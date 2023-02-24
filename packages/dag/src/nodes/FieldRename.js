@@ -17,14 +17,14 @@ export class FieldRename extends NodeType {
     properties: {
       $inputs: {
         type: 'array',
-        display: 'none'
+        display: 'none',
       },
       name: {
         type: 'string',
         title: i18n.t('packages_dag_nodes_database_jiedianmingcheng'),
         required: true,
         'x-decorator': 'FormItem',
-        'x-component': 'Input'
+        'x-component': 'Input',
       },
       operations: {
         type: 'array',
@@ -33,14 +33,14 @@ export class FieldRename extends NodeType {
         'x-component': 'FieldRename',
         'x-reactions': [
           '{{useAsyncDataSourceByConfig({service: loadNodeFieldsById, withoutField: true}, $values.id)}}',
-          '{{useAfterPatchAsyncDataSource({service: loadNodeFieldsById, withoutField: true}, $values.id, $values.$inputs[0], $values.fieldsNameTransform)}}'
+          '{{useAfterPatchAsyncDataSource({service: loadNodeFieldsById, withoutField: true}, $values.id, $values.$inputs[0], $values.fieldsNameTransform)}}',
         ],
         fieldsNameTransform: {
           type: 'string',
           default: '',
-          display: 'none'
-        }
-      }
-    }
+          display: 'none',
+        },
+      },
+    },
   }
 }

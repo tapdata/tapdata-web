@@ -1,17 +1,30 @@
 <template>
-  <aside class="layout-sidebar --left border-end flex flex-column flex-shrink-0">
+  <aside
+    class="layout-sidebar --left border-end flex flex-column flex-shrink-0"
+  >
     <div class="flex flex-column flex-1 min-h-0">
-      <ElCollapse v-model="collapseMode" ref="dbCollapse" class="collapse-fill db-list-container" accordion>
+      <ElCollapse
+        v-model:value="collapseMode"
+        ref="dbCollapse"
+        class="collapse-fill db-list-container"
+        accordion
+      >
         <ElCollapseItem name="db">
           <template #title>
             <div class="flex align-center flex-1 overflow-hidden">
               <template v-if="collapseMode === 'db'">
-                <span class="flex-1 user-select-none text-truncate flex align-center">
+                <span
+                  class="flex-1 user-select-none text-truncate flex align-center"
+                >
                   <!--连接-->
                   {{ $t('packages_dag_dag_connection') }}
                   <span v-show="dbTotal > 0" class="badge">{{ dbTotal }}</span>
                 </span>
-                <VIcon size="18" class="click-btn mr-1" :class="{ active: showDBInput }" @click.stop="handleShowDBInput"
+                <VIcon
+                  size="18"
+                  class="click-btn mr-1"
+                  :class="{ active: showDBInput }"
+                  @click.stop="handleShowDBInput"
                   >search-outline</VIcon
                 >
                 <VIcon
@@ -23,21 +36,25 @@
                   >add-outline</VIcon
                 >
               </template>
-              <span v-else class="flex-1 user-select-none text-truncate">{{ activeConnection.name }}</span>
+              <span v-else class="flex-1 user-select-none text-truncate">{{
+                activeConnection.name
+              }}</span>
             </div>
           </template>
           <div class="flex flex-column h-100">
             <div v-show="showDBInput" class="p-2">
               <ElInput
-                v-model="dbSearchTxt"
+                v-model:value="dbSearchTxt"
                 ref="dbInput"
                 class="header__input"
-                :placeholder="$t('packages_dag_connection_name_search_placeholder')"
+                :placeholder="
+                  $t('packages_dag_connection_name_search_placeholder')
+                "
                 size="mini"
                 clearable
-                @keydown.native.stop
-                @keyup.native.stop
-                @click.native.stop
+                @keydown.stop
+                @keyup.stop
+                @click.stop
                 @input="handleDBInput"
               >
                 <template #prefix>
@@ -46,8 +63,18 @@
               </ElInput>
             </div>
 
-            <ElScrollbar ref="dbList" class="flex-1" tag="div" wrap-class="db-list" :wrap-style="scrollbarWrapStyle">
-              <ElSkeleton :loading="dbLoading" animated :throttle="skeletonThrottle">
+            <ElScrollbar
+              ref="dbList"
+              class="flex-1"
+              tag="div"
+              wrap-class="db-list"
+              :wrap-style="scrollbarWrapStyle"
+            >
+              <ElSkeleton
+                :loading="dbLoading"
+                animated
+                :throttle="skeletonThrottle"
+              >
                 <template #template>
                   <div v-for="i in 5" :key="i" class="flex p-4 align-center">
                     <ElSkeletonItem
@@ -58,7 +85,11 @@
                     <ElSkeletonItem variant="text"></ElSkeletonItem>
                   </div>
                 </template>
-                <div v-infinite-scroll="loadMoreDB" :infinite-scroll-disabled="disabledDBMore" class="px-2 pb-2">
+                <div
+                  v-infinite-scroll="loadMoreDB"
+                  :infinite-scroll-disabled="disabledDBMore"
+                  class="px-2 pb-2"
+                >
                   <div
                     v-for="db in dbList"
                     v-mouse-drag="{
@@ -68,17 +99,22 @@
                       onStart,
                       onMove,
                       onDrop,
-                      onStop
+                      onStop,
                     }"
                     :key="db.id"
                     class="db-item flex align-center px-1 user-select-none rounded-2"
-                    :class="{ grabbable: !stateIsReadonly, active: activeConnection.id === db.id }"
+                    :class="{
+                      grabbable: !stateIsReadonly,
+                      active: activeConnection.id === db.id,
+                    }"
                     @click="handleSelectDB(db)"
                   >
                     <div class="flex-shrink-0 mr-2 db-item-icon">
                       <NodeIcon :node="db" />
                     </div>
-                    <div class="flex flex-column justify-center db-item-content">
+                    <div
+                      class="flex flex-column justify-center db-item-content"
+                    >
                       <div class="flex align-center">
                         <OverflowTooltip
                           class="text-truncate mr-1"
@@ -99,8 +135,12 @@
                     </div>
                   </div>
                   <VEmpty v-if="!dbList.length" />
-                  <div v-if="dbLoadingMore" class="text-center text-black-50 fs-8 p-2">
-                    {{ $t('packages_dag_loading') }}<span class="dotting"></span>
+                  <div
+                    v-if="dbLoadingMore"
+                    class="text-center text-black-50 fs-8 p-2"
+                  >
+                    {{ $t('packages_dag_loading')
+                    }}<span class="dotting"></span>
                   </div>
                 </div>
               </ElSkeleton>
@@ -117,15 +157,28 @@
             <span v-show="tbTotal > 0" class="badge">{{ tbTotal }}</span>
           </span>
           <!--创建新表作为节点使用-->
-          <ElTooltip :content="$t('packages_dag_components_leftsidebar_chongxinjiazai')" placement="top">
-            <StageButton :connection-id="activeConnection.id" @complete="loadDatabaseTable()">
+          <ElTooltip
+            :content="$t('packages_dag_components_leftsidebar_chongxinjiazai')"
+            placement="top"
+          >
+            <StageButton
+              :connection-id="activeConnection.id"
+              @complete="loadDatabaseTable()"
+            >
               <VIcon class="click-btn refresh mr-1" size="16">refresh</VIcon>
             </StageButton>
           </ElTooltip>
-          <VIcon size="18" class="click-btn mr-1" :class="{ active: showTBInput }" @click.stop="handleShowTBInput"
+          <VIcon
+            size="18"
+            class="click-btn mr-1"
+            :class="{ active: showTBInput }"
+            @click.stop="handleShowTBInput"
             >search-outline</VIcon
           >
-          <ElTooltip :content="$t('packages_dag_dag_create_table_as_node')" placement="top">
+          <ElTooltip
+            :content="$t('packages_dag_dag_create_table_as_node')"
+            placement="top"
+          >
             <VIcon
               size="20"
               class="click-btn"
@@ -139,14 +192,14 @@
         <div class="flex flex-column flex-1 min-h-0">
           <div v-show="showTBInput" class="p-2">
             <ElInput
-              v-model="tbSearchTxt"
+              v-model:value="tbSearchTxt"
               ref="tbInput"
               :placeholder="$t('packages_dag_table_name_search_placeholder')"
               size="mini"
               clearable
-              @keydown.native.stop
-              @keyup.native.stop
-              @click.native.stop
+              @keydown.stop
+              @keyup.stop
+              @click.stop
               @input="handleTBInput"
             >
               <template #prefix>
@@ -162,14 +215,23 @@
             wrap-class="tb-list"
             :wrap-style="scrollbarWrapStyle"
           >
-            <ElSkeleton v-show="tbLoading" class="position-absolute top-0 w-100 bg-white" :loading="tbLoading" animated>
+            <ElSkeleton
+              v-show="tbLoading"
+              class="position-absolute top-0 w-100 bg-white"
+              :loading="tbLoading"
+              animated
+            >
               <template #template>
                 <div v-for="i in 5" :key="i" class="flex p-4 align-center">
                   <ElSkeletonItem variant="text"></ElSkeletonItem>
                 </div>
               </template>
             </ElSkeleton>
-            <div v-infinite-scroll="loadMoreTable" :infinite-scroll-disabled="disabled" class="px-2 pb-2">
+            <div
+              v-infinite-scroll="loadMoreTable"
+              :infinite-scroll-disabled="disabled"
+              class="px-2 pb-2"
+            >
               <div
                 v-for="tb in tbList"
                 v-mouse-drag="{
@@ -179,16 +241,23 @@
                   onStart: onTBStart,
                   onMove,
                   onDrop,
-                  onStop
+                  onStop,
                 }"
                 :key="tb.id"
                 class="tb-item flex align-center px-2 user-select-none rounded-2"
                 :class="{ grabbable: !stateIsReadonly }"
               >
-                <OverflowTooltip :text="tb.name" placement="right" :open-delay="400"></OverflowTooltip>
+                <OverflowTooltip
+                  :text="tb.name"
+                  placement="right"
+                  :open-delay="400"
+                ></OverflowTooltip>
               </div>
               <VEmpty v-if="!tbList.length" />
-              <div v-if="tbLoadingMore" class="text-center text-black-50 fs-8 p-2">
+              <div
+                v-if="tbLoadingMore"
+                class="text-center text-black-50 fs-8 p-2"
+              >
                 {{ $t('packages_dag_loading') }}<span class="dotting"></span>
               </div>
             </div>
@@ -197,7 +266,11 @@
       </div>
     </div>
 
-    <ElCollapse ref="processorCollapse" class="collapse-fill processor-collapse" value="process">
+    <ElCollapse
+      ref="processorCollapse"
+      class="collapse-fill processor-collapse"
+      value="process"
+    >
       <ElCollapseItem name="process">
         <template #title>
           <div class="flex align-center flex-1">
@@ -207,7 +280,12 @@
             </span>
           </div>
         </template>
-        <ElScrollbar ref="processorList" tag="div" wrap-class="px-2 pb-2" :wrap-style="scrollbarWrapStyle">
+        <ElScrollbar
+          ref="processorList"
+          tag="div"
+          wrap-class="px-2 pb-2"
+          :wrap-style="scrollbarWrapStyle"
+        >
           <div
             v-for="(n, ni) in processorNodeTypes"
             :key="ni"
@@ -218,13 +296,18 @@
               onStart: onProcessorStart,
               onMove,
               onDrop,
-              onStop
+              onStop,
             }"
             class="node-item flex align-center px-2 user-select-none rounded-2"
             :class="{ grabbable: !stateIsReadonly }"
           >
             <NodeIcon class="flex-shrink-0 mr-2" :node="n" />
-            <OverflowTooltip :text="n.name" popper-class="df-node-text-tooltip" placement="top" :open-delay="400" />
+            <OverflowTooltip
+              :text="n.name"
+              popper-class="df-node-text-tooltip"
+              placement="top"
+              :open-delay="400"
+            />
             <VIcon class="ml-1" v-if="n.beta" size="32">beta</VIcon>
           </div>
         </ElScrollbar>
@@ -244,7 +327,7 @@
     <ElDialog
       :title="$t('packages_dag_components_leftsidebar_xuanzeshujuyuan')"
       width="848px"
-      :visible.sync="connectionDialog"
+      v-model:visible="connectionDialog"
       :close-on-click-modal="false"
       :append-to-body="true"
       custom-class="connection-dialog"
@@ -259,26 +342,38 @@
       <!-- :automationType="automationType" -->
     </ElDialog>
     <!-- <ElDialog
-      title="创建连接"
-      width="60%"
-      :visible.sync="connectionFormDialog"
-      :close-on-click-modal="false"
-      :append-to-body="true"
-    >
-      <Form v-if="connectionFormDialog" :databaseTypeText="databaseType" @saveConnection="saveConnection"></Form>
-    </ElDialog> -->
+        title="创建连接"
+        width="60%"
+        :visible.sync="connectionFormDialog"
+        :close-on-click-modal="false"
+        :append-to-body="true"
+      >
+        <Form v-if="connectionFormDialog" :databaseTypeText="databaseType" @saveConnection="saveConnection"></Form>
+      </ElDialog> -->
 
-    <CreateTable :dialog="dialogData" @handleTable="handleSaveTable"></CreateTable>
+    <CreateTable
+      :dialog="dialogData"
+      @handleTable="handleSaveTable"
+    ></CreateTable>
   </aside>
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 import { mapGetters } from 'vuex'
 import { debounce, escapeRegExp } from 'lodash'
 import { Select } from 'element-ui'
-import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event'
+import {
+  addResizeListener,
+  removeResizeListener,
+} from 'element-ui/src/utils/resize-event'
 import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
-import { metadataInstancesApi, databaseTypesApi, CancelToken, connectionsApi } from '@tap/api'
+import {
+  metadataInstancesApi,
+  databaseTypesApi,
+  CancelToken,
+  connectionsApi,
+} from '@tap/api'
 import { VIcon, VEmpty, OverflowTooltip } from '@tap/component'
 import { ConnectionTypeSelector } from '@tap/business'
 import { getInitialValuesInBySchema } from '@tap/form'
@@ -292,7 +387,6 @@ import StageButton from '@tap/business/src/components/StageButton'
 
 export default {
   name: 'LeftSidebar',
-
   components: {
     NodeIcon,
     CreateTable,
@@ -303,9 +397,8 @@ export default {
     ConnectionType,
     ConnectionTypeSelector,
     ElScrollbar: Select.components.ElScrollbar,
-    StageButton
+    StageButton,
   },
-
   data() {
     return {
       collapseMode: 'db',
@@ -328,7 +421,7 @@ export default {
       activeConnection: {
         id: '',
         name: '',
-        databaseType: ''
+        databaseType: '',
       },
       dragStarting: false,
       dragMoving: false,
@@ -351,18 +444,20 @@ export default {
         type: 'table',
         title: this.$t('packages_dag_dialog_createTable'),
         placeholder: this.$t('packages_dag_dialog_placeholderTable'),
-        visible: false
-      }
+        visible: false,
+      },
     }
   },
-
   directives: {
     mouseDrag,
-    resize
+    resize,
   },
-
   computed: {
-    ...mapGetters('dataflow', ['processorNodeTypes', 'getCtor', 'stateIsReadonly']),
+    ...mapGetters('dataflow', [
+      'processorNodeTypes',
+      'getCtor',
+      'stateIsReadonly',
+    ]),
 
     noMore() {
       return this.tbPage >= Math.ceil(this.tbTotal / 20)
@@ -383,34 +478,36 @@ export default {
     scrollbarWrapStyle() {
       let gutter = scrollbarWidth()
       return `position:relative;height: calc(100% + ${gutter}px);`
-    }
+    },
   },
-
   created() {
     this.getDatabaseType()
 
     this.init()
   },
-
   mounted() {
     addResizeListener(this.$refs.dbCollapse.$el, this.updateDBScrollbar)
     addResizeListener(this.$refs.tbList.$el, this.updateTBScrollbar)
-    addResizeListener(this.$refs.processorCollapse.$el, this.updateProcessorScrollbar)
+    addResizeListener(
+      this.$refs.processorCollapse.$el,
+      this.updateProcessorScrollbar
+    )
   },
-
-  beforeDestroy() {
+  beforeUnmount() {
     removeResizeListener(this.$refs.dbCollapse.$el, this.updateDBScrollbar)
     removeResizeListener(this.$refs.tbList.$el, this.updateTBScrollbar)
-    removeResizeListener(this.$refs.processorCollapse.$el, this.updateProcessorScrollbar)
+    removeResizeListener(
+      this.$refs.processorCollapse.$el,
+      this.updateProcessorScrollbar
+    )
   },
-
   methods: {
     // 创建连接
     creat() {
       this.connectionDialog = !this.stateIsReadonly
     },
     getDatabaseType() {
-      databaseTypesApi.get().then(res => {
+      databaseTypesApi.get().then((res) => {
         if (res) {
           this.getPdkData(res)
         }
@@ -423,11 +520,11 @@ export default {
       this.connectionDialog = false
       const { pdkHash } = item
       let query = {
-        pdkHash
+        pdkHash,
       }
       this.$router.push({
         name: 'connectionCreate',
-        query
+        query,
       })
     },
     async init() {
@@ -467,9 +564,9 @@ export default {
           pdkHash: 1,
           capabilities: 1,
           config: 1,
-          connectionString: 1
+          connectionString: 1,
         },
-        order: ['status DESC', 'name ASC']
+        order: ['status DESC', 'name ASC'],
       }
 
       const txt = escapeRegExp(this.dbSearchTxt.trim())
@@ -493,7 +590,7 @@ export default {
 
       this.dbTotal = data.total
 
-      const dbList = data.items.map(item => {
+      const dbList = data.items.map((item) => {
         item.databaseType = item.database_type
         if (item.connectionString) {
           item.connectionUrl = item.connectionString
@@ -507,7 +604,9 @@ export default {
           } else {
             const { host, port, database, schema } = item.config
             connectionUrl = host
-              ? `${host}${port ? `:${port}` : ''}${database ? `/${database}` : ''}${schema ? `/${schema}` : ''}`
+              ? `${host}${port ? `:${port}` : ''}${
+                  database ? `/${database}` : ''
+                }${schema ? `/${schema}` : ''}`
               : ''
           }
         }
@@ -518,7 +617,7 @@ export default {
 
       if (loadMore) {
         // 防止重复push
-        dbList.forEach(item => {
+        dbList.forEach((item) => {
           if (!this.dbIdMap[item.id]) {
             this.dbList.push(item)
             this.dbIdMap[item.id] = true
@@ -530,7 +629,10 @@ export default {
         this.dbList = dbList
         this.dbLoading = false
         // 缓存所有dbId
-        this.dbIdMap = dbList.reduce((map, item) => ((map[item.id] = true), map), {})
+        this.dbIdMap = dbList.reduce(
+          (map, item) => ((map[item.id] = true), map),
+          {}
+        )
       }
       return this.dbList
     },
@@ -547,16 +649,16 @@ export default {
           'source.id': this.activeConnection.id,
           taskId: this.$store.state.dataflow.taskId,
           meta_type: {
-            in: ['collection', 'table', 'view']
+            in: ['collection', 'table', 'view'],
           },
           is_deleted: false,
-          sourceType: 'SOURCE'
+          sourceType: 'SOURCE',
         },
         fields: {
           id: true,
-          original_name: true
+          original_name: true,
         },
-        order: ['original_name ASC']
+        order: ['original_name ASC'],
       }
 
       const txt = escapeRegExp(this.tbSearchTxt.trim())
@@ -589,7 +691,7 @@ export default {
       let data
       try {
         data = await metadataInstancesApi.get(this.getTableFilter(), {
-          cancelToken: this.cancelSource.token
+          cancelToken: this.cancelSource.token,
         })
       } catch (e) {
         // eslint-disable-next-line no-console
@@ -597,15 +699,15 @@ export default {
         return
       }
 
-      const tables = data.items.map(tb => ({
+      const tables = data.items.map((tb) => ({
         id: tb.id,
-        name: tb.original_name
+        name: tb.original_name,
       }))
 
       this.tbTotal = data.total
 
       if (loadMore) {
-        tables.forEach(item => {
+        tables.forEach((item) => {
           if (!this.tbIdMap[item.id]) {
             this.tbList.push(item)
             this.tbIdMap[item.id] = true
@@ -617,7 +719,10 @@ export default {
         this.tbList = tables
         this.tbLoading = false
         // 缓存所有tbId
-        this.tbIdMap = tables.reduce((map, item) => ((map[item.id] = true), map), {})
+        this.tbIdMap = tables.reduce(
+          (map, item) => ((map[item.id] = true), map),
+          {}
+        )
       }
     },
 
@@ -642,7 +747,7 @@ export default {
       const ins = getResourceIns(node)
       Object.defineProperty(node, '__Ctor', {
         value: ins,
-        enumerable: false
+        enumerable: false,
       })
       this.dragNode = node
       this.dragStarting = true
@@ -668,7 +773,7 @@ export default {
         // 设置属性__Ctor不可枚举
         Object.defineProperty(node, '__Ctor', {
           value: ins,
-          enumerable: false
+          enumerable: false,
         })
       }
       this.dragNode = node
@@ -678,11 +783,11 @@ export default {
 
     onMove() {
       this.dragMoving = true
-      this.$emit('move-node', ...arguments)
+      $emit(this, 'move-node', ...arguments)
     },
 
     onDrop(item, position, rect) {
-      this.$emit('drop-node', this.dragNode, position, rect)
+      $emit(this, 'drop-node', this.dragNode, position, rect)
     },
 
     onStop() {
@@ -706,7 +811,8 @@ export default {
     },
 
     scrollTopOfTableList() {
-      if (this.$refs.tbList && this.$refs.tbList.wrap.scrollTop > 0) this.$refs.tbList.wrap.scrollTop = 0
+      if (this.$refs.tbList && this.$refs.tbList.wrap.scrollTop > 0)
+        this.$refs.tbList.wrap.scrollTop = 0
     },
 
     handleShowTBInput() {
@@ -748,7 +854,11 @@ export default {
     },
 
     handleSaveTable(name) {
-      this.$emit('add-table-as-node', this.getNodeProps(this.activeConnection, name))
+      $emit(
+        this,
+        'add-table-as-node',
+        this.getNodeProps(this.activeConnection, name)
+      )
     },
 
     updateDBScrollbar() {
@@ -765,7 +875,8 @@ export default {
 
     getNodeProps(connection, tableName) {
       // 设置pdk节点配置默认值
-      const pdkProperties = this.$store.state.dataflow.pdkPropertiesMap[connection.pdkHash]
+      const pdkProperties =
+        this.$store.state.dataflow.pdkPropertiesMap[connection.pdkHash]
       let nodeConfig
       if (pdkProperties) {
         nodeConfig = getInitialValuesInBySchema(pdkProperties, {})
@@ -783,22 +894,23 @@ export default {
           accessNodeProcessId: connection.accessNodeProcessId,
           pdkType: connection.pdkType,
           pdkHash: connection.pdkHash,
-          capabilities: connection.capabilities || []
+          capabilities: connection.capabilities || [],
           /*capabilities: [
-            ...(connection.capabilities || []),
-            {
-              id: 'new_field_function',
-              type: 11
-            }
-          ]*/
-        }
+          ...(connection.capabilities || []),
+          {
+            id: 'new_field_function',
+            type: 11
+          }
+        ]*/
+        },
       }
-    }
-  }
+    },
+  },
+  emits: ['move-node', 'drop-node', 'add-table-as-node'],
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 $itemH: 30px;
 $hoverBg: #eef3ff;
 
@@ -809,11 +921,9 @@ $hoverBg: #eef3ff;
   opacity: 0;
   transform-origin: center center;
 }
-
 .layout-sidebar.--left {
   overflow: hidden;
   $headerH: 34px;
-
   ::v-deep {
     .db-list-container {
       max-height: 50%;
@@ -986,7 +1096,6 @@ $hoverBg: #eef3ff;
     }
   }
 }
-
 .node-list {
   .node-item {
     border-radius: 4px;
@@ -1010,7 +1119,6 @@ $hoverBg: #eef3ff;
     }
   }
 }
-
 ::v-deep {
   .connection-dialog {
     .el-dialog__body {

@@ -17,14 +17,14 @@ export class FieldModType extends NodeType {
     properties: {
       $inputs: {
         type: 'array',
-        display: 'none'
+        display: 'none',
       },
       name: {
         type: 'string',
         title: i18n.t('packages_dag_nodes_database_jiedianmingcheng'),
         required: true,
         'x-decorator': 'FormItem',
-        'x-component': 'Input'
+        'x-component': 'Input',
       },
       operations: {
         type: 'array',
@@ -32,8 +32,8 @@ export class FieldModType extends NodeType {
         'x-decorator': 'FormItem',
         'x-component': 'FieldModType',
         'x-reactions':
-          '{{useAsyncDataSourceByConfig({service: loadNodeFieldsById, withoutField: true}, $self.value.length ? $values.id : $values.$inputs[0])}}'
-      }
-    }
+          '{{useAsyncDataSourceByConfig({service: loadNodeFieldsById, withoutField: true}, $self.value.length ? $values.id : $values.$inputs[0])}}',
+      },
+    },
   }
 }

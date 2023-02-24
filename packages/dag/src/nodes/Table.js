@@ -20,22 +20,22 @@ export class Table extends NodeType {
     properties: {
       $inputs: {
         type: 'array',
-        'x-display': 'hidden'
+        'x-display': 'hidden',
       },
       $outputs: {
         type: 'array',
-        'x-display': 'hidden'
+        'x-display': 'hidden',
       },
       databaseType: {
         type: 'string',
-        'x-display': 'hidden'
+        'x-display': 'hidden',
       },
       name: {
         type: 'string',
         title: i18n.t('packages_dag_nodes_database_jiedianmingcheng'),
         required: true,
         'x-decorator': 'FormItem',
-        'x-component': 'Input'
+        'x-component': 'Input',
       },
 
       connectionIdWrap: {
@@ -44,12 +44,12 @@ export class Table extends NodeType {
         'x-decorator': 'FormItem',
         'x-decorator-props': {
           asterisk: true,
-          feedbackLayout: 'none'
+          feedbackLayout: 'none',
         },
         'x-component': 'FormFlex',
         'x-component-props': {
           gap: 8,
-          align: 'start'
+          align: 'start',
         },
         properties: {
           connectionId: {
@@ -58,17 +58,18 @@ export class Table extends NodeType {
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               style: {
-                flex: 1
-              }
+                flex: 1,
+              },
             },
             'x-component': 'AsyncSelect',
             'x-component-props': {
-              onSetSelected: '{{useHandleWithForm(handlerSyncDatabaseChange, $form)}}',
+              onSetSelected:
+                '{{useHandleWithForm(handlerSyncDatabaseChange, $form)}}',
               itemLabel: 'label',
               itemValue: 'id',
               itemQuery: 'name',
               method: '{{loadDatabases}}',
-              params: `{{ {where: {database_type: $values.databaseType}} }}`
+              params: `{{ {where: {database_type: $values.databaseType}} }}`,
             },
             'x-reactions': [
               {
@@ -76,11 +77,11 @@ export class Table extends NodeType {
                 effects: ['onFieldValueChange'],
                 fulfill: {
                   state: {
-                    value: ''
-                  }
-                }
-              }
-            ]
+                    value: '',
+                  },
+                },
+              },
+            ],
           },
 
           clipboardButton: {
@@ -88,10 +89,10 @@ export class Table extends NodeType {
             'x-component': 'ClipboardButton',
             'x-component-props': {
               tooltip: i18n.t('packages_dag_nodes_table_fuzhishujuku'),
-              finishTooltip: i18n.t('packages_dag_nodes_table_yifuzhi')
-            }
-          }
-        }
+              finishTooltip: i18n.t('packages_dag_nodes_table_yifuzhi'),
+            },
+          },
+        },
       },
 
       tableNameWrap: {
@@ -103,20 +104,21 @@ export class Table extends NodeType {
           feedbackLayout: 'none',
           connectionId: '{{$values.connectionId}}',
           title: i18n.t('packages_dag_dag_table'),
-          target: 'tableNameWrap.tableName'
+          target: 'tableNameWrap.tableName',
         },
         'x-component': 'FormFlex',
         'x-component-props': {
           gap: 8,
-          align: 'start'
+          align: 'start',
         },
         'x-reactions': {
           dependencies: ['databaseType'],
           fulfill: {
             state: {
-              display: '{{ !["CSV","EXCEL","JSON","XML"].includes($deps[0]) ? "visible":"hidden"}}'
-            }
-          }
+              display:
+                '{{ !["CSV","EXCEL","JSON","XML"].includes($deps[0]) ? "visible":"hidden"}}',
+            },
+          },
         },
         properties: {
           tableName: {
@@ -125,18 +127,18 @@ export class Table extends NodeType {
             'x-validator': [
               {
                 required: true,
-                message: i18n.t('packages_dag_nodes_table_qingxuanzebiao')
-              }
+                message: i18n.t('packages_dag_nodes_table_qingxuanzebiao'),
+              },
             ],
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               style: {
-                flex: 1
-              }
+                flex: 1,
+              },
             },
             'x-component': 'TableSelect',
             'x-component-props': {
-              method: '{{loadTable}}'
+              method: '{{loadTable}}',
             },
             'x-reactions': [
               {
@@ -144,48 +146,48 @@ export class Table extends NodeType {
                 effects: ['onFieldInputValueChange'],
                 fulfill: {
                   state: {
-                    value: '{{$self.value}}'
-                  }
-                }
+                    value: '{{$self.value}}',
+                  },
+                },
               },
               {
                 target: 'updateConditionFields',
                 effects: ['onFieldValueChange'],
                 fulfill: {
                   state: {
-                    value: null
-                  }
-                }
+                    value: null,
+                  },
+                },
               },
               {
                 dependencies: ['$inputs'],
                 fulfill: {
                   schema: {
                     // title: '{{console.log("tableName", $deps[0]),$deps[0] ? "表(可输入创建新表)" : "表"}}',
-                    'x-component-props.allowCreate': '{{$deps[0].length>0}}'
+                    'x-component-props.allowCreate': '{{$deps[0].length>0}}',
                     // 'x-decorator-props.feedbackText': '{{$deps[0] && "可输入创建新表"}}'
-                  }
-                }
-              }
-            ]
+                  },
+                },
+              },
+            ],
           },
           clipboardButton: {
             type: 'void',
             'x-component': 'ClipboardButton',
             'x-component-props': {
               tooltip: i18n.t('packages_dag_nodes_table_fuzhibiaoming'),
-              finishTooltip: i18n.t('packages_dag_nodes_table_yifuzhi')
+              finishTooltip: i18n.t('packages_dag_nodes_table_yifuzhi'),
             },
             'x-reactions': {
               dependencies: ['tableName'],
               fulfill: {
                 schema: {
-                  'x-component-props.content': '{{$deps[0]}}'
-                }
-              }
-            }
-          }
-        }
+                  'x-component-props.content': '{{$deps[0]}}',
+                },
+              },
+            },
+          },
+        },
       },
 
       // 指定agent
@@ -198,43 +200,43 @@ export class Table extends NodeType {
           content:
             '{{$agentMap[$self.value] ? `${$agentMap[$self.value].hostName}（${$agentMap[$self.value].ip}）` : "-"}}',
           style: {
-            color: '#535F72'
-          }
+            color: '#535F72',
+          },
         },
         'x-reactions': {
           fulfill: {
             state: {
-              display: '{{!$self.value ? "hidden":"visible"}}'
-            }
-          }
-        }
+              display: '{{!$self.value ? "hidden":"visible"}}',
+            },
+          },
+        },
       },
 
       collapse: {
         type: 'void',
         'x-decorator': 'FormItem',
         'x-decorator-props': {
-          class: 'mt-2 mx-n4'
+          class: 'mt-2 mx-n4',
         },
         'x-component': 'FormCollapse',
         'x-component-props': {
-          class: 'inset'
+          class: 'inset',
         },
         'x-reactions': {
           dependencies: ['$inputs', '$outputs'],
           fulfill: {
             state: {
               display:
-                '{{$hasPdkConfig($values.attrs.pdkHash) || $deps[0].length > 0 || $deps[1].length > 0 ? "visible":"hidden"}}'
-            }
-          }
+                '{{$hasPdkConfig($values.attrs.pdkHash) || $deps[0].length > 0 || $deps[1].length > 0 ? "visible":"hidden"}}',
+            },
+          },
         },
         properties: {
           tab1: {
             type: 'void',
             'x-component': 'FormCollapse.Item',
             'x-component-props': {
-              title: i18n.t('packages_dag_task_stetting_most_setting')
+              title: i18n.t('packages_dag_task_stetting_most_setting'),
             },
             properties: {
               sourceNodeConfig: {
@@ -244,9 +246,9 @@ export class Table extends NodeType {
                   dependencies: ['$outputs'],
                   fulfill: {
                     state: {
-                      display: '{{$deps[0].length > 0 ? "visible":"hidden"}}'
-                    }
-                  }
+                      display: '{{$deps[0].length > 0 ? "visible":"hidden"}}',
+                    },
+                  },
                 },
                 properties: {
                   // increase: {
@@ -279,32 +281,39 @@ export class Table extends NodeType {
                   //   }
                   // },
                   readBatchSize: {
-                    title: i18n.t('packages_dag_nodes_database_piliangduqutiao'), //增量批次读取条数
+                    title: i18n.t(
+                      'packages_dag_nodes_database_piliangduqutiao'
+                    ), //增量批次读取条数
                     type: 'string',
                     'x-decorator': 'FormItem',
                     'x-component': 'InputNumber',
                     'x-decorator-props': {
-                      tooltip: i18n.t('packages_dag_nodes_database_quanliangmeipici')
+                      tooltip: i18n.t(
+                        'packages_dag_nodes_database_quanliangmeipici'
+                      ),
                     },
                     'x-component-props': {
                       min: 1,
-                      max: 100000
+                      max: 100000,
                     },
                     default: 100,
                     'x-reactions': {
                       fulfill: {
                         state: {
-                          display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
-                        }
-                      }
-                    }
+                          display:
+                            '{{$settings.type === "cdc" ? "hidden":"visible"}}',
+                        },
+                      },
+                    },
                   },
                   enableDDL: {
                     title: i18n.t('packages_dag_nodes_table_ddLshijian'),
                     type: 'boolean',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      tooltip: i18n.t('packages_dag_nodes_database_kaiqihourenwu')
+                      tooltip: i18n.t(
+                        'packages_dag_nodes_database_kaiqihourenwu'
+                      ),
                     },
                     'x-component': 'Switch',
                     'x-reactions': [
@@ -312,9 +321,9 @@ export class Table extends NodeType {
                         target: 'disabledEvents',
                         fulfill: {
                           state: {
-                            display: '{{$self.value ? "visible" :"hidden"}}'
-                          }
-                        }
+                            display: '{{$self.value ? "visible" :"hidden"}}',
+                          },
+                        },
                       },
                       {
                         when: `{{!$values.attrs.capabilities.filter(item => item.type === 10).length}}`,
@@ -323,47 +332,57 @@ export class Table extends NodeType {
                             disabled: true,
                             description: `{{$values.databaseType + '${i18n.t(
                               'packages_dag_nodes_database_value_zanbuzhiciddl'
-                            )}'}}`
-                          }
-                        }
-                      }
-                    ]
+                            )}'}}`,
+                          },
+                        },
+                      },
+                    ],
                   },
                   disabledEvents: {
                     type: 'array',
-                    'x-component': 'DdlEventCheckbox'
+                    'x-component': 'DdlEventCheckbox',
                   },
                   cdcMode: {
-                    title: i18n.t('packages_dag_nodes_table_zengliangtongbufang'),
+                    title: i18n.t(
+                      'packages_dag_nodes_table_zengliangtongbufang'
+                    ),
                     type: 'string',
                     default: 'logCdc',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      tooltip: i18n.t('packages_dag_nodes_table_tedingziduande')
+                      tooltip: i18n.t(
+                        'packages_dag_nodes_table_tedingziduande'
+                      ),
                     },
                     'x-component': 'Radio.Group',
                     enum: [
-                      { label: i18n.t('packages_dag_nodes_table_rizhicdc'), value: 'logCdc' },
-                      { label: i18n.t('packages_dag_nodes_table_lunxun'), value: 'polling' }
+                      {
+                        label: i18n.t('packages_dag_nodes_table_rizhicdc'),
+                        value: 'logCdc',
+                      },
+                      {
+                        label: i18n.t('packages_dag_nodes_table_lunxun'),
+                        value: 'polling',
+                      },
                     ],
                     'x-reactions': [
                       {
                         fulfill: {
                           state: {
-                            visible: `{{$values.attrs.capabilities.some(item => item.id === 'query_by_advance_filter_function')}}`
-                          }
-                        }
+                            visible: `{{$values.attrs.capabilities.some(item => item.id === 'query_by_advance_filter_function')}}`,
+                          },
+                        },
                       },
                       {
                         target:
                           '*(cdcPollingFields,cdcPollingFieldsDefaultValues,cdcPollingInterval,cdcPollingBatchSize)',
                         fulfill: {
                           state: {
-                            visible: '{{$self.value==="polling"}}'
-                          }
-                        }
-                      }
-                    ]
+                            visible: '{{$self.value==="polling"}}',
+                          },
+                        },
+                      },
+                    ],
                   },
                   cdcPollingFields: {
                     title: i18n.t('packages_dag_nodes_table_zhidinglunxunzi'),
@@ -381,14 +400,16 @@ export class Table extends NodeType {
                           'x-decorator': 'FormItem',
                           'x-component': 'FieldSelect',
                           'x-component-props': {
-                            filterable: true
+                            filterable: true,
                           },
                           'x-reactions': {
-                            effects: ['onFieldInputValueChange']
-                          }
+                            effects: ['onFieldInputValueChange'],
+                          },
                         },
                         defaultValue: {
-                          title: i18n.t('packages_dag_nodes_table_lunxunziduanmo'),
+                          title: i18n.t(
+                            'packages_dag_nodes_table_lunxunziduanmo'
+                          ),
                           required: true,
                           type: 'string',
                           'x-decorator': 'FormItem',
@@ -396,13 +417,13 @@ export class Table extends NodeType {
                           'x-reactions': {
                             fulfill: {
                               state: {
-                                visible: `{{$settings.type === "cdc"}}`
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
+                                visible: `{{$settings.type === "cdc"}}`,
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
                   },
                   cdcPollingInterval: {
                     title: i18n.t('packages_dag_nodes_table_lunxunjiangem'),
@@ -412,10 +433,10 @@ export class Table extends NodeType {
                     'x-component': 'InputNumber',
                     'x-component-props': {
                       style: {
-                        width: '140px'
+                        width: '140px',
                       },
-                      min: 500
-                    }
+                      min: 500,
+                    },
                   },
                   cdcPollingBatchSize: {
                     title: i18n.t('packages_dag_nodes_table_meiciduquhang'),
@@ -425,10 +446,10 @@ export class Table extends NodeType {
                     'x-component': 'InputNumber',
                     'x-component-props': {
                       style: {
-                        width: '140px'
+                        width: '140px',
                       },
-                      min: 1
-                    }
+                      min: 1,
+                    },
                   },
                   isFilter: {
                     type: 'boolean',
@@ -440,10 +461,10 @@ export class Table extends NodeType {
                       target: '*(conditions)',
                       fulfill: {
                         state: {
-                          visible: '{{$self.value===true}}'
-                        }
-                      }
-                    }
+                          visible: '{{$self.value===true}}',
+                        },
+                      },
+                    },
                   },
 
                   /*limitWrap: {
@@ -516,11 +537,11 @@ export class Table extends NodeType {
                         fulfill: {
                           state: {
                             loading: '{{$self.loading}}',
-                            dataSource: '{{$self.value}}'
-                          }
-                        }
-                      }
-                    ]
+                            dataSource: '{{$self.value}}',
+                          },
+                        },
+                      },
+                    ],
                   },
 
                   conditions: {
@@ -543,14 +564,14 @@ export class Table extends NodeType {
                               'x-decorator': 'FormItem',
                               'x-component': 'FieldSelect',
                               'x-component-props': {
-                                filterable: true
+                                filterable: true,
                               },
                               'x-reactions': {
                                 effects: ['onFieldInputValueChange'],
                                 fulfill: {
-                                  run: '{{$record.value = undefined}}'
-                                }
-                              }
+                                  run: '{{$record.value = undefined}}',
+                                },
+                              },
                             },
                             operator: {
                               type: 'number',
@@ -558,30 +579,30 @@ export class Table extends NodeType {
                               enum: [
                                 {
                                   label: '>',
-                                  value: 1
+                                  value: 1,
                                 },
                                 {
                                   label: '>=',
-                                  value: 2
+                                  value: 2,
                                 },
                                 {
                                   label: '<',
-                                  value: 3
+                                  value: 3,
                                 },
                                 {
                                   label: '<=',
-                                  value: 4
+                                  value: 4,
                                 },
                                 {
                                   label: '=',
-                                  value: 5
-                                }
+                                  value: 5,
+                                },
                               ],
                               'x-decorator': 'FormItem',
                               'x-decorator-props': {
-                                wrapperWidth: 100
+                                wrapperWidth: 100,
                               },
-                              'x-component': 'Select'
+                              'x-component': 'Select',
                             },
                             value: {
                               type: 'string',
@@ -591,29 +612,29 @@ export class Table extends NodeType {
                               'x-component-props': {
                                 type: 'datetime',
                                 align: 'right',
-                                format: 'yyyy-MM-dd HH:mm:ss'
+                                format: 'yyyy-MM-dd HH:mm:ss',
                               },
                               'x-reactions': {
                                 dependencies: ['nodeSchema', '.key'],
                                 fulfill: {
                                   schema: {
                                     'x-component':
-                                      '{{field=$deps[0] && $deps[0].find(item=>item.value===$deps[1]),field&&/timestamp|date|DATE_TIME|datetime/i.test(field.type)?"DatePicker":"Input"}}'
-                                  }
-                                }
-                              }
+                                      '{{field=$deps[0] && $deps[0].find(item=>item.value===$deps[1]),field&&/timestamp|date|DATE_TIME|datetime/i.test(field.type)?"DatePicker":"Input"}}',
+                                  },
+                                },
+                              },
                             },
                             remove: {
                               type: 'void',
                               'x-decorator': 'FormItem',
                               'x-component': 'ArrayItems.Remove',
                               'x-component-props': {
-                                disabled: '{{$values.conditions.length<2}}'
-                              }
-                            }
-                          }
-                        }
-                      }
+                                disabled: '{{$values.conditions.length<2}}',
+                              },
+                            },
+                          },
+                        },
+                      },
                     },
                     properties: {
                       add: {
@@ -621,12 +642,12 @@ export class Table extends NodeType {
                         title: i18n.t('packages_dag_nodes_table_tianjia'),
                         'x-component': 'ArrayItems.Addition',
                         'x-component-props': {
-                          defaultValue: { key: '', value: '', operator: 5 }
-                        }
-                      }
-                    }
-                  }
-                }
+                          defaultValue: { key: '', value: '', operator: 5 },
+                        },
+                      },
+                    },
+                  },
+                },
               },
 
               targetNodeConfig: {
@@ -636,65 +657,74 @@ export class Table extends NodeType {
                   dependencies: ['$inputs'],
                   fulfill: {
                     state: {
-                      display: '{{$deps[0].length > 0 ? "visible":"hidden"}}'
-                    }
-                  }
+                      display: '{{$deps[0].length > 0 ? "visible":"hidden"}}',
+                    },
+                  },
                 },
                 properties: {
                   writeBachSpace: {
                     type: 'void',
                     'x-component': 'Space',
                     'x-component-props': {
-                      size: 'middle'
+                      size: 'middle',
                     },
                     'x-reactions': {
                       fulfill: {
                         state: {
-                          display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
-                        }
-                      }
+                          display:
+                            '{{$settings.type === "cdc" ? "hidden":"visible"}}',
+                        },
+                      },
                     },
                     properties: {
                       writeBatchSize: {
-                        title: i18n.t('packages_dag_nodes_database_piliangxierutiao'), //增量批次读取条数
+                        title: i18n.t(
+                          'packages_dag_nodes_database_piliangxierutiao'
+                        ), //增量批次读取条数
                         type: 'string',
                         'x-decorator': 'FormItem',
                         'x-component': 'InputNumber',
                         'x-decorator-props': {
-                          tooltip: i18n.t('packages_dag_nodes_database_quanliangmeipici2')
+                          tooltip: i18n.t(
+                            'packages_dag_nodes_database_quanliangmeipici2'
+                          ),
                         },
                         'x-component-props': {
                           min: 1,
-                          max: 100000
+                          max: 100000,
                         },
-                        default: 2000
+                        default: 2000,
                       },
                       writeBatchWaitMs: {
-                        title: i18n.t('packages_dag_nodes_database_xierumeipizui'), //增量批次读取条数
+                        title: i18n.t(
+                          'packages_dag_nodes_database_xierumeipizui'
+                        ), //增量批次读取条数
                         type: 'string',
                         'x-decorator': 'FormItem',
                         'x-component': 'InputNumber',
                         'x-component-props': {
-                          min: 1
+                          min: 1,
                         },
                         'x-decorator-props': {
-                          tooltip: i18n.t('packages_dag_nodes_database_xierumeipizui_tips')
+                          tooltip: i18n.t(
+                            'packages_dag_nodes_database_xierumeipizui_tips'
+                          ),
                         },
-                        default: 3000
-                      }
-                    }
+                        default: 3000,
+                      },
+                    },
                   },
                   ddlEvents: {
                     type: 'void',
                     title: i18n.t('packages_dag_nodes_database_ddLshijian'),
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      feedbackLayout: 'none'
+                      feedbackLayout: 'none',
                     },
                     'x-component': 'DdlEventList',
                     'x-component-props': {
-                      findParentNodes: '{{findParentNodes}}'
-                    }
+                      findParentNodes: '{{findParentNodes}}',
+                    },
                   },
                   existDataProcessMode: {
                     title: i18n.t('packages_dag_nodes_table_yiyoushujuchu'),
@@ -702,22 +732,28 @@ export class Table extends NodeType {
                     default: 'keepData',
                     enum: [
                       {
-                        label: i18n.t('packages_dag_nodes_database_baochimubiaoduan'),
-                        value: 'keepData'
+                        label: i18n.t(
+                          'packages_dag_nodes_database_baochimubiaoduan'
+                        ),
+                        value: 'keepData',
                       },
                       {
-                        label: i18n.t('packages_dag_nodes_database_qingchumubiaoduan'),
+                        label: i18n.t(
+                          'packages_dag_nodes_database_qingchumubiaoduan'
+                        ),
                         value: 'dropTable',
-                        disabled: true
+                        disabled: true,
                       },
                       {
-                        label: i18n.t('packages_dag_nodes_targetdatabase_baochimubiaoduan'),
-                        value: 'removeData'
-                      }
+                        label: i18n.t(
+                          'packages_dag_nodes_targetdatabase_baochimubiaoduan'
+                        ),
+                        value: 'removeData',
+                      },
                     ],
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      wrapperWidth: 300
+                      wrapperWidth: 300,
                     },
                     'x-component': 'Select',
                     'x-reactions': {
@@ -726,14 +762,14 @@ export class Table extends NodeType {
                         state: {
                           description: `{{$settings.type === "cdc" ? '${i18n.t(
                             'packages_dag_nodes_database_setting_cdc_changjing_desc'
-                          )}':''}}`
+                          )}':''}}`,
                         },
                         schema: {
                           // 根据capabilities列表如果不存在{"id" : "clear_table_function"}属性，表示不支持“运行前删除已存在数据”，⚠️👇表达式依赖enum的顺序
-                          'x-component-props.options': `{{options=[$self.dataSource[0]],$values.attrs.capabilities.find(item => item.id ==='drop_table_function') && options.push($self.dataSource[1]),$values.attrs.capabilities.find(item => item.id ==='clear_table_function') && options.push($self.dataSource[2]),options}}`
-                        }
-                      }
-                    }
+                          'x-component-props.options': `{{options=[$self.dataSource[0]],$values.attrs.capabilities.find(item => item.id ==='drop_table_function') && options.push($self.dataSource[1]),$values.attrs.capabilities.find(item => item.id ==='clear_table_function') && options.push($self.dataSource[2]),options}}`,
+                        },
+                      },
+                    },
                   },
                   // writeStrategy: {
                   //   title: '数据写入模式',
@@ -771,51 +807,60 @@ export class Table extends NodeType {
                     'x-component-props': {
                       layout: 'horizontal',
                       colon: false,
-                      feedbackLayout: 'none'
+                      feedbackLayout: 'none',
                     },
                     properties: {
                       writeStrategy: {
-                        title: i18n.t('packages_dag_nodes_mergetable_shujuxierumo'),
+                        title: i18n.t(
+                          'packages_dag_nodes_mergetable_shujuxierumo'
+                        ),
                         type: 'string',
                         default: 'updateOrInsert',
                         'x-component': 'Radio.Group',
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
-                          tooltip: i18n.t('packages_dag_nodes_database_tongjizhuijiaxie2')
+                          tooltip: i18n.t(
+                            'packages_dag_nodes_database_tongjizhuijiaxie2'
+                          ),
                         },
                         enum: [
                           {
-                            label: i18n.t('packages_dag_nodes_database_anshijianleixing'),
-                            value: 'updateOrInsert'
+                            label: i18n.t(
+                              'packages_dag_nodes_database_anshijianleixing'
+                            ),
+                            value: 'updateOrInsert',
                           },
                           {
-                            label: i18n.t('packages_dag_nodes_database_tongjizhuijiaxie'),
-                            value: 'appendWrite'
-                          }
+                            label: i18n.t(
+                              'packages_dag_nodes_database_tongjizhuijiaxie'
+                            ),
+                            value: 'appendWrite',
+                          },
                         ],
                         'x-reactions': {
                           target: '*(dmlPolicy,updateConditionFields)',
                           fulfill: {
                             state: {
-                              display: '{{$self.value === "appendWrite" ? "hidden":"visible"}}'
-                            }
-                          }
-                        }
-                      }
-                    }
+                              display:
+                                '{{$self.value === "appendWrite" ? "hidden":"visible"}}',
+                            },
+                          },
+                        },
+                      },
+                    },
                   },
                   dmlPolicy: {
                     title: i18n.t('packages_dag_nodes_database_shujuxieruce'),
                     type: 'object',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      feedbackLayout: 'none'
+                      feedbackLayout: 'none',
                     },
                     'x-component': 'FormLayout',
                     'x-component-props': {
                       layout: 'horizontal',
                       colon: false,
-                      feedbackLayout: 'none'
+                      feedbackLayout: 'none',
                     },
                     properties: {
                       insertPolicy: {
@@ -825,19 +870,25 @@ export class Table extends NodeType {
                         'x-decorator-props': {
                           className: 'font-color-dark mb-2',
                           wrapperWidth: 300,
-                          addonBefore: i18n.t('packages_dag_nodes_database_charushijian')
+                          addonBefore: i18n.t(
+                            'packages_dag_nodes_database_charushijian'
+                          ),
                         },
                         default: 'update_on_exists',
                         enum: [
                           {
-                            label: i18n.t('packages_dag_nodes_targetdatabase_mubiaocunzaishi'),
-                            value: 'update_on_exists'
+                            label: i18n.t(
+                              'packages_dag_nodes_targetdatabase_mubiaocunzaishi'
+                            ),
+                            value: 'update_on_exists',
                           },
                           {
-                            label: i18n.t('packages_dag_nodes_database_mubiaocunzaishi'),
-                            value: 'ignore_on_exists'
-                          }
-                        ]
+                            label: i18n.t(
+                              'packages_dag_nodes_database_mubiaocunzaishi'
+                            ),
+                            value: 'ignore_on_exists',
+                          },
+                        ],
                       },
                       updatePolicy: {
                         type: 'string',
@@ -846,19 +897,25 @@ export class Table extends NodeType {
                         'x-decorator-props': {
                           className: 'font-color-dark mb-2',
                           wrapperWidth: 300,
-                          addonBefore: i18n.t('packages_dag_nodes_database_gengxinshijian')
+                          addonBefore: i18n.t(
+                            'packages_dag_nodes_database_gengxinshijian'
+                          ),
                         },
                         default: 'ignore_on_nonexists',
                         enum: [
                           {
-                            label: i18n.t('packages_dag_nodes_database_bucunzaishidiu'),
-                            value: 'ignore_on_nonexists'
+                            label: i18n.t(
+                              'packages_dag_nodes_database_bucunzaishidiu'
+                            ),
+                            value: 'ignore_on_nonexists',
                           },
                           {
-                            label: i18n.t('packages_dag_nodes_database_bucunzaishicha'),
-                            value: 'insert_on_nonexists'
-                          }
-                        ]
+                            label: i18n.t(
+                              'packages_dag_nodes_database_bucunzaishicha'
+                            ),
+                            value: 'insert_on_nonexists',
+                          },
+                        ],
                       },
                       deletePolicy: {
                         type: 'void',
@@ -866,16 +923,20 @@ export class Table extends NodeType {
                         'x-decorator-props': {
                           className: 'font-color-dark',
                           wrapperWidth: 300,
-                          addonBefore: i18n.t('packages_dag_nodes_database_shanchushijian')
+                          addonBefore: i18n.t(
+                            'packages_dag_nodes_database_shanchushijian'
+                          ),
                         },
                         'x-component': 'Tag',
-                        'x-content': i18n.t('packages_dag_nodes_database_bucunzaishidiu'),
+                        'x-content': i18n.t(
+                          'packages_dag_nodes_database_bucunzaishidiu'
+                        ),
                         'x-component-props': {
                           type: 'info',
-                          effect: 'light'
-                        }
-                      }
-                    }
+                          effect: 'light',
+                        },
+                      },
+                    },
                   },
                   updateConditionFields: {
                     title: i18n.t('packages_dag_nodes_table_gengxintiaojianzi'),
@@ -888,13 +949,13 @@ export class Table extends NodeType {
                     )}" : ""}}`,
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      wrapperWidth: 300
+                      wrapperWidth: 300,
                     },
                     'x-component': 'FieldSelect',
                     'x-component-props': {
                       allowCreate: true,
                       multiple: true,
-                      filterable: true
+                      filterable: true,
                     },
                     'x-reactions': [
                       `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true}, $values.$inputs[0])}}`,
@@ -907,22 +968,24 @@ export class Table extends NodeType {
                               $self.setValue((isPrimaryKeyList.length ? isPrimaryKeyList : indicesUniqueList).map(item => item.value))
                               $self.validate()
                             }
-                          `
-                        }
-                      }
-                    ]
+                          `,
+                        },
+                      },
+                    ],
                   },
 
                   initialConcurrentSpace: {
-                    title: i18n.t('packages_dag_nodes_database_quanliangduoxiancheng'),
+                    title: i18n.t(
+                      'packages_dag_nodes_database_quanliangduoxiancheng'
+                    ),
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      layout: 'horizontal'
+                      layout: 'horizontal',
                     },
                     type: 'void',
                     'x-component': 'Space',
                     'x-component-props': {
-                      size: 'middle'
+                      size: 'middle',
                     },
                     properties: {
                       initialConcurrent: {
@@ -933,31 +996,33 @@ export class Table extends NodeType {
                           target: '.initialConcurrentWriteNum',
                           fulfill: {
                             state: {
-                              visible: '{{!!$self.value}}'
-                            }
-                          }
-                        }
+                              visible: '{{!!$self.value}}',
+                            },
+                          },
+                        },
                       },
                       initialConcurrentWriteNum: {
                         type: 'number',
                         default: 8,
                         'x-component': 'InputNumber',
                         'x-component-props': {
-                          min: 0
-                        }
-                      }
-                    }
+                          min: 0,
+                        },
+                      },
+                    },
                   },
                   cdcConcurrentSpace: {
                     type: 'void',
-                    title: i18n.t('packages_dag_nodes_database_zengliangduoxiancheng'),
+                    title: i18n.t(
+                      'packages_dag_nodes_database_zengliangduoxiancheng'
+                    ),
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      layout: 'horizontal'
+                      layout: 'horizontal',
                     },
                     'x-component': 'Space',
                     'x-component-props': {
-                      size: 'middle'
+                      size: 'middle',
                     },
                     properties: {
                       cdcConcurrent: {
@@ -967,42 +1032,42 @@ export class Table extends NodeType {
                           target: '.cdcConcurrentWriteNum',
                           fulfill: {
                             state: {
-                              visible: '{{!!$self.value}}'
-                            }
-                          }
-                        }
+                              visible: '{{!!$self.value}}',
+                            },
+                          },
+                        },
                       },
                       cdcConcurrentWriteNum: {
                         type: 'number',
                         default: 4,
                         'x-component': 'InputNumber',
                         'x-component-props': {
-                          min: 0
-                        }
-                      }
-                    }
-                  }
-                }
+                          min: 0,
+                        },
+                      },
+                    },
+                  },
+                },
               },
 
               nodeConfig: {
-                type: 'object'
-              }
-            }
-          }
-        }
+                type: 'object',
+              },
+            },
+          },
+        },
       },
 
       // 切换连接，保存连接的类型
       'attrs.connectionType': {
         type: 'string',
-        'x-display': 'hidden'
+        'x-display': 'hidden',
       },
 
       // 连接名称
       'attrs.connectionName': {
         type: 'string',
-        'x-display': 'hidden'
+        'x-display': 'hidden',
       },
 
       loadSchemaTree: {
@@ -1011,26 +1076,29 @@ export class Table extends NodeType {
         'x-decorator': 'FormItem',
         'x-component': 'loadSchemaTree',
         'x-component-props': {
-          tableNameField: 'tableName'
+          tableNameField: 'tableName',
         },
         'x-reactions': {
           dependencies: ['databaseType', '$outputs'],
           fulfill: {
             state: {
               display:
-                '{{ ($deps[1].length > 0 && ["CSV","EXCEL","JSON","XML"].includes($deps[0])) ? "visible":"hidden"}}'
-            }
-          }
-        }
-      }
-    }
+                '{{ ($deps[1].length > 0 && ["CSV","EXCEL","JSON","XML"].includes($deps[0])) ? "visible":"hidden"}}',
+            },
+          },
+        },
+      },
+    },
   }
 
   locales = AllLocales.Table
 
   allowTarget(target, source) {
     // 不再支持既是源又是目标的节点
-    return !source.$inputs?.length && (target.type !== 'table' || !target.$outputs?.length)
+    return (
+      !source.$inputs?.length &&
+      (target.type !== 'table' || !target.$outputs?.length)
+    )
   }
 
   allowSource(source, target) {

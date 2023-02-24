@@ -1,35 +1,68 @@
 <template>
   <section class="bottom-panel border-top flex-column">
-    <NodeLog v-if="onlyLog" v-bind="$attrs" :currentTab="currentTab" ref="log"></NodeLog>
+    <NodeLog
+      v-bind="$attrs"
+      v-if="onlyLog"
+      :currentTab="currentTab"
+      ref="log"
+    ></NodeLog>
     <div v-else class="panel-header flex h-100">
-      <ElTabs v-model="currentTab" class="setting-tabs h-100 flex-1 flex flex-column" key="bottomPanel">
-        <ElTabPane :label="$t('packages_dag_monitor_bottompanel_renwujindu')" name="milestone">
+      <ElTabs
+        v-model:value="currentTab"
+        class="setting-tabs h-100 flex-1 flex flex-column"
+        key="bottomPanel"
+      >
+        <ElTabPane
+          :label="$t('packages_dag_monitor_bottompanel_renwujindu')"
+          name="milestone"
+        >
           <MilestoneList
-            v-if="currentTab === 'milestone'"
             v-bind="$attrs"
+            v-if="currentTab === 'milestone'"
             :currentTab="currentTab"
             ref="log"
           ></MilestoneList>
         </ElTabPane>
-        <ElTabPane :label="$t('packages_dag_monitor_bottompanel_rizhi')" name="log">
-          <NodeLog v-if="currentTab === 'log'" v-bind="$attrs" :currentTab="currentTab" ref="log"></NodeLog>
-        </ElTabPane>
-        <ElTabPane :label="$t('packages_dag_monitor_bottompanel_yunxingjilu')" name="record">
-          <Record v-if="currentTab === 'record'" v-bind="$attrs" :currentTab="currentTab"></Record>
-        </ElTabPane>
-        <ElTabPane :label="$t('packages_dag_monitor_bottompanel_gaojingliebiao')" name="alert">
-          <Alert
-            v-if="currentTab === 'alert'"
+        <ElTabPane
+          :label="$t('packages_dag_monitor_bottompanel_rizhi')"
+          name="log"
+        >
+          <NodeLog
             v-bind="$attrs"
+            v-if="currentTab === 'log'"
+            :currentTab="currentTab"
+            ref="log"
+          ></NodeLog>
+        </ElTabPane>
+        <ElTabPane
+          :label="$t('packages_dag_monitor_bottompanel_yunxingjilu')"
+          name="record"
+        >
+          <Record
+            v-bind="$attrs"
+            v-if="currentTab === 'record'"
+            :currentTab="currentTab"
+          ></Record>
+        </ElTabPane>
+        <ElTabPane
+          :label="$t('packages_dag_monitor_bottompanel_gaojingliebiao')"
+          name="alert"
+        >
+          <Alert
+            v-bind="$attrs"
+            v-if="currentTab === 'alert'"
             :currentTab="currentTab"
             @change-tab="changeTab"
             @load-data="$emit('load-data')"
           ></Alert>
         </ElTabPane>
-        <ElTabPane :label="$t('packages_dag_monitor_bottompanel_guanlianrenwu')" name="relation">
+        <ElTabPane
+          :label="$t('packages_dag_monitor_bottompanel_guanlianrenwu')"
+          name="relation"
+        >
           <RelationList
-            v-if="currentTab === 'relation'"
             v-bind="$attrs"
+            v-if="currentTab === 'relation'"
             :currentTab="currentTab"
             @change-tab="changeTab"
             @load-data="$emit('load-data')"
@@ -37,7 +70,9 @@
         </ElTabPane>
       </ElTabs>
 
-      <VIcon class="close-icon" size="16" @click="$emit('showBottomPanel')">close</VIcon>
+      <VIcon class="close-icon" size="16" @click="$emit('showBottomPanel')"
+        >close</VIcon
+      >
     </div>
   </section>
 </template>
@@ -58,51 +93,53 @@ import Alert from './components/Alert'
 
 export default {
   name: 'ConfigPanel',
-
   components: { Record, Alert, RelationList, NodeLog, MilestoneList },
-
   directives: {
     resize,
-    focusSelect
+    focusSelect,
   },
-
   props: {
     onlyLog: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
-
   data() {
     return {
       currentTab: 'milestone',
-      name: this.activeNode?.name
+      name: this.activeNode?.name,
     }
   },
-
   computed: {
-    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly'])
+    ...mapGetters('dataflow', [
+      'activeType',
+      'activeNode',
+      'nodeById',
+      'stateIsReadonly',
+    ]),
   },
-
   watch: {
     'activeNode.name'(v) {
       this.name = v
-    }
+    },
   },
-
   mounted() {
     if (['MigrationMonitorViewer'].includes(this.$route.name)) {
       this.currentTab = 'log'
       const { start, end } = this.$route.query
       this.changeTab(this.currentTab, {
         start: start * 1,
-        end: end * 1
+        end: end * 1,
       })
     }
   },
-
   methods: {
-    ...mapMutations('dataflow', ['updateNodeProperties', 'setNodeError', 'clearNodeError', 'setActiveType']),
+    ...mapMutations('dataflow', [
+      'updateNodeProperties',
+      'setNodeError',
+      'clearNodeError',
+      'setActiveType',
+    ]),
     ...mapActions('dataflow', ['updateDag']),
 
     handleChangeName(name) {
@@ -110,8 +147,8 @@ export default {
         this.updateNodeProperties({
           id: this.activeNode.id,
           properties: {
-            name
-          }
+            name,
+          },
         })
         this.updateDag()
       } else {
@@ -136,38 +173,28 @@ export default {
         if (tab === 'log') {
           data.nodeId &&
             this.getLogRef()?.changeItem({
-              value: data.nodeId
+              value: data.nodeId,
             })
           const t = new Date(data.start).getTime()
           const len = 10 * 1000
           const start = t - len
           const end = data.end ? data.end + len : Time.now()
-          data.start && this.getLogRef()?.$refs.timeSelect.changeTime([start, end])
+          data.start &&
+            this.getLogRef()?.$refs.timeSelect.changeTime([start, end])
         }
       })
-    }
-  }
+    },
+  },
+  emits: ['load-data', 'showBottomPanel'],
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 $color: map-get($color, primary);
 $tabsHeaderWidth: 180px;
 $headerHeight: 40px;
 
-.bottom-panel {
-  position: relative;
-  z-index: 9;
-  height: 328px;
-  //min-height: 328px;
-  //height: 100%;
-  overflow: auto;
-  background-color: #fff;
-  //transition: height 0.24s;
-  will-change: width;
-  box-sizing: border-box;
-
-  &.show-record {
+.bottom-panel{position:relative;z-index:9;height:328px;//min-height:328px;//height:100%;overflow:auto;background-color:#fff;//transition:height 0.24s;will-change:width;box-sizing:border-box;&.show-record {
     width: 320px;
   }
 
@@ -261,18 +288,9 @@ $headerHeight: 40px;
     .resize-trigger {
       background: 0 0 !important;
     }
-  }
-}
-.close-icon {
-  position: absolute;
-  right: 16px;
-  top: 10px;
-}
-.tabs-header__hidden {
-  ::v-deep {
+  }}.close-icon{position:absolute;right:16px;top:10px}.tabs-header__hidden{::v-deep {
     .el-tabs__header {
       display: none;
     }
-  }
-}
+  }}
 </style>

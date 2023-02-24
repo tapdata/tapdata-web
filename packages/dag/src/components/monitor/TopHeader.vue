@@ -8,7 +8,7 @@
         <div class="flex align-items-center">
           <TextEditable
             class="overflow-hidden"
-            v-model="name"
+            v-model:value="name"
             :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"
             :input-min-width="32"
             @change="onNameInputChange"
@@ -23,7 +23,10 @@
           </template>
         </div>
       </div>
-      <div v-if="dataflow.agentId && !hideMenus.includes('agent')" class="agent-data__item ml-4 px-4">
+      <div
+        v-if="dataflow.agentId && !hideMenus.includes('agent')"
+        class="agent-data__item ml-4 px-4"
+      >
         <OverflowTooltip
           class="agent-name__item text-truncate mb-2 font-color-dark"
           placement="bottom"
@@ -43,52 +46,98 @@
 
     <div class="flex align-center">
       <!--内容居中-->
-      <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_center_content') + '(Shift + 1)'">
+      <ElTooltip
+        transition="tooltip-fade-in"
+        :content="$t('packages_dag_button_center_content') + '(Shift + 1)'"
+      >
         <button @click="$emit('center-content')" class="icon-btn">
           <VIcon size="20">compress</VIcon>
         </button>
       </ElTooltip>
       <VDivider class="mx-3" vertical></VDivider>
       <!--缩小-->
-      <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_zoom_out') + `(${commandCode} -)`">
+      <ElTooltip
+        transition="tooltip-fade-in"
+        :content="$t('packages_dag_button_zoom_out') + `(${commandCode} -)`"
+      >
         <button @click="$emit('zoom-out')" class="icon-btn">
           <VIcon size="20">remove-outline</VIcon>
         </button>
       </ElTooltip>
       <div class="choose-size mx-2">
-        <ElPopover placement="bottom" trigger="hover" popper-class="rounded-xl p-0">
-          <div slot="reference" class="size-wrap">{{ scaleTxt }}</div>
+        <ElPopover
+          placement="bottom"
+          trigger="hover"
+          popper-class="rounded-xl p-0"
+        >
+          <template v-slot:reference>
+            <div class="size-wrap">{{ scaleTxt }}</div>
+          </template>
           <div class="choose-list p-2">
-            <div @click="$emit('zoom-in')" class="choose-item pl-4 flex justify-content-between align-center">
-              <span class="title">{{ $t('packages_dag_button_zoom_out') }}</span>
-              <div class="kbd-wrap flex align-center mr-2"><kbd>⌘</kbd><span class="mx-1">+</span><kbd>+</kbd></div>
+            <div
+              @click="$emit('zoom-in')"
+              class="choose-item pl-4 flex justify-content-between align-center"
+            >
+              <span class="title">{{
+                $t('packages_dag_button_zoom_out')
+              }}</span>
+              <div class="kbd-wrap flex align-center mr-2">
+                <kbd>⌘</kbd><span class="mx-1">+</span><kbd>+</kbd>
+              </div>
             </div>
-            <div @click="$emit('zoom-out')" class="choose-item pl-4 flex justify-content-between align-center">
+            <div
+              @click="$emit('zoom-out')"
+              class="choose-item pl-4 flex justify-content-between align-center"
+            >
               <span class="title">{{ $t('packages_dag_button_zoom_in') }}</span>
-              <div class="kbd-wrap flex align-center mr-2"><kbd>⌘</kbd><span class="mx-1">+</span><kbd>–</kbd></div>
+              <div class="kbd-wrap flex align-center mr-2">
+                <kbd>⌘</kbd><span class="mx-1">+</span><kbd>–</kbd>
+              </div>
             </div>
             <VDivider class="my-2"></VDivider>
-            <div v-for="val in chooseItems" :key="val" class="choose-item pl-4" @click="$emit('zoom-to', val)">
+            <div
+              v-for="val in chooseItems"
+              :key="val"
+              class="choose-item pl-4"
+              @click="$emit('zoom-to', val)"
+            >
               {{ val * 100 }}%
             </div>
           </div>
         </ElPopover>
       </div>
       <!--放大-->
-      <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_zoom_in') + `(${commandCode} +)`">
+      <ElTooltip
+        transition="tooltip-fade-in"
+        :content="$t('packages_dag_button_zoom_in') + `(${commandCode} +)`"
+      >
         <button @click="$emit('zoom-in')" class="icon-btn">
           <VIcon size="20">add-outline</VIcon>
         </button>
       </ElTooltip>
       <VDivider class="mx-3" vertical></VDivider>
       <!--设置-->
-      <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_setting')">
-        <button @click="$emit('showSettings')" class="icon-btn" :class="{ active: activeType === 'settings' }">
+      <ElTooltip
+        transition="tooltip-fade-in"
+        :content="$t('packages_dag_button_setting')"
+      >
+        <button
+          @click="$emit('showSettings')"
+          class="icon-btn"
+          :class="{ active: activeType === 'settings' }"
+        >
           <VIcon size="20">setting-outline</VIcon>
         </button>
       </ElTooltip>
-      <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_monitor_bottompanel_rizhi')">
-        <button :class="{ active: showBottomPanel }" class="icon-btn" @click="$emit('showBottomPanel')">
+      <ElTooltip
+        transition="tooltip-fade-in"
+        :content="$t('packages_dag_monitor_bottompanel_rizhi')"
+      >
+        <button
+          :class="{ active: showBottomPanel }"
+          class="icon-btn"
+          @click="$emit('showBottomPanel')"
+        >
           <VIcon size="16">list</VIcon>
         </button>
       </ElTooltip>
@@ -127,7 +176,6 @@
           <ElButton
             v-if="isShowForceStop(dataflow)"
             :disabled="dataflow.disabledData && dataflow.disabledData.forceStop"
-            key="forceStop"
             class="mx-2"
             size="medium"
             type="danger"
@@ -138,7 +186,6 @@
           <ElButton
             v-else
             :disabled="dataflow.disabledData && dataflow.disabledData.stop"
-            key="stop"
             size="medium"
             type="danger"
             class="mx-2"
@@ -153,6 +200,7 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
 
 import { mapGetters, mapMutations, mapState } from 'vuex'
@@ -165,9 +213,7 @@ import syncTaskAgent from '@tap/business/src/mixins/syncTaskAgent'
 
 export default {
   name: 'TopHeader',
-
   directives: { focusSelect },
-
   props: {
     loading: Boolean,
     dataflowName: String,
@@ -176,15 +222,12 @@ export default {
     showBottomPanel: Boolean,
     hideMenus: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
-    quota: Object
+    quota: Object,
   },
-
   mixins: [syncTaskAgent],
-
   components: { VIcon, TaskStatus, VDivider, OverflowTooltip, TextEditable },
-
   data() {
     const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
     return {
@@ -192,9 +235,12 @@ export default {
       optionCode: isMacOs ? 'Option' : 'Alt',
       name: '',
       syncMap: {
-        'initial_sync+cdc': this.$t('packages_dag_dataFlow_initial_sync') + '+' + this.$t('packages_dag_dataFlow_cdc'),
+        'initial_sync+cdc':
+          this.$t('packages_dag_dataFlow_initial_sync') +
+          '+' +
+          this.$t('packages_dag_dataFlow_cdc'),
         initial_sync: this.$t('packages_dag_dataFlow_initial_sync'),
-        cdc: this.$t('packages_dag_dataFlow_cdc')
+        cdc: this.$t('packages_dag_dataFlow_cdc'),
       },
       chooseItems: [4, 2, 1.5, 1, 0.5, 0.25],
       showSearchNodePopover: false,
@@ -203,11 +249,12 @@ export default {
       syncType: {
         initial_sync: i18n.t('packages_dag_task_setting_initial_sync'),
         cdc: i18n.t('packages_dag_task_setting_cdc'),
-        'initial_sync+cdc': i18n.t('packages_dag_components_formpanel_quanliangzengliang')
-      }
+        'initial_sync+cdc': i18n.t(
+          'packages_dag_components_formpanel_quanliangzengliang'
+        ),
+      },
     }
   },
-
   computed: {
     ...mapGetters('dataflow', ['dataflowId', 'allNodes', 'activeType']),
     ...mapState('dataflow', ['spaceKeyPressed']),
@@ -223,7 +270,9 @@ export default {
 
     lastStartDate() {
       const { lastStartDate } = this.dataflow
-      return lastStartDate ? dayjs(lastStartDate).format('YYYY-MM-DD HH:mm:ss') : '-'
+      return lastStartDate
+        ? dayjs(lastStartDate).format('YYYY-MM-DD HH:mm:ss')
+        : '-'
     },
 
     agentData() {
@@ -232,30 +281,36 @@ export default {
       return {
         cpuUsage:
           typeof cpuUsage === 'number'
-            ? (cpuUsage * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%'
+            ? (cpuUsage * 100).toLocaleString('zh-CN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              }) + '%'
             : '',
         memoryRate:
           typeof memoryRate === 'number'
-            ? (memoryRate * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%'
+            ? (memoryRate * 100).toLocaleString('zh-CN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              }) + '%'
             : '',
         gcRate:
           typeof gcRate === 'number'
-            ? (gcRate * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%'
-            : ''
+            ? (gcRate * 100).toLocaleString('zh-CN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              }) + '%'
+            : '',
       }
-    }
+    },
   },
-
   watch: {
     dataflowName(v) {
       this.name = v
-    }
+    },
   },
-
   mounted() {
     this.name = this.dataflowName
   },
-
   methods: {
     ...mapMutations('dataflow', ['setActiveType', 'setPaperSpaceKeyPressed']),
 
@@ -267,7 +322,7 @@ export default {
       if (!this.name) {
         this.name = this.dataflowName
       } else {
-        this.$emit('change-name', this.name)
+        $emit(this, 'change-name', this.name)
       }
     },
 
@@ -281,24 +336,39 @@ export default {
       const backToList = () => {
         if ($PLATFORM === 'dfs') {
           top.window.App.$router.push({
-            name: 'Task'
+            name: 'Task',
           })
         } else {
           this.$router.push({
             name: 'dataFlows',
             query: {
-              mapping: mapping
-            }
+              mapping: mapping,
+            },
           })
         }
       }
       backToList()
-    }
-  }
+    },
+  },
+  emits: [
+    'page-return',
+    'center-content',
+    'zoom-out',
+    'zoom-in',
+    'zoom-to',
+    'showSettings',
+    'showBottomPanel',
+    'reset',
+    'edit',
+    'start',
+    'forceStop',
+    'stop',
+    'change-name',
+  ],
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 $sidebarW: 236px;
 $hoverBg: #eef3ff;
 $radius: 4px;
@@ -315,7 +385,6 @@ $sidebarBg: #fff;
   background-color: #fff;
   color: rgba(0, 0, 0, 0.87);
   box-sizing: border-box;
-
   .left-content {
     min-width: calc(50% - 140px);
   }
@@ -414,7 +483,6 @@ $sidebarBg: #fff;
     min-width: 260px;
   }
 }
-
 .agent-data__item {
   border-left: 1px solid #f2f2f2;
 }

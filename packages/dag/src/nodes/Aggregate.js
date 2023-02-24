@@ -18,14 +18,14 @@ export class Aggregate extends NodeType {
     properties: {
       $inputs: {
         type: 'array',
-        display: 'none'
+        display: 'none',
       },
       name: {
         type: 'string',
         title: i18n.t('packages_dag_nodes_database_jiedianmingcheng'),
         required: true,
         'x-decorator': 'FormItem',
-        'x-component': 'Input'
+        'x-component': 'Input',
       },
       fieldNames: {
         type: 'array',
@@ -33,15 +33,16 @@ export class Aggregate extends NodeType {
         'x-reactions': [
           '{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, fieldName: "value", withoutField: true}, $values.$inputs[0])}}',
           {
-            target: '*(aggregations.*.aggExpression,aggregations.*.groupByExpression)',
+            target:
+              '*(aggregations.*.aggExpression,aggregations.*.groupByExpression)',
             fulfill: {
               state: {
                 dataSource: '{{$self.value}}',
-                loading: '{{$self.loading}}'
-              }
-            }
-          }
-        ]
+                loading: '{{$self.loading}}',
+              },
+            },
+          },
+        ],
       },
 
       aggregations: {
@@ -52,9 +53,9 @@ export class Aggregate extends NodeType {
             filterPredicate: '',
             aggFunction: 'COUNT',
             aggExpression: '',
-            groupByExpression: []
-          }
-        ]
+            groupByExpression: [],
+          },
+        ],
       },
 
       'aggregations.0': {
@@ -70,28 +71,28 @@ export class Aggregate extends NodeType {
                 enum: [
                   {
                     label: 'AVG',
-                    value: 'AVG'
+                    value: 'AVG',
                   },
                   {
                     label: 'SUM',
-                    value: 'SUM'
+                    value: 'SUM',
                   },
                   {
                     label: 'MAX',
-                    value: 'MAX'
+                    value: 'MAX',
                   },
                   {
                     label: 'MIN',
-                    value: 'MIN'
+                    value: 'MIN',
                   },
                   {
                     label: 'COUNT',
-                    value: 'COUNT'
-                  }
+                    value: 'COUNT',
+                  },
                 ],
                 required: true,
                 'x-decorator': 'FormItem',
-                'x-component': 'Select'
+                'x-component': 'Select',
               },
               aggExpression: {
                 type: 'string',
@@ -101,7 +102,7 @@ export class Aggregate extends NodeType {
                 'x-decorator-props': { gridSpan: 2 },
                 'x-component': 'FieldSelect',
                 'x-component-props': {
-                  allowCreate: true
+                  allowCreate: true,
                 },
                 'x-reactions': [
                   {
@@ -109,13 +110,13 @@ export class Aggregate extends NodeType {
                     fulfill: {
                       state: {
                         value: `{{$deps[0]==='COUNT' ? null:'1'}}`,
-                        disabled: `{{$deps[0]==='COUNT'}}`
-                      }
-                    }
-                  }
-                ]
-              }
-            }
+                        disabled: `{{$deps[0]==='COUNT'}}`,
+                      },
+                    },
+                  },
+                ],
+              },
+            },
           },
           groupByExpression: {
             title: i18n.t('packages_dag_nodes_aggregate_fenzuziduan'),
@@ -123,10 +124,10 @@ export class Aggregate extends NodeType {
             'x-decorator': 'FormItem',
             'x-component': 'FieldSelect',
             'x-component-props': {
-              multiple: true
-            }
-          }
-        }
+              multiple: true,
+            },
+          },
+        },
       },
 
       externalStorageId: {
@@ -139,20 +140,21 @@ export class Aggregate extends NodeType {
           {
             fulfill: {
               state: {
-                value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}'
-              }
-            }
-          }
-        ]
+                value:
+                  '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}',
+              },
+            },
+          },
+        ],
       },
 
       return: {
         title: i18n.t('packages_dag_nodes_aggregate_fanhuishili'),
         type: 'void',
         'x-decorator': 'FormItem',
-        'x-component': 'ArrayAggregate'
-      }
-    }
+        'x-component': 'ArrayAggregate',
+      },
+    },
   }
 
   locales = AllLocales.Aggregate

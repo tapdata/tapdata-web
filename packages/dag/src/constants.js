@@ -15,7 +15,7 @@ export const DEFAULT_SETTINGS = {
   isSchedule: false,
   cronExpression: ' ',
   accessNodeType: 'AUTOMATIC_PLATFORM_ALLOCATION',
-  isAutoInspect: false
+  isAutoInspect: false,
 
   // readBatchSize: 100,
   // notificationWindow: 0,
@@ -60,7 +60,14 @@ export const DEFAULT_SETTINGS = {
 }
 
 // 不支持全量
-export const NONSUPPORT_SYNC = ['elasticsearch', 'redis', 'hive', 'tcp_udp', 'clickhouse', 'hazelcast_cloud_cluster']
+export const NONSUPPORT_SYNC = [
+  'elasticsearch',
+  'redis',
+  'hive',
+  'tcp_udp',
+  'clickhouse',
+  'hazelcast_cloud_cluster',
+]
 // 不支持增量
 export const NONSUPPORT_CDC = [
   'gbase-8s',
@@ -79,5 +86,5 @@ export const NONSUPPORT_CDC = [
   'adb_postgres',
   'kundb',
   'clickhouse',
-  'hazelcast_cloud_cluster'
+  'hazelcast_cloud_cluster',
 ]

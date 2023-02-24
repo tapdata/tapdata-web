@@ -1,3 +1,5 @@
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
+import * as Vue from 'vue'
 import i18n from '@tap/i18n'
 import { connect, mapProps } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
@@ -14,10 +16,10 @@ export const ExpressionExample = connect(
         example: {
           handler(v) {
             this.form.setValuesIn('Example', v)
-            this.$emit('change', v)
+            $emit(this, 'change', v)
             console.log('scripts', v) // eslint-disable-line
-          }
-        }
+          },
+        },
       },
 
       render() {
@@ -30,14 +32,20 @@ export const ExpressionExample = connect(
                 {' '}
                 {i18n.t('packages_form_example_file_index_biaodashishili')}
               </h3>
-              <p style="text-indent: 2em">{i18n.t('packages_form_example_file_index_shaixuanchusuiyi')}</p>
               <p style="text-indent: 2em">
-                <span style="color: red">(</span> record.gender <span style="color: #f5af3f">==</span> 0
-                <span style="color: #f5af3f">&&</span> record.age <span style="color: #f5af3f">&gt;</span> 50
+                {i18n.t('packages_form_example_file_index_shaixuanchusuiyi')}
+              </p>
+              <p style="text-indent: 2em">
+                <span style="color: red">(</span> record.gender{' '}
+                <span style="color: #f5af3f">==</span> 0
+                <span style="color: #f5af3f">&&</span> record.age{' '}
+                <span style="color: #f5af3f">&gt;</span> 50
                 <span style="color: red">)</span>
                 <span style="color: #f5af3f"> || </span>
-                <span style="color: red">(</span> record.age <span style="color: #f5af3f">&gt;=</span> 30
-                <span style="color: #f5af3f">&&</span> record.salary <span style="color: #f5af3f">&lt;=</span> 10000
+                <span style="color: red">(</span> record.age{' '}
+                <span style="color: #f5af3f">&gt;=</span> 30
+                <span style="color: #f5af3f">&&</span> record.salary{' '}
+                <span style="color: #f5af3f">&lt;=</span> 10000
                 <span style="color: red">)</span>
               </p>
 
@@ -65,30 +73,40 @@ export const ExpressionExample = connect(
                   <td style="width: 60px; text-align: center">
                     <span style="color: #f5af3f">==</span>
                   </td>
-                  <td style="width: 140px; text-align: left">{i18n.t('packages_form_example_file_index_dengyu')}</td>
+                  <td style="width: 140px; text-align: left">
+                    {i18n.t('packages_form_example_file_index_dengyu')}
+                  </td>
 
                   <td style="width: 60px; text-align: center">
                     <span style="color: #f5af3f">!</span>
                   </td>
-                  <td style="width: 140px; text-align: left">{i18n.t('packages_form_example_file_index_fei')}</td>
+                  <td style="width: 140px; text-align: left">
+                    {i18n.t('packages_form_example_file_index_fei')}
+                  </td>
                 </tr>
                 <tr>
                   <td style="width: 60px; text-align: center">
                     <span style="color: #f5af3f">&&</span>
                   </td>
-                  <td style="width: 140px; text-align: left">{i18n.t('packages_form_example_file_index_qie')}</td>
+                  <td style="width: 140px; text-align: left">
+                    {i18n.t('packages_form_example_file_index_qie')}
+                  </td>
 
                   <td style="width: 60px; text-align: center">
                     <span style="color: #f5af3f">||</span>
                   </td>
-                  <td style="width: 140px; text-align: left">{i18n.t('packages_form_example_file_index_huo')}</td>
+                  <td style="width: 140px; text-align: left">
+                    {i18n.t('packages_form_example_file_index_huo')}
+                  </td>
                 </tr>
                 <tr>
                   <td style="width: 60px; text-align: center">
                     <span style="color: #f5af3f">/^.*$/.test( )</span>
                   </td>
                   <td style="width: 140px; text-align: left">
-                    {i18n.t('packages_form_example_file_index_zhengzebiaodashi')}
+                    {i18n.t(
+                      'packages_form_example_file_index_zhengzebiaodashi'
+                    )}
                   </td>
 
                   <td style="width: 60px; text-align: center">
@@ -102,7 +120,7 @@ export const ExpressionExample = connect(
             </div>
           </div>
         )
-      }
+      },
     })
   ),
   mapProps({ dataSource: 'options' })

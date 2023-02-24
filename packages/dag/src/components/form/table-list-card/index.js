@@ -20,10 +20,13 @@ export const TableListCard = observer(
 
       const loadData = () => {
         loading.value = true
-        const params = { ...{ connectionId: props.connectionId }, ...props.params }
+        const params = {
+          ...{ connectionId: props.connectionId },
+          ...props.params,
+        }
         metadataInstancesApi
           .pageTables(params)
-          .then(data => {
+          .then((data) => {
             list.value = data?.items || []
             total.value = data?.total || 0
           })
@@ -51,7 +54,7 @@ export const TableListCard = observer(
                     placement="right"
                     open-delay={400}
                   />
-                )
+                ),
               }}
             />
           )
@@ -61,7 +64,9 @@ export const TableListCard = observer(
               <ElEmpty
                 image-size={111}
                 image={require('@tap/assets/images/img_empty.png')}
-                description={i18n.t('packages_dag_table_list_card_index_zanshimeiyoupi')}
+                description={i18n.t(
+                  'packages_dag_table_list_card_index_zanshimeiyoupi'
+                )}
               ></ElEmpty>
             </div>
           )
@@ -70,13 +75,18 @@ export const TableListCard = observer(
         return (
           <ElCard class="table-list-card" shadow="never">
             <div slot="header" class="clearfix">
-              <span>{props.title || i18n.t('packages_form_field_mapping_list_biaoming')}</span>
-              {!loading.value && <span class="font-color-light float-end">{total.value}</span>}
+              <span>
+                {props.title ||
+                  i18n.t('packages_form_field_mapping_list_biaoming')}
+              </span>
+              {!loading.value && (
+                <span class="font-color-light float-end">{total.value}</span>
+              )}
             </div>
             {listDom}
           </ElCard>
         )
       }
-    }
+    },
   })
 )

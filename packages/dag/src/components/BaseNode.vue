@@ -1,10 +1,16 @@
-<template functional>
-  <div v-bind="data.attrs" v-on="listeners" class="df-node" :class="[data.class, data.staticClass]" :style="data.style">
+<template>
+  <div
+    v-bind="data.attrs"
+    v-on="listeners"
+    class="df-node"
+    :class="[data.class, data.staticClass]"
+    :style="data.style"
+  >
     <div class="df-node-icon">
       <component :is="$options.components.NodeIcon" :node="props.node" />
       <!--<NodeIcon :node="props.node"></NodeIcon>-->
     </div>
-    <slot name="text" v-bind:text="props.node.name">
+    <slot v-bind:text="props.node.name" name="text">
       <div class="df-node-text">{{ props.node.name }}</div>
     </slot>
     <slot></slot>
@@ -18,8 +24,8 @@ export default {
   name: 'BaseNode',
   components: { NodeIcon },
   props: {
-    node: Object
-  }
+    node: Object,
+  },
 }
 </script>
 
@@ -30,11 +36,9 @@ $height: 30px;
 .layout-content .df-node {
   cursor: move;
 }
-
 .min-width-unset {
   min-width: unset;
 }
-
 .df-node {
   position: absolute;
   z-index: 5;
@@ -47,7 +51,6 @@ $height: 30px;
   border-radius: 10px;
   box-sizing: border-box;
   user-select: none;
-
   &-icon {
     position: relative;
     display: flex;
@@ -200,7 +203,6 @@ $height: 30px;
     }
   }
 }
-
 .df-menu-list {
   margin: -6px;
   .df-menu-item {

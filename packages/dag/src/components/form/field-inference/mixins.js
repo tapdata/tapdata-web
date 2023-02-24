@@ -12,7 +12,7 @@ export default {
 
     showLoading() {
       return this.loading
-    }
+    },
   },
 
   methods: {
@@ -21,7 +21,7 @@ export default {
       if (!nodeId) return
       let data = {
         items: [],
-        total: 0
+        total: 0,
       }
       try {
         const params = {
@@ -29,13 +29,13 @@ export default {
           tableFilter: op.tableFilter,
           fields: ['original_name', 'fields', 'qualified_name'],
           page: op.page || 1,
-          pageSize: op.pageSize || 20
+          pageSize: op.pageSize || 20,
         }
         data = await metadataInstancesApi.nodeSchemaPage(params)
       } catch (e) {
         // catch
       }
       return data
-    }
-  }
+    },
+  },
 }

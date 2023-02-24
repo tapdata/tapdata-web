@@ -20,7 +20,7 @@ export class RowFilter extends NodeType {
         title: i18n.t('packages_dag_nodes_database_jiedianmingcheng'),
         required: true,
         'x-decorator': 'FormItem',
-        'x-component': 'Input'
+        'x-component': 'Input',
       },
       action: {
         title: i18n.t('packages_dag_nodes_rowfilter_zhixingdongzuo'),
@@ -30,18 +30,18 @@ export class RowFilter extends NodeType {
         enum: [
           {
             label: i18n.t('packages_dag_nodes_jointcache_baoliupipeishu'),
-            value: 'retain'
+            value: 'retain',
           },
           {
             label: i18n.t('packages_dag_nodes_rowfilter_diuqipipeishu'),
-            value: 'discard'
-          }
+            value: 'discard',
+          },
         ],
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         'x-decorator-props': {
-          wrapperWidth: 240
-        }
+          wrapperWidth: 240,
+        },
       },
       expression: {
         title: i18n.t('packages_dag_nodes_rowfilter_tiaojianbiaodashi'),
@@ -50,16 +50,16 @@ export class RowFilter extends NodeType {
         'x-decorator': 'FormItem',
         'x-component': 'JsEditor',
         'x-decorator-props': {
-          wrapperWidth: 800
+          wrapperWidth: 800,
         },
         'x-component-props': {
-          options: { showPrintMargin: false, useWrapMode: true }
-        }
+          options: { showPrintMargin: false, useWrapMode: true },
+        },
       },
       example: {
         type: 'void',
-        'x-component': 'ExpressionExample'
-      }
-    }
+        'x-component': 'ExpressionExample',
+      },
+    },
   }
 }

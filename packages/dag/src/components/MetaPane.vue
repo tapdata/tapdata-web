@@ -1,12 +1,12 @@
 <template>
   <div v-loading="loading" class="metadata-list-wrap">
     <List
-      ref="table"
       v-bind="$attrs"
+      ref="table"
       :data="selected"
       :form="form"
       :readonly="stateIsReadonly || !isTarget"
-      :fieldChangeRules.sync="fieldChangeRules"
+      v-model:fieldChangeRules="fieldChangeRules"
       hide-batch
     ></List>
   </div>
@@ -27,7 +27,7 @@ export default {
 
   props: {
     isShow: Boolean,
-    form: Object
+    form: Object,
   },
 
   data() {
@@ -36,7 +36,7 @@ export default {
       tableData: [],
       loading: false,
       data: '',
-      fieldChangeRules: []
+      fieldChangeRules: [],
     }
   },
 
@@ -51,7 +51,7 @@ export default {
     isTarget() {
       const { type, $outputs } = this.activeNode || {}
       return (type === 'database' || type === 'table') && !$outputs.length
-    }
+    },
   },
 
   watch: {
@@ -81,7 +81,7 @@ export default {
       if (v) {
         this.loadFields()
       }
-    }
+    },
   },
 
   methods: {
@@ -101,8 +101,8 @@ export default {
 
     loadFieldChangeRules() {
       this.fieldChangeRules = this.form.getValuesIn('fieldChangeRules') || []
-    }
-  }
+    },
+  },
 }
 </script>
 

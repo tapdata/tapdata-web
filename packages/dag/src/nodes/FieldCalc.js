@@ -17,14 +17,14 @@ export class FieldCalc extends NodeType {
     properties: {
       $inputs: {
         type: 'array',
-        display: 'none'
+        display: 'none',
       },
       name: {
         type: 'string',
         title: i18n.t('packages_dag_nodes_database_jiedianmingcheng'),
         required: true,
         'x-decorator': 'FormItem',
-        'x-component': 'Input'
+        'x-component': 'Input',
       },
       scripts: {
         type: 'array',
@@ -32,8 +32,8 @@ export class FieldCalc extends NodeType {
         'x-decorator': 'FormItem',
         'x-component': 'FieldValue',
         'x-reactions':
-          '{{useAsyncDataSourceByConfig({service: loadNodeFieldsById, withoutField: true}, $self.value.length ? $values.id : $values.$inputs[0])}}'
-      }
-    }
+          '{{useAsyncDataSourceByConfig({service: loadNodeFieldsById, withoutField: true}, $self.value.length ? $values.id : $values.$inputs[0])}}',
+      },
+    },
   }
 }

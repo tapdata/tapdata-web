@@ -8,31 +8,39 @@
     :close-on-click-modal="false"
     @close="closeDialog"
   >
-    <List v-if="visible" ref="fieldMappingList" :readOnly="false" @updateVisible="updateVisible"></List>
-    <span slot="footer" class="dialog-footer">
-      <el-button @click="closeDialog()">{{ $t('packages_form_field_mapping_dialog_quxiao') }}</el-button>
-      <el-button type="primary" :loading="loadingSave" @click="save(true)">{{
-        $t('packages_form_field_mapping_dialog_queding')
-      }}</el-button>
-    </span>
+    <List
+      v-if="visible"
+      ref="fieldMappingList"
+      :readOnly="false"
+      @updateVisible="updateVisible"
+    ></List>
+    <template v-slot:footer>
+      <span class="dialog-footer">
+        <el-button @click="closeDialog()">{{
+          $t('packages_form_field_mapping_dialog_quxiao')
+        }}</el-button>
+        <el-button type="primary" :loading="loadingSave" @click="save(true)">{{
+          $t('packages_form_field_mapping_dialog_queding')
+        }}</el-button>
+      </span>
+    </template>
   </el-dialog>
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import List from './List'
 
 export default {
   name: 'Dialog',
   components: { List },
   props: ['visible'],
-
   data() {
     return {
       dialogVisible: false,
-      loadingSave: false
+      loadingSave: false,
     }
   },
-
   methods: {
     save() {
       this.loadingSave = true
@@ -40,14 +48,16 @@ export default {
     },
     updateVisible() {
       this.loadingSave = false
-      this.$emit('update:visible', false)
+      $emit(this, 'update:visible', false)
     },
     closeDialog() {
-      this.$emit('update:visible', false)
-    }
-  }
+      $emit(this, 'update:visible', false)
+    },
+  },
+  emits: ['update:visible'],
 }
 </script>
+
 <style lang="scss" scoped>
 ::v-deep {
   .field-mapping-table-dialog {

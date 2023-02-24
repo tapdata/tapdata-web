@@ -18,7 +18,12 @@ export const TableSelect = observer(
 
       return () => {
         const connectionId = fieldRef.value.query('connectionId').value()
-        const params = { where: { 'source.id': connectionId, taskId: root.$store.state.dataflow.taskId } }
+        const params = {
+          where: {
+            'source.id': connectionId,
+            taskId: root.$store.state.dataflow.taskId,
+          },
+        }
         return (
           <AsyncSelect
             ref="list"
@@ -30,7 +35,7 @@ export const TableSelect = observer(
           />
         )
       }
-    }
+    },
   })
 )
 

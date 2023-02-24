@@ -17,26 +17,26 @@ export class FieldAddDel extends NodeType {
     properties: {
       $inputs: {
         type: 'array',
-        display: 'none'
+        display: 'none',
       },
       name: {
         type: 'string',
         title: i18n.t('packages_dag_nodes_database_jiedianmingcheng'),
         required: true,
         'x-decorator': 'FormItem',
-        'x-component': 'Input'
+        'x-component': 'Input',
       },
       operations: {
         type: 'array',
         title: '',
         'x-decorator': 'FormItem',
-        'x-component': 'FieldAddDel'
+        'x-component': 'FieldAddDel',
       },
       deleteAllFields: {
         type: 'boolean',
         default: false,
-        display: 'none'
-      }
-    }
+        display: 'none',
+      },
+    },
   }
 }

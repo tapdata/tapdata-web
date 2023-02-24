@@ -2,6 +2,13 @@
   "name": "components",
   "version": "1.0.0",
   "dependencies": {
-    "@tap/i18n": "workspace:^1.0.0"
+    "@tap/i18n": "workspace:^1.0.0",
+    "tiny-emitter": "^2.1.0",
+    "core-js": "^3.8.3"
+  },
+  "devDependencies": {
+    "@vue/cli-service": "^5.0.1",
+    "@vue/cli-plugin-babel": "^5.0.1",
+    "@babel/core": "^7.12.16"
   }
 }

@@ -1,6 +1,13 @@
+import * as Vue from 'vue'
 import { debounce } from 'lodash'
 import i18n from '@tap/i18n'
-import { defineComponent, ref, reactive, nextTick, watch } from '@vue/composition-api'
+import {
+  defineComponent,
+  ref,
+  reactive,
+  nextTick,
+  watch,
+} from '@vue/composition-api'
 import { metadataInstancesApi, taskApi } from '@tap/api'
 import { FormItem } from '@tap/form'
 import { useForm } from '@tap/form'
@@ -34,18 +41,20 @@ export const FieldRenameProcessor = defineComponent({
       operation: {
         prefix: '',
         suffix: '',
-        capitalized: ''
+        capitalized: '',
       },
       page: {
         size: 10,
         current: 1,
         total: 0,
-        count: 1
+        count: 1,
       },
-      transformLoading: root.$store.state.dataflow.transformLoading
+      transformLoading: root.$store.state.dataflow.transformLoading,
     })
-    const updateDeletedNum = item => {
-      item.userDeletedNum = item.fieldsMapping.filter(field => !field.isShow).length
+    const updateDeletedNum = (item) => {
+      item.userDeletedNum = item.fieldsMapping.filter(
+        (field) => !field.isShow
+      ).length
       return item
     }
 
@@ -54,7 +63,7 @@ export const FieldRenameProcessor = defineComponent({
       config.page.current = 1
     }
     //数据初始化
-    const loadData = silence => {
+    const loadData = (silence) => {
       config.loadingNav = !silence
       config.loadingTable = !silence
 
@@ -64,16 +73,17 @@ export const FieldRenameProcessor = defineComponent({
         nodeId: props.nodeId,
         searchTable: config.searchTable,
         page: config.page.current,
-        pageSize: config.page.size
+        pageSize: config.page.size,
       }
 
       taskApi
         .getNodeTableInfo(where)
-        .then(res => {
+        .then((res) => {
           let { total, items = [] } = res
           list.value = items.map(updateDeletedNum)
           config.page.total = total
-          config.page.count = Math.ceil(total / 10) === 0 ? 1 : Math.ceil(total / 10)
+          config.page.count =
+            Math.ceil(total / 10) === 0 ? 1 : Math.ceil(total / 10)
           updateView(config.position)
         })
         .finally(() => {
@@ -90,7 +100,7 @@ export const FieldRenameProcessor = defineComponent({
     const doSearchField = () => {
       if (config.searchField.trim()) {
         config.searchField = config.searchField.trim().toString() //去空格
-        tableList.value = config.target.filter(v => {
+        tableList.value = config.target.filter((v) => {
           let str = (v.sourceFieldName + '' + v.targetFieldName).toLowerCase()
           return str.indexOf(config.searchField.toLowerCase()) > -1
         })
@@ -102,42 +112,42 @@ export const FieldRenameProcessor = defineComponent({
     const restOp = {
       prefix: '',
       suffix: '',
-      capitalized: ''
+      capitalized: '',
     }
     //转成mapping table级别
-    const mapping = data => {
+    const mapping = (data) => {
       let map = {}
       if (!data || data?.length === 0) return map
-      data.forEach(t => {
+      data.forEach((t) => {
         if (!map[t.qualifiedName]) {
           map[t.qualifiedName] = {
             qualifiedName: t?.qualifiedName,
             previousTableName: t?.previousTableName,
             originTableName: t?.originTableName,
             operation: t?.operation,
-            fields: t.fields || []
+            fields: t.fields || [],
           }
         }
       })
       return map
     }
     //转成mapping Field级别
-    const mappingField = data => {
+    const mappingField = (data) => {
       let map = {}
       if (!data || data?.length === 0) return map
-      data.forEach(t => {
+      data.forEach((t) => {
         if (!map[t.sourceFieldName]) {
           map[t.sourceFieldName] = {
             sourceFieldName: t?.sourceFieldName,
             targetFieldName: t?.targetFieldName,
-            isShow: t.isShow
+            isShow: t.isShow,
           }
         }
       })
       return map
     }
     //map -> array
-    const toList = map => {
+    const toList = (map) => {
       let list = []
       for (let key in map) {
         if (key && key !== 'undefined') {
@@ -158,11 +168,14 @@ export const FieldRenameProcessor = defineComponent({
           previousTableName: targetObjectName,
           originTableName: sourceObjectName,
           operation: config.operation,
-          fields: []
+          fields: [],
         }
       }
       let fields = mappingField(map[qualifiedName]?.fields) || {}
-      if (target === 'rest' && fields[row.sourceFieldName]?.sourceFieldName === row.sourceFieldName) {
+      if (
+        target === 'rest' &&
+        fields[row.sourceFieldName]?.sourceFieldName === row.sourceFieldName
+      ) {
         delete fields[row.sourceFieldName]
       } else {
         //先生成所有fields
@@ -170,7 +183,7 @@ export const FieldRenameProcessor = defineComponent({
           sourceFieldName: row.sourceFieldName,
           targetFieldName: target === 'rename' ? val : row.targetFieldName,
           isShow: target === 'del' ? val : row.isShow,
-          migrateType: 'custom'
+          migrateType: 'custom',
         }
       }
 
@@ -181,12 +194,12 @@ export const FieldRenameProcessor = defineComponent({
       emit('change', fieldsMapping)
     }
     //选择左侧table
-    const doCheckAllChange = val => {
+    const doCheckAllChange = (val) => {
       config.checkAll = val
       if (val) {
         config.checkedTables = list.value
         nextTick(() => {
-          tableList.value.forEach(row => {
+          tableList.value.forEach((row) => {
             refs.table?.toggleAllSelection(row, true)
           })
         })
@@ -197,16 +210,19 @@ export const FieldRenameProcessor = defineComponent({
         })
       }
     }
-    const doCheckedTablesChange = value => {
+    const doCheckedTablesChange = (value) => {
       let checkedCount = value.length
       config.checkAll = checkedCount === list.value.length
       //当前table是否被选中
       if (checkedCount > 0) {
-        let index = value.findIndex(t => t.sourceQualifiedName === config.selectTableRow.sourceQualifiedName)
+        let index = value.findIndex(
+          (t) =>
+            t.sourceQualifiedName === config.selectTableRow.sourceQualifiedName
+        )
         if (index > -1) {
           //联调右侧表格全选
           nextTick(() => {
-            tableList.value.forEach(row => {
+            tableList.value.forEach((row) => {
               refs.table?.toggleRowSelection(row, true)
             })
           })
@@ -225,18 +241,20 @@ export const FieldRenameProcessor = defineComponent({
       }
     }
     //选择右侧字段
-    const doSelectionField = value => {
+    const doSelectionField = (value) => {
       config.checkedFields = value
     }
     const doVisible = (target, val) => {
       config[target] = val
     }
-    const updateView = index => {
+    const updateView = (index) => {
       config.position = index
       config.selectTableRow = list.value[index]
       config.target = config.selectTableRow?.fieldsMapping || []
       tableList.value = config.target
-      config.fieldCount = config.selectTableRow?.sourceFieldCount - config.selectTableRow?.userDeletedNum || 0
+      config.fieldCount =
+        config.selectTableRow?.sourceFieldCount -
+          config.selectTableRow?.userDeletedNum || 0
       //是否选中右侧表
       doCheckedTablesChange(config.checkedTables)
     }
@@ -251,13 +269,13 @@ export const FieldRenameProcessor = defineComponent({
       let map = mapping(fieldsMapping)
       if (config.checkedTables?.length > 0) {
         //表级别
-        config.checkedTables.forEach(t => {
+        config.checkedTables.forEach((t) => {
           map[t?.sourceQualifiedName] = {
             qualifiedName: t?.sourceQualifiedName,
             originTableName: t?.sourceObjectName,
             previousTableName: t?.sinkObjectName,
             operation: config.operation,
-            fields: []
+            fields: [],
           }
         })
         fieldsMapping = toList(map)
@@ -268,8 +286,11 @@ export const FieldRenameProcessor = defineComponent({
       }
       if (config.checkedFields?.length > 0) {
         //字段级别
-        config.checkedFields.forEach(t => {
-          let newField = config.operation.prefix + t?.sourceFieldName + config.operation.suffix
+        config.checkedFields.forEach((t) => {
+          let newField =
+            config.operation.prefix +
+            t?.sourceFieldName +
+            config.operation.suffix
           if (config.operation.capitalized) {
             newField = newField[config.operation.capitalized]()
           }
@@ -289,7 +310,7 @@ export const FieldRenameProcessor = defineComponent({
     const doOperationRest = () => {
       let where = {
         taskId: root.$route.params.id,
-        nodeId: props.nodeId
+        nodeId: props.nodeId,
       }
       fieldsMapping = []
       emit('change', [])
@@ -299,7 +320,7 @@ export const FieldRenameProcessor = defineComponent({
       })
     }
     //单个删除字段
-    const doShowRow = row => {
+    const doShowRow = (row) => {
       for (let i = 0; i < tableList.value.length; i++) {
         if (tableList.value[i].sourceFieldName === row.sourceFieldName) {
           tableList.value[i]['isShow'] = true
@@ -308,7 +329,7 @@ export const FieldRenameProcessor = defineComponent({
       updateDeletedNum(config.selectTableRow)
       doUpdateField(row, 'del', true)
     }
-    const doDeleteRow = row => {
+    const doDeleteRow = (row) => {
       for (let i = 0; i < tableList.value.length; i++) {
         if (tableList.value[i].sourceFieldName === row.sourceFieldName) {
           tableList.value[i]['isShow'] = false
@@ -350,15 +371,15 @@ export const FieldRenameProcessor = defineComponent({
           class={[
             'cursor-pointer',
             {
-              'color-primary': row.sourceFieldName !== row.targetFieldName
-            }
+              'color-primary': row.sourceFieldName !== row.targetFieldName,
+            },
           ]}
         >
           <input
             readOnly={props.disabled}
             class="rename-table-item-input px-2"
             value={row.targetFieldName}
-            onChange={event => {
+            onChange={(event) => {
               const val = event.target.value
               if (val) {
                 row.targetFieldName = val
@@ -371,17 +392,25 @@ export const FieldRenameProcessor = defineComponent({
         </div>
       ) : (
         <div class="cursor-pointer">
-          <span class="col-new-field-name inline-block ellipsis align-middle  mr-4 ">{row.targetFieldName}</span>
+          <span class="col-new-field-name inline-block ellipsis align-middle  mr-4 ">
+            {row.targetFieldName}
+          </span>
         </div>
       )
     }
     const renderOpNode = ({ row }) => {
       let show = row.isShow ? (
-        <span class="text-primary cursor-pointer" onClick={() => doDeleteRow(row)}>
+        <span
+          class="text-primary cursor-pointer"
+          onClick={() => doDeleteRow(row)}
+        >
           {i18n.t('packages_form_field_processor_index_pingbi')}
         </span>
       ) : (
-        <span class="text-primary cursor-pointer" onClick={() => doShowRow(row)}>
+        <span
+          class="text-primary cursor-pointer"
+          onClick={() => doShowRow(row)}
+        >
           {i18n.t('packages_form_field_processor_index_huifu')}
         </span>
       )
@@ -394,7 +423,7 @@ export const FieldRenameProcessor = defineComponent({
     }
     watch(
       () => root.$store.state.dataflow.transformLoading,
-      v => {
+      (v) => {
         config.transformLoading = root.$store.state.dataflow.transformLoading
         if (!v) {
           loadData()
@@ -419,19 +448,24 @@ export const FieldRenameProcessor = defineComponent({
       updateView,
       doOperationRest,
       doSearchField,
-      doSearchTables
+      doSearchTables,
     }
   },
   render() {
     return (
-      <div class="processor-field-mapping flex flex-column" v-loading={this.config.transformLoading}>
+      <div
+        class="processor-field-mapping flex flex-column"
+        v-loading={this.config.transformLoading}
+      >
         <div class="task-form-body" style={this.listStyle}>
           <div class="task-form-left flex flex-column">
             <div class="flex mb-2 ml-2 mr-2">
               <div class="flex">
                 <ElInput
                   size="mini"
-                  placeholder={i18n.t('packages_form_field_mapping_list_qingshurubiaoming')}
+                  placeholder={i18n.t(
+                    'packages_form_field_mapping_list_qingshurubiaoming'
+                  )}
                   suffix-icon="el-icon-search"
                   clearable
                   v-model={this.config.searchTable}
@@ -441,21 +475,35 @@ export const FieldRenameProcessor = defineComponent({
             </div>
             <div class="bg-main flex justify-content-between line-height processor-ml-10">
               <span>
-                <el-checkbox v-model={this.config.checkAll} onChange={this.doCheckAllChange}></el-checkbox>
-                <span class="table-name ml-2">{i18n.t('packages_form_field_mapping_list_biaoming')}</span>
+                <el-checkbox
+                  v-model={this.config.checkAll}
+                  onChange={this.doCheckAllChange}
+                ></el-checkbox>
+                <span class="table-name ml-2">
+                  {i18n.t('packages_form_field_mapping_list_biaoming')}
+                </span>
               </span>
             </div>
-            <div class="task-form-left__ul flex flex-column" v-loading={this.config.loadingNav}>
+            <div
+              class="task-form-left__ul flex flex-column"
+              v-loading={this.config.loadingNav}
+            >
               {this.list.length > 0 ? (
                 <ul>
-                  <el-checkbox-group v-model={this.config.checkedTables} onChange={this.doCheckedTablesChange}>
+                  <el-checkbox-group
+                    v-model={this.config.checkedTables}
+                    onChange={this.doCheckedTablesChange}
+                  >
                     {this.list.map((item, index) => (
                       <li
                         key={index}
                         class={[this.config.position === index ? 'active' : '']}
                         onClick={() => this.updateView(index)}
                       >
-                        <el-checkbox nativeOnClick={event => event.stopPropagation()} label={item}>
+                        <el-checkbox
+                          nativeOnClick={(event) => event.stopPropagation()}
+                          label={item}
+                        >
                           <br />
                         </el-checkbox>
                         <div class="task-form-text-box">
@@ -465,10 +513,18 @@ export const FieldRenameProcessor = defineComponent({
                             placement="right"
                             open-delay={400}
                           />
-                          <div class="select" onClick={() => this.updateView(index)}>
+                          <div
+                            class="select"
+                            onClick={() => this.updateView(index)}
+                          >
                             <span>
-                              <span>{i18n.t('packages_form_dag_dialog_field_mapping_selected')}</span>
-                              {item.sourceFieldCount - item.userDeletedNum} /{item.sourceFieldCount}
+                              <span>
+                                {i18n.t(
+                                  'packages_form_dag_dialog_field_mapping_selected'
+                                )}
+                              </span>
+                              {item.sourceFieldCount - item.userDeletedNum} /
+                              {item.sourceFieldCount}
                             </span>
                           </div>
                         </div>
@@ -487,10 +543,10 @@ export const FieldRenameProcessor = defineComponent({
               class="flex mt-3 din-font"
               layout="total, prev, slot, next"
               on={{
-                'current-change': page => {
+                'current-change': (page) => {
                   this.config.page.current = page
                   this.loadData()
-                }
+                },
               }}
               current-page={this.config.page.current}
               total={this.config.page.total}
@@ -510,11 +566,16 @@ export const FieldRenameProcessor = defineComponent({
             </ElPagination>
           </div>
           <div class="main">
-            <div class="flex ml-2 text-start justify-content-between" style="margin-bottom: 8px">
+            <div
+              class="flex ml-2 text-start justify-content-between"
+              style="margin-bottom: 8px"
+            >
               <div class="flex">
                 <ElInput
                   size="mini"
-                  placeholder={i18n.t('packages_form_field_mapping_list_qingshuruziduan')}
+                  placeholder={i18n.t(
+                    'packages_form_field_mapping_list_qingshuruziduan'
+                  )}
                   suffix-icon="el-icon-search"
                   clearable
                   v-model={this.config.searchField}
@@ -526,13 +587,20 @@ export const FieldRenameProcessor = defineComponent({
                   type="text"
                   class="btn-operation"
                   disabled={
-                    (this.config.checkedTables.length === 0 && this.config.checkedFields.length === 0) || this.disabled
+                    (this.config.checkedTables.length === 0 &&
+                      this.config.checkedFields.length === 0) ||
+                    this.disabled
                   }
                   onClick={() => this.doVisible('visible', true)}
                 >
                   {i18n.t('packages_form_field_processor_index_piliangcaozuo')}
                 </ElButton>
-                <ElButton type="text" class="btn-rest mr-2" disabled={this.disabled} onClick={this.doOperationRest}>
+                <ElButton
+                  type="text"
+                  class="btn-rest mr-2"
+                  disabled={this.disabled}
+                  onClick={this.doOperationRest}
+                >
                   {i18n.t('packages_form_button_reset')}
                 </ElButton>
               </div>
@@ -557,15 +625,17 @@ export const FieldRenameProcessor = defineComponent({
                 label={i18n.t('packages_form_dag_dialog_field_mapping_field')}
                 prop="sourceFieldName"
                 scopedSlots={{
-                  default: this.renderSourceNode
+                  default: this.renderSourceNode,
                 }}
               ></ElTableColumn>
               <ElTableColumn
                 show-overflow-tooltip
-                label={i18n.t('packages_form_field_processor_index_xinziduanming')}
+                label={i18n.t(
+                  'packages_form_field_processor_index_xinziduanming'
+                )}
                 prop="targetFieldName"
                 scopedSlots={{
-                  default: this.renderNode
+                  default: this.renderNode,
                 }}
               ></ElTableColumn>
               <ElTableColumn
@@ -574,7 +644,7 @@ export const FieldRenameProcessor = defineComponent({
                 prop="isShow"
                 width={'60px'}
                 scopedSlots={{
-                  default: this.renderOpNode
+                  default: this.renderOpNode,
                 }}
               ></ElTableColumn>
               <div class="field-mapping-table__empty" slot="empty">
@@ -584,7 +654,9 @@ export const FieldRenameProcessor = defineComponent({
           </div>
         </div>
         <ElDialog
-          title={i18n.t('packages_form_ddl_event_checkbox_index_xiugaiziduanming')}
+          title={i18n.t(
+            'packages_form_ddl_event_checkbox_index_xiugaiziduanming'
+          )}
           width={'30%'}
           visible={this.config.operationVisible}
           append-to-body
@@ -594,7 +666,9 @@ export const FieldRenameProcessor = defineComponent({
             <ElInput v-model={this.config.newFieldName} clearable />
           </FormItem.BaseItem>
           <span slot="footer" className="dialog-footer">
-            <el-button onClick={() => this.doVisible('operationVisible', false)}>
+            <el-button
+              onClick={() => this.doVisible('operationVisible', false)}
+            >
               {i18n.t('packages_form_field_mapping_dialog_quxiao')}
             </el-button>
             <el-button type="primary" onClick={() => this.doEditNameSave()}>
@@ -609,18 +683,33 @@ export const FieldRenameProcessor = defineComponent({
           before-close={() => this.doVisible('visible', false)}
         >
           <div>
-            <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_qianzhui')}>
+            <FormItem.BaseItem
+              label={i18n.t('packages_form_field_processor_index_qianzhui')}
+            >
               <ElInput v-model={this.config.operation.prefix} clearable />
             </FormItem.BaseItem>
-            <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_houzhui')}>
+            <FormItem.BaseItem
+              label={i18n.t('packages_form_field_processor_index_houzhui')}
+            >
               <ElInput v-model={this.config.operation.suffix} clearable />
             </FormItem.BaseItem>
 
-            <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_daxiaoxie')}>
+            <FormItem.BaseItem
+              label={i18n.t('packages_form_field_processor_index_daxiaoxie')}
+            >
               <ElSelect v-model={this.config.operation.capitalized}>
-                <ElOption value="" label={i18n.t('packages_form_field_processor_index_bubian')} />
-                <ElOption value="toUpperCase" label={i18n.t('packages_form_field_processor_index_daxie')} />
-                <ElOption value="toLowerCase" label={i18n.t('packages_form_field_processor_index_xiaoxie')} />
+                <ElOption
+                  value=""
+                  label={i18n.t('packages_form_field_processor_index_bubian')}
+                />
+                <ElOption
+                  value="toUpperCase"
+                  label={i18n.t('packages_form_field_processor_index_daxie')}
+                />
+                <ElOption
+                  value="toLowerCase"
+                  label={i18n.t('packages_form_field_processor_index_xiaoxie')}
+                />
               </ElSelect>
             </FormItem.BaseItem>
           </div>
@@ -635,5 +724,5 @@ export const FieldRenameProcessor = defineComponent({
         </ElDialog>
       </div>
     )
-  }
+  },
 })

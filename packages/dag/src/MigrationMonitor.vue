@@ -30,18 +30,23 @@
       @load-data="init"
     >
       <template #status="{ result }">
-        <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block', 'mr-2']">
+        <span
+          v-if="result && result[0]"
+          :class="['status-' + result[0].status, 'status-block', 'mr-2']"
+        >
           {{ $t('packages_dag_task_preview_status_' + result[0].status) }}
         </span>
       </template>
     </TopHeader>
-    <section class="layout-wrap layout-has-sider position-relative font-color-light">
+    <section
+      class="layout-wrap layout-has-sider position-relative font-color-light"
+    >
       <!--左侧边栏-->
       <VExpandXTransition>
         <LeftSider
           v-resize.right="{
             minWidth: 356,
-            maxWidth: 750
+            maxWidth: 750,
           }"
           :dataflow="dataflow"
           :quota="quota"
@@ -58,18 +63,33 @@
           @verifyDetails="handleVerifyDetails"
         >
           <template #status="{ result }">
-            <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block']">
+            <span
+              v-if="result && result[0]"
+              :class="['status-' + result[0].status, 'status-block']"
+            >
               {{ $t('packages_dag_task_preview_status_' + result[0].status) }}
             </span>
           </template>
         </LeftSider>
       </VExpandXTransition>
-      <div v-if="!stateIsReadonly" class="sider-expand-wrap flex justify-center align-center rotate-180">
-        <VIcon size="24" class="font-color-light" @click.stop="handleToggleExpand">expand</VIcon>
+      <div
+        v-if="!stateIsReadonly"
+        class="sider-expand-wrap flex justify-center align-center rotate-180"
+      >
+        <VIcon
+          size="24"
+          class="font-color-light"
+          @click.stop="handleToggleExpand"
+          >expand</VIcon
+        >
       </div>
       <!--内容体-->
       <section class="layout-wrap flex-1">
-        <main id="dfEditorContent" ref="layoutContent" class="layout-content flex flex-column flex-1 overflow-hidden">
+        <main
+          id="dfEditorContent"
+          ref="layoutContent"
+          class="layout-content flex flex-column flex-1 overflow-hidden"
+        >
           <PaperScroller
             ref="paperScroller"
             :nav-lines="navLines"
@@ -85,7 +105,7 @@
               :id="NODE_PREFIX + n.id"
               :js-plumb-ins="jsPlumbIns"
               :class="{
-                'options-active': nodeMenu.typeId === n.id
+                'options-active': nodeMenu.typeId === n.id,
               }"
               :task-type="dataflow.type"
               :sync-type="dataflow.syncType"
@@ -103,7 +123,10 @@
               @open-detail="handleOpenDetail(n)"
             ></Node>
           </PaperScroller>
-          <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
+          <div
+            v-if="!allNodes.length && stateIsReadonly"
+            class="absolute-fill flex justify-center align-center"
+          >
             <VEmpty large></VEmpty>
           </div>
 
@@ -115,7 +138,7 @@
         <BottomPanel
           v-if="dataflow && dataflow.status && showBottomPanel"
           v-resize.top="{
-            minHeight: 328
+            minHeight: 328,
           }"
           :dataflow="dataflow"
           :alarmData="alarmData"
@@ -139,7 +162,7 @@
 
       <!--   节点详情   -->
       <NodeDetailDialog
-        v-model="nodeDetailDialog"
+        v-model:value="nodeDetailDialog"
         :dataflow="dataflow"
         :node-id="nodeDetailDialogId"
         :timeFormat="timeFormat"
@@ -175,7 +198,13 @@ import TopHeader from './components/monitor/TopHeader'
 import LeftSider from './components/monitor/LeftSider'
 import Node from './components/monitor/Node'
 import { jsPlumb, config } from './instance'
-import { NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH, NONSUPPORT_CDC, NONSUPPORT_SYNC } from './constants'
+import {
+  NODE_HEIGHT,
+  NODE_PREFIX,
+  NODE_WIDTH,
+  NONSUPPORT_CDC,
+  NONSUPPORT_SYNC,
+} from './constants'
 import { allResourceIns } from './nodes/loader'
 import ConfigPanel from './components/migration/ConfigPanel'
 import BottomPanel from './components/monitor/BottomPanel'
@@ -191,7 +220,7 @@ export default {
   name: 'MigrationMonitor',
 
   directives: {
-    resize
+    resize,
   },
 
   mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
@@ -208,14 +237,14 @@ export default {
     LeftSider,
     VIcon,
     NodeDetailDialog,
-    ConsolePanel
+    ConsolePanel,
   },
 
   data() {
     const dataflow = observable({
       id: '',
       name: '',
-      status: ''
+      status: '',
     })
 
     return {
@@ -236,7 +265,7 @@ export default {
         typeId: '',
         reference: null,
         data: null,
-        connectionData: {}
+        connectionData: {},
       },
 
       dataflow,
@@ -260,8 +289,8 @@ export default {
       watchStatusCount: 0,
       taskRecord: {
         total: 0,
-        items: []
-      }
+        items: [],
+      },
     }
   },
 
@@ -271,7 +300,7 @@ export default {
     formScope() {
       return {
         ...this.scope,
-        $settings: this.dataflow
+        $settings: this.dataflow,
       }
     },
 
@@ -303,7 +332,7 @@ export default {
         end = firstStartTime + 5 * 60 * 1000
       }
       return [firstStartTime, end || Time.now()]
-    }
+    },
   },
 
   watch: {
@@ -321,7 +350,7 @@ export default {
         this.handleBottomPanel(!flag)
       }
       this.toggleConnectionRun(v1 === 'running')
-    }
+    },
   },
 
   created() {
@@ -348,7 +377,7 @@ export default {
     })
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     this.command = null
     this.jsPlumbIns?.destroy()
     this.resetWorkspace()
@@ -368,7 +397,8 @@ export default {
     polling() {
       if (
         this.isEnterTimer ||
-        (['error', 'schedule_failed'].includes(this.dataflow.status) && ++this.extraEnterCount < 3)
+        (['error', 'schedule_failed'].includes(this.dataflow.status) &&
+          ++this.extraEnterCount < 3)
       ) {
         this.startLoadData()
       }
@@ -379,7 +409,7 @@ export default {
       if (this.quotaTimeType === 'lastStart') {
         const { id: taskId } = this.dataflow || {}
         let filter = {}
-        await taskApi.records(taskId, filter).then(data => {
+        await taskApi.records(taskId, filter).then((data) => {
           const lastStartDate = data.items?.[0]?.startDate
           if (lastStartDate) {
             this.dataflow.lastStartDate = new Date(lastStartDate).getTime()
@@ -421,10 +451,11 @@ export default {
     gotoViewer() {},
 
     async validate() {
-      if (!this.dataflow.name) return this.$t('packages_dag_editor_cell_validate_empty_name')
+      if (!this.dataflow.name)
+        return this.$t('packages_dag_editor_cell_validate_empty_name')
 
       // 至少两个数据节点
-      const tableNode = this.allNodes.filter(node => node.type === 'database')
+      const tableNode = this.allNodes.filter((node) => node.type === 'database')
       if (tableNode.length < 2) {
         return this.$t('packages_dag_editor_cell_validate_none_data_node')
       }
@@ -434,7 +465,7 @@ export default {
       const sourceMap = {},
         targetMap = {},
         edges = this.allEdges
-      edges.forEach(item => {
+      edges.forEach((item) => {
         let _source = sourceMap[item.source]
         let _target = targetMap[item.target]
 
@@ -453,7 +484,7 @@ export default {
 
       let someErrorMsg = ''
       // 检查每个节点的源节点个数、连线个数、节点的错误状态
-      this.allNodes.some(node => {
+      this.allNodes.some((node) => {
         const { id } = node
         const minInputs = node.__Ctor.minInputs ?? 1
         const inputNum = targetMap[id]?.length ?? 0
@@ -461,7 +492,7 @@ export default {
         if (!sourceMap[id] && !targetMap[id]) {
           // 存在没有连线的节点
           someErrorMsg = i18n.t('packages_dag_src_migrationmonitor_noden', {
-            val1: node.name
+            val1: node.name,
           })
           return true
         }
@@ -469,14 +500,14 @@ export default {
         if (inputNum < minInputs) {
           someErrorMsg = i18n.t('packages_dag_src_migrationmonitor_noden', {
             val1: node.name,
-            val2: minInputs
+            val2: minInputs,
           })
           return true
         }
 
         if (this.hasNodeError(id)) {
           someErrorMsg = i18n.t('packages_dag_src_migrationmonitor_noden', {
-            val1: node.name
+            val1: node.name,
           })
           return true
         }
@@ -487,52 +518,71 @@ export default {
       // 根据任务类型(全量、增量),检查不支持此类型的节点
       // 脏代码。这里的校验是有节点错误信息提示的，和节点表单校验揉在了一起，但是校验没有一起做
       if (this.dataflow.type === 'initial_sync+cdc') {
-        typeName = i18n.t('packages_dag_components_formpanel_quanliangzengliang')
-        tableNode.forEach(node => {
+        typeName = i18n.t(
+          'packages_dag_components_formpanel_quanliangzengliang'
+        )
+        tableNode.forEach((node) => {
           if (
             sourceMap[node.id] &&
-            (NONSUPPORT_SYNC.includes(node.databaseType) || NONSUPPORT_CDC.includes(node.databaseType))
+            (NONSUPPORT_SYNC.includes(node.databaseType) ||
+              NONSUPPORT_CDC.includes(node.databaseType))
           ) {
             nodeNames.push(node.name)
             this.setNodeErrorMsg({
               id: node.id,
-              msg: i18n.t('packages_dag_src_migrationmonitor_gaijiedianbuzhi') + typeName
+              msg:
+                i18n.t('packages_dag_src_migrationmonitor_gaijiedianbuzhi') +
+                typeName,
             })
           }
         })
       } else if (this.dataflow.type === 'initial_sync') {
         typeName = i18n.t('packages_dag_task_setting_initial_sync')
-        tableNode.forEach(node => {
-          if (sourceMap[node.id] && NONSUPPORT_SYNC.includes(node.databaseType)) {
+        tableNode.forEach((node) => {
+          if (
+            sourceMap[node.id] &&
+            NONSUPPORT_SYNC.includes(node.databaseType)
+          ) {
             nodeNames.push(node.name)
             this.setNodeErrorMsg({
               id: node.id,
-              msg: i18n.t('packages_dag_src_migrationmonitor_gaijiedianbuzhi') + typeName
+              msg:
+                i18n.t('packages_dag_src_migrationmonitor_gaijiedianbuzhi') +
+                typeName,
             })
           }
         })
       } else if (this.dataflow.type === 'cdc') {
         typeName = i18n.t('packages_dag_task_setting_cdc')
-        tableNode.forEach(node => {
-          if (sourceMap[node.id] && NONSUPPORT_CDC.includes(node.databaseType)) {
+        tableNode.forEach((node) => {
+          if (
+            sourceMap[node.id] &&
+            NONSUPPORT_CDC.includes(node.databaseType)
+          ) {
             nodeNames.push(node.name)
             this.setNodeErrorMsg({
               id: node.id,
-              msg: i18n.t('packages_dag_src_migrationmonitor_gaijiedianbuzhi') + typeName
+              msg:
+                i18n.t('packages_dag_src_migrationmonitor_gaijiedianbuzhi') +
+                typeName,
             })
           }
         })
       }
 
       if (nodeNames.length) {
-        someErrorMsg = i18n.t('packages_dag_src_migrationmonitor_cunzaibuzhichi', { val1: typeName })
+        someErrorMsg = i18n.t(
+          'packages_dag_src_migrationmonitor_cunzaibuzhichi',
+          { val1: typeName }
+        )
       }
 
       const accessNodeProcessIdArr = [
         ...tableNode.reduce((set, item) => {
-          item.attrs.accessNodeProcessId && set.add(item.attrs.accessNodeProcessId)
+          item.attrs.accessNodeProcessId &&
+            set.add(item.attrs.accessNodeProcessId)
           return set
-        }, new Set())
+        }, new Set()),
       ]
 
       if (accessNodeProcessIdArr.length > 1) {
@@ -545,14 +595,20 @@ export default {
         } else {
           let isError = false
           const agent = this.scope.$agentMap[chooseId]
-          tableNode.forEach(node => {
-            if (node.attrs.accessNodeProcessId && chooseId !== node.attrs.accessNodeProcessId) {
+          tableNode.forEach((node) => {
+            if (
+              node.attrs.accessNodeProcessId &&
+              chooseId !== node.attrs.accessNodeProcessId
+            ) {
               this.setNodeErrorMsg({
                 id: node.id,
-                msg: i18n.t('packages_dag_src_migrationmonitor_gaijiedianbuzhi', {
-                  val1: agent.hostName,
-                  val2: agent.ip
-                })
+                msg: i18n.t(
+                  'packages_dag_src_migrationmonitor_gaijiedianbuzhi',
+                  {
+                    val1: agent.hostName,
+                    val2: agent.ip,
+                  }
+                ),
               })
               isError = true
             }
@@ -561,16 +617,22 @@ export default {
         }
       } else if (accessNodeProcessIdArr.length === 1) {
         // 如果画布上仅有一个所属agent，自动设置为任务的agent
-        this.$set(this.dataflow, 'accessNodeType', 'MANUALLY_SPECIFIED_BY_THE_USER')
-        this.$set(this.dataflow, 'accessNodeProcessId', accessNodeProcessIdArr[0])
+        this.dataflow['accessNodeType'] = 'MANUALLY_SPECIFIED_BY_THE_USER'
+        this.dataflow['accessNodeProcessId'] = accessNodeProcessIdArr[0]
       }
 
       if (someErrorMsg) return someErrorMsg
 
       // 检查链路的末尾节点类型是否是表节点
-      const firstNodes = this.allNodes.filter(node => !targetMap[node.id]) // 链路的首节点
-      const nodeMap = this.allNodes.reduce((map, node) => ((map[node.id] = node), map), {})
-      if (firstNodes.some(node => !this.isEndOfTable(node, sourceMap, nodeMap))) return `链路的末位需要是一个数据节点`
+      const firstNodes = this.allNodes.filter((node) => !targetMap[node.id]) // 链路的首节点
+      const nodeMap = this.allNodes.reduce(
+        (map, node) => ((map[node.id] = node), map),
+        {}
+      )
+      if (
+        firstNodes.some((node) => !this.isEndOfTable(node, sourceMap, nodeMap))
+      )
+        return `链路的末位需要是一个数据节点`
 
       return null
     },
@@ -578,11 +640,11 @@ export default {
     handlePageReturn() {
       if (this.dataflow.syncType === 'migrate') {
         this.$router.push({
-          name: 'migrateList'
+          name: 'migrateList',
         })
       } else {
         this.$router.push({
-          name: 'dataflowList'
+          name: 'dataflowList',
         })
       }
     },
@@ -591,13 +653,13 @@ export default {
       if (this.dataflow.syncType === 'sync') {
         this.$router.push({
           name: 'DataflowEditor',
-          params: { id: this.dataflow.id }
+          params: { id: this.dataflow.id },
         })
         return
       }
       this.$router.push({
         name: 'MigrateEditor',
-        params: { id: this.dataflow.id }
+        params: { id: this.dataflow.id },
       })
     },
 
@@ -635,7 +697,9 @@ export default {
       try {
         this.wsAgentLive()
         await taskApi.start(this.dataflow.id)
-        this.$message.success(this.$t('packages_dag_message_operation_succuess'))
+        this.$message.success(
+          this.$t('packages_dag_message_operation_succuess')
+        )
         this.isSaving = false
         this.isReset = false
         this.loadDataflow(this.dataflow?.id)
@@ -653,7 +717,7 @@ export default {
       let params = {
         startAt,
         endAt,
-        samples: {}
+        samples: {},
       }
       const samples = {
         // 任务事件统计（条）- 任务累计 + 全量信息 + 增量信息
@@ -661,7 +725,7 @@ export default {
           tags: {
             type: 'task',
             taskId,
-            taskRecordId
+            taskRecordId,
           },
           endAt: Time.now(), // 停止时间 || 当前时间
           fields: [
@@ -692,16 +756,16 @@ export default {
             'currentEventTimestamp',
             'snapshotDoneCost',
             'outputQpsMax',
-            'outputQpsAvg'
+            'outputQpsAvg',
           ],
-          type: 'instant' // 瞬时值
+          type: 'instant', // 瞬时值
         },
         // 任务事件统计（条）-所选周期累计
         barChartData: {
           tags: {
             type: 'task',
             taskId,
-            taskRecordId
+            taskRecordId,
           },
           fields: [
             'inputInsertTotal',
@@ -713,26 +777,26 @@ export default {
             'outputUpdateTotal',
             'outputDeleteTotal',
             'outputDdlTotal',
-            'outputOthersTotal'
+            'outputOthersTotal',
           ],
-          type: 'difference'
+          type: 'difference',
         },
         // qps + 增量延迟
         lineChartData: {
           tags: {
             type: 'task',
             taskId,
-            taskRecordId
+            taskRecordId,
           },
           fields: ['inputQps', 'outputQps', 'timeCostAvg', 'replicateLag'],
-          type: 'continuous' // 连续数据
+          type: 'continuous', // 连续数据
         },
         // dag数据
         dagData: {
           tags: {
             type: 'node',
             taskId,
-            taskRecordId
+            taskRecordId,
           },
           fields: [
             'inputInsertTotal',
@@ -763,19 +827,19 @@ export default {
             'targetWriteTimeCostAvg',
             'snapshotStartAt',
             'snapshotDoneAt',
-            'replicateLag'
+            'replicateLag',
           ],
-          type: 'instant' // 瞬时值
+          type: 'instant', // 瞬时值
         },
         agentData: {
           tags: {
             type: 'engine',
-            engineId: agentId
+            engineId: agentId,
           },
           endAt: Time.now(),
           fields: ['memoryRate', 'cpuUsage', 'gcRate'],
-          type: 'instant'
-        }
+          type: 'instant',
+        },
       }
       params.samples.data = samples[type]
       return params
@@ -787,50 +851,50 @@ export default {
         verifyTotals: {
           uri: `/api/task/auto-inspect-totals`,
           param: {
-            id: this.dataflow.id
-          }
+            id: this.dataflow.id,
+          },
         },
         alarmData: {
           uri: '/api/alarm/list_task',
           param: {
-            taskId
-          }
+            taskId,
+          },
         },
         logTotals: {
           uri: '/api/MonitoringLogs/count',
           param: {
             taskId,
-            taskRecordId
-          }
+            taskRecordId,
+          },
         },
         totalData: {
           uri: '/api/measurement/query/v2',
-          param: this.getQuotaFilter('totalData')
+          param: this.getQuotaFilter('totalData'),
         },
         barChartData: {
           uri: '/api/measurement/query/v2',
-          param: this.getQuotaFilter('barChartData')
+          param: this.getQuotaFilter('barChartData'),
         },
         lineChartData: {
           uri: '/api/measurement/query/v2',
-          param: this.getQuotaFilter('lineChartData')
+          param: this.getQuotaFilter('lineChartData'),
         },
         dagData: {
           uri: '/api/measurement/query/v2',
-          param: this.getQuotaFilter('dagData')
+          param: this.getQuotaFilter('dagData'),
         },
         agentData: {
           uri: '/api/measurement/query/v2',
-          param: this.getQuotaFilter('agentData')
+          param: this.getQuotaFilter('agentData'),
         },
         taskRecord: {
           uri: '/api/task/records',
           param: {
             taskId,
             size: 200,
-            page: 1
-          }
-        }
+            page: 1,
+          },
+        },
       }
       return params
     },
@@ -845,12 +909,12 @@ export default {
       }
       measurementApi
         .batch(this.getParams())
-        .then(data => {
+        .then((data) => {
           const map = {
             verifyTotals: this.loadVerifyTotals,
             alarmData: this.loadAlarmData,
             logTotals: this.loadLogTotals,
-            taskRecord: this.loadTaskRecord
+            taskRecord: this.loadTaskRecord,
           }
           for (let key in data) {
             const item = data[key]
@@ -872,10 +936,16 @@ export default {
       let quota = {
         samples: {},
         time: [],
-        interval: 5000
+        interval: 5000,
       }
-      let arr = ['totalData', 'barChartData', 'lineChartData', 'dagData', 'agentData']
-      arr.forEach(el => {
+      let arr = [
+        'totalData',
+        'barChartData',
+        'lineChartData',
+        'dagData',
+        'agentData',
+      ]
+      arr.forEach((el) => {
         const item = data[el]
         if (item.code === 'ok') {
           quota.samples[el] = item.data?.samples?.data
@@ -897,10 +967,16 @@ export default {
       let quota = {
         samples: {},
         time: [],
-        interval: 5000
+        interval: 5000,
       }
-      let arr = ['totalData', 'barChartData', 'lineChartData', 'dagData', 'agentData']
-      arr.forEach(el => {
+      let arr = [
+        'totalData',
+        'barChartData',
+        'lineChartData',
+        'dagData',
+        'agentData',
+      ]
+      arr.forEach((el) => {
         quota.samples[el] = []
       })
       this.quota = quota
@@ -917,7 +993,7 @@ export default {
         diffRecords,
         diffTables,
         totals,
-        ignore
+        ignore,
       }
     },
 
@@ -925,26 +1001,29 @@ export default {
       const { alarmNum = {}, nodeInfos = [], alarmList = [] } = data
       const { alert = 0, error = 0 } = alarmNum
       const nodes = alarmList
-        .filter(t => t.nodeId && t.level)
+        .filter((t) => t.nodeId && t.level)
         .reduce((cur, next) => {
           const index = ALARM_LEVEL_SORT.indexOf(cur[next.nodeId]?.level)
           return {
             ...cur,
-            [next.nodeId]: index !== -1 && index < ALARM_LEVEL_SORT.indexOf(next.level) ? cur[next.nodeId] : next
+            [next.nodeId]:
+              index !== -1 && index < ALARM_LEVEL_SORT.indexOf(next.level)
+                ? cur[next.nodeId]
+                : next,
           }
         }, {})
       this.alarmData = {
         alarmNum: {
           alert,
-          error
+          error,
         },
-        nodeInfos: nodeInfos.map(t => {
+        nodeInfos: nodeInfos.map((t) => {
           return Object.assign({}, t, {
-            num: t.num || 0
+            num: t.num || 0,
           })
         }),
         alarmList,
-        nodes
+        nodes,
       }
     },
 
@@ -976,21 +1055,30 @@ export default {
       const newProperties = []
       const oldProperties = []
 
-      dg.setGraph({ nodesep: 120, ranksep: 200, marginx: 0, marginy: 0, rankdir: 'LR' })
+      dg.setGraph({
+        nodesep: 120,
+        ranksep: 200,
+        marginx: 0,
+        marginy: 0,
+        rankdir: 'LR',
+      })
       dg.setDefaultEdgeLabel(function () {
         return {}
       })
 
-      nodes.forEach(n => {
-        dg.setNode(NODE_PREFIX + n.id, { width: NODE_WIDTH, height: NODE_HEIGHT })
+      nodes.forEach((n) => {
+        dg.setNode(NODE_PREFIX + n.id, {
+          width: NODE_WIDTH,
+          height: NODE_HEIGHT,
+        })
         nodePositionMap[NODE_PREFIX + n.id] = n.attrs?.position || [0, 0]
       })
-      this.jsPlumbIns.getAllConnections().forEach(edge => {
+      this.jsPlumbIns.getAllConnections().forEach((edge) => {
         dg.setEdge(edge.source.id, edge.target.id)
       })
 
       dagre.layout(dg)
-      dg.nodes().forEach(n => {
+      dg.nodes().forEach((n) => {
         const node = dg.node(n)
         const top = Math.round(node.y - node.height / 2)
         const left = Math.round(node.x - node.width / 2)
@@ -1001,29 +1089,32 @@ export default {
             id: this.getRealId(n),
             properties: {
               attrs: {
-                position: nodePositionMap[n]
-              }
-            }
+                position: nodePositionMap[n],
+              },
+            },
           })
           newProperties.push({
             id: this.getRealId(n),
             properties: {
               attrs: {
-                position: [left, top]
-              }
-            }
+                position: [left, top],
+              },
+            },
           })
         }
       })
 
-      hasMove && this.command.exec(new MoveNodeCommand(oldProperties, newProperties))
+      hasMove &&
+        this.command.exec(new MoveNodeCommand(oldProperties, newProperties))
       this.$refs.paperScroller.autoResizePaper()
       this.$refs.paperScroller.centerContent()
     },
 
     handleChangeTimeSelect(val, isTime, source) {
       this.quotaTimeType = source?.type ?? val
-      this.quotaTime = isTime ? val?.split(',')?.map(t => Number(t)) : this.getTimeRange(val)
+      this.quotaTime = isTime
+        ? val?.split(',')?.map((t) => Number(t))
+        : this.getTimeRange(val)
       this.init()
     },
 
@@ -1074,11 +1165,11 @@ export default {
       let routeUrl = this.$router.resolve({
         name: 'VerifyDetails',
         params: {
-          id: this.dataflow?.id
+          id: this.dataflow?.id,
         },
         query: {
-          table
-        }
+          table,
+        },
       })
       window.open(routeUrl.href)
     },
@@ -1087,8 +1178,8 @@ export default {
       let routeUrl = this.$router.resolve({
         name: 'connectionsList',
         query: {
-          keyword
-        }
+          keyword,
+        },
       })
       window.open(routeUrl.href)
     },
@@ -1096,8 +1187,8 @@ export default {
     handleReset() {
       let msg = this.getConfirmMessage('initialize')
       this.$confirm(msg, '', {
-        type: 'warning'
-      }).then(async resFlag => {
+        type: 'warning',
+      }).then(async (resFlag) => {
         if (!resFlag) {
           return
         }
@@ -1107,7 +1198,10 @@ export default {
           this.toggleConsole(true)
           this.$refs.console?.startAuto('reset') // 信息输出自动加载
           const data = await taskApi.reset(this.dataflow.id)
-          this.responseHandler(data, this.$t('packages_dag_message_operation_succuess'))
+          this.responseHandler(
+            data,
+            this.$t('packages_dag_message_operation_succuess')
+          )
           if (!data?.fail?.length) {
             this.isReset = true
           }
@@ -1138,12 +1232,12 @@ export default {
       this.jsPlumbIns.registerConnectionTypes({
         error: {
           paintStyle: { stroke: '#D44D4D' },
-          hoverPaintStyle: { stroke: '#D44D4D' }
+          hoverPaintStyle: { stroke: '#D44D4D' },
         },
         warn: {
           paintStyle: { stroke: '#FF932C' },
-          hoverPaintStyle: { stroke: '#FF932C' }
-        }
+          hoverPaintStyle: { stroke: '#FF932C' },
+        },
       })
     },
 
@@ -1159,9 +1253,9 @@ export default {
           fields: {
             messages: true,
             pdkHash: true,
-            properties: true
-          }
-        })
+            properties: true,
+          },
+        }),
       })
       this.setPdkPropertiesMap(
         databaseItems.reduce((map, item) => {
@@ -1176,8 +1270,8 @@ export default {
 
     getTime() {
       return Time.now()
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -1196,12 +1290,10 @@ $sidebarBg: #fff;
   height: 100%;
   background-color: $sidebarBg;
   overflow: auto;
-
   &.--right {
     width: 726px;
   }
 }
-
 .layout-wrap {
   display: flex;
   flex: auto;
@@ -1217,13 +1309,9 @@ $sidebarBg: #fff;
     }
   }
 }
-
 .layout-content {
   position: relative;
   background-color: #f9f9f9;
-  /*background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIGlkPSJ2LTc2IiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIj48ZGVmcyBpZD0idi03NSI+PHBhdHRlcm4gaWQ9InBhdHRlcm5fMCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeD0iMCIgeT0iMCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIj48cmVjdCBpZD0idi03NyIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0iI0FBQUFBQSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgaWQ9InYtNzkiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjcGF0dGVybl8wKSIvPjwvc3ZnPg==);
-  background-color: #f5f8fe;*/
-
   ::v-deep {
     .connection-highlight,
     .connection-selected {
@@ -1293,7 +1381,6 @@ $sidebarBg: #fff;
     }
   }
 }
-
 .nav-line {
   position: absolute;
   width: 0;
@@ -1303,20 +1390,17 @@ $sidebarBg: #fff;
   border-top: 1px dashed #ff5b37;
   border-left: 1px dashed #ff5b37;
 }
-
 .select-box {
   position: absolute;
   background: rgba(23, 159, 251, 0.1);
   border: 1px solid #179ffb;
 }
-
 .node-view {
   position: relative;
   width: 100%;
   height: 100%;
   transform-origin: 0 0;
 }
-
 .node-view-background {
   position: absolute;
   width: 10000px;
@@ -1324,7 +1408,6 @@ $sidebarBg: #fff;
   top: -5000px;
   left: -5000px;
 }
-
 .sider-expand-wrap {
   position: absolute;
   z-index: 2;
@@ -1335,7 +1418,6 @@ $sidebarBg: #fff;
   border-radius: 50%;
   background: #fff;
   box-shadow: 0px 0px 30px rgb(0 0 0 / 6%);
-
   &:hover .v-icon {
     color: map-get($color, primary);
   }

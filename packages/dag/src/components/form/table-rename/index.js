@@ -1,5 +1,13 @@
+import * as Vue from 'vue'
 import i18n from '@tap/i18n'
-import { defineComponent, ref, reactive, set, del, computed } from '@vue/composition-api'
+import {
+  defineComponent,
+  ref,
+  reactive,
+  set,
+  del,
+  computed,
+} from '@vue/composition-api'
 import { useForm } from '@tap/form'
 import { FormItem } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
@@ -41,7 +49,7 @@ export const TableRename = observer(
         prefix: form.values.prefix || '', // 前缀
         suffix: form.values.suffix || '', // 后缀
         transferCase: form.values.transferCase || '', // toUpperCase ｜ toLowerCase
-        transformLoading: root.$store.state.dataflow.transformLoading
+        transformLoading: root.$store.state.dataflow.transformLoading,
       })
 
       let prevMap = {}
@@ -55,12 +63,12 @@ export const TableRename = observer(
               taskId,
               nodeId: form.values.id,
               page: 1,
-              pageSize: 10000
+              pageSize: 10000,
             })
             .then(({ items = [] }) => {
               prevMap = {}
               tableMap = {}
-              tableDataRef.value = items.map(item => {
+              tableDataRef.value = items.map((item) => {
                 prevMap[item.previousTableName] = item.sourceObjectName
                 tableMap[item.previousTableName] = true
                 return item.previousTableName
@@ -104,7 +112,7 @@ export const TableRename = observer(
       const filterNames = computed(() => {
         const txt = config.search.trim().toLowerCase()
         if (txt) {
-          return tableDataRef.value.filter(n => n.toLowerCase().includes(txt))
+          return tableDataRef.value.filter((n) => n.toLowerCase().includes(txt))
         }
         return tableDataRef.value
       })
@@ -113,10 +121,13 @@ export const TableRename = observer(
         const target = tableDataRef.value
         let flag
         // let skipTableName = []
-        target.forEach(n => {
+        target.forEach((n) => {
           let after = n
           after = config.replaceBefore
-            ? after.replace(new RegExp(config.replaceBefore, 'g'), config.replaceAfter)
+            ? after.replace(
+                new RegExp(config.replaceBefore, 'g'),
+                config.replaceAfter
+              )
             : after
           after = config.prefix + after + config.suffix
           if (config.transferCase) {
@@ -145,7 +156,7 @@ export const TableRename = observer(
           replaceAfter: config.replaceAfter, // 替换后
           prefix: config.prefix, // 前缀
           suffix: config.suffix, // 后缀
-          transferCase: config.transferCase // toUpperCase ｜ toLowerCase
+          transferCase: config.transferCase, // toUpperCase ｜ toLowerCase
         })
 
         flag && emitChange()
@@ -167,14 +178,14 @@ export const TableRename = observer(
           replaceAfter: '',
           prefix: '',
           suffix: '',
-          transferCase: ''
+          transferCase: '',
         })
       }
 
       const resetNames = () => {
         const keys = Object.keys(nameMap)
         if (keys.length) {
-          keys.forEach(key => del(nameMap, key))
+          keys.forEach((key) => del(nameMap, key))
           emitChange()
         }
       }
@@ -182,26 +193,28 @@ export const TableRename = observer(
       const emitChange = () => {
         const arr = []
         let _countByName = {}
-        Object.entries(nameMap).forEach(([previousTableName, currentTableName]) => {
-          const originTableName = prevMap[previousTableName]
-          if (originTableName) {
-            arr.push({
-              originTableName,
-              previousTableName,
-              currentTableName
-            })
-            if (currentTableName in _countByName) {
-              _countByName[currentTableName]++
-            } else {
-              _countByName[currentTableName] = 1
+        Object.entries(nameMap).forEach(
+          ([previousTableName, currentTableName]) => {
+            const originTableName = prevMap[previousTableName]
+            if (originTableName) {
+              arr.push({
+                originTableName,
+                previousTableName,
+                currentTableName,
+              })
+              if (currentTableName in _countByName) {
+                _countByName[currentTableName]++
+              } else {
+                _countByName[currentTableName] = 1
+              }
             }
           }
-        })
+        )
         countByName.value = _countByName
         emit('change', arr)
       }
 
-      const scrollToItem = index => {
+      const scrollToItem = (index) => {
         refs.nameList.scrollTop = index * itemSize
       }
 
@@ -217,46 +230,102 @@ export const TableRename = observer(
         tableData: tableDataRef,
         loading,
         countByName,
-        itemSize
+        itemSize,
       }
     },
 
     render() {
       return (
-        <div class="table-rename" v-loading={this.$store.state.dataflow.transformLoading || this.loading}>
+        <div
+          class="table-rename"
+          v-loading={
+            this.$store.state.dataflow.transformLoading || this.loading
+          }
+        >
           <div class="border border-form p-4 mt-4 rounded-2">
-            <div class="font-color-light">{i18n.t('packages_form_table_rename_index_yixiacaozuojin')}</div>
-            <FormItem.BaseItem label={i18n.t('packages_form_table_rename_index_tihuan')}>
+            <div class="font-color-light">
+              {i18n.t('packages_form_table_rename_index_yixiacaozuojin')}
+            </div>
+            <FormItem.BaseItem
+              label={i18n.t('packages_form_table_rename_index_tihuan')}
+            >
               <div class="flex">
-                <ElInput v-model={this.config.replaceBefore} disabled={this.disabled} clearable />
-                <div class="px-4 text-nowrap font-color-light">{i18n.t('packages_form_table_rename_index_gaiwei')}</div>
-                <ElInput v-model={this.config.replaceAfter} disabled={this.disabled} clearable />
+                <ElInput
+                  v-model={this.config.replaceBefore}
+                  disabled={this.disabled}
+                  clearable
+                />
+                <div class="px-4 text-nowrap font-color-light">
+                  {i18n.t('packages_form_table_rename_index_gaiwei')}
+                </div>
+                <ElInput
+                  v-model={this.config.replaceAfter}
+                  disabled={this.disabled}
+                  clearable
+                />
               </div>
             </FormItem.BaseItem>
-            <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_qianzhui')}>
-              <ElInput v-model={this.config.prefix} disabled={this.disabled} clearable />
+            <FormItem.BaseItem
+              label={i18n.t('packages_form_field_processor_index_qianzhui')}
+            >
+              <ElInput
+                v-model={this.config.prefix}
+                disabled={this.disabled}
+                clearable
+              />
             </FormItem.BaseItem>
-            <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_houzhui')}>
-              <ElInput v-model={this.config.suffix} disabled={this.disabled} clearable />
+            <FormItem.BaseItem
+              label={i18n.t('packages_form_field_processor_index_houzhui')}
+            >
+              <ElInput
+                v-model={this.config.suffix}
+                disabled={this.disabled}
+                clearable
+              />
             </FormItem.BaseItem>
-            <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_daxiaoxie')}>
-              <ElSelect v-model={this.config.transferCase} disabled={this.disabled}>
-                <ElOption value="" label={i18n.t('packages_form_field_processor_index_bubian')} />
-                <ElOption value="toUpperCase" label={i18n.t('packages_form_field_processor_index_daxie')} />
-                <ElOption value="toLowerCase" label={i18n.t('packages_form_field_processor_index_xiaoxie')} />
+            <FormItem.BaseItem
+              label={i18n.t('packages_form_field_processor_index_daxiaoxie')}
+            >
+              <ElSelect
+                v-model={this.config.transferCase}
+                disabled={this.disabled}
+              >
+                <ElOption
+                  value=""
+                  label={i18n.t('packages_form_field_processor_index_bubian')}
+                />
+                <ElOption
+                  value="toUpperCase"
+                  label={i18n.t('packages_form_field_processor_index_daxie')}
+                />
+                <ElOption
+                  value="toLowerCase"
+                  label={i18n.t('packages_form_field_processor_index_xiaoxie')}
+                />
               </ElSelect>
             </FormItem.BaseItem>
             <div class="mt-4">
-              <ElButton onClick={this.doModify} disabled={this.disabled} size="small" type="primary">
+              <ElButton
+                onClick={this.doModify}
+                disabled={this.disabled}
+                size="small"
+                type="primary"
+              >
                 {i18n.t('packages_form_table_rename_index_yingyong')}
               </ElButton>
-              <ElButton onClick={this.doReset} disabled={this.disabled} size="small">
+              <ElButton
+                onClick={this.doReset}
+                disabled={this.disabled}
+                size="small"
+              >
                 {i18n.t('packages_form_table_rename_index_qingkong')}
               </ElButton>
             </div>
           </div>
 
-          <FormItem.BaseItem label={i18n.t('packages_form_table_rename_index_sousuobiaoming')}>
+          <FormItem.BaseItem
+            label={i18n.t('packages_form_table_rename_index_sousuobiaoming')}
+          >
             <ElInput
               v-model={this.config.search}
               disabled={this.disabled}
@@ -270,15 +339,27 @@ export const TableRename = observer(
             style={this.listStyle}
           >
             <div class="name-list-header flex flex-shrink-0">
-              <div class="name-list-title px-4">{i18n.t('packages_form_table_rename_index_yuanbiaoming')}</div>
-              <div class="name-list-title pl-5 pr-4">{i18n.t('packages_form_table_rename_index_xinbiaoming')}</div>
+              <div class="name-list-title px-4">
+                {i18n.t('packages_form_table_rename_index_yuanbiaoming')}
+              </div>
+              <div class="name-list-title pl-5 pr-4">
+                {i18n.t('packages_form_table_rename_index_xinbiaoming')}
+              </div>
               <div class="name-list-header-extra px-4">
-                <ElButton disabled={this.disabled} onClick={this.resetNames} size="mini" type="text">
+                <ElButton
+                  disabled={this.disabled}
+                  onClick={this.resetNames}
+                  size="mini"
+                  type="text"
+                >
                   {i18n.t('packages_form_button_reset')}
                 </ElButton>
               </div>
             </div>
-            <div ref="nameList" class="name-list-content font-color-light overflow-auto">
+            <div
+              ref="nameList"
+              class="name-list-content font-color-light overflow-auto"
+            >
               {this.filterNames.length ? (
                 <List
                   disabled={this.disabled}
@@ -389,6 +470,6 @@ export const TableRename = observer(
           </div>
         </div>
       )
-    }
+    },
   })
 )

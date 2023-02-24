@@ -31,7 +31,7 @@ export default {
   props: ['dag', 'id'],
   components: {
     PaperScroller,
-    DFNode
+    DFNode,
   },
   mixins: [editor],
   data() {
@@ -39,7 +39,7 @@ export default {
       NODE_PREFIX,
       loading: false,
       navLines: [],
-      jsPlumbIns: jsPlumb.getInstance(config)
+      jsPlumbIns: jsPlumb.getInstance(config),
     }
   },
   mounted() {
@@ -58,7 +58,7 @@ export default {
       this.resetState()
       this.initNodeType()
       this.openDataflow()
-    }
+    },
   },
   methods: {
     async openDataflow() {
@@ -77,9 +77,7 @@ export default {
     },
     initNodeType() {
       this.addResourceIns(allResourceIns)
-    }
-  }
+    },
+  },
 }
 </script>
-
-<style scoped></style>
