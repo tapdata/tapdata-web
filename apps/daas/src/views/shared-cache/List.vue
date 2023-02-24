@@ -237,7 +237,7 @@ export default {
       this.details = row
       this.info = [
         { label: this.$t('column_creator'), value: row.createUser, icon: 'createUser' },
-        { label: this.$t('column_create_time'), value: row.cacheTimeAtFmt, icon: 'cacheTimeAtFmt' },
+        { label: this.$t('shared_cache_time'), value: row.cacheTimeAtFmt, icon: 'cacheTimeAtFmt' },
         { label: this.$t('column_connection'), value: row.connectionName, icon: 'connectionName' },
         { label: this.$t('column_table'), value: row.tableName, icon: 'table' },
         { label: this.$t('shared_cache_max_memory'), value: row.maxMemory, icon: 'record' }
