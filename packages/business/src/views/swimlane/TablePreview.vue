@@ -1,5 +1,5 @@
 <template>
-  <Drawer class="sw-table-drawer" :visible.sync="visible" width="850px">
+  <Drawer class="sw-table-drawer" :visible.sync="visible" width="850px" v-laoding="loading">
     <header v-if="detailData">
       <div class="table-name mb-4">{{ detailData.name }}</div>
       <span class="mr-2">
@@ -28,7 +28,7 @@
               </el-col>
               <el-col :span="4">
                 <div class="table-dec-label">Columns</div>
-                <div class="table-dec-txt mt-4">2.7M</div>
+                <div class="table-dec-txt mt-4">{{ tableFields.length }}</div>
               </el-col>
               <el-col :span="4">
                 <div class="table-dec-label">Storage Size</div>
@@ -52,7 +52,12 @@
                   <div slot="empty">{{ $t('packages_dag_dag_dialog_field_mapping_no_data') }}</div>
                 </VTable>
               </el-tab-pane>
-              <el-tab-pane label="Sample Data" name="sampleData">Schema</el-tab-pane>
+              <el-tab-pane label="Sample Data" name="sampleData">
+                <el-table :data="sampleData" v-loading="loadingSampleData">
+                  <el-table-column type="index" label="#"></el-table-column>
+                  <el-table-column v-for="item in sampleHeader" :prop="item" :label="item">
+                  </el-table-column> </el-table
+              ></el-tab-pane>
             </el-tabs>
           </section>
           <section class="mt-6">
@@ -88,7 +93,7 @@
 import { Drawer } from '@tap/component'
 import NodeIcon from '@tap/dag/src/components/NodeIcon'
 import { VTable } from '@tap/component'
-import { discoveryApi } from '@tap/api'
+import { discoveryApi, proxyApi } from '@tap/api'
 import i18n from '@/i18n'
 import dayjs from 'dayjs'
 export default {
@@ -102,6 +107,9 @@ export default {
       loading: false,
       detailData: {},
       tableFields: [],
+      sampleData: [],
+      sampleHeader: [],
+      loadingSampleData: false,
       columnsPreview: [
         {
           label: i18n.t('metadata_name'),
@@ -164,8 +172,10 @@ export default {
     open(row) {
       this.visible = true
       this.getTableStorage(row)
+      this.connectionId = row.connectionId
     },
     getTableStorage(row) {
+      this.loading = true
       discoveryApi
         .overViewStorage(row.id)
         .then(res => {
@@ -174,12 +184,30 @@ export default {
             ? dayjs(this.detailData['lastUpdAt']).format('YYYY-MM-DD HH:mm:ss')
             : '-'
           this.tableFields = res?.fields || []
+          this.getSampleData()
         })
         .finally(() => {
           this.loading = false
         })
     },
-    handleClick() {}
+    handleClick() {},
+    getSampleData() {
+      let params = {
+        className: 'QueryDataBaseDataService',
+        method: 'getData',
+        args: [this.connectionId, this.detailData.name]
+      }
+      this.loadingSampleData = true
+      proxyApi
+        .call(params)
+        .then(res => {
+          this.sampleData = res
+          this.sampleHeader = Object.keys(this.sampleData.reduce((o, c) => Object.assign(0, c))) || []
+        })
+        .finally(() => {
+          this.loadingSampleData = false
+        })
+    }
   }
 }
 </script>
