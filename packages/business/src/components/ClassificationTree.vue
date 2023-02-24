@@ -626,13 +626,14 @@ export default {
           objCategory: t.category
         }
       })
-      await discoveryApi.patchTags({
+      /*await discoveryApi.patchTags({
         tagBindingParams,
         tagIds: [from]
-      })
+      })*/
       await discoveryApi.postTags({
         tagBindingParams,
-        tagIds: [to]
+        tagIds: [to],
+        oldTagIds: [from]
       })
       objects.forEach(item => (item.parent_id = to))
       this.$message.success('操作成功')
@@ -673,6 +674,7 @@ export default {
         page: 1,
         pageSize: 10000,
         tagId: node.id,
+        range: 'current',
         fields: {
           allTags: 1
         }
