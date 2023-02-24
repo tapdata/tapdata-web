@@ -1,5 +1,5 @@
-// 按需引入element-ui减少项目体积
-import Vue from 'vue'
+import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
+import * as Vue from 'vue'
 
 import {
   Card,
@@ -68,25 +68,35 @@ import {
   InfiniteScroll,
   Breadcrumb,
   BreadcrumbItem,
-  Empty
+  Empty,
 } from 'element-ui'
 import { getCell, getColumnByCell } from 'element-ui/packages/table/src/util'
 import { getStyle, hasClass } from 'element-ui/src/utils/dom'
 
 // 组件默认尺寸为small
-Vue.prototype.$ELEMENT = { size: 'small' }
+window.$vueApp.config.globalProperties.$ELEMENT = { size: 'small' }
 // 提示框默认不显示箭头
 Tooltip.props.visibleArrow.default = false
 
 // 优化任务名称和标签一起显示，超出显示提示框的逻辑
-Table.components.TableBody.methods.handleCellMouseEnter = function (event, row) {
+Table.components.TableBody.methods.handleCellMouseEnter = function (
+  event,
+  row
+) {
   const table = this.table
   const cell = getCell(event)
 
   if (cell) {
     const column = getColumnByCell(table, cell)
     const hoverState = (table.hoverState = { cell, column, row })
-    table.$emit('cell-mouse-enter', hoverState.row, hoverState.column, hoverState.cell, event)
+    $emit(
+      table,
+      'cell-mouse-enter',
+      hoverState.row,
+      hoverState.column,
+      hoverState.cell,
+      event
+    )
   }
 
   // 判断是否text-overflow, 如果是就显示tooltip
@@ -121,9 +131,11 @@ Table.components.TableBody.methods.handleCellMouseEnter = function (event, row) 
   range.setEnd(cellChild, cellChild.childNodes.length)
   const rangeWidth = range.getBoundingClientRect().width
   const padding =
-    (parseInt(getStyle(cellChild, 'paddingLeft'), 10) || 0) + (parseInt(getStyle(cellChild, 'paddingRight'), 10) || 0)
+    (parseInt(getStyle(cellChild, 'paddingLeft'), 10) || 0) +
+    (parseInt(getStyle(cellChild, 'paddingRight'), 10) || 0)
   if (
-    (rangeWidth + padding > cellChild.offsetWidth || cellChild.scrollWidth > cellChild.offsetWidth) &&
+    (rangeWidth + padding > cellChild.offsetWidth ||
+      cellChild.scrollWidth > cellChild.offsetWidth) &&
     this.$refs.tooltip
   ) {
     showTooltip()
@@ -139,10 +151,13 @@ Select.methods.handleOptionSelect = function (option, byClick) {
     var optionIndex = _this12.getValueIndex(value, option.value)
     if (optionIndex > -1 && byClick) {
       value.splice(optionIndex, 1)
-    } else if (_this12.multipleLimit <= 0 || value.length < _this12.multipleLimit) {
+    } else if (
+      _this12.multipleLimit <= 0 ||
+      value.length < _this12.multipleLimit
+    ) {
       value.push(option.value)
     }
-    _this12.$emit('input', value)
+    $emit(_this12, 'update:value', value)
     _this12.emitChange(value)
     if (option.created) {
       _this12.query = ''
@@ -151,7 +166,7 @@ Select.methods.handleOptionSelect = function (option, byClick) {
     }
     if (_this12.filterable) _this12.$refs.input.focus()
   } else {
-    _this12.$emit('input', option.value)
+    $emit(_this12, 'update:value', option.value)
     _this12.emitChange(option.value)
     _this12.visible = false
   }
@@ -163,80 +178,80 @@ Select.methods.handleOptionSelect = function (option, byClick) {
   })
 }
 
-Vue.component(Card.name, Card)
-Vue.component(InputNumber.name, InputNumber)
-Vue.component(Autocomplete.name, Autocomplete)
-Vue.component(Upload.name, Upload)
-Vue.component(Image.name, Image)
-Vue.component(Tabs.name, Tabs)
-Vue.component(TabPane.name, TabPane)
-Vue.component(Popover.name, Popover)
-Vue.component(Radio.name, Radio)
-Vue.component(RadioGroup.name, RadioGroup)
-Vue.component(RadioButton.name, RadioButton)
-Vue.component(Checkbox.name, Checkbox)
-Vue.component(CheckboxGroup.name, CheckboxGroup)
-Vue.component(CheckboxButton.name, CheckboxButton)
-Vue.component(Dialog.name, Dialog)
-Vue.component(Menu.name, Menu)
-Vue.component(Submenu.name, Submenu)
-Vue.component(MenuItem.name, MenuItem)
-Vue.component(Form.name, Form)
-Vue.component(FormItem.name, FormItem)
-Vue.component(Input.name, Input)
-Vue.component(Button.name, Button)
-Vue.component(ButtonGroup.name, ButtonGroup)
-Vue.component(Select.name, Select)
-Vue.component(Table.name, Table)
-Vue.component(TableColumn.name, TableColumn)
-Vue.component(Option.name, Option)
-Vue.component(OptionGroup.name, OptionGroup)
-Vue.component(Row.name, Row)
-Vue.component(Col.name, Col)
-Vue.component(Pagination.name, Pagination)
-Vue.component(DatePicker.name, DatePicker)
-Vue.component(TimePicker.name, TimePicker)
-Vue.component(Container.name, Container)
-Vue.component(Aside.name, Aside)
-Vue.component(Main.name, Main)
-Vue.component(Header.name, Header)
-Vue.component(Footer.name, Footer)
-Vue.component(Tree.name, Tree)
-Vue.component(Link.name, Link)
-Vue.component(Dropdown.name, Dropdown)
-Vue.component(DropdownItem.name, DropdownItem)
-Vue.component(DropdownMenu.name, DropdownMenu)
+window.$vueApp.component(Card.name, Card)
+window.$vueApp.component(InputNumber.name, InputNumber)
+window.$vueApp.component(Autocomplete.name, Autocomplete)
+window.$vueApp.component(Upload.name, Upload)
+window.$vueApp.component(Image.name, Image)
+window.$vueApp.component(Tabs.name, Tabs)
+window.$vueApp.component(TabPane.name, TabPane)
+window.$vueApp.component(Popover.name, Popover)
+window.$vueApp.component(Radio.name, Radio)
+window.$vueApp.component(RadioGroup.name, RadioGroup)
+window.$vueApp.component(RadioButton.name, RadioButton)
+window.$vueApp.component(Checkbox.name, Checkbox)
+window.$vueApp.component(CheckboxGroup.name, CheckboxGroup)
+window.$vueApp.component(CheckboxButton.name, CheckboxButton)
+window.$vueApp.component(Dialog.name, Dialog)
+window.$vueApp.component(Menu.name, Menu)
+window.$vueApp.component(Submenu.name, Submenu)
+window.$vueApp.component(MenuItem.name, MenuItem)
+window.$vueApp.component(Form.name, Form)
+window.$vueApp.component(FormItem.name, FormItem)
+window.$vueApp.component(Input.name, Input)
+window.$vueApp.component(Button.name, Button)
+window.$vueApp.component(ButtonGroup.name, ButtonGroup)
+window.$vueApp.component(Select.name, Select)
+window.$vueApp.component(Table.name, Table)
+window.$vueApp.component(TableColumn.name, TableColumn)
+window.$vueApp.component(Option.name, Option)
+window.$vueApp.component(OptionGroup.name, OptionGroup)
+window.$vueApp.component(Row.name, Row)
+window.$vueApp.component(Col.name, Col)
+window.$vueApp.component(Pagination.name, Pagination)
+window.$vueApp.component(DatePicker.name, DatePicker)
+window.$vueApp.component(TimePicker.name, TimePicker)
+window.$vueApp.component(Container.name, Container)
+window.$vueApp.component(Aside.name, Aside)
+window.$vueApp.component(Main.name, Main)
+window.$vueApp.component(Header.name, Header)
+window.$vueApp.component(Footer.name, Footer)
+window.$vueApp.component(Tree.name, Tree)
+window.$vueApp.component(Link.name, Link)
+window.$vueApp.component(Dropdown.name, Dropdown)
+window.$vueApp.component(DropdownItem.name, DropdownItem)
+window.$vueApp.component(DropdownMenu.name, DropdownMenu)
 // Vue.component(DatePicker.name, DatePicker)
-Vue.component(Switch.name, Switch)
-Vue.component(Tooltip.name, Tooltip)
-Vue.component(Tag.name, Tag)
-Vue.component(Drawer.name, Drawer)
-Vue.component(Notification.name, Notification)
-Vue.component(Cascader.name, Cascader)
-Vue.component(Alert.name, Alert)
-Vue.component(Steps.name, Steps)
-Vue.component(Step.name, Step)
-Vue.component(Transfer.name, Transfer)
-Vue.component(Badge.name, Badge)
-Vue.component(Progress.name, Progress)
-Vue.component(Collapse.name, Collapse)
-Vue.component(CollapseItem.name, CollapseItem)
-Vue.component(Divider.name, Divider)
-Vue.component(Skeleton.name, Skeleton)
-Vue.component(SkeletonItem.name, SkeletonItem)
-Vue.component(Breadcrumb.name, Breadcrumb)
-Vue.component(BreadcrumbItem.name, BreadcrumbItem)
-Vue.component(Empty.name, Empty)
-Vue.use(Loading.directive)
-Vue.use(InfiniteScroll)
+window.$vueApp.component(Switch.name, Switch)
+window.$vueApp.component(Tooltip.name, Tooltip)
+window.$vueApp.component(Tag.name, Tag)
+window.$vueApp.component(Drawer.name, Drawer)
+window.$vueApp.component(Notification.name, Notification)
+window.$vueApp.component(Cascader.name, Cascader)
+window.$vueApp.component(Alert.name, Alert)
+window.$vueApp.component(Steps.name, Steps)
+window.$vueApp.component(Step.name, Step)
+window.$vueApp.component(Transfer.name, Transfer)
+window.$vueApp.component(Badge.name, Badge)
+window.$vueApp.component(Progress.name, Progress)
+window.$vueApp.component(Collapse.name, Collapse)
+window.$vueApp.component(CollapseItem.name, CollapseItem)
+window.$vueApp.component(Divider.name, Divider)
+window.$vueApp.component(Skeleton.name, Skeleton)
+window.$vueApp.component(SkeletonItem.name, SkeletonItem)
+window.$vueApp.component(Breadcrumb.name, Breadcrumb)
+window.$vueApp.component(BreadcrumbItem.name, BreadcrumbItem)
+window.$vueApp.component(Empty.name, Empty)
+window.$vueApp.use(Loading.directive)
+window.$vueApp.use(InfiniteScroll)
 
 const showMessage = Symbol('showMessage')
 
 class MessageConstructor {
   constructor() {
     const types = ['success', 'warning', 'info', 'error']
-    types.forEach(type => {
-      this[type] = options => this[showMessage](type, options)
+    types.forEach((type) => {
+      this[type] = (options) => this[showMessage](type, options)
     })
   }
 
@@ -265,10 +280,10 @@ class MessageConstructor {
 export const Message = new MessageConstructor()
 export const message = Message
 
-Vue.prototype.$loading = Loading.service
+window.$vueApp.config.globalProperties.$loading = Loading.service
 
-Vue.prototype.$prompt = MessageBox.prompt
-Vue.prototype.$alert = MessageBox.alert
-Vue.prototype.$message = Message
-Vue.prototype.$msgbox = MessageBox
-Vue.prototype.$notify = Notification
+window.$vueApp.config.globalProperties.$prompt = MessageBox.prompt
+window.$vueApp.config.globalProperties.$alert = MessageBox.alert
+window.$vueApp.config.globalProperties.$message = Message
+window.$vueApp.config.globalProperties.$msgbox = MessageBox
+window.$vueApp.config.globalProperties.$notify = Notification

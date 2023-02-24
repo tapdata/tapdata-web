@@ -1,24 +1,40 @@
 <template>
   <div class="system-notification" v-loading="loading">
     <div class="notification-head pt-8 pb-4 px-6">
-      <div class="title font-color-dark fs-7">{{ $t('daas_notification_alarmnotification_gaojingtongzhi') }}</div>
+      <div class="title font-color-dark fs-7">
+        {{ $t('daas_notification_alarmnotification_gaojingtongzhi') }}
+      </div>
     </div>
 
-    <el-tabs v-model="activeName" @tab-click="handleClick">
+    <el-tabs v-model:value="activeName" @tab-click="handleClick">
       <div class="operation">
-        <ElButton type="primary" size="mini" @click="handlePageRead()">{{ $t('notify_mask_read') }}</ElButton>
-        <ElButton size="mini" @click="handleAllRead()">{{ $t('notify_mask_read_all') }}</ElButton>
-        <ElButton size="mini" v-readonlybtn="'home_notice_settings'" @click="handleSetting">
+        <ElButton type="primary" size="mini" @click="handlePageRead()">{{
+          $t('notify_mask_read')
+        }}</ElButton>
+        <ElButton size="mini" @click="handleAllRead()">{{
+          $t('notify_mask_read_all')
+        }}</ElButton>
+        <ElButton
+          size="mini"
+          v-readonlybtn="'home_notice_settings'"
+          @click="handleSetting"
+        >
           {{ $t('notify_setting') }}
         </ElButton>
       </div>
-      <el-tab-pane :label="$t('notify_user_all_notice')" name="first"></el-tab-pane>
-      <el-tab-pane :label="$t('notify_unread_notice')" name="second"></el-tab-pane>
+      <el-tab-pane
+        :label="$t('notify_user_all_notice')"
+        name="first"
+      ></el-tab-pane>
+      <el-tab-pane
+        :label="$t('notify_unread_notice')"
+        name="second"
+      ></el-tab-pane>
     </el-tabs>
     <div class="py-2 pl-4">
       <SelectList
         v-if="options.length"
-        v-model="searchParams.search"
+        v-model:value="searchParams.search"
         :items="options"
         :inner-label="$t('notify_notice_level')"
         none-border
@@ -28,7 +44,10 @@
         @change="getData()"
       ></SelectList>
     </div>
-    <ul class="cuk-list clearfix cuk-list-type-block" v-if="listData && listData.length">
+    <ul
+      class="cuk-list clearfix cuk-list-type-block"
+      v-if="listData && listData.length"
+    >
       <li
         class="list-item"
         :style="{ cursor: item.read ? 'default' : 'pointer' }"
@@ -39,16 +58,23 @@
         <div class="list-item-content">
           <div class="unread-1zPaAXtSu" v-show="!item.read"></div>
           <div class="list-item-desc">
-            <span :class="['level-' + item.levelType]">【{{ item.levelLabel }}】</span>
+            <span :class="['level-' + item.levelType]"
+              >【{{ item.levelLabel }}】</span
+            >
             <span>{{ item.title }}</span>
           </div>
         </div>
       </li>
     </ul>
-    <div v-else class="notification-no-data flex h-100 justify-content-center align-items-center">
+    <div
+      v-else
+      class="notification-no-data flex h-100 justify-content-center align-items-center"
+    >
       <div>
         <VIcon size="140">no-notice</VIcon>
-        <div class="pt-4 fs-8 text-center font-color-slight fw-normal">{{ $t('notify_no_notice') }}</div>
+        <div class="pt-4 fs-8 text-center font-color-slight fw-normal">
+          {{ $t('notify_no_notice') }}
+        </div>
       </div>
     </div>
     <el-pagination
@@ -58,7 +84,7 @@
       :page-sizes="[20, 30, 50, 100]"
       :page-size="pagesize"
       :total="total"
-      :current-page.sync="currentPage"
+      v-model:current-page="currentPage"
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
     >
@@ -67,6 +93,7 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { SelectList } from '@tap/component'
 import { ALARM_LEVEL_MAP } from '@tap/business'
 import { notificationApi } from '@tap/api'
@@ -82,7 +109,7 @@ export default {
       loading: false,
       searchParams: {
         search: '',
-        msg: ''
+        msg: '',
       },
 
       currentPage: 1,
@@ -91,25 +118,25 @@ export default {
       options: [
         {
           label: this.$t('packages_business_components_alert_huifu'),
-          value: 'RECOVERY'
+          value: 'RECOVERY',
         },
         {
           label: this.$t('packages_business_shared_const_yiban'),
-          value: 'NORMAL'
+          value: 'NORMAL',
         },
         {
           label: this.$t('packages_business_shared_const_jinggao'),
-          value: 'WARNING'
+          value: 'WARNING',
         },
         {
           label: this.$t('packages_business_shared_const_yanzhong'),
-          value: 'CRITICAL'
+          value: 'CRITICAL',
         },
         {
           label: this.$t('packages_business_shared_const_jinji'),
-          value: 'EMERGENCY'
-        }
-      ]
+          value: 'EMERGENCY',
+        },
+      ],
     }
   },
   created() {
@@ -121,7 +148,7 @@ export default {
       let where = {
         msgType: 'ALARM',
         page: this.currentPage,
-        size: this.pagesize
+        size: this.pagesize,
       }
       if (this.searchParams.search) {
         where.level = this.searchParams.search
@@ -132,9 +159,9 @@ export default {
       this.loading = true
       notificationApi
         .list(where)
-        .then(data => {
+        .then((data) => {
           let list = data?.items || []
-          this.listData = list.map(item => {
+          this.listData = list.map((item) => {
             item.levelLabel = ALARM_LEVEL_MAP[item.level].text
             item.levelType = ALARM_LEVEL_MAP[item.level].type
             return item
@@ -160,7 +187,7 @@ export default {
         notificationApi.patch({ read: true, id: item.id }).then(() => {
           this.read = read
           let msg = {
-            type: 'notification'
+            type: 'notification',
           }
           this.$ws.ready(() => {
             this.$ws.send(msg)
@@ -172,25 +199,25 @@ export default {
     // 标记本页已读
     handlePageRead() {
       let ids = []
-      this.listData.map(item => {
+      this.listData.map((item) => {
         ids.push(item.id)
       })
       let id = {
-        inq: ids
+        inq: ids,
       }
 
       let data = {
         read: true,
-        id
+        id,
       }
       let read = this.read
       notificationApi.pageRead(data).then(() => {
         // this.getUnreadNum() //未读消息数量
         this.getData()
         this.read = read
-        this.$root.$emit('notificationUpdate')
+        $emit(this.$root, 'notificationUpdate')
         let msg = {
-          type: 'notification'
+          type: 'notification',
         }
         this.$ws.ready(() => {
           this.$ws.send(msg)
@@ -210,9 +237,9 @@ export default {
         // this.getUnreadNum() //未读消息数量
         this.getData()
         this.read = read
-        this.$root.$emit('notificationUpdate')
+        $emit(this.$root, 'notificationUpdate')
         let msg = {
-          type: 'notification'
+          type: 'notification',
         }
         this.$ws.ready(() => {
           this.$ws.send(msg)
@@ -235,18 +262,19 @@ export default {
           key: 'search',
           type: 'select-inner',
           items: this.options,
-          selectedWidth: '200px'
-        }
+          selectedWidth: '200px',
+        },
       ]
     },
     handleSetting() {
       this.$router.push({ name: 'alarmSetting' })
-    }
-  }
+    },
+  },
+  emits: ['notificationUpdate'],
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 $unreadColor: #ee5353;
 .system-notification {
   display: flex;
@@ -345,6 +373,7 @@ $unreadColor: #ee5353;
   padding: 10px 0 20px 0;
 }
 </style>
+
 <style lang="scss">
 .system-notification {
   .el-tabs {

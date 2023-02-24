@@ -8,18 +8,19 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 let count = 0
 export default {
   created() {
     this.getUrl()
     window.updateFavMenu = () => {
-      this.$root.$emit('updateMenu')
+      $emit(this.$root, 'updateMenu')
     }
   },
   watch: {
     $route() {
       this.getUrl()
-    }
+    },
   },
   methods: {
     loadFrame() {
@@ -38,16 +39,15 @@ export default {
             router.replace({
               name: route.name,
               query: Object.assign(route.query, { isNext: count }),
-              params: route.params
+              params: route.params,
             })
           } else {
             setTimeout(this.getUrl, 500)
           }
         }
       })
-    }
-  }
+    },
+  },
+  emits: ['updateMenu'],
 }
 </script>
-
-<style lang="scss" scoped></style>

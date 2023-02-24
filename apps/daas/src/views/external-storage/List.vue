@@ -1,14 +1,26 @@
 <template>
   <section class="external-storage-wrapper">
     <TablePage ref="table" row-key="id" :remoteMethod="getData">
-      <template slot="search">
-        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
+      <template v-slot:search>
+        <FilterBar
+          v-model:value="searchParams"
+          :items="filterItems"
+          @fetch="table.fetch(1)"
+        >
+        </FilterBar>
       </template>
-      <div slot="operation">
-        <ElButton class="btn btn-create" type="primary" size="mini" @click="openDialog()">
-          <span>{{ $t('daas_external_storage_list_chuangjianwaicun') }}</span>
-        </ElButton>
-      </div>
+      <template v-slot:operation>
+        <div>
+          <ElButton
+            class="btn btn-create"
+            type="primary"
+            size="mini"
+            @click="openDialog()"
+          >
+            <span>{{ $t('daas_external_storage_list_chuangjianwaicun') }}</span>
+          </ElButton>
+        </div>
+      </template>
       <ElTableColumn
         show-overflow-tooltip
         min-width="180"
@@ -16,7 +28,12 @@
         prop="name"
       >
         <template #default="{ row }">
-          <ElLink style="display: inline" type="primary" @click.stop="checkDetails(row)">{{ row.name }}</ElLink>
+          <ElLink
+            style="display: inline"
+            type="primary"
+            @click.stop="checkDetails(row)"
+            >{{ row.name }}</ElLink
+          >
         </template>
       </ElTableColumn>
       <ElTableColumn
@@ -39,23 +56,32 @@
       ></ElTableColumn>
       <ElTableColumn width="220" :label="$t('column_operation')">
         <template #default="{ row }">
-          <span class="mr-2">{{ $t('daas_external_storage_list_sheweimoren') }}</span>
+          <span class="mr-2">{{
+            $t('daas_external_storage_list_sheweimoren')
+          }}</span>
           <ElSwitch
             type="text"
-            v-model="row.defaultStorage"
+            v-model:value="row.defaultStorage"
             :disabled="row.defaultStorage"
             @change="handleDefault(row)"
           ></ElSwitch>
           <ElDivider direction="vertical"></ElDivider>
-          <ElButton type="text" :disabled="!row.canDelete" @click="remove(row)">{{ $t('button_delete') }}</ElButton>
+          <ElButton
+            type="text"
+            :disabled="!row.canDelete"
+            @click="remove(row)"
+            >{{ $t('button_delete') }}</ElButton
+          >
         </template>
       </ElTableColumn>
     </TablePage>
     <ElDialog
       append-to-body
-      :visible.sync="dialogVisible"
+      v-model:visible="dialogVisible"
       :title="
-        form.id ? $t('daas_external_storage_list_bianjiwaicun') : $t('daas_external_storage_list_chuangjianwaicun')
+        form.id
+          ? $t('daas_external_storage_list_bianjiwaicun')
+          : $t('daas_external_storage_list_chuangjianwaicun')
       "
     >
       <ElForm
@@ -67,18 +93,27 @@
         :model="form"
         :rules="rules"
       >
-        <ElFormItem :label="$t('daas_external_storage_list_waicunmingcheng')" prop="name">
-          <ElInput v-model="form.name"></ElInput>
+        <ElFormItem
+          :label="$t('daas_external_storage_list_waicunmingcheng')"
+          prop="name"
+        >
+          <ElInput v-model:value="form.name"></ElInput>
         </ElFormItem>
-        <ElFormItem required :label="$t('daas_external_storage_list_waicunleixing')">
-          <ElSelect v-model="form.type">
+        <ElFormItem
+          required
+          :label="$t('daas_external_storage_list_waicunleixing')"
+        >
+          <ElSelect v-model:value="form.type">
             <ElOption label="MongoDB" value="mongodb"></ElOption>
             <ElOption label="RocksDB" value="rocksdb"></ElOption>
           </ElSelect>
         </ElFormItem>
-        <ElFormItem :label="$t('daas_external_storage_list_cunchulujing')" prop="uri">
+        <ElFormItem
+          :label="$t('daas_external_storage_list_cunchulujing')"
+          prop="uri"
+        >
           <ElInput
-            v-model="form.uri"
+            v-model:value="form.uri"
             :placeholder="
               form.type === 'mongodb'
                 ? 'Example: mongodb://admin:password@127.0.0.1:27017/mydb?replicaSet=xxx&authSource=admin'
@@ -94,18 +129,24 @@
           required
           prop="table"
         >
-          <ElInput v-model="form.table"></ElInput>
+          <ElInput v-model:value="form.table"></ElInput>
         </ElFormItem>
         <ElFormItem :label="$t('daas_external_storage_list_sheweimoren')">
-          <ElSwitch v-model="form.defaultStorage"></ElSwitch>
+          <ElSwitch v-model:value="form.defaultStorage"></ElSwitch>
         </ElFormItem>
       </ElForm>
-      <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="dialogVisible = false">{{ $t('button_cancel') }}</ElButton>
-        <ElButton type="primary" size="mini" @click="submit">{{ $t('button_confirm') }}</ElButton>
-      </span>
+      <template v-slot:footer>
+        <span class="dialog-footer">
+          <ElButton size="mini" @click="dialogVisible = false">{{
+            $t('button_cancel')
+          }}</ElButton>
+          <ElButton type="primary" size="mini" @click="submit">{{
+            $t('button_confirm')
+          }}</ElButton>
+        </span>
+      </template>
     </ElDialog>
-    <Drawer class="shared-cache-details" :visible.sync="isShowDetails">
+    <Drawer class="shared-cache-details" v-model:visible="isShowDetails">
       <div v-if="details.id" class="shared-cache-details--header flex pb-3">
         <div class="img-box">
           <VIcon class="icon">text</VIcon>
@@ -126,6 +167,7 @@
     </Drawer>
   </section>
 </template>
+
 <script>
 import i18n from '@/i18n'
 
@@ -142,7 +184,9 @@ export default {
   data() {
     var checkTable = (rule, value, callback) => {
       if (this.form.type === 'mongodb' && value === '') {
-        callback(new Error(i18n.t('daas_external_storage_list_qingshuruwaicun2')))
+        callback(
+          new Error(i18n.t('daas_external_storage_list_qingshuruwaicun2'))
+        )
       } else {
         callback()
       }
@@ -153,35 +197,47 @@ export default {
       order: 'createAt DESC',
       searchParams: {
         type: '',
-        keyword: ''
+        keyword: '',
       },
       typeMapping: {
         mongodb: 'MongoDB',
         rocksdb: 'RocksDB',
-        memory: 'MEM'
+        memory: 'MEM',
       },
       dialogVisible: false,
       form: {},
       rules: {
-        name: [{ required: true, message: i18n.t('daas_external_storage_list_qingshuruwaicun'), trigger: 'blur' }],
-        uri: [{ required: true, message: i18n.t('daas_external_storage_list_qingshurucunchu'), trigger: 'blur' }],
-        table: [{ validator: checkTable, trigger: 'blur' }]
+        name: [
+          {
+            required: true,
+            message: i18n.t('daas_external_storage_list_qingshuruwaicun'),
+            trigger: 'blur',
+          },
+        ],
+        uri: [
+          {
+            required: true,
+            message: i18n.t('daas_external_storage_list_qingshurucunchu'),
+            trigger: 'blur',
+          },
+        ],
+        table: [{ validator: checkTable, trigger: 'blur' }],
       },
       isShowDetails: false,
       details: '',
       info: [],
-      labelWidth: '120px'
+      labelWidth: '120px',
     }
   },
   computed: {
     table() {
       return this.$refs.table
-    }
+    },
   },
   watch: {
     '$route.query'() {
       this.table.fetch(1)
-    }
+    },
   },
   created() {
     this.searchParams = Object.assign(this.searchParams, this.$route.query)
@@ -196,7 +252,7 @@ export default {
         const label = this.typeMapping[key]
         typeOptions.push({
           label,
-          value: key
+          value: key,
         })
       }
       this.filterItems = [
@@ -204,13 +260,15 @@ export default {
           label: this.$t('connection_list_form_database_type'),
           key: 'type', //对象分类
           type: 'select-inner',
-          items: typeOptions
+          items: typeOptions,
         },
         {
-          placeholder: i18n.t('daas_data_discovery_previewdrawer_qingshurumingcheng'),
+          placeholder: i18n.t(
+            'daas_data_discovery_previewdrawer_qingshurumingcheng'
+          ),
           key: 'keyword', //输入搜索名称
-          type: 'input'
-        }
+          type: 'input',
+        },
       ]
     },
     getData({ page }) {
@@ -227,29 +285,32 @@ export default {
         order: this.order,
         limit: size,
         skip: (current - 1) * size,
-        where
+        where,
       }
       return externalStorageApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
-          let list = (data?.items || []).map(item => {
+        .then((data) => {
+          let list = (data?.items || []).map((item) => {
             const regResult =
               /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
                 item.uri
               )
             if (regResult && regResult.groups && regResult.groups.password) {
               const { username, host, database, query } = regResult.groups
-              item.uri = `mongodb://${username}:***@${host}/${database}${query ? '/' + query : ''}`
+              item.uri = `mongodb://${username}:***@${host}/${database}${
+                query ? '/' + query : ''
+              }`
             }
             item.typeFmt = this.typeMapping[item.type] || '-'
-            item.createTimeFmt = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') || '-'
+            item.createTimeFmt =
+              dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') || '-'
             return item
           })
           return {
             total: data?.total,
-            data: list
+            data: list,
           }
         })
     },
@@ -262,14 +323,14 @@ export default {
             type: 'mongodb',
             table: '',
             uri: '',
-            defaultStorage: false
+            defaultStorage: false,
           }
       this.$nextTick(() => {
         this.$refs?.form?.clearValidate()
       })
     },
     submit() {
-      this.$refs.form.validate(async valid => {
+      this.$refs.form.validate(async (valid) => {
         if (valid) {
           this.loading = true
           let { id, name, type, table, uri, defaultStorage } = this.form
@@ -279,7 +340,7 @@ export default {
             type,
             table,
             uri,
-            defaultStorage
+            defaultStorage,
           }
           const catchFunc = () => {
             this.loading = false
@@ -313,10 +374,14 @@ export default {
       })
     },
     async remove(row) {
-      const flag = await this.$confirm(i18n.t('daas_external_storage_list_querenshanchuwai'), '', {
-        type: 'warning',
-        showClose: false
-      })
+      const flag = await this.$confirm(
+        i18n.t('daas_external_storage_list_querenshanchuwai'),
+        '',
+        {
+          type: 'warning',
+          showClose: false,
+        }
+      )
       if (flag) {
         await externalStorageApi.delete(row.id)
         this.table.fetch()
@@ -329,18 +394,35 @@ export default {
         {
           label: this.$t('daas_external_storage_list_waicunleixing'),
           value: row.typeFmt,
-          icon: 'name'
+          icon: 'name',
         },
-        { label: this.$t('daas_external_storage_list_waicunbiaoming'), value: row.table, icon: 'table' },
-        { label: this.$t('column_create_time'), value: row.createTimeFmt, icon: 'cacheTimeAtFmt' },
-        { label: this.$t('daas_external_storage_list_cunchulujing'), value: row.uri, icon: 'database' },
-        { label: this.$t('daas_external_storage_list_sheweimoren'), value: row.defaultStorage, icon: 'record' }
+        {
+          label: this.$t('daas_external_storage_list_waicunbiaoming'),
+          value: row.table,
+          icon: 'table',
+        },
+        {
+          label: this.$t('column_create_time'),
+          value: row.createTimeFmt,
+          icon: 'cacheTimeAtFmt',
+        },
+        {
+          label: this.$t('daas_external_storage_list_cunchulujing'),
+          value: row.uri,
+          icon: 'database',
+        },
+        {
+          label: this.$t('daas_external_storage_list_sheweimoren'),
+          value: row.defaultStorage,
+          icon: 'record',
+        },
       ]
       this.isShowDetails = true
-    }
-  }
+    },
+  },
 }
 </script>
+
 <style lang="scss" scoped>
 .external-storage-wrapper {
   height: 100%;

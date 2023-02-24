@@ -30,23 +30,27 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 export default {
   name: 'CustomerService',
   props: {
-    value: Boolean
+    value: Boolean,
   },
   methods: {
     close() {
-      this.$emit('input', false)
-    }
-  }
+      $emit(this, 'update:value', false)
+    },
+  },
+  emits: ['update:value'],
 }
 </script>
+
 <style>
 .customer-service-wrap .el-card__body {
   padding: 0;
 }
 </style>
+
 <style lang="scss" scoped>
 .customer-service-wrap {
   position: fixed;

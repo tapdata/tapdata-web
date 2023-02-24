@@ -6,12 +6,12 @@
     :title="$t('dataExplorer_query')"
     :close-on-click-modal="false"
     :append-to-body="true"
-    :visible.sync="dialogFormVisible"
+    v-model:visible="dialogFormVisible"
   >
     <div class="dialog-content">
       <!-- 过滤条件 -->
       <QueryBuild
-        v-model="condition"
+        v-model:value="condition"
         :fields="fields"
         :max-level="3"
         field-label="text"
@@ -22,19 +22,30 @@
           {{ $t('dataExplorer_add_favorite') }}
         </el-button>
         <!-- <el-button type="primary" @click="search(1)" size="small">
-          {{ $t('dataExplorer_query') }}
-        </el-button> -->
+            {{ $t('dataExplorer_query') }}
+          </el-button> -->
       </div>
     </div>
     <div class="browse_rows">
       <h3 class="pb-4">{{ $t('dataExplorer_show_column') }}</h3>
-      <el-checkbox :indeterminate="isIndeterminate" v-model="showAllColumn" @change="showAllColumns">{{
-        $t('role_all_check')
-      }}</el-checkbox>
+      <el-checkbox
+        :indeterminate="isIndeterminate"
+        v-model:value="showAllColumn"
+        @change="showAllColumns"
+        >{{ $t('role_all_check') }}</el-checkbox
+      >
       <div style="margin: 15px 0"></div>
-      <el-checkbox-group v-model="selectionRow" @change="handleCheckedFieldChange">
+      <el-checkbox-group
+        v-model:value="selectionRow"
+        @change="handleCheckedFieldChange"
+      >
         <el-checkbox
-          v-for="item in header.filter(v => v.value !== '__operation' && v.value !== '__tapd8' && v.value !== '_id')"
+          v-for="item in header.filter(
+            (v) =>
+              v.value !== '__operation' &&
+              v.value !== '__tapd8' &&
+              v.value !== '_id'
+          )"
           :label="item.text"
           :key="item.value"
           >{{ item.text }}</el-checkbox
@@ -42,16 +53,21 @@
       </el-checkbox-group>
     </div>
 
-    <div slot="footer" class="dialog-footer">
-      <el-button class="cancel" @click="handleClose()" size="mini">
-        {{ $t('button_cancel') }}
-      </el-button>
-      <el-button type="primary" @click="save()" size="mini">{{ $t('button_confirm') }}</el-button>
-    </div>
+    <template v-slot:footer>
+      <div class="dialog-footer">
+        <el-button class="cancel" @click="handleClose()" size="mini">
+          {{ $t('button_cancel') }}
+        </el-button>
+        <el-button type="primary" @click="save()" size="mini">{{
+          $t('button_confirm')
+        }}</el-button>
+      </div>
+    </template>
   </el-dialog>
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import QueryBuild from '@/components/QueryBuild'
 import { usersApi } from '@tap/api'
 export default {
@@ -60,20 +76,20 @@ export default {
   props: {
     fieldData: {
       required: true,
-      value: Array
+      value: Array,
     },
     header: {
       required: true,
-      value: Array
+      value: Array,
     },
     conditionData: {
       required: true,
-      value: Object
+      value: Object,
     },
     dialogVisible: {
       required: true,
-      value: Boolean
-    }
+      value: Boolean,
+    },
   },
   data() {
     return {
@@ -81,12 +97,12 @@ export default {
       condition: null,
       isIndeterminate: true,
       showAllColumn: true,
-      selectionRow: []
+      selectionRow: [],
     }
   },
   created() {
     this.condition = this.conditionData
-    this.fieldData.forEach(v => {
+    this.fieldData.forEach((v) => {
       if (v.show) {
         this.selectionRow.push(v.value)
       }
@@ -95,31 +111,33 @@ export default {
   computed: {
     fields() {
       let _this = this
-      let fieldData = _this.fieldData.map(item => {
+      let fieldData = _this.fieldData.map((item) => {
         if (item) {
-          item.field_name = item.alias_name ? item.alias_name + ' ( ' + item.field_name + ' ) ' : item.field_name
+          item.field_name = item.alias_name
+            ? item.alias_name + ' ( ' + item.field_name + ' ) '
+            : item.field_name
           item.javaType = item.data_type || item.javaType
           return item
         }
       })
       return fieldData
-    }
+    },
   },
   watch: {
     'model.requiredQueryField'() {
       this.handlerQueryField()
-    }
+    },
   },
   methods: {
     // 全选
     showAllColumns(val) {
       this.selectionRow = val
-        ? this.fields.map(item => {
+        ? this.fields.map((item) => {
             return item.value
           })
         : []
       this.isIndeterminate = false
-      this.fields.forEach(item => (item.show = true))
+      this.fields.forEach((item) => (item.show = true))
       // setTimeout(() => {
       //   this.querysavefn()
       // }, 2000)
@@ -128,8 +146,9 @@ export default {
     handleCheckedFieldChange(value) {
       let checkedCount = value.length
       this.showAllColumn = checkedCount === this.fields.length
-      this.isIndeterminate = checkedCount > 0 && checkedCount < this.fields.length
-      this.fields.forEach(v => {
+      this.isIndeterminate =
+        checkedCount > 0 && checkedCount < this.fields.length
+      this.fields.forEach((v) => {
         if (value.includes(v.value)) {
           v.show = true
         }
@@ -141,21 +160,23 @@ export default {
     // 保存
     save() {
       this.dialogFormVisible = false
-      this.$emit('backShowColumn', this.selectionRow, this.condition)
-      this.$emit('backDialogVisible', false)
+      $emit(this, 'backShowColumn', this.selectionRow, this.condition)
+      $emit(this, 'backDialogVisible', false)
     },
 
     // 收藏
     handleFavorite() {
       this.$prompt('', this.$t('dataExplorer_add_favorite_name'), {
         customClass: 'change-name-prompt',
-        inputValue: this.favoriteName
-      }).then(flag => {
+        inputValue: this.favoriteName,
+      }).then((flag) => {
         if (flag) {
           let exists = false
-          usersApi.get().then(data => {
+          usersApi.get().then((data) => {
             if (data) {
-              let collect = data.favorites.filter(v => v.meta.title === this.favoriteName)
+              let collect = data.favorites.filter(
+                (v) => v.meta.title === this.favoriteName
+              )
               exists = collect.length > 0
             }
             if (exists) {
@@ -170,13 +191,17 @@ export default {
       if (typeof val === 'object') {
         if (Array.isArray(val)) {
           let result = []
-          for (let i = 0; i < val.length; i++) result.push(this.serializationToRestFilter(`${key}[${i}]`, val[i]))
+          for (let i = 0; i < val.length; i++)
+            result.push(this.serializationToRestFilter(`${key}[${i}]`, val[i]))
           return result.join('&')
         } else {
           let result = []
           for (let name in val) {
             if (name && val.hasOwnProperty(name)) {
-              let temp = this.serializationToRestFilter(`${key}[${name}]`, val[name])
+              let temp = this.serializationToRestFilter(
+                `${key}[${name}]`,
+                val[name]
+              )
               if (temp) result.push(temp)
             }
           }
@@ -189,9 +214,10 @@ export default {
     // 关闭弹窗
     handleClose() {
       this.dialogFormVisible = false
-      this.$emit('backDialogVisible', false)
-    }
-  }
+      $emit(this, 'backDialogVisible', false)
+    },
+  },
+  emits: ['backShowColumn', 'backDialogVisible'],
 }
 </script>
 

@@ -3,21 +3,36 @@
     <div class="module-warp-box section-wrap-box">
       <div class="module-form">
         <ElForm :model="createForm" ref="form" size="small">
-          <ElFormItem :label="$t('module_form_connection')" prop="datasource" :rules="rules.datasource" required>
+          <ElFormItem
+            :label="$t('module_form_connection')"
+            prop="datasource"
+            :rules="rules.datasource"
+            required
+          >
             <ElSelect
-              v-model="createForm.datasource"
+              v-model:value="createForm.datasource"
               filterable
               size="mini"
               :placeholder="$t('common_placeholder_select')"
               :disabled="!!$route.query.id"
             >
-              <ElOption v-for="item in databaseOptions" :key="item.value" :label="item.label" :value="item.value">
+              <ElOption
+                v-for="item in databaseOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
               </ElOption>
             </ElSelect>
           </ElFormItem>
-          <ElFormItem :label="$t('module_form_tablename')" prop="tablename" :rules="rules.tablename" required>
+          <ElFormItem
+            :label="$t('module_form_tablename')"
+            prop="tablename"
+            :rules="rules.tablename"
+            required
+          >
             <VirtualSelect
-              v-model="createForm.tablename"
+              v-model:value="createForm.tablename"
               size="mini"
               filterable
               clearable
@@ -31,13 +46,24 @@
             <!-- @change="handleFieldFilterType" -->
           </ElFormItem>
         </ElForm>
-        <FormBuilder ref="form" v-model="createForm" :config="createFormConfig"></FormBuilder>
+        <FormBuilder
+          ref="form"
+          v-model:value="createForm"
+          :config="createFormConfig"
+        ></FormBuilder>
         <div class="url-tip pb-5">
           <span>{{ $t('module_form_path') }}</span>
           <span>
-            <ElRadioGroup v-model="createForm.apiType" @change="changeApiType">
-              <ElRadio label="defaultApi">{{ $t('module_form_default_Api') }}</ElRadio>
-              <ElRadio label="customerApi">{{ $t('module_form_customer_Api') }}</ElRadio>
+            <ElRadioGroup
+              v-model:value="createForm.apiType"
+              @change="changeApiType"
+            >
+              <ElRadio label="defaultApi">{{
+                $t('module_form_default_Api')
+              }}</ElRadio>
+              <ElRadio label="customerApi">{{
+                $t('module_form_customer_Api')
+              }}</ElRadio>
             </ElRadioGroup>
             <div class="pt-4">{{ createForm.path }}</div>
           </span>
@@ -47,55 +73,98 @@
             <span>{{ $t('module_form_path') }}</span>
             <div class="module-path-button">
               <el-button
-                v-if="createForm.apiType == 'customerApi' && createForm.paths.length < 1"
+                v-if="
+                  createForm.apiType == 'customerApi' &&
+                  createForm.paths.length < 1
+                "
                 size="mini"
                 type="primary"
                 @click="customeApiPath"
                 >{{ $t('module_form_customer_Api') }}</el-button
               >
               <!-- <el-button size="mini" v-if="apiAuthority === 'edit'" @click="updateAuthority">{{
-                $t('module_form_security')
+                  $t('module_form_security')
+                }}</el-button>
+                <el-button size="mini" v-else @click="updateAuthority">{{ $t('module_form_edit') }}</el-button> -->
+              <el-button
+                size="mini"
+                v-if="createForm.status === 'active'"
+                @click="openDocument"
+                >{{ $t('module_form_document') }}</el-button
+              >
+              <el-button size="mini" v-if="createForm.status === 'active'">{{
+                $t('module_form_preview')
               }}</el-button>
-              <el-button size="mini" v-else @click="updateAuthority">{{ $t('module_form_edit') }}</el-button> -->
-              <el-button size="mini" v-if="createForm.status === 'active'" @click="openDocument">{{
-                $t('module_form_document')
-              }}</el-button>
-              <el-button size="mini" v-if="createForm.status === 'active'">{{ $t('module_form_preview') }}</el-button>
             </div>
           </div>
           <div class="module-path-content">
-            <div class="module-path-item" v-for="(item, index) in createForm.paths" :key="index">
+            <div
+              class="module-path-item"
+              v-for="(item, index) in createForm.paths"
+              :key="index"
+            >
               <div class="module-path-item-group">
                 <div class="module-path-item-button">
-                  <span class="module-path-item-method" :class="'label-' + getstyle(item)">{{ item.method }}</span>
-                  <span class="module-path-item-description pl-2">{{ item.description }}</span>
+                  <span
+                    class="module-path-item-method"
+                    :class="'label-' + getstyle(item)"
+                    >{{ item.method }}</span
+                  >
+                  <span class="module-path-item-description pl-2">{{
+                    item.description
+                  }}</span>
                   <span class="module-path-item-text">{{ item.path }}</span>
                 </div>
                 <div class="module-path-button-box">
                   <div class="module-path-item-role fw-sub">
                     <span>{{ $t('module_form_permission') }}: </span>
-                    <el-select v-model="item.acl" multiple size="mini" :placeholder="$t('common_placeholder_select')">
-                      <el-option v-for="item in roles" :key="item.name" :label="item.name" :value="item.name">
+                    <el-select
+                      v-model:value="item.acl"
+                      multiple
+                      size="mini"
+                      :placeholder="$t('common_placeholder_select')"
+                    >
+                      <el-option
+                        v-for="item in roles"
+                        :key="item.name"
+                        :label="item.name"
+                        :value="item.name"
+                      >
                       </el-option>
                     </el-select>
                   </div>
                   <div style="margin-left: 10px">
-                    <el-tooltip class="item" effect="dark" :content="$t('button_delete')" placement="bottom">
-                      <ElButton type="text" title="remove" size="mini" @click="removeApiPath(index)">
+                    <el-tooltip
+                      class="item"
+                      effect="dark"
+                      :content="$t('button_delete')"
+                      placement="bottom"
+                    >
+                      <ElButton
+                        type="text"
+                        title="remove"
+                        size="mini"
+                        @click="removeApiPath(index)"
+                      >
                         <!-- <i class="fa fa-times el-icon-delete"></i> -->
                         {{ $t('button_delete') }}
                       </ElButton>
                     </el-tooltip>
                     <!-- <el-tooltip class="item" effect="dark" :content="$t('button_edit')" placement="left">
-                      <span title="edit" @click="editApiPath(item)" v-if="item.type !== 'preset'"
-                        ><i class="fa fa-edit el-icon-edit-outline"></i
-                      ></span>
-                    </el-tooltip> -->
+                        <span title="edit" @click="editApiPath(item)" v-if="item.type !== 'preset'"
+                          ><i class="fa fa-edit el-icon-edit-outline"></i
+                        ></span>
+                      </el-tooltip> -->
                   </div>
                 </div>
               </div>
             </div>
-            <div class="module-path-item pb-5" v-if="createForm.paths.length === 0">No record found</div>
+            <div
+              class="module-path-item pb-5"
+              v-if="createForm.paths.length === 0"
+            >
+              No record found
+            </div>
           </div>
         </div>
         <CustomerApiForm
@@ -105,12 +174,23 @@
           @dialogVisible="handleDialogVisible"
           @backApiPath="handleBackApiPath"
         ></CustomerApiForm>
-        <SelectClassify ref="classify" :types="['api']" @operationsClassify="saveClassify"></SelectClassify>
+        <SelectClassify
+          ref="classify"
+          :types="['api']"
+          @operationsClassify="saveClassify"
+        ></SelectClassify>
       </div>
       <div class="module-tags py-5">
         <span>{{ $t('module_form_tags') }}</span>
-        <span v-for="item in createForm.listtags" :key="item.id">{{ item.value }}</span>
-        <el-button type="text" size="small" class="pl-5" @click="handleOpenTag()">
+        <span v-for="item in createForm.listtags" :key="item.id">{{
+          item.value
+        }}</span>
+        <el-button
+          type="text"
+          size="small"
+          class="pl-5"
+          @click="handleOpenTag()"
+        >
           {{ $t('module_form_choose') }}
         </el-button>
       </div>
@@ -118,7 +198,9 @@
         <el-button class="cancel" @click="handleBack()" size="mini">
           {{ $t('button_back') }}
         </el-button>
-        <el-button type="primary" @click="submit()" size="mini"> {{ $t('button_save') }}</el-button>
+        <el-button type="primary" @click="submit()" size="mini">
+          {{ $t('button_save') }}</el-button
+        >
       </div>
     </div>
   </section>
@@ -129,7 +211,13 @@ import { ApiClient } from '@tap/api'
 import CustomerApiForm from './CustomerApiForm'
 import { VirtualSelect } from '@tap/component'
 import { SelectClassify } from '@tap/business'
-import { metadataInstancesApi, modulesApi, apiServerApi, roleApi, connectionsApi } from '@tap/api'
+import {
+  metadataInstancesApi,
+  modulesApi,
+  apiServerApi,
+  roleApi,
+  connectionsApi,
+} from '@tap/api'
 export default {
   name: 'ApiPublishForm',
   components: { CustomerApiForm, SelectClassify, VirtualSelect },
@@ -155,7 +243,7 @@ export default {
         status: 'pending',
         createType: '',
         paths: [],
-        listtags: []
+        listtags: [],
       },
       roles: [],
       fields: [],
@@ -165,19 +253,33 @@ export default {
       databaseOptions: [],
       tableNameSelectConfig: {
         size: 'mini',
-        placeholder: this.$t('editor_cell_data_node_collection_form_collection_placeholder'),
+        placeholder: this.$t(
+          'editor_cell_data_node_collection_form_collection_placeholder'
+        ),
         loading: false,
         filterable: true,
         options: [],
         allowCreate: false,
         defaultFirstOption: false,
         clearable: true,
-        disabled: false
+        disabled: false,
       },
       rules: {
-        datasource: [{ required: true, trigger: 'blur', message: `Please select database` }],
-        tablename: [{ required: true, trigger: 'blur', message: `Please select tablename` }]
-      }
+        datasource: [
+          {
+            required: true,
+            trigger: 'blur',
+            message: `Please select database`,
+          },
+        ],
+        tablename: [
+          {
+            required: true,
+            trigger: 'blur',
+            message: `Please select tablename`,
+          },
+        ],
+      },
     }
   },
   created() {
@@ -190,7 +292,12 @@ export default {
 
     this.getRoles()
     let prefix = this.createForm.prefix ? this.createForm.prefix + '/' : ''
-    this.createForm.path = '/api/' + this.createForm.apiVersion.toLowerCase() + '/' + prefix + this.createForm.basePath
+    this.createForm.path =
+      '/api/' +
+      this.createForm.apiVersion.toLowerCase() +
+      '/' +
+      prefix +
+      this.createForm.basePath
   },
   watch: {
     // 数据库切换获取表
@@ -198,7 +305,8 @@ export default {
       this.getTableData()
     },
     'createForm.apiType'(newType, oldType) {
-      if (this.$route.query.id && (newType === oldType || oldType === '')) return
+      if (this.$route.query.id && (newType === oldType || oldType === ''))
+        return
       this.createForm.paths = []
       if (newType === 'defaultApi') {
         this.initPresetPaths()
@@ -215,7 +323,7 @@ export default {
     },
     'createForm.prefix'() {
       this.updatePath()
-    }
+    },
   },
   methods: {
     // 表名称改变
@@ -229,11 +337,11 @@ export default {
           where: {
             'source.id': this.createForm.datasource,
             original_name: this.createForm.tablename,
-            is_deleted: false
-          }
-        })
+            is_deleted: false,
+          },
+        }),
       }
-      metadataInstancesApi.get(params).then(data => {
+      metadataInstancesApi.get(params).then((data) => {
         let table = data?.items?.[0]
         this.createForm.fields = this.fields = table.fields
       })
@@ -260,22 +368,42 @@ export default {
     updatePath() {
       let prefix = this.createForm.prefix ? this.createForm.prefix + '/' : ''
       this.createForm.path =
-        '/api/' + this.createForm.apiVersion.toLowerCase() + '/' + prefix + this.createForm.basePath
-      this.createForm.paths.forEach(v => {
+        '/api/' +
+        this.createForm.apiVersion.toLowerCase() +
+        '/' +
+        prefix +
+        this.createForm.basePath
+      this.createForm.paths.forEach((v) => {
         let prefix = this.createForm.prefix ? this.createForm.prefix + '/' : ''
         if (['findById', 'updateById', 'deleteById'].indexOf(v.name) !== -1) {
-          v.path = '/api/' + this.createForm.apiVersion + '/' + prefix + this.createForm.basePath + '/{id}'
+          v.path =
+            '/api/' +
+            this.createForm.apiVersion +
+            '/' +
+            prefix +
+            this.createForm.basePath +
+            '/{id}'
         } else if (v.type !== 'custom') {
-          v.path = '/api/' + this.createForm.apiVersion + '/' + prefix + this.createForm.basePath
+          v.path =
+            '/api/' +
+            this.createForm.apiVersion +
+            '/' +
+            prefix +
+            this.createForm.basePath
         } else {
-          v.path = '/api/' + this.createForm.apiVersion + '/' + prefix + this.createForm.basePath //+'/'+ v.namespace;//+'/'+ v.name//"/cust/"+
+          v.path =
+            '/api/' +
+            this.createForm.apiVersion +
+            '/' +
+            prefix +
+            this.createForm.basePath //+'/'+ v.namespace;//+'/'+ v.name//"/cust/"+
         }
       })
     },
     // 获取api数据
     getDetail() {
       let _this = this
-      modulesApi.get([this.$route.query.id]).then(data => {
+      modulesApi.get([this.$route.query.id]).then((data) => {
         if (data) {
           Object.assign(_this.createForm, data)
           _this.fields = data?.fields
@@ -290,21 +418,24 @@ export default {
         name: true,
         connection_type: true,
         status: true,
-        user_id: true
+        user_id: true,
       }
       let where = {
-        or: [{ connection_type: 'source_and_target' }, { connection_type: 'target' }]
+        or: [
+          { connection_type: 'source_and_target' },
+          { connection_type: 'target' },
+        ],
       }
       let params = {
         fields: fields,
-        where
+        where,
       }
-      connectionsApi.listAll(params).then(data => {
+      connectionsApi.listAll(params).then((data) => {
         let options = data || []
-        options = options.map(db => {
+        options = options.map((db) => {
           return {
             label: db.name,
-            value: db.id
+            value: db.id,
           }
         })
         this.databaseOptions = options
@@ -314,14 +445,14 @@ export default {
     getTableData() {
       metadataInstancesApi
         .getTables(this.createForm.datasource)
-        .then(result => {
+        .then((result) => {
           let schemas = result || []
           if (schemas?.length) {
             let tableList = schemas
               .sort((t1, t2) => (t1 > t2 ? 1 : t1 === t2 ? 0 : -1))
-              .map(item => ({
+              .map((item) => ({
                 label: item,
-                value: item
+                value: item,
               }))
             this.tableNameSelectConfig.options = tableList
           }
@@ -336,61 +467,122 @@ export default {
       let prefix = this.createForm.prefix ? this.createForm.prefix + '/' : ''
       this.createForm.paths = []
       let preset = {
-        path: '/api/' + this.createForm.apiVersion + '/' + prefix + this.createForm.basePath,
+        path:
+          '/api/' +
+          this.createForm.apiVersion +
+          '/' +
+          prefix +
+          this.createForm.basePath,
         method: 'POST',
         description: this.$t('module_form_create_a_new_record'),
         name: 'create',
         result: 'Document',
         type: 'preset',
-        acl: ['admin']
+        acl: ['admin'],
       }
       this.createForm.paths.push(preset)
       preset = {
-        path: '/api/' + this.createForm.apiVersion + '/' + prefix + this.createForm.basePath + '/{id}',
+        path:
+          '/api/' +
+          this.createForm.apiVersion +
+          '/' +
+          prefix +
+          this.createForm.basePath +
+          '/{id}',
         method: 'GET',
         description: this.$t('module_form_get_record_by_id'),
         name: 'findById',
-        params: [{ name: 'id', type: 'string', defaultvalue: 1, description: 'document id' }],
+        params: [
+          {
+            name: 'id',
+            type: 'string',
+            defaultvalue: 1,
+            description: 'document id',
+          },
+        ],
         result: 'Document',
         type: 'preset',
-        acl: ['admin']
+        acl: ['admin'],
       }
       this.createForm.paths.push(preset)
       preset = {
-        path: '/api/' + this.createForm.apiVersion + '/' + prefix + this.createForm.basePath + '/{id}',
+        path:
+          '/api/' +
+          this.createForm.apiVersion +
+          '/' +
+          prefix +
+          this.createForm.basePath +
+          '/{id}',
         method: 'PATCH',
         name: 'updateById',
-        params: [{ name: 'id', type: 'string', defaultvalue: 1, description: 'document id' }],
+        params: [
+          {
+            name: 'id',
+            type: 'string',
+            defaultvalue: 1,
+            description: 'document id',
+          },
+        ],
         description: this.$t('module_form_update_record_by_id'),
         result: 'Document',
         type: 'preset',
-        acl: ['admin']
+        acl: ['admin'],
       }
       this.createForm.paths.push(preset)
       preset = {
-        path: '/api/' + this.createForm.apiVersion + '/' + prefix + this.createForm.basePath + '/{id}',
+        path:
+          '/api/' +
+          this.createForm.apiVersion +
+          '/' +
+          prefix +
+          this.createForm.basePath +
+          '/{id}',
         method: 'DELETE',
         name: 'deleteById',
         params: [{ name: 'id', type: 'string', description: 'document id' }],
         description: this.$t('module_form_delete_record_by_id'),
         type: 'preset',
-        acl: ['admin']
+        acl: ['admin'],
       }
       this.createForm.paths.push(preset)
       preset = {
-        path: '/api/' + this.createForm.apiVersion + '/' + prefix + this.createForm.basePath,
+        path:
+          '/api/' +
+          this.createForm.apiVersion +
+          '/' +
+          prefix +
+          this.createForm.basePath,
         method: 'GET',
         name: 'findPage',
         params: [
-          { name: 'page', type: 'int', defaultvalue: 1, description: 'page number' },
-          { name: 'limit', type: 'int', defaultvalue: 20, description: 'max records per page' },
-          { name: 'sort', type: 'object', description: "sort setting,Array ,format like [{'propertyName':'ASC'}]" },
-          { name: 'filter', type: 'object', description: 'search filter object,Array' }
+          {
+            name: 'page',
+            type: 'int',
+            defaultvalue: 1,
+            description: 'page number',
+          },
+          {
+            name: 'limit',
+            type: 'int',
+            defaultvalue: 20,
+            description: 'max records per page',
+          },
+          {
+            name: 'sort',
+            type: 'object',
+            description:
+              "sort setting,Array ,format like [{'propertyName':'ASC'}]",
+          },
+          {
+            name: 'filter',
+            type: 'object',
+            description: 'search filter object,Array',
+          },
         ],
         description: this.$t('module_form_get_record_list_by_page_and_limit'),
         result: 'Page<Document>',
         type: 'preset',
-        acl: ['admin']
+        acl: ['admin'],
       }
       this.createForm.paths.push(preset)
     },
@@ -404,7 +596,7 @@ export default {
         availableQueryField: [],
         requiredQueryField: [],
         type: 'custom',
-        acl: ['admin']
+        acl: ['admin'],
       }
       // if (this.apiData?.field?.length) {
       //   this.apiData.fields.forEach(v => (v.visible = true))
@@ -420,7 +612,7 @@ export default {
     // 打开api文档
     openDocument() {
       this.apiClient = new ApiClient()
-      apiServerApi.get({ 'filter[limit]': 1 }).then(data => {
+      apiServerApi.get({ 'filter[limit]': 1 }).then((data) => {
         let servers = data?.items || []
         let apiServer = servers[0] || {}
         let apiServerUri = apiServer.clientURI || ''
@@ -433,8 +625,8 @@ export default {
           query: {
             id: api,
             openApi: openApiUri,
-            token: token
-          }
+            token: token,
+          },
         })
       })
       // .catch(() => {
@@ -443,11 +635,11 @@ export default {
     },
     // 获取角色权限
     getRoles() {
-      roleApi.get({}).then(data => {
+      roleApi.get({}).then((data) => {
         this.roles = data?.items || []
         this.roles.push({
           name: this.$t('module_form_public_api'),
-          id: '$everyone'
+          id: '$everyone',
         })
       })
     },
@@ -456,7 +648,9 @@ export default {
     handleOpenTag() {
       let id = this.$route.query.id
       if (id) {
-        this.$refs.classify.show(this.apiData.listtags ? this.apiData.listtags : {})
+        this.$refs.classify.show(
+          this.apiData.listtags ? this.apiData.listtags : {}
+        )
       } else {
         this.$refs.classify.show({})
       }
@@ -487,7 +681,12 @@ export default {
 
       let prefix = this.createForm.prefix ? this.createForm.prefix + '/' : ''
       this.createForm.apiVersion
-      this.apiData.path = '/api/' + this.createForm.apiVersion + '/' + prefix + this.createForm.basePath //+'/'+ this.api.namespace;//+'/'+ this.api.name;//"/cust/"+
+      this.apiData.path =
+        '/api/' +
+        this.createForm.apiVersion +
+        '/' +
+        prefix +
+        this.createForm.basePath //+'/'+ this.api.namespace;//+'/'+ this.api.name;//"/cust/"+
 
       if (this.apiData.createType == 'add') {
         this.createForm.paths.push(this.apiData)
@@ -514,13 +713,16 @@ export default {
       const id = this.$route.query.id
       const method = id ? 'patch' : 'post'
 
-      this.$refs.form.validate(valid => {
+      this.$refs.form.validate((valid) => {
         if (valid) {
           if (this.createForm.paths?.length) {
             let publicPermission = this.$t('module_form_public_api')
-            this.createForm.paths.forEach(item => {
+            this.createForm.paths.forEach((item) => {
               if (item.cal) {
-                if (item.cal.indexOf(publicPermission) !== -1 && item.cal.index('$everyone') === -1)
+                if (
+                  item.cal.indexOf(publicPermission) !== -1 &&
+                  item.cal.index('$everyone') === -1
+                )
                   item.acl.push('$everyone')
               }
             })
@@ -528,7 +730,7 @@ export default {
           modulesApi[method](this.createForm)
             .then(() => {
               this.$router.push({
-                name: 'apiPublish'
+                name: 'apiPublish',
               })
               this.$message.success(this.$t('message_save_ok'))
             })
@@ -547,7 +749,7 @@ export default {
       this.createFormConfig = {
         form: {
           labelPosition: 'left',
-          labelWidth: '100px'
+          labelWidth: '100px',
         },
         items: [
           // {
@@ -574,8 +776,8 @@ export default {
               { label: 'primaryPreferred', value: 'primaryPreferred' },
               { label: 'secondary', value: 'secondary' },
               { label: 'secondaryPreferred', value: 'secondaryPreferred' },
-              { label: 'nearest', value: 'nearest' }
-            ]
+              { label: 'nearest', value: 'nearest' },
+            ],
           },
           {
             type: 'input',
@@ -587,25 +789,25 @@ export default {
                 triggerOptions: [
                   {
                     field: 'readPreference',
-                    value: 'primary'
-                  }
+                    value: 'primary',
+                  },
                 ],
                 triggerConfig: {
-                  show: false
-                }
+                  show: false,
+                },
               },
               {
                 triggerOptions: [
                   {
                     field: 'readPreference',
-                    value: ''
-                  }
+                    value: '',
+                  },
                 ],
                 triggerConfig: {
-                  show: false
-                }
-              }
-            ]
+                  show: false,
+                },
+              },
+            ],
           },
           {
             type: 'select',
@@ -617,14 +819,14 @@ export default {
               { label: 'available', value: 'available' },
               { label: 'majority', value: 'majority' },
               { label: 'linearizable', value: 'linearizable' },
-              { label: 'snapshot', value: 'snapshot' }
-            ]
+              { label: 'snapshot', value: 'snapshot' },
+            ],
           },
           {
             type: 'input',
             label: this.$t('module_form_version'),
             field: 'apiVersion',
-            required: true
+            required: true,
           },
           {
             type: 'input',
@@ -635,14 +837,19 @@ export default {
               {
                 required: true,
                 validator: (rule, v, callback) => {
-                  const flag = /^[a-zA-Z\$_\u4e00-\u9fa5][a-zA-Z\u4e00-\u9fa5\d\$_]*$/.test(v) // eslint-disable-line
+                  const flag =
+                    /^[a-zA-Z\$_\u4e00-\u9fa5][a-zA-Z\u4e00-\u9fa5\d\$_]*$/.test(
+                      v
+                    ) // eslint-disable-line
                   if (!flag) {
-                    return callback(new Error(this.$t('module_form_validator_name')))
+                    return callback(
+                      new Error(this.$t('module_form_validator_name'))
+                    )
                   }
                   return callback()
-                }
-              }
-            ]
+                },
+              },
+            ],
           },
           {
             type: 'input',
@@ -650,14 +857,14 @@ export default {
             field: 'describtion',
             domType: 'textarea',
             maxlength: 100,
-            showWordLimit: true
+            showWordLimit: true,
           },
           {
             type: 'input',
             label: this.$t('module_form_prefix'),
             field: 'prefix',
             maxlength: 100,
-            showWordLimit: true
+            showWordLimit: true,
           },
           {
             type: 'input',
@@ -670,15 +877,20 @@ export default {
               {
                 required: true,
                 validator: (rule, v, callback) => {
-                  const flag = /^[a-zA-Z\$_\u4e00-\u9fa5][a-zA-Z\u4e00-\u9fa5\d\$_]*$/.test(v) // eslint-disable-line
+                  const flag =
+                    /^[a-zA-Z\$_\u4e00-\u9fa5][a-zA-Z\u4e00-\u9fa5\d\$_]*$/.test(
+                      v
+                    ) // eslint-disable-line
                   if (!flag) {
-                    return callback(new Error(this.$t('module_form_validator_name')))
+                    return callback(
+                      new Error(this.$t('module_form_validator_name'))
+                    )
                   }
                   return callback()
-                }
-              }
-            ]
-          }
+                },
+              },
+            ],
+          },
           // {
           //   type: 'input',
           //   label: this.$t('module_form_path'),
@@ -687,14 +899,14 @@ export default {
           //   maxlength: 100,
           //   showWordLimit: true
           // }
-        ]
+        ],
       }
-    }
-  }
+    },
+  },
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .module-warp {
   box-sizing: border-box;
   overflow: hidden;

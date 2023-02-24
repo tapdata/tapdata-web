@@ -4,7 +4,12 @@
     <!-- 选择字段 -->
     <div class="condition-warp-group">
       <div class="condition-warp-group-item">
-        <el-select v-model="model.queryField" size="mini" @change="queryFieldChange" style="width: 170px">
+        <el-select
+          v-model:value="model.queryField"
+          size="mini"
+          @change="queryFieldChange"
+          style="width: 170px"
+        >
           <el-option
             v-for="field in fieldList"
             :label="field[fieldLabel]"
@@ -15,7 +20,7 @@
 
         <template v-if="model.queryField">
           <el-select
-            v-model="model.queryCommand"
+            v-model:value="model.queryCommand"
             @change="commandChange"
             size="mini"
             style="width: 100px; padding: 0 10px"
@@ -28,14 +33,14 @@
             ></el-option>
           </el-select>
           <el-input
-            v-model="model.queryValue"
+            v-model:value="model.queryValue"
             v-if="model.queryCommand !== 'between' && !isDatetime"
             :placeholder="$t('query_build_queryValue')"
             size="mini"
             style="width: 250px; padding-right: 10px"
           ></el-input>
           <el-date-picker
-            v-model="model.queryValue"
+            v-model:value="model.queryValue"
             v-if="model.queryCommand !== 'between' && isDatetime"
             type="datetime"
             format="yyyy-MM-dd HH:mm:ss"
@@ -44,21 +49,21 @@
           >
           </el-date-picker>
           <el-input
-            v-model="model.smallerValue"
+            v-model:value="model.smallerValue"
             :placeholder="$t('query_build_queryValue')"
             size="mini"
             v-if="model.queryCommand === 'between' && !isDatetime"
             style="width: 125px; padding-right: 10px"
           ></el-input>
           <el-input
-            v-model="model.largerValue"
+            v-model:value="model.largerValue"
             v-if="model.queryCommand === 'between' && !isDatetime"
             :placeholder="$t('query_build_queryValue')"
             size="mini"
             style="width: 125px; padding-right: 10px"
           ></el-input>
           <el-date-picker
-            v-model="model.smallerValue"
+            v-model:value="model.smallerValue"
             v-if="model.queryCommand === 'between' && isDatetime"
             type="datetime"
             format="yyyy-MM-dd HH:mm:ss"
@@ -67,7 +72,7 @@
           >
           </el-date-picker>
           <el-date-picker
-            v-model="model.largerValue"
+            v-model:value="model.largerValue"
             v-if="model.queryCommand === 'between' && isDatetime"
             type="datetime"
             format="yyyy-MM-dd HH:mm:ss"
@@ -80,7 +85,9 @@
     </div>
   </div>
 </template>
+
 <script>
+import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 export default {
   name: 'Condition',
   props: {
@@ -88,19 +95,19 @@ export default {
       type: Array,
       default() {
         return []
-      }
+      },
     },
     fieldValue: {
       type: String,
       default() {
         return 'value'
-      }
+      },
     },
     fieldLabel: {
       type: String,
       default() {
         return 'text'
-      }
+      },
     },
     value: {
       type: Object,
@@ -108,16 +115,16 @@ export default {
         return {
           field: '',
           command: '',
-          value: ''
+          value: '',
         }
-      }
+      },
     },
     level: {
       type: Number,
       default() {
         return 1
-      }
-    }
+      },
+    },
     // showFilterDialog: {
     //   type: Boolean,
     //   default() {
@@ -134,7 +141,7 @@ export default {
         queryCommand: '',
         queryValue: '',
         smallerValue: '',
-        largerValue: ''
+        largerValue: '',
       },
       commands: [
         { text: '=', value: 'eq' },
@@ -148,8 +155,8 @@ export default {
         { text: 'Not In (comma-delimited)', value: 'nin' },
         { text: 'Like', value: 'like' },
         { text: 'Not Like', value: 'nlike' },
-        { text: 'Regexp', value: 'regexp' }
-      ]
+        { text: 'Regexp', value: 'regexp' },
+      ],
     }
   },
   created() {
@@ -164,35 +171,47 @@ export default {
     //   }
     // },
     conditions: {
+      deep: true,
+
       handler() {
         this.filterChange()
-      }
+      },
     },
     'model.queryField': {
+      deep: true,
+
       handler() {
         this.filterChange()
-      }
+      },
     },
     'model.queryCommand': {
+      deep: true,
+
       handler() {
         this.filterChange()
-      }
+      },
     },
     'model.queryValue': {
+      deep: true,
+
       handler() {
         this.filterChange()
-      }
+      },
     },
     'model.smallerValue': {
+      deep: true,
+
       handler() {
         this.filterChange()
-      }
+      },
     },
     'model.largerValue': {
+      deep: true,
+
       handler() {
         this.filterChange()
-      }
-    }
+      },
+    },
   },
   computed: {
     childLevel() {
@@ -208,7 +227,9 @@ export default {
       return this.value.conditions.length
     },
     isDatetime() {
-      let field = this.fields.filter(v => v.value === this.model.queryField)[0]
+      let field = this.fields.filter(
+        (v) => v.value === this.model.queryField
+      )[0]
       if (field) {
         let type = field.type
 
@@ -217,7 +238,7 @@ export default {
         }
       }
       return false
-    }
+    },
   },
   mounted() {
     this.setValue(this.value)
@@ -226,7 +247,7 @@ export default {
     // 改变字段名称
     queryFieldChange(value) {
       if (value) {
-        let item = this.fields.find(v => v.field_name === value)
+        let item = this.fields.find((v) => v.field_name === value)
         if (item) {
           this.model.queryField = item.field_name
         } else {
@@ -247,25 +268,25 @@ export default {
               type: 'condition',
               field: '',
               command: 'eq',
-              value: ''
-            }
-          ]
+              value: '',
+            },
+          ],
         }
       } else if (type === 'condition') {
         child = {
           type: 'condition',
           field: '',
           command: '',
-          value: ''
+          value: '',
         }
       }
       this.value.conditions.push(child)
-      this.$emit('input', this.value)
+      $emit(this, 'update:value', this.value)
     },
     setValue() {
-      this.$set(this.model, 'queryField', this.value.field)
-      this.$set(this.model, 'queryCommand', this.value.command)
-      this.$set(this.model, 'queryValue', this.value.value)
+      this.model['queryField'] = this.value.field
+      this.model['queryCommand'] = this.value.command
+      this.model['queryValue'] = this.value.value
     },
     // 过滤条件初始值
     filterChange() {
@@ -273,7 +294,7 @@ export default {
         type: 'condition',
         field: this.model.queryField,
         command: this.model.queryCommand,
-        value: this.model.queryValue
+        value: this.model.queryValue,
       }
       if (this.model.queryCommand === 'between') {
         let small = /^-?\d+\.?\d+$/.test(this.model.smallerValue)
@@ -288,17 +309,19 @@ export default {
       }
       // eslint-disable-next-line
       console.log('data', data)
-      this.$emit('input', data)
+      $emit(this, 'update:value', data)
     },
     commandChange() {
       this.model.queryValue = ''
       this.model.smallerValue = ''
       this.model.largerValue = ''
-    }
-  }
+    },
+  },
+  emits: ['update:value'],
 }
 </script>
-<style scoped lang="scss">
+
+<style lang="scss" scoped>
 .condition-warp {
   .condition-warp-group {
     // padding: 0 10px 0 24px;

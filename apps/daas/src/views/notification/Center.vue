@@ -3,34 +3,57 @@
     <div class="notification-wrap-box">
       <div class="left-panel pt-5">
         <ul class="menu">
-          <li :class="{ active: activePanel === 'system' }" @click="selectPanel('system')">
+          <li
+            :class="{ active: activePanel === 'system' }"
+            @click="selectPanel('system')"
+          >
             <VIcon size="14">notice-system-notice</VIcon>
             <span class="content ml-2">{{ $t('notify_system_notice') }}</span>
             <span class="unread" v-show="unRead > 0">{{ unRead }}</span>
           </li>
-          <li :class="{ active: activePanel === 'user' }" @click="selectPanel('user')">
+          <li
+            :class="{ active: activePanel === 'user' }"
+            @click="selectPanel('user')"
+          >
             <VIcon size="14">notice-user</VIcon>
-            <span class="content ml-2">{{ $t('daas_notification_center_yonghucaozuo') }}</span>
+            <span class="content ml-2">{{
+              $t('daas_notification_center_yonghucaozuo')
+            }}</span>
           </li>
-          <li :class="{ active: activePanel === 'alarmNotice' }" @click="selectPanel('alarmNotice')">
+          <li
+            :class="{ active: activePanel === 'alarmNotice' }"
+            @click="selectPanel('alarmNotice')"
+          >
             <VIcon size="14">warning</VIcon>
-            <span class="content ml-2">{{ $t('daas_notification_alarmnotification_gaojingtongzhi') }}</span>
+            <span class="content ml-2">{{
+              $t('daas_notification_alarmnotification_gaojingtongzhi')
+            }}</span>
           </li>
-          <li :class="{ active: activePanel === 'alarm' }" @click="selectPanel('alarm')">
+          <li
+            :class="{ active: activePanel === 'alarm' }"
+            @click="selectPanel('alarm')"
+          >
             <VIcon size="14">notice-system</VIcon>
-            <span class="content ml-2">{{ $t('daas_notification_center_xitonggaojing') }}</span>
+            <span class="content ml-2">{{
+              $t('daas_notification_center_xitonggaojing')
+            }}</span>
           </li>
         </ul>
       </div>
       <div class="main-panel">
-        <SystemNotification v-if="activePanel === 'system'"></SystemNotification>
+        <SystemNotification
+          v-if="activePanel === 'system'"
+        ></SystemNotification>
         <UserNotification v-if="activePanel === 'user'"></UserNotification>
         <SystemAlarm v-if="activePanel === 'alarm'"></SystemAlarm>
-        <AlarmNotification v-if="activePanel === 'alarmNotice'"></AlarmNotification>
+        <AlarmNotification
+          v-if="activePanel === 'alarmNotice'"
+        ></AlarmNotification>
       </div>
     </div>
   </section>
 </template>
+
 <script>
 import SystemNotification from './SystemNotification'
 import UserNotification from './UserNotification'
@@ -45,20 +68,20 @@ export default {
     UserNotification,
     SystemAlarm,
     AlarmNotification,
-    VIcon
+    VIcon,
   },
   data() {
     return {
-      activePanel: 'system'
+      activePanel: 'system',
     }
   },
   computed: mapState({
-    unRead: state => state.notification.unRead
+    unRead: (state) => state.notification.unRead,
   }),
   watch: {
     $route(route) {
       this.activePanel = route.query.type || route.params.type || 'system'
-    }
+    },
   },
   created() {
     this.activePanel = this.$route.query.type || 'system'
@@ -70,42 +93,43 @@ export default {
           this.$router.push({
             name: 'systemNotification',
             query: {
-              type: name
-            }
+              type: name,
+            },
           })
           break
         case 'user':
           this.$router.push({
             name: 'userNotification',
             query: {
-              type: name
-            }
+              type: name,
+            },
           })
           break
         case 'alarmNotice':
           this.$router.push({
             name: 'alarmNotification',
             query: {
-              type: name
-            }
+              type: name,
+            },
           })
           break
         case 'alarm':
           this.$router.push({
             name: 'systemAlarm',
             params: {
-              type: name
+              type: name,
             },
             query: {
-              type: name
-            }
+              type: name,
+            },
           })
           break
       }
-    }
-  }
+    },
+  },
 }
 </script>
+
 <style lang="scss" scoped>
 $unreadColor: #ee5353;
 .notification-wrap {

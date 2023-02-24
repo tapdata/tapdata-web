@@ -9,10 +9,21 @@
       aria-modal="true"
       :aria-label="title || 'dialog'"
     >
-      <div class="el-message-box" :class="[customClass, center && 'el-message-box--center']" :style="{ width }">
+      <div
+        class="el-message-box"
+        :class="[customClass, center && 'el-message-box--center']"
+        :style="{ width }"
+      >
         <div class="el-message-box__header" v-if="title">
           <div class="el-message-box__title flex align-center">
-            <VIcon v-if="icon" class="mr-3" :size="iconSize" :color="iconColor" :class="statusClass">{{ icon }}</VIcon>
+            <VIcon
+              v-if="icon"
+              class="mr-3"
+              :size="iconSize"
+              :color="iconColor"
+              :class="statusClass"
+              >{{ icon }}</VIcon
+            >
             <span>{{ title }}</span>
           </div>
           <button
@@ -20,8 +31,12 @@
             class="el-message-box__headerbtn"
             aria-label="Close"
             v-if="showClose"
-            @click="handleAction(distinguishCancelAndClose ? 'close' : 'cancel')"
-            @keydown.enter="handleAction(distinguishCancelAndClose ? 'close' : 'cancel')"
+            @click="
+              handleAction(distinguishCancelAndClose ? 'close' : 'cancel')
+            "
+            @keydown.enter="
+              handleAction(distinguishCancelAndClose ? 'close' : 'cancel')
+            "
           >
             <i class="el-message-box__close el-icon-close"></i>
           </button>
@@ -45,13 +60,18 @@
           </div>
           <div class="el-message-box__input" v-show="showInput">
             <el-input
-              v-model="inputValue"
+              v-model:value="inputValue"
               :type="inputType"
-              @keydown.enter.native="handleInputEnter"
+              @keydown.enter="handleInputEnter"
               :placeholder="inputPlaceholder"
               ref="input"
             ></el-input>
-            <div class="el-message-box__errormsg" :style="{ visibility: !!editorErrorMessage ? 'visible' : 'hidden' }">
+            <div
+              class="el-message-box__errormsg"
+              :style="{
+                visibility: !!editorErrorMessage ? 'visible' : 'hidden',
+              }"
+            >
               {{ editorErrorMessage }}
             </div>
           </div>
@@ -63,7 +83,7 @@
             v-if="showCancelButton"
             :round="roundButton"
             size="small"
-            @click.native="handleAction('cancel')"
+            @click="handleAction('cancel')"
             @keydown.enter="handleAction('cancel')"
           >
             {{ cancelButtonText || cancelButtonTextDefault }}
@@ -75,7 +95,7 @@
             v-show="showConfirmButton"
             :round="roundButton"
             size="small"
-            @click.native="handleAction('confirm')"
+            @click="handleAction('confirm')"
             @keydown.enter="handleAction('confirm')"
           >
             {{ confirmButtonText || confirmButtonTextDefault }}
@@ -100,7 +120,7 @@ export default {
     return {
       width: null,
       cancelButtonTextDefault: i18n.t('button_cancel'),
-      confirmButtonTextDefault: i18n.t('button_confirm')
+      confirmButtonTextDefault: i18n.t('button_confirm'),
     }
   },
 
@@ -119,8 +139,8 @@ export default {
     showContentIcon() {
       let { title, message } = this
       return !title && message
-    }
-  }
+    },
+  },
 }
 </script>
 

@@ -10,14 +10,23 @@
     <div class="create">
       <!-- <div class="model">{{ $t('new_advanced_mode') }}</div> -->
       <ElRow :gutter="20" v-readonlybtn="'Data_SYNC_menu'">
-        <ElCol :span="12" class="create-col" v-readonlybtn="'SYNC_job_creation'">
+        <ElCol
+          :span="12"
+          class="create-col"
+          v-readonlybtn="'SYNC_job_creation'"
+        >
           <div class="create-col-box copy-bg" @click="goNew">
             <div class="flex align-items-center">
-              <img src="../assets/images/new/Console_icon_new_data_replication.svg" alt="" />
+              <img
+                src="../assets/images/new/Console_icon_new_data_replication.svg"
+                alt=""
+              />
             </div>
 
             <div class="pl-4">
-              <div class="fs-7 pb-4 font-color-dark fw-sub">{{ $t('new_data_copy') }}</div>
+              <div class="fs-7 pb-4 font-color-dark fw-sub">
+                {{ $t('new_data_copy') }}
+              </div>
               <div class="fs-8 desc">
                 {{ $t('new_data_copy_desc') }}
               </div>
@@ -27,13 +36,22 @@
             </div>
           </div>
         </ElCol>
-        <ElCol :span="12" class="create-col" v-readonlybtn="'SYNC_job_creation'">
+        <ElCol
+          :span="12"
+          class="create-col"
+          v-readonlybtn="'SYNC_job_creation'"
+        >
           <div class="create-col-box development-bg" @click="goNewCust">
             <div class="flex align-items-center">
-              <img src="../assets/images/new/Console_icon_new_data_development.svg" alt="" />
+              <img
+                src="../assets/images/new/Console_icon_new_data_development.svg"
+                alt=""
+              />
             </div>
             <div class="pl-4">
-              <div class="fs-7 pb-4 font-color-dark fw-sub">{{ $t('new_data_development') }}</div>
+              <div class="fs-7 pb-4 font-color-dark fw-sub">
+                {{ $t('new_data_development') }}
+              </div>
               <div class="fs-8 desc">{{ $t('new_data_development_desc') }}</div>
             </div>
             <div>
@@ -42,7 +60,9 @@
           </div>
         </ElCol>
       </ElRow>
-      <div class="pt-5 fs-7 pb-4 font-color-dark fw-sub">{{ $t('new_more_features') }}</div>
+      <div class="pt-5 fs-7 pb-4 font-color-dark fw-sub">
+        {{ $t('new_more_features') }}
+      </div>
       <ElRow
         :gutter="20"
         v-show="
@@ -59,11 +79,19 @@
           <div class="more-col-box p-4" @click="handleConnection">
             <div class="fs-7 pb-4 font-color-dark">
               <div class="flex align-items-center flex-row">
-                <img src="../assets/images/new/Console_icon_data_source.svg" alt="" />
-                <span class="pl-2 fw-sub">{{ $t('new_create_connection') }}</span>
+                <img
+                  src="../assets/images/new/Console_icon_data_source.svg"
+                  alt=""
+                />
+                <span class="pl-2 fw-sub">{{
+                  $t('new_create_connection')
+                }}</span>
               </div>
             </div>
-            <div class="fs-8 desc" :style="{ minHeight: lang === 'en' ? '120px' : '70px' }">
+            <div
+              class="fs-8 desc"
+              :style="{ minHeight: lang === 'en' ? '120px' : '70px' }"
+            >
               <!-- <ElTooltip effect="dark" :content="$t('new_create_connection_desc')" placement="bottom"> -->
               {{ $t('new_create_connection_desc') }}
               <!-- </ElTooltip> -->
@@ -79,11 +107,17 @@
           <div class="more-col-box p-4" @click="handleModules">
             <div class="fs-7 pb-4 font-color-dark">
               <div class="flex align-items-center flex-row">
-                <img src="../assets/images/new/Console_icon_api-fill.svg" alt="" />
+                <img
+                  src="../assets/images/new/Console_icon_api-fill.svg"
+                  alt=""
+                />
                 <span class="pl-2 fw-sub">{{ $t('new_create_api') }}</span>
               </div>
             </div>
-            <div class="fs-8 desc" :style="{ minHeight: lang === 'en' ? '120px' : '70px' }">
+            <div
+              class="fs-8 desc"
+              :style="{ minHeight: lang === 'en' ? '120px' : '70px' }"
+            >
               {{ $t('new_create_api_desc') }}
             </div>
           </div>
@@ -99,18 +133,18 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 import DatabaseTypeDialog from '@tap/business/src/views/connections/DatabaseTypeDialog'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
 
 export default {
   name: 'newDataFlow',
   components: { DatabaseTypeDialog },
-
   props: {
     dialogVisible: {
       required: true,
-      value: Boolean
-    }
+      value: Boolean,
+    },
   },
   data() {
     return {
@@ -148,25 +182,24 @@ export default {
         'kundb',
         'adb_postgres',
         'adb_mysql',
-        'hazelcast_cloud_cluster'
-      ] //目前白名单,
+        'hazelcast_cloud_cluster',
+      ], //目前白名单,
     }
   },
-
   methods: {
     handleClose() {
-      this.$emit('update:dialogVisible', false)
+      $emit(this, 'update:dialogVisible', false)
     },
     goNew() {
       let routeUrl = this.$router.resolve({
-        name: 'MigrateCreate'
+        name: 'MigrateCreate',
       })
       window.open(routeUrl.href, '_blank')
       this.handleClose()
     },
     goNewCust() {
       let routeUrl = this.$router.resolve({
-        name: 'DataflowNew'
+        name: 'DataflowNew',
       })
       window.open(routeUrl.href, '_blank')
       this.handleClose()
@@ -185,7 +218,7 @@ export default {
     //跳转发布api
     handleModules() {
       let routeUrl = this.$router.resolve({
-        name: 'dataServer'
+        name: 'dataServer',
       })
       window.open(routeUrl.href, '_blank')
       this.handleClose()
@@ -201,14 +234,15 @@ export default {
       let query = { pdkHash }
       this.$router.push({
         name: 'connectionCreate',
-        query
+        query,
       })
-    }
-  }
+    },
+  },
+  emits: ['update:dialogVisible'],
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 $color: map-get($fontColor, slight);
 .simple-scene {
   .create {
@@ -247,6 +281,7 @@ $color: map-get($fontColor, slight);
   }
 }
 </style>
+
 <style lang="scss">
 .simple-scene {
   .el-dialog__title {

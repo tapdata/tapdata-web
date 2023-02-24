@@ -2,7 +2,10 @@
   <div class="role" v-loading="loading">
     <div class="section-wrap-box">
       <head class="head">
-        <i class="iconfont icon-left-circle back-btn-icon link-primary cursor-pointer" @click="back"></i>
+        <i
+          class="iconfont icon-left-circle back-btn-icon link-primary cursor-pointer"
+          @click="back"
+        ></i>
         <h1 class="pl-2">{{ $t('role_settingTitle') }}</h1>
         <span>{{ $t('role_currentRole') }}: {{ roleName }}</span>
       </head>
@@ -18,7 +21,9 @@
               <el-col class="e-col borderRight" :span="21">
                 {{ $t('role_choosePage') }}
               </el-col>
-              <el-col class="e-col" :span="3">{{ $t('role_bulkOperate') }} </el-col>
+              <el-col class="e-col" :span="3"
+                >{{ $t('role_bulkOperate') }}
+              </el-col>
             </el-row>
           </li>
           <li v-for="item in dataList" :key="item.id">
@@ -26,8 +31,7 @@
               <el-col class="e-col borderRight" :span="21">
                 <template v-for="second in item.children">
                   <el-checkbox
-                    :key="second.name"
-                    v-model="second.checkAll"
+                    v-model:value="second.checkAll"
                     v-if="second.id"
                     @change="handleCheckChange($event, item, second)"
                     v-cloak
@@ -39,7 +43,11 @@
                 </template>
               </el-col>
               <el-col class="e-col" :span="3">
-                <el-checkbox v-model="item.checked" @change="handleAllCheck($event, item)" v-cloak>
+                <el-checkbox
+                  v-model:value="item.checked"
+                  @change="handleAllCheck($event, item)"
+                  v-cloak
+                >
                   <span>
                     {{ $t('role_all_check') }}
                   </span>
@@ -186,8 +194,14 @@
         <!--        </ul>-->
       </div>
       <div class="btn">
-        <el-button size="mini" @click="back">{{ $t('button_back') }} </el-button>
-        <el-button size="mini" type="primary" :loading="saveloading" @click="save('ruleForm')"
+        <el-button size="mini" @click="back"
+          >{{ $t('button_back') }}
+        </el-button>
+        <el-button
+          size="mini"
+          type="primary"
+          :loading="saveloading"
+          @click="save('ruleForm')"
           >{{ $t('app_save') }}
         </el-button>
       </div>
@@ -196,6 +210,7 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { roleMappingsApi, permissionsApi, usersApi } from '@tap/api'
 
 let pageSort = [
@@ -209,13 +224,13 @@ let pageSort = [
       { name: 'v2_log_collector_menu' },
       { name: 'v2_function_management_list' },
       { name: 'v2_custom_node_menu' },
-      { name: 'v2_shared_cache_menu' }
-    ]
+      { name: 'v2_shared_cache_menu' },
+    ],
   },
   {
     name: 'data_verify',
     children: [
-      { name: 'v2_data_check_list' }
+      { name: 'v2_data_check_list' },
       // { name: 'v2_data_check_create' },
       // { name: 'v2_data_check_edit' },
       // { name: 'v2_data_check_details' },
@@ -223,11 +238,11 @@ let pageSort = [
       // { name: 'v2_data_check_result_history' },
       // { name: 'v2_data_check_result_details' },
       // { name: 'v2_data_check_result' }
-    ]
+    ],
   },
   {
     name: 'v2_data_discovery',
-    children: [{ name: 'v2_data_object' }, { name: 'v2_data_catalogue' }]
+    children: [{ name: 'v2_data_object' }, { name: 'v2_data_catalogue' }],
   },
   {
     name: 'data_publish',
@@ -236,8 +251,8 @@ let pageSort = [
       { name: 'v2_api-client' },
       { name: 'v2_api-servers' },
       { name: 'v2_data_server_audit-list' },
-      { name: 'v2_api_monitor' }
-    ]
+      { name: 'v2_api_monitor' },
+    ],
   },
   // { children: [{ name: 'data_collect_menu' }] },
   {
@@ -248,10 +263,10 @@ let pageSort = [
       // { name: 'agents_menu' },
       // { name: 'servers_oversee_menu' },
       { name: 'v2_user_management_menu' },
-      { name: 'v2_role_management_menu' }
+      { name: 'v2_role_management_menu' },
       // { name: 'system_settings_menu' }
-    ]
-  }
+    ],
+  },
 ]
 
 let moduleMapping = [
@@ -262,9 +277,12 @@ let moduleMapping = [
       { name: 'datasource', allName: 'datasource_all_data' },
       { name: 'datasource_creation' },
       { name: 'datasource_edition', allName: 'datasource_edition_all_data' },
-      { name: 'datasource_delete', allName: 'datasource_delete_all_data' }
+      { name: 'datasource_delete', allName: 'datasource_delete_all_data' },
     ],
-    classification: [{ name: 'datasource_category_management' }, { name: 'datasource_category_application' }]
+    classification: [
+      { name: 'datasource_category_management' },
+      { name: 'datasource_category_application' },
+    ],
   },
   {
     name: 'Data_SYNC',
@@ -273,10 +291,13 @@ let moduleMapping = [
       { name: 'SYNC_job_creation' },
       { name: 'SYNC_job_edition', allName: 'SYNC_job_edition_all_data' },
       { name: 'SYNC_job_delete', allName: 'SYNC_job_delete_all_data' },
-      { name: 'SYNC_job_operation', allName: 'SYNC_job_operation_all_data' }
+      { name: 'SYNC_job_operation', allName: 'SYNC_job_operation_all_data' },
     ],
-    classification: [{ name: 'SYNC_category_management' }, { name: 'SYNC_category_application' }],
-    functional: [{ name: 'SYNC_job_import' }, { name: 'SYNC_job_export' }]
+    classification: [
+      { name: 'SYNC_category_management' },
+      { name: 'SYNC_category_application' },
+    ],
+    functional: [{ name: 'SYNC_job_import' }, { name: 'SYNC_job_export' }],
   },
 
   {
@@ -285,29 +306,32 @@ let moduleMapping = [
       { name: 'Data_verify', allName: 'Data_verify_all_data' },
       { name: 'verify_job_creation' },
       { name: 'verify_job_edition', allName: 'verify_job_edition_all_data' },
-      { name: 'verify_job_delete', allName: 'verify_job_delete_all_data' }
+      { name: 'verify_job_delete', allName: 'verify_job_delete_all_data' },
       // { name: 'verify_job_execution', allName: 'verify_job_execution_all_data' }
-    ]
+    ],
   },
   {
     name: 'SYNC_Function_management',
-    functional: [{ name: 'SYNC_Function_management' }]
+    functional: [{ name: 'SYNC_Function_management' }],
   },
   {
     name: 'log_collector',
-    functional: [{ name: 'log_collector' }]
+    functional: [{ name: 'log_collector' }],
   },
   {
     name: 'custom_node',
-    functional: [{ name: 'custom_node' }]
+    functional: [{ name: 'custom_node' }],
   },
   {
     name: 'shared_cache',
-    functional: [{ name: 'shared_cache' }]
+    functional: [{ name: 'shared_cache' }],
   },
   {
     name: 'data_government',
-    classification: [{ name: 'data_catalog_category_application' }, { name: 'data_catalog_category_management' }]
+    classification: [
+      { name: 'data_catalog_category_application' },
+      { name: 'data_catalog_category_management' },
+    ],
   },
   {
     name: 'data_catalog',
@@ -316,10 +340,10 @@ let moduleMapping = [
       { name: 'new_model_creation' },
       {
         name: 'data_catalog_edition',
-        allName: 'data_catalog_edition_all_data'
+        allName: 'data_catalog_edition_all_data',
       },
-      { name: 'meta_data_deleting', allName: 'meta_data_deleting_all_data' }
-    ]
+      { name: 'meta_data_deleting', allName: 'meta_data_deleting_all_data' },
+    ],
   },
   // {
   //   name: 'data_quality',
@@ -361,10 +385,13 @@ let moduleMapping = [
       { name: 'API_creation' },
       { name: 'API_edition', allName: 'API_edition_all_data' },
       { name: 'API_delete', allName: 'API_delete_all_data' },
-      { name: 'API_publish', allName: 'API_publish_all_data' }
+      { name: 'API_publish', allName: 'API_publish_all_data' },
     ],
-    classification: [{ name: 'API_category_application' }, { name: 'API_category_management' }],
-    functional: [{ name: 'API_import' }, { name: 'API_export' }]
+    classification: [
+      { name: 'API_category_application' },
+      { name: 'API_category_management' },
+    ],
+    functional: [{ name: 'API_import' }, { name: 'API_export' }],
   },
   {
     name: 'API_data_explorer',
@@ -373,33 +400,36 @@ let moduleMapping = [
       { name: 'API_data_creation' },
       { name: 'API_data_explorer_deleting' },
       { name: 'API_data_explorer_export' },
-      { name: 'API_data_download' }
+      { name: 'API_data_download' },
     ],
-    classification: [{ name: 'API_data_explorer_tagging' }, { name: 'API_data_time_zone_editing' }]
+    classification: [
+      { name: 'API_data_explorer_tagging' },
+      { name: 'API_data_time_zone_editing' },
+    ],
   },
   {
     name: 'API_doc_test',
-    functional: [{ name: 'API_doc_test' }]
+    functional: [{ name: 'API_doc_test' }],
   },
   {
     name: 'API_stats',
-    functional: [{ name: 'API_stats' }]
+    functional: [{ name: 'API_stats' }],
   },
   {
     name: 'API_clients',
-    functional: [{ name: 'API_clients' }, { name: 'API_clients_amangement' }]
+    functional: [{ name: 'API_clients' }, { name: 'API_clients_amangement' }],
   },
   {
     name: 'API_server',
-    functional: [{ name: 'API_server' }, { name: 'API_server_management' }]
+    functional: [{ name: 'API_server' }, { name: 'API_server_management' }],
   },
   {
     name: 'Cluster_management',
     children: [
       { name: 'Cluster_management', allName: 'Cluster_management_all_data' },
       { name: 'Cluster_operation' },
-      { name: 'status_log' }
-    ]
+      { name: 'status_log' },
+    ],
   },
   {
     name: 'user_management',
@@ -407,9 +437,12 @@ let moduleMapping = [
       { name: 'user_management', allName: 'user_management_all_data' },
       { name: 'user_creation' },
       { name: 'user_edition', allName: 'user_edition_all_data' },
-      { name: 'user_delete', allName: 'user_delete_all_data' }
+      { name: 'user_delete', allName: 'user_delete_all_data' },
     ],
-    classification: [{ name: 'user_category_management' }, { name: 'user_category_application' }]
+    classification: [
+      { name: 'user_category_management' },
+      { name: 'user_category_application' },
+    ],
   },
   {
     name: 'role_management',
@@ -417,13 +450,17 @@ let moduleMapping = [
       { name: 'role_management', allName: 'role_management_all_data' },
       { name: 'role_creation' },
       { name: 'role_edition', allName: 'role_edition_all_data' },
-      { name: 'role_delete', allName: 'role_delete_all_data' }
-    ]
+      { name: 'role_delete', allName: 'role_delete_all_data' },
+    ],
   },
   {
     name: 'system_settings',
-    functional: [{ name: 'system_settings' }, { name: 'system_settings_modification' }, { name: 'notice_settings' }]
-  }
+    functional: [
+      { name: 'system_settings' },
+      { name: 'system_settings_modification' },
+      { name: 'notice_settings' },
+    ],
+  },
 ]
 export default {
   data() {
@@ -434,7 +471,7 @@ export default {
       form: {
         name: '',
         description: '',
-        register_user_default: false
+        register_user_default: false,
       },
       dataList: [],
       rolemappings: [],
@@ -445,36 +482,36 @@ export default {
       radio: 1,
       moduleList: [],
       adds: [],
-      deletes: []
+      deletes: [],
     }
   },
-
   created() {
     this.roleName = this.$route.query.name ? this.$route.query.name : ''
     this.getPermission()
   },
-
   methods: {
     // 获取用户权限数据
     getMappingData(mappingData, pageData) {
       this.loading = true
       let filter = {
         where: {
-          roleId: this.$route.query.id
-        }
+          roleId: this.$route.query.id,
+        },
       }
       roleMappingsApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           if (data?.length) {
-            data.forEach(item => {
+            data.forEach((item) => {
               if (item.principalType === 'USER') {
                 this.roleusers.push(item.principalId)
               }
               if (item.principalType === 'PERMISSION') {
-                let selected = this.permissionList.filter(v => v.name === item.principalId)
+                let selected = this.permissionList.filter(
+                  (v) => v.name === item.principalId
+                )
                 if (selected && selected.length > 0) {
                   selected[0].self_only = item.self_only
                   this.selectRole.push(selected[0].name)
@@ -483,13 +520,15 @@ export default {
             })
             this.rolemappings = data?.items
             if (pageData.length) {
-              pageData.forEach(item => {
+              pageData.forEach((item) => {
                 if (this.selectRole && this.selectRole.length) {
                   if (item.children && item.children.length) {
                     let checkedCount = [],
                       pageLength = []
-                    item.children.filter(childItem => {
-                      this.$set(childItem, 'checkAll', this.selectRole.includes(childItem.name))
+                    item.children.filter((childItem) => {
+                      childItem['checkAll'] = this.selectRole.includes(
+                        childItem.name
+                      )
                       if (childItem.checkAll) {
                         checkedCount.push(childItem)
                       }
@@ -497,21 +536,25 @@ export default {
                         pageLength.push(childItem)
                       }
                     })
-                    this.$set(item, 'checked', checkedCount.length === pageLength.length)
+                    item['checked'] = checkedCount.length === pageLength.length
                   }
                 }
               })
             }
             if (mappingData.length) {
-              mappingData.filter(item => {
+              mappingData.filter((item) => {
                 if (this.selectRole && this.selectRole.length) {
                   if (item.children && item.children.length) {
                     let checkedCount = [],
                       allCheckedCount = []
-                    item.children.filter(childItem => {
-                      this.$set(childItem, 'checkAllData', this.selectRole.includes(childItem.allName))
+                    item.children.filter((childItem) => {
+                      childItem['checkAllData'] = this.selectRole.includes(
+                        childItem.allName
+                      )
 
-                      this.$set(childItem, 'checked', this.selectRole.includes(childItem.name))
+                      childItem['checked'] = this.selectRole.includes(
+                        childItem.name
+                      )
                       if (childItem.checked) {
                         checkedCount.push(childItem)
                       }
@@ -519,32 +562,38 @@ export default {
                         allCheckedCount.push(childItem)
                       }
                     })
-                    let allData = item.children.filter(el => {
+                    let allData = item.children.filter((el) => {
                       return el.allName
                     })
 
-                    this.$set(item, 'checkAll', checkedCount.length === item.children.length)
-                    this.$set(item, 'checkedAllData', allCheckedCount.length === allData.length)
+                    item['checkAll'] =
+                      checkedCount.length === item.children.length
+                    item['checkedAllData'] =
+                      allCheckedCount.length === allData.length
                   }
                   if (item.classification && item.classification.length) {
                     let checkedCount = []
-                    item.classification.filter(classify => {
-                      this.$set(classify, 'checked', this.selectRole.includes(classify.name))
+                    item.classification.filter((classify) => {
+                      classify['checked'] = this.selectRole.includes(
+                        classify.name
+                      )
                       if (classify.checked) {
                         checkedCount.push(classify)
                       }
                     })
-                    this.$set(item, 'classifiyCheckAll', checkedCount.length === item.classification.length)
+                    item['classifiyCheckAll'] =
+                      checkedCount.length === item.classification.length
                   }
                   if (item.functional && item.functional.length) {
                     let checkedCount = []
-                    item.functional.filter(fun => {
-                      this.$set(fun, 'checked', this.selectRole.includes(fun.name))
+                    item.functional.filter((fun) => {
+                      fun['checked'] = this.selectRole.includes(fun.name)
                       if (fun.checked) {
                         checkedCount.push(fun)
                       }
                     })
-                    this.$set(item, 'functionCheckAll', checkedCount.length === item.functional.length)
+                    item['functionCheckAll'] =
+                      checkedCount.length === item.functional.length
                   }
                 }
               })
@@ -552,10 +601,10 @@ export default {
           }
           if (data?.length === 0) {
             if (mappingData.length)
-              mappingData.filter(item => {
+              mappingData.filter((item) => {
                 if (item.children && item.children.length) {
-                  item.children.filter(childItem => {
-                    this.$set(childItem, 'checked', childItem.type === 'read')
+                  item.children.filter((childItem) => {
+                    childItem['checked'] = childItem.type === 'read'
                   })
                 }
               })
@@ -574,19 +623,19 @@ export default {
 
       permissionsApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           if (data && data.length) {
             self.permissionList = data
 
             // 页面排序  ---- 开始
             let pageMap = {}
-            self.permissionList.forEach(item => {
+            self.permissionList.forEach((item) => {
               pageMap[item.name] = item
             })
-            let pageMenu = items => {
-              return items.map(item => {
+            let pageMenu = (items) => {
+              return items.map((item) => {
                 let page = pageMap[item.name]
                 let menu = Object.assign({}, item, page)
                 if (menu.children) {
@@ -596,8 +645,8 @@ export default {
               })
             }
 
-            let moduleFun = items => {
-              return items.map(item => {
+            let moduleFun = (items) => {
+              return items.map((item) => {
                 let page = pageMap[item.name]
                 let menu = Object.assign({}, item, page)
                 if (menu.children) {
@@ -627,10 +676,10 @@ export default {
     // 页面单选
     handleCheckChange(event, item, data) {
       if (typeof item.checkAll === 'undefined') {
-        this.$set(item, 'checkAll', false)
+        item['checkAll'] = false
       }
 
-      let checkedCount = item.children.filter(el => {
+      let checkedCount = item.children.filter((el) => {
         return el.checkAll
       })
       item.checked = checkedCount.length === item.children.length
@@ -642,19 +691,19 @@ export default {
     // 页面全选
     handleAllCheck(event, item) {
       if (typeof item.checked === 'undefined') {
-        this.$set(item, 'checked', false)
+        item['checked'] = false
       } else {
         item.checkAll = event
       }
       if (typeof item.checkAll === 'undefined') {
-        this.$set(item, 'checkAll', true)
+        item['checkAll'] = true
       }
       if (item.children && item.children.length) {
         for (let i = 0; i < item.children.length; i++) {
           if (item.checked) {
-            this.$set(item.children[i], 'checkAll', true)
+            item.children[i]['checkAll'] = true
           } else {
-            this.$set(item.children[i], 'checkAll', false)
+            item.children[i]['checkAll'] = false
           }
           this.updateData(item.checkAll, item.children[i])
         }
@@ -667,12 +716,14 @@ export default {
         let add = {
           principalType: 'PERMISSION',
           principalId: data.name,
-          roleId: roleId
+          roleId: roleId,
         }
         this.adds.push(add)
         //同时清掉 deletes
         if (this.deletes && this.deletes.length > 0) {
-          let index = this.deletes.findIndex(del => del.principalId === data.principalId)
+          let index = this.deletes.findIndex(
+            (del) => del.principalId === data.principalId
+          )
           if (index > -1) {
             this.deletes.splice(index, -1)
           }
@@ -681,12 +732,14 @@ export default {
         let del = {
           principalType: 'PERMISSION',
           principalId: data.name,
-          roleId: roleId
+          roleId: roleId,
         }
         this.deletes.push(del)
         //同时清掉 adds
         if (this.adds && this.adds.length > 0) {
-          let index = this.adds.findIndex(add => add.principalId === data.principalId)
+          let index = this.adds.findIndex(
+            (add) => add.principalId === data.principalId
+          )
           if (index > -1) {
             this.adds.splice(index, -1)
           }
@@ -697,7 +750,7 @@ export default {
     // 权限单个选择
     handleOneCheckAll(event, item, children, second, type) {
       if (typeof item.checked === 'undefined') {
-        this.$set(item, 'checked', true)
+        item['checked'] = true
       }
 
       // if (!event) {
@@ -705,7 +758,7 @@ export default {
       // 	item.checkedAllData = false;
       // }
 
-      let checkedCount = children.filter(el => {
+      let checkedCount = children.filter((el) => {
         return el.checked
       })
 
@@ -724,20 +777,20 @@ export default {
     // 权限全选
     handleAuthoritySelectAll(event, item, children) {
       if (typeof item.checkAll === 'undefined') {
-        this.$set(item, 'checkAll', false)
+        item['checkAll'] = false
       } else {
         item.checked = event
       }
       if (typeof item.checked === 'undefined') {
-        this.$set(item, 'checked', true)
+        item['checked'] = true
       }
       if (children && children.length) {
         for (let i = 0; i < children.length; i++) {
           if (event) {
-            this.$set(children[i], 'checked', true)
+            children[i]['checked'] = true
           } else {
             if (children[i].type !== 'read') {
-              this.$set(children[i], 'checked', false)
+              children[i]['checked'] = false
             }
 
             // this.$set(children[i], 'checkAllData', false);
@@ -750,38 +803,39 @@ export default {
     // 权限全部数据单选
     handleOneAllData(event, item, children, second) {
       if (typeof second.checkAllData === 'undefined') {
-        this.$set(second, 'checkAllData', true)
+        second['checkAllData'] = true
       }
       if (typeof item.checkAll === 'undefined') {
-        this.$set(item, 'checkAll', false)
+        item['checkAll'] = false
       } else {
         item.checked = event
       }
-      let checkedCount = children.filter(el => {
+      let checkedCount = children.filter((el) => {
         if (el.allName) {
           return el.checkAllData
         }
       })
-      let allDataCount = children.filter(el => {
+      let allDataCount = children.filter((el) => {
         return el.allName
       })
-      item.checkedAllData = checkedCount.length === allDataCount.length ? true : false
+      item.checkedAllData =
+        checkedCount.length === allDataCount.length ? true : false
     },
 
     // 权限全部数据全选
     handleCheckedAllData(event, item, children) {
       if (typeof item.checkedAllData === 'undefined') {
-        this.$set(item, 'checkedAllData', false)
+        item['checkedAllData'] = false
       } else {
         item.checkAllData = event
       }
       if (children && children.length) {
         for (let i = 0; i < children.length; i++) {
           if (event && children[i].checked) {
-            this.$set(children[i], 'checkAllData', true)
+            children[i]['checkAllData'] = true
           } else {
             if (children[i].allName !== 'data_catalog_all_data') {
-              this.$set(children[i], 'checkAllData', false)
+              children[i]['checkAllData'] = false
             }
           }
         }
@@ -801,17 +855,17 @@ export default {
         childreArrAll = [],
         classifyArr = [],
         functionalArr = []
-      this.dataList.forEach(item => {
-        item.children.forEach(child => {
+      this.dataList.forEach((item) => {
+        item.children.forEach((child) => {
           if (child.checkAll) {
             pageArr.push(child.name)
             pageMenuArr.push(item.name)
           }
         })
       })
-      this.moduleList.forEach(item => {
+      this.moduleList.forEach((item) => {
         if (item.children && item.children.length)
-          item.children.forEach(child => {
+          item.children.forEach((child) => {
             if (child.checkAllData) {
               childreArrAll.push(child.allName)
             }
@@ -820,38 +874,45 @@ export default {
             }
           })
         if (item.classification && item.classification.length)
-          item.classification.forEach(classify => {
+          item.classification.forEach((classify) => {
             if (classify.checked) {
               classifyArr.push(classify.name)
             }
           })
         if (item.functional && item.functional.length)
-          item.functional.forEach(fun => {
+          item.functional.forEach((fun) => {
             if (fun.checked) {
               functionalArr.push(fun.name)
             }
           })
       })
 
-      let saveRoleArr = [...pageMenuArr, ...pageArr, ...childreArr, ...childreArrAll, ...classifyArr, ...functionalArr]
+      let saveRoleArr = [
+        ...pageMenuArr,
+        ...pageArr,
+        ...childreArr,
+        ...childreArrAll,
+        ...classifyArr,
+        ...functionalArr,
+      ]
 
       let newRoleMappings = []
 
-      saveRoleArr.forEach(selectPermission => {
+      saveRoleArr.forEach((selectPermission) => {
         if (selectPermission)
           newRoleMappings.push({
             principalType: 'PERMISSION',
             principalId: selectPermission,
-            roleId: roleId
+            roleId: roleId,
           })
       })
 
       usersApi
         .deletePermissionRoleMapping(roleId, {
-          data: { data: newRoleMappings }
+          data: { data: newRoleMappings },
         })
         .then(() => {
-          this.$emit('saveBack')
+          $emit(this, 'saveBack')
           this.$message.success(this.$t('message_save_ok'))
         })
         .finally(() => {
@@ -865,12 +926,12 @@ export default {
       this.saveloading = true
       let data = {
         adds: this.adds,
-        deletes: this.deletes
+        deletes: this.deletes,
       }
       usersApi
         .updatePermissionRoleMapping(roleId, data)
         .then(() => {
-          this.$emit('saveBack')
+          $emit(this, 'saveBack')
           this.$message.success(this.$t('message_save_ok'))
           this.adds = []
           this.deletes = []
@@ -882,8 +943,9 @@ export default {
     // 返回
     back() {
       this.$router.push({ name: 'roles' })
-    }
-  }
+    },
+  },
+  emits: ['saveBack'],
 }
 </script>
 
@@ -1034,11 +1096,11 @@ export default {
     border-top: 1px solid #e7e7e7;
   }
 }
-
 [v-cloak] {
   display: none;
 }
 </style>
+
 <style lang="scss">
 .role {
   .role-table {

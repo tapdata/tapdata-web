@@ -4,7 +4,12 @@
       <div class="logo">
         <img :src="logoUrl" />
         <div v-if="$getSettingByKey('SHOW_LANGUAGE')" class="switch-lang">
-          <span v-for="(value, key) in languages" :key="key" :class="{ bold: key === lang }" @click="langChange(key)">
+          <span
+            v-for="(value, key) in languages"
+            :key="key"
+            :class="{ bold: key === lang }"
+            @click="langChange(key)"
+          >
             {{ value }}
           </span>
         </div>
@@ -13,8 +18,13 @@
     </header>
   </div>
 </template>
+
 <script>
-import { langMenu, getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
+import {
+  langMenu,
+  getCurrentLanguage,
+  setCurrentLanguage,
+} from '@tap/i18n/src/shared/util'
 
 export default {
   name: 'LoginHeader',
@@ -22,18 +32,19 @@ export default {
     return {
       logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
       languages: langMenu,
-      lang: getCurrentLanguage()
+      lang: getCurrentLanguage(),
     }
   },
   methods: {
     langChange(lang) {
       setCurrentLanguage(lang, this.$i18n)
       this.lang = lang
-    }
-  }
+    },
+  },
 }
 </script>
-<style scoped lang="scss">
+
+<style lang="scss" scoped>
 header {
   padding: 70px 80px 0 80px;
   margin: 0 auto;

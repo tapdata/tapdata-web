@@ -1,17 +1,44 @@
 <template>
   <section class="shared-cache-list-wrap h-100">
-    <TablePage ref="table" row-key="id" :remoteMethod="getData" @sort-change="handleSortTable">
-      <template slot="search">
-        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
+    <TablePage
+      ref="table"
+      row-key="id"
+      :remoteMethod="getData"
+      @sort-change="handleSortTable"
+    >
+      <template v-slot:search>
+        <FilterBar
+          v-model:value="searchParams"
+          :items="filterItems"
+          @fetch="table.fetch(1)"
+        >
+        </FilterBar>
       </template>
-      <div slot="operation">
-        <ElButton class="btn btn-create" type="primary" size="mini" @click="create">
-          <span> {{ $t('shared_cache_button_create') }}</span>
-        </ElButton>
-      </div>
-      <ElTableColumn show-overflow-tooltip prop="name" min-width="180" :label="$t('shared_cache_name')">
+      <template v-slot:operation>
+        <div>
+          <ElButton
+            class="btn btn-create"
+            type="primary"
+            size="mini"
+            @click="create"
+          >
+            <span> {{ $t('shared_cache_button_create') }}</span>
+          </ElButton>
+        </div>
+      </template>
+      <ElTableColumn
+        show-overflow-tooltip
+        prop="name"
+        min-width="180"
+        :label="$t('shared_cache_name')"
+      >
         <template #default="{ row }">
-          <ElLink style="display: inline" type="primary" @click.stop="checkDetails(row)">{{ row.name }}</ElLink>
+          <ElLink
+            style="display: inline"
+            type="primary"
+            @click.stop="checkDetails(row)"
+            >{{ row.name }}</ElLink
+          >
         </template>
       </ElTableColumn>
       <ElTableColumn
@@ -20,29 +47,47 @@
         min-width="100"
         :label="$t('column_connection')"
       ></ElTableColumn>
-      <ElTableColumn show-overflow-tooltip prop="tableName" min-width="100" :label="$t('column_table')"></ElTableColumn>
+      <ElTableColumn
+        show-overflow-tooltip
+        prop="tableName"
+        min-width="100"
+        :label="$t('column_table')"
+      ></ElTableColumn>
       <ElTableColumn :label="$t('shared_cache_status')" min-width="70">
         <template #default="{ row }">
           <TaskStatus :task="row" />
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="createTime" :label="$t('column_create_time')" min-width="100" sortable="createTime">
-        <template slot-scope="scope">
+      <ElTableColumn
+        prop="createTime"
+        :label="$t('column_create_time')"
+        min-width="100"
+        sortable="createTime"
+      >
+        <template v-slot="scope">
           {{ scope.row.createTimeFmt }}
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="cacheTimeAt" min-width="100" :label="$t('shared_cache_time')">
-        <template slot-scope="scope">
+      <ElTableColumn
+        prop="cacheTimeAt"
+        min-width="100"
+        :label="$t('shared_cache_time')"
+      >
+        <template v-slot="scope">
           {{ scope.row.cacheTimeAtFmt }}
         </template>
       </ElTableColumn>
       <ElTableColumn min-width="120" :label="$t('column_operation')">
         <template #default="{ row }">
-          <TaskButtons :task="row" :hide-list="['details']" @trigger="taskButtonsHandler"></TaskButtons>
+          <TaskButtons
+            :task="row"
+            :hide-list="['details']"
+            @trigger="taskButtonsHandler"
+          ></TaskButtons>
         </template>
       </ElTableColumn>
     </TablePage>
-    <Drawer class="shared-cache-details" :visible.sync="isShowDetails">
+    <Drawer class="shared-cache-details" v-model:visible="isShowDetails">
       <div v-if="details.id" class="shared-cache-details--header flex pb-3">
         <div class="img-box">
           <VIcon class="icon">text</VIcon>
@@ -70,7 +115,9 @@
       <div class="shared-cache--keys">
         <div class="title">{{ $t('shared_cache_fields') }}</div>
         <div class="content">
-          <div v-for="key in details.fields" :key="key" class="mt-2">{{ key }}</div>
+          <div v-for="key in details.fields" :key="key" class="mt-2">
+            {{ key }}
+          </div>
         </div>
       </div>
       <div class="mt-4">{{ $t('shared_cache_code') }}</div>
@@ -78,6 +125,178 @@
     </Drawer>
   </section>
 </template>
+
+<script>
+import dayjs from 'dayjs'
+import { sharedCacheApi } from '@tap/api'
+import { FilterBar, Drawer } from '@tap/component'
+import { TablePage, TaskStatus, makeStatusAndDisabled } from '@tap/business'
+
+import { toRegExp } from '@/utils/util'
+import TaskButtons from '@/components/TaskButtons'
+
+import CodeView from './CodeView.vue'
+
+export default {
+  components: {
+    TablePage,
+    FilterBar,
+    Drawer,
+    TaskButtons,
+    CodeView,
+    TaskStatus,
+  },
+  data() {
+    return {
+      searchParams: {
+        name: '',
+        connectionName: '',
+      },
+      filterItems: [
+        {
+          placeholder: this.$t('shared_cache_placeholder_task_name'),
+          key: 'name',
+          type: 'input',
+        },
+        {
+          placeholder: this.$t('shared_cache_placeholder_connection_name'),
+          key: 'connectionName',
+          type: 'input',
+        },
+      ],
+      details: {},
+      info: [],
+      isShowDetails: false,
+      order: 'cacheTimeAt DESC',
+    }
+  },
+  computed: {
+    table() {
+      return this.$refs.table
+    },
+  },
+  watch: {
+    '$route.query'() {
+      this.table.fetch(1)
+    },
+  },
+  methods: {
+    getData({ page }) {
+      let { current, size } = page
+      let { name, connectionName } = this.searchParams
+      let where = {}
+      name && (where.name = { like: toRegExp(name), options: 'i' })
+      connectionName &&
+        (where.connectionName = {
+          like: toRegExp(connectionName),
+          options: 'i',
+        })
+
+      let filter = {
+        order: this.order,
+        limit: size,
+        skip: (current - 1) * size,
+        where,
+      }
+      return sharedCacheApi
+        .get({
+          filter: JSON.stringify(filter),
+        })
+        .then((data) => {
+          let list = data?.items || []
+          return {
+            total: data?.total,
+            data: list.map((item) => {
+              item.createTimeFmt = item.createTime
+                ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+                : '-'
+              item.cacheTimeAtFmt = item.cacheTimeAt
+                ? dayjs(item.cacheTimeAt).format('YYYY-MM-DD HH:mm:ss')
+                : '-'
+
+              makeStatusAndDisabled(item)
+              return item
+            }),
+          }
+        })
+    },
+    create() {
+      this.$router.push({
+        name: 'sharedCacheCreate',
+      })
+    },
+    checkDetails(row) {
+      row.cacheKeysArr = row.cacheKeys?.split(',') || []
+      this.details = row
+      this.info = [
+        {
+          label: this.$t('column_creator'),
+          value: row.createUser,
+          icon: 'createUser',
+        },
+        {
+          label: this.$t('shared_cache_time'),
+          value: row.cacheTimeAtFmt,
+          icon: 'cacheTimeAtFmt',
+        },
+        {
+          label: this.$t('column_connection'),
+          value: row.connectionName,
+          icon: 'connectionName',
+        },
+        { label: this.$t('column_table'), value: row.tableName, icon: 'table' },
+        {
+          label: this.$t('shared_cache_max_memory'),
+          value: row.maxMemory,
+          icon: 'record',
+        },
+      ]
+      this.isShowDetails = true
+    },
+    taskButtonsHandler(event, task) {
+      if (event === 'edit') {
+        this.edit(task.id)
+      } else if (event === 'del') {
+        this.del(task.id)
+      } else {
+        this.table.fetch()
+      }
+    },
+    edit(id) {
+      this.$router.push({
+        name: 'sharedCacheEdit',
+        params: {
+          id,
+        },
+      })
+    },
+    del(id) {
+      this.$confirm(
+        this.$t('message_delete_confirm'),
+        this.$t('message_title_prompt'),
+        {
+          type: 'warning',
+        }
+      ).then((flag) => {
+        if (flag) {
+          sharedCacheApi.delete(id).then(() => {
+            this.$message.success(this.$t('message_delete_ok'))
+            this.table.fetch()
+          })
+        }
+      })
+    },
+    //筛选条件
+    handleSortTable({ order, prop }) {
+      this.order = `${order ? prop : 'cacheTimeAt'} ${
+        order === 'ascending' ? 'ASC' : 'DESC'
+      }`
+      this.table.fetch(1)
+    },
+  },
+}
+</script>
+
 <style lang="scss" scoped>
 .shared-cache-list-wrap {
   overflow: hidden;
@@ -148,136 +367,3 @@
   }
 }
 </style>
-<script>
-import dayjs from 'dayjs'
-import { sharedCacheApi } from '@tap/api'
-import { FilterBar, Drawer } from '@tap/component'
-import { TablePage, TaskStatus, makeStatusAndDisabled } from '@tap/business'
-
-import { toRegExp } from '@/utils/util'
-import TaskButtons from '@/components/TaskButtons'
-
-import CodeView from './CodeView.vue'
-
-export default {
-  components: { TablePage, FilterBar, Drawer, TaskButtons, CodeView, TaskStatus },
-  data() {
-    return {
-      searchParams: {
-        name: '',
-        connectionName: ''
-      },
-      filterItems: [
-        {
-          placeholder: this.$t('shared_cache_placeholder_task_name'),
-          key: 'name',
-          type: 'input'
-        },
-        {
-          placeholder: this.$t('shared_cache_placeholder_connection_name'),
-          key: 'connectionName',
-          type: 'input'
-        }
-      ],
-      details: {},
-      info: [],
-      isShowDetails: false,
-      order: 'cacheTimeAt DESC'
-    }
-  },
-  computed: {
-    table() {
-      return this.$refs.table
-    }
-  },
-  watch: {
-    '$route.query'() {
-      this.table.fetch(1)
-    }
-  },
-  methods: {
-    getData({ page }) {
-      let { current, size } = page
-      let { name, connectionName } = this.searchParams
-      let where = {}
-      name && (where.name = { like: toRegExp(name), options: 'i' })
-      connectionName && (where.connectionName = { like: toRegExp(connectionName), options: 'i' })
-
-      let filter = {
-        order: this.order,
-        limit: size,
-        skip: (current - 1) * size,
-        where
-      }
-      return sharedCacheApi
-        .get({
-          filter: JSON.stringify(filter)
-        })
-        .then(data => {
-          let list = data?.items || []
-          return {
-            total: data?.total,
-            data: list.map(item => {
-              item.createTimeFmt = item.createTime ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') : '-'
-              item.cacheTimeAtFmt = item.cacheTimeAt ? dayjs(item.cacheTimeAt).format('YYYY-MM-DD HH:mm:ss') : '-'
-
-              makeStatusAndDisabled(item)
-              return item
-            })
-          }
-        })
-    },
-    create() {
-      this.$router.push({
-        name: 'sharedCacheCreate'
-      })
-    },
-    checkDetails(row) {
-      row.cacheKeysArr = row.cacheKeys?.split(',') || []
-      this.details = row
-      this.info = [
-        { label: this.$t('column_creator'), value: row.createUser, icon: 'createUser' },
-        { label: this.$t('shared_cache_time'), value: row.cacheTimeAtFmt, icon: 'cacheTimeAtFmt' },
-        { label: this.$t('column_connection'), value: row.connectionName, icon: 'connectionName' },
-        { label: this.$t('column_table'), value: row.tableName, icon: 'table' },
-        { label: this.$t('shared_cache_max_memory'), value: row.maxMemory, icon: 'record' }
-      ]
-      this.isShowDetails = true
-    },
-    taskButtonsHandler(event, task) {
-      if (event === 'edit') {
-        this.edit(task.id)
-      } else if (event === 'del') {
-        this.del(task.id)
-      } else {
-        this.table.fetch()
-      }
-    },
-    edit(id) {
-      this.$router.push({
-        name: 'sharedCacheEdit',
-        params: {
-          id
-        }
-      })
-    },
-    del(id) {
-      this.$confirm(this.$t('message_delete_confirm'), this.$t('message_title_prompt'), {
-        type: 'warning'
-      }).then(flag => {
-        if (flag) {
-          sharedCacheApi.delete(id).then(() => {
-            this.$message.success(this.$t('message_delete_ok'))
-            this.table.fetch()
-          })
-        }
-      })
-    },
-    //筛选条件
-    handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'cacheTimeAt'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
-      this.table.fetch(1)
-    }
-  }
-}
-</script>

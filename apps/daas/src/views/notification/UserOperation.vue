@@ -1,32 +1,42 @@
 <script>
+import { plantRenderPara } from '../../utils/gogocodeTransfer'
+import * as Vue from 'vue'
 export default {
   props: {
     record: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
-  render(h) {
+  render() {
     let record = this.record
     let activeTextStyle = 'color: #2C65FF; padding-right: 5px;'
-    return h(
+    return Vue.h(
       'div',
-      {
-        class: 'user-operation-wrap'
-      },
+      plantRenderPara({
+        class: 'user-operation-wrap',
+      }),
       [
         this.$t('notification_account') + ' ',
-        h('span', { style: activeTextStyle }, record.username || record.email),
+        Vue.h(
+          'span',
+          plantRenderPara({ style: activeTextStyle }),
+          record.username || record.email
+        ),
         this.$t('notification_operation_' + record.operation),
         this.$t('notification_modular_' + record.modular) + ' ',
-        h('span', { style: activeTextStyle }, record.parameter1)
+        Vue.h(
+          'span',
+          plantRenderPara({ style: activeTextStyle }),
+          record.parameter1
+        ),
       ]
     )
-  }
+  },
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .user-operation-wrap {
   display: inline-block;
   color: map-get($fontColor, light);

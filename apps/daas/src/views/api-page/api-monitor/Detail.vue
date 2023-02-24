@@ -1,51 +1,105 @@
 <template>
-  <section class="api-monitor-detail-wrap flex flex-direction" v-loading="loadingDetail">
+  <section
+    class="api-monitor-detail-wrap flex flex-direction"
+    v-loading="loadingDetail"
+  >
     <div class="flex-direction pt-5 mt-8" style="width: 350px">
       <div class="flex flex-direction flex-1">
         <div class="flex-1">
-          <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_visitTotalCount') }}</div>
-          <div class="api-monitor-detail-wrap__value">{{ detail.totalCount }}/{{ detail.visitTotalCount || 0 }}</div>
+          <div class="api-monitor-detail-wrap__text">
+            {{ $t('api_monitor_detail_visitTotalCount') }}
+          </div>
+          <div class="api-monitor-detail-wrap__value">
+            {{ detail.totalCount }}/{{ detail.visitTotalCount || 0 }}
+          </div>
         </div>
         <div class="flex-1">
-          <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_visitQuantity') }}</div>
-          <div class="api-monitor-detail-wrap__value">{{ handleUnit(detail.visitQuantity) || 0 }}</div>
+          <div class="api-monitor-detail-wrap__text">
+            {{ $t('api_monitor_detail_visitQuantity') }}
+          </div>
+          <div class="api-monitor-detail-wrap__value">
+            {{ handleUnit(detail.visitQuantity) || 0 }}
+          </div>
         </div>
         <div class="flex-1 cursor-pointer" @click="getDetail(false, 'latency')">
-          <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_timeConsuming') }}</div>
-          <div class="api-monitor-detail-wrap__value">{{ formatMs(detail.timeConsuming) || 0 }}</div>
+          <div class="api-monitor-detail-wrap__text">
+            {{ $t('api_monitor_detail_timeConsuming') }}
+          </div>
+          <div class="api-monitor-detail-wrap__value">
+            {{ formatMs(detail.timeConsuming) || 0 }}
+          </div>
         </div>
       </div>
       <div class="flex flex-direction flex-1 pb-5 mt-8">
-        <div class="flex-1 cursor-pointer" @click="getDetail(false, 'visitTotalLine')">
-          <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_visitTotalLine') }}</div>
-          <div class="api-monitor-detail-wrap__value">{{ detail.visitTotalLine || 0 }}</div>
+        <div
+          class="flex-1 cursor-pointer"
+          @click="getDetail(false, 'visitTotalLine')"
+        >
+          <div class="api-monitor-detail-wrap__text">
+            {{ $t('api_monitor_detail_visitTotalLine') }}
+          </div>
+          <div class="api-monitor-detail-wrap__value">
+            {{ detail.visitTotalLine || 0 }}
+          </div>
         </div>
         <div class="flex-1 cursor-pointer" @click="getDetail(false, 'speed')">
-          <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_speed') }}</div>
+          <div class="api-monitor-detail-wrap__text">
+            {{ $t('api_monitor_detail_speed') }}
+          </div>
           <div class="api-monitor-detail-wrap__value">
             {{ detail.speed ? handleUnit(detail.speed) + '/S' : '0 M/S' }}
           </div>
         </div>
-        <div class="flex-1 cursor-pointer" @click="getDetail(false, 'responseTime')">
-          <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_responseTime') }}</div>
-          <div class="api-monitor-detail-wrap__value">{{ formatMs(detail.responseTime) || 0 }}</div>
+        <div
+          class="flex-1 cursor-pointer"
+          @click="getDetail(false, 'responseTime')"
+        >
+          <div class="api-monitor-detail-wrap__text">
+            {{ $t('api_monitor_detail_responseTime') }}
+          </div>
+          <div class="api-monitor-detail-wrap__value">
+            {{ formatMs(detail.responseTime) || 0 }}
+          </div>
         </div>
       </div>
     </div>
     <div class="flex-1 pt-3">
-      <FilterBar v-model="searchParams" :items="filterItems" :hideRefresh="true" @fetch="getDetail()"> </FilterBar>
+      <FilterBar
+        v-model:value="searchParams"
+        :items="filterItems"
+        :hideRefresh="true"
+        @fetch="getDetail()"
+      >
+      </FilterBar>
       <div v-loading="!qpsDataTime.length" style="height: 200px">
-        <Chart ref="chart" :extend="lineOptions" class="type-chart h-100"></Chart>
+        <Chart
+          ref="chart"
+          :extend="lineOptions"
+          class="type-chart h-100"
+        ></Chart>
       </div>
     </div>
     <div class="pt-5 ml-4" style="width: 200px">
-      <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">{{
-        $t('role_all_check')
-      }}</el-checkbox>
-      <span class="ml-2">{{ clientName.length }}/{{ clientNameList.length }}</span>
+      <el-checkbox
+        :indeterminate="isIndeterminate"
+        v-model:value="checkAll"
+        @change="handleCheckAllChange"
+        >{{ $t('role_all_check') }}</el-checkbox
+      >
+      <span class="ml-2"
+        >{{ clientName.length }}/{{ clientNameList.length }}</span
+      >
       <div style="margin: 15px 0"></div>
-      <el-checkbox-group v-model="clientName" @change="handleCheckedCitiesChange">
-        <el-checkbox v-for="item in clientNameList" :key="item.id" :label="item.id">{{ item.name }}</el-checkbox>
+      <el-checkbox-group
+        v-model:value="clientName"
+        @change="handleCheckedCitiesChange"
+      >
+        <el-checkbox
+          v-for="item in clientNameList"
+          :key="item.id"
+          :label="item.id"
+          >{{ item.name }}</el-checkbox
+        >
       </el-checkbox-group>
     </div>
   </section>
@@ -69,19 +123,28 @@ export default {
       filterItems: [],
       searchParams: {
         guanluary: 5,
-        type: 'visitTotalLine'
+        type: 'visitTotalLine',
       },
       typesOptions: [
-        { label: this.$t('api_monitor_detail_visitTotalLine'), value: 'visitTotalLine' },
-        { label: this.$t('api_monitor_detail_timeConsuming'), value: 'latency' },
+        {
+          label: this.$t('api_monitor_detail_visitTotalLine'),
+          value: 'visitTotalLine',
+        },
+        {
+          label: this.$t('api_monitor_detail_timeConsuming'),
+          value: 'latency',
+        },
         { label: this.$t('api_monitor_detail_speed'), value: 'speed' },
-        { label: this.$t('api_monitor_detail_responseTime'), value: 'responseTime' }
+        {
+          label: this.$t('api_monitor_detail_responseTime'),
+          value: 'responseTime',
+        },
       ],
       timeList: [
         { label: this.$t('task_info_five_min'), value: 5 },
         { label: this.$t('task_info_ten_min'), value: 10 },
         { label: this.$t('task_info_thirty_min'), value: 30 },
-        { label: this.$t('task_info_last_hour'), value: 60 }
+        { label: this.$t('task_info_last_hour'), value: 60 },
       ],
       allElection: [],
       clientName: [],
@@ -91,22 +154,22 @@ export default {
       clientNameList: [
         {
           name: 'Data Explorer',
-          id: '5c0e750b7a5cd42464a5099d'
-        }
+          id: '5c0e750b7a5cd42464a5099d',
+        },
       ],
       qpsDataTime: [],
       lineOptions: {
         tooltip: {
-          trigger: 'axis'
+          trigger: 'axis',
         },
         legend: {
           top: 4,
           right: 0,
-          show: false
+          show: false,
         },
         xAxis: {
           type: 'category',
-          boundaryGap: false
+          boundaryGap: false,
         },
         yAxis: {
           axisLabel: {
@@ -115,17 +178,17 @@ export default {
                 value = value / 1000 + 'K'
               }
               return value
-            }
+            },
           },
           axisLine: {
-            show: true
+            show: true,
           },
           splitLine: {
             show: true,
             lineStyle: {
-              type: 'dashed'
-            }
-          }
+              type: 'dashed',
+            },
+          },
         },
         grid: {
           left: '24px', // 没有数据的时候，Y轴单位显示不全。后面可以通过判断设置该值
@@ -134,27 +197,27 @@ export default {
           bottom: 0,
           containLabel: true,
           borderWidth: 1,
-          borderColor: '#ccc'
+          borderColor: '#ccc',
         },
         series: [
           {
             name: this.$t('task_info_input'),
             lineStyle: {
               color: 'rgba(24, 144, 255, 1)',
-              width: 1
+              width: 1,
             },
             areaStyle: {
-              color: 'rgba(24, 144, 255, 0.2)'
+              color: 'rgba(24, 144, 255, 0.2)',
             },
             symbol: 'none',
             itemStyle: {
-              color: 'rgba(24, 144, 255, 1)'
+              color: 'rgba(24, 144, 255, 1)',
             },
             type: 'line',
-            data: []
-          }
-        ]
-      }
+            data: [],
+          },
+        ],
+      },
     }
   },
   created() {
@@ -171,9 +234,9 @@ export default {
   watch: {
     '$route.query'() {
       this.getDetail()
-    }
+    },
   },
-  destroyed() {
+  unmounted() {
     this.timer && clearInterval(this.timer)
   },
   methods: {
@@ -194,31 +257,35 @@ export default {
         guanluary: this.searchParams.guanluary || 5,
         clientId: [],
         start: Time.now(),
-        type: this.searchParams.type || 'visitTotalLine'
+        type: this.searchParams.type || 'visitTotalLine',
       }
       if (!hiddenLoading) {
         this.loadingDetail = true
       }
       apiMonitorApi
         .apiDetail(data)
-        .then(data => {
+        .then((data) => {
           //处理数据
           this.detail = data
-          this.detail['totalCount'] = (this.detail.visitTotalCount || 0) - (this.detail.errorVisitTotalCount || 0) || 0
+          this.detail['totalCount'] =
+            (this.detail.visitTotalCount || 0) -
+              (this.detail.errorVisitTotalCount || 0) || 0
           // 折线图
           let qpsDataValue = data.value || []
           this.qpsDataTime = data.time || []
-          this.qpsDataTime = this.qpsDataTime.map(t => formatTime(t, 'HH:mm:ss')) // 时间不在这里格式化.map(t => formatTime(t))
+          this.qpsDataTime = this.qpsDataTime.map((t) =>
+            formatTime(t, 'HH:mm:ss')
+          ) // 时间不在这里格式化.map(t => formatTime(t))
           this.$nextTick(() => {
             this.$refs.chart?.chart?.setOption({
               xAxis: {
-                data: this.qpsDataTime
+                data: this.qpsDataTime,
               },
               series: [
                 {
-                  data: qpsDataValue // Object.assign([], this.lineDataDeep.y[0])
-                }
-              ]
+                  data: qpsDataValue, // Object.assign([], this.lineDataDeep.y[0])
+                },
+              ],
             })
           })
           //全选值
@@ -236,14 +303,14 @@ export default {
           type: 'select-inner',
           items: this.typesOptions,
           selectedWidth: '200px',
-          clearable: false
+          clearable: false,
         },
         {
           label: this.$t('api_monitor_detail_monitoring_period'),
           key: 'guanluary',
           type: 'select-inner',
-          items: this.timeList
-        }
+          items: this.timeList,
+        },
       ]
     },
     handleCheckAllChange(val) {
@@ -260,15 +327,16 @@ export default {
     handleCheckedCitiesChange(value) {
       let checkedCount = value.length
       this.checkAll = checkedCount === this.clientNameList.length
-      this.isIndeterminate = checkedCount > 0 && checkedCount < this.clientNameList.length
+      this.isIndeterminate =
+        checkedCount > 0 && checkedCount < this.clientNameList.length
       //刷新数据
       this.getDetail()
-    }
-  }
+    },
+  },
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .api-monitor-detail-wrap {
   .api-monitor-detail-wrap__text {
     font-size: 12px;

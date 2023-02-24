@@ -9,14 +9,22 @@
             <p>
               {{ $t('app_signIn_account') }}
               <i>{{ email }}</i>
-              {{ type === 'registy' ? $t('app_signIn_accountSuccess') : $t('app_signIn_resetAccountSuccess') }}
+              {{
+                type === 'registy'
+                  ? $t('app_signIn_accountSuccess')
+                  : $t('app_signIn_resetAccountSuccess')
+              }}
             </p>
             <p v-if="type === 'registy'">{{ $t('app_signIn_clickBtn') }}</p>
             <p v-else>{{ $t('app_signIn_resetClickBtn') }}</p>
 
-            <el-button class="btn" type="primary" size="mini" @click="goLogin">{{
-              $t('app_signIn_goLogin')
-            }}</el-button>
+            <el-button
+              class="btn"
+              type="primary"
+              size="mini"
+              @click="goLogin"
+              >{{ $t('app_signIn_goLogin') }}</el-button
+            >
           </div>
         </template>
 
@@ -25,12 +33,18 @@
           <div class="text">
             <p>
               {{ $t('app_signIn_account') }}<i>{{ email }}</i
-              >{{ type === 'registy' ? $t('app_signIn_connectionFailed') : $t('app_signIn_resetConnectionFailed') }}
+              >{{
+                type === 'registy'
+                  ? $t('app_signIn_connectionFailed')
+                  : $t('app_signIn_resetConnectionFailed')
+              }}
             </p>
             <div style="font-size: 18px">
               {{ $t('app_signIn_confirmEmail')
               }}<span @click="backRegisty">{{
-                type === 'registy' ? $t('app_signIn_registered') : $t('app_signIn_modifyPassword')
+                type === 'registy'
+                  ? $t('app_signIn_registered')
+                  : $t('app_signIn_modifyPassword')
               }}</span>
             </div>
           </div>
@@ -56,7 +70,7 @@ export default {
       timer: null,
       time: 0,
       result: '',
-      queryData: null
+      queryData: null,
     }
   },
   created() {
@@ -111,7 +125,7 @@ export default {
     // 去注册
     backRegisty() {
       this.$router.replace({
-        name: 'registry'
+        name: 'registry',
       })
     },
 
@@ -119,10 +133,10 @@ export default {
     goLogin() {
       this.$router.replace({
         name: 'login',
-        query: { email: this.email }
+        query: { email: this.email },
       })
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -132,7 +146,6 @@ export default {
   height: 100%;
   overflow: auto;
   box-sizing: border-box;
-
   main {
     position: relative;
     margin-top: 100px;

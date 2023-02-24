@@ -36,29 +36,29 @@ export const formatMs = (msTime = 0, type = 'time') => {
   let arr = []
   arr.push({
     label: 'd',
-    value: Math.floor(time / 60 / 60 / 24)
+    value: Math.floor(time / 60 / 60 / 24),
   }) // day
   arr.push({
     label: 'h',
-    value: Math.floor(time / 60 / 60) % 24
+    value: Math.floor(time / 60 / 60) % 24,
   }) // hour
   arr.push({
     label: 'm',
-    value: Math.floor(time / 60) % 60
+    value: Math.floor(time / 60) % 60,
   }) // minute
   arr.push({
     label: 's',
-    value: Math.floor(time) % 60
+    value: Math.floor(time) % 60,
   }) // second
   let result = ''
   if (type === 'time') {
     result = arr
       .slice(1)
-      .map(t => (t.value + '').padStart(2, '0'))
+      .map((t) => (t.value + '').padStart(2, '0'))
       .join(':')
     return result
   }
-  arr.forEach(el => {
+  arr.forEach((el) => {
     if (el.value) {
       result += el.value + el.label
     }

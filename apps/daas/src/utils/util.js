@@ -11,9 +11,9 @@ export function configUser(user = {}) {
   let permissions = []
   let list = user?.permissions || []
   if (list.length) {
-    list.forEach(permission => {
+    list.forEach((permission) => {
       if (permission.resources && permission.resources.length > 0) {
-        permission.resources.forEach(res => {
+        permission.resources.forEach((res) => {
           permissions.push(res)
         })
       }
@@ -36,7 +36,23 @@ export function signOut() {
 }
 
 export function toRegExp(word) {
-  let arr = ['\\', '$', '(', ')', '*', '+', '.', '[', ']', '?', '^', '{', '}', '|', '-']
+  let arr = [
+    '\\',
+    '$',
+    '(',
+    ')',
+    '*',
+    '+',
+    '.',
+    '[',
+    ']',
+    '?',
+    '^',
+    '{',
+    '}',
+    '|',
+    '-',
+  ]
   for (let i = 0; i < arr.length; i++) {
     let str = '\\' + arr[i]
     word = word.replace(new RegExp(str, 'g'), '\\' + arr[i])
@@ -76,7 +92,7 @@ export function delayTrigger(func, t = 500) {
   }
 }
 
-export const deepCopy = obj => JSON.parse(JSON.stringify(obj))
+export const deepCopy = (obj) => JSON.parse(JSON.stringify(obj))
 // TODO 去掉
 export const formatTime = (date, format = 'YYYY-MM-DD HH:mm:ss') => {
   return date ? dayjs(date).format(format) : ''
@@ -109,29 +125,29 @@ export const formatMs = (msTime = 0, type = 'time') => {
   let arr = []
   arr.push({
     label: i18n.t('task_info_d'),
-    value: Math.floor(time / 60 / 60 / 24)
+    value: Math.floor(time / 60 / 60 / 24),
   }) // day
   arr.push({
     label: i18n.t('task_info_h'),
-    value: Math.floor(time / 60 / 60) % 24
+    value: Math.floor(time / 60 / 60) % 24,
   }) // hour
   arr.push({
     label: i18n.t('task_info_m'),
-    value: Math.floor(time / 60) % 60
+    value: Math.floor(time / 60) % 60,
   }) // minute
   arr.push({
     label: i18n.t('task_info_s'),
-    value: Math.floor(time) % 60
+    value: Math.floor(time) % 60,
   }) // second
   let result = ''
   if (type === 'time') {
     result = arr
       .slice(1)
-      .map(t => (t.value + '').padStart(2, '0'))
+      .map((t) => (t.value + '').padStart(2, '0'))
       .join(':')
     return result
   }
-  arr.forEach(el => {
+  arr.forEach((el) => {
     if (el.value) {
       result += el.value + el.label
     }
@@ -143,7 +159,8 @@ export const formatMs = (msTime = 0, type = 'time') => {
 }
 
 // 判断对象是否为空
-export const isEmpty = obj => Reflect.ownKeys(obj).length === 0 && obj.constructor === Object
+export const isEmpty = (obj) =>
+  Reflect.ownKeys(obj).length === 0 && obj.constructor === Object
 
 const CLASSTYPES = [
   'String',
@@ -156,13 +173,18 @@ const CLASSTYPES = [
   'Date',
   'RegExp',
   'Object',
-  'Error'
+  'Error',
 ]
 
-const CLASS2TYPE = CLASSTYPES.reduce((obj, t) => ((obj[`[object ${t}]`] = t.toLowerCase()), obj), {})
+const CLASS2TYPE = CLASSTYPES.reduce(
+  (obj, t) => ((obj[`[object ${t}]`] = t.toLowerCase()), obj),
+  {}
+)
 
 export function getClassType(obj) {
-  return obj == null ? String(obj) : CLASS2TYPE[{}.toString.call(obj)] || 'object'
+  return obj == null
+    ? String(obj)
+    : CLASS2TYPE[{}.toString.call(obj)] || 'object'
 }
 
 export function isObject(obj) {
@@ -239,7 +261,9 @@ export function uniqueArr(arr = [], key = 'id') {
 }
 
 export function checkConnectionName(name) {
-  return /^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(name)
+  return /^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(
+    name
+  )
 }
 
 // 获取子任务状态统计
@@ -247,7 +271,7 @@ export function getSubTaskStatus(rows = []) {
   const statusMap = {
     running: ['wait_run', 'scheduling', 'running', 'stopping'],
     not_running: ['edit', 'stop', 'complete'],
-    error: ['error', 'schedule_failed']
+    error: ['error', 'schedule_failed'],
   }
   const len = rows.length
   let result = [],
@@ -255,28 +279,33 @@ export function getSubTaskStatus(rows = []) {
   if (len === 0) {
     result = [
       Object.assign({ count: 1 }, ETL_SUB_STATUS_MAP['edit'], {
-        status: 'edit'
-      })
+        status: 'edit',
+      }),
     ]
   } else {
     let tempMap = {}
-    rows.forEach(r => {
+    rows.forEach((r) => {
       tempMap[r.status] = true
     })
     if (Object.keys(tempMap).length === 1) {
       let status = rows[0]?.status
-      status = status === 'edit' ? 'ready' : status === 'schedule_failed' ? 'error' : status
+      status =
+        status === 'edit'
+          ? 'ready'
+          : status === 'schedule_failed'
+          ? 'error'
+          : status
       result = [
         Object.assign({ count: 1 }, ETL_SUB_STATUS_MAP[status], {
-          status: status
-        })
+          status: status,
+        }),
       ]
     } else {
       for (let key in ETL_STATUS_MAP) {
         item = Object.assign({}, ETL_STATUS_MAP[key])
         item.status = key
         item.count = 0
-        rows.forEach(el => {
+        rows.forEach((el) => {
           if (statusMap[key].includes(el.status)) {
             item.count++
           }
@@ -297,7 +326,7 @@ export function getTaskBtnDisabled(row, or) {
     edit: false,
     reset: false,
     delete: false,
-    monitor: false
+    monitor: false,
   }
   let statusResult = []
   if (row.statusResult) {
@@ -305,7 +334,7 @@ export function getTaskBtnDisabled(row, or) {
   } else {
     statusResult = getSubTaskStatus(row.statuses)
   }
-  let filterArr = statusResult.filter(t => t.count > 0)
+  let filterArr = statusResult.filter((t) => t.count > 0)
   // 统计出3种状态：运行中running、未运行not_running、错误error
   if (statusResult.length > 1) {
     // 启动禁用：运行中
@@ -314,12 +343,16 @@ export function getTaskBtnDisabled(row, or) {
     // 重置禁用：运行中
     // 删除禁用：运行中
     // 运行监控禁用：编辑中、待启动、启动中
-    result.start = filterArr.every(t => ['running'].includes(t.status))
-    result.stop = filterArr.every(t => ['not_running', 'error'].includes(t.status))
-    result.edit = filterArr.every(t => ['running'].includes(t.status))
-    result.reset = filterArr.every(t => ['running'].includes(t.status))
-    result.delete = filterArr.every(t => ['running'].includes(t.status))
-    result.monitor = filterArr.every(t => ['edit', 'ready'].includes(t.status))
+    result.start = filterArr.every((t) => ['running'].includes(t.status))
+    result.stop = filterArr.every((t) =>
+      ['not_running', 'error'].includes(t.status)
+    )
+    result.edit = filterArr.every((t) => ['running'].includes(t.status))
+    result.reset = filterArr.every((t) => ['running'].includes(t.status))
+    result.delete = filterArr.every((t) => ['running'].includes(t.status))
+    result.monitor = filterArr.every((t) =>
+      ['edit', 'ready'].includes(t.status)
+    )
   } else {
     // 启动可用：待启动、已完成、错误、调度失败、已停止
     // 停止可用：运行中、停止中
@@ -327,17 +360,46 @@ export function getTaskBtnDisabled(row, or) {
     // 重置可用：已完成、错误、调度失败、已停止
     // 删除可用：编辑中、待启动、已完成、错误、调度失败、已停止
     // 运行监控可用：运行中、已完成、错误、停止中、强制停止中、已停止
-    result.start = !filterArr.every(t => ['ready', 'complete', 'error', 'schedule_failed', 'stop'].includes(t.status))
-    result.stop = !filterArr.every(t => ['running', 'stopping'].includes(t.status))
-    result.edit = !filterArr.every(t =>
-      ['edit', 'ready', 'complete', 'error', 'schedule_failed', 'stop'].includes(t.status)
+    result.start = !filterArr.every((t) =>
+      ['ready', 'complete', 'error', 'schedule_failed', 'stop'].includes(
+        t.status
+      )
     )
-    result.reset = !filterArr.every(t => ['complete', 'error', 'schedule_failed', 'stop'].includes(t.status))
-    result.delete = !filterArr.every(t =>
-      ['edit', 'ready', 'complete', 'error', 'stop', 'schedule_failed'].includes(t.status)
+    result.stop = !filterArr.every((t) =>
+      ['running', 'stopping'].includes(t.status)
     )
-    result.monitor = !filterArr.every(t =>
-      ['running', 'complete', 'error', 'stopping', 'force_stopping', 'stop'].includes(t.status)
+    result.edit = !filterArr.every((t) =>
+      [
+        'edit',
+        'ready',
+        'complete',
+        'error',
+        'schedule_failed',
+        'stop',
+      ].includes(t.status)
+    )
+    result.reset = !filterArr.every((t) =>
+      ['complete', 'error', 'schedule_failed', 'stop'].includes(t.status)
+    )
+    result.delete = !filterArr.every((t) =>
+      [
+        'edit',
+        'ready',
+        'complete',
+        'error',
+        'stop',
+        'schedule_failed',
+      ].includes(t.status)
+    )
+    result.monitor = !filterArr.every((t) =>
+      [
+        'running',
+        'complete',
+        'error',
+        'stopping',
+        'force_stopping',
+        'stop',
+      ].includes(t.status)
     )
   }
   if (or) {
@@ -350,7 +412,9 @@ export function getTaskBtnDisabled(row, or) {
 
 export function isStopping(task) {
   const statuses = task.statuses
-  return statuses?.length && statuses.every(t => ['stopping'].includes(t.status))
+  return (
+    statuses?.length && statuses.every((t) => ['stopping'].includes(t.status))
+  )
 }
 
 // 转化单位

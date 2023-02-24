@@ -2,29 +2,39 @@
   <div class="code-view overflow-hidden">
     <div class="flex">
       <div class="code mr-2">
-        <span class="color-primary">var</span> cachedRow = CacheService.getCache(
+        <span class="color-primary">var</span> cachedRow =
+        CacheService.getCache(
         <span class="color-danger">'{{ data.name || 'cachename' }}'</span>
         <template v-if="!data.cacheKeys || !data.cacheKeys.length">
-          ,<span class="bold">record</span>.<span class="color-danger">category_code</span>
+          ,<span class="bold">record</span>.<span class="color-danger"
+            >category_code</span
+          >
         </template>
         <span v-for="key in cacheKeysArr" :key="key">
           <template v-if="key">
-            , <span class="bold">record</span>.<span class="color-danger">{{ key }}</span>
+            , <span class="bold">record</span>.<span class="color-danger">{{
+              key
+            }}</span>
           </template>
         </span>
         );<br />
-        <span class="bold">record</span>.category_name = cachedRow.category_name;<br />
+        <span class="bold">record</span>.category_name =
+        cachedRow.category_name;<br />
       </div>
       <ClipButton :value="script[0]"></ClipButton>
     </div>
     <div class="my-2">OR</div>
     <div class="flex">
       <div class="code mr-2">
-        <span class="bold">record</span>.category_name = CacheService.getCacheItem(
-        <span class="color-danger">'{{ data.name || 'cachename' }}'</span>, <span>'category_name'</span>, defaultValue
+        <span class="bold">record</span>.category_name =
+        CacheService.getCacheItem(
+        <span class="color-danger">'{{ data.name || 'cachename' }}'</span>,
+        <span>'category_name'</span>, defaultValue
         <span v-for="key in cacheKeysArr" :key="key">
           <template v-if="key">
-            ,<span class="bold">record</span>.<span class="color-danger">{{ key }}</span>
+            ,<span class="bold">record</span>.<span class="color-danger">{{
+              key
+            }}</span>
           </template>
         </span>
         );
@@ -39,15 +49,15 @@ import ClipButton from '@/components/ClipButton'
 import { getCode } from '@tap/shared'
 export default {
   components: {
-    ClipButton
+    ClipButton,
   },
   props: {
     data: {
       type: Object,
       default: () => {
         return {}
-      }
-    }
+      },
+    },
   },
   computed: {
     cacheKeysArr() {
@@ -55,8 +65,8 @@ export default {
     },
     script() {
       return getCode(this.data)
-    }
-  }
+    },
+  },
 }
 </script>
 

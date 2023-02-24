@@ -14,24 +14,27 @@
     ></i>
   </el-tooltip>
 </template>
-<style lang="scss" scoped>
-.buton-icon {
-  cursor: pointer;
-}
-</style>
+
 <script>
 export default {
   name: 'ClipButton',
   props: ['value', 'copyClass'],
   data() {
     return {
-      showTooltip: false
+      showTooltip: false,
     }
   },
   methods: {
     onCopy() {
       this.showTooltip = true
-    }
-  }
+    },
+  },
+  emits: ['update:value'],
 }
 </script>
+
+<style lang="scss" scoped>
+.buton-icon {
+  cursor: pointer;
+}
+</style>

@@ -5,13 +5,17 @@
       :field-label="fieldLabel"
       :field-value="fieldValue"
       :fields="fields"
-      v-model="root"
+      v-model:value="root"
       :level="1"
       :max-level="maxLevel"
     ></ConditionGroup>
     <div class="query-build-show-filter">
       <el-collapse accordion>
-        <el-collapse-item class="query-build-pre" :title="$t('query_build_show_filter')" name="1">
+        <el-collapse-item
+          class="query-build-pre"
+          :title="$t('query_build_show_filter')"
+          name="1"
+        >
           <pre>{{ value }}</pre>
         </el-collapse-item>
       </el-collapse>
@@ -19,9 +23,24 @@
     <!-- :showFilterDialog="showFilterDialog" -->
   </div>
 </template>
+
 <script>
+import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 import ConditionGroup from './ConditionGroup'
-const command = ['eq', 'gt', 'gte', 'lt', 'lte', /*'between',*/ 'inq', 'nin', 'near', 'neq', 'like', 'nlike', 'regexp']
+const command = [
+  'eq',
+  'gt',
+  'gte',
+  'lt',
+  'lte',
+  /*'between',*/ 'inq',
+  'nin',
+  'near',
+  'neq',
+  'like',
+  'nlike',
+  'regexp',
+]
 export default {
   name: 'QueryBuild',
   components: { ConditionGroup },
@@ -30,30 +49,30 @@ export default {
       type: Array,
       default() {
         return []
-      }
+      },
     },
     fieldValue: {
       type: String,
       default() {
         return 'value'
-      }
+      },
     },
     fieldLabel: {
       type: String,
       default() {
         return 'text'
-      }
+      },
     },
     value: {
       type: Object,
       default() {
         return []
-      }
+      },
     },
     maxLevel: {
       type: Number,
-      default: 3
-    }
+      default: 3,
+    },
     // showFilterDialog: {
     //   type: Boolean,
     //   default() {
@@ -66,8 +85,8 @@ export default {
       root: {
         type: 'group',
         operator: 'and',
-        conditions: []
-      }
+        conditions: [],
+      },
     }
   },
   watch: {
@@ -78,14 +97,14 @@ export default {
         let condition = this.flat(this.root)
         // eslint-disable-next-line
         console.log('root', this.root)
-        this.$emit('input', condition)
-      }
+        $emit(this, 'update:value', condition)
+      },
     },
     value: {
       deep: true,
       immediate: true,
-      handler() {}
-    }
+      handler() {},
+    },
     // showFilterDialog: {
     //   deep: true,
     //   immediate: true,
@@ -95,7 +114,6 @@ export default {
     //   }
     // }
   },
-
   mounted() {
     this.setCondition(this.value)
   },
@@ -115,7 +133,7 @@ export default {
           type: 'condition',
           field: '',
           command: '',
-          value: ''
+          value: '',
         })
       }
     },
@@ -126,34 +144,37 @@ export default {
       // } else
       if (typeof condition === 'object') {
         let keys = Object.keys(condition)
-        keys.forEach(key => {
+        keys.forEach((key) => {
           let value = condition[key]
           if (['and', 'or'].indexOf(key) >= 0) {
             let group = {
               type: 'group',
               operator: key,
-              conditions: []
+              conditions: [],
             }
-            value.forEach(c => {
+            value.forEach((c) => {
               if (Object.keys(c).length > 1) {
                 group.conditions.push({
                   type: 'group',
                   operator: 'and',
-                  conditions: this.standard(c)
+                  conditions: this.standard(c),
                 })
               } else {
                 group.conditions = group.conditions.concat(this.standard(c))
               }
             })
             conditions.push(group)
-          } else if (typeof value === 'object' && Object.keys(value).length >= 1) {
-            Object.keys(value).forEach(v => {
+          } else if (
+            typeof value === 'object' &&
+            Object.keys(value).length >= 1
+          ) {
+            Object.keys(value).forEach((v) => {
               if (command.indexOf(v)) {
                 conditions.push({
                   type: 'condition',
                   field: key,
                   command: v,
-                  value: value[v]
+                  value: value[v],
                 })
               }
             })
@@ -162,7 +183,7 @@ export default {
               type: 'condition',
               field: key,
               command: 'eq',
-              value: value
+              value: value,
             })
           }
         })
@@ -175,7 +196,7 @@ export default {
         if (condition.operator === 'and') {
           let result = {}
           // let groupCount = condition.conditions.filter(v => v.type === 'group')
-          condition.conditions.forEach(v => {
+          condition.conditions.forEach((v) => {
             let _flat = this.flat(v)
             if (_flat) {
               result.and = result.and || []
@@ -185,9 +206,9 @@ export default {
           return result
         } else if (condition.operator === 'or') {
           let result = {
-            or: []
+            or: [],
           }
-          condition.conditions.forEach(v => {
+          condition.conditions.forEach((v) => {
             let _flat = this.flat(v)
             if (_flat) result.or.push(_flat)
           })
@@ -196,13 +217,13 @@ export default {
       } else if (condition.type === 'condition' && condition.field) {
         if (condition.command === 'eq') {
           return {
-            ['' + condition.field + '']: condition.value
+            ['' + condition.field + '']: condition.value,
           }
         } else {
           return {
             ['' + condition.field + '']: {
-              ['' + condition.command + '']: condition.value
-            }
+              ['' + condition.command + '']: condition.value,
+            },
           }
         }
       } else {
@@ -213,13 +234,17 @@ export default {
       if (typeof val === 'object') {
         if (Array.isArray(val)) {
           let result = []
-          for (let i = 0; i < val.length; i++) result.push(this.serializationToRestFilter(`${key}[${i}]`, val[i]))
+          for (let i = 0; i < val.length; i++)
+            result.push(this.serializationToRestFilter(`${key}[${i}]`, val[i]))
           return result.join('&')
         } else {
           let result = []
           for (let name in val) {
             if (name && val.hasOwnProperty(name)) {
-              let temp = this.serializationToRestFilter(`${key}[${name}]`, val[name])
+              let temp = this.serializationToRestFilter(
+                `${key}[${name}]`,
+                val[name]
+              )
               if (temp) result.push(temp)
             }
           }
@@ -228,11 +253,13 @@ export default {
       } else {
         return `${key}=${typeof val === 'string' ? val.trim() : val}`
       }
-    }
-  }
+    },
+  },
+  emits: ['update:value'],
 }
 </script>
-<style scoped lang="scss">
+
+<style lang="scss" scoped>
 .query-build-wrap {
   .query-build-show-filter {
     max-height: 500px;

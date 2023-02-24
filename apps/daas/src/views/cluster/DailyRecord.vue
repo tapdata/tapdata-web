@@ -1,93 +1,137 @@
 <template>
   <section class="clusterManagement-wrap">
-    <TablePage ref="table" row-key="id" class="clusterManagement-list" :remoteMethod="getDataApi">
-      <div class="header" slot="header">
-        <div class="page-header-title">
-          <span class="title">{{ $t('cluster_statusLog') }}</span>
-          <div class="serviceCluMangeBtn" @click="goClusterManagement">
-            {{ $t('cluster_serviceCluMange') }}
+    <TablePage
+      ref="table"
+      row-key="id"
+      class="clusterManagement-list"
+      :remoteMethod="getDataApi"
+    >
+      <template v-slot:header>
+        <div class="header">
+          <div class="page-header-title">
+            <span class="title">{{ $t('cluster_statusLog') }}</span>
+            <div class="serviceCluMangeBtn" @click="goClusterManagement">
+              {{ $t('cluster_serviceCluMange') }}
+            </div>
           </div>
         </div>
-      </div>
-      <div slot="search">
-        <ul class="search-bar">
-          <li>
-            <el-date-picker
-              type="daterange"
-              size="mini"
-              range-separator="-"
-              :start-placeholder="$t('cluster_selectDate')"
-              :end-placeholder="$t('cluster_selectDate')"
-              :value="[searchParams.startDate, searchParams.closeDate]"
-              @change="handleChangeDate"
-            ></el-date-picker>
-          </li>
-          <li>
-            <el-select
-              v-model="searchParams.ip"
-              size="mini"
-              :placeholder="$t('cluster_placeholderSelect')"
-              @input="table.fetch(1)"
-            >
-              <el-option v-for="item in ipList" :label="item.value" :value="item.value" :key="item.value"></el-option>
-            </el-select>
-          </li>
-          <li>
-            <el-select
-              v-model="searchParams.serverType"
-              size="mini"
-              :placeholder="$t('cluster_placeholderSelect')"
-              @input="table.fetch(1)"
-            >
-              <el-option
-                v-for="item in serverTypeList"
-                :label="item.label"
-                :value="item.value"
-                :key="item.value"
-              ></el-option>
-            </el-select>
-          </li>
-          <li>
-            <el-select
-              v-model="searchParams.level"
-              size="mini"
-              :placeholder="$t('cluster_placeholderSelect')"
-              @input="table.fetch(1)"
-            >
-              <el-option
-                v-for="item in levelList"
-                :label="item.label"
-                :value="item.value"
-                :key="item.value"
-              ></el-option>
-            </el-select>
-          </li>
-          <li>
-            <el-button type="text" class="restBtn" size="mini" @click="rest()">
-              {{ $t('button_reset') }}
-            </el-button>
-          </li>
-        </ul>
-      </div>
+      </template>
+      <template v-slot:search>
+        <div>
+          <ul class="search-bar">
+            <li>
+              <el-date-picker
+                type="daterange"
+                size="mini"
+                range-separator="-"
+                :start-placeholder="$t('cluster_selectDate')"
+                :end-placeholder="$t('cluster_selectDate')"
+                :value="[searchParams.startDate, searchParams.closeDate]"
+                @change="handleChangeDate"
+              ></el-date-picker>
+            </li>
+            <li>
+              <el-select
+                v-model:value="searchParams.ip"
+                size="mini"
+                :placeholder="$t('cluster_placeholderSelect')"
+                @input="table.fetch(1)"
+              >
+                <el-option
+                  v-for="item in ipList"
+                  :label="item.value"
+                  :value="item.value"
+                  :key="item.value"
+                ></el-option>
+              </el-select>
+            </li>
+            <li>
+              <el-select
+                v-model:value="searchParams.serverType"
+                size="mini"
+                :placeholder="$t('cluster_placeholderSelect')"
+                @input="table.fetch(1)"
+              >
+                <el-option
+                  v-for="item in serverTypeList"
+                  :label="item.label"
+                  :value="item.value"
+                  :key="item.value"
+                ></el-option>
+              </el-select>
+            </li>
+            <li>
+              <el-select
+                v-model:value="searchParams.level"
+                size="mini"
+                :placeholder="$t('cluster_placeholderSelect')"
+                @input="table.fetch(1)"
+              >
+                <el-option
+                  v-for="item in levelList"
+                  :label="item.label"
+                  :value="item.value"
+                  :key="item.value"
+                ></el-option>
+              </el-select>
+            </li>
+            <li>
+              <el-button
+                type="text"
+                class="restBtn"
+                size="mini"
+                @click="rest()"
+              >
+                {{ $t('button_reset') }}
+              </el-button>
+            </li>
+          </ul>
+        </div>
+      </template>
       <el-table-column
         prop="last_updated"
         :label="$t('cluster_time')"
         :formatter="dateFormat"
         width="260"
       ></el-table-column>
-      <el-table-column prop="hostname" :label="$t('cluster_hostName')" :show-overflow-tooltip="true"></el-table-column>
-      <el-table-column prop="ip" :label="$t('cluster_ipAddress')" width="150"></el-table-column>
-      <el-table-column prop="uuid" :label="$t('cluster_uniqueEncode')" :show-overflow-tooltip="true"></el-table-column>
-      <el-table-column prop="threadName" :label="$t('cluster_serviceType')" width="100"></el-table-column>
+      <el-table-column
+        prop="hostname"
+        :label="$t('cluster_hostName')"
+        :show-overflow-tooltip="true"
+      ></el-table-column>
+      <el-table-column
+        prop="ip"
+        :label="$t('cluster_ipAddress')"
+        width="150"
+      ></el-table-column>
+      <el-table-column
+        prop="uuid"
+        :label="$t('cluster_uniqueEncode')"
+        :show-overflow-tooltip="true"
+      ></el-table-column>
+      <el-table-column
+        prop="threadName"
+        :label="$t('cluster_serviceType')"
+        width="100"
+      ></el-table-column>
       <el-table-column prop="level" :label="$t('cluster_level')" width="100">
-        <template slot-scope="scope">
-          <span :class="scope.row.level === 'ERROR' ? 'red' : ''" disable-transitions>{{ scope.row.level }}</span>
+        <template v-slot="scope">
+          <span
+            :class="scope.row.level === 'ERROR' ? 'red' : ''"
+            disable-transitions
+            >{{ scope.row.level }}</span
+          >
         </template>
       </el-table-column>
-      <el-table-column prop="message" :label="$t('cluster_logs')" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column
+        prop="message"
+        :label="$t('cluster_logs')"
+        :show-overflow-tooltip="true"
+      ></el-table-column>
     </TablePage>
   </section>
 </template>
+
 <script>
 import { clusterApi, logsApi } from '@tap/api'
 import { TablePage } from '@tap/business'
@@ -101,21 +145,21 @@ export default {
         closeDate: '',
         level: '',
         serverType: '',
-        ip: ''
+        ip: '',
       },
       tableData: [],
       levelList: [
         { label: 'INFO', value: 'INFO' },
         { label: 'WARN', value: 'WARN' },
-        { label: 'ERROR', value: 'ERROR' }
+        { label: 'ERROR', value: 'ERROR' },
       ],
       serverTypeList: [
         { label: 'engine', value: 'engine' },
         { label: 'management', value: 'management' },
         { label: 'apiServer', value: 'apiServer' },
-        { label: 'tapdataAgent', value: 'tapdataAgent' }
+        { label: 'tapdataAgent', value: 'tapdataAgent' },
       ],
-      ipList: []
+      ipList: [],
     }
   },
   mounted() {
@@ -128,17 +172,17 @@ export default {
   computed: {
     table() {
       return this.$refs.table
-    }
+    },
   },
-  destroyed() {
+  unmounted() {
     clearInterval(timeout)
   },
   methods: {
     // 获取ip
     getIpFn() {
-      clusterApi.get().then(data => {
+      clusterApi.get().then((data) => {
         let items = data?.items || []
-        items.forEach(item => {
+        items.forEach((item) => {
           this.ipList.push({ value: item.systemInfo.ip })
         })
       })
@@ -158,16 +202,16 @@ export default {
         order: 'last_updated DESC',
         limit: size,
         skip: (current - 1) * size,
-        where
+        where,
       }
       return logsApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           return {
             total: data?.total || 0,
-            data: data?.items || []
+            data: data?.items || [],
           }
         })
     },
@@ -177,7 +221,7 @@ export default {
         closeDate: '',
         level: '',
         serverType: '',
-        ip: ''
+        ip: '',
       }
       this.table.fetch(1)
     },
@@ -214,12 +258,13 @@ export default {
     //运行日志
     goClusterManagement() {
       this.$router.push({
-        name: 'clusterManagement'
+        name: 'clusterManagement',
       })
-    }
-  }
+    },
+  },
 }
 </script>
+
 <style lang="scss" scoped>
 .clusterManagement-wrap {
   height: 100%;

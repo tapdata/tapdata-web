@@ -3,44 +3,75 @@
     <main class="api-monitor-main">
       <!--api 统计 -->
       <el-row :gutter="40" class="section-header py-6">
-        <el-col :span="18" class="isCard-title">{{ $t($route.meta.title) }}</el-col>
+        <el-col :span="18" class="isCard-title">{{
+          $t($route.meta.title)
+        }}</el-col>
       </el-row>
-      <section class="flex flex-direction bg-white api-monitor-card mb-5" v-loading="loadingTotal">
+      <section
+        class="flex flex-direction bg-white api-monitor-card mb-5"
+        v-loading="loadingTotal"
+      >
         <div class="flex-1 mt-5 text-center">
-          <header class="api-monitor-total__tittle">{{ $t('api_monitor_total_totalCount') }}</header>
-          <div class="api-monitor-total__text din-font">{{ previewData.totalCount || 0 }}</div>
-        </div>
-        <div class="flex-1 mt-5 text-center">
-          <header class="api-monitor-total__tittle">{{ $t('api_monitor_total_warningApiCount') }}</header>
+          <header class="api-monitor-total__tittle">
+            {{ $t('api_monitor_total_totalCount') }}
+          </header>
           <div class="api-monitor-total__text din-font">
-            <span v-if="visitTotalCountText === 0">0</span>
-            <span v-else> {{ visitTotalCountText }}/{{ previewData.visitTotalCount }}</span>
+            {{ previewData.totalCount || 0 }}
           </div>
         </div>
         <div class="flex-1 mt-5 text-center">
-          <header class="api-monitor-total__tittle">{{ $t('api_monitor_total_visitTotalLine') }}</header>
-          <div class="api-monitor-total__text din-font">{{ previewData.visitTotalLine || 0 }}</div>
+          <header class="api-monitor-total__tittle">
+            {{ $t('api_monitor_total_warningApiCount') }}
+          </header>
+          <div class="api-monitor-total__text din-font">
+            <span v-if="visitTotalCountText === 0">0</span>
+            <span v-else>
+              {{ visitTotalCountText }}/{{ previewData.visitTotalCount }}</span
+            >
+          </div>
         </div>
         <div class="flex-1 mt-5 text-center">
-          <header class="api-monitor-total__tittle">{{ $t('api_monitor_total_transmitTotal') }}</header>
-          <div class="api-monitor-total__text din-font">{{ handleUnit(previewData.transmitTotal) || 0 }}</div>
+          <header class="api-monitor-total__tittle">
+            {{ $t('api_monitor_total_visitTotalLine') }}
+          </header>
+          <div class="api-monitor-total__text din-font">
+            {{ previewData.visitTotalLine || 0 }}
+          </div>
+        </div>
+        <div class="flex-1 mt-5 text-center">
+          <header class="api-monitor-total__tittle">
+            {{ $t('api_monitor_total_transmitTotal') }}
+          </header>
+          <div class="api-monitor-total__text din-font">
+            {{ handleUnit(previewData.transmitTotal) || 0 }}
+          </div>
         </div>
       </section>
       <!--api 排行榜 -->
-      <section class="flex flex-direction api-monitor-card mb-5 api-monitor__min__height">
+      <section
+        class="flex flex-direction api-monitor-card mb-5 api-monitor__min__height"
+      >
         <div
           class="flex flex-column api-monitor-chart api-monitor-card bg-white overflow-hidden pl-5 pt-5"
           v-loading="loadingTotal"
         >
-          <div class="api-monitor-chart__text mb-2">{{ $t('api_monitor_total_warningCount') }}</div>
+          <div class="api-monitor-chart__text mb-2">
+            {{ $t('api_monitor_total_warningCount') }}
+          </div>
           <Chart type="pie" :extend="getPieOption()"></Chart>
           <div class="flex ml-8 mb-8 mt-5">
             <div>
               <div class="mb-2">
-                <i class="circle-total mr-3"></i><span class="mr-8">{{ $t('api_monitor_total_totalCount') }}</span>
+                <i class="circle-total mr-3"></i
+                ><span class="mr-8">{{
+                  $t('api_monitor_total_totalCount')
+                }}</span>
               </div>
               <div>
-                <i class="circle-waring mr-3"></i><span class="mr-6">{{ $t('api_monitor_total_warningCount') }}</span>
+                <i class="circle-waring mr-3"></i
+                ><span class="mr-6">{{
+                  $t('api_monitor_total_warningCount')
+                }}</span>
               </div>
             </div>
             <div>
@@ -54,10 +85,15 @@
         >
           <div class="api-monitor-chart__text mb-2">
             {{ $t('api_monitor_total_FailRate') }}
-            <span class="api-monitor-triangle-bg position-relative ml-2" @click="handleFDOrder()">
+            <span
+              class="api-monitor-triangle-bg position-relative ml-2"
+              @click="handleFDOrder()"
+            >
               <span
                 class="api-monitor-triangle position-absolute"
-                :class="{ 'triangle-active': this.page.failRateOrder === 'ASC' }"
+                :class="{
+                  'triangle-active': this.page.failRateOrder === 'ASC',
+                }"
               ></span>
               <span
                 class="api-monitor-triangle-top position-absolute"
@@ -73,7 +109,7 @@
             :data="failRateList"
             :columns="columns"
           >
-            <template slot="failed" slot-scope="scope">
+            <template v-slot:failed="scope">
               <span> {{ Math.round(scope.row.failed * 100) }}</span>
             </template>
           </VTable>
@@ -82,23 +118,32 @@
             layout="->,total, prev,pager, next"
             background
             :page-size="5"
-            :current-page.sync="page.failRateCurrent"
+            v-model:current-page="page.failRateCurrent"
             :total="page.failRateTotal"
             @current-change="remoteFailedMethod"
           >
           </el-pagination>
         </div>
-        <div class="flex flex-column flex-1 bg-white api-monitor-card overflow-hidden pl-5 pt-5">
+        <div
+          class="flex flex-column flex-1 bg-white api-monitor-card overflow-hidden pl-5 pt-5"
+        >
           <div class="api-monitor-chart__text mb-2">
             {{ $t('api_monitor_total_consumingTime') }}
-            <span class="api-monitor-triangle-bg position-relative ml-2" @click="handleCTOrder()">
+            <span
+              class="api-monitor-triangle-bg position-relative ml-2"
+              @click="handleCTOrder()"
+            >
               <span
                 class="api-monitor-triangle position-absolute"
-                :class="{ 'triangle-active': this.page.consumingTimeOrder === 'ASC' }"
+                :class="{
+                  'triangle-active': this.page.consumingTimeOrder === 'ASC',
+                }"
               ></span>
               <span
                 class="api-monitor-triangle-top position-absolute"
-                :class="{ 'active-top': this.page.consumingTimeOrder === 'DESC' }"
+                :class="{
+                  'active-top': this.page.consumingTimeOrder === 'DESC',
+                }"
               ></span>
             </span>
           </div>
@@ -111,7 +156,7 @@
             :columns="columnsRT"
             ref="consumingTimeList"
           >
-            <template slot="failed" slot-scope="scope">
+            <template v-slot:failed="scope">
               <span>
                 {{ formatMs(scope.row.failed) }}
               </span>
@@ -122,7 +167,7 @@
             layout="->,total, prev,pager, next"
             background
             :page-size="5"
-            :current-page.sync="page.consumingTimeCurrent"
+            v-model:current-page="page.consumingTimeCurrent"
             :total="page.consumingTimeTotal"
             @current-change="consumingMethod"
           >
@@ -130,9 +175,19 @@
         </div>
       </section>
       <!--api list -->
-      <section class="flex flex-column bg-white api-monitor-card api-monitor-list__min__height pl-5 pt-5">
-        <header class="api-monitor-chart__text mb-2">{{ $t('api_monitor_total_api_list') }}</header>
-        <FilterBar class="mb-2" v-model="searchParams" :items="filterItems" @fetch="getApiList(1)"> </FilterBar>
+      <section
+        class="flex flex-column bg-white api-monitor-card api-monitor-list__min__height pl-5 pt-5"
+      >
+        <header class="api-monitor-chart__text mb-2">
+          {{ $t('api_monitor_total_api_list') }}
+        </header>
+        <FilterBar
+          class="mb-2"
+          v-model:value="searchParams"
+          :items="filterItems"
+          @fetch="getApiList(1)"
+        >
+        </FilterBar>
         <el-table
           ref="table"
           row-key="id"
@@ -147,17 +202,35 @@
               <Detail :id="row.id"></Detail>
             </template>
           </el-table-column>
-          <el-table-column prop="name" :label="$t('api_monitor_total_api_list_name')"> </el-table-column>
-          <el-table-column prop="status" :label="$t('api_monitor_total_api_list_status')">
+          <el-table-column
+            prop="name"
+            :label="$t('api_monitor_total_api_list_name')"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="status"
+            :label="$t('api_monitor_total_api_list_status')"
+          >
             <template #default="{ row }">
               <span :class="['status-' + row.status, 'status-block', 'mr-2']">
                 {{ getStatusLabel(row.status) }}
               </span>
             </template>
           </el-table-column>
-          <el-table-column prop="visitLine" :label="$t('api_monitor_total_api_list_visitLine')"> </el-table-column>
-          <el-table-column prop="visitCount" :label="$t('api_monitor_total_api_list_visitCount')"> </el-table-column>
-          <el-table-column prop="transitQuantity" :label="$t('api_monitor_total_api_list_transitQuantity')">
+          <el-table-column
+            prop="visitLine"
+            :label="$t('api_monitor_total_api_list_visitLine')"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="visitCount"
+            :label="$t('api_monitor_total_api_list_visitCount')"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="transitQuantity"
+            :label="$t('api_monitor_total_api_list_transitQuantity')"
+          >
             <template #default="{ row }">
               <span>{{ handleUnit(row.transitQuantity) || '-' }}</span>
             </template>
@@ -168,7 +241,7 @@
           layout="->, total, prev, pager, next, jumper"
           background
           :page-size="5"
-          :current-page.sync="page.apiListCurrent"
+          v-model:current-page="page.apiListCurrent"
           :total="page.apiListTotal"
           @current-change="getApiList"
         >
@@ -199,22 +272,22 @@ export default {
       columns: [
         {
           label: this.$t('api_monitor_total_api_list_name'),
-          prop: 'name'
+          prop: 'name',
         },
         {
           label: this.$t('api_monitor_total_columns_failed'),
-          slotName: 'failed'
-        }
+          slotName: 'failed',
+        },
       ],
       columnsRT: [
         {
           label: this.$t('api_monitor_total_api_list_name'),
-          prop: 'name'
+          prop: 'name',
         },
         {
           label: this.$t('api_monitor_total_rTime'),
-          slotName: 'failed'
-        }
+          slotName: 'failed',
+        },
       ],
       previewData: {},
       chartData: [],
@@ -230,29 +303,39 @@ export default {
         consumingTimeTotal: 0,
         consumingTimeOrder: 'DESC',
         apiListCurrent: 1,
-        apiListTotal: 0
+        apiListTotal: 0,
       },
       filterItems: [],
       searchParams: {
         keyword: '',
         clientName: '',
-        status: ''
+        status: '',
       },
       clientNameList: [],
       statusOptions: [
         { label: this.$t('task_list_status_all'), value: '' },
-        { label: this.$t('api_monitor_total_api_list_status_active'), value: 'active' },
-        { label: this.$t('api_monitor_total_api_list_status_pending'), value: 'pending' },
-        { label: this.$t('api_monitor_total_api_list_status_generating'), value: 'generating' }
-      ]
+        {
+          label: this.$t('api_monitor_total_api_list_status_active'),
+          value: 'active',
+        },
+        {
+          label: this.$t('api_monitor_total_api_list_status_pending'),
+          value: 'pending',
+        },
+        {
+          label: this.$t('api_monitor_total_api_list_status_generating'),
+          value: 'generating',
+        },
+      ],
     }
   },
   computed: {
     visitTotalCountText() {
-      let count = this.previewData.visitTotalCount - this.previewData.warningApiCount
+      let count =
+        this.previewData.visitTotalCount - this.previewData.warningApiCount
       if (isNaN(count)) return 0
       return count < 0 ? 0 : count
-    }
+    },
   },
   watch: {
     '$route.query'() {
@@ -261,7 +344,7 @@ export default {
       if (status || clientName) {
         this.getApiList(1)
       }
-    }
+    },
   },
   mounted() {
     this.initData()
@@ -273,7 +356,7 @@ export default {
         this.getClientName(),
         this.remoteFailedMethod(),
         this.consumingMethod(),
-        this.getApiList()
+        this.getApiList(),
       ]).finally(() => {
         this.silenceLoading = true
         setTimeout(() => {
@@ -295,7 +378,7 @@ export default {
       this.loadingTotal = !this.silenceLoading
       return apiMonitorApi
         .preview()
-        .then(data => {
+        .then((data) => {
           this.previewData = data
         })
         .finally(() => {
@@ -304,13 +387,13 @@ export default {
     },
     //获取所有客户端
     getClientName() {
-      return apiMonitorApi.apiClientName().then(data => {
+      return apiMonitorApi.apiClientName().then((data) => {
         //重组数据
         if (data?.length > 0) {
           for (let i = 0; i < data.length; i++) {
             let obj = {
               label: data[i].name,
-              value: data[i].id
+              value: data[i].id,
             }
             this.clientNameList.push(obj)
           }
@@ -323,20 +406,20 @@ export default {
       let data = [
         {
           itemStyle: {
-            color: '#8FD8C0'
+            color: '#8FD8C0',
           },
           label: 'totalCount',
           name: this.$t('api_monitor_total_totalCount'),
-          value: this.previewData?.totalCount
+          value: this.previewData?.totalCount,
         },
         {
           itemStyle: {
-            color: '#2C65FF'
+            color: '#2C65FF',
           },
           label: 'warningApiCount',
           name: this.$t('api_monitor_total_warningCount'),
-          value: this.previewData?.warningApiCount
-        }
+          value: this.previewData?.warningApiCount,
+        },
       ]
       this.chartData = data
       return {
@@ -345,9 +428,9 @@ export default {
             type: 'pie',
             avoidLabelOverlap: false,
             data: data,
-            radius: ['40%', '70%']
-          }
-        ]
+            radius: ['40%', '70%'],
+          },
+        ],
       }
     },
     //失败率排行榜
@@ -355,19 +438,19 @@ export default {
       let { failRateCurrent, size, failRateOrder } = this.page
       let filter = {
         where: {
-          type: 'failRate'
+          type: 'failRate',
         },
         limit: size,
         order: failRateOrder,
-        skip: size * (failRateCurrent - 1)
+        skip: size * (failRateCurrent - 1),
       }
       this.loadingFailRateList = !this.silenceLoading
       return apiMonitorApi
         .rankLists({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
-          let items = data?.items?.map(item => {
+        .then((data) => {
+          let items = data?.items?.map((item) => {
             let abj = {}
             for (let key in item) {
               abj.name = key
@@ -393,20 +476,20 @@ export default {
       let { consumingTimeCurrent, size, consumingTimeOrder } = this.page
       let filter = {
         where: {
-          type: 'responseTime'
+          type: 'responseTime',
         },
         limit: size,
         order: consumingTimeOrder,
-        skip: size * (consumingTimeCurrent - 1)
+        skip: size * (consumingTimeCurrent - 1),
       }
       this.loadingTimeList = !this.silenceLoading
       return apiMonitorApi
         .rankLists({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           //map
-          let items = data?.items?.map(item => {
+          let items = data?.items?.map((item) => {
             let abj = {}
             for (let key in item) {
               abj.name = key
@@ -446,14 +529,14 @@ export default {
         order: 'createTime DESC',
         limit: 5,
         skip: (apiListCurrent - 1) * 5,
-        where
+        where,
       }
       this.loadingApiList = !this.silenceLoading
       return apiMonitorApi
         .apiList({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           this.apiList = data.items
           this.page.apiListTotal = data.total
         })
@@ -469,26 +552,26 @@ export default {
           key: 'status',
           type: 'select-inner',
           items: this.statusOptions,
-          selectedWidth: '200px'
+          selectedWidth: '200px',
         },
         {
           label: this.$t('api_monitor_total_clientName'),
           key: 'clientName',
           type: 'select-inner',
           items: this.clientNameList,
-          selectedWidth: '200px'
+          selectedWidth: '200px',
         },
         {
           placeholder: this.$t('api_monitor_total_api_list_name'),
           key: 'keyword',
-          type: 'input'
-        }
+          type: 'input',
+        },
       ]
     },
     //控制手风琴（只展示一行)
     expandChange(row, expandRows) {
       if (expandRows.length > 1) {
-        this.apiList.forEach(expandrow => {
+        this.apiList.forEach((expandrow) => {
           if (row.id !== expandrow.id) {
             //这里需要判断一下展开行的length>1
             // toggleRowExpansion 设置是否展开，true则展开
@@ -499,13 +582,13 @@ export default {
     },
 
     getStatusLabel(status) {
-      return this.statusOptions.find(t => t.value === status)?.label
-    }
-  }
+      return this.statusOptions.find((t) => t.value === status)?.label
+    },
+  },
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .api-monitor-wrap {
   display: flex;
   -ms-flex: 1;

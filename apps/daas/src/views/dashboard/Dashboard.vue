@@ -2,14 +2,29 @@
   <section class="dashboard-wrap isCardBox">
     <div v-loading="loading" class="dashboard-main">
       <el-row :gutter="40" class="section-header py-6">
-        <el-col :span="18" class="isCard-title">{{ $t($route.meta.title) }}</el-col>
+        <el-col :span="18" class="isCard-title">{{
+          $t($route.meta.title)
+        }}</el-col>
       </el-row>
       <template v-if="noPermission">
-        <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'v2_data_pipeline'">
-          <el-col :span="6" v-for="item in taskList" :key="item.name" class="dashboard-col">
+        <el-row
+          :gutter="20"
+          class="dashboard-row mb-5"
+          v-readonlybtn="'v2_data_pipeline'"
+        >
+          <el-col
+            :span="6"
+            v-for="item in taskList"
+            :key="item.name"
+            class="dashboard-col"
+          >
             <div class="dashboard-col-box">
-              <div class="fs-7 font-color-normal">{{ $t('dashboard_' + item.key) }}</div>
-              <div class="dashboard-label fs-5 pt-4 text-center fw-sub font-color-normal">
+              <div class="fs-7 font-color-normal">
+                {{ $t('dashboard_' + item.key) }}
+              </div>
+              <div
+                class="dashboard-label fs-5 pt-4 text-center fw-sub font-color-normal"
+              >
                 {{ $t('dashboard_current_' + item.key) }}
               </div>
               <div
@@ -19,7 +34,10 @@
                   'pb-2',
                   'text-center',
                   'din-font',
-                  { 'cursor-pointer': item.key === 'copy_total' || item.key === 'sync_total' }
+                  {
+                    'cursor-pointer':
+                      item.key === 'copy_total' || item.key === 'sync_total',
+                  },
                 ]"
                 @click="handleTask(item)"
               >
@@ -29,135 +47,222 @@
           </el-col>
         </el-row>
         <!-- 复制任务概览 -->
-        <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'v2_data_pipeline'">
+        <el-row
+          :gutter="20"
+          class="dashboard-row mb-5"
+          v-readonlybtn="'v2_data_pipeline'"
+        >
           <el-col :span="12" class="dashboard-col col">
             <div class="charts-list flex flex-row">
               <div class="charts-list-text">
-                <div class="fs-7 font-color-normal">{{ $t('dashboard_copy_overview_title') }}</div>
+                <div class="fs-7 font-color-normal">
+                  {{ $t('dashboard_copy_overview_title') }}
+                </div>
                 <ul class="job-list">
-                  <li v-for="task in migrationTaskList" :key="task.label" @click="handleStatus(task.label)">
-                    <i class="dots mr-3" :style="`background-color: ${colorMap[task.label]};`"></i>
-                    <span class="fw-normal font-color-light">{{ task.name }}</span
-                    ><span class="num pl-7 font-color-dark">{{ task.value }}</span>
+                  <li
+                    v-for="task in migrationTaskList"
+                    :key="task.label"
+                    @click="handleStatus(task.label)"
+                  >
+                    <i
+                      class="dots mr-3"
+                      :style="`background-color: ${colorMap[task.label]};`"
+                    ></i>
+                    <span class="fw-normal font-color-light">{{
+                      task.name
+                    }}</span
+                    ><span class="num pl-7 font-color-dark">{{
+                      task.value
+                    }}</span>
                   </li>
                 </ul>
               </div>
               <div
-                v-if="copyPieData.every(item => item.value === 0)"
+                v-if="copyPieData.every((item) => item.value === 0)"
                 class="flex justify-content-center align-items-center w-100"
               >
                 <div
                   class="flex justify-content-center align-items-center font-color-slight"
                   v-html="
                     $t('dashboard_no_statistics', [
-                      '<span style=\'color: #2C65FF; padding: 0 5px;\'>' + $t('dashboard_copy_total') + '</span>'
+                      '<span style=\'color: #2C65FF; padding: 0 5px;\'>' +
+                        $t('dashboard_copy_total') +
+                        '</span>',
                     ])
                   "
                 ></div>
               </div>
               <div class="chart" v-else>
-                <Chart type="pie" :extend="getPieOption(copyPieData)" class="type-chart"></Chart>
+                <Chart
+                  type="pie"
+                  :extend="getPieOption(copyPieData)"
+                  class="type-chart"
+                ></Chart>
               </div>
             </div>
           </el-col>
           <el-col :span="12" class="dashboard-col col">
             <div class="charts-list flex flex-row">
               <div class="charts-list-text">
-                <div class="fs-7 font-color-normal">{{ $t('dashboard_sync_overview_title') }}</div>
+                <div class="fs-7 font-color-normal">
+                  {{ $t('dashboard_sync_overview_title') }}
+                </div>
                 <ul class="job-list">
-                  <li v-for="task in syncTaskList" :key="task.label" @click="handleSyncStatus(task.label)">
-                    <i class="dots mr-3" :style="`background-color: ${colorMap[task.label]};`"></i>
-                    <span class="fw-normal font-color-light">{{ task.name }}</span
-                    ><span class="num pl-7 font-color-dark">{{ toThousandsUnit(task.value) }}</span>
+                  <li
+                    v-for="task in syncTaskList"
+                    :key="task.label"
+                    @click="handleSyncStatus(task.label)"
+                  >
+                    <i
+                      class="dots mr-3"
+                      :style="`background-color: ${colorMap[task.label]};`"
+                    ></i>
+                    <span class="fw-normal font-color-light">{{
+                      task.name
+                    }}</span
+                    ><span class="num pl-7 font-color-dark">{{
+                      toThousandsUnit(task.value)
+                    }}</span>
                   </li>
                 </ul>
               </div>
               <div
-                v-if="syncPieData.every(item => item.value === 0)"
+                v-if="syncPieData.every((item) => item.value === 0)"
                 class="flex justify-content-center align-items-center w-100"
               >
                 <div
                   class="flex justify-content-center align-items-center font-color-slight"
                   v-html="
                     $t('dashboard_no_statistics', [
-                      '<span style=\'color: #2C65FF; padding: 0 5px;\'>' + $t('dashboard_sync_total') + '</span>'
+                      '<span style=\'color: #2C65FF; padding: 0 5px;\'>' +
+                        $t('dashboard_sync_total') +
+                        '</span>',
                     ])
                   "
                 ></div>
               </div>
               <div class="chart" v-else>
-                <Chart type="pie" :extend="getPieOption(syncPieData)" class="type-chart"></Chart>
+                <Chart
+                  type="pie"
+                  :extend="getPieOption(syncPieData)"
+                  class="type-chart"
+                ></Chart>
               </div>
             </div>
           </el-col>
         </el-row>
         <!-- 数据校验 -->
         <el-row :gutter="20" class="dashboard-row mb-5" v-if="syncValidFalg">
-          <el-col :span="12" class="dashboard-col col" v-readonlybtn="'Data_verify_menu'">
+          <el-col
+            :span="12"
+            class="dashboard-col col"
+            v-readonlybtn="'Data_verify_menu'"
+          >
             <div class="dashboard-col-box">
-              <div class="fs-7 font-color-normal">{{ $t('dashboard_valid_title') }}</div>
+              <div class="fs-7 font-color-normal">
+                {{ $t('dashboard_valid_title') }}
+              </div>
               <div class="chart line-chart flex flex-column">
-                <ul v-if="validBarData.every(item => item.value === 0)">
+                <ul v-if="validBarData.every((item) => item.value === 0)">
                   <li v-for="item in validBarData" :key="item.name">
                     <span class="font-color-light">{{ item.name }} </span>
-                    <span class="font-color-dark fw-sub"> {{ item.value }}</span>
+                    <span class="font-color-dark fw-sub">
+                      {{ item.value }}</span
+                    >
                   </li>
                 </ul>
                 <div
-                  v-if="validBarData.every(item => item.value === 0)"
+                  v-if="validBarData.every((item) => item.value === 0)"
                   class="flex justify-content-center align-items-center h-100"
                 >
                   <div
                     class="flex justify-content-center align-items-center font-color-slight"
                     v-html="
                       $t('dashboard_no_statistics', [
-                        '<span style=\'color: #2C65FF; padding: 0 5px;\'>' + $t('dashboard_valid_title') + '</span>'
+                        '<span style=\'color: #2C65FF; padding: 0 5px;\'>' +
+                          $t('dashboard_valid_title') +
+                          '</span>',
                       ])
                     "
                   ></div>
                 </div>
-                <Chart v-else type="bar" class="bar-chart" :data="validBarData" :options="barOptions"></Chart>
+                <Chart
+                  v-else
+                  type="bar"
+                  class="bar-chart"
+                  :data="validBarData"
+                  :options="barOptions"
+                ></Chart>
               </div>
             </div>
           </el-col>
-          <el-col :span="12" class="dashboard-col col" v-readonlybtn="'Data_SYNC_menu'">
+          <el-col
+            :span="12"
+            class="dashboard-col col"
+            v-readonlybtn="'Data_SYNC_menu'"
+          >
             <div class="charts-list flex flex-row">
               <div class="charts-list-text">
-                <div class="fs-7 font-color-normal">{{ $t('dashboard_transfer_overview') }}</div>
+                <div class="fs-7 font-color-normal">
+                  {{ $t('dashboard_transfer_overview') }}
+                </div>
                 <ul class="job-list">
                   <li v-for="item in transBarData" :key="item.key">
-                    <i class="dots mr-3" :style="`background-color: ${item.color};`"></i>
-                    <span class="fw-normal font-color-light">{{ item.name }}</span
-                    ><span class="num pl-7 font-color-dark">{{ toThousandsUnit(item.value) }}</span>
+                    <i
+                      class="dots mr-3"
+                      :style="`background-color: ${item.color};`"
+                    ></i>
+                    <span class="fw-normal font-color-light">{{
+                      item.name
+                    }}</span
+                    ><span class="num pl-7 font-color-dark">{{
+                      toThousandsUnit(item.value)
+                    }}</span>
                   </li>
                 </ul>
               </div>
               <div
-                v-if="transBarData.every(item => item.value === 0)"
+                v-if="transBarData.every((item) => item.value === 0)"
                 class="flex justify-content-center align-items-center w-100"
               >
                 <div
                   class="flex justify-content-center align-items-center font-color-slight"
                   v-html="
                     $t('dashboard_no_statistics', [
-                      '<span style=\'color: #2C65FF; padding: 0 5px;\'>' + $t('dashboard_transfer_overview') + '</span>'
+                      '<span style=\'color: #2C65FF; padding: 0 5px;\'>' +
+                        $t('dashboard_transfer_overview') +
+                        '</span>',
                     ])
                   "
                 ></div>
               </div>
               <div class="chart" v-else>
-                <Chart type="pie" :extend="getPieOption(transBarData)" class="type-chart"></Chart>
+                <Chart
+                  type="pie"
+                  :extend="getPieOption(transBarData)"
+                  class="type-chart"
+                ></Chart>
               </div>
             </div>
           </el-col>
         </el-row>
         <!-- 服务器进程 -->
-        <div class="dashboard-row dashboard-col col" v-readonlybtn="'v2_cluster-management_menu'">
+        <div
+          class="dashboard-row dashboard-col col"
+          v-readonlybtn="'v2_cluster-management_menu'"
+        >
           <div class="dashboard-col">
             <div class="dashboard-col-box">
-              <div class="fs-7 font-color-normal">{{ $t('dashboard_server_title') }}</div>
+              <div class="fs-7 font-color-normal">
+                {{ $t('dashboard_server_title') }}
+              </div>
               <el-row :gutter="20" v-if="serverTable.length">
-                <el-col :span="12" class="server-list pt-3" v-for="item in serverTable" :key="item.id">
+                <el-col
+                  :span="12"
+                  class="server-list pt-3"
+                  v-for="item in serverTable"
+                  :key="item.id"
+                >
                   <div class="server-list-box">
                     <img src="../../assets/images/serve.svg" />
                     <!-- <img src="../../assets/icons/svg/serve.svg" alt="" /> -->
@@ -166,34 +271,58 @@
 
                       <ul class="flex pt-1">
                         <li class="pr-5">
-                          <label class="font-color-slight pr-2">{{ $t('dashboard_management') }}</label>
-                          <span :style="`color: ${colorServeMap[item.management.status]};`">{{
-                            $t('dashboard_' + item.management.status)
-                          }}</span>
+                          <label class="font-color-slight pr-2">{{
+                            $t('dashboard_management')
+                          }}</label>
+                          <span
+                            :style="`color: ${
+                              colorServeMap[item.management.status]
+                            };`"
+                            >{{
+                              $t('dashboard_' + item.management.status)
+                            }}</span
+                          >
                         </li>
                         <li class="pr-5">
-                          <label class="font-color-slight pr-2">{{ $t('dashboard_task_transfer') }}</label>
-                          <span :style="`color: ${colorServeMap[item.engine.status]};`">{{
-                            $t('dashboard_' + item.engine.status)
-                          }}</span>
+                          <label class="font-color-slight pr-2">{{
+                            $t('dashboard_task_transfer')
+                          }}</label>
+                          <span
+                            :style="`color: ${
+                              colorServeMap[item.engine.status]
+                            };`"
+                            >{{ $t('dashboard_' + item.engine.status) }}</span
+                          >
                         </li>
                         <li>
-                          <label class="font-color-slight pr-2">{{ $t('dashboard_api_service') }}</label>
-                          <span :style="`color: ${colorServeMap[item.apiServer.status]};`">{{
-                            $t('dashboard_' + item.apiServer.status)
-                          }}</span>
+                          <label class="font-color-slight pr-2">{{
+                            $t('dashboard_api_service')
+                          }}</label>
+                          <span
+                            :style="`color: ${
+                              colorServeMap[item.apiServer.status]
+                            };`"
+                            >{{
+                              $t('dashboard_' + item.apiServer.status)
+                            }}</span
+                          >
                         </li>
                       </ul>
                     </div>
                   </div>
                 </el-col>
               </el-row>
-              <div v-else class="flex justify-content-center align-items-center h-100 py-4">
+              <div
+                v-else
+                class="flex justify-content-center align-items-center h-100 py-4"
+              >
                 <div
                   class="flex justify-content-center align-items-center font-color-slight"
                   v-html="
                     $t('dashboard_no_statistics', [
-                      '<span style=\'color: #2C65FF; padding: 0 5px;\'>' + $t('dashboard_server_title') + '</span>'
+                      '<span style=\'color: #2C65FF; padding: 0 5px;\'>' +
+                        $t('dashboard_server_title') +
+                        '</span>',
                     ])
                   "
                 ></div>
@@ -238,22 +367,22 @@ export default {
           top: 20,
           bottom: 0,
           left: 0,
-          right: 0
+          right: 0,
         },
         xAxis: {
           axisLine: {
             show: true,
             lineStyle: {
-              color: 'rgba(232, 232, 232, 0.75)'
-            }
+              color: 'rgba(232, 232, 232, 0.75)',
+            },
           },
           axisTick: {
             show: true,
-            interval: 'auto'
+            interval: 'auto',
           },
           axisLabel: {
-            color: 'rgba(0,0,0,.65)'
-          }
+            color: 'rgba(0,0,0,.65)',
+          },
         },
         yAxis: {
           show: true,
@@ -263,20 +392,20 @@ export default {
           axisLine: {
             show: true,
             lineStyle: {
-              color: '#d9d9d9'
-            }
+              color: '#d9d9d9',
+            },
           },
           axisLabel: {
-            color: 'rgba(0,0,0,.65)'
+            color: 'rgba(0,0,0,.65)',
           },
           splitLine: {
             onZero: true,
             show: true,
 
             lineStyle: {
-              type: 'dashed'
-            }
-          }
+              type: 'dashed',
+            },
+          },
         },
         tooltip: {
           trigger: 'item',
@@ -285,34 +414,46 @@ export default {
           textStyle: {
             color: '#fff',
             fontSize: 12,
-            align: 'center'
+            align: 'center',
           },
-          formatter: params => {
+          formatter: (params) => {
             let item = params
             let val = item.value
             if (val === 1.1) {
               val = 1
             }
 
-            let html = params.name + `<span style="padding: 0 4px; text-align: center;"></span><br/>` + val
+            let html =
+              params.name +
+              `<span style="padding: 0 4px; text-align: center;"></span><br/>` +
+              val
             return html
-          }
-        }
+          },
+        },
       },
-      syncValidFalg: this.$has('Data_verify_menu') || this.$has('Data_SYNC_menu'),
+      syncValidFalg:
+        this.$has('Data_verify_menu') || this.$has('Data_SYNC_menu'),
       taskList: [
         { key: 'all_total', value: 0 },
         { key: 'copy_total', value: 0 },
         { key: 'sync_total', value: 0 },
-        { key: 'valid_total', value: 0 }
+        { key: 'valid_total', value: 0 },
       ],
       statusList: [
-        { name: this.$t('dashboard_status_running'), label: 'running', value: 0 },
+        {
+          name: this.$t('dashboard_status_running'),
+          label: 'running',
+          value: 0,
+        },
         { name: this.$t('dashboard_status_edit'), label: 'edit', value: 0 },
         { name: this.$t('status_ready'), label: 'wait_start', value: 0 },
         { name: this.$t('dashboard_status_stop'), label: 'stop', value: 0 },
-        { name: this.$t('dashboard_status_complete'), label: 'complete', value: 0 },
-        { name: this.$t('dashboard_status_error'), label: 'error', value: 0 }
+        {
+          name: this.$t('dashboard_status_complete'),
+          label: 'complete',
+          value: 0,
+        },
+        { name: this.$t('dashboard_status_error'), label: 'error', value: 0 },
       ],
 
       loading: false,
@@ -322,7 +463,7 @@ export default {
         { name: this.$t('app_Home_initialization'), value: 'initializing' },
         { name: this.$t('app_Home_loadingFinished'), value: 'initialized' },
         { name: this.$t('app_Home_incremental'), value: 'cdc' },
-        { name: this.$t('app_Home_incrementalLag'), value: 'Lag' }
+        { name: this.$t('app_Home_incrementalLag'), value: 'Lag' },
       ],
       colorMap: {
         running: '#82C647',
@@ -331,24 +472,25 @@ export default {
         edit: '#88DBDA',
         error: '#F7D762',
         stop: '#E6B450',
-        complete: '#2EA0EA'
+        complete: '#2EA0EA',
       },
       colorServeMap: {
         starting: '#409EFF',
         running: '#8DC47A',
         stopping: '#F97066',
-        stopped: '#FDB01C'
+        stopped: '#FDB01C',
       },
       syncType: {
         initial_sync: this.$t('dataFlow_initial_sync'),
         cdc: this.$t('dataFlow_cdc'),
-        'initial_sync+cdc': this.$t('dataFlow_initial_sync') + '+' + this.$t('dataFlow_cdc')
+        'initial_sync+cdc':
+          this.$t('dataFlow_initial_sync') + '+' + this.$t('dataFlow_cdc'),
       },
 
       transfer: {
         height: 360,
         isHeader: false,
-        tableData: []
+        tableData: [],
       },
       syncJobObj: {},
       migrationJobObj: {},
@@ -358,30 +500,58 @@ export default {
 
       // 传输总览颜色
       transBarData: [
-        { name: this.$t('dashboard_total_input'), value: 0, key: 'inputTotal', color: '#82C647' },
-        { name: this.$t('dashboard_total_output'), value: 0, key: 'outputTotal', color: '#2EA0EA' },
-        { name: this.$t('dashboard_total_insert'), value: 0, key: 'insertedTotal', color: '#AE86C9' },
-        { name: this.$t('dashboard_total_update'), value: 0, key: 'updatedTotal', color: '#F7D762' },
-        { name: this.$t('dashboard_total_delete'), value: 0, key: 'deletedTotal', color: '#88DBDA' }
+        {
+          name: this.$t('dashboard_total_input'),
+          value: 0,
+          key: 'inputTotal',
+          color: '#82C647',
+        },
+        {
+          name: this.$t('dashboard_total_output'),
+          value: 0,
+          key: 'outputTotal',
+          color: '#2EA0EA',
+        },
+        {
+          name: this.$t('dashboard_total_insert'),
+          value: 0,
+          key: 'insertedTotal',
+          color: '#AE86C9',
+        },
+        {
+          name: this.$t('dashboard_total_update'),
+          value: 0,
+          key: 'updatedTotal',
+          color: '#F7D762',
+        },
+        {
+          name: this.$t('dashboard_total_delete'),
+          value: 0,
+          key: 'deletedTotal',
+          color: '#88DBDA',
+        },
       ],
       transBarOptions: {
         barWidth: '100%',
         series: [
           {
             labelFormat: 'KMT',
-            fixed: 1
-          }
-        ]
+            fixed: 1,
+          },
+        ],
       },
       serverProcess: {
         height: 360,
         isHeader: true,
-        tableData: []
+        tableData: [],
       },
       unitData: [],
       kbData: [],
       unitType: '',
-      noPermission: this.$has('v2_data_pipeline') || this.$has('Data_verify_menu') || this.$has('management_menu')
+      noPermission:
+        this.$has('v2_data_pipeline') ||
+        this.$has('Data_verify_menu') ||
+        this.$has('management_menu'),
     }
   },
 
@@ -402,11 +572,11 @@ export default {
     handleTask(item) {
       if (item.key === 'copy_total') {
         this.$router.push({
-          name: 'migrate'
+          name: 'migrate',
         })
       } else if (item.key === 'sync_total') {
         this.$router.push({
-          name: 'dataflowList'
+          name: 'dataflowList',
         })
       }
     },
@@ -414,24 +584,24 @@ export default {
       this.$router.push({
         name: 'migrate',
         query: {
-          status: status
-        }
+          status: status,
+        },
       })
     },
     handleSyncStatus(status) {
       this.$router.push({
         name: 'dataflow',
         query: {
-          status: status
-        }
+          status: status,
+        },
       })
     },
     // 获取服务器与进程的数据
     getClsterDataApi() {
       let params = {
-        type: 'dashboard'
+        type: 'dashboard',
       }
-      clusterApi.get(params).then(data => {
+      clusterApi.get(params).then((data) => {
         let items = data?.items || []
         this.serverProcess.tableData = items
         this.serverTable = items
@@ -443,12 +613,12 @@ export default {
       self.loading = true
       taskApi
         .chart()
-        .then(data => {
+        .then((data) => {
           if (data) {
-            let setColor = list => {
-              return list.map(item => {
+            let setColor = (list) => {
+              return list.map((item) => {
                 item.itemStyle = {
-                  color: this.colorMap[item.label]
+                  color: this.colorMap[item.label],
                 }
                 return item
               })
@@ -462,13 +632,13 @@ export default {
               all_total: copy_total + sync_total + valid_total,
               copy_total: copy_total,
               sync_total: sync_total,
-              valid_total: valid_total
+              valid_total: valid_total,
             }
             let result = []
-            this.taskList.forEach(el => {
+            this.taskList.forEach((el) => {
               result.push(
                 Object.assign({}, el, {
-                  value: total[el.key]
+                  value: total[el.key],
                 })
               )
             })
@@ -477,7 +647,9 @@ export default {
             self.migrationTaskList = data.chart1?.items
               ? self.handleDataProcessing(data.chart1.items, self.statusList)
               : []
-            self.syncTaskList = data?.chart3 ? self.handleDataProcessing(data.chart3.items, self.statusList) : []
+            self.syncTaskList = data?.chart3
+              ? self.handleDataProcessing(data.chart3.items, self.statusList)
+              : []
 
             console.log('STATUS_MAP', STATUS_MAP) // eslint-disable-line
 
@@ -498,13 +670,13 @@ export default {
     handleChart(data, originalData) {
       let echartData = []
       if (originalData?.length) {
-        originalData.forEach(el => {
+        originalData.forEach((el) => {
           for (let item in data) {
             if (el.key === item)
               echartData.push({
                 name: el.name || this.$t('dashboard_' + item),
                 value: data[item],
-                color: el.color
+                color: el.color,
               })
           }
         })
@@ -513,7 +685,7 @@ export default {
           echartData.push({
             name: this.$t('dashboard_' + item),
             value: data[item],
-            color: '#2EA0EA'
+            color: '#2EA0EA',
           })
         }
       }
@@ -526,7 +698,7 @@ export default {
       let statusItem = []
       if (dataItem?.length) {
         dataItem.sort((a, b) => (a._id > b._id ? 1 : a._id === b._id ? 0 : -1))
-        statusData.forEach(item => {
+        statusData.forEach((item) => {
           const $in = STATUS_MAP[item.label].in
           let total = 0
           if ($in?.length) {
@@ -537,13 +709,13 @@ export default {
               return total
             }, total)
           } else {
-            let dataObj = dataItem.find(element => item.label === element._id)
+            let dataObj = dataItem.find((element) => item.label === element._id)
             dataObj && (total = dataObj.count)
           }
           statusItem.push({
             name: item.name,
             label: item.label,
-            value: total
+            value: total,
           })
         })
       } else {
@@ -558,17 +730,17 @@ export default {
       let totalFalg = true
       let totalText = this.$t('dashboard_public_total')
       if (data?.length) {
-        data.forEach(item => {
+        data.forEach((item) => {
           dataName.push(item.name)
           total += parseFloat(item.value) * 1
         })
-        totalFalg = data.some(item => item.value > 0)
+        totalFalg = data.some((item) => item.value > 0)
         total = this.toThousandsUnit(total)
       }
 
       return {
         legend: {
-          show: false
+          show: false,
         },
         tooltip: {
           trigger: 'item',
@@ -576,9 +748,9 @@ export default {
           backgroundColor: 'rgba(0,0,0,0.8)',
           textStyle: {
             color: '#fff',
-            fontSize: 12
+            fontSize: 12,
           },
-          formatter: params => {
+          formatter: (params) => {
             let item = params
             let val = item.value
             if (val === 1.1) {
@@ -586,7 +758,7 @@ export default {
             }
             let html = `<div style="text-align: center;"> ${params.name}<div style="font-family: 'DIN'">${val}</div></div>`
             return html
-          }
+          },
         },
         series: [
           {
@@ -608,21 +780,23 @@ export default {
                   lineHeight: 24,
                   color: 'rgba(0, 0, 0, 0.85)',
                   fontSize: 16,
-                  fontWeight: '400'
+                  fontWeight: '400',
                 },
                 value: {
                   color: 'rgba(0, 0, 0, 0.43)',
                   fontSize: 12,
-                  fontWeight: '400'
-                }
-              }
+                  fontWeight: '400',
+                },
+              },
             },
             emphasis: {
               label: {
                 show: true,
                 fontWeight: 'bold',
                 formatter: ({ name, value }) => {
-                  return `{name|${this.toThousandsUnit(value)}}\n{value|${name}}`
+                  return `{name|${this.toThousandsUnit(
+                    value
+                  )}}\n{value|${name}}`
                 },
                 width: 60,
                 height: 34,
@@ -631,22 +805,22 @@ export default {
                     lineHeight: 24,
                     color: 'rgba(0, 0, 0, 0.85)',
                     fontSize: '16',
-                    fontWeight: '400'
+                    fontWeight: '400',
                   },
                   value: {
                     color: 'rgba(0, 0, 0, 0.43)',
                     fontSize: 12,
-                    fontWeight: '400'
-                  }
-                }
-              }
+                    fontWeight: '400',
+                  },
+                },
+              },
             },
-            data: data
-          }
-        ]
+            data: data,
+          },
+        ],
       }
-    }
-  }
+    },
+  },
 }
 </script>
 

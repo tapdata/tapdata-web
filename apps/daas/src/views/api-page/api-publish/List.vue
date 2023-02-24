@@ -6,71 +6,111 @@
       class="modules-list"
       :classify="{
         authority: 'API_category_management',
-        types: ['api']
+        types: ['api'],
       }"
       :remoteMethod="getData"
       @selection-change="handleSelectionChange"
       @classify-submit="handleOperationClassify"
       @sort-change="handleSortTable"
     >
-      <div slot="search" class="search-bar">
-        <div class="search-status pr-4">
-          {{ $t('modules_api_server_status') }}:
-          <span class="status-text" :class="status">{{ $t('modules_status_' + status) }}</span>
+      <template v-slot:search>
+        <div class="search-bar">
+          <div class="search-status pr-4">
+            {{ $t('modules_api_server_status') }}:
+            <span class="status-text" :class="status">{{
+              $t('modules_status_' + status)
+            }}</span>
+          </div>
+          <FilterBar
+            v-model:value="searchParams"
+            :items="filterItems"
+            @fetch="table.fetch(1)"
+          >
+          </FilterBar>
         </div>
-        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
-      </div>
-      <div slot="operation">
-        <ElButton size="mini" v-if="selectedStopped.length" @click="batch('active')">{{
-          $t('modules_allarelease')
-        }}</ElButton>
+      </template>
+      <template v-slot:operation>
+        <div>
+          <ElButton
+            size="mini"
+            v-if="selectedStopped.length"
+            @click="batch('active')"
+            >{{ $t('modules_allarelease') }}</ElButton
+          >
 
-        <ElButton size="mini" v-if="selectedRunning.length" @click="batch('pending')">{{
-          $t('modules_allacancel')
-        }}</ElButton>
-        <ElButton size="mini" @click.native="exportFile">{{ $t('modules_export') }}</ElButton>
-        <ElButton size="mini" @click.native="importFile">{{ $t('modules_import') }}</ElButton>
-        <ElButton
-          v-show="multipleSelection.length > 0"
-          v-readonlybtn="'data_catalog_category_application'"
-          size="mini"
-          class="btn"
-          @click="$refs.table.showClassify(handleSelectTag())"
-        >
-          <i class="iconfont icon-biaoqian back-btn-icon"></i>
-          <span> {{ $t('dataFlow_taskBulkTag') }}</span>
-        </ElButton>
-        <ElButton
-          v-readonlybtn="'API_creation'"
-          class="btn btn-create"
-          type="primary"
-          size="mini"
-          @click="openCreateDialog"
-        >
-          <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
-          <span>{{ $t('modules_create') }}</span>
-        </ElButton>
-      </div>
-      <el-table-column type="selection" width="45" :reserve-selection="true"></el-table-column>
-      <el-table-column :label="$t('modules_header_api_name')" show-overflow-tooltip minWidth="120">
-        <template slot-scope="scope">
+          <ElButton
+            size="mini"
+            v-if="selectedRunning.length"
+            @click="batch('pending')"
+            >{{ $t('modules_allacancel') }}</ElButton
+          >
+          <ElButton size="mini" @click="exportFile">{{
+            $t('modules_export')
+          }}</ElButton>
+          <ElButton size="mini" @click="importFile">{{
+            $t('modules_import')
+          }}</ElButton>
+          <ElButton
+            v-show="multipleSelection.length > 0"
+            v-readonlybtn="'data_catalog_category_application'"
+            size="mini"
+            class="btn"
+            @click="$refs.table.showClassify(handleSelectTag())"
+          >
+            <i class="iconfont icon-biaoqian back-btn-icon"></i>
+            <span> {{ $t('dataFlow_taskBulkTag') }}</span>
+          </ElButton>
+          <ElButton
+            v-readonlybtn="'API_creation'"
+            class="btn btn-create"
+            type="primary"
+            size="mini"
+            @click="openCreateDialog"
+          >
+            <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
+            <span>{{ $t('modules_create') }}</span>
+          </ElButton>
+        </div>
+      </template>
+      <el-table-column
+        type="selection"
+        width="45"
+        :reserve-selection="true"
+      ></el-table-column>
+      <el-table-column
+        :label="$t('modules_header_api_name')"
+        show-overflow-tooltip
+        minWidth="120"
+      >
+        <template v-slot="scope">
           <div style="white-space: nowrap"></div>
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('modules_header_tablename')" show-overflow-tooltip minWidth="140">
-        <template slot-scope="scope">
+      <el-table-column
+        :label="$t('modules_header_tablename')"
+        show-overflow-tooltip
+        minWidth="140"
+      >
+        <template v-slot="scope">
           {{ scope.row.tablename }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('modules_header_dataSource')" show-overflow-tooltip width="140">
-        <template slot-scope="scope" v-if="scope.row.source">
+      <el-table-column
+        :label="$t('modules_header_dataSource')"
+        show-overflow-tooltip
+        width="140"
+      >
+        <template v-if="scope.row.source" v-slot="scope">
           <span
             @click.stop="dataSourceFn(scope.row)"
             :title="scope.row.source.name"
             style="cursor: pointer; color: #2c65ff"
             >{{ scope.row.source.name }}({{
-              $t('modules_status_' + (scope.row.source && scope.row.source.status))
+              $t(
+                'modules_status_' +
+                  (scope.row.source && scope.row.source.status)
+              )
             }})</span
           >
         </template>
@@ -82,51 +122,75 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('modules_header_basePath')" show-overflow-tooltip>
-        <template slot-scope="scope">
+      <el-table-column
+        :label="$t('modules_header_basePath')"
+        show-overflow-tooltip
+      >
+        <template v-slot="scope">
           {{ scope.row.basePath }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('modules_header_version')">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           {{ scope.row.apiVersion }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('modules_header_classifications')">
-        <template slot-scope="scope" v-if="scope.row.listtags">
-          <div v-for="item in scope.row.listtags" :key="item.value">{{ item.value }}</div>
+        <template v-if="scope.row.listtags" v-slot="scope">
+          <div v-for="item in scope.row.listtags" :key="item.value">
+            {{ item.value }}
+          </div>
         </template>
       </el-table-column>
       <el-table-column :label="$t('modules_header_username')">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           {{ scope.row.user }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('modules_header_last_updated')" prop="last_updated" sortable="custom" width="140">
-        <template slot-scope="scope">
+      <el-table-column
+        :label="$t('modules_header_last_updated')"
+        prop="last_updated"
+        sortable="custom"
+        width="140"
+      >
+        <template v-slot="scope">
           {{ scope.row.lastUpdatedFmt }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('modules_header_operator')" width="260" fixed="right">
-        <template slot-scope="scope">
-          <ElButton v-readonlybtn="'API_creation'" size="mini" type="text" @click="copy(scope.row)">
+      <el-table-column
+        :label="$t('modules_header_operator')"
+        width="260"
+        fixed="right"
+      >
+        <template v-slot="scope">
+          <ElButton
+            v-readonlybtn="'API_creation'"
+            size="mini"
+            type="text"
+            @click="copy(scope.row)"
+          >
             {{ $t('button_copy') }}
           </ElButton>
-          <ElDivider direction="vertical" v-readonlybtn="'API_creation'"></ElDivider>
+          <ElDivider
+            direction="vertical"
+            v-readonlybtn="'API_creation'"
+          ></ElDivider>
           <!-- <ElButton v-readonlybtn="'API_data_explorer'" size="mini" type="text" @click="toDetails(scope.row)">
-            {{ $t('button_preview') }}
-          </ElButton>
-          <ElDivider direction="vertical"></ElDivider>
-          <ElButton v-readonlybtn="'API_doc_&_test'" size="mini" type="text" @click="toDocumentTest(scope.row)">
-            {{ $t('modules_api_test') }}
-          </ElButton>
-          <ElDivider direction="vertical"></ElDivider> -->
+              {{ $t('button_preview') }}
+            </ElButton>
+            <ElDivider direction="vertical"></ElDivider>
+            <ElButton v-readonlybtn="'API_doc_&_test'" size="mini" type="text" @click="toDocumentTest(scope.row)">
+              {{ $t('modules_api_test') }}
+            </ElButton>
+            <ElDivider direction="vertical"></ElDivider> -->
           <ElButton
             v-readonlybtn="'API_publish'"
             v-if="scope.row.status === 'pending'"
             size="mini"
             type="text"
-            :disabled="$disabledByPermission('API_publish_all_data', scope.row.userId)"
+            :disabled="
+              $disabledByPermission('API_publish_all_data', scope.row.userId)
+            "
             @click="publish(scope.row)"
           >
             {{ $t('modules_publish_api') }}
@@ -136,42 +200,74 @@
             v-readonlybtn="'API_publish'"
             size="mini"
             type="text"
-            :disabled="$disabledByPermission('API_publish_all_data', scope.row.userId)"
+            :disabled="
+              $disabledByPermission('API_publish_all_data', scope.row.userId)
+            "
             @click="unpublish(scope.row)"
           >
             {{ $t('modules_unpublish_api') }}
           </ElButton>
-          <ElDivider direction="vertical" v-readonlybtn="'API_publish'"></ElDivider>
-          <ElButton v-readonlybtn="'API_edition'" size="mini" type="text" @click="edit(scope.row)">
+          <ElDivider
+            direction="vertical"
+            v-readonlybtn="'API_publish'"
+          ></ElDivider>
+          <ElButton
+            v-readonlybtn="'API_edition'"
+            size="mini"
+            type="text"
+            @click="edit(scope.row)"
+          >
             {{ $t('modules_edit') }}
           </ElButton>
-          <ElDivider direction="vertical" v-readonlybtn="'API_edition'"></ElDivider>
+          <ElDivider
+            direction="vertical"
+            v-readonlybtn="'API_edition'"
+          ></ElDivider>
           <!-- <ElButton v-readonlybtn="'API_export'" size="mini" type="text" @click="handleDownload(scope.row)">
-            {{ $t('modules_export') }}
-          </ElButton>
-          <ElDivider direction="vertical"></ElDivider> -->
+              {{ $t('modules_export') }}
+            </ElButton>
+            <ElDivider direction="vertical"></ElDivider> -->
           <ElButton
             v-readonlybtn="'API_delete'"
             size="mini"
             type="text"
-            :disabled="$disabledByPermission('API_delete_all_data', scope.row.userId) || scope.row.status !== 'pending'"
+            :disabled="
+              $disabledByPermission('API_delete_all_data', scope.row.userId) ||
+              scope.row.status !== 'pending'
+            "
             @click="remove(scope.row)"
             >{{ $t('button_delete') }}</ElButton
           >
-          <ElDivider direction="vertical" v-readonlybtn="'API_delete'"></ElDivider>
-          <ElDropdown v-show="moreAuthority" size="small" @command="handleCommand($event, scope.row)" trigger="click">
+          <ElDivider
+            direction="vertical"
+            v-readonlybtn="'API_delete'"
+          ></ElDivider>
+          <ElDropdown
+            v-show="moreAuthority"
+            size="small"
+            @command="handleCommand($event, scope.row)"
+            trigger="click"
+          >
             <ElLink type="primary" class="rotate-90">
               <i class="el-icon-more"></i>
             </ElLink>
-            <ElDropdownMenu class="dataflow-table-more-dropdown-menu" slot="dropdown">
-              <ElDropdownItem command="preview" v-readonlybtn="'API_data_explorer'"
-                >{{ $t('button_preview') }}
-              </ElDropdownItem>
-              <ElDropdownItem command="export" v-readonlybtn="'API_export'">{{ $t('modules_export') }}</ElDropdownItem>
-              <ElDropdownItem command="toDocumentTest" v-readonlybtn="'API_doc_&_test'">{{
-                $t('modules_api_test')
-              }}</ElDropdownItem>
-            </ElDropdownMenu>
+            <template v-slot:dropdown>
+              <ElDropdownMenu class="dataflow-table-more-dropdown-menu">
+                <ElDropdownItem
+                  command="preview"
+                  v-readonlybtn="'API_data_explorer'"
+                  >{{ $t('button_preview') }}
+                </ElDropdownItem>
+                <ElDropdownItem command="export" v-readonlybtn="'API_export'">{{
+                  $t('modules_export')
+                }}</ElDropdownItem>
+                <ElDropdownItem
+                  command="toDocumentTest"
+                  v-readonlybtn="'API_doc_&_test'"
+                  >{{ $t('modules_api_test') }}</ElDropdownItem
+                >
+              </ElDropdownMenu>
+            </template>
           </ElDropdown>
         </template>
       </el-table-column>
@@ -195,13 +291,13 @@ export default {
   components: {
     TablePage,
     FilterBar,
-    Upload: UploadDialog
+    Upload: UploadDialog,
   },
   data() {
     return {
       searchParams: {
         keyword: '',
-        status: 'all'
+        status: 'all',
       },
       filterItems: [],
       order: 'last_updated DESC',
@@ -210,20 +306,23 @@ export default {
       statusList: [
         {
           label: this.$t('modules_all'),
-          value: 'all'
+          value: 'all',
         },
         {
           label: this.$t('modules_active'),
-          value: 'active'
+          value: 'active',
         },
         {
           label: this.$t('modules_pending'),
-          value: 'pending'
-        }
+          value: 'pending',
+        },
       ],
       multipleSelection: [],
       intervalId: 0,
-      moreAuthority: this.$has('API_data_explorer') || this.$has('API_doc_&_test') || this.$has('API_export')
+      moreAuthority:
+        this.$has('API_data_explorer') ||
+        this.$has('API_doc_&_test') ||
+        this.$has('API_export'),
       // importDialogVisible: false,
       // importForm: {
       //   tag: [],
@@ -239,7 +338,7 @@ export default {
   watch: {
     '$route.query'() {
       this.table.fetch(1)
-    }
+    },
   },
 
   created() {
@@ -251,11 +350,14 @@ export default {
       return this.$refs.table
     },
     selectedRunning() {
-      return this.multipleSelection.filter(v => v.status === 'active')
+      return this.multipleSelection.filter((v) => v.status === 'active')
     },
     selectedStopped() {
-      return this.multipleSelection.filter(v => v.status === 'pending' || v.status === 'error' || v.status === 'draft')
-    }
+      return this.multipleSelection.filter(
+        (v) =>
+          v.status === 'pending' || v.status === 'error' || v.status === 'draft'
+      )
+    },
   },
   methods: {
     // 重置查询条件
@@ -263,7 +365,7 @@ export default {
       if (name === 'reset') {
         this.searchParams = {
           keyword: '',
-          status: ''
+          status: '',
         }
       }
       this.table.fetch(1)
@@ -287,7 +389,7 @@ export default {
         listtags: true,
         name: true,
         'source._id': true,
-        'source.user_id': true
+        'source.user_id': true,
       }
       if (keyword && keyword.trim()) {
         let filterObj = { like: toRegExp(keyword), options: 'i' }
@@ -297,7 +399,7 @@ export default {
 
       if (tags && tags.length) {
         where['listtags.id'] = {
-          in: tags
+          in: tags,
         }
       }
       let filter = {
@@ -305,20 +407,22 @@ export default {
         limit: size,
         fields: fields,
         skip: (current - 1) * size,
-        where
+        where,
       }
       return modulesApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           return {
             total: data?.total,
             data:
-              data?.items?.map(item => {
-                item.lastUpdatedFmt = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+              data?.items?.map((item) => {
+                item.lastUpdatedFmt = dayjs(item.last_updated).format(
+                  'YYYY-MM-DD HH:mm:ss'
+                )
                 return item
-              }) || []
+              }) || [],
           }
         })
     },
@@ -328,22 +432,22 @@ export default {
         worker_type: 'api-server',
         ping_time: {
           gte: '$serverDate',
-          gte_offset: 30000
-        }
+          gte_offset: 30000,
+        },
       }
       let filter = {
         order: 'ping_time DESC',
         limit: 1,
         fields: {
-          worker_status: true
+          worker_status: true,
         },
-        where
+        where,
       }
       workerApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           if (data?.items?.length) {
             let record = data?.items[0] || {}
             let workerStatus = record.workerStatus || record.worker_status || {}
@@ -358,7 +462,9 @@ export default {
     },
     // 表格排序
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
+      this.order = `${order ? prop : 'last_updated'} ${
+        order === 'ascending' ? 'ASC' : 'DESC'
+      }`
       this.table.fetch(1)
     },
     handleSelectionChange(val) {
@@ -367,10 +473,10 @@ export default {
     // 选中分类
     handleSelectTag() {
       let tagList = {}
-      this.multipleSelection.forEach(row => {
+      this.multipleSelection.forEach((row) => {
         if (row.classifications && row.classifications.length > 0) {
           tagList[row.classifications[0].id] = {
-            value: row.classifications[0].value
+            value: row.classifications[0].value,
           }
         }
       })
@@ -379,8 +485,8 @@ export default {
     // 数据分类查询数据
     handleOperationClassify(listtags) {
       let attributes = {
-        id: this.multipleSelection.map(r => r.id),
-        listtags
+        id: this.multipleSelection.map((r) => r.id),
+        listtags,
       }
       modulesApi.batchUpdateListtags(attributes).then(() => {
         this.table.fetch()
@@ -400,25 +506,35 @@ export default {
     },
     // 预览
     preview(ids, item) {
-      this.$router.push({ name: 'apiExplorer', query: { id: item.basePath + '_' + item.apiVersion } })
+      this.$router.push({
+        name: 'apiExplorer',
+        query: { id: item.basePath + '_' + item.apiVersion },
+      })
     },
     // api文档及测试
     toDocumentTest(ids, item) {
-      this.$router.push({ name: 'apiDocAndTest', query: { id: item.basePath + '_' + item.apiVersion } })
+      this.$router.push({
+        name: 'apiDocAndTest',
+        query: { id: item.basePath + '_' + item.apiVersion },
+      })
     },
     // 发布api
     publish(item) {
-      this.$confirm(this.$t('modules_sure') + this.$t('modules_publish_api'), this.$t('modules_publish_api'), {
-        type: 'warning',
-        closeOnClickModal: false
-      }).then(resFlag => {
+      this.$confirm(
+        this.$t('modules_sure') + this.$t('modules_publish_api'),
+        this.$t('modules_publish_api'),
+        {
+          type: 'warning',
+          closeOnClickModal: false,
+        }
+      ).then((resFlag) => {
         if (!resFlag) {
           return
         }
         let parmas = {
           status: 'active',
           id: item.id,
-          tablename: item.tablename
+          tablename: item.tablename,
         }
         modulesApi.patch(parmas).then(() => {
           this.$message.success(this.$t('modules_active'))
@@ -431,17 +547,21 @@ export default {
     },
     // 取消发布
     unpublish(item) {
-      this.$confirm(this.$t('modules_sure') + this.$t('modules_unpublish_api'), this.$t('modules_unpublish_api'), {
-        type: 'warning',
-        closeOnClickModal: false
-      }).then(resFlag => {
+      this.$confirm(
+        this.$t('modules_sure') + this.$t('modules_unpublish_api'),
+        this.$t('modules_unpublish_api'),
+        {
+          type: 'warning',
+          closeOnClickModal: false,
+        }
+      ).then((resFlag) => {
         if (!resFlag) {
           return
         }
         let parmas = {
           status: 'pending',
           id: item.id,
-          tablename: item.tablename
+          tablename: item.tablename,
         }
         modulesApi.patch(parmas).then(() => {
           this.$message.success(this.$t('modules_pending'))
@@ -458,8 +578,8 @@ export default {
         name: 'apiPublishEdit',
         query: { id: item.id, name: item.table_name },
         params: {
-          id: item.id
-        }
+          id: item.id,
+        },
       })
     },
     // 删除列表
@@ -467,8 +587,8 @@ export default {
       const h = this.$createElement
       let message = h('p', [this.$t('message_deleteOrNot') + ' ' + item.name])
       this.$confirm(message, {
-        type: 'warning'
-      }).then(resFlag => {
+        type: 'warning',
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -485,39 +605,49 @@ export default {
     batch(action) {
       if (!action) return
       const h = this.$createElement
-      let text = action === 'active' ? this.$t('modules_releasefb') : this.$t('modules_releasecancel')
-      let jobs = action === 'active' ? this.selectedStopped : this.selectedRunning
-      let tableNameData = jobs.map(item => {
+      let text =
+        action === 'active'
+          ? this.$t('modules_releasefb')
+          : this.$t('modules_releasecancel')
+      let jobs =
+        action === 'active' ? this.selectedStopped : this.selectedRunning
+      let tableNameData = jobs.map((item) => {
         return item.tablename
       })
-      let message = h('p', [text + ' ', h('div', { style: { color: '#409EFF' } }, tableNameData.join(', '))])
-      let title = action === 'active' ? this.$t('modules_allarelease') : this.$t('modules_allacancel')
+      let message = h('p', [
+        text + ' ',
+        h('div', { style: { color: '#409EFF' } }, tableNameData.join(', ')),
+      ])
+      let title =
+        action === 'active'
+          ? this.$t('modules_allarelease')
+          : this.$t('modules_allacancel')
       this.$confirm(message, title, {
         type: 'warning',
-        closeOnClickModal: false
-      }).then(resFlag => {
+        closeOnClickModal: false,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
         let modulesData = []
-        jobs.forEach(item => {
+        jobs.forEach((item) => {
           let data =
             action === 'active'
               ? {
                   id: item.id,
                   status: 'active',
                   connectorStopped: false,
-                  transformerStopped: false
+                  transformerStopped: false,
                 }
               : {
                   id: item.id,
-                  status: 'pending'
+                  status: 'pending',
                 }
           modulesData.push(modulesApi.patch(data))
         })
 
-        Promise.all(modulesData).then(data => {
-          let successResults = data?.filter(rs => rs) || []
+        Promise.all(modulesData).then((data) => {
+          let successResults = data?.filter((rs) => rs) || []
           if (successResults.length === jobs.length) {
             this.table.fetch()
             this.$message.success(this.$t('message_save_ok'))
@@ -533,7 +663,7 @@ export default {
         let routeUrl = this.$router.resolve({
           name: 'connectionsEdit',
           params: { id: data.source.id },
-          query: { databaseType: data.source.database_type }
+          query: { databaseType: data.source.database_type },
         })
         window.open(routeUrl.href, '_blank')
       }
@@ -548,13 +678,13 @@ export default {
     // 批量导出
     exportFile() {
       let id = []
-      id = this.multipleSelection.map(v => {
+      id = this.multipleSelection.map((v) => {
         return v.id
       })
       let where = {
         _id: {
-          in: id
-        }
+          in: id,
+        },
       }
       metadataInstancesApi.download(where, 'Modules')
     },
@@ -562,8 +692,8 @@ export default {
     export(ids, item) {
       let where = {
         _id: {
-          in: [item.id]
-        }
+          in: [item.id],
+        },
       }
       metadataInstancesApi.download(where, 'Modules')
     },
@@ -571,7 +701,7 @@ export default {
     copy(item) {
       let parmas = {
         uri: `${item.id}/copy`,
-        headers: { 'lconname-name': item.basePath }
+        headers: { 'lconname-name': item.basePath },
       }
       modulesApi.post(parmas, { 'lconname-name': item.basePath }).then(() => {
         this.$message.success(this.$t('message_copy_success'))
@@ -588,13 +718,13 @@ export default {
           key: 'status',
           type: 'select-inner',
           items: this.statusList,
-          selectedWidth: '200px'
+          selectedWidth: '200px',
         },
         {
           placeholder: this.$t('modules_name_placeholder'),
           key: 'keyword',
-          type: 'input'
-        }
+          type: 'input',
+        },
       ]
     },
     handleCommand(command, node) {
@@ -602,18 +732,19 @@ export default {
       if (node) {
         ids = [node.id]
       } else {
-        ids = this.multipleSelection.map(item => item.id)
+        ids = this.multipleSelection.map((item) => item.id)
       }
       this[command](ids, node)
-    }
+    },
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.intervalId) {
       clearTimeout(this.intervalId)
     }
-  }
+  },
 }
 </script>
+
 <style lang="scss" scoped>
 .modules-list-wrap {
   height: 100%;
@@ -686,6 +817,7 @@ export default {
   }
 }
 </style>
+
 <style lang="scss">
 .changeName-prompt {
   .el-message-box__header {

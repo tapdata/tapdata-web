@@ -25,10 +25,13 @@
           <ElFormItem
             prop="function_name"
             :label="$t('function_name_label') + ':'"
-            :rules="{ required: true, message: $t('function_name_placeholder') }"
+            :rules="{
+              required: true,
+              message: $t('function_name_placeholder'),
+            }"
           >
             <ElInput
-              v-model="form.function_name"
+              v-model:value="form.function_name"
               class="form-input"
               :placeholder="$t('function_name_placeholder')"
             ></ElInput>
@@ -41,31 +44,48 @@
           :rules="scriptRules"
         >
           <div class="script-editor">
-            <JsEditor v-model="form.script" ref="editor" height="200"></JsEditor>
+            <JsEditor
+              v-model:value="form.script"
+              ref="editor"
+              height="200"
+            ></JsEditor>
           </div>
         </ElFormItem>
-        <ElFormItem prop="describe" :label="$t('function_describe_label') + ':'">
+        <ElFormItem
+          prop="describe"
+          :label="$t('function_describe_label') + ':'"
+        >
           <ElInput
-            v-model="form.describe"
+            v-model:value="form.describe"
             class="form-input"
             type="textarea"
             :placeholder="$t('function_describe_placeholder')"
           ></ElInput>
         </ElFormItem>
         <ElFormItem prop="format" :label="$t('function_format') + ':'">
-          <ElInput v-model="form.format" class="form-input" :placeholder="$t('function_format_placeholder')"></ElInput>
-        </ElFormItem>
-        <ElFormItem prop="parameters_desc" :label="$t('function_parameters_describe_label') + ':'">
           <ElInput
-            v-model="form.parameters_desc"
+            v-model:value="form.format"
+            class="form-input"
+            :placeholder="$t('function_format_placeholder')"
+          ></ElInput>
+        </ElFormItem>
+        <ElFormItem
+          prop="parameters_desc"
+          :label="$t('function_parameters_describe_label') + ':'"
+        >
+          <ElInput
+            v-model:value="form.parameters_desc"
             class="form-input"
             type="textarea"
             :placeholder="$t('function_parameters_describe_placeholder')"
           ></ElInput>
         </ElFormItem>
-        <ElFormItem prop="return_value" :label="$t('function_return_value_label') + ':'">
+        <ElFormItem
+          prop="return_value"
+          :label="$t('function_return_value_label') + ':'"
+        >
           <ElInput
-            v-model="form.return_value"
+            v-model:value="form.return_value"
             class="form-input"
             type="textarea"
             :placeholder="$t('function_return_value_placeholder')"
@@ -74,12 +94,16 @@
       </ElForm>
     </div>
     <div class="footer p-6">
-      <ElButton class="btn" size="mini" @click="$router.back()">{{ $t('button_back') }}</ElButton>
-      <ElButton class="btn" type="primary" size="mini" @click="save">{{ $t('button_save') }}</ElButton>
+      <ElButton class="btn" size="mini" @click="$router.back()">{{
+        $t('button_back')
+      }}</ElButton>
+      <ElButton class="btn" type="primary" size="mini" @click="save">{{
+        $t('button_save')
+      }}</ElButton>
     </div>
 
     <!-- </div>
-    </div> -->
+      </div> -->
   </section>
 </template>
 
@@ -88,10 +112,12 @@ import { JsEditor } from '@tap/component'
 import Cookie from '@tap/shared/src/cookie'
 import { javascriptFunctionsApi } from '@tap/api'
 
-const getScriptObj = script => {
+const getScriptObj = (script) => {
   let matchArr1 = script.match(/(?<=function\s+)\w+(?=\s*\([^]*\))/g)
   let name = matchArr1?.[0] || ''
-  let matchArr2 = script.match(/(?<=\s*function\s+\w+\s*\([^]*\)\s*\{)[^]*?(?=}\s*$)/g)
+  let matchArr2 = script.match(
+    /(?<=\s*function\s+\w+\s*\([^]*\)\s*\{)[^]*?(?=}\s*$)/g
+  )
   let body = matchArr2?.[0] || ''
   let matchArr3 = script.match(/(?<=function\s+\w+\s*\()[\w\s,]*(?=\))/g)
   let params = matchArr3?.[0] || ''
@@ -99,7 +125,7 @@ const getScriptObj = script => {
     name,
     body,
     params,
-    bodyLength: matchArr2?.length || 0
+    bodyLength: matchArr2?.length || 0,
   }
 }
 export default {
@@ -115,7 +141,7 @@ export default {
         format: '',
         parameters_desc: '',
         return_value: '',
-        script: 'function functionName (record) {\n\treturn record\n}'
+        script: 'function functionName (record) {\n\treturn record\n}',
       },
       scriptRules: {
         validator: (rule, value, callback) => {
@@ -123,18 +149,26 @@ export default {
           if (!value.trim()) {
             callback(new Error(this.$t('function_script_empty')))
           } else if (!obj.name.trim()) {
-            callback(new Error(this.$t('function_script_missing_function_name')))
+            callback(
+              new Error(this.$t('function_script_missing_function_name'))
+            )
           } else if (!obj.body.trim()) {
-            callback(new Error(this.$t('function_script_missing_function_body')))
-          } else if (self.$refs.editor.editor.session.$annotations.some(item => item.type === 'error')) {
+            callback(
+              new Error(this.$t('function_script_missing_function_body'))
+            )
+          } else if (
+            self.$refs.editor.editor.session.$annotations.some(
+              (item) => item.type === 'error'
+            )
+          ) {
             callback(new Error(this.$t('function_script_format_error')))
           } else if (obj.bodyLength.length > 1) {
             callback(new Error(this.$t('function_script_only_one')))
           } else {
             callback()
           }
-        }
-      }
+        },
+      },
     }
   },
   created() {
@@ -150,18 +184,19 @@ export default {
         .findOne({
           filter: JSON.stringify({
             where: {
-              id
-            }
-          })
+              id,
+            },
+          }),
         })
-        .then(data => {
+        .then((data) => {
           let details = data || {}
           // 处理老数据问题
           if (details.type === 'custom' && !details.script) {
             details.script = `function ${details.function_name}(${details.parameters}) ${details.function_body}`
           }
           if (details.type === 'jar') {
-            details.classNameFmt = details.className?.split(details.packageName + '.')?.[1] || ''
+            details.classNameFmt =
+              details.className?.split(details.packageName + '.')?.[1] || ''
           }
           this.details = details
           this.form = Object.assign({}, this.form, details)
@@ -173,11 +208,11 @@ export default {
     save() {
       this.$refs?.editor?.format()
       this.$nextTick(() => {
-        this.$refs.form.validate(valid => {
+        this.$refs.form.validate((valid) => {
           if (valid) {
             let format = this.form.format
             let params = {
-              format
+              format,
             }
             let method = 'post'
             let id = this.$route.params.id
@@ -187,7 +222,7 @@ export default {
                 function_body: `{${obj.body}}`,
                 function_name: obj.name,
                 parameters: obj.params,
-                format
+                format,
               }
             }
             if (id) {
@@ -201,7 +236,7 @@ export default {
             javascriptFunctionsApi[method](
               Object.assign({}, this.form, params, {
                 last_updated: new Date(),
-                user_id: Cookie.get('user_id')
+                user_id: Cookie.get('user_id'),
               })
             )
               .then(() => {
@@ -214,12 +249,12 @@ export default {
           }
         })
       })
-    }
-  }
+    },
+  },
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .details-value {
   color: map-get($fontColor, dark);
   font-size: 12px;
@@ -232,7 +267,6 @@ export default {
   background-color: map-get($bgColor, white);
   box-shadow: 0px 0px 3px 0px #cccccc;
   overflow: hidden;
-
   ::v-deep {
     .el-form-item__label {
       font-size: 12px;

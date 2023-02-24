@@ -1,16 +1,30 @@
 <template>
   <div class="solutions flex flex-column">
     <div class="search-row mb-4">
-      <ElInput v-model="keyword" clearable size="small" :placeholder="$t('solution_error_code')" @input="search(800)">
-        <ElSelect
-          v-model="select"
-          slot="prepend"
-          :placeholder="$t('solution_select_placeholder_type')"
-          class="type-select"
-        >
-          <ElOption v-for="item in selectItems" :key="item.value" :value="item.value" :label="item.label"></ElOption>
-        </ElSelect>
-        <ElButton slot="append" icon="el-icon-search" @click="search"> </ElButton>
+      <ElInput
+        v-model:value="keyword"
+        clearable
+        size="small"
+        :placeholder="$t('solution_error_code')"
+        @input="search(800)"
+      >
+        <template v-slot:prepend>
+          <ElSelect
+            v-model:value="select"
+            :placeholder="$t('solution_select_placeholder_type')"
+            class="type-select"
+          >
+            <ElOption
+              v-for="item in selectItems"
+              :key="item.value"
+              :value="item.value"
+              :label="item.label"
+            ></ElOption>
+          </ElSelect>
+        </template>
+        <template v-slot:append>
+          <ElButton icon="el-icon-search" @click="search"> </ElButton>
+        </template>
       </ElInput>
     </div>
     <div class="search-count align-items-center pb-4">
@@ -19,15 +33,23 @@
     </div>
     <div v-loading="loading" class="result-list flex-fill">
       <div class="result-list__content">
-        <div v-for="(item, index) in list" :key="index" class="result-item py-6">
-          <div class="result-item__title mb-3 fs-5 fw-bolder">{{ item.code }}</div>
+        <div
+          v-for="(item, index) in list"
+          :key="index"
+          class="result-item py-6"
+        >
+          <div class="result-item__title mb-3 fs-5 fw-bolder">
+            {{ item.code }}
+          </div>
           <div class="result-item__message mb-2 ml-4">
             <div class="mb-1">{{ $t('solution_search_desc') }}:</div>
             <div class="font-color-slight ml-4">{{ item.message }}</div>
           </div>
           <ul class="result-item__list ml-4">
             <li v-for="(t, i) in item.solutions" :key="i" class="mb-1">
-              <div class="mb-1">{{ $t('solution_search_solutions') }}{{ i + 1 }}:</div>
+              <div class="mb-1">
+                {{ $t('solution_search_solutions') }}{{ i + 1 }}:
+              </div>
               <div class="font-color-slight ml-4">{{ t }}</div>
             </li>
           </ul>
@@ -51,11 +73,11 @@ export default {
       selectItems: [
         {
           label: $t('solution_customer_job_logs'),
-          value: 'CustomerJobLogs'
-        }
+          value: 'CustomerJobLogs',
+        },
       ],
       loading: false,
-      list: []
+      list: [],
     }
   },
   mounted() {
@@ -87,14 +109,14 @@ export default {
       }
       customerJobLogsApi
         .solutions(params)
-        .then(data => {
+        .then((data) => {
           this.list = data || []
         })
         .finally(() => {
           this.loading = false
         })
-    }
-  }
+    },
+  },
 }
 </script>
 
