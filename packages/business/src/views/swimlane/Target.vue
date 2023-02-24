@@ -24,30 +24,52 @@
             <div class="flex justify-content-between">
               <span class="font-color-normal fw-sub fs-6">{{ item.name }}</span>
               <span class="operation-line">
-                <VIcon size="16" class="cursor-pointer" @click="openView(item)">copy</VIcon>
+                <VIcon size="16" class="cursor-pointer" @click="openView(item)"
+                  >copy</VIcon
+                >
                 <VIcon size="18" class="ml-3">setting</VIcon>
               </span>
             </div>
-            <div class="mt-2 font-color-light">Sync data to {{ item.database_type }} for analytics</div>
+            <div class="mt-2 font-color-light">
+              Sync data to {{ item.database_type }} for analytics
+            </div>
           </div>
         </div>
-        <TaskList :list="connectionTaskMap[item.id] || []" @edit-in-dag="handleEditInDag"></TaskList>
+        <TaskList
+          :list="connectionTaskMap[item.id] || []"
+          @edit-in-dag="handleEditInDag"
+        ></TaskList>
       </div>
 
-      <ElDialog :visible.sync="dialogConfig.visible" width="600" :close-on-click-modal="false">
-        <span slot="title" style="font-size: 14px">{{ dialogConfig.title }}</span>
+      <ElDialog
+        v-model:visible="dialogConfig.visible"
+        width="600"
+        :close-on-click-modal="false"
+      >
+        <template v-slot:title>
+          <span style="font-size: 14px">{{ dialogConfig.title }}</span>
+        </template>
         <ElForm ref="form" :model="dialogConfig" label-width="180px">
           <div class="pipeline-desc p-4 mb-4">{{ dialogConfig.desc }}</div>
           <ElFormItem label="Pipeline Name">
-            <ElInput size="small" v-model="dialogConfig.taskName" maxlength="50" show-word-limit></ElInput>
+            <ElInput
+              size="small"
+              v-model:value="dialogConfig.taskName"
+              maxlength="50"
+              show-word-limit
+            ></ElInput>
           </ElFormItem>
         </ElForm>
-        <span slot="footer" class="dialog-footer">
-          <ElButton size="mini" @click="hideDialog">{{ $t('packages_component_button_cancel') }}</ElButton>
-          <ElButton size="mini" type="primary" @click="dialogSubmit">
-            {{ $t('packages_component_button_confirm') }}
-          </ElButton>
-        </span>
+        <template v-slot:footer>
+          <span class="dialog-footer">
+            <ElButton size="mini" @click="hideDialog">{{
+              $t('packages_component_button_cancel')
+            }}</ElButton>
+            <ElButton size="mini" type="primary" @click="dialogSubmit">
+              {{ $t('packages_component_button_confirm') }}
+            </ElButton>
+          </span>
+        </template>
       </ElDialog>
       <connectionPreview ref="targetconnectionView"></connectionPreview>
     </div>
@@ -55,6 +77,7 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { connectionsApi, taskApi } from '@tap/api'
 import NodeIcon from '@tap/dag/src/components/NodeIcon'
 import connectionPreview from './connectionPreview'
@@ -77,7 +100,7 @@ const DEFAULT_SETTINGS = {
   isSchedule: false,
   cronExpression: ' ',
   accessNodeType: 'AUTOMATIC_PLATFORM_ALLOCATION',
-  isAutoInspect: false
+  isAutoInspect: false,
 }
 
 const TaskList = defineComponent({
@@ -88,7 +111,10 @@ const TaskList = defineComponent({
     return () => {
       const list = isLimit.value ? props.list.slice(0, limit) : props.list
       return (
-        <div staticClass="item__content position-relative p-2" class={{ 'has-more': props.list.length > limit }}>
+        <div
+          staticClass="item__content position-relative p-2"
+          class={{ 'has-more': props.list.length > limit }}
+        >
           {props.list.length ? (
             <div class="task-list">
               <div class="task-list-content">
@@ -111,7 +137,9 @@ const TaskList = defineComponent({
               </div>
             </div>
           ) : (
-            <span class="font-color-sslight">No tasks configured for this target</span>
+            <span class="font-color-sslight">
+              No tasks configured for this target
+            </span>
           )}
 
           <ElButton
@@ -129,18 +157,15 @@ const TaskList = defineComponent({
         </div>
       )
     }
-  }
+  },
 })
 
 export default {
   name: 'Target',
-
   props: {
-    dragState: Object
+    dragState: Object,
   },
-
   components: { NodeIcon, connectionPreview, TaskList },
-
   data() {
     return {
       list: [],
@@ -149,16 +174,14 @@ export default {
         desc: '',
         taskName: '',
         syncType: '',
-        visible: false
+        visible: false,
       },
-      connectionTaskMap: {}
+      connectionTaskMap: {},
     }
   },
-
   created() {
     this.init()
   },
-
   methods: {
     async init() {
       this.list = await this.getData()
@@ -166,7 +189,7 @@ export default {
     },
 
     handleAdd() {
-      this.$emit('create-connection', 'target')
+      $emit(this, 'create-connection', 'target')
     },
 
     async getData() {
@@ -174,12 +197,12 @@ export default {
         limit: 999,
         where: {
           connection_type: {
-            in: ['source_and_target', 'target']
-          }
-        }
+            in: ['source_and_target', 'target'],
+          },
+        },
       }
       const res = await connectionsApi.get({
-        filter: JSON.stringify(filter)
+        filter: JSON.stringify(filter),
       })
 
       return res.items
@@ -187,14 +210,14 @@ export default {
 
     async loadTask(list) {
       if (!list.length) return
-      const ids = list.map(item => item.id)
+      const ids = list.map((item) => item.id)
       const data = await taskApi.getTaskByConnection({
         connectionIds: ids.join(','),
-        position: 'target'
+        position: 'target',
       })
 
-      Object.keys(data).forEach(key => {
-        this.$set(this.connectionTaskMap, key, data[key].map(this.mapTask))
+      Object.keys(data).forEach((key) => {
+        this.connectionTaskMap[key] = data[key].map(this.mapTask)
       })
     },
 
@@ -213,20 +236,29 @@ export default {
     handleDragEnter(ev) {
       ev.preventDefault()
 
-      const dropNode = this.findParentByClassName(ev.currentTarget, 'wrap__item')
+      const dropNode = this.findParentByClassName(
+        ev.currentTarget,
+        'wrap__item'
+      )
       dropNode.classList.add('is-drop-inner')
     },
 
     handleDragLeave(ev) {
       if (!ev.currentTarget.contains(ev.relatedTarget)) {
-        const dropNode = this.findParentByClassName(ev.currentTarget, 'wrap__item')
+        const dropNode = this.findParentByClassName(
+          ev.currentTarget,
+          'wrap__item'
+        )
         dropNode.classList.remove('is-drop-inner')
       }
     },
 
     handleDrop(ev, item) {
       ev.preventDefault()
-      const dropNode = this.findParentByClassName(ev.currentTarget, 'wrap__item')
+      const dropNode = this.findParentByClassName(
+        ev.currentTarget,
+        'wrap__item'
+      )
       dropNode.classList.remove('is-drop-inner')
       console.log('handleDrop', this.dragState, item) // eslint-disable-line
 
@@ -258,7 +290,7 @@ export default {
 
       Object.assign(source, {
         migrateTableSelectType: 'expression',
-        tableExpression: '.*'
+        tableExpression: '.*',
       })
 
       return {
@@ -267,8 +299,8 @@ export default {
         name: this.dialogConfig.taskName,
         dag: {
           edges: [{ source: source.id, target: target.id }],
-          nodes: [source, target]
-        }
+          nodes: [source, target],
+        },
       }
     },
 
@@ -285,8 +317,8 @@ export default {
           accessNodeProcessId: db.accessNodeProcessId,
           pdkType: db.pdkType,
           pdkHash: db.pdkHash,
-          capabilities: db.capabilities || []
-        }
+          capabilities: db.capabilities || [],
+        },
       }
     },
 
@@ -304,8 +336,8 @@ export default {
           accessNodeProcessId: db.accessNodeProcessId,
           pdkType: db.pdkType,
           pdkHash: db.pdkHash,
-          capabilities: db.capabilities || []
-        }
+          capabilities: db.capabilities || [],
+        },
       }
     },
 
@@ -317,8 +349,8 @@ export default {
         name: this.dialogConfig.taskName,
         dag: {
           edges: [{ source: source.id, target: target.id }],
-          nodes: [source, target]
-        }
+          nodes: [source, target],
+        },
       }
     },
 
@@ -349,7 +381,7 @@ export default {
       if (this.connectionTaskMap[to.id]) {
         this.connectionTaskMap[to.id].push(taskInfo)
       } else {
-        this.$set(this.connectionTaskMap, to.id, [taskInfo])
+        this.connectionTaskMap[to.id] = [taskInfo]
       }
 
       this.$message.success('任务创建成功')
@@ -360,10 +392,11 @@ export default {
 
       window.open(
         this.$router.resolve({
-          name: task.syncType === 'migrate' ? 'MigrateEditor' : 'DataflowEditor',
+          name:
+            task.syncType === 'migrate' ? 'MigrateEditor' : 'DataflowEditor',
           params: {
-            id: task.id
-          }
+            id: task.id,
+          },
         }).href
       )
     },
@@ -382,16 +415,14 @@ export default {
     addItem(value) {
       this.list.unshift(value)
       this.loadTask([value])
-    }
-  }
+    },
+  },
+  emits: ['create-connection'],
 }
 </script>
 
 <style lang="scss" scoped>
-.wrap__item {
-  border: 1px solid #e1e3e9;
-
-  &:hover {
+.wrap__item{border:1px solid #e1e3e9;&:hover {
     background-color: #f2f3f5;
   }
 
@@ -426,20 +457,5 @@ export default {
         display: inline-flex;
       }
     }
-  }
-}
-.item__header {
-  border-bottom: 1px solid #e1e3e9;
-}
-.item__icon {
-  //border: 1px solid #4e5969;
-}
-.operation-line {
-  min-width: 50px;
-}
-
-.pipeline-desc {
-  background-color: #f8f8fa;
-  border-radius: 8px;
-}
+  }}.item__header{border-bottom:1px solid #e1e3e9}.item__icon{//border:1px solid #4e5969}.operation-line{min-width:50px}.pipeline-desc{background-color:#f8f8fa;border-radius:8px}
 </style>

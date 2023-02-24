@@ -4,21 +4,38 @@
     custom-class="import-upload-dialog"
     :title="$t('packages_business_modules_dialog_import_title')"
     :close-on-click-modal="false"
-    :visible.sync="dialogVisible"
+    v-model:visible="dialogVisible"
     :before-close="handleClose"
   >
-    <ElForm ref="form" :model="importForm" class="applications-form" label-width="100px">
-      <ElFormItem :label="$t('packages_business_modules_dialog_condition') + ':'">
-        <el-radio v-model="importForm.upsert" :label="1">{{
+    <ElForm
+      ref="form"
+      :model="importForm"
+      class="applications-form"
+      label-width="100px"
+    >
+      <ElFormItem
+        :label="$t('packages_business_modules_dialog_condition') + ':'"
+      >
+        <el-radio v-model:value="importForm.upsert" :label="1">{{
           $t('packages_business_modules_dialog_overwrite_data')
         }}</el-radio>
-        <el-radio v-model="importForm.upsert" :label="0">{{
+        <el-radio v-model:value="importForm.upsert" :label="0">{{
           $t('packages_business_modules_dialog_skip_data')
         }}</el-radio>
       </ElFormItem>
       <ElFormItem :label="$t('packages_business_modules_dialog_group') + ':'">
-        <ElSelect v-model="importForm.tag" multiple size="mini" class="w-75">
-          <ElOption v-for="item in classifyList" :label="item.value" :value="item.id" :key="item.id"></ElOption>
+        <ElSelect
+          v-model:value="importForm.tag"
+          multiple
+          size="mini"
+          class="w-75"
+        >
+          <ElOption
+            v-for="item in classifyList"
+            :label="item.value"
+            :value="item.id"
+            :key="item.id"
+          ></ElOption>
         </ElSelect>
       </ElFormItem>
       <ElFormItem :label="$t('packages_business_modules_dialog_file') + ':'">
@@ -33,35 +50,43 @@
           :on-change="handleChange"
           :on-remove="handleRemove"
         >
-          <ElLink class="align-top" type="primary" plain slot="trigger" size="mini">
-            <VIcon class="mr-1 link-primary">upload</VIcon>
-            {{ $t('packages_business_modules_dialog_upload_files') }}</ElLink
-          >
+          <template v-slot:trigger>
+            <ElLink class="align-top" type="primary" plain size="mini">
+              <VIcon class="mr-1 link-primary">upload</VIcon>
+              {{ $t('packages_business_modules_dialog_upload_files') }}</ElLink
+            >
+          </template>
         </ElUpload>
       </ElFormItem>
     </ElForm>
-    <span slot="footer" class="dialog-footer">
-      <ElButton @click="handleClose" size="mini">{{ $t('packages_business_button_cancel') }}</ElButton>
-      <ElButton type="primary" @click="submitUpload()" size="mini">{{
-        $t('packages_business_button_confirm')
-      }}</ElButton>
-    </span>
+    <template v-slot:footer>
+      <span class="dialog-footer">
+        <ElButton @click="handleClose" size="mini">{{
+          $t('packages_business_button_cancel')
+        }}</ElButton>
+        <ElButton type="primary" @click="submitUpload()" size="mini">{{
+          $t('packages_business_button_confirm')
+        }}</ElButton>
+      </span>
+    </template>
   </ElDialog>
 </template>
+
 <script>
+import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 import Cookie from '@tap/shared/src/cookie'
 import { VIcon } from '@tap/component'
 import { metadataDefinitionsApi } from '@tap/api'
 export default {
   name: 'Upload',
   components: {
-    VIcon
+    VIcon,
   },
   props: {
     type: {
       required: true,
-      value: String
-    }
+      value: String,
+    },
   },
   data() {
     return {
@@ -73,8 +98,8 @@ export default {
         fileList: [],
         action: '',
         upsert: 1,
-        accept: '.gz'
-      }
+        accept: '.gz',
+      },
     }
   },
   created() {
@@ -96,10 +121,10 @@ export default {
     // 上传文件成功失败钩子
     handleChange(file) {
       /*if (!file.name.endsWith('.json.gz')) {
-        this.$message.warning('请选择名称以[.json.gz]结尾的文件')
-        this.$refs.upload.clearFiles()
-        return
-      }*/
+      this.$message.warning('请选择名称以[.json.gz]结尾的文件')
+      this.$refs.upload.clearFiles()
+      return
+    }*/
       this.importForm.fileList = [file]
       if (this.type === 'api') {
         this.importForm.action =
@@ -115,7 +140,9 @@ export default {
         this.importForm.action =
           window.location.origin +
           window.location.pathname +
-          `api/Task/batch/import?listtags=${encodeURIComponent(JSON.stringify(this.importForm.tag))}&access_token=` +
+          `api/Task/batch/import?listtags=${encodeURIComponent(
+            JSON.stringify(this.importForm.tag)
+          )}&access_token=` +
           this.accessToken +
           `&cover=${!!this.importForm.upsert}`
       }
@@ -124,23 +151,27 @@ export default {
     // 获取分类
     getClassify() {
       let filter = {
-        where: { or: [{ item_type: this.type }] }
+        where: { or: [{ item_type: this.type }] },
       }
       metadataDefinitionsApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           this.classifyList = data?.items || []
         })
     },
 
     handleSuccess(response) {
       if (response.code !== 'ok') {
-        this.$message.error(response.message || this.$t('packages_business_message_upload_fail'))
+        this.$message.error(
+          response.message || this.$t('packages_business_message_upload_fail')
+        )
       } else {
-        this.$message.success(this.$t('packages_business_message_upload_success'))
-        this.$emit('success')
+        this.$message.success(
+          this.$t('packages_business_message_upload_success')
+        )
+        $emit(this, 'success')
       }
       this.$refs.upload.clearFiles()
     },
@@ -162,10 +193,12 @@ export default {
     handleClose() {
       this.dialogVisible = false
       this.$refs.upload.clearFiles()
-    }
-  }
+    },
+  },
+  emits: ['success'],
 }
 </script>
+
 <style lang="scss">
 .import-upload-dialog {
   .el-upload-list {

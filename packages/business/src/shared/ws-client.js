@@ -15,14 +15,14 @@ class WSClient extends EventEmitter {
       protocols: undefined, // 不能为null
       retryTimes: Number.MAX_VALUE, // 无限次尝试重连
       retryInterval: 500, // 断开立即重连
-      query: {}
+      query: {},
     }
     this.options = merge({}, defaultOptions, opts, {
       url,
       protocols,
       query: {
-        id: this.__getId()
-      }
+        id: this.__getId(),
+      },
     })
     this.ws = null
     this.retryCount = 0
@@ -33,11 +33,14 @@ class WSClient extends EventEmitter {
   __getId() {
     let id = this.__id
     if (!id) {
-      id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        let r = (Math.random() * 16) | 0,
-          v = c === 'x' ? r : (r & 0x3) | 0x8
-        return v.toString(16)
-      })
+      id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
+        /[xy]/g,
+        function (c) {
+          let r = (Math.random() * 16) | 0,
+            v = c === 'x' ? r : (r & 0x3) | 0x8
+          return v.toString(16)
+        }
+      )
       this.__id = id
     }
     return id
@@ -58,7 +61,7 @@ class WSClient extends EventEmitter {
       let queryStr = ''
       if (opts.query && Object.keys(opts.query).length > 0) {
         queryStr = Object.keys(opts.query)
-          .map(key => key + '=' + encodeURIComponent(opts.query[key]))
+          .map((key) => key + '=' + encodeURIComponent(opts.query[key]))
           .join('&')
       }
 
@@ -100,7 +103,8 @@ class WSClient extends EventEmitter {
   disconnect() {
     let ws = this.ws
     if (ws) {
-      if ([WebSocket.CONNECTING, WebSocket.OPEN].includes(ws.readyState)) ws.close()
+      if ([WebSocket.CONNECTING, WebSocket.OPEN].includes(ws.readyState))
+        ws.close()
     }
   }
 
@@ -111,7 +115,7 @@ class WSClient extends EventEmitter {
       console.log('websocket 已连接')
       this.emit('open')
     }
-    ws.onmessage = e => {
+    ws.onmessage = (e) => {
       this.__receiveMessage(e)
     }
     ws.onerror = () => {
@@ -191,7 +195,7 @@ class WSClient extends EventEmitter {
       Object.assign(this.msg, {
         message: i18n.t('message_network_connected'),
         type: 'success',
-        duration: 3000
+        duration: 3000,
       })
       this.msg.startTimer()
       this.msg = null
@@ -202,7 +206,7 @@ class WSClient extends EventEmitter {
     this.msg = Message.error({
       duration: 0,
       showClose: true,
-      message: i18n.t('message_network_unconnected')
+      message: i18n.t('message_network_unconnected'),
     })
   }
 }

@@ -1,13 +1,30 @@
 <template>
   <div class="database">
     <div class="inline-flex align-items-center mt-2 mb-4">
-      <ElCheckbox v-model="settings.showBeta" class="m-0" @change="getData(false)"></ElCheckbox>
-      <span class="ml-2">{{ $t('packages_business_create_connection_dialog_neirongSho2') }}</span>
-      <ElCheckbox v-model="settings.showAlpha" class="ml-8 mr-0" @change="getData(false)"></ElCheckbox>
-      <span class="ml-2">{{ $t('packages_business_create_connection_dialog_neirongSho') }}</span>
+      <ElCheckbox
+        v-model:value="settings.showBeta"
+        class="m-0"
+        @change="getData(false)"
+      ></ElCheckbox>
+      <span class="ml-2">{{
+        $t('packages_business_create_connection_dialog_neirongSho2')
+      }}</span>
+      <ElCheckbox
+        v-model:value="settings.showAlpha"
+        class="ml-8 mr-0"
+        @change="getData(false)"
+      ></ElCheckbox>
+      <span class="ml-2">{{
+        $t('packages_business_create_connection_dialog_neirongSho')
+      }}</span>
     </div>
-    <ElTabs v-model="active" @tab-click="getData(false)">
-      <ElTabPane v-for="item in tabs" :key="item.value" :name="item.value" :label="item.label"></ElTabPane>
+    <ElTabs v-model:value="active" @tab-click="getData(false)">
+      <ElTabPane
+        v-for="item in tabs"
+        :key="item.value"
+        :name="item.value"
+        :label="item.label"
+      ></ElTabPane>
     </ElTabs>
     <div v-loading="loading">
       <ul v-if="database.length" class="overflow-auto">
@@ -18,12 +35,23 @@
           :class="{ active: item.pdkId === selected.pdkId }"
           @click="handleSelect(item)"
         >
-          <div class="img-box inline-flex justify-content-center align-items-center rounded-circle">
-            <ElImage v-if="item.pdkType" :src="getPdkIcon(item)">{{ item.pdkType }}</ElImage>
+          <div
+            class="img-box inline-flex justify-content-center align-items-center rounded-circle"
+          >
+            <ElImage v-if="item.pdkType" :src="getPdkIcon(item)">{{
+              item.pdkType
+            }}</ElImage>
             <ElImage v-else :src="$util.getConnectionTypeDialogImg(item)" />
           </div>
-          <ElTooltip class="mt-2" effect="dark" :content="item.name" placement="bottom">
-            <div class="ellipsis text-center font-color-normal">{{ item.name }}</div>
+          <ElTooltip
+            class="mt-2"
+            effect="dark"
+            :content="item.name"
+            placement="bottom"
+          >
+            <div class="ellipsis text-center font-color-normal">
+              {{ item.name }}
+            </div>
           </ElTooltip>
         </li>
       </ul>
@@ -33,6 +61,7 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { getConnectionIcon } from '@tap/business/src/views/connections/util'
 import { databaseTypesApi } from '@tap/api'
 import { EmptyItem } from '@tap/component'
@@ -45,11 +74,11 @@ export default {
       type: Object,
       default: () => {
         return {}
-      }
+      },
     },
     visible: {
-      type: Boolean
-    }
+      type: Boolean,
+    },
   },
   data() {
     return {
@@ -60,30 +89,30 @@ export default {
       tabs: [
         {
           label: 'All Connectors',
-          value: 'All'
+          value: 'All',
         },
         {
           label: 'Databases Connectors',
-          value: 'Database'
+          value: 'Database',
         },
         {
           label: 'SaaS Connectors',
-          value: 'SaaS'
+          value: 'SaaS',
         },
         {
           label: 'File Connectors',
-          value: 'File'
+          value: 'File',
         },
         {
           label: 'My Connectors',
-          value: 'Custom'
-        }
+          value: 'Custom',
+        },
       ],
       timer: null,
       settings: {
         showBeta: true,
-        showAlpha: true
-      }
+        showAlpha: true,
+      },
     }
   },
   watch: {
@@ -93,7 +122,7 @@ export default {
       } else {
         this.database = []
       }
-    }
+    },
   },
   created() {
     this.active = this.tabs[0].value
@@ -113,14 +142,16 @@ export default {
       const params = {
         where: {
           tag: this.active,
-          authentication
-        }
+          authentication,
+        },
       }
       if (!noLoading) this.loading = true
       databaseTypesApi
         .getDatabases({ filter: JSON.stringify(params) })
-        .then(data => {
-          this.database = data?.filter(t => t.connectionType.includes(this.params?.type) && !!t.pdkHash)
+        .then((data) => {
+          this.database = data?.filter(
+            (t) => t.connectionType.includes(this.params?.type) && !!t.pdkHash
+          )
         })
         .finally(() => {
           this.loading = false
@@ -139,9 +170,10 @@ export default {
 
     handleSelect(item) {
       this.selected = item
-      this.$emit('select', this.selected)
-    }
-  }
+      $emit(this, 'select', this.selected)
+    },
+  },
+  emits: ['select'],
 }
 </script>
 

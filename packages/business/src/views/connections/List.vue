@@ -9,7 +9,7 @@
               authority: 'datasource_catalog_management',
               types: ['database'],
               viewPage: 'connections',
-              title: $t('packages_business_connections_list_lianjiefenlei')
+              title: $t('packages_business_connections_list_lianjiefenlei'),
             }
           : null
       "
@@ -18,33 +18,47 @@
       @classify-submit="handleOperationClassify"
       @sort-change="handleSortTable"
     >
-      <template slot="search">
-        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
+      <template v-slot:search>
+        <FilterBar
+          v-model:value="searchParams"
+          :items="filterItems"
+          @fetch="table.fetch(1)"
+        >
+        </FilterBar>
       </template>
-      <div slot="operation">
-        <ElButton
-          v-if="isDaas"
-          v-show="multipleSelection.length > 0"
-          v-readonlybtn="'datasource_category_application'"
-          size="mini"
-          class="btn"
-          @click="$refs.table.showClassify(handleSelectTag())"
-        >
-          <i class="iconfont icon-biaoqian back-btn-icon"></i>
-          <span> {{ $t('packages_business_dataFlow_taskBulkTag') }}</span>
-        </ElButton>
-        <ElButton
-          v-readonlybtn="'datasource_creation'"
-          class="btn btn-create"
-          type="primary"
-          size="mini"
-          :disabled="$disabledReadonlyUserBtn()"
-          @click="checkTestConnectionAvailable"
-        >
-          <span> {{ $t('packages_business_connection_createNewDataSource') }}</span>
-        </ElButton>
-      </div>
-      <ElTableColumn v-if="isDaas" type="selection" width="45" :reserve-selection="true"></ElTableColumn>
+      <template v-slot:operation>
+        <div>
+          <ElButton
+            v-if="isDaas"
+            v-show="multipleSelection.length > 0"
+            v-readonlybtn="'datasource_category_application'"
+            size="mini"
+            class="btn"
+            @click="$refs.table.showClassify(handleSelectTag())"
+          >
+            <i class="iconfont icon-biaoqian back-btn-icon"></i>
+            <span> {{ $t('packages_business_dataFlow_taskBulkTag') }}</span>
+          </ElButton>
+          <ElButton
+            v-readonlybtn="'datasource_creation'"
+            class="btn btn-create"
+            type="primary"
+            size="mini"
+            :disabled="$disabledReadonlyUserBtn()"
+            @click="checkTestConnectionAvailable"
+          >
+            <span>
+              {{ $t('packages_business_connection_createNewDataSource') }}</span
+            >
+          </ElButton>
+        </div>
+      </template>
+      <ElTableColumn
+        v-if="isDaas"
+        type="selection"
+        width="45"
+        :reserve-selection="true"
+      ></ElTableColumn>
       <ElTableColumn
         show-overflow-tooltip
         prop="name"
@@ -53,7 +67,11 @@
       >
         <template #default="{ row }">
           <span class="connection-name flex">
-            <img class="connection-img mr-2" :src="getConnectionIcon(row.pdkHash)" alt="" />
+            <img
+              class="connection-img mr-2"
+              :src="getConnectionIcon(row.pdkHash)"
+              alt=""
+            />
             <ElLink
               role="ellipsis"
               type="primary"
@@ -63,44 +81,77 @@
             >
               {{ row.name }}
             </ElLink>
-            <span v-if="row.listtags" class="justify-content-start ellipsis block">
-              <span class="tag inline-block" v-for="item in row.listtags"> {{ item.value }} </span>
+            <span
+              v-if="row.listtags"
+              class="justify-content-start ellipsis block"
+            >
+              <span class="tag inline-block" v-for="item in row.listtags">
+                {{ item.value }}
+              </span>
             </span>
           </span>
         </template>
       </ElTableColumn>
-      <ElTableColumn show-overflow-tooltip :label="$t('packages_business_connection_connectionInfo')" min-width="160">
-        <template slot-scope="scope">
+      <ElTableColumn
+        show-overflow-tooltip
+        :label="$t('packages_business_connection_connectionInfo')"
+        min-width="160"
+      >
+        <template v-slot="scope">
           {{ scope.row.connectionUrl }}
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="status" :label="$t('packages_business_connection_dataBaseStatus')" min-width="100">
+      <ElTableColumn
+        prop="status"
+        :label="$t('packages_business_connection_dataBaseStatus')"
+        min-width="100"
+      >
         <template #default="{ row }">
           <div>
             <span :class="['status-connection-' + row.status, 'status-block']">
-              {{ row.status ? $t('packages_business_connection_status_' + row.status) : '-' }}
+              {{
+                row.status
+                  ? $t('packages_business_connection_status_' + row.status)
+                  : '-'
+              }}
             </span>
           </div>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="connection_type" min-width="135" :label="$t('packages_business_connection_connectionType')">
-        <template slot-scope="scope">
-          {{ $t('packages_business_connection_type_' + scope.row.connection_type) }}
+      <ElTableColumn
+        prop="connection_type"
+        min-width="135"
+        :label="$t('packages_business_connection_connectionType')"
+      >
+        <template v-slot="scope">
+          {{
+            $t('packages_business_connection_type_' + scope.row.connection_type)
+          }}
         </template>
       </ElTableColumn>
       <ElTableColumn min-width="140">
-        <div slot="header" class="flex align-center">
-          <span>{{ $t('packages_business_connection_list_column_schema_status') }}</span>
-          <ElTooltip
-            class="ml-2"
-            placement="top"
-            :content="$t('packages_business_connection_list_column_schema_status_tips')"
-          >
-            <VIcon class="color-primary" size="14">info</VIcon>
-          </ElTooltip>
-        </div>
-        <div v-if="isFileSource(scope.row)" slot-scope="scope">-</div>
-        <template v-else slot-scope="scope">
+        <template v-slot:header>
+          <div class="flex align-center">
+            <span>{{
+              $t('packages_business_connection_list_column_schema_status')
+            }}</span>
+            <ElTooltip
+              class="ml-2"
+              placement="top"
+              :content="
+                $t(
+                  'packages_business_connection_list_column_schema_status_tips'
+                )
+              "
+            >
+              <VIcon class="color-primary" size="14">info</VIcon>
+            </ElTooltip>
+          </div>
+        </template>
+        <template v-slot="scope">
+          <div v-if="isFileSource(scope.row)">-</div>
+        </template>
+        <template v-else v-slot="scope">
           <SchemaProgress :data="scope.row"></SchemaProgress>
         </template>
       </ElTableColumn>
@@ -110,7 +161,7 @@
         min-width="160"
         :label="$t('packages_business_connections_list_biaojiegougengxin')"
       >
-        <template slot-scope="scope">
+        <template v-slot="scope">
           {{ scope.row.loadSchemaTime }}
         </template>
       </ElTableColumn>
@@ -120,12 +171,15 @@
         min-width="160"
         :label="$t('packages_business_connection_lastUpdateTime')"
       >
-        <template slot-scope="scope">
+        <template v-slot="scope">
           {{ scope.row.lastUpdateTime }}
         </template>
       </ElTableColumn>
-      <ElTableColumn width="320" :label="$t('packages_business_connection_operate')">
-        <template slot-scope="scope">
+      <ElTableColumn
+        width="320"
+        :label="$t('packages_business_connection_operate')"
+      >
+        <template v-slot="scope">
           <ElButton type="text" @click="testConnection(scope.row)"
             >{{ $t('packages_business_connection_list_test_button') }}
           </ElButton>
@@ -136,7 +190,10 @@
             placement="top"
           >
             <span>
-              <ElButton type="text" :disabled="isFileSource(scope.row)" @click="handleLoadSchema(scope.row)"
+              <ElButton
+                type="text"
+                :disabled="isFileSource(scope.row)"
+                @click="handleLoadSchema(scope.row)"
                 >{{ $t('packages_business_connection_preview_load_schema') }}
               </ElButton>
             </span>
@@ -146,12 +203,18 @@
             v-readonlybtn="'datasource_edition'"
             type="text"
             :disabled="
-              $disabledByPermission('datasource_edition_all_data', scope.row.user_id) || $disabledReadonlyUserBtn()
+              $disabledByPermission(
+                'datasource_edition_all_data',
+                scope.row.user_id
+              ) || $disabledReadonlyUserBtn()
             "
             @click="edit(scope.row.id, scope.row)"
             >{{ $t('packages_business_button_edit') }}
           </ElButton>
-          <ElDivider direction="vertical" v-readonlybtn="'datasource_edition'"></ElDivider>
+          <ElDivider
+            direction="vertical"
+            v-readonlybtn="'datasource_edition'"
+          ></ElDivider>
           <ElButton
             v-readonlybtn="'datasource_creation'"
             type="text"
@@ -160,12 +223,18 @@
             @click="copy(scope.row)"
             >{{ $t('packages_business_button_copy') }}
           </ElButton>
-          <ElDivider direction="vertical" v-readonlybtn="'datasource_creation'"></ElDivider>
+          <ElDivider
+            direction="vertical"
+            v-readonlybtn="'datasource_creation'"
+          ></ElDivider>
           <ElButton
             v-readonlybtn="'datasource_delete'"
             type="text"
             :disabled="
-              $disabledByPermission('datasource_delete_all_data', scope.row.user_id) || $disabledReadonlyUserBtn()
+              $disabledByPermission(
+                'datasource_delete_all_data',
+                scope.row.user_id
+              ) || $disabledReadonlyUserBtn()
             "
             @click="remove(scope.row)"
             >{{ $t('packages_business_button_delete') }}
@@ -179,14 +248,30 @@
       @dialogVisible="handleDialogDatabaseTypeVisible"
       @databaseType="handleDatabaseType"
     ></DatabaseTypeDialog>
-    <Test ref="test" :visible.sync="dialogTestVisible" :formData="testData" @returnTestData="returnTestData"></Test>
-    <ElDialog :title="$t('packages_business_connections_list_tishi')" width="40%" :visible.sync="connectionTaskDialog">
-      <span>{{ $t('packages_business_connections_list_gailianjieyibei') }}</span>
+    <Test
+      ref="test"
+      v-model:visible="dialogTestVisible"
+      :formData="testData"
+      @returnTestData="returnTestData"
+    ></Test>
+    <ElDialog
+      :title="$t('packages_business_connections_list_tishi')"
+      width="40%"
+      v-model:visible="connectionTaskDialog"
+    >
+      <span>{{
+        $t('packages_business_connections_list_gailianjieyibei')
+      }}</span>
       <div class="color-primary mt-2">
-        {{ $t('packages_business_connections_list_renwuzongshu') }}{{ connectionTaskListTotal }}
+        {{ $t('packages_business_connections_list_renwuzongshu')
+        }}{{ connectionTaskListTotal }}
       </div>
       <ul class="mt-4">
-        <li v-for="item in connectionTaskList" :key="item.id" @click="goTaskList(item)">
+        <li
+          v-for="item in connectionTaskList"
+          :key="item.id"
+          @click="goTaskList(item)"
+        >
           <el-tooltip :content="item.name" placement="right-start">
             <el-link type="primary">{{ item.name }}</el-link>
           </el-tooltip>
@@ -196,6 +281,7 @@
     </ElDialog>
   </section>
 </template>
+
 <script>
 import dayjs from 'dayjs'
 
@@ -212,7 +298,15 @@ import { defaultModel, verify, getConnectionIcon } from './util'
 let timeout = null
 
 export default {
-  components: { TablePage, DatabaseTypeDialog, Preview, Test, VIcon, SchemaProgress, FilterBar },
+  components: {
+    TablePage,
+    DatabaseTypeDialog,
+    Preview,
+    Test,
+    VIcon,
+    SchemaProgress,
+    FilterBar,
+  },
   inject: ['checkAgent', 'buried'],
   data() {
     return {
@@ -230,38 +324,38 @@ export default {
       databaseModelOptions: [
         {
           label: this.$t('packages_business_select_option_all'),
-          value: ''
+          value: '',
         },
         {
           label: this.$t('packages_business_connection_list_source'),
-          value: 'source'
+          value: 'source',
         },
         {
           label: this.$t('packages_business_connection_list_target'),
-          value: 'target'
+          value: 'target',
         },
         {
           label: this.$t('packages_business_connection_list_source_and_target'),
-          value: 'source_and_target'
-        }
+          value: 'source_and_target',
+        },
       ],
       databaseStatusOptions: [
         {
           label: this.$t('packages_business_select_option_all'),
-          value: ''
+          value: '',
         },
         {
           label: this.$t('packages_business_connection_list_efficient'),
-          value: 'ready'
+          value: 'ready',
         },
         {
           label: this.$t('packages_business_connection_list_invalidation'),
-          value: 'invalid'
+          value: 'invalid',
         },
         {
           label: this.$t('packages_business_connection_list_testing'),
-          value: 'testing'
-        }
+          value: 'testing',
+        },
       ],
       databaseTypeOptions: [],
       searchParams: {
@@ -270,24 +364,24 @@ export default {
         databaseModel: '',
         status: '',
         panelFlag: true,
-        sourceType: ''
+        sourceType: '',
       },
       testData: null,
       dialogTestVisible: false, // 连接测试框
       connectionTaskList: [],
       connectionTaskListTotal: 0,
-      connectionTaskDialog: false
+      connectionTaskDialog: false,
     }
   },
   computed: {
     table() {
       return this.$refs.table
-    }
+    },
   },
   watch: {
     '$route.query'() {
       this.table.fetch(1)
-    }
+    },
   },
   created() {
     let helpUrl = 'https://docs.tapdata.net'
@@ -296,7 +390,8 @@ export default {
       this.$t('packages_business_connection_list_help_doc') +
       '</a>'
 
-    this.description = this.$t('packages_business_connection_list_desc') + guideDoc
+    this.description =
+      this.$t('packages_business_connection_list_desc') + guideDoc
     //定时轮询
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
@@ -315,21 +410,21 @@ export default {
       this.searchParams.keyword = keyword
     }
   },
-  destroyed() {
+  unmounted() {
     clearInterval(timeout)
   },
   methods: {
     // 存在测试中，重新加载数据
     reloadDataOnTesting(data) {
       let flag = false
-      data.forEach(el => {
+      data.forEach((el) => {
         if (el.status === 'testing') {
           flag = true
         }
       })
       flag &&
         setTimeout(() => {
-          this.table.fetch(null, 0, true, value => {
+          this.table.fetch(null, 0, true, (value) => {
             this.reloadDataOnTesting(value)
           })
         }, 3000)
@@ -338,22 +433,27 @@ export default {
     handleGuide() {
       let item = {
         visible: true,
-        step: this.$route.query.step ? Number(this.$route.query.step) + 1 : 0
+        step: this.$route.query.step ? Number(this.$route.query.step) + 1 : 0,
       }
-      window.parent && window.parent.noviceGuideChange && window.parent.noviceGuideChange(item)
+      window.parent &&
+        window.parent.noviceGuideChange &&
+        window.parent.noviceGuideChange(item)
       this.$router.push({
-        name: 'connections'
+        name: 'connections',
       })
     },
     //筛选条件
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
+      this.order = `${order ? prop : 'last_updated'} ${
+        order === 'ascending' ? 'ASC' : 'DESC'
+      }`
       this.table.fetch(1)
     },
 
     getData({ page, tags }) {
       let { current, size } = page
-      let { keyword, databaseType, databaseModel, status, sourceType } = this.searchParams
+      let { keyword, databaseType, databaseModel, status, sourceType } =
+        this.searchParams
       let where = {}
       //精准搜索 iModel
       if (keyword && keyword.trim()) {
@@ -364,7 +464,7 @@ export default {
       sourceType && (where.sourceType = sourceType)
       if (tags && tags.length) {
         where['listtags.id'] = {
-          in: tags
+          in: tags,
         }
       }
       status && (where.status = status)
@@ -374,13 +474,13 @@ export default {
         noSchema: 1,
         //fields: fields, //传noSchema 过滤schema
         skip: (current - 1) * size,
-        where
+        where,
       }
       return connectionsApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           let list = data?.items || []
           // 有选中行，列表刷新后无法更新行数据，比如状态
           if (this.multipleSelection.length && list.length) {
@@ -395,7 +495,7 @@ export default {
               }
             })
           }
-          list = list.map(item => {
+          list = list.map((item) => {
             if (item.connectionString) {
               item.connectionUrl = item.connectionString
             } else {
@@ -404,16 +504,24 @@ export default {
                   /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
                     item.config.uri
                   )
-                if (regResult && regResult.groups && regResult.groups.password) {
+                if (
+                  regResult &&
+                  regResult.groups &&
+                  regResult.groups.password
+                ) {
                   const { username, host, database, query } = regResult.groups
-                  item.connectionUrl = `mongodb://${username}:***@${host}/${database}${query ? '/' + query : ''}`
+                  item.connectionUrl = `mongodb://${username}:***@${host}/${database}${
+                    query ? '/' + query : ''
+                  }`
                 } else {
                   item.connectionUrl = item.config.uri
                 }
               } else if (item.config) {
                 const { host, port, database, schema } = item.config
                 item.connectionUrl = host
-                  ? `${host}${port ? `:${port}` : ''}${database ? `/${database}` : ''}${schema ? `/${schema}` : ''}`
+                  ? `${host}${port ? `:${port}` : ''}${
+                      database ? `/${database}` : ''
+                    }${schema ? `/${schema}` : ''}`
                   : ''
               }
             }
@@ -421,7 +529,9 @@ export default {
             item.lastUpdateTime = item.last_updated = item.last_updated
               ? dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
               : '-'
-            item.loadSchemaTime = item.loadSchemaTime ? dayjs(item.loadSchemaTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+            item.loadSchemaTime = item.loadSchemaTime
+              ? dayjs(item.loadSchemaTime).format('YYYY-MM-DD HH:mm:ss')
+              : '-'
             return item
           })
 
@@ -429,7 +539,7 @@ export default {
           this.$refs.preview.sync(list)
           return {
             total: data?.total,
-            data: list
+            data: list,
           }
         })
     },
@@ -450,25 +560,25 @@ export default {
     edit(id, item) {
       const { pdkHash } = item
       let query = {
-        pdkHash
+        pdkHash,
       }
       this.$router.push({
         name: 'connectionsEdit',
         params: {
-          id: id
+          id: id,
         },
-        query
+        query,
       })
     },
     copy(data) {
       let headersName = { 'lconname-name': data.name }
-      this.$set(data, 'copyLoading', true)
+      data['copyLoading'] = true
       connectionsApi
         .copy(
           data.id,
           {
             uri: `${data.id}/copy`,
-            headers: headersName
+            headers: headersName,
           },
           data.name
         )
@@ -486,35 +596,41 @@ export default {
     },
     remove(row) {
       const h = this.$createElement
-      let strArr = this.$t('packages_business_connection_deteleDatabaseMsg').split('xxx')
+      let strArr = this.$t(
+        'packages_business_connection_deteleDatabaseMsg'
+      ).split('xxx')
       let msg = h('p', null, [
         strArr[0],
         h(
           'span',
           {
-            class: 'color-primary'
+            class: 'color-primary',
           },
           row.name
         ),
-        strArr[1]
+        strArr[1],
       ])
       this.$confirm(msg, '', {
         type: 'warning',
-        showClose: false
-      }).then(resFlag => {
+        showClose: false,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
         //检查该连接是否被已有任务使用
-        connectionsApi.checkConnectionTask(row.id).then(data => {
+        connectionsApi.checkConnectionTask(row.id).then((data) => {
           if (data?.items?.length === 0) {
-            connectionsApi.delete(row.id).then(data => {
+            connectionsApi.delete(row.id).then((data) => {
               let jobs = data?.jobs || []
               let modules = data?.modules || []
               if (jobs.length > 0 || modules.length > 0) {
-                this.$message.error(this.$t('packages_business_connection_checkMsg'))
+                this.$message.error(
+                  this.$t('packages_business_connection_checkMsg')
+                )
               } else {
-                this.$message.success(this.$t('packages_business_message_deleteOK'))
+                this.$message.success(
+                  this.$t('packages_business_message_deleteOK')
+                )
                 this.table.fetch()
               }
             })
@@ -533,15 +649,15 @@ export default {
         this.$router.push({
           name: 'migrateList',
           query: {
-            keyword: item.name
-          }
+            keyword: item.name,
+          },
         })
       } else {
         this.$router.push({
           name: 'dataflowList',
           query: {
-            keyword: item.name
-          }
+            keyword: item.name,
+          },
         })
       }
     },
@@ -558,7 +674,7 @@ export default {
     },
     handleSelectTag() {
       let tagList = []
-      this.multipleSelection.forEach(row => {
+      this.multipleSelection.forEach((row) => {
         if (row.listtags) {
           tagList = [...row.listtags, ...tagList]
         }
@@ -575,8 +691,8 @@ export default {
     },
     handleOperationClassify(listtags) {
       let attributes = {
-        id: this.multipleSelection.map(r => r.id),
-        listtags
+        id: this.multipleSelection.map((r) => r.id),
+        listtags,
       }
       connectionsApi.batchUpdateListtags(attributes).then(() => {
         this.table.fetch()
@@ -591,11 +707,11 @@ export default {
       this.handleDialogDatabaseTypeVisible()
       const { pdkHash } = item
       let query = {
-        pdkHash
+        pdkHash,
       }
       this.$router.push({
         name: 'connectionCreate',
-        query
+        query,
       })
     },
 
@@ -617,7 +733,7 @@ export default {
             Object.assign(
               {},
               {
-                status: 'testing'
+                status: 'testing',
               }
             )
           )
@@ -641,7 +757,8 @@ export default {
       let status = data.status
       if (status === 'ready') {
         this.$message.success(
-          this.$t('packages_business_connection_testConnection') + this.$t('packages_business_connection_status_ready'),
+          this.$t('packages_business_connection_testConnection') +
+            this.$t('packages_business_connection_status_ready'),
           false
         )
       } else {
@@ -652,7 +769,7 @@ export default {
         )
       }
       this.buried('connectionTest', '', {
-        result: status === 'ready'
+        result: status === 'ready',
       })
       this.table.fetch()
     },
@@ -663,16 +780,18 @@ export default {
           key: 'status',
           type: 'select-inner',
           items: this.databaseStatusOptions,
-          selectedWidth: '200px'
+          selectedWidth: '200px',
         },
         {
           label: this.$t('packages_business_connection_list_type'),
           key: 'databaseModel',
           type: 'select-inner',
-          items: this.databaseModelOptions
+          items: this.databaseModelOptions,
         },
         {
-          label: this.$t('packages_business_connection_list_form_database_type'),
+          label: this.$t(
+            'packages_business_connection_list_form_database_type'
+          ),
           key: 'databaseType',
           type: 'select-inner',
           menuMinWidth: '250px',
@@ -687,22 +806,22 @@ export default {
             //默认全部
             let all = {
               name: this.$t('packages_business_select_option_all'),
-              type: ''
+              type: '',
             }
             databaseTypeOptions.unshift(all)
-            return databaseTypeOptions.map(item => {
+            return databaseTypeOptions.map((item) => {
               return {
                 label: item.name,
-                value: item.type
+                value: item.type,
               }
             })
-          }
+          },
         },
         {
           placeholder: this.$t('packages_business_connection_list_name'),
           key: 'keyword',
-          type: 'input'
-        }
+          type: 'input',
+        },
       ]
     },
     getConnectionIcon() {
@@ -717,10 +836,11 @@ export default {
     },
     isFileSource(row) {
       return ['CSV', 'EXCEL', 'JSON', 'XML'].includes(row?.database_type)
-    }
-  }
+    },
+  },
 }
 </script>
+
 <style lang="scss" scoped>
 .paddingLeft0 {
   padding-left: 0 !important;

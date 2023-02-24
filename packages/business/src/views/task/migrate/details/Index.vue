@@ -8,20 +8,46 @@
       @reload="loadTask"
     ></Info>
     <div class="card-box__content card-box px-6 py-2 mt-6">
-      <ElTabs v-model="activeTab" class="flex flex-column flex-1 overflow-hidden h-100">
-        <ElTabPane :label="$t('packages_business_task_monitor_progress')" name="schedule">
+      <ElTabs
+        v-model:value="activeTab"
+        class="flex flex-column flex-1 overflow-hidden h-100"
+      >
+        <ElTabPane
+          :label="$t('packages_business_task_monitor_progress')"
+          name="schedule"
+        >
           <Schedule :task="task" @sync="getSyncData"></Schedule>
         </ElTabPane>
-        <ElTabPane :label="$t('packages_business_task_monitor_run_log')" name="log" lazy>
+        <ElTabPane
+          :label="$t('packages_business_task_monitor_run_log')"
+          name="log"
+          lazy
+        >
           <Log :id="task.id" style="max-height: 450px"></Log>
         </ElTabPane>
-        <ElTabPane :label="$t('packages_business_task_monitor_run_connection')" name="connect" lazy>
-          <Connection ref="connection" :ids="connectionIds" @change="loadTask"></Connection>
+        <ElTabPane
+          :label="$t('packages_business_task_monitor_run_connection')"
+          name="connect"
+          lazy
+        >
+          <Connection
+            ref="connection"
+            :ids="connectionIds"
+            @change="loadTask"
+          ></Connection>
         </ElTabPane>
-        <ElTabPane :label="$t('packages_business_task_monitor_history_run_record')" name="history" lazy>
+        <ElTabPane
+          :label="$t('packages_business_task_monitor_history_run_record')"
+          name="history"
+          lazy
+        >
           <History :ids="[task.parentId]" :operations="operations"></History>
         </ElTabPane>
-        <ElTabPane :label="$t('packages_business_task_monitor_mining_task')" name="sharedMing" lazy>
+        <ElTabPane
+          :label="$t('packages_business_task_monitor_mining_task')"
+          name="sharedMing"
+          lazy
+        >
           <ShareMining :id="task.id"></ShareMining>
         </ElTabPane>
       </ElTabs>
@@ -57,15 +83,15 @@ export default {
           key: 'overview',
           statsType: 'data_overview',
           title: this.$t('packages_business_task_info_data_screening'),
-          loading: false
+          loading: false,
         },
         body: {
           outputCount: 0,
           inputCount: 0,
           insertCount: 0,
           updateCount: 0,
-          deleteCount: 0
-        }
+          deleteCount: 0,
+        },
       },
       throughputObj: {
         title: {
@@ -76,27 +102,27 @@ export default {
           tip: this.$t('packages_business_task_info_throughputpop'),
           unit: 'QPS',
           class: 'putColor',
-          loading: false
+          loading: false,
         },
         body: null,
         input: 0,
-        output: 0
+        output: 0,
       },
       activeTab: 'schedule',
       showContent: false,
       field_process: [],
       operations: ['start', 'stop', 'forceStop'],
-      syncData: {}
+      syncData: {},
     }
   },
   computed: {
     connectionIds() {
       return (
-        this.task?.dag?.nodes?.map(item => {
+        this.task?.dag?.nodes?.map((item) => {
           return item.connectionId
         }) || []
       )
-    }
+    },
   },
   created() {
     this.$ws.on('watch', this.taskChange)
@@ -124,9 +150,9 @@ export default {
           'fullDocument.errorEvents': true,
           'fullDocument.milestones': true,
           'fullDocument.user': true,
-          'fullDocument.mappingTemplate': true
-        }
-      }
+          'fullDocument.mappingTemplate': true,
+        },
+      },
     })
     this.timer = setInterval(() => {
       this.loadTask(true)
@@ -135,7 +161,7 @@ export default {
   mounted() {
     this.init()
   },
-  destroyed() {
+  unmounted() {
     this.$ws.off('watch', this.taskChange)
     this.timer && clearInterval(this.timer)
   },
@@ -150,8 +176,10 @@ export default {
       let id = this.$route.query?.subId
       subtaskApi
         .get([id])
-        .then(data => {
-          if (JSON.stringify(this.formatTask(data)) === JSON.stringify(this.task)) {
+        .then((data) => {
+          if (
+            JSON.stringify(this.formatTask(data)) === JSON.stringify(this.task)
+          ) {
             return
           }
           this.task = this.formatTask(data)
@@ -169,7 +197,12 @@ export default {
     formatTask(data) {
       data.totalOutput = data.stats?.output?.rows || 0
       data.totalInput = data.stats?.input?.rows || 0
-      data.creator = data.creator || data.createUser || data.username || data.user?.username || '-'
+      data.creator =
+        data.creator ||
+        data.createUser ||
+        data.username ||
+        data.user?.username ||
+        '-'
       data.typeText =
         data.mappingTemplate === 'cluster-clone'
           ? i18n.t('packages_business_statistics_index_qianyirenwu')
@@ -177,7 +210,7 @@ export default {
       return data
     },
     infoRemoteMethod(params) {
-      return measurementApi.query(params).then(data => {
+      return measurementApi.query(params).then((data) => {
         return data
       })
     },
@@ -187,8 +220,8 @@ export default {
     //接收全量同步的实时数据
     getSyncData(data) {
       this.syncData = data
-    }
-  }
+    },
+  },
 }
 </script>
 

@@ -87,14 +87,18 @@ export default {
   packages_business_connection_form_data_source_type: '数据源类型',
   packages_business_connection_form_change: '更换',
   packages_business_connection_form_rename: '改名',
-  packages_business_connection_form_database_owner_tip: '逗号分割的表达式列表，使用 * 代表任意长度任意字符',
+  packages_business_connection_form_database_owner_tip:
+    '逗号分割的表达式列表，使用 * 代表任意长度任意字符',
   packages_business_connection_form_connection_type: '连接类型',
   packages_business_connection_form_source_and_target: '源头和目标',
   packages_business_connection_form_source: '源头',
   packages_business_connection_form_target: '目标',
-  packages_business_connection_form_source_and_target_tip: '此数据连接在Tapdata 中能同时作为源和目标使用',
-  packages_business_connection_form_source_tip: '此数据连接在Tapdata 中只能作为源使用，不能作用为目标',
-  packages_business_connection_form_target_tip: '此数据连接在Tapdata 中只能作为目标使用，不能作用为源',
+  packages_business_connection_form_source_and_target_tip:
+    '此数据连接在Tapdata 中能同时作为源和目标使用',
+  packages_business_connection_form_source_tip:
+    '此数据连接在Tapdata 中只能作为源使用，不能作用为目标',
+  packages_business_connection_form_target_tip:
+    '此数据连接在Tapdata 中只能作为目标使用，不能作用为源',
   packages_business_connection_form_connection_name: '连接名称',
   packages_business_connection_form_shared_mining: '共享挖掘',
   packages_business_connection_form_shared_mining_tip:
@@ -124,7 +128,8 @@ export default {
   packages_business_button_delete: '删除',
   packages_business_button_copy: '复制',
   packages_business_connection_list_column_schema_status: 'Schema状态',
-  packages_business_connection_list_column_schema_status_tips: 'Schema加载完成的连接才可以正常创建任务',
+  packages_business_connection_list_column_schema_status_tips:
+    'Schema加载完成的连接才可以正常创建任务',
   packages_business_connection_list_form_database_type: '数据库类型',
   packages_business_connection_list_name: '连接名',
   packages_business_connection_list_status: '状态',
@@ -142,8 +147,10 @@ export default {
   packages_business_connection_lastUpdateTime: '修改时间',
   packages_business_connection_operate: '操作',
   packages_business_connection_copyMsg: '复制成功',
-  packages_business_connection_deteleDatabaseMsg: '删除连接 xxx 后，此连接将无法恢复',
-  packages_business_connection_checkMsg: '此数据源被传输任务或API所占用，无法删除',
+  packages_business_connection_deteleDatabaseMsg:
+    '删除连接 xxx 后，此连接将无法恢复',
+  packages_business_connection_checkMsg:
+    '此数据源被传输任务或API所占用，无法删除',
   packages_business_connection_copyFailedMsg:
     '复制失败，原因：系统设置中 "连接设置 - 允许创建重复数据源" 被设置为 "false"',
   packages_business_connection_testConnection: '连接测试',
@@ -165,7 +172,8 @@ export default {
   packages_business_message_cancel: '取 消',
   packages_business_message_confirm: '确 定',
   packages_business_connection_reloadTittle: '重新加载 schema',
-  packages_business_connection_reloadMsg: '如果此库的schema过多，可能耗时较长，确定要刷新数据源的schema ',
+  packages_business_connection_reloadMsg:
+    '如果此库的schema过多，可能耗时较长，确定要刷新数据源的schema ',
   packages_business_dataForm_form_databaseOwner: 'Schema',
   packages_business_dataForm_primaryTest: '正在启动连接检测服务，请稍等...',
   packages_business_dataForm_testing: '正在测试中，请稍等...',
@@ -212,7 +220,8 @@ export default {
   packages_business_dataFlow_matchingRelationship: '匹配关系',
   packages_business_dataFlow_afterSubmission: '提交后必须',
   packages_business_dataFlow_runNomally: '才能正常运行',
-  packages_business_dataFlow_editLayerTip: ' 否则可能导致异常错误，请问您要继续编辑吗?',
+  packages_business_dataFlow_editLayerTip:
+    ' 否则可能导致异常错误，请问您要继续编辑吗?',
   packages_business_dataFlow_continueEditing: '继续编辑',
   packages_business_task_monitor_progress: '任务进度',
   packages_business_task_monitor_run_log: '运行日志',
@@ -304,7 +313,8 @@ export default {
     '输入输出统计: 平均每秒源端数据采集的速度以及目标端写入的速度，数值越大越好',
   packages_business_task_monitor_time: '时间',
   packages_business_task_monitor_mission_milestone: '任务里程碑',
-  packages_business_task_monitor_no_milestone_data: '此任务尚未启动或已被重置，暂无运行里程碑数据',
+  packages_business_task_monitor_no_milestone_data:
+    '此任务尚未启动或已被重置，暂无运行里程碑数据',
   packages_business_task_info_milestone: '里程碑',
   packages_business_task_info_error: '错误',
   packages_business_milestone_btn_check_error: '查看错误原因',
@@ -366,7 +376,8 @@ export default {
   packages_business_dataFlow_skipError_title: '跳过错误设置',
   packages_business_dataFlow_skipError_tip:
     '任务上次停止时发生了以下数据相关的错误，请确认这些错误已经被处理。如果希望跳过这些错误，请勾选相应的错误项并点击“跳过错误，启动任务” 。',
-  packages_business_dataFlow_skipError_attention: '注意：若导致错误的数据未被处理，跳过错误可能导致这条数据被丢弃。',
+  packages_business_dataFlow_skipError_attention:
+    '注意：若导致错误的数据未被处理，跳过错误可能导致这条数据被丢弃。',
   packages_business_dataFlow_skipError_startJob: '跳过错误，启动任务',
   packages_business_dataFlow_skipError_cancel: '取消',
   packages_business_dataFlow_skipError_taskName: '任务名',
@@ -405,29 +416,36 @@ export default {
   packages_business_logs_index_putong: '普通',
   packages_business_shared_task_yijingzhiweie: '已经置为[error]',
   packages_business_shared_task_weishibiederen: '未识别的任务状态：{val1}',
-  packages_business_connections_databaseform_cicaozuohuidiu: '此操作会丢失当前正在创建的连接',
+  packages_business_connections_databaseform_cicaozuohuidiu:
+    '此操作会丢失当前正在创建的连接',
   packages_business_connections_databaseform_mingchengguizezhong:
     '名称规则：中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格',
   packages_business_connections_databaseform_zhongyingkaitouge:
     '中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格',
   packages_business_connections_list_renwuzongshu: '任务总数: ',
-  packages_business_connections_list_gailianjieyibei: '该连接已被以下任务调用，请删除任务或修改配置后重试',
+  packages_business_connections_list_gailianjieyibei:
+    '该连接已被以下任务调用，请删除任务或修改配置后重试',
   packages_business_connections_list_tishi: '提示',
   packages_business_connections_preview_schem: 'schema加载完成',
   packages_business_etl_details_caozuoshibaiqing: '操作失败，请重试',
   packages_business_etl_details_shifouzhongzhigai: '是否重置该任务？',
-  packages_business_etl_details_zhongzhirenwux: '重置任务 xxx 将清除任务同步进度，任务将重新执行',
-  packages_business_etl_details_qiangzhitingzhiren: '强制停止任务 xxx 将立即中断数据传输强制任务快速停止，并重置该任务',
+  packages_business_etl_details_zhongzhirenwux:
+    '重置任务 xxx 将清除任务同步进度，任务将重新执行',
+  packages_business_etl_details_qiangzhitingzhiren:
+    '强制停止任务 xxx 将立即中断数据传输强制任务快速停止，并重置该任务',
   packages_business_etl_details_shifouqiangzhiting: '是否强制停止该任务？',
   packages_business_etl_details_zantingrenwux:
     '暂停任务 xxx 后，任务中未完成全量同步的表再次启动时，会重新执行全量同步',
   packages_business_dataFlow_agent_force_stop_confirm_message:
     '强制停止任务 xxx ，由于Agent已离线，我们只会重置该任务的状态，但是无法停止此任务的运行，请您确保已在本地手动停止或删除了该Agent，或等待该Agent连接上后再停止该任务。',
   packages_business_etl_details_shifouzantinggai: '是否暂停该任务？',
-  packages_business_etl_details_shanchurenwux: '删除任务 xxx 后，此任务将无法恢复',
+  packages_business_etl_details_shanchurenwux:
+    '删除任务 xxx 后，此任务将无法恢复',
   packages_business_etl_details_shifoushanchugai: '是否删除该任务？',
-  packages_business_etl_details_renwuXxx: '任务XXX中含有聚合处理节点，任务停止后再次启动，任务会先进行重置，确定停止？',
-  packages_business_etl_details_chushihualeixing: '初始化类型的任务暂停后如果再次启动，任务会从头开始同步，确定暂停?',
+  packages_business_etl_details_renwuXxx:
+    '任务XXX中含有聚合处理节点，任务停止后再次启动，任务会先进行重置，确定停止？',
+  packages_business_etl_details_chushihualeixing:
+    '初始化类型的任务暂停后如果再次启动，任务会从头开始同步，确定暂停?',
   packages_business_etl_details_miaoshuneirong: '描述内容',
   packages_business_statistics_index_tongburenwu: '同步任务',
   packages_business_statistics_index_qianyirenwu: '迁移任务',
@@ -438,9 +456,11 @@ export default {
   packages_business_statistics_schedule_qingxuanze: '请选择',
   packages_business_statistics_schedule_leixing: '类型：',
 
-  packages_business_dataFlow_delete_confirm_message: '删除任务 xxx 后，此任务将无法恢复',
+  packages_business_dataFlow_delete_confirm_message:
+    '删除任务 xxx 后，此任务将无法恢复',
   packages_business_dataFlow_bulk_delete_confirm_title: '是否批量删除任务？',
-  packages_business_dataFlow_bulk_delete_confirm_message: '批量删除任务后，任务将无法恢复',
+  packages_business_dataFlow_bulk_delete_confirm_message:
+    '批量删除任务后，任务将无法恢复',
   packages_business_dataFlow_stop_confirm_title: '是否暂停该任务？',
   packages_business_dataFlow_stop_confirm_message:
     '暂停任务 xxx 后，任务中未完成全量同步的表再次启动时，会重新执行全量同步',
@@ -450,19 +470,24 @@ export default {
   packages_business_dataFlow_force_stop_confirm_title: '是否强制停止该任务？',
   packages_business_dataFlow_force_stop_confirm_message:
     '强制停止任务 xxx 将立即中断数据传输强制任务快速停止，并重置该任务',
-  packages_business_dataFlow_bulk_force_stop_confirm_title: '是否批量强制停止任务？',
+  packages_business_dataFlow_bulk_force_stop_confirm_title:
+    '是否批量强制停止任务？',
   packages_business_dataFlow_bulk_force_stop_confirm_message:
     '批量强制停止任务将立即中断数据传输强制任务快速停止，并重置该任务',
   packages_business_dataFlow_initialize_confirm_title: '是否重置该任务？',
-  packages_business_dataFlow_initialize_confirm_message: '重置任务 xxx 将清除任务同步进度，任务将重新执行',
-  packages_business_dataFlow_bulk_initialize_confirm_title: '是否批量重置任务？',
-  packages_business_dataFlow_bulk_initialize_confirm_message: '批量重置任务将清除任务同步进度，任务将重新执行',
+  packages_business_dataFlow_initialize_confirm_message:
+    '重置任务 xxx 将清除任务同步进度，任务将重新执行',
+  packages_business_dataFlow_bulk_initialize_confirm_title:
+    '是否批量重置任务？',
+  packages_business_dataFlow_bulk_initialize_confirm_message:
+    '批量重置任务将清除任务同步进度，任务将重新执行',
   packages_business_connections_databaseform_zidingyi: '自定义',
   packages_business_connections_databaseform_duixiangshouji: '对象收集',
   packages_business_verification_details_yichangshuju: '异常数据',
   packages_business_verification_details_mubiaobiaoming: '目标表名',
   packages_business_verification_details_yuanbiaoming: '源表名',
-  packages_business_verification_details_gongxijiaoyanjie: '恭喜~校验结果源表与目标表内容完全一致，没有错误记录',
+  packages_business_verification_details_gongxijiaoyanjie:
+    '恭喜~校验结果源表与目标表内容完全一致，没有错误记录',
   packages_business_verification_details_mubiaobiaoziduan: '目标表字段：值',
   packages_business_verification_details_yuanbiaoziduanzhi: '源表字段：值',
   packages_business_verification_details_xianshiwanzhengzi: '显示完整字段',
@@ -485,7 +510,8 @@ export default {
   packages_business_external_storage: '外存配置',
   packages_business_dataFlow_taskBulkTag: '设置分类',
   packages_business_relation_details_chakanrenwu: '查看任务',
-  packages_business_relation_details_shiyonggaiguanlian: '使用该{val}的任务清单',
+  packages_business_relation_details_shiyonggaiguanlian:
+    '使用该{val}的任务清单',
   packages_business_relation_list_jiaoyanrenwu: '校验任务',
   packages_business_relation_list_huancunrenwu: '缓存任务',
   packages_business_relation_list_qingshururenwu: '请输入任务名称...',
@@ -493,25 +519,31 @@ export default {
   packages_business_relation_details_wajue: '挖掘',
   packages_business_relation_details_renwu: '任务',
   packages_business_agent_select_not_found: '该agent已不存在，请选择其他agent',
-  packages_business_components_connectiontypeselectorsort_wodeshujuyuan: '我的数据源',
+  packages_business_components_connectiontypeselectorsort_wodeshujuyuan:
+    '我的数据源',
   packages_business_components_connectiontypeselectorsort_jiaoyouTap:
     '交由Tapdata进行全面的质量测试，以保证插件的稳定性和质量',
   packages_business_components_connectiontypeselectorsort_zhuyizhelishi:
     '注意：这里是您自己上传的数据源插件，如果要用于生产任务，请在GitHub上提交源代码',
   packages_business_components_connectiontypeselectorsort_zhuyiBet:
     '注意：Beta 数据源尚未通过Tapdata的认证测试流程，Tapdata暂不保证这些数据源的稳定运行',
-  packages_business_components_connectiontypeselectorsort_shiyongbanzanbu: '敬请期待以下数据源开放',
+  packages_business_components_connectiontypeselectorsort_shiyongbanzanbu:
+    '敬请期待以下数据源开放',
   packages_business_components_connectiontypeselectorsort_betashu: 'Beta数据源',
-  packages_business_components_connectiontypeselectorsort_renzhengshujuyuan: 'GA数据源',
-  packages_business_components_connectiontypeselectorsort_jijiangshangxian: 'Alpha数据源',
+  packages_business_components_connectiontypeselectorsort_renzhengshujuyuan:
+    'GA数据源',
+  packages_business_components_connectiontypeselectorsort_jijiangshangxian:
+    'Alpha数据源',
   packages_business_connections_preview_lianjiechajianlai: '链接插件来源',
   packages_business_connections_list_lianjiefenlei: '连接分类',
   packages_business_task_migratelist_renwufenlei: '任务分类',
   packages_business_task_list_renwubuzhichi: '任务不支持该操作',
-  packages_business_connections_databaseform_keyicongbaohan: '可以从包含表规则匹配到的表中将指定的表排除',
+  packages_business_connections_databaseform_keyicongbaohan:
+    '可以从包含表规则匹配到的表中将指定的表排除',
   packages_business_connections_databaseform_paichubiao: '排除表',
   packages_business_connections_databaseform_baohanbiao: '包含表',
-  packages_business_connections_list_wenjianleixingde: '文件类型的连接暂不支持加载Schema',
+  packages_business_connections_list_wenjianleixingde:
+    '文件类型的连接暂不支持加载Schema',
   // 数据校验
   packages_business_verification_task_name: '校验任务名',
   packages_business_verification_type: '校验类型',
@@ -545,7 +577,8 @@ export default {
     '对本次全量校验的差异数据结果进行再次校验，行数差异暂不支持差异校验',
   packages_business_verification_last_start_time: '最后校验时间',
   packages_business_verification_button_diff_task_history: '校验历史',
-  packages_business_verification_message_old_data_not_support: '旧数据暂不支持二次校验',
+  packages_business_verification_message_old_data_not_support:
+    '旧数据暂不支持二次校验',
   packages_business_verification_message_out_of_limit:
     '您的差异数据量已超出任务支持的最大错误数据保存条数，暂时无法进行二次校验',
   packages_business_verification_result_count_more: '目标count多: {0}',
@@ -560,15 +593,20 @@ export default {
   packages_business_verification_form_source_filter: '源表数据过滤',
   packages_business_verification_form_target_filter: '目标表数据过滤',
   packages_business_verification_checking: '校验中...',
-  packages_business_verification_message_error_joint_table_not_set: '请添加校验条件',
+  packages_business_verification_message_error_joint_table_not_set:
+    '请添加校验条件',
   packages_business_verification_message_error_joint_table_target_or_source_not_set:
     '校验条件{val}中源表或目标表未选择',
   packages_business_verification_message_error_joint_table_field_not_match:
     '校验条件{val}中源表与目标表的索引字段个数不相等',
-  packages_business_verification_message_error_script_no_enter: '开启高级校验后，JS校验逻辑不能为空',
-  packages_business_verification_message_confirm_delete_script: '确定要删除自定义JS校验逻辑吗',
-  packages_business_verification_message_confirm_back: '此操作会丢失当前正在创建（编辑）的校验任务',
-  packages_business_verification_message_title_confirm_back: '是否放弃创建（编辑）校验任务？',
+  packages_business_verification_message_error_script_no_enter:
+    '开启高级校验后，JS校验逻辑不能为空',
+  packages_business_verification_message_confirm_delete_script:
+    '确定要删除自定义JS校验逻辑吗',
+  packages_business_verification_message_confirm_back:
+    '此操作会丢失当前正在创建（编辑）的校验任务',
+  packages_business_verification_message_title_confirm_back:
+    '是否放弃创建（编辑）校验任务？',
   packages_business_taskprogress_plan_sync_table_num: '计划同步表数量',
   packages_business_taskprogress_completed_sync_table_num: '已完成同步表数量',
   packages_business_taskprogress_plan_sync_data: '计划同步数据量（行）',
@@ -636,7 +674,8 @@ export default {
   packages_business_verification_returnMsg: '返回的message',
   packages_business_verification_returnedData: '返回的data',
   packages_business_verification_sourceTableData: '源表数据',
-  packages_business_verification_success: '恭喜~~~~校验结果源表与目标表内容完全一致，没有错误记录',
+  packages_business_verification_success:
+    '恭喜~~~~校验结果源表与目标表内容完全一致，没有错误记录',
   packages_business_verification_clickVerified: '点下方按钮添加校验表',
   packages_business_verification_ChoosePKField: '请选索引或主键字段',
   packages_business_verification_indexField: '索引字段',
@@ -661,23 +700,31 @@ export default {
   packages_business_verification_tasksVerifyCondition: '请添加校验条件',
   packages_business_verification_tasksVerifyInterval: '请输入校验间隔',
   packages_business_verification_lackSource: '校验条件中源表或目标表未选择',
-  packages_business_verification_lackIndex: '校验条件{val}中源表或目标表的索引字段未选择',
-  packages_business_verification_tasksAmount: '校验条件中源表与目标表的索引字段个数不相等',
+  packages_business_verification_lackIndex:
+    '校验条件{val}中源表或目标表的索引字段未选择',
+  packages_business_verification_tasksAmount:
+    '校验条件中源表与目标表的索引字段个数不相等',
   packages_business_verification_uniqueField: '唯一字段差异',
   packages_business_verification_otherField: '其他字段差异',
   packages_business_verification_back: '返回',
   packages_business_verification_startVerify: '正在执行校验',
-  packages_business_verification_deleteMessage: '删除校验任务将无法恢复, 确定删除',
+  packages_business_verification_deleteMessage:
+    '删除校验任务将无法恢复, 确定删除',
   packages_business_verification_checkStatusPre: '此任务处于 ',
   packages_business_verification_checkStatusSuffix: '状态，无法配置校验设置',
-  packages_business_verification_backConfirmMessage: '此操作会丢失当前正在创建（编辑）的校验任务',
-  packages_business_verification_backConfirmTitle: '是否放弃创建（编辑）校验任务？',
+  packages_business_verification_backConfirmMessage:
+    '此操作会丢失当前正在创建（编辑）的校验任务',
+  packages_business_verification_backConfirmTitle:
+    '是否放弃创建（编辑）校验任务？',
   packages_business_verification_history_source_total_rows: '源总行数',
   packages_business_verification_form_label_error_save_count: '错误保存条数',
   packages_business_verification_button_auto_add_table: '自动添加表',
-  packages_business_components_conditionbox_suoxuanrenwuque: '所选任务缺少节点连线信息',
-  packages_business_components_conditionbox_cunzaichulijiedian_wufazidong: '存在处理节点，无法自动添加表',
-  packages_business_components_conditionbox_shifouqingkongsuo: '是否清空所有条件',
+  packages_business_components_conditionbox_suoxuanrenwuque:
+    '所选任务缺少节点连线信息',
+  packages_business_components_conditionbox_cunzaichulijiedian_wufazidong:
+    '存在处理节点，无法自动添加表',
+  packages_business_components_conditionbox_shifouqingkongsuo:
+    '是否清空所有条件',
   packages_business_components_conditionbox_mubiaobiao: ' 目标表',
   packages_business_components_conditionbox_laiyuanbiao: '来源表',
   packages_business_components_conditionbox_daijiaoyanlianjie: '待校验连接',
@@ -691,18 +738,23 @@ export default {
   packages_business_verification_details_dongtaijiaoyan: '动态校验',
   packages_business_verification_details_zhankai: '展开',
   packages_business_verification_details_shouqi: '收起',
-  packages_business_verification_form_diinde: '校验条件{val1}，待校验模型不能为空',
-  packages_business_verification_form_zhaobudaojiedian: '找不到节点对应的表信息',
+  packages_business_verification_form_diinde:
+    '校验条件{val1}，待校验模型不能为空',
+  packages_business_verification_form_zhaobudaojiedian:
+    '找不到节点对应的表信息',
   packages_business_verification_form_qingshurukaishi: '请输入开始时间',
   packages_business_verification_form_jiaoyanjieshushi: '校验结束时间',
   packages_business_verification_form_jiaoyankaishishi: '校验开始时间',
-  packages_business_verification_form_zhishuchulaiyuan: '只输出来源表不一致的数据',
+  packages_business_verification_form_zhishuchulaiyuan:
+    '只输出来源表不一致的数据',
   packages_business_verification_form_shuchusuoyoubu: '输出所有不一致的数据',
   packages_business_verification_form_jieguoshuchu: '结果输出',
   packages_business_verification_form_zhidingrenyibiao: '指定任意表的校验任务',
-  packages_business_verification_form_weitedingdeP: '为特定的PIPELINE创建的校验任务',
+  packages_business_verification_form_weitedingdeP:
+    '为特定的PIPELINE创建的校验任务',
   packages_business_verification_form_jiaoyanrenwumo: '校验任务模式',
-  packages_business_task_status_agent_tooltip_time: '距上次状态上报时间已经{time}',
+  packages_business_task_status_agent_tooltip_time:
+    '距上次状态上报时间已经{time}',
   packages_business_task_status_agent_tooltip_agent: '任务所在的引擎为',
   packages_business_select_placeholder: '请添加或选择',
   packages_business_verification_form_youjiantongzhi: '邮件通知',
@@ -716,7 +768,8 @@ export default {
   packages_business_relation_details_rizhiwajueshi: '日志挖掘时间',
   packages_business_relation_details_wajuemingcheng: '挖掘名称',
   packages_business_relation_details_wajuexinxi: '挖掘信息',
-  packages_business_connections_databaseform_shujuyuanzhongmo: '数据源中模型数量大于1万时，会按本参数设置进行模型刷新',
+  packages_business_connections_databaseform_shujuyuanzhongmo:
+    '数据源中模型数量大于1万时，会按本参数设置进行模型刷新',
   packages_business_connections_databaseform_moxingjiazaipin: '模型加载频率',
   packages_business_connections_list_biaojiegougengxin: '表结构更新时间',
   packages_business_components_stagebutton_chongxinjiazai: '重新加载',
@@ -730,21 +783,33 @@ export default {
   packages_business_notify_webchat_notification: '微信通知',
   packages_business_notify_alarm_title: 'Agent告警设置',
   packages_business_notify_system_notice: '系统通知',
-  packages_business_setting_alarm_notification_notify_noticeInterval: '发送间隔',
+  packages_business_setting_alarm_notification_notify_noticeInterval:
+    '发送间隔',
   packages_business_setting_alarm_notification_describtion: '描述',
-  packages_business_setting_notification_alarm_notification_gaojingtongzhi: '告警通知',
+  packages_business_setting_notification_alarm_notification_gaojingtongzhi:
+    '告警通知',
   packages_business_setting_alarmnotification_gaojingzhibiao: '告警指标',
-  packages_business_setting_alarmnotification_dangjiediandeping: '当节点的平均处理耗时',
-  packages_business_setting_alarmnotification_dangshujuyuanjie: '当数据源节点的平均处理耗时',
-  packages_business_setting_alarmnotification_dangshujuyuanxie: '当数据源协议连接耗时',
-  packages_business_setting_alarmnotification_dangshujuyuanwang: '当数据源网络连接耗时',
-  packages_business_setting_alarmnotification_dangshujuwufa: '当数据源无法连接网络时',
-  packages_business_setting_alarmnotification_dangrenwudezeng: '当任务的增量延迟',
+  packages_business_setting_alarmnotification_dangjiediandeping:
+    '当节点的平均处理耗时',
+  packages_business_setting_alarmnotification_dangshujuyuanjie:
+    '当数据源节点的平均处理耗时',
+  packages_business_setting_alarmnotification_dangshujuyuanxie:
+    '当数据源协议连接耗时',
+  packages_business_setting_alarmnotification_dangshujuyuanwang:
+    '当数据源网络连接耗时',
+  packages_business_setting_alarmnotification_dangshujuwufa:
+    '当数据源无法连接网络时',
+  packages_business_setting_alarmnotification_dangrenwudezeng:
+    '当任务的增量延迟',
   packages_business_setting_alarmnotification_dangrenwutingzhi: '当任务停止时',
-  packages_business_setting_alarmnotification_dangrenwuzengliang: '当任务增量开始时',
-  packages_business_setting_alarmnotification_dangrenwuquanliang: '当任务全量完成时',
-  packages_business_setting_alarmnotification_dangrenwujiaoyan: '当任务校验出错时',
-  packages_business_setting_alarmnotification_dangrenwuyudao: '当任务遇到错误时',
+  packages_business_setting_alarmnotification_dangrenwuzengliang:
+    '当任务增量开始时',
+  packages_business_setting_alarmnotification_dangrenwuquanliang:
+    '当任务全量完成时',
+  packages_business_setting_alarmnotification_dangrenwujiaoyan:
+    '当任务校验出错时',
+  packages_business_setting_alarmnotification_dangrenwuyudao:
+    '当任务遇到错误时',
   packages_business_setting_alarmnotification_dangrenwustop: 'Agent服务停止时',
   packages_business_setting_alarmnotification_dangrenwuuP: 'Agent服务启动时',
   packages_business_setting_alarmnotification_msshigaojing: 's 时告警',
@@ -752,7 +817,8 @@ export default {
   packages_business_setting_alarmnotification_lianxu: '连续',
   packages_business_setting_alarmnotification_cichugaojinggui:
     '此处告警规则设置为系统全局告警规则设置，任务运行监控页面的告警规则设置优先级高于系统全局设置',
-  packages_business_setting_alarmnotification_renwumorengao: '任务默认告警规则设置',
+  packages_business_setting_alarmnotification_renwumorengao:
+    '任务默认告警规则设置',
   packages_business_setting_alarmnotification_morengaojinggui: '默认告警规则',
   packages_business_setting_alarmnotification_renwugaojingshe: '任务告警设置',
 
@@ -791,7 +857,8 @@ export default {
   packages_business_milestone_list_finis: '{val1}/{val2}完成，{val3}进行中',
   packages_business_milestone_list_wancheng: '完成',
   packages_business_milestone_list_zhengtijindu: '整体进度',
-  packages_business_milestone_list_jinhangzhongpr: '进行中，{val1}%已完成，预计剩余时间{val2}',
+  packages_business_milestone_list_jinhangzhongpr:
+    '进行中，{val1}%已完成，预计剩余时间{val2}',
   packages_business_milestone_list_zengliangshujuqian: '增量数据迁移',
   packages_business_milestone_list_quanliangshujuqian: '全量数据迁移',
   packages_business_milestone_list_biaojiegouqianyi: '表结构迁移',
@@ -849,8 +916,12 @@ export default {
   metadata_meta_type_table: '数据表',
   column_create_time: '创建时间',
   packages_business_create_connection_dialog_xuanzeshujuyuan: '选择数据源类型',
-  packages_business_create_connection_dialog_neirongCon: '连接并授权 Tapdata 访问您的 Zoho Desk 帐户：',
-  packages_business_create_connection_dialog_neirongSho: '显示处于 ALPHA 状态的连接器',
-  packages_business_create_connection_dialog_neirongSho2: '显示处于测试状态的连接器',
-  packages_business_create_connection_dialog_neirongCho: '从下面选择一个数据源连接器并配置连接和凭据。'
+  packages_business_create_connection_dialog_neirongCon:
+    '连接并授权 Tapdata 访问您的 Zoho Desk 帐户：',
+  packages_business_create_connection_dialog_neirongSho:
+    '显示处于 ALPHA 状态的连接器',
+  packages_business_create_connection_dialog_neirongSho2:
+    '显示处于测试状态的连接器',
+  packages_business_create_connection_dialog_neirongCho:
+    '从下面选择一个数据源连接器并配置连接和凭据。',
 }

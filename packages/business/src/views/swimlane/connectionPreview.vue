@@ -1,5 +1,5 @@
 <template>
-  <Drawer class="sw-connection-drawer" :visible.sync="visible" width="850px">
+  <Drawer class="sw-connection-drawer" v-model:visible="visible" width="850px">
     <section v-if="viewData">
       <header>
         <div class="flex justify-content-between">
@@ -11,8 +11,16 @@
           </div>
         </div>
         <div class="color-info mb-4">
-          {{ $t('packages_business_connection_type_' + viewData.connection_type) }}
-          <span :class="['status-connection-' + viewData.status, 'status-block', 'ml-4']">
+          {{
+            $t('packages_business_connection_type_' + viewData.connection_type)
+          }}
+          <span
+            :class="[
+              'status-connection-' + viewData.status,
+              'status-block',
+              'ml-4',
+            ]"
+          >
             {{ $t('packages_business_connection_status_' + viewData.status) }}
           </span>
         </div>
@@ -20,7 +28,8 @@
       <section class="basics-info">
         <el-row>
           <el-col :span="8">
-            <span class="table-dec-label">包含表数量 : </span> <span class="mt-2 ml-2">{{ viewData.tableCount }}</span>
+            <span class="table-dec-label">包含表数量 : </span>
+            <span class="mt-2 ml-2">{{ viewData.tableCount }}</span>
           </el-col>
           <el-col :span="8">
             <span class="table-dec-label">模型更新时间 :</span>
@@ -38,7 +47,9 @@
           </el-col>
           <el-col :span="8" class="flex items-center">
             <span class="table-dec-label">Schema状态 : </span>
-            <span class="ml-2" v-if="isFileSource(viewData.database_type)">-</span>
+            <span class="ml-2" v-if="isFileSource(viewData.database_type)"
+              >-</span
+            >
             <span class="ml-2" v-else>
               <SchemaProgress :data="viewData"></SchemaProgress>
             </span>
@@ -73,7 +84,9 @@
           >
           <el-col :span="12"
             ><span class="table-dec-label inline-block">时间类型的时区:</span
-            ><span>{{ viewData.config.database_datetype_without_timezone || '-' }}</span></el-col
+            ><span>{{
+              viewData.config.database_datetype_without_timezone || '-'
+            }}</span></el-col
           >
         </el-row>
       </section>
@@ -83,7 +96,9 @@
           <el-button type="primary" size="mini">新建</el-button>
         </header>
         <VTable :columns="columns" :data="tableFields" :has-pagination="false">
-          <div slot="empty">{{ $t('packages_dag_dag_dialog_field_mapping_no_data') }}</div>
+          <template v-slot:empty>
+            <div>{{ $t('packages_dag_dag_dialog_field_mapping_no_data') }}</div>
+          </template>
         </VTable>
       </section>
     </section>
@@ -105,25 +120,25 @@ export default {
       columns: [
         {
           label: '任务名称',
-          prop: 'name'
+          prop: 'name',
         },
         {
           label: '任务类型',
-          prop: 'dataType'
+          prop: 'dataType',
         },
         {
           label: '任务状态',
-          prop: 'businessDesc'
+          prop: 'businessDesc',
         },
         {
           label: '增量时间点',
-          prop: 'businessDesc'
+          prop: 'businessDesc',
         },
         {
           label: '上次运行时间',
-          prop: 'businessDesc'
-        }
-      ]
+          prop: 'businessDesc',
+        },
+      ],
     }
   },
   methods: {
@@ -131,31 +146,37 @@ export default {
       this.visible = true
       this.viewData = row
       //组装数据
-      this.viewData['last_updated'] = dayjs(row.last_updated).format('YYYY-MM-DD HH:mm:ss')
-      this.viewData['createTime'] = dayjs(row.createTime).format('YYYY-MM-DD HH:mm:ss')
-      this.viewData['loadSchemaTime'] = dayjs(row.loadSchemaTime).format('YYYY-MM-DD HH:mm:ss')
+      this.viewData['last_updated'] = dayjs(row.last_updated).format(
+        'YYYY-MM-DD HH:mm:ss'
+      )
+      this.viewData['createTime'] = dayjs(row.createTime).format(
+        'YYYY-MM-DD HH:mm:ss'
+      )
+      this.viewData['loadSchemaTime'] = dayjs(row.loadSchemaTime).format(
+        'YYYY-MM-DD HH:mm:ss'
+      )
     },
     edit() {
       const { id, pdkHash } = this.viewData
       let query = {
-        pdkHash
+        pdkHash,
       }
       this.$router.push({
         name: 'connectionsEdit',
         params: {
-          id
+          id,
         },
-        query
+        query,
       })
     },
     isFileSource(database_type) {
       return ['CSV', 'EXCEL', 'JSON', 'XML'].includes(database_type)
-    }
-  }
+    },
+  },
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .sw-connection-drawer {
   padding: 24px;
   .connection-name {

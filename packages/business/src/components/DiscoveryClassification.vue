@@ -2,14 +2,20 @@
   <div class="classification" :class="{ expand: isExpand }">
     <div class="classification-header pl-0">
       <div class="search-box">
-        <ElInput size="mini" v-model="filterText">
-          <span slot="suffix" class="el-input__icon h-100 ml-1">
-            <VIcon size="14">search</VIcon>
-          </span>
+        <ElInput size="mini" v-model:value="filterText">
+          <template v-slot:suffix>
+            <span class="el-input__icon h-100 ml-1">
+              <VIcon size="14">search</VIcon>
+            </span>
+          </template>
         </ElInput>
       </div>
     </div>
-    <ClassificationTree class="tree-block pr-3" v-loading="loadingTree" v-bind="$attrs" v-on="$listeners" />
+    <ClassificationTree
+      v-bind="$attrs"
+      class="tree-block pr-3"
+      v-loading="loadingTree"
+    />
   </div>
 </template>
 
@@ -31,7 +37,7 @@ export default {
       loadingTree: false,
       props: {
         key: 'id',
-        label: 'name'
+        label: 'name',
       },
       isActive: true,
 
@@ -43,7 +49,7 @@ export default {
         title: '',
         itemType: 'resource',
         desc: '',
-        visible: false
+        visible: false,
       },
 
       nodeName: '',
@@ -51,28 +57,25 @@ export default {
       title: '',
       iconMap: {
         table: 'table',
-        defaultApi: 'apiServer_navbar'
-      }
+        defaultApi: 'apiServer_navbar',
+      },
     }
-  }
+  },
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 $nodeH: 28px;
 .classification {
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 20px;
-  // height: 22px;
+  width: 20px; /*// height: 22px;*/
   user-select: none;
   box-sizing: border-box;
   border-top: none;
   background: map-get($bgColor, white);
-  border-radius: 3px;
-  // overflow: hidden;
-  // box-shadow: 0px -2px 10px 0px rgba(0, 0, 0, 0.1);
+  border-radius: 3px; /*// overflow: hidden;*/ /*// box-shadow: 0px -2px 10px 0px rgba(0, 0, 0, 0.1);*/
   .btn-expand {
     // padding: 2px 3px;
     // color: map-get($fontColor, light);

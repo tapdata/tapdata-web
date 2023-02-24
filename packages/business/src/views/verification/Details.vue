@@ -8,8 +8,13 @@
         </div>
         <div v-if="inspect.inspectMethod !== 'row_count'">
           <div class="flex align-items-center">
-            <div v-if="resultInfo.parentId" class="color-info flex align-items-center" style="font-size: 12px">
-              {{ $t('packages_business_verification_last_start_time') }}: {{ inspect.lastStartTimeFmt }}
+            <div
+              v-if="resultInfo.parentId"
+              class="color-info flex align-items-center"
+              style="font-size: 12px"
+            >
+              {{ $t('packages_business_verification_last_start_time') }}:
+              {{ inspect.lastStartTimeFmt }}
               <ElLink class="ml-5" type="primary" @click="toDiffHistory">{{
                 $t('packages_business_verification_button_diff_task_history')
               }}</ElLink>
@@ -26,9 +31,15 @@
                 $t('packages_business_verification_button_diff_verify')
               }}</ElButton>
               <ElTooltip effect="dark" placement="top">
-                <div slot="content" style="width: 232px">
-                  {{ $t('packages_business_verification_button_diff_verify_tips') }}
-                </div>
+                <template v-slot:content>
+                  <div style="width: 232px">
+                    {{
+                      $t(
+                        'packages_business_verification_button_diff_verify_tips'
+                      )
+                    }}
+                  </div>
+                </template>
                 <VIcon class="ml-2 color-info" size="14">warning-circle</VIcon>
               </ElTooltip>
             </div>
@@ -37,14 +48,25 @@
       </div>
       <div v-if="errorMsg && type === 'row_count'" class="error-tips mt-4 px-4">
         <VIcon class="color-danger">error</VIcon>
-        <span class="mx-2 text-break" :class="{ ellipsis: !expandErrorMessage }" style="flex: 1">{{ errorMsg }}</span>
+        <span
+          class="mx-2 text-break"
+          :class="{ ellipsis: !expandErrorMessage }"
+          style="flex: 1"
+          >{{ errorMsg }}</span
+        >
         <span>
-          <ElLink type="danger" @click="expandErrorMessage = !expandErrorMessage">{{
-            expandErrorMessage
-              ? $t('packages_business_verification_details_shouqi')
-              : $t('packages_business_verification_details_zhankai')
-          }}</ElLink>
-          <VIcon class="ml-2 color-info" size="12" @click="errorMsg = ''">close</VIcon>
+          <ElLink
+            type="danger"
+            @click="expandErrorMessage = !expandErrorMessage"
+            >{{
+              expandErrorMessage
+                ? $t('packages_business_verification_details_shouqi')
+                : $t('packages_business_verification_details_zhankai')
+            }}</ElLink
+          >
+          <VIcon class="ml-2 color-info" size="12" @click="errorMsg = ''"
+            >close</VIcon
+          >
         </span>
       </div>
       <div
@@ -54,13 +76,296 @@
         :element-loading-text="$t('packages_business_verification_checking')"
       >
         <template v-if="!['running', 'scheduling'].includes(inspect.status)">
-          <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
-          <ResultView v-if="type !== 'row_count'" ref="resultView" :remoteMethod="getResultData"></ResultView>
+          <ResultTable
+            ref="singleTable"
+            :type="type"
+            :data="tableData"
+            @row-click="rowClick"
+          ></ResultTable>
+          <ResultView
+            v-if="type !== 'row_count'"
+            ref="resultView"
+            :remoteMethod="getResultData"
+          ></ResultView>
         </template>
       </div>
     </div>
   </section>
 </template>
+
+<script>
+import i18n from '@tap/i18n'
+
+import ResultTable from './ResultTable'
+import ResultView from './ResultView'
+import dayjs from 'dayjs'
+import { inspectDetailsApi, inspectResultsApi, inspectApi } from '@tap/api'
+
+export default {
+  components: { ResultTable, ResultView },
+  data() {
+    return {
+      loading: false,
+      typeMap: {
+        row_count: this.$t('packages_business_verification_rowVerify'),
+        field: this.$t('packages_business_verification_contentVerify'),
+        jointField: this.$t('packages_business_verification_jointVerify'),
+        cdcCount: i18n.t(
+          'packages_business_verification_details_dongtaijiaoyan'
+        ),
+      },
+      inspect: {},
+      resultInfo: {},
+      errorMsg: '',
+      taskId: null,
+      expandErrorMessage: false,
+    }
+  },
+  computed: {
+    type() {
+      return this.inspect?.inspectMethod || ''
+    },
+    tableData() {
+      return this.resultInfo.stats || []
+    },
+    verifyType() {
+      return this.resultInfo?.inspect?.inspectMethod
+    },
+  },
+  created() {
+    this.getData()
+    setInterval(() => {
+      if (['running', 'scheduling'].includes(this.inspect?.status)) {
+        this.getData()
+      }
+    }, 10000)
+  },
+  methods: {
+    getData() {
+      this.loading = true
+      inspectApi
+        .get({
+          filter: JSON.stringify({
+            where: {
+              id: this.$route.params.id,
+            },
+          }),
+        })
+        .then((data) => {
+          let inspect = data?.items?.[0] || {}
+          let inspectResult = inspect.InspectResult
+          inspect.lastStartTime = dayjs(inspect.lastStartTime).format(
+            'YYYY-MM-DD HH:mm:ss'
+          )
+          this.inspect = inspect
+          inspectResultsApi
+            .get({
+              filter: JSON.stringify({
+                where: {
+                  id: inspectResult.id,
+                },
+              }),
+            })
+            .then((data) => {
+              let result = data?.items?.[0]
+              if (result) {
+                this.resultInfo = result
+                let stats = result.stats
+                if (stats.length) {
+                  this.errorMsg =
+                    result.status === 'error' ? result.errorMsg : undefined
+                  this.taskId = stats[0].taskId
+                  this.$nextTick(() => {
+                    this.$refs.resultView?.fetch(1)
+                    if (this.type !== 'row_count') {
+                      this.$refs.singleTable?.setCurrentRow(stats[0])
+                    }
+                  })
+                }
+              }
+            })
+            .finally(() => {
+              this.loading = false
+            })
+        })
+    },
+    getResultData({ current, size }) {
+      let taskId = this.taskId
+      let task = this.inspect.tasks?.find((item) => item.taskId === taskId)
+      if (task) {
+        let showAdvancedVerification = task.showAdvancedVerification
+        let statsInfo = this.tableData.find(
+          (item) => item.taskId === this.taskId
+        )
+        let where = {
+          taskId,
+          inspect_id: this.inspect.id,
+          inspectResultId: this.resultInfo.id,
+        }
+        let filter = {
+          where,
+          order: 'createTime DESC',
+          limit: showAdvancedVerification ? 1 : size,
+          skip: (current - 1) * (showAdvancedVerification ? 1 : size),
+        }
+        return inspectDetailsApi
+          .get({
+            filter: JSON.stringify(filter),
+          })
+          .then((data) => {
+            let resultList = []
+            if (data?.items) {
+              if (showAdvancedVerification) {
+                resultList = data.items || []
+              } else {
+                resultList = this.handleOtherVerify(data.items)
+              }
+            }
+            return {
+              showAdvancedVerification, // 是否高级校验
+              total: data.total, // 总条数
+              statsInfo, // 结果信息
+              resultList, // 结果详情
+            }
+          })
+      }
+      return Promise.reject()
+    },
+    diffInspect() {
+      let firstCheckId = this.resultInfo.firstCheckId
+      if (!firstCheckId) {
+        return this.$message.error(
+          this.$t('packages_business_verification_message_old_data_not_support')
+        )
+      }
+      let inspect = this.inspect
+      let keep = inspect?.limit?.keep || 0
+      let totalFailed = inspect?.difference_number || 0
+      if (keep < totalFailed) {
+        return this.$message.error(
+          this.$t('packages_business_verification_message_out_of_limit')
+        )
+      }
+      inspectApi
+        .update(
+          {
+            id: this.inspect.id,
+          },
+          {
+            status: 'scheduling',
+            ping_time: 0,
+            scheduleTimes: 0,
+            byFirstCheckId: firstCheckId,
+          }
+        )
+        .then(() => {
+          this.$message.success(
+            this.$t('packages_business_verification_startVerify')
+          )
+          this.getData()
+        })
+    },
+    rowClick(row) {
+      this.taskId = row.taskId
+      this.$refs.resultView?.fetch(1)
+    },
+    handleOtherVerify(data) {
+      if (data.length === 0) {
+        return
+      }
+      const findOne = this.tableData.find((t) => t.taskId === this.taskId)
+      const sourceColumns = findOne.source?.columns || []
+      const targetColumns = findOne.target?.columns || []
+      data.map((item) => {
+        let source = item.source || {}
+        let target = item.target || {}
+        let sourceKeys = Object.keys(source)
+        let targetKeys = Object.keys(target)
+        let key = Array.from(new Set([...sourceKeys, ...targetKeys])) //找出所有的key的并集
+        let message = item.message || ''
+        let diffFields = []
+        let diffFiledIndexs = []
+        if (message.includes('Different fields')) {
+          diffFields = message.split(':')[1].split(',')
+        } else if (message.includes('Different index')) {
+          diffFiledIndexs = message.split(':')[1].split(',')
+        }
+        if (diffFiledIndexs.length) {
+          this.handleLoadIndexField(
+            item,
+            diffFiledIndexs,
+            sourceColumns,
+            targetColumns
+          )
+        } else {
+          key.forEach((i) => {
+            let sourceValue = ''
+            let targetValue = ''
+            if (sourceKeys.filter((v) => i === v)) {
+              sourceValue = source[i]
+            } else {
+              sourceValue = ''
+            }
+            if (targetKeys.filter((v) => i === v)) {
+              targetValue = target[i]
+            } else {
+              targetValue = ''
+            }
+            let isDiff = diffFields.length
+              ? diffFields.includes(i)
+              : sourceValue !== targetValue
+            let node = {
+              type: item.type,
+              red: isDiff,
+              source: {
+                key: i,
+                value: sourceValue,
+              },
+              target: {
+                key: i,
+                value: targetValue,
+              },
+            }
+            item['details'] = item['details'] || []
+            item['details'].push(node)
+          })
+        }
+      })
+      return data
+    },
+    toDiffHistory() {
+      let url = ''
+      let route = this.$router.resolve({
+        name: 'VerifyDiffHistory',
+        params: {
+          id: this.resultInfo.firstCheckId,
+        },
+      })
+      url = route.href
+      window.open(url, '_blank')
+    },
+    handleLoadIndexField(item, indexArr, sourceColumns, targetColumns) {
+      sourceColumns.forEach((el, i) => {
+        let node = {
+          type: item.type,
+          red: indexArr.includes(i + ''),
+          source: {
+            key: el,
+            value: item.source[el],
+          },
+          target: {
+            key: targetColumns[i],
+            value: item.target[targetColumns[i]],
+          },
+        }
+        item['details'] = item['details'] || []
+        item['details'].push(node)
+      })
+    },
+  },
+}
+</script>
+
 <style lang="scss">
 .verify-details-wrap {
   flex: 1;
@@ -89,250 +394,3 @@
   overflow: auto;
 }
 </style>
-<script>
-import i18n from '@tap/i18n'
-
-import ResultTable from './ResultTable'
-import ResultView from './ResultView'
-import dayjs from 'dayjs'
-import { inspectDetailsApi, inspectResultsApi, inspectApi } from '@tap/api'
-
-export default {
-  components: { ResultTable, ResultView },
-  data() {
-    return {
-      loading: false,
-      typeMap: {
-        row_count: this.$t('packages_business_verification_rowVerify'),
-        field: this.$t('packages_business_verification_contentVerify'),
-        jointField: this.$t('packages_business_verification_jointVerify'),
-        cdcCount: i18n.t('packages_business_verification_details_dongtaijiaoyan')
-      },
-      inspect: {},
-      resultInfo: {},
-      errorMsg: '',
-      taskId: null,
-      expandErrorMessage: false
-    }
-  },
-  computed: {
-    type() {
-      return this.inspect?.inspectMethod || ''
-    },
-    tableData() {
-      return this.resultInfo.stats || []
-    },
-    verifyType() {
-      return this.resultInfo?.inspect?.inspectMethod
-    }
-  },
-  created() {
-    this.getData()
-    setInterval(() => {
-      if (['running', 'scheduling'].includes(this.inspect?.status)) {
-        this.getData()
-      }
-    }, 10000)
-  },
-  methods: {
-    getData() {
-      this.loading = true
-      inspectApi
-        .get({
-          filter: JSON.stringify({
-            where: {
-              id: this.$route.params.id
-            }
-          })
-        })
-        .then(data => {
-          let inspect = data?.items?.[0] || {}
-          let inspectResult = inspect.InspectResult
-          inspect.lastStartTime = dayjs(inspect.lastStartTime).format('YYYY-MM-DD HH:mm:ss')
-          this.inspect = inspect
-          inspectResultsApi
-            .get({
-              filter: JSON.stringify({
-                where: {
-                  id: inspectResult.id
-                }
-              })
-            })
-            .then(data => {
-              let result = data?.items?.[0]
-              if (result) {
-                this.resultInfo = result
-                let stats = result.stats
-                if (stats.length) {
-                  this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
-                  this.taskId = stats[0].taskId
-                  this.$nextTick(() => {
-                    this.$refs.resultView?.fetch(1)
-                    if (this.type !== 'row_count') {
-                      this.$refs.singleTable?.setCurrentRow(stats[0])
-                    }
-                  })
-                }
-              }
-            })
-            .finally(() => {
-              this.loading = false
-            })
-        })
-    },
-    getResultData({ current, size }) {
-      let taskId = this.taskId
-      let task = this.inspect.tasks?.find(item => item.taskId === taskId)
-      if (task) {
-        let showAdvancedVerification = task.showAdvancedVerification
-        let statsInfo = this.tableData.find(item => item.taskId === this.taskId)
-        let where = {
-          taskId,
-          inspect_id: this.inspect.id,
-          inspectResultId: this.resultInfo.id
-        }
-        let filter = {
-          where,
-          order: 'createTime DESC',
-          limit: showAdvancedVerification ? 1 : size,
-          skip: (current - 1) * (showAdvancedVerification ? 1 : size)
-        }
-        return inspectDetailsApi
-          .get({
-            filter: JSON.stringify(filter)
-          })
-          .then(data => {
-            let resultList = []
-            if (data?.items) {
-              if (showAdvancedVerification) {
-                resultList = data.items || []
-              } else {
-                resultList = this.handleOtherVerify(data.items)
-              }
-            }
-            return {
-              showAdvancedVerification, // 是否高级校验
-              total: data.total, // 总条数
-              statsInfo, // 结果信息
-              resultList // 结果详情
-            }
-          })
-      }
-      return Promise.reject()
-    },
-    diffInspect() {
-      let firstCheckId = this.resultInfo.firstCheckId
-      if (!firstCheckId) {
-        return this.$message.error(this.$t('packages_business_verification_message_old_data_not_support'))
-      }
-      let inspect = this.inspect
-      let keep = inspect?.limit?.keep || 0
-      let totalFailed = inspect?.difference_number || 0
-      if (keep < totalFailed) {
-        return this.$message.error(this.$t('packages_business_verification_message_out_of_limit'))
-      }
-      inspectApi
-        .update(
-          {
-            id: this.inspect.id
-          },
-          { status: 'scheduling', ping_time: 0, scheduleTimes: 0, byFirstCheckId: firstCheckId }
-        )
-        .then(() => {
-          this.$message.success(this.$t('packages_business_verification_startVerify'))
-          this.getData()
-        })
-    },
-    rowClick(row) {
-      this.taskId = row.taskId
-      this.$refs.resultView?.fetch(1)
-    },
-    handleOtherVerify(data) {
-      if (data.length === 0) {
-        return
-      }
-      const findOne = this.tableData.find(t => t.taskId === this.taskId)
-      const sourceColumns = findOne.source?.columns || []
-      const targetColumns = findOne.target?.columns || []
-      data.map(item => {
-        let source = item.source || {}
-        let target = item.target || {}
-        let sourceKeys = Object.keys(source)
-        let targetKeys = Object.keys(target)
-        let key = Array.from(new Set([...sourceKeys, ...targetKeys])) //找出所有的key的并集
-        let message = item.message || ''
-        let diffFields = []
-        let diffFiledIndexs = []
-        if (message.includes('Different fields')) {
-          diffFields = message.split(':')[1].split(',')
-        } else if (message.includes('Different index')) {
-          diffFiledIndexs = message.split(':')[1].split(',')
-        }
-        if (diffFiledIndexs.length) {
-          this.handleLoadIndexField(item, diffFiledIndexs, sourceColumns, targetColumns)
-        } else {
-          key.forEach(i => {
-            let sourceValue = ''
-            let targetValue = ''
-            if (sourceKeys.filter(v => i === v)) {
-              sourceValue = source[i]
-            } else {
-              sourceValue = ''
-            }
-            if (targetKeys.filter(v => i === v)) {
-              targetValue = target[i]
-            } else {
-              targetValue = ''
-            }
-            let isDiff = diffFields.length ? diffFields.includes(i) : sourceValue !== targetValue
-            let node = {
-              type: item.type,
-              red: isDiff,
-              source: {
-                key: i,
-                value: sourceValue
-              },
-              target: {
-                key: i,
-                value: targetValue
-              }
-            }
-            item['details'] = item['details'] || []
-            item['details'].push(node)
-          })
-        }
-      })
-      return data
-    },
-    toDiffHistory() {
-      let url = ''
-      let route = this.$router.resolve({
-        name: 'VerifyDiffHistory',
-        params: {
-          id: this.resultInfo.firstCheckId
-        }
-      })
-      url = route.href
-      window.open(url, '_blank')
-    },
-    handleLoadIndexField(item, indexArr, sourceColumns, targetColumns) {
-      sourceColumns.forEach((el, i) => {
-        let node = {
-          type: item.type,
-          red: indexArr.includes(i + ''),
-          source: {
-            key: el,
-            value: item.source[el]
-          },
-          target: {
-            key: targetColumns[i],
-            value: item.target[targetColumns[i]]
-          }
-        }
-        item['details'] = item['details'] || []
-        item['details'].push(node)
-      })
-    }
-  }
-}
-</script>

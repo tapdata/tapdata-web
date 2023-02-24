@@ -34,7 +34,11 @@
           </span>
         </li>
         <li>
-          <span>{{ $t('packages_business_verification_result_title') + ' : ' + statsInfo.result }}</span>
+          <span>{{
+            $t('packages_business_verification_result_title') +
+            ' : ' +
+            statsInfo.result
+          }}</span>
         </li>
         <li v-if="statsInfo.result !== 'passed'">
           <span>{{ statsInfo.countResultText }}</span>
@@ -44,7 +48,10 @@
         </li>
       </ul>
       <div class="success-band" v-if="statsInfo.result === 'passed'">
-        <img style="height: 30px; margin-right: 5px" :src="require('@tap/assets/images/passed.png')" />
+        <img
+          style="height: 30px; margin-right: 5px"
+          :src="require('@tap/assets/images/passed.png')"
+        />
         <span>{{ $t('packages_business_verification_success') }}</span>
       </div>
       <div class="error-band" v-if="statsInfo.status === 'error'">
@@ -53,15 +60,29 @@
       </div>
       <template v-if="statsInfo.result !== 'passed'">
         <div class="inspect-result-box" v-if="!showAdvancedVerification">
-          <div v-for="item in resultList" :key="item.id" class="inspect-details">
+          <div
+            v-for="item in resultList"
+            :key="item.id"
+            class="inspect-details"
+          >
             <ul class="father-table">
-              <li>{{ $t('packages_business_verification_inconsistentType') }}</li>
-              <li>{{ $t('packages_business_verification_sourceFieldName') }}</li>
+              <li>
+                {{ $t('packages_business_verification_inconsistentType') }}
+              </li>
+              <li>
+                {{ $t('packages_business_verification_sourceFieldName') }}
+              </li>
               <li>{{ $t('packages_business_verification_Value') }}</li>
-              <li>{{ $t('packages_business_verification_targetFieldName') }}</li>
+              <li>
+                {{ $t('packages_business_verification_targetFieldName') }}
+              </li>
               <li>{{ $t('packages_business_verification_Value') }}</li>
             </ul>
-            <ul class="sub-table" v-for="detail in item.details" :key="detail.id">
+            <ul
+              class="sub-table"
+              v-for="detail in item.details"
+              :key="detail.id"
+            >
               <li>
                 {{
                   detail.type === 'uniqueField'
@@ -84,19 +105,27 @@
           <div class="title-box">
             <div>{{ $t('packages_business_verification_result_title') }}</div>
           </div>
-          <div v-for="item in resultList" :key="item.id" class="inspect-details">
+          <div
+            v-for="item in resultList"
+            :key="item.id"
+            class="inspect-details"
+          >
             <div class="message-box">
               <span>{{ $t('packages_business_verification_returnMsg') }}</span>
               <div>{{ item.message }}</div>
             </div>
             <ul class="father-table">
-              <li>{{ $t('packages_business_verification_sourceTableData') }}</li>
+              <li>
+                {{ $t('packages_business_verification_sourceTableData') }}
+              </li>
               <li>{{ $t('packages_business_verification_returnedData') }}</li>
             </ul>
             <ul class="sub-table">
               <li><JsonViewer :value="item.source"></JsonViewer></li>
               <li>
-                <JsonViewer :value="item.target ? item.target.data : ''"></JsonViewer>
+                <JsonViewer
+                  :value="item.target ? item.target.data : ''"
+                ></JsonViewer>
               </li>
             </ul>
           </div>
@@ -108,15 +137,92 @@
       background
       layout="total, ->, prev, pager, next, sizes"
       :page-sizes="!showAdvancedVerification ? [20, 30, 50, 100] : [1]"
-      :page-size.sync="page.size"
+      v-model:page-size="page.size"
       :total="page.total"
-      :current-page.sync="page.current"
+      v-model:current-page="page.current"
       @current-change="fetch"
       @size-change="fetch(1)"
     >
     </ElPagination>
   </div>
 </template>
+
+<script>
+import JsonViewer from 'vue-json-viewer'
+import { VIcon } from '@tap/component'
+export default {
+  components: {
+    JsonViewer,
+    VIcon,
+  },
+  props: {
+    remoteMethod: Function,
+  },
+  data() {
+    return {
+      loading: false,
+      page: {
+        current: 1,
+        size: 20,
+        total: 0,
+      },
+      showAdvancedVerification: false,
+      statsInfo: {},
+      resultList: [],
+    }
+  },
+  methods: {
+    fetch(current) {
+      this.loading = true
+      this.remoteMethod({ current, size: this.page.size })
+        .then(
+          ({ statsInfo = {}, resultList, total, showAdvancedVerification }) => {
+            if (statsInfo?.result === 'failed') {
+              let countResultText = ''
+              let contentResultText = ''
+              let diffCount = statsInfo.target_total - statsInfo.source_total
+              let diffCountNum = Math.abs(diffCount)
+              if (diffCount > 0) {
+                countResultText = this.$t(
+                  'packages_business_verification_result_count_more',
+                  [diffCountNum]
+                )
+              }
+              if (diffCount < 0) {
+                countResultText = this.$t(
+                  'packages_business_verification_result_count_less',
+                  [diffCountNum]
+                )
+              }
+              if (this.type !== 'row_count') {
+                let diffContentNum =
+                  statsInfo.source_only +
+                  statsInfo.target_only +
+                  statsInfo.row_failed
+                if (diffContentNum !== 0) {
+                  contentResultText = this.$t(
+                    'packages_business_verification_result_content_diff',
+                    [diffContentNum]
+                  )
+                }
+              }
+              statsInfo.countResultText = countResultText
+              statsInfo.contentResultText = contentResultText
+            }
+            this.statsInfo = statsInfo
+            this.resultList = resultList
+            this.page.total = total
+            this.showAdvancedVerification = showAdvancedVerification
+          }
+        )
+        .finally(() => {
+          this.loading = false
+        })
+    },
+  },
+}
+</script>
+
 <style lang="scss" scoped>
 $margin: 10px;
 .verification-result-view {
@@ -311,6 +417,7 @@ $margin: 10px;
   }
 }
 </style>
+
 <style lang="scss">
 .result-view-pagination {
   padding-left: 24px;
@@ -322,64 +429,3 @@ $margin: 10px;
   }
 }
 </style>
-<script>
-import JsonViewer from 'vue-json-viewer'
-import { VIcon } from '@tap/component'
-export default {
-  components: {
-    JsonViewer,
-    VIcon
-  },
-  props: {
-    remoteMethod: Function
-  },
-  data() {
-    return {
-      loading: false,
-      page: {
-        current: 1,
-        size: 20,
-        total: 0
-      },
-      showAdvancedVerification: false,
-      statsInfo: {},
-      resultList: []
-    }
-  },
-  methods: {
-    fetch(current) {
-      this.loading = true
-      this.remoteMethod({ current, size: this.page.size })
-        .then(({ statsInfo = {}, resultList, total, showAdvancedVerification }) => {
-          if (statsInfo?.result === 'failed') {
-            let countResultText = ''
-            let contentResultText = ''
-            let diffCount = statsInfo.target_total - statsInfo.source_total
-            let diffCountNum = Math.abs(diffCount)
-            if (diffCount > 0) {
-              countResultText = this.$t('packages_business_verification_result_count_more', [diffCountNum])
-            }
-            if (diffCount < 0) {
-              countResultText = this.$t('packages_business_verification_result_count_less', [diffCountNum])
-            }
-            if (this.type !== 'row_count') {
-              let diffContentNum = statsInfo.source_only + statsInfo.target_only + statsInfo.row_failed
-              if (diffContentNum !== 0) {
-                contentResultText = this.$t('packages_business_verification_result_content_diff', [diffContentNum])
-              }
-            }
-            statsInfo.countResultText = countResultText
-            statsInfo.contentResultText = contentResultText
-          }
-          this.statsInfo = statsInfo
-          this.resultList = resultList
-          this.page.total = total
-          this.showAdvancedVerification = showAdvancedVerification
-        })
-        .finally(() => {
-          this.loading = false
-        })
-    }
-  }
-}
-</script>

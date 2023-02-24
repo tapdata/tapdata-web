@@ -1,4 +1,9 @@
-export const makeDragNodeImage = ($icon, nodeName, size = 1, parent = document.body) => {
+export const makeDragNodeImage = (
+  $icon,
+  nodeName,
+  size = 1,
+  parent = document.body
+) => {
   const dragImage = document.createElement('div')
 
   if (!nodeName) return dragImage

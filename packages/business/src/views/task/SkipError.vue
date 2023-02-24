@@ -1,22 +1,40 @@
 <template>
-  <el-dialog :title="$t('packages_business_dataFlow_skipError_title')" :visible.sync="dialogVisible" width="60%">
-    <div class="skip-tip">{{ $t('packages_business_dataFlow_skipError_tip') }}</div>
-    <div class="skip-tip">{{ $t('packages_business_dataFlow_skipError_attention') }}</div>
+  <el-dialog
+    :title="$t('packages_business_dataFlow_skipError_title')"
+    v-model:visible="dialogVisible"
+    width="60%"
+  >
+    <div class="skip-tip">
+      {{ $t('packages_business_dataFlow_skipError_tip') }}
+    </div>
+    <div class="skip-tip">
+      {{ $t('packages_business_dataFlow_skipError_attention') }}
+    </div>
     <div class="skip-name">
       {{ `${$t('packages_business_dataFlow_skipError_taskName')}:` }}
       <span class="link-primary">{{ task.name }}</span>
     </div>
     <ul class="error-list">
       <span class="check-all"
-        ><el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">{{
-          $t('packages_business_dataFlow_selectAll')
-        }}</el-checkbox></span
+        ><el-checkbox
+          :indeterminate="isIndeterminate"
+          v-model:value="checkAll"
+          @change="handleCheckAllChange"
+          >{{ $t('packages_business_dataFlow_selectAll') }}</el-checkbox
+        ></span
       >
-      <el-checkbox-group v-model="checkedData" @change="handleCheckedDataChange" class="list-box">
+      <el-checkbox-group
+        v-model:value="checkedData"
+        @change="handleCheckedDataChange"
+        class="list-box"
+      >
         <li v-for="(item, index) in errorEvents" :key="item.index">
           <el-checkbox :label="index">
             <div class="error-content">
-              <span class="error-msg"><span style="color: red">[ERROR]</span> {{ item.message }}</span>
+              <span class="error-msg"
+                ><span style="color: red">[ERROR]</span>
+                {{ item.message }}</span
+              >
             </div>
           </el-checkbox>
         </li>
@@ -26,14 +44,21 @@
       {{ errorTotal }} {{ checkedData.length }}
       {{ $t('packages_business_dataFlow_skipError_strip') }}
     </div>
-    <span slot="footer" class="dialog-footer">
-      <el-button @click="dialogVisible = false" size="mini">{{ $t('packages_business_dataFlow_skipError_cancel') }}</el-button>
-      <el-button type="primary" size="mini" @click="skipErrorData">{{ $t('packages_business_dataFlow_skipError_startJob') }}</el-button>
-    </span>
+    <template v-slot:footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogVisible = false" size="mini">{{
+          $t('packages_business_dataFlow_skipError_cancel')
+        }}</el-button>
+        <el-button type="primary" size="mini" @click="skipErrorData">{{
+          $t('packages_business_dataFlow_skipError_startJob')
+        }}</el-button>
+      </span>
+    </template>
   </el-dialog>
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { dataFlowsApi } from '@tap/api'
 export default {
   name: 'SkipError',
@@ -45,7 +70,7 @@ export default {
       checkAll: false,
       checkedData: [],
       task: {},
-      errorTotal: this.$t('packages_business_dataFlow_skipError_errorTotal')
+      errorTotal: this.$t('packages_business_dataFlow_skipError_errorTotal'),
     }
   },
   methods: {
@@ -54,12 +79,20 @@ export default {
       if (!task.status || task.status === 'error') {
         let data = await dataFlowsApi.get([task.id])
         data = data || {}
-        if (data.status === 'error' && data.setting.stopOnError && data.errorEvents && data.errorEvents.length > 0) {
+        if (
+          data.status === 'error' &&
+          data.setting.stopOnError &&
+          data.errorEvents &&
+          data.errorEvents.length > 0
+        ) {
           this.dialogVisible = true
           this.task = data
           errorEvents = data.errorEvents
           this.errorEvents = errorEvents
-          this.errorTotal = this.errorTotal.replace('XX', this.errorEvents.length)
+          this.errorTotal = this.errorTotal.replace(
+            'XX',
+            this.errorEvents.length
+          )
           return
         }
       }
@@ -77,25 +110,28 @@ export default {
     handleCheckedDataChange(value) {
       let checkedCount = value.length
       this.checkAll = checkedCount === this.errorEvents.length
-      this.isIndeterminate = checkedCount > 0 && checkedCount < this.errorEvents.length
+      this.isIndeterminate =
+        checkedCount > 0 && checkedCount < this.errorEvents.length
       this.checkedData = value
     },
     skipErrorData() {
       if (this.checkedData.length > 0) {
         let data = []
-        this.checkedData.forEach(item => {
+        this.checkedData.forEach((item) => {
           data.push(this.errorEvents[item])
         })
         this.checkedData = data
       } else {
         this.checkedData = []
       }
-      this.$emit('skip', this.task.id, this.checkedData)
+      $emit(this, 'skip', this.task.id, this.checkedData)
       this.dialogVisible = false
-    }
-  }
+    },
+  },
+  emits: ['skip'],
 }
 </script>
+
 <style lang="scss">
 .error-list {
   .el-checkbox__input {
@@ -103,7 +139,8 @@ export default {
   }
 }
 </style>
-<style scoped lang="scss">
+
+<style lang="scss" scoped>
 .error-list {
   background: #fefefe;
   border: 1px solid #dedee4;

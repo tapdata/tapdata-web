@@ -1,37 +1,67 @@
 <template>
   <div class="field-box">
     <div class="setting-item mt-4">
-      <label class="item-label">{{ $t('packages_business_verification_indexField') }}: </label>
+      <label class="item-label"
+        >{{ $t('packages_business_verification_indexField') }}:
+      </label>
       <MultiSelection
         v-if="isEdit"
-        v-model="item.source.sortColumn"
+        v-model:value="item.source.sortColumn"
         class="item-select"
         :class="{ red: !item.source.sortColumn }"
         :options="sourceFields"
         :id="'item-source-' + index"
         @focus="handleFocus"
       ></MultiSelection>
-      <span v-else :class="['item-value-text', { 'color-danger': !item.source.sortColumn }]">{{
-        item.source.sortColumn || $t('packages_business_statistics_schedule_qingxuanze')
-      }}</span>
+      <span
+        v-else
+        :class="[
+          'item-value-text',
+          { 'color-danger': !item.source.sortColumn },
+        ]"
+        >{{
+          item.source.sortColumn ||
+          $t('packages_business_statistics_schedule_qingxuanze')
+        }}</span
+      >
       <span class="item-icon"></span>
       <MultiSelection
         v-if="isEdit"
-        v-model="item.target.sortColumn"
+        v-model:value="item.target.sortColumn"
         class="item-select"
         :class="{ red: !item.target.sortColumn }"
         :options="targetFields"
         @focus="handleFocus"
       ></MultiSelection>
-      <span v-else :class="['item-value-text', { 'color-danger': !item.target.sortColumn }]">{{
-        item.target.sortColumn || $t('packages_business_statistics_schedule_qingxuanze')
-      }}</span>
+      <span
+        v-else
+        :class="[
+          'item-value-text',
+          { 'color-danger': !item.target.sortColumn },
+        ]"
+        >{{
+          item.target.sortColumn ||
+          $t('packages_business_statistics_schedule_qingxuanze')
+        }}</span
+      >
     </div>
     <div v-if="isEdit" class="setting-item align-items-center mt-4">
-      <label class="item-label">{{ $t('packages_business_components_fieldbox_daijiaoyanmoxing') }}:</label>
-      <ElRadioGroup v-model="item.modeType" :disabled="getModeTypeDisabled(item)" @change="handleChangeModeType">
-        <ElRadio label="all">{{ $t('packages_business_components_fieldbox_quanziduan') }}</ElRadio>
-        <ElRadio label="custom">{{ $t('packages_business_connections_databaseform_zidingyi') }}</ElRadio>
+      <label class="item-label"
+        >{{
+          $t('packages_business_components_fieldbox_daijiaoyanmoxing')
+        }}:</label
+      >
+      <ElRadioGroup
+        v-model:value="item.modeType"
+        :disabled="getModeTypeDisabled(item)"
+        @change="handleChangeModeType"
+      >
+        <ElRadio label="all">{{
+          $t('packages_business_components_fieldbox_quanziduan')
+        }}</ElRadio>
+        <ElRadio label="custom">{{
+          $t('packages_business_connections_databaseform_zidingyi')
+        }}</ElRadio>
       </ElRadioGroup>
     </div>
     <div v-if="item.modeType === 'custom' && isEdit" class="mt-4">
@@ -39,17 +69,24 @@
         <div class="mb-4">
           <ElInput
             class="search-input"
-            v-model="keyword"
+            v-model:value="keyword"
             prefix-icon="el-icon-search"
-            :placeholder="$t('packages_business_components_fieldbox_qingshuruziduan')"
+            :placeholder="
+              $t('packages_business_components_fieldbox_qingshuruziduan')
+            "
             clearable
           ></ElInput>
         </div>
         <div v-loading="loading" class="position-relative">
           <div class="list-table__header flex justify-content-between">
-            <span>{{ $t('packages_business_components_fieldbox_ziduan') }}</span>
+            <span>{{
+              $t('packages_business_components_fieldbox_ziduan')
+            }}</span>
             <ElButton type="text" class="ml-4 color-primary" @click="handleAdd">
-              <VIcon> plus</VIcon>{{ $t('packages_business_components_fieldbox_tianjiahang') }}</ElButton
+              <VIcon> plus</VIcon
+              >{{
+                $t('packages_business_components_fieldbox_tianjiahang')
+              }}</ElButton
             >
           </div>
           <div class="list-table__content" :id="'list-table__content' + index">
@@ -60,7 +97,7 @@
             >
               <span class="px-2">{{ fIndex + 1 }}</span>
               <ElSelect
-                v-model="fItem.source"
+                v-model:value="fItem.source"
                 :class="['flex-fill', { 'empty-data': !fItem.source }]"
                 :allow-create="sourceDynamicSchema"
                 :placeholder="
@@ -80,7 +117,7 @@
                 ></ElOption>
               </ElSelect>
               <ElSelect
-                v-model="fItem.target"
+                v-model:value="fItem.target"
                 :class="['flex-fill ml-5', { 'empty-data': !fItem.target }]"
                 :allow-create="targetDynamicSchema"
                 :placeholder="
@@ -98,7 +135,11 @@
                   :value="op.field_name"
                 ></ElOption>
               </ElSelect>
-              <ElButton type="text" class="mx-2 px-2 color-primary" @click="handleDelete(fIndex)">
+              <ElButton
+                type="text"
+                class="mx-2 px-2 color-primary"
+                @click="handleDelete(fIndex)"
+              >
                 <VIcon> delete</VIcon>
               </ElButton>
             </div>
@@ -110,6 +151,7 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import MultiSelection from '../MultiSelection'
 import { uuid } from '@tap/shared'
 import { TABLE_PARAMS } from './const'
@@ -118,40 +160,36 @@ import { metadataInstancesApi } from '@tap/api'
 
 export default {
   name: 'FieldBox',
-
   components: { MultiSelection },
-
   props: {
     item: {
       type: Object,
       default: () => {
         return this.getItemOptions()
-      }
+      },
     },
     index: [String, Number],
     editId: String,
     isEdit: {
       type: Boolean,
-      default: false
+      default: false,
     },
     dynamicSchemaMap: {
       type: Object,
       default: () => {
         return {}
-      }
-    }
+      },
+    },
   },
-
   data() {
     return {
       keyword: '',
       loading: false,
       list: [],
       sourceFields: [],
-      targetFields: []
+      targetFields: [],
     }
   },
-
   watch: {
     sourceSelect(v1, v2) {
       if (v1 !== v2) {
@@ -164,9 +202,8 @@ export default {
         this.handleFieldList([], this.item)
         this.init()
       }
-    }
+    },
   },
-
   computed: {
     sourceSelect() {
       return this.item.source.connectionId + this.item.source.table
@@ -179,13 +216,11 @@ export default {
     },
     targetDynamicSchema() {
       return this.dynamicSchemaMap[this.item.target.connectionId]
-    }
+    },
   },
-
   mounted() {
     this.init()
   },
-
   methods: {
     async init() {
       await this.loadFieldsList()
@@ -193,7 +228,9 @@ export default {
     },
 
     loadFieldsList() {
-      this.getFieldListOptions()?.sourceNodeId ? this.loadFieldsInNode() : this.loadFields()
+      this.getFieldListOptions()?.sourceNodeId
+        ? this.loadFieldsInNode()
+        : this.loadFields()
     },
 
     getFieldListOptions() {
@@ -204,7 +241,7 @@ export default {
         sourceId: item.source.connectionId?.replace(/.+\//g, ''),
         targetId: item.target.connectionId?.replace(/.+\//g, ''),
         sourceTable: item.source.table,
-        targetTable: item.target.table
+        targetTable: item.target.table,
       }
       return opt
     },
@@ -213,7 +250,7 @@ export default {
       const { item } = this
       return {
         source: item.source.columns,
-        target: item.target.columns
+        target: item.target.columns,
       }
     },
 
@@ -226,16 +263,21 @@ export default {
         script: '', //后台使用 需要拼接function头尾
         webScript: '', //前端使用 用于页面展示
         jsEngineName: 'graal.js',
-        modeType: 'all' // 待校验模型的类型
+        modeType: 'all', // 待校验模型的类型
       }
     },
 
     getModeTypeDisabled(item) {
-      return !(item.source.connectionId && item.source.table && item.target.connectionId && item.target.table)
+      return !(
+        item.source.connectionId &&
+        item.source.table &&
+        item.target.connectionId &&
+        item.target.table
+      )
     },
 
     handleFieldList(data) {
-      this.$emit('change', data)
+      $emit(this, 'change', data)
     },
 
     loadList() {
@@ -246,28 +288,30 @@ export default {
         source.forEach((el, i) => {
           list.push({
             source: el,
-            target: target[i]
+            target: target[i],
           })
         })
-        this.list = list.filter(t => t.source || t.target)
+        this.list = list.filter((t) => t.source || t.target)
         return
       }
 
-      const sourceFields = this.sourceFields.map(t => t.field_name)
-      const targetFields = this.targetFields.map(t => t.field_name)
+      const sourceFields = this.sourceFields.map((t) => t.field_name)
+      const targetFields = this.targetFields.map((t) => t.field_name)
       let sourceList = cloneDeep(sourceFields)
-      let targetList = cloneDeep(targetFields).map(t => {
+      let targetList = cloneDeep(targetFields).map((t) => {
         return {
           name: t,
-          used: false
+          used: false,
         }
       })
 
       let list = sourceList.map((t, i) => {
-        let findTarget = targetList.find(tar => tar.name.toLowerCase() === t.toLowerCase())
+        let findTarget = targetList.find(
+          (tar) => tar.name.toLowerCase() === t.toLowerCase()
+        )
         let opt = {
           source: t,
-          target: ''
+          target: '',
         }
         if (findTarget) {
           opt.target = findTarget.name
@@ -277,11 +321,11 @@ export default {
       })
 
       targetList
-        .filter(t => t.name && !t.used)
-        .forEach(el => {
+        .filter((t) => t.name && !t.used)
+        .forEach((el) => {
           list.push({
             source: '',
-            target: el.name
+            target: el.name,
           })
         })
 
@@ -292,7 +336,7 @@ export default {
     getItem() {
       return {
         source: '',
-        target: ''
+        target: '',
       }
     },
 
@@ -311,7 +355,8 @@ export default {
     },
 
     async loadFields() {
-      const { sourceId, targetId, sourceTable, targetTable } = this.getFieldListOptions()
+      const { sourceId, targetId, sourceTable, targetTable } =
+        this.getFieldListOptions()
 
       this.loading = true
       if (sourceId) {
@@ -320,18 +365,20 @@ export default {
             meta_type: 'table',
             sourceType: 'SOURCE',
             original_name: sourceTable,
-            'source._id': sourceId
+            'source._id': sourceId,
           },
-          limit: 1
+          limit: 1,
         }
         const res = await this.getTapTablesApi(params)
-        this.sourceFields = Object.values(res.items[0]?.nameFieldMap || {}).map(t => {
-          return {
-            id: t.id,
-            field_name: t.fieldName,
-            primary_key_position: t.primaryKeyPosition
+        this.sourceFields = Object.values(res.items[0]?.nameFieldMap || {}).map(
+          (t) => {
+            return {
+              id: t.id,
+              field_name: t.fieldName,
+              primary_key_position: t.primaryKeyPosition,
+            }
           }
-        })
+        )
       }
 
       if (targetId) {
@@ -340,25 +387,28 @@ export default {
             meta_type: 'table',
             sourceType: 'SOURCE',
             original_name: targetTable,
-            'source._id': targetId
+            'source._id': targetId,
           },
-          limit: 1
+          limit: 1,
         }
         const res = await this.getTapTablesApi(params)
-        this.targetFields = Object.values(res.items[0]?.nameFieldMap || {}).map(t => {
-          return {
-            id: t.id,
-            field_name: t.fieldName,
-            primary_key_position: t.primaryKeyPosition
+        this.targetFields = Object.values(res.items[0]?.nameFieldMap || {}).map(
+          (t) => {
+            return {
+              id: t.id,
+              field_name: t.fieldName,
+              primary_key_position: t.primaryKeyPosition,
+            }
           }
-        })
+        )
       }
 
       this.loading = false
     },
 
     async loadFieldsInNode() {
-      const { sourceNodeId, targetNodeId, sourceTable, targetTable } = this.getFieldListOptions()
+      const { sourceNodeId, targetNodeId, sourceTable, targetTable } =
+        this.getFieldListOptions()
 
       this.loading = true
       if (sourceTable) {
@@ -366,14 +416,14 @@ export default {
           nodeId: sourceNodeId,
           tableFilter: sourceTable,
           fields: ['original_name', 'fields', 'qualified_name'],
-          pageSize: 20
+          pageSize: 20,
         }
         const res = await this.getNodeSchemaPageApi(params)
-        this.sourceFields = (res.items[0]?.fields || []).map(t => {
+        this.sourceFields = (res.items[0]?.fields || []).map((t) => {
           return {
             id: t.id,
             field_name: t.field_name,
-            primary_key_position: t.primary_key_position
+            primary_key_position: t.primary_key_position,
           }
         })
       }
@@ -383,14 +433,14 @@ export default {
           nodeId: targetNodeId,
           tableFilter: targetTable,
           fields: ['original_name', 'fields', 'qualified_name'],
-          pageSize: 20
+          pageSize: 20,
         }
         const res = await this.getNodeSchemaPageApi(params)
-        this.targetFields = (res.items[0]?.fields || []).map(t => {
+        this.targetFields = (res.items[0]?.fields || []).map((t) => {
           return {
             id: t.id,
             field_name: t.field_name,
-            primary_key_position: t.primary_key_position
+            primary_key_position: t.primary_key_position,
           }
         })
       }
@@ -400,7 +450,7 @@ export default {
 
     getTapTablesApi(params) {
       return metadataInstancesApi.tapTables({
-        filter: JSON.stringify(params)
+        filter: JSON.stringify(params),
       })
     },
 
@@ -410,7 +460,7 @@ export default {
 
     getFilterList() {
       const { keyword } = this
-      return this.list.filter(t => (t.source + t.target).includes(keyword))
+      return this.list.filter((t) => (t.source + t.target).includes(keyword))
     },
 
     handleChangeModeType(val) {
@@ -421,8 +471,9 @@ export default {
       if (!this.sourceFields.length || !this.targetFields.length) {
         this.init()
       }
-    }
-  }
+    },
+  },
+  emits: ['change'],
 }
 </script>
 

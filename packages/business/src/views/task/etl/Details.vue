@@ -1,5 +1,8 @@
 <template>
-  <ElContainer v-loading="loading" class="task-details-container h-100 flex flex-column">
+  <ElContainer
+    v-loading="loading"
+    class="task-details-container h-100 flex flex-column"
+  >
     <div class="task-info flex justify-content-between bg-white p-6">
       <div class="task-info__left flex align-items-center">
         <div class="task-info__img flex justify-center align-items-center mr-8">
@@ -21,11 +24,17 @@
             </div>
             <div class="mr-6 mt-4 flex align-items-center">
               <VIcon size="12" class="v-icon">document</VIcon>
-              <span class="ml-1">{{ $t('packages_business_task_details_desc') }}：</span>
+              <span class="ml-1"
+                >{{ $t('packages_business_task_details_desc') }}：</span
+              >
               <InlineInput
                 :value="task.desc"
                 :icon-config="{ class: 'color-primary' }"
-                :input-props="{ placeholder: $t('packages_business_etl_details_miaoshuneirong') }"
+                :input-props="{
+                  placeholder: $t(
+                    'packages_business_etl_details_miaoshuneirong'
+                  ),
+                }"
                 :min="0"
                 :max="50"
                 type="icon"
@@ -41,11 +50,18 @@
               @click="start($route.params.id, arguments[0])"
             >
               <VIcon size="12">start-fill</VIcon>
-              <span class="ml-1">{{ $t('packages_business_task_button_start') }}</span>
+              <span class="ml-1">{{
+                $t('packages_business_task_button_start')
+              }}</span>
             </ElButton>
             <ElButton
               v-if="isShowForceStop(task.statuses)"
-              :disabled="$disabledByPermission('SYNC_job_operation_all_data', task.user_id)"
+              :disabled="
+                $disabledByPermission(
+                  'SYNC_job_operation_all_data',
+                  task.user_id
+                )
+              "
               @click="forceStop($route.params.id)"
             >
               {{ $t('packages_business_task_list_force_stop') }}
@@ -58,45 +74,90 @@
               @click="stop($route.params.id, arguments[0])"
             >
               <VIcon size="12">pause-fill</VIcon>
-              <span class="ml-1">{{ $t('packages_business_task_button_stop') }}</span>
+              <span class="ml-1">{{
+                $t('packages_business_task_button_stop')
+              }}</span>
             </ElButton>
-            <ElButton :disabled="task.disabledData.edit" @click="handleEditor(task.id)">
+            <ElButton
+              :disabled="task.disabledData.edit"
+              @click="handleEditor(task.id)"
+            >
               <VIcon size="12">edit-fill</VIcon>
-              <span class="ml-1">{{ $t('packages_business_task_button_edit') }}</span>
+              <span class="ml-1">{{
+                $t('packages_business_task_button_edit')
+              }}</span>
             </ElButton>
             <ElButton @click="toView(task.id)">
               <VIcon size="12">yulan</VIcon>
-              <span class="ml-1">{{ $t('packages_business_button_check') }}</span>
+              <span class="ml-1">{{
+                $t('packages_business_button_check')
+              }}</span>
             </ElButton>
           </div>
         </div>
       </div>
       <div class="task-info__right flex align-items-center pl-6">
-        <Chart type="pie" :data="pieData" :options="pieOptions" class="type-chart"></Chart>
+        <Chart
+          type="pie"
+          :data="pieData"
+          :options="pieOptions"
+          class="type-chart"
+        ></Chart>
         <div class="pie-status flex flex-wrap ml-5">
-          <div v-for="(item, index) in pieData" :key="index" class="pie-status__item flex align-items-center ellipsis">
-            <span class="circle-icon mr-2" :style="{ 'background-color': item.color }"></span>
+          <div
+            v-for="(item, index) in pieData"
+            :key="index"
+            class="pie-status__item flex align-items-center ellipsis"
+          >
+            <span
+              class="circle-icon mr-2"
+              :style="{ 'background-color': item.color }"
+            ></span>
             <span>{{ item.name }}</span>
           </div>
         </div>
       </div>
     </div>
     <div class="sub-task flex-fill mt-6 px-6 py-2 bg-white">
-      <ElTabs v-model="activeTab" class="dashboard-tabs">
-        <ElTabPane :label="$t('packages_business_task_preview_subtasks')" name="subTask">
-          <div slot="label">
-            <span class="mr-2">{{ $t('packages_business_task_details_sub_task') }}</span>
-            <ElTooltip placement="top" :content="$t('packages_business_task_info_subtasks_tip')">
-              <VIcon class="color-primary" size="14">info</VIcon>
-            </ElTooltip>
-          </div>
+      <ElTabs v-model:value="activeTab" class="dashboard-tabs">
+        <ElTabPane
+          :label="$t('packages_business_task_preview_subtasks')"
+          name="subTask"
+        >
+          <template v-slot:label>
+            <div>
+              <span class="mr-2">{{
+                $t('packages_business_task_details_sub_task')
+              }}</span>
+              <ElTooltip
+                placement="top"
+                :content="$t('packages_business_task_info_subtasks_tip')"
+              >
+                <VIcon class="color-primary" size="14">info</VIcon>
+              </ElTooltip>
+            </div>
+          </template>
           <Subtask v-if="activeTab === 'subTask'" :task="task"></Subtask>
         </ElTabPane>
-        <ElTabPane :label="$t('packages_business_task_monitor_run_connection')" name="connect">
-          <Connection v-if="activeTab === 'connect'" :ids="connectionIds" @change="loadData"></Connection>
+        <ElTabPane
+          :label="$t('packages_business_task_monitor_run_connection')"
+          name="connect"
+        >
+          <Connection
+            v-if="activeTab === 'connect'"
+            :ids="connectionIds"
+            @change="loadData"
+          ></Connection>
         </ElTabPane>
-        <ElTabPane :label="$t('packages_business_task_monitor_history_run_record')" name="history">
-          <History v-if="activeTab === 'history' && task.id" :ids="[task.id]" :operations="operations"></History>
+        <ElTabPane
+          :label="$t('packages_business_task_monitor_history_run_record')"
+          name="history"
+        >
+          <History
+            v-if="activeTab === 'history' && task.id"
+            :ids="[task.id]"
+            :operations="operations"
+          ></History>
         </ElTabPane>
       </ElTabs>
     </div>
@@ -111,7 +172,11 @@ import dayjs from 'dayjs'
 import { taskApi, dataFlowsApi } from '@tap/api'
 import { VIcon, Chart, InlineInput } from '@tap/component'
 
-import { ETL_SUB_STATUS_MAP, getSubTaskStatus, getTaskBtnDisabled } from '../../../shared'
+import {
+  ETL_SUB_STATUS_MAP,
+  getSubTaskStatus,
+  getTaskBtnDisabled,
+} from '../../../shared'
 import Connection from '../migrate/details/Connection'
 import History from '../migrate/details/History'
 import Subtask from '../Subtask'
@@ -125,47 +190,49 @@ export default {
       loading: true,
       activeTab: 'subTask',
       task: {
-        disabledData: {}
+        disabledData: {},
       },
       infoItems: [
         {
           key: 'creator',
           icon: 'account-fill',
-          label: this.$t('packages_business_task_monitor_founder')
+          label: this.$t('packages_business_task_monitor_founder'),
         },
         {
           key: 'updatedTime',
           icon: 'time-fill',
-          label: this.$t('packages_business_task_monitor_change_time')
+          label: this.$t('packages_business_task_monitor_change_time'),
         },
         {
           key: 'type',
           icon: 'menu',
-          label: this.$t('packages_business_task_monitor_sync_type')
-        }
+          label: this.$t('packages_business_task_monitor_sync_type'),
+        },
       ],
       ouputItems: [
         {
           key: 'totalOutput',
-          label: this.$t('packages_business_task_monitor_total_input')
+          label: this.$t('packages_business_task_monitor_total_input'),
         },
         {
           key: 'totalInput',
-          label: this.$t('packages_business_task_monitor_total_output')
-        }
+          label: this.$t('packages_business_task_monitor_total_output'),
+        },
       ],
       syncTypeMap: {
         initial_sync: this.$t('packages_business_dataFlow_initial_sync'),
         cdc: this.$t('packages_business_dataFlow_cdc'),
         'initial_sync+cdc':
-          this.$t('packages_business_dataFlow_initial_sync') + '+' + this.$t('packages_business_dataFlow_cdc')
+          this.$t('packages_business_dataFlow_initial_sync') +
+          '+' +
+          this.$t('packages_business_dataFlow_cdc'),
       },
       list: [],
       loadingObj: {
         start: false,
         stop: false,
         forceStop: false,
-        reset: false
+        reset: false,
       },
       operations: ['start', 'stop', 'forceStop'],
       pieData: [],
@@ -175,24 +242,24 @@ export default {
           left: 'center',
           top: 'center',
           textStyle: {
-            fontSize: '12'
-          }
+            fontSize: '12',
+          },
         },
         legend: {
-          show: false
+          show: false,
         },
-        radius: true
-      }
+        radius: true,
+      },
     }
   },
   computed: {
     connectionIds() {
       return (
-        this.task?.dag?.nodes?.map(item => {
+        this.task?.dag?.nodes?.map((item) => {
           return item.connectionId
         }) || []
       )
-    }
+    },
   },
   mounted() {
     this.init()
@@ -201,7 +268,7 @@ export default {
       this.loadData(true)
     }, 2000)
   },
-  destroyed() {
+  unmounted() {
     clearInterval(timeout)
   },
   methods: {
@@ -215,7 +282,7 @@ export default {
       }
       taskApi
         .get([id])
-        .then(data => {
+        .then((data) => {
           this.task = this.formatTask(data || '{}')
 
           this.getSubTaskStatusCount()
@@ -231,11 +298,27 @@ export default {
         obj[key] = Object.assign({ count: 0 }, ETL_SUB_STATUS_MAP[key])
       }
 
-      statuses.forEach(el => {
+      statuses.forEach((el) => {
         obj[el.status].count++
       })
-      let statusArr = ['edit', 'scheduling', 'running', 'stopping', 'stop', 'complete', 'error']
-      let color = ['#648EFF', '#5CC4D2', '#81CE94', '#EFB166', '#EFB166', '#11A9DA', '#EB755C']
+      let statusArr = [
+        'edit',
+        'scheduling',
+        'running',
+        'stopping',
+        'stop',
+        'complete',
+        'error',
+      ]
+      let color = [
+        '#648EFF',
+        '#5CC4D2',
+        '#81CE94',
+        '#EFB166',
+        '#EFB166',
+        '#11A9DA',
+        '#EB755C',
+      ]
       let arr = []
       for (let i = 0; i < statusArr.length; i++) {
         let t = statusArr[i]
@@ -271,25 +354,31 @@ export default {
       let result = JSON.parse(JSON.stringify(data))
       result.totalOutput = result.stats?.output?.rows || 0
       result.totalInput = result.stats?.input?.rows || 0
-      result.creator = result.creator || result.username || result.user?.username || '-'
+      result.creator =
+        result.creator || result.username || result.user?.username || '-'
       result.updatedTime = this.formatTime(result.last_updated)
       result.type = this.syncTypeMap[result.type]
       result.statusResult = getSubTaskStatus(result.statuses)
       result.disabledData = getTaskBtnDisabled(
         result,
-        this.$disabledByPermission('SYNC_job_operation_all_data', result.user_id)
+        this.$disabledByPermission(
+          'SYNC_job_operation_all_data',
+          result.user_id
+        )
       )
       return result
     },
     isShowForceStop(data) {
-      return data?.length && data.every(t => ['stopping'].includes(t.status))
+      return data?.length && data.every((t) => ['stopping'].includes(t.status))
     },
     start(id, resetLoading) {
       // this.changeStatus(id, { status: 'scheduled', finallyEvents: resetLoading })
       taskApi
         .start(id)
         .then(() => {
-          this.$message.success(this.$t('packages_business_message_operation_succuess'))
+          this.$message.success(
+            this.$t('packages_business_message_operation_succuess')
+          )
         })
         .finally(resetLoading)
     },
@@ -302,21 +391,30 @@ export default {
         message = i18n.t('packages_business_etl_details_chushihualeixing')
         title = i18n.t('packages_business_dataFlow_importantReminder')
       }
-      if (node.stages && node.stages.find(s => s.type === 'aggregation_processor')) {
+      if (
+        node.stages &&
+        node.stages.find((s) => s.type === 'aggregation_processor')
+      ) {
         const h = this.$createElement
         let arr = i18n.t('packages_business_etl_details_renwuXxx').split('XXX')
-        message = h('p', [arr[0] + '(', h('span', { style: { color: '#409EFF' } }, node.name), ')' + arr[1]])
+        message = h('p', [
+          arr[0] + '(',
+          h('span', { style: { color: '#409EFF' } }, node.name),
+          ')' + arr[1],
+        ])
         title = i18n.t('packages_business_dataFlow_importantReminder')
       }
       resetLoading.stop = true
       this.$confirm(message, title, {
-        type: 'warning'
-      }).then(resFlag => {
+        type: 'warning',
+      }).then((resFlag) => {
         if (resFlag) {
           taskApi
             .stop(id)
             .then(() => {
-              this.$message.success(this.$t('packages_business_message_operation_succuess'))
+              this.$message.success(
+                this.$t('packages_business_message_operation_succuess')
+              )
             })
             .finally(resetLoading)
         } else {
@@ -327,28 +425,46 @@ export default {
     forceStop(id) {
       let msgObj = this.getConfirmMessage('force_stop', this.task.name)
       this.$confirm(msgObj.msg, msgObj.title, {
-        type: 'warning'
-      }).then(resFlag => {
+        type: 'warning',
+      }).then((resFlag) => {
         if (resFlag) {
           taskApi.forceStop([id]).then(() => {
-            this.$message.success(this.$t('packages_business_message_operation_succuess'))
+            this.$message.success(
+              this.$t('packages_business_message_operation_succuess')
+            )
           })
         }
       })
     },
     getConfirmMessage(operateStr, name) {
       let map = {
-        delete_confirm_title: i18n.t('packages_business_etl_details_shifoushanchugai'),
-        delete_confirm_message: i18n.t('packages_business_etl_details_shanchurenwux'),
+        delete_confirm_title: i18n.t(
+          'packages_business_etl_details_shifoushanchugai'
+        ),
+        delete_confirm_message: i18n.t(
+          'packages_business_etl_details_shanchurenwux'
+        ),
 
-        stop_confirm_title: i18n.t('packages_business_etl_details_shifouzantinggai'),
-        stop_confirm_message: i18n.t('packages_business_etl_details_zantingrenwux'),
+        stop_confirm_title: i18n.t(
+          'packages_business_etl_details_shifouzantinggai'
+        ),
+        stop_confirm_message: i18n.t(
+          'packages_business_etl_details_zantingrenwux'
+        ),
 
-        force_stop_confirm_title: i18n.t('packages_business_etl_details_shifouqiangzhiting'),
-        force_stop_confirm_message: i18n.t('packages_business_etl_details_qiangzhitingzhiren'),
+        force_stop_confirm_title: i18n.t(
+          'packages_business_etl_details_shifouqiangzhiting'
+        ),
+        force_stop_confirm_message: i18n.t(
+          'packages_business_etl_details_qiangzhitingzhiren'
+        ),
 
-        initialize_confirm_title: i18n.t('packages_business_etl_details_shifouzhongzhigai'),
-        initialize_confirm_message: i18n.t('packages_business_etl_details_zhongzhirenwux')
+        initialize_confirm_title: i18n.t(
+          'packages_business_etl_details_shifouzhongzhigai'
+        ),
+        initialize_confirm_message: i18n.t(
+          'packages_business_etl_details_zhongzhirenwux'
+        ),
       }
       let title = operateStr + '_confirm_title',
         message = operateStr + '_confirm_message'
@@ -359,15 +475,15 @@ export default {
         h(
           'span',
           {
-            class: 'color-primary'
+            class: 'color-primary',
           },
           name
         ),
-        strArr[1]
+        strArr[1],
       ])
       return {
         msg,
-        title: map[title]
+        title: map[title],
       }
     },
     reset(id) {
@@ -376,17 +492,20 @@ export default {
         i18n.t('packages_business_dataFlow_reset'),
         {
           type: 'warning',
-          dangerouslyUseHTMLString: true
+          dangerouslyUseHTMLString: true,
         }
-      ).then(flag => {
+      ).then((flag) => {
         if (!flag) {
           return
         }
         this.loadingObj.reset = true
         taskApi
           .reset(id)
-          .then(data => {
-            this.responseHandler(data, this.$t('packages_business_message_deleteOK'))
+          .then((data) => {
+            this.responseHandler(
+              data,
+              this.$t('packages_business_message_deleteOK')
+            )
           })
           // .catch(error => {
           //   if (error?.isException) {
@@ -402,24 +521,27 @@ export default {
       this.$router.push({
         name: 'TaskStatistics',
         params: {
-          etlId: id
-        }
+          etlId: id,
+        },
       })
     },
     changeStatus(id, { status, errorEvents, finallyEvents }) {
       let where = {
         _id: {
-          in: [id]
-        }
+          in: [id],
+        },
       }
       let attributes = {
-        status
+        status,
       }
       errorEvents && (attributes.errorEvents = errorEvents)
       dataFlowsApi
         .update(where, attributes)
-        .then(data => {
-          this.responseHandler(data, this.$t('packages_business_message_deleteOK'))
+        .then((data) => {
+          this.responseHandler(
+            data,
+            this.$t('packages_business_message_deleteOK')
+          )
         })
         // .catch(error => {
         //   if (error?.isException) {
@@ -437,17 +559,19 @@ export default {
           5: i18n.t('packages_business_dataFlow_multiError_notFound'),
           6: i18n.t('packages_business_dataFlow_multiError_statusError'),
           7: i18n.t('packages_business_etl_details_caozuoshibaiqing'),
-          8: i18n.t('packages_business_dataFlow_multiError_statusError')
+          8: i18n.t('packages_business_dataFlow_multiError_statusError'),
         }
         this.$message.warning({
           dangerouslyUseHTMLString: true,
           message: failList
-            .map(item => {
+            .map((item) => {
               return `<div style="line-height: 24px;"><span style="color: #409EFF">${
                 this.task.name
-              }</span> : <span style="color: #F56C6C">${msgMapping[item.code]}</span></div>`
+              }</span> : <span style="color: #F56C6C">${
+                msgMapping[item.code]
+              }</span></div>`
             })
-            .join('')
+            .join(''),
         })
       } else if (msg) {
         this.$message.success(msg)
@@ -456,11 +580,13 @@ export default {
     updateDesc(val, id) {
       taskApi
         .patchId(id, {
-          desc: val
+          desc: val,
         })
         .then(() => {
           this.task.desc = val
-          this.$message.success(this.$t('packages_business_message_update_success'))
+          this.$message.success(
+            this.$t('packages_business_message_update_success')
+          )
         })
     },
     // 编辑
@@ -469,40 +595,62 @@ export default {
       this.$confirm(
         h('p', null, [
           h('span', null, this.$t('packages_business_dataFlow_modifyEditText')),
-          h('span', { style: 'color: #409EFF' }, this.$t('packages_business_dataFlow_nodeLayoutProcess')),
+          h(
+            'span',
+            { style: 'color: #409EFF' },
+            this.$t('packages_business_dataFlow_nodeLayoutProcess')
+          ),
           h('span', null, '、'),
-          h('span', { style: 'color: #409EFF' }, this.$t('packages_business_dataFlow_nodeAttributes')),
+          h(
+            'span',
+            { style: 'color: #409EFF' },
+            this.$t('packages_business_dataFlow_nodeAttributes')
+          ),
           h('span', null, '、'),
-          h('span', { style: 'color: #409EFF' }, this.$t('packages_business_dataFlow_matchingRelationship')),
+          h(
+            'span',
+            { style: 'color: #409EFF' },
+            this.$t('packages_business_dataFlow_matchingRelationship')
+          ),
           h('span', null, '，'),
-          h('span', null, this.$t('packages_business_dataFlow_afterSubmission')),
-          h('span', { style: 'color: #409EFF' }, this.$t('packages_business_dataFlow_reset')),
+          h(
+            'span',
+            null,
+            this.$t('packages_business_dataFlow_afterSubmission')
+          ),
+          h(
+            'span',
+            { style: 'color: #409EFF' },
+            this.$t('packages_business_dataFlow_reset')
+          ),
           h('span', null, this.$t('packages_business_dataFlow_runNomally')),
-          h('span', null, this.$t('packages_business_dataFlow_editLayerTip'))
+          h('span', null, this.$t('packages_business_dataFlow_editLayerTip')),
         ]),
         this.$t('packages_business_dataFlow_importantReminder'),
         {
           customClass: 'dataflow-clickTip',
-          confirmButtonText: this.$t('packages_business_dataFlow_continueEditing'),
-          type: 'warning'
+          confirmButtonText: this.$t(
+            'packages_business_dataFlow_continueEditing'
+          ),
+          type: 'warning',
         }
-      ).then(resFlag => {
+      ).then((resFlag) => {
         if (!resFlag) {
           return
         }
         let routeUrl = this.$router.resolve({
           name: 'DataflowEditor',
-          params: { id: id }
+          params: { id: id },
         })
         setTimeout(() => {
-          document.querySelectorAll('.el-tooltip__popper').forEach(it => {
+          document.querySelectorAll('.el-tooltip__popper').forEach((it) => {
             it.outerHTML = ''
           })
           window.open(routeUrl.href, 'edit_' + id)
         }, 200)
       })
       setTimeout(() => {
-        document.querySelectorAll('.el-tooltip__popper').forEach(it => {
+        document.querySelectorAll('.el-tooltip__popper').forEach((it) => {
           it.outerHTML = ''
         })
       }, 200)
@@ -521,11 +669,11 @@ export default {
       this.$router.push({
         name: 'DataflowViewer',
         params: {
-          id
-        }
+          id,
+        },
       })
-    }
-  }
+    },
+  },
 }
 </script>
 

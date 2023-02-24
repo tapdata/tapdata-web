@@ -1,12 +1,20 @@
 <template>
   <div :class="['etl-status-item', { 'inline-layout': inline }]">
-    <div v-for="(item, index) in comList" :key="index" class="etl-status-item__box">
+    <div
+      v-for="(item, index) in comList"
+      :key="index"
+      class="etl-status-item__box"
+    >
       <span
         :class="['circle-icon', 'mr-2', !!item.type && `bg-color-${item.type}`]"
         :style="{ 'background-color': colorMap[item.type] }"
       ></span>
-      <span class="etl-status-item__text font-color-light">{{ item.text }}</span>
-      <span v-if="showCount" class="etl-status-item__count font-color-slight">{{ ': ' + (item.count || 0) }}</span>
+      <span class="etl-status-item__text font-color-light">{{
+        item.text
+      }}</span>
+      <span v-if="showCount" class="etl-status-item__count font-color-slight">{{
+        ': ' + (item.count || 0)
+      }}</span>
     </div>
   </div>
 </template>
@@ -17,16 +25,16 @@ export default {
   props: {
     value: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     inline: {
       type: Boolean,
-      default: false
+      default: false,
     },
     showAll: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   computed: {
     showCount() {
@@ -34,10 +42,10 @@ export default {
     },
     comList() {
       if (!this.showAll) {
-        return this.value.filter(t => t.count > 0)
+        return this.value.filter((t) => t.count > 0)
       }
       return this.value
-    }
+    },
   },
   data() {
     return {
@@ -51,10 +59,11 @@ export default {
         stopping: '#C39700',
         stop: '#C88500',
         complete: '#008B58',
-        error: '#D44D4D'
-      }
+        error: '#D44D4D',
+      },
     }
-  }
+  },
+  emits: ['update:value'],
 }
 </script>
 

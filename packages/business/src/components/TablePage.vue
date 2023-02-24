@@ -34,6 +34,7 @@
             </div>
           </div>
           <ProTable
+            v-bind="$attrs"
             ref="table"
             v-loading="loading"
             class="table-page-table"
@@ -46,13 +47,14 @@
             :draggable="draggable"
             @selection-change="handleSelectionChange"
             @sort-change="$emit('sort-change', $event)"
-            v-on="$listeners"
           >
             <slot></slot>
-            <div slot="empty" class="empty">
-              <VIcon size="140">no-data-color</VIcon>
-              <slot name="noDataText"></slot>
-            </div>
+            <template v-slot:empty>
+              <div class="empty">
+                <VIcon size="140">no-data-color</VIcon>
+                <slot name="noDataText"></slot>
+              </div>
+            </template>
           </ProTable>
           <div class="table-footer">
             <slot name="tableFooter"></slot>
@@ -61,9 +63,9 @@
             background
             class="table-page-pagination mt-3"
             layout="->,total, sizes,  prev, pager, next, jumper"
-            :current-page.sync="page.current"
+            v-model:current-page="page.current"
             :page-sizes="[10, 20, 50, 100]"
-            :page-size.sync="page.size"
+            v-model:page-size="page.size"
             :total="page.total"
             @size-change="fetch(1)"
             @current-change="handleCurrent"
@@ -82,6 +84,7 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 import { delayTrigger } from '@tap/shared'
 import { VIcon, Classification, ProTable } from '@tap/component'
 
@@ -92,28 +95,28 @@ export default {
     Classification,
     SelectClassify,
     VIcon,
-    ProTable
+    ProTable,
   },
   props: {
     title: String,
     desc: String,
     defaultPageSize: {
       type: Number,
-      default: 20
+      default: 20,
     },
     hideClassify: {
       // 是否隐藏左侧栏
       type: Boolean,
-      default: false
+      default: false,
     },
     classify: {
-      type: Object
+      type: Object,
     },
     remoteMethod: Function,
     rowKey: [String, Function],
     spanMethod: [Function],
     defaultSort: Object,
-    draggable: Boolean
+    draggable: Boolean,
   },
   data() {
     return {
@@ -121,12 +124,12 @@ export default {
       page: {
         current: 1,
         size: this.defaultPageSize,
-        total: 0
+        total: 0,
       },
       list: [],
       multipleSelection: [],
       tags: [],
-      classifyDialogVisible: false
+      classifyDialogVisible: false,
     }
   },
   mounted() {
@@ -137,7 +140,7 @@ export default {
       let timer = null
       if (pageNum === 1) {
         this.multipleSelection = []
-        this.$emit('selection-change', [])
+        $emit(this, 'selection-change', [])
         this.$refs?.table?.clearSelection()
       }
       this.page.current = pageNum || this.page.current
@@ -150,7 +153,7 @@ export default {
             this.remoteMethod({
               page: this.page,
               tags: this.tags,
-              data: this.list
+              data: this.list,
             })
               .then(({ data, total }) => {
                 this.page.total = total
@@ -179,7 +182,7 @@ export default {
     },
     handleCurrent(val) {
       this.multipleSelection = []
-      this.$emit('selection-change', [])
+      $emit(this, 'selection-change', [])
       this.$refs?.table?.clearSelection()
       this.fetch(val) //主要为了换页 清空选中数据
     },
@@ -189,7 +192,7 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
-      this.$emit('selection-change', val)
+      $emit(this, 'selection-change', val)
     },
     showClassify(tagList) {
       this.$refs.classify.show(tagList)
@@ -199,8 +202,9 @@ export default {
     },
     clearSelection() {
       this.$refs?.table?.clearSelection()
-    }
-  }
+    },
+  },
+  emits: ['sort-change', 'classify-submit', 'selection-change'],
 }
 </script>
 
@@ -213,7 +217,6 @@ export default {
   min-width: 720px;
   flex: 1;
   width: 100%;
-
   .table-page-header {
     padding: 20px;
     background: #eff1f4;
@@ -304,7 +307,9 @@ export default {
     }
 
     .el-table--border td,
-    .el-table__body-wrapper .el-table--border.is-scrolling-left ~ .el-table__fixed {
+    .el-table__body-wrapper
+      .el-table--border.is-scrolling-left
+      ~ .el-table__fixed {
       border-right: 0;
     }
 

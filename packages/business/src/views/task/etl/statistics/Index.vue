@@ -9,14 +9,29 @@
         @reload="loadTask"
       ></Info>
       <div class="flex-1 mt-6 px-5 pb-12 bg-white">
-        <ElTabs v-model="activeTab" class="flex flex-column flex-1 overflow-hidden h-100">
-          <ElTabPane :label="$t('packages_business_task_monitor_progress')" name="schedule" lazy>
+        <ElTabs
+          v-model:value="activeTab"
+          class="flex flex-column flex-1 overflow-hidden h-100"
+        >
+          <ElTabPane
+            :label="$t('packages_business_task_monitor_progress')"
+            name="schedule"
+            lazy
+          >
             <Schedule :task="task" @sync="getSyncData"></Schedule>
           </ElTabPane>
-          <ElTabPane :label="$t('packages_business_task_monitor_run_log')" name="log" lazy>
+          <ElTabPane
+            :label="$t('packages_business_task_monitor_run_log')"
+            name="log"
+            lazy
+          >
             <Log :id="task.id"></Log>
           </ElTabPane>
-          <ElTabPane :label="$t('packages_business_task_monitor_mining_task')" name="sharedMing" lazy>
+          <ElTabPane
+            :label="$t('packages_business_task_monitor_mining_task')"
+            name="sharedMing"
+            lazy
+          >
             <ShareMining :id="task.id"></ShareMining>
           </ElTabPane>
         </ElTabs>
@@ -53,15 +68,15 @@ export default {
           key: 'overview',
           statsType: 'data_overview',
           title: this.$t('packages_business_dataFlow_dataScreening'),
-          loading: false
+          loading: false,
         },
         body: {
           outputCount: 0,
           inputCount: 0,
           insertCount: 0,
           updateCount: 0,
-          deleteCount: 0
-        }
+          deleteCount: 0,
+        },
       },
       throughputObj: {
         title: {
@@ -72,14 +87,14 @@ export default {
           tip: this.$t('packages_business_dataFlow_throughputpop'),
           unit: 'QPS',
           class: 'putColor',
-          loading: false
+          loading: false,
         },
         body: null,
         input: 0,
-        output: 0
+        output: 0,
       },
       activeTab: 'schedule',
-      syncData: {}
+      syncData: {},
     }
   },
   created() {
@@ -108,9 +123,9 @@ export default {
           'fullDocument.errorEvents': true,
           'fullDocument.milestones': true,
           'fullDocument.user': true,
-          'fullDocument.mappingTemplate': true
-        }
-      }
+          'fullDocument.mappingTemplate': true,
+        },
+      },
     })
     this.timer = setInterval(() => {
       this.loadTask(true)
@@ -119,7 +134,7 @@ export default {
   mounted() {
     this.init()
   },
-  destroyed() {
+  unmounted() {
     this.$ws.off('watch', this.taskChange)
     this.timer && clearInterval(this.timer)
   },
@@ -134,8 +149,10 @@ export default {
       }
       subtaskApi
         .get([id])
-        .then(data => {
-          if (JSON.stringify(this.formatTask(data)) === JSON.stringify(this.task)) {
+        .then((data) => {
+          if (
+            JSON.stringify(this.formatTask(data)) === JSON.stringify(this.task)
+          ) {
             return
           }
           this.task = this.formatTask(data)
@@ -153,7 +170,12 @@ export default {
     formatTask(data) {
       data.totalOutput = data.stats?.output?.rows || 0
       data.totalInput = data.stats?.input?.rows || 0
-      data.creator = data.creator || data.createUser || data.username || data.user?.username || '-'
+      data.creator =
+        data.creator ||
+        data.createUser ||
+        data.username ||
+        data.user?.username ||
+        '-'
       data.typeText =
         data.mappingTemplate === 'cluster-clone'
           ? i18n.t('packages_business_statistics_index_qianyirenwu')
@@ -169,7 +191,7 @@ export default {
       return time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
     },
     infoRemoteMethod(params) {
-      return measurementApi.query(params).then(data => {
+      return measurementApi.query(params).then((data) => {
         return data
       })
     },
@@ -179,8 +201,8 @@ export default {
     //接收全量同步的实时数据
     getSyncData(data) {
       this.syncData = data
-    }
-  }
+    },
+  },
 }
 </script>
 

@@ -37,7 +37,7 @@ export {
   SwimlaneDashboard,
   AlarmSetting,
   AlarmNotification,
-  CustomNodeList
+  CustomNodeList,
 }
 
 export * from './connections/util'

@@ -14,8 +14,8 @@ export default {
         Creating: $t('agent_status_creating'),
         Running: $t('agent_status_running'),
         Stopping: $t('agent_status_stopping'),
-        Stopped: $t('agent_status_stopped')
-      }
+        Stopped: $t('agent_status_stopped'),
+      },
     }
   },
 
@@ -23,7 +23,7 @@ export default {
     this.loop(this.isDaas ? this.getClusterStatus : this.getAgentStatus, 30000)
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     clearTimeout(this.syncTaskAgentTimer)
   },
 
@@ -34,7 +34,7 @@ export default {
         res[item.systemInfo['process_id']] = {
           status: this.agentStatusLabel[item.status] || '-',
           name: item.systemInfo.hostname,
-          itemId: item.id
+          itemId: item.id,
         }
         return res
       }, {})
@@ -48,7 +48,7 @@ export default {
           encodeURIComponent(
             JSON.stringify({
               size: 10000,
-              page: 1
+              page: 1,
             })
           )
       )
@@ -57,7 +57,7 @@ export default {
         res[item.tmInfo.agentId] = {
           status: this.agentStatusLabel[item.status] || '-',
           name: item.name,
-          itemId: item.id
+          itemId: item.id,
         }
         return res
       }, {})
@@ -70,6 +70,6 @@ export default {
       this.syncTaskAgentTimer = setTimeout(() => {
         this.loop(callback, timeout)
       }, timeout)
-    }
-  }
+    },
+  },
 }

@@ -7,7 +7,8 @@
           :class="{ active: activeNodeId === 'all' }"
           @click="changeItem()"
         >
-          <VIcon size="20" class="mr-1">folder</VIcon>{{ $t('packages_dag_migration_consolepanel_quanburizhi') }}
+          <VIcon size="20" class="mr-1">folder</VIcon
+          >{{ $t('packages_dag_migration_consolepanel_quanburizhi') }}
         </div>
         <div
           v-for="node in items"
@@ -31,7 +32,7 @@
         ></TimeSelect>
         <ElInput
           class="search-input ml-4"
-          v-model="keyword"
+          v-model:value="keyword"
           prefix-icon="el-icon-search"
           :placeholder="$t('packages_dag_components_log_qingshururizhi')"
           size="mini"
@@ -39,33 +40,47 @@
           style="width: 240px"
           @input="searchFnc"
         ></ElInput>
-        <ElButton :loading="downloadLoading" type="text" size="mini" class="ml-4" @click="handleDownload">{{
-          $t('packages_dag_components_log_xiazai')
-        }}</ElButton>
+        <ElButton
+          :loading="downloadLoading"
+          type="text"
+          size="mini"
+          class="ml-4"
+          @click="handleDownload"
+          >{{ $t('packages_dag_components_log_xiazai') }}</ElButton
+        >
       </div>
       <div class="level-line mb-2">
         <ElCheckboxGroup
-          v-model="checkList"
+          v-model:value="checkList"
           :disabled="loading"
           :min="1"
           size="mini"
           class="inline-flex"
           @change="searchFnc"
         >
-          <ElCheckbox v-for="item in checkItems" :label="item.label" :key="item.label">{{ item.text }}</ElCheckbox>
+          <ElCheckbox
+            v-for="item in checkItems"
+            :label="item.label"
+            :key="item.label"
+            >{{ item.text }}</ElCheckbox
+          >
         </ElCheckboxGroup>
         <ElButton type="text" size="mini" class="ml-4" @click="handleSetting">{{
           $t('packages_dag_components_log_rizhidengjishe')
         }}</ElButton>
       </div>
-      <div v-loading="loading" class="log-list flex-1 rounded-2" style="height: 0">
+      <div
+        v-loading="loading"
+        class="log-list flex-1 rounded-2"
+        style="height: 0"
+      >
         <DynamicScroller
           ref="virtualScroller"
           :items="list"
           key-field="id"
           :min-item-size="30"
           class="scroller px-2 py-1 h-100"
-          @scroll.native="scrollFnc"
+          @scroll="scrollFnc"
         >
           <template #before>
             <div
@@ -96,17 +111,34 @@
               :item="item"
               :active="active"
               :data-index="index"
-              :size-dependencies="[item.id, item.message, item.errorStack, item.dataText]"
+              :size-dependencies="[
+                item.id,
+                item.message,
+                item.errorStack,
+                item.dataText,
+              ]"
             >
               <VCollapse active="0">
                 <template #header>
-                  <div class="log-line flex align-items-center pr-6 flex font-color-light">
-                    <VIcon :class="`${item.level.toLowerCase()}-level`" size="16">{{ iconMap[item.level] }}</VIcon>
-                    <div v-html="item.titleDomStr" class="text-truncate flex-1"></div>
+                  <div
+                    class="log-line flex align-items-center pr-6 flex font-color-light"
+                  >
+                    <VIcon
+                      :class="`${item.level.toLowerCase()}-level`"
+                      size="16"
+                      >{{ iconMap[item.level] }}</VIcon
+                    >
+                    <div
+                      v-html="item.titleDomStr"
+                      class="text-truncate flex-1"
+                    ></div>
                   </div>
                 </template>
                 <template #content>
-                  <div v-html="item.jsonDomStr" class="log-line pl-10 pr-4 py-2 font-color-light white-space-pre"></div>
+                  <div
+                    v-html="item.jsonDomStr"
+                    class="log-line pl-10 pr-4 py-2 font-color-light white-space-pre"
+                  ></div>
                 </template>
               </VCollapse>
             </DynamicScrollerItem>
@@ -118,32 +150,66 @@
     <ElDialog
       :title="$t('packages_dag_components_log_rizhidengjishe')"
       width="437px"
-      :visible.sync="dialog"
+      v-model:visible="dialog"
       :close-on-click-modal="false"
       :append-to-body="true"
     >
       <ElForm label-width="120px">
-        <ElFormItem :label="$t('packages_dag_components_log_rizhijibie')" prop="level">
-          <ElSelect v-model="form.level" style="width: 275px">
-            <ElOption v-for="item in checkItems" :label="item.text" :value="item.label" :key="item.label"></ElOption>
+        <ElFormItem
+          :label="$t('packages_dag_components_log_rizhijibie')"
+          prop="level"
+        >
+          <ElSelect v-model:value="form.level" style="width: 275px">
+            <ElOption
+              v-for="item in checkItems"
+              :label="item.text"
+              :value="item.label"
+              :key="item.label"
+            ></ElOption>
           </ElSelect>
         </ElFormItem>
         <template v-if="form.level === 'DEBUG'">
-          <ElFormItem :label="$t('packages_dag_components_log_debug')" prop="param"> </ElFormItem>
-          <ElFormItem :label="$t('packages_dag_components_log_kaiqishichangmiao')" prop="start">
-            <ElInput v-model="form.intervalCeiling" type="number" style="width: 275px"></ElInput>
+          <ElFormItem
+            :label="$t('packages_dag_components_log_debug')"
+            prop="param"
+          >
           </ElFormItem>
-          <ElFormItem :label="$t('packages_dag_components_log_zuidashijianshu')" prop="max">
-            <ElInput v-model="form.recordCeiling" type="number" style="width: 275px"></ElInput>
+          <ElFormItem
+            :label="$t('packages_dag_components_log_kaiqishichangmiao')"
+            prop="start"
+          >
+            <ElInput
+              v-model:value="form.intervalCeiling"
+              type="number"
+              style="width: 275px"
+            ></ElInput>
+          </ElFormItem>
+          <ElFormItem
+            :label="$t('packages_dag_components_log_zuidashijianshu')"
+            prop="max"
+          >
+            <ElInput
+              v-model:value="form.recordCeiling"
+              type="number"
+              style="width: 275px"
+            ></ElInput>
           </ElFormItem>
         </template>
       </ElForm>
-      <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="handleClose">{{ $t('packages_dag_button_cancel') }}</ElButton>
-        <ElButton :disabled="saveLoading" size="mini" type="primary" @click="handleSave">{{
-          $t('packages_dag_button_confirm')
-        }}</ElButton>
-      </span>
+      <template v-slot:footer>
+        <span class="dialog-footer">
+          <ElButton size="mini" @click="handleClose">{{
+            $t('packages_dag_button_cancel')
+          }}</ElButton>
+          <ElButton
+            :disabled="saveLoading"
+            size="mini"
+            type="primary"
+            @click="handleSave"
+            >{{ $t('packages_dag_button_confirm') }}</ElButton
+          >
+        </span>
+      </template>
     </ElDialog>
   </div>
 </template>
@@ -166,30 +232,38 @@ import NodeIcon from '@tap/dag/src/components/NodeIcon'
 export default {
   name: 'NodeLog',
 
-  components: { NodeIcon, VIcon, TimeSelect, DynamicScroller, DynamicScrollerItem, VEmpty, VCollapse },
+  components: {
+    NodeIcon,
+    VIcon,
+    TimeSelect,
+    DynamicScroller,
+    DynamicScrollerItem,
+    VEmpty,
+    VCollapse,
+  },
 
   props: {
     dataflow: {
       type: Object,
-      default: () => {}
+      default: () => {},
     },
     logsData: {
       type: Object,
       default: () => {
         return {
           total: 0,
-          items: []
+          items: [],
         }
-      }
+      },
     },
     hideFilter: {
       type: Boolean,
-      default: false
+      default: false,
     },
     logTotals: {
       type: Array,
-      default: () => []
-    }
+      default: () => [],
+    },
   },
 
   data() {
@@ -200,20 +274,20 @@ export default {
       checkItems: [
         {
           label: 'DEBUG',
-          text: 'DEBUG'
+          text: 'DEBUG',
         },
         {
           label: 'INFO',
-          text: 'INFO'
+          text: 'INFO',
         },
         {
           label: 'WARN',
-          text: 'WARN'
+          text: 'WARN',
         },
         {
           label: 'ERROR',
-          text: 'ERROR'
-        }
+          text: 'ERROR',
+        },
       ],
       timer: null,
       downloadLoading: false,
@@ -227,53 +301,53 @@ export default {
         WARN: 'warning',
         ERROR: 'error',
         FATAL: 'error',
-        DEBUG: 'debug'
+        DEBUG: 'debug',
       },
       newPageObj: {
         page: 0,
         pageSize: 50,
-        total: 0
+        total: 0,
       },
       oldPageObj: {
         page: 0,
         pageSize: 50,
-        total: 0
+        total: 0,
       },
       isScrollBottom: false,
       form: {
         level: 'INFO',
         intervalCeiling: 500,
-        recordCeiling: 500
+        recordCeiling: 500,
       },
       dialog: false,
       timeOptions: [
         {
           label: i18n.t('packages_dag_components_log_quanbu'),
-          value: 'full'
+          value: 'full',
         },
         {
           label: i18n.t('packages_dag_components_log_zuijingexiaoshi'),
-          value: '6h'
+          value: '6h',
         },
         {
           label: i18n.t('packages_dag_components_log_zuixintian'),
-          value: '1d'
+          value: '1d',
         },
         {
           label: i18n.t('packages_dag_components_log_zuijintian'),
-          value: '3d'
+          value: '3d',
         },
         {
           label: i18n.t('packages_dag_components_log_zidingyishijian'),
           type: 'custom',
-          value: 'custom'
-        }
+          value: 'custom',
+        },
       ],
       quotaTimeType: 'full',
       quotaTime: [],
       newFilter: {},
       showNoMore: false,
-      extraEnterCount: 0
+      extraEnterCount: 0,
     }
   },
 
@@ -282,7 +356,7 @@ export default {
 
     nodeLogCountMap() {
       return this.logTotals
-        .filter(t => t.nodeId)
+        .filter((t) => t.nodeId)
         .reduce((cur, next) => {
           const count = cur[next.nodeId] || 0
           return { ...cur, [next.nodeId]: count + next.count }
@@ -290,7 +364,7 @@ export default {
     },
 
     items() {
-      return this.allNodes.filter(t => !!this.nodeLogCountMap[t.id])
+      return this.allNodes.filter((t) => !!this.nodeLogCountMap[t.id])
     },
 
     firstStartTime() {
@@ -318,12 +392,14 @@ export default {
     },
 
     isEnterTimer() {
-      return this.quotaTimeType !== 'custom' && this.dataflow?.status === 'running'
+      return (
+        this.quotaTimeType !== 'custom' && this.dataflow?.status === 'running'
+      )
     },
 
     logSetting() {
       return this.dataflow?.logSetting || {}
-    }
+    },
   },
 
   watch: {
@@ -336,14 +412,14 @@ export default {
     },
     'dataflow.startTime'() {
       this.init()
-    }
+    },
   },
 
   mounted() {
     this.init()
   },
 
-  destroyed() {
+  unmounted() {
     this.clearTimer()
   },
 
@@ -353,13 +429,13 @@ export default {
         this.timeOptions = [
           {
             label: i18n.t('packages_dag_components_log_quanbu'),
-            value: 'full'
+            value: 'full',
           },
           {
             label: i18n.t('packages_dag_components_log_zidingyishijian'),
             type: 'custom',
-            value: 'custom'
-          }
+            value: 'custom',
+          },
         ]
       }
       this.extraEnterCount = 0
@@ -380,7 +456,7 @@ export default {
       this.oldPageObj = {
         page: 0,
         pageSize: 20,
-        total: 0
+        total: 0,
       }
     },
 
@@ -388,7 +464,7 @@ export default {
       this.newPageObj = {
         page: 0,
         pageSize: 20,
-        total: 0
+        total: 0,
       }
     },
 
@@ -403,7 +479,8 @@ export default {
         // 不满足轮询条件，则多请求几次结束
         if (
           this.isEnterTimer ||
-          (['error', 'schedule_failed'].includes(this.dataflow.status) && ++this.extraEnterCount < 5)
+          (['error', 'schedule_failed'].includes(this.dataflow.status) &&
+            ++this.extraEnterCount < 5)
         ) {
           this.loadNew()
         }
@@ -421,7 +498,9 @@ export default {
 
     changeTime(val, isTime, source) {
       this.quotaTimeType = source?.type ?? val
-      this.quotaTime = isTime ? val?.split(',')?.map(t => Number(t)) : this.getTimeRange(val)
+      this.quotaTime = isTime
+        ? val?.split(',')?.map((t) => Number(t))
+        : this.getTimeRange(val)
       this.init()
     },
 
@@ -435,7 +514,8 @@ export default {
       if (this.list.length && target.scrollTop <= 0) {
         this.loadOld()
       }
-      this.isScrollBottom = target.scrollHeight - target.scrollTop <= target.clientHeight
+      this.isScrollBottom =
+        target.scrollHeight - target.scrollTop <= target.clientHeight
     },
 
     loadOld(callback) {
@@ -489,7 +569,7 @@ export default {
       } else {
         this.newFilter.page++
         filter = Object.assign({}, this.newFilter, {
-          page: this.newFilter.page
+          page: this.newFilter.page,
         })
       }
       if (!filter.start || !filter.end) {
@@ -517,20 +597,36 @@ export default {
 
     getFormatRow(rowData = []) {
       let result = deepCopy(rowData)
-      result.forEach(row => {
+      result.forEach((row) => {
         let obj = {}
         row.timestamp = new Date(row.date).getTime()
         obj.level = row.level
         obj.timestamp = this.formatTime(row.timestamp)
         obj.nodeName = this.getHighlightSpan(row.nodeName)
-        obj.logTags = row.logTags?.map(t => `[${this.getHighlightSpan(t)}]`) || []
+        obj.logTags =
+          row.logTags?.map((t) => `[${this.getHighlightSpan(t)}]`) || []
         obj.data = row.data.length ? JSON.stringify(row.data?.slice(0, 10)) : ''
         obj.message = row.message?.slice(0, 10000)
         obj.errorStack = row.errorStack?.slice(0, 20000)
 
-        const { level, timestamp, nodeName, logTags, data, message, errorStack } = obj
-        const jsonStr = JSON.stringify(Object.assign({ message, errorStack }, obj), null, '\t')?.slice(0, 200)
-        row.titleDomStr = this.getTitleStringDom({ timestamp, nodeName }, jsonStr)
+        const {
+          level,
+          timestamp,
+          nodeName,
+          logTags,
+          data,
+          message,
+          errorStack,
+        } = obj
+        const jsonStr = JSON.stringify(
+          Object.assign({ message, errorStack }, obj),
+          null,
+          '\t'
+        )?.slice(0, 200)
+        row.titleDomStr = this.getTitleStringDom(
+          { timestamp, nodeName },
+          jsonStr
+        )
         row.jsonDomStr = this.getJsonString([
           { level },
           { timestamp },
@@ -538,7 +634,7 @@ export default {
           { logTags },
           { data },
           { message },
-          { errorStack }
+          { errorStack },
         ])
       })
       return result
@@ -547,7 +643,9 @@ export default {
       let result = ''
       result += `<span class="ml-1">${row.timestamp}</span>`
       if (row.nodeName) {
-        result += `<span class="ml-1">[${this.getHighlightSpan(row.nodeName)}]</span>`
+        result += `<span class="ml-1">[${this.getHighlightSpan(
+          row.nodeName
+        )}]</span>`
       }
       if (extra) {
         result += `<span class="ml-1">${extra}</span>`
@@ -580,7 +678,9 @@ export default {
     },
 
     getOldFilter() {
-      const [start, end] = this.quotaTime.length ? this.quotaTime : this.getTimeRange(this.quotaTimeType)
+      const [start, end] = this.quotaTime.length
+        ? this.quotaTime
+        : this.getTimeRange(this.quotaTimeType)
       let { id: taskId, taskRecordId } = this.dataflow || {}
       const { query } = this.$route
       if (query?.taskRecordId) {
@@ -597,13 +697,16 @@ export default {
         taskRecordId,
         nodeId: this.activeNodeId === 'all' ? null : this.activeNodeId,
         search: this.keyword,
-        levels: this.checkList
+        levels: this.checkList,
       }
       return params
     },
 
     getNewFilter() {
-      const [start, end] = [this.list.at(-1)?.timestamp || this.resetDataTime, Time.now()]
+      const [start, end] = [
+        this.list.at(-1)?.timestamp || this.resetDataTime,
+        Time.now(),
+      ]
       let { id: taskId, taskRecordId } = this.dataflow || {}
       const { query } = this.$route
       if (query?.taskRecordId) {
@@ -620,7 +723,7 @@ export default {
         taskRecordId,
         nodeId: this.activeNodeId === 'all' ? null : this.activeNodeId,
         search: this.keyword,
-        levels: this.checkList
+        levels: this.checkList,
       }
       this.newFilter = params
       return params
@@ -644,7 +747,9 @@ export default {
     },
 
     handleDownload() {
-      const [start, end] = this.quotaTime.length ? this.quotaTime : this.getTimeRange(this.quotaTimeType)
+      const [start, end] = this.quotaTime.length
+        ? this.quotaTime
+        : this.getTimeRange(this.quotaTimeType)
       let { id: taskId, taskRecordId } = this.dataflow || {}
       const { query } = this.$route
       if (query?.taskRecordId) {
@@ -655,16 +760,18 @@ export default {
         start,
         end,
         taskId,
-        taskRecordId
+        taskRecordId,
       }
       this.downloadLoading = true
       monitoringLogsApi
         .export(filter)
-        .then(data => {
+        .then((data) => {
           downloadBlob(data)
         })
         .catch(() => {
-          this.$message.error(i18n.t('packages_dag_components_log_xiazaishibai'))
+          this.$message.error(
+            i18n.t('packages_dag_components_log_xiazaishibai')
+          )
         })
         .finally(() => {
           this.downloadLoading = false
@@ -677,7 +784,7 @@ export default {
         this.form = {
           level,
           intervalCeiling,
-          recordCeiling
+          recordCeiling,
         }
       }
       this.dialog = true
@@ -690,7 +797,7 @@ export default {
     handleSave() {
       const { form } = this
       let params = {
-        level: form.level
+        level: form.level,
       }
       if (form.level === 'DEBUG') {
         params.intervalCeiling = form.intervalCeiling
@@ -753,8 +860,8 @@ export default {
 
     getTime() {
       return Time.now()
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -782,13 +889,13 @@ export default {
   white-space: pre-wrap;
   word-break: break-all;
 }
-
 .log-list {
   background-color: rgba(229, 236, 255, 0.22);
   ::v-deep {
     .log-line {
       width: 100%;
-      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier,
+        monospace;
       .info-level {
         color: #c9cdd4;
       }
@@ -809,7 +916,8 @@ export default {
     .empty-wrap {
       margin: 24px 0;
     }
-    .vue-recycle-scroller.direction-vertical .vue-recycle-scroller__item-wrapper {
+    .vue-recycle-scroller.direction-vertical
+      .vue-recycle-scroller__item-wrapper {
       overflow: visible;
     }
     .log__label {
@@ -833,7 +941,6 @@ export default {
   line-height: 32px;
   border-radius: 6px;
   cursor: pointer;
-
   &:hover,
   &.active {
     background-color: rgba(229, 236, 255, 0.3);
