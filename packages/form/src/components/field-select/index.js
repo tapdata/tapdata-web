@@ -28,12 +28,12 @@ const DefineFieldSelect = defineComponent({
                   </VIcon>
                 )}
               </div>
-            ),
+            )
           }}
         />
       )
     }
-  },
+  }
 })
 
 export const FieldSelect = connect(

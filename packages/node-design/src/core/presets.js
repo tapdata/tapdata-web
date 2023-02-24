@@ -5,7 +5,7 @@ import {
   useAutoScrollEffect,
   useContentEditableEffect,
   useWorkspaceEffect,
-  useDragDropEffect,
+  useDragDropEffect
 } from './effects'
 
 export const DEFAULT_EFFECTS = [
@@ -14,11 +14,7 @@ export const DEFAULT_EFFECTS = [
   useAutoScrollEffect,
   useContentEditableEffect,
   useWorkspaceEffect,
-  useDragDropEffect,
+  useDragDropEffect
 ]
 
-export const DEFAULT_DRIVERS = [
-  MouseClickDriver,
-  DragDropDriver,
-  MouseMoveDriver,
-]
+export const DEFAULT_DRIVERS = [MouseClickDriver, DragDropDriver, MouseMoveDriver]

@@ -46,9 +46,7 @@
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
               >
-                <i class="click-style">{{
-                  $t('agent_deploy_upgrade_button_copy')
-                }}</i>
+                <i class="click-style">{{ $t('agent_deploy_upgrade_button_copy') }}</i>
               </span>
             </ElTooltip>
           </div>
@@ -76,9 +74,7 @@
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
               >
-                <i class="click-style">{{
-                  $t('agent_deploy_upgrade_button_copy')
-                }}</i>
+                <i class="click-style">{{ $t('agent_deploy_upgrade_button_copy') }}</i>
               </span>
             </ElTooltip>
           </div>
@@ -86,10 +82,7 @@
         <div>{{ $t('agent_upgrade_step_linux_third') }}</div>
       </div>
       <!--   AliComputenest   -->
-      <div
-        v-else-if="downLoadType === 'AliComputenest'"
-        class="content-container"
-      >
+      <div v-else-if="downLoadType === 'AliComputenest'" class="content-container">
         <div class="py-2 text-style">{{ $t('agent_upgrade_step_title') }}</div>
         <div>
           {{ $t('dfs_agent_download_upgradeversion_denglualiyun') }}
@@ -97,9 +90,7 @@
             type="primary"
             href="https://computenest.console.aliyun.com/user/cn-hangzhou/serviceInstance/private"
             target="_blank"
-            >{{
-              $t('dfs_agent_download_upgradeversion_jisuanchaodenglu')
-            }}</el-link
+            >{{ $t('dfs_agent_download_upgradeversion_jisuanchaodenglu') }}</el-link
           >
         </div>
         <div class="ml-2">
@@ -130,9 +121,7 @@
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
               >
-                <i class="click-style">{{
-                  $t('agent_deploy_upgrade_button_copy')
-                }}</i>
+                <i class="click-style">{{ $t('agent_deploy_upgrade_button_copy') }}</i>
               </span>
             </ElTooltip>
           </div>
@@ -183,9 +172,7 @@
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
               >
-                <i class="click-style">{{
-                  $t('agent_deploy_upgrade_button_copy')
-                }}</i>
+                <i class="click-style">{{ $t('agent_deploy_upgrade_button_copy') }}</i>
               </span>
             </ElTooltip>
           </div>
@@ -194,9 +181,7 @@
       </div>
     </main>
     <footer class="footer">
-      <ElButton type="primary" @click="goBack()">{{
-        $t('button_finish')
-      }}</ElButton>
+      <ElButton type="primary" @click="goBack()">{{ $t('button_finish') }}</ElButton>
     </footer>
   </section>
 </template>
@@ -218,14 +203,14 @@ export default {
         { name: 'Windows (64 bit)', value: 'windows' },
         {
           name: i18n.t('dfs_agent_download_agentdownloadmodal_aliyunjisuan'),
-          value: 'AliComputenest',
-        },
+          value: 'AliComputenest'
+        }
       ],
       showTooltip: false,
       agentId: '',
       downloadUrl: '',
       token: '',
-      version: '',
+      version: ''
       // user: window.__USER_INFO__ || {}
     }
   },
@@ -237,10 +222,10 @@ export default {
         windows: `tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`,
         Linux: `./tapdata stop agent && rm -f tapdata-bak && mv tapdata tapdata-bak && rm -f .tapdata-agent && wget "${downloadUrl}tapdata" && chmod +x tapdata && ./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`,
         AliComputenest: `./tapdata stop agent && rm -f tapdata-bak && mv tapdata tapdata-bak && rm -f .tapdata-agent && wget "${downloadUrl}tapdata" && chmod +x tapdata && ./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`,
-        Docker: `./tapdata stop agent && rm -f tapdata-bak && mv tapdata tapdata-bak && rm -f .tapdata-agent && wget "${downloadUrl}tapdata" && chmod +x tapdata && ./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`,
+        Docker: `./tapdata stop agent && rm -f tapdata-bak && mv tapdata tapdata-bak && rm -f .tapdata-agent && wget "${downloadUrl}tapdata" && chmod +x tapdata && ./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`
       }
       return map[this.downLoadType]
-    },
+    }
   },
   created() {
     this.loadData()
@@ -251,7 +236,7 @@ export default {
       this.downType = [
         { name: 'Linux (64 bit)', value: 'Linux' },
         { name: 'Docker', value: 'Docker' },
-        { name: 'Windows (64 bit)', value: 'windows' },
+        { name: 'Windows (64 bit)', value: 'windows' }
       ]
     }
   },
@@ -259,17 +244,13 @@ export default {
     loadData() {
       let agentId = this.$route.query.agentId
       this.agentId = agentId
-      this.$axios
-        .get('api/tcm/config/version/latest/' + agentId)
-        .then((data) => {
-          this.token = data.token
-          this.version = data.version
-          this.$axios
-            .get(`api/tcm/productRelease/${data.version}`)
-            .then((downloadUrl) => {
-              this.downloadUrl = downloadUrl
-            })
+      this.$axios.get('api/tcm/config/version/latest/' + agentId).then(data => {
+        this.token = data.token
+        this.version = data.version
+        this.$axios.get(`api/tcm/productRelease/${data.version}`).then(downloadUrl => {
+          this.downloadUrl = downloadUrl
         })
+      })
     },
     // 选择下载安装类型
     chooseDownLoadType(val) {
@@ -303,10 +284,9 @@ export default {
     loadChat() {
       let $zoho = $zoho || {}
       $zoho.salesiq = $zoho.salesiq || {
-        widgetcode:
-          '39c2c81d902fdf4fbcc9b55f1268168c6d58fe89b1de70d9adcb5c4c13d6ff4d604d73c57c92b8946ff9b4782f00d83f',
+        widgetcode: '39c2c81d902fdf4fbcc9b55f1268168c6d58fe89b1de70d9adcb5c4c13d6ff4d604d73c57c92b8946ff9b4782f00d83f',
         values: {},
-        ready: function () {},
+        ready: function () {}
       }
       window.$zoho = $zoho
       let d = document
@@ -325,11 +305,11 @@ export default {
         $zoho.salesiq.visitor.info({
           tapdata_username: user.nickname || user.username,
           tapdata_phone: user.telephone,
-          tapdata_email: user.email,
+          tapdata_email: user.email
         })
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

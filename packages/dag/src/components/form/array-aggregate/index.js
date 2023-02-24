@@ -19,25 +19,16 @@ export const ArrayAggregate = connect(
             result._id = {
               // _tapd8_sub_name: aggregation.name
             }
-            aggregation.groupByExpression.forEach((key) => {
+            aggregation.groupByExpression.forEach(key => {
               result._id[key] = 'XXX'
               result[key] = 'XXX'
             })
           }
-          result[aggregation.aggFunction] =
-            aggregation.aggFunction === 'COUNT'
-              ? 100
-              : aggregation.aggExpression
+          result[aggregation.aggFunction] = aggregation.aggFunction === 'COUNT' ? 100 : aggregation.aggExpression
 
-          return (
-            <Highlight
-              class="mt-0"
-              language="json"
-              code={JSON.stringify(result, null, 2)}
-            ></Highlight>
-          )
+          return <Highlight class="mt-0" language="json" code={JSON.stringify(result, null, 2)}></Highlight>
         }
-      },
+      }
     })
   )
 )

@@ -11,7 +11,7 @@ import { defineComponent } from 'vue-demi'
 export const DisplayStyleSetter = observer(
   defineComponent({
     props: {
-      value: { type: String },
+      value: { type: String }
     },
     setup: (props, { emit }) => {
       const fieldRef = useField()
@@ -24,7 +24,7 @@ export const DisplayStyleSetter = observer(
               <RadioGroup
                 class={prefix + '-radio'}
                 value={props.value}
-                onInput={(label) => {
+                onInput={label => {
                   emit('change', label)
                 }}
               >
@@ -46,7 +46,7 @@ export const DisplayStyleSetter = observer(
               name="flex"
               basePath={field.address.parent()}
               visible={false}
-              reactions={(flexField) => {
+              reactions={flexField => {
                 flexField.visible = field.value === 'flex'
               }}
               component={[FlexStyleSetter]}
@@ -54,6 +54,6 @@ export const DisplayStyleSetter = observer(
           </FragmentComponent>
         )
       }
-    },
+    }
   })
 )

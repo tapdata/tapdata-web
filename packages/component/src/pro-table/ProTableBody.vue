@@ -12,7 +12,7 @@ export default {
   computed: {
     draggable() {
       return !!this.table.draggable
-    },
+    }
   },
 
   methods: {
@@ -50,12 +50,12 @@ export default {
       let displayStyle = display
         ? null
         : {
-            display: 'none',
+            display: 'none'
           }
       const height = this.getRowHeight($index)
       const heightStyle = height
         ? {
-            height,
+            height
           }
         : null
 
@@ -65,15 +65,15 @@ export default {
           style={[displayStyle, this.getRowStyle(row, $index), heightStyle]}
           class={rowClasses}
           key={this.getKeyOfRow(row, $index)}
-          nativeOn-dblclick={($event) => this.handleDoubleClick($event, row)}
-          nativeOn-click={($event) => this.handleClick($event, row)}
-          nativeOn-contextmenu={($event) => this.handleContextMenu($event, row)}
-          nativeOn-mouseenter={(_) => this.handleMouseEnter($index)}
+          nativeOn-dblclick={$event => this.handleDoubleClick($event, row)}
+          nativeOn-click={$event => this.handleClick($event, row)}
+          nativeOn-contextmenu={$event => this.handleContextMenu($event, row)}
+          nativeOn-mouseenter={_ => this.handleMouseEnter($index)}
           nativeOn-mouseleave={this.handleMouseLeave}
-          nativeOn-dragstart={($event) => this.handleDragStart($event, row)}
-          nativeOn-dragover={($event) => this.handleDragOver($event, row)}
-          nativeOn-dragend={($event) => this.handleDragEnd($event, row)}
-          nativeOn-drop={($event) => this.handleDragDrop($event, row)}
+          nativeOn-dragstart={$event => this.handleDragStart($event, row)}
+          nativeOn-dragover={$event => this.handleDragOver($event, row)}
+          nativeOn-dragend={$event => this.handleDragEnd($event, row)}
+          nativeOn-drop={$event => this.handleDragDrop($event, row)}
           columns={columns}
           row={row}
           index={$index}
@@ -94,7 +94,7 @@ export default {
           fixed={this.fixed}
         ></TableRow>
       )
-    },
-  },
+    }
+  }
 }
 </script>

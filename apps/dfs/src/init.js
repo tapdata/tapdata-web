@@ -24,10 +24,10 @@ window.$vueApp.use(VueClipboard)
 const originalPush = VueRouter.prototype.push
 const originalReplace = VueRouter.prototype.replace
 VueRouter.prototype.push = function push(location) {
-  return originalPush.call(this, location).catch((err) => err)
+  return originalPush.call(this, location).catch(err => err)
 }
 VueRouter.prototype.replace = function replace(location) {
-  return originalReplace.call(this, location).catch((err) => err)
+  return originalReplace.call(this, location).catch(err => err)
 }
 window.$vueApp.use(FormBuilder)
 
@@ -40,13 +40,9 @@ window.$vueApp.mixin({
     let wsOptions = this.$options.wsOptions
     // 根实例才有ws
     if (wsOptions) {
-      window.$vueApp.config.globalProperties.$ws = new WSClient(
-        wsOptions.url,
-        wsOptions.protocols,
-        wsOptions
-      )
+      window.$vueApp.config.globalProperties.$ws = new WSClient(wsOptions.url, wsOptions.protocols, wsOptions)
     }
-  },
+  }
 })
 
 window.$vueApp.config.globalProperties.$confirm = (message, title, options) => {
@@ -67,7 +63,7 @@ export default ({ routes }) => {
   const init = () => {
     const router = VueRouter.createRouter({
       history: VueRouter.createWebHashHistory(),
-      routes: routes,
+      routes: routes
     })
     startTimeOnPage(router)
 
@@ -86,9 +82,9 @@ export default ({ routes }) => {
       store,
       i18n,
       wsOptions: {
-        url: wsUrl,
+        url: wsUrl
       },
-      render: (h) => h(App),
+      render: h => h(App)
     }.$mount('#app')
 
     // 路由守卫
@@ -103,7 +99,7 @@ export default ({ routes }) => {
           'DataflowEditor',
           'MigrateCreate',
           'MigrateEditor',
-          'MigrateEditor',
+          'MigrateEditor'
         ].includes(to.name) &&
         domainName === 'demo.cloud.tapdata.net' &&
         !removeReadonly
@@ -121,7 +117,7 @@ export default ({ routes }) => {
   let getData = () => {
     window.axios
       .get('api/tcm/user')
-      .then((data) => {
+      .then(data => {
         let userInfo = data
         window.__USER_INFO__ = userInfo
 
@@ -129,11 +125,11 @@ export default ({ routes }) => {
         init()
 
         // 设置服务器时间
-        timeStampApi.get().then((t) => {
+        timeStampApi.get().then(t => {
           Time.setTime(t)
         })
       })
-      .catch((err) => {
+      .catch(err => {
         // 获取用户信息失败
         if (count < 4) {
           // eslint-disable-next-line
@@ -141,12 +137,7 @@ export default ({ routes }) => {
           setTimeout(() => {
             count++
             // eslint-disable-next-line
-            console.log(
-              i18n.t('dfs_src_init_chongxinchangshihuo')(
-                'dfs_src_init_chongxinchangshihuo',
-                { val1: count }
-              )
-            )
+            console.log(i18n.t('dfs_src_init_chongxinchangshihuo')('dfs_src_init_chongxinchangshihuo', { val1: count }))
             getData()
           }, 3000)
         } else {
@@ -158,7 +149,7 @@ export default ({ routes }) => {
         }
       })
   }
-  window.axios.get('config/config.json').then((res) => {
+  window.axios.get('config/config.json').then(res => {
     window.__config__ = res.data
     getData()
   })

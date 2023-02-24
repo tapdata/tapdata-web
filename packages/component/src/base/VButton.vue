@@ -8,21 +8,21 @@ export default {
     ...Button.props,
     autoLoading: {
       type: Boolean,
-      default: false,
+      default: false
     },
     innerLoading: {
       type: Boolean,
-      default: false,
+      default: false
     },
     loadingColor: {
       type: String,
-      default: '',
-    },
+      default: ''
+    }
   },
   data() {
     return {
       comLoading: false,
-      '--my-color': 'red',
+      '--my-color': 'red'
     }
   },
   render() {
@@ -54,14 +54,14 @@ export default {
         props: {
           ...this.$props,
           loading: this.$props.loading || this.comLoading,
-          size: this.$props.size || 'mini',
+          size: this.$props.size || 'mini'
         },
         on: { ...this.$listeners, click: clickFnc },
-        class: className,
+        class: className
       }),
       [this.$slots.default && this.$slots.default()]
     )
-  },
+  }
 }
 </script>
 

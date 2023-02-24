@@ -6,10 +6,10 @@ import { defineComponent, computed, ref } from 'vue-demi'
 export const TextWidget = observer(
   defineComponent({
     props: {
-      token: [String, Object],
+      token: [String, Object]
     },
     setup(props, ctx) {
-      const takeLocale = (message) => {
+      const takeLocale = message => {
         if (isStr(message)) return message
         if (isPlainObj(message)) {
           const lang = GlobalRegistry.getDesignerLanguage()
@@ -20,11 +20,9 @@ export const TextWidget = observer(
         }
         return message
       }
-      const takeMessage = (token) => {
+      const takeMessage = token => {
         if (!token) return
-        const message = isStr(token)
-          ? GlobalRegistry.getDesignerMessage(token)
-          : token
+        const message = isStr(token) ? GlobalRegistry.getDesignerMessage(token) : token
         if (message) return takeLocale(message)
         return token
       }
@@ -41,12 +39,8 @@ export const TextWidget = observer(
       }
 
       return () => (
-        <span>
-          {takeMessage(txt?.value) ||
-            takeMessage(props.token) ||
-            takeMessage(props.defaultMessage)}
-        </span>
+        <span>{takeMessage(txt?.value) || takeMessage(props.token) || takeMessage(props.defaultMessage)}</span>
       )
-    },
+    }
   })
 )

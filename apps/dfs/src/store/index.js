@@ -6,8 +6,8 @@ import classification from '@tap/component/src/store'
 const store = Vuex.createStore({
   modules: {
     dataflow,
-    classification,
-  },
+    classification
+  }
 })
 
 export default store

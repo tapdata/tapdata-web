@@ -13,10 +13,7 @@ import { VIcon } from '@tap/component'
 import getRouter from '@/router'
 import VConfirm from '@/components/v-confirm'
 import { settingsApi, usersApi, timeStampApi } from '@tap/api'
-import {
-  getCurrentLanguage,
-  setCurrentLanguage,
-} from '@tap/i18n/src/shared/util'
+import { getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
 import FormBuilder from '@tap/component/src/form-builder'
 
 import '@/plugins/element'
@@ -37,13 +34,9 @@ window.$vueApp.mixin({
     let wsOptions = this.$options.wsOptions
     // 根实例才有ws
     if (wsOptions) {
-      window.$vueApp.config.globalProperties.$ws = new WSClient(
-        wsOptions.url,
-        wsOptions.protocols,
-        wsOptions
-      )
+      window.$vueApp.config.globalProperties.$ws = new WSClient(wsOptions.url, wsOptions.protocols, wsOptions)
     }
-  },
+  }
 })
 
 // Vue.prototype.$api = factory
@@ -58,13 +51,13 @@ window._TAPDATA_OPTIONS_ = {
   logoWidth: process.env.VUE_APP_LOGO_WIDTH,
   logoHeight: process.env.VUE_APP_LOGO_HEIGHT,
   loginSize: process.env.VUE_APP_LOGIN_IMG_SIZE,
-  homeUrl: process.env.VUE_APP_HOME_URL,
+  homeUrl: process.env.VUE_APP_HOME_URL
 }
 
-window.getSettingByKey = (key) => {
+window.getSettingByKey = key => {
   let value = ''
 
-  let setting = window?.__settings__.find((it) => it.key === key) || {}
+  let setting = window?.__settings__.find(it => it.key === key) || {}
   value = setting.isArray ? setting.value.split(',') : setting.value
   return value
 }
@@ -78,7 +71,7 @@ window.$vueApp.config.globalProperties.$confirm = (message, title, options) => {
       Object.assign(
         {
           cancelButtonText: window.App.$t('button_cancel'),
-          confirmButtonText: window.App.$t('button_confirm'),
+          confirmButtonText: window.App.$t('button_confirm')
         },
         options
       )
@@ -94,10 +87,7 @@ window.$vueApp.config.globalProperties.$confirm = (message, title, options) => {
   })
 }
 
-const IS_IFRAME =
-  (getUrlSearch('frame') ||
-    sessionStorage.getItem('IS_IFRAME') ||
-    window.self !== window.top) + ''
+const IS_IFRAME = (getUrlSearch('frame') || sessionStorage.getItem('IS_IFRAME') || window.self !== window.top) + ''
 if (IS_IFRAME) {
   sessionStorage.setItem('IS_IFRAME', IS_IFRAME)
 }
@@ -105,8 +95,7 @@ const TOKEN = getUrlSearch('token')
 const URL_LANG = getUrlSearch('lang')
 
 // 西工大的case
-;['zh-CN', 'zh-TW', 'en'].includes(URL_LANG) &&
-  localStorage.setItem('lang', URL_LANG)
+;['zh-CN', 'zh-TW', 'en'].includes(URL_LANG) && localStorage.setItem('lang', URL_LANG)
 
 if (TOKEN) {
   Cookie.set('access_token', TOKEN)
@@ -116,14 +105,12 @@ if (TOKEN) {
 
 let token = Cookie.get('access_token')
 
-let init = (settings) => {
+let init = settings => {
   window.__settings__ = settings
   let lang = getCurrentLanguage()
   setCurrentLanguage(lang, i18n)
 
-  document.title =
-    /*window.getSettingByKey('PRODUCT_TITLE') ||*/ process.env
-      .VUE_APP_PAGE_TITLE || 'Tapdata'
+  document.title = /*window.getSettingByKey('PRODUCT_TITLE') ||*/ process.env.VUE_APP_PAGE_TITLE || 'Tapdata'
 
   var loc = window.location,
     wsUrl = 'ws:'
@@ -133,10 +120,7 @@ let init = (settings) => {
   wsUrl += `//${loc.host}${location.pathname.replace(/\/$/, '')}/ws/agent`
 
   window.App = window.$vueApp = Vue.createApp(App)
-  window.$vueApp.config.globalProperties.routerAppend = (
-    path,
-    pathToAppend
-  ) => {
+  window.$vueApp.config.globalProperties.routerAppend = (path, pathToAppend) => {
     return path + (path.endsWith('/') ? '' : '/') + pathToAppend
   }
   window.$vueApp.use(store)
@@ -145,7 +129,7 @@ let init = (settings) => {
 }
 settingsApi
   .get()
-  .then(async (data) => {
+  .then(async data => {
     let initData = data || []
     if (initData.length) {
       localStorage.setItem('TAPDATA_SETTINGS', JSON.stringify(initData))
@@ -160,11 +144,11 @@ settingsApi
     }
     init(initData)
     // 设置服务器时间
-    timeStampApi.get().then((t) => {
+    timeStampApi.get().then(t => {
       Time.setTime(t)
     })
   })
-  .catch((err) => {
+  .catch(err => {
     // eslint-disable-next-line
     console.log(i18n.t('daas_src_main_qingqiuquanjupei') + err)
   })

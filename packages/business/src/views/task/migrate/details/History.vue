@@ -1,11 +1,6 @@
 <template>
   <div>
-    <VTable
-      :remoteMethod="remoteMethod"
-      :remote-data="ids"
-      :columns="columns"
-      :hide-on-single-page="true"
-    >
+    <VTable :remoteMethod="remoteMethod" :remote-data="ids" :columns="columns" :hide-on-single-page="true">
       <template v-slot:desc="scope">
         <span>{{ mapData[scope.row.operation] }}</span>
       </template>
@@ -23,40 +18,40 @@ export default {
   props: {
     ids: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     operations: {
       type: Array,
-      default: () => [],
-    },
+      default: () => []
+    }
   },
   data() {
     return {
       mapData: {
         start: this.$t('packages_business_task_start_task'),
         stop: this.$t('packages_business_task_stop_task'),
-        forceStop: this.$t('packages_business_task_info_forced_stop_task'),
+        forceStop: this.$t('packages_business_task_info_forced_stop_task')
       },
       columns: [
         {
           label: this.$t('packages_business_task_name'),
-          prop: 'parameter1',
+          prop: 'parameter1'
         },
         {
           label: this.$t('packages_business_task_info_running_time'),
           prop: 'createTime',
-          dataType: 'time',
+          dataType: 'time'
         },
         {
           label: this.$t('packages_business_task_info_operator'),
-          prop: 'username',
+          prop: 'username'
         },
         {
           label: this.$t('packages_business_task_info_operator_content'),
           prop: 'desc',
-          slotName: 'desc',
-        },
-      ],
+          slotName: 'desc'
+        }
+      ]
     }
   },
   methods: {
@@ -65,29 +60,29 @@ export default {
       const { ids, operations } = this
       let where = {
         sourceId: {
-          inq: ids,
+          inq: ids
         },
         modular: 'migration',
         operation: {
-          inq: operations,
-        },
+          inq: operations
+        }
       }
       let filter = {
         where: where,
         limit: size,
-        skip: size * (current - 1),
+        skip: size * (current - 1)
       }
       return userLogsApi
         .get({
-          filter: JSON.stringify(filter),
+          filter: JSON.stringify(filter)
         })
-        .then((data) => {
+        .then(data => {
           return {
             total: data?.total || 0,
-            data: data?.items || [],
+            data: data?.items || []
           }
         })
-    },
-  },
+    }
+  }
 }
 </script>

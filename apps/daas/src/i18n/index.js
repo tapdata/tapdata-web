@@ -17,12 +17,12 @@ import zhTW from './langs/zh-TW'
 const eleLangs = {
   'zh-CN': zhLocale,
   'zh-TW': tcLocale,
-  en: enLocale,
+  en: enLocale
 }
 const localLangs = {
   'zh-CN': zhCN,
   'zh-TW': zhTW,
-  en: en,
+  en: en
 }
 
 locale.i18n((key, value) => i18n.t(key, value)) // 重点：为了实现element插件的多语言切换

@@ -17,11 +17,7 @@
       <div class="mb-4 font-color-light">
         {{ $t('packages_business_create_connection_dialog_neirongCho') }}
       </div>
-      <ConnectionSelector
-        v-bind="$attrs"
-        v-model:visible="visible"
-        @select="handleSelect"
-      ></ConnectionSelector>
+      <ConnectionSelector v-bind="$attrs" v-model:visible="visible" @select="handleSelect"></ConnectionSelector>
     </div>
     <div v-else class="form__content">
       <div class="mb-4 text-center font-color-light">
@@ -48,27 +44,25 @@ export default {
   name: 'Dialog',
   components: {
     ConnectionSelector,
-    ConnectionForm,
+    ConnectionForm
   },
   props: {
     title: {
       type: String,
       default: () => {
-        return i18n.t(
-          'packages_business_create_connection_dialog_xuanzeshujuyuan'
-        )
-      },
+        return i18n.t('packages_business_create_connection_dialog_xuanzeshujuyuan')
+      }
     },
     visible: {
       required: true,
-      value: Boolean,
-    },
+      value: Boolean
+    }
   },
   data() {
     return {
       formParams: {},
       showForm: false,
-      timer: null,
+      timer: null
     }
   },
   methods: {
@@ -95,9 +89,9 @@ export default {
     handleSaveAndMore() {
       $emit(this, 'saveAndMore', ...arguments)
       this.init()
-    },
+    }
   },
-  emits: ['visible', 'update:visible', 'success', 'saveAndMore'],
+  emits: ['visible', 'update:visible', 'success', 'saveAndMore']
 }
 </script>
 

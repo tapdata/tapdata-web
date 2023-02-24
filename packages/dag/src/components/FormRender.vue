@@ -15,8 +15,8 @@ import * as _components from '../components/form'
 const { SchemaField } = createSchemaField({
   components: {
     ...components,
-    ..._components,
-  },
+    ..._components
+  }
 })
 
 export default {
@@ -32,12 +32,12 @@ export default {
         colon: false,
         shallow: false,
         layout: 'vertical',
-        feedbackLayout: 'terse',
-      }),
-    },
+        feedbackLayout: 'terse'
+      })
+    }
   },
 
-  components: { Form, SchemaField },
+  components: { Form, SchemaField }
 }
 </script>
 

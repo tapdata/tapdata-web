@@ -8,12 +8,12 @@
         authority: 'SYNC_category_management',
         types: ['dataflow'],
         viewPage: syncType,
-        title: $t('packages_business_task_migratelist_renwufenlei'),
+        title: $t('packages_business_task_migratelist_renwufenlei')
       }"
       :remoteMethod="getData"
       :default-sort="{ prop: 'last_updated', order: 'descending' }"
       @selection-change="
-        (val) => {
+        val => {
           multipleSelection = val
         }
       "
@@ -21,11 +21,7 @@
       @sort-change="handleSortTable"
     >
       <template v-slot:search>
-        <FilterBar
-          v-model:value="searchParams"
-          :items="filterItems"
-          @fetch="table.fetch(1)"
-        />
+        <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)" />
       </template>
       <template v-slot:operation>
         <div class="buttons">
@@ -47,42 +43,28 @@
           >
             <el-button class="btn-dropdowm" size="mini">
               <!--<i class="iconfont icon-piliang back-btn-icon"></i>-->
-              <span>
-                {{ $t('packages_business_dataFlow_taskBulkOperation') }}</span
-              >
+              <span> {{ $t('packages_business_dataFlow_taskBulkOperation') }}</span>
               <i class="el-icon-arrow-down el-icon--right"></i>
             </el-button>
             <template v-slot:dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item
-                  command="start"
-                  v-readonlybtn="'SYNC_job_operation'"
-                  >{{
-                    $t('packages_business_dataFlow_bulkScheuled')
-                  }}</el-dropdown-item
-                >
-                <el-dropdown-item
-                  command="stop"
-                  v-readonlybtn="'SYNC_job_operation'"
-                  >{{
-                    $t('packages_business_dataFlow_bulkStopping')
-                  }}</el-dropdown-item
-                >
+                <el-dropdown-item command="start" v-readonlybtn="'SYNC_job_operation'">{{
+                  $t('packages_business_dataFlow_bulkScheuled')
+                }}</el-dropdown-item>
+                <el-dropdown-item command="stop" v-readonlybtn="'SYNC_job_operation'">{{
+                  $t('packages_business_dataFlow_bulkStopping')
+                }}</el-dropdown-item>
                 <el-dropdown-item
                   command="initialize"
                   v-readonlybtn="'SYNC_job_operation'"
                   :disabled="$disabledReadonlyUserBtn()"
-                  >{{
-                    $t('packages_business_dataFlow_batchRest')
-                  }}</el-dropdown-item
+                  >{{ $t('packages_business_dataFlow_batchRest') }}</el-dropdown-item
                 >
                 <el-dropdown-item
                   command="del"
                   v-readonlybtn="'SYNC_job_delete'"
                   :disabled="$disabledReadonlyUserBtn()"
-                  >{{
-                    $t('packages_business_dataFlow_batchDelete')
-                  }}</el-dropdown-item
+                  >{{ $t('packages_business_dataFlow_batchDelete') }}</el-dropdown-item
                 >
               </el-dropdown-menu>
             </template>
@@ -97,9 +79,7 @@
               @click="handleCommand('export')"
             >
               <!--<i class="iconfont icon-export back-btn-icon"></i>-->
-              <span>
-                {{ $t('packages_business_dataFlow_dataFlowExport') }}</span
-              >
+              <span> {{ $t('packages_business_dataFlow_dataFlowExport') }}</span>
             </el-button>
             <el-button
               v-if="isDaas"
@@ -132,18 +112,10 @@
         type="selection"
         width="45"
         align="center"
-        :selectable="
-          (row) =>
-            !row.hasChildren &&
-            !$disabledByPermission('SYNC_job_operation_all_data', row.user_id)
-        "
+        :selectable="row => !row.hasChildren && !$disabledByPermission('SYNC_job_operation_all_data', row.user_id)"
       >
       </el-table-column>
-      <el-table-column
-        min-width="240"
-        :label="$t('packages_business_task_list_name')"
-        :show-overflow-tooltip="true"
-      >
+      <el-table-column min-width="240" :label="$t('packages_business_task_list_name')" :show-overflow-tooltip="true">
         <template #default="{ row }">
           <span class="dataflow-name link-primary flex">
             <ElLink
@@ -154,35 +126,20 @@
               @click.stop="handleClickName(row)"
               >{{ row.name }}</ElLink
             >
-            <span
-              v-if="row.listtags"
-              class="justify-content-start ellipsis block"
-            >
-              <span
-                class="tag inline-block"
-                v-for="item in row.listtags"
-                :key="item.id"
-                >{{ item.value }}</span
-              >
+            <span v-if="row.listtags" class="justify-content-start ellipsis block">
+              <span class="tag inline-block" v-for="item in row.listtags" :key="item.id">{{ item.value }}</span>
             </span>
           </span>
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('packages_business_task_list_task_type')"
-        :min-width="colWidth.taskType"
-      >
+      <el-table-column :label="$t('packages_business_task_list_task_type')" :min-width="colWidth.taskType">
         <template #default="{ row }">
           <span>
             {{ row.type ? taskType[row.type] : '' }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="status"
-        :label="$t('packages_business_task_list_status')"
-        :min-width="colWidth.status"
-      >
+      <el-table-column prop="status" :label="$t('packages_business_task_list_status')" :min-width="colWidth.status">
         <template #default="{ row }">
           <TaskStatus :task="row" :agentMap="agentMap" />
         </template>
@@ -207,10 +164,7 @@
           {{ formatTime(row.lastStartDate) }}
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('packages_business_column_operation')"
-        :width="colWidth.operation"
-      >
+      <el-table-column :label="$t('packages_business_column_operation')" :width="colWidth.operation">
         <template #default="{ row }">
           <div class="table-operations" v-if="!row.hasChildren">
             <ElLink
@@ -242,10 +196,7 @@
                 {{ $t('packages_business_task_list_stop') }}
               </ElLink>
             </template>
-            <ElDivider
-              v-readonlybtn="'SYNC_job_operation'"
-              direction="vertical"
-            ></ElDivider>
+            <ElDivider v-readonlybtn="'SYNC_job_operation'" direction="vertical"></ElDivider>
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
@@ -254,10 +205,7 @@
             >
               {{ $t('packages_business_button_edit') }}
             </ElLink>
-            <ElDivider
-              v-readonlybtn="'SYNC_job_edition'"
-              direction="vertical"
-            ></ElDivider>
+            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
@@ -266,10 +214,7 @@
             >
               {{ $t('packages_business_task_list_button_monitor') }}
             </ElLink>
-            <ElDivider
-              v-readonlybtn="'SYNC_job_edition'"
-              direction="vertical"
-            ></ElDivider>
+            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
@@ -278,10 +223,7 @@
             >
               {{ $t('packages_business_task_list_reset') }}
             </ElLink>
-            <ElDivider
-              v-readonlybtn="'SYNC_job_edition'"
-              direction="vertical"
-            ></ElDivider>
+            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
@@ -290,10 +232,7 @@
             >
               {{ $t('packages_business_task_list_copy') }}
             </ElLink>
-            <ElDivider
-              v-readonlybtn="'SYNC_job_edition'"
-              direction="vertical"
-            ></ElDivider>
+            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
@@ -308,17 +247,9 @@
     </TablePage>
     <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
     <!-- 导入 -->
-    <Upload
-      v-if="isDaas"
-      :type="'dataflow'"
-      ref="upload"
-      @success="table.fetch()"
-    ></Upload>
+    <Upload v-if="isDaas" :type="'dataflow'" ref="upload" @success="table.fetch()"></Upload>
     <!--付费 -->
-    <PaidUpgradeDialog
-      v-model:visible="paidUpgradeVisible"
-      :paidPlan="paidPlan"
-    ></PaidUpgradeDialog>
+    <PaidUpgradeDialog v-model:visible="paidUpgradeVisible" :paidPlan="paidPlan"></PaidUpgradeDialog>
     <!-- 删除任务 pg数据源 slot 删除失败 自定义dialog 提示 -->
     <el-dialog
       :title="$t('task_mapping_dialog_hint')"
@@ -347,9 +278,7 @@
               v-clipboard:success="onCopy"
               @mouseleave="showTooltip = false"
             >
-              <i class="click-style">{{
-                $t('agent_deploy_start_install_button_copy')
-              }}</i>
+              <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
             </span>
           </ElTooltip>
         </div>
@@ -371,9 +300,7 @@
               v-clipboard:success="onDelCopy"
               @mouseleave="showDelTooltip = false"
             >
-              <i class="click-style">{{
-                $t('agent_deploy_start_install_button_copy')
-              }}</i>
+              <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
             </span>
           </ElTooltip>
         </div>
@@ -411,7 +338,7 @@ export default {
   props: {
     route: {},
     taskBuried: {},
-    syncType: String,
+    syncType: String
   },
 
   inject: ['checkAgent', 'buried'],
@@ -422,7 +349,7 @@ export default {
     SkipError,
     Upload,
     TaskStatus,
-    PaidUpgradeDialog,
+    PaidUpgradeDialog
   },
 
   mixins: [syncTaskAgent],
@@ -441,39 +368,32 @@ export default {
       order: 'last_updated DESC',
       multipleSelection: [],
       createBtnLoading: false,
-      bulkOperation:
-        this.$has('SYNC_job_export') ||
-        this.$has('SYNC_job_operation') ||
-        this.$has('SYNC_job_delete'),
+      bulkOperation: this.$has('SYNC_job_export') || this.$has('SYNC_job_operation') || this.$has('SYNC_job_delete'),
       taskType: {
         initial_sync: this.$t('packages_business_task_info_initial_sync'),
         cdc: this.$t('packages_business_task_info_initial_cdc'),
         'initial_sync+cdc':
-          this.$t('packages_business_task_info_initial_sync') +
-          '+' +
-          this.$t('packages_business_task_info_initial_cdc'),
+          this.$t('packages_business_task_info_initial_sync') + '+' + this.$t('packages_business_task_info_initial_cdc')
       },
       typeOptions: [
         { label: this.$t('packages_business_select_option_all'), value: '' },
         {
           label: this.$t('packages_business_dataFlow_initial_sync'),
-          value: 'initial_sync',
+          value: 'initial_sync'
         },
         {
           label: this.$t('packages_business_dataFlow_cdc'),
-          value: 'cdc',
+          value: 'cdc'
         },
         {
-          label:
-            this.$t('packages_business_dataFlow_initial_sync') +
-            this.$t('packages_business_dataFlow_cdc'),
-          value: 'initial_sync+cdc',
-        },
+          label: this.$t('packages_business_dataFlow_initial_sync') + this.$t('packages_business_dataFlow_cdc'),
+          value: 'initial_sync+cdc'
+        }
       ],
       searchParams: {
         keyword: '',
         status: '',
-        type: '',
+        type: ''
       },
       //付费升级
       paidUpgradeVisible: false,
@@ -484,7 +404,7 @@ export default {
       copyDelSql: "SELECT pg_drop_replication_slot('${slot_name}');",
       showTooltip: false,
       showDelTooltip: false,
-      failList: [], //错误列表
+      failList: [] //错误列表
     }
   },
 
@@ -497,12 +417,12 @@ export default {
       const options = Object.entries(this.STATUS_MAP).map(([status, item]) => {
         return {
           label: this.$t(item.i18n),
-          value: item.in ? item.in.join(',') : status,
+          value: item.in ? item.in.join(',') : status
         }
       })
       options.unshift({
         label: this.$t('packages_business_task_list_status_all'),
-        value: '',
+        value: ''
       })
       return options
     },
@@ -513,21 +433,21 @@ export default {
         ? {
             taskType: 140,
             status: 130,
-            operation: 340,
+            operation: 340
           }
         : {
             taskType: 80,
             status: 100,
-            operation: 280,
+            operation: 280
           }
-    },
+    }
   },
 
   watch: {
     '$route.query'() {
       this.searchParams = this.$route.query
       this.table.fetch(1)
-    },
+    }
   },
 
   created() {
@@ -570,24 +490,24 @@ export default {
         currentEventTimestamp: true,
         crontabExpressionFlag: true,
         crontabExpression: true,
-        lastStartDate: true,
+        lastStartDate: true
       }
       let where = {
-        syncType,
+        syncType
       }
       if (keyword && keyword.trim()) {
         where.name = { like: toRegExp(keyword), options: 'i' }
       }
       if (tags && tags.length) {
         where['listtags.id'] = {
-          in: tags,
+          in: tags
         }
       }
       type && (where['type'] = type)
       if (status) {
         if (status.includes(',')) {
           where.status = {
-            $in: status.split(','),
+            $in: status.split(',')
           }
         } else {
           where.status = status
@@ -601,13 +521,13 @@ export default {
         limit: size,
         fields: fields,
         skip: (current - 1) * size,
-        where,
+        where
       }
       return taskApi
         .get({
-          filter: JSON.stringify(filter),
+          filter: JSON.stringify(filter)
         })
-        .then((data) => {
+        .then(data => {
           let list = (data?.items || []).map(makeStatusAndDisabled)
 
           // 有选中行，列表刷新后无法更新行数据，比如状态
@@ -626,7 +546,7 @@ export default {
 
           return {
             total: data.total,
-            data: list,
+            data: list
           }
         })
     },
@@ -642,19 +562,19 @@ export default {
           key: 'status',
           type: 'select-inner',
           items: this.statusOptions,
-          selectedWidth: '200px',
+          selectedWidth: '200px'
         },
         {
           label: this.$t('packages_business_task_list_sync_type'),
           key: 'type',
           type: 'select-inner',
-          items: this.typeOptions,
+          items: this.typeOptions
         },
         {
           placeholder: this.$t('packages_business_task_list_name'),
           key: 'keyword',
-          type: 'input',
-        },
+          type: 'input'
+        }
       ]
 
       if (!this.isDaas) {
@@ -666,21 +586,18 @@ export default {
           items: async () => {
             let filter = {
               where: {
-                status: { $in: ['Running'] },
+                status: { $in: ['Running'] }
               },
-              size: 100,
+              size: 100
             }
-            let data = await this.$axios.get(
-              'api/tcm/agent?filter=' +
-                encodeURIComponent(JSON.stringify(filter))
-            )
-            return data.items.map((item) => {
+            let data = await this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter)))
+            return data.items.map(item => {
               return {
                 label: item.name,
-                value: item.tmInfo.agentId,
+                value: item.tmInfo.agentId
               }
             })
-          },
+          }
         })
       }
     },
@@ -707,24 +624,22 @@ export default {
     },
 
     responseHandler(data, msg, canNotList = []) {
-      let failList = data?.filter((t) => t.code !== 'ok') || []
+      let failList = data?.filter(t => t.code !== 'ok') || []
       failList = [...failList, ...canNotList]
       if (failList.length) {
         let nameMapping = {}
-        this.table.list.forEach((item) => {
+        this.table.list.forEach(item => {
           nameMapping[item.id] = item.name
         })
         this.$message.warning({
           dangerouslyUseHTMLString: true,
           message: failList
-            .map((item) => {
+            .map(item => {
               return `<div style="line-height: 24px;"><span class="link-primary">${
                 nameMapping[item.id]
-              }</span> : <span style="color: #F56C6C">${
-                item.message
-              }</span></div>`
+              }</span> : <span style="color: #F56C6C">${item.message}</span></div>`
             })
-            .join(''),
+            .join('')
         })
       } else if (msg) {
         this.$message.success(msg, false)
@@ -736,28 +651,23 @@ export default {
       if (prop === 'lag') {
         prop = 'stats.replicationLag'
       }
-      this.order = `${order ? prop : 'last_updated'} ${
-        order === 'ascending' ? 'ASC' : 'DESC'
-      }`
+      this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
     },
 
     changeStatus(ids, { status, errorEvents }) {
       let where = {
         _id: {
-          in: ids,
-        },
+          in: ids
+        }
       }
       let attributes = {
-        status,
+        status
       }
       errorEvents && (attributes.errorEvents = errorEvents)
-      taskApi.update(where, attributes).then((data) => {
+      taskApi.update(where, attributes).then(data => {
         this.table.fetch()
-        this.responseHandler(
-          data,
-          this.$t('packages_business_message_operation_succuess')
-        )
+        this.responseHandler(data, this.$t('packages_business_message_operation_succuess'))
       })
     },
 
@@ -770,11 +680,11 @@ export default {
       if (this.dataFlowId) {
         ids = [this.dataFlowId]
       } else {
-        ids = this.multipleSelection.map((r) => r.id)
+        ids = this.multipleSelection.map(r => r.id)
       }
       let attributes = {
         id: ids,
-        listtags,
+        listtags
       }
       taskApi.batchUpdateListtags(attributes).then(() => {
         this.dataFlowId = ''
@@ -784,7 +694,7 @@ export default {
 
     handleSelectTag() {
       let tagList = []
-      this.multipleSelection.forEach((row) => {
+      this.multipleSelection.forEach(row => {
         if (row.listtags) {
           tagList = [...row.listtags, ...tagList]
         }
@@ -814,7 +724,7 @@ export default {
       }
       this.checkAgent(() => {
         this.$router.push({
-          name: this.route.new,
+          name: this.route.new
         })
       }).catch(() => {
         this.createBtnLoading = false
@@ -826,8 +736,8 @@ export default {
       this.openRoute({
         name: this.route.editor,
         params: {
-          id,
-        },
+          id
+        }
       })
     },
 
@@ -835,14 +745,10 @@ export default {
       this.buried(this.taskBuried.start)
       taskApi
         .batchStart(ids)
-        .then((data) => {
+        .then(data => {
           this.buried(this.taskBuried.start, '', { result: true })
           this.table.fetch()
-          this.responseHandler(
-            data,
-            this.$t('packages_business_message_operation_succuess'),
-            canNotList
-          )
+          this.responseHandler(data, this.$t('packages_business_message_operation_succuess'), canNotList)
         })
         .catch(() => {
           this.buried(this.taskBuried.start, '', { result: false })
@@ -857,27 +763,19 @@ export default {
     },
 
     initialize(ids, item = {}, canNotList) {
-      let msgObj = this.getConfirmMessage(
-        'initialize',
-        ids.length > 1,
-        item.name
-      )
+      let msgObj = this.getConfirmMessage('initialize', ids.length > 1, item.name)
       this.$confirm(msgObj.msg, msgObj.title, {
-        type: 'warning',
-      }).then((resFlag) => {
+        type: 'warning'
+      }).then(resFlag => {
         if (!resFlag) {
           return
         }
         this.restLoading = true
         taskApi
           .batchRenew(ids)
-          .then((data) => {
+          .then(data => {
             this.table.fetch()
-            this.responseHandler(
-              data,
-              this.$t('packages_business_message_operation_succuess'),
-              canNotList
-            )
+            this.responseHandler(data, this.$t('packages_business_message_operation_succuess'), canNotList)
           })
           .finally(() => {
             this.restLoading = false
@@ -888,29 +786,23 @@ export default {
     del(ids, item = {}, canNotList) {
       let msgObj = this.getConfirmMessage('delete', ids.length > 1, item.name)
       this.$confirm(msgObj.msg, '', {
-        type: 'warning',
-      }).then((resFlag) => {
+        type: 'warning'
+      }).then(resFlag => {
         if (!resFlag) {
           return
         }
-        taskApi.batchDelete(ids).then((data) => {
-          const selected = this.multipleSelection.filter(({ id }) =>
-            ids.includes(id)
-          )
+        taskApi.batchDelete(ids).then(data => {
+          const selected = this.multipleSelection.filter(({ id }) => ids.includes(id))
           const { toggleRowSelection } = this.table.$refs.table
-          selected.forEach((row) => toggleRowSelection(row, false))
+          selected.forEach(row => toggleRowSelection(row, false))
           this.table.fetch()
-          this.responseDelHandler(
-            data,
-            this.$t('packages_business_message_deleteOK'),
-            canNotList
-          )
+          this.responseDelHandler(data, this.$t('packages_business_message_deleteOK'), canNotList)
         })
       })
     },
     //删除任务单独提示
     responseDelHandler(data, msg, canNotList = []) {
-      this.failList = data?.filter((t) => t.code === 'Clear.Slot') || []
+      this.failList = data?.filter(t => t.code === 'Clear.Slot') || []
       this.failList = [...this.failList, ...canNotList]
       if (this.failList.length) {
         this.dialogDelMsgVisible = true
@@ -922,31 +814,19 @@ export default {
 
     async forceStop(ids, item = {}) {
       let data = await workerApi.taskUsedAgent(ids)
-      let msgObj = this.getConfirmMessage(
-        'force_stop',
-        ids.length > 1,
-        item.name
-      )
+      let msgObj = this.getConfirmMessage('force_stop', ids.length > 1, item.name)
       if (data?.status === 'offline' && !this.isDaas) {
-        msgObj = this.getConfirmMessage(
-          'agent_force_stop',
-          ids.length > 1,
-          item.name
-        )
+        msgObj = this.getConfirmMessage('agent_force_stop', ids.length > 1, item.name)
       }
       this.$confirm(msgObj.msg, '', {
         type: 'warning',
-        showClose: false,
-      }).then((resFlag) => {
+        showClose: false
+      }).then(resFlag => {
         if (!resFlag) {
           return
         }
-        taskApi.forceStop(ids).then((data) => {
-          this.$message.success(
-            data?.message ||
-              this.$t('packages_business_message_operation_succuess'),
-            false
-          )
+        taskApi.forceStop(ids).then(data => {
+          this.$message.success(data?.message || this.$t('packages_business_message_operation_succuess'), false)
           this.table.fetch()
         })
       })
@@ -957,18 +837,14 @@ export default {
       let message = msgObj.msg
       this.$confirm(message, '', {
         type: 'warning',
-        showClose: false,
-      }).then((resFlag) => {
+        showClose: false
+      }).then(resFlag => {
         if (!resFlag) {
           return
         }
-        taskApi.batchStop(ids).then((data) => {
+        taskApi.batchStop(ids).then(data => {
           this.table.fetch()
-          this.responseHandler(
-            data,
-            this.$t('packages_business_message_operation_succuess'),
-            canNotList
-          )
+          this.responseHandler(data, this.$t('packages_business_message_operation_succuess'), canNotList)
         })
       })
     },
@@ -977,8 +853,8 @@ export default {
       this.openRoute({
         name: this.route.monitor,
         params: {
-          id,
-        },
+          id
+        }
       })
     },
 
@@ -999,11 +875,11 @@ export default {
       let canNotList = []
       const disabledMap = {
         initialize: 'reset',
-        del: 'delete',
+        del: 'delete'
       }
       if (commandFilter.includes(command)) {
         let op = disabledMap[command] || command
-        taskList.forEach((task) => {
+        taskList.forEach(task => {
           if (task.btnDisabled?.[op]) {
             canNotList.push(task)
           } else {
@@ -1014,18 +890,18 @@ export default {
         canList = taskList
       }
 
-      const canNotResult = canNotList.map((t) => {
+      const canNotResult = canNotList.map(t => {
         return {
           code: 'error',
           id: t?.id,
-          message: i18n.t('packages_business_task_list_renwubuzhichi'),
+          message: i18n.t('packages_business_task_list_renwubuzhichi')
         }
       })
       if (!canList.length) {
         this.responseHandler(canList, '', canNotResult)
         return
       }
-      ids = canList.map((item) => item.id)
+      ids = canList.map(item => item.id)
       this[command](ids, node, canNotResult)
     },
 
@@ -1041,23 +917,23 @@ export default {
       let msg = h(
         'p',
         {
-          style: 'width: calc(100% - 28px);word-break: break-all;',
+          style: 'width: calc(100% - 28px);word-break: break-all;'
         },
         [
           strArr[0],
           h(
             'span',
             {
-              class: 'color-primary',
+              class: 'color-primary'
             },
             name
           ),
-          strArr[1],
+          strArr[1]
         ]
       )
       return {
         msg,
-        title: this.$t('packages_business_dataFlow_' + title),
+        title: this.$t('packages_business_dataFlow_' + title)
       }
     },
 
@@ -1069,8 +945,8 @@ export default {
     },
     onDelCopy() {
       this.showDelTooltip = true
-    },
-  },
+    }
+  }
 }
 </script>
 

@@ -10,20 +10,20 @@ Input.Behavior = createBehavior(
   {
     name: 'Input',
     extends: ['Field'],
-    selector: (node) => node.props['x-component'] === 'Input',
+    selector: node => node.props['x-component'] === 'Input',
     designerProps: {
-      propsSchema: createFieldSchema(AllSchemas.Input),
+      propsSchema: createFieldSchema(AllSchemas.Input)
     },
-    designerLocales: AllLocales.Input,
+    designerLocales: AllLocales.Input
   },
   {
     name: 'Input.TextArea',
     extends: ['Field'],
-    selector: (node) => node.props['x-component'] === 'Input.TextArea',
+    selector: node => node.props['x-component'] === 'Input.TextArea',
     designerProps: {
-      propsSchema: createFieldSchema(AllSchemas.Input.TextArea),
+      propsSchema: createFieldSchema(AllSchemas.Input.TextArea)
     },
-    designerLocales: AllLocales.TextArea,
+    designerLocales: AllLocales.TextArea
   }
 )
 
@@ -37,10 +37,10 @@ Input.Resource = createResource(
           type: 'string',
           title: 'Input',
           'x-decorator': 'FormItem',
-          'x-component': 'Input',
-        },
-      },
-    ],
+          'x-component': 'Input'
+        }
+      }
+    ]
   },
   {
     icon: 'TextAreaSource',
@@ -51,9 +51,9 @@ Input.Resource = createResource(
           type: 'string',
           title: 'TextArea',
           'x-decorator': 'FormItem',
-          'x-component': 'Input.TextArea',
-        },
-      },
-    ],
+          'x-component': 'Input.TextArea'
+        }
+      }
+    ]
   }
 )

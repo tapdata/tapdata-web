@@ -31,8 +31,8 @@ export default {
   props: {
     id: {
       type: String,
-      default: () => '',
-    },
+      default: () => ''
+    }
   },
   data() {
     return {
@@ -42,24 +42,22 @@ export default {
         {
           label: this.$t('packages_business_task_monitor_mining_task_name'),
           prop: 'name',
-          slotName: 'name',
+          slotName: 'name'
         },
         {
-          label: this.$t(
-            'packages_business_task_monitor_mining_task_point_time'
-          ),
-          prop: 'pointTime',
+          label: this.$t('packages_business_task_monitor_mining_task_point_time'),
+          prop: 'pointTime'
         },
         {
           label: this.$t('packages_business_task_monitor_mining_task_status'),
-          prop: 'status',
+          prop: 'status'
         },
         {
           label: this.$t('packages_business_column_operation'),
           prop: 'operation',
-          slotName: 'operation',
-        },
-      ],
+          slotName: 'operation'
+        }
+      ]
     }
   },
   methods: {
@@ -68,33 +66,31 @@ export default {
       let { current, size } = page
       let filter = {
         where: {
-          connections: [id],
+          connections: [id]
         },
         limit: size,
-        skip: size * (current - 1),
+        skip: size * (current - 1)
       }
       return logcollectorApi
         .get({
-          filter: JSON.stringify(filter),
+          filter: JSON.stringify(filter)
         })
-        .then((data) => {
+        .then(data => {
           let list = data?.items || []
           let pointTime = new Date()
 
           return {
             total: data?.total,
-            data: list.map((item) => {
+            data: list.map(item => {
               item['pointTime'] = pointTime
               if (item.syncTimePoint === 'current') {
                 item.pointTime = dayjs(pointTime).format('YYYY-MM-DD HH:mm:ss')
               } else {
                 item.pointTime = item.syncTimeZone
               }
-              item.createTime = dayjs(item.createTime).format(
-                'YYYY-MM-DD HH:mm:ss'
-              )
+              item.createTime = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
               return item
-            }),
+            })
           }
         })
     },
@@ -104,7 +100,7 @@ export default {
     fetch() {
       this.$refs.VTable?.fetch(null, null, true)
     },
-    handleDetail() {},
-  },
+    handleDetail() {}
+  }
 }
 </script>

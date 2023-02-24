@@ -18,14 +18,14 @@ export class FieldProcessor extends NodeType {
     properties: {
       $inputs: {
         type: 'array',
-        display: 'none',
+        display: 'none'
       },
       name: {
         type: 'string',
         title: i18n.t('packages_dag_nodes_database_jiedianmingcheng'),
         required: true,
         'x-decorator': 'FormItem',
-        'x-component': 'Input',
+        'x-component': 'Input'
       },
       fieldsMapping: {
         type: 'array',
@@ -33,9 +33,9 @@ export class FieldProcessor extends NodeType {
         'x-decorator': 'FormItem',
         'x-component': 'FieldRenameProcessor',
         'x-component-props': {
-          nodeId: '{{$values.id}}',
-        },
-      },
+          nodeId: '{{$values.id}}'
+        }
+      }
       // loadSchemaButton: {
       //   type: 'void',
       //   title: '',
@@ -54,6 +54,6 @@ export class FieldProcessor extends NodeType {
       //   'x-decorator': 'FormItem',
       //   'x-component': 'loadSchemaTree'
       // }
-    },
+    }
   }
 }

@@ -19,7 +19,7 @@ export const showMessage = {
 					<i>${error.message}</i>
 					${this.collapsableDetails(error)}`,
         type: 'error',
-        duration: 0,
+        duration: 0
       })
     },
 
@@ -32,10 +32,7 @@ export const showMessage = {
     collapsableDetails({ description, node }) {
       if (!description) return ''
 
-      const errorDescription =
-        description.length > 500
-          ? `${description.slice(0, 500)}...`
-          : description
+      const errorDescription = description.length > 500 ? `${description.slice(0, 500)}...` : description
       const title = i18n.t('packages_component_mixins_showmessage_xiangqing')
       return `
 				<br>
@@ -49,6 +46,6 @@ export const showMessage = {
 					<p>${node.name}: ${errorDescription}</p>
 				</details>
 			`
-    },
-  },
+    }
+  }
 }

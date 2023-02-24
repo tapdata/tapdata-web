@@ -5,13 +5,13 @@
       width: width ? px(width) : '100%',
       padding: '12px 0',
       overflow: 'hidden',
-      background: '#282c34',
+      background: '#282c34'
     }"
   >
     <div
       :style="{
         height: '100%',
-        width: '100%',
+        width: '100%'
       }"
     ></div>
   </div>
@@ -32,21 +32,21 @@ export default {
   name: 'VCodeEditor',
   props: {
     value: {
-      required: true,
+      required: true
     },
     lang: String,
     theme: {
       type: String,
-      default: 'one_dark',
+      default: 'one_dark'
     },
     height: [String, Number],
     width: [String, Number],
-    options: Object,
+    options: Object
   },
   data() {
     return {
       editor: null,
-      contentBackup: '',
+      contentBackup: ''
     }
   },
   methods: {
@@ -55,7 +55,7 @@ export default {
         return n + 'px'
       }
       return n
-    },
+    }
   },
   watch: {
     value(val) {
@@ -63,7 +63,7 @@ export default {
         val = JSON.stringify(val)
       }
       if (this.contentBackup !== val) this.editor.setValue(val, 1)
-    },
+    }
   },
   mounted() {
     let lang = this.lang || 'text'
@@ -80,10 +80,7 @@ export default {
     session.setMode(`ace/mode/${lang}`)
     session.setTabSize(2)
 
-    let val =
-      typeof this.value === 'object'
-        ? JSON.stringify(this.value, null, 2)
-        : this.value
+    let val = typeof this.value === 'object' ? JSON.stringify(this.value, null, 2) : this.value
     editor.setValue(val || '', 1)
 
     if (this.options) {
@@ -98,12 +95,12 @@ export default {
       this.contentBackup = content
     })
 
-    ACTION_EVENTS.forEach((ev) => {
+    ACTION_EVENTS.forEach(ev => {
       editor.on(ev, (event, editor) => {
         $emit(this, ev, editor.getValue(), event, editor)
       })
     })
   },
-  emits: ['init', 'initOptions', 'update:value'],
+  emits: ['init', 'initOptions', 'update:value']
 }
 </script>

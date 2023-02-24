@@ -18,12 +18,12 @@ import zhTW from './langs/zh-TW'
 const eleLangs = {
   'zh-CN': zhLocale,
   'zh-TW': tcLocale,
-  en: enLocale,
+  en: enLocale
 }
 const localLangs = {
   'zh-CN': zhCN,
   'zh-TW': zhTW,
-  en: en,
+  en: en
 }
 const current = i18n.locale
 

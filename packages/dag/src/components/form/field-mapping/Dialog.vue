@@ -8,17 +8,10 @@
     :close-on-click-modal="false"
     @close="closeDialog"
   >
-    <List
-      v-if="visible"
-      ref="fieldMappingList"
-      :readOnly="false"
-      @updateVisible="updateVisible"
-    ></List>
+    <List v-if="visible" ref="fieldMappingList" :readOnly="false" @updateVisible="updateVisible"></List>
     <template v-slot:footer>
       <span class="dialog-footer">
-        <el-button @click="closeDialog()">{{
-          $t('packages_form_field_mapping_dialog_quxiao')
-        }}</el-button>
+        <el-button @click="closeDialog()">{{ $t('packages_form_field_mapping_dialog_quxiao') }}</el-button>
         <el-button type="primary" :loading="loadingSave" @click="save(true)">{{
           $t('packages_form_field_mapping_dialog_queding')
         }}</el-button>
@@ -38,7 +31,7 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      loadingSave: false,
+      loadingSave: false
     }
   },
   methods: {
@@ -52,9 +45,9 @@ export default {
     },
     closeDialog() {
       $emit(this, 'update:visible', false)
-    },
+    }
   },
-  emits: ['update:visible'],
+  emits: ['update:visible']
 }
 </script>
 

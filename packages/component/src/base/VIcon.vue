@@ -8,7 +8,7 @@ const SIZE_MAP = {
   default: '24px',
   medium: '28px',
   large: '36px',
-  xLarge: '40px',
+  xLarge: '40px'
 }
 
 function convertToUnit(str, unit = 'px') {
@@ -26,7 +26,7 @@ const VIcon = function render(_props, _context) {
     ..._context,
     props: _props,
     data: _context.attr,
-    children: _context.slots,
+    children: _context.slots
   }
   const icon = this.getIcon()
   if (this.tag === 'svg') {
@@ -49,14 +49,13 @@ export default {
 
     // 支持 v-text 和 v-html
     if (data.domProps) {
-      iconName =
-        data.domProps.textContent || data.domProps.innerHTML || iconName
+      iconName = data.domProps.textContent || data.domProps.innerHTML || iconName
       delete data.domProps.textContent
       delete data.domProps.innerHTML
     }
 
     return h(VIcon, data, iconName ? [iconName] : children)
-  },
+  }
 }
 </script>
 

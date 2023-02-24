@@ -6,10 +6,7 @@
       </div>
     </div>
     <el-tabs v-model:value="activeName">
-      <el-tab-pane
-        :label="$t('daas_notification_systemalarm_quanbugaojing')"
-        name="first"
-      ></el-tab-pane>
+      <el-tab-pane :label="$t('daas_notification_systemalarm_quanbugaojing')" name="first"></el-tab-pane>
     </el-tabs>
     <TablePage
       ref="table"
@@ -17,55 +14,35 @@
       class="share-list"
       :remoteMethod="getData"
       @selection-change="
-        (val) => {
+        val => {
           multipleSelection = val
         }
       "
     >
       <template v-slot:search>
-        <FilterBar
-          v-model:value="searchParams"
-          :items="filterItems"
-          @fetch="table.fetch(1)"
-        >
-        </FilterBar>
+        <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </template>
       <template v-slot:operation>
         <div>
-          <el-button
-            class="btn btn-create"
-            type="primary"
-            size="mini"
-            :loading="loadingConfig"
-            @click="handleClose"
-          >
+          <el-button class="btn btn-create" type="primary" size="mini" :loading="loadingConfig" @click="handleClose">
             <span>{{ $t('text_close') }}</span>
           </el-button>
         </div>
       </template>
       <el-table-column type="selection"></el-table-column>
-      <el-table-column
-        :label="$t('packages_dag_components_alert_gaojingjibie')"
-        prop="level"
-      >
+      <el-table-column :label="$t('packages_dag_components_alert_gaojingjibie')" prop="level">
         <template #default="{ row }">
           <span :class="['status-' + row.levelType, 'status-block']">
             {{ row.levelLabel }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('packages_dag_components_alert_gaojingzhuangtai')"
-        prop="status"
-      >
+      <el-table-column :label="$t('packages_dag_components_alert_gaojingzhuangtai')" prop="status">
         <template #default="{ row }">
           <span> {{ row.statusLabel }} </span>
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('daas_notification_systemalarm_gaojingduixiang')"
-        prop="name"
-      ></el-table-column>
+      <el-table-column :label="$t('daas_notification_systemalarm_gaojingduixiang')" prop="name"></el-table-column>
       <el-table-column
         :label="$t('packages_dag_components_alert_gaojingmiaoshu')"
         prop="summary"
@@ -81,16 +58,11 @@
       ></el-table-column>
       <el-table-column fixed="right" :label="$t('column_operation')">
         <template #default="{ row }">
-          <el-button
-            type="text"
-            @click="handleClose(row.id)"
-            :disabled="row.status === 'CLOESE'"
-            >{{ $t('packages_dag_components_alert_guanbi') }}</el-button
-          >
-          <el-divider direction="vertical"></el-divider>
-          <el-button type="text" @click="goLog(row)">{{
-            $t('packages_dag_monitor_bottompanel_rizhi')
+          <el-button type="text" @click="handleClose(row.id)" :disabled="row.status === 'CLOESE'">{{
+            $t('packages_dag_components_alert_guanbi')
           }}</el-button>
+          <el-divider direction="vertical"></el-divider>
+          <el-button type="text" @click="goLog(row)">{{ $t('packages_dag_monitor_bottompanel_rizhi') }}</el-button>
         </template>
       </el-table-column>
     </TablePage>
@@ -120,9 +92,9 @@ export default {
         type: 'alarm',
         status: '',
         time: '',
-        keyword: '',
+        keyword: ''
       },
-      count: '',
+      count: ''
     }
   },
   created() {
@@ -131,13 +103,13 @@ export default {
   computed: {
     table() {
       return this.$refs.table
-    },
+    }
   },
   watch: {
     '$route.query'() {
       this.searchParams = this.$route.query
       this.table.fetch(1)
-    },
+    }
   },
   methods: {
     getData({ page }) {
@@ -145,7 +117,7 @@ export default {
       let { current, size } = page
       let where = {
         page: current,
-        size: size,
+        size: size
       }
       if (status || status !== '') {
         where.status = status
@@ -162,11 +134,11 @@ export default {
       if (end) {
         where.end = end
       }
-      return alarmApi.list(where).then((data) => {
+      return alarmApi.list(where).then(data => {
         let list = data?.items || []
         return {
           total: data?.total || 0,
-          data: list.map((item) => {
+          data: list.map(item => {
             item.firstOccurrenceTime = item.firstOccurrenceTime
               ? dayjs(item.firstOccurrenceTime).format('YYYY-MM-DD HH:mm:ss')
               : ''
@@ -177,7 +149,7 @@ export default {
             item.levelType = ALARM_LEVEL_MAP[item.level].type
             item.statusLabel = ALARM_STATUS_MAP[item.status].text
             return item
-          }),
+          })
         }
       })
     },
@@ -190,39 +162,37 @@ export default {
           items: [
             {
               label: i18n.t('packages_business_shared_const_gaojingzhong'),
-              value: 'ING',
+              value: 'ING'
             },
             {
               label: i18n.t('packages_business_shared_const_yihuifu'),
-              value: 'RECOVER',
+              value: 'RECOVER'
             },
             {
               label: i18n.t('packages_business_components_alert_yiguanbi'),
-              value: 'CLOESE',
-            },
+              value: 'CLOESE'
+            }
           ],
-          selectedWidth: '200px',
+          selectedWidth: '200px'
         },
         {
           title: i18n.t('daas_notification_systemalarm_gaojingshijian'),
           type: 'datetimerange',
-          key: 'start,end',
+          key: 'start,end'
         },
         {
           key: 'keyword',
-          type: 'input',
-        },
+          type: 'input'
+        }
       ]
     },
     handleClose(id) {
       let ids = id
       if (this.multipleSelection?.length > 0) {
-        ids = this.multipleSelection.map((item) => item.id)
+        ids = this.multipleSelection.map(item => item.id)
       }
       alarmApi.close(ids).then(() => {
-        this.$message.success(
-          i18n.t('daas_notification_systemalarm_guanbichenggong')
-        )
+        this.$message.success(i18n.t('daas_notification_systemalarm_guanbichenggong'))
         this.table.fetch(1)
       })
     },
@@ -231,19 +201,19 @@ export default {
         this.$router.push({
           name: 'MigrationMonitor',
           params: {
-            id: row.taskId,
-          },
+            id: row.taskId
+          }
         })
       } else {
         this.$router.push({
           name: 'TaskMonitor',
           params: {
-            id: row.taskId,
-          },
+            id: row.taskId
+          }
         })
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

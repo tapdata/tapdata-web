@@ -18,35 +18,16 @@
 
       <el-form :model="formData" class="e-form" label-position="top">
         <div class="e-form-box">
-          <div
-            v-for="(item, index) in formData.items"
-            :key="index"
-            class="item"
-            v-show="activePanel === item.category"
-          >
+          <div v-for="(item, index) in formData.items" :key="index" class="item" v-show="activePanel === item.category">
             <template v-if="activePanel === item.category">
               <span class="title">{{ $t('setting_' + item.category) }}</span>
-              <div
-                class="box"
-                v-for="(childItem, childIndex) in item.items"
-                :key="childIndex"
-              >
+              <div class="box" v-for="(childItem, childIndex) in item.items" :key="childIndex">
                 <div v-if="item.category === 'license'">
-                  <div
-                    class="license"
-                    v-for="(licenseItem, licenseIndex) in item.liceseItems"
-                    :key="licenseIndex"
-                  >
-                    <div>
-                      {{ $t('setting_nameserver') }}: {{ licenseItem.hostname }}
-                    </div>
+                  <div class="license" v-for="(licenseItem, licenseIndex) in item.liceseItems" :key="licenseIndex">
+                    <div>{{ $t('setting_nameserver') }}: {{ licenseItem.hostname }}</div>
                   </div>
-                  <el-button @click="importlicense(licenseItem)">{{
-                    $t('setting_import')
-                  }}</el-button>
-                  <el-button @click="hrefApply(licenseItem)">{{
-                    $t('setting_apply')
-                  }}</el-button>
+                  <el-button @click="importlicense(licenseItem)">{{ $t('setting_import') }}</el-button>
+                  <el-button @click="hrefApply(licenseItem)">{{ $t('setting_apply') }}</el-button>
                 </div>
 
                 <el-row v-if="activePanel === childItem.category">
@@ -56,19 +37,10 @@
                         <span>
                           <span
                             >{{
-                              $t(
-                                'setting_' +
-                                  (childItem.key_label || '')
-                                    .split(' ')
-                                    .join('_')
-                              ) || childItem.key_label
+                              $t('setting_' + (childItem.key_label || '').split(' ').join('_')) || childItem.key_label
                             }}:</span
                           >
-                          <el-tooltip
-                            effect="dark"
-                            placement="top"
-                            v-if="childItem.documentation"
-                          >
+                          <el-tooltip effect="dark" placement="top" v-if="childItem.documentation">
                             <template v-slot:content>
                               <div style="max-width: 300px">
                                 {{
@@ -101,35 +73,24 @@
                               class="icon iconfont icon-tishi1"
                               style="vertical-align: bottom; padding-left: 10px; font-size: 18px"
                             ></span> -->
-                            <VIcon class="color-primary ml-3" size="14"
-                              >info</VIcon
-                            >
+                            <VIcon class="color-primary ml-3" size="14">info</VIcon>
                           </el-tooltip>
                         </span>
                       </template>
                       <el-input
                         v-if="!childItem.enums || childItem.enums.length === 0"
-                        :type="
-                          childItem.key.match(/password/) ? 'password' : 'text'
-                        "
+                        :type="childItem.key.match(/password/) ? 'password' : 'text'"
                         v-model:value="childItem.value"
                         :disabled="item.category === 'license'"
                         :mask="childItem.mask"
                         size="mini"
                         :label="
-                          $t(
-                            'setting_' +
-                              (childItem.key_label || '').split(' ').join('_')
-                          ) || childItem.key_label
+                          $t('setting_' + (childItem.key_label || '').split(' ').join('_')) || childItem.key_label
                         "
                       >
                       </el-input>
 
-                      <el-select
-                        v-else
-                        v-model:value="childItem.value"
-                        size="mini"
-                      >
+                      <el-select v-else v-model:value="childItem.value" size="mini">
                         <el-option
                           v-for="options in childItem.enums"
                           :key="options"
@@ -144,25 +105,17 @@
             </template>
             <template v-if="item.category !== 'license'">
               <span class="btns py-3" v-if="item.category === 'SMTP'">
-                <a class="link-primary" @click="checkTemplate()">{{
-                  $t('setting_email_template')
-                }}</a>
-                <a class="link-primary" @click="connectAndTest()">{{
-                  $t('setting_connect_and_test')
-                }}</a>
+                <a class="link-primary" @click="checkTemplate()">{{ $t('setting_email_template') }}</a>
+                <a class="link-primary" @click="connectAndTest()">{{ $t('setting_connect_and_test') }}</a>
               </span>
             </template>
           </div>
         </div>
 
         <div class="footer">
-          <el-button
-            v-if="email === 'admin@admin.com'"
-            @click="save"
-            size="mini"
-            type="primary"
-            >{{ $t('button_save') }}</el-button
-          >
+          <el-button v-if="email === 'admin@admin.com'" @click="save" size="mini" type="primary">{{
+            $t('button_save')
+          }}</el-button>
         </div>
       </el-form>
     </div>
@@ -198,30 +151,20 @@
               {{ SMTP['Email_Receivers'] }}
             </p>
             <p>
-              {{ $t('setting_email_template_subject') }} :
-              {{ SMTP['Send_Email_Title_Prefix'] }} Tapdata Notification:
-              <span v-show="activeTab <= 4"
-                >Job {{ emailTabs[activeTab].status }}</span
-              >
-              <span v-show="activeTab > 4"
-                >DDL Warn, please perform DDL operation manually.</span
-              >
+              {{ $t('setting_email_template_subject') }} : {{ SMTP['Send_Email_Title_Prefix'] }} Tapdata Notification:
+              <span v-show="activeTab <= 4">Job {{ emailTabs[activeTab].status }}</span>
+              <span v-show="activeTab > 4">DDL Warn, please perform DDL operation manually.</span>
             </p>
             <p class="paragraph">Hello there,</p>
             <p class="paragraph" v-show="activeTab <= 3">
               <span>Job_name XXX was modified</span><br />
               <span
-                >Status:
-                <span style="color: #f56c6c">{{
-                  emailTabs[activeTab].status
-                }}</span></span
+                >Status: <span style="color: #f56c6c">{{ emailTabs[activeTab].status }}</span></span
               >
             </p>
             <p class="paragraph" v-show="activeTab == 4">
               <span>Job_name XXX was CDC lag</span><br />
-              <span
-                >Node lag time: <span style="color: #f56c6c">XXXX s</span></span
-              >
+              <span>Node lag time: <span style="color: #f56c6c">XXXX s</span></span>
             </p>
             <p class="paragraph" v-show="activeTab == 5">
               <span>Job: job_name xxx</span><br />
@@ -232,8 +175,7 @@
               <span>Notification DDLs:</span><br />
               <span>
                 No. <span style="color: #f56c6c">xxx</span>&nbsp;&nbsp; Scn:
-                <span style="color: #f56c6c">xxx</span>&nbsp;&nbsp; At:
-                <span style="color: #f56c6c">xxx</span><br />
+                <span style="color: #f56c6c">xxx</span>&nbsp;&nbsp; At: <span style="color: #f56c6c">xxx</span><br />
                 DDL sql: <span style="color: #f56c6c">xxx</span>
               </span>
             </p>
@@ -243,12 +185,9 @@
       </el-row>
       <template v-slot:footer>
         <div class="dialog-footer">
-          <el-button
-            size="mini"
-            type="primary"
-            @click="emailTemplateDialog = false"
-            >{{ $t('message_confirm') }}</el-button
-          >
+          <el-button size="mini" type="primary" @click="emailTemplateDialog = false">{{
+            $t('message_confirm')
+          }}</el-button>
         </div>
       </template>
     </el-dialog>
@@ -273,7 +212,7 @@ export default {
       liceseItems: [],
       emailTemplateDialog: false,
       formData: {
-        items: [],
+        items: []
       },
       activeTab: 0,
       activePanel: 'Log',
@@ -281,52 +220,44 @@ export default {
       emailTabs: [
         {
           label: this.$t('setting_Email_Template_Running'),
-          status: 'running',
+          status: 'running'
         },
         {
           label: this.$t('setting_Email_Template_Paused'),
-          status: 'paused',
+          status: 'paused'
         },
         {
           label: this.$t('setting_Email_Template_Error'),
-          status: 'error',
+          status: 'error'
         },
         {
           label: this.$t('setting_Email_Template_Draft'),
-          status: 'draft',
+          status: 'draft'
         },
         {
           label: this.$t('setting_Email_Template_CDC'),
-          status: 'CDC Lag',
+          status: 'CDC Lag'
         },
-        { label: this.$t('setting_Email_Template_DDL') },
+        { label: this.$t('setting_Email_Template_DDL') }
       ],
       keyMapping: {
         TASK_INCREMENT_DELAY: i18n.t('daas_setting_setting_renwudezengliang'),
-        DATANODE_HTTP_CONNECT_CONSUME: i18n.t(
-          'daas_setting_setting_shujuyuanwanglu'
-        ),
-        DATANODE_TCP_CONNECT_CONSUME: i18n.t(
-          'daas_setting_setting_shujuyuanxieyi'
-        ),
-        DATANODE_AVERAGE_HANDLE_CONSUME: i18n.t(
-          'daas_setting_setting_shujuyuanjiedian'
-        ),
-        PROCESSNODE_AVERAGE_HANDLE_CONSUME: i18n.t(
-          'daas_setting_setting_chulijiediande'
-        ),
+        DATANODE_HTTP_CONNECT_CONSUME: i18n.t('daas_setting_setting_shujuyuanwanglu'),
+        DATANODE_TCP_CONNECT_CONSUME: i18n.t('daas_setting_setting_shujuyuanxieyi'),
+        DATANODE_AVERAGE_HANDLE_CONSUME: i18n.t('daas_setting_setting_shujuyuanjiedian'),
+        PROCESSNODE_AVERAGE_HANDLE_CONSUME: i18n.t('daas_setting_setting_chulijiediande')
       },
       columns: [
         {
           label: i18n.t('daas_setting_alarmnotification_gaojingzhibiao'),
-          slotName: 'keySlot',
+          slotName: 'keySlot'
         },
         {
           label: i18n.t('daas_setting_alarmnotification_gaojingzhibiao'),
-          slotName: 'valueSlot',
-        },
+          slotName: 'valueSlot'
+        }
       ],
-      email: '',
+      email: ''
     }
   },
   created() {
@@ -338,17 +269,17 @@ export default {
       let result = {}
       let items = this.formData.items
       if (items && items.length) {
-        let SMTP = find(items, (item) => {
+        let SMTP = find(items, item => {
           return item.category === 'SMTP'
         })
         if (SMTP && SMTP.items) {
-          SMTP.items.forEach((it) => {
+          SMTP.items.forEach(it => {
             result[it.key_label.split(' ').join('_')] = it.value
           })
         }
       }
       return result
-    },
+    }
   },
   watch: {
     deep: true,
@@ -357,8 +288,8 @@ export default {
 
       handler(value) {
         this.formData = value
-      },
-    },
+      }
+    }
   },
   methods: {
     changeName(name) {
@@ -368,21 +299,21 @@ export default {
     getData() {
       let _this = this
       let auth_data = []
-      licensesApi.get({}).then((data) => {
+      licensesApi.get({}).then(data => {
         auth_data = data?.items || []
       })
-      settingsApi.get().then((data) => {
+      settingsApi.get().then(data => {
         let items = [],
           itemsCategories = [],
           cat = []
         data = data || []
-        items = data.map((item) => item.category)
+        items = data.map(item => item.category)
         items = uniq(items)
         items.sort((a, b) => {
           return a.sort < b.sort ? -1 : 1
         })
-        items.map((item) => {
-          let values = data.filter((childItem) => {
+        items.map(item => {
+          let values = data.filter(childItem => {
             return childItem.category === item && childItem.user_visible
           })
           values.sort((a, b) => {
@@ -394,43 +325,39 @@ export default {
           }
         })
 
-        let sortCategories = cat.map((item) => {
-          let values = data.filter((childItem) => {
+        let sortCategories = cat.map(item => {
+          let values = data.filter(childItem => {
             return childItem.category === item
           })
           return {
             category: item,
-            category_sort: values[0].category_sort,
+            category_sort: values[0].category_sort
           }
         })
 
-        let vals = sortCategories.map((item) => {
-          let value = find(itemsCategories, (val) => {
+        let vals = sortCategories.map(item => {
+          let value = find(itemsCategories, val => {
             return val.category === item.category
           })
           return Object.assign(value, item)
         })
         vals.sort((a, b) => {
-          return a.category_sort > b.category_sort
-            ? 1
-            : a.category_sort < b.category_sort
-            ? -1
-            : 0
+          return a.category_sort > b.category_sort ? 1 : a.category_sort < b.category_sort ? -1 : 0
         })
         _this.formData.items = vals
       })
       let lincenseData = {
         liceseItems: auth_data,
         items: auth_data,
-        category: 'license',
+        category: 'license'
       }
       _this.formData.items.push(lincenseData)
     },
     // 保存
     save() {
       let settingData = []
-      this.formData.items.filter((item) => {
-        item.items.forEach((childItem) => {
+      this.formData.items.filter(item => {
+        item.items.forEach(childItem => {
           settingData.push(childItem)
         })
       })
@@ -451,22 +378,20 @@ export default {
       let now = Time.now()
       let duration = Math.floor((now - lastTime) / 1000)
       if (lastTime && duration < 60) {
-        this.$message.success(
-          this.$t('setting_test_email_countdown') + '(' + (60 - duration) + 's)'
-        )
+        this.$message.success(this.$t('setting_test_email_countdown') + '(' + (60 - duration) + 's)')
         return
       }
       const params = {
         ...this.SMTP,
         title: `Tapdata Notification:`,
-        text: 'This is a test email',
+        text: 'This is a test email'
       }
       settingsApi.testEmail(params).then(() => {
         localStorage.setItem('Tapdata_settings_email_countdown', now)
         this.$message.success(this.$t('setting_test_email_success'))
       })
-    },
-  },
+    }
+  }
 }
 </script>
 

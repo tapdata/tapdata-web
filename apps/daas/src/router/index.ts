@@ -5,16 +5,16 @@ import routes from './routes'
 import Cookie from '@tap/shared/src/cookie'
 import { setPageTitle } from '@tap/shared'
 
-export default (i18n) => {
+export default i18n => {
   const router = VueRouter.createRouter({
     history: VueRouter.createWebHashHistory(),
-    routes: routes,
+    routes: routes
   })
 
   router.beforeEach((to, from, next) => {
     if (!to.matched.length) {
       Message.error({
-        message: 'Page not found!',
+        message: 'Page not found!'
       })
       next(false)
       return
@@ -31,7 +31,7 @@ export default (i18n) => {
       //判断当前路由的页面是否有权限，无权限则不跳转，有权限则执行跳转
       let matched = true
       if (to.meta.code) {
-        matched = permissions.some((p) => p.code === to.meta.code)
+        matched = permissions.some(p => p.code === to.meta.code)
       }
       // 绕开权限判断
       if (matched) {
@@ -45,20 +45,12 @@ export default (i18n) => {
         next('/')
       } else {
         Message.error({
-          message: i18n.t('app_signIn_permission_denied'),
+          message: i18n.t('app_signIn_permission_denied')
         })
         next(false)
       }
     } else {
-      if (
-        [
-          'login',
-          'registry',
-          'passwordReset',
-          'verificationEmail',
-          'registyResult',
-        ].includes(to.name)
-      ) {
+      if (['login', 'registry', 'passwordReset', 'verificationEmail', 'registyResult'].includes(to.name)) {
         next()
       } else {
         sessionStorage.setItem('lastLocationHref', location.href)

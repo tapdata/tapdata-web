@@ -4,14 +4,14 @@ import { h, Fragment } from '@formily/vue'
 
 const PortalMap = new Map()
 
-export const createPortalProvider = (id) => {
+export const createPortalProvider = id => {
   const Portal = defineComponent({
     name: 'ProtalProvider',
     props: {
       id: {
         type: [String, Symbol],
-        default: id,
-      },
+        default: id
+      }
     },
 
     setup(props) {
@@ -30,7 +30,7 @@ export const createPortalProvider = (id) => {
       }
 
       return h(Fragment, {}, this.$scopedSlots)
-    },
+    }
   })
 
   return Portal

@@ -18,21 +18,20 @@ export class StandardJs extends NodeType {
     properties: {
       $inputs: {
         type: 'array',
-        'x-display': 'hidden',
+        'x-display': 'hidden'
       },
       name: {
         type: 'string',
         title: i18n.t('packages_dag_nodes_database_jiedianmingcheng'),
         required: true,
         'x-decorator': 'FormItem',
-        'x-component': 'Input',
+        'x-component': 'Input'
       },
       script: {
         title: i18n.t('packages_dag_nodes_javascript_jiaoben'),
         type: 'string',
         required: true,
-        default:
-          'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}',
+        default: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}',
         'x-component': 'JsProcessor',
         'x-component-props': {
           isStandard: true,
@@ -44,10 +43,10 @@ export class StandardJs extends NodeType {
           afterRegexp: '}[^}]*$',
           after: '}',
           param: 'tapTable',
-          handleAddCompleter: '{{addDeclaredCompleterForSync}}',
-        },
-      },
-    },
+          handleAddCompleter: '{{addDeclaredCompleterForSync}}'
+        }
+      }
+    }
   }
 
   locales = AllLocales.JavaScript

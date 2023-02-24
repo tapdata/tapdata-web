@@ -1,52 +1,32 @@
 <template>
   <div class="field-inference" v-loading="transformLoading">
     <div class="field-inference__header flex justify-content-end">
-      <div
-        v-if="batchRuleCounts"
-        class="flex align-items-center cursor-pointer color-primary"
-        @click="visible = true"
-      >
+      <div v-if="batchRuleCounts" class="flex align-items-center cursor-pointer color-primary" @click="visible = true">
         <VIcon>info</VIcon>
         <span>{{ $t('packages_form_field_inference_main_dangqianyou') }}</span>
-        <span class="color-warning px-1 fs-6 fw-bold din-font">{{
-          batchRuleCounts
-        }}</span>
+        <span class="color-warning px-1 fs-6 fw-bold din-font">{{ batchRuleCounts }}</span>
         <span>{{ $t('packages_form_field_inference_main_ge') }}</span>
-        <span>{{
-          $t('packages_form_field_inference_main_gepiliangxiugai')
-        }}</span>
+        <span>{{ $t('packages_form_field_inference_main_gepiliangxiugai') }}</span>
       </div>
-      <ElButton
-        v-if="!readonly"
-        type="text"
-        class="ml-3"
-        @click="rollbackAll"
-        >{{ $t('packages_form_field_inference_main_quanbuhuifumo') }}</ElButton
-      >
+      <ElButton v-if="!readonly" type="text" class="ml-3" @click="rollbackAll">{{
+        $t('packages_form_field_inference_main_quanbuhuifumo')
+      }}</ElButton>
     </div>
     <div class="field-inference__main flex">
       <div class="field-inference__nav flex flex-column">
         <ElInput
           v-model:value="searchTable"
           size="mini"
-          :placeholder="
-            $t('packages_form_field_mapping_list_qingshurubiaoming')
-          "
+          :placeholder="$t('packages_form_field_mapping_list_qingshurubiaoming')"
           suffix-icon="el-icon-search"
           clearable
           class="p-2"
           @input="handleSearchTable"
         ></ElInput>
-        <div
-          class="flex bg-main justify-content-between pl-2"
-          style="height: 40px"
-        >
+        <div class="flex bg-main justify-content-between pl-2" style="height: 40px">
           {{ $t('packages_form_field_mapping_list_biaoming') }}
         </div>
-        <div
-          v-loading="navLoading"
-          class="nav-list flex-fill font-color-normal"
-        >
+        <div v-loading="navLoading" class="nav-list flex-fill font-color-normal">
           <ul v-if="navList.length">
             <li
               v-for="(item, index) in navList"
@@ -55,18 +35,11 @@
               @click="handleSelect(item, index)"
             >
               <div class="task-form-text-box pl-4">
-                <OverflowTooltip
-                  class="w-100 text-truncate target"
-                  :text="item.name"
-                  placement="right"
-                />
+                <OverflowTooltip class="w-100 text-truncate target" :text="item.name" placement="right" />
               </div>
             </li>
           </ul>
-          <div
-            v-else
-            class="task-form-left__ul flex flex-column align-items-center"
-          >
+          <div v-else class="task-form-left__ul flex flex-column align-items-center">
             <div class="table__empty_img" style="margin-top: 22%">
               <img style="" :src="noData" />
             </div>
@@ -86,13 +59,9 @@
           @current-change="loadData"
         >
           <div class="text-center">
-            <span class="page__current" style="min-width: 22px">{{
-              page.current
-            }}</span>
+            <span class="page__current" style="min-width: 22px">{{ page.current }}</span>
             <span class="icon-color" style="min-width: 22px">/</span>
-            <span class="icon-color" style="min-width: 22px">{{
-              page.count
-            }}</span>
+            <span class="icon-color" style="min-width: 22px">{{ page.count }}</span>
           </div>
         </ElPagination>
       </div>
@@ -100,9 +69,7 @@
         <div class="flex align-items-center p-2">
           <ElInput
             v-model:value="searchField"
-            :placeholder="
-              $t('packages_form_field_mapping_list_qingshuruziduan')
-            "
+            :placeholder="$t('packages_form_field_mapping_list_qingshuruziduan')"
             size="mini"
             suffix-icon="el-icon-search"
             clearable
@@ -153,7 +120,7 @@ export default {
 
   props: {
     form: Object,
-    readOnly: Boolean,
+    readOnly: Boolean
   },
 
   data() {
@@ -166,13 +133,13 @@ export default {
         size: 10,
         current: 1,
         total: 0,
-        count: 1,
+        count: 1
       },
       searchTable: '',
       searchField: '',
       visible: false,
       fieldChangeRules: [],
-      noData,
+      noData
     }
   },
 
@@ -181,12 +148,12 @@ export default {
     ...mapGetters('dataflow', ['stateIsReadonly']),
 
     batchRuleCounts() {
-      return this.fieldChangeRules.filter((t) => t.scope === 'Node').length
+      return this.fieldChangeRules.filter(t => t.scope === 'Node').length
     },
 
     readonly() {
       return this.stateIsReadonly
-    },
+    }
   },
 
   mounted() {
@@ -201,7 +168,7 @@ export default {
       const { items, total } = await this.getData({
         page: current,
         pageSize: size,
-        tableFilter: this.searchTable,
+        tableFilter: this.searchTable
       })
       this.navList = items
       this.page.total = total
@@ -218,9 +185,7 @@ export default {
       let item = this.navList[this.position]
       let fields = item?.fields
       if (this.searchField) {
-        fields = item.fields.filter((t) =>
-          t.field_name.toLowerCase().includes(this.searchField?.toLowerCase())
-        )
+        fields = item.fields.filter(t => t.field_name.toLowerCase().includes(this.searchField?.toLowerCase()))
       }
       this.selected = Object.assign({}, item, { fields })
     },
@@ -231,20 +196,14 @@ export default {
     },
 
     rollbackAll() {
-      this.$confirm(
-        i18n.t('packages_form_field_inference_main_ninquerenyaoquan'),
-        '',
-        {
-          type: 'warning',
-          closeOnClickModal: false,
-        }
-      ).then((resFlag) => {
+      this.$confirm(i18n.t('packages_form_field_inference_main_ninquerenyaoquan'), '', {
+        type: 'warning',
+        closeOnClickModal: false
+      }).then(resFlag => {
         if (resFlag) {
           this.fieldChangeRules = []
           this.handleUpdate()
-          this.$message.success(
-            i18n.t('packages_form_field_inference_list_caozuochenggong')
-          )
+          this.$message.success(i18n.t('packages_form_field_inference_list_caozuochenggong'))
         }
       })
     },
@@ -259,8 +218,8 @@ export default {
 
     handleSearchField: debounce(function () {
       this.filterFields()
-    }, 200),
-  },
+    }, 200)
+  }
 }
 </script>
 

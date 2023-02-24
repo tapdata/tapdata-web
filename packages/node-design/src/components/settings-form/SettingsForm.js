@@ -3,12 +3,7 @@ import { Form, SchemaField } from '@tap/form'
 // import { observe } from '@formily/reactive'
 import { NodePathWidget } from '../widgets'
 import { SettingsFormContext, IconContext } from '../../context'
-import {
-  usePrefix,
-  useSelected,
-  useCurrentNode,
-  useWorkbench,
-} from '../../hooks'
+import { usePrefix, useSelected, useCurrentNode, useWorkbench } from '../../hooks'
 import { useLocales } from './useLocales'
 import { Empty } from 'element-ui'
 import './styles.scss'
@@ -21,9 +16,7 @@ export const SettingsForm = defineComponent({
     const workbenchRef = useWorkbench()
     const prefixRef = usePrefix('settings-form')
 
-    const currentWorkspace =
-      workbenchRef.value?.activeWorkspace ||
-      workbenchRef.value?.currentWorkspace
+    const currentWorkspace = workbenchRef.value?.activeWorkspace || workbenchRef.value?.currentWorkspace
     const currentWorkspaceId = currentWorkspace?.id
 
     const nodeRef = useCurrentNode(currentWorkspaceId)
@@ -33,11 +26,7 @@ export const SettingsForm = defineComponent({
     const sources = reactive({
       key: nodeRef.value.id,
       schema: nodeRef.value?.designerProps?.propsSchema,
-      isEmpty: !(
-        nodeRef.value &&
-        nodeRef.value.designerProps?.propsSchema &&
-        selectedRef.value.length === 1
-      ),
+      isEmpty: !(nodeRef.value && nodeRef.value.designerProps?.propsSchema && selectedRef.value.length === 1)
     })
 
     const formRef = ref()
@@ -52,15 +41,11 @@ export const SettingsForm = defineComponent({
             useLocales(nodeRef.value)
             // useSnapshot(operationRef.value, keyupRef)
             props.effects?.(form)
-          },
+          }
         })
         sources.key = nodeRef.value.id
         sources.schema = nodeRef.value?.designerProps?.propsSchema
-        sources.isEmpty = !(
-          nodeRef.value &&
-          nodeRef.value.designerProps?.propsSchema &&
-          selectedRef.value.length === 1
-        )
+        sources.isEmpty = !(nodeRef.value && nodeRef.value.designerProps?.propsSchema && selectedRef.value.length === 1)
       })
     }
     requestIdleTask()
@@ -99,7 +84,7 @@ export const SettingsForm = defineComponent({
                     props={{
                       schema: sources.schema,
                       components: props.components,
-                      scope: props.scope,
+                      scope: props.scope
                     }}
                   />
                 </Form>
@@ -117,13 +102,11 @@ export const SettingsForm = defineComponent({
       return (
         <IconContext.Provider value={{ tooltip: true }}>
           <div class={prefix + '-wrapper'}>
-            {!sources.isEmpty && (
-              <NodePathWidget workspaceId={currentWorkspaceId} />
-            )}
+            {!sources.isEmpty && <NodePathWidget workspaceId={currentWorkspaceId} />}
             <div class={prefix + '-content'}>{render()}</div>
           </div>
         </IconContext.Provider>
       )
     }
-  },
+  }
 })

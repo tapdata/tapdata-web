@@ -11,8 +11,8 @@ export default {
     value: [String, Array],
     config: {
       require: true,
-      type: Object,
-    },
+      type: Object
+    }
   },
   render() {
     let self = this
@@ -22,26 +22,26 @@ export default {
     return Vue.h(
       'div',
       plantRenderPara({
-        class: 'fb-group',
+        class: 'fb-group'
       }),
       config.items.map((it, index) =>
         Vue.h(TYPE_MAPPING[it.type], {
           class: 'fb-group-item',
           props: {
             value: values[index],
-            config: it,
+            config: it
           },
           on: Object.assign({}, this.on, {
-            input: (val) => {
+            input: val => {
               values[index] = val
               this.on.input(values)
-            },
-          }),
+            }
+          })
         })
       )
     )
   },
-  emits: ['update:value'],
+  emits: ['update:value']
 }
 </script>
 

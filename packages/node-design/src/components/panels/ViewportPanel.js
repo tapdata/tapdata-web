@@ -8,5 +8,5 @@ export const ViewportPanel = defineComponent({
         <Simulator>{slots.default?.()}</Simulator>
       </WorkspacePanel.Item>
     )
-  },
+  }
 })

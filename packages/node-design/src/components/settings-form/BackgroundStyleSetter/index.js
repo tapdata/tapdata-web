@@ -18,61 +18,46 @@ export const BackgroundStyleSetter = observer(
         return (
           <FoldItem class={prefix} label={field.title}>
             <FoldItem.Base>
-              <Field
-                name="backgroundColor"
-                basePath={field.address.parent()}
-                component={[ColorInput]}
-              />
+              <Field name="backgroundColor" basePath={field.address.parent()} component={[ColorInput]} />
             </FoldItem.Base>
             <FoldItem.Extra>
               <InputItems>
                 <InputItems.Item icon="Image">
-                  <Field
-                    name="backgroundImage"
-                    basePath={field.address.parent()}
-                    component={[BackgroundImageInput]}
-                  />
+                  <Field name="backgroundImage" basePath={field.address.parent()} component={[BackgroundImageInput]} />
                 </InputItems.Item>
                 <InputItems.Item icon="ImageSize" width="50%">
-                  <Field
-                    name="backgroundSize"
-                    basePath={field.address.parent()}
-                    component={[BackgroundSizeInput]}
-                  />
+                  <Field name="backgroundSize" basePath={field.address.parent()} component={[BackgroundSizeInput]} />
                 </InputItems.Item>
                 <InputItems.Item icon="Repeat" width="50%">
                   <Field
                     name="backgroundRepeat"
                     basePath={field.address.parent()}
-                    component={[
-                      Select,
-                      { style: { width: '100%' }, placeholder: 'Repeat' },
-                    ]}
+                    component={[Select, { style: { width: '100%' }, placeholder: 'Repeat' }]}
                     dataSource={[
                       {
                         label: 'No Repeat',
-                        value: 'no-repeat',
+                        value: 'no-repeat'
                       },
                       {
                         label: 'Repeat',
-                        value: 'repeat',
+                        value: 'repeat'
                       },
                       {
                         label: 'Repeat X',
-                        value: 'repeat-x',
+                        value: 'repeat-x'
                       },
                       {
                         label: 'Repeat Y',
-                        value: 'repeat-y',
+                        value: 'repeat-y'
                       },
                       {
                         label: 'Space',
-                        value: 'space',
+                        value: 'space'
                       },
                       {
                         label: 'Round',
-                        value: 'round',
-                      },
+                        value: 'round'
+                      }
                     ]}
                   />
                 </InputItems.Item>
@@ -88,6 +73,6 @@ export const BackgroundStyleSetter = observer(
           </FoldItem>
         )
       }
-    },
+    }
   })
 )

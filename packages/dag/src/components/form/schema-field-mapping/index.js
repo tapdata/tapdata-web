@@ -33,16 +33,10 @@ export const SchemaFiledMapping = observer(
 
       return () => {
         return (
-          <FiledMapping
-            ref="fieldMapping"
-            attrs={attrs}
-            on={listeners}
-            itemType="string"
-            itemQuery="original_name"
-          />
+          <FiledMapping ref="fieldMapping" attrs={attrs} on={listeners} itemType="string" itemQuery="original_name" />
         )
       }
-    },
+    }
   })
 )
 

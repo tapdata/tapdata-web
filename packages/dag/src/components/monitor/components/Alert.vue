@@ -9,12 +9,7 @@
         @click="changeItem(item)"
       >
         <div class="flex flex-fill w-0" style="width: 0">
-          <OverflowTooltip
-            class="text-truncate"
-            placement="right"
-            :text="item.label"
-            :open-delay="400"
-          />
+          <OverflowTooltip class="text-truncate" placement="right" :text="item.label" :open-delay="400" />
           <span class="ml-1">{{ `(${item.num})` }}</span>
         </div>
         <div><VIcon>arrow-right</VIcon></div>
@@ -42,9 +37,7 @@
           </ElSelect>
         </div>
         <div class="ml-4">
-          <span>{{
-            $t('packages_dag_components_alert_gaojingzhuangtai')
-          }}</span>
+          <span>{{ $t('packages_dag_components_alert_gaojingzhuangtai') }}</span>
           <ElSelect
             v-model:value="form.status"
             :popper-append-to-body="false"
@@ -67,7 +60,7 @@
         :columns="columns"
         :data="list"
         :page-options="{
-          layout: 'total, ->, prev, pager, next, sizes, jumper',
+          layout: 'total, ->, prev, pager, next, sizes, jumper'
         }"
         ref="table"
         height="100"
@@ -114,46 +107,46 @@ export default {
   props: {
     dataflow: {
       type: Object,
-      default: () => {},
+      default: () => {}
     },
     logsData: {
       type: Object,
       default: () => {
         return {
           total: 0,
-          items: [],
+          items: []
         }
-      },
+      }
     },
     alarmData: {
       type: Object,
       default: () => {
         return {}
-      },
-    },
+      }
+    }
   },
   data() {
     return {
       activeNodeId: 'all',
       form: {
         level: '',
-        status: '',
+        status: ''
       },
       columns: [
         {
           label: i18n.t('packages_dag_components_alert_gaojingjibie'),
           prop: 'level',
           slotName: 'levelSlot',
-          width: 120,
+          width: 120
         },
         {
           label: i18n.t('packages_dag_components_alert_gaojingzhuangtai'),
           prop: 'statusLabel',
-          width: 80,
+          width: 80
         },
         {
           label: i18n.t('packages_dag_components_alert_gaojingmiaoshu'),
-          prop: 'summary',
+          prop: 'summary'
         },
         // {
         //   label: i
@@ -165,7 +158,7 @@ export default {
           label: i18n.t('packages_dag_components_alert_gaojingzuijinfa'),
           prop: 'lastOccurrenceTime',
           dataType: 'time',
-          width: 150,
+          width: 150
         },
         // {
         //   label: i18n.t('packages_dag_components_alert_gaojingfashengci'),
@@ -176,10 +169,10 @@ export default {
           label: i18n.t('packages_dag_components_record_caozuo'),
           slotName: 'operation',
           fixed: 'right',
-          width: 150,
-        },
+          width: 150
+        }
       ],
-      list: [],
+      list: []
     }
   },
   computed: {
@@ -189,13 +182,13 @@ export default {
       let result = [
         {
           label: i18n.t('packages_dag_components_log_quanbu'),
-          value: '',
-        },
+          value: ''
+        }
       ]
       for (let key in ALARM_LEVEL_MAP) {
         result.push({
           label: ALARM_LEVEL_MAP[key].text,
-          value: key,
+          value: key
         })
       }
       return result
@@ -205,13 +198,13 @@ export default {
       let result = [
         {
           label: i18n.t('packages_dag_components_log_quanbu'),
-          value: '',
-        },
+          value: ''
+        }
       ]
       for (let key in ALARM_STATUS_MAP) {
         result.push({
           label: ALARM_STATUS_MAP[key].text,
-          value: key,
+          value: key
         })
       }
       return result
@@ -225,7 +218,7 @@ export default {
         }, {}) || {}
       const alarmList = this.alarmData?.alarmList || []
       const totals = alarmList.length
-      alarmList.forEach((el) => {
+      alarmList.forEach(el => {
         if (el.nodeId) {
           nodeMap[el.nodeId].num++
         }
@@ -234,29 +227,29 @@ export default {
         {
           label: i18n.t('packages_dag_components_alert_quanbugaojing'),
           value: 'all',
-          num: totals,
+          num: totals
         },
         ...this.allNodes
-          .map((t) => {
+          .map(t => {
             return {
               label: t.name,
               value: t.id,
               source: t.$outputs.length > 0,
               target: t.$inputs.length > 0,
-              num: nodeMap[t.id]?.num || 0,
+              num: nodeMap[t.id]?.num || 0
             }
           })
-          .filter((t) => t.num),
+          .filter(t => t.num)
       ]
-    },
+    }
   },
   watch: {
     alarmData: {
       deep: true,
       handler() {
         this.getList()
-      },
-    },
+      }
+    }
   },
   mounted() {
     this.getList()
@@ -267,16 +260,16 @@ export default {
       const { activeNodeId } = this
       const { level, status } = this.form
       if (activeNodeId !== 'all') {
-        data = data.filter((t) => t.nodeId === activeNodeId)
+        data = data.filter(t => t.nodeId === activeNodeId)
       }
       if (level) {
-        data = data.filter((t) => t.level === level)
+        data = data.filter(t => t.level === level)
       }
       if (status) {
-        data = data.filter((t) => t.status === status)
+        data = data.filter(t => t.status === status)
       }
       this.list =
-        data.map((t) => {
+        data.map(t => {
           t.levelLabel = ALARM_LEVEL_MAP[t.level].text
           t.levelType = ALARM_LEVEL_MAP[t.level].type
           t.statusLabel = ALARM_STATUS_MAP[t.status].text
@@ -294,9 +287,7 @@ export default {
 
     handleClose(row = {}) {
       alarmApi.close([row.id]).then(() => {
-        this.$message.success(
-          i18n.t('packages_dag_components_alert_guanbichenggong')
-        )
+        this.$message.success(i18n.t('packages_dag_components_alert_guanbichenggong'))
         $emit(this, 'load-data')
       })
     },
@@ -304,12 +295,12 @@ export default {
     handleLog(row = {}) {
       const params = {
         start: row.lastOccurrenceTime,
-        nodeId: row.nodeId,
+        nodeId: row.nodeId
       }
       $emit(this, 'change-tab', 'log', params)
-    },
+    }
   },
-  emits: ['change-tab', 'load-data'],
+  emits: ['change-tab', 'load-data']
 }
 </script>
 
@@ -340,8 +331,7 @@ export default {
   background-color: rgba(229, 236, 255, 0.22);
   ::v-deep {
     .log-line {
-      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier,
-        monospace;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
     }
     .highlight-bg-color {
       background-color: #ff0;

@@ -3,14 +3,10 @@
     <ShadowSvg></ShadowSvg>
     <div class="hotkey-list user-select-none">
       <div>
-        <span class="mr-2">{{
-          $t('packages_dag_components_paperempty_fuzhi')
-        }}</span>
+        <span class="mr-2">{{ $t('packages_dag_components_paperempty_fuzhi') }}</span>
         <kbd>⌘</kbd><span class="mx-1">+</span><kbd>C</kbd>
         <span class="mx-2">/</span>
-        <span class="mr-2">{{
-          $t('packages_dag_components_paperempty_zhantie')
-        }}</span>
+        <span class="mr-2">{{ $t('packages_dag_components_paperempty_zhantie') }}</span>
         <kbd>⌘</kbd><span class="mx-1">+</span><kbd>V</kbd>
       </div>
 
@@ -19,8 +15,7 @@
         <kbd>⌘</kbd><span class="mx-1">+</span><kbd>Z</kbd>
         <span class="mx-2">/</span>
         <span class="mr-2">{{ $t('packages_dag_button_redo') }}</span>
-        <kbd>⌘</kbd><span class="mx-1">+</span><kbd>⇧</kbd
-        ><span class="mx-1">+</span><kbd>Z</kbd>
+        <kbd>⌘</kbd><span class="mx-1">+</span><kbd>⇧</kbd><span class="mx-1">+</span><kbd>Z</kbd>
       </div>
 
       <div>
@@ -32,14 +27,10 @@
       </div>
 
       <div>
-        <span class="mr-2">{{
-          $t('packages_dag_components_paperempty_huabushijichi')
-        }}</span>
+        <span class="mr-2">{{ $t('packages_dag_components_paperempty_huabushijichi') }}</span>
         <kbd>⌘</kbd><span class="mx-1">+</span><kbd>0</kbd>
         <span class="mx-2">/</span>
-        <span class="mr-2">{{
-          $t('packages_dag_components_paperempty_shiyinghuabu')
-        }}</span>
+        <span class="mr-2">{{ $t('packages_dag_components_paperempty_shiyinghuabu') }}</span>
         <kbd>⌘</kbd><span class="mx-1">+</span><kbd>1</kbd>
       </div>
 
@@ -72,7 +63,7 @@ export default {
       },
       mounted() {
         const root = this.$el.attachShadow({
-          mode: 'open',
+          mode: 'open'
         })
         root.innerHTML = `<svg viewBox="0 0 1024 1024" style="width:240px;height:240px"><style>
 @keyframes helper-drag-rec_w { 0% { width: 210px; } 54.5455% { width: 210px; animation-timing-function: cubic-bezier(0.904,0,0.726,0.668); } 66.6667% { width: 540px; animation-timing-function: cubic-bezier(0.214,0.499,0.52,0.867); } 72.7273% { width: 520px; } 100% { width: 520px; } }
@@ -122,9 +113,9 @@ export default {
         <path fill="#b6b6b6" opacity="1" stroke="none" d="M1,0L3,0C3.55228,0,4,0.447715,4,1L4,3C4,3.55228,3.55228,4,3,4L1,4C0.447715,4,0,3.55228,0,3L0,1C0,0.447715,0.447715,0,1,0Z" transform="translate(-15.4435,22) rotate(45) scale(2,2) translate(-2,-14)" style="animation: 3.3s linear infinite both a10_d;"/>
         <path fill="#b6b6b6" opacity="1" stroke="none" d="M1,0L3,0C3.55228,0,4,0.447715,4,1L4,3C4,3.55228,3.55228,4,3,4L1,4C0.447715,4,0,3.55228,0,3L0,1C0,0.447715,0.447715,0,1,0Z" transform="translate(-15.4435,22) rotate(90) scale(2,2) translate(-2,-14)" style="animation: 3.3s linear infinite both a11_d;"/>
     </g></svg>`
-      },
-    },
-  },
+      }
+    }
+  }
 }
 </script>
 

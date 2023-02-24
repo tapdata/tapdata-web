@@ -7,15 +7,8 @@
     v-model:visible="dialogVisible"
     :before-close="handleClose"
   >
-    <ElForm
-      ref="form"
-      :model="importForm"
-      class="applications-form"
-      label-width="100px"
-    >
-      <ElFormItem
-        :label="$t('packages_business_modules_dialog_condition') + ':'"
-      >
+    <ElForm ref="form" :model="importForm" class="applications-form" label-width="100px">
+      <ElFormItem :label="$t('packages_business_modules_dialog_condition') + ':'">
         <el-radio v-model:value="importForm.upsert" :label="1">{{
           $t('packages_business_modules_dialog_overwrite_data')
         }}</el-radio>
@@ -24,18 +17,8 @@
         }}</el-radio>
       </ElFormItem>
       <ElFormItem :label="$t('packages_business_modules_dialog_group') + ':'">
-        <ElSelect
-          v-model:value="importForm.tag"
-          multiple
-          size="mini"
-          class="w-75"
-        >
-          <ElOption
-            v-for="item in classifyList"
-            :label="item.value"
-            :value="item.id"
-            :key="item.id"
-          ></ElOption>
+        <ElSelect v-model:value="importForm.tag" multiple size="mini" class="w-75">
+          <ElOption v-for="item in classifyList" :label="item.value" :value="item.id" :key="item.id"></ElOption>
         </ElSelect>
       </ElFormItem>
       <ElFormItem :label="$t('packages_business_modules_dialog_file') + ':'">
@@ -61,9 +44,7 @@
     </ElForm>
     <template v-slot:footer>
       <span class="dialog-footer">
-        <ElButton @click="handleClose" size="mini">{{
-          $t('packages_business_button_cancel')
-        }}</ElButton>
+        <ElButton @click="handleClose" size="mini">{{ $t('packages_business_button_cancel') }}</ElButton>
         <ElButton type="primary" @click="submitUpload()" size="mini">{{
           $t('packages_business_button_confirm')
         }}</ElButton>
@@ -80,13 +61,13 @@ import { metadataDefinitionsApi } from '@tap/api'
 export default {
   name: 'Upload',
   components: {
-    VIcon,
+    VIcon
   },
   props: {
     type: {
       required: true,
-      value: String,
-    },
+      value: String
+    }
   },
   data() {
     return {
@@ -98,8 +79,8 @@ export default {
         fileList: [],
         action: '',
         upsert: 1,
-        accept: '.gz',
-      },
+        accept: '.gz'
+      }
     }
   },
   created() {
@@ -140,9 +121,7 @@ export default {
         this.importForm.action =
           window.location.origin +
           window.location.pathname +
-          `api/Task/batch/import?listtags=${encodeURIComponent(
-            JSON.stringify(this.importForm.tag)
-          )}&access_token=` +
+          `api/Task/batch/import?listtags=${encodeURIComponent(JSON.stringify(this.importForm.tag))}&access_token=` +
           this.accessToken +
           `&cover=${!!this.importForm.upsert}`
       }
@@ -151,26 +130,22 @@ export default {
     // 获取分类
     getClassify() {
       let filter = {
-        where: { or: [{ item_type: this.type }] },
+        where: { or: [{ item_type: this.type }] }
       }
       metadataDefinitionsApi
         .get({
-          filter: JSON.stringify(filter),
+          filter: JSON.stringify(filter)
         })
-        .then((data) => {
+        .then(data => {
           this.classifyList = data?.items || []
         })
     },
 
     handleSuccess(response) {
       if (response.code !== 'ok') {
-        this.$message.error(
-          response.message || this.$t('packages_business_message_upload_fail')
-        )
+        this.$message.error(response.message || this.$t('packages_business_message_upload_fail'))
       } else {
-        this.$message.success(
-          this.$t('packages_business_message_upload_success')
-        )
+        this.$message.success(this.$t('packages_business_message_upload_success'))
         $emit(this, 'success')
       }
       this.$refs.upload.clearFiles()
@@ -193,9 +168,9 @@ export default {
     handleClose() {
       this.dialogVisible = false
       this.$refs.upload.clearFiles()
-    },
+    }
   },
-  emits: ['success'],
+  emits: ['success']
 }
 </script>
 

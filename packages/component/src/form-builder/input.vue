@@ -10,8 +10,8 @@ export default {
     value: [String, Number],
     config: {
       require: true,
-      type: Object,
-    },
+      type: Object
+    }
   },
   render() {
     let self = this
@@ -25,9 +25,7 @@ export default {
             maxlength: config.maxlength,
             placeholder:
               config.placeholder ||
-              `${self.$t(
-                'packages_component_formBuilder_input_placeholderPrefix'
-              )}${config.label || ''}`,
+              `${self.$t('packages_component_formBuilder_input_placeholderPrefix')}${config.label || ''}`
           },
           props: {
             value: self.value,
@@ -37,38 +35,37 @@ export default {
             showPassword: config.showPassword,
             showWordLimit: config.showWordLimit,
             rows: config.rows || '',
-            autocomplete:
-              config.domType === 'password' ? 'new-password' : 'off',
+            autocomplete: config.domType === 'password' ? 'new-password' : 'off'
           },
           class: {
-            'el-input-maxlength': config.showWordLimit,
+            'el-input-maxlength': config.showWordLimit
           },
           on: Object.assign({}, this.on, {
-            input: (val) => {
+            input: val => {
               if (config.domType === 'number' && val) {
                 val = Number(val)
               }
               self.on.input(val)
             },
-            change: (val) => {
+            change: val => {
               val = val?.trim()
               self.on.input(val)
-            },
-          }),
+            }
+          })
         })
-      ),
+      )
     ]
     if (tip) {
       arr.push(
         Vue.h('div', plantRenderPara({ class: 'fb-switch-tip' }), [
           Vue.h('i', plantRenderPara({ class: 'el-icon-info' })),
-          Vue.h('span', plantRenderPara({ class: 'fb-switch-tip__text' }), tip),
+          Vue.h('span', plantRenderPara({ class: 'fb-switch-tip__text' }), tip)
         ])
       )
     }
     return Vue.h('div', plantRenderPara({ class: 'input-item' }), arr)
   },
-  emits: ['update:value'],
+  emits: ['update:value']
 }
 </script>
 

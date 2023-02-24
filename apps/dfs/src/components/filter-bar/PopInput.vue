@@ -10,9 +10,7 @@
     <div>
       <ElInput v-model:value="current"></ElInput>
       <div class="btn-row">
-        <ElButton type="primary" @click="confirm">{{
-          $t('button_confirm')
-        }}</ElButton>
+        <ElButton type="primary" @click="confirm">{{ $t('button_confirm') }}</ElButton>
         <ElButton @click="cancel">{{ $t('button_cancel') }}</ElButton>
       </div>
     </div>
@@ -22,13 +20,7 @@
         <span :class="['inner-select__value', { placeholder: !value }]">{{
           value || $t('form_placeholder_input')
         }}</span>
-        <VIcon
-          v-if="showClose"
-          size="12"
-          class="icon-btn ml-1"
-          @click.stop="clear"
-          >close</VIcon
-        >
+        <VIcon v-if="showClose" size="12" class="icon-btn ml-1" @click.stop="clear">close</VIcon>
         <VIcon v-else size="10" class="icon-btn ml-1">arrow-down-fill</VIcon>
       </div>
     </template>
@@ -47,27 +39,27 @@ export default {
     label: [Number, String],
     clearable: {
       type: Boolean,
-      default: false,
+      default: false
     },
     dark: {
       type: Boolean,
-      dafault: false,
+      dafault: false
     },
     overflow: {
       type: Boolean,
-      dafault: false,
-    },
+      dafault: false
+    }
   },
   watch: {
     value(v) {
       v && this.init()
-    },
+    }
   },
   data() {
     return {
       visible: false,
       showClose: false,
-      current: '',
+      current: ''
     }
   },
   methods: {
@@ -102,9 +94,9 @@ export default {
     },
     mouseLeaveFnc() {
       this.showClose = false
-    },
+    }
   },
-  emits: ['change', 'update:value'],
+  emits: ['change', 'update:value']
 }
 </script>
 

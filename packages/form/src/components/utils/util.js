@@ -20,11 +20,7 @@ export function isVnode(element) {
 }
 
 export function isVueOptions(options) {
-  return (
-    options &&
-    (typeof options.template === 'string' ||
-      typeof options.render === 'function')
-  )
+  return options && (typeof options.template === 'string' || typeof options.render === 'function')
 }
 
 export function composeExport(s0, s1) {

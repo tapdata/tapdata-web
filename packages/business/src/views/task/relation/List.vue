@@ -13,7 +13,7 @@
         :columns="columns"
         :remoteMethod="remoteMethod"
         :page-options="{
-          layout: 'total, ->, prev, pager, next, sizes, jumper',
+          layout: 'total, ->, prev, pager, next, sizes, jumper'
         }"
         :has-pagination="false"
         ref="table"
@@ -25,12 +25,9 @@
         </template>
         <template v-slot:operation="scope">
           <div class="operate-columns">
-            <ElButton
-              size="mini"
-              type="text"
-              @click="handleDetail(scope.row)"
-              >{{ $t('packages_business_task_info_info') }}</ElButton
-            >
+            <ElButton size="mini" type="text" @click="handleDetail(scope.row)">{{
+              $t('packages_business_task_info_info')
+            }}</ElButton>
           </div>
         </template>
       </VTable>
@@ -55,37 +52,37 @@ export default {
       searchParams: {
         type: '',
         status: '',
-        keyword: '',
+        keyword: ''
       },
       filterItems: [],
       columns: [
         {
           label: i18n.t('packages_business_task_name'),
-          prop: 'name',
+          prop: 'name'
         },
         {
           label: i18n.t('packages_business_task_list_task_type'),
           prop: 'typeLabel',
-          width: 150,
+          width: 150
         },
         {
           label: i18n.t('packages_business_task_status'),
           prop: 'status',
           slotName: 'status',
-          width: 150,
+          width: 150
         },
         {
           label: i18n.t('packages_business_task_preview_startTime'),
           prop: 'startTime',
           dataType: 'time',
-          width: 200,
+          width: 200
         },
         {
           label: i18n.t('packages_business_connection_operate'),
           slotName: 'operation',
-          width: 100,
-        },
-      ],
+          width: 100
+        }
+      ]
     }
   },
 
@@ -107,19 +104,19 @@ export default {
           items: [
             {
               label: i18n.t('packages_business_task_monitor_mining_task'),
-              value: 'logCollector',
+              value: 'logCollector'
             },
             {
               label: i18n.t('packages_business_relation_list_huancunrenwu'),
-              value: 'mem_cache',
-            },
-          ],
+              value: 'mem_cache'
+            }
+          ]
         },
         {
           placeholder: i18n.t('packages_business_relation_list_qingshururenwu'),
           key: 'keyword',
-          type: 'input',
-        },
+          type: 'input'
+        }
       ]
     },
 
@@ -130,23 +127,23 @@ export default {
       const MAP = {
         logCollector: i18n.t('packages_business_task_monitor_mining_task'),
         mem_cache: i18n.t('packages_business_relation_list_huancunrenwu'),
-        inspect: i18n.t('packages_business_relation_list_jiaoyanrenwu'),
+        inspect: i18n.t('packages_business_relation_list_jiaoyanrenwu')
       }
       let filter = {
         keyword,
         taskId,
         type,
         status,
-        taskRecordId,
+        taskRecordId
       }
-      return taskApi.taskConsoleRelations(filter).then((data) => {
+      return taskApi.taskConsoleRelations(filter).then(data => {
         return {
           total: 0,
           data:
-            data.map((t) => {
+            data.map(t => {
               t.typeLabel = MAP[t.type]
               return t
-            }) || [],
+            }) || []
         }
       })
     },
@@ -155,19 +152,19 @@ export default {
       const routeUrl = this.$router.resolve({
         name: 'relationTaskDetail',
         params: {
-          id: row.id,
+          id: row.id
         },
         query: {
-          type: row.type,
-        },
+          type: row.type
+        }
       })
       openUrl(routeUrl.href)
     },
 
     handleFetch() {
       this.$refs.table?.fetch(1)
-    },
-  },
+    }
+  }
 }
 </script>
 
@@ -183,8 +180,7 @@ export default {
   background-color: rgba(229, 236, 255, 0.22);
   ::v-deep {
     .log-line {
-      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier,
-        monospace;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
     }
     .highlight-bg-color {
       background-color: #ff0;

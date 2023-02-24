@@ -1,10 +1,6 @@
 import { Workspace } from './Workspace'
 import { observable, define, action } from '@formily/reactive'
-import {
-  AddWorkspaceEvent,
-  RemoveWorkspaceEvent,
-  SwitchWorkspaceEvent,
-} from '../events'
+import { AddWorkspaceEvent, RemoveWorkspaceEvent, SwitchWorkspaceEvent } from '../events'
 export class Workbench {
   workspaces
 
@@ -34,7 +30,7 @@ export class Workbench {
       addWorkspace: action,
       removeWorkspace: action,
       setActiveWorkspace: action,
-      setWorkbenchType: action,
+      setWorkbenchType: action
     })
   }
 
@@ -43,7 +39,7 @@ export class Workbench {
       engine: this.engine,
       workbench: this.engine.workbench,
       workspace: null,
-      viewport: null,
+      viewport: null
     }
   }
 
@@ -101,11 +97,11 @@ export class Workbench {
   }
 
   findWorkspaceById(id) {
-    return this.workspaces.find((item) => item.id === id)
+    return this.workspaces.find(item => item.id === id)
   }
 
   findWorkspaceIndexById(id) {
-    return this.workspaces.findIndex((item) => item.id === id)
+    return this.workspaces.findIndex(item => item.id === id)
   }
 
   mapWorkspace(callbackFn) {

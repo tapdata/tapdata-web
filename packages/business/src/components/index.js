@@ -21,5 +21,5 @@ export {
   ConnectionTypeSelector,
   TaskStatus,
   PageHeader,
-  DiscoveryClassification,
+  DiscoveryClassification
 }

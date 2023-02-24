@@ -19,20 +19,20 @@ export class TargetDatabase extends NodeType {
     properties: {
       $inputs: {
         type: 'array',
-        'x-display': 'hidden',
+        'x-display': 'hidden'
       },
       $outputs: {
         type: 'array',
-        'x-display': 'hidden',
+        'x-display': 'hidden'
       },
       databaseType: {
         type: 'string',
-        'x-display': 'hidden',
+        'x-display': 'hidden'
       },
       connectionId: {
         type: 'string',
         'x-display': 'hidden',
-        'x-reactions': '{{useSyncConnection}}',
+        'x-reactions': '{{useSyncConnection}}'
       },
 
       layout: {
@@ -43,14 +43,14 @@ export class TargetDatabase extends NodeType {
           colon: false,
           labelAlign: 'left',
           labelWidth: 80,
-          feedbackLayout: 'none',
+          feedbackLayout: 'none'
         },
         properties: {
           'attrs.connectionName': {
             type: 'string',
             title: i18n.t('packages_dag_nodes_database_lianjiemingcheng'),
             'x-decorator': 'FormItem',
-            'x-component': 'PreviewText.Input',
+            'x-component': 'PreviewText.Input'
           },
           'attrs.accessNodeProcessId': {
             type: 'string',
@@ -59,17 +59,17 @@ export class TargetDatabase extends NodeType {
             'x-component': 'PreviewText.Input',
             'x-component-props': {
               content:
-                '{{$agentMap[$self.value] ? `${$agentMap[$self.value].hostName}（${$agentMap[$self.value].ip}）` : "-"}}',
+                '{{$agentMap[$self.value] ? `${$agentMap[$self.value].hostName}（${$agentMap[$self.value].ip}）` : "-"}}'
             },
             'x-reactions': {
               fulfill: {
                 state: {
-                  display: '{{!$self.value ? "hidden":"visible"}}',
-                },
-              },
-            },
-          },
-        },
+                  display: '{{!$self.value ? "hidden":"visible"}}'
+                }
+              }
+            }
+          }
+        }
       },
 
       desc: {
@@ -78,8 +78,8 @@ export class TargetDatabase extends NodeType {
         'x-decorator': 'FormItem',
         'x-component': 'Input.TextArea',
         'x-component-props': {
-          autosize: { maxRows: 2 },
-        },
+          autosize: { maxRows: 2 }
+        }
       },
       // clipBtn: {
       //   type: 'void',
@@ -93,23 +93,23 @@ export class TargetDatabase extends NodeType {
         'x-decorator': 'FormItem',
         'x-decorator-props': {
           tooltip: i18n.t('packages_dag_nodes_database_dangqianjiedianzhi'),
-          feedbackLayout: 'none',
+          feedbackLayout: 'none'
         },
         'x-component': 'DdlEventList',
         'x-component-props': {
-          findParentNodes: '{{findParentNodes}}',
-        },
+          findParentNodes: '{{findParentNodes}}'
+        }
       },
 
       name: {
         type: 'string',
-        'x-display': 'hidden',
+        'x-display': 'hidden'
       },
       fieldMapping: {
         type: 'void',
         title: i18n.t('packages_dag_nodes_database_tuiyanjieguo'),
         'x-decorator': 'FormItem',
-        'x-component': 'SchemaFiledMapping',
+        'x-component': 'SchemaFiledMapping'
       },
       collapse: {
         type: 'void',
@@ -120,7 +120,7 @@ export class TargetDatabase extends NodeType {
             type: 'void',
             'x-component': 'FormCollapse.Item',
             'x-component-props': {
-              title: i18n.t('packages_dag_task_stetting_most_setting'),
+              title: i18n.t('packages_dag_task_stetting_most_setting')
             },
             properties: {
               existDataProcessMode: {
@@ -129,40 +129,34 @@ export class TargetDatabase extends NodeType {
                 default: 'keepData',
                 enum: [
                   {
-                    label: i18n.t(
-                      'packages_dag_nodes_database_qingchumubiaoduan'
-                    ),
-                    value: 'dropTable',
+                    label: i18n.t('packages_dag_nodes_database_qingchumubiaoduan'),
+                    value: 'dropTable'
                   },
                   {
-                    label: i18n.t(
-                      'packages_dag_nodes_targetdatabase_baochimubiaoduan'
-                    ),
-                    value: 'removeData',
+                    label: i18n.t('packages_dag_nodes_targetdatabase_baochimubiaoduan'),
+                    value: 'removeData'
                   },
                   {
-                    label: i18n.t(
-                      'packages_dag_nodes_database_baochimubiaoduan'
-                    ),
-                    value: 'keepData',
-                  },
+                    label: i18n.t('packages_dag_nodes_database_baochimubiaoduan'),
+                    value: 'keepData'
+                  }
                 ],
                 'x-decorator': 'FormItem',
                 required: true,
-                'x-component': 'Select',
+                'x-component': 'Select'
               },
               dmlPolicy: {
                 title: i18n.t('packages_dag_nodes_database_shujuxieruce'),
                 type: 'object',
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {
-                  feedbackLayout: 'none',
+                  feedbackLayout: 'none'
                 },
                 'x-component': 'FormLayout',
                 'x-component-props': {
                   layout: 'horizontal',
                   colon: false,
-                  feedbackLayout: 'none',
+                  feedbackLayout: 'none'
                 },
                 properties: {
                   insertPolicy: {
@@ -172,25 +166,19 @@ export class TargetDatabase extends NodeType {
                     'x-decorator-props': {
                       className: 'font-color-dark mb-2',
                       wrapperWidth: 300,
-                      addonBefore: i18n.t(
-                        'packages_dag_nodes_database_charushijian'
-                      ),
+                      addonBefore: i18n.t('packages_dag_nodes_database_charushijian')
                     },
                     default: 'update_on_exists',
                     enum: [
                       {
-                        label: i18n.t(
-                          'packages_dag_nodes_targetdatabase_mubiaocunzaishi'
-                        ),
-                        value: 'update_on_exists',
+                        label: i18n.t('packages_dag_nodes_targetdatabase_mubiaocunzaishi'),
+                        value: 'update_on_exists'
                       },
                       {
-                        label: i18n.t(
-                          'packages_dag_nodes_database_mubiaocunzaishi'
-                        ),
-                        value: 'ignore_on_exists',
-                      },
-                    ],
+                        label: i18n.t('packages_dag_nodes_database_mubiaocunzaishi'),
+                        value: 'ignore_on_exists'
+                      }
+                    ]
                   },
                   updatePolicy: {
                     type: 'string',
@@ -199,25 +187,19 @@ export class TargetDatabase extends NodeType {
                     'x-decorator-props': {
                       className: 'font-color-dark mb-2',
                       wrapperWidth: 300,
-                      addonBefore: i18n.t(
-                        'packages_dag_nodes_database_gengxinshijian'
-                      ),
+                      addonBefore: i18n.t('packages_dag_nodes_database_gengxinshijian')
                     },
                     default: 'ignore_on_nonexists',
                     enum: [
                       {
-                        label: i18n.t(
-                          'packages_dag_nodes_database_bucunzaishidiu'
-                        ),
-                        value: 'ignore_on_nonexists',
+                        label: i18n.t('packages_dag_nodes_database_bucunzaishidiu'),
+                        value: 'ignore_on_nonexists'
                       },
                       {
-                        label: i18n.t(
-                          'packages_dag_nodes_database_bucunzaishicha'
-                        ),
-                        value: 'insert_on_nonexists',
-                      },
-                    ],
+                        label: i18n.t('packages_dag_nodes_database_bucunzaishicha'),
+                        value: 'insert_on_nonexists'
+                      }
+                    ]
                   },
                   deletePolicy: {
                     type: 'void',
@@ -225,34 +207,28 @@ export class TargetDatabase extends NodeType {
                     'x-decorator-props': {
                       className: 'font-color-dark',
                       wrapperWidth: 300,
-                      addonBefore: i18n.t(
-                        'packages_dag_nodes_database_shanchushijian'
-                      ),
+                      addonBefore: i18n.t('packages_dag_nodes_database_shanchushijian')
                     },
                     'x-component': 'Tag',
-                    'x-content': i18n.t(
-                      'packages_dag_nodes_database_bucunzaishidiu'
-                    ),
+                    'x-content': i18n.t('packages_dag_nodes_database_bucunzaishidiu'),
                     'x-component-props': {
                       type: 'info',
-                      effect: 'light',
-                    },
-                  },
-                },
+                      effect: 'light'
+                    }
+                  }
+                }
               },
 
               initialConcurrentSpace: {
-                title: i18n.t(
-                  'packages_dag_nodes_database_quanliangduoxiancheng'
-                ),
+                title: i18n.t('packages_dag_nodes_database_quanliangduoxiancheng'),
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {
-                  layout: 'horizontal',
+                  layout: 'horizontal'
                 },
                 type: 'void',
                 'x-component': 'Space',
                 'x-component-props': {
-                  size: 'middle',
+                  size: 'middle'
                 },
                 properties: {
                   initialConcurrent: {
@@ -263,33 +239,31 @@ export class TargetDatabase extends NodeType {
                       target: '.initialConcurrentWriteNum',
                       fulfill: {
                         state: {
-                          visible: '{{!!$self.value}}',
-                        },
-                      },
-                    },
+                          visible: '{{!!$self.value}}'
+                        }
+                      }
+                    }
                   },
                   initialConcurrentWriteNum: {
                     type: 'number',
                     default: 8,
                     'x-component': 'InputNumber',
                     'x-component-props': {
-                      min: 0,
-                    },
-                  },
-                },
+                      min: 0
+                    }
+                  }
+                }
               },
               cdcConcurrentSpace: {
                 type: 'void',
-                title: i18n.t(
-                  'packages_dag_nodes_database_zengliangduoxiancheng'
-                ),
+                title: i18n.t('packages_dag_nodes_database_zengliangduoxiancheng'),
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {
-                  layout: 'horizontal',
+                  layout: 'horizontal'
                 },
                 'x-component': 'Space',
                 'x-component-props': {
-                  size: 'middle',
+                  size: 'middle'
                 },
                 properties: {
                   cdcConcurrent: {
@@ -299,45 +273,43 @@ export class TargetDatabase extends NodeType {
                       target: '.cdcConcurrentWriteNum',
                       fulfill: {
                         state: {
-                          visible: '{{!!$self.value}}',
-                        },
-                      },
-                    },
+                          visible: '{{!!$self.value}}'
+                        }
+                      }
+                    }
                   },
                   cdcConcurrentWriteNum: {
                     type: 'number',
                     default: 4,
                     'x-component': 'InputNumber',
                     'x-component-props': {
-                      min: 0,
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
+                      min: 0
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       },
 
       // 切换连接，保存连接的类型
       'attrs.connectionType': {
         type: 'string',
-        'x-display': 'hidden',
+        'x-display': 'hidden'
       },
 
       // 切换连接，保存连接的类型
       'attrs.capabilities': {
         type: 'array',
         'x-display': 'hidden',
-        'x-reactions': '{{useDmlPolicy}}',
-      },
-    },
+        'x-reactions': '{{useDmlPolicy}}'
+      }
+    }
   }
 
   selector(node) {
     // attrs.isTarget 是UI属性，在无UI的模式生成的节点，通过是否有输入($inputs)来判断
-    return (
-      node.type === 'database' && (node.attrs?.isTarget || node.$inputs?.length)
-    )
+    return node.type === 'database' && (node.attrs?.isTarget || node.$inputs?.length)
   }
 }

@@ -15,34 +15,19 @@
       <!--  任务初始化  -->
       <div v-if="['initial_sync'].indexOf(currentStep.group) === -1">
         <!--  里程碑  -->
-        <Milestone
-          :list="milestonesData"
-          :taskStatus="task && task.status"
-          :fold="false"
-        ></Milestone>
+        <Milestone :list="milestonesData" :taskStatus="task && task.status" :fold="false"></Milestone>
         <div v-if="currentStep.group === 'cdc'" class="mt-6">
           <div class="mb-4 fs-7 font-color-dark">
             {{ currentStep.label }}{{ $t('packages_business_task_info_info') }}
           </div>
-          <VTable
-            :columns="cdcColumns"
-            :data="list"
-            max-height="300"
-            hide-on-single-page
-          >
+          <VTable :columns="cdcColumns" :data="list" max-height="300" hide-on-single-page>
             <template v-slot:operation="scope">
-              <ElButton
-                size="mini"
-                type="text"
-                @click="handleClear(scope.row)"
-                >{{ $t('packages_business_button_clear') }}</ElButton
-              >
-              <ElButton
-                size="mini"
-                type="text"
-                @click="handleRollback(scope.row)"
-                >{{ $t('packages_business_button_rollback') }}</ElButton
-              ></template
+              <ElButton size="mini" type="text" @click="handleClear(scope.row)">{{
+                $t('packages_business_button_clear')
+              }}</ElButton>
+              <ElButton size="mini" type="text" @click="handleRollback(scope.row)">{{
+                $t('packages_business_button_rollback')
+              }}</ElButton></template
             >
           </VTable>
         </div>
@@ -50,10 +35,7 @@
       <!--  结构迁移  -->
       <div v-else>
         <div class="mb-4">
-          <Milestone
-            :list="milestonesData"
-            :taskStatus="task && task.status"
-          ></Milestone>
+          <Milestone :list="milestonesData" :taskStatus="task && task.status"></Milestone>
         </div>
         <ElDivider class="my-6"></ElDivider>
         <!--   概览   -->
@@ -95,20 +77,14 @@
           >
             <template v-slot:totalNum="scope">
               <span v-if="scope.row.totalNum === -2">
-                <span
-                  >{{ $t('packages_business_task_info_overView_error_msg') }}
-                </span>
+                <span>{{ $t('packages_business_task_info_overView_error_msg') }} </span>
                 <ElTooltip placement="top" :content="scope.row.errorMsg">
-                  <VIcon class="link-danger cursor-pointer" size="14"
-                    >error</VIcon
-                  >
+                  <VIcon class="link-danger cursor-pointer" size="14">error</VIcon>
                 </ElTooltip></span
               >
               <span v-else
                 >{{
-                  scope.row.totalNum === -1
-                    ? $t('packages_business_task_info_overView_status')
-                    : scope.row.totalNum
+                  scope.row.totalNum === -1 ? $t('packages_business_task_info_overView_status') : scope.row.totalNum
                 }}
               </span>
             </template>
@@ -116,15 +92,8 @@
               <span>{{ scope.row.progress }} %</span>
             </template>
             <template v-slot:status="scope">
-              <span
-                :class="['status-' + scope.row.status, 'status-block', 'mr-2']"
-              >
-                {{
-                  $t(
-                    'packages_business_task_info_status_' +
-                      getStatus(scope.row.status)
-                  )
-                }}
+              <span :class="['status-' + scope.row.status, 'status-block', 'mr-2']">
+                {{ $t('packages_business_task_info_status_' + getStatus(scope.row.status)) }}
               </span>
             </template>
           </VTable>
@@ -143,25 +112,14 @@
           <div class="mb-4 fs-7 font-color-dark">
             {{ currentStep.label }}{{ $t('packages_business_task_info_info') }}
           </div>
-          <VTable
-            :columns="cdcColumns"
-            :data="list"
-            max-height="300"
-            hide-on-single-page
-          >
+          <VTable :columns="cdcColumns" :data="list" max-height="300" hide-on-single-page>
             <template v-slot:operation="scope">
-              <ElButton
-                size="mini"
-                type="text"
-                @click="handleClear(scope.row)"
-                >{{ $t('packages_business_button_clear') }}</ElButton
-              >
-              <ElButton
-                size="mini"
-                type="text"
-                @click="handleRollback(scope.row)"
-                >{{ $t('packages_business_button_rollback') }}</ElButton
-              ></template
+              <ElButton size="mini" type="text" @click="handleClear(scope.row)">{{
+                $t('packages_business_button_clear')
+              }}</ElButton>
+              <ElButton size="mini" type="text" @click="handleRollback(scope.row)">{{
+                $t('packages_business_button_rollback')
+              }}</ElButton></template
             >
           </VTable>
         </div>
@@ -170,17 +128,12 @@
     <!--  里程碑无分类  -->
     <div v-else>
       <!--  里程碑  -->
-      <Milestone
-        :list="milestonesData"
-        :taskStatus="task && task.status"
-        :fold="false"
-      ></Milestone>
+      <Milestone :list="milestonesData" :taskStatus="task && task.status" :fold="false"></Milestone>
       <ElDivider class="my-6"></ElDivider>
       <Overview :info="syncOverViewData" :status="task.status"></Overview>
       <div v-if="currentStep.group === 'structure'" class="mt-6">
         <div class="mb-4 fs-7 font-color-dark">
-          {{ $t('packages_business_task_info_task_structure')
-          }}{{ $t('packages_business_task_info_info') }}
+          {{ $t('packages_business_task_info_task_structure') }}{{ $t('packages_business_task_info_info') }}
         </div>
         <div></div>
         <VTable
@@ -198,16 +151,9 @@
       </div>
       <div class="mt-6">
         <div class="mb-4 fs-7 font-color-dark">
-          {{ $t('packages_business_task_setting_initial_sync')
-          }}{{ $t('packages_business_task_info_info') }}
+          {{ $t('packages_business_task_setting_initial_sync') }}{{ $t('packages_business_task_info_info') }}
         </div>
-        <VTable
-          v-if="columns.length"
-          :data="syncTableList"
-          :columns="columns"
-          max-height="300"
-          hide-on-single-page
-        >
+        <VTable v-if="columns.length" :data="syncTableList" :columns="columns" max-height="300" hide-on-single-page>
           <template v-slot:schedule="scope">
             <span>{{ getSchedule(scope.row) }}</span>
           </template>
@@ -215,15 +161,9 @@
       </div>
       <div class="mt-6">
         <div class="mb-4 fs-7 font-color-dark">
-          {{ $t('packages_business_task_info_task_cdc')
-          }}{{ $t('packages_business_task_info_info') }}
+          {{ $t('packages_business_task_info_task_cdc') }}{{ $t('packages_business_task_info_info') }}
         </div>
-        <VTable
-          :columns="cdcColumns"
-          :data="list"
-          max-height="300"
-          hide-on-single-page
-        ></VTable>
+        <VTable :columns="cdcColumns" :data="list" max-height="300" hide-on-single-page></VTable>
       </div>
     </div>
     <ElDialog
@@ -234,28 +174,13 @@
     >
       <ElRow>
         <ElRow :span="8" style="margin-bottom: 10px">
-          <label>{{
-            $t('packages_business_statistics_schedule_leixing')
-          }}</label>
-          <ElSelect
-            v-model:value="syncPointType"
-            :placeholder="
-              $t('packages_business_statistics_schedule_qingxuanze')
-            "
-          >
-            <ElOption
-              v-for="op in options"
-              :key="op.value"
-              :label="op.label"
-              :value="op.value"
-            >
-            </ElOption>
+          <label>{{ $t('packages_business_statistics_schedule_leixing') }}</label>
+          <ElSelect v-model:value="syncPointType" :placeholder="$t('packages_business_statistics_schedule_qingxuanze')">
+            <ElOption v-for="op in options" :key="op.value" :label="op.label" :value="op.value"> </ElOption>
           </ElSelect>
         </ElRow>
         <ElRow :span="14" v-if="syncPointType !== 'current'">
-          <label>{{
-            $t('packages_business_statistics_schedule_shijian')
-          }}</label>
+          <label>{{ $t('packages_business_statistics_schedule_shijian') }}</label>
           <ElDatePicker
             format="yyyy-MM-dd HH:mm:ss"
             style="width: 70%"
@@ -267,9 +192,7 @@
       </ElRow>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <ElButton size="mini" @click="handleRollbackClose()">{{
-            $t('packages_business_button_cancel')
-          }}</ElButton>
+          <ElButton size="mini" @click="handleRollbackClose()">{{ $t('packages_business_button_cancel') }}</ElButton>
           <ElButton size="mini" type="primary" @click="submitRollBack()">{{
             $t('packages_business_button_confirm')
           }}</ElButton>
@@ -299,8 +222,8 @@ export default {
     task: {
       type: Object,
       required: true,
-      default: () => {},
-    },
+      default: () => {}
+    }
   },
   data() {
     return {
@@ -311,7 +234,7 @@ export default {
       steps: [],
       searchParams: {
         tableName: '',
-        type: '',
+        type: ''
       },
       structureColumns: [], // 结构迁移
       cdcColumns: [], // 增量
@@ -329,33 +252,33 @@ export default {
       statusMap: {
         done: {
           color: '',
-          text: this.$t('packages_business_task_info_synced'),
-        },
+          text: this.$t('packages_business_task_info_synced')
+        }
       },
       groupMap: {
         init: this.$t('packages_business_task_info_task_init'),
         structure: this.$t('packages_business_task_info_task_structure'),
         cdc: this.$t('packages_business_task_info_task_cdc'),
-        initial_sync: this.$t('packages_business_task_setting_initial_sync'),
+        initial_sync: this.$t('packages_business_task_setting_initial_sync')
       },
       rollbackVisible: false,
       options: [
         {
           label: i18n.t('packages_business_statistics_schedule_yonghuliulanqi'),
-          value: 'localTZ',
+          value: 'localTZ'
         },
         {
           label: i18n.t('packages_business_statistics_schedule_shujukushiqu'),
-          value: 'connTZ',
+          value: 'connTZ'
         },
         {
           label: i18n.t('packages_business_statistics_schedule_cike'),
-          value: 'current',
-        },
+          value: 'current'
+        }
       ],
       currentRow: {},
       syncPointType: '',
-      syncPointDate: '',
+      syncPointDate: ''
     }
   },
   computed: {
@@ -372,23 +295,20 @@ export default {
         this.getSyncTableData()
       }
       return steps[index - 1] || {}
-    },
+    }
   },
   watch: {
     task: {
       deep: true,
       handler(v) {
         v && this.init()
-      },
-    },
+      }
+    }
   },
   methods: {
     getStatus(status) {
       let result = status
-      if (
-        ['edit', 'stop', 'error'].includes(this.task.status) &&
-        status === 'running'
-      ) {
+      if (['edit', 'stop', 'error'].includes(this.task.status) && status === 'running') {
         result = 'paused'
       }
       return result
@@ -399,7 +319,7 @@ export default {
       this.getSyncOverViewData() //数据初始化
     },
     loadRuntimeInfo() {
-      subtaskApi.runtimeInfo(this.id).then((data) => {
+      subtaskApi.runtimeInfo(this.id).then(data => {
         this.runtimeInfo = data || {}
         this.getStep()
         this.getColumns()
@@ -410,14 +330,14 @@ export default {
       let milestones = runtimeInfo?.milestones || []
       let currentStep
       let stepsData = []
-      milestones.forEach((el) => {
+      milestones.forEach(el => {
         let item = stepsData[stepsData.length - 1]
         // 总有几个步骤
         if (el.group && el.group !== item?.group) {
           stepsData.push({
             label: groupMap[el.group],
             desc: this.formatTime(el.start) || this.formatTime(el.end),
-            group: el.group,
+            group: el.group
           })
         }
         // 已完成
@@ -429,8 +349,7 @@ export default {
         currentStep = milestones[milestones.length - 1].group
       }
       this.steps = stepsData
-      this.active =
-        (stepsData.findIndex((item) => item.group === currentStep) || 0) + 1
+      this.active = (stepsData.findIndex(item => item.group === currentStep) || 0) + 1
       if (!this.isClickStep) {
         this.showActive = this.active
       }
@@ -438,8 +357,8 @@ export default {
     },
     getMilestonesData() {
       this.milestonesData = (this.runtimeInfo?.milestones || [])
-        .filter((item) => item.group === this.currentStep.group)
-        .map((m) => {
+        .filter(item => item.group === this.currentStep.group)
+        .map(m => {
           // let time = m.status === 'running' ? formatTime(m.start) : formatTime(m.end)
           let time = this.formatTime(m.start)
           return {
@@ -447,7 +366,7 @@ export default {
             status: m.status,
             fromNow: time || '-',
             errorMessage: m.errorMessage,
-            tipDisabled: true,
+            tipDisabled: true
           }
         })
     },
@@ -456,28 +375,28 @@ export default {
       this.structureColumns = [
         {
           label: this.$t('packages_business_task_info_source_database'),
-          prop: 'connectionName',
+          prop: 'connectionName'
         },
         {
           label: this.$t('packages_business_task_info_source_table'),
-          prop: 'table',
+          prop: 'table'
         },
         {
           label: this.$t('packages_business_task_info_schedule'),
           prop: 'schedule',
-          slotName: 'schedule',
+          slotName: 'schedule'
         },
         {
           label: this.$t('packages_business_task_monitor_status'),
           prop: 'status',
-          slotName: 'status',
-        },
+          slotName: 'status'
+        }
       ]
       // 增量同步
       this.cdcColumns = [
         {
           label: this.$t('packages_business_task_info_srcName'),
-          prop: 'srcName',
+          prop: 'srcName'
         },
         // {
         //   label: this.$t('packages_business_task_info_srcTableName'),
@@ -485,7 +404,7 @@ export default {
         // },
         {
           label: this.$t('packages_business_task_info_tgtName'),
-          prop: 'tgtName',
+          prop: 'tgtName'
         },
         // {
         //   label: this.$t('packages_business_task_info_tgtTableName'),
@@ -493,56 +412,56 @@ export default {
         // },
         {
           label: this.$t('packages_business_task_info_cdc_delay'),
-          prop: 'delay',
+          prop: 'delay'
         },
         {
           label: this.$t('packages_business_task_info_cdc_time'),
           prop: 'cdcTime',
-          dataType: 'time',
+          dataType: 'time'
         },
         {
           label: this.$t('packages_business_column_operation'),
           prop: 'operation',
-          slotName: 'operation',
-        },
+          slotName: 'operation'
+        }
       ]
       // 全量同步
       this.columns = [
         {
           label: this.$t('packages_business_task_info_srcName'),
-          prop: 'srcName',
+          prop: 'srcName'
         },
         {
           label: this.$t('packages_business_task_info_source_table'),
-          prop: 'srcTableName',
+          prop: 'srcTableName'
         },
         {
           label: this.$t('packages_business_task_info_data_row'),
           prop: 'totalNum',
-          slotName: 'totalNum',
+          slotName: 'totalNum'
         },
         {
           label: this.$t('packages_business_task_info_tgtName'),
-          prop: 'tgtName',
+          prop: 'tgtName'
         },
         {
           label: this.$t('packages_business_task_info_target_table'),
-          prop: 'tgtTableName',
+          prop: 'tgtTableName'
         },
         {
           label: this.$t('packages_business_task_info_amount_sync_data'),
-          prop: 'finishNumber',
+          prop: 'finishNumber'
         },
         {
           label: this.$t('packages_business_task_info_schedule'),
           prop: 'progress',
-          slotName: 'progress',
+          slotName: 'progress'
         },
         {
           label: this.$t('packages_business_task_monitor_status'),
           prop: 'status',
-          slotName: 'status',
-        },
+          slotName: 'status'
+        }
       ]
       this.$refs.initialTableList?.fetch?.()
     },
@@ -554,10 +473,7 @@ export default {
     },
     getMilestoneStatus(status) {
       let result = status
-      if (
-        ['draft', 'pause', 'error'].includes(this.task?.status) &&
-        status === 'running'
-      ) {
+      if (['draft', 'pause', 'error'].includes(this.task?.status) && status === 'running') {
         result = 'pause'
       }
       return result
@@ -567,14 +483,14 @@ export default {
         {
           label: this.$t('packages_business_task_info_table_name'),
           key: 'tableName',
-          type: 'input',
+          type: 'input'
         },
         {
           label: this.$t('packages_business_task_monitor_status'),
           key: 'type',
           type: 'select',
-          items: [],
-        },
+          items: []
+        }
       ]
     },
     remoteMethod({ page }) {
@@ -583,7 +499,7 @@ export default {
       let stages = task?.stages || []
       let target = null
       let source = null
-      stages.forEach((stage) => {
+      stages.forEach(stage => {
         if (stage.inputLanes.length) {
           target = stage
         }
@@ -593,32 +509,32 @@ export default {
       })
       let where = {
         dataFlowId: {
-          like: task.id,
+          like: task.id
         },
         statsType: 'dataFlowDetailsStats',
         'statsData.sourceConnectionId': {
-          like: source.connectionId,
+          like: source.connectionId
         },
         'statsData.targetConnectionId': {
-          like: target.connectionId,
-        },
+          like: target.connectionId
+        }
       }
       let filter = {
         where,
         limit: size,
         skip: (current - 1) * size,
-        order: 'createTime DESC',
+        order: 'createTime DESC'
       }
       return dataFlowInsightsApi
         .get({
-          filter: JSON.stringify(filter),
+          filter: JSON.stringify(filter)
         })
-        .then((data) => {
+        .then(data => {
           return {
             total: data?.total || 0,
-            data: (data?.items || []).map((item) => {
+            data: (data?.items || []).map(item => {
               return Object.assign(item, item.statsData)
-            }),
+            })
           }
         })
     },
@@ -634,21 +550,19 @@ export default {
     getSyncTableData() {
       let filter = {
         limit: this.pageSize,
-        skip: (this.currentPage - 1) * this.pageSize,
+        skip: (this.currentPage - 1) * this.pageSize
       }
-      subtaskApi.syncTable(this.id, filter).then((data) => {
+      subtaskApi.syncTable(this.id, filter).then(data => {
         this.syncTableList = data?.items || []
         this.tableTotal = data?.total || 0
       })
     },
     //概览信息
     getSyncOverViewData() {
-      subtaskApi.syncOverView(this.id).then((data) => {
+      subtaskApi.syncOverView(this.id).then(data => {
         this.syncOverViewData = data || {}
         $emit(this, 'sync', deepCopy(data))
-        this.syncOverViewData.finishDuration = this.handleTime(
-          this.syncOverViewData?.finishDuration
-        )
+        this.syncOverViewData.finishDuration = this.handleTime(this.syncOverViewData?.finishDuration)
       })
     },
     handleTime(time) {
@@ -688,15 +602,13 @@ export default {
     },
     //增量同步
     getCdcTableList() {
-      subtaskApi.cdcIncrease(this.id).then((data) => {
+      subtaskApi.cdcIncrease(this.id).then(data => {
         this.list = data || []
       })
     },
     handleClear(row) {
       subtaskApi.clearIncrease(this.id, row.srcId, row.tgtId).then(() => {
-        this.$message.success(
-          this.$t('packages_business_message_update_success')
-        )
+        this.$message.success(this.$t('packages_business_message_update_success'))
       })
     },
     handleRollback(row) {
@@ -719,23 +631,14 @@ export default {
       let params = {
         dateTime: this.syncPointDate,
         pointType: this.syncPointType,
-        timeZone: systemTimeZone,
+        timeZone: systemTimeZone
       }
-      subtaskApi
-        .rollbackIncrease(
-          this.id,
-          this.currentRow.srcId,
-          this.currentRow.tgtId,
-          params
-        )
-        .then(() => {
-          this.rollbackVisible = false
-          this.$message.success(
-            this.$t('packages_business_message_update_success')
-          )
-        })
-    },
+      subtaskApi.rollbackIncrease(this.id, this.currentRow.srcId, this.currentRow.tgtId, params).then(() => {
+        this.rollbackVisible = false
+        this.$message.success(this.$t('packages_business_message_update_success'))
+      })
+    }
   },
-  emits: ['sync'],
+  emits: ['sync']
 }
 </script>

@@ -4,22 +4,9 @@
     class="config-panel border-start flex-column"
     :class="{ flex: showPanel, 'show-settings': activeType === 'settings' }"
   >
-    <NodeIcon
-      v-if="activeNode"
-      v-show="activeType === 'node'"
-      class="config-node-icon"
-      :node="activeNode"
-    />
-    <ElTabs
-      ref="tabs"
-      v-model:value="currentTab"
-      class="config-tabs"
-      v-show="activeType === 'node'"
-    >
-      <ElTabPane
-        :label="$t('packages_dag_migration_configpanel_peizhi')"
-        name="settings"
-      >
+    <NodeIcon v-if="activeNode" v-show="activeType === 'node'" class="config-node-icon" :node="activeNode" />
+    <ElTabs ref="tabs" v-model:value="currentTab" class="config-tabs" v-show="activeType === 'node'">
+      <ElTabPane :label="$t('packages_dag_migration_configpanel_peizhi')" name="settings">
         <FormPanel
           v-bind="$attrs"
           v-show="activeType !== 'settings'"
@@ -28,68 +15,32 @@
             colon: false,
             shallow: false,
             layout: 'vertical',
-            feedbackLayout: 'terse',
+            feedbackLayout: 'terse'
           }"
           @update:InputsOrOutputs="handleLoadMeta"
           @setSchema="handleSetSchema"
         />
       </ElTabPane>
-      <ElTabPane
-        v-if="showSchemaPanel"
-        :label="$t('packages_dag_migration_configpanel_moxing')"
-        name="meta"
-      >
-        <MetaPane
-          ref="metaPane"
-          :is-show="currentTab === 'meta'"
-          :form="form"
-        ></MetaPane>
+      <ElTabPane v-if="showSchemaPanel" :label="$t('packages_dag_migration_configpanel_moxing')" name="meta">
+        <MetaPane ref="metaPane" :is-show="currentTab === 'meta'" :form="form"></MetaPane>
       </ElTabPane>
-      <ElTabPane
-        v-if="isMonitor"
-        :label="$t('packages_dag_migration_configpanel_gaojingshezhi')"
-        name="alarm"
-      >
-        <AlarmPanel
-          v-bind="$attrs"
-          v-if="currentTab === 'alarm' && activeType === 'node'"
-          :isNode="true"
-        />
+      <ElTabPane v-if="isMonitor" :label="$t('packages_dag_migration_configpanel_gaojingshezhi')" name="alarm">
+        <AlarmPanel v-bind="$attrs" v-if="currentTab === 'alarm' && activeType === 'node'" :isNode="true" />
       </ElTabPane>
     </ElTabs>
 
-    <div
-      class="flex-column h-100"
-      :class="activeType === 'settings' ? 'flex' : 'none'"
-    >
+    <div class="flex-column h-100" :class="activeType === 'settings' ? 'flex' : 'none'">
       <div class="panel-header flex align-center px-4 border-bottom">
-        <div
-          class="title-input-wrap flex align-center flex-shrink-0 h-100 fw-sub"
-        >
-          <ElTabs
-            v-if="isMonitor"
-            ref="tabs"
-            v-model:value="titleCurrentTab"
-            class="setting-tabs"
-          >
-            <ElTabPane
-              :label="$t('packages_dag_task_stetting_basic_setting')"
-            ></ElTabPane>
-            <ElTabPane
-              :label="$t('packages_dag_migration_configpanel_gaojingshezhi')"
-            ></ElTabPane>
+        <div class="title-input-wrap flex align-center flex-shrink-0 h-100 fw-sub">
+          <ElTabs v-if="isMonitor" ref="tabs" v-model:value="titleCurrentTab" class="setting-tabs">
+            <ElTabPane :label="$t('packages_dag_task_stetting_basic_setting')"></ElTabPane>
+            <ElTabPane :label="$t('packages_dag_migration_configpanel_gaojingshezhi')"></ElTabPane>
           </ElTabs>
-          <span v-else>{{
-            $t('packages_dag_task_stetting_basic_setting')
-          }}</span>
+          <span v-else>{{ $t('packages_dag_task_stetting_basic_setting') }}</span>
         </div>
       </div>
       <div v-if="titleCurrentTab === '0'" class="panel-content flex-1">
-        <SettingPanel
-          v-bind="$attrs"
-          ref="setting"
-          v-show="activeType === 'settings'"
-        />
+        <SettingPanel v-bind="$attrs" ref="setting" v-show="activeType === 'settings'" />
       </div>
       <div v-else-if="titleCurrentTab === '1'" class="panel-content flex-1">
         <AlarmPanel v-bind="$attrs" v-if="activeType === 'settings'" />
@@ -116,7 +67,7 @@ export default {
 
   directives: {
     resize,
-    focusSelect,
+    focusSelect
   },
 
   props: {
@@ -124,8 +75,8 @@ export default {
     showSchemaPanel: Boolean,
     includesType: {
       type: Array,
-      default: () => ['node', 'settings'],
-    },
+      default: () => ['node', 'settings']
+    }
   },
 
   data() {
@@ -134,45 +85,33 @@ export default {
       currentTab: 'settings',
       titleCurrentTab: '0',
       name: this.activeNode?.name,
-      form: null,
+      form: null
     }
   },
 
   components: { MetaPane, SettingPanel, NodeIcon, FormPanel, AlarmPanel },
 
   computed: {
-    ...mapGetters('dataflow', [
-      'activeType',
-      'activeNode',
-      'nodeById',
-      'stateIsReadonly',
-    ]),
+    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
     ...mapState('dataflow', ['editVersion']),
 
     showPanel() {
-      return this.onlySetting
-        ? this.activeType === 'settings'
-        : this.includesType.includes(this.activeType)
+      return this.onlySetting ? this.activeType === 'settings' : this.includesType.includes(this.activeType)
     },
 
     isMonitor() {
       return ['TaskMonitor', 'MigrationMonitor'].includes(this.$route.name)
-    },
+    }
   },
 
   watch: {
     'activeNode.name'(v) {
       this.name = v
-    },
+    }
   },
 
   methods: {
-    ...mapMutations('dataflow', [
-      'updateNodeProperties',
-      'setNodeError',
-      'clearNodeError',
-      'setActiveType',
-    ]),
+    ...mapMutations('dataflow', ['updateNodeProperties', 'setNodeError', 'clearNodeError', 'setActiveType']),
     ...mapActions('dataflow', ['updateDag']),
 
     handleChangeName(name) {
@@ -213,8 +152,8 @@ export default {
 
     handleSetSchema() {
       this.form = cloneDeep(this.$refs.formPanel?.form)
-    },
-  },
+    }
+  }
 }
 </script>
 

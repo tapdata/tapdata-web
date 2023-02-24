@@ -10,33 +10,21 @@
     >
       <template v-slot:name="scope">
         <div class="flex flex-row align-items-center p-2">
-          <img
-            class="mr-2"
-            style="width: 24px; height: 24px"
-            :src="getConnectionIcon(scope.row.pdkHash)"
-            alt=""
-          />
+          <img class="mr-2" style="width: 24px; height: 24px" :src="getConnectionIcon(scope.row.pdkHash)" alt="" />
           <ElLink type="primary" style="display: block; line-height: 20px">
             {{ scope.row.name }}
           </ElLink>
         </div>
       </template>
       <template v-slot:status="scope">
-        <span
-          :class="['status-connection-' + scope.row.status, 'status-block']"
-        >
+        <span :class="['status-connection-' + scope.row.status, 'status-block']">
           {{ $t('packages_business_connection_status_' + scope.row.status) }}
         </span>
       </template>
       <template v-slot:schemaHeader>
         <div>
           {{ $t('packages_business_connection_list_column_schema_status') }}
-          <ElTooltip
-            placement="top"
-            :content="
-              $t('packages_business_connection_list_column_schema_status_tips')
-            "
-          >
+          <ElTooltip placement="top" :content="$t('packages_business_connection_list_column_schema_status_tips')">
             <VIcon class="color-primary" size="14">info</VIcon>
           </ElTooltip>
         </div>
@@ -46,12 +34,9 @@
       </template>
       <template v-slot:operation="scope">
         <div class="operate-columns">
-          <ElButton
-            size="mini"
-            type="text"
-            @click="testConnection(scope.row)"
-            >{{ $t('packages_business_task_info_connection_test') }}</ElButton
-          >
+          <ElButton size="mini" type="text" @click="testConnection(scope.row)">{{
+            $t('packages_business_task_info_connection_test')
+          }}</ElButton>
           <ElDivider direction="vertical"></ElDivider>
           <ElButton size="mini" type="text" @click="reload(scope.row)">{{
             $t('packages_business_connection_preview_load_schema')
@@ -80,8 +65,8 @@ export default {
   props: {
     ids: {
       type: Array,
-      default: () => [],
-    },
+      default: () => []
+    }
   },
   data() {
     return {
@@ -91,43 +76,39 @@ export default {
       columns: [
         {
           label: this.$t('packages_business_connection_list_name'),
-          slotName: 'name',
+          slotName: 'name'
         },
         {
           label: this.$t('packages_business_connection_list_status'),
           prop: 'status',
-          slotName: 'status',
+          slotName: 'status'
         },
         {
           label: this.$t('packages_business_connection_list_type'),
-          prop: 'connectType',
+          prop: 'connectType'
         },
         {
-          label: this.$t(
-            'packages_business_connection_list_schema_load_progress'
-          ),
+          label: this.$t('packages_business_connection_list_schema_load_progress'),
           prop: 'schema',
           headerSlot: 'schemaHeader',
-          slotName: 'schema',
+          slotName: 'schema'
         },
         {
           label: this.$t('packages_business_connection_list_change_time'),
           prop: 'last_updated',
-          dataType: 'time',
+          dataType: 'time'
         },
         {
           label: this.$t('packages_business_connection_list_operate'),
           prop: 'operation',
-          slotName: 'operation',
-        },
+          slotName: 'operation'
+        }
       ],
       connectTypeMap: {
         source: this.$t('packages_business_connection_list_source'),
         target: this.$t('packages_business_connection_list_target'),
-        source_and_target: this.$t(
-          'packages_business_connection_list_source_and_target'
-        ),
-      },
+        source_and_target: this.$t('packages_business_connection_list_source_and_target')
+      }
     }
   },
   mounted() {
@@ -149,24 +130,24 @@ export default {
       let filter = {
         where: {
           id: {
-            inq: ids,
-          },
+            inq: ids
+          }
         },
         limit: size,
-        skip: size * (current - 1),
+        skip: size * (current - 1)
       }
       return connectionsApi
         .get({
-          filter: JSON.stringify(filter),
+          filter: JSON.stringify(filter)
         })
-        .then((data) => {
-          let list = (data?.items || []).map((item) => {
+        .then(data => {
+          let list = (data?.items || []).map(item => {
             item.connectType = this.connectTypeMap[item.connection_type]
             return deepCopy(item)
           })
           return {
             total: data?.total || 0,
-            data: list,
+            data: list
           }
         })
     },
@@ -191,7 +172,7 @@ export default {
     async test(data, isShowDialog = true) {
       try {
         await connectionsApi.updateById(data.id, {
-          status: 'testing',
+          status: 'testing'
         })
         this.$refs.test.start(data, isShowDialog)
         this.fetch()
@@ -209,14 +190,14 @@ export default {
           confirmButtonText: this.$t('packages_business_button_confirm'),
           cancelButtonText: this.$t('packages_business_button_close'),
           name: row.name,
-          id: row.id,
+          id: row.id
         }
         this.$confirm(config.Message + config.name + '?', config.title, {
           confirmButtonText: config.confirmButtonText,
           cancelButtonText: config.cancelButtonText,
           type: 'warning',
-          closeOnClickModal: false,
-        }).then((resFlag) => {
+          closeOnClickModal: false
+        }).then(resFlag => {
           if (resFlag) {
             this.showProgress = true
             this.progress = 0
@@ -229,11 +210,11 @@ export default {
     testSchema(row) {
       let parms = {
         loadCount: 0,
-        loadFieldsStatus: 'loading',
+        loadFieldsStatus: 'loading'
       }
       this.loadFieldsStatus = 'loading'
       this.reloadLoading = true
-      connectionsApi.updateById(row.id, parms).then((data) => {
+      connectionsApi.updateById(row.id, parms).then(data => {
         if (!this?.$refs?.test) {
           return
         }
@@ -243,8 +224,8 @@ export default {
     },
     getConnectionIcon() {
       return getConnectionIcon(...arguments)
-    },
-  },
+    }
+  }
 }
 </script>
 

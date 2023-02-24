@@ -7,7 +7,7 @@ import { defineComponent } from 'vue-demi'
 export const EmptyWidget = observer(
   defineComponent({
     props: {
-      dragTipsDirection: { type: String, default: 'left' },
+      dragTipsDirection: { type: String, default: 'left' }
     },
     setup: (props, { slots }) => {
       const treeRef = useTree()
@@ -20,11 +20,7 @@ export const EmptyWidget = observer(
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <div class="animations">
                 <IconWidget
-                  infer={
-                    props.dragTipsDirection === 'left'
-                      ? 'DragLeftSourceAnimation'
-                      : 'DragRightSourceAnimation'
-                  }
+                  infer={props.dragTipsDirection === 'left' ? 'DragLeftSourceAnimation' : 'DragRightSourceAnimation'}
                   size={240}
                 />
                 <IconWidget infer="BatchDragAnimation" size={240} />
@@ -45,14 +41,10 @@ export const EmptyWidget = observer(
           )
         }
         if (!tree?.children?.length) {
-          return (
-            <div class={prefix}>
-              {slots.default ? slots.default() : renderEmpty()}
-            </div>
-          )
+          return <div class={prefix}>{slots.default ? slots.default() : renderEmpty()}</div>
         }
         return null
       }
-    },
+    }
   })
 )

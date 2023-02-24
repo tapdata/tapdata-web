@@ -9,11 +9,11 @@ export const InputNumber = FormInputNumber
 InputNumber.Behavior = createBehavior({
   name: 'InputNumber',
   extends: ['Field'],
-  selector: (node) => node.props['x-component'] === 'InputNumber',
+  selector: node => node.props['x-component'] === 'InputNumber',
   designerProps: {
-    propsSchema: createFieldSchema(AllSchemas.Input),
+    propsSchema: createFieldSchema(AllSchemas.Input)
   },
-  designerLocales: AllLocales.InputNumber,
+  designerLocales: AllLocales.InputNumber
 })
 
 InputNumber.Resource = createResource({
@@ -25,8 +25,8 @@ InputNumber.Resource = createResource({
         type: 'number',
         title: 'InputNumber',
         'x-decorator': 'FormItem',
-        'x-component': 'InputNumber',
-      },
-    },
-  ],
+        'x-component': 'InputNumber'
+      }
+    }
+  ]
 })

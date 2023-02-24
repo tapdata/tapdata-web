@@ -1,11 +1,4 @@
-import {
-  calcBoundingRect,
-  calcElementLayout,
-  isHTMLElement,
-  isPointInRect,
-  requestIdle,
-  cancelIdle,
-} from '@tap/shared'
+import { calcBoundingRect, calcElementLayout, isHTMLElement, isPointInRect, requestIdle, cancelIdle } from '@tap/shared'
 import { action, define, observable } from '@formily/reactive'
 import { Selector } from './Selector'
 
@@ -57,10 +50,7 @@ export class Viewport {
 
   get isScrollRight() {
     if (this.isIframe) {
-      return (
-        this.width + this.scrollX >=
-        this.contentWindow?.document?.body?.scrollWidth
-      )
+      return this.width + this.scrollX >= this.contentWindow?.document?.body?.scrollWidth
     } else if (this.viewportElement) {
       return this.width + this.scrollX >= this.viewportElement?.scrollWidth
     }
@@ -68,19 +58,14 @@ export class Viewport {
 
   get isScrollBottom() {
     if (this.isIframe) {
-      return (
-        this.height + this.scrollY >=
-        this.contentWindow?.document?.body?.scrollHeight
-      )
+      return this.height + this.scrollY >= this.contentWindow?.document?.body?.scrollHeight
     } else if (this.viewportElement) {
       return this.height + this.scrollY >= this.viewportElement?.scrollHeight
     }
   }
 
   get viewportRoot() {
-    return this.isIframe
-      ? this.contentWindow?.document?.body
-      : this.viewportElement
+    return this.isIframe ? this.contentWindow?.document?.body : this.viewportElement
   }
 
   get isMaster() {
@@ -102,10 +87,7 @@ export class Viewport {
 
   get innerRect() {
     const rect = this.rect
-    return (
-      typeof DOMRect !== 'undefined' &&
-      new DOMRect(0, 0, rect?.width, rect?.height)
-    )
+    return typeof DOMRect !== 'undefined' && new DOMRect(0, 0, rect?.width, rect?.height)
   }
 
   get offsetX() {
@@ -149,11 +131,7 @@ export class Viewport {
 
   matchViewport(target) {
     if (this.isIframe) {
-      return (
-        target === this.viewportElement ||
-        target === this.contentWindow ||
-        target === this.contentWindow?.document
-      )
+      return target === this.viewportElement || target === this.contentWindow || target === this.contentWindow?.document
     } else {
       return target === this.viewportElement
     }
@@ -194,8 +172,7 @@ export class Viewport {
 
   isPointInViewport(point, sensitive) {
     if (!this.rect) return false
-    if (!this.containsElement(document.elementFromPoint(point.x, point.y)))
-      return false
+    if (!this.containsElement(document.elementFromPoint(point.x, point.y))) return false
     return isPointInRect(point, this.rect, sensitive)
   }
 
@@ -206,8 +183,7 @@ export class Viewport {
 
   isOffsetPointInViewport(point, sensitive) {
     if (!this.innerRect) return false
-    if (!this.containsElement(document.elementFromPoint(point.x, point.y)))
-      return false
+    if (!this.containsElement(document.elementFromPoint(point.x, point.y))) return false
     return isPointInRect(point, this.innerRect, sensitive)
   }
 
@@ -219,7 +195,7 @@ export class Viewport {
       height: observable.ref,
       digestViewport: action,
       viewportElement: observable.ref,
-      contentWindow: observable.ref,
+      contentWindow: observable.ref
     })
   }
 
@@ -250,24 +226,20 @@ export class Viewport {
     if (this.isIframe) {
       return {
         x: topPoint.x - this.offsetX + (this.contentWindow?.scrollX ?? 0),
-        y: topPoint.y - this.offsetY + (this.contentWindow?.scrollY ?? 0),
+        y: topPoint.y - this.offsetY + (this.contentWindow?.scrollY ?? 0)
       }
     } else {
       return {
         x: topPoint.x - this.offsetX + (this.viewportElement?.scrollLeft ?? 0),
-        y: topPoint.y - this.offsetY + (this.viewportElement?.scrollTop ?? 0),
+        y: topPoint.y - this.offsetY + (this.viewportElement?.scrollTop ?? 0)
       }
     }
   }
 
   getElementRect(element) {
     const rect = element.getBoundingClientRect()
-    const offsetWidth = element['offsetWidth']
-      ? element['offsetWidth']
-      : rect.width
-    const offsetHeight = element['offsetHeight']
-      ? element['offsetHeight']
-      : rect.height
+    const offsetWidth = element['offsetWidth'] ? element['offsetWidth'] : rect.width
+    const offsetHeight = element['offsetHeight'] ? element['offsetHeight'] : rect.height
     return (
       typeof DOMRect !== 'undefined' &&
       new DOMRect(
@@ -285,25 +257,15 @@ export class Viewport {
    */
   getElementRectById(id) {
     const elements = this.findElementsById(id)
-    const rect = calcBoundingRect(
-      elements.map((element) => this.getElementRect(element))
-    )
+    const rect = calcBoundingRect(elements.map(element => this.getElementRect(element)))
     if (rect) {
       if (this.isIframe) {
         return (
           typeof DOMRect !== 'undefined' &&
-          new DOMRect(
-            rect.x + this.offsetX,
-            rect.y + this.offsetY,
-            rect.width,
-            rect.height
-          )
+          new DOMRect(rect.x + this.offsetX, rect.y + this.offsetY, rect.width, rect.height)
         )
       } else {
-        return (
-          typeof DOMRect !== 'undefined' &&
-          new DOMRect(rect.x, rect.y, rect.width, rect.height)
-        )
+        return typeof DOMRect !== 'undefined' && new DOMRect(rect.x, rect.y, rect.width, rect.height)
       }
     }
   }
@@ -315,9 +277,7 @@ export class Viewport {
   getElementOffsetRectById(id) {
     const elements = this.findElementsById(id)
     if (!elements.length) return
-    const elementRect = calcBoundingRect(
-      elements.map((element) => this.getElementRect(element))
-    )
+    const elementRect = calcBoundingRect(elements.map(element => this.getElementRect(element)))
     if (elementRect) {
       if (this.isIframe) {
         return (
@@ -333,10 +293,8 @@ export class Viewport {
         return (
           typeof DOMRect !== 'undefined' &&
           new DOMRect(
-            (elementRect.x - this.offsetX + this.viewportElement.scrollLeft) /
-              this.scale,
-            (elementRect.y - this.offsetY + this.viewportElement.scrollTop) /
-              this.scale,
+            (elementRect.x - this.offsetX + this.viewportElement.scrollLeft) / this.scale,
+            (elementRect.y - this.offsetY + this.viewportElement.scrollTop) / this.scale,
             elementRect.width,
             elementRect.height
           )
@@ -346,7 +304,7 @@ export class Viewport {
   }
 
   getValidNodeElement(node) {
-    const getNodeElement = (node) => {
+    const getNodeElement = node => {
       if (!node) return
       const ele = this.findElementById(node.id)
       if (ele) {

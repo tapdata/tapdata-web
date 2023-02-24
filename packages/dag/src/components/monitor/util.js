@@ -6,10 +6,10 @@ export function getPieOptions(data, op) {
       borderColor: '#364252',
       textStyle: {
         color: '#fff',
-        fontSize: 12,
+        fontSize: 12
       },
       position: 'top',
-      formatter: (params) => {
+      formatter: params => {
         const { marker, name, value, seriesName } = params || {}
         let result = `<div>`
         if (seriesName) {
@@ -18,19 +18,19 @@ export function getPieOptions(data, op) {
         result += `<span>${marker}</span><span class="pl-2">${name}</span><span class="din-font inline-block text-end" style="width: 60px">${value.toLocaleString()}</span>`
         result += `</div>`
         return result
-      },
+      }
     },
     textStyle: {
       rich: {
         orgname: {
           width: 75,
-          color: '#535F72',
+          color: '#535F72'
         },
         count: {
           padding: [0, 0, 0, 15],
-          color: '#333C4A',
-        },
-      },
+          color: '#333C4A'
+        }
+      }
     },
     legend: {
       bottom: 0,
@@ -38,11 +38,11 @@ export function getPieOptions(data, op) {
       orient: 'vertical',
       itemWidth: 6,
       itemHeight: 6,
-      formatter: (name) => {
+      formatter: name => {
         const count = 0
         const arr = [`{orgname|${name}}`, `{count|${count}}`]
         return arr.join('')
-      },
+      }
     },
     series: [
       {
@@ -53,9 +53,9 @@ export function getPieOptions(data, op) {
         label: { show: false },
         labelLine: { show: false },
         data: [],
-        top: 'top',
-      },
-    ],
+        top: 'top'
+      }
+    ]
   }
   if (op) {
     for (let key in op) {
@@ -69,18 +69,17 @@ export function getPieOptions(data, op) {
     }
   }
   if (data?.length) {
-    options.series[0].data = data.map((t) => {
+    options.series[0].data = data.map(t => {
       return {
         name: t.name,
         value: t.value,
         itemStyle: {
-          color: t.color,
-        },
+          color: t.color
+        }
       }
     })
-    options.legend.formatter = (name) => {
-      const count =
-        options.series[0].data?.find((t) => t.name === name)?.value || 0
+    options.legend.formatter = name => {
+      const count = options.series[0].data?.find(t => t.name === name)?.value || 0
       const arr = [`{orgname|${name}}`, `{count|${count.toLocaleString()}}`]
       return arr.join('')
     }
@@ -92,7 +91,7 @@ export const TIME_FORMAT_MAP = {
   s: 'HH:mm:ss',
   m: 'HH:mm:ss',
   h: 'MM-DD HH:00',
-  d: 'MM-DD',
+  d: 'MM-DD'
 }
 
 /*

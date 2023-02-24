@@ -10,26 +10,15 @@
     v-model:visible="dialogVisible"
     custom-class="bind-phone-dialog"
   >
-    <ElForm
-      :model="phoneForm"
-      :label-width="showLabel ? '120px' : null"
-      @submit.prevent
-    >
-      <ElFormItem
-        prop="current"
-        :label="showLabel ? $t('user_Center_dangQianShouJi') : ''"
-      >
+    <ElForm :model="phoneForm" :label-width="showLabel ? '120px' : null" @submit.prevent>
+      <ElFormItem prop="current" :label="showLabel ? $t('user_Center_dangQianShouJi') : ''">
         <ElInput
           v-model:value="phoneForm.current"
           :placeholder="$t('components_BindPhone_qingShuRuShouJi')"
           maxlength="50"
         ></ElInput>
       </ElFormItem>
-      <ElFormItem
-        prop="newPassword"
-        :label="showLabel ? $t('user_Center_yanZhengMa') : ''"
-        class="inline-form-item"
-      >
+      <ElFormItem prop="newPassword" :label="showLabel ? $t('user_Center_yanZhengMa') : ''" class="inline-form-item">
         <ElInput
           v-model:value="phoneForm.oldCode"
           :placeholder="$t('user_Center_qingShuRuShouJi')"
@@ -47,9 +36,7 @@
 
     <template v-slot:footer>
       <span class="dialog-footer">
-        <VButton v-if="!!$props.showClose" @click="dialogVisible = false">{{
-          $t('button_cancel')
-        }}</VButton>
+        <VButton v-if="!!$props.showClose" @click="dialogVisible = false">{{ $t('button_cancel') }}</VButton>
         <VButton
           type="primary"
           :disabled="!phoneForm.current || !phoneForm.oldCode"
@@ -74,17 +61,17 @@ export default {
   components: { VerificationCode },
   props: {
     visible: {
-      type: Boolean,
+      type: Boolean
     },
     showLabel: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   watch: {
     visible(v) {
       this.dialogVisible = !!v
-    },
+    }
   },
   data() {
     return {
@@ -93,8 +80,8 @@ export default {
         current: '',
         oldCode: '',
         newPhone: '',
-        newCode: '',
-      },
+        newCode: ''
+      }
     }
   },
   methods: {
@@ -104,22 +91,22 @@ export default {
       this.$axios
         .post('api/tcm/user/phone', {
           phone: phoneForm.current,
-          code: phoneForm.oldCode,
+          code: phoneForm.oldCode
         })
         .then(() => {
           this.$message.success(i18n.t('user_Center_bangDingShouJiCheng'))
           $emit(this, 'success', phoneForm.current)
           this.dialogVisible = false
         })
-        .catch((e) => {
+        .catch(e => {
           $emit(this, 'error', phoneForm.current, e)
         })
         .finally(() => {
           resetLoading?.()
         })
-    },
+    }
   },
-  emits: ['success', 'error'],
+  emits: ['success', 'error']
 }
 </script>
 

@@ -1,19 +1,13 @@
 <template>
   <div class="el-transfer-panel">
     <p class="el-transfer-panel__header">
-      <el-checkbox
-        v-model:value="allChecked"
-        @change="handleAllCheckedChange"
-        :indeterminate="isIndeterminate"
-      >
+      <el-checkbox v-model:value="allChecked" @change="handleAllCheckedChange" :indeterminate="isIndeterminate">
         {{ title }}
         <span>{{ checkedSummary }}</span>
       </el-checkbox>
     </p>
 
-    <div
-      :class="['el-transfer-panel__body', hasFooter ? 'is-with-footer' : '']"
-    >
+    <div :class="['el-transfer-panel__body', hasFooter ? 'is-with-footer' : '']">
       <el-input
         class="el-transfer-panel__filter"
         v-model:value="query"
@@ -25,10 +19,7 @@
         v-if="filterable"
       >
         <template v-slot:prefix>
-          <i
-            :class="['el-input__icon', 'el-icon-' + inputIcon]"
-            @click="clearQuery"
-          ></i>
+          <i :class="['el-input__icon', 'el-icon-' + inputIcon]" @click="clearQuery"></i>
         </template>
       </el-input>
       <el-checkbox-group
@@ -60,10 +51,7 @@
       <p class="el-transfer-panel__empty" v-show="hasNoMatch">
         {{ $t('packages_component_no_match') }}
       </p>
-      <p
-        class="el-transfer-panel__empty"
-        v-show="data.length === 0 && !hasNoMatch"
-      >
+      <p class="el-transfer-panel__empty" v-show="data.length === 0 && !hasNoMatch">
         {{ $t('packages_component_no_data') }}
       </p>
     </div>
@@ -91,10 +79,10 @@ export default {
 
     OptionContent: {
       props: {
-        option: Object,
+        option: Object
       },
       render() {
-        const getParent = (vm) => {
+        const getParent = vm => {
           if (vm.$options.name === 'VirtualTransferPanel') {
             return vm
           } else if (vm.$parent) {
@@ -113,34 +101,28 @@ export default {
           transferSlots.default({ option: this.option })
         ) : transferSlots.left || transferSlots.right ? (
           (panel.$slots.default && panel.$slots.default())({
-            option: this.option,
-          }) || (
-            <span>
-              {this.option[panel.labelProp] || this.option[panel.keyProp]}
-            </span>
-          )
+            option: this.option
+          }) || <span>{this.option[panel.labelProp] || this.option[panel.keyProp]}</span>
         ) : (
-          <span>
-            {this.option[panel.labelProp] || this.option[panel.keyProp]}
-          </span>
+          <span>{this.option[panel.labelProp] || this.option[panel.keyProp]}</span>
         )
-      },
-    },
+      }
+    }
   },
   extends: TransferPanel,
   props: {
     buffer: {
       type: Number,
-      default: 50,
+      default: 50
     },
     itemSize: {
       type: Number,
-      default: null,
+      default: null
     },
     searchAfterScrollTop: {
       type: Boolean,
-      default: true,
-    },
+      default: true
+    }
   },
   watch: {
     checked(val, oldVal) {
@@ -148,36 +130,34 @@ export default {
       this.updateAllChecked()
 
       const newObj = {}
-      val.every((item) => {
+      val.every(item => {
         newObj[item] = true
       })
       const oldObj = {}
-      oldVal.every((item) => {
+      oldVal.every(item => {
         oldObj[item] = true
       })
       if (this.checkChangeByUser) {
-        const movedKeys = val
-          .concat(oldVal)
-          .filter((v) => newObj[v] || oldVal[v])
+        const movedKeys = val.concat(oldVal).filter(v => newObj[v] || oldVal[v])
         $emit(this, 'checked-change', val, movedKeys)
       } else {
         $emit(this, 'checked-change', val)
         this.checkChangeByUser = true
       }
       // console.timeEnd('checked')
-    },
+    }
   },
   methods: {
     updateAllChecked() {
       // console.time('do-updateAllChecked')
       const checkObj = {}
-      this.checked.forEach((item) => {
+      this.checked.forEach(item => {
         checkObj[item] = true
       })
       this.allChecked =
         this.checkableData.length > 0 &&
         this.checked.length > 0 &&
-        this.checkableData.every((item) => checkObj[item[this.keyProp]])
+        this.checkableData.every(item => checkObj[item[this.keyProp]])
       // console.timeEnd('do-updateAllChecked')
     },
 
@@ -193,9 +173,9 @@ export default {
         this.query = ''
         this.handleQueryInput()
       }
-    },
+    }
   },
-  emits: ['checked-change'],
+  emits: ['checked-change']
 }
 </script>
 

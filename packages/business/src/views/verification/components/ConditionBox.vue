@@ -36,41 +36,27 @@
               <div class="flex justify-content-between">
                 <ElTooltip
                   placement="top-start"
-                  :content="
-                    $t(
-                      'packages_business_components_conditionbox_zhankaibianji'
-                    )
-                  "
+                  :content="$t('packages_business_components_conditionbox_zhankaibianji')"
                 >
                   <div
                     class="cond-item__title flex align-items-center cursor-pointer flex-fill"
                     @click="editItem(item)"
                   >
                     <span class="font-color-main fs-7">{{
-                      $t(
-                        'packages_business_components_conditionbox_jianyantiaojian'
-                      )
+                      $t('packages_business_components_conditionbox_jianyantiaojian')
                     }}</span>
                     <span class="ml-1">{{ index + 1 }}</span>
-                    <VIcon size="14" class="ml-1 color-primary"
-                      >edit-outline</VIcon
-                    >
+                    <VIcon size="14" class="ml-1 color-primary">edit-outline</VIcon>
                   </div>
                 </ElTooltip>
                 <div class="flex align-items-center">
-                  <ElButton type="text" @click.stop="removeItem(index)">{{
-                    $t('button_delete')
-                  }}</ElButton>
+                  <ElButton type="text" @click.stop="removeItem(index)">{{ $t('button_delete') }}</ElButton>
                   <VIcon size="16" class="arrow-icon ml-1">arrow-right</VIcon>
                 </div>
               </div>
               <div class="setting-item mt-4" :key="'connection' + item.id">
                 <label class="item-label"
-                  >{{
-                    $t(
-                      'packages_business_components_conditionbox_daijiaoyanlianjie'
-                    )
-                  }}:</label
+                  >{{ $t('packages_business_components_conditionbox_daijiaoyanlianjie') }}:</label
                 >
                 <AsyncSelect
                   v-if="editId === item.id"
@@ -80,23 +66,13 @@
                   itemQuery="name"
                   filterable
                   class="item-select"
-                  :onSetSelected="
-                    useHandle(handleSetSelectedConnection, item.source)
-                  "
+                  :onSetSelected="useHandle(handleSetSelectedConnection, item.source)"
                   @change="handleChangeConnection(arguments[0], item.source)"
                 >
                 </AsyncSelect>
-                <span
-                  v-else
-                  :class="[
-                    'item-value-text',
-                    { 'color-disable': !item.source.connectionId },
-                  ]"
-                  >{{
-                    item.source.connectionName ||
-                    $t('packages_business_statistics_schedule_qingxuanze')
-                  }}</span
-                >
+                <span v-else :class="['item-value-text', { 'color-disable': !item.source.connectionId }]">{{
+                  item.source.connectionName || $t('packages_business_statistics_schedule_qingxuanze')
+                }}</span>
                 <span class="item-icon fs-6">
                   <i class="el-icon-arrow-right"></i>
                 </span>
@@ -108,91 +84,53 @@
                   itemQuery="name"
                   filterable
                   class="item-select"
-                  :onSetSelected="
-                    useHandle(handleSetSelectedConnection, item.target)
-                  "
+                  :onSetSelected="useHandle(handleSetSelectedConnection, item.target)"
                   @change="handleChangeConnection(arguments[0], item.target)"
                 >
                 </AsyncSelect>
-                <span
-                  v-else
-                  :class="[
-                    'item-value-text',
-                    { 'color-disable': !item.target.connectionId },
-                  ]"
-                  >{{
-                    item.target.connectionName ||
-                    $t('packages_business_statistics_schedule_qingxuanze')
-                  }}</span
-                >
+                <span v-else :class="['item-value-text', { 'color-disable': !item.target.connectionId }]">{{
+                  item.target.connectionName || $t('packages_business_statistics_schedule_qingxuanze')
+                }}</span>
               </div>
               <div class="setting-item mt-4" :key="'table' + item.id">
-                <label class="item-label"
-                  >{{
-                    $t('packages_business_components_conditionbox_laiyuanbiao')
-                  }}:</label
-                >
+                <label class="item-label">{{ $t('packages_business_components_conditionbox_laiyuanbiao') }}:</label>
                 <AsyncSelect
                   v-if="editId === item.id"
                   v-model:value="item.source.table"
                   :method="getTableListMethod"
                   :params="{
                     connectionId: item.source.connectionId,
-                    nodeId: item.source.nodeId,
+                    nodeId: item.source.nodeId
                   }"
                   itemQuery="name"
                   itemType="string"
                   filterable
                   class="item-select"
-                  @change="
-                    handleChangeTable(arguments[0], item, index, 'source')
-                  "
+                  @change="handleChangeTable(arguments[0], item, index, 'source')"
                 >
                 </AsyncSelect>
-                <span
-                  v-else
-                  :class="[
-                    'item-value-text',
-                    { 'color-disable': !item.source.table },
-                  ]"
-                  >{{
-                    item.source.table ||
-                    $t('packages_business_statistics_schedule_qingxuanze')
-                  }}</span
-                >
-                <span class="item-icon"
-                  >{{
-                    $t('packages_business_components_conditionbox_mubiaobiao')
-                  }}:</span
-                >
+                <span v-else :class="['item-value-text', { 'color-disable': !item.source.table }]">{{
+                  item.source.table || $t('packages_business_statistics_schedule_qingxuanze')
+                }}</span>
+                <span class="item-icon">{{ $t('packages_business_components_conditionbox_mubiaobiao') }}:</span>
                 <AsyncSelect
                   v-if="editId === item.id"
                   v-model:value="item.target.table"
                   :method="getTableListMethod"
                   :params="{
                     connectionId: item.target.connectionId,
-                    nodeId: item.target.nodeId,
+                    nodeId: item.target.nodeId
                   }"
                   itemQuery="name"
                   itemType="string"
                   filterable
                   class="item-select"
-                  @change="
-                    handleChangeTable(arguments[0], item, index, 'target')
-                  "
+                  @change="handleChangeTable(arguments[0], item, index, 'target')"
                 >
                 </AsyncSelect>
-                <span
-                  v-else
-                  :class="[
-                    'item-value-text',
-                    { 'color-disable': !item.target.table },
-                  ]"
-                  >{{
-                    item.target.table ||
-                    $t('packages_business_statistics_schedule_qingxuanze')
-                  }}</span
-                >
+                <span v-else :class="['item-value-text', { 'color-disable': !item.target.table }]">{{
+                  item.target.table || $t('packages_business_statistics_schedule_qingxuanze')
+                }}</span>
               </div>
               <FieldBox
                 v-if="inspectMethod !== 'row_count' && editId === item.id"
@@ -209,47 +147,22 @@
                   v-model:value="item.showAdvancedVerification"
                   v-show="inspectMethod === 'field'"
                   @input="handleChangeAdvanced(item)"
-                  >{{
-                    $t('packages_business_verification_advanceVerify')
-                  }}</ElCheckbox
+                  >{{ $t('packages_business_verification_advanceVerify') }}</ElCheckbox
                 >
               </div>
-              <div
-                class="setting-item mt-4"
-                v-if="
-                  item.showAdvancedVerification && inspectMethod === 'field'
-                "
-              >
-                <label class="item-label"
-                  >{{ $t('packages_business_verification_JSVerifyLogic') }}:
-                </label>
-                <ElButton
-                  v-if="!item.webScript || item.webScript === ''"
-                  @click="addScript(index)"
-                  >{{ $t('packages_business_verification_addJS') }}</ElButton
-                >
+              <div class="setting-item mt-4" v-if="item.showAdvancedVerification && inspectMethod === 'field'">
+                <label class="item-label">{{ $t('packages_business_verification_JSVerifyLogic') }}: </label>
+                <ElButton v-if="!item.webScript || item.webScript === ''" @click="addScript(index)">{{
+                  $t('packages_business_verification_addJS')
+                }}</ElButton>
                 <template v-else>
-                  <ElLink
-                    type="primary"
-                    class="ml-4"
-                    @click="editScript(index)"
-                    >{{ $t('button_edit') }}</ElLink
-                  >
-                  <ElLink
-                    type="primary"
-                    class="ml-4"
-                    @click="removeScript(index)"
-                    >{{ $t('button_delete') }}</ElLink
-                  >
+                  <ElLink type="primary" class="ml-4" @click="editScript(index)">{{ $t('button_edit') }}</ElLink>
+                  <ElLink type="primary" class="ml-4" @click="removeScript(index)">{{ $t('button_delete') }}</ElLink>
                 </template>
               </div>
               <div
                 class="setting-item mt-4"
-                v-if="
-                  inspectMethod === 'field' &&
-                  item.showAdvancedVerification &&
-                  item.webScript
-                "
+                v-if="inspectMethod === 'field' && item.showAdvancedVerification && item.webScript"
               >
                 <pre class="item-script">{{ item.webScript }}</pre>
               </div>
@@ -259,9 +172,7 @@
       </template>
     </DynamicScroller>
     <div class="joint-table-footer">
-      <ElButton size="mini" @click="addItem">{{
-        $t('packages_business_verification_addTable')
-      }}</ElButton>
+      <ElButton size="mini" @click="addItem">{{ $t('packages_business_verification_addTable') }}</ElButton>
       <ElButton
         v-if="taskId"
         type="primary"
@@ -269,9 +180,7 @@
         :disabled="!!list.length"
         :loading="autoAddTableLoading"
         @click="autoAddTable"
-        >{{
-          $t('packages_business_verification_button_auto_add_table')
-        }}</ElButton
+        >{{ $t('packages_business_verification_button_auto_add_table') }}</ElButton
       >
     </div>
   </div>
@@ -301,12 +210,12 @@ export default {
     inspectMethod: String,
     data: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     allStages: {
       type: Array,
-      default: () => [],
-    },
+      default: () => []
+    }
   },
   data() {
     return {
@@ -315,14 +224,14 @@ export default {
       jointErrorMessage: '',
       fieldsMap: {},
       autoAddTableLoading: false,
-      dynamicSchemaMap: {},
+      dynamicSchemaMap: {}
     }
   },
   computed: {
     flowStages() {
       let types = this.isDB ? ['database'] : ['table']
-      return this.allStages.filter((stg) => types.includes(stg.type))
-    },
+      return this.allStages.filter(stg => types.includes(stg.type))
+    }
   },
   watch: {
     taskId(v1, v2) {
@@ -335,8 +244,8 @@ export default {
       deep: true,
       handler() {
         this.loadList()
-      },
-    },
+      }
+    }
   },
   methods: {
     async getConnectionsListMethod(filter) {
@@ -357,18 +266,16 @@ export default {
             accessNodeProcessIdList: 1,
             pdkType: 1,
             pdkHash: 1,
-            capabilities: 1,
+            capabilities: 1
           },
-          order: ['status DESC', 'name ASC'],
+          order: ['status DESC', 'name ASC']
         }
         let result = await connectionsApi.get({
-          filter: JSON.stringify(merge(filter, _filter)),
+          filter: JSON.stringify(merge(filter, _filter))
         })
 
-        result.items = result.items.map((item) => {
-          const findDynamicSchema = item.capabilities.find(
-            (t) => t.id === 'dynamic_schema'
-          )
+        result.items = result.items.map(item => {
+          const findDynamicSchema = item.capabilities.find(t => t.id === 'dynamic_schema')
           if (findDynamicSchema) {
             this.dynamicSchemaMap[item.id] = true
           }
@@ -376,14 +283,9 @@ export default {
             id: item.id,
             name: item.name,
             label: `${item.name} ${
-              item.status
-                ? `(${
-                    this.$t('packages_dag_connection_status_' + item.status) ||
-                    item.status
-                  })`
-                : ''
+              item.status ? `(${this.$t('packages_dag_connection_status_' + item.status) || item.status})` : ''
             }`,
-            value: item.id,
+            value: item.id
           }
         })
 
@@ -409,32 +311,32 @@ export default {
             meta_type: 'table',
             sourceType: 'SOURCE',
             is_deleted: false,
-            'source.id': connectionId,
+            'source.id': connectionId
           },
           skip: (page - 1) * size,
           limit: size,
-          order: 'createTime DESC',
+          order: 'createTime DESC'
         }
         const keyword = filter.where?.name?.like
         if (keyword) {
           params.where.name = filter.where.name
         }
         const res = await metadataInstancesApi.tapTables({
-          filter: JSON.stringify(params),
+          filter: JSON.stringify(params)
         })
         let result = {}
-        result.items = res.items.map((t) => t.name)
+        result.items = res.items.map(t => t.name)
         result.total = res.total
-        res.items.forEach((el) => {
+        res.items.forEach(el => {
           // 缓存起来
           this.setFieldsByItem(
             [nodeId, connectionId, el.name],
-            Object.values(el.nameFieldMap || {}).map((t) => {
+            Object.values(el.nameFieldMap || {}).map(t => {
               const { id, fieldName, primaryKeyPosition } = t
               return {
                 id,
                 field_name: fieldName,
-                primary_key_position: primaryKeyPosition,
+                primary_key_position: primaryKeyPosition
               }
             })
           )
@@ -449,21 +351,17 @@ export default {
       const keyword = filter.where?.name?.like
       let arr
       if (keyword) {
-        arr = this.flowStages.filter((t) =>
-          t.attrs?.connectionName.includes(filter.where?.name?.like)
-        )
+        arr = this.flowStages.filter(t => t.attrs?.connectionName.includes(filter.where?.name?.like))
       } else {
         arr = this.flowStages
       }
       const result = uniqueArr(
-        arr.map((t) => {
+        arr.map(t => {
           const nodeId = t.id
           const nodeName = t.name
           const connectionId = t.connectionId
           const connectionName = t.attrs?.connectionName
-          const findDynamicSchema = t.attrs?.capabilities.find(
-            (t) => t.id === 'dynamic_schema'
-          )
+          const findDynamicSchema = t.attrs?.capabilities.find(t => t.id === 'dynamic_schema')
           if (findDynamicSchema) {
             this.dynamicSchemaMap[t.connectionId] = true
           }
@@ -471,7 +369,7 @@ export default {
             attrs: { nodeId, nodeName, connectionId, connectionName },
             name: `${nodeName} / ${connectionName}`,
             value: `${nodeId}/${connectionId}`,
-            label: `${nodeName} / ${connectionName}`,
+            label: `${nodeName} / ${connectionName}`
           }
         }),
         'value'
@@ -486,7 +384,7 @@ export default {
       }
       const { isDB } = this
 
-      const findNode = this.flowStages.find((t) => t.id === nodeId)
+      const findNode = this.flowStages.find(t => t.id === nodeId)
       if (!findNode) {
         return { items: [], total: 0 }
       }
@@ -495,7 +393,7 @@ export default {
         nodeId,
         fields: ['original_name', 'fields', 'qualified_name'],
         page: filter?.page || 1,
-        pageSize: filter?.size || 20,
+        pageSize: filter?.size || 20
       }
       const keyword = filter.where?.name?.like
       if (keyword) {
@@ -504,12 +402,12 @@ export default {
 
       let res = await metadataInstancesApi.nodeSchemaPage(params)
 
-      const tableList = res.items?.map((t) => t.name) || []
+      const tableList = res.items?.map(t => t.name) || []
       const total = res.total
-      res.items.forEach((el) => {
+      res.items.forEach(el => {
         this.setFieldsByItem(
           [nodeId, connectionId, el.name],
-          el.fields.map((t) => {
+          el.fields.map(t => {
             const { id, field_name, primary_key_position } = t
             return { id, field_name, primary_key_position }
           })
@@ -519,7 +417,7 @@ export default {
       if (isDB) {
         if (!findNode.outputLanes.length) {
           const { tablePrefix, tableSuffix, tableNameTransform } = findNode
-          tableNames = tableNames.map((t) => {
+          tableNames = tableNames.map(t => {
             let name = (tablePrefix || '') + t + (tableSuffix || '')
             return tableNameTransform ? name[tableNameTransform]() : name
           })
@@ -527,22 +425,20 @@ export default {
         return { items: tableNames, total: total }
       }
       if (keyword) {
-        tableNames = tableNames.filter((t) =>
-          t.toLowerCase().includes(keyword.toLowerCase())
-        )
+        tableNames = tableNames.filter(t => t.toLowerCase().includes(keyword.toLowerCase()))
       }
       return { items: tableNames, total: tableNames.length }
     },
 
     getAllTablesInNode(nodeId) {
-      const findNode = this.flowStages.find((t) => t.id === nodeId)
+      const findNode = this.flowStages.find(t => t.id === nodeId)
       if (!findNode) return []
       if (this.isDB) {
         let tableList = findNode.tableNames || []
         if (findNode.inputLanes.length) {
           const objectNames = findNode.syncObjects?.[0]?.objectNames
           const { tablePrefix, tableSuffix, tableNameTransform } = findNode
-          tableList = objectNames.map((t) => {
+          tableList = objectNames.map(t => {
             let name = (tablePrefix || '') + t + (tableSuffix || '')
             return tableNameTransform ? name[tableNameTransform]() : name
           })
@@ -555,11 +451,9 @@ export default {
     getMatchNodeList() {
       let result = []
       this.flowStages
-        .filter((t) => t.outputLanes.length > 0)
-        .forEach((el) => {
-          const targetNode = this.flowStages.find(
-            (t) => t.id === el.outputLanes[0]
-          )
+        .filter(t => t.outputLanes.length > 0)
+        .forEach(el => {
+          const targetNode = this.flowStages.find(t => t.id === el.outputLanes[0])
           if (targetNode) {
             result.push({
               source: el.id,
@@ -569,7 +463,7 @@ export default {
               sourceConnectionId: el.connectionId,
               sourceConnectionName: el.attrs?.connectionName,
               targetConnectionId: targetNode.connectionId,
-              targetConnectionName: targetNode.attrs?.connectionName,
+              targetConnectionName: targetNode.attrs?.connectionName
             })
           }
         })
@@ -594,9 +488,9 @@ export default {
         i18n.t('packages_business_verification_clear'),
         i18n.t('packages_business_components_conditionbox_shifouqingkongsuo'),
         {
-          type: 'warning',
+          type: 'warning'
         }
-      ).then((res) => {
+      ).then(res => {
         if (!res) {
           return
         }
@@ -617,7 +511,7 @@ export default {
         script: '', //后台使用 需要拼接function头尾
         webScript: '', //前端使用 用于页面展示
         jsEngineName: 'graal.js',
-        modeType: 'all', // 待校验模型的类型
+        modeType: 'all' // 待校验模型的类型
       }
     },
 
@@ -634,7 +528,7 @@ export default {
       let connectionIds = []
       let tableNames = []
       const matchNodeList = this.getMatchNodeList()
-      matchNodeList.forEach((m) => {
+      matchNodeList.forEach(m => {
         connectionIds.push(m.sourceConnectionId)
         connectionIds.push(m.targetConnectionId)
         tableNames.push(...this.getAllTablesInNode(m.source))
@@ -642,35 +536,29 @@ export default {
       })
       if (!matchNodeList.length) {
         if (this.allStages.length > this.flowStages.length)
-          return this.$message.error(
-            i18n.t(
-              'packages_business_components_conditionbox_cunzaichulijiedian_wufazidong'
-            )
-          )
-        return this.$message.error(
-          i18n.t('packages_business_components_conditionbox_suoxuanrenwuque')
-        )
+          return this.$message.error(i18n.t('packages_business_components_conditionbox_cunzaichulijiedian_wufazidong'))
+        return this.$message.error(i18n.t('packages_business_components_conditionbox_suoxuanrenwuque'))
       }
       let where = {
         meta_type: {
-          inq: DATA_NODE_TYPES,
+          inq: DATA_NODE_TYPES
         },
         'source.id': {
-          inq: Array.from(new Set(connectionIds)),
+          inq: Array.from(new Set(connectionIds))
         },
         original_name: {
-          inq: Array.from(new Set(tableNames)),
-        },
+          inq: Array.from(new Set(tableNames))
+        }
       }
       this.autoAddTableLoading = true
       metadataInstancesApi
         .findInspect({
           where,
-          fields: META_INSTANCE_FIELDS,
+          fields: META_INSTANCE_FIELDS
         })
-        .then((data) => {
+        .then(data => {
           let list = []
-          matchNodeList.forEach((m) => {
+          matchNodeList.forEach(m => {
             const {
               source,
               target,
@@ -679,19 +567,14 @@ export default {
               sourceConnectionId,
               targetConnectionId,
               sourceConnectionName,
-              targetConnectionName,
+              targetConnectionName
             } = m
             const getAllTablesInNodeSource = this.getAllTablesInNode(source)
             const getAllTablesInNodeTarget = this.getAllTablesInNode(target)
             getAllTablesInNodeSource.forEach((ge, geIndex) => {
-              let findTable = data.find(
-                (t) =>
-                  t.source.id === sourceConnectionId && t.original_name === ge
-              )
+              let findTable = data.find(t => t.source.id === sourceConnectionId && t.original_name === ge)
               let findTargetTable = data.find(
-                (t) =>
-                  t.source.id === targetConnectionId &&
-                  t.original_name === getAllTablesInNodeTarget[geIndex]
+                t => t.source.id === targetConnectionId && t.original_name === getAllTablesInNodeTarget[geIndex]
               )
               let item = this.getItemOptions()
               item.source.nodeId = source
@@ -700,9 +583,7 @@ export default {
               item.source.connectionName = `${sourceName} / ${sourceConnectionName}`
               item.source.table = findTable.original_name
               item.source.fields = findTable.fields
-              item.source.sortColumn = this.getPrimaryKeyFieldStr(
-                findTable.fields
-              )
+              item.source.sortColumn = this.getPrimaryKeyFieldStr(findTable.fields)
 
               item.target.nodeId = target
               item.target.nodeName = targetName
@@ -710,18 +591,12 @@ export default {
               item.target.connectionName = `${targetName} / ${targetConnectionName}`
               item.target.table = findTargetTable.original_name
               item.target.fields = findTargetTable.fields
-              item.target.sortColumn = this.getPrimaryKeyFieldStr(
-                findTargetTable.fields
-              )
+              item.target.sortColumn = this.getPrimaryKeyFieldStr(findTargetTable.fields)
               list.push(item)
             })
           })
           if (!list.length) {
-            return this.$message.error(
-              i18n.t(
-                'packages_business_components_conditionbox_suoxuanrenwuque'
-              )
-            )
+            return this.$message.error(i18n.t('packages_business_components_conditionbox_suoxuanrenwuque'))
           }
           this.list = list
         })
@@ -736,7 +611,7 @@ export default {
 
     loadList() {
       let data = cloneDeep(this.data)
-      data.forEach((el) => {
+      data.forEach(el => {
         el.modeType = el.source.columns ? 'custom' : 'all'
         if (this.taskId) {
           el.source.connectionId = `${el.source.nodeId}/${el.source.connectionId}`
@@ -751,7 +626,7 @@ export default {
     getList() {
       let list = cloneDeep(this.list)
       if (this.taskId) {
-        list.forEach((el) => {
+        list.forEach(el => {
           if (el.modeType === 'all') {
             el.source.columns = null
             el.target.columns = null
@@ -799,11 +674,9 @@ export default {
       }
       // 自动填充目标连接和表
       const { isDB } = this
-      const sourceNode = this.flowStages.find(
-        (t) => t.id === item.source.nodeId
-      )
+      const sourceNode = this.flowStages.find(t => t.id === item.source.nodeId)
       const targetNodeId = sourceNode?.outputLanes?.[0]
-      const targetNode = this.flowStages.find((t) => t.id === targetNodeId)
+      const targetNode = this.flowStages.find(t => t.id === targetNodeId)
       if (!targetNode) return
 
       const nodeId = targetNode.id
@@ -815,9 +688,7 @@ export default {
       item.target.connectionId = `${nodeId}/${connectionId}`
       item.target.connectionName = `${nodeName} / ${connectionName}`
       if (isDB) {
-        const findSourceTableIndex = sourceNode.tableNames.findIndex(
-          (t) => t === val
-        )
+        const findSourceTableIndex = sourceNode.tableNames.findIndex(t => t === val)
         const objectNames = targetNode.syncObjects?.[0]?.objectNames || []
         item.target.table = objectNames[findSourceTableIndex]
       } else {
@@ -830,11 +701,11 @@ export default {
         nodeId,
         tableFilter: targetTableName,
         page: 1,
-        pageSize: 1,
+        pageSize: 1
       }
-      metadataInstancesApi.nodeSchemaPage(params).then((data) => {
+      metadataInstancesApi.nodeSchemaPage(params).then(data => {
         item.target.fields =
-          data.items?.[0]?.fields.map((t) => {
+          data.items?.[0]?.fields.map(t => {
             const { id, field_name, primary_key_position } = t
             return { id, field_name, primary_key_position }
           }) || []
@@ -861,14 +732,8 @@ export default {
 
     editScript(index) {
       this.formIndex = index
-      let script = JSON.parse(
-        JSON.stringify(this.form.tasks[this.formIndex].webScript)
-      )
-      this.jsEngineName = JSON.parse(
-        JSON.stringify(
-          this.form.tasks[this.formIndex].jsEngineName || 'nashorn'
-        )
-      )
+      let script = JSON.parse(JSON.stringify(this.form.tasks[this.formIndex].webScript))
+      this.jsEngineName = JSON.parse(JSON.stringify(this.form.tasks[this.formIndex].jsEngineName || 'nashorn'))
       this.webScript = script
       this.dialogAddScriptVisible = true
     },
@@ -878,9 +743,9 @@ export default {
         this.$t('packages_business_verification_message_confirm_delete_script'),
         this.$t('packages_business_button_delete'),
         {
-          type: 'warning',
+          type: 'warning'
         }
-      ).then((resFlag) => {
+      ).then(resFlag => {
         if (!resFlag) {
           return
         }
@@ -889,21 +754,17 @@ export default {
     },
 
     setFieldsByItem(item = [], data = []) {
-      const key = item.filter((t) => t).join()
+      const key = item.filter(t => t).join()
       this.fieldsMap[key] = data
     },
 
     getFieldsByItem(item, type) {
       const { nodeId, connectionId, table } = item[type] || {}
-      return (
-        this.fieldsMap[
-          [nodeId || '', connectionId, table].filter((t) => t).join()
-        ] || []
-      )
+      return this.fieldsMap[[nodeId || '', connectionId, table].filter(t => t).join()] || []
     },
 
     getPrimaryKeyFieldStr(data = []) {
-      let sortField = (list) => {
+      let sortField = list => {
         return (
           list?.sort((a, b) => {
             return a.field_name > b.field_name ? -1 : 1
@@ -911,8 +772,8 @@ export default {
         )
       }
       return sortField(data)
-        .filter((f) => f.primary_key_position > 0)
-        .map((t) => t.field_name)
+        .filter(f => f.primary_key_position > 0)
+        .map(t => t.field_name)
         .join(',')
     },
 
@@ -923,8 +784,8 @@ export default {
     },
 
     handleChangeFieldBox(data, item) {
-      item.source.columns = data.map((t) => t.source)
-      item.target.columns = data.map((t) => t.target)
+      item.source.columns = data.map(t => t.source)
+      item.target.columns = data.map(t => t.target)
     },
 
     validate() {
@@ -943,12 +804,9 @@ export default {
         this.$nextTick(() => {
           formDom.childNodes[index - 1].querySelector('input').focus()
         })
-        message = this.$t(
-          'packages_business_verification_message_error_joint_table_target_or_source_not_set',
-          {
-            val: index,
-          }
-        )
+        message = this.$t('packages_business_verification_message_error_joint_table_target_or_source_not_set', {
+          val: index
+        })
         this.jointErrorMessage = message
         return message
       }
@@ -968,7 +826,7 @@ export default {
           item.querySelector('input').focus()
         })
         message = this.$t('packages_business_verification_lackIndex', {
-          val: index,
+          val: index
         })
         this.jointErrorMessage = message
         return message
@@ -979,10 +837,7 @@ export default {
         ['field', 'jointField'].includes(this.inspectMethod) &&
         tasks.some((c, i) => {
           index = i + 1
-          return (
-            c.source.sortColumn.split(',').length !==
-            c.target.sortColumn.split(',').length
-          )
+          return c.source.sortColumn.split(',').length !== c.target.sortColumn.split(',').length
         })
       ) {
         this.setEditId(tasks[index - 1]?.id)
@@ -990,10 +845,7 @@ export default {
           let item = document.getElementById('item-source-' + (index - 1))
           item.querySelector('input').focus()
         })
-        message = this.$t(
-          'packages_business_verification_message_error_joint_table_field_not_match',
-          { val: index }
-        )
+        message = this.$t('packages_business_verification_message_error_joint_table_field_not_match', { val: index })
         this.jointErrorMessage = message
         return message
       }
@@ -1003,28 +855,23 @@ export default {
         ['field', 'jointField'].includes(this.inspectMethod) &&
         tasks.some((c, i) => {
           index = i + 1
-          return (
-            c.source.columns?.some((t) => !t) ||
-            c.target.columns?.some((t) => !t)
-          )
+          return c.source.columns?.some(t => !t) || c.target.columns?.some(t => !t)
         })
       ) {
         this.setEditId(tasks[index - 1]?.id)
         this.$nextTick(() => {
-          let item = document.getElementById(
-            'list-table__content' + (index - 1)
-          )
+          let item = document.getElementById('list-table__content' + (index - 1))
           const emptyDom = item.querySelector('.el-select.empty-data')
           const offsetTop = emptyDom?.offsetTop || 0
           if (offsetTop) {
             const height = emptyDom?.offsetHeight || 0
             item.scrollTo({
-              top: offsetTop - height,
+              top: offsetTop - height
             })
           }
         })
         message = this.$t('packages_business_verification_form_diinde', {
-          val1: index,
+          val1: index
         })
         this.jointErrorMessage = message
         return message
@@ -1043,17 +890,15 @@ export default {
         this.$nextTick(() => {
           formDom.childNodes[index - 1].querySelector('input').focus()
         })
-        message = this.$t(
-          'packages_business_verification_message_error_script_no_enter'
-        )
+        message = this.$t('packages_business_verification_message_error_script_no_enter')
         this.jointErrorMessage = message
         return message
       }
       this.jointErrorMessage = ''
       return
-    },
+    }
   },
-  emits: ['addScript'],
+  emits: ['addScript']
 }
 </script>
 

@@ -1,9 +1,9 @@
 .form-js-editor-wrap {
   position: relative;
 
-  &[theme="one_dark"] {
+  &[theme='one_dark'] {
     .code-before,
-    .code-after{
+    .code-after {
       .hljs {
         color: #abb2bf;
         background: rgb(40, 44, 52);
@@ -15,12 +15,12 @@
         }
       }
       .hljs-title {
-        color: rgb(97,175,239);
+        color: rgb(97, 175, 239);
       }
     }
   }
   .code-before,
-  .code-after{
+  .code-after {
     .hljs {
       padding: 0 8px;
       background: #ebebeb;

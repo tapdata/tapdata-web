@@ -9,11 +9,11 @@ export const Checkbox = FormCheckbox
 Checkbox.Behavior = createBehavior({
   name: 'Checkbox.Group',
   extends: ['Field'],
-  selector: (node) => node.props['x-component'] === 'Checkbox.Group',
+  selector: node => node.props['x-component'] === 'Checkbox.Group',
   designerProps: {
-    propsSchema: createFieldSchema(AllSchemas.Checkbox.Group, null, true),
+    propsSchema: createFieldSchema(AllSchemas.Checkbox.Group, null, true)
   },
-  designerLocales: AllLocales.CheckboxGroup,
+  designerLocales: AllLocales.CheckboxGroup
 })
 
 Checkbox.Resource = createResource({
@@ -28,9 +28,9 @@ Checkbox.Resource = createResource({
         'x-component': 'Checkbox.Group',
         enum: [
           { label: '选项1', value: 1 },
-          { label: '选项2', value: 2 },
-        ],
-      },
-    },
-  ],
+          { label: '选项2', value: 2 }
+        ]
+      }
+    }
+  ]
 })

@@ -12,37 +12,37 @@ export default {
     value: [File, String, Object],
     config: {
       require: true,
-      type: Object,
-    },
+      type: Object
+    }
   },
   data() {
     return {
-      fileName: '',
+      fileName: ''
     }
   },
   render() {
     let self = this
     let config = self.config
     let fileName = this?.value?.name || config.fileName || ''
-    let selectFile = (file) => {
+    let selectFile = file => {
       let value = {
         name: '',
-        value: '',
+        value: ''
       }
       if (file) {
         this.fileName = file.name
         if (config.maxFileSize && file.size / 1024 > config.maxFileSize) {
           this.$message.error(
             i18n.t('packages_component_form_builder_file_shangchuanwenjianda', {
-              val1: config.maxFileSize,
+              val1: config.maxFileSize
             })
           )
         } else {
           let reader = new FileReader()
-          let emitInput = (val) => {
+          let emitInput = val => {
             value = {
               name: file.name,
-              value: config.base64 ? val.split(',')[1] : val,
+              value: config.base64 ? val.split(',')[1] : val
             }
             $emit(self, 'update:value', value)
             $emit(self, 'change', value)
@@ -70,28 +70,23 @@ export default {
         $emit(self, 'change', value)
       }
     }
-    fileName =
-      Object.prototype.toString.call(fileName) === '[object Object]'
-        ? ''
-        : fileName
+    fileName = Object.prototype.toString.call(fileName) === '[object Object]' ? '' : fileName
     return Vue.h(
       'ElInput',
       plantRenderPara({
         attrs: {
-          placeholder:
-            config.placeholder ||
-            self.$t('packages_component_formBuilder_file_placeholder'),
+          placeholder: config.placeholder || self.$t('packages_component_formBuilder_file_placeholder')
         },
         props: {
           value: fileName,
-          clearable: config.clearable,
+          clearable: config.clearable
         },
         on: {
           clear() {
             $emit(self, 'update:value', null)
             $emit(self, 'change', null)
-          },
-        },
+          }
+        }
       }),
       [
         Vue.h(
@@ -103,25 +98,20 @@ export default {
               autoUpload: false,
               accept: config.accept,
               showFileList: false,
-              onChange: (file) => {
+              onChange: file => {
                 selectFile(file.raw)
               },
-              onExceed: (fileList) => {
+              onExceed: fileList => {
                 selectFile(fileList[0])
-              },
+              }
             },
-            slot: 'append',
+            slot: 'append'
           }),
-          [
-            Vue.h(
-              'ElButton',
-              self.$t('packages_component_formBuilder_file_button')
-            ),
-          ]
-        ),
+          [Vue.h('ElButton', self.$t('packages_component_formBuilder_file_button'))]
+        )
       ]
     )
   },
-  emits: ['update:value', 'change'],
+  emits: ['update:value', 'change']
 }
 </script>

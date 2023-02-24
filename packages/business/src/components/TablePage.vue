@@ -95,28 +95,28 @@ export default {
     Classification,
     SelectClassify,
     VIcon,
-    ProTable,
+    ProTable
   },
   props: {
     title: String,
     desc: String,
     defaultPageSize: {
       type: Number,
-      default: 20,
+      default: 20
     },
     hideClassify: {
       // 是否隐藏左侧栏
       type: Boolean,
-      default: false,
+      default: false
     },
     classify: {
-      type: Object,
+      type: Object
     },
     remoteMethod: Function,
     rowKey: [String, Function],
     spanMethod: [Function],
     defaultSort: Object,
-    draggable: Boolean,
+    draggable: Boolean
   },
   data() {
     return {
@@ -124,12 +124,12 @@ export default {
       page: {
         current: 1,
         size: this.defaultPageSize,
-        total: 0,
+        total: 0
       },
       list: [],
       multipleSelection: [],
       tags: [],
-      classifyDialogVisible: false,
+      classifyDialogVisible: false
     }
   },
   mounted() {
@@ -153,7 +153,7 @@ export default {
             this.remoteMethod({
               page: this.page,
               tags: this.tags,
-              data: this.list,
+              data: this.list
             })
               .then(({ data, total }) => {
                 this.page.total = total
@@ -202,9 +202,9 @@ export default {
     },
     clearSelection() {
       this.$refs?.table?.clearSelection()
-    },
+    }
   },
-  emits: ['sort-change', 'classify-submit', 'selection-change'],
+  emits: ['sort-change', 'classify-submit', 'selection-change']
 }
 </script>
 
@@ -307,9 +307,7 @@ export default {
     }
 
     .el-table--border td,
-    .el-table__body-wrapper
-      .el-table--border.is-scrolling-left
-      ~ .el-table__fixed {
+    .el-table__body-wrapper .el-table--border.is-scrolling-left ~ .el-table__fixed {
       border-right: 0;
     }
 

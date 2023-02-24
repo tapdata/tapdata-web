@@ -5,22 +5,11 @@
         class="connections-schema-status__icon mr-1"
         :class="'el-icon-' + schemaInfo.icon + ' color-' + schemaInfo.color"
       ></i>
-      <ElLink
-        v-if="schemaInfo.icon === 'error'"
-        type="danger"
-        @click="showErrorMsg"
-        >{{ schemaInfo.text }}</ElLink
-      >
-      <ElTooltip
-        v-else-if="schemaInfo.tips"
-        :content="schemaInfo.tips"
-        placement="top"
-      >
+      <ElLink v-if="schemaInfo.icon === 'error'" type="danger" @click="showErrorMsg">{{ schemaInfo.text }}</ElLink>
+      <ElTooltip v-else-if="schemaInfo.tips" :content="schemaInfo.tips" placement="top">
         <span :class="'color-' + schemaInfo.color">{{ schemaInfo.text }}</span>
       </ElTooltip>
-      <span v-else-if="schemaInfo.color" :class="'color-' + schemaInfo.color">{{
-        schemaInfo.text
-      }}</span>
+      <span v-else-if="schemaInfo.color" :class="'color-' + schemaInfo.color">{{ schemaInfo.text }}</span>
       <span v-else>-</span>
     </template>
     <span v-else>-</span>
@@ -32,7 +21,7 @@ import dayjs from 'dayjs'
 
 export default {
   props: {
-    data: Object,
+    data: Object
   },
   computed: {
     schemaInfo() {
@@ -46,27 +35,25 @@ export default {
           icon: 'success',
           color: 'success',
           tips: loadTime
-            ? this.$t('packages_business_schema_progress_load_time', [
-                dayjs(loadTime).format('YYYY-MM-DD HH:mm:ss'),
-              ])
-            : '',
+            ? this.$t('packages_business_schema_progress_load_time', [dayjs(loadTime).format('YYYY-MM-DD HH:mm:ss')])
+            : ''
         }
       } else if (data.loadFieldsStatus === 'loading') {
         let process = (data.loadCount * 100) / data.tableCount || 0
         schemaInfo = {
           text: Math.floor(process) + '%',
           icon: 'warning',
-          color: 'warning',
+          color: 'warning'
         }
       } else if (data.loadFieldsStatus) {
         schemaInfo = {
           text: this.$t('packages_business_schema_progress_status_error'),
           icon: 'error',
-          color: 'danger',
+          color: 'danger'
         }
       }
       return schemaInfo
-    },
+    }
   },
   methods: {
     showErrorMsg() {
@@ -75,7 +62,7 @@ export default {
         h(
           'pre',
           {
-            class: 'pb-5 overflow-auto',
+            class: 'pb-5 overflow-auto'
           },
           [this.data.loadFieldErrMsg]
         ),
@@ -83,11 +70,11 @@ export default {
         {
           type: 'error',
           customClass: 'schema-error-dialog',
-          confirmButtonText: this.$t('packages_business_button_close'),
+          confirmButtonText: this.$t('packages_business_button_close')
         }
       )
-    },
-  },
+    }
+  }
 }
 </script>
 

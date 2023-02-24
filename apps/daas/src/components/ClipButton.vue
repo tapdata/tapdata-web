@@ -21,15 +21,15 @@ export default {
   props: ['value', 'copyClass'],
   data() {
     return {
-      showTooltip: false,
+      showTooltip: false
     }
   },
   methods: {
     onCopy() {
       this.showTooltip = true
-    },
+    }
   },
-  emits: ['update:value'],
+  emits: ['update:value']
 }
 </script>
 

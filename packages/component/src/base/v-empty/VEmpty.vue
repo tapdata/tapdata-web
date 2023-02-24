@@ -3,45 +3,22 @@
     class="empty-wrap"
     :class="{
       'empty-small': props.small,
-      'empty-large': props.large,
+      'empty-large': props.large
     }"
   >
     <div class="empty-image">
       <slot name="image">
-        <svg
-          width="111"
-          height="92"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 111 92"
-        >
+        <svg width="111" height="92" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 111 92">
           <defs>
-            <linearGradient
-              x1="52.045%"
-              y1="100%"
-              x2="52.045%"
-              y2="-7.865%"
-              id="a"
-            >
+            <linearGradient x1="52.045%" y1="100%" x2="52.045%" y2="-7.865%" id="a">
               <stop stop-color="#F3F4F6" stop-opacity="0" offset="0%" />
               <stop stop-color="#E4E6E9" offset="100%" />
             </linearGradient>
-            <linearGradient
-              x1="19.146%"
-              y1="25.168%"
-              x2="62.242%"
-              y2="84.261%"
-              id="b"
-            >
+            <linearGradient x1="19.146%" y1="25.168%" x2="62.242%" y2="84.261%" id="b">
               <stop stop-color="#ECECEC" offset="0%" />
               <stop stop-color="#E4E6E9" offset="100%" />
             </linearGradient>
-            <linearGradient
-              x1="63.824%"
-              y1="23.66%"
-              x2="50%"
-              y2="81.252%"
-              id="c"
-            >
+            <linearGradient x1="63.824%" y1="23.66%" x2="50%" y2="81.252%" id="c">
               <stop stop-color="#F3F3F3" offset="0%" />
               <stop stop-color="#DCDDDE" offset="100%" />
             </linearGradient>
@@ -51,19 +28,8 @@
             </linearGradient>
           </defs>
           <g fill="none" fill-rule="evenodd">
-            <ellipse
-              fill="url(#a)"
-              fill-rule="nonzero"
-              cx="55.5"
-              cy="68.5"
-              rx="55.5"
-              ry="23.5"
-            />
-            <path
-              fill="#D8D8D8"
-              fill-rule="nonzero"
-              d="m27.084 38.938 24.065-6.423L84 35.549l-26.937 5.65z"
-            />
+            <ellipse fill="url(#a)" fill-rule="nonzero" cx="55.5" cy="68.5" rx="55.5" ry="23.5" />
+            <path fill="#D8D8D8" fill-rule="nonzero" d="m27.084 38.938 24.065-6.423L84 35.549l-26.937 5.65z" />
             <path
               fill="url(#b)"
               fill-rule="nonzero"
@@ -94,18 +60,9 @@
               d="m57.063 41.199 9.165 15.62L91.6 47.357 82.724 35.37zM26.155 38.938l-5.896 10.367 30.398 6.471 6.406-14.577z"
             />
             <g fill-rule="nonzero">
-              <path
-                fill="#E4E6E9"
-                d="m24 1.636 5.475 4.869L51 0zM32.439 9.195 51 0l-8.307 18z"
-              />
-              <path
-                fill="#D7D8DA"
-                d="m29.475 6.505-.44 7.479 3.48-4.815L51 0z"
-              />
-              <path
-                fill="#DEE0E4"
-                d="m29.035 13.984 6.161-2.513-2.775-2.279z"
-              />
+              <path fill="#E4E6E9" d="m24 1.636 5.475 4.869L51 0zM32.439 9.195 51 0l-8.307 18z" />
+              <path fill="#D7D8DA" d="m29.475 6.505-.44 7.479 3.48-4.815L51 0z" />
+              <path fill="#DEE0E4" d="m29.035 13.984 6.161-2.513-2.775-2.279z" />
             </g>
           </g>
         </svg>
@@ -127,9 +84,9 @@ export default {
       type: String,
       default: () => {
         return i18n.t('packages_component_dag_dialog_field_mapping_no_data')
-      },
-    },
-  },
+      }
+    }
+  }
 }
 </script>
 

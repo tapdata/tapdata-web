@@ -15,6 +15,6 @@ export default {
     },
     duration(date, type) {
       return dayjs(date).duration(type)
-    },
-  },
+    }
+  }
 }

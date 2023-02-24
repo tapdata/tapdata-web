@@ -4,12 +4,7 @@
     <!-- 选择字段 -->
     <div class="condition-warp-group">
       <div class="condition-warp-group-item">
-        <el-select
-          v-model:value="model.queryField"
-          size="mini"
-          @change="queryFieldChange"
-          style="width: 170px"
-        >
+        <el-select v-model:value="model.queryField" size="mini" @change="queryFieldChange" style="width: 170px">
           <el-option
             v-for="field in fieldList"
             :label="field[fieldLabel]"
@@ -95,19 +90,19 @@ export default {
       type: Array,
       default() {
         return []
-      },
+      }
     },
     fieldValue: {
       type: String,
       default() {
         return 'value'
-      },
+      }
     },
     fieldLabel: {
       type: String,
       default() {
         return 'text'
-      },
+      }
     },
     value: {
       type: Object,
@@ -115,16 +110,16 @@ export default {
         return {
           field: '',
           command: '',
-          value: '',
+          value: ''
         }
-      },
+      }
     },
     level: {
       type: Number,
       default() {
         return 1
-      },
-    },
+      }
+    }
     // showFilterDialog: {
     //   type: Boolean,
     //   default() {
@@ -141,7 +136,7 @@ export default {
         queryCommand: '',
         queryValue: '',
         smallerValue: '',
-        largerValue: '',
+        largerValue: ''
       },
       commands: [
         { text: '=', value: 'eq' },
@@ -155,8 +150,8 @@ export default {
         { text: 'Not In (comma-delimited)', value: 'nin' },
         { text: 'Like', value: 'like' },
         { text: 'Not Like', value: 'nlike' },
-        { text: 'Regexp', value: 'regexp' },
-      ],
+        { text: 'Regexp', value: 'regexp' }
+      ]
     }
   },
   created() {
@@ -175,43 +170,43 @@ export default {
 
       handler() {
         this.filterChange()
-      },
+      }
     },
     'model.queryField': {
       deep: true,
 
       handler() {
         this.filterChange()
-      },
+      }
     },
     'model.queryCommand': {
       deep: true,
 
       handler() {
         this.filterChange()
-      },
+      }
     },
     'model.queryValue': {
       deep: true,
 
       handler() {
         this.filterChange()
-      },
+      }
     },
     'model.smallerValue': {
       deep: true,
 
       handler() {
         this.filterChange()
-      },
+      }
     },
     'model.largerValue': {
       deep: true,
 
       handler() {
         this.filterChange()
-      },
-    },
+      }
+    }
   },
   computed: {
     childLevel() {
@@ -227,9 +222,7 @@ export default {
       return this.value.conditions.length
     },
     isDatetime() {
-      let field = this.fields.filter(
-        (v) => v.value === this.model.queryField
-      )[0]
+      let field = this.fields.filter(v => v.value === this.model.queryField)[0]
       if (field) {
         let type = field.type
 
@@ -238,7 +231,7 @@ export default {
         }
       }
       return false
-    },
+    }
   },
   mounted() {
     this.setValue(this.value)
@@ -247,7 +240,7 @@ export default {
     // 改变字段名称
     queryFieldChange(value) {
       if (value) {
-        let item = this.fields.find((v) => v.field_name === value)
+        let item = this.fields.find(v => v.field_name === value)
         if (item) {
           this.model.queryField = item.field_name
         } else {
@@ -268,16 +261,16 @@ export default {
               type: 'condition',
               field: '',
               command: 'eq',
-              value: '',
-            },
-          ],
+              value: ''
+            }
+          ]
         }
       } else if (type === 'condition') {
         child = {
           type: 'condition',
           field: '',
           command: '',
-          value: '',
+          value: ''
         }
       }
       this.value.conditions.push(child)
@@ -294,7 +287,7 @@ export default {
         type: 'condition',
         field: this.model.queryField,
         command: this.model.queryCommand,
-        value: this.model.queryValue,
+        value: this.model.queryValue
       }
       if (this.model.queryCommand === 'between') {
         let small = /^-?\d+\.?\d+$/.test(this.model.smallerValue)
@@ -315,9 +308,9 @@ export default {
       this.model.queryValue = ''
       this.model.smallerValue = ''
       this.model.largerValue = ''
-    },
+    }
   },
-  emits: ['update:value'],
+  emits: ['update:value']
 }
 </script>
 

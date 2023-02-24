@@ -24,7 +24,7 @@ export default {
   data: function () {
     return {
       detectedLanguage: '',
-      unknownLanguage: false,
+      unknownLanguage: false
     }
   },
   computed: {
@@ -36,9 +36,7 @@ export default {
     highlighted() {
       // no idea what language to use, return raw code
       if (!this.autoDetect && !hljs.getLanguage(this.language)) {
-        console.warn(
-          `The language "${this.language}" you specified could not be found.`
-        ) // eslint-disable-line
+        console.warn(`The language "${this.language}" you specified could not be found.`) // eslint-disable-line
         this.unknownLanguage = true
         return escapeHTML(this.code)
       }
@@ -50,7 +48,7 @@ export default {
       } else {
         result = hljs.highlight(this.code, {
           language: this.language,
-          ignoreIllegals: this.ignoreIllegals,
+          ignoreIllegals: this.ignoreIllegals
         })
         this.detectedLanguage = this.language
       }
@@ -61,7 +59,7 @@ export default {
     },
     ignoreIllegals() {
       return true
-    },
+    }
   },
   // this avoids needing to use a whole Vue compilation pipeline just
   // to build Highlight.js
@@ -71,10 +69,10 @@ export default {
         'code',
         plantRenderPara({
           class: this.className,
-          domProps: { innerHTML: this.highlighted },
+          domProps: { innerHTML: this.highlighted }
         })
-      ),
+      )
     ])
-  },
+  }
   // template: `<pre><code :class="className" v-html="highlighted"></code></pre>`
 }

@@ -15,7 +15,7 @@ function ExpandTransitionGenerator(expandedParentClass = '', x = false) {
       el._initialStyle = {
         transition: el.style.transition,
         overflow: el.style.overflow,
-        [sizeProperty]: el.style[sizeProperty],
+        [sizeProperty]: el.style[sizeProperty]
       }
       console.log('beforeEnter', el._initialStyle) // eslint-disable-line
     },
@@ -49,7 +49,7 @@ function ExpandTransitionGenerator(expandedParentClass = '', x = false) {
       el._initialStyle = {
         transition: '',
         overflow: el.style.overflow,
-        [sizeProperty]: el.style[sizeProperty],
+        [sizeProperty]: el.style[sizeProperty]
       }
 
       el.style.overflow = 'hidden'
@@ -59,7 +59,7 @@ function ExpandTransitionGenerator(expandedParentClass = '', x = false) {
     },
 
     afterLeave,
-    leaveCancelled: afterLeave,
+    leaveCancelled: afterLeave
   }
 
   function afterLeave(el) {
@@ -82,11 +82,11 @@ export default function render(_props, _context) {
     ..._context,
     props: _props,
     data: _context.attr,
-    children: _context.slots,
+    children: _context.slots
   }
   const { attrs, children } = context
   const data = {
-    on: new ExpandTransitionGenerator('', true),
+    on: new ExpandTransitionGenerator('', true)
   }
 
   return Vue.h(
@@ -95,8 +95,8 @@ export default function render(_props, _context) {
       ...data,
       props: {
         ...attrs,
-        name: 'expand-x-transition',
-      },
+        name: 'expand-x-transition'
+      }
     }),
     children
   )

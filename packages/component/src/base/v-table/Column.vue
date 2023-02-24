@@ -1,9 +1,5 @@
 <template>
-  <ElTableColumn
-    v-bind="item"
-    :key="item.prop"
-    :sortable="item.sortable ? 'custom' : false"
-  >
+  <ElTableColumn v-bind="item" :key="item.prop" :sortable="item.sortable ? 'custom' : false">
     <!--  列表头  -->
     <template v-if="item.headerSlot" v-slot:header>
       <slot :name="item.headerSlot"></slot>
@@ -33,13 +29,13 @@ export default {
       type: Object,
       default: () => {
         return {}
-      },
-    },
+      }
+    }
   },
   computed: {
     children() {
       return this.item?.children
-    },
+    }
   },
   methods: {
     formatTime(time, fmt = 'YYYY-MM-DD HH:mm:ss') {
@@ -55,13 +51,13 @@ export default {
       }
       const map = {
         time: this.formatTime,
-        number: this.formatNumber,
+        number: this.formatNumber
       }
       if (map[item.dataType]) {
         return map[item.dataType]?.(val)
       }
       return val
-    },
-  },
+    }
+  }
 }
 </script>

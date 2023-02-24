@@ -6,13 +6,13 @@ export function useEffect(func, dependency) {
   watch(
     dependency,
     () => {
-      disposes.forEach((fn) => fn?.())
+      disposes.forEach(fn => fn?.())
       disposes.push(func())
     },
     { immediate: true }
   )
 
   onBeforeUnmount(() => {
-    disposes.forEach((fn) => fn?.())
+    disposes.forEach(fn => fn?.())
   })
 }

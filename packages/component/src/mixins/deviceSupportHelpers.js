@@ -2,7 +2,7 @@ export default {
   data() {
     return {
       isTouchDevice: 'ontouchstart' in window || navigator.msMaxTouchPoints,
-      isMacOs: /(ipad|iphone|ipod|mac)/i.test(navigator.platform),
+      isMacOs: /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
     }
   },
   computed: {
@@ -11,7 +11,7 @@ export default {
         return 'Meta'
       }
       return 'Control'
-    },
+    }
   },
   methods: {
     isCtrlKeyPressed(e) {
@@ -22,6 +22,6 @@ export default {
         return e.metaKey
       }
       return e.ctrlKey
-    },
-  },
+    }
+  }
 }

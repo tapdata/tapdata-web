@@ -34,14 +34,14 @@ import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 export default {
   name: 'CustomerService',
   props: {
-    value: Boolean,
+    value: Boolean
   },
   methods: {
     close() {
       $emit(this, 'update:value', false)
-    },
+    }
   },
-  emits: ['update:value'],
+  emits: ['update:value']
 }
 </script>
 

@@ -1,23 +1,13 @@
 <template>
-  <VTable
-    :data="taskList"
-    :columns="columns"
-    :remote-data="id"
-    height="100%"
-    :has-pagination="false"
-    ref="VTable"
-  >
+  <VTable :data="taskList" :columns="columns" :remote-data="id" height="100%" :has-pagination="false" ref="VTable">
     <template #status="{ row }">
       <TaskStatus :task="row" />
     </template>
     <template v-slot:operation="scope">
       <div class="operate-columns">
-        <ElButton
-          size="mini"
-          type="text"
-          @click="goShareCdcInfo(scope.row.id)"
-          >{{ $t('packages_business_task_info_info') }}</ElButton
-        >
+        <ElButton size="mini" type="text" @click="goShareCdcInfo(scope.row.id)">{{
+          $t('packages_business_task_info_info')
+        }}</ElButton>
       </div>
     </template>
   </VTable>
@@ -34,7 +24,7 @@ export default {
   name: 'ShareMining',
   components: { VTable, TaskStatus },
   props: {
-    id: String,
+    id: String
   },
   data() {
     return {
@@ -43,22 +33,22 @@ export default {
       columns: [
         {
           label: this.$t('packages_business_share_task_table_name'),
-          prop: 'name',
+          prop: 'name'
         },
         {
           label: this.$t('packages_business_share_task_table_time'),
-          slotName: 'sourceTimestamp',
+          slotName: 'sourceTimestamp'
         },
         {
           label: this.$t('packages_business_share_task_table_status'),
-          slotName: 'status',
+          slotName: 'status'
         },
         {
           label: this.$t('packages_business_column_operation'),
           prop: 'operation',
-          slotName: 'operation',
-        },
-      ],
+          slotName: 'operation'
+        }
+      ]
     }
   },
   mounted() {
@@ -66,7 +56,7 @@ export default {
   },
   methods: {
     getData(id) {
-      logcollectorApi.byTaskId(id).then((data) => {
+      logcollectorApi.byTaskId(id).then(data => {
         this.taskList = (data || []).map(makeStatusAndDisabled)
       })
     },
@@ -74,10 +64,10 @@ export default {
       this.$router.push({
         name: 'SharedMiningDetails',
         params: {
-          id: id,
-        },
+          id: id
+        }
       })
-    },
-  },
+    }
+  }
 }
 </script>

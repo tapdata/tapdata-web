@@ -5,7 +5,7 @@ import { defineComponent, computed } from 'vue-demi'
 
 export const PreviewWidget = defineComponent({
   props: ['tree'],
-  setup: (props) => {
+  setup: props => {
     const form = createForm()
     const treeSchema = computed(() => transformToSchema(props.tree))
 
@@ -19,5 +19,5 @@ export const PreviewWidget = defineComponent({
         </Form>
       )
     }
-  },
+  }
 })

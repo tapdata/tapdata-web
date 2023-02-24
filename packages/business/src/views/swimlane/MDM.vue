@@ -8,10 +8,7 @@
       </div>
     </div>
     <div class="flex flex-column flex-1 min-h-0">
-      <ClassificationTree
-        ref="classify"
-        class="p-3 flex-1 overflow-auto"
-      ></ClassificationTree>
+      <ClassificationTree ref="classify" class="p-3 flex-1 overflow-auto"></ClassificationTree>
     </div>
   </div>
 </template>
@@ -25,12 +22,12 @@ export default {
 
   data() {
     return {
-      keyword: '',
+      keyword: ''
     }
   },
 
   methods: {
-    searchFnc() {},
-  },
+    searchFnc() {}
+  }
 }
 </script>

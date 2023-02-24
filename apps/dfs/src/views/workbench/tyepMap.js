@@ -31,19 +31,13 @@ export const TYPEMAP = {
   APISeverAbnormallyStopped: i18n.t('dfs_workbench_tyepmap_apIfuwu4'),
   SYNCSeverAbnormallyStopped: i18n.t('dfs_workbench_tyepmap_tongbuzhilifu4'),
   manageSeverAbnormallyStopped: i18n.t('dfs_workbench_tyepmap_guanliduanfuwu4'),
-  manageSeverStartedSuccessfully: i18n.t(
-    'dfs_workbench_tyepmap_guanliduanfuwu3'
-  ),
+  manageSeverStartedSuccessfully: i18n.t('dfs_workbench_tyepmap_guanliduanfuwu3'),
   APISeverStartedSuccessfully: i18n.t('dfs_workbench_tyepmap_apIfuwu3'),
   SYNCSeverStartedSuccessfully: i18n.t('dfs_workbench_tyepmap_tongbuzhilifu3'),
-  manageSeverStoppedSuccessfully: i18n.t(
-    'dfs_workbench_tyepmap_guanliduanfuwu2'
-  ),
+  manageSeverStoppedSuccessfully: i18n.t('dfs_workbench_tyepmap_guanliduanfuwu2'),
   APISeverStoppedSuccessfully: i18n.t('dfs_workbench_tyepmap_apIfuwu2'),
   SYNCSeverStoppedSuccessfully: i18n.t('dfs_workbench_tyepmap_tongbuzhilifu2'),
-  manageSeverRestartedSuccessfully: i18n.t(
-    'dfs_workbench_tyepmap_guanliduanfuwu'
-  ),
+  manageSeverRestartedSuccessfully: i18n.t('dfs_workbench_tyepmap_guanliduanfuwu'),
   APISeverRestartedSuccessfully: i18n.t('dfs_workbench_tyepmap_apIfuwu'),
   SYNCSeverRestartedSuccessfully: i18n.t('dfs_workbench_tyepmap_tongbuzhilifu'),
   newSeverCreatedSuccessfully: i18n.t('dfs_workbench_tyepmap_xinfuwujiankong2'),
@@ -53,7 +47,7 @@ export const TYPEMAP = {
   inspectValue: i18n.t('notify_list_inspect_value'),
   inspectDelete: i18n.t('notify_list_inspect_delete'),
   inspectError: i18n.t('notify_list_inspect_error'),
-  approaching: i18n.t('notify_list_approaching'),
+  approaching: i18n.t('notify_list_approaching')
 }
 
 export const notificationMAP = {
@@ -70,5 +64,5 @@ export const notificationMAP = {
   agentStarted: i18n.t('notify_list_agent_started'),
   agentStopped: i18n.t('notify_list_agent_stopped'),
   agentCreated: i18n.t('notify_list_agent_created'),
-  agentDeleted: i18n.t('notify_list_agent_deleted'),
+  agentDeleted: i18n.t('notify_list_agent_deleted')
 }

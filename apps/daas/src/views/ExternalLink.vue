@@ -20,7 +20,7 @@ export default {
   watch: {
     $route() {
       this.getUrl()
-    },
+    }
   },
   methods: {
     loadFrame() {
@@ -39,15 +39,15 @@ export default {
             router.replace({
               name: route.name,
               query: Object.assign(route.query, { isNext: count }),
-              params: route.params,
+              params: route.params
             })
           } else {
             setTimeout(this.getUrl, 500)
           }
         }
       })
-    },
+    }
   },
-  emits: ['updateMenu'],
+  emits: ['updateMenu']
 }
 </script>

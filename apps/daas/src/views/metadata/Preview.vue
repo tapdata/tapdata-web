@@ -1,12 +1,6 @@
 <template>
   <section class="preview-list-wrap">
-    <TablePage
-      ref="table"
-      row-key="id"
-      class="metadata-list"
-      :remoteMethod="getData"
-      @sort-change="handleSortTable"
-    >
+    <TablePage ref="table" row-key="id" class="metadata-list" :remoteMethod="getData" @sort-change="handleSortTable">
       <template v-slot:operation>
         <div>
           <el-button class="btn btn-create" size="mini" @click="handleQuery">
@@ -50,11 +44,11 @@ export default {
   props: {
     validaData: {
       type: Object,
-      required: true,
-    },
+      required: true
+    }
   },
   components: {
-    TablePage,
+    TablePage
   },
   data() {
     return {
@@ -63,14 +57,14 @@ export default {
       createDialogVisible: false,
       pageSize: 20,
       pageCurrent: 1,
-      pageTotal: 0,
+      pageTotal: 0
     }
   },
   mounted() {},
   computed: {
     table() {
       return this.$refs.table
-    },
+    }
   },
   methods: {
     // 查询
@@ -96,35 +90,29 @@ export default {
       let header = {}
       if (this.validaData.fields) {
         for (let i = 0; i < this.validaData.fields.length; i++) {
-          if (
-            this.validaData.fields[i].alias_name &&
-            this.validaData.fields[i].alias_name !== ''
-          ) {
-            header[this.validaData.fields[i].field_name] =
-              this.validaData.fields[i].alias_name
+          if (this.validaData.fields[i].alias_name && this.validaData.fields[i].alias_name !== '') {
+            header[this.validaData.fields[i].field_name] = this.validaData.fields[i].alias_name
           }
         }
       }
       let where = {
         id: this.validaData.id,
         limit: size,
-        skip: (current - 1) * size,
+        skip: (current - 1) * size
       }
-      return previewDataApi.post(where).then((data) => {
+      return previewDataApi.post(where).then(data => {
         this.tableHeader = data?.head
         return {
           total: data?.total,
-          data: data?.items,
+          data: data?.items
         }
       })
     },
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'last_updated'} ${
-        order === 'ascending' ? 'ASC' : 'DESC'
-      }`
+      this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
-    },
-  },
+    }
+  }
 }
 </script>
 

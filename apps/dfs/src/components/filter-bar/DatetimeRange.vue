@@ -36,55 +36,51 @@ export default {
     value: [String, Array, Number, Object],
     label: {
       type: String,
-      default: '',
+      default: ''
     },
     startPlaceholder: {
       type: String,
       default: () => {
         return i18n.t('start_time')
-      },
+      }
     },
     endPlaceholder: {
       type: String,
       default: () => {
         return i18n.t('end_time')
-      },
-    },
+      }
+    }
   },
   data() {
     return {
       start: '',
       end: '',
       startOptions: {
-        disabledDate: (time) => {
+        disabledDate: time => {
           const { end } = this
           if (end) {
             if (this.getTimestamp(end) === this.getDayStartTimestamp(end)) {
-              return (
-                this.getTimestamp(time) > this.getDayStartTimestamp(end) - 1
-              )
+              return this.getTimestamp(time) > this.getDayStartTimestamp(end) - 1
             }
             return this.getTimestamp(time) > this.getDayStartTimestamp(end)
           }
         },
-        selectableRange: null,
+        selectableRange: null
       },
       endOptions: {
-        disabledDate: (time) => {
+        disabledDate: time => {
           const { start } = this
           if (start) {
             if (this.getTimestamp(start) === this.getDayEndTimestamp(start)) {
-              return (
-                this.getTimestamp(time) < this.getDayStartTimestamp(start) + 1
-              )
+              return this.getTimestamp(time) < this.getDayStartTimestamp(start) + 1
             }
             return this.getTimestamp(time) < this.getDayStartTimestamp(start)
           }
         },
-        selectableRange: null,
+        selectableRange: null
       },
       startRange: '00:00:00',
-      endRange: '23:59:59',
+      endRange: '23:59:59'
     }
   },
   watch: {
@@ -95,7 +91,7 @@ export default {
     end() {
       this.setEndValue()
       this.setEndRange()
-    },
+    }
   },
   mounted() {
     this.init()
@@ -141,16 +137,14 @@ export default {
       if (!this.end || !this.isSameDay()) {
         this.resetRange()
       } else {
-        this.startOptions.selectableRange =
-          this.startRange + '-' + this.getHMs(this.end - 1000)
+        this.startOptions.selectableRange = this.startRange + '-' + this.getHMs(this.end - 1000)
       }
     },
     setEndRange() {
       if (!this.start || !this.isSameDay()) {
         this.resetRange()
       } else {
-        this.endOptions.selectableRange =
-          this.getHMs(this.start + 1000) + '-' + this.endRange
+        this.endOptions.selectableRange = this.getHMs(this.start + 1000) + '-' + this.endRange
       }
     },
     setStartValue() {
@@ -189,12 +183,10 @@ export default {
     },
     // 获取当天23:59:59时间戳，精确到s
     getDayEndTimestamp(timestamp) {
-      return new Date(
-        new Date(timestamp).setHours(0, 0, 0, 0) + 24 * 60 * 60 * 1000 - 1000
-      ).getTime()
-    },
+      return new Date(new Date(timestamp).setHours(0, 0, 0, 0) + 24 * 60 * 60 * 1000 - 1000).getTime()
+    }
   },
-  emits: ['change', 'update:value'],
+  emits: ['change', 'update:value']
 }
 </script>
 

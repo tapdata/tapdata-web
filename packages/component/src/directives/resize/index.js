@@ -4,20 +4,17 @@ const EVENT = {
   mouse: {
     start: 'mousedown',
     move: 'mousemove',
-    stop: 'mouseup',
+    stop: 'mouseup'
   },
   touch: {
     start: 'touchstart',
     move: 'touchmove',
-    stop: 'touchend',
-  },
+    stop: 'touchend'
+  }
 }
 
 function initEvent($el, position, options) {
-  let $trigger = appendHtml(
-    $el,
-    `<div class="resize-trigger --${position}"></div>`
-  )
+  let $trigger = appendHtml($el, `<div class="resize-trigger --${position}"></div>`)
   const isHorizontal = position === 'left' || position === 'right'
   const num = position === 'left' || position === 'top' ? 1 : -1
   let initOffset, oldVal, xOry, attr, cls
@@ -38,7 +35,7 @@ function initEvent($el, position, options) {
   const min = options[`min${attr}`] || -Infinity
   const { onResize } = options
 
-  const handleStart = (event) => {
+  const handleStart = event => {
     if (event.button !== 0) return
     if (event.type === 'touchstart') {
       eventsFor = EVENT.touch
@@ -54,12 +51,12 @@ function initEvent($el, position, options) {
 
     on(window, eventsFor.move, handleMove, {
       capture: false,
-      passive: false,
+      passive: false
     })
     on(window, eventsFor.stop, handleStop)
   }
 
-  const handleMove = (event) => {
+  const handleMove = event => {
     event.preventDefault()
     $trigger.classList.add('active')
 
@@ -71,7 +68,7 @@ function initEvent($el, position, options) {
     onResize?.({
       isHorizontal,
       _attr,
-      newVal,
+      newVal
     })
 
     $el.style[_attr] = newVal + 'px'
@@ -101,5 +98,5 @@ export default {
     right && initEvent(el, 'right', options)
     top && initEvent(el, 'top', options)
     bottom && initEvent(el, 'bottom', options)
-  },
+  }
 }

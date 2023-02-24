@@ -2,20 +2,11 @@
   <div class="api-doc">
     <div class="section-wrap-box h-100">
       <div class="api-doc-box">
-        <el-button
-          :title="$t('daas_api_page_apidocandtest_daochudaopo')"
-          size="mini"
-          @click="exportJson"
-        >
+        <el-button :title="$t('daas_api_page_apidocandtest_daochudaopo')" size="mini" @click="exportJson">
           {{ $t('button_export') }}
         </el-button>
       </div>
-      <iframe
-        src
-        frameborder="0"
-        class="doc-test-iframe"
-        id="docTestIframe"
-      ></iframe>
+      <iframe src frameborder="0" class="doc-test-iframe" id="docTestIframe"></iframe>
     </div>
   </div>
 </template>
@@ -31,7 +22,7 @@ export default {
     return {
       openapi: {},
       openapiAll: {},
-      token: '',
+      token: ''
     }
   },
   created() {
@@ -39,19 +30,18 @@ export default {
     if (!parseInt(Cookie.get('user_id'))) {
       return this.$router.push({
         name: 'login',
-        query: { redirect: '/apiAnalysis' },
+        query: { redirect: '/apiAnalysis' }
       })
     }
   },
   async mounted() {
     try {
       let servers = await apiServerApi.get({
-        'filter[where][clientName]': 'Default APIServer',
+        'filter[where][clientName]': 'Default APIServer'
       })
 
       if (servers?.items?.length) {
-        let defaultCollection =
-          this.$route.query.collection || this.$route.query['id']
+        let defaultCollection = this.$route.query.collection || this.$route.query['id']
 
         this.apiClient = new ApiClient(defaultCollection)
         this.apiClient.setApiServer(servers.items[0])
@@ -85,8 +75,7 @@ export default {
         let ifm = document.getElementById('docTestIframe')
         ifm.src = url
       } else {
-        this.$message.error(this.$t('api_server_no_available')) ||
-          'No available API Server'
+        this.$message.error(this.$t('api_server_no_available')) || 'No available API Server'
       }
     } catch (e) {
       // eslint-disable-next-line
@@ -101,18 +90,15 @@ export default {
         name: 'access_token',
         schema: {
           type: 'string',
-          default: this.token,
-        },
+          default: this.token
+        }
       }
       if (obj && obj.paths) {
         for (let x in obj.paths) {
           if (obj.paths[x]) {
             for (let y in obj.paths[x]) {
               if (obj.paths[x][y]) {
-                if (
-                  !obj.paths[x][y].parameters ||
-                  !Array.isArray(obj.paths[x][y].parameters)
-                ) {
+                if (!obj.paths[x][y].parameters || !Array.isArray(obj.paths[x][y].parameters)) {
                   obj.paths[x][y].parameters = []
                 }
                 obj.paths[x][y].parameters.push(tokenField)
@@ -140,22 +126,22 @@ export default {
                         data: {
                           type: 'array',
                           items: {
-                            $ref: '#/components/schemas/AccessToken1',
-                          },
+                            $ref: '#/components/schemas/AccessToken1'
+                          }
                         },
                         total: {
                           type: 'object',
                           properties: {
                             count: {
-                              type: 'number',
-                            },
-                          },
-                        },
-                      },
-                    },
-                  },
-                },
-              },
+                              type: 'number'
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             },
             requestBody: {
               description: '',
@@ -165,57 +151,38 @@ export default {
                     properties: {
                       grant_type: {
                         type: 'String',
-                        default: 'client_credentials',
+                        default: 'client_credentials'
                       },
                       client_id: {
-                        type: 'String',
+                        type: 'String'
                       },
                       client_secret: {
-                        type: 'String',
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
+                        type: 'String'
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
 
         let fileName = 'openApi.json'
         let fileString = JSON.stringify(obj)
         let urlObject = window.URL || window.webkitURL || window
         let export_blob = new Blob([fileString])
-        let save_link = document.createElementNS(
-          'http://www.w3.org/1999/xhtml',
-          'a'
-        )
+        let save_link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a')
         save_link.href = urlObject.createObjectURL(export_blob)
         save_link.download = fileName
         let fakeClick = function (obj) {
           let ev = document.createEvent('MouseEvents')
-          ev.initMouseEvent(
-            'click',
-            true,
-            false,
-            window,
-            0,
-            0,
-            0,
-            0,
-            0,
-            false,
-            false,
-            false,
-            false,
-            0,
-            null
-          )
+          ev.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
           obj.dispatchEvent(ev)
         }
         fakeClick(save_link)
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

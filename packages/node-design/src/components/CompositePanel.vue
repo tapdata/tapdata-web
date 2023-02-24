@@ -17,19 +17,14 @@
         </div>
       </div>-->
     <div class="composite-panel-tabs-content h-100 border-end">
-      <div
-        class="composite-panel-tabs-header px-2 flex justify-space-between align-center border-bottom"
-      >
+      <div class="composite-panel-tabs-header px-2 flex justify-space-between align-center border-bottom">
         <div class="composite-panel-tabs-header-title">
           {{ tabItems[activeTab].title }}
         </div>
         <div class="composite-panel-tabs-header-actions"></div>
       </div>
       <div class="composite-panel-tabs-body">
-        <ResourceWidget
-          title="sources.Inputs"
-          :sources="sources"
-        ></ResourceWidget>
+        <ResourceWidget title="sources.Inputs" :sources="sources"></ResourceWidget>
       </div>
     </div>
   </div>
@@ -53,26 +48,26 @@ export default {
       tabItems: [
         {
           name: 'component',
-          title: '组件',
+          title: '组件'
         },
         {
           name: 'outline',
-          title: '大纲',
+          title: '大纲'
         },
         {
           name: 'history',
-          title: '历史记录',
-        },
+          title: '历史记录'
+        }
       ],
-      activeTab: 0,
+      activeTab: 0
     }
   },
 
   methods: {
     handleActiveTab(index) {
       this.activeTab = index
-    },
-  },
+    }
+  }
 }
 </script>
 

@@ -33,7 +33,7 @@
         v-if="dataflow.id"
         v-resize.right="{
           minWidth: 260,
-          maxWidth: 400,
+          maxWidth: 400
         }"
         @move-node="handleDragMoveNode"
         @drop-node="handleAddNodeByDrag"
@@ -41,11 +41,7 @@
       />
       <section class="layout-wrap flex-1">
         <!--内容体-->
-        <main
-          id="dfEditorContent"
-          ref="layoutContent"
-          class="layout-content flex-1 overflow-hidden"
-        >
+        <main id="dfEditorContent" ref="layoutContent" class="layout-content flex-1 overflow-hidden">
           <PaperScroller
             ref="paperScroller"
             :nav-lines="navLines"
@@ -60,7 +56,7 @@
               :id="NODE_PREFIX + n.id"
               :js-plumb-ins="jsPlumbIns"
               :class="{
-                'options-active': nodeMenu.typeId === n.id,
+                'options-active': nodeMenu.typeId === n.id
               }"
               @drag-start="onNodeDragStart"
               @drag-move="onNodeDragMove"
@@ -72,10 +68,7 @@
               @show-node-popover="showNodePopover"
             ></DFNode>
           </PaperScroller>
-          <div
-            v-if="!allNodes.length && stateIsReadonly"
-            class="absolute-fill flex justify-center align-center"
-          >
+          <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
             <VEmpty large />
           </div>
           <TransformLoading :show="transformLoading" />
@@ -89,12 +82,7 @@
         <ConsolePanel ref="console"></ConsolePanel>
       </section>
       <!--配置面板-->
-      <ConfigPanel
-        ref="configPanel"
-        :scope="scope"
-        :settings="dataflow"
-        show-schema-panel
-      />
+      <ConfigPanel ref="configPanel" :scope="scope" :settings="dataflow" show-schema-panel />
     </section>
   </section>
 </template>
@@ -139,7 +127,7 @@ export default {
     DFNode,
     LeftSidebar,
     TransformLoading,
-    ConsolePanel,
+    ConsolePanel
   },
 
   inject: ['buried'],
@@ -163,11 +151,11 @@ export default {
         typeId: '',
         reference: null,
         data: null,
-        connectionData: {},
+        connectionData: {}
       },
 
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
-      scale: 1,
+      scale: 1
     }
   },
 
@@ -183,13 +171,10 @@ export default {
         this.gotoViewer()
       }
 
-      if (
-        ['DataflowViewer'].includes(this.$route.name) &&
-        ['renewing'].includes(v)
-      ) {
+      if (['DataflowViewer'].includes(this.$route.name) && ['renewing'].includes(v)) {
         this.handleConsoleAutoLoad()
       }
-    },
+    }
   },
 
   // created 换成 mounted，等上一个实例destroy走完
@@ -227,20 +212,20 @@ export default {
       let nodes = [
         {
           name: i18n.t('packages_dag_src_editor_zhuijiahebing'),
-          type: 'union_processor',
+          type: 'union_processor'
         },
         {
           name: i18n.t('packages_dag_src_migrationeditor_jSchuli_standard'),
-          type: 'standard_js_processor',
+          type: 'standard_js_processor'
         },
         {
           name: i18n.t('packages_dag_src_migrationeditor_jSchuli'),
           type: 'js_processor',
-          beta: true,
+          beta: true
         },
         {
           name: 'Row Filter',
-          type: 'row_filter_processor',
+          type: 'row_filter_processor'
         },
         // {
         //   name: i18n.t('packages_dag_src_editor_juhe'),
@@ -248,32 +233,32 @@ export default {
         // }
         {
           name: i18n.t('packages_dag_src_editor_ziduanjisuan'),
-          type: 'field_calc_processor',
+          type: 'field_calc_processor'
         },
         {
           name: i18n.t('packages_dag_src_editor_leixingxiugai'),
-          type: 'field_mod_type_processor',
+          type: 'field_mod_type_processor'
         },
         {
           name: i18n.t('packages_dag_src_editor_ziduangaiming'),
-          type: 'field_rename_processor',
+          type: 'field_rename_processor'
         },
         {
           name: i18n.t('packages_dag_src_editor_zengshanziduan'),
-          type: 'field_add_del_processor',
-        },
+          type: 'field_add_del_processor'
+        }
       ]
       //仅企业版有的节点
       if (this.isDaas) {
         let isDaasNode = [
           {
             name: i18n.t('packages_dag_src_editor_join'),
-            type: 'join_processor', //join 节点
+            type: 'join_processor' //join 节点
           },
           {
             name: i18n.t('packages_dag_src_editor_zhuconghebing'),
-            type: 'merge_table_processor',
-          },
+            type: 'merge_table_processor'
+          }
         ]
         nodes = [...isDaasNode, ...nodes]
       }
@@ -288,11 +273,7 @@ export default {
       if (data) {
         if (this.destory) return
         const { dag } = data
-        this.setStateReadonly(
-          this.$route.name === 'DataflowViewer'
-            ? true
-            : this.dataflow.disabledData.edit
-        )
+        this.setStateReadonly(this.$route.name === 'DataflowViewer' ? true : this.dataflow.disabledData.edit)
         this.setTaskId(data.id)
         this.setEdges(dag.edges)
         this.setEditVersion(data.editVersion)
@@ -314,8 +295,8 @@ export default {
         .push({
           name: 'TaskMonitor',
           params: {
-            id: this.dataflow.id,
-          },
+            id: this.dataflow.id
+          }
         })
         .catch(() => {
           console.log('Current route: DataflowViewer') // eslint-disable-line
@@ -328,7 +309,7 @@ export default {
       return {
         dag,
         editVersion,
-        ...this.dataflow,
+        ...this.dataflow
       }
     },
 
@@ -370,8 +351,7 @@ export default {
         // const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
         const result = await taskApi.save(data)
         this.reformDataflow(result)
-        !needStart &&
-          this.$message.success(this.$t('packages_dag_message_save_ok'))
+        !needStart && this.$message.success(this.$t('packages_dag_message_save_ok'))
         this.setEditVersion(result.editVersion)
         this.isSaving = false
         this.toggleConsole(true)
@@ -400,7 +380,7 @@ export default {
         // this.$message.success(this.$t('packages_dag_message_save_ok'))
         await this.$router.replace({
           name: 'DataflowEditor',
-          params: { id: dataflow.id, action: 'dataflowEdit' },
+          params: { id: dataflow.id, action: 'dataflowEdit' }
         })
         this.$nextTick(() => {
           this.$refs.paperScroller.initVisibleArea()
@@ -414,7 +394,7 @@ export default {
           this.newDataflow(newName)
         } else if (e?.data?.code === 'InvalidPaidPlan') {
           this.$router.push({
-            name: 'dataflowList',
+            name: 'dataflowList'
           })
         } else {
           this.handleError(e)
@@ -441,25 +421,25 @@ export default {
         ranksep: 120,
         marginx: 50,
         marginy: 50,
-        rankdir: 'LR',
+        rankdir: 'LR'
       })
       dg.setDefaultEdgeLabel(function () {
         return {}
       })
 
-      nodes.forEach((n) => {
+      nodes.forEach(n => {
         dg.setNode(NODE_PREFIX + n.id, {
           width: NODE_WIDTH,
-          height: NODE_HEIGHT,
+          height: NODE_HEIGHT
         })
         nodePositionMap[NODE_PREFIX + n.id] = n.attrs.position
       })
-      this.jsPlumbIns.getAllConnections().forEach((edge) => {
+      this.jsPlumbIns.getAllConnections().forEach(edge => {
         dg.setEdge(edge.source.id, edge.target.id)
       })
 
       dagre.layout(dg)
-      dg.nodes().forEach((n) => {
+      dg.nodes().forEach(n => {
         const node = dg.node(n)
         const top = Math.round(node.y - node.height / 2)
         const left = Math.round(node.x - node.width / 2)
@@ -470,23 +450,22 @@ export default {
             id: this.getRealId(n),
             properties: {
               attrs: {
-                position: nodePositionMap[n],
-              },
-            },
+                position: nodePositionMap[n]
+              }
+            }
           })
           newProperties.push({
             id: this.getRealId(n),
             properties: {
               attrs: {
-                position: [left, top],
-              },
-            },
+                position: [left, top]
+              }
+            }
           })
         }
       })
 
-      hasMove &&
-        this.command.exec(new MoveNodeCommand(oldProperties, newProperties))
+      hasMove && this.command.exec(new MoveNodeCommand(oldProperties, newProperties))
       this.$refs.paperScroller.autoResizePaper()
       this.$refs.paperScroller.centerContent()
     },
@@ -523,10 +502,7 @@ export default {
 
     handleAddTableAsNode(item) {
       const { x, y } = this.$refs.paperScroller.getPaperCenterPos()
-      const position = this.getNewNodePosition(
-        [x - NODE_WIDTH / 2, y - NODE_HEIGHT / 2],
-        [0, 120]
-      )
+      const position = this.getNewNodePosition([x - NODE_WIDTH / 2, y - NODE_HEIGHT / 2], [0, 120])
       const node = this.handleAddNodeToPos(position, item)
       if (position[1] !== y) {
         this.$refs.paperScroller.centerNode(node)
@@ -538,7 +514,7 @@ export default {
       const node = merge(
         {
           id: uuid(),
-          attrs: { position },
+          attrs: { position }
         },
         item
       )
@@ -546,7 +522,7 @@ export default {
       const ins = item.__Ctor || getResourceIns(item)
       Object.defineProperty(node, '__Ctor', {
         value: ins,
-        enumerable: false,
+        enumerable: false
       })
 
       return node
@@ -565,35 +541,27 @@ export default {
     },*/
 
     handlePageReturn() {
-      if (
-        !this.allNodes.length &&
-        !this.nameHasUpdated &&
-        this.$store.state.dataflow.taskId
-      ) {
+      if (!this.allNodes.length && !this.nameHasUpdated && this.$store.state.dataflow.taskId) {
         this.$confirm(
           this.$t('packages_dag_page_return_confirm_content'),
           this.$t('packages_dag_page_return_confirm_title'),
           {
             type: 'warning',
             closeOnClickModal: false,
-            confirmButtonText: this.$t(
-              'packages_dag_page_return_confirm_ok_text'
-            ),
-            cancelButtonText: this.$t(
-              'packages_dag_page_return_confirm_cancel_text'
-            ),
+            confirmButtonText: this.$t('packages_dag_page_return_confirm_ok_text'),
+            cancelButtonText: this.$t('packages_dag_page_return_confirm_cancel_text')
           }
-        ).then((res) => {
+        ).then(res => {
           if (res) {
             taskApi.delete(this.dataflow.id)
           }
           this.$router.push({
-            name: 'dataflowList',
+            name: 'dataflowList'
           })
         })
       } else {
         this.$router.push({
-          name: 'dataflowList',
+          name: 'dataflowList'
         })
       }
     },
@@ -601,7 +569,7 @@ export default {
     handleEdit() {
       this.$router.push({
         name: 'DataflowEditor',
-        params: { id: this.dataflow.id, action: 'dataflowEdit' },
+        params: { id: this.dataflow.id, action: 'dataflowEdit' }
       })
     },
 
@@ -609,20 +577,16 @@ export default {
       this.$router.push({
         name: 'TaskMonitor',
         params: {
-          id: this.dataflow.id,
-        },
+          id: this.dataflow.id
+        }
       })
     },
 
     async handleStart() {
       this.buried('taskStart')
       this.unWatchStatus?.()
-      this.unWatchStatus = this.$watch('dataflow.status', (v) => {
-        if (
-          ['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(
-            v
-          )
-        ) {
+      this.unWatchStatus = this.$watch('dataflow.status', v => {
+        if (['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)) {
           this.$refs.console?.loadData()
           if (v !== 'running') {
             this.$refs.console?.stopAuto()
@@ -653,8 +617,8 @@ export default {
       } else {
         this.buried('taskStart', { result: false })
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

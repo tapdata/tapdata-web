@@ -2,23 +2,13 @@
   <div class="card-box p-6">
     <div class="flex justify-content-between align-items-center">
       <div class="info-line flex align-items-center">
-        <ElTooltip
-          v-if="task"
-          class="item"
-          effect="dark"
-          :content="task.name"
-          placement="top"
-        >
-          <span class="mr-4 fs-6 font-color-dark ellipsis info-name">{{
-            task.name
-          }}</span>
+        <ElTooltip v-if="task" class="item" effect="dark" :content="task.name" placement="top">
+          <span class="mr-4 fs-6 font-color-dark ellipsis info-name">{{ task.name }}</span>
         </ElTooltip>
         <TaskStatus class="py-0" :task="task" />
         <div class="flex-grow-1"></div>
         <span class="ml-6 font-color-light text-nowrap">
-          {{ $t('packages_business_task_monitor_founder') }}：<span>{{
-            task.creator
-          }}</span>
+          {{ $t('packages_business_task_monitor_founder') }}：<span>{{ task.creator }}</span>
         </span>
         <span class="mx-6 font-color-light text-nowrap">
           {{ $t('packages_business_task_info_start_time') }}：
@@ -26,15 +16,9 @@
         </span>
       </div>
       <div v-if="task.btnDisabled" class="operation">
-        <VButton
-          type="primary"
-          :disabled="task.btnDisabled.start"
-          @click="start(task, arguments[0])"
-        >
+        <VButton type="primary" :disabled="task.btnDisabled.start" @click="start(task, arguments[0])">
           <VIcon size="12">start-fill</VIcon>
-          <span class="ml-1">{{
-            $t('packages_business_task_button_start')
-          }}</span>
+          <span class="ml-1">{{ $t('packages_business_task_button_start') }}</span>
         </VButton>
         <VButton
           v-if="task.status === 'stopping'"
@@ -43,20 +27,11 @@
           @click="forceStop(task, arguments[0])"
         >
           <VIcon size="12">pause-fill</VIcon>
-          <span class="ml-1">{{
-            $t('packages_business_task_button_force_stop')
-          }}</span>
+          <span class="ml-1">{{ $t('packages_business_task_button_force_stop') }}</span>
         </VButton>
-        <VButton
-          v-else
-          type="danger"
-          :disabled="task.btnDisabled.stop"
-          @click="stop(task, arguments[0])"
-        >
+        <VButton v-else type="danger" :disabled="task.btnDisabled.stop" @click="stop(task, arguments[0])">
           <VIcon size="12">pause-fill</VIcon>
-          <span class="ml-1">{{
-            $t('packages_business_task_button_stop')
-          }}</span>
+          <span class="ml-1">{{ $t('packages_business_task_button_stop') }}</span>
         </VButton>
       </div>
     </div>
@@ -100,21 +75,13 @@
         @change="changeRateFnc"
       ></SelectList>
     </div>
-    <div
-      class="chart-wrap flex justify-content-between mt-6"
-      style="height: 247px"
-    >
+    <div class="chart-wrap flex justify-content-between mt-6" style="height: 247px">
       <div class="px-4 py-6 grey-background" style="min-width: 220px">
         <div class="flex align-items-center mb-2">
           <VIcon class="mr-4 color-primary" size="18">mark</VIcon>
-          <span class="font-color-light">{{
-            $t('packages_business_task_monitor_total_input')
-          }}</span>
+          <span class="font-color-light">{{ $t('packages_business_task_monitor_total_input') }}</span>
         </div>
-        <ElTooltip
-          :content="overData.inputTotal.toString()"
-          placement="left-start"
-        >
+        <ElTooltip :content="overData.inputTotal.toString()" placement="left-start">
           <div class="mb-4 fs-4 fw-bolder din-font" style="color: #409488">
             {{ toThousandsUnit(overData.inputTotal) }}
           </div>
@@ -122,14 +89,9 @@
 
         <div class="flex align-items-center mb-2">
           <VIcon class="mr-4 color-success" size="18">mark</VIcon>
-          <span class="font-color-light">{{
-            $t('packages_business_task_monitor_total_output')
-          }}</span>
+          <span class="font-color-light">{{ $t('packages_business_task_monitor_total_output') }}</span>
         </div>
-        <ElTooltip
-          :content="overData.outputTotal.toString()"
-          placement="left-start"
-        >
+        <ElTooltip :content="overData.outputTotal.toString()" placement="left-start">
           <div class="mb-4 fs-4 fw-bolder din-font" style="color: #377ab9">
             {{ toThousandsUnit(overData.outputTotal) }}
           </div>
@@ -167,23 +129,12 @@
           </div>
         </div>
       </div>
-      <div
-        class="flex flex-column flex-fill ml-4"
-        v-loading="!lineDataDeep.x.length"
-      >
-        <Chart
-          ref="chart"
-          :extend="lineOptions"
-          class="type-chart h-100"
-        ></Chart>
+      <div class="flex flex-column flex-fill ml-4" v-loading="!lineDataDeep.x.length">
+        <Chart ref="chart" :extend="lineOptions" class="type-chart h-100"></Chart>
       </div>
       <div class="ml-3 flex flex-column text-center" style="min-width: 250px">
         <div
-          v-if="
-            task &&
-            task.parentTask &&
-            ['initial_sync', 'initial_sync+cdc'].includes(task.parentTask.type)
-          "
+          v-if="task && task.parentTask && ['initial_sync', 'initial_sync+cdc'].includes(task.parentTask.type)"
           class="right-box grey-background justify-content-center"
         >
           <div class="fw-bold right-box-text font-color-dark">
@@ -202,39 +153,27 @@
                 :show-text="false"
                 :width="48"
               ></ElProgress>
-              <div
-                class="flex justify-content-center position-absolute color-primary fw-bolder din-font"
-              >
+              <div class="flex justify-content-center position-absolute color-primary fw-bolder din-font">
                 {{ syncData.progress }}%
               </div>
             </div>
             <div class="py-2 fs-8 font-color-light" v-else>
               {{ $t('packages_business_migrate_no_progress_statistics_yet') }}
             </div>
-            <div
-              v-if="syncData.progress === 100"
-              class="right-box-text font-color-light mt-1"
-            >
-              {{ $t('packages_business_task_info_full_time') }}：{{
-                formatTime(syncData.endTs)
-              }}
+            <div v-if="syncData.progress === 100" class="right-box-text font-color-light mt-1">
+              {{ $t('packages_business_task_info_full_time') }}：{{ formatTime(syncData.endTs) }}
             </div>
             <div v-else class="right-box-text font-color-light mt-1">
               {{
                 $t('packages_business_task_monitor_full_completion_time') +
                 '：' +
-                (syncData.finishDuration ||
-                  $t('packages_business_task_info_calculating'))
+                (syncData.finishDuration || $t('packages_business_task_info_calculating'))
               }}
             </div>
           </div>
         </div>
         <div
-          v-if="
-            task &&
-            task.parentTask &&
-            ['cdc', 'initial_sync+cdc'].includes(task.parentTask.type)
-          "
+          v-if="task && task.parentTask && ['cdc', 'initial_sync+cdc'].includes(task.parentTask.type)"
           class="right-box grey-background justify-content-center"
         >
           <div class="fw-bold right-box-text font-color-dark">
@@ -251,13 +190,8 @@
             <div class="py-2 fs-8 font-color-light" v-else>
               {{ $t('packages_business_migrate_no_latency_statistics_yet') }}
             </div>
-            <div
-              class="right-box-text font-color-light mt-1"
-              v-if="writeData.cdcTime"
-            >
-              {{ $t('packages_business_task_info_increment_time_point') }}：{{
-                formatTime(writeData.cdcTime)
-              }}
+            <div class="right-box-text font-color-light mt-1" v-if="writeData.cdcTime">
+              {{ $t('packages_business_task_info_increment_time_point') }}：{{ formatTime(writeData.cdcTime) }}
             </div>
           </div>
         </div>
@@ -284,13 +218,13 @@ export default {
     task: {
       type: Object,
       required: true,
-      default: () => {},
+      default: () => {}
     },
     syncData: {
       type: Object,
-      default: () => {},
+      default: () => {}
     },
-    remoteMethod: Function,
+    remoteMethod: Function
   },
   data() {
     return {
@@ -305,32 +239,32 @@ export default {
           stop: true,
           complete: true,
           error: true,
-          schedule_failed: true,
+          schedule_failed: true
         },
         pause: {
-          running: true,
+          running: true
         },
         recover: {
           pause: true,
           schedule_failed: true,
-          error: true,
+          error: true
         },
         stop: {
-          running: true,
+          running: true
           // pause: true,
           // schedule_failed: true,
           // error: true
         },
         edit: {
           edit: true,
-          pause: true,
+          pause: true
         },
         reset: {
           stop: true,
           error: true,
           complete: true,
-          schedule_failed: true,
-        },
+          schedule_failed: true
+        }
       },
       selectedStage: '', // 选中的节点
       selectedTime: 'default',
@@ -338,22 +272,22 @@ export default {
       guanluaryFormat: '',
       lineDataDeep: {
         x: [],
-        y: [[], []],
+        y: [[], []]
       },
       lineOptions: {
         tooltip: {
-          trigger: 'axis',
+          trigger: 'axis'
         },
         legend: {
           top: 4,
           right: 0,
-          show: false,
+          show: false
         },
         xAxis: {
           type: 'time',
           splitLine: {
-            show: false,
-          },
+            show: false
+          }
         },
         yAxis: {
           name: 'QPS',
@@ -363,17 +297,17 @@ export default {
                 value = value / 1000 + 'K'
               }
               return value
-            },
+            }
           },
           axisLine: {
-            show: true,
+            show: true
           },
           splitLine: {
             show: true,
             lineStyle: {
-              type: 'dashed',
-            },
-          },
+              type: 'dashed'
+            }
+          }
         },
         grid: {
           left: '24px', // 没有数据的时候，Y轴单位显示不全。后面可以通过判断设置该值
@@ -382,7 +316,7 @@ export default {
           bottom: 0,
           containLabel: true,
           borderWidth: 1,
-          borderColor: '#ccc',
+          borderColor: '#ccc'
         },
         series: [
           {
@@ -390,92 +324,92 @@ export default {
             name: this.$t('packages_business_task_info_input'),
             lineStyle: {
               color: 'rgba(24, 144, 255, 1)',
-              width: 1,
+              width: 1
             },
             areaStyle: {
-              color: 'rgba(24, 144, 255, 0.2)',
+              color: 'rgba(24, 144, 255, 0.2)'
             },
             symbol: 'none',
             itemStyle: {
-              color: 'rgba(24, 144, 255, 1)',
+              color: 'rgba(24, 144, 255, 1)'
             },
-            data: [],
+            data: []
           },
           {
             type: 'line',
             name: this.$t('packages_business_task_info_output'),
             lineStyle: {
               color: 'rgba(118, 205, 238, 1)',
-              width: 1,
+              width: 1
             },
             symbol: 'none',
             areaStyle: {
-              color: 'rgba(118, 205, 238, 0.2)',
+              color: 'rgba(118, 205, 238, 0.2)'
             },
             itemStyle: {
-              color: 'rgba(118, 205, 238, 1)',
+              color: 'rgba(118, 205, 238, 1)'
             },
-            data: [],
-          },
-        ],
+            data: []
+          }
+        ]
       },
       overData: {
         inputTotal: '',
         outputTotal: '',
         insertedTotal: '',
         updatedTotal: '',
-        deletedTotal: '',
+        deletedTotal: ''
       },
       writeData: {
         cdcTime: '',
         initialTime: '',
         initialTotal: 0,
         initialWrite: 0,
-        replicateLag: 0,
+        replicateLag: 0
       },
       endTs: '', // 预计完成时间
       selectedTimeItems: [
         {
           label: this.$t('packages_business_task_info_default'),
           value: 'default',
-          spacing: 0,
+          spacing: 0
         },
         {
           label: this.$t('packages_business_task_info_five_min'),
           value: '5min',
-          spacing: 5 * 60 * 1000,
+          spacing: 5 * 60 * 1000
         },
         {
           label: this.$t('packages_business_task_info_fifteen_min'),
           value: '15min',
-          spacing: 15 * 60 * 1000,
+          spacing: 15 * 60 * 1000
         },
         {
           label: this.$t('packages_business_task_info_thirty_min'),
           value: '30min',
-          spacing: 30 * 60 * 1000,
+          spacing: 30 * 60 * 1000
         },
         {
           label: this.$t('packages_business_task_info_last_hour'),
           value: '60min',
-          spacing: 60 * 60 * 1000,
+          spacing: 60 * 60 * 1000
         },
         {
           label: this.$t('packages_business_task_info_custom_time'),
-          value: 'custom',
-        },
+          value: 'custom'
+        }
       ],
       selectedRateItems: [
         {
           label: this.$t('packages_business_task_info_five_seconds'),
-          value: 'second',
+          value: 'second'
         },
         {
           label: this.$t('packages_business_task_info_one_min'),
-          value: 'minute',
-        },
+          value: 'minute'
+        }
       ],
-      timeRange: [],
+      timeRange: []
     }
   },
   computed: {
@@ -492,14 +426,14 @@ export default {
       return !statusBtMap['edit'][task.status]
     },
     stagesItems() {
-      let result = this.task?.dag?.nodes?.map((item) => {
+      let result = this.task?.dag?.nodes?.map(item => {
         return {
           label: item.name,
-          value: item.id,
+          value: item.id
         }
       })
       return result || []
-    },
+    }
   },
   beforeUnmount() {
     this.timer && clearInterval(this.timer)
@@ -557,40 +491,34 @@ export default {
       let diff =
         this.selectedTime === 'custom'
           ? (endTimeStamp || Time.now()) - startTimeStamp
-          : selectedTimeItems.find((t) => t.value === selectedTime).spacing
+          : selectedTimeItems.find(t => t.value === selectedTime).spacing
       let guanluary = this.getGuanluary(diff)
       // 维度需要展示的格式
       this.guanluaryFormat = this.getGuanluary(diff, true)
       let taskId = this.$route.params?.id
       let tags = {
         taskId,
-        type: 'task',
+        type: 'task'
       }
       let params = {
         samples: [
           {
             tags,
             guanluary,
-            fields: ['inputQPS', 'outputQPS'],
+            fields: ['inputQPS', 'outputQPS']
           },
           {
             tags,
             guanluary,
-            fields: [
-              'inputTotal',
-              'outputTotal',
-              'insertedTotal',
-              'updatedTotal',
-              'deletedTotal',
-            ],
-            type: 'headAndTail',
-          },
+            fields: ['inputTotal', 'outputTotal', 'insertedTotal', 'updatedTotal', 'deletedTotal'],
+            type: 'headAndTail'
+          }
         ],
         statistics: [
           {
-            tags,
-          },
-        ],
+            tags
+          }
+        ]
       }
       if (this.selectedStage) {
         let nodeId = this.selectedStage
@@ -598,40 +526,34 @@ export default {
         tags = {
           taskId,
           type: 'node',
-          nodeId,
+          nodeId
         }
         params = {
           samples: [
             {
               tags,
               guanluary,
-              fields: ['inputQPS', 'outputQPS'],
+              fields: ['inputQPS', 'outputQPS']
             },
             {
               tags,
               guanluary,
-              fields: [
-                'inputTotal',
-                'outputTotal',
-                'insertedTotal',
-                'updatedTotal',
-                'deletedTotal',
-              ],
-              type: 'headAndTail',
-            },
+              fields: ['inputTotal', 'outputTotal', 'insertedTotal', 'updatedTotal', 'deletedTotal'],
+              type: 'headAndTail'
+            }
           ],
           statistics: [
             {
-              tags: taskTags,
-            },
-          ],
+              tags: taskTags
+            }
+          ]
         }
       }
       // 轮询需要传递上一次的参数
       if (reset) {
         this.lineDataDeep = {
           x: [],
-          y: [[], []],
+          y: [[], []]
         }
       }
       if (endTimeStamp) {
@@ -664,9 +586,9 @@ export default {
       if (!params) {
         return
       }
-      this.remoteMethod(params).then((data) => {
+      this.remoteMethod(params).then(data => {
         let { samples } = data
-        samples.forEach((el) => {
+        samples.forEach(el => {
           for (let key in el) {
             el[key] = el[key].reverse()
           }
@@ -701,9 +623,7 @@ export default {
         const qpsData = samples[0] || {}
         let { inputQPS = [], outputQPS = [] } = qpsData
         let qpsDataTime = qpsData.time || []
-        let xArr = qpsDataTime.map((t) =>
-          this.formatTime(t, 'YYYY-MM-DD HH:mm:ss.SSS')
-        ) // 时间不在这里格式化.map(t => formatTime(t))
+        let xArr = qpsDataTime.map(t => this.formatTime(t, 'YYYY-MM-DD HH:mm:ss.SSS')) // 时间不在这里格式化.map(t => formatTime(t))
         const xArrLen = xArr.length
         if (this.lineDataDeep.x.length > 20) {
           this.lineDataDeep.x.splice(0, xArrLen)
@@ -716,11 +636,11 @@ export default {
           let time = el
           inArr.push({
             name: time,
-            value: [time, inputQPS[i] || 0],
+            value: [time, inputQPS[i] || 0]
           })
           outArr.push({
             name: time,
-            value: [time, outputQPS[i] || 0],
+            value: [time, outputQPS[i] || 0]
           })
         })
         if (reset) {
@@ -745,19 +665,19 @@ export default {
         this.$refs.chart?.chart?.setOption({
           xAxis: {
             axisLabel: {
-              formatter: (val) => {
+              formatter: val => {
                 return this.formatTime(val, this.guanluaryFormat)
-              },
-            },
+              }
+            }
           },
           series: [
             {
-              data: Object.assign([], this.lineDataDeep.y[0]),
+              data: Object.assign([], this.lineDataDeep.y[0])
             },
             {
-              data: Object.assign([], this.lineDataDeep.y[1]),
-            },
-          ],
+              data: Object.assign([], this.lineDataDeep.y[1])
+            }
+          ]
         })
       })
     },
@@ -797,11 +717,8 @@ export default {
     start(row = {}, resetLoading) {
       taskApi
         .start(row.id)
-        .then((data) => {
-          this.$message.success(
-            data?.message ||
-              this.$t('packages_business_message_operation_succuess')
-          )
+        .then(data => {
+          this.$message.success(data?.message || this.$t('packages_business_message_operation_succuess'))
           $emit(this, 'reload')
         })
         .finally(resetLoading)
@@ -809,11 +726,8 @@ export default {
     stop(row, resetLoading) {
       taskApi
         .stop(row.id)
-        .then((data) => {
-          this.$message.success(
-            data?.message ||
-              this.$t('packages_business_message_operation_succuess')
-          )
+        .then(data => {
+          this.$message.success(data?.message || this.$t('packages_business_message_operation_succuess'))
           $emit(this, 'reload')
         })
         .finally(resetLoading)
@@ -821,11 +735,8 @@ export default {
     forceStop(row, resetLoading) {
       taskApi
         .forceStop(row.id)
-        .then((data) => {
-          this.$message.success(
-            data?.message ||
-              this.$t('packages_business_message_operation_succuess')
-          )
+        .then(data => {
+          this.$message.success(data?.message || this.$t('packages_business_message_operation_succuess'))
           $emit(this, 'reload')
         })
         .finally(resetLoading)
@@ -845,20 +756,12 @@ export default {
       }
       if (type === 'edit') {
         this.$confirm(
-          `<p>${this.$t(
-            'packages_business_task_list_edit_tip'
-          )}<span style="color:#409EFF">${this.$t(
+          `<p>${this.$t('packages_business_task_list_edit_tip')}<span style="color:#409EFF">${this.$t(
             'packages_business_task_list_edit_tip1'
           )}</span>、` +
-            `<span style="color:#409EFF">${this.$t(
-              'packages_business_task_list_node_attr'
-            )}</span>、` +
-            `<span style="color:#409EFF">${this.$t(
-              'packages_business_task_list_matching_releation'
-            )}</span>,` +
-            `${this.$t(
-              'packages_business_task_list_edit_submit'
-            )}<span style="color:#409EFF">${this.$t(
+            `<span style="color:#409EFF">${this.$t('packages_business_task_list_node_attr')}</span>、` +
+            `<span style="color:#409EFF">${this.$t('packages_business_task_list_matching_releation')}</span>,` +
+            `${this.$t('packages_business_task_list_edit_submit')}<span style="color:#409EFF">${this.$t(
               'task_list_edit_reset'
             )}</span>${this.$t('packages_business_task_list_edit_tip3')}</p>`,
           this.$t('packages_business_task_important_reminder'),
@@ -866,15 +769,13 @@ export default {
             dangerouslyUseHTMLString: true,
             customClass: 'dataflow-clickTip',
             cancelButtonText: this.$t('packages_business_button_cancel'),
-            confirmButtonText: this.$t(
-              'packages_business_task_list_continue_edit'
-            ),
-            type: 'warning',
+            confirmButtonText: this.$t('packages_business_task_list_continue_edit'),
+            type: 'warning'
           }
-        ).then((resFlag) => {
+        ).then(resFlag => {
           if (resFlag) {
             this.$router.push({
-              path: '/task/' + id,
+              path: '/task/' + id
             })
           }
         })
@@ -882,12 +783,12 @@ export default {
         this.$router.push({
           name: 'Monitor',
           params: {
-            id: id,
-          },
+            id: id
+          }
         })
       }
       setTimeout(() => {
-        document.querySelectorAll('.el-tooltip__popper').forEach((it) => {
+        document.querySelectorAll('.el-tooltip__popper').forEach(it => {
           it.outerHTML = ''
         })
       }, 200)
@@ -932,9 +833,9 @@ export default {
     changeTimeRangeFnc() {
       this.resetTimer()
       this.getMeasurement(true)
-    },
+    }
   },
-  emits: ['reload'],
+  emits: ['reload']
 }
 </script>
 

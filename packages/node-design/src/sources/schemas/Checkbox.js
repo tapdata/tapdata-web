@@ -4,9 +4,9 @@ export const Checkbox = {
     autoFocus: {
       type: 'boolean',
       'x-decorator': 'FormItem',
-      'x-component': 'Switch',
-    },
-  },
+      'x-component': 'Switch'
+    }
+  }
 }
 
 Checkbox.Group = {
@@ -15,7 +15,7 @@ Checkbox.Group = {
     autoFocus: {
       type: 'boolean',
       'x-decorator': 'FormItem',
-      'x-component': 'Switch',
-    },
-  },
+      'x-component': 'Switch'
+    }
+  }
 }

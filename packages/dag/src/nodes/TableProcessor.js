@@ -18,14 +18,14 @@ export class TableProcessor extends NodeType {
     properties: {
       $inputs: {
         type: 'array',
-        display: 'none',
+        display: 'none'
       },
       name: {
         type: 'string',
         title: i18n.t('packages_dag_nodes_database_jiedianmingcheng'),
         required: true,
         'x-decorator': 'FormItem',
-        'x-component': 'Input',
+        'x-component': 'Input'
       },
       tableNames: {
         type: 'array',
@@ -33,8 +33,8 @@ export class TableProcessor extends NodeType {
         'x-component-props': {
           findParentNodes: '{{findParentNodes}}',
           listStyle: {
-            maxHeight: 'calc((100vh - 120px) * 0.618)',
-          },
+            maxHeight: 'calc((100vh - 120px) * 0.618)'
+          }
         },
         'x-validator': {
           validator: `{{(value, rule) => {
@@ -67,9 +67,9 @@ export class TableProcessor extends NodeType {
               }
             }
           }}}`,
-          message: i18n.t('packages_dag_nodes_tableprocessor_biaomingchongfu'),
-        },
-      },
-    },
+          message: i18n.t('packages_dag_nodes_tableprocessor_biaomingchongfu')
+        }
+      }
+    }
   }
 }

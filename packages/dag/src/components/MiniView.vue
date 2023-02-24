@@ -1,25 +1,10 @@
 <template>
   <div class="miniview shadow flex justify-center align-center" :style="style">
     <div class="miniview-paper-wrap" :style="wrapStyle">
-      <div
-        ref="paperView"
-        class="miniview-paper"
-        :style="paperStyle"
-        @mousedown="mouseDown($event, true)"
-      >
-        <div
-          v-for="(c, i) in coms"
-          :style="c"
-          :key="i"
-          class="component-placeholder"
-        ></div>
+      <div ref="paperView" class="miniview-paper" :style="paperStyle" @mousedown="mouseDown($event, true)">
+        <div v-for="(c, i) in coms" :style="c" :key="i" class="component-placeholder"></div>
       </div>
-      <div
-        ref="currentView"
-        class="current-view"
-        :style="currentViewStyle"
-        @mousedown="mouseDown"
-      ></div>
+      <div ref="currentView" class="current-view" :style="currentViewStyle" @mousedown="mouseDown"></div>
     </div>
   </div>
 </template>
@@ -37,23 +22,23 @@ export default {
     scrollPosition: Object,
     width: {
       type: Number,
-      default: 150,
+      default: 150
     },
     height: {
       type: Number,
-      default: 150,
+      default: 150
     },
     padding: {
       type: Number,
-      default: 10,
-    },
+      default: 10
+    }
   },
   computed: {
     style() {
       return {
         width: this.width + 'px',
         height: this.height + 'px',
-        padding: this.padding + 'px',
+        padding: this.padding + 'px'
       }
     },
     scale() {
@@ -66,22 +51,22 @@ export default {
     wrapStyle() {
       return {
         width: this.paperSize.width * this.scale + 'px',
-        height: this.paperSize.height * this.scale + 'px',
+        height: this.paperSize.height * this.scale + 'px'
       }
     },
     paperStyle() {
       return {
         width: this.paperSize.width + 'px',
         height: this.paperSize.height + 'px',
-        transform: `scale(${this.scale})`,
+        transform: `scale(${this.scale})`
       }
     },
     coms() {
       const { w, h } = this.paperReverseSize
       const nodes = this.$store.getters['dataflow/allNodes']
-      return nodes.map((n) => ({
+      return nodes.map(n => ({
         left: n.attrs.position[0] + w + 'px',
-        top: n.attrs.position[1] + h + 'px',
+        top: n.attrs.position[1] + h + 'px'
       }))
     },
     viewPosition() {
@@ -94,7 +79,7 @@ export default {
           width: Math.round(ww * m * scale),
           height: Math.round(wh * m * scale),
           left: 0,
-          top: 0,
+          top: 0
         }
       rect.left = ((x - paperLeft) / paperScale) * scale
       rect.top = ((y - paperTop) / paperScale) * scale
@@ -106,9 +91,9 @@ export default {
         left: obj.left + 'px',
         top: obj.top + 'px',
         width: obj.width + 'px',
-        height: obj.height + 'px',
+        height: obj.height + 'px'
       }
-    },
+    }
   },
   methods: {
     /**
@@ -122,7 +107,7 @@ export default {
         r = { dx: 0, dy: 0 }
       let flag = false,
         c = Object.assign({}, s)
-      const onMove = (event) => {
+      const onMove = event => {
           if (event.buttons === 0) return
           point || (point = { pageX: event.pageX, pageY: event.pageY })
           a || (a = point)
@@ -133,11 +118,9 @@ export default {
           a = { pageX: event.pageX, pageY: event.pageY }
           flag || ((Math.abs(s.x) >= 5 || Math.abs(s.y) >= 5) && (flag = true))
           const isNotSame = c.x !== s.x || c.y !== s.y
-          flag &&
-            isNotSame &&
-            ((c = Object.assign({}, s)), moveCallback(event, s, r, point))
+          flag && isNotSame && ((c = Object.assign({}, s)), moveCallback(event, s, r, point))
         },
-        h = (e) => {
+        h = e => {
           point = undefined
           window.removeEventListener('mousemove', onMove)
           window.removeEventListener('mouseup', h)
@@ -159,7 +142,7 @@ export default {
         top = point.y - height / 2
         $emit(this, 'drag-move', {
           x: left / this.scale,
-          y: top / this.scale,
+          y: top / this.scale
         })
       }
 
@@ -168,7 +151,7 @@ export default {
         y = (top + y) / this.scale
         $emit(this, 'drag-move', {
           x,
-          y,
+          y
         })
       })
     },
@@ -177,11 +160,11 @@ export default {
       let { x, y } = this.$refs.paperView.getBoundingClientRect()
       return {
         x: e.pageX - x,
-        y: e.pageY - y,
+        y: e.pageY - y
       }
-    },
+    }
   },
-  emits: ['drag-move'],
+  emits: ['drag-move']
 }
 </script>
 

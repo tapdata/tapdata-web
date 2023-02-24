@@ -2,11 +2,7 @@
   <!-- mogo视图 start -->
   <section class="pipeline-list-wrap">
     <el-form :model="model" :rules="rules" ref="form" label-position="top">
-      <el-form-item
-        :label="$t('metadata_details_pipeline_collection')"
-        prop="collection"
-        required
-      >
+      <el-form-item :label="$t('metadata_details_pipeline_collection')" prop="collection" required>
         <el-select v-model:value="model.collection" size="mini">
           <el-option
             v-for="item in collections"
@@ -26,19 +22,12 @@
             "
           ></el-input> -->
       </el-form-item>
-      <el-form-item
-        :label="$t('metadata_details_pipeline_pipeline')"
-        prop="pipeline"
-        required
-      >
+      <el-form-item :label="$t('metadata_details_pipeline_pipeline')" prop="pipeline" required>
         <el-input
           type="textarea"
           size="mini"
           v-model:value="model.pipeline"
-          :placeholder="
-            $t('metadata_details_enter') +
-            $t('metadata_details_pipeline_pipeline')
-          "
+          :placeholder="$t('metadata_details_enter') + $t('metadata_details_pipeline_pipeline')"
         ></el-input>
       </el-form-item>
       <el-form-item>
@@ -57,9 +46,7 @@
           <el-button type="primary" @click="applicationBtn" size="mini">{{
             $t('metadata_details_pipeline_apply')
           }}</el-button>
-          <el-button type="primary" @click="saveSubmit" size="mini">{{
-            $t('message_save')
-          }}</el-button>
+          <el-button type="primary" @click="saveSubmit" size="mini">{{ $t('message_save') }}</el-button>
         </div>
       </el-form-item>
     </el-form>
@@ -72,8 +59,8 @@ export default {
   props: {
     pipelineData: {
       type: Object,
-      required: true,
-    },
+      required: true
+    }
   },
   data() {
     return {
@@ -83,28 +70,24 @@ export default {
       isCoverDialog: false,
       model: {
         collection: '',
-        pipeline: '',
+        pipeline: ''
       },
       rules: {
         collection: [
           {
             required: true,
             trigger: 'blur',
-            message:
-              this.$t('metadata_details_pipeline_collection') +
-              this.$t('metadata_details_pipeline_cnot_Empty'),
-          },
+            message: this.$t('metadata_details_pipeline_collection') + this.$t('metadata_details_pipeline_cnot_Empty')
+          }
         ],
         pipeline: [
           {
             required: true,
             trigger: 'blur',
-            message:
-              this.$t('metadata_details_pipeline_pipeline') +
-              this.$t('metadata_details_pipeline_cnot_Empty'),
-          },
-        ],
-      },
+            message: this.$t('metadata_details_pipeline_pipeline') + this.$t('metadata_details_pipeline_cnot_Empty')
+          }
+        ]
+      }
     }
   },
   created() {
@@ -121,13 +104,13 @@ export default {
         where: {
           meta_type: 'collection',
           databaseId: {
-            regexp: `^${this.pipelineData.databaseId}$`,
-          },
-        },
-      },
+            regexp: `^${this.pipelineData.databaseId}$`
+          }
+        }
+      }
     }
 
-    metadataInstancesApi.get(params).then((data) => {
+    metadataInstancesApi.get(params).then(data => {
       this.collections = data?.items || []
       this.model.collection = this.collections[0].original_name
     })
@@ -140,7 +123,7 @@ export default {
           closeOnClickModal: false,
           confirmButtonText: this.$t('message_confirm'),
           confirmButtonClass: this.$t('message_cancel'),
-          showClose: false,
+          showClose: false
         })
           .then(() => {
             this.applyToDB()
@@ -156,7 +139,7 @@ export default {
     // 管道
     applyToDB() {
       let _this = this
-      this.$refs.form.validate((valid) => {
+      this.$refs.form.validate(valid => {
         if (valid) {
           scheduleTasksApi
             .post({
@@ -172,20 +155,13 @@ export default {
                 type: 'view',
                 isApplication: true,
                 dropIfExists: true,
-                source: this.pipelineData.source._id,
-              },
+                source: this.pipelineData.source._id
+              }
             })
-            .then((data) => {
+            .then(data => {
               _this.isApplication = data?.task_data.isApplication
-              if (_this.pipelineData)
-                _this.$set(
-                  _this.pipelineData.pipline,
-                  'isApplication',
-                  _this.isApplication
-                )
-              this.$message.success(
-                this.$t('metadata_details_pipeline_success')
-              )
+              if (_this.pipelineData) _this.$set(_this.pipelineData.pipline, 'isApplication', _this.isApplication)
+              this.$message.success(this.$t('metadata_details_pipeline_success'))
             })
         }
       })
@@ -195,13 +171,13 @@ export default {
     saveSubmit() {
       metadataInstancesApi
         .patchId(this.pipelineData.id, {
-          pipline: this.model,
+          pipline: this.model
         })
         .then(() => {
           this.$message.success(this.$t('message_save_ok'))
         })
-    },
-  },
+    }
+  }
 }
 </script>
 

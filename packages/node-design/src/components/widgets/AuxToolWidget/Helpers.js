@@ -25,10 +25,7 @@ export const Helpers = defineComponent({
         const getYInViewport = (nodeRect, helpersRect) => {
           if (nodeRect.top - viewportRef.value.scrollY > helpersRect.height) {
             return 'top'
-          } else if (
-            viewportRef.value.isScrollTop &&
-            nodeRect.height + helpersRect.height > viewportRef.value.height
-          ) {
+          } else if (viewportRef.value.isScrollTop && nodeRect.height + helpersRect.height > viewportRef.value.height) {
             return 'inner-top'
           } else if (
             viewportRef.value.isScrollBottom &&
@@ -58,10 +55,7 @@ export const Helpers = defineComponent({
           const helpersRect = refs.root?.getBoundingClientRect()
           if (!helpersRect || !nodeRect) return
           if (unmountRef.value) return
-          position.value =
-            getYInViewport(nodeRect, helpersRect) +
-            '-' +
-            getXInViewport(nodeRect, helpersRect)
+          position.value = getYInViewport(nodeRect, helpersRect) + '-' + getXInViewport(nodeRect, helpersRect)
         }
 
         nextTick(() => {
@@ -75,7 +69,7 @@ export const Helpers = defineComponent({
             viewportRef.value.scrollX,
             viewportRef.value.scrollY,
             viewportRef.value.isScrollBottom,
-            viewportRef.value.isScrollTop,
+            viewportRef.value.isScrollTop
           ],
           () => {
             clearTimeout(request)
@@ -93,8 +87,8 @@ export const Helpers = defineComponent({
           class={[
             prefix,
             {
-              [position.value]: true,
-            },
+              [position.value]: true
+            }
           ]}
           ref="root"
         >
@@ -107,5 +101,5 @@ export const Helpers = defineComponent({
         </div>
       )
     }
-  },
+  }
 })

@@ -37,11 +37,7 @@
       />
       <section class="layout-wrap flex-1">
         <!--内容体-->
-        <main
-          id="dfEditorContent"
-          ref="layoutContent"
-          class="layout-content flex-1 overflow-hidden"
-        >
+        <main id="dfEditorContent" ref="layoutContent" class="layout-content flex-1 overflow-hidden">
           <PaperScroller
             ref="paperScroller"
             :nav-lines="navLines"
@@ -56,7 +52,7 @@
               :id="NODE_PREFIX + n.id"
               :js-plumb-ins="jsPlumbIns"
               :class="{
-                'options-active': nodeMenu.typeId === n.id,
+                'options-active': nodeMenu.typeId === n.id
               }"
               @drag-start="onNodeDragStart"
               @drag-move="onNodeDragMove"
@@ -68,10 +64,7 @@
               @show-node-popover="showNodePopover"
             ></DFNode>
           </PaperScroller>
-          <div
-            v-if="!allNodes.length && stateIsReadonly"
-            class="absolute-fill flex justify-center align-center"
-          >
+          <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
             <VEmpty large />
           </div>
           <!--<PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>-->
@@ -86,12 +79,7 @@
       </section>
 
       <!--配置面板-->
-      <ConfigPanel
-        ref="configPanel"
-        :settings="dataflow"
-        :scope="scope"
-        @hide="onHideSidebar"
-      />
+      <ConfigPanel ref="configPanel" :settings="dataflow" :scope="scope" @hide="onHideSidebar" />
     </section>
   </section>
 </template>
@@ -125,7 +113,7 @@ export default {
   name: 'MigrationEditor',
 
   directives: {
-    resize,
+    resize
   },
 
   mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
@@ -140,7 +128,7 @@ export default {
     TopHeader,
     DFNode,
     LeftSider,
-    TransformLoading,
+    TransformLoading
   },
 
   inject: ['buried'],
@@ -164,24 +152,21 @@ export default {
         typeId: '',
         reference: null,
         data: null,
-        connectionData: {},
+        connectionData: {}
       },
 
       scale: 1,
-      showLeftSider: true,
+      showLeftSider: true
     }
   },
 
   watch: {
     'dataflow.status'(v) {
       this.checkGotoViewer()
-      if (
-        ['DataflowViewer', 'MigrateViewer'].includes(this.$route.name) &&
-        ['renewing', 'renew_failed'].includes(v)
-      ) {
+      if (['DataflowViewer', 'MigrateViewer'].includes(this.$route.name) && ['renewing', 'renew_failed'].includes(v)) {
         this.handleConsoleAutoLoad()
       }
-    },
+    }
   },
 
   async mounted() {
@@ -215,21 +200,21 @@ export default {
       this.addProcessorNode([
         {
           name: i18n.t('packages_dag_src_migrationeditor_biaobianji'),
-          type: 'table_rename_processor',
+          type: 'table_rename_processor'
         },
         {
           name: i18n.t('packages_dag_src_migrationeditor_ziduanbianji'),
-          type: 'migrate_field_rename_processor',
+          type: 'migrate_field_rename_processor'
         },
         {
           name: i18n.t('packages_dag_src_migrationeditor_jSchuli_standard'),
-          type: 'standard_migrate_js_processor',
+          type: 'standard_migrate_js_processor'
         },
         {
           name: i18n.t('packages_dag_src_migrationeditor_jSchuli'),
           type: 'migrate_js_processor',
-          beta: true,
-        },
+          beta: true
+        }
       ])
       this.addResourceIns(allResourceIns)
     },
@@ -240,11 +225,7 @@ export default {
       if (data) {
         if (this.destory) return
         const { dag } = data
-        this.setStateReadonly(
-          this.$route.name === 'MigrateViewer'
-            ? true
-            : this.dataflow.disabledData.edit
-        )
+        this.setStateReadonly(this.$route.name === 'MigrateViewer' ? true : this.dataflow.disabledData.edit)
         this.setTaskId(data.id)
         this.setEdges(dag.edges)
         this.setEditVersion(data.editVersion)
@@ -266,11 +247,11 @@ export default {
           this.$router.resolve({
             name: 'MigrationMonitor',
             query: {
-              id: this.dataflow.id,
+              id: this.dataflow.id
             },
             params: {
-              id: this.dataflow.id,
-            },
+              id: this.dataflow.id
+            }
           }).href,
           `MigrateStatistics_${this.dataflow.id}`
         )
@@ -278,11 +259,11 @@ export default {
         this.$router.push({
           name: 'MigrationMonitor',
           query: {
-            id: this.dataflow.id,
+            id: this.dataflow.id
           },
           params: {
-            id: this.dataflow.id,
-          },
+            id: this.dataflow.id
+          }
         })
       }
     },
@@ -301,7 +282,7 @@ export default {
         // this.$message.success(this.$t('packages_dag_message_save_ok'))
         await this.$router.replace({
           name: 'MigrateEditor',
-          params: { id: dataflow.id, action: 'dataflowEdit' },
+          params: { id: dataflow.id, action: 'dataflowEdit' }
         })
       } catch (e) {
         // eslint-disable-next-line no-console
@@ -312,7 +293,7 @@ export default {
           this.newDataflow(newName)
         } else if (e?.data?.code === 'InvalidPaidPlan') {
           this.$router.push({
-            name: 'migrateList',
+            name: 'migrateList'
           })
         } else {
           this.handleError(e)
@@ -326,7 +307,7 @@ export default {
       const node = merge(
         {
           id: uuid(),
-          attrs: { position },
+          attrs: { position }
         },
         item
       )
@@ -334,42 +315,34 @@ export default {
       const ins = item.__Ctor || getResourceIns(item)
       Object.defineProperty(node, '__Ctor', {
         value: ins,
-        enumerable: false,
+        enumerable: false
       })
 
       return node
     },
 
     handlePageReturn() {
-      if (
-        !this.allNodes.length &&
-        !this.nameHasUpdated &&
-        this.$store.state.dataflow.taskId
-      ) {
+      if (!this.allNodes.length && !this.nameHasUpdated && this.$store.state.dataflow.taskId) {
         this.$confirm(
           this.$t('packages_dag_page_return_confirm_content'),
           this.$t('packages_dag_page_return_confirm_title'),
           {
             type: 'warning',
             closeOnClickModal: false,
-            confirmButtonText: this.$t(
-              'packages_dag_page_return_confirm_ok_text'
-            ),
-            cancelButtonText: this.$t(
-              'packages_dag_page_return_confirm_cancel_text'
-            ),
+            confirmButtonText: this.$t('packages_dag_page_return_confirm_ok_text'),
+            cancelButtonText: this.$t('packages_dag_page_return_confirm_cancel_text')
           }
-        ).then((res) => {
+        ).then(res => {
           if (res) {
             taskApi.delete(this.dataflow.id)
           }
           this.$router.push({
-            name: 'migrateList',
+            name: 'migrateList'
           })
         })
       } else {
         this.$router.push({
-          name: 'migrateList',
+          name: 'migrateList'
         })
       }
     },
@@ -377,7 +350,7 @@ export default {
     handleEdit() {
       this.$router.push({
         name: 'MigrateEditor',
-        params: { id: this.dataflow.id, action: 'dataflowEdit' },
+        params: { id: this.dataflow.id, action: 'dataflowEdit' }
       })
     },
 
@@ -385,11 +358,11 @@ export default {
       this.$router.push({
         name: 'MigrationMonitor',
         query: {
-          id: this.dataflow.id,
+          id: this.dataflow.id
         },
         params: {
-          id: this.dataflow.id,
-        },
+          id: this.dataflow.id
+        }
       })
     },
 
@@ -415,8 +388,7 @@ export default {
         // const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
         const result = await taskApi.save(data)
         this.reformDataflow(result)
-        !needStart &&
-          this.$message.success(this.$t('packages_dag_message_save_ok'))
+        !needStart && this.$message.success(this.$t('packages_dag_message_save_ok'))
         this.setEditVersion(result.editVersion)
         this.isSaving = false
         isOk = true
@@ -436,12 +408,8 @@ export default {
     async handleStart() {
       this.buried('migrationStart')
       this.unWatchStatus?.()
-      this.unWatchStatus = this.$watch('dataflow.status', (v) => {
-        if (
-          ['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(
-            v
-          )
-        ) {
+      this.unWatchStatus = this.$watch('dataflow.status', v => {
+        if (['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)) {
           this.$refs.console?.loadData()
           if (v !== 'running') {
             this.$refs.console?.stopAuto()
@@ -484,8 +452,8 @@ export default {
       } else {
         this.setStateReadonly(false)
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

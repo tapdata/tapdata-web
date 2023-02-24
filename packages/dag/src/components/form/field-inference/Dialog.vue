@@ -11,13 +11,9 @@
   >
     <div v-if="ruleForm.list.length">
       <ElRow>
-        <ElCol :span="9">{{
-          $t('packages_form_field_inference_dialog_mubiaomorentui')
-        }}</ElCol>
+        <ElCol :span="9">{{ $t('packages_form_field_inference_dialog_mubiaomorentui') }}</ElCol>
         <ElCol :span="3">&nbsp;</ElCol>
-        <ElCol :span="9">{{
-          $t('packages_form_field_inference_dialog_xiugaihoudelei')
-        }}</ElCol>
+        <ElCol :span="9">{{ $t('packages_form_field_inference_dialog_xiugaihoudelei') }}</ElCol>
         <ElCol v-if="!readonly" :span="3" class="text-center">{{
           $t('packages_form_field_processor_index_caozuo')
         }}</ElCol>
@@ -26,48 +22,29 @@
         <ElCol :span="9">
           <ElInput
             v-model:value="item.accept"
-            :placeholder="
-              $t('packages_form_field_inference_dialog_cankaogeshiv')
-            "
+            :placeholder="$t('packages_form_field_inference_dialog_cankaogeshiv')"
             :disabled="readonly"
           ></ElInput>
         </ElCol>
         <ElCol :span="3">
-          <div
-            class="flex justify-content-center align-items-center"
-            style="height: 32px"
-          >
+          <div class="flex justify-content-center align-items-center" style="height: 32px">
             <VIcon size="16" class="color-primary">d-arrow-right</VIcon>
           </div>
         </ElCol>
         <ElCol :span="9" class="flex align-items-center">
           <ElInput
             v-model:value="item.result.dataType"
-            :placeholder="
-              $t('packages_form_field_inference_dialog_cankaogeshiv')
-            "
+            :placeholder="$t('packages_form_field_inference_dialog_cankaogeshiv')"
             :disabled="readonly"
             class="mr-1"
           ></ElInput>
-          <VIcon v-if="item.result.tapType === null" class="color-danger"
-            >error</VIcon
-          >
-          <VIcon
-            v-else
-            :class="[!item.result.tapType ? 'color-disable' : 'color-success']"
-            >success</VIcon
-          >
+          <VIcon v-if="item.result.tapType === null" class="color-danger">error</VIcon>
+          <VIcon v-else :class="[!item.result.tapType ? 'color-disable' : 'color-success']">success</VIcon>
           <!--            <span v-show="item.result.tapType === null" class="color-danger">错误</span>-->
         </ElCol>
         <ElCol v-if="!readonly" :span="3">
-          <div
-            class="flex justify-content-center align-items-center"
-            style="height: 32px"
-          >
-            <VIcon
-              size="16"
-              class="cursor-pointer color-primary"
-              @click="ruleForm.list.splice(index, 1)"
+          <div class="flex justify-content-center align-items-center" style="height: 32px">
+            <VIcon size="16" class="cursor-pointer color-primary" @click="ruleForm.list.splice(index, 1)"
               >minus-circle</VIcon
             >
           </div>
@@ -92,9 +69,7 @@
     </div>
     <template v-slot:footer>
       <span class="dialog-footer">
-        <ElButton size="mini" @click="handleCancel">{{
-          $t('button_cancel')
-        }}</ElButton>
+        <ElButton size="mini" @click="handleCancel">{{ $t('button_cancel') }}</ElButton>
         <ElButton
           size="mini"
           type="primary"
@@ -121,46 +96,41 @@ export default {
   name: 'FieldInferenceDialog',
   props: {
     form: {
-      type: Object,
+      type: Object
     },
     visible: {
       type: Boolean,
-      default: false,
+      default: false
     },
     fieldChangeRules: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     readonly: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   computed: {
-    ...mapGetters('dataflow', [
-      'activeType',
-      'activeNode',
-      'nodeById',
-      'stateIsReadonly',
-    ]),
-    ...mapState('dataflow', ['editVersion']),
+    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
+    ...mapState('dataflow', ['editVersion'])
   },
   data() {
     return {
       ruleForm: {
         visible: false,
         list: [],
-        options: [],
+        options: []
       },
       editBtnLoading: false,
-      noData,
+      noData
     }
   },
   watch: {
     visible(v) {
       this.ruleForm.visible = v
       v && this.loadData()
-    },
+    }
   },
   methods: {
     ...mapMutations('dataflow', ['updateNodeProperties']),
@@ -172,16 +142,14 @@ export default {
         namespace: [this.activeNode?.id],
         type: 'DataType',
         accept: '',
-        result: { dataType: '', tapType: '' },
+        result: { dataType: '', tapType: '' }
       }
     },
     handleAdd(index = 0) {
       this.ruleForm.list.splice(index + 1, 0, this.getItem())
     },
     loadData() {
-      this.ruleForm.list = cloneDeep(
-        this.fieldChangeRules.filter((t) => t.scope === 'Node')
-      )
+      this.ruleForm.list = cloneDeep(this.fieldChangeRules.filter(t => t.scope === 'Node'))
     },
     handleCancel() {
       this.loadData()
@@ -191,17 +159,14 @@ export default {
     getSubmitDisabled() {
       return (
         this.readonly ||
-        this.ruleForm.list.some((t) => !t.accept || !t.result?.dataType) ||
+        this.ruleForm.list.some(t => !t.accept || !t.result?.dataType) ||
         JSON.stringify(this.nodeRules) === JSON.stringify(this.ruleForm.list)
       )
     },
     handleUpdate() {
       this.form.setValuesIn('fieldChangeRules', this.ruleForm.list)
       this.ruleForm.visible = false
-      const result = [
-        ...this.fieldChangeRules.filter((t) => t.scope === 'Field'),
-        ...this.ruleForm.list,
-      ]
+      const result = [...this.fieldChangeRules.filter(t => t.scope === 'Field'), ...this.ruleForm.list]
       $emit(this, 'update:fieldChangeRules', result)
       $emit(this, 'update:visible', this.ruleForm.visible)
     },
@@ -212,38 +177,33 @@ export default {
         this.handleUpdate()
         return
       }
-      const dataTypes = list.map((t) => t.result.dataType)
+      const dataTypes = list.map(t => t.result.dataType)
       const params = {
         databaseType: activeNode.databaseType,
-        dataTypes,
+        dataTypes
       }
       this.editBtnLoading = true
       metadataInstancesApi
         .dataType2TapType(params)
-        .then((data) => {
-          const result = list.map((t) => {
+        .then(data => {
+          const result = list.map(t => {
             const val = data[t.result.dataType]
-            t.result.tapType =
-              val && val.type !== 7 ? JSON.stringify(val) : null
+            t.result.tapType = val && val.type !== 7 ? JSON.stringify(val) : null
             return t
           })
-          if (result.some((t) => !t.result?.tapType)) {
-            this.$message.error(
-              i18n.t('packages_form_field_inference_list_geshicuowu')
-            )
+          if (result.some(t => !t.result?.tapType)) {
+            this.$message.error(i18n.t('packages_form_field_inference_list_geshicuowu'))
             this.editBtnLoading = false
             return
           }
           this.handleUpdate()
-          this.$message.success(
-            i18n.t('packages_form_field_inference_list_caozuochenggong')
-          )
+          this.$message.success(i18n.t('packages_form_field_inference_list_caozuochenggong'))
         })
         .finally(() => {
           this.editBtnLoading = false
         })
-    },
+    }
   },
-  emits: ['update:visible', 'update:fieldChangeRules'],
+  emits: ['update:visible', 'update:fieldChangeRules']
 }
 </script>

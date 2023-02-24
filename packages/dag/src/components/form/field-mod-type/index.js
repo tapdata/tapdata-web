@@ -20,7 +20,7 @@ export const FieldModType = connect(
         return {
           databaseType: form.values.databaseType,
           operations: form.values.operations,
-          form,
+          form
         }
       },
 
@@ -30,36 +30,36 @@ export const FieldModType = connect(
           selectList: [
             {
               label: 'String',
-              value: 'String',
+              value: 'String'
             },
             {
               label: 'Date',
-              value: 'Date',
+              value: 'Date'
             },
             {
               label: 'Double',
-              value: 'Double',
+              value: 'Double'
             },
             {
               label: 'Float',
-              value: 'Float',
+              value: 'Float'
             },
             {
               label: 'BigDecimal',
-              value: 'BigDecimal',
+              value: 'BigDecimal'
             },
             {
               label: 'Long',
-              value: 'Long',
+              value: 'Long'
             },
             {
               label: 'Map',
-              value: 'Map',
+              value: 'Map'
             },
             {
               label: 'Array',
-              value: 'Array',
-            },
+              value: 'Array'
+            }
           ],
           originalFields: [],
           checkAll: false,
@@ -69,8 +69,8 @@ export const FieldModType = connect(
             op: 'CONVERT',
             field: '',
             operand: '',
-            originalDataType: '',
-          },
+            originalDataType: ''
+          }
         }
       },
       watch: {
@@ -79,24 +79,21 @@ export const FieldModType = connect(
           handler(v) {
             $emit(this, 'change', v)
             console.log('operations', v) // eslint-disable-line
-          },
-        },
+          }
+        }
       },
 
       render() {
         // eslint-disable-next-line no-console
         console.log('🚗 FieldProcessor', this.loading, this.options)
         let fields = this.options || []
-        fields = fields.filter((item) => !item.is_deleted)
+        fields = fields.filter(item => !item.is_deleted)
         fields = convertSchemaToTreeData(fields) || [] //将模型转换成tree
         fields = this.checkOps(fields)
         this.fields = fields
         this.originalFields = JSON.parse(JSON.stringify(fields))
         return (
-          <div
-            class="field-processors-tree-warp bg-body pt-2 pb-5"
-            v-loading={this.loading}
-          >
+          <div class="field-processors-tree-warp bg-body pt-2 pb-5" v-loading={this.loading}>
             <div class="field-processor-operation flex">
               <span class="flex-1 text inline-block  ml-6">
                 {i18n.t('packages_form_field_add_del_index_ziduanmingcheng')}
@@ -132,9 +129,7 @@ export const FieldModType = connect(
                       class="tree-node flex flex-1 justify-content-center align-items flex-row"
                       slot-scope="{ node, data }"
                     >
-                      <span class="flex-1 inline-block ellipsis">
-                        {data.field_name}
-                      </span>
+                      <span class="flex-1 inline-block ellipsis">{data.field_name}</span>
                       <span class="flex-1 inline-block">{data.type}</span>
                       <ElSelect
                         v-model={data.data_type}
@@ -143,28 +138,22 @@ export const FieldModType = connect(
                         disabled={this.disabled}
                         onChange={() => this.handleDataType(node, data)}
                       >
-                        {this.selectList.map((op) => (
-                          <ElOption
-                            label={op.label}
-                            value={op.value}
-                            key={op.value}
-                          />
+                        {this.selectList.map(op => (
+                          <ElOption label={op.label} value={op.value} key={op.value} />
                         ))}
                       </ElSelect>
                       <span class="e-ops">
                         <ElButton
                           type="text"
                           class="ml-5"
-                          disabled={
-                            !this.isConvertDataType(data.id) || this.disabled
-                          }
+                          disabled={!this.isConvertDataType(data.id) || this.disabled}
                           onClick={() => this.handleReset(node, data)}
                         >
                           <VIcon size="12">revoke</VIcon>
                         </ElButton>
                       </span>
                     </span>
-                  ),
+                  )
                 }}
               />
             </div>
@@ -173,9 +162,7 @@ export const FieldModType = connect(
       },
       methods: {
         isConvertDataType(id) {
-          let ops = this.operations.filter(
-            (v) => v.id === id && v.op === 'CONVERT'
-          )
+          let ops = this.operations.filter(v => v.id === id && v.op === 'CONVERT')
           return ops && ops.length > 0
         },
         getNativeData(id) {
@@ -202,9 +189,7 @@ export const FieldModType = connect(
           if (this.operations?.length > 0 && fields?.length > 0) {
             for (let i = 0; i < this.operations.length; i++) {
               if (this.operations[i]?.op === 'CONVERT') {
-                let targetIndex = fields.findIndex(
-                  (n) => n.id === this.operations[i].id
-                )
+                let targetIndex = fields.findIndex(n => n.id === this.operations[i].id)
                 if (targetIndex === -1) {
                   continue
                 }
@@ -218,28 +203,22 @@ export const FieldModType = connect(
           console.log('fieldProcessor.handleDataType', node, data) //eslint-disable-line
           let nativeData = this.getNativeData(data.id)
           let ops = this.operations.filter(
-            (v) =>
-              (v.id === data.id ||
-                data?.oldIdList.findIndex((t) => t === v.id) > -1) &&
-              v.op === 'CONVERT'
+            v => (v.id === data.id || data?.oldIdList.findIndex(t => t === v.id) > -1) && v.op === 'CONVERT'
           )
           let op
           if (ops.length === 0) {
-            op = Object.assign(
-              JSON.parse(JSON.stringify(this.CONVERT_OPS_TPL)),
-              {
-                id: data.id,
-                field: data.schema_field_name || data.field_name,
-                operand: data.data_type,
-                originalDataType: nativeData.originalDataType,
-                table_name: data.table_name,
-                type: data.type,
-                primary_key_position: data.primary_key_position,
-                color: data.color,
-                label: data.field_name,
-                field_name: data.field_name,
-              }
-            )
+            op = Object.assign(JSON.parse(JSON.stringify(this.CONVERT_OPS_TPL)), {
+              id: data.id,
+              field: data.schema_field_name || data.field_name,
+              operand: data.data_type,
+              originalDataType: nativeData.originalDataType,
+              table_name: data.table_name,
+              type: data.type,
+              primary_key_position: data.primary_key_position,
+              color: data.color,
+              label: data.field_name,
+              field_name: data.field_name
+            })
             this.operations.push(op)
           } else {
             op = ops[0]
@@ -273,8 +252,7 @@ export const FieldModType = connect(
           this.checkAll = false
         },
         getParentFieldName(node) {
-          let fieldName =
-            node.data && node.data.field_name ? node.data.field_name : ''
+          let fieldName = node.data && node.data.field_name ? node.data.field_name : ''
           if (node.level > 1 && node.parent && node.parent.data) {
             let parentFieldName = this.getParentFieldName(node.parent)
             if (parentFieldName) fieldName = parentFieldName + '.' + fieldName
@@ -283,8 +261,8 @@ export const FieldModType = connect(
         },
         handleAllReset() {
           this.operations.splice(0)
-        },
-      },
+        }
+      }
     })
   ),
   mapProps({ dataSource: 'options', loading: true })

@@ -12,7 +12,7 @@ export const Text = defineComponent({
       const style = Object.assign(
         {
           'white-space': 'pre',
-          color: '#535f72',
+          color: '#535f72'
         },
         props.contentStyle || {}
       )
@@ -23,7 +23,7 @@ export const Text = defineComponent({
         </div>
       )
     }
-  },
+  }
 })
 
 export default Text

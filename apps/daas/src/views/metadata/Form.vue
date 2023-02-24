@@ -6,25 +6,12 @@
     v-model:visible="dialogFormVisible"
     custom-class="dialogInfo-form"
   >
-    <el-form
-      :model="form"
-      :rules="rules"
-      ref="form"
-      label-width="120"
-      class="e-form"
-      label-position="left"
-    >
+    <el-form :model="form" :rules="rules" ref="form" label-width="120" class="e-form" label-position="left">
       <div class="box">
-        <el-form-item
-          :label="$t('metadata_details_filedName')"
-          prop="field_name"
-          required
-        >
+        <el-form-item :label="$t('metadata_details_filedName')" prop="field_name" required>
           <el-input
             v-model:value="form.field_name"
-            :placeholder="
-              $t('metadata_details_enter') + $t('metadata_details_filedName')
-            "
+            :placeholder="$t('metadata_details_enter') + $t('metadata_details_filedName')"
             autocomplete="off"
             :disabled="fieldNameDisabled"
             size="mini"
@@ -35,9 +22,7 @@
         <el-form-item :label="$t('metadata_details_alias')">
           <el-input
             v-model:value="form.alias_name"
-            :placeholder="
-              $t('metadata_details_enter') + $t('metadata_details_alias')
-            "
+            :placeholder="$t('metadata_details_enter') + $t('metadata_details_alias')"
             autocomplete="off"
             size="mini"
             maxlength="50"
@@ -47,20 +32,14 @@
         <el-form-item :label="$t('metadata_details_description')">
           <el-input
             type="textarea"
-            :placeholder="
-              $t('metadata_details_enter') + $t('metadata_details_description')
-            "
+            :placeholder="$t('metadata_details_enter') + $t('metadata_details_description')"
             v-model:value="form.comment"
             maxlength="50"
             show-word-limit
           >
           </el-input>
         </el-form-item>
-        <el-form-item
-          :label="$t('metadata_details_fieldType')"
-          prop="data_type"
-          required
-        >
+        <el-form-item :label="$t('metadata_details_fieldType')" prop="data_type" required>
           <ElAutocomplete
             :disabled="fieldNameDisabled"
             v-model:value="form.data_type"
@@ -71,15 +50,9 @@
           <div class="mt-3 fs-8">{{ getPdkEditValueType() }}</div>
         </el-form-item>
         <el-form-item style="margin-left: 100px">
-          <el-checkbox v-model:value="form.is_auto_allowed">{{
-            $t('metadata_details_allowOverwrite')
-          }}</el-checkbox>
-          <el-checkbox v-model:value="form.autoincrement">{{
-            $t('metadata_details_selfIncreasing')
-          }}</el-checkbox>
-          <el-checkbox v-model:value="form.primary_key">{{
-            $t('metadata_details_primaryKey')
-          }}</el-checkbox>
+          <el-checkbox v-model:value="form.is_auto_allowed">{{ $t('metadata_details_allowOverwrite') }}</el-checkbox>
+          <el-checkbox v-model:value="form.autoincrement">{{ $t('metadata_details_selfIncreasing') }}</el-checkbox>
+          <el-checkbox v-model:value="form.primary_key">{{ $t('metadata_details_primaryKey') }}</el-checkbox>
         </el-form-item>
         <!--        <el-form-item :label="$t('metadata_details_fieldLength')">-->
         <!--          <el-input-number v-model="form.columnSize" :min="0" size="mini"></el-input-number>-->
@@ -126,22 +99,10 @@
       <!-- 外键设置 -->
       <div class="box">
         <h2>{{ $t('metadata_details_foreignKeySetting') }}</h2>
-        <el-table
-          :data="form.relation"
-          border
-          class="e-table"
-          style="width: 100%"
-        >
-          <el-table-column
-            prop="table_name"
-            :label="$t('metadata_details_associationTable')"
-          >
+        <el-table :data="form.relation" border class="e-table" style="width: 100%">
+          <el-table-column prop="table_name" :label="$t('metadata_details_associationTable')">
             <template v-slot="scope">
-              <el-select
-                v-model:value="scope.row.table_name"
-                @change="changeRecordTable($event)"
-                size="mini"
-              >
+              <el-select v-model:value="scope.row.table_name" @change="changeRecordTable($event)" size="mini">
                 <el-option
                   v-for="item in getAvailableTable(scope.$index)"
                   :label="item.original_name"
@@ -151,10 +112,7 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column
-            prop="field_name"
-            :label="$t('metadata_details_associationField')"
-          >
+          <el-table-column prop="field_name" :label="$t('metadata_details_associationField')">
             <template v-slot="scope">
               <el-select
                 v-model:value="scope.row.field_name"
@@ -170,10 +128,7 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column
-            prop="rel"
-            :label="$t('metadata_details_connectionRelation')"
-          >
+          <el-table-column prop="rel" :label="$t('metadata_details_connectionRelation')">
             <template v-slot="scope">
               <el-select v-model:value="scope.row.rel" size="mini">
                 <el-option
@@ -185,11 +140,7 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column
-            prop="address"
-            :label="$t('metadata_details_opera')"
-            width="60"
-          >
+          <el-table-column prop="address" :label="$t('metadata_details_opera')" width="60">
             <template v-slot="scope">
               <el-button
                 @click="delRelation(scope.$index, 0)"
@@ -212,9 +163,7 @@
         <el-button class="cancel" @click="handleClose()" size="mini">
           {{ $t('button_cancel') }}
         </el-button>
-        <el-button type="primary" @click="save()" size="mini">{{
-          $t('button_save')
-        }}</el-button>
+        <el-button type="primary" @click="save()" size="mini">{{ $t('button_save') }}</el-button>
       </div>
     </template>
     <el-dialog
@@ -225,11 +174,7 @@
       custom-class="dialogDictionary"
     >
       <el-radio-group v-model:value="selectDictionaryTem">
-        <el-radio
-          v-for="item in dictionaryList"
-          :key="item.id"
-          :label="item.name"
-        ></el-radio>
+        <el-radio v-for="item in dictionaryList" :key="item.id" :label="item.name"></el-radio>
       </el-radio-group>
       <!-- <ul>
   				<li
@@ -243,18 +188,10 @@
   			</ul> -->
       <template v-slot:footer>
         <div class="dialog-footer">
-          <el-button
-            class="cancel"
-            @click="dialogDictionaryVisible = false"
-            size="mini"
-            >{{ $t('message_cancel') }}</el-button
-          >
-          <el-button
-            type="primary"
-            @click="handleSelectDictionary"
-            size="mini"
-            >{{ $t('message_confirm') }}</el-button
-          >
+          <el-button class="cancel" @click="dialogDictionaryVisible = false" size="mini">{{
+            $t('message_cancel')
+          }}</el-button>
+          <el-button type="primary" @click="handleSelectDictionary" size="mini">{{ $t('message_confirm') }}</el-button>
         </div>
       </template>
     </el-dialog>
@@ -268,22 +205,20 @@ export default {
   props: {
     data: {
       required: true,
-      value: Object,
+      value: Object
     },
     metadata: {
       required: true,
-      value: Object,
+      value: Object
     },
     dialogVisible: {
       required: true,
-      value: Boolean,
-    },
+      value: Boolean
+    }
   },
   data() {
     return {
-      title: this.data.id
-        ? this.$t('metadata_details_editFild')
-        : this.$t('metadata_details_createFiled'),
+      title: this.data.id ? this.$t('metadata_details_editFild') : this.$t('metadata_details_createFiled'),
       dialogFormVisible: this.dialogVisible,
       selectDictionaryTem: '',
       fieldNameDisabled: false,
@@ -297,28 +232,28 @@ export default {
         primary_key: false,
         primary_key_position: 0,
         dictionary: [{ name: '', key: '', value: '' }],
-        relation: [{ table_name: '', field_name: '', rel: '' }],
+        relation: [{ table_name: '', field_name: '', rel: '' }]
       },
       rules: {
         field_name: [
           {
             required: true,
             trigger: 'blur',
-            message: this.$t('metadata_details_msgFiledName'),
-          },
-        ],
+            message: this.$t('metadata_details_msgFiledName')
+          }
+        ]
       },
       typeMapping: [],
       relationshipList: [
         { name: this.$t('metadata_details_oneone'), key: 'oneone' },
         { name: this.$t('metadata_details_onemany'), key: 'onemany' },
-        { name: this.$t('metadata_details_manyone'), key: 'manyone' },
+        { name: this.$t('metadata_details_manyone'), key: 'manyone' }
       ],
       fieldList: [],
       getTableData: [],
       dialogDictionaryVisible: false,
       dictionaryList: [],
-      activeIndex: -1,
+      activeIndex: -1
     }
   },
   created() {
@@ -335,29 +270,29 @@ export default {
       let params = {
         where: {
           databaseId: {
-            regexp: `^${this.metadata.databaseId}$`,
+            regexp: `^${this.metadata.databaseId}$`
           },
           meta_type: this.metadata.meta_type,
 
           'relation.table_name': {
-            neq: this.metadata.original_name,
-          },
+            neq: this.metadata.original_name
+          }
         },
 
         fields: {
           histories: false,
           original_name: true,
-          id: true,
-        },
+          id: true
+        }
       }
       if (this.data.id) {
         params['where.id'] = {
-          neq: this.data.id,
+          neq: this.data.id
         }
       }
 
       let resultData = await metadataInstancesApi.get({
-        filter: JSON.stringify(params),
+        filter: JSON.stringify(params)
       })
 
       if (resultData?.items) {
@@ -366,28 +301,26 @@ export default {
     },
     //获取typeMapping
     getTypeMapping(type) {
-      typeMappingApi.pdkDataType(type).then((data) => {
+      typeMappingApi.pdkDataType(type).then(data => {
         let targetObj = JSON.parse(data || '{}')
         for (let key in targetObj) {
           this.typeMapping.push({
             dbType: key,
-            rules: targetObj[key],
+            rules: targetObj[key]
           })
         }
       })
     },
     querySearchPdkType(queryString, cb) {
-      let result = this.typeMapping.map((t) => {
+      let result = this.typeMapping.map(t => {
         return {
-          value: t.dbType,
+          value: t.dbType
         }
       })
       cb(result)
     },
     getPdkEditValueType() {
-      let findOne = this.typeMapping.find(
-        (t) => t.dbType === this.form.data_type
-      )
+      let findOne = this.typeMapping.find(t => t.dbType === this.form.data_type)
       return findOne?.rules || ''
     },
     // 获取有效表
@@ -401,7 +334,7 @@ export default {
       }
       this.getTableData &&
         this.getTableData.length &&
-        this.getTableData.forEach((val) => {
+        this.getTableData.forEach(val => {
           if (unavailableTable.indexOf(val.original_name) >= 0) {
             return
           }
@@ -414,7 +347,7 @@ export default {
       this.fieldList = []
       let _this = this,
         id = ''
-      this.getTableData.forEach((item) => {
+      this.getTableData.forEach(item => {
         if (item.original_name === name) {
           id = item.id
         }
@@ -426,15 +359,15 @@ export default {
             original_name: true,
             fields: true,
             'fields.field_name': true,
-            'fields.original_field_name': true,
-          },
-        },
+            'fields.original_field_name': true
+          }
+        }
       }
       let data = await metadataInstancesApi.getId(id, params)
       let duplicateName = []
       if (_this.metadata.relation && _this.metadata.relation.length) {
-        _this.metadata.relation.forEach((item) => {
-          item.fields.forEach((fieldName) => {
+        _this.metadata.relation.forEach(item => {
+          item.fields.forEach(fieldName => {
             duplicateName.push(fieldName.local)
           })
         })
@@ -443,12 +376,10 @@ export default {
         let fieldsList = []
         for (let i = 0; i < _this.form.relation.length; i++) {
           if (_this.form.relation[i].table_name) {
-            let index = data.original_name.indexOf(
-              _this.form.relation[i].table_name
-            )
+            let index = data.original_name.indexOf(_this.form.relation[i].table_name)
             if (index > -1) {
-              data.fields.forEach((field) => fieldsList.push(field))
-              fieldsList.map((item) => {
+              data.fields.forEach(field => fieldsList.push(field))
+              fieldsList.map(item => {
                 let isname = duplicateName.indexOf(item.field_name)
                 if (isname == -1) {
                   _this.fieldList.push(item)
@@ -466,16 +397,9 @@ export default {
     async handleSelectTemplate(item) {
       let that = this
       if (
-        [
-          'String',
-          'Integer',
-          'Boolean',
-          'Short',
-          'Long',
-          'Float',
-          'Double',
-          'BigDecimal',
-        ].includes(that.form.data_type) &&
+        ['String', 'Integer', 'Boolean', 'Short', 'Long', 'Float', 'Double', 'BigDecimal'].includes(
+          that.form.data_type
+        ) &&
         this.form.field_name
       ) {
         that.dialogDictionaryVisible = true
@@ -492,12 +416,10 @@ export default {
         }
         let filter = {
           where: {
-            dataType: fieldsType,
-          },
+            dataType: fieldsType
+          }
         }
-        let result = await that
-          .$api('Dictionary')
-          .get({ filter: JSON.stringify(filter) })
+        let result = await that.$api('Dictionary').get({ filter: JSON.stringify(filter) })
         if (result.data?.items) {
           that.dictionaryList = result.data.items || []
         }
@@ -514,7 +436,7 @@ export default {
     handleSelectDictionary() {
       if (this.selectDictionaryTem) {
         this.dialogDictionaryVisible = false
-        this.dictionaryList.forEach((item) => {
+        this.dictionaryList.forEach(item => {
           if (item.name === this.selectDictionaryTem) {
             this.form.dictionary = item.typearr
           }
@@ -525,22 +447,15 @@ export default {
     // 新增字典模板
     addDictionary() {
       if (
-        [
-          'String',
-          'Integer',
-          'Boolean',
-          'Short',
-          'Long',
-          'Float',
-          'Double',
-          'BigDecimal',
-        ].includes(this.form.data_type) &&
+        ['String', 'Integer', 'Boolean', 'Short', 'Long', 'Float', 'Double', 'BigDecimal'].includes(
+          this.form.data_type
+        ) &&
         this.form.field_name
       ) {
         this.form.dictionary.push({
           name: this.form.field_name,
           key: '',
-          value: '',
+          value: ''
         })
       } else {
         if (!this.form.field_name) {
@@ -559,7 +474,7 @@ export default {
       let list = {
         table_name: '', //关联表id
         rel: '', //关联关系
-        field_name: '',
+        field_name: ''
       }
       if (!this.form.relation) {
         this.form.relation = []
@@ -583,15 +498,13 @@ export default {
       let groupRelation = {},
         fieldsArr = [],
         falg = false
-      this.metadata.fields = this.metadata.fields?.length
-        ? this.metadata.fields
-        : []
+      this.metadata.fields = this.metadata.fields?.length ? this.metadata.fields : []
       if (this.metadata.fields.includes(this.form.field_name)) {
         falg = true
       }
       let maxNum = Math.max.apply(
         Math,
-        this.metadata.fields.map((field) => {
+        this.metadata.fields.map(field => {
           return field.primary_key_position
         })
       )
@@ -610,12 +523,9 @@ export default {
       let fields = this.metadata.fields
 
       if (fields && fields.length) {
-        fields.forEach((field) => {
+        fields.forEach(field => {
           if (!this.form.primary_key) {
-            if (
-              this.form.primary_key &&
-              field.primary_key_position * 1 > primary_key_position_mum * 1
-            ) {
+            if (this.form.primary_key && field.primary_key_position * 1 > primary_key_position_mum * 1) {
               field.primary_key_position = field.primary_key_position - 1
             }
           }
@@ -624,12 +534,12 @@ export default {
           }
           field.relation &&
             field.relation.length &&
-            field.relation.forEach((item) => {
+            field.relation.forEach(item => {
               let key = item.table_name + item.rel
               if (groupRelation[key]) {
                 groupRelation[key].fields.push({
                   local: item.field_name,
-                  foreign: field.field_name,
+                  foreign: field.field_name
                 })
               } else {
                 groupRelation[key] = {
@@ -638,9 +548,9 @@ export default {
                   fields: [
                     {
                       local: item.field_name,
-                      foreign: field.field_name,
-                    },
-                  ],
+                      foreign: field.field_name
+                    }
+                  ]
                 }
               }
             })
@@ -648,7 +558,7 @@ export default {
       }
       let relation = Object.values(groupRelation)
 
-      this.$refs.form.validate(async (valid) => {
+      this.$refs.form.validate(async valid => {
         if (valid) {
           let params = {
             // field_name: this.form.field_name,
@@ -663,7 +573,7 @@ export default {
             // scale: this.form.scale,
             // dictionary: this.form.dictionary,
             fields: this.metadata.fields,
-            relation: relation,
+            relation: relation
           }
           if (!falg) {
             metadataInstancesApi.patchId(this.metadata.id, params).then(() => {
@@ -679,9 +589,9 @@ export default {
           }
         }
       })
-    },
+    }
   },
-  emits: ['dialogVisible', 'update:dialogVisible'],
+  emits: ['dialogVisible', 'update:dialogVisible']
 }
 </script>
 

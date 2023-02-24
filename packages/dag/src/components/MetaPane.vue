@@ -27,7 +27,7 @@ export default {
 
   props: {
     isShow: Boolean,
-    form: Object,
+    form: Object
   },
 
   data() {
@@ -36,7 +36,7 @@ export default {
       tableData: [],
       loading: false,
       data: '',
-      fieldChangeRules: [],
+      fieldChangeRules: []
     }
   },
 
@@ -51,7 +51,7 @@ export default {
     isTarget() {
       const { type, $outputs } = this.activeNode || {}
       return (type === 'database' || type === 'table') && !$outputs.length
-    },
+    }
   },
 
   watch: {
@@ -81,7 +81,7 @@ export default {
       if (v) {
         this.loadFields()
       }
-    },
+    }
   },
 
   methods: {
@@ -101,8 +101,8 @@ export default {
 
     loadFieldChangeRules() {
       this.fieldChangeRules = this.form.getValuesIn('fieldChangeRules') || []
-    },
-  },
+    }
+  }
 }
 </script>
 

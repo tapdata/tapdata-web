@@ -1,10 +1,5 @@
 <template>
-  <ElPopover
-    placement="bottom"
-    popper-class="notive-popove"
-    trigger="hover"
-    @show="activeTab = 'system'"
-  >
+  <ElPopover placement="bottom" popper-class="notive-popove" trigger="hover" @show="activeTab = 'system'">
     <template v-slot:reference>
       <div class="btn" @click="toCenter()">
         <ElBadge class="item-badge" :value="unRead" :max="99" :hidden="!unRead">
@@ -30,9 +25,7 @@
                 <span class="unread-1zPaAXtSu inline-block"></span>
               </div>
               <div>
-                <span :class="['level-' + item.levelType]"
-                  >【{{ item.levelLabel }}】</span
-                >
+                <span :class="['level-' + item.levelType]">【{{ item.levelLabel }}】</span>
                 <template>
                   <span>{{ item.title }}</span>
                 </template>
@@ -44,12 +37,8 @@
           <VIcon size="76">notice-color</VIcon>
           <span>{{ $t('header_no_notice') }}</span>
         </div>
-        <div
-          class="tab-item__footer flex justify-content-end py-3 font-color-sub"
-        >
-          <ElLink class="font-color-sub" @click="toCenter()">{{
-            $t('header_view_notifications')
-          }}</ElLink>
+        <div class="tab-item__footer flex justify-content-end py-3 font-color-sub">
+          <ElLink class="font-color-sub" @click="toCenter()">{{ $t('header_view_notifications') }}</ElLink>
         </div>
       </div>
     </div>
@@ -79,7 +68,7 @@ export default {
       colorMap: {
         ERROR: 'red',
         WARN: 'orangered',
-        INFO: '#409EFF',
+        INFO: '#409EFF'
       },
       typeMap: TYPEMAP,
       systemMap: {
@@ -88,11 +77,11 @@ export default {
         dataFlow: this.$t('notify_task'),
         agent: this.$t('notify_agent'),
         inspect: this.$t('notify_inspect'),
-        JobDDL: this.$t('notify_jobDDL'),
+        JobDDL: this.$t('notify_jobDDL')
       },
       userOperations: [],
       visible: false,
-      form: {},
+      form: {}
     }
   },
   created() {
@@ -101,13 +90,13 @@ export default {
   methods: {
     init() {
       let msg = {
-        type: 'notification',
+        type: 'notification'
       }
       this.getUnreadData()
       if (this.$ws) {
         this.$ws.on(
           'notification',
-          debounce((res) => {
+          debounce(res => {
             let data = res?.data
             if (data?.msg !== 'alarm') {
               this.getUnReadNum()
@@ -130,28 +119,23 @@ export default {
     // 获取未读的消息数量
     getUnReadNum() {
       let where = {
-        read: false,
+        read: false
       }
-      return this.$axios
-        .get(
-          'tm/api/Messages/count?where=' +
-            encodeURIComponent(JSON.stringify(where))
-        )
-        .then((res) => {
-          this.unRead = res
-        })
+      return this.$axios.get('tm/api/Messages/count?where=' + encodeURIComponent(JSON.stringify(where))).then(res => {
+        this.unRead = res
+      })
     },
     getUnreadData() {
       let where = {
         msgType: 'ALARM',
         page: 1,
         size: 20,
-        read: false,
+        read: false
       }
-      notificationApi.list(where).then((data) => {
+      notificationApi.list(where).then(data => {
         let list = data?.items || []
         this.unRead = data?.total
-        this.listData = list.map((item) => {
+        this.listData = list.map(item => {
           item.levelLabel = ALARM_LEVEL_MAP[item.level].text
           item.levelType = ALARM_LEVEL_MAP[item.level].type
           return item
@@ -171,9 +155,9 @@ export default {
         return
       }
       this.$router.push({ name: 'SystemNotice' })
-    },
+    }
   },
-  emits: ['notificationUpdate'],
+  emits: ['notificationUpdate']
 }
 </script>
 

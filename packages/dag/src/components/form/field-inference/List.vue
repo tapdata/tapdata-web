@@ -12,21 +12,12 @@
       <template v-slot:field_name="scope">
         <span class="flex align-center"
           >{{ scope.row.field_name }}
-          <VIcon
-            v-if="scope.row.primary_key_position > 0"
-            size="12"
-            class="text-warning ml-1"
-            >key</VIcon
-          >
+          <VIcon v-if="scope.row.primary_key_position > 0" size="12" class="text-warning ml-1">key</VIcon>
         </span>
       </template>
       <template v-slot:data_type="scope">
         <span v-if="readonly">{{ scope.row.data_type }}</span>
-        <div
-          v-else
-          class="cursor-pointer"
-          @click="openEditDataTypeVisible(scope.row)"
-        >
+        <div v-else class="cursor-pointer" @click="openEditDataTypeVisible(scope.row)">
           <span>{{ scope.row.data_type }}</span>
           <VIcon class="ml-2">arrow-down</VIcon>
         </div>
@@ -35,11 +26,7 @@
         {{ nullableMap[!scope.row.is_nullable] }}
       </template>
       <template v-slot:operationHeader>
-        <VIcon
-          :class="canRevokeRules.length ? 'color-primary' : 'color-disable'"
-          @click="revokeAll()"
-          >revoke</VIcon
-        >
+        <VIcon :class="canRevokeRules.length ? 'color-primary' : 'color-disable'" @click="revokeAll()">revoke</VIcon>
       </template>
       <template v-slot:operation="scope">
         <ElTooltip
@@ -47,11 +34,7 @@
           :content="$t('packages_form_field_inference_main_gepiliangxiugai')"
           placement="top"
         >
-          <VIcon
-            :class="getRevokeColorClass(scope.row)"
-            @click="revoke(scope.row)"
-            >revoke</VIcon
-          >
+          <VIcon :class="getRevokeColorClass(scope.row)" @click="revoke(scope.row)">revoke</VIcon>
         </ElTooltip>
       </template>
     </VTable>
@@ -62,16 +45,8 @@
       v-model:visible="editDataTypeVisible"
       width="35%"
     >
-      <ElForm
-        ref="dataTypeForm"
-        label-width="140px"
-        label-position="left"
-        :model="currentData"
-        @submit.prevent
-      >
-        <ElFormItem
-          :label="$t('packages_form_field_inference_list_tuiyanchudelei')"
-        >
+      <ElForm ref="dataTypeForm" label-width="140px" label-position="left" :model="currentData" @submit.prevent>
+        <ElFormItem :label="$t('packages_form_field_inference_list_tuiyanchudelei')">
           <span>{{ currentData.dataType }}</span>
         </ElFormItem>
         <ElFormItem
@@ -81,11 +56,7 @@
           inline-message
           required
         >
-          <ElInput
-            v-model:value="currentData.newDataType"
-            maxlength="100"
-            show-word-limit
-          ></ElInput>
+          <ElInput v-model:value="currentData.newDataType" maxlength="100" show-word-limit></ElInput>
         </ElFormItem>
         <div v-if="!hideBatch">
           <ElCheckbox v-model:value="currentData.useToAll">{{
@@ -104,10 +75,7 @@
           <ElButton
             size="mini"
             type="primary"
-            :disabled="
-              !currentData.newDataType ||
-              currentData.dataType === currentData.newDataType
-            "
+            :disabled="!currentData.newDataType || currentData.dataType === currentData.newDataType"
             :loading="editBtnLoading"
             @click="submitEdit"
             >{{ $t('packages_business_button_confirm') }}</ElButton
@@ -135,37 +103,37 @@ export default {
       type: Object,
       default: () => {
         return {}
-      },
+      }
     },
     data: {
       type: Object,
       default: () => {
         return {
           qualified_name: '',
-          fields: [],
+          fields: []
         }
-      },
+      }
     },
     showColumns: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     showDelete: {
       type: Boolean,
-      default: false,
+      default: false
     },
     readonly: {
       type: Boolean,
-      default: false,
+      default: false
     },
     fieldChangeRules: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     hideBatch: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   data() {
     return {
@@ -174,40 +142,40 @@ export default {
           label: i18n.t('packages_form_field_mapping_list_xuhao'),
           type: 'index',
           prop: 'index',
-          width: '60px',
+          width: '60px'
         },
         {
           label: i18n.t('packages_form_field_add_del_index_ziduanmingcheng'),
           prop: 'field_name',
           slotName: 'field_name',
-          'min-width': '90px',
+          'min-width': '90px'
         },
         {
           label: i18n.t('packages_form_dag_dialog_field_mapping_type'),
           prop: 'data_type',
           slotName: 'data_type',
-          'min-width': '126px',
+          'min-width': '126px'
         },
         {
           label: i18n.t('packages_form_field_inference_list_feikong'),
           prop: 'is_nullable',
-          slotName: 'is_nullable',
+          slotName: 'is_nullable'
         },
         {
           label: i18n.t('packages_form_field_inference_list_ziduanzhushi'),
-          prop: 'comment',
+          prop: 'comment'
         },
         {
           label: i18n.t('packages_form_field_processor_index_caozuo'),
           prop: 'operation',
           slotName: 'operation',
           headerSlot: 'operationHeader',
-          width: '60px',
-        },
+          width: '60px'
+        }
       ],
       nullableMap: {
         true: i18n.t('packages_dag_meta_table_true'),
-        false: i18n.t('packages_dag_meta_table_false'),
+        false: i18n.t('packages_dag_meta_table_false')
       },
       editDataTypeVisible: false,
       currentData: {
@@ -217,9 +185,9 @@ export default {
         newDataType: '',
         useToAll: false,
         errorMessage: '',
-        source: {},
+        source: {}
       },
-      editBtnLoading: false,
+      editBtnLoading: false
     }
   },
   computed: {
@@ -229,51 +197,45 @@ export default {
       const { showColumns, columns, readonly } = this
       let result = columns
       if (readonly) {
-        result = result.filter((t) => t.prop !== 'operation')
+        result = result.filter(t => t.prop !== 'operation')
       }
       if (!showColumns.length) {
         return result
       }
       return showColumns
-        .map((t) => {
-          return result.find((f) => f.prop === t)
+        .map(t => {
+          return result.find(f => f.prop === t)
         })
-        .filter((t) => t)
+        .filter(t => t)
     },
 
     tableList() {
       const { fields } = this.data
-      let list = (fields || []).map((t) => {
+      let list = (fields || []).map(t => {
         t.source = this.findInRulesById(t.changeRuleId) || {}
         t.accept = t.source?.accept || t.accept
         t.data_type = t.source?.result?.dataType || t.data_type
         return t
       })
-      return this.showDelete ? list : list.filter((t) => !t.is_deleted)
+      return this.showDelete ? list : list.filter(t => !t.is_deleted)
     },
 
     canRevokeRules() {
       const { qualified_name } = this.data
-      return (
-        this.fieldChangeRules.filter(
-          (t) => t.scope === 'Field' && t.namespace?.[1] === qualified_name
-        ) || []
-      )
-    },
+      return this.fieldChangeRules.filter(t => t.scope === 'Field' && t.namespace?.[1] === qualified_name) || []
+    }
   },
   methods: {
     findInRulesById(id) {
-      return this.fieldChangeRules.find((t) => t.id === id)
+      return this.fieldChangeRules.find(t => t.id === id)
     },
 
     findNodeRuleByType(type) {
-      return this.fieldChangeRules.find(
-        (t) => t.accept === type && t.scope === 'Node'
-      )
+      return this.fieldChangeRules.find(t => t.accept === type && t.scope === 'Node')
     },
 
     deleteRuleById(id) {
-      const index = this.fieldChangeRules.findIndex((t) => t.id === id)
+      const index = this.fieldChangeRules.findIndex(t => t.id === id)
       this.fieldChangeRules.splice(index, 1)
     },
 
@@ -290,32 +252,26 @@ export default {
     },
 
     handleUpdate(data) {
-      this.form?.setValuesIn?.(
-        'fieldChangeRules',
-        data || this.fieldChangeRules
-      )
+      this.form?.setValuesIn?.('fieldChangeRules', data || this.fieldChangeRules)
       $emit(this, 'update:fieldChangeRules', data || this.fieldChangeRules)
     },
 
     submitEdit() {
       const { qualified_name, nodeId } = this.data
-      const { changeRuleId, fieldName, dataType, newDataType, useToAll } =
-        this.currentData
+      const { changeRuleId, fieldName, dataType, newDataType, useToAll } = this.currentData
       const params = {
         databaseType: this.activeNode.databaseType,
-        dataTypes: [newDataType],
+        dataTypes: [newDataType]
       }
       this.editBtnLoading = true
       this.currentData.errorMessage = ''
       metadataInstancesApi
         .dataType2TapType(params)
-        .then((data) => {
+        .then(data => {
           const val = data[newDataType]
           const tapType = val && val.type !== 7 ? JSON.stringify(val) : null
           if (!tapType) {
-            this.currentData.errorMessage = i18n.t(
-              'packages_form_field_inference_list_geshicuowu'
-            )
+            this.currentData.errorMessage = i18n.t('packages_form_field_inference_list_geshicuowu')
             this.editBtnLoading = false
             return
           }
@@ -348,30 +304,23 @@ export default {
             const op = {
               id: uuid(),
               scope: useToAll ? 'Node' : 'Field',
-              namespace: useToAll
-                ? [nodeId]
-                : [nodeId, qualified_name, fieldName],
+              namespace: useToAll ? [nodeId] : [nodeId, qualified_name, fieldName],
               type: 'DataType',
               accept: dataType,
-              result: { dataType: newDataType, tapType },
+              result: { dataType: newDataType, tapType }
             }
             ruleId = op.id
             ruleAccept = dataType
             this.fieldChangeRules.push(op)
           }
           this.handleUpdate()
-          this.data.fields.find((t) => {
-            if (
-              (useToAll && t.data_type === ruleAccept) ||
-              t.field_name === fieldName
-            ) {
+          this.data.fields.find(t => {
+            if ((useToAll && t.data_type === ruleAccept) || t.field_name === fieldName) {
               t.changeRuleId = ruleId
             }
           })
           this.editBtnLoading = false
-          this.$message.success(
-            i18n.t('packages_form_field_inference_list_caozuochenggong')
-          )
+          this.$message.success(i18n.t('packages_form_field_inference_list_caozuochenggong'))
           this.editDataTypeVisible = false
         })
         .catch(() => {
@@ -388,7 +337,7 @@ export default {
       }
       if (f.scope === 'Field') {
         row.data_type = f.accept
-        const index = this.fieldChangeRules.findIndex((t) => t.id === f.id)
+        const index = this.fieldChangeRules.findIndex(t => t.id === f.id)
         this.fieldChangeRules.splice(index, 1)
       }
       this.handleUpdate()
@@ -398,25 +347,16 @@ export default {
       if (!this.canRevokeRules.length) {
         return
       }
-      this.$confirm(
-        i18n.t('packages_form_field_inference_list_ninquerenyaohui'),
-        '',
-        {
-          type: 'warning',
-          closeOnClickModal: false,
-        }
-      ).then((resFlag) => {
+      this.$confirm(i18n.t('packages_form_field_inference_list_ninquerenyaohui'), '', {
+        type: 'warning',
+        closeOnClickModal: false
+      }).then(resFlag => {
         if (resFlag) {
           const { qualified_name } = this.data
           this.handleUpdate(
-            this.fieldChangeRules.filter(
-              (t) =>
-                !(t.scope === 'Field' && t.namespace?.[1] === qualified_name)
-            )
+            this.fieldChangeRules.filter(t => !(t.scope === 'Field' && t.namespace?.[1] === qualified_name))
           )
-          this.$message.success(
-            i18n.t('packages_form_field_inference_list_caozuochenggong')
-          )
+          this.$message.success(i18n.t('packages_form_field_inference_list_caozuochenggong'))
         }
       })
     },
@@ -436,12 +376,12 @@ export default {
     getRevokeColorClass(row = {}) {
       const map = {
         Node: 'color-warning',
-        Field: 'color-primary',
+        Field: 'color-primary'
       }
       return map[this.getFieldScope(row)] || 'color-disable'
-    },
+    }
   },
-  emits: ['update:fieldChangeRules'],
+  emits: ['update:fieldChangeRules']
 }
 </script>
 

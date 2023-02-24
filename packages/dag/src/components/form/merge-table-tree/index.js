@@ -1,22 +1,8 @@
 import i18n from '@tap/i18n'
-import {
-  defineComponent,
-  ref,
-  watch,
-  onMounted,
-  computed,
-  nextTick,
-} from '@vue/composition-api'
+import { defineComponent, ref, watch, onMounted, computed, nextTick } from '@vue/composition-api'
 import { observer } from '@formily/reactive-vue'
 import { observe } from '@formily/reactive'
-import {
-  FormItem,
-  Space,
-  h as createElement,
-  useFieldSchema,
-  useForm,
-  RecursionField,
-} from '@tap/form'
+import { FormItem, Space, h as createElement, useFieldSchema, useForm, RecursionField } from '@tap/form'
 import { getNodeIconSrc } from '@tap/business'
 import { metadataInstancesApi } from '@tap/api'
 import './style.scss'
@@ -30,8 +16,8 @@ export const MergeTableTree = observer(
       loadFieldsMethod: Function,
       treeWidth: {
         type: [Number, String],
-        default: 320,
-      },
+        default: 320
+      }
     },
     setup(props, { emit, refs, root }) {
       const formRef = useForm()
@@ -44,19 +30,19 @@ export const MergeTableTree = observer(
         let width = props.treeWidth
         if (!isNaN(width)) width += 'px'
         return {
-          width,
+          width
         }
       })
 
-      const setPath = (pathArr) => {
+      const setPath = pathArr => {
         const path = pathArr.join('.children.')
         currentPath.value = path
         if (pathArr.length === 1) {
           form.setFieldState(`mergeProperties.${path}.mergeType`, {
-            display: 'hidden',
+            display: 'hidden'
           })
           form.setFieldState(`mergeProperties.${path}.joinKeys`, {
-            visible: false,
+            visible: false
           })
         }
         return path
@@ -64,7 +50,7 @@ export const MergeTableTree = observer(
 
       watch(
         treeRef,
-        (val) => {
+        val => {
           // eslint-disable-next-line
           console.log('🤖MergeTableTree.watch', val, treeRef.value)
           emit('change', JSON.parse(JSON.stringify(val)))
@@ -74,9 +60,9 @@ export const MergeTableTree = observer(
 
       const makeTree = () => {
         const $inputs = formRef.value.values.$inputs
-        const traverse = (children) => {
+        const traverse = children => {
           const filter = []
-          children.forEach((item) => {
+          children.forEach(item => {
             if (!$inputs.includes(item.id) && item.children?.length) {
               filter.push(...traverse(item.children))
             } else if ($inputs.includes(item.id) && item.children?.length) {
@@ -93,7 +79,7 @@ export const MergeTableTree = observer(
         }
         let filterIdMap = {}
         let newTree = traverse(JSON.parse(JSON.stringify(props.value)))
-        $inputs.forEach((id) => {
+        $inputs.forEach(id => {
           if (!filterIdMap[id]) {
             const node = props.findNodeById(id)
             newTree.push({
@@ -102,7 +88,7 @@ export const MergeTableTree = observer(
               targetPath: null,
               tableName: node.name,
               // joinKeys: [],
-              children: [],
+              children: []
             })
           }
         })
@@ -127,10 +113,7 @@ export const MergeTableTree = observer(
 
       observe(formRef.value.values.$inputs, () => {
         // eslint-disable-next-line
-        console.log(
-          'formRef.value.values.$inputs',
-          formRef.value.values.$inputs
-        )
+        console.log('formRef.value.values.$inputs', formRef.value.values.$inputs)
         makeTree()
       })
 
@@ -148,13 +131,13 @@ export const MergeTableTree = observer(
         )
       }
 
-      const updatePath = (node) => {
+      const updatePath = node => {
         const temp = []
         const nodePath = refs.tree.getNodePath(node)
         nodePath.reduce((parent, item) => {
           if (parent) {
             // temp.push(parent.indexOf(item))
-            temp.push(parent.findIndex((p) => p.id === item.id))
+            temp.push(parent.findIndex(p => p.id === item.id))
           }
           return item.children
         }, treeRef.value)
@@ -163,49 +146,35 @@ export const MergeTableTree = observer(
       }
 
       const loadTargetField = (selfId, selfPath) => {
-        form.setFieldState(
-          `*(mergeProperties.${selfPath}.*(joinKeys.*.target))`,
-          {
-            loading: true,
-          }
-        )
-        metadataInstancesApi
-          .getMergerNodeParentFields(root.$route.params.id, selfId)
-          .then((fields) => {
-            form.setFieldState(
-              `*(mergeProperties.${selfPath}.*(joinKeys.*.target))`,
-              {
-                loading: false,
-                dataSource: fields.map((item) => ({
-                  label: item.field_name,
-                  value: item.field_name,
-                  isPrimaryKey: item.primary_key_position > 0,
-                })),
-              }
-            )
+        form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
+          loading: true
+        })
+        metadataInstancesApi.getMergerNodeParentFields(root.$route.params.id, selfId).then(fields => {
+          form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
+            loading: false,
+            dataSource: fields.map(item => ({
+              label: item.field_name,
+              value: item.field_name,
+              isPrimaryKey: item.primary_key_position > 0
+            }))
           })
+        })
       }
 
       const loadField = (selfId, selfPath, ifWait) => {
         const pathArr = selfPath.split('.children.')
         if (pathArr.length < 2) return
-        props.loadFieldsMethod(selfId).then((fields) => {
-          form.setFieldState(
-            `*(mergeProperties.${selfPath}.*(joinKeys.*.source,arrayKeys))`,
-            {
-              loading: false,
-              dataSource: fields,
-            }
-          )
+        props.loadFieldsMethod(selfId).then(fields => {
+          form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.source,arrayKeys))`, {
+            loading: false,
+            dataSource: fields
+          })
         })
 
         if (ifWait) {
-          form.setFieldState(
-            `*(mergeProperties.${selfPath}.*(joinKeys.*.target))`,
-            {
-              loading: true,
-            }
-          )
+          form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
+            loading: true
+          })
           // 等待自动保存接口响应后查询
           let unwatch = root.$watch(
             () => root.$store.state.dataflow.editVersion,
@@ -245,20 +214,10 @@ export const MergeTableTree = observer(
 
       return () => {
         return (
-          <Space
-            class="merge-table-tree-space"
-            align="stretch"
-            size={12}
-            split={true}
-            inline={false}
-          >
+          <Space class="merge-table-tree-space" align="stretch" size={12} split={true} inline={false}>
             <FormItem.BaseItem
-              label={i18n.t(
-                'packages_dag_merge_table_tree_index_biaomingchengzhichi'
-              )}
-              tooltip={i18n.t(
-                'packages_dag_merge_table_tree_index_biaozhijianketong'
-              )}
+              label={i18n.t('packages_dag_merge_table_tree_index_biaomingchengzhichi')}
+              tooltip={i18n.t('packages_dag_merge_table_tree_index_biaozhijianketong')}
             >
               <ElTree
                 ref="tree"
@@ -270,7 +229,7 @@ export const MergeTableTree = observer(
                 expandOnClickNode={false}
                 draggable={!props.disabled}
                 scopedSlots={{
-                  default: renderNode,
+                  default: renderNode
                 }}
                 vOn:current-change={handleCurrentChange}
                 vOn:node-drop={handleNodeDrop}
@@ -286,8 +245,8 @@ export const MergeTableTree = observer(
                     props: {
                       onlyRenderProperties: true,
                       name: currentPath.value,
-                      schema: schemaRef.value.items,
-                    },
+                      schema: schemaRef.value.items
+                    }
                   },
                   {}
                 )}
@@ -295,6 +254,6 @@ export const MergeTableTree = observer(
           </Space>
         )
       }
-    },
+    }
   })
 )

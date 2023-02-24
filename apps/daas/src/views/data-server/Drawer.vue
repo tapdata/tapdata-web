@@ -1,32 +1,13 @@
 <template>
-  <Drawer
-    v-loading="loading"
-    class="overflow-hidden"
-    style="width: 838px"
-    v-model:visible="visible"
-  >
+  <Drawer v-loading="loading" class="overflow-hidden" style="width: 838px" v-model:visible="visible">
     <div class="flex flex-column overflow-hidden pt-2 h-100">
       <!-- 顶部 标题 Tab -->
       <div class="flex position-relative">
-        <div
-          class="position-absolute top-0 start-0 fs-7 fw-sub px-6 font-color-dark"
-          style="line-height: 36px"
-        >
-          {{
-            data.id
-              ? $t('daas_data_server_drawer_fuwuxiangqing')
-              : $t('daas_data_server_drawer_chuangjianfuwu')
-          }}
+        <div class="position-absolute top-0 start-0 fs-7 fw-sub px-6 font-color-dark" style="line-height: 36px">
+          {{ data.id ? $t('daas_data_server_drawer_fuwuxiangqing') : $t('daas_data_server_drawer_chuangjianfuwu') }}
         </div>
-        <ElTabs
-          v-model:value="tab"
-          class="data-server__tabs flex-1"
-          @tab-click="tabChanged"
-        >
-          <ElTabPane
-            :label="$t('daas_data_server_drawer_peizhi')"
-            name="form"
-          ></ElTabPane>
+        <ElTabs v-model:value="tab" class="data-server__tabs flex-1" @tab-click="tabChanged">
+          <ElTabPane :label="$t('daas_data_server_drawer_peizhi')" name="form"></ElTabPane>
           <ElTabPane
             v-if="data.status === 'active'"
             :label="$t('daas_data_server_drawer_tiaoshi')"
@@ -50,9 +31,7 @@
             <ElInput
               v-if="isEdit"
               v-model:value="form.name"
-              :placeholder="
-                $t('daas_data_discovery_previewdrawer_qingshurumingcheng')
-              "
+              :placeholder="$t('daas_data_discovery_previewdrawer_qingshurumingcheng')"
             ></ElInput>
             <div v-else class="fw-sub fs-7 font-color-normal">
               {{ data.name }}
@@ -60,25 +39,12 @@
           </ElFormItem>
           <template v-if="tab === 'form' && data.status !== 'active'">
             <div v-if="isEdit" class="ml-10">
-              <ElButton
-                v-if="data.id"
-                class="mr-4"
-                size="mini"
-                @click="isEdit = false"
-                >{{ $t('button_cancel') }}</ElButton
-              >
-              <ElButton type="primary" size="mini" @click="save()">{{
-                $t('button_save')
+              <ElButton v-if="data.id" class="mr-4" size="mini" @click="isEdit = false">{{
+                $t('button_cancel')
               }}</ElButton>
+              <ElButton type="primary" size="mini" @click="save()">{{ $t('button_save') }}</ElButton>
             </div>
-            <ElButton
-              v-else
-              class="ml-10"
-              type="primary"
-              size="mini"
-              @click="edit"
-              >{{ $t('button_edit') }}</ElButton
-            >
+            <ElButton v-else class="ml-10" type="primary" size="mini" @click="edit">{{ $t('button_edit') }}</ElButton>
           </template>
         </div>
         <div class="flex-1 mt-4" size="small">
@@ -89,74 +55,34 @@
             :disabled="!isEdit"
           ></ElInput>
         </div>
-        <ElFormItem
-          class="flex-1 mt-4"
-          size="small"
-          :label="$t('daas_data_server_drawer_quanxianfanwei')"
-          prop="acl"
-        >
-          <ElSelect
-            v-model:value="form.acl"
-            multiple
-            :disabled="!isEdit"
-            @change="aclChanged"
-          >
-            <ElOption
-              v-for="item in roles"
-              :label="item.name"
-              :value="item.name"
-              :key="item.id"
-            ></ElOption>
+        <ElFormItem class="flex-1 mt-4" size="small" :label="$t('daas_data_server_drawer_quanxianfanwei')" prop="acl">
+          <ElSelect v-model:value="form.acl" multiple :disabled="!isEdit" @change="aclChanged">
+            <ElOption v-for="item in roles" :label="item.name" :value="item.name" :key="item.id"></ElOption>
           </ElSelect>
         </ElFormItem>
 
         <!-- 基础信息 -->
-        <ul
-          v-if="tab === 'form'"
-          class="flex flex-wrap bg-main p-2 mt-4 rounded-1"
-        >
+        <ul v-if="tab === 'form'" class="flex flex-wrap bg-main p-2 mt-4 rounded-1">
           <li class="data-server-form-base__item">
-            <ElFormItem
-              :label="$t('daas_data_server_drawer_caozuoleixing')"
-              label-width="86px"
-            >
+            <ElFormItem :label="$t('daas_data_server_drawer_caozuoleixing')" label-width="86px">
               <div class="text">{{ $t('dataExplorer_query') }}</div>
             </ElFormItem>
           </li>
           <li class="data-server-form-base__item">
-            <ElFormItem
-              :label="$t('daas_data_server_drawer_fabujiedian')"
-              label-width="86px"
-            >
+            <ElFormItem :label="$t('daas_data_server_drawer_fabujiedian')" label-width="86px">
               <div class="text">{{ $t('select_option_all') }}</div>
             </ElFormItem>
           </li>
           <li class="data-server-form-base__item">
-            <ElFormItem
-              :label="$t('daas_data_server_drawer_jiekouleixing')"
-              label-width="86px"
-            >
-              <ElSelect
-                v-if="isEdit"
-                v-model:value="form.apiType"
-                @change="apiTypeChanged"
-              >
-                <ElOption
-                  v-for="(label, value) in apiTypeMap"
-                  :key="value"
-                  :value="value"
-                  :label="label"
-                ></ElOption>
+            <ElFormItem :label="$t('daas_data_server_drawer_jiekouleixing')" label-width="86px">
+              <ElSelect v-if="isEdit" v-model:value="form.apiType" @change="apiTypeChanged">
+                <ElOption v-for="(label, value) in apiTypeMap" :key="value" :value="value" :label="label"></ElOption>
               </ElSelect>
               <div v-else class="text">{{ apiTypeMap[data.apiType] }}</div>
             </ElFormItem>
           </li>
           <li class="data-server-form-base__item">
-            <ElFormItem
-              :label="$t('connection_list_type')"
-              label-width="86px"
-              prop="connectionType"
-            >
+            <ElFormItem :label="$t('connection_list_type')" label-width="86px" prop="connectionType">
               <ElSelect
                 v-if="isEdit"
                 v-model:value="form.connectionType"
@@ -164,22 +90,13 @@
                 :loading="!databaseTypes"
                 @change="connectionTypeChanged"
               >
-                <ElOption
-                  v-for="item in databaseTypes"
-                  :key="item"
-                  :value="item"
-                  :label="item"
-                ></ElOption>
+                <ElOption v-for="item in databaseTypes" :key="item" :value="item" :label="item"></ElOption>
               </ElSelect>
               <div v-else class="text">{{ data.connectionType }}</div>
             </ElFormItem>
           </li>
           <li class="data-server-form-base__item">
-            <ElFormItem
-              :label="$t('daas_data_server_drawer_lianjiemingcheng')"
-              label-width="86px"
-              prop="connectionId"
-            >
+            <ElFormItem :label="$t('daas_data_server_drawer_lianjiemingcheng')" label-width="86px" prop="connectionId">
               <ElSelect
                 v-if="isEdit"
                 v-model:value="form.connectionName"
@@ -198,11 +115,7 @@
             </ElFormItem>
           </li>
           <li class="data-server-form-base__item">
-            <ElFormItem
-              :label="$t('object_list_name')"
-              label-width="86px"
-              prop="tableName"
-            >
+            <ElFormItem :label="$t('object_list_name')" label-width="86px" prop="tableName">
               <ElSelect
                 v-if="isEdit"
                 v-model:value="form.tableName"
@@ -210,12 +123,7 @@
                 :loading="!tableOptions"
                 @change="tableChanged"
               >
-                <ElOption
-                  v-for="item in tableOptions"
-                  :key="item"
-                  :value="item"
-                  :label="item"
-                ></ElOption>
+                <ElOption v-for="item in tableOptions" :key="item" :value="item" :label="item"></ElOption>
               </ElSelect>
               <div v-else class="text">{{ data.tableName }}</div>
             </ElFormItem>
@@ -227,16 +135,9 @@
             {{ $t('daas_data_server_drawer_aPI_path_Settings') }}
           </div>
           <div class="flex-1 mt-4" size="small">
-            <el-radio-group
-              v-model:value="form.pathAccessMethod"
-              :disabled="!isEdit"
-            >
-              <el-radio label="default">{{
-                $t('daas_data_server_drawer_default_path')
-              }}</el-radio>
-              <el-radio label="customize">{{
-                $t('daas_data_server_drawer_custom_path')
-              }}</el-radio>
+            <el-radio-group v-model:value="form.pathAccessMethod" :disabled="!isEdit">
+              <el-radio label="default">{{ $t('daas_data_server_drawer_default_path') }}</el-radio>
+              <el-radio label="customize">{{ $t('daas_data_server_drawer_custom_path') }}</el-radio>
             </el-radio-group>
           </div>
           <ElFormItem
@@ -247,10 +148,7 @@
             :rules="rules.apiVersion"
             v-if="form.pathAccessMethod === 'customize'"
           >
-            <ElInput
-              v-model:value="form.apiVersion"
-              :disabled="!isEdit"
-            ></ElInput>
+            <ElInput v-model:value="form.apiVersion" :disabled="!isEdit"></ElInput>
           </ElFormItem>
           <ElFormItem
             class="flex-1 mt-4"
@@ -268,10 +166,7 @@
             prop="basePath"
             v-if="form.pathAccessMethod === 'customize'"
           >
-            <ElInput
-              v-model:value="form.basePath"
-              :disabled="!isEdit"
-            ></ElInput>
+            <ElInput v-model:value="form.basePath" :disabled="!isEdit"></ElInput>
           </ElFormItem>
           <ElFormItem
             class="flex-1 mt-4"
@@ -295,25 +190,16 @@
           </div>
         </div>
         <ElTable class="flex-1" :data="isEdit ? form.params : data.params">
-          <ElTableColumn
-            :label="$t('daas_data_server_drawer_canshumingcheng')"
-            prop="name"
-            min-width="120"
-          >
+          <ElTableColumn :label="$t('daas_data_server_drawer_canshumingcheng')" prop="name" min-width="120">
             <template #default="{ row, $index }">
-              <div
-                v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'"
-              >
+              <div v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'">
                 <ElFormItem
                   :prop="`params.${$index}.name`"
                   :error="!form.params[$index].name ? 'true' : ''"
                   :show-message="false"
                   :rules="rules.param"
                 >
-                  <ElInput
-                    v-model:value="form.params[$index].name"
-                    size="mini"
-                  ></ElInput>
+                  <ElInput v-model:value="form.params[$index].name" size="mini"></ElInput>
                 </ElFormItem>
               </div>
               <div v-else>{{ row.name }}</div>
@@ -321,108 +207,53 @@
           </ElTableColumn>
           <ElTableColumn :label="$t('metadata_type')" prop="type">
             <template #default="{ row, $index }">
-              <div
-                v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'"
-                min-width="60"
-              >
+              <div v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'" min-width="60">
                 <ElSelect v-model:value="form.params[$index].type" size="mini">
-                  <ElOption
-                    v-for="type in typeOptions"
-                    :key="type"
-                    :value="type"
-                    :label="type"
-                  ></ElOption>
+                  <ElOption v-for="type in typeOptions" :key="type" :value="type" :label="type"></ElOption>
                 </ElSelect>
               </div>
               <div v-else>{{ row.type }}</div>
             </template>
           </ElTableColumn>
-          <ElTableColumn
-            v-if="tab === 'form'"
-            :label="$t('meta_table_default')"
-            prop="defaultvalue"
-            min-width="60"
-          >
+          <ElTableColumn v-if="tab === 'form'" :label="$t('meta_table_default')" prop="defaultvalue" min-width="60">
             <template #default="{ row, $index }">
               <div v-if="isEdit && row.defaultvalue !== undefined">
-                <ElInput
-                  v-model:value="form.params[$index].defaultvalue"
-                  size="mini"
-                ></ElInput>
+                <ElInput v-model:value="form.params[$index].defaultvalue" size="mini"></ElInput>
               </div>
               <div v-else>{{ row.defaultvalue }}</div>
             </template>
           </ElTableColumn>
-          <ElTableColumn
-            :label="$t('module_form_describtion')"
-            prop="description"
-            min-width="100"
-          >
+          <ElTableColumn :label="$t('module_form_describtion')" prop="description" min-width="100">
             <template #default="{ row, $index }">
-              <div
-                v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'"
-              >
-                <ElInput
-                  v-model:value="form.params[$index].description"
-                  size="mini"
-                ></ElInput>
+              <div v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'">
+                <ElInput v-model:value="form.params[$index].description" size="mini"></ElInput>
               </div>
               <div v-else>{{ row.description }}</div>
             </template>
           </ElTableColumn>
-          <ElTableColumn
-            v-if="debugParams"
-            :label="$t('daas_data_server_drawer_canshuzhi')"
-            min-width="100"
-          >
+          <ElTableColumn v-if="debugParams" :label="$t('daas_data_server_drawer_canshuzhi')" min-width="100">
             <template #default="{ row }">
-              <ElInput
-                v-model:value="debugParams[row.name]"
-                size="mini"
-              ></ElInput>
+              <ElInput v-model:value="debugParams[row.name]" size="mini"></ElInput>
             </template>
           </ElTableColumn>
-          <ElTableColumn
-            v-if="isEdit && form.apiType === 'customerQuery'"
-            align="center"
-            width="60"
-          >
+          <ElTableColumn v-if="isEdit && form.apiType === 'customerQuery'" align="center" width="60">
             <template #default="{ $index }">
-              <i
-                v-if="$index > 1"
-                class="el-icon-remove icon-button"
-                @click="removeItem('params', $index)"
-              ></i>
+              <i v-if="$index > 1" class="el-icon-remove icon-button" @click="removeItem('params', $index)"></i>
             </template>
           </ElTableColumn>
         </ElTable>
 
-        <template
-          v-if="
-            data.apiType === 'customerQuery' || form.apiType === 'customerQuery'
-          "
-        >
+        <template v-if="data.apiType === 'customerQuery' || form.apiType === 'customerQuery'">
           <!-- 筛选条件 -->
           <div class="data-server-panel__title">
             <div>
               <span>{{ $t('daas_data_server_drawer_shaixuantiaojian') }}</span>
-              <i
-                v-if="isEdit"
-                class="el-icon-circle-plus icon-button color-primary ml-4"
-                @click="addItem('where')"
-              ></i>
+              <i v-if="isEdit" class="el-icon-circle-plus icon-button color-primary ml-4" @click="addItem('where')"></i>
             </div>
           </div>
           <ul v-if="isEdit">
-            <li
-              v-for="(item, index) in form.where"
-              class="flex align-items-center"
-              :key="index"
-            >
-              <ElSelect
-                v-model:value="form.where[index].fieldName"
-                class="mr-4"
-              >
+            <li v-for="(item, index) in form.where" class="flex align-items-center" :key="index">
+              <ElSelect v-model:value="form.where[index].fieldName" class="mr-4">
                 <ElOption
                   v-for="opt in allFields"
                   :key="opt.id"
@@ -430,22 +261,10 @@
                   :label="opt.field_name"
                 ></ElOption>
               </ElSelect>
-              <ElSelect
-                v-model:value="form.where[index].operator"
-                size="mini"
-                class="mr-4"
-              >
-                <ElOption
-                  v-for="item in operatorOptions"
-                  :key="item"
-                  :value="item"
-                  :label="item"
-                ></ElOption>
+              <ElSelect v-model:value="form.where[index].operator" size="mini" class="mr-4">
+                <ElOption v-for="item in operatorOptions" :key="item" :value="item" :label="item"></ElOption>
               </ElSelect>
-              <ElSelect
-                v-model:value="form.where[index].parameter"
-                class="mr-4"
-              >
+              <ElSelect v-model:value="form.where[index].parameter" class="mr-4">
                 <ElOption
                   v-for="opt in parameterOptions"
                   :key="opt.name"
@@ -453,11 +272,7 @@
                   :label="opt.name"
                 ></ElOption>
               </ElSelect>
-              <ElSelect
-                v-model:value="form.where[index].condition"
-                size="mini"
-                class="mr-4"
-              >
+              <ElSelect v-model:value="form.where[index].condition" size="mini" class="mr-4">
                 <template v-for="item in conditionOptions">
                   <ElOption
                     v-if="item !== 'null' || index === form.where.length - 1"
@@ -466,18 +281,11 @@
                   ></ElOption>
                 </template>
               </ElSelect>
-              <i
-                class="el-icon-remove icon-button"
-                @click="removeItem('where', index)"
-              ></i>
+              <i class="el-icon-remove icon-button" @click="removeItem('where', index)"></i>
             </li>
           </ul>
           <ul v-else>
-            <li
-              v-for="(item, index) in data.where"
-              class="flex align-items-center"
-              :key="index"
-            >
+            <li v-for="(item, index) in data.where" class="flex align-items-center" :key="index">
               <span class="mr-4">{{ item.fieldName }}</span>
               <span class="mr-4">{{ item.operator }}</span>
               <span class="mr-4">{{ item.parameter }}</span>
@@ -489,19 +297,11 @@
           <div class="data-server-panel__title">
             <div>
               <span>{{ $t('daas_data_server_drawer_pailietiaojian') }}</span>
-              <i
-                v-if="isEdit"
-                class="el-icon-circle-plus icon-button color-primary ml-4"
-                @click="addItem('sort')"
-              ></i>
+              <i v-if="isEdit" class="el-icon-circle-plus icon-button color-primary ml-4" @click="addItem('sort')"></i>
             </div>
           </div>
           <ul v-if="isEdit">
-            <li
-              v-for="(item, index) in form.sort"
-              class="flex align-items-center"
-              :key="index"
-            >
+            <li v-for="(item, index) in form.sort" class="flex align-items-center" :key="index">
               <ElSelect v-model:value="form.sort[index].fieldName" class="mr-4">
                 <ElOption
                   v-for="opt in allFields"
@@ -510,26 +310,15 @@
                   :label="opt.field_name"
                 ></ElOption>
               </ElSelect>
-              <ElSelect
-                v-model:value="form.sort[index].type"
-                size="mini"
-                class="mr-4"
-              >
+              <ElSelect v-model:value="form.sort[index].type" size="mini" class="mr-4">
                 <ElOption value="asc" label="ASC"></ElOption>
                 <ElOption value="desc" label="DESC"></ElOption>
               </ElSelect>
-              <i
-                class="el-icon-remove icon-button"
-                @click="removeItem('sort', index)"
-              ></i>
+              <i class="el-icon-remove icon-button" @click="removeItem('sort', index)"></i>
             </li>
           </ul>
           <ul v-else>
-            <li
-              v-for="(item, index) in data.sort"
-              class="flex align-items-center"
-              :key="index"
-            >
+            <li v-for="(item, index) in data.sort" class="flex align-items-center" :key="index">
               <span class="mr-4">{{ item.fieldName }}</span>
               <span>{{ item.type }}</span>
             </li>
@@ -547,26 +336,10 @@
             :loading="fieldLoading"
             @selection-change="fieldsChanged"
           >
-            <ElTableColumn
-              v-if="isEdit"
-              type="selection"
-              width="55"
-            ></ElTableColumn>
-            <ElTableColumn
-              :label="$t('metadata_name')"
-              prop="field_name"
-              min-width="200"
-            ></ElTableColumn>
-            <ElTableColumn
-              :label="$t('metadata_type')"
-              prop="originalDataType"
-              min-width="120"
-            ></ElTableColumn>
-            <ElTableColumn
-              :label="$t('module_form_describtion')"
-              prop="comment"
-              min-width="50"
-            ></ElTableColumn>
+            <ElTableColumn v-if="isEdit" type="selection" width="55"></ElTableColumn>
+            <ElTableColumn :label="$t('metadata_name')" prop="field_name" min-width="200"></ElTableColumn>
+            <ElTableColumn :label="$t('metadata_type')" prop="originalDataType" min-width="120"></ElTableColumn>
+            <ElTableColumn :label="$t('module_form_describtion')" prop="comment" min-width="50"></ElTableColumn>
           </ElTable>
         </template>
         <!--服务访问 -->
@@ -574,11 +347,7 @@
           <div class="data-server-panel__title">
             <span>{{ $t('daas_data_server_drawer_fuwufangwen') }}</span>
             <ElButton
-              v-if="
-                this.data.id &&
-                form.pathAccessMethod === 'default' &&
-                data.status !== 'active'
-              "
+              v-if="this.data.id && form.pathAccessMethod === 'default' && data.status !== 'active'"
               type="primary"
               size="mini"
               @click="generate"
@@ -586,15 +355,8 @@
             >
           </div>
           <ul v-if="data.path" class="data-server-path">
-            <li
-              v-for="(url, method) in urls"
-              :key="method"
-              class="data-server-path__item"
-            >
-              <div
-                class="data-server-path__method"
-                :class="'method--' + method"
-              >
+            <li v-for="(url, method) in urls" :key="method" class="data-server-path__item">
+              <div class="data-server-path__method" :class="'method--' + method">
                 {{ method }}
               </div>
               <div class="data-server-path__value line-height">{{ url }}</div>
@@ -615,17 +377,11 @@
                 style="width: 100px"
                 size="mini"
               >
-                <ElOption
-                  v-for="(url, method) in urls"
-                  :key="method"
-                  :value="method"
-                ></ElOption>
+                <ElOption v-for="(url, method) in urls" :key="method" :value="method"></ElOption>
               </ElSelect>
               <div>{{ urls[debugMethod] }}</div>
             </div>
-            <ElButton type="primary" size="mini" @click="debugData">{{
-              $t('button_submit')
-            }}</ElButton>
+            <ElButton type="primary" size="mini" @click="debugData">{{ $t('button_submit') }}</ElButton>
           </div>
         </template>
         <template v-if="tab === 'debug'">
@@ -643,16 +399,10 @@
         <!--  {{$t('daas_data_server_drawer_shilidaima2')}} -->
         <template v-if="tab === 'debug'">
           <div class="flex position-relative mt-8 mb-4">
-            <div
-              class="position-absolute top-0 start-0 fs-7 fw-sub font-color-dark"
-              style="line-height: 36px"
-            >
+            <div class="position-absolute top-0 start-0 fs-7 fw-sub font-color-dark" style="line-height: 36px">
               {{ $t('daas_data_server_drawer_shilidaima') }}
             </div>
-            <ElTabs
-              v-model:value="templateType"
-              class="data-server__tabs flex-1"
-            >
+            <ElTabs v-model:value="templateType" class="data-server__tabs flex-1">
               <ElTabPane label="JAVA" name="java"></ElTabPane>
               <ElTabPane label="JS" name="javascript"></ElTabPane>
               <ElTabPane label="PYTHON" name="python"></ElTabPane>
@@ -677,14 +427,7 @@ import i18n from '@/i18n'
 import axios from 'axios'
 import { cloneDeep } from 'lodash'
 
-import {
-  databaseTypesApi,
-  connectionsApi,
-  metadataInstancesApi,
-  modulesApi,
-  applicationApi,
-  roleApi,
-} from '@tap/api'
+import { databaseTypesApi, connectionsApi, metadataInstancesApi, modulesApi, applicationApi, roleApi } from '@tap/api'
 import { Drawer, VCodeEditor } from '@tap/component'
 import { uid } from '@tap/shared'
 
@@ -693,14 +436,12 @@ import getTemplate from './template'
 export default {
   components: { Drawer, VCodeEditor },
   props: {
-    host: String,
+    host: String
   },
   data() {
     const validateParams = (rule, value, callback) => {
       // eslint-disable-next-line no-control-regex
-      if (
-        /^([^\x00-\xff]|[a-zA-Z_$])([^\x00-\xff]|[a-zA-Z0-9_$])*$/.test(value)
-      ) {
+      if (/^([^\x00-\xff]|[a-zA-Z_$])([^\x00-\xff]|[a-zA-Z0-9_$])*$/.test(value)) {
         callback()
       } else {
         callback(i18n.t('daas_data_server_drawer_geshicuowu'))
@@ -716,10 +457,7 @@ export default {
     }
     const validatePrefix = (rule, value, callback) => {
       // eslint-disable-next-line no-control-regex
-      if (
-        /^[a-zA-Z\$_\u4e00-\u9fa5][a-zA-Z\u4e00-\u9fa5\d\$_]*$/.test(value) ||
-        value === ''
-      ) {
+      if (/^[a-zA-Z\$_\u4e00-\u9fa5][a-zA-Z\u4e00-\u9fa5\d\$_]*$/.test(value) || value === '') {
         callback()
       } else {
         callback(i18n.t('daas_data_server_drawer_validate'))
@@ -735,7 +473,7 @@ export default {
         apiVersion: 'v1',
         prefix: '',
         basePath: '',
-        acl: ['admin'],
+        acl: ['admin']
       },
       tab: 'form',
       isEdit: false,
@@ -744,69 +482,69 @@ export default {
           {
             required: true,
             message: i18n.t('daas_data_server_drawer_qingshurufuwu'),
-            trigger: 'blur',
-          },
+            trigger: 'blur'
+          }
         ],
         acl: [
           {
             required: true,
             message: i18n.t('daas_data_server_drawer_selectPermissions'),
-            trigger: 'blur',
-          },
+            trigger: 'blur'
+          }
         ],
         connectionType: [
           {
             required: true,
             message: i18n.t('daas_data_server_drawer_qingxuanzelianjie'),
-            trigger: 'blur',
-          },
+            trigger: 'blur'
+          }
         ],
         connectionId: [
           {
             required: true,
             message: i18n.t('shared_cache_placeholder_connection'),
-            trigger: 'blur',
-          },
+            trigger: 'blur'
+          }
         ],
         tableName: [
           {
             required: true,
             message: i18n.t('daas_data_server_drawer_qingxuanzeduixiang'),
-            trigger: 'blur',
-          },
+            trigger: 'blur'
+          }
         ],
         param: [
           {
             required: true,
             validator: validateParams,
-            trigger: ['blur', 'change'],
-          },
+            trigger: ['blur', 'change']
+          }
         ],
         basePath: [
           {
             required: true,
             validator: validateBasePath,
-            trigger: ['blur', 'change'],
-          },
+            trigger: ['blur', 'change']
+          }
         ],
         prefix: [
           {
             required: false,
             validator: validatePrefix,
-            trigger: ['blur', 'change'],
-          },
+            trigger: ['blur', 'change']
+          }
         ],
         apiVersion: [
           {
             required: true,
             validator: validateBasePath,
-            trigger: ['blur', 'change'],
-          },
-        ],
+            trigger: ['blur', 'change']
+          }
+        ]
       },
       apiTypeMap: {
         defaultApi: i18n.t('daas_data_server_drawer_morenchaxun'),
-        customerQuery: i18n.t('daas_data_server_drawer_zidingyichaxun'),
+        customerQuery: i18n.t('daas_data_server_drawer_zidingyichaxun')
       },
       databaseTypes: null,
       connectionOptions: null,
@@ -827,16 +565,12 @@ export default {
       templateType: 'java',
 
       token: '',
-      roles: [],
+      roles: []
     }
   },
   computed: {
     parameterOptions() {
-      return (
-        this.form?.params?.filter(
-          (item) => !['page', 'limit'].includes(item.name)
-        ) || []
-      )
+      return this.form?.params?.filter(item => !['page', 'limit'].includes(item.name)) || []
     },
     //计算基础路径
     customizePath() {
@@ -852,7 +586,7 @@ export default {
       }
       this.form.path = '/api/' + arr.join('/')
       return '/api/' + arr.join('/')
-    },
+    }
   },
   mounted() {
     this.getRoles()
@@ -879,7 +613,7 @@ export default {
       let debugParams = null
       if (this.tab === 'debug') {
         debugParams = {}
-        this.data.params.forEach((p) => {
+        this.data.params.forEach(p => {
           debugParams[p.name] = p.defaultvalue || ''
         })
       }
@@ -903,7 +637,7 @@ export default {
         basePath,
         apiVersion,
         prefix,
-        pathAccessMethod,
+        pathAccessMethod
       } = formData
       // 若为新建时，则默认值为 ‘默认查询(defaultApi)’ 的值
       let apiType = formData?.apiType || 'defaultApi'
@@ -927,7 +661,7 @@ export default {
         where: path.where || [],
         sort: path.sort || [],
         path: path.path || '',
-        acl: path.acl,
+        acl: path.acl
       }
       this.form.description = this.data.description
       this.form.acl = path.acl || ['admin']
@@ -937,17 +671,17 @@ export default {
       this.urls = {
         POST: `${baseUrl}/find`,
         GET: `${baseUrl}`,
-        TOKEN: `${location.origin + location.pathname}oauth/token`,
+        TOKEN: `${location.origin + location.pathname}oauth/token`
       }
       if (this.data.status === 'active') {
-        this.getAPIServerToken((token) => {
+        this.getAPIServerToken(token => {
           this.templates = getTemplate(baseUrl, token)
         })
       }
     },
     // 获取角色
     getRoles() {
-      roleApi.get({}).then((data) => {
+      roleApi.get({}).then(data => {
         this.roles = data?.items || []
       })
     },
@@ -958,15 +692,15 @@ export default {
           type: 'number',
           defaultvalue: '1',
           description: i18n.t('daas_data_server_drawer_fenyebianhao'),
-          required: true,
+          required: true
         },
         {
           name: 'limit',
           type: 'number',
           defaultvalue: '20',
           description: i18n.t('daas_data_server_drawer_meigefenyefan'),
-          required: true,
-        },
+          required: true
+        }
       ]
       if (apiType === 'defaultApi') {
         params.push(
@@ -974,13 +708,13 @@ export default {
             {
               name: 'sort',
               type: 'object',
-              description: i18n.t('daas_data_server_drawer_paixu'),
+              description: i18n.t('daas_data_server_drawer_paixu')
             },
             {
               name: 'filter',
               type: 'object',
-              description: i18n.t('module_form_condition'),
-            },
+              description: i18n.t('module_form_condition')
+            }
           ]
         )
       }
@@ -1004,7 +738,7 @@ export default {
     },
     // 保存，新建和修改
     save(type) {
-      this.$refs.form.validate(async (valid) => {
+      this.$refs.form.validate(async valid => {
         if (valid) {
           //自定义路径 数据清理
           if (this.form.pathAccessMethod === 'default') {
@@ -1034,16 +768,14 @@ export default {
             connectionName,
             apiVersion,
             prefix,
-            pathAccessMethod,
+            pathAccessMethod
           } = this.form
           // basePath
           if (basePath && basePath !== '') {
             status = 'pending'
           }
-          if (params.some((it) => !it.name.trim())) {
-            return this.$message.error(
-              i18n.t('daas_data_server_drawer_qingshurucanshu')
-            )
+          if (params.some(it => !it.name.trim())) {
+            return this.$message.error(i18n.t('daas_data_server_drawer_qingshurucanshu'))
           }
           this.loading = true
           let formData = {
@@ -1071,8 +803,7 @@ export default {
 
             paths: [
               {
-                name:
-                  apiType === 'customerQuery' ? 'customerQuery' : 'findPage', // 冗余老字段
+                name: apiType === 'customerQuery' ? 'customerQuery' : 'findPage', // 冗余老字段
                 result: 'Page<Document>', // 冗余老字段
                 type: apiType === 'customerQuery' ? 'customerQuery' : 'preset', // 冗余老字段
                 acl: acl, // 冗余老字段
@@ -1082,23 +813,21 @@ export default {
                 where,
                 sort,
                 fields,
-                path,
-              },
-            ],
+                path
+              }
+            ]
           }
           if (!type) {
             //生成按钮 不传fields覆盖数据库已有数据 (open 抽屉this.allFields 就清空了数据)
             formData.fields = this.allFields
           }
-          const data = await modulesApi[id ? 'patch' : 'post'](
-            formData
-          ).finally(() => {
+          const data = await modulesApi[id ? 'patch' : 'post'](formData).finally(() => {
             this.loading = false
           })
           data.connection = connectionId
           data.source = {
             database_type: connectionType,
-            name: connectionName,
+            name: connectionName
           }
           this.formatData(data || [])
           $emit(this, 'save')
@@ -1109,8 +838,8 @@ export default {
     generate() {
       if (this.data.basePath && this.data.basePath !== '') {
         this.$confirm(this.$t('daas_data_server_drawer_confirm_tip'), {
-          type: 'warning',
-        }).then((resFlag) => {
+          type: 'warning'
+        }).then(resFlag => {
           if (!resFlag) {
             return
           }
@@ -1139,12 +868,8 @@ export default {
       })
       this.databaseTypes =
         data
-          ?.filter((it) =>
-            ['mysql', 'sqlserver', 'oracle', 'mongodb', 'pg', 'tidb'].includes(
-              it.pdkId
-            )
-          )
-          ?.map((it) => it.name) || []
+          ?.filter(it => ['mysql', 'sqlserver', 'oracle', 'mongodb', 'pg', 'tidb'].includes(it.pdkId))
+          ?.map(it => it.name) || []
       // this.databaseTypes = data?.map(it => it.name) || []
       this.getConnectionOptions()
     },
@@ -1157,18 +882,18 @@ export default {
           connection_type: true,
           status: true,
           user_id: true,
-          database_type: true,
+          database_type: true
         },
         where: {
           database_type: this.form.connectionType
             ? this.form.connectionType
             : {
-                in: this.databaseTypes,
+                in: this.databaseTypes
               },
           connection_type: {
-            in: ['source_and_target', 'target'],
-          },
-        },
+            in: ['source_and_target', 'target']
+          }
+        }
       }
       let type = this.form.connectionType
       if (type) {
@@ -1179,10 +904,10 @@ export default {
         this.connectionOptions = []
       })
       this.connectionOptions =
-        data?.map((it) => ({
+        data?.map(it => ({
           name: it.name,
           type: it.database_type,
-          id: it.id,
+          id: it.id
         })) || []
     },
     // 获取可选表，依赖连接id
@@ -1200,23 +925,23 @@ export default {
         where: {
           'source.id': this.form.connectionId,
           original_name: this.form.tableName,
-          is_deleted: false,
-        },
+          is_deleted: false
+        }
       }
       const data = await metadataInstancesApi
         .get({
-          filter: JSON.stringify(filter),
+          filter: JSON.stringify(filter)
         })
         .finally(() => {
           this.fieldLoading = false
         })
       this.allFields =
-        data?.items?.[0]?.fields?.map((it) => {
+        data?.items?.[0]?.fields?.map(it => {
           return Object.assign({}, it, {
             id: it.id,
             field_name: it.field_name,
             originalDataType: it.data_type,
-            comment: '',
+            comment: ''
           })
         }) || []
       if (!this.form.id) {
@@ -1225,10 +950,8 @@ export default {
       // 回显输出结果中被选中的字段
       const fields = this.form.fields || []
       this.$nextTick(() => {
-        fields.forEach((row) => {
-          this.$refs?.fieldTable.toggleRowSelection(
-            this.allFields.find((it) => it.id === row.id)
-          )
+        fields.forEach(row => {
+          this.$refs?.fieldTable.toggleRowSelection(this.allFields.find(it => it.id === row.id))
         })
       })
     },
@@ -1245,9 +968,7 @@ export default {
     },
     connectionNameChanged() {
       // 选择连接名时自动填充连接类型
-      const connection = this.connectionOptions.find(
-        (it) => it.name === this.form.connectionName
-      )
+      const connection = this.connectionOptions.find(it => it.name === this.form.connectionName)
       this.form.connectionType = connection.type
       this.form.connectionId = connection.id
       this.form.tableName = ''
@@ -1275,9 +996,9 @@ export default {
           fieldName: '',
           parameter: '',
           operator: '>',
-          condition: 'and',
+          condition: 'and'
         },
-        sort: { fieldName: '', type: 'asc' },
+        sort: { fieldName: '', type: 'asc' }
       }
       if (key === 'where') {
         let list = this.form.where
@@ -1295,17 +1016,14 @@ export default {
       const clientInfo = await applicationApi.get({
         filter: JSON.stringify({
           where: {
-            clientName: 'Data Explorer',
-          },
-        }),
+            clientName: 'Data Explorer'
+          }
+        })
       })
       const clientInfoItem = clientInfo?.items?.[0] || {}
 
       const paramsStr =
-        'grant_type=client_credentials&client_id=' +
-        clientInfoItem.id +
-        '&client_secret=' +
-        clientInfoItem.clientSecret
+        'grant_type=client_credentials&client_id=' + clientInfoItem.id + '&client_secret=' + clientInfoItem.clientSecret
       const result = await axios.create().post('/oauth/token', paramsStr)
       const token = result?.data?.access_token || ''
       this.token = token
@@ -1321,7 +1039,7 @@ export default {
             access_token: this.token,
             expires_in: 1209599,
             scope: 'admin',
-            token_type: 'Bearer',
+            token_type: 'Bearer'
           },
           null,
           2
@@ -1336,23 +1054,21 @@ export default {
         }
         if (method === 'GET') {
           params = {
-            params: params,
+            params: params
           }
         }
-        let result = await http[method.toLowerCase()](url, params).catch(
-          (error) => {
-            let result = error?.response?.data
-            result = result ? JSON.stringify(result, null, 2) : ''
-            this.debugResult = result
-          }
-        )
+        let result = await http[method.toLowerCase()](url, params).catch(error => {
+          let result = error?.response?.data
+          result = result ? JSON.stringify(result, null, 2) : ''
+          this.debugResult = result
+        })
         if (result) {
           this.debugResult = JSON.stringify(result?.data, null, 2)
         }
       }
-    },
+    }
   },
-  emits: ['save'],
+  emits: ['save']
 }
 </script>
 

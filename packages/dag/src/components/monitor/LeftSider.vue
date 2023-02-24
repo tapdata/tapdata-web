@@ -2,21 +2,14 @@
   <aside class="layout-sidebar --left border-end flex-column flex-shrink-0">
     <div class="flex flex-column flex-1 min-h-0">
       <div class="info-box flex justify-content-between align-items-center">
-        <TimeSelect
-          :range="$attrs.range"
-          ref="timeSelect"
-          class="mb-1"
-          @change="changeTimeSelect"
-        ></TimeSelect>
+        <TimeSelect :range="$attrs.range" ref="timeSelect" class="mb-1" @change="changeTimeSelect"></TimeSelect>
         <ElDivider direction="vertical" class="mx-1"></ElDivider>
         <ElTooltip
           transition="tooltip-fade-in"
           :content="$t('packages_dag_components_nodedetaildialog_shuaxin')"
           class="mt-n1"
         >
-          <VIcon size="16" class="color-primary" @click="$emit('load-data')"
-            >refresh</VIcon
-          >
+          <VIcon size="16" class="color-primary" @click="$emit('load-data')">refresh</VIcon>
         </ElTooltip>
         <ElDivider direction="vertical" class="mx-1"></ElDivider>
         <Frequency
@@ -28,13 +21,8 @@
       </div>
       <div v-if="dataflow.type !== 'cdc'" class="info-box sync-info">
         <div class="flex justify-content-between mb-2">
-          <span class="fw-sub fs-7 font-color-normal">{{
-            $t('packages_dag_monitor_leftsider_tongbuxinxi')
-          }}</span>
-          <ElTooltip
-            transition="tooltip-fade-in"
-            :content="$t('packages_dag_monitor_leftsider_liebiao')"
-          >
+          <span class="fw-sub fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_tongbuxinxi') }}</span>
+          <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_monitor_leftsider_liebiao')">
             <VIcon @click.stop="toInitialList">menu-left</VIcon>
           </ElTooltip>
         </div>
@@ -45,19 +33,12 @@
             }}</span>
             <span>{{ initialData.snapshotStartAt || '-' }}</span>
           </div>
-          <div
-            v-if="initialData.snapshotDoneAt"
-            class="mb-2 flex justify-content-between"
-          >
-            <span class="sync-info-item__title">{{
-              $t('packages_dag_monitor_leftsider_quanliangwanchengshi')
-            }}</span>
+          <div v-if="initialData.snapshotDoneAt" class="mb-2 flex justify-content-between">
+            <span class="sync-info-item__title">{{ $t('packages_dag_monitor_leftsider_quanliangwanchengshi') }}</span>
             <span>{{ initialData.snapshotDoneAt }}</span>
           </div>
           <div v-else class="mb-2 flex justify-content-between">
-            <span class="sync-info-item__title">{{
-              $t('packages_dag_monitor_leftsider_yujiquanliangwan')
-            }}</span>
+            <span class="sync-info-item__title">{{ $t('packages_dag_monitor_leftsider_yujiquanliangwan') }}</span>
             <span v-if="isFileSource" class="flex-1 text-end">{{
               $t('packages_dag_components_node_zanbuzhichi')
             }}</span>
@@ -84,38 +65,20 @@
                   style="width: 150px"
                   :percentage="totalDataPercentage"
                 />
-                <span class="ml-2">{{
-                  totalData.snapshotTableTotal + '/' + totalData.tableTotal
-                }}</span>
+                <span class="ml-2">{{ totalData.snapshotTableTotal + '/' + totalData.tableTotal }}</span>
               </div>
               <template v-slot:content>
                 <div class="fs-8">
                   <div>
-                    <span
-                      >{{
-                        $t(
-                          'packages_dag_monitor_leftsider_quanliangwanchenghao'
-                        )
-                      }}:</span
-                    >
-                    <span class="ml-2">{{
-                      calcTimeUnit(totalData.snapshotDoneCost)
-                    }}</span>
+                    <span>{{ $t('packages_dag_monitor_leftsider_quanliangwanchenghao') }}:</span>
+                    <span class="ml-2">{{ calcTimeUnit(totalData.snapshotDoneCost) }}</span>
                   </div>
                   <div>
-                    <span
-                      >{{
-                        $t('packages_dag_monitor_leftsider_pingjunQps')
-                      }}:</span
-                    >
+                    <span>{{ $t('packages_dag_monitor_leftsider_pingjunQps') }}:</span>
                     <span class="ml-2">{{ totalData.outputQpsAvg }}</span>
                   </div>
                   <div>
-                    <span
-                      >{{
-                        $t('packages_dag_monitor_leftsider_zuidaQps')
-                      }}:</span
-                    >
+                    <span>{{ $t('packages_dag_monitor_leftsider_zuidaQps') }}:</span>
                     <span class="ml-2">{{ totalData.outputQpsMax }}</span>
                   </div>
                 </div>
@@ -123,52 +86,31 @@
             </ElTooltip>
           </div>
           <div
-            v-if="
-              dataflow.syncType === 'migrate' &&
-              totalData.currentSnapshotTableRowTotal
-            "
+            v-if="dataflow.syncType === 'migrate' && totalData.currentSnapshotTableRowTotal"
             class="mb-4 flex align-items-center"
           >
             <span class="mr-2 sync-info-item__title">{{
               $t('packages_dag_components_nodedetaildialog_dangqianbiaotongbu')
             }}</span>
-            <ElProgress
-              class="flex-1 my-2"
-              :show-text="false"
-              :percentage="currentTotalDataPercentage"
-            />
+            <ElProgress class="flex-1 my-2" :show-text="false" :percentage="currentTotalDataPercentage" />
             <span class="ml-2">{{
-              (totalData.currentSnapshotTableInsertRowTotal || 0) +
-              '/' +
-              (totalData.currentSnapshotTableRowTotal || 0)
+              (totalData.currentSnapshotTableInsertRowTotal || 0) + '/' + (totalData.currentSnapshotTableRowTotal || 0)
             }}</span>
           </div>
         </template>
         <template v-if="dataflow.type !== 'initial_sync'">
-          <div
-            v-if="initialData.snapshotDoneAt"
-            class="mb-2 flex justify-content-between"
-          >
-            <span>{{
-              $t('packages_dag_monitor_leftsider_zuidazengliangyan')
-            }}</span>
+          <div v-if="initialData.snapshotDoneAt" class="mb-2 flex justify-content-between">
+            <span>{{ $t('packages_dag_monitor_leftsider_zuidazengliangyan') }}</span>
             <span>{{ getReplicateLag(initialData.replicateLag) }}</span>
           </div>
         </template>
       </div>
       <div
-        v-if="
-          dataflow.syncType === 'migrate' &&
-          dataflow.isAutoInspect &&
-          dataflow.canOpenInspect &&
-          verifyTotals
-        "
+        v-if="dataflow.syncType === 'migrate' && dataflow.isAutoInspect && dataflow.canOpenInspect && verifyTotals"
         class="info-box"
       >
         <div class="flex justify-content-between mb-2">
-          <span class="fw-sub fs-7 font-color-normal">{{
-            $t('packages_dag_monitor_leftsider_renwujiaoyan')
-          }}</span>
+          <span class="fw-sub fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_renwujiaoyan') }}</span>
           <ElTooltip
             v-if="verifyTotals.diffTables"
             transition="tooltip-fade-in"
@@ -178,32 +120,22 @@
           </ElTooltip>
         </div>
         <div class="flex justify-content-between mb-2">
-          <span>{{
-            $t('packages_dag_monitor_leftsider_chayizongxingshu')
-          }}</span>
-          <span :class="{ 'color-danger': verifyTotals.diffRecords }">{{
-            verifyTotals.diffRecords
-          }}</span>
+          <span>{{ $t('packages_dag_monitor_leftsider_chayizongxingshu') }}</span>
+          <span :class="{ 'color-danger': verifyTotals.diffRecords }">{{ verifyTotals.diffRecords }}</span>
         </div>
         <div class="flex justify-content-between mb-2">
           <span>{{ $t('packages_dag_monitor_leftsider_jiaoyanbuyizhi') }}</span>
           <span v-if="verifyTotals.diffTables">
-            <span :class="{ 'color-danger': verifyTotals.diffTables }">{{
-              verifyTotals.diffTables
-            }}</span>
+            <span :class="{ 'color-danger': verifyTotals.diffTables }">{{ verifyTotals.diffTables }}</span>
             <span>/</span>
             <span>{{ verifyTotals.totals }}</span>
           </span>
           <span v-else>0</span>
         </div>
         <div class="flex justify-content-between">
-          <span class="mr-2">{{
-            $t('packages_dag_monitor_leftsider_buzhichijiaoyan')
-          }}</span>
+          <span class="mr-2">{{ $t('packages_dag_monitor_leftsider_buzhichijiaoyan') }}</span>
           <span v-if="verifyTotals.ignore">
-            <span :class="{ 'color-danger': verifyTotals.ignore }">{{
-              verifyTotals.ignore
-            }}</span>
+            <span :class="{ 'color-danger': verifyTotals.ignore }">{{ verifyTotals.ignore }}</span>
             <span>/</span>
             <span>{{ verifyTotals.totals }}</span>
           </span>
@@ -215,10 +147,7 @@
           <span class="fs-7 fw-sub font-color-normal">{{
             $t('packages_dag_components_nodedetaildialog_xingnengzhibiao')
           }}</span>
-          <ElTooltip
-            transition="tooltip-fade-in"
-            :content="$t('packages_dag_button_zoom_in')"
-          >
+          <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_zoom_in')">
             <VIcon @click.stop="toFullscreen">enlarge</VIcon>
           </ElTooltip>
         </div>
@@ -284,9 +213,7 @@
       </div>
       <div class="info-box py-2 px-4">
         <div class="flex justify-content-between mb-2">
-          <span class="fw-sub fs-7 font-color-normal">{{
-            $t('packages_dag_monitor_leftsider_renwushijiantong')
-          }}</span>
+          <span class="fw-sub fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_renwushijiantong') }}</span>
         </div>
         <div v-loading="!eventDataAll" class="flex">
           <div v-if="eventDataAll" class="w-50 pr-4">
@@ -335,21 +262,15 @@
               </ElTooltip>
               <div class="mb-2">
                 <span>{{ $t('packages_dag_monitor_leftsider_charu') }}</span>
-                <span>{{
-                  eventDataAll.outputInsertTotal.toLocaleString()
-                }}</span>
+                <span>{{ eventDataAll.outputInsertTotal.toLocaleString() }}</span>
               </div>
               <div class="mb-2">
                 <span>{{ $t('packages_dag_monitor_leftsider_gengxin') }}</span>
-                <span>{{
-                  eventDataAll.outputUpdateTotal.toLocaleString()
-                }}</span>
+                <span>{{ eventDataAll.outputUpdateTotal.toLocaleString() }}</span>
               </div>
               <div class="mb-2">
                 <span>{{ $t('packages_dag_monitor_leftsider_shanchu') }}</span>
-                <span>{{
-                  eventDataAll.outputDeleteTotal.toLocaleString()
-                }}</span>
+                <span>{{ eventDataAll.outputDeleteTotal.toLocaleString() }}</span>
               </div>
               <div>
                 <span>DDL：</span>
@@ -361,14 +282,10 @@
       </div>
       <div class="py-2 px-4">
         <div class="flex justify-content-between mb-2">
-          <span class="fw-sub fs-7 font-color-normal">{{
-            $t('packages_dag_monitor_leftsider_tiaoshixinxi')
-          }}</span>
+          <span class="fw-sub fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_tiaoshixinxi') }}</span>
         </div>
         <div class="mb-2 flex justify-content-between">
-          <span
-            >{{ $t('packages_dag_monitor_topheader_renwuxintiaoshi') }}:</span
-          >
+          <span>{{ $t('packages_dag_monitor_topheader_renwuxintiaoshi') }}:</span>
           <span>{{ heartbeatTime }}</span>
         </div>
       </div>
@@ -408,11 +325,7 @@
       ></LineChart>
     </ElDialog>
 
-    <InitialList
-      v-model:value="initialListDialog"
-      :dataflow="dataflow"
-      ref="initialList"
-    ></InitialList>
+    <InitialList v-model:value="initialListDialog" :dataflow="dataflow" ref="initialList"></InitialList>
   </aside>
 </template>
 
@@ -441,24 +354,24 @@ export default {
           diffRecords: 0,
           diffTables: 0,
           totals: 0,
-          ignore: 0,
+          ignore: 0
         }
-      },
+      }
     },
-    timeFormat: String,
+    timeFormat: String
   },
   components: {
     LineChart,
     TimeSelect,
     Frequency,
     VIcon,
-    InitialList,
+    InitialList
   },
   data() {
     return {
       lineChartDialog: false,
       initialListDialog: false,
-      timeSelectLabel: '',
+      timeSelectLabel: ''
     }
   },
   computed: {
@@ -471,7 +384,7 @@ export default {
         return {
           x: [],
           name: [],
-          value: [[], []],
+          value: [[], []]
         }
       }
       const { time = [] } = this.quota
@@ -479,9 +392,9 @@ export default {
         x: time,
         name: [
           i18n.t('packages_dag_components_nodedetaildialog_shuru'),
-          i18n.t('packages_dag_components_nodedetaildialog_shuchu'),
+          i18n.t('packages_dag_components_nodedetaildialog_shuchu')
         ],
-        value: [data.inputQps, data.outputQps],
+        value: [data.inputQps, data.outputQps]
       }
     },
 
@@ -492,12 +405,12 @@ export default {
       if (!data) {
         return {
           x: [],
-          value: [],
+          value: []
         }
       }
       return {
         x: time,
-        value: data.timeCostAvg,
+        value: data.timeCostAvg
       }
     },
     // 增量延迟
@@ -507,25 +420,19 @@ export default {
       if (!data) {
         return {
           x: [],
-          value: [],
+          value: []
         }
       }
       return {
         x: time,
-        value: data.replicateLag,
+        value: data.replicateLag
       }
     },
 
     // 全量信息
     initialData() {
       const data = this.quota.samples?.totalData?.[0] || {}
-      const {
-        snapshotRowTotal = 0,
-        snapshotInsertRowTotal = 0,
-        snapshotDoneAt,
-        snapshotStartAt,
-        replicateLag,
-      } = data
+      const { snapshotRowTotal = 0, snapshotInsertRowTotal = 0, snapshotDoneAt, snapshotStartAt, replicateLag } = data
       const usedTime = Time.now() - snapshotStartAt
       let time
       if (!snapshotInsertRowTotal || !snapshotRowTotal || !snapshotStartAt) {
@@ -534,14 +441,10 @@ export default {
         time = snapshotRowTotal / (snapshotInsertRowTotal / usedTime) - usedTime
       }
       return {
-        snapshotDoneAt: snapshotDoneAt
-          ? dayjs(snapshotDoneAt).format('YYYY-MM-DD HH:mm:ss.SSS')
-          : '',
-        snapshotStartAt: snapshotStartAt
-          ? dayjs(snapshotStartAt).format('YYYY-MM-DD HH:mm:ss.SSS')
-          : '',
+        snapshotDoneAt: snapshotDoneAt ? dayjs(snapshotDoneAt).format('YYYY-MM-DD HH:mm:ss.SSS') : '',
+        snapshotStartAt: snapshotStartAt ? dayjs(snapshotStartAt).format('YYYY-MM-DD HH:mm:ss.SSS') : '',
         replicateLag: replicateLag,
-        finishDuration: time,
+        finishDuration: time
       }
     },
 
@@ -553,7 +456,7 @@ export default {
         currentSnapshotTableRowTotal = 0,
         snapshotDoneCost,
         outputQpsMax = 0,
-        outputQpsAvg = 0,
+        outputQpsAvg = 0
       } = this.quota.samples?.totalData?.[0] || {}
       return {
         tableTotal,
@@ -562,25 +465,19 @@ export default {
         currentSnapshotTableRowTotal,
         snapshotDoneCost,
         outputQpsMax: Math.ceil(outputQpsMax),
-        outputQpsAvg: Math.ceil(outputQpsAvg),
+        outputQpsAvg: Math.ceil(outputQpsAvg)
       }
     },
 
     totalDataPercentage() {
       const { tableTotal, snapshotTableTotal } = this.totalData
-      return snapshotTableTotal && tableTotal
-        ? (snapshotTableTotal / tableTotal) * 100
-        : 0
+      return snapshotTableTotal && tableTotal ? (snapshotTableTotal / tableTotal) * 100 : 0
     },
 
     currentTotalDataPercentage() {
-      const {
-        currentSnapshotTableInsertRowTotal,
-        currentSnapshotTableRowTotal,
-      } = this.totalData
+      const { currentSnapshotTableInsertRowTotal, currentSnapshotTableRowTotal } = this.totalData
       return currentSnapshotTableRowTotal
-        ? (currentSnapshotTableInsertRowTotal / currentSnapshotTableRowTotal) *
-            100
+        ? (currentSnapshotTableInsertRowTotal / currentSnapshotTableRowTotal) * 100
         : 0
     },
 
@@ -596,17 +493,15 @@ export default {
 
     heartbeatTime() {
       const { pingTime, status } = this.dataflow
-      return status === 'running' && pingTime
-        ? dayjs(Time.now()).to(dayjs(pingTime))
-        : '-'
+      return status === 'running' && pingTime ? dayjs(Time.now()).to(dayjs(pingTime)) : '-'
     },
 
     isFileSource() {
       const allNodes = this.$store.getters['dataflow/allNodes']
       if (!allNodes.length) return
       const fileType = ['CSV', 'EXCEL', 'JSON', 'XML']
-      return allNodes.some((node) => fileType.includes(node.databaseType))
-    },
+      return allNodes.some(node => fileType.includes(node.databaseType))
+    }
   },
   mounted() {
     this.timeSelectLabel = this.$refs.timeSelect?.getPeriod()?.label
@@ -631,21 +526,15 @@ export default {
 
     getInputOutput(data) {
       let result = {}
-      const inputArr = [
-        'inputInsertTotal',
-        'inputUpdateTotal',
-        'inputDeleteTotal',
-        'inputDdlTotal',
-        'inputOthersTotal',
-      ]
+      const inputArr = ['inputInsertTotal', 'inputUpdateTotal', 'inputDeleteTotal', 'inputDdlTotal', 'inputOthersTotal']
       const outputArr = [
         'outputInsertTotal',
         'outputUpdateTotal',
         'outputDeleteTotal',
         'outputDdlTotal',
-        'outputOthersTotal',
+        'outputOthersTotal'
       ]
-      ;[...inputArr, ...outputArr].forEach((el) => {
+      ;[...inputArr, ...outputArr].forEach(el => {
         result[el] = data?.[el] || 0
       })
       result.inputTotals = inputArr.reduce((total, key) => {
@@ -656,14 +545,10 @@ export default {
       }, 0)
       const limit = 1000000000
       result.inputTotalsLabel =
-        result.inputTotals >= limit
-          ? calcUnit(result.inputTotals)
-          : result.inputTotals.toLocaleString()
+        result.inputTotals >= limit ? calcUnit(result.inputTotals) : result.inputTotals.toLocaleString()
 
       result.outputTotalsLabel =
-        result.outputTotals >= limit
-          ? calcUnit(result.outputTotals)
-          : result.outputTotals.toLocaleString()
+        result.outputTotals >= limit ? calcUnit(result.outputTotals) : result.outputTotals.toLocaleString()
       return result
     },
 
@@ -674,12 +559,12 @@ export default {
     getReplicateLag(val) {
       return typeof val === 'number' && val >= 0
         ? calcTimeUnit(val, 2, {
-            autoHideMs: true,
+            autoHideMs: true
           })
         : i18n.t('packages_dag_dag_dialog_field_mapping_no_data')
-    },
+    }
   },
-  emits: ['load-data', 'verifyDetails', 'changeTimeSelect', 'changeFrequency'],
+  emits: ['load-data', 'verifyDetails', 'changeTimeSelect', 'changeFrequency']
 }
 </script>
 

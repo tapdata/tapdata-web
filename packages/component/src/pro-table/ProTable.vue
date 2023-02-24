@@ -13,10 +13,9 @@
         'el-table--scrollable-y': layout.scrollY,
         'el-table--enable-row-hover': !store.states.isComplex,
         'el-table--enable-row-transition':
-          (store.states.data || []).length !== 0 &&
-          (store.states.data || []).length < 100,
+          (store.states.data || []).length !== 0 && (store.states.data || []).length < 100
       },
-      tableSize ? `el-table--${tableSize}` : '',
+      tableSize ? `el-table--${tableSize}` : ''
     ]"
     @mouseleave="handleMouseLeave($event)"
   >
@@ -33,7 +32,7 @@
         :border="border"
         :default-sort="defaultSort"
         :style="{
-          width: layout.bodyWidth ? layout.bodyWidth + 'px' : '',
+          width: layout.bodyWidth ? layout.bodyWidth + 'px' : ''
         }"
       >
       </table-header>
@@ -41,9 +40,7 @@
     <div
       class="el-table__body-wrapper"
       ref="bodyWrapper"
-      :class="[
-        layout.scrollX ? `is-scrolling-${scrollPosition}` : 'is-scrolling-none',
-      ]"
+      :class="[layout.scrollX ? `is-scrolling-${scrollPosition}` : 'is-scrolling-none']"
       :style="[bodyHeight]"
     >
       <table-body
@@ -54,25 +51,16 @@
         :row-style="rowStyle"
         :highlight="highlightCurrentRow"
         :style="{
-          width: bodyWidth,
+          width: bodyWidth
         }"
       >
       </table-body>
-      <div
-        v-if="!data || data.length === 0"
-        class="el-table__empty-block"
-        ref="emptyBlock"
-        :style="emptyBlockStyle"
-      >
+      <div v-if="!data || data.length === 0" class="el-table__empty-block" ref="emptyBlock" :style="emptyBlockStyle">
         <span class="el-table__empty-text">
           <slot name="empty">{{ emptyText || t('el.table.emptyText') }}</slot>
         </span>
       </div>
-      <div
-        v-if="$slots.append"
-        class="el-table__append-wrapper"
-        ref="appendWrapper"
-      >
+      <div v-if="$slots.append" class="el-table__append-wrapper" ref="appendWrapper">
         <slot name="append"></slot>
       </div>
     </div>
@@ -90,7 +78,7 @@
         :summary-method="summaryMethod"
         :default-sort="defaultSort"
         :style="{
-          width: layout.bodyWidth ? layout.bodyWidth + 'px' : '',
+          width: layout.bodyWidth ? layout.bodyWidth + 'px' : ''
         }"
       >
       </table-footer>
@@ -102,23 +90,19 @@
       ref="fixedWrapper"
       :style="[
         {
-          width: layout.fixedWidth ? layout.fixedWidth + 'px' : '',
+          width: layout.fixedWidth ? layout.fixedWidth + 'px' : ''
         },
-        fixedHeight,
+        fixedHeight
       ]"
     >
-      <div
-        v-if="showHeader"
-        class="el-table__fixed-header-wrapper"
-        ref="fixedHeaderWrapper"
-      >
+      <div v-if="showHeader" class="el-table__fixed-header-wrapper" ref="fixedHeaderWrapper">
         <table-header
           ref="fixedTableHeader"
           fixed="left"
           :border="border"
           :store="store"
           :style="{
-            width: bodyWidth,
+            width: bodyWidth
           }"
         ></table-header>
       </div>
@@ -127,9 +111,9 @@
         ref="fixedBodyWrapper"
         :style="[
           {
-            top: layout.headerHeight + 'px',
+            top: layout.headerHeight + 'px'
           },
-          fixedBodyHeight,
+          fixedBodyHeight
         ]"
       >
         <table-body
@@ -140,15 +124,11 @@
           :row-class-name="rowClassName"
           :row-style="rowStyle"
           :style="{
-            width: layout.fixedWidth ? layout.fixedWidth + 'px' : '',
+            width: layout.fixedWidth ? layout.fixedWidth + 'px' : ''
           }"
         >
         </table-body>
-        <div
-          v-if="$slots.append"
-          class="el-table__append-gutter"
-          :style="{ height: layout.appendHeight + 'px' }"
-        ></div>
+        <div v-if="$slots.append" class="el-table__append-gutter" :style="{ height: layout.appendHeight + 'px' }"></div>
       </div>
       <div
         v-if="showSummary"
@@ -163,7 +143,7 @@
           :summary-method="summaryMethod"
           :store="store"
           :style="{
-            width: bodyWidth,
+            width: bodyWidth
           }"
         ></table-footer>
       </div>
@@ -176,25 +156,19 @@
       :style="[
         {
           width: layout.rightFixedWidth ? layout.rightFixedWidth + 'px' : '',
-          right: layout.scrollY
-            ? (border ? layout.gutterWidth : layout.gutterWidth || 0) + 'px'
-            : '',
+          right: layout.scrollY ? (border ? layout.gutterWidth : layout.gutterWidth || 0) + 'px' : ''
         },
-        fixedHeight,
+        fixedHeight
       ]"
     >
-      <div
-        v-if="showHeader"
-        class="el-table__fixed-header-wrapper"
-        ref="rightFixedHeaderWrapper"
-      >
+      <div v-if="showHeader" class="el-table__fixed-header-wrapper" ref="rightFixedHeaderWrapper">
         <table-header
           ref="rightFixedTableHeader"
           fixed="right"
           :border="border"
           :store="store"
           :style="{
-            width: bodyWidth,
+            width: bodyWidth
           }"
         ></table-header>
       </div>
@@ -203,9 +177,9 @@
         ref="rightFixedBodyWrapper"
         :style="[
           {
-            top: layout.headerHeight + 'px',
+            top: layout.headerHeight + 'px'
           },
-          fixedBodyHeight,
+          fixedBodyHeight
         ]"
       >
         <table-body
@@ -216,15 +190,11 @@
           :row-style="rowStyle"
           :highlight="highlightCurrentRow"
           :style="{
-            width: layout.rightFixedWidth ? layout.rightFixedWidth + 'px' : '',
+            width: layout.rightFixedWidth ? layout.rightFixedWidth + 'px' : ''
           }"
         >
         </table-body>
-        <div
-          v-if="$slots.append"
-          class="el-table__append-gutter"
-          :style="{ height: layout.appendHeight + 'px' }"
-        ></div>
+        <div v-if="$slots.append" class="el-table__append-gutter" :style="{ height: layout.appendHeight + 'px' }"></div>
       </div>
       <div
         v-if="showSummary"
@@ -239,7 +209,7 @@
           :summary-method="summaryMethod"
           :store="store"
           :style="{
-            width: bodyWidth,
+            width: bodyWidth
           }"
         ></table-footer>
       </div>
@@ -250,14 +220,10 @@
       ref="rightFixedPatch"
       :style="{
         width: layout.scrollY ? layout.gutterWidth + 'px' : '0',
-        height: layout.headerHeight + 'px',
+        height: layout.headerHeight + 'px'
       }"
     ></div>
-    <div
-      class="el-table__column-resize-proxy"
-      ref="resizeProxy"
-      v-show="resizeProxyVisible"
-    ></div>
+    <div class="el-table__column-resize-proxy" ref="resizeProxy" v-show="resizeProxyVisible"></div>
   </div>
 </template>
 
@@ -270,9 +236,9 @@ export default {
   extends: Table,
 
   props: {
-    draggable: Boolean,
+    draggable: Boolean
   },
 
-  components: { TableBody },
+  components: { TableBody }
 }
 </script>

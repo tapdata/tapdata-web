@@ -9,12 +9,10 @@ export const Header = observer(
       const prefix = usePrefix('data-source-setter')
       return () => (
         <div class={`${prefix + '-layout-item-header'}`}>
-          <div class={`${prefix + '-layout-item-title'}`}>
-            {slots.title?.()}
-          </div>
+          <div class={`${prefix + '-layout-item-title'}`}>{slots.title?.()}</div>
           {slots.extra?.()}
         </div>
       )
-    },
+    }
   })
 )

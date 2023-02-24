@@ -1,12 +1,6 @@
 import { FormPath } from '@formily/core'
 import { toJS } from '@formily/reactive'
-import {
-  ArrayField,
-  Field as InternalField,
-  ObjectField,
-  VoidField,
-  Schema,
-} from '@formily/vue'
+import { ArrayField, Field as InternalField, ObjectField, VoidField, Schema } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { FormItem } from '@tap/form'
 import { each, reduce } from '@formily/shared'
@@ -37,7 +31,7 @@ const SchemaStateMap = {
   'x-visible': 'visible',
   'x-hidden': 'hidden',
   'x-display': 'display',
-  'x-pattern': 'pattern',
+  'x-pattern': 'pattern'
 }
 
 const NeedShownExpression = {
@@ -45,12 +39,12 @@ const NeedShownExpression = {
   description: true,
   default: true,
   'x-content': true,
-  'x-value': true,
+  'x-value': true
 }
 
-const isExpression = (val) => isStr(val) && /^\{\{.*\}\}$/.test(val)
+const isExpression = val => isStr(val) && /^\{\{.*\}\}$/.test(val)
 
-const filterExpression = (val) => {
+const filterExpression = val => {
   if (typeof val === 'object') {
     const isArray = isArr(val)
     const results = reduce(
@@ -95,10 +89,8 @@ const toDesignableFieldProps = (schema, components, nodeIdAttrName, id) => {
   if (!components['FormItem']) {
     components['FormItem'] = FormItem
   }
-  const decorator =
-    schema['x-decorator'] && FormPath.getIn(components, schema['x-decorator'])
-  const component =
-    schema['x-component'] && FormPath.getIn(components, schema['x-component'])
+  const decorator = schema['x-decorator'] && FormPath.getIn(components, schema['x-decorator'])
+  const component = schema['x-component'] && FormPath.getIn(components, schema['x-component'])
   const decoratorProps = schema['x-decorator-props'] || {}
   const componentProps = schema['x-component-props'] || {}
 
@@ -114,11 +106,8 @@ const toDesignableFieldProps = (schema, components, nodeIdAttrName, id) => {
     FormPath.setIn(props['component'][1], nodeIdAttrName, id)
   }
   const title = props.title
-  props.title =
-    props.title && (() => <span data-content-editable="title">{title}</span>)
-  props.description = props.description && (
-    <span data-content-editable="description">{props.description}</span>
-  )
+  props.title = props.title && (() => <span data-content-editable="title">{title}</span>)
+  props.description = props.description && <span data-content-editable="description">{props.description}</span>
   return props
 }
 
@@ -135,12 +124,7 @@ export const Field = observer(
 
         const node = nodeRef.value
 
-        const fieldProps = toDesignableFieldProps(
-          attrs,
-          components.value,
-          designer.value.props.nodeIdAttrName,
-          node.id
-        )
+        const fieldProps = toDesignableFieldProps(attrs, components.value, designer.value.props.nodeIdAttrName, node.id)
 
         if (attrs.type === 'object') {
           return (
@@ -172,12 +156,12 @@ export const Field = observer(
           {}
         )*/
       }
-    },
+    }
   })
 )
 
 Field.Behavior = createBehavior({
   name: 'Field',
   selector: 'Field',
-  designerLocales: AllLocales.Field,
+  designerLocales: AllLocales.Field
 })

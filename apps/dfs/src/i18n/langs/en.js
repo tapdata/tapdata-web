@@ -44,14 +44,11 @@ export default {
   workbench_notice: 'Announcements',
   workbench_overview: 'Overview',
   workbench_guide: "Beginner's Guide",
-  workbench_agent_desc:
-    'Installing an agent on your server is a necessary step to use Tapdata Cloud.',
+  workbench_agent_desc: 'Installing an agent on your server is a necessary step to use Tapdata Cloud.',
   workbench_agent_button_create: 'Create Agent',
-  workbench_connection_desc:
-    'You can then setup your data source and target connections. ',
+  workbench_connection_desc: 'You can then setup your data source and target connections. ',
   workbench_connection_button_create: 'Create connection',
-  workbench_task_desc:
-    'Start creating database replication or data pipelines. ',
+  workbench_task_desc: 'Start creating database replication or data pipelines. ',
   workbench_task_button_create: 'Create pipeline',
   workbench_overview_connection: 'Connections',
   workbench_overview_connection_ready: 'Ready',
@@ -65,8 +62,7 @@ export default {
   workbench_statistics__sub_title: 'Processing data volume',
   workbench_statistics__sub_title_label: 'Cumulative',
   header_scan_code: 'Encountered problems during use? ',
-  header_join_group:
-    'Scan the code to add a small assistant to get technical support',
+  header_join_group: 'Scan the code to add a small assistant to get technical support',
   header_manual: 'User Manual',
   header_technical_support: 'Technical Support',
   header_official_website: 'Official website',
@@ -107,8 +103,7 @@ export default {
   notify_no_notice: 'No notification yet',
   notify_delete_notification_tip: 'Are you sure to delete the notification?',
   notify_delete_notification_title: 'Delete notification',
-  notify_delete_all_notification_message:
-    'Are you sure to delete all notifications?',
+  notify_delete_all_notification_message: 'Are you sure to delete all notifications?',
   notify_list_started: 'started',
   notify_list_paused: 'Paused',
   notify_list_edited: 'Edited',
@@ -167,8 +162,7 @@ export default {
   agent_tip_auto_upgrade: 'Unable to use "Auto upgrade" when Agent is offline',
   agent_dialog_upgrade_title:
     'The Agent version is updated. You can upgrade your Agent to the latest version in the following ways. Tasks cannot be run during the upgrade process.',
-  agent_dialog_upgrade_fail:
-    'Auto upgrade failed, please try again or upgrade manually.',
+  agent_dialog_upgrade_fail: 'Auto upgrade failed, please try again or upgrade manually.',
   agent_button_create_msg_success: 'Agent created successfully',
   agent_button_create_msg_success_desc:
     'Please click [Deploy] to enter the deployment page and follow the instructions to complete the Agent deployment.',
@@ -179,8 +173,7 @@ export default {
     'After the Agent is stopped, the task can no longer be run. You need to go to the Agent installation directory to start the Agent again. Are you sure to stop?',
   agent_button_stop_msg_success: 'Agent is stopped',
   agent_button_stop_msg_fail: 'Agent failed to stop',
-  agent_button_delete_confirm_title:
-    'The agent can no longer be used after it is deleted. Are you sure to delete it?',
+  agent_button_delete_confirm_title: 'The agent can no longer be used after it is deleted. Are you sure to delete it?',
   agent_button_delete_confirm_msg:
     'There are tasks currently running on the Agent. Please stop the tasks before deleting them.',
   agent_button_delete_success: 'Agent deleted successfully',
@@ -190,8 +183,7 @@ export default {
   agent_auto_upgrade_tip_start: 'Start to upgrade',
   agent_auto_upgrade_tip_upgrading: 'Automatically upgrading',
   agent_auto_upgrade_tip_progress: 'Upgrade package download progress',
-  agent_auto_upgrade_tip_fail:
-    'Automatic upgrade failed, please upgrade manually',
+  agent_auto_upgrade_tip_fail: 'Automatic upgrade failed, please upgrade manually',
   agent_auto_upgrade_tip_have_new: 'Agent version is updated, click to upgrade',
   agent_detail_synchronization_task_number: 'Running Pipelines',
   agent_detail_host_name: 'Host Name',
@@ -213,12 +205,10 @@ export default {
   agent_deploy_before_prepare_title: 'Prepare before installation',
   agent_deploy_before_prepare_windows_first:
     '1. Before installation, please make sure that Java 1.8 is installed in your deployment environment and the environment variables are correctly configured. ',
-  agent_deploy_before_prepare_windows_first_link:
-    'Click to see how to install and configure Java 1.8',
+  agent_deploy_before_prepare_windows_first_link: 'Click to see how to install and configure Java 1.8',
   agent_deploy_before_prepare_windows_second:
     '2. Click the download button below to download the Tapdata Agent installation package to the local environment. ',
-  agent_deploy_before_prepare_windows_second_download:
-    'Click to download Tapdata Agent',
+  agent_deploy_before_prepare_windows_second_download: 'Click to download Tapdata Agent',
   agent_deploy_before_prepare_windows_third:
     '3. Please strictly follow the installation steps below to deploy, do not double-click the installation package directly. ',
   agent_deploy_before_prepare_windows_four:
@@ -230,20 +220,17 @@ export default {
   agent_deploy_start_install_windows_first_download: 'Download Tapdata Agent',
   agent_deploy_start_install_windows_second:
     '2. Put tapdata.exe into the directory you want to install. The installation path cannot contain Chinese and special characters. ',
-  agent_deploy_start_install_windows_third:
-    '3. Double-click to execute tapdata.exe to start the installation. ',
+  agent_deploy_start_install_windows_third: '3. Double-click to execute tapdata.exe to start the installation. ',
   agent_deploy_start_install_windows_fourth:
     '4. When the installation process prompts you to enter the Token, copy the Token below and right-click in the command window to paste it',
   agent_deploy_start_install_windows_fifth:
     '5. Wait patiently to complete the installation and startup of Tapdata Agent. ',
-  agent_deploy_link_agent_operation:
-    '"Agent Installation Manual and Common QA"',
+  agent_deploy_link_agent_operation: '"Agent Installation Manual and Common QA"',
   agent_deploy_link_agent_operation_desc:
     'Or directly scan the QR code on the right to join the community for technical support. ',
   agent_deploy_before_prepare_linux_first:
     '1. Before installation, please make sure that Java 1.8 is installed in your deployment environment and the environment variables are correctly configured. ',
-  agent_deploy_before_prepare_linux_first_link:
-    'Click to see how to install and configure Java 1.8',
+  agent_deploy_before_prepare_linux_first_link: 'Click to see how to install and configure Java 1.8',
   agent_deploy_before_prepare_linux_second:
     '2. We highly recommend deploying Tapdata Agent in a separate and clean folder.',
   agent_deploy_before_prepare_linux_third:
@@ -273,30 +260,23 @@ export default {
   agent_upgrade_step_title: 'Upgrade step',
   agent_deploy_upgrade_button_copy: 'Copy',
   agent_deploy_upgrade_button_copied: 'copied',
-  agent_upgrade_before_windows_first:
-    '1. Backup the tapdata.exe of the existing program',
+  agent_upgrade_before_windows_first: '1. Backup the tapdata.exe of the existing program',
   agent_upgrade_before_windows_second:
     '2. Download the new version of tapdata.exe program and put it in the program directory',
   agent_upgrade_before_windows_second_download: 'Click to download',
   agent_upgrade_before_windows_third: '3. Follow the upgrade steps',
-  agent_upgrade_step_windows_first:
-    '1. Open the cmd window and enter the original Agent installation directory',
+  agent_upgrade_step_windows_first: '1. Open the cmd window and enter the original Agent installation directory',
   agent_upgrade_step_windows_second:
     '2. Copy the upgrade command below and execute it in the directory. The upgrade command will automatically back up, upgrade and start. If the upgrade fails, it will automatically roll back the version.',
   agent_upgrade_step_windows_third:
     '3. If "Update finished." appears, it means the Agent has been successfully upgraded',
-  agent_upgrade_step_linux_first:
-    '1. Enter the original Agent installation directory',
+  agent_upgrade_step_linux_first: '1. Enter the original Agent installation directory',
   agent_upgrade_step_linux_second:
     '2. Copy the upgrade command below and execute it in the directory. The upgrade command will automatically back up, upgrade and start. If the upgrade fails, it will automatically roll back the version.',
-  agent_upgrade_step_linux_third:
-    '3. If "Update finished." appears, it means the Agent has been successfully upgraded',
-  agent_upgrade_step_docker_first:
-    '1. Enter the docker container of the original Agent',
-  agent_upgrade_step_docker_first_one:
-    "(1) Found the original agent's docker container CONTAINER ID",
-  agent_upgrade_step_docker_first_two:
-    '(2) Enter the container through the container ID',
+  agent_upgrade_step_linux_third: '3. If "Update finished." appears, it means the Agent has been successfully upgraded',
+  agent_upgrade_step_docker_first: '1. Enter the docker container of the original Agent',
+  agent_upgrade_step_docker_first_one: "(1) Found the original agent's docker container CONTAINER ID",
+  agent_upgrade_step_docker_first_two: '(2) Enter the container through the container ID',
   agent_upgrade_step_docker_first_three:
     '(3) If the container has stopped running, you can start the container first and then enter the container to upgrade',
   agent_upgrade_step_docker_first_four: 'Start the container',
@@ -305,8 +285,7 @@ export default {
     '2. Copy the upgrade command below to execute directly in the container, the upgrade command will automatically back up, upgrade and start, if the upgrade fails, it will automatically roll back the version',
   agent_upgrade_step_docker_third:
     '3. If "Update finished." appears, it means the Agent has been successfully upgraded',
-  agent_tip_no_running:
-    'No agent available, Check the Agent running status or create a new Agent',
+  agent_tip_no_running: 'No agent available, Check the Agent running status or create a new Agent',
   connection_manage: 'Connections',
   connection_list_efficient: 'effective',
   connection_list_invalidation: 'Invalid',
@@ -340,14 +319,12 @@ export default {
   task_reset: 'Reset',
   task_reset_failed: 'Reset failed',
   task_operation_successful: 'Operation successful',
-  task_start_failed:
-    'Task failed to start, please edit the task to complete the mapping configuration',
+  task_start_failed: 'Task failed to start, please edit the task to complete the mapping configuration',
   task_not_exist: 'This task does not exist',
   task_not_allow_operation: 'Task status does not allow this operation',
   task_operation_failed: 'The operation failed, please try again',
   task_delete_confirm_title: 'Do you want to delete this task? ',
-  task_delete_confirm_message:
-    'After deleting task xxx, this task cannot be restored',
+  task_delete_confirm_message: 'After deleting task xxx, this task cannot be restored',
   task_stop_confirm_title: 'Do you want to suspend this task? ',
   task_stop_confirm_message:
     'After suspending task xxx, when the table in the task that has not been fully synchronized is started again, full synchronization will be performed again',
@@ -364,8 +341,7 @@ export default {
     'Task XXX contains aggregation processing nodes. After the task is stopped and restarted, the task will be reset first. Are you sure to stop? ',
   task_monitor_progress: 'Task progress',
   task_monitor_full_sync: 'Full synchronization overview',
-  task_monitor_full_completion_time:
-    'It is estimated that full completion will take time',
+  task_monitor_full_completion_time: 'It is estimated that full completion will take time',
   task_monitor_cdc_overview: 'Incremental synchronization overview',
   task_monitor_delay: 'Delay',
   task_monitor_progress_details: 'Progress details',
@@ -376,10 +352,8 @@ export default {
   task_monitor_status_statistice: 'Status Statistics',
   task_monitor_migrate_table_number: 'Number of tables planned to be migrated',
   task_monitor_migrate_table_rows: 'Planned migration data volume (rows)',
-  task_monitor_migrate_table_number_completed:
-    'Number of completed migration tables',
-  task_monitor_migrate_table_rows_completed:
-    'Completed migration data volume (rows)',
+  task_monitor_migrate_table_number_completed: 'Number of completed migration tables',
+  task_monitor_migrate_table_rows_completed: 'Completed migration data volume (rows)',
   task_monitor_migrate_tip:
     '*Current task progress view only supports: MySQL, Oracle, SQL Server, PostgreSQL and MongoDB',
   task_monitor_unit_row: 'Unit:/rows',
@@ -449,41 +423,32 @@ export default {
   task_mapping_dialog_to_uppercase: 'Turn to uppercase',
   task_mapping_dialog_lowercase: 'Turn to lowercase',
   task_mapping_dialog_modify_target_field_name: 'Modify target field name',
-  task_mapping_dialog_modify_target_field_type:
-    'Modify the target table field type',
-  task_mapping_dialog_modify_target_field_length:
-    'Modify the target field length',
-  task_mapping_dialog_modify_target_field_accuracy:
-    'Modify target table accuracy',
+  task_mapping_dialog_modify_target_field_type: 'Modify the target table field type',
+  task_mapping_dialog_modify_target_field_length: 'Modify the target field length',
+  task_mapping_dialog_modify_target_field_accuracy: 'Modify target table accuracy',
   task_mapping_batch_change_table_title: 'Batch change table name setting',
   task_mapping_dialog_table_name_case: 'Table name case',
-  task_mapping_dialog_rule_note:
-    'Note: The prefix and suffix of the setting also follow the capitalization rule',
+  task_mapping_dialog_rule_note: 'Note: The prefix and suffix of the setting also follow the capitalization rule',
   task_mapping_dialog_enter_prefix: 'Please enter the prefix',
   task_mapping_dialog_english_letter:
     'Starting with an English letter, only supports English, numbers, underscores, dots, and underscores, limited to 0~50 characters',
-  task_mapping_dialog_not_allow_system:
-    'Prefixes are not allowed to start with system',
+  task_mapping_dialog_not_allow_system: 'Prefixes are not allowed to start with system',
   task_mapping_dialog_enter_suffix: 'Please enter the suffix',
   task_mapping_dialog_underscore_begin:
     'Start with English letters and underscores, only support English, numbers, underscores, dots, and underscores, limited to 0~50 characters',
   task_mapping_dialog_example: 'Example',
   task_mapping_dialog_original_table_name: 'Original table name',
   task_mapping_dialog_after_modify: 'After modification',
-  task_mapping_dialog_rule_input:
-    'Please input according to the following rules:',
-  task_mapping_dialog_all_restore_defaults:
-    'Are you sure you want to restore all defaults? ',
+  task_mapping_dialog_rule_input: 'Please input according to the following rules:',
+  task_mapping_dialog_all_restore_defaults: 'Are you sure you want to restore all defaults? ',
   task_mapping_dialog_hint: 'Hint',
   task_mapping_dialog_delete_all_field_tip:
     'All fields in the current table have been deleted, and the save operation is not allowed',
-  task_mapping_dialog_restore_defaults:
-    'Are you sure you want to restore the defaults? ',
+  task_mapping_dialog_restore_defaults: 'Are you sure you want to restore the defaults? ',
   task_mapping_dialog_field_name_restrictions_tip:
     'Start with English letters and underscores, only support English, numbers, and underscores, limited to 1~50 characters',
   task_mapping_dialog_target_no_fields: 'Target model not found',
-  task_mapping_dialog_field_range_check:
-    'The current value does not meet the field range',
+  task_mapping_dialog_field_range_check: 'The current value does not meet the field range',
   task_mapping_dialog_field_type_problem:
     'It has been detected that you have a problem with the field type settings of XXX tables. Please select the problematic table in the table area on the left for processing.',
   task_mapping_dialog_target_no_fields_problem:
@@ -498,11 +463,9 @@ export default {
   operation_log_connection_create: 'Create connection',
   operation_log_connection_create_tip: 'Created a connection [@{parameter1}]',
   operation_log_connection_update: 'Edit connection',
-  operation_log_connection_update_tip:
-    'Edited the configuration information of the connection [@{parameter1}]',
+  operation_log_connection_update_tip: 'Edited the configuration information of the connection [@{parameter1}]',
   operation_log_connection_copy: 'Copy connection',
-  operation_log_connection_copy_tip:
-    'Copy connection [${parameter1}] as [@{parameter2}]',
+  operation_log_connection_copy_tip: 'Copy connection [${parameter1}] as [@{parameter2}]',
   operation_log_connection_delete: 'Delete connection',
   operation_log_connection_delete_tip: 'Connection deleted [${parameter1}]',
   operation_log_migration_create: 'Create task',
@@ -510,11 +473,9 @@ export default {
   operation_log_migration_start: 'Start task',
   operation_log_migration_start_tip: 'Task started [@{parameter1}]',
   operation_log_migration_update: 'Edit task',
-  operation_log_migration_update_tip:
-    'Edited the configuration information of task [@{parameter1}]',
+  operation_log_migration_update_tip: 'Edited the configuration information of task [@{parameter1}]',
   operation_log_migration_copy: 'Copy task',
-  operation_log_migration_copy_tip:
-    'The task [${parameter1}] was copied as [@{parameter2}]',
+  operation_log_migration_copy_tip: 'The task [${parameter1}] was copied as [@{parameter2}]',
   operation_log_migration_reset: 'Reset task',
   operation_log_migration_reset_tip: 'The task was reset [@{parameter1}]',
   operation_log_migration_delete: 'Delete task',
@@ -522,8 +483,7 @@ export default {
   operation_log_migration_stop: 'Stop task',
   operation_log_migration_stop_tip: 'The task has been stopped [@{parameter1}]',
   operation_log_migration_forceStop: 'Force stop task',
-  operation_log_migration_forceStop_tip:
-    'The task was forcibly stopped [@{parameter1}]',
+  operation_log_migration_forceStop_tip: 'The task was forcibly stopped [@{parameter1}]',
   operation_log_agent_create: 'Create agent',
   operation_log_agent_create_tip: 'Create a agent [@{parameter1}]',
   operation_log_agent_stop: 'Stop agent',
@@ -531,27 +491,21 @@ export default {
   operation_log_agent_delete: 'Delete agent',
   operation_log_agent_delete_tip: 'Delete a Agent [${parameter1}]',
   operation_log_agent_rename: 'Modify Agent name',
-  operation_log_agent_rename_tip:
-    'Modify the Agent name [${parameter2}] to [@{parameter1}]',
+  operation_log_agent_rename_tip: 'Modify the Agent name [${parameter2}] to [@{parameter1}]',
   operation_log_agent_update: 'Agent upgrade',
   operation_log_agent_update_tip: 'Agent upgrade has been carried out',
   operation_log_inspect_create: 'New data verification',
-  operation_log_inspect_create_tip:
-    'Create a new data verification task [@{parameter1}]',
+  operation_log_inspect_create_tip: 'Create a new data verification task [@{parameter1}]',
   operation_log_inspect_start: 'Perform data verification',
-  operation_log_inspect_start_tip:
-    'Perform data verification task [@{parameter1}]',
+  operation_log_inspect_start_tip: 'Perform data verification task [@{parameter1}]',
   operation_log_inspect_update: 'Edit data verification',
-  operation_log_inspect_update_tip:
-    'Data verification task edited [@{parameter1}]',
+  operation_log_inspect_update_tip: 'Data verification task edited [@{parameter1}]',
   operation_log_inspect_delete: 'Delete data verification',
-  operation_log_inspect_delete_tip:
-    'Data verification task [${parameter1}] is deleted',
+  operation_log_inspect_delete_tip: 'Data verification task [${parameter1}] is deleted',
   operation_log_difference_inspect_start: 'Perform difference check',
   operation_log_difference_inspect_start_tip:
     'Difference check was performed on the data verification task [@{parameter1}]',
-  operation_log_modify_connection_name:
-    'Modify the connection name from [${parameter2}] to [@{parameter1}]',
+  operation_log_modify_connection_name: 'Modify the connection name from [${parameter2}] to [@{parameter1}]',
   operation_log_modular_name_user_center: 'User center',
   message_exists_name: 'Name already exists',
   milestone_btn_check_error: 'View the cause of the error',
@@ -577,8 +531,7 @@ export default {
   dataFlow_totalInsert: 'Total insertion',
   dataFlow_totalUpdate: 'Total update',
   dataFlow_totalDelete: 'Total deletion',
-  RequestErrorMessage_error_title:
-    'There is an error currently. Please refresh the page',
+  RequestErrorMessage_error_title: 'There is an error currently. Please refresh the page',
   RequestErrorMessage_code_label: 'Error code:',
   RequestErrorMessage_req_id_label: 'Request ID:',
   RequestErrorMessage_error_detail_label: 'Error details',
@@ -591,12 +544,10 @@ export default {
   field_mapping_field_mapping_dialog_changDu: 'length',
   field_mapping_field_mapping_dialog_jingDu: 'accuracy',
   field_mapping_field_mapping_dialog_tianJia: 'add to',
-  field_mapping_field_mapping_dialog_qingShuRuBiaoMing:
-    'Please enter the table name',
+  field_mapping_field_mapping_dialog_qingShuRuBiaoMing: 'Please enter the table name',
   field_mapping_main_jieKouQingQiuShi: 'Interface request failed',
   filter_bar_DatetimeRange_zhi: 'to',
-  components_InlineInput_ziFuChangDuXian:
-    'The character length is limited to {val1} - {val2} characters',
+  components_InlineInput_ziFuChangDuXian: 'The character length is limited to {val1} - {val2} characters',
   components_RequestErrorMessage_yiFuZhi: 'Copied',
   components_SelectList_meiYouGengDuoShu: 'No more data',
   components_TableFilter_quanBu: 'whole',
@@ -614,12 +565,9 @@ export default {
     '2. Copy the following commands and execute them in the tapdata directory, which includes the download and operation of images, and the download, automatic deployment and startup of tapdata agent',
   agent_download_AgentDownloadModal_dengDaiMingLingZhi:
     '3. Wait for the command execution to complete the installation and startup of tapdata agent.',
-  agent_download_AgentDownloadModal_buShuZhuangTaiJian:
-    'Deployment status detection in progress',
-  agent_download_AgentDownloadModal_gongXiNinWanCheng:
-    'Congratulations on completing the deployment.',
-  agent_download_AgentDownloadModal_kaiShiChuangJianLian:
-    'Start creating connection',
+  agent_download_AgentDownloadModal_buShuZhuangTaiJian: 'Deployment status detection in progress',
+  agent_download_AgentDownloadModal_gongXiNinWanCheng: 'Congratulations on completing the deployment.',
+  agent_download_AgentDownloadModal_kaiShiChuangJianLian: 'Start creating connection',
   agent_download_AgentDownloadModal_jinRuGongZuoTai: 'Enter the workbench',
   agent_download_UpgradeVersion_dOCKE: 'Docker exec - it container ID Bash',
   agent_download_UpgradeVersion_dOCKE2: 'Docker start container ID',
@@ -631,8 +579,7 @@ export default {
   views_Error_ninDeZhangHuYi:
     'Your account has been suspended and cannot order products. Please recharge in time or contact the account manager.',
   views_Error_chanPinYiXiaJia: 'The product has been taken off the shelf',
-  views_Error_feiChangBaoQianChan:
-    "I'm very sorry, the product has been taken off the shelf",
+  views_Error_feiChangBaoQianChan: "I'm very sorry, the product has been taken off the shelf",
   instance_Instance_anIDShiLi: 'Search by ID / instance name',
   instance_Instance_tHIST: '，{val1}：{val2}%',
   monitor_Dashboard_cuoWu: 'error',
@@ -651,8 +598,7 @@ export default {
   operation_log_List_shanChuQuanBuTong: 'Delete all notifications',
   operation_log_List_shanChuLeQuanBu: 'All notifications deleted',
   operation_log_List_biaoJiTongZhiWei: 'Mark notification as read',
-  operation_log_List_jiangXuanZhongDeTong2:
-    'Mark all selected notifications as read',
+  operation_log_List_jiangXuanZhongDeTong2: 'Mark all selected notifications as read',
   operation_log_List_shanChuTongZhi: 'Delete notification',
   operation_log_List_jiangXuanZhongDeTong: 'Delete all selected notifications',
   operation_log_List_xiuGaiTongZhiShe: 'Modify notification settings',
@@ -680,20 +626,17 @@ export default {
   user_Center_dangQianShouJi: 'Current phone:',
   user_Center_qingShuRuDangQian: 'Please enter the current mobile phone',
   user_Center_shouJiYanZhengMa: 'Mobile phone verification code:',
-  user_Center_qingShuRuShouJi:
-    'Please enter the mobile phone verification code',
+  user_Center_qingShuRuShouJi: 'Please enter the mobile phone verification code',
   user_Center_xinMiMa: 'New password:',
   user_Center_qingShuRuXinMi: 'Please enter a new password',
   user_Center_queRenMiMa: 'Confirm password:',
   user_Center_yanZhengMa: 'Verification Code:',
   user_Center_jiuShouJiYanZheng: 'Old mobile phone verification code:',
-  user_Center_qingShuRuJiuShou:
-    'Please enter the old mobile phone verification code',
+  user_Center_qingShuRuJiuShou: 'Please enter the old mobile phone verification code',
   user_Center_xinShouJi: 'New phone:',
   user_Center_qingShuRuXinShou2: 'Please enter a new phone',
   user_Center_xinShouJiYanZheng: 'New mobile phone verification code:',
-  user_Center_qingShuRuXinShou:
-    'Please enter the new mobile phone verification code',
+  user_Center_qingShuRuXinShou: 'Please enter the new mobile phone verification code',
   user_Center_bangDingWeiXin: 'Binding wechat',
   user_Center_youXiang: 'Email:',
   user_Center_qingShuRuYouXiang: 'Please enter email address',
@@ -713,13 +656,10 @@ export default {
   user_Center_suoShuHangYe: 'Industry:',
   user_Center_suoShuChengShi: 'City:',
   user_Center_qiYeXinXiXiu: 'Enterprise information modification',
-  user_Center_zhiChiJPG:
-    'Support JPG, PNG and GIF formats, and the image size should be within 500kb',
-  user_Center_qingShiYongWeiXin:
-    'Please use wechat scanning QR code to bind tapdata cloud',
+  user_Center_zhiChiJPG: 'Support JPG, PNG and GIF formats, and the image size should be within 500kb',
+  user_Center_qingShiYongWeiXin: 'Please use wechat scanning QR code to bind tapdata cloud',
   user_Center_xiuGaiNiChengCheng: 'Successfully modified nickname',
-  user_Center_shangChuanTouXiangTu:
-    'Upload avatar image size can not exceed 500kb.',
+  user_Center_shangChuanTouXiangTu: 'Upload avatar image size can not exceed 500kb.',
   user_Center_xiuGaiTouXiangCheng: 'Successfully modified Avatar',
   user_Center_qingXianBangDingShou: 'Please bind your mobile number first',
   user_Center_bangDingShouJi: 'Binding mobile phone',
@@ -739,18 +679,13 @@ export default {
   workbench_Notice_tAPDA12: 'Tapdata cloud version 1.0.9 has been released.',
   workbench_Notice_tAPDA11:
     'Tapdata cloud is the first heterogeneous database real-time synchronization cloud platform in China. At present, it supports Oracle, mysql, PG, SQL server, mongodb and es, Dameng, Kafka, GP, MQ, Clickhouse, hazelcast cloud, ADB mysql, ADBThe data synchronization among PostgreSQL, kundb, tidb and dummy will support DB2, Sybase ASE, redis, gbase and gaussdbAnd permanently free to users.',
-  workbench_Notice_buDuanYouHuaTi:
-    '2. Continuously optimize and provide better experience',
-  workbench_Notice_zaiChuangJianLianJie:
-    'When creating a connection, the user can select the connection type',
-  workbench_Notice_benCiXinZengRi:
-    'The new log filtering function enables users to filter through log filtering',
-  workbench_Notice_zhiChiPiLiangCao:
-    '3. Support batch operation and better experience',
+  workbench_Notice_buDuanYouHuaTi: '2. Continuously optimize and provide better experience',
+  workbench_Notice_zaiChuangJianLianJie: 'When creating a connection, the user can select the connection type',
+  workbench_Notice_benCiXinZengRi: 'The new log filtering function enables users to filter through log filtering',
+  workbench_Notice_zhiChiPiLiangCao: '3. Support batch operation and better experience',
   workbench_Notice_ziDuanYingSheBu:
     'In the field mapping part, the table name, field name and case settings support user batch adjustment, which is simple and fast, and greatly improves the processing efficiency.',
-  workbench_Notice_duoWeiDuTongJi:
-    '4. Multi dimensional statistics, more intuitive understanding of task progress',
+  workbench_Notice_duoWeiDuTongJi: '4. Multi dimensional statistics, more intuitive understanding of task progress',
   workbench_Notice_banBenDuiShuJu:
     'Version 1.0.9 optimizes the details of database synchronization tasks. Users can see the synchronization progress and the synchronization process at a glance.',
   workbench_Notice_shengJiGongGao: 'Upgrade announcement.',
@@ -772,17 +707,13 @@ export default {
   workbench_Notice_gengXinSuLan: 'Update quick view 👇',
   workbench_Notice_zhiChi: '1. Support',
   workbench_Notice_sheZhiZengLiangCai: 'Set incremental acquisition time point',
-  workbench_Notice_zengLiangRenWuKe:
-    ', the start time of acquisition can be customized for incremental tasks',
-  workbench_Notice_zhiChiShuJuYuan:
-    '2. Support data source updating and data connection',
+  workbench_Notice_zengLiangRenWuKe: ', the start time of acquisition can be customized for incremental tasks',
+  workbench_Notice_zhiChiShuJuYuan: '2. Support data source updating and data connection',
   workbench_Notice_xinZengMAR: 'Added MariaDB support',
   workbench_Notice_xiJieGengXinYou:
     '3. Detail update: the pop-up prompt for editing "run tasks" is optimized to avoid misoperation',
-  workbench_Notice_zhiChiSheZhiZeng:
-    'Support setting incremental acquisition time point',
-  workbench_Notice_gongNengShengJiCao:
-    'More flexible function upgrade operation',
+  workbench_Notice_zhiChiSheZhiZeng: 'Support setting incremental acquisition time point',
+  workbench_Notice_gongNengShengJiCao: 'More flexible function upgrade operation',
   workbench_Notice_zhenDuiLiShiBan:
     'In the historical version, the time cannot be specified when setting the incremental task, and the incremental data collection starts from the "current time" by default. Now it has been optimized - in the new version, the incremental task can customize the incremental collection time point. By opening the incremental task setting, you can manually add the "incremental acquisition start time", meet the operation requirements in the real business scenario, and focus on the continuous optimization of the use experience.',
   workbench_Notice_ruGuoNiDeQuan:
@@ -791,15 +722,13 @@ export default {
     'At present, the optimization has covered mysql, SQL server, Oracle and mongodbMultiple databases including. For the support of other databases, the follow-up will also be opened one after another. Please look forward to it.',
   workbench_Notice_shuJuYuanZaiShang: 'New data source',
   workbench_Notice_mARIA: 'MariaDB has now joined the tapdata cloud',
-  workbench_Notice_yiGouShuJuKu:
-    'Heterogeneous database real-time synchronization family',
+  workbench_Notice_yiGouShuJuKu: 'Heterogeneous database real-time synchronization family',
   workbench_Notice_zuoWeiGuoNeiShou3:
     'As the first heterogeneous database real-time synchronization cloud platform in China, tapdata cloudBreak the system and data type restrictions, support diversified data sources and drag-and-drop "zero" code configuration operation, and truly realize cross system and cross type data synchronization and exchange with strong data processing ability, so that you can release the energy in the data preparation stage and focus more on the development and innovation of data business.',
   workbench_Notice_benCiGengXinZhong3:
     'In this update, MariaDB support is added to the data connection, and another piece of data source layout that can be supported is added. Look, these are all the rivers and mountains that tapdata cloud has "fought" for you:',
   workbench_Notice_xiJieYouHua: 'Detail optimization',
-  workbench_Notice_weiXiaoDanTieXin2:
-    'Small but intimate use is more reassuring',
+  workbench_Notice_weiXiaoDanTieXin2: 'Small but intimate use is more reassuring',
   workbench_Notice_yongHuDaoXiangXi2:
     'User oriented, detail oriented - this time, we optimized the pop-up prompt for editing running tasks. Ding Dong, there are running tasks ahead. If you modify the task settings, you must reset them after submitting them to run normally. Please operate with caution.',
   workbench_Notice_zhongShiChengZhangLu2:
@@ -813,27 +742,22 @@ export default {
   workbench_Notice_kaiShiZhiChiYun: 'Start supporting cloud database access',
   workbench_Notice_benLunXinZengA:
     ', aliyun is added in this roundMariaDB, aliyun mongodb, aliyun RDS for sqlserver, aliyun RDS for PG, aliyun RDS for MySQL as the source and target;',
-  workbench_Notice_youHuaWIN:
-    'Optimize Windows version packaging and installation process',
-  workbench_Notice_liuChengGengQingXi:
-    ', clearer process and simpler deployment operation;',
+  workbench_Notice_youHuaWIN: 'Optimize Windows version packaging and installation process',
+  workbench_Notice_liuChengGengQingXi: ', clearer process and simpler deployment operation;',
   workbench_Notice_xinZengYongHuZhong2: 'Add user center module',
   workbench_Notice_zhiChiXiuGaiZhu:
     ': support the modification of initial registration information, including the editing of nickname, avatar, password and enterprise information, as well as the new binding and switching of mobile phone number and email;',
   workbench_Notice_xinZengRenWuShu2: 'New task data visualization module',
   workbench_Notice_yongHuGongZuoTai:
     ': the "daily data volume trend chart of task" can be seen on the user workbench ➕ "Cumulative data volume chart"',
-  workbench_Notice_shuJuLianJieYou2:
-    'The data connection is new again, and the "cloud" is coming',
+  workbench_Notice_shuJuLianJieYou2: 'The data connection is new again, and the "cloud" is coming',
   workbench_Notice_zuoWeiGuoNeiShou:
     'As the first heterogeneous database real-time synchronization cloud platform in China, tapdata cloudContinuously expand the data connection layout that can be supported, strive to meet the diversified data sources and target needs of users, and truly realize the "comprehensive breaking wall" of real-time data synchronization.',
   workbench_Notice_mianDuiDaLiangYong:
     'Facing the urgent needs of a large number of users to connect to the cloud database, tapdata cloud gives priority to response. In this update, aliyun MariaDB and aliyun are supportedMongodb, aliyun RDS for sqlserver, aliyun RDS for PG and aliyun RDS for MySQL are the source and target. Zoom in and see tapdataLatest achievements of cloud "wall breaking operation" 👇：',
   workbench_Notice_wINDO: 'Windows version process optimization',
-  workbench_Notice_shaGuaMoShiZai:
-    '"Fool mode" is upgraded, installed and deployed more efficiently',
-  workbench_Notice_tAPDA6:
-    'Is the installation and deployment of tapdata cloud easy to use? We can be simpler 👉',
+  workbench_Notice_shaGuaMoShiZai: '"Fool mode" is upgraded, installed and deployed more efficiently',
+  workbench_Notice_tAPDA6: 'Is the installation and deployment of tapdata cloud easy to use? We can be simpler 👉',
   workbench_Notice_benCiGengXinZhong2:
     'This update focuses on the re optimization of Windows version operation process:',
   workbench_Notice_zaiAGEN:
@@ -846,8 +770,7 @@ export default {
   workbench_Notice_niDeGeXingHua: 'Your new personalization feature is online',
   workbench_Notice_xiangYaoZiZhuXiu:
     'If you want to modify the initial registration information, set the avatar / nickname / password, or bind a new mobile phone number and email, the entrance is coming. Hover over the personal account in the upper right corner, select the [user center] tab in the drop-down menu, and click to enter the personal and enterprise information editing interface.',
-  workbench_Notice_xinZengRenWuShu:
-    'Statistical chart display of new task data volume',
+  workbench_Notice_xinZengRenWuShu: 'Statistical chart display of new task data volume',
   workbench_Notice_yinWeiKeShiSuo: "It's clearer because it's visible",
   workbench_Notice_zheYiCiWoMen:
     'This time, we also added "daily data volume trend chart" and "cumulative quantity chart" at the bottom of the [user workbench]. You can click to enter the workbench and slide down to view your task data statistics - a direct view of a table to make your task clearer.',
@@ -859,24 +782,20 @@ export default {
     'The requirements are continuously updated and optimized all the time - the March version of tapdata cloud is updated again.',
   workbench_Notice_zuiXinFaBuDe3:
     'Newly released 2.1.1In the version, Tencent\'s cloud database connection is new. While expanding the access area of cloud database again, it adheres to the iterative guidance of giving priority to user experience and focuses on removing three "small nails" that are easy to kick in the past use.',
-  workbench_Notice_shuJuLianJieShang:
-    'New data connection and new cloud database access',
+  workbench_Notice_shuJuLianJieShang: 'New data connection and new cloud database access',
   workbench_Notice_ciFanZengJiaLe:
     ': tencentdb for is added this timeMysql, tencentdb for MariaDB, tencentdb for PG, tencentdb for sqlserver, and tencentdb mongodbAs source and target;',
   workbench_Notice_kaiShiZhiChiRen: 'Start supporting task "scheduled release"',
   workbench_Notice_quanLiangRenWuKe2:
     '1. The "execution cycle" can be specified for the "full quantity" task, and the "planned running time" can also be set for the "full quantity + increment" & "increment" taskSecond, liberate migrant workers, non working hours are not hard;',
-  workbench_Notice_kaiShiZhiChiZhi:
-    'Start to support "revalidation" of specified single table or multiple tables',
+  workbench_Notice_kaiShiZhiChiZhi: 'Start to support "revalidation" of specified single table or multiple tables',
   workbench_Notice_shuJuJiaoYanHuan:
     ": in the data verification phase, you can independently initiate re verification for tables with inconsistent verification. You don't have to start from scratch, and you're not afraid of a large amount of data and multiple tables;",
-  workbench_Notice_ziDuanYingSheGuo2:
-    'Single table name modification is supported during field mapping',
+  workbench_Notice_ziDuanYingSheGuo2: 'Single table name modification is supported during field mapping',
   workbench_Notice_zaiYuanYouDePi:
     ': on the basis of the original batch table name change, the modification for a single table name is added to realize the freedom of table name change and easier operation.',
   workbench_Notice_yunShuJuKuJie: 'New cloud database access',
-  workbench_Notice_banTuYouJianXin:
-    'The territory has seen a new look, and Tencent cloud database has now settled in',
+  workbench_Notice_banTuYouJianXin: 'The territory has seen a new look, and Tencent cloud database has now settled in',
   workbench_Notice_zuoWeiGuoNeiShou2:
     'As the first heterogeneous database real-time synchronization cloud platform in China, tapdata cloudContinuously expand the data connection layout that can be supported, strive to meet the diversified data sources and target needs of users, and truly realize the "comprehensive breaking wall" of real-time data synchronization',
   workbench_Notice_jiBanBenShouCi:
@@ -887,12 +806,10 @@ export default {
   workbench_Notice_hINiDeRen: 'Hi, your task has been released regularly',
   workbench_Notice_buBeiDongJiaBan:
     'Do not work overtime passively. Start by setting the "execution cycle" and "running" time independently',
-  workbench_Notice_haiZaiWeiXuYao2:
-    'Are you still depressed about the need to start tasks during non working hours?',
+  workbench_Notice_haiZaiWeiXuYao2: 'Are you still depressed about the need to start tasks during non working hours?',
   workbench_Notice_haiZaiWeiXuYao:
     'Are you still having a headache about the need to manually start periodic full-scale tasks over and over again?',
-  workbench_Notice_niXiangYaoDeRen:
-    '——The "scheduled release of tasks" function you want is online.',
+  workbench_Notice_niXiangYaoDeRen: '——The "scheduled release of tasks" function you want is online.',
   workbench_Notice_quanLiangZengLiangJi:
     'For [full amount + increment] and [increment] tasks, "start time" can be specified',
   workbench_Notice_zhenDuiQuanLiangZeng:
@@ -901,38 +818,31 @@ export default {
     'Specific process: open the setting and display the time selection control → select the planned running time as needed, and the optional time is: [current time, + ∞) → complete other settings and save the task → the task is triggered to start and run at the specified time',
   workbench_Notice_shouDongHuaZhongDian:
     '(* manually highlight: if [task save time] ≥ [planned run time], the task will start when the settings are saved successfully,',
-  workbench_Notice_baoCunQianQingWu:
-    'Please carefully check whether the time setting is correct before saving',
+  workbench_Notice_baoCunQianQingWu: 'Please carefully check whether the time setting is correct before saving',
   workbench_Notice_daKaiSheZhi: 'Open Settings',
   workbench_Notice_xuanZeYunXingShi: 'Select run time',
-  workbench_Notice_sheZhiShiJianQian:
-    'The task was not started before the time was set',
+  workbench_Notice_sheZhiShiJianQian: 'The task was not started before the time was set',
   workbench_Notice_sheZhiShiJianDao: 'When the set time is up, the task starts',
-  workbench_Notice_quanLiangRenWuKe:
-    '[full quantity] task can specify "operation cycle"',
+  workbench_Notice_quanLiangRenWuKe: '[full quantity] task can specify "operation cycle"',
   workbench_Notice_zhenDuiQuanLiangRen:
     'For the [full volume] task, the [scheduled task] setting is added in the task attribute setting. This setting is also closed by default and can be selected on demand.',
   workbench_Notice_juTiLiuChengDa:
     'Specific process: open the setting and display the [scheduling expression] input box → hover the help icon to display the input help and sample of cron expression → fill in the task cycle according to the instructions and actual needs → complete other settings and save the task → the task runs stably according to the set fixed time, date and interval',
   workbench_Notice_zhiLuShuRuKuang:
     'After the direction input box, you can see the instructions for filling in the dispatching expression',
-  workbench_Notice_shiLiSheZhiTiao:
-    'Example: set the scheduling cycle to run every five minutes',
+  workbench_Notice_shiLiSheZhiTiao: 'Example: set the scheduling cycle to run every five minutes',
   workbench_Notice_renWuWeiQiDong: 'Task not started',
   workbench_Notice_renWuDiYiCi: 'The task starts for the first time',
   workbench_Notice_renWuZaiCiQi: 'The task starts again',
-  workbench_Notice_zhiChiDuiZhiDing:
-    'Supports re verification of the specified table',
+  workbench_Notice_zhiChiDuiZhiDing: 'Supports re verification of the specified table',
   workbench_Notice_zhiYouGeBieBiao:
     'Only individual table verification is inconsistent? Now you can delimit a small area and recheck it.',
   workbench_Notice_congZheYiBanKai2:
     '📣 From this version, when there is a problem of inconsistent data verification, there is no need to re perform the whole verification task.',
   workbench_Notice_xinBanBenZhiChi2:
     'The new version supports selecting one or more tables from the current execution results on the data verification results page to start the data verification task again. The task execution status and results will directly update the current verification results. Come back byeBye, efficiency high~',
-  workbench_Notice_ziDuanYingSheShi:
-    'Field mapping supports modifying a single table name',
-  workbench_Notice_daPoJuXianGeng:
-    'Break the limitations and be more convenient',
+  workbench_Notice_ziDuanYingSheShi: 'Field mapping supports modifying a single table name',
+  workbench_Notice_daPoJuXianGeng: 'Break the limitations and be more convenient',
   workbench_Notice_tAPDA5:
     'Tapdata Cloud 2.1.1In view of the limitations of the function of "only supporting batch change of table name" in the historical version in the actual operation environment, starting from the actual needs of users, the ability of "single table name modification" is added on the basis of the original function of "batch change of table name".',
   workbench_Notice_xinGongNengXiaYong: 'Under the new function, users can:',
@@ -941,10 +851,8 @@ export default {
   workbench_Notice_yuanBiaoShuJu: 'Source table data',
   workbench_Notice_xieRu: 'write in',
   workbench_Notice_zhiDingMuBiaoBiao: 'Specify target table',
-  workbench_Notice_tongGuoXiuGaiMu:
-    'By modifying the target table name to the same table name, the',
-  workbench_Notice_duoGeJieGouXiang:
-    'Multiple source tables with the same structure',
+  workbench_Notice_tongGuoXiuGaiMu: 'By modifying the target table name to the same table name, the',
+  workbench_Notice_duoGeJieGouXiang: 'Multiple source tables with the same structure',
   workbench_Notice_tongYiMuBiaoBiao: 'Same target table',
   workbench_Notice_tAPDA4:
     'Tapdata cloud 2.1.2 is coming: big wave details are ready. Field types can be modified in batch, support wechat code scanning login, and add Vika as the goal',
@@ -968,24 +876,19 @@ export default {
     '✔️ When creating a connection, you can quickly search and locate the data source and target through the connection type and connection name',
   workbench_Notice_kaiShiZhiChiV: 'Start supporting Vika as a goal',
   workbench_Notice_shuJuLianJieYou: 'Data connection adds new members',
-  workbench_Notice_qingLiangQingLiangGeng:
-    'Light weight + light weight = easier to use',
+  workbench_Notice_qingLiangQingLiangGeng: 'Light weight + light weight = easier to use',
   workbench_Notice_benCiGengXinZhong:
     'The new data target Vika in this updateVig table integrates the underlying visual database, spreadsheet, real-time network collaboration and low code development technology, making data management lightweight. When the lightweight heterogeneous data real-time synchronization tool meets the lightweight data management tool, it will be created in the new era of digitization1 + 1 > 2. Users with tapdata cloudIt can quickly import business system and other data into wig table, and provide a stable and reliable digital basis for more agile use of wig table for team data collaboration and project management. So far, tapdataCloud data connection sites expanded to',
-  workbench_Notice_lingFuCaoZuoYan:
-    'An operation demonstration is attached. Click to see how to',
+  workbench_Notice_lingFuCaoZuoYan: 'An operation demonstration is attached. Click to see how to',
   workbench_Notice_jiangXueShengChengJi: 'Import student grades into Vika',
   workbench_Notice_2: '：',
-  workbench_Notice_caoZuoYanShiJiang:
-    'Operation demonstration: import student scores into Vika',
-  workbench_Notice_zhiChiZiDuanLei:
-    'Batch modification of field types is supported',
+  workbench_Notice_caoZuoYanShiJiang: 'Operation demonstration: import student scores into Vika',
+  workbench_Notice_zhiChiZiDuanLei: 'Batch modification of field types is supported',
   workbench_Notice_ziDuanLeiXingZhuan:
     'What should I do if the field type conversion exception causes an error in the task? Now you can modify it manually.',
   workbench_Notice_tAPDA3:
     'Tapdata Cloud 2.1.2Aiming at the problem of task errors caused by abnormal field type conversion during data migration in the historical version, it began to support batch modification of field types (you can choose to apply to all tables of the current task during modification), providing users with the ability to manually modify the field type conversion mapping relationship.',
-  workbench_Notice_shiXianSaoMaZhu:
-    'Realize code scanning registration and login',
+  workbench_Notice_shiXianSaoMaZhu: 'Realize code scanning registration and login',
   workbench_Notice_jiSaoJiYongKuai: 'Scan and use quickly',
   workbench_Notice_zhangHaoMiMaRong:
     'Account and password are easy to mix, and SMS verification has to wait. What if you want to log in quickly?',
@@ -993,12 +896,10 @@ export default {
     '📣 From now on, after scanning wechat, you can start your trip of real-time synchronization of heterogeneous data in tapdata cloud - the new version of tapdata cloudSupport new users to quickly register and log in with one click through wechat scanning code, making the first step of the journey more convenient; At the same time, it also supports old users to bind their existing accounts through wechat to optimize their login experience.',
   workbench_Notice_chuCiSaoMaDeng:
     'The first time you scan the code and log in, you can synchronously follow the tapdata official account, get first-hand information such as first-line case analysis and the new version of the operation guide at the first time, and master all the popular information.',
-  workbench_Notice_weiXiaoDanTieXin:
-    'Small but intimate, and the use experience is constantly upgraded',
+  workbench_Notice_weiXiaoDanTieXin: 'Small but intimate, and the use experience is constantly upgraded',
   workbench_Notice_yongHuDaoXiangXi:
     'User oriented, detail oriented - this time, we optimized the SMS notification strategy and the connection creation process.',
-  workbench_Notice_ziZhuKaiGuanDuan:
-    'Self service switch SMS notification permission',
+  workbench_Notice_ziZhuKaiGuanDuan: 'Self service switch SMS notification permission',
   workbench_Notice_aGENT:
     "Agent offline prompt, agent operation notification, task exception alarm - don't want to be frequently disturbed by unnecessary SMS reminders?",
   workbench_Notice_xinBanBenDeDuan:
@@ -1010,8 +911,7 @@ export default {
     'The new version supports quick search and location of data sources and targets through connection type filtering and fuzzy query of connection name when creating connections - all changes are for easier use.',
   workbench_Notice_tAPDA2:
     'Tapdata 2.1.3 is coming: Apache Doris is added as the target, and the task query is faster.',
-  workbench_Notice_xuQiuChiXuGeng:
-    'Requirements are constantly updated and optimized - tapdata cloud 2.1.3 is coming.',
+  workbench_Notice_xuQiuChiXuGeng: 'Requirements are constantly updated and optimized - tapdata cloud 2.1.3 is coming.',
   workbench_Notice_zuiXinFaBuDe:
     'In the newly released version, in addition to supporting Apache Doris, the query of task log is also more humanized.',
   workbench_Notice_xinZengZhiChiA: 'New support for Apache Doris',
@@ -1021,16 +921,14 @@ export default {
   workbench_Notice_kaiShiZhiChiZai:
     ': start to support the direct export of logs on the task operation monitoring page, making the query faster;',
   workbench_Notice_kaiShiZhiChiD: 'Start supporting Doris as the goal',
-  workbench_Notice_qiangQiangLianShouGong:
-    'Join hands to build the next generation data architecture',
+  workbench_Notice_qiangQiangLianShouGong: 'Join hands to build the next generation data architecture',
   workbench_Notice_suiZheXinXingGuo:
     'With the continuous emergence of emerging domestic databases, tapdata cloud continues to work with more high-quality domestic databases. The new data target Apache in this updateDoris, also launched recently',
   workbench_Notice_tAPDA: 'Tapdata PDK ecological co construction plan',
   workbench_Notice_deShouPiGongJian:
     'One of the first co construction partners will work with tapdataJoin hands to break the data island, build a next-generation data architecture, and provide users with an efficient and unified data application and analysis platform.',
   workbench_Notice_zhiCiTAP: 'So far, tapdata cloud',
-  workbench_Notice_shuJuLianJieJu:
-    'Number of data connection sites expanded to',
+  workbench_Notice_shuJuLianJieJu: 'Number of data connection sites expanded to',
   workbench_Notice_xiaoYouHuaGengTie: 'Small optimization, more intimate',
   workbench_Notice_congZheYiBanKai:
     "📣 From this version, when you need to query the task log, you don't need to go back to the agent to pull it.",
@@ -1050,25 +948,21 @@ export default {
   workbench_Notice_shuJuLianJieShang1: 'New data connection',
   workbench_Notice_xinZengZhiChiA1:
     ': Alibaba cloud polardb MySQL is supportedAs the source and target, the new platform "light flow" supporting codeless system is added as the target;',
-  workbench_Notice_ziDongBiaoJiBu:
-    'Unsupported field types are automatically marked',
+  workbench_Notice_ziDongBiaoJiBu: 'Unsupported field types are automatically marked',
   workbench_Notice_duiYuYiJingMing:
     ': for the field type that does not support synchronization, it is marked as not supported by default during field mapping. Quickly locate and delete to ensure the normal operation of the task.',
   workbench_Notice_shuJuLianJieZai: 'Add new members to data connection',
-  workbench_Notice_chiXuDaZaoDe:
-    'Continue to create a user experience of 1 + 1 > 2',
+  workbench_Notice_chiXuDaZaoDe: 'Continue to create a user experience of 1 + 1 > 2',
   workbench_Notice_zuoWeiGuoNeiShou1:
     'As the first heterogeneous database real-time synchronization cloud platform in China, tapdata cloudContinuously expand the data connection layout that can be supported, strive to meet the diversified data sources and target needs of users, and truly realize the "comprehensive breaking wall" of real-time data synchronization. 2.1.4New partners have joined the version:',
-  workbench_Notice_xinZengZhiChiP:
-    'Polardb MySQL is added as the source and target',
+  workbench_Notice_xinZengZhiChiP: 'Polardb MySQL is added as the source and target',
   workbench_Notice_suiZheXinXingGuo1:
     'With the continuous emergence of emerging domestic databases, tapdata cloud continues to work with more high-quality domestic databases. The latest access in this update',
   workbench_Notice_aLiYunPO: 'Alibaba cloud polardb MySQL',
   workbench_Notice_tongShiYeShiJin: 'It was also launched recently',
   workbench_Notice_deShouPiGongJian1:
     'One of the first co construction partners will work with tapdata to provide users with a better data as a service (DAAS) experience,Jointly prosper the cloud native distributed database ecosystem.',
-  workbench_Notice_xinZengZhiChiQing:
-    'Added support for "light flow" as the target',
+  workbench_Notice_xinZengZhiChiQing: 'Added support for "light flow" as the target',
   workbench_Notice_mianDuiJinJiZhong:
     'In the face of the SaaS wave under attack and aiming at the diversified target needs of users, tapdata cloud plans steadily and continues to work together. The new version starts to support high quality',
   workbench_Notice_sAASFu: 'SaaS service tool "light flow"',
@@ -1076,8 +970,7 @@ export default {
     'For data targets. As a codeless system building platform, light flow supports 0 code and quickly builds business systems, which can effectively improve work efficiency and reduce management costs. When the lightweight heterogeneous data real-time synchronization tool meets the lightweight digital management tool, the ease of use of the two can be doubled. User assistanceTapdata cloud quickly imports business data into light flow, providing stable and reliable data support for more agile use of light flow for digital management.',
   workbench_Notice_ziDongBiaoJi: 'Automatic marking',
   workbench_Notice_buZhiChiDeZi: 'Unsupported field type',
-  workbench_Notice_kuaiSuDingWeiShan:
-    'Quickly locate and delete, and the task runs unimpeded',
+  workbench_Notice_kuaiSuDingWeiShan: 'Quickly locate and delete, and the task runs unimpeded',
   workbench_Notice_zhenDuiLiShiBan1:
     'In the historical version, errors are reported because the special field types in some databases do not support synchronization, which affects the normal operation of the task. The new version gives a solution:',
   workbench_Notice_gaiBanBenXiaDui:
@@ -1111,8 +1004,7 @@ export default {
   workbench_Notice_kaiShiZhiChiZi:
     'Avoid supporting custom adjustment of JVM configuration at the beginning, and effectively:Memory overflow caused by agent startup.',
   workbench_Notice_shuJuLianJieZai1: 'Add new members to data connection',
-  workbench_Notice_pOLAR:
-    'Polardb, PostgreSQL and Amazon RDS for MySQL are connected',
+  workbench_Notice_pOLAR: 'Polardb, PostgreSQL and Amazon RDS for MySQL are connected',
   workbench_Notice_zuoWeiGuoNeiShou12:
     'As the first heterogeneous database real-time synchronization cloud platform in China, tapdata cloudContinuously expand the data connection layout that can be supported, strive to meet the diversified data sources and target needs of users, and truly realize the "comprehensive breaking wall" of real-time data synchronization.',
   workbench_Notice_jiBanBenShouCi1:
@@ -1126,8 +1018,7 @@ export default {
     'If the task reports an error, what should I do if I want to query the error log faster?',
   workbench_Notice_congZheYiBanBen:
     "📣 Starting from this version, log query will be faster. When a task runs in error, you don't need to go back to the operation monitoring page to export the error log. You can preview the error information directly through the pop-up window. At the same time, you can get the complete log query entry at the bottom of the pop-up window. You can click directly to the log display page for quick viewing and quick positioning, which is more convenient to use.",
-  workbench_Notice_renWuBaoCuoDian:
-    'The task reports an error. Click to view the error log',
+  workbench_Notice_renWuBaoCuoDian: 'The task reports an error. Click to view the error log',
   workbench_Notice_aGENT1: 'Agent deployment details optimization',
   workbench_Notice_zhiChiJVM: 'Support JVM custom configuration',
   workbench_Notice_qiDongGengFangXin: 'Start more assured',
@@ -1135,8 +1026,7 @@ export default {
     'In view of the memory overflow problem that may be caused by the small default allocated memory during the agent installation of the historical version, the new version gives an optimization scheme:',
   workbench_Notice_xianJiangJVM:
     'Now the JVM parameter setting permission is open, and users can customize and adjust according to their own server configuration. AgentWhen starting, it will automatically prompt the memory usage. The user can adjust and restart it in the configuration file according to the actual needs.',
-  workbench_Notice_peiZhiWenJianKai:
-    "JVM parameter name opened by configuration file: tapdatajavaopts: '- xmx2362m'",
+  workbench_Notice_peiZhiWenJianKai: "JVM parameter name opened by configuration file: tapdatajavaopts: '- xmx2362m'",
   workbench_Notice_beiZhuMoRenQi:
     '*Note: by default, startup occupies 3 / 5 of the system configuration memory. If 3 / 5 of the system memory exceeds 8g, it only occupies 8g at most.',
   workbench_Workbench_tAPDA12: 'Tapdata cloud version 2.1.5 has been released.',
@@ -1145,15 +1035,12 @@ export default {
   page_title_data_difference_details: 'Difference details',
   notify_abnormally_stopped: 'stopped unexpectedly',
   header_upgrade: 'Access old version',
-  dfs_src_init_huoquyonghuxin:
-    'Failed to obtain user information, stop retrying and jump to 500',
-  dfs_src_init_chongxinchangshihuo:
-    'Retry to obtain user information: {val1}th time',
+  dfs_src_init_huoquyonghuxin: 'Failed to obtain user information, stop retrying and jump to 500',
+  dfs_src_init_chongxinchangshihuo: 'Retry to obtain user information: {val1}th time',
   dfs_src_init_huoquyonghuxin2: 'Failed to obtain user information',
   dfs_plugins_axios_qingqiushibai: 'Request failed:',
   dfs_plugins_axios_qingqiubaocuo: 'Request error:',
-  dfs_plugins_buried_wangzhantingliushi:
-    'The website stay time tracking point is not initialized.',
+  dfs_plugins_buried_wangzhantingliushi: 'The website stay time tracking point is not initialized.',
   dfs_plugins_buried_chufamaidianc: 'Trigger tracking point [{val1}]: ',
   dfs_workbench_tyepmap_fuwuqiduankai: 'Server disconnected',
   dfs_workbench_tyepmap_fasongjiange: 'Sending interval',
@@ -1167,35 +1054,26 @@ export default {
   dfs_workbench_tyepmap_renwubeiqidong: 'task was started',
   dfs_workbench_tyepmap_jiancedaoshuju: 'database DDL changes were detected',
   dfs_workbench_tyepmap_xinfuwujiankong: 'new service monitoring was deleted',
-  dfs_workbench_tyepmap_xinfuwujiankong2:
-    ' A new service monitoring has been created',
-  dfs_workbench_tyepmap_tongbuzhilifu:
-    'The synchronization management service has been restarted',
+  dfs_workbench_tyepmap_xinfuwujiankong2: ' A new service monitoring has been created',
+  dfs_workbench_tyepmap_tongbuzhilifu: 'The synchronization management service has been restarted',
   dfs_workbench_tyepmap_apIfuwu: 'the API service has been restarted',
-  dfs_workbench_tyepmap_guanliduanfuwu:
-    'the management side service has been restarted',
-  dfs_workbench_tyepmap_tongbuzhilifu2:
-    'the synchronization management service has been stopped',
+  dfs_workbench_tyepmap_guanliduanfuwu: 'the management side service has been restarted',
+  dfs_workbench_tyepmap_tongbuzhilifu2: 'the synchronization management service has been stopped',
   dfs_workbench_tyepmap_apIfuwu2: 'the API service has been stopped',
   dfs_workbench_tyepmap_guanliduanfuwu2: 'Admin service has stopped',
   dfs_workbench_tyepmap_tongbuzhilifu3: 'Sync Governance Service Started',
   dfs_workbench_tyepmap_apIfuwu3: 'API Service Started',
   dfs_workbench_tyepmap_guanliduanfuwu3: 'Management Service Started',
-  dfs_workbench_tyepmap_guanliduanfuwu4:
-    'Management Service Stopped Unexpectedly',
-  dfs_workbench_tyepmap_tongbuzhilifu4:
-    'Sync Governance Service Stopped Unexpectedly',
+  dfs_workbench_tyepmap_guanliduanfuwu4: 'Management Service Stopped Unexpectedly',
+  dfs_workbench_tyepmap_tongbuzhilifu4: 'Sync Governance Service Stopped Unexpectedly',
   dfs_workbench_tyepmap_apIfuwu4: 'API Service Stopped Unexpectedly',
-  dfs_workbench_tyepmap_tongbuzhilifu5:
-    ' Failed to stop synchronization management service',
+  dfs_workbench_tyepmap_tongbuzhilifu5: ' Failed to stop synchronization management service',
   dfs_workbench_tyepmap_apIfuwu5: 'Failed to stop API service',
   dfs_workbench_tyepmap_guanliduanfuwu5: 'Failed to stop management service',
-  dfs_workbench_tyepmap_tongbuzhilifu6:
-    'Failed to start synchronization management service',
+  dfs_workbench_tyepmap_tongbuzhilifu6: 'Failed to start synchronization management service',
   dfs_workbench_tyepmap_apIfuwu6: 'Failed to start API service',
   dfs_workbench_tyepmap_guanliduanfuwu6: 'Failed to start management service',
-  dfs_workbench_tyepmap_tongbuzhilifu7:
-    'Restart synchronization management service Failed',
+  dfs_workbench_tyepmap_tongbuzhilifu7: 'Restart synchronization management service Failed',
   dfs_workbench_tyepmap_apIfuwu7: 'API service restart failed',
   dfs_workbench_tyepmap_guanliduanfuwu7: 'Management service restart failed',
   dfs_workbench_tyepmap_cdCzhihou2: 'CDC lag timeout',
@@ -1220,8 +1098,7 @@ export default {
     '· Added DDL support capability to synchronize common DDL operations of Oracle, MySQL, DB2, PG and other databases',
   dfs_workbench_workbench_xinzengdongtaixin:
     '· Added the function of dynamically adding new tables, which supports synchronizing new tables in the database to the target',
-  dfs_workbench_workbench_shujutongbuneng:
-    'Enhanced data synchronization capability',
+  dfs_workbench_workbench_shujutongbuneng: 'Enhanced data synchronization capability',
   dfs_workbench_workbench_renwugaojingneng:
     '· Task alarm capability, when an abnormal alarm occurs in a task, it is directly reflected on the task operation monitoring page, combined with the task DAG, all problems are intuitively visible',
   dfs_workbench_workbench_renwurizhike:
@@ -1241,33 +1118,25 @@ export default {
     '· The newly developed data source can be quickly connected to the platform through registration and can be used without restarting',
   dfs_workbench_workbench_yonghukeanzhao:
     '·Users can flexibly customize their own data sources according to PDK standards',
-  dfs_workbench_workbench_jiyuPdk:
-    '· Implement data source development based on PDK',
-  dfs_workbench_workbench_jiyuPdk2:
-    'PDK-based data source registration mechanism',
-  dfs_workbench_workbench_xiamianshixinban:
-    'The following are the features added in the new version:',
+  dfs_workbench_workbench_jiyuPdk: '· Implement data source development based on PDK',
+  dfs_workbench_workbench_jiyuPdk2: 'PDK-based data source registration mechanism',
+  dfs_workbench_workbench_xiamianshixinban: 'The following are the features added in the new version:',
   dfs_workbench_workbench_dangranruguoyou:
     'Of course, if there are new tasks, we recommend that you create them in V3.0 for a better user experience. You are welcome to experience our new features and give your valuable suggestions. ',
   dfs_workbench_workbench_youyuzengjiale:
     'Due to the addition of many practical functions, we have refactored and developed the architecture of the V2 version, so the connections and tasks you created in the V2 version will not be synchronized to the V3.0 version, but do not worry, after the new version is released, you You can still continue to use the old version for your data operations, and we guarantee that the V2 version and the V3.0 version will coexist for a long time. ',
-  dfs_workbench_workbench_zainianyueriwo:
-    'Our major upgrade version V3.0 has been officially released. ',
+  dfs_workbench_workbench_zainianyueriwo: 'Our major upgrade version V3.0 has been officially released. ',
   dfs_workbench_workbench_zunjingdeyonghu: 'Dear user, hello:',
-  dfs_workbench_workbench_banbenshengjihe:
-    'Announcement of version upgrade and service switching',
-  dfs_workbench_workbench_banbenshengjitong:
-    'Tapdata Cloud V3.0 release notice',
+  dfs_workbench_workbench_banbenshengjihe: 'Announcement of version upgrade and service switching',
+  dfs_workbench_workbench_banbenshengjitong: 'Tapdata Cloud V3.0 release notice',
   dfs_user_center_acces:
     'AccessKey is your secret key to access the system API and has full account authority, please keep it properly. Do not expose AccessKey to external channels (such as GitHub) in any way to avoid being used by others to cause security threats. ',
   dfs_user_center_kaifaxinxi: 'Development information',
 
-  dfs_agent_download_agentdownloadmodal_aliyunjisuan:
-    'Alibaba Cloud Computing Nest',
+  dfs_agent_download_agentdownloadmodal_aliyunjisuan: 'Alibaba Cloud Computing Nest',
   dfs_agent_download_agentdownloadmodal_bushuwanchenghou:
     '4. After the deployment is complete, return to our [Agent Management Page] and wait for 2 minutes until the [Status] changes to [Running]. congratulations. The deployment of the Tapdata Alould computing environment has been completed, and the data task can be created. ',
-  dfs_agent_download_agentdownloadmodal_querenjisuanchao:
-    '3. Confirm that the Compute Nest deployment is complete. ',
+  dfs_agent_download_agentdownloadmodal_querenjisuanchao: '3. Confirm that the Compute Nest deployment is complete. ',
   dfs_agent_download_agentdownloadmodal_shilitok: 'Instance token:',
   dfs_agent_download_agentdownloadmodal_shilibanben: 'Instance version:',
   dfs_agent_download_agentdownloadmodal_womenyijingwei:
@@ -1280,8 +1149,7 @@ export default {
     'The Alibaba Cloud account that is ready to manage the cloud server can also be created on site by clicking the button below. ',
   dfs_agent_download_agentdownloadmodal_jisuanchaoCo:
     'Compute Nest is an enterprise software service for automated deployment and management of Tapdata for Alibaba Cloud, which saves you the time to deploy and operate servers. ',
-  dfs_agent_download_agentdownloadmodal_yaoanzhuangAg:
-    'To install Agent, please select your server type below:',
+  dfs_agent_download_agentdownloadmodal_yaoanzhuangAg: 'To install Agent, please select your server type below:',
   dfs_agent_download_fastdownload_bushuwanchenghou:
     '4. After the deployment is complete, return to our [Agent Management Page] and wait for 2 minutes until the [Status] changes to [Running]. congratulations. The deployment of the Tapdata Alould computing environment has been completed, and the data task can be created. ',
   dfs_agent_download_fastdownload_ninkeyixuanze:
@@ -1302,17 +1170,14 @@ export default {
     '2. Click the instance name, select the "Resources" tab, and click "Remote Login" in the "Cloud Server ECS" resource',
   dfs_agent_download_upgradeversion_ruguoninbushu:
     'If you are deploying a "3-day trial instance", please open the Compute Nest "trial service" tab',
-  dfs_agent_download_upgradeversion_jisuanchaodenglu:
-    'Calculate nest login address',
+  dfs_agent_download_upgradeversion_jisuanchaodenglu: 'Calculate nest login address',
   dfs_agent_download_upgradeversion_denglualiyun:
     '1. Log in to Alibaba Cloud Computing Nest console and find the service instance where Agent is deployed.',
 
   dfs_the_header_header_jichuban: 'Basic',
   dfs_the_header_header_biaozhun: 'Standard',
-  dfs_agent_download_paidupgrade_qingxuanzelianxi:
-    'Please select a contact phone number',
-  dfs_agent_download_paidupgrade_qingshurulianxi:
-    'Please enter the contact name',
+  dfs_agent_download_paidupgrade_qingxuanzelianxi: 'Please select a contact phone number',
+  dfs_agent_download_paidupgrade_qingshurulianxi: 'Please enter the contact name',
   dfs_agent_download_paidupgrade_fanhuikongzhitai: 'Return to console',
   dfs_agent_download_paidupgrade_womendetongshi:
     'Our colleagues will contact you through the contact information you left for offline contract signing and payment. ',
@@ -1323,8 +1188,7 @@ export default {
     'Clicking to confirm the purchase means that you agree to our [Terms of Service] You can immediately start enjoying the benefits of the new plan. Our colleagues will contact you by phone or email, and you need to complete the offline payment within 1 week. ',
   dfs_agent_download_paidupgrade_zongji: 'Total',
   dfs_agent_download_paidupgrade_meigeewaide: 'Every additional task',
-  dfs_agent_download_paidupgrade_jichuyuefeihan:
-    'Basic monthly fee includes 5 tasks',
+  dfs_agent_download_paidupgrade_jichuyuefeihan: 'Basic monthly fee includes 5 tasks',
   dfs_agent_download_paidupgrade_shoufeixiangqingmei: 'Charge details (yearly)',
   dfs_agent_download_paidupgrade_goumaifangan: 'Purchase plan',
   dfs_agent_download_paidupgrade_dianhua: 'Phone',
@@ -1343,38 +1207,30 @@ export default {
   dfs_instance_instance_banbenhao: 'version number: ',
   dfs_instance_instance_agent: 'Agent update',
 
-  dfs_user_center_phone_error:
-    'This phone number has already been registered by another user',
+  dfs_user_center_phone_error: 'This phone number has already been registered by another user',
   packages_business_task_status_agent_tooltip_agent: 'Agent',
-  dfs_agent_download_agentguidedialog_qingdianjibushu:
-    'Please select data source network access policy',
-  dfs_agent_download_agentguidedialog_ruhurucang:
-    'Entering the lake and entering the warehouse',
+  dfs_agent_download_agentguidedialog_qingdianjibushu: 'Please select data source network access policy',
+  dfs_agent_download_agentguidedialog_ruhurucang: 'Entering the lake and entering the warehouse',
   dfs_agent_download_agentguidedialog_shujutongbu: 'Data synchronization',
   dfs_agent_download_agentguidedialog_tapda:
     'Tapdata can meet various scenarios such as real-time synchronization of heterogeneous databases, data entering lakes and warehouses, and data ETL in the cloud',
   dfs_agent_download_agentguidedialog_tiyan: 'Experience',
   dfs_agent_download_agentguidedialog_womentigongle:
     'We provide a physical examination Demo environment, you can view and experience Tapdata is powerful data synchronization and processing capabilities without installing Agent. (DEMO account: demo@tapdata.io password: tapdata)',
-  dfs_agent_download_agentguidedialog_tiyanDem:
-    'Experience Demo (no installation required)',
+  dfs_agent_download_agentguidedialog_tiyanDem: 'Experience Demo (no installation required)',
   dfs_agent_download_agentguidedialog_anzhuang: 'Install',
   dfs_agent_download_agentguidedialog_ninxuyaogenju:
     'You need to install Tapdata is data calculation engine Agent on a machine that can access your data according to the guided operation. ',
-  dfs_agent_download_agentguidedialog_zizhuanzhuang:
-    'Self-service installation',
+  dfs_agent_download_agentguidedialog_zizhuanzhuang: 'Self-service installation',
   dfs_agent_download_agentguidedialog_lijiquanzhuang: 'install now',
   dfs_agent_download_agentguidedialog_xiayibu: 'Next',
-  dfs_agent_download_agentguidedialog_womendeshuju:
-    'Our data source and target allow by external network services',
-  dfs_agent_download_agentguidedialog_neiwang:
-    'Our company security policy does not allow this',
+  dfs_agent_download_agentguidedialog_womendeshuju: 'Our data source and target allow by external network services',
+  dfs_agent_download_agentguidedialog_neiwang: 'Our company security policy does not allow this',
   dfs_agent_download_agentguidedialog_ninyaotongbude:
     'Can the data source/target library you want to synchronize open ports to the external network? (via firewall, SSH Tunnel, VPN or other means)',
   dfs_agent_download_agentguidedialog_dianjixiafangde:
     'Based on your network security policy, we will recommend a most appropriate deployment for your use. ',
-  dfs_agent_download_agentguidedialog_huanyingshiyongT:
-    'Welcome to Tapdata Cloud',
+  dfs_agent_download_agentguidedialog_huanyingshiyongT: 'Welcome to Tapdata Cloud',
   dfs_agent_download_agentguidedialog_mimatap: 'Password:',
   dfs_agent_download_agentguidedialog_yonghumingde: 'Username:',
   dfs_agent_download_agentguidedialog_buxianganzhuanghuo:
@@ -1382,18 +1238,14 @@ export default {
   dfs_agent_download_agentguidedialog_jijiangshangxian: 'coming soon',
   dfs_agent_download_agentguidedialog_shiyongTap:
     'Using the computing power provided by Tapdata, you only need to select the appropriate area and specifications for deployment without installing any programs. ',
-  dfs_agent_download_agentguidedialog_quantuoguanyunmo:
-    'Fully Managed Cloud Mode – Direct Cloud Deployment',
-  dfs_agent_download_agentguidedialog_huoquwanzhengshi:
-    'Get the full trial version',
+  dfs_agent_download_agentguidedialog_quantuoguanyunmo: 'Fully Managed Cloud Mode – Direct Cloud Deployment',
+  dfs_agent_download_agentguidedialog_huoquwanzhengshi: 'Get the full trial version',
   dfs_agent_download_agentguidedialog_zainindeshuju:
     'Install the full suite of software on your data center or cloud server, under your full control. Note that this option is not a cloud service. ',
-  dfs_agent_download_agentguidedialog_xianxiamoshizi:
-    'Offline mode - install a full set of software independently',
+  dfs_agent_download_agentguidedialog_xianxiamoshizi: 'Offline mode - install a full set of software independently',
   dfs_agent_download_agentguidedialog_ninkeyigenzhe:
     'You can follow the guidance process and install Tapdata Agent in your server or VPC for data synchronization and processing',
-  dfs_agent_download_agentguidedialog_bantuoguanyunmo:
-    'Semi-managed cloud mode - only need to install Agent',
+  dfs_agent_download_agentguidedialog_bantuoguanyunmo: 'Semi-managed cloud mode - only need to install Agent',
   dfs_instance_instance_shanchuchenggong: 'Deleted successfully',
   dfs_instance_instance_wenjianxiazai: 'File download',
   dfs_instance_instance_wenjianzhuangtai: 'File status',
@@ -1418,10 +1270,8 @@ export default {
 
   //数据服务
   dfs_data_server: 'Data Service',
-  dfs_data_server_demo_title:
-    'Centralized data service, reusable and easy to distribute',
-  dfs_data_server_demo_title_desc:
-    '·Centralized data service·Centralized storage·Data real-time service',
+  dfs_data_server_demo_title: 'Centralized data service, reusable and easy to distribute',
+  dfs_data_server_demo_title_desc: '·Centralized data service·Centralized storage·Data real-time service',
   dfs_data_server_demo_title_edition: 'Tapdata On-Prem Edition',
   dfs_data_server_demo_desc:
     ' Centralize the core data of the enterprise to the centralized data platform in real time and provide fresh real-time data for downstream interactive applications, microservices or interactive analysis through API or reverse synchronization. ',
@@ -1432,8 +1282,7 @@ export default {
   dfs_data_server_data_service_mode:
     'In the service layer, there are two mainstream data service modes Pull and Push. The API supports low-code publishing and can publish data according to specific needs. When the required data has already been stored in the business system, the sorted and managed data can be reversely pushed to the user through REVERSE ETL;',
   dfs_data_server_feature: 'Data Services unique features',
-  dfs_data_server_On_Prem:
-    'The Data Services capability is currently only available in the Tapdata On-Prem version',
+  dfs_data_server_On_Prem: 'The Data Services capability is currently only available in the Tapdata On-Prem version',
   dfs_data_server_apply_for_trial: 'Apply for trial',
   dfs_data_server_apply_for_version: 'Offline deployment version',
 
@@ -1442,5 +1291,5 @@ export default {
 
   page_title_custom_node: 'Custom Nodes',
   packages_nodeDesign_custom_node_name_required: 'Please enter the node name',
-  packages_nodeDesign_message_save_ok: 'Save successfully',
+  packages_nodeDesign_message_save_ok: 'Save successfully'
 }

@@ -8,7 +8,7 @@ export function getSubTaskStatus(rows = []) {
   const statusMap = {
     running: ['wait_run', 'scheduling', 'running', 'stopping'],
     not_running: ['edit', 'stop', 'complete'],
-    error: ['error', 'schedule_failed'],
+    error: ['error', 'schedule_failed']
   }
   const len = rows.length
   let result = [],
@@ -16,12 +16,12 @@ export function getSubTaskStatus(rows = []) {
   if (len === 0) {
     result = [
       Object.assign({ count: 1 }, ETL_SUB_STATUS_MAP['edit'], {
-        status: 'edit',
-      }),
+        status: 'edit'
+      })
     ]
   } else {
     let tempMap = {}
-    rows.forEach((r) => {
+    rows.forEach(r => {
       tempMap[r.status] = true
     })
     if (Object.keys(tempMap).length === 1) {
@@ -30,15 +30,15 @@ export function getSubTaskStatus(rows = []) {
       status = status === 'schedule_failed' ? 'error' : status
       result = [
         Object.assign({ count: 1 }, ETL_SUB_STATUS_MAP[status], {
-          status: status,
-        }),
+          status: status
+        })
       ]
     } else {
       for (let key in ETL_STATUS_MAP) {
         item = Object.assign({}, ETL_STATUS_MAP[key])
         item.status = key
         item.count = 0
-        rows.forEach((el) => {
+        rows.forEach(el => {
           if (statusMap[key].includes(el.status)) {
             item.count++
           }
@@ -57,7 +57,7 @@ export function getTaskBtnDisabled(row, or) {
     stop: false,
     edit: false,
     reset: false,
-    delete: false,
+    delete: false
   }
   // 启动可用：待启动、已完成、错误、调度失败、已停止
   // 停止可用：运行中、停止中
@@ -66,25 +66,9 @@ export function getTaskBtnDisabled(row, or) {
   // 删除可用：编辑中、待启动、已完成、错误、调度失败、已停止
   result.start = ['wait_run', 'complete', 'error', 'stop'].includes(row.status)
   result.stop = !['running', 'stopping'].includes(row.status)
-  result.edit = ![
-    'edit',
-    'ready',
-    'complete',
-    'error',
-    'schedule_failed',
-    'stop',
-  ].includes(row.status)
-  result.reset = !['complete', 'error', 'schedule_failed', 'stop'].includes(
-    row.status
-  )
-  result.delete = ![
-    'edit',
-    'ready',
-    'complete',
-    'error',
-    'stop',
-    'schedule_failed',
-  ].includes(row.status)
+  result.edit = !['edit', 'ready', 'complete', 'error', 'schedule_failed', 'stop'].includes(row.status)
+  result.reset = !['complete', 'error', 'schedule_failed', 'stop'].includes(row.status)
+  result.delete = !['edit', 'ready', 'complete', 'error', 'stop', 'schedule_failed'].includes(row.status)
   if (or) {
     for (let key in result) {
       result[key] = or || result[key]
@@ -102,57 +86,51 @@ export function getNodeIconSrc(node) {
     const accessToken = Cookie.get('access_token')
     return `${BASE_URL}api/pdk/icon?access_token=${accessToken}&pdkHash=${pdkHash}`
   }
-  let icon =
-    node.type === 'table' || node.type === 'database' || node.databaseType
-      ? node.databaseType
-      : node.type
+  let icon = node.type === 'table' || node.type === 'database' || node.databaseType ? node.databaseType : node.type
   return icon ? getIcon(icon) : null
 }
 
 export const STATUS_MAP = {
   edit: {
-    i18n: 'packages_business_status_edit',
+    i18n: 'packages_business_status_edit'
   },
   wait_start: {
-    i18n: 'packages_business_status_wait_start',
+    i18n: 'packages_business_status_wait_start'
   },
   starting: {
     i18n: 'packages_business_status_starting',
-    in: ['preparing', 'scheduling', 'wait_run'],
+    in: ['preparing', 'scheduling', 'wait_run']
   },
   running: {
-    i18n: 'packages_business_status_running',
+    i18n: 'packages_business_status_running'
   },
   complete: {
-    i18n: 'packages_business_status_complete',
+    i18n: 'packages_business_status_complete'
   },
   stopping: {
-    i18n: 'packages_business_status_stopping',
+    i18n: 'packages_business_status_stopping'
   },
   stop: {
-    i18n: 'packages_business_status_stop',
+    i18n: 'packages_business_status_stop'
   },
   error: {
     i18n: 'packages_business_status_error',
-    in: ['schedule_failed', 'error'],
+    in: ['schedule_failed', 'error']
   },
   renewing: {
-    i18n: 'packages_business_status_renewing',
+    i18n: 'packages_business_status_renewing'
   },
   renew_failed: {
-    i18n: 'packages_business_status_renew_failed',
-  },
+    i18n: 'packages_business_status_renew_failed'
+  }
 }
 
-export const STATUS_MERGE = Object.entries(STATUS_MAP).reduce(
-  (merge, [key, value]) => {
-    if (value.in) {
-      value.in.reduce((res, val) => ((res[val] = key), res), merge)
-    }
-    return merge
-  },
-  {}
-)
+export const STATUS_MERGE = Object.entries(STATUS_MAP).reduce((merge, [key, value]) => {
+  if (value.in) {
+    value.in.reduce((res, val) => ((res[val] = key), res), merge)
+  }
+  return merge
+}, {})
 
 //'renewing' 不可以删除
 const BUTTON_WITH_STATUS = {
@@ -162,15 +140,7 @@ const BUTTON_WITH_STATUS = {
   stop: ['running'],
   forceStop: ['stopping'],
   reset: ['wait_start', 'complete', 'error', 'stop', 'renew_failed'],
-  monitor: [
-    'running',
-    'complete',
-    'error',
-    'stop',
-    'stopping',
-    'renewing',
-    'renew_failed',
-  ],
+  monitor: ['running', 'complete', 'error', 'stop', 'stopping', 'renewing', 'renew_failed']
 }
 
 export function makeStatusAndDisabled(item) {
@@ -184,20 +154,17 @@ export function makeStatusAndDisabled(item) {
   if (!(status in STATUS_MAP)) {
     console.error(
       i18n.t('packages_business_shared_task_weishibiederen', {
-        val1: status,
+        val1: status
       }),
       i18n.t('packages_business_shared_task_yijingzhiweie')
     ) // eslint-disable-line
     item.status = status = 'error'
   }
 
-  item.btnDisabled = Object.entries(BUTTON_WITH_STATUS).reduce(
-    (map, [key, value]) => {
-      map[key] = !value.includes(status)
-      return map
-    },
-    {}
-  )
+  item.btnDisabled = Object.entries(BUTTON_WITH_STATUS).reduce((map, [key, value]) => {
+    map[key] = !value.includes(status)
+    return map
+  }, {})
 
   // 当返回false时，任务不可点击强制停止
   if (item.canForceStopping === false) {

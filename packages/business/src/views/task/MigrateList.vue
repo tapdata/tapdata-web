@@ -16,14 +16,14 @@ export default {
       taskBuried: {
         new: 'migrationCreate',
         newFail: 'migrationCreateAgentFail',
-        start: 'migrationStart',
+        start: 'migrationStart'
       },
       route: {
         new: 'MigrateCreate',
         editor: 'MigrateEditor',
-        monitor: 'MigrationMonitor',
-      },
+        monitor: 'MigrationMonitor'
+      }
     }
-  },
+  }
 }
 </script>

@@ -1,16 +1,9 @@
 <template>
   <ElSteps v-bind="$attrs" :active="activeStep">
     <template v-if="!hasNumber">
-      <ElStep
-        v-for="(item, index) in stepList"
-        :key="index"
-        :class="[{ 'is-active': showActive === index + 1 }]"
-      >
+      <ElStep v-for="(item, index) in stepList" :key="index" :class="[{ 'is-active': showActive === index + 1 }]">
         <template v-slot:icon>
-          <span
-            class="circle-icon cursor-pointer"
-            @click="$emit('activeStep', index)"
-          ></span>
+          <span class="circle-icon cursor-pointer" @click="$emit('activeStep', index)"></span>
         </template>
         <template v-slot:title>
           <div class="cursor-pointer" @click="$emit('activeStep', index)">
@@ -18,23 +11,14 @@
           </div>
         </template>
         <template v-slot:description>
-          <div
-            v-if="item.desc"
-            class="cursor-pointer"
-            @click="$emit('activeStep', index)"
-          >
+          <div v-if="item.desc" class="cursor-pointer" @click="$emit('activeStep', index)">
             {{ item.desc }}
           </div>
         </template>
       </ElStep>
     </template>
     <template v-else>
-      <ElStep
-        v-for="(item, index) in stepList"
-        :key="index"
-        :title="item.label"
-        :description="item.desc"
-      ></ElStep>
+      <ElStep v-for="(item, index) in stepList" :key="index" :title="item.label" :description="item.desc"></ElStep>
     </template>
   </ElSteps>
 </template>
@@ -54,27 +38,27 @@ export default {
         //     desc: '这是一段很长很长很长的描述性文字',
         //    }
         // ]
-      },
+      }
     },
     activeStep: {
       type: Number,
-      default: 0,
+      default: 0
     },
     hasNumber: {
       type: Boolean,
-      default: true,
+      default: true
     },
     showActive: {
       type: Number,
-      default: 0,
-    },
+      default: 0
+    }
   },
   data() {
     return {
-      active: 0,
+      active: 0
     }
   },
-  emits: ['activeStep'],
+  emits: ['activeStep']
 }
 </script>
 

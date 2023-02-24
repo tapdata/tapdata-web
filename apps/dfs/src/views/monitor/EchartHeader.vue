@@ -1,12 +1,7 @@
 <template>
   <div :class="['echart-head', { flex: data.classFlex }]">
     <h2 v-if="data.title">{{ data.title }}</h2>
-    <ElTooltip
-      v-if="data.tip"
-      style="margin-left: 10px"
-      placement="top-start"
-      :content="data.tip"
-    >
+    <ElTooltip v-if="data.tip" style="margin-left: 10px" placement="top-start" :content="data.tip">
       <i class="echart-head-tooltip__icon el-icon-warning-outline"></i>
     </ElTooltip>
     <span style="flex: 1">
@@ -23,9 +18,7 @@
       :class="data.class"
       @change="changeFnc"
     >
-      <ElRadioButton v-if="!this.data.hideSecond" label="second">{{
-        $t('dataFlow_second')
-      }}</ElRadioButton>
+      <ElRadioButton v-if="!this.data.hideSecond" label="second">{{ $t('dataFlow_second') }}</ElRadioButton>
       <ElRadioButton label="minute">{{ $t('dataFlow_min') }}</ElRadioButton>
       <ElRadioButton label="hour">{{ $t('dataFlow_hour') }}</ElRadioButton>
       <ElRadioButton label="day">{{ $t('dataFlow_day') }}</ElRadioButton>
@@ -48,10 +41,10 @@ export default {
           tip: '',
           unit: '',
           class: '',
-          hideSecond: false,
+          hideSecond: false
         }
-      },
-    },
+      }
+    }
   },
   data() {
     return {
@@ -60,15 +53,15 @@ export default {
       time: 'minute',
       rowCount: null,
       kbs: null,
-      selectColor: '',
+      selectColor: ''
     }
   },
   methods: {
     changeFnc(val) {
       $emit(this, 'change', val, this.data)
-    },
+    }
   },
-  emits: ['change'],
+  emits: ['change']
 }
 </script>
 

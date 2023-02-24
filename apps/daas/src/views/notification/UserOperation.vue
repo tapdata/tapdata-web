@@ -5,8 +5,8 @@ export default {
   props: {
     record: {
       type: Object,
-      required: true,
-    },
+      required: true
+    }
   },
   render() {
     let record = this.record
@@ -14,25 +14,17 @@ export default {
     return Vue.h(
       'div',
       plantRenderPara({
-        class: 'user-operation-wrap',
+        class: 'user-operation-wrap'
       }),
       [
         this.$t('notification_account') + ' ',
-        Vue.h(
-          'span',
-          plantRenderPara({ style: activeTextStyle }),
-          record.username || record.email
-        ),
+        Vue.h('span', plantRenderPara({ style: activeTextStyle }), record.username || record.email),
         this.$t('notification_operation_' + record.operation),
         this.$t('notification_modular_' + record.modular) + ' ',
-        Vue.h(
-          'span',
-          plantRenderPara({ style: activeTextStyle }),
-          record.parameter1
-        ),
+        Vue.h('span', plantRenderPara({ style: activeTextStyle }), record.parameter1)
       ]
     )
-  },
+  }
 }
 </script>
 

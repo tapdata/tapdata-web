@@ -8,11 +8,7 @@
     popper-class="rounded-xl p-0"
     :reference="popover.reference"
   >
-    <ElScrollbar
-      tag="div"
-      wrap-class="choose-list-wrap"
-      view-class="choose-list p-2"
-    >
+    <ElScrollbar tag="div" wrap-class="choose-list-wrap" view-class="choose-list p-2">
       <div
         v-for="(n, ni) in processorNodeTypes"
         :key="ni"
@@ -33,19 +29,19 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'NodePopover',
   props: {
-    popover: {},
+    popover: {}
   },
   components: {
-    ElScrollbar: Select.components.ElScrollbar,
+    ElScrollbar: Select.components.ElScrollbar
   },
   computed: {
-    ...mapGetters('dataflow', ['processorNodeTypes']),
+    ...mapGetters('dataflow', ['processorNodeTypes'])
   },
   methods: {
     handleClick(node) {
       $emit(this, 'click-node', node)
-    },
+    }
   },
-  emits: ['click-node'],
+  emits: ['click-node']
 }
 </script>

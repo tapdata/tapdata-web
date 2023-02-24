@@ -13,7 +13,7 @@ export const useAfterTaskSaved = (root, obs, callback) => {
   const dispose = observe(obs, (...args) => {
     let unwatchSaving = watch(
       () => root.$store.state.dataflow.taskSaving,
-      (v) => {
+      v => {
         if (!v) {
           callback()
         }
@@ -29,11 +29,9 @@ export const useAfterTaskSaved = (root, obs, callback) => {
   // 模型生成状态变化
   watch(
     () => root.$store.state.dataflow.transformLoading,
-    (v) => {
+    v => {
       if (!v) {
-        console.debug(
-          i18n.t('packages_dag_hooks_useaftertasksaved_moxingyishengcheng')
-        )
+        console.debug(i18n.t('packages_dag_hooks_useaftertasksaved_moxingyishengcheng'))
         callback()
       }
     }

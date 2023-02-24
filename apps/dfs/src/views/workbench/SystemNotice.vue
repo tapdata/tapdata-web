@@ -1,8 +1,5 @@
 <template>
-  <section
-    class="system-notice g-panel-container"
-    v-if="$route.name === 'SystemNotice'"
-  >
+  <section class="system-notice g-panel-container" v-if="$route.name === 'SystemNotice'">
     <AlarmNotification></AlarmNotification>
   </section>
 </template>
@@ -11,7 +8,7 @@
 import { AlarmNotification } from '@tap/business'
 
 export default {
-  components: { AlarmNotification },
+  components: { AlarmNotification }
 }
 </script>
 

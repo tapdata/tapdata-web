@@ -28,7 +28,7 @@ export class Engine extends Event {
     super(props)
     this.props = {
       ...Engine.defaultProps,
-      ...props,
+      ...props
     }
     this.init()
     this.id = uid()
@@ -66,8 +66,8 @@ export class Engine extends Event {
 
   findDraggingNodes() {
     const results = []
-    this.workbench.eachWorkspace((workspace) => {
-      workspace.operation.viewportDragon.dragNodes?.forEach((node) => {
+    this.workbench.eachWorkspace(workspace => {
+      workspace.operation.viewportDragon.dragNodes?.forEach(node => {
         if (!results.includes(node)) {
           results.push(node)
         }
@@ -103,6 +103,6 @@ export class Engine extends Event {
     nodeResizeHandlerAttrName: 'data-designer-node-resize-handler',
     outlineNodeIdAttrName: 'data-designer-outline-node-id',
     nodeTranslateAttrName: 'data-designer-node-translate-handler',
-    defaultScreenTypeType: 'PC',
+    defaultScreenTypeType: 'PC'
   }
 }

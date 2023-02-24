@@ -9,21 +9,10 @@
       aria-modal="true"
       :aria-label="title || 'dialog'"
     >
-      <div
-        class="el-message-box"
-        :class="[customClass, center && 'el-message-box--center']"
-        :style="{ width }"
-      >
+      <div class="el-message-box" :class="[customClass, center && 'el-message-box--center']" :style="{ width }">
         <div class="el-message-box__header" v-if="title">
           <div class="el-message-box__title flex align-center">
-            <VIcon
-              v-if="icon"
-              class="mr-3"
-              :size="iconSize"
-              :color="iconColor"
-              :class="statusClass"
-              >{{ icon }}</VIcon
-            >
+            <VIcon v-if="icon" class="mr-3" :size="iconSize" :color="iconColor" :class="statusClass">{{ icon }}</VIcon>
             <span>{{ title }}</span>
           </div>
           <button
@@ -31,12 +20,8 @@
             class="el-message-box__headerbtn"
             aria-label="Close"
             v-if="showClose"
-            @click="
-              handleAction(distinguishCancelAndClose ? 'close' : 'cancel')
-            "
-            @keydown.enter="
-              handleAction(distinguishCancelAndClose ? 'close' : 'cancel')
-            "
+            @click="handleAction(distinguishCancelAndClose ? 'close' : 'cancel')"
+            @keydown.enter="handleAction(distinguishCancelAndClose ? 'close' : 'cancel')"
           >
             <i class="el-message-box__close el-icon-close"></i>
           </button>
@@ -69,7 +54,7 @@
             <div
               class="el-message-box__errormsg"
               :style="{
-                visibility: !!editorErrorMessage ? 'visible' : 'hidden',
+                visibility: !!editorErrorMessage ? 'visible' : 'hidden'
               }"
             >
               {{ editorErrorMessage }}
@@ -120,7 +105,7 @@ export default {
     return {
       width: null,
       cancelButtonTextDefault: i18n.t('button_cancel'),
-      confirmButtonTextDefault: i18n.t('button_confirm'),
+      confirmButtonTextDefault: i18n.t('button_confirm')
     }
   },
 
@@ -139,8 +124,8 @@ export default {
     showContentIcon() {
       let { title, message } = this
       return !title && message
-    },
-  },
+    }
+  }
 }
 </script>
 

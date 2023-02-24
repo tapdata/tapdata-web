@@ -6,12 +6,12 @@ export const CursorStatus = {
   Normal: 'NORMAL',
   DragStart: 'DRAG_START',
   Dragging: 'DRAGGING',
-  DragStop: 'DRAG_STOP',
+  DragStop: 'DRAG_STOP'
 }
 
 export const CursorType = {
   Move: 'MOVE',
-  Selection: 'SELECTION',
+  Selection: 'SELECTION'
 }
 
 const DEFAULT_POSITION = {
@@ -22,12 +22,12 @@ const DEFAULT_POSITION = {
   topPageX: 0,
   topPageY: 0,
   topClientX: 0,
-  topClientY: 0,
+  topClientY: 0
 }
 
 const DEFAULT_SCROLL_OFFSET = {
   scrollX: 0,
-  scrollY: 0,
+  scrollY: 0
 }
 
 const setCursorStyle = (contentWindow, style) => {
@@ -78,7 +78,7 @@ export class Cursor {
       setStyle: action,
       setPosition: action,
       setStatus: action,
-      setType: action,
+      setType: action
     })
   }
 
@@ -91,7 +91,7 @@ export class Cursor {
   }
 
   setStyle(style) {
-    this.engine.workbench.eachWorkspace((workspace) => {
+    this.engine.workbench.eachWorkspace(workspace => {
       setCursorStyle(workspace.viewport.contentWindow, style)
     })
   }
@@ -99,31 +99,31 @@ export class Cursor {
   setPosition(position) {
     this.position = {
       ...this.position,
-      ...position,
+      ...position
     }
   }
   setDragStartPosition(position) {
     this.dragStartPosition = {
       ...this.dragStartPosition,
-      ...position,
+      ...position
     }
   }
   setDragEndPosition(position) {
     this.dragEndPosition = {
       ...this.dragEndPosition,
-      ...position,
+      ...position
     }
   }
   setDragStartScrollOffset(offset) {
     this.dragStartScrollOffset = {
       ...this.dragStartScrollOffset,
-      ...offset,
+      ...offset
     }
   }
   setDragEndScrollOffset(offset) {
     this.dragEndScrollOffset = {
       ...this.dragEndScrollOffset,
-      ...offset,
+      ...offset
     }
   }
 }

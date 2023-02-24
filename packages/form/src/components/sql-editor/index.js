@@ -7,25 +7,25 @@ export const Index = {
     value: String,
     height: {
       type: [String, Number],
-      default: 200,
+      default: 200
     },
     options: {
       type: Object,
-      default: () => ({}),
+      default: () => ({})
     },
-    disabled: Boolean,
+    disabled: Boolean
   },
 
   data() {
     return {
-      sql: this.value,
+      sql: this.value
     }
   },
 
   watch: {
     value(v) {
       this.sql = v
-    },
+    }
   },
 
   methods: {
@@ -33,7 +33,7 @@ export const Index = {
       this.sql = v
       $emit(this, 'update:value', v)
       $emit(this, 'change', v)
-    },
+    }
   },
 
   render() {
@@ -41,7 +41,7 @@ export const Index = {
       enableBasicAutocompletion: true,
       enableLiveAutocompletion: true,
       ...this.options,
-      readOnly: this.disabled,
+      readOnly: this.disabled
     }
     return (
       <VCodeEditor
@@ -54,7 +54,7 @@ export const Index = {
         options={options}
       />
     )
-  },
+  }
 }
 
 export default Index

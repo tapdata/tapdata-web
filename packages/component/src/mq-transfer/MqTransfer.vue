@@ -8,9 +8,7 @@
       :data="sourceData"
       :title="titles[0] || $t('packages_component_transfer_titles_0')"
       :default-checked="leftDefaultChecked"
-      :placeholder="
-        filterPlaceholder || $t('packages_component_filter_placeholder')
-      "
+      :placeholder="filterPlaceholder || $t('packages_component_filter_placeholder')"
       @checked-change="onSourceCheckedChange"
     >
       <slot name="left" :option="option"></slot>
@@ -21,10 +19,7 @@
         <!-- class="mb-0 mr-4" -->
         <el-button
           type="primary"
-          :class="[
-            'el-transfer__button',
-            hasButtonTexts ? 'is-with-texts' : '',
-          ]"
+          :class="['el-transfer__button', hasButtonTexts ? 'is-with-texts' : '']"
           @click="addToLeft()"
           :disabled="topChecked.length === 0"
         >
@@ -34,10 +29,7 @@
         <el-button
           type="primary"
           class="mb-0"
-          :class="[
-            'el-transfer__button',
-            hasButtonTexts ? 'is-with-texts' : '',
-          ]"
+          :class="['el-transfer__button', hasButtonTexts ? 'is-with-texts' : '']"
           @click="addToRight()"
           :disabled="leftChecked.length === 0"
         >
@@ -49,10 +41,7 @@
         <!-- class="mb-0 mr-4" -->
         <el-button
           type="primary"
-          :class="[
-            'el-transfer__button',
-            hasButtonTexts ? 'is-with-texts' : '',
-          ]"
+          :class="['el-transfer__button', hasButtonTexts ? 'is-with-texts' : '']"
           @click="addToLeft('bottom')"
           :disabled="bottomChecked.length === 0"
         >
@@ -62,10 +51,7 @@
         <el-button
           type="primary"
           class="mb-0"
-          :class="[
-            'el-transfer__button',
-            hasButtonTexts ? 'is-with-texts' : '',
-          ]"
+          :class="['el-transfer__button', hasButtonTexts ? 'is-with-texts' : '']"
           @click="addToRight('bottom')"
           :disabled="leftChecked.length === 0"
         >
@@ -83,9 +69,7 @@
         :data="rightTopData"
         :title="titles[1] || $t('packages_component_transfer_titles_1')"
         :default-checked="rightTopDefaultChecked"
-        :placeholder="
-          filterPlaceholder || $t('packages_component_filter_placeholder')
-        "
+        :placeholder="filterPlaceholder || $t('packages_component_filter_placeholder')"
         @checked-change="onTargetCheckedChange('top', ...arguments)"
       >
         <slot name="right" :option="option"></slot>
@@ -99,9 +83,7 @@
         :data="rightBottomData"
         :title="titles[2] || $t('packages_component_transfer_titles_1')"
         :default-checked="rightBottomDefaultChecked"
-        :placeholder="
-          filterPlaceholder || $t('packages_component_filter_placeholder')
-        "
+        :placeholder="filterPlaceholder || $t('packages_component_filter_placeholder')"
         @checked-change="onTargetCheckedChange('bottom', ...arguments)"
       >
         <slot name="right" :option="option"></slot>
@@ -125,51 +107,51 @@ export default {
       type: Array,
       default() {
         return []
-      },
+      }
     },
     bottomValue: {
       type: Array,
       default() {
         return []
-      },
+      }
     },
     rightTopDefaultChecked: {
       type: Array,
       default() {
         return []
-      },
+      }
     },
     rightBottomDefaultChecked: {
       type: Array,
       default() {
         return []
-      },
-    },
+      }
+    }
   },
   data() {
     return {
       topChecked: [],
-      bottomChecked: [],
+      bottomChecked: []
     }
   },
   computed: {
     sourceData() {
       const allValue = [...this.topValue, ...this.bottomValue]
       const valueObj = {}
-      allValue.forEach((item) => {
+      allValue.forEach(item => {
         valueObj[item] = true
       })
-      return this.data.filter((item) => !valueObj[item[this.props.key]])
+      return this.data.filter(item => !valueObj[item[this.props.key]])
     },
 
     rightTopData() {
       let data
       if (this.targetOrder === 'original') {
         const valueObj = {}
-        this.topValue.forEach((item) => {
+        this.topValue.forEach(item => {
           valueObj[item] = true
         })
-        data = this.data.filter((item) => valueObj[item[this.props.key]])
+        data = this.data.filter(item => valueObj[item[this.props.key]])
       } else {
         data = this.topValue.reduce((arr, cur) => {
           const val = this.dataObj[cur]
@@ -186,10 +168,10 @@ export default {
       let data
       if (this.targetOrder === 'original') {
         const valueObj = {}
-        this.bottomValue.forEach((item) => {
+        this.bottomValue.forEach(item => {
           valueObj[item] = true
         })
-        data = this.data.filter((item) => valueObj[item[this.props.key]])
+        data = this.data.filter(item => valueObj[item[this.props.key]])
       } else {
         data = this.bottomValue.reduce((arr, cur) => {
           const val = this.dataObj[cur]
@@ -200,7 +182,7 @@ export default {
         }, [])
       }
       return data
-    },
+    }
   },
   methods: {
     onTargetCheckedChange(from, val, movedKeys) {
@@ -213,7 +195,7 @@ export default {
       const valueKey = `${from}Value`
       let currentValue = this[valueKey].slice()
       const currentChecked = this[`${from}Checked`]
-      currentChecked.forEach((item) => {
+      currentChecked.forEach(item => {
         const index = currentValue.indexOf(item)
         if (index > -1) {
           currentValue.splice(index, 1)
@@ -231,16 +213,16 @@ export default {
       const key = this.props.key
 
       let leftCheckedKeyPropsObj = {}
-      this.leftChecked.forEach((item) => {
+      this.leftChecked.forEach(item => {
         leftCheckedKeyPropsObj[item] = true
       })
 
       let valueKeyPropsObj = {}
-      allValue.forEach((item) => {
+      allValue.forEach(item => {
         valueKeyPropsObj[item] = true
       })
 
-      this.data.forEach((item) => {
+      this.data.forEach(item => {
         const itemKey = item[key]
         if (leftCheckedKeyPropsObj[itemKey] && !valueKeyPropsObj[itemKey]) {
           itemsToBeMoved.push(itemKey)
@@ -248,14 +230,12 @@ export default {
       })
 
       currentValue =
-        this.targetOrder === 'unshift'
-          ? itemsToBeMoved.concat(currentValue)
-          : currentValue.concat(itemsToBeMoved)
+        this.targetOrder === 'unshift' ? itemsToBeMoved.concat(currentValue) : currentValue.concat(itemsToBeMoved)
 
       $emit(this, `update:${valueKey}`, currentValue)
       $emit(this, 'change', currentValue, `right-${to}`, this.leftChecked)
-    },
+    }
   },
-  emits: ['right-top-check-change', , 'change'],
+  emits: ['right-top-check-change', , 'change']
 }
 </script>

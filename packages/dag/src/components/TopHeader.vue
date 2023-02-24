@@ -22,10 +22,7 @@
     <div class="operation-center flex align-center">
       <template v-if="!stateIsReadonly">
         <!--撤销-->
-        <ElTooltip
-          transition="tooltip-fade-in"
-          :content="$t('packages_dag_button_undo') + `(${commandCode} + Z)`"
-        >
+        <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_undo') + `(${commandCode} + Z)`">
           <button @click="$emit('undo')" class="icon-btn">
             <VIcon size="20">undo</VIcon>
           </button>
@@ -33,29 +30,21 @@
         <!--重做-->
         <ElTooltip
           transition="tooltip-fade-in"
-          :content="
-            $t('packages_dag_button_redo') + `(${commandCode} + Shift + Z)`
-          "
+          :content="$t('packages_dag_button_redo') + `(${commandCode} + Shift + Z)`"
         >
           <button @click="$emit('redo')" class="icon-btn">
             <VIcon size="20">redo</VIcon>
           </button>
         </ElTooltip>
         <!--删除-->
-        <ElTooltip
-          transition="tooltip-fade-in"
-          :content="$t('packages_dag_button_delete') + '(Del)'"
-        >
+        <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_delete') + '(Del)'">
           <button @click="$emit('delete')" class="icon-btn">
             <VIcon size="20">delete</VIcon>
           </button>
         </ElTooltip>
       </template>
       <!--内容居中-->
-      <ElTooltip
-        transition="tooltip-fade-in"
-        :content="$t('packages_dag_button_center_content') + '(Shift + 1)'"
-      >
+      <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_center_content') + '(Shift + 1)'">
         <button @click="$emit('center-content')" class="icon-btn">
           <VIcon size="20">compress</VIcon>
         </button>
@@ -63,10 +52,7 @@
       <!--自动布局-->
       <ElTooltip
         transition="tooltip-fade-in"
-        :content="
-          $t('packages_dag_button_auto_layout') +
-          `(${commandCode} + ${optionCode} + L)`
-        "
+        :content="$t('packages_dag_button_auto_layout') + `(${commandCode} + ${optionCode} + L)`"
       >
         <button @click="$emit('auto-layout')" class="icon-btn">
           <VIcon size="20">auto-layout</VIcon>
@@ -79,75 +65,41 @@
           </button>
         </ElTooltip>-->
       <!--拖选画布-->
-      <ElTooltip
-        transition="tooltip-fade-in"
-        :content="$t('packages_dag_mouse_selection')"
-      >
-        <button
-          @click="toggleShiftKeyPressed()"
-          class="icon-btn"
-          :class="{ active: shiftKeyPressed }"
-        >
+      <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_mouse_selection')">
+        <button @click="toggleShiftKeyPressed()" class="icon-btn" :class="{ active: shiftKeyPressed }">
           <VIcon size="20">kuangxuan</VIcon>
         </button>
       </ElTooltip>
       <VDivider class="mx-3" vertical inset></VDivider>
       <!--缩小-->
-      <ElTooltip
-        transition="tooltip-fade-in"
-        :content="$t('packages_dag_button_zoom_out') + `(${commandCode} -)`"
-      >
+      <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_zoom_out') + `(${commandCode} -)`">
         <button @click="$emit('zoom-out')" class="icon-btn">
           <VIcon size="20">remove-outline</VIcon>
         </button>
       </ElTooltip>
       <div class="choose-size mx-2">
-        <ElPopover
-          placement="bottom"
-          trigger="hover"
-          popper-class="rounded-xl p-0"
-        >
+        <ElPopover placement="bottom" trigger="hover" popper-class="rounded-xl p-0">
           <template v-slot:reference>
             <div class="size-wrap">{{ scaleTxt }}</div>
           </template>
           <div class="choose-list p-2">
-            <div
-              @click="$emit('zoom-in')"
-              class="choose-item pl-4 flex justify-content-between align-center"
-            >
-              <span class="title">{{
-                $t('packages_dag_button_zoom_out')
-              }}</span>
-              <div class="kbd-wrap flex align-center mr-2">
-                <kbd>⌘</kbd><span class="mx-1">+</span><kbd>+</kbd>
-              </div>
+            <div @click="$emit('zoom-in')" class="choose-item pl-4 flex justify-content-between align-center">
+              <span class="title">{{ $t('packages_dag_button_zoom_out') }}</span>
+              <div class="kbd-wrap flex align-center mr-2"><kbd>⌘</kbd><span class="mx-1">+</span><kbd>+</kbd></div>
             </div>
-            <div
-              @click="$emit('zoom-out')"
-              class="choose-item pl-4 flex justify-content-between align-center"
-            >
+            <div @click="$emit('zoom-out')" class="choose-item pl-4 flex justify-content-between align-center">
               <span class="title">{{ $t('packages_dag_button_zoom_in') }}</span>
-              <div class="kbd-wrap flex align-center mr-2">
-                <kbd>⌘</kbd><span class="mx-1">+</span><kbd>–</kbd>
-              </div>
+              <div class="kbd-wrap flex align-center mr-2"><kbd>⌘</kbd><span class="mx-1">+</span><kbd>–</kbd></div>
             </div>
             <VDivider class="my-2"></VDivider>
-            <div
-              v-for="val in chooseItems"
-              :key="val"
-              class="choose-item pl-4"
-              @click="$emit('zoom-to', val)"
-            >
+            <div v-for="val in chooseItems" :key="val" class="choose-item pl-4" @click="$emit('zoom-to', val)">
               {{ val * 100 }}%
             </div>
           </div>
         </ElPopover>
       </div>
       <!--放大-->
-      <ElTooltip
-        transition="tooltip-fade-in"
-        :content="$t('packages_dag_button_zoom_in') + `(${commandCode} +)`"
-      >
+      <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_zoom_in') + `(${commandCode} +)`">
         <button @click="$emit('zoom-in')" class="icon-btn">
           <VIcon size="20">add-outline</VIcon>
         </button>
@@ -159,24 +111,13 @@
         :content="$t('packages_dag_monitor_bottompanel_rizhi')"
         v-if="$route.name === 'MigrateEditor'"
       >
-        <button
-          @click="toggleConsole()"
-          class="icon-btn"
-          :class="{ active: showConsole }"
-        >
+        <button @click="toggleConsole()" class="icon-btn" :class="{ active: showConsole }">
           <VIcon size="16">list</VIcon>
         </button>
       </ElTooltip>
       <!--设置-->
-      <ElTooltip
-        transition="tooltip-fade-in"
-        :content="$t('packages_dag_button_setting')"
-      >
-        <button
-          @click="$emit('showSettings')"
-          class="icon-btn"
-          :class="{ active: activeType === 'settings' }"
-        >
+      <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_setting')">
+        <button @click="$emit('showSettings')" class="icon-btn" :class="{ active: activeType === 'settings' }">
           <VIcon size="20">setting-outline</VIcon>
         </button>
       </ElTooltip>
@@ -184,12 +125,7 @@
     <!--复制dag查看不显示-->
     <div class="flex align-center flex-grow-1">
       <div class="flex-grow-1"></div>
-      <ElButton
-        v-if="stateIsReadonly"
-        size="medium"
-        class="mx-1 btn--text"
-        @click="$emit('detail')"
-      >
+      <ElButton v-if="stateIsReadonly" size="medium" class="mx-1 btn--text" @click="$emit('detail')">
         <VIcon>monitoring</VIcon>
         <!--运行监控-->
         {{ $t('packages_dag_task_list_button_monitor') }}
@@ -209,10 +145,7 @@
       <ElButton
         v-if="!stateIsReadonly"
         :loading="isSaving"
-        :disabled="
-          (dataflow.disabledData && dataflow.disabledData.edit) ||
-          $disabledReadonlyUserBtn()
-        "
+        :disabled="(dataflow.disabledData && dataflow.disabledData.edit) || $disabledReadonlyUserBtn()"
         class="mx-2"
         size="medium"
         @click="$emit('save')"
@@ -225,10 +158,7 @@
           v-if="$route.name !== 'MigrateEditor'"
           class="mx-1 btn--text"
           size="medium"
-          :disabled="
-            (dataflow.disabledData && dataflow.disabledData.edit) ||
-            $disabledReadonlyUserBtn()
-          "
+          :disabled="(dataflow.disabledData && dataflow.disabledData.edit) || $disabledReadonlyUserBtn()"
           @click="$emit('edit')"
         >
           <VIcon>edit</VIcon>
@@ -259,11 +189,7 @@
       </template>
 
       <ElButton
-        :disabled="
-          isSaving ||
-          (dataflow.disabledData && dataflow.disabledData.start) ||
-          transformLoading
-        "
+        :disabled="isSaving || (dataflow.disabledData && dataflow.disabledData.start) || transformLoading"
         class="mx-2"
         size="medium"
         type="primary"
@@ -290,7 +216,7 @@ export default {
     isSaving: Boolean,
     dataflowName: String,
     dataflow: Object,
-    scale: Number,
+    scale: Number
   },
   components: { TextEditable, TaskStatus, VDivider, VIcon },
   data() {
@@ -300,31 +226,18 @@ export default {
       optionCode: isMacOs ? 'Option' : 'Alt',
       name: '',
       syncMap: {
-        'initial_sync+cdc':
-          this.$t('packages_dag_dataFlow_initial_sync') +
-          '+' +
-          this.$t('packages_dag_dataFlow_cdc'),
+        'initial_sync+cdc': this.$t('packages_dag_dataFlow_initial_sync') + '+' + this.$t('packages_dag_dataFlow_cdc'),
         initial_sync: this.$t('packages_dag_dataFlow_initial_sync'),
-        cdc: this.$t('packages_dag_dataFlow_cdc'),
+        cdc: this.$t('packages_dag_dataFlow_cdc')
       },
       chooseItems: [4, 2, 1.5, 1, 0.5, 0.25],
       showSearchNodePopover: false,
-      nodeSearchInput: '',
+      nodeSearchInput: ''
     }
   },
   computed: {
-    ...mapGetters('dataflow', [
-      'dataflowId',
-      'stateIsReadonly',
-      'allNodes',
-      'activeType',
-    ]),
-    ...mapState('dataflow', [
-      'spaceKeyPressed',
-      'shiftKeyPressed',
-      'showConsole',
-      'transformLoading',
-    ]),
+    ...mapGetters('dataflow', ['dataflowId', 'stateIsReadonly', 'allNodes', 'activeType']),
+    ...mapState('dataflow', ['spaceKeyPressed', 'shiftKeyPressed', 'showConsole', 'transformLoading']),
 
     scaleTxt() {
       return Math.round(this.scale * 100) + '%'
@@ -332,25 +245,21 @@ export default {
 
     isViewer() {
       return ['DataflowViewer', 'MigrateViewer'].includes(this.$route.name)
-    },
+    }
   },
   watch: {
     dataflowName(v) {
       this.name = v
-    },
+    }
   },
   mounted() {
     this.name = this.dataflowName
   },
   methods: {
-    ...mapMutations('dataflow', [
-      'setActiveType',
-      'toggleShiftKeyPressed',
-      'toggleConsole',
-    ]),
+    ...mapMutations('dataflow', ['setActiveType', 'toggleShiftKeyPressed', 'toggleConsole']),
 
     isShowForceStop(data) {
-      return data?.length && data.every((t) => ['stopping'].includes(t.status))
+      return data?.length && data.every(t => ['stopping'].includes(t.status))
     },
 
     onNameInputChange() {
@@ -371,19 +280,19 @@ export default {
       const backToList = () => {
         if ($PLATFORM === 'dfs') {
           top.window.App.$router.push({
-            name: 'Task',
+            name: 'Task'
           })
         } else {
           this.$router.push({
             name: 'dataFlows',
             query: {
-              mapping: mapping,
-            },
+              mapping: mapping
+            }
           })
         }
       }
       backToList()
-    },
+    }
   },
   emits: [
     'page-return',
@@ -403,8 +312,8 @@ export default {
     'forceStop',
     'stop',
     'start',
-    'change-name',
-  ],
+    'change-name'
+  ]
 }
 </script>
 

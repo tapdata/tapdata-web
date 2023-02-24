@@ -26,10 +26,7 @@
               >
                 <template v-slot:suffix>
                   <i
-                    :class="[
-                      flag ? 'icon-openeye' : 'icon-closeeye',
-                      'iconfont',
-                    ]"
+                    :class="[flag ? 'icon-openeye' : 'icon-closeeye', 'iconfont']"
                     style="margin-top: 8px; font-size: 18px; cursor: pointer"
                     autocomplete="auto"
                     @click="passwordTypeChange"
@@ -44,14 +41,9 @@
                 :placeholder="$t('app_signIn_inviteCode_placeholder')"
               ></el-input>
             </el-form-item>
-            <el-checkbox
-              class="keep-sign-in"
-              v-model:value="keepSignIn"
-              style="display: none"
-            >
+            <el-checkbox class="keep-sign-in" v-model:value="keepSignIn" style="display: none">
               <span class="font-color-light"
-                >{{ $t('app_signIn_registry_tip') }}
-                <i>{{ $t('app_signIn_userPplicy') }}</i></span
+                >{{ $t('app_signIn_registry_tip') }} <i>{{ $t('app_signIn_userPplicy') }}</i></span
               >
             </el-checkbox>
             <el-button
@@ -75,11 +67,7 @@
           <div class="title">{{ $t('app_signIn_getCode') }}</div>
           <p>{{ $t('app_signIn_qrCodeText') }}</p>
           <div class="imageBox">
-            <el-image
-              class="image"
-              :src="require('@/assets/images/tapdateQR.png')"
-              fit="cover"
-            ></el-image>
+            <el-image class="image" :src="require('@/assets/images/tapdateQR.png')" fit="cover"></el-image>
           </div>
         </el-card>
       </div>
@@ -102,12 +90,12 @@ export default {
         email: '',
         password: '',
         emailVerified: true,
-        role: 0,
+        role: 0
       },
       errorMessage: '',
       keepSignIn: true,
       passwordType: 'password',
-      flag: false,
+      flag: false
     }
   },
 
@@ -159,7 +147,7 @@ export default {
         Cookie.set('user_id', data.id)
         this.$router.replace({
           name: 'verificationEmail',
-          params: { data: this.form },
+          params: { data: this.form }
         })
       } catch (e) {
         if (e.response && e.response.msg) {
@@ -183,10 +171,10 @@ export default {
     backLogin() {
       this.$router.replace({
         name: 'login',
-        query: { email: this.form.email },
+        query: { email: this.form.email }
       })
-    },
-  },
+    }
+  }
 }
 </script>
 

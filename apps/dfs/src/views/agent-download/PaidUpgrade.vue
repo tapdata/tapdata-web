@@ -1,16 +1,9 @@
 <template>
   <div class="paid-upgrade-wrap">
     <TheHeader></TheHeader>
-    <ElBreadcrumb
-      class="breadcrumb paid-upgrade-mb16"
-      separator-class="el-icon-arrow-right"
-    >
-      <ElBreadcrumbItem :to="{ path: '/' }">{{
-        $t('dfs_agent_download_paidupgrade_fanhuicaidan')
-      }}</ElBreadcrumbItem>
-      <ElBreadcrumbItem>{{
-        $t('dfs_agent_download_paidupgrade_fuwushengji')
-      }}</ElBreadcrumbItem>
+    <ElBreadcrumb class="breadcrumb paid-upgrade-mb16" separator-class="el-icon-arrow-right">
+      <ElBreadcrumbItem :to="{ path: '/' }">{{ $t('dfs_agent_download_paidupgrade_fanhuicaidan') }}</ElBreadcrumbItem>
+      <ElBreadcrumbItem>{{ $t('dfs_agent_download_paidupgrade_fuwushengji') }}</ElBreadcrumbItem>
     </ElBreadcrumb>
     <div class="card" v-show="!successStatus">
       <header class="header">
@@ -18,22 +11,11 @@
       </header>
       <div class="main">
         <el-form :model="form" ref="paidForm" :rules="rules">
-          <el-form-item
-            :label="$t('dfs_agent_download_paidupgrade_xingming')"
-            required
-            prop="contactName"
-          >
+          <el-form-item :label="$t('dfs_agent_download_paidupgrade_xingming')" required prop="contactName">
             <el-input v-model:value="form.contactName"></el-input>
           </el-form-item>
-          <el-form-item
-            :label="$t('dfs_agent_download_paidupgrade_dianhua')"
-            required
-            prop="contactTelephone"
-          >
-            <el-input
-              :max="11"
-              v-model:value="form.contactTelephone"
-            ></el-input>
+          <el-form-item :label="$t('dfs_agent_download_paidupgrade_dianhua')" required prop="contactTelephone">
+            <el-input :max="11" v-model:value="form.contactTelephone"></el-input>
           </el-form-item>
         </el-form>
         <div class="currentList paid-upgrade-mb16">
@@ -48,11 +30,7 @@
         </div>
         <div class="content flex justify-content-between paid-upgrade-mb8">
           <span
-            ><el-checkbox
-              class="mr-2"
-              v-model:value="checked"
-              @change="handleChecked"
-            ></el-checkbox
+            ><el-checkbox class="mr-2" v-model:value="checked" @change="handleChecked"></el-checkbox
             >{{ $t('dfs_agent_download_paidupgrade_meigeewaide') }}</span
           >
           <span class="version">¥3600</span>
@@ -68,9 +46,7 @@
         </div>
         <div class="link paid-upgrade-mb16"></div>
         <div class="content flex justify-content-between paid-upgrade-mb16">
-          <span class="currentList">{{
-            $t('dfs_agent_download_paidupgrade_zongji')
-          }}</span>
+          <span class="currentList">{{ $t('dfs_agent_download_paidupgrade_zongji') }}</span>
           <span class="version" v-if="!checked">¥12000</span>
           <span class="version" v-else>¥{{ total }}</span>
         </div>
@@ -87,15 +63,12 @@
         <img class="mt-2 block" :src="getImg('complete')" alt="" />
       </div>
       <div class="version paid-upgrade-mb8">
-        {{ $t('dfs_agent_download_paidupgrade_ganxienindinggou')
-        }}{{ (successData.extraPipelines || 0) + 5 }}
+        {{ $t('dfs_agent_download_paidupgrade_ganxienindinggou') }}{{ (successData.extraPipelines || 0) + 5 }}
       </div>
       <div class="desc paid-upgrade-mb16">
         {{ $t('dfs_agent_download_paidupgrade_womendetongshi') }}
       </div>
-      <el-button type="primary" @click="goBack">{{
-        $t('dfs_agent_download_paidupgrade_fanhuikongzhitai')
-      }}</el-button>
+      <el-button type="primary" @click="goBack">{{ $t('dfs_agent_download_paidupgrade_fanhuikongzhitai') }}</el-button>
     </div>
   </div>
 </template>
@@ -115,46 +88,44 @@ export default {
         contactTelephone: user.telephone,
         paidPlanCode: 'standard',
         count: 1,
-        extraPipelines: 0,
+        extraPipelines: 0
       },
       rules: {
         contactName: [
           {
             required: true,
             message: i18n.t('dfs_agent_download_paidupgrade_qingshurulianxi'),
-            trigger: 'blur',
-          },
+            trigger: 'blur'
+          }
         ],
         contactTelephone: [
           {
             required: true,
             message: i18n.t('dfs_agent_download_paidupgrade_qingxuanzelianxi'),
-            trigger: 'blur',
-          },
-        ],
+            trigger: 'blur'
+          }
+        ]
       },
       successStatus: false,
-      successData: '',
+      successData: ''
     }
   },
   computed: {
     total() {
       return 12000 + this.form.extraPipelines * 3600
-    },
+    }
   },
   methods: {
     handleChecked(val) {
       this.form.extraPipelines = val ? 1 : 0
     },
     save() {
-      this.$refs.paidForm.validate((valid) => {
+      this.$refs.paidForm.validate(valid => {
         if (valid) {
-          this.$axios
-            .post('api/tcm/orders/subscribe/paid/plan', this.form)
-            .then((data) => {
-              this.successData = data
-              this.successStatus = true
-            })
+          this.$axios.post('api/tcm/orders/subscribe/paid/plan', this.form).then(data => {
+            this.successData = data
+            this.successStatus = true
+          })
         }
       })
     },
@@ -163,10 +134,10 @@ export default {
     },
     goBack() {
       this.$router.push({
-        name: 'Workbench',
+        name: 'Workbench'
       })
-    },
-  },
+    }
+  }
 }
 </script>
 

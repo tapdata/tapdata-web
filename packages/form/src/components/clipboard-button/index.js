@@ -6,12 +6,12 @@ export const ClipboardButton = defineComponent({
     title: String,
     tooltip: {
       type: String,
-      default: 'Copy',
+      default: 'Copy'
     },
     finishTooltip: {
       type: String,
-      default: 'Copied',
-    },
+      default: 'Copied'
+    }
   },
   setup(props, { attrs, refs }) {
     const contentRef = ref(props.tooltip)
@@ -50,12 +50,7 @@ export const ClipboardButton = defineComponent({
 
     return () => {
       return (
-        <ElTooltip
-          ref="tooltip"
-          transition="tooltip-fade-in"
-          placement="top"
-          content={contentRef.value}
-        >
+        <ElTooltip ref="tooltip" transition="tooltip-fade-in" placement="top" content={contentRef.value}>
           <ElButton
             ref="btn"
             class="p-2"
@@ -70,6 +65,6 @@ export const ClipboardButton = defineComponent({
         </ElTooltip>
       )
     }
-  },
+  }
 })
 export default ClipboardButton

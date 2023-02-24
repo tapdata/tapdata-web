@@ -8,41 +8,31 @@
         <p class="text">
           {{ $route.query.message || $t('views_Error_fuWuQiNeiBu') }}
         </p>
-        <ElButton class="mt-5" type="primary" @click="toHome()">{{
-          $t('views_Error_fanHuiShouYe')
-        }}</ElButton>
+        <ElButton class="mt-5" type="primary" @click="toHome()">{{ $t('views_Error_fanHuiShouYe') }}</ElButton>
       </div>
       <div v-if="$route.path === '/invalid'" class="box">
         <img class="img" src="../assets/image/invalid.png" />
         <p class="text">{{ $t('views_Error_zhangHuZanWuQuan') }}</p>
-        <ElButton class="mt-5" type="primary" @click="toHome()">{{
-          $t('views_Error_fanHuiShouYe')
-        }}</ElButton>
+        <ElButton class="mt-5" type="primary" @click="toHome()">{{ $t('views_Error_fanHuiShouYe') }}</ElButton>
       </div>
       <div v-if="$route.path === '/freeze'" class="box">
         <img class="img" src="../assets/image/freeze.png" />
         <p class="label">{{ $t('views_Error_zhangHuYiBeiDong') }}</p>
         <p class="text">{{ $t('views_Error_ninDeZhangHuYi') }}</p>
-        <ElButton class="mt-5" type="primary" @click="toHome()">{{
-          $t('views_Error_fanHuiShouYe')
-        }}</ElButton>
+        <ElButton class="mt-5" type="primary" @click="toHome()">{{ $t('views_Error_fanHuiShouYe') }}</ElButton>
       </div>
       <div v-if="$route.path === '/off'" class="box">
         <img class="img" src="../assets/image/off_shelf.png" />
         <p class="label">{{ $t('views_Error_chanPinYiXiaJia') }}</p>
         <p class="text">{{ $t('views_Error_feiChangBaoQianChan') }}</p>
-        <ElButton class="mt-5" type="primary" @click="toHome()">{{
-          $t('views_Error_fanHuiShouYe')
-        }}</ElButton>
+        <ElButton class="mt-5" type="primary" @click="toHome()">{{ $t('views_Error_fanHuiShouYe') }}</ElButton>
       </div>
       <div v-if="$route.path === '/404'" class="box img-wrap position-relative">
         <img class="img" src="../assets/image/404.png" />
         <div class="position-absolute p-content text-start">
           <p class="p-text">OOPS!</p>
           <p class="label">找不到页面</p>
-          <ElButton class="mt-5" type="primary" @click="toHome()">{{
-            $t('views_Error_fanHuiShouYe')
-          }}</ElButton>
+          <ElButton class="mt-5" type="primary" @click="toHome()">{{ $t('views_Error_fanHuiShouYe') }}</ElButton>
         </div>
       </div>
       <div v-if="$route.path === '/500'" class="box img-wrap position-relative">
@@ -51,9 +41,7 @@
           <p class="p-text">OOPS!</p>
           <p class="label">Internal Server Error</p>
           <p class="label">服务器遇到一个妨碍它为请求提供服务的错误。</p>
-          <ElButton class="mt-5" type="primary" @click="toHome()">{{
-            $t('views_Error_fanHuiShouYe')
-          }}</ElButton>
+          <ElButton class="mt-5" type="primary" @click="toHome()">{{ $t('views_Error_fanHuiShouYe') }}</ElButton>
         </div>
       </div>
       <div v-if="$route.path === '/502'" class="box img-wrap position-relative">
@@ -61,12 +49,8 @@
         <div class="position-absolute p-content text-start">
           <p class="p-text">OOPS!</p>
           <p class="label">Bad Gateway</p>
-          <p class="label">
-            作为代理或网关使用的服务器从请求响应链的下一条链路上收到了一条伪响应。
-          </p>
-          <ElButton class="mt-5" type="primary" @click="toHome()">{{
-            $t('views_Error_fanHuiShouYe')
-          }}</ElButton>
+          <p class="label">作为代理或网关使用的服务器从请求响应链的下一条链路上收到了一条伪响应。</p>
+          <ElButton class="mt-5" type="primary" @click="toHome()">{{ $t('views_Error_fanHuiShouYe') }}</ElButton>
         </div>
       </div>
       <div v-if="$route.path === '/504'" class="box img-wrap position-relative">
@@ -74,9 +58,7 @@
         <div class="position-absolute p-content text-start">
           <p class="p-text">OOPS!</p>
           <p class="label">Gateway Timeout</p>
-          <ElButton class="mt-5" type="primary" @click="toHome()">{{
-            $t('views_Error_fanHuiShouYe')
-          }}</ElButton>
+          <ElButton class="mt-5" type="primary" @click="toHome()">{{ $t('views_Error_fanHuiShouYe') }}</ElButton>
         </div>
       </div>
     </div>
@@ -88,14 +70,14 @@ import TheHeader from '@/components/the-header'
 
 export default {
   components: {
-    TheHeader,
+    TheHeader
   },
   methods: {
     toHome() {
       let baseUrl = process.env.BASE_URL || ''
       location.href = baseUrl
-    },
-  },
+    }
+  }
 }
 </script>
 

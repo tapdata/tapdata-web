@@ -19,24 +19,22 @@ export default observer({
   components: { FormRender },
   props: {
     settings: Object,
-    scope: Object,
+    scope: Object
   },
 
   data() {
-    let repeatNameMessage = this.$t(
-      'packages_dag_task_form_error_name_duplicate'
-    )
+    let repeatNameMessage = this.$t('packages_dag_task_form_error_name_duplicate')
     let values = this.settings
     values.isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
     return {
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       formScope: {
-        checkName: (value) => {
-          return new Promise((resolve) => {
+        checkName: value => {
+          return new Promise(resolve => {
             this.handleCheckName(resolve, value)
           })
         },
-        getPickerOptionsBeforeTime,
+        getPickerOptionsBeforeTime
       },
 
       schema: {
@@ -44,7 +42,7 @@ export default observer({
         properties: {
           isDaas: {
             type: 'string',
-            display: 'none',
+            display: 'none'
           },
           layout: {
             type: 'void',
@@ -65,7 +63,7 @@ export default observer({
                         }
                       })
                     })
-                  }}}`,
+                  }}}`
               },
               type: {
                 title: this.$t('packages_dag_task_setting_sync_type'),
@@ -75,20 +73,18 @@ export default observer({
                 default: 'initial_sync+cdc',
                 enum: [
                   {
-                    label: this.$t(
-                      'packages_dag_task_setting_initial_sync_cdc'
-                    ), //全量+增量
-                    value: 'initial_sync+cdc',
+                    label: this.$t('packages_dag_task_setting_initial_sync_cdc'), //全量+增量
+                    value: 'initial_sync+cdc'
                   },
                   {
                     label: this.$t('packages_dag_task_setting_initial_sync'), //全量
-                    value: 'initial_sync',
+                    value: 'initial_sync'
                   },
                   {
                     label: this.$t('packages_dag_task_setting_cdc'), //增量
-                    value: 'cdc',
-                  },
-                ],
+                    value: 'cdc'
+                  }
+                ]
               },
               desc: {
                 title: this.$t('packages_dag_task_stetting_desc'), //任务描述
@@ -97,8 +93,8 @@ export default observer({
                 'x-component': 'Input.TextArea',
                 'x-component-props': {
                   min: 1,
-                  max: 100,
-                },
+                  max: 100
+                }
               },
               collapse: {
                 type: 'void',
@@ -109,13 +105,11 @@ export default observer({
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
-                      title: this.$t('packages_dag_task_stetting_most_setting'),
+                      title: this.$t('packages_dag_task_stetting_most_setting')
                     },
                     properties: {
                       planStartDateFlag: {
-                        title: this.$t(
-                          'packages_dag_task_setting_plan_start_date'
-                        ), //计划时间
+                        title: this.$t('packages_dag_task_setting_plan_start_date'), //计划时间
                         type: 'boolean',
                         'x-decorator': 'FormItem',
                         'x-component': 'Switch',
@@ -123,9 +117,9 @@ export default observer({
                         target: '*(syncPoints)',
                         fulfill: {
                           state: {
-                            visible: '{{$self.value}}',
-                          },
-                        },
+                            visible: '{{$self.value}}'
+                          }
+                        }
                       },
                       planStartDate: {
                         type: 'string',
@@ -136,28 +130,24 @@ export default observer({
                           type: 'datetime',
                           align: 'right',
                           format: 'yyyy-MM-dd HH:mm:ss',
-                          valueFormat: 'timestamp',
+                          valueFormat: 'timestamp'
                         },
                         'x-reactions': {
                           dependencies: ['planStartDateFlag'],
                           fulfill: {
                             state: {
-                              display: '{{$deps[0] ? "visible" : "hidden"}}',
-                            },
-                          },
-                        },
+                              display: '{{$deps[0] ? "visible" : "hidden"}}'
+                            }
+                          }
+                        }
                       },
                       crontabExpressionFlag: {
                         //调度表达式
-                        title: this.$t(
-                          'packages_dag_task_setting_crontabExpressionFlag'
-                        ), //定期调度任务
+                        title: this.$t('packages_dag_task_setting_crontabExpressionFlag'), //定期调度任务
                         type: 'boolean',
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
-                          tooltip: this.$t(
-                            'packages_dag_task_setting_cron_tip'
-                          ),
+                          tooltip: this.$t('packages_dag_task_setting_cron_tip')
                         },
                         'x-component': 'Switch',
                         default: false,
@@ -165,49 +155,39 @@ export default observer({
                           dependencies: ['type'],
                           fulfill: {
                             state: {
-                              display:
-                                '{{$deps[0] === "initial_sync" ? "visible" : "hidden"}}',
-                            },
-                          },
-                        },
+                              display: '{{$deps[0] === "initial_sync" ? "visible" : "hidden"}}'
+                            }
+                          }
+                        }
                       },
                       crontabExpression: {
                         type: 'string',
                         required: 'true',
                         'x-validator': {
                           cron: true,
-                          message: i18n.t(
-                            'packages_dag_migration_settingpanel_cronbiao'
-                          ),
+                          message: i18n.t('packages_dag_migration_settingpanel_cronbiao')
                         },
                         'x-decorator': 'FormItem',
                         'x-component': 'Input',
                         'x-component-props': {
-                          placeholder: this.$t(
-                            'packages_dag_task_setting_cron_expression'
-                          ),
+                          placeholder: this.$t('packages_dag_task_setting_cron_expression')
                         },
-                        description: this.$t(
-                          'packages_dag_task_setting_cron_tip'
-                        ),
+                        description: this.$t('packages_dag_task_setting_cron_tip'),
                         'x-reactions': {
                           dependencies: ['type', 'crontabExpressionFlag'],
                           fulfill: {
                             state: {
-                              display:
-                                '{{$deps[0] === "initial_sync" && $deps[1] ? "visible" : "hidden"}}',
-                            },
-                          },
-                        },
+                              display: '{{$deps[0] === "initial_sync" && $deps[1] ? "visible" : "hidden"}}'
+                            }
+                          }
+                        }
                       },
                       syncPoints: {
                         title: this.$t('packages_dag_task_setting_sync_point'), //增量采集开始时刻
                         type: 'array',
                         default: [{ type: 'current', date: '' }],
                         'x-decorator-props': {
-                          tooltip: this.$t(
-                            'packages_dag_task_setting_syncPoint_tip'
-                          ),
+                          tooltip: this.$t('packages_dag_task_setting_syncPoint_tip')
                         },
                         'x-component': 'ArrayItems',
                         'x-decorator': 'FormItem',
@@ -215,10 +195,9 @@ export default observer({
                           dependencies: ['type'],
                           fulfill: {
                             state: {
-                              display:
-                                '{{$deps[0] === "cdc" ? "visible" : "hidden"}}',
-                            },
-                          },
+                              display: '{{$deps[0] === "cdc" ? "visible" : "hidden"}}'
+                            }
+                          }
                         },
                         items: {
                           type: 'object',
@@ -227,82 +206,71 @@ export default observer({
                               type: 'string',
                               'x-component': 'PreviewText.Input',
                               'x-reactions': {
-                                dependencies: [
-                                  '.connectionName',
-                                  '.connectionId',
-                                ],
+                                dependencies: ['.connectionName', '.connectionId'],
                                 fulfill: {
                                   schema: {
-                                    'x-component-props.content': `{{$deps[0] + '('+ $self.value + ')'}}`,
+                                    'x-component-props.content': `{{$deps[0] + '('+ $self.value + ')'}}`
                                   },
                                   state: {
-                                    display:
-                                      '{{ $deps[1] ? "visible":"hidden"}}',
-                                  },
-                                },
-                              },
+                                    display: '{{ $deps[1] ? "visible":"hidden"}}'
+                                  }
+                                }
+                              }
                             },
                             hiddenPointType: {
                               'x-display': 'hidden',
                               type: 'boolean',
-                              'x-component': 'PreviewText.Input',
+                              'x-component': 'PreviewText.Input'
                             },
                             connectionId: {
                               'x-display': 'hidden',
-                              type: 'string',
+                              type: 'string'
                             },
                             connectionName: {
                               'x-display': 'hidden',
                               type: 'string',
-                              'x-component': 'PreviewText.Input',
+                              'x-component': 'PreviewText.Input'
                             },
                             pointType: {
                               type: 'string',
                               'x-decorator': 'FormItem',
                               'x-component': 'Select',
                               'x-component-props': {
-                                placeholder: i18n.t(
-                                  'packages_dag_components_formpanel_qingxuanze'
-                                ),
+                                placeholder: i18n.t('packages_dag_components_formpanel_qingxuanze')
                               },
                               default: 'current',
                               enum: [
                                 {
-                                  label: this.$t(
-                                    'packages_dag_dataFlow_SyncInfo_localTZType'
-                                  ),
-                                  value: 'localTZ',
+                                  label: this.$t('packages_dag_dataFlow_SyncInfo_localTZType'),
+                                  value: 'localTZ'
                                 },
                                 /*{
                                   label: this.$t('packages_dag_dataFlow_SyncInfo_connTZType'),
                                   value: 'connTZ'
                                 },*/
                                 {
-                                  label: this.$t(
-                                    'packages_dag_dataFlow_SyncInfo_currentType'
-                                  ),
-                                  value: 'current',
-                                },
+                                  label: this.$t('packages_dag_dataFlow_SyncInfo_currentType'),
+                                  value: 'current'
+                                }
                               ],
                               'x-reactions': [
                                 {
                                   dependencies: ['.hiddenPointType'],
                                   fulfill: {
                                     state: {
-                                      disabled: `{{$deps[0]}}`,
-                                    },
-                                  },
+                                      disabled: `{{$deps[0]}}`
+                                    }
+                                  }
                                 },
                                 {
                                   dependencies: ['.connectionId'],
                                   fulfill: {
                                     state: {
-                                      display:
-                                        '{{ $deps[0] ? "visible":"hidden"}}',
-                                    },
-                                  },
-                                },
-                              ],
+                                      display: '{{ $deps[0] ? "visible":"hidden"}}'
+                                    }
+                                  }
+                                }
+                              ]
                             },
                             dateTime: {
                               type: 'string',
@@ -313,29 +281,29 @@ export default observer({
                                 type: 'datetime',
                                 format: 'yyyy-MM-dd HH:mm:ss',
                                 valueFormat: 'timestamp',
-                                popperClass: 'setting-panel__dateTimePicker',
+                                popperClass: 'setting-panel__dateTimePicker'
                               },
                               'x-reactions': [
                                 {
                                   dependencies: ['.pointType'],
                                   fulfill: {
                                     state: {
-                                      visible: '{{$deps[0] !== "current"}}',
-                                    },
-                                  },
+                                      visible: '{{$deps[0] !== "current"}}'
+                                    }
+                                  }
                                 },
                                 {
                                   dependencies: ['.pointType'],
                                   fulfill: {
                                     schema: {
-                                      'x-component-props.pickerOptions': `{{$deps[0] === "localTZ" ? getPickerOptionsBeforeTime($self.value, Date.now()) : null}}`,
-                                    },
-                                  },
-                                },
-                              ],
-                            },
-                          },
-                        },
+                                      'x-component-props.pickerOptions': `{{$deps[0] === "localTZ" ? getPickerOptionsBeforeTime($self.value, Date.now()) : null}}`
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        }
                       },
                       // isAutoCreateIndexS: {
                       //   title: this.$t('packages_dag_task_setting_automatic_index'), //自动创建索引
@@ -352,9 +320,7 @@ export default observer({
                       //   'x-component': 'Switch'
                       // },
                       shareCdcEnable: {
-                        title: this.$t(
-                          'packages_dag_connection_form_shared_mining'
-                        ), //共享挖掘日志过滤
+                        title: this.$t('packages_dag_connection_form_shared_mining'), //共享挖掘日志过滤
                         type: 'boolean',
                         default: false,
                         'x-decorator': 'FormItem',
@@ -363,11 +329,10 @@ export default observer({
                           dependencies: ['type'],
                           fulfill: {
                             state: {
-                              visible:
-                                '{{$deps[0] !== "initial_sync" && $values.isDaas}}', // 只有增量或全量+增量支持
-                            },
-                          },
-                        },
+                              visible: '{{$deps[0] !== "initial_sync" && $values.isDaas}}' // 只有增量或全量+增量支持
+                            }
+                          }
+                        }
                       },
                       isAutoInspect: {
                         title: this.$t('packages_dag_task_list_verify'),
@@ -375,23 +340,19 @@ export default observer({
                         default: true,
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
-                          tooltip: i18n.t(
-                            'packages_dag_migration_settingpanel_dangrenwufuhe'
-                          ),
+                          tooltip: i18n.t('packages_dag_migration_settingpanel_dangrenwufuhe')
                         },
                         'x-component': 'Switch',
                         'x-reactions': {
                           fulfill: {
                             state: {
-                              visible: '{{$values.syncType === "migrate"}}',
-                            },
-                          },
-                        },
+                              visible: '{{$values.syncType === "migrate"}}'
+                            }
+                          }
+                        }
                       },
                       increSyncConcurrency: {
-                        title: this.$t(
-                          'packages_dag_task_setting_cdc_concurrency'
-                        ),
+                        title: this.$t('packages_dag_task_setting_cdc_concurrency'),
                         type: 'boolean',
                         default: true,
                         'x-decorator': 'FormItem',
@@ -400,11 +361,10 @@ export default observer({
                           dependencies: ['type'],
                           fulfill: {
                             state: {
-                              display:
-                                '{{$deps[0]!=="initial_sync" ? "visible" : "hidden"}}',
-                            },
-                          },
-                        },
+                              display: '{{$deps[0]!=="initial_sync" ? "visible" : "hidden"}}'
+                            }
+                          }
+                        }
                       },
                       increHysteresisSpace: {
                         type: 'void',
@@ -414,54 +374,47 @@ export default observer({
                         properties: {
                           increHysteresis: {
                             type: 'boolean',
-                            'x-component': 'Switch',
+                            'x-component': 'Switch'
                           },
                           hysteresisInterval: {
                             type: 'number',
                             'x-decorator': 'FormItem',
                             'x-decorator-props': {
                               feedbackLayout: 'none',
-                              addonAfter: i18n.t(
-                                'packages_dag_dag_data_setting_second'
-                              ),
+                              addonAfter: i18n.t('packages_dag_dag_data_setting_second')
                             },
                             'x-component': 'InputNumber',
                             'x-component-props': {
-                              min: 1,
+                              min: 1
                             },
                             'x-reactions': {
                               dependencies: ['.increHysteresis'],
                               fulfill: {
                                 state: {
-                                  display: '{{$deps[0]?"visible":"hidden"}}',
-                                },
-                              },
-                            },
-                          },
+                                  display: '{{$deps[0]?"visible":"hidden"}}'
+                                }
+                              }
+                            }
+                          }
                         },
                         'x-reactions': {
                           dependencies: ['type'],
                           fulfill: {
                             state: {
-                              display:
-                                '{{$deps[0]!=="initial_sync" ? "visible" : "hidden"}}',
-                            },
-                          },
-                        },
+                              display: '{{$deps[0]!=="initial_sync" ? "visible" : "hidden"}}'
+                            }
+                          }
+                        }
                       },
                       processorThreadNum: {
                         type: 'number',
-                        title: this.$t(
-                          'packages_dag_task_setting_processorThreadNum'
-                        ),
+                        title: this.$t('packages_dag_task_setting_processorThreadNum'),
                         'x-decorator': 'FormItem',
-                        'x-component': 'InputNumber',
+                        'x-component': 'InputNumber'
                       },
                       increOperationModeSpace: {
                         type: 'void',
-                        title: this.$t(
-                          'packages_dag_task_setting_increOperationMode'
-                        ),
+                        title: this.$t('packages_dag_task_setting_increOperationMode'),
                         'x-decorator': 'FormItem',
                         'x-component': 'Space',
                         properties: {
@@ -470,107 +423,94 @@ export default observer({
                             'x-component': 'Select',
                             enum: [
                               {
-                                label: i18n.t(
-                                  'packages_dag_components_formpanel_piliang'
-                                ),
-                                value: false,
+                                label: i18n.t('packages_dag_components_formpanel_piliang'),
+                                value: false
                               },
                               {
-                                label: i18n.t(
-                                  'packages_dag_components_formpanel_zhutiao'
-                                ),
-                                value: true,
-                              },
-                            ],
+                                label: i18n.t('packages_dag_components_formpanel_zhutiao'),
+                                value: true
+                              }
+                            ]
                           },
                           increaseReadSize: {
                             type: 'number',
                             'x-component': 'InputNumber',
                             'x-component-props': {
-                              min: 1,
+                              min: 1
                             },
                             'x-reactions': {
                               dependencies: ['.increOperationMode'],
                               fulfill: {
                                 state: {
-                                  display: '{{$deps[0]?"visible":"hidden"}}',
-                                },
-                              },
-                            },
-                          },
+                                  display: '{{$deps[0]?"visible":"hidden"}}'
+                                }
+                              }
+                            }
+                          }
                         },
                         'x-reactions': {
                           dependencies: ['type'],
                           fulfill: {
                             state: {
-                              display:
-                                '{{$deps[0]!=="initial_sync" ? "visible" : "hidden"}}',
-                            },
-                          },
-                        },
+                              display: '{{$deps[0]!=="initial_sync" ? "visible" : "hidden"}}'
+                            }
+                          }
+                        }
                       },
                       accessNodeType: {
                         type: 'string',
-                        title: this.$t(
-                          'packages_dag_connection_form_access_node'
-                        ),
+                        title: this.$t('packages_dag_connection_form_access_node'),
                         default: 'AUTOMATIC_PLATFORM_ALLOCATION',
                         'x-decorator': 'FormItem',
                         'x-component': 'Select',
                         enum: [
                           {
-                            label: this.$t(
-                              'packages_dag_connection_form_automatic'
-                            ),
-                            value: 'AUTOMATIC_PLATFORM_ALLOCATION',
+                            label: this.$t('packages_dag_connection_form_automatic'),
+                            value: 'AUTOMATIC_PLATFORM_ALLOCATION'
                           },
                           {
-                            label: this.$t(
-                              'packages_dag_connection_form_manual'
-                            ),
-                            value: 'MANUALLY_SPECIFIED_BY_THE_USER',
-                          },
+                            label: this.$t('packages_dag_connection_form_manual'),
+                            value: 'MANUALLY_SPECIFIED_BY_THE_USER'
+                          }
                         ],
                         'x-reactions': [
                           {
                             target: 'accessNodeProcessId',
                             fulfill: {
                               state: {
-                                visible:
-                                  "{{$self.value==='MANUALLY_SPECIFIED_BY_THE_USER'}}",
-                              },
-                            },
+                                visible: "{{$self.value==='MANUALLY_SPECIFIED_BY_THE_USER'}}"
+                              }
+                            }
                           },
                           {
                             target: 'accessNodeProcessId',
                             effects: ['onFieldInputValueChange'],
                             fulfill: {
                               state: {
-                                value:
-                                  '{{$target.value || $target.dataSource[0].value}}',
-                              },
-                            },
-                          },
-                        ],
+                                value: '{{$target.value || $target.dataSource[0].value}}'
+                              }
+                            }
+                          }
+                        ]
                       },
                       accessNodeProcessId: {
                         type: 'string',
                         'x-decorator': 'FormItem',
-                        'x-component': 'Select',
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
+                        'x-component': 'Select'
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       },
 
       form: createForm({
         disabled: this.stateIsReadonly,
-        values,
-      }),
+        values
+      })
     }
   },
 
@@ -579,10 +519,9 @@ export default observer({
 
     accessNodeProcessIdArr() {
       const set = this.allNodes
-        .filter((item) => item.type === 'database' || item.type === 'table')
+        .filter(item => item.type === 'database' || item.type === 'table')
         .reduce((set, item) => {
-          item.attrs.accessNodeProcessId &&
-            set.add(item.attrs.accessNodeProcessId)
+          item.attrs.accessNodeProcessId && set.add(item.attrs.accessNodeProcessId)
           return set
         }, new Set())
       return [...set]
@@ -590,20 +529,18 @@ export default observer({
 
     accessNodeProcessList() {
       if (!this.accessNodeProcessIdArr.length) return this.scope.$agents
-      return this.scope.$agents.filter((item) =>
-        this.accessNodeProcessIdArr.includes(item.value)
-      )
+      return this.scope.$agents.filter(item => this.accessNodeProcessIdArr.includes(item.value))
     },
 
     sourceNodes() {
       return this.allNodes
-        .filter((node) => node.$outputs.length && !node.$inputs.length)
-        .map((node) => ({
+        .filter(node => node.$outputs.length && !node.$inputs.length)
+        .map(node => ({
           nodeId: node.id,
           nodeName: node.name,
           hiddenPointType: node?.cdcMode === 'polling', //源节点开启了日志轮询则禁用增量采集时刻配置
           connectionId: node.connectionId,
-          connectionName: node.attrs.connectionName,
+          connectionName: node.attrs.connectionName
         }))
     },
 
@@ -616,7 +553,7 @@ export default observer({
         systemTimeZone = '+' + -timeZone
       }
       return systemTimeZone
-    },
+    }
   },
 
   watch: {
@@ -625,7 +562,7 @@ export default observer({
       if (v) {
         // 监控模式禁用
         this.form.setFieldState('*(accessNodeType,accessNodeProcessId)', {
-          disabled: true,
+          disabled: true
         })
       }
     },
@@ -638,29 +575,28 @@ export default observer({
         if (size >= 1) {
           const currentId = this.settings.accessNodeProcessId
           this.settings.accessNodeType = 'MANUALLY_SPECIFIED_BY_THE_USER'
-          this.settings.accessNodeProcessId =
-            currentId && arr.includes(currentId) ? currentId : arr[0]
+          this.settings.accessNodeProcessId = currentId && arr.includes(currentId) ? currentId : arr[0]
         }
         if (!this.stateIsReadonly) {
           // 只在编辑模式下禁用或启用
           this.form.setFieldState('*(accessNodeType,accessNodeProcessId)', {
-            disabled: size === 1,
+            disabled: size === 1
           })
         }
       },
 
-      immediate: true,
+      immediate: true
     },
     accessNodeProcessList: {
       deep: true,
 
       handler(dataSource = []) {
         this.form.setFieldState('accessNodeProcessId', {
-          dataSource,
+          dataSource
         })
       },
 
-      immediate: true,
+      immediate: true
     },
 
     sourceNodes(v) {
@@ -672,24 +608,24 @@ export default observer({
             return map
           }, {})
         : {}
-      const syncPoints = this.sourceNodes.map((item) => {
+      const syncPoints = this.sourceNodes.map(item => {
         const old = oldPointsMap[item.nodeId]
         const point = {
           ...item,
           timeZone,
           pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
-          dateTime: '',
+          dateTime: ''
         }
         if (old && !item.hiddenPointType) {
           Object.assign(point, {
             pointType: old.pointType,
-            dateTime: old.dateTime,
+            dateTime: old.dateTime
           })
         }
         return point
       })
       this.settings.syncPoints = syncPoints
-    },
+    }
   },
 
   created() {
@@ -701,13 +637,13 @@ export default observer({
       taskApi
         .checkName({
           name: value,
-          id: this.settings.id || '',
+          id: this.settings.id || ''
         })
-        .then((data) => {
+        .then(data => {
           resolve(data)
         })
-    }, 500),
-  },
+    }, 500)
+  }
 })
 </script>
 

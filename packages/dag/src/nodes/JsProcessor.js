@@ -22,20 +22,19 @@ export class JavaScript extends NodeType {
       // 组件内需要监听$inputs的响应
       $inputs: {
         type: 'array',
-        display: 'none',
+        display: 'none'
       },
       name: {
         type: 'string',
         title: i18n.t('packages_dag_nodes_database_jiedianmingcheng'),
         required: true,
         'x-decorator': 'FormItem',
-        'x-component': 'Input',
+        'x-component': 'Input'
       },
       script: {
         type: 'string',
         required: true,
-        default:
-          'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}',
+        default: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}',
         'x-component': 'JsProcessor',
         'x-component-props': {
           height: 500,
@@ -46,10 +45,10 @@ export class JavaScript extends NodeType {
           afterRegexp: '}[^}]*$',
           after: '}',
           param: 'schemaApplyResultList',
-          handleAddCompleter: '{{addDeclaredCompleterForMigrate}}',
-        },
-      },
-    },
+          handleAddCompleter: '{{addDeclaredCompleterForMigrate}}'
+        }
+      }
+    }
   }
 
   locales = AllLocales.JavaScript

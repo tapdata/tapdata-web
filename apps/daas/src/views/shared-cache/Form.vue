@@ -2,13 +2,7 @@
   <section class="shared-cache-form" v-loading="loading">
     <div class="section-wrap-box flex">
       <div class="title mb-6">
-        {{
-          $t(
-            $route.params.id
-              ? 'page_title_shared_cache_edit'
-              : 'page_title_shared_cache_create'
-          )
-        }}
+        {{ $t($route.params.id ? 'page_title_shared_cache_edit' : 'page_title_shared_cache_create') }}
       </div>
       <ElForm
         ref="form"
@@ -52,10 +46,7 @@
         <ElFormItem prop="cacheKeys" :label="$t('shared_cache_keys') + ':'">
           <template v-slot:label>
             <span>{{ $t('shared_cache_keys') }}</span>
-            <el-tooltip
-              placement="top"
-              :content="$t('shared_cache_keys_tooltip')"
-            >
+            <el-tooltip placement="top" :content="$t('shared_cache_keys_tooltip')">
               <i class="el-icon-info color-primary ml-1"></i>
             </el-tooltip>
             <span>:</span>
@@ -70,10 +61,7 @@
         <ElFormItem prop="fields" :label="$t('shared_cache_fields') + ':'">
           <template v-slot:label>
             <span>{{ $t('shared_cache_fields') }}</span>
-            <el-tooltip
-              placement="top"
-              :content="$t('shared_cache_fields_tooltip')"
-            >
+            <el-tooltip placement="top" :content="$t('shared_cache_fields_tooltip')">
               <i class="el-icon-info color-primary ml-1"></i>
             </el-tooltip>
             <span>:</span>
@@ -88,10 +76,7 @@
         <ElFormItem prop="maxMemory">
           <template v-slot:label>
             <span>{{ $t('shared_cache_max_memory') }}</span>
-            <el-tooltip
-              placement="top"
-              :content="$t('shared_cache_max_memory_tooltip')"
-            >
+            <el-tooltip placement="top" :content="$t('shared_cache_max_memory_tooltip')">
               <i class="el-icon-info color-primary ml-1"></i>
             </el-tooltip>
             <span>:</span>
@@ -106,11 +91,7 @@
           <span class="ml-1">M</span>
         </ElFormItem>
         <ElFormItem prop="externalStorageId" label="外存配置">
-          <ElSelect
-            v-model:value="form.externalStorageId"
-            filterable
-            :loading="!externalStorageOptions"
-          >
+          <ElSelect v-model:value="form.externalStorageId" filterable :loading="!externalStorageOptions">
             <ElOption
               v-for="opt in externalStorageOptions"
               :key="opt.value"
@@ -122,10 +103,7 @@
         <ElFormItem>
           <template v-slot:label>
             <span>{{ $t('shared_cache_code') }}</span>
-            <el-tooltip
-              placement="top"
-              :content="$t('shared_cache_code_tooltip')"
-            >
+            <el-tooltip placement="top" :content="$t('shared_cache_code_tooltip')">
               <i class="el-icon-info color-primary ml-1"></i>
             </el-tooltip>
             <span>:</span>
@@ -135,9 +113,7 @@
       </ElForm>
       <div class="pt-6">
         <ElButton @click="$router.back()">{{ $t('button_back') }}</ElButton>
-        <ElButton type="primary" @click="submit">{{
-          $t('button_save')
-        }}</ElButton>
+        <ElButton type="primary" @click="submit">{{ $t('button_save') }}</ElButton>
       </div>
     </div>
   </section>
@@ -147,12 +123,7 @@
 import { VirtualSelect } from '@tap/component'
 import FieldSelector from './FieldSelector'
 import CodeView from './CodeView.vue'
-import {
-  sharedCacheApi,
-  metadataInstancesApi,
-  connectionsApi,
-  externalStorageApi,
-} from '@tap/api'
+import { sharedCacheApi, metadataInstancesApi, connectionsApi, externalStorageApi } from '@tap/api'
 
 export default {
   components: { VirtualSelect, FieldSelector, CodeView },
@@ -166,7 +137,7 @@ export default {
         cacheKeys: '',
         fields: '',
         maxMemory: 500,
-        externalStorageId: '',
+        externalStorageId: ''
       },
       connectionOptions: [],
       externalStorageOptions: null,
@@ -182,52 +153,52 @@ export default {
           {
             required: true,
             trigger: 'blur',
-            message: this.$t('shared_cache_placeholder_name'),
-          },
+            message: this.$t('shared_cache_placeholder_name')
+          }
         ],
         connectionId: [
           {
             required: true,
             trigger: 'blur',
-            message: this.$t('shared_cache_placeholder_connection'),
-          },
+            message: this.$t('shared_cache_placeholder_connection')
+          }
         ],
         tableName: [
           {
             required: true,
             trigger: 'blur',
-            message: this.$t('shared_cache_placeholder_table'),
-          },
+            message: this.$t('shared_cache_placeholder_table')
+          }
         ],
         cacheKeys: [
           {
             required: true,
             trigger: 'blur',
-            message: this.$t('shared_cache_placeholder_keys'),
-          },
+            message: this.$t('shared_cache_placeholder_keys')
+          }
         ],
         fields: [
           {
             required: true,
             trigger: 'blur',
-            message: this.$t('shared_cache_placeholder_fields'),
-          },
+            message: this.$t('shared_cache_placeholder_fields')
+          }
         ],
         maxMemory: [
           {
             required: true,
             trigger: 'blur',
-            message: this.$t('shared_cache_placeholder_max_memory'),
-          },
+            message: this.$t('shared_cache_placeholder_max_memory')
+          }
         ],
         externalStorageId: [
           {
             required: true,
             trigger: 'blur',
-            message: this.$t('shared_cache_placeholder_external_storage'),
-          },
-        ],
-      },
+            message: this.$t('shared_cache_placeholder_external_storage')
+          }
+        ]
+      }
     }
   },
   created() {
@@ -243,7 +214,7 @@ export default {
       this.loading = true
       sharedCacheApi
         .findOne(id)
-        .then((data) => {
+        .then(data => {
           data = data || {}
           this.form = {
             name: data.name,
@@ -252,7 +223,7 @@ export default {
             cacheKeys: data.cacheKeys,
             fields: data.fields?.join(',') || '',
             maxMemory: data.maxMemory,
-            externalStorageId: data.externalStorageId,
+            externalStorageId: data.externalStorageId
           }
           this.getTableOptions(data.connectionId)
           this.getTableSchema(data.tableName)
@@ -267,7 +238,7 @@ export default {
       })
       let defaultStorageId = ''
       this.externalStorageOptions =
-        data?.items?.map((it) => {
+        data?.items?.map(it => {
           if (it.defaultStorage) {
             defaultStorageId = it.id
           }
@@ -282,17 +253,17 @@ export default {
         order: 'createTime DESC',
         fields: {
           id: true,
-          name: true,
+          name: true
         },
         where: {
-          connection_type: { in: ['source', 'source_and_target'] },
-        },
+          connection_type: { in: ['source', 'source_and_target'] }
+        }
       }
-      connectionsApi.listAll(filter).then((data) => {
+      connectionsApi.listAll(filter).then(data => {
         let options = data || []
-        this.connectionOptions = options.map((opt) => ({
+        this.connectionOptions = options.map(opt => ({
           label: opt.name,
-          value: opt.id,
+          value: opt.id
         }))
       })
     },
@@ -300,10 +271,10 @@ export default {
       this.tableOptionsLoading = true
       metadataInstancesApi
         .getTables(connectionId)
-        .then((data) => {
+        .then(data => {
           let options = []
           let list = data || []
-          list.forEach((opt) => {
+          list.forEach(opt => {
             if (opt) {
               options.push({ label: opt, value: opt })
             }
@@ -321,22 +292,22 @@ export default {
             'source.id': this.form.connectionId,
             original_name: tableName,
             is_deleted: false,
-            'fields.is_deleted': false,
+            'fields.is_deleted': false
           },
           fields: {
             'fields.field_name': true,
-            'fields.original_field_name': true,
-          },
-        }),
+            'fields.original_field_name': true
+          }
+        })
       }
       this.fieldOptionsLoading = true
       metadataInstancesApi
         .get(params)
-        .then((data) => {
+        .then(data => {
           let table = data?.items?.[0]
           if (table) {
             let fields = table.fields || []
-            this.fieldOptions = fields.map((opt) => opt.field_name)
+            this.fieldOptions = fields.map(opt => opt.field_name)
           } else {
             this.$message.error(this.$t('shared_cache_messge_no_table'))
           }
@@ -359,17 +330,9 @@ export default {
       this.getTableSchema(tableName)
     },
     submit() {
-      this.$refs.form.validate((flag) => {
+      this.$refs.form.validate(flag => {
         if (flag) {
-          let {
-            name,
-            connectionId,
-            tableName,
-            cacheKeys,
-            fields,
-            maxMemory,
-            externalStorageId,
-          } = this.form
+          let { name, connectionId, tableName, cacheKeys, fields, maxMemory, externalStorageId } = this.form
           let id = this.$route.params.id
           let params = {
             id,
@@ -379,20 +342,20 @@ export default {
                 {
                   type: 'collection',
                   attrs: {
-                    fields: fields.split(','),
+                    fields: fields.split(',')
                   },
                   tableName: tableName,
                   databaseType: 'mongodb',
-                  connectionId: connectionId,
+                  connectionId: connectionId
                 },
                 {
                   cacheKeys: cacheKeys,
                   maxMemory: maxMemory,
-                  externalStorageId,
-                },
+                  externalStorageId
+                }
               ],
-              edges: [],
-            },
+              edges: []
+            }
           }
           let method = id ? 'patch' : 'post'
           this.loading = true
@@ -400,7 +363,7 @@ export default {
             .then(() => {
               this.$message.success(this.$t('message_save_ok'))
               this.$router.replace({
-                name: 'sharedCacheList',
+                name: 'sharedCacheList'
               })
             })
             .finally(() => {
@@ -408,8 +371,8 @@ export default {
             })
         }
       })
-    },
-  },
+    }
+  }
 }
 </script>
 

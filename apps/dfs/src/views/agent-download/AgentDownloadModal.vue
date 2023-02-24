@@ -59,16 +59,12 @@
                     v-clipboard:success="onCopy"
                     @mouseleave="showTooltip = false"
                   >
-                    <i class="click-style">{{
-                      $t('agent_deploy_start_install_button_copy')
-                    }}</i>
+                    <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
                   </span>
                 </ElTooltip>
               </li>
               <li class="mt-3">
-                <span>{{
-                  $t('agent_deploy_start_install_windows_fifth')
-                }}</span>
+                <span>{{ $t('agent_deploy_start_install_windows_fifth') }}</span>
               </li>
             </ul>
           </template>
@@ -100,31 +96,23 @@
                     v-clipboard:success="onCopy"
                     @mouseleave="showTooltip = false"
                   >
-                    <i class="click-style">{{
-                      $t('agent_deploy_start_install_button_copy')
-                    }}</i>
+                    <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
                   </span>
                 </ElTooltip>
               </li>
               <li>
-                {{
-                  $t('agent_download_AgentDownloadModal_dengDaiMingLingZhi2')
-                }}
+                {{ $t('agent_download_AgentDownloadModal_dengDaiMingLingZhi2') }}
               </li>
             </ul>
           </template>
           <template v-if="downLoadType === 'Docker'">
             <ul class="ul-style">
               <li>
-                <span>{{
-                  $t('agent_download_AgentDownloadModal_ninDeBuShuHuan')
-                }}</span>
+                <span>{{ $t('agent_download_AgentDownloadModal_ninDeBuShuHuan') }}</span>
                 <ElLink type="primary" @click="dockerToInstall">{{
                   $t('agent_deploy_before_prepare_docker_install_link')
                 }}</ElLink>
-                <span>{{
-                  $t('agent_deploy_before_prepare_docker_second_install')
-                }}</span>
+                <span>{{ $t('agent_deploy_before_prepare_docker_second_install') }}</span>
               </li>
               <li>
                 <div class="my-5 text-style">
@@ -149,9 +137,7 @@
                     v-clipboard:success="onCopy"
                     @mouseleave="showTooltip = false"
                   >
-                    <i class="click-style">{{
-                      $t('agent_deploy_start_install_button_copy')
-                    }}</i>
+                    <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
                   </span>
                 </ElTooltip>
               </li>
@@ -163,9 +149,7 @@
           <template v-if="downLoadType === 'AliComputenest'">
             <ul class="ul-style">
               <li>
-                <span>{{
-                  $t('dfs_agent_download_agentdownloadmodal_jisuanchaoCo')
-                }}</span>
+                <span>{{ $t('dfs_agent_download_agentdownloadmodal_jisuanchaoCo') }}</span>
               </li>
               <li>
                 <div class="my-5 text-style">
@@ -173,9 +157,7 @@
                 </div>
               </li>
               <li>
-                {{
-                  $t('dfs_agent_download_agentdownloadmodal_zhunbeiguanliyun')
-                }}
+                {{ $t('dfs_agent_download_agentdownloadmodal_zhunbeiguanliyun') }}
               </li>
               <li>
                 <div class="my-5 text-style">
@@ -187,18 +169,12 @@
                 <div class="my-4">
                   <el-link :href="trialUrl" target="_blank" class="mr-4 url-btn"
                     ><div>
-                      {{
-                        $t(
-                          'dfs_agent_download_agentdownloadmodal_santianshiyong'
-                        )
-                      }}
+                      {{ $t('dfs_agent_download_agentdownloadmodal_santianshiyong') }}
                     </div></el-link
                   >
                   <el-link :href="url" target="_blank" class="url-btn"
                     ><div>
-                      {{
-                        $t('dfs_agent_download_agentdownloadmodal_fufeibushu')
-                      }}
+                      {{ $t('dfs_agent_download_agentdownloadmodal_fufeibushu') }}
                     </div></el-link
                   >
                 </div>
@@ -221,17 +197,13 @@
                 {{ token }}
               </li>
               <li>
-                {{
-                  $t('dfs_agent_download_agentdownloadmodal_querenjisuanchao')
-                }}
+                {{ $t('dfs_agent_download_agentdownloadmodal_querenjisuanchao') }}
               </li>
               <li>
                 <el-image :src="getImg('alicomputenest_instance')" alt="" />
               </li>
               <li class="my-2">
-                {{
-                  $t('dfs_agent_download_agentdownloadmodal_bushuwanchenghou')
-                }}
+                {{ $t('dfs_agent_download_agentdownloadmodal_bushuwanchenghou') }}
               </li>
               <li>
                 <el-image :src="getImg('alicomputenest_agent')" alt="" />
@@ -243,15 +215,10 @@
     </section>
     <template v-slot:footer>
       <span>
-        <div
-          class="result-item text-center flex justify-content-end align-items-center"
-        >
+        <div class="result-item text-center flex justify-content-end align-items-center">
           <div v-if="!isFinished" class="loading-item flex align-items-center">
             <div class="flex align-items-center agent_download_status_icon">
-              <VIcon
-                class="v-icon animation-rotate color-success"
-                size="18"
-                color="rgb(61, 156, 64)"
+              <VIcon class="v-icon animation-rotate color-success" size="18" color="rgb(61, 156, 64)"
                 >loading-circle-blue</VIcon
               >
               <div class="ml-4">
@@ -265,12 +232,7 @@
             </div>
           </div>
           <div v-else class="finish-item">
-            <VIcon
-              class="v-icon color-success"
-              size="24"
-              color="rgb(61, 156, 64)"
-              >check</VIcon
-            >
+            <VIcon class="v-icon color-success" size="24" color="rgb(61, 156, 64)">check</VIcon>
             <div class="mt-4">
               {{ $t('agent_download_AgentDownloadModal_gongXiNinWanCheng') }}
             </div>
@@ -301,12 +263,12 @@ export default {
   components: { VIcon },
   props: {
     visible: {
-      type: Boolean,
+      type: Boolean
     },
     source: {
       type: Object,
-      default: () => {},
-    },
+      default: () => {}
+    }
   },
   data() {
     return {
@@ -317,8 +279,8 @@ export default {
         { name: 'Windows (64 bit)', value: 'windows' },
         {
           name: i18n.t('dfs_agent_download_agentdownloadmodal_aliyunjisuan'),
-          value: 'AliComputenest',
-        },
+          value: 'AliComputenest'
+        }
       ],
       showTooltip: false,
       windowsLink: '',
@@ -332,7 +294,7 @@ export default {
       token: '',
       version: '',
       trialUrl: '',
-      url: '',
+      url: ''
     }
   },
   watch: {
@@ -343,8 +305,8 @@ export default {
       deep: true,
       handler(v) {
         v && this.loadData()
-      },
-    },
+      }
+    }
   },
   methods: {
     setTimer() {
@@ -358,23 +320,19 @@ export default {
     getAgentStatus() {
       let filter = {
         where: {
-          id: this.agentId,
+          id: this.agentId
         },
-        limit: 10,
+        limit: 10
       }
-      this.$axios
-        .get(
-          'api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))
-        )
-        .then((data) => {
-          this.isFinished = data?.items[0]?.status === 'Running'
-        })
+      this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
+        this.isFinished = data?.items[0]?.status === 'Running'
+      })
     },
     loadData() {
       let data = Object.assign({}, this.source)
       this.agentId = data.agentId
       // this.dialogVisible = true
-      data.deployInfo.links.forEach((el) => {
+      data.deployInfo.links.forEach(el => {
         if (el?.os === 'AliComputenest') {
           this.trialUrl = el?.trialUrl
           this.url = el?.url
@@ -418,13 +376,13 @@ export default {
     toConnection() {
       this.closeModal()
       this.$router.push({
-        name: 'connections',
+        name: 'connections'
       })
     },
     toWorkbench() {
       this.closeModal()
       this.$router.push({
-        name: 'Workbench',
+        name: 'Workbench'
       })
     },
     getImg(name) {
@@ -435,8 +393,8 @@ export default {
       let user = window.__USER_INFO__
       Cookie.set('deployLaterUser', user.userId)
       this.closeModal()
-    },
-  },
+    }
+  }
 }
 </script>
 

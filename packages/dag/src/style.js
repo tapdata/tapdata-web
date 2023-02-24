@@ -2,7 +2,7 @@ export const connectorActiveStyle = {
   paintStyle: { strokeWidth: 1, stroke: '#fa6303' },
   hoverPaintStyle: { stroke: '#fa6303' },
   cssClass: 'connector-selected',
-  overlays: [],
+  overlays: []
 }
 
 export const targetEndpoint = {
@@ -15,16 +15,16 @@ export const targetEndpoint = {
     cursor: 'pointer',
     stroke: '#dedee4',
     fill: '#FFF',
-    radius: 6,
+    radius: 6
   },
   hoverPaintStyle: {
     stroke: '#2c65ff',
     fill: '#f0f7ff',
-    radius: 8,
+    radius: 8
   },
   dropOptions: {
-    hoverClass: 'dropHover',
-  },
+    hoverClass: 'dropHover'
+  }
 }
 
 export const sourceEndpoint = {
@@ -40,20 +40,20 @@ export const sourceEndpoint = {
     // fill: '#FFF',
     stroke: 'transparent',
     fill: 'transparent',
-    radius: 6,
+    radius: 6
   },
   hoverPaintStyle: {
     stroke: '#2c65ff',
     fill: '#f0f7ff',
-    radius: 8,
+    radius: 8
   },
   connectorStyle: {
     strokeWidth: 1.5,
     stroke: '#9f9f9f',
     outlineStroke: 'transparent',
-    outlineWidth: 1.5,
+    outlineWidth: 1.5
   },
   connectorHoverStyle: {
-    stroke: '#2c65ff',
-  },
+    stroke: '#2c65ff'
+  }
 }

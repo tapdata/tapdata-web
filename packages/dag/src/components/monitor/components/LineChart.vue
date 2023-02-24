@@ -22,7 +22,7 @@ export default {
   props: {
     title: {
       type: String,
-      default: '',
+      default: ''
     },
     data: {
       type: Object,
@@ -48,40 +48,37 @@ export default {
             '2000-06-17',
             '2000-06-18',
             '2000-06-19',
-            '2000-06-20',
+            '2000-06-20'
           ],
           name: [i18n.t('packages_dag_components_linechart_biaoti')],
-          value: [
-            12, 3, 42, 4, 78, 24, 7, 5, 44, 22, 12, 3, 42, 4, 78, 24, 7, 5, 44,
-            222,
-          ],
+          value: [12, 3, 42, 4, 78, 24, 7, 5, 44, 22, 12, 3, 42, 4, 78, 24, 7, 5, 44, 222]
         }
-      },
+      }
     },
     color: {
       type: Array,
-      default: () => ['#26CF6C'],
+      default: () => ['#26CF6C']
     },
     limit: {
-      type: Number,
+      type: Number
     },
     timeFormat: {
       type: String,
-      default: 'YYYY-MM-DD HH:mm:ss',
+      default: 'YYYY-MM-DD HH:mm:ss'
     },
     options: {
-      type: Object,
+      type: Object
     },
     timeValue: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
 
   data() {
     return {
       extend: null,
-      end: 100,
+      end: 100
     }
   },
 
@@ -90,8 +87,8 @@ export default {
       deep: true,
       handler() {
         this.init()
-      },
-    },
+      }
+    }
   },
 
   mounted() {
@@ -106,21 +103,13 @@ export default {
       let series = []
       if (value?.[0] instanceof Array) {
         value.forEach((el, index) => {
-          series.push(
-            this.getSeriesItem(
-              el?.map((t) => Math.abs(t || 0)) || [],
-              index,
-              name?.[index]
-            )
-          )
+          series.push(this.getSeriesItem(el?.map(t => Math.abs(t || 0)) || [], index, name?.[index]))
         })
       } else {
-        series.push(
-          this.getSeriesItem(value?.map((t) => Math.abs(t || 0)) || [])
-        )
+        series.push(this.getSeriesItem(value?.map(t => Math.abs(t || 0)) || []))
       }
       options.series = series
-      const seriesNoData = series.every((t) => !t.data.length)
+      const seriesNoData = series.every(t => !t.data.length)
       options.yAxis.max = seriesNoData ? 1 : null
       options.yAxis.min = seriesNoData ? 0 : null
       if (x.length) {
@@ -142,12 +131,12 @@ export default {
             zoomOnMouseWheel: false,
             moveOnMouseWheel: false,
             startValue: x[len - 1 - limit] + '',
-            endValue: x[len - 1] + '',
-          },
+            endValue: x[len - 1] + ''
+          }
         ]
         this.$refs.chart.chart?.chart.on(
           'datazoom',
-          debounce((params) => {
+          debounce(params => {
             const { end } = params?.batch?.[0] || {}
             this.end = end
           }, 100)
@@ -155,7 +144,7 @@ export default {
       }
 
       if (this.end === 100) {
-        const isEmptyData = options.series.every((t) => !t.data.length)
+        const isEmptyData = options.series.every(t => !t.data.length)
         this.extend = Object.assign(
           {},
           {
@@ -165,12 +154,12 @@ export default {
                 color: '#86909c',
                 fontSize: 14,
                 fontWeight: '500',
-                opacity: 0.7,
+                opacity: 0.7
               },
               text: i18n.t('packages_dag_dag_dialog_field_mapping_no_data'),
               left: 'center',
-              top: 'center',
-            },
+              top: 'center'
+            }
           },
           options
         )
@@ -183,16 +172,13 @@ export default {
           backgroundColor: '#364252',
           textStyle: {
             color: '#fff',
-            fontSize: 12,
+            fontSize: 12
           },
-          formatter: (params) => {
+          formatter: params => {
             let result = ''
             params.forEach((item, index) => {
               const { axisValue, marker, seriesName, data } = item
-              let markerStr = marker.replace(
-                /background-color:#\w+;/g,
-                `background-color:${this.color[index]};`
-              )
+              let markerStr = marker.replace(/background-color:#\w+;/g, `background-color:${this.color[index]};`)
               if (!index) {
                 result += dayjs(Number(axisValue)).format('YYYY-MM-DD HH:mm:ss')
               }
@@ -200,12 +186,12 @@ export default {
               if (![null, undefined].includes(data)) {
                 if (this.timeValue) {
                   val = calcTimeUnit(data || 0, 2, {
-                    digits: 2,
+                    digits: 2
                   })
                 } else {
                   val = (data || 0).toLocaleString('zh', {
                     minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
+                    maximumFractionDigits: 2
                   })
                 }
               }
@@ -213,7 +199,7 @@ export default {
               result += `<div class="flex justify-content-between"><div>${markerStr}${seriesName}</div><div class="din-font">${val}</div></div>`
             })
             return result
-          },
+          }
         },
         grid: {
           top: '8px',
@@ -222,7 +208,7 @@ export default {
           right: 0,
           // bottom: '24px',
           bottom: 0,
-          containLabel: true,
+          containLabel: true
         },
         xAxis: {
           type: 'category',
@@ -231,52 +217,52 @@ export default {
           splitLine: {
             show: true,
             lineStyle: {
-              type: 'dashed',
-            },
+              type: 'dashed'
+            }
           },
           axisTick: {
-            show: false,
+            show: false
           },
           axisLine: {
             show: true,
             lineStyle: {
-              color: '#E9E9E9',
-            },
+              color: '#E9E9E9'
+            }
           },
           axisLabel: {
             color: '#535F72',
-            formatter: (val) => {
+            formatter: val => {
               return dayjs(Number(val)).format(this.timeFormat)
-            },
-          },
+            }
+          }
         },
         yAxis: {
           axisLine: {
             show: true,
             lineStyle: {
-              color: '#E9E9E9',
-            },
+              color: '#E9E9E9'
+            }
           },
           splitLine: {
             show: true,
             lineStyle: {
-              type: 'dashed',
-            },
+              type: 'dashed'
+            }
           },
           axisLabel: {
             color: '#535F72',
-            formatter: (val) => {
+            formatter: val => {
               return this.timeValue
                 ? calcTimeUnit(val || 0, 2, {
-                    digits: 2,
+                    digits: 2
                   })
                 : calcUnit(val)
-            },
+            }
             // showMaxLabel: false,
             // showMinLabel: false
-          },
+          }
         },
-        series: [],
+        series: []
       }
       const op = this.options
       if (op) {
@@ -300,16 +286,16 @@ export default {
         smooth: true,
         symbol: 'none',
         label: {
-          show: false,
+          show: false
         },
         lineStyle: {
           color: this.color[index],
-          width: 1,
+          width: 1
         },
         areaStyle: {
           color: this.color[index],
-          opacity: 0.1,
-        },
+          opacity: 0.1
+        }
       }
     },
     reset() {
@@ -317,7 +303,7 @@ export default {
     },
     clear() {
       this.$refs.chart.chart?.chart?.clear()
-    },
-  },
+    }
+  }
 }
 </script>

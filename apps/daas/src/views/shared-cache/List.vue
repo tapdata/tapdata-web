@@ -1,44 +1,19 @@
 <template>
   <section class="shared-cache-list-wrap h-100">
-    <TablePage
-      ref="table"
-      row-key="id"
-      :remoteMethod="getData"
-      @sort-change="handleSortTable"
-    >
+    <TablePage ref="table" row-key="id" :remoteMethod="getData" @sort-change="handleSortTable">
       <template v-slot:search>
-        <FilterBar
-          v-model:value="searchParams"
-          :items="filterItems"
-          @fetch="table.fetch(1)"
-        >
-        </FilterBar>
+        <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </template>
       <template v-slot:operation>
         <div>
-          <ElButton
-            class="btn btn-create"
-            type="primary"
-            size="mini"
-            @click="create"
-          >
+          <ElButton class="btn btn-create" type="primary" size="mini" @click="create">
             <span> {{ $t('shared_cache_button_create') }}</span>
           </ElButton>
         </div>
       </template>
-      <ElTableColumn
-        show-overflow-tooltip
-        prop="name"
-        min-width="180"
-        :label="$t('shared_cache_name')"
-      >
+      <ElTableColumn show-overflow-tooltip prop="name" min-width="180" :label="$t('shared_cache_name')">
         <template #default="{ row }">
-          <ElLink
-            style="display: inline"
-            type="primary"
-            @click.stop="checkDetails(row)"
-            >{{ row.name }}</ElLink
-          >
+          <ElLink style="display: inline" type="primary" @click.stop="checkDetails(row)">{{ row.name }}</ElLink>
         </template>
       </ElTableColumn>
       <ElTableColumn
@@ -47,43 +22,25 @@
         min-width="100"
         :label="$t('column_connection')"
       ></ElTableColumn>
-      <ElTableColumn
-        show-overflow-tooltip
-        prop="tableName"
-        min-width="100"
-        :label="$t('column_table')"
-      ></ElTableColumn>
+      <ElTableColumn show-overflow-tooltip prop="tableName" min-width="100" :label="$t('column_table')"></ElTableColumn>
       <ElTableColumn :label="$t('shared_cache_status')" min-width="70">
         <template #default="{ row }">
           <TaskStatus :task="row" />
         </template>
       </ElTableColumn>
-      <ElTableColumn
-        prop="createTime"
-        :label="$t('column_create_time')"
-        min-width="100"
-        sortable="createTime"
-      >
+      <ElTableColumn prop="createTime" :label="$t('column_create_time')" min-width="100" sortable="createTime">
         <template v-slot="scope">
           {{ scope.row.createTimeFmt }}
         </template>
       </ElTableColumn>
-      <ElTableColumn
-        prop="cacheTimeAt"
-        min-width="100"
-        :label="$t('shared_cache_time')"
-      >
+      <ElTableColumn prop="cacheTimeAt" min-width="100" :label="$t('shared_cache_time')">
         <template v-slot="scope">
           {{ scope.row.cacheTimeAtFmt }}
         </template>
       </ElTableColumn>
       <ElTableColumn min-width="120" :label="$t('column_operation')">
         <template #default="{ row }">
-          <TaskButtons
-            :task="row"
-            :hide-list="['details']"
-            @trigger="taskButtonsHandler"
-          ></TaskButtons>
+          <TaskButtons :task="row" :hide-list="['details']" @trigger="taskButtonsHandler"></TaskButtons>
         </template>
       </ElTableColumn>
     </TablePage>
@@ -144,41 +101,41 @@ export default {
     Drawer,
     TaskButtons,
     CodeView,
-    TaskStatus,
+    TaskStatus
   },
   data() {
     return {
       searchParams: {
         name: '',
-        connectionName: '',
+        connectionName: ''
       },
       filterItems: [
         {
           placeholder: this.$t('shared_cache_placeholder_task_name'),
           key: 'name',
-          type: 'input',
+          type: 'input'
         },
         {
           placeholder: this.$t('shared_cache_placeholder_connection_name'),
           key: 'connectionName',
-          type: 'input',
-        },
+          type: 'input'
+        }
       ],
       details: {},
       info: [],
       isShowDetails: false,
-      order: 'cacheTimeAt DESC',
+      order: 'cacheTimeAt DESC'
     }
   },
   computed: {
     table() {
       return this.$refs.table
-    },
+    }
   },
   watch: {
     '$route.query'() {
       this.table.fetch(1)
-    },
+    }
   },
   methods: {
     getData({ page }) {
@@ -189,40 +146,36 @@ export default {
       connectionName &&
         (where.connectionName = {
           like: toRegExp(connectionName),
-          options: 'i',
+          options: 'i'
         })
 
       let filter = {
         order: this.order,
         limit: size,
         skip: (current - 1) * size,
-        where,
+        where
       }
       return sharedCacheApi
         .get({
-          filter: JSON.stringify(filter),
+          filter: JSON.stringify(filter)
         })
-        .then((data) => {
+        .then(data => {
           let list = data?.items || []
           return {
             total: data?.total,
-            data: list.map((item) => {
-              item.createTimeFmt = item.createTime
-                ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
-                : '-'
-              item.cacheTimeAtFmt = item.cacheTimeAt
-                ? dayjs(item.cacheTimeAt).format('YYYY-MM-DD HH:mm:ss')
-                : '-'
+            data: list.map(item => {
+              item.createTimeFmt = item.createTime ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+              item.cacheTimeAtFmt = item.cacheTimeAt ? dayjs(item.cacheTimeAt).format('YYYY-MM-DD HH:mm:ss') : '-'
 
               makeStatusAndDisabled(item)
               return item
-            }),
+            })
           }
         })
     },
     create() {
       this.$router.push({
-        name: 'sharedCacheCreate',
+        name: 'sharedCacheCreate'
       })
     },
     checkDetails(row) {
@@ -232,24 +185,24 @@ export default {
         {
           label: this.$t('column_creator'),
           value: row.createUser,
-          icon: 'createUser',
+          icon: 'createUser'
         },
         {
           label: this.$t('shared_cache_time'),
           value: row.cacheTimeAtFmt,
-          icon: 'cacheTimeAtFmt',
+          icon: 'cacheTimeAtFmt'
         },
         {
           label: this.$t('column_connection'),
           value: row.connectionName,
-          icon: 'connectionName',
+          icon: 'connectionName'
         },
         { label: this.$t('column_table'), value: row.tableName, icon: 'table' },
         {
           label: this.$t('shared_cache_max_memory'),
           value: row.maxMemory,
-          icon: 'record',
-        },
+          icon: 'record'
+        }
       ]
       this.isShowDetails = true
     },
@@ -266,18 +219,14 @@ export default {
       this.$router.push({
         name: 'sharedCacheEdit',
         params: {
-          id,
-        },
+          id
+        }
       })
     },
     del(id) {
-      this.$confirm(
-        this.$t('message_delete_confirm'),
-        this.$t('message_title_prompt'),
-        {
-          type: 'warning',
-        }
-      ).then((flag) => {
+      this.$confirm(this.$t('message_delete_confirm'), this.$t('message_title_prompt'), {
+        type: 'warning'
+      }).then(flag => {
         if (flag) {
           sharedCacheApi.delete(id).then(() => {
             this.$message.success(this.$t('message_delete_ok'))
@@ -288,12 +237,10 @@ export default {
     },
     //筛选条件
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'cacheTimeAt'} ${
-        order === 'ascending' ? 'ASC' : 'DESC'
-      }`
+      this.order = `${order ? prop : 'cacheTimeAt'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
-    },
-  },
+    }
+  }
 }
 </script>
 

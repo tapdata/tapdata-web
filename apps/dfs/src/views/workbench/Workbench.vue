@@ -13,14 +13,8 @@
         <!--          </div>-->
         <!--        </li>-->
         <li v-for="(item, index) in createList" :key="index">
-          <div
-            class="create-list__item flex justify-content-center align-items-center p-2"
-          >
-            <el-link
-              class="create-list__main ml-4"
-              :disabled="$disabledReadonlyUserBtn()"
-              @click="item.action"
-            >
+          <div class="create-list__item flex justify-content-center align-items-center p-2">
+            <el-link class="create-list__main ml-4" :disabled="$disabledReadonlyUserBtn()" @click="item.action">
               <VIcon class="ml-2 mr-2" size="20">{{ item.icon }}</VIcon>
               <span> {{ index + 1 }}. {{ item.name }} </span>
               <VIcon class="ml-8" size="14">add</VIcon>
@@ -67,19 +61,11 @@
           >
             <div class="position-relative">
               <img :src="getImg(item.img)" />
-              <div
-                class="position-absolute position-text flex justify-content-center align-items-center flex-column"
-              >
-                <div
-                  v-if="item.title"
-                  class="text-center explore-examples-ellipsis pl-1 pr-1"
-                >
+              <div class="position-absolute position-text flex justify-content-center align-items-center flex-column">
+                <div v-if="item.title" class="text-center explore-examples-ellipsis pl-1 pr-1">
                   {{ item.title }}
                 </div>
-                <div
-                  v-if="item.subTitle"
-                  class="text-center explore-examples-ellipsis"
-                >
+                <div v-if="item.subTitle" class="text-center explore-examples-ellipsis">
                   {{ item.subTitle }}
                 </div>
               </div>
@@ -91,25 +77,14 @@
     <!--	概览	-->
     <div class="workbench-overview workbench-section">
       <ElRow :gutter="24" class="section-header py-4">
-        <ElCol :span="18" class="main-title">{{
-          $t('workbench_overview')
-        }}</ElCol>
-        <ElCol :span="6" class="aside-title">{{
-          $t('workbench_notice')
-        }}</ElCol>
+        <ElCol :span="18" class="main-title">{{ $t('workbench_overview') }}</ElCol>
+        <ElCol :span="6" class="aside-title">{{ $t('workbench_notice') }}</ElCol>
       </ElRow>
       <ElRow :gutter="24" class="section-body">
         <ElCol :span="18">
           <ul class="agent-list__list flex">
-            <li
-              v-for="(item, index) in agentList"
-              :key="index"
-              class="agent-list__item"
-              :ref="item.key"
-            >
-              <div
-                class="agent-list__name flex align-items-center mx-auto mb-3"
-              >
+            <li v-for="(item, index) in agentList" :key="index" class="agent-list__item" :ref="item.key">
+              <div class="agent-list__name flex align-items-center mx-auto mb-3">
                 <VIcon size="14" class="icon">{{ item.icon }}</VIcon>
                 <span class="ml-1 fs-7">{{ item.name }}</span>
               </div>
@@ -122,22 +97,14 @@
                 v-if="item.list.length > 0"
               >
                 <div>
-                  <div
-                    class="mb-2"
-                    v-for="(detail, dIndex) in item.list"
-                    :key="dIndex"
-                  >
+                  <div class="mb-2" v-for="(detail, dIndex) in item.list" :key="dIndex">
                     <span>{{ detail.label }}</span>
                     <span>:</span>
                     <span :class="['ml-1']">{{ detail.value }}</span>
                   </div>
                 </div>
                 <div style="height: 80px; width: 80px; margin-bottom: 16px">
-                  <Chart
-                    ref="lineChart"
-                    type="pie"
-                    :extend="getPieOption(index)"
-                  ></Chart>
+                  <Chart ref="lineChart" type="pie" :extend="getPieOption(index)"></Chart>
                 </div>
               </div>
             </li>
@@ -154,11 +121,7 @@
                 <div v-if="item.type" class="notice-list__type mr-4 p-1">
                   {{ item.type }}
                 </div>
-                <ElLink
-                  v-else
-                  class="notice-list__name flex-grow-1 ellipsis block pointer"
-                  @click="toNotice(item)"
-                >
+                <ElLink v-else class="notice-list__name flex-grow-1 ellipsis block pointer" @click="toNotice(item)">
                   {{ item.name }}
                 </ElLink>
                 <div class="notice-list__time">
@@ -176,12 +139,8 @@
       <div class="p-6 common-card">
         <div class="fs-7" style="color: #000">
           <span class="mr-4">{{ $t('workbench_statistics__sub_title') }}</span>
-          <span class="mr-1">{{
-            $t('workbench_statistics__sub_title_label')
-          }}</span>
-          <span class="color-primary" style="font-family: DIN">{{
-            numToThousands(taskInputNumber)
-          }}</span>
+          <span class="mr-1">{{ $t('workbench_statistics__sub_title_label') }}</span>
+          <span class="color-primary" style="font-family: DIN">{{ numToThousands(taskInputNumber) }}</span>
         </div>
         <div class="pr-4" style="height: 200px">
           <Chart type="pie" :extend="getLineOption()"></Chart>
@@ -243,16 +202,11 @@
       </div>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <el-button type="primary" @click="showUpgrade = false">{{
-            $t('button_cancel')
-          }}</el-button>
+          <el-button type="primary" @click="showUpgrade = false">{{ $t('button_cancel') }}</el-button>
         </span>
       </template>
     </el-dialog>
-    <PaidUpgradeDialog
-      v-model:visible="paidUpgradeVisible"
-      :paidPlan="paidPlan"
-    ></PaidUpgradeDialog>
+    <PaidUpgradeDialog v-model:visible="paidUpgradeVisible" :paidPlan="paidPlan"></PaidUpgradeDialog>
   </div>
   <RouterView v-else></RouterView>
 </template>
@@ -280,22 +234,22 @@ export default {
           desc: $t('workbench_agent_desc'),
           btnName: $t('workbench_agent_button_create'),
           action: this.createAgent,
-          icon: 'dashboard-agent',
+          icon: 'dashboard-agent'
         },
         {
           name: $t('connection_manage'),
           desc: $t('workbench_connection_desc'),
           btnName: $t('workbench_connection_button_create'),
           action: this.createConnection,
-          icon: 'dashboard-connection',
+          icon: 'dashboard-connection'
         },
         {
           name: $t('task_manage'),
           desc: $t('workbench_task_desc'),
           btnName: $t('workbench_task_button_create'),
           action: this.createTask,
-          icon: 'dashboard-task',
-        },
+          icon: 'dashboard-task'
+        }
       ], // 创建列表
       agentList: [
         {
@@ -307,14 +261,14 @@ export default {
             {
               label: $t('agent_status_running'),
               value: 0,
-              class: 'success',
+              class: 'success'
             },
             {
               label: $t('agent_status_stopped'),
               value: 0,
-              class: 'error',
-            },
-          ],
+              class: 'error'
+            }
+          ]
         },
         {
           name: $t('workbench_overview_connection'),
@@ -324,13 +278,13 @@ export default {
           list: [
             {
               label: $t('workbench_overview_connection_ready'),
-              value: 0,
+              value: 0
             },
             {
               label: $t('workbench_overview_connection_invalid'),
-              value: 0,
-            },
-          ],
+              value: 0
+            }
+          ]
         },
         {
           name: $t('workbench_overview_task'),
@@ -340,33 +294,33 @@ export default {
           list: [
             {
               label: $t('task_initial_sync'),
-              value: 0,
+              value: 0
             },
             {
               label: $t('task_sync_type_cdc'),
-              value: 0,
+              value: 0
             },
             {
               label: $t('task_initial_sync_cdc'),
-              value: 0,
-            },
-          ],
-        },
+              value: 0
+            }
+          ]
+        }
       ], // 介绍列表
       notices: [], // 公告列表
       guides: [
         {
           name: $t('workbench_guide_documentation'),
-          url: 'https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_readme',
+          url: 'https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_readme'
         },
         {
           name: $t('workbench_guide_problem'),
-          url: 'https://www.yuque.com/tapdata/cloud/iff88o',
+          url: 'https://www.yuque.com/tapdata/cloud/iff88o'
         },
         {
           name: $t('workbench_guide_data_safe'),
-          url: 'https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_chan-pin-jia-gou-ji-yuan-li',
-        },
+          url: 'https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_chan-pin-jia-gou-ji-yuan-li'
+        }
       ],
       isGuide: true,
       taskInputNumber: 0,
@@ -385,37 +339,37 @@ export default {
           title: i18n.t('_workbench_workbench_jiangshujudaoru'),
           subTitle: i18n.t('_workbench_workbench_jiangshujudaorusub'),
           img: 'table-store',
-          url: 'https://tapdata.net/how-to-import-data-into-tablestore-alibaba-cloud.html?fromColId=104',
+          url: 'https://tapdata.net/how-to-import-data-into-tablestore-alibaba-cloud.html?fromColId=104'
         },
         {
           type: 'all',
           title: i18n.t('_workbench_workbench_shujuruhucang'),
           subTitle: 'MySQL → Doris',
           img: 'mysql-doris',
-          url: 'https://tapdata.net/real-time-data-entry-into-the-lake-and-warehouse.html?fromColId=104',
+          url: 'https://tapdata.net/real-time-data-entry-into-the-lake-and-warehouse.html?fromColId=104'
         },
         {
           type: 'all',
           title: i18n.t('_workbench_workbench_yigoushishitong'),
           subTitle: 'Oracle → MySQL ',
           img: 'oracle-mysql',
-          url: 'https://tapdata.net/real-time-sync-of-hdb-from-oracle-to-mysql.html?fromColId=104',
+          url: 'https://tapdata.net/real-time-sync-of-hdb-from-oracle-to-mysql.html?fromColId=104'
         },
         {
           type: 'all',
           title: i18n.t('_workbench_workbench_shujurucang'),
           subTitle: 'SQL Server → BigQuery ',
           img: 'bigQuery',
-          url: 'https://tapdata.net/tapdata-connector-sqlserver-bigquery.html',
+          url: 'https://tapdata.net/tapdata-connector-sqlserver-bigquery.html'
         },
         {
           type: 'all',
           title: i18n.t('_workbench_workbench_shujurucang'),
           subTitle: 'MySQL → ClickHouse',
           img: 'clickHouse',
-          url: 'https://tapdata.net/tapdata-connector-mysql-clickhouse.html?fromColId=104',
-        },
-      ],
+          url: 'https://tapdata.net/tapdata-connector-mysql-clickhouse.html?fromColId=104'
+        }
+      ]
     }
   },
   mounted() {
@@ -432,15 +386,14 @@ export default {
     loadAgent() {
       let agentList = this.agentList
       const loading = this.$loading({
-        target: this.$refs.agent?.[0],
+        target: this.$refs.agent?.[0]
       })
       this.$axios
         .get('api/tcm/agent/agentCount')
-        .then((data) => {
+        .then(data => {
           agentList[0].value = data.agentTotalCount || 0
           agentList[0].list[0].value = data.agentRunningCount || 0
-          agentList[0].list[1].value =
-            agentList[0].value - agentList[0].list[0].value
+          agentList[0].list[1].value = agentList[0].value - agentList[0].list[0].value
         })
         .finally(() => {
           loading.close()
@@ -449,7 +402,7 @@ export default {
     // 获取连接数据
     async getConnectionStats() {
       const connectionLoading = this.$loading({
-        target: this.$refs.connection?.[0],
+        target: this.$refs.connection?.[0]
       })
       const data = await connectionsApi.getStats().finally(() => {
         connectionLoading.close()
@@ -465,7 +418,7 @@ export default {
     // 获取任务数据
     async getTaskStats() {
       const taskLoading = this.$loading({
-        target: this.$refs.task?.[0],
+        target: this.$refs.task?.[0]
       })
       const data = await taskApi.getStats().finally(() => {
         taskLoading.close()
@@ -486,42 +439,42 @@ export default {
           type: '',
           name: 'Tapdata Cloud 3.1.7 Release Notes',
           link: 'https://mp.weixin.qq.com/s/npognQxT4O4xzc4u1bb4mg',
-          time: '2023-02-21 21:00',
+          time: '2023-02-21 21:00'
         },
         {
           id: 5,
           type: '',
           name: 'Tapdata Cloud 3.1.6 Release Notes',
           link: 'https://mp.weixin.qq.com/s/rG_ag8LY-WSte4VnIgThXA',
-          time: '2023-02-3 21:00',
+          time: '2023-02-3 21:00'
         },
         {
           id: 4,
           type: '',
           name: 'Tapdata Cloud 3.1.5 Release Notes',
           link: 'https://mp.weixin.qq.com/s/JYPt9aExnCL9tyOENe7QOA',
-          time: '2023-01-20 21:00',
+          time: '2023-01-20 21:00'
         },
         {
           id: 3,
           type: '',
           name: 'Tapdata Cloud 3.1.4 Release Notes',
           link: 'https://mp.weixin.qq.com/s/dUuqGQZGEI10cOLpbzqbHA',
-          time: '2023-01-3 21:00',
+          time: '2023-01-3 21:00'
         },
         {
           id: 2,
           type: '',
           name: 'Tapdata Cloud 3.1.3 Release Notes',
           link: 'https://mp.weixin.qq.com/s/mwMNTGsglm9rQi-k9zqRgg',
-          time: '2022-12-15 21:00',
+          time: '2022-12-15 21:00'
         },
         {
           id: 1,
           type: '',
           name: i18n.t('dfs_workbench_workbench_zhongyaobanbensheng'),
-          time: '2022-12-03 18:00',
-        },
+          time: '2022-12-03 18:00'
+        }
       ]
     },
     loadBarData() {
@@ -529,14 +482,14 @@ export default {
       this.$axios
         .get('tm/api/DataFlowInsights/statistics', {
           params: {
-            granularity,
-          },
+            granularity
+          }
         })
-        .then((data) => {
+        .then(data => {
           const list = data.inputDataStatistics || []
           this.taskInputNumber = data.totalInputDataCount || 0
-          this.lineDataX = list.map((el) => el.time)
-          this.lineDataY = list.map((el) => {
+          this.lineDataX = list.map(el => el.time)
+          this.lineDataY = list.map(el => {
             let value = el.count
             if (value === 1) {
               value = 1.1
@@ -549,8 +502,8 @@ export default {
       this.$router.push({
         name: 'Instance',
         query: {
-          create: true,
-        },
+          create: true
+        }
       })
     },
     async createTask() {
@@ -561,7 +514,7 @@ export default {
       }
       this.checkAgent(() => {
         this.$router.push({
-          name: 'MigrateCreate',
+          name: 'MigrateCreate'
         })
       })
     },
@@ -578,8 +531,8 @@ export default {
         this.$router.push({
           name: 'WorkbenchNotice',
           query: {
-            id: item?.id,
-          },
+            id: item?.id
+          }
         })
       }
     },
@@ -606,48 +559,48 @@ export default {
       let data = [
         {
           itemStyle: {
-            color: '#00b42a',
+            color: '#00b42a'
           },
           value: this.agentList[index].list[0].value,
-          name: this.agentList[index].list[0].label,
+          name: this.agentList[index].list[0].label
         },
         {
           itemStyle: {
-            color: '#ff7d00',
+            color: '#ff7d00'
           },
           value: this.agentList[index].list[1].value,
-          name: this.agentList[index].list[1].label,
-        },
+          name: this.agentList[index].list[1].label
+        }
       ]
       if (index === 2) {
         let node = {
           itemStyle: {
-            color: '#2C65FF',
+            color: '#2C65FF'
           },
           value: this.agentList[index].list[2].value,
-          name: this.agentList[index].list[2].label,
+          name: this.agentList[index].list[2].label
         }
         data.push(node)
       }
       return {
         tooltip: {
-          trigger: 'item',
+          trigger: 'item'
         },
         series: [
           {
             type: 'pie',
             labelLine: {
-              show: false,
+              show: false
             },
             label: {
               show: false,
-              position: 'center',
+              position: 'center'
             },
             avoidLabelOverlap: false,
             data: data,
-            radius: ['50%', '70%'],
-          },
-        ],
+            radius: ['50%', '70%']
+          }
+        ]
       }
     },
     //折线面积图
@@ -657,16 +610,16 @@ export default {
           top: 20,
           bottom: 20,
           left: 55,
-          right: 20,
+          right: 20
         },
         xAxis: {
           boundaryGap: false,
           axisLabel: {
-            formatter: (val) => {
+            formatter: val => {
               return this.formatTime(val, '', 'MM-DD')
-            },
+            }
           },
-          data: this.lineDataX,
+          data: this.lineDataX
         },
         yAxis: {
           show: true,
@@ -674,18 +627,18 @@ export default {
           min: 1,
           logBase: 10,
           axisLabel: {
-            formatter: (val) => {
+            formatter: val => {
               let res = val === 1 ? 0 : val
               if (res / 1000 >= 1) {
                 res = res / 1000 + 'K'
               }
               return res
-            },
-          },
+            }
+          }
         },
         tooltip: {
           trigger: 'item',
-          formatter: (params) => {
+          formatter: params => {
             let item = params
             let val = item.value
             if (val === 1.1) {
@@ -694,7 +647,7 @@ export default {
             val = numToThousands(val)
             let html = val
             return html
-          },
+          }
         },
         series: [
           {
@@ -711,23 +664,23 @@ export default {
                 colorStops: [
                   {
                     offset: 0,
-                    color: 'rgba(0, 102, 255, 0.2)', // 0% 处的颜色
+                    color: 'rgba(0, 102, 255, 0.2)' // 0% 处的颜色
                   },
                   {
                     offset: 1,
-                    color: 'rgba(44, 127, 252, 0)', // 100% 处的颜色
-                  },
+                    color: 'rgba(44, 127, 252, 0)' // 100% 处的颜色
+                  }
                 ],
-                global: false, // 缺省为 false
-              },
+                global: false // 缺省为 false
+              }
             },
-            color: '#2C65FF', //线条颜色
-          },
-        ],
+            color: '#2C65FF' //线条颜色
+          }
+        ]
       }
-    },
+    }
   },
-  emits: ['select-connection-type', 'show-guide'],
+  emits: ['select-connection-type', 'show-guide']
 }
 </script>
 

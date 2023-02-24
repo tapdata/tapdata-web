@@ -9,11 +9,7 @@
   >
     <section class="agent-guide-main flex" style="height: 646px">
       <!--第一步-->
-      <div
-        class="agent-guide-left mt-110"
-        :style="{ 'margin-top': style['top'] }"
-        v-if="step === 1"
-      >
+      <div class="agent-guide-left mt-110" :style="{ 'margin-top': style['top'] }" v-if="step === 1">
         <header class="agent-guide-header mb-32">
           {{ $t('dfs_agent_download_agentguidedialog_huanyingshiyongT') }}
         </header>
@@ -51,9 +47,7 @@
         <div class="mt-4" style="height: 20px">
           <span v-if="showTip">
             <VIcon size="14" class="color-danger mr-1">info</VIcon
-            >{{
-              $t('dfs_agent_download_agentguidedialog_qingdianjibushu')
-            }}</span
+            >{{ $t('dfs_agent_download_agentguidedialog_qingdianjibushu') }}</span
           >
         </div>
         <div class="footer mt-6">
@@ -77,21 +71,12 @@
             <div class="step-content">
               {{ $t('dfs_agent_download_agentguidedialog_ninkeyigenzhe') }}
             </div>
-            <el-button
-              type="primary"
-              class="mb-2 step-button"
-              @click="openAgentDownloadModal()"
-              >{{
-                $t('dfs_agent_download_agentguidedialog_anzhuang')
-              }}</el-button
-            >
+            <el-button type="primary" class="mb-2 step-button" @click="openAgentDownloadModal()">{{
+              $t('dfs_agent_download_agentguidedialog_anzhuang')
+            }}</el-button>
           </div>
           <!--线下模式 – 自主安装全套软件 -->
-          <div
-            class="step mb-39"
-            :style="{ width: style['step'] }"
-            v-if="current === 'intranet'"
-          >
+          <div class="step mb-39" :style="{ width: style['step'] }" v-if="current === 'intranet'">
             <div class="step-header mb-2">
               <VIcon size="16" class="color-primary mr-2">offline-install</VIcon
               >{{ $t('dfs_agent_download_agentguidedialog_xianxiamoshizi') }}
@@ -104,11 +89,7 @@
             }}</el-button>
           </div>
           <!--全托管云模式 – 直接云中部署 -->
-          <div
-            class="step mb-39"
-            :style="{ width: style['step'] }"
-            v-if="current === 'extranet'"
-          >
+          <div class="step mb-39" :style="{ width: style['step'] }" v-if="current === 'extranet'">
             <div class="step-header mb-2">
               <VIcon size="16" class="color-primary mr-2">cloud-install</VIcon
               >{{ $t('dfs_agent_download_agentguidedialog_quantuoguanyunmo') }}
@@ -116,15 +97,9 @@
             <div class="step-content">
               {{ $t('dfs_agent_download_agentguidedialog_shiyongTap') }}
             </div>
-            <el-button
-              type="info"
-              disabled
-              class="mb-2"
-              @click="openAgentDownloadModal()"
-              >{{
-                $t('dfs_agent_download_agentguidedialog_jijiangshangxian')
-              }}</el-button
-            >
+            <el-button type="info" disabled class="mb-2" @click="openAgentDownloadModal()">{{
+              $t('dfs_agent_download_agentguidedialog_jijiangshangxian')
+            }}</el-button>
           </div>
           <!--demo -->
           <div class="step" :style="{ width: style['step'] }">
@@ -135,12 +110,9 @@
             <div class="step-content">
               {{ $t('dfs_agent_download_agentguidedialog_buxianganzhuanghuo') }}
             </div>
-            <el-button
-              type="primary"
-              class="mb-2 step-button"
-              @click="goDemo()"
-              >{{ $t('dfs_agent_download_agentguidedialog_tiyan') }}</el-button
-            >
+            <el-button type="primary" class="mb-2 step-button" @click="goDemo()">{{
+              $t('dfs_agent_download_agentguidedialog_tiyan')
+            }}</el-button>
             <!--            <span class="inline-block userPassword">-->
             <!--              <span class="inline-block"-->
             <!--                >{{ $t('dfs_agent_download_agentguidedialog_yonghumingde') }}<span>demo@tapdata.io</span></span-->
@@ -153,13 +125,7 @@
             <!--            </span>-->
           </div>
         </div>
-        <VIcon
-          size="18"
-          class="agent-download-icon"
-          v-if="showClose"
-          @click="close"
-          >close</VIcon
-        >
+        <VIcon size="18" class="agent-download-icon" v-if="showClose" @click="close">close</VIcon>
       </div>
       <div class="agent-guide-init" v-show="type === 'init'">
         <div class="agent-guide-right-txt">
@@ -169,16 +135,12 @@
       <!--外网切换 -->
       <div class="agent-guide-sync" v-show="type === 'extranet-sync'">
         <div class="switch" :style="{ width: style['switch'] }">
-          <span
-            class="current cursor-pointer"
-            :style="{ width: style['current'] }"
-            >{{ $t('dfs_agent_download_agentguidedialog_shujutongbu') }}</span
-          >
-          <span
-            class="ordinary cursor-pointer"
-            @click="changeType('extranet-login')"
-            >{{ $t('dfs_agent_download_agentguidedialog_ruhurucang') }}</span
-          >
+          <span class="current cursor-pointer" :style="{ width: style['current'] }">{{
+            $t('dfs_agent_download_agentguidedialog_shujutongbu')
+          }}</span>
+          <span class="ordinary cursor-pointer" @click="changeType('extranet-login')">{{
+            $t('dfs_agent_download_agentguidedialog_ruhurucang')
+          }}</span>
         </div>
       </div>
       <div class="agent-guide-login" v-show="type === 'extranet-login'">
@@ -189,32 +151,23 @@
             @click="changeType('extranet-sync')"
             >{{ $t('dfs_agent_download_agentguidedialog_shujutongbu') }}</span
           >
-          <span
-            class="current-suffix cursor-pointer"
-            :style="{ width: style['ordinary-suffix'] }"
-            >{{ $t('dfs_agent_download_agentguidedialog_ruhurucang') }}</span
-          >
+          <span class="current-suffix cursor-pointer" :style="{ width: style['ordinary-suffix'] }">{{
+            $t('dfs_agent_download_agentguidedialog_ruhurucang')
+          }}</span>
         </div>
       </div>
       <!--内网切换 -->
       <div class="agent-guide-intranet-sync" v-show="type === 'intranet-sync'">
         <div class="switch" :style="{ width: style['switch'] }">
-          <span
-            class="current cursor-pointer"
-            :style="{ width: style['current'] }"
-            >{{ $t('dfs_agent_download_agentguidedialog_shujutongbu') }}</span
-          >
-          <span
-            class="ordinary cursor-pointer"
-            @click="changeType('intranet-login')"
-            >{{ $t('dfs_agent_download_agentguidedialog_ruhurucang') }}</span
-          >
+          <span class="current cursor-pointer" :style="{ width: style['current'] }">{{
+            $t('dfs_agent_download_agentguidedialog_shujutongbu')
+          }}</span>
+          <span class="ordinary cursor-pointer" @click="changeType('intranet-login')">{{
+            $t('dfs_agent_download_agentguidedialog_ruhurucang')
+          }}</span>
         </div>
       </div>
-      <div
-        class="agent-guide-intranet-login"
-        v-show="type === 'intranet-login'"
-      >
+      <div class="agent-guide-intranet-login" v-show="type === 'intranet-login'">
         <div class="switch" :style="{ width: style['switch'] }">
           <span
             class="ordinary-suffix cursor-pointer"
@@ -222,11 +175,9 @@
             @click="changeType('intranet-sync')"
             >{{ $t('dfs_agent_download_agentguidedialog_shujutongbu') }}</span
           >
-          <span
-            class="current-suffix cursor-pointer"
-            :style="{ width: style['ordinary-suffix'] }"
-            >{{ $t('dfs_agent_download_agentguidedialog_ruhurucang') }}</span
-          >
+          <span class="current-suffix cursor-pointer" :style="{ width: style['ordinary-suffix'] }">{{
+            $t('dfs_agent_download_agentguidedialog_ruhurucang')
+          }}</span>
         </div>
       </div>
     </section>
@@ -244,8 +195,8 @@ export default {
   components: { VIcon },
   props: {
     visible: {
-      type: Boolean,
-    },
+      type: Boolean
+    }
   },
   data() {
     return {
@@ -254,7 +205,7 @@ export default {
       step: 1,
       style: {},
       showClose: false, //关闭按钮
-      showTip: false,
+      showTip: false
     }
   },
   mounted() {
@@ -273,7 +224,7 @@ export default {
               dialog: '1100px',
               top: '20px',
               'ordinary-suffix': '365px',
-              step: '448px',
+              step: '448px'
             }
           : {
               current: '135px',
@@ -283,7 +234,7 @@ export default {
               dialog: '1035px',
               top: '110px',
               'ordinary-suffix': '130px',
-              step: '382px',
+              step: '382px'
             }
     },
     changeImg(type) {
@@ -327,9 +278,9 @@ export default {
       buried('agentGuideDemo')
       this.showClose = true
       window.open('https://demo.cloud.tapdata.net/console/v3/')
-    },
+    }
   },
-  emits: ['update:visible', 'openAgentDownload'],
+  emits: ['update:visible', 'openAgentDownload']
 }
 </script>
 

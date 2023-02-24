@@ -25,28 +25,14 @@
             >
             <span class="flex-fill">
               {{ menu.title }}
-              <VIcon v-if="menu.beta" size="30" style="margin-bottom: 5px"
-                >beta</VIcon
-              >
+              <VIcon v-if="menu.beta" size="30" style="margin-bottom: 5px">beta</VIcon>
             </span>
             <template v-if="menu.name === 'Instance' && showAgentWarning">
-              <ElTooltip
-                placement="top"
-                popper-class="agent-tooltip__popper"
-                :visible-arrow="false"
-                effect="light"
-              >
-                <VIcon size="14" class="agent-warning-icon color-warning"
-                  >warning
-                </VIcon>
+              <ElTooltip placement="top" popper-class="agent-tooltip__popper" :visible-arrow="false" effect="light">
+                <VIcon size="14" class="agent-warning-icon color-warning">warning </VIcon>
                 <template #content>
                   <div class="font-color-dark">
-                    <VIcon
-                      size="14"
-                      class="mr-2 color-warning"
-                      style="vertical-align: -0.125em"
-                    >
-                      warning </VIcon
+                    <VIcon size="14" class="mr-2 color-warning" style="vertical-align: -0.125em"> warning </VIcon
                     >{{ $t('agent_tip_no_running') }}
                   </div>
                 </template>
@@ -62,22 +48,10 @@
         <RouterView @agent_no_running="onAgentNoRunning"></RouterView>
       </ElMain>
     </ElContainer>
-    <ConnectionTypeDialog
-      v-model:dialogVisible="dialogVisible"
-      @databaseType="createConnection"
-    ></ConnectionTypeDialog>
-    <AgentGuideDialog
-      v-model:visible="agentGuideDialog"
-      @openAgentDownload="openAgentDownload"
-    ></AgentGuideDialog>
-    <AgentDownloadModal
-      v-model:visible="agentDownload.visible"
-      :source="agentDownload.data"
-    ></AgentDownloadModal>
-    <BindPhone
-      v-model:visible="bindPhoneVisible"
-      @success="bindPhoneSuccess"
-    ></BindPhone>
+    <ConnectionTypeDialog v-model:dialogVisible="dialogVisible" @databaseType="createConnection"></ConnectionTypeDialog>
+    <AgentGuideDialog v-model:visible="agentGuideDialog" @openAgentDownload="openAgentDownload"></AgentGuideDialog>
+    <AgentDownloadModal v-model:visible="agentDownload.visible" :source="agentDownload.data"></AgentDownloadModal>
+    <BindPhone v-model:visible="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>
   </ElContainer>
 </template>
 
@@ -103,7 +77,7 @@ export default {
     AgentDownloadModal,
     AgentGuideDialog,
     BindPhone,
-    PageHeader,
+    PageHeader
   },
   data() {
     const $t = this.$t.bind(this)
@@ -114,59 +88,59 @@ export default {
         {
           name: 'Workbench',
           title: $t('workbench_manage'),
-          icon: 'workbench',
+          icon: 'workbench'
         },
         {
           name: 'Instance',
           title: $t('agent_manage'),
-          icon: 'agent',
+          icon: 'agent'
         },
         {
           name: 'connections',
           title: $t('connection_manage'),
-          icon: 'connection',
+          icon: 'connection'
         },
         {
           name: 'migrateList',
           title: $t('task_manage_migrate'),
-          icon: 'migrate',
+          icon: 'migrate'
         },
         {
           name: 'dataflowList',
           title: $t('task_manage_etl'),
           icon: 'task',
-          beta: true,
+          beta: true
         },
         {
           name: 'customNodeList',
           title: $t('page_title_custom_node'),
           icon: 'custom',
-          beta: true,
+          beta: true
         },
         {
           name: 'dataServerList',
           title: $t('dfs_data_server'),
-          icon: 'data-server',
+          icon: 'data-server'
         },
         {
           name: 'OperationLog',
           title: $t('operation_log_manage'),
-          icon: 'operation-log',
+          icon: 'operation-log'
         },
         {
           name: 'swimLane',
           title: 'Data Console(Preview)',
-          icon: 'operation-log',
-        },
+          icon: 'operation-log'
+        }
       ],
       dialogVisible: false,
       agentDownload: {
         visible: false,
-        data: {},
+        data: {}
       },
       bindPhoneVisible: false,
       agentGuideDialog: false,
-      showAgentWarning: false,
+      showAgentWarning: false
     }
   },
   created() {
@@ -175,18 +149,15 @@ export default {
     }
     if (window.__config__?.disabledDataService) {
       //海外版隐藏数据服务
-      this.sortMenus = this.sortMenus.filter(
-        (item) => item.name !== 'dataServerList'
-      )
+      this.sortMenus = this.sortMenus.filter(item => item.name !== 'dataServerList')
     }
     this.loopLoadAgentCount()
     this.activeMenu = this.$route.path
-    let children =
-      this.$router.options.routes.find((r) => r.path === '/')?.children || []
-    const findRoute = (name) => {
-      return children.find((item) => item.name === name)
+    let children = this.$router.options.routes.find(r => r.path === '/')?.children || []
+    const findRoute = name => {
+      return children.find(item => item.name === name)
     }
-    this.menus = this.sortMenus.map((el) => {
+    this.menus = this.sortMenus.map(el => {
       if (el.children?.length) {
         el.children.forEach((cMenu, idx) => {
           el.children[idx].path = findRoute(cMenu.name).path
@@ -214,7 +185,7 @@ export default {
   watch: {
     $route(route) {
       this.activeMenu = route.path
-    },
+    }
   },
   methods: {
     //监听agent引导页面
@@ -227,11 +198,11 @@ export default {
       buried('connectionCreate')
       const { pdkHash } = item
       let query = {
-        pdkHash,
+        pdkHash
       }
       this.$router.push({
         name: 'connectionCreate',
-        query,
+        query
       })
     },
     showGuide() {
@@ -261,13 +232,12 @@ export default {
     // 检查微信用户，是否绑定手机号
     checkWechatPhone() {
       let user = window.__USER_INFO__
-      this.bindPhoneVisible =
-        user?.registerSource === 'social:wechatmp-qrcode' && !user?.telephone
+      this.bindPhoneVisible = user?.registerSource === 'social:wechatmp-qrcode' && !user?.telephone
       return this.bindPhoneVisible
     },
     // 检查是否有安装过agent
     checkAgentInstall() {
-      this.$axios.get('api/tcm/orders/checkAgent').then((data) => {
+      this.$axios.get('api/tcm/orders/checkAgent').then(data => {
         if (data.agentId) {
           this.agentGuideDialog = true
           this.agentDownload.data = data
@@ -296,10 +266,9 @@ export default {
     loadChat() {
       let $zoho = $zoho || {}
       $zoho.salesiq = $zoho.salesiq || {
-        widgetcode:
-          '39c2c81d902fdf4fbcc9b55f1268168c6d58fe89b1de70d9adcb5c4c13d6ff4d604d73c57c92b8946ff9b4782f00d83f',
+        widgetcode: '39c2c81d902fdf4fbcc9b55f1268168c6d58fe89b1de70d9adcb5c4c13d6ff4d604d73c57c92b8946ff9b4782f00d83f',
         values: {},
-        ready: function () {},
+        ready: function () {}
       }
       window.$zoho = $zoho
       let d = document
@@ -318,7 +287,7 @@ export default {
         $zoho.salesiq.visitor.info({
           tapdata_username: user.nickname || user.username,
           tapdata_phone: user.telephone,
-          tapdata_email: user.email,
+          tapdata_email: user.email
         })
 
         $zoho.salesiq.onload = function () {
@@ -329,10 +298,7 @@ export default {
             let style = document.createElement('style')
             style.type = 'text/css'
             style.innerHTML = `.botactions em { white-space: nowrap; }`
-            siqiframe.contentWindow.document
-              .getElementsByTagName('head')
-              .item(0)
-              .appendChild(style)
+            siqiframe.contentWindow.document.getElementsByTagName('head').item(0).appendChild(style)
           }
         }
 
@@ -357,17 +323,16 @@ export default {
     loopLoadAgentCount() {
       this.$axios
         .get('api/tcm/agent/agentCount')
-        .then((data) => {
-          this.showAgentWarning =
-            data.agentTotalCount && !data.agentRunningCount
+        .then(data => {
+          this.showAgentWarning = data.agentTotalCount && !data.agentRunningCount
         })
         .finally(() => {
           this.loopLoadAgentCountTimer = setTimeout(() => {
             this.loopLoadAgentCount()
           }, 10000)
         })
-    },
-  },
+    }
+  }
 }
 </script>
 

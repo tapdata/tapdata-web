@@ -10,9 +10,7 @@
               :placeholder="$t('views_Lang_wenAnBaoHanDe')"
               autosize
             ></ElInput>
-            <ElButton type="primary" class="mt-3" @click="saveIncludes">{{
-              $t('button_save')
-            }}</ElButton>
+            <ElButton type="primary" class="mt-3" @click="saveIncludes">{{ $t('button_save') }}</ElButton>
           </ElFormItem>
           <ElFormItem :label="$t('views_Lang_wenAnDengYuDe')">
             <ElInput
@@ -21,67 +19,32 @@
               :placeholder="$t('views_Lang_wenAnDengYuDe')"
               autosize
             ></ElInput>
-            <ElButton type="primary" class="mt-3" @click="saveEqual">{{
-              $t('button_save')
-            }}</ElButton>
+            <ElButton type="primary" class="mt-3" @click="saveEqual">{{ $t('button_save') }}</ElButton>
           </ElFormItem>
         </ElForm>
       </ElCollapseItem>
     </ElCollapse>
     <div class="flex justify-content-between mt-4">
-      <FilterBar
-        v-model:value="searchParams"
-        :items="filterItems"
-        @search="search"
-      >
-      </FilterBar>
+      <FilterBar v-model:value="searchParams" :items="filterItems" @search="search"> </FilterBar>
       <div>
-        <UploadFile
-          :upload="uploadModifyZhCN"
-          accept="text/javascript"
-          class="inline-block mr-4"
-        >
+        <UploadFile :upload="uploadModifyZhCN" accept="text/javascript" class="inline-block mr-4">
           <ElButton>{{ $t('button_upload') + $t('lang_zh_cn') }}</ElButton>
         </UploadFile>
-        <UploadFile
-          :upload="uploadModifyZhTW"
-          accept="text/javascript"
-          class="inline-block mr-4"
-        >
+        <UploadFile :upload="uploadModifyZhTW" accept="text/javascript" class="inline-block mr-4">
           <ElButton>{{ $t('button_upload') + $t('lang_zh_tw') }}</ElButton>
         </UploadFile>
-        <UploadFile
-          :upload="uploadModifyEn"
-          accept="text/javascript"
-          class="inline-block mr-4"
-        >
+        <UploadFile :upload="uploadModifyEn" accept="text/javascript" class="inline-block mr-4">
           <ElButton>{{ $t('button_upload') + $t('lang_en') }}</ElButton>
         </UploadFile>
-        <ElButton type="primary" @click="exportModifyZhCN">{{
-          $t('button_export') + $t('lang_zh_cn')
-        }}</ElButton>
-        <ElButton type="primary" @click="exportModifyZhTW">{{
-          $t('button_export') + $t('lang_zh_tw')
-        }}</ElButton>
-        <ElButton type="primary" @click="exportModifyEn">{{
-          $t('button_export') + $t('lang_en')
-        }}</ElButton>
+        <ElButton type="primary" @click="exportModifyZhCN">{{ $t('button_export') + $t('lang_zh_cn') }}</ElButton>
+        <ElButton type="primary" @click="exportModifyZhTW">{{ $t('button_export') + $t('lang_zh_tw') }}</ElButton>
+        <ElButton type="primary" @click="exportModifyEn">{{ $t('button_export') + $t('lang_en') }}</ElButton>
       </div>
     </div>
-    <VTable
-      ref="table"
-      row-key="id"
-      :columns="columns"
-      :data="data"
-      height="100%"
-      class="mt-4"
-      :isPage="true"
-    >
+    <VTable ref="table" row-key="id" :columns="columns" :data="data" height="100%" class="mt-4" :isPage="true">
       <template v-slot:operation="scope">
         <div class="operate-columns">
-          <ElButton size="mini" type="text" @click="edit(scope.row)">{{
-            $t('button_edit')
-          }}</ElButton>
+          <ElButton size="mini" type="text" @click="edit(scope.row)">{{ $t('button_edit') }}</ElButton>
         </div>
       </template>
       <template v-slot:name="scope">
@@ -91,13 +54,7 @@
         <div v-else>{{ scope.row[scope.prop] }}</div>
       </template>
     </VTable>
-    <ElDialog
-      width="435px"
-      append-to-body
-      title="edit"
-      :close-on-click-modal="false"
-      v-model:visible="dialog.visible"
-    >
+    <ElDialog width="435px" append-to-body title="edit" :close-on-click-modal="false" v-model:visible="dialog.visible">
       <ElForm :model="dialog.form" label-width="120px" @submit.prevent>
         <ElFormItem label="key">
           <div>{{ dialog.form.key }}</div>
@@ -129,12 +86,8 @@
       </ElForm>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <ElButton @click="dialog.visible = false">{{
-            $t('button_cancel')
-          }}</ElButton>
-          <ElButton type="primary" @click="confirm">{{
-            $t('button_confirm')
-          }}</ElButton>
+          <ElButton @click="dialog.visible = false">{{ $t('button_cancel') }}</ElButton>
+          <ElButton type="primary" @click="confirm">{{ $t('button_confirm') }}</ElButton>
         </span>
       </template>
     </ElDialog>
@@ -160,13 +113,13 @@ export default {
     let langMap = {
       'zh-CN': i18n.t('lang_zh_cn'),
       'zh-TW': i18n.t('lang_zh_tw'),
-      en: i18n.t('lang_en'),
+      en: i18n.t('lang_en')
     }
     // 原有的文案
     let sourceObject = {
       en: enSource,
       'zh-CN': zhCN,
-      'zh-TW': zhTWSource,
+      'zh-TW': zhTWSource
     }
     let localLangModifyZhCN = localStorage.getItem('localLangModifyZhCN')
     let localLangModifyZhTW = localStorage.getItem('localLangModifyZhTW')
@@ -175,33 +128,33 @@ export default {
     let modifyObject = {
       en: localLangModifyEn ? JSON.parse(localLangModifyEn) : {},
       'zh-TW': localLangModifyZhTW ? JSON.parse(localLangModifyZhTW) : {},
-      'zh-CN': localLangModifyZhCN ? JSON.parse(localLangModifyZhCN) : {},
+      'zh-CN': localLangModifyZhCN ? JSON.parse(localLangModifyZhCN) : {}
     }
     let columns = [
       {
         label: 'key',
         prop: 'key',
-        minWidth: 100,
-      },
+        minWidth: 100
+      }
     ]
     for (let key in langMap) {
       columns.push({
         label: langMap[key],
         prop: key,
-        slotName: 'name',
+        slotName: 'name'
       })
     }
     columns.push({
       label: i18n.t('list_operation'),
       prop: 'operation',
-      slotName: 'operation',
+      slotName: 'operation'
     })
     let list = []
     for (let key in sourceObject['zh-CN']) {
       let obj = {}
       if (typeof sourceObject['zh-CN'][key] === 'string') {
         obj.key = key
-        Object.keys(langMap).forEach((el) => {
+        Object.keys(langMap).forEach(el => {
           obj[el] = sourceObject[el][key]
           obj[el + '-modify'] = modifyObject[el]?.[key] || ''
         })
@@ -218,7 +171,7 @@ export default {
       searchParams: {
         status: '',
         key: '',
-        value: '',
+        value: ''
       },
       filterItems: [
         {
@@ -228,31 +181,31 @@ export default {
           items: [
             {
               label: 'modify',
-              value: 'modify',
+              value: 'modify'
             },
             {
               label: 'no-modify',
-              value: 'no-modify',
-            },
-          ],
+              value: 'no-modify'
+            }
+          ]
         },
         {
           placeholder: 'key',
           key: 'key',
           type: 'input',
-          debounce: 300,
+          debounce: 300
         },
         {
           placeholder: 'value',
           key: 'value',
           type: 'input',
-          debounce: 300,
-        },
+          debounce: 300
+        }
       ],
       dialog: {
         visible: false,
-        form: {},
-      },
+        form: {}
+      }
     }
   },
   mounted() {
@@ -275,27 +228,17 @@ export default {
         let data = this.list
         if (status) {
           if (status === 'modify') {
-            data = this.list.filter(
-              (t) => t['zh-CN-modify'] || t['zh-TW-modify'] || t['en-modify']
-            )
+            data = this.list.filter(t => t['zh-CN-modify'] || t['zh-TW-modify'] || t['en-modify'])
           } else if (status === 'no-modify') {
-            data = this.list.filter(
-              (t) => !t['zh-CN-modify'] && !t['zh-TW-modify'] && !t['en-modify']
-            )
+            data = this.list.filter(t => !t['zh-CN-modify'] && !t['zh-TW-modify'] && !t['en-modify'])
           }
         }
         if (key) {
-          data = this.list.filter((t) =>
-            t.key.toLowerCase().includes(key.trim().toLowerCase() || '')
-          )
+          data = this.list.filter(t => t.key.toLowerCase().includes(key.trim().toLowerCase() || ''))
         }
         if (value) {
           let iVal = value.trim().toLowerCase()
-          data = this.list.filter((t) =>
-            ['zh-CN', 'zh-TW', 'en'].some((s) =>
-              t[s]?.toLowerCase().includes(iVal || '')
-            )
-          )
+          data = this.list.filter(t => ['zh-CN', 'zh-TW', 'en'].some(s => t[s]?.toLowerCase().includes(iVal || '')))
         }
 
         this.data = data
@@ -308,7 +251,7 @@ export default {
     confirm() {
       this.dialog.visible = false
       let { form } = this.dialog
-      let findOne = this.list.find((t) => t.key === form.key)
+      let findOne = this.list.find(t => t.key === form.key)
       findOne['zh-CN-modify'] = form['zh-CN-modify']
       findOne['zh-TW-modify'] = form['zh-TW-modify']
       findOne['en-modify'] = form['en-modify']
@@ -319,7 +262,7 @@ export default {
       let zhCN = {}
       let zhTW = {}
       let en = {}
-      this.list.forEach((el) => {
+      this.list.forEach(el => {
         if (el['zh-CN-modify']) {
           zhCN[el.key] = el['zh-CN-modify']
         }
@@ -333,7 +276,7 @@ export default {
       return {
         zhCN,
         zhTW,
-        en,
+        en
       }
     },
     updateLocalStorage() {
@@ -364,7 +307,7 @@ export default {
       downloadBlob(
         {
           data: 'export default ' + JSON.stringify(obj),
-          headers: { 'content-type': 'text/plain;charset=utf-8' },
+          headers: { 'content-type': 'text/plain;charset=utf-8' }
         },
         name
       )
@@ -380,7 +323,7 @@ export default {
       }
     },
     uploadModifyEn(evt) {
-      this.upload(evt, (data) => {
+      this.upload(evt, data => {
         let res = localStorage.getItem('localLangModifyEn')
         if (res) {
           Object.assign(data, JSON.parse(res))
@@ -389,7 +332,7 @@ export default {
       })
     },
     uploadModifyZhTW(evt) {
-      this.upload(evt, (data) => {
+      this.upload(evt, data => {
         let res = localStorage.getItem('localLangModifyZhTW')
         if (res) {
           Object.assign(data, JSON.parse(res))
@@ -398,14 +341,14 @@ export default {
       })
     },
     uploadModifyZhCN(evt) {
-      this.upload(evt, (data) => {
+      this.upload(evt, data => {
         let res = localStorage.getItem('localLangModifyZhCN')
         if (res) {
           Object.assign(data, JSON.parse(res))
         }
         localStorage.setItem('localLangModifyZhCN', JSON.stringify(data))
       })
-    },
-  },
+    }
+  }
 }
 </script>

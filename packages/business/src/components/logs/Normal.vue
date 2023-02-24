@@ -1,8 +1,6 @@
 <template>
   <div class="e-debug-log customer-logs">
-    <div
-      class="filter-row flex justify-content-between align-items-center mb-4"
-    >
+    <div class="filter-row flex justify-content-between align-items-center mb-4">
       <div class="flex align-items-center">
         <ElInput
           class="search-input mt-2"
@@ -13,13 +11,7 @@
           clearable
           @input="searchFnc(800)"
         ></ElInput>
-        <ElCheckboxGroup
-          v-model:value="checkList"
-          :min="1"
-          size="mini"
-          class="inline-flex ml-4"
-          @change="searchFnc"
-        >
+        <ElCheckboxGroup v-model:value="checkList" :min="1" size="mini" class="inline-flex ml-4" @change="searchFnc">
           <ElCheckbox label="INFO">INFO</ElCheckbox>
           <ElCheckbox label="WARN">WARN</ElCheckbox>
           <ElCheckbox label="ERROR">ERROR</ElCheckbox>
@@ -38,18 +30,12 @@
         @scroll="scrollFnc"
       >
         <template #before>
-          <div
-            v-if="keyword"
-            class="before-scroll-content text-center font-color-light pb-2"
-          >
+          <div v-if="keyword" class="before-scroll-content text-center font-color-light pb-2">
             <div>
               {{ $t('packages_business_customer_logs_no_search_data') }}
             </div>
           </div>
-          <div
-            v-else
-            class="before-scroll-content text-center font-color-light pb-2"
-          >
+          <div v-else class="before-scroll-content text-center font-color-light pb-2">
             <div v-if="isNoMore">
               {{ $t('packages_business_customer_logs_no_more_data') }}
             </div>
@@ -70,20 +56,15 @@
           >
             <div class="flex py-1 font-color-light">
               <div class="mr-2 white-space-nowrap">
-                [<span :class="['level', colorMap[item.level]]">{{
-                  item.params.level || item.level
-                }}</span
+                [<span :class="['level', colorMap[item.level]]">{{ item.params.level || item.level }}</span
                 >]
                 <span>{{ formatTime(item.timestamp) }}</span>
               </div>
               <div>
                 <span v-html="item.content"></span>
-                <span
-                  v-if="item.link"
-                  class="color-primary ml-2 cursor-pointer"
-                  @click="toLink(item.link)"
-                  >{{ $t('packages_business_customer_logs_to_link') }}</span
-                >
+                <span v-if="item.link" class="color-primary ml-2 cursor-pointer" @click="toLink(item.link)">{{
+                  $t('packages_business_customer_logs_to_link')
+                }}</span>
                 <!--产品决定临时屏蔽-->
                 <!--<span
                     v-if="item.params.errorCode"
@@ -111,10 +92,10 @@ export default {
   name: 'Normal',
   components: {
     DynamicScroller,
-    DynamicScrollerItem,
+    DynamicScrollerItem
   },
   props: {
-    id: String,
+    id: String
   },
   data() {
     return {
@@ -132,15 +113,15 @@ export default {
       colorMap: {
         FATAL: 'color-red',
         ERROR: 'color-danger',
-        WARN: 'color-warning',
+        WARN: 'color-warning'
       },
       itemSize: 20,
       pageObj: {
         page: 1,
-        size: 20,
+        size: 20
       },
       isScrollBottom: false,
-      isNoMore: false,
+      isNoMore: false
     }
   },
   mounted() {
@@ -164,10 +145,10 @@ export default {
         filter: {
           where: { dataFlowId: this.id },
           order: 'id DESC',
-          limit: 20,
-        },
+          limit: 20
+        }
       }
-      this.$ws.on('logs', (data) => {
+      this.$ws.on('logs', data => {
         data && this.resetData()
       })
 
@@ -180,23 +161,17 @@ export default {
       if (target.scrollTop <= 0) {
         this.loadOld()
       }
-      this.isScrollBottom =
-        target.scrollHeight - target.scrollTop <= target.clientHeight
+      this.isScrollBottom = target.scrollHeight - target.scrollTop <= target.clientHeight
     },
     toSolutions(code) {
       let routeUrl = this.$router.resolve({
         name: 'Solutions',
-        query: { code: code },
+        query: { code: code }
       })
       window.open(routeUrl.href)
     },
     logScroll(logContainer) {
-      if (
-        logContainer.scrollHeight -
-          logContainer.clientHeight -
-          logContainer.scrollTop <
-        100
-      ) {
+      if (logContainer.scrollHeight - logContainer.clientHeight - logContainer.scrollTop < 100) {
         this.loadOld()
       }
     },
@@ -204,15 +179,12 @@ export default {
       const { checkList, keyword } = this
       if (keyword) {
         // filter.where.searchKey = { $regex: keyword, $options: 'i' }
-        filter.where.$or = [
-          { searchKey: { $regex: keyword, $options: 'i' } },
-          { key: keyword },
-        ]
+        filter.where.$or = [{ searchKey: { $regex: keyword, $options: 'i' } }, { key: keyword }]
       }
 
       if (checkList.length) {
         filter.where.level = {
-          in: checkList,
+          in: checkList
         }
       }
       return filter
@@ -223,14 +195,14 @@ export default {
       }
       let filter = {
         where: {
-          dataFlowId: this.id,
+          dataFlowId: this.id
         },
         order: 'id DESC',
-        limit: 20,
+        limit: 20
       }
       if (this.firstLogsId) {
         filter.where.id = {
-          lt: this.firstLogsId,
+          lt: this.firstLogsId
         }
       }
       this.addFilter(filter)
@@ -240,14 +212,14 @@ export default {
       // this.lastLogsId = ''
       let filter = {
         where: {
-          dataFlowId: this.id,
+          dataFlowId: this.id
         },
         order: 'id DESC',
-        limit: 20,
+        limit: 20
       }
       if (this.lastLogsId) {
         filter.where.id = {
-          gt: this.lastLogsId,
+          gt: this.lastLogsId
         }
       }
       this.addFilter(filter)
@@ -261,10 +233,10 @@ export default {
       this.preLoading = false
       let filter = {
         where: {
-          dataFlowId: this.id,
+          dataFlowId: this.id
         },
         order: 'id DESC',
-        limit: 20,
+        limit: 20
       }
       this.addFilter(filter)
 
@@ -284,7 +256,7 @@ export default {
       }
       customerJobLogsApi
         .get({ filter: JSON.stringify(filter) })
-        .then((data) => {
+        .then(data => {
           let items = data?.items || []
           items = items.reverse()
           if (!items.length) {
@@ -298,11 +270,11 @@ export default {
             return
           }
           const { keyword } = this
-          items.forEach((el) => {
+          items.forEach(el => {
             let { template, params, templateKeys } = el
             let content = template || ''
             if (templateKeys) {
-              templateKeys.forEach((t) => {
+              templateKeys.forEach(t => {
                 for (let key in params) {
                   let re = new RegExp(`{${key}}`, 'ig')
                   params[t] = params[t].replace(re, params[key])
@@ -380,18 +352,16 @@ export default {
     },
     toLink(link) {
       this.$copyText(link).then(() => {
-        this.$message.success(
-          this.$t('packages_business_customer_logs_copy_result')
-        )
+        this.$message.success(this.$t('packages_business_customer_logs_copy_result'))
         window.open(link, '_blank')
       })
-    },
+    }
   },
 
   unmounted() {
     clearInterval(this.timer)
     this.timer = null
-  },
+  }
 }
 </script>
 

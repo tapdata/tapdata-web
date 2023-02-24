@@ -1,41 +1,18 @@
 <template>
   <section class="data-server-wrapper">
-    <TablePage
-      ref="table"
-      row-key="id"
-      :remoteMethod="getData"
-      @selection-change="handleSelectionChange"
-    >
+    <TablePage ref="table" row-key="id" :remoteMethod="getData" @selection-change="handleSelectionChange">
       <template v-slot:search>
-        <FilterBar
-          v-model:value="searchParams"
-          :items="filterItems"
-          @fetch="table.fetch(1)"
-        >
-        </FilterBar>
+        <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </template>
       <template v-slot:operation>
         <div>
-          <ElButton
-            class="btn btn-create"
-            type="primary"
-            size="mini"
-            @click.stop="showDrawer()"
-          >
+          <ElButton class="btn btn-create" type="primary" size="mini" @click.stop="showDrawer()">
             <span>{{ $t('daas_data_server_drawer_chuangjianfuwu') }}</span>
           </ElButton>
         </div>
       </template>
-      <ElTableColumn
-        type="selection"
-        width="45"
-        :reserve-selection="true"
-      ></ElTableColumn>
-      <ElTableColumn
-        show-overflow-tooltip
-        :label="$t('daas_data_server_list_fuwumingcheng')"
-        min-width="180"
-      >
+      <ElTableColumn type="selection" width="45" :reserve-selection="true"></ElTableColumn>
+      <ElTableColumn show-overflow-tooltip :label="$t('daas_data_server_list_fuwumingcheng')" min-width="180">
         <template #default="{ row }">
           <ElLink
             class="ellipsis"
@@ -52,32 +29,19 @@
           {{ row.connectionType }}
         </template>
       </ElTableColumn>
-      <ElTableColumn
-        show-overflow-tooltip
-        :label="$t('daas_data_server_drawer_lianjiemingcheng')"
-        min-width="200"
-      >
+      <ElTableColumn show-overflow-tooltip :label="$t('daas_data_server_drawer_lianjiemingcheng')" min-width="200">
         <template #default="{ row }">
           {{ row.connectionName }}
         </template>
       </ElTableColumn>
-      <ElTableColumn
-        show-overflow-tooltip
-        :label="$t('daas_data_server_list_guanlianduixiang')"
-        min-width="120"
-      >
+      <ElTableColumn show-overflow-tooltip :label="$t('daas_data_server_list_guanlianduixiang')" min-width="120">
         <template #default="{ row }">
           {{ row.tableName }}
         </template>
       </ElTableColumn>
-      <ElTableColumn
-        :label="$t('daas_data_server_list_fuwuzhuangtai')"
-        min-width="100"
-      >
+      <ElTableColumn :label="$t('daas_data_server_list_fuwuzhuangtai')" min-width="100">
         <template #default="{ row }">
-          <span class="status-block" :class="'status-' + row.status">{{
-            row.statusFmt
-          }}</span>
+          <span class="status-block" :class="'status-' + row.status">{{ row.statusFmt }}</span>
         </template>
       </ElTableColumn>
       <ElTableColumn width="200" :label="$t('column_operation')">
@@ -89,20 +53,13 @@
             @click="changeStatus(row)"
             >{{ $t('button_public') }}</ElButton
           >
-          <ElButton
-            v-if="row.status === 'active'"
-            type="text"
-            @click="changeStatus(row)"
-            >{{ $t('button_revoke') }}</ElButton
-          >
-          <ElDivider direction="vertical"></ElDivider>
-          <ElButton type="text" @click="output(row)">{{
-            $t('button_export')
+          <ElButton v-if="row.status === 'active'" type="text" @click="changeStatus(row)">{{
+            $t('button_revoke')
           }}</ElButton>
           <ElDivider direction="vertical"></ElDivider>
-          <ElButton type="text" @click="removeServer(row)">{{
-            $t('button_delete')
-          }}</ElButton>
+          <ElButton type="text" @click="output(row)">{{ $t('button_export') }}</ElButton>
+          <ElDivider direction="vertical"></ElDivider>
+          <ElButton type="text" @click="removeServer(row)">{{ $t('button_delete') }}</ElButton>
         </template>
       </ElTableColumn>
     </TablePage>
@@ -113,12 +70,7 @@
 <script>
 import i18n from '@/i18n'
 
-import {
-  databaseTypesApi,
-  modulesApi,
-  metadataInstancesApi,
-  apiServerApi,
-} from '@tap/api'
+import { databaseTypesApi, modulesApi, metadataInstancesApi, apiServerApi } from '@tap/api'
 import { TablePage } from '@tap/business'
 import { FilterBar } from '@tap/component'
 
@@ -135,37 +87,37 @@ export default {
       searchParams: {
         type: '',
         status: '',
-        keyword: '',
+        keyword: ''
       },
       statusOptions: [
         {
           label: i18n.t('select_option_all'),
-          value: '',
+          value: ''
         },
         {
           label: i18n.t('modules_active'),
-          value: 'active',
+          value: 'active'
         },
         {
           label: i18n.t('modules_pending'),
-          value: 'pending',
+          value: 'pending'
         },
         {
           label: i18n.t('api_monitor_total_api_list_status_generating'),
-          value: 'generating',
-        },
-      ],
+          value: 'generating'
+        }
+      ]
     }
   },
   computed: {
     table() {
       return this.$refs.table
-    },
+    }
   },
   watch: {
     '$route.query'() {
       this.table.fetch(1)
-    },
+    }
   },
   created() {
     this.searchParams = Object.assign(this.searchParams, this.$route.query)
@@ -183,15 +135,8 @@ export default {
             let data = await databaseTypesApi.get()
             data = data || []
             let databaseTypes = []
-            databaseTypes = data?.filter((it) =>
-              [
-                'mysql',
-                'sqlserver',
-                'oracle',
-                'mongodb',
-                'pg',
-                'tidb',
-              ].includes(it.pdkId)
+            databaseTypes = data?.filter(it =>
+              ['mysql', 'sqlserver', 'oracle', 'mongodb', 'pg', 'tidb'].includes(it.pdkId)
             )
             let databaseTypeOptions = databaseTypes.sort((t1, t2) =>
               t1.name > t2.name ? 1 : t1.name === t2.name ? 0 : -1
@@ -199,30 +144,28 @@ export default {
             //默认全部
             let all = {
               name: this.$t('select_option_all'),
-              type: '',
+              type: ''
             }
             databaseTypeOptions.unshift(all)
-            return databaseTypeOptions.map((item) => {
+            return databaseTypeOptions.map(item => {
               return {
                 label: item.name,
-                value: item.type,
+                value: item.type
               }
             })
-          },
+          }
         },
         {
           label: i18n.t('modules_header_status'),
           key: 'status', //对象类型
           type: 'select-inner',
-          items: this.statusOptions,
+          items: this.statusOptions
         },
         {
-          placeholder: i18n.t(
-            'daas_data_discovery_previewdrawer_qingshurumingcheng'
-          ),
+          placeholder: i18n.t('daas_data_discovery_previewdrawer_qingshurumingcheng'),
           key: 'keyword', //输入搜索名称
-          type: 'input',
-        },
+          type: 'input'
+        }
       ]
     },
     getData({ page }) {
@@ -231,10 +174,7 @@ export default {
       let where = {}
       //精准搜索 iModel
       if (keyword && keyword.trim()) {
-        where['or'] = [
-          { basePath: { like: keyword, options: 'i' } },
-          { description: { like: keyword, options: 'i' } },
-        ]
+        where['or'] = [{ basePath: { like: keyword, options: 'i' } }, { description: { like: keyword, options: 'i' } }]
       }
       if (type) {
         where['connectionType'] = type
@@ -244,22 +184,20 @@ export default {
         order: this.order,
         limit: size,
         skip: (current - 1) * size,
-        where,
+        where
       }
       return modulesApi
         .get({
-          filter: JSON.stringify(filter),
+          filter: JSON.stringify(filter)
         })
-        .then((data) => {
-          let list = (data?.items || []).map((item) => {
-            item.statusFmt =
-              this.statusOptions.find((it) => it.value === item.status)
-                ?.label || '-'
+        .then(data => {
+          let list = (data?.items || []).map(item => {
+            item.statusFmt = this.statusOptions.find(it => it.value === item.status)?.label || '-'
             return item
           })
           return {
             total: data?.total,
-            data: list,
+            data: list
           }
         })
     },
@@ -280,14 +218,10 @@ export default {
       this.multipleSelection = val
     },
     async removeServer(row) {
-      const flag = await this.$confirm(
-        i18n.t('daas_data_server_list_querenshanchufu'),
-        '',
-        {
-          type: 'warning',
-          showClose: false,
-        }
-      )
+      const flag = await this.$confirm(i18n.t('daas_data_server_list_querenshanchufu'), '', {
+        type: 'warning',
+        showClose: false
+      })
       if (flag) {
         await modulesApi.delete(row.id)
         this.table.fetch()
@@ -300,13 +234,13 @@ export default {
       }
       const flag = await this.$confirm(msg, '', {
         type: 'warning',
-        showClose: false,
+        showClose: false
       })
       if (flag) {
         await modulesApi.patch({
           id: row.id,
           status: row.status === 'active' ? 'pending' : 'active',
-          tableName: row.tableName,
+          tableName: row.tableName
         })
         this.table.fetch()
       }
@@ -315,16 +249,16 @@ export default {
       metadataInstancesApi.download(
         {
           _id: {
-            in: [row.id],
-          },
+            in: [row.id]
+          }
         },
         'Modules'
       )
     },
     showDrawer(item) {
       this.$refs.drawer.open(item)
-    },
-  },
+    }
+  }
 }
 </script>
 

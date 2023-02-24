@@ -16,12 +16,8 @@
       ref="datepicker"
       @change="emitFnc"
     ></ElDatePicker>
-    <VIcon v-if="showClose" size="12" class="icon-btn ml-1" @click.stop="clear"
-      >close</VIcon
-    >
-    <VIcon v-else size="10" class="icon-btn ml-1" @click="focusFnc"
-      >arrow-down-fill</VIcon
-    >
+    <VIcon v-if="showClose" size="12" class="icon-btn ml-1" @click.stop="clear">close</VIcon>
+    <VIcon v-else size="10" class="icon-btn ml-1" @click="focusFnc">arrow-down-fill</VIcon>
   </div>
 </template>
 
@@ -36,17 +32,17 @@ export default {
     value: [String, Array, Number, Object],
     title: {
       type: String,
-      default: '',
+      default: ''
     },
     clearable: {
       type: Boolean,
-      default: true,
-    },
+      default: true
+    }
   },
   data() {
     return {
       time: '',
-      showClose: false,
+      showClose: false
     }
   },
   watch: {
@@ -54,7 +50,7 @@ export default {
       if (v) {
         this.time = v
       }
-    },
+    }
   },
   mounted() {},
   methods: {
@@ -76,9 +72,9 @@ export default {
     },
     focusFnc() {
       this.$refs.datepicker?.focus()
-    },
+    }
   },
-  emits: ['change', 'update:value'],
+  emits: ['change', 'update:value']
 }
 </script>
 

@@ -10,20 +10,11 @@
       :placeholder="placeholder"
       @input="inputHandler"
     >
-      <ElOption
-        v-for="opt in options"
-        :key="opt"
-        :label="opt"
-        :value="opt"
-      ></ElOption>
+      <ElOption v-for="opt in options" :key="opt" :label="opt" :value="opt"></ElOption>
     </ElSelect>
     <template v-if="values.length">
       <div class="fields-selector--display flex p-2 mt-2">
-        <div
-          class="fields-selector--item mr-2"
-          v-for="(field, index) in values"
-          :key="field"
-        >
+        <div class="fields-selector--item mr-2" v-for="(field, index) in values" :key="field">
           <span>{{ field }}</span>
           <ElLink @click="remove(index)"><i class="el-icon-close"></i></ElLink>
         </div>
@@ -41,32 +32,28 @@ export default {
   props: {
     value: {
       type: [String],
-      required: true,
+      required: true
     },
     placeholder: String,
-    options: Array,
+    options: Array
   },
   computed: {
     values() {
       let value = this.value
       return value && value.length ? value.split(',') : []
-    },
+    }
   },
   methods: {
     inputHandler(values) {
       //过滤空字符串并去重，之后使用逗号分隔
-      $emit(
-        this,
-        'update:value',
-        Array.from(new Set(values.filter((v) => !!v.trim()))).join(',')
-      )
+      $emit(this, 'update:value', Array.from(new Set(values.filter(v => !!v.trim()))).join(','))
     },
     remove(index) {
       this.values.splice(index, 1)
       this.inputHandler(this.values)
-    },
+    }
   },
-  emits: ['update:value'],
+  emits: ['update:value']
 }
 </script>
 

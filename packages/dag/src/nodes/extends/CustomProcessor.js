@@ -15,8 +15,6 @@ export class CustomProcessor extends NodeType {
   }
 
   selector(node) {
-    return (
-      node.type === this.type && node.customNodeId === this.props.customNodeId
-    )
+    return node.type === this.type && node.customNodeId === this.props.customNodeId
   }
 }

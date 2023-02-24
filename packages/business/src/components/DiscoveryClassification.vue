@@ -11,11 +11,7 @@
         </ElInput>
       </div>
     </div>
-    <ClassificationTree
-      v-bind="$attrs"
-      class="tree-block pr-3"
-      v-loading="loadingTree"
-    />
+    <ClassificationTree v-bind="$attrs" class="tree-block pr-3" v-loading="loadingTree" />
   </div>
 </template>
 
@@ -37,7 +33,7 @@ export default {
       loadingTree: false,
       props: {
         key: 'id',
-        label: 'name',
+        label: 'name'
       },
       isActive: true,
 
@@ -49,7 +45,7 @@ export default {
         title: '',
         itemType: 'resource',
         desc: '',
-        visible: false,
+        visible: false
       },
 
       nodeName: '',
@@ -57,10 +53,10 @@ export default {
       title: '',
       iconMap: {
         table: 'table',
-        defaultApi: 'apiServer_navbar',
-      },
+        defaultApi: 'apiServer_navbar'
+      }
     }
-  },
+  }
 }
 </script>
 

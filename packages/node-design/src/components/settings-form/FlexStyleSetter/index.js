@@ -23,17 +23,15 @@ export const FlexStyleSetter = observer(
                 dataSource={[
                   {
                     label: <IconWidget infer="FlexDirectionRow" />,
-                    value: 'row',
+                    value: 'row'
                   },
                   {
                     label: <IconWidget infer="FlexDirectionColumn" />,
-                    value: 'column',
-                  },
+                    value: 'column'
+                  }
                 ]}
-                reactions={(field) => {
-                  field.decorator[1].title = `Flex Direction : ${
-                    field.value || ''
-                  }`
+                reactions={field => {
+                  field.decorator[1].title = `Flex Direction : ${field.value || ''}`
                 }}
                 decorator={[InputItems.Item]}
                 component={[Radio.Group, { optionType: 'button' }]}
@@ -44,14 +42,14 @@ export const FlexStyleSetter = observer(
                 dataSource={[
                   {
                     label: <IconWidget infer="FlexNoWrap" />,
-                    value: 'nowrap',
+                    value: 'nowrap'
                   },
                   {
                     label: <IconWidget infer="FlexWrap" />,
-                    value: 'wrap',
-                  },
+                    value: 'wrap'
+                  }
                 ]}
-                reactions={(field) => {
+                reactions={field => {
                   field.decorator[1].title = `Flex Wrap : ${field.value || ''}`
                 }}
                 decorator={[InputItems.Item]}
@@ -63,33 +61,31 @@ export const FlexStyleSetter = observer(
                 dataSource={[
                   {
                     label: <IconWidget infer="FlexAlignContentCenter" />,
-                    value: 'center',
+                    value: 'center'
                   },
                   {
                     label: <IconWidget infer="FlexAlignContentStart" />,
-                    value: 'flex-start',
+                    value: 'flex-start'
                   },
                   {
                     label: <IconWidget infer="FlexAlignContentEnd" />,
-                    value: 'flex-end',
+                    value: 'flex-end'
                   },
                   {
                     label: <IconWidget infer="FlexAlignContentSpaceAround" />,
-                    value: 'space-around',
+                    value: 'space-around'
                   },
                   {
                     label: <IconWidget infer="FlexAlignContentSpaceBetween" />,
-                    value: 'space-between',
+                    value: 'space-between'
                   },
                   {
                     label: <IconWidget infer="FlexAlignContentStretch" />,
-                    value: 'stretch',
-                  },
+                    value: 'stretch'
+                  }
                 ]}
-                reactions={(field) => {
-                  field.decorator[1].title = `Align Content : ${
-                    field.value || ''
-                  }`
+                reactions={field => {
+                  field.decorator[1].title = `Align Content : ${field.value || ''}`
                 }}
                 decorator={[InputItems.Item]}
                 component={[Radio.Group, { optionType: 'button' }]}
@@ -100,33 +96,31 @@ export const FlexStyleSetter = observer(
                 dataSource={[
                   {
                     label: <IconWidget infer="FlexJustifyCenter" />,
-                    value: 'center',
+                    value: 'center'
                   },
                   {
                     label: <IconWidget infer="FlexJustifyStart" />,
-                    value: 'flex-start',
+                    value: 'flex-start'
                   },
                   {
                     label: <IconWidget infer="FlexJustifyEnd" />,
-                    value: 'flex-end',
+                    value: 'flex-end'
                   },
                   {
                     label: <IconWidget infer="FlexJustifySpaceAround" />,
-                    value: 'space-around',
+                    value: 'space-around'
                   },
                   {
                     label: <IconWidget infer="FlexJustifySpaceBetween" />,
-                    value: 'space-between',
+                    value: 'space-between'
                   },
                   {
                     label: <IconWidget infer="FlexJustifySpaceEvenly" />,
-                    value: 'space-evenly',
-                  },
+                    value: 'space-evenly'
+                  }
                 ]}
-                reactions={(field) => {
-                  field.decorator[1].title = `Justify Content : ${
-                    field.value || ''
-                  }`
+                reactions={field => {
+                  field.decorator[1].title = `Justify Content : ${field.value || ''}`
                 }}
                 decorator={[InputItems.Item]}
                 component={[Radio.Group, { optionType: 'button' }]}
@@ -137,29 +131,27 @@ export const FlexStyleSetter = observer(
                 dataSource={[
                   {
                     label: <IconWidget infer="FlexAlignItemsCenter" />,
-                    value: 'center',
+                    value: 'center'
                   },
                   {
                     label: <IconWidget infer="FlexAlignItemsStart" />,
-                    value: 'flex-start',
+                    value: 'flex-start'
                   },
                   {
                     label: <IconWidget infer="FlexAlignItemsEnd" />,
-                    value: 'flex-end',
+                    value: 'flex-end'
                   },
                   {
                     label: <IconWidget infer="FlexAlignItemsStretch" />,
-                    value: 'stretch',
+                    value: 'stretch'
                   },
                   {
                     label: <IconWidget infer="FlexAlignItemsBaseline" />,
-                    value: 'baseline',
-                  },
+                    value: 'baseline'
+                  }
                 ]}
-                reactions={(field) => {
-                  field.decorator[1].title = `Align Items : ${
-                    field.value || ''
-                  }`
+                reactions={field => {
+                  field.decorator[1].title = `Align Items : ${field.value || ''}`
                 }}
                 decorator={[InputItems.Item]}
                 component={[Radio.Group, { optionType: 'button' }]}
@@ -168,6 +160,6 @@ export const FlexStyleSetter = observer(
           </div>
         )
       }
-    },
+    }
   })
 )

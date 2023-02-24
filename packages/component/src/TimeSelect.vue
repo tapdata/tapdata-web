@@ -1,9 +1,6 @@
 <template>
   <div class="time-select__picker">
-    <div
-      class="picker__item inline-flex align-items-center cursor-pointer"
-      @click="openSelect"
-    >
+    <div class="picker__item inline-flex align-items-center cursor-pointer" @click="openSelect">
       <div class="time-select__title">{{ title }}</div>
       <ElSelect
         v-model:value="period"
@@ -15,16 +12,9 @@
         ref="select"
         @change="changeFnc"
       >
-        <ElOption
-          v-for="(item, index) in items"
-          :key="index"
-          :label="item.label"
-          :value="item.value"
-        ></ElOption>
+        <ElOption v-for="(item, index) in items" :key="index" :label="item.label" :value="item.value"></ElOption>
       </ElSelect>
-      <VIcon size="14" class="color-primary ml-1" @click="openPicker"
-        >timer</VIcon
-      >
+      <VIcon size="14" class="color-primary ml-1" @click="openPicker">timer</VIcon>
     </div>
     <ElDatePicker
       v-model:value="time"
@@ -60,47 +50,47 @@ export default {
       type: String,
       default: () => {
         return i18n.t('packages_dag_components_timeselect_zhouqi')
-      },
+      }
     },
     options: {
       type: Array,
       default: () => [
         {
           label: i18n.t('packages_dag_components_timeselect_zuijinfenzhong'),
-          value: '5m',
+          value: '5m'
         },
         {
           label: i18n.t('packages_dag_components_timeselect_zuixinxiaoshi'),
-          value: '1h',
+          value: '1h'
         },
         {
           label: i18n.t('packages_dag_components_timeselect_zuijintian'),
-          value: '1d',
+          value: '1d'
         },
         {
           label: i18n.t('packages_dag_components_timeselect_renwuzuijinyi'),
-          value: 'lastStart',
+          value: 'lastStart'
         },
         {
           label: i18n.t('packages_dag_components_timeselect_renwuquanzhouqi'),
-          value: 'full',
+          value: 'full'
         },
         {
           label: i18n.t('packages_dag_components_log_zidingyishijian'),
           type: 'custom',
-          value: 'custom',
-        },
-      ],
+          value: 'custom'
+        }
+      ]
     },
     rangeSeparator: String,
     interval: {
       type: Number,
-      default: 60 * 1000,
+      default: 60 * 1000
     },
     range: {
       type: Array,
-      default: () => [Time.now() - 5 * 60 * 1000, Time.now()],
-    },
+      default: () => [Time.now() - 5 * 60 * 1000, Time.now()]
+    }
   },
   data() {
     return {
@@ -109,7 +99,7 @@ export default {
       items: [],
       isTime: false,
       pickerOptions: {
-        disabledDate: (time) => {
+        disabledDate: time => {
           const [start, end] = this.getRangeTime()
           const d = new Date(time).getTime()
           const pickDate = dayjs(time).format(this.timeFormat.date)
@@ -122,21 +112,21 @@ export default {
           }
           return d < startStamp || d >= endStamp
         },
-        onPick: this.handleTimeRangeDisabled,
+        onPick: this.handleTimeRangeDisabled
       },
       timeFormat: {
         date: 'YYYY-MM-DD',
         time: 'HH:mm:ss',
         startTime: '00:00:00',
-        endTime: '23:59:59',
-      },
+        endTime: '23:59:59'
+      }
     }
   },
   computed: {
     optionsAndValue() {
       const { value, options } = this
       return { value, options }
-    },
+    }
   },
   watch: {
     optionsAndValue: {
@@ -146,8 +136,8 @@ export default {
         if (this.value) {
           this.setPeriod(this.value)
         }
-      },
-    },
+      }
+    }
   },
   mounted() {
     this.items = JSON.parse(JSON.stringify(this.options))
@@ -161,13 +151,13 @@ export default {
       const maxDate = this.formatTime(endTime, this.timeFormat.date)
       this.handleTimeRangeDisabled({
         minDate,
-        maxDate,
+        maxDate
       })
     })
   },
   methods: {
     changeFnc(value) {
-      let findOne = this.items.find((t) => t.value === value)
+      let findOne = this.items.find(t => t.value === value)
       if (findOne?.type === 'custom') {
         this.openPicker()
         return
@@ -199,17 +189,17 @@ export default {
 
       const { rangeSeparator, formatToString } = this.$refs.datetime
       const label = formatToString(val)?.join(rangeSeparator)
-      const valJoin = val?.map((t) => new Date(t).getTime()).join()
+      const valJoin = val?.map(t => new Date(t).getTime()).join()
       if (!valJoin) {
         return
       }
-      const findOne = this.items.find((t) => t.value === valJoin)
+      const findOne = this.items.find(t => t.value === valJoin)
       if (!findOne) {
-        this.items = this.items.filter((t) => !t.isTime)
+        this.items = this.items.filter(t => !t.isTime)
         this.items.push({
           label: label,
           value: valJoin,
-          isTime: true,
+          isTime: true
         })
         this.isTime = true
       }
@@ -221,9 +211,9 @@ export default {
         true,
         Object.assign(
           {},
-          this.items.find((t) => t.type === 'custom'),
+          this.items.find(t => t.type === 'custom'),
           {
-            value: val,
+            value: val
           }
         )
       )
@@ -259,26 +249,13 @@ export default {
       const endTime = dayjs(end).format(this.timeFormat.time)
       // 控件日期、开始日期、结束日期，都是同一天
       if (pickStartDate === startDate && startDate === endDate) {
-        minTimePicker.selectableRange = [
-          [
-            new Date(`${startDate} ${startTime}`),
-            new Date(`${endDate} ${endTime}`),
-          ],
-        ]
-        maxTimePicker.selectableRange = [
-          [
-            new Date(`${startDate} ${startTime}`),
-            new Date(`${endDate} ${endTime}`),
-          ],
-        ]
+        minTimePicker.selectableRange = [[new Date(`${startDate} ${startTime}`), new Date(`${endDate} ${endTime}`)]]
+        maxTimePicker.selectableRange = [[new Date(`${startDate} ${startTime}`), new Date(`${endDate} ${endTime}`)]]
       } else {
         // 控件日期 等于 开始日期
         if (pickStartDate === startDate) {
           minTimePicker.selectableRange = [
-            [
-              new Date(`${startDate} ${startTime}`),
-              new Date(`${startDate} ${this.timeFormat.endTime}`),
-            ],
+            [new Date(`${startDate} ${startTime}`), new Date(`${startDate} ${this.timeFormat.endTime}`)]
           ]
         } else {
           minTimePicker.selectableRange = []
@@ -286,10 +263,7 @@ export default {
         // 控件日期 等于 结束日期
         if (pickEndDate === endDate) {
           maxTimePicker.selectableRange = [
-            [
-              new Date(`${endDate} ${this.timeFormat.startTime}`),
-              new Date(`${endDate} ${endTime}`),
-            ],
+            [new Date(`${endDate} ${this.timeFormat.startTime}`), new Date(`${endDate} ${endTime}`)]
           ]
         } else {
           maxTimePicker.selectableRange = []
@@ -302,23 +276,23 @@ export default {
     },
 
     getRangeTime() {
-      return this.range.map((t) => t || Date.now())
+      return this.range.map(t => t || Date.now())
     },
 
     setPeriod(value) {
-      let findOne = this.items.find((t) => t.value === value)
+      let findOne = this.items.find(t => t.value === value)
       if (!findOne) {
-        this.changeTime(value?.split(',').map((t) => Number(t)))
+        this.changeTime(value?.split(',').map(t => Number(t)))
         return
       }
       this.period = value
     },
 
     getPeriod(value) {
-      return this.items.find((t) => t.value === (value || this.period))
-    },
+      return this.items.find(t => t.value === (value || this.period))
+    }
   },
-  emits: ['change', 'setMinAndMaxTime', 'update:value'],
+  emits: ['change', 'setMinAndMaxTime', 'update:value']
 }
 </script>
 

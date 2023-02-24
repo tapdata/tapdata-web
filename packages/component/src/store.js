@@ -3,16 +3,16 @@ const getState = function () {
   return {
     connections: {
       panelFlag: state?.connections?.panelFlag || false,
-      classification: state?.connections?.classification || [],
+      classification: state?.connections?.classification || []
     },
     migrate: {
       panelFlag: state?.migrate?.panelFlag || false,
-      classification: state?.migrate?.classification || [],
+      classification: state?.migrate?.classification || []
     },
     sync: {
       panelFlag: state?.sync?.panelFlag || false,
-      classification: state?.sync?.classification || [],
-    },
+      classification: state?.sync?.classification || []
+    }
   }
 }
 
@@ -22,15 +22,15 @@ console.log(state, '当前分类标签store')
 
 // getters
 const getters = {
-  stateConnections: (state) => {
+  stateConnections: state => {
     return state.connections
   },
-  stateMigrate: (state) => {
+  stateMigrate: state => {
     return state.migrate
   },
-  stateSync: (state) => {
+  stateSync: state => {
     return state.sync
-  },
+  }
 }
 
 // actions
@@ -58,7 +58,7 @@ const mutations = {
     let type = data?.type || 'connections'
     state[type].panelFlag = data.panelFlag
     sessionStorage.setItem('classificationState', JSON.stringify(state))
-  },
+  }
 }
 
 export default {
@@ -67,5 +67,5 @@ export default {
   state,
   getters,
   actions,
-  mutations,
+  mutations
 }

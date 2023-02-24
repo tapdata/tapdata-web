@@ -7,14 +7,14 @@ import './styles.scss'
 import { defineComponent } from 'vue-demi'
 
 export const ImageInput = defineComponent({
-  setup: (props) => {
+  setup: props => {
     const prefix = usePrefix('image-input')
     const context = useContext(SettingsFormContext)
     return () => (
       <div class={prefix}>
         <Input
           {...props}
-          onChange={(e) => {
+          onChange={e => {
             props.onChange?.(e?.target?.['value'])
           }}
           prefix={
@@ -22,13 +22,9 @@ export const ImageInput = defineComponent({
               action={context.uploadAction}
               itemRender={() => null}
               maxCount={1}
-              onChange={(params) => {
+              onChange={params => {
                 const response = params.file?.response
-                const url =
-                  response?.url ||
-                  response?.downloadURL ||
-                  response?.imageURL ||
-                  response?.thumbUrl
+                const url = response?.url || response?.downloadURL || response?.imageURL || response?.thumbUrl
                 if (!url) return
                 props.onChange?.(url)
               }}
@@ -39,11 +35,11 @@ export const ImageInput = defineComponent({
         />
       </div>
     )
-  },
+  }
 })
 
 export const BackgroundImageInput = defineComponent({
-  setup: (props) => {
+  setup: props => {
     const addBgValue = (value: any) => {
       if (/url\([^)]+\)/.test(value)) {
         return value
@@ -60,10 +56,10 @@ export const BackgroundImageInput = defineComponent({
     return () => (
       <ImageInput
         value={removeBgValue(props.value)}
-        onChange={(url) => {
+        onChange={url => {
           props.onChange?.(addBgValue(url))
         }}
       />
     )
-  },
+  }
 })

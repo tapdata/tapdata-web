@@ -9,11 +9,11 @@ export const Radio = FormRadio
 Radio.Behavior = createBehavior({
   name: 'Radio.Group',
   extends: ['Field'],
-  selector: (node) => node.props['x-component'] === 'Radio.Group',
+  selector: node => node.props['x-component'] === 'Radio.Group',
   designerProps: {
-    propsSchema: createFieldSchema(AllSchemas.Radio.Group, null, true),
+    propsSchema: createFieldSchema(AllSchemas.Radio.Group, null, true)
   },
-  designerLocales: AllLocales.RadioGroup,
+  designerLocales: AllLocales.RadioGroup
 })
 
 Radio.Resource = createResource({
@@ -28,9 +28,9 @@ Radio.Resource = createResource({
         'x-component': 'Radio.Group',
         enum: [
           { label: '选项1', value: 1 },
-          { label: '选项2', value: 2 },
-        ],
-      },
-    },
-  ],
+          { label: '选项2', value: 2 }
+        ]
+      }
+    }
+  ]
 })

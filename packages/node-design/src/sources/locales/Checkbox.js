@@ -1,8 +1,8 @@
 export const CheckboxGroup = {
   'zh-CN': {
-    title: '复选框组',
+    title: '复选框组'
   },
   'en-US': {
-    title: 'Checkbox',
-  },
+    title: 'Checkbox'
+  }
 }

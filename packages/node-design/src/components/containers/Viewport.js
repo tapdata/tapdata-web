@@ -6,7 +6,7 @@ import { defineComponent, ref, onMounted } from 'vue-demi'
 export const Viewport = defineComponent({
   props: {
     placeholder: {},
-    dragTipsDirection: {},
+    dragTipsDirection: {}
   },
   setup: (props, { slots, refs }) => {
     const placeholder = props.placeholder
@@ -52,15 +52,13 @@ export const Viewport = defineComponent({
         class={prefix}
         style={{
           opacity: !loaded ? 0 : 1,
-          overflow: isFrameRef.value ? 'hidden' : 'overlay',
+          overflow: isFrameRef.value ? 'hidden' : 'overlay'
         }}
       >
         {slots.default?.()}
         <AuxToolWidget />
-        <EmptyWidget dragTipsDirection={dragTipsDirection}>
-          {placeholder}
-        </EmptyWidget>
+        <EmptyWidget dragTipsDirection={dragTipsDirection}>{placeholder}</EmptyWidget>
       </div>
     )
-  },
+  }
 })

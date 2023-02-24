@@ -35,13 +35,11 @@ export default {
   packages_dag_meta_table_true: 'True',
   packages_dag_meta_table_false: 'False',
   packages_dag_meta_table_comment: 'Comment',
-  packages_dag_connection_name_search_placeholder:
-    'Please enter the connection name to search',
+  packages_dag_connection_name_search_placeholder: 'Please enter the connection name to search',
   packages_dag_task_form_error_name_duplicate: '',
   packages_dag_task_stetting_name: 'Task name',
   packages_dag_task_setting_sync_type: 'Sync type',
-  packages_dag_task_setting_initial_sync_cdc:
-    'Full + Incremental synchronization',
+  packages_dag_task_setting_initial_sync_cdc: 'Full + Incremental synchronization',
   packages_dag_task_setting_initial_sync: 'Full synchronization',
   packages_dag_task_setting_cdc: 'Incremental synchronization',
   packages_dag_task_stetting_desc: 'Task description',
@@ -55,8 +53,7 @@ export default {
     '0 */1 * * * ?  // Run every minute \n' +
     '0 0 2 * * ?  // Run at 2:00 AM every day',
   packages_dag_task_setting_sync_point: 'Incremental collection start time',
-  packages_dag_task_setting_syncPoint_tip:
-    'The task will collect incremental logs from this point in time',
+  packages_dag_task_setting_syncPoint_tip: 'The task will collect incremental logs from this point in time',
   packages_dag_task_setting_automatic_index: 'Automatically create an index',
   packages_dag_task_setting_stop_on_error: 'Stop on error',
   packages_dag_connection_form_shared_mining: 'Shared mining',
@@ -72,12 +69,9 @@ export default {
   packages_dag_connection_form_automatic: 'Platform automatic allocation',
   packages_dag_connection_form_manual: 'User specified manually',
   packages_dag_task_setting_automatic_ddl: 'Automatic DDL',
-  packages_dag_task_setting_distinct_write_type:
-    'De-duplication write mechanism',
-  packages_dag_task_setting_transformer_concurrency:
-    'Number of target write threads',
-  packages_dag_task_setting_cdc_concurrency:
-    'Incremental synchronization concurrent write',
+  packages_dag_task_setting_distinct_write_type: 'De-duplication write mechanism',
+  packages_dag_task_setting_transformer_concurrency: 'Number of target write threads',
+  packages_dag_task_setting_cdc_concurrency: 'Incremental synchronization concurrent write',
   packages_dag_task_setting_lag_time: 'Incremental lag judgment time setting',
   packages_dag_task_setting_cdc_engine_filter: 'Enable engine filtering',
   packages_dag_task_setting_share_cdc_mode: 'Shared incremental read mode',
@@ -102,8 +96,7 @@ export default {
   packages_dag_dataFlow_initial_sync: 'INITIAL SYNC',
   packages_dag_dataFlow_cdc: ' CDC ',
   packages_dag_editor_cell_validate_empty_name: 'Name is required.',
-  packages_dag_editor_cell_validate_none_data_node:
-    'At least 2 data node in graph',
+  packages_dag_editor_cell_validate_none_data_node: 'At least 2 data node in graph',
   packages_dag_message_save_ok: 'Save successfully',
   packages_dag_dag_save_fail: 'Save failed, please check node',
   packages_dag_message_operation_error: 'Operation failed',
@@ -112,24 +105,18 @@ export default {
   packages_dag_message_resetFailed: 'Reset Failed',
   packages_dag_message_task_rename_success: 'Modified successfully',
   packages_dag_dataFlow_multiError_notFound: 'This job does not existed.',
-  packages_dag_dataFlow_multiError_statusError:
-    'Job status does not allow to do this operation.',
-  packages_dag_dataFlow_multiError_otherError:
-    'Operation failed, please try it again.',
+  packages_dag_dataFlow_multiError_statusError: 'Job status does not allow to do this operation.',
+  packages_dag_dataFlow_multiError_otherError: 'Operation failed, please try it again.',
   packages_dag_editor_cell_link_writeMode_append: 'Append into Target',
-  packages_dag_editor_cell_link_writeMode_upsert:
-    'Match and Merge or Insert New',
+  packages_dag_editor_cell_link_writeMode_upsert: 'Match and Merge or Insert New',
   packages_dag_editor_cell_link_writeMode_update: 'Match and Merge',
-  packages_dag_editor_cell_link_writeMode_merge_embed:
-    'Match then Embed as Array in target',
+  packages_dag_editor_cell_link_writeMode_merge_embed: 'Match then Embed as Array in target',
   packages_dag_connection_status_all: 'All',
   packages_dag_connection_status_testing: 'testing',
   packages_dag_connection_status_invalid: 'invalid',
   packages_dag_connection_status_ready: 'ready',
-  packages_dag_dataFlow_delete_confirm_Message:
-    'After deleting task XXX, this task cannot be restored',
-  packages_dag_dataFlow_bulk_delete_confirm_Message:
-    'After deleting tasks in batch, tasks cannot be restored',
+  packages_dag_dataFlow_delete_confirm_Message: 'After deleting task XXX, this task cannot be restored',
+  packages_dag_dataFlow_bulk_delete_confirm_Message: 'After deleting tasks in batch, tasks cannot be restored',
   packages_dag_dataFlow_stop_confirm_message:
     'After the task xxx is suspended, when the table in the task that has not been fully synchronized is started again, the full synchronization will be performed again',
   packages_dag_dataFlow_bulk_stop_confirm_message:
@@ -160,37 +147,29 @@ export default {
   packages_dag_dag_data_setting_week: 'week',
   packages_dag_dag_data_setting_year: 'year',
   packages_dag_mouse_selection: 'Box choose(Press Shift)',
-  packages_dag_table_name_search_placeholder:
-    'Please enter the table name to search',
+  packages_dag_table_name_search_placeholder: 'Please enter the table name to search',
   packages_dag_dag_dialog_field_mapping_no_data: 'No data yet',
   packages_dag_customer_logs_no_more_data: 'No more data',
   packages_dag_customer_logs_no_search_data: 'No search results',
   packages_dag_src_command_qingshixianun: 'Please implement the undo method. ',
   packages_dag_src_command_qingshixianex: 'Please implement the exec method. ',
-  packages_dag_components_datapane_shanghaishiputuo:
-    'Lane 1518, Jinshajiang Road, Putuo District, Shanghai',
+  packages_dag_components_datapane_shanghaishiputuo: 'Lane 1518, Jinshajiang Road, Putuo District, Shanghai',
   packages_dag_components_datapane_wangxiaohu: 'Wang Xiaohu',
   packages_dag_components_datapane_dizhi: 'Address',
   packages_dag_components_datapane_xingming: 'Name',
   packages_dag_components_datapane_riqi: 'date',
-  packages_dag_components_dfnode_gaijiedianth:
-    'The node "{val1}" has reached the maximum connection limit',
+  packages_dag_components_dfnode_gaijiedianth: 'The node "{val1}" has reached the maximum connection limit',
   packages_dag_components_dfnode_tuodongshijianduan:
     'Drag time period, or small distance change, trigger node activation',
-  packages_dag_components_dfnode_qingjianchajiedian:
-    'Please check node configuration',
+  packages_dag_components_dfnode_qingjianchajiedian: 'Please check node configuration',
   packages_dag_components_dfnode_shanchujiedian: 'Delete node',
   packages_dag_components_dfnode_tianjiajiedian: 'Add node',
-  packages_dag_components_formpanel_zengliangzhihoupan:
-    'Incremental lag judgment time setting (seconds)',
-  packages_dag_components_formpanel_shiwuzuidashi:
-    'Maximum transaction duration (hours)',
-  packages_dag_components_formpanel_gongxiangwajueri:
-    'Shared mining log filtering',
+  packages_dag_components_formpanel_zengliangzhihoupan: 'Incremental lag judgment time setting (seconds)',
+  packages_dag_components_formpanel_shiwuzuidashi: 'Maximum transaction duration (hours)',
+  packages_dag_components_formpanel_gongxiangwajueri: 'Shared mining log filtering',
   packages_dag_components_formpanel_qingxuanze: 'Please select',
   packages_dag_components_formpanel_meiciduqushu: 'Number of each read',
-  packages_dag_components_formpanel_zengliangtongbujian:
-    'Incremental sync interval',
+  packages_dag_components_formpanel_zengliangtongbujian: 'Incremental sync interval',
   packages_dag_components_formpanel_lunxunduqu: 'Polling read',
   packages_dag_components_formpanel_liushiduqu: 'Streaming read',
   packages_dag_components_formpanel_dangrenwukaiqi: 'When the task starts',
@@ -198,30 +177,24 @@ export default {
   packages_dag_components_formpanel_dangrenwuchucuo: 'When the task fails',
   packages_dag_components_formpanel_dangrenwutingzhi: 'When the task stops',
   packages_dag_components_formpanel_fasongyoujian: 'Send Mail',
-  packages_dag_components_formpanel_zengliangpicidu:
-    'Number of incremental batches read',
+  packages_dag_components_formpanel_zengliangpicidu: 'Number of incremental batches read',
   packages_dag_components_formpanel_zhutiao: 'One by one',
   packages_dag_components_formpanel_piliang: 'Batch',
-  packages_dag_components_formpanel_zengliangshujuchu:
-    'Incremental data processing mechanism',
-  packages_dag_components_formpanel_zhichiwuzhujian:
-    'Support no primary key synchronization',
+  packages_dag_components_formpanel_zengliangshujuchu: 'Incremental data processing mechanism',
+  packages_dag_components_formpanel_zhichiwuzhujian: 'Support no primary key synchronization',
   packages_dag_components_formpanel_zidongchuliD: 'Automatically handle DDL',
   packages_dag_components_formpanel_quanliangzengliang: 'full + incremental',
   packages_dag_components_formpanel_gengxinout: '👷 update $outputs',
   packages_dag_components_formpanel_gengxininp: '👷 Update $inputs',
-  packages_dag_components_formpanel_shangyigejihuo:
-    'Verification result of the last activated node',
+  packages_dag_components_formpanel_shangyigejihuo: 'Verification result of the last activated node',
   packages_dag_components_formpanel_jiantingsta: 'Listen: stateIsReadonly',
-  packages_dag_components_leftsidebar_xuanzeshujuyuan:
-    'Select data source type',
+  packages_dag_components_leftsidebar_xuanzeshujuyuan: 'Select data source type',
   packages_dag_components_metapane_geziduan: ' fields',
   packages_dag_components_metapane_gongyou: 'Total',
   packages_dag_migration_configpanel_moxing: 'model',
   packages_dag_migration_configpanel_peizhi: 'Configuration',
   packages_dag_migration_consolepanel_quanburizhi: 'All logs',
-  packages_dag_migration_consolepanel_dangqianjiancefaxian:
-    'Current detection and co-discovery',
+  packages_dag_migration_consolepanel_dangqianjiancefaxian: 'Current detection and co-discovery',
   packages_dag_migration_consolepanel_qingguanzhu: 'Please pay attention',
   packages_dag_migration_consolepanel_ge: 'a',
   packages_dag_migration_settingpanel_dangrenwufuhe:
@@ -233,19 +206,16 @@ export default {
   packages_dag_components_eventchart_charu: 'insert',
   packages_dag_components_eventchart_zongshuchu: 'Total output',
   packages_dag_components_eventchart_zongshuru: 'Total input',
-  packages_dag_components_eventchart_suoxuanzhouqilei:
-    'Selected cycle accumulation',
+  packages_dag_components_eventchart_suoxuanzhouqilei: 'Selected cycle accumulation',
   packages_dag_components_eventchart_renwuyunxinglei: 'Task running cumulative',
-  packages_dag_components_initiallist_quanliangtongbuzhuang:
-    'Full synchronization status',
+  packages_dag_components_initiallist_quanliangtongbuzhuang: 'Full synchronization status',
   packages_dag_components_initiallist_shujutongbu: 'Data synchronization',
   packages_dag_components_initiallist_mubiaobiaoming: 'target table name',
   packages_dag_components_initiallist_yuanbiaoming: 'Source table name',
   packages_dag_components_initiallist_tongbuzhong: 'Synchronizing',
   packages_dag_components_initiallist_weikaishi: 'Not started',
   packages_dag_components_initiallist_dianjishuaxin: 'Click to refresh',
-  packages_dag_components_initiallist_quanliangxinxixiang:
-    'Full information details',
+  packages_dag_components_initiallist_quanliangxinxixiang: 'Full information details',
   packages_dag_components_linechart_biaoti: 'Title',
   packages_dag_components_log_xiazaishibai: 'Download failed',
   packages_dag_components_log_zidingyishijian: 'custom time',
@@ -264,16 +234,11 @@ export default {
   packages_dag_components_nodedetaildialog_shuru: 'input',
   packages_dag_components_nodedetaildialog_zengliangyanchi: 'incremental delay',
   packages_dag_components_nodedetaildialog_chulihaoshi: 'processing time',
-  packages_dag_components_nodedetaildialog_xingnengzhibiao:
-    'Performance metrics',
-  packages_dag_components_nodedetaildialog_zengliangshijiandian:
-    'Incremental time point',
-  packages_dag_components_nodedetaildialog_xieyilianjiehao:
-    'The protocol connection takes time',
-  packages_dag_components_nodedetaildialog_tcPlianjie:
-    'TCP connection time consuming',
-  packages_dag_components_nodedetaildialog_lianjiezhuangtai:
-    'Connection status',
+  packages_dag_components_nodedetaildialog_xingnengzhibiao: 'Performance metrics',
+  packages_dag_components_nodedetaildialog_zengliangshijiandian: 'Incremental time point',
+  packages_dag_components_nodedetaildialog_xieyilianjiehao: 'The protocol connection takes time',
+  packages_dag_components_nodedetaildialog_tcPlianjie: 'TCP connection time consuming',
+  packages_dag_components_nodedetaildialog_lianjiezhuangtai: 'Connection status',
   packages_dag_components_nodedetaildialog_tongbuzhuangtai: 'Sync status',
   packages_dag_components_nodedetaildialog_shijiantongji: 'Event Statistics',
   packages_dag_components_nodedetaildialog_jiedian: 'node',
@@ -295,22 +260,18 @@ export default {
   packages_dag_components_timeselect_kaishiriqi: 'Start date',
   packages_dag_components_timeselect_zhi: 'to',
   packages_dag_monitor_leftsider_chulihaoshim: 'Processing time',
-  packages_dag_monitor_leftsider_buzhichijiaoyan:
-    'Tables that do not support verification:',
+  packages_dag_monitor_leftsider_buzhichijiaoyan: 'Tables that do not support verification:',
   packages_dag_monitor_leftsider_jiaoyanbuyizhi: 'Check inconsistent tables:',
   packages_dag_monitor_leftsider_chayizongxingshu: 'Difference total lines:',
   packages_dag_monitor_leftsider_liebiao: 'list',
   packages_dag_monitor_leftsider_renwujiaoyan: 'Task verification',
-  packages_dag_monitor_leftsider_biaotongbuzongjin:
-    'Total progress of table synchronization',
-  packages_dag_monitor_leftsider_yujiquanliangwan:
-    'It is expected to be completed in full:',
+  packages_dag_monitor_leftsider_biaotongbuzongjin: 'Total progress of table synchronization',
+  packages_dag_monitor_leftsider_yujiquanliangwan: 'It is expected to be completed in full:',
   packages_dag_monitor_leftsider_quanliangwanchengshi: 'Full completion time:',
   packages_dag_monitor_leftsider_quanliangxinxi: 'full information',
   packages_dag_monitor_node_zengliangzhuangtai: 'incremental status',
   packages_dag_monitor_node_quanliangzhuangtai: 'full status',
-  packages_dag_monitor_node_snaps:
-    '{val1}/{val2} | It is estimated that it will take {val3}',
+  packages_dag_monitor_node_snaps: '{val1}/{val2} | It is estimated that it will take {val3}',
   packages_dag_task_preview_status_complete: 'Completed',
   packages_dag_monitor_node_jinhangzhong: 'in progress',
   packages_dag_monitor_node_daijinhang: 'to be carried out',
@@ -318,49 +279,36 @@ export default {
   packages_dag_monitor_node_leijishurushi: 'Total input',
   packages_dag_monitor_node_haoshi: 'time-consuming',
   packages_dag_monitor_topheader_dakaijiaoyan: 'Open verification',
-  packages_dag_monitor_topheader_mubiaolianjiebu:
-    '3. The target connection does not support verification',
-  packages_dag_monitor_topheader_yuanlianjiebuzhi:
-    '2. The source connection does not support verification',
-  packages_dag_monitor_topheader_tianjialezhongjian:
-    '1. Added intermediate processing node',
-  packages_dag_monitor_topheader_dangqianrenwuzan:
-    'The current task does not support verification, possible reasons:',
+  packages_dag_monitor_topheader_mubiaolianjiebu: '3. The target connection does not support verification',
+  packages_dag_monitor_topheader_yuanlianjiebuzhi: '2. The source connection does not support verification',
+  packages_dag_monitor_topheader_tianjialezhongjian: '1. Added intermediate processing node',
+  packages_dag_monitor_topheader_dangqianrenwuzan: 'The current task does not support verification, possible reasons:',
   packages_dag_monitor_topheader_qidongshijian: 'Startup time:',
   packages_dag_monitor_topheader_qingshururenwu: 'Please enter the task name',
   packages_dag_monitor_verifypanel_zongji: 'Total',
-  packages_dag_monitor_verifypanel_buzhichijiaoyan:
-    'Do not support verification',
-  packages_dag_monitor_verifypanel_jiaoyanbuyizhi:
-    'The verification is inconsistent',
+  packages_dag_monitor_verifypanel_buzhichijiaoyan: 'Do not support verification',
+  packages_dag_monitor_verifypanel_jiaoyanbuyizhi: 'The verification is inconsistent',
   packages_dag_monitor_verifypanel_jiaoyanyizhi: 'Verify is consistent',
   packages_dag_monitor_verifypanel_yichangshujuhang: 'Exception data (line):',
   packages_dag_monitor_verifypanel_biaoming: 'Table name:',
   packages_dag_monitor_verifypanel_lianjieming: 'Connection name:',
-  packages_dag_monitor_verifypanel_qingshurusousuo:
-    'Please enter the search content',
-  packages_dag_monitor_verifypanel_jiancedaoxinshu:
-    'New data detected, please click to refresh',
+  packages_dag_monitor_verifypanel_qingshurusousuo: 'Please enter the search content',
+  packages_dag_monitor_verifypanel_jiancedaoxinshu: 'New data detected, please click to refresh',
   packages_dag_monitor_verifypanel_wentibiaoqingdan: 'Problem table list',
   packages_dag_components_paperempty_shiyinghuabu: 'Adapt to canvas',
-  packages_dag_components_paperempty_huabushijichi:
-    'The actual size of the canvas',
+  packages_dag_components_paperempty_huabushijichi: 'The actual size of the canvas',
   packages_dag_components_paperempty_zhantie: 'Paste',
   packages_dag_components_paperempty_fuzhi: 'Copy',
   packages_dag_components_settingpanel_renwudetongbu:
     'The task is executed when the synchronization type is incremental or full + incremental',
-  packages_dag_components_settingpanel_gongxiangwajueshe:
-    'Shared mining settings',
+  packages_dag_components_settingpanel_gongxiangwajueshe: 'Shared mining settings',
   packages_dag_components_settingpanel_shujuyuan: 'Data source:',
-  packages_dag_components_settingpanel_chuliqixiancheng:
-    'Number of processor threads:',
+  packages_dag_components_settingpanel_chuliqixiancheng: 'Number of processor threads:',
   packages_dag_components_settingpanel_miao: 'seconds',
   packages_dag_components_settingpanel_zengliangshezhi: 'Incremental settings',
-  packages_dag_components_settingpanel_renwuzaijinhang:
-    'The strategy that tasks execute when reading and writing',
+  packages_dag_components_settingpanel_renwuzaijinhang: 'The strategy that tasks execute when reading and writing',
   packages_dag_components_settingpanel_duxieshezhi: 'Read and write settings',
-  packages_dag_components_settingpanel_renwuzaiqidong:
-    'Environment settings for tasks at startup and runtime',
+  packages_dag_components_settingpanel_renwuzaiqidong: 'Environment settings for tasks at startup and runtime',
   packages_dag_components_settingpanel_yunxingshezhi: 'Running settings',
   packages_dag_components_settingpanel_jibenshezhi: 'Basic settings',
   packages_dag_src_editor_chucuole: 'Something went wrong',
@@ -378,34 +326,23 @@ export default {
   packages_dag_src_migrationeditor_ziduanbianji: 'Field Edit',
   packages_dag_src_migrationeditor_biaobianji: 'Table editor',
   packages_dag_src_migrationeditor_zhuangtaijanting: 'Status monitoring',
-  packages_dag_src_migrationmonitor_gaijiedianbuzhi:
-    'This node does not support',
-  packages_dag_src_migrationmonitor_cunzaibuzhichi:
-    'There is a node that does not support {val1}',
-  packages_dag_src_migrationmonitor_noden:
-    "'{val1}' does not have any connections",
-  packages_dag_src_migrationmonitorviewer_gaifuzhirenwu:
-    'This replication task has no subtasks',
-  packages_dag_src_migrationmonitorviewer_gaijiedianbuzhi:
-    'This node does not support',
-  packages_dag_src_migrationmonitorviewer_cunzaibuzhichi:
-    'There is a node that does not support {val1}',
-  packages_dag_src_migrationmonitorviewer_noden:
-    "'{val1}' does not have any connections",
+  packages_dag_src_migrationmonitor_gaijiedianbuzhi: 'This node does not support',
+  packages_dag_src_migrationmonitor_cunzaibuzhichi: 'There is a node that does not support {val1}',
+  packages_dag_src_migrationmonitor_noden: "'{val1}' does not have any connections",
+  packages_dag_src_migrationmonitorviewer_gaifuzhirenwu: 'This replication task has no subtasks',
+  packages_dag_src_migrationmonitorviewer_gaijiedianbuzhi: 'This node does not support',
+  packages_dag_src_migrationmonitorviewer_cunzaibuzhichi: 'There is a node that does not support {val1}',
+  packages_dag_src_migrationmonitorviewer_noden: "'{val1}' does not have any connections",
   packages_dag_mixins_editor_renwujiazaichu: 'Error loading task',
   packages_dag_mixins_editor_renwubucunzai: 'Task does not exist',
   packages_dag_mixins_editor_renwuzhonghanyou:
     'The task contains JS nodes, custom nodes, Union nodes, or incremental custom SQL for node settings. DDL is not supported at the moment, please close it manually',
-  packages_dag_mixins_editor_gaijiedianbuzhi:
-    'This node does not support running on {val1}（{val2}）',
-  packages_dag_mixins_editor_not_support_ddl:
-    'This node does not support DDL, please close it',
-  packages_dag_mixins_editor_not_support_cdc:
-    'The node does not support CDC. Change the task type to full',
+  packages_dag_mixins_editor_gaijiedianbuzhi: 'This node does not support running on {val1}（{val2}）',
+  packages_dag_mixins_editor_not_support_ddl: 'This node does not support DDL, please close it',
+  packages_dag_mixins_editor_not_support_cdc: 'The node does not support CDC. Change the task type to full',
   packages_dag_mixins_editor_task_not_support_cdc:
     'The task contains nodes that do not support CDC, change the task type to full',
-  packages_dag_mixins_editor_buzhichiduotiao:
-    'Multiple links are not supported, please re-edit the task link',
+  packages_dag_mixins_editor_buzhichiduotiao: 'Multiple links are not supported, please re-edit the task link',
   packages_dag_mixins_editor_renwulianlubu: 'The task link is incomplete',
   packages_dag_mixins_editor_renwushezhiyi: 'The task setting is abnormal',
   packages_dag_mixins_editor_suoshuage: 'Agent node conflict',
@@ -414,25 +351,18 @@ export default {
   packages_dag_mixins_editor_shanchulianjie: 'Delete connection',
   packages_dag_mixins_editor_initV: 'Monitor enabled by initView-dataflowEdit',
   packages_dag_mixins_editor_xinrenwu: 'New Task@',
-  packages_dag_mixins_editor_source:
-    "'{val1}' does not support the node '{val2}' as a target",
-  packages_dag_mixins_editor_gaijiedianta:
-    'The node "{val1}" is only supported as a source',
-  packages_dag_mixins_editor_gaijiedianyijing:
-    'The node has reached the maximum connection limit',
-  packages_dag_mixins_editor_gaijiedianso:
-    'The node "{val1}" is only supported as a target',
+  packages_dag_mixins_editor_source: "'{val1}' does not support the node '{val2}' as a target",
+  packages_dag_mixins_editor_gaijiedianta: 'The node "{val1}" is only supported as a source',
+  packages_dag_mixins_editor_gaijiedianyijing: 'The node has reached the maximum connection limit',
+  packages_dag_mixins_editor_gaijiedianso: 'The node "{val1}" is only supported as a target',
   packages_dag_mixins_formscope_tuiyanshibai: 'Deduction failed',
-  packages_dag_mixins_formscope_liuyipar:
-    'Note that the parent cannot be found',
+  packages_dag_mixins_formscope_liuyipar: 'Note that the parent cannot be found',
   packages_dag_nodes_aggregate_fanhuishili: 'return example',
   packages_dag_nodes_aggregate_fenzuziduan: 'Grouping field',
   packages_dag_nodes_aggregate_zuoyongmubiao: 'Action target',
   packages_dag_nodes_aggregate_juhehanshu: 'Aggregate function',
-  packages_dag_nodes_database_zengliangduoxiancheng:
-    'Incremental multi-threaded write',
-  packages_dag_nodes_database_quanliangduoxiancheng:
-    'Full multi-threaded write',
+  packages_dag_nodes_database_zengliangduoxiancheng: 'Incremental multi-threaded write',
+  packages_dag_nodes_database_quanliangduoxiancheng: 'Full multi-threaded write',
   packages_dag_nodes_database_bucunzaishidiu: 'Discard if not exists',
   packages_dag_nodes_database_shanchushijian: 'Delete event',
   packages_dag_nodes_database_bucunzaishicha: 'Insert if not exists',
@@ -440,28 +370,23 @@ export default {
   packages_dag_nodes_database_mubiaocunzaishi: 'Update when target exists',
   packages_dag_nodes_database_charushijian: 'Insert event',
   packages_dag_nodes_database_shujuxieruce: 'Data write strategy',
-  packages_dag_nodes_database_baochimubiaoduan:
-    'Keep the original table structure of the target and clear the data',
-  packages_dag_nodes_database_qingchumubiaoduan:
-    'Clear the original table structure and data on the target side',
+  packages_dag_nodes_database_baochimubiaoduan: 'Keep the original table structure of the target and clear the data',
+  packages_dag_nodes_database_qingchumubiaoduan: 'Clear the original table structure and data on the target side',
   packages_dag_nodes_database_chongfuchulice: 'Duplicate processing strategy',
   packages_dag_nodes_database_tuiyanjieguo: 'Deduction result',
-  packages_dag_nodes_database_dangqianjiedianzhi:
-    'The current node supports processing DDL events',
+  packages_dag_nodes_database_dangqianjiedianzhi: 'The current node supports processing DDL events',
   packages_dag_nodes_database_ddLshijian: 'DDL event collection',
   packages_dag_nodes_database_kaiqihourenwu:
     'After opening, the task will automatically collect the selected source DDL events',
   packages_dag_nodes_database_dongtaixinzengbiao: 'Dynamic new table',
-  packages_dag_nodes_database_quanliangmeipici:
-    'The number of full reads per batch',
+  packages_dag_nodes_database_quanliangmeipici: 'The number of full reads per batch',
   packages_dag_nodes_database_piliangduqutiao: 'Batch read number',
   packages_dag_nodes_database_zidingyi: 'custom',
   packages_dag_nodes_database_xuanzebiao: 'Select table',
   packages_dag_nodes_database_suoshuage: 'belonging agent',
   packages_dag_nodes_database_lianjiemingcheng: 'Connection name',
   packages_dag_nodes_database_jiedianmingcheng: 'Node name',
-  packages_dag_extends_nodetype_queshaobiyaode:
-    'Missing required type attribute. ',
+  packages_dag_extends_nodetype_queshaobiyaode: 'Missing required type attribute. ',
   packages_dag_nodes_javascript_moxingshengming: 'Model declaration',
   packages_dag_nodes_javascript_jiaoben: 'script',
   packages_dag_nodes_join_youce: 'right',
@@ -469,11 +394,9 @@ export default {
   packages_dag_nodes_join_lianjieziduanshe: 'Connection field settings',
   packages_dag_nodes_join_zuolianjie: 'Left join',
   packages_dag_nodes_join_lianjieleixing: 'join type',
-  packages_dag_nodes_jointcache_qingxuanzehuochuang:
-    'Please select or create a write path field',
+  packages_dag_nodes_jointcache_qingxuanzehuochuang: 'Please select or create a write path field',
   packages_dag_nodes_jointcache_xierulujing: 'Write path',
-  packages_dag_nodes_jointcache_yuanbiaoguanlianjian:
-    'Source table associated key',
+  packages_dag_nodes_jointcache_yuanbiaoguanlianjian: 'Source table associated key',
   packages_dag_nodes_jointcache_huancunbiaozhujian: 'Cache table primary key',
   packages_dag_nodes_jointcache_guanlianshezhi: 'Association settings',
   packages_dag_nodes_jointcache_chuangjianpipeishu: 'Create matching data',
@@ -482,93 +405,71 @@ export default {
   packages_dag_nodes_mergetable_mubiaobiaoziduan: 'target table field',
   packages_dag_nodes_mergetable_dangqianbiaoziduan: 'Current table field',
   packages_dag_nodes_mergetable_guanliantiaojian: 'Association conditions',
-  packages_dag_nodes_mergetable_neiqianshuzupi:
-    'Inline array matching conditions',
-  packages_dag_nodes_mergetable_guanlianhouxieru:
-    'Write path after association',
+  packages_dag_nodes_mergetable_neiqianshuzupi: 'Inline array matching conditions',
+  packages_dag_nodes_mergetable_guanlianhouxieru: 'Write path after association',
   packages_dag_nodes_mergetable_gengxinjinneiqian: 'Update into embedded array',
   packages_dag_nodes_mergetable_shujuxierumo: 'Data write mode',
   packages_dag_nodes_rowfilter_tiaojianbiaodashi: 'Conditional expression',
   packages_dag_nodes_rowfilter_diuqipipeishu: 'Discard matching data',
   packages_dag_nodes_rowfilter_zhixingdongzuo: 'Execute action',
   packages_dag_nodes_table_gengxintiaojianzi: 'Update condition field',
-  packages_dag_nodes_table_gengxinyicunzai:
-    'Update existing or insert new data',
-  packages_dag_nodes_table_yunxingqianshanchu:
-    'Delete existing data before running',
+  packages_dag_nodes_table_gengxinyicunzai: 'Update existing or insert new data',
+  packages_dag_nodes_table_yunxingqianshanchu: 'Delete existing data before running',
   packages_dag_nodes_table_baochiyicunzai: 'Keep existing data',
   packages_dag_nodes_table_yiyoushujuchu: 'Existing data processing',
   packages_dag_nodes_table_ddLshijian: 'DDL event collection',
   packages_dag_nodes_table_meiciduqushu: 'Number of reads per time (rows)',
-  packages_dag_nodes_table_zengliangtongbujian:
-    'Incremental synchronization interval (ms)',
+  packages_dag_nodes_table_zengliangtongbujian: 'Incremental synchronization interval (ms)',
   packages_dag_nodes_table_yifuzhi: 'Copied',
   packages_dag_nodes_table_fuzhibiaoming: 'Copy table name',
   packages_dag_nodes_table_qingxuanzebiao: 'Please select a table',
   packages_dag_nodes_table_fuzhishujuku: 'Copy database name',
   packages_dag_nodes_table_shujuku: 'database',
-  packages_dag_nodes_targetdatabase_mubiaocunzaishi:
-    'Update when target exists',
+  packages_dag_nodes_targetdatabase_mubiaocunzaishi: 'Update when target exists',
   packages_dag_nodes_targetdatabase_baochimubiaoduan:
     'Keep the original table structure of the target and clear the data',
   packages_dag_nodes_targetdatabase_jiedianmiaoshu: 'node description',
   packages_dag_src_store_weizhaodaojiedian: 'node not found',
-  packages_dag_src_store_qingkongjiedianshu:
-    'Clear the monitoring of node input and output',
+  packages_dag_src_store_qingkongjiedianshu: 'Clear the monitoring of node input and output',
   packages_dag_components_alert_dangqianrenwuyi:
     'The current task has been stopped with an error, please pay attention.',
   packages_dag_components_alert_gaojingfashengci: 'Number of alarm occurrences',
-  packages_dag_components_alert_gaojingzuijinfa:
-    'The last time the alarm occurred',
-  packages_dag_components_alert_gaojingshoucifa:
-    'The time when the alarm first occurred',
+  packages_dag_components_alert_gaojingzuijinfa: 'The last time the alarm occurred',
+  packages_dag_components_alert_gaojingshoucifa: 'The time when the alarm first occurred',
   packages_dag_components_alert_gaojingmiaoshu: 'Alarm description',
   packages_dag_components_alert_gaojingzhuangtai: 'Alarm status',
   packages_dag_components_alert_gaojingjibie: 'Alarm level',
   packages_dag_components_alert_guanbi: 'off',
   packages_dag_components_frequency_shuaxinpinlu: 'Refresh frequency',
   packages_dag_components_nodedetaildialog_xieruhaoshi: 'Writing time',
-  packages_dag_components_nodedetaildialog_zengliangduquyan:
-    'Incremental read latency',
+  packages_dag_components_nodedetaildialog_zengliangduquyan: 'Incremental read latency',
   packages_dag_components_nodedetaildialog_pingjunduquhao: 'Average read time',
-  packages_dag_components_nodedetaildialog_zengliangshijiandian2:
-    'Incremental time point:',
-  packages_dag_components_nodedetaildialog_dangqianbiaotongbu:
-    'Current table synchronization progress',
+  packages_dag_components_nodedetaildialog_zengliangshijiandian2: 'Incremental time point:',
+  packages_dag_components_nodedetaildialog_dangqianbiaotongbu: 'Current table synchronization progress',
   packages_dag_components_nodedetaildialog_quanliangtongbujin: 'Sync progress',
-  packages_dag_components_nodedetaildialog_quanliangkaishishi:
-    'Full start time:',
+  packages_dag_components_nodedetaildialog_quanliangkaishishi: 'Full start time:',
   packages_dag_components_nodedetaildialog_shuaxin: 'Refresh',
-  packages_dag_components_timeselect_renwuzuijinyi:
-    'The task has been started since the last time',
+  packages_dag_components_timeselect_renwuzuijinyi: 'The task has been started since the last time',
   packages_dag_monitor_leftsider_shanchu: 'Delete:',
   packages_dag_monitor_leftsider_gengxin: 'Update:',
   packages_dag_monitor_leftsider_charu: 'Insert:',
-  packages_dag_monitor_leftsider_renwushijiantong:
-    'Task event statistics (strips)',
-  packages_dag_monitor_leftsider_zuidazengliangyan:
-    'Maximum incremental delay:',
+  packages_dag_monitor_leftsider_renwushijiantong: 'Task event statistics (strips)',
+  packages_dag_monitor_leftsider_zuidazengliangyan: 'Maximum incremental delay:',
   packages_dag_monitor_leftsider_tongbuxinxi: 'Sync information',
   packages_dag_monitor_leftsider_tiaoshixinxi: 'Debug information',
   packages_dag_monitor_leftsider_chayixiangqing: 'Difference details',
-  packages_dag_components_nodedetaildialog_chulixieruhao:
-    'Processing/writing time',
-  packages_dag_components_nodedetaildialog_duquchulihao:
-    'Reading/processing time',
+  packages_dag_components_nodedetaildialog_chulixieruhao: 'Processing/writing time',
+  packages_dag_components_nodedetaildialog_duquchulihao: 'Reading/processing time',
   packages_dag_components_nodedetaildialog_chulihaoshidang:
     'Processing time: the average time for the current node to process events',
   packages_dag_components_nodedetaildialog_xieruhaoshidang:
     'Writing time: the time it takes for the current target node to write data to the target database',
   packages_dag_components_nodedetaildialog_chulihaoshiyuan:
     'Processing time: the time it takes for the source node to complete the processing after reading the event from the source database',
-  packages_dag_node_only_as_source:
-    'This node({val1}) is only supported as a source',
-  packages_dag_node_only_as_target:
-    'This node({val1}) is only supported as a target',
-  packages_dag_node_none_input:
-    '「 {val1} 」At least {val2} source nodes are required',
-  packages_dag_node_none_output:
-    '「 {val1} 」At least {val2} target nodes are required',
+  packages_dag_node_only_as_source: 'This node({val1}) is only supported as a source',
+  packages_dag_node_only_as_target: 'This node({val1}) is only supported as a target',
+  packages_dag_node_none_input: '「 {val1} 」At least {val2} source nodes are required',
+  packages_dag_node_none_output: '「 {val1} 」At least {val2} target nodes are required',
   packages_dag_node_none_connection: '「 {val1} 」 no connection',
   packages_dag_components_nodedetaildialog_dangqianjiedianchu:
     'The average time spent processing events by the current node',
@@ -584,8 +485,7 @@ export default {
     "Incremental read delay: the delay time from the time the incremental event is generated to the time it is read to the start of the task's processing in the incremental phase",
   packages_dag_components_nodedetaildialog_pingjunduquhao2:
     'Average read time: the average time to read each piece of data in the full stage',
-  packages_dag_components_log_zuidashijianshu:
-    'Maximum number of events (pieces)',
+  packages_dag_components_log_zuidashijianshu: 'Maximum number of events (pieces)',
   packages_dag_message_save_fail: 'Save failed',
   packages_dag_task_reset_start: 'Starting clean task',
   packages_dag_task_reset_pdk_node_external_resource:
@@ -602,38 +502,27 @@ export default {
     "Clean join node[{nodeName}({nodeId})]'s cache data...{status}, elapsed time: {elapsedTime} ms",
   packages_dag_task_reset_end:
     'The task is cleaned, in total, {totalEvent} items need to clean, succeed: {succeedEvent} item, failed: {failedEvent} item...{status}, elapsed time: {elapsedTime} ms',
-  packages_dag_unknown_error:
-    'Clean node[{nodeName}({nodeId})] occur an unknown error',
+  packages_dag_unknown_error: 'Clean node[{nodeName}({nodeId})] occur an unknown error',
   packages_dag_console_log_status_success: 'Succeed',
   packages_dag_console_log_status_fail: 'Failed',
   packages_dag_auto_reset_start:
     'The task will automatically attempt to reset the cleanup {rest} times on failed cleanup items after {resetInterval} seconds',
-  packages_dag_auto_reset_start_nth:
-    'The task starts to perform the {resetTimes} automatic reset cleanup',
-  packages_dag_auto_reset_start_result:
-    'The task reset failed, please try again later',
+  packages_dag_auto_reset_start_nth: 'The task starts to perform the {resetTimes} automatic reset cleanup',
+  packages_dag_auto_reset_start_result: 'The task reset failed, please try again later',
   packages_dag_migration_alarmpanel_gedian: 'Minutes',
   packages_dag_migration_alarmpanel_lianxu: 'Continuous',
   packages_dag_migration_alarmpanel_youjiantongzhi: 'Email notification',
   packages_dag_migration_alarmpanel_xitongtongzhi: 'System notification',
-  packages_dag_migration_alarmpanel_renwuzengliangyan:
-    'Task increment delay alarm',
+  packages_dag_migration_alarmpanel_renwuzengliangyan: 'Task increment delay alarm',
   packages_dag_migration_alarmpanel_renwutingzhigao: 'Task stop alarm',
-  packages_dag_migration_alarmpanel_renwuzengliangkai:
-    'Task increment start notification',
-  packages_dag_migration_alarmpanel_renwuquanliangwan:
-    'Notice of full completion of tasks',
-  packages_dag_migration_alarmpanel_renwujiaoyanchu:
-    'Task verification error alarm',
+  packages_dag_migration_alarmpanel_renwuzengliangkai: 'Task increment start notification',
+  packages_dag_migration_alarmpanel_renwuquanliangwan: 'Notice of full completion of tasks',
+  packages_dag_migration_alarmpanel_renwujiaoyanchu: 'Task verification error alarm',
   packages_dag_migration_alarmpanel_renwuyunxingchu: 'Task running error alarm',
-  packages_dag_migration_alarmpanel_jiedianpingjunchu:
-    'Node average processing time alarm',
-  packages_dag_migration_alarmpanel_shujuyuanxieyi:
-    'Data source protocol connection time-consuming alarm',
-  packages_dag_migration_alarmpanel_shujuyuanwangluo:
-    'Data source network connection time-consuming alarm',
-  packages_dag_migration_alarmpanel_shujuyuanwufa:
-    'Data source cannot be connected to alarm',
+  packages_dag_migration_alarmpanel_jiedianpingjunchu: 'Node average processing time alarm',
+  packages_dag_migration_alarmpanel_shujuyuanxieyi: 'Data source protocol connection time-consuming alarm',
+  packages_dag_migration_alarmpanel_shujuyuanwangluo: 'Data source network connection time-consuming alarm',
+  packages_dag_migration_alarmpanel_shujuyuanwufa: 'Data source cannot be connected to alarm',
   packages_dag_migration_configpanel_gaojingshezhi: 'Alarm settings',
   packages_dag_monitor_bottompanel_guanlianrenwu: 'Associated tasks',
   packages_dag_monitor_bottompanel_gaojingliebiao: 'Alarm list',
@@ -644,28 +533,21 @@ export default {
     '[DEBUG] Polling the loading task details, the status is inconsistent, and update according to the returned status',
   packages_dag_mixins_editor_debug3:
     '[DEBUG] Polling load task details, current status: [{val1}], return status: [{val2}]',
-  packages_dag_mixins_editor_debug4:
-    '[DEBUG] Start polling loading tasks, every 3s',
-  packages_dag_mixins_editor_debug5:
-    '[DEBUG]ws returned, task status: [{val1}]',
+  packages_dag_mixins_editor_debug4: '[DEBUG] Start polling loading tasks, every 3s',
+  packages_dag_mixins_editor_debug5: '[DEBUG]ws returned, task status: [{val1}]',
   packages_dag_monitor_topheader_zuijinyiciqi: 'Last start time:',
-  packages_dag_components_nodedetaildialog_quanliangyiwancheng:
-    'Full volume completed',
+  packages_dag_components_nodedetaildialog_quanliangyiwancheng: 'Full volume completed',
   packages_dag_components_node_quanliangwanchenghaixu: 'Estimated finish time',
   packages_dag_components_node_xieruhaoshi: 'Writing time:',
   packages_dag_components_node_chulihaoshi: 'Processing time:',
   packages_dag_components_node_zanbuzhichi: 'Not supported',
   packages_dag_page_return_confirm_title: 'Return to confirm',
-  packages_dag_page_return_confirm_content:
-    'The current task is empty. Do you want to keep it?',
+  packages_dag_page_return_confirm_content: 'The current task is empty. Do you want to keep it?',
   packages_dag_page_return_confirm_ok_text: "Don't keep",
   packages_dag_page_return_confirm_cancel_text: 'Keep',
-  packages_dag_monitor_node_popover_cdcTimeTitle_source:
-    'Read incremental time',
-  packages_dag_monitor_node_popover_cdcTimeTitle_target:
-    'Write incremental time',
-  packages_dag_monitor_node_popover_cdcTimeTitle_processor:
-    'Process incremental time',
+  packages_dag_monitor_node_popover_cdcTimeTitle_source: 'Read incremental time',
+  packages_dag_monitor_node_popover_cdcTimeTitle_target: 'Write incremental time',
+  packages_dag_monitor_node_popover_cdcTimeTitle_processor: 'Process incremental time',
   packages_dag_monitor_node_popover_targetWriteTime_title: 'Avg time per write',
   packages_dag_monitor_topheader_renwuxintiaoshi: 'Task heartbeat time',
   packages_dag_monitor_node_per_deal_need_time: 'Single processing time',
@@ -673,8 +555,7 @@ export default {
   packages_dag_js_declare_index_queding: 'OK',
   packages_dag_js_declare_index_shilidaima: 'sample code',
   packages_dag_js_declare_index_shiyongbangzhu: 'use help',
-  packages_dag_js_declare_index_xianshishengminglai:
-    'Explicitly declare to define and modify models',
+  packages_dag_js_declare_index_xianshishengminglai: 'Explicitly declare to define and modify models',
   packages_dag_js_declare_index_zengjiayigezi:
     "// Add a field, do not operate if the field already exists\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n// Remove an existing field\nTapModelDeclare.removeField({val2}, 'fieldName')\n//Update an existing field\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n//Update the field, if it does not exist, add it\nTapModelDeclare.upsertField({ val4}, 'fieldName', 'TapString')\n// Set the field as the primary key\nTapModelDeclare.setPk({val5}, 'fieldName')\n// Cancel the primary key\nTapModelDeclare.unSetPk({val6}, 'fieldName' )\n// Add index\nTapModelDeclare.addIndex({val7}, 'indexName', [{'fieldName':'fieldName1', 'order': 'asc'}])\n// Remove index\nTapModelDeclare. removeIndex({val8}, 'indexName')\n",
   packages_dag_js_processor_index_duibi: 'Comparison',
@@ -686,35 +567,27 @@ export default {
   packages_dag_js_processor_index_riqichuli: 'date processing',
   packages_dag_merge_table_tree_index_biaozhijianketong:
     'Tables can be nested by dragging and dropping to determine the master-slave relationship',
-  packages_dag_merge_table_tree_index_biaomingchengzhichi:
-    'table name (support drag and drop)',
+  packages_dag_merge_table_tree_index_biaomingchengzhichi: 'table name (support drag and drop)',
   packages_dag_components_leftsidebar_chongxinjiazai: 'Reload',
   packages_dag_migration_settingpanel_cronbiao: 'Cron expression format error',
-  packages_dag_hooks_useaftertasksaved_moxingyishengcheng:
-    'The model has been generated, execute callback',
-  packages_dag_mixins_editor_wsshoudaole:
-    'ws received the return of other tasks',
+  packages_dag_hooks_useaftertasksaved_moxingyishengcheng: 'The model has been generated, execute callback',
+  packages_dag_mixins_editor_wsshoudaole: 'ws received the return of other tasks',
   packages_dag_nodes_database_tongjizhuijiaxie: 'Statistics additional write',
   packages_dag_nodes_database_anshijianleixing: 'Process by event type',
   packages_dag_nodes_database_tongjizhuijiaxie2:
     'Statistics additional writing: only handle insert events, discard update and delete events',
   packages_dag_nodes_database_setting_cdc_changjing_desc:
     'In the pure incremental scenario, the clearing operation on the target table structure and data is not supported. ',
-  packages_dag_nodes_database_xierumeipizui:
-    'Write the maximum waiting time for each batch (ms)',
-  packages_dag_nodes_database_xierumeipizui_tips:
-    'Write the maximum waiting time for each batch (ms)',
-  packages_dag_nodes_database_quanliangmeipici2:
-    'The number of entries written in each batch of the full amount',
+  packages_dag_nodes_database_xierumeipizui: 'Write the maximum waiting time for each batch (ms)',
+  packages_dag_nodes_database_xierumeipizui_tips: 'Write the maximum waiting time for each batch (ms)',
+  packages_dag_nodes_database_quanliangmeipici2: 'The number of entries written in each batch of the full amount',
   packages_dag_nodes_database_piliangxierutiao: 'Number of batch writes',
   packages_dag_nodes_database_zhengzebiaodashi:
     'In the regular expression matching mode, the new table in the database that matches the expression will be automatically synchronized to the target',
   packages_dag_nodes_database_anzhengzebiaoda: 'Match by regular expression',
   packages_dag_nodes_database_anbiaomingxuanze: 'Select by table name',
-  packages_dag_nodes_database_value_zanbuzhiciddl:
-    'Does not support DDL event collection',
-  packages_dag_nodes_mergetable_const_zuiduozhichiliangceng:
-    'Supports up to two levels of nesting',
+  packages_dag_nodes_database_value_zanbuzhiciddl: 'Does not support DDL event collection',
+  packages_dag_nodes_mergetable_const_zuiduozhichiliangceng: 'Supports up to two levels of nesting',
   packages_dag_nodes_mergetable_zhucongpeizhi: 'master-slave configuration',
   packages_dag_nodes_table_isDaa_ruguoyuanweimongodb:
     'If the source is MongoDB, you need to delete events synchronously, please make sure to associate _id',
@@ -727,15 +600,11 @@ export default {
   packages_dag_nodes_table_zhidinglunxunzi: 'Specify the polling field',
   packages_dag_nodes_table_lunxun: 'Polling',
   packages_dag_nodes_table_rizhicdc: 'log cdc',
-  packages_dag_nodes_table_tedingziduande:
-    'Incremental collection of data by polling of specific fields',
-  packages_dag_nodes_table_zengliangtongbufang:
-    'Incremental synchronization method',
-  packages_dag_table_list_card_index_zanshimeiyoupi:
-    'There is no matching table yet',
+  packages_dag_nodes_table_tedingziduande: 'Incremental collection of data by polling of specific fields',
+  packages_dag_nodes_table_zengliangtongbufang: 'Incremental synchronization method',
+  packages_dag_table_list_card_index_zanshimeiyoupi: 'There is no matching table yet',
   packages_dag_nodes_database_pipeidaodebiao: 'Matched table',
-  packages_dag_nodes_tableprocessor_biaomingchongfu:
-    'The table name is repeated',
+  packages_dag_nodes_tableprocessor_biaomingchongfu: 'The table name is repeated',
   packages_dag_monitor_leftsider_zuidaQps: 'Maximum QPS(Q/S)',
   packages_dag_monitor_leftsider_pingjunQps: 'Average QPS(Q/S)',
   packages_dag_monitor_leftsider_quanliangwanchenghao: 'Full Sync Duration',
@@ -743,5 +612,5 @@ export default {
   packages_dag_src_editor_shaohouqidong: 'Start later',
   packages_dag_src_editor_jixuqidong: 'Continue to start',
   packages_dag_src_editor_renwubaocunjianceshi:
-    'An alarm was found during task saving detection, which may cause the task to run abnormally. It is recommended that you check and resolve the alarm before starting the task',
+    'An alarm was found during task saving detection, which may cause the task to run abnormally. It is recommended that you check and resolve the alarm before starting the task'
 }

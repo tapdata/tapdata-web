@@ -65,7 +65,7 @@ import {
   SkeletonItem,
   Submenu,
   InfiniteScroll,
-  Empty,
+  Empty
 } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
@@ -74,8 +74,8 @@ const showMessage = Symbol('showMessage')
 class MessageConstructor {
   constructor() {
     const types = ['success', 'warning', 'info', 'error']
-    types.forEach((type) => {
-      this[type] = (options) => this[showMessage](type, options)
+    types.forEach(type => {
+      this[type] = options => this[showMessage](type, options)
     })
   }
 
@@ -105,7 +105,7 @@ export const Message = new MessageConstructor()
 
 window.$vueApp.config.globalProperties.$ELEMENT = {
   size: 'small',
-  zIndex: 3000,
+  zIndex: 3000
 }
 window.$vueApp.config.globalProperties.$message = Message
 

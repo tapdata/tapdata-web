@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="notice g-panel-container ws-main-container fs-8"
-    v-if="$route.query.id == 8"
-  >
+  <div class="notice g-panel-container ws-main-container fs-8" v-if="$route.query.id == 8">
     <div class="notice-header p-6">
       <div class="notice-header__title fw-bolder fs-7">
         <span>{{ $t('workbench_Notice_tAPDA12') }}</span>
@@ -16,8 +13,7 @@
     <div class="notice-body mt-6 fs-6">
       <div class="notice-body__content p-6 fs-7" style="width: 800px">
         <div class="mb-3">
-          {{ $t('workbench_Notice_tAPDA11')
-          }}<img src="../../../public/images/notice/v1.0.9_01.png" alt="" />
+          {{ $t('workbench_Notice_tAPDA11') }}<img src="../../../public/images/notice/v1.0.9_01.png" alt="" />
         </div>
         <div class="mb-3 fw-bolder">
           {{ $t('workbench_Notice_buDuanYouHuaTi') }}
@@ -49,10 +45,7 @@
       </div>
     </div>
   </div>
-  <div
-    class="notice g-panel-container ws-main-container fs-8"
-    v-else-if="$route.query.id == 9"
-  >
+  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 9">
     <div class="notice-header p-6">
       <div class="notice-header__title fw-bolder fs-7">
         <span>{{ $t('workbench_Notice_shengJiGongGao') }}</span>
@@ -74,10 +67,7 @@
       </div>
     </div>
   </div>
-  <div
-    class="notice g-panel-container ws-main-container fs-8"
-    v-else-if="$route.query.id == 10"
-  >
+  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 10">
     <div class="notice-header p-6">
       <div class="notice-header__title fw-bolder fs-7">
         <span>{{ $t('workbench_Notice_tAPDA8') }}</span>
@@ -96,16 +86,12 @@
           <div class="mb-4">{{ $t('workbench_Notice_gengXinSuLan') }}</div>
           <div class="ml-2 mb-4">
             {{ $t('workbench_Notice_zhiChi')
-            }}<span class="fw-bold font-color-main">{{
-              $t('workbench_Notice_sheZhiZengLiangCai')
-            }}</span
+            }}<span class="fw-bold font-color-main">{{ $t('workbench_Notice_sheZhiZengLiangCai') }}</span
             >{{ $t('workbench_Notice_zengLiangRenWuKe') }}
           </div>
           <div class="ml-2 mb-4">
             {{ $t('workbench_Notice_zhiChiShuJuYuan')
-            }}<span class="fw-bold font-color-main">{{
-              $t('workbench_Notice_xinZengMAR')
-            }}</span>
+            }}<span class="fw-bold font-color-main">{{ $t('workbench_Notice_xinZengMAR') }}</span>
           </div>
           <div class="ml-2 mb-4">
             {{ $t('workbench_Notice_xiJieGengXinYou') }}
@@ -132,10 +118,7 @@
           <img src="../../../public/images/notice/task_create.gif" alt="" />
         </div>
         <div>
-          <img
-            src="../../../public/images/notice/task_setting_cdc_time.png"
-            alt=""
-          />
+          <img src="../../../public/images/notice/task_setting_cdc_time.png" alt="" />
         </div>
         <div class="mb-4 line-height-2">
           {{ $t('workbench_Notice_muQianGaiYouHua') }}
@@ -159,10 +142,7 @@
           {{ $t('workbench_Notice_benCiGengXinZhong3') }}
         </div>
         <div>
-          <img
-            src="../../../public/images/notice/connection_selector.png"
-            alt=""
-          />
+          <img src="../../../public/images/notice/connection_selector.png" alt="" />
         </div>
         <div class="number-title-box mt-8">
           <div class="number-title-box__number">03</div>
@@ -182,10 +162,7 @@
           <img src="../../../public/images/notice/task_edit_pop.gif" alt="" />
         </div>
         <div>
-          <img
-            src="../../../public/images/notice/task_edit_pop_content.png"
-            alt=""
-          />
+          <img src="../../../public/images/notice/task_edit_pop_content.png" alt="" />
         </div>
         <div class="line-height-2">
           {{ $t('workbench_Notice_zhongShiChengZhangLu2') }}
@@ -198,10 +175,7 @@
       </div>
     </div>
   </div>
-  <div
-    class="notice g-panel-container ws-main-container fs-8"
-    v-else-if="$route.query.id == 11"
-  >
+  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 11">
     <div class="notice-header p-6">
       <div class="notice-header__title fw-bolder fs-7">
         <span>{{ $t('workbench_Notice_tAPDA7') }}</span>
@@ -219,30 +193,22 @@
           <div class="mb-4">{{ $t('workbench_Notice_gengXinSuLan') }}</div>
           <div class="ml-2 mb-4">
             {{ $t('workbench_Notice_shuJuLianJieShang2')
-            }}<span class="fw-bold font-color-main">{{
-              $t('workbench_Notice_kaiShiZhiChiYun')
-            }}</span
+            }}<span class="fw-bold font-color-main">{{ $t('workbench_Notice_kaiShiZhiChiYun') }}</span
             >{{ $t('workbench_Notice_benLunXinZengA') }}
           </div>
           <div class="ml-2 mb-4">
             2.
-            <span class="fw-bold font-color-main">{{
-              $t('workbench_Notice_youHuaWIN')
-            }}</span
+            <span class="fw-bold font-color-main">{{ $t('workbench_Notice_youHuaWIN') }}</span
             >{{ $t('workbench_Notice_liuChengGengQingXi') }}
           </div>
           <div class="ml-2 mb-4">
             3.
-            <span class="fw-bold font-color-main">{{
-              $t('workbench_Notice_xinZengYongHuZhong2')
-            }}</span
+            <span class="fw-bold font-color-main">{{ $t('workbench_Notice_xinZengYongHuZhong2') }}</span
             >{{ $t('workbench_Notice_zhiChiXiuGaiZhu') }}
           </div>
           <div class="ml-2 mb-4">
             4.
-            <span class="fw-bold font-color-main">{{
-              $t('workbench_Notice_xinZengRenWuShu2')
-            }}</span
+            <span class="fw-bold font-color-main">{{ $t('workbench_Notice_xinZengRenWuShu2') }}</span
             >{{ $t('workbench_Notice_yongHuGongZuoTai') }}
           </div>
         </div>
@@ -288,9 +254,7 @@
         </div>
         <div class="mb-4 line-height-2">
           {{ $t('workbench_Notice_zaiAnZhuangGuoCheng')
-          }}<span class="color-danger">{{
-            $t('workbench_Notice_wuRenHeQinRu')
-          }}</span
+          }}<span class="color-danger">{{ $t('workbench_Notice_wuRenHeQinRu') }}</span
           >{{ $t('workbench_Notice_3') }}
         </div>
         <div>
@@ -350,10 +314,7 @@
       </div>
     </div>
   </div>
-  <div
-    class="notice g-panel-container ws-main-container fs-8"
-    v-else-if="$route.query.id == 12"
-  >
+  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 12">
     <div class="notice-header p-6">
       <div class="notice-header__title fw-bolder fs-7">
         <span>{{ $t('workbench_Notice_xinZengTengXunYun') }}</span>
@@ -371,30 +332,22 @@
         <div class="mb-2 p-4" style="background-color: rgb(241, 248, 255)">
           <div class="mb-4">{{ $t('workbench_Notice_gengXinSuLan') }}</div>
           <div class="ml-2 mb-4">
-            1.<span class="fw-bold font-color-main">{{
-              $t('workbench_Notice_shuJuLianJieShang')
-            }}</span
+            1.<span class="fw-bold font-color-main">{{ $t('workbench_Notice_shuJuLianJieShang') }}</span
             >{{ $t('workbench_Notice_ciFanZengJiaLe') }}
           </div>
           <div class="ml-2 mb-4">
             2.
-            <span class="fw-bold font-color-main">{{
-              $t('workbench_Notice_kaiShiZhiChiRen')
-            }}</span
+            <span class="fw-bold font-color-main">{{ $t('workbench_Notice_kaiShiZhiChiRen') }}</span
             >{{ $t('workbench_Notice_quanLiangRenWuKe2') }}
           </div>
           <div class="ml-2 mb-4">
             3.
-            <span class="fw-bold font-color-main">{{
-              $t('workbench_Notice_kaiShiZhiChiZhi')
-            }}</span
+            <span class="fw-bold font-color-main">{{ $t('workbench_Notice_kaiShiZhiChiZhi') }}</span
             >{{ $t('workbench_Notice_shuJuJiaoYanHuan') }}
           </div>
           <div class="ml-2 mb-4">
             4.
-            <span class="fw-bold font-color-main">{{
-              $t('workbench_Notice_ziDuanYingSheGuo2')
-            }}</span
+            <span class="fw-bold font-color-main">{{ $t('workbench_Notice_ziDuanYingSheGuo2') }}</span
             >{{ $t('workbench_Notice_zaiYuanYouDePi') }}
           </div>
         </div>
@@ -416,11 +369,7 @@
           {{ $t('workbench_Notice_jiBanBenShouCi') }}
           <span class="fw-bold font-color-main"
             >{{ $t('workbench_Notice_shuJuYuanJuDian')
-            }}<span
-              class="fs-6"
-              style="font-family: DIN; color: rgb(0, 122, 181)"
-              >28</span
-            ></span
+            }}<span class="fs-6" style="font-family: DIN; color: rgb(0, 122, 181)">28</span></span
           >{{ $t('workbench_Notice_fangDaJiuKanT') }}
         </div>
         <div>
@@ -459,9 +408,7 @@
           {{ $t('workbench_Notice_juTiLiuChengDa2') }}
           <span class="color: rgb(136, 136, 136);"
             >{{ $t('workbench_Notice_shouDongHuaZhongDian')
-            }}<span style="color: rgb(255, 76, 0)">{{
-              $t('workbench_Notice_baoCunQianQingWu')
-            }}</span
+            }}<span style="color: rgb(255, 76, 0)">{{ $t('workbench_Notice_baoCunQianQingWu') }}</span
             >{{ $t('workbench_Notice_3') }}</span
           >
         </div>
@@ -574,23 +521,15 @@
         <ul class="pl-8">
           <li class="mb-4 line-height-2 list-style-disc">
             {{ $t('workbench_Notice_zaiQianYiGuoCheng')
-            }}<span class="fw-bold font-color-main">{{
-              $t('workbench_Notice_yuanBiaoShuJu')
-            }}</span
+            }}<span class="fw-bold font-color-main">{{ $t('workbench_Notice_yuanBiaoShuJu') }}</span
             >{{ $t('workbench_Notice_xieRu')
-            }}<span class="fw-bold font-color-main">{{
-              $t('workbench_Notice_zhiDingMuBiaoBiao')
-            }}</span>
+            }}<span class="fw-bold font-color-main">{{ $t('workbench_Notice_zhiDingMuBiaoBiao') }}</span>
           </li>
           <li class="mb-4 line-height-2 list-style-disc">
             {{ $t('workbench_Notice_tongGuoXiuGaiMu')
-            }}<span class="fw-bold font-color-main">{{
-              $t('workbench_Notice_duoGeJieGouXiang')
-            }}</span
+            }}<span class="fw-bold font-color-main">{{ $t('workbench_Notice_duoGeJieGouXiang') }}</span
             >{{ $t('workbench_Notice_xieRu')
-            }}<span class="fw-bold font-color-main">{{
-              $t('workbench_Notice_tongYiMuBiaoBiao')
-            }}</span>
+            }}<span class="fw-bold font-color-main">{{ $t('workbench_Notice_tongYiMuBiaoBiao') }}</span>
           </li>
         </ul>
         <div>
@@ -607,10 +546,7 @@
       </div>
     </div>
   </div>
-  <div
-    class="notice g-panel-container ws-main-container fs-8"
-    v-else-if="$route.query.id == 13"
-  >
+  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 13">
     <div class="notice-header p-6">
       <div class="notice-header__title fw-bolder fs-7">
         <span>{{ $t('workbench_Notice_tAPDA4') }}</span>
@@ -630,30 +566,22 @@
         <div class="mb-2 p-4" style="background-color: rgb(241, 248, 255)">
           <div class="mb-4">{{ $t('workbench_Notice_gengXinSuLan') }}</div>
           <div class="ml-2 mb-4">
-            1.<span class="fw-bold font-color-main">{{
-              $t('workbench_Notice_xinZengZhiChiV')
-            }}</span
+            1.<span class="fw-bold font-color-main">{{ $t('workbench_Notice_xinZengZhiChiV') }}</span
             >{{ $t('workbench_Notice_daTongYuXinYi') }}
           </div>
           <div class="ml-2 mb-4">
             2.
-            <span class="fw-bold font-color-main">{{
-              $t('workbench_Notice_ziDuanLeiXingKe')
-            }}</span
+            <span class="fw-bold font-color-main">{{ $t('workbench_Notice_ziDuanLeiXingKe') }}</span
             >{{ $t('workbench_Notice_ziDuanYingSheGuo') }}
           </div>
           <div class="ml-2 mb-4">
             3.
-            <span class="fw-bold font-color-main">{{
-              $t('workbench_Notice_saoMaDengLuGong')
-            }}</span
+            <span class="fw-bold font-color-main">{{ $t('workbench_Notice_saoMaDengLuGong') }}</span
             >{{ $t('workbench_Notice_zhiChiWeiXinSao') }}
           </div>
           <div class="ml-2 mb-4">
             4.
-            <span class="fw-bold font-color-main">{{
-              $t('workbench_Notice_gengDuoXiJieYou')
-            }}</span
+            <span class="fw-bold font-color-main">{{ $t('workbench_Notice_gengDuoXiJieYou') }}</span
             >{{ $t('field_mapping_field_mapping_dialog_') }}
             <p class="mt-2">{{ $t('workbench_Notice_duanXinTongZhiCe') }}</p>
             <p class="mt-2">
@@ -679,11 +607,7 @@
         <div class="mb-4 line-height-2">
           {{ $t('workbench_Notice_benCiGengXinZhong') }}
           <span class="fw-bold font-color-main"
-            ><span
-              class="fs-6"
-              style="font-family: DIN; color: rgb(0, 122, 181)"
-              >29</span
-            ></span
+            ><span class="fs-6" style="font-family: DIN; color: rgb(0, 122, 181)">29</span></span
           >{{ $t('workbench_Notice_fangDaJiuKanT') }}
         </div>
         <div>
@@ -691,17 +615,12 @@
         </div>
         <div class="my-4">
           {{ $t('workbench_Notice_lingFuCaoZuoYan')
-          }}<span class="font-color-main fw-bold">{{
-            $t('workbench_Notice_jiangXueShengChengJi')
-          }}</span
+          }}<span class="font-color-main fw-bold">{{ $t('workbench_Notice_jiangXueShengChengJi') }}</span
           >{{ $t('workbench_Notice_2') }}
         </div>
         <div>
           <!--<img src="../../../public/images/notice/v2.1.2/02.gif" alt="" />-->
-          <video
-            src="../../../public/images/notice/v2.1.2/demo.mp4"
-            controls="controls"
-          ></video>
+          <video src="../../../public/images/notice/v2.1.2/demo.mp4" controls="controls"></video>
         </div>
         <div class="text-center color-disable">
           {{ $t('workbench_Notice_caoZuoYanShiJiang') }}
@@ -764,8 +683,7 @@
           {{ $t('workbench_Notice_yongHuDaoXiangXi') }}
         </div>
         <div class="mb-4 font-color-main fs-7 fw-bold">
-          <span class="dot mr-4"></span
-          >{{ $t('workbench_Notice_ziZhuKaiGuanDuan') }}
+          <span class="dot mr-4"></span>{{ $t('workbench_Notice_ziZhuKaiGuanDuan') }}
         </div>
         <div>
           <img src="../../../public/images/notice/v2.1.2/06.png" alt="" />
@@ -775,8 +693,7 @@
           {{ $t('workbench_Notice_xinBanBenDeDuan') }}
         </div>
         <div class="mb-4 font-color-main fs-7 fw-bold">
-          <span class="dot mr-4"></span
-          >{{ $t('workbench_Notice_gengKuaiDingWeiLian') }}
+          <span class="dot mr-4"></span>{{ $t('workbench_Notice_gengKuaiDingWeiLian') }}
         </div>
         <div class="mb-4">
           <img src="../../../public/images/notice/v2.1.2/07.png" alt="" />
@@ -801,10 +718,7 @@
       </div>
     </div>
   </div>
-  <div
-    class="notice g-panel-container ws-main-container fs-8"
-    v-else-if="$route.query.id == 14"
-  >
+  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 14">
     <div class="notice-header p-6">
       <div class="notice-header__title fw-bolder fs-7">
         <span>{{ $t('workbench_Notice_tAPDA2') }}</span>
@@ -824,17 +738,12 @@
         <div class="mb-2 p-4" style="background-color: rgb(241, 248, 255)">
           <div class="mb-4">{{ $t('workbench_Notice_gengXinSuLan') }}</div>
           <div class="ml-2 mb-4">
-            <span>1.</span
-            ><span class="fw-bold font-color-main pl-1">{{
-              $t('workbench_Notice_xinZengZhiChiA')
-            }}</span
+            <span>1.</span><span class="fw-bold font-color-main pl-1">{{ $t('workbench_Notice_xinZengZhiChiA') }}</span
             >{{ $t('workbench_Notice_qianShouGengDuoYou') }}
           </div>
           <div class="ml-2 mb-4">
             <span>2.</span>
-            <span class="fw-bold font-color-main pl-1">{{
-              $t('workbench_Notice_renWuRiZhiCha')
-            }}</span
+            <span class="fw-bold font-color-main pl-1">{{ $t('workbench_Notice_renWuRiZhiCha') }}</span
             >{{ $t('workbench_Notice_kaiShiZhiChiZai') }}
           </div>
         </div>
@@ -869,11 +778,7 @@
           {{ $t('workbench_Notice_zhiCiTAP') }}
           <span class="fw-bold font-color-main"
             >{{ $t('workbench_Notice_shuJuLianJieJu')
-            }}<span
-              class="fs-6 pl-1"
-              style="font-family: DIN; color: rgb(0, 122, 181)"
-              >30</span
-            ></span
+            }}<span class="fs-6 pl-1" style="font-family: DIN; color: rgb(0, 122, 181)">30</span></span
           >{{ $t('workbench_Notice_fangDaJiuKanT') }}
         </div>
         <div>
@@ -916,10 +821,7 @@
       </div>
     </div>
   </div>
-  <div
-    class="notice g-panel-container ws-main-container fs-8"
-    v-else-if="$route.query.id == 15"
-  >
+  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 15">
     <div class="notice-header p-6">
       <div class="notice-header__title fw-bolder fs-7">
         <span>{{ $t('workbench_Notice_tAPDA1') }}</span>
@@ -940,16 +842,12 @@
           <div class="mb-4">{{ $t('workbench_Notice_gengXinSuLan') }}</div>
           <div class="ml-2 mb-4">
             <span>1.</span
-            ><span class="fw-bold font-color-main pl-1">{{
-              $t('workbench_Notice_shuJuLianJieShang1')
-            }}</span
+            ><span class="fw-bold font-color-main pl-1">{{ $t('workbench_Notice_shuJuLianJieShang1') }}</span
             >{{ $t('workbench_Notice_xinZengZhiChiA1') }}
           </div>
           <div class="ml-2 mb-4">
             <span>2.</span>
-            <span class="fw-bold font-color-main pl-1">{{
-              $t('workbench_Notice_ziDongBiaoJiBu')
-            }}</span
+            <span class="fw-bold font-color-main pl-1">{{ $t('workbench_Notice_ziDongBiaoJiBu') }}</span
             >{{ $t('workbench_Notice_duiYuYiJingMing') }}
           </div>
         </div>
@@ -968,14 +866,11 @@
           {{ $t('workbench_Notice_zuoWeiGuoNeiShou1') }}
         </div>
         <div class="mb-4 blue-title">
-          <span class="blue-circle-index mr-1">1</span
-          >{{ $t('workbench_Notice_xinZengZhiChiP') }}
+          <span class="blue-circle-index mr-1">1</span>{{ $t('workbench_Notice_xinZengZhiChiP') }}
         </div>
         <div class="mb-4 line-height-2">
           {{ $t('workbench_Notice_suiZheXinXingGuo1')
-          }}<span class="fw-bold font-color-main">{{
-            $t('workbench_Notice_aLiYunPO')
-          }}</span
+          }}<span class="fw-bold font-color-main">{{ $t('workbench_Notice_aLiYunPO') }}</span
           >{{ $t('workbench_Notice_tongShiYeShiJin') }}
           <ElLink
             type="primary"
@@ -987,14 +882,11 @@
           {{ $t('workbench_Notice_deShouPiGongJian1') }}
         </div>
         <div class="mb-4 blue-title">
-          <span class="blue-circle-index mr-1">2</span
-          >{{ $t('workbench_Notice_xinZengZhiChiQing') }}
+          <span class="blue-circle-index mr-1">2</span>{{ $t('workbench_Notice_xinZengZhiChiQing') }}
         </div>
         <div class="mb-4 line-height-2">
           {{ $t('workbench_Notice_mianDuiJinJiZhong') }}
-          <span class="fw-bold font-color-main">{{
-            $t('workbench_Notice_sAASFu')
-          }}</span
+          <span class="fw-bold font-color-main">{{ $t('workbench_Notice_sAASFu') }}</span
           >{{ $t('workbench_Notice_weiShuJuMuBiao') }}
         </div>
         <div>
@@ -1004,11 +896,7 @@
           {{ $t('workbench_Notice_zhiCiTAP') }}
           <span class="fw-bold font-color-main"
             >{{ $t('workbench_Notice_shuJuLianJieJu')
-            }}<span
-              class="fs-6 pl-1"
-              style="font-family: DIN; color: rgb(0, 122, 181)"
-              >32</span
-            ></span
+            }}<span class="fs-6 pl-1" style="font-family: DIN; color: rgb(0, 122, 181)">32</span></span
           >{{ $t('workbench_Notice_fangDaJiuKanT') }}
         </div>
         <div>
@@ -1034,9 +922,7 @@
         <div class="mb-4 line-height-2">
           {{ $t('workbench_Notice_gaiBanBenXiaDui')
           }}<span class="font-color-sub"
-            ><span class="fw-bold">{{
-              $t('workbench_Notice_huaZhongDian')
-            }}</span
+            ><span class="fw-bold">{{ $t('workbench_Notice_huaZhongDian') }}</span
             >{{ $t('workbench_Notice_yongHuKeYiZai') }}</span
           >{{ $t('workbench_Notice_congErBaoZhengRen') }}
         </div>
@@ -1054,10 +940,7 @@
       </div>
     </div>
   </div>
-  <div
-    class="notice g-panel-container ws-main-container fs-8"
-    v-else-if="$route.query.id == 16"
-  >
+  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 16">
     <div class="notice-header p-6">
       <div class="notice-header__title fw-bolder fs-7">
         <span>{{ $t('workbench_Notice_tAPDA1213') }}</span>
@@ -1078,23 +961,17 @@
           <div class="mb-4">{{ $t('workbench_Notice_gengXinSuLan') }}</div>
           <div class="ml-2 mb-4">
             <span>1.</span
-            ><span class="fw-bold font-color-main pl-1">{{
-              $t('workbench_Notice_shuJuLianJieShang12')
-            }}</span
+            ><span class="fw-bold font-color-main pl-1">{{ $t('workbench_Notice_shuJuLianJieShang12') }}</span
             >{{ $t('workbench_Notice_chiXuQianShouYun') }}
           </div>
           <div class="ml-2 mb-4">
             <span>2.</span>
-            <span class="fw-bold font-color-main pl-1">{{
-              $t('workbench_Notice_xinZengCuoWuRi2')
-            }}</span
+            <span class="fw-bold font-color-main pl-1">{{ $t('workbench_Notice_xinZengCuoWuRi2') }}</span
             >{{ $t('workbench_Notice_renWuYunXingChu') }}
           </div>
           <div class="ml-2 mb-4">
             <span>3.</span>
-            <span class="fw-bold font-color-main pl-1">{{
-              $t('workbench_Notice_aGENT2')
-            }}</span
+            <span class="fw-bold font-color-main pl-1">{{ $t('workbench_Notice_aGENT2') }}</span
             >{{ $t('workbench_Notice_kaiShiZhiChiZi') }}
           </div>
         </div>
@@ -1115,11 +992,7 @@
         <div class="mb-4 line-height-2">
           {{ $t('workbench_Notice_jiBanBenShouCi1') }}
           <span class="fw-bold font-color-main"
-            ><span
-              class="fs-6"
-              style="font-family: DIN; color: rgb(0, 122, 181)"
-              >34</span
-            ></span
+            ><span class="fs-6" style="font-family: DIN; color: rgb(0, 122, 181)">34</span></span
           >{{ $t('workbench_Notice_fangDaJiuKanT1') }}
         </div>
         <div>
@@ -1199,7 +1072,7 @@
 
 <script>
 export default {
-  name: 'Notice',
+  name: 'Notice'
 }
 </script>
 

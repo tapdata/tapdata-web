@@ -5,10 +5,4 @@ import global from './global'
 import operations from './operations'
 import settingsForm from './settingsForm'
 
-GlobalRegistry.registerDesignerLocales(
-  icons,
-  panels,
-  global,
-  operations,
-  settingsForm
-)
+GlobalRegistry.registerDesignerLocales(icons, panels, global, operations, settingsForm)

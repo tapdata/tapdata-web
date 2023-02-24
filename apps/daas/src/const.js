@@ -2,7 +2,7 @@ import i18n from '@/i18n'
 
 let directionMap = {
   unidirectional: '单向同步',
-  bidirectional: '双向同步',
+  bidirectional: '双向同步'
 }
 let topologyMap = {}
 for (const dKey in directionMap) {
@@ -14,7 +14,7 @@ export const TOPOLOGY_MAP = topologyMap,
     running: {
       text: i18n.t('status_running'),
       icon: 'yunxingzhong',
-      type: 'success',
+      type: 'success'
     },
     paused: { text: i18n.t('status_paused'), icon: 'daiqidong' },
     error: { text: i18n.t('status_error'), icon: 'cuowu', type: 'warning' },
@@ -22,29 +22,29 @@ export const TOPOLOGY_MAP = topologyMap,
     scheduled: {
       text: i18n.t('status_scheduled'),
       icon: 'qidongzhong',
-      type: 'success',
+      type: 'success'
     },
     stopping: {
       text: i18n.t('status_stopping'),
       icon: 'tingzhizhong',
-      type: 'success',
+      type: 'success'
     },
     'force stopping': {
       text: i18n.t('status_force_stopping'),
       icon: 'qiangzhitingzhi',
-      type: 'success',
+      type: 'success'
     },
     finished: {
       text: i18n.t('status_finished'),
       icon: 'yiwancheng',
-      type: 'success',
-    },
+      type: 'success'
+    }
   },
   SHARECDC_MAP = {
     running: {
       text: i18n.t('status_running'),
       icon: 'running',
-      type: 'success',
+      type: 'success'
     },
     stop: { text: i18n.t('status_stop'), icon: 'stop' },
     error: { text: i18n.t('status_error'), icon: 'error', type: 'warning' },
@@ -52,38 +52,38 @@ export const TOPOLOGY_MAP = topologyMap,
     scheduling: {
       text: i18n.t('status_scheduling'),
       icon: 'scheduling',
-      type: 'success',
+      type: 'success'
     },
     stopping: {
       text: i18n.t('status_stopping'),
       icon: 'stopping',
-      type: 'warning',
-    },
+      type: 'warning'
+    }
     // pause: { text: '强制停止中', icon: 'pause', type: 'success' },
     //complete: { text: '已完成', icon: 'complete', type: 'success' }
   },
   CONNECTION_STATUS_MAP = {
     ready: { text: i18n.t('connection_list_efficient'), type: 'success' },
     invalid: { text: i18n.t('connection_list_invalidation'), type: 'danger' },
-    testing: { text: i18n.t('connection_list_testing'), type: 'warning' },
+    testing: { text: i18n.t('connection_list_testing'), type: 'warning' }
   },
   MILESTONE_STATUS_MAP = {
     waiting: {
       text: i18n.t('milestone_list_status_waiting'),
-      icon: 'daizhixing',
+      icon: 'daizhixing'
     },
     running: { text: i18n.t('task_info_progress'), icon: 'jinxingzhong' },
     error: { text: i18n.t('milestone_list_status_error'), icon: 'cuowu' },
     finish: {
       text: i18n.t('milestone_list_status_finish'),
-      icon: 'yiwancheng',
+      icon: 'yiwancheng'
     },
-    paused: { text: i18n.t('status_stopping'), icon: 'yizanting' },
+    paused: { text: i18n.t('status_stopping'), icon: 'yizanting' }
   },
   ETL_STATUS_MAP = {
     running: { text: i18n.t('task_status_running'), type: 'success' },
     not_running: { text: i18n.t('task_status_not_running'), type: 'disable' },
-    error: { text: i18n.t('task_status_error'), type: 'danger' },
+    error: { text: i18n.t('task_status_error'), type: 'danger' }
   },
   ETL_SUB_STATUS_MAP = {
     ready: { text: i18n.t('status_ready'), type: 'ready' },
@@ -91,61 +91,61 @@ export const TOPOLOGY_MAP = topologyMap,
     scheduling: { text: i18n.t('status_scheduling'), type: 'scheduling' },
     schedule_failed: {
       text: i18n.t('status_schedule_failed'),
-      type: 'schedule_failed',
+      type: 'schedule_failed'
     },
     wait_run: { text: i18n.t('status_wait_run'), type: 'wait_run' },
     running: { text: i18n.t('status_running'), type: 'running' },
     stopping: { text: i18n.t('status_stopping'), type: 'stopping' },
     stop: { text: i18n.t('status_stop'), type: 'stop' },
     complete: { text: i18n.t('status_complete'), type: 'complete' },
-    error: { text: i18n.t('task_status_error'), type: 'error' },
+    error: { text: i18n.t('task_status_error'), type: 'error' }
   },
   MIGRATE_STATUS_MAP = {
     running: {
       text: i18n.t('dataFlow_status_running'),
       icon: 'right-fill',
-      type: 'success',
+      type: 'success'
     },
     paused: {
       text: i18n.t('dataFlow_status_paused'),
       icon: 'wait-fill',
-      type: 'primary',
+      type: 'primary'
     },
     error: {
       text: i18n.t('dataFlow_status_error'),
       icon: 'warning',
-      type: 'warning',
+      type: 'warning'
     },
     draft: {
       text: i18n.t('dataFlow_status_draft'),
       icon: 'wait-fill',
-      type: 'primary',
+      type: 'primary'
     },
     scheduled: {
       text: i18n.t('dataFlow_status_scheduled'),
       icon: 'loading',
-      type: 'success',
+      type: 'success'
     },
     stopping: {
       text: i18n.t('dataFlow_status_stopping'),
       icon: 'loading',
-      type: 'success',
+      type: 'success'
     },
     'force stopping': {
       text: i18n.t('dataFlow_status_force_stopping'),
       icon: 'loading',
-      type: 'success',
-    },
+      type: 'success'
+    }
   },
   SPEC_MAP = {
     micro: '小规格',
     small: '标准规格',
     medium: '中规格',
-    large: '大规格',
+    large: '大规格'
   },
   CHARGE_MAP = {
     '1,month': '包月计费',
-    '2,1': '按量计费',
+    '2,1': '按量计费'
   },
   SUPPORT_DB = [
     'mysql',
@@ -161,7 +161,7 @@ export const TOPOLOGY_MAP = topologyMap,
     'mariadb',
     'mysql pxc',
     'jira',
-    'dameng',
+    'dameng'
     // 'gbase-8s',
     // 'sybase ase',
     // 'gaussdb200',
@@ -204,5 +204,5 @@ export const DATA_NODE_TYPES = [
   'mem_cache',
   'logminer',
   'protobuf_convert_processor',
-  'hazelcast_cloud_cluster',
+  'hazelcast_cloud_cluster'
 ]

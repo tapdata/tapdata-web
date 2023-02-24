@@ -6,6 +6,6 @@
 
 <script>
 export default {
-  name: 'WorkspacePanel',
+  name: 'WorkspacePanel'
 }
 </script>

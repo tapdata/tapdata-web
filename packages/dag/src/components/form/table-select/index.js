@@ -21,8 +21,8 @@ export const TableSelect = observer(
         const params = {
           where: {
             'source.id': connectionId,
-            taskId: root.$store.state.dataflow.taskId,
-          },
+            taskId: root.$store.state.dataflow.taskId
+          }
         }
         return (
           <AsyncSelect
@@ -35,7 +35,7 @@ export const TableSelect = observer(
           />
         )
       }
-    },
+    }
   })
 )
 

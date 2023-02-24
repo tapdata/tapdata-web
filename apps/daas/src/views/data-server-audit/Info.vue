@@ -7,9 +7,7 @@
       <ElRow class="pt-4" v-if="auditData">
         <ElCol class="font-color-normal pb-4" :span="12">
           <span class="font-text"> API ID:</span>
-          <span class="fw-sub">{{
-            auditData.id ? auditData.id : '-'
-          }}</span></ElCol
+          <span class="fw-sub">{{ auditData.id ? auditData.id : '-' }}</span></ElCol
         >
         <ElCol class="font-color-normal pb-4" :span="12"
           ><span class="font-text">{{ $t('apiaudit_name') }}:</span>
@@ -40,10 +38,7 @@
             <div class="fs-8 font-color-normal">{{ item.label }}</div>
             <div
               class="link-primary pt-4 din-font details-box-item-num"
-              v-if="
-                item.value > 0 &&
-                ['latency', 'averResponseTime'].includes(item.key)
-              "
+              v-if="item.value > 0 && ['latency', 'averResponseTime'].includes(item.key)"
             >
               {{ formatDuring(item.value) }}
             </div>
@@ -89,20 +84,20 @@ export default {
         {
           label: this.$t('apiaudit_access_records'),
           key: 'visitTotalCount',
-          value: 0,
+          value: 0
         },
         {
           label: this.$t('apiaudit_average_access_rate'),
           key: 'speed',
-          value: 0,
+          value: 0
         },
         { label: this.$t('apiaudit_access_time'), key: 'latency', value: 0 },
         {
           label: this.$t('apiaudit_average_response_time'),
           key: 'averResponseTime',
-          value: 0,
-        },
-      ],
+          value: 0
+        }
+      ]
     }
   },
   created() {
@@ -115,14 +110,12 @@ export default {
       this.loading = true
       apiCallsApi
         .get([id])
-        .then((data) => {
+        .then(data => {
           if (data) {
             this.auditData = data
-            this.auditData.createAt = data['createAt']
-              ? dayjs(data['createAt']).format('YYYY-MM-DD HH:mm:ss')
-              : '-'
+            this.auditData.createAt = data['createAt'] ? dayjs(data['createAt']).format('YYYY-MM-DD HH:mm:ss') : '-'
 
-            this.list.forEach((item) => {
+            this.list.forEach(item => {
               for (let el in data) {
                 if (item.key === el) {
                   item.value = data[el]
@@ -153,8 +146,8 @@ export default {
     },
     handleUnit(limit) {
       return handleUnit(limit)
-    },
-  },
+    }
+  }
 }
 </script>
 

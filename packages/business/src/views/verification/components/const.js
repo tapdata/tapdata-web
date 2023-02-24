@@ -6,7 +6,7 @@ export const TABLE_PARAMS = {
   databaseType: '',
   sortColumn: '',
   fields: [],
-  columns: null,
+  columns: null
 }
 
 export const META_INSTANCE_FIELDS = {
@@ -20,7 +20,7 @@ export const META_INSTANCE_FIELDS = {
   'fields.field_name': true,
   'fields.primary_key_position': true,
   databaseId: true,
-  meta_type: true,
+  meta_type: true
 }
 
 export const DATA_NODE_TYPES = [
@@ -57,5 +57,5 @@ export const DATA_NODE_TYPES = [
   'mem_cache',
   'logminer',
   'protobuf_convert_processor',
-  'hazelcast_cloud_cluster',
+  'hazelcast_cloud_cluster'
 ]

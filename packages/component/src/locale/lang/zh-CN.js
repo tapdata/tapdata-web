@@ -25,16 +25,14 @@ export default {
   packages_component_classification_editNode: '编辑',
   packages_component_classification_deleteNode: '删除',
   packages_component_classification_nodeName: '请输入分类名称',
-  packages_component_classification_deteleMessage:
-    '此操作会将该分类下存在的子类都删除，是否删除',
+  packages_component_classification_deteleMessage: '此操作会将该分类下存在的子类都删除，是否删除',
   packages_component_formBuilder_file_placeholder: '请选择文件',
   packages_component_formBuilder_file_button: '选择文件',
   packages_component_formBuilder_noneText: '不能为空',
   packages_component_formBuilder_input_placeholderPrefix: '请输入',
   packages_component_common_placeholder_select: '请选择',
   packages_component_dag_dialog_field_mapping_no_data: '暂无数据',
-  packages_component_src_discoveryclassification_qingshurumulu:
-    '请输入目录描述',
+  packages_component_src_discoveryclassification_qingshurumulu: '请输入目录描述',
   packages_component_src_discoveryclassification_mulumiaoshu: '目录描述',
   packages_component_src_discoveryclassification_ziyuanmulu: '资源目录',
   packages_component_src_discoveryclassification_mulufenlei: '目录分类',
@@ -43,15 +41,12 @@ export default {
   packages_component_filter_bar_datetimerange_jieshushijian: '结束时间',
   packages_component_filter_bar_datetimerange_kaishishijian: '开始时间',
   packages_component_filter_bar_datetimerange_zhi: '至',
-  packages_component_form_builder_file_shangchuanwenjianda:
-    '上传文件大小不能超过 {val1}KB',
-  packages_component_src_inlineinput_zifuchangduxian:
-    '字符长度限制{val1}-{val2}个字符',
+  packages_component_form_builder_file_shangchuanwenjianda: '上传文件大小不能超过 {val1}KB',
+  packages_component_src_inlineinput_zifuchangduxian: '字符长度限制{val1}-{val2}个字符',
   packages_component_src_inlineinput_baocun: '保存',
   packages_component_mixins_showmessage_xiangqing: '详情',
   packages_component_src_selectlist_meiyougengduoshu: '没有更多数据',
   packages_component_src_classification_chuangjianfenlei: '创建分类',
   packages_component_src_darkselect_biaoti: '标题',
-  packages_component_src_discoveryclassification_morenmuluji:
-    '默认目录（技术）',
+  packages_component_src_discoveryclassification_morenmuluji: '默认目录（技术）'
 }

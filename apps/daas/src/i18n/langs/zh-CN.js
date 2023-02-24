@@ -140,8 +140,7 @@ export default {
   component_table_selector_bulk_pick: '批量选表',
   component_table_selector_not_checked: '您暂时没有选择表',
   component_table_selector_tables_empty: '您暂时没有表，请点击右上角重新加载表',
-  component_table_selector_clipboard_placeholder:
-    '请输入表名称并以逗号分隔,例如：table_a,table_b',
+  component_table_selector_clipboard_placeholder: '请输入表名称并以逗号分隔,例如：table_a,table_b',
   // app
   app_license_expire_warning: '提醒：License剩余 {0} 天到期',
   // Agent
@@ -282,8 +281,7 @@ export default {
   module_form_public_api: '公共的',
   module_form_available_query_field: '可用查询字段',
   module_form_required_query_field: '必须的查询条件',
-  module_form_validator_name:
-    '只能包含中文、字母、数字、下划线和美元符号,并且数字不能开头',
+  module_form_validator_name: '只能包含中文、字母、数字、下划线和美元符号,并且数字不能开头',
   module_form_create_a_new_record: '创建新记录',
   module_form_get_record_by_id: '根据id获取记录',
   module_form_update_record_by_id: '根据id更新记录',
@@ -405,8 +403,7 @@ export default {
   connection_list_invalidation: '无效',
   connection_list_testing: '测试中',
   connection_reload_schema_confirm_title: '重新加载 schema',
-  connection_reload_schema_confirm_msg:
-    '如果此库的schema过多，可能耗时较长，确定要刷新数据源的schema',
+  connection_reload_schema_confirm_msg: '如果此库的schema过多，可能耗时较长，确定要刷新数据源的schema',
   connection_reload_schema_fail: 'Schema 加载失败',
   // Dag
   dag_data_setting_second: '秒',
@@ -418,8 +415,7 @@ export default {
   task_list_reset: '重置',
   task_list_status_all: '全部状态',
   task_list_important_reminder: '重要提醒',
-  task_list_stop_confirm_message:
-    '初始化类型的任务暂停后如果再次启动，任务会从头开始同步，确定暂停?',
+  task_list_stop_confirm_message: '初始化类型的任务暂停后如果再次启动，任务会从头开始同步，确定暂停?',
   //后台数据返回
   task_status_running: '已运行',
   task_status_not_running: '未运行',
@@ -455,8 +451,7 @@ export default {
   function_file_upload_success: '上传成功',
   function_file_upload_fail: '上传失败',
   function_parameters_describe_label: '参数说明',
-  function_parameters_describe_placeholder:
-    '支持输入的参数类型以及返回参数类型的具体说明',
+  function_parameters_describe_placeholder: '支持输入的参数类型以及返回参数类型的具体说明',
   function_return_value_label: '返回值',
   function_return_value_placeholder: '请输入返回值',
   function_describe_label: '描述',
@@ -480,8 +475,7 @@ export default {
   function_dialog_setting_title: '函数设置',
   function_message_function_empty: '请上传jar包文件并加载函数',
   function_message_delete_title: '删除函数',
-  function_message_delete_content:
-    '删除可能会导致已调用该函数的任务报错，确定删除该函数吗？',
+  function_message_delete_content: '删除可能会导致已调用该函数的任务报错，确定删除该函数吗？',
   function_tips_max_size: '最大',
   // 解决方案
   solution_customer_job_logs: '客户任务日志',
@@ -547,8 +541,7 @@ export default {
   shared_cache_placeholder_external_storage: '请选择外存配置',
   shared_cache_keys_tooltip: '以该字段作为主键识别数据进行缓存',
   shared_cache_fields_tooltip: '需要进行缓存的常用字段',
-  shared_cache_max_memory_tooltip:
-    '系统会保存的最大内存量，超过则按调用时间，将最不常用的数据删掉',
+  shared_cache_max_memory_tooltip: '系统会保存的最大内存量，超过则按调用时间，将最不常用的数据删掉',
   shared_cache_code_tooltip: '可在JS节点中输入这段代码使用该缓存',
   // 设置
   setting_email_template: '邮件模板',
@@ -568,8 +561,7 @@ export default {
   setting_Log_level: '日志等级',
   setting_maxCpuUsage: '最大CPU使用率(取值范围 0.1 ~ 1)',
   setting_maxHeapMemoryUsage: '最大堆内存使用率(取值范围 0.1 ~ 1)',
-  setting_switch_insert_mode_interval:
-    ' 增量模式下切换到批量插入模式间隔时间（单位：秒）',
+  setting_switch_insert_mode_interval: ' 增量模式下切换到批量插入模式间隔时间（单位：秒）',
   setting_Email_Communication_Protocol: ' 加密方式',
   setting_SMTP_Server_Port: 'SMTP 服务端口',
   setting_SMTP_Server_User: 'SMTP 服务账号',
@@ -598,18 +590,14 @@ export default {
   setting_Mongodb_target_create_date_docs: '是否在目标端数据集添加创建时间',
   setting_System: '系统资源监控',
   setting_Collect_system_info_interval: '系统资源监控采集频率(秒)',
-  setting_Interval_to_collect_system_info:
-    '系统资源信息（CPU，内存，硬盘使用率）监控采集频率',
+  setting_Interval_to_collect_system_info: '系统资源信息（CPU，内存，硬盘使用率）监控采集频率',
   setting_Job_Sync_Mode: '任务同步模式',
   setting_Worker_Threshold: '进程阈值',
   setting_Worker_Heartbeat_Expire: '进程心跳过期时间(秒)',
   setting_License_Key: '证书秘钥',
-  setting_Enter_jobs_log_level__error_warn_info_debug_trace:
-    '输入任务日志等级: error/warn/info/debug/trace',
-  setting_Email_Receivers_Multiple_separated_by_semicolons:
-    '邮件接收者,可输入多个，通过逗号分隔',
-  setting_Keep_recent_n_hours_message_before_the_last_processed_message_s_time_:
-    '保持最近n小时消息',
+  setting_Enter_jobs_log_level__error_warn_info_debug_trace: '输入任务日志等级: error/warn/info/debug/trace',
+  setting_Email_Receivers_Multiple_separated_by_semicolons: '邮件接收者,可输入多个，通过逗号分隔',
+  setting_Keep_recent_n_hours_message_before_the_last_processed_message_s_time_: '保持最近n小时消息',
   setting_Store_full_record_as_embedded_document_in_target_collection_for_update_operations:
     '缓存一份当前整体数据，合并到目标数据集中',
   setting_Store_before_field_as_embedded_document_in_target_collection_before_update_operation:
@@ -618,8 +606,7 @@ export default {
   setting_Validator_to_validate_data__s_sample_rate: '校验数据采样率',
   setting_retry_interval_second: '重试间隔(秒)',
   setting_max_retry_time_minute: '最大重试时间(分钟)',
-  setting_Process_message_mode__consistency_fast:
-    '消息处理模式 consistency/fast',
+  setting_Process_message_mode__consistency_fast: '消息处理模式 consistency/fast',
   setting_Worker_can_execute_the_nums_of_Jobs: '进程可以执行多个任务',
   setting_Worker_heartbeat_expire_time: '进程心跳过期时间',
   setting_Users: ' 用户',
@@ -644,26 +631,21 @@ export default {
   setting_dashboard_Analysis_Interval: '面板数据分析间隔(秒)',
   setting_quality_Analysis_Interval: '数据质量分析间隔(秒)',
   setting_Log_filter_interval: '日志过滤间隔(秒)',
-  setting_Filter_the_interval_between_duplicate_logs__seconds__:
-    '相同日志在指定时间内只出现一次（1分钟后生效）',
+  setting_Filter_the_interval_between_duplicate_logs__seconds__: '相同日志在指定时间内只出现一次（1分钟后生效）',
   setting__DK36: '文件下载',
   setting_File_Down_Base_Url: '地址',
-  setting_Set_the_average_number_of_events_per_second_to_allow:
-    '日志设置每秒允许的事件平均数量',
+  setting_Set_the_average_number_of_events_per_second_to_allow: '日志设置每秒允许的事件平均数量',
   setting_Log_Filter_Rate: '日志输出频率(行/秒)',
   setting_Connections: '连接设置',
   setting_Mongodb_Load_Schema_Sample_Size: 'Mongodb加载模型采样记录数(行)',
-  setting_hint_Mongodb_Load_Schema_Sample_Size:
-    '当MongoDB连接加载模型时，会使用该配置进行采样加载',
+  setting_hint_Mongodb_Load_Schema_Sample_Size: '当MongoDB连接加载模型时，会使用该配置进行采样加载',
   setting_Enable_API_Stats_Batch_Report: ' 启用 API 统计',
   setting_Header: ' UDP 头信息',
   setting_hint_Header: ' UDP 头信息',
   setting_Size_Of_Trigger_API_Stats_Report: ' API 请求缓存最大个数',
-  setting_hint_Size_Of_Trigger_API_Stats_Report:
-    ' API 请求记录数到达指定个数时批量发送到管理端',
+  setting_hint_Size_Of_Trigger_API_Stats_Report: ' API 请求记录数到达指定个数时批量发送到管理端',
   setting_Time_Span_Of_Trigger_API_Stats_Report: ' API 请求汇报频率(秒)',
-  setting_hint_Time_Span_Of_Trigger_API_Stats_Report:
-    ' API 请求缓存到指定时间发送到管理端',
+  setting_hint_Time_Span_Of_Trigger_API_Stats_Report: ' API 请求缓存到指定时间发送到管理端',
   setting_save: ' 保存成功，一分钟后生效',
   setting_Logout_forward_to_this_url: ' 登出跳转地址',
   setting_Check_devices: ' 重要设备检测',
@@ -677,8 +659,7 @@ export default {
   setting_doc_base_url: ' 帮助文档URL',
   setting_help: ' 帮助文档',
   setting_Ip_addresses: ' Ipv4地址(多个逗号分隔)',
-  setting_hint_Ip_addresses:
-    ' 需要检测的设备ipv4地址, 例如: 127.0.0.1, 192.168.0.1',
+  setting_hint_Ip_addresses: ' 需要检测的设备ipv4地址, 例如: 127.0.0.1, 192.168.0.1',
   setting_PingTimeout: ' 检测超时(毫秒)',
   setting_hint_PingTimeout: ' 当超过该设置，认为设备无法连通',
   setting_Job_field_replacement: ' 非法字符替换为',
@@ -692,11 +673,9 @@ export default {
     'before字段包含每个表列的字段以及更新操作之前该列中的值。',
   setting_Job_heart_timeout: '同步任务心跳超时（毫秒）',
   setting_job_cdc_share_mode: '增量同步任务共享模式',
-  setting_job_cdc_share_mode_doc:
-    '在增量同步阶段，会根据日志采集任务是否可用，自动采用共享模式。影响的数据库：Oracle',
+  setting_job_cdc_share_mode_doc: '在增量同步阶段，会根据日志采集任务是否可用，自动采用共享模式。影响的数据库：Oracle',
   setting_job_cdc_share_only: '增量任务强制使用共享模式',
-  setting_job_cdc_share_only_doc:
-    '当增量同步任务共享模式开启，并且无法找到一个可共享的日志，将会停止任务',
+  setting_job_cdc_share_only_doc: '当增量同步任务共享模式开启，并且无法找到一个可共享的日志，将会停止任务',
   setting_test_email_success: '测试邮件已发送，请登录接收邮箱查收',
   setting_test_email_countdown: '操作太频繁了，请稍后重试',
   setting_email_template_from: '发件人',
@@ -713,24 +692,18 @@ export default {
   setting_requestFailed: '请求处理失败',
   setting_Mongodb_will_use_this_sample_size_when_load_schema:
     'Mongodb will use this sample size when load schema 当MongoDB连接加载模型时，会使用该配置进行采样加载',
-  setting_Switch_to_batch_insert_mode_interval__s__in_cdc_:
-    '切换到cdc中的批量插入模式间隔。',
+  setting_Switch_to_batch_insert_mode_interval__s__in_cdc_: '切换到cdc中的批量插入模式间隔。',
   setting_share_cdc: '共享增量',
   setting_share_cdc_persistence_mode: '共享增量存储模式',
   setting_share_cdc_persistence_memory_size: '共享增量内存缓存行数',
-  setting_share_cdc_persistence_memory_size_doc:
-    '该配置控制共享增量事件在内存缓存的行数',
-  setting_share_cdc_persistence_mode_doc:
-    '共享增量存储模式。选项: InMemory, MongoDB, RocksDB',
+  setting_share_cdc_persistence_memory_size_doc: '该配置控制共享增量事件在内存缓存的行数',
+  setting_share_cdc_persistence_mode_doc: '共享增量存储模式。选项: InMemory, MongoDB, RocksDB',
   setting_share_cdc_persistence_mongodb_uri_db: '存储MongoDB的连接名称',
-  setting_share_cdc_persistence_mongodb_uri_db_doc:
-    '该项配置只有模式选择MongoDB时生效，输入创建的MongoDB连接名称即可',
+  setting_share_cdc_persistence_mongodb_uri_db_doc: '该项配置只有模式选择MongoDB时生效，输入创建的MongoDB连接名称即可',
   setting_share_cdc_persistence_mongodb_collection: '存储MongoDB的表名',
-  setting_share_cdc_persistence_mongodb_collection_doc:
-    '该项配置只有模式选择MongoDB时生效，输入存储的表名',
+  setting_share_cdc_persistence_mongodb_collection_doc: '该项配置只有模式选择MongoDB时生效，输入存储的表名',
   setting_share_cdc_persistence_rocksdb_path: 'RocksDB存储的本地路径',
-  setting_share_cdc_persistence_rocksdb_path_doc:
-    '该项配置只有模式选择RocksDB时生效，RocksDB存储的本地路径',
+  setting_share_cdc_persistence_rocksdb_path_doc: '该项配置只有模式选择RocksDB时生效，RocksDB存储的本地路径',
   user_list_all: '全部',
   user_list_user_name_email: '请输入用户名 / 邮箱',
   user_list_change_time: ' 修改时间',
@@ -877,8 +850,7 @@ export default {
   notify_inspect_verify_job_error: '运行error',
   notify_approaching: '剩余 ',
   notify_system_setting: '系统设置',
-  notify_tip:
-    '此处通知设置为系统全局通知的设置，任务编排页的通知设置的其优先级高于此处的全局通知设置',
+  notify_tip: '此处通知设置为系统全局通知的设置，任务编排页的通知设置的其优先级高于此处的全局通知设置',
   notify_job_operation_notice: '任务运行通知',
   notify_email_notice: '邮件通知',
   notify_job_started: '任务被启动',
@@ -1073,16 +1045,12 @@ export default {
   new_more_features: '更多功能',
   new_data_copy: '数据复制',
   new_data_development: '数据开发',
-  new_data_copy_desc:
-    '对数据库进行跨库复制，适用于数据迁移，容灾备份，系统多活等场景',
-  new_data_development_desc:
-    '抽取源端数据并加工计算转换、例如行过滤、字段处理、多表合并等',
+  new_data_copy_desc: '对数据库进行跨库复制，适用于数据迁移，容灾备份，系统多活等场景',
+  new_data_development_desc: '抽取源端数据并加工计算转换、例如行过滤、字段处理、多表合并等',
   new_create_connection: '创建数据源',
   new_create_api: '创建API',
-  new_create_connection_desc:
-    '数据源是创建传输任务的前提，任务重所有的数据库和表数据节点都来自数据源',
-  new_create_api_desc:
-    'API即数据发布，可以根据现有collection或者通过同步任务创建新的collection对外发布的API',
+  new_create_connection_desc: '数据源是创建传输任务的前提，任务重所有的数据库和表数据节点都来自数据源',
+  new_create_api_desc: 'API即数据发布，可以根据现有collection或者通过同步任务创建新的collection对外发布的API',
   //数据发现-数据对象
   object_list_name: '对象名称',
   object_list_classification: '对象分类',
@@ -1116,13 +1084,11 @@ export default {
   app_signOutMsg: '您确定要退出登录吗？',
   app_save: '保存',
   app_customerService_technicalSupport: '邮件支持',
-  app_customerService_technicalSupportText:
-    '在使用过程中，有任何问题，请发送邮件到',
+  app_customerService_technicalSupportText: '在使用过程中，有任何问题，请发送邮件到',
   app_customerService_technicalSupportText1: '，我们会尽快答复。',
   app_customerService_userSupport: 'team@tapdata.io',
   app_customerService_otherDmands: '微信支持',
-  app_customerService_otherDmandsText:
-    '请扫描下方企业微信二维码, 联系我们获取支持',
+  app_customerService_otherDmandsText: '请扫描下方企业微信二维码, 联系我们获取支持',
   app_signIn_slogan: '像自来水一样方便地使用您的数据',
   app_signIn_signIn: '登录',
   app_signIn_keepSignIn: '保持登录状态',
@@ -1144,8 +1110,7 @@ export default {
   app_signIn_email_existed: 'Email 地址已被注册',
   app_signIn_userPplicy_message: '请选择用户政策',
   app_signIn_modifyPassword: '修改密码',
-  app_signIn_newPasswordTip:
-    '输入您注册的邮箱和新密码，我们将向您发送用于重置密码的链接',
+  app_signIn_newPasswordTip: '输入您注册的邮箱和新密码，我们将向您发送用于重置密码的链接',
   app_signIn_newpassword_placeholder: '请设置新密码',
   app_signIn_rememberPasswords: '想起密码?',
   app_signIn_Registration: '注册账号',
@@ -1169,8 +1134,7 @@ export default {
   app_signIn_hasMailbox: 'oops~此邮箱已经被注册了',
   app_signIn_disableSignup: 'oops~禁止注册',
   app_signIn_getCode: '邀请码获取',
-  app_signIn_qrCodeText:
-    '如果想试用产品, 请扫描下方企业微信二维码, 联系我们获取',
+  app_signIn_qrCodeText: '如果想试用产品, 请扫描下方企业微信二维码, 联系我们获取',
   app_Home_initialization: '初始化中',
   app_Home_loadingFinished: '初始化完成',
   app_Home_incremental: '增量中',
@@ -1234,8 +1198,7 @@ export default {
   dataFlow_saveFail: '任务保存失败，请检查配置信息并确保数据源状态有效',
   dataFlow_leave: '离开',
   dataFlow_backlistText: '返回列表页',
-  dataFlow_saveReminder:
-    '此任务尚未保存，离开本页面会导致任务配置丢失，确定要离开吗?',
+  dataFlow_saveReminder: '此任务尚未保存，离开本页面会导致任务配置丢失，确定要离开吗?',
   dataFlow_aggregateNotDataNode: '连接聚合节点的第一个目标数据节点只能是数据集',
   dataFlow_batchSortOperation: '批量分类操作',
   dataFlow_selectRowdata: '请选择行数据',
@@ -1279,8 +1242,7 @@ export default {
   dataFlow_dataValidation: '数据校验',
   dataFlow_sourceDescription:
     '数据源是创建传输任务的前提，任务中所有的数据库和表等数据节点都来自数据源。数据源包含数据库, File, GridFS, Rest API, View, Udp, Custom connection等',
-  dataFlow_apiDescription:
-    'API即数据发布，可以根据现有collection或者通过同步任务创建新的collection对外发布的API',
+  dataFlow_apiDescription: 'API即数据发布，可以根据现有collection或者通过同步任务创建新的collection对外发布的API',
   dataFlow_datavaliDescription:
     '数据校验可对迁移同步任务的数据源与目标之间的数据进行比对校验，校验功能包含快速count校验，全表字段值校验，关联字段值校验，定时自动校验等。',
   dataFlow_multiError_allSelectionError: '选中的任务状态不允许这种操作',
@@ -1307,11 +1269,9 @@ export default {
   dataFlow_cdcLabel: '数据源:',
   dataFlow_syncType: '任务类型',
   dataFlow_belongAgent: '所属Agent',
-  dataFlow_SyncInfo_localTZ:
-    '当前时区传输时间：系统所在时区下，开始传输任务的时刻',
+  dataFlow_SyncInfo_localTZ: '当前时区传输时间：系统所在时区下，开始传输任务的时刻',
   dataFlow_SyncInfo_current: '当前时区时间：默认当前时间',
-  dataFlow_SyncInfo_connTZ:
-    '数据库时区传输时间： 数据库所在时区下，开始传输任务的时刻',
+  dataFlow_SyncInfo_connTZ: '数据库时区传输时间： 数据库所在时区下，开始传输任务的时刻',
   dataFlow_SyncInfo_localTZType: '用户浏览器时区',
   dataFlow_SyncInfo_currentType: '此刻',
   dataFlow_SyncInfo_connTZType: '数据库时区',
@@ -1380,12 +1340,10 @@ export default {
   dataFlow_totalDelete: '总删除',
   dataFlow_category: '类别',
   dataFlow_replicate: '数据同步差距',
-  dataFlow_throughputpop:
-    '输入输出统计: 平均每秒源端数据采集的速度以及目标端写入的速度，数值越大越好',
+  dataFlow_throughputpop: '输入输出统计: 平均每秒源端数据采集的速度以及目标端写入的速度，数值越大越好',
   dataFlow_transtime_pop:
     '传输耗时: 除源节点外，事件处理完的时间减去事件的发生时间。 节点间统计:事件从进入节点到输出到所消耗的时间 任务流统计:所有节点耗时相加，数值越小越好',
-  dataFlow_replicate_pop:
-    '数据同步差距: 源库和目标库数据最后更新时间的差距，数值越小越好',
+  dataFlow_replicate_pop: '数据同步差距: 源库和目标库数据最后更新时间的差距，数值越小越好',
   dataFlow_status_running: '运行中',
   dataFlow_status_paused: '已暂停',
   dataFlow_status_draft: '编辑中',
@@ -1496,14 +1454,11 @@ export default {
   dataFlow_aggregation: '聚合处理',
   dataFlow_aggrCleanSecond: '清理旧版本数据时间',
   dataFlow_aggrFullSyncSecond: '全量同步时间',
-  dataFlow_aggregatePrompt:
-    '提示：使用聚合处理节点后，此任务停止后再次启动，任务将会重置',
-  dataFlow_nameTip:
-    '后续节点的脚本编辑需要引用此子处理的名称进行指定的数据处理，故不同的子处理名称不可重复。',
+  dataFlow_aggregatePrompt: '提示：使用聚合处理节点后，此任务停止后再次启动，任务将会重置',
+  dataFlow_nameTip: '后续节点的脚本编辑需要引用此子处理的名称进行指定的数据处理，故不同的子处理名称不可重复。',
   dataFlow_enterFilterTable: '请输入过滤表内容',
   dataFlow_lagTime: '增量滞后判断时间设置',
-  dataFlow_lagTimeTip:
-    '当增量任务延迟大于该值时，则认为任务增量滞后，默认值为0',
+  dataFlow_lagTimeTip: '当增量任务延迟大于该值时，则认为任务增量滞后，默认值为0',
   dataFlow_button_submit: '提交执行',
   dataFlow_button_viewConfig: '查看节点配置',
   dataFlow_button_viewMonitoring: '查看监控数据',
@@ -1539,23 +1494,17 @@ export default {
   dataFlow_bulk_delete_confirm_title: '是否批量删除任务？',
   dataFlow_bulk_delete_confirm_message: '批量删除任务后，任务将无法恢复',
   dataFlow_stop_confirm_title: '是否暂停该任务？',
-  dataFlow_stop_confirm_message:
-    '暂停任务 xxx 后，任务中未完成全量同步的表再次启动时，会重新执行全量同步',
+  dataFlow_stop_confirm_message: '暂停任务 xxx 后，任务中未完成全量同步的表再次启动时，会重新执行全量同步',
   dataFlow_bulk_stop_confirm_title: '是否批量暂停任务？',
-  dataFlow_bulk_stop_confirm_message:
-    '批量暂停任务后，任务中未完成全量同步的表再次启动时，会重新执行全量同步',
+  dataFlow_bulk_stop_confirm_message: '批量暂停任务后，任务中未完成全量同步的表再次启动时，会重新执行全量同步',
   dataFlow_force_stop_confirm_title: '是否强制停止该任务？',
-  dataFlow_force_stop_confirm_message:
-    '强制停止任务 xxx 将立即中断数据传输强制任务快速停止，并重置该任务',
+  dataFlow_force_stop_confirm_message: '强制停止任务 xxx 将立即中断数据传输强制任务快速停止，并重置该任务',
   dataFlow_bulk_force_stop_confirm_title: '是否批量强制停止任务？',
-  dataFlow_bulk_force_stop_confirm_message:
-    '批量强制停止任务将立即中断数据传输强制任务快速停止，并重置该任务',
+  dataFlow_bulk_force_stop_confirm_message: '批量强制停止任务将立即中断数据传输强制任务快速停止，并重置该任务',
   dataFlow_initialize_confirm_title: '是否重置该任务？',
-  dataFlow_initialize_confirm_message:
-    '重置任务 xxx 将清除任务同步进度，任务将重新执行',
+  dataFlow_initialize_confirm_message: '重置任务 xxx 将清除任务同步进度，任务将重新执行',
   dataFlow_bulk_initialize_confirm_title: '是否批量重置任务？',
-  dataFlow_bulk_initialize_confirm_message:
-    '批量重置任务将清除任务同步进度，任务将重新执行',
+  dataFlow_bulk_initialize_confirm_message: '批量重置任务将清除任务同步进度，任务将重新执行',
   dataFlow_importantReminder: '重要提醒',
   dataFlow_modifyEditText: '编辑任务如果修改了',
   dataFlow_nodeLayoutProcess: '节点排版流程',
@@ -1569,22 +1518,16 @@ export default {
   dataFlow_setting_distinctWriteType: '去重写入机制',
   dataFlow_setting_intellect: '智能去重写入',
   dataFlow_setting_compel: '强制去重写入',
-  dataFlow_setting_intellectTip:
-    '智能去重写入：对目标已有数据进行智能检测，去重的同时能极大提升传输性能',
-  dataFlow_setting_compelTip:
-    '强制去重写入：对目标已有数据进行强制去重检测，严格保证精准度但传输性能较低',
-  dataFlow_setting_batchTip:
-    '批量：对监测到的增量数据进行批量传输处理，性能较高',
-  dataFlow_setting_onebyoneTip:
-    '逐行：对监测到的增量数据进行逐条处理，性能较差',
-  dataFlow_setting_sync_type_tip:
-    '关闭数据集节点的聚合设置才能修改传输类型，已开启节点:',
+  dataFlow_setting_intellectTip: '智能去重写入：对目标已有数据进行智能检测，去重的同时能极大提升传输性能',
+  dataFlow_setting_compelTip: '强制去重写入：对目标已有数据进行强制去重检测，严格保证精准度但传输性能较低',
+  dataFlow_setting_batchTip: '批量：对监测到的增量数据进行批量传输处理，性能较高',
+  dataFlow_setting_onebyoneTip: '逐行：对监测到的增量数据进行逐条处理，性能较差',
+  dataFlow_setting_sync_type_tip: '关闭数据集节点的聚合设置才能修改传输类型，已开启节点:',
   dataFlow_skipError_title: '跳过错误设置',
   dataFlow_skipError_skipErrorSettings: '任务错误处理',
   dataFlow_skipError_tip:
     '任务上次停止时发生了以下数据相关的错误，请确认这些错误已经被处理。如果希望跳过这些错误，请勾选相应的错误项并点击“跳过错误，启动任务” 。',
-  dataFlow_skipError_attention:
-    '注意：若导致错误的数据未被处理，跳过错误可能导致这条数据被丢弃。',
+  dataFlow_skipError_attention: '注意：若导致错误的数据未被处理，跳过错误可能导致这条数据被丢弃。',
   dataFlow_skipError_startJob: '跳过错误，启动任务',
   dataFlow_skipError_cancel: '取消',
   dataFlow_skipError_taskName: '任务名',
@@ -1594,13 +1537,10 @@ export default {
   dataFlow_flowEngineV1: 'Flow Engine V1',
   dataFlow_jetFlowEngineV2: 'Jet Flow Engine V2',
   editor_cell_data_node_collection_form_collection_placeholder: '请选择数据集',
-  editor_cell_data_node_collection_form_fieldFilterType_retainedField:
-    '保留字段',
+  editor_cell_data_node_collection_form_fieldFilterType_retainedField: '保留字段',
   editor_cell_data_node_collection_form_fieldFilterType_deleteField: '删除字段',
-  editor_cell_data_node_collection_form_fieldFilter_placeholderKeep:
-    ' 请选择要保留的字段',
-  editor_cell_data_node_collection_form_fieldFilter_placeholderDelete:
-    '  请选择要删除的字段',
+  editor_cell_data_node_collection_form_fieldFilter_placeholderKeep: ' 请选择要保留的字段',
+  editor_cell_data_node_collection_form_fieldFilter_placeholderDelete: '  请选择要删除的字段',
   editor_cell_data_node_collection_form_filter_fieldFilter: '智能模式',
   editor_cell_data_node_collection_form_filter_sqlFilter: 'SQL模式',
   editor_cell_data_node_collection_form_filter_mqlFilter: 'MQL模式',
@@ -1612,8 +1552,7 @@ export default {
   editor_cell_data_node_table_form_custom_sql_placeholder: '请输入自定义SQL',
   editor_cell_data_node_table_form_custom_sql_mplaceholder: '请输入自定义MQL',
   editor_cell_data_node_table_form_initial_offset_label: '自定义SQL增量条件',
-  editor_cell_data_node_table_form_initial_offset_placeholder:
-    '请输入自定义SQL增量条件',
+  editor_cell_data_node_table_form_initial_offset_placeholder: '请输入自定义SQL增量条件',
   editor_ui_sidebar_setting: '任务设置',
   dataForm_submit: '保存',
   relations_add: '新增',
@@ -1737,8 +1676,7 @@ export default {
   metadata_details_version_version: '版本',
   metadata_details_version_version_control: '版本管理',
   metadata_details_version_version_control_required: '版本管理不能为空',
-  metadata_details_version_lastVersion:
-    '此元数据已是最新版本，过往保存的历史版本记录将保存在下面列表中',
+  metadata_details_version_lastVersion: '此元数据已是最新版本，过往保存的历史版本记录将保存在下面列表中',
   metadata_details_version_versionNum: '版本号',
   metadata_details_version_versionComparison: '版本比对',
   metadata_details_version_compared: '对比',
@@ -1790,8 +1728,7 @@ export default {
   metadata_details_pipeline_pipeline: 'MongoDB Pipeline',
   metadata_details_pipeline_viewStatus: '视图状态',
   metadata_details_pipeline_FailedMessage: '失败详情',
-  metadata_details_pipeline_penpinSave:
-    '点击下方保存按钮仅保存到系统，点击更新按钮将应用到此数据所在的数据库',
+  metadata_details_pipeline_penpinSave: '点击下方保存按钮仅保存到系统，点击更新按钮将应用到此数据所在的数据库',
   metadata_details_pipeline_apply: '应用',
   metadata_details_pipeline_cnot_Empty: '不能为空',
   metadata_details_pipeline_view_tip: '操作将覆盖同名的视图，是否创建视图',
@@ -1808,8 +1745,7 @@ export default {
   metadata_metadataSearch_noMore: '无更多检索结果',
   metadata_metadataSearch_more: '点击加载更多',
   metadata_metadataSearch_placeholder: '请输入搜索关键字',
-  dialog_placeholderTable:
-    '仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许 system 开头',
+  dialog_placeholderTable: '仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许 system 开头',
   dialog_downAgent_ok: '好的',
   notification_stoppedByError: '出错停止',
   notification_CDCLag: 'CDC滞后超时',
@@ -1993,8 +1929,7 @@ export default {
   guide_task_type_custom_tips:
     '数据同步侧重于表级数据处理和传输，以满足用户需要实现多表（数据集）、多级数据之间的多表集成、数据拆分、关联映射、字段增减合并、内容过滤、实时数据同步聚合处理案例JS处理等功能，在不影响用户业务的情况下，满足用户对远程或本地数据容灾、跨实例数据同步、查询报表分发、实时性等多种业务场景的需求数据仓库管理员元素。 ',
   guide_btn_to_dashboard: '暂不编辑任务，先去购物',
-  app_signIn_registry_sucess_wait_approval:
-    '登录前等待管理员批准，5秒后跳转到登录页面',
+  app_signIn_registry_sucess_wait_approval: '登录前等待管理员批准，5秒后跳转到登录页面',
   daas_deletefile_emptyitem_zanwushuju: '暂无数据',
   daas_components_querycond_xuanzeriqishi: '选择日期时间',
   daas_src_main_qingqiuquanjupei: '请求全局配置(settings)失败: ',
@@ -2072,19 +2007,17 @@ export default {
   daas_data_server_drawer_geshicuowu: '格式错误',
   daas_notification_center_yonghucaozuo: '用户操作',
 
-  daas_data_server_drawer_validate:
-    '只能包含中文、字母、数字、下划线和美元符号,并且数字不能开头',
+  daas_data_server_drawer_validate: '只能包含中文、字母、数字、下划线和美元符号,并且数字不能开头',
   daas_data_server_drawer_aPI_path_Settings: '访问路径设置',
   daas_data_server_drawer_default_path: '默认访问路径',
   daas_data_server_drawer_custom_path: '自定义访问路径',
   daas_data_server_drawer_prefix: '前缀',
   daas_data_server_drawer_base_path: '基础路径',
   daas_data_server_drawer_path: '访问路径',
-  daas_data_server_drawer_confirm_tip:
-    '重新生成会导致原API访问路径发生改变，是否确认重新生成？',
+  daas_data_server_drawer_confirm_tip: '重新生成会导致原API访问路径发生改变，是否确认重新生成？',
 
   // 覆盖连接编辑、创建处的国际化文案
   packages_business_connection_form_source_and_target_tip: `此数据连接在 ${process.env.VUE_APP_PAGE_TITLE} 中能同时作为源和目标使用`,
   packages_business_connection_form_source_tip: `此数据连接在 ${process.env.VUE_APP_PAGE_TITLE} 中只能作为源使用，不能作用为目标`,
-  packages_business_connection_form_target_tip: `此数据连接在 ${process.env.VUE_APP_PAGE_TITLE} 中只能作为目标使用，不能作用为源`,
+  packages_business_connection_form_target_tip: `此数据连接在 ${process.env.VUE_APP_PAGE_TITLE} 中只能作为目标使用，不能作用为源`
 }

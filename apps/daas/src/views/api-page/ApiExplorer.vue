@@ -7,7 +7,7 @@
       :remoteMethod="getData"
       :classify="{
         authority: 'API_category_management',
-        types: ['api'],
+        types: ['api']
       }"
       @selection-change="handleSelectionChange"
       @sort-change="handleSortTable"
@@ -16,9 +16,7 @@
         <div class="search-bar">
           <div class="search-status pr-4">
             {{ $t('modules_api_server_status') }}:
-            <span class="status-text" :class="status">{{
-              $t('modules_status_' + status)
-            }}</span>
+            <span class="status-text" :class="status">{{ $t('modules_status_' + status) }}</span>
           </div>
           <SelectList
             v-if="apiServersList.length"
@@ -56,37 +54,20 @@
             size="mini"
             width="100%"
             :label="
-              $t('dataExplorer_datetype_without_timezone') +
-              '. ' +
-              $t('dataExplorer_mysql_datetype_without_timezone')
+              $t('dataExplorer_datetype_without_timezone') + '. ' + $t('dataExplorer_mysql_datetype_without_timezone')
             "
             class="timezone"
             @change="saveTimeZone"
           >
-            <ElOption
-              v-for="item in timezones"
-              :label="item.label"
-              :value="item.value"
-              :key="item.value"
-            ></ElOption>
+            <ElOption v-for="item in timezones" :label="item.label" :value="item.value" :key="item.value"></ElOption>
           </ElSelect>
-          <ElButton
-            v-readonlybtn="'API_data_explorer_export'"
-            class="btn"
-            size="mini"
-            @click="exportDialog = true"
-          >
+          <ElButton v-readonlybtn="'API_data_explorer_export'" class="btn" size="mini" @click="exportDialog = true">
             <span>{{ $t('button_export') }}</span>
           </ElButton>
           <ElButton class="btn" size="mini" @click="showFilterDialog = true">
             <span>{{ $t('dataExplorer_query') }}</span>
           </ElButton>
-          <ElButton
-            v-readonlybtn="'API_doc_&_test'"
-            class="btn"
-            size="mini"
-            @click="openDocument"
-          >
+          <ElButton v-readonlybtn="'API_doc_&_test'" class="btn" size="mini" @click="openDocument">
             <span>{{ $t('dataExplorer_document') }}</span>
           </ElButton>
           <ElButton
@@ -103,12 +84,7 @@
       </template>
 
       <!-- 列表项 -->
-      <el-table-column
-        v-for="item in tableHeaders"
-        :key="item.text"
-        v-show="item.show"
-        min-width="120"
-      >
+      <el-table-column v-for="item in tableHeaders" :key="item.text" v-show="item.show" min-width="120">
         <template v-slot:header>
           <span :title="item.text">{{ handleAliasName(item.text) }}</span>
         </template>
@@ -122,11 +98,7 @@
           >
             {{ scope.row[item.text] }}
           </div>
-          <div
-            v-else
-            class="edit-text"
-            @dblclick="editItem(scope.row, item.text)"
-          ></div>
+          <div v-else class="edit-text" @dblclick="editItem(scope.row, item.text)"></div>
           <template v-if="scope.row.istrue">
             <div v-if="scope.row.isshow[item.text]">
               <el-input
@@ -138,20 +110,10 @@
                 size="mini"
               />
               <div>
-                <ElButton
-                  @click="editOk(scope.row, item.text, item.type)"
-                  class="btn-text"
-                  type="text"
-                  size="small"
-                >
+                <ElButton @click="editOk(scope.row, item.text, item.type)" class="btn-text" type="text" size="small">
                   {{ $t('button_save') }}
                 </ElButton>
-                <ElButton
-                  @click="editCancel(scope.row, item.text)"
-                  class="btn-text"
-                  type="text"
-                  size="small"
-                >
+                <ElButton @click="editCancel(scope.row, item.text)" class="btn-text" type="text" size="small">
                   {{ $t('button_cancel') }}
                 </ElButton>
               </div>
@@ -160,18 +122,9 @@
         </template>
       </el-table-column>
 
-      <el-table-column
-        :label="$t('column_operation')"
-        width="220"
-        fixed="right"
-      >
+      <el-table-column :label="$t('column_operation')" width="220" fixed="right">
         <template v-slot="scope">
-          <ElButton
-            v-if="downloadFileUrl"
-            size="mini"
-            type="text"
-            @click="downloadFile(scope.row)"
-          >
+          <ElButton v-if="downloadFileUrl" size="mini" type="text" @click="downloadFile(scope.row)">
             {{ $t('button_download') }}
           </ElButton>
           <ElButton
@@ -191,25 +144,16 @@
             @click="remove(scope.row)"
             >{{ $t('button_delete') }}</ElButton
           >
-          <el-tooltip
-            class="item"
-            effect="dark"
-            :content="$t('api_server_download_API_Server_config')"
-            placement="top"
-          >
+          <el-tooltip class="item" effect="dark" :content="$t('api_server_download_API_Server_config')" placement="top">
             <ElButton
-              v-if="
-                scope.row['dk_new_filename'] &&
-                scope.row['dk_orginal_filename'] &&
-                scope.row['dk_filepath']
-              "
+              v-if="scope.row['dk_new_filename'] && scope.row['dk_orginal_filename'] && scope.row['dk_filepath']"
               size="mini"
               type="text"
               @click="
                 downloadFileByField({
                   'metadata.file_name': scope.row['dk_orginal_filename'],
                   'metadata.file_path': scope.row['dk_filepath'],
-                  'metadata.dk_new_filename': scope.row['dk_new_filename'],
+                  'metadata.dk_new_filename': scope.row['dk_new_filename']
                 })
               "
               >{{ $t('api_server_download') }}</ElButton
@@ -265,15 +209,9 @@
       </ul>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <ElButton @click="openCreateDialog = false" size="mini">{{
-            $t('dialog_button_cancel')
-          }}</ElButton>
-          <ElButton @click="formatJson()" size="mini">{{
-            $t('dataExplorer_format')
-          }}</ElButton>
-          <ElButton type="primary" @click="createSave()" size="mini">{{
-            $t('button_confirm')
-          }}</ElButton>
+          <ElButton @click="openCreateDialog = false" size="mini">{{ $t('dialog_button_cancel') }}</ElButton>
+          <ElButton @click="formatJson()" size="mini">{{ $t('dataExplorer_format') }}</ElButton>
+          <ElButton type="primary" @click="createSave()" size="mini">{{ $t('button_confirm') }}</ElButton>
         </span>
       </template>
     </el-dialog>
@@ -285,14 +223,7 @@ import i18n from '@/i18n'
 
 import dayjs from 'dayjs'
 
-import {
-  ApiClient,
-  settingsApi,
-  workerApi,
-  usersApi,
-  apiServerApi,
-  modulesApi,
-} from '@tap/api'
+import { ApiClient, settingsApi, workerApi, usersApi, apiServerApi, modulesApi } from '@tap/api'
 import { JsEditor, SelectList } from '@tap/component'
 import { TablePage } from '@tap/business'
 import Time from '@tap/shared/src/time'
@@ -306,13 +237,13 @@ export default {
     TablePage,
     BrowseQuery,
     SelectList,
-    JsEditor,
+    JsEditor
   },
   data() {
     return {
       searchParams: {
         api_server_process_id: '',
-        collection: '',
+        collection: ''
       },
       filterItems: [],
       status: 'stop',
@@ -351,12 +282,11 @@ export default {
       order: '_id DESC',
       createDialogVisible: false,
       classifyTag: [], //选中分类tag
-      editDocId: '',
+      editDocId: ''
     }
   },
   created() {
-    let defaultCollection =
-      this.$route.query.collection || this.$route.query['id']
+    let defaultCollection = this.$route.query.collection || this.$route.query['id']
     this.apiClient = new ApiClient(defaultCollection)
     this.initTimezones() // 获取时区下拉值
     this.getApiServer() // 获取API Server下拉值
@@ -374,18 +304,18 @@ export default {
         if (val) {
           this.collectionsList = []
           if (this.apiServersList.length) {
-            let temp = this.apiServersList.filter((v) => v.processId === val)
+            let temp = this.apiServersList.filter(v => v.processId === val)
             this.apiClient.setApiServer(temp[0])
           }
           this.getCollections(this.classifyTag)
         }
       },
-      deep: true,
+      deep: true
     },
     'searchParams.collection': {
       handler(val) {
         if (val) {
-          this.collectionsList.forEach((item) => {
+          this.collectionsList.forEach(item => {
             if (item.value === val) {
               this.apiType = item.type
             }
@@ -393,7 +323,7 @@ export default {
           this.getTableHeader()
         }
       },
-      deep: true,
+      deep: true
     },
     tableHeader: {
       handler(val) {
@@ -401,36 +331,32 @@ export default {
           this.tableHeader = val
         }
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
   computed: {
     tableHeaders() {
-      return this.tableHeader.filter(
-        (v) => v.show && v.value !== '__operation' && v.value !== '__tapd8'
-      )
+      return this.tableHeader.filter(v => v.show && v.value !== '__operation' && v.value !== '__tapd8')
     },
     table() {
       return this.$refs.table
     },
     queryFields() {
-      return this.tableHeader.filter((v) => {
+      return this.tableHeader.filter(v => {
         v.text = this.aliasNameObj[v.value] || v.value
-        return (
-          v.show && ['__operation', '_id', '__tapd8'].indexOf(v.value) === -1
-        )
+        return v.show && ['__operation', '_id', '__tapd8'].indexOf(v.value) === -1
       })
     },
     timezoneLabel() {
       let _this = this
       let label = ''
-      this.timezones.forEach((item) => {
+      this.timezones.forEach(item => {
         if (item.value == _this.without_timezone) {
           label = item.label
         }
       })
       return label
-    },
+    }
   },
   methods: {
     // 双击编辑字段
@@ -453,7 +379,7 @@ export default {
         item.isspancen[key] = false
         this.$nextTick(() => {
           if (this.$refs.editInput && this.$refs.editInput.length) {
-            this.$refs.editInput.forEach((v) => {
+            this.$refs.editInput.forEach(v => {
               v.focus()
             })
           } else {
@@ -464,16 +390,15 @@ export default {
     },
     // 获取API Server下拉值
     getApiServer() {
-      apiServerApi.get({}).then((data) => {
+      apiServerApi.get({}).then(data => {
         this.apiServersList = data?.items || []
         if (this.apiServersList.length) {
-          this.searchParams.api_server_process_id =
-            this.apiServersList[0].processId
+          this.searchParams.api_server_process_id = this.apiServersList[0].processId
           this.apiClient.setApiServer(this.apiServersList[0])
-          this.serverData = this.apiServersList.map((item) => {
+          this.serverData = this.apiServersList.map(item => {
             return {
               label: item.clientName,
-              value: item.processId,
+              value: item.processId
             }
           })
         }
@@ -482,10 +407,10 @@ export default {
     // 获取api下拉数据
     async loadOpenAPI(tag) {
       let _this = this
-      await this.apiClient.loadOpenAPI().then((res) => {
+      await this.apiClient.loadOpenAPI().then(res => {
         if (res) {
           this.collectionsList = []
-          Object.keys(res.data).forEach((item) => {
+          Object.keys(res.data).forEach(item => {
             let operations = res.data[item].api,
               apiId = res.data[item].apiId,
               _apiName = res.data[item].apiName || '',
@@ -502,14 +427,11 @@ export default {
                 method: operations['findPage_post'].method,
                 downloadFileUrl: downloadFileUrl,
                 apiId: apiId,
-                type: 'preset',
+                type: 'preset'
               })
             }
-            Object.keys(operations).forEach((operationName) => {
-              if (
-                operationName !== 'findPage_post' &&
-                operationName.startsWith('findPage_')
-              ) {
+            Object.keys(operations).forEach(operationName => {
+              if (operationName !== 'findPage_post' && operationName.startsWith('findPage_')) {
                 let url = operations[operationName].url
                 _this.collectionsList.push({
                   collection: item,
@@ -519,7 +441,7 @@ export default {
                   downloadFileUrl: downloadFileUrl,
                   operationName: operationName,
                   apiId: apiId,
-                  type: 'custom',
+                  type: 'custom'
                 })
               }
             })
@@ -529,18 +451,15 @@ export default {
             let collectionsArr = []
             // 去重
             let obj = {}
-            _this.collectionsList = _this.collectionsList.reduce(
-              (cur, next) => {
-                obj[next.text] ? '' : (obj[next.text] = true && cur.push(next))
-                return cur
-              },
-              []
-            )
+            _this.collectionsList = _this.collectionsList.reduce((cur, next) => {
+              obj[next.text] ? '' : (obj[next.text] = true && cur.push(next))
+              return cur
+            }, [])
 
-            _this.collectionsList.forEach((item) => {
+            _this.collectionsList.forEach(item => {
               // 数据类目
               if (tag && tag.length) {
-                tag.forEach((tagId) => {
+                tag.forEach(tagId => {
                   if (tagId.id === item.apiId) {
                     item.text = tagId.name || item.text
                     collectionsArr.push(item)
@@ -549,14 +468,12 @@ export default {
               }
             })
 
-            _this.collectionsList = collectionsArr?.length
-              ? collectionsArr
-              : _this.collectionsList
+            _this.collectionsList = collectionsArr?.length ? collectionsArr : _this.collectionsList
             // 基础路径下拉获取值
-            _this.pathList = _this.collectionsList.map((item) => {
+            _this.pathList = _this.collectionsList.map(item => {
               return {
                 label: item.text,
-                value: item.value,
+                value: item.value
               }
             })
           }
@@ -567,9 +484,7 @@ export default {
             // let formData = window.getFormLocal('apiDataExplorer')
             if (
               this.searchParams.collection &&
-              _this.collectionsList.find(
-                (v) => v.value === this.searchParams.collection
-              )
+              _this.collectionsList.find(v => v.value === this.searchParams.collection)
             ) {
               // _this.searchParams.collection = formData.collection
             } else {
@@ -580,20 +495,15 @@ export default {
           }
 
           // 页面传参改变默认api
-          let defaultCollection =
-            _this.$route.query.collection || _this.$route.query['id']
+          let defaultCollection = _this.$route.query.collection || _this.$route.query['id']
           if (defaultCollection) {
-            let obj = this.collectionsList.find(
-              (v) => v.collection === defaultCollection && v.method === 'post'
-            )
+            let obj = this.collectionsList.find(v => v.collection === defaultCollection && v.method === 'post')
             if (obj) {
               this.searchParams.collection = obj.value
             }
           }
 
-          let api = _this.collectionsList.filter(
-            (v) => v.value === _this.searchParams.collection
-          )
+          let api = _this.collectionsList.filter(v => v.value === _this.searchParams.collection)
           if (api[0]) {
             _this.apiClient.setCollection(api[0])
             _this.apiId = api[0].apiId
@@ -629,32 +539,25 @@ export default {
 
       this.tableHeader = []
       // 获取当前选中表
-      let selectCollections = _this.collectionsList.filter(
-        (v) => v.value === _this.searchParams.collection
-      )
-      let selectCollection = selectCollections.length
-        ? selectCollections[0]
-        : {}
+      let selectCollections = _this.collectionsList.filter(v => v.value === _this.searchParams.collection)
+      let selectCollection = selectCollections.length ? selectCollections[0] : {}
 
       let apiId = selectCollection.apiId || ''
       _this.downloadFileUrl = selectCollection.downloadFileUrl || ''
       _this.apiClient.setCollection(selectCollection)
       // 根据当前表获取表api浏览表格头
 
-      let headers = await _this.apiClient.getHeaders(
-        selectCollection.collection,
-        selectCollection.operationName
-      )
+      let headers = await _this.apiClient.getHeaders(selectCollection.collection, selectCollection.operationName)
       if (headers?.length)
-        headers.forEach((col) => {
+        headers.forEach(col => {
           if (col) _this.tableHeader.push(col)
         })
       // 获取当前用户信息
-      usersApi.get().then((data) => {
+      usersApi.get().then(data => {
         if (data) {
           let arrquery = data.arrquery
           if (arrquery?.length) {
-            _this.tableHeader = arrquery.map((item) => {
+            _this.tableHeader = arrquery.map(item => {
               if (
                 item.apiServer === _this.getApiId('') &&
                 item.processId === _this.searchParams.api_server_process_id
@@ -671,28 +574,27 @@ export default {
       let filter = {
         field: {
           _id: true,
-          fields: true,
+          fields: true
         },
         where: {
-          _id: apiId,
-        },
+          _id: apiId
+        }
       }
-      modulesApi.get({ filter: JSON.stringify(filter) }).then((data) => {
+      modulesApi.get({ filter: JSON.stringify(filter) }).then(data => {
         let items = data?.items || []
         if (items.length) {
           let field_alias = {}
-          items[0].fields.forEach((v) => {
+          items[0].fields.forEach(v => {
             field_alias[v.field_name] = v.field_alias || ''
           })
-          _this.enableTag =
-            _this.enableEdit && field_alias.hasOwnProperty('__tapd8')
+          _this.enableTag = _this.enableEdit && field_alias.hasOwnProperty('__tapd8')
         }
         _this.table.fetch()
       })
     },
     // 获取当前apiId
     getApiId(apiid) {
-      this.collectionsList.forEach((item) => {
+      this.collectionsList.forEach(item => {
         if (item.value == this.searchParams.collection) {
           apiid = item.apiId
         }
@@ -707,9 +609,9 @@ export default {
       let parmas = {
         apiServer: _this.getApiId(apiId), //API服务器ID
         processId: _this.searchParams.api_server_process_id, //API ID
-        condition: JSON.stringify(_this.tableHeader),
+        condition: JSON.stringify(_this.tableHeader)
       }
-      _this.tableHeader.forEach((item) => {
+      _this.tableHeader.forEach(item => {
         if (!data.includes(item.value) && item.value !== '__operation') {
           item.show = false
         } else {
@@ -718,7 +620,7 @@ export default {
       })
       this.condition = condition
       this.table.fetch()
-      usersApi.get().then((data) => {
+      usersApi.get().then(data => {
         if (data) {
           let arrquery = data.arrquery
           let isproid = 0
@@ -726,7 +628,7 @@ export default {
             usersApi.patch({ arrquery: [parmas] })
           } else {
             let userData = { arrquery: arrquery }
-            arrquery.forEach((item) => {
+            arrquery.forEach(item => {
               if (item.processId === _this.searchParams.api_server_process_id) {
                 if (item.apiServer === _this.getApiId(apiId)) {
                   // parmas.parmas[index].condition = JSON.stringify(_this)
@@ -764,7 +666,7 @@ export default {
       let where = {}
       if (tags && tags.length) {
         where['listtags.id'] = {
-          in: tags,
+          in: tags
         }
       }
       let params = {
@@ -775,12 +677,12 @@ export default {
             id: true,
             prefix: true,
             name: true,
-            apiType: true,
+            apiType: true
           },
-          where,
-        },
+          where
+        }
       }
-      modulesApi.get(params).then((data) => {
+      modulesApi.get(params).then(data => {
         if (data) {
           this.loadOpenAPI(data)
         }
@@ -800,21 +702,9 @@ export default {
       let { pkValue } = item.isPrimaryKey
       let id = pkValue || this.editDocId
       _this.editDocId = item['_id']
-      if (
-        [
-          'float',
-          'double',
-          'short',
-          'bigDecimal',
-          'integer',
-          'long',
-          'number',
-        ].includes(type)
-      ) {
+      if (['float', 'double', 'short', 'bigDecimal', 'integer', 'long', 'number'].includes(type)) {
         if (!/^\d+$/.test(_this.editValue)) {
-          _this.$message.error(
-            _this.$t('message_save_ok') + '-' + _this.$t('message_save_fail')
-          )
+          _this.$message.error(_this.$t('message_save_ok') + '-' + _this.$t('message_save_fail'))
         } else {
           newValue = Number(_this.editValue)
         }
@@ -822,9 +712,7 @@ export default {
         try {
           newValue = JSON.parse(_this.editValue)
         } catch (e) {
-          _this.$message.error(
-            _this.$t('message_save_ok') + '-' + _this.$t('message_save_fail')
-          )
+          _this.$message.error(_this.$t('message_save_ok') + '-' + _this.$t('message_save_fail'))
           return false
         }
       } else if (/^\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d$/.test(item[text])) {
@@ -840,7 +728,7 @@ export default {
       }
       _this.jsonDocHint = []
       let result = await this.apiClient.updateById(id, {
-        [value]: newValue,
+        [value]: newValue
       })
       if (result.success) {
         // console.log("保存成功进来了....")
@@ -863,7 +751,7 @@ export default {
     openCreate() {
       function clearContent(obj) {
         if (obj && typeof obj === 'object') {
-          Object.keys(obj).forEach((key) => {
+          Object.keys(obj).forEach(key => {
             let type = typeof obj[key]
             if (key === '_id') {
               delete obj[key]
@@ -886,7 +774,7 @@ export default {
         example = JSON.parse(JSON.stringify(this.tableData[0]))
         clearContent(example)
       } else {
-        this.tableHeader.forEach((v) => {
+        this.tableHeader.forEach(v => {
           if (v.value !== '__operation')
             example[v.value] =
               v.type === 'string'
@@ -934,7 +822,7 @@ export default {
       if (doc) {
         doc = JSON.parse(doc)
 
-        await this.apiClient.create(doc).then((res) => {
+        await this.apiClient.create(doc).then(res => {
           if (res.success) {
             this.showEditDialog = false
             this.jsonDoc = null
@@ -945,7 +833,7 @@ export default {
               let details = res.response.data.error.details
               if (details?.length) {
                 this.$message.error(this.$t('message_save_fail'))
-                details.forEach((err) => {
+                details.forEach(err => {
                   this.jsonDocHint.push('Field ' + err.path + ' ' + err.message)
                 })
               }
@@ -972,9 +860,9 @@ export default {
         tapd8.tag = _this.tag
         await _this.apiClient
           .updateById(item._id || item.id, {
-            __tapd8: tapd8,
+            __tapd8: tapd8
           })
-          .then((res) => {
+          .then(res => {
             if (res) {
               item.__tapd8 = tapd8
               _this.saveTag = function () {}
@@ -989,13 +877,11 @@ export default {
     // 移除
     async remove(item) {
       const h = this.$createElement
-      let message = h('p', [
-        this.$t('message_deleteOrNot') + ' ' + item.clientName,
-      ])
+      let message = h('p', [this.$t('message_deleteOrNot') + ' ' + item.clientName])
       this.$confirm(message, this.$t('message_prompt'), {
-        type: 'warning',
+        type: 'warning'
       }).then(
-        await ((resFlag) => {
+        await (resFlag => {
           if (!resFlag) {
             return
           }
@@ -1016,15 +902,11 @@ export default {
     // api文档
     async openDocument() {
       if (this.apiServersList?.length) {
-        let tmp = this.apiServersList.filter(
-          (v) => v.processId === this.searchParams.api_server_process_id
-        )
+        let tmp = this.apiServersList.filter(v => v.processId === this.searchParams.api_server_process_id)
         if (tmp && tmp.length > 0) {
           let openApi = tmp[0].clientURI + '/openapi.json'
           let token = await this.apiClient.getAPIServerToken()
-          let cols = this.collectionsList.filter(
-            (v) => v.value === this.searchParams.collection
-          )
+          let cols = this.collectionsList.filter(v => v.value === this.searchParams.collection)
           let api = cols && cols.length === 1 ? cols[0].text : ''
 
           this.$router.push({
@@ -1032,8 +914,8 @@ export default {
             query: {
               id: api,
               openApi: openApi,
-              token: token,
-            },
+              token: token
+            }
           })
         }
       }
@@ -1043,9 +925,9 @@ export default {
     downloadFileByField(item) {
       let parms = {
         'filter[where][id][eq]': '53',
-        'filter[limit]': 1,
+        'filter[limit]': 1
       }
-      settingsApi.get(parms).then((data) => {
+      settingsApi.get(parms).then(data => {
         if (data) {
           let baseUrl = data[0].value
           let url = encodeURI(
@@ -1065,8 +947,8 @@ export default {
         worker_type: 'api-server',
         ping_time: {
           gte: '$serverDate',
-          gte_offset: 30000,
-        },
+          gte_offset: 30000
+        }
       }
       if (_this.searchParams.api_server_process_id) {
         where.process_id = _this.searchParams.api_server_process_id
@@ -1075,15 +957,15 @@ export default {
         order: 'ping_time DESC',
         limit: 1,
         fields: {
-          worker_status: true,
+          worker_status: true
         },
-        where,
+        where
       }
       workerApi
         .get({
-          filter: JSON.stringify(filter),
+          filter: JSON.stringify(filter)
         })
-        .then((data) => {
+        .then(data => {
           let items = data?.items || []
           if (items.length) {
             let record = items[0] || {}
@@ -1105,7 +987,7 @@ export default {
       let fields = []
       let { current, size } = page
       let where = {}
-      let formatTime = (time) => {
+      let formatTime = time => {
         return Math.floor(time / 10) / 100
       }
       this.classifyTag = tags
@@ -1121,17 +1003,17 @@ export default {
         limit: size,
         skip: (current - 1) * size,
         fields: {}, // 查询所有字段
-        where,
+        where
       }
       time = Time.now()
       _this.queryTime = 0
       _this.renderTime = 0
       // 获取字段
       if (_this.apiId) {
-        await modulesApi.getdata({ mondeid: _this.apiId }).then((data) => {
+        await modulesApi.getdata({ mondeid: _this.apiId }).then(data => {
           if (data.fields?.length) {
             let obj = {}
-            data.fields.forEach((v) => {
+            data.fields.forEach(v => {
               if (v.alias_name) {
                 obj[v.field_name] = v.alias_name
               }
@@ -1152,23 +1034,21 @@ export default {
               '[object String]': 'string',
               '[object Boolean]': 'boolean',
               '[object Number]': 'number',
-              '[object Object]': 'object',
+              '[object Object]': 'object'
             }
             let oldHeaders = JSON.parse(JSON.stringify(_this.tableHeader))
             let headerMap = {}
             // 保存之前的headers
-            oldHeaders.forEach((v) => {
+            oldHeaders.forEach(v => {
               headerMap[v.value] = v
             })
             let findData = data?.data || []
             if (findData?.length) {
-              findData.forEach((record) => {
-                Object.keys(record).forEach((v) => {
+              findData.forEach(record => {
+                Object.keys(record).forEach(v => {
                   let isValidDate =
                     typeof record[v] === 'string' &&
-                    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3}Z)?(\+\d{2}:\d{2})?$/.test(
-                      record[v]
-                    )
+                    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3}Z)?(\+\d{2}:\d{2})?$/.test(record[v])
                   if (!headerMap[v]) {
                     let value = record[v]
                     let h = {
@@ -1176,9 +1056,9 @@ export default {
                       text: _this.aliasNameObj[v] || v,
                       type: typeMap[Object.prototype.toString.call(value)],
                       value: v,
-                      pkName: record[_this.pkName],
+                      pkName: record[_this.pkName]
                     }
-                    let header = oldHeaders.find((it) => it.value === v)
+                    let header = oldHeaders.find(it => it.value === v)
                     if (header) {
                       h.show = header.show
                     } else if (isValidDate) {
@@ -1187,15 +1067,13 @@ export default {
                     headerMap[v] = h
                   }
                   if (isValidDate) {
-                    let time = dayjs(new Date(record[v])).format(
-                      'YYYY-MM-DD HH:mm:ss'
-                    )
+                    let time = dayjs(new Date(record[v])).format('YYYY-MM-DD HH:mm:ss')
                     record[v] = _this.timeZoneConversion(time)
                   }
                 })
                 let isPrimaryKey = {
                   pkName: _this.pkName,
-                  pkValue: record[_this.pkName],
+                  pkValue: record[_this.pkName]
                 }
                 record['isshow'] = {}
                 record['isspancen'] = {}
@@ -1207,10 +1085,8 @@ export default {
                 if (fields.length) {
                   Object.keys(fields).forEach((v, index) => {
                     if (fields[index].dictionary) {
-                      fields[index].dictionary.forEach((j) => {
-                        if (
-                          j.key == record['' + fields[index].field_name + '']
-                        ) {
+                      fields[index].dictionary.forEach(j => {
+                        if (j.key == record['' + fields[index].field_name + '']) {
                           record['' + fields[index].field_name + ''] = j.value
                         }
                       })
@@ -1226,7 +1102,7 @@ export default {
             _this.queryTime = formatTime(Time.now() - time)
             return {
               total: data.total.count,
-              data: this.tableData,
+              data: this.tableData
             }
           })
           // .catch(e => {
@@ -1266,13 +1142,11 @@ export default {
         if (this.$route.query.sortBy) {
           this.pagination.sortBy = this.$route.query.sortBy
         }
-        this.$route.query.descending =
-          this.$route.query.descending === true ||
-          this.$route.query.descending === 'true'
+        this.$route.query.descending = this.$route.query.descending === true || this.$route.query.descending === 'true'
         if (this.$route.query.fields) {
           let fields = JSON.parse(this.$route.query.fields)
           if (typeof fields === 'object') {
-            this.tableHeaders.forEach((h) => {
+            this.tableHeaders.forEach(h => {
               if (fields.hasOwnProperty(h.value)) {
                 h.show = fields[h.value]
               }
@@ -1285,7 +1159,7 @@ export default {
     getFieldFilter() {
       let showFields = {}
       let hideFields = {}
-      this.tableHeaders.forEach((h) => {
+      this.tableHeaders.forEach(h => {
         if (h.value !== '__operation') {
           if (h.show) {
             showFields[h.value] = true
@@ -1304,17 +1178,14 @@ export default {
     // 导出
     async exportData(type) {
       let params = {
-        type: type || 'json',
+        type: type || 'json'
       }
       // console.log(this.condition, Object.keys(this.condition))
       if (this.condition && Object.keys(this.condition).length) {
         // 有查询条件
-        let queryString = this.$refs.queryBuild.serializationToRestFilter(
-          'filter',
-          { where: this.condition }
-        )
+        let queryString = this.$refs.queryBuild.serializationToRestFilter('filter', { where: this.condition })
         if (queryString) {
-          queryString.split('&').forEach((v) => {
+          queryString.split('&').forEach(v => {
             let keyValue = v.split('=')
             if (keyValue.length === 2) {
               params[keyValue[0]] = keyValue[1]
@@ -1324,7 +1195,7 @@ export default {
       }
       let fieldFilter = this.getFieldFilter()
       if (fieldFilter) {
-        Object.keys(fieldFilter).forEach((field) => {
+        Object.keys(fieldFilter).forEach(field => {
           params[`filter[fields][${field}]`] = fieldFilter[field]
         })
       }
@@ -1334,15 +1205,13 @@ export default {
     },
     // 保存时区
     saveTimeZone() {
-      this.save_timezone = this.without_timezone
-        ? parseInt(this.without_timezone)
-        : 0
+      this.save_timezone = this.without_timezone ? parseInt(this.without_timezone) : 0
 
       let where = {
-        id: '84',
+        id: '84'
       }
       let parmas = {
-        value: String(this.save_timezone),
+        value: String(this.save_timezone)
       }
 
       settingsApi.update(where, parmas).then(() => {
@@ -1358,9 +1227,7 @@ export default {
     },
     // 初始化时区下拉
     initTimezones() {
-      let timezones = [
-        { label: i18n.t('dataFlow_SyncInfo_connTZType'), value: '' },
-      ]
+      let timezones = [{ label: i18n.t('dataFlow_SyncInfo_connTZType'), value: '' }]
 
       for (let i = -11; i < 15; i++) {
         let timezone = ''
@@ -1388,10 +1255,10 @@ export default {
     getHandleTimeZone() {
       let filter = {
         where: {
-          id: '84',
-        },
+          id: '84'
+        }
       }
-      settingsApi.get({ filter: JSON.stringify(filter) }).then((data) => {
+      settingsApi.get({ filter: JSON.stringify(filter) }).then(data => {
         if (data) {
           this.save_timezone = data[0].value
 
@@ -1431,17 +1298,15 @@ export default {
 
     // 表格排序
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'clientName'} ${
-        order === 'ascending' ? 'ASC' : 'DESC'
-      }`
+      this.order = `${order ? prop : 'clientName'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
-    },
+    }
   },
   beforeUnmount() {
     if (this.intervalId) {
       clearTimeout(this.intervalId)
     }
-  },
+  }
 }
 </script>
 

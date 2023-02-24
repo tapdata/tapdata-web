@@ -18,7 +18,7 @@ export const FieldRename = connect(
         return {
           databaseType: form.values.databaseType,
           operations: form.values.operations,
-          form,
+          form
         }
       },
 
@@ -34,8 +34,8 @@ export const FieldRename = connect(
             id: '',
             op: 'RENAME',
             field: '',
-            operand: '',
-          },
+            operand: ''
+          }
         }
       },
       watch: {
@@ -44,14 +44,14 @@ export const FieldRename = connect(
           handler(v) {
             $emit(this, 'change', v)
             console.log('operations', v) // eslint-disable-line
-          },
-        },
+          }
+        }
       },
       render() {
         // eslint-disable-next-line no-console
         console.log('🚗 FieldProcessor', this.loading, this.options)
         let fields = this.options || []
-        fields = fields.filter((item) => !item.is_deleted)
+        fields = fields.filter(item => !item.is_deleted)
         fields = convertSchemaToTreeData(fields) || [] //将模型转换成tree
         fields = this.checkOps(fields) || []
         this.fields = fields || []
@@ -63,10 +63,7 @@ export const FieldRename = connect(
         // eslint-disable-next-line
         console.log('FieldProcess.mergeOutputSchema', fields)
         return (
-          <div
-            class="field-processors-tree-warp bg-body pt-2 pb-5"
-            v-loading={this.loading}
-          >
+          <div class="field-processors-tree-warp bg-body pt-2 pb-5" v-loading={this.loading}>
             <div class="field-processor-operation flex">
               <span class="flex-1 text inline-block ml-6">
                 {i18n.t('packages_form_field_rename_index_yuanziduanming')}
@@ -76,12 +73,7 @@ export const FieldRename = connect(
               </span>
               <span class="field-ops  inline-block mr-4">
                 <VIcon
-                  class={[
-                    this.disabled || this.transformLoading
-                      ? 'disable__btn'
-                      : 'clickable',
-                    'ml-5',
-                  ]}
+                  class={[this.disabled || this.transformLoading ? 'disable__btn' : 'clickable', 'ml-5']}
                   size="12"
                   disabled={this.disabled || this.transformLoading}
                   onClick={() => this.handleAllToUpperCase()}
@@ -89,12 +81,7 @@ export const FieldRename = connect(
                   toUpperCase
                 </VIcon>
                 <VIcon
-                  class={[
-                    this.disabled || this.transformLoading
-                      ? 'disable__btn'
-                      : 'clickable',
-                    'ml-5',
-                  ]}
+                  class={[this.disabled || this.transformLoading ? 'disable__btn' : 'clickable', 'ml-5']}
                   size="12"
                   disabled={this.disabled || this.transformLoading}
                   onClick={() => this.handleAllToLowerCase()}
@@ -102,12 +89,7 @@ export const FieldRename = connect(
                   toLowerCase
                 </VIcon>
                 <VIcon
-                  class={[
-                    this.disabled || this.transformLoading
-                      ? 'disable__btn'
-                      : 'clickable',
-                    'ml-5',
-                  ]}
+                  class={[this.disabled || this.transformLoading ? 'disable__btn' : 'clickable', 'ml-5']}
                   size="12"
                   disabled={this.disabled || this.transformLoading}
                   onClick={() => this.handleAllReset()}
@@ -141,23 +123,13 @@ export const FieldRename = connect(
                           ''
                         )}
                       </span>
-                      <span
-                        class={[
-                          'tree-field-input-wrap',
-                          'item',
-                          'inline-block',
-                          'e-label',
-                          'ellipsis',
-                        ]}
-                      >
+                      <span class={['tree-field-input-wrap', 'item', 'inline-block', 'e-label', 'ellipsis']}>
                         {data.level === 1 ? (
                           <div
                             staticClass="el-input el-input--small tree-field-input text__inner"
                             class={{
-                              'tree-field-input-primary':
-                                data.field_name !== data.original_field_name,
-                              'is-disabled':
-                                this.disabled || this.transformLoading,
+                              'tree-field-input-primary': data.field_name !== data.original_field_name,
+                              'is-disabled': this.disabled || this.transformLoading
                             }}
                           >
                             <input
@@ -166,7 +138,7 @@ export const FieldRename = connect(
                               autocomplete="off"
                               class="el-input__inner"
                               value={data.field_name}
-                              onChange={(event) => {
+                              onChange={event => {
                                 const val = event.target.value
                                 if (val) {
                                   data.field_name = val
@@ -205,8 +177,7 @@ export const FieldRename = connect(
                           type="text"
                           class="ml-5"
                           disabled={
-                            (this.fieldsNameTransforms === '' &&
-                              !this.isRename(data.id)) ||
+                            (this.fieldsNameTransforms === '' && !this.isRename(data.id)) ||
                             this.isReset(data.id) ||
                             this.disabled ||
                             this.transformLoading
@@ -217,7 +188,7 @@ export const FieldRename = connect(
                         </ElButton>
                       </span>
                     </span>
-                  ),
+                  )
                 }}
               />
             </div>
@@ -226,21 +197,15 @@ export const FieldRename = connect(
       },
       methods: {
         isRename(id) {
-          let ops = this.operations.filter(
-            (v) => v.id === id && v.op === 'RENAME'
-          )
+          let ops = this.operations.filter(v => v.id === id && v.op === 'RENAME')
           return ops && ops.length > 0
         },
         isReset(id) {
-          let ops = this.operations.filter(
-            (v) => v.id === id && v.op === 'RENAME' && v.reset
-          )
+          let ops = this.operations.filter(v => v.id === id && v.op === 'RENAME' && v.reset)
           return ops && ops.length > 0
         },
         firstReset(id) {
-          let ops = this.operations.filter(
-            (v) => v.id === id && v.op === 'RENAME' && v.firstReset
-          )
+          let ops = this.operations.filter(v => v.id === id && v.op === 'RENAME' && v.firstReset)
           return ops && ops.length > 0
         },
         checkOps(fields) {
@@ -249,7 +214,7 @@ export const FieldRename = connect(
             for (let i = 0; i < this.operations.length; i++) {
               let item = this.operations[i]
               if (!item) return fields
-              let targetIndex = fields.findIndex((n) => n.id === item.id)
+              let targetIndex = fields.findIndex(n => n.id === item.id)
               if (targetIndex === -1) {
                 continue
               }
@@ -261,10 +226,9 @@ export const FieldRename = connect(
                 fields[targetIndex].field_name = newNameStr
 
                 // change children field name
-                fields.forEach((field) => {
+                fields.forEach(field => {
                   if (field?.field_name?.startsWith(name + '.')) {
-                    field.field_name =
-                      newNameStr + field.field_name.substring(name.length)
+                    field.field_name = newNameStr + field.field_name.substring(name.length)
                   }
                 })
               }
@@ -291,37 +255,28 @@ export const FieldRename = connect(
             nativeData,
             this.operations
           )
-          let ops = this.operations.filter(
-            (v) => v.id === data.id && v.op === 'RENAME'
-          )
+          let ops = this.operations.filter(v => v.id === data.id && v.op === 'RENAME')
           let op
           if (ops.length === 0) {
-            op = Object.assign(
-              JSON.parse(JSON.stringify(this.RENAME_OPS_TPL)),
-              {
-                id: data.id,
-                field: data.schema_field_name || data.field_name,
-                operand: first
-                  ? nativeData.original_field_name
-                  : data.field_name,
-                table_name: data.table_name,
-                type: data.type,
-                primary_key_position: data.primary_key_position,
-                color: data.color,
-                label: data.field_name,
-                field_name: data.field_name,
-                reset: this.fieldsNameTransforms !== '',
-                firstReset: first || false,
-              }
-            )
+            op = Object.assign(JSON.parse(JSON.stringify(this.RENAME_OPS_TPL)), {
+              id: data.id,
+              field: data.schema_field_name || data.field_name,
+              operand: first ? nativeData.original_field_name : data.field_name,
+              table_name: data.table_name,
+              type: data.type,
+              primary_key_position: data.primary_key_position,
+              color: data.color,
+              label: data.field_name,
+              field_name: data.field_name,
+              reset: this.fieldsNameTransforms !== '',
+              firstReset: first || false
+            })
             this.operations.push(op)
           } else {
             op = ops[0]
             if (data.field_name === nativeData.original_field_name) {
               //再次改名跟原来名字一样 删除当前operation 记录
-              let index = this.operations.findIndex(
-                (v) => v.id === data.id && v.op === 'RENAME'
-              )
+              let index = this.operations.findIndex(v => v.id === data.id && v.op === 'RENAME')
               this.operations.splice(index, 1)
             } else {
               op.operand = data.field_name
@@ -337,13 +292,9 @@ export const FieldRename = connect(
           // 改名前查找同级中是否重名，若有则return且还原改动并提示
           let exist = false
           if (node && node.parent && node.parent.childNodes) {
-            let parentNode = node.parent.childNodes.filter(
-              (v) => data.field_name === v.data.field_name
-            )
+            let parentNode = node.parent.childNodes.filter(v => data.field_name === v.data.field_name)
             if (parentNode && parentNode.length === 2) {
-              this.$message.error(
-                data.field_name + i18n.t('packages_form_message_exists_name')
-              )
+              this.$message.error(data.field_name + i18n.t('packages_form_message_exists_name'))
               exist = true
             }
           }
@@ -392,8 +343,7 @@ export const FieldRename = connect(
                   if (existsName) {
                     return
                   }
-                  if (nativeData)
-                    node.data.field_name = nativeData.original_field_name
+                  if (nativeData) node.data.field_name = nativeData.original_field_name
                   self.operations.splice(i, 1)
                   i--
                   continue
@@ -408,8 +358,7 @@ export const FieldRename = connect(
           }
         },
         getParentFieldName(node) {
-          let fieldName =
-            node.data && node.data.field_name ? node.data.field_name : ''
+          let fieldName = node.data && node.data.field_name ? node.data.field_name : ''
           if (node.level > 1 && node.parent && node.parent.data) {
             let parentFieldName = this.getParentFieldName(node.parent)
             if (parentFieldName) fieldName = parentFieldName + '.' + fieldName
@@ -441,8 +390,8 @@ export const FieldRename = connect(
               this.$refs.tree.setCheckedKeys([])
             })
           }
-        },
-      },
+        }
+      }
     })
   ),
   mapProps({ dataSource: 'options', loading: true })

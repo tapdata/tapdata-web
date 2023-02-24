@@ -10,5 +10,5 @@ export const PCSimulator = defineComponent({
         {slots.default?.()}
       </div>
     )
-  },
+  }
 })

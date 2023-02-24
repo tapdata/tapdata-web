@@ -4,9 +4,9 @@ export const Radio = {
     autoFocus: {
       type: 'boolean',
       'x-decorator': 'FormItem',
-      'x-component': 'Switch',
-    },
-  },
+      'x-component': 'Switch'
+    }
+  }
 }
 
 Radio.Group = {
@@ -19,8 +19,8 @@ Radio.Group = {
       'x-component': 'Radio.Group',
       'x-component-props': {
         defaultValue: 'default',
-        optionType: 'button',
-      },
-    },
-  },
+        optionType: 'button'
+      }
+    }
+  }
 }

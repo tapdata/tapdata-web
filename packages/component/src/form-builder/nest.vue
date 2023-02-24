@@ -10,8 +10,8 @@ export default {
     value: [String, Array],
     config: {
       require: true,
-      type: Object,
-    },
+      type: Object
+    }
   },
   methods: {
     getNestItems(h, items, itemValues, values, level, removeFunc) {
@@ -24,36 +24,36 @@ export default {
             : h('ElButton', {
                 style: {
                   height: '28px',
-                  padding: '7px',
+                  padding: '7px'
                 },
                 props: {
-                  icon: 'el-icon-plus',
+                  icon: 'el-icon-plus'
                 },
                 on: {
                   click: () => {
                     itemValues.push(items.map(() => ''))
                     this.on.input(values)
-                  },
-                },
+                  }
+                }
               }),
           removeFunc
             ? h('ElButton', {
                 style: {
                   marginLeft: '10px',
                   height: '28px',
-                  padding: '7px',
+                  padding: '7px'
                 },
                 props: {
-                  icon: 'el-icon-minus',
+                  icon: 'el-icon-minus'
                 },
                 on: {
                   click: () => {
                     removeFunc && removeFunc()
                     this.on.input(values)
-                  },
-                },
+                  }
+                }
               })
-            : null,
+            : null
         ]),
         h('div', { class: 'fb-nest-body' }, [
           ...items.map((it, index) =>
@@ -61,32 +61,32 @@ export default {
               class: 'fb-nest-item',
               props: {
                 value: itemValues[index],
-                config: it,
+                config: it
               },
               on: Object.assign({}, this.on, {
-                input: (val) => {
+                input: val => {
                   itemValues[index] = val
                   this.on.input(values)
-                },
-              }),
+                }
+              })
             })
           ),
           ...nestValues.map((it, idx) => {
             return this.getNestItems(h, items, it, values, level + 1, () => {
               itemValues.splice(items.length + idx, 1)
             })
-          }),
-        ]),
+          })
+        ])
       ])
       return nestEl
-    },
+    }
   },
   render() {
     let config = this.config
     let values = this.value || config.items.map(() => '')
     return this.getNestItems(Vue.h, config.items, values, values, [])
   },
-  emits: ['update:value'],
+  emits: ['update:value']
 }
 </script>
 

@@ -10,9 +10,7 @@
             @input="checkAll($event, 'table')"
             :indeterminate="isIndeterminate"
           ></ElCheckbox>
-          <span class="ml-3">{{
-            $t('packages_form_component_table_selector_candidate_label')
-          }}</span>
+          <span class="ml-3">{{ $t('packages_form_component_table_selector_candidate_label') }}</span>
           <span v-if="table.tables.length" class="font-color-light ml-2"
             >({{ table.checked.length }}/{{ table.tables.length }})</span
           >
@@ -21,12 +19,7 @@
           <i class="el-icon-loading mx-2"></i>
           <span>{{ progress }}%</span>
         </span>
-        <ElLink
-          v-else-if="!disabled && !hideReload"
-          type="primary"
-          :disabled="stateIsReadonly"
-          @click="reload()"
-        >
+        <ElLink v-else-if="!disabled && !hideReload" type="primary" :disabled="stateIsReadonly" @click="reload()">
           <div class="flex align-center">
             <span>{{ $t('packages_form_button_reload') }}</span>
             <VIcon class="ml-1" size="9">icon_table_selector_load</VIcon>
@@ -50,37 +43,19 @@
           class="selector-panel__list"
           @input="checkedChange('table')"
         >
-          <RecycleScroller
-            class="selector-panel__scroller"
-            :item-size="36"
-            :buffer="50"
-            :items="filteredData"
-          >
+          <RecycleScroller class="selector-panel__scroller" :item-size="36" :buffer="50" :items="filteredData">
             <template #default="{ item }">
-              <ElCheckbox
-                class="selector-panel__item"
-                :label="item"
-                :key="item"
-              >
-                <OverflowTooltip
-                  :text="item"
-                  placement="right"
-                  :enterable="false"
-                ></OverflowTooltip>
+              <ElCheckbox class="selector-panel__item" :label="item" :key="item">
+                <OverflowTooltip :text="item" placement="right" :enterable="false"></OverflowTooltip>
               </ElCheckbox>
             </template>
           </RecycleScroller>
         </ElCheckboxGroup>
-        <div
-          v-if="!filteredData.length"
-          class="flex-1 flex flex-column justify-center"
-        >
+        <div v-if="!filteredData.length" class="flex-1 flex flex-column justify-center">
           <ElEmpty
             :image-size="111"
             :image="require('@tap/assets/images/img_empty.png')"
-            :description="
-              $t('packages_form_component_table_selector_tables_empty') + '~'
-            "
+            :description="$t('packages_form_component_table_selector_tables_empty') + '~'"
           ></ElEmpty>
         </div>
       </div>
@@ -92,8 +67,7 @@
           class="btn-transfer"
           :class="{
             'btn-transfer--disabled': isOpenClipMode || disabled,
-            'btn-transfer--primary':
-              table.checked.length > 0 && !isOpenClipMode && !disabled,
+            'btn-transfer--primary': table.checked.length > 0 && !isOpenClipMode && !disabled
           }"
           @click="add"
         >
@@ -103,8 +77,7 @@
           class="btn-transfer mt-4"
           :class="{
             'btn-transfer--disabled': isOpenClipMode || disabled,
-            'btn-transfer--primary':
-              selected.checked.length > 0 && !isOpenClipMode && !disabled,
+            'btn-transfer--primary': selected.checked.length > 0 && !isOpenClipMode && !disabled
           }"
           @click="remove"
         >
@@ -122,23 +95,15 @@
             :indeterminate="selectedIsIndeterminate"
             @input="checkAll($event, 'selected')"
           ></ElCheckbox>
-          <span class="ml-3">{{
-            $t('packages_form_component_table_selector_checked_label')
-          }}</span>
-          <span
-            v-if="selected.tables.length && !isOpenClipMode"
-            class="font-color-light ml-2"
+          <span class="ml-3">{{ $t('packages_form_component_table_selector_checked_label') }}</span>
+          <span v-if="selected.tables.length && !isOpenClipMode" class="font-color-light ml-2"
             >({{ selected.checked.length }}/{{ selected.tables.length }})</span
           >
         </div>
         <ElLink v-if="!disabled" type="primary" @click="changeSeletedMode()">
           <div class="flex align-center">
-            <span v-if="!isOpenClipMode">{{
-              $t('packages_form_component_table_selector_bulk_name')
-            }}</span>
-            <span v-else>{{
-              $t('packages_form_component_table_selector_bulk_pick')
-            }}</span>
+            <span v-if="!isOpenClipMode">{{ $t('packages_form_component_table_selector_bulk_name') }}</span>
+            <span v-else>{{ $t('packages_form_component_table_selector_bulk_pick') }}</span>
             <VIcon class="ml-1" size="9">icon_table_selector_bulk_pick</VIcon>
           </div>
         </ElLink>
@@ -158,18 +123,9 @@
           class="selector-panel__list"
           @input="checkedChange('selected')"
         >
-          <RecycleScroller
-            class="selector-panel__scroller"
-            :item-size="36"
-            :buffer="50"
-            :items="filterSelectedData"
-          >
+          <RecycleScroller class="selector-panel__scroller" :item-size="36" :buffer="50" :items="filterSelectedData">
             <template #default="{ item }">
-              <ElCheckbox
-                class="selector-panel__item"
-                :label="item"
-                :key="item"
-              >
+              <ElCheckbox class="selector-panel__item" :label="item" :key="item">
                 <ElTooltip
                   class="ellipsis"
                   placement="right"
@@ -185,16 +141,11 @@
             </template>
           </RecycleScroller>
         </ElCheckboxGroup>
-        <div
-          v-if="!isOpenClipMode && !filterSelectedData.length"
-          class="flex-1 flex flex-column justify-center"
-        >
+        <div v-if="!isOpenClipMode && !filterSelectedData.length" class="flex-1 flex flex-column justify-center">
           <ElEmpty
             :image-size="111"
             :image="require('@tap/assets/images/img_empty.png')"
-            :description="
-              $t('packages_form_component_table_selector_not_checked') + '~'
-            "
+            :description="$t('packages_form_component_table_selector_not_checked') + '~'"
           ></ElEmpty>
         </div>
         <div v-if="isOpenClipMode" class="selector-clipboard flex flex-column">
@@ -216,10 +167,7 @@
                 :content="errorTables[t]"
               >
                 <span :class="{ 'color-danger': errorTables[t] }"
-                  >{{ t
-                  }}<template v-if="i < clipboardTables.length - 1"
-                    >,&nbsp;</template
-                  ></span
+                  >{{ t }}<template v-if="i < clipboardTables.length - 1">,&nbsp;</template></span
                 >
               </ElTooltip>
             </template>
@@ -235,30 +183,21 @@
             class="selector-clipboard__textarea"
             type="textarea"
             resize="none"
-            :placeholder="
-              $t('packages_form_component_table_selector_clipboard_placeholder')
-            "
+            :placeholder="$t('packages_form_component_table_selector_clipboard_placeholder')"
             @blur="isFocus = false"
           ></ElInput>
         </div>
       </div>
       <div class="selector-panel__footer">
-        <div
-          v-if="Object.keys(errorTables).length"
-          class="selector-error flex align-center"
-        >
-          <span class="color-danger"
-            >*{{ $t('packages_form_component_table_selector_error') }}</span
-          >
+        <div v-if="Object.keys(errorTables).length" class="selector-error flex align-center">
+          <span class="color-danger">*{{ $t('packages_form_component_table_selector_error') }}</span>
           <ElLink class="ml-2" type="primary" @click="autofix">{{
             $t('packages_form_component_table_selector_autofix')
           }}</ElLink>
         </div>
         <div v-if="isOpenClipMode" class="px-4 pb-4 text-end">
           <!--          <ElButton @click="changeSeletedMode()">{{ $t('packages_form_button_cancel') }}</ElButton>-->
-          <ElButton type="primary" @click="submitClipboard">{{
-            $t('packages_form_button_confirm')
-          }}</ElButton>
+          <ElButton type="primary" @click="submitClipboard">{{ $t('packages_form_button_confirm') }}</ElButton>
         </div>
       </div>
     </div>
@@ -280,12 +219,12 @@ export default {
   props: {
     connectionId: {
       type: String,
-      required: true,
+      required: true
     },
     value: Array,
     disabled: Boolean,
     hideReload: Boolean,
-    reloadTime: [String, Number],
+    reloadTime: [String, Number]
   },
   data() {
     return {
@@ -295,13 +234,13 @@ export default {
         isCheckAll: false,
         searchKeyword: '',
         checked: [],
-        tables: [],
+        tables: []
       },
       selected: {
         isCheckAll: false,
         searchKeyword: '',
         checked: [],
-        tables: this.value,
+        tables: this.value
       },
       showProgress: false,
       progress: '',
@@ -309,7 +248,7 @@ export default {
       errorTables: {},
       isOpenClipMode: false,
       clipboardValue: '',
-      isFocus: false,
+      isFocus: false
     }
   },
   computed: {
@@ -317,7 +256,7 @@ export default {
       let { searchKeyword, tables } = this.table
       try {
         let reg = new RegExp(searchKeyword, 'i')
-        return tables.filter((item) => reg.test(item))
+        return tables.filter(item => reg.test(item))
       } catch (error) {
         return []
       }
@@ -326,7 +265,7 @@ export default {
       let { searchKeyword, tables } = this.selected
       let errorTables = this.getErrorTables(tables)
       let reg = new RegExp(searchKeyword, 'i')
-      let filterTables = tables.filter((item) => reg.test(item))
+      let filterTables = tables.filter(item => reg.test(item))
       filterTables = filterTables.sort((t1, t2) => {
         if (errorTables[t1]) {
           return -1
@@ -343,7 +282,7 @@ export default {
       let value = this.clipboardValue?.replace(/(\n)/g, ',')
       value = value?.replace(/\s+/g, '')
       let tables = value ? value.split(',') : []
-      return Array.from(new Set(tables.filter((it) => !!it && it.trim())))
+      return Array.from(new Set(tables.filter(it => !!it && it.trim())))
     },
     isIndeterminate() {
       const checkedLength = this.table.checked.length
@@ -354,7 +293,7 @@ export default {
       const checkedLength = this.selected.checked.length
       const tablesLength = this.filterSelectedData.length
       return checkedLength > 0 && checkedLength < tablesLength
-    },
+    }
   },
   watch: {
     isFocus(v) {
@@ -381,7 +320,7 @@ export default {
     },
     reloadTime() {
       this.getProgress()
-    },
+    }
   },
   created() {
     let id = this.connectionId
@@ -396,9 +335,7 @@ export default {
       if (!Object.keys(errorTables).length) {
         this.changeSeletedMode()
         //保留当前选中 以及当前所手动输入
-        this.selected.tables = Array.from(
-          new Set([...this.selected.tables, ...this.clipboardTables.concat()])
-        )
+        this.selected.tables = Array.from(new Set([...this.selected.tables, ...this.clipboardTables.concat()]))
         $emit(this, 'update:value', this.selected.tables)
         $emit(this, 'change', this.selected.tables)
       }
@@ -414,9 +351,7 @@ export default {
         $emit(this, 'update:value', this.selected.tables)
         $emit(this, 'change', this.selected.tables)
       } else {
-        this.$message.warning(
-          this.$t('packages_form_component_table_selector_not_checked')
-        )
+        this.$message.warning(this.$t('packages_form_component_table_selector_not_checked'))
       }
     },
     remove() {
@@ -425,29 +360,21 @@ export default {
       }
       let tables = this.selected.checked
       if (tables.length) {
-        this.selected.tables = Object.freeze(
-          this.selected.tables.filter((it) => !tables.includes(it))
-        )
+        this.selected.tables = Object.freeze(this.selected.tables.filter(it => !tables.includes(it)))
         this.selected.checked = []
         this.selected.isCheckAll = false
         $emit(this, 'update:value', this.selected.tables)
         $emit(this, 'change', this.selected.tables)
       } else {
-        this.$message.warning(
-          this.$t('packages_form_component_table_selector_not_checked')
-        )
+        this.$message.warning(this.$t('packages_form_component_table_selector_not_checked'))
       }
     },
     autofix() {
       if (this.isOpenClipMode) {
-        this.clipboardValue = this.clipboardTables
-          .filter((t) => !this.errorTables[t])
-          .join(', ')
+        this.clipboardValue = this.clipboardTables.filter(t => !this.errorTables[t]).join(', ')
         this.errorTables = {}
       } else {
-        this.selected.tables = Object.freeze(
-          this.selected.tables.filter((t) => !this.errorTables[t])
-        )
+        this.selected.tables = Object.freeze(this.selected.tables.filter(t => !this.errorTables[t]))
         $emit(this, 'update:value', this.selected.tables)
         $emit(this, 'change', this.selected.tables)
       }
@@ -457,11 +384,9 @@ export default {
       let errorTables = {}
 
       if (!this.loading) {
-        tables.forEach((t) => {
+        tables.forEach(t => {
           if (!allTables.includes(t)) {
-            errorTables[t] = this.$t(
-              'packages_form_component_table_selector_error_not_exit'
-            )
+            errorTables[t] = this.$t('packages_form_component_table_selector_error_not_exit')
           }
         })
       }
@@ -471,8 +396,7 @@ export default {
     },
     checkAll(flag, name) {
       if (flag) {
-        this[name].checked =
-          name === 'table' ? this.filteredData : this.filterSelectedData
+        this[name].checked = name === 'table' ? this.filteredData : this.filterSelectedData
       } else {
         this[name].checked = []
       }
@@ -515,17 +439,13 @@ export default {
         this.$message.error(this.$t('packages_form_agent_check_error'))
       } else {
         let config = {
-          title: this.$t(
-            'packages_form_connection_reload_schema_confirm_title'
-          ),
-          Message: this.$t(
-            'packages_form_connection_reload_schema_confirm_msg'
-          ),
+          title: this.$t('packages_form_connection_reload_schema_confirm_title'),
+          Message: this.$t('packages_form_connection_reload_schema_confirm_msg')
         }
         this.$confirm(config.Message + '?', config.title, {
           type: 'warning',
-          closeOnClickModal: false,
-        }).then((resFlag) => {
+          closeOnClickModal: false
+        }).then(resFlag => {
           if (resFlag) {
             this.showProgress = true
             this.progress = 0
@@ -538,10 +458,10 @@ export default {
     testSchema() {
       let parms = {
         loadCount: 0,
-        loadFieldsStatus: 'loading',
+        loadFieldsStatus: 'loading'
       }
       this.loadFieldsStatus = 'loading'
-      connectionsApi.updateById(this.connectionId, parms).then((res) => {
+      connectionsApi.updateById(this.connectionId, parms).then(res => {
         if (this?.$refs?.test) {
           let data = res
           this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
@@ -554,7 +474,7 @@ export default {
     getProgress() {
       connectionsApi
         .getNoSchema(this.connectionId)
-        .then((res) => {
+        .then(res => {
           let data = res
           this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
           if (data.loadFieldsStatus === 'finished') {
@@ -565,15 +485,14 @@ export default {
               const { taskId, activeNodeId } = this.$store.state?.dataflow || {}
               metadataInstancesApi
                 .logicSchema(taskId, {
-                  nodeId: activeNodeId,
+                  nodeId: activeNodeId
                 })
                 .then(() => {
                   this.getTables() //更新schema
                 })
             }, 1000)
           } else {
-            let progress =
-              Math.round((data.loadCount / data.tableCount) * 10000) / 100
+            let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100
             this.progress = progress ? progress : 0
             setTimeout(() => {
               if (this?.$refs?.test) {
@@ -591,19 +510,16 @@ export default {
 
     updateAllChecked() {
       this.table.isCheckAll =
-        this.filteredData.length > 0 &&
-        this.filteredData.every((item) => this.table.checked.indexOf(item) > -1)
+        this.filteredData.length > 0 && this.filteredData.every(item => this.table.checked.indexOf(item) > -1)
     },
 
     updateSelectedAllChecked() {
       this.selected.isCheckAll =
         this.filterSelectedData.length > 0 &&
-        this.filterSelectedData.every(
-          (item) => this.selected.checked.indexOf(item) > -1
-        )
-    },
+        this.filterSelectedData.every(item => this.selected.checked.indexOf(item) > -1)
+    }
   },
-  emits: ['update:value', 'change'],
+  emits: ['update:value', 'change']
 }
 </script>
 

@@ -68,7 +68,7 @@ import {
   InfiniteScroll,
   Breadcrumb,
   BreadcrumbItem,
-  Empty,
+  Empty
 } from 'element-ui'
 import { getCell, getColumnByCell } from 'element-ui/packages/table/src/util'
 import { getStyle, hasClass } from 'element-ui/src/utils/dom'
@@ -79,24 +79,14 @@ window.$vueApp.config.globalProperties.$ELEMENT = { size: 'small' }
 Tooltip.props.visibleArrow.default = false
 
 // 优化任务名称和标签一起显示，超出显示提示框的逻辑
-Table.components.TableBody.methods.handleCellMouseEnter = function (
-  event,
-  row
-) {
+Table.components.TableBody.methods.handleCellMouseEnter = function (event, row) {
   const table = this.table
   const cell = getCell(event)
 
   if (cell) {
     const column = getColumnByCell(table, cell)
     const hoverState = (table.hoverState = { cell, column, row })
-    $emit(
-      table,
-      'cell-mouse-enter',
-      hoverState.row,
-      hoverState.column,
-      hoverState.cell,
-      event
-    )
+    $emit(table, 'cell-mouse-enter', hoverState.row, hoverState.column, hoverState.cell, event)
   }
 
   // 判断是否text-overflow, 如果是就显示tooltip
@@ -131,11 +121,9 @@ Table.components.TableBody.methods.handleCellMouseEnter = function (
   range.setEnd(cellChild, cellChild.childNodes.length)
   const rangeWidth = range.getBoundingClientRect().width
   const padding =
-    (parseInt(getStyle(cellChild, 'paddingLeft'), 10) || 0) +
-    (parseInt(getStyle(cellChild, 'paddingRight'), 10) || 0)
+    (parseInt(getStyle(cellChild, 'paddingLeft'), 10) || 0) + (parseInt(getStyle(cellChild, 'paddingRight'), 10) || 0)
   if (
-    (rangeWidth + padding > cellChild.offsetWidth ||
-      cellChild.scrollWidth > cellChild.offsetWidth) &&
+    (rangeWidth + padding > cellChild.offsetWidth || cellChild.scrollWidth > cellChild.offsetWidth) &&
     this.$refs.tooltip
   ) {
     showTooltip()
@@ -151,10 +139,7 @@ Select.methods.handleOptionSelect = function (option, byClick) {
     var optionIndex = _this12.getValueIndex(value, option.value)
     if (optionIndex > -1 && byClick) {
       value.splice(optionIndex, 1)
-    } else if (
-      _this12.multipleLimit <= 0 ||
-      value.length < _this12.multipleLimit
-    ) {
+    } else if (_this12.multipleLimit <= 0 || value.length < _this12.multipleLimit) {
       value.push(option.value)
     }
     $emit(_this12, 'update:value', value)
@@ -250,8 +235,8 @@ const showMessage = Symbol('showMessage')
 class MessageConstructor {
   constructor() {
     const types = ['success', 'warning', 'info', 'error']
-    types.forEach((type) => {
-      this[type] = (options) => this[showMessage](type, options)
+    types.forEach(type => {
+      this[type] = options => this[showMessage](type, options)
     })
   }
 

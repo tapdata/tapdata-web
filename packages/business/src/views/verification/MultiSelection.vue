@@ -14,7 +14,7 @@
       @focus="handleFocus"
     >
       <el-option
-        v-for="opt in options.filter((i) => !!i)"
+        v-for="opt in options.filter(i => !!i)"
         :key="opt.id + opt.field_name"
         :label="opt.field_name"
         :value="opt.field_name"
@@ -47,32 +47,28 @@ export default {
   props: {
     value: {
       type: [String],
-      required: true,
+      required: true
     },
     options: Array,
-    placeholder: String,
+    placeholder: String
   },
   computed: {
     values() {
       let value = this.value
       return value && value.length ? value.split(',') : []
-    },
+    }
   },
   methods: {
     inputHandler(values) {
       //过滤空字符串并去重，之后使用逗号分隔
-      $emit(
-        this,
-        'update:value',
-        Array.from(new Set(values.filter((v) => !!v.trim()))).join(',')
-      )
+      $emit(this, 'update:value', Array.from(new Set(values.filter(v => !!v.trim()))).join(','))
     },
 
     handleFocus() {
       $emit(this, 'focus')
-    },
+    }
   },
-  emits: ['remove-tag', 'change', 'update:value', 'focus'],
+  emits: ['remove-tag', 'change', 'update:value', 'focus']
 }
 </script>
 

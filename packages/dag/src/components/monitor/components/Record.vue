@@ -4,7 +4,7 @@
       :remoteMethod="remoteMethod"
       :columns="columns"
       :page-options="{
-        layout: 'total, ->, prev, pager, next, sizes, jumper',
+        layout: 'total, ->, prev, pager, next, sizes, jumper'
       }"
       ref="table"
       height="100%"
@@ -41,17 +41,17 @@ export default {
   props: {
     dataflow: {
       type: Object,
-      default: () => {},
+      default: () => {}
     },
     taskRecord: {
       type: Object,
       default: () => {
         return {
           total: 0,
-          items: [],
+          items: []
         }
-      },
-    },
+      }
+    }
   },
 
   data() {
@@ -60,37 +60,37 @@ export default {
         {
           label: i18n.t('packages_dag_components_record_yunxingkaishishi'),
           prop: 'startDate',
-          dataType: 'time',
+          dataType: 'time'
         },
         {
           label: i18n.t('packages_dag_components_record_yunxingjieshushi'),
           prop: 'endDate',
-          dataType: 'time',
+          dataType: 'time'
         },
         {
           label: i18n.t('packages_dag_components_record_caozuoren'),
-          prop: 'operator',
+          prop: 'operator'
         },
         {
           label: i18n.t('packages_dag_components_record_yunxingjieguo'),
           prop: 'status',
-          slotName: 'status',
+          slotName: 'status'
         },
         {
           label: i18n.t('packages_dag_components_record_shurushijianzong'),
           prop: 'inputTotal',
-          dataType: 'number',
+          dataType: 'number'
         },
         {
           label: i18n.t('packages_dag_components_record_shuchushijianzong'),
           prop: 'outputTotal',
-          dataType: 'number',
+          dataType: 'number'
         },
         {
           label: i18n.t('packages_dag_components_record_caozuo'),
-          slotName: 'operation',
-        },
-      ],
+          slotName: 'operation'
+        }
+      ]
     }
   },
 
@@ -101,13 +101,12 @@ export default {
         const page = this.getPage() || {}
         if (
           page.current === 1 &&
-          (v?.total !== page.total ||
-            JSON.stringify(v?.items) !== JSON.stringify(this.getTableData()))
+          (v?.total !== page.total || JSON.stringify(v?.items) !== JSON.stringify(this.getTableData()))
         ) {
           this.fetch()
         }
-      },
-    },
+      }
+    }
   },
 
   methods: {
@@ -116,32 +115,30 @@ export default {
       const { id: taskId } = this.dataflow || {}
       let filter = {
         page: current,
-        size: size,
+        size: size
       }
-      return taskApi.records(taskId, filter).then((data) => {
+      return taskApi.records(taskId, filter).then(data => {
         return {
           total: data.total,
-          data: data.items || [],
+          data: data.items || []
         }
       })
     },
 
     handleDetail(row = {}) {
       const { taskId, taskRecordId, startDate, endDate } = row
-      const start = startDate
-        ? new Date(startDate).getTime() - 1000
-        : Time.now()
+      const start = startDate ? new Date(startDate).getTime() - 1000 : Time.now()
       const end = endDate ? new Date(endDate).getTime() : Time.now()
       const routeUrl = this.$router.resolve({
         name: 'MigrationMonitorViewer',
         params: {
-          id: taskId,
+          id: taskId
         },
         query: {
           taskRecordId,
           start,
-          end,
-        },
+          end
+        }
       })
       openUrl(routeUrl.href)
     },
@@ -156,8 +153,8 @@ export default {
 
     getTableData() {
       return this.$refs.table?.getData()
-    },
-  },
+    }
+  }
 }
 </script>
 

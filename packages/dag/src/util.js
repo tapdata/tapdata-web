@@ -7,10 +7,7 @@ export function getNodeIconSrc(node) {
   if (pdkHash) {
     return getConnectionIcon(pdkHash)
   }
-  let icon =
-    node.type === 'table' || node.type === 'database' || node.databaseType
-      ? node.databaseType
-      : node.type
+  let icon = node.type === 'table' || node.type === 'database' || node.databaseType ? node.databaseType : node.type
   return icon ? getIcon(icon) : null
 }
 
@@ -38,8 +35,8 @@ export function getSchema(schema, values, pdkPropertiesMap) {
     newSchema = {
       type: 'object',
       properties: {
-        form: JSON.parse(JSON.stringify(schema.schema)),
-      },
+        form: JSON.parse(JSON.stringify(schema.schema))
+      }
     }
   } else {
     newSchema = JSON.parse(JSON.stringify(schema))
@@ -47,17 +44,12 @@ export function getSchema(schema, values, pdkPropertiesMap) {
 
   const blacklist = ['Redis', 'CSV', 'EXCEL', 'JSON', 'XML']
 
-  if (
-    values.attrs.pdkHash &&
-    (values.type != 'database' || !blacklist.includes(values.databaseType))
-  ) {
+  if (values.attrs.pdkHash && (values.type != 'database' || !blacklist.includes(values.databaseType))) {
     const pdkProperties = pdkPropertiesMap[values.attrs.pdkHash]
     if (pdkProperties) {
       const pdkSchemaList = takeFieldValue(newSchema, 'nodeConfig')
       if (pdkSchemaList?.length) {
-        pdkSchemaList.forEach((pdkSchema) =>
-          Object.assign(pdkSchema, pdkProperties)
-        )
+        pdkSchemaList.forEach(pdkSchema => Object.assign(pdkSchema, pdkProperties))
       }
     }
   }

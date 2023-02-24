@@ -11,35 +11,35 @@ export const JsEditor = connect(
       value: String,
       before: {
         type: String,
-        default: '',
+        default: ''
       },
       beforeRegexp: String,
       after: {
         type: String,
-        default: '',
+        default: ''
       },
       afterRegexp: String,
       height: {
         type: [String, Number],
-        default: 200,
+        default: 200
       },
       options: {
         type: Object,
-        default: () => ({}),
+        default: () => ({})
       },
       disabled: Boolean,
       includeBeforeAndAfter: Boolean,
       handleAddCompleter: Function,
       theme: {
         type: String,
-        default: 'chrome',
+        default: 'chrome'
       },
-      showFullscreen: Boolean,
+      showFullscreen: Boolean
     },
 
     data() {
       return {
-        fullscreen: false,
+        fullscreen: false
       }
     },
 
@@ -51,7 +51,7 @@ export const JsEditor = connect(
             .replace(new RegExp(this.afterRegexp || this.before), '')
         }
         return this.value
-      },
+      }
     },
 
     methods: {
@@ -69,10 +69,7 @@ export const JsEditor = connect(
       },
 
       onInit(editor, tools) {
-        if (
-          this.handleAddCompleter &&
-          typeof this.handleAddCompleter === 'function'
-        ) {
+        if (this.handleAddCompleter && typeof this.handleAddCompleter === 'function') {
           this.handleAddCompleter(editor, tools)
         }
         $emit(this, 'init', editor)
@@ -89,7 +86,7 @@ export const JsEditor = connect(
 
       unbindEvent() {
         window.removeEventListener('beforeunload', this.handleBeforeunload)
-      },
+      }
     },
 
     render() {
@@ -97,7 +94,7 @@ export const JsEditor = connect(
         enableBasicAutocompletion: true,
         enableLiveAutocompletion: true,
         ...this.options,
-        readOnly: this.disabled,
+        readOnly: this.disabled
       }
       return this.before || this.after ? (
         <div
@@ -107,9 +104,7 @@ export const JsEditor = connect(
         >
           {this.showFullscreen && (
             <div class="js-editor-toolbar flex align-center px-4">
-              <div class="js-editor-toolbar-title flex-1">
-                {this.$t('packages_form_js_processor_index_jiaoben')}
-              </div>
+              <div class="js-editor-toolbar-title flex-1">{this.$t('packages_form_js_processor_index_jiaoben')}</div>
               <ElLink
                 onClick={() => {
                   this.fullscreen = !this.fullscreen
@@ -121,14 +116,8 @@ export const JsEditor = connect(
                 type="primary"
               >
                 {this.fullscreen
-                  ? [
-                      <VIcon class="mr-1">suoxiao</VIcon>,
-                      this.$t('packages_form_js_editor_exit_fullscreen'),
-                    ]
-                  : [
-                      <VIcon class="mr-1">fangda</VIcon>,
-                      this.$t('packages_form_js_editor_fullscreen'),
-                    ]}
+                  ? [<VIcon class="mr-1">suoxiao</VIcon>, this.$t('packages_form_js_editor_exit_fullscreen')]
+                  : [<VIcon class="mr-1">fangda</VIcon>, this.$t('packages_form_js_editor_fullscreen')]}
               </ElLink>
             </div>
           )}
@@ -155,7 +144,7 @@ export const JsEditor = connect(
           ref="jsEditor"
           class="border rounded-2 py-0"
           style={{
-            background: '#fff',
+            background: '#fff'
           }}
           theme={this.theme}
           value={this.code}
@@ -166,7 +155,7 @@ export const JsEditor = connect(
           options={options}
         />
       )
-    },
+    }
   },
   mapProps({ disabled: true })
 )

@@ -1,21 +1,9 @@
 <template>
   <section class="bottom-panel border-top flex-column">
-    <NodeLog
-      v-bind="$attrs"
-      v-if="onlyLog"
-      :currentTab="currentTab"
-      ref="log"
-    ></NodeLog>
+    <NodeLog v-bind="$attrs" v-if="onlyLog" :currentTab="currentTab" ref="log"></NodeLog>
     <div v-else class="panel-header flex h-100">
-      <ElTabs
-        v-model:value="currentTab"
-        class="setting-tabs h-100 flex-1 flex flex-column"
-        key="bottomPanel"
-      >
-        <ElTabPane
-          :label="$t('packages_dag_monitor_bottompanel_renwujindu')"
-          name="milestone"
-        >
+      <ElTabs v-model:value="currentTab" class="setting-tabs h-100 flex-1 flex flex-column" key="bottomPanel">
+        <ElTabPane :label="$t('packages_dag_monitor_bottompanel_renwujindu')" name="milestone">
           <MilestoneList
             v-bind="$attrs"
             v-if="currentTab === 'milestone'"
@@ -23,31 +11,13 @@
             ref="log"
           ></MilestoneList>
         </ElTabPane>
-        <ElTabPane
-          :label="$t('packages_dag_monitor_bottompanel_rizhi')"
-          name="log"
-        >
-          <NodeLog
-            v-bind="$attrs"
-            v-if="currentTab === 'log'"
-            :currentTab="currentTab"
-            ref="log"
-          ></NodeLog>
+        <ElTabPane :label="$t('packages_dag_monitor_bottompanel_rizhi')" name="log">
+          <NodeLog v-bind="$attrs" v-if="currentTab === 'log'" :currentTab="currentTab" ref="log"></NodeLog>
         </ElTabPane>
-        <ElTabPane
-          :label="$t('packages_dag_monitor_bottompanel_yunxingjilu')"
-          name="record"
-        >
-          <Record
-            v-bind="$attrs"
-            v-if="currentTab === 'record'"
-            :currentTab="currentTab"
-          ></Record>
+        <ElTabPane :label="$t('packages_dag_monitor_bottompanel_yunxingjilu')" name="record">
+          <Record v-bind="$attrs" v-if="currentTab === 'record'" :currentTab="currentTab"></Record>
         </ElTabPane>
-        <ElTabPane
-          :label="$t('packages_dag_monitor_bottompanel_gaojingliebiao')"
-          name="alert"
-        >
+        <ElTabPane :label="$t('packages_dag_monitor_bottompanel_gaojingliebiao')" name="alert">
           <Alert
             v-bind="$attrs"
             v-if="currentTab === 'alert'"
@@ -56,10 +26,7 @@
             @load-data="$emit('load-data')"
           ></Alert>
         </ElTabPane>
-        <ElTabPane
-          :label="$t('packages_dag_monitor_bottompanel_guanlianrenwu')"
-          name="relation"
-        >
+        <ElTabPane :label="$t('packages_dag_monitor_bottompanel_guanlianrenwu')" name="relation">
           <RelationList
             v-bind="$attrs"
             v-if="currentTab === 'relation'"
@@ -70,9 +37,7 @@
         </ElTabPane>
       </ElTabs>
 
-      <VIcon class="close-icon" size="16" @click="$emit('showBottomPanel')"
-        >close</VIcon
-      >
+      <VIcon class="close-icon" size="16" @click="$emit('showBottomPanel')">close</VIcon>
     </div>
   </section>
 </template>
@@ -96,32 +61,27 @@ export default {
   components: { Record, Alert, RelationList, NodeLog, MilestoneList },
   directives: {
     resize,
-    focusSelect,
+    focusSelect
   },
   props: {
     onlyLog: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   data() {
     return {
       currentTab: 'milestone',
-      name: this.activeNode?.name,
+      name: this.activeNode?.name
     }
   },
   computed: {
-    ...mapGetters('dataflow', [
-      'activeType',
-      'activeNode',
-      'nodeById',
-      'stateIsReadonly',
-    ]),
+    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly'])
   },
   watch: {
     'activeNode.name'(v) {
       this.name = v
-    },
+    }
   },
   mounted() {
     if (['MigrationMonitorViewer'].includes(this.$route.name)) {
@@ -129,17 +89,12 @@ export default {
       const { start, end } = this.$route.query
       this.changeTab(this.currentTab, {
         start: start * 1,
-        end: end * 1,
+        end: end * 1
       })
     }
   },
   methods: {
-    ...mapMutations('dataflow', [
-      'updateNodeProperties',
-      'setNodeError',
-      'clearNodeError',
-      'setActiveType',
-    ]),
+    ...mapMutations('dataflow', ['updateNodeProperties', 'setNodeError', 'clearNodeError', 'setActiveType']),
     ...mapActions('dataflow', ['updateDag']),
 
     handleChangeName(name) {
@@ -147,8 +102,8 @@ export default {
         this.updateNodeProperties({
           id: this.activeNode.id,
           properties: {
-            name,
-          },
+            name
+          }
         })
         this.updateDag()
       } else {
@@ -173,19 +128,18 @@ export default {
         if (tab === 'log') {
           data.nodeId &&
             this.getLogRef()?.changeItem({
-              value: data.nodeId,
+              value: data.nodeId
             })
           const t = new Date(data.start).getTime()
           const len = 10 * 1000
           const start = t - len
           const end = data.end ? data.end + len : Time.now()
-          data.start &&
-            this.getLogRef()?.$refs.timeSelect.changeTime([start, end])
+          data.start && this.getLogRef()?.$refs.timeSelect.changeTime([start, end])
         }
       })
-    },
+    }
   },
-  emits: ['load-data', 'showBottomPanel'],
+  emits: ['load-data', 'showBottomPanel']
 }
 </script>
 

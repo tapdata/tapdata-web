@@ -30,20 +30,20 @@ export default {
       type: String,
       default: () => {
         return i18n.t('packages_business_components_stagebutton_chongxinjiazai')
-      },
-    },
+      }
+    }
   },
   data() {
     return {
       loading: false,
       destroyStatus: false,
-      progress: '0%',
+      progress: '0%'
     }
   },
   watch: {
     connectionId(v) {
       v && this.init()
-    },
+    }
   },
   mounted() {
     this.init()
@@ -64,9 +64,9 @@ export default {
       connectionsApi
         .updateById(this.connectionId, {
           loadCount: 0,
-          loadFieldsStatus: 'loading',
+          loadFieldsStatus: 'loading'
         })
-        .then((data) => {
+        .then(data => {
           this.progress = '0%'
           this.getProgress()
           $emit(this, 'start')
@@ -81,11 +81,9 @@ export default {
         this.loading = true
       }
       clearTimeout(this.timer)
-      connectionsApi.getNoSchema(this.connectionId).then((res) => {
+      connectionsApi.getNoSchema(this.connectionId).then(res => {
         if (res.loadFieldsStatus === 'loading') {
-          this.progress =
-            (Math.round((res.loadCount / res.tableCount) * 10000) / 100 || 0) +
-            '%'
+          this.progress = (Math.round((res.loadCount / res.tableCount) * 10000) / 100 || 0) + '%'
           this.timer = setTimeout(this.getProgress, 1000)
         } else {
           this.progress = 100 + '%'
@@ -93,7 +91,7 @@ export default {
           if (!check && taskId && nodeId) {
             metadataInstancesApi
               .logicSchema(taskId, {
-                nodeId,
+                nodeId
               })
               .then(this.updateDag)
           }
@@ -106,7 +104,7 @@ export default {
     startByConnection(connection, updateSchema, editTest) {
       let msg = {
         type: 'testConnection',
-        data: connection,
+        data: connection
       }
       msg.data['updateSchema'] = false
       msg.data['editTest'] = false
@@ -122,8 +120,8 @@ export default {
           this.$ws.send(msg)
         })
       })
-    },
+    }
   },
-  emits: ['start', 'complete'],
+  emits: ['start', 'complete']
 }
 </script>

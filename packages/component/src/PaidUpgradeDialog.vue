@@ -7,15 +7,11 @@
     custom-class="paid-upgrade-dialog"
     :before-close="handleClose"
   >
-    <span class="paid-upgrade-desc"
-      >您使用的是免费版本，目前任务数量已经达到上限，请升级您的服务计划。</span
-    >
+    <span class="paid-upgrade-desc">您使用的是免费版本，目前任务数量已经达到上限，请升级您的服务计划。</span>
     <ul class="flex paid-upgrade-ul mt-4">
       <li class="paid-upgrade-left">
         <div style="height: 150px">
-          <div class="version mb-2">
-            基础版 <span class="current">当前版本</span>
-          </div>
+          <div class="version mb-2">基础版 <span class="current">当前版本</span></div>
           <div class="paid-upgrade-mb16">
             <span class="free">免费,</span>
             <span class="desc">包含所有产品功能</span>
@@ -25,9 +21,7 @@
         <div class="currentList paid-upgrade-mb16">
           √ 最大任务数: {{ paidPlan.limit === -1 ? '不限制' : paidPlan.limit }}
         </div>
-        <div class="currentList paid-upgrade-mb16">
-          √ 已用任务数: {{ paidPlan.current }}
-        </div>
+        <div class="currentList paid-upgrade-mb16">√ 已用任务数: {{ paidPlan.current }}</div>
         <el-link
           type="primary"
           target="_blank"
@@ -49,9 +43,7 @@
         <div class="link paid-upgrade-mb16"></div>
         <div class="currentList paid-upgrade-mb16">√ 任务数不限</div>
         <div class="currentList paid-upgrade-mb16">√ 提供SLA支持</div>
-        <el-button class="float-end" type="primary" @click="goPaidUpgrade"
-          >升 级</el-button
-        >
+        <el-button class="float-end" type="primary" @click="goPaidUpgrade">升 级</el-button>
       </li>
     </ul>
   </el-dialog>
@@ -65,14 +57,14 @@ export default {
   methods: {
     goPaidUpgrade() {
       this.$router.push({
-        name: 'PaidUpgrade',
+        name: 'PaidUpgrade'
       })
     },
     handleClose() {
       $emit(this, 'update:visible', false)
-    },
+    }
   },
-  emits: ['update:visible'],
+  emits: ['update:visible']
 }
 </script>
 

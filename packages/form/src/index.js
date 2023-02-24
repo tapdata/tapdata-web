@@ -31,7 +31,7 @@ registerValidateRules({
       console.log('cron-rule', e) // eslint-disable-line
     }
     return message
-  },
+  }
 })
 
 export { composeExport, langs, components }

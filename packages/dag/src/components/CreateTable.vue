@@ -21,12 +21,8 @@
 
     <template v-slot:footer>
       <span class="dialog-footer">
-        <el-button @click="closeDialogForm">{{
-          $t('packages_dag_button_cancel')
-        }}</el-button>
-        <el-button type="primary" @click="confirm" @>{{
-          $t('packages_dag_button_confirm')
-        }}</el-button>
+        <el-button @click="closeDialogForm">{{ $t('packages_dag_button_cancel') }}</el-button>
+        <el-button type="primary" @click="confirm" @>{{ $t('packages_dag_button_confirm') }}</el-button>
       </span>
     </template>
   </ElDialog>
@@ -37,17 +33,17 @@ import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 export default {
   name: 'CreateTable',
   props: {
-    dialog: Object,
+    dialog: Object
   },
   data() {
     return {
       flag: null,
       ruleForm: {
-        newTable: '',
+        newTable: ''
       },
       rules: {
         newTable: [
-          { required: true, trigger: 'blur' },
+          { required: true, trigger: 'blur' }
           // {
           //
           //   pattern: /^[a-zA-Z][0-9a-zA-Z_.-]*$/,
@@ -55,8 +51,8 @@ export default {
           //   message:
           //     this.dialog.type === 'table' ? this.$t('packages_dag_dialog_tableValidateTip') : this.$t('packages_dag_dialog_collectionValidateTip')
           // }
-        ],
-      },
+        ]
+      }
     }
   },
   methods: {
@@ -69,7 +65,7 @@ export default {
     // 子组件校验，传递到父组件
     validateForm() {
       let flag = null
-      this.$refs['ruleForm'].validate((valid) => {
+      this.$refs['ruleForm'].validate(valid => {
         if (valid) {
           flag = true
         } else {
@@ -80,20 +76,17 @@ export default {
     },
     confirm() {
       let flag = this.validateForm()
-      let first =
-        this.ruleForm.newTable.split('.')[0] == 'system' ? true : false
+      let first = this.ruleForm.newTable.split('.')[0] == 'system' ? true : false
       if (flag) {
         if (this.dialog.type === 'collection' && first) {
-          this.$message.error(
-            this.$t('packages_dag_dialog_collectionValidateTip')
-          )
+          this.$message.error(this.$t('packages_dag_dialog_collectionValidateTip'))
         } else {
           this.dialog.visible = false
           $emit(this, 'handleTable', this.ruleForm.newTable)
         }
       }
-    },
+    }
   },
-  emits: ['handleTable'],
+  emits: ['handleTable']
 }
 </script>

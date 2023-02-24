@@ -34,18 +34,12 @@
         :allow-drop="() => false"
       ></VirtualTree>
 
-      <div
-        class="drop-mask justify-center align-center absolute-fill font-color-light"
-      >
+      <div class="drop-mask justify-center align-center absolute-fill font-color-light">
         {{ dialogConfig.connection ? 'Clone To FDM' : 'Please Configure FDM' }}
       </div>
     </div>
 
-    <ElDialog
-      v-model:visible="dialogConfig.visible"
-      width="600"
-      :close-on-click-modal="false"
-    >
+    <ElDialog v-model:visible="dialogConfig.visible" width="600" :close-on-click-modal="false">
       <template v-slot:title>
         <span style="font-size: 14px"> Configure FDM </span>
       </template>
@@ -75,21 +69,14 @@
       </template>
     </ElDialog>
 
-    <ElDialog
-      v-model:visible="taskDialogConfig.visible"
-      width="600"
-      :close-on-click-modal="false"
-    >
+    <ElDialog v-model:visible="taskDialogConfig.visible" width="600" :close-on-click-modal="false">
       <template v-slot:title>
         <span style="font-size: 14px">Create Cloning Pipeline</span>
       </template>
       <ElForm ref="form" :model="dialogConfig" label-width="180px">
         <div class="pipeline-desc p-4 mb-4 text-pre">{{ taskDesc }}</div>
         <ElFormItem label="Table Name Prefix">
-          <ElInput
-            size="small"
-            v-model:value="taskDialogConfig.prefix"
-          ></ElInput>
+          <ElInput size="small" v-model:value="taskDialogConfig.prefix"></ElInput>
         </ElFormItem>
       </ElForm>
       <template v-slot:footer>
@@ -116,7 +103,7 @@ export default {
   name: 'FDM',
 
   props: {
-    dragState: Object,
+    dragState: Object
   },
 
   components: { AsyncSelect, VirtualTree },
@@ -132,16 +119,16 @@ export default {
         desc: '',
         taskName: '',
         syncType: '',
-        visible: false,
+        visible: false
       },
       taskDialogConfig: {
         from: null,
         to: null,
         visible: false,
         prefix: 'f_',
-        tableName: null,
+        tableName: null
       },
-      treeData: [],
+      treeData: []
     }
   },
 
@@ -150,15 +137,13 @@ export default {
       if (!this.taskDialogConfig.from) return ''
       const { from, tableName } = this.taskDialogConfig
       return `This will clone ${
-        tableName
-          ? `Source Table: [${tableName}]`
-          : `Source Database: [${from.name}]`
+        tableName ? `Source Table: [${tableName}]` : `Source Database: [${from.name}]`
       } to FDM Layer.
 
 所有的源表将统一存储到 FDM 库里,遵从以下的命名规范
 
 ${this.taskDialogConfig.prefix}<original_table_name>`
-    },
+    }
   },
 
   created() {
@@ -175,9 +160,7 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
 
       return (
         <div class="custom-tree-node">
-          <div class="tree-item-icon flex align-center mr-2">
-            {icon && <VIcon size="18">{icon}</VIcon>}
-          </div>
+          <div class="tree-item-icon flex align-center mr-2">{icon && <VIcon size="18">{icon}</VIcon>}</div>
           <span class="table-label" title={data.name}>
             {data.name}
           </span>
@@ -195,7 +178,7 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
           where: {
             status: 'ready',
             database_type: 'MongoDB',
-            connection_type: 'source_and_target',
+            connection_type: 'source_and_target'
           },
           fields: {
             name: 1,
@@ -208,15 +191,15 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
             accessNodeProcessIdList: 1,
             pdkType: 1,
             pdkHash: 1,
-            capabilities: 1,
+            capabilities: 1
           },
-          order: ['status DESC', 'name ASC'],
+          order: ['status DESC', 'name ASC']
         }
         let result = await connectionsApi.get({
-          filter: JSON.stringify(merge(filter, _filter)),
+          filter: JSON.stringify(merge(filter, _filter))
         })
 
-        result.items = result.items.map((item) => {
+        result.items = result.items.map(item => {
           return {
             id: item.id,
             name: item.name,
@@ -224,7 +207,7 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
             value: item.id,
             databaseType: item.database_type,
             connectionType: item.connection_type,
-            accessNodeProcessId: item.accessNodeProcessId,
+            accessNodeProcessId: item.accessNodeProcessId
           }
         })
 
@@ -254,14 +237,8 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
     },
 
     dialogSubmit() {
-      localStorage.setItem(
-        'LDP_FDM_CONNECTION_ID',
-        this.dialogConfig.connectionId
-      )
-      localStorage.setItem(
-        'LDP_FDM_CONNECTION',
-        JSON.stringify(this.dialogConfig._connection)
-      )
+      localStorage.setItem('LDP_FDM_CONNECTION_ID', this.dialogConfig.connectionId)
+      localStorage.setItem('LDP_FDM_CONNECTION', JSON.stringify(this.dialogConfig._connection))
       this.dialogConfig.connection = this.dialogConfig._connection
       this.dialogConfig._connection = null
       this.dialogConfig.visible = false
@@ -279,10 +256,7 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
     handleDragEnter(ev) {
       ev.preventDefault()
 
-      const dropNode = this.findParentByClassName(
-        ev.currentTarget,
-        'fdm-tree-wrap'
-      )
+      const dropNode = this.findParentByClassName(ev.currentTarget, 'fdm-tree-wrap')
       dropNode.classList.add('is-drop-inner')
     },
 
@@ -290,10 +264,7 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
       ev.preventDefault()
 
       if (!ev.currentTarget.contains(ev.relatedTarget)) {
-        const dropNode = this.findParentByClassName(
-          ev.currentTarget,
-          'fdm-tree-wrap'
-        )
+        const dropNode = this.findParentByClassName(ev.currentTarget, 'fdm-tree-wrap')
         dropNode.classList.remove('is-drop-inner')
       }
     },
@@ -301,10 +272,7 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
     handleDrop(ev) {
       ev.preventDefault()
 
-      const dropNode = this.findParentByClassName(
-        ev.currentTarget,
-        'fdm-tree-wrap'
-      )
+      const dropNode = this.findParentByClassName(ev.currentTarget, 'fdm-tree-wrap')
       dropNode.classList.remove('is-drop-inner')
 
       if (!this.dialogConfig.connection) {
@@ -322,13 +290,11 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
         this.taskDialogConfig.tableName = null
 
         this.taskDialogConfig.treeData = {
-          ...object.data,
+          ...object.data
         }
 
         if (object.childNodes.length) {
-          this.taskDialogConfig.treeData.children = object.childNodes.map(
-            (node) => node.data
-          )
+          this.taskDialogConfig.treeData.children = object.childNodes.map(node => node.data)
         }
       } else if (object.data.type === 'table') {
         this.taskDialogConfig.from = object.parent.data
@@ -339,9 +305,9 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
           ...object.parent.data,
           children: [
             {
-              ...object.data,
-            },
-          ],
+              ...object.data
+            }
+          ]
         }
       }
 
@@ -353,8 +319,8 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
         parent = parent.parentNode
       }
       return parent
-    },
-  },
+    }
+  }
 }
 </script>
 

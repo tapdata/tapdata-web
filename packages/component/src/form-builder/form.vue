@@ -29,8 +29,8 @@ export default {
     value: Object,
     config: {
       require: true,
-      type: Object,
-    },
+      type: Object
+    }
   },
   data() {
     return {
@@ -44,7 +44,7 @@ export default {
         labelWidth: '160px',
         size: 'mini',
         inlineMessage: false,
-        disabled: false,
+        disabled: false
       },
       defaultFormItemConfig: {
         show: true,
@@ -55,21 +55,21 @@ export default {
         required: false,
         clearable: true,
         allowSpace: true,
-        on: {},
+        on: {}
       },
       form: null,
       itemsConfig: this.config.items.concat(),
-      oldValue: {},
+      oldValue: {}
     }
   },
   watch: {
     'config.items'(configs) {
       this.itemsConfig = configs.concat()
-    },
+    }
   },
   render() {
     let formConfig = Object.assign(this.defaultFormConfig, this.config.form, {
-      model: this.value,
+      model: this.value
     })
     let formItems = this.itemsConfig || []
 
@@ -79,7 +79,7 @@ export default {
         class: 'e-form-builder-container',
         ref: 'form',
 
-        props: Object.assign(formConfig),
+        props: Object.assign(formConfig)
       }),
       formItems.map((item, index) => {
         return this.getFormItem(Vue.h, item, formConfig, index)
@@ -113,12 +113,10 @@ export default {
          *						value: 依赖的值
          *			triggerConfig: 依赖项满足条件后需要更新的配置
          */
-        dependOn.forEach((depend) => {
+        dependOn.forEach(depend => {
           let triggerOptions = depend.triggerOptions
           let triggerConfig = depend.triggerConfig
-          if (
-            triggerOptions.every((opt) => opt.value === this.value[opt.field])
-          ) {
+          if (triggerOptions.every(opt => opt.value === this.value[opt.field])) {
             config = Object.assign(config, depend.triggerConfig)
             //需要判断本次渲染是否修改的当前值，如果是，则不走dependOn逻辑，
             //否则会导致本次值永远无法修改的情况，无限被triggerConfig.value的值覆盖
@@ -133,49 +131,39 @@ export default {
         this.oldValue[config.field] = this.value[config.field]
       }
       //改变必填项的默认提示
-      if (config.required && !rules.find((r) => r.required)) {
+      if (config.required && !rules.find(r => r.required)) {
         rules.push({
           required: true,
           validator(rule, value, callback) {
             if ((!value && value !== 0) || (value && !(value + '').trim())) {
-              callback(
-                new Error(
-                  `${config.label}` +
-                    self.$t('packages_component_formBuilder_noneText')
-                )
-              )
+              callback(new Error(`${config.label}` + self.$t('packages_component_formBuilder_noneText')))
             } else {
               callback()
             }
-          },
+          }
         })
       }
 
       let item = h(
         'ElFormItem',
         {
-          class: config.customClass
-            ? 'e-form-builder-item ' + config.customClass
-            : 'e-form-builder-item ',
+          class: config.customClass ? 'e-form-builder-item ' + config.customClass : 'e-form-builder-item ',
           style: formConfig.itemStyle,
           props: {
             prop: config.field,
             label: config.label,
             inlineMessage: !!config.inlineMeesage,
-            rules: rules.map((r) => {
+            rules: rules.map(r => {
               let rule = Object.assign({}, r)
               if (rule.validator) {
                 rule.validator = rule.validator.bind(this)
               }
               return rule
-            }),
+            })
           },
-          key: config.field || index,
+          key: config.field || index
         },
-        [
-          this.getLabel(h, config, formConfig),
-          this.getBody(h, config, formConfig),
-        ]
+        [this.getLabel(h, config, formConfig), this.getBody(h, config, formConfig)]
       )
       return config.show ? item : ''
     },
@@ -186,7 +174,7 @@ export default {
             'span',
             {
               class: 'e-form-builder-item-label',
-              slot: 'label',
+              slot: 'label'
             },
             [
               formConfig.labelColon ? config.label + '：' : config.label,
@@ -198,37 +186,35 @@ export default {
                     props: {
                       trigger: 'hover',
                       placement: 'top',
-                      popperClass: 'e-popover',
-                    },
+                      popperClass: 'e-popover'
+                    }
                   },
                   [
                     h('div', {
                       domProps: {
-                        innerHTML: config.tips,
-                      },
+                        innerHTML: config.tips
+                      }
                     }),
                     h(
                       'span',
                       {
                         class: 'color-primary',
-                        slot: 'reference',
+                        slot: 'reference'
                       },
                       [
                         h('i', {
-                          class: 'el-icon-info e-form-builder-item-tips',
-                        }),
+                          class: 'el-icon-info e-form-builder-item-tips'
+                        })
                       ]
-                    ),
+                    )
                   ]
-                ),
+                )
             ]
           )
     },
     getBody(h, config, formConfig) {
       let self = this
-      let appendSlot = config.appendSlot
-        ? config.appendSlot(h, this.value)
-        : null
+      let appendSlot = config.appendSlot ? config.appendSlot(h, this.value) : null
       let el = null
       if (config.type === 'file' && config.fileNameField) {
         let fileName = self.value[config.fileNameField]
@@ -242,14 +228,12 @@ export default {
         el = h(TYPE_MAPPING[config.type], {
           props: {
             value: self.value[config.field],
-            config: config,
+            config: config
           },
           on: {
             input(val) {
               if (self.value[config.field] === undefined) {
-                throw new Error(
-                  `The field "${config.field}" of the model is not defined!`
-                )
+                throw new Error(`The field "${config.field}" of the model is not defined!`)
               }
               if (!config.allowSpace) {
                 val = val.replace(/\s+/g, '')
@@ -262,7 +246,7 @@ export default {
               self.value[config.field] = val
               let influences = config.influences
               if (influences && influences.length) {
-                influences.forEach((it) => {
+                influences.forEach(it => {
                   if (it.byValue === val) {
                     self.value[it.field] = it.value
                   }
@@ -271,22 +255,20 @@ export default {
               config.on.input && config.on.input(val)
               $emit(self, 'value-change', {
                 field: config.field,
-                value: val,
+                value: val
               })
             },
             change(...args) {
               config.on.change && config.on.change(...args)
-            },
-          },
+            }
+          }
         })
       }
 
       if (appendSlot) {
         return h('div', { class: { 'fb-item-group': true } }, [
           el,
-          h('div', { class: { 'fb-form-item-append-slot': true } }, [
-            appendSlot,
-          ]),
+          h('div', { class: { 'fb-form-item-append-slot': true } }, [appendSlot])
         ])
       } else {
         return [el]
@@ -303,9 +285,9 @@ export default {
     },
     initConfig() {
       this.itemsConfig = this.config.items.concat()
-    },
+    }
   },
-  emits: ['value-change', 'update:value'],
+  emits: ['value-change', 'update:value']
 }
 </script>
 

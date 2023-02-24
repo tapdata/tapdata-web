@@ -5,14 +5,9 @@
         <div class="sign-in-panel">
           <div class="title">
             {{ $t('app_signIn_signIn') }}
-            <span v-if="$getSettingByKey('SHOW_REGISTER')" @click="registry">{{
-              $t('app_signIn_Registration')
-            }}</span>
+            <span v-if="$getSettingByKey('SHOW_REGISTER')" @click="registry">{{ $t('app_signIn_Registration') }}</span>
           </div>
-          <div
-            class="error-tips align-center justify-content-start"
-            v-show="errorMessage"
-          >
+          <div class="error-tips align-center justify-content-start" v-show="errorMessage">
             <i class="el-icon-warning-outline mr-2"></i>
             {{ errorMessage }}
           </div>
@@ -36,20 +31,12 @@
           <el-checkbox class="keep-sign-in" v-model:value="keepSignIn">
             {{ $t('app_signIn_keepSignIn') }}
           </el-checkbox>
-          <ElButton
-            class="btn-sign-in"
-            type="primary"
-            size="medium"
-            :loading="loading"
-            @click="submit"
-          >
+          <ElButton class="btn-sign-in" type="primary" size="medium" :loading="loading" @click="submit">
             {{ $t('app_signIn_signIn') }}
           </ElButton>
 
           <div class="remember">
-            <ElButton type="text" @click="forgetPassword">{{
-              $t('app_signIn_forgetPassword')
-            }}</ElButton>
+            <ElButton type="text" @click="forgetPassword">{{ $t('app_signIn_forgetPassword') }}</ElButton>
           </div>
         </div>
       </section>
@@ -74,10 +61,10 @@ export default {
       loading: false,
       form: {
         email: '',
-        password: '',
+        password: ''
       },
       keepSignIn: true,
-      errorMessage: '',
+      errorMessage: ''
     }
   },
   created() {
@@ -109,12 +96,8 @@ export default {
         //登陆密码加密
         let timeStampData = await timeStampApi.get()
         this.form['stime'] = timeStampData.data
-        this.form.password = cryptoJS.RC4.encrypt(
-          this.form.password,
-          'Gotapd8'
-        ).toString()
-        let Str =
-          this.form.email + this.form.password + this.form.stime + 'Gotapd8'
+        this.form.password = cryptoJS.RC4.encrypt(this.form.password, 'Gotapd8').toString()
+        let Str = this.form.email + this.form.password + this.form.stime + 'Gotapd8'
         this.form['sign'] = cryptoJS.SHA1(Str).toString().toUpperCase()
 
         let data = await usersApi.login(this.form)
@@ -127,15 +110,13 @@ export default {
         configUser(user)
         let lastLocationHref = sessionStorage.getItem('lastLocationHref')
         if (lastLocationHref) {
-          location.href = lastLocationHref.includes('login')
-            ? location.href.split('#')[0]
-            : lastLocationHref
+          location.href = lastLocationHref.includes('login') ? location.href.split('#')[0] : lastLocationHref
           setTimeout(() => {
             sessionStorage.removeItem('lastLocationHref')
           }, 50)
         } else {
           this.$router.push({
-            name: 'dashboard',
+            name: 'dashboard'
           })
         }
       } catch (e) {
@@ -146,15 +127,15 @@ export default {
     // 注册账号
     registry() {
       this.$router.push({
-        name: 'registry',
+        name: 'registry'
       })
     },
 
     // 忘记密码
     forgetPassword() {
       this.$router.push({ name: 'passwordReset' })
-    },
-  },
+    }
+  }
 }
 </script>
 

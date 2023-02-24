@@ -6,54 +6,34 @@
         <img src="../../assets/image/logoFull.png" alt="" />
       </ElLink>
       <div class="dfs-header__button button-bar pr-4 fs-7">
-        <div
-          v-if="domain === 'demo.cloud.tapdata.net' && lang !== 'en'"
-          class="marquee-container cursor-pointer"
-        >
+        <div v-if="domain === 'demo.cloud.tapdata.net' && lang !== 'en'" class="marquee-container cursor-pointer">
           <div class="marquee-box">
             <span>{{ $t('dfs_data_dashboard_Marquee') }}</span>
           </div>
         </div>
-        <div
-          v-if="domain === 'demo.cloud.tapdata.net' && lang === 'en'"
-          class="block"
-        >
+        <div v-if="domain === 'demo.cloud.tapdata.net' && lang === 'en'" class="block">
           <p class="words">{{ $t('dfs_data_dashboard_Marquee') }}</p>
         </div>
 
-        <div
-          class="command-item mr-6"
-          v-for="item in topBarLinks"
-          @click="handleGo(item)"
-        >
+        <div class="command-item mr-6" v-for="item in topBarLinks" @click="handleGo(item)">
           <VIcon v-if="item.icon" class="mr-2" size="17">{{ item.icon }}</VIcon>
           <span class="cursor-pointer">{{ $t(item.text) }}</span>
         </div>
 
-        <NotificationPopover
-          class="command-item mr-2 flex align-items-center"
-        ></NotificationPopover>
+        <NotificationPopover class="command-item mr-2 flex align-items-center"></NotificationPopover>
         <ElDropdown class="mr-2" placement="bottom" @command="changeLanguage">
           <span class="cursor-pointer command-item icon-btn">
             <VIcon size="20">{{ 'language-' + lang }}</VIcon>
           </span>
           <template v-slot:dropdown>
             <ElDropdownMenu class="no-triangle">
-              <ElDropdownItem
-                v-for="(value, key) in languages"
-                :key="key"
-                :command="key"
-              >
+              <ElDropdownItem v-for="(value, key) in languages" :key="key" :command="key">
                 {{ value }}
               </ElDropdownItem>
             </ElDropdownMenu>
           </template>
         </ElDropdown>
-        <ElDropdown
-          class="command-item menu-user"
-          placement="bottom"
-          @command="command"
-        >
+        <ElDropdown class="command-item menu-user" placement="bottom" @command="command">
           <div class="username flex align-items-center">
             <img
               v-if="user.avatar"
@@ -63,31 +43,22 @@
               style="width: 30px; height: 30px; border-radius: 50%"
             />
             <VIcon v-else class="mr-2" size="20">account</VIcon>
-            <span>{{
-              user.username || user.nickname || user.phone || user.email
-            }}</span>
+            <span>{{ user.username || user.nickname || user.phone || user.email }}</span>
             <span class="ml-2 current">{{
-              paidPlansCode === 'standard'
-                ? $t('dfs_the_header_header_biaozhun')
-                : $t('dfs_the_header_header_jichuban')
+              paidPlansCode === 'standard' ? $t('dfs_the_header_header_biaozhun') : $t('dfs_the_header_header_jichuban')
             }}</span>
           </div>
 
           <template v-slot:dropdown>
             <ElDropdownMenu>
               <!-- <ElDropdownItem command="account"> 个人设置 </ElDropdownItem> -->
-              <ElDropdownItem
-                command="userCenter"
-                :disabled="$disabledReadonlyUserBtn()"
-                >{{ $t('the_header_Header_yongHuZhongXin') }}</ElDropdownItem
-              >
+              <ElDropdownItem command="userCenter" :disabled="$disabledReadonlyUserBtn()">{{
+                $t('the_header_Header_yongHuZhongXin')
+              }}</ElDropdownItem>
               <ElDropdownItem command="home">
                 {{ $t('header_official_website') }}
               </ElDropdownItem>
-              <ElDropdownItem
-                command="signOut"
-                :disabled="$disabledReadonlyUserBtn()"
-              >
+              <ElDropdownItem command="signOut" :disabled="$disabledReadonlyUserBtn()">
                 {{ $t('header_sign_out') }}
               </ElDropdownItem>
             </ElDropdownMenu>
@@ -100,11 +71,7 @@
 
 <script>
 import { VIcon } from '@tap/component'
-import {
-  langMenu,
-  getCurrentLanguage,
-  setCurrentLanguage,
-} from '@tap/i18n/src/shared/util'
+import { langMenu, getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
 
 import NotificationPopover from '@/views/workbench/NotificationPopover'
 
@@ -115,12 +82,11 @@ export default {
       user: window.__USER_INFO__ || {},
       USER_CENTER: window.__config__.USER_CENTER,
       topBarLinks: window.__config__?.topBarLinks,
-      officialWebsiteAddress:
-        window.__config__?.officialWebsiteAddress || 'https://tapdata.net',
+      officialWebsiteAddress: window.__config__?.officialWebsiteAddress || 'https://tapdata.net',
       lang: '',
       languages: langMenu,
       paidPlansCode: '',
-      domain: document.domain,
+      domain: document.domain
     }
   },
   created() {
@@ -136,26 +102,26 @@ export default {
         {
           text: 'dfs_data_server_apply_for_version', //线下部署
           link: 'https://tapdata.net/tapdata-on-prem/demo.html',
-          type: 'op',
+          type: 'op'
         },
         {
           text: 'header_upgrade', //旧版本访问
           link: 'https://cloud.tapdata.net/console/#/workbench/',
           icon: 'navigation_general',
-          type: 'v2',
+          type: 'v2'
         },
         {
           text: 'header_technical_support', //技术支持
           link: 'https://desk.zoho.com.cn/portal/tapdata/zh/community/topic/welcome-to-community',
           icon: 'question',
-          type: 'support',
+          type: 'support'
         },
         {
           text: 'header_manual', //使用手册
           link: 'https://docs.tapdata.io/cloud/what-is-tapdata-clou',
           icon: 'send',
-          type: 'handbook',
-        },
+          type: 'handbook'
+        }
       ]
     }
   },
@@ -176,10 +142,7 @@ export default {
           window.open(this.officialWebsiteAddress, '_blank')
           break
         case 'v2':
-          window.open(
-            'https://cloud.tapdata.net/console/#/workbench/',
-            '_blank'
-          )
+          window.open('https://cloud.tapdata.net/console/#/workbench/', '_blank')
           break
         case 'op':
           window.open('https://tapdata.net/tapdata-on-prem/demo.html', '_blank')
@@ -187,19 +150,15 @@ export default {
         case 'userCenter':
           // window.open(this.USER_CENTER || 'https://tapdata.authing.cn/u', '_blank')
           this.$router.push({
-            name: 'userCenter',
+            name: 'userCenter'
           })
           break
         case 'signOut':
-          this.$confirm(
-            this.$t('header_log_out_tip'),
-            this.$t('header_log_out_title'),
-            {
-              type: 'warning',
-              confirmButtonText: this.$t('button_confirm'),
-              cancelButtonText: this.$t('button_cancel'),
-            }
-          ).then((res) => {
+          this.$confirm(this.$t('header_log_out_tip'), this.$t('header_log_out_title'), {
+            type: 'warning',
+            confirmButtonText: this.$t('button_confirm'),
+            cancelButtonText: this.$t('button_cancel')
+          }).then(res => {
             if (res) {
               this.clearCookie()
               location.href = './logout'
@@ -210,22 +169,13 @@ export default {
           window.open('https://ask.tapdata.net/', '_blank')
           break
         case 'source-center':
-          window.open(
-            'https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_readme',
-            '_blank'
-          )
+          window.open('https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_readme', '_blank')
           break
         case 'handbook':
-          window.open(
-            'https://docs.tapdata.io/cloud/what-is-tapdata-cloud',
-            '_blank'
-          )
+          window.open('https://docs.tapdata.io/cloud/what-is-tapdata-cloud', '_blank')
           break
         case 'support':
-          window.open(
-            'https://desk.zoho.com.cn/portal/tapdata/zh/community/topic/welcome-to-community',
-            '_blank'
-          )
+          window.open('https://desk.zoho.com.cn/portal/tapdata/zh/community/topic/welcome-to-community', '_blank')
           break
       }
     },
@@ -239,18 +189,13 @@ export default {
       let keys = document.cookie.match(/[^ =;]+(?==)/g)
       if (keys) {
         for (let i = keys.length; i--; ) {
-          document.cookie =
-            keys[i] +
-            '=0;path=/;domain=' +
-            document.domain +
-            ';expires=' +
-            new Date(0).toUTCString()
+          document.cookie = keys[i] + '=0;path=/;domain=' + document.domain + ';expires=' + new Date(0).toUTCString()
         }
       }
     },
     //用户是否是付费用户
     getPaidPlan() {
-      this.$axios.get('api/tcm/user/paidPlan').then((data) => {
+      this.$axios.get('api/tcm/user/paidPlan').then(data => {
         this.paidPlansCode = data?.paidPlans?.[0].code
       })
     },
@@ -258,8 +203,8 @@ export default {
     //处理跳转
     handleGo(item) {
       window.open(item.link, '_blank')
-    },
-  },
+    }
+  }
 }
 </script>
 

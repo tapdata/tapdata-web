@@ -35,34 +35,16 @@
                 color="rgb(61, 156, 64)"
                 >loading-circle</VIcon
               >
-              <NodeIcon
-                v-if="!node.data.isLeaf"
-                :node="node.data"
-                :size="18"
-                class="tree-item-icon mr-2"
-              />
-              <div
-                v-else-if="node.data.isEmpty"
-                class="flex align-items-center"
-              >
-                <span class="mr-1">{{
-                  $t('packages_business_dag_dialog_field_mapping_no_data')
-                }}</span>
-                <StageButton :connection-id="getConnectionId(node)">
-                </StageButton>
+              <NodeIcon v-if="!node.data.isLeaf" :node="node.data" :size="18" class="tree-item-icon mr-2" />
+              <div v-else-if="node.data.isEmpty" class="flex align-items-center">
+                <span class="mr-1">{{ $t('packages_business_dag_dialog_field_mapping_no_data') }}</span>
+                <StageButton :connection-id="getConnectionId(node)"> </StageButton>
               </div>
               <VIcon v-else class="tree-item-icon mr-2" size="18">table</VIcon>
-              <span
-                :class="[{ 'color-disable': data.disabled }, 'table-label']"
-                :title="data.name"
-                >{{ data.name }}</span
-              >
-              <VIcon
-                size="16"
-                class="btn-menu"
-                @click="openView(node.data, node.data.isLeaf)"
-                >copy</VIcon
-              >
+              <span :class="[{ 'color-disable': data.disabled }, 'table-label']" :title="data.name">{{
+                data.name
+              }}</span>
+              <VIcon size="16" class="btn-menu" @click="openView(node.data, node.data.isLeaf)">copy</VIcon>
             </span>
           </template>
         </VirtualTree>
@@ -88,14 +70,14 @@ import { makeDragNodeImage } from '../../shared'
 export default {
   name: 'Source',
   props: {
-    dragState: Object,
+    dragState: Object
   },
   components: {
     NodeIcon,
     VirtualTree,
     connectionPreview,
     TablePreview,
-    StageButton,
+    StageButton
   },
   data() {
     return {
@@ -104,9 +86,9 @@ export default {
       expandedKeys: [],
       props: {
         isLeaf: 'isLeaf',
-        disabled: 'disabled',
+        disabled: 'disabled'
       },
-      loading: false,
+      loading: false
     }
   },
   methods: {
@@ -119,38 +101,36 @@ export default {
         limit: 999,
         where: {
           connection_type: {
-            in: ['source_and_target', 'source'],
-          },
-        },
+            in: ['source_and_target', 'source']
+          }
+        }
       }
       const res = await connectionsApi.get({
-        filter: JSON.stringify(filter),
+        filter: JSON.stringify(filter)
       })
 
-      return res.items.map((t) => {
+      return res.items.map(t => {
         const { status, loadCount = 0, tableCount = 0 } = t
         const disabled = status !== 'ready'
         return {
           ...t,
-          progress: !tableCount
-            ? 0
-            : Math.round((loadCount / tableCount) * 10000) / 100,
+          progress: !tableCount ? 0 : Math.round((loadCount / tableCount) * 10000) / 100,
           children: [],
           isLeaf: false,
           disabled,
-          type: 'connection',
+          type: 'connection'
         }
       })
     },
 
     async getTableList(id) {
       const res = await metadataInstancesApi.getSourceTablesValues(id)
-      const data = res.map((t) => {
+      const data = res.map(t => {
         return {
           id: t.tableId,
           name: t.tableName,
           isLeaf: true,
-          type: 'table',
+          type: 'table'
         }
       })
       return data.length
@@ -160,8 +140,8 @@ export default {
               id: '',
               name: '',
               isLeaf: true,
-              isEmpty: true,
-            },
+              isEmpty: true
+            }
           ]
     },
 
@@ -210,7 +190,7 @@ export default {
         let node = {
           id: row.id,
           category: 'storage',
-          type: 'table',
+          type: 'table'
         }
         this.$refs.tablePreview.open(node)
       } else {
@@ -234,9 +214,9 @@ export default {
       } else {
         this.$refs.tree.append(data, 0)
       }
-    },
+    }
   },
-  emits: ['create-connection', 'node-drag-end'],
+  emits: ['create-connection', 'node-drag-end']
 }
 </script>
 

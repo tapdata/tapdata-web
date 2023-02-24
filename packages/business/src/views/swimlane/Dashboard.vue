@@ -53,22 +53,22 @@ export default {
           title: 'SOURCES',
           type: 'source',
           add: true,
-          component: 'SourceItem',
+          component: 'SourceItem'
         },
         {
           title: 'FDM / CACHE',
-          component: 'FDMItem',
+          component: 'FDMItem'
         },
         {
           title: 'MDM / CURATED MODELS',
-          component: 'MDMItem',
+          component: 'MDMItem'
         },
         {
           title: 'SERVICES / TARGETS',
           type: 'target',
           add: true,
-          component: 'TargetItem',
-        },
+          component: 'TargetItem'
+        }
       ],
       visible: false,
       createConnectionParams: {},
@@ -76,8 +76,8 @@ export default {
         isDragging: false,
         draggingObjects: [],
         dropNode: null,
-        form: '',
-      },
+        form: ''
+      }
     }
   },
 
@@ -90,9 +90,7 @@ export default {
     },
 
     handleSuccess(value) {
-      const component = this.options.find(
-        (t) => t.type === this.createConnectionParams.type
-      )?.component
+      const component = this.options.find(t => t.type === this.createConnectionParams.type)?.component
       this.$refs[component]?.[0]?.addItem(value)
     },
 
@@ -101,8 +99,8 @@ export default {
       this.dragState.draggingObjects = []
       this.dragState.dropNode = null
       this.dragState.form = ''
-    },
-  },
+    }
+  }
 }
 </script>
 

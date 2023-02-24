@@ -17,7 +17,7 @@ export const CollapseItem = observer(
           <div class={[prefix, { expand: expand.value }]}>
             <div
               class={prefix + '-header'}
-              onClick={(e) => {
+              onClick={e => {
                 e.stopPropagation()
                 e.preventDefault()
                 expand.value = !expand.value
@@ -32,6 +32,6 @@ export const CollapseItem = observer(
           </div>
         )
       }
-    },
+    }
   })
 )

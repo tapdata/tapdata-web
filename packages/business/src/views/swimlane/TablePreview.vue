@@ -59,9 +59,7 @@
                   </template>
                 </VTable>
               </el-tab-pane>
-              <el-tab-pane label="Sample Data" name="sampleData"
-                >Schema</el-tab-pane
-              >
+              <el-tab-pane label="Sample Data" name="sampleData">Schema</el-tab-pane>
             </el-tabs>
           </section>
           <section class="mt-6">
@@ -81,12 +79,7 @@
           </section>
         </el-tab-pane>
         <el-tab-pane label="Schema" name="schema">
-          <VTable
-            class="discovery-page-table"
-            :columns="columns"
-            :data="tableFields"
-            :has-pagination="false"
-          >
+          <VTable class="discovery-page-table" :columns="columns" :data="tableFields" :has-pagination="false">
             <template v-slot:empty>
               <div>
                 {{ $t('packages_dag_dag_dialog_field_mapping_no_data') }}
@@ -123,59 +116,59 @@ export default {
       columnsPreview: [
         {
           label: i18n.t('metadata_name'),
-          prop: 'name',
+          prop: 'name'
         },
         {
           label: i18n.t('metadata_type'),
-          prop: 'dataType',
+          prop: 'dataType'
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_yewumiaoshu'),
-          prop: 'businessDesc',
-        },
+          prop: 'businessDesc'
+        }
       ],
       columns: [
         {
           label: i18n.t('metadata_name'),
-          prop: 'name',
+          prop: 'name'
         },
         {
           label: i18n.t('metadata_type'),
-          prop: 'dataType',
+          prop: 'dataType'
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_zhujian'),
-          prop: 'primaryKey',
+          prop: 'primaryKey'
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_waijian'),
-          prop: 'foreignKey',
+          prop: 'foreignKey'
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_suoyin'),
-          prop: 'index',
+          prop: 'index'
         },
         {
           label: i18n.t('meta_table_not_null'),
-          prop: 'notNull',
+          prop: 'notNull'
         },
         {
           label: i18n.t('meta_table_default'),
-          prop: 'defaultValue',
+          prop: 'defaultValue'
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_yewumingcheng'),
-          prop: 'businessName',
+          prop: 'businessName'
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_yewuleixing'),
-          prop: 'businessType',
+          prop: 'businessType'
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_yewumiaoshu'),
-          prop: 'businessDesc',
-        },
-      ],
+          prop: 'businessDesc'
+        }
+      ]
     }
   },
   methods: {
@@ -186,7 +179,7 @@ export default {
     getTableStorage(row) {
       discoveryApi
         .overViewStorage(row.id)
-        .then((res) => {
+        .then(res => {
           this.detailData = res
           this.detailData['lastUpdAt'] = this.detailData['lastUpdAt']
             ? dayjs(this.detailData['lastUpdAt']).format('YYYY-MM-DD HH:mm:ss')
@@ -197,8 +190,8 @@ export default {
           this.loading = false
         })
     },
-    handleClick() {},
-  },
+    handleClick() {}
+  }
 }
 </script>
 

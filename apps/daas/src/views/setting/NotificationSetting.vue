@@ -7,24 +7,15 @@
       <section class="notification-tip">
         <span> {{ $t('notify_tip') }}</span>
       </section>
-      <section
-        class="run-notification"
-        v-show="runNotification && runNotification.length > 0"
-      >
+      <section class="run-notification" v-show="runNotification && runNotification.length > 0">
         <span class="title">{{ $t('notify_job_operation_notice') }}</span>
         <ul>
           <li v-for="(item, index) in runNotification" :key="index">
             <span class="label">{{ notificationMAP[item.label] }}</span>
-            <el-checkbox class="notice" v-model:value="item.notice">{{
-              $t('notify_system_notice')
-            }}</el-checkbox>
-            <el-checkbox class="email" v-model:value="item.email">{{
-              $t('notify_email_notice')
-            }}</el-checkbox>
+            <el-checkbox class="notice" v-model:value="item.notice">{{ $t('notify_system_notice') }}</el-checkbox>
+            <el-checkbox class="email" v-model:value="item.email">{{ $t('notify_email_notice') }}</el-checkbox>
             <div class="mt-4" v-if="item.lagTime">
-              <span class="label" v-if="item.lagTime">{{
-                notificationMAP[item.lagTime]
-              }}</span>
+              <span class="label" v-if="item.lagTime">{{ notificationMAP[item.lagTime] }}</span>
               <span v-if="item.label === 'CDCLagTime'">
                 <el-input
                   v-model:value="item.lagTimeInterval"
@@ -95,37 +86,23 @@
           </li>
         </ul>
       </section>
-      <section
-        class="run-notification"
-        v-show="systemNotification && systemNotification.length > 0"
-      >
+      <section class="run-notification" v-show="systemNotification && systemNotification.length > 0">
         <span class="title">{{ $t('notify_system_setting') }}</span>
         <ul>
           <li v-for="(item, index) in systemNotification" :key="index">
             <span class="label">{{ notificationMAP[item.label] }}</span>
-            <el-checkbox class="notice" v-model:value="item.notice">{{
-              $t('notify_system_notice')
-            }}</el-checkbox>
-            <el-checkbox class="email" v-model:value="item.email">{{
-              $t('notify_email_notice')
-            }}</el-checkbox>
+            <el-checkbox class="notice" v-model:value="item.notice">{{ $t('notify_system_notice') }}</el-checkbox>
+            <el-checkbox class="email" v-model:value="item.email">{{ $t('notify_email_notice') }}</el-checkbox>
           </li>
         </ul>
       </section>
-      <section
-        class="run-notification"
-        v-show="agentNotification && agentNotification.length > 0"
-      >
+      <section class="run-notification" v-show="agentNotification && agentNotification.length > 0">
         <span class="title">{{ $t('notification_agentNotice') }}</span>
         <ul>
           <li v-for="(item, index) in agentNotification" :key="index">
             <span class="label">{{ notificationMAP[item.label] }}</span>
-            <el-checkbox class="notice" v-model:value="item.notice">{{
-              $t('notify_system_notice')
-            }}</el-checkbox>
-            <el-checkbox class="email" v-model:value="item.email">{{
-              $t('notify_email_notice')
-            }}</el-checkbox>
+            <el-checkbox class="notice" v-model:value="item.notice">{{ $t('notify_system_notice') }}</el-checkbox>
+            <el-checkbox class="email" v-model:value="item.email">{{ $t('notify_email_notice') }}</el-checkbox>
           </li>
         </ul>
       </section>
@@ -136,9 +113,7 @@
         @click="submit"
         size="mini"
         type="primary"
-        :disabled="
-          !runNotification || !systemNotification || !agentNotification
-        "
+        :disabled="!runNotification || !systemNotification || !agentNotification"
         >{{ $t('dataForm_submit') }}</ElButton
       >
     </div>
@@ -160,7 +135,7 @@ export default {
       runNotification: [],
       systemNotification: [],
       agentNotification: [],
-      loading: false,
+      loading: false
     }
   },
   created() {
@@ -171,7 +146,7 @@ export default {
       this.loading = true
       settingsApi
         .findOne('76')
-        .then((data) => {
+        .then(data => {
           let value = JSON.parse(data?.value || '{}')
           this.runNotification = value.runNotification
           this.systemNotification = value.systemNotification
@@ -183,12 +158,12 @@ export default {
     },
     submit() {
       let where = {
-        _id: '76',
+        _id: '76'
       }
       let data = {
         runNotification: this.runNotification,
         systemNotification: this.systemNotification,
-        agentNotification: this.agentNotification,
+        agentNotification: this.agentNotification
       }
       if (!data) {
         return
@@ -201,8 +176,8 @@ export default {
         .finally(() => {
           this.loading = false
         })
-    },
-  },
+    }
+  }
 }
 </script>
 

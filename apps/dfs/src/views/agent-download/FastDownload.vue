@@ -70,9 +70,7 @@
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
               >
-                <i class="click-style">{{
-                  $t('agent_deploy_start_install_button_copy')
-                }}</i>
+                <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
               </span>
             </ElTooltip>
           </li>
@@ -115,9 +113,7 @@
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
               >
-                <i class="click-style">{{
-                  $t('agent_deploy_start_install_button_copy')
-                }}</i>
+                <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
               </span>
             </ElTooltip>
           </li>
@@ -127,9 +123,7 @@
           </li>
           <li>
             <span>{{ $t('agent_deploy_start_install_linux_third') }}</span>
-            <ElLink type="primary" @click="linuxToAgent">{{
-              $t('agent_deploy_link_agent_operation')
-            }}</ElLink>
+            <ElLink type="primary" @click="linuxToAgent">{{ $t('agent_deploy_link_agent_operation') }}</ElLink>
             <span>{{ $t('agent_deploy_link_agent_operation_desc') }}</span>
           </li>
         </ul>
@@ -145,9 +139,7 @@
             <ElLink type="primary" @click="dockerToInstall">{{
               $t('agent_deploy_before_prepare_docker_install_link')
             }}</ElLink>
-            <span>{{
-              $t('agent_deploy_before_prepare_docker_second_install')
-            }}</span>
+            <span>{{ $t('agent_deploy_before_prepare_docker_second_install') }}</span>
           </li>
           <li>
             <div class="my-5 text-style">
@@ -170,9 +162,7 @@
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
               >
-                <i class="click-style">{{
-                  $t('agent_deploy_start_install_button_copy')
-                }}</i>
+                <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
               </span>
             </ElTooltip>
           </li>
@@ -182,9 +172,7 @@
           </li>
           <li class="flex">
             <span>{{ $t('agent_deploy_start_install_docker_third') }}</span>
-            <ElLink type="primary" @click="dockerToAgent">{{
-              $t('agent_deploy_link_agent_operation')
-            }}</ElLink>
+            <ElLink type="primary" @click="dockerToAgent">{{ $t('agent_deploy_link_agent_operation') }}</ElLink>
             <span>{{ $t('agent_deploy_link_agent_operation_desc') }}</span>
           </li>
         </ul>
@@ -192,9 +180,7 @@
       <template v-if="downLoadType === 'AliComputenest'">
         <ul class="ul-style">
           <li>
-            <span>{{
-              $t('dfs_agent_download_fastdownload_jisuanchaoCo')
-            }}</span>
+            <span>{{ $t('dfs_agent_download_fastdownload_jisuanchaoCo') }}</span>
           </li>
           <li>
             <div class="my-5 text-style">
@@ -214,9 +200,7 @@
             <div class="my-4">
               <el-link :href="trialUrl" target="_blank" class="mr-4 url-btn"
                 ><div>
-                  {{
-                    $t('dfs_agent_download_agentdownloadmodal_santianshiyong')
-                  }}
+                  {{ $t('dfs_agent_download_agentdownloadmodal_santianshiyong') }}
                 </div></el-link
               >
               <el-link :href="url" target="_blank" class="url-btn"
@@ -249,9 +233,7 @@
                 v-clipboard:success="onCopyVersion"
                 @mouseleave="showTooltipVersion = false"
               >
-                <i class="click-style">{{
-                  $t('agent_deploy_start_install_button_copy')
-                }}</i>
+                <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
               </span>
             </ElTooltip>
           </li>
@@ -275,9 +257,7 @@
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
               >
-                <i class="click-style">{{
-                  $t('agent_deploy_start_install_button_copy')
-                }}</i>
+                <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
               </span>
             </ElTooltip>
           </li>
@@ -297,9 +277,7 @@
       </template>
     </main>
     <footer class="footer">
-      <ElButton type="primary" @click="handleNextStep()">{{
-        $t('button_finish')
-      }}</ElButton>
+      <ElButton type="primary" @click="handleNextStep()">{{ $t('button_finish') }}</ElButton>
     </footer>
   </section>
 </template>
@@ -320,8 +298,8 @@ export default {
         { name: 'Windows (64 bit)', value: 'windows' },
         {
           name: i18n.t('dfs_agent_download_agentdownloadmodal_aliyunjisuan'),
-          value: 'AliComputenest',
-        },
+          value: 'AliComputenest'
+        }
       ],
       showTooltip: false,
       showTooltipVersion: false,
@@ -333,7 +311,7 @@ export default {
       version: '',
       trialUrl: '',
       url: '',
-      agentId: '',
+      agentId: ''
     }
   },
   created() {
@@ -345,27 +323,25 @@ export default {
       this.downType = [
         { name: 'Linux (64 bit)', value: 'Linux' },
         { name: 'Docker', value: 'Docker' },
-        { name: 'Windows (64 bit)', value: 'windows' },
+        { name: 'Windows (64 bit)', value: 'windows' }
       ]
     }
   },
   methods: {
     getUrl() {
-      this.$axios
-        .get('api/tcm/productRelease/deploy/' + this.$route.query?.id)
-        .then(async (data) => {
-          this.downloadUrl = data.downloadUrl || ''
-          this.token = data.token || ''
-          this.version = data.version || ''
-          let links = data.links || []
-          links.forEach((el) => {
-            if (el?.os === 'AliComputenest') {
-              this.trialUrl = el?.trialUrl
-              this.url = el?.url
-            }
-            this[el.os + 'Link'] = el.command
-          })
+      this.$axios.get('api/tcm/productRelease/deploy/' + this.$route.query?.id).then(async data => {
+        this.downloadUrl = data.downloadUrl || ''
+        this.token = data.token || ''
+        this.version = data.version || ''
+        let links = data.links || []
+        links.forEach(el => {
+          if (el?.os === 'AliComputenest') {
+            this.trialUrl = el?.trialUrl
+            this.url = el?.url
+          }
+          this[el.os + 'Link'] = el.command
         })
+      })
     },
     // windows下载
     handleDownLoad() {
@@ -405,19 +381,13 @@ export default {
       )
     },
     linuxToAgent() {
-      window.open(
-        'https://docs.tapdata.io/cloud/user-guide/manage-agent/',
-        '_blank'
-      )
+      window.open('https://docs.tapdata.io/cloud/user-guide/manage-agent/', '_blank')
     },
     dockerToInstall() {
       window.open('https://docs.docker.com/get-docker/', '_blank')
     },
     dockerToAgent() {
-      window.open(
-        'https://docs.tapdata.io/cloud/user-guide/manage-agent/',
-        '_blank'
-      )
+      window.open('https://docs.tapdata.io/cloud/user-guide/manage-agent/', '_blank')
     },
     //在线小助手
     hideCustomTip() {
@@ -433,10 +403,9 @@ export default {
     loadChat() {
       let $zoho = $zoho || {}
       $zoho.salesiq = $zoho.salesiq || {
-        widgetcode:
-          '39c2c81d902fdf4fbcc9b55f1268168c6d58fe89b1de70d9adcb5c4c13d6ff4d604d73c57c92b8946ff9b4782f00d83f',
+        widgetcode: '39c2c81d902fdf4fbcc9b55f1268168c6d58fe89b1de70d9adcb5c4c13d6ff4d604d73c57c92b8946ff9b4782f00d83f',
         values: {},
-        ready: function () {},
+        ready: function () {}
       }
       window.$zoho = $zoho
       let d = document
@@ -455,11 +424,11 @@ export default {
         $zoho.salesiq.visitor.info({
           tapdata_username: user.nickname || user.username,
           tapdata_phone: user.telephone,
-          tapdata_email: user.email,
+          tapdata_email: user.email
         })
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

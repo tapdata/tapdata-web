@@ -9,8 +9,8 @@ const store = Vuex.createStore({
   // 全局变量
   state: {
     notification: {
-      unRead: 0,
-    },
+      unRead: 0
+    }
   },
   actions,
 
@@ -18,8 +18,8 @@ const store = Vuex.createStore({
 
   modules: {
     dataflow,
-    classification,
-  },
+    classification
+  }
 })
 
 export default store

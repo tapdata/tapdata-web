@@ -1,9 +1,6 @@
 <template>
   <div class="milestone-container">
-    <div
-      class="inline-flex align-items-center fs-7 font-color-dark cursor-pointer"
-      @click="toggleFnc"
-    >
+    <div class="inline-flex align-items-center fs-7 font-color-dark cursor-pointer" @click="toggleFnc">
       <span>{{ $t('packages_business_task_monitor_mission_milestone') }}</span>
       <VIcon v-if="isFold" class="v-icon ml-1">arrow-right</VIcon>
       <VIcon v-else class="v-icon ml-1">arrow-down</VIcon>
@@ -30,21 +27,8 @@
         </ElButton>
       </template>
       <template v-slot:status="scope">
-        <span
-          :class="[
-            'status-' + scope.row.status,
-            'fs-8',
-            'px-2',
-            'py-1',
-            'rounded-md',
-          ]"
-        >
-          {{
-            $t(
-              'packages_business_milestone_list_status_' +
-                getMilestoneStatus(scope.row.status)
-            )
-          }}
+        <span :class="['status-' + scope.row.status, 'fs-8', 'px-2', 'py-1', 'rounded-md']">
+          {{ $t('packages_business_milestone_list_status_' + getMilestoneStatus(scope.row.status)) }}
         </span>
 
         <!-- <StatusTag type="text" target="milestone" :status="getMilestoneStatus(scope.row.status)"></StatusTag> -->
@@ -62,16 +46,16 @@ export default {
   props: {
     list: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     taskStatus: {
       type: String,
-      default: '',
+      default: ''
     },
     fold: {
       type: Boolean,
-      default: true, // 默认折叠
-    },
+      default: true // 默认折叠
+    }
   },
   data() {
     return {
@@ -80,34 +64,31 @@ export default {
         {
           label: this.$t('packages_business_task_info_milestone'),
           prop: 'label',
-          slotName: 'label',
+          slotName: 'label'
         },
         {
           label: this.$t('packages_business_task_monitor_status'),
           prop: 'status',
           slotName: 'status',
-          width: 100,
+          width: 100
         },
         {
           label: this.$t('packages_business_task_monitor_time'),
           prop: 'fromNow',
-          width: 160,
-        },
-      ],
+          width: 160
+        }
+      ]
     }
   },
   computed: {
     milestoneList() {
       return this.list || []
-    },
+    }
   },
   methods: {
     getMilestoneStatus(status) {
       let result = status
-      if (
-        ['edit', 'stop', 'error'].includes(this.taskStatus) &&
-        status === 'running'
-      ) {
+      if (['edit', 'stop', 'error'].includes(this.taskStatus) && status === 'running') {
         result = 'paused'
       }
       return result
@@ -116,13 +97,13 @@ export default {
       this.$confirm(msg, this.$t('packages_business_task_info_error'), {
         type: 'warning',
         width: '850px',
-        customClass: 'milestone-check-error-container',
+        customClass: 'milestone-check-error-container'
       })
     },
     toggleFnc() {
       this.isFold = !this.isFold
-    },
-  },
+    }
+  }
 }
 </script>
 

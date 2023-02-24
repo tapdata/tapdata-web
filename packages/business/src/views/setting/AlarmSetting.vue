@@ -8,119 +8,55 @@
         {{ $t('packages_business_setting_alarmnotification_morengaojinggui') }}
       </div>
     </header>
-    <VTable
-      ref="table"
-      class="table-list"
-      :data="tableData"
-      :columns="columns"
-      :hasPagination="false"
-    >
+    <VTable ref="table" class="table-list" :data="tableData" :columns="columns" :hasPagination="false">
       <template v-slot:key="scope">
         <span>{{ keyMapping[scope.row.key] }}</span>
       </template>
       <template v-slot:notify="scope">
         <div class="flex">
-          <el-switch
-            style="margin-right: 20px"
-            v-model:value="scope.row.open"
-          ></el-switch>
+          <el-switch style="margin-right: 20px" v-model:value="scope.row.open"></el-switch>
           <el-checkbox-group v-model:value="scope.row.notify">
-            <el-checkbox label="SYSTEM">{{
-              $t('packages_business_notify_system_notice')
-            }}</el-checkbox>
-            <el-checkbox label="EMAIL">{{
-              $t('packages_business_notify_email_notification')
-            }}</el-checkbox>
+            <el-checkbox label="SYSTEM">{{ $t('packages_business_notify_system_notice') }}</el-checkbox>
+            <el-checkbox label="EMAIL">{{ $t('packages_business_notify_email_notification') }}</el-checkbox>
             <el-tooltip
               placement="top"
               :content="$t('packages_business_notify_no_webchat_notification')"
               v-if="!isOpenid && !isDaas"
-              ><el-checkbox
-                label="WECHAT"
-                v-if="!isDaas"
-                :disabled="!isOpenid"
-                >{{
-                  $t('packages_business_notify_webchat_notification')
-                }}</el-checkbox
-              ></el-tooltip
+              ><el-checkbox label="WECHAT" v-if="!isDaas" :disabled="!isOpenid">{{
+                $t('packages_business_notify_webchat_notification')
+              }}</el-checkbox></el-tooltip
             >
             <el-checkbox label="WECHAT" v-if="!isDaas && isOpenid">{{
               $t('packages_business_notify_webchat_notification')
             }}</el-checkbox>
-            <el-checkbox label="SMS" v-if="!isDaas">{{
-              $t('packages_business_notify_sms_notification')
-            }}</el-checkbox>
+            <el-checkbox label="SMS" v-if="!isDaas">{{ $t('packages_business_notify_sms_notification') }}</el-checkbox>
           </el-checkbox-group>
         </div>
       </template>
       <template v-slot:interval="scope">
-        <el-input-number
-          :controls="false"
-          style="width: 100px"
-          v-model:value="scope.row.interval"
-        ></el-input-number>
-        <el-select
-          style="width: 100px"
-          class="ml-2"
-          v-model:value="scope.row.unit"
-        >
-          <el-option
-            :label="$t('packages_business_task_info_ms')"
-            value="MS"
-          ></el-option>
-          <el-option
-            :label="$t('packages_business_task_info_s')"
-            value="SECOND"
-          ></el-option>
-          <el-option
-            :label="$t('packages_business_task_info_m')"
-            value="MINUTE"
-          ></el-option>
-          <el-option
-            :label="$t('packages_business_task_info_h')"
-            value="HOUR"
-          ></el-option>
-          <el-option
-            :label="$t('packages_business_task_info_d')"
-            value="DAY"
-          ></el-option>
-          <el-option
-            :label="$t('packages_business_task_info_w')"
-            value="WEEK"
-          ></el-option>
+        <el-input-number :controls="false" style="width: 100px" v-model:value="scope.row.interval"></el-input-number>
+        <el-select style="width: 100px" class="ml-2" v-model:value="scope.row.unit">
+          <el-option :label="$t('packages_business_task_info_ms')" value="MS"></el-option>
+          <el-option :label="$t('packages_business_task_info_s')" value="SECOND"></el-option>
+          <el-option :label="$t('packages_business_task_info_m')" value="MINUTE"></el-option>
+          <el-option :label="$t('packages_business_task_info_h')" value="HOUR"></el-option>
+          <el-option :label="$t('packages_business_task_info_d')" value="DAY"></el-option>
+          <el-option :label="$t('packages_business_task_info_w')" value="WEEK"></el-option>
         </el-select>
       </template>
     </VTable>
     <section v-if="!isDaas">
-      <header
-        class="flex justify-content-between mb-4 mt-4"
-        style="border-bottom: 1px solid #ebeef5"
-      >
+      <header class="flex justify-content-between mb-4 mt-4" style="border-bottom: 1px solid #ebeef5">
         <div class="mb-4">{{ $t('packages_business_notify_alarm_title') }}</div>
       </header>
-      <ElForm
-        ref="form"
-        class="e-form"
-        label-position="left"
-        label-width="390px"
-        :model="form"
-      >
-        <ElFormItem
-          :label="$t('notify_agent_status_offline')"
-          style="border-bottom: 1px solid #ebeef5"
-        >
-          <el-checkbox
-            v-model:value="form.connectionInterrupted.sms"
-            size="mini"
-            @change="handleSettingValue"
-            >{{ $t('notify_sms_notification') }}</el-checkbox
-          >
-          <el-checkbox
-            v-model:value="form.connectionInterrupted.email"
-            size="mini"
-            @change="handleSettingValue"
-            >{{ $t('notify_email_notification') }}</el-checkbox
-          >
+      <ElForm ref="form" class="e-form" label-position="left" label-width="390px" :model="form">
+        <ElFormItem :label="$t('notify_agent_status_offline')" style="border-bottom: 1px solid #ebeef5">
+          <el-checkbox v-model:value="form.connectionInterrupted.sms" size="mini" @change="handleSettingValue">{{
+            $t('notify_sms_notification')
+          }}</el-checkbox>
+          <el-checkbox v-model:value="form.connectionInterrupted.email" size="mini" @change="handleSettingValue">{{
+            $t('notify_email_notification')
+          }}</el-checkbox>
           <br />
           <el-tooltip
             placement="top"
@@ -131,9 +67,7 @@
               v-if="!isDaas"
               v-model:value="form.connectionInterrupted.weChat"
               :disabled="!isOpenid"
-              >{{
-                $t('packages_business_notify_webchat_notification')
-              }}</el-checkbox
+              >{{ $t('packages_business_notify_webchat_notification') }}</el-checkbox
             ></el-tooltip
           >
           <el-checkbox
@@ -146,52 +80,31 @@
             {{ $t('notify_webchat_notification') }}</el-checkbox
           >
         </ElFormItem>
-        <ElFormItem
-          :label="$t('notify_agent_status_running')"
-          style="border-bottom: 1px solid #ebeef5"
-        >
-          <el-checkbox
-            v-model:value="form.connected.sms"
-            size="mini"
-            @change="handleSettingValue"
-            >{{ $t('notify_sms_notification') }}</el-checkbox
-          >
-          <el-checkbox
-            v-model:value="form.connected.email"
-            @change="handleSettingValue"
-            >{{ $t('notify_email_notification') }}</el-checkbox
-          >
+        <ElFormItem :label="$t('notify_agent_status_running')" style="border-bottom: 1px solid #ebeef5">
+          <el-checkbox v-model:value="form.connected.sms" size="mini" @change="handleSettingValue">{{
+            $t('notify_sms_notification')
+          }}</el-checkbox>
+          <el-checkbox v-model:value="form.connected.email" @change="handleSettingValue">{{
+            $t('notify_email_notification')
+          }}</el-checkbox>
           <br />
           <el-tooltip
             placement="top"
             :content="$t('packages_business_notify_no_webchat_notification')"
             v-if="!isOpenid && !isDaas"
-            ><el-checkbox
-              label="WECHAT"
-              v-if="!isDaas"
-              v-model:value="form.connected.weChat"
-              :disabled="!isOpenid"
-              >{{
-                $t('packages_business_notify_webchat_notification')
-              }}</el-checkbox
-            ></el-tooltip
+            ><el-checkbox label="WECHAT" v-if="!isDaas" v-model:value="form.connected.weChat" :disabled="!isOpenid">{{
+              $t('packages_business_notify_webchat_notification')
+            }}</el-checkbox></el-tooltip
           >
-          <el-checkbox
-            v-if="isOpenid && !isDaas"
-            v-model:value="form.connected.weChat"
-            @change="handleSettingValue"
-            >{{ $t('notify_webchat_notification') }}</el-checkbox
-          >
+          <el-checkbox v-if="isOpenid && !isDaas" v-model:value="form.connected.weChat" @change="handleSettingValue">{{
+            $t('notify_webchat_notification')
+          }}</el-checkbox>
         </ElFormItem>
       </ElForm>
     </section>
     <footer class="flex justify-content-end mt-4">
-      <el-button size="mini" @click="remoteMethod('close')">{{
-        $t('button_cancel')
-      }}</el-button>
-      <el-button size="mini" type="primary" @click="save()">{{
-        $t('button_save')
-      }}</el-button>
+      <el-button size="mini" @click="remoteMethod('close')">{{ $t('button_cancel') }}</el-button>
+      <el-button size="mini" type="primary" @click="save()">{{ $t('button_save') }}</el-button>
     </footer>
     <el-dialog
       :title="$t('packages_business_setting_alarmnotification_renwumorengao')"
@@ -202,20 +115,12 @@
       <div class="mb-4">
         {{ $t('packages_business_setting_alarmnotification_cichugaojinggui') }}
       </div>
-      <VTable
-        ref="table"
-        class="table-list"
-        :data="alarmData"
-        :columns="alarmRulesColumns"
-        :hasPagination="false"
-      >
+      <VTable ref="table" class="table-list" :data="alarmData" :columns="alarmRulesColumns" :hasPagination="false">
         <template v-slot:keySlot="scope">
           <span>{{ keyMapping[scope.row.key] }}</span>
         </template>
         <template v-slot:valueSlot="scope">
-          <span class="mr-2">{{
-            $t('packages_business_setting_alarmnotification_lianxu')
-          }}</span>
+          <span class="mr-2">{{ $t('packages_business_setting_alarmnotification_lianxu') }}</span>
           <el-input-number
             :controls="false"
             :precision="0"
@@ -223,14 +128,8 @@
             style="width: 100px"
             v-model:value="scope.row.point"
           ></el-input-number>
-          <span class="ml-2 mr-2">
-            {{ $t('packages_business_setting_alarmnotification_gedian') }}</span
-          >
-          <el-select
-            style="width: 100px"
-            class="mr-2"
-            v-model:value="scope.row.equalsFlag"
-          >
+          <span class="ml-2 mr-2"> {{ $t('packages_business_setting_alarmnotification_gedian') }}</span>
+          <el-select style="width: 100px" class="mr-2" v-model:value="scope.row.equalsFlag">
             <el-option label=">=" :value="1"></el-option>
             <el-option label="<=" :value="-1"></el-option>
           </el-select>
@@ -241,18 +140,12 @@
             v-model:value="scope.row.ms"
             style="width: 80px"
           ></el-input-number>
-          <span class="ml-2">{{
-            $t('packages_business_setting_alarmnotification_msshigaojing')
-          }}</span>
+          <span class="ml-2">{{ $t('packages_business_setting_alarmnotification_msshigaojing') }}</span>
         </template>
       </VTable>
       <footer class="flex justify-content-end mt-4">
-        <el-button size="mini" @click="alarmRulesVisible = false">{{
-          $t('button_cancel')
-        }}</el-button>
-        <el-button size="mini" type="primary" @click="saveAlarmRules()">{{
-          $t('button_save')
-        }}</el-button>
+        <el-button size="mini" @click="alarmRulesVisible = false">{{ $t('button_cancel') }}</el-button>
+        <el-button size="mini" type="primary" @click="saveAlarmRules()">{{ $t('button_save') }}</el-button>
       </footer>
     </el-dialog>
   </section>
@@ -271,80 +164,44 @@ export default {
     return {
       columns: [
         {
-          label: i18n.t(
-            'packages_business_setting_alarm_notification_describtion'
-          ),
-          slotName: 'key',
+          label: i18n.t('packages_business_setting_alarm_notification_describtion'),
+          slotName: 'key'
         },
         {
-          label: i18n.t(
-            'packages_business_setting_notification_alarm_notification_gaojingtongzhi'
-          ),
+          label: i18n.t('packages_business_setting_notification_alarm_notification_gaojingtongzhi'),
           prop: 'notify',
-          slotName: 'notify',
+          slotName: 'notify'
         },
         {
-          label: i18n.t(
-            'packages_business_setting_alarm_notification_notify_noticeInterval'
-          ),
+          label: i18n.t('packages_business_setting_alarm_notification_notify_noticeInterval'),
           prop: 'interval',
-          slotName: 'interval',
-        },
+          slotName: 'interval'
+        }
       ],
       keyMapping: {
-        TASK_STATUS_ERROR: i18n.t(
-          'packages_business_setting_alarmnotification_dangrenwuyudao'
-        ),
-        TASK_INSPECT_ERROR: i18n.t(
-          'packages_business_setting_alarmnotification_dangrenwujiaoyan'
-        ),
-        TASK_FULL_COMPLETE: i18n.t(
-          'packages_business_setting_alarmnotification_dangrenwuquanliang'
-        ),
-        TASK_INCREMENT_START: i18n.t(
-          'packages_business_setting_alarmnotification_dangrenwuzengliang'
-        ),
-        TASK_STATUS_STOP: i18n.t(
-          'packages_business_setting_alarmnotification_dangrenwutingzhi'
-        ),
-        TASK_INCREMENT_DELAY: i18n.t(
-          'packages_business_setting_alarmnotification_dangrenwudezeng'
-        ),
-        DATANODE_CANNOT_CONNECT: i18n.t(
-          'packages_business_setting_alarmnotification_dangshujuwufa'
-        ),
-        DATANODE_HTTP_CONNECT_CONSUME: i18n.t(
-          'packages_business_setting_alarmnotification_dangshujuyuanwang'
-        ),
-        DATANODE_TCP_CONNECT_CONSUME: i18n.t(
-          'packages_business_setting_alarmnotification_dangshujuyuanxie'
-        ),
-        DATANODE_AVERAGE_HANDLE_CONSUME: i18n.t(
-          'packages_business_setting_alarmnotification_dangshujuyuanjie'
-        ),
-        PROCESSNODE_AVERAGE_HANDLE_CONSUME: i18n.t(
-          'packages_business_setting_alarmnotification_dangjiediandeping'
-        ),
-        SYSTEM_FLOW_EGINGE_DOWN: i18n.t(
-          'packages_business_setting_alarmnotification_dangrenwustop'
-        ),
-        SYSTEM_FLOW_EGINGE_UP: i18n.t(
-          'packages_business_setting_alarmnotification_dangrenwuuP'
-        ),
+        TASK_STATUS_ERROR: i18n.t('packages_business_setting_alarmnotification_dangrenwuyudao'),
+        TASK_INSPECT_ERROR: i18n.t('packages_business_setting_alarmnotification_dangrenwujiaoyan'),
+        TASK_FULL_COMPLETE: i18n.t('packages_business_setting_alarmnotification_dangrenwuquanliang'),
+        TASK_INCREMENT_START: i18n.t('packages_business_setting_alarmnotification_dangrenwuzengliang'),
+        TASK_STATUS_STOP: i18n.t('packages_business_setting_alarmnotification_dangrenwutingzhi'),
+        TASK_INCREMENT_DELAY: i18n.t('packages_business_setting_alarmnotification_dangrenwudezeng'),
+        DATANODE_CANNOT_CONNECT: i18n.t('packages_business_setting_alarmnotification_dangshujuwufa'),
+        DATANODE_HTTP_CONNECT_CONSUME: i18n.t('packages_business_setting_alarmnotification_dangshujuyuanwang'),
+        DATANODE_TCP_CONNECT_CONSUME: i18n.t('packages_business_setting_alarmnotification_dangshujuyuanxie'),
+        DATANODE_AVERAGE_HANDLE_CONSUME: i18n.t('packages_business_setting_alarmnotification_dangshujuyuanjie'),
+        PROCESSNODE_AVERAGE_HANDLE_CONSUME: i18n.t('packages_business_setting_alarmnotification_dangjiediandeping'),
+        SYSTEM_FLOW_EGINGE_DOWN: i18n.t('packages_business_setting_alarmnotification_dangrenwustop'),
+        SYSTEM_FLOW_EGINGE_UP: i18n.t('packages_business_setting_alarmnotification_dangrenwuuP')
       },
       alarmRulesColumns: [
         {
-          label: i18n.t(
-            'packages_business_setting_alarmnotification_gaojingzhibiao'
-          ),
-          slotName: 'keySlot',
+          label: i18n.t('packages_business_setting_alarmnotification_gaojingzhibiao'),
+          slotName: 'keySlot'
         },
         {
-          label: i18n.t(
-            'packages_business_setting_alarmnotification_gaojingzhibiao'
-          ),
-          slotName: 'valueSlot',
-        },
+          label: i18n.t('packages_business_setting_alarmnotification_gaojingzhibiao'),
+          slotName: 'valueSlot'
+        }
       ],
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       alarmRulesVisible: false,
@@ -355,21 +212,21 @@ export default {
         connected: {
           email: true,
           sms: false,
-          weChat: false,
+          weChat: false
         },
         connectionInterrupted: {
           email: true,
           sms: false,
-          weChat: false,
+          weChat: false
         },
         stoppedByError: {
           email: true,
           sms: false,
-          weChat: false,
-        },
+          weChat: false
+        }
       },
       userId: '',
-      currentData: [],
+      currentData: []
     }
   },
   mounted() {
@@ -377,7 +234,7 @@ export default {
     if (!this.isDaas) {
       //是否绑定微信
       // 获取tm用户id
-      this.$axios.get('tm/api/users/self').then((data) => {
+      this.$axios.get('tm/api/users/self').then(data => {
         if (data) {
           this.userId = data.id
           if (data.notification) {
@@ -390,18 +247,14 @@ export default {
   },
   methods: {
     remoteMethod(type) {
-      settingsApi.findAlarm().then((data) => {
+      settingsApi.findAlarm().then(data => {
         this.tableData = data
         if (!this.isDaas && type) {
           $emit(this, 'updateVisible', false)
         }
         //过滤掉agent停止时
-        this.currentData = data.filter(
-          (item) => item.key === 'SYSTEM_FLOW_EGINGE_DOWN'
-        )
-        this.tableData = this.tableData.filter(
-          (item) => item.key !== 'SYSTEM_FLOW_EGINGE_DOWN'
-        )
+        this.currentData = data.filter(item => item.key === 'SYSTEM_FLOW_EGINGE_DOWN')
+        this.tableData = this.tableData.filter(item => item.key !== 'SYSTEM_FLOW_EGINGE_DOWN')
       })
     },
     save() {
@@ -420,8 +273,8 @@ export default {
     },
     //告警设置 单独请求接口 单独提交数据
     getAlarmData() {
-      alarmRuleApi.find().then((data) => {
-        this.alarmData = data.map((item) => {
+      alarmRuleApi.find().then(data => {
+        this.alarmData = data.map(item => {
           item.point = this.getPoints(item.point)
           item.ms = this.getSecond(item.ms)
           return item
@@ -438,9 +291,8 @@ export default {
     },
     saveAlarmRules() {
       //告警设置单独保存
-      this.alarmData = this.alarmData.map((item) => {
-        item.point =
-          Math.ceil(item.point * 12) < 1 ? 1 : Math.ceil(item.point * 12)
+      this.alarmData = this.alarmData.map(item => {
+        item.point = Math.ceil(item.point * 12) < 1 ? 1 : Math.ceil(item.point * 12)
         item.ms = Math.ceil(item.ms * 1000) < 1 ? 1 : Math.ceil(item.ms * 1000)
         return item
       })
@@ -451,11 +303,11 @@ export default {
     },
     handleSettingValue() {
       let data = {
-        notification: this.form,
+        notification: this.form
       }
       this.$axios.patch(`tm/api/users/${this.userId}`, data)
-    },
+    }
   },
-  emits: ['updateVisible'],
+  emits: ['updateVisible']
 }
 </script>
