@@ -140,8 +140,8 @@ export default {
             })
           const t = new Date(data.start).getTime()
           const len = 10 * 1000
-          const start = t - len
-          const end = data.end ? data.end + len : Time.now()
+          let start = t - len
+          const end = data.end ? data.end + len : t + len
           data.start && this.getLogRef()?.$refs.timeSelect.changeTime([start, end])
         }
       })
