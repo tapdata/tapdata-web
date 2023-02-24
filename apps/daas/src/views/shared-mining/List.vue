@@ -409,20 +409,7 @@ export default {
     },
     // 取消编辑
     cancelEdit() {
-      //弹框没有任何修改 直接关闭不需要二次提示
-      if (this.editForm.name === this.currentForm.name && this.editForm.storageTime === this.currentForm.storageTime) {
-        this.editDialogVisible = false
-        return
-      }
-      this.$confirm(this.$t('share_form_edit_text'), this.$t('share_form_edit_title'), {
-        type: 'warning',
-        closeOnClickModal: false
-      }).then(resFlag => {
-        if (!resFlag) {
-          return
-        }
-        this.editDialogVisible = false
-      })
+      this.editDialogVisible = false
     },
     // 保存编辑
     saveEdit() {
