@@ -347,7 +347,7 @@ const mutations = {
 
   // 设置激活连接
   setActiveConnection(state, connection) {
-    Vue.set(state, 'activeConnection', connection)
+    state['activeConnection'] = connection
     state.activeType = connection ? 'connection' : null
   },
 
@@ -362,7 +362,7 @@ const mutations = {
     if (!nodeData.$inputs) nodeData.$inputs = []
     if (!nodeData.$outputs) nodeData.$outputs = []
     state.dag.nodes.push(nodeData)
-    Vue.set(state.NodeMap, nodeData.id, nodeData)
+    state.NodeMap[nodeData.id] = nodeData
   },
 
   addNodes(state, nodes) {
@@ -370,7 +370,7 @@ const mutations = {
       if (!node.$inputs) node.$inputs = []
       if (!node.$outputs) node.$outputs = []
       state.dag.nodes.push(node)
-      Vue.set(state.NodeMap, node.id, node)
+      state.NodeMap[node.id] = node
     })
   },
 
@@ -384,7 +384,7 @@ const mutations = {
         if (isObject(value) && target[key]) {
           updateObjVal(target[key], value)
         } else {
-          Vue.set(target, key, value)
+          target[key] = value
         }
       })
     }
@@ -394,11 +394,11 @@ const mutations = {
       /*Object.entries(updateInformation.properties).forEach(([key, value]) => {
         if (isObject(value)) {
         } else {
-          Vue.set(node, key, value)
+          node[key] = value
         }
       })*/
       /*for (const key of Object.keys(updateInformation.properties)) {
-        Vue.set(node, key, updateInformation.properties[key])
+        node[key] = updateInformation.properties[key]
       }*/
     }
   },
@@ -450,7 +450,7 @@ const mutations = {
     let target = find(node, nameParts, conditions)
 
     state.stateIsDirty = true
-    target && Vue.set(target, key, updateInformation.value)
+    target && (target[key] = updateInformation.value)
   },
 
   // 通过Path[k1.k2]更新节点
@@ -467,7 +467,7 @@ const mutations = {
     let target = find(node, nameParts, conditions)
 
     state.stateIsDirty = true
-    target && Vue.set(target, key, updateInformation.value)
+    target && (target[key] = updateInformation.value)
   },
 
   // 更新节点value
@@ -479,7 +479,7 @@ const mutations = {
     }
 
     state.stateIsDirty = true
-    Vue.set(node, updateInformation.key, updateInformation.value)
+    node[updateInformation.key] = updateInformation.value
   },
 
   // 添加连接，设置input、output
@@ -495,12 +495,12 @@ const mutations = {
 
     if (!$outputs.includes(target)) {
       $outputs.push(target)
-      Vue.set(sourceNode, '$outputs', $outputs)
+      sourceNode['$outputs'] = $outputs
     }
 
     if (!$inputs.includes(source)) {
       $inputs.push(source)
-      Vue.set(targetNode, '$inputs', $inputs)
+      targetNode['$inputs'] = $inputs
     }
   },
 
@@ -523,8 +523,8 @@ const mutations = {
     if (~ti) $outputs.splice(ti, 1)
     if (~si) $inputs.splice(si, 1)
 
-    // Vue.set(sourceNode, '$outputs', $outputs)
-    // Vue.set(targetNode, '$inputs', $inputs)
+    // sourceNode['$outputs'] = $outputs
+    // targetNode['$inputs'] = $inputs
   },
 
   // 移除节点
@@ -623,7 +623,7 @@ const mutations = {
   },
 
   setFormSchema(state, schema) {
-    Vue.set(state, 'formSchema', schema)
+    state['formSchema'] = schema
     console.log('state', state) // eslint-disable-line
   },
 
@@ -633,11 +633,11 @@ const mutations = {
    * @param id
    */
   setNodeError(state, id) {
-    Vue.set(state.nodeErrorState, id, true)
+    state.nodeErrorState[id] = true
   },
 
   setNodeErrorMsg(state, { id, msg }) {
-    Vue.set(state.nodeErrorState, id, msg)
+    state.nodeErrorState[id] = msg
   },
 
   /**
@@ -857,7 +857,7 @@ const mutations = {
   },
 
   setPdkPropertiesMap(state, map) {
-    Vue.set(state, 'pdkPropertiesMap', map)
+    state['pdkPropertiesMap'] = map
   },
 
   toggleTaskSaving(state, flag = !state.taskSaving) {
