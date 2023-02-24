@@ -82,7 +82,7 @@ export default {
         }
       }
       const formatFunction = item => {
-        let methodName = item.methodName || item.function_name
+        let methodName = item.methodName || item.function_name || item.className
         return {
           caption: methodName,
           snippet: methodName + '(${1})',
