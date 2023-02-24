@@ -26,7 +26,7 @@
     "cron-parser": "^4.6.0",
     "highlight.js": "^11.0.1",
     "resize-observer-polyfill": "^1.5.1",
-    "vue": "^2.6.14",
+    "vue": "^3.0.0",
     "vue-demi": "^0.12.1",
     "vue-virtual-scroller": "^1.0.10"
   }

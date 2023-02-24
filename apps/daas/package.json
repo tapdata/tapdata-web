@@ -26,7 +26,7 @@
     "@tap/node-design": "workspace:^1.0.0",
     "@tap/shared": "workspace:^1.0.0",
     "axios": "^0.21.1",
-    "core-js": "^3.6.5",
+    "core-js": "^3.8.3",
     "crypto-js": "^4.0.0",
     "dagre": "^0.8.5",
     "dayjs": "^1.11.2",
@@ -37,21 +37,22 @@
     "lodash": "^4.17.15",
     "mousetrap": "^1.6.5",
     "qs": "^6.10.3",
-    "vue": "^2.6.14",
+    "vue": "^3.0.0",
     "vue-clipboard2": "^0.3.1",
     "vue-echarts": "^6.0.0",
     "vue-json-viewer": "^2.2.15",
-    "vue-router": "^3.2.0",
+    "vue-router": "^4.0.8",
     "vue-virtual-scroller": "^1.0.10",
-    "vuex": "^3.4.0"
+    "vuex": "^4.0.2",
+    "tiny-emitter": "^2.1.0"
   },
   "devDependencies": {
     "@babel/plugin-transform-typescript": "^7.18.4",
-    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-babel": "^5.0.1",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-plugin-router": "~4.5.0",
     "@vue/cli-plugin-vuex": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
+    "@vue/cli-service": "^5.0.1",
     "@vue/composition-api": "^1.6.2",
     "@vue/eslint-config-prettier": "^6.0.0",
     "babel-eslint": "^10.1.0",
@@ -74,7 +75,7 @@
     "speed-measure-webpack-plugin": "^1.5.0",
     "svg-sprite-loader": "^6.0.2",
     "svgo-loader": "^3.0.0",
-    "vue-template-compiler": "^2.6.11"
+    "@babel/core": "^7.12.16"
   },
   "gitHooks": {
     "pre-commit": "lint-staged"
