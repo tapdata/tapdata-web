@@ -17,7 +17,7 @@
         :label="$t('apiaudit_interview_time')"
         :show-overflow-tooltip="true"
         prop="createTime"
-        width="150"
+        width="160"
         sortable="createTime"
       >
         <template #default="{ row }">

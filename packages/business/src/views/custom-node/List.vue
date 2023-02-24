@@ -12,11 +12,12 @@
       <ElTableColumn :label="$t('packages_business_custom_node_name')" prop="name"> </ElTableColumn>
       <ElTableColumn :label="$t('packages_business_desc')" prop="desc"> </ElTableColumn>
 
-      <ElTableColumn prop="createTime" :label="$t('packages_business_column_create_time')"></ElTableColumn>
+      <ElTableColumn prop="createTime" :label="$t('packages_business_column_create_time')" :width="160"></ElTableColumn>
       <ElTableColumn
         prop="last_updated"
         sortable="last_updated"
         :label="$t('packages_business_last_updated')"
+        :width="160"
       ></ElTableColumn>
 
       <ElTableColumn width="150" :label="$t('packages_business_column_operation')">
