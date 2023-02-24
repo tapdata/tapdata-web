@@ -466,7 +466,8 @@ export default {
           pdkType: 1,
           pdkHash: 1,
           capabilities: 1,
-          config: 1
+          config: 1,
+          connectionString: 1
         },
         order: ['status DESC', 'name ASC']
       }
