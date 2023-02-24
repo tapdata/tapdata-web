@@ -366,7 +366,7 @@ export class Database extends NodeType {
                         'x-component': 'Radio.Group',
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
-                          tooltip: '统计追加写入: 只处理插入事件，丢弃更新和删除事件'
+                          tooltip: '追加写入: 只处理插入事件，丢弃更新和删除事件'
                         },
                         enum: [
                           {
@@ -374,7 +374,7 @@ export class Database extends NodeType {
                             value: 'updateOrInsert'
                           },
                           {
-                            label: '统计追加写入',
+                            label: '追加写入',
                             value: 'appendWrite'
                           }
                         ]
