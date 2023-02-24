@@ -1,6 +1,13 @@
-import { defineComponent, provide, inject, readonly, ref, toRef } from '@vue/composition-api'
+import {
+  defineComponent,
+  provide,
+  inject,
+  readonly,
+  ref,
+  toRef,
+} from '@vue/composition-api'
 
-export const createContext = defaultValue => {
+export const createContext = (defaultValue) => {
   const injectKey = Symbol()
 
   return {
@@ -11,15 +18,15 @@ export const createContext = defaultValue => {
           type: null,
           default() {
             return defaultValue ?? null
-          }
-        }
+          },
+        },
       },
       setup(props, { slots }) {
         const value = toRef(props, 'value')
         provide(injectKey, readonly(value))
 
         return () => slots?.default?.()
-      }
+      },
     }),
 
     Consumer: defineComponent({
@@ -28,13 +35,13 @@ export const createContext = defaultValue => {
         const value = inject(injectKey)
 
         return () => slots?.default?.(value)
-      }
+      },
     }),
-    injectKey
+    injectKey,
   }
 }
 
-export const useContext = context => {
+export const useContext = (context) => {
   const key = context.injectKey
 
   return inject(key, ref(null))

@@ -1,13 +1,13 @@
 <template>
   <div class="scheme-to-form">
     <Form
+      v-bind="$attrs"
       class-name="form-wrap"
       :form="form"
       :colon="colon"
       :layout="layout"
       :label-align="labelAlign"
       :label-width="labelWidth"
-      v-bind="$attrs"
     >
       <SchemaField v-if="!!objData" :schema="objData" :scope="scope" />
     </Form>
@@ -25,32 +25,32 @@ export default {
   components: { Form, SchemaField },
   props: {
     schema: {
-      type: Object
+      type: Object,
     },
     colon: {
       type: Boolean,
-      default: false
+      default: false,
     },
     layout: {
       type: String,
-      default: 'horizontal'
+      default: 'horizontal',
     },
     labelAlign: {
       type: String,
-      default: 'left'
+      default: 'left',
     },
     labelWidth: {
       type: [String, Number],
-      default: 120
+      default: 120,
     },
     scope: {
-      type: Object
-    }
+      type: Object,
+    },
   },
   data() {
     return {
       form: createForm(),
-      objData: null
+      objData: null,
     }
   },
   watch: {
@@ -61,8 +61,8 @@ export default {
           return
         }
         this.init()
-      }
-    }
+      },
+    },
   },
   mounted() {
     this.init()
@@ -79,8 +79,8 @@ export default {
     },
     getFormCheckStatus() {
       return this.form.valid
-    }
-  }
+    },
+  },
 }
 </script>
 

@@ -5,7 +5,7 @@ export const loading = async (loadingText = 'Loading...', processor) => {
   let loading = setTimeout(() => {
     loadingInstance = Loading.service({
       text: loadingText,
-      background: 'transparent'
+      background: 'transparent',
     })
   }, 100)
   const results = await processor()

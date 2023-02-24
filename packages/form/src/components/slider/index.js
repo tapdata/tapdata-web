@@ -4,9 +4,12 @@ import { PreviewText } from '@formily/element'
 import { Slider as ElSlider } from 'element-ui'
 
 const TransformElSlider = transformComponent(ElSlider, {
-  change: 'input'
+  change: 'input',
 })
 
-export const Slider = connect(TransformElSlider, mapReadPretty(PreviewText.Input))
+export const Slider = connect(
+  TransformElSlider,
+  mapReadPretty(PreviewText.Input)
+)
 
 export default Slider

@@ -5,7 +5,7 @@ export const FormFlex = defineComponent({
     gap: Number,
     align: String,
     justify: String,
-    alignContent: String
+    alignContent: String,
   },
   setup(props, { attrs, slots }) {
     return () => {
@@ -13,14 +13,19 @@ export const FormFlex = defineComponent({
         {
           [`align-items-${props.align}`]: props.align,
           [`align-content-${props.alignContent}`]: props.alignContent,
-          [`justify-${props.justify}`]: props.justify
-        }
+          [`justify-${props.justify}`]: props.justify,
+        },
       ]
       return (
-        <div staticClass="flex" class={classList} attrs={attrs} style={{ gap: `${props.gap}px` }}>
+        <div
+          staticClass="flex"
+          class={classList}
+          attrs={attrs}
+          style={{ gap: `${props.gap}px` }}
+        >
           {slots.default?.()}
         </div>
       )
     }
-  }
+  },
 })

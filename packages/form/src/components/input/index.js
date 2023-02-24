@@ -6,8 +6,8 @@ export const Input = defineComponent({
     // 默认去空格
     trim: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   setup(props, { attrs, listeners }) {
     return () => {
@@ -17,17 +17,17 @@ export const Input = defineComponent({
           attrs={{ ...attrs }}
           on={{
             ...listeners,
-            change: val => {
+            change: (val) => {
               if (props.trim) {
                 val = val.trim()
               }
               listeners.change(val)
-            }
+            },
           }}
         />
       )
     }
-  }
+  },
 })
 
 Input.TextArea = _Input.TextArea
