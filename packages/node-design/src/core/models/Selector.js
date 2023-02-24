@@ -1,4 +1,4 @@
-const toArray = target => Array.from(target || [])
+const toArray = (target) => Array.from(target || [])
 
 export class Selector {
   #store = new Map()
@@ -44,7 +44,10 @@ export class Selector {
     if (caches) {
       results.current = caches.get(target)
       if (Array.isArray(results.current)) {
-        if (results.current.length === 0 || results.current.some(node => !node.isConnected)) {
+        if (
+          results.current.length === 0 ||
+          results.current.some((node) => !node.isConnected)
+        ) {
           this.#_clean(target, cacheKey)
           return this.#_queryAll(target, selector)
         }

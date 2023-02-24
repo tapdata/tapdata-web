@@ -21,8 +21,6 @@ import { VIcon } from '@tap/component'
 
 export default {
   name: 'PanelHeader',
-  components: { VIcon }
+  components: { VIcon },
 }
 </script>
-
-<style scoped lang="scss"></style>

@@ -19,11 +19,13 @@ export const StudioHeader = observer(
 
       watch(
         () => root.$route,
-        async route => {
+        async (route) => {
           if (route.params?.id) {
             if (route.params.action === 'nodeSave') return
             const data = await customNodeApi.get([route.params?.id])
-            designerRef.value.setCurrentTree(transformToTreeNode(data.formSchema))
+            designerRef.value.setCurrentTree(
+              transformToTreeNode(data.formSchema)
+            )
             customNodeRef.value.from(data)
 
             customNodeApi.checkUsed(route.params.id)
@@ -37,7 +39,9 @@ export const StudioHeader = observer(
       const save = async () => {
         const customNode = customNodeRef.value
         if (!customNode.name) {
-          root.$message.warning(root.$t('packages_nodeDesign_custom_node_name_required'))
+          root.$message.warning(
+            root.$t('packages_nodeDesign_custom_node_name_required')
+          )
           return
         }
         saving.value = true
@@ -48,7 +52,7 @@ export const StudioHeader = observer(
             customNode.id = data.id
             root.$router.replace({
               name: 'NodeEditor',
-              params: { id: data.id, action: 'nodeSave' }
+              params: { id: data.id, action: 'nodeSave' },
             })
           }
           root.$message.success(root.$t('packages_nodeDesign_message_save_ok'))
@@ -65,7 +69,7 @@ export const StudioHeader = observer(
             <button
               onClick={() => {
                 root.$router.push({
-                  name: 'customNodeList'
+                  name: 'customNodeList',
                 })
               }}
               class="panel-header-btn inline-flex align-center p-1"
@@ -81,7 +85,7 @@ export const StudioHeader = observer(
               maxWidth="254"
               placeholder="请输入节点名称"
               value={customNodeRef.value.name}
-              onInput={val => {
+              onInput={(val) => {
                 customNodeRef.value.name = val
               }}
             />
@@ -89,7 +93,10 @@ export const StudioHeader = observer(
           <div class="panel-header-tools flex align-center">
             <ElTooltip transition="tooltip-fade-in" content="表单设计">
               <button
-                class={['icon-btn', { active: workbenchRef.value.type === 'DESIGNABLE' }]}
+                class={[
+                  'icon-btn',
+                  { active: workbenchRef.value.type === 'DESIGNABLE' },
+                ]}
                 onClick={() => {
                   workbenchRef.value.type = 'DESIGNABLE'
                 }}
@@ -99,7 +106,10 @@ export const StudioHeader = observer(
             </ElTooltip>
             <ElTooltip transition="tooltip-fade-in" content="JSON Schema">
               <button
-                class={['icon-btn', { active: workbenchRef.value.type === 'JSONTREE' }]}
+                class={[
+                  'icon-btn',
+                  { active: workbenchRef.value.type === 'JSONTREE' },
+                ]}
                 onClick={() => {
                   workbenchRef.value.type = 'JSONTREE'
                 }}
@@ -109,7 +119,10 @@ export const StudioHeader = observer(
             </ElTooltip>
             <ElTooltip transition="tooltip-fade-in" content="代码编辑">
               <button
-                class={['icon-btn', { active: workbenchRef.value.type === 'CODE' }]}
+                class={[
+                  'icon-btn',
+                  { active: workbenchRef.value.type === 'CODE' },
+                ]}
                 onClick={() => {
                   workbenchRef.value.type = 'CODE'
                 }}
@@ -119,7 +132,10 @@ export const StudioHeader = observer(
             </ElTooltip>
             <ElTooltip transition="tooltip-fade-in" content="预览表单">
               <button
-                class={['icon-btn', { active: workbenchRef.value.type === 'PREVIEW' }]}
+                class={[
+                  'icon-btn',
+                  { active: workbenchRef.value.type === 'PREVIEW' },
+                ]}
                 onClick={() => {
                   workbenchRef.value.type = 'PREVIEW'
                 }}
@@ -129,12 +145,17 @@ export const StudioHeader = observer(
             </ElTooltip>
           </div>
           <div class="panel-header-actions text-end flex-grow-1 mr-3">
-            <ElButton loading={saving.value} size="small" type="primary" onClick={save}>
+            <ElButton
+              loading={saving.value}
+              size="small"
+              type="primary"
+              onClick={save}
+            >
               保存
             </ElButton>
           </div>
         </div>
       )
-    }
+    },
   })
 )

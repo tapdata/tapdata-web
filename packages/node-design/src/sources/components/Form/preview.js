@@ -14,7 +14,7 @@ export const Form = observer(
       const prefix = usePrefix('designable-form')
       const form = computed(() =>
         createForm({
-          designable: true
+          designable: true,
         })
       )
 
@@ -23,13 +23,13 @@ export const Form = observer(
           {slots.default?.()}
         </BaseForm>
       )
-    }
+    },
   })
 )
 
 Form.Behavior = createBehavior({
   name: 'Form',
-  selector: node => node.componentName === 'Form',
+  selector: (node) => node.componentName === 'Form',
   designerProps(node) {
     return {
       draggable: !node.isRoot,
@@ -50,12 +50,12 @@ Form.Behavior = createBehavior({
         layout: 'vertical',
         feedbackLayout: 'terse',
         style: {
-          padding: '16px'
-        }
-      }
+          padding: '16px',
+        },
+      },
     }
   },
-  designerLocales: AllLocales.Form
+  designerLocales: AllLocales.Form,
 })
 
 Form.Resource = createResource({
@@ -66,8 +66,8 @@ Form.Resource = createResource({
       componentName: 'Field',
       props: {
         type: 'object',
-        'x-component': 'Form'
-      }
-    }
-  ]
+        'x-component': 'Form',
+      },
+    },
+  ],
 })

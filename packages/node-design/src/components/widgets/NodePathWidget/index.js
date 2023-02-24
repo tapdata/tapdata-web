@@ -1,5 +1,10 @@
 import { Breadcrumb, BreadcrumbItem } from 'element-ui'
-import { useCurrentNode, useSelection, usePrefix, useHover } from '../../../hooks'
+import {
+  useCurrentNode,
+  useSelection,
+  usePrefix,
+  useHover,
+} from '../../../hooks'
 import { IconWidget } from '../IconWidget'
 import { NodeTitleWidget } from '../NodeTitleWidget'
 import { observer } from '@formily/reactive-vue'
@@ -10,9 +15,9 @@ export const NodePathWidget = observer(
   defineComponent({
     props: {
       maxItems: Number,
-      workspaceId: String
+      workspaceId: String,
     },
-    setup: props => {
+    setup: (props) => {
       const selectedRef = useCurrentNode(props.workspaceId)
       const selectionRef = useSelection(props.workspaceId)
       const hoverRef = useHover(props.workspaceId)
@@ -35,13 +40,15 @@ export const NodePathWidget = observer(
             {nodes.map((node, key) => {
               return (
                 <BreadcrumbItem key={key}>
-                  {key === 0 && <IconWidget infer="Position" style={{ marginRight: 3 }} />}
+                  {key === 0 && (
+                    <IconWidget infer="Position" style={{ marginRight: 3 }} />
+                  )}
                   <a
                     href=""
                     onMouseenter={() => {
                       hoverRef.value.setHover(node)
                     }}
-                    onClick={e => {
+                    onClick={(e) => {
                       e.stopPropagation()
                       e.preventDefault()
                       selectionRef.value.select(node)
@@ -55,6 +62,6 @@ export const NodePathWidget = observer(
           </Breadcrumb>
         )
       }
-    }
+    },
   })
 )

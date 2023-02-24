@@ -1,3 +1,4 @@
+import * as Vue from 'vue'
 import { useCursor, usePrefix, useDesigner } from '../../../hooks'
 import { CursorStatus } from '../../../core'
 import { autorun } from '@formily/reactive'
@@ -16,9 +17,9 @@ export const GhostWidget = observer(
       const prefix = usePrefix('ghost')
       const dispose = autorun(() => {
         const cursor = unref(cursorRef)
-        const transform = `perspective(1px) translate3d(${cursor.position?.topClientX - 18}px,${
-          cursor.position?.topClientY - 12
-        }px,0) scale(0.8)`
+        const transform = `perspective(1px) translate3d(${
+          cursor.position?.topClientX - 18
+        }px,${cursor.position?.topClientY - 12}px,0) scale(0.8)`
         if (!refs.root) return
         refs.root.style.transform = transform
       })
@@ -37,7 +38,7 @@ export const GhostWidget = observer(
         return (
           <span
             style={{
-              whiteSpace: 'nowrap'
+              whiteSpace: 'nowrap',
             }}
           >
             <NodeTitleWidget node={firstNode} />
@@ -45,12 +46,13 @@ export const GhostWidget = observer(
           </span>
         )
       }
-      if (!firstNode || this.cursor.status !== CursorStatus.Dragging) return null
+      if (!firstNode || this.cursor.status !== CursorStatus.Dragging)
+        return Vue.h
       return (
         <div id="Ghost" ref="root" class={this.prefix}>
           {renderNodes()}
         </div>
       )
-    }
+    },
   })
 )

@@ -9,14 +9,14 @@ export const traverseTree = (data, callback) => {
   }
 }
 
-export const transformValueToData = value => {
+export const transformValueToData = (value) => {
   const data = clone(value)
   traverseTree(data, (item, i, dataSource) => {
     const dataItem = {
       key: '',
       duplicateKey: '',
       map: [],
-      children: []
+      children: [],
     }
     for (const [key, value] of Object.entries(dataSource[i] || {})) {
       if (key !== 'children') dataItem.map.push({ label: key, value: value })
@@ -30,13 +30,13 @@ export const transformValueToData = value => {
   return data
 }
 
-export const transformDataToValue = data => {
+export const transformDataToValue = (data) => {
   const value = clone(data)
   traverseTree(value, (item, i, dataSource) => {
     const valueItem = {
-      children: []
+      children: [],
     }
-    toArr(dataSource[i].map).forEach(item => {
+    toArr(dataSource[i].map).forEach((item) => {
       if (item.label) valueItem[item.label] = item.value
     })
     valueItem.children = dataSource[i]?.children || []

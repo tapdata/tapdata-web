@@ -8,7 +8,7 @@ const ValidatorFormats = [
   { label: '货币格式', value: 'money' },
   { label: '中文格式', value: 'zh' },
   { label: '日期格式', value: 'date' },
-  { label: '邮编格式', value: 'zip' }
+  { label: '邮编格式', value: 'zip' },
 ]
 
 export default {
@@ -21,16 +21,16 @@ export default {
         triggerType: {
           title: '触发类型',
           placeholder: '请选择',
-          dataSource: ['输入时', '聚焦时', '失焦时']
+          dataSource: ['输入时', '聚焦时', '失焦时'],
         },
         format: {
           title: '格式校验',
           placeholder: '请选择',
-          dataSource: ValidatorFormats
+          dataSource: ValidatorFormats,
         },
         validator: {
           title: '自定义校验器',
-          tooltip: '格式: function (value){ return "Error Message"}'
+          tooltip: '格式: function (value){ return "Error Message"}',
         },
         pattern: '正则表达式',
         len: '长度限制',
@@ -42,13 +42,14 @@ export default {
         required: '是否必填',
         message: {
           title: '错误消息',
-          tooltip: '错误消息只对当前规则集的一个内置规则生效，如果需要对不同内置规则定制错误消息，请拆分成多条规则'
-        }
-      }
+          tooltip:
+            '错误消息只对当前规则集的一个内置规则生效，如果需要对不同内置规则定制错误消息，请拆分成多条规则',
+        },
+      },
     },
     SettingComponents: {
       ValueInput: {
-        expression: '表达式'
+        expression: '表达式',
       },
       DataSourceSetter: {
         nodeProperty: '节点属性',
@@ -61,7 +62,7 @@ export default {
         addNode: '新增节点',
         label: '键名',
         value: '键值',
-        item: '选项'
+        item: '选项',
       },
       ReactionsSetter: {
         configureReactions: '配置响应器',
@@ -91,13 +92,13 @@ export default {
         decorator: '容器',
         decoratorProps: '容器属性',
         pleaseSelect: '请选择',
-        expressionValueTypeIs: '表达式值类型为'
+        expressionValueTypeIs: '表达式值类型为',
       },
       ValidatorSetter: {
         pleaseSelect: '请选择',
-        formats: ValidatorFormats
-      }
-    }
+        formats: ValidatorFormats,
+      },
+    },
   },
   'en-US': {
     settings: {
@@ -108,16 +109,16 @@ export default {
         triggerType: {
           title: 'Trigger Type',
           placeholder: 'Please Select',
-          dataSource: ['onInput', 'onFocus', 'onBlur']
+          dataSource: ['onInput', 'onFocus', 'onBlur'],
         },
         format: {
           title: 'Format',
           placeholder: 'Please Select',
-          dataSource: ValidatorFormats
+          dataSource: ValidatorFormats,
         },
         validator: {
           title: 'Custom Validator',
-          tooltip: 'Format: function (value){ return "Error Message"}'
+          tooltip: 'Format: function (value){ return "Error Message"}',
         },
         pattern: 'RegExp',
         len: 'Length Limit',
@@ -130,13 +131,13 @@ export default {
         message: {
           title: 'Error Message',
           tooltip:
-            'The error message is only effective for one built-in rule of the current rule set. If you need to customize the error message for different built-in rules, please split into multiple rules'
-        }
-      }
+            'The error message is only effective for one built-in rule of the current rule set. If you need to customize the error message for different built-in rules, please split into multiple rules',
+        },
+      },
     },
     SettingComponents: {
       ValueInput: {
-        expression: 'Expression'
+        expression: 'Expression',
       },
       DataSourceSetter: {
         nodeProperty: 'Node Property',
@@ -149,7 +150,7 @@ export default {
         addNode: 'Add Node',
         label: 'label',
         value: 'value',
-        item: 'Item'
+        item: 'Item',
       },
       ReactionsSetter: {
         configureReactions: 'Configure',
@@ -162,8 +163,10 @@ export default {
         variableType: 'Variable Type',
         operations: 'Operations',
         addRelationField: 'Add Associated Field',
-        propertyReactions: 'Property Reactions(Only Support Javascript Expression)',
-        actionReactions: 'Action Reactions(Optional, Support Javascript Statement)',
+        propertyReactions:
+          'Property Reactions(Only Support Javascript Expression)',
+        actionReactions:
+          'Action Reactions(Optional, Support Javascript Statement)',
         visible: 'Show/None',
         hidden: 'Show/UI Hidden',
         display: 'Display',
@@ -179,12 +182,12 @@ export default {
         decorator: 'Decorator',
         decoratorProps: 'Decorator Props',
         pleaseSelect: 'Please Select',
-        expressionValueTypeIs: 'Expression value type is'
+        expressionValueTypeIs: 'Expression value type is',
       },
       ValidatorSetter: {
         pleaseSelect: 'Please Select',
-        formats: ValidatorFormats
-      }
-    }
-  }
+        formats: ValidatorFormats,
+      },
+    },
+  },
 }

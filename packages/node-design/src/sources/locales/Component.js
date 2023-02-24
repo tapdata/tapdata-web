@@ -12,9 +12,9 @@ export const Component = {
         padding: '内边距',
         borderRadius: '圆角',
         border: '边框',
-        opacity: '透明度'
-      }
-    }
+        opacity: '透明度',
+      },
+    },
   },
   'en-US': {
     settings: {
@@ -29,8 +29,8 @@ export const Component = {
         padding: 'Padding',
         borderRadius: 'Radius',
         border: 'Border',
-        opacity: 'Opacity'
-      }
-    }
-  }
+        opacity: 'Opacity',
+      },
+    },
+  },
 }

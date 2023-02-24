@@ -19,7 +19,11 @@ export class CustomNode {
   props
 
   static defaultScript =
-    'function process(record, form){\n' + '\n' + '\t// Enter you code at here\n' + '\treturn record;\n' + '}'
+    'function process(record, form){\n' +
+    '\n' +
+    '\t// Enter you code at here\n' +
+    '\treturn record;\n' +
+    '}'
 
   constructor(engine, props = {}) {
     this.engine = engine
@@ -34,7 +38,7 @@ export class CustomNode {
   makeObservable() {
     define(this, {
       name: observable.ref,
-      template: observable.ref
+      template: observable.ref,
     })
   }
 
@@ -53,7 +57,7 @@ export class CustomNode {
       name: this.name,
       desc: this.desc,
       formSchema: this.formSchema,
-      template: this.template
+      template: this.template,
     }
   }
 

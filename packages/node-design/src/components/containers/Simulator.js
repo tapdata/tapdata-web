@@ -7,9 +7,9 @@ export const Simulator = observer(
   defineComponent({
     setup: (props, { slots }) => {
       return () => <PCSimulator props={props}>{slots.default?.()}</PCSimulator>
-    }
+    },
   }),
   {
-    scheduler: requestIdle
+    scheduler: requestIdle,
   }
 )

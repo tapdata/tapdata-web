@@ -9,11 +9,11 @@ export { FieldSelect }
 FieldSelect.Behavior = createBehavior({
   name: 'FieldSelect',
   extends: ['Field'],
-  selector: node => node.props['x-component'] === 'FieldSelect',
+  selector: (node) => node.props['x-component'] === 'FieldSelect',
   designerProps: {
-    propsSchema: createFieldSchema(AllSchemas.Select)
+    propsSchema: createFieldSchema(AllSchemas.Select),
   },
-  designerLocales: AllLocales.FieldSelect
+  designerLocales: AllLocales.FieldSelect,
 })
 
 FieldSelect.Resource = createResource({
@@ -25,8 +25,8 @@ FieldSelect.Resource = createResource({
         title: '选择字段',
         'x-decorator': 'FormItem',
         'x-component': 'FieldSelect',
-        'x-reactions': `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true}, $values.$inputs[0])}}`
-      }
-    }
-  ]
+        'x-reactions': `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true}, $values.$inputs[0])}}`,
+      },
+    },
+  ],
 })

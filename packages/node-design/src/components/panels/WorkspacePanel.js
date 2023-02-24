@@ -6,7 +6,7 @@ const WorkspacePanelComponent = defineComponent({
   setup(props, { slots }) {
     const prefix = usePrefix('workspace-panel')
     return () => <div class={prefix}>{slots.default?.()}</div>
-  }
+  },
 })
 
 const WorkspacePanelItem = defineComponent({
@@ -21,16 +21,16 @@ const WorkspacePanelItem = defineComponent({
           style={{
             // ...style,
             flexGrow: props.flexable ? 1 : 0,
-            flexShrink: props.flexable ? 1 : 0
+            flexShrink: props.flexable ? 1 : 0,
           }}
         >
           {slots.default?.()}
         </div>
       )
     }
-  }
+  },
 })
 
 export const WorkspacePanel = composeExport(WorkspacePanelComponent, {
-  Item: WorkspacePanelItem
+  Item: WorkspacePanelItem,
 })

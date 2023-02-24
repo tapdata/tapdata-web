@@ -10,12 +10,12 @@ export const FormLayout = withContainer(BaseFormLayout)
 FormLayout.Behavior = createBehavior({
   name: 'FormLayout',
   extends: ['Field'],
-  selector: node => node.props['x-component'] === 'FormLayout',
+  selector: (node) => node.props['x-component'] === 'FormLayout',
   designerProps: {
     droppable: true,
-    propsSchema: createVoidFieldSchema(AllSchemas.FormLayout)
+    propsSchema: createVoidFieldSchema(AllSchemas.FormLayout),
   },
-  designerLocales: AllLocales.FormLayout
+  designerLocales: AllLocales.FormLayout,
 })
 
 FormLayout.Resource = createResource({
@@ -25,8 +25,8 @@ FormLayout.Resource = createResource({
       componentName: 'Field',
       props: {
         type: 'void',
-        'x-component': 'FormLayout'
-      }
-    }
-  ]
+        'x-component': 'FormLayout',
+      },
+    },
+  ],
 })

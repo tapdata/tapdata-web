@@ -2,16 +2,19 @@ import { CursorStatus } from '../models'
 import { MouseClickEvent } from '../events'
 import { KeyCode, Point } from '@tap/shared'
 
-export const useSelectionEffect = engine => {
-  engine.subscribeTo(MouseClickEvent, event => {
+export const useSelectionEffect = (engine) => {
+  engine.subscribeTo(MouseClickEvent, (event) => {
     if (engine.cursor.status !== CursorStatus.Normal) return
     const target = event.data.target
     const el = target?.closest?.(`
       *[${engine.props.nodeIdAttrName}],
       *[${engine.props.outlineNodeIdAttrName}]
     `)
-    const isHelpers = target?.closest?.(`*[${engine.props.nodeSelectionIdAttrName}]`)
-    const currentWorkspace = event.context?.workspace ?? engine.workbench.activeWorkspace
+    const isHelpers = target?.closest?.(
+      `*[${engine.props.nodeSelectionIdAttrName}]`
+    )
+    const currentWorkspace =
+      event.context?.workspace ?? engine.workbench.activeWorkspace
     if (!currentWorkspace) return
     if (!el?.getAttribute) {
       const point = new Point(event.data.topClientX, event.data.topClientY)
@@ -36,7 +39,10 @@ export const useSelectionEffect = engine => {
     const node = tree.findById(nodeId || structNodeId)
     if (node) {
       engine.keyboard.requestClean()
-      if (engine.keyboard.isKeyDown(KeyCode.Meta) || engine.keyboard.isKeyDown(KeyCode.Control)) {
+      if (
+        engine.keyboard.isKeyDown(KeyCode.Meta) ||
+        engine.keyboard.isKeyDown(KeyCode.Control)
+      ) {
         if (selection.has(node)) {
           if (selection.selected.length > 1) {
             selection.remove(node)

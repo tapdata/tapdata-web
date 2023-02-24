@@ -16,7 +16,9 @@ const FoldItemComponent = observer(
     setup: (props, { attrs, slots }) => {
       const prefix = usePrefix('fold-item')
       const fieldRef = useField()
-      const expand = observable.ref(ExpandedMap.get(fieldRef.value.address.toString()))
+      const expand = observable.ref(
+        ExpandedMap.get(fieldRef.value.address.toString())
+      )
 
       return () => {
         const field = fieldRef.value
@@ -36,8 +38,8 @@ const FoldItemComponent = observer(
                     class={[
                       prefix + '-title',
                       {
-                        expand: expand.value
-                      }
+                        expand: expand.value,
+                      },
                     ]}
                   >
                     {slots.extra && <IconWidget infer="Expand" size={10} />}
@@ -47,7 +49,7 @@ const FoldItemComponent = observer(
               >
                 <div
                   style={{ width: '100%' }}
-                  onClick={e => {
+                  onClick={(e) => {
                     e.stopPropagation()
                   }}
                 >
@@ -55,19 +57,21 @@ const FoldItemComponent = observer(
                 </div>
               </FormItem.BaseItem>
             </div>
-            {expand.value && slots.extra && <div class={prefix + '-extra'}>{slots.extra?.()}</div>}
+            {expand.value && slots.extra && (
+              <div class={prefix + '-extra'}>{slots.extra?.()}</div>
+            )}
           </div>
         )
       }
-    }
+    },
   })
 )
 
 export const FoldItem = composeExport(FoldItemComponent, {
   Base: composeExport(() => <FragmentComponent></FragmentComponent>, {
-    displayName: 'FoldItem.Base'
+    displayName: 'FoldItem.Base',
   }),
   Extra: composeExport(() => <FragmentComponent></FragmentComponent>, {
-    displayName: 'FoldItem.Extra'
-  })
+    displayName: 'FoldItem.Extra',
+  }),
 })
