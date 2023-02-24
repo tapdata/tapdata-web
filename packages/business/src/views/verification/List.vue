@@ -101,7 +101,7 @@
         :label="$t('packages_business_verification_verifyTime')"
         prop="lastStartTime"
         sortable="lastStartTime"
-        min-width="150"
+        min-width="160"
       ></el-table-column>
       <el-table-column :label="$t('column_operation')" width="260">
         <template slot-scope="scope">

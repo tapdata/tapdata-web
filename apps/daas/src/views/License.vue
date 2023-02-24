@@ -13,8 +13,8 @@
           <span :class="'color-' + row.status.color">{{ row.status.text }}</span>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="expirationDateFmt" :label="$t('license_expire_date')" min-width="150"></ElTableColumn>
-      <ElTableColumn prop="lastUpdatedFmt" :label="$t('license_update_time')" min-width="150"></ElTableColumn>
+      <ElTableColumn prop="expirationDateFmt" :label="$t('license_expire_date')" min-width="160"></ElTableColumn>
+      <ElTableColumn prop="lastUpdatedFmt" :label="$t('license_update_time')" min-width="160"></ElTableColumn>
     </TablePage>
     <ElDialog append-to-body :title="$t('license_renew_dialog')" :visible.sync="dialogVisible">
       <ElInput v-model.trim="license" type="textarea"></ElInput>
