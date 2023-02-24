@@ -20,14 +20,30 @@ export function toDecimal2(x) {
   return s
 }
 export function toRegExp(word) {
-  let arr = ['\\', '$', '(', ')', '*', '+', '.', '[', ']', '?', '^', '{', '}', '|', '-']
+  let arr = [
+    '\\',
+    '$',
+    '(',
+    ')',
+    '*',
+    '+',
+    '.',
+    '[',
+    ']',
+    '?',
+    '^',
+    '{',
+    '}',
+    '|',
+    '-',
+  ]
   for (let i = 0; i < arr.length; i++) {
     let str = '\\' + arr[i]
     word = word.replace(new RegExp(str, 'g'), '\\' + arr[i])
   }
   return word
 }
-export const deepCopy = obj => JSON.parse(JSON.stringify(obj))
+export const deepCopy = (obj) => JSON.parse(JSON.stringify(obj))
 export const formatTime = timeFunction.methods.formatTime
 // 根据类型做时间格式化，精确到哪种级别
 export const formatTimeByTime = (time, type) => {
@@ -50,7 +66,8 @@ export const formatTimeByTime = (time, type) => {
 }
 
 // 判断对象是否为空
-export const isEmpty = obj => Reflect.ownKeys(obj).length === 0 && obj.constructor === Object
+export const isEmpty = (obj) =>
+  Reflect.ownKeys(obj).length === 0 && obj.constructor === Object
 // 数组去重
 export function uniqueArr(arr = [], key = 'id') {
   if (typeof arr[0] !== 'object') {
@@ -103,10 +120,10 @@ export const TYPEMAP = {
   mariadb: 'MariaDB',
   'mysql pxc': 'MySQL PXC',
   jira: 'jira',
-  clickhouse: 'ClickHouse'
+  clickhouse: 'ClickHouse',
 }
 // 转base64
-export const urlToBase64 = url => {
+export const urlToBase64 = (url) => {
   return new Promise((resolve, reject) => {
     let image = new Image()
     image.onload = function () {
@@ -139,7 +156,9 @@ export const downloadBlob = (res, name = '') => {
     return
   }
   const { data, headers } = res
-  const fileName = name || headers['content-disposition'].replace(/\w+;\s*filename="(.*)"/, '$1')
+  const fileName =
+    name ||
+    headers['content-disposition'].replace(/\w+;\s*filename="(.*)"/, '$1')
   const blob = new Blob([data], { type: headers['content-type'] })
   let dom = document.createElement('a')
   let url = window.URL.createObjectURL(blob)
@@ -161,7 +180,7 @@ export const getDatabaseTypes = (mapping = false) => {
   let result = str ? JSON.parse(str) : []
   if (mapping) {
     let obj = {}
-    result.forEach(el => {
+    result.forEach((el) => {
       obj[el.type] = el.name
     })
     return obj
@@ -170,7 +189,7 @@ export const getDatabaseTypes = (mapping = false) => {
 }
 
 // 500错误弹窗
-export const errorConfirmFnc = error => {
+export const errorConfirmFnc = (error) => {
   let msg = `<div>${i18n.t('RequestErrorMessage_error_title')}</div>`
   let title = i18n.t('confirm_error_tip')
   error = typeof error === 'object' ? error : {}
@@ -205,8 +224,8 @@ export const errorConfirmFnc = error => {
     iconSize: 18,
     dangerouslyUseHTMLString: true,
     confirmButtonText: i18n.t('confirm_reload_label'),
-    cancelButtonText: i18n.t('button_close')
-  }).then(flag => {
+    cancelButtonText: i18n.t('button_close'),
+  }).then((flag) => {
     if (flag) {
       location.reload()
     }

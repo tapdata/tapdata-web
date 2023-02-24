@@ -1,7 +1,12 @@
 <template>
   <div :class="['echart-head', { flex: data.classFlex }]">
     <h2 v-if="data.title">{{ data.title }}</h2>
-    <ElTooltip v-if="data.tip" style="margin-left: 10px" placement="top-start" :content="data.tip">
+    <ElTooltip
+      v-if="data.tip"
+      style="margin-left: 10px"
+      placement="top-start"
+      :content="data.tip"
+    >
       <i class="echart-head-tooltip__icon el-icon-warning-outline"></i>
     </ElTooltip>
     <span style="flex: 1">
@@ -12,20 +17,24 @@
     </div>
     <ElRadioGroup
       v-if="data.unit"
-      v-model="time"
+      v-model:value="time"
       style="margin-left: 10px"
       size="mini"
       :class="data.class"
       @change="changeFnc"
     >
-      <ElRadioButton v-if="!this.data.hideSecond" label="second">{{ $t('dataFlow_second') }}</ElRadioButton>
+      <ElRadioButton v-if="!this.data.hideSecond" label="second">{{
+        $t('dataFlow_second')
+      }}</ElRadioButton>
       <ElRadioButton label="minute">{{ $t('dataFlow_min') }}</ElRadioButton>
       <ElRadioButton label="hour">{{ $t('dataFlow_hour') }}</ElRadioButton>
       <ElRadioButton label="day">{{ $t('dataFlow_day') }}</ElRadioButton>
     </ElRadioGroup>
   </div>
 </template>
+
 <script>
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { VIcon } from '@tap/component'
 export default {
   name: 'EchartHeader',
@@ -39,10 +48,10 @@ export default {
           tip: '',
           unit: '',
           class: '',
-          hideSecond: false
+          hideSecond: false,
         }
-      }
-    }
+      },
+    },
   },
   data() {
     return {
@@ -51,19 +60,21 @@ export default {
       time: 'minute',
       rowCount: null,
       kbs: null,
-      selectColor: ''
+      selectColor: '',
     }
   },
   methods: {
     changeFnc(val) {
-      this.$emit('change', val, this.data)
-    }
-  }
+      $emit(this, 'change', val, this.data)
+    },
+  },
+  emits: ['change'],
 }
 </script>
+
 <style lang="scss" scoped>
 .echart-head {
-  // display: flex;
+  /*// display: flex;*/
   align-items: center;
   height: 38px;
   padding: 0 10px;
@@ -106,6 +117,7 @@ export default {
   }
 }
 </style>
+
 <style lang="scss">
 .echart-head {
   .el-radio-button--mini .el-radio-button__inner {

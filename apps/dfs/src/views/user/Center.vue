@@ -6,13 +6,17 @@
       <div>
         <ElRow :gutter="40" class="section-header mb-6">
           <ElCol :span="12" class="user-item">
-            <div class="user-item__label">{{ $t('user_name') }}{{ $t('symbol_colon') }}</div>
+            <div class="user-item__label">
+              {{ $t('user_name') }}{{ $t('symbol_colon') }}
+            </div>
             <div class="user-item__value">{{ userData.username }}</div>
           </ElCol>
         </ElRow>
         <ElRow :gutter="40" class="section-header mb-6">
           <ElCol :span="12" class="user-item">
-            <div class="user-item__label">{{ $t('user_Center_yongHuNiCheng') }}</div>
+            <div class="user-item__label">
+              {{ $t('user_Center_yongHuNiCheng') }}
+            </div>
             <InlineInput
               class="inline-input fs-8"
               :value="userData.nickname"
@@ -23,16 +27,27 @@
             ></InlineInput>
           </ElCol>
           <ElCol :span="12" class="user-item">
-            <div class="user-item__label">{{ $t('user_password') }}{{ $t('symbol_colon') }}</div>
+            <div class="user-item__label">
+              {{ $t('user_password') }}{{ $t('symbol_colon') }}
+            </div>
             <div class="user-item__value">******</div>
-            <ElLink type="primary" @click="editPassword">{{ $t('user_Center_xiuGai') }}</ElLink>
+            <ElLink type="primary" @click="editPassword">{{
+              $t('user_Center_xiuGai')
+            }}</ElLink>
           </ElCol>
         </ElRow>
         <ElRow :gutter="40" class="section-header mb-6">
           <ElCol :span="12" class="user-item">
             <div class="user-item__label">{{ $t('user_phone_number') }}</div>
-            <div class="user-item__value">{{ userData.telephone || $t('user_Center_weiBangDing') }}</div>
-            <ElLink v-if="userData.telephone" type="primary" @click="editPhone">{{ $t('user_Center_xiuGai') }}</ElLink>
+            <div class="user-item__value">
+              {{ userData.telephone || $t('user_Center_weiBangDing') }}
+            </div>
+            <ElLink
+              v-if="userData.telephone"
+              type="primary"
+              @click="editPhone"
+              >{{ $t('user_Center_xiuGai') }}</ElLink
+            >
             <ElLink
               v-if="!disabledBindingPhone && !userData.telephone"
               type="primary"
@@ -47,11 +62,20 @@
                 v-if="userData.avatar"
                 :src="userData.avatar"
                 alt=""
-                style="position: absolute; top: -24px; left: 0; width: 56px; height: 56px; border-radius: 50%"
+                style="
+                  position: absolute;
+                  top: -24px;
+                  left: 0;
+                  width: 56px;
+                  height: 56px;
+                  border-radius: 50%;
+                "
               />
               <span v-else>{{ $t('data_no') }}</span>
             </div>
-            <ElLink type="primary" @click="editAvatar">{{ $t('user_Center_xiuGai') }}</ElLink>
+            <ElLink type="primary" @click="editAvatar">{{
+              $t('user_Center_xiuGai')
+            }}</ElLink>
           </ElCol>
         </ElRow>
         <ElRow :gutter="40" class="section-header mb-6">
@@ -63,9 +87,15 @@
           <!--          </ElCol>-->
           <ElCol :span="12" class="user-item">
             <div class="user-item__label">{{ $t('user_Center_youXiang') }}</div>
-            <div class="user-item__value">{{ userData.email || $t('user_Center_weiBangDing') }}</div>
-            <ElLink v-if="userData.email" type="primary" @click="editEmail">{{ $t('user_Center_xiuGai') }}</ElLink>
-            <ElLink v-else type="primary" @click="dialogObj.bindEmail = true">{{ $t('button_bind') }}</ElLink>
+            <div class="user-item__value">
+              {{ userData.email || $t('user_Center_weiBangDing') }}
+            </div>
+            <ElLink v-if="userData.email" type="primary" @click="editEmail">{{
+              $t('user_Center_xiuGai')
+            }}</ElLink>
+            <ElLink v-else type="primary" @click="dialogObj.bindEmail = true">{{
+              $t('button_bind')
+            }}</ElLink>
           </ElCol>
         </ElRow>
       </div>
@@ -76,40 +106,70 @@
       <div>
         <ElRow :gutter="40" class="section-header mb-2">
           <ElCol :span="12" class="enterprise-item">
-            <div class="enterprise-item__label">{{ $t('user_Center_gongSiMingCheng') }}</div>
+            <div class="enterprise-item__label">
+              {{ $t('user_Center_gongSiMingCheng') }}
+            </div>
             <div v-if="!isEdit" class="enterprise-item__value">
               {{ enData.companyName || $t('user_Center_weiTianXie') }}
             </div>
-            <ElInput v-else v-model="enForm.companyName" class="enterprise-item__value"></ElInput>
+            <ElInput
+              v-else
+              v-model:value="enForm.companyName"
+              class="enterprise-item__value"
+            ></ElInput>
           </ElCol>
           <ElCol :span="12" class="enterprise-item">
-            <div class="enterprise-item__label">{{ $t('user_Center_gongSiGuanWang') }}</div>
+            <div class="enterprise-item__label">
+              {{ $t('user_Center_gongSiGuanWang') }}
+            </div>
             <div v-if="!isEdit" class="enterprise-item__value">
               {{ enData.website || $t('user_Center_weiTianXie') }}
             </div>
-            <ElInput v-else v-model="enForm.website" class="enterprise-item__value"></ElInput>
+            <ElInput
+              v-else
+              v-model:value="enForm.website"
+              class="enterprise-item__value"
+            ></ElInput>
           </ElCol>
         </ElRow>
         <ElRow :gutter="40" class="section-header mb-2">
           <ElCol :span="12" class="enterprise-item">
-            <div class="enterprise-item__label">{{ $t('user_Center_suoShuHangYe') }}</div>
+            <div class="enterprise-item__label">
+              {{ $t('user_Center_suoShuHangYe') }}
+            </div>
             <div v-if="!isEdit" class="enterprise-item__value">
               {{ enData.industry || $t('user_Center_weiTianXie') }}
             </div>
-            <ElInput v-else v-model="enForm.industry" class="enterprise-item__value"></ElInput>
+            <ElInput
+              v-else
+              v-model:value="enForm.industry"
+              class="enterprise-item__value"
+            ></ElInput>
           </ElCol>
           <ElCol :span="12" class="enterprise-item">
-            <div class="enterprise-item__label">{{ $t('user_Center_suoShuChengShi') }}</div>
-            <div v-if="!isEdit" class="enterprise-item__value">{{ enData.city || $t('user_Center_weiTianXie') }}</div>
-            <ElInput v-else v-model="enForm.city" class="enterprise-item__value"></ElInput>
+            <div class="enterprise-item__label">
+              {{ $t('user_Center_suoShuChengShi') }}
+            </div>
+            <div v-if="!isEdit" class="enterprise-item__value">
+              {{ enData.city || $t('user_Center_weiTianXie') }}
+            </div>
+            <ElInput
+              v-else
+              v-model:value="enForm.city"
+              class="enterprise-item__value"
+            ></ElInput>
           </ElCol>
         </ElRow>
         <VButton v-if="!isEdit" type="text" class="pl-0" @click="editEnData">{{
           $t('user_Center_qiYeXinXiXiu')
         }}</VButton>
         <template v-else>
-          <VButton type="text" class="pl-0" @click="cancelEditEnData">{{ $t('button_cancel') }}</VButton>
-          <VButton type="text" auto-loading @click="saveEnData(arguments[0])">{{ $t('button_save') }}</VButton>
+          <VButton type="text" class="pl-0" @click="cancelEditEnData">{{
+            $t('button_cancel')
+          }}</VButton>
+          <VButton type="text" auto-loading @click="saveEnData(arguments[0])">{{
+            $t('button_save')
+          }}</VButton>
         </template>
       </div>
     </div>
@@ -140,7 +200,9 @@
                 v-clipboard:success="handleCopyAccessKey"
                 @mouseleave="accessKeyTooltip = false"
               >
-                <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
+                <i class="click-style">{{
+                  $t('agent_deploy_start_install_button_copy')
+                }}</i>
               </span>
             </ElTooltip>
           </ElCol>
@@ -162,7 +224,9 @@
                 v-clipboard:success="handleCopySecretKey"
                 @mouseleave="secretKeyTooltip = false"
               >
-                <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
+                <i class="click-style">{{
+                  $t('agent_deploy_start_install_button_copy')
+                }}</i>
               </span>
             </ElTooltip>
           </ElCol>
@@ -174,21 +238,31 @@
       append-to-body
       :title="$t('user_Center_shangChuanTouXiang')"
       :close-on-click-modal="false"
-      :visible.sync="dialogObj.avatar"
+      v-model:visible="dialogObj.avatar"
     >
       <div class="text-center">
         <UploadFile :upload="upload" accept="image/*">
           <img v-if="avatar" :src="avatar" class="avatar" />
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-          <div class="my-4 font-color-main">{{ $t('user_Center_zhiChiJPG') }}</div>
-          <VButton type="primary">{{ $t('user_Center_shangChuanTouXiang') }}</VButton>
+          <div class="my-4 font-color-main">
+            {{ $t('user_Center_zhiChiJPG') }}
+          </div>
+          <VButton type="primary">{{
+            $t('user_Center_shangChuanTouXiang')
+          }}</VButton>
         </UploadFile>
       </div>
       <div class="mt-6 text-center">
-        <VButton @click="dialogObj.avatar = false">{{ $t('button_cancel') }}</VButton>
-        <VButton type="primary" :disabled="avatarDisabled()" auto-loading @click="avatarConfirm(arguments[0])">{{
-          $t('button_confirm')
+        <VButton @click="dialogObj.avatar = false">{{
+          $t('button_cancel')
         }}</VButton>
+        <VButton
+          type="primary"
+          :disabled="avatarDisabled()"
+          auto-loading
+          @click="avatarConfirm(arguments[0])"
+          >{{ $t('button_confirm') }}</VButton
+        >
       </div>
     </ElDialog>
     <!--  {{$t('operation_log_List_xiuGaiMiMa')}}  -->
@@ -198,25 +272,31 @@
       :title="$t('operation_log_List_xiuGaiMiMa')"
       label-width="120px"
       :close-on-click-modal="false"
-      :visible.sync="dialogObj.password"
+      v-model:visible="dialogObj.password"
     >
-      <ElForm :model="passwordForm" label-width="120px" @submit.native.prevent>
+      <ElForm :model="passwordForm" label-width="120px" @submit.prevent>
         <ElFormItem prop="current" :label="$t('user_Center_dangQianShouJi')">
           <ElInput
-            v-model="passwordForm.telephone"
+            v-model:value="passwordForm.telephone"
             :placeholder="$t('user_Center_qingShuRuDangQian')"
             maxlength="50"
             disabled
           ></ElInput>
         </ElFormItem>
-        <ElFormItem prop="newPassword" :label="$t('user_Center_shouJiYanZhengMa')" class="inline-form-item">
+        <ElFormItem
+          prop="newPassword"
+          :label="$t('user_Center_shouJiYanZhengMa')"
+          class="inline-form-item"
+        >
           <ElInput
-            v-model="passwordForm.code"
+            v-model:value="passwordForm.code"
             :placeholder="$t('user_Center_qingShuRuShouJi')"
             maxlength="50"
           ></ElInput>
           <VerificationCode
-            :request-options="getCodeOptions(passwordForm.telephone, 'RESET_PASSWORD')"
+            :request-options="
+              getCodeOptions(passwordForm.telephone, 'RESET_PASSWORD')
+            "
             :disabled="!passwordForm.telephone"
             :style="{ width: '120px', textAlign: 'center' }"
             class="ml-6"
@@ -225,16 +305,19 @@
         </ElFormItem>
         <ElFormItem prop="newPassword" :label="$t('user_Center_xinMiMa')">
           <ElInput
-            v-model="passwordForm.newPassword"
+            v-model:value="passwordForm.newPassword"
             :placeholder="$t('user_Center_qingShuRuXinMi')"
             maxlength="50"
             show-password
             onkeyup="value=value.replace(/[\u4e00-\u9fa5]/ig,'')"
           ></ElInput>
         </ElFormItem>
-        <ElFormItem prop="newAgainPassword" :label="$t('user_Center_queRenMiMa')">
+        <ElFormItem
+          prop="newAgainPassword"
+          :label="$t('user_Center_queRenMiMa')"
+        >
           <ElInput
-            v-model="passwordForm.newAgainPassword"
+            v-model:value="passwordForm.newAgainPassword"
             :placeholder="$t('user_Center_qingShuRuXinMi')"
             maxlength="50"
             show-password
@@ -243,12 +326,20 @@
         </ElFormItem>
       </ElForm>
 
-      <span slot="footer" class="dialog-footer">
-        <VButton @click="dialogObj.password = false">{{ $t('button_cancel') }}</VButton>
-        <VButton type="primary" auto-loading @click="passwordConfirm(arguments[0])" @>{{
-          $t('button_confirm')
-        }}</VButton>
-      </span>
+      <template v-slot:footer>
+        <span class="dialog-footer">
+          <VButton @click="dialogObj.password = false">{{
+            $t('button_cancel')
+          }}</VButton>
+          <VButton
+            type="primary"
+            auto-loading
+            @click="passwordConfirm(arguments[0])"
+            @
+            >{{ $t('button_confirm') }}</VButton
+          >
+        </span>
+      </template>
     </ElDialog>
     <!--  {{$t('operation_log_List_bangDingShouJiHao')}}  -->
     <ElDialog
@@ -256,19 +347,23 @@
       append-to-body
       :title="$t('operation_log_List_bangDingShouJiHao')"
       :close-on-click-modal="false"
-      :visible.sync="dialogObj.bindPhone"
+      v-model:visible="dialogObj.bindPhone"
     >
-      <ElForm :model="phoneForm" label-width="120px" @submit.native.prevent>
+      <ElForm :model="phoneForm" label-width="120px" @submit.prevent>
         <ElFormItem prop="current" :label="$t('user_Center_dangQianShouJi')">
           <ElInput
-            v-model="phoneForm.current"
+            v-model:value="phoneForm.current"
             :placeholder="$t('user_Center_qingShuRuDangQian')"
             maxlength="50"
           ></ElInput>
         </ElFormItem>
-        <ElFormItem prop="newPassword" :label="$t('user_Center_yanZhengMa')" class="inline-form-item">
+        <ElFormItem
+          prop="newPassword"
+          :label="$t('user_Center_yanZhengMa')"
+          class="inline-form-item"
+        >
           <ElInput
-            v-model="phoneForm.oldCode"
+            v-model:value="phoneForm.oldCode"
             :placeholder="$t('user_Center_qingShuRuShouJi')"
             maxlength="50"
           ></ElInput>
@@ -282,12 +377,20 @@
         </ElFormItem>
       </ElForm>
 
-      <span slot="footer" class="dialog-footer">
-        <VButton @click="dialogObj.bindPhone = false">{{ $t('button_cancel') }}</VButton>
-        <VButton type="primary" :disabled="!phoneForm.oldCode" auto-loading @click="bindPhoneConfirm(arguments[0])">{{
-          $t('button_confirm')
-        }}</VButton>
-      </span>
+      <template v-slot:footer>
+        <span class="dialog-footer">
+          <VButton @click="dialogObj.bindPhone = false">{{
+            $t('button_cancel')
+          }}</VButton>
+          <VButton
+            type="primary"
+            :disabled="!phoneForm.oldCode"
+            auto-loading
+            @click="bindPhoneConfirm(arguments[0])"
+            >{{ $t('button_confirm') }}</VButton
+          >
+        </span>
+      </template>
     </ElDialog>
     <!--  {{$t('operation_log_List_xiuGaiShouJiHao')}}  -->
     <ElDialog
@@ -295,20 +398,24 @@
       append-to-body
       :title="$t('operation_log_List_xiuGaiShouJiHao')"
       :close-on-click-modal="false"
-      :visible.sync="dialogObj.editPhone"
+      v-model:visible="dialogObj.editPhone"
     >
-      <ElForm :model="phoneForm" label-width="120px" @submit.native.prevent>
+      <ElForm :model="phoneForm" label-width="120px" @submit.prevent>
         <ElFormItem prop="current" :label="$t('user_Center_dangQianShouJi')">
           <ElInput
-            v-model="phoneForm.current"
+            v-model:value="phoneForm.current"
             :placeholder="$t('user_Center_qingShuRuDangQian')"
             maxlength="50"
             disabled
           ></ElInput>
         </ElFormItem>
-        <ElFormItem prop="newPassword" :label="$t('user_Center_jiuShouJiYanZheng')" class="inline-form-item">
+        <ElFormItem
+          prop="newPassword"
+          :label="$t('user_Center_jiuShouJiYanZheng')"
+          class="inline-form-item"
+        >
           <ElInput
-            v-model="phoneForm.oldCode"
+            v-model:value="phoneForm.oldCode"
             :placeholder="$t('user_Center_qingShuRuJiuShou')"
             maxlength="50"
           ></ElInput>
@@ -320,16 +427,22 @@
             type="text"
           ></VerificationCode>
         </ElFormItem>
-        <ElFormItem prop="newAgainPassword" :label="$t('user_Center_xinShouJi')">
+        <ElFormItem
+          prop="newAgainPassword"
+          :label="$t('user_Center_xinShouJi')"
+        >
           <ElInput
-            v-model="phoneForm.newPhone"
+            v-model:value="phoneForm.newPhone"
             :placeholder="$t('user_Center_qingShuRuXinShou2')"
             maxlength="50"
           ></ElInput>
         </ElFormItem>
-        <ElFormItem prop="newAgainPassword" :label="$t('user_Center_xinShouJiYanZheng')">
+        <ElFormItem
+          prop="newAgainPassword"
+          :label="$t('user_Center_xinShouJiYanZheng')"
+        >
           <ElInput
-            v-model="phoneForm.newCode"
+            v-model:value="phoneForm.newCode"
             :placeholder="$t('user_Center_qingShuRuXinShou')"
             maxlength="50"
           ></ElInput>
@@ -343,12 +456,20 @@
         </ElFormItem>
       </ElForm>
 
-      <span slot="footer" class="dialog-footer">
-        <VButton @click="dialogObj.editPhone = false">{{ $t('button_cancel') }}</VButton>
-        <VButton type="primary" :disabled="editPhoneDisabled()" auto-loading @click="editPhoneConfirm(arguments[0])">{{
-          $t('button_confirm')
-        }}</VButton>
-      </span>
+      <template v-slot:footer>
+        <span class="dialog-footer">
+          <VButton @click="dialogObj.editPhone = false">{{
+            $t('button_cancel')
+          }}</VButton>
+          <VButton
+            type="primary"
+            :disabled="editPhoneDisabled()"
+            auto-loading
+            @click="editPhoneConfirm(arguments[0])"
+            >{{ $t('button_confirm') }}</VButton
+          >
+        </span>
+      </template>
     </ElDialog>
     <!--  {{$t('user_Center_bangDingWeiXin')}}  -->
     <ElDialog
@@ -356,11 +477,17 @@
       append-to-body
       :title="$t('user_Center_bangDingWeiXin')"
       :close-on-click-modal="true"
-      :visible.sync="dialogObj.bindWx"
+      v-model:visible="dialogObj.bindWx"
     >
       <div class="text-center">
-        <img src="../../../public/images/user/bindWx.png" alt="" style="width: 200px" />
-        <div class="mt-4 font-color-main">{{ $t('user_Center_qingShiYongWeiXin') }}</div>
+        <img
+          src="../../../public/images/user/bindWx.png"
+          alt=""
+          style="width: 200px"
+        />
+        <div class="mt-4 font-color-main">
+          {{ $t('user_Center_qingShiYongWeiXin') }}
+        </div>
       </div>
     </ElDialog>
     <!--  {{$t('operation_log_List_bangDingYouXiang')}}  -->
@@ -369,20 +496,30 @@
       append-to-body
       :title="$t('operation_log_List_bangDingYouXiang')"
       :close-on-click-modal="false"
-      :visible.sync="dialogObj.bindEmail"
+      v-model:visible="dialogObj.bindEmail"
     >
-      <ElForm :model="emailForm" label-width="120px" @submit.native.prevent>
+      <ElForm :model="emailForm" label-width="120px" @submit.prevent>
         <ElFormItem prop="current" :label="$t('user_Center_youXiang')">
           <ElInput
-            v-model="emailForm.email"
+            v-model:value="emailForm.email"
             :placeholder="$t('user_Center_qingShuRuYouXiang')"
             maxlength="50"
           ></ElInput>
         </ElFormItem>
-        <ElFormItem prop="newPassword" :label="$t('user_Center_yanZhengMa')" class="inline-form-item">
-          <ElInput v-model="emailForm.code" :placeholder="$t('user_Center_qingShuRuYanZheng')" maxlength="50"></ElInput>
+        <ElFormItem
+          prop="newPassword"
+          :label="$t('user_Center_yanZhengMa')"
+          class="inline-form-item"
+        >
+          <ElInput
+            v-model:value="emailForm.code"
+            :placeholder="$t('user_Center_qingShuRuYanZheng')"
+            maxlength="50"
+          ></ElInput>
           <VerificationCode
-            :request-options="getCodeOptions(emailForm.email, 'BIND_EMAIL', 'email')"
+            :request-options="
+              getCodeOptions(emailForm.email, 'BIND_EMAIL', 'email')
+            "
             :disabled="!emailForm.email"
             :style="{ width: '120px', textAlign: 'center' }"
             class="ml-6"
@@ -391,16 +528,20 @@
         </ElFormItem>
       </ElForm>
 
-      <span slot="footer" class="dialog-footer">
-        <VButton @click="dialogObj.bindEmail = false">{{ $t('button_cancel') }}</VButton>
-        <VButton
-          type="primary"
-          :disabled="!emailForm.email || !emailForm.code"
-          auto-loading
-          @click="bindEmailConfirm(arguments[0])"
-          >{{ $t('button_confirm') }}</VButton
-        >
-      </span>
+      <template v-slot:footer>
+        <span class="dialog-footer">
+          <VButton @click="dialogObj.bindEmail = false">{{
+            $t('button_cancel')
+          }}</VButton>
+          <VButton
+            type="primary"
+            :disabled="!emailForm.email || !emailForm.code"
+            auto-loading
+            @click="bindEmailConfirm(arguments[0])"
+            >{{ $t('button_confirm') }}</VButton
+          >
+        </span>
+      </template>
     </ElDialog>
     <!--  {{$t('operation_log_List_xiuGaiYouXiang')}}  -->
     <ElDialog
@@ -408,21 +549,31 @@
       append-to-body
       :title="$t('operation_log_List_xiuGaiYouXiang')"
       :close-on-click-modal="false"
-      :visible.sync="dialogObj.editEmail"
+      v-model:visible="dialogObj.editEmail"
     >
-      <ElForm :model="emailForm" label-width="120px" @submit.native.prevent>
+      <ElForm :model="emailForm" label-width="120px" @submit.prevent>
         <ElFormItem prop="email" :label="$t('user_Center_youXiang')">
           <ElInput
-            v-model="emailForm.email"
+            v-model:value="emailForm.email"
             disabled
             :placeholder="$t('user_Center_qingShuRuYouXiang')"
             maxlength="50"
           ></ElInput>
         </ElFormItem>
-        <ElFormItem prop="code" :label="$t('user_Center_dangQianYouXiangYan')" class="inline-form-item">
-          <ElInput v-model="emailForm.code" :placeholder="$t('user_Center_qingShuRuYanZheng')" maxlength="50"></ElInput>
+        <ElFormItem
+          prop="code"
+          :label="$t('user_Center_dangQianYouXiangYan')"
+          class="inline-form-item"
+        >
+          <ElInput
+            v-model:value="emailForm.code"
+            :placeholder="$t('user_Center_qingShuRuYanZheng')"
+            maxlength="50"
+          ></ElInput>
           <VerificationCode
-            :request-options="getCodeOptions(emailForm.email, 'CHANGE_EMAIL', 'email')"
+            :request-options="
+              getCodeOptions(emailForm.email, 'CHANGE_EMAIL', 'email')
+            "
             :disabled="!emailForm.email"
             :style="{ width: '120px', textAlign: 'center' }"
             class="ml-6"
@@ -431,19 +582,25 @@
         </ElFormItem>
         <ElFormItem prop="newEmail" :label="$t('user_Center_xinYouXiang')">
           <ElInput
-            v-model="emailForm.newEmail"
+            v-model:value="emailForm.newEmail"
             :placeholder="$t('user_Center_qingShuRuXinYou')"
             maxlength="50"
           ></ElInput>
         </ElFormItem>
-        <ElFormItem prop="newCode" :label="$t('user_Center_xinYouXiangYanZheng')" class="inline-form-item">
+        <ElFormItem
+          prop="newCode"
+          :label="$t('user_Center_xinYouXiangYanZheng')"
+          class="inline-form-item"
+        >
           <ElInput
-            v-model="emailForm.newCode"
+            v-model:value="emailForm.newCode"
             :placeholder="$t('user_Center_qingShuRuYanZheng')"
             maxlength="50"
           ></ElInput>
           <VerificationCode
-            :request-options="getCodeOptions(emailForm.newEmail, 'BIND_EMAIL', 'email')"
+            :request-options="
+              getCodeOptions(emailForm.newEmail, 'BIND_EMAIL', 'email')
+            "
             :disabled="!emailForm.newEmail"
             :style="{ width: '120px', textAlign: 'center' }"
             class="ml-6"
@@ -452,17 +609,26 @@
         </ElFormItem>
       </ElForm>
 
-      <span slot="footer" class="dialog-footer">
-        <VButton @click="dialogObj.editEmail = false">{{ $t('button_cancel') }}</VButton>
-        <VButton type="primary" :disabled="editEmailDisabled()" auto-loading @click="editEmailConfirm(arguments[0])">{{
-          $t('button_confirm')
-        }}</VButton>
-      </span>
+      <template v-slot:footer>
+        <span class="dialog-footer">
+          <VButton @click="dialogObj.editEmail = false">{{
+            $t('button_cancel')
+          }}</VButton>
+          <VButton
+            type="primary"
+            :disabled="editEmailDisabled()"
+            auto-loading
+            @click="editEmailConfirm(arguments[0])"
+            >{{ $t('button_confirm') }}</VButton
+          >
+        </span>
+      </template>
     </ElDialog>
   </div>
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import i18n from '@/i18n'
 
 import InlineInput from '@/components/InlineInput'
@@ -482,10 +648,10 @@ export default {
         avatar: '',
         telephone: '',
         wx: '',
-        email: ''
+        email: '',
       },
       nameForm: {
-        nickname: ''
+        nickname: '',
       },
       avatar: '',
       dialogObj: {
@@ -495,47 +661,47 @@ export default {
         editPhone: false,
         bindWx: false,
         bindEmail: false,
-        editEmail: false
+        editEmail: false,
       },
       passwordForm: {
         telephone: '',
         code: '',
         newPassword: '',
-        newAgainPassword: ''
+        newAgainPassword: '',
       },
       phoneForm: {
         current: '',
         oldCode: '',
         newPhone: '',
-        newCode: ''
+        newCode: '',
       },
       emailForm: {
         email: '',
         code: '',
         newEmail: '',
-        newCode: ''
+        newCode: '',
       },
       enData: {
         companyName: '',
         website: '',
         industry: '',
-        city: ''
+        city: '',
       },
       enForm: {
         companyName: '',
         website: '',
         industry: '',
-        city: ''
+        city: '',
       },
       keyForm: {
         accessKey: '',
         secretKey: '',
-        decodeSecretKey: ''
+        decodeSecretKey: '',
       },
       isEdit: false,
       accessKeyTooltip: false,
       secretKeyTooltip: false,
-      disabledBindingPhone: window.__config__?.disabledBindingPhone
+      disabledBindingPhone: window.__config__?.disabledBindingPhone,
     }
   },
   mounted() {
@@ -557,7 +723,7 @@ export default {
       nameForm.nickname = userData.nickname
     },
     getEnterprise() {
-      this.$axios.get('tm/api/Customer').then(data => {
+      this.$axios.get('tm/api/Customer').then((data) => {
         for (let key in this.enData) {
           this.enData[key] = data[key] || ''
           this.enForm[key] = data[key] || ''
@@ -565,20 +731,23 @@ export default {
       })
     },
     getAkAndSk() {
-      this.$axios.get('api/tcm/user/ak').then(data => {
+      this.$axios.get('api/tcm/user/ak').then((data) => {
         const { accessKey, secretKey } = data?.[0] || {}
         const key = '5fa25b06ee34581d'
         this.keyForm.accessKey = accessKey
         this.keyForm.decodeSecretKey = CryptoJS.AES.decrypt(
           {
-            ciphertext: CryptoJS.enc.Base64.parse(secretKey)
+            ciphertext: CryptoJS.enc.Base64.parse(secretKey),
           },
           CryptoJS.enc.Latin1.parse(key),
           {
-            iv: CryptoJS.enc.Latin1.parse(key)
+            iv: CryptoJS.enc.Latin1.parse(key),
           }
         ).toString(CryptoJS.enc.Utf8)
-        this.keyForm.secretKey = this.keyForm.decodeSecretKey.replace(/(\w{3})\w*(\w{3})/, '$1****$2')
+        this.keyForm.secretKey = this.keyForm.decodeSecretKey.replace(
+          /(\w{3})\w*(\w{3})/,
+          '$1****$2'
+        )
       })
     },
     resetPasswordForm() {
@@ -615,7 +784,7 @@ export default {
       let nickname = val
       this.$axios
         .patch('api/tcm/user', {
-          nickname
+          nickname,
         })
         .then(() => {
           this.userData.nickname = nickname
@@ -629,7 +798,7 @@ export default {
         this.$message.error(i18n.t('user_Center_shangChuanTouXiangTu'))
         return
       }
-      urlToBase64(URL.createObjectURL(file)).then(res => {
+      urlToBase64(URL.createObjectURL(file)).then((res) => {
         this.avatar = res
       })
     },
@@ -644,7 +813,7 @@ export default {
       const avatar = encodeURI(this.avatar)
       this.$axios
         .patch('api/tcm/user', {
-          avatar
+          avatar,
         })
         .then(() => {
           this.$message.success(i18n.t('user_Center_xiuGaiTouXiangCheng'))
@@ -659,12 +828,12 @@ export default {
     sendCode(phone, scene) {
       return this.$axios.post('api/tcm/sms/captcha', {
         phone,
-        scene
+        scene,
       })
     },
     getCodeOptions(val, scene, type = 'sms') {
       let params = {
-        scene
+        scene,
       }
       if (type === 'sms') {
         params.phone = val
@@ -674,14 +843,18 @@ export default {
       return {
         method: 'post',
         url: `api/tcm/${type}/captcha`,
-        params
+        params,
       }
     },
     editPassword() {
       if (!this.userData.telephone) {
-        this.$confirm(i18n.t('user_Center_qingXianBangDingShou'), i18n.t('user_Center_bangDingShouJi'), {
-          type: 'warning'
-        }).then(resFlag => {
+        this.$confirm(
+          i18n.t('user_Center_qingXianBangDingShou'),
+          i18n.t('user_Center_bangDingShouJi'),
+          {
+            type: 'warning',
+          }
+        ).then((resFlag) => {
           if (resFlag) {
             this.dialogObj.bindPhone = true
           }
@@ -702,7 +875,10 @@ export default {
       this.$axios
         .patch('api/tcm/user/password', {
           phoneCode: passwordForm.code,
-          password: CryptoJS.RC4.encrypt(passwordForm.newPassword, 'XWFSxfs8wFcs').toString()
+          password: CryptoJS.RC4.encrypt(
+            passwordForm.newPassword,
+            'XWFSxfs8wFcs'
+          ).toString(),
         })
         .then(() => {
           this.$message.success(i18n.t('user_Center_xiuGaiMiMaCheng'))
@@ -721,7 +897,7 @@ export default {
       this.$axios
         .post('api/tcm/user/phone', {
           phone: phoneForm.current,
-          code: phoneForm.oldCode
+          code: phoneForm.oldCode,
         })
         .then(() => {
           this.userData.telephone = phoneForm.current
@@ -759,7 +935,7 @@ export default {
         .patch('api/tcm/user/phone', {
           oldPhoneCode: phoneForm.oldCode,
           phone: phoneForm.newPhone,
-          phoneCode: phoneForm.newCode
+          phoneCode: phoneForm.newCode,
         })
         .then(() => {
           this.userData.telephone = phoneForm.newPhone
@@ -772,9 +948,13 @@ export default {
         })
     },
     unbindWx() {
-      this.$confirm(i18n.t('user_Center_jieChuHouJiangWu'), i18n.t('user_Center_jieChuWeiXin'), {
-        type: 'warning'
-      }).then(resFlag => {
+      this.$confirm(
+        i18n.t('user_Center_jieChuHouJiangWu'),
+        i18n.t('user_Center_jieChuWeiXin'),
+        {
+          type: 'warning',
+        }
+      ).then((resFlag) => {
         if (resFlag) {
           this.$axios.patch('tm/api/user/unbindWx').then(() => {
             this.userData.wx = ''
@@ -792,7 +972,7 @@ export default {
       this.$axios
         .post('api/tcm/user/email', {
           email: emailForm.email,
-          code: emailForm.code
+          code: emailForm.code,
         })
         .then(() => {
           this.userData.email = emailForm.email
@@ -825,7 +1005,7 @@ export default {
           // email: emailForm.email,
           oldEmailCode: emailForm.code,
           email: emailForm.newEmail,
-          emailCode: emailForm.newCode
+          emailCode: emailForm.newCode,
         })
         .then(() => {
           this.userData.email = emailForm.newEmail
@@ -851,7 +1031,7 @@ export default {
           companyName: enForm.companyName,
           website: enForm.website,
           industry: enForm.industry,
-          city: enForm.city
+          city: enForm.city,
         })
         .then(() => {
           this.$message.success(i18n.t('user_Center_xiuGaiQiYeXin'))
@@ -863,15 +1043,16 @@ export default {
         })
     },
     refreshRootUser() {
-      this.$root.$emit('get-user')
+      $emit(this.$root, 'get-user')
     },
     handleCopyAccessKey() {
       this.accessKeyTooltip = true
     },
     handleCopySecretKey() {
       this.secretKeyTooltip = true
-    }
-  }
+    },
+  },
+  emits: ['get-user'],
 }
 </script>
 

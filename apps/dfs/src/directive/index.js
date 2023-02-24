@@ -1,14 +1,14 @@
-import Vue from 'vue'
+import * as Vue from 'vue'
 
-Vue.directive('readonlybtn', {})
+window.$vueApp.directive('readonlybtn', {})
 
-Vue.prototype.$has = function () {
+window.$vueApp.config.globalProperties.$has = function () {
   return true
 }
-Vue.prototype.$disabledByPermission = function () {
+window.$vueApp.config.globalProperties.$disabledByPermission = function () {
   return false
 }
-Vue.prototype.$disabledReadonlyUserBtn = function () {
+window.$vueApp.config.globalProperties.$disabledReadonlyUserBtn = function () {
   let domainName = document.domain
   let removeReadonly = localStorage.getItem('removeReadonly')
   if (domainName === 'demo.cloud.tapdata.net' && !removeReadonly) {

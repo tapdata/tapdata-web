@@ -166,18 +166,23 @@ export default {
     'Agent版本有更新，您可以通過以下管道將您的Agent陞級到最新版本。 陞級過程中將無法運行任務。',
   agent_dialog_upgrade_fail: '自動升級失敗，請重試或者直接手動升級！',
   agent_button_create_msg_success: 'Agent創建成功',
-  agent_button_create_msg_success_desc: '請點擊【立即部署】進入部署頁面，按照操作指引完成Agent部署。',
+  agent_button_create_msg_success_desc:
+    '請點擊【立即部署】進入部署頁面，按照操作指引完成Agent部署。',
   agent_button_stop_tip: '是否停止',
-  agent_button_stop_tip_running: '當前Agent有任務正在運行，强行停止Agent可能會導致任務出現異常，是否要强行停止！',
+  agent_button_stop_tip_running:
+    '當前Agent有任務正在運行，强行停止Agent可能會導致任務出現異常，是否要强行停止！',
   agent_button_stop_tip_no_running:
     'Agent停止後將無法再繼續運行任務，您需要去Agent安裝目錄下才能再次啟動Agent，是否確認停止？',
   agent_button_stop_msg_success: 'Agent已停止',
   agent_button_stop_msg_fail: 'Agent停止失敗',
-  agent_button_delete_confirm_title: '删除後該Agent將無法再繼續使用，是否確認删除？',
-  agent_button_delete_confirm_msg: '當前Agent上有任務正在運行，請先停止任務後再删除。',
+  agent_button_delete_confirm_title:
+    '删除後該Agent將無法再繼續使用，是否確認删除？',
+  agent_button_delete_confirm_msg:
+    '當前Agent上有任務正在運行，請先停止任務後再删除。',
   agent_button_delete_success: 'Agent删除成功',
   agent_button_delete_fail: 'Agent删除失敗',
-  agent_auto_upgrade_tip_running_task: '檢測到您有任務正在運行，請先停止該agent下所有任務再進行陞級操作！',
+  agent_auto_upgrade_tip_running_task:
+    '檢測到您有任務正在運行，請先停止該agent下所有任務再進行陞級操作！',
   agent_auto_upgrade_tip_start: '開始陞級',
   agent_auto_upgrade_tip_upgrading: '自動升級中',
   agent_auto_upgrade_tip_progress: '升級包下載進度',
@@ -195,38 +200,55 @@ export default {
   agent_detail_run_manual: '日誌目錄',
   agent_list_empty_desc1: '快來',
   agent_list_empty_desc2: '開始即時資料同步吧~',
-  agent_error_check: '當前無可用Agent，請去Agent管理頁面新建Agent或啟動已有的Agent並保證連通性',
+  agent_error_check:
+    '當前無可用Agent，請去Agent管理頁面新建Agent或啟動已有的Agent並保證連通性',
   agent_deploy_title: 'Agent下載與安裝',
   agent_deploy_select_tip:
     'Tapdata DFS雲版需要先在本地安裝Agent以確保連接數據庫和資料傳輸服務的正常運行，您可以根據要安裝服務器的類型在下方選擇相應的類型進行下載安裝',
   agent_deploy_before_prepare_title: '安裝前準備',
-  agent_deploy_before_prepare_windows_first: '1.安裝前請確認您的部署環境中已安裝Java1. 8版本並正確配寘環境變數。',
-  agent_deploy_before_prepare_windows_first_link: '點擊查看Java1. 8安裝和配寘管道',
-  agent_deploy_before_prepare_windows_second: '2.點擊下方的下載按鈕將Tapdata Agent安裝包下載到本地環境。',
+  agent_deploy_before_prepare_windows_first:
+    '1.安裝前請確認您的部署環境中已安裝Java1. 8版本並正確配寘環境變數。',
+  agent_deploy_before_prepare_windows_first_link:
+    '點擊查看Java1. 8安裝和配寘管道',
+  agent_deploy_before_prepare_windows_second:
+    '2.點擊下方的下載按鈕將Tapdata Agent安裝包下載到本地環境。',
   agent_deploy_before_prepare_windows_second_download: '點擊下載Tapdata Agent',
-  agent_deploy_before_prepare_windows_third: '3.請嚴格按照下方的安裝步驟部署，不要直接按兩下安裝包！',
-  agent_deploy_before_prepare_windows_four: '4.若安裝路徑包括中文或特殊字元可能導致安裝失敗。',
+  agent_deploy_before_prepare_windows_third:
+    '3.請嚴格按照下方的安裝步驟部署，不要直接按兩下安裝包！',
+  agent_deploy_before_prepare_windows_four:
+    '4.若安裝路徑包括中文或特殊字元可能導致安裝失敗。',
   agent_deploy_start_install: '開始安裝',
   agent_deploy_start_install_button_copy: '複製',
   agent_deploy_start_install_button_copied: '已複製',
   agent_deploy_start_install_windows_first: '1.點擊',
   agent_deploy_start_install_windows_first_download: '下載Tapdata Agent',
-  agent_deploy_start_install_windows_second: '2.將tapdata. exe放入您要安裝的目錄，安裝路徑不能有中文和特殊字元。',
-  agent_deploy_start_install_windows_third: '3.按兩下執行tapdata. exe開始安裝。',
-  agent_deploy_start_install_windows_fourth: '4.等待安裝過程提示要輸入Token時，複製下方Token，在命令視窗右鍵進行粘貼',
-  agent_deploy_start_install_windows_fifth: '5.耐心等待，即可完成Tapdata Agent的安裝和啟動。',
+  agent_deploy_start_install_windows_second:
+    '2.將tapdata. exe放入您要安裝的目錄，安裝路徑不能有中文和特殊字元。',
+  agent_deploy_start_install_windows_third:
+    '3.按兩下執行tapdata. exe開始安裝。',
+  agent_deploy_start_install_windows_fourth:
+    '4.等待安裝過程提示要輸入Token時，複製下方Token，在命令視窗右鍵進行粘貼',
+  agent_deploy_start_install_windows_fifth:
+    '5.耐心等待，即可完成Tapdata Agent的安裝和啟動。',
   agent_deploy_link_agent_operation: '《Agent安裝手册及常見QA》',
-  agent_deploy_link_agent_operation_desc: '或者直接掃描右方二維碼加入社群獲取技術支援。',
-  agent_deploy_before_prepare_linux_first: '1.安裝前請確認您的部署環境中已安裝Java1. 8版本並正確配寘環境變數。',
-  agent_deploy_before_prepare_linux_first_link: '點擊查看Java1. 8安裝和配寘管道',
-  agent_deploy_before_prepare_linux_second: '2.我們非常建議在一個獨立、乾淨的資料夾內部署Tapdata Agent。',
+  agent_deploy_link_agent_operation_desc:
+    '或者直接掃描右方二維碼加入社群獲取技術支援。',
+  agent_deploy_before_prepare_linux_first:
+    '1.安裝前請確認您的部署環境中已安裝Java1. 8版本並正確配寘環境變數。',
+  agent_deploy_before_prepare_linux_first_link:
+    '點擊查看Java1. 8安裝和配寘管道',
+  agent_deploy_before_prepare_linux_second:
+    '2.我們非常建議在一個獨立、乾淨的資料夾內部署Tapdata Agent。',
   agent_deploy_before_prepare_linux_third:
     '3.下載、部署Tapdata Agent無需root許可權，只需要對部署目錄具備讀寫許可權即可。',
   agent_deploy_start_install_linux_first:
     '1.請複製下方命令並在本地部署環境執行，其包含Tapdata Agent的下載、自動部署及啟動：',
-  agent_deploy_start_install_linux_second: '2.待上方命令執行完畢後，出現如下圖所示日誌則代表Agent啟動成功：',
-  agent_deploy_start_install_linux_third: '3.如果您在安裝和使用過程中遇到任何問題，請參攷',
-  agent_deploy_before_prepare_docker_first: '1.我們提供了包含Tapdata Agent運行所需環境的鏡像。',
+  agent_deploy_start_install_linux_second:
+    '2.待上方命令執行完畢後，出現如下圖所示日誌則代表Agent啟動成功：',
+  agent_deploy_start_install_linux_third:
+    '3.如果您在安裝和使用過程中遇到任何問題，請參攷',
+  agent_deploy_before_prepare_docker_first:
+    '1.我們提供了包含Tapdata Agent運行所需環境的鏡像。',
   agent_deploy_before_prepare_docker_second:
     '2.首先您的部署環境必須已經安裝Docker才可使用Docker管道安裝，如未安裝可參攷',
   agent_deploy_before_prepare_docker_install_link: '《Docker安裝》',
@@ -235,35 +257,44 @@ export default {
     '1.請複製下方命令並在部署環境執行，其包含鏡像的下載及運行，Tapdata Agent的下載、自動部署及啟動：',
   agent_deploy_start_install_docker_second:
     '2.docker安裝成功後，會自動輸出已安裝Agent的容器ID，您可以通過docker ps命令來查看正在運行的docker：',
-  agent_deploy_start_install_docker_third: '3.如果您需要查看Agent的日誌或者對Agent進行啟停操作，請參攷',
+  agent_deploy_start_install_docker_third:
+    '3.如果您需要查看Agent的日誌或者對Agent進行啟停操作，請參攷',
   agent_upgrade_title: 'Agent版本陞級',
-  agent_upgrade_select_tip: '系統檢測到您的Agent不是最新版本，請按照指引進行陞級',
+  agent_upgrade_select_tip:
+    '系統檢測到您的Agent不是最新版本，請按照指引進行陞級',
   agent_upgrade_before_title: '陞級前',
   agent_upgrade_step_title: '陞級步驟',
   agent_deploy_upgrade_button_copy: '複製',
   agent_deploy_upgrade_button_copied: '已複製',
   agent_upgrade_before_windows_first: '1.備份現有程式的tapdata. exe',
-  agent_upgrade_before_windows_second: '2.下載新版的tapdata. exe程式放到程式目錄',
+  agent_upgrade_before_windows_second:
+    '2.下載新版的tapdata. exe程式放到程式目錄',
   agent_upgrade_before_windows_second_download: '點擊下載',
   agent_upgrade_before_windows_third: '3.按照陞級步驟操作',
   agent_upgrade_step_windows_first: '1.打開cmd視窗，進入原Agent安裝目錄',
   agent_upgrade_step_windows_second:
     '2.複製下方的陞級命令並在目錄下執行，該陞級命令會自動進行備份、陞級和啟動，如果陞級失敗會自動回退版本',
-  agent_upgrade_step_windows_third: '3.出現“Update finished.” 則代表Agent陞級成功',
+  agent_upgrade_step_windows_third:
+    '3.出現“Update finished.” 則代表Agent陞級成功',
   agent_upgrade_step_linux_first: '1.進入原Agent安裝目錄下',
   agent_upgrade_step_linux_second:
     '2.複製下方的陞級命令並在目錄下執行，該陞級命令會自動進行備份、陞級和啟動，如果陞級失敗會自動回退版本',
-  agent_upgrade_step_linux_third: '3.出現“Update finished.” 則代表Agent陞級成功',
+  agent_upgrade_step_linux_third:
+    '3.出現“Update finished.” 則代表Agent陞級成功',
   agent_upgrade_step_docker_first: '1.進入原Agent的docker容器內',
-  agent_upgrade_step_docker_first_one: '（1）找到原Agent的docker容器CONTAINER ID',
+  agent_upgrade_step_docker_first_one:
+    '（1）找到原Agent的docker容器CONTAINER ID',
   agent_upgrade_step_docker_first_two: '（2）通過容器ID進入容器',
-  agent_upgrade_step_docker_first_three: '（3）如果容器已停止運行，可以先啟動容器再進入容器進行陞級',
+  agent_upgrade_step_docker_first_three:
+    '（3）如果容器已停止運行，可以先啟動容器再進入容器進行陞級',
   agent_upgrade_step_docker_first_four: '啟動容器',
   agent_upgrade_step_docker_first_five: '進入容器',
   agent_upgrade_step_docker_second:
     '2.複製下方的陞級命令直接在容器內執行，該陞級命令會自動進行備份、陞級和啟動，如果陞級失敗會自動回退版本',
-  agent_upgrade_step_docker_third: '3.出現“Update finished.” 則代表Agent陞級成功',
-  agent_tip_no_running: '无可用 Agent， 请检查 Agent 运行状态或者创建一个新的 Agent',
+  agent_upgrade_step_docker_third:
+    '3.出現“Update finished.” 則代表Agent陞級成功',
+  agent_tip_no_running:
+    '无可用 Agent， 请检查 Agent 运行状态或者创建一个新的 Agent',
   connection_manage: '連接管理',
   connection_list_efficient: '有效',
   connection_list_invalidation: '失效',
@@ -304,14 +335,19 @@ export default {
   task_delete_confirm_title: '是否删除該任務？',
   task_delete_confirm_message: '删除任務xxx後，此任務將無法恢復',
   task_stop_confirm_title: '是否暫停該任務？',
-  task_stop_confirm_message: '暫停任務xxx後，任務中未完成全量同步的表再次啟動時，會重新執行全量同步',
+  task_stop_confirm_message:
+    '暫停任務xxx後，任務中未完成全量同步的表再次啟動時，會重新執行全量同步',
   task_force_stop_confirm_title: '是否強制停止該任務？',
-  task_force_stop_confirm_message: '強制停止任務xxx將立即中斷資料傳輸強制任務快速停止，並重置該任務',
+  task_force_stop_confirm_message:
+    '強制停止任務xxx將立即中斷資料傳輸強制任務快速停止，並重置該任務',
   task_initialize_confirm_title: '是否重置該任務？',
-  task_initialize_confirm_message: '重置任務xxx將清除任務同步進度，任務將重新執行',
-  task_pause_tip: '初始化類型的任務暫停後如果再次啟動，任務會從頭開始同步，確定暫停？',
+  task_initialize_confirm_message:
+    '重置任務xxx將清除任務同步進度，任務將重新執行',
+  task_pause_tip:
+    '初始化類型的任務暫停後如果再次啟動，任務會從頭開始同步，確定暫停？',
   task_important_reminder: '重要提醒',
-  task_stop_tip: '任務XXX中含有聚合處理節點，任務停止後再次啟動，任務會先進行重置，確定停止？',
+  task_stop_tip:
+    '任務XXX中含有聚合處理節點，任務停止後再次啟動，任務會先進行重置，確定停止？',
   task_monitor_progress: '任務進度',
   task_monitor_full_sync: '全量同步概覽',
   task_monitor_full_completion_time: '預計全量完成還需時間',
@@ -327,7 +363,8 @@ export default {
   task_monitor_migrate_table_rows: '計畫遷移數據量（行）',
   task_monitor_migrate_table_number_completed: '已完成遷移表數量',
   task_monitor_migrate_table_rows_completed: '已完成遷移數據量（行）',
-  task_monitor_migrate_tip: '*現時任務進度查看僅支持：MySQL、Oracle、SQL Server、PostgreSQL和MongoDB',
+  task_monitor_migrate_tip:
+    '*現時任務進度查看僅支持：MySQL、Oracle、SQL Server、PostgreSQL和MongoDB',
   task_monitor_unit_row: '組織：/條',
   task_monitor_unit_second: '組織：/秒',
   task_monitor_not_start: '未開始',
@@ -343,7 +380,8 @@ export default {
   task_monitor_cdc_time: '增量所處時間點',
   task_monitor_run_log: '運行日誌',
   task_monitor_mission_milestone: '任務里程碑',
-  task_monitor_no_milestone_data: '此任務尚未啟動或已被重置，暫無運行里程碑數據',
+  task_monitor_no_milestone_data:
+    '此任務尚未啟動或已被重置，暫無運行里程碑數據',
   task_monitor_task_details: '任務詳情',
   task_monitor_status: '狀態',
   task_monitor_sync_content: '同步內容',
@@ -385,7 +423,8 @@ export default {
     '當前表字段未設定完成，請保證所有源字段都已關聯目標字段，不需要同步的源字段請直接删除',
   task_mapping_table_no_data: '暫無數據，可能正在首次加載表結構，請稍候再試',
   task_mapping_table_no_data_vika: '請選擇目標維格表，並等待表結構資訊加載完成',
-  task_mapping_table_no_data_qingflow: '請選擇目標輕流應用，並等待字段資訊加載完成',
+  task_mapping_table_no_data_qingflow:
+    '請選擇目標輕流應用，並等待字段資訊加載完成',
   task_mapping_batch_change_field_title: '批量改字段名設定',
   task_mapping_dialog_field_name_case: '字段名大小寫',
   task_mapping_dialog_constant: '不變',
@@ -399,27 +438,34 @@ export default {
   task_mapping_dialog_table_name_case: '表名大小寫',
   task_mapping_dialog_rule_note: '說明：設定的前尾碼也遵循大小寫規則',
   task_mapping_dialog_enter_prefix: '請輸入首碼',
-  task_mapping_dialog_english_letter: '以英文字母開頭，僅支持英文、數位、底線、點、中劃線，限0~50字元',
+  task_mapping_dialog_english_letter:
+    '以英文字母開頭，僅支持英文、數位、底線、點、中劃線，限0~50字元',
   task_mapping_dialog_not_allow_system: '首碼不允許以system開頭',
   task_mapping_dialog_enter_suffix: '請輸入尾碼',
-  task_mapping_dialog_underscore_begin: '以英文字母、底線開頭，僅支持英文、數位、底線、點、中劃線，限0~50字元',
+  task_mapping_dialog_underscore_begin:
+    '以英文字母、底線開頭，僅支持英文、數位、底線、點、中劃線，限0~50字元',
   task_mapping_dialog_example: '示例',
   task_mapping_dialog_original_table_name: '原表名',
   task_mapping_dialog_after_modify: '修改後',
   task_mapping_dialog_rule_input: '請按照以下規則輸入：',
   task_mapping_dialog_all_restore_defaults: '您確認要全部恢復默認嗎？',
   task_mapping_dialog_hint: '提示',
-  task_mapping_dialog_delete_all_field_tip: '當前表沒有可用字段，不允許保存操作',
+  task_mapping_dialog_delete_all_field_tip:
+    '當前表沒有可用字段，不允許保存操作',
   task_mapping_dialog_restore_defaults: '您確認要恢復默認嗎？',
-  task_mapping_dialog_field_name_restrictions_tip: '以英文字母、底線開頭，僅支持英文、數位、底線，限1~50字元',
+  task_mapping_dialog_field_name_restrictions_tip:
+    '以英文字母、底線開頭，僅支持英文、數位、底線，限1~50字元',
   task_mapping_dialog_target_no_fields: '未找到目標模型',
   task_mapping_dialog_field_range_check: '當前值不符合該字段範圍',
   task_mapping_dialog_field_type_problem:
     '檢測到您還有XXX張表的字段類型設定存在問題，請在左側表區域選擇有問題的表進行處理',
-  task_mapping_dialog_target_no_fields_problem: '檢測到您有XXX張表中沒有字段，請先返回上一步將沒有字段的表移除',
+  task_mapping_dialog_target_no_fields_problem:
+    '檢測到您有XXX張表中沒有字段，請先返回上一步將沒有字段的表移除',
   task_mapping_dialog_rename_a_single_table_title: '修改目標表名',
-  task_mapping_dialog_rename_a_single_table_input_desc: '自定義名稱的表，不會應用：前尾碼和大小寫轉換操作',
-  task_mapping_dialog_batch_change_field_type_desc: '實際可用長度取決於目標數據庫類型定義，請按需設定',
+  task_mapping_dialog_rename_a_single_table_input_desc:
+    '自定義名稱的表，不會應用：前尾碼和大小寫轉換操作',
+  task_mapping_dialog_batch_change_field_type_desc:
+    '實際可用長度取決於目標數據庫類型定義，請按需設定',
   operation_log_manage: '操作日誌',
   operation_log_user_name: '用戶名稱',
   operation_log_connection_create: '創建連接',
@@ -427,7 +473,8 @@ export default {
   operation_log_connection_update: '編輯連接',
   operation_log_connection_update_tip: '編輯了連接【@{parameter1}】的配寘資訊',
   operation_log_connection_copy: '複製連接',
-  operation_log_connection_copy_tip: '複製了連接[${parameter1}]為【@{parameter2}】',
+  operation_log_connection_copy_tip:
+    '複製了連接[${parameter1}]為【@{parameter2}】',
   operation_log_connection_delete: '删除連接',
   operation_log_connection_delete_tip: '删除了連接【${parameter1}】',
   operation_log_migration_create: '創建任務',
@@ -437,7 +484,8 @@ export default {
   operation_log_migration_update: '編輯任務',
   operation_log_migration_update_tip: '編輯了任務【@{parameter1}】的配寘資訊',
   operation_log_migration_copy: '複製任務',
-  operation_log_migration_copy_tip: '複製了任務[${parameter1}]為【@{parameter2}】',
+  operation_log_migration_copy_tip:
+    '複製了任務[${parameter1}]為【@{parameter2}】',
   operation_log_migration_reset: '重置任務',
   operation_log_migration_reset_tip: '重置了任務【@{parameter1}】',
   operation_log_migration_delete: '删除任務',
@@ -453,7 +501,8 @@ export default {
   operation_log_agent_delete: '删除Agent',
   operation_log_agent_delete_tip: '删除了Agent【${parameter1}】',
   operation_log_agent_rename: '修改Agent名稱',
-  operation_log_agent_rename_tip: '將Agent名稱[${parameter2}]修改為【@{parameter1}】',
+  operation_log_agent_rename_tip:
+    '將Agent名稱[${parameter2}]修改為【@{parameter1}】',
   operation_log_agent_update: 'Agent陞級',
   operation_log_agent_update_tip: '進行了Agent陞級',
   operation_log_inspect_create: '新建數據校驗',
@@ -465,8 +514,10 @@ export default {
   operation_log_inspect_delete: '删除數據校驗',
   operation_log_inspect_delete_tip: '删除了數據校驗任務【${parameter1}】',
   operation_log_difference_inspect_start: '執行差异校驗',
-  operation_log_difference_inspect_start_tip: '對數據校驗任務【@{parameter1}】執行了差异校驗',
-  operation_log_modify_connection_name: '將連接名稱由[${parameter2}]修改為【@{parameter1}】',
+  operation_log_difference_inspect_start_tip:
+    '對數據校驗任務【@{parameter1}】執行了差异校驗',
+  operation_log_modify_connection_name:
+    '將連接名稱由[${parameter2}]修改為【@{parameter1}】',
   operation_log_modular_name_user_center: '用戶中心',
   message_exists_name: '名稱已存在',
   milestone_btn_check_error: '查看錯誤原因',
@@ -479,12 +530,14 @@ export default {
   dataFlow_current: '當前',
   dataFlow_dataScreening: '事件統計',
   dataFlow_inputOutput: '輸入輸出統計',
-  dataFlow_throughputpop: '輸入輸出統計：平均每秒源端資料獲取的速度以及目標端寫入的速度，數值越大越好',
+  dataFlow_throughputpop:
+    '輸入輸出統計：平均每秒源端資料獲取的速度以及目標端寫入的速度，數值越大越好',
   dataFlow_transf: '傳輸耗時',
   dataFlow_transtime_pop:
     '傳輸耗時：除源節點外，事件處理完的時間减去事件的發生時間。 節點間統計：事件從進入節點到輸出到所消耗的時間任務流統計：所有節點耗時相加，數值越小越好',
   dataFlow_replicate: '資料同步差距',
-  dataFlow_replicate_pop: '資料同步差距：源庫和目標庫數據最後更新時間的差距，數值越小越好',
+  dataFlow_replicate_pop:
+    '資料同步差距：源庫和目標庫數據最後更新時間的差距，數值越小越好',
   dataFlow_totalOutput: '總輸出',
   dataFlow_totalInput: '總輸入',
   dataFlow_totalInsert: '總插入',
@@ -512,15 +565,18 @@ export default {
   components_TableFilter_quanBu: '全部',
   the_header_Header_yongHuZhongXin: '用戶中心',
   components_VerificationCode_faSongYanZhengMa: '發送驗證碼',
-  agent_download_AgentDownloadModal_zaiNinDeLI: '2.在您的Linux服務器下新建目錄tapdata用來安裝部署Tapdata Agent',
+  agent_download_AgentDownloadModal_zaiNinDeLI:
+    '2.在您的Linux服務器下新建目錄tapdata用來安裝部署Tapdata Agent',
   agent_download_AgentDownloadModal_fuZhiXiaFangMing2:
     '3.複製下方命令並在tapdata目錄下執行，其包含Tapdata Agent的下載、自動部署及啟動。',
-  agent_download_AgentDownloadModal_dengDaiMingLingZhi2: '4.等待命令執行完成，即可完成Tapdata Agent的安裝和啟動。',
+  agent_download_AgentDownloadModal_dengDaiMingLingZhi2:
+    '4.等待命令執行完成，即可完成Tapdata Agent的安裝和啟動。',
   agent_download_AgentDownloadModal_ninDeBuShuHuan:
     '1.您的部署環境必須已經安裝並啟動Docker才可使用Docker管道安裝，如未安裝可參攷',
   agent_download_AgentDownloadModal_fuZhiXiaFangMing:
     '2.複製下方命令並在tapdata目錄下執行，其包含鏡像的下載及運行，Tapdata Agent的下載、自動部署及啟動',
-  agent_download_AgentDownloadModal_dengDaiMingLingZhi: '3.等待命令執行完成，即可完成Tapdata Agent的安裝和啟動。',
+  agent_download_AgentDownloadModal_dengDaiMingLingZhi:
+    '3.等待命令執行完成，即可完成Tapdata Agent的安裝和啟動。',
   agent_download_AgentDownloadModal_buShuZhuangTaiJian: '部署狀態檢測中',
   agent_download_AgentDownloadModal_gongXiNinWanCheng: '恭喜您，完成部署！',
   agent_download_AgentDownloadModal_kaiShiChuangJianLian: '開始創建連接',
@@ -532,7 +588,8 @@ export default {
   views_Error_zhangHuZanWuQuan:
     '帳戶暫無許可權！ 您的帳戶許可權不足，無法訂購產品，請聯系客戶經理或客服人員：4001100868',
   views_Error_zhangHuYiBeiDong: '帳戶已被凍結',
-  views_Error_ninDeZhangHuYi: '您的帳戶已被暫停，無法訂購產品，請及時充值或聯系客戶經理。',
+  views_Error_ninDeZhangHuYi:
+    '您的帳戶已被暫停，無法訂購產品，請及時充值或聯系客戶經理。',
   views_Error_chanPinYiXiaJia: '產品已下架',
   views_Error_feiChangBaoQianChan: '非常抱歉，產品已下架',
   instance_Instance_anIDShiLi: '按ID/實例名稱搜索',
@@ -622,7 +679,8 @@ export default {
   user_Center_xiuGaiMiMaCheng: '修改密碼成功',
   user_Center_bangDingShouJiCheng: '綁定手機成功',
   user_Center_xiuGaiShouJiCheng: '修改手機成功',
-  user_Center_jieChuHouJiangWu: '解除後將無法使用微信登入和接收微信通知，確定解綁嗎',
+  user_Center_jieChuHouJiangWu:
+    '解除後將無法使用微信登入和接收微信通知，確定解綁嗎',
   user_Center_jieChuWeiXin: '解除微信',
   user_Center_jieBangWeiXinCheng: '解綁微信成功',
   user_Center_bangDingYouXiangCheng: '綁定郵箱成功',
@@ -635,7 +693,8 @@ export default {
     'Tapdata Cloud是國內首家異構數據庫實时同步雲平臺，現時支持Oracle、MySQL、PG、SQL Server、MongoDB、ES、達夢、Kafka、GP、MQ、ClickHouse、Hazelcast Cloud、ADB MySQL、ADBPostgreSQL、KunDB、TiDB、Dummy之間的資料同步，即將支持DB2、Sybase ASE、Redis、GBase、GaussDB等，並對用戶永久免費。',
   workbench_Notice_buDuanYouHuaTi: '2.不斷優化，提供更佳體驗',
   workbench_Notice_zaiChuangJianLianJie: '在創建連接時，用戶可以選擇連接類型',
-  workbench_Notice_benCiXinZengRi: '本次新增日誌過濾篩選功能，用戶可以通過日誌過濾篩選',
+  workbench_Notice_benCiXinZengRi:
+    '本次新增日誌過濾篩選功能，用戶可以通過日誌過濾篩選',
   workbench_Notice_zhiChiPiLiangCao: '3.支持批量操作、體驗更佳',
   workbench_Notice_ziDuanYingSheBu:
     '字段映射部分，表名、字段名和大小寫設定支持用戶批量調整，簡單快捷，極大提高了處理效率。',
@@ -648,11 +707,14 @@ export default {
     '您好！ 為了進一步提高服務質量，Tapdata Cloud將於2022年1月20號（本週四）19點至22點進行陞級',
   workbench_Notice_shengJiQiJianKe:
     '陞級期間可能會影響訪問控制台、創建任務等操作，不影響已在運行狀態的任務，陞級完成後恢復正常使用。',
-  workbench_Notice_yiShangShengJiRu: '以上陞級如帶來不便請您諒解，並提前做好準備，如有疑問可聯繫我們。',
+  workbench_Notice_yiShangShengJiRu:
+    '以上陞級如帶來不便請您諒解，並提前做好準備，如有疑問可聯繫我們。',
   workbench_Notice_nianYueRi: '2022年1月20日',
   workbench_Notice_tAPDA9: 'Tapdata Cloud團隊',
-  workbench_Notice_tAPDA8: 'Tapdata Cloud開年版本更新：細節控福利！ 資料來源又新增，支持增量任務自定義採集「開始時刻」',
-  workbench_Notice_kaiNianYouFengGeng: '開年又逢更新，優化一刻不停——Tapdata Cloud新版本發佈啦！',
+  workbench_Notice_tAPDA8:
+    'Tapdata Cloud開年版本更新：細節控福利！ 資料來源又新增，支持增量任務自定義採集「開始時刻」',
+  workbench_Notice_kaiNianYouFengGeng:
+    '開年又逢更新，優化一刻不停——Tapdata Cloud新版本發佈啦！',
   workbench_Notice_ciCiFaBuDe2:
     '此次發佈的2.0.1版，在資料來源上新之餘，針對實際操作過程中的諸多細節再做優化，進一步提升了其易用性和操作的便捷性。',
   workbench_Notice_gengXinSuLan: '更新速覽 👇',
@@ -661,7 +723,8 @@ export default {
   workbench_Notice_zengLiangRenWuKe: '，增量任務可以自定義採集開始時刻',
   workbench_Notice_zhiChiShuJuYuan: '2.支持資料來源再上新，數據連接',
   workbench_Notice_xinZengMAR: '新增MariaDB支持',
-  workbench_Notice_xiJieGengXinYou: '3.細節更新：優化了編輯「已運行任務」的彈窗提示，避免誤操作',
+  workbench_Notice_xiJieGengXinYou:
+    '3.細節更新：優化了編輯「已運行任務」的彈窗提示，避免誤操作',
   workbench_Notice_zhiChiSheZhiZeng: '支持設定增量採集時間點',
   workbench_Notice_gongNengShengJiCao: '功能陞級操作更靈活',
   workbench_Notice_zhenDuiLiShiBan:
@@ -698,7 +761,8 @@ export default {
   workbench_Notice_zhiChiXiuGaiZhu:
     '：支持修改註冊初始資訊，包括對昵稱、頭像、密碼、企業資訊的編輯，以及手機號、郵箱的新增綁定和切換；',
   workbench_Notice_xinZengRenWuShu2: '新增任務數據視覺化模塊',
-  workbench_Notice_yongHuGongZuoTai: '：用戶工作臺可見「任務每日數據量趨勢圖」 ➕ 「累計數據量圖」',
+  workbench_Notice_yongHuGongZuoTai:
+    '：用戶工作臺可見「任務每日數據量趨勢圖」 ➕ 「累計數據量圖」',
   workbench_Notice_shuJuLianJieYou2: '數據連接又上新千呼萬喚「雲」來了',
   workbench_Notice_zuoWeiGuoNeiShou:
     '作為國內首家異構數據庫實时同步雲平臺，Tapdata Cloud不斷拓展能够支持的數據連接版圖，力求滿足用戶的多樣化資料來源和目標需求，真正實現數據實时同步“全面破壁”。',
@@ -706,9 +770,12 @@ export default {
     '面對大量用戶對於連接雲數據庫的迫切需求，Tapdata Cloud優先響應。 本次更新中，新增支持Aliyun MariaDB、AliyunMongoDB、Aliyun RDS for SQLServer、Aliyun RDS for PG、Aliyun RDS for MySQL作為源和目標。 放大就看TapdataCloud“破壁行動”最新戰績 👇：',
   workbench_Notice_wINDO: 'Windows版本流程優化',
   workbench_Notice_shaGuaMoShiZai: '「傻瓜模式」再陞級安裝部署更高效',
-  workbench_Notice_tAPDA6: 'Tapdata Cloud的安裝部署簡單易上手？ 我們還可以更簡單 👉',
-  workbench_Notice_benCiGengXinZhong2: '本次更新重點針對Windows版本操作流程再優化：',
-  workbench_Notice_zaiAGEN: '在Agent部署管道方面：用戶下載Agent安裝包後，按兩下執行即可完成安裝部署',
+  workbench_Notice_tAPDA6:
+    'Tapdata Cloud的安裝部署簡單易上手？ 我們還可以更簡單 👉',
+  workbench_Notice_benCiGengXinZhong2:
+    '本次更新重點針對Windows版本操作流程再優化：',
+  workbench_Notice_zaiAGEN:
+    '在Agent部署管道方面：用戶下載Agent安裝包後，按兩下執行即可完成安裝部署',
   workbench_Notice_zaiAnZhuangGuoCheng:
     '在安裝過程中：新版本會自動檢測用戶的Java環境，如果用戶的Java環境不滿足運行需要，會自動下載JRE使用，無需再提前進行Java環境配寘。 （*手動劃重點：下載的JRE對客戶環境',
   workbench_Notice_wuRenHeQinRu: '無任何侵入',
@@ -725,7 +792,8 @@ export default {
     '重視成長路上收穫的每一條迴響，不斷完善，持續優化，Tapdata一直在路上。 始於細節，成於大美，期待下一個新版本再和大家見面',
   workbench_Notice_xinZengTengXunYun:
     '新增騰訊雲數據庫連接，任務可定時發佈，重新校驗可指定表單——以用戶體驗為先的TapdataCloud，又對功能細節下手了',
-  workbench_Notice_xuQiuChiXuGeng3: '需求持續更新，優化一刻不停——Tapdata Cloud 3月版本又更新啦！',
+  workbench_Notice_xuQiuChiXuGeng3:
+    '需求持續更新，優化一刻不停——Tapdata Cloud 3月版本又更新啦！',
   workbench_Notice_zuiXinFaBuDe3:
     '最新發佈的2.1.1版中，騰訊雲數據庫連接上新，再次拓寬雲數據庫接入面之餘，秉承用戶體驗優先的反覆運算導向，重點拔除了三顆既往使用過程中容易踢到的“小釘子”。',
   workbench_Notice_shuJuLianJieShang: '數據連接上新，雲數據庫接入再添新',
@@ -738,7 +806,8 @@ export default {
   workbench_Notice_shuJuJiaoYanHuan:
     '：數據校驗環節，可以單獨對校驗不一致的表發起重新校驗，不必從頭來過，大量數據、多個表也不怕；',
   workbench_Notice_ziDuanYingSheGuo2: '字段映射過程中支持修改單個表名',
-  workbench_Notice_zaiYuanYouDePi: '：在原有的批量改表名基礎上，新增針對單個表名的修改，實現改表名自由，操作更順手。',
+  workbench_Notice_zaiYuanYouDePi:
+    '：在原有的批量改表名基礎上，新增針對單個表名的修改，實現改表名自由，操作更順手。',
   workbench_Notice_yunShuJuKuJie: '雲數據庫接入再上新',
   workbench_Notice_banTuYouJianXin: '版圖又見新貌，騰訊雲數據庫現已入駐',
   workbench_Notice_zuoWeiGuoNeiShou2:
@@ -746,13 +815,17 @@ export default {
   workbench_Notice_jiBanBenShouCi:
     '繼2.1.0版本首次實現雲數據庫接入，Tapdata Cloud持續發力，本次更新中雲數據庫再下五城，新增支持TencentDB forMySQL、TencentDB for MariaDB、TencentDB for PG、TencentDB for SQLServer、TencentDB MongoDB作為源和目標，',
   workbench_Notice_shuJuYuanJuDian: '資料來源據點數量擴張至',
-  workbench_Notice_fangDaJiuKanT: '。 放大就看Tapdata Cloud“破壁行動”最新戰績 👇：',
+  workbench_Notice_fangDaJiuKanT:
+    '。 放大就看Tapdata Cloud“破壁行動”最新戰績 👇：',
   workbench_Notice_hINiDeRen: 'Hi，你的任務已定時發佈',
-  workbench_Notice_buBeiDongJiaBan: '不被動加班，從自主設定「執行週期」和「運行」時間做起',
+  workbench_Notice_buBeiDongJiaBan:
+    '不被動加班，從自主設定「執行週期」和「運行」時間做起',
   workbench_Notice_haiZaiWeiXuYao2: '還在為需要在非工作時間啟動任務而鬱悶嗎？',
-  workbench_Notice_haiZaiWeiXuYao: '還在為需要周而復始地手動啟動週期性全量任務而頭疼嗎？',
+  workbench_Notice_haiZaiWeiXuYao:
+    '還在為需要周而復始地手動啟動週期性全量任務而頭疼嗎？',
   workbench_Notice_niXiangYaoDeRen: '——你想要的「任務定時發佈」功能已上線。',
-  workbench_Notice_quanLiangZengLiangJi: '【全量+增量】及【增量】任務可以指定「啟動時間」',
+  workbench_Notice_quanLiangZengLiangJi:
+    '【全量+增量】及【增量】任務可以指定「啟動時間」',
   workbench_Notice_zhenDuiQuanLiangZeng:
     '針對【全量+增量】以及【增量】任務，任務内容設定裏新增【計畫運行時間】設定，該設定默認關閉，可以根據實際需要選擇是否啟用。',
   workbench_Notice_juTiLiuChengDa2:
@@ -775,8 +848,10 @@ export default {
   workbench_Notice_renWuDiYiCi: '任務第一次啟動',
   workbench_Notice_renWuZaiCiQi: '任務再次啟動',
   workbench_Notice_zhiChiDuiZhiDing: '支持對指定表發起重新校驗',
-  workbench_Notice_zhiYouGeBieBiao: '只有個別表校驗不一致？ 現在可以劃定小範圍重新校驗了！',
-  workbench_Notice_congZheYiBanKai2: '📣 從這一版開始，碰上數據校驗不一致的問題時，就無需再重新執行整個校驗任務啦！',
+  workbench_Notice_zhiYouGeBieBiao:
+    '只有個別表校驗不一致？ 現在可以劃定小範圍重新校驗了！',
+  workbench_Notice_congZheYiBanKai2:
+    '📣 從這一版開始，碰上數據校驗不一致的問題時，就無需再重新執行整個校驗任務啦！',
   workbench_Notice_xinBanBenZhiChi2:
     '新版本支持在數據校驗結果頁面，從當前執行結果中選擇其中一個或多個表再次啟動數據校驗任務，任務執行狀態和結果會直接更新當前校驗結果。 重來byebye，效率high high~',
   workbench_Notice_ziDuanYingSheShi: '字段映射時支持修改單個表名',
@@ -784,7 +859,8 @@ export default {
   workbench_Notice_tAPDA5:
     'Tapdata Cloud 2.1.1針對歷史版本中“僅支持表名批量更改”的功能在實際操作環境中的局限性，從用戶真實需求出發，在原有「批量改表名」功能的基礎上，新增「單個表名修改」能力。',
   workbench_Notice_xinGongNengXiaYong: '新功能下，用戶可以：',
-  workbench_Notice_zaiQianYiGuoCheng: '在遷移過程中自由修改表名（不僅僅是前尾碼），從而實現將',
+  workbench_Notice_zaiQianYiGuoCheng:
+    '在遷移過程中自由修改表名（不僅僅是前尾碼），從而實現將',
   workbench_Notice_yuanBiaoShuJu: '源表數據',
   workbench_Notice_xieRu: '寫入',
   workbench_Notice_zhiDingMuBiaoBiao: '指定目標表',
@@ -793,19 +869,24 @@ export default {
   workbench_Notice_tongYiMuBiaoBiao: '同一目標表',
   workbench_Notice_tAPDA4:
     'Tapdata Cloud 2.1.2來啦：大波細節已就緒！ 字段類型可批量修改、支持微信掃碼登入、新增支持Vika為目標',
-  workbench_Notice_xuQiuChiXuGeng2: '需求持續更新，優化一刻不停——Tapdata Cloud 2.1.2版來啦！',
+  workbench_Notice_xuQiuChiXuGeng2:
+    '需求持續更新，優化一刻不停——Tapdata Cloud 2.1.2版來啦！',
   workbench_Notice_zuiXinFaBuDe2:
     '最新發佈的這一版本中，新增支持Vika為目標，為快速導入數據，利用維格表實現零程式碼合作系統搭建“架橋”。 同時繼續秉承用戶體驗優先的反覆運算導向，開放支持微信掃碼注册和登入，從細節處著眼，重點提升Tapdata Cloud在實際操作層面的易用性。',
   workbench_Notice_xinZengZhiChiV: '新增支持Vika為目標',
   workbench_Notice_daTongYuXinYi:
     '：打通與「新一代團隊數據合作+專案管理神器」之間的即時資料通路，助力進一步提升業務轉化與協同效率；',
   workbench_Notice_ziDuanLeiXingKe: '字段類型可批量修改',
-  workbench_Notice_ziDuanYingSheGuo: '：字段映射過程新增類型批量修改能力，修改類型時可選擇應用於當前任務全部表；',
+  workbench_Notice_ziDuanYingSheGuo:
+    '：字段映射過程新增類型批量修改能力，修改類型時可選擇應用於當前任務全部表；',
   workbench_Notice_saoMaDengLuGong: '掃碼登入功能上線',
-  workbench_Notice_zhiChiWeiXinSao: '：支持微信掃碼注册和登入，一鍵操作，即掃即用更快捷；',
+  workbench_Notice_zhiChiWeiXinSao:
+    '：支持微信掃碼注册和登入，一鍵操作，即掃即用更快捷；',
   workbench_Notice_gengDuoXiJieYou: '更多細節優化',
-  workbench_Notice_duanXinTongZhiCe: '✔️ 簡訊通知策略優化，簡訊通知默認關閉，可根據需要自行打開',
-  workbench_Notice_chuangJianLianJieShi: '✔ ️創建連接時支持通過連接類型、連接名稱，快速搜索並定位資料來源和目標',
+  workbench_Notice_duanXinTongZhiCe:
+    '✔️ 簡訊通知策略優化，簡訊通知默認關閉，可根據需要自行打開',
+  workbench_Notice_chuangJianLianJieShi:
+    '✔ ️創建連接時支持通過連接類型、連接名稱，快速搜索並定位資料來源和目標',
   workbench_Notice_kaiShiZhiChiV: '開始支持Vika作為目標',
   workbench_Notice_shuJuLianJieYou: '數據連接又添新成員',
   workbench_Notice_qingLiangQingLiangGeng: '輕量+輕量=更加易用',
@@ -816,20 +897,24 @@ export default {
   workbench_Notice_2: '：',
   workbench_Notice_caoZuoYanShiJiang: '操作演示：將學生成績導入Vika',
   workbench_Notice_zhiChiZiDuanLei: '支持字段類型批量修改',
-  workbench_Notice_ziDuanLeiXingZhuan: '字段類型轉換异常導致任務出錯怎麼辦？ 現在可以手動修改啦！',
+  workbench_Notice_ziDuanLeiXingZhuan:
+    '字段類型轉換异常導致任務出錯怎麼辦？ 現在可以手動修改啦！',
   workbench_Notice_tAPDA3:
     'Tapdata Cloud 2.1.2針對歷史版本中，數據遷移時會遇到的因字段類型轉換出現異常，而導致任務出錯的問題，開始支持批量修改字段類型（修改時可選擇應用於當前任務全部表），為用戶提供手動修改字段類型轉換映射關係的能力。',
   workbench_Notice_shiXianSaoMaZhu: '實現掃碼注册和登入',
   workbench_Notice_jiSaoJiYongKuai: '即掃即用，快捷隨心',
-  workbench_Notice_zhangHaoMiMaRong: '帳號密碼容易混，簡訊驗證還要等，想要快捷登入怎麼辦？',
+  workbench_Notice_zhangHaoMiMaRong:
+    '帳號密碼容易混，簡訊驗證還要等，想要快捷登入怎麼辦？',
   workbench_Notice_congXianZaiKaiShi:
     '📣 從現在開始，微信掃一掃，即可開啟你的Tapdata Cloud異構數據實时同步之旅——新版本Tapdata Cloud支持新用戶通過微信掃碼實現一鍵快速注册、登入，讓旅程的第一步更便捷； 同時也支持老用戶微信關聯綁定已有帳號，優化登入體驗。',
   workbench_Notice_chuCiSaoMaDeng:
     '初次掃碼登入即可同步關注Tapdata公眾號，第一時間get一線案例分析、新版操作指南等一手資料，熱門訊息盡在掌握。',
   workbench_Notice_weiXiaoDanTieXin: '微小但貼心，使用體驗不斷陞級',
-  workbench_Notice_yongHuDaoXiangXi: '用戶導向，細節至上——這一次，我們對簡訊通知策略，以及連接創建過程做了優化。',
+  workbench_Notice_yongHuDaoXiangXi:
+    '用戶導向，細節至上——這一次，我們對簡訊通知策略，以及連接創建過程做了優化。',
   workbench_Notice_ziZhuKaiGuanDuan: '自助開關簡訊通知許可權',
-  workbench_Notice_aGENT: 'Agent離線提示、Agent運行通知、任務异常告警——不想被被非必要的簡訊提醒頻繁打擾？',
+  workbench_Notice_aGENT:
+    'Agent離線提示、Agent運行通知、任務异常告警——不想被被非必要的簡訊提醒頻繁打擾？',
   workbench_Notice_xinBanBenDeDuan:
     '新版本的簡訊通知策略已優化，新用戶簡訊通知將默認關閉（老用戶的設定保持不變），可以根據實際需要在通知設定中，自行選擇打開或保持關閉狀態。',
   workbench_Notice_gengKuaiDingWeiLian: '更快定位連接類型',
@@ -837,13 +922,18 @@ export default {
     '所謂版圖之大，一屏裝不下，隨著Tapdata Cloud支持的數據連接類型不斷擴展，在創建連接的過程中快速定位資料來源和目標的需求也被提上了日程。',
   workbench_Notice_xinBanBenZhiChi:
     '新版本支持在創建連接時，通過連接類型篩選，以及連接名稱模糊查詢，快速搜索並定位資料來源和目標——一切改變，都是為了更方便地使用。',
-  workbench_Notice_tAPDA2: 'Tapdata 2.1.3來啦：新增支持Apache Doris為目標，任務査詢更快捷！',
-  workbench_Notice_xuQiuChiXuGeng: '需求持續更新，優化一刻不停——Tapdata Cloud 2.1.3來啦！',
-  workbench_Notice_zuiXinFaBuDe: '最新發佈的版中，在新增支持Apache Doris為目標之餘，任務日誌的査詢也更加人性化。',
+  workbench_Notice_tAPDA2:
+    'Tapdata 2.1.3來啦：新增支持Apache Doris為目標，任務査詢更快捷！',
+  workbench_Notice_xuQiuChiXuGeng:
+    '需求持續更新，優化一刻不停——Tapdata Cloud 2.1.3來啦！',
+  workbench_Notice_zuiXinFaBuDe:
+    '最新發佈的版中，在新增支持Apache Doris為目標之餘，任務日誌的査詢也更加人性化。',
   workbench_Notice_xinZengZhiChiA: '新增支持Apache Doris為目標',
-  workbench_Notice_qianShouGengDuoYou: '：牽手更多優秀國產數據庫，強強聯手，探索新一代數據架構的更多可能；',
+  workbench_Notice_qianShouGengDuoYou:
+    '：牽手更多優秀國產數據庫，強強聯手，探索新一代數據架構的更多可能；',
   workbench_Notice_renWuRiZhiCha: '任務日誌査詢路徑優化',
-  workbench_Notice_kaiShiZhiChiZai: '：開始支持在任務運行監控頁面直接匯出日誌，査詢更快捷；',
+  workbench_Notice_kaiShiZhiChiZai:
+    '：開始支持在任務運行監控頁面直接匯出日誌，査詢更快捷；',
   workbench_Notice_kaiShiZhiChiD: '開始支持Doris為目標',
   workbench_Notice_qiangQiangLianShouGong: '強強聯手，共建下一代數據架構',
   workbench_Notice_suiZheXinXingGuo:
@@ -854,7 +944,8 @@ export default {
   workbench_Notice_zhiCiTAP: '至此，Tapdata Cloud',
   workbench_Notice_shuJuLianJieJu: '數據連接據點數量擴張至',
   workbench_Notice_xiaoYouHuaGengTie: '小優化，更貼心',
-  workbench_Notice_congZheYiBanKai: '📣 從這一版開始，需要査詢任務日誌時，無需再回到Agent拉取啦！',
+  workbench_Notice_congZheYiBanKai:
+    '📣 從這一版開始，需要査詢任務日誌時，無需再回到Agent拉取啦！',
   workbench_Notice_xinBanBenXiaDang:
     '新版本下，當用戶任務出現問題，需要查看日誌定位問題時，可以直接在運行監控頁面匯出日誌（支持選擇【時間範圍】），無需再返回Agent部署服務器查找日誌檔。 操作更加人性化！',
   workbench_Workbench_tAPDA5: 'Tapdata Cloud 2.1.3版本發佈啦！',
@@ -862,8 +953,10 @@ export default {
   workbench_Workbench_tAPDA3: 'Tapdata Cloud 2.1.1版本發佈啦！',
   workbench_Workbench_tAPDA2: 'Tapdata Cloud 2.1.0版本發佈啦！',
   workbench_Workbench_tAPDA: 'Tapdata Cloud 2.0.1版本發佈啦！',
-  workbench_Notice_tAPDA1: 'Tapdata 2.1.4來啦：數據連接又上新，PolarDB MySQL、輕流開始接入，可自動標記不支持的字段類型',
-  workbench_Notice_xuQiuChiXuGeng1: '需求持續更新，優化一刻不停——Tapdata Cloud 2.1.4來啦！',
+  workbench_Notice_tAPDA1:
+    'Tapdata 2.1.4來啦：數據連接又上新，PolarDB MySQL、輕流開始接入，可自動標記不支持的字段類型',
+  workbench_Notice_xuQiuChiXuGeng1:
+    '需求持續更新，優化一刻不停——Tapdata Cloud 2.1.4來啦！',
   workbench_Notice_zuiXinFaBuDe1:
     '最新發佈的版本中，在新增數據連接之餘，默認標記不支持同步的字段類型，避免囙此影響任務的正常運行。',
   workbench_Notice_shuJuLianJieShang1: '數據連接上新',
@@ -911,7 +1004,8 @@ export default {
     '上傳成功，刷新頁面即可生效，並合併到現有文案。 如果現有文案還需要使用，請先匯出。',
   workbench_Notice_tAPDA1213:
     'Tapdata Cloud 2.1.5來啦：新增支持Amazon RDS數據庫，錯誤日誌査詢更便捷，Agent部署細節再優化',
-  workbench_Notice_xuQiuChiXuGeng12: '需求持續更新，優化一刻不停——Tapdata Cloud 2.1.5來啦！',
+  workbench_Notice_xuQiuChiXuGeng12:
+    '需求持續更新，優化一刻不停——Tapdata Cloud 2.1.5來啦！',
   workbench_Notice_zuiXinFaBuDe12:
     '最新發佈的版本中，數據連接再上新，同時新增任務報錯相關資訊快速查詢入口，開始支持JVM參數自定義設定。',
   workbench_Notice_shuJuLianJieShang12: '數據連接上新',
@@ -921,14 +1015,16 @@ export default {
   workbench_Notice_renWuYunXingChu:
     '：任務運行出錯時，可以直接通過彈窗預覽錯誤資訊，同時還可在彈窗底部獲取完整日誌査詢入口，一鍵快速到達日誌展示頁面；',
   workbench_Notice_aGENT2: 'Agent部署配寘優化',
-  workbench_Notice_kaiShiZhiChiZi: '：開始支持自定義調整JVM配寘，有效避免Agent啟動可能導致的記憶體溢出。',
+  workbench_Notice_kaiShiZhiChiZi:
+    '：開始支持自定義調整JVM配寘，有效避免Agent啟動可能導致的記憶體溢出。',
   workbench_Notice_shuJuLianJieZai1: '數據連接再添新成員',
   workbench_Notice_pOLAR: 'PolarDB PostgreSQL、Amazon RDS for MySQL開始接入',
   workbench_Notice_zuoWeiGuoNeiShou12:
     '作為國內首家異構數據庫實时同步雲平臺，Tapdata Cloud不斷拓展能够支持的數據連接版圖，力求滿足用戶的多樣化資料來源和目標需求，真正實現數據實时同步“全面破壁”。',
   workbench_Notice_jiBanBenShouCi1:
     '繼2.1.0版本首次實現雲數據庫接入之後，Tapdata Cloud持續發力，本次更新又有新夥伴加入：新增支持阿裡雲PolarDBPostgreSQL和Amazon RDS for MySQL作為源和目標。 至此，Tapdata Cloud數據連接據點數量擴張至',
-  workbench_Notice_fangDaJiuKanT1: '。 放大就看Tapdata Cloud“破壁行動”最新戰績 👇：',
+  workbench_Notice_fangDaJiuKanT1:
+    '。 放大就看Tapdata Cloud“破壁行動”最新戰績 👇：',
   workbench_Notice_xinZengCuoWuRi: '新增錯誤日誌',
   workbench_Notice_kuaiSuChaXunRu: '快速查詢入口',
   workbench_Notice_tanChuangYuLanYi: '彈窗預覽，一鍵直達',
@@ -943,7 +1039,8 @@ export default {
     '針對歷史版本在Agent安裝過程中，因啟動時默認分配記憶體較小可能導致的記憶體溢出問題，新版本給出了優化方案：',
   workbench_Notice_xianJiangJVM:
     '現將JVM參數設置許可權開放，支持用戶根據自身服務器的配寘來進行自定義調整。 Agent啟動時，會自動提示記憶體佔用情况，用戶按照實際需求在設定檔中自行調整並重啓即可。',
-  workbench_Notice_peiZhiWenJianKai: "設定檔開放的JVM參數名：tapdataJavaOpts: '-Xmx2362M'",
+  workbench_Notice_peiZhiWenJianKai:
+    "設定檔開放的JVM參數名：tapdataJavaOpts: '-Xmx2362M'",
   workbench_Notice_beiZhuMoRenQi:
     '*備註：默認啟動佔用系統配寘記憶體的3/5，如果系統記憶體的3/5超過8G，則最大只佔用到8G。',
   workbench_Workbench_tAPDA12: 'Tapdata Cloud 2.1.5版本發佈啦！',
@@ -1003,25 +1100,38 @@ export default {
   _workbench_workbench_jiangshujudaorusub: '阿里雲 Tablestore',
   _workbench_workbench_tansuoshili: '探索示例',
 
-  dfs_workbench_workbench_zhongyaobanbensheng: '【重要】版本升級和服務切換重要公告',
-  dfs_workbench_workbench_xinzengzidingyi: '· 新增自定義算子支持，用戶可通過靈活的JS能力來定義自己的算子',
-  dfs_workbench_workbench_xinzengzidingyi2: '· 新增自定義函數用戶可通過jar包導入自定義函數進行使用',
-  dfs_workbench_workbench_xinzenghebingsuan: '· 新增合併算子和JOIN算子，支持多表關聯合併操作',
-  dfs_workbench_workbench_xinzengDdl: '· 新增DDL支持能力，支持對Oracle、MySQL、DB2、PG等數據庫的常用DDL操作進行同步',
-  dfs_workbench_workbench_xinzengdongtaixin: '· 新增動態新增表功能，支持將數據庫新增表同步至目標',
+  dfs_workbench_workbench_zhongyaobanbensheng:
+    '【重要】版本升級和服務切換重要公告',
+  dfs_workbench_workbench_xinzengzidingyi:
+    '· 新增自定義算子支持，用戶可通過靈活的JS能力來定義自己的算子',
+  dfs_workbench_workbench_xinzengzidingyi2:
+    '· 新增自定義函數用戶可通過jar包導入自定義函數進行使用',
+  dfs_workbench_workbench_xinzenghebingsuan:
+    '· 新增合併算子和JOIN算子，支持多表關聯合併操作',
+  dfs_workbench_workbench_xinzengDdl:
+    '· 新增DDL支持能力，支持對Oracle、MySQL、DB2、PG等數據庫的常用DDL操作進行同步',
+  dfs_workbench_workbench_xinzengdongtaixin:
+    '· 新增動態新增表功能，支持將數據庫新增表同步至目標',
   dfs_workbench_workbench_shujutongbuneng: '數據同步能力增強',
   dfs_workbench_workbench_renwugaojingneng:
     '· 任務告警能力，任務出現異常告警時直接體現在任務運行監控頁面，與任務DAG結合，所有問題直觀可見',
   dfs_workbench_workbench_renwurizhike:
     '· 任務日誌可觀測能力，通過標準化的任務日誌輸出任務關鍵信息，當出現問題時可以快速定位',
-  dfs_workbench_workbench_renwuzhibiaoke: '· 任務指標可觀測能力，可通過關鍵指標直接反饋任務的運行狀態',
+  dfs_workbench_workbench_renwuzhibiaoke:
+    '· 任務指標可觀測能力，可通過關鍵指標直接反饋任務的運行狀態',
   dfs_workbench_workbench_renwukeguance: '任務可觀測能力',
-  dfs_workbench_workbench_jubeiduishuju: '· 具備對數據校驗的差異結果發起再次校驗的能力',
-  dfs_workbench_workbench_jubeiduishuju2: '· 具備對數據複製任務增量數據一致性的實時校驗能力',
-  dfs_workbench_workbench_jubeiduishuju3: '· 具備對數據複製任務全量數據一致性的校驗能力',
-  dfs_workbench_workbench_quanlianghezengliang: '全量和增量階段的數據一致性校驗能力',
-  dfs_workbench_workbench_xinkaifadeshu: '· 新開發的數據源可以通過註冊快速接入平台，無需重啟即可使用',
-  dfs_workbench_workbench_yonghukeanzhao: '· 用戶可按照PDK的標準靈活定制自己的數據源',
+  dfs_workbench_workbench_jubeiduishuju:
+    '· 具備對數據校驗的差異結果發起再次校驗的能力',
+  dfs_workbench_workbench_jubeiduishuju2:
+    '· 具備對數據複製任務增量數據一致性的實時校驗能力',
+  dfs_workbench_workbench_jubeiduishuju3:
+    '· 具備對數據複製任務全量數據一致性的校驗能力',
+  dfs_workbench_workbench_quanlianghezengliang:
+    '全量和增量階段的數據一致性校驗能力',
+  dfs_workbench_workbench_xinkaifadeshu:
+    '· 新開發的數據源可以通過註冊快速接入平台，無需重啟即可使用',
+  dfs_workbench_workbench_yonghukeanzhao:
+    '· 用戶可按照PDK的標準靈活定制自己的數據源',
   dfs_workbench_workbench_jiyuPdk: '· 基於PDK來實現數據源的開發',
   dfs_workbench_workbench_jiyuPdk2: '基於PDK的數據源註冊機制',
   dfs_workbench_workbench_xiamianshixinban: '下面是新版本增加的特性：',
@@ -1029,10 +1139,12 @@ export default {
     '當然，如果有新的任務我們建議您在 V3.0 版本中創建以便獲得更好的使用體驗，歡迎您來體驗我們新版功能並提出您的寶貴建議。 ',
   dfs_workbench_workbench_youyuzengjiale:
     '由於增加了很多實用功能，我們對V2版本的架構進行了重構開發，因此您之前在V2版本中創建的連接和任務將不會同步到 V3.0 版本，不過放心，新版本發布後您仍然可以繼續使用舊版本進行您的數據操作，我們保證V2版本和 V3.0 版本將長期共存。 ',
-  dfs_workbench_workbench_zainianyueriwo: '我們的重大升級版本 V3.0，已經正式發布。 ',
+  dfs_workbench_workbench_zainianyueriwo:
+    '我們的重大升級版本 V3.0，已經正式發布。 ',
   dfs_workbench_workbench_zunjingdeyonghu: '尊敬的用戶，您好：',
   dfs_workbench_workbench_banbenshengjihe: '版本升級和服務切換的公告',
-  dfs_workbench_workbench_banbenshengjitong: 'Tapdata Cloud V3.0 版本正式發布通知',
+  dfs_workbench_workbench_banbenshengjitong:
+    'Tapdata Cloud V3.0 版本正式發布通知',
   dfs_user_center_acces:
     'AccessKey是您訪問系統API的秘鑰，具有賬號的完全權限，請您務必妥善保管！不要以任何方式公開AccessKey到外部渠道（例如GitHub），避免被他人利用造成安全威脅。 ',
   dfs_user_center_kaifaxinxi: '開發信息',
@@ -1040,7 +1152,8 @@ export default {
   dfs_agent_download_agentdownloadmodal_aliyunjisuan: '阿里雲計算巢',
   dfs_agent_download_agentdownloadmodal_bushuwanchenghou:
     '4. 部署完成後，返回我們的【Agent管理頁面】等待2分鐘直到【狀態】變為【運行中】。恭喜您！已經完成了Tapdata  Alould 計算環境的部署，可以去創建數據任務了。 ',
-  dfs_agent_download_agentdownloadmodal_querenjisuanchao: '3. 確認計算巢部署完成。 ',
+  dfs_agent_download_agentdownloadmodal_querenjisuanchao:
+    '3. 確認計算巢部署完成。 ',
   dfs_agent_download_agentdownloadmodal_shilitok: '實例token：',
   dfs_agent_download_agentdownloadmodal_shilibanben: '實例版本：',
   dfs_agent_download_agentdownloadmodal_womenyijingwei:
@@ -1049,36 +1162,45 @@ export default {
   dfs_agent_download_agentdownloadmodal_santianshiyong: '三天試用',
   dfs_agent_download_agentdownloadmodal_ninkeyixuanze:
     ' 1. 您可以選擇按流量計費或者預付包月/年，也可以免費試用3天，3天后服務器資源將自動回收，您需要重新部署Agent才能繼續使用TapData，根據您的付費方式，請點擊下方按鈕跳轉到阿里雲創建您的雲服務器，Tapdata  Agent會自動安裝在改實例上，如果沒有賬號可以現場註冊： ',
-  dfs_agent_download_agentdownloadmodal_zhunbeiguanliyun: '準備管理雲服務器的阿里雲賬號，也可點擊下方的按鈕現場創建。 ',
+  dfs_agent_download_agentdownloadmodal_zhunbeiguanliyun:
+    '準備管理雲服務器的阿里雲賬號，也可點擊下方的按鈕現場創建。 ',
   dfs_agent_download_agentdownloadmodal_jisuanchaoCo:
     '計算巢（Compute Nest）是為阿里雲提供的自動化部署和管理Tapdata的企業軟件服務，可以免去您部署和運維服務器的時間。 ',
-  dfs_agent_download_agentdownloadmodal_yaoanzhuangAg: '要安裝Agent,請先在下方選擇您的服務器類型：',
+  dfs_agent_download_agentdownloadmodal_yaoanzhuangAg:
+    '要安裝Agent,請先在下方選擇您的服務器類型：',
   dfs_agent_download_fastdownload_bushuwanchenghou:
     '4. 部署完成後，返回我們的【Agent管理頁面】等待2分鐘直到【狀態】變為【運行中】。恭喜您！已經完成了Tapdata Alould 計算環境的部署，可以去創建數據任務了。 ',
   dfs_agent_download_fastdownload_ninkeyixuanze:
     '1. 您可以選擇按流量計費或者預付包月/年，也可以免費試用3天，3天后服務器資源將自動回收，您需要重新部署Agent才能繼續使用TapData，根據您的付費方式，請點擊下方按鈕跳轉到阿里雲創建您的雲服務器，Tapdata  Agent會自動安裝在改實例上，如果沒有賬號可以現場註冊： ',
   dfs_agent_download_fastdownload_jisuanchaoCo:
     '計算巢（Compute Nest）是為阿里雲提供的自動化部署和管理Tapdata的企業軟件服務，可以免去您部署和運維服務器的時間。 ',
-  dfs_agent_download_upgradeversion_jinruyuanAg: '2. 進入原Agent安裝目錄下，計算巢會自動安裝在/data/tapdata下面',
-  dfs_agent_download_upgradeversion_dengludaoanzhuang: '1. 登錄到安裝了Tapdata Agent的阿里雲ECS實例',
-  dfs_agent_download_upgradeversion_chuxianUpd: '5. 出現“Update finished.”則代表Agent升級成功',
+  dfs_agent_download_upgradeversion_jinruyuanAg:
+    '2. 進入原Agent安裝目錄下，計算巢會自動安裝在/data/tapdata下面',
+  dfs_agent_download_upgradeversion_dengludaoanzhuang:
+    '1. 登錄到安裝了Tapdata Agent的阿里雲ECS實例',
+  dfs_agent_download_upgradeversion_chuxianUpd:
+    '5. 出現“Update finished.”則代表Agent升級成功',
   dfs_agent_download_upgradeversion_zaiTapd:
     '4. 在Tapdata 控制台手動升級頁面 複製升級命令，並粘貼到“雲服務器ECS”遠程終端中執行',
   dfs_agent_download_upgradeversion_dengluchenggonghou:
     '3. 登錄成功後，先切換為 root 用戶，然後進入 “/data/tapdata” 目錄，執行命令如下：',
   dfs_agent_download_upgradeversion_dianjishiliming:
     '2. 點擊實例名稱，選擇“資源”選項卡，在“雲服務器 ECS”資源點擊“遠程登錄”',
-  dfs_agent_download_upgradeversion_ruguoninbushu: '如果您部署的是“3天試用實例”請打開計算巢“試用服務”選項卡',
+  dfs_agent_download_upgradeversion_ruguoninbushu:
+    '如果您部署的是“3天試用實例”請打開計算巢“試用服務”選項卡',
   dfs_agent_download_upgradeversion_jisuanchaodenglu: '計算巢登錄地址',
-  dfs_agent_download_upgradeversion_denglualiyun: '1. 登錄阿里雲計算巢控制台，找到部署Agent的服務實例.',
+  dfs_agent_download_upgradeversion_denglualiyun:
+    '1. 登錄阿里雲計算巢控制台，找到部署Agent的服務實例.',
 
   dfs_the_header_header_jichuban: '基礎版',
   dfs_the_header_header_biaozhun: '標準版',
   dfs_agent_download_paidupgrade_qingxuanzelianxi: '請選擇聯繫人手機號碼',
   dfs_agent_download_paidupgrade_qingshurulianxi: '請輸入聯繫人姓名',
   dfs_agent_download_paidupgrade_fanhuikongzhitai: '返回控制台',
-  dfs_agent_download_paidupgrade_womendetongshi: '我們的同事會通過您留下的聯繫方式和您聯繫進行線下合同簽署和付款。 ',
-  dfs_agent_download_paidupgrade_ganxienindinggou: '感謝您訂購Tapdata Cloud 標準版。鏈路數量：',
+  dfs_agent_download_paidupgrade_womendetongshi:
+    '我們的同事會通過您留下的聯繫方式和您聯繫進行線下合同簽署和付款。 ',
+  dfs_agent_download_paidupgrade_ganxienindinggou:
+    '感謝您訂購Tapdata Cloud 標準版。鏈路數量：',
   dfs_agent_download_paidupgrade_queren: '確認',
   dfs_agent_download_paidupgrade_dianjiquerengou:
     '點擊確認購買即表示您同意我們的【服務條款】您可以立即開始享受新計劃的權益。我們的同事將通過電話或者郵件與您聯絡，您需要在1週之內完成線下付款。 ',
@@ -1095,7 +1217,8 @@ export default {
 
   dfs_instance_instance_fenzhong: ' 分鐘',
   dfs_instance_instance_ruxuliaojiegeng: '如需了解更多請訪問',
-  dfs_instance_instance_bencigengxinbao: '本次更新包含錯誤修復和安全性更新，建議所有用戶安裝。 ',
+  dfs_instance_instance_bencigengxinbao:
+    '本次更新包含錯誤修復和安全性更新，建議所有用戶安裝。 ',
   dfs_instance_instance_xinzenggongneng: '新增功能',
   dfs_instance_instance_yujianzhuangshi: '預計安裝時間 : ',
   dfs_instance_instance_anzhuangbao: '安裝包 : ',
@@ -1106,7 +1229,8 @@ export default {
   dfs_agent_download_agentguidedialog_qingdianjibushu: '請選擇網絡安全策略',
   dfs_agent_download_agentguidedialog_ruhurucang: '实时入湖仓',
   dfs_agent_download_agentguidedialog_shujutongbu: '实时数据库同步',
-  dfs_agent_download_agentguidedialog_tapda: 'Tapdata可以滿足異構數據庫實時同步、數據入湖入倉、雲中數據ETL等多類場景',
+  dfs_agent_download_agentguidedialog_tapda:
+    'Tapdata可以滿足異構數據庫實時同步、數據入湖入倉、雲中數據ETL等多類場景',
   dfs_agent_download_agentguidedialog_tiyan: '體驗',
   dfs_agent_download_agentguidedialog_womentigongle:
     '我們提供了體檢Demo環境，您無需安裝Agent即可查看和體驗Tapdata強大的數據同步和處理能力。 (DEMO賬號：demo@tapdata.io 密碼：tapdata)',
@@ -1117,11 +1241,14 @@ export default {
   dfs_agent_download_agentguidedialog_zizhuanzhuang: '自助安裝',
   dfs_agent_download_agentguidedialog_lijiquanzhuang: '立即去安裝',
   dfs_agent_download_agentguidedialog_xiayibu: '下一步',
-  dfs_agent_download_agentguidedialog_womendeshuju: '我們的數據源和目標 可以被外網服務訪問',
-  dfs_agent_download_agentguidedialog_neiwang: '我們公司的安全策略 不允許這麼做',
+  dfs_agent_download_agentguidedialog_womendeshuju:
+    '我們的數據源和目標 可以被外網服務訪問',
+  dfs_agent_download_agentguidedialog_neiwang:
+    '我們公司的安全策略 不允許這麼做',
   dfs_agent_download_agentguidedialog_ninyaotongbude:
     '您要同步的數據源/目標庫是否能夠給外網開放端口？ （通過防火增、SSH Tunnel、VPN或其他方式）',
-  dfs_agent_download_agentguidedialog_dianjixiafangde: '根據您的數據源的外網訪問策略，我們會為您推薦最合適的部署模式。',
+  dfs_agent_download_agentguidedialog_dianjixiafangde:
+    '根據您的數據源的外網訪問策略，我們會為您推薦最合適的部署模式。',
   dfs_agent_download_agentguidedialog_huanyingshiyongT: '歡迎使用Tapdata',
   dfs_agent_download_agentguidedialog_mimatap: '密碼:',
   dfs_agent_download_agentguidedialog_yonghumingde: '用戶名：',
@@ -1130,14 +1257,17 @@ export default {
   dfs_agent_download_agentguidedialog_jijiangshangxian: '即將上線',
   dfs_agent_download_agentguidedialog_shiyongTap:
     '使用 Tapdata 提供的計算能力，只需選擇合適的區域和規格進行部署，無需安裝任何程序。 ',
-  dfs_agent_download_agentguidedialog_quantuoguanyunmo: '全託管雲模式 – 直接雲中部署',
+  dfs_agent_download_agentguidedialog_quantuoguanyunmo:
+    '全託管雲模式 – 直接雲中部署',
   dfs_agent_download_agentguidedialog_huoquwanzhengshi: '獲取完整試用版',
   dfs_agent_download_agentguidedialog_zainindeshuju:
     '在您的數據中心或 雲服務器上安裝全套軟件， 由您完全掌控。注意這個選項不是雲服務。 ',
-  dfs_agent_download_agentguidedialog_xianxiamoshizi: '線下模式 – 自主安裝全套軟件',
+  dfs_agent_download_agentguidedialog_xianxiamoshizi:
+    '線下模式 – 自主安裝全套軟件',
   dfs_agent_download_agentguidedialog_ninkeyigenzhe:
     '您可以跟著引導流程，在您的服務器或者VPC內安裝 Tapdata Agent，用來進行數據同步及處理',
-  dfs_agent_download_agentguidedialog_bantuoguanyunmo: '半託管雲模式 – 僅需安裝 Agent',
+  dfs_agent_download_agentguidedialog_bantuoguanyunmo:
+    '半託管雲模式 – 僅需安裝 Agent',
   dfs_instance_instance_shanchuchenggong: '刪除成功',
   dfs_instance_instance_wenjianxiazai: '文件下載',
   dfs_instance_instance_wenjianzhuangtai: '文件狀態',
@@ -1164,7 +1294,8 @@ export default {
   //数据服务
   dfs_data_server: '數據服務',
   dfs_data_server_demo_title: '中央化的數據服務，可複用易分發',
-  dfs_data_server_demo_title_desc: '·中央化的数据服务 ·中央化存储 ·数据实时服务',
+  dfs_data_server_demo_title_desc:
+    '·中央化的数据服务 ·中央化存储 ·数据实时服务',
   dfs_data_server_demo_title_edition: 'Tapdata On-Prem 版',
   dfs_data_server_demo_desc:
     ' 將企業核心數據實時集中到中央化數據平台的方式並通過API 或者反向同步方式，為下游的交互式應用、微服務或交互式分析提供新鮮實時的數據。 ',
@@ -1175,13 +1306,15 @@ export default {
   dfs_data_server_data_service_mode:
     '在服務層，有兩種主流的數據服務模式 Pull 和 Push。 API支持低代碼發布，可按照具體需求發布數據。當所需數據在業務系統中已有存儲時，可通過 REVERSE ETL，反向把經過整理、治理的數據推送給用戶；',
   dfs_data_server_feature: 'Data Services 特有功能點',
-  dfs_data_server_On_Prem: 'Data Services 能力目前僅在 Tapdata On-Prem 版中上線',
+  dfs_data_server_On_Prem:
+    'Data Services 能力目前僅在 Tapdata On-Prem 版中上線',
   dfs_data_server_apply_for_trial: '申請試用',
   dfs_data_server_apply_for_version: '線下部署版',
 
-  dfs_data_dashboard_Marquee: '當前demo環境為只讀環境，僅支持查看和體驗產品功能',
+  dfs_data_dashboard_Marquee:
+    '當前demo環境為只讀環境，僅支持查看和體驗產品功能',
 
   page_title_custom_node: '自定義節點',
   packages_nodeDesign_custom_node_name_required: '請輸入節點名稱',
-  packages_nodeDesign_message_save_ok: '保存成功'
+  packages_nodeDesign_message_save_ok: '保存成功',
 }

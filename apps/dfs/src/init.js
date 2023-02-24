@@ -1,9 +1,9 @@
-import Vue from 'vue'
+import * as Vue from 'vue'
 import './plugins/element'
 import './plugins/axios'
 import './directive'
 import App from './App.vue'
-import VueRouter from 'vue-router'
+import * as VueRouter from 'vue-router'
 import 'github-markdown-css'
 import './assets/styles/app.scss'
 import VueClipboard from 'vue-clipboard2'
@@ -19,35 +19,37 @@ import { timeStampApi } from '@tap/api'
 import Time from '@tap/shared/src/time'
 import WSClient from '@tap/business/src/shared/ws-client'
 
-Vue.config.productionTip = false
-Vue.use(VueClipboard)
+window.$vueApp.use(VueClipboard)
 
 const originalPush = VueRouter.prototype.push
 const originalReplace = VueRouter.prototype.replace
 VueRouter.prototype.push = function push(location) {
-  return originalPush.call(this, location).catch(err => err)
+  return originalPush.call(this, location).catch((err) => err)
 }
 VueRouter.prototype.replace = function replace(location) {
-  return originalReplace.call(this, location).catch(err => err)
+  return originalReplace.call(this, location).catch((err) => err)
 }
-Vue.use(VueRouter)
-Vue.use(FormBuilder)
+window.$vueApp.use(FormBuilder)
 
-Vue.component(VIcon.name, VIcon)
-Vue.component(VButton.name, VButton)
+window.$vueApp.component(VIcon.name, VIcon)
+window.$vueApp.component(VButton.name, VButton)
 
-Vue.mixin({
+window.$vueApp.mixin({
   created() {
     // 创建实例时传入wsOptions，即可默认开启websocket
     let wsOptions = this.$options.wsOptions
     // 根实例才有ws
     if (wsOptions) {
-      Vue.prototype.$ws = new WSClient(wsOptions.url, wsOptions.protocols, wsOptions)
+      window.$vueApp.config.globalProperties.$ws = new WSClient(
+        wsOptions.url,
+        wsOptions.protocols,
+        wsOptions
+      )
     }
-  }
+  },
 })
 
-Vue.prototype.$confirm = (message, title, options) => {
+window.$vueApp.config.globalProperties.$confirm = (message, title, options) => {
   return new Promise((resolve, reject) => {
     VConfirm.confirm(message, title, options)
       .then(() => {
@@ -63,8 +65,9 @@ export default ({ routes }) => {
   let loading = null
 
   const init = () => {
-    const router = new VueRouter({
-      routes
+    const router = VueRouter.createRouter({
+      history: VueRouter.createWebHashHistory(),
+      routes: routes,
     })
     startTimeOnPage(router)
 
@@ -78,15 +81,15 @@ export default ({ routes }) => {
       queryString = `__token=${process.env.VUE_APP_ACCESS_TOKEN}`
     }
     wsUrl = wsUrl + loc.host + loc.pathname + `tm/ws/agent?${queryString}`
-    window.App = new Vue({
+    window.App = {
       router,
       store,
       i18n,
       wsOptions: {
-        url: wsUrl
+        url: wsUrl,
       },
-      render: h => h(App)
-    }).$mount('#app')
+      render: (h) => h(App),
+    }.$mount('#app')
 
     // 路由守卫
     router.beforeEach((to, from, next) => {
@@ -100,7 +103,7 @@ export default ({ routes }) => {
           'DataflowEditor',
           'MigrateCreate',
           'MigrateEditor',
-          'MigrateEditor'
+          'MigrateEditor',
         ].includes(to.name) &&
         domainName === 'demo.cloud.tapdata.net' &&
         !removeReadonly
@@ -118,7 +121,7 @@ export default ({ routes }) => {
   let getData = () => {
     window.axios
       .get('api/tcm/user')
-      .then(data => {
+      .then((data) => {
         let userInfo = data
         window.__USER_INFO__ = userInfo
 
@@ -126,11 +129,11 @@ export default ({ routes }) => {
         init()
 
         // 设置服务器时间
-        timeStampApi.get().then(t => {
+        timeStampApi.get().then((t) => {
           Time.setTime(t)
         })
       })
-      .catch(err => {
+      .catch((err) => {
         // 获取用户信息失败
         if (count < 4) {
           // eslint-disable-next-line
@@ -138,7 +141,12 @@ export default ({ routes }) => {
           setTimeout(() => {
             count++
             // eslint-disable-next-line
-            console.log(i18n.t('dfs_src_init_chongxinchangshihuo')('dfs_src_init_chongxinchangshihuo', { val1: count }))
+            console.log(
+              i18n.t('dfs_src_init_chongxinchangshihuo')(
+                'dfs_src_init_chongxinchangshihuo',
+                { val1: count }
+              )
+            )
             getData()
           }, 3000)
         } else {
@@ -150,7 +158,7 @@ export default ({ routes }) => {
         }
       })
   }
-  window.axios.get('config/config.json').then(res => {
+  window.axios.get('config/config.json').then((res) => {
     window.__config__ = res.data
     getData()
   })

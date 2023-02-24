@@ -1,5 +1,5 @@
 import i18n from '@/i18n'
-import Vue from 'vue'
+import * as Vue from 'vue'
 import axios from 'axios'
 import Qs from 'qs'
 import { Message } from '@/plugins/element'
@@ -9,7 +9,7 @@ import { Message } from '@/plugins/element'
 // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 const headers = {
-  'x-requested-with': 'XMLHttpRequest'
+  'x-requested-with': 'XMLHttpRequest',
 }
 axios.defaults.headers.common['x-requested-with'] = headers['x-requested-with']
 axios.defaults.baseURL = './tm'
@@ -18,15 +18,18 @@ const CancelToken = axios.CancelToken
 
 const _axios = axios.create({
   baseURL: './',
-  headers: headers
+  headers: headers,
 })
 
-const getPendingKey = config => {
+const getPendingKey = (config) => {
   let { url, method, params } = config
   let headers = {}
   for (const key in config.headers) {
     let value = config.headers[key]
-    if (Object.prototype.toString.call(value) === '[object String]' && !['Content-Type', 'Accept'].includes(key)) {
+    if (
+      Object.prototype.toString.call(value) === '[object String]' &&
+      !['Content-Type', 'Accept'].includes(key)
+    ) {
       headers[key] = value
     }
   }
@@ -34,17 +37,17 @@ const getPendingKey = config => {
     url,
     method,
     params,
-    headers
+    headers,
   })
   return key
 }
-const removePending = config => {
+const removePending = (config) => {
   let key = getPendingKey(config)
-  let index = pending.findIndex(it => it === key)
+  let index = pending.findIndex((it) => it === key)
   pending.splice(index, 1)
 }
 let skipErrorHandler = false
-const errorCallback = error => {
+const errorCallback = (error) => {
   let status = error?.response?.status
   // 从请求池清除掉错误请求
   if (error?.response?.config || error?.config) {
@@ -81,11 +84,11 @@ const errorCallback = error => {
   console.error(i18n.t('dfs_plugins_axios_qingqiubaocuo') + error) // eslint-disable-line
   return Promise.reject(error)
 }
-const requestInterceptor = config => {
-  config.paramsSerializer = params => {
+const requestInterceptor = (config) => {
+  config.paramsSerializer = (params) => {
     return Qs.stringify(params, {
       arrayFormat: 'brackets',
-      encoder: str => window.encodeURIComponent(str)
+      encoder: (str) => window.encodeURIComponent(str),
     })
   }
   // 本地开发使用header中加__token的方式绕过网关登录
@@ -107,7 +110,7 @@ const requestInterceptor = config => {
 
   // 获取取消请求的函数
   let cancelFunc = null
-  config.cancelToken = new CancelToken(c => {
+  config.cancelToken = new CancelToken((c) => {
     cancelFunc = c
   })
   let key = getPendingKey(config)
@@ -120,7 +123,7 @@ const requestInterceptor = config => {
   }
   return config
 }
-const responseInterceptor = response => {
+const responseInterceptor = (response) => {
   return new Promise((resolve, reject) => {
     // 从请求池清除掉错误请求
     removePending(response.config)
@@ -133,7 +136,11 @@ const responseInterceptor = response => {
     } else if (code === 'SystemError') {
       // code 为 SystemError 则表示请求异常，提示信息
       let msg = data?.message || data?.msg || ''
-      Message.error(`SystemError： ${msg === msg.substring(0, 20) ? msg : msg.substring(0, 20) + '...'}`)
+      Message.error(
+        `SystemError： ${
+          msg === msg.substring(0, 20) ? msg : msg.substring(0, 20) + '...'
+        }`
+      )
       // eslint-disable-next-line
       console.log(i18n.t('dfs_plugins_axios_qingqiushibai') + msg, response)
       return reject(msg)
@@ -178,20 +185,20 @@ const Plugin = {}
 Plugin.install = function (Vue) {
   Vue.axios = _axios
   window.axios = _axios
-  Object.defineProperties(Vue.prototype, {
+  Object.defineProperties(window.$vueApp.config.globalProperties, {
     axios: {
       get() {
         return _axios
-      }
+      },
     },
     $axios: {
       get() {
         return _axios
-      }
-    }
+      },
+    },
   })
 }
 
-Vue.use(Plugin)
+window.$vueApp.use(Plugin)
 
 export default Plugin

@@ -1,7 +1,7 @@
 // 获取验证码
 export function getCodeOptions(val, scene, type = 'sms') {
   let params = {
-    scene
+    scene,
   }
   if (type === 'sms') {
     params.phone = val
@@ -11,6 +11,6 @@ export function getCodeOptions(val, scene, type = 'sms') {
   return {
     method: 'post',
     url: `api/tcm/${type}/captcha`,
-    params
+    params,
   }
 }

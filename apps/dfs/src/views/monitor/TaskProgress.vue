@@ -3,12 +3,17 @@
     <div class="task-overview flex">
       <div class="flex-shrink-0" style="width: 300px">
         <!-- 非增量 -->
-        <div v-if="task && task.setting && task.setting.sync_type !== 'cdc'" style="height: 310px">
+        <div
+          v-if="task && task.setting && task.setting.sync_type !== 'cdc'"
+          style="height: 310px"
+        >
           <div>
             <span class="dots">{{ $t('task_monitor_full_sync') }}</span>
           </div>
           <div>
-            <div class="progress-box flex justify-content-center align-items-center position-relative">
+            <div
+              class="progress-box flex justify-content-center align-items-center position-relative"
+            >
               <ElProgress
                 type="circle"
                 color="rgba(44, 101, 255, 1)"
@@ -16,11 +21,16 @@
                 :show-text="false"
                 :width="120"
               ></ElProgress>
-              <div class="progress-box__value flex justify-content-center align-items-center">{{ progressBar }}%</div>
+              <div
+                class="progress-box__value flex justify-content-center align-items-center"
+              >
+                {{ progressBar }}%
+              </div>
             </div>
           </div>
           <div class="py-6 text-center">
-            {{ $t('task_monitor_full_completion_time') }}{{ $t('field_mapping_field_mapping_dialog_')
+            {{ $t('task_monitor_full_completion_time')
+            }}{{ $t('field_mapping_field_mapping_dialog_')
             }}<span>{{ completeTime }}</span>
           </div>
         </div>
@@ -30,7 +40,9 @@
             <span class="dots">{{ $t('task_monitor_cdc_overview') }}</span>
           </div>
           <div class="pb-6">
-            <div class="progress-box flex justify-content-center align-items-center position-relative">
+            <div
+              class="progress-box flex justify-content-center align-items-center position-relative"
+            >
               <ElProgress
                 type="circle"
                 color="rgba(44, 101, 255, 1)"
@@ -38,9 +50,15 @@
                 :show-text="false"
                 :width="120"
               ></ElProgress>
-              <div class="progress-box__value flex flex-column justify-content-center align-items-center">
-                <div class="fs-5">{{ replicateObj.currentStatus || $t('task_monitor_delay') }}</div>
-                <div class="mt-2" v-if="!replicateObj.currentStatus">{{ replicateObj.value }}</div>
+              <div
+                class="progress-box__value flex flex-column justify-content-center align-items-center"
+              >
+                <div class="fs-5">
+                  {{ replicateObj.currentStatus || $t('task_monitor_delay') }}
+                </div>
+                <div class="mt-2" v-if="!replicateObj.currentStatus">
+                  {{ replicateObj.value }}
+                </div>
               </div>
             </div>
           </div>
@@ -48,66 +66,130 @@
       </div>
       <div class="task-overview__detail flex-fill pl-4">
         <!-- 非增量 -->
-        <div v-if="task && task.setting && task.setting.sync_type !== 'cdc'" style="height: 310px">
-          <div class="mb-10 fs-7 dots">{{ $t('task_monitor_progress_details') }}</div>
-          <div v-for="(item, index) in initialList" :key="index" class="initial-box">
+        <div
+          v-if="task && task.setting && task.setting.sync_type !== 'cdc'"
+          style="height: 310px"
+        >
+          <div class="mb-10 fs-7 dots">
+            {{ $t('task_monitor_progress_details') }}
+          </div>
+          <div
+            v-for="(item, index) in initialList"
+            :key="index"
+            class="initial-box"
+          >
             <span v-if="item.label" class="initial-box__title font-color-sub"
-              >{{ item.label }}{{ $t('field_mapping_field_mapping_dialog_') }}</span
+              >{{ item.label
+              }}{{ $t('field_mapping_field_mapping_dialog_') }}</span
             >
-            <span class="initial-box__value" :class="{ 'font-color-sub': !!item.value }">{{
-              item.value || overviewStats[item.key]
-            }}</span>
+            <span
+              class="initial-box__value"
+              :class="{ 'font-color-sub': !!item.value }"
+              >{{ item.value || overviewStats[item.key] }}</span
+            >
           </div>
         </div>
         <!-- 非全量 -->
         <div v-if="task && task.setting.sync_type !== 'initial_sync'">
-          <div class="mb-10 fs-7 dots">{{ $t('task_monitor_cdc_details') }}</div>
+          <div class="mb-10 fs-7 dots">
+            {{ $t('task_monitor_cdc_details') }}
+          </div>
           <ElTable :data="cdcLastTimes">
-            <ElTableColumn :label="$t('task_monitor_source_library')" prop="sourceConnectionName"></ElTableColumn>
+            <ElTableColumn
+              :label="$t('task_monitor_source_library')"
+              prop="sourceConnectionName"
+            ></ElTableColumn>
             <ElTableColumn :label="$t('task_monitor_time')" prop="cdcTime">
-              <template slot-scope="scope">{{ formatTime(scope.row.cdcTime) }}</template>
+              <template v-slot="scope">{{
+                formatTime(scope.row.cdcTime)
+              }}</template>
             </ElTableColumn>
-            <ElTableColumn :label="$t('task_monitor_target_library')" prop="targetConnectionName"></ElTableColumn>
+            <ElTableColumn
+              :label="$t('task_monitor_target_library')"
+              prop="targetConnectionName"
+            ></ElTableColumn>
           </ElTable>
         </div>
       </div>
     </div>
     <div class="task-chart">
-      <div class="task-chart__title fs-7">{{ $t('task_monitor_status_statistice') }}</div>
+      <div class="task-chart__title fs-7">
+        {{ $t('task_monitor_status_statistice') }}
+      </div>
       <div class="task-chart__body flex flex-wrap justify-content-between pr-3">
         <div class="task-chart__item">
           <EchartHeader :data="overviewObj.title"></EchartHeader>
-          <Chart v-if="overviewObj.body" :extend="overviewObj.body" class="v-echart"></Chart>
+          <Chart
+            v-if="overviewObj.body"
+            :extend="overviewObj.body"
+            class="v-echart"
+          ></Chart>
         </div>
         <div class="task-chart__item">
-          <EchartHeader :data="throughputObj.title" @change="changeHeaderFnc"></EchartHeader>
+          <EchartHeader
+            :data="throughputObj.title"
+            @change="changeHeaderFnc"
+          ></EchartHeader>
           <div class="floatLayer">
-            <span style="background-color: rgba(72, 182, 226, 0.3); color: #409eff"
-              >{{ $t('dataFlow_input') }}:<span class="ml-1">{{ throughputObj.input }}</span></span
+            <span
+              style="background-color: rgba(72, 182, 226, 0.3); color: #409eff"
+              >{{ $t('dataFlow_input') }}:<span class="ml-1">{{
+                throughputObj.input
+              }}</span></span
             >
-            <span style="background-color: rgba(98, 165, 105, 0.3); color: #62a569"
-              >{{ $t('dataFlow_output') }}:<span class="ml-1">{{ throughputObj.output }}</span></span
+            <span
+              style="background-color: rgba(98, 165, 105, 0.3); color: #62a569"
+              >{{ $t('dataFlow_output') }}:<span class="ml-1">{{
+                throughputObj.output
+              }}</span></span
             >
           </div>
-          <Chart v-if="throughputObj.body" :extend="throughputObj.body" class="v-echart"></Chart>
+          <Chart
+            v-if="throughputObj.body"
+            :extend="throughputObj.body"
+            class="v-echart"
+          ></Chart>
         </div>
         <div class="task-chart__item">
-          <EchartHeader :data="transfObj.title" @change="changeHeaderFnc"></EchartHeader>
+          <EchartHeader
+            :data="transfObj.title"
+            @change="changeHeaderFnc"
+          ></EchartHeader>
           <div class="floatLayer">
-            <span style="background-color: rgba(251, 142, 0, 0.3); color: #fb8e00"
-              >{{ $t('dataFlow_current') }}:<span class="ml-1">{{ transfObj.value }}</span></span
+            <span
+              style="background-color: rgba(251, 142, 0, 0.3); color: #fb8e00"
+              >{{ $t('dataFlow_current') }}:<span class="ml-1">{{
+                transfObj.value
+              }}</span></span
             >
           </div>
-          <Chart v-if="transfObj.body" :extend="transfObj.body" class="v-echart"></Chart>
+          <Chart
+            v-if="transfObj.body"
+            :extend="transfObj.body"
+            class="v-echart"
+          ></Chart>
         </div>
         <div class="task-chart__item">
-          <EchartHeader :data="replicateObj.title" @change="changeHeaderFnc"></EchartHeader>
+          <EchartHeader
+            :data="replicateObj.title"
+            @change="changeHeaderFnc"
+          ></EchartHeader>
           <div class="floatLayer">
-            <span style="background-color: rgba(7245, 108, 108, 0.3); color: #f56c6c"
-              >{{ $t('dataFlow_current') }}:<span class="ml-1">{{ replicateObj.value }}</span></span
+            <span
+              style="
+                background-color: rgba(7245, 108, 108, 0.3);
+                color: #f56c6c;
+              "
+              >{{ $t('dataFlow_current') }}:<span class="ml-1">{{
+                replicateObj.value
+              }}</span></span
             >
           </div>
-          <Chart v-if="replicateObj.body" :extend="replicateObj.body" class="v-echart"></Chart>
+          <Chart
+            v-if="replicateObj.body"
+            :extend="replicateObj.body"
+            class="v-echart"
+          ></Chart>
         </div>
       </div>
     </div>
@@ -115,6 +197,7 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { Chart } from '@tap/component'
 import EchartHeader from './EchartHeader'
 import { getOverviewData } from '../task/copy/util'
@@ -131,8 +214,8 @@ export default {
       type: Object,
       default: () => {
         return {}
-      }
-    }
+      },
+    },
   },
   data() {
     return {
@@ -142,25 +225,25 @@ export default {
       initialList: [
         {
           key: 'sourceTableNum',
-          label: this.$t('task_monitor_migrate_table_number')
+          label: this.$t('task_monitor_migrate_table_number'),
         },
         {
           key: 'sourceRowNum',
-          label: this.$t('task_monitor_migrate_table_rows')
+          label: this.$t('task_monitor_migrate_table_rows'),
         },
         {
           key: 'waitingForSyecTableNums',
-          label: this.$t('task_monitor_migrate_table_number_completed')
+          label: this.$t('task_monitor_migrate_table_number_completed'),
         },
         {
           key: 'targatRowNum',
-          label: this.$t('task_monitor_migrate_table_rows_completed')
+          label: this.$t('task_monitor_migrate_table_rows_completed'),
         },
         {
           // key: '',
           // label: '*目前任务进度查看仅支持： MySQL、Oracle、SQL Server、PostgreSQL和MongoDB',
-          value: this.$t('task_monitor_migrate_tip')
-        }
+          value: this.$t('task_monitor_migrate_tip'),
+        },
       ],
       // 事件统计
       overviewObj: {
@@ -169,9 +252,9 @@ export default {
           statsType: 'data_overview',
           title: this.$t('dataFlow_dataScreening'),
           classFlex: true,
-          loading: false
+          loading: false,
         },
-        body: null
+        body: null,
       },
       // 输入输出统计
       throughputObj: {
@@ -184,11 +267,11 @@ export default {
           unit: 'QPS',
           class: 'putColor',
           classFlex: true,
-          loading: false
+          loading: false,
         },
         body: null,
         input: 0,
-        output: 0
+        output: 0,
       },
       // 传输耗时
       transfObj: {
@@ -201,10 +284,10 @@ export default {
           unit: this.$t('task_monitor_unit_row'),
           class: 'transfColor',
           classFlex: true,
-          loading: false
+          loading: false,
         },
         body: null,
-        value: 0
+        value: 0,
       },
       // 数据同步差距
       replicateObj: {
@@ -218,52 +301,54 @@ export default {
           class: 'transfColor',
           classFlex: 'flex',
           hideSecond: true,
-          loading: false
+          loading: false,
         },
         body: null,
         value: 0, // 当前延迟
-        currentStatus: this.$t('task_monitor_not_start')
+        currentStatus: this.$t('task_monitor_not_start'),
       },
       selectFlow: 'flow_', // 选中节点
       stageId: 'all',
-      dataOverviewAll: 'flow'
+      dataOverviewAll: 'flow',
     }
   },
   computed: {
     cdcLastTimes() {
       return (
-        this.task?.cdcLastTimes?.map(item => {
+        this.task?.cdcLastTimes?.map((item) => {
           return item
         }) || []
       )
-    }
+    },
   },
   watch: {
     'task.stats': {
       deep: true,
       handler() {
         this.loadInfo()
-      }
-    }
+      },
+    },
   },
   mounted() {
-    this.$once('onceLoadHttp', () => {
+    $once(this, 'onceLoadHttp', () => {
       this.loadHttp()
     })
     this.init()
   },
-  destroyed() {
+  unmounted() {
     this.clearWS()
   },
   methods: {
     init() {
       this.loadInfo()
-      this.$emit('onceLoadHttp')
+      $emit(this, 'onceLoadHttp')
       this.loadWS()
       this.sendMsg()
     },
     loadInfo() {
-      let { progress, overview, completeTime, currentStatus } = getOverviewData(this.task)
+      let { progress, overview, completeTime, currentStatus } = getOverviewData(
+        this.task
+      )
       this.progressBar = progress
       this.overviewStats = overview
       this.completeTime = completeTime
@@ -272,11 +357,11 @@ export default {
     // http请求
     loadHttp() {
       let arr = ['overviewObj', 'throughputObj', 'transfObj', 'replicateObj']
-      arr.forEach(el => {
+      arr.forEach((el) => {
         let item = this[el]?.title
         let params = {
           statsType: item.statsType,
-          granularity: item.time ? item.time : 'flow'
+          granularity: item.time ? item.time : 'flow',
         }
         this.loadData(params, item)
       })
@@ -288,20 +373,20 @@ export default {
         overview.inputCount,
         overview.insertCount,
         overview.updateCount,
-        overview.deleteCount
+        overview.deleteCount,
       ]
       this.overviewObj.body = {
         tooltip: {
           trigger: 'axis',
           axisPointer: {
-            type: 'none'
-          }
+            type: 'none',
+          },
         },
         grid: {
           left: '10%',
           right: '10%',
           bottom: '3%',
-          containLabel: true
+          containLabel: true,
         },
         xAxis: {
           type: 'category',
@@ -310,32 +395,32 @@ export default {
             show: false,
             lineStyle: {
               color: '#666',
-              width: 0
-            }
+              width: 0,
+            },
           },
           axisLabel: {
-            margin: 30
+            margin: 30,
           },
           axisTick: {
-            show: false
+            show: false,
           },
           data: [
             this.$t('dataFlow_totalOutput'),
             this.$t('dataFlow_totalInput'),
             this.$t('dataFlow_totalInsert'),
             this.$t('dataFlow_totalUpdate'),
-            this.$t('dataFlow_totalDelete')
+            this.$t('dataFlow_totalDelete'),
           ],
           axisPointer: {
-            type: 'shadow'
+            type: 'shadow',
           },
           nameTextStyle: {
             verticalAlign: 'bottom',
-            color: '#F00'
-          }
+            color: '#F00',
+          },
         },
         yAxis: {
-          show: false
+          show: false,
         },
         series: [
           {
@@ -346,7 +431,13 @@ export default {
             itemStyle: {
               normal: {
                 color: function (params) {
-                  let colorList = ['#7ba75d', '#409EFF', '#d9742c', '#e6b451', '#e06c6c']
+                  let colorList = [
+                    '#7ba75d',
+                    '#409EFF',
+                    '#d9742c',
+                    '#e6b451',
+                    '#e06c6c',
+                  ]
                   return colorList[params.dataIndex]
                 },
                 label: {
@@ -355,18 +446,20 @@ export default {
                   distance: 10,
                   formatter: function (value) {
                     if (value.data / (1000 * 1000 * 1000) > 1) {
-                      return (value.data / (1000 * 1000 * 1000)).toFixed(1) + ' T'
+                      return (
+                        (value.data / (1000 * 1000 * 1000)).toFixed(1) + ' T'
+                      )
                     } else if (value.data / (1000 * 1000) > 1) {
                       return (value.data / (1000 * 1000)).toFixed(1) + ' M'
                     } else if (value.data / 1000 > 1) {
                       return (value.data / 1000).toFixed(1) + ' K'
                     }
-                  }
-                }
-              }
-            }
-          }
-        ]
+                  },
+                },
+              },
+            },
+          },
+        ],
       }
     },
     getThroughputOpt(data) {
@@ -374,7 +467,7 @@ export default {
         inputCountList = [],
         outputCountList = [],
         timeType = data.granularity['throughput']?.split('_')[1]
-      data.statsData.throughput.forEach(item => {
+      data.statsData.throughput.forEach((item) => {
         timeList.push(formatTimeByTime(item.t, timeType))
         inputCountList.push(item.inputCount)
         outputCountList.push(item.outputCount)
@@ -382,35 +475,35 @@ export default {
 
       this.throughputObj.body = {
         tooltip: {
-          trigger: 'axis'
+          trigger: 'axis',
         },
         legend: {
           top: 10,
-          right: 50
+          right: 50,
         },
         grid: {
           left: '10%',
           right: '10%',
           bottom: '3%',
-          containLabel: true
+          containLabel: true,
         },
         xAxis: {
           axisLine: {
             lineStyle: {
               color: '#409EFF',
-              width: 1 // 这里是为了突出显示加上的
-            }
+              width: 1, // 这里是为了突出显示加上的
+            },
           },
           boundaryGap: false,
-          data: timeList
+          data: timeList,
         },
         yAxis: {
           axisLine: {
             show: true,
             lineStyle: {
               color: '#409EFF',
-              width: 1
-            }
+              width: 1,
+            },
           },
           axisLabel: {
             formatter: function (value) {
@@ -418,8 +511,8 @@ export default {
                 value = value / 1000 + 'K'
               }
               return value
-            }
-          }
+            },
+          },
         },
         series: [
           {
@@ -428,11 +521,11 @@ export default {
             smooth: true,
             data: inputCountList,
             itemStyle: {
-              color: '#2ba7c3'
+              color: '#2ba7c3',
             },
             lineStyle: {
-              color: '#2ba7c3'
-            }
+              color: '#2ba7c3',
+            },
           },
           {
             name: this.$t('dataFlow_output'),
@@ -440,56 +533,57 @@ export default {
             smooth: true,
             data: outputCountList,
             itemStyle: {
-              color: '#61a569'
+              color: '#61a569',
             },
             lineStyle: {
-              color: '#8cd5c2' // 改变折线点的颜色
-            }
-          }
-        ]
+              color: '#8cd5c2', // 改变折线点的颜色
+            },
+          },
+        ],
       }
       this.throughputObj.input = inputCountList[inputCountList.length - 1] || 0
-      this.throughputObj.output = outputCountList[outputCountList.length - 1] || 0
+      this.throughputObj.output =
+        outputCountList[outputCountList.length - 1] || 0
     },
     getTransfOpt(data) {
       let timeList = [],
         dataList = [],
         timeType = data.granularity['trans_time']?.split('_')[1]
-      data.statsData.trans_time.forEach(item => {
+      data.statsData.trans_time.forEach((item) => {
         timeList.push(formatTimeByTime(item.t, timeType)) // 时间
         dataList.push(item.d)
       })
       this.transfObj.body = {
         tooltip: {
-          trigger: 'axis'
+          trigger: 'axis',
         },
         legend: {
           top: 10,
-          right: 50
+          right: 50,
         },
         grid: {
           left: '10%',
           right: '10%',
           bottom: '3%',
-          containLabel: true
+          containLabel: true,
         },
         xAxis: {
           axisLine: {
             lineStyle: {
               color: '#fb8e00',
-              width: 1
-            }
+              width: 1,
+            },
           },
           boundaryGap: false,
-          data: timeList
+          data: timeList,
         },
         yAxis: {
           axisLine: {
             show: true,
             lineStyle: {
               color: '#fb8e00',
-              width: 1
-            }
+              width: 1,
+            },
           },
           axisLabel: {
             formatter: function (value) {
@@ -497,8 +591,8 @@ export default {
                 value = value / 1000 + 'K'
               }
               return value
-            }
-          }
+            },
+          },
         },
         series: [
           {
@@ -506,13 +600,13 @@ export default {
             smooth: true,
             data: dataList,
             itemStyle: {
-              color: '#fb8e00'
+              color: '#fb8e00',
             },
             lineStyle: {
-              color: '#fb8e00'
-            }
-          }
-        ]
+              color: '#fb8e00',
+            },
+          },
+        ],
       }
       this.transfObj.value = dataList[dataList.length - 1] || 0
     },
@@ -520,40 +614,42 @@ export default {
       let timeList = [],
         dataList = [],
         timeType = data.granularity['repl_lag']?.split('_')[1]
-      data.statsData.repl_lag.forEach(item => {
+      data.statsData.repl_lag.forEach((item) => {
         timeList.push(formatTimeByTime(item.t, timeType)) // 时间
         dataList.push(item.d)
       })
-      this.replicateObj.value = this.formatLag(dataList[dataList.length - 1] || 0)
+      this.replicateObj.value = this.formatLag(
+        dataList[dataList.length - 1] || 0
+      )
       this.replicateObj.body = {
         tooltip: {
-          trigger: 'axis'
+          trigger: 'axis',
         },
         legend: {
           top: 10,
-          right: 50
+          right: 50,
         },
         grid: {
           left: '10%',
           right: '10%',
           bottom: '3%',
-          containLabel: true
+          containLabel: true,
         },
         xAxis: {
           axisLine: {
             lineStyle: {
-              color: '#f56c6c'
-            }
+              color: '#f56c6c',
+            },
           },
           boundaryGap: false,
-          data: timeList
+          data: timeList,
         },
         yAxis: {
           axisLine: {
             show: true,
             lineStyle: {
-              color: '#f56c6c'
-            }
+              color: '#f56c6c',
+            },
           },
           axisLabel: {
             formatter: function (value) {
@@ -561,8 +657,8 @@ export default {
                 value = value / 1000 + 'K'
               }
               return value
-            }
-          }
+            },
+          },
         },
         series: [
           {
@@ -570,13 +666,13 @@ export default {
             data: dataList,
             smooth: true,
             itemStyle: {
-              color: '#f56c6c'
+              color: '#f56c6c',
             },
             lineStyle: {
-              color: '#f56c6c'
-            }
-          }
-        ]
+              color: '#f56c6c',
+            },
+          },
+        ],
       }
     },
     formatLag(data = 0) {
@@ -605,7 +701,7 @@ export default {
       return result
     },
     loadWS() {
-      this.$ws.on('dataFlowInsight', data => {
+      this.$ws.on('dataFlowInsight', (data) => {
         this.getOverview(data) // 事件统计
         this.getThroughputOpt(data) // 输入输出统计
         this.getTransfOpt(data) // 传输耗时
@@ -626,9 +722,9 @@ export default {
           throughput: this.selectFlow + this.throughputObj.title.time,
           trans_time: this.selectFlow + this.transfObj.title.time,
           repl_lag: this.selectFlow + this.replicateObj.title.time,
-          data_overview: this.dataOverviewAll
+          data_overview: this.dataOverviewAll,
         },
-        dataFlowId: this.task.id
+        dataFlowId: this.task.id,
       }
       if (this.stageId !== 'all') {
         msg['stageId'] = this.stageId
@@ -650,13 +746,13 @@ export default {
       item.loading = true
       this.$axios
         .get('tm/api/DataFlowInsights/runtimeMonitor', {
-          params: params
+          params: params,
         })
-        .then(res => {
+        .then((res) => {
           let result = res[0] || {}
           let data = {
             statsData: {},
-            granularity: {}
+            granularity: {},
           }
           if (result.statsType) {
             data.statsData[result.statsType] = result.statsData
@@ -692,8 +788,9 @@ export default {
     clearWS() {
       this.$ws.off('dataFlowInsight')
       lastMsg = ''
-    }
-  }
+    },
+  },
+  emits: ['onceLoadHttp'],
 }
 </script>
 

@@ -4,33 +4,51 @@
       <div>
         <ElInput
           class="search-input mt-2"
-          v-model="keyword"
+          v-model:value="keyword"
           clearable
           prefix-icon="el-icon-search"
           :placeholder="$t('monitor_Log_qingShuRuRiZhi')"
           @input="search"
         ></ElInput>
-        <ElCheckboxGroup v-model="checkList" :min="1" class="inline-block ml-4" @change="changeType">
+        <ElCheckboxGroup
+          v-model:value="checkList"
+          :min="1"
+          class="inline-block ml-4"
+          @change="changeType"
+        >
           <ElCheckbox label="INFO">INFO</ElCheckbox>
           <ElCheckbox label="WARN">WARN</ElCheckbox>
           <ElCheckbox label="ERROR">ERROR</ElCheckbox>
         </ElCheckboxGroup>
       </div>
-      <ElTooltip effect="dark" :content="$t('monitor_Log_xiaZaiRenWuRi')" placement="bottom">
+      <ElTooltip
+        effect="dark"
+        :content="$t('monitor_Log_xiaZaiRenWuRi')"
+        placement="bottom"
+      >
         <VIcon class="color-primary mr-6" @click="openDownload">download</VIcon>
       </ElTooltip>
     </div>
-    <div ref="logs" class="log-container flex-fit mt-6 py-6 overflow-auto" @scroll="loadOld">
+    <div
+      ref="logs"
+      class="log-container flex-fit mt-6 py-6 overflow-auto"
+      @scroll="loadOld"
+    >
       <div v-show="!noMore && loading" class="pb-4 text-center fs-5">
         <i class="el-icon-loading"></i>
       </div>
-      <div v-show="logs && logs.length && noMore" class="font-color-sub text-center pb-4">
+      <div
+        v-show="logs && logs.length && noMore"
+        class="font-color-sub text-center pb-4"
+      >
         {{ $t('monitor_Log_meiYouGengDuoLe') }}
       </div>
       <ul v-if="logs" class="position-relative">
         <li class="log-item px-6" v-for="log in logs" :key="log.id">
-          [<span class="fw-bold" :class="log.color" v-html="log.level"></span>]&nbsp; <span>{{ log.time }}</span
-          >&nbsp; [<span v-html="log.threadName"></span>]&nbsp; <span v-html="log.loggerName"></span>&nbsp;
+          [<span class="fw-bold" :class="log.color" v-html="log.level"></span
+          >]&nbsp; <span>{{ log.time }}</span
+          >&nbsp; [<span v-html="log.threadName"></span>]&nbsp;
+          <span v-html="log.loggerName"></span>&nbsp;
           <div class="log-message pl-10" v-html="log.message"></div>
         </li>
       </ul>
@@ -43,7 +61,7 @@
     </div>
     <ElDialog
       :title="$t('monitor_Log_xiaZaiRenWuRi')"
-      :visible.sync="downloadForm.visible"
+      v-model:visible="downloadForm.visible"
       width="500px"
       top="30vh"
       append-to-body
@@ -51,7 +69,7 @@
     >
       <div class="flex align-items-center pl-6">
         <div class="mr-4">{{ $t('monitor_Log_xuanZeRiZhiFan') }}</div>
-        <ElSelect v-model="downloadForm.select" size="mini">
+        <ElSelect v-model:value="downloadForm.select" size="mini">
           <ElOption
             v-for="(item, index) in downloadForm.items"
             :label="item.label"
@@ -61,36 +79,17 @@
         </ElSelect>
       </div>
       <div class="text-center mt-10">
-        <VButton type="primary" auto-loading @click="downloadNow(arguments[0])">{{
-          $t('monitor_Log_liJiXiaZai')
-        }}</VButton>
+        <VButton
+          type="primary"
+          auto-loading
+          @click="downloadNow(arguments[0])"
+          >{{ $t('monitor_Log_liJiXiaZai') }}</VButton
+        >
       </div>
     </ElDialog>
   </div>
 </template>
-<style lang="scss">
-.monitor-log-wrap {
-  .search-input {
-    width: 343px;
-  }
-  .log-container {
-    background: rgba(229, 236, 255, 0.22);
-    box-sizing: border-box;
-  }
-  .log-item {
-    word-break: break-word;
-  }
-  .log-message {
-    box-sizing: border-box;
-  }
-  .log-keyword-block {
-    background: map-get($color, warning);
-  }
-  .monitor-log-wrap {
-    color: map-get($fontColor, light);
-  }
-}
-</style>
+
 <script>
 import i18n from '@/i18n'
 import Time from '@tap/shared/src/time'
@@ -103,7 +102,7 @@ export default {
   components: { VIcon },
   mixins: [timeFunction],
   props: {
-    id: String
+    id: String,
   },
   data() {
     return {
@@ -119,27 +118,27 @@ export default {
         items: [
           {
             label: i18n.t('monitor_Log_zuiJinGeXiaoShi'),
-            value: 6
+            value: 6,
           },
           {
             label: i18n.t('monitor_Log_zuiJinTian3'),
-            value: 24
+            value: 24,
           },
           {
             label: i18n.t('monitor_Log_zuiJinTian2'),
-            value: 3 * 24
+            value: 3 * 24,
           },
           {
             label: i18n.t('monitor_Log_zuiJinTian'),
-            value: 5 * 24
-          }
-        ]
+            value: 5 * 24,
+          },
+        ],
       },
       page: {
         total: 0,
         limit: 20,
-        skip: 0
-      }
+        skip: 0,
+      },
     }
   },
   created() {
@@ -148,14 +147,14 @@ export default {
       filter: {
         where: { 'contextMap.dataFlowId': { eq: this.id } },
         order: 'id DESC',
-        limit: 20
-      }
+        limit: 20,
+      },
     }
     this.$ws.on('logs', this.updateLogs)
     this.$ws.send(msg)
     this.getLogsTotal()
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.$ws.off('logs', this.updateLogs)
   },
   methods: {
@@ -168,7 +167,7 @@ export default {
       const { keyword, checkList } = this
       let logs = data?.data || []
       this.loadNew(
-        logs.filter(item => {
+        logs.filter((item) => {
           return (
             checkList.includes(item.level) &&
             (item.threadName.includes(keyword) ||
@@ -222,29 +221,34 @@ export default {
       let filter = {
         where: {
           'contextMap.dataFlowId': {
-            $eq: this.id
-          }
+            $eq: this.id,
+          },
         },
         order: `id ASC`,
-        limit: this.page.limit
+        limit: this.page.limit,
       }
       const { keyword, checkList } = this
       const len = checkList.length
       if (len > 0) {
         filter.where.level = {
-          $in: checkList
+          $in: checkList,
         }
       }
       if (keyword) {
         let query = { $regex: toRegExp(keyword), $options: 'i' }
-        filter.where.$or = [{ threadName: query }, { loggerName: query }, { message: query }, { level: query }]
+        filter.where.$or = [
+          { threadName: query },
+          { loggerName: query },
+          { message: query },
+          { level: query },
+        ]
       }
       if (!isSearch && this.logs.length) {
         filter.skip = this.page.skip
       }
       this.$axios
         .get(`tm/api/Logs?filter=${encodeURIComponent(JSON.stringify(filter))}`)
-        .then(data => {
+        .then((data) => {
           let list = data?.items || data || []
           if (isSearch) {
             this.noMore = false
@@ -262,7 +266,9 @@ export default {
           list = list.map(this.formatLog)
           this.logs.unshift(...list)
           this.$nextTick(() => {
-            let itemEl = this.$refs.logs.querySelector(`li:nth-child(${list.length + 1})`)
+            let itemEl = this.$refs.logs.querySelector(
+              `li:nth-child(${list.length + 1})`
+            )
             itemEl && el.scrollTo(0, itemEl.offsetTop)
           })
         })
@@ -274,13 +280,16 @@ export default {
       let colorMap = {
         ERROR: 'color-danger',
         WARN: 'color-warning',
-        INFO: 'font-color-main'
+        INFO: 'font-color-main',
       }
-      let markKeyword = text => {
+      let markKeyword = (text) => {
         let keyword = this.keyword
         if (keyword) {
           let re = new RegExp(keyword, 'ig')
-          text = text.replace(re, `<span class="px-1 color-danger log-keyword-block">$&</span>`)
+          text = text.replace(
+            re,
+            `<span class="px-1 color-danger log-keyword-block">$&</span>`
+          )
         }
         return text
       }
@@ -291,7 +300,7 @@ export default {
         threadName: markKeyword(log.threadName),
         loggerName: markKeyword(log.loggerName),
         message: markKeyword(log.message),
-        id: log.id
+        id: log.id,
       }
     },
     changeType() {
@@ -305,13 +314,17 @@ export default {
       let start = Time.now() - this.downloadForm.select * 60 * 60 * 1000
       let params = {
         dataFlowId: this.id,
-        start
+        start,
       }
       this.$axios
-        .get('tm/api/Logs/export?where=' + encodeURIComponent(JSON.stringify(params)), {
-          responseType: 'blob'
-        })
-        .then(res => {
+        .get(
+          'tm/api/Logs/export?where=' +
+            encodeURIComponent(JSON.stringify(params)),
+          {
+            responseType: 'blob',
+          }
+        )
+        .then((res) => {
           downloadBlob(res)
           this.downloadForm.visible = false
         })
@@ -323,14 +336,16 @@ export default {
       let filter = {
         where: {
           'contextMap.dataFlowId': {
-            $eq: this.id
-          }
+            $eq: this.id,
+          },
         },
-        limit: 0
+        limit: 0,
       }
-      this.$axios.get(`tm/api/Logs?filter=${encodeURIComponent(JSON.stringify(filter))}`).then(data => {
-        this.resetPageSkip(data.total)
-      })
+      this.$axios
+        .get(`tm/api/Logs?filter=${encodeURIComponent(JSON.stringify(filter))}`)
+        .then((data) => {
+          this.resetPageSkip(data.total)
+        })
     },
     resetPageSkip(total) {
       this.page.total = total
@@ -338,7 +353,31 @@ export default {
       if (this.page.skip < 0) {
         this.page.skip = 0
       }
-    }
-  }
+    },
+  },
 }
 </script>
+
+<style lang="scss">
+.monitor-log-wrap {
+  .search-input {
+    width: 343px;
+  }
+  .log-container {
+    background: rgba(229, 236, 255, 0.22);
+    box-sizing: border-box;
+  }
+  .log-item {
+    word-break: break-word;
+  }
+  .log-message {
+    box-sizing: border-box;
+  }
+  .log-keyword-block {
+    background: map-get($color, warning);
+  }
+  .monitor-log-wrap {
+    color: map-get($fontColor, light);
+  }
+}
+</style>

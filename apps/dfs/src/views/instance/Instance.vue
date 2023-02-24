@@ -1,9 +1,18 @@
 <template>
-  <section class="instance-wrapper g-panel-container" v-loading="loading" v-if="$route.name === 'Instance'">
+  <section
+    class="instance-wrapper g-panel-container"
+    v-loading="loading"
+    v-if="$route.name === 'Instance'"
+  >
     <div class="main">
       <div class="instance-operation">
         <div class="instance-operation-left">
-          <FilterBar v-model="searchParams" :items="filterItems" @search="search" @fetch="fetch"></FilterBar>
+          <FilterBar
+            v-model:value="searchParams"
+            :items="filterItems"
+            @search="search"
+            @fetch="fetch"
+          ></FilterBar>
         </div>
         <div class="instance-operation-right">
           <ElButton
@@ -24,11 +33,14 @@
         @row-click="rowClick"
       >
         <ElTableColumn min-width="200px" :label="$t('agent_name')">
-          <template slot-scope="scope">
+          <template v-slot="scope">
             <div class="flex">
               <div>
                 <InlineInput
-                  :class="['color-primary', { 'cursor-pointer': scope.row.agentType !== 'Cloud' }]"
+                  :class="[
+                    'color-primary',
+                    { 'cursor-pointer': scope.row.agentType !== 'Cloud' },
+                  ]"
                   :value="scope.row.name"
                   :icon-config="{ class: 'color-primary', size: '12' }"
                   type="icon"
@@ -49,10 +61,16 @@
           </template>
         </ElTableColumn>
         <ElTableColumn :label="$t('agent_status')" width="120">
-          <template slot-scope="scope">
-            <StatusTag type="tag" :status="scope.row.status" default-status="Stopped"></StatusTag>
+          <template v-slot="scope">
+            <StatusTag
+              type="tag"
+              :status="scope.row.status"
+              default-status="Stopped"
+            ></StatusTag>
             <ElTooltip v-if="scope.row.status == 'Stopped'" placement="top">
-              <VIcon size="14" class="ml-2 color-primary">question-circle</VIcon>
+              <VIcon size="14" class="ml-2 color-primary"
+                >question-circle</VIcon
+              >
               <template #content>
                 <div style="max-width: 380px">
                   {{ $t('dfs_instance_stopped_help_tip_prefix') }}
@@ -69,33 +87,51 @@
           </template>
         </ElTableColumn>
         <ElTableColumn :label="$t('agent_task_number')" width="160">
-          <template slot-scope="scope">
+          <template v-slot="scope">
             <div>
               <div class="flex align-center">
                 {{ $t('task_manage_migrate') }}：
                 <ElLink
                   type="primary"
-                  :disabled="(scope.row.metric ? scope.row.metric.runningTask.migrate || 0 : 0) < 1"
+                  :disabled="
+                    (scope.row.metric
+                      ? scope.row.metric.runningTask.migrate || 0
+                      : 0) < 1
+                  "
                   @click="toDataFlow(scope.row.tmInfo.agentId)"
-                  >{{ scope.row.metric ? scope.row.metric.runningTask.migrate || 0 : 0 }}</ElLink
+                  >{{
+                    scope.row.metric
+                      ? scope.row.metric.runningTask.migrate || 0
+                      : 0
+                  }}</ElLink
                 >
               </div>
               <div class="flex align-center">
                 {{ $t('task_manage_etl') }}：
                 <ElLink
                   type="primary"
-                  :disabled="(scope.row.metric ? scope.row.metric.runningTask.sync || 0 : 0) < 1"
+                  :disabled="
+                    (scope.row.metric
+                      ? scope.row.metric.runningTask.sync || 0
+                      : 0) < 1
+                  "
                   @click="toDataFlow(scope.row.tmInfo.agentId, 'dataflowList')"
-                  >{{ scope.row.metric ? scope.row.metric.runningTask.sync || 0 : 0 }}</ElLink
+                  >{{
+                    scope.row.metric
+                      ? scope.row.metric.runningTask.sync || 0
+                      : 0
+                  }}</ElLink
                 >
               </div>
             </div>
           </template>
         </ElTableColumn>
         <ElTableColumn :label="$t('agent_version')" width="200">
-          <template slot-scope="scope">
+          <template v-slot="scope">
             <div class="flex align-items-center">
-              <span v-if="showVersionFlag(scope.row)">{{ scope.row.spec && scope.row.spec.version }}</span>
+              <span v-if="showVersionFlag(scope.row)">{{
+                scope.row.spec && scope.row.spec.version
+              }}</span>
               <template v-if="showUpgradeIcon(scope.row)">
                 <ElTooltip
                   v-if="upgradingFlag(scope.row)"
@@ -103,10 +139,14 @@
                   effect="dark"
                   placement="top"
                   :content="getTooltipContent(scope.row, 'upgrading')"
-                  key="upgrading"
                 >
                   <div class="upgrading-box">
-                    <VIcon class="v-icon animation-rotate" size="14" color="rgb(61, 156, 64)">loading-circle</VIcon>
+                    <VIcon
+                      class="v-icon animation-rotate"
+                      size="14"
+                      color="rgb(61, 156, 64)"
+                      >loading-circle</VIcon
+                    >
                     <ElProgress
                       v-if="upgradingProgres(scope.row) !== undefined"
                       class="upgrading-progress"
@@ -115,7 +155,7 @@
                       :percentage="upgradingProgres(scope.row)"
                       :show-text="false"
                       :format="
-                        value => {
+                        (value) => {
                           return value
                         }
                       "
@@ -128,9 +168,11 @@
                   effect="dark"
                   placement="top"
                   :content="getTooltipContent(scope.row, 'fail')"
-                  key="fail"
                 >
-                  <VIcon size="20" class="cursor-pointer block" @click="showUpgradeErrorDialogFnc(scope.row)"
+                  <VIcon
+                    size="20"
+                    class="cursor-pointer block"
+                    @click="showUpgradeErrorDialogFnc(scope.row)"
                     >upgrade-error-color</VIcon
                   >
                 </ElTooltip>
@@ -140,9 +182,11 @@
                   effect="dark"
                   placement="top"
                   :content="getTooltipContent(scope.row)"
-                  key="done"
                 >
-                  <VIcon size="20" class="cursor-pointer block" @click="showUpgradeDialogFnc(scope.row)"
+                  <VIcon
+                    size="20"
+                    class="cursor-pointer block"
+                    @click="showUpgradeDialogFnc(scope.row)"
                     >upgrade-color</VIcon
                   >
                 </ElTooltip>
@@ -150,16 +194,23 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="createAt" sortable="custom" :label="$t('agent_create_time')" width="180">
-          <template slot-scope="scope">
+        <ElTableColumn
+          prop="createAt"
+          sortable="custom"
+          :label="$t('agent_create_time')"
+          width="180"
+        >
+          <template v-slot="scope">
             <span>{{ formatTime(scope.row.createAt) }}</span>
           </template>
         </ElTableColumn>
         <ElTableColumn :label="$t('list_operation')" width="240">
-          <template slot-scope="scope">
+          <template v-slot="scope">
             <ElButton
               type="text"
-              :disabled="deployBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
+              :disabled="
+                deployBtnDisabled(scope.row) || $disabledReadonlyUserBtn()
+              "
               @click="toDeploy(scope.row)"
               >{{ $t('agent_button_deploy') }}</ElButton
             >
@@ -167,7 +218,9 @@
             <ElButton
               size="mini"
               type="text"
-              :disabled="stopBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
+              :disabled="
+                stopBtnDisabled(scope.row) || $disabledReadonlyUserBtn()
+              "
               :loading="scope.row.btnLoading.stop"
               @click="handleStop(scope.row)"
               >{{ $t('button_stop') }}</ElButton
@@ -177,43 +230,60 @@
               size="mini"
               type="text"
               :loading="scope.row.btnLoading.delete"
-              :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
+              :disabled="
+                delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()
+              "
               @click="handleDel(scope.row)"
               >{{ $t('button_delete') }}</ElButton
             >
           </template>
         </ElTableColumn>
-        <div v-if="!isSearching" class="instance-table__empty" slot="empty">
-          <VIcon size="120">no-data-color</VIcon>
-          <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
-            <span>{{ $t('agent_list_empty_desc1') }}</span>
-            <span class="color-primary cursor-pointer fs-7 ml-1" @click="createAgent">{{
-              $t('agent_button_create')
-            }}</span>
-            <span>{{ $t('agent_list_empty_desc2') }}</span>
+        <template v-slot:empty>
+          <div v-if="!isSearching" class="instance-table__empty">
+            <VIcon size="120">no-data-color</VIcon>
+            <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
+              <span>{{ $t('agent_list_empty_desc1') }}</span>
+              <span
+                class="color-primary cursor-pointer fs-7 ml-1"
+                @click="createAgent"
+                >{{ $t('agent_button_create') }}</span
+              >
+              <span>{{ $t('agent_list_empty_desc2') }}</span>
+            </div>
           </div>
-        </div>
-        <div v-else class="instance-table__empty" slot="empty">
-          <VIcon size="120">search-no-data-color</VIcon>
-          <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
-            <span>{{ $t('data_no_find_result') }}</span>
-            <span class="color-primary cursor-pointer fs-7 ml-1" @click="reset">{{ $t('link_back_to_list') }}</span>
+        </template>
+        <template v-slot:empty>
+          <div v-else class="instance-table__empty">
+            <VIcon size="120">search-no-data-color</VIcon>
+            <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
+              <span>{{ $t('data_no_find_result') }}</span>
+              <span
+                class="color-primary cursor-pointer fs-7 ml-1"
+                @click="reset"
+                >{{ $t('link_back_to_list') }}</span
+              >
+            </div>
           </div>
-        </div>
+        </template>
       </ElTable>
       <ElPagination
         background
         class="mt-3"
         layout="total, sizes, ->, prev, pager, next, jumper"
-        :current-page.sync="page.current"
+        v-model:current-page="page.current"
         :page-sizes="[10, 20, 50, 100]"
-        :page-size.sync="page.size"
+        v-model:page-size="page.size"
         :total="page.total"
         @size-change="fetch(1)"
         @current-change="fetch"
       >
       </ElPagination>
-      <ElDialog :visible.sync="upgradeDialog" width="562px" top="20vh" :title="$t('dfs_instance_instance_agent')">
+      <ElDialog
+        v-model:visible="upgradeDialog"
+        width="562px"
+        top="20vh"
+        :title="$t('dfs_instance_instance_agent')"
+      >
         <div>
           <div class="flex upgrade-mb24">
             <div class="imgBox flex justify-content-center align-items-center">
@@ -221,17 +291,23 @@
             </div>
             <div class="ml-6">
               <div class="upgrade-version">
-                {{ $t('dfs_instance_instance_banbenhao') }}{{ currentVersionInfo.version }}
+                {{ $t('dfs_instance_instance_banbenhao')
+                }}{{ currentVersionInfo.version }}
               </div>
               <div class="upgrade-version mt-1">
-                {{ $t('dfs_instance_instance_anzhuangbao') }}{{ currentVersionInfo.packageSize }}
+                {{ $t('dfs_instance_instance_anzhuangbao')
+                }}{{ currentVersionInfo.packageSize }}
               </div>
               <div class="upgrade-version mt-1">
-                {{ $t('dfs_instance_instance_yujianzhuangshi') }}{{ currentVersionInfo.estimatedUpgradeTime }}
+                {{ $t('dfs_instance_instance_yujianzhuangshi')
+                }}{{ currentVersionInfo.estimatedUpgradeTime }}
               </div>
             </div>
           </div>
-          <div class="upgrade-desc upgrade-mb16" v-if="currentVersionInfo.changeList">
+          <div
+            class="upgrade-desc upgrade-mb16"
+            v-if="currentVersionInfo.changeList"
+          >
             {{ $t('dfs_instance_instance_xinzenggongneng') }}
           </div>
           <ul class="upgrade-mb24" v-if="currentVersionInfo.changeList">
@@ -241,81 +317,123 @@
               v-html="currentVersionInfo.changeList"
             ></li>
           </ul>
-          <div class="upgrade-desc upgrade-mb8">{{ $t('dfs_instance_instance_bencigengxinbao') }}</div>
+          <div class="upgrade-desc upgrade-mb8">
+            {{ $t('dfs_instance_instance_bencigengxinbao') }}
+          </div>
           <div class="upgrade-text upgrade-mb16">
             {{ $t('dfs_instance_instance_ruxuliaojiegeng')
-            }}<el-link type="primary" target="_blank" :href="currentVersionInfo.releaseNoteUri"> Release Notes</el-link>
+            }}<el-link
+              type="primary"
+              target="_blank"
+              :href="currentVersionInfo.releaseNoteUri"
+            >
+              Release Notes</el-link
+            >
           </div>
         </div>
         <div class="dialog-btn flex justify-content-end mt-6">
           <div class="w-50" v-if="showAutoUpgrade">
-            <ElButton type="primary" :disabled="disabledAutoUpgradeBtn" @click="autoUpgradeFnc">{{
-              $t('agent_button_auto_upgrade')
-            }}</ElButton>
+            <ElButton
+              type="primary"
+              :disabled="disabledAutoUpgradeBtn"
+              @click="autoUpgradeFnc"
+              >{{ $t('agent_button_auto_upgrade') }}</ElButton
+            >
           </div>
           <div class="text-end w-50">
-            <ElButton type="primary" @click="manualUpgradeFnc">{{ $t('agent_button_manual_upgrade') }}</ElButton>
-          </div>
-        </div>
-        <div v-if="disabledAutoUpgradeBtn" class="mt-1 fs-8 text-break">({{ $t('agent_tip_auto_upgrade') }})</div>
-      </ElDialog>
-      <!--   升级失败   -->
-      <ElDialog :visible.sync="upgradeErrorDialog" width="450px" top="30vh" center>
-        <div class="dialog-content text-center">{{ $t('agent_dialog_upgrade_fail') }}</div>
-        <div class="dialog-btn flex justify-content-evenly mt-6">
-          <div class="text-center">
-            <ElButton type="primary" :disabled="disabledAutoUpgradeBtn" @click="autoUpgradeFnc">{{
-              $t('button_retry')
+            <ElButton type="primary" @click="manualUpgradeFnc">{{
+              $t('agent_button_manual_upgrade')
             }}</ElButton>
           </div>
+        </div>
+        <div v-if="disabledAutoUpgradeBtn" class="mt-1 fs-8 text-break">
+          ({{ $t('agent_tip_auto_upgrade') }})
+        </div>
+      </ElDialog>
+      <!--   升级失败   -->
+      <ElDialog
+        v-model:visible="upgradeErrorDialog"
+        width="450px"
+        top="30vh"
+        center
+      >
+        <div class="dialog-content text-center">
+          {{ $t('agent_dialog_upgrade_fail') }}
+        </div>
+        <div class="dialog-btn flex justify-content-evenly mt-6">
+          <div class="text-center">
+            <ElButton
+              type="primary"
+              :disabled="disabledAutoUpgradeBtn"
+              @click="autoUpgradeFnc"
+              >{{ $t('button_retry') }}</ElButton
+            >
+          </div>
           <div>
-            <ElButton type="primary" @click="manualUpgradeFnc">{{ $t('agent_button_manual_upgrade') }}</ElButton>
+            <ElButton type="primary" @click="manualUpgradeFnc">{{
+              $t('agent_button_manual_upgrade')
+            }}</ElButton>
           </div>
         </div>
       </ElDialog>
       <!--  详情    -->
-      <Details v-model="showDetails" :detail-id="detailId" @closed="detailsClosedFnc" @load-data="loadDetailsData">
-        <div slot="title">
-          <InlineInput
-            :value="selectedRow.name"
-            :icon-config="{ class: 'color-primary' }"
-            :input-style="{ width: '140px' }"
-            type="icon"
-            word-break
-            @save="updateName($event, selectedRow.id)"
-          ></InlineInput>
-        </div>
-        <div slot="operation" class="flex">
-          <VButton
-            :loading="selectedRow.btnLoading.deploy"
-            :disabled="deployBtnDisabled(selectedRow) || $disabledReadonlyUserBtn()"
-            type="primary"
-            class="flex-fill min-w-0"
-            @click="toDeploy(selectedRow)"
-          >
-            <VIcon size="12">deploy</VIcon>
-            <span class="ml-1">{{ $t('agent_button_deploy') }}</span>
-          </VButton>
-          <VButton
-            :loading="selectedRow.btnLoading.stop"
-            :disabled="stopBtnDisabled(selectedRow) || $disabledReadonlyUserBtn()"
-            type="primary"
-            class="flex-fill min-w-0"
-            @click="handleStop(selectedRow)"
-          >
-            <VIcon size="12">stop</VIcon>
-            <span class="ml-1">{{ $t('button_stop') }}</span>
-          </VButton>
-          <VButton
-            :loading="selectedRow.btnLoading.delete"
-            :disabled="delBtnDisabled(selectedRow) || $disabledReadonlyUserBtn()"
-            class="flex-fill min-w-0"
-            @click="handleDel(selectedRow)"
-          >
-            <VIcon size="12">delete</VIcon>
-            <span class="ml-1">{{ $t('button_delete') }}</span>
-          </VButton>
-        </div>
+      <Details
+        v-model:value="showDetails"
+        :detail-id="detailId"
+        @closed="detailsClosedFnc"
+        @load-data="loadDetailsData"
+      >
+        <template v-slot:title>
+          <div>
+            <InlineInput
+              :value="selectedRow.name"
+              :icon-config="{ class: 'color-primary' }"
+              :input-style="{ width: '140px' }"
+              type="icon"
+              word-break
+              @save="updateName($event, selectedRow.id)"
+            ></InlineInput>
+          </div>
+        </template>
+        <template v-slot:operation>
+          <div class="flex">
+            <VButton
+              :loading="selectedRow.btnLoading.deploy"
+              :disabled="
+                deployBtnDisabled(selectedRow) || $disabledReadonlyUserBtn()
+              "
+              type="primary"
+              class="flex-fill min-w-0"
+              @click="toDeploy(selectedRow)"
+            >
+              <VIcon size="12">deploy</VIcon>
+              <span class="ml-1">{{ $t('agent_button_deploy') }}</span>
+            </VButton>
+            <VButton
+              :loading="selectedRow.btnLoading.stop"
+              :disabled="
+                stopBtnDisabled(selectedRow) || $disabledReadonlyUserBtn()
+              "
+              type="primary"
+              class="flex-fill min-w-0"
+              @click="handleStop(selectedRow)"
+            >
+              <VIcon size="12">stop</VIcon>
+              <span class="ml-1">{{ $t('button_stop') }}</span>
+            </VButton>
+            <VButton
+              :loading="selectedRow.btnLoading.delete"
+              :disabled="
+                delBtnDisabled(selectedRow) || $disabledReadonlyUserBtn()
+              "
+              class="flex-fill min-w-0"
+              @click="handleDel(selectedRow)"
+            >
+              <VIcon size="12">delete</VIcon>
+              <span class="ml-1">{{ $t('button_delete') }}</span>
+            </VButton>
+          </div>
+        </template>
       </Details>
     </div>
   </section>
@@ -342,7 +460,7 @@ export default {
     StatusTag,
     VIcon,
     Details,
-    FilterBar
+    FilterBar,
   },
   mixins: [timeFunction],
   data() {
@@ -351,13 +469,13 @@ export default {
       createAgentLoading: false,
       searchParams: {
         status: '',
-        keyword: ''
+        keyword: '',
       },
       list: [],
       page: {
         current: 0,
         size: 10,
-        total: 0
+        total: 0,
       },
       order: 'createAt desc',
       statusMap: INSTANCE_STATUS_MAP,
@@ -367,8 +485,8 @@ export default {
         btnLoading: {
           deploy: false,
           stop: false,
-          delete: false
-        }
+          delete: false,
+        },
       },
       agentStatus: 'stop',
       version: '',
@@ -376,17 +494,17 @@ export default {
       currentVersionInfo: '',
       showDetails: false,
       detailId: null,
-      filterItems: []
+      filterItems: [],
     }
   },
   computed: {
     statusItems() {
       let result = []
       let filter = ['Creating', 'Running', 'Stopped']
-      filter.forEach(el => {
+      filter.forEach((el) => {
         result.push({
           label: this.$t('agent_status_' + el.toLowerCase()),
-          value: el
+          value: el,
         })
       })
       return result
@@ -404,7 +522,7 @@ export default {
     },
     isSearching() {
       return !!Object.values(this.searchParams).join('')
-    }
+    },
   },
   watch: {
     $route(route, oldRoute) {
@@ -416,7 +534,7 @@ export default {
         this.searchParams.status = query.status || ''
         this.fetch(queryStr === '{}' ? undefined : 1)
       }
-    }
+    },
   },
   created() {
     this.init()
@@ -433,7 +551,7 @@ export default {
       }
     }, 10000)
   },
-  beforeDestroy() {
+  beforeUnmount() {
     clearInterval(timer)
     timer = null
   },
@@ -443,7 +561,10 @@ export default {
     },
     init() {
       let query = this.$route.query
-      let { detailId, ...searchParams } = Object.assign(this.searchParams, query)
+      let { detailId, ...searchParams } = Object.assign(
+        this.searchParams,
+        query
+      )
       this.searchParams = searchParams
       this.getFilterItems()
       this.fetch()
@@ -452,7 +573,7 @@ export default {
         this.createAgent()
         // 清除创建标记
         this.$router.replace({
-          name: 'Instance'
+          name: 'Instance',
         })
       } else if (detailId) {
         this.$nextTick(() => {
@@ -467,13 +588,13 @@ export default {
           label: i18n.t('agent_status'),
           key: 'status',
           type: 'select-inner',
-          items: this.statusItems
+          items: this.statusItems,
         },
         {
           placeholder: i18n.t('instance_Instance_anIDShiLi'),
           key: 'keyword',
-          type: 'input'
-        }
+          type: 'input',
+        },
       ]
     },
     async getVersion(id) {
@@ -482,7 +603,7 @@ export default {
     search() {
       this.$router.replace({
         name: 'Instance',
-        query: this.searchParams
+        query: this.searchParams,
       })
     },
     fetch(pageNum, hideLoading) {
@@ -493,27 +614,32 @@ export default {
       let { keyword, status } = this.searchParams
       let where = {}
       if (keyword && keyword.trim()) {
-        where.$or = [{ name: { $regex: keyword, $options: 'i' } }, { clusterId: { $regex: keyword, $options: 'i' } }]
+        where.$or = [
+          { name: { $regex: keyword, $options: 'i' } },
+          { clusterId: { $regex: keyword, $options: 'i' } },
+        ]
       }
       if (status) {
         where.status = {
-          $in: status.split(',')
+          $in: status.split(','),
         }
       }
       let filter = {
         where,
         size: this.page.size,
         page: current,
-        sort: [this.order]
+        sort: [this.order],
       }
 
       // 升级状态
       // let getUpgradeList = await this.getUpgradeList()
       this.$axios
-        .get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter)))
-        .then(async data => {
+        .get(
+          'api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))
+        )
+        .then(async (data) => {
           let list = data.items || []
-          this.list = list.map(item => {
+          this.list = list.map((item) => {
             // item.status = item.status === 'Running' ? 'Running' : item.status === 'Stopping' ? 'Stopping' : 'Offline'
             item.deployDisable = item.tmInfo.pingTime || false
             // item.updateStatus = ''
@@ -523,7 +649,7 @@ export default {
             item.btnLoading = {
               deploy: false,
               stop: false,
-              delete: false
+              delete: false,
             }
             return item
           })
@@ -532,16 +658,26 @@ export default {
           if (this.list?.[0]?.id) {
             let getVersion = await this.getVersion(this.list[0]?.id)
             //升级弹窗使用
-            let { packageSize, changeList, estimatedUpgradeTime, version, releaseNoteUri } = getVersion
+            let {
+              packageSize,
+              changeList,
+              estimatedUpgradeTime,
+              version,
+              releaseNoteUri,
+            } = getVersion
             this.currentVersionInfo = {
-              packageSize: (packageSize ? (packageSize / (1024 * 1024)).toFixed(1) + ' MB' : '-') || '-',
+              packageSize:
+                (packageSize
+                  ? (packageSize / (1024 * 1024)).toFixed(1) + ' MB'
+                  : '-') || '-',
               changeList: changeList || '',
               estimatedUpgradeTime:
                 (estimatedUpgradeTime
-                  ? (Math.floor(estimatedUpgradeTime / 60) % 60) + i18n.t('dfs_instance_instance_fenzhong')
+                  ? (Math.floor(estimatedUpgradeTime / 60) % 60) +
+                    i18n.t('dfs_instance_instance_fenzhong')
                   : '-') || '-',
               releaseNoteUri: releaseNoteUri,
-              version: version
+              version: version,
             }
             this.version = getVersion?.version
           }
@@ -563,7 +699,9 @@ export default {
       return require(`../../../public/images/agent/${name}.png`)
     },
     sortChange({ prop, order }) {
-      this.order = `${order ? prop : 'createAt'} ${order === 'ascending' ? 'asc' : 'desc'}`
+      this.order = `${order ? prop : 'createAt'} ${
+        order === 'ascending' ? 'asc' : 'desc'
+      }`
       this.fetch(1)
     },
     rowClick(row) {
@@ -581,8 +719,8 @@ export default {
         name: 'Instance',
         query: {
           ...this.$route.query,
-          detailId: undefined
-        }
+          detailId: undefined,
+        },
       })
     },
     toDeploy(row) {
@@ -593,8 +731,8 @@ export default {
       let downloadUrl = window.App.$router.resolve({
         name: 'FastDownload',
         query: {
-          id: row?.id
-        }
+          id: row?.id,
+        },
       })
 
       window.open(downloadUrl.href, '_blank')
@@ -611,12 +749,14 @@ export default {
       if (row.metric?.runningTaskNum) {
         flag = true
       }
-      let message = flag ? this.$t('agent_button_stop_tip_running') : this.$t('agent_button_stop_tip_no_running')
+      let message = flag
+        ? this.$t('agent_button_stop_tip_running')
+        : this.$t('agent_button_stop_tip_no_running')
       this.$confirm(message, this.$t('agent_button_stop_tip'), {
         type: 'warning',
         confirmButtonText: this.$t('button_confirm'),
-        cancelButtonText: this.$t('button_cancel')
-      }).then(res => {
+        cancelButtonText: this.$t('button_cancel'),
+      }).then((res) => {
         if (res) {
           if (row.btnLoading) {
             row.btnLoading.stop = true
@@ -655,8 +795,8 @@ export default {
         type: 'warning',
         confirmButtonText: this.$t('button_confirm'),
         cancelButtonText: this.$t('button_cancel'),
-        customClass: 'delete-agent'
-      }).then(res => {
+        customClass: 'delete-agent',
+      }).then((res) => {
         if (res) {
           if (noDelFlag) {
             return
@@ -667,7 +807,7 @@ export default {
           if (row.agentType === 'Cloud') {
             this.$axios
               .post('api/tcm/orders/cancel', {
-                instanceId: row.id
+                instanceId: row.id,
               })
               .then(() => {
                 this.$message.success(this.$t('agent_button_delete_success'))
@@ -708,7 +848,7 @@ export default {
       this.$axios
         .post('api/tcm/agent', {
           id,
-          name: val
+          name: val,
         })
         .then(() => {
           this.$message.success(this.$t('operate_update_success'))
@@ -721,7 +861,7 @@ export default {
     reset() {
       this.searchParams = {
         status: '',
-        keyword: ''
+        keyword: '',
       }
       this.fetch(1)
     },
@@ -730,8 +870,8 @@ export default {
         name,
         query: {
           agentId: id,
-          status: 'running'
-        }
+          status: 'running',
+        },
       })
     },
     showUpgradeDialogFnc(row) {
@@ -754,21 +894,25 @@ export default {
       //   return
       // }
       let row = this.selectedRow
-      this.$axios.get('api/tcm/config/version/latest/' + row.id).then(({ token }) => {
-        this.$axios.get(`api/tcm/productRelease/${this.version}`).then(downloadUrl => {
+      this.$axios
+        .get('api/tcm/config/version/latest/' + row.id)
+        .then(({ token }) => {
           this.$axios
-            .post('tm/api/clusterStates/updataAgent', {
-              downloadUrl,
-              process_id: this.selectedRow?.tmInfo?.agentId,
-              version: this.version,
-              token: token
-            })
-            .then(() => {
-              this.$message.success(this.$t('agent_auto_upgrade_tip_start'))
-              this.fetch()
+            .get(`api/tcm/productRelease/${this.version}`)
+            .then((downloadUrl) => {
+              this.$axios
+                .post('tm/api/clusterStates/updataAgent', {
+                  downloadUrl,
+                  process_id: this.selectedRow?.tmInfo?.agentId,
+                  version: this.version,
+                  token: token,
+                })
+                .then(() => {
+                  this.$message.success(this.$t('agent_auto_upgrade_tip_start'))
+                  this.fetch()
+                })
             })
         })
-      })
     },
     manualUpgradeFnc() {
       let row = this.selectedRow
@@ -781,8 +925,8 @@ export default {
       let routeUrl = this.$router.resolve({
         name: 'UpgradeVersion',
         query: {
-          agentId: row.id
-        }
+          agentId: row.id,
+        },
       })
       window.open(routeUrl.href, '_blank')
     },
@@ -802,7 +946,7 @@ export default {
               ? ''
               : i18n.t('instance_Instance_tHIST', {
                   val1: this.$t('agent_auto_upgrade_tip_progress'),
-                  val2: this.upgradingProgres(row)
+                  val2: this.upgradingProgres(row),
                 }))
           break
         case 'fail':
@@ -828,8 +972,8 @@ export default {
         .replace({
           name: 'Instance',
           query: Object.assign({}, query, {
-            detailId: this.selectedRow.id
-          })
+            detailId: this.selectedRow.id,
+          }),
         })
         .catch(() => {})
     },
@@ -838,13 +982,13 @@ export default {
       this.createAgentLoading = true
       this.$axios
         .post('api/tcm/orders', {
-          agentType: 'Local'
+          agentType: 'Local',
         })
-        .then(data => {
+        .then((data) => {
           buried('agentCreate')
           this.fetch()
           this.toDeploy({
-            id: data.agentId
+            id: data.agentId,
           })
           //创建agnet成功后直接跳转到部署页面
           // this.deployConfirm(data.agentId)
@@ -903,17 +1047,24 @@ export default {
       if (row.agentType === 'Cloud') {
         return false
       }
-      return !!(version && row?.tmInfo?.pingTime && row?.spec?.version !== version)
+      return !!(
+        version &&
+        row?.tmInfo?.pingTime &&
+        row?.spec?.version !== version
+      )
     },
     upgradeFlag(row) {
       let { tmInfo } = row
-      let isOvertime = (Time.now() - (tmInfo?.updatePingTime ?? 0)) / 1000 / 60 > 5
+      let isOvertime =
+        (Time.now() - (tmInfo?.updatePingTime ?? 0)) / 1000 / 60 > 5
       // 刚完成5分钟内
       return tmInfo.updateStatus === 'done' && !isOvertime
     },
     upgradingFlag(row) {
       let { tmInfo } = row
-      return ['preparing', 'downloading', 'upgrading'].includes(tmInfo.updateStatus)
+      return ['preparing', 'downloading', 'upgrading'].includes(
+        tmInfo.updateStatus
+      )
     },
     upgradingProgres(row) {
       let { tmInfo } = row
@@ -925,13 +1076,15 @@ export default {
     upgradeFailedFlag(row) {
       let { tmInfo } = row
       return (
-        tmInfo.updateVersion && tmInfo.updateVersion === this.version && ['fail', 'error'].includes(tmInfo.updateStatus)
+        tmInfo.updateVersion &&
+        tmInfo.updateVersion === this.version &&
+        ['fail', 'error'].includes(tmInfo.updateStatus)
       )
     },
     isWindons(row) {
       return row?.metric?.systemInfo?.os?.includes('win')
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -1083,6 +1236,7 @@ export default {
   }
 }
 </style>
+
 <style lang="scss">
 .el-message-box {
   &.delete-agent {

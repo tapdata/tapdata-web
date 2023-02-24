@@ -7,19 +7,34 @@
     :close-on-click-modal="!!$props.closeOnClickModal"
     :close-on-press-escape="!!$props.closeOnPressEscape"
     :show-close="!!$props.showClose"
-    :visible.sync="dialogVisible"
+    v-model:visible="dialogVisible"
     custom-class="bind-phone-dialog"
   >
-    <ElForm :model="phoneForm" :label-width="showLabel ? '120px' : null" @submit.native.prevent>
-      <ElFormItem prop="current" :label="showLabel ? $t('user_Center_dangQianShouJi') : ''">
+    <ElForm
+      :model="phoneForm"
+      :label-width="showLabel ? '120px' : null"
+      @submit.prevent
+    >
+      <ElFormItem
+        prop="current"
+        :label="showLabel ? $t('user_Center_dangQianShouJi') : ''"
+      >
         <ElInput
-          v-model="phoneForm.current"
+          v-model:value="phoneForm.current"
           :placeholder="$t('components_BindPhone_qingShuRuShouJi')"
           maxlength="50"
         ></ElInput>
       </ElFormItem>
-      <ElFormItem prop="newPassword" :label="showLabel ? $t('user_Center_yanZhengMa') : ''" class="inline-form-item">
-        <ElInput v-model="phoneForm.oldCode" :placeholder="$t('user_Center_qingShuRuShouJi')" maxlength="50"></ElInput>
+      <ElFormItem
+        prop="newPassword"
+        :label="showLabel ? $t('user_Center_yanZhengMa') : ''"
+        class="inline-form-item"
+      >
+        <ElInput
+          v-model:value="phoneForm.oldCode"
+          :placeholder="$t('user_Center_qingShuRuShouJi')"
+          maxlength="50"
+        ></ElInput>
         <VerificationCode
           :request-options="getCodeOptions(phoneForm.current, 'BIND_PHONE')"
           :disabled="!phoneForm.current"
@@ -30,20 +45,25 @@
       </ElFormItem>
     </ElForm>
 
-    <span slot="footer" class="dialog-footer">
-      <VButton v-if="!!$props.showClose" @click="dialogVisible = false">{{ $t('button_cancel') }}</VButton>
-      <VButton
-        type="primary"
-        :disabled="!phoneForm.current || !phoneForm.oldCode"
-        auto-loading
-        @click="bindPhoneConfirm(arguments[0])"
-        >{{ $t('button_confirm') }}</VButton
-      >
-    </span>
+    <template v-slot:footer>
+      <span class="dialog-footer">
+        <VButton v-if="!!$props.showClose" @click="dialogVisible = false">{{
+          $t('button_cancel')
+        }}</VButton>
+        <VButton
+          type="primary"
+          :disabled="!phoneForm.current || !phoneForm.oldCode"
+          auto-loading
+          @click="bindPhoneConfirm(arguments[0])"
+          >{{ $t('button_confirm') }}</VButton
+        >
+      </span>
+    </template>
   </ElDialog>
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import i18n from '@/i18n'
 
 import VerificationCode from './VerificationCode'
@@ -54,17 +74,17 @@ export default {
   components: { VerificationCode },
   props: {
     visible: {
-      type: Boolean
+      type: Boolean,
     },
     showLabel: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   watch: {
     visible(v) {
       this.dialogVisible = !!v
-    }
+    },
   },
   data() {
     return {
@@ -73,8 +93,8 @@ export default {
         current: '',
         oldCode: '',
         newPhone: '',
-        newCode: ''
-      }
+        newCode: '',
+      },
     }
   },
   methods: {
@@ -84,21 +104,22 @@ export default {
       this.$axios
         .post('api/tcm/user/phone', {
           phone: phoneForm.current,
-          code: phoneForm.oldCode
+          code: phoneForm.oldCode,
         })
         .then(() => {
           this.$message.success(i18n.t('user_Center_bangDingShouJiCheng'))
-          this.$emit('success', phoneForm.current)
+          $emit(this, 'success', phoneForm.current)
           this.dialogVisible = false
         })
-        .catch(e => {
-          this.$emit('error', phoneForm.current, e)
+        .catch((e) => {
+          $emit(this, 'error', phoneForm.current, e)
         })
         .finally(() => {
           resetLoading?.()
         })
-    }
-  }
+    },
+  },
+  emits: ['success', 'error'],
 }
 </script>
 

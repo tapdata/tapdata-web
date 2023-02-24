@@ -1,4 +1,5 @@
 <script>
+import * as Vue from 'vue'
 import bindsAttrs from '@/mixins/bindsAttrs'
 
 const SIZE_MAP = {
@@ -7,7 +8,7 @@ const SIZE_MAP = {
   default: '24px',
   medium: '28px',
   large: '36px',
-  xLarge: '40px'
+  xLarge: '40px',
 }
 
 function convertToUnit(str, unit = 'px') {
@@ -20,111 +21,22 @@ function convertToUnit(str, unit = 'px') {
   }
 }
 
-const VIcon = {
-  name: 'VIcon',
-
-  props: {
-    disabled: Boolean,
-    size: [Number, String],
-    color: String,
-    large: Boolean,
-    small: Boolean,
-    xLarge: Boolean,
-    xSmall: Boolean,
-    tag: {
-      type: String,
-      required: false,
-      default: 'svg'
-    }
-  },
-
-  mixins: [bindsAttrs],
-
-  computed: {
-    hasClickListener() {
-      return Boolean(this.listeners$.click || this.listeners$['!click'])
-    }
-  },
-
-  methods: {
-    getIcon() {
-      let iconName = ''
-      if (this.$slots.default) iconName = this.$slots.default[0].text.trim()
-
-      return `icon-${iconName}`
-    },
-
-    getSize() {
-      const sizes = {
-        xSmall: this.xSmall,
-        small: this.small,
-        medium: this.medium,
-        large: this.large,
-        xLarge: this.xLarge
-      }
-
-      const explicitSize = Object.keys(sizes).find(key => sizes[key])
-
-      return (explicitSize && SIZE_MAP[explicitSize]) || convertToUnit(this.size)
-    },
-
-    getDefaultData() {
-      return {
-        staticClass: 'iconfont',
-        class: {
-          'v-icon--disabled': this.disabled,
-          'v-icon--link': this.hasClickListener,
-          'v-icon--dense': this.dense
-        },
-        attrs: {
-          'aria-hidden': !this.hasClickListener,
-          disabled: this.hasClickListener && this.disabled,
-          type: this.hasClickListener ? 'button' : undefined,
-          ...this.attrs$
-        },
-        on: this.listeners$
-      }
-    },
-
-    getSvgWrapperData() {
-      const fontSize = this.getSize()
-      const wrapperData = {
-        ...this.getDefaultData(),
-        style: fontSize
-          ? {
-              fontSize,
-              height: fontSize,
-              width: fontSize,
-              color: this.color
-            }
-          : { color: this.color }
-      }
-
-      return wrapperData
-    },
-
-    renderSvgIcon(icon, h) {
-      return h('svg', this.getSvgWrapperData(), [
-        h('use', {
-          attrs: {
-            'xlink:href': `#${icon}`
-          }
-        })
-      ])
-    }
-  },
-
-  render(h) {
-    const icon = this.getIcon()
-    if (this.tag === 'svg') {
-      return this.renderSvgIcon(icon, h)
-    }
-    const data = this.getDefaultData()
-    data.class[icon] = true
-    const fontSize = this.getSize()
-    if (fontSize) data.style = { fontSize, color: this.color }
-    return h(this.tag, data)
+const VIcon = function render(_props, _context) {
+  const context = {
+    ..._context,
+    props: _props,
+    data: _context.attr,
+    children: _context.slots,
   }
+  const icon = this.getIcon()
+  if (this.tag === 'svg') {
+    return this.renderSvgIcon(icon, Vue.h)
+  }
+  const data = this.getDefaultData()
+  data.class[icon] = true
+  const fontSize = this.getSize()
+  if (fontSize) data.style = { fontSize, color: this.color }
+  return Vue.h(this.tag, data)
 }
 
 export default {
@@ -137,13 +49,14 @@ export default {
 
     // 支持 v-text 和 v-html
     if (data.domProps) {
-      iconName = data.domProps.textContent || data.domProps.innerHTML || iconName
+      iconName =
+        data.domProps.textContent || data.domProps.innerHTML || iconName
       delete data.domProps.textContent
       delete data.domProps.innerHTML
     }
 
     return h(VIcon, data, iconName ? [iconName] : children)
-  }
+  },
 }
 </script>
 
