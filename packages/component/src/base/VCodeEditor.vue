@@ -5,19 +5,20 @@
       width: width ? px(width) : '100%',
       padding: '12px 0',
       overflow: 'hidden',
-      background: '#282c34'
+      background: '#282c34',
     }"
   >
     <div
       :style="{
         height: '100%',
-        width: '100%'
+        width: '100%',
       }"
     ></div>
   </div>
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 import ace from 'ace-builds'
 import 'ace-builds/webpack-resolver'
 import 'ace-builds/src-noconflict/ext-language_tools'
@@ -31,21 +32,21 @@ export default {
   name: 'VCodeEditor',
   props: {
     value: {
-      required: true
+      required: true,
     },
     lang: String,
     theme: {
       type: String,
-      default: 'one_dark'
+      default: 'one_dark',
     },
     height: [String, Number],
     width: [String, Number],
-    options: Object
+    options: Object,
   },
   data() {
     return {
       editor: null,
-      contentBackup: ''
+      contentBackup: '',
     }
   },
   methods: {
@@ -54,7 +55,7 @@ export default {
         return n + 'px'
       }
       return n
-    }
+    },
   },
   watch: {
     value(val) {
@@ -62,7 +63,7 @@ export default {
         val = JSON.stringify(val)
       }
       if (this.contentBackup !== val) this.editor.setValue(val, 1)
-    }
+    },
   },
   mounted() {
     let lang = this.lang || 'text'
@@ -71,7 +72,7 @@ export default {
     let tools = ace.require('ace/ext/language_tools')
     var beautify = ace.require('ace/ext/beautify') // get reference to extension
     ace.require('ace/ext/searchbox')
-    this.$emit('init', editor, tools, beautify)
+    $emit(this, 'init', editor, tools, beautify)
 
     editor.$blockScrolling = Infinity
     let session = editor.getSession()
@@ -79,26 +80,30 @@ export default {
     session.setMode(`ace/mode/${lang}`)
     session.setTabSize(2)
 
-    let val = typeof this.value === 'object' ? JSON.stringify(this.value, null, 2) : this.value
+    let val =
+      typeof this.value === 'object'
+        ? JSON.stringify(this.value, null, 2)
+        : this.value
     editor.setValue(val || '', 1)
 
     if (this.options) {
       session.setUseWrapMode(this.options.useWrapMode) // 自动换行
       editor.setOptions(this.options)
-      this.$emit('initOptions', editor, tools, beautify)
+      $emit(this, 'initOptions', editor, tools, beautify)
     }
 
     editor.on('change', () => {
       let content = editor.getValue()
-      this.$emit('input', content)
+      $emit(this, 'update:value', content)
       this.contentBackup = content
     })
 
-    ACTION_EVENTS.forEach(ev => {
+    ACTION_EVENTS.forEach((ev) => {
       editor.on(ev, (event, editor) => {
-        this.$emit(ev, editor.getValue(), event, editor)
+        $emit(this, ev, editor.getValue(), event, editor)
       })
     })
-  }
+  },
+  emits: ['init', 'initOptions', 'update:value'],
 }
 </script>

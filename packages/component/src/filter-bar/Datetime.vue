@@ -4,22 +4,29 @@
     @mouseenter="mouseEnterFnc"
     @mouseleave="mouseLeaveFnc"
   >
-    <div v-if="title" class="filter-datetime__title" @click="focusFnc">{{ title }}</div>
+    <div v-if="title" class="filter-datetime__title" @click="focusFnc">
+      {{ title }}
+    </div>
     <ElDatePicker
-      v-model="time"
       v-bind="$attrs"
+      v-model:value="time"
       type="datetime"
       :clearable="false"
       :class="['date-picker', { 'empty-time': !this.time }]"
       ref="datepicker"
       @change="emitFnc"
     ></ElDatePicker>
-    <VIcon v-if="showClose" size="12" class="icon-btn ml-1" @click.native.stop="clear">close</VIcon>
-    <VIcon v-else size="10" class="icon-btn ml-1" @click.native="focusFnc">arrow-down-fill</VIcon>
+    <VIcon v-if="showClose" size="12" class="icon-btn ml-1" @click.stop="clear"
+      >close</VIcon
+    >
+    <VIcon v-else size="10" class="icon-btn ml-1" @click="focusFnc"
+      >arrow-down-fill</VIcon
+    >
   </div>
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 import VIcon from '../base/VIcon'
 
 export default {
@@ -29,17 +36,17 @@ export default {
     value: [String, Array, Number, Object],
     title: {
       type: String,
-      default: ''
+      default: '',
     },
     clearable: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   data() {
     return {
       time: '',
-      showClose: false
+      showClose: false,
     }
   },
   watch: {
@@ -47,7 +54,7 @@ export default {
       if (v) {
         this.time = v
       }
-    }
+    },
   },
   methods: {
     mouseEnterFnc() {
@@ -64,12 +71,13 @@ export default {
     },
     emitFnc() {
       const { time } = this
-      this.$emit('input', time).$emit('change', time)
+      $emit(this.$emit('update:value', time), 'change', time)
     },
     focusFnc() {
       this.$refs.datepicker?.focus()
-    }
-  }
+    },
+  },
+  emits: ['change', 'update:value'],
 }
 </script>
 

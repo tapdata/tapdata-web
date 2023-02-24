@@ -1,5 +1,6 @@
 <template>
   <VCodeEditor
+    v-bind="$attrs"
     :value="value"
     :theme="theme"
     :lang="lang"
@@ -7,7 +8,6 @@
     :height="height - 24"
     :options="_options"
     @initOptions="init"
-    v-on="$listeners"
   ></VCodeEditor>
 </template>
 
@@ -24,7 +24,7 @@ export default {
     theme: String,
     lang: {
       type: String,
-      default: 'javascript'
+      default: 'javascript',
     },
     width: [String, Number],
     height: [String, Number],
@@ -32,12 +32,12 @@ export default {
       type: Object,
       default: () => {
         return {}
-      }
-    }
+      },
+    },
   },
   data() {
     return {
-      editor: null
+      editor: null,
     }
   },
   computed: {
@@ -49,11 +49,11 @@ export default {
           enableLiveAutocompletion: true,
           enableSnippets: true,
           fontSize: 12,
-          wrap: true
+          wrap: true,
         },
         this.options
       )
-    }
+    },
   },
   methods: {
     px(n) {
@@ -71,17 +71,17 @@ export default {
       let typeMapping = {
         custom: this.$t('packages_component_function_type_option_custom'),
         jar: this.$t('packages_component_function_type_option_jar'),
-        system: this.$t('packages_component_function_type_option_system')
+        system: this.$t('packages_component_function_type_option_system'),
       }
-      const formatCache = item => {
+      const formatCache = (item) => {
         return {
           caption: item.name,
           snippet: getCode(item)[0],
           type: 'snippet',
-          meta: this.$t('packages_component_shared_cache')
+          meta: this.$t('packages_component_shared_cache'),
         }
       }
-      const formatFunction = item => {
+      const formatFunction = (item) => {
         let methodName = item.methodName || item.function_name
         return {
           caption: methodName,
@@ -91,25 +91,27 @@ export default {
           format: item.format,
           parametersDesc: item.parameters_desc,
           returnDesc: item.return_value,
-          originType: item.type
+          originType: item.type,
         }
       }
       Promise.all([
         sharedCacheApi.get(),
         functionApi.get({
           filter: JSON.stringify({
-            size: 0
-          })
-        })
+            size: 0,
+          }),
+        }),
       ]).then(([cacheData, functionData]) => {
         let cacheItems = cacheData?.items || []
         let functionItems = functionData?.items || []
-        let items = cacheItems.map(formatCache).concat(functionItems.map(formatFunction))
+        let items = cacheItems
+          .map(formatCache)
+          .concat(functionItems.map(formatFunction))
         items.sort((a, b) => {
           let scoreMap = {
             custom: 0,
             jar: 1,
-            system: 2
+            system: 2,
           }
           let aName = a.caption?.toLowerCase()
           let bName = b.caption?.toLowerCase()
@@ -125,7 +127,8 @@ export default {
             return 0
           }
         })
-        const idx = editor.completers?.findIndex(item => item.id === 'function') || -1
+        const idx =
+          editor.completers?.findIndex((item) => item.id === 'function') || -1
         if (~idx) editor.completers.splice(idx, 1)
         tools.addCompleter({
           id: 'function',
@@ -145,11 +148,15 @@ export default {
           getDocTooltip: function (item) {
             if (item.type == 'snippet') {
               let type = `<div class="code-editor-snippet-tips__type">${item.meta}</div>`
-              let title = `<span class="panel-title">${item.originType ? 'function' : 'Cache name'}</span>`
+              let title = `<span class="panel-title">${
+                item.originType ? 'function' : 'Cache name'
+              }</span>`
               let body = item.parametersDesc
                 ? `<pre class="code-editor-snippet-tips__body"><div class="panel-title">parameters description</div>${item.parametersDesc}</pre>`
                 : item.originType
-                ? `<pre class="code-editor-snippet-tips__body">${item.format || item.caption}</pre>`
+                ? `<pre class="code-editor-snippet-tips__body">${
+                    item.format || item.caption
+                  }</pre>`
                 : `<pre class="code-editor-snippet-tips__body">${item.snippet}</pre>`
               let footer = item.returnDesc
                 ? `<pre class="code-editor-snippet-tips__footer"><div class="panel-title">return description</div>${item.returnDesc}</pre>`
@@ -158,13 +165,15 @@ export default {
                 item.format || item.caption
               }</div>${body}${footer}</div>`
             }
-          }
+          },
         })
       })
-    }
-  }
+    },
+  },
+  emits: ['update:value'],
 }
 </script>
+
 <style lang="scss">
 .ace_tooltip.ace_doc-tooltip {
   background: #fafafa;

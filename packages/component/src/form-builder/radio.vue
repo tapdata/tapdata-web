@@ -1,4 +1,6 @@
 <script>
+import { plantRenderPara } from '../utils/gogocodeTransfer'
+import * as Vue from 'vue'
 import mixins from './mixin'
 export default {
   name: 'FbRadio',
@@ -7,85 +9,87 @@ export default {
     value: [String, Number, Boolean],
     config: {
       require: true,
-      type: Object
-    }
+      type: Object,
+    },
   },
   data() {
     return {
       defaultConfig: {
         border: true,
-        isVertical: true
-      }
+        isVertical: true,
+      },
     }
   },
-  render(h) {
+  render() {
     let self = this
     let config = Object.assign(self.defaultConfig, self.config)
     if (!config.options) {
       config.options = []
       throw new Error(`The component "FbRadio" is not config options!`)
     }
-    let tip = config.options.find(item => item.value === this.value)?.tip || ''
+    let tip =
+      config.options.find((item) => item.value === this.value)?.tip || ''
     const outerTip = !!config.outerTip
     let innerTip = true
     if (config.innerTip !== undefined) {
       innerTip = config.innerTip
     }
     let arr = [
-      h(
+      Vue.h(
         'ElRadioGroup',
-        {
+        plantRenderPara({
           class: {
             'fb-radio': true,
             'radio-border': config.border,
             verical: config.isVertical,
-            'radio-button': !!config.button
+            'radio-button': !!config.button,
           },
           props: {
-            value: self.value
+            value: self.value,
           },
-          on: self.on
-        },
-        config.options.map(opt => {
-          let optArr = [h('span', opt.label)]
+          on: self.on,
+        }),
+        config.options.map((opt) => {
+          let optArr = [Vue.h('span', opt.label)]
           if (innerTip && opt.tip && config.isVertical && config.border) {
             optArr.push(
-              h(
+              Vue.h(
                 'div',
-                {
-                  class: 'fb-radio-option-tip'
-                },
+                plantRenderPara({
+                  class: 'fb-radio-option-tip',
+                }),
                 opt.tip
               )
             )
           }
-          return h(
+          return Vue.h(
             config.button ? 'ElRadioButton' : 'ElRadio',
-            {
+            plantRenderPara({
               class: {
-                'fb-radio-option': true
+                'fb-radio-option': true,
               },
               props: {
                 label: opt.value,
                 disabled: opt.disabled,
-                border: config.border
-              }
-            },
+                border: config.border,
+              },
+            }),
             optArr
           )
         })
-      )
+      ),
     ]
     if (outerTip && tip) {
       arr.push(
-        h('div', { class: 'fb-radio-tip' }, [
-          h('i', { class: 'el-icon-info color-primary' }),
-          h('span', { class: 'fb-radio-tip__text' }, tip)
+        Vue.h('div', plantRenderPara({ class: 'fb-radio-tip' }), [
+          Vue.h('i', plantRenderPara({ class: 'el-icon-info color-primary' })),
+          Vue.h('span', plantRenderPara({ class: 'fb-radio-tip__text' }), tip),
         ])
       )
     }
-    return h('div', { class: 'fb-radio-group' }, arr)
-  }
+    return Vue.h('div', plantRenderPara({ class: 'fb-radio-group' }), arr)
+  },
+  emits: ['update:value'],
 }
 </script>
 

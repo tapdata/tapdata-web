@@ -1,15 +1,16 @@
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { getNodeKey } from 'element-ui/packages/tree/src/model/util'
 
 export default {
   methods: {
     handleDragStart(event) {
       if (!this.tree.draggable) return
-      this.tree.$emit('tree-node-drag-start', event, this)
+      $emit(this.tree, 'tree-node-drag-start', event, this)
     },
 
     handleDragOver(event) {
       if (!this.tree.draggable) return
-      this.tree.$emit('tree-node-drag-over', event, this)
+      $emit(this.tree, 'tree-node-drag-over', event, this)
       event.preventDefault()
     },
 
@@ -19,7 +20,7 @@ export default {
 
     handleDragEnd(event) {
       if (!this.tree.draggable) return
-      this.tree.$emit('tree-node-drag-end', event, this)
+      $emit(this.tree, 'tree-node-drag-end', event, this)
     },
     creator(parent, nodeTag) {
       const node = this[nodeTag]
@@ -48,7 +49,7 @@ export default {
       }
 
       if (this.tree.accordion) {
-        this.$on('tree-node-expand', currentNode => {
+        $on(this, 'tree-node-expand', (currentNode) => {
           if (node !== currentNode) {
             node.collapse()
           }
@@ -63,8 +64,11 @@ export default {
     handleSelectChange(checked, indeterminate) {
       const node = this.node || this.source
 
-      if (this.oldChecked !== checked && this.oldIndeterminate !== indeterminate) {
-        this.tree.$emit('check-change', node.data, checked, indeterminate)
+      if (
+        this.oldChecked !== checked &&
+        this.oldIndeterminate !== indeterminate
+      ) {
+        $emit(this.tree, 'check-change', node.data, checked, indeterminate)
       }
       this.oldChecked = checked
       this.indeterminate = indeterminate
@@ -75,28 +79,36 @@ export default {
       const store = this.tree.store
 
       store.setCurrentNode(node)
-      this.tree.$emit('current-change', store.currentNode ? store.currentNode.data : null, store.currentNode)
+      $emit(
+        this.tree,
+        'current-change',
+        store.currentNode ? store.currentNode.data : null,
+        store.currentNode
+      )
       this.tree.currentNode = this
       if (this.tree.expandOnClickNode) {
         this.handleExpandIconClick()
       }
       if (this.tree.checkOnClickNode && !node.disabled) {
         this.handleCheckChange(null, {
-          target: { checked: !node.checked }
+          target: { checked: !node.checked },
         })
       }
 
-      this.tree.$emit('node-click', node.data, node, this)
+      $emit(this.tree, 'node-click', node.data, node, this)
     },
 
     handleContextMenu(event) {
       const node = this.node || this.source
 
-      if (this.tree._events['node-contextmenu'] && this.tree._events['node-contextmenu'].length > 0) {
+      if (
+        this.tree._events['node-contextmenu'] &&
+        this.tree._events['node-contextmenu'].length > 0
+      ) {
         event.stopPropagation()
         event.preventDefault()
       }
-      this.tree.$emit('node-contextmenu', event, node.data, node, this)
+      $emit(this.tree, 'node-contextmenu', event, node.data, node, this)
     },
 
     handleExpandIconClick() {
@@ -104,11 +116,11 @@ export default {
 
       if (node.isLeaf) return
       if (this.expanded) {
-        this.tree.$emit('node-collapse', node.data, node, this)
+        $emit(this.tree, 'node-collapse', node.data, node, this)
         node.collapse()
       } else {
         node.expand()
-        this.$emit('node-expand', node.data, node, this)
+        $emit(this, 'node-expand', node.data, node, this)
       }
     },
 
@@ -118,18 +130,30 @@ export default {
       node.setChecked(ev.target.checked, !this.tree.checkStrictly)
       this.$nextTick(() => {
         const store = this.tree.store
-        this.tree.$emit('check', node.data, {
+        $emit(this.tree, 'check', node.data, {
           checkedNodes: store.getCheckedNodes(),
           checkedKeys: store.getCheckedKeys(),
           halfCheckedNodes: store.getHalfCheckedNodes(),
-          halfCheckedKeys: store.getHalfCheckedKeys()
+          halfCheckedKeys: store.getHalfCheckedKeys(),
         })
       })
     },
 
     handleChildNodeExpand(nodeData, node, instance) {
       this.broadcast('ElTreeNode', 'tree-node-expand', node)
-      this.tree.$emit('node-expand', nodeData, node, instance)
-    }
-  }
+      $emit(this.tree, 'node-expand', nodeData, node, instance)
+    },
+  },
+  emits: [
+    'tree-node-drag-start',
+    'tree-node-drag-over',
+    'tree-node-drag-end',
+    'check-change',
+    'current-change',
+    'node-click',
+    'node-contextmenu',
+    'node-collapse',
+    'node-expand',
+    'check',
+  ],
 }

@@ -5,7 +5,7 @@
       'el-tree--highlight-current': highlightCurrent,
       'is-dragging': !!dragState.draggingNode,
       'is-drop-not-allow': !dragState.allowDrop,
-      'is-drop-inner': dragState.dropType === 'inner'
+      'is-drop-inner': dragState.dropType === 'inner',
     }"
     role="tree"
   >
@@ -19,7 +19,7 @@
         renderAfterExpand,
         showCheckbox,
         renderContent,
-        onNodeExpand: handleNodeExpand
+        onNodeExpand: handleNodeExpand,
       }"
     />
     <el-tree-node
@@ -29,14 +29,17 @@
       :props="props"
       :render-after-expand="renderAfterExpand"
       :show-checkbox="showCheckbox"
-      :key="getNodeKey(child)"
       :render-content="renderContent"
       @node-expand="handleNodeExpand"
     ></el-tree-node>
     <div class="el-tree__empty-block" v-if="isEmpty">
       <span class="el-tree__empty-text">{{ emptyText }}</span>
     </div>
-    <div v-show="dragState.showDropIndicator" class="el-tree__drop-indicator" ref="dropIndicator"></div>
+    <div
+      v-show="dragState.showDropIndicator"
+      class="el-tree__drop-indicator"
+      ref="dropIndicator"
+    ></div>
   </div>
 </template>
 
@@ -49,28 +52,28 @@ export default {
   name: 'ElTree',
   components: {
     VirtualList,
-    ElTreeNode
+    ElTreeNode,
   },
   extends: Tree,
   data() {
     return {
-      itemComponent: ElVirtualNode
+      itemComponent: ElVirtualNode,
     }
   },
   props: {
     height: {
       type: [String, Number],
-      default: 0
+      default: 0,
     },
     extraLine: {
       type: Number,
-      default: 8
-    }
+      default: 8,
+    },
   },
   computed: {
     visibleList() {
       return this.flattenTree(this.root.childNodes)
-    }
+    },
   },
   methods: {
     flattenTree(datas) {
@@ -83,7 +86,7 @@ export default {
         }
         return conn
       }, [])
-    }
-  }
+    },
+  },
 }
 </script>

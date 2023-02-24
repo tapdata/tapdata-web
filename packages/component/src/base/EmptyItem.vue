@@ -1,14 +1,26 @@
-<template functional>
+<template>
   <div
     class="empty-wrap"
     :class="{
-      'empty-small': props.small
+      'empty-small': props.small,
     }"
   >
     <div class="empty-image">
-      <svg class="empty-img-simple" width="64" height="41" viewBox="0 0 64 41" xmlns="http://www.w3.org/2000/svg">
+      <svg
+        class="empty-img-simple"
+        width="64"
+        height="41"
+        viewBox="0 0 64 41"
+        xmlns="http://www.w3.org/2000/svg"
+      >
         <g transform="translate(0 1)" fill="none" fill-rule="evenodd">
-          <ellipse class="empty-img-simple-ellipse" cx="32" cy="33" rx="32" ry="7"></ellipse>
+          <ellipse
+            class="empty-img-simple-ellipse"
+            cx="32"
+            cy="33"
+            rx="32"
+            ry="7"
+          ></ellipse>
           <g class="empty-img-simple-g" fill-rule="nonzero">
             <path
               d="M55 12.76L44.854 1.258C44.367.474 43.656 0 42.907 0H21.093c-.749 0-1.46.474-1.947 1.257L9 12.761V22h46v-9.24z"
@@ -21,7 +33,9 @@
         </g>
       </svg>
     </div>
-    <p class="empty-desc">{{ parent.$t('packages_component_dag_dialog_field_mapping_no_data') }}</p>
+    <p class="empty-desc">
+      {{ parent.$t('packages_component_dag_dialog_field_mapping_no_data') }}
+    </p>
   </div>
 </template>
 
@@ -29,8 +43,8 @@
 export default {
   name: 'EmptyItem',
   props: {
-    small: Boolean
-  }
+    small: Boolean,
+  },
 }
 </script>
 
@@ -41,7 +55,6 @@ export default {
   line-height: 1.5715;
   text-align: center;
   color: rgba(0, 0, 0, 0.25);
-
   &.empty-small {
     margin: 8px 0;
     font-size: 12px;

@@ -1,3 +1,4 @@
+import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 export default {
   data() {
     let self = this
@@ -5,14 +6,18 @@ export default {
       isFirst: true,
       on: {
         input: (...args) => {
-          self.$emit('input', ...args)
-          self.config.on && self.config.on.input && self.config.on.input(...args)
+          $emit(self, 'update:value', ...args)
+          self.config.on &&
+            self.config.on.input &&
+            self.config.on.input(...args)
         },
         change: (...args) => {
-          self.$emit('change', ...args)
-          self.config.on && self.config.on.change && self.config.on.change(...args)
-        }
-      }
+          $emit(self, 'change', ...args)
+          self.config.on &&
+            self.config.on.change &&
+            self.config.on.change(...args)
+        },
+      },
     }
   },
   mounted() {
@@ -20,5 +25,6 @@ export default {
     if (this.isFirst && defaultValue && !this.value) {
       this.on.input(defaultValue)
     }
-  }
+  },
+  emits: ['update:value', 'change'],
 }

@@ -1,4 +1,7 @@
 <script>
+import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
+import { plantRenderPara } from '../utils/gogocodeTransfer'
+import * as Vue from 'vue'
 import i18n from '@tap/i18n'
 
 import mixins from './mixin'
@@ -9,38 +12,40 @@ export default {
     value: [File, String, Object],
     config: {
       require: true,
-      type: Object
-    }
+      type: Object,
+    },
   },
   data() {
     return {
-      fileName: ''
+      fileName: '',
     }
   },
-  render(h) {
+  render() {
     let self = this
     let config = self.config
     let fileName = this?.value?.name || config.fileName || ''
-    let selectFile = file => {
+    let selectFile = (file) => {
       let value = {
         name: '',
-        value: ''
+        value: '',
       }
       if (file) {
         this.fileName = file.name
         if (config.maxFileSize && file.size / 1024 > config.maxFileSize) {
           this.$message.error(
-            i18n.t('packages_component_form_builder_file_shangchuanwenjianda', { val1: config.maxFileSize })
+            i18n.t('packages_component_form_builder_file_shangchuanwenjianda', {
+              val1: config.maxFileSize,
+            })
           )
         } else {
           let reader = new FileReader()
-          let emitInput = val => {
+          let emitInput = (val) => {
             value = {
               name: file.name,
-              value: config.base64 ? val.split(',')[1] : val
+              value: config.base64 ? val.split(',')[1] : val,
             }
-            self.$emit('input', value)
-            self.$emit('change', value)
+            $emit(self, 'update:value', value)
+            $emit(self, 'change', value)
           }
           if (config.base64) {
             let fileResult = ''
@@ -61,53 +66,62 @@ export default {
           }
         }
       } else {
-        self.$emit('input', value)
-        self.$emit('change', value)
+        $emit(self, 'update:value', value)
+        $emit(self, 'change', value)
       }
     }
-    fileName = Object.prototype.toString.call(fileName) === '[object Object]' ? '' : fileName
-    return h(
+    fileName =
+      Object.prototype.toString.call(fileName) === '[object Object]'
+        ? ''
+        : fileName
+    return Vue.h(
       'ElInput',
-      {
+      plantRenderPara({
         attrs: {
-          placeholder: config.placeholder || self.$t('packages_component_formBuilder_file_placeholder')
+          placeholder:
+            config.placeholder ||
+            self.$t('packages_component_formBuilder_file_placeholder'),
         },
         props: {
           value: fileName,
-          clearable: config.clearable
+          clearable: config.clearable,
         },
         on: {
           clear() {
-            self.$emit('input', null)
-            self.$emit('change', null)
-          }
-        }
-      },
+            $emit(self, 'update:value', null)
+            $emit(self, 'change', null)
+          },
+        },
+      }),
       [
-        h(
+        Vue.h(
           'ElUpload',
-          {
+          plantRenderPara({
             props: {
               action: '',
               limit: 1,
               autoUpload: false,
               accept: config.accept,
               showFileList: false,
-              onChange: file => {
+              onChange: (file) => {
                 selectFile(file.raw)
               },
-              onExceed: fileList => {
+              onExceed: (fileList) => {
                 selectFile(fileList[0])
-              }
+              },
             },
-            slot: 'append'
-          },
-          [h('ElButton', self.$t('packages_component_formBuilder_file_button'))]
-        )
+            slot: 'append',
+          }),
+          [
+            Vue.h(
+              'ElButton',
+              self.$t('packages_component_formBuilder_file_button')
+            ),
+          ]
+        ),
       ]
     )
-  }
+  },
+  emits: ['update:value', 'change'],
 }
 </script>
-
-<style></style>

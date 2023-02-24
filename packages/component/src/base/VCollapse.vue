@@ -2,7 +2,9 @@
   <ElCollapse :value="active" accordion class="collapse-fill">
     <ElCollapseItem name="1">
       <template #title>
-        <div class="slot__header flex justify-content-between align-items-center flex-1">
+        <div
+          class="slot__header flex justify-content-between align-items-center flex-1"
+        >
           <slot name="header"></slot>
           <div class="slot__header-right">
             <slot name="header-right"></slot>
@@ -21,9 +23,9 @@ export default {
   props: {
     active: {
       type: String,
-      default: '1'
-    }
-  }
+      default: '1',
+    },
+  },
 }
 </script>
 
@@ -73,7 +75,6 @@ $headerH: 34px;
     }
   }
 }
-
 .el-collapse-item {
   &.is-active [role='tab'] {
     position: sticky;
@@ -81,7 +82,6 @@ $headerH: 34px;
     z-index: 1;
   }
 }
-
 .slot__header {
   height: inherit;
   width: 100%;

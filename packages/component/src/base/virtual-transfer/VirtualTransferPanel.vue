@@ -1,27 +1,38 @@
 <template>
   <div class="el-transfer-panel">
     <p class="el-transfer-panel__header">
-      <el-checkbox v-model="allChecked" @change="handleAllCheckedChange" :indeterminate="isIndeterminate">
+      <el-checkbox
+        v-model:value="allChecked"
+        @change="handleAllCheckedChange"
+        :indeterminate="isIndeterminate"
+      >
         {{ title }}
         <span>{{ checkedSummary }}</span>
       </el-checkbox>
     </p>
 
-    <div :class="['el-transfer-panel__body', hasFooter ? 'is-with-footer' : '']">
+    <div
+      :class="['el-transfer-panel__body', hasFooter ? 'is-with-footer' : '']"
+    >
       <el-input
         class="el-transfer-panel__filter"
-        v-model="query"
+        v-model:value="query"
         size="small"
         :placeholder="placeholder"
         @input="handleQueryInput"
-        @mouseenter.native="inputHover = true"
-        @mouseleave.native="inputHover = false"
+        @mouseenter="inputHover = true"
+        @mouseleave="inputHover = false"
         v-if="filterable"
       >
-        <i slot="prefix" :class="['el-input__icon', 'el-icon-' + inputIcon]" @click="clearQuery"></i>
+        <template v-slot:prefix>
+          <i
+            :class="['el-input__icon', 'el-icon-' + inputIcon]"
+            @click="clearQuery"
+          ></i>
+        </template>
       </el-input>
       <el-checkbox-group
-        v-model="checked"
+        v-model:value="checked"
         v-show="!hasNoMatch && data.length > 0"
         :class="{ 'is-filterable': filterable }"
         class="el-transfer-panel__list"
@@ -46,8 +57,13 @@
           </template>
         </RecycleScroller>
       </el-checkbox-group>
-      <p class="el-transfer-panel__empty" v-show="hasNoMatch">{{ $t('packages_component_no_match') }}</p>
-      <p class="el-transfer-panel__empty" v-show="data.length === 0 && !hasNoMatch">
+      <p class="el-transfer-panel__empty" v-show="hasNoMatch">
+        {{ $t('packages_component_no_match') }}
+      </p>
+      <p
+        class="el-transfer-panel__empty"
+        v-show="data.length === 0 && !hasNoMatch"
+      >
         {{ $t('packages_component_no_data') }}
       </p>
     </div>
@@ -58,6 +74,8 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
+import * as Vue from 'vue'
 import { cloneDeep } from 'lodash'
 import { Transfer } from 'element-ui'
 import { RecycleScroller } from 'vue-virtual-scroller'
@@ -68,16 +86,15 @@ delete TransferPanel.watch.checked
 
 export default {
   name: 'VirtualTransferPanel',
-
   components: {
     RecycleScroller,
 
     OptionContent: {
       props: {
-        option: Object
+        option: Object,
       },
-      render(h) {
-        const getParent = vm => {
+      render() {
+        const getParent = (vm) => {
           if (vm.$options.name === 'VirtualTransferPanel') {
             return vm
           } else if (vm.$parent) {
@@ -88,75 +105,79 @@ export default {
         }
         const panel = getParent(this)
         const transfer = panel.$parent || panel
-        const transferSlots = transfer.$scopedSlots
+        const transferSlots = transfer.$slots
 
         return panel.renderContent ? (
-          panel.renderContent(h, this.option)
+          panel.renderContent(Vue.h, this.option)
         ) : transferSlots.default ? (
           transferSlots.default({ option: this.option })
         ) : transferSlots.left || transferSlots.right ? (
-          panel.$scopedSlots.default({ option: this.option }) || (
-            <span>{this.option[panel.labelProp] || this.option[panel.keyProp]}</span>
+          (panel.$slots.default && panel.$slots.default())({
+            option: this.option,
+          }) || (
+            <span>
+              {this.option[panel.labelProp] || this.option[panel.keyProp]}
+            </span>
           )
         ) : (
-          <span>{this.option[panel.labelProp] || this.option[panel.keyProp]}</span>
+          <span>
+            {this.option[panel.labelProp] || this.option[panel.keyProp]}
+          </span>
         )
-      }
-    }
+      },
+    },
   },
-
   extends: TransferPanel,
-
   props: {
     buffer: {
       type: Number,
-      default: 50
+      default: 50,
     },
     itemSize: {
       type: Number,
-      default: null
+      default: null,
     },
     searchAfterScrollTop: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
-
   watch: {
     checked(val, oldVal) {
       // console.time('checked')
       this.updateAllChecked()
 
       const newObj = {}
-      val.every(item => {
+      val.every((item) => {
         newObj[item] = true
       })
       const oldObj = {}
-      oldVal.every(item => {
+      oldVal.every((item) => {
         oldObj[item] = true
       })
       if (this.checkChangeByUser) {
-        const movedKeys = val.concat(oldVal).filter(v => newObj[v] || oldVal[v])
-        this.$emit('checked-change', val, movedKeys)
+        const movedKeys = val
+          .concat(oldVal)
+          .filter((v) => newObj[v] || oldVal[v])
+        $emit(this, 'checked-change', val, movedKeys)
       } else {
-        this.$emit('checked-change', val)
+        $emit(this, 'checked-change', val)
         this.checkChangeByUser = true
       }
       // console.timeEnd('checked')
-    }
+    },
   },
-
   methods: {
     updateAllChecked() {
       // console.time('do-updateAllChecked')
       const checkObj = {}
-      this.checked.forEach(item => {
+      this.checked.forEach((item) => {
         checkObj[item] = true
       })
       this.allChecked =
         this.checkableData.length > 0 &&
         this.checked.length > 0 &&
-        this.checkableData.every(item => checkObj[item[this.keyProp]])
+        this.checkableData.every((item) => checkObj[item[this.keyProp]])
       // console.timeEnd('do-updateAllChecked')
     },
 
@@ -172,8 +193,9 @@ export default {
         this.query = ''
         this.handleQueryInput()
       }
-    }
-  }
+    },
+  },
+  emits: ['checked-change'],
 }
 </script>
 

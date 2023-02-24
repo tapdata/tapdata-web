@@ -58,7 +58,7 @@ export {
   OverflowTooltip,
   DarkSelect,
   TimeSelect,
-  PaidUpgradeDialog
+  PaidUpgradeDialog,
 }
 
 export * from './base'

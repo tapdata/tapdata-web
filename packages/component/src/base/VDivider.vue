@@ -1,31 +1,36 @@
 <script>
+import { plantRenderPara } from '../utils/gogocodeTransfer'
+import * as Vue from 'vue'
 export default {
   name: 'v-divider',
 
   props: {
     inset: Boolean,
-    vertical: Boolean
+    vertical: Boolean,
   },
 
-  render(h) {
+  render() {
     let orientation
     if (!this.$attrs.role || this.$attrs.role === 'separator') {
       orientation = this.vertical ? 'vertical' : 'horizontal'
     }
-    return h('hr', {
-      class: {
-        'v-divider': true,
-        'v-divider--inset': this.inset,
-        'v-divider--vertical': this.vertical
-      },
-      attrs: {
-        role: 'separator',
-        'aria-orientation': orientation,
-        ...this.$attrs
-      },
-      on: this.$listeners
-    })
-  }
+    return Vue.h(
+      'hr',
+      plantRenderPara({
+        class: {
+          'v-divider': true,
+          'v-divider--inset': this.inset,
+          'v-divider--vertical': this.vertical,
+        },
+        attrs: {
+          role: 'separator',
+          'aria-orientation': orientation,
+          ...this.$attrs,
+        },
+        on: this.$listeners,
+      })
+    )
+  },
 }
 </script>
 

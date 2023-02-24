@@ -1,5 +1,12 @@
 <template>
-  <ElForm :model="form" :rules="rules" ref="filterForm" inline class="filter-form" @submit.native.prevent>
+  <ElForm
+    :model="form"
+    :rules="rules"
+    ref="filterForm"
+    inline
+    class="filter-form"
+    @submit.prevent
+  >
     <ElFormItem
       v-for="(item, index) in items"
       :key="index"
@@ -11,16 +18,18 @@
         <slot :name="item.slotName" :row="scope.row"></slot>
       </template>
       <component
-        v-else
         v-bind="getOptions(item)"
-        v-model="item.value"
+        v-else
+        v-model:value="item.value"
         :is="getComponent(item.type)"
         :style="getStyle(item)"
         @input="search(item, 'input')"
         @change="search(item, 'change')"
         @clear="fetch()"
       >
-        <VIcon slot="suffix" size="14" class="inline-block">{{ item.icon }}</VIcon>
+        <template v-slot:suffix>
+          <VIcon size="14" class="inline-block">{{ item.icon }}</VIcon>
+        </template>
       </component>
     </ElFormItem>
     <ElFormItem v-if="!hideRefresh">
@@ -32,6 +41,7 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 import { delayTrigger } from '@tap/shared'
 
 import VIcon from '../base/VIcon.vue'
@@ -43,15 +53,22 @@ import DarkSelect from '../DarkSelect'
 
 export default {
   name: 'FilterBar',
-  components: { VIcon, SelectList, PopInput, DatetimeRange, Datetime, DarkSelect },
+  components: {
+    VIcon,
+    SelectList,
+    PopInput,
+    DatetimeRange,
+    Datetime,
+    DarkSelect,
+  },
   props: {
     value: {
       type: Object,
-      default: () => {}
+      default: () => {},
     },
     items: {
       type: Array,
-      default: () => []
+      default: () => [],
       /**参考src/views/operation-log/List.vue:184
        * 1.支持表单的rules
        * 格式 rules: () => { let flag = false;//false表示没有错误 if (可取this.searchParams的值做条件) { flag = '报错信息' } return flag }
@@ -59,17 +76,17 @@ export default {
     },
     hideRefresh: {
       type: Boolean,
-      default: false
+      default: false,
     },
     changeRoute: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   data() {
     return {
       form: {},
-      rules: {}
+      rules: {},
     }
   },
   watch: {
@@ -77,11 +94,11 @@ export default {
       deep: true,
       handler(v) {
         v && this.init()
-      }
+      },
     },
     items() {
       this.init()
-    }
+    },
   },
   created() {
     this.init()
@@ -91,19 +108,19 @@ export default {
       let { value } = this
       this.getRules()
       let form = {}
-      this.items.forEach(el => {
+      this.items.forEach((el) => {
         if (hasOwnProperty.call(value, el.key)) {
-          this.$set(el, 'value', value[el.key])
+          el['value'] = value[el.key]
         }
         if (el.type === 'datetimerange') {
           if (el.key.indexOf(',') > -1) {
             let result = []
-            el.key.split(',').forEach(k => {
+            el.key.split(',').forEach((k) => {
               form[k] = value?.[k]
               result.push(form[k])
             })
             form[el.key] = result
-            this.$set(el, 'value', form[el.key])
+            el['value'] = form[el.key]
           } else {
             form[el.key] = el.value
           }
@@ -115,7 +132,7 @@ export default {
     },
     getValue() {
       let result = {}
-      this.items.forEach(el => {
+      this.items.forEach((el) => {
         if (el.value) {
           if (el.type === 'datetimerange') {
             if (el.key.indexOf(',') > -1) {
@@ -135,7 +152,7 @@ export default {
     },
     getRules() {
       let result = {}
-      this.items.forEach(el => {
+      this.items.forEach((el) => {
         if (el.rules) {
           if (typeof el.rules === 'function') {
             result[el.key] = [
@@ -147,8 +164,8 @@ export default {
                   } else {
                     callback()
                   }
-                }
-              }
+                },
+              },
             ]
           } else {
             result[el.key] = el.rules
@@ -161,26 +178,26 @@ export default {
       if (item.type === 'input' && target === 'change') {
         return
       }
-      this.$refs.filterForm.validate(valid => {
+      this.$refs.filterForm.validate((valid) => {
         if (valid) {
           delayTrigger(() => {
-            this.$emit('input', this.getValue())
-            this.$emit('search', this.getValue())
+            $emit(this, 'update:value', this.getValue())
+            $emit(this, 'search', this.getValue())
             this.changeRoute &&
               this.$router.replace({
                 name: this.$route.name,
                 params: this.$route.params,
-                query: this.getValue()
+                query: this.getValue(),
               })
           }, item.debounce)
         }
       })
     },
     fetch() {
-      this.$emit('input', this.getValue())
-      this.$refs.filterForm.validate(valid => {
+      $emit(this, 'update:value', this.getValue())
+      this.$refs.filterForm.validate((valid) => {
         if (valid) {
-          this.$emit('fetch')
+          $emit(this, 'fetch')
         }
       })
     },
@@ -198,7 +215,7 @@ export default {
         datetime: 'Datetime',
         datetimerange: 'DatetimeRange',
         'input-pop': 'PopInput',
-        input: 'ElInput'
+        input: 'ElInput',
       }
       return obj[type] || obj['input']
     },
@@ -246,8 +263,9 @@ export default {
       if (!hasOwnProperty.call(item, key)) {
         item[key] = val
       }
-    }
-  }
+    },
+  },
+  emits: ['update:value', 'search', 'fetch'],
 }
 </script>
 

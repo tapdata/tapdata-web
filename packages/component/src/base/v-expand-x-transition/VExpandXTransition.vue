@@ -1,4 +1,6 @@
 <script>
+import { plantRenderPara } from '../../utils/gogocodeTransfer'
+import * as Vue from 'vue'
 function upperFirst(str) {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
@@ -13,7 +15,7 @@ function ExpandTransitionGenerator(expandedParentClass = '', x = false) {
       el._initialStyle = {
         transition: el.style.transition,
         overflow: el.style.overflow,
-        [sizeProperty]: el.style[sizeProperty]
+        [sizeProperty]: el.style[sizeProperty],
       }
       console.log('beforeEnter', el._initialStyle) // eslint-disable-line
     },
@@ -47,7 +49,7 @@ function ExpandTransitionGenerator(expandedParentClass = '', x = false) {
       el._initialStyle = {
         transition: '',
         overflow: el.style.overflow,
-        [sizeProperty]: el.style[sizeProperty]
+        [sizeProperty]: el.style[sizeProperty],
       }
 
       el.style.overflow = 'hidden'
@@ -57,7 +59,7 @@ function ExpandTransitionGenerator(expandedParentClass = '', x = false) {
     },
 
     afterLeave,
-    leaveCancelled: afterLeave
+    leaveCancelled: afterLeave,
   }
 
   function afterLeave(el) {
@@ -75,26 +77,29 @@ function ExpandTransitionGenerator(expandedParentClass = '', x = false) {
   }
 }
 
-export default {
-  name: 'VExpandXTransition',
-  functional: true,
-  render(h, { attrs, children }) {
-    const data = {
-      on: new ExpandTransitionGenerator('', true)
-    }
-
-    return h(
-      'transition',
-      {
-        ...data,
-        props: {
-          ...attrs,
-          name: 'expand-x-transition'
-        }
-      },
-      children
-    )
+export default function render(_props, _context) {
+  const context = {
+    ..._context,
+    props: _props,
+    data: _context.attr,
+    children: _context.slots,
   }
+  const { attrs, children } = context
+  const data = {
+    on: new ExpandTransitionGenerator('', true),
+  }
+
+  return Vue.h(
+    'transition',
+    plantRenderPara({
+      ...data,
+      props: {
+        ...attrs,
+        name: 'expand-x-transition',
+      },
+    }),
+    children
+  )
 }
 </script>
 

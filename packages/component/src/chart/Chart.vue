@@ -1,8 +1,14 @@
 <template>
-  <VChart ref="chart" :option="chartOption" :autoresize="autoresize" class="type-chart-container" />
+  <VChart
+    ref="chart"
+    :option="chartOption"
+    :autoresize="autoresize"
+    class="type-chart-container"
+  />
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { PieChart, BarChart, LineChart } from 'echarts/charts'
@@ -12,7 +18,7 @@ import {
   ToolboxComponent,
   LegendComponent,
   GridComponent,
-  DataZoomComponent
+  DataZoomComponent,
 } from 'echarts/components'
 import VChart from 'vue-echarts'
 import { delayTrigger } from '@tap/shared'
@@ -27,7 +33,7 @@ use([
   ToolboxComponent,
   LegendComponent,
   GridComponent,
-  DataZoomComponent
+  DataZoomComponent,
 ])
 
 export default {
@@ -35,53 +41,53 @@ export default {
   components: { VChart },
   props: {
     type: {
-      type: String
+      type: String,
     },
     data: {
-      type: [Array, Object]
+      type: [Array, Object],
     },
     // 和默认配置，合并再渲染
     options: {
-      type: Object
+      type: Object,
     },
     // 当做完整配置，直接渲染
     extend: {
-      type: Object
+      type: Object,
     },
     autoresize: {
       type: Boolean,
-      default: true
+      default: true,
     },
     // 横坐标没数据，string传入指定类型，Array直接渲染横坐标
     noX: {
-      type: [String, Array]
+      type: [String, Array],
     },
     // 纵坐标，需要传入最小、大值数组 [min, max]
     noY: {
       type: Array,
-      default: () => [0, 1]
+      default: () => [0, 1],
     },
     events: {
       type: Array,
-      default: () => []
-    }
+      default: () => [],
+    },
   },
   data() {
     return {
-      chartOption: {}
+      chartOption: {},
     }
   },
   computed: {
     chart() {
       return this.$refs.chart || {}
-    }
+    },
   },
   watch: {
     data: {
       deep: true,
       handler(v) {
         v && this.init()
-      }
+      },
     },
     extend: {
       deep: true,
@@ -89,13 +95,13 @@ export default {
         if (v) {
           v && this.init()
         }
-      }
-    }
+      },
+    },
   },
   mounted() {
     this.init()
     window.addEventListener('resize', this.resize)
-    this.$once('hook:beforeDestroy', () => {
+    $once(this, 'hook:beforeDestroy', () => {
       window.removeEventListener('resize', this.resize)
     })
   },
@@ -104,7 +110,7 @@ export default {
       const { events, extend, chart } = this
       if (events.length) {
         let getDom = chart?.chart
-        events.forEach(t => {
+        events.forEach((t) => {
           getDom.on(t.name, t.method)
         })
       }
@@ -164,20 +170,20 @@ export default {
         tooltip: {
           trigger: 'axis',
           axisPointer: {
-            type: 'none'
-          }
+            type: 'none',
+          },
         },
         grid: {
           // left: '10%',
           // right: '10%',
           // bottom: '3%',
-          containLabel: true
+          containLabel: true,
         },
         xAxis: {
           type: 'category',
           // show: true,
           axisLine: {
-            show: false
+            show: false,
             // lineStyle: {
             //   type: 'dashed'
             //   // color: '#666',
@@ -188,26 +194,26 @@ export default {
             // margin: 30
           },
           axisTick: {
-            show: false
+            show: false,
           },
           data: [],
           axisPointer: {
             show: false,
-            type: 'shadow'
+            type: 'shadow',
           },
           nameTextStyle: {
             // verticalAlign: 'bottom',
             // color: '#F00'
-          }
+          },
         },
         yAxis: {
-          show: false
+          show: false,
         },
         series: [
           {
             type: 'bar',
             data: [],
-            colorBy: 'value'
+            colorBy: 'value',
             // barWidth: '50%',
             // barGap: '-100%'
             // itemStyle: {
@@ -232,14 +238,14 @@ export default {
             //     }
             //   }
             // }
-          }
-        ]
+          },
+        ],
       }
       const { data, options } = this
       if (data instanceof Array) {
-        let color = data.map(t => t.color)
-        obj.xAxis.data = data.map(t => t.name)
-        obj.series[0].data = data.map(t => t.value)
+        let color = data.map((t) => t.color)
+        obj.xAxis.data = data.map((t) => t.name)
+        obj.series[0].data = data.map((t) => t.value)
         if (color.length) {
           obj.color = color
         }
@@ -247,7 +253,7 @@ export default {
         // 需要传入 { x: [], y: [[], []] }，y数组支持多系列
         obj.xAxis.data = data.x
         let series = []
-        data.y.forEach(el => {
+        data.y.forEach((el) => {
           series.push(Object.assign(this.getBarSeriesItem(), { data: el }))
         })
         obj.series = series
@@ -266,15 +272,23 @@ export default {
                     distance: 10,
                     formatter: function (value) {
                       if (value.data / (1000 * 1000 * 1000) > 1) {
-                        return valueToFixed(value.data / (1000 * 1000 * 1000), el.fixed) + ' T'
+                        return (
+                          valueToFixed(
+                            value.data / (1000 * 1000 * 1000),
+                            el.fixed
+                          ) + ' T'
+                        )
                       } else if (value.data / (1000 * 1000) > 1) {
-                        return valueToFixed(value.data / (1000 * 1000), el.fixed) + ' M'
+                        return (
+                          valueToFixed(value.data / (1000 * 1000), el.fixed) +
+                          ' M'
+                        )
                       } else if (value.data / 1000 > 1) {
                         return valueToFixed(value.data / 1000, el.fixed) + ' K'
                       }
-                    }
-                  }
-                }
+                    },
+                  },
+                },
               }
             }
           })
@@ -291,40 +305,40 @@ export default {
           splitLine: {
             show: true,
             lineStyle: {
-              type: 'dashed'
-            }
+              type: 'dashed',
+            },
           },
           axisTick: {
-            show: false
-          }
+            show: false,
+          },
         },
         yAxis: [
           {
             type: 'value',
             max: 'dataMax',
             axisLine: {
-              show: true
+              show: true,
             },
             splitLine: {
               show: true,
               lineStyle: {
-                type: 'dashed'
-              }
-            }
-          }
+                type: 'dashed',
+              },
+            },
+          },
         ],
         grid: {
           containLabel: true,
           borderWidth: 1,
-          borderColor: '#ccc'
+          borderColor: '#ccc',
         },
-        series: []
+        series: [],
       }
       const { data } = this
       obj.xAxis.data = data.x || []
       let series = []
       if (data.y && data.y[0] instanceof Array) {
-        data.y.forEach(el => {
+        data.y.forEach((el) => {
           series.push(Object.assign(this.getLineSeriesItem(), { data: el }))
         })
       } else {
@@ -337,7 +351,7 @@ export default {
     pie() {
       // 需要传入 [{ value: 1, name: 'A', color: 'red' },{ value: 2, name: 'B', color: 'blue' }...]
       // 环形图只需在options中设置radius: true
-      let series = this.data.map(el => {
+      let series = this.data.map((el) => {
         if (el.color) {
           if (!el.itemStyle) {
             el.itemStyle = {}
@@ -348,10 +362,10 @@ export default {
       })
       let obj = {
         tooltip: {
-          trigger: 'item'
+          trigger: 'item',
         },
         legend: {
-          icon: 'circle'
+          icon: 'circle',
         },
         series: [
           {
@@ -359,14 +373,15 @@ export default {
             radius: '50%',
             label: { show: false },
             labelLine: { show: false },
-            data: series
-          }
-        ]
+            data: series,
+          },
+        ],
       }
       const { options } = this
       if (options) {
         if (options.radius) {
-          obj.series[0].radius = options.radius?.length === 2 ? options.radius : ['65%', '90%']
+          obj.series[0].radius =
+            options.radius?.length === 2 ? options.radius : ['65%', '90%']
         }
         if (options.center) {
           obj.series[0].center = options.center
@@ -379,7 +394,7 @@ export default {
       let item = {
         type: 'bar',
         data: [],
-        colorBy: 'value'
+        colorBy: 'value',
       }
       if (options) {
         if (options.barWidth) {
@@ -393,7 +408,7 @@ export default {
       let item = {
         type: 'line',
         smooth: true,
-        data: []
+        data: [],
       }
       if (options) {
         if (options.smooth) {
@@ -423,8 +438,8 @@ export default {
       delayTrigger(() => {
         this.chart?.resize?.()
       }, 300)
-    }
-  }
+    },
+  },
 }
 </script>
 

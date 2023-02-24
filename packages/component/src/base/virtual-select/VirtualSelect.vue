@@ -20,13 +20,25 @@
           @close="deleteTag($event, selected[0])"
           disable-transitions
         >
-          <span class="el-select__tags-text">{{ selected[0].currentLabel }}</span>
+          <span class="el-select__tags-text">{{
+            selected[0].currentLabel
+          }}</span>
         </el-tag>
-        <el-tag v-if="selected.length > 1" :closable="false" :size="collapseTagSize" type="info" disable-transitions>
+        <el-tag
+          v-if="selected.length > 1"
+          :closable="false"
+          :size="collapseTagSize"
+          type="info"
+          disable-transitions
+        >
           <span class="el-select__tags-text">+ {{ selected.length - 1 }}</span>
         </el-tag>
       </span>
-      <transition-group @after-leave="resetInputHeight" v-if="!collapseTags">
+      <transition-group
+        tag="span"
+        @after-leave="resetInputHeight"
+        v-if="!collapseTags"
+      >
         <el-tag
           v-for="item in selected"
           :key="getValueKey(item)"
@@ -63,13 +75,17 @@
         v-model="query"
         @input="debouncedQueryChange"
         v-if="filterable"
-        :style="{ 'flex-grow': '1', width: inputLength / (inputWidth - 32) + '%', 'max-width': inputWidth - 42 + 'px' }"
+        :style="{
+          'flex-grow': '1',
+          width: inputLength / (inputWidth - 32) + '%',
+          'max-width': inputWidth - 42 + 'px',
+        }"
         ref="input"
       />
     </div>
     <ElInput
       ref="reference"
-      v-model="selectedLabel"
+      v-model:value="selectedLabel"
       :id="id"
       type="text"
       :name="name"
@@ -83,20 +99,20 @@
       :tabindex="multiple && filterable ? '-1' : null"
       @focus="handleFocus"
       @blur="handleBlur"
-      @keyup.native="debouncedOnInputChange"
-      @keydown.native.down.stop.prevent="navigateOptions('next')"
-      @keydown.native.up.stop.prevent="navigateOptions('prev')"
-      @keydown.native.enter.prevent="selectOption"
-      @keydown.native.esc.stop.prevent="visible = false"
-      @keydown.native.tab.stop.prevent="visible = false"
-      @paste.native="debouncedOnInputChange"
-      @mouseenter.native="inputHovering = true"
-      @mouseleave.native="inputHovering = false"
+      @keyup="debouncedOnInputChange"
+      @keydown.down.stop.prevent="navigateOptions('next')"
+      @keydown.up.stop.prevent="navigateOptions('prev')"
+      @keydown.enter.prevent="selectOption"
+      @keydown.esc.stop.prevent="visible = false"
+      @keydown.tab.stop.prevent="visible = false"
+      @paste="debouncedOnInputChange"
+      @mouseenter="inputHovering = true"
+      @mouseleave="inputHovering = false"
     >
-      <template slot="prefix" v-if="$slots.prefix">
+      <template v-if="$slots.prefix" v-slot:prefix>
         <slot name="prefix" />
       </template>
-      <template slot="suffix">
+      <template v-slot:suffix>
         <span v-if="loading" class="el-select__loading">
           <svg
             viewBox="0 0 1024 1024"
@@ -113,13 +129,32 @@
           </svg>
         </span>
         <template v-else>
-          <i v-show="!showClose" :class="['el-select__caret', 'el-input__icon', 'el-icon-' + iconClass]" />
-          <i v-if="showClose" class="el-select__caret el-input__icon el-icon-circle-close" @click="handleClearClick" />
+          <i
+            v-show="!showClose"
+            :class="[
+              'el-select__caret',
+              'el-input__icon',
+              'el-icon-' + iconClass,
+            ]"
+          />
+          <i
+            v-if="showClose"
+            class="el-select__caret el-input__icon el-icon-circle-close"
+            @click="handleClearClick"
+          />
         </template>
       </template>
     </ElInput>
-    <transition name="el-zoom-in-top" @before-enter="handleMenuEnter" @after-leave="doDestroy">
-      <ElSelectMenu ref="popper" :append-to-body="popperAppendToBody" v-show="visible && emptyText !== false">
+    <transition
+      name="el-zoom-in-top"
+      @before-enter="handleMenuEnter"
+      @after-leave="doDestroy"
+    >
+      <ElSelectMenu
+        ref="popper"
+        :append-to-body="popperAppendToBody"
+        v-show="visible && emptyText !== false"
+      >
         <div
           class="el-select-dropdown__wrap el-scrollbar__wrap virtual-scroller-wrap"
           v-show="filteredItems.length > 0 && !loading"
@@ -138,7 +173,11 @@
             </template>
             <template #default="{ item, index, active }">
               <slot :item="item" :index="index" :active="active">
-                <ElOption :key="item.value" :label="item.label" :value="item.value" />
+                <ElOption
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
               </slot>
             </template>
             <template #after>
@@ -146,7 +185,14 @@
             </template>
           </RecycleScroller>
         </div>
-        <template v-if="emptyText && (!allowCreate || loading || (allowCreate && filteredItems.length === 0))">
+        <template
+          v-if="
+            emptyText &&
+            (!allowCreate ||
+              loading ||
+              (allowCreate && filteredItems.length === 0))
+          "
+        >
           <slot name="empty" v-if="$slots.empty"></slot>
           <p class="el-select-dropdown__empty" v-else>
             {{ emptyText }}
@@ -167,7 +213,7 @@ export default {
   name: 'VirtualSelect',
 
   components: {
-    RecycleScroller
+    RecycleScroller,
   },
 
   extends: Select,
@@ -175,26 +221,26 @@ export default {
   props: {
     items: {
       type: Array,
-      required: true
+      required: true,
     },
     buffer: {
       type: Number,
-      default: 30
+      default: 30,
     },
     itemSize: {
       type: Number,
-      default: null
+      default: null,
     },
     filterDelay: {
       type: Number,
-      default: 200
-    }
+      default: 200,
+    },
   },
 
   data() {
     return {
       lazySearch: '',
-      filteredItems: this.items
+      filteredItems: this.items,
     }
   },
 
@@ -213,8 +259,14 @@ export default {
       if (this.loading) {
         return this.loadingText || this.$t('packages_component_loading')
       } else {
-        if (this.remote && this.query === '' && this.options.length === 0) return false
-        if (this.filterable && this.query && this.options.length > 0 && this.filteredOptionsCount === 0) {
+        if (this.remote && this.query === '' && this.options.length === 0)
+          return false
+        if (
+          this.filterable &&
+          this.query &&
+          this.options.length > 0 &&
+          this.filteredOptionsCount === 0
+        ) {
           return this.noMatchText || this.$t('packages_component_no_match')
         }
         if (this.filteredItems.length === 0) {
@@ -222,7 +274,7 @@ export default {
         }
       }
       return null
-    }
+    },
   },
 
   watch: {
@@ -233,7 +285,7 @@ export default {
       if (val) {
         this.filteredItems = this.items
       }
-    }
+    },
   },
 
   methods: {
@@ -241,7 +293,8 @@ export default {
       if (this.previousQuery === val || this.isOnComposition) return
       if (
         this.previousQuery === null &&
-        (typeof this.filterMethod === 'function' || typeof this.remoteMethod === 'function')
+        (typeof this.filterMethod === 'function' ||
+          typeof this.remoteMethod === 'function')
       ) {
         this.previousQuery = val
         return
@@ -267,7 +320,7 @@ export default {
         this.broadcast('ElOptionGroup', 'queryChange')
       } else {
         if (val) {
-          this.filteredItems = this.items.filter(item => {
+          this.filteredItems = this.items.filter((item) => {
             return item.label.toLowerCase().includes(val.toLowerCase())
           })
         } else {
@@ -275,7 +328,11 @@ export default {
         }
         this.filteredOptionsCount = this.filteredItems.length
       }
-      if (this.defaultFirstOption && (this.filterable || this.remote) && this.filteredOptionsCount) {
+      if (
+        this.defaultFirstOption &&
+        (this.filterable || this.remote) &&
+        this.filteredOptionsCount
+      ) {
         this.checkDefaultFirstOption()
       }
     },
@@ -284,21 +341,27 @@ export default {
       const $option = Array.isArray(option) ? option[0] : option
       if ($option) {
         const { value } = $option
-        const index = this.items.findIndex(item => item.value === value)
+        const index = this.items.findIndex((item) => item.value === value)
         this.$refs.virtualScroller.scrollToItem(index)
       }
     },
 
     getOption(value) {
       let option
-      const isObject = Object.prototype.toString.call(value).toLowerCase() === '[object object]'
-      const isNull = Object.prototype.toString.call(value).toLowerCase() === '[object null]'
-      const isUndefined = Object.prototype.toString.call(value).toLowerCase() === '[object undefined]'
+      const isObject =
+        Object.prototype.toString.call(value).toLowerCase() ===
+        '[object object]'
+      const isNull =
+        Object.prototype.toString.call(value).toLowerCase() === '[object null]'
+      const isUndefined =
+        Object.prototype.toString.call(value).toLowerCase() ===
+        '[object undefined]'
 
       for (let i = this.items.length - 1; i >= 0; i--) {
         const cachedOption = this.items[i]
         const isEqual = isObject
-          ? getValueByPath(cachedOption.value, this.valueKey) === getValueByPath(value, this.valueKey)
+          ? getValueByPath(cachedOption.value, this.valueKey) ===
+            getValueByPath(value, this.valueKey)
           : cachedOption.value === value
         if (isEqual) {
           option = { ...cachedOption, currentLabel: cachedOption.label }
@@ -309,14 +372,14 @@ export default {
       const label = !isObject && !isNull && !isUndefined ? String(value) : ''
       let newOption = {
         value: value,
-        currentLabel: label
+        currentLabel: label,
       }
       if (this.multiple) {
         newOption.hitState = false
       }
       return newOption
-    }
-  }
+    },
+  },
 }
 </script>
 

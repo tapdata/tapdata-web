@@ -1,7 +1,10 @@
 <template>
   <div
     class="v-select-list el-select"
-    :class="[selectSize ? 'el-select--' + selectSize : '', { 'none-border': noneBorder }]"
+    :class="[
+      selectSize ? 'el-select--' + selectSize : '',
+      { 'none-border': noneBorder },
+    ]"
     @click.stop="toggleMenu"
     v-clickoutside="handleClose"
   >
@@ -20,13 +23,25 @@
           @close="deleteTag($event, selected[0])"
           disable-transitions
         >
-          <span class="el-select__tags-text">{{ selected[0].currentLabel }}</span>
+          <span class="el-select__tags-text">{{
+            selected[0].currentLabel
+          }}</span>
         </el-tag>
-        <el-tag v-if="selected.length > 1" :closable="false" :size="collapseTagSize" type="info" disable-transitions>
+        <el-tag
+          v-if="selected.length > 1"
+          :closable="false"
+          :size="collapseTagSize"
+          type="info"
+          disable-transitions
+        >
           <span class="el-select__tags-text">+ {{ selected.length - 1 }}</span>
         </el-tag>
       </span>
-      <transition-group @after-leave="resetInputHeight" v-if="!collapseTags">
+      <transition-group
+        tag="span"
+        @after-leave="resetInputHeight"
+        v-if="!collapseTags"
+      >
         <el-tag
           v-for="item in selected"
           :key="getValueKey(item)"
@@ -63,14 +78,18 @@
         v-model="query"
         @input="debouncedQueryChange"
         v-if="filterable"
-        :style="{ 'flex-grow': '1', width: inputLength / (inputWidth - 32) + '%', 'max-width': inputWidth - 42 + 'px' }"
+        :style="{
+          'flex-grow': '1',
+          width: inputLength / (inputWidth - 32) + '%',
+          'max-width': inputWidth - 42 + 'px',
+        }"
         ref="input"
       />
     </div>
     <ElInput
       v-if="!innerLabel"
       ref="reference"
-      v-model="selectedLabel"
+      v-model:value="selectedLabel"
       :id="id"
       type="text"
       :name="name"
@@ -84,31 +103,46 @@
       :tabindex="multiple && filterable ? '-1' : null"
       @focus="handleFocus"
       @blur="handleBlur"
-      @keyup.native="debouncedOnInputChange"
-      @keydown.native.down.stop.prevent="navigateOptions('next')"
-      @keydown.native.up.stop.prevent="navigateOptions('prev')"
-      @keydown.native.enter.prevent="selectOption"
-      @keydown.native.esc.stop.prevent="visible = false"
-      @keydown.native.tab.stop.prevent="visible = false"
-      @paste.native="debouncedOnInputChange"
-      @mouseenter.native="inputHovering = true"
-      @mouseleave.native="inputHovering = false"
+      @keyup="debouncedOnInputChange"
+      @keydown.down.stop.prevent="navigateOptions('next')"
+      @keydown.up.stop.prevent="navigateOptions('prev')"
+      @keydown.enter.prevent="selectOption"
+      @keydown.esc.stop.prevent="visible = false"
+      @keydown.tab.stop.prevent="visible = false"
+      @paste="debouncedOnInputChange"
+      @mouseenter="inputHovering = true"
+      @mouseleave="inputHovering = false"
     >
-      <template slot="prepend" v-if="$slots.prepend">
+      <template v-if="$slots.prepend" v-slot:prepend>
         <slot name="prepend" />
       </template>
-      <template slot="prefix" v-if="$slots.prefix">
+      <template v-if="$slots.prefix" v-slot:prefix>
         <slot name="prefix" />
       </template>
-      <template slot="suffix">
-        <i v-show="!showClose" :class="['el-select__caret', 'el-input__icon', 'el-icon-' + iconClass]" />
-        <i v-if="showClose" class="el-select__caret el-input__icon el-icon-circle-close" @click="handleClearClick" />
+      <template v-slot:suffix>
+        <i
+          v-show="!showClose"
+          :class="[
+            'el-select__caret',
+            'el-input__icon',
+            'el-icon-' + iconClass,
+          ]"
+        />
+        <i
+          v-if="showClose"
+          class="el-select__caret el-input__icon el-icon-circle-close"
+          @click="handleClearClick"
+        />
       </template>
     </ElInput>
     <div
       v-else
       ref="reference"
-      :class="['inner-select', { 'is-focus': visible }, 'inline-flex align-items-center']"
+      :class="[
+        'inner-select',
+        { 'is-focus': visible },
+        'inline-flex align-items-center',
+      ]"
       :validate-event="false"
       @mouseenter="inputHovering = true"
       @mouseleave="inputHovering = false"
@@ -117,16 +151,32 @@
       <span
         :class="['inner-select__selected', { placeholder: !selectedLabel }]"
         :style="{ 'max-width': selectedWidth }"
-        >{{ selectedLabel || $t('packages_component_common_placeholder_select') }}</span
+        >{{
+          selectedLabel || $t('packages_component_common_placeholder_select')
+        }}</span
       >
-      <VIcon v-if="showClose" size="10" class="icon-btn ml-1" @click.native="handleClearClick">close</VIcon>
+      <VIcon
+        v-if="showClose"
+        size="10"
+        class="icon-btn ml-1"
+        @click="handleClearClick"
+        >close</VIcon
+      >
       <VIcon v-else size="10" class="icon-btn ml-1">arrow-down-fill</VIcon>
     </div>
     <div v-if="loading" class="el-select__loading">
       <i class="el-icon-loading"></i>
     </div>
-    <transition name="el-zoom-in-top" @before-enter="handleMenuEnter" @after-leave="doDestroy">
-      <ElSelectMenu ref="popper" :append-to-body="popperAppendToBody" v-show="visible && emptyText !== false">
+    <transition
+      name="el-zoom-in-top"
+      @before-enter="handleMenuEnter"
+      @after-leave="doDestroy"
+    >
+      <ElSelectMenu
+        ref="popper"
+        :append-to-body="popperAppendToBody"
+        v-show="visible && emptyText !== false"
+      >
         <div
           class="el-select-dropdown__wrap el-scrollbar__wrap virtual-scroller-wrap"
           v-show="filteredItems.length > 0 && !loading"
@@ -139,26 +189,40 @@
             :item-size="itemSize"
             class="scroller"
             :style="scrollerStyle"
-            @scroll.native="scrollFnc"
+            @scroll="scrollFnc"
           >
             <template #before>
               <slot name="before" />
             </template>
             <template #default="{ item, index, active }">
               <slot :item="item" :index="index" :active="active">
-                <ElOption :key="item.value" :label="item.label" :value="item.value" />
+                <ElOption
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
               </slot>
             </template>
             <template #after>
               <slot name="after">
-                <div v-if="!!lastPageText && isLastPage" class="pl-5 py-2 fs-7 font-color-slight">
+                <div
+                  v-if="!!lastPageText && isLastPage"
+                  class="pl-5 py-2 fs-7 font-color-slight"
+                >
                   {{ lastPageText }}
                 </div>
               </slot>
             </template>
           </RecycleScroller>
         </div>
-        <template v-if="emptyText && (!allowCreate || loading || (allowCreate && filteredItems.length === 0))">
+        <template
+          v-if="
+            emptyText &&
+            (!allowCreate ||
+              loading ||
+              (allowCreate && filteredItems.length === 0))
+          "
+        >
           <slot name="empty" v-if="$slots.empty"></slot>
           <p class="el-select-dropdown__empty" v-else>
             {{ emptyText }}
@@ -180,83 +244,79 @@ import VIcon from './base/VIcon.vue'
 
 export default {
   name: 'SelectList',
-
   components: {
     RecycleScroller,
-    VIcon
+    VIcon,
   },
-
   extends: Select,
-
   props: {
     value: {
-      type: [Number, String]
+      type: [Number, String],
     },
     items: {
       type: [Array, Function],
-      default: () => []
+      default: () => [],
     },
     buffer: {
       type: Number,
-      default: 30
+      default: 30,
     },
     itemSize: {
       type: Number,
-      default: 30
+      default: 30,
     },
     filterDelay: {
       type: Number,
-      default: 200
+      default: 200,
     },
     url: {
-      type: String
+      type: String,
     },
     params: {
       type: Object,
-      default: () => {}
+      default: () => {},
     },
     labelKey: {
       type: String,
-      default: 'name'
+      default: 'name',
     },
     valueKey: {
       type: String,
-      default: 'id'
+      default: 'id',
     },
     filterKey: {
       type: String,
-      default: 'name'
+      default: 'name',
     },
     // 回填搜索的key
     echoKey: {
       type: String,
-      default: 'id'
+      default: 'id',
     },
     lastPageText: {
       type: String,
       default: () => {
         return i18n.t('packages_component_src_selectlist_meiyougengduoshu')
-      }
+      },
     },
     menuMinWidth: {
       type: String,
-      default: '200px'
+      default: '200px',
     },
     innerLabel: {
-      type: String
+      type: String,
     },
     formatData: {
-      type: Function
+      type: Function,
     },
     noneBorder: {
-      type: Boolean
+      type: Boolean,
     },
     selectedWidth: {
       type: String,
-      default: '80px'
-    }
+      default: '80px',
+    },
   },
-
   data() {
     return {
       list: [], // 本地数据
@@ -264,11 +324,10 @@ export default {
       pageObj: {
         size: 50,
         page: 1,
-        totalPage: 1
-      }
+        totalPage: 1,
+      },
     }
   },
-
   computed: {
     scrollerStyle() {
       const count = Math.min(this.filteredItems.length, 5)
@@ -284,8 +343,14 @@ export default {
       if (this.loading) {
         return this.loadingText || this.$t('packages_component_loading')
       } else {
-        if (this.remote && this.query === '' && this.options.length === 0) return false
-        if (this.filterable && this.query && this.options.length > 0 && this.filteredOptionsCount === 0) {
+        if (this.remote && this.query === '' && this.options.length === 0)
+          return false
+        if (
+          this.filterable &&
+          this.query &&
+          this.options.length > 0 &&
+          this.filteredOptionsCount === 0
+        ) {
           return this.noMatchText || this.$t('packages_component_no_match')
         }
         if (this.filteredItems.length === 0) {
@@ -302,7 +367,7 @@ export default {
     // 是否远程数据
     isRemote() {
       return !!this.url
-    }
+    },
     // comItems() {
     //   const { items } = this
     //   if (typeof items === 'function') {
@@ -311,7 +376,6 @@ export default {
     //   return items || []
     // }
   },
-
   watch: {
     visible(val) {
       val && this.initWidth()
@@ -325,8 +389,8 @@ export default {
         if (v1 && v2 && JSON.stringify(v1) !== JSON.stringify(v2)) {
           this.init()
         }
-      }
-    }
+      },
+    },
   },
   mounted() {
     this.init()
@@ -367,7 +431,9 @@ export default {
         return
       }
       this.$nextTick(() => {
-        this.selectedLabel = this.list.find(item => item.value === value)?.label
+        this.selectedLabel = this.list.find(
+          (item) => item.value === value
+        )?.label
       })
     },
     resetInputWidth() {
@@ -392,7 +458,7 @@ export default {
       let filter = deepCopy(
         Object.assign({}, this.params, {
           size: size,
-          page: page
+          page: page,
         })
       )
       if (isSearch) {
@@ -409,16 +475,17 @@ export default {
         }
         filter.where[this.echoKey] = val
       }
-      let comUrl = this.url + '?filter=' + encodeURIComponent(JSON.stringify(filter))
-      this.$axios.get(comUrl).then(data => {
+      let comUrl =
+        this.url + '?filter=' + encodeURIComponent(JSON.stringify(filter))
+      this.$axios.get(comUrl).then((data) => {
         // 格式化数据
         if (this.formatData) {
           data = this.formatData(data, size)
         } else {
-          data.items = data.items.map(item => {
+          data.items = data.items.map((item) => {
             return {
               label: item[this.labelKey],
-              value: item[this.valueKey]
+              value: item[this.valueKey],
             }
           })
         }
@@ -432,11 +499,16 @@ export default {
         if (isSearch) {
           this.filteredItems = data.items
         } else {
-          this.filteredItems = uniqueArr([...this.filteredItems, ...data.items], 'value')
+          this.filteredItems = uniqueArr(
+            [...this.filteredItems, ...data.items],
+            'value'
+          )
         }
         // 回显
         if (isEcho) {
-          this.selectedLabel = this.filteredItems.find(item => item.value === this.value)?.label
+          this.selectedLabel = this.filteredItems.find(
+            (item) => item.value === this.value
+          )?.label
         }
       })
     },
@@ -444,7 +516,8 @@ export default {
       if (this.previousQuery === val || this.isOnComposition) return
       if (
         this.previousQuery === null &&
-        (typeof this.filterMethod === 'function' || typeof this.remoteMethod === 'function')
+        (typeof this.filterMethod === 'function' ||
+          typeof this.remoteMethod === 'function')
       ) {
         this.previousQuery = val
         return
@@ -472,7 +545,7 @@ export default {
         // 远程数据
         if (this.isRemote) {
           if (val) {
-            let findone = this.filteredItems.filter(item => {
+            let findone = this.filteredItems.filter((item) => {
               return item.label === val && item.value === this.value
             })
             if (findone?.length === 0) {
@@ -484,7 +557,7 @@ export default {
         } else {
           // 本地数据
           if (val) {
-            this.filteredItems = this.list.filter(item => {
+            this.filteredItems = this.list.filter((item) => {
               return item.label.indexOf(val) !== -1
             })
           } else {
@@ -494,7 +567,11 @@ export default {
 
         this.filteredOptionsCount = this.filteredItems.length
       }
-      if (this.defaultFirstOption && (this.filterable || this.remote) && this.filteredOptionsCount) {
+      if (
+        this.defaultFirstOption &&
+        (this.filterable || this.remote) &&
+        this.filteredOptionsCount
+      ) {
         this.checkDefaultFirstOption()
       }
     },
@@ -503,13 +580,18 @@ export default {
       const $option = Array.isArray(option) ? option[0] : option
       if ($option) {
         const { value } = $option
-        const index = this.filteredItems.findIndex(item => item.value === value)
+        const index = this.filteredItems.findIndex(
+          (item) => item.value === value
+        )
         this.$refs.virtualScroller.scrollToItem(index)
       }
     },
     scrollFnc(e) {
       let { target } = e
-      if (this.isRemote && target.scrollHeight - target.scrollTop <= target.clientHeight) {
+      if (
+        this.isRemote &&
+        target.scrollHeight - target.scrollTop <= target.clientHeight
+      ) {
         this.loadMore()
       }
     },
@@ -519,8 +601,9 @@ export default {
       }
       this.pageObj.page++
       this.getData()
-    }
-  }
+    },
+  },
+  emits: ['update:value'],
 }
 </script>
 

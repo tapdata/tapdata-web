@@ -1,4 +1,6 @@
 <script>
+import { plantRenderPara } from '../utils/gogocodeTransfer'
+import * as Vue from 'vue'
 import mixins from './mixin'
 import TYPE_MAPPING from './constant'
 
@@ -9,36 +11,37 @@ export default {
     value: [String, Array],
     config: {
       require: true,
-      type: Object
-    }
+      type: Object,
+    },
   },
-  render(h) {
+  render() {
     let self = this
     let config = self.config
     let values = this.value || config.items.map(() => '')
 
-    return h(
+    return Vue.h(
       'div',
-      {
-        class: 'fb-group'
-      },
+      plantRenderPara({
+        class: 'fb-group',
+      }),
       config.items.map((it, index) =>
-        h(TYPE_MAPPING[it.type], {
+        Vue.h(TYPE_MAPPING[it.type], {
           class: 'fb-group-item',
           props: {
             value: values[index],
-            config: it
+            config: it,
           },
           on: Object.assign({}, this.on, {
-            input: val => {
-              this.$set(values, index, val)
+            input: (val) => {
+              values[index] = val
               this.on.input(values)
-            }
-          })
+            },
+          }),
         })
       )
     )
-  }
+  },
+  emits: ['update:value'],
 }
 </script>
 

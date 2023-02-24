@@ -1,27 +1,31 @@
 <script>
+import * as Vue from 'vue'
 export default {
   name: 'OverflowTooltip',
   props: {
-    text: String
+    text: String,
   },
 
   data() {
     return {
-      overflow: false
+      overflow: false,
     }
   },
 
   watch: {
     text: {
+      deep: true,
       immediate: true,
+
       handler() {
         this.$nextTick(() => {
-          const containerWidth = this.$refs.container?.getBoundingClientRect().width
+          const containerWidth =
+            this.$refs.container?.getBoundingClientRect().width
           const textWidth = this.$refs.text?.getBoundingClientRect().width
           this.overflow = textWidth > containerWidth
         })
-      }
-    }
+      },
+    },
   },
 
   render() {
@@ -30,7 +34,7 @@ export default {
       <el-tooltip
         content={text}
         {...{
-          props: this.$attrs
+          props: this.$attrs,
         }}
       >
         <div ref="container" class="overflow-tip">
@@ -46,7 +50,7 @@ export default {
         </span>
       </div>
     )
-  }
+  },
 }
 </script>
 

@@ -1,4 +1,6 @@
 <script>
+import { plantRenderPara } from '../utils/gogocodeTransfer'
+import * as Vue from 'vue'
 import mixins from './mixin'
 export default {
   name: 'FbSwitch',
@@ -7,36 +9,40 @@ export default {
     value: [Boolean, String, Number],
     config: {
       require: true,
-      type: Object
-    }
+      type: Object,
+    },
   },
-  render(h) {
+  render() {
     let self = this
     const tip = self.config?.tip || ''
     let arr = [
-      h('ElSwitch', {
-        props: {
-          value: self.value,
-          disabled: self.config.disabled,
-          activeValue: self.config.activeValue,
-          inactiveValue: self.config.inactiveValue
-        },
-        style: {
-          'user-select': 'none'
-        },
-        on: this.on
-      })
+      Vue.h(
+        'ElSwitch',
+        plantRenderPara({
+          props: {
+            value: self.value,
+            disabled: self.config.disabled,
+            activeValue: self.config.activeValue,
+            inactiveValue: self.config.inactiveValue,
+          },
+          style: {
+            'user-select': 'none',
+          },
+          on: this.on,
+        })
+      ),
     ]
     if (tip) {
       arr.push(
-        h('div', { class: 'fb-switch-tip' }, [
-          h('i', { class: 'el-icon-info' }),
-          h('span', { class: 'fb-switch-tip__text' }, tip)
+        Vue.h('div', plantRenderPara({ class: 'fb-switch-tip' }), [
+          Vue.h('i', plantRenderPara({ class: 'el-icon-info' })),
+          Vue.h('span', plantRenderPara({ class: 'fb-switch-tip__text' }), tip),
         ])
       )
     }
-    return h('div', { class: 'switch-item' }, arr)
-  }
+    return Vue.h('div', plantRenderPara({ class: 'switch-item' }), arr)
+  },
+  emits: ['update:value'],
 }
 </script>
 

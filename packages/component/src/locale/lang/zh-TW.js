@@ -25,14 +25,16 @@ export default {
   packages_component_classification_editNode: '編輯',
   packages_component_classification_deleteNode: '刪除',
   packages_component_classification_nodeName: '請輸入分類名稱',
-  packages_component_classification_deteleMessage: '此操作會將該分類下存在的子類都刪除，是否刪除',
+  packages_component_classification_deteleMessage:
+    '此操作會將該分類下存在的子類都刪除，是否刪除',
   packages_component_formBuilder_file_placeholder: '請選擇文件',
   packages_component_formBuilder_file_button: '選擇文件',
   packages_component_formBuilder_noneText: '不能為空',
   packages_component_formBuilder_input_placeholderPrefix: '請輸入',
   packages_component_common_placeholder_select: '請選擇',
   packages_component_dag_dialog_field_mapping_no_data: '暫無數據',
-  packages_component_src_discoveryclassification_qingshurumulu: '請輸入目錄描述',
+  packages_component_src_discoveryclassification_qingshurumulu:
+    '請輸入目錄描述',
   packages_component_src_discoveryclassification_mulumiaoshu: '目錄描述',
   packages_component_src_discoveryclassification_ziyuanmulu: '資源目錄',
   packages_component_src_discoveryclassification_mulufenlei: '目錄分類',
@@ -41,12 +43,15 @@ export default {
   packages_component_filter_bar_datetimerange_jieshushijian: '結束時間',
   packages_component_filter_bar_datetimerange_kaishishijian: '開始時間',
   packages_component_filter_bar_datetimerange_zhi: '至',
-  packages_component_form_builder_file_shangchuanwenjianda: '上傳文件大小不能超過 {val1}KB',
-  packages_component_src_inlineinput_zifuchangduxian: '字符長度限制{val1}-{val2}個字符',
+  packages_component_form_builder_file_shangchuanwenjianda:
+    '上傳文件大小不能超過 {val1}KB',
+  packages_component_src_inlineinput_zifuchangduxian:
+    '字符長度限制{val1}-{val2}個字符',
   packages_component_src_inlineinput_baocun: '保存',
   packages_component_mixins_showmessage_xiangqing: '詳情',
   packages_component_src_selectlist_meiyougengduoshu: '沒有更多數據',
   packages_component_src_classification_chuangjianfenlei: '創建分類',
   packages_component_src_darkselect_biaoti: '標題',
-  packages_component_src_discoveryclassification_morenmuluji: '默認目錄（技術）'
+  packages_component_src_discoveryclassification_morenmuluji:
+    '默認目錄（技術）',
 }
