@@ -27,13 +27,13 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column min-width="150" :label="$t('share_list_time_excavation')">
+      <el-table-column min-width="160" :label="$t('share_list_time_excavation')">
         <template slot-scope="scope">
           {{ scope.row.logTime }}
         </template>
       </el-table-column>
       <el-table-column sortable min-width="120" :label="$t('share_list_time')" prop="delayTime"></el-table-column>
-      <el-table-column prop="createTime" min-width="150" :label="$t('share_list_creat_time')" sortable>
+      <el-table-column prop="createTime" min-width="160" :label="$t('share_list_creat_time')" sortable>
       </el-table-column>
       <el-table-column min-width="110" prop="status" :label="$t('share_list_status')">
         <template #default="{ row }">

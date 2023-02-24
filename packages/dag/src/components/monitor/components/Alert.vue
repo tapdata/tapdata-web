@@ -160,7 +160,7 @@ export default {
           label: i18n.t('packages_dag_components_alert_gaojingzuijinfa'),
           prop: 'lastOccurrenceTime',
           dataType: 'time',
-          width: 150
+          width: 160
         },
         // {
         //   label: i18n.t('packages_dag_components_alert_gaojingfashengci'),

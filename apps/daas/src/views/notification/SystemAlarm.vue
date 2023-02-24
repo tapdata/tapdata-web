@@ -51,6 +51,7 @@
       <el-table-column
         :label="$t('packages_dag_components_alert_gaojingzuijinfa')"
         prop="lastOccurrenceTime"
+        :width="160"
       ></el-table-column>
       <el-table-column fixed="right" :label="$t('column_operation')">
         <template #default="{ row }">

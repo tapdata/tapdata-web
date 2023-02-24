@@ -26,17 +26,17 @@
           <TaskStatus :task="row" />
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="createTime" :label="$t('column_create_time')" min-width="100" sortable="createTime">
+      <ElTableColumn prop="createTime" :label="$t('column_create_time')" min-width="160" sortable="createTime">
         <template slot-scope="scope">
           {{ scope.row.createTimeFmt }}
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="cacheTimeAt" min-width="100" :label="$t('shared_cache_time')">
+      <ElTableColumn prop="cacheTimeAt" min-width="160" :label="$t('shared_cache_time')">
         <template slot-scope="scope">
           {{ scope.row.cacheTimeAtFmt }}
         </template>
       </ElTableColumn>
-      <ElTableColumn min-width="120" :label="$t('column_operation')">
+      <ElTableColumn min-width="140" :label="$t('column_operation')">
         <template #default="{ row }">
           <TaskButtons :task="row" :hide-list="['details']" @trigger="taskButtonsHandler"></TaskButtons>
         </template>
