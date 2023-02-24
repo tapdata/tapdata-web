@@ -308,6 +308,7 @@ export default {
   packages_dag_src_editor_zhuconghebing: '主從合併',
   packages_dag_src_editor_juhe: '聚合',
   packages_dag_src_editor_zhuijiahebing: '追加合併',
+  packages_dag_src_editor_join: '連接',
   packages_dag_src_migrationeditor_jSchuli: '增強JS',
   packages_dag_src_migrationeditor_jSchuli_standard: '標準JS',
   packages_dag_src_migrationeditor_ziduanbianji: '字段編輯',

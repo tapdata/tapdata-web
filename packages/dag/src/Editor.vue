@@ -252,7 +252,7 @@ export default {
       if (this.isDaas) {
         let isDaasNode = [
           {
-            name: i18n.t('packages_dag_dag_connection'),
+            name: i18n.t('packages_dag_src_editor_join'),
             type: 'join_processor' //join 节点
           },
           {

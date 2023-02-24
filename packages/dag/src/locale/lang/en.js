@@ -320,6 +320,7 @@ export default {
   packages_dag_src_editor_zhuconghebing: 'Master-slave merge',
   packages_dag_src_editor_juhe: 'Aggregate',
   packages_dag_src_editor_zhuijiahebing: 'Union',
+  packages_dag_src_editor_join: 'Join',
   packages_dag_src_migrationeditor_jSchuli: 'Enhanced JS',
   packages_dag_src_migrationeditor_jSchuli_standard: 'Standard JS',
   packages_dag_src_migrationeditor_ziduanbianji: 'Field Edit',
