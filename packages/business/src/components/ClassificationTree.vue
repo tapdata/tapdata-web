@@ -626,10 +626,10 @@ export default {
           objCategory: t.category
         }
       })
-      /*await discoveryApi.patchTags({
+      await discoveryApi.patchTags({
         tagBindingParams,
         tagIds: [from]
-      })*/
+      })
       await discoveryApi.postTags({
         tagBindingParams,
         tagIds: [to],
