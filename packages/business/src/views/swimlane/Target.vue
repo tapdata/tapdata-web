@@ -9,30 +9,47 @@
       </div>
     </div>
     <div class="p-3 flex-fill min-h-0 overflow-auto">
-      <div
-        v-for="(item, index) in list"
-        :key="index"
-        class="wrap__item rounded-2 mb-4"
-        @dragover.stop="handleDragOver"
-        @dragenter.stop="handleDragEnter"
-        @dragleave.stop="handleDragLeave"
-        @drop.stop="handleDrop($event, item)"
-      >
-        <div class="item__header flex p-3">
-          <NodeIcon :node="item" :size="20" class="item__icon mt-1" />
-          <div class="flex-fill ml-2">
-            <div class="flex justify-content-between">
-              <span class="font-color-normal fw-sub fs-6">{{ item.name }}</span>
-              <span class="operation-line">
-                <!--<VIcon size="16" class="cursor-pointer" @click="openView(item)">copy</VIcon>-->
-                <!--<VIcon size="18" class="ml-3">setting</VIcon>-->
-              </span>
+      <draggable v-model="list" @start="dragging = true" @end="dragging = false">
+        <div
+          v-for="item in list"
+          :key="item.id"
+          class="wrap__item rounded-2 mb-3"
+          @dragover="handleDragOver"
+          @dragenter.stop="handleDragEnter"
+          @dragleave.stop="handleDragLeave"
+          @drop.stop="handleDrop($event, item)"
+        >
+          <div v-if="item.type === 'service'" class="item__header flex p-3 border-bottom-0">
+            <ElImage
+              style="width: 20px; height: 20px"
+              class="item__icon mt-1 flex-shrink-0"
+              :src="$util.getConnectionTypeDialogImg('rest api')"
+            />
+            <div class="flex-fill ml-2">
+              <div class="flex justify-content-between">
+                <span class="font-color-normal fw-sub fs-6">{{ item.name }}</span>
+              </div>
+              <div class="mt-2 font-color-light">A set of APIs for 3rd party integration with Tapdata Cloud</div>
             </div>
-            <div class="mt-2 font-color-light">Sync data to {{ item.database_type }} for analytics</div>
           </div>
+          <template v-else>
+            <div class="item__header flex p-3">
+              <NodeIcon :node="item" :size="20" class="item__icon mt-1" />
+              <div class="flex-fill ml-2">
+                <div class="flex justify-content-between">
+                  <span class="font-color-normal fw-sub fs-6">{{ item.name }}</span>
+                  <span class="operation-line">
+                    <VIcon size="16" class="cursor-pointer" @click="openView(item)">copy</VIcon>
+                    <VIcon size="18" class="ml-3">setting</VIcon>
+                  </span>
+                </div>
+                <div class="mt-2 font-color-light">Sync data to {{ item.database_type }} for analytics</div>
+              </div>
+            </div>
+            <TaskList :list="connectionTaskMap[item.id] || []" @edit-in-dag="handleEditInDag"></TaskList>
+          </template>
         </div>
-        <TaskList :list="connectionTaskMap[item.id] || []" @edit-in-dag="handleEditInDag"></TaskList>
-      </div>
+      </draggable>
 
       <ElDialog :visible.sync="dialogConfig.visible" width="600" :close-on-click-modal="false">
         <span slot="title" style="font-size: 14px">{{ dialogConfig.title }}</span>
@@ -55,6 +72,8 @@
 </template>
 
 <script>
+import draggable from 'vuedraggable'
+
 import { connectionsApi, taskApi } from '@tap/api'
 import NodeIcon from '@tap/dag/src/components/NodeIcon'
 import connectionPreview from './connectionPreview'
@@ -139,10 +158,11 @@ export default {
     dragState: Object
   },
 
-  components: { NodeIcon, connectionPreview, TaskList },
+  components: { NodeIcon, connectionPreview, TaskList, draggable },
 
   data() {
     return {
+      dragging: false,
       list: [],
       dialogConfig: {
         title: '',
@@ -162,6 +182,7 @@ export default {
   methods: {
     async init() {
       this.list = await this.getData()
+      console.log('list', this.list) // eslint-disable-line
       this.loadTask(this.list)
     },
 
@@ -182,7 +203,28 @@ export default {
         filter: JSON.stringify(filter)
       })
 
-      return res.items
+      return [
+        {
+          id: 'Product Catalog',
+          name: 'Product Catalog',
+          type: 'service'
+        },
+        {
+          id: 'Discount',
+          name: 'Discount',
+          type: 'service'
+        },
+        {
+          id: '业绩宝',
+          name: '业绩宝',
+          type: 'service'
+        },
+        {
+          id: 'POSS',
+          name: 'POSS',
+          type: 'service'
+        }
+      ].concat(res.items)
     },
 
     async loadTask(list) {
@@ -212,12 +254,13 @@ export default {
 
     handleDragEnter(ev) {
       ev.preventDefault()
-
+      if (this.dragging) return
       const dropNode = this.findParentByClassName(ev.currentTarget, 'wrap__item')
       dropNode.classList.add('is-drop-inner')
     },
 
     handleDragLeave(ev) {
+      if (this.dragging) return
       if (!ev.currentTarget.contains(ev.relatedTarget)) {
         const dropNode = this.findParentByClassName(ev.currentTarget, 'wrap__item')
         dropNode.classList.remove('is-drop-inner')
@@ -226,6 +269,7 @@ export default {
 
     handleDrop(ev, item) {
       ev.preventDefault()
+      if (this.dragging || item.type === 'service') return
       const dropNode = this.findParentByClassName(ev.currentTarget, 'wrap__item')
       dropNode.classList.remove('is-drop-inner')
       console.log('handleDrop', this.dragState, item) // eslint-disable-line
