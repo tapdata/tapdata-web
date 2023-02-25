@@ -41,7 +41,7 @@
             </div>
             <VIcon v-else class="tree-item-icon mr-2" size="18">table</VIcon>
             <span :class="[{ 'color-disable': data.disabled }, 'table-label']" :title="data.name">{{ data.name }}</span>
-            <VIcon size="16" class="btn-menu" @click="openView(node, node.data.isLeaf)">copy</VIcon>
+            <VIcon size="18" class="btn-menu" @click="openView(node, node.data.isLeaf)">view-details</VIcon>
           </span>
         </VirtualTree>
       </div>

@@ -24,8 +24,8 @@
             <div class="flex justify-content-between">
               <span class="font-color-normal fw-sub fs-6">{{ item.name }}</span>
               <span class="operation-line">
-                <VIcon size="16" class="cursor-pointer" @click="openView(item)">copy</VIcon>
-                <VIcon size="18" class="ml-3">setting</VIcon>
+                <!--<VIcon size="16" class="cursor-pointer" @click="openView(item)">copy</VIcon>-->
+                <!--<VIcon size="18" class="ml-3">setting</VIcon>-->
               </span>
             </div>
             <div class="mt-2 font-color-light">Sync data to {{ item.database_type }} for analytics</div>

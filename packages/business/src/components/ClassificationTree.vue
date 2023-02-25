@@ -84,7 +84,8 @@ export default {
     dragState: {
       type: Object,
       default: () => ({})
-    }
+    },
+    showViewDetails: Boolean
   },
 
   components: { VirtualTree },
@@ -190,44 +191,55 @@ export default {
                 add
               </VIcon>
             </span>
-          ) : (
-            !data.readOnly &&
-            !data.isObject && (
-              <span class="btn-menu">
+          ) : !data.readOnly && !data.isObject ? (
+            <span class="btn-menu">
+              <VIcon
+                size="14"
+                class="color-primary mr-2"
+                onClick={ev => {
+                  ev.stopPropagation()
+                  data.isRoot ? this.showDialog() : this.showDialog(node, 'add')
+                }}
+              >
+                add
+              </VIcon>
+              <ElDropdown
+                class="inline-flex"
+                placement="bottom"
+                trigger="click"
+                onCommand={ev => this.handleRowCommand(ev, node)}
+              >
                 <VIcon
-                  size="14"
-                  class="color-primary mr-2"
                   onClick={ev => {
                     ev.stopPropagation()
-                    data.isRoot ? this.showDialog() : this.showDialog(node, 'add')
+                  }}
+                  size="16"
+                  class="color-primary"
+                >
+                  more-circle
+                </VIcon>
+                <ElDropdownMenu slot="dropdown">
+                  <ElDropdownItem command="edit">
+                    {this.$t('packages_component_classification_editNode')}
+                  </ElDropdownItem>
+                  <ElDropdownItem command="delete">
+                    {this.$t('packages_component_classification_deleteNode')}
+                  </ElDropdownItem>
+                </ElDropdownMenu>
+              </ElDropdown>
+            </span>
+          ) : (
+            data.isObject &&
+            this.showViewDetails && (
+              <span class="btn-menu">
+                <VIcon
+                  size="18"
+                  onClick={() => {
+                    this.$emit('view-details', data)
                   }}
                 >
-                  add
+                  view-details
                 </VIcon>
-                <ElDropdown
-                  class="inline-flex"
-                  placement="bottom"
-                  trigger="click"
-                  onCommand={ev => this.handleRowCommand(ev, node)}
-                >
-                  <VIcon
-                    onClick={ev => {
-                      ev.stopPropagation()
-                    }}
-                    size="16"
-                    class="color-primary"
-                  >
-                    more-circle
-                  </VIcon>
-                  <ElDropdownMenu slot="dropdown">
-                    <ElDropdownItem command="edit">
-                      {this.$t('packages_component_classification_editNode')}
-                    </ElDropdownItem>
-                    <ElDropdownItem command="delete">
-                      {this.$t('packages_component_classification_deleteNode')}
-                    </ElDropdownItem>
-                  </ElDropdownMenu>
-                </ElDropdown>
               </span>
             )
           )}
