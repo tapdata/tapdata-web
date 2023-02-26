@@ -19,19 +19,37 @@
           @dragleave.stop="handleDragLeave"
           @drop.stop="handleDrop($event, item)"
         >
-          <div v-if="item.type === 'service'" class="item__header flex p-3 border-bottom-0">
-            <ElImage
-              style="width: 20px; height: 20px"
-              class="item__icon mt-1 flex-shrink-0"
-              :src="$util.getConnectionTypeDialogImg('rest api')"
-            />
-            <div class="flex-fill ml-2">
-              <div class="flex justify-content-between">
-                <span class="font-color-normal fw-sub fs-6">{{ item.name }}</span>
+          <template v-if="item.type === 'service'">
+            <div class="item__header flex p-3">
+              <ElImage
+                style="width: 20px; height: 20px"
+                class="item__icon mt-1 flex-shrink-0"
+                :src="$util.getConnectionTypeDialogImg('rest api')"
+              />
+              <div class="flex-fill ml-2">
+                <div class="flex justify-content-between">
+                  <span class="font-color-normal fw-sub fs-6">{{ item.name }}</span>
+                </div>
+                <div class="mt-2 font-color-light">A set of APIs for 3rd party integration with Tapdata Cloud</div>
               </div>
-              <div class="mt-2 font-color-light">A set of APIs for 3rd party integration with Tapdata Cloud</div>
             </div>
-          </div>
+            <div class="item__content position-relative p-2">
+              <div class="task-list">
+                <div class="task-list-content">
+                  <div v-for="api in item.apiList" key="{i}" class="task-list-item flex align-center">
+                    <div class="p-1 ellipsis flex-1 align-center">
+                      <a class="el-link el-link--primary w-100 justify-content-start" title="{task.name}">
+                        <span class="ellipsis">{{ api.name }}</span>
+                      </a>
+                    </div>
+                    <div class="p-1">
+                      <span class="status-block status-active">已发布</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
           <template v-else>
             <div class="item__header flex p-3">
               <NodeIcon :node="item" :size="20" class="item__icon mt-1" />
@@ -207,22 +225,51 @@ export default {
         {
           id: 'Product Catalog',
           name: 'Product Catalog',
-          type: 'service'
+          type: 'service',
+          apiList: [
+            {
+              name: 'API_ProductInventory'
+            },
+            {
+              name: 'API_IM_STATIC_REF'
+            }
+          ]
         },
         {
           id: 'Discount',
           name: 'Discount',
-          type: 'service'
+          type: 'service',
+          apiList: [
+            {
+              name: 'API_bomCertificate'
+            }
+          ]
         },
         {
           id: '业绩宝',
           name: '业绩宝',
-          type: 'service'
+          type: 'service',
+          apiList: [
+            {
+              name: 'API_marketingKeyword'
+            },
+            {
+              name: 'API_PC_refinement'
+            },
+            {
+              name: 'API_modelPriceGroup'
+            }
+          ]
         },
         {
           id: 'POSS',
           name: 'POSS',
-          type: 'service'
+          type: 'service',
+          apiList: [
+            {
+              name: 'API_pos'
+            }
+          ]
         }
       ].concat(res.items)
     },
