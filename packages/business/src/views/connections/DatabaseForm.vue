@@ -972,11 +972,13 @@ export default {
       })
     },
     async setConnectionConfig() {
-      const { connectionConfig } = this.$route.query || {}
+      const { connectionConfig, pdkHash } = this.$route.query || {}
       if (connectionConfig) {
         const params = {
-          connectionConfig: connectionConfig,
-          type: 'OAuth'
+          pdkHash,
+          connectionConfig: JSON.parse(connectionConfig),
+          command: 'OAuth',
+          type: 'connection'
         }
         const res = proxyApi.command(params)
         const { __TAPDATA, __TAPDATA_CONFIG = {}, ...trace } = res || JSON.parse(connectionConfig) || {}
