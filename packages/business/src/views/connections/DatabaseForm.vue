@@ -912,17 +912,15 @@ export default {
             params: routeParams
           })
 
-          this.schemaFormInstance?.validate().then(async () => {
-            const { __TAPDATA, ...__TAPDATA_CONFIG } = this.$refs.schemaToForm?.getFormValues?.() || {}
-            const data = Object.assign({}, params, {
-              url: location.origin + location.pathname + routeUrl.href,
-              connectionConfig: {
-                __TAPDATA,
-                __TAPDATA_CONFIG
-              }
-            })
-            submitForm(params?.target, data)
+          const { __TAPDATA, ...__TAPDATA_CONFIG } = this.$refs.schemaToForm?.getFormValues?.() || {}
+          const data = Object.assign({}, params, {
+            url: location.origin + location.pathname + routeUrl.href,
+            connectionConfig: {
+              __TAPDATA,
+              __TAPDATA_CONFIG
+            }
           })
+          submitForm(params?.target, data)
         }
       }
       this.schemaData = result
