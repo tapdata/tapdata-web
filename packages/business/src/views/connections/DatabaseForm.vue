@@ -980,7 +980,7 @@ export default {
           command: 'OAuth',
           type: 'connection'
         }
-        const res = proxyApi.command(params)
+        const res = await proxyApi.command(params)
         const { __TAPDATA, __TAPDATA_CONFIG = {}, ...trace } = res || JSON.parse(connectionConfig) || {}
         Object.assign(
           this.model,
