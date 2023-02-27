@@ -769,7 +769,7 @@ export default {
         }
       }
       if (id) {
-        this.getPdkData(id)
+        await this.getPdkData(id)
         delete result.properties.START.properties.__TAPDATA.properties.name
       }
 
@@ -944,8 +944,8 @@ export default {
       this.schemaData = result
       this.loadingFrom = false
     },
-    getPdkData(id) {
-      connectionsApi.getNoSchema(id).then(data => {
+    async getPdkData(id) {
+      await connectionsApi.getNoSchema(id).then(data => {
         this.model = data
         let {
           name,
