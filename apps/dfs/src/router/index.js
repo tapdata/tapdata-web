@@ -427,6 +427,12 @@ const routes = [
     path: '/node/editor/:id',
     name: 'NodeEditor',
     component: NodeEditor
+  },
+  //云市场对接
+  {
+    path: '/aliyun-market/license',
+    name: 'aliyunMarketLicense',
+    component: () => import('../views/aliyun-market/License.vue')
   }
 ]
 if (process.env.NODE_ENV === 'development') {

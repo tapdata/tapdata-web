@@ -50,6 +50,7 @@
     <AgentGuideDialog :visible.sync="agentGuideDialog" @openAgentDownload="openAgentDownload"></AgentGuideDialog>
     <AgentDownloadModal :visible.sync="agentDownload.visible" :source="agentDownload.data"></AgentDownloadModal>
     <BindPhone :visible.sync="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>
+    <CheckLicense :visible.sync="aliyunMaketVisible" :user="userInfo"></CheckLicense>
   </ElContainer>
 </template>
 
@@ -62,6 +63,7 @@ import ConnectionTypeDialog from '@/components/ConnectionTypeDialog'
 import AgentDownloadModal from '@/views/agent-download/AgentDownloadModal'
 import AgentGuideDialog from '@/views/agent-download/AgentGuideDialog'
 import BindPhone from '@/views/user/components/BindPhone'
+import CheckLicense from '@/views/aliyun-market/CheckLicnese'
 import { buried } from '@/plugins/buried'
 import Cookie from '@tap/shared/src/cookie'
 
@@ -74,7 +76,8 @@ export default {
     AgentDownloadModal,
     AgentGuideDialog,
     BindPhone,
-    PageHeader
+    PageHeader,
+    CheckLicense
   },
   data() {
     const $t = this.$t.bind(this)
@@ -137,7 +140,11 @@ export default {
       },
       bindPhoneVisible: false,
       agentGuideDialog: false,
-      showAgentWarning: false
+      showAgentWarning: false,
+
+      //云市场
+      aliyunMaketVisible: false,
+      userInfo: ''
     }
   },
   created() {
@@ -172,9 +179,14 @@ export default {
   mounted() {
     //获取cookie 是否用户有操作过 稍后部署 且缓存是当前用户 不在弹窗
     let user = window.__USER_INFO__
+    this.userInfo = user
     let isCurrentUser = Cookie.get('deployLaterUser') === user?.userId
     if (Cookie.get('deployLater') == 1 && isCurrentUser) return
     this.checkDialogState()
+    //检查是云市场用户授权码有效期
+    if (user?.enableLicense) {
+      this.checkLicense(user)
+    }
   },
   beforeDestroy() {
     clearTimeout(this.loopLoadAgentCountTimer)
@@ -229,6 +241,10 @@ export default {
     // 检查微信用户，是否绑定手机号
     checkWechatPhone() {
       let user = window.__USER_INFO__
+      if (window.__config__?.disabledBindingPhone) {
+        //海外版不强制绑定手机号
+        return
+      }
       this.bindPhoneVisible = user?.registerSource === 'social:wechatmp-qrcode' && !user?.telephone
       return this.bindPhoneVisible
     },
@@ -328,6 +344,22 @@ export default {
             this.loopLoadAgentCount()
           }, 10000)
         })
+    },
+    //检查云市场用户授权码是否过期
+    checkLicense(user) {
+      /*
+       * 1. licenseValid有效 且 nearExpiration 不临近过期 正常使用
+       * 2. licenseValid有效 且 nearExpiration 临近过期 提醒用户延长有效期
+       * 3.  licenseValid有效 且 nearExpiration 临近过期 且 licenseStatus 过期  强制不可以使用并提醒用户延长有效期
+       * */
+
+      //是否有临近过期授权码
+      var licenseCodes = user?.licenseCodes || []
+      let verify = licenseCodes.filter(it => it.nearExpiration)
+      if (user?.licenseValid && verify.length === 0) {
+        return
+      }
+      this.aliyunMaketVisible = true
     }
   }
 }

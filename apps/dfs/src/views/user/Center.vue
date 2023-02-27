@@ -169,6 +169,30 @@
         </ElRow>
       </div>
     </div>
+
+    <section v-if="userData.enableLicense">
+      <div class="mt-12 fs-7">授权码信息</div>
+      <ElDivider class="my-6"></ElDivider>
+      <ul>
+        <li v-for="(item, index) in userData.licenseCodes" :key="index">
+          <el-row
+            ><el-col><span>授权码: </span>{{ item.licenseCode }}</el-col></el-row
+          >
+          <el-row class="mt-2">
+            <el-col :span="12"><span>激活时间： </span>{{ item.activateTime }}</el-col>
+            <el-col :span="12"><span>过期时间： </span>{{ item.expiredTime }}</el-col>
+          </el-row>
+        </li>
+      </ul>
+      <div v-if="userData.enableLicense.length > 0" style="margin-left: 100px">
+        <el-link type="primary" href="https://market.console.aliyun.com/imageconsole/index.htm" target="_blank"
+          >续费</el-link
+        >
+        <el-link class="ml-4" type="primary" href="https://market.console.aliyun.com/receipt/index.htm" target="_blank"
+          >开发票</el-link
+        >
+      </div>
+    </section>
     <ElDialog
       width="435px"
       append-to-body
@@ -470,6 +494,7 @@ import VerificationCode from '@/components/VerificationCode'
 import UploadFile from '@/components/UploadFile'
 import { urlToBase64 } from '@/util'
 import CryptoJS from 'crypto-js'
+import dayjs from 'dayjs'
 
 export default {
   name: 'Center',
@@ -482,7 +507,9 @@ export default {
         avatar: '',
         telephone: '',
         wx: '',
-        email: ''
+        email: '',
+        enableLicense: false,
+        licenseCodes: []
       },
       nameForm: {
         nickname: ''
@@ -547,6 +574,7 @@ export default {
       for (let key in userData) {
         userData[key] = window.__USER_INFO__[key]
       }
+
       userData.avatar = window.__USER_INFO__.avatar
       this.avatar = userData.avatar
       this.getEnterprise()
@@ -555,6 +583,12 @@ export default {
       this.resetPhoneForm()
       this.resetEmailForm()
       nameForm.nickname = userData.nickname
+
+      userData.licenseCodes = userData.licenseCodes.map(item => {
+        item.activateTime = item.activateTime ? dayjs(item.activateTime).format('YYYY-MM-DD HH:mm:ss') : ''
+        item.expiredTime = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD HH:mm:ss') : ''
+        return item
+      })
     },
     getEnterprise() {
       this.$axios.get('tm/api/Customer').then(data => {
