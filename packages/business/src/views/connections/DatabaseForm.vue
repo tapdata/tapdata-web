@@ -773,23 +773,7 @@ export default {
         delete result.properties.START.properties.__TAPDATA.properties.name
       }
 
-      const { connectionConfig } = this.$route.query || {}
-      if (connectionConfig) {
-        const { __TAPDATA, __TAPDATA_CONFIG = {}, ...trace } = JSON.parse(connectionConfig) || {}
-        Object.assign(
-          this.model,
-          __TAPDATA,
-          {
-            config: __TAPDATA_CONFIG
-          },
-          trace
-        )
-        this.schemaFormInstance.setValues({
-          __TAPDATA,
-          ...__TAPDATA_CONFIG,
-          ...trace
-        })
-      }
+      this.setConnectionConfig()
 
       this.schemaScope = {
         isEdit: !!id,
@@ -988,6 +972,30 @@ export default {
       pdkApi.doc(pdkHash).then(res => {
         this.doc = res?.data
       })
+    },
+    async setConnectionConfig() {
+      const { connectionConfig } = this.$route.query || {}
+      if (connectionConfig) {
+        const params = {
+          connectionConfig: connectionConfig,
+          type: 'OAuth'
+        }
+        const res = proxyApi.command(params)
+        const { __TAPDATA, __TAPDATA_CONFIG = {}, ...trace } = res || JSON.parse(connectionConfig) || {}
+        Object.assign(
+          this.model,
+          __TAPDATA,
+          {
+            config: __TAPDATA_CONFIG
+          },
+          trace
+        )
+        this.schemaFormInstance.setValues({
+          __TAPDATA,
+          ...__TAPDATA_CONFIG,
+          ...trace
+        })
+      }
     }
   }
 }
