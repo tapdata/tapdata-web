@@ -1,4 +1,15 @@
 export default {
+  // commonly used
+  public_name: 'Name',
+  public_type: 'Type',
+  public_title: 'Title',
+  public_description: 'Description',
+  public_version: 'Version',
+  public_operation: 'Operation',
+  public_create_time: 'Create time',
+  public_creator: 'Creator',
+  public_update_time: 'update time',
+  public_change_time: 'modification time',
   // state
   public_status_ready: 'Valid',
   public_status_invalid: 'Invalid',
@@ -68,17 +79,6 @@ export default {
   public_message_network_unconnected: 'The network connection is abnormal',
   public_message_network_connected: 'The network has been restored',
   public_message_request_timeout: 'Request timeout',
-  // list
-  public_table_operation: 'Operation',
-  public_table_create_time: 'Create time',
-  public_table_creator: 'Creator',
-  public_table_update_time: 'update time',
-  public_table_change_time: 'modification time',
-  public_table_name: 'Name',
-  public_table_type: 'Type',
-  public_table_title: 'Title',
-  public_table_description: 'Description',
-  public_table_version: 'Version',
   // drop-down list
   public_select_placeholder: 'Please select',
   public_select_option_all: 'All',
@@ -158,12 +158,12 @@ export default {
   public_task_max_incremental_delay: 'Maximum incremental delay',
   public_task_heartbeat_time: 'Task heartbeat time',
   public_task_mission_error: 'Task error',
-  // task-node
-  public_task_node_name: 'node name',
-  public_task_node_type: 'node type',
-  public_task_node_source: 'source node',
-  public_task_node_processor: 'processing node',
-  public_task_node_target: 'target node',
+  // node
+  public_node_name: 'node name',
+  public_node_type: 'node type',
+  public_node_source: 'source node',
+  public_node_processor: 'processing node',
+  public_node_target: 'target node',
   // task event
   public_event_incremental_delay: 'Incremental delay',
   public_event_total_input: 'Total input',

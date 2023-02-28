@@ -1,4 +1,15 @@
 export default {
+  // 常用
+  public_name: '名称',
+  public_type: '类型',
+  public_title: '标题',
+  public_description: '描述',
+  public_version: '版本',
+  public_operation: '操作',
+  public_create_time: '创建时间',
+  public_creator: '创建人',
+  public_update_time: '更新时间',
+  public_change_time: '修改时间',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '无效',
@@ -68,17 +79,6 @@ export default {
   public_message_network_unconnected: '网络连接异常',
   public_message_network_connected: '网络已恢复',
   public_message_request_timeout: '请求超时',
-  // 列表
-  public_table_operation: '操作',
-  public_table_create_time: '创建时间',
-  public_table_creator: '创建人',
-  public_table_update_time: '更新时间',
-  public_table_change_time: '修改时间',
-  public_table_name: '名称',
-  public_table_type: '类型',
-  public_table_title: '标题',
-  public_table_description: '描述',
-  public_table_version: '版本',
   // 下拉列表
   public_select_placeholder: '请选择',
   public_select_option_all: '全部',
@@ -158,12 +158,12 @@ export default {
   public_task_max_incremental_delay: '最大增量延迟',
   public_task_heartbeat_time: '任务心跳时间',
   public_task_mission_error: '任务出错',
-  // 任务-节点
-  public_task_node_name: '节点名称',
-  public_task_node_type: '节点类型',
-  public_task_node_source: '源节点',
-  public_task_node_processor: '处理节点',
-  public_task_node_target: '目标节点',
+  // 节点
+  public_node_name: '节点名称',
+  public_node_type: '节点类型',
+  public_node_source: '源节点',
+  public_node_processor: '处理节点',
+  public_node_target: '目标节点',
   // 任务事件
   public_event_incremental_delay: '增量延迟',
   public_event_total_input: '总输入',
