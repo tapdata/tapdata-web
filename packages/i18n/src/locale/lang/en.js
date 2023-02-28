@@ -126,7 +126,7 @@ export default {
   public_connection_type: 'Connection type',
   public_connection_type_source: 'source',
   public_connection_type_target: 'Target',
-  public_connection_type_source_and_target: 'source and target',
+  public_connection_type_source_and_target: 'Source&Target',
   public_connection_information: 'Connection information',
   public_connection_schema_status: 'Schema status',
   public_connection_schema_status_tip: 'Only when the Schema is loaded can the connection be created normally',
