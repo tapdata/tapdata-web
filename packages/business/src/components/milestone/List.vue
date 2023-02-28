@@ -189,6 +189,12 @@ export default {
         icon: 'warning',
         color: 'color-warning'
       }
+      const errorOpt = {
+        status: 'ERROR',
+        desc: i18n.t('packages_business_status_error'),
+        icon: 'error',
+        color: 'color-danger'
+      }
       result.forEach(el => {
         if (el.key === 'FULL_SYNC') {
           const { snapshotDoneAt } = this.totalData
@@ -213,14 +219,21 @@ export default {
           }
         } else {
           const item = milestone[el.key]
-          if (item?.status === 'FINISH') {
-            Object.assign(el, finishOpt)
-          } else if (item?.status === 'RUNNING') {
-            Object.assign(el, runningOpt, {
-              progress: (item.progress / item.totals) * 100
-            })
-          } else {
-            Object.assign(el, waitingOpt)
+          switch (item?.status) {
+            case 'FINISH':
+              Object.assign(el, finishOpt)
+              break
+            case 'ERROR':
+              Object.assign(el, errorOpt)
+              break
+            case 'RUNNING':
+              Object.assign(el, runningOpt, {
+                progress: (item.progress / item.totals) * 100
+              })
+              break
+            default:
+              Object.assign(el, waitingOpt)
+              break
           }
         }
       })
