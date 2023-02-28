@@ -33,11 +33,9 @@
           size="mini"
           :disabled="disabled"
           @click="save"
-          >{{ $t('packages_component_src_inlineinput_baocun') }}</ElButton
+          >{{ $t('public_button_save') }}</ElButton
         >
-        <ElButton class="inline-input-button" size="mini" @click="cancel">{{
-          $t('packages_component_button_cancel')
-        }}</ElButton>
+        <ElButton class="inline-input-button" size="mini" @click="cancel">{{ $t('public_button_cancel') }}</ElButton>
       </template>
     </span>
   </div>

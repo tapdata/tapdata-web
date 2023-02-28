@@ -21,7 +21,7 @@
         </g>
       </svg>
     </div>
-    <p class="empty-desc">{{ parent.$t('packages_component_dag_dialog_field_mapping_no_data') }}</p>
+    <p class="empty-desc">{{ parent.$t('public_data_no_data') }}</p>
   </div>
 </template>
 
