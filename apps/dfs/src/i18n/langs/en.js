@@ -1291,5 +1291,38 @@ export default {
 
   page_title_custom_node: 'Custom Nodes',
   packages_nodeDesign_custom_node_name_required: 'Please enter the node name',
-  packages_nodeDesign_message_save_ok: 'Save successfully'
+  packages_nodeDesign_message_save_ok: 'Save successfully',
+
+  dfs_aliyun_market_checklicnese_jihuoshouquanma: 'Activation authorization code',
+  dfs_aliyun_market_checklicnese_yanchangshouquanma: 'Extend authorization code validity period',
+  dfs_aliyun_market_checklicnese_xiayiciyanqi: 'Next postponement',
+  dfs_aliyun_market_checklicnese_ninhaimeiyouji:
+    'You have not activated the authorization code, please go to the Aliyun Market to copy the authorization code and activate it on the authorization code activation page',
+  dfs_aliyun_market_checklicnese_weijihuoshouquan: 'Authorization code not activated',
+  dfs_aliyun_market_checklicnese_qingdaoaliyun:
+    'Please go to Aliyun Market to extend the validity period of the authorization code',
+  dfs_aliyun_market_checklicnese_youxiaoqizhi: 'Valid until',
+  dfs_aliyun_market_checklicnese_nindeshouquanma: 'Your authorization code',
+  dfs_aliyun_market_checklicnese_nindeshouquanma2:
+    'Your authorization code has expired, please extend the validity period as soon as possible',
+  dfs_aliyun_market_checklicnese_nindeshouquanma3:
+    'Your authorization code is about to expire, please extend the validity period as soon as possible',
+  dfs_aliyun_market_license_jihuochenggongS: 'Activation is successful, jump to the workbench after 30S',
+  dfs_aliyun_market_license_jihuo: 'Activate',
+  dfs_aliyun_market_license_qianwanggongzuotai: 'Go to the workbench',
+  dfs_aliyun_market_license_shouquanma: 'Authorization Code:',
+  dfs_aliyun_market_license_niantiedaoxiafang: '3. Paste it into the authorization text box below and verify',
+  dfs_aliyun_market_license_chuangjianshouquanma: '2. Create an authorization code and copy it',
+  dfs_aliyun_market_license_dakaialiyun: '1. Open Aliyun Market',
+  dfs_aliyun_market_license_jihuoaliyun: 'Activate Aliyun Market License',
+  dfs_views_error_zuoweidailihuo:
+    'The server used as a proxy or gateway received a bogus response from the next link in the request-response chain. ',
+  dfs_views_error_fuwuqiyudao: 'The server encountered an error that prevents it from servicing the request. ',
+  dfs_views_error_zhaobudaoyemian: 'Page not found',
+  dfs_user_center_kaifapiao: 'Invoicing',
+  dfs_user_center_xufei: 'Renewal',
+  dfs_user_center_guoqishijian: 'Expiration Time: ',
+  dfs_user_center_jihuoshijian: 'Activation Time: ',
+  dfs_user_center_shouquanma: 'Authorization Code: ',
+  dfs_user_center_shouquanmaxinxi: 'Authorization code information'
 }

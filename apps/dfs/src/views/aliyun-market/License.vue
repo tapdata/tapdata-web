@@ -1,23 +1,27 @@
 <template>
   <section class="license-warp flex justify-content-center align-items-center flex-column">
     <main class="main">
-      <header class="header">激活阿里云市场授权码</header>
+      <header class="header">{{ $t('dfs_aliyun_market_license_jihuoaliyun') }}</header>
       <ul class="step mt-4">
-        <li>1. 打开阿里云市场</li>
-        <li>2. 创建授权码并复制</li>
-        <li>3. 粘贴到下方授权文本框并验证</li>
+        <li>{{ $t('dfs_aliyun_market_license_dakaialiyun') }}</li>
+        <li>{{ $t('dfs_aliyun_market_license_chuangjianshouquanma') }}</li>
+        <li>{{ $t('dfs_aliyun_market_license_niantiedaoxiafang') }}</li>
       </ul>
-      <div class="mt-4 mb-2">授权码：</div>
+      <div class="mt-4 mb-2">{{ $t('dfs_aliyun_market_license_shouquanma') }}</div>
       <el-input v-model="licenseCode" type="textarea" rows="6" autofocus></el-input>
-      <el-button v-if="showGoDashboard" class="mt-4 float-end" type="primary" @click="goDashboard"
-        >前往工作台</el-button
-      >
-      <el-button v-else class="mt-4 float-end" type="primary" @click="save">激活</el-button>
+      <el-button v-if="showGoDashboard" class="mt-4 float-end" type="primary" @click="goDashboard">{{
+        $t('dfs_aliyun_market_license_qianwanggongzuotai')
+      }}</el-button>
+      <el-button v-else class="mt-4 float-end" type="primary" @click="save">{{
+        $t('dfs_aliyun_market_license_jihuo')
+      }}</el-button>
     </main>
   </section>
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 export default {
   name: 'License',
   data() {
@@ -34,7 +38,7 @@ export default {
     save() {
       this.$axios.post('api/tcm/aliyun/market/license/activate', { licenseCode: this.licenseCode }).then(data => {
         if (data.licenseStatus === 'ACTIVATED') {
-          this.$message.success('激活成功，30S后跳转到工作台')
+          this.$message.success(i18n.t('dfs_aliyun_market_license_jihuochenggongS'))
           this.showGoDashboard = true
           this.$axios.get('api/tcm/user').then(data => {
             window.__USER_INFO__ = data

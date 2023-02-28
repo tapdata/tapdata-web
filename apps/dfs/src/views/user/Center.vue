@@ -171,31 +171,31 @@
     </div>
 
     <section v-if="userData.enableLicense">
-      <div class="mt-12 fs-7">授权码信息</div>
+      <div class="mt-12 fs-7">{{$t('dfs_user_center_shouquanmaxinxi')}}</div>
       <ElDivider class="my-6"></ElDivider>
       <ul>
         <li v-for="(item, index) in userData.licenseCodes" :key="index">
           <el-row
             ><el-col :span="12"
-              ><span class="enterprise-item__label inline-block">授权码: </span>{{ item.licenseCode }}</el-col
+              ><span class="enterprise-item__label inline-block">{{$t('dfs_user_center_shouquanma')}}</span>{{ item.licenseCode }}</el-col
             ></el-row
           >
           <el-row class="mt-2">
             <el-col :span="12"
-              ><span class="enterprise-item__label inline-block">激活时间： </span>{{ item.activateTime }}</el-col
+              ><span class="enterprise-item__label inline-block">{{$t('dfs_user_center_jihuoshijian')}}</span>{{ item.activateTime }}</el-col
             >
             <el-col :span="12"
-              ><span class="enterprise-item__label inline-block">过期时间： </span>{{ item.expiredTime }}</el-col
+              ><span class="enterprise-item__label inline-block">{{$t('dfs_user_center_guoqishijian')}}</span>{{ item.expiredTime }}</el-col
             >
           </el-row>
         </li>
       </ul>
       <div v-if="userData.licenseCodes.length > 0" class="mt-4" style="margin-left: 100px">
         <el-link type="primary" href="https://market.console.aliyun.com/imageconsole/index.htm" target="_blank"
-          >续费</el-link
+          >{{$t('dfs_user_center_xufei')}}</el-link
         >
         <el-link class="ml-4" type="primary" href="https://market.console.aliyun.com/receipt/index.htm" target="_blank"
-          >开发票</el-link
+          >{{$t('dfs_user_center_kaifapiao')}}</el-link
         >
       </div>
     </section>

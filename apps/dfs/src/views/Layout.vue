@@ -347,20 +347,39 @@ export default {
     },
     //检查云市场用户授权码是否过期
     checkLicense(user) {
-      debugger
-      /*
-       * 1. licenseValid有效 且 nearExpiration 不临近过期 正常使用
-       * 2. licenseValid有效 且 nearExpiration 临近过期 提醒用户延长有效期
-       * 3.  licenseValid有效 且 nearExpiration 临近过期 且 licenseStatus 过期  强制不可以使用并提醒用户延长有效期
-       * */
-
-      //是否有临近过期授权码
+      //未激活
       var licenseCodes = user?.licenseCodes || []
-      let verify = licenseCodes.filter(it => it.nearExpiration)
-      if (user?.licenseValid && verify.length === 0) {
-        return
+      if (!user?.licenseValid && licenseCodes?.length === 0) {
+        //未激活
+        this.aliyunMaketVisible = true
+        this.userInfo = {
+          showNextProcessing: false,
+          licenseType: 'license',
+          nearExpiration: []
+        }
       }
-      this.aliyunMaketVisible = true
+      //是否有临近过期授权码
+      let verify = licenseCodes.filter(it => it.nearExpiration)
+      if (user?.licenseValid && verify?.length > 0) {
+        //授权码可用 存在有临近授权码
+        this.aliyunMaketVisible = true
+        this.userInfo = {
+          showNextProcessing: true,
+          licenseType: 'checkCode',
+          data: verify
+        }
+      }
+      //已过期
+      let expired = licenseCodes.filter(it => it.licenseStatus === 'EXPIRED')
+      if (!user?.licenseValid && expired?.length > 0) {
+        //授权码不可用 存在有临近授权码
+        this.aliyunMaketVisible = true
+        this.userInfo = {
+          showNextProcessing: false,
+          licenseType: 'checkCode',
+          data: expired
+        }
+      }
     }
   }
 }
