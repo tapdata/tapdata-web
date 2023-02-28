@@ -1231,5 +1231,6 @@ export default {
   dfs_user_center_guoqishijian: '过期时间： ',
   dfs_user_center_jihuoshijian: '激活时间： ',
   dfs_user_center_shouquanma: '授权码: ',
-  dfs_user_center_shouquanmaxinxi: '授权码信息'
+  dfs_user_center_shouquanmaxinxi: '授权码信息',
+  dfs_user_center_jijiangguoqi: '即将过期'
 }

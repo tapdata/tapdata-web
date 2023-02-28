@@ -3,26 +3,42 @@
     <section>
       <main v-if="user.licenseType === 'checkCode'">
         <header class="header">
-          {{ user.showNextProcessing ? $t('dfs_aliyun_market_checklicnese_nindeshouquanma3') : $t('dfs_aliyun_market_checklicnese_nindeshouquanma2') }}
+          {{
+            user.showNextProcessing
+              ? $t('dfs_aliyun_market_checklicnese_nindeshouquanma3')
+              : $t('dfs_aliyun_market_checklicnese_nindeshouquanma2')
+          }}
         </header>
         <ul class="step mt-4">
-          <li v-if="user.data[0]">{{$t('dfs_aliyun_market_checklicnese_nindeshouquanma')}}<span>{{ user.data[0].licenseCode }}</span>{{$t('dfs_aliyun_market_checklicnese_youxiaoqizhi')}}<span>{{ user.data[0].expiredTime }}</span>{{$t('dfs_aliyun_market_checklicnese_qingdaoaliyun')}}</li>
+          <li v-if="user.data[0]">
+            {{ $t('dfs_aliyun_market_checklicnese_nindeshouquanma')
+            }}<span class="error">{{ user.data[0].licenseCode }}</span
+            >{{ $t('dfs_aliyun_market_checklicnese_youxiaoqizhi')
+            }}<span class="ml-2 mr-2">{{ user.data[0].expiredTime }}</span
+            >{{ $t('dfs_aliyun_market_checklicnese_qingdaoaliyun') }}
+          </li>
         </ul>
       </main>
       <main v-else>
-        <header class="header">{{$t('dfs_aliyun_market_checklicnese_weijihuoshouquan')}}</header>
+        <header class="header">{{ $t('dfs_aliyun_market_checklicnese_weijihuoshouquan') }}</header>
         <ul class="step mt-4">
-          <li>{{$t('dfs_aliyun_market_checklicnese_ninhaimeiyouji')}}</li>
+          <li>{{ $t('dfs_aliyun_market_checklicnese_ninhaimeiyouji') }}</li>
         </ul>
       </main>
     </section>
     <span slot="footer">
       <div v-if="user.licenseType === 'checkCode'">
-        <el-button class="mt-4" v-if="user.showNextProcessing" @click="visible = false">{{$t('dfs_aliyun_market_checklicnese_xiayiciyanqi')}}</el-button>
-        <el-button class="mt-4" type="primary" @click="goAliyun()">{{$t('dfs_aliyun_market_checklicnese_yanchangshouquanma')}}</el-button>
+        <el-button class="mt-4" v-if="user.showNextProcessing" @click="visible = false">{{
+          $t('dfs_aliyun_market_checklicnese_xiayiciyanqi')
+        }}</el-button>
+        <el-button class="mt-4" type="primary" @click="goAliyun()">{{
+          $t('dfs_aliyun_market_checklicnese_yanchangshouquanma')
+        }}</el-button>
       </div>
       <div v-else>
-        <el-button class="mt-4" type="primary" @click="goLicense()">{{$t('dfs_aliyun_market_checklicnese_jihuoshouquanma')}}</el-button>
+        <el-button class="mt-4" type="primary" @click="goLicense()">{{
+          $t('dfs_aliyun_market_checklicnese_jihuoshouquanma')
+        }}</el-button>
       </div>
     </span>
   </el-dialog>
@@ -71,6 +87,9 @@ export default {
   font-size: 34px;
   font-weight: 500;
   color: map-get($fontColor, dark);
+}
+.error {
+  color: map-get($color, warning);
 }
 .main {
   width: 800px;
