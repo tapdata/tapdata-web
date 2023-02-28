@@ -180,13 +180,13 @@ export default {
     //获取cookie 是否用户有操作过 稍后部署 且缓存是当前用户 不在弹窗
     let user = window.__USER_INFO__
     this.userInfo = user
-    let isCurrentUser = Cookie.get('deployLaterUser') === user?.userId
-    if (Cookie.get('deployLater') == 1 && isCurrentUser) return
-    this.checkDialogState()
     //检查是云市场用户授权码有效期
     if (user?.enableLicense) {
       this.checkLicense(user)
     }
+    let isCurrentUser = Cookie.get('deployLaterUser') === user?.userId
+    if (Cookie.get('deployLater') == 1 && isCurrentUser) return
+    this.checkDialogState()
   },
   beforeDestroy() {
     clearTimeout(this.loopLoadAgentCountTimer)
@@ -347,6 +347,7 @@ export default {
     },
     //检查云市场用户授权码是否过期
     checkLicense(user) {
+      debugger
       /*
        * 1. licenseValid有效 且 nearExpiration 不临近过期 正常使用
        * 2. licenseValid有效 且 nearExpiration 临近过期 提醒用户延长有效期

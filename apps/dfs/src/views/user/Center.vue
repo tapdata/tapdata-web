@@ -176,15 +176,21 @@
       <ul>
         <li v-for="(item, index) in userData.licenseCodes" :key="index">
           <el-row
-            ><el-col><span>授权码: </span>{{ item.licenseCode }}</el-col></el-row
+            ><el-col :span="12"
+              ><span class="enterprise-item__label inline-block">授权码: </span>{{ item.licenseCode }}</el-col
+            ></el-row
           >
           <el-row class="mt-2">
-            <el-col :span="12"><span>激活时间： </span>{{ item.activateTime }}</el-col>
-            <el-col :span="12"><span>过期时间： </span>{{ item.expiredTime }}</el-col>
+            <el-col :span="12"
+              ><span class="enterprise-item__label inline-block">激活时间： </span>{{ item.activateTime }}</el-col
+            >
+            <el-col :span="12"
+              ><span class="enterprise-item__label inline-block">过期时间： </span>{{ item.expiredTime }}</el-col
+            >
           </el-row>
         </li>
       </ul>
-      <div v-if="userData.enableLicense.length > 0" style="margin-left: 100px">
+      <div v-if="userData.licenseCodes.length > 0" class="mt-4" style="margin-left: 100px">
         <el-link type="primary" href="https://market.console.aliyun.com/imageconsole/index.htm" target="_blank"
           >续费</el-link
         >
@@ -926,7 +932,7 @@ export default {
   line-height: 34px;
 }
 .enterprise-item__label {
-  width: 80px;
+  width: 100px;
 }
 .enterprise-item__value {
   width: 240px;
