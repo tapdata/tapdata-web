@@ -29,6 +29,8 @@ export default {
   public_status_error: '错误',
   public_status_failed: '失败',
   public_status_schedule_failed: '调度失败',
+  public_status_renewing: '重置中',
+  public_status_renew_failed: '重置失败',
   // 按钮
   public_button_edit: '编辑',
   public_button_confirm: '确定',

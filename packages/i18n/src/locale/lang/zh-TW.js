@@ -29,6 +29,8 @@ export default {
   public_status_error: '錯誤',
   public_status_failed: '失敗',
   public_status_schedule_failed: '調度失敗',
+  public_status_renewing: '重置中',
+  public_status_renew_failed: '重置失敗',
   // 按鈕
   public_button_edit: '編輯',
   public_button_confirm: '確定',
