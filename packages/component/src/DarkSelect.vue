@@ -27,7 +27,7 @@ export default {
     label: {
       type: String,
       default: () => {
-        return i18n.t('packages_component_src_darkselect_biaoti')
+        return i18n.t('public_title')
       }
     },
     items: {

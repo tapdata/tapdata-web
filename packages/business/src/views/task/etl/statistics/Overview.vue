@@ -7,7 +7,9 @@
           <span>{{ $t('packages_business_task_info_table_number') }} : {{ totalDataText }}</span>
           <span class="ml-3">{{ $t('packages_business_task_info_completed') }} : {{ info.finishNumber || 0 }}</span>
         </div>
-        <div v-if="info.progress !== 100">{{ $t('packages_business_task_monitor_full_completion_time') }}：{{ finishDurationText }}</div>
+        <div v-if="info.progress !== 100">
+          {{ $t('packages_business_task_monitor_full_completion_time') }}：{{ finishDurationText }}
+        </div>
         <div v-else>{{ $t('packages_business_task_info_fully_completed') }}</div>
       </div>
       <ElProgress color="#2C65FF" :percentage="info.progress" :show-text="false"></ElProgress>

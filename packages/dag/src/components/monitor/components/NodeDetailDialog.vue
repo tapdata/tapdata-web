@@ -21,7 +21,7 @@
       </div>
       <TimeSelect :value="period" :range="$attrs.range" class="ml-4" @change="changeTimeSelect"></TimeSelect>
       <Frequency :range="$attrs.range" @change="changeFrequency"></Frequency>
-      <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_components_nodedetaildialog_shuaxin')">
+      <ElTooltip transition="tooltip-fade-in" :content="$t('public_button_refresh')">
         <VIcon class="color-primary" @click="init">refresh</VIcon>
       </ElTooltip>
     </div>
@@ -55,7 +55,7 @@
               </ElTooltip>
             </div>
             <div class="mb-4 flex align-items-center">
-              <span class="mr-2">{{ $t('packages_dag_components_nodedetaildialog_quanliangtongbujin') }}</span>
+              <span class="mr-2">{{ $t('public_task_full_sync_progress') }}</span>
               <ElProgress
                 class="flex-1 my-2"
                 :show-text="false"
@@ -252,10 +252,7 @@ export default {
       const { time = [] } = this.quota
       return {
         x: time,
-        name: [
-          i18n.t('packages_dag_components_nodedetaildialog_shuru'),
-          i18n.t('packages_dag_components_nodedetaildialog_shuchu')
-        ],
+        name: [i18n.t('public_time_input'), i18n.t('public_time_output')],
         value: [qps || inputQps, qps || outputQps]
       }
     },

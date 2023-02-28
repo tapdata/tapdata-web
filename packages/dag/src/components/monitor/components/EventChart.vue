@@ -8,12 +8,12 @@
       <ElTooltip transition="tooltip-fade-in" :content="total.input.toLocaleString()">
         <span class="font-color-normal fw-bold fs-3 din-font">{{ calcUnit(total.input) }}</span>
       </ElTooltip>
-      <span class="ml-2">{{ $t('packages_dag_components_eventchart_zongshuru') }}</span>
+      <span class="ml-2">{{ $t('public_event_total_input') }}</span>
       <ElDivider direction="vertical" class="divider mx-4"></ElDivider>
       <ElTooltip transition="tooltip-fade-in" :content="total.output.toLocaleString()">
         <span class="font-color-normal fw-bold fs-3 din-font">{{ calcUnit(total.output) }}</span>
       </ElTooltip>
-      <span class="ml-2">{{ $t('packages_dag_components_eventchart_zongshuchu') }}</span>
+      <span class="ml-2">{{ $t('public_event_total_output') }}</span>
     </div>
     <Chart :extend="options" :style="{ height }"></Chart>
   </div>
@@ -35,10 +35,7 @@ export default {
     },
     yData: {
       type: Array,
-      default: () => [
-        i18n.t('packages_dag_components_eventchart_zongshuru'),
-        i18n.t('packages_dag_components_eventchart_zongshuchu')
-      ]
+      default: () => [i18n.t('public_event_total_input'), i18n.t('public_event_total_output')]
     },
     height: {
       type: String,
@@ -152,17 +149,17 @@ export default {
       this.total.output = eval(Object.values(outData).join('+'))
       let arr = [
         {
-          label: i18n.t('packages_dag_components_eventchart_charu'),
+          label: i18n.t('public_event_insert'),
           key: 'InsertTotal',
           color: '#88DBDA'
         },
         {
-          label: i18n.t('packages_dag_components_eventchart_gengxin'),
+          label: i18n.t('public_event_update'),
           key: 'UpdateTotal',
           color: '#6ACA26'
         },
         {
-          label: i18n.t('packages_dag_button_delete'),
+          label: i18n.t('public_button_delete'),
           key: 'DeleteTotal',
           color: '#FDD746'
         },

@@ -3,7 +3,7 @@
     <ShadowSvg></ShadowSvg>
     <div class="hotkey-list user-select-none">
       <div>
-        <span class="mr-2">{{ $t('packages_dag_components_paperempty_fuzhi') }}</span>
+        <span class="mr-2">{{ $t('public_button_copy') }}</span>
         <kbd>⌘</kbd><span class="mx-1">+</span><kbd>C</kbd>
         <span class="mx-2">/</span>
         <span class="mr-2">{{ $t('packages_dag_components_paperempty_zhantie') }}</span>
@@ -11,7 +11,7 @@
       </div>
 
       <div>
-        <span class="mr-2">{{ $t('packages_dag_button_undo') }}</span>
+        <span class="mr-2">{{ $t('public_button_revoke') }}</span>
         <kbd>⌘</kbd><span class="mx-1">+</span><kbd>Z</kbd>
         <span class="mx-2">/</span>
         <span class="mr-2">{{ $t('packages_dag_button_redo') }}</span>
@@ -44,7 +44,7 @@
       </div>
 
       <div>
-        <span class="mr-2">{{ $t('packages_dag_button_delete') }}</span
+        <span class="mr-2">{{ $t('public_button_delete') }}</span
         ><kbd>⌫</kbd>
       </div>
     </div>

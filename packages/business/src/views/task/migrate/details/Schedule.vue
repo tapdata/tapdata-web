@@ -17,9 +17,7 @@
         <!--  里程碑  -->
         <Milestone :list="milestonesData" :taskStatus="task && task.status" :fold="false"></Milestone>
         <div v-if="currentStep.group === 'cdc'" class="mt-6">
-          <div class="mb-4 fs-7 font-color-dark">
-            {{ currentStep.label }}{{ $t('packages_business_task_info_info') }}
-          </div>
+          <div class="mb-4 fs-7 font-color-dark">{{ currentStep.label }}{{ $t('public_button_details') }}</div>
           <VTable :columns="cdcColumns" :data="list" max-height="300" hide-on-single-page>
             <template slot="operation" slot-scope="scope">
               <ElButton size="mini" type="text" @click="handleClear(scope.row)">{{
@@ -45,9 +43,7 @@
           :status="task.status"
         ></Overview>
         <div v-if="currentStep.group === 'structure'" class="mt-6">
-          <div class="mb-4 fs-7 font-color-dark">
-            {{ currentStep.label }}{{ $t('packages_business_task_info_info') }}
-          </div>
+          <div class="mb-4 fs-7 font-color-dark">{{ currentStep.label }}{{ $t('public_button_details') }}</div>
           <div></div>
           <VTable
             v-if="columns.length"
@@ -64,9 +60,7 @@
           </VTable>
         </div>
         <div v-if="currentStep.group === 'initial_sync'" class="mt-6">
-          <div class="mb-4 fs-7 font-color-dark">
-            {{ currentStep.label }}{{ $t('packages_business_task_info_info') }}
-          </div>
+          <div class="mb-4 fs-7 font-color-dark">{{ currentStep.label }}{{ $t('public_button_details') }}</div>
           <div></div>
           <VTable
             v-if="columns.length"
@@ -111,9 +105,7 @@
           </el-pagination>
         </div>
         <div v-if="currentStep.group === 'cdc'" class="mt-6">
-          <div class="mb-4 fs-7 font-color-dark">
-            {{ currentStep.label }}{{ $t('packages_business_task_info_info') }}
-          </div>
+          <div class="mb-4 fs-7 font-color-dark">{{ currentStep.label }}{{ $t('public_button_details') }}</div>
           <VTable :columns="cdcColumns" :data="list" max-height="300" hide-on-single-page>
             <template slot="operation" slot-scope="scope">
               <ElButton size="mini" type="text" @click="handleClear(scope.row)">{{
@@ -135,7 +127,7 @@
       <Overview :info="syncOverViewData" :status="task.status"></Overview>
       <div v-if="currentStep.group === 'structure'" class="mt-6">
         <div class="mb-4 fs-7 font-color-dark">
-          {{ $t('packages_business_task_info_task_structure') }}{{ $t('packages_business_task_info_info') }}
+          {{ $t('packages_business_task_info_task_structure') }}{{ $t('public_button_details') }}
         </div>
         <div></div>
         <VTable
@@ -154,7 +146,7 @@
       </div>
       <div class="mt-6">
         <div class="mb-4 fs-7 font-color-dark">
-          {{ $t('packages_business_task_setting_initial_sync') }}{{ $t('packages_business_task_info_info') }}
+          {{ $t('public_task_type_initial_sync') }}{{ $t('public_button_details') }}
         </div>
         <VTable
           v-if="columns.length"
@@ -171,7 +163,7 @@
       </div>
       <div class="mt-6">
         <div class="mb-4 fs-7 font-color-dark">
-          {{ $t('packages_business_task_info_task_cdc') }}{{ $t('packages_business_task_info_info') }}
+          {{ $t('packages_business_task_info_task_cdc') }}{{ $t('public_button_details') }}
         </div>
         <VTable :columns="cdcColumns" :data="list" max-height="300" hide-on-single-page></VTable>
       </div>
@@ -185,7 +177,7 @@
       <ElRow>
         <ElRow :span="8" style="margin-bottom: 10px">
           <label>{{ $t('packages_business_statistics_schedule_leixing') }}</label>
-          <ElSelect v-model="syncPointType" :placeholder="$t('packages_business_statistics_schedule_qingxuanze')">
+          <ElSelect v-model="syncPointType" :placeholder="$t('public_select_placeholder')">
             <ElOption v-for="op in options" :key="op.value" :label="op.label" :value="op.value"> </ElOption>
           </ElSelect>
         </ElRow>
@@ -201,10 +193,8 @@
         </ElRow>
       </ElRow>
       <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="handleRollbackClose()">{{ $t('packages_business_button_cancel') }}</ElButton>
-        <ElButton size="mini" type="primary" @click="submitRollBack()">{{
-          $t('packages_business_button_confirm')
-        }}</ElButton>
+        <ElButton size="mini" @click="handleRollbackClose()">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton size="mini" type="primary" @click="submitRollBack()">{{ $t('public_button_confirm') }}</ElButton>
       </span>
     </ElDialog>
   </div>
@@ -266,7 +256,7 @@ export default {
         init: this.$t('packages_business_task_info_task_init'),
         structure: this.$t('packages_business_task_info_task_structure'),
         cdc: this.$t('packages_business_task_info_task_cdc'),
-        initial_sync: this.$t('packages_business_task_setting_initial_sync')
+        initial_sync: this.$t('public_task_type_initial_sync')
       },
       rollbackVisible: false,
       options: [
@@ -427,7 +417,7 @@ export default {
           dataType: 'time'
         },
         {
-          label: this.$t('packages_business_column_operation'),
+          label: this.$t('public_operation'),
           prop: 'operation',
           slotName: 'operation'
         }
@@ -592,17 +582,17 @@ export default {
           }
         }
         if (m === 0 && h === 0 && d === 0 && s < 60 && s > 0) {
-          r = 1 + this.$t('packages_business_taskProgress_m')
+          r = 1 + this.$t('public_time_m')
         }
-        // r = parseInt(s) + this.$t('packages_business_timeToLive_s')
+        // r = parseInt(s) + this.$t('public_time_s')
         if (m > 0) {
-          r = parseInt(m) + this.$t('packages_business_taskProgress_m')
+          r = parseInt(m) + this.$t('public_time_m')
         }
         if (h > 0) {
-          r = parseInt(h) + this.$t('packages_business_taskProgress_h') + r
+          r = parseInt(h) + this.$t('public_time_h') + r
         }
         if (d > 0) {
-          r = parseInt(d) + this.$t('packages_business_taskProgress_d') + r
+          r = parseInt(d) + this.$t('public_time_d') + r
         }
         return r
       }

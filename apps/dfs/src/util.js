@@ -205,7 +205,7 @@ export const errorConfirmFnc = error => {
     iconSize: 18,
     dangerouslyUseHTMLString: true,
     confirmButtonText: i18n.t('confirm_reload_label'),
-    cancelButtonText: i18n.t('button_close')
+    cancelButtonText: i18n.t('public_button_close')
   }).then(flag => {
     if (flag) {
       location.reload()

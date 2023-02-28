@@ -12,7 +12,7 @@
         @focus="handleFocus"
       ></MultiSelection>
       <span v-else :class="['item-value-text', { 'color-danger': !item.source.sortColumn }]">{{
-        item.source.sortColumn || $t('packages_business_statistics_schedule_qingxuanze')
+        item.source.sortColumn || $t('public_select_placeholder')
       }}</span>
       <span class="item-icon"></span>
       <MultiSelection
@@ -24,7 +24,7 @@
         @focus="handleFocus"
       ></MultiSelection>
       <span v-else :class="['item-value-text', { 'color-danger': !item.target.sortColumn }]">{{
-        item.target.sortColumn || $t('packages_business_statistics_schedule_qingxuanze')
+        item.target.sortColumn || $t('public_select_placeholder')
       }}</span>
     </div>
     <div v-if="isEdit" class="setting-item align-items-center mt-4">
@@ -64,9 +64,7 @@
                 :class="['flex-fill', { 'empty-data': !fItem.source }]"
                 :allow-create="sourceDynamicSchema"
                 :placeholder="
-                  sourceDynamicSchema
-                    ? $t('packages_business_select_placeholder')
-                    : $t('packages_business_statistics_schedule_qingxuanze')
+                  sourceDynamicSchema ? $t('packages_business_select_placeholder') : $t('public_select_placeholder')
                 "
                 filterable
                 class="flex-fill"
@@ -84,9 +82,7 @@
                 :class="['flex-fill ml-5', { 'empty-data': !fItem.target }]"
                 :allow-create="targetDynamicSchema"
                 :placeholder="
-                  targetDynamicSchema
-                    ? $t('packages_business_select_placeholder')
-                    : $t('packages_business_statistics_schedule_qingxuanze')
+                  targetDynamicSchema ? $t('packages_business_select_placeholder') : $t('public_select_placeholder')
                 "
                 filterable
                 @change="handleChange"

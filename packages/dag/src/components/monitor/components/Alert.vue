@@ -79,7 +79,7 @@
               type="text"
               :disabled="scope.row.status === 'CLOESE'"
               @click="handleClose(scope.row)"
-              >{{ $t('packages_dag_components_alert_guanbi') }}</ElButton
+              >{{ $t('public_button_close') }}</ElButton
             >
             <ElButton size="mini" type="text" @click="handleLog(scope.row)">{{
               $t('packages_dag_monitor_bottompanel_rizhi')
@@ -168,7 +168,7 @@ export default {
         //   dataType: 'number'
         // },
         {
-          label: i18n.t('packages_dag_components_record_caozuo'),
+          label: i18n.t('public_operation'),
           slotName: 'operation',
           fixed: 'right',
           width: 150
@@ -184,7 +184,7 @@ export default {
     levelItems() {
       let result = [
         {
-          label: i18n.t('packages_dag_components_log_quanbu'),
+          label: i18n.t('public_select_option_all'),
           value: ''
         }
       ]
@@ -200,7 +200,7 @@ export default {
     statusItems() {
       let result = [
         {
-          label: i18n.t('packages_dag_components_log_quanbu'),
+          label: i18n.t('public_select_option_all'),
           value: ''
         }
       ]

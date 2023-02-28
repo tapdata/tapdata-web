@@ -1,7 +1,6 @@
 export default {
   packages_form_el_select_loading: '加載中',
   packages_form_el_select_noMatch: '無匹配資料',
-  packages_form_el_select_noData: '無資料',
   packages_form_el_select_placeholder: '請選擇',
   packages_form_message_exists_name: '名稱已存在',
   packages_form_button_edit: '編輯',

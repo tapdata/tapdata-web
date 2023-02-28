@@ -48,7 +48,7 @@ export class TargetDatabase extends NodeType {
         properties: {
           'attrs.connectionName': {
             type: 'string',
-            title: i18n.t('packages_dag_nodes_database_lianjiemingcheng'),
+            title: i18n.t('public_connection_name'),
             'x-decorator': 'FormItem',
             'x-component': 'PreviewText.Input'
           },
