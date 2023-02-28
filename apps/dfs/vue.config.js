@@ -32,6 +32,10 @@ let pages = {
   index: {
     entry: 'src/pages/main.js',
     title: 'Tapdata Cloud'
+  },
+  license_code_activation: {
+    entry: 'src/pages/licenseCodeActivation.js',
+    title: 'Tapdata Cloud'
   }
 }
 
