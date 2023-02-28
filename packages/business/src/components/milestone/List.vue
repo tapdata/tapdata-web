@@ -183,22 +183,33 @@ export default {
         icon: 'time',
         color: 'color-primary'
       }
+      const stopOpt = {
+        status: 'STOP',
+        desc: i18n.t('packages_business_status_stop'),
+        icon: 'warning',
+        color: 'color-warning'
+      }
       result.forEach(el => {
         if (el.key === 'FULL_SYNC') {
-          const { snapshotTableTotal, snapshotDoneAt } = this.totalData
+          const { snapshotDoneAt } = this.totalData
           if (snapshotDoneAt) {
             Object.assign(el, finishOpt)
-          } else if (!snapshotTableTotal) {
-            Object.assign(el, waitingOpt)
           } else {
-            const { progress, time } = this.getDueTimeAndProgress(this.totalData)
-            Object.assign(el, runningOpt, {
-              progress,
-              desc: i18n.t('packages_business_milestone_list_jinhangzhongpr', {
-                val1: progress,
-                val2: calcTimeUnit(time)
+            if (['running'].includes(this.dataflow.status)) {
+              const { progress, time } = this.getDueTimeAndProgress(this.totalData)
+              const p = progress > 99 ? 99 : progress
+              Object.assign(el, runningOpt, {
+                progress: p,
+                desc: i18n.t('packages_business_milestone_list_jinhangzhongpr', {
+                  val1: p,
+                  val2: calcTimeUnit(time)
+                })
               })
-            })
+            } else if (['error', 'stop'].includes(this.dataflow.status)) {
+              Object.assign(el, stopOpt)
+            } else {
+              Object.assign(el, waitingOpt)
+            }
           }
         } else {
           const item = milestone[el.key]
@@ -311,20 +322,24 @@ export default {
           let { status = 'WAITING' } = t
           let label = ''
           if (el.key === 'BATCH_READ') {
-            const { snapshotTableTotal, snapshotDoneAt } = this.totalData
+            const { snapshotDoneAt } = this.totalData
             if (snapshotDoneAt) {
               status = 'FINISH'
-            } else if (!snapshotTableTotal) {
-              status = 'WAITING'
             } else {
-              status = 'RUNNING'
-              const { progress, time } = this.getDueTimeAndProgress(this.totalData)
-              label =
-                STATUS_MAP[status]?.label +
-                i18n.t('packages_business_milestone_list_progr', {
-                  val1: progress,
-                  val2: calcTimeUnit(time)
-                })
+              if (['running'].includes(this.dataflow.status)) {
+                status = 'RUNNING'
+                const { progress, time } = this.getDueTimeAndProgress(this.totalData)
+                label =
+                  STATUS_MAP[status]?.label +
+                  i18n.t('packages_business_milestone_list_progr', {
+                    val1: progress,
+                    val2: calcTimeUnit(time)
+                  })
+              } else if (['error', 'schedule_failed', 'stop'].includes(this.dataflow.status)) {
+                status = 'STOP'
+              } else {
+                status = 'WAITING'
+              }
             }
           }
           t.statusColor = STATUS_MAP[status]?.color
@@ -353,16 +368,7 @@ export default {
     },
 
     getDueTimeAndProgress(data = {}) {
-      const {
-        tableTotal,
-        snapshotTableTotal,
-        currentSnapshotTableInsertRowTotal,
-        currentSnapshotTableRowTotal,
-        snapshotRowTotal,
-        snapshotInsertRowTotal,
-        snapshotDoneAt,
-        snapshotStartAt
-      } = data
+      const { tableTotal, snapshotTableTotal, snapshotRowTotal, snapshotInsertRowTotal, snapshotStartAt } = data
       const progress = snapshotTableTotal && tableTotal ? Math.round((snapshotTableTotal / tableTotal) * 100) : 0
       const usedTime = Time.now() - snapshotStartAt
       let time
