@@ -73,14 +73,14 @@
         <template #default="{ row }">
           <div>
             <span :class="['status-connection-' + row.status, 'status-block']">
-              {{ row.status ? $t('packages_business_connection_status_' + row.status) : '-' }}
+              {{ getStatus(row.status) }}
             </span>
           </div>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="connection_type" min-width="135" :label="$t('public_connection_type')">
         <template slot-scope="scope">
-          {{ $t('packages_business_connection_type_' + scope.row.connection_type) }}
+          {{ getType(scope.row.connection_type) }}
         </template>
       </ElTableColumn>
       <ElTableColumn min-width="140">
@@ -192,6 +192,7 @@ import DatabaseTypeDialog from './DatabaseTypeDialog'
 import Preview from './Preview'
 import Test from './Test'
 import { defaultModel, verify, getConnectionIcon } from './util'
+import { CONNECTION_STATUS_MAP, CONNECTION_TYPE_MAP } from '@tap/business/src/shared'
 
 let timeout = null
 
@@ -694,6 +695,12 @@ export default {
     },
     isFileSource(row) {
       return ['CSV', 'EXCEL', 'JSON', 'XML'].includes(row?.database_type)
+    },
+    getStatus(status) {
+      return CONNECTION_STATUS_MAP[status]?.text || '-'
+    },
+    getType(type) {
+      return CONNECTION_TYPE_MAP[type]?.text || '-'
     }
   }
 }
