@@ -1,7 +1,6 @@
 export default {
   packages_form_el_select_loading: 'Loading',
   packages_form_el_select_noMatch: 'No matching data',
-  packages_form_el_select_noData: 'No data',
   packages_form_el_select_placeholder: 'Select',
   packages_form_message_exists_name: 'Name already exists',
   packages_form_button_edit: 'Edit',
