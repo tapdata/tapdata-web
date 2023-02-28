@@ -1,9 +1,10 @@
-.discovery-page-wrap{
+.discovery-page-wrap {
   overflow: hidden;
   height: 100%;
 
   .classification {
-    &.expand, .classification-header {
+    &.expand,
+    .classification-header {
       width: 100%;
     }
     .custom-tree-node .table-label {
@@ -11,10 +12,10 @@
     }
   }
 }
-.catalogue-drawer-resource-wrap{
+.catalogue-drawer-resource-wrap {
   padding: 0 24px 24px 24px;
 }
-.discovery-page-main-box{
+.discovery-page-main-box {
   display: flex;
   -ms-flex: 1;
   flex: 1;
@@ -36,11 +37,12 @@
   padding: 20px;
   border-radius: 4px;
 }
-.el-table::before{
+.el-table::before {
   height: 0;
 }
 
-.discovery-page-table,.discovery-page-api-table{
+.discovery-page-table,
+.discovery-page-api-table {
   flex: 1;
   border-bottom: none;
   border-radius: 3px;
@@ -85,8 +87,8 @@
 .table-page-pagination {
   margin-top: 5px;
 }
-.min-h{
-  min-height: calc(100vh - 90px)
+.min-h {
+  min-height: calc(100vh - 90px);
 }
 .catalogue-page-topbar {
   display: flex;
@@ -101,57 +103,57 @@
     text-align: right;
   }
 }
-.object-drawer-wrap{
-  .el-drawer__header{
+.object-drawer-wrap {
+  .el-drawer__header {
     height: 62px;
     color: map-get($fontColor, dark);
     border-bottom: 1px solid map-get($borderColor, light);
     font-size: 14px;
     font-weight: 500;
-    margin-bottom:0;
+    margin-bottom: 0;
     padding-bottom: 10px;
   }
 }
-.discovery-desc{
+.discovery-desc {
   color: map-get($fontColor, slight);
 }
-.discovery-title{
+.discovery-title {
   color: map-get($fontColor, dark);
   font-size: 14px;
   font-weight: 500;
 }
-.discovery-secondary-title{
+.discovery-secondary-title {
   color: map-get($fontColor, light);
   font-size: 12px;
   font-weight: 400;
 }
-.discovery-page-wrap{
+.discovery-page-wrap {
   .page-left {
     width: 300px;
   }
-  .border-right{
+  .border-right {
     border-right: 1px solid map-get($borderColor, light);
   }
-  .el-table th.el-table__cell > .cell{
+  .el-table th.el-table__cell > .cell {
     font-weight: 700;
   }
 
-  .discovery-page-table{
+  .discovery-page-table {
     .el-table__body-wrapper {
       overflow-y: auto;
       overflow-x: hidden;
-      height: calc(100vh - 460px)
+      height: calc(100vh - 460px);
     }
   }
-  .discovery-page-api-table{
+  .discovery-page-api-table {
     .el-table__body-wrapper {
       overflow-y: auto;
       overflow-x: hidden;
-      height: 170px
+      height: 170px;
     }
   }
-  .table-page-container .table-page-body .table-page-topbar{
-    align-items:center;
+  .table-page-container .table-page-body .table-page-topbar {
+    align-items: center;
   }
 }
 .drawer-tabs {

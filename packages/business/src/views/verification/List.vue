@@ -76,7 +76,7 @@
             </template>
             <div v-else-if="scope.row.status === 'error'" class="data-verify__status">
               <i class="data-verify__icon el-icon-error"></i>
-              <span>{{ $t('packages_business_status_error') }}</span>
+              <span>{{ $t('public_status_error') }}</span>
             </div>
             <div v-else-if="scope.row.status !== 'done'" class="data-verify__status">
               <img style="width: 26px; vertical-align: middle" :src="loadingImg" />
@@ -117,7 +117,7 @@
           >
           <ElDivider direction="vertical" v-readonlybtn="'verify_job_edition'"></ElDivider>
           <ElLink type="primary" :disabled="!scope.row.InspectResult" @click="toTableInfo(scope.row.id)">{{
-            $t('packages_business_verification_detailTip')
+            $t('public_button_details')
           }}</ElLink>
           <ElDivider direction="vertical"></ElDivider>
           <ElLink
@@ -143,7 +143,7 @@
                 command="remove"
                 v-readonlybtn="'verify_job_delete'"
                 :disabled="$disabledByPermission('verify_job_delete_all_data', scope.row.user_id)"
-                >{{ $t('packages_business_verification_deleteTip') }}</ElDropdownItem
+                >{{ $t('public_button_delete') }}</ElDropdownItem
               >
             </ElDropdownMenu>
           </ElDropdown>
@@ -364,8 +364,8 @@ export default {
         `${this.$t('packages_business_verification_deleteMessage')} ${name}?`,
         this.$t('packages_business_dataFlow_importantReminder'),
         {
-          confirmButtonText: this.$t('packages_business_button_delete'),
-          cancelButtonText: this.$t('packages_business_button_cancel'),
+          confirmButtonText: this.$t('public_button_delete'),
+          cancelButtonText: this.$t('public_button_cancel'),
           type: 'warning'
         }
       ).then(resFlag => {
@@ -373,7 +373,7 @@ export default {
           return
         }
         inspectApi.delete(id).then(() => {
-          this.$message.success(this.$t('packages_business_message_deleteOK'))
+          this.$message.success(this.$t('public_message_delete_ok'))
           this.table.fetch()
         })
       })

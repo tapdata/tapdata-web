@@ -72,7 +72,7 @@
                 >
                 </AsyncSelect>
                 <span v-else :class="['item-value-text', { 'color-disable': !item.source.connectionId }]">{{
-                  item.source.connectionName || $t('packages_business_statistics_schedule_qingxuanze')
+                  item.source.connectionName || $t('public_select_placeholder')
                 }}</span>
                 <span class="item-icon fs-6">
                   <i class="el-icon-arrow-right"></i>
@@ -91,7 +91,7 @@
                 >
                 </AsyncSelect>
                 <span v-else :class="['item-value-text', { 'color-disable': !item.target.connectionId }]">{{
-                  item.target.connectionName || $t('packages_business_statistics_schedule_qingxuanze')
+                  item.target.connectionName || $t('public_select_placeholder')
                 }}</span>
               </div>
               <div class="setting-item mt-4" :key="'table' + item.id">
@@ -113,7 +113,7 @@
                 >
                 </AsyncSelect>
                 <span v-else :class="['item-value-text', { 'color-disable': !item.source.table }]">{{
-                  item.source.table || $t('packages_business_statistics_schedule_qingxuanze')
+                  item.source.table || $t('public_select_placeholder')
                 }}</span>
                 <span class="item-icon">{{ $t('packages_business_components_conditionbox_mubiaobiao') }}:</span>
                 <AsyncSelect
@@ -133,7 +133,7 @@
                 >
                 </AsyncSelect>
                 <span v-else :class="['item-value-text', { 'color-disable': !item.target.table }]">{{
-                  item.target.table || $t('packages_business_statistics_schedule_qingxuanze')
+                  item.target.table || $t('public_select_placeholder')
                 }}</span>
               </div>
               <FieldBox
@@ -746,7 +746,7 @@ export default {
     removeScript(index) {
       this.$confirm(
         this.$t('packages_business_verification_message_confirm_delete_script'),
-        this.$t('packages_business_button_delete'),
+        this.$t('public_button_delete'),
         {
           type: 'warning'
         }

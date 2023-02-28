@@ -36,7 +36,7 @@
             >
             <NodeIcon v-if="!node.data.isLeaf" :node="node.data" :size="18" class="tree-item-icon mr-2" />
             <div v-else-if="node.data.isEmpty" class="flex align-items-center">
-              <span class="mr-1">{{ $t('packages_business_dag_dialog_field_mapping_no_data') }}</span>
+              <span class="mr-1">{{ $t('public_data_no_data') }}</span>
               <StageButton :connection-id="getConnectionId(node)"> </StageButton>
             </div>
             <VIcon v-else class="tree-item-icon mr-2" size="18">table</VIcon>

@@ -112,11 +112,11 @@ export default {
       loadingSampleData: false,
       columnsPreview: [
         {
-          label: i18n.t('metadata_name'),
+          label: i18n.t('public_name'),
           prop: 'name'
         },
         {
-          label: i18n.t('metadata_type'),
+          label: i18n.t('public_type'),
           prop: 'dataType'
         },
         {
@@ -126,11 +126,11 @@ export default {
       ],
       columns: [
         {
-          label: i18n.t('metadata_name'),
+          label: i18n.t('public_name'),
           prop: 'name'
         },
         {
-          label: i18n.t('metadata_type'),
+          label: i18n.t('public_type'),
           prop: 'dataType'
         },
         {
