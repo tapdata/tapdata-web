@@ -35,7 +35,7 @@
           </div>
           <div v-else class="before-scroll-content text-center font-color-light pb-2">
             <div v-if="isNoMore">{{ $t('packages_business_customer_logs_no_more_data') }}</div>
-            <div v-else-if="!list.length">{{ $t('packages_business_dag_dialog_field_mapping_no_data') }}</div>
+            <div v-else-if="!list.length">{{ $t('public_data_no_data') }}</div>
             <div v-show="preLoading">
               <i class="el-icon-loading"></i>
             </div>

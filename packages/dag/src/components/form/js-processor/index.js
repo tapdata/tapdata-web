@@ -455,7 +455,7 @@ export const JsProcessor = observer(
                   class="js-processor-editor-console border-start"
                 >
                   <ElTabs onInput={onTabChange} class="w-100 flex flex-column">
-                    <ElTabPane label={i18n.t('packages_dag_components_nodedetaildialog_shuchu')}>
+                    <ElTabPane label={i18n.t('public_time_output')}>
                       <div class="js-processor-editor-console-panel h-100 overflow-auto">
                         <div class="js-log-list">
                           {logList.value.length

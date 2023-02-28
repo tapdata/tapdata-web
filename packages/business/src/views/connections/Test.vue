@@ -83,9 +83,7 @@
       <el-button v-if="isTimeout" size="mini" @click="start()">{{
         $t('packages_business_dataForm_test_retryBtn')
       }}</el-button>
-      <el-button size="mini" type="primary" @click="handleClose()">{{
-        $t('packages_business_dataForm_close')
-      }}</el-button>
+      <el-button size="mini" type="primary" @click="handleClose()">{{ $t('public_button_close') }}</el-button>
     </span>
   </el-dialog>
 </template>

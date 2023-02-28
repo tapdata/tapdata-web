@@ -6,11 +6,11 @@
           {{
             params.id
               ? this.$t('packages_business_connection_form_edit_connection')
-              : this.$t('packages_business_connection_form_creat_connection')
+              : this.$t('public_connection_button_create')
           }}
         </div>
         <div class="connection-from-label" v-if="params.id">
-          <label class="label">{{ $t('packages_business_connection_form_connection_name') }}: </label>
+          <label class="label">{{ $t('public_connection_name') }}: </label>
           <div class="content-box">
             <div class="img-box ml-2">
               <img :src="getConnectionIcon()" alt="" />
@@ -44,19 +44,19 @@
               <span class="error" v-if="['invalid'].includes(status)">
                 <VIcon>error</VIcon>
                 <span>
-                  {{ $t('packages_business_connection_status_invalid') }}
+                  {{ $t('public_status_invalid') }}
                 </span>
               </span>
               <span class="success" v-if="['ready'].includes(status)">
                 <i class="el-icon-success"></i>
                 <span>
-                  {{ $t('packages_business_connection_status_ready') }}
+                  {{ $t('public_status_ready') }}
                 </span>
               </span>
               <span class="warning" v-if="['testing'].includes(status)">
                 <i class="el-icon-warning"></i>
                 <span>
-                  {{ $t('packages_business_connection_status_testing') }}
+                  {{ $t('public_status_testing') }}
                 </span>
               </span>
             </span>
@@ -64,12 +64,10 @@
         </div>
         <footer slot="footer" class="footer">
           <div class="footer-btn text-start py-4">
-            <!--            <el-button @click="goBack()">{{ $t('packages_business_button_back') }}</el-button>-->
-            <el-button class="test" @click="startTest()">{{
-              $t('packages_business_connection_list_test_button')
-            }}</el-button>
+            <!--            <el-button @click="goBack()">{{ $t('public_button_back') }}</el-button>-->
+            <el-button class="test" @click="startTest()">{{ $t('public_connection_button_test') }}</el-button>
             <el-button type="primary" :loading="submitBtnLoading" @click="submit()">
-              {{ $t('packages_business_button_save') }}
+              {{ $t('public_button_save') }}
             </el-button>
             <el-button type="primary" :loading="saveAndMoreLoading" @click="saveAndMore">SAVE & ADD MORE</el-button>
           </div>
@@ -93,9 +91,9 @@
         }}</span>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleCancelRename" size="mini">{{ $t('packages_business_button_cancel') }}</el-button>
+        <el-button @click="handleCancelRename" size="mini">{{ $t('public_button_cancel') }}</el-button>
         <el-button @click="submitEdit()" size="mini" type="primary" :loading="editBtnLoading">{{
-          $t('packages_business_button_confirm')
+          $t('public_button_confirm')
         }}</el-button>
       </span>
     </el-dialog>
@@ -137,12 +135,7 @@ export default {
   data() {
     let validateRename = (rule, value, callback) => {
       if (!this.renameData.rename || !this.renameData.rename.trim()) {
-        callback(
-          new Error(
-            this.$t('packages_business_dataForm_form_connectionName') +
-              this.$t('packages_business_formBuilder_noneText')
-          )
-        )
+        callback(new Error(this.$t('public_connection_name') + this.$t('public_form_not_empty')))
       } else if (!checkConnectionName(this.renameData.rename)) {
         callback(new Error(i18n.t('packages_business_connections_databaseform_mingchengguizezhong')))
       } else {
@@ -210,7 +203,7 @@ export default {
 
       this.$confirm(msg, '', {
         confirmButtonText: this.$t('packages_business_connection_form_give_up'),
-        cancelButtonText: this.$t('packages_business_button_cancel'),
+        cancelButtonText: this.$t('public_button_cancel'),
         type: 'warning',
         showClose: false
       }).then(resFlag => {
@@ -276,7 +269,7 @@ export default {
             this.buried('connectionSubmit', '', {
               result: true
             })
-            this.$message.success(this.$t('packages_business_message_saveOK'))
+            this.$message.success(this.$t('public_message_save_ok'))
             this.$emit(addNext ? 'saveAndMore' : 'success', data)
           })
           .catch(() => {
@@ -369,7 +362,7 @@ export default {
                 }
               })
               this.$refs['renameForm'].clearValidate()
-              this.$message.success(this.$t('packages_business_message_save_ok'))
+              this.$message.success(this.$t('public_message_save_ok'))
               this.dialogEditNameVisible = false
             })
             .catch(() => {
@@ -389,22 +382,22 @@ export default {
       }
       let connectionTypeJson = {
         type: 'string',
-        title: this.$t('packages_business_connection_form_connection_type'),
+        title: this.$t('public_connection_type'),
         required: true,
         default: this.pdkOptions.connectionType || 'source_and_target',
         enum: [
           {
-            label: this.$t('packages_business_connection_form_source_and_target'),
+            label: this.$t('public_connection_type_source_and_target'),
             value: 'source_and_target',
             tip: this.$t('packages_business_connection_form_source_and_target_tip')
           },
           {
-            label: this.$t('packages_business_connection_form_source'),
+            label: this.$t('public_connection_type_source'),
             value: 'source',
             tip: this.$t('packages_business_connection_form_source_tip')
           },
           {
-            label: this.$t('packages_business_connection_form_target'),
+            label: this.$t('public_connection_type_target'),
             value: 'target',
             tip: this.$t('packages_business_connection_form_target_tip')
           }
@@ -421,7 +414,7 @@ export default {
       if (this.pdkOptions.connectionType === 'source') {
         connectionTypeJson.enum = [
           {
-            label: this.$t('packages_business_connection_form_source'),
+            label: this.$t('public_connection_type_source'),
             value: 'source',
             tip: this.$t('packages_business_connection_form_source_tip')
           }
@@ -429,7 +422,7 @@ export default {
       } else if (this.pdkOptions.connectionType === 'target') {
         connectionTypeJson.enum = [
           {
-            label: this.$t('packages_business_connection_form_target'),
+            label: this.$t('public_connection_type_target'),
             value: 'target',
             tip: this.$t('packages_business_connection_form_target_tip')
           }
@@ -539,31 +532,31 @@ export default {
               default: 3,
               enum: [
                 {
-                  label: 1 + this.$t('packages_business_share_form_edit_day'),
+                  label: 1 + this.$t('public_time_d'),
                   value: 1
                 },
                 {
-                  label: 2 + this.$t('packages_business_share_form_edit_day'),
+                  label: 2 + this.$t('public_time_d'),
                   value: 2
                 },
                 {
-                  label: 3 + this.$t('packages_business_share_form_edit_day'),
+                  label: 3 + this.$t('public_time_d'),
                   value: 3
                 },
                 {
-                  label: 4 + this.$t('packages_business_share_form_edit_day'),
+                  label: 4 + this.$t('public_time_d'),
                   value: 4
                 },
                 {
-                  label: 5 + this.$t('packages_business_share_form_edit_day'),
+                  label: 5 + this.$t('public_time_d'),
                   value: 5
                 },
                 {
-                  label: 6 + this.$t('packages_business_share_form_edit_day'),
+                  label: 6 + this.$t('public_time_d'),
                   value: 6
                 },
                 {
-                  label: 7 + this.$t('packages_business_share_form_edit_day'),
+                  label: 7 + this.$t('public_time_d'),
                   value: 7
                 }
               ],
@@ -594,7 +587,7 @@ export default {
             'x-component': 'Radio.Group',
             enum: [
               {
-                label: i18n.t('packages_business_select_option_all'),
+                label: i18n.t('public_select_option_all'),
                 value: true
               },
               {
@@ -786,7 +779,7 @@ export default {
                 properties: {
                   name: {
                     type: 'string',
-                    title: this.$t('packages_business_connection_form_connection_name'),
+                    title: this.$t('public_connection_name'),
                     required: true,
                     'x-decorator': 'FormItem',
                     'x-component': 'Input'

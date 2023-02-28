@@ -183,7 +183,7 @@
         </ul>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="showUpgrade = false">{{ $t('button_cancel') }}</el-button>
+        <el-button type="primary" @click="showUpgrade = false">{{ $t('public_button_cancel') }}</el-button>
       </span>
     </el-dialog>
     <PaidUpgradeDialog :visible.sync="paidUpgradeVisible" :paidPlan="paidPlan"></PaidUpgradeDialog>
@@ -211,14 +211,14 @@ export default {
         {
           name: $t('agent_manage'),
           desc: $t('workbench_agent_desc'),
-          btnName: $t('workbench_agent_button_create'),
+          btnName: $t('public_agent_button_create'),
           action: this.createAgent,
           icon: 'dashboard-agent'
         },
         {
           name: $t('connection_manage'),
           desc: $t('workbench_connection_desc'),
-          btnName: $t('workbench_connection_button_create'),
+          btnName: $t('public_connection_button_create'),
           action: this.createConnection,
           icon: 'dashboard-connection'
         },
@@ -238,12 +238,12 @@ export default {
           value: 0,
           list: [
             {
-              label: $t('agent_status_running'),
+              label: $t('public_status_running'),
               value: 0,
               class: 'success'
             },
             {
-              label: $t('agent_status_stopped'),
+              label: $t('public_agent_status_offline'),
               value: 0,
               class: 'error'
             }
@@ -272,15 +272,15 @@ export default {
           value: 0,
           list: [
             {
-              label: $t('task_initial_sync'),
+              label: $t('public_task_type_initial_sync'),
               value: 0
             },
             {
-              label: $t('task_sync_type_cdc'),
+              label: $t('public_task_type_cdc'),
               value: 0
             },
             {
-              label: $t('task_initial_sync_cdc'),
+              label: $t('public_task_type_initial_sync_and_cdc'),
               value: 0
             }
           ]

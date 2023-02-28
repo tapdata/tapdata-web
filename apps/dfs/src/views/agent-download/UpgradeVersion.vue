@@ -44,7 +44,7 @@
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
               >
-                <i class="click-style">{{ $t('agent_deploy_upgrade_button_copy') }}</i>
+                <i class="click-style">{{ $t('public_button_copy') }}</i>
               </span>
             </ElTooltip>
           </div>
@@ -72,7 +72,7 @@
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
               >
-                <i class="click-style">{{ $t('agent_deploy_upgrade_button_copy') }}</i>
+                <i class="click-style">{{ $t('public_button_copy') }}</i>
               </span>
             </ElTooltip>
           </div>
@@ -115,7 +115,7 @@
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
               >
-                <i class="click-style">{{ $t('agent_deploy_upgrade_button_copy') }}</i>
+                <i class="click-style">{{ $t('public_button_copy') }}</i>
               </span>
             </ElTooltip>
           </div>
@@ -156,7 +156,7 @@
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
               >
-                <i class="click-style">{{ $t('agent_deploy_upgrade_button_copy') }}</i>
+                <i class="click-style">{{ $t('public_button_copy') }}</i>
               </span>
             </ElTooltip>
           </div>
@@ -165,7 +165,7 @@
       </div>
     </main>
     <footer class="footer">
-      <ElButton type="primary" @click="goBack()">{{ $t('button_finish') }}</ElButton>
+      <ElButton type="primary" @click="goBack()">{{ $t('public_status_complete') }}</ElButton>
     </footer>
   </section>
 </template>

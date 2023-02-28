@@ -2,11 +2,12 @@ import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 
 import { langKeyMap, getCurrentLanguage } from './shared/util'
+import locale from './locale'
 
 Vue.use(VueI18n)
 const i18n = new VueI18n({
   locale: getCurrentLanguage(),
-  messages: {},
+  messages: locale,
   silentTranslationWarn: true
 })
 

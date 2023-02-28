@@ -198,17 +198,17 @@
               </div>
             </template>
           </ElTableColumn>
-          <ElTableColumn :label="$t('list_operation')" width="80" v-if="!hiddenFieldProcess && !readOnly">
+          <ElTableColumn :label="$t('public_operation')" width="80" v-if="!hiddenFieldProcess && !readOnly">
             <template slot-scope="scope">
               <div v-if="scope.row.notDataTypeSupport">
                 <span>{{ $t('field_mapping_field_mapping_dialog_buZhiChi') }}</span>
               </div>
               <div v-else>
                 <ElLink type="primary" v-if="!scope.row.is_deleted" @click="del(scope.row.t_id, true, scope.row)">
-                  {{ $t('button_delete') }}
+                  {{ $t('public_button_delete') }}
                 </ElLink>
                 <ElLink type="primary" v-else @click="del(scope.row.t_id, false, scope.row)">
-                  {{ $t('task_mapping_table_reduction') }}
+                  {{ $t('public_button_reduction') }}
                 </ElLink>
               </div>
             </template>
@@ -300,8 +300,8 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <ElButton @click="handleClose()">{{ $t('button_cancel') }}</ElButton>
-        <ElButton type="primary" @click="editSave()">{{ $t('button_confirm') }}</ElButton>
+        <ElButton @click="handleClose()">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton type="primary" @click="editSave()">{{ $t('public_button_confirm') }}</ElButton>
       </span>
     </ElDialog>
     <ElDialog
@@ -351,8 +351,8 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="handleTableClose()">{{ $t('button_cancel') }}</ElButton>
-        <ElButton size="mini" type="primary" @click="handleTableNameSave()">{{ $t('button_confirm') }}</ElButton>
+        <ElButton size="mini" @click="handleTableClose()">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton size="mini" type="primary" @click="handleTableNameSave()">{{ $t('public_button_confirm') }}</ElButton>
       </span>
     </ElDialog>
     <ElDialog
@@ -376,8 +376,8 @@
         </ElForm>
       </div>
       <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="handleFieldClose">{{ $t('button_cancel') }}</ElButton>
-        <ElButton size="mini" type="primary" @click="handleFieldSave()">{{ $t('button_confirm') }}</ElButton>
+        <ElButton size="mini" @click="handleFieldClose">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton size="mini" type="primary" @click="handleFieldSave()">{{ $t('public_button_confirm') }}</ElButton>
       </span>
     </ElDialog>
     <ElDialog
@@ -412,13 +412,13 @@
         </ElForm>
       </div>
       <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="changeTableNameForm.visible = false">{{ $t('button_cancel') }}</ElButton>
+        <ElButton size="mini" @click="changeTableNameForm.visible = false">{{ $t('public_button_cancel') }}</ElButton>
         <ElButton
           size="mini"
           type="primary"
           :disabled="changeTableNameForm.new && changeTableNameForm.old === changeTableNameForm.new"
           @click="handleOneTableNameSave()"
-          >{{ $t('button_confirm') }}</ElButton
+          >{{ $t('public_button_confirm') }}</ElButton
         >
       </span>
     </ElDialog>
@@ -464,9 +464,9 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="vikaForm.visible = false">{{ $t('button_cancel') }}</ElButton>
+        <ElButton size="mini" @click="vikaForm.visible = false">{{ $t('public_button_cancel') }}</ElButton>
         <ElButton size="mini" type="primary" :disabled="vikaSaveTableDisabled()" @click="vikaSaveTable()">{{
-          $t('button_confirm')
+          $t('public_button_confirm')
         }}</ElButton>
       </span>
     </ElDialog>
@@ -486,7 +486,7 @@
           <ElCol :span="6">{{ $t('field_mapping_field_mapping_dialog_muBiaoZiDuanLei') }}</ElCol>
           <ElCol :span="4">{{ $t('field_mapping_field_mapping_dialog_changDu') }}</ElCol>
           <ElCol :span="4">{{ $t('field_mapping_field_mapping_dialog_jingDu') }}</ElCol>
-          <ElCol :span="3">{{ $t('list_operation') }}</ElCol>
+          <ElCol :span="3">{{ $t('public_operation') }}</ElCol>
         </ElRow>
         <ElRow v-for="(item, index) in batchFieldTypeForm.list" :key="index" class="mt-4">
           <ElCol :span="7" class="flex">
@@ -569,9 +569,9 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="batchFieldTypeFormCancel">{{ $t('button_cancel') }}</ElButton>
+        <ElButton size="mini" @click="batchFieldTypeFormCancel">{{ $t('public_button_cancel') }}</ElButton>
         <ElButton size="mini" type="primary" :disabled="batchFieldTypeFormDisabled()" @click="batchFieldTypeFormSave">{{
-          $t('button_confirm')
+          $t('public_button_confirm')
         }}</ElButton>
       </span>
     </ElDialog>
@@ -997,10 +997,10 @@ export default {
     },
     /* 恢复默认全部*/
     rollbackAll() {
-      this.$confirm(this.$t('task_mapping_dialog_all_restore_defaults'), this.$t('task_mapping_dialog_hint'), {
+      this.$confirm(this.$t('task_mapping_dialog_all_restore_defaults'), this.$t('public_message_title_prompt'), {
         type: 'warning',
-        confirmButtonText: this.$t('button_confirm'),
-        cancelButtonText: this.$t('button_cancel')
+        confirmButtonText: this.$t('public_button_confirm'),
+        cancelButtonText: this.$t('public_button_cancel')
       }).then(resFlag => {
         if (resFlag) {
           this.form = {
@@ -1097,10 +1097,10 @@ export default {
     },
     /*恢复默认单表*/
     rollbackTable(name, id) {
-      this.$confirm(this.$t('task_mapping_dialog_restore_defaults'), this.$t('task_mapping_dialog_hint'), {
+      this.$confirm(this.$t('task_mapping_dialog_restore_defaults'), this.$t('public_message_title_prompt'), {
         type: 'warning',
-        confirmButtonText: this.$t('button_confirm'),
-        cancelButtonText: this.$t('button_cancel')
+        confirmButtonText: this.$t('public_button_confirm'),
+        cancelButtonText: this.$t('public_button_cancel')
       }).then(resFlag => {
         if (resFlag) {
           this.loadingPage = true

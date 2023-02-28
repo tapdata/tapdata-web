@@ -34,11 +34,11 @@
       <template slot="interval" slot-scope="scope">
         <el-input-number :controls="false" style="width: 100px" v-model="scope.row.interval"></el-input-number>
         <el-select style="width: 100px" class="ml-2" v-model="scope.row.unit">
-          <el-option :label="$t('packages_business_task_info_ms')" value="MS"></el-option>
-          <el-option :label="$t('packages_business_task_info_s')" value="SECOND"></el-option>
-          <el-option :label="$t('packages_business_task_info_m')" value="MINUTE"></el-option>
-          <el-option :label="$t('packages_business_task_info_h')" value="HOUR"></el-option>
-          <el-option :label="$t('packages_business_task_info_d')" value="DAY"></el-option>
+          <el-option :label="$t('public_time_ms')" value="MS"></el-option>
+          <el-option :label="$t('public_time_s')" value="SECOND"></el-option>
+          <el-option :label="$t('public_time_m')" value="MINUTE"></el-option>
+          <el-option :label="$t('public_time_h')" value="HOUR"></el-option>
+          <el-option :label="$t('public_time_d')" value="DAY"></el-option>
           <el-option :label="$t('packages_business_task_info_w')" value="WEEK"></el-option>
         </el-select>
       </template>
@@ -124,7 +124,7 @@
             style="width: 100px"
             v-model="scope.row.point"
           ></el-input-number>
-          <span class="ml-2 mr-2"> {{ $t('packages_business_setting_alarmnotification_gedian') }}</span>
+          <span class="ml-2 mr-2"> {{ $t('public_time_m') }}</span>
           <el-select style="width: 100px" class="mr-2" v-model="scope.row.equalsFlag">
             <el-option label=">=" :value="1"></el-option>
             <el-option label="<=" :value="-1"></el-option>
@@ -159,7 +159,7 @@ export default {
     return {
       columns: [
         {
-          label: i18n.t('packages_business_setting_alarm_notification_describtion'),
+          label: i18n.t('public_description'),
           slotName: 'key'
         },
         {
@@ -256,7 +256,7 @@ export default {
       //合并agent停止时
       let data = [...this.tableData, ...this.currentData]
       settingsApi.saveAlarm(data).then(() => {
-        this.$message.success(i18n.t('packages_business_message_save_ok'))
+        this.$message.success(i18n.t('public_message_save_ok'))
         if (!this.isDaas) {
           this.$emit('updateVisible', false)
         }
@@ -293,7 +293,7 @@ export default {
       })
       alarmRuleApi.save(this.alarmData).then(() => {
         this.alarmRulesVisible = false
-        this.$message.success(this.$t('packages_business_message_save_ok'))
+        this.$message.success(this.$t('public_message_save_ok'))
       })
     },
     handleSettingValue() {

@@ -40,7 +40,7 @@ export class Database extends NodeType {
 
       name: {
         type: 'string',
-        title: i18n.t('packages_dag_nodes_database_jiedianmingcheng'),
+        title: i18n.t('public_node_name'),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input'
@@ -59,7 +59,7 @@ export class Database extends NodeType {
         properties: {
           'attrs.connectionName': {
             type: 'string',
-            title: i18n.t('packages_dag_nodes_database_lianjiemingcheng'),
+            title: i18n.t('public_connection_name'),
             'x-decorator': 'FormItem',
             'x-component': 'PreviewText.Input'
           },

@@ -113,7 +113,7 @@
           <div class="flex align-center flex-1">
             <span class="flex-1 user-select-none">
               <!--处理节点-->
-              {{ $t('packages_dag_dag_processor_node') }}
+              {{ $t('public_node_processor') }}
             </span>
           </div>
         </template>
