@@ -53,14 +53,14 @@
     "vue-echarts": "^6.0.0",
     "vue-json-viewer": "^2.2.15",
     "vue-router": "^4.0.8",
-    "vue-virtual-scroller": "^1.0.10",
+    "vue-virtual-scroller": "2.0.0-beta.8",
     "vuex": "^4.0.2",
     "tiny-emitter": "^2.1.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^5.0.1",
-    "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-plugin-router": "~4.5.0",
+    "@vue/cli-plugin-eslint": "^5.0.1",
+    "@vue/cli-plugin-router": "^5.0.1",
     "@vue/cli-service": "^5.0.1",
     "@vue/eslint-config-prettier": "^6.0.0",
     "ace-builds": "^1.4.13",

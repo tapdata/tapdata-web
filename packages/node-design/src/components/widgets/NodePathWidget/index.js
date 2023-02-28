@@ -12,7 +12,7 @@ import { IconWidget } from '../IconWidget'
 import { NodeTitleWidget } from '../NodeTitleWidget'
 import { observer } from '@formily/reactive-vue'
 import './styles.scss'
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from 'vue'
 
 export const NodePathWidget = observer(
   defineComponent({

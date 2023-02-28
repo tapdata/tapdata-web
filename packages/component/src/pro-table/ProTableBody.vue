@@ -1,13 +1,11 @@
 <script>
-import TableBody from 'element-ui/packages/table/src/table-body'
-import TableRow from 'element-ui/packages/table/src/table-row'
+// import TableBody from 'element-plus/lib/components/table/src/table-body'
 // let TableBody = {}
 // let TableRow = {}
 export default {
   name: 'ProTableBody',
-  extends: TableBody,
+  // extends: TableBody,
 
-  components: { TableRow },
 
   computed: {
     draggable() {

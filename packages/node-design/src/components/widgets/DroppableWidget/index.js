@@ -3,7 +3,7 @@ import { useTreeNode, useNodeIdProps } from '../../../hooks'
 import { NodeTitleWidget } from '../NodeTitleWidget'
 import { NodeActionsWidget } from '../NodeActionsWidget'
 import './styles.scss'
-import { defineComponent, toRefs } from 'vue-demi'
+import { defineComponent, toRefs } from 'vue'
 
 export const DroppableWidget = observer(
   defineComponent({

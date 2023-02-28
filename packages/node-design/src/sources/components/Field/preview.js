@@ -11,7 +11,7 @@ import { observer } from '@formily/reactive-vue'
 import { FormItem } from '@tap/form'
 import { each, reduce } from '@formily/shared'
 import { createBehavior } from '../../../core'
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from 'vue'
 
 import { isArr, isStr } from '@tap/shared'
 import { Container } from '../../../components/common/Container'

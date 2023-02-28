@@ -2,7 +2,7 @@ import { useTree, usePrefix, useDesigner, useComponents } from '../../../hooks'
 import { TreeNodeContext, DesignerComponentsContext } from '../../../context'
 import { GlobalRegistry } from '../../../core'
 import { observer } from '@formily/reactive-vue'
-import { defineComponent, watchEffect } from 'vue-demi'
+import { defineComponent, watchEffect } from 'vue'
 import './styles.scss'
 
 export const TreeNodeWidget = observer(

@@ -1,9 +1,11 @@
 import i18n from '@tap/i18n'
 // elementUI
-import locale from 'element-ui/lib/locale'
-import enLocale from 'element-ui/lib/locale/lang/en'
-import zhLocale from 'element-ui/lib/locale/lang/zh-CN'
-import tcLocale from 'element-ui/lib/locale/lang/zh-TW'
+// import locale from 'element-ui/lib/locale'
+import enLocale from 'element-plus/es/locale/lang/en'
+import zhLocale from 'element-plus/es/locale/lang/zh-cn'
+import tcLocale from 'element-plus/es/locale/lang/zh-tw'
+
+import zhCn from 'element-plus/es/locale/lang/zh-cn'
 // 公共模块
 import componentLangs from '@tap/component/src/locale'
 import dagLangs from '@tap/dag/src/locale'
@@ -25,7 +27,7 @@ const localLangs = {
   en: en
 }
 
-locale.i18n((key, value) => i18n.t(key, value)) // 重点：为了实现element插件的多语言切换
+// locale.i18n((key, value) => i18n.t(key, value)) // 重点：为了实现element插件的多语言切换
 i18n.merge(eleLangs)
 i18n.merge(dagLangs)
 i18n.merge(formLangs)

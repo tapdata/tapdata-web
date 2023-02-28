@@ -1,6 +1,6 @@
 import { WorkspacePanel } from './WorkspacePanel'
 import { Simulator } from '../containers'
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from 'vue'
 export const ViewportPanel = defineComponent({
   setup: (props, { slots }) => {
     return () => (

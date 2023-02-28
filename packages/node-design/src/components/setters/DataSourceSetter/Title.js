@@ -4,7 +4,7 @@ import { usePrefix } from '../../../hooks'
 import { TextWidget, IconWidget } from '../../widgets'
 import { traverseTree } from './shared'
 import './styles.scss'
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from 'vue'
 
 export const Title = observer(
   defineComponent({

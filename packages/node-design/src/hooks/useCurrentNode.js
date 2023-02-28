@@ -1,6 +1,6 @@
 import { useSelected } from './useSelected'
 import { useTree } from './useTree'
-import { computed } from 'vue-demi'
+import { computed } from 'vue'
 
 export const useCurrentNode = (workspaceId) => {
   const selected = useSelected(workspaceId)

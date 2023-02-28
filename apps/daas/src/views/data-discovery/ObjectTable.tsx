@@ -209,7 +209,7 @@ export default defineComponent({
           onSelect-all={this.saveAllTags}
           onSelection-change={this.handleSelectionChange}
         >
-          <template slot="search">
+          <template v-slot:search>
             <FilterBar
               items={this.data.filterItems}
               v-model={this.data.searchParams}

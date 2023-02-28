@@ -5,7 +5,7 @@ import { observable } from '@formily/reactive'
 import { usePrefix } from '../../../hooks'
 import { IconWidget } from '../../widgets'
 import './styles.scss'
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from 'vue'
 import { composeExport } from '@tap/form'
 
 const ExpandedMap = new Map()

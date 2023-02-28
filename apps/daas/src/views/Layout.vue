@@ -89,7 +89,7 @@
           @select="menuHandler"
         >
           <template v-for="menu in menus">
-            <ElSubmenu v-if="menu.children && !menu.hidden" :index="menu.name">
+            <ElSubMenu v-if="menu.children && !menu.hidden" :index="menu.name">
               <template v-slot:title>
                 <VIcon size="16" class="menu-icon">{{ menu.icon }}</VIcon>
                 <template v-slot:title>
@@ -101,7 +101,7 @@
                   <div class="submenu-item">{{ cMenu.label }}</div>
                 </ElMenuItem>
               </template>
-            </ElSubmenu>
+            </ElSubMenu>
             <ElMenuItem v-else-if="!menu.hidden" :index="menu.name">
               <VIcon size="16" class="menu-icon">{{ menu.icon }}</VIcon>
               <template v-slot:title>

@@ -20,7 +20,7 @@
         >
           <div class="img-box inline-flex justify-content-center align-items-center rounded-circle">
             <ElImage v-if="item.pdkType" :src="getPdkIcon(item)">{{ item.pdkType }}</ElImage>
-            <ElImage v-else :src="$util.getConnectionTypeDialogImg(item)" />
+            <!--<ElImage v-else :src="$util.getConnectionTypeDialogImg(item)" />-->
           </div>
           <ElTooltip class="mt-2" effect="dark" :content="item.name" placement="bottom">
             <div class="ellipsis text-center font-color-normal">

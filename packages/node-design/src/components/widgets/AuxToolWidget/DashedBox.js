@@ -1,6 +1,6 @@
 import { useHover, usePrefix, useSelection, useViewport } from '../../../hooks'
 import { observer } from '@formily/reactive-vue'
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from 'vue'
 
 // 组件hover的虚线框
 const DashedBoxComponent = observer(

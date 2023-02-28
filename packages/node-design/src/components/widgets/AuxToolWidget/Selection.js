@@ -12,7 +12,7 @@ import {
 import { observer } from '@formily/reactive-vue'
 import { FragmentComponent } from '@formily/vue'
 import { TranslateHandler } from './TranslateHandler'
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from 'vue'
 
 export const SelectionBox = defineComponent({
   props: ['node', 'showHelpers'],

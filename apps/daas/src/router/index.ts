@@ -1,4 +1,4 @@
-import * as Vue from 'vue'
+import type { RouteRecordRaw } from 'vue-router'
 import * as VueRouter from 'vue-router'
 import { ElMessage as Message } from 'element-plus'
 import routes from './routes'
@@ -8,7 +8,7 @@ import { setPageTitle } from '@tap/shared'
 export default i18n => {
   const router = VueRouter.createRouter({
     history: VueRouter.createWebHashHistory(),
-    routes: routes
+    routes: routes as unknown as RouteRecordRaw[]
   })
 
   router.beforeEach((to, from, next) => {
@@ -50,7 +50,7 @@ export default i18n => {
         next(false)
       }
     } else {
-      if (['login', 'registry', 'passwordReset', 'verificationEmail', 'registyResult'].includes(to.name)) {
+      if (['login', 'registry', 'passwordReset', 'verificationEmail', 'registyResult'].includes(to.name as string)) {
         next()
       } else {
         sessionStorage.setItem('lastLocationHref', location.href)

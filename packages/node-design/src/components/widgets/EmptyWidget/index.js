@@ -2,7 +2,7 @@ import { useTree, usePrefix } from '../../../hooks'
 import { observer } from '@formily/reactive-vue'
 import { IconWidget } from '../IconWidget'
 import './styles.scss'
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from 'vue'
 
 export const EmptyWidget = observer(
   defineComponent({

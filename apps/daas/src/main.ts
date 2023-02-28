@@ -1,7 +1,7 @@
 import '@/styles/app.scss'
 
 import * as Vue from 'vue'
-import App from '@/App.tsx'
+import App from '@/App'
 import store from '@/vuex' // 引入全局数据控制
 import i18n from './i18n'
 import VueClipboard from 'vue-clipboard2'
@@ -11,7 +11,7 @@ import Time from '@tap/shared/src/time'
 import WSClient from '@tap/business/src/shared/ws-client'
 import { VIcon } from '@tap/component'
 import getRouter from '@/router'
-import VConfirm from '@/components/v-confirm'
+// import VConfirm from '@/components/v-confirm'
 import { settingsApi, usersApi, timeStampApi } from '@tap/api'
 import { getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
 import FormBuilder from '@tap/component/src/form-builder'
@@ -19,14 +19,13 @@ import FormBuilder from '@tap/component/src/form-builder'
 import '@/plugins/element'
 import '@/plugins/icon'
 import '@/directives'
-import LoadMore from '@/utils/loadMore'
 
 import '@/plugins/axios.ts'
 import { configUser, getUrlSearch } from '@/utils/util'
 
 window.$vueApp.use(VueClipboard)
-window.$vueApp.use(LoadMore)
 window.$vueApp.use(FormBuilder)
+window.$vueApp.use(i18n)
 
 window.$vueApp.mixin({
   created() {
@@ -55,15 +54,15 @@ window._TAPDATA_OPTIONS_ = {
 }
 
 window.getSettingByKey = key => {
-  let value = ''
+  let value: settingItem['value'] = ''
 
-  let setting = window?.__settings__.find(it => it.key === key) || {}
-  value = setting.isArray ? setting.value.split(',') : setting.value
+  let setting: settingItem = window?.__settings__.find(it => it.key === key) || ({} as settingItem)
+  value = setting.isArray ? (setting.value as string).split(',') : setting.value
   return value
 }
 window.$vueApp.config.globalProperties.$getSettingByKey = window.getSettingByKey
 
-window.$vueApp.config.globalProperties.$confirm = (message, title, options) => {
+/*window.$vueApp.config.globalProperties.$confirm = (message, title, options) => {
   return new Promise((resolve, reject) => {
     VConfirm.confirm(
       message,
@@ -85,7 +84,7 @@ window.$vueApp.config.globalProperties.$confirm = (message, title, options) => {
   }).catch(() => {
     return false
   })
-}
+}*/
 
 const IS_IFRAME = (getUrlSearch('frame') || sessionStorage.getItem('IS_IFRAME') || window.self !== window.top) + ''
 if (IS_IFRAME) {
@@ -112,7 +111,7 @@ let init = settings => {
 
   document.title = /*window.getSettingByKey('PRODUCT_TITLE') ||*/ process.env.VUE_APP_PAGE_TITLE || 'Tapdata'
 
-  var loc = window.location,
+  let loc = window.location,
     wsUrl = 'ws:'
   if (loc.protocol === 'https:') {
     wsUrl = 'wss:'
@@ -157,7 +156,7 @@ settingsApi
 //解决浏览器tab切换时，element ui 组件tooltip气泡不消失的问题  #7752
 document.addEventListener('visibilitychange', () => {
   setTimeout(() => {
-    let ele = document.querySelector(':focus')
+    let ele: HTMLElement = document.querySelector(':focus')
     ele && ele.blur()
   }, 50)
 })

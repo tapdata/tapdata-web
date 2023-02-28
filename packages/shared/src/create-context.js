@@ -1,4 +1,4 @@
-import { defineComponent, provide, inject, readonly, ref, toRef } from 'vue-demi'
+import { defineComponent, provide, inject, readonly, ref, toRef } from 'vue'
 
 export const createContext = defaultValue => {
   const injectKey = Symbol()

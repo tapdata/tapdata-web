@@ -9,7 +9,7 @@ import { Header } from './Header'
 import { traverseTree } from './shared'
 import './styles.scss'
 import { GlobalRegistry } from '../../../core'
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from 'vue'
 
 const limitTreeDrag = ({ dropPosition }) => {
   if (dropPosition === 0) {

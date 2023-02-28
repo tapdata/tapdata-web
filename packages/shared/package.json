@@ -10,7 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "requestidlecallback": "^0.3.0",
-    "vue-demi": "^0.12.1"
+    "requestidlecallback": "^0.3.0"
   }
 }

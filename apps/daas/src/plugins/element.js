@@ -1,6 +1,4 @@
 import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
-import * as Vue from 'vue'
-
 import {
   ElCard as Card,
   ElImage as Image,
@@ -19,7 +17,7 @@ import {
   ElMessageBox as MessageBox,
   ElMessage as _Message,
   ElMenu as Menu,
-  ElSubmenu as Submenu,
+  ElSubMenu as SubMenu,
   ElMenuItem as MenuItem,
   ElForm as Form,
   ElFormItem as FormItem,
@@ -70,8 +68,7 @@ import {
   ElBreadcrumbItem as BreadcrumbItem,
   ElEmpty as Empty
 } from 'element-plus'
-import { getCell, getColumnByCell } from 'element-ui/packages/table/src/util'
-import { getStyle, hasClass } from 'element-ui/src/utils/dom'
+import { getCell, getColumnByCell, getStyle, hasClass } from '@tap/shared'
 
 // 组件默认尺寸为small
 window.$vueApp.config.globalProperties.$ELEMENT = { size: 'small' }
@@ -179,7 +176,7 @@ window.$vueApp.component(CheckboxGroup.name, CheckboxGroup)
 window.$vueApp.component(CheckboxButton.name, CheckboxButton)
 window.$vueApp.component(Dialog.name, Dialog)
 window.$vueApp.component(Menu.name, Menu)
-window.$vueApp.component(Submenu.name, Submenu)
+window.$vueApp.component(SubMenu.name, SubMenu)
 window.$vueApp.component(MenuItem.name, MenuItem)
 window.$vueApp.component(Form.name, Form)
 window.$vueApp.component(FormItem.name, FormItem)

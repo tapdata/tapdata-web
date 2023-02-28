@@ -2,7 +2,7 @@ import { observer } from '@formily/reactive-vue'
 import { IconWidget } from '../IconWidget'
 import { useDesigner, usePrefix } from '../../../hooks'
 import { ElButton as Button } from 'element-plus'
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from 'vue'
 
 export const DragHandler = observer(
   defineComponent({

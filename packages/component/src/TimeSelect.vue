@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { $on, $off, $once, $emit } from 'utils/gogocodeTransfer'
+import { $on, $off, $once, $emit } from './utils/gogocodeTransfer'
 import dayjs from 'dayjs'
 
 import i18n from '@tap/i18n'
@@ -297,7 +297,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.time-select__picker{position:relative;::v-deep {
+.time-select__picker {
+  position: relative;
+  ::v-deep {
     .time-select__popper {
       width: 270px;
       min-width: 270px !important;
@@ -321,7 +323,18 @@ export default {
       bottom: 0;
       left: 0;
     }
-  }}.time-select__title{white-space:nowrap;line-height:1.5}.datetime{position:absolute}.is-time{//flex:1;//width:260px}.picker__item{padding:0 4px;border-radius:2px;&:hover {
+  }
+
+  .time-select__title {
+    white-space: nowrap;
+    line-height: 1.5;
+  }
+  .datetime {
+    position: absolute;
+  }
+  .is-time {
+    //flex:1;//width:260px}.picker__item{padding:0 4px;border-radius:2px;&:hover {
     background: #eef3ff;
-  }}
+  }
+}
 </style>

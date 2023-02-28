@@ -255,7 +255,7 @@ export default defineComponent({
             'selection-change': this.handleSelectionChange
           }}
         >
-          <template slot="search">
+          <template v-slot:search>
             <div class="flex flex-row align-items-center mb-2">
               <span class="discovery-title ml-2 mr-2">{i18n.t('metadata_meta_type_directory')}</span>
               <span class="discovery-secondary-title mr-2"> {this.data.currentNode.value} </span>
@@ -267,7 +267,7 @@ export default defineComponent({
               {...{ on: { fetch: this.rest } }}
             ></FilterBar>
           </template>
-          <template slot="operation">
+          <template v-slot:operation>
             {this.data.currentNode.readOnly ? (
               ' '
             ) : (

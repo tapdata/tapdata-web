@@ -4,7 +4,7 @@
     <ElAside class="left-aside" width="220px">
       <ElMenu :default-active="activeMenu" @select="menuTrigger">
         <template v-for="menu in menus">
-          <ElSubmenu v-if="menu.children" :index="menu.name">
+          <ElSubMenu v-if="menu.children" :index="menu.name">
             <template v-slot:title>
               <span class="mr-4" slot v-if="menu.icon"
                 ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
@@ -18,7 +18,7 @@
                 <div class="submenu-item">{{ cMenu.title }}</div>
               </ElMenuItem>
             </template>
-          </ElSubmenu>
+          </ElSubMenu>
           <ElMenuItem v-else :index="menu.path" class="flex align-center">
             <span class="mr-4" v-if="menu.icon"
               ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span

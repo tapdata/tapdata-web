@@ -1,10 +1,7 @@
-import Vue from 'vue'
-import VueI18n from 'vue-i18n'
-
+import { createI18n } from 'vue-i18n'
 import { langKeyMap, getCurrentLanguage } from './shared/util'
 
-Vue.use(VueI18n)
-const i18n = new VueI18n({
+const i18n = createI18n({
   locale: getCurrentLanguage(),
   messages: {},
   silentTranslationWarn: true

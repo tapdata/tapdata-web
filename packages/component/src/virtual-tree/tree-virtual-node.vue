@@ -49,7 +49,7 @@
 
 <script type="text/jsx">
 import * as Vue from 'vue';
-import emitter from 'element-ui/src/mixins/emitter';
+import emitter from './mixin/emitter';
 import mixinNode from './mixin/node';
 
 export default {

@@ -5,7 +5,7 @@ import { IconWidget } from '../../widgets'
 import { usePrefix } from '../../../hooks'
 import { InputItems } from '../InputItems'
 import './styles.scss'
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from 'vue'
 
 export const FlexStyleSetter = observer(
   defineComponent({

@@ -1,6 +1,6 @@
 import { useSelection } from './useSelection'
 import { toJS, observe } from '@formily/reactive'
-import { onBeforeUnmount, ref } from 'vue-demi'
+import { onBeforeUnmount, ref } from 'vue'
 
 export const useSelected = (workspaceId) => {
   const selectionRef = useSelection(workspaceId)

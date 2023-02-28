@@ -11,7 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@formily/core": "^2.0.9",
-    "@formily/element": "^2.0.9",
+    "@formily/element-plus": "1.0.0-beta.8",
     "@formily/path": "^2.0.12",
     "@formily/reactive": "^2.0.9",
     "@formily/reactive-vue": "*",
@@ -26,7 +26,7 @@
     "jsplumb": "^2.15.6",
     "mousetrap": "^1.6.5",
     "resize-observer-polyfill": "^1.5.1",
-    "vue-virtual-scroller": "^1.0.10",
+    "vue-virtual-scroller": "2.0.0-beta.8",
     "vuex": "^3.6.2"
   }
 }

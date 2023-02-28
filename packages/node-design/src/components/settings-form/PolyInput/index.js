@@ -2,7 +2,7 @@ import { ElButton as Button } from 'element-plus'
 import { IconWidget } from '../../widgets'
 import { usePrefix } from '../../../hooks'
 import './styles.scss'
-import { defineComponent, ref, toRefs, watch } from 'vue-demi'
+import { defineComponent, ref, toRefs, watch } from 'vue'
 
 const isValid = val => val !== undefined && val !== null
 

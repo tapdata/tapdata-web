@@ -1,11 +1,11 @@
 <template>
   <el-dialog
     title="需要更多的服务？"
-    v-model="visible"
+    :model-value="visible"
+    @update:modelValue="handleClose"
     :append-to-body="true"
     width="680px"
     custom-class="paid-upgrade-dialog"
-    :before-close="handleClose"
   >
     <span class="paid-upgrade-desc">您使用的是免费版本，目前任务数量已经达到上限，请升级您的服务计划。</span>
     <ul class="flex paid-upgrade-ul mt-4">
@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { $on, $off, $once, $emit } from 'utils/gogocodeTransfer'
+import { $on, $off, $once, $emit } from './utils/gogocodeTransfer'
 export default {
   name: 'PaidUpgradeDialog',
   props: ['visible', 'paidPlan'],
@@ -60,8 +60,8 @@ export default {
         name: 'PaidUpgrade'
       })
     },
-    handleClose() {
-      $emit(this, 'update:visible', false)
+    handleClose(v) {
+      $emit(this, 'update:visible', v)
     }
   },
   emits: ['update:visible']

@@ -1,4 +1,3 @@
-import * as Vue from 'vue'
 import Cookie from '@tap/shared/src/cookie'
 
 window.$vueApp.directive('readonlybtn', {

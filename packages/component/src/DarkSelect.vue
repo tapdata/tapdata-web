@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { $on, $off, $once, $emit } from 'utils/gogocodeTransfer'
+import { $on, $off, $once, $emit } from './utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
 
 export default {

@@ -1,7 +1,7 @@
 import { createForm } from '@formily/core'
 import { Form, SchemaField } from '@tap/form'
 import { transformToSchema } from '../../../core'
-import { defineComponent, computed } from 'vue-demi'
+import { defineComponent, computed } from 'vue'
 
 export const PreviewWidget = defineComponent({
   props: ['tree'],

@@ -1,7 +1,7 @@
 import { useDragon, usePrefix } from '../../../hooks'
 import { ClosestPosition } from '../../../core'
 import { observer } from '@formily/reactive-vue'
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from 'vue'
 
 // 插入导航线
 

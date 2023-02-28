@@ -1,6 +1,5 @@
 const { resolve } = require('path')
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
-const SpeedMeasurePlugin = require('speed-measure-webpack-plugin')
 
 const serveUrlMap = {
   mock: 'http://localhost:30300',
@@ -46,7 +45,7 @@ module.exports = {
     /[/\\]node_modules[/\\](.+?)?element-ui(.*)[/\\]packages[/\\]table[/\\]src/,
     /[/\\]node_modules[/\\](.+?)?element-ui(.*)[/\\]packages[/\\]tooltip[/\\]src/
   ],
-  chainWebpack(config) {
+  /*chainWebpack(config) {
     //  ============ 配置别名 ============
     config.resolve.alias.set('@', resolve('src'))
 
@@ -98,7 +97,7 @@ module.exports = {
             name: 'removeAttrs',
             active: true,
             params: {
-              attrs: ['class', 'p-id' /*, 'fill'*/]
+              attrs: ['class', 'p-id' /!*, 'fill'*!/]
             }
           }
         ]
@@ -142,12 +141,12 @@ module.exports = {
       .loader('babel-loader')
       .end()
 
-    /*console.log('js config :>> ', config.module.rule('js').toConfig())
+    /!*console.log('js config :>> ', config.module.rule('js').toConfig())
     // element-ui 特殊处理
     config.module.rule('js').merge({
       include: [resolve('node_modules/element-ui/packages/table/src/table-body.js')]
-    })*/
-  },
+    })*!/
+  },*/
   configureWebpack: config => {
     // 尽量保证项目中文件后缀的精确
     config.resolve.extensions = ['.js', 'jsx', '.vue', '.json', '.ts', '.tsx']
@@ -159,10 +158,7 @@ module.exports = {
           test: /\.(js|css|svg|woff|ttf|json|html|otf)$/, // 正在匹配需要压缩的文件后缀
           threshold: 10240 // 大于10kb的会压缩
           // 其余配置查看compression-webpack-plugin
-        }),
-
-        // 分析工具
-        new SpeedMeasurePlugin()
+        })
       )
 
       config['performance'] = {

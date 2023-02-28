@@ -1,4 +1,4 @@
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from 'vue'
 
 export const FormContent = defineComponent({
   setup: (props, { slots }) => {

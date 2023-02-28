@@ -1,4 +1,4 @@
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from 'vue'
 import { Highlight } from '@tap/component'
 import 'highlight.js/styles/atom-one-light.css'
 

@@ -1,4 +1,4 @@
-import { defineComponent, ref, nextTick } from 'vue-demi'
+import { defineComponent, ref, nextTick } from 'vue'
 
 export const ClipboardButton = defineComponent({
   props: {

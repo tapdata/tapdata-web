@@ -5,7 +5,7 @@ import { FreeSelection } from './FreeSelection'
 import { Cover } from './Cover'
 import { DashedBox } from './DashedBox'
 import './styles.scss'
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from 'vue'
 
 export const AuxToolWidget = defineComponent({
   setup: (props, { refs }) => {

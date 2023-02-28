@@ -1,4 +1,4 @@
-import { ref } from 'vue-demi'
+import { ref } from 'vue'
 import { requestIdle, cancelIdle } from '@tap/shared'
 import ResizeObserver from 'resize-observer-polyfill'
 import { useViewport } from './useViewport'

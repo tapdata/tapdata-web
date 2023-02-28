@@ -8,7 +8,7 @@ import { DataSettingPanel } from './DataSettingPanel'
 import { TreePanel } from './TreePanel'
 import { transformDataToValue, transformValueToData } from './shared'
 import './styles.scss'
-import { defineComponent, ref, watch } from 'vue-demi'
+import { defineComponent, ref, watch } from 'vue'
 
 export const DataSourceSetter = observer(
   defineComponent({

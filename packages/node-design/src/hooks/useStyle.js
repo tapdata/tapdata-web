@@ -1,5 +1,5 @@
 import { isStr } from '@tap/shared'
-import { getCurrentInstance } from 'vue-demi'
+import { getCurrentInstance } from 'vue'
 
 const css2obj = (css) => {
   const r = /(?<=^|;)\s*([^:]+)\s*:\s*([^;]+)\s*/g,

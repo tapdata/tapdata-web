@@ -1,7 +1,7 @@
 import { useContext } from '@tap/shared'
 import { useDesigner } from './useDesigner'
 import { WorkspaceContext } from '../context'
-import { computed, ref } from 'vue-demi'
+import { computed, ref } from 'vue'
 
 export const useWorkspace = (id) => {
   const designer = useDesigner()

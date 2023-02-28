@@ -162,10 +162,11 @@
 </template>
 
 <script>
-import { CircleClose as ElIconCircleClose } from '@element-plus/icons'import { ElSelect as Select } from 'element-plus'
+import { CircleClose as ElIconCircleClose } from '@element-plus/icons'
+import { ElSelect as Select } from 'element-plus'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-import { getValueByPath } from 'element-ui/lib/utils/util'
+import { getValueByPath } from '@tap/shared'
 
 export default {
   components: {

@@ -1,4 +1,4 @@
-import { computed } from 'vue-demi'
+import { computed } from 'vue'
 import { useWorkspace } from './useWorkspace'
 
 export const useViewport = (workspaceId) => {

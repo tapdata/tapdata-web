@@ -1,4 +1,4 @@
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from 'vue'
 import { VCodeEditor } from '@tap/component'
 
 export const CodeEditorWidget = defineComponent({

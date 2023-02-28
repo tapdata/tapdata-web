@@ -1,6 +1,6 @@
 import { observer } from '@formily/reactive-vue'
 import { FragmentComponent } from '@formily/vue'
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from 'vue'
 
 export const NodeTitleWidget = observer(
   defineComponent({

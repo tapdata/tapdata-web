@@ -1,6 +1,5 @@
 <script>
 import * as Vue from 'vue'
-import bindsAttrs from '../mixins/bindsAttrs'
 
 const SIZE_MAP = {
   xSmall: '12px',

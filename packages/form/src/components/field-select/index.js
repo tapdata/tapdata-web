@@ -1,4 +1,4 @@
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from 'vue'
 import { Select } from '../select'
 import { connect, mapProps, mapReadPretty } from '@formily/vue'
 import { PreviewText } from '@formily/element'

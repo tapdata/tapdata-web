@@ -63,7 +63,7 @@ import {
   ElCheckboxGroup as CheckboxGroup,
   ElSkeleton as Skeleton,
   ElSkeletonItem as SkeletonItem,
-  ElSubmenu as Submenu,
+  ElSubMenu as SubMenu,
   ElInfiniteScroll as InfiniteScroll,
   ElEmpty as Empty
 } from 'element-plus'
@@ -178,7 +178,7 @@ window.$vueApp.use(Tree)
 window.$vueApp.use(CheckboxGroup)
 window.$vueApp.use(Skeleton)
 window.$vueApp.use(SkeletonItem)
-window.$vueApp.use(Submenu)
+window.$vueApp.use(SubMenu)
 window.$vueApp.use(InfiniteScroll)
 window.$vueApp.use(Alert)
 window.$vueApp.use(Empty)

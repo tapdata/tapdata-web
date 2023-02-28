@@ -11,8 +11,8 @@
         <slot :name="item.slotName" :row="scope.row"></slot>
       </template>
       <component
+        v-if="!item.slotName"
         v-bind="getOptions(item)"
-        v-else
         v-model:value="item.value"
         :is="getComponent(item.type)"
         :style="getStyle(item)"

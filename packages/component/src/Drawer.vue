@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { $on, $off, $once, $emit } from 'utils/gogocodeTransfer'
+import { $on, $off, $once, $emit } from './utils/gogocodeTransfer'
 export default {
   name: 'Drawer',
   props: {

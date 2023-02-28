@@ -156,7 +156,7 @@ export default defineComponent({
     return (
       <section class="discovery-page-wrap">
         <TablePage ref="table" row-key="id" remoteMethod={this.loadData}>
-          <template slot="search">
+          <template v-slot:search>
             <FilterBar
               items={this.data.filterItems}
               v-model={this.data.searchParams}

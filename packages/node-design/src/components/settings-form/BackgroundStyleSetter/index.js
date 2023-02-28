@@ -6,7 +6,7 @@ import { ColorInput } from '../ColorInput'
 import { BackgroundSizeInput } from '../SizeInput'
 import { BackgroundImageInput } from '../ImageInput'
 import { InputItems } from '../InputItems'
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from 'vue'
 
 export const BackgroundStyleSetter = observer(
   defineComponent({

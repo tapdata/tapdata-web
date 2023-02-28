@@ -8,7 +8,7 @@ import { usePrefix, useTreeNode, useSelected } from '../../../hooks'
 import { IconWidget } from '../IconWidget'
 import { TextWidget } from '../TextWidget'
 import './styles.scss'
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from 'vue'
 
 export const NodeActionsWidget = observer(
   defineComponent({

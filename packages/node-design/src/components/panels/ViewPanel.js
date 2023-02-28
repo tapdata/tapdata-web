@@ -1,7 +1,7 @@
 import { observer } from '@formily/reactive-vue'
 import { useTree, useWorkbench } from '../../hooks'
 import { Viewport } from '../containers'
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from 'vue'
 
 export const ViewPanel = observer(
   defineComponent({

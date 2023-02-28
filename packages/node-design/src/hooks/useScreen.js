@@ -1,5 +1,5 @@
 import { useDesigner } from './useDesigner'
-import { computed } from 'vue-demi'
+import { computed } from 'vue'
 
 export const useScreen = () => {
   const designer = useDesigner()
