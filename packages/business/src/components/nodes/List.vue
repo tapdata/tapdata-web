@@ -1,7 +1,7 @@
 <template>
   <div class="px-2 py-3 overflow-y-auto">
     <div
-      class="node-list-item px-2 mb-1 flex align-center font-color-dark"
+      class="node-list-item px-2 mb-1 flex align-center font-color-dark item__whole"
       :class="{ active: activeNodeId === '' }"
       @click="changeItem()"
     >
@@ -11,12 +11,13 @@
       v-for="node in items"
       :key="node.id"
       class="node-list-item px-2 mb-1 flex align-center font-color-dark"
-      :class="{ active: activeNodeId === node.id }"
+      :class="[{ active: activeNodeId === node.id }, customClass(node)]"
       @click="changeItem(node.id)"
     >
       <NodeIcon :node="node" :size="18" class="mr-2 flex-shrink-0" />
       <OverflowTooltip :text="node.name" placement="left" :enterable="false"></OverflowTooltip>
       <ElTag v-if="showType" class="ml-2" effect="plain" size="mini">{{ typeMap[node.nodeType] }}</ElTag>
+      <slot name="right"></slot>
     </div>
   </div>
 </template>
@@ -46,6 +47,10 @@ export default {
     showType: {
       type: Boolean,
       default: false
+    },
+    customClass: {
+      type: Function,
+      default: () => {}
     }
   },
 

@@ -2,11 +2,13 @@
   <div class="flex h-100">
     <NodeList
       v-model="activeNodeId"
-      show-type
       :label="$t('packages_business_milestone_list_zhengtijindu')"
       class="node-list border-end mr-4"
+      :customClass="handleCustomClass"
       @change="handleChange"
-    ></NodeList>
+    >
+      <VIcon slot="right" class="ml-2 color-warning error-icon">warning</VIcon>
+    </NodeList>
     <div v-if="activeNodeId" class="flex-fill overflow-auto">
       <VTable ref="table" row-key="id" :columns="columns" :data="nodeData" hide-on-single-page class="pt-4">
         <template slot="statusLabel" slot-scope="scope">
@@ -365,6 +367,20 @@ export default {
               : '-'
           return t
         })
+    },
+
+    errorNodeIds() {
+      const nodeMilestones = this.dataflow.attrs?.nodeMilestones || {}
+      let result = []
+      for (let nodeId in nodeMilestones) {
+        const node = nodeMilestones[nodeId]
+        let flag = false
+        for (let key in node) {
+          flag = node[key].status === 'ERROR'
+        }
+        flag && result.push(nodeId)
+      }
+      return result
     }
   },
 
@@ -395,6 +411,10 @@ export default {
         progress,
         time
       }
+    },
+
+    handleCustomClass(node) {
+      return this.errorNodeIds.includes(node?.id) ? 'error-node' : ''
     }
   }
 }
@@ -406,6 +426,16 @@ export default {
 }
 .node-list {
   width: 224px;
+  ::v-deep {
+    .error-icon {
+      display: none;
+    }
+    .error-node {
+      .error-icon {
+        display: inline-flex;
+      }
+    }
+  }
 }
 .step__line {
   left: 50%;
