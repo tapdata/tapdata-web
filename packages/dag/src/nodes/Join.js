@@ -41,7 +41,7 @@ export class Join extends NodeType {
       },
       name: {
         type: 'string',
-        title: i18n.t('packages_dag_nodes_database_jiedianmingcheng'),
+        title: i18n.t('public_node_name'),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input'
@@ -56,7 +56,7 @@ export class Join extends NodeType {
       },
 
       joinType: {
-        title: i18n.t('packages_dag_nodes_join_lianjieleixing'),
+        title: i18n.t('public_connection_type'),
         type: 'string',
         required: true,
         default: 'left',

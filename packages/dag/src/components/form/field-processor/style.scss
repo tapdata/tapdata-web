@@ -8,7 +8,7 @@
   .icon-color {
     color: map-get($iconFillColor, normal);
   }
-  .processor-ml-10{
+  .processor-ml-10 {
     padding-left: 10px;
   }
   .table__empty_img {
@@ -66,7 +66,7 @@
         color: map-get($fontColor, normal);
         font-weight: 500;
       }
-      .line-height{
+      .line-height {
         height: 40px;
         line-height: 40px;
       }
@@ -125,7 +125,7 @@
       flex-direction: column;
       padding-top: 8px;
     }
-    .col-new-field-name{
+    .col-new-field-name {
       max-width: 90px;
     }
 
@@ -147,7 +147,7 @@
         border-color: map-get($color, primary);
       }
     }
-    .row-deleted{
+    .row-deleted {
       color: map-get($color, disable);
     }
     .color-darkorange {

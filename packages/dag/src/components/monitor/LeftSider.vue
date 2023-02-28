@@ -4,11 +4,7 @@
       <div class="info-box flex justify-content-between align-items-center">
         <TimeSelect :range="$attrs.range" ref="timeSelect" class="mb-1" @change="changeTimeSelect"></TimeSelect>
         <ElDivider direction="vertical" class="mx-1"></ElDivider>
-        <ElTooltip
-          transition="tooltip-fade-in"
-          :content="$t('packages_dag_components_nodedetaildialog_shuaxin')"
-          class="mt-n1"
-        >
+        <ElTooltip transition="tooltip-fade-in" :content="$t('public_button_refresh')" class="mt-n1">
           <VIcon size="16" class="color-primary" @click="$emit('load-data')">refresh</VIcon>
         </ElTooltip>
         <ElDivider direction="vertical" class="mx-1"></ElDivider>
@@ -51,9 +47,7 @@
             </ElTooltip>
           </div>
           <div class="mb-2 flex align-items-center">
-            <span class="mr-2 sync-info-item__title">{{
-              $t('packages_dag_components_nodedetaildialog_quanliangtongbujin')
-            }}</span>
+            <span class="mr-2 sync-info-item__title">{{ $t('public_task_full_sync_progress') }}</span>
             <span v-if="isFileSource" class="flex-1 text-end">{{
               $t('packages_dag_components_node_zanbuzhichi')
             }}</span>
@@ -158,9 +152,7 @@
             :content="$t('packages_dag_monitor_leftsider_shijiancongyuanku')"
           >
             <span class="inline-flex align-items-center">
-              <span class="mr-2 font-color-dark fw-sub">{{
-                $t('packages_dag_components_nodedetaildialog_zengliangyanchi')
-              }}</span>
+              <span class="mr-2 font-color-dark fw-sub">{{ $t('public_event_incremental_delay') }}</span>
               <VIcon size="14" class="color-primary">info</VIcon>
             </span>
           </ElTooltip>
@@ -199,7 +191,7 @@
         </div>
         <div v-loading="!eventDataAll" class="flex">
           <div v-if="eventDataAll" class="w-50 pr-4">
-            <div>{{ $t('packages_dag_components_eventchart_zongshuru') }}</div>
+            <div>{{ $t('public_event_total_input') }}</div>
             <div class="mt-1 mb-2 font-color-normal fw-sub fs-3 din-font">
               {{ eventDataAll.inputTotals.toLocaleString() }}
             </div>
@@ -224,7 +216,7 @@
           <div v-if="eventDataAll" class="output-item flex w-50">
             <div class="output-item__divider"></div>
             <div class="ml-4">
-              <div>{{ $t('packages_dag_components_eventchart_zongshuchu') }}</div>
+              <div>{{ $t('public_event_total_output') }}</div>
               <div class="mt-1 mb-2 font-color-normal fw-sub fs-3 din-font">
                 {{ eventDataAll.outputTotals.toLocaleString() }}
               </div>
@@ -253,7 +245,7 @@
           <span class="fw-sub fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_tiaoshixinxi') }}</span>
         </div>
         <div class="mb-2 flex justify-content-between">
-          <span>{{ $t('packages_dag_monitor_topheader_renwuxintiaoshi') }}:</span>
+          <span>{{ $t('public_task_heartbeat_time') }}:</span>
           <span>{{ heartbeatTime }}</span>
         </div>
       </div>
@@ -275,7 +267,7 @@
       ></LineChart>
       <LineChart
         :data="replicateLagData"
-        :title="$t('packages_dag_components_nodedetaildialog_zengliangyanchi')"
+        :title="$t('public_event_incremental_delay')"
         :color="['#2C65FF']"
         :time-format="timeFormat"
         time-value
@@ -359,10 +351,7 @@ export default {
       const { time = [] } = this.quota
       return {
         x: time,
-        name: [
-          i18n.t('packages_dag_components_nodedetaildialog_shuru'),
-          i18n.t('packages_dag_components_nodedetaildialog_shuchu')
-        ],
+        name: [i18n.t('public_time_input'), i18n.t('public_time_output')],
         value: [data.inputQps, data.outputQps]
       }
     },
@@ -515,7 +504,7 @@ export default {
         ? calcTimeUnit(val, 2, {
             autoHideMs: true
           })
-        : i18n.t('packages_dag_dag_dialog_field_mapping_no_data')
+        : i18n.t('public_data_no_data')
     }
   }
 }

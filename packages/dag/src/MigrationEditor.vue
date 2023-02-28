@@ -279,7 +279,7 @@ export default {
         this.setTaskId(dataflow.id)
         this.setEditVersion(dataflow.editVersion)
         this.setTaskInfo(this.dataflow)
-        // this.$message.success(this.$t('packages_dag_message_save_ok'))
+        // this.$message.success(this.$t('public_message_save_ok'))
         await this.$router.replace({
           name: 'MigrateEditor',
           params: { id: dataflow.id, action: 'dataflowEdit' }
@@ -387,7 +387,7 @@ export default {
         this.initWS()
         const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
         this.reformDataflow(result)
-        !needStart && this.$message.success(this.$t('packages_dag_message_save_ok'))
+        !needStart && this.$message.success(this.$t('public_message_save_ok'))
         this.setEditVersion(result.editVersion)
         this.isSaving = false
         isOk = true

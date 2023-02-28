@@ -202,7 +202,7 @@ export default defineComponent({
     const isNumber = value => typeof value === 'number'
 
     const getVal = val => {
-      return val ?? i18n.t('packages_dag_dag_dialog_field_mapping_no_data')
+      return val ?? i18n.t('public_data_no_data')
     }
 
     const renderStatistic = () => {
@@ -249,7 +249,7 @@ export default defineComponent({
       if (hasCDC) {
         // 增量进行中
         const cdcTitle = isSource.value
-          ? i18n.t('packages_dag_components_nodedetaildialog_zengliangyanchi')
+          ? i18n.t('public_event_incremental_delay')
           : isTarget.value
           ? i18n.t('packages_dag_monitor_node_popover_targetWriteTime_title')
           : i18n.t('packages_dag_monitor_node_per_deal_need_time')
@@ -307,7 +307,7 @@ export default defineComponent({
             <div class="statistic-value">
               {props.sample.snapshotSourceReadTimeCostAvg
                 ? calcTimeUnit(props.sample.snapshotSourceReadTimeCostAvg)
-                : i18n.t('packages_dag_dag_dialog_field_mapping_no_data')}
+                : i18n.t('public_data_no_data')}
             </div>
           </div>
         </div>
@@ -321,7 +321,7 @@ export default defineComponent({
             <div class="statistic-value">
               {props.sample.incrementalSourceReadTimeCostAvg
                 ? calcTimeUnit(props.sample.incrementalSourceReadTimeCostAvg)
-                : i18n.t('packages_dag_dag_dialog_field_mapping_no_data')}
+                : i18n.t('public_data_no_data')}
             </div>
           </div>
         </div>
@@ -361,7 +361,7 @@ export default defineComponent({
 
       const syncProcess = (
         <div class="statistic">
-          <div class="statistic-title">{i18n.t('packages_dag_components_nodedetaildialog_quanliangtongbujin')}</div>
+          <div class="statistic-title">{i18n.t('public_task_full_sync_progress')}</div>
           <div class="statistic-content">
             <div class="statistic-value">{initialSyncProcess.value}%</div>
           </div>
