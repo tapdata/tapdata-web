@@ -1315,5 +1315,6 @@ export default {
   dfs_user_center_guoqishijian: 'Expiration Time: ',
   dfs_user_center_jihuoshijian: 'Activation Time: ',
   dfs_user_center_shouquanma: 'Authorization Code: ',
-  dfs_user_center_shouquanmaxinxi: 'Authorization code information'
+  dfs_user_center_shouquanmaxinxi: 'Authorization code information',
+  dfs_user_center_jijiangguoqi: 'expiring soon'
 }

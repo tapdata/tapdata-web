@@ -173,31 +173,41 @@
     </div>
 
     <section v-if="userData.enableLicense">
-      <div class="mt-12 fs-7">{{$t('dfs_user_center_shouquanmaxinxi')}}</div>
+      <div class="mt-12 fs-7">{{ $t('dfs_user_center_shouquanmaxinxi') }}</div>
       <ElDivider class="my-6"></ElDivider>
       <ul>
-        <li v-for="(item, index) in userData.licenseCodes" :key="index">
+        <li class="mb-4" v-for="(item, index) in userData.licenseCodes" :key="index">
           <el-row
             ><el-col :span="12"
-              ><span class="enterprise-item__label inline-block">{{$t('dfs_user_center_shouquanma')}}</span>{{ item.licenseCode }}</el-col
+              ><span class="enterprise-item__label inline-block">{{ $t('dfs_user_center_shouquanma') }}</span
+              >{{ item.licenseCode }}</el-col
             ></el-row
           >
           <el-row class="mt-2">
             <el-col :span="12"
-              ><span class="enterprise-item__label inline-block">{{$t('dfs_user_center_jihuoshijian')}}</span>{{ item.activateTime }}</el-col
+              ><span class="enterprise-item__label inline-block">{{ $t('dfs_user_center_jihuoshijian') }}</span
+              >{{ item.activateTime }}</el-col
             >
             <el-col :span="12"
-              ><span class="enterprise-item__label inline-block">{{$t('dfs_user_center_guoqishijian')}}</span>{{ item.expiredTime }}</el-col
-            >
+              ><span class="enterprise-item__label inline-block">{{ $t('dfs_user_center_guoqishijian') }}</span
+              >{{ item.expiredTime }}
+              <span v-if="item.nearExpiration" class="expried inline-block">{{
+                $t('dfs_user_center_jijiangguoqi')
+              }}</span>
+            </el-col>
           </el-row>
         </li>
       </ul>
       <div v-if="userData.licenseCodes.length > 0" class="mt-4" style="margin-left: 100px">
-        <el-link type="primary" href="https://market.console.aliyun.com/imageconsole/index.htm" target="_blank"
-          >{{$t('dfs_user_center_xufei')}}</el-link
-        >
-        <el-link class="ml-4" type="primary" href="https://market.console.aliyun.com/receipt/index.htm" target="_blank"
-          >{{$t('dfs_user_center_kaifapiao')}}</el-link
+        <el-link type="primary" href="https://market.console.aliyun.com/imageconsole/index.htm" target="_blank">{{
+          $t('dfs_user_center_xufei')
+        }}</el-link>
+        <el-link
+          class="ml-4"
+          type="primary"
+          href="https://market.console.aliyun.com/receipt/index.htm"
+          target="_blank"
+          >{{ $t('dfs_user_center_kaifapiao') }}</el-link
         >
       </div>
     </section>
@@ -935,6 +945,12 @@ export default {
 }
 .enterprise-item__label {
   width: 100px;
+}
+.expried {
+  padding: 2px 4px;
+  color: map-get($color, warning);
+  border-radius: 4px;
+  border: 1px solid map-get($color, warning);
 }
 .enterprise-item__value {
   width: 240px;
