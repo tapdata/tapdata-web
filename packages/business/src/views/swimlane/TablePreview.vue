@@ -1,5 +1,5 @@
 <template>
-  <Drawer class="sw-table-drawer" :visible.sync="visible" width="850px" v-laoding="loading">
+  <Drawer class="sw-table-drawer" :visible.sync="visible" width="850px" v-loading="loading">
     <header v-if="detailData">
       <div class="table-name mb-4">{{ detailData.name }}</div>
       <span class="mr-2">
@@ -24,7 +24,7 @@
             <el-row>
               <el-col :span="4">
                 <div class="table-dec-label">Rows</div>
-                <div class="table-dec-txt mt-4">2.7M</div>
+                <div class="table-dec-txt mt-4">{{ numOfRows }}</div>
               </el-col>
               <el-col :span="4">
                 <div class="table-dec-label">Columns</div>
@@ -32,7 +32,7 @@
               </el-col>
               <el-col :span="4">
                 <div class="table-dec-label">Storage Size</div>
-                <div class="table-dec-txt mt-4">27M</div>
+                <div class="table-dec-txt mt-4">{{ storageSize }}</div>
               </el-col>
               <el-col :span="6">
                 <div class="table-dec-label">Connection</div>
@@ -55,7 +55,7 @@
               <el-tab-pane label="Sample Data" name="sampleData">
                 <el-table :data="sampleData" v-loading="loadingSampleData">
                   <el-table-column type="index" label="#"></el-table-column>
-                  <el-table-column v-for="item in sampleHeader" :prop="item" :label="item">
+                  <el-table-column v-for="(item, index) in sampleHeader" :key="index" :prop="item" :label="item">
                   </el-table-column> </el-table
               ></el-tab-pane>
             </el-tabs>
@@ -81,7 +81,43 @@
             <div slot="empty">{{ $t('packages_dag_dag_dialog_field_mapping_no_data') }}</div>
           </VTable>
         </el-tab-pane>
-        <el-tab-pane label="Tasks" name="tasks">Tasks</el-tab-pane>
+        <el-tab-pane label="Tasks" name="tasks">
+          <div>以这个模型为源的任务</div>
+          <el-table class="discovery-page-table" :data="taskData" :has-pagination="false">
+            <el-table-column :label="$t('packages_business_task_list_task_type')">
+              <template #default="{ row }">
+                <span>
+                  {{ row.type ? taskType[row.type] : '' }}
+                </span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="status" :label="$t('packages_business_task_list_status')">
+              <template #default="{ row }">
+                <TaskStatus :task="row" :agentMap="agentMap" />
+              </template>
+            </el-table-column>
+            <el-table-column
+              sortable
+              prop="currentEventTimestamp"
+              :label="$t('packages_business_column_event_time')"
+              min-width="164"
+            >
+              <template #default="{ row }">
+                {{ formatTime(row.currentEventTimestamp) }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="lastStartDate"
+              :label="$t('packages_business_column_last_start_time')"
+              min-width="164"
+              sortable="custom"
+            >
+              <template #default="{ row }">
+                {{ formatTime(row.lastStartDate) }}
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
         <el-tab-pane label="APIs" name="apis">APIs</el-tab-pane>
         <el-tab-pane label="Lineage" name="lineage">APIs</el-tab-pane>
       </el-tabs>
@@ -93,12 +129,13 @@
 import { Drawer } from '@tap/component'
 import NodeIcon from '@tap/dag/src/components/NodeIcon'
 import { VTable } from '@tap/component'
-import { discoveryApi, proxyApi } from '@tap/api'
+import { discoveryApi, proxyApi, taskApi } from '@tap/api'
 import i18n from '@/i18n'
 import dayjs from 'dayjs'
+import { TaskStatus } from '../../components'
 export default {
   name: 'TablePreview',
-  components: { Drawer, VTable, NodeIcon },
+  components: { Drawer, VTable, TaskStatus },
   data() {
     return {
       visible: false,
@@ -165,14 +202,23 @@ export default {
           label: i18n.t('datadiscovery_previewdrawer_yewumiaoshu'),
           prop: 'businessDesc'
         }
-      ]
+      ],
+      taskData: [],
+      storageSize: '',
+      numOfRows: '',
+      taskType: {
+        initial_sync: this.$t('packages_business_task_info_initial_sync'),
+        cdc: this.$t('packages_business_task_info_initial_cdc'),
+        'initial_sync+cdc':
+          this.$t('packages_business_task_info_initial_sync') + '+' + this.$t('packages_business_task_info_initial_cdc')
+      }
     }
   },
   methods: {
     open(row) {
       this.visible = true
-      this.getTableStorage(row)
       this.connectionId = row.connectionId
+      this.getTableStorage(row)
     },
     getTableStorage(row) {
       this.loading = true
@@ -185,12 +231,25 @@ export default {
             : '-'
           this.tableFields = res?.fields || []
           this.getSampleData()
+          this.getTasks()
+          setTimeout(() => {
+            this.getStorageSize()
+          }, 1000)
         })
         .finally(() => {
           this.loading = false
         })
     },
     handleClick() {},
+    getTasks() {
+      let params = {
+        connectionId: this.connectionId,
+        tableName: this.detailData.name
+      }
+      taskApi.getTaskByTableName(params).then(res => {
+        this.taskData = res
+      })
+    },
     getSampleData() {
       let params = {
         className: 'QueryDataBaseDataService',
@@ -207,6 +266,20 @@ export default {
         .finally(() => {
           this.loadingSampleData = false
         })
+    },
+    getStorageSize() {
+      let params = {
+        className: 'QueryDataBaseDataService',
+        method: 'getTableInfo',
+        args: [this.connectionId, this.detailData.name]
+      }
+      proxyApi.call(params).then(res => {
+        this.storageSize = res.storageSize || 0
+        this.numOfRows = res.numOfRows || 0
+      })
+    },
+    formatTime(time) {
+      return time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
     }
   }
 }
