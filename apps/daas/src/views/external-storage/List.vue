@@ -230,7 +230,7 @@ export default {
         where
       }
       return externalStorageApi
-        .get({
+        .list({
           filter: JSON.stringify(filter)
         })
         .then(data => {

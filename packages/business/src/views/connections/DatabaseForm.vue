@@ -896,7 +896,7 @@ export default {
         },
         async loadExternalStorage() {
           try {
-            const { items = [] } = await externalStorageApi.get()
+            const { items = [] } = await externalStorageApi.list()
             return items.map(item => {
               return {
                 label: item.name,
