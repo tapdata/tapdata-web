@@ -89,14 +89,14 @@
             type="text"
             :disabled="[0, 2, 3].includes(scope.row.status)"
             @click="handleDownload(scope.row)"
-            >{{ $t('dfs_instance_instance_xiazai') }}</ElButton
+            >{{ $t('public_button_download') }}</ElButton
           >
           <ElButton
             size="mini"
             type="text"
             :disabled="scope.row.status === 0"
             @click="handleDeleteUploadLog(scope.row)"
-            >{{ $t('button_delete') }}</ElButton
+            >{{ $t('public_button_delete') }}</ElButton
           >
         </template>
       </VTable>
@@ -164,11 +164,11 @@ export default {
               key: 'id'
             },
             {
-              label: $t('agent_version'),
+              label: $t('public_version'),
               key: 'version'
             },
             {
-              label: $t('agent_create_time'),
+              label: $t('public_create_time'),
               key: 'createAt'
             }
           ]
@@ -479,7 +479,7 @@ export default {
     //删除
     handleDeleteUploadLog(row) {
       this.$axios.post('api/tcm/deleteUploadLog', { agentId: this.currentAgentId, id: row.id }).then(() => {
-        this.$message.success(i18n.t('dfs_instance_instance_shanchuchenggong'))
+        this.$message.success(i18n.t('public_message_delete_ok'))
         //主動刷新列表
         clearTimeout(this.timer)
         this.getDownloadList()

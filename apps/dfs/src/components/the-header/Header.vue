@@ -149,8 +149,8 @@ export default {
         case 'signOut':
           this.$confirm(this.$t('header_log_out_tip'), this.$t('header_log_out_title'), {
             type: 'warning',
-            confirmButtonText: this.$t('button_confirm'),
-            cancelButtonText: this.$t('button_cancel')
+            confirmButtonText: this.$t('public_button_confirm'),
+            cancelButtonText: this.$t('public_button_cancel')
           }).then(res => {
             if (res) {
               this.clearCookie()

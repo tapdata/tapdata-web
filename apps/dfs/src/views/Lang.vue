@@ -5,11 +5,11 @@
         <ElForm>
           <ElFormItem :label="$t('views_Lang_wenAnBaoHanDe')">
             <ElInput v-model="inc" type="textarea" :placeholder="$t('views_Lang_wenAnBaoHanDe')" autosize></ElInput>
-            <ElButton type="primary" class="mt-3" @click="saveIncludes">{{ $t('button_save') }}</ElButton>
+            <ElButton type="primary" class="mt-3" @click="saveIncludes">{{ $t('public_button_save') }}</ElButton>
           </ElFormItem>
           <ElFormItem :label="$t('views_Lang_wenAnDengYuDe')">
             <ElInput v-model="equal" type="textarea" :placeholder="$t('views_Lang_wenAnDengYuDe')" autosize></ElInput>
-            <ElButton type="primary" class="mt-3" @click="saveEqual">{{ $t('button_save') }}</ElButton>
+            <ElButton type="primary" class="mt-3" @click="saveEqual">{{ $t('public_button_save') }}</ElButton>
           </ElFormItem>
         </ElForm>
       </ElCollapseItem>
@@ -26,15 +26,19 @@
         <UploadFile :upload="uploadModifyEn" accept="text/javascript" class="inline-block mr-4">
           <ElButton>{{ $t('button_upload') + $t('lang_en') }}</ElButton>
         </UploadFile>
-        <ElButton type="primary" @click="exportModifyZhCN">{{ $t('button_export') + $t('lang_zh_cn') }}</ElButton>
-        <ElButton type="primary" @click="exportModifyZhTW">{{ $t('button_export') + $t('lang_zh_tw') }}</ElButton>
-        <ElButton type="primary" @click="exportModifyEn">{{ $t('button_export') + $t('lang_en') }}</ElButton>
+        <ElButton type="primary" @click="exportModifyZhCN">{{
+          $t('public_button_export') + $t('lang_zh_cn')
+        }}</ElButton>
+        <ElButton type="primary" @click="exportModifyZhTW">{{
+          $t('public_button_export') + $t('lang_zh_tw')
+        }}</ElButton>
+        <ElButton type="primary" @click="exportModifyEn">{{ $t('public_button_export') + $t('lang_en') }}</ElButton>
       </div>
     </div>
     <VTable ref="table" row-key="id" :columns="columns" :data="data" height="100%" class="mt-4" :isPage="true">
       <template slot="operation" slot-scope="scope">
         <div class="operate-columns">
-          <ElButton size="mini" type="text" @click="edit(scope.row)">{{ $t('button_edit') }}</ElButton>
+          <ElButton size="mini" type="text" @click="edit(scope.row)">{{ $t('public_button_edit') }}</ElButton>
         </div>
       </template>
       <template slot="name" slot-scope="scope">
@@ -75,8 +79,8 @@
         </ElFormItem>
       </ElForm>
       <span slot="footer" class="dialog-footer">
-        <ElButton @click="dialog.visible = false">{{ $t('button_cancel') }}</ElButton>
-        <ElButton type="primary" @click="confirm">{{ $t('button_confirm') }}</ElButton>
+        <ElButton @click="dialog.visible = false">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton type="primary" @click="confirm">{{ $t('public_button_confirm') }}</ElButton>
       </span>
     </ElDialog>
   </div>
@@ -132,7 +136,7 @@ export default {
       })
     }
     columns.push({
-      label: i18n.t('list_operation'),
+      label: i18n.t('public_operation'),
       prop: 'operation',
       slotName: 'operation'
     })

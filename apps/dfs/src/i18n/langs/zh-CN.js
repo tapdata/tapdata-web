@@ -1026,7 +1026,6 @@ export default {
   dfs_workbench_tyepmap_apIfuwu7: 'API服务重启失败',
   dfs_workbench_tyepmap_guanliduanfuwu7: '管理端服务重启失败',
   dfs_workbench_tyepmap_cdCzhihou2: 'CDC滞后超时',
-
   _workbench_workbench_yigoushishitong: '异构实时同步',
   _workbench_workbench_shujuruhucang: '数据入湖仓 ',
   _workbench_workbench_shujurucang: '数据入仓',
@@ -1034,7 +1033,6 @@ export default {
   _workbench_workbench_jiangshujudaoru: '数据导入',
   _workbench_workbench_jiangshujudaorusub: '阿里云 Tablestore',
   _workbench_workbench_tansuoshili: '探索示例',
-
   dfs_workbench_workbench_zhongyaobanbensheng: '【重要】版本升级和服务切换重要公告',
   dfs_workbench_workbench_xinzengzidingyi: '· 新增自定义算子支持，用户可通过灵活的JS能力来定义自己的算子',
   dfs_workbench_workbench_xinzengzidingyi2: '· 新增自定义函数用户可通过jar包导入自定义函数进行使用',
@@ -1101,7 +1099,6 @@ export default {
   dfs_agent_download_upgradeversion_ruguoninbushu: '如果您部署的是“3天试用实例”请打开计算巢“试用服务”选项卡',
   dfs_agent_download_upgradeversion_jisuanchaodenglu: '计算巢登录地址',
   dfs_agent_download_upgradeversion_denglualiyun: '1. 登录阿里云计算巢控制台，找到部署Agent的服务实例.',
-
   dfs_the_header_header_jichuban: '基础版',
   dfs_the_header_header_biaozhun: '标准版',
   dfs_agent_download_paidupgrade_qingxuanzelianxi: '请选择联系人手机号码',
@@ -1130,7 +1127,6 @@ export default {
   dfs_instance_instance_anzhuangbao: '安装包 : ',
   dfs_instance_instance_banbenhao: '版本号: ',
   dfs_instance_instance_agent: 'Agent更新',
-
   dfs_user_center_phone_error: '该手机号码已被其他用户注册过',
   packages_business_task_status_agent_tooltip_agent: '任务所在的Agent为',
   dfs_agent_download_agentguidedialog_qingdianjibushu: '请选择网络安全策略',
@@ -1187,7 +1183,6 @@ export default {
   dfs_instance_stopped_help_tip_prefix:
     'Agent 离线有可能是因为网络原因或者 Agent 退出导致。请检查 Agent 所在服务器的网络及 Agent 的运行状况。您可以查看',
   dfs_instance_stopped_help_tip_suffix: '获取更多的帮助',
-
   //数据服务
   dfs_data_server: '数据服务',
   dfs_data_server_demo_title_desc: '中央化的数据服务 ·中央化存储 ·数据实时服务',
@@ -1205,9 +1200,7 @@ export default {
   dfs_data_server_On_Prem: 'Data Services 能力目前仅在 Tapdata On-Prem 版中上线',
   dfs_data_server_apply_for_trial: '申请试用',
   dfs_data_server_apply_for_version: '线下部署版',
-
   dfs_data_dashboard_Marquee: '当前demo环境为只读环境，仅支持查看和体验产品功能',
-
   page_title_custom_node: '自定义节点',
   packages_nodeDesign_custom_node_name_required: '请输入节点名称',
   packages_nodeDesign_message_save_ok: '保存成功'
