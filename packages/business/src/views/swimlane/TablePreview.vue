@@ -19,7 +19,7 @@
           <section class="mt-2">
             <div class="mb-4">
               <span class="table-dec-label mb-4">Table Description：</span
-              ><span class="table-dec-txt">Lorem ipsum dolor sit</span>
+              ><el-input type="textarea" row="4" class="table-dec-txt mt-2" v-model="detailData.commnet"></el-input>
             </div>
             <el-row>
               <el-col :span="4">
@@ -47,13 +47,14 @@
                   class="discovery-page-table"
                   :columns="columnsPreview"
                   :data="tableFields"
+                  max-height="381px"
                   :has-pagination="false"
                 >
                   <div slot="empty">{{ $t('packages_dag_dag_dialog_field_mapping_no_data') }}</div>
                 </VTable>
               </el-tab-pane>
               <el-tab-pane label="Sample Data" name="sampleData">
-                <el-table :data="sampleData" v-loading="loadingSampleData">
+                <el-table :data="sampleData" v-loading="loadingSampleData" max-height="381px">
                   <el-table-column type="index" label="#"></el-table-column>
                   <el-table-column v-for="(item, index) in sampleHeader" :key="index" :prop="item" :label="item">
                   </el-table-column> </el-table
