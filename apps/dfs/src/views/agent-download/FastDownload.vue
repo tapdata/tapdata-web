@@ -66,7 +66,7 @@
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
               >
-                <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
+                <i class="click-style">{{ $t('public_button_copy') }}</i>
               </span>
             </ElTooltip>
           </li>
@@ -105,7 +105,7 @@
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
               >
-                <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
+                <i class="click-style">{{ $t('public_button_copy') }}</i>
               </span>
             </ElTooltip>
           </li>
@@ -150,7 +150,7 @@
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
               >
-                <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
+                <i class="click-style">{{ $t('public_button_copy') }}</i>
               </span>
             </ElTooltip>
           </li>
@@ -207,7 +207,7 @@
                 v-clipboard:success="onCopyVersion"
                 @mouseleave="showTooltipVersion = false"
               >
-                <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
+                <i class="click-style">{{ $t('public_button_copy') }}</i>
               </span>
             </ElTooltip>
           </li>
@@ -229,7 +229,7 @@
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
               >
-                <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
+                <i class="click-style">{{ $t('public_button_copy') }}</i>
               </span>
             </ElTooltip>
           </li>
@@ -245,7 +245,7 @@
       </template>
     </main>
     <footer class="footer">
-      <ElButton type="primary" @click="handleNextStep()">{{ $t('button_finish') }}</ElButton>
+      <ElButton type="primary" @click="handleNextStep()">{{ $t('public_status_complete') }}</ElButton>
     </footer>
   </section>
 </template>
