@@ -28,7 +28,7 @@
     </section>
     <span slot="footer">
       <div v-if="user.licenseType === 'checkCode'">
-        <el-button class="mt-4" v-if="user.showNextProcessing" @click="visible = false">{{
+        <el-button class="mt-4" v-if="user.showNextProcessing" @click="$emit('update:visible', false)">{{
           $t('dfs_aliyun_market_checklicnese_xiayiciyanqi')
         }}</el-button>
         <el-button class="mt-4" type="primary" @click="goAliyun()">{{

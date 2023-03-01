@@ -26,5 +26,6 @@
   "onlyEnglishLanguage": true, //支持语言
   "disabledAlibabaCloudComputingNest":true, //计算巢
   "disabledBindingPhone": true, //手机号绑定
-  "disabledDataService": true // 数据服务
+  "disabledDataService": true, // 数据服务
+  "showSwimLane": true // 显示泳道
 }
