@@ -81,12 +81,12 @@
                     </el-col>
                     <el-col :span="4">
                       <span :class="['status-' + item.management.status, 'status']">{{
-                        $t('cluster_' + item.management.status)
+                        getStatus(item.management.status)
                       }}</span>
                     </el-col>
                     <el-col :span="4">
                       <span :class="['status-' + item.management.serviceStatus, 'status']">{{
-                        $t('cluster_' + item.management.serviceStatus)
+                        getStatus(item.management.serviceStatus)
                       }}</span>
                     </el-col>
                     <el-col :span="8">
@@ -121,12 +121,12 @@
                     </el-col>
                     <el-col :span="4">
                       <span :class="['status-' + item.engine.status, 'status']">{{
-                        $t('cluster_' + item.engine.status)
+                        getStatus(item.engine.status)
                       }}</span>
                     </el-col>
                     <el-col :span="4">
                       <span :class="['status-' + item.engine.serviceStatus, 'status']">{{
-                        $t('cluster_' + item.engine.status)
+                        getStatus(item.engine.status)
                       }}</span>
                     </el-col>
                     <el-col :span="8">
@@ -162,12 +162,12 @@
                     </el-col>
                     <el-col :span="4">
                       <span :class="['status-' + item.apiServer.status, 'status']">{{
-                        $t('cluster_' + item.apiServer.status)
+                        getStatus(item.apiServer.status)
                       }}</span>
                     </el-col>
                     <el-col :span="4">
                       <span :class="['status-' + item.apiServer.serviceStatus, 'status']">{{
-                        $t('cluster_' + item.apiServer.status)
+                        getStatus(item.apiServer.status)
                       }}</span>
                     </el-col>
                     <el-col :span="8">
@@ -286,6 +286,7 @@
 import { FilterBar } from '@tap/component'
 import AddServe from './AddServe'
 import { workerApi, clusterApi } from '@tap/api'
+import { STATUS_MAP } from './const'
 
 export default {
   components: {
@@ -660,6 +661,9 @@ export default {
       this.$router.push({
         name: 'dailyRecord'
       })
+    },
+    getStatus(type) {
+      return STATUS_MAP[type] || '-'
     }
   },
   destroyed() {

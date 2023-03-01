@@ -16,7 +16,7 @@
       <div slot="search" class="search-bar">
         <div class="search-status pr-4">
           {{ $t('modules_api_server_status') }}:
-          <span class="status-text" :class="status">{{ $t('modules_status_' + status) }}</span>
+          <span class="status-text" :class="status">{{ getStatus(status) }}</span>
         </div>
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </div>
@@ -189,6 +189,7 @@ import { FilterBar } from '@tap/component'
 import { TablePage, UploadDialog } from '@tap/business'
 
 import { toRegExp } from '@/utils/util'
+import { STATUS_MAP } from '../const'
 
 export default {
   name: 'ApiPublish',
@@ -605,6 +606,9 @@ export default {
         ids = this.multipleSelection.map(item => item.id)
       }
       this[command](ids, node)
+    },
+    getStatus(type) {
+      return STATUS_MAP[type] || '-'
     }
   },
   beforeDestroy() {
