@@ -1,8 +1,9 @@
 <template>
-  <el-dialog :visible.sync="visible" :close-on-click-modal="false" :show-close="false">
+  <el-dialog :visible.sync="visible" :close-on-click-modal="false" :show-close="false" width="550px">
     <section>
       <main v-if="user.licenseType === 'checkCode'">
-        <header class="header">
+        <header class="header flex">
+          <VIcon class="color-warning mr-2" size="16">warning</VIcon>
           {{
             user.showNextProcessing
               ? $t('dfs_aliyun_market_checklicnese_nindeshouquanma3')
@@ -11,15 +12,16 @@
         </header>
         <ul class="step mt-4">
           <li v-if="user.data[0]">
-            {{ $t('dfs_aliyun_market_checklicnese_nindeshouquanma')
-            }}<span class="error">{{ user.data[0].licenseCode }}</span
-            >{{ $t('dfs_aliyun_market_checklicnese_youxiaoqizhi')
-            }}<span class="ml-2 mr-2">{{ user.data[0].expiredTime }}</span
-            >{{ $t('dfs_aliyun_market_checklicnese_qingdaoaliyun') }}
+            <div class="mt-2">{{ $t('dfs_aliyun_market_checklicnese_nindeshouquanma') }}</div>
+            <div class="mt-2 mb-2">{{ user.data[0].licenseCode }}</div>
+            {{ $t('dfs_aliyun_market_checklicnese_youxiaoqizhi') }}
+            <span class="ml-2 mr-2">{{ user.data[0].expiredTime }}</span>
+            {{ $t('dfs_aliyun_market_checklicnese_qingdaoaliyun') }}
           </li>
         </ul>
       </main>
       <main v-else>
+        <VIcon class="color-warning">warning</VIcon>
         <header class="header">{{ $t('dfs_aliyun_market_checklicnese_weijihuoshouquan') }}</header>
         <ul class="step mt-4">
           <li>{{ $t('dfs_aliyun_market_checklicnese_ninhaimeiyouji') }}</li>
@@ -46,10 +48,12 @@
 
 <script>
 import dayjs from 'dayjs'
+import { VIcon } from '@tap/component'
 
 export default {
   name: 'CheckLicense',
   props: ['user', 'visible'],
+  components: { VIcon },
   data() {
     return {
       licenseCode: '',
@@ -84,18 +88,18 @@ export default {
   height: 230px;
 }
 .header {
-  font-size: 34px;
+  font-size: 14px;
   font-weight: 500;
   color: map-get($fontColor, dark);
-}
-.error {
-  color: map-get($color, warning);
-}
-.main {
-  width: 800px;
 }
 .step li {
   color: map-get($fontColor, light);
   margin-bottom: 8px;
+}
+::v-deep {
+  .el-dialog__header {
+    padding: 0;
+    padding-bottom: 0;
+  }
 }
 </style>
