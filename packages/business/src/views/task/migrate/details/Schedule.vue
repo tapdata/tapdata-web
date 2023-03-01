@@ -89,7 +89,7 @@
             </template>
             <template slot="status" slot-scope="scope">
               <span :class="['status-' + scope.row.status, 'status-block', 'mr-2']">
-                {{ $t('packages_business_task_info_status_' + getStatus(scope.row.status)) }}
+                {{ getStatus(scope.row.status) }}
               </span>
             </template>
           </VTable>
@@ -208,6 +208,7 @@ import dayjs from 'dayjs'
 import { dataFlowInsightsApi, subtaskApi } from '@tap/api'
 import { VStep, VTable } from '@tap/component'
 import { deepCopy } from '@tap/shared'
+import { TASK_STATUS_MAP } from '@tap/business'
 
 import Milestone from './Milestone'
 import Overview from '../../etl/statistics/Overview'
@@ -308,7 +309,7 @@ export default {
       if (['edit', 'stop', 'error'].includes(this.task.status) && status === 'running') {
         result = 'paused'
       }
-      return result
+      return TASK_STATUS_MAP[result] || '-'
     },
     init() {
       this.id = this.$route.query?.subId

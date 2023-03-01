@@ -31,7 +31,7 @@
     >
       <template #status="{ result }">
         <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block', 'mr-2']">
-          {{ $t('packages_dag_task_preview_status_' + result[0].status) }}
+          {{ getTaskStatus(result[0].status) }}
         </span>
       </template>
     </TopHeader>
@@ -59,7 +59,7 @@
         >
           <template #status="{ result }">
             <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block']">
-              {{ $t('packages_dag_task_preview_status_' + result[0].status) }}
+              {{ getTaskStatus(result[0].status) }}
             </span>
           </template>
         </LeftSider>
@@ -167,7 +167,7 @@ import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers
 import { titleChange } from '@tap/component/src/mixins/titleChange'
 import { showMessage } from '@tap/component/src/mixins/showMessage'
 import resize from '@tap/component/src/directives/resize'
-import { ALARM_LEVEL_SORT } from '@tap/business'
+import { ALARM_LEVEL_SORT, TASK_STATUS_MAP } from '@tap/business'
 import Time from '@tap/shared/src/time'
 
 import PaperScroller from './components/PaperScroller'
@@ -1176,6 +1176,10 @@ export default {
 
     getTime() {
       return Time.now()
+    },
+
+    getTaskStatus(type) {
+      return TASK_STATUS_MAP[type] || ''
     }
   }
 }

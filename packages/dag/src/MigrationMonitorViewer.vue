@@ -26,7 +26,7 @@
     >
       <template #status="{ result }">
         <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block', 'mr-2']">
-          {{ $t('packages_dag_task_preview_status_' + result[0].status) }}
+          {{ getTaskStatus(result[0].status) }}
         </span>
       </template>
     </TopHeader>
@@ -119,6 +119,7 @@ import { MoveNodeCommand } from './command'
 import NodeDetailDialog from './components/monitor/components/NodeDetailDialog'
 import { TIME_FORMAT_MAP, getTimeGranularity } from './components/monitor/util'
 import { mapMutations } from 'vuex'
+import { TASK_STATUS_MAP } from '@tap/business'
 
 export default {
   name: 'MigrationMonitorViewer',
@@ -808,6 +809,10 @@ export default {
 
     getTime() {
       return Time.now()
+    },
+
+    getTaskStatus(type) {
+      return TASK_STATUS_MAP[type] || ''
     }
   }
 }

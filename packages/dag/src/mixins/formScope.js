@@ -5,6 +5,7 @@ import { merge, isEqual } from 'lodash'
 import { connectionsApi, metadataInstancesApi, clusterApi, proxyApi } from '@tap/api'
 import { externalStorageApi } from '@tap/api'
 import { isPlainObj } from '@tap/shared'
+import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 
 export default {
   data() {
@@ -251,7 +252,7 @@ export default {
                 id: item.id,
                 name: item.name,
                 label: `${item.name} ${
-                  item.status ? `(${this.$t('packages_dag_connection_status_' + item.status) || item.status})` : ''
+                  item.status ? `(${CONNECTION_STATUS_MAP[item.status]?.text || item.status})` : ''
                 }`,
                 value: item.id,
                 databaseType: item.database_type,

@@ -333,6 +333,7 @@ import { buried } from '@/plugins/buried'
 import { VIcon, FilterBar } from '@tap/component'
 import { dayjs } from '@tap/business'
 import Time from '@tap/shared/src/time'
+import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 
 let timer = null
 
@@ -385,7 +386,7 @@ export default {
       let filter = ['Creating', 'Running', 'Stopped']
       filter.forEach(el => {
         result.push({
-          label: this.$t('agent_status_' + el.toLowerCase()),
+          label: CONNECTION_STATUS_MAP[el.toLowerCase()],
           value: el
         })
       })

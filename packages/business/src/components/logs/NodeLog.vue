@@ -248,23 +248,23 @@ export default {
       dialog: false,
       timeOptions: [
         {
-          label: i18n.t('packages_dag_components_log_quanbu'),
+          label: i18n.t('public_select_option_all'),
           value: 'full'
         },
         {
-          label: i18n.t('packages_dag_components_log_zuijingexiaoshi'),
+          label: i18n.t('public_time_Last_six_hours'),
           value: '6h'
         },
         {
-          label: i18n.t('packages_dag_components_log_zuixintian'),
+          label: i18n.t('public_time_last_day'),
           value: '1d'
         },
         {
-          label: i18n.t('packages_dag_components_log_zuijintian'),
+          label: i18n.t('public_time_last_three_days'),
           value: '3d'
         },
         {
-          label: i18n.t('packages_dag_components_log_zidingyishijian'),
+          label: i18n.t('public_time_custom_time'),
           type: 'custom',
           value: 'custom'
         }
@@ -352,11 +352,11 @@ export default {
       if (this.$route.name === 'MigrationMonitorViewer') {
         this.timeOptions = [
           {
-            label: i18n.t('packages_dag_components_log_quanbu'),
+            label: i18n.t('public_select_option_all'),
             value: 'full'
           },
           {
-            label: i18n.t('packages_dag_components_log_zidingyishijian'),
+            label: i18n.t('public_time_custom_time'),
             type: 'custom',
             value: 'custom'
           }
