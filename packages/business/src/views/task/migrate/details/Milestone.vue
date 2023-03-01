@@ -94,7 +94,7 @@ export default {
       return result
     },
     checkError(msg) {
-      this.$confirm(msg, this.$t('packages_business_task_info_error'), {
+      this.$confirm(msg, this.$t('public_status_error'), {
         type: 'warning',
         width: '850px',
         customClass: 'milestone-check-error-container'

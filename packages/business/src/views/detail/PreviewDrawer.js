@@ -19,11 +19,11 @@ export const PreviewDrawer = defineComponent({
       loading: false,
       columns: [
         {
-          label: i18n.t('metadata_name'),
+          label: i18n.t('public_name'),
           prop: 'name'
         },
         {
-          label: i18n.t('metadata_type'),
+          label: i18n.t('public_type'),
           prop: 'dataType'
         },
         {
@@ -61,11 +61,11 @@ export const PreviewDrawer = defineComponent({
       ],
       nodeColumns: [
         {
-          label: i18n.t('metadata_name'),
+          label: i18n.t('public_name'),
           prop: 'name'
         },
         {
-          label: i18n.t('metadata_type'),
+          label: i18n.t('public_type'),
           prop: 'type'
         },
         {
@@ -79,11 +79,11 @@ export const PreviewDrawer = defineComponent({
       ],
       apiColumns: [
         {
-          label: i18n.t('metadata_name'),
+          label: i18n.t('public_name'),
           prop: 'name'
         },
         {
-          label: i18n.t('metadata_type'),
+          label: i18n.t('public_type'),
           prop: 'type'
         },
         {
@@ -97,11 +97,11 @@ export const PreviewDrawer = defineComponent({
       ],
       apiInputColumns: [
         {
-          label: i18n.t('metadata_name'),
+          label: i18n.t('public_name'),
           prop: 'field_name'
         },
         {
-          label: i18n.t('metadata_type'),
+          label: i18n.t('public_type'),
           prop: 'data_type'
         },
         {
@@ -267,7 +267,7 @@ export const PreviewDrawer = defineComponent({
                       </el-row>
                       <el-row class="mt-2">
                         <el-col span={8}>
-                          <span class="max-label inline-block">{i18n.t('column_create_time')}</span>
+                          <span class="max-label inline-block">{i18n.t('public_create_time')}</span>
                           <span class="ml-2">{dayjs(this.previewData.createAt).format('YYYY-MM-DD HH:mm:ss')}</span>
                         </el-col>
                         <el-col span={8}>
@@ -309,7 +309,7 @@ export const PreviewDrawer = defineComponent({
                           <span class="ml-2">{this.previewData.connectionName}</span>
                         </el-col>
                         <el-col span={8}>
-                          <span class="max-label inline-block">{i18n.t('connection_list_type')}</span>
+                          <span class="max-label inline-block">{i18n.t('public_connection_type')}</span>
                           <span class="ml-2">{this.previewData.connectionType}</span>
                         </el-col>
                         <el-col span={8}>
@@ -366,7 +366,7 @@ export const PreviewDrawer = defineComponent({
                       </el-row>
                       <el-row class="mt-2">
                         <el-col span={8}>
-                          <span class="max-label inline-block">{i18n.t('column_create_time')}</span>
+                          <span class="max-label inline-block">{i18n.t('public_create_time')}</span>
                           <span class="ml-2">{dayjs(this.previewData.createAt).format('YYYY-MM-DD HH:mm:ss')}</span>
                         </el-col>
                         <el-col span={8}>
@@ -487,7 +487,7 @@ export const PreviewDrawer = defineComponent({
                       </el-row>
                       <el-row class="mt-2">
                         <el-col span={8}>
-                          <span class="max-label inline-block">{i18n.t('column_create_time')}</span>
+                          <span class="max-label inline-block">{i18n.t('public_create_time')}</span>
                           <span class="ml-2">{dayjs(this.previewData.createAt).format('YYYY-MM-DD HH:mm:ss')}</span>
                         </el-col>
                         <el-col span={8}>

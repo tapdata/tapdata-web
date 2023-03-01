@@ -27,15 +27,15 @@
                 size="mini"
                 class="flex-fill min-w-0"
                 @click="reload()"
-                >{{ $t('packages_business_connection_preview_load_schema') }}
+                >{{ $t('public_connection_button_load_schema') }}
               </el-button>
             </span>
           </el-tooltip>
           <el-button class="flex-fill min-w-0" size="mini" @click="edit()" :disabled="$disabledReadonlyUserBtn()">
-            {{ $t('packages_business_connection_preview_edit') }}
+            {{ $t('public_button_edit') }}
           </el-button>
           <el-button class="flex-fill min-w-0" size="mini" @click="$emit('test', connection)">
-            {{ $t('packages_business_connection_preview_test') }}
+            {{ $t('public_connection_button_test') }}
           </el-button>
         </div>
         <el-progress
@@ -79,9 +79,7 @@
               v-else-if="connection[temp.key] && (temp.key === 'shareCdcEnable' || temp.key === 'redoLogParserEnable')"
               class="box-line__value ellipsis"
             >
-              <span>{{
-                connection[temp.key] ? $t('packages_business_text_open') : $t('packages_business_text_close')
-              }}</span>
+              <span>{{ connection[temp.key] ? $t('packages_business_text_open') : $t('public_button_close') }}</span>
             </div>
             <!-- MQ文字转换 end -->
             <div v-else class="box-line__value ellipsis">{{ connection[temp.key] || '-' }}</div>
@@ -151,7 +149,7 @@ export default {
             icon: 'time',
             items: [
               {
-                label: this.$t('packages_business_connection_preview_load_schema'),
+                label: this.$t('public_connection_button_load_schema'),
                 key: 'last_updated'
               }
             ]
@@ -160,7 +158,7 @@ export default {
             icon: 'database',
             items: [
               {
-                label: this.$t('packages_business_connection_form_database_address'),
+                label: this.$t('public_connection_form_database_address'),
                 key: 'database_host'
               }
             ]
@@ -169,7 +167,7 @@ export default {
             icon: 'port',
             items: [
               {
-                label: this.$t('packages_business_connection_form_port'),
+                label: this.$t('public_connection_form_host'),
                 key: 'database_port'
               }
             ]
@@ -178,7 +176,7 @@ export default {
             icon: 'name',
             items: [
               {
-                label: this.$t('packages_business_connection_form_database_name'),
+                label: this.$t('public_connection_form_database_name'),
                 key: 'database_name'
               }
             ]
@@ -187,7 +185,7 @@ export default {
             icon: 'database-user-name',
             items: [
               {
-                label: this.$t('packages_business_connection_form_database_username'),
+                label: this.$t('public_connection_form_account'),
                 key: 'database_username'
               }
             ]
@@ -196,7 +194,7 @@ export default {
             icon: 'connect_schema',
             items: [
               {
-                label: this.$t('packages_business_dataForm_form_databaseOwner'),
+                label: this.$t('public_connection_form_schema'),
                 key: 'database_owner'
               }
             ]
@@ -205,7 +203,7 @@ export default {
             icon: 'additional-string',
             items: [
               {
-                label: this.$t('packages_business_connection_form_additional_string'),
+                label: this.$t('public_connection_form_other_connection_string'),
                 key: 'additionalString'
               }
             ]
@@ -214,7 +212,7 @@ export default {
             icon: 'origin-time',
             items: [
               {
-                label: this.$t('packages_business_connection_form_timezone'),
+                label: this.$t('public_connection_form_time_zone_of_time_type'),
                 key: 'database_datetype_without_timezone'
               }
             ]
@@ -420,7 +418,7 @@ export default {
                 icon: 'link',
                 items: [
                   {
-                    label: i18n.t('packages_business_connections_preview_lianjiechajianlai'),
+                    label: i18n.t('public_connection_form_link_plugin_source'),
                     key: 'sourceFrom'
                   }
                 ]

@@ -26,7 +26,7 @@
         <template slot="operation" slot-scope="scope">
           <div class="operate-columns">
             <ElButton size="mini" type="text" @click="handleDetail(scope.row)">{{
-              $t('packages_business_task_info_info')
+              $t('public_button_details')
             }}</ElButton>
           </div>
         </template>
@@ -57,16 +57,16 @@ export default {
       filterItems: [],
       columns: [
         {
-          label: i18n.t('packages_business_task_name'),
+          label: i18n.t('public_task_name'),
           prop: 'name'
         },
         {
-          label: i18n.t('packages_business_task_list_task_type'),
+          label: i18n.t('public_task_type'),
           prop: 'typeLabel',
           width: 150
         },
         {
-          label: i18n.t('packages_business_task_status'),
+          label: i18n.t('public_task_status'),
           prop: 'status',
           slotName: 'status',
           width: 150
@@ -78,7 +78,7 @@ export default {
           width: 200
         },
         {
-          label: i18n.t('packages_business_connection_operate'),
+          label: i18n.t('public_operation'),
           slotName: 'operation',
           width: 100
         }
@@ -98,7 +98,7 @@ export default {
     getSearchItems() {
       this.filterItems = [
         {
-          label: i18n.t('packages_business_task_list_task_type'),
+          label: i18n.t('public_task_type'),
           key: 'type',
           type: 'dark-select',
           items: [

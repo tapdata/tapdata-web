@@ -21,7 +21,7 @@
             </div>
             <div class="mr-6 mt-4 flex align-items-center">
               <VIcon size="12" class="v-icon">document</VIcon>
-              <span class="ml-1">{{ $t('packages_business_task_details_desc') }}：</span>
+              <span class="ml-1">{{ $t('public_description') }}：</span>
               <InlineInput
                 :value="task.desc"
                 :icon-config="{ class: 'color-primary' }"
@@ -41,14 +41,14 @@
               @click="start($route.params.id, arguments[0])"
             >
               <VIcon size="12">start-fill</VIcon>
-              <span class="ml-1">{{ $t('packages_business_task_button_start') }}</span>
+              <span class="ml-1">{{ $t('public_button_start') }}</span>
             </ElButton>
             <ElButton
               v-if="isShowForceStop(task.statuses)"
               :disabled="$disabledByPermission('SYNC_job_operation_all_data', task.user_id)"
               @click="forceStop($route.params.id)"
             >
-              {{ $t('packages_business_task_list_force_stop') }}
+              {{ $t('public_button__force_stop') }}
             </ElButton>
             <ElButton
               v-else
@@ -58,15 +58,15 @@
               @click="stop($route.params.id, arguments[0])"
             >
               <VIcon size="12">pause-fill</VIcon>
-              <span class="ml-1">{{ $t('packages_business_task_button_stop') }}</span>
+              <span class="ml-1">{{ $t('public_button__stop') }}</span>
             </ElButton>
             <ElButton :disabled="task.disabledData.edit" @click="handleEditor(task.id)">
               <VIcon size="12">edit-fill</VIcon>
-              <span class="ml-1">{{ $t('packages_business_task_button_edit') }}</span>
+              <span class="ml-1">{{ $t('public_button_edit') }}</span>
             </ElButton>
             <ElButton @click="toView(task.id)">
               <VIcon size="12">yulan</VIcon>
-              <span class="ml-1">{{ $t('packages_business_button_check') }}</span>
+              <span class="ml-1">{{ $t('public_button_check') }}</span>
             </ElButton>
           </div>
         </div>
@@ -131,12 +131,12 @@ export default {
         {
           key: 'creator',
           icon: 'account-fill',
-          label: this.$t('packages_business_task_monitor_founder')
+          label: this.$t('public_creator')
         },
         {
           key: 'updatedTime',
           icon: 'time-fill',
-          label: this.$t('packages_business_task_monitor_change_time')
+          label: this.$t('public_change_time')
         },
         {
           key: 'type',
@@ -147,18 +147,17 @@ export default {
       ouputItems: [
         {
           key: 'totalOutput',
-          label: this.$t('packages_business_task_monitor_total_input')
+          label: this.$t('public_event_total_input')
         },
         {
           key: 'totalInput',
-          label: this.$t('packages_business_task_monitor_total_output')
+          label: this.$t('public_event_total_output')
         }
       ],
       syncTypeMap: {
-        initial_sync: this.$t('packages_business_dataFlow_initial_sync'),
-        cdc: this.$t('packages_business_dataFlow_cdc'),
-        'initial_sync+cdc':
-          this.$t('packages_business_dataFlow_initial_sync') + '+' + this.$t('packages_business_dataFlow_cdc')
+        initial_sync: this.$t('public_task_type_initial_sync'),
+        cdc: this.$t('public_task_type_cdc'),
+        'initial_sync+cdc': this.$t('public_task_type_initial_sync') + '+' + this.$t('public_task_type_cdc')
       },
       list: [],
       loadingObj: {
@@ -171,7 +170,7 @@ export default {
       pieData: [],
       pieOptions: {
         title: {
-          text: this.$t('packages_business_task_status'),
+          text: this.$t('public_task_status'),
           left: 'center',
           top: 'center',
           textStyle: {
@@ -289,7 +288,7 @@ export default {
       taskApi
         .start(id)
         .then(() => {
-          this.$message.success(this.$t('packages_business_message_operation_succuess'))
+          this.$message.success(this.$t('public_message_operation_success'))
         })
         .finally(resetLoading)
     },
@@ -316,7 +315,7 @@ export default {
           taskApi
             .stop(id)
             .then(() => {
-              this.$message.success(this.$t('packages_business_message_operation_succuess'))
+              this.$message.success(this.$t('public_message_operation_success'))
             })
             .finally(resetLoading)
         } else {
@@ -331,7 +330,7 @@ export default {
       }).then(resFlag => {
         if (resFlag) {
           taskApi.forceStop([id]).then(() => {
-            this.$message.success(this.$t('packages_business_message_operation_succuess'))
+            this.$message.success(this.$t('public_message_operation_success'))
           })
         }
       })
@@ -371,14 +370,10 @@ export default {
       }
     },
     reset(id) {
-      this.$confirm(
-        i18n.t('packages_business_etl_details_shifouzhongzhigai'),
-        i18n.t('packages_business_dataFlow_reset'),
-        {
-          type: 'warning',
-          dangerouslyUseHTMLString: true
-        }
-      ).then(flag => {
+      this.$confirm(i18n.t('packages_business_etl_details_shifouzhongzhigai'), i18n.t('public_button_reset'), {
+        type: 'warning',
+        dangerouslyUseHTMLString: true
+      }).then(flag => {
         if (!flag) {
           return
         }
@@ -386,7 +381,7 @@ export default {
         taskApi
           .reset(id)
           .then(data => {
-            this.responseHandler(data, this.$t('packages_business_message_deleteOK'))
+            this.responseHandler(data, this.$t('public_message_delete_ok'))
           })
           // .catch(error => {
           //   if (error?.isException) {
@@ -419,7 +414,7 @@ export default {
       dataFlowsApi
         .update(where, attributes)
         .then(data => {
-          this.responseHandler(data, this.$t('packages_business_message_deleteOK'))
+          this.responseHandler(data, this.$t('public_message_delete_ok'))
         })
         // .catch(error => {
         //   if (error?.isException) {
@@ -476,7 +471,7 @@ export default {
           h('span', { style: 'color: #409EFF' }, this.$t('packages_business_dataFlow_matchingRelationship')),
           h('span', null, '，'),
           h('span', null, this.$t('packages_business_dataFlow_afterSubmission')),
-          h('span', { style: 'color: #409EFF' }, this.$t('packages_business_dataFlow_reset')),
+          h('span', { style: 'color: #409EFF' }, this.$t('public_button_reset')),
           h('span', null, this.$t('packages_business_dataFlow_runNomally')),
           h('span', null, this.$t('packages_business_dataFlow_editLayerTip'))
         ]),

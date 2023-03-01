@@ -38,9 +38,9 @@
     </el-tree>
     <span slot="footer" class="dialog-footer">
       <el-button class="message-button-cancel" @click="handleCancel" size="mini">{{
-        $t('packages_business_button_cancel')
+        $t('public_button_cancel')
       }}</el-button>
-      <el-button type="primary" @click="handleAdd" size="mini">{{ $t('packages_business_button_save') }}</el-button>
+      <el-button type="primary" @click="handleAdd" size="mini">{{ $t('public_button_save') }}</el-button>
     </span>
   </el-dialog>
 </template>

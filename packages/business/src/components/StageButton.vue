@@ -29,7 +29,7 @@ export default {
     label: {
       type: String,
       default: () => {
-        return i18n.t('packages_business_components_stagebutton_chongxinjiazai')
+        return i18n.t('public_button_reload')
       }
     }
   },

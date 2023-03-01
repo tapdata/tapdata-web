@@ -186,7 +186,7 @@
                 onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
                 onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
               >
-                <template slot="append"> {{ $t('packages_business_taskProgress_m') }} </template>
+                <template slot="append"> {{ $t('public_time_m') }} </template>
               </ElInput>
             </ElFormItem>
             <ElFormItem class="setting-item" prop="cdcBeginDate">

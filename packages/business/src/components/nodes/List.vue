@@ -59,8 +59,8 @@ export default {
       activeNodeId: '',
       typeMap: {
         source: i18n.t('packages_business_nodes_list_laiyuan'),
-        target: i18n.t('packages_business_connection_form_target'),
-        processor: i18n.t('packages_business_nodes_list_chulijiedian')
+        target: i18n.t('public_connection_type_target'),
+        processor: i18n.t('public_node_processor')
       }
     }
   },

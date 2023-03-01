@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="my-4 fs-5">{{ dataflow.name || $t('packages_business_task_name') }}</div>
+    <div class="my-4 fs-5">{{ dataflow.name || $t('public_task_name') }}</div>
     <div class="bg-white p-6">
       <div class="mb-4 fw-bold">
         {{
@@ -127,28 +127,28 @@ export default {
       dataflow: {},
       columns: [
         {
-          label: i18n.t('packages_business_task_name'),
+          label: i18n.t('public_task_name'),
           prop: 'name'
         },
         {
-          label: i18n.t('packages_business_task_list_task_type'),
+          label: i18n.t('public_task_type'),
           prop: 'typeTitle',
           width: 150
         },
         {
-          label: i18n.t('packages_business_task_status'),
+          label: i18n.t('public_task_status'),
           prop: 'status',
           slotName: 'status',
           width: 150
         },
         {
-          label: i18n.t('packages_business_column_create_time'),
+          label: i18n.t('public_create_time'),
           prop: 'creatTime',
           dataType: 'time',
           width: 200
         },
         {
-          label: i18n.t('packages_business_connection_operate'),
+          label: i18n.t('public_operation'),
           slotName: 'operation',
           width: 150
         }
@@ -212,10 +212,9 @@ export default {
         size
       }
       const MAP = {
-        initial_sync: this.$t('packages_business_task_info_initial_sync'),
-        cdc: this.$t('packages_business_task_info_initial_cdc'),
-        'initial_sync+cdc':
-          this.$t('packages_business_task_info_initial_sync') + '+' + this.$t('packages_business_task_info_initial_cdc')
+        initial_sync: this.$t('public_task_type_initial_sync'),
+        cdc: this.$t('public_task_type_cdc'),
+        'initial_sync+cdc': this.$t('public_task_type_initial_sync') + '+' + this.$t('public_task_type_cdc')
       }
       return logcollectorApi.relateTasks(filter).then(data => {
         const { total = 0, items = [] } = data || {}

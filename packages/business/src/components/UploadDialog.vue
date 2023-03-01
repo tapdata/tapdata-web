@@ -41,10 +41,8 @@
       </ElFormItem>
     </ElForm>
     <span slot="footer" class="dialog-footer">
-      <ElButton @click="handleClose" size="mini">{{ $t('packages_business_button_cancel') }}</ElButton>
-      <ElButton type="primary" @click="submitUpload()" size="mini">{{
-        $t('packages_business_button_confirm')
-      }}</ElButton>
+      <ElButton @click="handleClose" size="mini">{{ $t('public_button_cancel') }}</ElButton>
+      <ElButton type="primary" @click="submitUpload()" size="mini">{{ $t('public_button_confirm') }}</ElButton>
     </span>
   </ElDialog>
 </template>

@@ -14,7 +14,7 @@
         <template slot="statusLabel" slot-scope="scope">
           <div v-if="scope.row.status === 'ERROR'" :class="scope.row.statusColor">
             <span class="color-danger underline cursor-pointer" @click="handleError(scope.row)">{{
-              $t('packages_business_milestone_list_renwuchucuo')
+              $t('public_task_mission_error')
             }}</span>
           </div>
           <div v-else :class="scope.row.statusColor">{{ scope.row.statusLabel }}</div>
@@ -168,7 +168,7 @@ export default {
 
       const finishOpt = {
         status: 'FINISH',
-        desc: i18n.t('packages_business_milestone_list_wancheng'),
+        desc: i18n.t('public_status_complete'),
         icon: 'success',
         color: 'color-success'
       }
@@ -181,19 +181,19 @@ export default {
       }
       const waitingOpt = {
         status: 'WAITING',
-        desc: i18n.t('packages_business_milestone_list_dengdaizhong'),
+        desc: i18n.t('public_status_waiting'),
         icon: 'time',
         color: 'color-primary'
       }
       const stopOpt = {
         status: 'STOP',
-        desc: i18n.t('packages_business_status_stop'),
+        desc: i18n.t('public_status_stop'),
         icon: 'warning',
         color: 'color-warning'
       }
       const errorOpt = {
         status: 'ERROR',
-        desc: i18n.t('packages_business_status_error'),
+        desc: i18n.t('public_status_error'),
         icon: 'error',
         color: 'color-danger'
       }
@@ -248,7 +248,7 @@ export default {
         percentage: per,
         desc:
           per >= 100
-            ? i18n.t('packages_business_milestone_list_wancheng')
+            ? i18n.t('public_status_complete')
             : i18n.t('packages_business_milestone_list_finis', {
                 val1: finishedLen,
                 val2: len,
@@ -303,7 +303,7 @@ export default {
       }
       const STATUS_MAP = {
         FINISH: {
-          label: i18n.t('packages_business_status_complete'),
+          label: i18n.t('public_status_finished'),
           color: 'color-success'
         },
         RUNNING: {
@@ -311,11 +311,11 @@ export default {
           color: 'color-primary'
         },
         WAITING: {
-          label: i18n.t('packages_business_milestone_list_dengdaizhong'),
+          label: i18n.t('public_status_waiting'),
           color: 'color-info'
         },
         STOP: {
-          label: i18n.t('packages_business_status_stop'),
+          label: i18n.t('public_status_stop'),
           color: 'color-warning'
         },
         ERROR: {

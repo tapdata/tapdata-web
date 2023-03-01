@@ -73,9 +73,9 @@
           </template>
         </el-table-column>
         <el-table-column :label="$t('packages_business_verification_verifyStatus')" prop="status"></el-table-column>
-        <el-table-column :label="$t('packages_business_verification_operation')" width="60px">
+        <el-table-column :label="$t('public_operation')" width="60px">
           <template slot-scope="scope">
-            <ElLink type="primary" @click="rowClick(scope.row)">{{ $t('packages_business_button_details') }}</ElLink>
+            <ElLink type="primary" @click="rowClick(scope.row)">{{ $t('public_button_details') }}</ElLink>
           </template>
         </el-table-column>
       </el-table>
