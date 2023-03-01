@@ -303,7 +303,7 @@ export default {
           return this.noMatchText || this.$t('packages_form_el_select_noMatch')
         }
         if (this.total === 0) {
-          return this.noDataText || this.$t('packages_form_el_select_noData')
+          return this.noDataText || this.$t('public_data_no_data1')
         }
       }
       return null
