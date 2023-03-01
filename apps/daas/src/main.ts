@@ -10,106 +10,78 @@ import Cookie from '@tap/shared/src/cookie'
 import Time from '@tap/shared/src/time'
 import WSClient from '@tap/business/src/shared/ws-client'
 import { VIcon } from '@tap/component'
-import getRouter from '@/router'
+import { setupRouter } from '@/router'
 // import VConfirm from '@/components/v-confirm'
 import { settingsApi, usersApi, timeStampApi } from '@tap/api'
 import { getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
 import FormBuilder from '@tap/component/src/form-builder'
-
-import '@/plugins/element'
+// import '@/plugins/element'
 import '@/plugins/icon'
-import '@/directives'
-
 import '@/plugins/axios.ts'
 import { configUser, getUrlSearch } from '@/utils/util'
+// @ts-ignore 见鬼了，这里识别不到export
+import { setupDirectives } from '@/directives'
 
-window.$vueApp.use(VueClipboard)
-window.$vueApp.use(FormBuilder)
-window.$vueApp.use(i18n)
+async function bootstrap() {
+  window._TAPDATA_OPTIONS_ = {
+    version: process.env.VUE_APP_VERSION,
+    logoUrl: require(`@/assets/images/${process.env.VUE_APP_LOGO_IMG}`),
+    loginUrl: require(`@/assets/images/${process.env.VUE_APP_LOGIN_IMG}`),
+    loadingImg: require(`@/assets/icons/${process.env.VUE_APP_LOADING_IMG}`),
+    logoWidth: process.env.VUE_APP_LOGO_WIDTH,
+    logoHeight: process.env.VUE_APP_LOGO_HEIGHT,
+    loginSize: process.env.VUE_APP_LOGIN_IMG_SIZE,
+    homeUrl: process.env.VUE_APP_HOME_URL
+  }
 
-window.$vueApp.mixin({
-  created() {
-    // 创建实例时传入wsOptions，即可默认开启websocket
-    let wsOptions = this.$options.wsOptions
-    // 根实例才有ws
-    if (wsOptions) {
-      window.$vueApp.config.globalProperties.$ws = new WSClient(wsOptions.url, wsOptions.protocols, wsOptions)
+  window.getSettingByKey = key => {
+    let value: settingItem['value'] = ''
+
+    let setting: settingItem = window.__settings__.find(it => it.key === key) || ({} as settingItem)
+    value = setting.isArray ? (setting.value as string).split(',') : setting.value
+    return value
+  }
+
+  const IS_IFRAME = (getUrlSearch('frame') || sessionStorage.getItem('IS_IFRAME') || window.self !== window.top) + ''
+  if (IS_IFRAME) {
+    sessionStorage.setItem('IS_IFRAME', IS_IFRAME)
+  }
+  const TOKEN = getUrlSearch('token')
+  const URL_LANG = getUrlSearch('lang')
+
+  // 西工大的case
+  ;['zh-CN', 'zh-TW', 'en'].includes(URL_LANG) && localStorage.setItem('lang', URL_LANG)
+
+  if (TOKEN) {
+    Cookie.set('access_token', TOKEN)
+    // eslint-disable-next-line
+    console.log(i18n.t('daas_src_main_baocuntok'), TOKEN)
+  }
+
+  let token = Cookie.get('access_token')
+
+  const settings = (await settingsApi.get()) || []
+
+  if (settings.length) {
+    localStorage.setItem('TAPDATA_SETTINGS', JSON.stringify(settings))
+  }
+
+  if (token) {
+    try {
+      //无权限，说明是首次进入页面，重新请求后台获取
+      let user = await usersApi.getInfo()
+      //权限存在则存入缓存并继续向下走
+      configUser(user)
+    } catch (e) {
+      console.error(e) // eslint-disable-line
     }
   }
-})
 
-// Vue.prototype.$api = factory
-
-window.$vueApp.component(VIcon.name, VIcon)
-
-window._TAPDATA_OPTIONS_ = {
-  version: process.env.VUE_APP_VERSION,
-  logoUrl: require(`@/assets/images/${process.env.VUE_APP_LOGO_IMG}`),
-  loginUrl: require(`@/assets/images/${process.env.VUE_APP_LOGIN_IMG}`),
-  loadingImg: require(`@/assets/icons/${process.env.VUE_APP_LOADING_IMG}`),
-  logoWidth: process.env.VUE_APP_LOGO_WIDTH,
-  logoHeight: process.env.VUE_APP_LOGO_HEIGHT,
-  loginSize: process.env.VUE_APP_LOGIN_IMG_SIZE,
-  homeUrl: process.env.VUE_APP_HOME_URL
-}
-
-window.getSettingByKey = key => {
-  let value: settingItem['value'] = ''
-
-  let setting: settingItem = window?.__settings__.find(it => it.key === key) || ({} as settingItem)
-  value = setting.isArray ? (setting.value as string).split(',') : setting.value
-  return value
-}
-window.$vueApp.config.globalProperties.$getSettingByKey = window.getSettingByKey
-
-/*window.$vueApp.config.globalProperties.$confirm = (message, title, options) => {
-  return new Promise((resolve, reject) => {
-    VConfirm.confirm(
-      message,
-      title,
-      Object.assign(
-        {
-          cancelButtonText: window.App.$t('button_cancel'),
-          confirmButtonText: window.App.$t('button_confirm')
-        },
-        options
-      )
-    )
-      .then(() => {
-        resolve(true)
-      })
-      .catch(() => {
-        reject(false)
-      })
-  }).catch(() => {
-    return false
-  })
-}*/
-
-const IS_IFRAME = (getUrlSearch('frame') || sessionStorage.getItem('IS_IFRAME') || window.self !== window.top) + ''
-if (IS_IFRAME) {
-  sessionStorage.setItem('IS_IFRAME', IS_IFRAME)
-}
-const TOKEN = getUrlSearch('token')
-const URL_LANG = getUrlSearch('lang')
-
-// 西工大的case
-;['zh-CN', 'zh-TW', 'en'].includes(URL_LANG) && localStorage.setItem('lang', URL_LANG)
-
-if (TOKEN) {
-  Cookie.set('access_token', TOKEN)
-  // eslint-disable-next-line
-  console.log(i18n.t('daas_src_main_baocuntok'), TOKEN)
-}
-
-let token = Cookie.get('access_token')
-
-let init = settings => {
   window.__settings__ = settings
   let lang = getCurrentLanguage()
   setCurrentLanguage(lang, i18n)
 
-  document.title = /*window.getSettingByKey('PRODUCT_TITLE') ||*/ process.env.VUE_APP_PAGE_TITLE || 'Tapdata'
+  document.title = process.env.VUE_APP_PAGE_TITLE || 'Tapdata'
 
   let loc = window.location,
     wsUrl = 'ws:'
@@ -118,70 +90,37 @@ let init = settings => {
   }
   wsUrl += `//${loc.host}${location.pathname.replace(/\/$/, '')}/ws/agent`
 
-  window.App = window.$vueApp = Vue.createApp(App)
-  window.$vueApp.config.globalProperties.routerAppend = (path, pathToAppend) => {
+  const app = (window.App = window.$vueApp = Vue.createApp(App))
+  app.config.globalProperties.routerAppend = (path, pathToAppend) => {
     return path + (path.endsWith('/') ? '' : '/') + pathToAppend
   }
-  window.$vueApp.use(store)
-  window.$vueApp.use(undefined)
-  window.$vueApp.mount('#app')
+  app.use(store)
+  app.use(VueClipboard)
+  app.use(FormBuilder)
+  app.use(i18n)
+  app.mixin({
+    created() {
+      // 创建实例时传入wsOptions，即可默认开启websocket
+      let wsOptions = this.$options.wsOptions
+      // 根实例才有ws
+      if (wsOptions) {
+        app.config.globalProperties.$ws = new WSClient(wsOptions.url, wsOptions.protocols, wsOptions)
+      }
+    }
+  })
+  app.component(VIcon.name, VIcon)
+  app.config.globalProperties.$getSettingByKey = window.getSettingByKey
+
+  setupRouter(app)
+
+  setupDirectives(app)
+
+  app.mount('#app')
+
+  // 设置服务器时间
+  timeStampApi.get().then(t => {
+    Time.setTime(t)
+  })
 }
-settingsApi
-  .get()
-  .then(async data => {
-    let initData = data || []
-    if (initData.length) {
-      localStorage.setItem('TAPDATA_SETTINGS', JSON.stringify(initData))
-    }
-    if (token) {
-      //无权限，说明是首次进入页面，重新请求后台获取
-      let user = await usersApi.getInfo().catch(() => {
-        init(initData)
-      })
-      //权限存在则存入缓存并继续向下走
-      configUser(user)
-    }
-    init(initData)
-    // 设置服务器时间
-    timeStampApi.get().then(t => {
-      Time.setTime(t)
-    })
-  })
-  .catch(err => {
-    // eslint-disable-next-line
-    console.log(i18n.t('daas_src_main_qingqiuquanjupei') + err)
-  })
-//获取全局项目设置（OEM信息）
 
-//解决浏览器tab切换时，element ui 组件tooltip气泡不消失的问题  #7752
-document.addEventListener('visibilitychange', () => {
-  setTimeout(() => {
-    let ele: HTMLElement = document.querySelector(':focus')
-    ele && ele.blur()
-  }, 50)
-})
-
-// 判断浏览器是否为IE
-// const isIE = /MSIE (\d+\.\d+);/.test(navigator.userAgent) || ~navigator.userAgent.indexOf('Trident/')
-
-// // 兼容ie iframe切换路由不生效
-// if (isIE) {
-//   window.addEventListener(
-//     'hashchange',
-//     () => {
-//       let currentPath = window.location.hash.slice(1)
-//       let arr = ['/dataFlows', '/connections'] // 匹配的路由：同步任务、连接管理、数据校验
-//       let flag = false // 是否是iframe使用到的路由地址
-//       arr.forEach(el => {
-//         let reg = new RegExp('^' + el)
-//         if (reg.test(currentPath)) {
-//           flag = true
-//         }
-//       })
-//       if (flag && window.App.$route.fullPath !== currentPath) {
-//         window.App.$router.push(currentPath)
-//       }
-//     },
-//     false
-//   )
-// }
+bootstrap()

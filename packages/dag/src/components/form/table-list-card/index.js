@@ -3,7 +3,7 @@ import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import { RecycleScroller } from 'vue-virtual-scroller'
 
 import i18n from '@tap/i18n'
-import { defineComponent, ref, watch } from '@vue/composition-api'
+import { defineComponent, ref, watch } from 'vue'
 import { metadataInstancesApi } from '@tap/api'
 import { OverflowTooltip } from '@tap/component'
 import { observer } from '@formily/reactive-vue'

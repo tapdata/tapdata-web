@@ -71,12 +71,12 @@ import {
 import { getCell, getColumnByCell, getStyle, hasClass } from '@tap/shared'
 
 // 组件默认尺寸为small
-window.$vueApp.config.globalProperties.$ELEMENT = { size: 'small' }
+// window.$vueApp.config.globalProperties.$ELEMENT = { size: 'small' }
 // 提示框默认不显示箭头
-Tooltip.props.visibleArrow.default = false
+// Tooltip.props.visibleArrow.default = false
 
 // 优化任务名称和标签一起显示，超出显示提示框的逻辑
-Table.components.TableBody.methods.handleCellMouseEnter = function (event, row) {
+/*Table.components.TableBody.methods.handleCellMouseEnter = function (event, row) {
   const table = this.table
   const cell = getCell(event)
 
@@ -125,10 +125,10 @@ Table.components.TableBody.methods.handleCellMouseEnter = function (event, row) 
   ) {
     showTooltip()
   }
-}
+}*/
 
 //重写ElementUI Select组件多选时的触发函数，去掉去重的处理
-Select.methods.handleOptionSelect = function (option, byClick) {
+/*Select.methods.handleOptionSelect = function (option, byClick) {
   var _this12 = this
 
   if (_this12.multiple) {
@@ -158,7 +158,7 @@ Select.methods.handleOptionSelect = function (option, byClick) {
   _this12.$nextTick(function () {
     _this12.scrollToOption(option)
   })
-}
+}*/
 
 window.$vueApp.component(Card.name, Card)
 window.$vueApp.component(InputNumber.name, InputNumber)

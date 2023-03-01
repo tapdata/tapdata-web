@@ -1,4 +1,4 @@
-import { defineComponent, toRefs, computed } from '@vue/composition-api'
+import { defineComponent, toRefs, getCurrentInstance } from 'vue'
 import { getTaskBtnDisabled, isStopping } from '@/utils/util'
 import { useI18n, useMessage } from '@/hooks'
 import { taskApi } from '@tap/api'
@@ -12,10 +12,11 @@ export default defineComponent({
     },
     hideList: {
       type: Array,
-      default: []
+      default: () => []
     }
   },
-  setup(props, { emit, root }) {
+  setup(props, { emit }) {
+    const root = getCurrentInstance().appContext.config.globalProperties
     const { task, hideList } = toRefs(props)
     const { $t } = useI18n()
     const { success } = useMessage()

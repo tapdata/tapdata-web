@@ -22,7 +22,7 @@
     <template v-slot:footer>
       <span class="dialog-footer">
         <el-button @click="closeDialogForm">{{ $t('packages_dag_button_cancel') }}</el-button>
-        <el-button type="primary" @click="confirm" @>{{ $t('packages_dag_button_confirm') }}</el-button>
+        <el-button type="primary" @click="confirm">{{ $t('packages_dag_button_confirm') }}</el-button>
       </span>
     </template>
   </ElDialog>

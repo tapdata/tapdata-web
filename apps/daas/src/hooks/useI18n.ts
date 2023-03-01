@@ -1,4 +1,4 @@
-import { provide, inject } from '@vue/composition-api'
+import { provide, inject } from 'vue'
 import i18n from '@/i18n'
 
 const createI18n = () => ({

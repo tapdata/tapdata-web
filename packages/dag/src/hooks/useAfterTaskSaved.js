@@ -1,5 +1,5 @@
 import i18n from '@tap/i18n'
-import { onBeforeUnmount, watch } from '@vue/composition-api'
+import { onBeforeUnmount, watch } from 'vue'
 import { observe } from '@formily/reactive'
 
 /**

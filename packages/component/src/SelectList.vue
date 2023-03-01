@@ -1,7 +1,7 @@
 <template>
-  <div
+  <!--<div
     class="v-select-list el-select"
-    :class="[selectSize ? 'el-select--' + selectSize : '', { 'none-border': noneBorder }]"
+    :class="[selectSize ? 'el-select&#45;&#45;' + selectSize : '', { 'none-border': noneBorder }]"
     @click.stop="toggleMenu"
     v-clickoutside="handleClose"
   >
@@ -130,7 +130,7 @@
       <el-icon><el-icon-loading /></el-icon>
     </div>
     <transition name="el-zoom-in-top" @before-enter="handleMenuEnter" @after-leave="doDestroy">
-      <ElSelectMenu ref="popper" :append-to-body="popperAppendToBody" v-show="visible && emptyText !== false">
+      &lt;!&ndash;<ElSelectMenu ref="popper" :append-to-body="popperAppendToBody" v-show="visible && emptyText !== false">
         <div
           class="el-select-dropdown__wrap el-scrollbar__wrap virtual-scroller-wrap"
           v-show="filteredItems.length > 0 && !loading"
@@ -168,17 +168,17 @@
             {{ emptyText }}
           </p>
         </template>
-      </ElSelectMenu>
+      </ElSelectMenu>&ndash;&gt;
     </transition>
-  </div>
+  </div>-->
 </template>
 
 <script>
-import { CircleClose as ElIconCircleClose, Loading as ElIconLoading } from '@element-plus/icons'
+// import { CircleClose as ElIconCircleClose, Loading as ElIconLoading } from '@element-plus/icons'
 import i18n from '@tap/i18n'
 
 import { deepCopy, uniqueArr } from '@tap/shared'
-import { ElSelect as Select } from 'element-plus'
+// import { ElSelect as Select } from 'element-plus'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import VIcon from './base/VIcon.vue'
@@ -186,12 +186,10 @@ import VIcon from './base/VIcon.vue'
 export default {
   components: {
     RecycleScroller,
-    VIcon,
-    ElIconCircleClose,
-    ElIconLoading
+    VIcon
   },
   name: 'SelectList',
-  extends: Select,
+  // extends: Select,
   props: {
     value: {
       type: [Number, String]

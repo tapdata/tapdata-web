@@ -204,7 +204,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.monitor-log-wrap{display:flex;//max-height:450px;font-size:14px;.search-input {
+.monitor-log-wrap {
+  display: flex;
+  //max-height: 450px;
+  font-size: 14px;
+  .search-input {
     width: 343px;
   }
   .log-container {
@@ -219,7 +223,11 @@ export default {
   }
   .log-keyword-block {
     background: map-get($color, warning);
-  }}.filter-row{.el-checkbox {
+  }
+}
+.filter-row {
+  .el-checkbox {
     margin-right: 16px;
-  }}
+  }
+}
 </style>

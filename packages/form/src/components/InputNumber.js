@@ -1,5 +1,5 @@
-import { InputNumber as _InputNumber } from '@formily/element'
-import { defineComponent } from '@vue/composition-api'
+import { InputNumber as _InputNumber } from '@formily/element-plus'
+import { defineComponent } from 'vue'
 
 export const InputNumber = defineComponent({
   setup(props, { attrs, listeners }) {

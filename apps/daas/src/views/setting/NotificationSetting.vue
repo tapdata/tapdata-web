@@ -181,13 +181,21 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 $unreadColor: #ee5353;
-.notification{display:flex;flex-direction:column;justify-content:space-between;height:100%;font-size:$fontBaseTitle;.notification-head {
+.notification {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  font-size: 12px;
+  font-size: $fontBaseTitle;
+  .notification-head {
     display: flex;
     justify-content: space-between;
     align-items: center;
     height: 54px;
+    font-size: 12px;
     font-size: $fontBaseTitle;
     color: map-get($color, primary);
     padding: 20px 20px 0 24px;
@@ -212,6 +220,7 @@ $unreadColor: #ee5353;
       padding-top: 5px;
       span {
         padding: 4px 100px 4px 20px;
+        font-size: 12px;
         font-size: $fontBaseTitle;
         white-space: nowrap;
         color: map-get($fontColor, light);
@@ -223,6 +232,7 @@ $unreadColor: #ee5353;
     .run-notification {
       margin-top: 15px;
       .title {
+        font-size: 14px;
         font-size: $fontBaseTitle;
         font-weight: bold;
         color: map-get($fontColor, dark);
@@ -277,7 +287,15 @@ $unreadColor: #ee5353;
     height: 60px;
     text-align: right;
     border-top: 1px solid map-get($borderColor, light);
-  }}/*// .notification-main*/{/*//   display: flex;*//*//   flex-direction: column;*//*//   justify-content: space-between;*//*//   height: 100%;*//*//   .notification-left-sidebar {*/
+  }
+}
+
+// .notification-main {
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: space-between;
+//   height: 100%;
+//   .notification-left-sidebar {
 //     background: rgba(250, 250, 250, 1);
 //     border: 1px solid rgba(230, 230, 232, 1);
 //     width: 250px;
@@ -309,7 +327,11 @@ $unreadColor: #ee5353;
 //     padding-left: 20px;
 //   }
 
-//}.pagination{float:right;margin-top:10px}
+// }
+.pagination {
+  float: right;
+  margin-top: 10px;
+}
 </style>
 
 <style lang="scss">

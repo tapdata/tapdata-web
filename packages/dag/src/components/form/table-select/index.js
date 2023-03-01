@@ -1,7 +1,7 @@
 import { AsyncSelect } from '@tap/form'
 import { useField } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
-import { watch, defineComponent } from '@vue/composition-api'
+import { watch, defineComponent } from 'vue'
 
 export const TableSelect = observer(
   defineComponent({

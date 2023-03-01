@@ -97,14 +97,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.function-details-wrapper{/*// display: flex;*//*// flex-direction: column;*//*// height: 100%;*//*// background: map-get($bgColor, normal);*//*// .function-details__body {*/
-  //   margin: 30px 24px 0 24px;
-  //   flex: 1;
-  //   display: flex;
-  //   flex-direction: column;
-  //   background-color: map-get($bgColor, white);
-  //   box-shadow: 0px 0px 3px 0px #cccccc;
-  //   overflow: hidden;
+.function-details-wrapper {
   .details-value {
     color: map-get($fontColor, dark);
     font-size: 12px;
@@ -139,5 +132,5 @@ export default {
       width: 80px;
     }
   }
-  // }}
+}
 </style>

@@ -1,4 +1,4 @@
-import { defineComponent, ref, reactive, onUnmounted, watch } from '@vue/composition-api'
+import { defineComponent, ref, reactive, onUnmounted, watch } from 'vue'
 import { useForm } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
 import { observe } from '@formily/reactive'

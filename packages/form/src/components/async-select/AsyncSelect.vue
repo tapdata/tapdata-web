@@ -1,7 +1,7 @@
-<template>
+<!--<template>
   <div
     class="el-select"
-    :class="[selectSize ? 'el-select--' + selectSize : '']"
+    :class="[selectSize ? 'el-select&#45;&#45;' + selectSize : '']"
     @click.stop="toggleMenu"
     v-clickoutside="handleClose"
   >
@@ -196,17 +196,17 @@
       </ElSelectMenu>
     </transition>
   </div>
-</template>
+</template>-->
 
 <script>
-import { CircleClose as ElIconCircleClose } from '@element-plus/icons'
-import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
-import { merge, escapeRegExp, uniqBy, debounce } from 'lodash'
 import { ElSelect as Select } from 'element-plus'
-import { getValueByPath } from 'element-ui/lib/utils/util'
-import scrollIntoView from 'element-ui/lib/utils/scroll-into-view'
+import { CircleClose as ElIconCircleClose } from '@element-plus/icons'
+import { merge, escapeRegExp, uniqBy, debounce } from 'lodash'
+
+import { getValueByPath, scrollIntoView, valueEquals } from '@tap/shared'
 import { CancelToken } from '@tap/api'
-import { valueEquals } from 'element-ui/src/utils/util'
+
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 
 export default {
   components: {

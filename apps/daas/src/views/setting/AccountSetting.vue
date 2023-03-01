@@ -372,10 +372,16 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 $unreadColor: #ee5353;
-// .settingCenter{/*// 	height: 100%;*//*// 	font-size: 12px;*//*// 	.setting-main {*/
-// 		display: flex;/*// 		justify-content: space-between;*//*// 		height: 100%;*/.account {
+// .settingCenter {
+// 	height: 100%;
+// 	font-size: 12px;
+// 	.setting-main {
+// 		display: flex;
+// 		justify-content: space-between;
+// 		height: 100%;
+.account {
   width: 100%;
   height: 100%;
   flex: 1 1 auto;
@@ -417,7 +423,7 @@ $unreadColor: #ee5353;
       }
     }
   }
-}}
+}
 </style>
 
 <style lang="scss">

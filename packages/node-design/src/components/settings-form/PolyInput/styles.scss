@@ -20,7 +20,7 @@
   }
 
   .#{$prefix-cls}-poly-input-controller {
-    border: 1px solid $--border-color-base;
+    border: 1px solid map-get($borderColor, form);
     //border-radius: 2px;
     cursor: pointer;
     //padding: 0 8px;

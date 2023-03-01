@@ -1,5 +1,5 @@
 import i18n from '@tap/i18n'
-import { defineComponent, ref, watch, onMounted, computed, nextTick } from '@vue/composition-api'
+import { defineComponent, ref, watch, onMounted, computed, nextTick } from 'vue'
 import { observer } from '@formily/reactive-vue'
 import { observe } from '@formily/reactive'
 import { FormItem, Space, h as createElement, useFieldSchema, useForm, RecursionField } from '@tap/form'

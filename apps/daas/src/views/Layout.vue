@@ -89,20 +89,18 @@
           @select="menuHandler"
         >
           <template v-for="menu in menus">
-            <ElSubMenu v-if="menu.children && !menu.hidden" :index="menu.name">
+            <ElSubMenu v-if="menu.children && !menu.hidden" :index="menu.name" :key="menu.name">
               <template v-slot:title>
                 <VIcon size="16" class="menu-icon">{{ menu.icon }}</VIcon>
-                <template v-slot:title>
-                  <span class="ml-4 title">{{ menu.label }}</span>
-                </template>
+                <span class="ml-4 title">{{ menu.label }}</span>
               </template>
               <template v-for="cMenu in menu.children">
-                <ElMenuItem v-if="!cMenu.hidden" :index="cMenu.name">
+                <ElMenuItem v-if="!cMenu.hidden" :index="cMenu.name" :key="cMenu.name">
                   <div class="submenu-item">{{ cMenu.label }}</div>
                 </ElMenuItem>
               </template>
             </ElSubMenu>
-            <ElMenuItem v-else-if="!menu.hidden" :index="menu.name">
+            <ElMenuItem v-else-if="!menu.hidden" :index="menu.name" :key="menu.name">
               <VIcon size="16" class="menu-icon">{{ menu.icon }}</VIcon>
               <template v-slot:title>
                 <span class="ml-4 title">{{ menu.label }}</span>

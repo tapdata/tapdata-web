@@ -12,7 +12,7 @@
             >
               <!-- <i :class="['iconfont', item.icon]"></i> -->
               <VIcon :size="item.size" class="mr-2">{{ item.icon }}</VIcon>
-              <template v-slot:title>
+              <template>
                 <span>{{ item.name }}</span>
               </template>
             </li>

@@ -143,12 +143,24 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 $color: map-get($color, primary);
 $tabsHeaderWidth: 180px;
 $headerHeight: 40px;
 
-.bottom-panel{position:relative;z-index:9;height:328px;//min-height:328px;//height:100%;overflow:auto;background-color:#fff;//transition:height 0.24s;will-change:width;box-sizing:border-box;&.show-record {
+.bottom-panel {
+  position: relative;
+  z-index: 9;
+  height: 328px;
+  //min-height: 328px;
+  //height: 100%;
+  overflow: auto;
+  background-color: #fff;
+  //transition: height 0.24s;
+  will-change: width;
+  box-sizing: border-box;
+
+  &.show-record {
     width: 320px;
   }
 
@@ -242,9 +254,18 @@ $headerHeight: 40px;
     .resize-trigger {
       background: 0 0 !important;
     }
-  }}.close-icon{position:absolute;right:16px;top:10px}.tabs-header__hidden{::v-deep {
+  }
+}
+.close-icon {
+  position: absolute;
+  right: 16px;
+  top: 10px;
+}
+.tabs-header__hidden {
+  ::v-deep {
     .el-tabs__header {
       display: none;
     }
-  }}
+  }
+}
 </style>

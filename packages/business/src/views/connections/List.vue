@@ -66,7 +66,7 @@
               {{ row.name }}
             </ElLink>
             <span v-if="row.listtags" class="justify-content-start ellipsis block">
-              <span class="tag inline-block" v-for="item in row.listtags">
+              <span class="tag inline-block" v-for="item in row.listtags" :key="item.value">
                 {{ item.value }}
               </span>
             </span>
@@ -107,9 +107,7 @@
         </template>
         <template v-slot="scope">
           <div v-if="isFileSource(scope.row)">-</div>
-        </template>
-        <template v-else v-slot="scope">
-          <SchemaProgress :data="scope.row"></SchemaProgress>
+          <SchemaProgress v-else :data="scope.row"></SchemaProgress>
         </template>
       </ElTableColumn>
       <ElTableColumn

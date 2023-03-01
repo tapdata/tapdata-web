@@ -1,4 +1,4 @@
-import { defineComponent, ref, onMounted } from '@vue/composition-api'
+import { defineComponent, ref, onMounted } from 'vue'
 import { observer } from '@formily/reactive-vue'
 
 import i18n from '@tap/i18n'

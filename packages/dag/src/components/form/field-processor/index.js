@@ -1,7 +1,7 @@
 import * as Vue from 'vue'
 import { debounce } from 'lodash'
 import i18n from '@tap/i18n'
-import { defineComponent, ref, reactive, nextTick, watch } from '@vue/composition-api'
+import { defineComponent, ref, reactive, nextTick, watch } from 'vue'
 import { metadataInstancesApi, taskApi } from '@tap/api'
 import { FormItem } from '@tap/form'
 import { useForm } from '@tap/form'

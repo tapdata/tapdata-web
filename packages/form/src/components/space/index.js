@@ -1,9 +1,9 @@
-import { defineComponent, watch } from '@vue/composition-api'
+import { defineComponent, watch } from 'vue'
 import { h } from '@formily/vue'
 import { stylePrefix } from '../configs'
-import { useFormLayout } from '@formily/element'
+import { useFormLayout } from '@formily/element-plus'
 import { VDivider } from '@tap/component'
-import '@formily/element/lib/space/style.scss'
+import '@formily/element-plus/lib/space/style.scss'
 
 const spaceSize = {
   small: 8,

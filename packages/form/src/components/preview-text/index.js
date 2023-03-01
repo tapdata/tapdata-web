@@ -1,17 +1,17 @@
-import { defineComponent, computed, toRef } from '@vue/composition-api'
+import { defineComponent, computed, toRef } from 'vue'
 import {
   createContext,
   resolveComponent,
   useContext,
   composeExport,
   stylePrefix
-} from '@formily/element/lib/__builtins__'
+} from '@formily/element-plus/lib/__builtins__'
 import { observer } from '@formily/reactive-vue'
 import { h, useField } from '@formily/vue'
 import { isArr, isValid } from '@formily/shared'
 import { Space } from '../space'
 import { ElTag as Tag } from 'element-plus'
-import { formatDate } from 'element-ui/src/utils/date-util'
+import { formatDate } from '@tap/shared'
 
 const prefixCls = `${stylePrefix}-preview-text`
 const PlaceholderContext = createContext('N/A')

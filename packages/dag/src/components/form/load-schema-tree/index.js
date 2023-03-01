@@ -1,7 +1,7 @@
-import { defineComponent, ref } from '@vue/composition-api'
+import { defineComponent, ref } from 'vue'
 import { observer } from '@formily/reactive-vue'
 import { useForm } from '@tap/form'
-import { onMounted, onUnmounted } from '@vue/composition-api'
+import { onMounted, onUnmounted } from 'vue'
 
 import { metadataInstancesApi, proxyApi, taskApi, connectionsApi } from '@tap/api'
 

@@ -1,4 +1,4 @@
-import { defineComponent, reactive, ref, nextTick, watch, onMounted } from '@vue/composition-api'
+import { defineComponent, reactive, ref, nextTick, watch, onMounted } from 'vue'
 import i18n from '@/i18n'
 import { FilterBar } from '@tap/component'
 import { TablePage } from '@tap/business'

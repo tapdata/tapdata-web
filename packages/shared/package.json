@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "requestidlecallback": "^0.3.0"
+    "requestidlecallback": "^0.3.0",
+    "resize-observer-polyfill": "^1.5.1"
   }
 }

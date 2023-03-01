@@ -1,7 +1,7 @@
-<template>
+<!--<template>
   <div
     class="el-select"
-    :class="[selectSize ? 'el-select--' + selectSize : '']"
+    :class="[selectSize ? 'el-select&#45;&#45;' + selectSize : '']"
     @click.stop="toggleMenu"
     v-clickoutside="handleClose"
   >
@@ -147,16 +147,17 @@
       </el-select-menu>
     </transition>
   </div>
-</template>
+</template>-->
 
 <script>
-import { CircleClose as ElIconCircleClose } from '@element-plus/icons'import { ElSelect as Select } from 'element-plus'
+import { CircleClose as ElIconCircleClose } from '@element-plus/icons'
+import { ElSelect as Select } from 'element-plus'
 export default {
   components: {
-    ElIconCircleClose,
+    ElIconCircleClose
   },
   name: 'Select',
-extends: Select
+  extends: Select
 }
 </script>
 

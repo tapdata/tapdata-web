@@ -1,4 +1,4 @@
-import { defineComponent } from '@vue/composition-api'
+import { defineComponent } from 'vue'
 import { MigrateList } from '@tap/business'
 
 export default defineComponent({

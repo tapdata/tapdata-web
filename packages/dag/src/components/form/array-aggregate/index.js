@@ -1,6 +1,6 @@
 import { connect, useForm } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
-import { defineComponent } from '@vue/composition-api'
+import { defineComponent } from 'vue'
 import { Highlight } from '@tap/component'
 import 'highlight.js/styles/atom-one-light.css'
 

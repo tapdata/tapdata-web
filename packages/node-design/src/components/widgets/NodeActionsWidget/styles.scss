@@ -21,7 +21,7 @@
       height: 0;
       width: 300%;
       top: 50%;
-      border-bottom: 1px dashed $--border-color-base;
+      border-bottom: 1px dashed map-get($borderColor, form);
       right: 100%;
     }
     &::after {
@@ -31,13 +31,13 @@
       height: 0;
       width: 300%;
       top: 50%;
-      border-bottom: 1px dashed $--border-color-base;
+      border-bottom: 1px dashed map-get($borderColor, form);
       left: 100%;
     }
     a {
       color: $--color-text-secondary;
       &:hover {
-        color: $--color-primary;
+        color: map-get($color, primary);
       }
     }
   }

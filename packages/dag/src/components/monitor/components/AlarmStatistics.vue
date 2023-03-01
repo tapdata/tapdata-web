@@ -1,5 +1,5 @@
 <script>
-import { defineComponent } from '@vue/composition-api'
+import { defineComponent } from 'vue'
 import { VIcon } from '@tap/component'
 
 export default defineComponent({

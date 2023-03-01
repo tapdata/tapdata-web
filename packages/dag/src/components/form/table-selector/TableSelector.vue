@@ -152,10 +152,7 @@
           <div
             v-show="!isFocus"
             class="selector-clipboard__view"
-            @click="
-              isFocus = true
-              clipboardValue = clipboardTables.concat().join(', ')
-            "
+            @click=";(isFocus = true), (clipboardValue = clipboardTables.concat().join(', '))"
           >
             <template v-if="clipboardTables.length">
               <ElTooltip
@@ -537,17 +534,81 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.table-selector{display:flex;align-items:stretch;height:100%;overflow:hidden}.selector-panel{flex:1;//height:100%;display:flex;flex-direction:column;border:1px solid map-get($borderColor, light);border-radius:2px;overflow:hidden}.selector-panel__header{padding:0 16px;display:flex;align-items:center;background:#f7f8fa;line-height:40px;color:map-get($fontColor, normal);font-size:13px;font-weight:500}.selector-panel__body{padding:16px 0;flex:1;display:flex;flex-direction:column;overflow:hidden;&.isOpenClipMode {
+.table-selector {
+  display: flex;
+  align-items: stretch;
+  height: 100%;
+  overflow: hidden;
+}
+.selector-panel {
+  flex: 1;
+  //height: 100%;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid map-get($borderColor, light);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.selector-panel__header {
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  background: #f7f8fa;
+  line-height: 40px;
+  color: map-get($fontColor, normal);
+  font-size: 13px;
+  font-weight: 500;
+}
+.selector-panel__body {
+  padding: 16px 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  &.isOpenClipMode {
     flex: unset;
     overflow: auto;
-  }}.selector-panel__search{padding:0 16px}.selector-panel__list{margin-top:16px;flex:1;height:calc(100% - 32px);padding-bottom:5px;box-sizing:border-box;overflow-x:hidden;overflow-y:auto}.selector-panel__scroller{height:100%}.selector-panel__item{padding:0 16px;width:100%;line-height:36px;height:36px;display:flex;align-items:center;&:hover {
+  }
+}
+.selector-panel__search {
+  padding: 0 16px;
+}
+.selector-panel__list {
+  margin-top: 16px;
+  flex: 1;
+  height: calc(100% - 32px);
+  padding-bottom: 5px;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.selector-panel__scroller {
+  height: 100%;
+}
+.selector-panel__item {
+  padding: 0 16px;
+  width: 100%;
+  line-height: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  &:hover {
     background-color: map-get($bgColor, disable);
   }
   > ::v-deep {
     .el-checkbox__label {
       overflow: hidden;
     }
-  }}.selector-center{width:46px;display:flex;flex-direction:column;align-items:center;justify-content:center;.selector-btns {
+  }
+}
+.selector-center {
+  width: 46px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  .selector-btns {
     width: 28px;
   }
   .btn-transfer {
@@ -576,7 +637,21 @@ export default {
       background: map-get($color, primary);
       color: map-get($fontColor, white);
     }
-  }}.selector-error{padding:16px;font-size:12px}.selector-clipboard{padding:0 16px}.selector-clipboard__view{flex:1;//overflow:auto;cursor:text;white-space:pre-wrap;> span {
+  }
+}
+.selector-error {
+  padding: 16px;
+  font-size: 12px;
+}
+.selector-clipboard {
+  padding: 0 16px;
+}
+.selector-clipboard__view {
+  flex: 1;
+  //overflow: auto;
+  cursor: text;
+  white-space: pre-wrap;
+  > span {
     display: inline-block;
     line-height: 20px;
     //height: 20px;
@@ -589,7 +664,11 @@ export default {
     font-size: 12px;
     font-weight: normal;
     line-height: 20px;
-  }}.selector-clipboard__textarea{flex:1;::v-deep {
+  }
+}
+.selector-clipboard__textarea {
+  flex: 1;
+  ::v-deep {
     .el-textarea__inner {
       height: 100%;
       border: none;
@@ -597,5 +676,6 @@ export default {
       font-size: 12px;
       line-height: 20px;
     }
-  }}
+  }
+}
 </style>

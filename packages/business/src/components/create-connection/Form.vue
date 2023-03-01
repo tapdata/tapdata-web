@@ -62,20 +62,18 @@
             </span>
           </div>
         </div>
-        <template v-slot:footer>
-          <footer class="footer">
-            <div class="footer-btn text-start py-4">
-              <!--            <el-button @click="goBack()">{{ $t('packages_business_button_back') }}</el-button>-->
-              <el-button class="test" @click="startTest()">{{
+        <footer class="footer">
+          <div class="footer-btn text-start py-4">
+            <!--            <el-button @click="goBack()">{{ $t('packages_business_button_back') }}</el-button>-->
+            <el-button class="test" @click="startTest()">{{
                 $t('packages_business_connection_list_test_button')
               }}</el-button>
-              <el-button type="primary" :loading="submitBtnLoading" @click="submit()">
-                {{ $t('packages_business_button_save') }}
-              </el-button>
-              <el-button type="primary" :loading="saveAndMoreLoading" @click="saveAndMore">SAVE & ADD MORE</el-button>
-            </div>
-          </footer>
-        </template>
+            <el-button type="primary" :loading="submitBtnLoading" @click="submit()">
+              {{ $t('packages_business_button_save') }}
+            </el-button>
+            <el-button type="primary" :loading="saveAndMoreLoading" @click="saveAndMore">SAVE & ADD MORE</el-button>
+          </div>
+        </footer>
       </main>
       <GitBook :value="doc" class="git-book"></GitBook>
     </div>

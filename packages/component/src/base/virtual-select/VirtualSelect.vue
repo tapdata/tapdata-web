@@ -1,7 +1,7 @@
 <template>
-  <div
+  <!--<div
     class="el-select"
-    :class="[selectSize ? 'el-select--' + selectSize : '']"
+    :class="[selectSize ? 'el-select&#45;&#45;' + selectSize : '']"
     @click.stop="toggleMenu"
     v-clickoutside="handleClose"
   >
@@ -158,7 +158,7 @@
         </template>
       </ElSelectMenu>
     </transition>
-  </div>
+  </div>-->
 </template>
 
 <script>

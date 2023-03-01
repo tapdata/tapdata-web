@@ -1,5 +1,5 @@
 import i18n from '@/i18n'
-import { defineComponent, reactive, ref, watch, nextTick, onMounted } from '@vue/composition-api'
+import {defineComponent, reactive, ref, watch, nextTick, onMounted, getCurrentInstance} from 'vue'
 import { FilterBar, Drawer, VIcon } from '@tap/component'
 import { TablePage, DiscoveryClassification, makeDragNodeImage } from '@tap/business'
 import { discoveryApi } from '@tap/api'
@@ -13,8 +13,13 @@ export default defineComponent({
   directives: {
     resize
   },
-  setup(props, { refs, root }) {
+  setup(props) {
+    const root = getCurrentInstance().appContext.config.globalProperties
     const list = ref([])
+    const objectTableRef = ref(null)
+    const tableRef = ref(null)
+    const classifyRef = ref(null)
+    const drawerContentRef = ref(null)
     const { sourceType, queryKey } = root.$route.query || {}
     const data = reactive({
       isShowDetails: false,
@@ -53,7 +58,7 @@ export default defineComponent({
     }
     const rest = () => {
       // @ts-ignore
-      refs.table.fetch(1)
+      tableRef.value.fetch(1)
     }
     const loadFilterList = () => {
       let filterType = ['objType']
@@ -89,7 +94,7 @@ export default defineComponent({
       data.isShowDetails = true
       nextTick(() => {
         // @ts-ignore
-        refs?.drawerContent?.loadData(row)
+        drawerContentRef.value.loadData(row)
       })
     }
     const closeDrawer = val => {
@@ -101,27 +106,27 @@ export default defineComponent({
       nextTick(() => {
         // @ts-ignore
         //请求筛选条件-下拉列表
-        refs?.objectTable?.loadFilterList()
+        objectTableRef.value.loadFilterList()
         // @ts-ignore
         //请求资源绑定目录
-        refs?.objectTable?.loadTableData()
+        objectTableRef.value.loadTableData()
       })
     }
     const closeSourceDrawer = val => {
       data.isShowSourceDrawer = val
       nextTick(() => {
         // @ts-ignore
-        refs.table.fetch(1)
+        tableRef.value.fetch(1)
         // @ts-ignore
         //关闭资源绑定抽屉 刷新数据目录分类树 主要是统计
-        refs?.classify?.getData()
+        classifyRef.value.getData()
       })
     }
     //切换目录
     const getNodeChecked = node => {
       data.currentNode = node
       // @ts-ignore
-      refs.table.fetch(1)
+      tableRef.value.fetch(1)
     }
     const renderNode = ({ row }) => {
       return (
@@ -148,12 +153,12 @@ export default defineComponent({
       () => root.$route.query,
       val => {
         // @ts-ignore
-        refs.table.fetch(1)
+        tableRef.value.fetch(1)
       }
     )
     onMounted(() => {
       // @ts-ignore
-      refs.table.fetch(1)
+      tableRef.value.fetch(1)
     })
 
     const dragState = reactive({
@@ -239,13 +244,13 @@ export default defineComponent({
         >
           <DiscoveryClassification
             v-model={this.data.searchParams}
-            ref="classify"
+            ref="classifyRef"
             dragState={this.dragState}
             onNodeChecked={this.getNodeChecked}
           ></DiscoveryClassification>
         </div>
         <TablePage
-          ref="table"
+          ref="tableRef"
           row-key="id"
           remoteMethod={this.loadData}
           draggable
@@ -301,7 +306,7 @@ export default defineComponent({
           visible={this.data.isShowDetails}
           on={{ ['update:visible']: this.closeDrawer }}
         >
-          <DrawerContent ref={'drawerContent'}></DrawerContent>
+          <DrawerContent ref="drawerContentRef"></DrawerContent>
         </Drawer>
         <el-drawer
           class="object-drawer-wrap"
@@ -311,7 +316,7 @@ export default defineComponent({
           on={{ ['update:visible']: this.closeSourceDrawer }}
         >
           <ObjectTable
-            ref={'objectTable'}
+            ref="objectTableRef"
             parentNode={this.data.currentNode}
             {...{ on: { fetch: this.closeSourceDrawer } }}
           ></ObjectTable>

@@ -145,8 +145,6 @@
                   {{ $t('packages_dag_components_nodedetaildialog_zengliangduquyan2') }}
                 </div>
               </div>
-            </template>
-            <template v-slot:content>
               <div v-else-if="isTarget">
                 <div>
                   {{ $t('packages_dag_components_nodedetaildialog_chulihaoshidang') }}
@@ -155,8 +153,6 @@
                   {{ $t('packages_dag_components_nodedetaildialog_xieruhaoshidang') }}
                 </div>
               </div>
-            </template>
-            <template v-slot:content>
               <div v-else>
                 <div>
                   {{ $t('packages_dag_components_nodedetaildialog_dangqianjiedianchu') }}
@@ -668,13 +664,33 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep{.el-dialog {
+::v-deep {
+  .el-dialog {
     .el-dialog__body {
       padding-top: 6px;
     }
-  }}.chart-box{width:355px;height:286px;border:1px solid #c9cdd4;&.disabled {
+  }
+}
+.chart-box {
+  width: 355px;
+  height: 286px;
+  border: 1px solid #c9cdd4;
+  &.disabled {
     border: none;
-  }}.chart-box__title{//color:#333c4a;height:38px;background:#fafafa;border-top-left-radius:4px;border-top-right-radius:4px}.line-chart{height:200px}.event-chart{::v-deep {
+  }
+}
+.chart-box__title {
+  //color: #333c4a;
+  height: 38px;
+  background: #fafafa;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+.line-chart {
+  height: 200px;
+}
+.event-chart {
+  ::v-deep {
     .event-chart__radio {
       //position: absolute;
       //top: 4px;
@@ -684,7 +700,19 @@ export default {
     .total-line {
       margin-bottom: 20px !important;
     }
-  }}.pie-chart{margin:0 auto;width:70px;height:70px}.select__row{padding:0 4px 0 0;height:28px;cursor:pointer;white-space:nowrap;&:hover {
+  }
+}
+.pie-chart {
+  margin: 0 auto;
+  width: 70px;
+  height: 70px;
+}
+.select__row {
+  padding: 0 4px 0 0;
+  height: 28px;
+  cursor: pointer;
+  white-space: nowrap;
+  &:hover {
     background: #eef3ff;
   }
   ::v-deep {
@@ -699,5 +727,6 @@ export default {
         }
       }
     }
-  }}
+  }
+}
 </style>

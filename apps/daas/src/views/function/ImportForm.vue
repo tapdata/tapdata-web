@@ -61,10 +61,7 @@
                     class="ml-2"
                     type="text"
                     icon="el-icon-edit-outline"
-                    @click="
-                      editIndex = $index
-                      editName = row.function_name
-                    "
+                    @click=";(editIndex = $index), (editName = row.function_name)"
                   ></ElButton>
                 </template>
                 <template v-else>

@@ -15,33 +15,31 @@
         </div>
       </div>
       <div v-if="!hideOperation" class="button-line container-item border-item pt-4 pb-5">
-        <template v-slot:operation>
-          <div class="flex">
-            <el-tooltip
-              :disabled="!isFileSource()"
-              :content="$t('packages_business_connections_list_wenjianleixingde')"
-              placement="top"
-              class="load-schema__tooltip"
-            >
-              <span>
-                <el-button
-                  :disabled="isFileSource()"
-                  type="primary"
-                  size="mini"
-                  class="flex-fill min-w-0"
-                  @click="reload()"
-                  >{{ $t('packages_business_connection_preview_load_schema') }}
-                </el-button>
-              </span>
-            </el-tooltip>
-            <el-button class="flex-fill min-w-0" size="mini" @click="edit()" :disabled="$disabledReadonlyUserBtn()">
-              {{ $t('packages_business_connection_preview_edit') }}
-            </el-button>
-            <el-button class="flex-fill min-w-0" size="mini" @click="$emit('test', connection)">
-              {{ $t('packages_business_connection_preview_test') }}
-            </el-button>
-          </div>
-        </template>
+        <div class="flex">
+          <el-tooltip
+            :disabled="!isFileSource()"
+            :content="$t('packages_business_connections_list_wenjianleixingde')"
+            placement="top"
+            class="load-schema__tooltip"
+          >
+            <span>
+              <el-button
+                :disabled="isFileSource()"
+                type="primary"
+                size="mini"
+                class="flex-fill min-w-0"
+                @click="reload()"
+                >{{ $t('packages_business_connection_preview_load_schema') }}
+              </el-button>
+            </span>
+          </el-tooltip>
+          <el-button class="flex-fill min-w-0" size="mini" @click="edit()" :disabled="$disabledReadonlyUserBtn()">
+            {{ $t('packages_business_connection_preview_edit') }}
+          </el-button>
+          <el-button class="flex-fill min-w-0" size="mini" @click="$emit('test', connection)">
+            {{ $t('packages_business_connection_preview_test') }}
+          </el-button>
+        </div>
         <el-progress
           v-if="showProgress"
           class="details-progress mt-2"

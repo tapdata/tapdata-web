@@ -204,7 +204,7 @@ import { debounce } from 'lodash'
 import { connectionsApi, databaseTypesApi } from '@tap/api'
 import { ElSelect as Select } from 'element-plus'
 import { OverflowTooltip } from '@tap/component'
-import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
+import { getScrollbarWidth } from '@tap/shared'
 import NodeIcon from '../NodeIcon'
 import { escapeRegExp } from 'lodash'
 import ConnectionType from '../ConnectionType'
@@ -269,7 +269,7 @@ export default {
     },
 
     scrollbarWrapStyle() {
-      let gutter = scrollbarWidth()
+      let gutter = getScrollbarWidth()
       return `height: calc(100% + ${gutter}px);`
     }
   },

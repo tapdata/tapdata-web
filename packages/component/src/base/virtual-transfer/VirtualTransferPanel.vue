@@ -68,9 +68,9 @@ import { cloneDeep } from 'lodash'
 import { ElTransfer as Transfer } from 'element-plus'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-const TransferPanel = cloneDeep(Transfer.components.TransferPanel)
+// const TransferPanel = cloneDeep(Transfer.components.TransferPanel)
 
-delete TransferPanel.watch.checked
+// delete TransferPanel.watch.checked
 
 export default {
   name: 'VirtualTransferPanel',
@@ -109,7 +109,7 @@ export default {
       }
     }
   },
-  extends: TransferPanel,
+  // extends: TransferPanel,
   props: {
     buffer: {
       type: Number,

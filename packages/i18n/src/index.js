@@ -9,7 +9,7 @@ const i18n = createI18n({
 
 i18n.merge = (langs = {}) => {
   Object.keys(langKeyMap).forEach(f => {
-    i18n.mergeLocaleMessage(f, langs[f])
+    i18n.global.mergeLocaleMessage(f, langs[f])
   })
 }
 

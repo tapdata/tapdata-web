@@ -67,7 +67,7 @@ import { uuid } from '@tap/shared'
 
 import { makeStatusAndDisabled } from '../../shared'
 import { TaskStatus } from '../../components'
-import { defineComponent, ref } from '@vue/composition-api'
+import { defineComponent, ref } from 'vue'
 
 const DEFAULT_SETTINGS = {
   name: '', // 任务名称
@@ -389,7 +389,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.wrap__item{border:1px solid #e1e3e9;&:hover {
+.wrap__item {
+  border: 1px solid #e1e3e9;
+
+  &:hover {
     background-color: #f2f3f5;
   }
 
@@ -424,5 +427,20 @@ export default {
         display: inline-flex;
       }
     }
-  }}.item__header{border-bottom:1px solid #e1e3e9}.item__icon{//border:1px solid #4e5969}.operation-line{min-width:50px}.pipeline-desc{background-color:#f8f8fa;border-radius:8px}
+  }
+}
+.item__header {
+  border-bottom: 1px solid #e1e3e9;
+}
+.item__icon {
+  //border: 1px solid #4e5969;
+}
+.operation-line {
+  min-width: 50px;
+}
+
+.pipeline-desc {
+  background-color: #f8f8fa;
+  border-radius: 8px;
+}
 </style>

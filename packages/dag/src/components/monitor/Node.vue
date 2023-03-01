@@ -2,7 +2,7 @@
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { defineComponent, computed, ref, onMounted, watch } from '@vue/composition-api'
+import { defineComponent, computed, ref, onMounted, watch } from 'vue'
 
 import i18n from '@tap/i18n'
 import { VIcon } from '@tap/component'

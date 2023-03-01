@@ -1,3 +1,4 @@
 $prefix-cls: 'fd'; // form design 缩写
 $formily-prefix: 'formily-element';
-@import '~element-ui/packages/theme-chalk/src/common/var.scss';
+$--color-text-secondary: #909399 !default;
+@use "element-plus/theme-chalk/src/common/var.scss";

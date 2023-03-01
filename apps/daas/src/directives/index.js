@@ -1,26 +1,5 @@
 import Cookie from '@tap/shared/src/cookie'
 
-window.$vueApp.directive('readonlybtn', {
-  mounted: function (el, binding, vnode) {
-    const code = binding.value
-
-    if (!window.$vueApp.config.globalProperties.$has(code)) {
-      el.remove()
-      vnode.child && vnode.child.$destroy()
-    }
-  }
-})
-window.$vueApp.config.globalProperties.$disabledReadonlyUserBtn = function () {
-  return false
-}
-
-window.$vueApp.config.globalProperties.$has = function (code) {
-  return hasPermissionByCode(code)
-}
-window.$vueApp.config.globalProperties.$disabledByPermission = function (code, id) {
-  return permissionBtnDisable(code, id)
-}
-
 export function hasPermissionByCode(code) {
   let permissions = sessionStorage.getItem('tapdata_permissions')
   permissions = JSON.parse(permissions)
@@ -60,4 +39,26 @@ export function permissionBtnDisable(code, id) {
     }
   }
   return falg
+}
+
+export function setupDirectives(app) {
+  app.directive('readonlybtn', {
+    mounted: function (el, binding, vnode) {
+      const code = binding.value
+
+      if (!app.config.globalProperties.$has(code)) {
+        el.remove()
+        vnode.child && vnode.child.$destroy()
+      }
+    }
+  })
+  app.config.globalProperties.$disabledReadonlyUserBtn = function () {
+    return false
+  }
+  app.config.globalProperties.$has = function (code) {
+    return hasPermissionByCode(code)
+  }
+  app.config.globalProperties.$disabledByPermission = function (code, id) {
+    return permissionBtnDisable(code, id)
+  }
 }

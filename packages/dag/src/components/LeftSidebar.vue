@@ -280,12 +280,11 @@ import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 import { mapGetters } from 'vuex'
 import { debounce, escapeRegExp } from 'lodash'
 import { ElSelect as Select } from 'element-plus'
-import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event'
-import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
 import { metadataInstancesApi, databaseTypesApi, CancelToken, connectionsApi } from '@tap/api'
 import { VIcon, VEmpty, OverflowTooltip } from '@tap/component'
 import { ConnectionTypeSelector } from '@tap/business'
 import { getInitialValuesInBySchema } from '@tap/form'
+import { addResizeListener, removeResizeListener, getScrollbarWidth } from '@tap/shared'
 import mouseDrag from '@tap/component/src/directives/mousedrag'
 import resize from '@tap/component/src/directives/resize'
 import BaseNode from './BaseNode'
@@ -381,7 +380,7 @@ export default {
     },
 
     scrollbarWrapStyle() {
-      let gutter = scrollbarWidth()
+      let gutter = getScrollbarWidth()
       return `position:relative;height: calc(100% + ${gutter}px);`
     }
   },

@@ -3,9 +3,9 @@ import * as Vue from 'vue'
 import i18n from '@tap/i18n'
 import { connect, mapProps } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
-import { defineComponent } from '@vue/composition-api'
+import { defineComponent } from 'vue'
 import './index.scss'
-// import { Form, FormItem, Switch, Input, Checkbox, Radio} from '@formily/element'
+// import { Form, FormItem, Switch, Input, Checkbox, Radio} from '@formily/element-plus'
 
 export const ExpressionExample = connect(
   observer(

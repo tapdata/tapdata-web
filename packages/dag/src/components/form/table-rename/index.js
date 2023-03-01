@@ -1,6 +1,6 @@
 import * as Vue from 'vue'
 import i18n from '@tap/i18n'
-import { defineComponent, ref, reactive, set, del, computed } from '@vue/composition-api'
+import { defineComponent, ref, reactive, set, del, computed } from 'vue'
 import { useForm } from '@tap/form'
 import { FormItem } from '@tap/form'
 import { observer } from '@formily/reactive-vue'

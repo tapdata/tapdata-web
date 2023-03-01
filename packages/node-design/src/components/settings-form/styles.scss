@@ -68,7 +68,7 @@
   }
 
   .formily-element-form-item {
-    border-bottom: 1px solid $--border-color-base;
+    border-bottom: 1px solid map-get($borderColor, form);
     padding-bottom: 8px;
     margin-bottom: 8px;
     margin-top: 8px;
