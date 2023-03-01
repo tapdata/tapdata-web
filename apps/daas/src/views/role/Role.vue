@@ -248,7 +248,7 @@ let pageSort = [
       // { name: 'agents_menu' },
       // { name: 'servers_oversee_menu' },
       { name: 'v2_user_management_menu' },
-      { name: 'v2_cluster-storage_menu' },
+      { name: 'v2_external-storage_menu' },
       { name: 'v2_role_management_menu' }
       // { name: 'system_settings_menu' }
     ]
