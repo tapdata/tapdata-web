@@ -894,20 +894,16 @@ export class Table extends NodeType {
                     'x-component-props': {
                       allowCreate: true,
                       multiple: true,
-                      filterable: true
+                      filterable: true,
+                      '@blur': `{{(e) => setDefaultPrimaryKey($self)}}`
                     },
                     'x-reactions': [
                       `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true}, $values.$inputs[0])}}`,
                       {
+                        // 相当于更新条件字段初始，并且字段获取到后执行
+                        when: '{{!$self.value && $self.dataSource && $self.dataSource.length}}',
                         fulfill: {
-                          run: `
-                            if (!$self.value && $self.dataSource && $self.dataSource.length) {
-                              let isPrimaryKeyList = $self.dataSource.filter(item => item.isPrimaryKey)
-                              let indicesUniqueList = $self.dataSource.filter(item => item.indicesUnique)
-                              $self.setValue((isPrimaryKeyList.length ? isPrimaryKeyList : indicesUniqueList).map(item => item.value))
-                              $self.validate()
-                            }
-                          `
+                          run: `console.log('执行run', $self.value);setDefaultPrimaryKey($self)`
                         }
                       }
                     ]
