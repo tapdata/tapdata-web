@@ -48,7 +48,7 @@ export default observer({
             type: 'void',
             properties: {
               name: {
-                title: this.$t('packages_dag_task_stetting_name'), //任务名称
+                title: this.$t('public_task_name'), //任务名称
                 type: 'string',
                 required: 'true',
                 'x-decorator': 'FormItem',
@@ -77,11 +77,11 @@ export default observer({
                     value: 'initial_sync+cdc'
                   },
                   {
-                    label: this.$t('packages_dag_task_setting_initial_sync'), //全量
+                    label: this.$t('public_task_type_initial_sync'), //全量
                     value: 'initial_sync'
                   },
                   {
-                    label: this.$t('packages_dag_task_setting_cdc'), //增量
+                    label: this.$t('public_task_type_cdc'), //增量
                     value: 'cdc'
                   }
                 ]
@@ -236,7 +236,7 @@ export default observer({
                               'x-decorator': 'FormItem',
                               'x-component': 'Select',
                               'x-component-props': {
-                                placeholder: i18n.t('packages_dag_components_formpanel_qingxuanze')
+                                placeholder: i18n.t('public_select_placeholder')
                               },
                               default: 'current',
                               enum: [
@@ -381,7 +381,7 @@ export default observer({
                             'x-decorator': 'FormItem',
                             'x-decorator-props': {
                               feedbackLayout: 'none',
-                              addonAfter: i18n.t('packages_dag_dag_data_setting_second')
+                              addonAfter: i18n.t('public_time_s')
                             },
                             'x-component': 'InputNumber',
                             'x-component-props': {

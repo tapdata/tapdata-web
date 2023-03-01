@@ -58,11 +58,7 @@
           <div class="before-scroll-content text-center font-color-light py-1">
             <VEmpty
               v-if="!list.length"
-              :description="
-                keyword
-                  ? $t('packages_dag_customer_logs_no_search_data')
-                  : $t('packages_dag_dag_dialog_field_mapping_no_data')
-              "
+              :description="keyword ? $t('packages_dag_customer_logs_no_search_data') : $t('public_data_no_data')"
             />
             <div v-show="moreLoading">
               <i class="el-icon-loading"></i>

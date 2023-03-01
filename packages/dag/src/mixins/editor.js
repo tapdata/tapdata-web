@@ -844,7 +844,7 @@ export default {
       try {
         const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
         this.reformDataflow(result)
-        !needStart && this.$message.success(this.$t('packages_dag_message_save_ok'))
+        !needStart && this.$message.success(this.$t('public_message_save_ok'))
         this.setEditVersion(result.editVersion)
         this.isSaving = false
         isOk = true
@@ -1748,7 +1748,7 @@ export default {
         await taskApi.stop(this.dataflow.id).catch(e => {
           this.handleError(e, this.$t('packages_dag_message_operation_error'))
         })
-        this.$message.success(this.$t('packages_dag_message_operation_succuess'))
+        this.$message.success(this.$t('public_message_operation_success'))
       })
     },
 
@@ -1782,7 +1782,7 @@ export default {
           this.toggleConsole(true)
           this.$refs.console?.startAuto('reset') // 信息输出自动加载
           const data = await taskApi.reset(this.dataflow.id)
-          this.responseHandler(data, this.$t('packages_dag_message_operation_succuess'))
+          this.responseHandler(data, this.$t('public_message_operation_success'))
         } catch (e) {
           this.handleError(e, this.$t('packages_dag_message_operation_error'))
         }

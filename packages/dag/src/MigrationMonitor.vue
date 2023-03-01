@@ -487,7 +487,7 @@ export default {
       // 根据任务类型(全量、增量),检查不支持此类型的节点
       // 脏代码。这里的校验是有节点错误信息提示的，和节点表单校验揉在了一起，但是校验没有一起做
       if (this.dataflow.type === 'initial_sync+cdc') {
-        typeName = i18n.t('packages_dag_components_formpanel_quanliangzengliang')
+        typeName = i18n.t('public_task_type_initial_sync_and_cdc')
         tableNode.forEach(node => {
           if (
             sourceMap[node.id] &&
@@ -501,7 +501,7 @@ export default {
           }
         })
       } else if (this.dataflow.type === 'initial_sync') {
-        typeName = i18n.t('packages_dag_task_setting_initial_sync')
+        typeName = i18n.t('public_task_type_initial_sync')
         tableNode.forEach(node => {
           if (sourceMap[node.id] && NONSUPPORT_SYNC.includes(node.databaseType)) {
             nodeNames.push(node.name)
@@ -512,7 +512,7 @@ export default {
           }
         })
       } else if (this.dataflow.type === 'cdc') {
-        typeName = i18n.t('packages_dag_task_setting_cdc')
+        typeName = i18n.t('public_task_type_cdc')
         tableNode.forEach(node => {
           if (sourceMap[node.id] && NONSUPPORT_CDC.includes(node.databaseType)) {
             nodeNames.push(node.name)
@@ -635,7 +635,7 @@ export default {
       try {
         this.wsAgentLive()
         await taskApi.start(this.dataflow.id)
-        this.$message.success(this.$t('packages_dag_message_operation_succuess'))
+        this.$message.success(this.$t('public_message_operation_success'))
         this.isSaving = false
         this.isReset = false
         this.loadDataflow(this.dataflow?.id)
@@ -1107,7 +1107,7 @@ export default {
           this.toggleConsole(true)
           this.$refs.console?.startAuto('reset') // 信息输出自动加载
           const data = await taskApi.reset(this.dataflow.id)
-          this.responseHandler(data, this.$t('packages_dag_message_operation_succuess'))
+          this.responseHandler(data, this.$t('public_message_operation_success'))
           if (!data?.fail?.length) {
             this.isReset = true
           }
