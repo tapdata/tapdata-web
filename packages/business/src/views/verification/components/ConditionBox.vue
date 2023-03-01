@@ -199,6 +199,7 @@ import { AsyncSelect } from '@tap/form'
 import { connectionsApi, metadataInstancesApi, taskApi } from '@tap/api'
 import { merge, cloneDeep } from 'lodash'
 import { uuid, uniqueArr } from '@tap/shared'
+import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 
 import FieldBox from './FieldBox'
 
@@ -291,9 +292,7 @@ export default {
           return {
             id: item.id,
             name: item.name,
-            label: `${item.name} ${
-              item.status ? `(${this.$t('packages_dag_connection_status_' + item.status) || item.status})` : ''
-            }`,
+            label: `${item.name} ${item.status ? `(${CONNECTION_STATUS_MAP[item.status]?.text || item.status})` : ''}`,
             value: item.id
           }
         })

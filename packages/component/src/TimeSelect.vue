@@ -189,7 +189,8 @@ export default {
       }
 
       const { rangeSeparator, formatToString } = this.$refs.datetime
-      const label = formatToString(val)?.join(rangeSeparator)
+      console.log('formatToString(val)', formatToString(val))
+      const label = formatToString(val)?.join?.(rangeSeparator) || ''
       const valJoin = val?.map(t => new Date(t).getTime()).join()
       if (!valJoin) {
         return

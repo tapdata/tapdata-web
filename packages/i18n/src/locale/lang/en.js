@@ -29,6 +29,8 @@ export default {
   public_status_error: 'Error',
   public_status_failed: 'Failed',
   public_status_schedule_failed: 'Schedule failed',
+  public_status_renewing: 'Resetting',
+  public_status_renew_failed: 'Reset failed',
   // button
   public_button_edit: 'Edit',
   public_button_confirm: 'OK',

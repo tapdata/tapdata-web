@@ -8,9 +8,9 @@
         <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'v2_data_pipeline'">
           <el-col :span="6" v-for="item in taskList" :key="item.name" class="dashboard-col">
             <div class="dashboard-col-box">
-              <div class="fs-7 font-color-normal">{{ $t('dashboard_' + item.key) }}</div>
+              <div class="fs-7 font-color-normal">{{ item.title }}</div>
               <div class="dashboard-label fs-5 pt-4 text-center fw-sub font-color-normal">
-                {{ $t('dashboard_current_' + item.key) }}
+                {{ item.desc }}
               </div>
               <div
                 :class="[
@@ -168,19 +168,19 @@
                         <li class="pr-5">
                           <label class="font-color-slight pr-2">{{ $t('dashboard_management') }}</label>
                           <span :style="`color: ${colorServeMap[item.management.status]};`">{{
-                            $t('dashboard_' + item.management.status)
+                            getStatus(item.management.status)
                           }}</span>
                         </li>
                         <li class="pr-5">
                           <label class="font-color-slight pr-2">{{ $t('dashboard_task_transfer') }}</label>
                           <span :style="`color: ${colorServeMap[item.engine.status]};`">{{
-                            $t('dashboard_' + item.engine.status)
+                            getStatus(item.engine.status)
                           }}</span>
                         </li>
                         <li>
                           <label class="font-color-slight pr-2">{{ $t('dashboard_api_service') }}</label>
                           <span :style="`color: ${colorServeMap[item.apiServer.status]};`">{{
-                            $t('dashboard_' + item.apiServer.status)
+                            getStatus(item.apiServer.status)
                           }}</span>
                         </li>
                       </ul>
@@ -217,6 +217,7 @@ import { Chart } from '@tap/component'
 import { clusterApi, taskApi } from '@tap/api'
 import { STATUS_MAP } from '@tap/business'
 import { toThousandsUnit } from '@/utils/util'
+import { STATUS_MAP as DASHBOARD_STATUS_MAP } from './const'
 
 export default {
   components: { Chart },
@@ -224,9 +225,9 @@ export default {
     return {
       h: this.$createElement,
       copyPieData: [],
-      copyTaskData: [],
+      // copyTaskData: [],
       syncPieData: [],
-      syncTaskData: [],
+      // syncTaskData: [],
       validBarData: [],
       serverTable: [],
       migrationTaskList: [],
@@ -301,10 +302,30 @@ export default {
       },
       syncValidFalg: this.$has('Data_verify_menu') || this.$has('Data_SYNC_menu'),
       taskList: [
-        { key: 'all_total', value: 0 },
-        { key: 'copy_total', value: 0 },
-        { key: 'sync_total', value: 0 },
-        { key: 'valid_total', value: 0 }
+        {
+          title: this.$t('dashboard_all_total'),
+          desc: this.$t('dashboard_current_all_total'),
+          key: 'all_total',
+          value: 0
+        },
+        {
+          title: this.$t('dashboard_copy_total'),
+          desc: this.$t('dashboard_current_copy_total'),
+          key: 'copy_total',
+          value: 0
+        },
+        {
+          title: this.$t('dashboard_sync_total'),
+          desc: this.$t('dashboard_current_sync_total'),
+          key: 'sync_total',
+          value: 0
+        },
+        {
+          title: this.$t('dashboard_valid_total'),
+          desc: this.$t('dashboard_current_valid_total'),
+          key: 'valid_total',
+          value: 0
+        }
       ],
       statusList: [
         { name: this.$t('dashboard_status_running'), label: 'running', value: 0 },
@@ -363,6 +384,13 @@ export default {
         { name: this.$t('dashboard_total_insert'), value: 0, key: 'insertedTotal', color: '#AE86C9' },
         { name: this.$t('dashboard_total_update'), value: 0, key: 'updatedTotal', color: '#F7D762' },
         { name: this.$t('dashboard_total_delete'), value: 0, key: 'deletedTotal', color: '#88DBDA' }
+      ],
+      // 数据校验颜色
+      verifyBarData: [
+        { name: this.$t('dashboard_total'), value: 0, key: 'total', color: '#2EA0EA' },
+        { name: this.$t('dashboard_diff'), value: 0, key: 'diff', color: '#2EA0EA' },
+        { name: this.$t('dashboard_can'), value: 0, key: 'can', color: '#2EA0EA' },
+        { name: this.$t('dashboard_error'), value: 0, key: 'error', color: '#2EA0EA' }
       ],
       transBarOptions: {
         barWidth: '100%',
@@ -482,10 +510,10 @@ export default {
             console.log('STATUS_MAP', STATUS_MAP) // eslint-disable-line
 
             self.copyPieData = setColor(self.migrationTaskList)
-            self.copyTaskData = this.handleChart(data.chart2)
+            // self.copyTaskData = this.handleChart(data.chart2)
             self.syncPieData = setColor(self.syncTaskList)
-            self.syncTaskData = this.handleChart(data.chart4)
-            self.validBarData = this.handleChart(data.chart5)
+            // self.syncTaskData = this.handleChart(data.chart4)
+            self.validBarData = this.handleChart(data.chart5, self.verifyBarData)
             self.transBarData = this.handleChart(data.chart6, self.transBarData)
           }
         })
@@ -502,7 +530,7 @@ export default {
           for (let item in data) {
             if (el.key === item)
               echartData.push({
-                name: el.name || this.$t('dashboard_' + item),
+                name: el.name,
                 value: data[item],
                 color: el.color
               })
@@ -511,7 +539,7 @@ export default {
       } else {
         for (let item in data) {
           echartData.push({
-            name: this.$t('dashboard_' + item),
+            name: '',
             value: data[item],
             color: '#2EA0EA'
           })
@@ -645,6 +673,10 @@ export default {
           }
         ]
       }
+    },
+
+    getStatus(type) {
+      return DASHBOARD_STATUS_MAP[type] || '-'
     }
   }
 }
