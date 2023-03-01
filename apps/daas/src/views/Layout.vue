@@ -434,7 +434,7 @@ let menuSetting = [
     code: 'v2_system-management',
     children: [
       { name: 'clusterManagement', code: 'v2_cluster-management_menu' },
-      { name: 'externalStorage', code: '' },
+      { name: 'externalStorage', code: 'v2_external-storage_menu' },
       { name: 'users', code: 'v2_user_management_menu', parent: 'users' },
       { name: 'roleList', code: 'v2_role_management_menu', parent: 'roleList' }
     ]
