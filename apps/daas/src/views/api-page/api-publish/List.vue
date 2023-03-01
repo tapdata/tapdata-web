@@ -28,7 +28,7 @@
         <ElButton size="mini" v-if="selectedRunning.length" @click="batch('pending')">{{
           $t('modules_allacancel')
         }}</ElButton>
-        <ElButton size="mini" @click.native="exportFile">{{ $t('modules_export') }}</ElButton>
+        <ElButton size="mini" @click.native="exportFile">{{ $t('public_button_export') }}</ElButton>
         <ElButton size="mini" @click.native="importFile">{{ $t('modules_import') }}</ElButton>
         <ElButton
           v-show="multipleSelection.length > 0"
@@ -38,7 +38,7 @@
           @click="$refs.table.showClassify(handleSelectTag())"
         >
           <i class="iconfont icon-biaoqian back-btn-icon"></i>
-          <span> {{ $t('dataFlow_taskBulkTag') }}</span>
+          <span> {{ $t('public_button_bulk_tag') }}</span>
         </ElButton>
         <ElButton
           v-readonlybtn="'API_creation'"
@@ -87,7 +87,7 @@
           {{ scope.row.basePath }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('modules_header_version')">
+      <el-table-column :label="$t('public_version')">
         <template slot-scope="scope">
           {{ scope.row.apiVersion }}
         </template>
@@ -102,19 +102,19 @@
           {{ scope.row.user }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('modules_header_last_updated')" prop="last_updated" sortable="custom" width="140">
+      <el-table-column :label="$t('public_update_time')" prop="last_updated" sortable="custom" width="140">
         <template slot-scope="scope">
           {{ scope.row.lastUpdatedFmt }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('modules_header_operator')" width="260" fixed="right">
+      <el-table-column :label="$t('public_operation')" width="260" fixed="right">
         <template slot-scope="scope">
           <ElButton v-readonlybtn="'API_creation'" size="mini" type="text" @click="copy(scope.row)">
-            {{ $t('button_copy') }}
+            {{ $t('public_button_copy') }}
           </ElButton>
           <ElDivider direction="vertical" v-readonlybtn="'API_creation'"></ElDivider>
           <!-- <ElButton v-readonlybtn="'API_data_explorer'" size="mini" type="text" @click="toDetails(scope.row)">
-            {{ $t('button_preview') }}
+            {{ $t('public_button_preview') }}
           </ElButton>
           <ElDivider direction="vertical"></ElDivider>
           <ElButton v-readonlybtn="'API_doc_&_test'" size="mini" type="text" @click="toDocumentTest(scope.row)">
@@ -143,11 +143,11 @@
           </ElButton>
           <ElDivider direction="vertical" v-readonlybtn="'API_publish'"></ElDivider>
           <ElButton v-readonlybtn="'API_edition'" size="mini" type="text" @click="edit(scope.row)">
-            {{ $t('modules_edit') }}
+            {{ $t('public_button_edit') }}
           </ElButton>
           <ElDivider direction="vertical" v-readonlybtn="'API_edition'"></ElDivider>
           <!-- <ElButton v-readonlybtn="'API_export'" size="mini" type="text" @click="handleDownload(scope.row)">
-            {{ $t('modules_export') }}
+            {{ $t('public_button_export') }}
           </ElButton>
           <ElDivider direction="vertical"></ElDivider> -->
           <ElButton
@@ -156,7 +156,7 @@
             type="text"
             :disabled="$disabledByPermission('API_delete_all_data', scope.row.userId) || scope.row.status !== 'pending'"
             @click="remove(scope.row)"
-            >{{ $t('button_delete') }}</ElButton
+            >{{ $t('public_button_delete') }}</ElButton
           >
           <ElDivider direction="vertical" v-readonlybtn="'API_delete'"></ElDivider>
           <ElDropdown v-show="moreAuthority" size="small" @command="handleCommand($event, scope.row)" trigger="click">
@@ -165,9 +165,11 @@
             </ElLink>
             <ElDropdownMenu class="dataflow-table-more-dropdown-menu" slot="dropdown">
               <ElDropdownItem command="preview" v-readonlybtn="'API_data_explorer'"
-                >{{ $t('button_preview') }}
+                >{{ $t('public_button_preview') }}
               </ElDropdownItem>
-              <ElDropdownItem command="export" v-readonlybtn="'API_export'">{{ $t('modules_export') }}</ElDropdownItem>
+              <ElDropdownItem command="export" v-readonlybtn="'API_export'">{{
+                $t('public_button_export')
+              }}</ElDropdownItem>
               <ElDropdownItem command="toDocumentTest" v-readonlybtn="'API_doc_&_test'">{{
                 $t('modules_api_test')
               }}</ElDropdownItem>
@@ -209,7 +211,7 @@ export default {
       dbOptions: [],
       statusList: [
         {
-          label: this.$t('modules_all'),
+          label: this.$t('public_select_option_all'),
           value: 'all'
         },
         {
@@ -384,10 +386,10 @@ export default {
       }
       modulesApi.batchUpdateListtags(attributes).then(() => {
         this.table.fetch()
-        this.$message.success(this.$t('message_save_ok'))
+        this.$message.success(this.$t('public_message_save_ok'))
       })
       // .catch(() => {
-      //   this.$message.error(this.$t('message_save_fail'))
+      //   this.$message.error(this.$t('public_message_save_fail'))
       // })
     },
     // 状态改变查询
@@ -465,7 +467,7 @@ export default {
     // 删除列表
     remove(item) {
       const h = this.$createElement
-      let message = h('p', [this.$t('message_deleteOrNot') + ' ' + item.name])
+      let message = h('p', [this.$t('public_message_delete_confirm') + ' ' + item.name])
       this.$confirm(message, {
         type: 'warning'
       }).then(resFlag => {
@@ -473,11 +475,11 @@ export default {
           return
         }
         modulesApi.delete(item.id, item.name).then(() => {
-          this.$message.success(this.$t('message_delete_ok'))
+          this.$message.success(this.$t('public_message_delete_ok'))
           this.table.fetch()
         })
         // .catch(() => {
-        //   this.$message.info(this.$t('message_delete_fail'))
+        //   this.$message.info(this.$t('public_message_delete_fail'))
         // })
       })
     },
@@ -520,9 +522,9 @@ export default {
           let successResults = data?.filter(rs => rs) || []
           if (successResults.length === jobs.length) {
             this.table.fetch()
-            this.$message.success(this.$t('message_save_ok'))
+            this.$message.success(this.$t('public_message_save_ok'))
           } else {
-            this.$message.error(this.$t('message_save_fail'))
+            this.$message.error(this.$t('public_message_save_fail'))
           }
         })
       })
@@ -574,17 +576,17 @@ export default {
         headers: { 'lconname-name': item.basePath }
       }
       modulesApi.post(parmas, { 'lconname-name': item.basePath }).then(() => {
-        this.$message.success(this.$t('message_copy_success'))
+        this.$message.success(this.$t('public_message_copy_success'))
         this.table.fetch()
       })
       // .catch(() => {
-      //   this.$message.error(this.$t('message_copy_fail'))
+      //   this.$message.error(this.$t('public_message_copy_fail'))
       // })
     },
     getFilterItems() {
       this.filterItems = [
         {
-          label: this.$t('modules_type'),
+          label: this.$t('public_type'),
           key: 'status',
           type: 'select-inner',
           items: this.statusList,

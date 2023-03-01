@@ -30,10 +30,10 @@
             }}</el-button>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('metadata_details_opera')" width="120">
+        <el-table-column :label="$t('public_operation')" width="120">
           <template slot-scope="scope">
             <el-button size="mini" type="text" style="color: #f56c6c" @click="remove(scope.row)">{{
-              $t('button_delete')
+              $t('public_button_delete')
             }}</el-button>
           </template>
         </el-table-column>
@@ -68,7 +68,7 @@
             type="text"
             size="mini"
             v-model="createForm.name"
-            :placeholder="$t('dataRule_pleaseSelect') + $t('metadata_details_collectionName')"
+            :placeholder="$t('public_select_placeholder') + $t('metadata_details_collectionName')"
           ></el-input>
         </el-form-item>
       </el-form>
@@ -164,10 +164,10 @@ export default {
               size: 20
             }
             this.getData(page)
-            this.$message.success(this.$t('message_save_ok'))
+            this.$message.success(this.$t('public_message_save_ok'))
           })
           // .catch(() => {
-          //   this.$message.error(this.$t('message_save_fail'))
+          //   this.$message.error(this.$t('public_message_save_fail'))
           // })
         }
       })
@@ -175,14 +175,14 @@ export default {
     // 删除数据集
     remove(item) {
       const h = this.$createElement
-      let message = h('p', [this.$t('message_deleteOrNot') + ' ' + item.name])
-      this.$confirm(message, this.$t('message_title_prompt'), {
+      let message = h('p', [this.$t('public_message_delete_confirm') + ' ' + item.name])
+      this.$confirm(message, this.$t('public_message_title_prompt'), {
         type: 'warning',
         closeOnClickModal: false
       }).then(() => {
         metadataInstancesApi.delete(item.id).then(() => {
           this.getData()
-          this.$message.success(this.$t('message_deleteOK'))
+          this.$message.success(this.$t('public_message_delete_ok'))
         })
       })
     },

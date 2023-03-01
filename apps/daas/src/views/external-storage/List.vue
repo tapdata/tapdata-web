@@ -34,10 +34,10 @@
       <ElTableColumn
         show-overflow-tooltip
         min-width="120"
-        :label="$t('column_create_time')"
+        :label="$t('public_create_time')"
         prop="createTimeFmt"
       ></ElTableColumn>
-      <ElTableColumn width="220" :label="$t('column_operation')">
+      <ElTableColumn width="220" :label="$t('public_operation')">
         <template #default="{ row }">
           <span class="mr-2">{{ $t('daas_external_storage_list_sheweimoren') }}</span>
           <ElSwitch
@@ -47,7 +47,9 @@
             @change="handleDefault(row)"
           ></ElSwitch>
           <ElDivider direction="vertical"></ElDivider>
-          <ElButton type="text" :disabled="!row.canDelete" @click="remove(row)">{{ $t('button_delete') }}</ElButton>
+          <ElButton type="text" :disabled="!row.canDelete" @click="remove(row)">{{
+            $t('public_button_delete')
+          }}</ElButton>
         </template>
       </ElTableColumn>
     </TablePage>
@@ -101,8 +103,8 @@
         </ElFormItem>
       </ElForm>
       <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="dialogVisible = false">{{ $t('button_cancel') }}</ElButton>
-        <ElButton type="primary" size="mini" @click="submit">{{ $t('button_confirm') }}</ElButton>
+        <ElButton size="mini" @click="dialogVisible = false">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton type="primary" size="mini" @click="submit">{{ $t('public_button_confirm') }}</ElButton>
       </span>
     </ElDialog>
     <Drawer class="shared-cache-details" :visible.sync="isShowDetails">
@@ -191,7 +193,7 @@ export default {
   },
   methods: {
     getFilterItems() {
-      let typeOptions = [{ label: i18n.t('select_option_all'), value: '' }]
+      let typeOptions = [{ label: i18n.t('public_select_option_all'), value: '' }]
       for (const key in this.typeMapping) {
         const label = this.typeMapping[key]
         typeOptions.push({
@@ -308,7 +310,7 @@ export default {
     },
     handleDefault(row) {
       externalStorageApi.changeExternalStorage(row.id).then(() => {
-        this.$message.success(i18n.t('message_operation_succuess'))
+        this.$message.success(i18n.t('public_message_operation_success'))
         this.table.fetch()
       })
     },
@@ -332,7 +334,7 @@ export default {
           icon: 'name'
         },
         { label: this.$t('daas_external_storage_list_waicunbiaoming'), value: row.table, icon: 'table' },
-        { label: this.$t('column_create_time'), value: row.createTimeFmt, icon: 'cacheTimeAtFmt' },
+        { label: this.$t('public_create_time'), value: row.createTimeFmt, icon: 'cacheTimeAtFmt' },
         { label: this.$t('daas_external_storage_list_cunchulujing'), value: row.uri, icon: 'database' },
         { label: this.$t('daas_external_storage_list_sheweimoren'), value: row.defaultStorage, icon: 'record' }
       ]

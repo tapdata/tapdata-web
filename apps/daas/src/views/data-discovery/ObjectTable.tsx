@@ -170,7 +170,7 @@ export default defineComponent({
       }
       discoveryApi[http](where)
         .then(() => {
-          success(i18n.t('message_operation_succuess'))
+          success(i18n.t('public_message_operation_success'))
         })
         .catch(err => {
           error(err)

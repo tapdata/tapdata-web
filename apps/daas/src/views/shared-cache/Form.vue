@@ -108,8 +108,8 @@
         <CodeView :data="form"></CodeView>
       </ElForm>
       <div class="pt-6">
-        <ElButton @click="$router.back()">{{ $t('button_back') }}</ElButton>
-        <ElButton type="primary" @click="submit">{{ $t('button_save') }}</ElButton>
+        <ElButton @click="$router.back()">{{ $t('public_button_back') }}</ElButton>
+        <ElButton type="primary" @click="submit">{{ $t('public_button_save') }}</ElButton>
       </div>
     </div>
   </section>
@@ -328,7 +328,7 @@ export default {
           this.loading = true
           sharedCacheApi[method](params)
             .then(() => {
-              this.$message.success(this.$t('message_save_ok'))
+              this.$message.success(this.$t('public_message_save_ok'))
               this.$router.replace({
                 name: 'sharedCacheList'
               })

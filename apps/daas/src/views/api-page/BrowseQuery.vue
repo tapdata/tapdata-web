@@ -44,9 +44,9 @@
 
     <div slot="footer" class="dialog-footer">
       <el-button class="cancel" @click="handleClose()" size="mini">
-        {{ $t('button_cancel') }}
+        {{ $t('public_button_cancel') }}
       </el-button>
-      <el-button type="primary" @click="save()" size="mini">{{ $t('button_confirm') }}</el-button>
+      <el-button type="primary" @click="save()" size="mini">{{ $t('public_button_confirm') }}</el-button>
     </div>
   </el-dialog>
 </template>

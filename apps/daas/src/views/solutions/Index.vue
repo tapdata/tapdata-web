@@ -22,7 +22,7 @@
         <div v-for="(item, index) in list" :key="index" class="result-item py-6">
           <div class="result-item__title mb-3 fs-5 fw-bolder">{{ item.code }}</div>
           <div class="result-item__message mb-2 ml-4">
-            <div class="mb-1">{{ $t('solution_search_desc') }}:</div>
+            <div class="mb-1">{{ $t('public_description') }}:</div>
             <div class="font-color-slight ml-4">{{ item.message }}</div>
           </div>
           <ul class="result-item__list ml-4">

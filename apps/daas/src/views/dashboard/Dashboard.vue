@@ -307,12 +307,12 @@ export default {
         { key: 'valid_total', value: 0 }
       ],
       statusList: [
-        { name: this.$t('dashboard_status_running'), label: 'running', value: 0 },
-        { name: this.$t('dashboard_status_edit'), label: 'edit', value: 0 },
-        { name: this.$t('status_ready'), label: 'wait_start', value: 0 },
-        { name: this.$t('dashboard_status_stop'), label: 'stop', value: 0 },
-        { name: this.$t('dashboard_status_complete'), label: 'complete', value: 0 },
-        { name: this.$t('dashboard_status_error'), label: 'error', value: 0 }
+        { name: this.$t('public_status_running'), label: 'running', value: 0 },
+        { name: this.$t('public_status_edit'), label: 'edit', value: 0 },
+        { name: this.$t('public_status_wait_run'), label: 'wait_start', value: 0 },
+        { name: this.$t('public_status_stop'), label: 'stop', value: 0 },
+        { name: this.$t('public_status_complete'), label: 'complete', value: 0 },
+        { name: this.$t('public_status_error'), label: 'error', value: 0 }
       ],
 
       loading: false,
@@ -340,9 +340,9 @@ export default {
         stopped: '#FDB01C'
       },
       syncType: {
-        initial_sync: this.$t('dataFlow_initial_sync'),
-        cdc: this.$t('dataFlow_cdc'),
-        'initial_sync+cdc': this.$t('dataFlow_initial_sync') + '+' + this.$t('dataFlow_cdc')
+        initial_sync: this.$t('public_task_type_initial_sync'),
+        cdc: this.$t('public_task_type_cdc'),
+        'initial_sync+cdc': this.$t('public_task_type_initial_sync') + '+' + this.$t('public_task_type_cdc')
       },
 
       transfer: {
@@ -358,8 +358,8 @@ export default {
 
       // 传输总览颜色
       transBarData: [
-        { name: this.$t('dashboard_total_input'), value: 0, key: 'inputTotal', color: '#82C647' },
-        { name: this.$t('dashboard_total_output'), value: 0, key: 'outputTotal', color: '#2EA0EA' },
+        { name: this.$t('public_event_total_input'), value: 0, key: 'inputTotal', color: '#82C647' },
+        { name: this.$t('public_event_total_output'), value: 0, key: 'outputTotal', color: '#2EA0EA' },
         { name: this.$t('dashboard_total_insert'), value: 0, key: 'insertedTotal', color: '#AE86C9' },
         { name: this.$t('dashboard_total_update'), value: 0, key: 'updatedTotal', color: '#F7D762' },
         { name: this.$t('dashboard_total_delete'), value: 0, key: 'deletedTotal', color: '#88DBDA' }

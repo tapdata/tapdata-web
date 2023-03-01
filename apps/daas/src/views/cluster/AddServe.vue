@@ -6,7 +6,7 @@
         prop="name"
         :rules="{
           required: true,
-          message: $t('tips_rule_not_empty'),
+          message: $t('public_form_not_empty'),
           trigger: 'blur'
         }"
       >
@@ -18,7 +18,7 @@
         prop="command"
         :rules="{
           required: true,
-          message: $t('tips_rule_not_empty'),
+          message: $t('public_form_not_empty'),
           trigger: 'blur'
         }"
       >

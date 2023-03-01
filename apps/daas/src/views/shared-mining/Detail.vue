@@ -39,7 +39,7 @@
       <div class="flex share-detail-head-right text-center p-6 pl-0">
         <div class="flex text-center bg-color-main w-100 h-100">
           <div class="box py-3">
-            <div class="title fs-7 font-color-dark">{{ $t('share_detail_incremental_play') }}</div>
+            <div class="title fs-7 font-color-dark">{{ $t('public_event_incremental_delay') }}</div>
             <div class="time py-4 fs-2 text-primary">{{ getReplicateLagTime(replicateLag) }}</div>
             <div class="text-muted font-color-slight fs-8" v-if="detailData.cdcTime">
               {{ $t('share_detail_incremental_time') }}：{{ formatTime(detailData.cdcTime) }}
@@ -69,7 +69,7 @@
         </template>
         <template slot="operation" slot-scope="scope">
           <div class="operate-columns">
-            <ElButton size="mini" type="text" @click="goDetail(scope.row)">{{ $t('button_check') }}</ElButton>
+            <ElButton size="mini" type="text" @click="goDetail(scope.row)">{{ $t('public_button_check') }}</ElButton>
             <ElButton size="mini" type="text" @click="getTables(scope.row.id)">{{
               $t('share_detail_button_table_info')
             }}</ElButton>
@@ -181,7 +181,7 @@ export default {
         },
         series: [
           {
-            name: this.$t('task_info_input'),
+            name: this.$t('public_time_input'),
             lineStyle: {
               color: 'rgba(24, 144, 255, 1)',
               width: 1
@@ -197,7 +197,7 @@ export default {
             data: []
           },
           {
-            name: this.$t('task_info_output'),
+            name: this.$t('public_time_output'),
             lineStyle: {
               color: 'rgba(118, 205, 238, 1)',
               width: 1
@@ -242,7 +242,7 @@ export default {
           slotName: 'status'
         },
         {
-          label: this.$t('column_operation'),
+          label: this.$t('public_operation'),
           prop: 'operation',
           slotName: 'operation'
         }
@@ -458,9 +458,9 @@ export default {
     },
     getReplicateLagTime(val) {
       if (val < 1000) {
-        return '<1' + this.$t('task_info_s')
+        return '<1' + this.$t('public_time_s')
       } else if (val > 24 * 60 * 60 * 1000) {
-        return '>1' + this.$t('task_info_d')
+        return '>1' + this.$t('public_time_d')
       }
       return formatMs(val, 'time')
     },

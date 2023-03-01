@@ -40,7 +40,7 @@
           }}</span>
         </template> -->
       </el-table-column>
-      <el-table-column :label="$t('metadata_details_opera')" width="120">
+      <el-table-column :label="$t('public_operation')" width="120">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -48,7 +48,7 @@
             style="color: #f56c6c"
             @click="remove(scope.row)"
             v-if="scope.row.name !== '_id_' && scope.row.status === 'created'"
-            >{{ $t('button_delete') }}</el-button
+            >{{ $t('public_button_delete') }}</el-button
           >
         </template>
       </el-table-column>
@@ -68,7 +68,7 @@
             type="text"
             size="mini"
             v-model="createForm.task_data.name"
-            :placeholder="$t('dataRule_pleaseSelect') + $t('metadata_details_index_name')"
+            :placeholder="$t('public_select_placeholder') + $t('metadata_details_index_name')"
           ></el-input>
         </el-form-item>
         <el-row
@@ -125,7 +125,7 @@
               @click="removeRow(item, index)"
               v-if="createForm.indexDefinition.length > 1"
             >
-              {{ $t('message_delete') }}
+              {{ $t('public_button_delete') }}
             </el-button>
             <el-button
               plain
@@ -134,7 +134,7 @@
               @click="addRow"
               v-if="index === createForm.indexDefinition.length - 1"
             >
-              {{ $t('relations_add') }}
+              {{ $t('public_button_button') }}
             </el-button>
           </el-col>
         </el-row>
@@ -208,10 +208,10 @@ export default {
         }
       },
       dataTypeList: [
-        { label: this.$t('timeToLive_s'), value: 's' },
-        { label: this.$t('timeToLive_m'), value: 'm' },
-        { label: this.$t('timeToLive_h'), value: 'h' },
-        { label: this.$t('timeToLive_d'), value: 'd' },
+        { label: this.$t('public_time_s'), value: 's' },
+        { label: this.$t('public_time_m'), value: 'm' },
+        { label: this.$t('public_time_h'), value: 'h' },
+        { label: this.$t('public_time_d'), value: 'd' },
         { label: this.$t('timeToLive_w'), value: 'w' },
         { label: this.$t('timeToLive_mo'), value: 'mo' },
         { label: this.$t('timeToLive_y'), value: 'y' }
@@ -340,7 +340,7 @@ export default {
           }
           scheduleTasksApi.post(params).then(() => {
             this.createDialogVisible = false
-            this.$message.success(this.$t('message_save_ok'))
+            this.$message.success(this.$t('public_message_save_ok'))
           })
         }
       })
@@ -349,8 +349,8 @@ export default {
     remove(item) {
       const h = this.$createElement
       let _this = this
-      let message = h('p', [this.$t('message_deleteOrNot') + ' ' + item.name])
-      this.$confirm(message, this.$t('message_title_prompt'), {
+      let message = h('p', [this.$t('public_message_delete_confirm') + ' ' + item.name])
+      this.$confirm(message, this.$t('public_message_title_prompt'), {
         type: 'warning',
         closeOnClickModal: false
       }).then(flag => {
@@ -369,7 +369,7 @@ export default {
               }
             })
             .then(() => {
-              this.$message.success(this.$t('message_deleting'))
+              this.$message.success(this.$t('public_message_deleting'))
             })
         }
       })

@@ -26,7 +26,7 @@
           <TaskStatus :task="row" />
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="createTime" :label="$t('column_create_time')" min-width="160" sortable="createTime">
+      <ElTableColumn prop="createTime" :label="$t('public_create_time')" min-width="160" sortable="createTime">
         <template slot-scope="scope">
           {{ scope.row.createTimeFmt }}
         </template>
@@ -36,7 +36,7 @@
           {{ scope.row.cacheTimeAtFmt }}
         </template>
       </ElTableColumn>
-      <ElTableColumn min-width="140" :label="$t('column_operation')">
+      <ElTableColumn min-width="140" :label="$t('public_operation')">
         <template #default="{ row }">
           <TaskButtons :task="row" :hide-list="['details']" @trigger="taskButtonsHandler"></TaskButtons>
         </template>
@@ -236,7 +236,7 @@ export default {
       row.cacheKeysArr = row.cacheKeys?.split(',') || []
       this.details = row
       this.info = [
-        { label: this.$t('column_creator'), value: row.createUser, icon: 'createUser' },
+        { label: this.$t('public_creator'), value: row.createUser, icon: 'createUser' },
         { label: this.$t('shared_cache_time'), value: row.cacheTimeAtFmt, icon: 'cacheTimeAtFmt' },
         { label: this.$t('column_connection'), value: row.connectionName, icon: 'connectionName' },
         { label: this.$t('column_table'), value: row.tableName, icon: 'table' },
@@ -262,12 +262,12 @@ export default {
       })
     },
     del(id) {
-      this.$confirm(this.$t('message_delete_confirm'), this.$t('message_title_prompt'), {
+      this.$confirm(this.$t('public_message_delete_confirm'), this.$t('public_message_title_prompt'), {
         type: 'warning'
       }).then(flag => {
         if (flag) {
           sharedCacheApi.delete(id).then(() => {
-            this.$message.success(this.$t('message_delete_ok'))
+            this.$message.success(this.$t('public_message_delete_ok'))
             this.table.fetch()
           })
         }

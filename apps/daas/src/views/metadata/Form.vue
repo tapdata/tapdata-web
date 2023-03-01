@@ -11,7 +11,7 @@
         <el-form-item :label="$t('metadata_details_filedName')" prop="field_name" required>
           <el-input
             v-model="form.field_name"
-            :placeholder="$t('metadata_details_enter') + $t('metadata_details_filedName')"
+            :placeholder="$t('public_input_placeholder') + $t('metadata_details_filedName')"
             autocomplete="off"
             :disabled="fieldNameDisabled"
             size="mini"
@@ -22,17 +22,17 @@
         <el-form-item :label="$t('metadata_details_alias')">
           <el-input
             v-model="form.alias_name"
-            :placeholder="$t('metadata_details_enter') + $t('metadata_details_alias')"
+            :placeholder="$t('public_input_placeholder') + $t('metadata_details_alias')"
             autocomplete="off"
             size="mini"
             maxlength="50"
             show-word-limit
           ></el-input>
         </el-form-item>
-        <el-form-item :label="$t('metadata_details_description')">
+        <el-form-item :label="$t('public_description')">
           <el-input
             type="textarea"
-            :placeholder="$t('metadata_details_enter') + $t('metadata_details_description')"
+            :placeholder="$t('public_input_placeholder') + $t('public_description')"
             v-model="form.comment"
             maxlength="50"
             show-word-limit
@@ -78,7 +78,7 @@
               <el-input v-model="scope.row.value" size="mini"> </el-input>
             </template>
           </el-table-column>
-          <el-table-column prop="address" :label="$t('metadata_details_opera')" width="60">
+          <el-table-column prop="address" :label="$t('public_operation')" width="60">
             <template slot-scope="scope">
               <el-button
                 @click="delDictionary(scope.$index, 0)"
@@ -136,7 +136,7 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column prop="address" :label="$t('metadata_details_opera')" width="60">
+          <el-table-column prop="address" :label="$t('public_operation')" width="60">
             <template slot-scope="scope">
               <el-button
                 @click="delRelation(scope.$index, 0)"
@@ -156,9 +156,9 @@
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button class="cancel" @click="handleClose()" size="mini">
-        {{ $t('button_cancel') }}
+        {{ $t('public_button_cancel') }}
       </el-button>
-      <el-button type="primary" @click="save()" size="mini">{{ $t('button_save') }}</el-button>
+      <el-button type="primary" @click="save()" size="mini">{{ $t('public_button_save') }}</el-button>
     </div>
     <el-dialog
       :title="$t('metadata_details_chooseTemplate')"
@@ -572,7 +572,7 @@ export default {
               this.$message.success(this.$t('metadata_details_success_Release'))
             })
             // .catch(() => {
-            //   this.$message.error(this.$t('message_save_fail'))
+            //   this.$message.error(this.$t('public_message_save_fail'))
             // })
           } else {
             this.$message.error(this.$t('metadata_details_filedName_repeat'))

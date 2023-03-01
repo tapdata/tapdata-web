@@ -65,10 +65,10 @@
           <span v-for="item in scope.row.scopes" :key="item" class="table-span">{{ item }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('column_operation')" min-width="120" fixed="right">
+      <el-table-column :label="$t('public_operation')" min-width="120" fixed="right">
         <template slot-scope="scope">
           <ElButton v-readonlybtn="'API_clients_amangement'" size="mini" type="text" @click="edit(scope.row)">
-            {{ $t('modules_edit') }}
+            {{ $t('public_button_edit') }}
           </ElButton>
           <ElButton
             v-readonlybtn="'API_clients_amangement'"
@@ -76,7 +76,7 @@
             size="mini"
             type="text"
             @click="remove(scope.row)"
-            >{{ $t('button_delete') }}</ElButton
+            >{{ $t('public_button_delete') }}</ElButton
           >
         </template>
       </el-table-column>
@@ -130,8 +130,8 @@
         </ElFormItem>
       </ElForm>
       <span slot="footer" class="dialog-footer">
-        <ElButton @click="createDialogVisible = false" size="small">{{ $t('button_cancel') }}</ElButton>
-        <ElButton type="primary" @click="createApplication()" size="small">{{ $t('button_confirm') }}</ElButton>
+        <ElButton @click="createDialogVisible = false" size="small">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton type="primary" @click="createApplication()" size="small">{{ $t('public_button_confirm') }}</ElButton>
       </span>
     </ElDialog>
   </section>
@@ -214,19 +214,19 @@ export default {
     // 移除
     remove(item) {
       const h = this.$createElement
-      let message = h('p', [this.$t('message_deleteOrNot') + ' ' + item.name])
-      this.$confirm(message, this.$t('message_prompt'), {
+      let message = h('p', [this.$t('public_message_delete_confirm') + ' ' + item.name])
+      this.$confirm(message, this.$t('public_message_title_prompt'), {
         type: 'warning'
       }).then(resFlag => {
         if (!resFlag) {
           return
         }
         applicationApi.delete(item.id).then(() => {
-          this.$message.success(this.$t('message_delete_ok'))
+          this.$message.success(this.$t('public_message_delete_ok'))
           this.table.fetch()
         })
         // .catch(() => {
-        //   this.$message.info(this.$t('message_delete_fail'))
+        //   this.$message.info(this.$t('public_message_delete_fail'))
         // })
       })
     },
@@ -244,7 +244,7 @@ export default {
           applicationApi[method](params).then(() => {
             this.table.fetch()
             this.createDialogVisible = false
-            this.$message.success(this.$t('message_save_ok'))
+            this.$message.success(this.$t('public_message_save_ok'))
           })
         }
       })

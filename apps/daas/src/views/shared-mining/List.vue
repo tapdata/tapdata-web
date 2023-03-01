@@ -33,14 +33,13 @@
         </template>
       </el-table-column>
       <el-table-column sortable min-width="120" :label="$t('share_list_time')" prop="delayTime"></el-table-column>
-      <el-table-column prop="createTime" min-width="160" :label="$t('share_list_creat_time')" sortable>
-      </el-table-column>
+      <el-table-column prop="createTime" min-width="160" :label="$t('public_create_time')" sortable> </el-table-column>
       <el-table-column min-width="110" prop="status" :label="$t('share_list_status')">
         <template #default="{ row }">
           <TaskStatus :task="row" />
         </template>
       </el-table-column>
-      <el-table-column width="210" fixed="right" :label="$t('column_operation')">
+      <el-table-column width="210" fixed="right" :label="$t('public_operation')">
         <template #default="{ row }">
           <TaskButtons :task="row" :hide-list="['del']" @trigger="taskButtonsHandler"></TaskButtons>
         </template>
@@ -103,15 +102,14 @@
             v-model="digSettingForm.share_cdc_ttl_day"
             :placeholder="$t('shared_cdc_setting_select_time_tip')"
           >
-            <el-option v-for="op in logSaveList" :key="op" :label="op + $t('share_form_edit_day')" :value="op">
-            </el-option>
+            <el-option v-for="op in logSaveList" :key="op" :label="op + $t('public_time_d')" :value="op"> </el-option>
           </el-select>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="settingDialogVisible = false">{{ $t('button_cancel') }}</el-button>
+        <el-button size="mini" @click="settingDialogVisible = false">{{ $t('public_button_cancel') }}</el-button>
         <el-button size="mini" type="primary" :disabled="!showEditSettingBtn" @click="saveSetting()">{{
-          $t('button_confirm')
+          $t('public_button_confirm')
         }}</el-button>
       </span>
     </el-dialog>
@@ -129,14 +127,13 @@
           <el-input clearable v-model="editForm.name"></el-input>
         </el-form-item>
         <el-form-item size="mini" :label="$t('share_form_setting_log_time')">
-          <el-select v-model="editForm.storageTime" :placeholder="$t('common_placeholder_select')">
-            <el-option v-for="op in logSaveList" :key="op" :label="op + $t('share_form_edit_day')" :value="op">
-            </el-option>
+          <el-select v-model="editForm.storageTime" :placeholder="$t('public_select_placeholder')">
+            <el-option v-for="op in logSaveList" :key="op" :label="op + $t('public_time_d')" :value="op"> </el-option>
           </el-select>
         </el-form-item>
         <el-form-item size="mini" :label="$t('share_list_edit_title_start_time')">
           <div v-for="(item, index) in editForm.syncPoints" :key="index">
-            <el-select v-model="item.pointType" :placeholder="$t('common_placeholder_select')">
+            <el-select v-model="item.pointType" :placeholder="$t('public_select_placeholder')">
               <el-option v-for="op in pointTypeOptions" :key="op.value" :label="op.label" :value="op.value"></el-option>
             </el-select>
             <el-date-picker
@@ -153,8 +150,8 @@
         </el-form-item>
       </el-form>
       <span class="dialog-footer" slot="footer">
-        <el-button @click="cancelEdit" size="mini">{{ $t('button_cancel') }}</el-button>
-        <el-button size="mini" type="primary" @click="saveEdit()">{{ $t('button_save') }}</el-button>
+        <el-button @click="cancelEdit" size="mini">{{ $t('public_button_cancel') }}</el-button>
+        <el-button size="mini" type="primary" @click="saveEdit()">{{ $t('public_button_save') }}</el-button>
       </span>
     </el-dialog>
   </section>
@@ -356,7 +353,7 @@ export default {
           }
           logcollectorApi.patchSystemConfig(this.digSettingForm).then(() => {
             this.settingDialogVisible = false
-            this.$message.success(this.$t('message_save_ok'))
+            this.$message.success(this.$t('public_message_save_ok'))
           })
         }
       })

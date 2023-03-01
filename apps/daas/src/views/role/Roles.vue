@@ -31,7 +31,7 @@
           <span>{{ scope.row.userCount }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('role_list_founder')">
+      <el-table-column :label="$t('public_creator')">
         <template slot-scope="scope">
           <div>
             {{ scope.row.userEmail }}
@@ -48,7 +48,7 @@
           </el-switch>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('column_operation')" width="310">
+      <el-table-column :label="$t('public_operation')" width="310">
         <template slot-scope="scope">
           <el-button
             type="text"
@@ -74,7 +74,7 @@
             :disabled="$disabledByPermission('role_edition_all_data', scope.row.user_id)"
             @click="openCreateDialog(scope.row.id, scope.row)"
           >
-            {{ $t('button_edit') }}
+            {{ $t('public_button_edit') }}
           </el-button>
           <ElDivider direction="vertical"></ElDivider>
           <!--          <el-button-->
@@ -83,7 +83,7 @@
           <!--            :disabled="$disabledByPermission('role_delete_all_data', scope.row.user_id) || scope.row.name === 'admin'"-->
           <!--            v-readonlybtn="'role_delete'"-->
           <!--          >-->
-          <!--            {{ $t('button_delete') }}-->
+          <!--            {{ $t('public_button_delete') }}-->
           <!--          </el-button>-->
         </template>
       </el-table-column>
@@ -127,8 +127,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="dialogFormVisible = false">{{ $t('button_cancel') }} </el-button>
-        <el-button size="mini" type="primary" @click="createSave">{{ $t('button_confirm') }} </el-button>
+        <el-button size="mini" @click="dialogFormVisible = false">{{ $t('public_button_cancel') }} </el-button>
+        <el-button size="mini" type="primary" @click="createSave">{{ $t('public_button_confirm') }} </el-button>
       </div>
     </el-dialog>
 
@@ -146,8 +146,8 @@
         <div class="num fs-8">{{ $t('role_form_connected') }}: {{ roleusers.length }}</div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="dialogUserVisible = false">{{ $t('button_cancel') }}</el-button>
-        <el-button size="mini" type="primary" @click="saveUser">{{ $t('button_confirm') }}</el-button>
+        <el-button size="mini" @click="dialogUserVisible = false">{{ $t('public_button_cancel') }}</el-button>
+        <el-button size="mini" type="primary" @click="saveUser">{{ $t('public_button_confirm') }}</el-button>
       </span>
     </el-dialog>
   </section>
@@ -321,11 +321,11 @@ export default {
                     .then(data => {
                       if (data) {
                         // roleMappingModel.post(newRoleMappings);
-                        this.$message.success(this.$t('message_save_ok'))
+                        this.$message.success(this.$t('public_message_save_ok'))
                       }
                     })
                 } else {
-                  this.$message.success(this.$t('message_save_ok'))
+                  this.$message.success(this.$t('public_message_save_ok'))
                 }
                 this.table.fetch()
               }
@@ -408,7 +408,7 @@ export default {
           })
 
           this.table.fetch()
-          this.$message.success(this.$t('message_save_ok'))
+          this.$message.success(this.$t('public_message_save_ok'))
         }
       })
       // .catch(e => {

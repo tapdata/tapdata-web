@@ -9,11 +9,11 @@
     :visible.sync="dialogFormVisible"
   >
     <ElForm :model="model" ref="form" label-width="120px">
-      <ElFormItem :label="$t('module_form_describtion')">
+      <ElFormItem :label="$t('public_description')">
         <ElInput v-model="model.describtion" size="mini"></ElInput>
       </ElFormItem>
       <ElFormItem :label="$t('module_form_method')">
-        <ElSelect v-model="model.method" :placeholder="$t('common_placeholder_select')" size="mini">
+        <ElSelect v-model="model.method" :placeholder="$t('public_select_placeholder')" size="mini">
           <ElOption label="GET" value="GET"></ElOption>
           <ElOption label="STREAM" value="STREAM"></ElOption>
         </ElSelect>
@@ -60,9 +60,9 @@
     </ElForm>
     <div slot="footer" class="dialog-footer">
       <el-button class="cancel" @click="handleClose()" size="mini">
-        {{ $t('button_cancel') }}
+        {{ $t('public_button_cancel') }}
       </el-button>
-      <el-button type="primary" @click="save()" size="mini">{{ $t('button_save') }}</el-button>
+      <el-button type="primary" @click="save()" size="mini">{{ $t('public_button_save') }}</el-button>
     </div>
   </el-dialog>
 </template>

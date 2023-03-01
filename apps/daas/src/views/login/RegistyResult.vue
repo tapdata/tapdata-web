@@ -7,7 +7,7 @@
           <div class="image iconfont icon-zhuhe"></div>
           <div class="text">
             <p>
-              {{ $t('app_signIn_account') }}
+              {{ $t('public_connection_form_account') }}
               <i>{{ email }}</i>
               {{ type === 'registy' ? $t('app_signIn_accountSuccess') : $t('app_signIn_resetAccountSuccess') }}
             </p>
@@ -24,7 +24,7 @@
           <div class="image iconfont icon-cuowu errorIcon"></div>
           <div class="text">
             <p>
-              {{ $t('app_signIn_account') }}<i>{{ email }}</i
+              {{ $t('public_connection_form_account') }}<i>{{ email }}</i
               >{{ type === 'registy' ? $t('app_signIn_connectionFailed') : $t('app_signIn_resetConnectionFailed') }}
             </p>
             <div style="font-size: 18px">

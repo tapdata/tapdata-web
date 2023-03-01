@@ -71,7 +71,7 @@
                     </el-col>
                     <el-col :span="8">
                       <div class="btn txt fw-sub">
-                        {{ $t('column_operation') }}
+                        {{ $t('public_operation') }}
                       </div>
                     </el-col>
                   </el-row>
@@ -95,7 +95,7 @@
                           type="text"
                           :disabled="item.management.status == 'stopped' ? false : true"
                           @click="startFn(item, item.management.status, 'management', 'start')"
-                          >{{ $t('button_start') }}
+                          >{{ $t('public_button_start') }}
                         </ElButton>
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
@@ -103,14 +103,14 @@
                           type="text"
                           :disabled="item.management.status == 'running' ? false : true"
                           @click="closeFn(item, item.management.status, 'management', 'stop')"
-                          >{{ $t('button_close') }}
+                          >{{ $t('public_button_close') }}
                         </ElButton>
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
                           type="text"
                           :disabled="item.management.status == 'running' ? false : true"
                           @click="restartFn(item, item.management.status, 'management', 'restart')"
-                          >{{ $t('button_restart') }}
+                          >{{ $t('public_button_restart') }}
                         </ElButton>
                       </div>
                     </el-col>
@@ -136,7 +136,7 @@
                           type="text"
                           :disabled="item.engine.status == 'stopped' ? false : true"
                           @click="startFn(item, item.engine.status, 'engine')"
-                          >{{ $t('button_start') }}</ElButton
+                          >{{ $t('public_button_start') }}</ElButton
                         >
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
@@ -144,14 +144,14 @@
                           type="text"
                           :disabled="item.engine.status == 'running' ? false : true"
                           @click="closeFn(item, item.engine.status, 'engine')"
-                          >{{ $t('button_close') }}</ElButton
+                          >{{ $t('public_button_close') }}</ElButton
                         >
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
                           type="text"
                           :disabled="item.engine.status == 'running' ? false : true"
                           @click="restartFn(item, item.engine.status, 'engine')"
-                          >{{ $t('button_restart') }}</ElButton
+                          >{{ $t('public_button_restart') }}</ElButton
                         >
                       </div>
                     </el-col>
@@ -177,7 +177,7 @@
                           type="text"
                           :disabled="item.apiServer.status == 'stopped' ? false : true"
                           @click="startFn(item, item.apiServer.status, 'apiServer')"
-                          >{{ $t('button_start') }}</ElButton
+                          >{{ $t('public_button_start') }}</ElButton
                         >
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
@@ -185,14 +185,14 @@
                           type="text"
                           :disabled="item.apiServer.status == 'running' ? false : true"
                           @click="closeFn(item, item.apiServer.status, 'apiServer')"
-                          >{{ $t('button_close') }}</ElButton
+                          >{{ $t('public_button_close') }}</ElButton
                         >
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
                           type="text"
                           :disabled="item.apiServer.status == 'running' ? false : true"
                           @click="restartFn(item, item.apiServer.status, 'apiServer')"
-                          >{{ $t('button_restart') }}</ElButton
+                          >{{ $t('public_button_restart') }}</ElButton
                         >
                       </div>
                     </el-col>
@@ -209,10 +209,12 @@
                     </el-col>
                     <el-col :md="8" v-readonlybtn="'Cluster_operation'">
                       <div class="btn">
-                        <ElButton type="text" @click="delServe(child, item.status)">{{ $t('button_delete') }}</ElButton>
+                        <ElButton type="text" @click="delServe(child, item.status)">{{
+                          $t('public_button_delete')
+                        }}</ElButton>
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton type="text" @click="editServe(child, item.status, item)">{{
-                          $t('button_edit')
+                          $t('public_button_edit')
                         }}</ElButton>
                       </div>
                     </el-col>
@@ -240,8 +242,10 @@
     >
       <AddServe :data="currentData" :editItem="editItem" ref="childRules"></AddServe>
       <div slot="footer" class="dialog-footer">
-        <ElButton size="small" @click="closeDialogForm()">{{ $t('button_cancel') }}</ElButton>
-        <ElButton size="small" type="primary" @click="submitForm('ruleForm')">{{ $t('button_confirm') }}</ElButton>
+        <ElButton size="small" @click="closeDialogForm()">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton size="small" type="primary" @click="submitForm('ruleForm')">{{
+          $t('public_button_confirm')
+        }}</ElButton>
       </div>
     </el-dialog>
     <el-dialog
@@ -263,7 +267,7 @@
               show-word-limit
               :placeholder="$t('cluster_placeholder_mon_server')"
             ></el-input>
-            <ElButton type="text" class="rest-btn" @click="editNameRest">{{ $t('button_reduction') }}</ElButton>
+            <ElButton type="text" class="rest-btn" @click="editNameRest">{{ $t('public_button_reduction') }}</ElButton>
           </div>
         </el-form-item>
         <el-form-item :label="$t('cluster_ip_display')" prop="command">
@@ -274,9 +278,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <ElButton size="small" @click="editAgentDialog = false">{{ $t('button_cancel') }}</ElButton>
+        <ElButton size="small" @click="editAgentDialog = false">{{ $t('public_button_cancel') }}</ElButton>
         <ElButton size="small" type="primary" @click="submitEditAgent('editAgentForm')">{{
-          $t('button_confirm')
+          $t('public_button_confirm')
         }}</ElButton>
       </div>
     </el-dialog>
@@ -358,7 +362,7 @@ export default {
               .then(() => {
                 this.dialogForm = false
                 this.getDataApi()
-                this.$message.success(this.$t('message_save_ok'))
+                this.$message.success(this.$t('public_message_save_ok'))
               })
               .finally(() => {
                 this.dialogForm = false
@@ -370,10 +374,10 @@ export default {
               .then(() => {
                 this.dialogForm = false
                 this.getDataApi()
-                this.$message.success(this.$t('message_save_ok'))
+                this.$message.success(this.$t('public_message_save_ok'))
               })
               // .catch(() => {
-              //   this.$message.error(this.$t('message_save_fail'))
+              //   this.$message.error(this.$t('public_message_save_fail'))
               // })
               .finally(() => {
                 this.dialogForm = false
@@ -397,7 +401,7 @@ export default {
       }
 
       if (status === 'running') {
-        this.$confirm(this.$t('cluster_deleteor_not') + '?', {
+        this.$confirm(this.$t('public_message_delete_confirm') + '?', {
           type: 'warning'
         }).then(resFlag => {
           if (!resFlag) {
@@ -405,10 +409,10 @@ export default {
           }
           clusterApi.removeMonitor(params).then(() => {
             this.getDataApi()
-            this.$message.success(this.$t('message_save_ok'))
+            this.$message.success(this.$t('public_message_save_ok'))
           })
           // .catch(() => {
-          //   this.$message.error(this.$t('message_save_fail'))
+          //   this.$message.error(this.$t('public_message_save_fail'))
           // })
         })
       } else {
@@ -599,7 +603,7 @@ export default {
       // this.delData.agentName = this.delData.agentName || this.delData.systemInfo.hostname
       let agentName = item.agentName || item.systemInfo.hostname
       const h = this.$createElement
-      let message = h('p', [this.$t('cluster_del_delete_or_not') + ' ' + agentName])
+      let message = h('p', [this.$t('public_message_delete_confirm') + ' ' + agentName])
       this.$confirm(message, {
         type: 'warning'
       }).then(resFlag => {
@@ -607,21 +611,21 @@ export default {
           return
         }
         clusterApi.delete(item.id, item.name).then(() => {
-          this.$message.success(this.$t('message_delete_ok'))
+          this.$message.success(this.$t('public_message_delete_ok'))
           this.getDataApi()
         })
         // .catch(() => {
-        //   this.$message.info(this.$t('message_delete_fail'))
+        //   this.$message.info(this.$t('public_message_delete_fail'))
         // })
       })
     },
     removeNode(id) {
       clusterApi.delete(id).then(() => {
         this.deleteDialogVisible = false
-        this.$message.success(this.$t('message_delete_ok'))
+        this.$message.success(this.$t('public_message_delete_ok'))
       })
       // .catch(() => {
-      //   this.$message.error(this.$t('message_delete_fail'))
+      //   this.$message.error(this.$t('public_message_delete_fail'))
       // })
     },
     //编辑
@@ -637,7 +641,7 @@ export default {
     submitEditAgent() {
       if (this.agentName === '') {
         this.agentName = this.currentNde.hostname
-        this.$message.error(this.$t('cluster_server_name') + this.$t('cluster_none_text'))
+        this.$message.error(this.$t('cluster_server_name') + this.$t('public_form_not_empty'))
         return
       }
       let data = {
@@ -646,10 +650,10 @@ export default {
       }
       clusterApi.editAgent(this.custId, data).then(() => {
         this.editAgentDialog = false
-        this.$message.success(this.$t('message_delete_ok'))
+        this.$message.success(this.$t('public_message_delete_ok'))
       })
       // .catch(() => {
-      //   this.$message.error(this.$t('message_delete_fail'))
+      //   this.$message.error(this.$t('public_message_delete_fail'))
       // })
     },
     editNameRest() {

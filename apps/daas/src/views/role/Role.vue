@@ -186,9 +186,9 @@
         <!--        </ul>-->
       </div>
       <div class="btn">
-        <el-button size="mini" @click="back">{{ $t('button_back') }} </el-button>
+        <el-button size="mini" @click="back">{{ $t('public_button_back') }} </el-button>
         <el-button size="mini" type="primary" :loading="saveloading" @click="save('ruleForm')"
-          >{{ $t('app_save') }}
+          >{{ $t('public_button_save') }}
         </el-button>
       </div>
     </div>
@@ -853,7 +853,7 @@ export default {
         })
         .then(() => {
           this.$emit('saveBack')
-          this.$message.success(this.$t('message_save_ok'))
+          this.$message.success(this.$t('public_message_save_ok'))
         })
         .finally(() => {
           self.saveloading = false
@@ -872,7 +872,7 @@ export default {
         .updatePermissionRoleMapping(roleId, data)
         .then(() => {
           this.$emit('saveBack')
-          this.$message.success(this.$t('message_save_ok'))
+          this.$message.success(this.$t('public_message_save_ok'))
           this.adds = []
           this.deletes = []
         })

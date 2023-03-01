@@ -31,7 +31,7 @@
               class="e-button"
               type="text"
               @click=";(editCommentDialogVisible = true), (editCommentForm.comment = metadataDataObj.comment)"
-              >{{ $t('metadata_details_edit') }}</el-button
+              >{{ $t('public_button_edit') }}</el-button
             >
           </div>
 
@@ -65,7 +65,7 @@
                 </el-tooltip>
               </li>
               <li>
-                <span class="label">{{ $t('metadata_details_typesOf') }}：</span>
+                <span class="label">{{ $t('public_type') }}：</span>
                 <span>{{ metadataDataObj.meta_type }}</span>
               </li>
               <li>
@@ -87,11 +87,11 @@
                 <span>{{ metadataDataObj.create_source }}</span>
               </li>
               <li>
-                <span class="label">{{ $t('metadata_details_creationTime') }}：</span>
+                <span class="label">{{ $t('public_create_time') }}：</span>
                 <span>{{ metadataDataObj.createTimeFmt }}</span>
               </li>
               <li>
-                <span class="label">{{ $t('metadata_details_changeTime') }}：</span>
+                <span class="label">{{ $t('public_change_time') }}：</span>
                 <span>{{ metadataDataObj.lastUpdatedFmt }}</span>
               </li>
               <li>
@@ -113,7 +113,7 @@
               <li class="business" v-for="(item, key, index) in metadataDataObj.custom_properties" :key="index">
                 <span>{{ key }} : {{ item }}</span>
                 <ElLink type="primary" class="delete" @click="delBusiness(item, key, index)">{{
-                  $t('button_delete')
+                  $t('public_button_delete')
                 }}</ElLink>
               </li>
             </ul>
@@ -151,7 +151,7 @@
                         </li>
                         <li class="item">
                           <el-button type="text" class="restBtn" size="mini" @click="reset()">
-                            {{ $t('dataFlow_reset') }}
+                            {{ $t('public_button_reset') }}
                           </el-button>
                         </li>
                       </ul>
@@ -240,8 +240,8 @@
                       :label="$t('metadata_details_fieldLength')"
                       width="100"
                     ></el-table-column>
-                    <el-table-column prop="comment" :label="$t('metadata_details_description')"></el-table-column>
-                    <el-table-column width="120" :label="$t('metadata_details_opera')">
+                    <el-table-column prop="comment" :label="$t('public_description')"></el-table-column>
+                    <el-table-column width="120" :label="$t('public_operation')">
                       <template slot-scope="scope">
                         <el-button
                           v-readonlybtn="'data_catalog_edition'"
@@ -249,7 +249,7 @@
                           type="text"
                           @click="edit(scope.row)"
                         >
-                          {{ $t('metadata_details_edit') }}
+                          {{ $t('public_button_edit') }}
                         </el-button>
                         <el-button
                           v-readonlybtn="'meta_data_deleting'"
@@ -257,7 +257,7 @@
                           size="mini"
                           type="text"
                           @click="remove(scope.row, scope.$index, 0)"
-                          >{{ $t('button_delete') }}</el-button
+                          >{{ $t('public_button_delete') }}</el-button
                         >
                       </template>
                     </el-table-column>
@@ -366,7 +366,7 @@
       custom-class="dialogForm"
     >
       <el-form :model="editCommentForm" ref="ruleForm" label-width="90px" class="demo-ruleForm">
-        <el-form-item :label="$t('metadata_details_description')" prop="name">
+        <el-form-item :label="$t('public_description')" prop="name">
           <el-input type="textarea" v-model="editCommentForm.comment" maxlength="500" show-word-limit></el-input>
         </el-form-item>
       </el-form>
@@ -561,10 +561,10 @@ export default {
       let primary_key_position_mum = item.primary_key_position
       const h = this.$createElement
       let message = h('p', [
-        this.$t('message_deleteOrNot') + ' ',
+        this.$t('public_message_delete_confirm') + ' ',
         h('span', { style: { color: '#2C65FF' } }, item.field_name)
       ])
-      this.$confirm(message, this.$t('message_title_prompt'), {
+      this.$confirm(message, this.$t('public_message_title_prompt'), {
         type: 'warning',
         closeOnClickModal: false
       }).then(resFlag => {
@@ -617,10 +617,10 @@ export default {
         }
         metadataInstancesApi.patchId(this.metadataDataObj.id, params).then(() => {
           this.getData()
-          this.$message.success(this.$t('message_deleteOK'))
+          this.$message.success(this.$t('public_message_delete_ok'))
         })
         // .catch(() => {
-        //   this.$message.info(this.$t('message_deleteFail'))
+        //   this.$message.info(this.$t('public_message_delete_fail'))
         // })
       })
     },
@@ -663,8 +663,11 @@ export default {
     // 删除业务属性
     delBusiness(item, key) {
       const h = this.$createElement
-      let message = h('p', [this.$t('message_deleteOrNot') + ' ', h('span', { style: { color: '#409EFF' } }, key)])
-      this.$confirm(message, this.$t('message_title_prompt'), {
+      let message = h('p', [
+        this.$t('public_message_delete_confirm') + ' ',
+        h('span', { style: { color: '#409EFF' } }, key)
+      ])
+      this.$confirm(message, this.$t('public_message_title_prompt'), {
         type: 'warning',
         closeOnClickModal: false
       }).then(flag => {
@@ -684,7 +687,7 @@ export default {
           this.$message.success(this.$t('metadata_details_success_Release'))
         })
         // .catch(() => {
-        //   this.$message.error(this.$t('message_save_fail'))
+        //   this.$message.error(this.$t('public_message_save_fail'))
         // })
         // .finally(() => {
         //   instance.confirmButtonLoading = false
@@ -706,7 +709,7 @@ export default {
           this.$message.success(this.$t('metadata_details_success_Release'))
         })
         // .catch(() => {
-        //   this.$message.error(this.$t('message_save_fail'))
+        //   this.$message.error(this.$t('public_message_save_fail'))
         // })
         .finally(() => {
           this.businessDialogVisible = false
@@ -734,7 +737,7 @@ export default {
           this.$message.success(this.$t('metadata_details_success_Release'))
         })
         // .catch(() => {
-        //   this.$message.error(this.$t('message_save_fail'))
+        //   this.$message.error(this.$t('public_message_save_fail'))
         // })
         .finally(() => {
           this.editNameDialogVisible = false
@@ -752,7 +755,7 @@ export default {
           this.$message.success(this.$t('metadata_details_success_Release'))
         })
         // .catch(() => {
-        //   this.$message.error(this.$t('message_save_fail'))
+        //   this.$message.error(this.$t('public_message_save_fail'))
         // })
         .finally(() => {
           this.editCommentDialogVisible = false
