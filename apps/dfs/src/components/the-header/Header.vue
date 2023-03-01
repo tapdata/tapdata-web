@@ -111,7 +111,7 @@ export default {
         },
         {
           text: 'header_manual', //使用手册
-          link: 'https://docs.tapdata.io/cloud/what-is-tapdata-clou',
+          link: 'https://docs.tapdata.io/',
           icon: 'send',
           type: 'handbook'
         }
