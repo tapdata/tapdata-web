@@ -895,15 +895,24 @@ export class Table extends NodeType {
                       allowCreate: true,
                       multiple: true,
                       filterable: true,
-                      '@blur': `{{(e) => setDefaultPrimaryKey($self)}}`
+                      '@blur': `{{() => setDefaultPrimaryKey($self)}}`
                     },
                     'x-reactions': [
                       `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true}, $values.$inputs[0])}}`,
                       {
-                        // 相当于更新条件字段初始，并且字段获取到后执行
-                        when: '{{!$self.value && $self.dataSource && $self.dataSource.length}}',
+                        dependencies: ['$inputs'],
+                        // 源节点连线时，字段值为null并且模型获取到后执行
+                        when: '{{$deps[0].length && !$self.value && $self.dataSource && $self.dataSource.length}}',
                         fulfill: {
-                          run: `console.log('执行run', $self.value);setDefaultPrimaryKey($self)`
+                          run: `setDefaultPrimaryKey($self)`
+                        }
+                      },
+                      {
+                        dependencies: ['$inputs'],
+                        // 断开源节点的连线，如果更新条件为空[],设置值为null（为了下次连线触发设置默认值）
+                        when: '{{!$deps[0].length && $self.value && $self.value.length === 0}}',
+                        fulfill: {
+                          run: `$self.value=null`
                         }
                       }
                     ]
