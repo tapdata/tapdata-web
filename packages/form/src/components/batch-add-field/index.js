@@ -175,10 +175,10 @@ export const BatchAddField = defineComponent({
                   visible.value = false
                 }}
               >
-                {i18n.t('packages_component_button_cancel')}
+                {i18n.t('public_button_cancel')}
               </ElButton>
               <ElButton loading={loading.value} type="primary" onClick={handleSubmit}>
-                {i18n.t('packages_component_button_confirm')}
+                {i18n.t('public_button_confirm')}
               </ElButton>
             </div>
           </ElDialog>

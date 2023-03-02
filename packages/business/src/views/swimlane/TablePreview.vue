@@ -50,7 +50,7 @@
                   max-height="381px"
                   :has-pagination="false"
                 >
-                  <div slot="empty">{{ $t('packages_dag_dag_dialog_field_mapping_no_data') }}</div>
+                  <div slot="empty">{{ $t('public_data_no_data') }}</div>
                 </VTable>
               </el-tab-pane>
               <el-tab-pane label="Sample Data" name="sampleData">
@@ -79,20 +79,20 @@
         </el-tab-pane>
         <el-tab-pane label="Schema" name="schema">
           <VTable class="discovery-page-table" :columns="columns" :data="tableFields" :has-pagination="false">
-            <div slot="empty">{{ $t('packages_dag_dag_dialog_field_mapping_no_data') }}</div>
+            <div slot="empty">{{ $t('public_data_no_data') }}</div>
           </VTable>
         </el-tab-pane>
         <el-tab-pane label="Tasks" name="tasks">
           <div>以这个模型为源的任务</div>
           <el-table class="discovery-page-table" :data="taskData" :has-pagination="false">
-            <el-table-column :label="$t('packages_business_task_list_task_type')">
+            <el-table-column :label="$t('public_task_type')">
               <template #default="{ row }">
                 <span>
                   {{ row.type ? taskType[row.type] : '' }}
                 </span>
               </template>
             </el-table-column>
-            <el-table-column prop="status" :label="$t('packages_business_task_list_status')">
+            <el-table-column prop="status" :label="$t('public_task_status')">
               <template #default="{ row }">
                 <TaskStatus :task="row" :agentMap="agentMap" />
               </template>
@@ -100,7 +100,7 @@
             <el-table-column
               sortable
               prop="currentEventTimestamp"
-              :label="$t('packages_business_column_event_time')"
+              :label="$t('public_task_cdc_time_point')"
               min-width="164"
             >
               <template #default="{ row }">
@@ -109,7 +109,7 @@
             </el-table-column>
             <el-table-column
               prop="lastStartDate"
-              :label="$t('packages_business_column_last_start_time')"
+              :label="$t('public_task_last_run_time')"
               min-width="164"
               sortable="custom"
             >
@@ -208,10 +208,9 @@ export default {
       storageSize: '',
       numOfRows: '',
       taskType: {
-        initial_sync: this.$t('packages_business_task_info_initial_sync'),
-        cdc: this.$t('packages_business_task_info_initial_cdc'),
-        'initial_sync+cdc':
-          this.$t('packages_business_task_info_initial_sync') + '+' + this.$t('packages_business_task_info_initial_cdc')
+        initial_sync: this.$t('public_task_type_initial_sync'),
+        cdc: this.$t('public_task_type_cdc'),
+        'initial_sync+cdc': this.$t('public_task_type_initial_sync') + '+' + this.$t('public_task_type_cdc')
       }
     }
   },
