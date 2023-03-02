@@ -55,8 +55,8 @@
       <el-table-column
         :label="$t('application_header_redirect_uri')"
         :show-overflow-tooltip="true"
-        prop="redirectUris"
-        sortable="redirectUris"
+        prop="redirectUrisStr"
+        sortable="redirectUrisStr"
         min-width="140"
       >
       </el-table-column>
@@ -113,9 +113,9 @@
             <ElOption v-for="item in roles" :label="item.name" :value="item.name" :key="item.id"></ElOption>
           </ElSelect>
         </ElFormItem>
-        <ElFormItem :label="$t('application_header_redirect_uri')" required prop="redirectUris">
+        <ElFormItem :label="$t('application_header_redirect_uri')" required prop="redirectUrisStr">
           <ElInput
-            v-model="createForm.redirectUris"
+            v-model="createForm.redirectUrisStr"
             type="textarea"
             size="mini"
             :maxlength="200"
@@ -138,6 +138,8 @@
 </template>
 
 <script>
+import { cloneDeep } from 'lodash'
+
 import { roleApi, applicationApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage } from '@tap/business'
@@ -164,7 +166,8 @@ export default {
         grantTypes: [],
         clientSecret: '',
         scopes: [],
-        redirectUris: '',
+        redirectUris: [],
+        redirectUrisStr: '',
         showMenu: true
       }
     }
@@ -199,7 +202,8 @@ export default {
         grantTypes: ['implicit', 'client_credentials'],
         clientSecret: '',
         scopes: [],
-        redirectUris: '',
+        redirectUris: [],
+        redirectUrisStr: '',
         showMenu: true
       }
     },
@@ -209,6 +213,7 @@ export default {
       this.$nextTick(() => {
         this.$refs.form.clearValidate()
       })
+      item.redirectUrisStr = item.redirectUris?.join()
       this.createForm = item
     },
     // 移除
@@ -233,11 +238,13 @@ export default {
     // 保存
     createApplication() {
       const method = this.createForm.id ? 'patch' : 'post'
-      const params = this.createForm
+      const params = cloneDeep(this.createForm)
       params.name = this.createForm.clientName
       params.tokenType = 'jwt'
       params.clientType = 'public'
       params.responseTypes = ['token']
+      params.redirectUris = params.redirectUrisStr?.split(',') || []
+      delete params['redirectUrisStr']
 
       this.$refs.form.validate(valid => {
         if (valid) {
