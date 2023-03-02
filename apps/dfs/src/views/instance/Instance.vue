@@ -265,7 +265,7 @@
         <div class="dialog-btn flex justify-content-evenly mt-6">
           <div class="text-center">
             <ElButton type="primary" :disabled="disabledAutoUpgradeBtn" @click="autoUpgradeFnc">{{
-              $t('button_retry')
+              $t('public_button_retry')
             }}</ElButton>
           </div>
           <div>

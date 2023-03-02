@@ -12,9 +12,7 @@ export default {
   button_edit: '编辑',
   button_stop: '停止',
   button_delete: '删除',
-  button_all_delete: '全部删除',
   button_cancel: '取消',
-  button_finish: '完成',
   button_confirm: '确定',
   button_close: '关闭',
   button_save: '保存',
@@ -23,7 +21,6 @@ export default {
   button_bind: '绑定',
   button_unbind: '解绑',
   button_retry: '重试',
-  button_zhanKai: '展开',
   message_network_unconnected: '网络连接异常',
   message_network_connected: '网络已恢复',
   // 链接
@@ -288,9 +285,6 @@ export default {
   agent_tip_no_running: '无可用 Agent，请检查 Agent 运行状态或者创建一个新的 Agent',
   // 连接
   connection_manage: '连接管理',
-  connection_list_efficient: '有效',
-  connection_list_invalidation: '失效',
-  connection_list_testing: '测试中',
   connection_form_creat_connection: '创建连接',
   connection_form_mq_broker_url: 'MQ连接串',
   // 任务

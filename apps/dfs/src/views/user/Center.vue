@@ -39,7 +39,7 @@
               v-if="!disabledBindingPhone && !userData.telephone"
               type="primary"
               @click="dialogObj.bindPhone = true"
-              >{{ $t('button_bind') }}</ElLink
+              >{{ $t('public_button_bind') }}</ElLink
             >
           </ElCol>
           <ElCol :span="12" class="user-item">
@@ -60,14 +60,14 @@
           <!--          <ElCol :span="12" class="user-item">-->
           <!--            <div class="user-item__label">{{ $t('user_wechat') + $t('symbol_colon') }}</div>-->
           <!--            <div class="user-item__value">{{ userData.wx || $t('user_Center_weiBangDing') }}</div>-->
-          <!--            <ElLink v-if="userData.wx" type="primary" @click="unbindWx">{{ $t('button_unbind') }}</ElLink>-->
-          <!--            <ElLink v-else type="primary" @click="dialogObj.bindWx = true">{{ $t('button_bind') }}</ElLink>-->
+          <!--            <ElLink v-if="userData.wx" type="primary" @click="unbindWx">{{ $t('public_button_unbind') }}</ElLink>-->
+          <!--            <ElLink v-else type="primary" @click="dialogObj.bindWx = true">{{ $t('public_button_bind') }}</ElLink>-->
           <!--          </ElCol>-->
           <ElCol :span="12" class="user-item">
             <div class="user-item__label">{{ $t('user_Center_youXiang') }}</div>
             <div class="user-item__value">{{ userData.email || $t('user_Center_weiBangDing') }}</div>
             <ElLink v-if="userData.email" type="primary" @click="editEmail">{{ $t('public_button_revise') }}</ElLink>
-            <ElLink v-else type="primary" @click="dialogObj.bindEmail = true">{{ $t('button_bind') }}</ElLink>
+            <ElLink v-else type="primary" @click="dialogObj.bindEmail = true">{{ $t('public_button_bind') }}</ElLink>
           </ElCol>
         </ElRow>
       </div>
