@@ -19,7 +19,7 @@
           @click="handleExport"
         >
           <i class="iconfont icon-daoru back-btn-icon"></i>
-          <span> {{ $t('button_bulk_export') }}</span>
+          <span> {{ $t('public_button_bulk_export') }}</span>
         </ElButton>
         <ElButton
           v-readonlybtn="'datasource_creation'"
@@ -28,7 +28,7 @@
           size="mini"
           @click="$router.push({ name: 'dataVerificationCreate' })"
         >
-          <span> {{ $t('button_create') }}</span>
+          <span> {{ $t('public_button_create') }}</span>
         </ElButton>
       </div>
       <el-table-column type="selection" width="45"></el-table-column>
@@ -103,7 +103,7 @@
         sortable="lastStartTime"
         min-width="160"
       ></el-table-column>
-      <el-table-column :label="$t('column_operation')" width="260">
+      <el-table-column :label="$t('public_operation')" width="260">
         <template slot-scope="scope">
           <ElLink
             v-readonlybtn="'verify_job_edition'"
