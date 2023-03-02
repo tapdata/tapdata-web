@@ -426,6 +426,12 @@ export default {
     loadNotices() {
       this.notices = [
         {
+          id: 7,
+          type: '',
+          name: this.$t('workbench_Notice_tAPDA12'),
+          time: '2023-03-2 21:00'
+        },
+        {
           id: 6,
           type: '',
           name: 'Tapdata Cloud 3.1.7 Release Notes',

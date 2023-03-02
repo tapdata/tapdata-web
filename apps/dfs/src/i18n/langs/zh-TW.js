@@ -624,10 +624,10 @@ export default {
   user_Center_xiuGaiQiYeXin: '修改企業資訊成功',
   components_BindPhone_qingBangDingShouJi: '請綁定手機號',
   components_BindPhone_qingShuRuShouJi: '請輸入手機',
-  workbench_Notice_tAPDA12: 'Tapdata Cloud 1.0.9版本發佈啦！',
-  workbench_Notice_tAPDA11:
-    'Tapdata Cloud是國內首家異構數據庫實时同步雲平臺，現時支持Oracle、MySQL、PG、SQL Server、MongoDB、ES、達夢、Kafka、GP、MQ、ClickHouse、Hazelcast Cloud、ADB MySQL、ADBPostgreSQL、KunDB、TiDB、Dummy之間的資料同步，即將支持DB2、Sybase ASE、Redis、GBase、GaussDB等，並對用戶永久免費。',
-  workbench_Notice_buDuanYouHuaTi: '2.不斷優化，提供更佳體驗',
+  wworkbench_Notice_tAPDA12: '關於《產品使用手冊》訪問地址變更的通知',
+  workbench_Notice_tAPDA11: '尊敬的用戶，您好：',
+  workbench_Notice_buDuanYouHuaTi:
+    'Tapdata最新版本的《產品使用手冊》地址已變更為：https://docs.tapdata.io/，產品內部所有相關跳轉鏈接已同步更新。自本公告發布之日起，我們將停止對原語雀版本文檔的更新和維護，請您使用新的地址訪問，謝謝您對Tapdata產品的支持。 ',
   workbench_Notice_zaiChuangJianLianJie: '在創建連接時，用戶可以選擇連接類型',
   workbench_Notice_benCiXinZengRi: '本次新增日誌過濾篩選功能，用戶可以通過日誌過濾篩選',
   workbench_Notice_zhiChiPiLiangCao: '3.支持批量操作、體驗更佳',
