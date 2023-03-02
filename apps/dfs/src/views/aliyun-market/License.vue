@@ -16,7 +16,7 @@
           <el-input v-model="licenseCode" type="textarea" rows="2" autofocus></el-input>
         </div>
         <div class="mt-8">
-          <a v-if="showGoDashboard" class="mt-4 float-end button" type="primary" href="/">{{
+          <a v-if="showGoDashboard" class="mt-4 float-end button" type="primary" href="index.html">{{
             $t('dfs_aliyun_market_license_qianwanggongzuotai')
           }}</a>
           <el-button v-else class="mt-4 float-end" type="primary" @click="save">{{
@@ -53,7 +53,7 @@ export default {
             window.__USER_INFO__ = data
           })
           setTimeout(() => {
-            window.location.href = '/'
+            window.location.href = 'index.html'
           }, 30000)
         }
       })

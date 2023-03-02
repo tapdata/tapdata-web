@@ -66,7 +66,12 @@ export default ({ routes }) => {
     if (process.env.NODE_ENV === 'development') {
       queryString = `__token=${process.env.VUE_APP_ACCESS_TOKEN}`
     }
-    wsUrl = wsUrl + loc.host + loc.pathname + `tm/ws/agent?${queryString}`
+    let index = loc.pathname.lastIndexOf('.html')
+    let path = loc.pathname
+    if (index > 0) {
+      path = loc.pathname.substring(0, loc.pathname.lastIndexOf('/') + 1)
+    }
+    wsUrl = wsUrl + loc.host + path + `tm/ws/agent?${queryString}`
     window.App = new Vue({
       router,
       store,
