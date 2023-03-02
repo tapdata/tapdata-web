@@ -882,9 +882,6 @@ export default {
             this.$message.success(this.$t('public_message_delete_ok'))
             this.table.fetch()
           })
-          // .catch(() => {
-          //   this.$message.info(this.$t('public_message_delete_fail'))
-          // })
         })
       )
     },
@@ -1209,7 +1206,6 @@ export default {
 
       settingsApi.update(where, parmas).then(() => {
         this.table.fetch()
-        // this.$message.success(this.$t('public_message_save_ok'))
       })
       // .catch(() => {
       //   this.$message.error(this.$t('public_message_save_fail'))

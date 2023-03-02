@@ -128,7 +128,7 @@
               @click="addRow"
               v-if="index === createForm.indexDefinition.length - 1"
             >
-              {{ $t('public_button_button') }}
+              {{ $t('public_button_add') }}
             </el-button>
           </el-col>
         </el-row>
@@ -154,8 +154,8 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="createDialogVisible = false" size="small">{{ $t('message_cancel') }}</el-button>
-        <el-button type="primary" @click="createNewModel()" size="small">{{ $t('message_confirm') }}</el-button>
+        <el-button @click="createDialogVisible = false" size="small">{{ $t('public_button_cancel') }}</el-button>
+        <el-button type="primary" @click="createNewModel()" size="small">{{ $t('public_button_confirm') }}</el-button>
       </span>
     </el-dialog>
     <!-- 创建索引弹窗 end -->

@@ -23,3 +23,5 @@ export {
   PageHeader,
   DiscoveryClassification
 }
+
+export * from './DatabaseIcon'

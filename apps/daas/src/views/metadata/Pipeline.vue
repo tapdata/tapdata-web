@@ -46,7 +46,7 @@
           <el-button type="primary" @click="applicationBtn" size="mini">{{
             $t('metadata_details_pipeline_apply')
           }}</el-button>
-          <el-button type="primary" @click="saveSubmit" size="mini">{{ $t('message_save') }}</el-button>
+          <el-button type="primary" @click="saveSubmit" size="mini">{{ $t('public_button_save') }}</el-button>
         </div>
       </el-form-item>
     </el-form>
@@ -121,8 +121,8 @@ export default {
       if (this.pipeline_status === 'succeed') {
         this.$confirm(this.$t('metadata_details_pipeline_view_tip'), {
           closeOnClickModal: false,
-          confirmButtonText: this.$t('message_confirm'),
-          confirmButtonClass: this.$t('message_cancel'),
+          confirmButtonText: this.$t('public_button_confirm'),
+          confirmButtonClass: this.$t('public_button_cancel'),
           showClose: false
         })
           .then(() => {

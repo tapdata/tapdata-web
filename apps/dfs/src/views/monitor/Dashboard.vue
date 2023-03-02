@@ -31,12 +31,12 @@
             @click="start"
             >{{ $t('public_button_start') }}</VButton
           >
-          <VButton :disabled="!statusBtMap['stop'][task.status]" @click="stop">{{ $t('public_button__stop') }}</VButton>
+          <VButton :disabled="!statusBtMap['stop'][task.status]" @click="stop">{{ $t('public_button_stop') }}</VButton>
           <VButton :loading="resetBtnLoading" :disabled="!statusBtMap['reset'][task.status]" @click="reset">{{
             $t('public_button_reset')
           }}</VButton>
           <VButton :disabled="!statusBtMap['forceStop'][task.status]" @click="forceStop">{{
-            $t('public_button__force_stop')
+            $t('public_button_force_stop')
           }}</VButton>
         </div>
       </div>

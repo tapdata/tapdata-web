@@ -378,7 +378,6 @@ export default {
                 this.$message.success(this.$t('public_message_save_ok'))
               })
               // .catch(() => {
-              //   this.$message.error(this.$t('public_message_save_fail'))
               // })
               .finally(() => {
                 this.dialogForm = false
@@ -413,7 +412,6 @@ export default {
             this.$message.success(this.$t('public_message_save_ok'))
           })
           // .catch(() => {
-          //   this.$message.error(this.$t('public_message_save_fail'))
           // })
         })
       } else {
@@ -616,7 +614,6 @@ export default {
           this.getDataApi()
         })
         // .catch(() => {
-        //   this.$message.info(this.$t('public_message_delete_fail'))
         // })
       })
     },
@@ -626,7 +623,6 @@ export default {
         this.$message.success(this.$t('public_message_delete_ok'))
       })
       // .catch(() => {
-      //   this.$message.error(this.$t('public_message_delete_fail'))
       // })
     },
     //编辑
@@ -654,7 +650,6 @@ export default {
         this.$message.success(this.$t('public_message_delete_ok'))
       })
       // .catch(() => {
-      //   this.$message.error(this.$t('public_message_delete_fail'))
       // })
     },
     editNameRest() {

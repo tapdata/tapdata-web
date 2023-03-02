@@ -167,7 +167,7 @@
                 :disabled="row.btnDisabled.forceStop"
                 @click="forceStop([row.id], row)"
               >
-                {{ $t('public_button__force_stop') }}
+                {{ $t('public_button_force_stop') }}
               </ElLink>
               <ElLink
                 v-else
@@ -176,7 +176,7 @@
                 :disabled="row.btnDisabled.stop"
                 @click="stop([row.id], row)"
               >
-                {{ $t('public_button__stop') }}
+                {{ $t('public_button_stop') }}
               </ElLink>
             </template>
             <ElDivider v-readonlybtn="'SYNC_job_operation'" direction="vertical"></ElDivider>

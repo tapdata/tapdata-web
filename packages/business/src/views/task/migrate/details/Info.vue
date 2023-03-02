@@ -28,7 +28,7 @@
         </ElButton>
         <ElButton type="danger" :disabled="stopDisabled" @click="stop(task, arguments[0])">
           <VIcon size="12">pause-fill</VIcon>
-          <span class="ml-1">{{ $t('public_button__stop') }}</span>
+          <span class="ml-1">{{ $t('public_button_stop') }}</span>
         </ElButton>
         <!--        <ElButton :disabled="editDisabled" @click="edit">-->
         <!--          <VIcon size="12">edit-fill</VIcon>-->

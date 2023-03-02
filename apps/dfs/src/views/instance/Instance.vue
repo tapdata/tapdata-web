@@ -170,7 +170,7 @@
               :disabled="stopBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
               :loading="scope.row.btnLoading.stop"
               @click="handleStop(scope.row)"
-              >{{ $t('public_button__stop') }}</ElButton
+              >{{ $t('public_button_stop') }}</ElButton
             >
             <ElDivider direction="vertical"></ElDivider>
             <ElButton
@@ -265,7 +265,7 @@
         <div class="dialog-btn flex justify-content-evenly mt-6">
           <div class="text-center">
             <ElButton type="primary" :disabled="disabledAutoUpgradeBtn" @click="autoUpgradeFnc">{{
-              $t('button_retry')
+              $t('public_button_retry')
             }}</ElButton>
           </div>
           <div>
@@ -304,7 +304,7 @@
             @click="handleStop(selectedRow)"
           >
             <VIcon size="12">stop</VIcon>
-            <span class="ml-1">{{ $t('public_button__stop') }}</span>
+            <span class="ml-1">{{ $t('public_button_stop') }}</span>
           </VButton>
           <VButton
             :loading="selectedRow.btnLoading.delete"
