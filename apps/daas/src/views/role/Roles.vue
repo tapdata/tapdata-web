@@ -74,7 +74,7 @@
             :disabled="$disabledByPermission('role_edition_all_data', scope.row.user_id)"
             @click="openCreateDialog(scope.row.id, scope.row)"
           >
-            {{ $t('button_edit') }}
+            {{ $t('public_button_edit') }}
           </el-button>
           <ElDivider direction="vertical"></ElDivider>
           <!--          <el-button-->
@@ -83,7 +83,7 @@
           <!--            :disabled="$disabledByPermission('role_delete_all_data', scope.row.user_id) || scope.row.name === 'admin'"-->
           <!--            v-readonlybtn="'role_delete'"-->
           <!--          >-->
-          <!--            {{ $t('button_delete') }}-->
+          <!--            {{ $t('public_button_delete') }}-->
           <!--          </el-button>-->
         </template>
       </el-table-column>
@@ -127,8 +127,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="dialogFormVisible = false">{{ $t('button_cancel') }} </el-button>
-        <el-button size="mini" type="primary" @click="createSave">{{ $t('button_confirm') }} </el-button>
+        <el-button size="mini" @click="dialogFormVisible = false">{{ $t('public_button_cancel') }} </el-button>
+        <el-button size="mini" type="primary" @click="createSave">{{ $t('public_button_confirm') }} </el-button>
       </div>
     </el-dialog>
 
@@ -146,8 +146,8 @@
         <div class="num fs-8">{{ $t('role_form_connected') }}: {{ roleusers.length }}</div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="dialogUserVisible = false">{{ $t('button_cancel') }}</el-button>
-        <el-button size="mini" type="primary" @click="saveUser">{{ $t('button_confirm') }}</el-button>
+        <el-button size="mini" @click="dialogUserVisible = false">{{ $t('public_button_cancel') }}</el-button>
+        <el-button size="mini" type="primary" @click="saveUser">{{ $t('public_button_confirm') }}</el-button>
       </span>
     </el-dialog>
   </section>

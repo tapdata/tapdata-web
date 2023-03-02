@@ -73,7 +73,7 @@ const errorCallback = (error: AxiosError): Promise<AxiosError | string> => {
   } else if (error.code === 'ECONNABORTED' /* || error.message === 'Network Error' || !window.navigator.onLine*/) {
     // 这两种情况已在ws-client.js里监听 👉 error.message === 'Network Error' || !window.navigator.onLine
     Message.error({
-      message: i18n.t('message_network_unconnected').toString()
+      message: i18n.t('public_message_network_unconnected').toString()
     })
   } else if (error.message && error.message.includes('timeout')) {
     Message.error({

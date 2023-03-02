@@ -162,7 +162,7 @@
               v-if="['activated', 'rejected'].includes(scope.row.status)"
               :disabled="$disabledByPermission('user_edition_all_data', scope.row.user_id)"
               @click="edit(scope.row)"
-              >{{ $t('button_edit') }}</el-button
+              >{{ $t('public_button_edit') }}</el-button
             >
             <ElDivider v-if="['activated', 'rejected'].includes(scope.row.status)" direction="vertical"></ElDivider>
             <el-button
@@ -171,7 +171,7 @@
               type="text"
               :disabled="$disabledByPermission('user_delete_all_data', scope.row.user_id)"
               @click="remove(scope.row)"
-              >{{ $t('button_delete') }}</el-button
+              >{{ $t('public_button_delete') }}</el-button
             >
           </div>
         </template>
@@ -208,8 +208,8 @@
         </el-tooltip>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="createDialogVisible = false" size="mini">{{ $t('button_cancel') }}</el-button>
-        <el-button type="primary" @click="createNewUser()" size="mini">{{ $t('button_confirm') }}</el-button>
+        <el-button @click="createDialogVisible = false" size="mini">{{ $t('public_button_cancel') }}</el-button>
+        <el-button type="primary" @click="createNewUser()" size="mini">{{ $t('public_button_confirm') }}</el-button>
       </span>
     </el-dialog>
   </section>
