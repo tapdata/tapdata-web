@@ -19,7 +19,13 @@
           <section class="mt-2">
             <div class="mb-4">
               <span class="table-dec-label mb-4">Table Description：</span
-              ><el-input type="textarea" row="4" class="table-dec-txt mt-2" v-model="detailData.commnet"></el-input>
+              ><el-input
+                type="textarea"
+                row="4"
+                class="table-dec-txt mt-2"
+                v-model="detailData.description || detailData.comment"
+                @blur="saveTableDesc"
+              ></el-input>
             </div>
             <el-row>
               <el-col :span="4">
@@ -83,16 +89,24 @@
           </VTable>
         </el-tab-pane>
         <el-tab-pane label="Tasks" name="tasks">
-          <div>以这个模型为源的任务</div>
+          <div class="flex justify-content-between mb-4">
+            <span>以这个模型为源的任务</span><span class="color-primary">Create Task</span>
+          </div>
           <el-table class="discovery-page-table" :data="taskData" :has-pagination="false">
-            <el-table-column :label="$t('packages_business_task_list_task_type')">
+            <el-table-column
+              :label="$t('public_task_name')"
+              prop="name"
+              width="200px"
+              show-overflow-tooltip
+            ></el-table-column>
+            <el-table-column :label="$t('public_task_type')">
               <template #default="{ row }">
                 <span>
                   {{ row.type ? taskType[row.type] : '' }}
                 </span>
               </template>
             </el-table-column>
-            <el-table-column prop="status" :label="$t('packages_business_task_list_status')">
+            <el-table-column prop="status" :label="$t('public_task_status')">
               <template #default="{ row }">
                 <TaskStatus :task="row" :agentMap="agentMap" />
               </template>
@@ -100,7 +114,7 @@
             <el-table-column
               sortable
               prop="currentEventTimestamp"
-              :label="$t('packages_business_column_event_time')"
+              :label="$t('public_task_cdc_time_point')"
               min-width="164"
             >
               <template #default="{ row }">
@@ -109,7 +123,7 @@
             </el-table-column>
             <el-table-column
               prop="lastStartDate"
-              :label="$t('packages_business_column_last_start_time')"
+              :label="$t('public_task_last_run_time')"
               min-width="164"
               sortable="custom"
             >
@@ -128,9 +142,8 @@
 
 <script>
 import { Drawer } from '@tap/component'
-import NodeIcon from '@tap/dag/src/components/NodeIcon'
 import { VTable } from '@tap/component'
-import { discoveryApi, proxyApi, taskApi } from '@tap/api'
+import { discoveryApi, proxyApi, taskApi, metadataInstancesApi } from '@tap/api'
 import i18n from '@/i18n'
 import dayjs from 'dayjs'
 import { TaskStatus } from '../../components'
@@ -208,10 +221,9 @@ export default {
       storageSize: '',
       numOfRows: '',
       taskType: {
-        initial_sync: this.$t('packages_business_task_info_initial_sync'),
-        cdc: this.$t('packages_business_task_info_initial_cdc'),
-        'initial_sync+cdc':
-          this.$t('packages_business_task_info_initial_sync') + '+' + this.$t('packages_business_task_info_initial_cdc')
+        initial_sync: this.$t('public_task_type_initial_sync'),
+        cdc: this.$t('public_task_type_cdc'),
+        'initial_sync+cdc': this.$t('public_task_type_initial_sync') + '+' + this.$t('public_task_type_cdc')
       }
     }
   },
@@ -233,9 +245,10 @@ export default {
           this.tableFields = res?.fields || []
           this.getSampleData()
           this.getTasks()
+          this.getTaskStatus()
           setTimeout(() => {
             this.getStorageSize()
-          }, 1000)
+          }, 800)
         })
         .finally(() => {
           this.loading = false
@@ -275,12 +288,23 @@ export default {
         args: [this.connectionId, this.detailData.name]
       }
       proxyApi.call(params).then(res => {
-        this.storageSize = res.storageSize || 0
+        this.storageSize = Math.floor(res.storageSize / 1024) || 0
         this.numOfRows = res.numOfRows || 0
       })
     },
     formatTime(time) {
       return time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
+    },
+    //
+    saveTableDesc() {
+      metadataInstancesApi.updateTableDesc({
+        id: this.detailData.id,
+        description: this.detailData.comment
+      })
+    },
+    //获取表状态
+    getTaskStatus() {
+      taskApi.tableStatus(this.connectionId, this.detailData.name)
     }
   }
 }

@@ -143,14 +143,13 @@ export default {
       //海外版隐藏数据服务
       this.sortMenus = this.sortMenus.filter(item => item.name !== 'dataServerList')
     }
-    if (window.__config__?.showSwimLane) {
+    if (!window.__config__?.showSwimLane) {
       let swimLane = {
         name: 'swimLane',
         title: 'Data Console(Preview)',
         icon: 'operation-log'
       }
-      //海外版隐藏数据服务
-      this.sortMenus = this.sortMenus.push(swimLane)
+      this.sortMenus.push(swimLane)
     }
     this.loopLoadAgentCount()
     this.activeMenu = this.$route.path
