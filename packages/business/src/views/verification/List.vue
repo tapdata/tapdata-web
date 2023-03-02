@@ -19,7 +19,7 @@
           @click="handleExport"
         >
           <i class="iconfont icon-daoru back-btn-icon"></i>
-          <span> {{ $t('button_bulk_export') }}</span>
+          <span> {{ $t('public_button_bulk_export') }}</span>
         </ElButton>
         <ElButton
           v-readonlybtn="'datasource_creation'"
@@ -28,7 +28,7 @@
           size="mini"
           @click="$router.push({ name: 'dataVerificationCreate' })"
         >
-          <span> {{ $t('button_create') }}</span>
+          <span> {{ $t('public_button_create') }}</span>
         </ElButton>
       </div>
       <el-table-column type="selection" width="45"></el-table-column>
@@ -103,7 +103,7 @@
         sortable="lastStartTime"
         min-width="150"
       ></el-table-column>
-      <el-table-column :label="$t('column_operation')" width="260">
+      <el-table-column :label="$t('public_operation')" width="260">
         <template slot-scope="scope">
           <ElLink
             v-readonlybtn="'verify_job_edition'"
@@ -197,14 +197,14 @@ export default {
         running: this.$t('packages_business_verification_running')
       },
       validList: [
-        { label: this.$t('select_option_all'), value: '' },
+        { label: this.$t('public_select_option_all'), value: '' },
         { label: this.$t('packages_business_verification_check_same'), value: 'passed' },
         { label: this.$t('packages_business_verification_count_difference'), value: 'row_count' },
         { label: this.$t('packages_business_verification_content_difference'), value: 'valueDiff' },
         { label: 'Error', value: 'error' }
       ],
       verifyTypeList: [
-        { label: this.$t('select_option_all'), value: '' },
+        { label: this.$t('public_select_option_all'), value: '' },
         { label: this.$t('packages_business_verification_row_verify'), value: 'row_count' },
         { label: this.$t('packages_business_verification_content_verify'), value: 'field' },
         { label: this.$t('packages_business_verification_joint_verify'), value: 'jointField' }
@@ -400,7 +400,7 @@ export default {
           key: 'mode',
           type: 'select-inner',
           items: [
-            { label: this.$t('select_option_all'), value: '' },
+            { label: this.$t('public_select_option_all'), value: '' },
             { label: this.$t('packages_business_verification_single'), value: 'MANUALLY_SPECIFIED_BY_THE_USER' },
             { label: this.$t('packages_business_verification_repeating'), value: 'cron' }
           ]
@@ -410,7 +410,7 @@ export default {
           key: 'enabled',
           type: 'select-inner',
           items: [
-            { label: this.$t('select_option_all'), value: '' },
+            { label: this.$t('public_select_option_all'), value: '' },
             { label: this.$t('packages_business_verification_job_enable'), value: 1 },
             { label: this.$t('packages_business_verification_job_disable'), value: 2 }
           ]

@@ -27,7 +27,7 @@ export const TOPOLOGY_MAP = topologyMap,
   },
   CONNECTION_STATUS_MAP = {
     ready: { text: i18n.t('public_status_ready'), type: 'success' },
-    invalid: { text: i18n.t('connection_list_invalidation'), type: 'danger' },
+    invalid: { text: i18n.t('public_status_invalid'), type: 'danger' },
     testing: { text: i18n.t('public_status_testing'), type: 'warning' }
   },
   CONNECTION_STATUS_MAP_EN = {

@@ -26,11 +26,11 @@
           @click="forceStop(task, arguments[0])"
         >
           <VIcon size="12">pause-fill</VIcon>
-          <span class="ml-1">{{ $t('public_button__force_stop') }}</span>
+          <span class="ml-1">{{ $t('public_button_force_stop') }}</span>
         </VButton>
         <VButton v-else type="danger" :disabled="task.btnDisabled.stop" @click="stop(task, arguments[0])">
           <VIcon size="12">pause-fill</VIcon>
-          <span class="ml-1">{{ $t('public_button__stop') }}</span>
+          <span class="ml-1">{{ $t('public_button_stop') }}</span>
         </VButton>
       </div>
     </div>

@@ -46,7 +46,7 @@ export default defineComponent({
       }
       taskApi.get({ filter: JSON.stringify(filter) }).then(() => {
         taskApi.batchStart([id]).then(data => {
-          success(data?.message || $t('message_operation_succuess'))
+          success(data?.message || $t('public_message_operation_success'))
           emit('trigger', 'start')
         })
       })
@@ -63,7 +63,7 @@ export default defineComponent({
             return
           }
           taskApi.batchStop([id]).then(data => {
-            success(data?.message || $t('message_operation_succuess'))
+            success(data?.message || $t('public_message_operation_success'))
             emit('trigger', 'stop')
           })
         })
@@ -83,7 +83,7 @@ export default defineComponent({
             return
           }
           taskApi.forceStop([id]).then(data => {
-            success(data?.message || $t('message_operation_succuess'))
+            success(data?.message || $t('public_message_operation_success'))
             emit('trigger', 'forceStop')
           })
         })
@@ -107,7 +107,7 @@ export default defineComponent({
           }
           taskApi.batchRenew([id]).then(data => {
             emit('trigger', 'reset')
-            success(data?.message || $t('message_operation_succuess'))
+            success(data?.message || $t('public_message_operation_success'))
           })
         })
     }
@@ -129,21 +129,21 @@ export default defineComponent({
       return (
         <div>
           <el-button type="text" disabled={props.task.btnDisabled.start} onClick={start}>
-            {$t('task_list_run')}
+            {$t('public_button_start')}
           </el-button>
           <el-divider direction="vertical"></el-divider>
           {isStopping(task.value) ? (
             <el-button type="text" onClick={forceStop}>
-              {$t('task_list_force_stop')}
+              {$t('public_button__force_stop')}
             </el-button>
           ) : (
             <el-button type="text" disabled={props.task.btnDisabled.stop} onClick={stop}>
-              {$t('task_list_stop')}
+              {$t('public_button__stop')}
             </el-button>
           )}
           <el-divider direction="vertical"></el-divider>
           <el-button type="text" disabled={props.task.btnDisabled.edit} onClick={edit}>
-            {$t('button_edit')}
+            {$t('public_button_edit')}
           </el-button>
           <el-divider direction="vertical"></el-divider>
           <el-dropdown onCommand={dropdownHandler} trigger="click">
@@ -152,15 +152,15 @@ export default defineComponent({
             </el-link>
             <el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">
               {!hideList.value.includes('details') ? (
-                <el-dropdown-item command="details">{$t('button_details')}</el-dropdown-item>
+                <el-dropdown-item command="details">{$t('public_button_details')}</el-dropdown-item>
               ) : (
                 ''
               )}
               <el-dropdown-item command="reset" disabled={props.task.btnDisabled.reset}>
-                {$t('task_list_reset')}
+                {$t('public_button_reset')}
               </el-dropdown-item>
               {!hideList.value.includes('del') ? (
-                <el-dropdown-item command="del">{$t('button_delete')}</el-dropdown-item>
+                <el-dropdown-item command="del">{$t('public_button_delete')}</el-dropdown-item>
               ) : (
                 ''
               )}
