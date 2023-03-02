@@ -231,7 +231,6 @@ export default {
           this.table.fetch()
         })
         // .catch(() => {
-        //   this.$message.info(this.$t('public_message_delete_fail'))
         // })
       })
     },

@@ -331,9 +331,9 @@
       <FormBuilder ref="form" v-model="businessForm" :config="businessFormConfig"></FormBuilder>
       <span slot="footer" class="dialog-footer">
         <el-button class="cancel" @click="businessDialogVisible = false" size="small">{{
-          $t('message_cancel')
+          $t('public_button_cancel')
         }}</el-button>
-        <el-button type="primary" @click="saveBusiness()" size="small">{{ $t('message_save') }}</el-button>
+        <el-button type="primary" @click="saveBusiness()" size="small">{{ $t('public_button_save') }}</el-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -353,9 +353,9 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button class="cancel" @click="editNameDialogVisible = false" size="small">{{
-          $t('message_cancel')
+          $t('public_button_cancel')
         }}</el-button>
-        <el-button type="primary" @click="saveAliasName()" size="small">{{ $t('message_save') }}</el-button>
+        <el-button type="primary" @click="saveAliasName()" size="small">{{ $t('public_button_save') }}</el-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -372,9 +372,9 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button class="cancel" @click="editCommentDialogVisible = false" size="small">{{
-          $t('message_cancel')
+          $t('public_button_cancel')
         }}</el-button>
-        <el-button type="primary" @click="saveComment()" size="small">{{ $t('message_save') }}</el-button>
+        <el-button type="primary" @click="saveComment()" size="small">{{ $t('public_button_save') }}</el-button>
       </span>
     </el-dialog>
   </section>
@@ -620,7 +620,6 @@ export default {
           this.$message.success(this.$t('public_message_delete_ok'))
         })
         // .catch(() => {
-        //   this.$message.info(this.$t('public_message_delete_fail'))
         // })
       })
     },
@@ -687,7 +686,6 @@ export default {
           this.$message.success(this.$t('metadata_details_success_Release'))
         })
         // .catch(() => {
-        //   this.$message.error(this.$t('public_message_save_fail'))
         // })
         // .finally(() => {
         //   instance.confirmButtonLoading = false
@@ -737,7 +735,6 @@ export default {
           this.$message.success(this.$t('metadata_details_success_Release'))
         })
         // .catch(() => {
-        //   this.$message.error(this.$t('public_message_save_fail'))
         // })
         .finally(() => {
           this.editNameDialogVisible = false
@@ -755,7 +752,6 @@ export default {
           this.$message.success(this.$t('metadata_details_success_Release'))
         })
         // .catch(() => {
-        //   this.$message.error(this.$t('public_message_save_fail'))
         // })
         .finally(() => {
           this.editCommentDialogVisible = false
