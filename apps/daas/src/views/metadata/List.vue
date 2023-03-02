@@ -25,7 +25,7 @@
           @click="$refs.table.showClassify(handleSelectTag())"
         >
           <i class="iconfont icon-biaoqian back-btn-icon"></i>
-          <span> {{ $t('dataFlow_taskBulkTag') }}</span>
+          <span> {{ $t('public_button_bulk_tag') }}</span>
         </el-button>
         <el-button
           v-readonlybtn="'new_model_creation'"
@@ -62,7 +62,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('metadata_header_meta_type')" prop="meta_type" sortable="custom">
+      <el-table-column :label="$t('public_type')" prop="meta_type" sortable="custom">
         <template slot-scope="scope">
           {{ $t('metadata_metaType_' + scope.row.meta_type) }}
         </template>
@@ -72,12 +72,12 @@
         prop="username"
         sortable="custom"
       ></el-table-column>
-      <el-table-column :label="$t('metadata_header_last_updated')" prop="last_updated" sortable="custom">
+      <el-table-column :label="$t('public_update_time')" prop="last_updated" sortable="custom">
         <template slot-scope="scope">
           {{ scope.row.lastUpdatedFmt }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('metadata_details_opera')" width="180">
+      <el-table-column :label="$t('public_operation')" width="180">
         <template slot-scope="scope">
           <el-button
             v-readonlybtn="'data_catalog_edition'"
@@ -88,7 +88,7 @@
             "
             @click="toDetails(scope.row)"
           >
-            {{ $t('button_details') }}
+            {{ $t('public_button_details') }}
           </el-button>
           <ElDivider direction="vertical" v-readonlybtn="'data_catalog_edition'"></ElDivider>
           <el-button
@@ -100,7 +100,7 @@
             "
             @click="changeName(scope.row)"
           >
-            {{ $t('button_rename') }}
+            {{ $t('public_button_rename') }}
           </el-button>
           <ElDivider direction="vertical" v-readonlybtn="'data_catalog_edition'"></ElDivider>
           <el-button
@@ -109,7 +109,7 @@
             type="text"
             :disabled="$disabledByPermission('meta_data_deleting_all_data', scope.row.source ? scope.row.user_id : '')"
             @click="remove(scope.row)"
-            >{{ $t('button_delete') }}</el-button
+            >{{ $t('public_button_delete') }}</el-button
           >
         </template>
       </el-table-column>
@@ -123,7 +123,7 @@
       :visible.sync="createDialogVisible"
     >
       <ElForm ref="form" label-position="left" label-width="100px" size="mini" :model="createForm" :rules="createRules">
-        <ElFormItem :label="$t('metadata_form_type')" required prop="model_type">
+        <ElFormItem :label="$t('public_type')" required prop="model_type">
           <ElSelect v-model="createForm.model_type" width="100%">
             <ElOption
               v-for="item in modelTyoeList"
@@ -138,16 +138,16 @@
             <ElOption v-for="item in dbOptions" :label="item.label" :value="item.value" :key="item.value"></ElOption>
           </ElSelect>
         </ElFormItem>
-        <ElFormItem :label="$t('metadata_form_table_name')" required prop="tableName">
+        <ElFormItem :label="$t('public_name')" required prop="tableName">
           <ElInput v-model="createForm.tableName"></ElInput>
         </ElFormItem>
       </ElForm>
 
       <span slot="footer" class="dialog-footer">
         <el-button class="message-button-cancel" @click="createDialogVisible = false" size="mini">{{
-          $t('button_cancel')
+          $t('public_button_cancel')
         }}</el-button>
-        <el-button type="primary" @click="createNewModel()" size="mini">{{ $t('button_confirm') }}</el-button>
+        <el-button type="primary" @click="createNewModel()" size="mini">{{ $t('public_button_confirm') }}</el-button>
       </span>
     </el-dialog>
     <!-- 改名 -->
@@ -159,15 +159,15 @@
       :visible.sync="changeNameDialogVisible"
     >
       <div class="flex fs-8">
-        <span class="change-name-label">{{ $t('metadata_name') }}:</span>
+        <span class="change-name-label">{{ $t('public_name') }}:</span>
         <el-input v-model="changeNameValue"></el-input>
       </div>
 
       <span slot="footer" class="dialog-footer">
         <el-button class="message-button-cancel" @click="changeNameDialogVisible = false" size="mini">{{
-          $t('button_cancel')
+          $t('public_button_cancel')
         }}</el-button>
-        <el-button type="primary" @click="saveChangeName()" size="mini">{{ $t('button_confirm') }}</el-button>
+        <el-button type="primary" @click="saveChangeName()" size="mini">{{ $t('public_button_confirm') }}</el-button>
       </span>
     </el-dialog>
   </section>
@@ -178,6 +178,7 @@ import dayjs from 'dayjs'
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage } from '@tap/business'
+import { delayTrigger } from '@tap/shared'
 
 import { toRegExp } from '../../utils/util'
 
@@ -229,7 +230,7 @@ export default {
             required: true,
             validator: (rule, v, callback) => {
               if (!v || !v.trim()) {
-                return callback(new Error(this.$t('metadata_form_database') + this.$t('tips_rule_not_empty')))
+                return callback(new Error(this.$t('metadata_form_database') + this.$t('public_form_not_empty')))
               }
               return callback()
             }
@@ -240,7 +241,7 @@ export default {
             required: true,
             validator: (rule, v, callback) => {
               if (!v || !v.trim()) {
-                return callback(new Error(this.$t('metadata_form_table_name') + this.$t('tips_rule_not_empty')))
+                return callback(new Error(this.$t('public_name') + this.$t('public_form_not_empty')))
               }
               const flag = /^[_a-zA-Z][0-9a-zA-Z_\.\-]*$/.test(v) // eslint-disable-line
               if (v.split('.')[0] == 'system' || !flag) {
@@ -475,7 +476,7 @@ export default {
           params.fields = model_type === 'collection' ? fields : []
           metadataInstancesApi.post(params).then(() => {
             this.createDialogVisible = false
-            this.$message.success(this.$t('message_save_ok'))
+            this.$message.success(this.$t('public_message_save_ok'))
           })
         }
       })
@@ -489,12 +490,11 @@ export default {
           name: this.changeNameValue
         })
         .then(() => {
-          this.$message.success(this.$t('message_save_ok'))
+          this.$message.success(this.$t('public_message_save_ok'))
           this.changeNameDialogVisible = false
           this.table.fetch()
         })
       // .catch(() => {
-      //   this.$message.info(this.$t('message_save_fail'))
       // })
     },
     changeName(item) {
@@ -505,7 +505,7 @@ export default {
     remove(item) {
       const h = this.$createElement
       let message = h('p', [
-        this.$t('message_deleteOrNot') + ' ',
+        this.$t('public_message_delete_confirm') + ' ',
         h('span', { style: { color: '#2C65FF' } }, item.original_name)
       ])
       this.$confirm(message, '', {
@@ -517,13 +517,12 @@ export default {
           return
         }
         metadataInstancesApi.delete(item.id).then(() => {
-          this.$message.success(this.$t('message_deleteOK'))
+          this.$message.success(this.$t('public_message_delete_ok'))
           this.table.fetch()
         })
       })
     },
     search(debounce) {
-      const { delayTrigger } = this.$util
       delayTrigger(() => {
         this.$router.replace({
           name: 'metadataDefinition',
@@ -543,7 +542,7 @@ export default {
       }
       this.filterItems = [
         {
-          label: this.$t('metadata_type'),
+          label: this.$t('public_type'),
           key: 'metaType',
           type: 'select-inner',
           items: this.metaTypeOptions,
