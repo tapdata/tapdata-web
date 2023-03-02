@@ -98,6 +98,10 @@ const AlarmSetting = async () => {
   const { AlarmSetting } = await import('@tap/business')
   return AlarmSetting
 }
+const SwimlaneDashboard = async () => {
+  const { SwimlaneDashboard } = await import('@tap/business')
+  return SwimlaneDashboard
+}
 export default [
   {
     path: '/login',
@@ -959,6 +963,16 @@ export default [
         meta: {
           title: 'daas_router_routes_guanlianrenwuxiang',
           hideTitle: true
+        }
+      },
+      {
+        path: '/data-console',
+        name: 'dataConsole',
+        component: SwimlaneDashboard,
+        meta: {
+          title: 'dfs_data_server',
+          hideTitle: true,
+          icon: 'data-server'
         }
       }
     ]
