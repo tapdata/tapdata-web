@@ -2,7 +2,6 @@ export default {
   // 通用提示
   // 通用下拉框
   // 公共区
-  common_placeholder_search_input: '请输入搜索内容...',
   // 通用按钮
   button_reload: '重新加载',
   button_button: '新增',

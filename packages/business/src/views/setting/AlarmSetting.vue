@@ -101,8 +101,8 @@
       </ElForm>
     </section>
     <footer class="flex justify-content-end mt-4">
-      <el-button size="mini" @click="remoteMethod('close')">{{ $t('button_cancel') }}</el-button>
-      <el-button size="mini" type="primary" @click="save()">{{ $t('button_save') }}</el-button>
+      <el-button size="mini" @click="remoteMethod('close')">{{ $t('public_button_cancel') }}</el-button>
+      <el-button size="mini" type="primary" @click="save()">{{ $t('public_button_save') }}</el-button>
     </footer>
     <el-dialog
       :title="$t('packages_business_setting_alarmnotification_renwumorengao')"
@@ -140,8 +140,8 @@
         </template>
       </VTable>
       <footer class="flex justify-content-end mt-4">
-        <el-button size="mini" @click="alarmRulesVisible = false">{{ $t('button_cancel') }}</el-button>
-        <el-button size="mini" type="primary" @click="saveAlarmRules()">{{ $t('button_save') }}</el-button>
+        <el-button size="mini" @click="alarmRulesVisible = false">{{ $t('public_button_cancel') }}</el-button>
+        <el-button size="mini" type="primary" @click="saveAlarmRules()">{{ $t('public_button_save') }}</el-button>
       </footer>
     </el-dialog>
   </section>

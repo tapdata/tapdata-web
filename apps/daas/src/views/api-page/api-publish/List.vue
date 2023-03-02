@@ -390,7 +390,6 @@ export default {
         this.$message.success(this.$t('public_message_save_ok'))
       })
       // .catch(() => {
-      //   this.$message.error(this.$t('public_message_save_fail'))
       // })
     },
     // 状态改变查询
@@ -581,7 +580,6 @@ export default {
         this.table.fetch()
       })
       // .catch(() => {
-      //   this.$message.error(this.$t('public_message_copy_fail'))
       // })
     },
     getFilterItems() {

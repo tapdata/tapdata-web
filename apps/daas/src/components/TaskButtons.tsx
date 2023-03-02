@@ -134,11 +134,11 @@ export default defineComponent({
           <el-divider direction="vertical"></el-divider>
           {isStopping(task.value) ? (
             <el-button type="text" onClick={forceStop}>
-              {$t('public_button__force_stop')}
+              {$t('public_button_force_stop')}
             </el-button>
           ) : (
             <el-button type="text" disabled={props.task.btnDisabled.stop} onClick={stop}>
-              {$t('public_button__stop')}
+              {$t('public_button_stop')}
             </el-button>
           )}
           <el-divider direction="vertical"></el-divider>

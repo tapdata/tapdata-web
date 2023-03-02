@@ -100,7 +100,7 @@
             "
             @click="changeName(scope.row)"
           >
-            {{ $t('button_rename') }}
+            {{ $t('public_button_rename') }}
           </el-button>
           <ElDivider direction="vertical" v-readonlybtn="'data_catalog_edition'"></ElDivider>
           <el-button
@@ -495,7 +495,6 @@ export default {
           this.table.fetch()
         })
       // .catch(() => {
-      //   this.$message.info(this.$t('public_message_save_fail'))
       // })
     },
     changeName(item) {

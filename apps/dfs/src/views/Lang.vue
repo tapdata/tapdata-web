@@ -18,13 +18,13 @@
       <FilterBar v-model="searchParams" :items="filterItems" @search="search"> </FilterBar>
       <div>
         <UploadFile :upload="uploadModifyZhCN" accept="text/javascript" class="inline-block mr-4">
-          <ElButton>{{ $t('button_upload') + $t('lang_zh_cn') }}</ElButton>
+          <ElButton>{{ $t('public_button_upload') + $t('lang_zh_cn') }}</ElButton>
         </UploadFile>
         <UploadFile :upload="uploadModifyZhTW" accept="text/javascript" class="inline-block mr-4">
-          <ElButton>{{ $t('button_upload') + $t('lang_zh_tw') }}</ElButton>
+          <ElButton>{{ $t('public_button_upload') + $t('lang_zh_tw') }}</ElButton>
         </UploadFile>
         <UploadFile :upload="uploadModifyEn" accept="text/javascript" class="inline-block mr-4">
-          <ElButton>{{ $t('button_upload') + $t('lang_en') }}</ElButton>
+          <ElButton>{{ $t('public_button_upload') + $t('lang_en') }}</ElButton>
         </UploadFile>
         <ElButton type="primary" @click="exportModifyZhCN">{{
           $t('public_button_export') + $t('lang_zh_cn')

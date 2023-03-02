@@ -133,7 +133,7 @@
             type="danger"
             @click="$emit('forceStop')"
           >
-            {{ $t('public_button__force_stop') }}
+            {{ $t('public_button_force_stop') }}
           </ElButton>
           <ElButton
             v-else
@@ -144,7 +144,7 @@
             class="mx-2"
             @click="$emit('stop')"
           >
-            {{ $t('public_button__stop') }}
+            {{ $t('public_button_stop') }}
           </ElButton>
         </template>
       </template>
