@@ -50,6 +50,7 @@
     <AgentGuideDialog :visible.sync="agentGuideDialog" @openAgentDownload="openAgentDownload"></AgentGuideDialog>
     <AgentDownloadModal :visible.sync="agentDownload.visible" :source="agentDownload.data"></AgentDownloadModal>
     <BindPhone :visible.sync="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>
+    <CheckLicense :visible.sync="aliyunMaketVisible" :user="userInfo"></CheckLicense>
   </ElContainer>
 </template>
 
