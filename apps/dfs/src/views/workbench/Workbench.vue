@@ -673,17 +673,7 @@ export default {
 
     //检查云市场用户授权码是否过期
     checkLicense(user) {
-      //未激活
       var licenseCodes = user?.licenseCodes || []
-      if (!user?.licenseValid && licenseCodes?.length === 0) {
-        //未激活
-        this.aliyunMaketVisible = true
-        this.userInfo = {
-          showNextProcessing: false,
-          licenseType: 'license',
-          nearExpiration: []
-        }
-      }
       //是否有临近过期授权码
       let verify = licenseCodes.filter(it => it.nearExpiration)
       if (user?.licenseValid && verify?.length > 0) {
@@ -693,17 +683,6 @@ export default {
           showNextProcessing: true,
           licenseType: 'checkCode',
           data: verify
-        }
-      }
-      //已过期
-      let expired = licenseCodes.filter(it => it.licenseStatus === 'EXPIRED')
-      if (!user?.licenseValid && expired?.length > 0) {
-        //授权码不可用 存在有临近授权码
-        this.aliyunMaketVisible = true
-        this.userInfo = {
-          showNextProcessing: false,
-          licenseType: 'checkCode',
-          data: expired
         }
       }
     }
