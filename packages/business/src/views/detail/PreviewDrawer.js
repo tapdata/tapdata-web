@@ -91,7 +91,7 @@ export const PreviewDrawer = defineComponent({
           prop: 'defaultvalue'
         },
         {
-          label: i18n.t('module_form_describtion'),
+          label: i18n.t('public_description'),
           prop: 'description'
         }
       ],
@@ -105,7 +105,7 @@ export const PreviewDrawer = defineComponent({
           prop: 'data_type'
         },
         {
-          label: i18n.t('module_form_describtion'),
+          label: i18n.t('public_description'),
           prop: 'description'
         }
       ],

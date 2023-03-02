@@ -279,7 +279,6 @@ export default {
         this.setTaskId(dataflow.id)
         this.setEditVersion(dataflow.editVersion)
         this.setTaskInfo(this.dataflow)
-        // this.$message.success(this.$t('public_message_save_ok'))
         await this.$router.replace({
           name: 'MigrateEditor',
           params: { id: dataflow.id, action: 'dataflowEdit' }

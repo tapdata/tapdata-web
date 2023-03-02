@@ -62,6 +62,12 @@ export default {
   public_button_public: '发布',
   public_button_revoke: '撤销',
   public_button_submit: '提交',
+  public_button_upload: '上传',
+  public_button_bind: '绑定',
+  public_button_unbind: '解绑',
+  public_button_retry: '重试',
+  public_button_expand: '展开',
+  public_button_fold: '折叠',
   // 消息
   public_message_title_prompt: '提示',
   public_message_delete_confirm: '是否删除',

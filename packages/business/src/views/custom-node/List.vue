@@ -22,9 +22,9 @@
 
       <ElTableColumn width="150" :label="$t('public_operation')">
         <template #default="{ row }">
-          <ElLink type="primary" @click="toEdit(row)">{{ $t('button_edit') }}</ElLink>
+          <ElLink type="primary" @click="toEdit(row)">{{ $t('public_button_edit') }}</ElLink>
           <ElDivider direction="vertical"></ElDivider>
-          <ElLink type="primary" @click="remove(row)">{{ $t('button_delete') }}</ElLink>
+          <ElLink type="primary" @click="remove(row)">{{ $t('public_button_delete') }}</ElLink>
         </template>
       </ElTableColumn>
     </TablePage>
@@ -96,7 +96,7 @@ export default {
         })
     },
     remove(item) {
-      this.$confirm(this.$t('message_delete_confirm'), this.$t('message_title_prompt'), {
+      this.$confirm(this.$t('public_message_delete_confirm'), this.$t('public_message_title_prompt'), {
         type: 'warning'
       }).then(resFlag => {
         if (!resFlag) {
