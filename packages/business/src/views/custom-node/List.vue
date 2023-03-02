@@ -6,7 +6,7 @@
       </template>
       <div slot="operation">
         <ElButton type="primary" class="btn-create" size="mini" @click="toCreate">
-          <span>{{ $t('public_button_button') }}</span>
+          <span>{{ $t('public_button_add') }}</span>
         </ElButton>
       </div>
       <ElTableColumn :label="$t('public_node_name')" prop="name"> </ElTableColumn>

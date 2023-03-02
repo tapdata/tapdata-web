@@ -175,7 +175,7 @@
           @click="$emit('forceStop')"
         >
           <VIcon>stop</VIcon>
-          {{ $t('public_button__force_stop') }}
+          {{ $t('public_button_force_stop') }}
         </ElButton>
         <ElButton
           key="stop"
@@ -186,7 +186,7 @@
           @click="$emit('stop')"
         >
           <VIcon>stop</VIcon>
-          {{ $t('public_button__stop') }}
+          {{ $t('public_button_stop') }}
         </ElButton>
       </template>
 
