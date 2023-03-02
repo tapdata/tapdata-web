@@ -596,14 +596,17 @@ export default {
   packages_business_setting_alarm_notification_notify_noticeInterval: 'Send Interval',
   packages_business_setting_notification_alarm_notification_gaojingtongzhi: 'Alarm Notification',
   packages_business_setting_alarmnotification_gaojingzhibiao: 'Alarm Indicator',
-  packages_business_setting_alarmnotification_dangjiediandeping: 'When the average processing time of the node',
+  packages_business_setting_alarmnotification_dangjiediandeping:
+    'When the average processing time of the node exceeds the threshold',
   packages_business_setting_alarmnotification_dangshujuyuanjie:
-    'When the average processing time of the data source node',
-  packages_business_setting_alarmnotification_dangshujuyuanxie: 'When the data source protocol connection takes time',
+    'When the average processing time of the data source node exceeds the threshold',
+  packages_business_setting_alarmnotification_dangshujuyuanxie:
+    'When the data source protocol connection time exceeds the threshold',
   packages_business_setting_alarmnotification_dangshujuyuanwang: 'When the data source network connection takes time',
   packages_business_setting_alarmnotification_dangshujuwufa:
     'It takes time when the data cannot be connected to the network',
-  packages_business_setting_alarmnotification_dangrenwudezeng: 'When the incremental delay of the task',
+  packages_business_setting_alarmnotification_dangrenwudezeng:
+    'When the incremental delay of the task exceeds the threshold',
   packages_business_setting_alarmnotification_dangrenwutingzhi: 'When the task stops',
   packages_business_setting_alarmnotification_dangrenwuzengliang: 'When the task increment start',
   packages_business_setting_alarmnotification_dangrenwuquanliang: 'When the task is fully completed',
