@@ -77,6 +77,9 @@
             <div v-else-if="scope.row.status === 'error'" class="data-verify__status">
               <i class="data-verify__icon el-icon-error"></i>
               <span>{{ $t('public_status_error') }}</span>
+              <ElLink type="primary" class="ml-2" @click="handleError(scope.row)">{{
+                $t('public_button_check')
+              }}</ElLink>
             </div>
             <div v-else-if="scope.row.status !== 'done'" class="data-verify__status">
               <img style="width: 26px; vertical-align: middle" :src="loadingImg" />
@@ -427,6 +430,13 @@ export default {
           type: 'input'
         }
       ]
+    },
+    handleError(row = {}) {
+      this.$confirm(row.errorMsg, i18n.t('packages_business_milestone_list_cuowuxinxi'), {
+        type: 'warning',
+        closeOnClickModal: false,
+        customClass: 'verify-list-error-msg'
+      })
     }
   }
 }
@@ -468,6 +478,16 @@ export default {
     width: 26px;
     text-align: center;
     font-size: 14px;
+  }
+}
+
+::v-deep {
+  .verify-list-error-msg {
+    .el-message-box__message {
+      max-height: 450px;
+      overflow-y: auto;
+      word-break: break-word;
+    }
   }
 }
 </style>
