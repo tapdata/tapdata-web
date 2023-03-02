@@ -62,6 +62,12 @@ export default {
   public_button_public: 'Publish',
   public_button_revoke: 'Revoke',
   public_button_submit: 'Submit',
+  public_button_upload: 'Upload',
+  public_button_bind: 'Bind',
+  public_button_unbind: 'Unbind',
+  public_button_retry: 'Retry',
+  public_button_expand: 'Expand',
+  public_button_fold: 'Fold',
   // information
   public_message_title_prompt: 'Prompt',
   public_message_delete_confirm: 'Delete',

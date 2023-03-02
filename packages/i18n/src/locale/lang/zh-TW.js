@@ -62,6 +62,12 @@ export default {
   public_button_public: '發布',
   public_button_revoke: '撤銷',
   public_button_submit: '提交',
+  public_button_upload: '上傳',
+  public_button_bind: '綁定',
+  public_button_unbind: '解綁',
+  public_button_retry: '重試',
+  public_button_expand: '展開',
+  public_button_fold: '折疊',
   // 消息
   public_message_title_prompt: '提示',
   public_message_delete_confirm: '是否刪除',
