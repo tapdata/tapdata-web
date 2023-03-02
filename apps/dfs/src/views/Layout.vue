@@ -152,8 +152,7 @@ export default {
         title: 'Data Console(Preview)',
         icon: 'operation-log'
       }
-      //海外版隐藏数据服务
-      this.sortMenus = this.sortMenus.push(swimLane)
+      this.sortMenus.push(swimLane)
     }
     this.loopLoadAgentCount()
     this.activeMenu = this.$route.path
