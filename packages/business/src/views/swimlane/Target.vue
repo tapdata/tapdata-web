@@ -21,11 +21,7 @@
         >
           <template v-if="item.type === 'service'">
             <div class="item__header flex p-3">
-              <ElImage
-                style="width: 20px; height: 20px"
-                class="item__icon mt-1 flex-shrink-0"
-                :src="$util.getConnectionTypeDialogImg('rest api')"
-              />
+              <ElImage style="width: 20px; height: 20px" class="item__icon mt-1 flex-shrink-0" :src="restApiIcon" />
               <div class="flex-fill ml-2">
                 <div class="flex justify-content-between">
                   <span class="font-color-normal fw-sub fs-6">{{ item.name }}</span>
@@ -36,7 +32,7 @@
             <div class="item__content position-relative p-2">
               <div class="task-list">
                 <div class="task-list-content">
-                  <div v-for="api in item.apiList" key="{i}" class="task-list-item flex align-center">
+                  <div v-for="api in item.apiList" :key="api.name" class="task-list-item flex align-center">
                     <div class="p-1 ellipsis flex-1 align-center">
                       <a class="el-link el-link--primary w-100 justify-content-start" title="{task.name}">
                         <span class="ellipsis">{{ api.name }}</span>
@@ -52,11 +48,11 @@
           </template>
           <template v-else>
             <div class="item__header flex p-3">
-              <NodeIcon :node="item" :size="20" class="item__icon mt-1" />
-              <div class="flex-fill ml-2">
+              <DatabaseIcon :item="item" :size="20" class="item__icon mt-1" />
+              <div class="flex-1 ml-2 overflow-hidden">
                 <div class="flex justify-content-between">
-                  <span class="font-color-normal fw-sub fs-6">{{ item.name }}</span>
-                  <span class="operation-line">
+                  <span class="font-color-normal fw-sub fs-6 ellipsis" :title="item.name">{{ item.name }}</span>
+                  <span class="operation-line ml-2">
                     <VIcon size="16" class="cursor-pointer" @click="openView(item)">copy</VIcon>
                     <VIcon size="18" class="ml-3">setting</VIcon>
                   </span>
@@ -91,15 +87,16 @@
 
 <script>
 import draggable from 'vuedraggable'
+import { defineComponent, ref } from '@vue/composition-api'
 
 import { connectionsApi, taskApi } from '@tap/api'
-import NodeIcon from '@tap/dag/src/components/NodeIcon'
-import connectionPreview from './connectionPreview'
 import { uuid } from '@tap/shared'
+import { getIcon } from '@tap/assets'
 
+import { DatabaseIcon } from '../../components'
+import connectionPreview from './connectionPreview'
 import { makeStatusAndDisabled } from '../../shared'
 import { TaskStatus } from '../../components'
-import { defineComponent, ref } from '@vue/composition-api'
 
 const DEFAULT_SETTINGS = {
   name: '', // 任务名称
@@ -116,6 +113,8 @@ const DEFAULT_SETTINGS = {
   accessNodeType: 'AUTOMATIC_PLATFORM_ALLOCATION',
   isAutoInspect: false
 }
+
+const restApiIcon = getIcon('rest api')
 
 const TaskList = defineComponent({
   props: ['list'],
@@ -176,10 +175,11 @@ export default {
     dragState: Object
   },
 
-  components: { NodeIcon, connectionPreview, TaskList, draggable },
+  components: { DatabaseIcon, connectionPreview, TaskList, draggable },
 
   data() {
     return {
+      restApiIcon,
       dragging: false,
       list: [],
       dialogConfig: {
@@ -308,18 +308,22 @@ export default {
 
     handleDragLeave(ev) {
       if (this.dragging) return
+
       if (!ev.currentTarget.contains(ev.relatedTarget)) {
-        const dropNode = this.findParentByClassName(ev.currentTarget, 'wrap__item')
-        dropNode.classList.remove('is-drop-inner')
+        this.removeDropEffect(ev)
       }
+    },
+
+    removeDropEffect(ev, cls = 'wrap__item') {
+      const dropNode = this.findParentByClassName(ev.currentTarget, cls)
+      dropNode.classList.remove('is-drop-inner')
     },
 
     handleDrop(ev, item) {
       ev.preventDefault()
+      this.removeDropEffect(ev)
+
       if (this.dragging || item.type === 'service') return
-      const dropNode = this.findParentByClassName(ev.currentTarget, 'wrap__item')
-      dropNode.classList.remove('is-drop-inner')
-      console.log('handleDrop', this.dragState, item) // eslint-disable-line
 
       const { draggingObjects } = this.dragState
       if (!draggingObjects.length) return
