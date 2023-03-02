@@ -6,6 +6,12 @@ export const CONNECTION_STATUS_MAP = {
   testing: { text: i18n.t('public_status_testing'), type: 'warning' }
 }
 
+export const CONNECTION_TYPE_MAP = {
+  source: { text: i18n.t('public_connection_type_source') },
+  target: { text: i18n.t('public_connection_type_target') },
+  source_and_target: { text: i18n.t('public_connection_type_source_and_target') }
+}
+
 export const TASK_STATUS_MAP = {
   running: { text: i18n.t('public_status_running'), icon: 'yunxingzhong', type: 'success' },
   paused: { text: i18n.t('public_status_wait_run'), icon: 'daiqidong' },

@@ -12,7 +12,7 @@
             :loading="createAgentLoading"
             :disabled="$disabledReadonlyUserBtn()"
           >
-            <span>{{ $t('agent_button_create') }}</span>
+            <span>{{ $t('public_agent_button_create') }}</span>
           </ElButton>
         </div>
       </div>
@@ -92,7 +92,7 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn :label="$t('agent_version')" width="200">
+        <ElTableColumn :label="$t('public_version')" width="200">
           <template slot-scope="scope">
             <div class="flex align-items-center">
               <span v-if="showVersionFlag(scope.row)">{{ scope.row.spec && scope.row.spec.version }}</span>
@@ -150,18 +150,18 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="createAt" sortable="custom" :label="$t('agent_create_time')" width="180">
+        <ElTableColumn prop="createAt" sortable="custom" :label="$t('public_create_time')" width="180">
           <template slot-scope="scope">
             <span>{{ formatTime(scope.row.createAt) }}</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn :label="$t('list_operation')" width="240">
+        <ElTableColumn :label="$t('public_operation')" width="240">
           <template slot-scope="scope">
             <ElButton
               type="text"
               :disabled="deployBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
               @click="toDeploy(scope.row)"
-              >{{ $t('agent_button_deploy') }}</ElButton
+              >{{ $t('public_agent_button_deploy') }}</ElButton
             >
             <ElDivider direction="vertical"></ElDivider>
             <ElButton
@@ -170,7 +170,7 @@
               :disabled="stopBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
               :loading="scope.row.btnLoading.stop"
               @click="handleStop(scope.row)"
-              >{{ $t('button_stop') }}</ElButton
+              >{{ $t('public_button__stop') }}</ElButton
             >
             <ElDivider direction="vertical"></ElDivider>
             <ElButton
@@ -179,7 +179,7 @@
               :loading="scope.row.btnLoading.delete"
               :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
               @click="handleDel(scope.row)"
-              >{{ $t('button_delete') }}</ElButton
+              >{{ $t('public_button_delete') }}</ElButton
             >
           </template>
         </ElTableColumn>
@@ -188,7 +188,7 @@
           <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
             <span>{{ $t('agent_list_empty_desc1') }}</span>
             <span class="color-primary cursor-pointer fs-7 ml-1" @click="createAgent">{{
-              $t('agent_button_create')
+              $t('public_agent_button_create')
             }}</span>
             <span>{{ $t('agent_list_empty_desc2') }}</span>
           </div>
@@ -196,7 +196,7 @@
         <div v-else class="instance-table__empty" slot="empty">
           <VIcon size="120">search-no-data-color</VIcon>
           <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
-            <span>{{ $t('data_no_find_result') }}</span>
+            <span>{{ $t('public_data_no_find_result') }}</span>
             <span class="color-primary cursor-pointer fs-7 ml-1" @click="reset">{{ $t('link_back_to_list') }}</span>
           </div>
         </div>
@@ -250,11 +250,11 @@
         <div class="dialog-btn flex justify-content-end mt-6">
           <div class="w-50" v-if="showAutoUpgrade">
             <ElButton type="primary" :disabled="disabledAutoUpgradeBtn" @click="autoUpgradeFnc">{{
-              $t('agent_button_auto_upgrade')
+              $t('public_agent_button_auto_upgrade')
             }}</ElButton>
           </div>
           <div class="text-end w-50">
-            <ElButton type="primary" @click="manualUpgradeFnc">{{ $t('agent_button_manual_upgrade') }}</ElButton>
+            <ElButton type="primary" @click="manualUpgradeFnc">{{ $t('public_agent_button_manual_upgrade') }}</ElButton>
           </div>
         </div>
         <div v-if="disabledAutoUpgradeBtn" class="mt-1 fs-8 text-break">({{ $t('agent_tip_auto_upgrade') }})</div>
@@ -269,7 +269,7 @@
             }}</ElButton>
           </div>
           <div>
-            <ElButton type="primary" @click="manualUpgradeFnc">{{ $t('agent_button_manual_upgrade') }}</ElButton>
+            <ElButton type="primary" @click="manualUpgradeFnc">{{ $t('public_agent_button_manual_upgrade') }}</ElButton>
           </div>
         </div>
       </ElDialog>
@@ -294,7 +294,7 @@
             @click="toDeploy(selectedRow)"
           >
             <VIcon size="12">deploy</VIcon>
-            <span class="ml-1">{{ $t('agent_button_deploy') }}</span>
+            <span class="ml-1">{{ $t('public_agent_button_deploy') }}</span>
           </VButton>
           <VButton
             :loading="selectedRow.btnLoading.stop"
@@ -304,7 +304,7 @@
             @click="handleStop(selectedRow)"
           >
             <VIcon size="12">stop</VIcon>
-            <span class="ml-1">{{ $t('button_stop') }}</span>
+            <span class="ml-1">{{ $t('public_button__stop') }}</span>
           </VButton>
           <VButton
             :loading="selectedRow.btnLoading.delete"
@@ -313,7 +313,7 @@
             @click="handleDel(selectedRow)"
           >
             <VIcon size="12">delete</VIcon>
-            <span class="ml-1">{{ $t('button_delete') }}</span>
+            <span class="ml-1">{{ $t('public_button_delete') }}</span>
           </VButton>
         </div>
       </Details>
@@ -615,8 +615,8 @@ export default {
       let message = flag ? this.$t('agent_button_stop_tip_running') : this.$t('agent_button_stop_tip_no_running')
       this.$confirm(message, this.$t('agent_button_stop_tip'), {
         type: 'warning',
-        confirmButtonText: this.$t('button_confirm'),
-        cancelButtonText: this.$t('button_cancel')
+        confirmButtonText: this.$t('public_button_confirm'),
+        cancelButtonText: this.$t('public_button_cancel')
       }).then(res => {
         if (res) {
           if (row.btnLoading) {
@@ -649,13 +649,13 @@ export default {
       let title = null
       let message = this.$t('agent_button_delete_confirm_title')
       if (noDelFlag) {
-        title = this.$t('operate_delete_fail')
+        title = this.$t('public_message_delete_fail')
         message = this.$t('agent_button_delete_confirm_msg')
       }
       this.$confirm(message, title, {
         type: 'warning',
-        confirmButtonText: this.$t('button_confirm'),
-        cancelButtonText: this.$t('button_cancel'),
+        confirmButtonText: this.$t('public_button_confirm'),
+        cancelButtonText: this.$t('public_button_cancel'),
         customClass: 'delete-agent'
       }).then(res => {
         if (res) {
@@ -860,8 +860,8 @@ export default {
     // deployConfirm(id) {
     //   this.$confirm(this.$t('agent_button_create_msg_success_desc'), this.$t('agent_button_create_msg_success'), {
     //     type: 'success',
-    //     confirmButtonText: this.$t('agent_button_deploy_now'),
-    //     cancelButtonText: this.$t('agent_button_deploy_later')
+    //     confirmButtonText: this.$t('public_agent_button_deploy_now'),
+    //     cancelButtonText: this.$t('public_agent_button_deploy_later')
     //   }).then(res => {
     //     if (res) {
     //       this.toDeploy({

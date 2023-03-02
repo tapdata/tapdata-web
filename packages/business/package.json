@@ -15,6 +15,7 @@
     "@tap/shared": "workspace:^1.0.0",
     "cron-parser": "^4.6.0",
     "dayjs": "^1.11.2",
-    "qs": "^6.11.0"
+    "qs": "^6.11.0",
+    "vuedraggable": "^2.24.3"
   }
 }

@@ -1077,7 +1077,6 @@ export default {
   dfs_workbench_tyepmap_apIfuwu7: 'API service restart failed',
   dfs_workbench_tyepmap_guanliduanfuwu7: 'Management service restart failed',
   dfs_workbench_tyepmap_cdCzhihou2: 'CDC lag timeout',
-
   _workbench_workbench_yigoushishitong: 'Hetrogeneous Database Replication',
   _workbench_workbench_shujuruhucang: 'Ingestion into Data Lake',
   _workbench_workbench_shujurucang: 'Data Warehousing',
@@ -1085,7 +1084,6 @@ export default {
   _workbench_workbench_jiangshujudaoru: 'Sync to',
   _workbench_workbench_jiangshujudaorusub: 'AliCloud Tablestore',
   _workbench_workbench_tansuoshili: 'Explore Use Cases',
-
   dfs_workbench_workbench_zhongyaobanbensheng:
     '[Important] Important announcement on version upgrade and service switching',
   dfs_workbench_workbench_xinzengzidingyi:
@@ -1132,7 +1130,6 @@ export default {
   dfs_user_center_acces:
     'AccessKey is your secret key to access the system API and has full account authority, please keep it properly. Do not expose AccessKey to external channels (such as GitHub) in any way to avoid being used by others to cause security threats. ',
   dfs_user_center_kaifaxinxi: 'Development information',
-
   dfs_agent_download_agentdownloadmodal_aliyunjisuan: 'Alibaba Cloud Computing Nest',
   dfs_agent_download_agentdownloadmodal_bushuwanchenghou:
     '4. After the deployment is complete, return to our [Agent Management Page] and wait for 2 minutes until the [Status] changes to [Running]. congratulations. The deployment of the Tapdata Alould computing environment has been completed, and the data task can be created. ',
@@ -1173,7 +1170,6 @@ export default {
   dfs_agent_download_upgradeversion_jisuanchaodenglu: 'Calculate nest login address',
   dfs_agent_download_upgradeversion_denglualiyun:
     '1. Log in to Alibaba Cloud Computing Nest console and find the service instance where Agent is deployed.',
-
   dfs_the_header_header_jichuban: 'Basic',
   dfs_the_header_header_biaozhun: 'Standard',
   dfs_agent_download_paidupgrade_qingxuanzelianxi: 'Please select a contact phone number',
@@ -1196,7 +1192,6 @@ export default {
   dfs_agent_download_paidupgrade_biaozhunban: 'Standard Edition',
   dfs_agent_download_paidupgrade_fuwushengji: 'Service Upgrade',
   dfs_agent_download_paidupgrade_fanhuicaidan: 'Back to menu',
-
   dfs_instance_instance_fenzhong: 'Minutes',
   dfs_instance_instance_ruxuliaojiegeng: 'For more information, please visit',
   dfs_instance_instance_bencigengxinbao:
@@ -1206,7 +1201,6 @@ export default {
   dfs_instance_instance_anzhuangbao: 'Installation package: ',
   dfs_instance_instance_banbenhao: 'version number: ',
   dfs_instance_instance_agent: 'Agent update',
-
   dfs_user_center_phone_error: 'This phone number has already been registered by another user',
   packages_business_task_status_agent_tooltip_agent: 'Agent',
   dfs_agent_download_agentguidedialog_qingdianjibushu: 'Please select data source network access policy',
@@ -1267,7 +1261,6 @@ export default {
   dfs_instance_stopped_help_tip_prefix:
     'The Agent may be offline because of network reasons or Agent exit. Check the network of the Agent server and the running status of the Agent. You can view ',
   dfs_instance_stopped_help_tip_suffix: 'get more help',
-
   //数据服务
   dfs_data_server: 'Data Service',
   dfs_data_server_demo_title: 'Centralized data service, reusable and easy to distribute',
@@ -1285,11 +1278,43 @@ export default {
   dfs_data_server_On_Prem: 'The Data Services capability is currently only available in the Tapdata On-Prem version',
   dfs_data_server_apply_for_trial: 'Apply for trial',
   dfs_data_server_apply_for_version: 'Offline deployment version',
-
   dfs_data_dashboard_Marquee:
     'The current demo environment is a read-only environment, which only supports viewing and experiencing product functions',
-
   page_title_custom_node: 'Custom Nodes',
   packages_nodeDesign_custom_node_name_required: 'Please enter the node name',
-  packages_nodeDesign_message_save_ok: 'Save successfully'
+  packages_nodeDesign_message_save_ok: 'Save successfully',
+
+  dfs_aliyun_market_checklicnese_jihuoshouquanma: 'Activation authorization code',
+  dfs_aliyun_market_checklicnese_yanchangshouquanma: 'Extend authorization code validity period',
+  dfs_aliyun_market_checklicnese_xiayiciyanqi: 'Next postponement',
+  dfs_aliyun_market_checklicnese_ninhaimeiyouji:
+    'You have not activated the authorization code, please go to the Aliyun Market to copy the authorization code and activate it on the authorization code activation page',
+  dfs_aliyun_market_checklicnese_weijihuoshouquan: 'Authorization code not activated',
+  dfs_aliyun_market_checklicnese_qingdaoaliyun:
+    'Please go to Aliyun Market to extend the validity period of the authorization code',
+  dfs_aliyun_market_checklicnese_youxiaoqizhi: 'Valid until',
+  dfs_aliyun_market_checklicnese_nindeshouquanma: 'Your authorization code',
+  dfs_aliyun_market_checklicnese_nindeshouquanma2:
+    'Your authorization code has expired, please extend the validity period as soon as possible',
+  dfs_aliyun_market_checklicnese_nindeshouquanma3:
+    'Your authorization code is about to expire, please extend the validity period as soon as possible',
+  dfs_aliyun_market_license_jihuochenggongS: 'Activation is successful, jump to the workbench after 30S',
+  dfs_aliyun_market_license_jihuo: 'Activate',
+  dfs_aliyun_market_license_qianwanggongzuotai: 'Go to the workbench',
+  dfs_aliyun_market_license_shouquanma: 'Authorization Code:',
+  dfs_aliyun_market_license_niantiedaoxiafang: '3. Paste it into the authorization text box below and verify',
+  dfs_aliyun_market_license_chuangjianshouquanma: '2. Create an authorization code and copy it',
+  dfs_aliyun_market_license_dakaialiyun: '1. Open Aliyun Market',
+  dfs_aliyun_market_license_jihuoaliyun: 'Activate Aliyun Market License',
+  dfs_views_error_zuoweidailihuo:
+    'The server used as a proxy or gateway received a bogus response from the next link in the request-response chain. ',
+  dfs_views_error_fuwuqiyudao: 'The server encountered an error that prevents it from servicing the request. ',
+  dfs_views_error_zhaobudaoyemian: 'Page not found',
+  dfs_user_center_kaifapiao: 'Invoicing',
+  dfs_user_center_xufei: 'Renewal',
+  dfs_user_center_guoqishijian: 'Expiration Time: ',
+  dfs_user_center_jihuoshijian: 'Activation Time: ',
+  dfs_user_center_shouquanma: 'Authorization Code: ',
+  dfs_user_center_shouquanmaxinxi: 'Authorization code information',
+  dfs_user_center_jijiangguoqi: 'expiring soon'
 }

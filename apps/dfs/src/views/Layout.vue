@@ -123,11 +123,6 @@ export default {
           name: 'OperationLog',
           title: $t('operation_log_manage'),
           icon: 'operation-log'
-        },
-        {
-          name: 'swimLane',
-          title: 'Data Console(Preview)',
-          icon: 'operation-log'
         }
       ],
       dialogVisible: false,
@@ -147,6 +142,15 @@ export default {
     if (window.__config__?.disabledDataService) {
       //海外版隐藏数据服务
       this.sortMenus = this.sortMenus.filter(item => item.name !== 'dataServerList')
+    }
+    if (window.__config__?.showSwimLane) {
+      let swimLane = {
+        name: 'swimLane',
+        title: 'Data Console(Preview)',
+        icon: 'operation-log'
+      }
+      //海外版隐藏数据服务
+      this.sortMenus = this.sortMenus.push(swimLane)
     }
     this.loopLoadAgentCount()
     this.activeMenu = this.$route.path
@@ -229,6 +233,10 @@ export default {
     // 检查微信用户，是否绑定手机号
     checkWechatPhone() {
       let user = window.__USER_INFO__
+      if (window.__config__?.disabledBindingPhone) {
+        //海外版不强制绑定手机号
+        return
+      }
       this.bindPhoneVisible = user?.registerSource === 'social:wechatmp-qrcode' && !user?.telephone
       return this.bindPhoneVisible
     },

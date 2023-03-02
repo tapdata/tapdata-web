@@ -1,7 +1,6 @@
 export default {
   packages_business_status_wait_start: '待啟動',
   packages_business_status_starting: '啟動中',
-  packages_business_status_edit: '編輯中',
   packages_business_status_renewing: '重置中',
   packages_business_status_renew_failed: '重置失敗',
   packages_business_milestone_list_status_waiting: '待執行',

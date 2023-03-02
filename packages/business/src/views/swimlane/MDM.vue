@@ -8,17 +8,24 @@
       </div>
     </div>
     <div class="flex flex-column flex-1 min-h-0">
-      <ClassificationTree ref="classify" class="p-3 flex-1 overflow-auto"></ClassificationTree>
+      <ClassificationTree
+        ref="classify"
+        class="p-3 flex-1 overflow-auto"
+        show-view-details
+        @view-details="handleViewDetails"
+      ></ClassificationTree>
     </div>
+    <TablePreview ref="tablePreview"></TablePreview>
   </div>
 </template>
 
 <script>
 import ClassificationTree from '../../components/ClassificationTree'
+import TablePreview from './TablePreview'
 export default {
   name: 'MDM',
 
-  components: { ClassificationTree },
+  components: { ClassificationTree, TablePreview },
 
   data() {
     return {
@@ -27,7 +34,15 @@ export default {
   },
 
   methods: {
-    searchFnc() {}
+    searchFnc() {},
+    handleViewDetails(data) {
+      console.log('handleViewDetails', data) // eslint-disable-line
+      this.$refs.tablePreview.open({
+        id: data.id,
+        category: data.category,
+        type: data.type
+      })
+    }
   }
 }
 </script>

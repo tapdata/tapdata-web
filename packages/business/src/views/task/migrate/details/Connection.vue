@@ -18,7 +18,7 @@
       </template>
       <template slot="status" slot-scope="scope">
         <span :class="['status-connection-' + scope.row.status, 'status-block']">
-          {{ $t('packages_business_connection_status_' + scope.row.status) }}
+          {{ getStatus(scope.row.status) }}
         </span>
       </template>
       <template slot="schemaHeader">
@@ -53,6 +53,7 @@
 import { connectionsApi } from '@tap/api'
 import { VIcon, VTable } from '@tap/component'
 import { deepCopy } from '@tap/shared'
+import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 
 import ConnectionTest from '../../../connections/Test.vue'
 import { SchemaProgress } from '../../../../components'
@@ -224,6 +225,9 @@ export default {
     },
     getConnectionIcon() {
       return getConnectionIcon(...arguments)
+    },
+    getStatus(status) {
+      return CONNECTION_STATUS_MAP[status]?.text || '-'
     }
   }
 }

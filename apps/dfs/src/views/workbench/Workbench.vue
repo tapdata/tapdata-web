@@ -183,10 +183,11 @@
         </ul>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="showUpgrade = false">{{ $t('button_cancel') }}</el-button>
+        <el-button type="primary" @click="showUpgrade = false">{{ $t('public_button_cancel') }}</el-button>
       </span>
     </el-dialog>
     <PaidUpgradeDialog :visible.sync="paidUpgradeVisible" :paidPlan="paidPlan"></PaidUpgradeDialog>
+    <CheckLicense :visible.sync="aliyunMaketVisible" :user="userInfo"></CheckLicense>
   </div>
   <RouterView v-else></RouterView>
 </template>
@@ -198,27 +199,31 @@ import { connectionsApi, taskApi, paidApi } from '@tap/api'
 import { VIcon, Chart, PaidUpgradeDialog } from '@tap/component'
 import { numToThousands } from '@/util'
 import timeFunction from '@/mixins/timeFunction'
+import CheckLicense from '@/views/aliyun-market/CheckLicnese'
 
 export default {
   name: 'Workbench',
-  components: { VIcon, Chart, PaidUpgradeDialog },
+  components: { VIcon, Chart, PaidUpgradeDialog, CheckLicense },
   inject: ['checkAgent'],
   mixins: [timeFunction],
   data() {
     const $t = this.$t.bind(this)
     return {
+      userInfo: '',
+      //云市场
+      aliyunMaketVisible: false,
       createList: [
         {
           name: $t('agent_manage'),
           desc: $t('workbench_agent_desc'),
-          btnName: $t('workbench_agent_button_create'),
+          btnName: $t('public_agent_button_create'),
           action: this.createAgent,
           icon: 'dashboard-agent'
         },
         {
           name: $t('connection_manage'),
           desc: $t('workbench_connection_desc'),
-          btnName: $t('workbench_connection_button_create'),
+          btnName: $t('public_connection_button_create'),
           action: this.createConnection,
           icon: 'dashboard-connection'
         },
@@ -238,12 +243,12 @@ export default {
           value: 0,
           list: [
             {
-              label: $t('agent_status_running'),
+              label: $t('public_status_running'),
               value: 0,
               class: 'success'
             },
             {
-              label: $t('agent_status_stopped'),
+              label: $t('public_agent_status_offline'),
               value: 0,
               class: 'error'
             }
@@ -272,15 +277,15 @@ export default {
           value: 0,
           list: [
             {
-              label: $t('task_initial_sync'),
+              label: $t('public_task_type_initial_sync'),
               value: 0
             },
             {
-              label: $t('task_sync_type_cdc'),
+              label: $t('public_task_type_cdc'),
               value: 0
             },
             {
-              label: $t('task_initial_sync_cdc'),
+              label: $t('public_task_type_initial_sync_and_cdc'),
               value: 0
             }
           ]
@@ -361,6 +366,13 @@ export default {
       this.getTaskStats() // 任务
       this.loadNotices() // 通知公告
       this.loadBarData()
+      //获取cookie 是否用户有操作过 稍后部署 且缓存是当前用户 不在弹窗
+      let user = window.__USER_INFO__
+      this.userInfo = user
+      //检查是云市场用户授权码有效期
+      if (user?.enableLicense) {
+        this.checkLicense(user)
+      }
     },
     loadAgent() {
       let agentList = this.agentList
@@ -656,6 +668,43 @@ export default {
             color: '#2C65FF' //线条颜色
           }
         ]
+      }
+    },
+
+    //检查云市场用户授权码是否过期
+    checkLicense(user) {
+      //未激活
+      var licenseCodes = user?.licenseCodes || []
+      if (!user?.licenseValid && licenseCodes?.length === 0) {
+        //未激活
+        this.aliyunMaketVisible = true
+        this.userInfo = {
+          showNextProcessing: false,
+          licenseType: 'license',
+          nearExpiration: []
+        }
+      }
+      //是否有临近过期授权码
+      let verify = licenseCodes.filter(it => it.nearExpiration)
+      if (user?.licenseValid && verify?.length > 0) {
+        //授权码可用 存在有临近授权码
+        this.aliyunMaketVisible = true
+        this.userInfo = {
+          showNextProcessing: true,
+          licenseType: 'checkCode',
+          data: verify
+        }
+      }
+      //已过期
+      let expired = licenseCodes.filter(it => it.licenseStatus === 'EXPIRED')
+      if (!user?.licenseValid && expired?.length > 0) {
+        //授权码不可用 存在有临近授权码
+        this.aliyunMaketVisible = true
+        this.userInfo = {
+          showNextProcessing: false,
+          licenseType: 'checkCode',
+          data: expired
+        }
       }
     }
   }

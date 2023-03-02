@@ -11,9 +11,9 @@
           </div>
         </div>
         <div class="color-info mb-4">
-          {{ $t('packages_business_connection_type_' + viewData.connection_type) }}
+          {{ getType(viewData.connection_type) }}
           <span :class="['status-connection-' + viewData.status, 'status-block', 'ml-4']">
-            {{ $t('packages_business_connection_status_' + viewData.status) }}
+            {{ getStatus(viewData.status) }}
           </span>
         </div>
       </header>
@@ -92,6 +92,7 @@
 
 <script>
 import { Drawer, VTable } from '@tap/component'
+import { CONNECTION_STATUS_MAP, CONNECTION_TYPE_MAP } from '@tap/business/src/shared'
 import { SchemaProgress } from '../../components'
 import dayjs from 'dayjs'
 
@@ -150,6 +151,12 @@ export default {
     },
     isFileSource(database_type) {
       return ['CSV', 'EXCEL', 'JSON', 'XML'].includes(database_type)
+    },
+    getStatus(status) {
+      return CONNECTION_STATUS_MAP[status]?.text || '-'
+    },
+    getType(type) {
+      return CONNECTION_TYPE_MAP[type]?.text || '-'
     }
   }
 }

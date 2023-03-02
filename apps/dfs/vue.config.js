@@ -10,8 +10,8 @@ const serveUrlMap = {
   localTm: 'http://127.0.0.1:3030'
 }
 // const userId = '60b60af1147bce7705727188' // zed?
-// const userId = '637b268fe377c481ae013dc2' // lemon
-const userId = '60cc0c304e190a579cbe306c' // jason
+const userId = '60b064e9a65d8e852c8523bc' // lemon
+//const userId = '60cc0c304e190a579cbe306c' // jason
 let origin
 const { argv } = process
 const { SERVE_ENV = 'mock' } = process.env
@@ -31,6 +31,10 @@ let varUrl = '~@tap/assets/styles/var.scss'
 let pages = {
   index: {
     entry: 'src/pages/main.js',
+    title: 'Tapdata Cloud'
+  },
+  license_code_activation: {
+    entry: 'src/pages/licenseCodeActivation.js',
     title: 'Tapdata Cloud'
   }
 }

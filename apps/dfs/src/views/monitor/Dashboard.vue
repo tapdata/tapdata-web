@@ -8,7 +8,7 @@
         <div class="flex align-items-center">
           <ElTooltip :content="task.name" placement="top">
             <ElLink class="fs-7 mr-4 inline-block ellipsis" style="max-width: 50%" type="primary"
-              >{{ $t('task_name') }}: {{ task.name }}</ElLink
+              >{{ $t('public_task_name') }}: {{ task.name }}</ElLink
             >
           </ElTooltip>
           <StatusTag
@@ -18,9 +18,9 @@
           ></StatusTag>
         </div>
         <div class="mt-1">
-          <span>{{ $t('task_monitor_founder') }}: {{ task.createUser }}</span>
+          <span>{{ $t('public_creator') }}: {{ task.createUser }}</span>
           <span class="ml-4"
-            >{{ $t('task_type') }}{{ $t('field_mapping_field_mapping_dialog_') }}{{ taskType.label }}</span
+            >{{ $t('public_task_type') }}{{ $t('field_mapping_field_mapping_dialog_') }}{{ taskType.label }}</span
           >
         </div>
         <div class="mt-2">
@@ -29,21 +29,21 @@
             :disabled="!statusBtMap['run'][task.status] || (task.status === 'draft' && task.checked === false)"
             :loading="startLoading"
             @click="start"
-            >{{ $t('task_monitor_start') }}</VButton
+            >{{ $t('public_button_start') }}</VButton
           >
-          <VButton :disabled="!statusBtMap['stop'][task.status]" @click="stop">{{ $t('task_monitor_stop') }}</VButton>
+          <VButton :disabled="!statusBtMap['stop'][task.status]" @click="stop">{{ $t('public_button__stop') }}</VButton>
           <VButton :loading="resetBtnLoading" :disabled="!statusBtMap['reset'][task.status]" @click="reset">{{
-            $t('task_monitor_reset')
+            $t('public_button_reset')
           }}</VButton>
           <VButton :disabled="!statusBtMap['forceStop'][task.status]" @click="forceStop">{{
-            $t('task_monitor_forced_stop')
+            $t('public_button__force_stop')
           }}</VButton>
         </div>
       </div>
       <div class="input-and-output flex align-center">
-        <span>{{ $t('task_monitor_total_output') }}</span>
+        <span>{{ $t('public_event_total_output') }}</span>
         <span class="fs-4 ml-4 color-primary fw-bold">{{ task.totalOutput }}</span>
-        <span class="ml-6">{{ $t('task_monitor_total_input') }}</span>
+        <span class="ml-6">{{ $t('public_event_total_input') }}</span>
         <span class="fs-4 ml-4 color-primary fw-bold">{{ task.totalInput }}</span>
       </div>
     </div>
@@ -240,7 +240,7 @@ export default {
           title: this.$t('task_monitor_source_info'),
           items: [
             {
-              label: this.$t('task_monitor_node_name'),
+              label: this.$t('public_node_name'),
               key: 'sourceName'
             },
             {
@@ -248,7 +248,7 @@ export default {
               key: 'sourceDB'
             },
             {
-              label: this.$t('task_monitor_database_addr'),
+              label: this.$t('public_connection_form_database_address'),
               key: 'sourceUrl'
             },
             {
@@ -261,7 +261,7 @@ export default {
           title: this.$t('task_monitor_target_info'),
           items: [
             {
-              label: this.$t('task_monitor_node_name'),
+              label: this.$t('public_node_name'),
               key: 'targetName'
             },
             {
@@ -269,7 +269,7 @@ export default {
               key: 'targetDB'
             },
             {
-              label: this.$t('task_monitor_database_addr'),
+              label: this.$t('public_connection_form_database_address'),
               key: 'targetUrl'
             },
             {
@@ -343,9 +343,9 @@ export default {
     taskType() {
       let sync_type = this.task.setting?.sync_type
       let map = {
-        initial_sync: this.$t('task_initial_sync'),
-        cdc: this.$t('task_sync_type_cdc'),
-        'initial_sync+cdc': this.$t('task_initial_sync_cdc')
+        initial_sync: this.$t('public_task_type_initial_sync'),
+        cdc: this.$t('public_task_type_cdc'),
+        'initial_sync+cdc': this.$t('public_task_type_initial_sync_and_cdc')
       }
       return {
         label: map[sync_type],
@@ -424,7 +424,7 @@ export default {
             case 'mq':
               this.infoObj[type].items = [
                 {
-                  label: this.$t('task_monitor_node_name'),
+                  label: this.$t('public_node_name'),
                   key: type + 'Name'
                 },
                 {
@@ -446,7 +446,7 @@ export default {
             case 'kafka':
               this.infoObj[type].items = [
                 {
-                  label: this.$t('task_monitor_node_name'),
+                  label: this.$t('public_node_name'),
                   key: type + 'Name'
                 },
                 {
@@ -454,7 +454,7 @@ export default {
                   key: type + 'KafkaPatternTopics'
                 },
                 {
-                  label: this.$t('task_monitor_database_addr'),
+                  label: this.$t('public_connection_form_database_address'),
                   key: type + 'KafkaBootstrapServers'
                 },
                 {
@@ -497,7 +497,7 @@ export default {
       }
       errorEvents && (attributes.errorEvents = errorEvents)
       return await this.$axios.patch('tm/api/DataFlows?where=', attributes).then(data => {
-        this.responseHandler(data, this.$t('task_operation_successful'))
+        this.responseHandler(data, this.$t('public_message_operation_success'))
       })
       // .catch(error => {
       //   error?.isException && this.$message.error(this.$t('task_start_failed'))
@@ -585,8 +585,8 @@ export default {
       }
       this.$confirm(message, title, {
         type: 'warning',
-        confirmButtonText: this.$t('button_confirm'),
-        cancelButtonText: this.$t('button_cancel')
+        confirmButtonText: this.$t('public_button_confirm'),
+        cancelButtonText: this.$t('public_button_cancel')
       }).then(resFlag => {
         if (resFlag) {
           this.changeStatus({ status: 'stopping' })
@@ -597,8 +597,8 @@ export default {
       let msgObj = this.getConfirmMessage('force_stop', this.task.name)
       this.$confirm(msgObj.msg, msgObj.title, {
         type: 'warning',
-        confirmButtonText: this.$t('button_confirm'),
-        cancelButtonText: this.$t('button_cancel')
+        confirmButtonText: this.$t('public_button_confirm'),
+        cancelButtonText: this.$t('public_button_cancel')
       }).then(resFlag => {
         if (resFlag) {
           this.changeStatus({ status: 'force stopping' })
@@ -606,10 +606,10 @@ export default {
       })
     },
     reset() {
-      this.$confirm(this.$t('task_reset_tsk'), this.$t('task_reset'), {
+      this.$confirm(this.$t('task_reset_tsk'), this.$t('public_button_reset'), {
         type: 'warning',
-        confirmButtonText: this.$t('button_confirm'),
-        cancelButtonText: this.$t('button_cancel'),
+        confirmButtonText: this.$t('public_button_confirm'),
+        cancelButtonText: this.$t('public_button_cancel'),
         dangerouslyUseHTMLString: true
       }).then(flag => {
         if (!flag) {
@@ -621,7 +621,7 @@ export default {
             id: [this.$route.params.id]
           })
           .then(data => {
-            this.responseHandler(data, this.$t('task_operation_successful'))
+            this.responseHandler(data, this.$t('public_message_operation_success'))
             this.getData()
           })
           // .catch(error => {
@@ -664,7 +664,7 @@ export default {
       })
     },
     checkError(msg) {
-      this.$confirm(msg, i18n.t('monitor_Dashboard_cuoWu'), {
+      this.$confirm(msg, i18n.t('public_status_error'), {
         type: 'warning',
         width: '850px'
       })
