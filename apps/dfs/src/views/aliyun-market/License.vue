@@ -14,7 +14,7 @@
         </ul>
         <div class="flex mt-4">
           <span class="label mb-2">{{ $t('dfs_aliyun_market_license_shouquanma') }}</span>
-          <el-input v-model="licenseCode" type="textarea" rows="1" autofocus></el-input>
+          <el-input v-model="licenseCode" type="textarea" rows="2" autofocus></el-input>
         </div>
         <div class="mt-8">
           <a v-if="showGoDashboard" class="mt-4 float-end button" type="primary" href="index.html">{{
@@ -56,7 +56,7 @@ export default {
             window.__USER_INFO__ = data
           })
           setTimeout(() => {
-            this.goDashboard()
+            window.location.href = 'index.html'
           }, 30000)
         }
       })
