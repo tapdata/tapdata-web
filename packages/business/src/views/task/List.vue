@@ -235,7 +235,7 @@
     <PaidUpgradeDialog :visible.sync="paidUpgradeVisible" :paidPlan="paidPlan"></PaidUpgradeDialog>
     <!-- 删除任务 pg数据源 slot 删除失败 自定义dialog 提示 -->
     <el-dialog
-      :title="$t('task_mapping_dialog_hint')"
+      :title="$t('public_message_title_prompt')"
       :visible.sync="dialogDelMsgVisible"
       width="52%"
       custom-class="dialogDelMsgDialog"
@@ -259,7 +259,7 @@
               v-clipboard:success="onCopy"
               @mouseleave="showTooltip = false"
             >
-              <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
+              <i class="click-style">{{ $t('public_button_copy') }}</i>
             </span>
           </ElTooltip>
         </div>
@@ -279,7 +279,7 @@
               v-clipboard:success="onDelCopy"
               @mouseleave="showDelTooltip = false"
             >
-              <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
+              <i class="click-style">{{ $t('public_button_copy') }}</i>
             </span>
           </ElTooltip>
         </div>

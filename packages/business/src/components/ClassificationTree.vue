@@ -54,9 +54,9 @@
         </ElFormItem>
       </ElForm>
       <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="hideDialog()">{{ $t('packages_component_button_cancel') }}</ElButton>
+        <ElButton size="mini" @click="hideDialog()">{{ $t('public_button_cancel') }}</ElButton>
         <ElButton size="mini" type="primary" @click="dialogSubmit()">
-          {{ $t('packages_component_button_confirm') }}
+          {{ $t('public_button_confirm') }}
         </ElButton>
       </span>
     </ElDialog>
@@ -220,12 +220,8 @@ export default {
                     more-circle
                   </VIcon>
                   <ElDropdownMenu slot="dropdown">
-                    <ElDropdownItem command="edit">
-                      {this.$t('packages_component_classification_editNode')}
-                    </ElDropdownItem>
-                    <ElDropdownItem command="delete">
-                      {this.$t('packages_component_classification_deleteNode')}
-                    </ElDropdownItem>
+                    <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
+                    <ElDropdownItem command="delete">{this.$t('public_button_delete')}</ElDropdownItem>
                   </ElDropdownMenu>
                 </ElDropdown>
               </span>
@@ -387,7 +383,7 @@ export default {
             ? node
               ? this.$t('packages_component_classification_addChildernNode')
               : this.$t('packages_component_classification_addNode')
-            : this.$t('packages_component_classification_editNode')
+            : this.$t('public_button_edit')
       }
     },
     hideDialog() {
@@ -463,7 +459,7 @@ export default {
     deleteNode(id) {
       let that = this
       this.$confirm(this.$t('packages_component_classification_deteleMessage'), {
-        confirmButtonText: this.$t('packages_component_message_delete'),
+        confirmButtonText: this.$t('public_button_delete'),
         cancelButtonText: this.$t('packages_component_message_cancel'),
         type: 'warning',
         closeOnClickModal: false

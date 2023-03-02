@@ -40,9 +40,7 @@
         <span class="mx-2 text-break" :class="{ ellipsis: !expandErrorMessage }" style="flex: 1">{{ errorMsg }}</span>
         <span>
           <ElLink type="danger" @click="expandErrorMessage = !expandErrorMessage">{{
-            expandErrorMessage
-              ? $t('packages_business_verification_details_shouqi')
-              : $t('packages_business_verification_details_zhankai')
+            expandErrorMessage ? $t('packages_business_verification_details_shouqi') : $t('public_button_expand')
           }}</ElLink>
           <VIcon class="ml-2 color-info" size="12" @click="errorMsg = ''">close</VIcon>
         </span>
