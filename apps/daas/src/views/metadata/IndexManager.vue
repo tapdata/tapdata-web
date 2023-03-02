@@ -134,7 +134,7 @@
               @click="addRow"
               v-if="index === createForm.indexDefinition.length - 1"
             >
-              {{ $t('public_button_button') }}
+              {{ $t('public_button_add') }}
             </el-button>
           </el-col>
         </el-row>

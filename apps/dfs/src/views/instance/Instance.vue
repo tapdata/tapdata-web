@@ -170,7 +170,7 @@
               :disabled="stopBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
               :loading="scope.row.btnLoading.stop"
               @click="handleStop(scope.row)"
-              >{{ $t('public_button__stop') }}</ElButton
+              >{{ $t('public_button_stop') }}</ElButton
             >
             <ElDivider direction="vertical"></ElDivider>
             <ElButton
@@ -304,7 +304,7 @@
             @click="handleStop(selectedRow)"
           >
             <VIcon size="12">stop</VIcon>
-            <span class="ml-1">{{ $t('public_button__stop') }}</span>
+            <span class="ml-1">{{ $t('public_button_stop') }}</span>
           </VButton>
           <VButton
             :loading="selectedRow.btnLoading.delete"

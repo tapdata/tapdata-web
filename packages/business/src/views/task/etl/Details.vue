@@ -48,7 +48,7 @@
               :disabled="$disabledByPermission('SYNC_job_operation_all_data', task.user_id)"
               @click="forceStop($route.params.id)"
             >
-              {{ $t('public_button__force_stop') }}
+              {{ $t('public_button_force_stop') }}
             </ElButton>
             <ElButton
               v-else
@@ -58,7 +58,7 @@
               @click="stop($route.params.id, arguments[0])"
             >
               <VIcon size="12">pause-fill</VIcon>
-              <span class="ml-1">{{ $t('public_button__stop') }}</span>
+              <span class="ml-1">{{ $t('public_button_stop') }}</span>
             </ElButton>
             <ElButton :disabled="task.disabledData.edit" @click="handleEditor(task.id)">
               <VIcon size="12">edit-fill</VIcon>
