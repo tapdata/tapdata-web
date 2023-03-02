@@ -1,6 +1,5 @@
 <template>
   <section class="license-warp flex justify-content-center align-items-center flex-column">
-    <TheHeader ref="theHeader" class="layout-header"></TheHeader>
     <main class="main">
       <header class="header header-wrap pl-4">{{ $t('dfs_aliyun_market_license_jihuoaliyun') }}</header>
       <main style="padding: 24px">
@@ -31,11 +30,9 @@
 
 <script>
 import i18n from '@/i18n'
-import TheHeader from '@/components/the-header'
 
 export default {
   name: 'License',
-  components: { TheHeader },
   data() {
     return {
       licenseCode: '',
