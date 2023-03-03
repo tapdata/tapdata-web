@@ -182,9 +182,9 @@
 			</ul> -->
       <div slot="footer" class="dialog-footer">
         <el-button class="cancel" @click="dialogDictionaryVisible = false" size="mini">{{
-          $t('message_cancel')
+          $t('public_button_cancel')
         }}</el-button>
-        <el-button type="primary" @click="handleSelectDictionary" size="mini">{{ $t('message_confirm') }}</el-button>
+        <el-button type="primary" @click="handleSelectDictionary" size="mini">{{ $t('public_button_confirm') }}</el-button>
       </div>
     </el-dialog>
   </el-dialog>
@@ -572,7 +572,6 @@ export default {
               this.$message.success(this.$t('metadata_details_success_Release'))
             })
             // .catch(() => {
-            //   this.$message.error(this.$t('public_message_save_fail'))
             // })
           } else {
             this.$message.error(this.$t('metadata_details_filedName_repeat'))

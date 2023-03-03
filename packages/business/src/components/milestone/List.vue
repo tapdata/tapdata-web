@@ -199,11 +199,11 @@ export default {
       }
       result.forEach(el => {
         if (el.key === 'FULL_SYNC') {
-          const { snapshotDoneAt } = this.totalData
+          const { snapshotDoneAt, snapshotStartAt } = this.totalData
           if (snapshotDoneAt) {
             Object.assign(el, finishOpt)
           } else {
-            if (['running'].includes(this.dataflow.status)) {
+            if (snapshotStartAt && ['running'].includes(this.dataflow.status)) {
               const { progress, time } = this.getDueTimeAndProgress(this.totalData)
               const p = progress > 99 ? 99 : progress
               Object.assign(el, runningOpt, {
@@ -337,11 +337,11 @@ export default {
           let { status = 'WAITING' } = t
           let label = ''
           if (el.key === 'BATCH_READ') {
-            const { snapshotDoneAt } = this.totalData
+            const { snapshotDoneAt, snapshotStartAt } = this.totalData
             if (snapshotDoneAt) {
               status = 'FINISH'
             } else {
-              if (['running'].includes(this.dataflow.status)) {
+              if (snapshotStartAt && ['running'].includes(this.dataflow.status)) {
                 status = 'RUNNING'
                 const { progress, time } = this.getDueTimeAndProgress(this.totalData)
                 label =

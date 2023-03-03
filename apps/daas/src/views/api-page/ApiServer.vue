@@ -78,8 +78,8 @@
     >
       <FormBuilder ref="form" v-model="createForm" :config="createFormConfig"></FormBuilder>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="createDialogVisible = false" size="small">{{ $t('message_cancel') }}</el-button>
-        <el-button type="primary" @click="createServer()" size="small">{{ $t('message_confirm') }}</el-button>
+        <el-button @click="createDialogVisible = false" size="small">{{ $t('public_button_cancel') }}</el-button>
+        <el-button type="primary" @click="createServer()" size="small">{{ $t('public_button_confirm') }}</el-button>
       </span>
     </el-dialog>
   </section>
@@ -201,7 +201,6 @@ export default {
           this.table.fetch()
         })
         // .catch(() => {
-        //   this.$message.info(this.$t('public_message_delete_fail'))
         // })
       })
     },
@@ -224,7 +223,6 @@ export default {
             this.$message.success(this.$t('public_message_save_ok'))
           })
           // .catch(() => {
-          //   this.$message.error(this.$t('public_message_save_fail'))
           // })
         }
       })

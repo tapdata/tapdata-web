@@ -42,7 +42,7 @@
             type="text"
             @click="stop(scope.row, arguments[0])"
           >
-            {{ $t('public_button__stop') }}
+            {{ $t('public_button_stop') }}
           </VButton>
           <ElDivider direction="vertical"></ElDivider>
           <VButton

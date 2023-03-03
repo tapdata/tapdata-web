@@ -50,7 +50,7 @@
                   </div>
                 </ElTooltip>
                 <div class="flex align-items-center">
-                  <ElButton type="text" @click.stop="removeItem(index)">{{ $t('button_delete') }}</ElButton>
+                  <ElButton type="text" @click.stop="removeItem(index)">{{ $t('public_button_delete') }}</ElButton>
                   <VIcon size="16" class="arrow-icon ml-1">arrow-right</VIcon>
                 </div>
               </div>
@@ -160,8 +160,8 @@
                   $t('packages_business_verification_addJS')
                 }}</ElButton>
                 <template v-else>
-                  <ElLink type="primary" class="ml-4" @click="editScript(index)">{{ $t('button_edit') }}</ElLink>
-                  <ElLink type="primary" class="ml-4" @click="removeScript(index)">{{ $t('button_delete') }}</ElLink>
+                  <ElLink type="primary" class="ml-4" @click="editScript(index)">{{ $t('public_button_edit') }}</ElLink>
+                  <ElLink type="primary" class="ml-4" @click="removeScript(index)">{{ $t('public_button_delete') }}</ElLink>
                 </template>
               </div>
               <div

@@ -230,8 +230,8 @@
         ></ConditionBox>
       </div>
       <div class="mt-8">
-        <ElButton size="mini" @click="goBack()">{{ $t('button_back') }}</ElButton>
-        <ElButton type="primary" size="mini" @click="save">{{ $t('button_save') }}</ElButton>
+        <ElButton size="mini" @click="goBack()">{{ $t('public_button_back') }}</ElButton>
+        <ElButton type="primary" size="mini" @click="save">{{ $t('public_button_save') }}</ElButton>
       </div>
     </div>
 
@@ -250,8 +250,8 @@
         <GitBook :value="doc" class="example ml-4 color-primary"></GitBook>
       </div>
       <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="handleAddScriptClose">{{ $t('button_cancel') }}</ElButton>
-        <ElButton type="primary" size="mini" @click="submitScript">{{ $t('button_confirm') }}</ElButton>
+        <ElButton size="mini" @click="handleAddScriptClose">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton type="primary" size="mini" @click="submitScript">{{ $t('public_button_confirm') }}</ElButton>
       </span>
     </ElDialog>
   </section>
@@ -577,7 +577,6 @@ export default {
             this.$router.back()
           })
           // .catch(err => {
-          //   let message = err?.data?.message || this.$t('message_operation_error')
           //   this.$message.error(message)
           // })
         }
