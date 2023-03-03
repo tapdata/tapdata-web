@@ -127,8 +127,8 @@
       </ul>
     </Drawer>
     <el-dialog :visible.sync="showUsingTaskDialog" title="提示">
-      <div>该外存已被个任务调用，请删除或者修改配置后重试</div>
-      <el-table height="250px" :data="usingTasks">
+      <div>{{ $t('daas_external_storage_list_tishi', { val1: usingTasks.length }) }}</div>
+      <el-table class="mt-4" height="250px" :data="usingTasks">
         <el-table-column min-width="240" :label="$t('public_task_name')" :show-overflow-tooltip="true">
           <template #default="{ row }">
             <span class="dataflow-name link-primary flex">
