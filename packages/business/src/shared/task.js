@@ -105,7 +105,7 @@ export const STATUS_MAP = {
     i18n: 'public_status_running'
   },
   complete: {
-    i18n: 'public_status_complete'
+    i18n: 'public_status_finished'
   },
   stopping: {
     i18n: 'public_status_stopping'
