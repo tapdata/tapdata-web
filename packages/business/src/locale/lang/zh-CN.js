@@ -267,7 +267,7 @@ export default {
   packages_business_connections_databaseform_zhongyingkaitouge:
     '中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格',
   packages_business_connections_list_renwuzongshu: '任务总数: ',
-  packages_business_connections_list_gailianjieyibei: '该连接已被以下任务调用，请删除任务或修改配置后重试',
+  packages_business_connections_list_gailianjieyibei: '该连接已被 {val1} 个任务调用，请删除任务或修改配置后重试',
   packages_business_connections_preview_schem: 'schema加载完成',
   packages_business_etl_details_caozuoshibaiqing: '操作失败，请重试',
   packages_business_etl_details_shifouzhongzhigai: '是否重置该任务？',
