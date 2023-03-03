@@ -6,7 +6,7 @@
       <ElCheckbox v-model="settings.showAlpha" class="ml-8 mr-0" @change="getData(false)"></ElCheckbox>
       <span class="ml-2">{{ $t('packages_business_create_connection_dialog_neirongSho') }}</span>
     </div>
-    <ElTabs v-model="active" @tab-click="getData(false)">
+    <ElTabs v-model="active" @tab-click="handleChangeTab">
       <ElTabPane v-for="item in tabs" :key="item.value" :name="item.value" :label="item.label"></ElTabPane>
     </ElTabs>
     <div v-loading="loading">
@@ -25,6 +25,18 @@
           <ElTooltip class="mt-2" effect="dark" :content="item.name" placement="bottom">
             <div class="ellipsis text-center font-color-normal">{{ item.name }}</div>
           </ElTooltip>
+        </li>
+      </ul>
+      <ul v-else-if="apiList.length" class="overflow-auto">
+        <li
+          v-for="(item, index) in apiList"
+          :key="index"
+          class="api-item float-start cursor-pointer inline-flex flex-column align-items-center p-6 mb-6"
+          @click="handleSelect(item)"
+        >
+          <VIcon size="32" class="color-primary">deploy</VIcon>
+          <div class="mt-4 fw-bold font-color-normal">{{ item.title }}</div>
+          <div class="mt-4 font-color-light flex-fill">{{ item.desc }}</div>
         </li>
       </ul>
       <EmptyItem v-else></EmptyItem>
@@ -55,6 +67,7 @@ export default {
     return {
       loading: false,
       database: [],
+      apiList: [],
       active: '',
       selected: {},
       tabs: [
@@ -77,6 +90,10 @@ export default {
         {
           label: 'My Connectors',
           value: 'Custom'
+        },
+        {
+          label: 'Application Services',
+          value: 'apiServices'
         }
       ],
       timer: null,
@@ -120,16 +137,16 @@ export default {
       databaseTypesApi
         .getDatabases({ filter: JSON.stringify(params) })
         .then(data => {
-          this.database = data?.filter(t => t.connectionType.includes(this.params?.type) && !!t.pdkHash)
+          this.database = data?.filter(t => t.connectionType.includes(this.params?.type) && !!t.pdkHash) || []
         })
         .finally(() => {
           this.loading = false
-          if (this.visible) {
-            clearTimeout(this.timer)
-            this.timer = setTimeout(() => {
-              this.getData(true)
-            }, 3000)
-          }
+          // if (this.visible) {
+          //   clearTimeout(this.timer)
+          //   this.timer = setTimeout(() => {
+          //     this.getData(true)
+          //   }, 3000)
+          // }
         })
     },
 
@@ -138,8 +155,28 @@ export default {
     },
 
     handleSelect(item) {
-      this.selected = item
+      this.selected = Object.assign(item, {
+        activeTab: this.active
+      })
       this.$emit('select', this.selected)
+    },
+
+    handleChangeTab(val) {
+      this.apiList = []
+      this.database = []
+      switch (val?.name) {
+        case 'apiServices':
+          this.apiList = [
+            {
+              title: 'API Publish',
+              desc: 'Public Data APIs for application use.'
+            }
+          ]
+          break
+        default:
+          this.getData(false)
+          break
+      }
     }
   }
 }
@@ -148,6 +185,7 @@ export default {
 <style lang="scss" scoped>
 .database {
   overflow: auto;
+  word-break: break-word;
 }
 .database-item {
   width: 80px;
@@ -186,5 +224,11 @@ export default {
     display: flex;
     justify-content: center;
   }
+}
+.api-item {
+  width: 180px;
+  height: 180px;
+  background: rgba(239, 241, 244, 0.2);
+  border: 1px solid rgba(221, 221, 221, 0.4);
 }
 </style>
