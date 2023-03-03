@@ -7,6 +7,7 @@
     top="10vh"
     custom-class="connection-dialog ldp-conection-dialog flex flex-column"
     :before-close="handleClose"
+    destroy-on-close
   >
     <div slot="title" class="text-center font-color-dark fs-2 fw-bold">
       {{ showForm ? 'Configure SaaS Source' : title }}
@@ -15,12 +16,15 @@
       <div class="mb-4 font-color-light">{{ $t('packages_business_create_connection_dialog_neirongCho') }}</div>
       <ConnectionSelector v-bind="$attrs" :visible.sync="visible" @select="handleSelect"></ConnectionSelector>
     </div>
-    <div v-else class="form__content">
+    <div v-else class="form__content flex flex-column">
       <div class="mb-4 text-center font-color-light">
         {{ $t('packages_business_create_connection_dialog_neirongCon') }}
       </div>
+      <ServeForm v-if="activeTab" :params="formParams" class="flex-fill"></ServeForm>
       <ConnectionForm
+        v-else
         :params="formParams"
+        class="flex-fill"
         @back="init"
         @success="handleSuccess"
         @saveAndMore="handleSaveAndMore"
@@ -34,12 +38,14 @@ import i18n from '@tap/i18n'
 
 import ConnectionSelector from './Selector'
 import ConnectionForm from './Form'
+import ServeForm from './ServeForm'
 
 export default {
   name: 'Dialog',
   components: {
     ConnectionSelector,
-    ConnectionForm
+    ConnectionForm,
+    ServeForm
   },
   props: {
     title: {
@@ -57,7 +63,8 @@ export default {
     return {
       formParams: {},
       showForm: false,
-      timer: null
+      timer: null,
+      activeTab: ''
     }
   },
   methods: {
@@ -70,9 +77,12 @@ export default {
       this.$emit('update:visible', false)
     },
     handleSelect(item) {
+      this.activeTab = item.activeTab
+      if (!item.activeTab) {
+        const { pdkHash } = item
+        this.formParams = { pdkHash }
+      }
       this.showForm = true
-      const { pdkHash } = item
-      this.formParams = { pdkHash }
     },
 
     handleSuccess() {
