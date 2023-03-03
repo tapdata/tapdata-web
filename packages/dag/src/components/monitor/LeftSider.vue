@@ -456,6 +456,7 @@ export default {
     },
 
     totalDataPercentage() {
+      if (this.initialData.snapshotDoneAt) return 100
       const { tableTotal, snapshotTableTotal } = this.totalData
       return snapshotTableTotal && tableTotal ? (snapshotTableTotal / tableTotal) * 100 : 0
     },
