@@ -1,7 +1,10 @@
 <template>
   <Drawer class="sw-table-drawer" :visible.sync="visible" width="850px" v-loading="loading">
     <header v-if="detailData">
-      <div class="table-name mb-4">{{ detailData.name }} {{ tableStatus }}</div>
+      <div class="mb-4">
+        <span class="table-name inline-block">{{ detailData.name }}</span>
+        <span :class="['status', 'ml-4', 'status-' + tableStatus]">{{ statusMap[tableStatus] }}</span>
+      </div>
       <span class="mr-2">
         <VIcon class="tree-item-icon" size="18">table</VIcon> <span class="table-dec-txt">Table</span></span
       >
@@ -10,15 +13,15 @@
       >
       <span class="ml-8"
         ><span class="table-dec-label">数据最后更新时间：</span
-        ><span class="table-dec-txt">{{ detailData.LastDataChangeTime }}</span></span
+        ><span class="table-dec-txt">{{ lastDataChangeTime || '-' }}</span></span
       >
       <span class="ml-8"
         ><span class="table-dec-label">增量数据延迟：</span
-        ><span class="table-dec-txt">{{ detailData.cdcDelayTime }}</span></span
+        ><span class="table-dec-txt">{{ cdcDelayTime || '-' }}</span></span
       >
     </header>
     <section class="mt-6">
-      <el-tabs v-model="activeName" @tab-click="handleClick">
+      <el-tabs v-model="activeName">
         <el-tab-pane label="OverView" name="overView">
           <section class="mt-2">
             <div class="mb-4">
@@ -27,7 +30,7 @@
                 type="textarea"
                 row="4"
                 class="table-dec-txt mt-2"
-                v-model="detailData.description || detailData.comment"
+                v-model="detailData.description"
                 @blur="saveTableDesc"
               ></el-input>
             </div>
@@ -51,7 +54,7 @@
             </el-row>
           </section>
           <section class="mt-6">
-            <el-tabs v-model="activeNameItems" @tab-click="handleClick">
+            <el-tabs v-model="activeNameItems">
               <el-tab-pane label="Columns Preview" name="columnsPreview">
                 <VTable
                   class="discovery-page-table"
@@ -94,7 +97,7 @@
         </el-tab-pane>
         <el-tab-pane label="Tasks" name="tasks">
           <div class="flex justify-content-between mb-4">
-            <span>以这个模型为源的任务</span><span class="color-primary">Create Task</span>
+            <span>以这个模型源/目标的任务</span><span class="color-primary">Create Task</span>
           </div>
           <el-table class="discovery-page-table" :data="taskData" :has-pagination="false">
             <el-table-column
@@ -112,7 +115,7 @@
             </el-table-column>
             <el-table-column prop="status" :label="$t('public_task_status')">
               <template #default="{ row }">
-                <TaskStatus :task="row" :agentMap="agentMap" />
+                <TaskStatus :task="row" />
               </template>
             </el-table-column>
             <el-table-column
@@ -231,7 +234,12 @@ export default {
       },
       tableStatus: '',
       cdcDelayTime: '',
-      LastDataChangeTime: ''
+      lastDataChangeTime: '',
+      statusMap: {
+        error: this.$t('public_status_error'),
+        draft: this.$t('public_status_wait_run'),
+        normal: this.$t('public_status_renew_normal')
+      }
     }
   },
   methods: {
@@ -258,7 +266,6 @@ export default {
           this.loading = false
         })
     },
-    handleClick() {},
     getTasks() {
       let params = {
         connectionId: this.connectionId,
@@ -287,17 +294,6 @@ export default {
           this.loadingSampleData = false
         })
     },
-    getStorageSize() {
-      let params = {
-        className: 'QueryDataBaseDataService',
-        method: 'getTableInfo',
-        args: [this.connectionId, this.detailData.name]
-      }
-      proxyApi.call(params).then(res => {
-        this.storageSize = Math.floor(res.storageSize / 1024) || 0
-        this.numOfRows = res.numOfRows || 0
-      })
-    },
     formatTime(time) {
       return time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
     },
@@ -311,10 +307,10 @@ export default {
     //获取表状态
     getTaskStatus() {
       taskApi.tableStatus(this.connectionId, this.detailData.name).then(res => {
-        this.tableStatus = res.TableStatusInfoDto?.status
-        this.cdcDelayTime = res.TableStatusInfoDto?.cdcDelayTime
-        this.LastDataChangeTime = res.TableStatusInfoDto?.LastDataChangeTime
-          ? dayjs(res.TableStatusInfoDto?.LastDataChangeTime).format('YYYY-MM-DD HH:mm:ss')
+        this.tableStatus = res?.status
+        this.cdcDelayTime = res?.cdcDelayTime || '-'
+        this.lastDataChangeTime = res?.lastDataChangeTime
+          ? dayjs(res?.lastDataChangeTime).format('YYYY-MM-DD HH:mm:ss')
           : '-'
       })
     }
@@ -342,6 +338,27 @@ export default {
     font-weight: 500;
     font-size: 18px;
     color: #1d2129;
+  }
+  .status {
+    display: inline-block;
+    min-width: 60px;
+    padding: 3px 10px;
+    text-align: center;
+    font-weight: 500;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  .status-draft {
+    color: #c39700;
+    background-color: #fdf1c8;
+  }
+  .status-normal {
+    color: #008b58;
+    background-color: #b4edd8;
+  }
+  .status-error {
+    color: #d44d4d;
+    background-color: #ffecec;
   }
 }
 </style>
