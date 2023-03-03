@@ -142,6 +142,7 @@ export default {
   agent_key: 'Agent',
   agent_manage: 'Agent管理',
   agent_name: 'Agent名稱',
+  agent_heartbeat: 'Agent心跳時間',
   agent_id: 'Agent ID',
   agent_task_number: '任務數',
   agent_create_time: '創建時間',

@@ -161,6 +161,7 @@ export default {
   agent_key: 'Agent',
   agent_manage: 'Agent管理',
   agent_name: 'Agent 名称',
+  agent_heartbeat: 'Agent 心跳时间',
   agent_id: 'Agent ID',
   agent_task_number: '任务数',
   agent_create_time: '创建时间',

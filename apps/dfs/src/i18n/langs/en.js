@@ -140,6 +140,7 @@ export default {
   agent_key: 'Agent',
   agent_manage: 'Agent',
   agent_name: 'Agent Name',
+  agent_heartbeat: 'Heartbeat Time',
   agent_id: 'Agent ID',
   agent_task_number: 'Number Tasks',
   agent_create_time: 'Create Time',

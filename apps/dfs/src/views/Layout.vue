@@ -135,7 +135,9 @@ export default {
       },
       bindPhoneVisible: false,
       agentGuideDialog: false,
-      showAgentWarning: false
+      showAgentWarning: false,
+      userInfo: '',
+      aliyunMaketVisible: false
     }
   },
   created() {
