@@ -673,7 +673,6 @@ export default {
   page_title_overview: '概览',
   metadata_meta_type_table: '数据表',
   packages_business_create_connection_dialog_xuanzeshujuyuan: '选择数据源类型',
-  packages_business_create_connection_dialog_neirongCon: '连接并授权 Tapdata 访问您的 Zoho Desk 帐户：',
   packages_business_create_connection_dialog_neirongSho: '显示处于 ALPHA 状态的连接器',
   packages_business_create_connection_dialog_neirongSho2: '显示处于测试状态的连接器',
   packages_business_create_connection_dialog_neirongCho: '从下面选择一个数据源连接器并配置连接和凭据。'

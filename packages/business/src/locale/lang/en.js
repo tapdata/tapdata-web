@@ -695,8 +695,6 @@ export default {
   page_title_overview: 'Overview',
   metadata_meta_type_table: 'Data Table',
   packages_business_create_connection_dialog_xuanzeshujuyuan: 'Choose Data Source Type',
-  packages_business_create_connection_dialog_neirongCon:
-    'Connect & Authorize Tapdata to access your Zoho Desk account:',
   packages_business_create_connection_dialog_neirongSho: 'Show Connectors in ALPHA State',
   packages_business_create_connection_dialog_neirongSho2: 'Show Connectors in BETA State',
   packages_business_create_connection_dialog_neirongCho:

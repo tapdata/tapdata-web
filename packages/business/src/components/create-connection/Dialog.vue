@@ -10,16 +10,13 @@
     destroy-on-close
   >
     <div slot="title" class="text-center font-color-dark fs-2 fw-bold">
-      {{ showForm ? 'Configure SaaS Source' : title }}
+      {{ showForm ? 'Configure Source' : title }}
     </div>
     <div v-if="!showForm" class="px-7 text-center">
       <div class="mb-4 font-color-light">{{ $t('packages_business_create_connection_dialog_neirongCho') }}</div>
       <ConnectionSelector v-bind="$attrs" :visible.sync="visible" @select="handleSelect"></ConnectionSelector>
     </div>
     <div v-else class="form__content flex flex-column">
-      <div class="mb-4 text-center font-color-light">
-        {{ $t('packages_business_create_connection_dialog_neirongCon') }}
-      </div>
       <ServeForm v-if="activeTab" :params="formParams" class="flex-fill"></ServeForm>
       <ConnectionForm
         v-else
