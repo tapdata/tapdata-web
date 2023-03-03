@@ -258,14 +258,6 @@ export default {
         })
         .then(data => {
           let list = (data?.items || []).map(item => {
-            const regResult =
-              /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
-                item.uri
-              )
-            if (regResult && regResult.groups && regResult.groups.password) {
-              const { username, host, database, query } = regResult.groups
-              item.uri = `mongodb://${username}:***@${host}/${database}${query ? '/' + query : ''}`
-            }
             item.typeFmt = this.typeMapping[item.type] || '-'
             item.createTimeFmt = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') || '-'
             return item
