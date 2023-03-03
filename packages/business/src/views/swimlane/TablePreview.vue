@@ -1,7 +1,7 @@
 <template>
   <Drawer class="sw-table-drawer" :visible.sync="visible" width="850px" v-loading="loading">
     <header v-if="detailData">
-      <div class="table-name mb-4">{{ detailData.name }}</div>
+      <div class="table-name mb-4">{{ detailData.name }} {{ tableStatus }}</div>
       <span class="mr-2">
         <VIcon class="tree-item-icon" size="18">table</VIcon> <span class="table-dec-txt">Table</span></span
       >
@@ -9,8 +9,12 @@
         <span>{{ detailData.sourceType }}</span></span
       >
       <span class="ml-8"
-        ><span class="table-dec-label">模型最后更新时间：</span
-        ><span class="table-dec-txt">{{ detailData.lastUpdAt }}</span></span
+        ><span class="table-dec-label">数据最后更新时间：</span
+        ><span class="table-dec-txt">{{ detailData.LastDataChangeTime }}</span></span
+      >
+      <span class="ml-8"
+        ><span class="table-dec-label">增量数据延迟：</span
+        ><span class="table-dec-txt">{{ detailData.cdcDelayTime }}</span></span
       >
     </header>
     <section class="mt-6">
@@ -224,7 +228,10 @@ export default {
         initial_sync: this.$t('public_task_type_initial_sync'),
         cdc: this.$t('public_task_type_cdc'),
         'initial_sync+cdc': this.$t('public_task_type_initial_sync') + '+' + this.$t('public_task_type_cdc')
-      }
+      },
+      tableStatus: '',
+      cdcDelayTime: '',
+      LastDataChangeTime: ''
     }
   },
   methods: {
@@ -246,9 +253,6 @@ export default {
           this.getSampleData()
           this.getTasks()
           this.getTaskStatus()
-          setTimeout(() => {
-            this.getStorageSize()
-          }, 800)
         })
         .finally(() => {
           this.loading = false
@@ -274,8 +278,10 @@ export default {
       proxyApi
         .call(params)
         .then(res => {
-          this.sampleData = res
+          this.sampleData = res?.sampleData
           this.sampleHeader = Object.keys(this.sampleData.reduce((o, c) => Object.assign(0, c))) || []
+          this.storageSize = Math.floor(res?.tableInfo?.storageSize / 1024) || 0
+          this.numOfRows = res?.tableInfo?.numOfRows || 0
         })
         .finally(() => {
           this.loadingSampleData = false
@@ -304,7 +310,13 @@ export default {
     },
     //获取表状态
     getTaskStatus() {
-      taskApi.tableStatus(this.connectionId, this.detailData.name)
+      taskApi.tableStatus(this.connectionId, this.detailData.name).then(res => {
+        this.tableStatus = res.TableStatusInfoDto?.status
+        this.cdcDelayTime = res.TableStatusInfoDto?.cdcDelayTime
+        this.LastDataChangeTime = res.TableStatusInfoDto?.LastDataChangeTime
+          ? dayjs(res.TableStatusInfoDto?.LastDataChangeTime).format('YYYY-MM-DD HH:mm:ss')
+          : '-'
+      })
     }
   }
 }
