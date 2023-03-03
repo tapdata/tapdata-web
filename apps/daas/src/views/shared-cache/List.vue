@@ -240,6 +240,7 @@ export default {
         { label: this.$t('shared_cache_time'), value: row.cacheTimeAtFmt, icon: 'cacheTimeAtFmt' },
         { label: this.$t('column_connection'), value: row.connectionName, icon: 'connectionName' },
         { label: this.$t('column_table'), value: row.tableName, icon: 'table' },
+        { label: this.$t('daas_external_storage_list_waicunmingcheng'), value: row.externalStorageName, icon: 'table' },
         { label: this.$t('shared_cache_max_memory'), value: row.maxMemory, icon: 'record' }
       ]
       this.isShowDetails = true
