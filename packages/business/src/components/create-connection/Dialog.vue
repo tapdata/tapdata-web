@@ -6,7 +6,7 @@
     width="80%"
     top="10vh"
     custom-class="connection-dialog ldp-conection-dialog flex flex-column"
-    :before-close="handleClose"
+    :before-close="handleBeforeClose"
     destroy-on-close
   >
     <div slot="title" class="text-center font-color-dark fs-2 fw-bold">
@@ -69,10 +69,17 @@ export default {
       this.showForm = false
       this.formParams = {}
     },
+
+    handleBeforeClose() {
+      this.init()
+      this.handleClose()
+    },
+
     handleClose() {
       this.$emit('visible', false)
       this.$emit('update:visible', false)
     },
+
     handleSelect(item) {
       this.activeTab = item.activeTab
       if (!item.activeTab) {
