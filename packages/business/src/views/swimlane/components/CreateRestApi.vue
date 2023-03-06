@@ -974,7 +974,7 @@ export default {
 .t-dialog.el-dialog {
   display: flex;
   flex-direction: column;
-  margin: 0;
+  margin: 0 !important;
   position: absolute;
   left: 50%;
   top: 50%;
