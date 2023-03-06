@@ -824,13 +824,16 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
 
 /* Dialog
 --------------------------*/
-.el-dialog__title {
-  font-size: 16px;
-  font-weight: 500;
-  color: map-get($fontColor, dark);
-}
-.el-dialog__close {
-  color: map-get($color, primary);
+.el-dialog {
+  border-radius: 4px;
+  .el-dialog__title {
+    font-size: 16px;
+    font-weight: 500;
+    color: map-get($fontColor, dark);
+  }
+  .el-dialog__close {
+    color: map-get($color, primary);
+  }
 }
 
 /* Icon

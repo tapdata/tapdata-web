@@ -81,6 +81,7 @@
         </span>
       </ElDialog>
       <connectionPreview ref="targetconnectionView"></connectionPreview>
+      <CreateRestApi v-model="apiDialog.visible"></CreateRestApi>
     </div>
   </div>
 </template>
@@ -97,6 +98,7 @@ import { DatabaseIcon } from '../../components'
 import connectionPreview from './connectionPreview'
 import { makeStatusAndDisabled } from '../../shared'
 import { TaskStatus } from '../../components'
+import CreateRestApi from './components/CreateRestApi'
 
 const DEFAULT_SETTINGS = {
   name: '', // 任务名称
@@ -175,7 +177,7 @@ export default {
     dragState: Object
   },
 
-  components: { DatabaseIcon, connectionPreview, TaskList, draggable },
+  components: { CreateRestApi, DatabaseIcon, connectionPreview, TaskList, draggable },
 
   data() {
     return {
@@ -189,7 +191,10 @@ export default {
         syncType: '',
         visible: false
       },
-      connectionTaskMap: {}
+      connectionTaskMap: {},
+      apiDialog: {
+        visible: false
+      }
     }
   },
 
@@ -323,28 +328,36 @@ export default {
       ev.preventDefault()
       this.removeDropEffect(ev)
 
-      if (this.dragging || item.type === 'service') return
+      if (this.dragging) return
 
       const { draggingObjects } = this.dragState
       if (!draggingObjects.length) return
       const object = draggingObjects[0]
 
-      if (object.data.type === 'connection') {
-        this.dialogConfig.from = object.data
-        this.dialogConfig.to = item
-        this.dialogConfig.title = 'Create Migrate Pipeline'
-        this.dialogConfig.syncType = 'migrate'
-        this.dialogConfig.desc = `Tapdata will create a pipeline task to sync [ ${object.data.name} ] to [ ${item.name} ],  please click button below to continue. You can also change the pipeline name`
-      } else if (object.data.type === 'table') {
-        this.dialogConfig.from = object.parent.data
-        this.dialogConfig.tableName = object.data.name
-        this.dialogConfig.to = item
-        this.dialogConfig.title = 'Create Sync Pipeline'
-        this.dialogConfig.syncType = 'sync'
-        this.dialogConfig.desc = `Tapdata will create a pipeline task to sync [ ${object.data.name} ] from [ ${object.parent.data.name} ] to [ ${item.name} ],  please click button below to continue. You can also change the pipeline name`
-      }
+      if (item.type === 'service') {
+        this.showApiDialog()
+      } else {
+        if (object.data.type === 'connection') {
+          this.dialogConfig.from = object.data
+          this.dialogConfig.to = item
+          this.dialogConfig.title = 'Create Migrate Pipeline'
+          this.dialogConfig.syncType = 'migrate'
+          this.dialogConfig.desc = `Tapdata will create a pipeline task to sync [ ${object.data.name} ] to [ ${item.name} ],  please click button below to continue. You can also change the pipeline name`
+        } else if (object.data.type === 'table') {
+          this.dialogConfig.from = object.parent.data
+          this.dialogConfig.tableName = object.data.name
+          this.dialogConfig.to = item
+          this.dialogConfig.title = 'Create Sync Pipeline'
+          this.dialogConfig.syncType = 'sync'
+          this.dialogConfig.desc = `Tapdata will create a pipeline task to sync [ ${object.data.name} ] from [ ${object.parent.data.name} ] to [ ${item.name} ],  please click button below to continue. You can also change the pipeline name`
+        }
 
-      this.showDialog()
+        this.showDialog()
+      }
+    },
+
+    showApiDialog() {
+      this.apiDialog.visible = true
     },
 
     makeMigrateTask(from, to) {
