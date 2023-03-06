@@ -36,7 +36,7 @@
           <span v-else class="error">
             <i class="connections-status__icon el-icon-error"></i>
             <span>
-              {{ $t('apiaudit_fail') }}
+              {{ $t('public_status_failed') }}
             </span>
           </span>
         </template>
@@ -44,10 +44,10 @@
       <el-table-column prop="codeMsg" :label="$t('apiaudit_reason_fail')" :show-overflow-tooltip="true">
         <template #default="{ row }"> {{ row.code == 200 ? '-' : row.codeMsg }} </template>
       </el-table-column>
-      <el-table-column :label="$t('column_operation')" width="70" fixed="right">
+      <el-table-column :label="$t('public_operation')" width="70" fixed="right">
         <template slot-scope="scope">
           <el-button v-readonlybtn="'API_clients_amangement'" size="mini" type="text" @click="toDetails(scope.row)">
-            {{ $t('button_details') }}
+            {{ $t('public_button_details') }}
           </el-button>
         </template>
       </el-table-column>
@@ -189,7 +189,7 @@ export default {
             data = data || []
             return data.map(item => {
               return {
-                label: item == 200 ? this.$t('apiaudit_success') : this.$t('apiaudit_fail'),
+                label: item == 200 ? this.$t('apiaudit_success') : this.$t('public_status_failed'),
                 value: item
               }
             })
@@ -200,7 +200,7 @@ export default {
           title: this.$t('apiaudit_interview_time'),
           key: 'start,end',
           type: 'datetimerange',
-          placeholder: this.$t('common_placeholder_select'),
+          placeholder: this.$t('public_select_placeholder'),
           selectedWidth: '200px'
         },
         {

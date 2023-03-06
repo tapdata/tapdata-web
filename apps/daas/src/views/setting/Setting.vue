@@ -102,7 +102,7 @@
             <template v-if="item.category !== 'license'">
               <span class="btns py-3" v-if="item.category === 'SMTP'">
                 <a class="link-primary" @click="checkTemplate()">{{ $t('setting_email_template') }}</a>
-                <a class="link-primary" @click="connectAndTest()">{{ $t('setting_connect_and_test') }}</a>
+                <a class="link-primary" @click="connectAndTest()">{{ $t('public_connection_button_test') }}</a>
               </span>
             </template>
           </div>
@@ -353,7 +353,7 @@ export default {
         })
       })
       settingsApi.save(settingData).then(() => {
-        this.$message.success(this.$t('message_save_ok'))
+        this.$message.success(this.$t('public_message_save_ok'))
       })
       // .catch(e => {
       //   this.$message.error(e.response.msg)

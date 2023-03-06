@@ -384,7 +384,8 @@ export default {
 
       try {
         this.initWS()
-        const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
+        // const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
+        const result = await taskApi.save(data)
         this.reformDataflow(result)
         !needStart && this.$message.success(this.$t('public_message_save_ok'))
         this.setEditVersion(result.editVersion)
@@ -432,6 +433,7 @@ export default {
         this.dataflow.disabledData.stop = true
         this.dataflow.disabledData.reset = true
         // this.gotoViewer()
+        this.beforeStartTask()
         this.buried('taskSubmit', { result: true })
       } else {
         this.buried('taskSubmit', { result: false })

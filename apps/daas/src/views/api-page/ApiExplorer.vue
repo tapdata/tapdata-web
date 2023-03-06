@@ -882,9 +882,6 @@ export default {
             this.$message.success(this.$t('public_message_delete_ok'))
             this.table.fetch()
           })
-          // .catch(() => {
-          //   this.$message.info(this.$t('public_message_delete_fail'))
-          // })
         })
       )
     },

@@ -100,7 +100,7 @@ import i18n from '@tap/i18n'
 import { mapGetters, mapState } from 'vuex'
 import { debounce } from 'lodash'
 
-import noData from 'web-core/assets/images/noData.png'
+import noData from '@tap/assets/images/noData.png'
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
 
 import mixins from './mixins'

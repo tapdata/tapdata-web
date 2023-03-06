@@ -11,36 +11,36 @@ for (const dKey in directionMap) {
 }
 export const TOPOLOGY_MAP = topologyMap,
   TASK_STATUS_MAP = {
-    running: { text: i18n.t('status_running'), icon: 'yunxingzhong', type: 'success' },
-    paused: { text: i18n.t('status_paused'), icon: 'daiqidong' },
-    error: { text: i18n.t('status_error'), icon: 'cuowu', type: 'warning' },
-    draft: { text: i18n.t('status_draft'), icon: 'daiqidong' },
-    scheduled: { text: i18n.t('status_scheduled'), icon: 'qidongzhong', type: 'success' },
-    stopping: { text: i18n.t('status_stopping'), icon: 'tingzhizhong', type: 'success' },
-    'force stopping': { text: i18n.t('status_force_stopping'), icon: 'qiangzhitingzhi', type: 'success' },
-    finished: { text: i18n.t('status_finished'), icon: 'yiwancheng', type: 'success' }
+    running: { text: i18n.t('public_status_running'), icon: 'yunxingzhong', type: 'success' },
+    paused: { text: i18n.t('public_status_wait_run'), icon: 'daiqidong' },
+    error: { text: i18n.t('public_status_error'), icon: 'cuowu', type: 'warning' },
+    draft: { text: i18n.t('public_status_wait_run'), icon: 'daiqidong' },
+    scheduled: { text: i18n.t('public_status_starting'), icon: 'qidongzhong', type: 'success' },
+    stopping: { text: i18n.t('public_status_stopping'), icon: 'tingzhizhong', type: 'success' },
+    'force stopping': { text: i18n.t('public_status_force_stopping'), icon: 'qiangzhitingzhi', type: 'success' },
+    finished: { text: i18n.t('public_status_finished'), icon: 'yiwancheng', type: 'success' }
   },
   SHARECDC_MAP = {
-    running: { text: i18n.t('status_running'), icon: 'running', type: 'success' },
-    stop: { text: i18n.t('status_stop'), icon: 'stop' },
-    error: { text: i18n.t('status_error'), icon: 'error', type: 'warning' },
-    edit: { text: i18n.t('status_edit'), icon: 'edit' },
-    scheduling: { text: i18n.t('status_scheduling'), icon: 'scheduling', type: 'success' },
-    stopping: { text: i18n.t('status_stopping'), icon: 'stopping', type: 'warning' }
+    running: { text: i18n.t('public_status_running'), icon: 'running', type: 'success' },
+    stop: { text: i18n.t('public_status_stop'), icon: 'stop' },
+    error: { text: i18n.t('public_status_error'), icon: 'error', type: 'warning' },
+    edit: { text: i18n.t('public_status_edit'), icon: 'edit' },
+    scheduling: { text: i18n.t('public_status_starting'), icon: 'scheduling', type: 'success' },
+    stopping: { text: i18n.t('public_status_stopping'), icon: 'stopping', type: 'warning' }
     // pause: { text: '强制停止中', icon: 'pause', type: 'success' },
     //complete: { text: '已完成', icon: 'complete', type: 'success' }
   },
   CONNECTION_STATUS_MAP = {
     ready: { text: i18n.t('public_status_ready'), type: 'success' },
-    invalid: { text: i18n.t('connection_list_invalidation'), type: 'danger' },
+    invalid: { text: i18n.t('public_status_invalid'), type: 'danger' },
     testing: { text: i18n.t('public_status_testing'), type: 'warning' }
   },
   MILESTONE_STATUS_MAP = {
     waiting: { text: i18n.t('milestone_list_status_waiting'), icon: 'daizhixing' },
     running: { text: i18n.t('task_info_progress'), icon: 'jinxingzhong' },
-    error: { text: i18n.t('milestone_list_status_error'), icon: 'cuowu' },
-    finish: { text: i18n.t('milestone_list_status_finish'), icon: 'yiwancheng' },
-    paused: { text: i18n.t('status_stopping'), icon: 'yizanting' }
+    error: { text: i18n.t('public_status_error'), icon: 'cuowu' },
+    finish: { text: i18n.t('public_status_finished'), icon: 'yiwancheng' },
+    paused: { text: i18n.t('public_status_stopping'), icon: 'yizanting' }
   },
   ETL_STATUS_MAP = {
     running: { text: i18n.t('public_status_running'), type: 'success' },
@@ -48,20 +48,20 @@ export const TOPOLOGY_MAP = topologyMap,
     error: { text: i18n.t('public_status_error'), type: 'danger' }
   },
   ETL_SUB_STATUS_MAP = {
-    ready: { text: i18n.t('status_ready'), type: 'ready' },
-    edit: { text: i18n.t('status_edit'), type: 'edit' },
-    scheduling: { text: i18n.t('status_scheduling'), type: 'scheduling' },
-    schedule_failed: { text: i18n.t('status_schedule_failed'), type: 'schedule_failed' },
-    wait_run: { text: i18n.t('status_wait_run'), type: 'wait_run' },
-    running: { text: i18n.t('status_running'), type: 'running' },
-    stopping: { text: i18n.t('status_stopping'), type: 'stopping' },
-    stop: { text: i18n.t('status_stop'), type: 'stop' },
-    complete: { text: i18n.t('status_complete'), type: 'complete' },
+    ready: { text: i18n.t('public_status_wait_run'), type: 'ready' },
+    edit: { text: i18n.t('public_status_edit'), type: 'edit' },
+    scheduling: { text: i18n.t('public_status_starting'), type: 'scheduling' },
+    schedule_failed: { text: i18n.t('public_status_error'), type: 'schedule_failed' },
+    wait_run: { text: i18n.t('public_status_starting'), type: 'wait_run' },
+    running: { text: i18n.t('public_status_running'), type: 'running' },
+    stopping: { text: i18n.t('public_status_stopping'), type: 'stopping' },
+    stop: { text: i18n.t('public_status_stop'), type: 'stop' },
+    complete: { text: i18n.t('public_status_complete'), type: 'complete' },
     error: { text: i18n.t('public_status_error'), type: 'error' }
   },
   MIGRATE_STATUS_MAP = {
     running: {
-      text: i18n.t('dataFlow_status_running'),
+      text: i18n.t('public_status_running'),
       icon: 'right-fill',
       type: 'success'
     },
@@ -71,27 +71,27 @@ export const TOPOLOGY_MAP = topologyMap,
       type: 'primary'
     },
     error: {
-      text: i18n.t('dataFlow_status_error'),
+      text: i18n.t('public_status_error'),
       icon: 'warning',
       type: 'warning'
     },
     draft: {
-      text: i18n.t('dataFlow_status_draft'),
+      text: i18n.t('public_status_edit'),
       icon: 'wait-fill',
       type: 'primary'
     },
     scheduled: {
-      text: i18n.t('dataFlow_status_scheduled'),
+      text: i18n.t('public_status_starting'),
       icon: 'loading',
       type: 'success'
     },
     stopping: {
-      text: i18n.t('dataFlow_status_stopping'),
+      text: i18n.t('public_status_stopping'),
       icon: 'loading',
       type: 'success'
     },
     'force stopping': {
-      text: i18n.t('dataFlow_status_force_stopping'),
+      text: i18n.t('public_status_force_stopping'),
       icon: 'loading',
       type: 'success'
     }

@@ -321,14 +321,12 @@
   .#{$namespace}-input-number.is-controls-right .#{$namespace}-input__inner {
     padding-right: 40px;
   }
-  .#{$namespace}-input-number.is-controls-right
-    .#{$namespace}-input-number__increase {
+  .#{$namespace}-input-number.is-controls-right .#{$namespace}-input-number__increase {
     top: 0;
     right: 8px;
     border-right: $--border-base;
   }
-  .#{$namespace}-input-number.is-controls-right
-    .#{$namespace}-input-number__decrease {
+  .#{$namespace}-input-number.is-controls-right .#{$namespace}-input-number__decrease {
     bottom: 0;
     right: 8px;
     border-right: $--border-base;

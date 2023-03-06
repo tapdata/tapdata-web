@@ -1,6 +1,6 @@
 import { createForm } from '@formily/core'
 import { Schema } from '@formily/json-schema'
-import { isString } from 'web-core/utils/util'
+import { isString } from '@tap/shared'
 
 function recursiveField(form, schema, scope, basePath, name) {
   // 校验的特殊处理：1.x-reactions作为异步请求时；2.去掉默认值

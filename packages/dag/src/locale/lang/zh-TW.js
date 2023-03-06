@@ -159,6 +159,9 @@ export default {
   packages_dag_migration_configpanel_moxing: '模型',
   packages_dag_migration_configpanel_peizhi: '配置',
   packages_dag_migration_consolepanel_quanburizhi: '全部日誌',
+  packages_dag_migration_consolepanel_dangqianjiancefaxian: '當前檢測共發現',
+  packages_dag_migration_consolepanel_qingguanzhu: '請關注',
+  packages_dag_migration_consolepanel_ge: '個',
   packages_dag_migration_settingpanel_dangrenwufuhe:
     '開啟數據校驗開關後，任務會自動對同步結果的一致性進行全量校驗和增量校驗，並會在運行監控頁面將校驗不一致的數據行數展示出來。需要注意，當任務符合以下情況時，即使開啟校驗開關任務也不會進行校驗\n 1. 添加了中間處理節點\n 2. 源連接不支持校驗\n 3. 目標連接不支持校驗',
   packages_dag_monitor_bottompanel_yunxingjilu: '運行記錄',
@@ -268,6 +271,7 @@ export default {
   packages_dag_src_editor_zhuconghebing: '主從合併',
   packages_dag_src_editor_juhe: '聚合',
   packages_dag_src_editor_zhuijiahebing: '追加合併',
+  packages_dag_src_editor_join: '連接',
   packages_dag_src_migrationeditor_jSchuli: '增強JS',
   packages_dag_src_migrationeditor_jSchuli_standard: '標準JS',
   packages_dag_src_migrationeditor_ziduanbianji: '字段編輯',
@@ -322,7 +326,7 @@ export default {
   packages_dag_nodes_database_tuiyanjieguo: '推演結果',
   packages_dag_nodes_database_dangqianjiedianzhi: '當前節點支持處理的DDL事件',
   packages_dag_nodes_database_ddLshijian: 'DDL事件採集',
-  packages_dag_nodes_database_kaiqihourenwu: '開啟後任務將會自動處理新增，刪除表',
+  packages_dag_nodes_database_kaiqihourenwu: '開啟後任務將會自動採集選中的源端DDL事件',
   packages_dag_nodes_database_dongtaixinzengbiao: '動態新增表',
   packages_dag_nodes_database_quanliangmeipici: '全量每批次讀取的條數',
   packages_dag_nodes_database_piliangduqutiao: '批量讀取條數',
@@ -496,6 +500,7 @@ export default {
   packages_dag_nodes_database_tongjizhuijiaxie2: '統計追加寫入: 只處理插入事件，丟棄更新和刪除事件',
   packages_dag_nodes_database_setting_cdc_changjing_desc: '純增量場景下，不支持對目標表結構和數據的清除操作。 ',
   packages_dag_nodes_database_xierumeipizui: '寫入每批最大等待時間(ms)',
+  packages_dag_nodes_database_xierumeipizui_tips: '寫入每批最大等待時間(ms)',
   packages_dag_nodes_database_quanliangmeipici2: '全量每批次寫入的條數',
   packages_dag_nodes_database_piliangxierutiao: '批量寫入條數',
   packages_dag_nodes_database_zhengzebiaodashi: '正則表達式匹配模式下，數據庫新增的符合表達式的表會被自動同步到目標',
@@ -518,5 +523,13 @@ export default {
   packages_dag_nodes_table_zengliangtongbufang: '增量同步方式',
   packages_dag_table_list_card_index_zanshimeiyoupi: '暫時沒有匹配的表',
   packages_dag_nodes_database_pipeidaodebiao: '匹配到的表',
-  packages_dag_nodes_tableprocessor_biaomingchongfu: '表名重複'
+  packages_dag_nodes_tableprocessor_biaomingchongfu: '表名重複',
+  packages_dag_monitor_leftsider_zuidaQps: '最大QPS(Q/S)',
+  packages_dag_monitor_leftsider_pingjunQps: '平均QPS(Q/S)',
+  packages_dag_monitor_leftsider_quanliangwanchenghao: '全量完成耗時',
+  packages_dag_monitor_bottompanel_renwujindu: '任務進度',
+  packages_dag_src_editor_shaohouqidong: '稍後啟動',
+  packages_dag_src_editor_jixuqidong: '繼續啟動',
+  packages_dag_src_editor_renwubaocunjianceshi:
+    '任務保存檢測時發現了告警，可能會導致任務運行出現異常，建議您查看並解決告警後再啟動任務'
 }

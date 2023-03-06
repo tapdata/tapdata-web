@@ -791,7 +791,7 @@ export default [
         component: () => import(/* webpackChunkName: "external-storage" */ '@/views/external-storage/List'),
         meta: {
           title: 'page_title_external_storage',
-          code: ''
+          code: 'v2_external-storage_menu'
         }
       },
       /* ---------- 用户管理  ----------*/

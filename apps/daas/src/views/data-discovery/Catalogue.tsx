@@ -293,7 +293,7 @@ export default defineComponent({
             }}
           ></el-table-column>
           <el-table-column label={i18n.t('public_type')} prop="type"></el-table-column>
-          <el-table-column label={i18n.t('module_form_describtion')} prop="desc"></el-table-column>
+          <el-table-column label={i18n.t('public_description')} prop="desc"></el-table-column>
         </TablePage>
         <Drawer
           class="object-drawer-wrap overflow-hidden"

@@ -14,10 +14,14 @@
         min-width="180"
         :label="$t('daas_external_storage_list_waicunmingcheng')"
         prop="name"
-      ></ElTableColumn>
+      >
+        <template #default="{ row }">
+          <ElLink style="display: inline" type="primary" @click.stop="checkDetails(row)">{{ row.name }}</ElLink>
+        </template>
+      </ElTableColumn>
       <ElTableColumn
         show-overflow-tooltip
-        min-width="100"
+        min-width="150"
         :label="$t('daas_external_storage_list_waicunleixing')"
         prop="typeFmt"
       ></ElTableColumn>
@@ -33,11 +37,19 @@
         :label="$t('public_create_time')"
         prop="createTimeFmt"
       ></ElTableColumn>
-      <ElTableColumn width="120" :label="$t('column_operation')">
+      <ElTableColumn width="220" :label="$t('public_operation')">
         <template #default="{ row }">
-          <!-- <ElButton type="text" :disabled="!row.canEdit" @click="openDialog(row)">{{ $t('public_button_edit') }}</ElButton>
-          <ElDivider direction="vertical"></ElDivider> -->
-          <ElButton type="text" :disabled="!row.canDelete" @click="remove(row)">{{ $t('public_button_delete') }}</ElButton>
+          <span class="mr-2">{{ $t('daas_external_storage_list_sheweimoren') }}</span>
+          <ElSwitch
+            type="text"
+            v-model="row.defaultStorage"
+            :disabled="row.defaultStorage"
+            @change="handleDefault(row)"
+          ></ElSwitch>
+          <ElDivider direction="vertical"></ElDivider>
+          <ElButton type="text" :disabled="!row.canDelete" @click="remove(row)">{{
+            $t('public_button_delete')
+          }}</ElButton>
         </template>
       </ElTableColumn>
     </TablePage>
@@ -48,7 +60,15 @@
         form.id ? $t('daas_external_storage_list_bianjiwaicun') : $t('daas_external_storage_list_chuangjianwaicun')
       "
     >
-      <ElForm class="" ref="form" label-position="left" label-width="120px" size="mini" :model="form" :rules="rules">
+      <ElForm
+        class=""
+        ref="form"
+        label-position="left"
+        :label-width="labelWidth"
+        size="mini"
+        :model="form"
+        :rules="rules"
+      >
         <ElFormItem :label="$t('daas_external_storage_list_waicunmingcheng')" prop="name">
           <ElInput v-model="form.name"></ElInput>
         </ElFormItem>
@@ -58,15 +78,25 @@
             <ElOption label="RocksDB" value="rocksdb"></ElOption>
           </ElSelect>
         </ElFormItem>
+        <ElFormItem :label="$t('daas_external_storage_list_cunchulujing')" prop="uri">
+          <ElInput
+            v-model="form.uri"
+            :placeholder="
+              form.type === 'mongodb'
+                ? 'Example: mongodb://admin:password@127.0.0.1:27017/mydb?replicaSet=xxx&authSource=admin'
+                : 'Example: /xxx/xxx'
+            "
+            type="textarea"
+            resize="none"
+          ></ElInput>
+        </ElFormItem>
         <ElFormItem
           v-if="form.type === 'mongodb'"
           :label="$t('daas_external_storage_list_waicunbiaoming')"
+          required
           prop="table"
         >
           <ElInput v-model="form.table"></ElInput>
-        </ElFormItem>
-        <ElFormItem :label="$t('daas_external_storage_list_cunchulujing')" prop="uri">
-          <ElInput v-model="form.uri" type="textarea" resize="none"></ElInput>
         </ElFormItem>
         <ElFormItem :label="$t('daas_external_storage_list_sheweimoren')">
           <ElSwitch v-model="form.defaultStorage"></ElSwitch>
@@ -77,6 +107,44 @@
         <ElButton type="primary" size="mini" @click="submit">{{ $t('public_button_confirm') }}</ElButton>
       </span>
     </ElDialog>
+    <Drawer class="shared-cache-details" :visible.sync="isShowDetails">
+      <div v-if="details.id" class="shared-cache-details--header flex pb-3">
+        <div class="img-box">
+          <VIcon class="icon">text</VIcon>
+        </div>
+        <div class="flex-fill ml-4 overflow-hidden">
+          <div class="fs-6 ellipsis">{{ details.name }}</div>
+        </div>
+      </div>
+      <ul class="mt-2">
+        <li v-for="item in info" :key="item.label" class="drawer-info__item">
+          <VIcon class="fs-7 mt-2">{{ item.icon }}</VIcon>
+          <div class="body ml-4">
+            <label class="label">{{ item.label }}</label>
+            <p class="value mt-2">{{ item.value || '-' }}</p>
+          </div>
+        </li>
+      </ul>
+    </Drawer>
+    <el-dialog :visible.sync="showUsingTaskDialog" title="提示">
+      <div>{{ $t('daas_external_storage_list_tishi', { val1: usingTasks.length }) }}</div>
+      <el-table class="mt-4" height="250px" :data="usingTasks">
+        <el-table-column min-width="240" :label="$t('public_task_name')" :show-overflow-tooltip="true">
+          <template #default="{ row }">
+            <span class="dataflow-name link-primary flex">
+              <ElLink
+                role="ellipsis"
+                type="primary"
+                class="justify-content-start ellipsis block"
+                :class="['name']"
+                @click.stop="handleClickName(row)"
+                >{{ row.name }}</ElLink
+              >
+            </span>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
   </section>
 </template>
 <script>
@@ -84,13 +152,14 @@ import i18n from '@/i18n'
 
 import dayjs from 'dayjs'
 import { cloneDeep } from 'lodash'
+import { toRegExp } from '@tap/shared'
 
 import { externalStorageApi } from '@tap/api'
 import { TablePage } from '@tap/business'
-import { FilterBar } from '@tap/component'
+import { FilterBar, Drawer } from '@tap/component'
 
 export default {
-  components: { TablePage, FilterBar },
+  components: { TablePage, FilterBar, Drawer },
   data() {
     var checkTable = (rule, value, callback) => {
       if (this.form.type === 'mongodb' && value === '') {
@@ -118,7 +187,13 @@ export default {
         name: [{ required: true, message: i18n.t('daas_external_storage_list_qingshuruwaicun'), trigger: 'blur' }],
         uri: [{ required: true, message: i18n.t('daas_external_storage_list_qingshurucunchu'), trigger: 'blur' }],
         table: [{ validator: checkTable, trigger: 'blur' }]
-      }
+      },
+      isShowDetails: false,
+      details: '',
+      info: [],
+      labelWidth: '120px',
+      showUsingTaskDialog: false,
+      usingTasks: []
     }
   },
   computed: {
@@ -134,10 +209,12 @@ export default {
   created() {
     this.searchParams = Object.assign(this.searchParams, this.$route.query)
     this.getFilterItems()
+    const { locale } = this.$i18n
+    this.labelWidth = locale === 'en' ? '220px' : '120px'
   },
   methods: {
     getFilterItems() {
-      let typeOptions = [{ label: i18n.t('select_option_all'), value: '' }]
+      let typeOptions = [{ label: i18n.t('public_select_option_all'), value: '' }]
       for (const key in this.typeMapping) {
         const label = this.typeMapping[key]
         typeOptions.push({
@@ -165,7 +242,7 @@ export default {
       let where = {}
 
       if (keyword && keyword.trim()) {
-        where['name'] = { like: keyword, options: 'i' }
+        where.name = { like: toRegExp(keyword), options: 'i' }
       }
       type && (where.type = type)
 
@@ -176,7 +253,7 @@ export default {
         where
       }
       return externalStorageApi
-        .get({
+        .list({
           filter: JSON.stringify(filter)
         })
         .then(data => {
@@ -223,24 +300,84 @@ export default {
             this.loading = false
           }
           if (id) {
-            await externalStorageApi.updateById(id, params).catch(catchFunc)
+            await externalStorageApi
+              .updateById(id, params)
+              .then(() => {
+                this.table.fetch()
+                this.dialogVisible = false
+                this.loading = false
+              })
+              .catch(catchFunc)
           } else {
-            await externalStorageApi.post(params).catch(catchFunc)
+            await externalStorageApi
+              .post(params)
+              .then(() => {
+                this.table.fetch()
+                this.dialogVisible = false
+                this.loading = false
+              })
+              .catch(catchFunc)
           }
-          this.table.fetch()
-          this.dialogVisible = false
-          this.loading = false
         }
       })
     },
+    handleDefault(row) {
+      externalStorageApi.changeExternalStorage(row.id).then(() => {
+        this.$message.success(i18n.t('public_message_operation_success'))
+        this.table.fetch()
+      })
+    },
     async remove(row) {
+      //先去请求是否外存已被使用了
+      this.usingTasks = await await externalStorageApi.usingTask(row.id)
       const flag = await this.$confirm(i18n.t('daas_external_storage_list_querenshanchuwai'), '', {
         type: 'warning',
         showClose: false
       })
       if (flag) {
-        await externalStorageApi.delete(row.id)
-        this.table.fetch()
+        if (this.usingTasks) {
+          this.showUsingTaskDialog = true
+        } else {
+          await externalStorageApi.delete(row.id)
+          this.table.fetch()
+        }
+      }
+    },
+    checkDetails(row) {
+      this.details = row
+      this.info = [
+        //{ label: this.$t('daas_external_storage_list_waicunmingcheng'), value: row.name, icon: 'createUser' },
+        {
+          label: this.$t('daas_external_storage_list_waicunleixing'),
+          value: row.typeFmt,
+          icon: 'name'
+        },
+        { label: this.$t('daas_external_storage_list_waicunbiaoming'), value: row.table, icon: 'table' },
+        { label: this.$t('public_create_time'), value: row.createTimeFmt, icon: 'cacheTimeAtFmt' },
+        { label: this.$t('daas_external_storage_list_cunchulujing'), value: row.uri, icon: 'database' },
+        { label: this.$t('daas_external_storage_list_sheweimoren'), value: row.defaultStorage, icon: 'record' }
+      ]
+      this.isShowDetails = true
+    },
+    /**
+     * 点击名称调整
+     * @param row
+     */
+    handleClickName(item) {
+      if (item?.syncType === 'migrate') {
+        this.$router.push({
+          name: 'migrateList',
+          query: {
+            keyword: item.name
+          }
+        })
+      } else {
+        this.$router.push({
+          name: 'dataflowList',
+          query: {
+            keyword: item.name
+          }
+        })
       }
     }
   }
@@ -250,5 +387,58 @@ export default {
 .external-storage-wrapper {
   height: 100%;
   overflow: hidden;
+}
+.shared-cache-list-wrap {
+  overflow: hidden;
+}
+.icon-status {
+  display: block;
+  width: 60px;
+  height: 25px;
+  line-height: 25px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-align: center;
+  &.icon-status--success {
+    color: #178061;
+    background: #c4f3cb;
+  }
+  &.icon-status--warning {
+    color: #d5760e;
+    background: #ffe9cf;
+  }
+  &.icon-status--danger {
+    color: map-get($color, danger);
+    background: #ffecec;
+  }
+}
+.shared-cache-details {
+  padding: 16px;
+}
+.shared-cache-details--header {
+  border-bottom: 1px solid map-get($borderColor, light);
+  .icon {
+    font-size: 18px;
+  }
+}
+.drawer-info__item {
+  display: flex;
+  .body {
+    flex: 1;
+    padding: 8px 0;
+    line-height: 17px;
+    border-bottom: 1px solid map-get($borderColor, light);
+    .label {
+      font-size: $fontBaseTitle;
+      color: rgba(0, 0, 0, 0.6);
+    }
+    .value {
+      font-size: $fontBaseTitle;
+      color: map-get($fontColor, dark);
+    }
+  }
 }
 </style>

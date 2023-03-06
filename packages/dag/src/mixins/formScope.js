@@ -592,6 +592,20 @@ export default {
           } catch (e) {
             return []
           }
+        },
+
+        /**
+         * 设置主键默认值
+         * 目前的场景是更新条件字段
+         * @param field
+         */
+        setDefaultPrimaryKey(field) {
+          if (!field.value?.length && field.dataSource && field.dataSource.length) {
+            let isPrimaryKeyList = field.dataSource.filter(item => item.isPrimaryKey)
+            let indicesUniqueList = field.dataSource.filter(item => item.indicesUnique)
+            field.setValue((isPrimaryKeyList.length ? isPrimaryKeyList : indicesUniqueList).map(item => item.value))
+            field.validate()
+          }
         }
       }
     }

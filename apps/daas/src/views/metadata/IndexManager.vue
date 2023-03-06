@@ -34,7 +34,7 @@
         </template>
       </el-table-column>
       <el-table-column :label="$t('metadata_details_index_create_by')" prop="create_by"> </el-table-column>
-      <el-table-column :label="$t('metadata_details_opera')" width="120">
+      <el-table-column :label="$t('public_operation')" width="120">
         <template slot-scope="scope">
           <el-button
             size="mini"

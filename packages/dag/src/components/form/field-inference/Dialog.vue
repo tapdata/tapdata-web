@@ -78,7 +78,7 @@ import { cloneDeep } from 'lodash'
 
 import i18n from '@tap/i18n'
 import { metadataInstancesApi } from '@tap/api'
-import noData from 'web-core/assets/images/noData.png'
+import noData from '@tap/assets/images/noData.png'
 
 export default {
   name: 'FieldInferenceDialog',

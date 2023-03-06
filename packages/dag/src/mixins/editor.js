@@ -1084,6 +1084,7 @@ export default {
           someErrorMsg = i18n.t('packages_dag_src_migrationmonitor_noden', {
             val1: node.name
           })
+          this.handleLocateNode(node)
           return true
         }
 
@@ -1707,8 +1708,10 @@ export default {
     },
 
     handleLocateNode(node) {
-      this.$refs.paperScroller.centerNode(node)
       this.nodeSelectedById(node.id, true, true)
+      setTimeout(() => {
+        this.$refs.paperScroller.centerNode(node)
+      }, 300)
     },
 
     async handleStart() {
@@ -2016,6 +2019,48 @@ export default {
           return map
         }, {})
       )
+    },
+
+    getIsDataflow() {
+      const routeName = this.$route.name
+      return ['DataflowNew', 'DataflowEditor', 'DataflowViewer', 'TaskMonitor'].includes(routeName)
+    },
+
+    beforeStartTask() {
+      const buriedCode = this.getIsDataflow() ? 'taskStart' : 'migrationStart'
+      const { warnNum, errorNum, over } = this.$refs.console?.getData() || {}
+      if (!over) {
+        setTimeout(this.beforeStartTask, 800)
+      } else {
+        if (warnNum || errorNum) {
+          this.$confirm(i18n.t('packages_dag_src_editor_renwubaocunjianceshi'), '', {
+            type: 'warning',
+            confirmButtonText: i18n.t('packages_dag_src_editor_jixuqidong'),
+            cancelButtonText: i18n.t('packages_dag_src_editor_shaohouqidong')
+          }).then(resFlag => {
+            if (resFlag) {
+              this.startTask()
+              return
+            }
+            this.buried(buriedCode, { result: false })
+          })
+        } else {
+          this.startTask()
+        }
+      }
+    },
+
+    startTask() {
+      const buriedCode = this.getIsDataflow() ? 'taskStart' : 'migrationStart'
+      taskApi
+        .batchStart([this.dataflow.id])
+        .then(() => {
+          this.buried(buriedCode, { result: true })
+          this.gotoViewer()
+        })
+        .catch(() => {
+          this.buried(buriedCode, { result: false })
+        })
     }
   }
 }

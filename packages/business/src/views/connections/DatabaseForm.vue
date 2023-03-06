@@ -110,16 +110,7 @@
 import { action } from '@formily/reactive'
 
 import i18n from '@tap/i18n'
-import {
-  clusterApi,
-  connectionsApi,
-  databaseTypesApi,
-  logcollectorApi,
-  pdkApi,
-  settingsApi,
-  externalStorageApi,
-  proxyApi
-} from '@tap/api'
+import { clusterApi, connectionsApi, databaseTypesApi, pdkApi, externalStorageApi, proxyApi } from '@tap/api'
 import { VIcon, GitBook } from '@tap/component'
 import { SchemaToForm } from '@tap/form'
 import { checkConnectionName, isEmpty } from '@tap/shared'
@@ -147,7 +138,6 @@ export default {
       id: '',
       commandCallbackFunctionId: '',
       visible: false,
-      showSystemConfig: false,
       model: {
         config: null
       },
@@ -190,10 +180,6 @@ export default {
     })
   },
   methods: {
-    //保存全局挖掘设置
-    saveSetting(digSettingForm) {
-      logcollectorApi.patchSystemConfig(digSettingForm)
-    },
     goBack() {
       let msg = this.$route.params.id
         ? i18n.t('packages_business_connections_databaseform_cicaozuohuidiu')
@@ -252,16 +238,6 @@ export default {
             config: formValues
           }
         )
-        if (this.showSystemConfig) {
-          //打开挖掘配置
-          let digSettingForm = {
-            persistenceMode: 'MongoDB',
-            persistenceMongodb_uri_db: params.persistenceMongodb_uri_db,
-            persistenceMongodb_collection: params.persistenceMongodb_collection,
-            share_cdc_ttl_day: params.share_cdc_ttl_day
-          }
-          this.saveSetting(digSettingForm)
-        }
         let promise = null
         if (id) {
           params.id = id
@@ -462,13 +438,8 @@ export default {
           }
         }
       }
-      const settings = await settingsApi.get()
       // 是否支持共享挖掘
-      if (
-        this.isDaas &&
-        this.pdkOptions.capabilities?.some(t => t.id === 'stream_read_function') &&
-        settings.some(it => it.key === 'share_cdc_enable' && it.value === 'true')
-      ) {
+      if (this.isDaas && this.pdkOptions.capabilities?.some(t => t.id === 'stream_read_function')) {
         END.properties.__TAPDATA.properties.shareCdcEnable = {
           type: 'boolean',
           default: false,
@@ -483,119 +454,33 @@ export default {
           }
         }
         // 共享挖掘设置
-        let shareFlag = await Promise.all([logcollectorApi.check(), logcollectorApi.getSystemConfig()]).then(
-          ([check, data]) => check && !data?.persistenceMongodb_uri_db
-        )
-        if (shareFlag) {
-          this.showSystemConfig = true
-          let config = {
-            // TODO 按时屏蔽外存功能
-            // externalStorageId: {
-            //   title: this.$t('packages_business_external_storage'), //外存配置
-            //   type: 'string',
-            //   'x-decorator': 'FormItem',
-            //   'x-component': 'Select',
-            //   'x-reactions': [
-            //     {
-            //       dependencies: ['__TAPDATA.shareCdcEnable'],
-            //       fulfill: {
-            //         state: {
-            //           display: '{{$deps[0] ? "visible" : "hidden"}}'
-            //         }
-            //       }
-            //     },
-            //     '{{useAsyncDataSource(loadExternalStorage)}}',
-            //     {
-            //       fulfill: {
-            //         state: {
-            //           value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}'
-            //         }
-            //       }
-            //     }
-            //   ]
-            // },
-            persistenceMongodb_uri_db: {
-              type: 'string',
-              title: this.$t('MongoDB URI'),
-              required: true,
-              'x-decorator': 'FormItem',
-              'x-component': 'Input',
-              'x-component-props': {
-                type: 'textarea'
+        let config = {
+          shareCDCExternalStorageId: {
+            title: this.$t('packages_business_external_storage'), //外存配置
+            type: 'string',
+            'x-decorator': 'FormItem',
+            'x-component': 'Select',
+            'x-reactions': [
+              {
+                dependencies: ['__TAPDATA.shareCdcEnable'],
+                fulfill: {
+                  state: {
+                    display: '{{$deps[0] ? "visible" : "hidden"}}'
+                  }
+                }
               },
-              'x-reactions': {
-                dependencies: ['__TAPDATA.shareCdcEnable'],
+              '{{useAsyncDataSource(loadExternalStorage)}}',
+              {
                 fulfill: {
                   state: {
-                    display: '{{$deps[0] ? "visible" : "hidden"}}'
+                    value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}'
                   }
                 }
               }
-            },
-            persistenceMongodb_collection: {
-              type: 'string',
-              title: this.$t('packages_business_share_form_setting_table_name'),
-              required: true,
-              'x-decorator': 'FormItem',
-              'x-component': 'Input',
-              'x-reactions': {
-                dependencies: ['__TAPDATA.shareCdcEnable'],
-                fulfill: {
-                  state: {
-                    display: '{{$deps[0] ? "visible" : "hidden"}}'
-                  }
-                }
-              }
-            },
-            share_cdc_ttl_day: {
-              type: 'string',
-              title: this.$t('packages_business_share_form_setting_log_time'),
-              required: true,
-              'x-decorator': 'FormItem',
-              default: 3,
-              enum: [
-                {
-                  label: 1 + this.$t('public_time_d'),
-                  value: 1
-                },
-                {
-                  label: 2 + this.$t('public_time_d'),
-                  value: 2
-                },
-                {
-                  label: 3 + this.$t('public_time_d'),
-                  value: 3
-                },
-                {
-                  label: 4 + this.$t('public_time_d'),
-                  value: 4
-                },
-                {
-                  label: 5 + this.$t('public_time_d'),
-                  value: 5
-                },
-                {
-                  label: 6 + this.$t('public_time_d'),
-                  value: 6
-                },
-                {
-                  label: 7 + this.$t('public_time_d'),
-                  value: 7
-                }
-              ],
-              'x-component': 'Select',
-              'x-reactions': {
-                dependencies: ['__TAPDATA.shareCdcEnable'],
-                fulfill: {
-                  state: {
-                    display: '{{$deps[0] ? "visible" : "hidden"}}'
-                  }
-                }
-              }
-            }
+            ]
           }
-          END.properties.__TAPDATA.properties = Object.assign({}, END.properties.__TAPDATA.properties, config)
         }
+        END.properties.__TAPDATA.properties = Object.assign({}, END.properties.__TAPDATA.properties, config)
       }
 
       // 是否支持包含表
@@ -882,7 +767,7 @@ export default {
         this.getPdkData(id)
         delete result.properties.START.properties.__TAPDATA.properties.name
       }
-      //this.showSystemConfig = true
+
       this.schemaScope = {
         isEdit: !!id,
         useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
@@ -1002,7 +887,7 @@ export default {
         },
         async loadExternalStorage() {
           try {
-            const { items = [] } = await externalStorageApi.get()
+            const { items = [] } = await externalStorageApi.list()
             return items.map(item => {
               return {
                 label: item.name,
@@ -1031,7 +916,8 @@ export default {
           accessNodeProcessId,
           openTableExcludeFilter,
           tableExcludeFilter,
-          schemaUpdateHour
+          schemaUpdateHour,
+          shareCDCExternalStorageId
         } = this.model
         this.schemaFormInstance.setValues({
           __TAPDATA: {
@@ -1044,6 +930,7 @@ export default {
             accessNodeProcessId,
             openTableExcludeFilter,
             tableExcludeFilter,
+            shareCDCExternalStorageId,
             schemaUpdateHour
           },
           ...this.model?.config

@@ -148,13 +148,14 @@ export const JsProcessor = observer(
                 handleAutoQuery()
               }, 500)
             } else {
-              // 两秒后再去拿一次日志，如果没有日志就继续轮询
+              // 两秒后再去拿一次日志
               outTimer = setTimeout(() => {
                 logTimer = setInterval(async () => {
                   await queryLog()
-                  if (logList.value.length) {
-                    resetQuery()
-                  }
+                  // 不继续轮询了
+                  // if (logList.value.length) {
+                  resetQuery()
+                  // }
                 }, 1000)
               }, 2000)
 

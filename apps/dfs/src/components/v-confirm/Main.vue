@@ -77,10 +77,10 @@
 
 <script>
 import { VIcon } from '@tap/component'
-import error from 'web-core/assets/icons/svg/error.svg'
-import info from 'web-core/assets/icons/svg/info.svg'
-import success from 'web-core/assets/icons/svg/success.svg'
-import warning from 'web-core/assets/icons/svg/warning.svg'
+import error from '@tap/assets/icons/svg/error.svg'
+import info from '@tap/assets/icons/svg/info.svg'
+import success from '@tap/assets/icons/svg/success.svg'
+import warning from '@tap/assets/icons/svg/warning.svg'
 import i18n from '@/i18n'
 
 export default {

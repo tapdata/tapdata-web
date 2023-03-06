@@ -22,11 +22,11 @@
       <template slot="interval" slot-scope="scope">
         <el-input-number :controls="false" style="width: 100px" v-model="scope.row.interval"></el-input-number>
         <el-select style="width: 100px" class="ml-2" v-model="scope.row.unit">
-          <el-option :label="$t('task_info_ms')" value="MS"></el-option>
-          <el-option :label="$t('dag_data_setting_second')" value="SECOND"></el-option>
+          <el-option :label="$t('public_time_ms')" value="MS"></el-option>
+          <el-option :label="$t('public_time_s')" value="SECOND"></el-option>
           <el-option :label="$t('dataFlow_min')" value="MINUTE"></el-option>
-          <el-option :label="$t('dag_data_setting_hour')" value="HOUR"></el-option>
-          <el-option :label="$t('task_info_d')" value="DAY"></el-option>
+          <el-option :label="$t('public_time_h')" value="HOUR"></el-option>
+          <el-option :label="$t('public_time_d')" value="DAY"></el-option>
           <el-option :label="$t('timeToLive_w')" value="WEEK"></el-option>
         </el-select>
       </template>
@@ -77,7 +77,7 @@ export default {
     return {
       columns: [
         {
-          label: i18n.t('module_form_describtion'),
+          label: i18n.t('public_description'),
           slotName: 'key'
         },
         {
@@ -131,7 +131,7 @@ export default {
     },
     save() {
       settingsApi.saveAlarm(this.tableData).then(() => {
-        this.$message.success(i18n.t('message_save_ok'))
+        this.$message.success(i18n.t('public_message_save_ok'))
       })
     },
     showAlarmRlues() {
@@ -148,7 +148,7 @@ export default {
       //告警设置单独保存
       alarmRuleApi.save(this.alarmData).then(() => {
         this.alarmRulesVisible = false
-        this.$message.success(this.$t('message_save_ok'))
+        this.$message.success(this.$t('public_message_save_ok'))
       })
     }
   }

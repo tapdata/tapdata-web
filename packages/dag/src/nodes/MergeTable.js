@@ -23,6 +23,23 @@ export class MergeTable extends NodeType {
         type: 'array',
         'x-display': 'hidden'
       },
+
+      externalStorageId: {
+        title: '外存配置', //外存配置
+        type: 'string',
+        'x-decorator': 'FormItem',
+        'x-component': 'Select',
+        'x-reactions': [
+          '{{useAsyncDataSourceByConfig({service: loadExternalStorage, withoutField: true})}}',
+          {
+            fulfill: {
+              state: {
+                value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}'
+              }
+            }
+          }
+        ]
+      },
       name: {
         type: 'string',
         title: i18n.t('public_node_name'),
@@ -30,23 +47,6 @@ export class MergeTable extends NodeType {
         'x-decorator': 'FormItem',
         'x-component': 'Input'
       },
-      // TODO 按时屏蔽外存功能
-      // externalStorageId: {
-      //   title: '外存配置', //外存配置
-      //   type: 'string',
-      //   'x-decorator': 'FormItem',
-      //   'x-component': 'Select',
-      //   'x-reactions': [
-      //     '{{useAsyncDataSourceByConfig({service: loadExternalStorage, withoutField: true})}}',
-      //     {
-      //       fulfill: {
-      //         state: {
-      //           value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}'
-      //         }
-      //       }
-      //     }
-      //   ]
-      // },
 
       mergeProperties: {
         title: i18n.t('packages_dag_nodes_mergetable_zhucongpeizhi'),

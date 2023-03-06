@@ -125,15 +125,21 @@ export default {
     }
   },
 
-  watch: {
-    value(v) {
-      this.setPeriod(v)
-    },
+  computed: {
+    optionsAndValue() {
+      const { value, options } = this
+      return { value, options }
+    }
+  },
 
-    options: {
+  watch: {
+    optionsAndValue: {
       deep: true,
       handler() {
-        this.setPeriod(this.value)
+        this.items = JSON.parse(JSON.stringify(this.options))
+        if (this.value) {
+          this.setPeriod(this.value)
+        }
       }
     }
   },
@@ -141,7 +147,6 @@ export default {
   mounted() {
     this.items = JSON.parse(JSON.stringify(this.options))
     this.setPeriod(this.value || this.items[0]?.value)
-    // this.changeFnc(this.period)
     this.$once('setMinAndMaxTime', () => {
       const picker = this.$refs.datetime?.picker
       const [startTime, endTime] = this.getRangeTime()

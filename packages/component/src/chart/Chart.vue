@@ -15,6 +15,7 @@ import {
   DataZoomComponent
 } from 'echarts/components'
 import VChart from 'vue-echarts'
+import { delayTrigger } from '@tap/shared'
 
 use([
   CanvasRenderer,
@@ -419,7 +420,6 @@ export default {
       return val
     },
     resize() {
-      const { delayTrigger } = this.$util
       delayTrigger(() => {
         this.chart?.resize?.()
       }, 300)

@@ -86,8 +86,7 @@
           ></ElInputNumber>
           <span class="ml-1">M</span>
         </ElFormItem>
-        <!-- // TODO 按时屏蔽外存功能 -->
-        <!-- <ElFormItem prop="externalStorageId" label="外存配置">
+        <ElFormItem prop="externalStorageId" label="外存配置">
           <ElSelect v-model="form.externalStorageId" filterable :loading="!externalStorageOptions">
             <ElOption
               v-for="opt in externalStorageOptions"
@@ -96,7 +95,7 @@
               :label="opt.label"
             ></ElOption>
           </ElSelect>
-        </ElFormItem> -->
+        </ElFormItem>
         <ElFormItem>
           <template slot="label">
             <span>{{ $t('shared_cache_code') }}</span>
@@ -109,7 +108,7 @@
         <CodeView :data="form"></CodeView>
       </ElForm>
       <div class="pt-6">
-        <ElButton @click="$router.back()">{{ $t('button_back') }}</ElButton>
+        <ElButton @click="$router.back()">{{ $t('public_button_back') }}</ElButton>
         <ElButton type="primary" @click="submit">{{ $t('public_button_save') }}</ElButton>
       </div>
     </div>
@@ -165,11 +164,10 @@ export default {
         tableName: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_table') }],
         cacheKeys: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_keys') }],
         fields: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_fields') }],
-        maxMemory: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_max_memory') }]
-        // TODO 按时屏蔽外存功能
-        // externalStorageId: [
-        //   { required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_external_storage') }
-        // ]
+        maxMemory: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_max_memory') }],
+        externalStorageId: [
+          { required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_external_storage') }
+        ]
       }
     }
   },
@@ -330,7 +328,7 @@ export default {
           this.loading = true
           sharedCacheApi[method](params)
             .then(() => {
-              this.$message.success(this.$t('message_save_ok'))
+              this.$message.success(this.$t('public_message_save_ok'))
               this.$router.replace({
                 name: 'sharedCacheList'
               })

@@ -179,13 +179,14 @@
 </template>
 
 <script>
+import { delayTrigger } from '@tap/shared'
 import { VIcon } from '@tap/component'
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
-import rollback from 'web-core/assets/icons/svg/rollback.svg'
-import refresh from 'web-core/assets/icons/svg/refresh.svg'
-import fieldMapping_table from 'web-core/assets/images/fieldMapping_table.png'
-import fieldMapping_table_error from 'web-core/assets/images/fieldMapping_table_error.png'
-import noData from 'web-core/assets/images/noData.png'
+import rollback from '@tap/assets/icons/svg/rollback.svg'
+import refresh from '@tap/assets/icons/svg/refresh.svg'
+import fieldMapping_table from '@tap/assets/images/fieldMapping_table.png'
+import fieldMapping_table_error from '@tap/assets/images/fieldMapping_table_error.png'
+import noData from '@tap/assets/images/noData.png'
 import { metadataInstancesApi, taskApi, typeMappingApi } from '@tap/api'
 import { mapState } from 'vuex'
 
@@ -320,7 +321,6 @@ export default {
     },
     search() {
       this.$nextTick(() => {
-        const { delayTrigger } = this.$util
         delayTrigger(() => {
           if (this.searchField.trim()) {
             this.searchField = this.searchField.trim().toString() //去空格

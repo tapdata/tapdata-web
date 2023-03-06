@@ -121,6 +121,7 @@
           :alarmData="alarmData"
           :logTotals="logTotals"
           :taskRecord="taskRecord"
+          :quota="quota"
           @load-data="init"
           ref="bottomPanel"
           @showBottomPanel="handleShowBottomPanel"
@@ -688,7 +689,10 @@ export default {
             'currentSnapshotTableInsertRowTotal',
             'replicateLag',
             'snapshotStartAt',
-            'currentEventTimestamp'
+            'currentEventTimestamp',
+            'snapshotDoneCost',
+            'outputQpsMax',
+            'outputQpsAvg'
           ],
           type: 'instant' // 瞬时值
         },

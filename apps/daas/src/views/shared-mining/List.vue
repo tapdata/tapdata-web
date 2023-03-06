@@ -4,12 +4,12 @@
       <template slot="search">
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </template>
-      <!--外存配置还没上，这里的设置需要打开-->
-      <div slot="operation">
-        <el-button class="btn btn-create" type="primary" size="mini" :loading="loadingConfig" @click="handleSetting">
-          <span>{{ $t('share_list_setting') }}</span>
-        </el-button>
-      </div>
+      <!--外存配置已上，这里关闭，稳定后相关注释代码可去掉-->
+      <!--      <div slot="operation">-->
+      <!--        <el-button class="btn btn-create" type="primary" size="mini" :loading="loadingConfig" @click="handleSetting">-->
+      <!--          <span>{{ $t('share_list_setting') }}</span>-->
+      <!--        </el-button>-->
+      <!--      </div>-->
       <el-table-column min-width="250" :label="$t('share_list_name')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.name }}
@@ -27,20 +27,19 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column min-width="150" :label="$t('share_list_time_excavation')">
+      <el-table-column min-width="160" :label="$t('share_list_time_excavation')">
         <template slot-scope="scope">
           {{ scope.row.logTime }}
         </template>
       </el-table-column>
       <el-table-column sortable min-width="120" :label="$t('share_list_time')" prop="delayTime"></el-table-column>
-      <el-table-column prop="createTime" min-width="150" :label="$t('share_list_creat_time')" sortable>
-      </el-table-column>
+      <el-table-column prop="createTime" min-width="160" :label="$t('public_create_time')" sortable> </el-table-column>
       <el-table-column min-width="110" prop="status" :label="$t('share_list_status')">
         <template #default="{ row }">
           <TaskStatus :task="row" />
         </template>
       </el-table-column>
-      <el-table-column width="210" fixed="right" :label="$t('column_operation')">
+      <el-table-column width="210" fixed="right" :label="$t('public_operation')">
         <template #default="{ row }">
           <TaskButtons :task="row" :hide-list="['del']" @trigger="taskButtonsHandler"></TaskButtons>
         </template>
@@ -103,8 +102,7 @@
             v-model="digSettingForm.share_cdc_ttl_day"
             :placeholder="$t('shared_cdc_setting_select_time_tip')"
           >
-            <el-option v-for="op in logSaveList" :key="op" :label="op + $t('share_form_edit_day')" :value="op">
-            </el-option>
+            <el-option v-for="op in logSaveList" :key="op" :label="op + $t('public_time_d')" :value="op"> </el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -129,14 +127,13 @@
           <el-input clearable v-model="editForm.name"></el-input>
         </el-form-item>
         <el-form-item size="mini" :label="$t('share_form_setting_log_time')">
-          <el-select v-model="editForm.storageTime" :placeholder="$t('common_placeholder_select')">
-            <el-option v-for="op in logSaveList" :key="op" :label="op + $t('share_form_edit_day')" :value="op">
-            </el-option>
+          <el-select v-model="editForm.storageTime" :placeholder="$t('public_select_placeholder')">
+            <el-option v-for="op in logSaveList" :key="op" :label="op + $t('public_time_d')" :value="op"> </el-option>
           </el-select>
         </el-form-item>
         <el-form-item size="mini" :label="$t('share_list_edit_title_start_time')">
           <div v-for="(item, index) in editForm.syncPoints" :key="index">
-            <el-select v-model="item.pointType" :placeholder="$t('common_placeholder_select')">
+            <el-select v-model="item.pointType" :placeholder="$t('public_select_placeholder')">
               <el-option v-for="op in pointTypeOptions" :key="op.value" :label="op.label" :value="op.value"></el-option>
             </el-select>
             <el-date-picker
@@ -356,7 +353,7 @@ export default {
           }
           logcollectorApi.patchSystemConfig(this.digSettingForm).then(() => {
             this.settingDialogVisible = false
-            this.$message.success(this.$t('message_save_ok'))
+            this.$message.success(this.$t('public_message_save_ok'))
           })
         }
       })
@@ -409,20 +406,7 @@ export default {
     },
     // 取消编辑
     cancelEdit() {
-      //弹框没有任何修改 直接关闭不需要二次提示
-      if (this.editForm.name === this.currentForm.name && this.editForm.storageTime === this.currentForm.storageTime) {
-        this.editDialogVisible = false
-        return
-      }
-      this.$confirm(this.$t('share_form_edit_text'), this.$t('share_form_edit_title'), {
-        type: 'warning',
-        closeOnClickModal: false
-      }).then(resFlag => {
-        if (!resFlag) {
-          return
-        }
-        this.editDialogVisible = false
-      })
+      this.editDialogVisible = false
     },
     // 保存编辑
     saveEdit() {

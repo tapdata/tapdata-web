@@ -31,7 +31,7 @@
           <span>{{ scope.row.userCount }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('role_list_founder')">
+      <el-table-column :label="$t('public_creator')">
         <template slot-scope="scope">
           <div>
             {{ scope.row.userEmail }}
@@ -48,7 +48,7 @@
           </el-switch>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('column_operation')" width="310">
+      <el-table-column :label="$t('public_operation')" width="310">
         <template slot-scope="scope">
           <el-button
             type="text"
@@ -321,11 +321,11 @@ export default {
                     .then(data => {
                       if (data) {
                         // roleMappingModel.post(newRoleMappings);
-                        this.$message.success(this.$t('message_save_ok'))
+                        this.$message.success(this.$t('public_message_save_ok'))
                       }
                     })
                 } else {
-                  this.$message.success(this.$t('message_save_ok'))
+                  this.$message.success(this.$t('public_message_save_ok'))
                 }
                 this.table.fetch()
               }
@@ -408,7 +408,7 @@ export default {
           })
 
           this.table.fetch()
-          this.$message.success(this.$t('message_save_ok'))
+          this.$message.success(this.$t('public_message_save_ok'))
         }
       })
       // .catch(e => {

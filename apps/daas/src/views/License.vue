@@ -2,8 +2,10 @@
   <section class="license-wrapper h-100">
     <TablePage ref="table" row-key="id" :remoteMethod="getData">
       <div slot="operation">
-        <ElButton :loading="copyLoading" class="btn" size="mini" @click="copySid">{{ $t('button_copy') }}</ElButton>
-        <ElButton class="btn" type="primary" size="mini" @click="openDialog">{{ $t('license_renew') }}</ElButton>
+        <ElButton :loading="copyLoading" class="btn" size="mini" @click="copySid">{{
+          $t('public_button_copy')
+        }}</ElButton>
+        <ElButton class="btn" type="primary" size="mini" @click="openDialog">{{ $t('public_event_update') }}</ElButton>
       </div>
       <ElTableColumn type="selection" width="45"></ElTableColumn>
       <ElTableColumn prop="hostname" :label="$t('license_node_name')" min-width="150"></ElTableColumn>
@@ -13,14 +15,14 @@
           <span :class="'color-' + row.status.color">{{ row.status.text }}</span>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="expirationDateFmt" :label="$t('license_expire_date')" min-width="150"></ElTableColumn>
-      <ElTableColumn prop="lastUpdatedFmt" :label="$t('license_update_time')" min-width="150"></ElTableColumn>
+      <ElTableColumn prop="expirationDateFmt" :label="$t('license_expire_date')" min-width="160"></ElTableColumn>
+      <ElTableColumn prop="lastUpdatedFmt" :label="$t('license_update_time')" min-width="160"></ElTableColumn>
     </TablePage>
     <ElDialog append-to-body :title="$t('license_renew_dialog')" :visible.sync="dialogVisible">
       <ElInput v-model.trim="license" type="textarea"></ElInput>
       <div slot="footer">
         <ElButton type="primary" size="mini" :disabled="!license" :loading="dialogLoading" @click="updateLicense">{{
-          $t('license_renew')
+          $t('public_event_update')
         }}</ElButton>
       </div>
     </ElDialog>

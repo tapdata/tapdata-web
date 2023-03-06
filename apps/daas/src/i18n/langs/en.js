@@ -1865,6 +1865,8 @@ export default {
   daas_external_storage_list_chuangjianwaicun: 'Create External Storage',
   daas_external_storage_list_bianjiwaicun: 'Edit External Storage',
   daas_external_storage_list_waicunxinxi: 'External Storage Information',
+  daas_external_storage_list_tishi:
+    'This external storage has been called by {val1} tasks, please delete or modify the configuration and try again.',
   daas_function_importform_shangchuanwenjianda: 'Upload file size cannot exceed {val1}M',
   daas_login_login_dengluchenggong: 'Login successful:',
   daas_login_passwordreset_shangweiyanzhengdian: 'Email not verified',

@@ -6,7 +6,7 @@ const serveUrlMap = {
   mock: 'http://localhost:30300',
   dev: 'http://localhost:3000', // TM端本地默认地址
   jet: 'http://jet.devops.tapdata.net:31613',
-  test: 'http://139.198.127.204:31845/' // v2.0
+  test: 'http://139.198.127.204:32181' // v2.14
 }
 let origin
 const { argv } = process
@@ -48,19 +48,21 @@ module.exports = {
   ],
   chainWebpack(config) {
     //  ============ 配置别名 ============
-    config.resolve.alias.set('@', resolve('src')).set('web-core', resolve('../../packages/web-core'))
+    config.resolve.alias.set('@', resolve('src'))
 
     // ============ svg处理 ============
     const iconDir = resolve('src/assets/icons/svg')
     const colorIconDir = resolve('src/assets/icons/colorSvg')
-    const webCoreIconDir = resolve('../../packages/web-core/assets/icons/svg')
+    const assetsIconDir = resolve('../../packages/assets/icons/svg')
+    const assetsColorIconDir = resolve('../../packages/assets/icons/colorSvg')
 
     // svg loader排除 icon 目录
     config.module
       .rule('svg')
       .exclude.add(iconDir)
       .add(colorIconDir)
-      .add(webCoreIconDir)
+      .add(assetsIconDir)
+      .add(assetsColorIconDir)
       .end()
       .use('svgo-loader')
       .loader('svgo-loader')
@@ -71,7 +73,7 @@ module.exports = {
       .rule('svg-sprite')
       .test(/\.svg$/)
       .include.add(iconDir)
-      .add(webCoreIconDir)
+      .add(assetsIconDir)
       .end()
       .use('svg-sprite-loader')
       .loader('svg-sprite-loader')
@@ -107,6 +109,7 @@ module.exports = {
       .rule('color-svg-sprite')
       .test(/\.svg$/)
       .include.add(colorIconDir)
+      .add(assetsColorIconDir)
       .end()
       .use('svg-sprite-loader')
       .loader('svg-sprite-loader')

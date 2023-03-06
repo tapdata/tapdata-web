@@ -16,7 +16,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('metadata_details_opera')" width="120">
+      <el-table-column :label="$t('public_operation')" width="120">
         <template slot-scope="scope">
           <!-- v-if="scope.row.name !== '_id_' && scope.row.status === 'created'" -->
           <el-button size="mini" type="text" style="color: #f56c6c" @click="remove(scope.row)">{{
@@ -43,7 +43,7 @@
             filterable
             allow-create
             default-first-option
-            :placeholder="$t('dataRule_pleaseSelect') + $t('metadata_details_validation_field_name')"
+            :placeholder="$t('public_select_placeholder') + $t('metadata_details_validation_field_name')"
           >
             <el-option v-for="item in fieldsArr" :key="item.value" :label="item.name" :value="item.value"></el-option>
           </el-select>
@@ -55,7 +55,7 @@
             filterable
             default-first-option
             clearable
-            :placeholder="$t('dataRule_pleaseSelect') + $t('metadata_details_validation_ruleTem')"
+            :placeholder="$t('public_select_placeholder') + $t('metadata_details_validation_ruleTem')"
           >
             <el-option-group v-for="group in rulesArr" :key="group.label" :label="group.label">
               <el-option v-for="item in group.rulesData" :key="item.name" :label="item.name" :value="item.name">
@@ -79,7 +79,7 @@
                     v-model="createForm.ruleType"
                     clearable
                     size="mini"
-                    :placeholder="$t('dataRule_pleaseSelect') + $t('dataRule_classification')"
+                    :placeholder="$t('public_select_placeholder') + $t('dataRule_classification')"
                   >
                     <el-option
                       v-for="item in ruleTypes"
@@ -118,7 +118,7 @@
                     <el-select
                       v-model="createForm.rule.dataType"
                       size="mini"
-                      :placeholder="$t('dataRule_pleaseSelect') + $t('dataRule_classification')"
+                      :placeholder="$t('public_select_placeholder') + $t('dataRule_classification')"
                     >
                       <el-option
                         v-for="item in dataTypes"
@@ -143,7 +143,7 @@
                     <el-input
                       v-model="createForm.rule.dataRegex"
                       size="mini"
-                      :placeholder="$t('dataRule_pleaseInput') + $t('dataRule_data_Regex')"
+                      :placeholder="$t('public_input_placeholder') + $t('dataRule_data_Regex')"
                     ></el-input>
                   </el-form-item>
                 </el-col>
@@ -161,7 +161,7 @@
                     <el-input
                       v-model="createForm.rule.enumData"
                       size="mini"
-                      :placeholder="$t('dataRule_pleaseInput') + $t('dataRule_data_Enum')"
+                      :placeholder="$t('public_input_placeholder') + $t('dataRule_data_Enum')"
                     ></el-input>
                   </el-form-item>
                 </el-col>
@@ -172,14 +172,14 @@
                     prop="rule.gt"
                     :rules="{
                       required: true,
-                      message: $t('dataRule_required'),
+                      message: $t('public_form_not_empty'),
                       trigger: 'blur'
                     }"
                   >
                     <el-select
                       v-model="createForm.rule.gt"
                       size="mini"
-                      :placeholder="$t('dataRule_pleaseSelect') + $t('dataRule_greater_that')"
+                      :placeholder="$t('public_select_placeholder') + $t('dataRule_greater_that')"
                     >
                       <el-option label=">" value="gt"></el-option>
                       <el-option label=">=" value="gte"></el-option>
@@ -203,14 +203,14 @@
                     prop="rule.lt"
                     :rules="{
                       required: true,
-                      message: $t('dataRule_required'),
+                      message: $t('public_form_not_empty'),
                       trigger: 'blur'
                     }"
                   >
                     <el-select
                       v-model="createForm.rule.lt"
                       size="mini"
-                      :placeholder="$t('dataRule_pleaseSelect') + $t('dataRule_less_that')"
+                      :placeholder="$t('public_select_placeholder') + $t('dataRule_less_that')"
                     >
                       <el-option label="<" value="lt"></el-option>
                       <el-option label="<=" value="lte"></el-option>
@@ -331,7 +331,7 @@ export default {
       gtDataRules: [
         {
           required: true,
-          message: this.$t('dataRule_required')
+          message: this.$t('public_form_not_empty')
         },
         {
           type: 'number',
@@ -345,7 +345,7 @@ export default {
       ltDataRules: [
         {
           required: true,
-          message: this.$t('dataRule_required')
+          message: this.$t('public_form_not_empty')
         },
         {
           type: 'number',
@@ -490,7 +490,7 @@ export default {
 
           this.doSave()
           this.createDialogVisible = false
-          this.$message.success(this.$t('message_save_ok'))
+          this.$message.success(this.$t('public_message_save_ok'))
         }
       })
     },
@@ -564,8 +564,8 @@ export default {
     remove(item) {
       const h = this.$createElement
       let _this = this
-      let message = h('p', [this.$t('message_deleteOrNot') + ' ' + item.field_name])
-      this.$confirm(message, this.$t('message_title_prompt'), {
+      let message = h('p', [this.$t('public_message_delete_confirm') + ' ' + item.field_name])
+      this.$confirm(message, this.$t('public_message_title_prompt'), {
         type: 'warning',
         closeOnClickModal: false
       }).then(action => {
@@ -581,7 +581,7 @@ export default {
             })
           _this.validationTableData.splice(idx, 1)
           this.doSave()
-          this.$message.success(this.$t('message_deleteOK'))
+          this.$message.success(this.$t('public_message_delete_ok'))
         }
       })
     }

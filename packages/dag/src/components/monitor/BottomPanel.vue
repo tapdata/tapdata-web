@@ -3,6 +3,14 @@
     <NodeLog v-if="onlyLog" v-bind="$attrs" :currentTab="currentTab" ref="log"></NodeLog>
     <div v-else class="panel-header flex h-100">
       <ElTabs v-model="currentTab" class="setting-tabs h-100 flex-1 flex flex-column" key="bottomPanel">
+        <ElTabPane :label="$t('packages_dag_monitor_bottompanel_renwujindu')" name="milestone">
+          <MilestoneList
+            v-if="currentTab === 'milestone'"
+            v-bind="$attrs"
+            :currentTab="currentTab"
+            ref="log"
+          ></MilestoneList>
+        </ElTabPane>
         <ElTabPane :label="$t('packages_dag_monitor_bottompanel_rizhi')" name="log">
           <NodeLog v-if="currentTab === 'log'" v-bind="$attrs" :currentTab="currentTab" ref="log"></NodeLog>
         </ElTabPane>
@@ -42,6 +50,7 @@ import resize from '@tap/component/src/directives/resize'
 import focusSelect from '@tap/component/src/directives/focusSelect'
 import NodeLog from '@tap/business/src/components/logs/NodeLog'
 import RelationList from '@tap/business/src/views/task/relation/List.vue'
+import MilestoneList from '@tap/business/src/components/milestone/List'
 import Time from '@tap/shared/src/time'
 
 import Record from './components/Record'
@@ -50,7 +59,7 @@ import Alert from './components/Alert'
 export default {
   name: 'ConfigPanel',
 
-  components: { Record, Alert, RelationList, NodeLog },
+  components: { Record, Alert, RelationList, NodeLog, MilestoneList },
 
   directives: {
     resize,
@@ -66,7 +75,7 @@ export default {
 
   data() {
     return {
-      currentTab: 'log',
+      currentTab: 'milestone',
       name: this.activeNode?.name
     }
   },
@@ -129,8 +138,11 @@ export default {
             this.getLogRef()?.changeItem({
               value: data.nodeId
             })
-          data.lastOccurrenceTime &&
-            this.getLogRef()?.$refs.timeSelect.changeTime([new Date(data.lastOccurrenceTime).getTime(), Time.now()])
+          const t = new Date(data.start).getTime()
+          const len = 10 * 1000
+          let start = t - len
+          const end = data.end ? data.end + len : t + len
+          data.start && this.getLogRef()?.$refs.timeSelect.changeTime([start, end])
         }
       })
     }

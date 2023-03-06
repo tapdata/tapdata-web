@@ -54,7 +54,7 @@
           v-show="multipleSelection.length > 0"
           @click="$refs.table.showClassify(handleSelectTag())"
         >
-          <span> {{ $t('button_bulk_tag') }}</span>
+          <span> {{ $t('public_button_bulk_tag') }}</span>
         </el-button>
         <el-dropdown
           @command="handleCommand($event)"
@@ -63,7 +63,7 @@
         >
           <el-button class="btn btn-dropdowm" size="mini">
             <i class="iconfont icon-piliang back-btn-icon"></i>
-            <span> {{ $t('button_bulk_operation') }}</span>
+            <span> {{ $t('public_button_bulk_operation') }}</span>
           </el-button>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="activated" v-readonlybtn="'user_edition'">{{
@@ -84,7 +84,7 @@
           size="mini"
           @click="openCreateDialog"
         >
-          <span>{{ $t('button_create') }}</span>
+          <span>{{ $t('public_button_create') }}</span>
         </el-button>
       </div>
       <el-table-column type="selection" width="45" :reserve-selection="true"></el-table-column>
@@ -120,7 +120,7 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('column_operation')" width="210">
+      <el-table-column :label="$t('public_operation')" width="210">
         <template slot-scope="scope">
           <div>
             <el-button
@@ -188,7 +188,7 @@
       <div>
         <span class="label">{{ $t('user_form_activation_code') }}</span>
         <span style="padding-right: 30px">{{ createForm.accesscode || '-' }}</span>
-        <el-button @click="resetAccesCode" type="text" size="mini">{{ $t('button_reset') }}</el-button>
+        <el-button @click="resetAccesCode" type="text" size="mini">{{ $t('public_button_reset') }}</el-button>
         <el-tooltip
           placement="top"
           manual
@@ -203,7 +203,7 @@
             v-clipboard:success="onCopy"
             @mouseleave="showTooltip = false"
           >
-            <el-button type="text" size="mini">{{ $t('button_copy') }}</el-button>
+            <el-button type="text" size="mini">{{ $t('public_button_copy') }}</el-button>
           </span>
         </el-tooltip>
       </div>
@@ -244,7 +244,7 @@ export default {
       createDialogVisible: false,
       activePanel: 'all',
       muneList: [
-        { name: this.$t('user_list_all'), key: 'all' },
+        { name: this.$t('public_select_option_all'), key: 'all' },
         { name: this.$t('user_status_notActivated'), key: 'notActivated', count: 0 },
         { name: this.$t('user_status_notVerified'), key: 'notVerified', count: 0 },
         { name: this.$t('user_status_rejected'), key: 'rejected', count: 0 }
@@ -317,7 +317,7 @@ export default {
           {
             type: 'input',
             field: 'password',
-            label: this.$t('user_form_password'),
+            label: this.$t('public_connection_form_password'),
             domType: 'password',
             maxlength: 32,
             showPassword: true,
@@ -453,7 +453,7 @@ export default {
               if (item.account_status === 0) {
                 item.status = 'rejected'
               }
-              item.lastUpdatedFmt = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+              item.lastUpdatedFmt = item.last_updated ? dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss') : ''
               return item
             })
           }
@@ -671,7 +671,7 @@ export default {
                   })
                 })
                 roleMappingsApi.saveAll(newRoleMappings).then(() => {
-                  that.$message.success(this.$t('message_save_ok'))
+                  that.$message.success(this.$t('public_message_save_ok'))
                 })
                 this.table.fetch()
               }
@@ -694,7 +694,7 @@ export default {
             usersApi
               .delete(item.id)
               .then(() => {
-                this.$message.success(this.$t('message_deleteOK'))
+                this.$message.success(this.$t('public_message_delete_ok'))
                 this.table.fetch()
                 done()
               })
@@ -798,7 +798,7 @@ export default {
       }
       usersApi.update(where, params).then(() => {
         this.table.fetch()
-        this.$message.success(this.$t('message_operation_succuess'))
+        this.$message.success(this.$t('public_message_operation_success'))
       })
     },
     // 关联用户

@@ -51,15 +51,31 @@
             <span v-if="isFileSource" class="flex-1 text-end">{{
               $t('packages_dag_components_node_zanbuzhichi')
             }}</span>
-            <template v-else>
-              <ElProgress
-                class="flex-1 my-2"
-                :show-text="false"
-                style="width: 150px"
-                :percentage="totalDataPercentage"
-              />
-              <span class="ml-2">{{ totalData.snapshotTableTotal + '/' + totalData.tableTotal }}</span>
-            </template>
+            <ElTooltip v-else placement="bottom">
+              <div class="inline-flex">
+                <ElProgress
+                  class="flex-1 my-2"
+                  :show-text="false"
+                  style="width: 150px"
+                  :percentage="totalDataPercentage"
+                />
+                <span class="ml-2">{{ totalData.snapshotTableTotal + '/' + totalData.tableTotal }}</span>
+              </div>
+              <div slot="content" class="fs-8">
+                <div>
+                  <span>{{ $t('packages_dag_monitor_leftsider_quanliangwanchenghao') }}:</span>
+                  <span class="ml-2">{{ calcTimeUnit(totalData.snapshotDoneCost) }}</span>
+                </div>
+                <div>
+                  <span>{{ $t('packages_dag_monitor_leftsider_pingjunQps') }}:</span>
+                  <span class="ml-2">{{ totalData.outputQpsAvg }}</span>
+                </div>
+                <div>
+                  <span>{{ $t('packages_dag_monitor_leftsider_zuidaQps') }}:</span>
+                  <span class="ml-2">{{ totalData.outputQpsMax }}</span>
+                </div>
+              </div>
+            </ElTooltip>
           </div>
           <div
             v-if="dataflow.syncType === 'migrate' && totalData.currentSnapshotTableRowTotal"
@@ -192,9 +208,14 @@
         <div v-loading="!eventDataAll" class="flex">
           <div v-if="eventDataAll" class="w-50 pr-4">
             <div>{{ $t('public_event_total_input') }}</div>
-            <div class="mt-1 mb-2 font-color-normal fw-sub fs-3 din-font">
-              {{ eventDataAll.inputTotals.toLocaleString() }}
-            </div>
+            <ElTooltip
+              transition="tooltip-fade-in"
+              placement="top"
+              :content="eventDataAll.inputTotals.toLocaleString()"
+              class="mt-1 mb-2 font-color-normal fw-sub fs-3 din-font"
+            >
+              <div>{{ eventDataAll.inputTotalsLabel }}</div>
+            </ElTooltip>
             <div class="mb-2">
               <span>{{ $t('packages_dag_monitor_leftsider_charu') }}</span>
               <span>{{ eventDataAll.inputInsertTotal.toLocaleString() }}</span>
@@ -217,9 +238,16 @@
             <div class="output-item__divider"></div>
             <div class="ml-4">
               <div>{{ $t('public_event_total_output') }}</div>
-              <div class="mt-1 mb-2 font-color-normal fw-sub fs-3 din-font">
-                {{ eventDataAll.outputTotals.toLocaleString() }}
-              </div>
+              <ElTooltip
+                transition="tooltip-fade-in"
+                placement="top"
+                :content="eventDataAll.outputTotals.toLocaleString()"
+                class="mt-1 mb-2 font-color-normal fw-sub fs-3 din-font"
+              >
+                <div>
+                  {{ eventDataAll.outputTotalsLabel }}
+                </div>
+              </ElTooltip>
               <div class="mb-2">
                 <span>{{ $t('packages_dag_monitor_leftsider_charu') }}</span>
                 <span>{{ eventDataAll.outputInsertTotal.toLocaleString() }}</span>
@@ -298,7 +326,7 @@ import { VIcon, TimeSelect } from '@tap/component'
 import Frequency from './components/Frequency'
 import InitialList from './components/InitialList'
 import dayjs from 'dayjs'
-import { calcTimeUnit } from '@tap/shared'
+import { calcTimeUnit, calcUnit } from '@tap/shared'
 import Time from '@tap/shared/src/time'
 
 export default {
@@ -411,12 +439,24 @@ export default {
         tableTotal = 0,
         snapshotTableTotal = 0,
         currentSnapshotTableInsertRowTotal = 0,
-        currentSnapshotTableRowTotal = 0
+        currentSnapshotTableRowTotal = 0,
+        snapshotDoneCost,
+        outputQpsMax = 0,
+        outputQpsAvg = 0
       } = this.quota.samples?.totalData?.[0] || {}
-      return { tableTotal, snapshotTableTotal, currentSnapshotTableInsertRowTotal, currentSnapshotTableRowTotal }
+      return {
+        tableTotal,
+        snapshotTableTotal,
+        currentSnapshotTableInsertRowTotal,
+        currentSnapshotTableRowTotal,
+        snapshotDoneCost,
+        outputQpsMax: Math.ceil(outputQpsMax),
+        outputQpsAvg: Math.ceil(outputQpsAvg)
+      }
     },
 
     totalDataPercentage() {
+      if (this.initialData.snapshotDoneAt) return 100
       const { tableTotal, snapshotTableTotal } = this.totalData
       return snapshotTableTotal && tableTotal ? (snapshotTableTotal / tableTotal) * 100 : 0
     },
@@ -492,6 +532,12 @@ export default {
       result.outputTotals = outputArr.reduce((total, key) => {
         return total + result[key] || 0
       }, 0)
+      const limit = 1000000000
+      result.inputTotalsLabel =
+        result.inputTotals >= limit ? calcUnit(result.inputTotals) : result.inputTotals.toLocaleString()
+
+      result.outputTotalsLabel =
+        result.outputTotals >= limit ? calcUnit(result.outputTotals) : result.outputTotals.toLocaleString()
       return result
     },
 

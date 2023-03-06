@@ -42,7 +42,9 @@
               }}</ElButton>
               <ElButton type="primary" size="mini" @click="save()">{{ $t('public_button_save') }}</ElButton>
             </div>
-            <ElButton v-else class="ml-10" type="primary" size="mini" @click="edit">{{ $t('public_button_edit') }}</ElButton>
+            <ElButton v-else class="ml-10" type="primary" size="mini" @click="edit">{{
+              $t('public_button_edit')
+            }}</ElButton>
           </template>
         </div>
         <div class="flex-1 mt-4" size="small">
@@ -68,7 +70,7 @@
           </li>
           <li class="data-server-form-base__item">
             <ElFormItem :label="$t('daas_data_server_drawer_fabujiedian')" label-width="86px">
-              <div class="text">{{ $t('select_option_all') }}</div>
+              <div class="text">{{ $t('public_select_option_all') }}</div>
             </ElFormItem>
           </li>
           <li class="data-server-form-base__item">
@@ -94,7 +96,7 @@
             </ElFormItem>
           </li>
           <li class="data-server-form-base__item">
-            <ElFormItem :label="$t('daas_data_server_drawer_lianjiemingcheng')" label-width="86px" prop="connectionId">
+            <ElFormItem :label="$t('public_connection_name')" label-width="86px" prop="connectionId">
               <ElSelect
                 v-if="isEdit"
                 v-model="form.connectionName"
@@ -139,7 +141,7 @@
           <ElFormItem
             class="flex-1 mt-4"
             size="small"
-            :label="$t('modules_header_version')"
+            :label="$t('public_version')"
             prop="apiVersion"
             :rules="rules.apiVersion"
             v-if="form.pathAccessMethod === 'customize'"
@@ -225,7 +227,7 @@
               <div v-else>{{ row.defaultvalue }}</div>
             </template>
           </ElTableColumn>
-          <ElTableColumn :label="$t('module_form_describtion')" prop="description" min-width="100">
+          <ElTableColumn :label="$t('public_description')" prop="description" min-width="100">
             <template #default="{ row, $index }">
               <div v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'">
                 <ElInput v-model="form.params[$index].description" size="mini"></ElInput>
@@ -345,7 +347,7 @@
             <ElTableColumn v-if="isEdit" type="selection" width="55"></ElTableColumn>
             <ElTableColumn :label="$t('public_name')" prop="field_name" min-width="200"></ElTableColumn>
             <ElTableColumn :label="$t('public_type')" prop="originalDataType" min-width="120"></ElTableColumn>
-            <ElTableColumn :label="$t('module_form_describtion')" prop="comment" min-width="50"></ElTableColumn>
+            <ElTableColumn :label="$t('public_description')" prop="comment" min-width="50"></ElTableColumn>
           </ElTable>
         </template>
         <!--服务访问 -->
@@ -380,7 +382,7 @@
               </ElSelect>
               <div>{{ urls[debugMethod] }}</div>
             </div>
-            <ElButton type="primary" size="mini" @click="debugData">{{ $t('button_submit') }}</ElButton>
+            <ElButton type="primary" size="mini" @click="debugData">{{ $t('public_button_submit') }}</ElButton>
           </div>
         </template>
         <template v-if="tab === 'debug'">

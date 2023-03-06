@@ -17,7 +17,7 @@
           size="mini"
           v-model="model.collection"
           :placeholder="
-            $t('metadata_details_select') +
+            $t('public_select_placeholder') +
             $t('metadata_details_pipeline_collection')
           "
         ></el-input> -->
@@ -27,7 +27,7 @@
           type="textarea"
           size="mini"
           v-model="model.pipeline"
-          :placeholder="$t('metadata_details_enter') + $t('metadata_details_pipeline_pipeline')"
+          :placeholder="$t('public_input_placeholder') + $t('metadata_details_pipeline_pipeline')"
         ></el-input>
       </el-form-item>
       <el-form-item>
@@ -77,14 +77,14 @@ export default {
           {
             required: true,
             trigger: 'blur',
-            message: this.$t('metadata_details_pipeline_collection') + this.$t('metadata_details_pipeline_cnot_Empty')
+            message: this.$t('metadata_details_pipeline_collection') + this.$t('public_form_not_empty')
           }
         ],
         pipeline: [
           {
             required: true,
             trigger: 'blur',
-            message: this.$t('metadata_details_pipeline_pipeline') + this.$t('metadata_details_pipeline_cnot_Empty')
+            message: this.$t('metadata_details_pipeline_pipeline') + this.$t('public_form_not_empty')
           }
         ]
       }
@@ -174,7 +174,7 @@ export default {
           pipline: this.model
         })
         .then(() => {
-          this.$message.success(this.$t('message_save_ok'))
+          this.$message.success(this.$t('public_message_save_ok'))
         })
     }
   }

@@ -1,5 +1,6 @@
 import i18n from '@tap/i18n'
 import { Cookie } from '@tap/shared'
+import { getIcon } from '@tap/assets/icons'
 // 获取子任务状态统计
 import { ETL_STATUS_MAP, ETL_SUB_STATUS_MAP } from './const'
 
@@ -86,7 +87,7 @@ export function getNodeIconSrc(node) {
     return `${BASE_URL}api/pdk/icon?access_token=${accessToken}&pdkHash=${pdkHash}`
   }
   let icon = node.type === 'table' || node.type === 'database' || node.databaseType ? node.databaseType : node.type
-  return icon ? require(`web-core/assets/icons/node/${icon}.svg`) : null
+  return icon ? getIcon(icon) : null
 }
 
 export const STATUS_MAP = {
@@ -104,7 +105,7 @@ export const STATUS_MAP = {
     i18n: 'public_status_running'
   },
   complete: {
-    i18n: 'public_status_complete'
+    i18n: 'public_status_finished'
   },
   stopping: {
     i18n: 'public_status_stopping'
