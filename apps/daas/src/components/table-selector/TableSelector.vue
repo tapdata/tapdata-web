@@ -180,8 +180,8 @@ f
           <ElLink class="ml-2" type="primary" @click="autofix">{{ $t('component_table_selector_autofix') }}</ElLink>
         </div>
         <div v-if="isOpenClipMode" class="px-4 pb-4 text-end">
-          <ElButton @click="changeSeletedMode()">{{ $t('button_cancel') }}</ElButton>
-          <ElButton type="primary" @click="submitClipboard">{{ $t('button_confirm') }}</ElButton>
+          <ElButton @click="changeSeletedMode()">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton type="primary" @click="submitClipboard">{{ $t('public_button_confirm') }}</ElButton>
         </div>
       </div>
     </div>

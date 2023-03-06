@@ -83,7 +83,7 @@
           <el-button type="primary" size="mini">新建</el-button>
         </header>
         <VTable :columns="columns" :data="tableFields" :has-pagination="false">
-          <div slot="empty">{{ $t('packages_dag_dag_dialog_field_mapping_no_data') }}</div>
+          <div slot="empty">{{ $t('public_data_no_data') }}</div>
         </VTable>
       </section>
     </section>

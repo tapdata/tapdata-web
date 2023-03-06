@@ -161,7 +161,9 @@
                 }}</ElButton>
                 <template v-else>
                   <ElLink type="primary" class="ml-4" @click="editScript(index)">{{ $t('public_button_edit') }}</ElLink>
-                  <ElLink type="primary" class="ml-4" @click="removeScript(index)">{{ $t('public_button_delete') }}</ElLink>
+                  <ElLink type="primary" class="ml-4" @click="removeScript(index)">{{
+                    $t('public_button_delete')
+                  }}</ElLink>
                 </template>
               </div>
               <div

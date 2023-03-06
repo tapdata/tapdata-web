@@ -19,11 +19,11 @@ export default defineComponent({
       loading: false,
       columns: [
         {
-          label: i18n.t('metadata_name'),
+          label: i18n.t('public_name'),
           prop: 'name'
         },
         {
-          label: i18n.t('metadata_type'),
+          label: i18n.t('public_type'),
           prop: 'dataType'
         },
         {
@@ -61,11 +61,11 @@ export default defineComponent({
       ],
       nodeColumns: [
         {
-          label: i18n.t('metadata_name'),
+          label: i18n.t('public_name'),
           prop: 'name'
         },
         {
-          label: i18n.t('metadata_type'),
+          label: i18n.t('public_type'),
           prop: 'type'
         },
         {
@@ -79,11 +79,11 @@ export default defineComponent({
       ],
       apiColumns: [
         {
-          label: i18n.t('metadata_name'),
+          label: i18n.t('public_name'),
           prop: 'name'
         },
         {
-          label: i18n.t('metadata_type'),
+          label: i18n.t('public_type'),
           prop: 'type'
         },
         {
@@ -97,11 +97,11 @@ export default defineComponent({
       ],
       apiInputColumns: [
         {
-          label: i18n.t('metadata_name'),
+          label: i18n.t('public_name'),
           prop: 'field_name'
         },
         {
-          label: i18n.t('metadata_type'),
+          label: i18n.t('public_type'),
           prop: 'data_type'
         },
         {
@@ -267,7 +267,7 @@ export default defineComponent({
                       </el-row>
                       <el-row class="mt-2">
                         <el-col span={8}>
-                          <span class="max-label inline-block">{i18n.t('column_create_time')}</span>
+                          <span class="max-label inline-block">{i18n.t('public_create_time')}</span>
                           <span class="ml-2">{dayjs(this.previewData.createAt).format('YYYY-MM-DD HH:mm:ss')}</span>
                         </el-col>
                         <el-col span={8}>
@@ -309,7 +309,7 @@ export default defineComponent({
                           <span class="ml-2">{this.previewData.connectionName}</span>
                         </el-col>
                         <el-col span={8}>
-                          <span class="max-label inline-block">{i18n.t('connection_list_type')}</span>
+                          <span class="max-label inline-block">{i18n.t('public_connection_type')}</span>
                           <span class="ml-2">{this.previewData.connectionType}</span>
                         </el-col>
                         <el-col span={8}>
@@ -348,7 +348,7 @@ export default defineComponent({
                         data={this.previewData.fields}
                         has-pagination={false}
                       >
-                        <div slot="empty">{i18n.t('packages_dag_dag_dialog_field_mapping_no_data')}</div>
+                        <div slot="empty">{i18n.t('public_data_no_data')}</div>
                       </VTable>
                     </div>
                   </div>
@@ -366,7 +366,7 @@ export default defineComponent({
                       </el-row>
                       <el-row class="mt-2">
                         <el-col span={8}>
-                          <span class="max-label inline-block">{i18n.t('column_create_time')}</span>
+                          <span class="max-label inline-block">{i18n.t('public_create_time')}</span>
                           <span class="ml-2">{dayjs(this.previewData.createAt).format('YYYY-MM-DD HH:mm:ss')}</span>
                         </el-col>
                         <el-col span={8}>
@@ -456,7 +456,7 @@ export default defineComponent({
                         columns={this.data.apiInputColumns}
                         data={this.previewData.fields}
                       >
-                        <div slot="empty">{i18n.t('packages_dag_dag_dialog_field_mapping_no_data')}</div>
+                        <div slot="empty">{i18n.t('public_data_no_data')}</div>
                       </VTable>
                     </div>
                     <div class="mt-5">
@@ -487,7 +487,7 @@ export default defineComponent({
                       </el-row>
                       <el-row class="mt-2">
                         <el-col span={8}>
-                          <span class="max-label inline-block">{i18n.t('column_create_time')}</span>
+                          <span class="max-label inline-block">{i18n.t('public_create_time')}</span>
                           <span class="ml-2">{dayjs(this.previewData.createAt).format('YYYY-MM-DD HH:mm:ss')}</span>
                         </el-col>
                         <el-col span={8}>

@@ -348,7 +348,7 @@ export const PreviewDrawer = defineComponent({
                         data={this.previewData.fields}
                         has-pagination={false}
                       >
-                        <div slot="empty">{i18n.t('packages_dag_dag_dialog_field_mapping_no_data')}</div>
+                        <div slot="empty">{i18n.t('public_data_no_data')}</div>
                       </VTable>
                     </div>
                   </div>
@@ -456,7 +456,7 @@ export const PreviewDrawer = defineComponent({
                         columns={this.data.apiInputColumns}
                         data={this.previewData.fields}
                       >
-                        <div slot="empty">{i18n.t('packages_dag_dag_dialog_field_mapping_no_data')}</div>
+                        <div slot="empty">{i18n.t('public_data_no_data')}</div>
                       </VTable>
                     </div>
                     <div class="mt-5">

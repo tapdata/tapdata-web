@@ -3,7 +3,7 @@
     <div class="section-wrap-box h-100">
       <div class="api-doc-box">
         <el-button :title="$t('daas_api_page_apidocandtest_daochudaopo')" size="mini" @click="exportJson">
-          {{ $t('button_export') }}
+          {{ $t('public_button_export') }}
         </el-button>
       </div>
       <iframe src frameborder="0" class="doc-test-iframe" id="docTestIframe"></iframe>

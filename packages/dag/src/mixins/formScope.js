@@ -614,9 +614,7 @@ export default {
         return {
           value: item.processId,
           label: `${item.hostName}（${
-            item.status === 'running'
-              ? i18n.t('packages_business_agent_status_running')
-              : i18n.t('packages_business_agent_status_stopped')
+            item.status === 'running' ? i18n.t('public_status_running') : i18n.t('public_agent_status_offline')
           }）`,
           disabled: item.status !== 'running'
         }

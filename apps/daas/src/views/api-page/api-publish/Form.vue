@@ -80,13 +80,13 @@
                     </el-select>
                   </div>
                   <div style="margin-left: 10px">
-                    <el-tooltip class="item" effect="dark" :content="$t('button_delete')" placement="bottom">
+                    <el-tooltip class="item" effect="dark" :content="$t('public_button_delete')" placement="bottom">
                       <ElButton type="text" title="remove" size="mini" @click="removeApiPath(index)">
                         <!-- <i class="fa fa-times el-icon-delete"></i> -->
-                        {{ $t('button_delete') }}
+                        {{ $t('public_button_delete') }}
                       </ElButton>
                     </el-tooltip>
-                    <!-- <el-tooltip class="item" effect="dark" :content="$t('button_edit')" placement="left">
+                    <!-- <el-tooltip class="item" effect="dark" :content="$t('public_button_edit')" placement="left">
                       <span title="edit" @click="editApiPath(item)" v-if="item.type !== 'preset'"
                         ><i class="fa fa-edit el-icon-edit-outline"></i
                       ></span>
@@ -118,7 +118,7 @@
         <el-button class="cancel" @click="handleBack()" size="mini">
           {{ $t('button_back') }}
         </el-button>
-        <el-button type="primary" @click="submit()" size="mini"> {{ $t('button_save') }}</el-button>
+        <el-button type="primary" @click="submit()" size="mini"> {{ $t('public_button_save') }}</el-button>
       </div>
     </div>
   </section>

@@ -61,8 +61,8 @@ Vue.prototype.$confirm = (message, title, options) => {
       title,
       Object.assign(
         {
-          cancelButtonText: window.App.$t('button_cancel'),
-          confirmButtonText: window.App.$t('button_confirm')
+          cancelButtonText: window.App.$t('public_button_cancel'),
+          confirmButtonText: window.App.$t('public_button_confirm')
         },
         options
       )

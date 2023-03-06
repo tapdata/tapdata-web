@@ -41,7 +41,7 @@
           </ul>
           <div v-else class="task-form-left__ul flex flex-column align-items-center">
             <div class="table__empty_img" style="margin-top: 22%"><img style="" :src="noData" /></div>
-            <div class="noData">{{ $t('packages_form_dag_dialog_field_mapping_no_data') }}</div>
+            <div class="noData">{{ $t('public_data_no_data') }}</div>
           </div>
         </div>
         <ElPagination
@@ -199,7 +199,7 @@ export default {
         if (resFlag) {
           this.fieldChangeRules = []
           this.handleUpdate()
-          this.$message.success(i18n.t('packages_form_field_inference_list_caozuochenggong'))
+          this.$message.success(i18n.t('public_message_operation_success'))
         }
       })
     },

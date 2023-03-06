@@ -22,7 +22,7 @@
           </ElLink>
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('connection_list_type')" min-width="120">
+      <ElTableColumn :label="$t('public_connection_type')" min-width="120">
         <template #default="{ row }">
           {{ row.connectionType }}
         </template>
@@ -55,9 +55,9 @@
             $t('button_revoke')
           }}</ElButton>
           <ElDivider direction="vertical"></ElDivider>
-          <ElButton type="text" @click="output(row)">{{ $t('button_export') }}</ElButton>
+          <ElButton type="text" @click="output(row)">{{ $t('public_button_export') }}</ElButton>
           <ElDivider direction="vertical"></ElDivider>
-          <ElButton type="text" @click="removeServer(row)">{{ $t('button_delete') }}</ElButton>
+          <ElButton type="text" @click="removeServer(row)">{{ $t('public_button_delete') }}</ElButton>
         </template>
       </ElTableColumn>
     </TablePage>

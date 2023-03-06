@@ -109,9 +109,9 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="settingDialogVisible = false">{{ $t('button_cancel') }}</el-button>
+        <el-button size="mini" @click="settingDialogVisible = false">{{ $t('public_button_cancel') }}</el-button>
         <el-button size="mini" type="primary" :disabled="!showEditSettingBtn" @click="saveSetting()">{{
-          $t('button_confirm')
+          $t('public_button_confirm')
         }}</el-button>
       </span>
     </el-dialog>
@@ -153,8 +153,8 @@
         </el-form-item>
       </el-form>
       <span class="dialog-footer" slot="footer">
-        <el-button @click="cancelEdit" size="mini">{{ $t('button_cancel') }}</el-button>
-        <el-button size="mini" type="primary" @click="saveEdit()">{{ $t('button_save') }}</el-button>
+        <el-button @click="cancelEdit" size="mini">{{ $t('public_button_cancel') }}</el-button>
+        <el-button size="mini" type="primary" @click="saveEdit()">{{ $t('public_button_save') }}</el-button>
       </span>
     </el-dialog>
   </section>
