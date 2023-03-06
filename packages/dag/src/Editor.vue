@@ -211,15 +211,15 @@ export default {
     async initNodeType() {
       let nodes = [
         {
-          name: i18n.t('packages_dag_src_editor_zhuijiahebing'),
+          name: i18n.global.t('packages_dag_src_editor_zhuijiahebing'),
           type: 'union_processor'
         },
         {
-          name: i18n.t('packages_dag_src_migrationeditor_jSchuli_standard'),
+          name: i18n.global.t('packages_dag_src_migrationeditor_jSchuli_standard'),
           type: 'standard_js_processor'
         },
         {
-          name: i18n.t('packages_dag_src_migrationeditor_jSchuli'),
+          name: i18n.global.t('packages_dag_src_migrationeditor_jSchuli'),
           type: 'js_processor',
           beta: true
         },
@@ -228,23 +228,23 @@ export default {
           type: 'row_filter_processor'
         },
         // {
-        //   name: i18n.t('packages_dag_src_editor_juhe'),
+        //   name: i18n.global.t('packages_dag_src_editor_juhe'),
         //   type: 'aggregation_processor' //聚合节点
         // }
         {
-          name: i18n.t('packages_dag_src_editor_ziduanjisuan'),
+          name: i18n.global.t('packages_dag_src_editor_ziduanjisuan'),
           type: 'field_calc_processor'
         },
         {
-          name: i18n.t('packages_dag_src_editor_leixingxiugai'),
+          name: i18n.global.t('packages_dag_src_editor_leixingxiugai'),
           type: 'field_mod_type_processor'
         },
         {
-          name: i18n.t('packages_dag_src_editor_ziduangaiming'),
+          name: i18n.global.t('packages_dag_src_editor_ziduangaiming'),
           type: 'field_rename_processor'
         },
         {
-          name: i18n.t('packages_dag_src_editor_zengshanziduan'),
+          name: i18n.global.t('packages_dag_src_editor_zengshanziduan'),
           type: 'field_add_del_processor'
         }
       ]
@@ -252,11 +252,11 @@ export default {
       if (this.isDaas) {
         let isDaasNode = [
           {
-            name: i18n.t('packages_dag_src_editor_join'),
+            name: i18n.global.t('packages_dag_src_editor_join'),
             type: 'join_processor' //join 节点
           },
           {
-            name: i18n.t('packages_dag_src_editor_zhuconghebing'),
+            name: i18n.global.t('packages_dag_src_editor_zhuconghebing'),
             type: 'merge_table_processor'
           }
         ]
@@ -387,7 +387,7 @@ export default {
         })
       } catch (e) {
         // eslint-disable-next-line no-console
-        console.error(i18n.t('packages_dag_src_editor_renwubaocunchu'), e)
+        console.error(i18n.global.t('packages_dag_src_editor_renwubaocunchu'), e)
         this.buried('taskSubmit', { result: true })
         if (e?.data?.code === 'Task.RepeatName') {
           const newName = await this.makeTaskName(data.name)

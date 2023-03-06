@@ -133,16 +133,16 @@ export default ({ routes }) => {
         // 获取用户信息失败
         if (count < 4) {
           // eslint-disable-next-line
-          console.log(i18n.t('dfs_src_init_huoquyonghuxin2'))
+          console.log(i18n.global.t('dfs_src_init_huoquyonghuxin2'))
           setTimeout(() => {
             count++
             // eslint-disable-next-line
-            console.log(i18n.t('dfs_src_init_chongxinchangshihuo')('dfs_src_init_chongxinchangshihuo', { val1: count }))
+            console.log(i18n.global.t('dfs_src_init_chongxinchangshihuo')('dfs_src_init_chongxinchangshihuo', { val1: count }))
             getData()
           }, 3000)
         } else {
           // eslint-disable-next-line
-          console.log(i18n.t('dfs_src_init_huoquyonghuxin'), err)
+          console.log(i18n.global.t('dfs_src_init_huoquyonghuxin'), err)
           loading.close()
           init()
           return errorConfirmFnc(err)

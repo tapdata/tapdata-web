@@ -16,38 +16,38 @@ export default {
       tableData: [
         {
           date: '2016-05-02',
-          name: i18n.t('packages_dag_components_datapane_wangxiaohu'),
-          address: i18n.t('packages_dag_components_datapane_shanghaishiputuo')
+          name: i18n.global.t('packages_dag_components_datapane_wangxiaohu'),
+          address: i18n.global.t('packages_dag_components_datapane_shanghaishiputuo')
         },
         {
           date: '2016-05-04',
-          name: i18n.t('packages_dag_components_datapane_wangxiaohu'),
-          address: i18n.t('packages_dag_components_datapane_shanghaishiputuo')
+          name: i18n.global.t('packages_dag_components_datapane_wangxiaohu'),
+          address: i18n.global.t('packages_dag_components_datapane_shanghaishiputuo')
         },
         {
           date: '2016-05-01',
-          name: i18n.t('packages_dag_components_datapane_wangxiaohu'),
-          address: i18n.t('packages_dag_components_datapane_shanghaishiputuo')
+          name: i18n.global.t('packages_dag_components_datapane_wangxiaohu'),
+          address: i18n.global.t('packages_dag_components_datapane_shanghaishiputuo')
         },
         {
           date: '2016-05-03',
-          name: i18n.t('packages_dag_components_datapane_wangxiaohu'),
-          address: i18n.t('packages_dag_components_datapane_shanghaishiputuo')
+          name: i18n.global.t('packages_dag_components_datapane_wangxiaohu'),
+          address: i18n.global.t('packages_dag_components_datapane_shanghaishiputuo')
         },
         {
           date: '2016-05-03',
-          name: i18n.t('packages_dag_components_datapane_wangxiaohu'),
-          address: i18n.t('packages_dag_components_datapane_shanghaishiputuo')
+          name: i18n.global.t('packages_dag_components_datapane_wangxiaohu'),
+          address: i18n.global.t('packages_dag_components_datapane_shanghaishiputuo')
         },
         {
           date: '2016-05-03',
-          name: i18n.t('packages_dag_components_datapane_wangxiaohu'),
-          address: i18n.t('packages_dag_components_datapane_shanghaishiputuo')
+          name: i18n.global.t('packages_dag_components_datapane_wangxiaohu'),
+          address: i18n.global.t('packages_dag_components_datapane_shanghaishiputuo')
         },
         {
           date: '2016-05-03',
-          name: i18n.t('packages_dag_components_datapane_wangxiaohu'),
-          address: i18n.t('packages_dag_components_datapane_shanghaishiputuo')
+          name: i18n.global.t('packages_dag_components_datapane_wangxiaohu'),
+          address: i18n.global.t('packages_dag_components_datapane_shanghaishiputuo')
         }
       ]
     }

@@ -232,7 +232,7 @@ export default {
       operations: ['start', 'stop', 'forceStop'],
       columnsTableName: [
         {
-          label: i18n.t('modules_header_tablename'),
+          label: i18n.global.t('modules_header_tablename'),
           prop: 'tablename'
         }
       ],
@@ -382,7 +382,7 @@ export default {
           })
         })
         // eslint-disable-next-line
-        console.log(i18n.t('daas_shared_mining_detail_wajuexiangqingx'), this.lineDataDeep.x.length, xArr)
+        console.log(i18n.global.t('daas_shared_mining_detail_wajuexiangqingx'), this.lineDataDeep.x.length, xArr)
         xArr.forEach((el, index) => {
           if (!this.lineDataDeep.x.includes(el)) {
             this.lineDataDeep.x.push(el)

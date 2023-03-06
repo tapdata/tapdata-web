@@ -164,42 +164,42 @@ export default {
     return {
       columns: [
         {
-          label: i18n.t('packages_business_setting_alarm_notification_describtion'),
+          label: i18n.global.t('packages_business_setting_alarm_notification_describtion'),
           slotName: 'key'
         },
         {
-          label: i18n.t('packages_business_setting_notification_alarm_notification_gaojingtongzhi'),
+          label: i18n.global.t('packages_business_setting_notification_alarm_notification_gaojingtongzhi'),
           prop: 'notify',
           slotName: 'notify'
         },
         {
-          label: i18n.t('packages_business_setting_alarm_notification_notify_noticeInterval'),
+          label: i18n.global.t('packages_business_setting_alarm_notification_notify_noticeInterval'),
           prop: 'interval',
           slotName: 'interval'
         }
       ],
       keyMapping: {
-        TASK_STATUS_ERROR: i18n.t('packages_business_setting_alarmnotification_dangrenwuyudao'),
-        TASK_INSPECT_ERROR: i18n.t('packages_business_setting_alarmnotification_dangrenwujiaoyan'),
-        TASK_FULL_COMPLETE: i18n.t('packages_business_setting_alarmnotification_dangrenwuquanliang'),
-        TASK_INCREMENT_START: i18n.t('packages_business_setting_alarmnotification_dangrenwuzengliang'),
-        TASK_STATUS_STOP: i18n.t('packages_business_setting_alarmnotification_dangrenwutingzhi'),
-        TASK_INCREMENT_DELAY: i18n.t('packages_business_setting_alarmnotification_dangrenwudezeng'),
-        DATANODE_CANNOT_CONNECT: i18n.t('packages_business_setting_alarmnotification_dangshujuwufa'),
-        DATANODE_HTTP_CONNECT_CONSUME: i18n.t('packages_business_setting_alarmnotification_dangshujuyuanwang'),
-        DATANODE_TCP_CONNECT_CONSUME: i18n.t('packages_business_setting_alarmnotification_dangshujuyuanxie'),
-        DATANODE_AVERAGE_HANDLE_CONSUME: i18n.t('packages_business_setting_alarmnotification_dangshujuyuanjie'),
-        PROCESSNODE_AVERAGE_HANDLE_CONSUME: i18n.t('packages_business_setting_alarmnotification_dangjiediandeping'),
-        SYSTEM_FLOW_EGINGE_DOWN: i18n.t('packages_business_setting_alarmnotification_dangrenwustop'),
-        SYSTEM_FLOW_EGINGE_UP: i18n.t('packages_business_setting_alarmnotification_dangrenwuuP')
+        TASK_STATUS_ERROR: i18n.global.t('packages_business_setting_alarmnotification_dangrenwuyudao'),
+        TASK_INSPECT_ERROR: i18n.global.t('packages_business_setting_alarmnotification_dangrenwujiaoyan'),
+        TASK_FULL_COMPLETE: i18n.global.t('packages_business_setting_alarmnotification_dangrenwuquanliang'),
+        TASK_INCREMENT_START: i18n.global.t('packages_business_setting_alarmnotification_dangrenwuzengliang'),
+        TASK_STATUS_STOP: i18n.global.t('packages_business_setting_alarmnotification_dangrenwutingzhi'),
+        TASK_INCREMENT_DELAY: i18n.global.t('packages_business_setting_alarmnotification_dangrenwudezeng'),
+        DATANODE_CANNOT_CONNECT: i18n.global.t('packages_business_setting_alarmnotification_dangshujuwufa'),
+        DATANODE_HTTP_CONNECT_CONSUME: i18n.global.t('packages_business_setting_alarmnotification_dangshujuyuanwang'),
+        DATANODE_TCP_CONNECT_CONSUME: i18n.global.t('packages_business_setting_alarmnotification_dangshujuyuanxie'),
+        DATANODE_AVERAGE_HANDLE_CONSUME: i18n.global.t('packages_business_setting_alarmnotification_dangshujuyuanjie'),
+        PROCESSNODE_AVERAGE_HANDLE_CONSUME: i18n.global.t('packages_business_setting_alarmnotification_dangjiediandeping'),
+        SYSTEM_FLOW_EGINGE_DOWN: i18n.global.t('packages_business_setting_alarmnotification_dangrenwustop'),
+        SYSTEM_FLOW_EGINGE_UP: i18n.global.t('packages_business_setting_alarmnotification_dangrenwuuP')
       },
       alarmRulesColumns: [
         {
-          label: i18n.t('packages_business_setting_alarmnotification_gaojingzhibiao'),
+          label: i18n.global.t('packages_business_setting_alarmnotification_gaojingzhibiao'),
           slotName: 'keySlot'
         },
         {
-          label: i18n.t('packages_business_setting_alarmnotification_gaojingzhibiao'),
+          label: i18n.global.t('packages_business_setting_alarmnotification_gaojingzhibiao'),
           slotName: 'valueSlot'
         }
       ],
@@ -261,7 +261,7 @@ export default {
       //合并agent停止时
       let data = [...this.tableData, ...this.currentData]
       settingsApi.saveAlarm(data).then(() => {
-        this.$message.success(i18n.t('packages_business_message_save_ok'))
+        this.$message.success(i18n.global.t('packages_business_message_save_ok'))
         if (!this.isDaas) {
           $emit(this, 'updateVisible', false)
         }

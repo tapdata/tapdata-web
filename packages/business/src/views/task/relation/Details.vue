@@ -143,35 +143,35 @@ export default {
       dataflow: {},
       columns: [
         {
-          label: i18n.t('packages_business_task_name'),
+          label: i18n.global.t('packages_business_task_name'),
           prop: 'name'
         },
         {
-          label: i18n.t('packages_business_task_list_task_type'),
+          label: i18n.global.t('packages_business_task_list_task_type'),
           prop: 'typeTitle',
           width: 150
         },
         {
-          label: i18n.t('packages_business_task_status'),
+          label: i18n.global.t('packages_business_task_status'),
           prop: 'status',
           slotName: 'status',
           width: 150
         },
         {
-          label: i18n.t('packages_business_column_create_time'),
+          label: i18n.global.t('packages_business_column_create_time'),
           prop: 'creatTime',
           dataType: 'time',
           width: 200
         },
         {
-          label: i18n.t('packages_business_connection_operate'),
+          label: i18n.global.t('packages_business_connection_operate'),
           slotName: 'operation',
           width: 150
         }
       ],
       taskTypeMap: {
-        logCollector: i18n.t('packages_business_relation_details_wajue'),
-        mem_cache: i18n.t('packages_business_relation_details_huancun')
+        logCollector: i18n.global.t('packages_business_relation_details_wajue'),
+        mem_cache: i18n.global.t('packages_business_relation_details_huancun')
       },
       detailData: {},
       typeMapping: {

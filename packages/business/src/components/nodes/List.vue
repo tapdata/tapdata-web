@@ -39,7 +39,7 @@ export default {
     label: {
       type: String,
       default: () => {
-        return i18n.t('packages_dag_components_log_quanbu')
+        return i18n.global.t('packages_dag_components_log_quanbu')
       }
     },
     showType: {
@@ -51,9 +51,9 @@ export default {
     return {
       activeNodeId: '',
       typeMap: {
-        source: i18n.t('packages_business_nodes_list_laiyuan'),
-        target: i18n.t('packages_business_connection_form_target'),
-        processor: i18n.t('packages_business_nodes_list_chulijiedian')
+        source: i18n.global.t('packages_business_nodes_list_laiyuan'),
+        target: i18n.global.t('packages_business_connection_form_target'),
+        processor: i18n.global.t('packages_business_nodes_list_chulijiedian')
       }
     }
   },

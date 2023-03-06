@@ -197,7 +197,7 @@ export default {
         row_count: this.$t('packages_business_verification_rowVerify'),
         field: this.$t('packages_business_verification_contentVerify'),
         jointField: this.$t('packages_business_verification_jointVerify'),
-        cdcCount: i18n.t('packages_business_verification_details_dongtaijiaoyan')
+        cdcCount: i18n.global.t('packages_business_verification_details_dongtaijiaoyan')
       },
       statusMap: {
         waiting: this.$t('packages_business_verification_waiting'),

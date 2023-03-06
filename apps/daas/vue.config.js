@@ -46,7 +46,7 @@ module.exports = {
     /[/\\]node_modules[/\\](.+?)?element-ui(.*)[/\\]packages[/\\]table[/\\]src/,
     /[/\\]node_modules[/\\](.+?)?element-ui(.*)[/\\]packages[/\\]tooltip[/\\]src/
   ],
-  /*chainWebpack(config) {
+  chainWebpack(config) {
     //  ============ 配置别名 ============
     config.resolve.alias.set('@', resolve('src'))
 
@@ -98,7 +98,7 @@ module.exports = {
             name: 'removeAttrs',
             active: true,
             params: {
-              attrs: ['class', 'p-id' /!*, 'fill'*!/]
+              attrs: ['class', 'p-id' /*, 'fill'*/]
             }
           }
         ]
@@ -134,20 +134,12 @@ module.exports = {
       })
       .end()
 
-    // ============ ts处理 ============
-    config.module
-      .rule('compile')
-      .test(/\.(jsx|tsx|ts)$/)
-      .use('babel')
-      .loader('babel-loader')
-      .end()
-
-    /!*console.log('js config :>> ', config.module.rule('js').toConfig())
+    /*console.log('js config :>> ', config.module.rule('js').toConfig())
     // element-ui 特殊处理
     config.module.rule('js').merge({
       include: [resolve('node_modules/element-ui/packages/table/src/table-body.js')]
-    })*!/
-  },*/
+    })*/
+  },
   configureWebpack: config => {
     config.plugins.push(
       require('unplugin-vue-components/webpack')({

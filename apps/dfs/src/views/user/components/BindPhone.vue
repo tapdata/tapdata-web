@@ -94,7 +94,7 @@ export default {
           code: phoneForm.oldCode
         })
         .then(() => {
-          this.$message.success(i18n.t('user_Center_bangDingShouJiCheng'))
+          this.$message.success(i18n.global.t('user_Center_bangDingShouJiCheng'))
           $emit(this, 'success', phoneForm.current)
           this.dialogVisible = false
         })

@@ -236,7 +236,7 @@ export default {
     lastPageText: {
       type: String,
       default: () => {
-        return i18n.t('components_SelectList_meiYouGengDuoShu')
+        return i18n.global.t('components_SelectList_meiYouGengDuoShu')
       }
     },
     menuMinWidth: {

@@ -111,9 +111,9 @@ export default {
   components: { VTable, FilterBar, UploadFile },
   data() {
     let langMap = {
-      'zh-CN': i18n.t('lang_zh_cn'),
-      'zh-TW': i18n.t('lang_zh_tw'),
-      en: i18n.t('lang_en')
+      'zh-CN': i18n.global.t('lang_zh_cn'),
+      'zh-TW': i18n.global.t('lang_zh_tw'),
+      en: i18n.global.t('lang_en')
     }
     // 原有的文案
     let sourceObject = {
@@ -145,7 +145,7 @@ export default {
       })
     }
     columns.push({
-      label: i18n.t('list_operation'),
+      label: i18n.global.t('list_operation'),
       prop: 'operation',
       slotName: 'operation'
     })
@@ -175,7 +175,7 @@ export default {
       },
       filterItems: [
         {
-          label: i18n.t('agent_status'),
+          label: i18n.global.t('agent_status'),
           key: 'status',
           type: 'select-inner',
           items: [
@@ -319,7 +319,7 @@ export default {
       reader.onload = () => {
         let data = reader.result?.replace('export default', '')
         callback?.(eval('(' + data + ')'))
-        this.$message.success(i18n.t('views_Lang_shangChuanChengGongShua'))
+        this.$message.success(i18n.global.t('views_Lang_shangChuanChengGongShua'))
       }
     },
     uploadModifyEn(evt) {

@@ -278,7 +278,7 @@ export default {
         { name: 'Docker', value: 'Docker' },
         { name: 'Windows (64 bit)', value: 'windows' },
         {
-          name: i18n.t('dfs_agent_download_agentdownloadmodal_aliyunjisuan'),
+          name: i18n.global.t('dfs_agent_download_agentdownloadmodal_aliyunjisuan'),
           value: 'AliComputenest'
         }
       ],

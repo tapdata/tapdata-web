@@ -14,7 +14,7 @@ registerValidateRules({
   cron(value, rule) {
     value = value?.trim()
     if (!value) return ''
-    const message = rule.message || i18n.t('packages_form_src_index_cronbiao')
+    const message = rule.message || i18n.global.t('packages_form_src_index_cronbiao')
     const list = value.split(/\s+/g)
     if (list.length < 6 || list.length > 7) return message
     // 包含年份的情况（一般不会...

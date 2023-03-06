@@ -49,34 +49,34 @@ export default {
     title: {
       type: String,
       default: () => {
-        return i18n.t('packages_dag_components_timeselect_zhouqi')
+        return i18n.global.t('packages_dag_components_timeselect_zhouqi')
       }
     },
     options: {
       type: Array,
       default: () => [
         {
-          label: i18n.t('packages_dag_components_timeselect_zuijinfenzhong'),
+          label: i18n.global.t('packages_dag_components_timeselect_zuijinfenzhong'),
           value: '5m'
         },
         {
-          label: i18n.t('packages_dag_components_timeselect_zuixinxiaoshi'),
+          label: i18n.global.t('packages_dag_components_timeselect_zuixinxiaoshi'),
           value: '1h'
         },
         {
-          label: i18n.t('packages_dag_components_timeselect_zuijintian'),
+          label: i18n.global.t('packages_dag_components_timeselect_zuijintian'),
           value: '1d'
         },
         {
-          label: i18n.t('packages_dag_components_timeselect_renwuzuijinyi'),
+          label: i18n.global.t('packages_dag_components_timeselect_renwuzuijinyi'),
           value: 'lastStart'
         },
         {
-          label: i18n.t('packages_dag_components_timeselect_renwuquanzhouqi'),
+          label: i18n.global.t('packages_dag_components_timeselect_renwuquanzhouqi'),
           value: 'full'
         },
         {
-          label: i18n.t('packages_dag_components_log_zidingyishijian'),
+          label: i18n.global.t('packages_dag_components_log_zidingyishijian'),
           type: 'custom',
           value: 'custom'
         }

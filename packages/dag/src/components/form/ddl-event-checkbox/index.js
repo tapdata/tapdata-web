@@ -5,17 +5,17 @@ import i18n from '@tap/i18n'
 import { useForm, useField } from '@tap/form'
 
 const EVENT_MAP = {
-  alter_field_name_event: i18n.t('packages_form_ddl_event_checkbox_index_xiugaiziduanming'),
-  alter_field_attributes_event: i18n.t('packages_form_ddl_event_checkbox_index_xiugaiziduanshu'),
-  create_table_event: i18n.t('packages_form_ddl_event_checkbox_index_chuangjianbiao'),
-  drop_table_event: i18n.t('packages_form_ddl_event_checkbox_index_shanchubiao'),
-  clear_table_event: i18n.t('packages_form_ddl_event_checkbox_index_qingkongbiao'),
-  alter_primary_key_event: i18n.t('packages_form_ddl_event_checkbox_index_xiugaizhujian'),
-  drop_field_event: i18n.t('packages_form_ddl_event_checkbox_index_shanchuziduan'),
-  new_field_event: i18n.t('packages_form_ddl_event_checkbox_index_xinzengziduan'),
-  alter_table_charset_event: i18n.t('packages_form_ddl_event_checkbox_index_xiugaibiaozifu'),
-  alter_database_timezone_event: i18n.t('packages_form_ddl_event_checkbox_index_xiugaishujuku'),
-  rename_table_event: i18n.t('packages_form_ddl_event_checkbox_index_xiugaibiaoming')
+  alter_field_name_event: i18n.global.t('packages_form_ddl_event_checkbox_index_xiugaiziduanming'),
+  alter_field_attributes_event: i18n.global.t('packages_form_ddl_event_checkbox_index_xiugaiziduanshu'),
+  create_table_event: i18n.global.t('packages_form_ddl_event_checkbox_index_chuangjianbiao'),
+  drop_table_event: i18n.global.t('packages_form_ddl_event_checkbox_index_shanchubiao'),
+  clear_table_event: i18n.global.t('packages_form_ddl_event_checkbox_index_qingkongbiao'),
+  alter_primary_key_event: i18n.global.t('packages_form_ddl_event_checkbox_index_xiugaizhujian'),
+  drop_field_event: i18n.global.t('packages_form_ddl_event_checkbox_index_shanchuziduan'),
+  new_field_event: i18n.global.t('packages_form_ddl_event_checkbox_index_xinzengziduan'),
+  alter_table_charset_event: i18n.global.t('packages_form_ddl_event_checkbox_index_xiugaibiaozifu'),
+  alter_database_timezone_event: i18n.global.t('packages_form_ddl_event_checkbox_index_xiugaishujuku'),
+  rename_table_event: i18n.global.t('packages_form_ddl_event_checkbox_index_xiugaibiaoming')
 }
 
 export const DdlEventCheckbox = observer(
@@ -115,7 +115,7 @@ export const DdlEventList = observer(
               ? list.value.map((item, i) => {
                   return [
                     <div class={['font-color-light mb-2 lh-1', { 'mt-2': i > 0 }]}>
-                      {i18n.t('packages_form_ddl_event_checkbox_index_laiziyuanlianjie')}
+                      {i18n.global.t('packages_form_ddl_event_checkbox_index_laiziyuanlianjie')}
                       {item.source}
                     </div>,
                     <div class="flex flex-wrap gap-1">
@@ -127,7 +127,7 @@ export const DdlEventList = observer(
                     </div>
                   ]
                 })
-              : i18n.t('packages_form_ddl_event_checkbox_index_mubiaozanbuzhi')}
+              : i18n.global.t('packages_form_ddl_event_checkbox_index_mubiaozanbuzhi')}
           </div>
         )
       }

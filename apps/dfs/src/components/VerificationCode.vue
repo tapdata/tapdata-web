@@ -28,7 +28,7 @@ export default {
     buttonText: {
       type: String,
       default: () => {
-        return i18n.t('components_VerificationCode_faSongYanZhengMa')
+        return i18n.global.t('components_VerificationCode_faSongYanZhengMa')
       }
     },
     remoteMethod: {

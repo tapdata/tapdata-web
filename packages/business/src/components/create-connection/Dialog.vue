@@ -50,7 +50,7 @@ export default {
     title: {
       type: String,
       default: () => {
-        return i18n.t('packages_business_create_connection_dialog_xuanzeshujuyuan')
+        return i18n.global.t('packages_business_create_connection_dialog_xuanzeshujuyuan')
       }
     },
     visible: {

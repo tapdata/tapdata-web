@@ -274,94 +274,94 @@ export default {
         },
         // 通知
         {
-          label: i18n.t('operation_log_List_yiDuQuanBuTong'),
+          label: i18n.global.t('operation_log_List_yiDuQuanBuTong'),
           value: 'message&&readAll',
-          desc: i18n.t('operation_log_List_sheZhiQuanBuTong')
+          desc: i18n.global.t('operation_log_List_sheZhiQuanBuTong')
         },
         {
-          label: i18n.t('operation_log_List_shanChuQuanBuTong'),
+          label: i18n.global.t('operation_log_List_shanChuQuanBuTong'),
           value: 'message&&deleteAll',
-          desc: i18n.t('operation_log_List_shanChuLeQuanBu')
+          desc: i18n.global.t('operation_log_List_shanChuLeQuanBu')
         },
         {
-          label: i18n.t('operation_log_List_biaoJiTongZhiWei'),
+          label: i18n.global.t('operation_log_List_biaoJiTongZhiWei'),
           value: 'message&&read',
-          desc: i18n.t('operation_log_List_jiangXuanZhongDeTong2')
+          desc: i18n.global.t('operation_log_List_jiangXuanZhongDeTong2')
         },
         {
-          label: i18n.t('operation_log_List_shanChuTongZhi'),
+          label: i18n.global.t('operation_log_List_shanChuTongZhi'),
           value: 'message&&delete',
-          desc: i18n.t('operation_log_List_jiangXuanZhongDeTong')
+          desc: i18n.global.t('operation_log_List_jiangXuanZhongDeTong')
         },
         {
-          label: i18n.t('operation_log_List_xiuGaiTongZhiShe'),
+          label: i18n.global.t('operation_log_List_xiuGaiTongZhiShe'),
           value: 'userNotification&&update',
-          desc: i18n.t('operation_log_List_xiuGaiLeXiTong')
+          desc: i18n.global.t('operation_log_List_xiuGaiLeXiTong')
         },
         // 用户中心
         // { label: '修改昵称', value: 'user&&update_nickname', desc: '修改了昵称' },
         {
-          label: i18n.t('operation_log_List_xiuGaiYongHuXin'),
+          label: i18n.global.t('operation_log_List_xiuGaiYongHuXin'),
           value: 'user&&update',
-          desc: i18n.t('operation_log_List_xiuGaiLeYongHu')
+          desc: i18n.global.t('operation_log_List_xiuGaiLeYongHu')
         },
         {
-          label: i18n.t('operation_log_List_bangDingShouJiHao'),
+          label: i18n.global.t('operation_log_List_bangDingShouJiHao'),
           value: 'user&&bind_phone',
-          desc: i18n.t('operation_log_List_bangDingLeShouJi')
+          desc: i18n.global.t('operation_log_List_bangDingLeShouJi')
         },
         {
-          label: i18n.t('operation_log_List_xiuGaiShouJiHao'),
+          label: i18n.global.t('operation_log_List_xiuGaiShouJiHao'),
           value: 'user&&update_phone',
-          desc: i18n.t('operation_log_List_xiuGaiLeShouJi')
+          desc: i18n.global.t('operation_log_List_xiuGaiLeShouJi')
         },
         {
-          label: i18n.t('operation_log_List_bangDingYouXiang'),
+          label: i18n.global.t('operation_log_List_bangDingYouXiang'),
           value: 'user&&bind_email',
-          desc: i18n.t('operation_log_List_bangDingLeYouXiang')
+          desc: i18n.global.t('operation_log_List_bangDingLeYouXiang')
         },
         {
-          label: i18n.t('operation_log_List_xiuGaiYouXiang'),
+          label: i18n.global.t('operation_log_List_xiuGaiYouXiang'),
           value: 'user&&update_email',
-          desc: i18n.t('operation_log_List_xiuGaiLeYouXiang')
+          desc: i18n.global.t('operation_log_List_xiuGaiLeYouXiang')
         },
         {
-          label: i18n.t('operation_log_List_xiuGaiMiMa'),
+          label: i18n.global.t('operation_log_List_xiuGaiMiMa'),
           value: 'user&&reset_password',
-          desc: i18n.t('operation_log_List_xiuGaiLeMiMa')
+          desc: i18n.global.t('operation_log_List_xiuGaiLeMiMa')
         },
         // { label: '修改头像', value: 'user&&update_avatar', desc: '修改了头像' },
         {
-          label: i18n.t('operation_log_List_xiuGaiQiYeXin'),
+          label: i18n.global.t('operation_log_List_xiuGaiQiYeXin'),
           value: 'customer&&update',
-          desc: i18n.t('operation_log_List_xiuGaiLeQiYe')
+          desc: i18n.global.t('operation_log_List_xiuGaiLeQiYe')
         }
       ],
       columns: [
         {
-          label: i18n.t('operation_log_user_name'),
+          label: i18n.global.t('operation_log_user_name'),
           prop: 'username',
           minWidth: 160
         },
         {
-          label: i18n.t('operation_log_List_caoZuoShiJian'),
+          label: i18n.global.t('operation_log_List_caoZuoShiJian'),
           prop: 'createTime',
           dataType: 'time',
           width: 180
         },
         {
-          label: i18n.t('operation_log_List_caoZuoDuiXiang'),
+          label: i18n.global.t('operation_log_List_caoZuoDuiXiang'),
           prop: 'parameter1',
           width: 350
         },
         {
-          label: i18n.t('operation_log_List_caoZuoLeiXing'),
+          label: i18n.global.t('operation_log_List_caoZuoLeiXing'),
           prop: 'operationType',
           slotName: 'operationType',
           width: 120
         },
         {
-          label: i18n.t('operation_log_List_caoZuoMiaoShu'),
+          label: i18n.global.t('operation_log_List_caoZuoMiaoShu'),
           prop: 'desc',
           slotName: 'desc',
           minWidth: 300
@@ -415,23 +415,23 @@ export default {
     getSearchItems() {
       this.filterItems = [
         {
-          label: i18n.t('operation_log_List_caoZuoLeiXing'),
+          label: i18n.global.t('operation_log_List_caoZuoLeiXing'),
           key: 'operationType',
           type: 'select-inner',
           items: this.operationTypeOptions
         },
         {
-          label: i18n.t('operation_log_List_caoZuoShiJian'),
+          label: i18n.global.t('operation_log_List_caoZuoShiJian'),
           key: 'start,end',
           type: 'datetimerange'
         },
         {
-          placeholder: i18n.t('operation_log_List_caoZuoDuiXiang'),
+          placeholder: i18n.global.t('operation_log_List_caoZuoDuiXiang'),
           key: 'parameter1',
           type: 'input'
         },
         {
-          placeholder: i18n.t('operation_log_List_yongHuMingCheng'),
+          placeholder: i18n.global.t('operation_log_List_yongHuMingCheng'),
           key: 'username',
           type: 'input'
         }

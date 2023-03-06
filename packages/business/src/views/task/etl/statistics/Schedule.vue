@@ -262,15 +262,15 @@ export default {
       rollbackVisible: false,
       options: [
         {
-          label: i18n.t('packages_business_statistics_schedule_yonghuliulanqi'),
+          label: i18n.global.t('packages_business_statistics_schedule_yonghuliulanqi'),
           value: 'localTZ'
         },
         {
-          label: i18n.t('packages_business_statistics_schedule_shujukushiqu'),
+          label: i18n.global.t('packages_business_statistics_schedule_shujukushiqu'),
           value: 'connTZ'
         },
         {
-          label: i18n.t('packages_business_statistics_schedule_cike'),
+          label: i18n.global.t('packages_business_statistics_schedule_cike'),
           value: 'current'
         }
       ],

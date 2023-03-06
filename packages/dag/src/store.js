@@ -336,7 +336,7 @@ const mutations = {
   setActiveNode(state, nodeId) {
     if (!nodeId || state.activeNodeId !== nodeId) {
       // eslint-disable-next-line no-console
-      console.log(i18n.t('packages_dag_src_store_qingkongjiedianshu'))
+      console.log(i18n.global.t('packages_dag_src_store_qingkongjiedianshu'))
       state.nodeInputsWatcher?.()
       state.nodeOutputsWatcher?.()
     }
@@ -444,7 +444,7 @@ const mutations = {
     const { conditions } = updateInformation
 
     if (node === undefined || node === null) {
-      throw new Error(i18n.t('packages_dag_src_store_weizhaodaojiedian'))
+      throw new Error(i18n.global.t('packages_dag_src_store_weizhaodaojiedian'))
     }
 
     let target = find(node, nameParts, conditions)
@@ -461,7 +461,7 @@ const mutations = {
     const { conditions = [] } = updateInformation
 
     if (node === undefined || node === null) {
-      throw new Error(i18n.t('packages_dag_src_store_weizhaodaojiedian'))
+      throw new Error(i18n.global.t('packages_dag_src_store_weizhaodaojiedian'))
     }
 
     let target = find(node, nameParts, conditions)
@@ -475,7 +475,7 @@ const mutations = {
     const node = state.dag.nodes.find(node => node.id === updateInformation.id)
 
     if (node === undefined || node === null) {
-      throw new Error(i18n.t('packages_dag_src_store_weizhaodaojiedian'))
+      throw new Error(i18n.global.t('packages_dag_src_store_weizhaodaojiedian'))
     }
 
     state.stateIsDirty = true

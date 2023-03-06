@@ -299,7 +299,7 @@ export default {
       let maxFileSize = 10
       if (file.size > maxFileSize * 1024 * 1024) {
         this.$message.error(
-          i18n.t('daas_function_importform_shangchuanwenjianda', {
+          i18n.global.t('daas_function_importform_shangchuanwenjianda', {
             val1: maxFileSize
           })
         )

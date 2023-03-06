@@ -54,11 +54,11 @@ export default {
       showTooltip: false,
       copied: false,
       errData: {},
-      copiedTip: i18n.t('components_RequestErrorMessage_yiFuZhi'),
-      errorTitle: i18n.t('RequestErrorMessage_error_title'),
-      codeLabel: i18n.t('RequestErrorMessage_code_label'),
-      reqIdLabel: i18n.t('RequestErrorMessage_req_id_label'),
-      errorDetailLabel: i18n.t('RequestErrorMessage_error_detail_label')
+      copiedTip: i18n.global.t('components_RequestErrorMessage_yiFuZhi'),
+      errorTitle: i18n.global.t('RequestErrorMessage_error_title'),
+      codeLabel: i18n.global.t('RequestErrorMessage_code_label'),
+      reqIdLabel: i18n.global.t('RequestErrorMessage_req_id_label'),
+      errorDetailLabel: i18n.global.t('RequestErrorMessage_error_detail_label')
     }
   },
   computed: {

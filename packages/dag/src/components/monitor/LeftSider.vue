@@ -391,8 +391,8 @@ export default {
       return {
         x: time,
         name: [
-          i18n.t('packages_dag_components_nodedetaildialog_shuru'),
-          i18n.t('packages_dag_components_nodedetaildialog_shuchu')
+          i18n.global.t('packages_dag_components_nodedetaildialog_shuru'),
+          i18n.global.t('packages_dag_components_nodedetaildialog_shuchu')
         ],
         value: [data.inputQps, data.outputQps]
       }
@@ -561,7 +561,7 @@ export default {
         ? calcTimeUnit(val, 2, {
             autoHideMs: true
           })
-        : i18n.t('packages_dag_dag_dialog_field_mapping_no_data')
+        : i18n.global.t('packages_dag_dag_dialog_field_mapping_no_data')
     }
   },
   emits: ['load-data', 'verifyDetails', 'changeTimeSelect', 'changeFrequency']

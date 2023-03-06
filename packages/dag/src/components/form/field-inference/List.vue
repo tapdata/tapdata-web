@@ -139,34 +139,34 @@ export default {
     return {
       columns: [
         {
-          label: i18n.t('packages_form_field_mapping_list_xuhao'),
+          label: i18n.global.t('packages_form_field_mapping_list_xuhao'),
           type: 'index',
           prop: 'index',
           width: '60px'
         },
         {
-          label: i18n.t('packages_form_field_add_del_index_ziduanmingcheng'),
+          label: i18n.global.t('packages_form_field_add_del_index_ziduanmingcheng'),
           prop: 'field_name',
           slotName: 'field_name',
           'min-width': '90px'
         },
         {
-          label: i18n.t('packages_form_dag_dialog_field_mapping_type'),
+          label: i18n.global.t('packages_form_dag_dialog_field_mapping_type'),
           prop: 'data_type',
           slotName: 'data_type',
           'min-width': '126px'
         },
         {
-          label: i18n.t('packages_form_field_inference_list_feikong'),
+          label: i18n.global.t('packages_form_field_inference_list_feikong'),
           prop: 'is_nullable',
           slotName: 'is_nullable'
         },
         {
-          label: i18n.t('packages_form_field_inference_list_ziduanzhushi'),
+          label: i18n.global.t('packages_form_field_inference_list_ziduanzhushi'),
           prop: 'comment'
         },
         {
-          label: i18n.t('packages_form_field_processor_index_caozuo'),
+          label: i18n.global.t('packages_form_field_processor_index_caozuo'),
           prop: 'operation',
           slotName: 'operation',
           headerSlot: 'operationHeader',
@@ -174,8 +174,8 @@ export default {
         }
       ],
       nullableMap: {
-        true: i18n.t('packages_dag_meta_table_true'),
-        false: i18n.t('packages_dag_meta_table_false')
+        true: i18n.global.t('packages_dag_meta_table_true'),
+        false: i18n.global.t('packages_dag_meta_table_false')
       },
       editDataTypeVisible: false,
       currentData: {
@@ -271,7 +271,7 @@ export default {
           const val = data[newDataType]
           const tapType = val && val.type !== 7 ? JSON.stringify(val) : null
           if (!tapType) {
-            this.currentData.errorMessage = i18n.t('packages_form_field_inference_list_geshicuowu')
+            this.currentData.errorMessage = i18n.global.t('packages_form_field_inference_list_geshicuowu')
             this.editBtnLoading = false
             return
           }
@@ -320,7 +320,7 @@ export default {
             }
           })
           this.editBtnLoading = false
-          this.$message.success(i18n.t('packages_form_field_inference_list_caozuochenggong'))
+          this.$message.success(i18n.global.t('packages_form_field_inference_list_caozuochenggong'))
           this.editDataTypeVisible = false
         })
         .catch(() => {
@@ -347,7 +347,7 @@ export default {
       if (!this.canRevokeRules.length) {
         return
       }
-      this.$confirm(i18n.t('packages_form_field_inference_list_ninquerenyaohui'), '', {
+      this.$confirm(i18n.global.t('packages_form_field_inference_list_ninquerenyaohui'), '', {
         type: 'warning',
         closeOnClickModal: false
       }).then(resFlag => {
@@ -356,7 +356,7 @@ export default {
           this.handleUpdate(
             this.fieldChangeRules.filter(t => !(t.scope === 'Field' && t.namespace?.[1] === qualified_name))
           )
-          this.$message.success(i18n.t('packages_form_field_inference_list_caozuochenggong'))
+          this.$message.success(i18n.global.t('packages_form_field_inference_list_caozuochenggong'))
         }
       })
     },

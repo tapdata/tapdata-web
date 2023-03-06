@@ -31,7 +31,7 @@ export const useAfterTaskSaved = (root, obs, callback) => {
     () => root.$store.state.dataflow.transformLoading,
     v => {
       if (!v) {
-        console.debug(i18n.t('packages_dag_hooks_useaftertasksaved_moxingyishengcheng'))
+        console.debug(i18n.global.t('packages_dag_hooks_useaftertasksaved_moxingyishengcheng'))
         callback()
       }
     }

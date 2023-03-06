@@ -334,7 +334,7 @@ export default {
           } else {
             //默认目录国际化
             if (it?.item_type && it?.item_type.findIndex(t => t === 'default') > -1) {
-              it.name = i18n.t('packages_component_src_discoveryclassification_morenmuluji')
+              it.name = i18n.global.t('packages_component_src_discoveryclassification_morenmuluji')
               if (it?.userName && it?.user_id !== userId) {
                 it.name += `| ${it.userName}`
               }

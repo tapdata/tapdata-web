@@ -100,19 +100,19 @@ export default {
         select: 6,
         items: [
           {
-            label: i18n.t('monitor_Log_zuiJinGeXiaoShi'),
+            label: i18n.global.t('monitor_Log_zuiJinGeXiaoShi'),
             value: 6
           },
           {
-            label: i18n.t('monitor_Log_zuiJinTian3'),
+            label: i18n.global.t('monitor_Log_zuiJinTian3'),
             value: 24
           },
           {
-            label: i18n.t('monitor_Log_zuiJinTian2'),
+            label: i18n.global.t('monitor_Log_zuiJinTian2'),
             value: 3 * 24
           },
           {
-            label: i18n.t('monitor_Log_zuiJinTian'),
+            label: i18n.global.t('monitor_Log_zuiJinTian'),
             value: 5 * 24
           }
         ]

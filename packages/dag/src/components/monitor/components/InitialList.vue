@@ -52,30 +52,30 @@ export default {
       visible: false,
       statusMap: {
         NOT_START: {
-          text: i18n.t('packages_dag_components_initiallist_weikaishi'),
+          text: i18n.global.t('packages_dag_components_initiallist_weikaishi'),
           type: 'waiting'
         },
         PAUSE: {
-          text: i18n.t('packages_dag_task_preview_status_stop'),
+          text: i18n.global.t('packages_dag_task_preview_status_stop'),
           type: 'pause'
         },
         DONE: {
-          text: i18n.t('packages_dag_task_preview_status_complete'),
+          text: i18n.global.t('packages_dag_task_preview_status_complete'),
           type: 'finish'
         },
         ING: {
-          text: i18n.t('packages_dag_components_initiallist_tongbuzhong'),
+          text: i18n.global.t('packages_dag_components_initiallist_tongbuzhong'),
           type: 'running'
         }
       },
       columns: [
         {
-          label: i18n.t('packages_dag_components_initiallist_yuanbiaoming'),
+          label: i18n.global.t('packages_dag_components_initiallist_yuanbiaoming'),
           prop: 'originTable',
           width: 180
         },
         {
-          label: i18n.t('packages_dag_components_initiallist_mubiaobiaoming'),
+          label: i18n.global.t('packages_dag_components_initiallist_mubiaobiaoming'),
           prop: 'targetTable',
           width: 180
         },
@@ -86,12 +86,12 @@ export default {
         //   width: 80
         // },
         {
-          label: i18n.t('packages_dag_components_initiallist_shujutongbu'),
+          label: i18n.global.t('packages_dag_components_initiallist_shujutongbu'),
           prop: 'progress',
           slotName: 'progress'
         },
         {
-          label: i18n.t('packages_dag_components_initiallist_quanliangtongbuzhuang'),
+          label: i18n.global.t('packages_dag_components_initiallist_quanliangtongbuzhuang'),
           prop: 'syncStatus',
           slotName: 'syncStatus',
           width: 100

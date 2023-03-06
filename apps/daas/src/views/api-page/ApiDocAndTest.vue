@@ -113,7 +113,7 @@ export default {
             'x-controller-name': 'oauth',
             'x-operation-name': 'oauth',
             tags: ['oauth'],
-            summary: i18n.t('daas_api_page_apidocandtest_shouquanjiekou'),
+            summary: i18n.global.t('daas_api_page_apidocandtest_shouquanjiekou'),
             responses: {
               200: {
                 description:

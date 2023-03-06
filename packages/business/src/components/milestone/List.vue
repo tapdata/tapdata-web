@@ -77,25 +77,25 @@ export default {
       activeNode: {},
       columns: [
         {
-          label: i18n.t('packages_business_milestone_list_guanjianbuzhou'),
+          label: i18n.global.t('packages_business_milestone_list_guanjianbuzhou'),
           prop: 'label'
         },
         {
-          label: i18n.t('packages_business_connection_list_status'),
+          label: i18n.global.t('packages_business_connection_list_status'),
           slotName: 'statusLabel'
         },
         {
-          label: i18n.t('packages_business_task_info_start_time'),
+          label: i18n.global.t('packages_business_task_info_start_time'),
           dataType: 'time',
           prop: 'begin'
         },
         {
-          label: i18n.t('packages_business_verification_LastTime'),
+          label: i18n.global.t('packages_business_verification_LastTime'),
           dataType: 'time',
           prop: 'end'
         },
         {
-          label: i18n.t('packages_business_milestone_list_haoshi'),
+          label: i18n.global.t('packages_business_milestone_list_haoshi'),
           prop: 'diff'
         }
       ]
@@ -138,23 +138,23 @@ export default {
       let result = [
         {
           key: 'TASK',
-          label: i18n.t('packages_business_milestone_list_renwudiaodu')
+          label: i18n.global.t('packages_business_milestone_list_renwudiaodu')
         },
         {
           key: 'DATA_NODE_INIT',
-          label: i18n.t('packages_business_milestone_list_shujujiedianchu')
+          label: i18n.global.t('packages_business_milestone_list_shujujiedianchu')
         },
         {
           key: 'TABLE_INIT',
-          label: i18n.t('packages_business_milestone_list_biaojiegouqianyi')
+          label: i18n.global.t('packages_business_milestone_list_biaojiegouqianyi')
         },
         {
           key: 'FULL_SYNC',
-          label: i18n.t('packages_business_milestone_list_quanliangshujuqian')
+          label: i18n.global.t('packages_business_milestone_list_quanliangshujuqian')
         },
         {
           key: 'STREAM_READ',
-          label: i18n.t('packages_business_milestone_list_zengliangshujuqian')
+          label: i18n.global.t('packages_business_milestone_list_zengliangshujuqian')
         }
       ]
 
@@ -168,20 +168,20 @@ export default {
 
       const finishOpt = {
         status: 'FINISH',
-        desc: i18n.t('packages_business_milestone_list_wancheng'),
+        desc: i18n.global.t('packages_business_milestone_list_wancheng'),
         icon: 'success',
         color: 'color-success'
       }
       const runningOpt = {
         status: 'RUNNING',
-        desc: i18n.t('packages_business_milestone_list_status_progressing'),
+        desc: i18n.global.t('packages_business_milestone_list_status_progressing'),
         icon: 'loading-circle',
         progress: 0,
         color: 'color-primary'
       }
       const waitingOpt = {
         status: 'WAITING',
-        desc: i18n.t('packages_business_milestone_list_dengdaizhong'),
+        desc: i18n.global.t('packages_business_milestone_list_dengdaizhong'),
         icon: 'time',
         color: 'color-primary'
       }
@@ -196,7 +196,7 @@ export default {
             const { progress, time } = this.getDueTimeAndProgress(this.totalData)
             Object.assign(el, runningOpt, {
               progress,
-              desc: i18n.t('packages_business_milestone_list_jinhangzhongpr', {
+              desc: i18n.global.t('packages_business_milestone_list_jinhangzhongpr', {
                 val1: progress,
                 val2: calcTimeUnit(time)
               })
@@ -219,13 +219,13 @@ export default {
       const finishedLen = result.filter(t => t.status === 'FINISH').length
       const per = (finishedLen / len) * 100
       result.unshift({
-        label: i18n.t('packages_business_milestone_list_zhengtijindu'),
+        label: i18n.global.t('packages_business_milestone_list_zhengtijindu'),
         icon: 'device',
         percentage: per,
         desc:
           per >= 100
-            ? i18n.t('packages_business_milestone_list_wancheng')
-            : i18n.t('packages_business_milestone_list_finis', {
+            ? i18n.global.t('packages_business_milestone_list_wancheng')
+            : i18n.global.t('packages_business_milestone_list_finis', {
                 val1: finishedLen,
                 val2: len,
                 val3: result.find(t => t.status !== 'FINISH')?.label
@@ -241,61 +241,61 @@ export default {
         source: [
           {
             key: 'NODE',
-            label: i18n.t('packages_business_milestone_list_lianjiebingyanzheng')
+            label: i18n.global.t('packages_business_milestone_list_lianjiebingyanzheng')
           },
           {
             key: 'BATCH_READ',
-            label: i18n.t('packages_business_milestone_list_duququanliangshu')
+            label: i18n.global.t('packages_business_milestone_list_duququanliangshu')
           },
           {
             key: 'OPEN_STREAM_READ',
-            label: i18n.t('packages_business_milestone_list_kaiqizengliang')
+            label: i18n.global.t('packages_business_milestone_list_kaiqizengliang')
           },
           {
             key: 'STREAM_READ',
-            label: i18n.t('packages_business_milestone_list_duquzengliangshu')
+            label: i18n.global.t('packages_business_milestone_list_duquzengliangshu')
           }
         ],
         target: [
           {
             key: 'NODE',
-            label: i18n.t('packages_business_milestone_list_lianjiebingyanzheng')
+            label: i18n.global.t('packages_business_milestone_list_lianjiebingyanzheng')
           },
           {
             key: 'TABLE_INIT',
-            label: i18n.t('packages_business_milestone_list_chuangjianmubiaobiao')
+            label: i18n.global.t('packages_business_milestone_list_chuangjianmubiaobiao')
           },
           {
             key: 'WRITE_RECORD',
-            label: i18n.t('packages_business_milestone_list_mubiaoshujuxie')
+            label: i18n.global.t('packages_business_milestone_list_mubiaoshujuxie')
           }
         ],
         processor: [
           {
             key: 'NODE',
-            label: i18n.t('packages_business_milestone_list_shujuchuli')
+            label: i18n.global.t('packages_business_milestone_list_shujuchuli')
           }
         ]
       }
       const STATUS_MAP = {
         FINISH: {
-          label: i18n.t('packages_business_status_complete'),
+          label: i18n.global.t('packages_business_status_complete'),
           color: 'color-success'
         },
         RUNNING: {
-          label: i18n.t('packages_business_milestone_list_status_progressing'),
+          label: i18n.global.t('packages_business_milestone_list_status_progressing'),
           color: 'color-primary'
         },
         WAITING: {
-          label: i18n.t('packages_business_milestone_list_dengdaizhong'),
+          label: i18n.global.t('packages_business_milestone_list_dengdaizhong'),
           color: 'color-info'
         },
         STOP: {
-          label: i18n.t('packages_business_status_stop'),
+          label: i18n.global.t('packages_business_status_stop'),
           color: 'color-warning'
         },
         ERROR: {
-          label: i18n.t('packages_business_milestone_list_chucuo'),
+          label: i18n.global.t('packages_business_milestone_list_chucuo'),
           color: 'color-danger'
         }
       }
@@ -323,7 +323,7 @@ export default {
               const { progress, time } = this.getDueTimeAndProgress(this.totalData)
               label =
                 STATUS_MAP[status]?.label +
-                i18n.t('packages_business_milestone_list_progr', {
+                i18n.global.t('packages_business_milestone_list_progr', {
                   val1: progress,
                   val2: calcTimeUnit(time)
                 })
@@ -348,7 +348,7 @@ export default {
     },
 
     handleError(row = {}) {
-      this.$confirm(row.errorMessage, i18n.t('packages_business_milestone_list_cuowuxinxi'), {
+      this.$confirm(row.errorMessage, i18n.global.t('packages_business_milestone_list_cuowuxinxi'), {
         type: 'warning',
         closeOnClickModal: false
       })

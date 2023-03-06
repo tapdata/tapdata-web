@@ -45,7 +45,7 @@ export default {
     placeholder: {
       type: String,
       default: () => {
-        return i18n.t('packages_component_formBuilder_input_placeholderPrefix')
+        return i18n.global.t('packages_component_formBuilder_input_placeholderPrefix')
       }
     },
     hiddenIcon: Boolean,

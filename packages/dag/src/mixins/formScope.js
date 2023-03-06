@@ -114,7 +114,7 @@ export default {
           while (parentId) {
             parent = this.scope.findNodeById(parentId)
             if (!parent) {
-              console.error(i18n.t('packages_dag_mixins_formscope_liuyipar'), parentId) // eslint-disable-line
+              console.error(i18n.global.t('packages_dag_mixins_formscope_liuyipar'), parentId) // eslint-disable-line
             }
             parentId = parent?.$inputs?.[0]
           }
@@ -614,8 +614,8 @@ export default {
           value: item.processId,
           label: `${item.hostName}（${
             item.status === 'running'
-              ? i18n.t('packages_business_agent_status_running')
-              : i18n.t('packages_business_agent_status_stopped')
+              ? i18n.global.t('packages_business_agent_status_running')
+              : i18n.global.t('packages_business_agent_status_stopped')
           }）`,
           disabled: item.status !== 'running'
         }

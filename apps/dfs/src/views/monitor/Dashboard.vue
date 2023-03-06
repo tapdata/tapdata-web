@@ -597,7 +597,7 @@ export default {
       })
     },
     checkError(msg) {
-      this.$confirm(msg, i18n.t('monitor_Dashboard_cuoWu'), {
+      this.$confirm(msg, i18n.global.t('monitor_Dashboard_cuoWu'), {
         type: 'warning',
         width: '850px'
       })

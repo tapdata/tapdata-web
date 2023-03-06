@@ -50,7 +50,7 @@ export default {
             '2000-06-19',
             '2000-06-20'
           ],
-          name: [i18n.t('packages_dag_components_linechart_biaoti')],
+          name: [i18n.global.t('packages_dag_components_linechart_biaoti')],
           value: [12, 3, 42, 4, 78, 24, 7, 5, 44, 22, 12, 3, 42, 4, 78, 24, 7, 5, 44, 222]
         }
       }
@@ -156,7 +156,7 @@ export default {
                 fontWeight: '500',
                 opacity: 0.7
               },
-              text: i18n.t('packages_dag_dag_dialog_field_mapping_no_data'),
+              text: i18n.global.t('packages_dag_dag_dialog_field_mapping_no_data'),
               left: 'center',
               top: 'center'
             }

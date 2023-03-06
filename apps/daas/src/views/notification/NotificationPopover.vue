@@ -212,7 +212,7 @@ export default {
         msg.userId = Cookie.get('user_id')
       }
       this.getUnreadData()
-      this.$ws.on(
+      this.$ws?.on(
         'notification',
         debounce(res => {
           let data = res?.data
@@ -225,7 +225,7 @@ export default {
           }
         }, 800)
       )
-      this.$ws.ready(() => {
+      this.$ws?.ready(() => {
         this.$ws.send(msg)
       }, true)
       $on(this.$root, 'notificationUpdate', () => {

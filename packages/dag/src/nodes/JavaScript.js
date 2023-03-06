@@ -24,13 +24,13 @@ export class JavaScript extends NodeType {
       },
       name: {
         type: 'string',
-        title: i18n.t('packages_dag_nodes_database_jiedianmingcheng'),
+        title: i18n.global.t('packages_dag_nodes_database_jiedianmingcheng'),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input'
       },
       script: {
-        title: i18n.t('packages_dag_nodes_javascript_jiaoben'),
+        title: i18n.global.t('packages_dag_nodes_javascript_jiaoben'),
         type: 'string',
         required: true,
         default: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}',

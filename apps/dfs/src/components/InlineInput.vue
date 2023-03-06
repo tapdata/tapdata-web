@@ -84,19 +84,19 @@ export default {
     editText: {
       type: String,
       default: () => {
-        return i18n.t('button_edit')
+        return i18n.global.t('button_edit')
       }
     },
     saveText: {
       type: String,
       default: () => {
-        return i18n.t('button_save')
+        return i18n.global.t('button_save')
       }
     },
     cancelText: {
       type: String,
       default: () => {
-        return i18n.t('button_cancel')
+        return i18n.global.t('button_cancel')
       }
     }
   },
@@ -118,7 +118,7 @@ export default {
     },
     tooltip() {
       let { min, max } = this
-      return i18n.t('components_InlineInput_ziFuChangDuXian', {
+      return i18n.global.t('components_InlineInput_ziFuChangDuXian', {
         val1: min,
         val2: max
       })

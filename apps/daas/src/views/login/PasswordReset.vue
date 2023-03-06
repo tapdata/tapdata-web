@@ -159,9 +159,9 @@ export default {
             })
             .catch(e => {
               if (e?.data?.message) {
-                if (e.data.message === i18n.t('daas_login_passwordreset_zhaobudaodianzi')) {
+                if (e.data.message === i18n.global.t('daas_login_passwordreset_zhaobudaodianzi')) {
                   this.errorMessage = this.$t('signin_not_mailbox')
-                } else if (e.data.message === i18n.t('daas_login_passwordreset_shangweiyanzhengdian')) {
+                } else if (e.data.message === i18n.global.t('daas_login_passwordreset_shangweiyanzhengdian')) {
                   this.errorMessage = this.$t('signin_verify_email_invalid')
                 } else if (e.data.message.includes('Incorect')) {
                   this.errorMessage = this.$t('signin_verify_code_not_incorrect')

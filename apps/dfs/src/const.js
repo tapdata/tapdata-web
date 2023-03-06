@@ -10,49 +10,49 @@ for (const dKey in directionMap) {
 }
 export const TOPOLOGY_MAP = topologyMap,
   INSTANCE_STATUS_MAP = {
-    Creating: { text: i18n.t('agent_status_creating'), type: 'warning' },
-    Running: { text: i18n.t('agent_status_running'), type: 'success' },
-    Stopping: { text: i18n.t('agent_status_stopping'), type: 'danger' },
-    Stopped: { text: i18n.t('agent_status_stopped'), type: 'disable' }
+    Creating: { text: i18n.global.t('agent_status_creating'), type: 'warning' },
+    Running: { text: i18n.global.t('agent_status_running'), type: 'success' },
+    Stopping: { text: i18n.global.t('agent_status_stopping'), type: 'danger' },
+    Stopped: { text: i18n.global.t('agent_status_stopped'), type: 'disable' }
   },
   TASK_STATUS_MAP = {
     running: {
-      text: i18n.t('task_status_running'),
+      text: i18n.global.t('task_status_running'),
       icon: 'yunxingzhong',
       type: 'success'
     },
     paused: {
-      text: i18n.t('task_status_paused'),
+      text: i18n.global.t('task_status_paused'),
       icon: 'daiqidong',
       type: 'warning'
     },
-    error: { text: i18n.t('task_status_error'), icon: 'cuowu', type: 'danger' },
+    error: { text: i18n.global.t('task_status_error'), icon: 'cuowu', type: 'danger' },
     draft: {
-      text: i18n.t('task_status_draft'),
+      text: i18n.global.t('task_status_draft'),
       icon: 'daiqidong',
       type: 'warning'
     },
-    scheduled: { text: i18n.t('task_status_scheduled'), icon: 'qidongzhong' },
+    scheduled: { text: i18n.global.t('task_status_scheduled'), icon: 'qidongzhong' },
     stopping: {
-      text: i18n.t('task_status_stopping'),
+      text: i18n.global.t('task_status_stopping'),
       icon: 'tingzhizhong',
       type: 'info'
     },
     'force stopping': {
-      text: i18n.t('task_status_force_stopping'),
+      text: i18n.global.t('task_status_force_stopping'),
       icon: 'qiangzhitingzhi',
       type: 'danger'
     },
     finished: {
-      text: i18n.t('task_status_finished'),
+      text: i18n.global.t('task_status_finished'),
       icon: 'yiwancheng',
       type: 'success'
     }
   },
   CONNECTION_STATUS_MAP = {
-    ready: { text: i18n.t('connection_list_efficient'), type: 'success' },
-    invalid: { text: i18n.t('connection_list_invalidation'), type: 'danger' },
-    testing: { text: i18n.t('connection_list_testing'), type: 'warning' }
+    ready: { text: i18n.global.t('connection_list_efficient'), type: 'success' },
+    invalid: { text: i18n.global.t('connection_list_invalidation'), type: 'danger' },
+    testing: { text: i18n.global.t('connection_list_testing'), type: 'warning' }
   },
   CONNECTION_STATUS_MAP_EN = {
     ready: { text: 'Ready', type: 'success' },
@@ -61,39 +61,39 @@ export const TOPOLOGY_MAP = topologyMap,
   },
   AGENT_STATUS_MAP_EN = {
     0: {
-      text: i18n.t('dfs_instance_details_shangchuanzhong'),
+      text: i18n.global.t('dfs_instance_details_shangchuanzhong'),
       type: 'warning'
     }, //上传中
     1: {
-      text: i18n.t('dfs_instance_instance_status_success'),
+      text: i18n.global.t('dfs_instance_instance_status_success'),
       type: 'success'
     }, //上传成功
-    2: { text: i18n.t('dfs_instance_instance_status_false'), type: 'danger' }, //上传失败
-    3: { text: i18n.t('dfs_instance_details_status_invalid'), type: 'danger' } //失效
+    2: { text: i18n.global.t('dfs_instance_instance_status_false'), type: 'danger' }, //上传失败
+    3: { text: i18n.global.t('dfs_instance_details_status_invalid'), type: 'danger' } //失效
   },
   MILESTONE_STATUS_MAP = {
     waiting: {
-      text: i18n.t('task_milestone_waiting'),
+      text: i18n.global.t('task_milestone_waiting'),
       icon: 'daizhixing',
       type: 'warning'
     },
     running: {
-      text: i18n.t('task_milestone_running'),
+      text: i18n.global.t('task_milestone_running'),
       icon: 'jinxingzhong',
       type: 'success'
     },
     error: {
-      text: i18n.t('task_milestone_error'),
+      text: i18n.global.t('task_milestone_error'),
       icon: 'cuowu',
       type: 'danger'
     },
     finish: {
-      text: i18n.t('task_milestone_finish'),
+      text: i18n.global.t('task_milestone_finish'),
       icon: 'yiwancheng',
       type: 'success'
     },
     paused: {
-      text: i18n.t('task_milestone_paused'),
+      text: i18n.global.t('task_milestone_paused'),
       icon: 'yizanting',
       type: 'info'
     }

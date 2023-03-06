@@ -460,14 +460,14 @@ export default {
 
         if (!sourceMap[id] && !targetMap[id]) {
           // 存在没有连线的节点
-          someErrorMsg = i18n.t('packages_dag_src_migrationmonitor_noden', {
+          someErrorMsg = i18n.global.t('packages_dag_src_migrationmonitor_noden', {
             val1: node.name
           })
           return true
         }
 
         if (inputNum < minInputs) {
-          someErrorMsg = i18n.t('packages_dag_src_migrationmonitor_noden', {
+          someErrorMsg = i18n.global.t('packages_dag_src_migrationmonitor_noden', {
             val1: node.name,
             val2: minInputs
           })
@@ -475,7 +475,7 @@ export default {
         }
 
         if (this.hasNodeError(id)) {
-          someErrorMsg = i18n.t('packages_dag_src_migrationmonitor_noden', {
+          someErrorMsg = i18n.global.t('packages_dag_src_migrationmonitor_noden', {
             val1: node.name
           })
           return true
@@ -487,7 +487,7 @@ export default {
       // 根据任务类型(全量、增量),检查不支持此类型的节点
       // 脏代码。这里的校验是有节点错误信息提示的，和节点表单校验揉在了一起，但是校验没有一起做
       if (this.dataflow.type === 'initial_sync+cdc') {
-        typeName = i18n.t('packages_dag_components_formpanel_quanliangzengliang')
+        typeName = i18n.global.t('packages_dag_components_formpanel_quanliangzengliang')
         tableNode.forEach(node => {
           if (
             sourceMap[node.id] &&
@@ -496,36 +496,36 @@ export default {
             nodeNames.push(node.name)
             this.setNodeErrorMsg({
               id: node.id,
-              msg: i18n.t('packages_dag_src_migrationmonitor_gaijiedianbuzhi') + typeName
+              msg: i18n.global.t('packages_dag_src_migrationmonitor_gaijiedianbuzhi') + typeName
             })
           }
         })
       } else if (this.dataflow.type === 'initial_sync') {
-        typeName = i18n.t('packages_dag_task_setting_initial_sync')
+        typeName = i18n.global.t('packages_dag_task_setting_initial_sync')
         tableNode.forEach(node => {
           if (sourceMap[node.id] && NONSUPPORT_SYNC.includes(node.databaseType)) {
             nodeNames.push(node.name)
             this.setNodeErrorMsg({
               id: node.id,
-              msg: i18n.t('packages_dag_src_migrationmonitor_gaijiedianbuzhi') + typeName
+              msg: i18n.global.t('packages_dag_src_migrationmonitor_gaijiedianbuzhi') + typeName
             })
           }
         })
       } else if (this.dataflow.type === 'cdc') {
-        typeName = i18n.t('packages_dag_task_setting_cdc')
+        typeName = i18n.global.t('packages_dag_task_setting_cdc')
         tableNode.forEach(node => {
           if (sourceMap[node.id] && NONSUPPORT_CDC.includes(node.databaseType)) {
             nodeNames.push(node.name)
             this.setNodeErrorMsg({
               id: node.id,
-              msg: i18n.t('packages_dag_src_migrationmonitor_gaijiedianbuzhi') + typeName
+              msg: i18n.global.t('packages_dag_src_migrationmonitor_gaijiedianbuzhi') + typeName
             })
           }
         })
       }
 
       if (nodeNames.length) {
-        someErrorMsg = i18n.t('packages_dag_src_migrationmonitor_cunzaibuzhichi', { val1: typeName })
+        someErrorMsg = i18n.global.t('packages_dag_src_migrationmonitor_cunzaibuzhichi', { val1: typeName })
       }
 
       const accessNodeProcessIdArr = [
@@ -549,7 +549,7 @@ export default {
             if (node.attrs.accessNodeProcessId && chooseId !== node.attrs.accessNodeProcessId) {
               this.setNodeErrorMsg({
                 id: node.id,
-                msg: i18n.t('packages_dag_src_migrationmonitor_gaijiedianbuzhi', {
+                msg: i18n.global.t('packages_dag_src_migrationmonitor_gaijiedianbuzhi', {
                   val1: agent.hostName,
                   val2: agent.ip
                 })

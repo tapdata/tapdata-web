@@ -257,23 +257,23 @@ export default {
       dialog: false,
       timeOptions: [
         {
-          label: i18n.t('packages_dag_components_log_quanbu'),
+          label: i18n.global.t('packages_dag_components_log_quanbu'),
           value: 'full'
         },
         {
-          label: i18n.t('packages_dag_components_log_zuijingexiaoshi'),
+          label: i18n.global.t('packages_dag_components_log_zuijingexiaoshi'),
           value: '6h'
         },
         {
-          label: i18n.t('packages_dag_components_log_zuixintian'),
+          label: i18n.global.t('packages_dag_components_log_zuixintian'),
           value: '1d'
         },
         {
-          label: i18n.t('packages_dag_components_log_zuijintian'),
+          label: i18n.global.t('packages_dag_components_log_zuijintian'),
           value: '3d'
         },
         {
-          label: i18n.t('packages_dag_components_log_zidingyishijian'),
+          label: i18n.global.t('packages_dag_components_log_zidingyishijian'),
           type: 'custom',
           value: 'custom'
         }
@@ -356,11 +356,11 @@ export default {
       if (this.$route.name === 'MigrationMonitorViewer') {
         this.timeOptions = [
           {
-            label: i18n.t('packages_dag_components_log_quanbu'),
+            label: i18n.global.t('packages_dag_components_log_quanbu'),
             value: 'full'
           },
           {
-            label: i18n.t('packages_dag_components_log_zidingyishijian'),
+            label: i18n.global.t('packages_dag_components_log_zidingyishijian'),
             type: 'custom',
             value: 'custom'
           }
@@ -668,7 +668,7 @@ export default {
           downloadBlob(data)
         })
         .catch(() => {
-          this.$message.error(i18n.t('packages_dag_components_log_xiazaishibai'))
+          this.$message.error(i18n.global.t('packages_dag_components_log_xiazaishibai'))
         })
         .finally(() => {
           this.downloadLoading = false

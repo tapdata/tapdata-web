@@ -94,14 +94,14 @@ export default {
         contactName: [
           {
             required: true,
-            message: i18n.t('dfs_agent_download_paidupgrade_qingshurulianxi'),
+            message: i18n.global.t('dfs_agent_download_paidupgrade_qingshurulianxi'),
             trigger: 'blur'
           }
         ],
         contactTelephone: [
           {
             required: true,
-            message: i18n.t('dfs_agent_download_paidupgrade_qingxuanzelianxi'),
+            message: i18n.global.t('dfs_agent_download_paidupgrade_qingxuanzelianxi'),
             trigger: 'blur'
           }
         ]

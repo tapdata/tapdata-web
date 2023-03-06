@@ -58,36 +58,36 @@ export default {
     return {
       columns: [
         {
-          label: i18n.t('packages_dag_components_record_yunxingkaishishi'),
+          label: i18n.global.t('packages_dag_components_record_yunxingkaishishi'),
           prop: 'startDate',
           dataType: 'time'
         },
         {
-          label: i18n.t('packages_dag_components_record_yunxingjieshushi'),
+          label: i18n.global.t('packages_dag_components_record_yunxingjieshushi'),
           prop: 'endDate',
           dataType: 'time'
         },
         {
-          label: i18n.t('packages_dag_components_record_caozuoren'),
+          label: i18n.global.t('packages_dag_components_record_caozuoren'),
           prop: 'operator'
         },
         {
-          label: i18n.t('packages_dag_components_record_yunxingjieguo'),
+          label: i18n.global.t('packages_dag_components_record_yunxingjieguo'),
           prop: 'status',
           slotName: 'status'
         },
         {
-          label: i18n.t('packages_dag_components_record_shurushijianzong'),
+          label: i18n.global.t('packages_dag_components_record_shurushijianzong'),
           prop: 'inputTotal',
           dataType: 'number'
         },
         {
-          label: i18n.t('packages_dag_components_record_shuchushijianzong'),
+          label: i18n.global.t('packages_dag_components_record_shuchushijianzong'),
           prop: 'outputTotal',
           dataType: 'number'
         },
         {
-          label: i18n.t('packages_dag_components_record_caozuo'),
+          label: i18n.global.t('packages_dag_components_record_caozuo'),
           slotName: 'operation'
         }
       ]

@@ -192,12 +192,12 @@ export default {
             return t
           })
           if (result.some(t => !t.result?.tapType)) {
-            this.$message.error(i18n.t('packages_form_field_inference_list_geshicuowu'))
+            this.$message.error(i18n.global.t('packages_form_field_inference_list_geshicuowu'))
             this.editBtnLoading = false
             return
           }
           this.handleUpdate()
-          this.$message.success(i18n.t('packages_form_field_inference_list_caozuochenggong'))
+          this.$message.success(i18n.global.t('packages_form_field_inference_list_caozuochenggong'))
         })
         .finally(() => {
           this.editBtnLoading = false

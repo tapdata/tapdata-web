@@ -153,10 +153,10 @@ export function makeStatusAndDisabled(item) {
 
   if (!(status in STATUS_MAP)) {
     console.error(
-      i18n.t('packages_business_shared_task_weishibiederen', {
+      i18n.global.t('packages_business_shared_task_weishibiederen', {
         val1: status
       }),
-      i18n.t('packages_business_shared_task_yijingzhiweie')
+      i18n.global.t('packages_business_shared_task_yijingzhiweie')
     ) // eslint-disable-line
     item.status = status = 'error'
   }

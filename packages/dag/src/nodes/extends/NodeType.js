@@ -27,7 +27,7 @@ export class NodeType {
   }
 
   selector(node) {
-    if (!this.type) throw new Error(i18n.t('packages_dag_extends_nodetype_queshaobiyaode'))
+    if (!this.type) throw new Error(i18n.global.t('packages_dag_extends_nodetype_queshaobiyaode'))
     return node.type === this.type
   }
 }

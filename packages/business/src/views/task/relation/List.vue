@@ -57,28 +57,28 @@ export default {
       filterItems: [],
       columns: [
         {
-          label: i18n.t('packages_business_task_name'),
+          label: i18n.global.t('packages_business_task_name'),
           prop: 'name'
         },
         {
-          label: i18n.t('packages_business_task_list_task_type'),
+          label: i18n.global.t('packages_business_task_list_task_type'),
           prop: 'typeLabel',
           width: 150
         },
         {
-          label: i18n.t('packages_business_task_status'),
+          label: i18n.global.t('packages_business_task_status'),
           prop: 'status',
           slotName: 'status',
           width: 150
         },
         {
-          label: i18n.t('packages_business_task_preview_startTime'),
+          label: i18n.global.t('packages_business_task_preview_startTime'),
           prop: 'startTime',
           dataType: 'time',
           width: 200
         },
         {
-          label: i18n.t('packages_business_connection_operate'),
+          label: i18n.global.t('packages_business_connection_operate'),
           slotName: 'operation',
           width: 100
         }
@@ -98,22 +98,22 @@ export default {
     getSearchItems() {
       this.filterItems = [
         {
-          label: i18n.t('packages_business_task_list_task_type'),
+          label: i18n.global.t('packages_business_task_list_task_type'),
           key: 'type',
           type: 'dark-select',
           items: [
             {
-              label: i18n.t('packages_business_task_monitor_mining_task'),
+              label: i18n.global.t('packages_business_task_monitor_mining_task'),
               value: 'logCollector'
             },
             {
-              label: i18n.t('packages_business_relation_list_huancunrenwu'),
+              label: i18n.global.t('packages_business_relation_list_huancunrenwu'),
               value: 'mem_cache'
             }
           ]
         },
         {
-          placeholder: i18n.t('packages_business_relation_list_qingshururenwu'),
+          placeholder: i18n.global.t('packages_business_relation_list_qingshururenwu'),
           key: 'keyword',
           type: 'input'
         }
@@ -125,9 +125,9 @@ export default {
       const { taskRecordId } = this.$route.query || {}
       const { keyword, type, status } = this.searchParams
       const MAP = {
-        logCollector: i18n.t('packages_business_task_monitor_mining_task'),
-        mem_cache: i18n.t('packages_business_relation_list_huancunrenwu'),
-        inspect: i18n.t('packages_business_relation_list_jiaoyanrenwu')
+        logCollector: i18n.global.t('packages_business_task_monitor_mining_task'),
+        mem_cache: i18n.global.t('packages_business_relation_list_huancunrenwu'),
+        inspect: i18n.global.t('packages_business_relation_list_jiaoyanrenwu')
       }
       let filter = {
         keyword,

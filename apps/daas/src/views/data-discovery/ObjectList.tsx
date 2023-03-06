@@ -1,4 +1,4 @@
-import { defineComponent, reactive, ref, computed, watch, onMounted } from 'vue'
+import {defineComponent, reactive, ref, computed, watch, onMounted, getCurrentInstance} from 'vue'
 import i18n from '@/i18n'
 import { FilterBar, Drawer } from '@tap/component'
 import { TablePage } from '@tap/business'
@@ -9,7 +9,10 @@ import './index.scss'
 
 export default defineComponent({
   props: [''],
-  setup(props, { refs, root }) {
+  setup() {
+    const root = getCurrentInstance().appContext.config.globalProperties
+    const tableRef = ref(null)
+    const drawerContentRef = ref(null)
     const { success } = useMessage()
     const list = ref([])
     const { category, type, sourceCategory, sourceType, queryKey } = root.$route.query || {}
@@ -55,7 +58,7 @@ export default defineComponent({
     }
     const rest = () => {
       // @ts-ignore
-      refs.table.fetch(1)
+      tableRef.value.fetch(1)
     }
     //请求筛选条件-下拉列表
     const loadFilterList = () => {
@@ -64,32 +67,32 @@ export default defineComponent({
         let { objCategory, objType, sourceCategory, sourceType } = res
         data.filterItems = [
           {
-            label: i18n.t('object_list_classification'),
+            label: i18n.global.t('object_list_classification'),
             key: 'category', //对象分类
             type: 'select-inner',
             items: dataAssembly(objCategory),
             selectedWidth: '200px'
           },
           {
-            label: i18n.t('object_list_type'),
+            label: i18n.global.t('object_list_type'),
             key: 'type', //对象类型
             type: 'select-inner',
             items: dataAssembly(objType)
           },
           {
-            label: i18n.t('object_list_source_type'),
+            label: i18n.global.t('object_list_source_type'),
             key: 'sourceType', //来源类型
             type: 'select-inner',
             items: dataAssembly(sourceType)
           },
           {
-            label: i18n.t('datadiscovery_objectlist_laiyuanfenlei'),
+            label: i18n.global.t('datadiscovery_objectlist_laiyuanfenlei'),
             key: 'sourceCategory', //来源分类
             type: 'select-inner',
             items: dataAssembly(sourceCategory)
           },
           {
-            placeholder: i18n.t('datadiscovery_objectlist_duixiangminglaiyuan'),
+            placeholder: i18n.global.t('datadiscovery_objectlist_duixiangminglaiyuan'),
             key: 'queryKey', //输入搜索名称
             type: 'input'
           }
@@ -110,7 +113,7 @@ export default defineComponent({
     const handlePreview = row => {
       data.isShowDetails = true
       // @ts-ignore
-      refs.drawerContent.loadData(row)
+      drawerContentRef.value.loadData(row)
     }
     const closeDrawer = val => {
       data.isShowDetails = val
@@ -134,12 +137,12 @@ export default defineComponent({
       () => root.$route.query,
       val => {
         // @ts-ignore
-        refs.table.fetch(1)
+        tableRef.value.fetch(1)
       }
     )
     onMounted(() => {
       // @ts-ignore
-      refs.table.fetch(1)
+      tableRef.value.fetch(1)
     })
     loadFilterList()
     return {
@@ -155,7 +158,7 @@ export default defineComponent({
   render() {
     return (
       <section class="discovery-page-wrap">
-        <TablePage ref="table" row-key="id" remoteMethod={this.loadData}>
+        <TablePage ref="tableRef" row-key="id" remoteMethod={this.loadData}>
           <template v-slot:search>
             <FilterBar
               items={this.data.filterItems}
@@ -192,7 +195,7 @@ export default defineComponent({
           visible={this.data.isShowDetails}
           on={{ ['update:visible']: this.closeDrawer }}
         >
-          <DrawerContent ref={'drawerContent'}></DrawerContent>
+          <DrawerContent ref="drawerContentRef" />
         </Drawer>
       </section>
     )

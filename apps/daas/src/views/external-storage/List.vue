@@ -147,7 +147,7 @@ export default {
   data() {
     var checkTable = (rule, value, callback) => {
       if (this.form.type === 'mongodb' && value === '') {
-        callback(new Error(i18n.t('daas_external_storage_list_qingshuruwaicun2')))
+        callback(new Error(i18n.global.t('daas_external_storage_list_qingshuruwaicun2')))
       } else {
         callback()
       }
@@ -171,14 +171,14 @@ export default {
         name: [
           {
             required: true,
-            message: i18n.t('daas_external_storage_list_qingshuruwaicun'),
+            message: i18n.global.t('daas_external_storage_list_qingshuruwaicun'),
             trigger: 'blur'
           }
         ],
         uri: [
           {
             required: true,
-            message: i18n.t('daas_external_storage_list_qingshurucunchu'),
+            message: i18n.global.t('daas_external_storage_list_qingshurucunchu'),
             trigger: 'blur'
           }
         ],
@@ -208,7 +208,7 @@ export default {
   },
   methods: {
     getFilterItems() {
-      let typeOptions = [{ label: i18n.t('select_option_all'), value: '' }]
+      let typeOptions = [{ label: i18n.global.t('select_option_all'), value: '' }]
       for (const key in this.typeMapping) {
         const label = this.typeMapping[key]
         typeOptions.push({
@@ -224,7 +224,7 @@ export default {
           items: typeOptions
         },
         {
-          placeholder: i18n.t('daas_data_discovery_previewdrawer_qingshurumingcheng'),
+          placeholder: i18n.global.t('daas_data_discovery_previewdrawer_qingshurumingcheng'),
           key: 'keyword', //输入搜索名称
           type: 'input'
         }
@@ -325,12 +325,12 @@ export default {
     },
     handleDefault(row) {
       externalStorageApi.changeExternalStorage(row.id).then(() => {
-        this.$message.success(i18n.t('message_operation_succuess'))
+        this.$message.success(i18n.global.t('message_operation_succuess'))
         this.table.fetch()
       })
     },
     async remove(row) {
-      const flag = await this.$confirm(i18n.t('daas_external_storage_list_querenshanchuwai'), '', {
+      const flag = await this.$confirm(i18n.global.t('daas_external_storage_list_querenshanchuwai'), '', {
         type: 'warning',
         showClose: false
       })

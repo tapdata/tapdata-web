@@ -127,8 +127,8 @@ export default {
       dangerouslyUseHTMLString: false,
       distinguishCancelAndClose: false,
       width: '416px', // 需要完整的像素字符串
-      confirmButtonTextDefault: i18n.t('button_confirm'),
-      cancelButtonTextDefault: i18n.t('button_cancel')
+      confirmButtonTextDefault: i18n.global.t('button_confirm'),
+      cancelButtonTextDefault: i18n.global.t('button_cancel')
     }
   },
   computed: {

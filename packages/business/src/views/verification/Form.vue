@@ -349,7 +349,7 @@ export default {
         ],
         cdcBeginDate: [
           {
-            validator: requiredValidator(i18n.t('packages_business_verification_form_qingshurukaishi'), () => {
+            validator: requiredValidator(i18n.global.t('packages_business_verification_form_qingshurukaishi'), () => {
               return self.form.inspectMethod === 'cdcCount'
             })
           }

@@ -66,14 +66,14 @@ export default defineComponent({
         let { objType } = res
         data.filterItems = [
           {
-            label: i18n.t('datadiscovery_catalogue_ziyuanleixing'),
+            label: i18n.global.t('datadiscovery_catalogue_ziyuanleixing'),
             key: 'sourceType',
             type: 'select-inner',
             items: dataAssembly(objType),
             selectedWidth: '200px'
           },
           {
-            placeholder: i18n.t('datadiscovery_catalogue_lianjieduixiangming'),
+            placeholder: i18n.global.t('datadiscovery_catalogue_lianjieduixiangming'),
             key: 'queryKey',
             type: 'input'
           }
@@ -262,7 +262,7 @@ export default defineComponent({
         >
           <template v-slot:search>
             <div class="flex flex-row align-items-center mb-2">
-              <span class="discovery-title ml-2 mr-2">{i18n.t('metadata_meta_type_directory')}</span>
+              <span class="discovery-title ml-2 mr-2">{i18n.global.t('metadata_meta_type_directory')}</span>
               <span class="discovery-secondary-title mr-2"> {this.data.currentNode.value} </span>
               <span class="discovery-desc ml-2">{this.data.currentNode.desc} </span>
             </div>
@@ -283,13 +283,13 @@ export default defineComponent({
                   this.handleSourceDrawer()
                 }}
               >
-                <span>{i18n.t('datadiscovery_catalogue_ziyuanbangding')}</span>
+                <span>{i18n.global.t('datadiscovery_catalogue_ziyuanbangding')}</span>
               </el-button>
             )}
           </template>
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column
-            label={i18n.t('metadata_name')}
+            label={i18n.global.t('metadata_name')}
             prop="name"
             show-overflow-tooltip
             width="350px"
@@ -297,8 +297,8 @@ export default defineComponent({
               default: this.renderNode
             }}
           ></el-table-column>
-          <el-table-column label={i18n.t('metadata_type')} prop="type"></el-table-column>
-          <el-table-column label={i18n.t('module_form_describtion')} prop="desc"></el-table-column>
+          <el-table-column label={i18n.global.t('metadata_type')} prop="type"></el-table-column>
+          <el-table-column label={i18n.global.t('module_form_describtion')} prop="desc"></el-table-column>
         </TablePage>
         <Drawer
           class="object-drawer-wrap overflow-hidden"
@@ -311,7 +311,7 @@ export default defineComponent({
         <el-drawer
           class="object-drawer-wrap"
           size="58%"
-          title={i18n.t('datadiscovery_catalogue_ziyuanbangding')}
+          title={i18n.global.t('datadiscovery_catalogue_ziyuanbangding')}
           visible={this.data.isShowSourceDrawer}
           on={{ ['update:visible']: this.closeSourceDrawer }}
         >

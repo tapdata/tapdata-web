@@ -216,8 +216,8 @@ export const MergeTableTree = observer(
         return (
           <Space class="merge-table-tree-space" align="stretch" size={12} split={true} inline={false}>
             <FormItem.BaseItem
-              label={i18n.t('packages_dag_merge_table_tree_index_biaomingchengzhichi')}
-              tooltip={i18n.t('packages_dag_merge_table_tree_index_biaozhijianketong')}
+              label={i18n.global.t('packages_dag_merge_table_tree_index_biaomingchengzhichi')}
+              tooltip={i18n.global.t('packages_dag_merge_table_tree_index_biaozhijianketong')}
             >
               <ElTree
                 ref="tree"

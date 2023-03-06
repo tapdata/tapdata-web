@@ -172,8 +172,8 @@ export default {
       data.creator = data.creator || data.createUser || data.username || data.user?.username || '-'
       data.typeText =
         data.mappingTemplate === 'cluster-clone'
-          ? i18n.t('packages_business_statistics_index_qianyirenwu')
-          : i18n.t('packages_business_statistics_index_tongburenwu')
+          ? i18n.global.t('packages_business_statistics_index_qianyirenwu')
+          : i18n.global.t('packages_business_statistics_index_tongburenwu')
       return data
     },
     infoRemoteMethod(params) {

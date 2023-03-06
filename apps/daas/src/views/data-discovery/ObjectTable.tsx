@@ -1,4 +1,4 @@
-import { defineComponent, reactive, ref, nextTick, watch, onMounted } from 'vue'
+import { defineComponent, reactive, ref, nextTick, watch, onMounted, getCurrentInstance } from 'vue'
 import i18n from '@/i18n'
 import { FilterBar } from '@tap/component'
 import { TablePage } from '@tap/business'
@@ -8,7 +8,8 @@ import './index.scss'
 
 export default defineComponent({
   props: ['parentNode'],
-  setup(props, { root, emit, refs }) {
+  setup(props) {
+    const root = getCurrentInstance().appContext.config.globalProperties
     const { category, type, sourceCategory, sourceType, queryKey } = root.$route.query || {}
     const list = ref([])
     const { error, success } = useMessage()
@@ -60,7 +61,7 @@ export default defineComponent({
             if (usedRow?.length > 0) {
               nextTick(() => {
                 // @ts-ignore
-                refs.multipleTable?.toggleRowSelection(t, true)
+                multipleTableRef.value?.toggleRowSelection(t, true)
               })
             }
           }
@@ -78,32 +79,32 @@ export default defineComponent({
         let { objCategory, objType, sourceCategory, sourceType } = res
         data.filterItems = [
           {
-            label: i18n.t('object_list_classification'),
+            label: i18n.global.t('object_list_classification'),
             key: 'category',
             type: 'select-inner',
             items: dataAssembly(objCategory),
             selectedWidth: '200px'
           },
           {
-            label: i18n.t('object_list_type'),
+            label: i18n.global.t('object_list_type'),
             key: 'type',
             type: 'select-inner',
             items: dataAssembly(objType)
           },
           {
-            label: i18n.t('object_list_source_type'),
+            label: i18n.global.t('object_list_source_type'),
             key: 'sourceType',
             type: 'select-inner',
             items: dataAssembly(sourceType)
           },
           {
-            label: i18n.t('datadiscovery_objectlist_laiyuanfenlei'),
+            label: i18n.global.t('datadiscovery_objectlist_laiyuanfenlei'),
             key: 'sourceCategory',
             type: 'select-inner',
             items: dataAssembly(sourceCategory)
           },
           {
-            placeholder: i18n.t('datadiscovery_objectlist_duixiangminglaiyuan'),
+            placeholder: i18n.global.t('datadiscovery_objectlist_duixiangminglaiyuan'),
             key: 'queryKey',
             type: 'input'
           }
@@ -170,7 +171,7 @@ export default defineComponent({
       }
       discoveryApi[http](where)
         .then(() => {
-          success(i18n.t('message_operation_succuess'))
+          success(i18n.global.t('message_operation_succuess'))
         })
         .catch(err => {
           error(err)
@@ -181,12 +182,12 @@ export default defineComponent({
       () => root.$route.query,
       val => {
         // @ts-ignore
-        refs.multipleTable.fetch(1)
+        multipleTableRef.value.fetch(1)
       }
     )
     onMounted(() => {
       // @ts-ignore
-      refs.multipleTable.fetch(1)
+      multipleTableRef.value.fetch(1)
     })
     return {
       data,
@@ -202,7 +203,7 @@ export default defineComponent({
     return (
       <section class="discovery-page-wrap catalogue-drawer-resource-wrap">
         <TablePage
-          ref="multipleTable"
+          ref="multipleTableRef"
           row-key="id"
           remoteMethod={this.loadTableData}
           onselect={this.saveTags}

@@ -84,7 +84,7 @@ export default {
     },
     tooltip() {
       let { min, max } = this
-      return i18n.t('packages_component_src_inlineinput_zifuchangduxian', {
+      return i18n.global.t('packages_component_src_inlineinput_zifuchangduxian', {
         val1: min,
         val2: max
       })

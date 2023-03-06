@@ -156,27 +156,27 @@ export default {
     getFilterItems() {
       this.filterItems = [
         {
-          label: i18n.t('daas_notification_systemalarm_gaojingzhuangtai'),
+          label: i18n.global.t('daas_notification_systemalarm_gaojingzhuangtai'),
           key: 'status',
           type: 'select-inner',
           items: [
             {
-              label: i18n.t('packages_business_shared_const_gaojingzhong'),
+              label: i18n.global.t('packages_business_shared_const_gaojingzhong'),
               value: 'ING'
             },
             {
-              label: i18n.t('packages_business_shared_const_yihuifu'),
+              label: i18n.global.t('packages_business_shared_const_yihuifu'),
               value: 'RECOVER'
             },
             {
-              label: i18n.t('packages_business_components_alert_yiguanbi'),
+              label: i18n.global.t('packages_business_components_alert_yiguanbi'),
               value: 'CLOESE'
             }
           ],
           selectedWidth: '200px'
         },
         {
-          title: i18n.t('daas_notification_systemalarm_gaojingshijian'),
+          title: i18n.global.t('daas_notification_systemalarm_gaojingshijian'),
           type: 'datetimerange',
           key: 'start,end'
         },
@@ -192,7 +192,7 @@ export default {
         ids = this.multipleSelection.map(item => item.id)
       }
       alarmApi.close(ids).then(() => {
-        this.$message.success(i18n.t('daas_notification_systemalarm_guanbichenggong'))
+        this.$message.success(i18n.global.t('daas_notification_systemalarm_guanbichenggong'))
         this.table.fetch(1)
       })
     },

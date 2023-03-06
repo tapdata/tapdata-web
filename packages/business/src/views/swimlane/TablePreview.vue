@@ -115,57 +115,57 @@ export default {
       tableFields: [],
       columnsPreview: [
         {
-          label: i18n.t('metadata_name'),
+          label: i18n.global.t('metadata_name'),
           prop: 'name'
         },
         {
-          label: i18n.t('metadata_type'),
+          label: i18n.global.t('metadata_type'),
           prop: 'dataType'
         },
         {
-          label: i18n.t('datadiscovery_previewdrawer_yewumiaoshu'),
+          label: i18n.global.t('datadiscovery_previewdrawer_yewumiaoshu'),
           prop: 'businessDesc'
         }
       ],
       columns: [
         {
-          label: i18n.t('metadata_name'),
+          label: i18n.global.t('metadata_name'),
           prop: 'name'
         },
         {
-          label: i18n.t('metadata_type'),
+          label: i18n.global.t('metadata_type'),
           prop: 'dataType'
         },
         {
-          label: i18n.t('datadiscovery_previewdrawer_zhujian'),
+          label: i18n.global.t('datadiscovery_previewdrawer_zhujian'),
           prop: 'primaryKey'
         },
         {
-          label: i18n.t('datadiscovery_previewdrawer_waijian'),
+          label: i18n.global.t('datadiscovery_previewdrawer_waijian'),
           prop: 'foreignKey'
         },
         {
-          label: i18n.t('datadiscovery_previewdrawer_suoyin'),
+          label: i18n.global.t('datadiscovery_previewdrawer_suoyin'),
           prop: 'index'
         },
         {
-          label: i18n.t('meta_table_not_null'),
+          label: i18n.global.t('meta_table_not_null'),
           prop: 'notNull'
         },
         {
-          label: i18n.t('meta_table_default'),
+          label: i18n.global.t('meta_table_default'),
           prop: 'defaultValue'
         },
         {
-          label: i18n.t('datadiscovery_previewdrawer_yewumingcheng'),
+          label: i18n.global.t('datadiscovery_previewdrawer_yewumingcheng'),
           prop: 'businessName'
         },
         {
-          label: i18n.t('datadiscovery_previewdrawer_yewuleixing'),
+          label: i18n.global.t('datadiscovery_previewdrawer_yewuleixing'),
           prop: 'businessType'
         },
         {
-          label: i18n.t('datadiscovery_previewdrawer_yewumiaoshu'),
+          label: i18n.global.t('datadiscovery_previewdrawer_yewumiaoshu'),
           prop: 'businessDesc'
         }
       ]

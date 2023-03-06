@@ -41,13 +41,13 @@ export default {
     startPlaceholder: {
       type: String,
       default: () => {
-        return i18n.t('start_time')
+        return i18n.global.t('start_time')
       }
     },
     endPlaceholder: {
       type: String,
       default: () => {
-        return i18n.t('end_time')
+        return i18n.global.t('end_time')
       }
     }
   },

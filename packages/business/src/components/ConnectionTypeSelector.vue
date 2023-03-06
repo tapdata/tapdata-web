@@ -126,19 +126,19 @@ export default {
       active: 'GA',
       tabs: [
         {
-          label: i18n.t('packages_business_components_connectiontypeselectorsort_renzhengshujuyuan'),
+          label: i18n.global.t('packages_business_components_connectiontypeselectorsort_renzhengshujuyuan'),
           value: 'GA'
         },
         {
-          label: i18n.t('packages_business_components_connectiontypeselectorsort_betashu'),
+          label: i18n.global.t('packages_business_components_connectiontypeselectorsort_betashu'),
           value: 'Beta'
         },
         {
-          label: i18n.t('packages_business_components_connectiontypeselectorsort_jijiangshangxian'),
+          label: i18n.global.t('packages_business_components_connectiontypeselectorsort_jijiangshangxian'),
           value: 'Alpha'
         },
         {
-          label: i18n.t('packages_business_components_connectiontypeselectorsort_wodeshujuyuan'),
+          label: i18n.global.t('packages_business_components_connectiontypeselectorsort_wodeshujuyuan'),
           value: 'my'
         }
       ]

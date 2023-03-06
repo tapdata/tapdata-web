@@ -22,7 +22,7 @@ export class Aggregate extends NodeType {
       },
       name: {
         type: 'string',
-        title: i18n.t('packages_dag_nodes_database_jiedianmingcheng'),
+        title: i18n.global.t('packages_dag_nodes_database_jiedianmingcheng'),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input'
@@ -66,7 +66,7 @@ export class Aggregate extends NodeType {
             properties: {
               aggFunction: {
                 type: 'string',
-                title: i18n.t('packages_dag_nodes_aggregate_juhehanshu'),
+                title: i18n.global.t('packages_dag_nodes_aggregate_juhehanshu'),
                 enum: [
                   {
                     label: 'AVG',
@@ -95,7 +95,7 @@ export class Aggregate extends NodeType {
               },
               aggExpression: {
                 type: 'string',
-                title: i18n.t('packages_dag_nodes_aggregate_zuoyongmubiao'),
+                title: i18n.global.t('packages_dag_nodes_aggregate_zuoyongmubiao'),
                 required: true,
                 'x-decorator': 'FormItem',
                 'x-decorator-props': { gridSpan: 2 },
@@ -118,7 +118,7 @@ export class Aggregate extends NodeType {
             }
           },
           groupByExpression: {
-            title: i18n.t('packages_dag_nodes_aggregate_fenzuziduan'),
+            title: i18n.global.t('packages_dag_nodes_aggregate_fenzuziduan'),
             type: 'array',
             'x-decorator': 'FormItem',
             'x-component': 'FieldSelect',
@@ -147,7 +147,7 @@ export class Aggregate extends NodeType {
       },
 
       return: {
-        title: i18n.t('packages_dag_nodes_aggregate_fanhuishili'),
+        title: i18n.global.t('packages_dag_nodes_aggregate_fanhuishili'),
         type: 'void',
         'x-decorator': 'FormItem',
         'x-component': 'ArrayAggregate'

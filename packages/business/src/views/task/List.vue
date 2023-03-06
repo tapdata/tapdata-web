@@ -571,7 +571,7 @@ export default {
 
       if (!this.isDaas) {
         this.filterItems.splice(2, 0, {
-          label: i18n.t('agent_name'),
+          label: i18n.global.t('agent_name'),
           key: 'agentId',
           type: 'select-inner',
           menuMinWidth: '250px',
@@ -886,7 +886,7 @@ export default {
         return {
           code: 'error',
           id: t?.id,
-          message: i18n.t('packages_business_task_list_renwubuzhichi')
+          message: i18n.global.t('packages_business_task_list_renwubuzhichi')
         }
       })
       if (!canList.length) {

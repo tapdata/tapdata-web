@@ -5,7 +5,7 @@ const createI18n = () => ({
   // locale: ref(config.locale),
   // messages: config.messages,
   $t(key) {
-    return i18n.t(key)
+    return i18n.global.t(key)
   }
 })
 

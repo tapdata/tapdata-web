@@ -199,19 +199,19 @@ export default {
     initNodeType() {
       this.addProcessorNode([
         {
-          name: i18n.t('packages_dag_src_migrationeditor_biaobianji'),
+          name: i18n.global.t('packages_dag_src_migrationeditor_biaobianji'),
           type: 'table_rename_processor'
         },
         {
-          name: i18n.t('packages_dag_src_migrationeditor_ziduanbianji'),
+          name: i18n.global.t('packages_dag_src_migrationeditor_ziduanbianji'),
           type: 'migrate_field_rename_processor'
         },
         {
-          name: i18n.t('packages_dag_src_migrationeditor_jSchuli_standard'),
+          name: i18n.global.t('packages_dag_src_migrationeditor_jSchuli_standard'),
           type: 'standard_migrate_js_processor'
         },
         {
-          name: i18n.t('packages_dag_src_migrationeditor_jSchuli'),
+          name: i18n.global.t('packages_dag_src_migrationeditor_jSchuli'),
           type: 'migrate_js_processor',
           beta: true
         }
@@ -286,7 +286,7 @@ export default {
         })
       } catch (e) {
         // eslint-disable-next-line no-console
-        console.error(i18n.t('packages_dag_src_editor_renwubaocunchu'), e)
+        console.error(i18n.global.t('packages_dag_src_editor_renwubaocunchu'), e)
         this.buried('migrationSubmit', { result: false })
         if (e?.data?.code === 'Task.RepeatName') {
           const newName = await this.makeTaskName(data.name)

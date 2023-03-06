@@ -122,7 +122,7 @@ export default {
     nodeErrorMsg() {
       const res = this.hasNodeError(this.data.id)
       if (res) {
-        return typeof res === 'string' ? res : i18n.t('packages_dag_components_dfnode_qingjianchajiedian')
+        return typeof res === 'string' ? res : i18n.global.t('packages_dag_components_dfnode_qingjianchajiedian')
       }
       return null
     }
@@ -211,7 +211,7 @@ export default {
 
             if (distance < 4 || Time.now() - this.onMouseDownAt < 10) {
               console.log(
-                i18n.t('packages_dag_components_dfnode_tuodongshijianduan'),
+                i18n.global.t('packages_dag_components_dfnode_tuodongshijianduan'),
                 Time.now() - this.onMouseDownAt,
                 distance
               ) // eslint-disable-line
@@ -274,7 +274,7 @@ export default {
                 // 源point没有onMaxConnections事件回调，故用次事件内提示
                 if (maxOutputs !== -1 && el._jsPlumb.connections.length >= maxOutputs) {
                   this.$message.error(
-                    i18n.t('packages_dag_components_dfnode_gaijiedianth', {
+                    i18n.global.t('packages_dag_components_dfnode_gaijiedianth', {
                       val1: this.data.name
                     })
                   )

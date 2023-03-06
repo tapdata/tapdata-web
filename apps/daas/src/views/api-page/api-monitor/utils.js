@@ -64,7 +64,7 @@ export const formatMs = (msTime = 0, type = 'time') => {
     }
   })
   if (!result) {
-    result = msTime + i18n.t('task_info_ms')
+    result = msTime + i18n.global.t('task_info_ms')
   }
   return result
 }

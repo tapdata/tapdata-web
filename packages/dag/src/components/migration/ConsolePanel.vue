@@ -206,9 +206,9 @@ export default {
       let result = []
       data.forEach(el => {
         el.st = el.status
-        el.status = i18n.t(I18N_MAP[el.status])
+        el.status = i18n.global.t(I18N_MAP[el.status])
         const time = dayjs(el.time).format('YYYY-MM-DD HH:mm:ss')
-        const desc = i18n.t(I18N_MAP[el.describe], el)
+        const desc = i18n.global.t(I18N_MAP[el.describe], el)
         let item = {}
         item.id = el.id
         item.grade = el.level
@@ -222,17 +222,17 @@ export default {
           const rest = resetAllTimes - resetTimes
           if (rest) {
             let startItem = deepCopy(item)
-            startItem.log = `${time} ${i18n.t('packages_dag_auto_reset_start', Object.assign({}, el, { rest }))}`
+            startItem.log = `${time} ${i18n.global.t('packages_dag_auto_reset_start', Object.assign({}, el, { rest }))}`
             result.push(startItem)
           }
           if (resetTimes) {
             let nthItem = deepCopy(item)
-            nthItem.log = `${time} ${i18n.t('packages_dag_auto_reset_start_nth', el)}`
+            nthItem.log = `${time} ${i18n.global.t('packages_dag_auto_reset_start_nth', el)}`
             result.push(nthItem)
           }
           if (resetAllTimes && resetAllTimes === resetTimes) {
             let resultItem = deepCopy(item)
-            resultItem.log = `${time} ${i18n.t('packages_dag_auto_reset_start_result', el)}`
+            resultItem.log = `${time} ${i18n.global.t('packages_dag_auto_reset_start_result', el)}`
             result.push(resultItem)
           }
         }

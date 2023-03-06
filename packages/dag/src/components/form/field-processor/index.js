@@ -379,17 +379,17 @@ export const FieldRenameProcessor = defineComponent({
     const renderOpNode = ({ row }) => {
       let show = row.isShow ? (
         <span class="text-primary cursor-pointer" onClick={() => doDeleteRow(row)}>
-          {i18n.t('packages_form_field_processor_index_pingbi')}
+          {i18n.global.t('packages_form_field_processor_index_pingbi')}
         </span>
       ) : (
         <span class="text-primary cursor-pointer" onClick={() => doShowRow(row)}>
-          {i18n.t('packages_form_field_processor_index_huifu')}
+          {i18n.global.t('packages_form_field_processor_index_huifu')}
         </span>
       )
       let disabled = row.isShow ? (
-        <span>{i18n.t('packages_form_field_processor_index_pingbi')}</span>
+        <span>{i18n.global.t('packages_form_field_processor_index_pingbi')}</span>
       ) : (
-        <span>{i18n.t('packages_form_field_processor_index_huifu')}</span>
+        <span>{i18n.global.t('packages_form_field_processor_index_huifu')}</span>
       )
       return props.disabled ? disabled : show
     }
@@ -432,7 +432,7 @@ export const FieldRenameProcessor = defineComponent({
               <div class="flex">
                 <ElInput
                   size="mini"
-                  placeholder={i18n.t('packages_form_field_mapping_list_qingshurubiaoming')}
+                  placeholder={i18n.global.t('packages_form_field_mapping_list_qingshurubiaoming')}
                   suffix-icon="el-icon-search"
                   clearable
                   v-model={this.config.searchTable}
@@ -443,7 +443,7 @@ export const FieldRenameProcessor = defineComponent({
             <div class="bg-main flex justify-content-between line-height processor-ml-10">
               <span>
                 <el-checkbox v-model={this.config.checkAll} onChange={this.doCheckAllChange}></el-checkbox>
-                <span class="table-name ml-2">{i18n.t('packages_form_field_mapping_list_biaoming')}</span>
+                <span class="table-name ml-2">{i18n.global.t('packages_form_field_mapping_list_biaoming')}</span>
               </span>
             </div>
             <div class="task-form-left__ul flex flex-column" v-loading={this.config.loadingNav}>
@@ -468,7 +468,7 @@ export const FieldRenameProcessor = defineComponent({
                           />
                           <div class="select" onClick={() => this.updateView(index)}>
                             <span>
-                              <span>{i18n.t('packages_form_dag_dialog_field_mapping_selected')}</span>
+                              <span>{i18n.global.t('packages_form_dag_dialog_field_mapping_selected')}</span>
                               {item.sourceFieldCount - item.userDeletedNum} /{item.sourceFieldCount}
                             </span>
                           </div>
@@ -515,7 +515,7 @@ export const FieldRenameProcessor = defineComponent({
               <div class="flex">
                 <ElInput
                   size="mini"
-                  placeholder={i18n.t('packages_form_field_mapping_list_qingshuruziduan')}
+                  placeholder={i18n.global.t('packages_form_field_mapping_list_qingshuruziduan')}
                   suffix-icon="el-icon-search"
                   clearable
                   v-model={this.config.searchField}
@@ -531,10 +531,10 @@ export const FieldRenameProcessor = defineComponent({
                   }
                   onClick={() => this.doVisible('visible', true)}
                 >
-                  {i18n.t('packages_form_field_processor_index_piliangcaozuo')}
+                  {i18n.global.t('packages_form_field_processor_index_piliangcaozuo')}
                 </ElButton>
                 <ElButton type="text" class="btn-rest mr-2" disabled={this.disabled} onClick={this.doOperationRest}>
-                  {i18n.t('packages_form_button_reset')}
+                  {i18n.global.t('packages_form_button_reset')}
                 </ElButton>
               </div>
             </div>
@@ -551,11 +551,11 @@ export const FieldRenameProcessor = defineComponent({
               <ElTableColumn
                 type="index"
                 width="55"
-                label={i18n.t('packages_form_field_mapping_list_xuhao')}
+                label={i18n.global.t('packages_form_field_mapping_list_xuhao')}
               ></ElTableColumn>
               <ElTableColumn
                 show-overflow-tooltip
-                label={i18n.t('packages_form_dag_dialog_field_mapping_field')}
+                label={i18n.global.t('packages_form_dag_dialog_field_mapping_field')}
                 prop="sourceFieldName"
                 scopedSlots={{
                   default: this.renderSourceNode
@@ -563,7 +563,7 @@ export const FieldRenameProcessor = defineComponent({
               ></ElTableColumn>
               <ElTableColumn
                 show-overflow-tooltip
-                label={i18n.t('packages_form_field_processor_index_xinziduanming')}
+                label={i18n.global.t('packages_form_field_processor_index_xinziduanming')}
                 prop="targetFieldName"
                 scopedSlots={{
                   default: this.renderNode
@@ -571,7 +571,7 @@ export const FieldRenameProcessor = defineComponent({
               ></ElTableColumn>
               <ElTableColumn
                 show-overflow-tooltip
-                label={i18n.t('packages_form_field_processor_index_caozuo')}
+                label={i18n.global.t('packages_form_field_processor_index_caozuo')}
                 prop="isShow"
                 width={'60px'}
                 scopedSlots={{
@@ -585,7 +585,7 @@ export const FieldRenameProcessor = defineComponent({
           </div>
         </div>
         <ElDialog
-          title={i18n.t('packages_form_ddl_event_checkbox_index_xiugaiziduanming')}
+          title={i18n.global.t('packages_form_ddl_event_checkbox_index_xiugaiziduanming')}
           width={'30%'}
           visible={this.config.operationVisible}
           append-to-body
@@ -596,41 +596,41 @@ export const FieldRenameProcessor = defineComponent({
           </FormItem.BaseItem>
           <span slot="footer" className="dialog-footer">
             <el-button onClick={() => this.doVisible('operationVisible', false)}>
-              {i18n.t('packages_form_field_mapping_dialog_quxiao')}
+              {i18n.global.t('packages_form_field_mapping_dialog_quxiao')}
             </el-button>
             <el-button type="primary" onClick={() => this.doEditNameSave()}>
-              {i18n.t('packages_form_field_mapping_dialog_queding')}
+              {i18n.global.t('packages_form_field_mapping_dialog_queding')}
             </el-button>
           </span>
         </ElDialog>
         <ElDialog
-          title={i18n.t('packages_form_field_processor_index_piliangcaozuo')}
+          title={i18n.global.t('packages_form_field_processor_index_piliangcaozuo')}
           visible={this.config.visible}
           append-to-body
           before-close={() => this.doVisible('visible', false)}
         >
           <div>
-            <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_qianzhui')}>
+            <FormItem.BaseItem label={i18n.global.t('packages_form_field_processor_index_qianzhui')}>
               <ElInput v-model={this.config.operation.prefix} clearable />
             </FormItem.BaseItem>
-            <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_houzhui')}>
+            <FormItem.BaseItem label={i18n.global.t('packages_form_field_processor_index_houzhui')}>
               <ElInput v-model={this.config.operation.suffix} clearable />
             </FormItem.BaseItem>
 
-            <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_daxiaoxie')}>
+            <FormItem.BaseItem label={i18n.global.t('packages_form_field_processor_index_daxiaoxie')}>
               <ElSelect v-model={this.config.operation.capitalized}>
-                <ElOption value="" label={i18n.t('packages_form_field_processor_index_bubian')} />
-                <ElOption value="toUpperCase" label={i18n.t('packages_form_field_processor_index_daxie')} />
-                <ElOption value="toLowerCase" label={i18n.t('packages_form_field_processor_index_xiaoxie')} />
+                <ElOption value="" label={i18n.global.t('packages_form_field_processor_index_bubian')} />
+                <ElOption value="toUpperCase" label={i18n.global.t('packages_form_field_processor_index_daxie')} />
+                <ElOption value="toLowerCase" label={i18n.global.t('packages_form_field_processor_index_xiaoxie')} />
               </ElSelect>
             </FormItem.BaseItem>
           </div>
           <span slot="footer" class="dialog-footer">
             <el-button onClick={() => this.doVisible('visible', false)}>
-              {i18n.t('packages_form_field_mapping_dialog_quxiao')}
+              {i18n.global.t('packages_form_field_mapping_dialog_quxiao')}
             </el-button>
             <el-button type="primary" onClick={() => this.doOperationSave()}>
-              {i18n.t('packages_form_field_mapping_dialog_queding')}
+              {i18n.global.t('packages_form_field_mapping_dialog_queding')}
             </el-button>
           </span>
         </ElDialog>

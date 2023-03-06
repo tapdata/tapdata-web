@@ -36,8 +36,8 @@ export default {
     yData: {
       type: Array,
       default: () => [
-        i18n.t('packages_dag_components_eventchart_zongshuru'),
-        i18n.t('packages_dag_components_eventchart_zongshuchu')
+        i18n.global.t('packages_dag_components_eventchart_zongshuru'),
+        i18n.global.t('packages_dag_components_eventchart_zongshuchu')
       ]
     },
     height: {
@@ -152,17 +152,17 @@ export default {
       this.total.output = eval(Object.values(outData).join('+'))
       let arr = [
         {
-          label: i18n.t('packages_dag_components_eventchart_charu'),
+          label: i18n.global.t('packages_dag_components_eventchart_charu'),
           key: 'InsertTotal',
           color: '#88DBDA'
         },
         {
-          label: i18n.t('packages_dag_components_eventchart_gengxin'),
+          label: i18n.global.t('packages_dag_components_eventchart_gengxin'),
           key: 'UpdateTotal',
           color: '#6ACA26'
         },
         {
-          label: i18n.t('packages_dag_button_delete'),
+          label: i18n.global.t('packages_dag_button_delete'),
           key: 'DeleteTotal',
           color: '#FDD746'
         },
@@ -172,7 +172,7 @@ export default {
           color: '#B682CE'
         },
         {
-          label: i18n.t('packages_dag_components_eventchart_qita'),
+          label: i18n.global.t('packages_dag_components_eventchart_qita'),
           key: 'OthersTotal',
           color: '#00A1F1'
         }

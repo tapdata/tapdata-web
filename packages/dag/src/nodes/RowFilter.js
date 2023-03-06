@@ -17,23 +17,23 @@ export class RowFilter extends NodeType {
     properties: {
       name: {
         type: 'string',
-        title: i18n.t('packages_dag_nodes_database_jiedianmingcheng'),
+        title: i18n.global.t('packages_dag_nodes_database_jiedianmingcheng'),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input'
       },
       action: {
-        title: i18n.t('packages_dag_nodes_rowfilter_zhixingdongzuo'),
+        title: i18n.global.t('packages_dag_nodes_rowfilter_zhixingdongzuo'),
         type: 'string',
         required: true,
         default: 'retain',
         enum: [
           {
-            label: i18n.t('packages_dag_nodes_jointcache_baoliupipeishu'),
+            label: i18n.global.t('packages_dag_nodes_jointcache_baoliupipeishu'),
             value: 'retain'
           },
           {
-            label: i18n.t('packages_dag_nodes_rowfilter_diuqipipeishu'),
+            label: i18n.global.t('packages_dag_nodes_rowfilter_diuqipipeishu'),
             value: 'discard'
           }
         ],
@@ -44,7 +44,7 @@ export class RowFilter extends NodeType {
         }
       },
       expression: {
-        title: i18n.t('packages_dag_nodes_rowfilter_tiaojianbiaodashi'),
+        title: i18n.global.t('packages_dag_nodes_rowfilter_tiaojianbiaodashi'),
         type: 'string',
         required: true,
         'x-decorator': 'FormItem',

@@ -14,16 +14,16 @@ export class JointCache extends NodeType {
     type: 'object',
     properties: {
       cacheId: {
-        title: i18n.t('packages_dag_nodes_jointcache_duiyinghuancunjie'),
+        title: i18n.global.t('packages_dag_nodes_jointcache_duiyinghuancunjie'),
         type: 'string',
         required: true,
         enum: [
           {
-            label: i18n.t('packages_dag_nodes_jointcache_baoliupipeishu'),
+            label: i18n.global.t('packages_dag_nodes_jointcache_baoliupipeishu'),
             value: 'retain'
           },
           {
-            label: i18n.t('packages_dag_nodes_jointcache_chuangjianpipeishu'),
+            label: i18n.global.t('packages_dag_nodes_jointcache_chuangjianpipeishu'),
             value: 'discard'
           }
         ],
@@ -36,7 +36,7 @@ export class JointCache extends NodeType {
       },
       joinSettings: {
         type: 'array',
-        title: i18n.t('packages_dag_nodes_jointcache_guanlianshezhi'),
+        title: i18n.global.t('packages_dag_nodes_jointcache_guanlianshezhi'),
         required: true,
         default: [{ cacheKey: 1 }],
         'x-decorator': 'FormItem',
@@ -48,7 +48,7 @@ export class JointCache extends NodeType {
               type: 'void',
               'x-component': 'ArrayTable.Column',
               'x-component-props': {
-                title: i18n.t('packages_dag_nodes_jointcache_huancunbiaozhujian'),
+                title: i18n.global.t('packages_dag_nodes_jointcache_huancunbiaozhujian'),
                 align: 'center'
               },
               properties: {
@@ -62,7 +62,7 @@ export class JointCache extends NodeType {
               type: 'void',
               'x-component': 'ArrayTable.Column',
               'x-component-props': {
-                title: i18n.t('packages_dag_nodes_jointcache_yuanbiaoguanlianjian'),
+                title: i18n.global.t('packages_dag_nodes_jointcache_yuanbiaoguanlianjian'),
                 align: 'center'
               },
               properties: {
@@ -103,13 +103,13 @@ export class JointCache extends NodeType {
         }
       },
       joinKey: {
-        title: i18n.t('packages_dag_nodes_jointcache_xierulujing'),
+        title: i18n.global.t('packages_dag_nodes_jointcache_xierulujing'),
         type: 'string',
         'x-decorator': 'FormItem',
         'x-component': 'Input',
         'x-component-props': {
           config: {
-            placeholder: i18n.t('packages_dag_nodes_jointcache_qingxuanzehuochuang')
+            placeholder: i18n.global.t('packages_dag_nodes_jointcache_qingxuanzehuochuang')
           }
         }
       },

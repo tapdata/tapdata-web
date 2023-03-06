@@ -92,7 +92,7 @@ export const FieldAddDel = connect(
             <div class="field-processor-operation flex">
               {/*<ElCheckbox class="check-all" v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />*/}
               <span class="flex-1 text inline-block ml-6">
-                {i18n.t('packages_form_field_add_del_index_ziduanmingcheng')}
+                {i18n.global.t('packages_form_field_add_del_index_ziduanmingcheng')}
               </span>
               <span class="field-ops inline-block ml-10">
                 <VIcon

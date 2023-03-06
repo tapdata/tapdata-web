@@ -241,19 +241,19 @@ export default {
         { label: this.$t('setting_Email_Template_DDL') }
       ],
       keyMapping: {
-        TASK_INCREMENT_DELAY: i18n.t('daas_setting_setting_renwudezengliang'),
-        DATANODE_HTTP_CONNECT_CONSUME: i18n.t('daas_setting_setting_shujuyuanwanglu'),
-        DATANODE_TCP_CONNECT_CONSUME: i18n.t('daas_setting_setting_shujuyuanxieyi'),
-        DATANODE_AVERAGE_HANDLE_CONSUME: i18n.t('daas_setting_setting_shujuyuanjiedian'),
-        PROCESSNODE_AVERAGE_HANDLE_CONSUME: i18n.t('daas_setting_setting_chulijiediande')
+        TASK_INCREMENT_DELAY: i18n.global.t('daas_setting_setting_renwudezengliang'),
+        DATANODE_HTTP_CONNECT_CONSUME: i18n.global.t('daas_setting_setting_shujuyuanwanglu'),
+        DATANODE_TCP_CONNECT_CONSUME: i18n.global.t('daas_setting_setting_shujuyuanxieyi'),
+        DATANODE_AVERAGE_HANDLE_CONSUME: i18n.global.t('daas_setting_setting_shujuyuanjiedian'),
+        PROCESSNODE_AVERAGE_HANDLE_CONSUME: i18n.global.t('daas_setting_setting_chulijiediande')
       },
       columns: [
         {
-          label: i18n.t('daas_setting_alarmnotification_gaojingzhibiao'),
+          label: i18n.global.t('daas_setting_alarmnotification_gaojingzhibiao'),
           slotName: 'keySlot'
         },
         {
-          label: i18n.t('daas_setting_alarmnotification_gaojingzhibiao'),
+          label: i18n.global.t('daas_setting_alarmnotification_gaojingzhibiao'),
           slotName: 'valueSlot'
         }
       ],

@@ -186,7 +186,7 @@ class WSClient extends EventEmitter {
     this.send('ping') // 网络恢复立即发送ping
     if (this.msg?.visible) {
       Object.assign(this.msg, {
-        message: i18n.t('message_network_connected'),
+        message: i18n.global.t('message_network_connected'),
         type: 'success',
         duration: 3000
       })
@@ -199,7 +199,7 @@ class WSClient extends EventEmitter {
     this.msg = Message.error({
       duration: 0,
       showClose: true,
-      message: i18n.t('message_network_unconnected')
+      message: i18n.global.t('message_network_unconnected')
     })
   }
 }

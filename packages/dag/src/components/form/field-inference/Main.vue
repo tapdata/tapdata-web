@@ -196,14 +196,14 @@ export default {
     },
 
     rollbackAll() {
-      this.$confirm(i18n.t('packages_form_field_inference_main_ninquerenyaoquan'), '', {
+      this.$confirm(i18n.global.t('packages_form_field_inference_main_ninquerenyaoquan'), '', {
         type: 'warning',
         closeOnClickModal: false
       }).then(resFlag => {
         if (resFlag) {
           this.fieldChangeRules = []
           this.handleUpdate()
-          this.$message.success(i18n.t('packages_form_field_inference_list_caozuochenggong'))
+          this.$message.success(i18n.global.t('packages_form_field_inference_list_caozuochenggong'))
         }
       })
     },

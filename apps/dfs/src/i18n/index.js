@@ -28,7 +28,7 @@ const localLangs = {
 const current = i18n.locale
 
 dayjs.locale(current)
-locale.i18n((key, value) => i18n.t(key, value)) // 重点：为了实现element插件的多语言切换
+locale.i18n((key, value) => i18n.global.t(key, value)) // 重点：为了实现element插件的多语言切换
 i18n.merge(eleLangs)
 i18n.merge(formLangs)
 i18n.merge(componentLangs)

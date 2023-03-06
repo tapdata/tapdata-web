@@ -145,7 +145,7 @@ export default {
           )
         )
       } else if (!checkConnectionName(this.renameData.rename)) {
-        callback(new Error(i18n.t('packages_business_connections_databaseform_mingchengguizezhong')))
+        callback(new Error(i18n.global.t('packages_business_connections_databaseform_mingchengguizezhong')))
       } else {
         callback()
       }
@@ -200,8 +200,8 @@ export default {
   methods: {
     goBack() {
       let msg = this.$route.params.id
-        ? i18n.t('packages_business_connections_databaseform_cicaozuohuidiu')
-        : i18n.t('packages_business_connections_databaseform_cicaozuohuidiu')
+        ? i18n.global.t('packages_business_connections_databaseform_cicaozuohuidiu')
+        : i18n.global.t('packages_business_connections_databaseform_cicaozuohuidiu')
       // let title = this.$route.params.id ? '是否放弃修改内容？' : '是否放弃创建该连接？'
 
       this.$confirm(msg, '', {
@@ -510,16 +510,16 @@ export default {
           loadAllTables: {
             type: 'boolean',
             default: true,
-            title: i18n.t('packages_business_connections_databaseform_baohanbiao'),
+            title: i18n.global.t('packages_business_connections_databaseform_baohanbiao'),
             'x-decorator': 'FormItem',
             'x-component': 'Radio.Group',
             enum: [
               {
-                label: i18n.t('packages_business_select_option_all'),
+                label: i18n.global.t('packages_business_select_option_all'),
                 value: true
               },
               {
-                label: i18n.t('packages_business_connections_databaseform_zidingyi'),
+                label: i18n.global.t('packages_business_connections_databaseform_zidingyi'),
                 value: false
               }
             ]
@@ -545,7 +545,7 @@ export default {
             }
           },
           openTableExcludeFilter: {
-            title: i18n.t('packages_business_connections_databaseform_paichubiao'),
+            title: i18n.global.t('packages_business_connections_databaseform_paichubiao'),
             type: 'boolean',
             default: false,
             'x-decorator-props': {
@@ -564,7 +564,7 @@ export default {
             'x-component': 'Text',
             'x-component-props': {
               icon: 'info',
-              content: i18n.t('packages_business_connections_databaseform_keyicongbaohan')
+              content: i18n.global.t('packages_business_connections_databaseform_keyicongbaohan')
             }
           },
           tableExcludeFilter: {
@@ -667,16 +667,16 @@ export default {
 
       END.properties.__TAPDATA.properties.schemaUpdateHour = {
         type: 'string',
-        title: i18n.t('packages_business_connections_databaseform_moxingjiazaipin'),
+        title: i18n.global.t('packages_business_connections_databaseform_moxingjiazaipin'),
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         'x-decorator-props': {
-          tooltip: i18n.t('packages_business_connections_databaseform_shujuyuanzhongmo')
+          tooltip: i18n.global.t('packages_business_connections_databaseform_shujuyuanzhongmo')
         },
         default: '02:00',
         enum: [
           {
-            label: i18n.t('packages_business_connections_databaseform_bujiazai'),
+            label: i18n.global.t('packages_business_connections_databaseform_bujiazai'),
             value: 'false'
           },
           '00:00',
@@ -842,8 +842,8 @@ export default {
                 value: item.processId,
                 label: `${item.hostName}（${
                   item.status === 'running'
-                    ? i18n.t('packages_business_agent_status_running')
-                    : i18n.t('packages_business_agent_status_stopped')
+                    ? i18n.global.t('packages_business_agent_status_running')
+                    : i18n.global.t('packages_business_agent_status_stopped')
                 }）`,
                 disabled: item.status !== 'running'
               }

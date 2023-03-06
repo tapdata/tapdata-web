@@ -108,7 +108,7 @@ export default {
         Cookie.set('access_token', data?.id)
         Cookie.set('tem_token', data?.id)
         // eslint-disable-next-line
-        console.log(i18n.t('daas_login_login_dengluchenggong'), data)
+        console.log(i18n.global.t('daas_login_login_dengluchenggong'), data)
 
         let user = await usersApi.getInfo()
         configUser(user)

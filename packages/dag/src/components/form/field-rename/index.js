@@ -66,10 +66,10 @@ export const FieldRename = connect(
           <div class="field-processors-tree-warp bg-body pt-2 pb-5" v-loading={this.loading}>
             <div class="field-processor-operation flex">
               <span class="flex-1 text inline-block ml-6">
-                {i18n.t('packages_form_field_rename_index_yuanziduanming')}
+                {i18n.global.t('packages_form_field_rename_index_yuanziduanming')}
               </span>
               <span class="flex-1 text inline-block">
-                {i18n.t('packages_form_field_rename_index_mubiaoziduanming')}
+                {i18n.global.t('packages_form_field_rename_index_mubiaoziduanming')}
               </span>
               <span class="field-ops  inline-block mr-4">
                 <VIcon
@@ -294,7 +294,7 @@ export const FieldRename = connect(
           if (node && node.parent && node.parent.childNodes) {
             let parentNode = node.parent.childNodes.filter(v => data.field_name === v.data.field_name)
             if (parentNode && parentNode.length === 2) {
-              this.$message.error(data.field_name + i18n.t('packages_form_message_exists_name'))
+              this.$message.error(data.field_name + i18n.global.t('packages_form_message_exists_name'))
               exist = true
             }
           }

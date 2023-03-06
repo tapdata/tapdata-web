@@ -133,12 +133,12 @@ export const JsProcessor = observer(
         queryTimes++
         clearTimeout(timer)
         if (queryTimes > 5) {
-          runningText.value = i18n.t('packages_form_js_processor_index_rengzaipinmingjia')
+          runningText.value = i18n.global.t('packages_form_js_processor_index_rengzaipinmingjia')
         }
 
         if (queryTimes > 20) {
           resetQuery()
-          root.$message.error(i18n.t('packages_form_js_processor_index_qingqiuchaoshiqing'))
+          root.$message.error(i18n.global.t('packages_form_js_processor_index_qingqiuchaoshiqing'))
           return
         }
         handleQuery()
@@ -215,9 +215,9 @@ export const JsProcessor = observer(
 
       let functionGroup = ref({})
       const classDescMap = {
-        DateUtil: i18n.t('packages_dag_js_processor_index_riqichuli'),
-        idGen: i18n.t('packages_dag_js_processor_index_iDshengchengqi'),
-        networkUtil: i18n.t('packages_dag_js_processor_index_wangluogongju')
+        DateUtil: i18n.global.t('packages_dag_js_processor_index_riqichuli'),
+        idGen: i18n.global.t('packages_dag_js_processor_index_iDshengchengqi'),
+        networkUtil: i18n.global.t('packages_dag_js_processor_index_wangluogongju')
       }
       const loadFunction = async () => {
         const data = await javascriptFunctionsApi.get({
@@ -265,13 +265,13 @@ export const JsProcessor = observer(
         const label = (
           <div class="position-absolute flex align-center w-100">
             <span class="formily-element-form-item-asterisk">*</span>
-            <span class="flex-1">{i18n.t('packages_form_js_processor_index_jiaoben')}</span>
+            <span class="flex-1">{i18n.global.t('packages_form_js_processor_index_jiaoben')}</span>
             <ElLink class="mr-3" onClick={toggleDoc} type="primary">
-              {i18n.t('packages_dag_api_docs')}
+              {i18n.global.t('packages_dag_api_docs')}
             </ElLink>
             <ElLink onClick={toggleFullscreen} class="js-editor-fullscreen" type="primary">
               <VIcon class="mr-1">fangda</VIcon>
-              {i18n.t('packages_form_js_editor_fullscreen')}
+              {i18n.global.t('packages_form_js_editor_fullscreen')}
             </ElLink>
           </div>
         )
@@ -282,7 +282,7 @@ export const JsProcessor = observer(
               <FormItem.BaseItem
                 asterisk
                 class="flex-1 mr-4"
-                label={i18n.t('packages_form_js_processor_index_xuanzebiao')}
+                label={i18n.global.t('packages_form_js_processor_index_xuanzebiao')}
                 layout="horizontal"
                 feedbackLayout="none"
               >
@@ -302,7 +302,7 @@ export const JsProcessor = observer(
             )}
             <div class="flex-1 flex justify-content-between">
               <FormItem.BaseItem
-                label={i18n.t('packages_form_js_processor_index_shujuhangshu')}
+                label={i18n.global.t('packages_form_js_processor_index_shujuhangshu')}
                 layout="horizontal"
                 feedbackLayout="none"
               >
@@ -327,7 +327,7 @@ export const JsProcessor = observer(
                 type="primary"
                 size="small"
               >
-                {i18n.t('packages_form_js_processor_index_shiyunxing')}
+                {i18n.global.t('packages_form_js_processor_index_shiyunxing')}
               </ElButton>
             </div>
           </div>
@@ -336,7 +336,7 @@ export const JsProcessor = observer(
         const jsonView = (
           <div class="flex json-view-wrap" v-loading={running.value} element-loading-text={runningText.value}>
             <div class="json-view flex-1 mr-4 border rounded-2 overflow-hidden">
-              <div class="json-view-header">{i18n.t('packages_form_js_processor_index_tiaoshishuru')}</div>
+              <div class="json-view-header">{i18n.global.t('packages_form_js_processor_index_tiaoshishuru')}</div>
               <VCodeEditor
                 ref="beforeJson"
                 class="py-0 json-view-editor flex-1"
@@ -351,7 +351,7 @@ export const JsProcessor = observer(
               ></VCodeEditor>
             </div>
             <div class="json-view flex-1 border rounded-2 overflow-hidden">
-              <div class="json-view-header">{i18n.t('packages_form_js_processor_index_jieguoshuchu')}</div>
+              <div class="json-view-header">{i18n.global.t('packages_form_js_processor_index_jieguoshuchu')}</div>
               <VCodeEditor
                 ref="afterJson"
                 class="py-0 json-view-editor flex-1"
@@ -373,7 +373,7 @@ export const JsProcessor = observer(
             <ElDrawer
               append-to-body
               modal={false}
-              title={i18n.t('packages_dag_api_docs')}
+              title={i18n.global.t('packages_dag_api_docs')}
               size={600}
               visible={showDoc.value}
               on={{
@@ -388,16 +388,16 @@ export const JsProcessor = observer(
                   return [
                     <h2>{className}</h2>,
                     classDescMap[className] && <p>{classDescMap[className]}</p>,
-                    <h3>{i18n.t('packages_dag_js_processor_index_fangfa')}</h3>,
+                    <h3>{i18n.global.t('packages_dag_js_processor_index_fangfa')}</h3>,
                     functionGroup.value[className].map(item => {
                       return [
                         <h4>{item.methodName}</h4>,
                         <ul>
                           <li>
-                            {i18n.t('packages_dag_js_processor_index_zuoyong')}
+                            {i18n.global.t('packages_dag_js_processor_index_zuoyong')}
                             {item.desc}
                           </li>
-                          <li>{i18n.t('packages_dag_js_processor_index_yongfa')}</li>
+                          <li>{i18n.global.t('packages_dag_js_processor_index_yongfa')}</li>
                         </ul>,
                         <HighlightCode code={item.example}></HighlightCode>
                       ]
@@ -418,10 +418,10 @@ export const JsProcessor = observer(
                 {fullscreen && runTool}
                 <div>
                   <ElLink class="mr-3" onClick={toggleDoc} type="primary">
-                    {i18n.t('packages_dag_api_docs')}
+                    {i18n.global.t('packages_dag_api_docs')}
                   </ElLink>
                   <ElLink onClick={toggleFullscreen} class="js-editor-fullscreen" type="primary">
-                    <VIcon class="mr-1">suoxiao</VIcon> {i18n.t('packages_form_js_editor_exit_fullscreen')}
+                    <VIcon class="mr-1">suoxiao</VIcon> {i18n.global.t('packages_form_js_editor_exit_fullscreen')}
                   </ElLink>
                 </div>
               </div>
@@ -463,7 +463,7 @@ export const JsProcessor = observer(
                   class="js-processor-editor-console border-start"
                 >
                   <ElTabs onInput={onTabChange} class="w-100 flex flex-column">
-                    <ElTabPane label={i18n.t('packages_dag_components_nodedetaildialog_shuchu')}>
+                    <ElTabPane label={i18n.global.t('packages_dag_components_nodedetaildialog_shuchu')}>
                       <div class="js-processor-editor-console-panel h-100 overflow-auto">
                         <div class="js-log-list">
                           {logList.value.length
@@ -499,12 +499,12 @@ export const JsProcessor = observer(
                             <svg viewBox="25 25 50 50" class="circular">
                               <circle cx="50" cy="50" r="20" fill="none" class="path"></circle>
                             </svg>
-                            <span class="ml-1 font-color-light">{i18n.t('packages_dag_loading')}</span>
+                            <span class="ml-1 font-color-light">{i18n.global.t('packages_dag_loading')}</span>
                           </div>
                         </div>
                       </div>
                     </ElTabPane>
-                    <ElTabPane label={i18n.t('packages_dag_js_processor_index_duibi')}>
+                    <ElTabPane label={i18n.global.t('packages_dag_js_processor_index_duibi')}>
                       {fullscreen.value && jsonView}
                     </ElTabPane>
                   </ElTabs>

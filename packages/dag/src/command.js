@@ -50,11 +50,11 @@ class CommandManager {
  */
 class Command {
   exec() {
-    throw new Error(i18n.t('packages_dag_src_command_qingshixianex'))
+    throw new Error(i18n.global.t('packages_dag_src_command_qingshixianex'))
   }
 
   undo() {
-    throw new Error(i18n.t('packages_dag_src_command_qingshixianun'))
+    throw new Error(i18n.global.t('packages_dag_src_command_qingshixianun'))
   }
 }
 

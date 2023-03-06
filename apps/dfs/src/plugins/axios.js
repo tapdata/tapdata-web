@@ -78,7 +78,7 @@ const errorCallback = error => {
   // else if (error?.message !== 'cancel' && window.navigator.onLine) {
   //   errorConfirmFnc(error)
   // }
-  console.error(i18n.t('dfs_plugins_axios_qingqiubaocuo') + error) // eslint-disable-line
+  console.error(i18n.global.t('dfs_plugins_axios_qingqiubaocuo') + error) // eslint-disable-line
   return Promise.reject(error)
 }
 const requestInterceptor = config => {
@@ -135,7 +135,7 @@ const responseInterceptor = response => {
       let msg = data?.message || data?.msg || ''
       Message.error(`SystemError： ${msg === msg.substring(0, 20) ? msg : msg.substring(0, 20) + '...'}`)
       // eslint-disable-next-line
-      console.log(i18n.t('dfs_plugins_axios_qingqiushibai') + msg, response)
+      console.log(i18n.global.t('dfs_plugins_axios_qingqiushibai') + msg, response)
       return reject(msg)
     } else {
       // 其他情况交由业务端自行处理
@@ -156,7 +156,7 @@ const responseInterceptor = response => {
       if (!skipErrorHandler) {
         // 手机号码
         if (['Authing.User.Update.Failed'].includes(code)) {
-          Message.error(i18n.t('dfs_user_center_phone_error'))
+          Message.error(i18n.global.t('dfs_user_center_phone_error'))
         } else {
           Message.error(msg)
         }

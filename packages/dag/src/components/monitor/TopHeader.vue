@@ -197,9 +197,9 @@ export default {
       nodeSearchInput: '',
       editSvg: require('@tap/assets/images/edit-fill.svg'),
       syncType: {
-        initial_sync: i18n.t('packages_dag_task_setting_initial_sync'),
-        cdc: i18n.t('packages_dag_task_setting_cdc'),
-        'initial_sync+cdc': i18n.t('packages_dag_components_formpanel_quanliangzengliang')
+        initial_sync: i18n.global.t('packages_dag_task_setting_initial_sync'),
+        cdc: i18n.global.t('packages_dag_task_setting_cdc'),
+        'initial_sync+cdc': i18n.global.t('packages_dag_components_formpanel_quanliangzengliang')
       }
     }
   },

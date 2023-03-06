@@ -478,13 +478,13 @@ export default {
     getFilterItems() {
       this.filterItems = [
         {
-          label: i18n.t('agent_status'),
+          label: i18n.global.t('agent_status'),
           key: 'status',
           type: 'select-inner',
           items: this.statusItems
         },
         {
-          placeholder: i18n.t('instance_Instance_anIDShiLi'),
+          placeholder: i18n.global.t('instance_Instance_anIDShiLi'),
           key: 'keyword',
           type: 'input'
         }
@@ -552,7 +552,7 @@ export default {
               changeList: changeList || '',
               estimatedUpgradeTime:
                 (estimatedUpgradeTime
-                  ? (Math.floor(estimatedUpgradeTime / 60) % 60) + i18n.t('dfs_instance_instance_fenzhong')
+                  ? (Math.floor(estimatedUpgradeTime / 60) % 60) + i18n.global.t('dfs_instance_instance_fenzhong')
                   : '-') || '-',
               releaseNoteUri: releaseNoteUri,
               version: version
@@ -814,7 +814,7 @@ export default {
             this.$t('agent_auto_upgrade_tip_upgrading') +
             (this.upgradingProgres(row) === undefined
               ? ''
-              : i18n.t('instance_Instance_tHIST', {
+              : i18n.global.t('instance_Instance_tHIST', {
                   val1: this.$t('agent_auto_upgrade_tip_progress'),
                   val2: this.upgradingProgres(row)
                 }))

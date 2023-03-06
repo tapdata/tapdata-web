@@ -165,7 +165,7 @@ export default observer({
                         required: 'true',
                         'x-validator': {
                           cron: true,
-                          message: i18n.t('packages_dag_migration_settingpanel_cronbiao')
+                          message: i18n.global.t('packages_dag_migration_settingpanel_cronbiao')
                         },
                         'x-decorator': 'FormItem',
                         'x-component': 'Input',
@@ -236,7 +236,7 @@ export default observer({
                               'x-decorator': 'FormItem',
                               'x-component': 'Select',
                               'x-component-props': {
-                                placeholder: i18n.t('packages_dag_components_formpanel_qingxuanze')
+                                placeholder: i18n.global.t('packages_dag_components_formpanel_qingxuanze')
                               },
                               default: 'current',
                               enum: [
@@ -340,7 +340,7 @@ export default observer({
                         default: true,
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
-                          tooltip: i18n.t('packages_dag_migration_settingpanel_dangrenwufuhe')
+                          tooltip: i18n.global.t('packages_dag_migration_settingpanel_dangrenwufuhe')
                         },
                         'x-component': 'Switch',
                         'x-reactions': {
@@ -381,7 +381,7 @@ export default observer({
                             'x-decorator': 'FormItem',
                             'x-decorator-props': {
                               feedbackLayout: 'none',
-                              addonAfter: i18n.t('packages_dag_dag_data_setting_second')
+                              addonAfter: i18n.global.t('packages_dag_dag_data_setting_second')
                             },
                             'x-component': 'InputNumber',
                             'x-component-props': {
@@ -423,11 +423,11 @@ export default observer({
                             'x-component': 'Select',
                             enum: [
                               {
-                                label: i18n.t('packages_dag_components_formpanel_piliang'),
+                                label: i18n.global.t('packages_dag_components_formpanel_piliang'),
                                 value: false
                               },
                               {
-                                label: i18n.t('packages_dag_components_formpanel_zhutiao'),
+                                label: i18n.global.t('packages_dag_components_formpanel_zhutiao'),
                                 value: true
                               }
                             ]

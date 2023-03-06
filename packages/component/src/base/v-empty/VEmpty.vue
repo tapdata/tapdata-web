@@ -83,7 +83,7 @@ export default {
     description: {
       type: String,
       default: () => {
-        return i18n.t('packages_component_dag_dialog_field_mapping_no_data')
+        return i18n.global.t('packages_component_dag_dialog_field_mapping_no_data')
       }
     }
   }

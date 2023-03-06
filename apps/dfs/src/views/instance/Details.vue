@@ -233,25 +233,25 @@ export default {
       downloadDialog: false,
       downloadListCol: [
         {
-          label: i18n.t('dfs_instance_instance_wenjianming'),
+          label: i18n.global.t('dfs_instance_instance_wenjianming'),
           prop: 'id'
         },
         {
-          label: i18n.t('dfs_instance_instance_wenjiandaxiao'),
+          label: i18n.global.t('dfs_instance_instance_wenjiandaxiao'),
           slotName: 'fileSize'
         },
         {
-          label: i18n.t('dfs_instance_instance_shangchuanshijian'),
+          label: i18n.global.t('dfs_instance_instance_shangchuanshijian'),
           prop: 'createAt',
           dataType: 'time'
         },
         {
-          label: i18n.t('dfs_instance_instance_wenjianzhuangtai'),
+          label: i18n.global.t('dfs_instance_instance_wenjianzhuangtai'),
           slotName: 'status'
         },
 
         {
-          label: i18n.t('dfs_instance_instance_wenjianxiazai'),
+          label: i18n.global.t('dfs_instance_instance_wenjianxiazai'),
           slotName: 'operation'
         }
       ],
@@ -266,7 +266,7 @@ export default {
       uploadTimer: null,
       loadingLogTable: false,
       loadingUpload: false,
-      btnTxt: i18n.t('dfs_instance_instance_upload_btn'),
+      btnTxt: i18n.global.t('dfs_instance_instance_upload_btn'),
       disabledUploadDialog: false, //控制agent 上传频率 同时只能一个在上传 在弹窗
       tapdataAgentStatus: '',
       showUpload: 1,
@@ -427,7 +427,7 @@ export default {
     //日志上传
     handleUpload(id) {
       this.loadingUpload = true
-      this.btnTxt = i18n.t('dfs_instance_details_shangchuanzhong')
+      this.btnTxt = i18n.global.t('dfs_instance_details_shangchuanzhong')
       this.$axios
         .post('api/tcm/uploadLog', { agentId: id, uploadDays: this.uploadDays })
         .then(() => {
@@ -483,7 +483,7 @@ export default {
           this.disabledUploadDialog = uploading?.length > 0
           if (!this.disabledUploadDialog) {
             this.loadingUpload = false
-            this.btnTxt = i18n.t('dfs_instance_instance_rizhishangchuan')
+            this.btnTxt = i18n.global.t('dfs_instance_instance_rizhishangchuan')
           }
           this.timer = setTimeout(() => {
             this.getDownloadList()
@@ -502,7 +502,7 @@ export default {
           id: row.id
         })
         .then(() => {
-          this.$message.success(i18n.t('dfs_instance_instance_shanchuchenggong'))
+          this.$message.success(i18n.global.t('dfs_instance_instance_shanchuchenggong'))
           //主動刷新列表
           clearTimeout(this.timer)
           this.getDownloadList()

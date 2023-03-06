@@ -42,14 +42,14 @@ export class MergeTable extends NodeType {
       },
       name: {
         type: 'string',
-        title: i18n.t('packages_dag_nodes_database_jiedianmingcheng'),
+        title: i18n.global.t('packages_dag_nodes_database_jiedianmingcheng'),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input'
       },
 
       mergeProperties: {
-        title: i18n.t('packages_dag_nodes_mergetable_zhucongpeizhi'),
+        title: i18n.global.t('packages_dag_nodes_mergetable_zhucongpeizhi'),
         type: 'array',
         required: true,
         'x-decorator': 'FormItem',
@@ -73,20 +73,20 @@ export class MergeTable extends NodeType {
                 },
                 mergeType: {
                   type: 'string',
-                  title: i18n.t('packages_dag_nodes_mergetable_shujuxierumo'),
+                  title: i18n.global.t('packages_dag_nodes_mergetable_shujuxierumo'),
                   'x-decorator': 'FormItem',
                   'x-component': 'Select',
                   enum: [
                     {
-                      label: i18n.t('packages_dag_editor_cell_link_writeMode_update'),
+                      label: i18n.global.t('packages_dag_editor_cell_link_writeMode_update'),
                       value: 'updateWrite'
                     },
                     {
-                      label: i18n.t('packages_dag_editor_cell_link_writeMode_upsert'),
+                      label: i18n.global.t('packages_dag_editor_cell_link_writeMode_upsert'),
                       value: 'updateOrInsert'
                     },
                     {
-                      label: i18n.t('packages_dag_nodes_mergetable_gengxinjinneiqian'),
+                      label: i18n.global.t('packages_dag_nodes_mergetable_gengxinjinneiqian'),
                       value: 'updateIntoArray'
                     }
                   ]
@@ -97,7 +97,7 @@ export class MergeTable extends NodeType {
                   properties: {
                     targetPath: {
                       type: 'string',
-                      title: i18n.t('packages_dag_nodes_mergetable_guanlianhouxieru'),
+                      title: i18n.global.t('packages_dag_nodes_mergetable_guanlianhouxieru'),
                       'x-decorator': 'FormItem',
                       'x-component': 'Input',
                       'x-reactions': [
@@ -116,7 +116,7 @@ export class MergeTable extends NodeType {
                                   const arr = $self.value.split('.')
                                   if (arr.length > 2) {
                                     $self.value = arr.slice(0,2).join('.')
-                                    $self.description = '${i18n.t(
+                                    $self.description = '${i18n.global.t(
                                       'packages_dag_nodes_mergetable_const_zuiduozhichiliangceng'
                                     )}'
                                   } else {
@@ -129,7 +129,7 @@ export class MergeTable extends NodeType {
                     },
                     arrayKeys: {
                       type: 'array',
-                      title: i18n.t('packages_dag_nodes_mergetable_neiqianshuzupi'),
+                      title: i18n.global.t('packages_dag_nodes_mergetable_neiqianshuzupi'),
                       'x-decorator': 'FormItem',
                       'x-component': 'FieldSelect',
                       'x-component-props': {
@@ -150,7 +150,7 @@ export class MergeTable extends NodeType {
                     },
                     joinKeys: {
                       type: 'array',
-                      title: i18n.t('packages_dag_nodes_mergetable_guanliantiaojian'),
+                      title: i18n.global.t('packages_dag_nodes_mergetable_guanliantiaojian'),
                       'x-decorator': 'FormItem',
                       'x-component': 'ArrayTable',
                       items: {
@@ -160,7 +160,7 @@ export class MergeTable extends NodeType {
                             type: 'void',
                             'x-component': 'ArrayTable.Column',
                             'x-component-props': {
-                              title: i18n.t('packages_dag_nodes_mergetable_dangqianbiaoziduan'),
+                              title: i18n.global.t('packages_dag_nodes_mergetable_dangqianbiaoziduan'),
                               align: 'center',
                               asterisk: false
                             },
@@ -182,7 +182,7 @@ export class MergeTable extends NodeType {
                             type: 'void',
                             'x-component': 'ArrayTable.Column',
                             'x-component-props': {
-                              title: i18n.t('packages_dag_nodes_mergetable_mubiaobiaoziduan'),
+                              title: i18n.global.t('packages_dag_nodes_mergetable_mubiaobiaoziduan'),
                               align: 'center',
                               asterisk: false
                             },

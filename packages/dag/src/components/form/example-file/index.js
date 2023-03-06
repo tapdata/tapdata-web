@@ -30,9 +30,9 @@ export const ExpressionExample = connect(
             <div style="color: #888888; font-size: 12px">
               <h3 style="font-size: 14px; font-weight: bold">
                 {' '}
-                {i18n.t('packages_form_example_file_index_biaodashishili')}
+                {i18n.global.t('packages_form_example_file_index_biaodashishili')}
               </h3>
-              <p style="text-indent: 2em">{i18n.t('packages_form_example_file_index_shaixuanchusuiyi')}</p>
+              <p style="text-indent: 2em">{i18n.global.t('packages_form_example_file_index_shaixuanchusuiyi')}</p>
               <p style="text-indent: 2em">
                 <span style="color: red">(</span> record.gender <span style="color: #f5af3f">==</span> 0
                 <span style="color: #f5af3f">&&</span> record.age <span style="color: #f5af3f">&gt;</span> 50
@@ -44,7 +44,7 @@ export const ExpressionExample = connect(
               </p>
 
               <h3 style="font-size: 14px; font-weight: bold">
-                {i18n.t('packages_form_example_file_index_zhichidefuhao')}
+                {i18n.global.t('packages_form_example_file_index_zhichidefuhao')}
               </h3>
               <table>
                 <tr>
@@ -53,51 +53,51 @@ export const ExpressionExample = connect(
                     <span style="color: #f5af3f"></span>
                   </td>
                   <td style="width: 140px; text-align: left">
-                    {i18n.t('packages_form_example_file_index_dayuxiaoyu')}
+                    {i18n.global.t('packages_form_example_file_index_dayuxiaoyu')}
                   </td>
 
                   <td style="width: 80px; text-align: center">
                     <span style="color: #f5af3f">&gt;=, &lt;=</span>
                   </td>
                   <td style="width: 140px; text-align: left">
-                    {i18n.t('packages_form_example_file_index_dayudengyuxiao')}
+                    {i18n.global.t('packages_form_example_file_index_dayudengyuxiao')}
                   </td>
                 </tr>
                 <tr>
                   <td style="width: 60px; text-align: center">
                     <span style="color: #f5af3f">==</span>
                   </td>
-                  <td style="width: 140px; text-align: left">{i18n.t('packages_form_example_file_index_dengyu')}</td>
+                  <td style="width: 140px; text-align: left">{i18n.global.t('packages_form_example_file_index_dengyu')}</td>
 
                   <td style="width: 60px; text-align: center">
                     <span style="color: #f5af3f">!</span>
                   </td>
-                  <td style="width: 140px; text-align: left">{i18n.t('packages_form_example_file_index_fei')}</td>
+                  <td style="width: 140px; text-align: left">{i18n.global.t('packages_form_example_file_index_fei')}</td>
                 </tr>
                 <tr>
                   <td style="width: 60px; text-align: center">
                     <span style="color: #f5af3f">&&</span>
                   </td>
-                  <td style="width: 140px; text-align: left">{i18n.t('packages_form_example_file_index_qie')}</td>
+                  <td style="width: 140px; text-align: left">{i18n.global.t('packages_form_example_file_index_qie')}</td>
 
                   <td style="width: 60px; text-align: center">
                     <span style="color: #f5af3f">||</span>
                   </td>
-                  <td style="width: 140px; text-align: left">{i18n.t('packages_form_example_file_index_huo')}</td>
+                  <td style="width: 140px; text-align: left">{i18n.global.t('packages_form_example_file_index_huo')}</td>
                 </tr>
                 <tr>
                   <td style="width: 60px; text-align: center">
                     <span style="color: #f5af3f">/^.*$/.test( )</span>
                   </td>
                   <td style="width: 140px; text-align: left">
-                    {i18n.t('packages_form_example_file_index_zhengzebiaodashi')}
+                    {i18n.global.t('packages_form_example_file_index_zhengzebiaodashi')}
                   </td>
 
                   <td style="width: 60px; text-align: center">
                     <span style="color: #f5af3f">( )</span>
                   </td>
                   <td style="width: 140px; text-align: left">
-                    {i18n.t('packages_form_example_file_index_tiaojianfenzu')}
+                    {i18n.global.t('packages_form_example_file_index_tiaojianfenzu')}
                   </td>
                 </tr>
               </table>

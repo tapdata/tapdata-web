@@ -265,8 +265,8 @@ export default {
       return {
         x: time,
         name: [
-          i18n.t('packages_dag_components_nodedetaildialog_shuru'),
-          i18n.t('packages_dag_components_nodedetaildialog_shuchu')
+          i18n.global.t('packages_dag_components_nodedetaildialog_shuru'),
+          i18n.global.t('packages_dag_components_nodedetaildialog_shuchu')
         ],
         value: [qps || inputQps, qps || outputQps]
       }
@@ -274,22 +274,22 @@ export default {
 
     delayLineTitle() {
       const { isSource, isTarget } = this
-      let result = i18n.t('packages_dag_components_nodedetaildialog_chulihaoshi')
+      let result = i18n.global.t('packages_dag_components_nodedetaildialog_chulihaoshi')
       if (isSource) {
-        result = i18n.t('packages_dag_components_nodedetaildialog_duquchulihao')
+        result = i18n.global.t('packages_dag_components_nodedetaildialog_duquchulihao')
       } else if (isTarget) {
-        result = i18n.t('packages_dag_components_nodedetaildialog_chulixieruhao')
+        result = i18n.global.t('packages_dag_components_nodedetaildialog_chulixieruhao')
       }
       return result
     },
 
     delayLineInfo() {
       const { isSource, isTarget } = this
-      let result = i18n.t('packages_dag_components_nodedetaildialog_chulihaoshi')
+      let result = i18n.global.t('packages_dag_components_nodedetaildialog_chulihaoshi')
       if (isSource) {
-        result = i18n.t('packages_dag_components_nodedetaildialog_duquchulihao')
+        result = i18n.global.t('packages_dag_components_nodedetaildialog_duquchulihao')
       } else if (isTarget) {
-        result = i18n.t('packages_dag_components_nodedetaildialog_chulixieruhao')
+        result = i18n.global.t('packages_dag_components_nodedetaildialog_chulixieruhao')
       }
       return result
     },
@@ -307,20 +307,20 @@ export default {
       const { isSource, isTarget } = this
       let result = {
         x: time,
-        name: [i18n.t('packages_dag_components_nodedetaildialog_chulihaoshi')],
+        name: [i18n.global.t('packages_dag_components_nodedetaildialog_chulihaoshi')],
         value: data.timeCostAvg
       }
       if (isSource) {
         result.name = [
-          i18n.t('packages_dag_components_nodedetaildialog_chulihaoshi'),
-          i18n.t('packages_dag_components_nodedetaildialog_pingjunduquhao'),
-          i18n.t('packages_dag_components_nodedetaildialog_zengliangduquyan')
+          i18n.global.t('packages_dag_components_nodedetaildialog_chulihaoshi'),
+          i18n.global.t('packages_dag_components_nodedetaildialog_pingjunduquhao'),
+          i18n.global.t('packages_dag_components_nodedetaildialog_zengliangduquyan')
         ]
         result.value = [data.timeCostAvg, data.snapshotSourceReadTimeCostAvg, data.incrementalSourceReadTimeCostAvg]
       } else if (isTarget) {
         result.name = [
-          i18n.t('packages_dag_components_nodedetaildialog_chulihaoshi'),
-          i18n.t('packages_dag_components_nodedetaildialog_xieruhaoshi')
+          i18n.global.t('packages_dag_components_nodedetaildialog_chulihaoshi'),
+          i18n.global.t('packages_dag_components_nodedetaildialog_xieruhaoshi')
         ]
         result.value = [data.timeCostAvg, data.targetWriteTimeCostAvg]
       }

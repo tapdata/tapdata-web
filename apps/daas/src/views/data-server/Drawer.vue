@@ -446,7 +446,7 @@ export default {
       if (/^([^\x00-\xff]|[a-zA-Z_$])([^\x00-\xff]|[a-zA-Z0-9_$])*$/.test(value)) {
         callback()
       } else {
-        callback(i18n.t('daas_data_server_drawer_geshicuowu'))
+        callback(i18n.global.t('daas_data_server_drawer_geshicuowu'))
       }
     }
     const validateBasePath = (rule, value, callback) => {
@@ -454,7 +454,7 @@ export default {
       if (/^[a-zA-Z\$_\u4e00-\u9fa5][a-zA-Z\u4e00-\u9fa5\d\$_]*$/.test(value)) {
         callback()
       } else {
-        callback(i18n.t('daas_data_server_drawer_validate'))
+        callback(i18n.global.t('daas_data_server_drawer_validate'))
       }
     }
     const validatePrefix = (rule, value, callback) => {
@@ -462,7 +462,7 @@ export default {
       if (/^[a-zA-Z\$_\u4e00-\u9fa5][a-zA-Z\u4e00-\u9fa5\d\$_]*$/.test(value) || value === '') {
         callback()
       } else {
-        callback(i18n.t('daas_data_server_drawer_validate'))
+        callback(i18n.global.t('daas_data_server_drawer_validate'))
       }
     }
 
@@ -483,35 +483,35 @@ export default {
         name: [
           {
             required: true,
-            message: i18n.t('daas_data_server_drawer_qingshurufuwu'),
+            message: i18n.global.t('daas_data_server_drawer_qingshurufuwu'),
             trigger: 'blur'
           }
         ],
         acl: [
           {
             required: true,
-            message: i18n.t('daas_data_server_drawer_selectPermissions'),
+            message: i18n.global.t('daas_data_server_drawer_selectPermissions'),
             trigger: 'blur'
           }
         ],
         connectionType: [
           {
             required: true,
-            message: i18n.t('daas_data_server_drawer_qingxuanzelianjie'),
+            message: i18n.global.t('daas_data_server_drawer_qingxuanzelianjie'),
             trigger: 'blur'
           }
         ],
         connectionId: [
           {
             required: true,
-            message: i18n.t('shared_cache_placeholder_connection'),
+            message: i18n.global.t('shared_cache_placeholder_connection'),
             trigger: 'blur'
           }
         ],
         tableName: [
           {
             required: true,
-            message: i18n.t('daas_data_server_drawer_qingxuanzeduixiang'),
+            message: i18n.global.t('daas_data_server_drawer_qingxuanzeduixiang'),
             trigger: 'blur'
           }
         ],
@@ -545,8 +545,8 @@ export default {
         ]
       },
       apiTypeMap: {
-        defaultApi: i18n.t('daas_data_server_drawer_morenchaxun'),
-        customerQuery: i18n.t('daas_data_server_drawer_zidingyichaxun')
+        defaultApi: i18n.global.t('daas_data_server_drawer_morenchaxun'),
+        customerQuery: i18n.global.t('daas_data_server_drawer_zidingyichaxun')
       },
       databaseTypes: null,
       connectionOptions: null,
@@ -693,14 +693,14 @@ export default {
           name: 'page',
           type: 'number',
           defaultvalue: '1',
-          description: i18n.t('daas_data_server_drawer_fenyebianhao'),
+          description: i18n.global.t('daas_data_server_drawer_fenyebianhao'),
           required: true
         },
         {
           name: 'limit',
           type: 'number',
           defaultvalue: '20',
-          description: i18n.t('daas_data_server_drawer_meigefenyefan'),
+          description: i18n.global.t('daas_data_server_drawer_meigefenyefan'),
           required: true
         }
       ]
@@ -710,12 +710,12 @@ export default {
             {
               name: 'sort',
               type: 'object',
-              description: i18n.t('daas_data_server_drawer_paixu')
+              description: i18n.global.t('daas_data_server_drawer_paixu')
             },
             {
               name: 'filter',
               type: 'object',
-              description: i18n.t('module_form_condition')
+              description: i18n.global.t('module_form_condition')
             }
           ]
         )
@@ -777,7 +777,7 @@ export default {
             status = 'pending'
           }
           if (params.some(it => !it.name.trim())) {
-            return this.$message.error(i18n.t('daas_data_server_drawer_qingshurucanshu'))
+            return this.$message.error(i18n.global.t('daas_data_server_drawer_qingshurucanshu'))
           }
           this.loading = true
           let formData = {

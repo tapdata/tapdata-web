@@ -166,19 +166,19 @@ export default {
       }
       let arr = [
         {
-          name: i18n.t('packages_dag_monitor_verifypanel_jiaoyanyizhi'),
+          name: i18n.global.t('packages_dag_monitor_verifypanel_jiaoyanyizhi'),
           key: 'passed',
           value: 0,
           color: '#82C647'
         },
         {
-          name: i18n.t('packages_dag_monitor_verifypanel_jiaoyanbuyizhi'),
+          name: i18n.global.t('packages_dag_monitor_verifypanel_jiaoyanbuyizhi'),
           key: 'diffTables',
           value: 0,
           color: '#F7D762'
         },
         {
-          name: i18n.t('packages_dag_monitor_verifypanel_buzhichijiaoyan'),
+          name: i18n.global.t('packages_dag_monitor_verifypanel_buzhichijiaoyan'),
           key: 'ignore',
           value: 0,
           color: '#88DBDA'
@@ -288,7 +288,7 @@ export default {
 
     getPieOptions(data) {
       const total = eval(data.map(t => t.value).join('+'))
-      const totalText = i18n.t('packages_dag_monitor_verifypanel_zongji')
+      const totalText = i18n.global.t('packages_dag_monitor_verifypanel_zongji')
       let options = {
         tooltip: {
           trigger: 'item',
@@ -337,7 +337,7 @@ export default {
         },
         series: [
           {
-            name: i18n.t('packages_dag_monitor_leftsider_renwujiaoyan'),
+            name: i18n.global.t('packages_dag_monitor_leftsider_renwujiaoyan'),
             type: 'pie',
             radius: ['55%', '90%'],
             center: ['20%', '50%'],

@@ -19,93 +19,93 @@ export default defineComponent({
       loading: false,
       columns: [
         {
-          label: i18n.t('metadata_name'),
+          label: i18n.global.t('metadata_name'),
           prop: 'name'
         },
         {
-          label: i18n.t('metadata_type'),
+          label: i18n.global.t('metadata_type'),
           prop: 'dataType'
         },
         {
-          label: i18n.t('datadiscovery_previewdrawer_zhujian'),
+          label: i18n.global.t('datadiscovery_previewdrawer_zhujian'),
           prop: 'primaryKey'
         },
         {
-          label: i18n.t('datadiscovery_previewdrawer_waijian'),
+          label: i18n.global.t('datadiscovery_previewdrawer_waijian'),
           prop: 'foreignKey'
         },
         {
-          label: i18n.t('datadiscovery_previewdrawer_suoyin'),
+          label: i18n.global.t('datadiscovery_previewdrawer_suoyin'),
           prop: 'index'
         },
         {
-          label: i18n.t('meta_table_not_null'),
+          label: i18n.global.t('meta_table_not_null'),
           prop: 'notNull'
         },
         {
-          label: i18n.t('meta_table_default'),
+          label: i18n.global.t('meta_table_default'),
           prop: 'defaultValue'
         },
         {
-          label: i18n.t('datadiscovery_previewdrawer_yewumingcheng'),
+          label: i18n.global.t('datadiscovery_previewdrawer_yewumingcheng'),
           prop: 'businessName'
         },
         {
-          label: i18n.t('datadiscovery_previewdrawer_yewuleixing'),
+          label: i18n.global.t('datadiscovery_previewdrawer_yewuleixing'),
           prop: 'businessType'
         },
         {
-          label: i18n.t('datadiscovery_previewdrawer_yewumiaoshu'),
+          label: i18n.global.t('datadiscovery_previewdrawer_yewumiaoshu'),
           prop: 'businessDesc'
         }
       ],
       nodeColumns: [
         {
-          label: i18n.t('metadata_name'),
+          label: i18n.global.t('metadata_name'),
           prop: 'name'
         },
         {
-          label: i18n.t('metadata_type'),
+          label: i18n.global.t('metadata_type'),
           prop: 'type'
         },
         {
-          label: i18n.t('daas_data_discovery_previewdrawer_jiedianmiaoshu'),
+          label: i18n.global.t('daas_data_discovery_previewdrawer_jiedianmiaoshu'),
           prop: 'connectionInfo'
         },
         {
-          label: i18n.t('datadiscovery_previewdrawer_yewumiaoshu'),
+          label: i18n.global.t('datadiscovery_previewdrawer_yewumiaoshu'),
           prop: 'serviceDesc'
         }
       ],
       apiColumns: [
         {
-          label: i18n.t('metadata_name'),
+          label: i18n.global.t('metadata_name'),
           prop: 'name'
         },
         {
-          label: i18n.t('metadata_type'),
+          label: i18n.global.t('metadata_type'),
           prop: 'type'
         },
         {
-          label: i18n.t('meta_table_default'),
+          label: i18n.global.t('meta_table_default'),
           prop: 'defaultvalue'
         },
         {
-          label: i18n.t('module_form_describtion'),
+          label: i18n.global.t('module_form_describtion'),
           prop: 'description'
         }
       ],
       apiInputColumns: [
         {
-          label: i18n.t('metadata_name'),
+          label: i18n.global.t('metadata_name'),
           prop: 'field_name'
         },
         {
-          label: i18n.t('metadata_type'),
+          label: i18n.global.t('metadata_type'),
           prop: 'data_type'
         },
         {
-          label: i18n.t('module_form_describtion'),
+          label: i18n.global.t('module_form_describtion'),
           prop: 'description'
         }
       ],
@@ -126,9 +126,9 @@ export default defineComponent({
     const formatTask = data => {
       for (let i = 0; i < data?.length; i++) {
         if (data[i].type === 'calculate') {
-          data[i].connectionInfo = `${i18n.t('daas_data_discovery_previewdrawer_shurujiedian')}: ${
+          data[i].connectionInfo = `${i18n.global.t('daas_data_discovery_previewdrawer_shurujiedian')}: ${
             data[i].inputNodeName
-          } ; ${i18n.t('daas_data_discovery_previewdrawer_shuchujiedian')}: ${data[i].outputNodeName}`
+          } ; ${i18n.global.t('daas_data_discovery_previewdrawer_shuchujiedian')}: ${data[i].outputNodeName}`
         }
       }
       return data
@@ -232,10 +232,10 @@ export default defineComponent({
       <div class="flex flex-column overflow-hidden pt-2 h-100" v-loading={this.data.loading}>
         <div class="flex position-relative">
           <div class="position-absolute top-0 start-0 fs-7 fw-sub px-6 font-color-dark" style="line-height: 36px">
-            {i18n.t('datadiscovery_previewdrawer_duixiangxiangqing')}
+            {i18n.global.t('datadiscovery_previewdrawer_duixiangxiangqing')}
           </div>
           <el-tabs class="drawer-tabs flex-1" v-model={this.data.activeName}>
-            <el-tab-pane label={i18n.t('page_title_overview')} name="first">
+            <el-tab-pane label={i18n.global.t('page_title_overview')} name="first">
               <div style="width:40px"></div>
             </el-tab-pane>
           </el-tabs>
@@ -251,7 +251,7 @@ export default defineComponent({
                 v-loading={this.data.tableLoading}
               >
                 <div class="user">
-                  <span class="mr-4">{i18n.t('datadiscovery_previewdrawer_guanliyuan')}</span>
+                  <span class="mr-4">{i18n.global.t('datadiscovery_previewdrawer_guanliyuan')}</span>
                   <el-select v-model={this.data.activeUser}>
                     <el-option label="admin" value="admin"></el-option>
                   </el-select>
@@ -261,37 +261,37 @@ export default defineComponent({
                     <div class="details_data_info mt-4 p-5">
                       <el-row class="mt-2">
                         <el-col>
-                          <span class="drawer__header_text inline-block">{i18n.t('metadata_meta_type_table')}</span>
+                          <span class="drawer__header_text inline-block">{i18n.global.t('metadata_meta_type_table')}</span>
                           <span class="ml-2">{this.previewData.name}</span>
                         </el-col>
                       </el-row>
                       <el-row class="mt-2">
                         <el-col span={8}>
-                          <span class="max-label inline-block">{i18n.t('column_create_time')}</span>
+                          <span class="max-label inline-block">{i18n.global.t('column_create_time')}</span>
                           <span class="ml-2">{dayjs(this.previewData.createAt).format('YYYY-MM-DD HH:mm:ss')}</span>
                         </el-col>
                         <el-col span={8}>
                           <span class="max-label inline-block">
-                            {i18n.t('datadiscovery_previewdrawer_biangengshijian')}
+                            {i18n.global.t('datadiscovery_previewdrawer_biangengshijian')}
                           </span>
                           <span class="ml-2">{dayjs(this.previewData.lastUpdAt).format('YYYY-MM-DD HH:mm:ss')}</span>
                         </el-col>
                         <el-col span={8}>
-                          <span class="max-label inline-block">{i18n.t('datadiscovery_previewdrawer_shujuxiang')}</span>
+                          <span class="max-label inline-block">{i18n.global.t('datadiscovery_previewdrawer_shujuxiang')}</span>
                           <span class="ml-2">{this.previewData.fieldNum}</span>
                         </el-col>
                       </el-row>
                       <el-row class="mt-2">
                         <el-col span={8}>
-                          <span class="max-label inline-block">{i18n.t('datadiscovery_previewdrawer_shujuliang')}</span>
+                          <span class="max-label inline-block">{i18n.global.t('datadiscovery_previewdrawer_shujuliang')}</span>
                           <span class="ml-2">{this.previewData.rowNum}</span>
                         </el-col>
                         <el-col span={8}>
-                          <span class="max-label inline-block">{i18n.t('object_list_source_type')}</span>
+                          <span class="max-label inline-block">{i18n.global.t('object_list_source_type')}</span>
                           <span class="ml-2">{this.previewData.sourceType}</span>
                         </el-col>
                         <el-col class="flex" span={8}>
-                          <span class="max-label inline-block">{i18n.t('object_list_source_information')}</span>
+                          <span class="max-label inline-block">{i18n.global.t('object_list_source_information')}</span>
                           <span class="ml-2">
                             <OverflowTooltip
                               class="cursor-pointer"
@@ -305,16 +305,16 @@ export default defineComponent({
                       </el-row>
                       <el-row class="mt-2">
                         <el-col span={8}>
-                          <span class="max-label inline-block">{i18n.t('connection_list_name')}</span>
+                          <span class="max-label inline-block">{i18n.global.t('connection_list_name')}</span>
                           <span class="ml-2">{this.previewData.connectionName}</span>
                         </el-col>
                         <el-col span={8}>
-                          <span class="max-label inline-block">{i18n.t('connection_list_type')}</span>
+                          <span class="max-label inline-block">{i18n.global.t('connection_list_type')}</span>
                           <span class="ml-2">{this.previewData.connectionType}</span>
                         </el-col>
                         <el-col span={8}>
                           <span class="max-label inline-block">
-                            {i18n.t('datadiscovery_previewdrawer_lianjiemiaoshu')}
+                            {i18n.global.t('datadiscovery_previewdrawer_lianjiemiaoshu')}
                           </span>
                           <span class="ml-2">{this.previewData.connectionDesc}</span>
                         </el-col>
@@ -322,7 +322,7 @@ export default defineComponent({
                       <el-row class="mt-2">
                         <el-col span={8}>
                           <span class="max-label inline-block">
-                            {i18n.t('datadiscovery_previewdrawer_yewumingcheng')}
+                            {i18n.global.t('datadiscovery_previewdrawer_yewumingcheng')}
                           </span>
                           <span class="ml-2">{this.previewData.businessName}</span>
                         </el-col>
@@ -331,12 +331,12 @@ export default defineComponent({
                     <div class="mt-5">
                       <div class="flex justify-content-between align-items-center">
                         <span class="drawer__header_text inline-block">
-                          {i18n.t('datadiscovery_previewdrawer_shujuxiang')}
+                          {i18n.global.t('datadiscovery_previewdrawer_shujuxiang')}
                         </span>
                         <el-input
                           class="mb-3"
                           style="width:200px"
-                          placeholder={i18n.t('daas_data_discovery_previewdrawer_qingshurumingcheng')}
+                          placeholder={i18n.global.t('daas_data_discovery_previewdrawer_qingshurumingcheng')}
                           suffix-icon="el-icon-search"
                           v-model={this.data.search}
                           onChange={this.filterNames}
@@ -348,7 +348,7 @@ export default defineComponent({
                         data={this.previewData.fields}
                         has-pagination={false}
                       >
-                        <div v-slot:empty>{i18n.t('packages_dag_dag_dialog_field_mapping_no_data')}</div>
+                        <div v-slot:empty>{i18n.global.t('packages_dag_dag_dialog_field_mapping_no_data')}</div>
                       </VTable>
                     </div>
                   </div>
@@ -366,33 +366,33 @@ export default defineComponent({
                       </el-row>
                       <el-row class="mt-2">
                         <el-col span={8}>
-                          <span class="max-label inline-block">{i18n.t('column_create_time')}</span>
+                          <span class="max-label inline-block">{i18n.global.t('column_create_time')}</span>
                           <span class="ml-2">{dayjs(this.previewData.createAt).format('YYYY-MM-DD HH:mm:ss')}</span>
                         </el-col>
                         <el-col span={8}>
                           <span class="max-label inline-block">
-                            {i18n.t('datadiscovery_previewdrawer_biangengshijian')}
+                            {i18n.global.t('datadiscovery_previewdrawer_biangengshijian')}
                           </span>
                           <span class="ml-2">{dayjs(this.previewData.lastUpdAt).format('YYYY-MM-DD HH:mm:ss')}</span>
                         </el-col>
                         <el-col span={8}>
-                          <span class="max-label inline-block">{i18n.t('daas_data_server_drawer_shurucanshu')}</span>
+                          <span class="max-label inline-block">{i18n.global.t('daas_data_server_drawer_shurucanshu')}</span>
                           <span class="ml-2">{this.previewData.inputParamNum}</span>
                         </el-col>
                       </el-row>
                       <el-row class="mt-2">
                         <el-col span={8}>
                           <span class="max-label inline-block">
-                            {i18n.t('daas_data_discovery_previewdrawer_shuchucanshu')}
+                            {i18n.global.t('daas_data_discovery_previewdrawer_shuchucanshu')}
                           </span>
                           <span class="ml-2">{this.previewData.outputParamNum}</span>
                         </el-col>
                         <el-col span={8}>
-                          <span class="max-label inline-block">{i18n.t('object_list_source_type')}</span>
+                          <span class="max-label inline-block">{i18n.global.t('object_list_source_type')}</span>
                           <span class="ml-2">{this.previewData.sourceType}</span>
                         </el-col>
                         <el-col class="flex" span={8}>
-                          <span class="max-label inline-block">{i18n.t('object_list_source_information')}</span>
+                          <span class="max-label inline-block">{i18n.global.t('object_list_source_information')}</span>
                           <span class="ml-2">
                             <OverflowTooltip
                               class="cursor-pointer"
@@ -406,12 +406,12 @@ export default defineComponent({
                       </el-row>
                       <el-row class="mt-2">
                         <el-col span={8}>
-                          <span class="max-label inline-block">{i18n.t('daas_data_server_list_fuwumingcheng')}</span>
+                          <span class="max-label inline-block">{i18n.global.t('daas_data_server_list_fuwumingcheng')}</span>
                           <span class="ml-2">{this.previewData.name}</span>
                         </el-col>
                         <el-col span={8}>
                           <span class="max-label inline-block">
-                            {i18n.t('daas_data_discovery_previewdrawer_fuwumiaoshu')}
+                            {i18n.global.t('daas_data_discovery_previewdrawer_fuwumiaoshu')}
                           </span>
                           <span class="ml-2">{this.previewData.description}</span>
                         </el-col>
@@ -419,7 +419,7 @@ export default defineComponent({
                       <el-row class="mt-2">
                         <el-col span={8}>
                           <span class="max-label inline-block">
-                            {i18n.t('datadiscovery_previewdrawer_yewumingcheng')}
+                            {i18n.global.t('datadiscovery_previewdrawer_yewumingcheng')}
                           </span>
                           <span class="ml-2">{this.previewData.businessName}</span>
                         </el-col>
@@ -427,7 +427,7 @@ export default defineComponent({
                     </div>
                     <div class="mt-5">
                       <span class="drawer__header_text inline-block">
-                        {i18n.t('daas_data_server_drawer_shurucanshu')}
+                        {i18n.global.t('daas_data_server_drawer_shurucanshu')}
                       </span>
                       <VTable
                         class="discovery-page-api-table"
@@ -439,12 +439,12 @@ export default defineComponent({
                     <div class="mt-5">
                       <div class="flex justify-content-between align-items-center">
                         <span class="drawer__header_text inline-block">
-                          {i18n.t('daas_data_discovery_previewdrawer_shuchucanshu')}
+                          {i18n.global.t('daas_data_discovery_previewdrawer_shuchucanshu')}
                         </span>
                         <el-input
                           class="mb-3"
                           style="width:200px"
-                          placeholder={i18n.t('daas_data_discovery_previewdrawer_qingshurumingcheng')}
+                          placeholder={i18n.global.t('daas_data_discovery_previewdrawer_qingshurumingcheng')}
                           suffix-icon="el-icon-search"
                           v-model={this.data.searchApi}
                           onChange={this.filterNamesApi}
@@ -456,12 +456,12 @@ export default defineComponent({
                         columns={this.data.apiInputColumns}
                         data={this.previewData.fields}
                       >
-                        <div v-slot:empty>{i18n.t('packages_dag_dag_dialog_field_mapping_no_data')}</div>
+                        <div v-slot:empty>{i18n.global.t('packages_dag_dag_dialog_field_mapping_no_data')}</div>
                       </VTable>
                     </div>
                     <div class="mt-5">
                       <span class="drawer__header_text inline-block">
-                        {i18n.t('daas_data_server_drawer_fuwufangwen')}
+                        {i18n.global.t('daas_data_server_drawer_fuwufangwen')}
                       </span>
                       <ul class="data-api-path">
                         {this.data.urls.map(path => (
@@ -481,35 +481,35 @@ export default defineComponent({
                     <div class="details_data_info mt-4 p-5">
                       <el-row class="mt-2">
                         <el-col>
-                          <span class="drawer__header_text inline-block">{i18n.t('setting_Job')}</span>
+                          <span class="drawer__header_text inline-block">{i18n.global.t('setting_Job')}</span>
                           <span class="ml-2">{this.previewData.name}</span>
                         </el-col>
                       </el-row>
                       <el-row class="mt-2">
                         <el-col span={8}>
-                          <span class="max-label inline-block">{i18n.t('column_create_time')}</span>
+                          <span class="max-label inline-block">{i18n.global.t('column_create_time')}</span>
                           <span class="ml-2">{dayjs(this.previewData.createAt).format('YYYY-MM-DD HH:mm:ss')}</span>
                         </el-col>
                         <el-col span={8}>
                           <span class="max-label inline-block">
-                            {i18n.t('datadiscovery_previewdrawer_biangengshijian')}
+                            {i18n.global.t('datadiscovery_previewdrawer_biangengshijian')}
                           </span>
                           <span class="ml-2">{dayjs(this.previewData.lastUpdAt).format('YYYY-MM-DD HH:mm:ss')}</span>
                         </el-col>
                         <el-col span={8}>
                           <span class="max-label inline-block">
-                            {i18n.t('daas_data_discovery_previewdrawer_jiedianshu')}
+                            {i18n.global.t('daas_data_discovery_previewdrawer_jiedianshu')}
                           </span>
                           <span class="ml-2">{this.previewData.nodeNum}</span>
                         </el-col>
                       </el-row>
                       <el-row class="mt-2">
                         <el-col span={8}>
-                          <span class="max-label inline-block">{i18n.t('object_list_source_type')}</span>
+                          <span class="max-label inline-block">{i18n.global.t('object_list_source_type')}</span>
                           <span class="ml-2">{this.previewData.sourceType}</span>
                         </el-col>
                         <el-col class="flex" span={8}>
-                          <span class="max-label inline-block">{i18n.t('object_list_source_information')}</span>
+                          <span class="max-label inline-block">{i18n.global.t('object_list_source_information')}</span>
                           <span class="ml-2">
                             <OverflowTooltip
                               class="cursor-pointer"
@@ -524,19 +524,19 @@ export default defineComponent({
                       <el-row class="mt-2">
                         <el-col span={8}>
                           <span class="max-label inline-block">
-                            {i18n.t('daas_data_discovery_previewdrawer_yinqingmingcheng')}
+                            {i18n.global.t('daas_data_discovery_previewdrawer_yinqingmingcheng')}
                           </span>
                           <span class="ml-2">{this.previewData.agentId}</span>
                         </el-col>
                         <el-col span={8}>
                           <span class="max-label inline-block">
-                            {i18n.t('daas_data_discovery_previewdrawer_yinqingmiaoshu')}
+                            {i18n.global.t('daas_data_discovery_previewdrawer_yinqingmiaoshu')}
                           </span>
                           <span class="ml-2">{this.previewData.agentDesc}</span>
                         </el-col>
                         <el-col span={8}>
                           <span class="max-label inline-block">
-                            {i18n.t('daas_data_discovery_previewdrawer_renwumiaoshu')}
+                            {i18n.global.t('daas_data_discovery_previewdrawer_renwumiaoshu')}
                           </span>
                           <span class="ml-2">{this.previewData.taskDesc}</span>
                         </el-col>
@@ -544,7 +544,7 @@ export default defineComponent({
                       <el-row class="mt-2">
                         <el-col span={8}>
                           <span class="max-label inline-block">
-                            {i18n.t('datadiscovery_previewdrawer_yewumingcheng')}
+                            {i18n.global.t('datadiscovery_previewdrawer_yewumingcheng')}
                           </span>
                           <span class="ml-2">{this.previewData.businessName}</span>
                         </el-col>
@@ -552,7 +552,7 @@ export default defineComponent({
                     </div>
                     <div class="mt-5">
                       <span class="drawer__header_text inline-block">
-                        {i18n.t('daas_data_discovery_previewdrawer_jiedian')}
+                        {i18n.global.t('daas_data_discovery_previewdrawer_jiedian')}
                       </span>
                       <NodeViewer dag={this.previewData.dag}></NodeViewer>
                     </div>

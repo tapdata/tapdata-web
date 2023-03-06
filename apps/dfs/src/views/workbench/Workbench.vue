@@ -336,35 +336,35 @@ export default {
       examplesList: [
         {
           type: 'all',
-          title: i18n.t('_workbench_workbench_jiangshujudaoru'),
-          subTitle: i18n.t('_workbench_workbench_jiangshujudaorusub'),
+          title: i18n.global.t('_workbench_workbench_jiangshujudaoru'),
+          subTitle: i18n.global.t('_workbench_workbench_jiangshujudaorusub'),
           img: 'table-store',
           url: 'https://tapdata.net/how-to-import-data-into-tablestore-alibaba-cloud.html?fromColId=104'
         },
         {
           type: 'all',
-          title: i18n.t('_workbench_workbench_shujuruhucang'),
+          title: i18n.global.t('_workbench_workbench_shujuruhucang'),
           subTitle: 'MySQL → Doris',
           img: 'mysql-doris',
           url: 'https://tapdata.net/real-time-data-entry-into-the-lake-and-warehouse.html?fromColId=104'
         },
         {
           type: 'all',
-          title: i18n.t('_workbench_workbench_yigoushishitong'),
+          title: i18n.global.t('_workbench_workbench_yigoushishitong'),
           subTitle: 'Oracle → MySQL ',
           img: 'oracle-mysql',
           url: 'https://tapdata.net/real-time-sync-of-hdb-from-oracle-to-mysql.html?fromColId=104'
         },
         {
           type: 'all',
-          title: i18n.t('_workbench_workbench_shujurucang'),
+          title: i18n.global.t('_workbench_workbench_shujurucang'),
           subTitle: 'SQL Server → BigQuery ',
           img: 'bigQuery',
           url: 'https://tapdata.net/tapdata-connector-sqlserver-bigquery.html'
         },
         {
           type: 'all',
-          title: i18n.t('_workbench_workbench_shujurucang'),
+          title: i18n.global.t('_workbench_workbench_shujurucang'),
           subTitle: 'MySQL → ClickHouse',
           img: 'clickHouse',
           url: 'https://tapdata.net/tapdata-connector-mysql-clickhouse.html?fromColId=104'
@@ -472,7 +472,7 @@ export default {
         {
           id: 1,
           type: '',
-          name: i18n.t('dfs_workbench_workbench_zhongyaobanbensheng'),
+          name: i18n.global.t('dfs_workbench_workbench_zhongyaobanbensheng'),
           time: '2022-12-03 18:00'
         }
       ]

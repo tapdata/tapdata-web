@@ -303,14 +303,14 @@ export default {
       let title = msgObj.title
       let node = this.task
       if (node.setting && !node.setting.sync_type.includes('cdc')) {
-        message = i18n.t('packages_business_etl_details_chushihualeixing')
-        title = i18n.t('packages_business_dataFlow_importantReminder')
+        message = i18n.global.t('packages_business_etl_details_chushihualeixing')
+        title = i18n.global.t('packages_business_dataFlow_importantReminder')
       }
       if (node.stages && node.stages.find(s => s.type === 'aggregation_processor')) {
         const h = this.$createElement
-        let arr = i18n.t('packages_business_etl_details_renwuXxx').split('XXX')
+        let arr = i18n.global.t('packages_business_etl_details_renwuXxx').split('XXX')
         message = h('p', [arr[0] + '(', h('span', { style: { color: '#409EFF' } }, node.name), ')' + arr[1]])
-        title = i18n.t('packages_business_dataFlow_importantReminder')
+        title = i18n.global.t('packages_business_dataFlow_importantReminder')
       }
       resetLoading.stop = true
       this.$confirm(message, title, {
@@ -342,17 +342,17 @@ export default {
     },
     getConfirmMessage(operateStr, name) {
       let map = {
-        delete_confirm_title: i18n.t('packages_business_etl_details_shifoushanchugai'),
-        delete_confirm_message: i18n.t('packages_business_etl_details_shanchurenwux'),
+        delete_confirm_title: i18n.global.t('packages_business_etl_details_shifoushanchugai'),
+        delete_confirm_message: i18n.global.t('packages_business_etl_details_shanchurenwux'),
 
-        stop_confirm_title: i18n.t('packages_business_etl_details_shifouzantinggai'),
-        stop_confirm_message: i18n.t('packages_business_etl_details_zantingrenwux'),
+        stop_confirm_title: i18n.global.t('packages_business_etl_details_shifouzantinggai'),
+        stop_confirm_message: i18n.global.t('packages_business_etl_details_zantingrenwux'),
 
-        force_stop_confirm_title: i18n.t('packages_business_etl_details_shifouqiangzhiting'),
-        force_stop_confirm_message: i18n.t('packages_business_etl_details_qiangzhitingzhiren'),
+        force_stop_confirm_title: i18n.global.t('packages_business_etl_details_shifouqiangzhiting'),
+        force_stop_confirm_message: i18n.global.t('packages_business_etl_details_qiangzhitingzhiren'),
 
-        initialize_confirm_title: i18n.t('packages_business_etl_details_shifouzhongzhigai'),
-        initialize_confirm_message: i18n.t('packages_business_etl_details_zhongzhirenwux')
+        initialize_confirm_title: i18n.global.t('packages_business_etl_details_shifouzhongzhigai'),
+        initialize_confirm_message: i18n.global.t('packages_business_etl_details_zhongzhirenwux')
       }
       let title = operateStr + '_confirm_title',
         message = operateStr + '_confirm_message'
@@ -376,8 +376,8 @@ export default {
     },
     reset(id) {
       this.$confirm(
-        i18n.t('packages_business_etl_details_shifouzhongzhigai'),
-        i18n.t('packages_business_dataFlow_reset'),
+        i18n.global.t('packages_business_etl_details_shifouzhongzhigai'),
+        i18n.global.t('packages_business_dataFlow_reset'),
         {
           type: 'warning',
           dangerouslyUseHTMLString: true
@@ -438,10 +438,10 @@ export default {
       let failList = data.fail || []
       if (failList.length) {
         let msgMapping = {
-          5: i18n.t('packages_business_dataFlow_multiError_notFound'),
-          6: i18n.t('packages_business_dataFlow_multiError_statusError'),
-          7: i18n.t('packages_business_etl_details_caozuoshibaiqing'),
-          8: i18n.t('packages_business_dataFlow_multiError_statusError')
+          5: i18n.global.t('packages_business_dataFlow_multiError_notFound'),
+          6: i18n.global.t('packages_business_dataFlow_multiError_statusError'),
+          7: i18n.global.t('packages_business_etl_details_caozuoshibaiqing'),
+          8: i18n.global.t('packages_business_dataFlow_multiError_statusError')
         }
         this.$message.warning({
           dangerouslyUseHTMLString: true,

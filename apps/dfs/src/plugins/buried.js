@@ -25,7 +25,7 @@ export const buried = (code, page, attrs, sid) => {
   }
   // eslint-disable-next-line
   process.env.NODE_ENV !== 'production' &&
-    console.log(i18n.t('dfs_plugins_buried_chufamaidianc', { val1: code }), attrs)
+    console.log(i18n.global.t('dfs_plugins_buried_chufamaidianc', { val1: code }), attrs)
 
   window.axios.get('api/tcm/user/behavior' + queryStr)
 }
@@ -55,7 +55,7 @@ export const updateTimeOnSite = () => {
     )
   } else {
     // eslint-disable-next-line
-    console.error(i18n.t('dfs_plugins_buried_wangzhantingliushi'))
+    console.error(i18n.global.t('dfs_plugins_buried_wangzhantingliushi'))
   }
 }
 
@@ -81,7 +81,7 @@ export const startTimeOnPage = router => {
     }
 
     if (to.meta.title) {
-      setPageTitle(i18n.t(to.meta.title))
+      setPageTitle(i18n.global.t(to.meta.title))
     }
 
     // 隐藏客服控件
@@ -121,6 +121,6 @@ export const updateTimeOnPage = () => {
     }
   } else {
     // eslint-disable-next-line
-    console.error(i18n.t('dfs_plugins_buried_wangzhantingliushi'))
+    console.error(i18n.global.t('dfs_plugins_buried_wangzhantingliushi'))
   }
 }

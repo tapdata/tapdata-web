@@ -492,8 +492,8 @@ export default {
 
     handleClear() {
       this.$confirm(
-        i18n.t('packages_business_verification_clear'),
-        i18n.t('packages_business_components_conditionbox_shifouqingkongsuo'),
+        i18n.global.t('packages_business_verification_clear'),
+        i18n.global.t('packages_business_components_conditionbox_shifouqingkongsuo'),
         {
           type: 'warning'
         }
@@ -543,8 +543,8 @@ export default {
       })
       if (!matchNodeList.length) {
         if (this.allStages.length > this.flowStages.length)
-          return this.$message.error(i18n.t('packages_business_components_conditionbox_cunzaichulijiedian_wufazidong'))
-        return this.$message.error(i18n.t('packages_business_components_conditionbox_suoxuanrenwuque'))
+          return this.$message.error(i18n.global.t('packages_business_components_conditionbox_cunzaichulijiedian_wufazidong'))
+        return this.$message.error(i18n.global.t('packages_business_components_conditionbox_suoxuanrenwuque'))
       }
       let where = {
         meta_type: {
@@ -603,7 +603,7 @@ export default {
             })
           })
           if (!list.length) {
-            return this.$message.error(i18n.t('packages_business_components_conditionbox_suoxuanrenwuque'))
+            return this.$message.error(i18n.global.t('packages_business_components_conditionbox_suoxuanrenwuque'))
           }
           this.list = list
         })

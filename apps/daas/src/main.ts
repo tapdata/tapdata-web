@@ -55,7 +55,7 @@ async function bootstrap() {
   if (TOKEN) {
     Cookie.set('access_token', TOKEN)
     // eslint-disable-next-line
-    console.log(i18n.t('daas_src_main_baocuntok'), TOKEN)
+    console.log(i18n.global.t('daas_src_main_baocuntok'), TOKEN)
   }
 
   let token = Cookie.get('access_token')

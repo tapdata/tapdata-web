@@ -188,7 +188,7 @@ export default {
       if (!allowSource || (connectionType && !connectionType.includes('target'))) {
         showMsg &&
           this.$message.error(
-            i18n.t('packages_dag_node_only_as_source', {
+            i18n.global.t('packages_dag_node_only_as_source', {
               val1: target.name
             })
           )
@@ -204,7 +204,7 @@ export default {
       if (!allowTarget || (connectionType && !connectionType.includes('source'))) {
         showMsg &&
           this.$message.error(
-            i18n.t('packages_dag_node_only_as_target', {
+            i18n.global.t('packages_dag_node_only_as_target', {
               val1: source.name
             })
           )
@@ -220,7 +220,7 @@ export default {
       })
 
       if (maxInputs !== -1 && connections.length >= maxInputs) {
-        showMsg && this.$message.error(i18n.t('packages_dag_mixins_editor_gaijiedianyijing'))
+        showMsg && this.$message.error(i18n.global.t('packages_dag_mixins_editor_gaijiedianyijing'))
         return false
       }
       return true
@@ -233,7 +233,7 @@ export default {
       })
 
       if (maxOutputs !== -1 && connections.length >= maxOutputs) {
-        showMsg && this.$message.error(i18n.t('packages_dag_mixins_editor_gaijiedianyijing'))
+        showMsg && this.$message.error(i18n.global.t('packages_dag_mixins_editor_gaijiedianyijing'))
         return false
       }
       return true
@@ -246,7 +246,7 @@ export default {
       if (typeof allowSource === 'function' && !allowSource(source, target)) {
         showMsg &&
           this.$message.error(
-            i18n.t('packages_dag_mixins_editor_gaijiedianta', {
+            i18n.global.t('packages_dag_mixins_editor_gaijiedianta', {
               val1: target.name,
               val2: source.name
             })
@@ -256,7 +256,7 @@ export default {
       if (typeof allowTarget === 'function' && !allowTarget(target, source)) {
         showMsg &&
           this.$message.error(
-            i18n.t('packages_dag_mixins_editor_sourc', {
+            i18n.global.t('packages_dag_mixins_editor_sourc', {
               val1: source.name,
               val2: target.name
             })
@@ -288,7 +288,7 @@ export default {
     },
 
     async newDataflow(name) {
-      this.dataflow.name = name || i18n.t('packages_dag_mixins_editor_xinrenwu') + new Date().toLocaleTimeString()
+      this.dataflow.name = name || i18n.global.t('packages_dag_mixins_editor_xinrenwu') + new Date().toLocaleTimeString()
       await this.saveAsNewDataflow()
       this.titleSet()
     },
@@ -737,7 +737,7 @@ export default {
             location: 0.35,
             create() {
               const div = document.createElement('div')
-              div.title = i18n.t('packages_dag_components_dfnode_tianjiajiedian')
+              div.title = i18n.global.t('packages_dag_components_dfnode_tianjiajiedian')
               div.classList.add('conn-btn__wrap')
               div.innerHTML = `<div class="conn-btn"><span class="v-icon"> <svg class="v-icon__svg"><use xlink:href="#icon-plus"></use></svg> </span></div>`
               return div
@@ -760,7 +760,7 @@ export default {
             location: 0.65,
             create() {
               const div = document.createElement('div')
-              div.title = i18n.t('packages_dag_mixins_editor_shanchulianjie')
+              div.title = i18n.global.t('packages_dag_mixins_editor_shanchulianjie')
               div.classList.add('conn-btn__wrap')
               div.innerHTML = `<div class="conn-btn"><span class="v-icon"> <svg class="v-icon__svg"><use xlink:href="#icon-close"></use></svg> </span></div>`
               return div
@@ -1059,7 +1059,7 @@ export default {
         this.clearNodeError(node.id)
       } catch (e) {
         // eslint-disable-next-line no-console
-        console.log(i18n.t('packages_dag_mixins_editor_jiedianjiaoyancuo'), e)
+        console.log(i18n.global.t('packages_dag_mixins_editor_jiedianjiaoyancuo'), e)
         if (node.type === 'table_rename_processor') {
           // 节点的特殊处理，直接拿表单校验结果设置错误信息
           this.setNodeErrorMsg({
@@ -1096,7 +1096,7 @@ export default {
         const outputNum = node.$outputs.length
 
         if (this.hasNodeError(id)) {
-          someErrorMsg = i18n.t('packages_dag_src_migrationmonitor_noden', {
+          someErrorMsg = i18n.global.t('packages_dag_src_migrationmonitor_noden', {
             val1: node.name
           })
           this.handleLocateNode(node)
@@ -1104,7 +1104,7 @@ export default {
         }
 
         if (inputNum < minInputs) {
-          someErrorMsg = i18n.t('packages_dag_node_none_input', {
+          someErrorMsg = i18n.global.t('packages_dag_node_none_input', {
             val1: node.name,
             val2: minInputs
           })
@@ -1112,7 +1112,7 @@ export default {
         }
 
         if (outputNum < minOutputs) {
-          someErrorMsg = i18n.t('packages_dag_node_none_output', {
+          someErrorMsg = i18n.global.t('packages_dag_node_none_output', {
             val1: node.name,
             val2: minOutputs
           })
@@ -1121,7 +1121,7 @@ export default {
 
         if (!inputNum && !outputNum) {
           // 存在没有连线的节点
-          someErrorMsg = i18n.t('packages_dag_node_none_connection', {
+          someErrorMsg = i18n.global.t('packages_dag_node_none_connection', {
             val1: node.name
           })
           return true
@@ -1150,7 +1150,7 @@ export default {
 
         if (!chooseId) {
           // someErrorMsg = `请配置任务运行agent`
-          someErrorMsg = i18n.t('packages_dag_mixins_editor_suoshuage') // 一样提示冲突
+          someErrorMsg = i18n.global.t('packages_dag_mixins_editor_suoshuage') // 一样提示冲突
         } else {
           let isError = false
           const agent = this.scope.$agentMap[chooseId]
@@ -1158,7 +1158,7 @@ export default {
             if (node.attrs.accessNodeProcessId && chooseId !== node.attrs.accessNodeProcessId) {
               this.setNodeErrorMsg({
                 id: node.id,
-                msg: i18n.t('packages_dag_mixins_editor_gaijiedianbuzhi', {
+                msg: i18n.global.t('packages_dag_mixins_editor_gaijiedianbuzhi', {
                   val1: agent.hostName,
                   val2: agent.ip
                 })
@@ -1166,7 +1166,7 @@ export default {
               isError = true
             }
           })
-          isError && (someErrorMsg = i18n.t('packages_dag_mixins_editor_suoshuage'))
+          isError && (someErrorMsg = i18n.global.t('packages_dag_mixins_editor_suoshuage'))
         }
       } else if (accessNodeProcessIdArr.length === 1) {
         // 如果画布上仅有一个所属agent，自动设置为任务的agent
@@ -1181,7 +1181,7 @@ export default {
         await this.$refs.configPanel.validateSetting()
       } catch (e) {
         this.setActiveType('settings')
-        return i18n.t('packages_dag_mixins_editor_renwushezhiyi')
+        return i18n.global.t('packages_dag_mixins_editor_renwushezhiyi')
       }
     },
 
@@ -1196,14 +1196,14 @@ export default {
               hasNoStreamReadFunction = true
               this.setNodeErrorMsg({
                 id: node.id,
-                msg: i18n.t('packages_dag_mixins_editor_not_support_cdc')
+                msg: i18n.global.t('packages_dag_mixins_editor_not_support_cdc')
               })
             }
           }
         })
         if (hasNoStreamReadFunction) {
           this.setActiveType('settings')
-          return i18n.t('packages_dag_mixins_editor_task_not_support_cdc')
+          return i18n.global.t('packages_dag_mixins_editor_task_not_support_cdc')
         }
       }
     },
@@ -1279,12 +1279,12 @@ export default {
 
     validateLink() {
       const firstSourceNode = this.allNodes.find(node => !node.$inputs.length)
-      if (!firstSourceNode) return i18n.t('packages_dag_mixins_editor_renwulianlubu')
+      if (!firstSourceNode) return i18n.global.t('packages_dag_mixins_editor_renwulianlubu')
       this.eachMap = {}
       this.eachOutputs(firstSourceNode)
 
       if (this.allNodes.some(node => !this.eachMap[node.id])) {
-        return i18n.t('packages_dag_mixins_editor_buzhichiduotiao')
+        return i18n.global.t('packages_dag_mixins_editor_buzhichiduotiao')
       }
     },
 
@@ -1300,7 +1300,7 @@ export default {
             hasEnableDDLAndIncreasesql = true
             this.setNodeErrorMsg({
               id: node.id,
-              msg: i18n.t('packages_dag_mixins_editor_not_support_ddl')
+              msg: i18n.global.t('packages_dag_mixins_editor_not_support_ddl')
             })
           }
         }
@@ -1309,7 +1309,7 @@ export default {
         }
       })
       if ((hasEnableDDL && inBlacklist) || hasEnableDDLAndIncreasesql) {
-        return i18n.t('packages_dag_mixins_editor_renwuzhonghanyou')
+        return i18n.global.t('packages_dag_mixins_editor_renwuzhonghanyou')
       }
     },
 
@@ -1667,7 +1667,7 @@ export default {
       return newPosition
     },
 
-    handleError(error, msg = i18n.t('packages_dag_src_editor_chucuole')) {
+    handleError(error, msg = i18n.global.t('packages_dag_src_editor_chucuole')) {
       if (error?.data?.code === 'Task.ListWarnMessage') {
         let names = []
         if (error.data?.data) {
@@ -1712,14 +1712,14 @@ export default {
 
     handleEditFlush(result) {
       console.debug(
-        i18n.t('packages_dag_mixins_editor_debug5', {
+        i18n.global.t('packages_dag_mixins_editor_debug5', {
           val1: result.data?.status
         }),
         result.data
       ) // eslint-disable-line
       if (result.data) {
         if (result.data.id !== this.dataflow.id) {
-          console.debug(i18n.t('packages_dag_mixins_editor_wsshoudaole'), result.data)
+          console.debug(i18n.global.t('packages_dag_mixins_editor_wsshoudaole'), result.data)
           return
         }
         this.reformDataflow(result.data, true)
@@ -1861,7 +1861,7 @@ export default {
       try {
         const data = await taskApi.get(id, params)
         if (!data) {
-          this.$message.error(i18n.t('packages_dag_mixins_editor_renwubucunzai'))
+          this.$message.error(i18n.global.t('packages_dag_mixins_editor_renwubucunzai'))
           this.handlePageReturn()
           return
         }
@@ -1872,7 +1872,7 @@ export default {
         this.titleSet()
         return data
       } catch (e) {
-        this.$message.error(i18n.t('packages_dag_mixins_editor_renwujiazaichu'))
+        this.$message.error(i18n.global.t('packages_dag_mixins_editor_renwujiazaichu'))
         this.handlePageReturn()
       } finally {
         this.loading = false
@@ -1880,7 +1880,7 @@ export default {
     },
 
     startLoopTask(id) {
-      console.debug(i18n.t('packages_dag_mixins_editor_debug4')) // eslint-disable-line
+      console.debug(i18n.global.t('packages_dag_mixins_editor_debug4')) // eslint-disable-line
       clearTimeout(this.startLoopTaskTimer)
       if (!id) return
       this.startLoopTaskTimer = setTimeout(async () => {
@@ -1891,14 +1891,14 @@ export default {
 
           makeStatusAndDisabled(data)
           console.debug(
-            i18n.t('packages_dag_mixins_editor_debug3', {
+            i18n.global.t('packages_dag_mixins_editor_debug3', {
               val1: this.dataflow.status,
               val2: data.status
             }),
             data
           ) // eslint-disable-line
           if (this.dataflow.status !== data.status) {
-            console.debug(i18n.t('packages_dag_mixins_editor_debug2')) // eslint-disable-line
+            console.debug(i18n.global.t('packages_dag_mixins_editor_debug2')) // eslint-disable-line
             this.dataflow.status = data.status
           }
           // 需要实时更新的字段
@@ -1918,7 +1918,7 @@ export default {
     },
 
     initWS() {
-      console.debug(i18n.t('packages_dag_mixins_editor_debug'), this.$ws.ws) // eslint-disable-line
+      console.debug(i18n.global.t('packages_dag_mixins_editor_debug'), this.$ws.ws) // eslint-disable-line
       this.$ws.off('editFlush', this.handleEditFlush)
       this.$ws.on('editFlush', this.handleEditFlush)
       this.$ws.send({
@@ -2056,10 +2056,10 @@ export default {
         setTimeout(this.beforeStartTask, 800)
       } else {
         if (warnNum || errorNum) {
-          this.$confirm(i18n.t('packages_dag_src_editor_renwubaocunjianceshi'), '', {
+          this.$confirm(i18n.global.t('packages_dag_src_editor_renwubaocunjianceshi'), '', {
             type: 'warning',
-            confirmButtonText: i18n.t('packages_dag_src_editor_jixuqidong'),
-            cancelButtonText: i18n.t('packages_dag_src_editor_shaohouqidong')
+            confirmButtonText: i18n.global.t('packages_dag_src_editor_jixuqidong'),
+            cancelButtonText: i18n.global.t('packages_dag_src_editor_shaohouqidong')
           }).then(resFlag => {
             if (resFlag) {
               this.startTask()

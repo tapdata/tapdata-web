@@ -141,12 +141,12 @@ export default {
                 type: 'void',
                 properties: {
                   // 'DATANODE_CANNOT_CONNECT.open': this.getSwitch(
-                  //   i18n.t('packages_dag_migration_alarmpanel_shujuyuanwufa'),
+                  //   i18n.global.t('packages_dag_migration_alarmpanel_shujuyuanwufa'),
                   //   'DATANODE_CANNOT_CONNECT.notify'
                   // ),
                   // 'DATANODE_CANNOT_CONNECT.notify': this.getCheckboxGroup('DATANODE_CANNOT_CONNECT.open'),
                   // 'DATANODE_HTTP_CONNECT_CONSUME.open': this.getSwitch(
-                  //   i18n.t('packages_dag_migration_alarmpanel_shujuyuanwangluo')
+                  //   i18n.global.t('packages_dag_migration_alarmpanel_shujuyuanwangluo')
                   // ),
                   // 'DATANODE_HTTP_CONNECT_CONSUME.notify': this.getCheckboxGroup(),
                   // space1: this.getSpace(
@@ -155,7 +155,7 @@ export default {
                   //   'DATANODE_HTTP_CONNECT_CONSUME.ms'
                   // ),
                   // 'DATANODE_TCP_CONNECT_CONSUME.open': this.getSwitch(
-                  //   i18n.t('packages_dag_migration_alarmpanel_shujuyuanxieyi')
+                  //   i18n.global.t('packages_dag_migration_alarmpanel_shujuyuanxieyi')
                   // ),
                   // 'DATANODE_TCP_CONNECT_CONSUME.notify': this.getCheckboxGroup(),
                   // space2: this.getSpace(
@@ -164,7 +164,7 @@ export default {
                   //   'DATANODE_TCP_CONNECT_CONSUME.ms'
                   // ),
                   'DATANODE_AVERAGE_HANDLE_CONSUME.open': this.getSwitch(
-                    i18n.t('packages_business_setting_alarmnotification_dangshujuyuanjie'),
+                    i18n.global.t('packages_business_setting_alarmnotification_dangshujuyuanjie'),
                     'DATANODE_AVERAGE_HANDLE_CONSUME.notify'
                   ),
                   'DATANODE_AVERAGE_HANDLE_CONSUME.notify': this.getCheckboxGroup(
@@ -189,7 +189,7 @@ export default {
                 type: 'void',
                 properties: {
                   'PROCESSNODE_AVERAGE_HANDLE_CONSUME.open': this.getSwitch(
-                    i18n.t('packages_business_setting_alarmnotification_dangjiediandeping'),
+                    i18n.global.t('packages_business_setting_alarmnotification_dangjiediandeping'),
                     'PROCESSNODE_AVERAGE_HANDLE_CONSUME.notify'
                   ),
                   'PROCESSNODE_AVERAGE_HANDLE_CONSUME.notify': this.getCheckboxGroup(
@@ -214,32 +214,32 @@ export default {
                 type: 'void',
                 properties: {
                   'TASK_STATUS_ERROR.open': this.getSwitch(
-                    i18n.t('packages_dag_migration_alarmpanel_renwuyunxingchu'),
+                    i18n.global.t('packages_dag_migration_alarmpanel_renwuyunxingchu'),
                     'TASK_STATUS_ERROR.notify'
                   ),
                   'TASK_STATUS_ERROR.notify': this.getCheckboxGroup('TASK_STATUS_ERROR.open'),
                   // 'TASK_INSPECT_ERROR.open': this.getSwitch(
-                  //   i18n.t('packages_dag_migration_alarmpanel_renwujiaoyanchu'),
+                  //   i18n.global.t('packages_dag_migration_alarmpanel_renwujiaoyanchu'),
                   //   'TASK_INSPECT_ERROR.notify'
                   // ),
                   // 'TASK_INSPECT_ERROR.notify': this.getCheckboxGroup('TASK_INSPECT_ERROR.open'),
                   'TASK_FULL_COMPLETE.open': this.getSwitch(
-                    i18n.t('packages_dag_migration_alarmpanel_renwuquanliangwan'),
+                    i18n.global.t('packages_dag_migration_alarmpanel_renwuquanliangwan'),
                     'TASK_FULL_COMPLETE.notify'
                   ),
                   'TASK_FULL_COMPLETE.notify': this.getCheckboxGroup('TASK_FULL_COMPLETE.open'),
                   'TASK_INCREMENT_START.open': this.getSwitch(
-                    i18n.t('packages_dag_migration_alarmpanel_renwuzengliangkai'),
+                    i18n.global.t('packages_dag_migration_alarmpanel_renwuzengliangkai'),
                     'TASK_INCREMENT_START.notify'
                   ),
                   'TASK_INCREMENT_START.notify': this.getCheckboxGroup('TASK_INCREMENT_START.open'),
                   'TASK_STATUS_STOP.open': this.getSwitch(
-                    i18n.t('packages_dag_migration_alarmpanel_renwutingzhigao'),
+                    i18n.global.t('packages_dag_migration_alarmpanel_renwutingzhigao'),
                     'TASK_STATUS_STOP.notify'
                   ),
                   'TASK_STATUS_STOP.notify': this.getCheckboxGroup('TASK_STATUS_STOP.open'),
                   'TASK_INCREMENT_DELAY.open': this.getSwitch(
-                    i18n.t('packages_dag_migration_alarmpanel_renwuzengliangyan'),
+                    i18n.global.t('packages_dag_migration_alarmpanel_renwuzengliangyan'),
                     'TASK_INCREMENT_DELAY.notify'
                   ),
                   'TASK_INCREMENT_DELAY.notify': this.getCheckboxGroup('TASK_INCREMENT_DELAY.open'),
@@ -311,11 +311,11 @@ export default {
         'x-component': 'Checkbox.Group',
         enum: [
           {
-            label: i18n.t('packages_dag_migration_alarmpanel_xitongtongzhi'),
+            label: i18n.global.t('packages_dag_migration_alarmpanel_xitongtongzhi'),
             value: 'SYSTEM'
           },
           {
-            label: i18n.t('packages_dag_migration_alarmpanel_youjiantongzhi'),
+            label: i18n.global.t('packages_dag_migration_alarmpanel_youjiantongzhi'),
             value: 'EMAIL'
           }
         ],
@@ -328,12 +328,12 @@ export default {
         let isOpenid = window.__USER_INFO__?.openid
         let enums = [
           {
-            label: i18n.t('packages_business_notify_webchat_notification'),
+            label: i18n.global.t('packages_business_notify_webchat_notification'),
             value: 'WECHAT',
             disabled: !isOpenid
           },
           {
-            label: i18n.t('packages_business_notify_sms_notification'),
+            label: i18n.global.t('packages_business_notify_sms_notification'),
             value: 'SMS'
           }
         ]
@@ -410,8 +410,8 @@ export default {
         'x-component': 'Space',
         properties: {}
       }
-      result.properties[key1] = this.getInputNumber(i18n.t('packages_dag_migration_alarmpanel_lianxu'), 10, key4)
-      result.properties[key2] = this.getSelect(i18n.t('packages_dag_migration_alarmpanel_gedian'))
+      result.properties[key1] = this.getInputNumber(i18n.global.t('packages_dag_migration_alarmpanel_lianxu'), 10, key4)
+      result.properties[key2] = this.getSelect(i18n.global.t('packages_dag_migration_alarmpanel_gedian'))
       result.properties[key3] = this.getInputNumber('', 1000, key4)
       result.properties.ms = {
         title: 's',

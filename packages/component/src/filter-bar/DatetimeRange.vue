@@ -41,13 +41,13 @@ export default {
     startPlaceholder: {
       type: String,
       default: () => {
-        return i18n.t('packages_component_filter_bar_datetimerange_kaishishijian')
+        return i18n.global.t('packages_component_filter_bar_datetimerange_kaishishijian')
       }
     },
     endPlaceholder: {
       type: String,
       default: () => {
-        return i18n.t('packages_component_filter_bar_datetimerange_jieshushijian')
+        return i18n.global.t('packages_component_filter_bar_datetimerange_jieshushijian')
       }
     },
     range: {

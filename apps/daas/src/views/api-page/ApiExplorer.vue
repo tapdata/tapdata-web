@@ -1227,7 +1227,7 @@ export default {
     },
     // 初始化时区下拉
     initTimezones() {
-      let timezones = [{ label: i18n.t('dataFlow_SyncInfo_connTZType'), value: '' }]
+      let timezones = [{ label: i18n.global.t('dataFlow_SyncInfo_connTZType'), value: '' }]
 
       for (let i = -11; i < 15; i++) {
         let timezone = ''

@@ -28,7 +28,7 @@ export default {
     title: {
       type: String,
       default: () => {
-        return i18n.t('packages_dag_components_frequency_shuaxinpinlu')
+        return i18n.global.t('packages_dag_components_frequency_shuaxinpinlu')
       }
     },
     options: {

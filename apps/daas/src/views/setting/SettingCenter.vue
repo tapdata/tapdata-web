@@ -44,7 +44,7 @@ export default {
         },
         {
           icon: 'warning',
-          name: i18n.t('daas_setting_settingcenter_gaojingshezhi'),
+          name: i18n.global.t('daas_setting_settingcenter_gaojingshezhi'),
           key: 'alarmSetting',
           size: 14
         },

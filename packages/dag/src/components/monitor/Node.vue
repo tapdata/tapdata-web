@@ -202,7 +202,7 @@ export default defineComponent({
     const isNumber = value => typeof value === 'number'
 
     const getVal = val => {
-      return val ?? i18n.t('packages_dag_dag_dialog_field_mapping_no_data')
+      return val ?? i18n.global.t('packages_dag_dag_dialog_field_mapping_no_data')
     }
 
     const renderStatistic = () => {
@@ -213,7 +213,7 @@ export default defineComponent({
             return (
               <div class="statistic flex">
                 <div class="statistic-title">
-                  {i18n.t('packages_dag_components_nodedetaildialog_quanliangyiwancheng')}
+                  {i18n.global.t('packages_dag_components_nodedetaildialog_quanliangyiwancheng')}
                 </div>
               </div>
             )
@@ -222,12 +222,12 @@ export default defineComponent({
           // 全量进行中
           if (taskSnapshotStartAt.value) {
             const title = isSource.value
-              ? i18n.t('packages_dag_components_node_quanliangwanchenghaixu')
+              ? i18n.global.t('packages_dag_components_node_quanliangwanchenghaixu')
               : isTarget.value
-              ? i18n.t('packages_dag_monitor_node_popover_targetWriteTime_title')
-              : i18n.t('packages_dag_monitor_node_per_deal_need_time')
+              ? i18n.global.t('packages_dag_monitor_node_popover_targetWriteTime_title')
+              : i18n.global.t('packages_dag_monitor_node_per_deal_need_time')
             const val = isFileSource.value
-              ? i18n.t('packages_dag_components_node_zanbuzhichi')
+              ? i18n.global.t('packages_dag_components_node_zanbuzhichi')
               : getVal(
                   isTarget.value
                     ? targetWriteTimeCostAvg.value
@@ -249,10 +249,10 @@ export default defineComponent({
       if (hasCDC) {
         // 增量进行中
         const cdcTitle = isSource.value
-          ? i18n.t('packages_dag_components_nodedetaildialog_zengliangyanchi')
+          ? i18n.global.t('packages_dag_components_nodedetaildialog_zengliangyanchi')
           : isTarget.value
-          ? i18n.t('packages_dag_monitor_node_popover_targetWriteTime_title')
-          : i18n.t('packages_dag_monitor_node_per_deal_need_time')
+          ? i18n.global.t('packages_dag_monitor_node_popover_targetWriteTime_title')
+          : i18n.global.t('packages_dag_monitor_node_per_deal_need_time')
         const replicateLagProps = props.sample.replicateLag
         const replicateLagVal =
           isNumber(replicateLagProps) && replicateLagProps >= 0
@@ -277,10 +277,10 @@ export default defineComponent({
 
     const renderPopoverContent = () => {
       const cdcTimeTitle = isSource.value
-        ? i18n.t('packages_dag_monitor_node_popover_cdcTimeTitle_source')
+        ? i18n.global.t('packages_dag_monitor_node_popover_cdcTimeTitle_source')
         : isTarget.value
-        ? i18n.t('packages_dag_monitor_node_popover_cdcTimeTitle_target')
-        : i18n.t('packages_dag_monitor_node_popover_cdcTimeTitle_processor')
+        ? i18n.global.t('packages_dag_monitor_node_popover_cdcTimeTitle_target')
+        : i18n.global.t('packages_dag_monitor_node_popover_cdcTimeTitle_processor')
       const cdcTime = (
         <div class="statistic span-2">
           <div class="statistic-title">{cdcTimeTitle}</div>
@@ -292,7 +292,7 @@ export default defineComponent({
 
       const processingTime = (
         <div class="statistic">
-          <div class="statistic-title">{i18n.t('packages_dag_monitor_node_per_deal_need_time')}</div>
+          <div class="statistic-title">{i18n.global.t('packages_dag_monitor_node_per_deal_need_time')}</div>
           <div class="statistic-content">
             <div class="statistic-value">{getVal(timeCostAvg.value)}</div>
           </div>
@@ -302,12 +302,12 @@ export default defineComponent({
       // 源全量读取耗时
       const sourceInitalReadTime = (
         <div class="statistic">
-          <div class="statistic-title">{i18n.t('packages_dag_components_nodedetaildialog_pingjunduquhao')}</div>
+          <div class="statistic-title">{i18n.global.t('packages_dag_components_nodedetaildialog_pingjunduquhao')}</div>
           <div class="statistic-content">
             <div class="statistic-value">
               {props.sample.snapshotSourceReadTimeCostAvg
                 ? calcTimeUnit(props.sample.snapshotSourceReadTimeCostAvg)
-                : i18n.t('packages_dag_dag_dialog_field_mapping_no_data')}
+                : i18n.global.t('packages_dag_dag_dialog_field_mapping_no_data')}
             </div>
           </div>
         </div>
@@ -316,12 +316,12 @@ export default defineComponent({
       // 源增量读取耗时
       const sourceCDCReadTime = (
         <div class="statistic">
-          <div class="statistic-title">{i18n.t('packages_dag_components_nodedetaildialog_zengliangduquyan')}</div>
+          <div class="statistic-title">{i18n.global.t('packages_dag_components_nodedetaildialog_zengliangduquyan')}</div>
           <div class="statistic-content">
             <div class="statistic-value">
               {props.sample.incrementalSourceReadTimeCostAvg
                 ? calcTimeUnit(props.sample.incrementalSourceReadTimeCostAvg)
-                : i18n.t('packages_dag_dag_dialog_field_mapping_no_data')}
+                : i18n.global.t('packages_dag_dag_dialog_field_mapping_no_data')}
             </div>
           </div>
         </div>
@@ -330,7 +330,7 @@ export default defineComponent({
       // 目标写入耗时
       const targetWriteTime = (
         <div class="statistic">
-          <div class="statistic-title">{i18n.t('packages_dag_monitor_node_popover_targetWriteTime_title')}</div>
+          <div class="statistic-title">{i18n.global.t('packages_dag_monitor_node_popover_targetWriteTime_title')}</div>
           <div class="statistic-content">
             <div class="statistic-value">{getVal(targetWriteTimeCostAvg.value)}</div>
           </div>
@@ -339,7 +339,7 @@ export default defineComponent({
 
       const outputEvent = (
         <div class="statistic">
-          <div class="statistic-title">{i18n.t('packages_dag_monitor_node_leijishuchushi')}</div>
+          <div class="statistic-title">{i18n.global.t('packages_dag_monitor_node_leijishuchushi')}</div>
           <div class="statistic-content">
             <ElTooltip transition="tooltip-fade-in" content={outputTotal.value.toLocaleString()}>
               <div class="statistic-value">{calcUnit(outputTotal.value)}</div>
@@ -350,7 +350,7 @@ export default defineComponent({
 
       const inputEvent = (
         <div class="statistic">
-          <div class="statistic-title">{i18n.t('packages_dag_monitor_node_leijishurushi')}</div>
+          <div class="statistic-title">{i18n.global.t('packages_dag_monitor_node_leijishurushi')}</div>
           <div class="statistic-content">
             <ElTooltip transition="tooltip-fade-in" content={inputTotal.value.toLocaleString()}>
               <div class="statistic-value">{calcUnit(inputTotal.value)}</div>
@@ -361,7 +361,7 @@ export default defineComponent({
 
       const syncProcess = (
         <div class="statistic">
-          <div class="statistic-title">{i18n.t('packages_dag_components_nodedetaildialog_quanliangtongbujin')}</div>
+          <div class="statistic-title">{i18n.global.t('packages_dag_components_nodedetaildialog_quanliangtongbujin')}</div>
           <div class="statistic-content">
             <div class="statistic-value">{initialSyncProcess.value}%</div>
           </div>

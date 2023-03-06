@@ -672,14 +672,14 @@ export default {
         })
         .then(() => {
           this.userData.nickname = nickname
-          this.$message.success(i18n.t('user_Center_xiuGaiNiChengCheng'))
+          this.$message.success(i18n.global.t('user_Center_xiuGaiNiChengCheng'))
         })
     },
     upload(evt) {
       let file = evt.target.files[0]
       const leftThan = file.size / 1024 < 500
       if (!leftThan) {
-        this.$message.error(i18n.t('user_Center_shangChuanTouXiangTu'))
+        this.$message.error(i18n.global.t('user_Center_shangChuanTouXiangTu'))
         return
       }
       urlToBase64(URL.createObjectURL(file)).then(res => {
@@ -700,7 +700,7 @@ export default {
           avatar
         })
         .then(() => {
-          this.$message.success(i18n.t('user_Center_xiuGaiTouXiangCheng'))
+          this.$message.success(i18n.global.t('user_Center_xiuGaiTouXiangCheng'))
           this.userData.avatar = avatar
           this.refreshRootUser()
           this.dialogObj.avatar = false
@@ -732,7 +732,7 @@ export default {
     },
     editPassword() {
       if (!this.userData.telephone) {
-        this.$confirm(i18n.t('user_Center_qingXianBangDingShou'), i18n.t('user_Center_bangDingShouJi'), {
+        this.$confirm(i18n.global.t('user_Center_qingXianBangDingShou'), i18n.global.t('user_Center_bangDingShouJi'), {
           type: 'warning'
         }).then(resFlag => {
           if (resFlag) {
@@ -748,7 +748,7 @@ export default {
       let { passwordForm } = this
       let { newPassword, newAgainPassword } = passwordForm
       if (newPassword !== newAgainPassword) {
-        this.$message.error(i18n.t('user_Center_shuRuMiMaBu'))
+        this.$message.error(i18n.global.t('user_Center_shuRuMiMaBu'))
         resetLoading?.()
         return
       }
@@ -758,7 +758,7 @@ export default {
           password: CryptoJS.RC4.encrypt(passwordForm.newPassword, 'XWFSxfs8wFcs').toString()
         })
         .then(() => {
-          this.$message.success(i18n.t('user_Center_xiuGaiMiMaCheng'))
+          this.$message.success(i18n.global.t('user_Center_xiuGaiMiMaCheng'))
           this.resetPasswordForm()
           this.dialogObj.password = false
         })
@@ -779,7 +779,7 @@ export default {
         .then(() => {
           this.userData.telephone = phoneForm.current
           this.resetPhoneForm()
-          this.$message.success(i18n.t('user_Center_bangDingShouJiCheng'))
+          this.$message.success(i18n.global.t('user_Center_bangDingShouJiCheng'))
           this.dialogObj.bindPhone = false
         })
         .finally(() => {
@@ -817,7 +817,7 @@ export default {
         .then(() => {
           this.userData.telephone = phoneForm.newPhone
           this.resetPhoneForm()
-          this.$message.success(i18n.t('user_Center_xiuGaiShouJiCheng'))
+          this.$message.success(i18n.global.t('user_Center_xiuGaiShouJiCheng'))
           this.dialogObj.editPhone = false
         })
         .finally(() => {
@@ -825,13 +825,13 @@ export default {
         })
     },
     unbindWx() {
-      this.$confirm(i18n.t('user_Center_jieChuHouJiangWu'), i18n.t('user_Center_jieChuWeiXin'), {
+      this.$confirm(i18n.global.t('user_Center_jieChuHouJiangWu'), i18n.global.t('user_Center_jieChuWeiXin'), {
         type: 'warning'
       }).then(resFlag => {
         if (resFlag) {
           this.$axios.patch('tm/api/user/unbindWx').then(() => {
             this.userData.wx = ''
-            this.$message.success(i18n.t('user_Center_jieBangWeiXinCheng'))
+            this.$message.success(i18n.global.t('user_Center_jieBangWeiXinCheng'))
             this.dialogObj.editPhone = false
           })
         }
@@ -850,7 +850,7 @@ export default {
         .then(() => {
           this.userData.email = emailForm.email
           this.resetEmailForm()
-          this.$message.success(i18n.t('user_Center_bangDingYouXiangCheng'))
+          this.$message.success(i18n.global.t('user_Center_bangDingYouXiangCheng'))
           this.dialogObj.bindEmail = false
         })
         .finally(() => {
@@ -883,7 +883,7 @@ export default {
         .then(() => {
           this.userData.email = emailForm.newEmail
           this.resetEmailForm()
-          this.$message.success(i18n.t('user_Center_xiuGaiYouXiangCheng'))
+          this.$message.success(i18n.global.t('user_Center_xiuGaiYouXiangCheng'))
           this.dialogObj.editEmail = false
         })
         .finally(() => {
@@ -907,7 +907,7 @@ export default {
           city: enForm.city
         })
         .then(() => {
-          this.$message.success(i18n.t('user_Center_xiuGaiQiYeXin'))
+          this.$message.success(i18n.global.t('user_Center_xiuGaiQiYeXin'))
           this.enData = Object.assign({}, enForm)
           this.isEdit = false
         })

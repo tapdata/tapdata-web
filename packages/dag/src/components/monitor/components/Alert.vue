@@ -134,18 +134,18 @@ export default {
       },
       columns: [
         {
-          label: i18n.t('packages_dag_components_alert_gaojingjibie'),
+          label: i18n.global.t('packages_dag_components_alert_gaojingjibie'),
           prop: 'level',
           slotName: 'levelSlot',
           width: 120
         },
         {
-          label: i18n.t('packages_dag_components_alert_gaojingzhuangtai'),
+          label: i18n.global.t('packages_dag_components_alert_gaojingzhuangtai'),
           prop: 'statusLabel',
           width: 80
         },
         {
-          label: i18n.t('packages_dag_components_alert_gaojingmiaoshu'),
+          label: i18n.global.t('packages_dag_components_alert_gaojingmiaoshu'),
           prop: 'summary'
         },
         // {
@@ -155,18 +155,18 @@ export default {
         //   dataType: 'time'
         // },
         {
-          label: i18n.t('packages_dag_components_alert_gaojingzuijinfa'),
+          label: i18n.global.t('packages_dag_components_alert_gaojingzuijinfa'),
           prop: 'lastOccurrenceTime',
           dataType: 'time',
           width: 150
         },
         // {
-        //   label: i18n.t('packages_dag_components_alert_gaojingfashengci'),
+        //   label: i18n.global.t('packages_dag_components_alert_gaojingfashengci'),
         //   prop: 'tally',
         //   dataType: 'number'
         // },
         {
-          label: i18n.t('packages_dag_components_record_caozuo'),
+          label: i18n.global.t('packages_dag_components_record_caozuo'),
           slotName: 'operation',
           fixed: 'right',
           width: 150
@@ -181,7 +181,7 @@ export default {
     levelItems() {
       let result = [
         {
-          label: i18n.t('packages_dag_components_log_quanbu'),
+          label: i18n.global.t('packages_dag_components_log_quanbu'),
           value: ''
         }
       ]
@@ -197,7 +197,7 @@ export default {
     statusItems() {
       let result = [
         {
-          label: i18n.t('packages_dag_components_log_quanbu'),
+          label: i18n.global.t('packages_dag_components_log_quanbu'),
           value: ''
         }
       ]
@@ -225,7 +225,7 @@ export default {
       })
       return [
         {
-          label: i18n.t('packages_dag_components_alert_quanbugaojing'),
+          label: i18n.global.t('packages_dag_components_alert_quanbugaojing'),
           value: 'all',
           num: totals
         },
@@ -287,7 +287,7 @@ export default {
 
     handleClose(row = {}) {
       alarmApi.close([row.id]).then(() => {
-        this.$message.success(i18n.t('packages_dag_components_alert_guanbichenggong'))
+        this.$message.success(i18n.global.t('packages_dag_components_alert_guanbichenggong'))
         $emit(this, 'load-data')
       })
     },

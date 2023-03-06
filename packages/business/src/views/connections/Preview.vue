@@ -398,7 +398,7 @@ export default {
             setTimeout(() => {
               this.showProgress = false
               this.progress = 0 //加载完成
-              this.$message.success(i18n.t('packages_business_connections_preview_schem'))
+              this.$message.success(i18n.global.t('packages_business_connections_preview_schem'))
             }, 1000)
           } else {
             let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100
@@ -427,7 +427,7 @@ export default {
                 icon: 'link',
                 items: [
                   {
-                    label: i18n.t('packages_business_connections_preview_lianjiechajianlai'),
+                    label: i18n.global.t('packages_business_connections_preview_lianjiechajianlai'),
                     key: 'sourceFrom'
                   }
                 ]
@@ -454,9 +454,9 @@ export default {
     getSourceFrom(row = {}) {
       const { definitionScope, beta = false } = row
       const MAP = {
-        publicfalse: i18n.t('packages_business_components_connectiontypeselectorsort_renzhengshujuyuan'),
-        publictrue: i18n.t('packages_business_components_connectiontypeselectorsort_betashu'),
-        customer: i18n.t('packages_business_components_connectiontypeselectorsort_wodeshujuyuan')
+        publicfalse: i18n.global.t('packages_business_components_connectiontypeselectorsort_renzhengshujuyuan'),
+        publictrue: i18n.global.t('packages_business_components_connectiontypeselectorsort_betashu'),
+        customer: i18n.global.t('packages_business_components_connectiontypeselectorsort_wodeshujuyuan')
       }
       return MAP[definitionScope + beta] || MAP['customer']
     },

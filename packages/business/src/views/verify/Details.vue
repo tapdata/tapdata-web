@@ -197,16 +197,16 @@ export default {
           reserveSelection: true
         },
         {
-          label: i18n.t('packages_business_verification_details_yuanbiaoming'),
+          label: i18n.global.t('packages_business_verification_details_yuanbiaoming'),
           prop: 'originalTableName'
         },
         {
-          label: i18n.t('packages_business_verification_details_mubiaobiaoming'),
+          label: i18n.global.t('packages_business_verification_details_mubiaobiaoming'),
           prop: 'targetTableName',
           default: '-'
         },
         {
-          label: i18n.t('packages_business_verification_details_yichangshuju'),
+          label: i18n.global.t('packages_business_verification_details_yichangshuju'),
           prop: 'counts',
           slotName: 'counts'
         }

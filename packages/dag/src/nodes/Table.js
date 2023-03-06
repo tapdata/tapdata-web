@@ -32,7 +32,7 @@ export class Table extends NodeType {
       },
       name: {
         type: 'string',
-        title: i18n.t('packages_dag_nodes_database_jiedianmingcheng'),
+        title: i18n.global.t('packages_dag_nodes_database_jiedianmingcheng'),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input'
@@ -40,7 +40,7 @@ export class Table extends NodeType {
 
       connectionIdWrap: {
         type: 'void',
-        title: i18n.t('packages_dag_nodes_table_shujuku'),
+        title: i18n.global.t('packages_dag_nodes_table_shujuku'),
         'x-decorator': 'FormItem',
         'x-decorator-props': {
           asterisk: true,
@@ -87,8 +87,8 @@ export class Table extends NodeType {
             type: 'void',
             'x-component': 'ClipboardButton',
             'x-component-props': {
-              tooltip: i18n.t('packages_dag_nodes_table_fuzhishujuku'),
-              finishTooltip: i18n.t('packages_dag_nodes_table_yifuzhi')
+              tooltip: i18n.global.t('packages_dag_nodes_table_fuzhishujuku'),
+              finishTooltip: i18n.global.t('packages_dag_nodes_table_yifuzhi')
             }
           }
         }
@@ -96,13 +96,13 @@ export class Table extends NodeType {
 
       tableNameWrap: {
         type: 'void',
-        title: i18n.t('packages_dag_dag_table'),
+        title: i18n.global.t('packages_dag_dag_table'),
         'x-decorator': 'StageButtonLabel',
         'x-decorator-props': {
           asterisk: true,
           feedbackLayout: 'none',
           connectionId: '{{$values.connectionId}}',
-          title: i18n.t('packages_dag_dag_table'),
+          title: i18n.global.t('packages_dag_dag_table'),
           target: 'tableNameWrap.tableName'
         },
         'x-component': 'FormFlex',
@@ -125,7 +125,7 @@ export class Table extends NodeType {
             'x-validator': [
               {
                 required: true,
-                message: i18n.t('packages_dag_nodes_table_qingxuanzebiao')
+                message: i18n.global.t('packages_dag_nodes_table_qingxuanzebiao')
               }
             ],
             'x-decorator': 'FormItem',
@@ -173,8 +173,8 @@ export class Table extends NodeType {
             type: 'void',
             'x-component': 'ClipboardButton',
             'x-component-props': {
-              tooltip: i18n.t('packages_dag_nodes_table_fuzhibiaoming'),
-              finishTooltip: i18n.t('packages_dag_nodes_table_yifuzhi')
+              tooltip: i18n.global.t('packages_dag_nodes_table_fuzhibiaoming'),
+              finishTooltip: i18n.global.t('packages_dag_nodes_table_yifuzhi')
             },
             'x-reactions': {
               dependencies: ['tableName'],
@@ -191,7 +191,7 @@ export class Table extends NodeType {
       // 指定agent
       'attrs.accessNodeProcessId': {
         type: 'string',
-        title: i18n.t('packages_dag_nodes_database_suoshuage'),
+        title: i18n.global.t('packages_dag_nodes_database_suoshuage'),
         'x-decorator': 'FormItem',
         'x-component': 'PreviewText.Input',
         'x-component-props': {
@@ -234,7 +234,7 @@ export class Table extends NodeType {
             type: 'void',
             'x-component': 'FormCollapse.Item',
             'x-component-props': {
-              title: i18n.t('packages_dag_task_stetting_most_setting')
+              title: i18n.global.t('packages_dag_task_stetting_most_setting')
             },
             properties: {
               sourceNodeConfig: {
@@ -279,12 +279,12 @@ export class Table extends NodeType {
                   //   }
                   // },
                   readBatchSize: {
-                    title: i18n.t('packages_dag_nodes_database_piliangduqutiao'), //增量批次读取条数
+                    title: i18n.global.t('packages_dag_nodes_database_piliangduqutiao'), //增量批次读取条数
                     type: 'string',
                     'x-decorator': 'FormItem',
                     'x-component': 'InputNumber',
                     'x-decorator-props': {
-                      tooltip: i18n.t('packages_dag_nodes_database_quanliangmeipici')
+                      tooltip: i18n.global.t('packages_dag_nodes_database_quanliangmeipici')
                     },
                     'x-component-props': {
                       min: 1,
@@ -300,11 +300,11 @@ export class Table extends NodeType {
                     }
                   },
                   enableDDL: {
-                    title: i18n.t('packages_dag_nodes_table_ddLshijian'),
+                    title: i18n.global.t('packages_dag_nodes_table_ddLshijian'),
                     type: 'boolean',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      tooltip: i18n.t('packages_dag_nodes_database_kaiqihourenwu')
+                      tooltip: i18n.global.t('packages_dag_nodes_database_kaiqihourenwu')
                     },
                     'x-component': 'Switch',
                     'x-reactions': [
@@ -321,7 +321,7 @@ export class Table extends NodeType {
                         fulfill: {
                           state: {
                             disabled: true,
-                            description: `{{$values.databaseType + '${i18n.t(
+                            description: `{{$values.databaseType + '${i18n.global.t(
                               'packages_dag_nodes_database_value_zanbuzhiciddl'
                             )}'}}`
                           }
@@ -334,21 +334,21 @@ export class Table extends NodeType {
                     'x-component': 'DdlEventCheckbox'
                   },
                   cdcMode: {
-                    title: i18n.t('packages_dag_nodes_table_zengliangtongbufang'),
+                    title: i18n.global.t('packages_dag_nodes_table_zengliangtongbufang'),
                     type: 'string',
                     default: 'logCdc',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      tooltip: i18n.t('packages_dag_nodes_table_tedingziduande')
+                      tooltip: i18n.global.t('packages_dag_nodes_table_tedingziduande')
                     },
                     'x-component': 'Radio.Group',
                     enum: [
                       {
-                        label: i18n.t('packages_dag_nodes_table_rizhicdc'),
+                        label: i18n.global.t('packages_dag_nodes_table_rizhicdc'),
                         value: 'logCdc'
                       },
                       {
-                        label: i18n.t('packages_dag_nodes_table_lunxun'),
+                        label: i18n.global.t('packages_dag_nodes_table_lunxun'),
                         value: 'polling'
                       }
                     ],
@@ -372,7 +372,7 @@ export class Table extends NodeType {
                     ]
                   },
                   cdcPollingFields: {
-                    title: i18n.t('packages_dag_nodes_table_zhidinglunxunzi'),
+                    title: i18n.global.t('packages_dag_nodes_table_zhidinglunxunzi'),
                     type: 'array',
                     required: true,
                     default: [{ field: '', defaultValue: '' }],
@@ -394,7 +394,7 @@ export class Table extends NodeType {
                           }
                         },
                         defaultValue: {
-                          title: i18n.t('packages_dag_nodes_table_lunxunziduanmo'),
+                          title: i18n.global.t('packages_dag_nodes_table_lunxunziduanmo'),
                           required: true,
                           type: 'string',
                           'x-decorator': 'FormItem',
@@ -411,7 +411,7 @@ export class Table extends NodeType {
                     }
                   },
                   cdcPollingInterval: {
-                    title: i18n.t('packages_dag_nodes_table_lunxunjiangem'),
+                    title: i18n.global.t('packages_dag_nodes_table_lunxunjiangem'),
                     type: 'object',
                     default: 500,
                     'x-decorator': 'FormItem',
@@ -424,7 +424,7 @@ export class Table extends NodeType {
                     }
                   },
                   cdcPollingBatchSize: {
-                    title: i18n.t('packages_dag_nodes_table_meiciduquhang'),
+                    title: i18n.global.t('packages_dag_nodes_table_meiciduquhang'),
                     type: 'number',
                     default: 1000,
                     'x-decorator': 'FormItem',
@@ -438,7 +438,7 @@ export class Table extends NodeType {
                   },
                   isFilter: {
                     type: 'boolean',
-                    title: i18n.t('packages_dag_nodes_table_guolushezhi'),
+                    title: i18n.global.t('packages_dag_nodes_table_guolushezhi'),
                     default: false,
                     'x-decorator': 'FormItem',
                     'x-component': 'Switch',
@@ -530,7 +530,7 @@ export class Table extends NodeType {
                   },
 
                   conditions: {
-                    title: i18n.t('packages_dag_nodes_table_zidingyitiaojian'),
+                    title: i18n.global.t('packages_dag_nodes_table_zidingyitiaojian'),
                     type: 'array',
                     required: true,
                     default: [{ key: '', value: '', operator: 5 }],
@@ -624,7 +624,7 @@ export class Table extends NodeType {
                     properties: {
                       add: {
                         type: 'void',
-                        title: i18n.t('packages_dag_nodes_table_tianjia'),
+                        title: i18n.global.t('packages_dag_nodes_table_tianjia'),
                         'x-component': 'ArrayItems.Addition',
                         'x-component-props': {
                           defaultValue: { key: '', value: '', operator: 5 }
@@ -662,12 +662,12 @@ export class Table extends NodeType {
                     },
                     properties: {
                       writeBatchSize: {
-                        title: i18n.t('packages_dag_nodes_database_piliangxierutiao'), //增量批次读取条数
+                        title: i18n.global.t('packages_dag_nodes_database_piliangxierutiao'), //增量批次读取条数
                         type: 'string',
                         'x-decorator': 'FormItem',
                         'x-component': 'InputNumber',
                         'x-decorator-props': {
-                          tooltip: i18n.t('packages_dag_nodes_database_quanliangmeipici2')
+                          tooltip: i18n.global.t('packages_dag_nodes_database_quanliangmeipici2')
                         },
                         'x-component-props': {
                           min: 1,
@@ -676,7 +676,7 @@ export class Table extends NodeType {
                         default: 2000
                       },
                       writeBatchWaitMs: {
-                        title: i18n.t('packages_dag_nodes_database_xierumeipizui'), //增量批次读取条数
+                        title: i18n.global.t('packages_dag_nodes_database_xierumeipizui'), //增量批次读取条数
                         type: 'string',
                         'x-decorator': 'FormItem',
                         'x-component': 'InputNumber',
@@ -684,7 +684,7 @@ export class Table extends NodeType {
                           min: 1
                         },
                         'x-decorator-props': {
-                          tooltip: i18n.t('packages_dag_nodes_database_xierumeipizui_tips')
+                          tooltip: i18n.global.t('packages_dag_nodes_database_xierumeipizui_tips')
                         },
                         default: 3000
                       }
@@ -692,7 +692,7 @@ export class Table extends NodeType {
                   },
                   ddlEvents: {
                     type: 'void',
-                    title: i18n.t('packages_dag_nodes_database_ddLshijian'),
+                    title: i18n.global.t('packages_dag_nodes_database_ddLshijian'),
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       feedbackLayout: 'none'
@@ -703,21 +703,21 @@ export class Table extends NodeType {
                     }
                   },
                   existDataProcessMode: {
-                    title: i18n.t('packages_dag_nodes_table_yiyoushujuchu'),
+                    title: i18n.global.t('packages_dag_nodes_table_yiyoushujuchu'),
                     type: 'string',
                     default: 'keepData',
                     enum: [
                       {
-                        label: i18n.t('packages_dag_nodes_database_baochimubiaoduan'),
+                        label: i18n.global.t('packages_dag_nodes_database_baochimubiaoduan'),
                         value: 'keepData'
                       },
                       {
-                        label: i18n.t('packages_dag_nodes_database_qingchumubiaoduan'),
+                        label: i18n.global.t('packages_dag_nodes_database_qingchumubiaoduan'),
                         value: 'dropTable',
                         disabled: true
                       },
                       {
-                        label: i18n.t('packages_dag_nodes_targetdatabase_baochimubiaoduan'),
+                        label: i18n.global.t('packages_dag_nodes_targetdatabase_baochimubiaoduan'),
                         value: 'removeData'
                       }
                     ],
@@ -730,7 +730,7 @@ export class Table extends NodeType {
                       fulfill: {
                         run: '{{$self.dataSource[1].disabled = $self.dataSource[2].disabled = $settings.type === "cdc"}}',
                         state: {
-                          description: `{{$settings.type === "cdc" ? '${i18n.t(
+                          description: `{{$settings.type === "cdc" ? '${i18n.global.t(
                             'packages_dag_nodes_database_setting_cdc_changjing_desc'
                           )}':''}}`
                         },
@@ -781,21 +781,21 @@ export class Table extends NodeType {
                     },
                     properties: {
                       writeStrategy: {
-                        title: i18n.t('packages_dag_nodes_mergetable_shujuxierumo'),
+                        title: i18n.global.t('packages_dag_nodes_mergetable_shujuxierumo'),
                         type: 'string',
                         default: 'updateOrInsert',
                         'x-component': 'Radio.Group',
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
-                          tooltip: i18n.t('packages_dag_nodes_database_tongjizhuijiaxie2')
+                          tooltip: i18n.global.t('packages_dag_nodes_database_tongjizhuijiaxie2')
                         },
                         enum: [
                           {
-                            label: i18n.t('packages_dag_nodes_database_anshijianleixing'),
+                            label: i18n.global.t('packages_dag_nodes_database_anshijianleixing'),
                             value: 'updateOrInsert'
                           },
                           {
-                            label: i18n.t('packages_dag_nodes_database_tongjizhuijiaxie'),
+                            label: i18n.global.t('packages_dag_nodes_database_tongjizhuijiaxie'),
                             value: 'appendWrite'
                           }
                         ],
@@ -811,7 +811,7 @@ export class Table extends NodeType {
                     }
                   },
                   dmlPolicy: {
-                    title: i18n.t('packages_dag_nodes_database_shujuxieruce'),
+                    title: i18n.global.t('packages_dag_nodes_database_shujuxieruce'),
                     type: 'object',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
@@ -831,16 +831,16 @@ export class Table extends NodeType {
                         'x-decorator-props': {
                           className: 'font-color-dark mb-2',
                           wrapperWidth: 300,
-                          addonBefore: i18n.t('packages_dag_nodes_database_charushijian')
+                          addonBefore: i18n.global.t('packages_dag_nodes_database_charushijian')
                         },
                         default: 'update_on_exists',
                         enum: [
                           {
-                            label: i18n.t('packages_dag_nodes_targetdatabase_mubiaocunzaishi'),
+                            label: i18n.global.t('packages_dag_nodes_targetdatabase_mubiaocunzaishi'),
                             value: 'update_on_exists'
                           },
                           {
-                            label: i18n.t('packages_dag_nodes_database_mubiaocunzaishi'),
+                            label: i18n.global.t('packages_dag_nodes_database_mubiaocunzaishi'),
                             value: 'ignore_on_exists'
                           }
                         ]
@@ -852,16 +852,16 @@ export class Table extends NodeType {
                         'x-decorator-props': {
                           className: 'font-color-dark mb-2',
                           wrapperWidth: 300,
-                          addonBefore: i18n.t('packages_dag_nodes_database_gengxinshijian')
+                          addonBefore: i18n.global.t('packages_dag_nodes_database_gengxinshijian')
                         },
                         default: 'ignore_on_nonexists',
                         enum: [
                           {
-                            label: i18n.t('packages_dag_nodes_database_bucunzaishidiu'),
+                            label: i18n.global.t('packages_dag_nodes_database_bucunzaishidiu'),
                             value: 'ignore_on_nonexists'
                           },
                           {
-                            label: i18n.t('packages_dag_nodes_database_bucunzaishicha'),
+                            label: i18n.global.t('packages_dag_nodes_database_bucunzaishicha'),
                             value: 'insert_on_nonexists'
                           }
                         ]
@@ -872,10 +872,10 @@ export class Table extends NodeType {
                         'x-decorator-props': {
                           className: 'font-color-dark',
                           wrapperWidth: 300,
-                          addonBefore: i18n.t('packages_dag_nodes_database_shanchushijian')
+                          addonBefore: i18n.global.t('packages_dag_nodes_database_shanchushijian')
                         },
                         'x-component': 'Tag',
-                        'x-content': i18n.t('packages_dag_nodes_database_bucunzaishidiu'),
+                        'x-content': i18n.global.t('packages_dag_nodes_database_bucunzaishidiu'),
                         'x-component-props': {
                           type: 'info',
                           effect: 'light'
@@ -884,12 +884,12 @@ export class Table extends NodeType {
                     }
                   },
                   updateConditionFields: {
-                    title: i18n.t('packages_dag_nodes_table_gengxintiaojianzi'),
+                    title: i18n.global.t('packages_dag_nodes_table_gengxintiaojianzi'),
                     type: 'array',
                     'x-index': 1,
                     required: true,
                     default: null,
-                    description: `{{ !$isDaas ? "${i18n.t(
+                    description: `{{ !$isDaas ? "${i18n.global.t(
                       'packages_dag_nodes_table_isDaa_ruguoyuanweimongodb'
                     )}" : ""}}`,
                     'x-decorator': 'FormItem',
@@ -920,7 +920,7 @@ export class Table extends NodeType {
                   },
 
                   initialConcurrentSpace: {
-                    title: i18n.t('packages_dag_nodes_database_quanliangduoxiancheng'),
+                    title: i18n.global.t('packages_dag_nodes_database_quanliangduoxiancheng'),
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       layout: 'horizontal'
@@ -956,7 +956,7 @@ export class Table extends NodeType {
                   },
                   cdcConcurrentSpace: {
                     type: 'void',
-                    title: i18n.t('packages_dag_nodes_database_zengliangduoxiancheng'),
+                    title: i18n.global.t('packages_dag_nodes_database_zengliangduoxiancheng'),
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       layout: 'horizontal'

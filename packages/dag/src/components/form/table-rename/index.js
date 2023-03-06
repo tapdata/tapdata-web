@@ -154,7 +154,7 @@ export const TableRename = observer(
         /*if (skipTableName.length) {
           // `自动跳过针对 [${skipTableName.join(', ')}] 表名的操作，原因是会导致表名重复`
           root.$message.warning(
-            i18n.t('packages_form_table_rename_index_daozhibiaomingchongfu', {
+            i18n.global.t('packages_form_table_rename_index_daozhibiaomingchongfu', {
               val1: skipTableName.join(', ')
             })
           )
@@ -226,38 +226,38 @@ export const TableRename = observer(
       return (
         <div class="table-rename" v-loading={this.$store.state.dataflow.transformLoading || this.loading}>
           <div class="border border-form p-4 mt-4 rounded-2">
-            <div class="font-color-light">{i18n.t('packages_form_table_rename_index_yixiacaozuojin')}</div>
-            <FormItem.BaseItem label={i18n.t('packages_form_table_rename_index_tihuan')}>
+            <div class="font-color-light">{i18n.global.t('packages_form_table_rename_index_yixiacaozuojin')}</div>
+            <FormItem.BaseItem label={i18n.global.t('packages_form_table_rename_index_tihuan')}>
               <div class="flex">
                 <ElInput v-model={this.config.replaceBefore} disabled={this.disabled} clearable />
-                <div class="px-4 text-nowrap font-color-light">{i18n.t('packages_form_table_rename_index_gaiwei')}</div>
+                <div class="px-4 text-nowrap font-color-light">{i18n.global.t('packages_form_table_rename_index_gaiwei')}</div>
                 <ElInput v-model={this.config.replaceAfter} disabled={this.disabled} clearable />
               </div>
             </FormItem.BaseItem>
-            <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_qianzhui')}>
+            <FormItem.BaseItem label={i18n.global.t('packages_form_field_processor_index_qianzhui')}>
               <ElInput v-model={this.config.prefix} disabled={this.disabled} clearable />
             </FormItem.BaseItem>
-            <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_houzhui')}>
+            <FormItem.BaseItem label={i18n.global.t('packages_form_field_processor_index_houzhui')}>
               <ElInput v-model={this.config.suffix} disabled={this.disabled} clearable />
             </FormItem.BaseItem>
-            <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_daxiaoxie')}>
+            <FormItem.BaseItem label={i18n.global.t('packages_form_field_processor_index_daxiaoxie')}>
               <ElSelect v-model={this.config.transferCase} disabled={this.disabled}>
-                <ElOption value="" label={i18n.t('packages_form_field_processor_index_bubian')} />
-                <ElOption value="toUpperCase" label={i18n.t('packages_form_field_processor_index_daxie')} />
-                <ElOption value="toLowerCase" label={i18n.t('packages_form_field_processor_index_xiaoxie')} />
+                <ElOption value="" label={i18n.global.t('packages_form_field_processor_index_bubian')} />
+                <ElOption value="toUpperCase" label={i18n.global.t('packages_form_field_processor_index_daxie')} />
+                <ElOption value="toLowerCase" label={i18n.global.t('packages_form_field_processor_index_xiaoxie')} />
               </ElSelect>
             </FormItem.BaseItem>
             <div class="mt-4">
               <ElButton onClick={this.doModify} disabled={this.disabled} size="small" type="primary">
-                {i18n.t('packages_form_table_rename_index_yingyong')}
+                {i18n.global.t('packages_form_table_rename_index_yingyong')}
               </ElButton>
               <ElButton onClick={this.doReset} disabled={this.disabled} size="small">
-                {i18n.t('packages_form_table_rename_index_qingkong')}
+                {i18n.global.t('packages_form_table_rename_index_qingkong')}
               </ElButton>
             </div>
           </div>
 
-          <FormItem.BaseItem label={i18n.t('packages_form_table_rename_index_sousuobiaoming')}>
+          <FormItem.BaseItem label={i18n.global.t('packages_form_table_rename_index_sousuobiaoming')}>
             <ElInput
               v-model={this.config.search}
               disabled={this.disabled}
@@ -271,11 +271,11 @@ export const TableRename = observer(
             style={this.listStyle}
           >
             <div class="name-list-header flex flex-shrink-0">
-              <div class="name-list-title px-4">{i18n.t('packages_form_table_rename_index_yuanbiaoming')}</div>
-              <div class="name-list-title pl-5 pr-4">{i18n.t('packages_form_table_rename_index_xinbiaoming')}</div>
+              <div class="name-list-title px-4">{i18n.global.t('packages_form_table_rename_index_yuanbiaoming')}</div>
+              <div class="name-list-title pl-5 pr-4">{i18n.global.t('packages_form_table_rename_index_xinbiaoming')}</div>
               <div class="name-list-header-extra px-4">
                 <ElButton disabled={this.disabled} onClick={this.resetNames} size="mini" type="text">
-                  {i18n.t('packages_form_button_reset')}
+                  {i18n.global.t('packages_form_button_reset')}
                 </ElButton>
               </div>
             </div>

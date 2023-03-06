@@ -41,7 +41,7 @@ export class Join extends NodeType {
       },
       name: {
         type: 'string',
-        title: i18n.t('packages_dag_nodes_database_jiedianmingcheng'),
+        title: i18n.global.t('packages_dag_nodes_database_jiedianmingcheng'),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input'
@@ -56,13 +56,13 @@ export class Join extends NodeType {
       },
 
       joinType: {
-        title: i18n.t('packages_dag_nodes_join_lianjieleixing'),
+        title: i18n.global.t('packages_dag_nodes_join_lianjieleixing'),
         type: 'string',
         required: true,
         default: 'left',
         enum: [
           {
-            label: i18n.t('packages_dag_nodes_join_zuolianjie'),
+            label: i18n.global.t('packages_dag_nodes_join_zuolianjie'),
             value: 'left'
           } /*,
                   {
@@ -83,7 +83,7 @@ export class Join extends NodeType {
       },
 
       joinExpressions: {
-        title: i18n.t('packages_dag_nodes_join_lianjieziduanshe'),
+        title: i18n.global.t('packages_dag_nodes_join_lianjieziduanshe'),
         type: 'array',
         required: true,
         default: [{ left: '', right: '', expression: '=' }],
@@ -91,7 +91,7 @@ export class Join extends NodeType {
           type: 'object',
           properties: {
             left: {
-              title: i18n.t('packages_dag_nodes_join_zuoce'),
+              title: i18n.global.t('packages_dag_nodes_join_zuoce'),
               type: 'string',
               required: true,
               'x-decorator': 'FormItem',
@@ -106,7 +106,7 @@ export class Join extends NodeType {
               }
             },
             right: {
-              title: i18n.t('packages_dag_nodes_join_youce'),
+              title: i18n.global.t('packages_dag_nodes_join_youce'),
               type: 'string',
               required: true,
               'x-decorator': 'FormItem',

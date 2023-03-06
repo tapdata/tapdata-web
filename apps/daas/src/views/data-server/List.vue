@@ -91,19 +91,19 @@ export default {
       },
       statusOptions: [
         {
-          label: i18n.t('select_option_all'),
+          label: i18n.global.t('select_option_all'),
           value: ''
         },
         {
-          label: i18n.t('modules_active'),
+          label: i18n.global.t('modules_active'),
           value: 'active'
         },
         {
-          label: i18n.t('modules_pending'),
+          label: i18n.global.t('modules_pending'),
           value: 'pending'
         },
         {
-          label: i18n.t('api_monitor_total_api_list_status_generating'),
+          label: i18n.global.t('api_monitor_total_api_list_status_generating'),
           value: 'generating'
         }
       ]
@@ -156,13 +156,13 @@ export default {
           }
         },
         {
-          label: i18n.t('modules_header_status'),
+          label: i18n.global.t('modules_header_status'),
           key: 'status', //对象类型
           type: 'select-inner',
           items: this.statusOptions
         },
         {
-          placeholder: i18n.t('daas_data_discovery_previewdrawer_qingshurumingcheng'),
+          placeholder: i18n.global.t('daas_data_discovery_previewdrawer_qingshurumingcheng'),
           key: 'keyword', //输入搜索名称
           type: 'input'
         }
@@ -203,7 +203,7 @@ export default {
     },
     async getApiServerHost() {
       const showError = () => {
-        this.$message.error(i18n.t('daas_data_server_list_huoqufuwuyu'))
+        this.$message.error(i18n.global.t('daas_data_server_list_huoqufuwuyu'))
       }
       const data = await apiServerApi.get().catch(() => {
         showError()
@@ -218,7 +218,7 @@ export default {
       this.multipleSelection = val
     },
     async removeServer(row) {
-      const flag = await this.$confirm(i18n.t('daas_data_server_list_querenshanchufu'), '', {
+      const flag = await this.$confirm(i18n.global.t('daas_data_server_list_querenshanchufu'), '', {
         type: 'warning',
         showClose: false
       })
@@ -228,9 +228,9 @@ export default {
       }
     },
     async changeStatus(row) {
-      let msg = i18n.t('daas_data_server_list_quedingfabugai')
+      let msg = i18n.global.t('daas_data_server_list_quedingfabugai')
       if (row.status === 'active') {
-        msg = i18n.t('daas_data_server_list_quedingchexiaogai')
+        msg = i18n.global.t('daas_data_server_list_quedingchexiaogai')
       }
       const flag = await this.$confirm(msg, '', {
         type: 'warning',

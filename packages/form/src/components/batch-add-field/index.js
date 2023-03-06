@@ -123,11 +123,11 @@ export const BatchAddField = defineComponent({
         <div class="DummyBatchAddField mt-n3">
           <div class="formily-element-array-items">
             <ElButton class="w-100 formily-element-array-base-addition" onClick={handleOpenDialog} plain>
-              {i18n.t('packages_form_batch_add_field_title')}
+              {i18n.global.t('packages_form_batch_add_field_title')}
             </ElButton>
           </div>
           <ElDialog
-            title={i18n.t('packages_form_batch_add_field_title')}
+            title={i18n.global.t('packages_form_batch_add_field_title')}
             visible={visible.value}
             on={{
               'update:visible': v => {
@@ -137,10 +137,10 @@ export const BatchAddField = defineComponent({
           >
             <ElForm ref="form" label-position="right" label-width="80px" props={{ mode: form }}>
               <div class="flex gap-1">
-                <ElFormItem prop="prefix" label={i18n.t('packages_form_batch_add_field_prefix')} class="flex-1">
+                <ElFormItem prop="prefix" label={i18n.global.t('packages_form_batch_add_field_prefix')} class="flex-1">
                   <ElInput value={form.prefix} onInput={v => (form.prefix = v)}></ElInput>
                 </ElFormItem>
-                <ElFormItem prop="type" label={i18n.t('packages_form_batch_add_field_type')} class="flex-1">
+                <ElFormItem prop="type" label={i18n.global.t('packages_form_batch_add_field_type')} class="flex-1">
                   <ElSelect allowCreate filterable value={form.type} onInput={v => (form.type = v)}>
                     {options.map(item => (
                       <ElOption props={{ ...item }} />
@@ -150,7 +150,7 @@ export const BatchAddField = defineComponent({
               </div>
 
               <div class="flex gap-2">
-                <ElFormItem prop="count" label={i18n.t('packages_form_batch_add_field_count')} class="flex-1">
+                <ElFormItem prop="count" label={i18n.global.t('packages_form_batch_add_field_count')} class="flex-1">
                   <ElInputNumber
                     value={form.count}
                     onInput={v => (form.count = v)}
@@ -159,7 +159,7 @@ export const BatchAddField = defineComponent({
                     controls-position="right"
                   ></ElInputNumber>
                 </ElFormItem>
-                <ElFormItem prop="start" label={i18n.t('packages_form_batch_add_field_start')} class="flex-1">
+                <ElFormItem prop="start" label={i18n.global.t('packages_form_batch_add_field_start')} class="flex-1">
                   <ElInputNumber
                     value={form.start}
                     onInput={v => (form.start = v)}
@@ -175,10 +175,10 @@ export const BatchAddField = defineComponent({
                   visible.value = false
                 }}
               >
-                {i18n.t('packages_component_button_cancel')}
+                {i18n.global.t('packages_component_button_cancel')}
               </ElButton>
               <ElButton loading={loading.value} type="primary" onClick={handleSubmit}>
-                {i18n.t('packages_component_button_confirm')}
+                {i18n.global.t('packages_component_button_confirm')}
               </ElButton>
             </div>
           </ElDialog>

@@ -64,7 +64,7 @@ export const TableListCard = observer(
               <ElEmpty
                 image-size={111}
                 image={require('@tap/assets/images/img_empty.png')}
-                description={i18n.t('packages_dag_table_list_card_index_zanshimeiyoupi')}
+                description={i18n.global.t('packages_dag_table_list_card_index_zanshimeiyoupi')}
               ></ElEmpty>
             </div>
           )
@@ -73,7 +73,7 @@ export const TableListCard = observer(
         return (
           <ElCard class="table-list-card" shadow="never">
             <div slot="header" class="clearfix">
-              <span>{props.title || i18n.t('packages_form_field_mapping_list_biaoming')}</span>
+              <span>{props.title || i18n.global.t('packages_form_field_mapping_list_biaoming')}</span>
               {!loading.value && <span class="font-color-light float-end">{total.value}</span>}
             </div>
             {listDom}

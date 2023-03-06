@@ -34,8 +34,8 @@ export default {
     return {
       visible: false,
       sql: 'CREATE TABLE Persons',
-      tooltip: i18n.t('packages_form_clipboard_dialog_dialog_fuzhichuangjianming'),
-      finishTooltip: i18n.t('packages_form_clipboard_dialog_dialog_yifuzhi'),
+      tooltip: i18n.global.t('packages_form_clipboard_dialog_dialog_fuzhichuangjianming'),
+      finishTooltip: i18n.global.t('packages_form_clipboard_dialog_dialog_yifuzhi'),
       options: {
         readOnly: true
       }
