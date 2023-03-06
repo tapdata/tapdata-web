@@ -260,7 +260,7 @@ export const TableRename = observer(
               <div class="name-list-title pl-5 pr-4">{i18n.t('packages_form_table_rename_index_xinbiaoming')}</div>
               <div class="name-list-header-extra px-4">
                 <ElButton disabled={this.disabled} onClick={this.resetNames} size="mini" type="text">
-                  {i18n.t('packages_form_button_reset')}
+                  {i18n.t('public_button_reset')}
                 </ElButton>
               </div>
             </div>

@@ -54,11 +54,9 @@
         </ElFormItem>
       </ElForm>
       <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="dialogConfig.visible = false">{{
-          $t('packages_component_button_cancel')
-        }}</ElButton>
+        <ElButton size="mini" @click="dialogConfig.visible = false">{{ $t('public_button_cancel') }}</ElButton>
         <ElButton size="mini" type="primary" @click="dialogSubmit">
-          {{ $t('packages_component_button_confirm') }}
+          {{ $t('public_button_confirm') }}
         </ElButton>
       </span>
     </ElDialog>
@@ -72,11 +70,9 @@
         </ElFormItem>
       </ElForm>
       <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="taskDialogConfig.visible = false">{{
-          $t('packages_component_button_cancel')
-        }}</ElButton>
+        <ElButton size="mini" @click="taskDialogConfig.visible = false">{{ $t('public_button_cancel') }}</ElButton>
         <ElButton size="mini" type="primary" @click="taskDialogSubmit">
-          {{ $t('packages_component_button_confirm') }}
+          {{ $t('public_button_confirm') }}
         </ElButton>
       </span>
     </ElDialog>

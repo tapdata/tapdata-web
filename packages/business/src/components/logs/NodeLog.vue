@@ -40,7 +40,7 @@
           @input="searchFnc"
         ></ElInput>
         <ElButton :loading="downloadLoading" type="text" size="mini" class="ml-4" @click="handleDownload">{{
-          $t('packages_dag_components_log_xiazai')
+          $t('public_button_download')
         }}</ElButton>
       </div>
       <div class="level-line mb-2">
@@ -83,11 +83,7 @@
               ></ElAlert>
               <VEmpty
                 v-if="!list.length"
-                :description="
-                  keyword
-                    ? $t('packages_dag_customer_logs_no_search_data')
-                    : $t('packages_dag_dag_dialog_field_mapping_no_data')
-                "
+                :description="keyword ? $t('packages_dag_customer_logs_no_search_data') : $t('public_data_no_data')"
               />
             </div>
           </template>
@@ -139,9 +135,9 @@
         </template>
       </ElForm>
       <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="handleClose">{{ $t('packages_dag_button_cancel') }}</ElButton>
+        <ElButton size="mini" @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>
         <ElButton :disabled="saveLoading" size="mini" type="primary" @click="handleSave">{{
-          $t('packages_dag_button_confirm')
+          $t('public_button_confirm')
         }}</ElButton>
       </span>
     </ElDialog>
@@ -700,14 +696,14 @@ export default {
       taskApi
         .putLogSetting(this.dataflow.id, params)
         .then(() => {
-          this.$message.success(this.$t('packages_dag_message_save_ok'))
+          this.$message.success(this.$t('public_message_save_ok'))
           this.dialog = false
         })
         .finally(() => {
           this.saveLoading = false
         })
         .catch(() => {
-          this.$message.error(this.$t('packages_dag_message_save_fail'))
+          this.$message.error(this.$t('public_message_save_fail'))
         })
     },
 

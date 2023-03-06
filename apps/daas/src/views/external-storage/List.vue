@@ -30,14 +30,14 @@
       <ElTableColumn
         show-overflow-tooltip
         min-width="120"
-        :label="$t('column_create_time')"
+        :label="$t('public_create_time')"
         prop="createTimeFmt"
       ></ElTableColumn>
       <ElTableColumn width="120" :label="$t('column_operation')">
         <template #default="{ row }">
-          <!-- <ElButton type="text" :disabled="!row.canEdit" @click="openDialog(row)">{{ $t('button_edit') }}</ElButton>
+          <!-- <ElButton type="text" :disabled="!row.canEdit" @click="openDialog(row)">{{ $t('public_button_edit') }}</ElButton>
           <ElDivider direction="vertical"></ElDivider> -->
-          <ElButton type="text" :disabled="!row.canDelete" @click="remove(row)">{{ $t('button_delete') }}</ElButton>
+          <ElButton type="text" :disabled="!row.canDelete" @click="remove(row)">{{ $t('public_button_delete') }}</ElButton>
         </template>
       </ElTableColumn>
     </TablePage>
@@ -73,8 +73,8 @@
         </ElFormItem>
       </ElForm>
       <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="dialogVisible = false">{{ $t('button_cancel') }}</ElButton>
-        <ElButton type="primary" size="mini" @click="submit">{{ $t('button_confirm') }}</ElButton>
+        <ElButton size="mini" @click="dialogVisible = false">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton type="primary" size="mini" @click="submit">{{ $t('public_button_confirm') }}</ElButton>
       </span>
     </ElDialog>
   </section>

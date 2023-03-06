@@ -625,7 +625,7 @@ export default {
             this.getData()
           })
           // .catch(error => {
-          //   error?.isException && this.$message.error(this.$t('task_reset_failed'))
+          //   error?.isException && this.$message.error(this.$t('public_status_renew_failed'))
           // })
           .finally(() => {
             this.resetBtnLoading = false

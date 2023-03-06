@@ -110,7 +110,7 @@
 
         <div class="footer">
           <el-button v-if="email === 'admin@admin.com'" @click="save" size="mini" type="primary">{{
-            $t('button_save')
+            $t('public_button_save')
           }}</el-button>
         </div>
       </el-form>

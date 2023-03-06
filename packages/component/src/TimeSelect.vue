@@ -50,7 +50,7 @@ export default {
     title: {
       type: String,
       default: () => {
-        return i18n.t('packages_dag_components_timeselect_zhouqi')
+        return i18n.t('public_time_period')
       }
     },
     options: {
@@ -65,7 +65,7 @@ export default {
           value: '1h'
         },
         {
-          label: i18n.t('packages_dag_components_timeselect_zuijintian'),
+          label: i18n.t('public_time_last_day'),
           value: '1d'
         },
         {
@@ -77,7 +77,7 @@ export default {
           value: 'full'
         },
         {
-          label: i18n.t('packages_dag_components_log_zidingyishijian'),
+          label: i18n.t('public_time_custom_time'),
           type: 'custom',
           value: 'custom'
         }

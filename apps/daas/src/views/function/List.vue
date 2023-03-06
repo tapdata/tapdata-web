@@ -65,9 +65,9 @@
           >
           <template v-if="row.type !== 'system'">
             <ElDivider direction="vertical"></ElDivider>
-            <ElLink type="primary" size="mini" @click="toEdit(row)">{{ $t('button_edit') }}</ElLink>
+            <ElLink type="primary" size="mini" @click="toEdit(row)">{{ $t('public_button_edit') }}</ElLink>
             <ElDivider direction="vertical"></ElDivider>
-            <ElLink type="primary" size="mini" @click="remove(row)">{{ $t('button_delete') }}</ElLink>
+            <ElLink type="primary" size="mini" @click="remove(row)">{{ $t('public_button_delete') }}</ElLink>
           </template>
         </template>
       </ElTableColumn>

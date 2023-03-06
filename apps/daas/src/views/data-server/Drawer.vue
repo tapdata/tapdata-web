@@ -25,7 +25,7 @@
         :model="form"
         :rules="rules"
       >
-        <!-- 服务{{$t('metadata_name')}} -->
+        <!-- 服务{{$t('public_name')}} -->
         <div class="flex justify-content-between align-items-start">
           <ElFormItem class="flex-1 form-item-name" size="small" prop="name">
             <ElInput
@@ -38,11 +38,11 @@
           <template v-if="tab === 'form' && data.status !== 'active'">
             <div v-if="isEdit" class="ml-10">
               <ElButton v-if="data.id" class="mr-4" size="mini" @click="isEdit = false">{{
-                $t('button_cancel')
+                $t('public_button_cancel')
               }}</ElButton>
-              <ElButton type="primary" size="mini" @click="save()">{{ $t('button_save') }}</ElButton>
+              <ElButton type="primary" size="mini" @click="save()">{{ $t('public_button_save') }}</ElButton>
             </div>
-            <ElButton v-else class="ml-10" type="primary" size="mini" @click="edit">{{ $t('button_edit') }}</ElButton>
+            <ElButton v-else class="ml-10" type="primary" size="mini" @click="edit">{{ $t('public_button_edit') }}</ElButton>
           </template>
         </div>
         <div class="flex-1 mt-4" size="small">
@@ -80,7 +80,7 @@
             </ElFormItem>
           </li>
           <li class="data-server-form-base__item">
-            <ElFormItem :label="$t('connection_list_type')" label-width="86px" prop="connectionType">
+            <ElFormItem :label="$t('public_connection_type')" label-width="86px" prop="connectionType">
               <ElSelect
                 v-if="isEdit"
                 v-model="form.connectionType"
@@ -201,7 +201,7 @@
               <div v-else>{{ row.name }}</div>
             </template>
           </ElTableColumn>
-          <ElTableColumn :label="$t('metadata_type')" prop="type">
+          <ElTableColumn :label="$t('public_type')" prop="type">
             <template #default="{ row, $index }">
               <div v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'" min-width="60">
                 <ElSelect v-model="form.params[$index].type" size="mini">
@@ -343,8 +343,8 @@
             @selection-change="fieldsChanged"
           >
             <ElTableColumn v-if="isEdit" type="selection" width="55"></ElTableColumn>
-            <ElTableColumn :label="$t('metadata_name')" prop="field_name" min-width="200"></ElTableColumn>
-            <ElTableColumn :label="$t('metadata_type')" prop="originalDataType" min-width="120"></ElTableColumn>
+            <ElTableColumn :label="$t('public_name')" prop="field_name" min-width="200"></ElTableColumn>
+            <ElTableColumn :label="$t('public_type')" prop="originalDataType" min-width="120"></ElTableColumn>
             <ElTableColumn :label="$t('module_form_describtion')" prop="comment" min-width="50"></ElTableColumn>
           </ElTable>
         </template>

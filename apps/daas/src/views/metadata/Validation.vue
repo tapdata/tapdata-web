@@ -20,7 +20,7 @@
         <template slot-scope="scope">
           <!-- v-if="scope.row.name !== '_id_' && scope.row.status === 'created'" -->
           <el-button size="mini" type="text" style="color: #f56c6c" @click="remove(scope.row)">{{
-            $t('button_delete')
+            $t('public_button_delete')
           }}</el-button>
         </template>
       </el-table-column>

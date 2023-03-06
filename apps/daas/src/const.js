@@ -31,9 +31,9 @@ export const TOPOLOGY_MAP = topologyMap,
     //complete: { text: '已完成', icon: 'complete', type: 'success' }
   },
   CONNECTION_STATUS_MAP = {
-    ready: { text: i18n.t('connection_list_efficient'), type: 'success' },
+    ready: { text: i18n.t('public_status_ready'), type: 'success' },
     invalid: { text: i18n.t('connection_list_invalidation'), type: 'danger' },
-    testing: { text: i18n.t('connection_list_testing'), type: 'warning' }
+    testing: { text: i18n.t('public_status_testing'), type: 'warning' }
   },
   MILESTONE_STATUS_MAP = {
     waiting: { text: i18n.t('milestone_list_status_waiting'), icon: 'daizhixing' },
@@ -43,9 +43,9 @@ export const TOPOLOGY_MAP = topologyMap,
     paused: { text: i18n.t('status_stopping'), icon: 'yizanting' }
   },
   ETL_STATUS_MAP = {
-    running: { text: i18n.t('task_status_running'), type: 'success' },
+    running: { text: i18n.t('public_status_running'), type: 'success' },
     not_running: { text: i18n.t('task_status_not_running'), type: 'disable' },
-    error: { text: i18n.t('task_status_error'), type: 'danger' }
+    error: { text: i18n.t('public_status_error'), type: 'danger' }
   },
   ETL_SUB_STATUS_MAP = {
     ready: { text: i18n.t('status_ready'), type: 'ready' },
@@ -57,7 +57,7 @@ export const TOPOLOGY_MAP = topologyMap,
     stopping: { text: i18n.t('status_stopping'), type: 'stopping' },
     stop: { text: i18n.t('status_stop'), type: 'stop' },
     complete: { text: i18n.t('status_complete'), type: 'complete' },
-    error: { text: i18n.t('task_status_error'), type: 'error' }
+    error: { text: i18n.t('public_status_error'), type: 'error' }
   },
   MIGRATE_STATUS_MAP = {
     running: {

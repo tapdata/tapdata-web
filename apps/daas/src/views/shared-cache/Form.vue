@@ -110,7 +110,7 @@
       </ElForm>
       <div class="pt-6">
         <ElButton @click="$router.back()">{{ $t('button_back') }}</ElButton>
-        <ElButton type="primary" @click="submit">{{ $t('button_save') }}</ElButton>
+        <ElButton type="primary" @click="submit">{{ $t('public_button_save') }}</ElButton>
       </div>
     </div>
   </section>
