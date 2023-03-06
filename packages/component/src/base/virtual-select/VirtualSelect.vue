@@ -218,7 +218,7 @@ export default {
           return this.noMatchText || this.$t('packages_component_no_match')
         }
         if (this.filteredItems.length === 0) {
-          return this.noDataText || this.$t('packages_component_no_data')
+          return this.noDataText || this.$t('public_data_no_data1')
         }
       }
       return null

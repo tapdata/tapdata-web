@@ -57,11 +57,11 @@ export default {
           type: 'waiting'
         },
         PAUSE: {
-          text: i18n.t('packages_dag_task_preview_status_stop'),
+          text: i18n.t('public_status_stop'),
           type: 'pause'
         },
         DONE: {
-          text: i18n.t('packages_dag_task_preview_status_complete'),
+          text: i18n.t('public_status_finished'),
           type: 'finish'
         },
         ING: {

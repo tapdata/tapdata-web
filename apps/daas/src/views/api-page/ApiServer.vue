@@ -48,13 +48,13 @@
         sortable="clientURI"
       >
       </el-table-column>
-      <el-table-column :label="$t('column_operation')" width="170" fixed="right">
+      <el-table-column :label="$t('public_operation')" width="170" fixed="right">
         <template slot-scope="scope">
           <el-button v-readonlybtn="'API_clients_amangement'" size="mini" type="text" @click="edit(scope.row)">
-            {{ $t('modules_edit') }}
+            {{ $t('public_button_edit') }}
           </el-button>
           <el-button v-readonlybtn="'API_clients_amangement'" size="mini" type="text" @click="remove(scope.row)">{{
-            $t('button_delete')
+            $t('public_button_delete')
           }}</el-button>
           <el-tooltip class="item" effect="dark" :content="$t('api_server_download_API_Server_config')" placement="top">
             <el-button
@@ -62,7 +62,7 @@
               size="mini"
               type="text"
               @click="downloadConfig(scope.row)"
-              >{{ $t('api_server_download') }}</el-button
+              >{{ $t('public_button_download') }}</el-button
             >
           </el-tooltip>
         </template>
@@ -72,14 +72,14 @@
     <el-dialog
       width="600px"
       custom-class="create-dialog"
-      :title="createForm.id ? $t('button_edit') : $t('api_server_create_server')"
+      :title="createForm.id ? $t('public_button_edit') : $t('api_server_create_server')"
       :close-on-click-modal="false"
       :visible.sync="createDialogVisible"
     >
       <FormBuilder ref="form" v-model="createForm" :config="createFormConfig"></FormBuilder>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="createDialogVisible = false" size="small">{{ $t('message_cancel') }}</el-button>
-        <el-button type="primary" @click="createServer()" size="small">{{ $t('message_confirm') }}</el-button>
+        <el-button @click="createDialogVisible = false" size="small">{{ $t('public_button_cancel') }}</el-button>
+        <el-button type="primary" @click="createServer()" size="small">{{ $t('public_button_confirm') }}</el-button>
       </span>
     </el-dialog>
   </section>
@@ -189,7 +189,7 @@ export default {
     // 移除
     remove(item) {
       const h = this.$createElement
-      let message = h('p', [this.$t('message_deleteOrNot') + ' ' + item.clientName])
+      let message = h('p', [this.$t('public_message_delete_confirm') + ' ' + item.clientName])
       this.$confirm(message, '', {
         type: 'warning'
       }).then(resFlag => {
@@ -197,11 +197,10 @@ export default {
           return
         }
         apiServerApi.delete(item.id).then(() => {
-          this.$message.success(this.$t('message_delete_ok'))
+          this.$message.success(this.$t('public_message_delete_ok'))
           this.table.fetch()
         })
         // .catch(() => {
-        //   this.$message.info(this.$t('message_delete_fail'))
         // })
       })
     },
@@ -221,10 +220,9 @@ export default {
           apiServerApi[method](params).then(() => {
             this.table.fetch()
             this.createDialogVisible = false
-            this.$message.success(this.$t('message_save_ok'))
+            this.$message.success(this.$t('public_message_save_ok'))
           })
           // .catch(() => {
-          //   this.$message.error(this.$t('message_save_fail'))
           // })
         }
       })
@@ -276,7 +274,7 @@ export default {
     getFilterItems() {
       this.filterItems = [
         {
-          placeholder: this.$t('api_server_name'),
+          placeholder: this.$t('public_name'),
           key: 'keyword',
           type: 'input'
         }

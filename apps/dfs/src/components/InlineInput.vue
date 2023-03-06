@@ -51,9 +51,11 @@
       </template>
       <template v-else>
         <ElButton class="inline-input-button" type="primary" size="mini" :disabled="disabled" @click="save">{{
-          $t('button_save')
+          $t('public_button_save')
         }}</ElButton>
-        <ElButton class="inline-input-button m-0" size="mini" @click="cancel">{{ $t('button_cancel') }}</ElButton>
+        <ElButton class="inline-input-button m-0" size="mini" @click="cancel">{{
+          $t('public_button_cancel')
+        }}</ElButton>
       </template>
     </span>
   </div>
@@ -83,19 +85,19 @@ export default {
     editText: {
       type: String,
       default: () => {
-        return i18n.t('button_edit')
+        return i18n.t('public_button_edit')
       }
     },
     saveText: {
       type: String,
       default: () => {
-        return i18n.t('button_save')
+        return i18n.t('public_button_save')
       }
     },
     cancelText: {
       type: String,
       default: () => {
-        return i18n.t('button_cancel')
+        return i18n.t('public_button_cancel')
       }
     }
   },

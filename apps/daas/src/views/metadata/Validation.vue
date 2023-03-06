@@ -235,8 +235,8 @@
       </el-form>
       <!-- 数据验证弹窗表单 end -->
       <span slot="footer" class="dialog-footer">
-        <el-button @click="createDialogVisible = false" size="small">{{ $t('message_cancel') }}</el-button>
-        <el-button type="primary" @click="createNewModel()" size="small">{{ $t('message_confirm') }}</el-button>
+        <el-button @click="createDialogVisible = false" size="small">{{ $t('public_button_cancel') }}</el-button>
+        <el-button type="primary" @click="createNewModel()" size="small">{{ $t('public_button_confirm') }}</el-button>
       </span>
     </el-dialog>
     <!-- 数据验证弹窗 end -->

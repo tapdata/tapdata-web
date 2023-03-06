@@ -6,24 +6,25 @@
       </template>
       <div slot="operation">
         <ElButton type="primary" class="btn-create" size="mini" @click="toCreate">
-          <span>{{ $t('packages_business_new') }}</span>
+          <span>{{ $t('public_button_add') }}</span>
         </ElButton>
       </div>
-      <ElTableColumn :label="$t('packages_business_custom_node_name')" prop="name"> </ElTableColumn>
-      <ElTableColumn :label="$t('packages_business_desc')" prop="desc"> </ElTableColumn>
+      <ElTableColumn :label="$t('public_node_name')" prop="name"> </ElTableColumn>
+      <ElTableColumn :label="$t('public_description')" prop="desc"> </ElTableColumn>
 
-      <ElTableColumn prop="createTime" :label="$t('packages_business_column_create_time')"></ElTableColumn>
+      <ElTableColumn prop="createTime" :label="$t('public_create_time')" :width="160"></ElTableColumn>
       <ElTableColumn
         prop="last_updated"
         sortable="last_updated"
-        :label="$t('packages_business_last_updated')"
+        :label="$t('public_update_time')"
+        :width="160"
       ></ElTableColumn>
 
-      <ElTableColumn width="150" :label="$t('packages_business_column_operation')">
+      <ElTableColumn width="150" :label="$t('public_operation')">
         <template #default="{ row }">
-          <ElLink type="primary" @click="toEdit(row)">{{ $t('button_edit') }}</ElLink>
+          <ElLink type="primary" @click="toEdit(row)">{{ $t('public_button_edit') }}</ElLink>
           <ElDivider direction="vertical"></ElDivider>
-          <ElLink type="primary" @click="remove(row)">{{ $t('button_delete') }}</ElLink>
+          <ElLink type="primary" @click="remove(row)">{{ $t('public_button_delete') }}</ElLink>
         </template>
       </ElTableColumn>
     </TablePage>
@@ -95,7 +96,7 @@ export default {
         })
     },
     remove(item) {
-      this.$confirm(this.$t('message_delete_confirm'), this.$t('message_title_prompt'), {
+      this.$confirm(this.$t('public_message_delete_confirm'), this.$t('public_message_title_prompt'), {
         type: 'warning'
       }).then(resFlag => {
         if (!resFlag) {

@@ -5,7 +5,7 @@
     </template>
     <template v-else>
       <slot>
-        <span>重新加载</span>
+        <span>{{ label }}</span>
         <VIcon class="ml-1" size="9">icon_table_selector_load</VIcon>
       </slot>
     </template>
@@ -13,6 +13,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { mapActions } from 'vuex'
 
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
@@ -23,14 +25,20 @@ export default {
   props: {
     connectionId: String,
     taskId: String,
-    nodeId: String
+    nodeId: String,
+    label: {
+      type: String,
+      default: () => {
+        return i18n.t('public_button_reload')
+      }
+    }
   },
 
   data() {
     return {
       loading: false,
-      title: '重新加载',
-      progress: ''
+      destroyStatus: false,
+      progress: '0%'
     }
   },
 
@@ -45,6 +53,7 @@ export default {
   },
 
   beforeDestroy() {
+    this.destroyStatus = true
     clearTimeout(this.timer)
   },
 
@@ -63,20 +72,23 @@ export default {
           loadFieldsStatus: 'loading'
         })
         .then(data => {
+          this.progress = '0%'
           this.getProgress()
+          this.$emit('start')
           this.startByConnection(data, true, false)
         })
     },
 
     getProgress(check = false) {
+      if (this.destroyStatus) return
       if (!this.connectionId) return
       if (!check) {
         this.loading = true
       }
-      this.progress = '0'
       clearTimeout(this.timer)
       connectionsApi.getNoSchema(this.connectionId).then(res => {
         if (res.loadFieldsStatus === 'loading') {
+          this.progress = (Math.round((res.loadCount / res.tableCount) * 10000) / 100 || 0) + '%'
           this.timer = setTimeout(this.getProgress, 1000)
         } else {
           this.progress = 100 + '%'

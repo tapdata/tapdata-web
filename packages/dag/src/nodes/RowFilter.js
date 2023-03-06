@@ -17,7 +17,7 @@ export class RowFilter extends NodeType {
     properties: {
       name: {
         type: 'string',
-        title: i18n.t('packages_dag_nodes_database_jiedianmingcheng'),
+        title: i18n.t('public_node_name'),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input'

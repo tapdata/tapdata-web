@@ -18,7 +18,7 @@
       :class="data.class"
       @change="changeFnc"
     >
-      <ElRadioButton v-if="!this.data.hideSecond" label="second">{{ $t('dataFlow_second') }}</ElRadioButton>
+      <ElRadioButton v-if="!this.data.hideSecond" label="second">{{ $t('public_time_s') }}</ElRadioButton>
       <ElRadioButton label="minute">{{ $t('dataFlow_min') }}</ElRadioButton>
       <ElRadioButton label="hour">{{ $t('dataFlow_hour') }}</ElRadioButton>
       <ElRadioButton label="day">{{ $t('dataFlow_day') }}</ElRadioButton>

@@ -31,7 +31,7 @@ export default {
       if (data.loadFieldsStatus === 'finished') {
         let loadTime = data.loadSchemaTime
         schemaInfo = {
-          text: this.$t('packages_business_schema_progress_status_success'),
+          text: this.$t('public_status_finished'),
           icon: 'success',
           color: 'success',
           tips: loadTime
@@ -70,7 +70,7 @@ export default {
         {
           type: 'error',
           customClass: 'schema-error-dialog',
-          confirmButtonText: this.$t('packages_business_button_close')
+          confirmButtonText: this.$t('public_button_close')
         }
       )
     }

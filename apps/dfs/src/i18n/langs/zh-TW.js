@@ -8,9 +8,7 @@ export default {
   button_edit: '編輯',
   button_stop: '停止',
   button_delete: '删除',
-  button_all_delete: '全部删除',
   button_cancel: '取消',
-  button_finish: '完成',
   button_confirm: '確定',
   button_close: '關閉',
   button_save: '保存',
@@ -19,7 +17,6 @@ export default {
   button_bind: '綁定',
   button_unbind: '解綁',
   button_retry: '重試',
-  button_zhanKai: '展開',
   message_network_unconnected: '網絡連接異常',
   message_network_connected: '網絡已恢復',
   link_back_to_list: '返回列表',
@@ -145,6 +142,7 @@ export default {
   agent_key: 'Agent',
   agent_manage: 'Agent管理',
   agent_name: 'Agent名稱',
+  agent_heartbeat: 'Agent心跳時間',
   agent_id: 'Agent ID',
   agent_task_number: '任務數',
   agent_create_time: '創建時間',
@@ -265,9 +263,6 @@ export default {
   agent_upgrade_step_docker_third: '3.出現“Update finished.” 則代表Agent陞級成功',
   agent_tip_no_running: '无可用 Agent， 请检查 Agent 运行状态或者创建一个新的 Agent',
   connection_manage: '連接管理',
-  connection_list_efficient: '有效',
-  connection_list_invalidation: '失效',
-  connection_list_testing: '測試中',
   connection_form_creat_connection: '創建連接',
   connection_form_mq_broker_url: 'MQ連接串',
   task_manage: '任務管理',
@@ -630,10 +625,10 @@ export default {
   user_Center_xiuGaiQiYeXin: '修改企業資訊成功',
   components_BindPhone_qingBangDingShouJi: '請綁定手機號',
   components_BindPhone_qingShuRuShouJi: '請輸入手機',
-  workbench_Notice_tAPDA12: 'Tapdata Cloud 1.0.9版本發佈啦！',
-  workbench_Notice_tAPDA11:
-    'Tapdata Cloud是國內首家異構數據庫實时同步雲平臺，現時支持Oracle、MySQL、PG、SQL Server、MongoDB、ES、達夢、Kafka、GP、MQ、ClickHouse、Hazelcast Cloud、ADB MySQL、ADBPostgreSQL、KunDB、TiDB、Dummy之間的資料同步，即將支持DB2、Sybase ASE、Redis、GBase、GaussDB等，並對用戶永久免費。',
-  workbench_Notice_buDuanYouHuaTi: '2.不斷優化，提供更佳體驗',
+  wworkbench_Notice_tAPDA12: '關於《產品使用手冊》訪問地址變更的通知',
+  workbench_Notice_tAPDA11: '尊敬的用戶，您好：',
+  workbench_Notice_buDuanYouHuaTi:
+    'Tapdata最新版本的《產品使用手冊》地址已變更為：https://docs.tapdata.io/，產品內部所有相關跳轉鏈接已同步更新。自本公告發布之日起，我們將停止對原語雀版本文檔的更新和維護，請您使用新的地址訪問，謝謝您對Tapdata產品的支持。 ',
   workbench_Notice_zaiChuangJianLianJie: '在創建連接時，用戶可以選擇連接類型',
   workbench_Notice_benCiXinZengRi: '本次新增日誌過濾篩選功能，用戶可以通過日誌過濾篩選',
   workbench_Notice_zhiChiPiLiangCao: '3.支持批量操作、體驗更佳',
@@ -994,14 +989,13 @@ export default {
   dfs_workbench_tyepmap_apIfuwu7: 'API服務重啟失敗',
   dfs_workbench_tyepmap_guanliduanfuwu7: '管理端服務重啟失敗',
   dfs_workbench_tyepmap_cdCzhihou2: 'CDC滯後超時',
-
   _workbench_workbench_yigoushishitong: '異構實時同步',
-  _workbench_workbench_shujuruhucang: '數據入湖倉 ',
+  _workbench_workbench_shujuruhucang: '數據入湖倉',
+  _workbench_workbench_shujurucang: '數據入倉',
   _workbench_workbench_jichengaliyun: '集成阿里雲計算巢',
   _workbench_workbench_jiangshujudaoru: '數據導入阿里雲 Tablestore',
   _workbench_workbench_jiangshujudaorusub: '阿里雲 Tablestore',
   _workbench_workbench_tansuoshili: '探索示例',
-
   dfs_workbench_workbench_zhongyaobanbensheng: '【重要】版本升級和服務切換重要公告',
   dfs_workbench_workbench_xinzengzidingyi: '· 新增自定義算子支持，用戶可通過靈活的JS能力來定義自己的算子',
   dfs_workbench_workbench_xinzengzidingyi2: '· 新增自定義函數用戶可通過jar包導入自定義函數進行使用',
@@ -1035,7 +1029,6 @@ export default {
   dfs_user_center_acces:
     'AccessKey是您訪問系統API的秘鑰，具有賬號的完全權限，請您務必妥善保管！不要以任何方式公開AccessKey到外部渠道（例如GitHub），避免被他人利用造成安全威脅。 ',
   dfs_user_center_kaifaxinxi: '開發信息',
-
   dfs_agent_download_agentdownloadmodal_aliyunjisuan: '阿里雲計算巢',
   dfs_agent_download_agentdownloadmodal_bushuwanchenghou:
     '4. 部署完成後，返回我們的【Agent管理頁面】等待2分鐘直到【狀態】變為【運行中】。恭喜您！已經完成了Tapdata  Alould 計算環境的部署，可以去創建數據任務了。 ',
@@ -1070,7 +1063,6 @@ export default {
   dfs_agent_download_upgradeversion_ruguoninbushu: '如果您部署的是“3天試用實例”請打開計算巢“試用服務”選項卡',
   dfs_agent_download_upgradeversion_jisuanchaodenglu: '計算巢登錄地址',
   dfs_agent_download_upgradeversion_denglualiyun: '1. 登錄阿里雲計算巢控制台，找到部署Agent的服務實例.',
-
   dfs_the_header_header_jichuban: '基礎版',
   dfs_the_header_header_biaozhun: '標準版',
   dfs_agent_download_paidupgrade_qingxuanzelianxi: '請選擇聯繫人手機號碼',
@@ -1091,7 +1083,6 @@ export default {
   dfs_agent_download_paidupgrade_biaozhunban: '標準版',
   dfs_agent_download_paidupgrade_fuwushengji: '服務升級',
   dfs_agent_download_paidupgrade_fanhuicaidan: '返回菜單',
-
   dfs_instance_instance_fenzhong: ' 分鐘',
   dfs_instance_instance_ruxuliaojiegeng: '如需了解更多請訪問',
   dfs_instance_instance_bencigengxinbao: '本次更新包含錯誤修復和安全性更新，建議所有用戶安裝。 ',
@@ -1100,7 +1091,6 @@ export default {
   dfs_instance_instance_anzhuangbao: '安裝包 : ',
   dfs_instance_instance_banbenhao: '版本號: ',
   dfs_instance_instance_agent: 'Agent更新',
-
   dfs_user_center_phone_error: '該手機號碼已被其他用戶註冊過',
   dfs_agent_download_agentguidedialog_qingdianjibushu: '請選擇網絡安全策略',
   dfs_agent_download_agentguidedialog_ruhurucang: '实时入湖仓',
@@ -1159,7 +1149,6 @@ export default {
   dfs_instance_stopped_help_tip_prefix:
     'Agent 離線有可能是因為網絡原因或者 Agent 退出導致。請檢查 Agent 所在服務器的網絡及 Agent 的運行狀況。您可以查看',
   dfs_instance_stopped_help_tip_suffix: '獲取更多的幫助',
-
   //数据服务
   dfs_data_server: '數據服務',
   dfs_data_server_demo_title: '中央化的數據服務，可複用易分發',
@@ -1177,10 +1166,37 @@ export default {
   dfs_data_server_On_Prem: 'Data Services 能力目前僅在 Tapdata On-Prem 版中上線',
   dfs_data_server_apply_for_trial: '申請試用',
   dfs_data_server_apply_for_version: '線下部署版',
-
   dfs_data_dashboard_Marquee: '當前demo環境為只讀環境，僅支持查看和體驗產品功能',
-
   page_title_custom_node: '自定義節點',
   packages_nodeDesign_custom_node_name_required: '請輸入節點名稱',
-  packages_nodeDesign_message_save_ok: '保存成功'
+  packages_nodeDesign_message_save_ok: '保存成功',
+
+  dfs_aliyun_market_checklicnese_jihuoshouquanma: '激活授權碼',
+  dfs_aliyun_market_checklicnese_yanchangshouquanma: '延長授權碼有效期',
+  dfs_aliyun_market_checklicnese_xiayiciyanqi: '下一次延期處理',
+  dfs_aliyun_market_checklicnese_ninhaimeiyouji: '您還沒有激活授權碼，請到阿里雲市場複製授權碼並在授權碼激活頁面激活',
+  dfs_aliyun_market_checklicnese_weijihuoshouquan: '未激活授權碼',
+  dfs_aliyun_market_checklicnese_qingdaoaliyun: '請到阿里雲市場延長授權碼有效期',
+  dfs_aliyun_market_checklicnese_youxiaoqizhi: ' 有效期至',
+  dfs_aliyun_market_checklicnese_nindeshouquanma: '您的授權碼 ',
+  dfs_aliyun_market_checklicnese_nindeshouquanma2: '您的授權碼已到期，請盡快延長有效期',
+  dfs_aliyun_market_checklicnese_nindeshouquanma3: '您的授權碼即將到期，請盡快延長有效期',
+  dfs_aliyun_market_license_jihuochenggongS: '激活成功，30S後跳轉到工作台',
+  dfs_aliyun_market_license_jihuo: '激活',
+  dfs_aliyun_market_license_qianwanggongzuotai: '前往工作台',
+  dfs_aliyun_market_license_shouquanma: '授權碼：',
+  dfs_aliyun_market_license_niantiedaoxiafang: '3. 粘貼到下方授權文本框並驗證',
+  dfs_aliyun_market_license_chuangjianshouquanma: '2. 創建授權碼並複制',
+  dfs_aliyun_market_license_dakaialiyun: '1. 打開阿里雲市場',
+  dfs_aliyun_market_license_jihuoaliyun: '激活阿里雲市場授權碼',
+  dfs_views_error_zuoweidailihuo: '作為代理或網關使用的服務器從請求響應鏈的下一條鏈路上收到了一條偽響應。 ',
+  dfs_views_error_fuwuqiyudao: '服務器遇到一個妨礙它為請求提供服務的錯誤。 ',
+  dfs_views_error_zhaobudaoyemian: '找不到頁面',
+  dfs_user_center_kaifapiao: '開發票',
+  dfs_user_center_xufei: '續費',
+  dfs_user_center_guoqishijian: '過期時間： ',
+  dfs_user_center_jihuoshijian: '激活時間： ',
+  dfs_user_center_shouquanma: '授權碼: ',
+  dfs_user_center_shouquanmaxinxi: '授權碼信息',
+  dfs_user_center_jijiangguoqi: '即將過期'
 }

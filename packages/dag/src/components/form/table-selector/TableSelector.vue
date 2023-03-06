@@ -19,7 +19,7 @@
           <i class="el-icon-loading mx-2"></i>
           <span>{{ progress }}%</span>
         </span>
-        <ElLink v-else-if="!disabled" type="primary" :disabled="stateIsReadonly" @click="reload()">
+        <ElLink v-else-if="!disabled && !hideReload" type="primary" :disabled="stateIsReadonly" @click="reload()">
           <div class="flex align-center">
             <span>{{ $t('packages_form_button_reload') }}</span>
             <VIcon class="ml-1" size="9">icon_table_selector_load</VIcon>
@@ -368,7 +368,9 @@ export default {
       required: true
     },
     value: Array,
-    disabled: Boolean
+    disabled: Boolean,
+    hideReload: Boolean,
+    reloadTime: [String, Number]
   },
   data() {
     return {
@@ -461,6 +463,9 @@ export default {
     },
     'filterSelectedData.length'() {
       this.updateSelectedAllChecked()
+    },
+    reloadTime() {
+      this.getProgress()
     }
   },
   created() {

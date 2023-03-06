@@ -65,8 +65,9 @@
                 v-clipboard:copy="windowsLink"
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
+                @click="handleCopy"
               >
-                <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
+                <i class="click-style">{{ $t('public_button_copy') }}</i>
               </span>
             </ElTooltip>
           </li>
@@ -104,8 +105,9 @@
                 v-clipboard:copy="linuxLink"
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
+                @click="handleCopy"
               >
-                <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
+                <i class="click-style">{{ $t('public_button_copy') }}</i>
               </span>
             </ElTooltip>
           </li>
@@ -149,8 +151,9 @@
                 v-clipboard:copy="dockerLink"
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
+                @click="handleCopy"
               >
-                <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
+                <i class="click-style">{{ $t('public_button_copy') }}</i>
               </span>
             </ElTooltip>
           </li>
@@ -207,7 +210,7 @@
                 v-clipboard:success="onCopyVersion"
                 @mouseleave="showTooltipVersion = false"
               >
-                <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
+                <i class="click-style">{{ $t('public_button_copy') }}</i>
               </span>
             </ElTooltip>
           </li>
@@ -228,8 +231,9 @@
                 v-clipboard:copy="token"
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
+                @click="handleCopy"
               >
-                <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
+                <i class="click-style">{{ $t('public_button_copy') }}</i>
               </span>
             </ElTooltip>
           </li>
@@ -245,7 +249,7 @@
       </template>
     </main>
     <footer class="footer">
-      <ElButton type="primary" @click="handleNextStep()">{{ $t('button_finish') }}</ElButton>
+      <ElButton type="primary" @click="handleNextStep()">{{ $t('public_status_complete') }}</ElButton>
     </footer>
   </section>
 </template>
@@ -256,6 +260,7 @@ import TheHeader from '@/components/the-header'
 export default {
   name: 'FastDownload',
   components: { TheHeader },
+  inject: ['buried'],
   data() {
     return {
       downLoadType: 'Linux',
@@ -280,7 +285,16 @@ export default {
   },
   created() {
     this.getUrl()
-    this.loadChat()
+    if (!window.__config__?.disabledOnlineChat) {
+      this.loadChat()
+    }
+    if (window.__config__?.disabledAlibabaCloudComputingNest) {
+      this.downType = [
+        { name: 'Linux (64 bit)', value: 'Linux' },
+        { name: 'Docker', value: 'Docker' },
+        { name: 'Windows (64 bit)', value: 'windows' }
+      ]
+    }
   },
   methods: {
     getUrl() {
@@ -301,6 +315,7 @@ export default {
     // windows下载
     handleDownLoad() {
       window.location = `${this.downloadUrl}tapdata.exe`
+      this.buried('downloadTapdataExe')
     },
     // 选择下载安装类型
     chooseDownLoadType(val) {
@@ -375,12 +390,22 @@ export default {
 
       $zoho.salesiq.ready = function () {
         const user = window.__USER_INFO__
+        $zoho.salesiq.visitor.contactnumber(user.telephone)
         $zoho.salesiq.visitor.info({
           tapdata_username: user.nickname || user.username,
           tapdata_phone: user.telephone,
           tapdata_email: user.email
         })
       }
+    },
+    handleCopy() {
+      const MAP = {
+        Linux: 'copyTokenInLinux',
+        Docker: 'copyTokenInDocker',
+        windows: 'copyTokenInWindows',
+        AliComputenest: 'copyTokenInAliComputenest'
+      }
+      this.buried(MAP[this.downLoadType])
     }
   }
 }

@@ -12,9 +12,7 @@ export default {
   button_edit: '编辑',
   button_stop: '停止',
   button_delete: '删除',
-  button_all_delete: '全部删除',
   button_cancel: '取消',
-  button_finish: '完成',
   button_confirm: '确定',
   button_close: '关闭',
   button_save: '保存',
@@ -23,7 +21,6 @@ export default {
   button_bind: '绑定',
   button_unbind: '解绑',
   button_retry: '重试',
-  button_zhanKai: '展开',
   message_network_unconnected: '网络连接异常',
   message_network_connected: '网络已恢复',
   // 链接
@@ -164,6 +161,7 @@ export default {
   agent_key: 'Agent',
   agent_manage: 'Agent管理',
   agent_name: 'Agent 名称',
+  agent_heartbeat: 'Agent 心跳时间',
   agent_id: 'Agent ID',
   agent_task_number: '任务数',
   agent_create_time: '创建时间',
@@ -288,9 +286,6 @@ export default {
   agent_tip_no_running: '无可用 Agent，请检查 Agent 运行状态或者创建一个新的 Agent',
   // 连接
   connection_manage: '连接管理',
-  connection_list_efficient: '有效',
-  connection_list_invalidation: '失效',
-  connection_list_testing: '测试中',
   connection_form_creat_connection: '创建连接',
   connection_form_mq_broker_url: 'MQ连接串',
   // 任务
@@ -656,10 +651,10 @@ export default {
   user_Center_xiuGaiQiYeXin: '修改企业信息成功',
   components_BindPhone_qingBangDingShouJi: '请绑定手机号',
   components_BindPhone_qingShuRuShouJi: '请输入手机',
-  workbench_Notice_tAPDA12: 'Tapdata Cloud 1.0.9 版本发布啦！',
-  workbench_Notice_tAPDA11:
-    '\n          Tapdata Cloud 是国内首家异构数据库实时同步云平台，目前支持Oracle、MySQL、PG、SQL Server、MongoDB、ES\n          、达梦、Kafka、GP、MQ、ClickHouse、Hazelcast Cloud、ADB MySQL、ADB\n          PostgreSQL、KunDB、TiDB、Dummy之间的数据同步，即将支持 DB2、Sybase ASE、Redis、GBase、GaussDB\n          等，并对用户永久免费。',
-  workbench_Notice_buDuanYouHuaTi: '2. 不断优化，提供更佳体验',
+  workbench_Notice_tAPDA12: '关于《产品使用手册》访问地址变更的通知',
+  workbench_Notice_tAPDA11: '尊敬的用户，您好：',
+  workbench_Notice_buDuanYouHuaTi:
+    'Tapdata最新版本的《产品使用手册》地址已变更为：https://docs.tapdata.io/，产品内部所有相关跳转链接已同步更新。自本公告发布之日起，我们将停止对原语雀版本文档的更新和维护，请您使用新的地址访问，谢谢您对Tapdata产品的支持。 ',
   workbench_Notice_zaiChuangJianLianJie: '在创建连接时，用户可以选择连接类型',
   workbench_Notice_benCiXinZengRi: '本次新增日志过滤筛选功能，用户可以通过日志过滤筛选',
   workbench_Notice_zhiChiPiLiangCao: '3. 支持批量操作、体验更佳',
@@ -1026,14 +1021,13 @@ export default {
   dfs_workbench_tyepmap_apIfuwu7: 'API服务重启失败',
   dfs_workbench_tyepmap_guanliduanfuwu7: '管理端服务重启失败',
   dfs_workbench_tyepmap_cdCzhihou2: 'CDC滞后超时',
-
   _workbench_workbench_yigoushishitong: '异构实时同步',
   _workbench_workbench_shujuruhucang: '数据入湖仓 ',
+  _workbench_workbench_shujurucang: '数据入仓',
   _workbench_workbench_jichengaliyun: '集成阿里云计算巢',
   _workbench_workbench_jiangshujudaoru: '数据导入',
   _workbench_workbench_jiangshujudaorusub: '阿里云 Tablestore',
   _workbench_workbench_tansuoshili: '探索示例',
-
   dfs_workbench_workbench_zhongyaobanbensheng: '【重要】版本升级和服务切换重要公告',
   dfs_workbench_workbench_xinzengzidingyi: '· 新增自定义算子支持，用户可通过灵活的JS能力来定义自己的算子',
   dfs_workbench_workbench_xinzengzidingyi2: '· 新增自定义函数用户可通过jar包导入自定义函数进行使用',
@@ -1100,7 +1094,6 @@ export default {
   dfs_agent_download_upgradeversion_ruguoninbushu: '如果您部署的是“3天试用实例”请打开计算巢“试用服务”选项卡',
   dfs_agent_download_upgradeversion_jisuanchaodenglu: '计算巢登录地址',
   dfs_agent_download_upgradeversion_denglualiyun: '1. 登录阿里云计算巢控制台，找到部署Agent的服务实例.',
-
   dfs_the_header_header_jichuban: '基础版',
   dfs_the_header_header_biaozhun: '标准版',
   dfs_agent_download_paidupgrade_qingxuanzelianxi: '请选择联系人手机号码',
@@ -1129,7 +1122,6 @@ export default {
   dfs_instance_instance_anzhuangbao: '安装包 : ',
   dfs_instance_instance_banbenhao: '版本号: ',
   dfs_instance_instance_agent: 'Agent更新',
-
   dfs_user_center_phone_error: '该手机号码已被其他用户注册过',
   packages_business_task_status_agent_tooltip_agent: '任务所在的Agent为',
   dfs_agent_download_agentguidedialog_qingdianjibushu: '请选择网络安全策略',
@@ -1186,7 +1178,6 @@ export default {
   dfs_instance_stopped_help_tip_prefix:
     'Agent 离线有可能是因为网络原因或者 Agent 退出导致。请检查 Agent 所在服务器的网络及 Agent 的运行状况。您可以查看',
   dfs_instance_stopped_help_tip_suffix: '获取更多的帮助',
-
   //数据服务
   dfs_data_server: '数据服务',
   dfs_data_server_demo_title_desc: '中央化的数据服务 ·中央化存储 ·数据实时服务',
@@ -1204,10 +1195,37 @@ export default {
   dfs_data_server_On_Prem: 'Data Services 能力目前仅在 Tapdata On-Prem 版中上线',
   dfs_data_server_apply_for_trial: '申请试用',
   dfs_data_server_apply_for_version: '线下部署版',
-
   dfs_data_dashboard_Marquee: '当前demo环境为只读环境，仅支持查看和体验产品功能',
-
   page_title_custom_node: '自定义节点',
   packages_nodeDesign_custom_node_name_required: '请输入节点名称',
-  packages_nodeDesign_message_save_ok: '保存成功'
+  packages_nodeDesign_message_save_ok: '保存成功',
+
+  dfs_aliyun_market_checklicnese_jihuoshouquanma: '激活授权码',
+  dfs_aliyun_market_checklicnese_yanchangshouquanma: '延长授权码有效期',
+  dfs_aliyun_market_checklicnese_xiayiciyanqi: '下一次延期处理',
+  dfs_aliyun_market_checklicnese_ninhaimeiyouji: '您还没有激活授权码，请到阿里云市场复制授权码并在授权码激活页面激活',
+  dfs_aliyun_market_checklicnese_weijihuoshouquan: '未激活授权码',
+  dfs_aliyun_market_checklicnese_qingdaoaliyun: '请到阿里云市场延长授权码有效期',
+  dfs_aliyun_market_checklicnese_youxiaoqizhi: ' 有效期至',
+  dfs_aliyun_market_checklicnese_nindeshouquanma: '您的授权码 ',
+  dfs_aliyun_market_checklicnese_nindeshouquanma2: '您的授权码已到期，请尽快延长有效期',
+  dfs_aliyun_market_checklicnese_nindeshouquanma3: '您的授权码即将到期，请尽快延长有效期',
+  dfs_aliyun_market_license_jihuochenggongS: '激活成功，30S后跳转到工作台',
+  dfs_aliyun_market_license_jihuo: '激活',
+  dfs_aliyun_market_license_qianwanggongzuotai: '前往工作台',
+  dfs_aliyun_market_license_shouquanma: '授权码：',
+  dfs_aliyun_market_license_niantiedaoxiafang: '3. 粘贴到下方授权文本框并验证',
+  dfs_aliyun_market_license_chuangjianshouquanma: '2. 创建授权码并复制',
+  dfs_aliyun_market_license_dakaialiyun: '1. 打开阿里云市场',
+  dfs_aliyun_market_license_jihuoaliyun: '激活阿里云市场授权码',
+  dfs_views_error_zuoweidailihuo: '作为代理或网关使用的服务器从请求响应链的下一条链路上收到了一条伪响应。',
+  dfs_views_error_fuwuqiyudao: '服务器遇到一个妨碍它为请求提供服务的错误。',
+  dfs_views_error_zhaobudaoyemian: '找不到页面',
+  dfs_user_center_kaifapiao: '开发票',
+  dfs_user_center_xufei: '续费',
+  dfs_user_center_guoqishijian: '过期时间： ',
+  dfs_user_center_jihuoshijian: '激活时间： ',
+  dfs_user_center_shouquanma: '授权码: ',
+  dfs_user_center_shouquanmaxinxi: '授权码信息',
+  dfs_user_center_jijiangguoqi: '即将过期'
 }

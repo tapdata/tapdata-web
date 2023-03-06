@@ -22,7 +22,7 @@ export class TableProcessor extends NodeType {
       },
       name: {
         type: 'string',
-        title: i18n.t('packages_dag_nodes_database_jiedianmingcheng'),
+        title: i18n.t('public_node_name'),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input'
@@ -67,7 +67,7 @@ export class TableProcessor extends NodeType {
               }
             }
           }}}`,
-          message: '表名重复'
+          message: i18n.t('packages_dag_nodes_tableprocessor_biaomingchongfu')
         }
       }
     }

@@ -1,7 +1,7 @@
 <template>
   <ElContainer :class="['layout-wrap', $i18n && $i18n.locale]">
     <TheHeader ref="theHeader" class="layout-header"></TheHeader>
-    <ElAside class="left-aside" width="200px">
+    <ElAside class="left-aside" width="220px">
       <ElMenu :default-active="activeMenu" @select="menuTrigger">
         <template v-for="menu in menus">
           <ElSubmenu v-if="menu.children" :key="menu.title" :index="menu.name">
@@ -50,6 +50,7 @@
     <AgentGuideDialog :visible.sync="agentGuideDialog" @openAgentDownload="openAgentDownload"></AgentGuideDialog>
     <AgentDownloadModal :visible.sync="agentDownload.visible" :source="agentDownload.data"></AgentDownloadModal>
     <BindPhone :visible.sync="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>
+    <CheckLicense :visible.sync="aliyunMaketVisible" :user="userInfo"></CheckLicense>
   </ElContainer>
 </template>
 
@@ -62,6 +63,7 @@ import ConnectionTypeDialog from '@/components/ConnectionTypeDialog'
 import AgentDownloadModal from '@/views/agent-download/AgentDownloadModal'
 import AgentGuideDialog from '@/views/agent-download/AgentGuideDialog'
 import BindPhone from '@/views/user/components/BindPhone'
+import CheckLicense from '@/views/aliyun-market/CheckLicnese'
 import { buried } from '@/plugins/buried'
 import Cookie from '@tap/shared/src/cookie'
 
@@ -74,7 +76,8 @@ export default {
     AgentDownloadModal,
     AgentGuideDialog,
     BindPhone,
-    PageHeader
+    PageHeader,
+    CheckLicense
   },
   data() {
     const $t = this.$t.bind(this)
@@ -132,11 +135,27 @@ export default {
       },
       bindPhoneVisible: false,
       agentGuideDialog: false,
-      showAgentWarning: false
+      showAgentWarning: false,
+      userInfo: '',
+      aliyunMaketVisible: false
     }
   },
   created() {
-    this.loadChat()
+    if (!window.__config__?.disabledOnlineChat) {
+      this.loadChat()
+    }
+    if (window.__config__?.disabledDataService) {
+      //海外版隐藏数据服务
+      this.sortMenus = this.sortMenus.filter(item => item.name !== 'dataServerList')
+    }
+    if (window.__config__?.showSwimLane) {
+      let swimLane = {
+        name: 'swimLane',
+        title: 'Data Console(Preview)',
+        icon: 'operation-log'
+      }
+      this.sortMenus.push(swimLane)
+    }
     this.loopLoadAgentCount()
     this.activeMenu = this.$route.path
     let children = this.$router.options.routes.find(r => r.path === '/')?.children || []
@@ -161,6 +180,11 @@ export default {
   mounted() {
     //获取cookie 是否用户有操作过 稍后部署 且缓存是当前用户 不在弹窗
     let user = window.__USER_INFO__
+    this.userInfo = user
+    //检查是云市场用户授权码有效期
+    if (user?.enableLicense) {
+      this.checkLicense(user)
+    }
     let isCurrentUser = Cookie.get('deployLaterUser') === user?.userId
     if (Cookie.get('deployLater') == 1 && isCurrentUser) return
     this.checkDialogState()
@@ -218,6 +242,10 @@ export default {
     // 检查微信用户，是否绑定手机号
     checkWechatPhone() {
       let user = window.__USER_INFO__
+      if (window.__config__?.disabledBindingPhone) {
+        //海外版不强制绑定手机号
+        return
+      }
       this.bindPhoneVisible = user?.registerSource === 'social:wechatmp-qrcode' && !user?.telephone
       return this.bindPhoneVisible
     },
@@ -269,11 +297,36 @@ export default {
 
       $zoho.salesiq.ready = function () {
         const user = window.__USER_INFO__
+        $zoho.salesiq.visitor.contactnumber(user.telephone)
         $zoho.salesiq.visitor.info({
           tapdata_username: user.nickname || user.username,
           tapdata_phone: user.telephone,
           tapdata_email: user.email
         })
+
+        $zoho.salesiq.onload = function () {
+          let siqiframe = document.getElementById('siqiframe')
+          console.log('siqiframe', siqiframe) // eslint-disable-line
+
+          if (siqiframe) {
+            let style = document.createElement('style')
+            style.type = 'text/css'
+            style.innerHTML = `.botactions em { white-space: nowrap; }`
+            siqiframe.contentWindow.document.getElementsByTagName('head').item(0).appendChild(style)
+          }
+        }
+
+        /*$zoho.salesiq.floatbutton.click(function () {
+          let siqiframe = document.getElementById('siqiframe')
+          console.log('siqiframe', siqiframe) // eslint-disable-line
+
+          if (siqiframe) {
+            let style = document.createElement('style')
+            style.type = 'text/css'
+            style.innerHTML = `.botactions em { white-space: nowrap; }`
+            siqiframe.contentWindow.document.getElementsByTagName('head').item(0).appendChild(style)
+          }
+        })*/
       }
     },
 
@@ -292,6 +345,31 @@ export default {
             this.loopLoadAgentCount()
           }, 10000)
         })
+    },
+    //检查云市场用户授权码是否过期
+    checkLicense(user) {
+      //未激活
+      var licenseCodes = user?.licenseCodes || []
+      if (!user?.licenseValid && licenseCodes?.length === 0) {
+        //未激活
+        this.aliyunMaketVisible = true
+        this.userInfo = {
+          showNextProcessing: false,
+          licenseType: 'license',
+          nearExpiration: []
+        }
+      }
+      //已过期
+      let expired = licenseCodes.filter(it => it.licenseStatus === 'EXPIRED')
+      if (!user?.licenseValid && expired?.length > 0) {
+        //授权码不可用 存在有临近授权码
+        this.aliyunMaketVisible = true
+        this.userInfo = {
+          showNextProcessing: false,
+          licenseType: 'checkCode',
+          data: expired
+        }
+      }
     }
   }
 }
@@ -304,7 +382,7 @@ export default {
   word-wrap: break-word;
   word-break: break-word;
   .left-aside {
-    border-right: map-get($borderColor, aside);
+    border-right: 1px map-get($borderColor, aside) solid;
     background: map-get($bgColor, disable);
     .el-menu-item {
       height: 50px;

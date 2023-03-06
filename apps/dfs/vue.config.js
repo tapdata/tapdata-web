@@ -5,12 +5,13 @@ const crypto = require('crypto')
 const serveUrlMap = {
   mock: 'http://localhost:3000',
   dev: 'http://backend:3030',
-  test: 'https://dev.cloud.tapdata.net:8443',
+  test: 'https://test3.cloud.tapdata.net:7443',
   local: 'https://v3.test.cloud.tapdata.net',
   localTm: 'http://127.0.0.1:3030'
 }
 // const userId = '60b60af1147bce7705727188' // zed?
-const userId = '637b268fe377c481ae013dc2' // jason
+const userId = '60b064e9a65d8e852c8523bc' // lemon
+//const userId = '60cc0c304e190a579cbe306c' // jason
 let origin
 const { argv } = process
 const { SERVE_ENV = 'mock' } = process.env
@@ -30,6 +31,10 @@ let varUrl = '~@tap/assets/styles/var.scss'
 let pages = {
   index: {
     entry: 'src/pages/main.js',
+    title: 'Tapdata Cloud'
+  },
+  license_code_activation: {
+    entry: 'src/pages/licenseCodeActivation.js',
     title: 'Tapdata Cloud'
   }
 }
@@ -93,6 +98,11 @@ module.exports = {
                   )
           }
   },
+  transpileDependencies: [
+    // 按需添加需要babel处理的模块
+    /[/\\]node_modules[/\\](.+?)?element-ui(.*)[/\\]packages[/\\]table[/\\]src/,
+    /[/\\]node_modules[/\\](.+?)?element-ui(.*)[/\\]packages[/\\]tooltip[/\\]src/
+  ],
   configureWebpack: config => {
     config.resolve.extensions = ['.js', 'jsx', '.vue', '.json', '.ts', '.tsx']
 

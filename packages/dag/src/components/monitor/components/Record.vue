@@ -16,7 +16,7 @@
       <template slot="operation" slot-scope="scope">
         <div class="operate-columns">
           <ElButton size="mini" type="text" @click="handleDetail(scope.row)">{{
-            $t('packages_dag_components_record_xiangqing')
+            $t('public_button_details')
           }}</ElButton>
         </div>
       </template>
@@ -60,11 +60,13 @@ export default {
         {
           label: i18n.t('packages_dag_components_record_yunxingkaishishi'),
           prop: 'startDate',
+          width: 160,
           dataType: 'time'
         },
         {
           label: i18n.t('packages_dag_components_record_yunxingjieshushi'),
           prop: 'endDate',
+          width: 160,
           dataType: 'time'
         },
         {
@@ -87,7 +89,7 @@ export default {
           dataType: 'number'
         },
         {
-          label: i18n.t('packages_dag_components_record_caozuo'),
+          label: i18n.t('public_operation'),
           slotName: 'operation'
         }
       ]

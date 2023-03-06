@@ -81,6 +81,17 @@ export default {
     }
   },
 
+  mounted() {
+    if (['MigrationMonitorViewer'].includes(this.$route.name)) {
+      this.currentTab = 'log'
+      const { start, end } = this.$route.query
+      this.changeTab(this.currentTab, {
+        start: start * 1,
+        end: end * 1
+      })
+    }
+  },
+
   methods: {
     ...mapMutations('dataflow', ['updateNodeProperties', 'setNodeError', 'clearNodeError', 'setActiveType']),
     ...mapActions('dataflow', ['updateDag']),

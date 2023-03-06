@@ -34,7 +34,7 @@ export default {
       },
       columns: [
         {
-          label: this.$t('packages_business_task_name'),
+          label: this.$t('public_task_name'),
           prop: 'parameter1'
         },
         {

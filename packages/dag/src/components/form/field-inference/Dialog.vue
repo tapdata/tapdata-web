@@ -66,9 +66,9 @@
       <div class="noData">{{ $t('packages_form_dag_dialog_field_mapping_no_data') }}</div>
     </div>
     <span slot="footer" class="dialog-footer">
-      <ElButton size="mini" @click="handleCancel">{{ $t('button_cancel') }}</ElButton>
+      <ElButton size="mini" @click="handleCancel">{{ $t('public_button_cancel') }}</ElButton>
       <ElButton size="mini" type="primary" :disabled="getSubmitDisabled()" :loading="editBtnLoading" @click="submit">{{
-        $t('button_confirm')
+        $t('public_button_confirm')
       }}</ElButton>
     </span>
   </ElDialog>

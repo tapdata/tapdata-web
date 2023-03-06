@@ -81,8 +81,16 @@ export default class MetadataInstances extends Http {
     return this.axios.get(this.url + '/tables?connectionId=' + connectionId)
   }
 
+  getTablesValue(connectionId) {
+    return this.axios.get(this.url + '/tablesValue?connectionId=' + connectionId)
+  }
+
   getSourceTables(connectionId) {
     return this.axios.get(this.url + '/tables?connectionId=' + connectionId + '&sourceType=SOURCE')
+  }
+
+  getSourceTablesValues(connectionId) {
+    return this.axios.get(this.url + '/tablesValue?connectionId=' + connectionId + '&sourceType=SOURCE')
   }
 
   /**
@@ -130,6 +138,9 @@ export default class MetadataInstances extends Http {
   }
   logicSchema(taskId, params) {
     return this.axios.delete(this.url + '/logic/schema/' + taskId, { params })
+  }
+  pageTables(params) {
+    return this.axios.get(this.url + '/page-tables', { params })
   }
 }
 export { MetadataInstances }

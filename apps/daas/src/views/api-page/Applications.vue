@@ -55,8 +55,8 @@
       <el-table-column
         :label="$t('application_header_redirect_uri')"
         :show-overflow-tooltip="true"
-        prop="redirectUris"
-        sortable="redirectUris"
+        prop="redirectUrisStr"
+        sortable="redirectUrisStr"
         min-width="140"
       >
       </el-table-column>
@@ -65,10 +65,10 @@
           <span v-for="item in scope.row.scopes" :key="item" class="table-span">{{ item }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('column_operation')" min-width="120" fixed="right">
+      <el-table-column :label="$t('public_operation')" min-width="120" fixed="right">
         <template slot-scope="scope">
           <ElButton v-readonlybtn="'API_clients_amangement'" size="mini" type="text" @click="edit(scope.row)">
-            {{ $t('modules_edit') }}
+            {{ $t('public_button_edit') }}
           </ElButton>
           <ElButton
             v-readonlybtn="'API_clients_amangement'"
@@ -76,7 +76,7 @@
             size="mini"
             type="text"
             @click="remove(scope.row)"
-            >{{ $t('button_delete') }}</ElButton
+            >{{ $t('public_button_delete') }}</ElButton
           >
         </template>
       </el-table-column>
@@ -113,9 +113,9 @@
             <ElOption v-for="item in roles" :label="item.name" :value="item.name" :key="item.id"></ElOption>
           </ElSelect>
         </ElFormItem>
-        <ElFormItem :label="$t('application_header_redirect_uri')" required prop="redirectUris">
+        <ElFormItem :label="$t('application_header_redirect_uri')" required prop="redirectUrisStr">
           <ElInput
-            v-model="createForm.redirectUris"
+            v-model="createForm.redirectUrisStr"
             type="textarea"
             size="mini"
             :maxlength="200"
@@ -130,14 +130,16 @@
         </ElFormItem>
       </ElForm>
       <span slot="footer" class="dialog-footer">
-        <ElButton @click="createDialogVisible = false" size="small">{{ $t('button_cancel') }}</ElButton>
-        <ElButton type="primary" @click="createApplication()" size="small">{{ $t('button_confirm') }}</ElButton>
+        <ElButton @click="createDialogVisible = false" size="small">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton type="primary" @click="createApplication()" size="small">{{ $t('public_button_confirm') }}</ElButton>
       </span>
     </ElDialog>
   </section>
 </template>
 
 <script>
+import { cloneDeep } from 'lodash'
+
 import { roleApi, applicationApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage } from '@tap/business'
@@ -164,7 +166,8 @@ export default {
         grantTypes: [],
         clientSecret: '',
         scopes: [],
-        redirectUris: '',
+        redirectUris: [],
+        redirectUrisStr: '',
         showMenu: true
       }
     }
@@ -199,7 +202,8 @@ export default {
         grantTypes: ['implicit', 'client_credentials'],
         clientSecret: '',
         scopes: [],
-        redirectUris: '',
+        redirectUris: [],
+        redirectUrisStr: '',
         showMenu: true
       }
     },
@@ -209,42 +213,44 @@ export default {
       this.$nextTick(() => {
         this.$refs.form.clearValidate()
       })
+      item.redirectUrisStr = item.redirectUris?.join()
       this.createForm = item
     },
     // 移除
     remove(item) {
       const h = this.$createElement
-      let message = h('p', [this.$t('message_deleteOrNot') + ' ' + item.name])
-      this.$confirm(message, this.$t('message_prompt'), {
+      let message = h('p', [this.$t('public_message_delete_confirm') + ' ' + item.name])
+      this.$confirm(message, this.$t('public_message_title_prompt'), {
         type: 'warning'
       }).then(resFlag => {
         if (!resFlag) {
           return
         }
         applicationApi.delete(item.id).then(() => {
-          this.$message.success(this.$t('message_delete_ok'))
+          this.$message.success(this.$t('public_message_delete_ok'))
           this.table.fetch()
         })
         // .catch(() => {
-        //   this.$message.info(this.$t('message_delete_fail'))
         // })
       })
     },
     // 保存
     createApplication() {
       const method = this.createForm.id ? 'patch' : 'post'
-      const params = this.createForm
+      const params = cloneDeep(this.createForm)
       params.name = this.createForm.clientName
       params.tokenType = 'jwt'
       params.clientType = 'public'
       params.responseTypes = ['token']
+      params.redirectUris = params.redirectUrisStr?.split(',') || []
+      delete params['redirectUrisStr']
 
       this.$refs.form.validate(valid => {
         if (valid) {
           applicationApi[method](params).then(() => {
             this.table.fetch()
             this.createDialogVisible = false
-            this.$message.success(this.$t('message_save_ok'))
+            this.$message.success(this.$t('public_message_save_ok'))
           })
         }
       })

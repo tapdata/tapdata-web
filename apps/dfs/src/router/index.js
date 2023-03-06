@@ -44,10 +44,17 @@ const VerifyDetails = async () => {
   const { VerifyDetails } = await import('@tap/business')
   return VerifyDetails
 }
+
+const SwimlaneDashboard = async () => {
+  const { SwimlaneDashboard } = await import('@tap/business')
+  return SwimlaneDashboard
+}
+
 const CustomNodeList = async () => {
   const { CustomNodeList } = await import('@tap/business')
   return CustomNodeList
 }
+
 const NodeEditor = async () => {
   const { Editor } = await import(/* webpackChunkName: "node-design" */ '@tap/node-design')
   return Editor
@@ -254,6 +261,16 @@ const routes = [
           icon: 'data-server'
         }
       },
+      {
+        path: '/swim-lane',
+        name: 'swimLane',
+        component: SwimlaneDashboard,
+        meta: {
+          title: 'dfs_data_server',
+          hideTitle: true,
+          icon: 'data-server'
+        }
+      },
       /* ---------- 自定义节点  ----------*/
       {
         path: '/custom-node',
@@ -410,6 +427,12 @@ const routes = [
     path: '/node/editor/:id',
     name: 'NodeEditor',
     component: NodeEditor
+  },
+  //云市场对接
+  {
+    path: '/aliyun-market/license',
+    name: 'aliyunMarketLicense',
+    component: () => import('../views/aliyun-market/License.vue')
   }
 ]
 if (process.env.NODE_ENV === 'development') {

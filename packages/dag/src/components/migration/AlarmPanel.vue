@@ -398,7 +398,7 @@ export default {
         properties: {}
       }
       result.properties[key1] = this.getInputNumber(i18n.t('packages_dag_migration_alarmpanel_lianxu'), 10, key4)
-      result.properties[key2] = this.getSelect(i18n.t('packages_dag_migration_alarmpanel_gedian'))
+      result.properties[key2] = this.getSelect(i18n.t('public_time_m'))
       result.properties[key3] = this.getInputNumber('', 1000, key4)
       result.properties.ms = {
         title: 's',

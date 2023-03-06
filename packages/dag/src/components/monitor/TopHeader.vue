@@ -82,7 +82,7 @@
       </ElTooltip>
       <VDivider class="mx-3" vertical></VDivider>
       <!--设置-->
-      <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_setting')">
+      <ElTooltip transition="tooltip-fade-in" :content="$t('public_button_setting')">
         <button @click="$emit('showSettings')" class="icon-btn" :class="{ active: activeType === 'settings' }">
           <VIcon size="20">setting-outline</VIcon>
         </button>
@@ -103,7 +103,7 @@
           size="medium"
           @click="$emit('reset')"
         >
-          {{ $t('packages_dag_dataFlow_button_reset') }}
+          {{ $t('public_button_reset') }}
         </ElButton>
         <ElButton
           v-if="dataflow.disabledData && !dataflow.disabledData.edit"
@@ -112,7 +112,7 @@
           size="medium"
           @click="$emit('edit')"
         >
-          {{ $t('packages_dag_button_edit') }}
+          {{ $t('public_button_edit') }}
         </ElButton>
         <ElButton
           v-if="!(dataflow.disabledData && dataflow.disabledData.start)"
@@ -121,7 +121,7 @@
           type="primary"
           @click="$emit('start')"
         >
-          {{ $t('packages_dag_task_list_run') }}
+          {{ $t('public_button_start') }}
         </ElButton>
         <template v-else>
           <ElButton
@@ -133,7 +133,7 @@
             type="danger"
             @click="$emit('forceStop')"
           >
-            {{ $t('packages_dag_task_list_force_stop') }}
+            {{ $t('public_button_force_stop') }}
           </ElButton>
           <ElButton
             v-else
@@ -144,7 +144,7 @@
             class="mx-2"
             @click="$emit('stop')"
           >
-            {{ $t('packages_dag_task_list_stop') }}
+            {{ $t('public_button_stop') }}
           </ElButton>
         </template>
       </template>
@@ -192,18 +192,18 @@ export default {
       optionCode: isMacOs ? 'Option' : 'Alt',
       name: '',
       syncMap: {
-        'initial_sync+cdc': this.$t('packages_dag_dataFlow_initial_sync') + '+' + this.$t('packages_dag_dataFlow_cdc'),
-        initial_sync: this.$t('packages_dag_dataFlow_initial_sync'),
-        cdc: this.$t('packages_dag_dataFlow_cdc')
+        'initial_sync+cdc': this.$t('public_task_type_initial_sync') + '+' + this.$t('public_task_type_cdc'),
+        initial_sync: this.$t('public_task_type_initial_sync'),
+        cdc: this.$t('public_task_type_cdc')
       },
       chooseItems: [4, 2, 1.5, 1, 0.5, 0.25],
       showSearchNodePopover: false,
       nodeSearchInput: '',
       editSvg: require('@tap/assets/images/edit-fill.svg'),
       syncType: {
-        initial_sync: i18n.t('packages_dag_task_setting_initial_sync'),
-        cdc: i18n.t('packages_dag_task_setting_cdc'),
-        'initial_sync+cdc': i18n.t('packages_dag_components_formpanel_quanliangzengliang')
+        initial_sync: i18n.t('public_task_type_initial_sync'),
+        cdc: i18n.t('public_task_type_cdc'),
+        'initial_sync+cdc': i18n.t('public_task_type_initial_sync_and_cdc')
       }
     }
   },

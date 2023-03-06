@@ -117,7 +117,7 @@
             <span v-show="tbTotal > 0" class="badge">{{ tbTotal }}</span>
           </span>
           <!--创建新表作为节点使用-->
-          <ElTooltip :content="$t('packages_dag_components_leftsidebar_chongxinjiazai')" placement="top">
+          <ElTooltip :content="$t('public_button_reload')" placement="top">
             <StageButton :connection-id="activeConnection.id" @complete="loadDatabaseTable()">
               <VIcon class="click-btn refresh mr-1" size="16">refresh</VIcon>
             </StageButton>
@@ -203,7 +203,7 @@
           <div class="flex align-center flex-1">
             <span class="flex-1 user-select-none">
               <!--处理节点-->
-              {{ $t('packages_dag_dag_processor_node') }}
+              {{ $t('public_node_processor') }}
             </span>
           </div>
         </template>
@@ -288,7 +288,7 @@ import BaseNode from './BaseNode'
 import CreateTable from './CreateTable'
 import NodeIcon from './NodeIcon'
 import ConnectionType from './ConnectionType'
-import StageButton from '@tap/component/src/StageButton'
+import StageButton from '@tap/business/src/components/StageButton'
 
 export default {
   name: 'LeftSidebar',
