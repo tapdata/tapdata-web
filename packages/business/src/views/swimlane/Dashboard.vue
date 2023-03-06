@@ -1,20 +1,26 @@
 <template>
   <div class="swim-lane flex flex-column h-100">
-    <div class="p-6">
-      <span class="fs-5 font-color-dark">Dashboard</span>
-      <ElInput
-        class="search-input ml-4"
-        v-model="keyword"
-        prefix-icon="el-icon-search"
-        size="small"
-        clearable
-        style="width: 240px"
-        @input="searchFnc"
-      ></ElInput>
+    <div class="p-6 flex justify-content-between">
+      <div>
+        <span class="fs-5 font-color-dark">Dashboard</span>
+        <ElInput
+          class="search-input ml-4"
+          v-model="keyword"
+          prefix-icon="el-icon-search"
+          size="small"
+          clearable
+          style="width: 240px"
+          @input="searchFnc"
+        ></ElInput>
+      </div>
+      <div>
+        <span>四泳道</span>
+        <ElSwitch v-model="moreLaneSwitch" class="ml-2"></ElSwitch>
+      </div>
     </div>
     <div class="list flex flex-fill overflow-hidden">
       <component
-        v-for="(item, index) in options"
+        v-for="(item, index) in laneOptions"
         :key="index"
         :is="item.component"
         :ref="item.component"
@@ -34,7 +40,6 @@
 
 <script>
 import CreateConnection from '../../components/create-connection/Dialog'
-
 import SourceItem from './Source'
 import TargetItem from './Target'
 import FDMItem from './FDM'
@@ -48,12 +53,27 @@ export default {
   data() {
     return {
       keyword: '',
-      options: [
+      visible: false,
+      createConnectionParams: {},
+      dragState: {
+        isDragging: false,
+        draggingObjects: [],
+        dropNode: null,
+        form: ''
+      },
+      moreLaneSwitch: false
+    }
+  },
+
+  computed: {
+    laneOptions() {
+      const result = [
         {
           title: 'SOURCES',
           type: 'source',
           add: true,
-          component: 'SourceItem'
+          component: 'SourceItem',
+          level: 'base'
         },
         {
           title: 'FDM / CACHE',
@@ -67,17 +87,11 @@ export default {
           title: 'SERVICES / TARGETS',
           type: 'target',
           add: true,
-          component: 'TargetItem'
+          component: 'TargetItem',
+          level: 'base'
         }
-      ],
-      visible: false,
-      createConnectionParams: {},
-      dragState: {
-        isDragging: false,
-        draggingObjects: [],
-        dropNode: null,
-        form: ''
-      }
+      ]
+      return this.moreLaneSwitch ? result : result.filter(t => t.level === 'base')
     }
   },
 
@@ -90,7 +104,7 @@ export default {
     },
 
     handleSuccess(value) {
-      const component = this.options.find(t => t.type === this.createConnectionParams.type)?.component
+      const component = this.laneOptions.find(t => t.type === this.createConnectionParams.type)?.component
       this.$refs[component]?.[0]?.addItem(value)
     },
 
