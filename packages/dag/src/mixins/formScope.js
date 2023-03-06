@@ -533,7 +533,7 @@ export default {
             } else {
               const values = policyField.dataSource.map(item => item.value)
               const alternatives = policy.alternatives.filter(key => values.includes(key))
-              if (alternatives.length <= 1) {
+              if (!alternatives.includes(policyField?.value)) {
                 setTimeout(() => {
                   policyField.setPattern('readPretty')
                 }, 50)

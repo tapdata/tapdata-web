@@ -837,7 +837,15 @@ export class Table extends NodeType {
                             label: i18n.t('packages_dag_nodes_database_mubiaocunzaishi'),
                             value: 'ignore_on_exists'
                           }
-                        ]
+                        ],
+                        'x-reactions': {
+                          fulfill: {
+                            state: {
+                              display:
+                                '{{$values.attrs.capabilities.some(item => item.id === "dml_insert_policy") ? "visible":"hidden"}}'
+                            }
+                          }
+                        }
                       },
                       updatePolicy: {
                         type: 'string',
@@ -858,7 +866,15 @@ export class Table extends NodeType {
                             label: i18n.t('packages_dag_nodes_database_bucunzaishicha'),
                             value: 'insert_on_nonexists'
                           }
-                        ]
+                        ],
+                        'x-reactions': {
+                          fulfill: {
+                            state: {
+                              display:
+                                '{{$values.attrs.capabilities.some(item => item.id === "dml_update_policy") ? "visible":"hidden"}}'
+                            }
+                          }
+                        }
                       },
                       deletePolicy: {
                         type: 'void',
@@ -986,6 +1002,12 @@ export class Table extends NodeType {
                         }
                       }
                     }
+                  },
+
+                  'attrs.capabilities': {
+                    type: 'array',
+                    'x-display': 'hidden',
+                    'x-reactions': '{{useDmlPolicy}}'
                   }
                 }
               },
