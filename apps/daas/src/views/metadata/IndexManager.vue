@@ -33,13 +33,7 @@
           <span>{{ $t('metadata_details_index_status_' + scope.row.status) }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('metadata_details_index_create_by')" prop="create_by">
-        <!-- <template slot-scope="scope">
-          <span>{{
-            $t('metadata_details_index_create_by_' + scope.row.create_by)
-          }}</span>
-        </template> -->
-      </el-table-column>
+      <el-table-column :label="$t('metadata_details_index_create_by')" prop="create_by"> </el-table-column>
       <el-table-column :label="$t('public_operation')" width="120">
         <template slot-scope="scope">
           <el-button

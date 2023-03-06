@@ -171,6 +171,46 @@
         </ElRow>
       </div>
     </div>
+
+    <section v-if="userData.enableLicense">
+      <div class="mt-12 fs-7">{{ $t('dfs_user_center_shouquanmaxinxi') }}</div>
+      <ElDivider class="my-6"></ElDivider>
+      <ul>
+        <li class="mb-4" v-for="(item, index) in userData.licenseCodes" :key="index">
+          <el-row
+            ><el-col :span="12"
+              ><span class="enterprise-item__label inline-block">{{ $t('dfs_user_center_shouquanma') }}</span
+              >{{ item.licenseCode }}</el-col
+            ></el-row
+          >
+          <el-row class="mt-2">
+            <el-col :span="12"
+              ><span class="enterprise-item__label inline-block">{{ $t('dfs_user_center_jihuoshijian') }}</span
+              >{{ item.activateTime }}</el-col
+            >
+            <el-col :span="12"
+              ><span class="enterprise-item__label inline-block">{{ $t('dfs_user_center_guoqishijian') }}</span
+              >{{ item.expiredTime }}
+              <span v-if="item.nearExpiration" class="expried inline-block">{{
+                $t('dfs_user_center_jijiangguoqi')
+              }}</span>
+            </el-col>
+          </el-row>
+        </li>
+      </ul>
+      <div v-if="userData.licenseCodes.length > 0" class="mt-4" style="margin-left: 100px">
+        <el-link type="primary" href="https://market.console.aliyun.com/imageconsole/index.htm" target="_blank">{{
+          $t('dfs_user_center_xufei')
+        }}</el-link>
+        <el-link
+          class="ml-4"
+          type="primary"
+          href="https://market.console.aliyun.com/receipt/index.htm"
+          target="_blank"
+          >{{ $t('dfs_user_center_kaifapiao') }}</el-link
+        >
+      </div>
+    </section>
     <ElDialog
       width="435px"
       append-to-body
@@ -472,6 +512,7 @@ import VerificationCode from '@/components/VerificationCode'
 import UploadFile from '@/components/UploadFile'
 import { urlToBase64 } from '@/util'
 import CryptoJS from 'crypto-js'
+import dayjs from 'dayjs'
 
 export default {
   name: 'Center',
@@ -484,7 +525,9 @@ export default {
         avatar: '',
         telephone: '',
         wx: '',
-        email: ''
+        email: '',
+        enableLicense: false,
+        licenseCodes: []
       },
       nameForm: {
         nickname: ''
@@ -549,6 +592,7 @@ export default {
       for (let key in userData) {
         userData[key] = window.__USER_INFO__[key]
       }
+
       userData.avatar = window.__USER_INFO__.avatar
       this.avatar = userData.avatar
       this.getEnterprise()
@@ -557,6 +601,12 @@ export default {
       this.resetPhoneForm()
       this.resetEmailForm()
       nameForm.nickname = userData.nickname
+
+      userData.licenseCodes = userData.licenseCodes.map(item => {
+        item.activateTime = item.activateTime ? dayjs(item.activateTime).format('YYYY-MM-DD HH:mm:ss') : ''
+        item.expiredTime = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD HH:mm:ss') : ''
+        return item
+      })
     },
     getEnterprise() {
       this.$axios.get('tm/api/Customer').then(data => {
@@ -894,7 +944,13 @@ export default {
   line-height: 34px;
 }
 .enterprise-item__label {
-  width: 80px;
+  width: 100px;
+}
+.expried {
+  padding: 2px 4px;
+  color: map-get($color, warning);
+  border-radius: 4px;
+  border: 1px solid map-get($color, warning);
 }
 .enterprise-item__value {
   width: 240px;

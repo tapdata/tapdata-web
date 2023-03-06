@@ -68,6 +68,11 @@
             </ElTooltip>
           </template>
         </ElTableColumn>
+        <ElTableColumn width="180px" :label="$t('agent_heartbeat')">
+          <template slot-scope="scope">
+            <span>{{ handlePingTime(scope.row) }}</span>
+          </template>
+        </ElTableColumn>
         <ElTableColumn :label="$t('agent_task_number')" width="160">
           <template slot-scope="scope">
             <div>
@@ -559,6 +564,10 @@ export default {
             this.loading = false
           }
         })
+    },
+    handlePingTime(row) {
+      let pingTime = row?.tmInfo?.pingTime
+      return pingTime ? dayjs(pingTime).format('YYYY-MM-DD HH:mm:ss') : '-'
     },
     getImg(name) {
       return require(`../../../public/images/agent/${name}.png`)

@@ -1,5 +1,5 @@
 <template>
-  <Drawer class="sw-table-drawer" :visible.sync="visible" width="850px">
+  <Drawer class="sw-table-drawer" :visible.sync="visible" width="850px" v-loading="loading">
     <header v-if="detailData">
       <div class="table-name mb-4">{{ detailData.name }}</div>
       <span class="mr-2">
@@ -19,20 +19,20 @@
           <section class="mt-2">
             <div class="mb-4">
               <span class="table-dec-label mb-4">Table Description：</span
-              ><span class="table-dec-txt">Lorem ipsum dolor sit</span>
+              ><el-input type="textarea" row="4" class="table-dec-txt mt-2" v-model="detailData.commnet"></el-input>
             </div>
             <el-row>
               <el-col :span="4">
                 <div class="table-dec-label">Rows</div>
-                <div class="table-dec-txt mt-4">2.7M</div>
+                <div class="table-dec-txt mt-4">{{ numOfRows }}</div>
               </el-col>
               <el-col :span="4">
                 <div class="table-dec-label">Columns</div>
-                <div class="table-dec-txt mt-4">2.7M</div>
+                <div class="table-dec-txt mt-4">{{ tableFields.length }}</div>
               </el-col>
               <el-col :span="4">
                 <div class="table-dec-label">Storage Size</div>
-                <div class="table-dec-txt mt-4">27M</div>
+                <div class="table-dec-txt mt-4">{{ storageSize }}</div>
               </el-col>
               <el-col :span="6">
                 <div class="table-dec-label">Connection</div>
@@ -47,12 +47,18 @@
                   class="discovery-page-table"
                   :columns="columnsPreview"
                   :data="tableFields"
+                  max-height="381px"
                   :has-pagination="false"
                 >
                   <div slot="empty">{{ $t('public_data_no_data') }}</div>
                 </VTable>
               </el-tab-pane>
-              <el-tab-pane label="Sample Data" name="sampleData">Schema</el-tab-pane>
+              <el-tab-pane label="Sample Data" name="sampleData">
+                <el-table :data="sampleData" v-loading="loadingSampleData" max-height="381px">
+                  <el-table-column type="index" label="#"></el-table-column>
+                  <el-table-column v-for="(item, index) in sampleHeader" :key="index" :prop="item" :label="item">
+                  </el-table-column> </el-table
+              ></el-tab-pane>
             </el-tabs>
           </section>
           <section class="mt-6">
@@ -76,7 +82,43 @@
             <div slot="empty">{{ $t('public_data_no_data') }}</div>
           </VTable>
         </el-tab-pane>
-        <el-tab-pane label="Tasks" name="tasks">Tasks</el-tab-pane>
+        <el-tab-pane label="Tasks" name="tasks">
+          <div>以这个模型为源的任务</div>
+          <el-table class="discovery-page-table" :data="taskData" :has-pagination="false">
+            <el-table-column :label="$t('public_task_type')">
+              <template #default="{ row }">
+                <span>
+                  {{ row.type ? taskType[row.type] : '' }}
+                </span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="status" :label="$t('public_task_status')">
+              <template #default="{ row }">
+                <TaskStatus :task="row" :agentMap="agentMap" />
+              </template>
+            </el-table-column>
+            <el-table-column
+              sortable
+              prop="currentEventTimestamp"
+              :label="$t('public_task_cdc_time_point')"
+              min-width="164"
+            >
+              <template #default="{ row }">
+                {{ formatTime(row.currentEventTimestamp) }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="lastStartDate"
+              :label="$t('public_task_last_run_time')"
+              min-width="164"
+              sortable="custom"
+            >
+              <template #default="{ row }">
+                {{ formatTime(row.lastStartDate) }}
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
         <el-tab-pane label="APIs" name="apis">APIs</el-tab-pane>
         <el-tab-pane label="Lineage" name="lineage">APIs</el-tab-pane>
       </el-tabs>
@@ -88,12 +130,13 @@
 import { Drawer } from '@tap/component'
 import NodeIcon from '@tap/dag/src/components/NodeIcon'
 import { VTable } from '@tap/component'
-import { discoveryApi } from '@tap/api'
+import { discoveryApi, proxyApi, taskApi } from '@tap/api'
 import i18n from '@/i18n'
 import dayjs from 'dayjs'
+import { TaskStatus } from '../../components'
 export default {
   name: 'TablePreview',
-  components: { Drawer, VTable, NodeIcon },
+  components: { Drawer, VTable, TaskStatus },
   data() {
     return {
       visible: false,
@@ -102,6 +145,9 @@ export default {
       loading: false,
       detailData: {},
       tableFields: [],
+      sampleData: [],
+      sampleHeader: [],
+      loadingSampleData: false,
       columnsPreview: [
         {
           label: i18n.t('public_name'),
@@ -157,15 +203,25 @@ export default {
           label: i18n.t('datadiscovery_previewdrawer_yewumiaoshu'),
           prop: 'businessDesc'
         }
-      ]
+      ],
+      taskData: [],
+      storageSize: '',
+      numOfRows: '',
+      taskType: {
+        initial_sync: this.$t('public_task_type_initial_sync'),
+        cdc: this.$t('public_task_type_cdc'),
+        'initial_sync+cdc': this.$t('public_task_type_initial_sync') + '+' + this.$t('public_task_type_cdc')
+      }
     }
   },
   methods: {
     open(row) {
       this.visible = true
+      this.connectionId = row.connectionId
       this.getTableStorage(row)
     },
     getTableStorage(row) {
+      this.loading = true
       discoveryApi
         .overViewStorage(row.id)
         .then(res => {
@@ -174,12 +230,57 @@ export default {
             ? dayjs(this.detailData['lastUpdAt']).format('YYYY-MM-DD HH:mm:ss')
             : '-'
           this.tableFields = res?.fields || []
+          this.getSampleData()
+          this.getTasks()
+          setTimeout(() => {
+            this.getStorageSize()
+          }, 1000)
         })
         .finally(() => {
           this.loading = false
         })
     },
-    handleClick() {}
+    handleClick() {},
+    getTasks() {
+      let params = {
+        connectionId: this.connectionId,
+        tableName: this.detailData.name
+      }
+      taskApi.getTaskByTableName(params).then(res => {
+        this.taskData = res
+      })
+    },
+    getSampleData() {
+      let params = {
+        className: 'QueryDataBaseDataService',
+        method: 'getData',
+        args: [this.connectionId, this.detailData.name]
+      }
+      this.loadingSampleData = true
+      proxyApi
+        .call(params)
+        .then(res => {
+          this.sampleData = res
+          this.sampleHeader = Object.keys(this.sampleData.reduce((o, c) => Object.assign(0, c))) || []
+        })
+        .finally(() => {
+          this.loadingSampleData = false
+        })
+    },
+    getStorageSize() {
+      let params = {
+        className: 'QueryDataBaseDataService',
+        method: 'getTableInfo',
+        args: [this.connectionId, this.detailData.name]
+      }
+      proxyApi.call(params).then(res => {
+        this.storageSize = res.storageSize || 0
+        this.numOfRows = res.numOfRows || 0
+      })
+    },
+    formatTime(time) {
+      return time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
+    }
   }
 }
 </script>

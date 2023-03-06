@@ -152,6 +152,7 @@ import i18n from '@/i18n'
 
 import { VTable } from '@tap/component'
 import { alarmRuleApi, settingsApi } from '@tap/api'
+import { cloneDeep } from 'lodash'
 export default {
   name: 'AlarmNotification',
   components: { VTable },
@@ -286,7 +287,8 @@ export default {
     },
     saveAlarmRules() {
       //告警设置单独保存
-      this.alarmData = this.alarmData.map(item => {
+      let data = cloneDeep(this.alarmData)
+      data = data.map(item => {
         item.point = Math.ceil(item.point * 12) < 1 ? 1 : Math.ceil(item.point * 12)
         item.ms = Math.ceil(item.ms * 1000) < 1 ? 1 : Math.ceil(item.ms * 1000)
         return item

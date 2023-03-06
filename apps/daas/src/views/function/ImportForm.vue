@@ -108,7 +108,7 @@
       :visible="!!settingData"
     >
       <ElForm v-if="settingData" label-position="left" label-width="120px" size="small" :model="settingData">
-        <ElFormItem prop="describe" :label="$t('public_description') + ':'">
+        <ElFormItem prop="describe" :label="$t('function_describe_label') + ':'">
           <ElInput
             v-model="settingData.describe"
             type="textarea"

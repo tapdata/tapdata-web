@@ -65,6 +65,7 @@
                 v-clipboard:copy="windowsLink"
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
+                @click="handleCopy"
               >
                 <i class="click-style">{{ $t('public_button_copy') }}</i>
               </span>
@@ -104,6 +105,7 @@
                 v-clipboard:copy="linuxLink"
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
+                @click="handleCopy"
               >
                 <i class="click-style">{{ $t('public_button_copy') }}</i>
               </span>
@@ -149,6 +151,7 @@
                 v-clipboard:copy="dockerLink"
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
+                @click="handleCopy"
               >
                 <i class="click-style">{{ $t('public_button_copy') }}</i>
               </span>
@@ -228,6 +231,7 @@
                 v-clipboard:copy="token"
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
+                @click="handleCopy"
               >
                 <i class="click-style">{{ $t('public_button_copy') }}</i>
               </span>
@@ -256,6 +260,7 @@ import TheHeader from '@/components/the-header'
 export default {
   name: 'FastDownload',
   components: { TheHeader },
+  inject: ['buried'],
   data() {
     return {
       downLoadType: 'Linux',
@@ -310,6 +315,7 @@ export default {
     // windows下载
     handleDownLoad() {
       window.location = `${this.downloadUrl}tapdata.exe`
+      this.buried('downloadTapdataExe')
     },
     // 选择下载安装类型
     chooseDownLoadType(val) {
@@ -391,6 +397,15 @@ export default {
           tapdata_email: user.email
         })
       }
+    },
+    handleCopy() {
+      const MAP = {
+        Linux: 'copyTokenInLinux',
+        Docker: 'copyTokenInDocker',
+        windows: 'copyTokenInWindows',
+        AliComputenest: 'copyTokenInAliComputenest'
+      }
+      this.buried(MAP[this.downLoadType])
     }
   }
 }
