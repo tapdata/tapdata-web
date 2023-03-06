@@ -9,7 +9,7 @@ import { mapGetters, mapState } from 'vuex'
 import { createForm, onFormValuesChange } from '@formily/core'
 import { observer } from '@formily/reactive-vue'
 import FormRender from '../FormRender'
-import { debounce } from 'lodash'
+import { debounce } from 'lodash-es'
 import { taskApi } from '@tap/api'
 
 export default {

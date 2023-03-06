@@ -1,6 +1,6 @@
 import i18n from '@tap/i18n'
 import * as Vue from 'vue'
-import { debounce } from 'lodash'
+import { debounce } from 'lodash-es'
 import { Path } from '@formily/path'
 import { observable } from '@formily/reactive'
 import { setValidateLanguage } from '@formily/core'

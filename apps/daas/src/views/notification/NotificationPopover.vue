@@ -148,7 +148,7 @@
 
 <script>
 import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
-import { debounce } from 'lodash'
+import { debounce } from 'lodash-es'
 import dayjs from 'dayjs'
 import { mapState } from 'vuex'
 

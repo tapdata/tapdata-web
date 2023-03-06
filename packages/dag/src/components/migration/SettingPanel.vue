@@ -10,7 +10,7 @@ import { createForm } from '@formily/core'
 // import { observable } from '@formily/reactive'
 import { observer } from '@formily/reactive-vue'
 import FormRender from '../FormRender'
-import { debounce } from 'lodash'
+import { debounce } from 'lodash-es'
 import { taskApi } from '@tap/api'
 import { getPickerOptionsBeforeTime } from '@tap/business/src/shared/util'
 

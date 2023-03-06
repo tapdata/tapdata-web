@@ -278,7 +278,7 @@
 <script>
 import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 import { mapGetters } from 'vuex'
-import { debounce, escapeRegExp } from 'lodash'
+import { debounce, escapeRegExp } from 'lodash-es'
 import { ElSelect as Select } from 'element-plus'
 import { metadataInstancesApi, databaseTypesApi, CancelToken, connectionsApi } from '@tap/api'
 import { VIcon, VEmpty, OverflowTooltip } from '@tap/component'

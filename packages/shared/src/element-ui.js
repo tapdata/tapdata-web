@@ -1,5 +1,5 @@
 import ResizeObserver from 'resize-observer-polyfill'
-import { debounce } from 'lodash'
+import { debounce } from 'lodash-es'
 
 export const getCell = function (event) {
   let cell = event.target

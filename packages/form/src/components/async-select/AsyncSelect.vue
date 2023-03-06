@@ -201,7 +201,7 @@
 <script>
 import { ElSelect as Select } from 'element-plus'
 import { CircleClose as ElIconCircleClose } from '@element-plus/icons'
-import { merge, escapeRegExp, uniqBy, debounce } from 'lodash'
+import { merge, escapeRegExp, uniqBy, debounce } from 'lodash-es'
 
 import { getValueByPath, scrollIntoView, valueEquals } from '@tap/shared'
 import { CancelToken } from '@tap/api'

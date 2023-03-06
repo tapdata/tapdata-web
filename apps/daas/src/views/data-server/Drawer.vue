@@ -422,7 +422,7 @@ import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import i18n from '@/i18n'
 
 import axios from 'axios'
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'lodash-es'
 
 import { databaseTypesApi, connectionsApi, metadataInstancesApi, modulesApi, applicationApi, roleApi } from '@tap/api'
 import { Drawer, VCodeEditor } from '@tap/component'

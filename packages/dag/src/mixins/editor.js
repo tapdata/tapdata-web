@@ -1,5 +1,5 @@
 import i18n from '@tap/i18n'
-import { merge } from 'lodash'
+import { merge } from 'lodash-es'
 import Mousetrap from 'mousetrap'
 import { databaseTypesApi, taskApi } from '@tap/api'
 import { makeStatusAndDisabled } from '@tap/business'

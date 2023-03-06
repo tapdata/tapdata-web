@@ -197,7 +197,7 @@
 <script>
 import i18n from '@/i18n'
 
-import { uniq, find } from 'lodash'
+import { uniq, find } from 'lodash-es'
 import { VIcon, VTable } from '@tap/component'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
 import { licensesApi, settingsApi, alarmRuleApi } from '@tap/api'

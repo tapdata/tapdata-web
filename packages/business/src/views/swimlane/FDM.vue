@@ -97,7 +97,7 @@
 import { connectionsApi } from '@tap/api'
 import { AsyncSelect } from '@tap/form'
 import { VirtualTree } from '@tap/component'
-import { merge } from 'lodash'
+import { merge } from 'lodash-es'
 
 export default {
   name: 'FDM',

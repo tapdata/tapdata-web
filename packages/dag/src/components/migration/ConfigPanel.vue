@@ -51,7 +51,7 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'lodash-es'
 
 import '@tap/component/src/directives/resize/index.scss'
 import resize from '@tap/component/src/directives/resize'

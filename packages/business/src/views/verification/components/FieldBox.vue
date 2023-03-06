@@ -114,7 +114,7 @@ import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import MultiSelection from '../MultiSelection'
 import { uuid } from '@tap/shared'
 import { TABLE_PARAMS } from './const'
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'lodash-es'
 import { metadataInstancesApi } from '@tap/api'
 
 export default {

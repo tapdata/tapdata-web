@@ -104,7 +104,7 @@ import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
 
 import dayjs from 'dayjs'
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'lodash-es'
 import { connectionsApi } from '@tap/api'
 import { VIcon, Drawer } from '@tap/component'
 import { getIcon } from '@tap/assets/icons'

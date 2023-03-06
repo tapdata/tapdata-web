@@ -158,7 +158,7 @@
 import { mapMutations, mapState } from 'vuex'
 import dagre from 'dagre'
 import { observable } from '@formily/reactive'
-import { debounce } from 'lodash'
+import { debounce } from 'lodash-es'
 
 import i18n from '@tap/i18n'
 import { VExpandXTransition, VEmpty, VIcon } from '@tap/component'

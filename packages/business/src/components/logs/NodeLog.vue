@@ -157,7 +157,7 @@ import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
 import { mapGetters } from 'vuex'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
-import { debounce } from 'lodash'
+import { debounce } from 'lodash-es'
 
 import { uniqueArr, downloadBlob, deepCopy } from '@tap/shared'
 import Time from '@tap/shared/src/time'

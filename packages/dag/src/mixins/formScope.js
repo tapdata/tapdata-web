@@ -1,7 +1,7 @@
 import i18n from '@tap/i18n'
 import { action } from '@formily/reactive'
 import { mapGetters, mapState } from 'vuex'
-import { merge, isEqual } from 'lodash'
+import { merge, isEqual } from 'lodash-es'
 import { connectionsApi, metadataInstancesApi, clusterApi, proxyApi } from '@tap/api'
 import { externalStorageApi } from '@tap/api'
 import { isPlainObj } from '@tap/shared'

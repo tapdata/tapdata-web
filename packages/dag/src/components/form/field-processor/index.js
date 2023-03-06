@@ -1,5 +1,5 @@
 import * as Vue from 'vue'
-import { debounce } from 'lodash'
+import { debounce } from 'lodash-es'
 import i18n from '@tap/i18n'
 import { defineComponent, ref, reactive, nextTick, watch } from 'vue'
 import { metadataInstancesApi, taskApi } from '@tap/api'

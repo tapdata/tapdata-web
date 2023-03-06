@@ -2,7 +2,7 @@ import { defineComponent, ref, reactive, onUnmounted, watch } from 'vue'
 import { useForm } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
 import { observe } from '@formily/reactive'
-import { groupBy } from 'lodash'
+import { groupBy } from 'lodash-es'
 
 import i18n from '@tap/i18n'
 import { FormItem, JsEditor, HighlightCode } from '@tap/form'

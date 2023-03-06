@@ -47,7 +47,7 @@
 
 <script>
 import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
-import { debounce } from 'lodash'
+import { debounce } from 'lodash-es'
 
 import { TYPEMAP } from './tyepMap'
 import { VIcon } from '@tap/component'

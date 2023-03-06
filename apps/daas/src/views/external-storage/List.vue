@@ -135,7 +135,7 @@
 import i18n from '@/i18n'
 
 import dayjs from 'dayjs'
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'lodash-es'
 import { toRegExp } from '@tap/shared'
 
 import { externalStorageApi } from '@tap/api'

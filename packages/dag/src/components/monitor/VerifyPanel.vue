@@ -105,7 +105,7 @@ import i18n from '@tap/i18n'
 
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { mapGetters } from 'vuex'
-import { debounce } from 'lodash'
+import { debounce } from 'lodash-es'
 
 import { Chart } from '@tap/component'
 import { calcUnit, deepCopy } from '@tap/shared'

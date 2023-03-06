@@ -195,7 +195,7 @@ import i18n from '@tap/i18n'
 
 import { AsyncSelect } from '@tap/form'
 import { connectionsApi, metadataInstancesApi, taskApi } from '@tap/api'
-import { merge, cloneDeep } from 'lodash'
+import { merge, cloneDeep } from 'lodash-es'
 import { uuid, uniqueArr } from '@tap/shared'
 
 import FieldBox from './FieldBox'

@@ -1,5 +1,5 @@
 import { ElMessage as Message } from 'element-plus'
-import { merge } from 'lodash'
+import { merge } from 'lodash-es'
 import EventEmitter from './event'
 import i18n from '@/i18n'
 
