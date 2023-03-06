@@ -1,5 +1,6 @@
 <script>
 import * as Vue from 'vue'
+import { defineComponent, Text, computed, ComputedRef, h } from 'vue'
 
 const SIZE_MAP = {
   xSmall: '12px',
@@ -20,42 +21,157 @@ function convertToUnit(str, unit = 'px') {
   }
 }
 
-const VIcon = function render(_props, _context) {
-  const context = {
-    ..._context,
-    props: _props,
-    data: _context.attr,
-    children: _context.slots
-  }
-  const icon = this.getIcon()
-  if (this.tag === 'svg') {
-    return this.renderSvgIcon(icon, Vue.h)
-  }
-  const data = this.getDefaultData()
-  data.class[icon] = true
-  const fontSize = this.getSize()
-  if (fontSize) data.style = { fontSize, color: this.color }
-  return Vue.h(this.tag, data)
-}
-
-export default {
+const VIcon = defineComponent({
   name: 'VIcon',
 
-  functional: true,
+  props: {
+    disabled: Boolean,
+    size: [Number, String],
+    color: String,
+    large: Boolean,
+    small: Boolean,
+    xLarge: Boolean,
+    xSmall: Boolean,
+    tag: {
+      type: String,
+      required: false,
+      default: 'svg'
+    }
+  },
 
-  render(h, { data, children }) {
-    let iconName = ''
+  methods: {
+    getSize() {
+      const sizes = {
+        xSmall: this.xSmall,
+        small: this.small,
+        medium: this.medium,
+        large: this.large,
+        xLarge: this.xLarge
+      }
 
-    // 支持 v-text 和 v-html
-    if (data.domProps) {
-      iconName = data.domProps.textContent || data.domProps.innerHTML || iconName
-      delete data.domProps.textContent
-      delete data.domProps.innerHTML
+      const explicitSize = Object.keys(sizes).find(key => sizes[key])
+
+      return (explicitSize && SIZE_MAP[explicitSize]) || convertToUnit(this.size)
+    },
+
+    getDefaultData() {
+      const clickable = !!this.$attrs.onClick
+      return {
+        staticClass: 'iconfont',
+        class: {
+          'v-icon--disabled': this.disabled,
+          'v-icon--link': clickable
+        },
+        attrs: {
+          'aria-hidden': !clickable,
+          disabled: clickable && this.disabled,
+          type: clickable ? 'button' : undefined,
+          ...this.$attrs
+        }
+      }
+    },
+
+    getSvgWrapperData() {
+      const fontSize = this.getSize()
+      const sizeData = fontSize
+        ? {
+            fontSize,
+            height: fontSize,
+            width: fontSize
+          }
+        : {}
+
+      return {
+        ...this.getDefaultData(),
+        staticClass: 'v-icon',
+        style: {
+          ...sizeData,
+          color: this.color,
+          'caret-color': this.color
+        }
+      }
+    },
+
+    renderSvgIcon(icon) {
+      const svgData = {
+        class: 'v-icon__svg',
+        attrs: {
+          xmlns: 'http://www.w3.org/2000/svg',
+          viewBox: '0 0 24 24',
+          role: 'img',
+          'aria-hidden': true
+        }
+      }
+
+      const size = this.getSize()
+      if (size) {
+        svgData.style = {
+          fontSize: size,
+          height: size,
+          width: size
+        }
+      }
+      return h('span', this.getSvgWrapperData(), [
+        h('svg', svgData, [
+          h('use', {
+            'xlink:href': `#${icon}`
+          })
+        ])
+      ])
+    }
+  },
+
+  setup(props, { slots }) {
+    let slotIcon
+    if (slots.default) {
+      slotIcon = computed(() => {
+        const slot = slots.default?.()
+        if (!slot) return
+
+        const iconName = slot
+          .filter(node => node.type === Text && node.children && typeof node.children === 'string')[0]
+          ?.children.trim()
+
+        if (!iconName) return
+
+        return `icon-${iconName}`
+      })
     }
 
-    return h(VIcon, data, iconName ? [iconName] : children)
+    return {
+      slotIcon
+    }
+  },
+
+  render() {
+    const icon = this.slotIcon
+    if (this.tag === 'svg') {
+      return this.renderSvgIcon(icon)
+    }
+    const data = this.getDefaultData()
+    data.class[icon] = true
+    const fontSize = this.getSize()
+    if (fontSize) data.style = { fontSize, color: this.color }
+    return h(this.tag, data)
   }
-}
+})
+
+export default defineComponent({
+  name: 'VIcon',
+
+  render() {
+    let iconName = ''
+    const attrs = this.$attrs
+    // 支持 v-text 和 v-html
+    if (attrs) {
+      iconName = attrs.textContent || attrs.innerHTML || iconName
+      delete attrs.textContent
+      delete attrs.innerHTML
+    }
+
+    return Vue.h(VIcon, { ...attrs }, iconName ? [iconName] : this.$slots.default())
+  }
+})
 </script>
 
 <style lang="scss">
