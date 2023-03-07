@@ -159,7 +159,7 @@ export default {
   packages_dag_migration_configpanel_moxing: '模型',
   packages_dag_migration_configpanel_peizhi: '配置',
   packages_dag_migration_consolepanel_quanburizhi: '全部日誌',
-  packages_dag_migration_consolepanel_dangqianjiancefaxian: '當前檢測共發現',
+  packages_dag_migration_consolepanel_dangqianjiancefaxian: '當前檢測共發現，',
   packages_dag_migration_consolepanel_qingguanzhu: '請關注',
   packages_dag_migration_consolepanel_ge: '個',
   packages_dag_migration_settingpanel_dangrenwufuhe:
