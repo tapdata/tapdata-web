@@ -215,7 +215,8 @@ export default {
     const dataflow = observable({
       id: '',
       name: '',
-      status: ''
+      status: '',
+      attrs: {}
     })
 
     return {

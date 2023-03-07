@@ -8,7 +8,7 @@
             v-if="currentTab === 'milestone'"
             v-bind="$attrs"
             :currentTab="currentTab"
-            ref="log"
+            ref="milestoneList"
           ></MilestoneList>
         </ElTabPane>
         <ElTabPane :label="$t('packages_dag_monitor_bottompanel_rizhi')" name="log">
