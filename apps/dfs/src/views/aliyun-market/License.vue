@@ -1,6 +1,5 @@
 <template>
   <section class="license-warp flex justify-content-center align-items-center flex-column">
-    <TheHeader ref="theHeader" class="layout-header"></TheHeader>
     <main class="main">
       <header class="header header-wrap pl-4">{{ $t('dfs_aliyun_market_license_jihuoaliyun') }}</header>
       <main style="padding: 24px">
@@ -14,7 +13,7 @@
         </ul>
         <div class="flex mt-4">
           <span class="label mb-2">{{ $t('dfs_aliyun_market_license_shouquanma') }}</span>
-          <el-input v-model="licenseCode" type="textarea" rows="1" autofocus></el-input>
+          <el-input v-model="licenseCode" type="textarea" rows="2" autofocus></el-input>
         </div>
         <div class="mt-8">
           <a v-if="showGoDashboard" class="mt-4 float-end button" type="primary" href="index.html">{{
@@ -31,11 +30,9 @@
 
 <script>
 import i18n from '@/i18n'
-import TheHeader from '@/components/the-header'
 
 export default {
   name: 'License',
-  components: { TheHeader },
   data() {
     return {
       licenseCode: '',
@@ -56,7 +53,7 @@ export default {
             window.__USER_INFO__ = data
           })
           setTimeout(() => {
-            this.goDashboard()
+            window.location.href = 'index.html'
           }, 30000)
         }
       })

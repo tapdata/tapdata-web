@@ -1811,6 +1811,7 @@ export default {
   daas_external_storage_list_chuangjianwaicun: '创建外存',
   daas_external_storage_list_bianjiwaicun: '编辑外存',
   daas_external_storage_list_waicunxinxi: '外存信息',
+  daas_external_storage_list_tishi: '该外存已被 {val1} 个任务调用，请删除或者修改配置后重试',
   daas_function_importform_shangchuanwenjianda: '上传文件大小不能超过 {val1}M',
   daas_login_login_dengluchenggong: '登录成功：',
   daas_login_passwordreset_shangweiyanzhengdian: '尚未验证电子邮件',

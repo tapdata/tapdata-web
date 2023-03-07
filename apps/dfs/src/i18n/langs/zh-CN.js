@@ -161,6 +161,7 @@ export default {
   agent_key: 'Agent',
   agent_manage: 'Agent管理',
   agent_name: 'Agent 名称',
+  agent_heartbeat: 'Agent 心跳时间',
   agent_id: 'Agent ID',
   agent_task_number: '任务数',
   agent_create_time: '创建时间',
@@ -650,10 +651,10 @@ export default {
   user_Center_xiuGaiQiYeXin: '修改企业信息成功',
   components_BindPhone_qingBangDingShouJi: '请绑定手机号',
   components_BindPhone_qingShuRuShouJi: '请输入手机',
-  workbench_Notice_tAPDA12: 'Tapdata Cloud 1.0.9 版本发布啦！',
-  workbench_Notice_tAPDA11:
-    '\n          Tapdata Cloud 是国内首家异构数据库实时同步云平台，目前支持Oracle、MySQL、PG、SQL Server、MongoDB、ES\n          、达梦、Kafka、GP、MQ、ClickHouse、Hazelcast Cloud、ADB MySQL、ADB\n          PostgreSQL、KunDB、TiDB、Dummy之间的数据同步，即将支持 DB2、Sybase ASE、Redis、GBase、GaussDB\n          等，并对用户永久免费。',
-  workbench_Notice_buDuanYouHuaTi: '2. 不断优化，提供更佳体验',
+  workbench_Notice_tAPDA12: '关于《产品使用手册》访问地址变更的通知',
+  workbench_Notice_tAPDA11: '尊敬的用户，您好：',
+  workbench_Notice_buDuanYouHuaTi:
+    'Tapdata最新版本的《产品使用手册》地址已变更为：https://docs.tapdata.io/，产品内部所有相关跳转链接已同步更新。自本公告发布之日起，我们将停止对原语雀版本文档的更新和维护，请您使用新的地址访问，谢谢您对Tapdata产品的支持。 ',
   workbench_Notice_zaiChuangJianLianJie: '在创建连接时，用户可以选择连接类型',
   workbench_Notice_benCiXinZengRi: '本次新增日志过滤筛选功能，用户可以通过日志过滤筛选',
   workbench_Notice_zhiChiPiLiangCao: '3. 支持批量操作、体验更佳',

@@ -41,7 +41,7 @@ export default {
     label: {
       type: String,
       default: () => {
-        return i18n.t('packages_dag_components_log_quanbu')
+        return i18n.t('public_select_option_all')
       }
     },
     showType: {

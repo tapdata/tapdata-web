@@ -56,7 +56,7 @@
       <el-table-column fixed="right" :label="$t('public_operation')">
         <template #default="{ row }">
           <el-button type="text" @click="handleClose(row.id)" :disabled="row.status === 'CLOESE'">{{
-            $t('packages_dag_components_alert_guanbi')
+            $t('public_button_close')
           }}</el-button>
           <el-divider direction="vertical"></el-divider>
           <el-button type="text" @click="goLog(row)">{{ $t('packages_dag_monitor_bottompanel_rizhi') }}</el-button>

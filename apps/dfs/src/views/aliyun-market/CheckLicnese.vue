@@ -1,6 +1,6 @@
 <template>
   <el-dialog :visible.sync="visible" :close-on-click-modal="false" :show-close="false" width="550px">
-    <section>
+    <section v-if="user">
       <main v-if="user.licenseType === 'checkCode'">
         <header class="header flex">
           <VIcon class="color-warning mr-2" size="16">warning</VIcon>
@@ -28,7 +28,7 @@
         </ul>
       </main>
     </section>
-    <span slot="footer">
+    <span v-if="user" slot="footer">
       <div v-if="user.licenseType === 'checkCode'">
         <el-button class="mt-4" v-if="user.showNextProcessing" @click="$emit('update:visible', false)">{{
           $t('dfs_aliyun_market_checklicnese_xiayiciyanqi')

@@ -126,6 +126,25 @@
         </li>
       </ul>
     </Drawer>
+    <el-dialog :visible.sync="showUsingTaskDialog" title="提示">
+      <div>{{ $t('daas_external_storage_list_tishi', { val1: usingTasks.length }) }}</div>
+      <el-table class="mt-4" height="250px" :data="usingTasks">
+        <el-table-column min-width="240" :label="$t('public_task_name')" :show-overflow-tooltip="true">
+          <template #default="{ row }">
+            <span class="dataflow-name link-primary flex">
+              <ElLink
+                role="ellipsis"
+                type="primary"
+                class="justify-content-start ellipsis block"
+                :class="['name']"
+                @click.stop="handleClickName(row)"
+                >{{ row.name }}</ElLink
+              >
+            </span>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
   </section>
 </template>
 <script>
@@ -172,7 +191,9 @@ export default {
       isShowDetails: false,
       details: '',
       info: [],
-      labelWidth: '120px'
+      labelWidth: '120px',
+      showUsingTaskDialog: false,
+      usingTasks: []
     }
   },
   computed: {
@@ -237,14 +258,6 @@ export default {
         })
         .then(data => {
           let list = (data?.items || []).map(item => {
-            const regResult =
-              /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
-                item.uri
-              )
-            if (regResult && regResult.groups && regResult.groups.password) {
-              const { username, host, database, query } = regResult.groups
-              item.uri = `mongodb://${username}:***@${host}/${database}${query ? '/' + query : ''}`
-            }
             item.typeFmt = this.typeMapping[item.type] || '-'
             item.createTimeFmt = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') || '-'
             return item
@@ -315,13 +328,19 @@ export default {
       })
     },
     async remove(row) {
+      //先去请求是否外存已被使用了
+      this.usingTasks = await await externalStorageApi.usingTask(row.id)
       const flag = await this.$confirm(i18n.t('daas_external_storage_list_querenshanchuwai'), '', {
         type: 'warning',
         showClose: false
       })
       if (flag) {
-        await externalStorageApi.delete(row.id)
-        this.table.fetch()
+        if (this.usingTasks) {
+          this.showUsingTaskDialog = true
+        } else {
+          await externalStorageApi.delete(row.id)
+          this.table.fetch()
+        }
       }
     },
     checkDetails(row) {
@@ -339,6 +358,27 @@ export default {
         { label: this.$t('daas_external_storage_list_sheweimoren'), value: row.defaultStorage, icon: 'record' }
       ]
       this.isShowDetails = true
+    },
+    /**
+     * 点击名称调整
+     * @param row
+     */
+    handleClickName(item) {
+      if (item?.syncType === 'migrate') {
+        this.$router.push({
+          name: 'migrateList',
+          query: {
+            keyword: item.name
+          }
+        })
+      } else {
+        this.$router.push({
+          name: 'dataflowList',
+          query: {
+            keyword: item.name
+          }
+        })
+      }
     }
   }
 }

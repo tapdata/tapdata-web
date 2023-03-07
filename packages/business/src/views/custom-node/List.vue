@@ -12,13 +12,8 @@
       <ElTableColumn :label="$t('public_node_name')" prop="name"> </ElTableColumn>
       <ElTableColumn :label="$t('public_description')" prop="desc"> </ElTableColumn>
 
-      <ElTableColumn prop="createTime" :label="$t('public_create_time')" :width="160"></ElTableColumn>
-      <ElTableColumn
-        prop="last_updated"
-        sortable="last_updated"
-        :label="$t('public_update_time')"
-        :width="160"
-      ></ElTableColumn>
+      <ElTableColumn prop="createTime" :label="$t('public_create_time')"></ElTableColumn>
+      <ElTableColumn prop="last_updated" sortable="last_updated" :label="$t('public_update_time')"></ElTableColumn>
 
       <ElTableColumn width="150" :label="$t('public_operation')">
         <template #default="{ row }">

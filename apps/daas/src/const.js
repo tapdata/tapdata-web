@@ -43,7 +43,7 @@ export const TOPOLOGY_MAP = topologyMap,
     paused: { text: i18n.t('public_status_stopping'), icon: 'yizanting' }
   },
   ETL_STATUS_MAP = {
-    running: { text: i18n.t('task_status_running'), type: 'success' },
+    running: { text: i18n.t('public_status_running'), type: 'success' },
     not_running: { text: i18n.t('task_status_not_running'), type: 'disable' },
     error: { text: i18n.t('public_status_error'), type: 'danger' }
   },

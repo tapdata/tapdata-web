@@ -165,18 +165,23 @@
     ></DatabaseTypeDialog>
     <Test ref="test" :visible.sync="dialogTestVisible" :formData="testData" @returnTestData="returnTestData"></Test>
     <ElDialog :title="$t('public_message_title_prompt')" width="40%" :visible.sync="connectionTaskDialog">
-      <span>{{ $t('packages_business_connections_list_gailianjieyibei') }}</span>
-      <div class="color-primary mt-2">
-        {{ $t('packages_business_connections_list_renwuzongshu') }}{{ connectionTaskListTotal }}
-      </div>
-      <ul class="mt-4">
-        <li v-for="item in connectionTaskList" :key="item.id" @click="goTaskList(item)">
-          <el-tooltip :content="item.name" placement="right-start">
-            <el-link type="primary">{{ item.name }}</el-link>
-          </el-tooltip>
-        </li>
-        <li v-if="connectionTaskListTotal > 10">...</li>
-      </ul>
+      <span>{{ $t('packages_business_connections_list_gailianjieyibei', { val1: connectionTaskListTotal }) }}</span>
+      <el-table class="mt-4" height="250px" :data="connectionTaskList">
+        <el-table-column min-width="240" :label="$t('public_task_name')" :show-overflow-tooltip="true">
+          <template #default="{ row }">
+            <span class="dataflow-name link-primary flex">
+              <ElLink
+                role="ellipsis"
+                type="primary"
+                class="justify-content-start ellipsis block"
+                :class="['name']"
+                @click.stop="goTaskList(row)"
+                >{{ row.name }}</ElLink
+              >
+            </span>
+          </template>
+        </el-table-column>
+      </el-table>
     </ElDialog>
   </section>
 </template>

@@ -140,6 +140,7 @@ export default {
   agent_key: 'Agent',
   agent_manage: 'Agent',
   agent_name: 'Agent Name',
+  agent_heartbeat: 'Heartbeat Time',
   agent_id: 'Agent ID',
   agent_task_number: 'Number Tasks',
   agent_create_time: 'Create Time',
@@ -670,10 +671,10 @@ export default {
   user_Center_xiuGaiQiYeXin: 'Enterprise information modified successfully',
   components_BindPhone_qingBangDingShouJi: 'Please bind your mobile number',
   components_BindPhone_qingShuRuShouJi: 'Please enter your mobile phone',
-  workbench_Notice_tAPDA12: 'Tapdata cloud version 1.0.9 has been released.',
-  workbench_Notice_tAPDA11:
-    'Tapdata cloud is the first heterogeneous database real-time synchronization cloud platform in China. At present, it supports Oracle, mysql, PG, SQL server, mongodb and es, Dameng, Kafka, GP, MQ, Clickhouse, hazelcast cloud, ADB mysql, ADBThe data synchronization among PostgreSQL, kundb, tidb and dummy will support DB2, Sybase ASE, redis, gbase and gaussdbAnd permanently free to users.',
-  workbench_Notice_buDuanYouHuaTi: '2. Continuously optimize and provide better experience',
+  workbench_Notice_tAPDA12: 'Notice about the change of the access address of the "Product User Manual"',
+  workbench_Notice_tAPDA11: 'Dear user, hello:',
+  workbench_Notice_buDuanYouHuaTi:
+    'The address of the latest version of Tapdata is "Product User Manual" has been changed to: https://docs.tapdata.io/, and all relevant jump links inside the product have been updated synchronously. From the date of this announcement, we will stop updating and maintaining the original version of the document, please use the new address to visit, thank you for your support for Tapdata products. ',
   workbench_Notice_zaiChuangJianLianJie: 'When creating a connection, the user can select the connection type',
   workbench_Notice_benCiXinZengRi: 'The new log filtering function enables users to filter through log filtering',
   workbench_Notice_zhiChiPiLiangCao: '3. Support batch operation and better experience',

@@ -23,5 +23,8 @@ export default class ExternalStorage extends Http {
     params = params || {}
     return this.axios.get(this.url + '/list', { params })
   }
+  usingTask(id) {
+    return this.axios.get(this.url + '/' + id + '/usingTask')
+  }
 }
 export { ExternalStorage }
