@@ -60,12 +60,6 @@ export default {
       default: () => {
         return {}
       }
-    },
-    quota: {
-      type: Object,
-      default: () => {
-        return {}
-      }
     }
   },
 
@@ -107,29 +101,6 @@ export default {
       const { activeNodeId } = this
       if (!activeNodeId) return {}
       return this.dataflow.attrs?.nodeMilestones?.[activeNodeId] || {}
-    },
-
-    totalData() {
-      const {
-        tableTotal = 0,
-        snapshotTableTotal = 0,
-        currentSnapshotTableInsertRowTotal = 0,
-        currentSnapshotTableRowTotal = 0,
-        snapshotRowTotal = 0,
-        snapshotInsertRowTotal = 0,
-        snapshotDoneAt,
-        snapshotStartAt
-      } = this.quota.samples?.totalData?.[0] || {}
-      return {
-        tableTotal,
-        snapshotTableTotal,
-        currentSnapshotTableInsertRowTotal,
-        currentSnapshotTableRowTotal,
-        snapshotRowTotal,
-        snapshotInsertRowTotal,
-        snapshotDoneAt,
-        snapshotStartAt
-      }
     },
 
     wholeItems() {
