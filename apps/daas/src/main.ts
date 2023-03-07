@@ -11,6 +11,7 @@ import Time from '@tap/shared/src/time'
 import WSClient from '@tap/business/src/shared/ws-client'
 import { VIcon } from '@tap/component'
 import { setupRouter } from '@/router'
+import { setupElement } from '@/element'
 // import VConfirm from '@/components/v-confirm'
 import { settingsApi, usersApi, timeStampApi } from '@tap/api'
 import { getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
@@ -19,7 +20,6 @@ import FormBuilder from '@tap/component/src/form-builder'
 import '@/plugins/icon'
 import '@/plugins/axios.ts'
 import { configUser, getUrlSearch } from '@/utils/util'
-// @ts-ignore 见鬼了，这里识别不到export
 import { setupDirectives } from '@/directives'
 
 async function bootstrap() {
@@ -112,6 +112,8 @@ async function bootstrap() {
   app.config.globalProperties.$getSettingByKey = window.getSettingByKey
 
   setupRouter(app)
+
+  setupElement(app)
 
   setupDirectives(app)
 
