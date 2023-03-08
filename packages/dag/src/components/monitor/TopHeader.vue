@@ -116,6 +116,7 @@
         </ElButton>
         <ElButton
           v-if="!(dataflow.disabledData && dataflow.disabledData.start)"
+          :disabled="$disabledReadonlyUserBtn()"
           class="mx-2"
           size="medium"
           type="primary"
@@ -126,7 +127,7 @@
         <template v-else>
           <ElButton
             v-if="isShowForceStop(dataflow)"
-            :disabled="dataflow.disabledData && dataflow.disabledData.forceStop"
+            :disabled="(dataflow.disabledData && dataflow.disabledData.forceStop) || $disabledReadonlyUserBtn()"
             key="forceStop"
             class="mx-2"
             size="medium"
@@ -137,7 +138,7 @@
           </ElButton>
           <ElButton
             v-else
-            :disabled="dataflow.disabledData && dataflow.disabledData.stop"
+            :disabled="(dataflow.disabledData && dataflow.disabledData.stop) || $disabledReadonlyUserBtn()"
             key="stop"
             size="medium"
             type="danger"
