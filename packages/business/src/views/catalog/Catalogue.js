@@ -1,15 +1,14 @@
-import i18n from '@/i18n'
 import { defineComponent, reactive, ref, watch, nextTick, onMounted } from '@vue/composition-api'
+import i18n from '@tap/i18n'
 import { FilterBar, Drawer, VIcon } from '@tap/component'
-import { TablePage, DiscoveryClassification, makeDragNodeImage } from '@tap/business'
 import { discoveryApi } from '@tap/api'
-import DrawerContent from '@/views/data-discovery/PreviewDrawer'
-import ObjectTable from '@/views/data-discovery/ObjectTable'
-import './index.scss'
+import { TablePage, DiscoveryClassification, makeDragNodeImage } from '../../index'
+import DrawerContent from './PreviewDrawer'
+import ObjectTable from './ObjectTable'
 import resize from '@tap/component/src/directives/resize'
+import './index.scss'
 
 export default defineComponent({
-  props: [''],
   directives: {
     resize
   },
@@ -52,7 +51,6 @@ export default defineComponent({
       })
     }
     const rest = () => {
-      // @ts-ignore
       refs.table.fetch(1)
     }
     const loadFilterList = () => {
@@ -88,7 +86,6 @@ export default defineComponent({
     const handlePreview = row => {
       data.isShowDetails = true
       nextTick(() => {
-        // @ts-ignore
         refs?.drawerContent?.loadData(row)
       })
     }
@@ -99,10 +96,9 @@ export default defineComponent({
     const handleSourceDrawer = () => {
       data.isShowSourceDrawer = true
       nextTick(() => {
-        // @ts-ignore
         //请求筛选条件-下拉列表
         refs?.objectTable?.loadFilterList()
-        // @ts-ignore
+
         //请求资源绑定目录
         refs?.objectTable?.loadTableData()
       })
@@ -110,9 +106,8 @@ export default defineComponent({
     const closeSourceDrawer = val => {
       data.isShowSourceDrawer = val
       nextTick(() => {
-        // @ts-ignore
         refs.table.fetch(1)
-        // @ts-ignore
+
         //关闭资源绑定抽屉 刷新数据目录分类树 主要是统计
         refs?.classify?.getData()
       })
@@ -120,7 +115,7 @@ export default defineComponent({
     //切换目录
     const getNodeChecked = node => {
       data.currentNode = node
-      // @ts-ignore
+
       refs.table.fetch(1)
     }
     const renderNode = ({ row }) => {
@@ -147,12 +142,10 @@ export default defineComponent({
     watch(
       () => root.$route.query,
       val => {
-        // @ts-ignore
         refs.table.fetch(1)
       }
     )
     onMounted(() => {
-      // @ts-ignore
       refs.table.fetch(1)
     })
 

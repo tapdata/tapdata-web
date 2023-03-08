@@ -102,6 +102,12 @@ const SwimlaneDashboard = async () => {
   const { SwimlaneDashboard } = await import('@tap/business')
   return SwimlaneDashboard
 }
+
+const CatalogView = async () => {
+  const { CatalogView } = await import('@tap/business')
+  return CatalogView
+}
+
 export default [
   {
     path: '/login',
@@ -322,7 +328,7 @@ export default [
           {
             path: '',
             name: 'catalogueList',
-            component: () => import(/* webpackChunkName: "connection-list" */ '@/views/data-discovery/Catalogue.tsx'),
+            component: CatalogView,
             meta: {
               title: 'page_title_data_catalogue',
               code: 'v2_data_catalogue'
