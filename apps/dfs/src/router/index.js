@@ -1,6 +1,5 @@
 import Parent from './Parent'
 import Layout from '../views/Layout.vue'
-import Error from '../views/Error.vue'
 import FastDownload from '@/views/agent-download/FastDownload.vue'
 import UpgradeVersion from '@/views/agent-download/UpgradeVersion.vue'
 import PaidUpgrade from '@/views/agent-download/PaidUpgrade.vue'
@@ -323,46 +322,6 @@ const routes = [
     meta: {
       title: 'tap_upgrade'
     }
-  },
-  {
-    path: '/404',
-    name: '404',
-    component: Error
-  },
-  {
-    path: '/500',
-    name: '500',
-    component: Error
-  },
-  {
-    path: '/502',
-    name: '502',
-    component: Error
-  },
-  {
-    path: '/504',
-    name: '504',
-    component: Error
-  },
-  {
-    path: '/error',
-    name: 'error',
-    component: Error
-  },
-  {
-    path: '/invalid',
-    name: 'Invalid',
-    component: Error
-  },
-  {
-    path: '/freeze',
-    name: 'Freeze',
-    component: Error
-  },
-  {
-    path: '/off',
-    name: 'Off',
-    component: Error
   },
   {
     path: '/dataflow/editor',
