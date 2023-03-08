@@ -39,16 +39,13 @@
           </ElMenuItem>
         </template>
         <ElMenuItem
-          v-if="isDemoEnv"
+          v-if="!isDemoEnv"
           :key="$t('dfs_agent_download_agentguidedialog_tiyan') + ' Demo'"
           index="goDemo"
           class="flex align-center border-top"
         >
-          <span class="mr-4"><VIcon class="v-icon" size="17">deploy</VIcon></span>
-          <span class="flex-fill text-decoration-underline">{{
-            $t('dfs_agent_download_agentguidedialog_tiyan') + ' Demo'
-          }}</span>
-          <VIcon class="v-icon" size="14">link</VIcon>
+          <span class="mr-4"><VIcon class="v-icon" size="17">open-in-new</VIcon></span>
+          <span class="text-decoration-underline">{{ $t('dfs_agent_download_agentguidedialog_tiyan') + ' Demo' }}</span>
         </ElMenuItem>
       </ElMenu>
     </ElAside>
