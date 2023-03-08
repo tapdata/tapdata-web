@@ -108,6 +108,11 @@ const CatalogView = async () => {
   return CatalogView
 }
 
+const ObjectList = async () => {
+  const { ObjectList } = await import('@tap/business')
+  return ObjectList
+}
+
 export default [
   {
     path: '/login',
@@ -307,7 +312,7 @@ export default [
           {
             path: '',
             name: 'objectList',
-            component: () => import(/* webpackChunkName: "connection-list" */ '@/views/data-discovery/ObjectList.tsx'),
+            component: ObjectList,
             meta: {
               title: 'page_title_data_object',
               code: 'v2_data_object'
