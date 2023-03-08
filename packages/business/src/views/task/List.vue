@@ -46,12 +46,18 @@
             <i class="el-icon-arrow-down el-icon--right"></i>
           </el-button>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="start" v-readonlybtn="'SYNC_job_operation'">{{
-              $t('packages_business_dataFlow_bulkScheuled')
-            }}</el-dropdown-item>
-            <el-dropdown-item command="stop" v-readonlybtn="'SYNC_job_operation'">{{
-              $t('packages_business_dataFlow_bulkStopping')
-            }}</el-dropdown-item>
+            <el-dropdown-item
+              command="start"
+              v-readonlybtn="'SYNC_job_operation'"
+              :disabled="$disabledReadonlyUserBtn()"
+              >{{ $t('packages_business_dataFlow_bulkScheuled') }}</el-dropdown-item
+            >
+            <el-dropdown-item
+              command="stop"
+              v-readonlybtn="'SYNC_job_operation'"
+              :disabled="$disabledReadonlyUserBtn()"
+              >{{ $t('packages_business_dataFlow_bulkStopping') }}</el-dropdown-item
+            >
             <el-dropdown-item
               command="initialize"
               v-readonlybtn="'SYNC_job_operation'"
@@ -154,7 +160,7 @@
               v-if="row.btnDisabled.stop && row.btnDisabled.forceStop"
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
-              :disabled="row.btnDisabled.start"
+              :disabled="row.btnDisabled.start || $disabledReadonlyUserBtn()"
               @click="start([row.id])"
             >
               {{ $t('public_button_start') }}
@@ -164,7 +170,7 @@
                 v-if="row.status === 'stopping'"
                 v-readonlybtn="'SYNC_job_operation'"
                 type="primary"
-                :disabled="row.btnDisabled.forceStop"
+                :disabled="row.btnDisabled.forceStop || $disabledReadonlyUserBtn()"
                 @click="forceStop([row.id], row)"
               >
                 {{ $t('public_button_force_stop') }}
@@ -173,7 +179,7 @@
                 v-else
                 v-readonlybtn="'SYNC_job_operation'"
                 type="primary"
-                :disabled="row.btnDisabled.stop"
+                :disabled="row.btnDisabled.stop || $disabledReadonlyUserBtn()"
                 @click="stop([row.id], row)"
               >
                 {{ $t('public_button_stop') }}
