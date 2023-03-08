@@ -39,7 +39,7 @@
           </ElMenuItem>
         </template>
         <ElMenuItem
-          v-if="!isDemoEnv"
+          v-if="isDemoEnv"
           :key="$t('dfs_agent_download_agentguidedialog_tiyan') + ' Demo'"
           index="goDemo"
           class="flex align-center border-top"
