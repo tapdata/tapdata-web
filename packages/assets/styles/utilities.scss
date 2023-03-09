@@ -12309,3 +12309,8 @@
 .color-white{
   color: white;
 }
+
+// icon
+.icon-color-normal {
+  color: map-get($iconFillColor, normal) !important;
+}

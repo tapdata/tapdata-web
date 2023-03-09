@@ -14,8 +14,9 @@
         ></ElInput>
       </div>
       <div>
-        <span>四泳道</span>
-        <ElSwitch v-model="moreLaneSwitch" class="ml-2"></ElSwitch>
+<!--        <span>四泳道</span>-->
+<!--        <ElSwitch v-model="moreLaneSwitch" class="ml-2"></ElSwitch>-->
+        <VIcon size="18 " class="icon-color-normal" @click="handleSwitch">list-view</VIcon>
       </div>
     </div>
     <div class="list flex flex-fill overflow-hidden">
@@ -27,6 +28,7 @@
         :dragState="dragState"
         @create-connection="handleAdd"
         @node-drag-end="handleDragEnd"
+        @vector="handleVector"
       ></component>
     </div>
     <CreateConnection
@@ -35,6 +37,7 @@
       @success="handleSuccess"
       @saveAndMore="handleSuccess"
     ></CreateConnection>
+    <Settings :visible.sync="settingsVisible" @success="handleSettingsSuccess"></Settings>
   </div>
 </template>
 
@@ -44,16 +47,19 @@ import SourceItem from './Source'
 import TargetItem from './Target'
 import FDMItem from './FDM'
 import MDMItem from './MDM'
+import VectorItem from './VectorItem'
+import Settings from './Settings'
 
 export default {
   name: 'Dashboard',
 
-  components: { CreateConnection, SourceItem, TargetItem, FDMItem, MDMItem },
+  components: { CreateConnection, SourceItem, TargetItem, FDMItem, MDMItem, VectorItem, Settings },
 
   data() {
     return {
       keyword: '',
       visible: false,
+      settingsVisible: false,
       createConnectionParams: {},
       dragState: {
         isDragging: false,
@@ -61,7 +67,7 @@ export default {
         dropNode: null,
         form: ''
       },
-      moreLaneSwitch: false
+      mode: ''
     }
   },
 
@@ -80,6 +86,11 @@ export default {
           component: 'FDMItem'
         },
         {
+          title: '分割线',
+          component: 'VectorItem',
+          level: 'base'
+        },
+        {
           title: 'MDM / CURATED MODELS',
           component: 'MDMItem'
         },
@@ -91,7 +102,7 @@ export default {
           level: 'base'
         }
       ]
-      return this.moreLaneSwitch ? result : result.filter(t => t.level === 'base')
+      return this.mode === 'service' ? result : result.filter(t => t.level === 'base')
     }
   },
 
@@ -113,6 +124,18 @@ export default {
       this.dragState.draggingObjects = []
       this.dragState.dropNode = null
       this.dragState.form = ''
+    },
+
+    handleSwitch() {
+      this.settingsVisible = true
+    },
+
+    handleSettingsSuccess(data) {
+      this.mode = data.mode
+    },
+
+    handleVector(val) {
+      this.handleSwitch()
     }
   }
 }
@@ -133,9 +156,6 @@ export default {
     .list__title {
       border-top: 1px solid #e1e3e9;
       border-bottom: 1px solid #e1e3e9;
-    }
-    .icon-color {
-      color: map-get($iconFillColor, normal);
     }
   }
 }
