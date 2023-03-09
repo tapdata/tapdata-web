@@ -5,8 +5,9 @@
     :append-to-body="true"
     width="1234px"
     top="10vh"
-    :before-close="handleBeforeClose"
     destroy-on-close
+    @open="handleOpen"
+    @close="handleClose"
   >
     <div slot="title" class="text-center font-color-dark fs-2 fw-bold">
       {{ title }}
@@ -18,10 +19,14 @@
         difference is Data Platform mode requires a storage backend.
       </div>
       <ElRadioGroup v-model="mode" class="block">
-        <ElRadio label="integration" class="w-50 mr-0">Data Integration Mode</ElRadio>
-        <ElRadio label="service" class="w-50 inline-flex align-items-center">
-          <span>Data Service Platform Mode</span>
-          <VIcon class="ml-1" size="28">beta</VIcon>
+        <ElRadio
+          v-for="item in modeItems"
+          :label="item.value"
+          :key="item.value"
+          class="w-50 mr-0 inline-flex align-items-center"
+        >
+          <span>{{ item.label }}</span>
+          <VIcon v-if="item.beta" class="ml-1" size="28">beta</VIcon>
         </ElRadio>
       </ElRadioGroup>
       <div class="flex">
@@ -120,6 +125,7 @@
 
 <script>
 import i18n from '@tap/i18n'
+import { liveDataPlatformApi } from '@tap/api'
 
 export default {
   name: 'Settings',
@@ -139,7 +145,23 @@ export default {
 
   data() {
     return {
-      mode: 'integration',
+      mode: '',
+      // <ElRadio label="integration" class="w-50 mr-0">Data Integration Mode</ElRadio>
+      // <ElRadio label="service" class="w-50 inline-flex align-items-center">
+      //   <span>Data Service Platform Mode</span>
+      //   <VIcon class="ml-1" size="28">beta</VIcon>
+      // </ElRadio>
+      modeItems: [
+        {
+          label: 'Data Integration Mode',
+          value: 'integration'
+        },
+        {
+          label: 'Data Service Platform Mode',
+          value: 'service',
+          beta: true
+        }
+      ],
       FDMRadioItems: [
         {
           label: 'MongoDB Atlas Cluster',
@@ -232,16 +254,19 @@ export default {
     }
   },
 
-  mounted() {
+  created() {
     this.init()
   },
 
   methods: {
     async init() {
       const data = await this.getData()
+      console.log('init', data)
       if (data) {
-        return
+        return this.setData(data)
       }
+      this.mode = this.modeItems[0]?.value
+
       this.FDMStorage.type = this.FDMRadioItems[0]?.value
       this.handleChangeFDMStorage(this.FDMStorage.type)
 
@@ -250,12 +275,25 @@ export default {
     },
 
     async getData() {
-      return
+      return liveDataPlatformApi.get().catch(() => {
+        return null
+      })
     },
 
-    handleBeforeClose() {
+    setData(data = {}) {
+      this.mode = data.mode
+      // TODO set FDMStorage and MDMStorage
+      this.FDMStorage.type = ''
+      this.FDMStorage.value = ''
+
+      this.MDMStorage.type = ''
+      this.MDMStorage.value = ''
+
+      this.$emit('update:mode', this.mode)
+    },
+
+    handleOpen() {
       this.init()
-      this.handleClose()
     },
 
     handleClose() {
@@ -277,6 +315,12 @@ export default {
 
     submit() {
       this.loading = true
+      liveDataPlatformApi
+        .patch()
+        .then()
+        .finally(() => {
+          this.loading = false
+        })
       const { mode, FDMStorage, MDMStorage } = this
       this.$emit('success', { mode, FDMStorage, MDMStorage })
       this.handleClose()

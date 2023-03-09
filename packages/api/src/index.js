@@ -153,6 +153,9 @@ const proxyApi = new Proxy()
 import Paid from './Paid'
 const paidApi = new Paid()
 
+import LiveDataPlatform from './LiveDataPlatform'
+const liveDataPlatformApi = new LiveDataPlatform()
+
 export {
   connectionsApi,
   databaseTypesApi,
@@ -204,7 +207,8 @@ export {
   alarmApi,
   externalStorageApi,
   proxyApi,
-  paidApi
+  paidApi,
+  liveDataPlatformApi
 }
 export * from './ApiClient'
 

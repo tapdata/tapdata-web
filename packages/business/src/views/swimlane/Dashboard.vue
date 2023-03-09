@@ -35,7 +35,7 @@
       @success="handleSuccess"
       @saveAndMore="handleSuccess"
     ></CreateConnection>
-    <Settings :visible.sync="settingsVisible" @success="handleSettingsSuccess"></Settings>
+    <Settings :mode.sync="mode" :visible.sync="settingsVisible" @success="handleSettingsSuccess"></Settings>
   </div>
 </template>
 
@@ -45,13 +45,12 @@ import SourceItem from './Source'
 import TargetItem from './Target'
 import FDMItem from './FDM'
 import MDMItem from './MDM'
-import VectorItem from './VectorItem'
 import Settings from './Settings'
 
 export default {
   name: 'Dashboard',
 
-  components: { CreateConnection, SourceItem, TargetItem, FDMItem, MDMItem, VectorItem, Settings },
+  components: { CreateConnection, SourceItem, TargetItem, FDMItem, MDMItem, Settings },
 
   data() {
     return {
@@ -80,10 +79,6 @@ export default {
         },
         {
           component: 'FDMItem'
-        },
-        {
-          component: 'VectorItem',
-          level: 'base'
         },
         {
           component: 'MDMItem'
