@@ -14,8 +14,6 @@
         ></ElInput>
       </div>
       <div>
-<!--        <span>四泳道</span>-->
-<!--        <ElSwitch v-model="moreLaneSwitch" class="ml-2"></ElSwitch>-->
         <VIcon size="18 " class="icon-color-normal" @click="handleSwitch">list-view</VIcon>
       </div>
     </div>
@@ -75,27 +73,22 @@ export default {
     laneOptions() {
       const result = [
         {
-          title: 'SOURCES',
           type: 'source',
           add: true,
           component: 'SourceItem',
           level: 'base'
         },
         {
-          title: 'FDM / CACHE',
           component: 'FDMItem'
         },
         {
-          title: '分割线',
           component: 'VectorItem',
           level: 'base'
         },
         {
-          title: 'MDM / CURATED MODELS',
           component: 'MDMItem'
         },
         {
-          title: 'SERVICES / TARGETS',
           type: 'target',
           add: true,
           component: 'TargetItem',
