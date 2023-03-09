@@ -595,4 +595,8 @@ export class Database extends NodeType {
       }
     }
   }
+
+  selector(node) {
+    return ['database', 'logCollector'].includes(node.type)
+  }
 }
