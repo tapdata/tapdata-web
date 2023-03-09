@@ -576,15 +576,21 @@ export default {
     },
 
     handlePageReturn() {
-      if (this.dataflow.syncType === 'migrate') {
-        this.$router.push({
-          name: 'migrateList'
-        })
-      } else {
-        this.$router.push({
-          name: 'dataflowList'
-        })
+      let name
+      switch (this.dataflow.syncType) {
+        case 'migrate':
+          name = 'migrateList'
+          break
+        case 'logCollector':
+          name = 'sharedMining'
+          break
+        default:
+          name = 'dataflowList'
+          break
       }
+      this.$router.push({
+        name
+      })
     },
 
     handleEdit() {

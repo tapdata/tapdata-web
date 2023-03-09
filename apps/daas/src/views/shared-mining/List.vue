@@ -15,18 +15,6 @@
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column
-        prop="connections"
-        min-width="160"
-        :label="$t('column_connection')"
-        :show-overflow-tooltip="true"
-      >
-        <template slot-scope="scope">
-          <div v-for="item in scope.row.connections" :key="item.id" class="ellipsis">
-            <span v-for="op in item" :key="op">{{ op }}</span>
-          </div>
-        </template>
-      </el-table-column>
       <el-table-column min-width="160" :label="$t('share_list_time_excavation')">
         <template slot-scope="scope">
           {{ scope.row.logTime }}
@@ -39,9 +27,66 @@
           <TaskStatus :task="row" />
         </template>
       </el-table-column>
-      <el-table-column width="210" fixed="right" :label="$t('public_operation')">
+      <el-table-column width="220" fixed="right" :label="$t('public_operation')">
         <template #default="{ row }">
-          <TaskButtons :task="row" :hide-list="['del']" @trigger="taskButtonsHandler"></TaskButtons>
+          <div class="table-operations">
+            <ElLink
+              v-if="row.btnDisabled.stop && row.btnDisabled.forceStop"
+              v-readonlybtn="'SYNC_job_operation'"
+              type="primary"
+              :disabled="row.btnDisabled.start"
+              @click="start([row.id])"
+            >
+              {{ $t('public_button_start') }}
+            </ElLink>
+            <template v-else>
+              <ElLink
+                v-if="row.status === 'stopping'"
+                v-readonlybtn="'SYNC_job_operation'"
+                type="primary"
+                :disabled="row.btnDisabled.forceStop"
+                @click="forceStop([row.id])"
+              >
+                {{ $t('public_button_force_stop') }}
+              </ElLink>
+              <ElLink
+                v-else
+                v-readonlybtn="'SYNC_job_operation'"
+                type="primary"
+                :disabled="row.btnDisabled.stop"
+                @click="stop([row.id])"
+              >
+                {{ $t('public_button_stop') }}
+              </ElLink>
+            </template>
+            <ElDivider v-readonlybtn="'SYNC_job_operation'" direction="vertical"></ElDivider>
+            <ElLink
+              v-readonlybtn="'SYNC_job_edition'"
+              type="primary"
+              :disabled="row.btnDisabled.edit || $disabledReadonlyUserBtn()"
+              @click="handleEditor(row)"
+            >
+              {{ $t('public_button_edit') }}
+            </ElLink>
+            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+            <ElLink
+              v-readonlybtn="'SYNC_job_edition'"
+              type="primary"
+              :disabled="row.btnDisabled.monitor && !row.startTime"
+              @click="handleDetails(row)"
+            >
+              {{ $t('packages_business_task_list_button_monitor') }}
+            </ElLink>
+            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+            <ElLink
+              v-readonlybtn="'SYNC_job_edition'"
+              type="primary"
+              :disabled="row.btnDisabled.reset || $disabledReadonlyUserBtn()"
+              @click="handleReset(row)"
+            >
+              {{ $t('public_button_reset') }}
+            </ElLink>
+          </div>
         </template>
       </el-table-column>
     </TablePage>
@@ -159,19 +204,16 @@
 
 <script>
 import dayjs from 'dayjs'
-import { logcollectorApi } from '@tap/api'
+import { logcollectorApi, taskApi, workerApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage, TaskStatus, makeStatusAndDisabled } from '@tap/business'
-import Time from '@tap/shared/src/time'
-
-import TaskButtons from '@/components/TaskButtons'
 
 let timeout = null
 export default {
+  inject: ['buried'],
   components: {
     TablePage,
     FilterBar,
-    TaskButtons,
     TaskStatus
   },
   data() {
@@ -238,14 +280,17 @@ export default {
           label: this.$t('packages_dag_dataFlow_SyncInfo_currentType'),
           value: 'current'
         }
-      ]
+      ],
+      taskBuried: {
+        start: 'sharedMiningStart'
+      }
     }
   },
   mounted() {
     //定时轮询
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
-    }, 10000)
+    }, 8000)
   },
   computed: {
     table() {
@@ -358,52 +403,6 @@ export default {
         }
       })
     },
-    taskButtonsHandler(event, task) {
-      if (event === 'edit') {
-        this.editDialogVisible = true
-        this.editForm.id = task.id
-        this.editForm.name = task.name
-        this.editForm.storageTime = task.storageTime
-        let syncPoints = task.syncPoints
-        if (syncPoints) {
-          this.editForm.syncPoints = syncPoints
-        } else {
-          const [connectionId, connectionName] = Object.entries(task.connections[0])[0]
-          const sourceNodeIds = (task.dag?.edges || []).map(t => t.source)
-          const sourceNodes = (task.dag?.nodes || [])
-            .filter(node => sourceNodeIds.includes(node.id))
-            .map(node => ({
-              nodeId: node.id,
-              nodeName: node.name,
-              connectionId: connectionId,
-              connectionName: connectionName
-            }))
-          const result = sourceNodes.map(item => {
-            const point = {
-              ...item,
-              timeZone: this.systemTimeZone,
-              pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
-              dateTime: ''
-            }
-            return point
-          })
-          this.editForm.syncPoints = result
-        }
-        this.currentForm = JSON.parse(JSON.stringify(this.editForm))
-      } else if (event === 'details') {
-        this.$router.push({
-          name: 'relationTaskDetail',
-          params: {
-            id: task.id
-          },
-          query: {
-            type: 'logCollector'
-          }
-        })
-      } else {
-        this.table.fetch()
-      }
-    },
     // 取消编辑
     cancelEdit() {
       this.editDialogVisible = false
@@ -453,6 +452,141 @@ export default {
         op.selectableRange = `${formatMap.startTime} - ${formatMap.endTime}`
       }
       return op
+    },
+
+    start(ids) {
+      this.buried(this.taskBuried.start)
+      let filter = {
+        where: {
+          id: ids[0]
+        }
+      }
+      taskApi.get({ filter: JSON.stringify(filter) }).then(() => {
+        taskApi
+          .batchStart(ids)
+          .then(data => {
+            this.buried(this.taskBuried.start, '', { result: true })
+            this.$message.success(data?.message || this.$t('public_message_operation_success'))
+            this.table.fetch()
+          })
+          .catch(() => {
+            this.buried(this.taskBuried.start, '', { result: false })
+          })
+      })
+    },
+
+    forceStop(ids) {
+      let msgObj = this.getConfirmMessage('force_stop')
+      this.$confirm(msgObj.msg, '', {
+        type: 'warning',
+        showClose: false,
+        dangerouslyUseHTMLString: true
+      }).then(resFlag => {
+        if (!resFlag) {
+          return
+        }
+        taskApi.forceStop(ids).then(data => {
+          this.$message.success(data?.message || this.$t('public_message_operation_success'))
+          this.table.fetch()
+        })
+      })
+    },
+
+    stop(ids) {
+      this.$confirm(this.$t('task_list_stop_confirm_message'), this.$t('task_list_important_reminder'), {
+        type: 'warning'
+      }).then(resFlag => {
+        if (!resFlag) {
+          return
+        }
+        taskApi.batchStop(ids).then(data => {
+          this.$message.success(data?.message || this.$t('public_message_operation_success'))
+          this.table.fetch()
+        })
+      })
+    },
+
+    handleEditor(task = {}) {
+      this.editDialogVisible = true
+      this.editForm.id = task.id
+      this.editForm.name = task.name
+      this.editForm.storageTime = task.storageTime
+      let syncPoints = task.syncPoints
+      if (syncPoints) {
+        this.editForm.syncPoints = syncPoints
+      } else {
+        const [connectionId, connectionName] = Object.entries(task.connections[0])[0]
+        const sourceNodeIds = (task.dag?.edges || []).map(t => t.source)
+        const sourceNodes = (task.dag?.nodes || [])
+          .filter(node => sourceNodeIds.includes(node.id))
+          .map(node => ({
+            nodeId: node.id,
+            nodeName: node.name,
+            connectionId: connectionId,
+            connectionName: connectionName
+          }))
+        const result = sourceNodes.map(item => {
+          const point = {
+            ...item,
+            timeZone: this.systemTimeZone,
+            pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
+            dateTime: ''
+          }
+          return point
+        })
+        this.editForm.syncPoints = result
+      }
+      this.currentForm = JSON.parse(JSON.stringify(this.editForm))
+    },
+
+    openRoute(route, newTab = true) {
+      if (newTab) {
+        window.open(this.$router.resolve(route).href)
+      } else {
+        this.$router.push(route)
+      }
+    },
+
+    handleDetails(task = {}) {
+      this.openRoute({
+        name: 'SharedMiningMonitor',
+        params: {
+          id: task.id
+        }
+      })
+    },
+
+    getConfirmMessage(operateStr, task) {
+      let title = operateStr + '_confirm_title',
+        message = operateStr + '_confirm_message'
+      let strArr = this.$t('dataFlow_' + message).split('xxx')
+      let msg = `
+        <p>
+          ${strArr[0]}
+          <span class="color-primary">${task.name}</span>
+          ${strArr[1]}
+        </p>`
+      return {
+        msg,
+        title: this.$t('dataFlow_' + title)
+      }
+    },
+
+    handleReset(row) {
+      const id = row.id
+      let msgObj = this.getConfirmMessage('initialize', row)
+      this.$confirm(msgObj.msg, msgObj.title, {
+        type: 'warning',
+        dangerouslyUseHTMLString: true
+      }).then(resFlag => {
+        if (!resFlag) {
+          return
+        }
+        taskApi.batchRenew([id]).then(data => {
+          this.$message.success(data?.message || this.$t('public_message_operation_success'))
+          this.table.fetch()
+        })
+      })
     }
   }
 }
