@@ -5,6 +5,7 @@ import { discoveryApi } from '@tap/api'
 import { TablePage, DiscoveryClassification, makeDragNodeImage } from '../../index'
 import DrawerContent from './PreviewDrawer'
 import ObjectTable from './ObjectTable'
+import TableView from '../../components/TableView'
 import resize from '@tap/component/src/directives/resize'
 import './index.scss'
 
@@ -14,6 +15,8 @@ export default defineComponent({
   },
   setup(props, { refs, root }) {
     const list = ref([])
+    const objectList = ref([])
+    const catalogList = ref([])
     const { sourceType, queryKey } = root.$route.query || {}
     const data = reactive({
       isShowDetails: false,
@@ -51,7 +54,7 @@ export default defineComponent({
       })
     }
     const rest = () => {
-      refs.table.fetch(1)
+      // refs.table.fetch(1)
     }
     const loadFilterList = () => {
       let filterType = ['objType']
@@ -84,10 +87,12 @@ export default defineComponent({
     }
     //打开资源概览
     const handlePreview = row => {
+      refs.tableView.open(row)
       data.isShowDetails = true
+      /*
       nextTick(() => {
         refs?.drawerContent?.loadData(row)
-      })
+      })*/
     }
     const closeDrawer = val => {
       data.isShowDetails = val
@@ -106,7 +111,7 @@ export default defineComponent({
     const closeSourceDrawer = val => {
       data.isShowSourceDrawer = val
       nextTick(() => {
-        refs.table.fetch(1)
+        // refs.table.fetch(1)
 
         //关闭资源绑定抽屉 刷新数据目录分类树 主要是统计
         refs?.classify?.getData()
@@ -115,22 +120,36 @@ export default defineComponent({
     //切换目录
     const getNodeChecked = node => {
       data.currentNode = node
+      objectList.value = node.children
+      console.log('getNodeChecked', node) // eslint-disable-line
+      // refs.table.fetch(1)
+    }
 
-      refs.table.fetch(1)
+    const iconMap = {
+      table: 'table',
+      defaultApi: 'apiServer_navbar'
     }
     const renderNode = ({ row }) => {
+      let icon = 'folder-outline'
+
+      if (row.isObject) {
+        icon = iconMap[row.type]
+      }
       return (
         <div class="cursor-pointer">
+          <VIcon class="color-primary mr-2" size={18}>
+            {icon}
+          </VIcon>
           <span class="tree-item-icon none">
-            <VIcon class="color-primary" size={16}>
-              table
+            <VIcon class="color-primary" size={18}>
+              {icon}
             </VIcon>
           </span>
           <span
-            class="col-new-field-name inline-block ellipsis align-middle color-primary  mr-4 "
             onClick={event => {
               event.stopPropagation()
-              handlePreview(row)
+              objectList.value = row.children
+              // handlePreview(row)
             }}
           >
             {row.name}
@@ -142,11 +161,11 @@ export default defineComponent({
     watch(
       () => root.$route.query,
       val => {
-        refs.table.fetch(1)
+        // refs.table.fetch(1)
       }
     )
     onMounted(() => {
-      refs.table.fetch(1)
+      // refs.table.fetch(1)
     })
 
     const dragState = reactive({
@@ -207,7 +226,8 @@ export default defineComponent({
       handleDragStart,
       handleDragEnd,
       handleSelectionChange,
-      dragState
+      dragState,
+      objectList
     }
   },
   render() {
@@ -237,65 +257,52 @@ export default defineComponent({
             onNodeChecked={this.getNodeChecked}
           ></DiscoveryClassification>
         </div>
-        <TablePage
-          ref="table"
-          row-key="id"
-          remoteMethod={this.loadData}
-          draggable
-          on={{
-            'row-dragstart': this.handleDragStart,
-            'row-dragend': this.handleDragEnd,
-            'selection-change': this.handleSelectionChange
-          }}
-        >
-          <template slot="search">
-            <div class="flex flex-row align-items-center mb-2">
-              <span class="discovery-title ml-2 mr-2">{i18n.t('metadata_meta_type_directory')}</span>
-              <span class="discovery-secondary-title mr-2"> {this.data.currentNode.value} </span>
-              <span class="discovery-desc ml-2">{this.data.currentNode.desc} </span>
-            </div>
-            <FilterBar
-              v-model={this.data.searchParams}
-              items={this.data.filterItems}
-              {...{ on: { fetch: this.rest } }}
-            ></FilterBar>
-          </template>
-          <template slot="operation">
-            {this.data.currentNode.readOnly ? (
-              ' '
-            ) : (
-              <el-button
-                type="primary"
-                size="mini"
-                onClick={() => {
-                  this.handleSourceDrawer()
+        <div class="flex flex-column flex-1">
+          <div class="p-3">
+            <ElBreadcrumb separator-class="el-icon-arrow-right">
+              <ElBreadcrumbItem class="discovery-title">所有目录</ElBreadcrumbItem>
+              <ElBreadcrumbItem class="discovery-title">Source</ElBreadcrumbItem>
+            </ElBreadcrumb>
+          </div>
+          <div staticClass="flex-1" class={{ none: !this.data.isShowDetails }}>
+            <TableView ref="tableView"></TableView>
+          </div>
+          <div staticClass="flex-1" class={{ none: this.data.isShowDetails }}>
+            <ElTable
+              class={{ none: this.data.isShowDetails }}
+              ref="table"
+              row-key="id"
+              draggable
+              data={this.objectList}
+              treeProps={{ children: 'no_children' }}
+              on={{
+                'row-dragstart': this.handleDragStart,
+                'row-dragend': this.handleDragEnd,
+                'selection-change': this.handleSelectionChange
+              }}
+            >
+              <el-table-column type="selection" width="55"></el-table-column>
+              <el-table-column
+                label={i18n.t('public_name')}
+                prop="name"
+                show-overflow-tooltip
+                width="350px"
+                scopedSlots={{
+                  default: this.renderNode
                 }}
-              >
-                <span>{i18n.t('datadiscovery_catalogue_ziyuanbangding')}</span>
-              </el-button>
-            )}
-          </template>
-          <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column
-            label={i18n.t('public_name')}
-            prop="name"
-            show-overflow-tooltip
-            width="350px"
-            scopedSlots={{
-              default: this.renderNode
-            }}
-          ></el-table-column>
-          <el-table-column label={i18n.t('public_type')} prop="type"></el-table-column>
-          <el-table-column label={i18n.t('public_description')} prop="desc"></el-table-column>
-        </TablePage>
-        <Drawer
+              ></el-table-column>
+              <el-table-column label={i18n.t('public_change_time')} prop="changeTime"></el-table-column>
+            </ElTable>
+          </div>
+        </div>
+        {/*<Drawer
           class="object-drawer-wrap overflow-hidden"
           width="850px"
           visible={this.data.isShowDetails}
           on={{ ['update:visible']: this.closeDrawer }}
         >
           <DrawerContent ref={'drawerContent'}></DrawerContent>
-        </Drawer>
+        </Drawer>*/}
         <el-drawer
           class="object-drawer-wrap"
           size="58%"

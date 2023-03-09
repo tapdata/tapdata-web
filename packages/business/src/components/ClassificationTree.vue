@@ -243,11 +243,13 @@ export default {
       )
     },
 
-    nodeClickHandler(data) {
+    nodeClickHandler(data, node) {
       let { currentNode = {} } = this
       if (data.id === currentNode.id || data.isObject) return
+      this.handleNodeExpand(data, node)
       this.currentNode = data
       this.emitCheckedNodes(data)
+      console.log('node', node) // eslint-disable-line
     },
 
     emitCheckedNodes(node) {
@@ -285,6 +287,7 @@ export default {
 
           this.treeData = [
             {
+              id: '-',
               name: '所有目录',
               isRoot: true,
               readOnly: true,
@@ -307,10 +310,11 @@ export default {
           cb && cb(items)
           //默认选中第一个
           this.$nextTick(() => {
-            let key = treeData?.[0]?.id
+            const first = this.treeData[0]
+            let key = first.id
             this.expandedKeys = [key]
             this.$refs.tree.setCurrentKey(key)
-            this.emitCheckedNodes(treeData?.[0])
+            this.emitCheckedNodes(first)
           })
         })
         .finally(() => {
@@ -634,10 +638,10 @@ export default {
           objCategory: t.category
         }
       })
-      await discoveryApi.patchTags({
+      /*await discoveryApi.patchTags({
         tagBindingParams,
         tagIds: [from]
-      })
+      })*/
       await discoveryApi.postTags({
         tagBindingParams,
         tagIds: [to],
@@ -657,7 +661,7 @@ export default {
       }, 2000)
     },
 
-    async handleNodeExpand(data, node, el) {
+    async handleNodeExpand(data, node) {
       // 十秒内加载过资源，不再继续加载
       if (data.isRoot || (node.loadTime && Date.now() - node.loadTime < 10000)) return
 
