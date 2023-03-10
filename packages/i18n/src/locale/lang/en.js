@@ -119,6 +119,8 @@ export default {
   public_time_last_day: 'Last 1 day',
   public_time_last_three_days: 'The last 3 days',
   public_time_custom_time: 'Custom time',
+  public_time_user_specified_time: 'User specified time',
+  public_time_current: 'Current Time',
   // relation
   public_or: 'or',
   public_and: 'and',

@@ -119,6 +119,8 @@ export default {
   public_time_last_day: '最近1天',
   public_time_last_three_days: '最近3天',
   public_time_custom_time: '自定義時間',
+  public_time_user_specified_time: '用戶指定時間',
+  public_time_current: '此刻',
   // 关系
   public_or: '或',
   public_and: '和',

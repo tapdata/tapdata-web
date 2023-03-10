@@ -241,7 +241,7 @@ export default observer({
                               default: 'current',
                               enum: [
                                 {
-                                  label: this.$t('packages_dag_dataFlow_SyncInfo_localTZType'),
+                                  label: this.$t('public_time_user_specified_time'),
                                   value: 'localTZ'
                                 },
                                 /*{
@@ -249,7 +249,7 @@ export default observer({
                                   value: 'connTZ'
                                 },*/
                                 {
-                                  label: this.$t('packages_dag_dataFlow_SyncInfo_currentType'),
+                                  label: this.$t('public_time_current'),
                                   value: 'current'
                                 }
                               ],

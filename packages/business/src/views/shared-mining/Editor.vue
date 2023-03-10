@@ -41,7 +41,7 @@
             type="datetime"
             format="yyyy-MM-dd HH:mm:ss"
             valueFormat="timestamp"
-            class="mt-4"
+            class="ml-4"
           ></ElDatePicker>
         </div>
       </ElFormItem>
@@ -91,15 +91,11 @@ export default {
       logSaveList: [1, 2, 3, 4, 5, 6, 7],
       pointTypeOptions: [
         {
-          label: this.$t('packages_dag_dataFlow_SyncInfo_localTZType'),
+          label: this.$t('public_time_user_specified_time'),
           value: 'localTZ'
         },
         {
-          label: this.$t('packages_dag_dataFlow_SyncInfo_connTZType'),
-          value: 'connTZ'
-        },
-        {
-          label: this.$t('packages_dag_dataFlow_SyncInfo_currentType'),
+          label: this.$t('public_time_current'),
           value: 'current'
         }
       ]
