@@ -1,6 +1,7 @@
 export default {
   // 常用
   public_name: '名稱',
+  public_index: '索引',
   public_type: '類型',
   public_title: '標題',
   public_description: '描述',
@@ -10,6 +11,7 @@ export default {
   public_creator: '創建人',
   public_update_time: '更新時間',
   public_change_time: '修改時間',
+  public_serial_number: '序號',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '無效',

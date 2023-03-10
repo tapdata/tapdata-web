@@ -1,6 +1,7 @@
 export default {
   // commonly used
   public_name: 'Name',
+  public_index: 'Index',
   public_type: 'Type',
   public_title: 'Title',
   public_description: 'Description',
@@ -10,6 +11,7 @@ export default {
   public_creator: 'Creator',
   public_update_time: 'Update time',
   public_change_time: 'Modification time',
+  public_serial_number: 'Serial number',
   // state
   public_status_ready: 'Valid',
   public_status_invalid: 'Invalid',
