@@ -159,46 +159,7 @@
       </span>
     </el-dialog>
 
-    <el-dialog
-      width="800px"
-      custom-class="edit-dialog"
-      :title="$t('share_list_edit_title')"
-      :close-on-click-modal="false"
-      :destroy-on-close="true"
-      :visible.sync="editDialogVisible"
-    >
-      <el-form ref="editForm" label-position="left" label-width="150px" :model="editForm" :rules="rulesEdit">
-        <el-form-item size="mini" :label="$t('share_form_edit_name')" prop="name">
-          <el-input clearable v-model="editForm.name"></el-input>
-        </el-form-item>
-        <el-form-item size="mini" :label="$t('share_form_setting_log_time')">
-          <el-select v-model="editForm.storageTime" :placeholder="$t('public_select_placeholder')">
-            <el-option v-for="op in logSaveList" :key="op" :label="op + $t('public_time_d')" :value="op"> </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item size="mini" :label="$t('share_list_edit_title_start_time')">
-          <div v-for="(item, index) in editForm.syncPoints" :key="index">
-            <el-select v-model="item.pointType" :placeholder="$t('public_select_placeholder')">
-              <el-option v-for="op in pointTypeOptions" :key="op.value" :label="op.label" :value="op.value"></el-option>
-            </el-select>
-            <el-date-picker
-              v-if="item.pointType !== 'current'"
-              v-model="item.dateTime"
-              :picker-options="getPickerOptions(item.dateTime, item)"
-              popperClass="hide-current__dateTime"
-              type="datetime"
-              format="yyyy-MM-dd HH:mm:ss"
-              valueFormat="timestamp"
-              class="mt-4"
-            ></el-date-picker>
-          </div>
-        </el-form-item>
-      </el-form>
-      <span class="dialog-footer" slot="footer">
-        <el-button @click="cancelEdit" size="mini">{{ $t('public_button_cancel') }}</el-button>
-        <el-button size="mini" type="primary" @click="saveEdit()">{{ $t('public_button_save') }}</el-button>
-      </span>
-    </el-dialog>
+    <Editor :task-id="editForm.id" :visible.sync="editDialogVisible" @success="table.fetch(1)"></Editor>
   </section>
 </template>
 
@@ -208,13 +169,16 @@ import { logcollectorApi, taskApi, workerApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage, TaskStatus, makeStatusAndDisabled } from '@tap/business'
 
+import Editor from './Editor'
+
 let timeout = null
 export default {
   inject: ['buried'],
   components: {
     TablePage,
     FilterBar,
-    TaskStatus
+    TaskStatus,
+    Editor
   },
   data() {
     return {
@@ -248,12 +212,8 @@ export default {
       },
       enumsItems: ['Mem', 'MongoDB', 'RocksDB'],
       editForm: {
-        id: '',
-        name: '',
-        storageTime: 3,
-        syncPoints: []
+        id: ''
       },
-      currentForm: {},
       logSaveList: [1, 2, 3, 4, 5, 6, 7],
       showEditSettingBtn: false, //禁用
       rules: {
@@ -264,23 +224,6 @@ export default {
           { required: true, message: this.$t('shared_cdc_setting_select_table_tip'), trigger: 'blur' }
         ]
       },
-      rulesEdit: {
-        name: [{ required: true, message: this.$t('shared_cdc_name'), trigger: 'blur' }]
-      },
-      pointTypeOptions: [
-        {
-          label: this.$t('packages_dag_dataFlow_SyncInfo_localTZType'),
-          value: 'localTZ'
-        },
-        {
-          label: this.$t('packages_dag_dataFlow_SyncInfo_connTZType'),
-          value: 'connTZ'
-        },
-        {
-          label: this.$t('packages_dag_dataFlow_SyncInfo_currentType'),
-          value: 'current'
-        }
-      ],
       taskBuried: {
         start: 'sharedMiningStart'
       }
@@ -403,56 +346,6 @@ export default {
         }
       })
     },
-    // 取消编辑
-    cancelEdit() {
-      this.editDialogVisible = false
-    },
-    // 保存编辑
-    saveEdit() {
-      this.$refs['editForm'].validate(valid => {
-        if (valid) {
-          let id = this.editForm?.id
-          logcollectorApi.patchId(id, this.editForm).then(() => {
-            this.editDialogVisible = false
-            this.table.fetch(1)
-            this.$message.success(this.$t('shared_cdc_setting_message_edit_save'))
-          })
-        }
-      })
-    },
-
-    getPickerOptions(val, item) {
-      if (item.pointType === 'connTZ')
-        return {
-          disabledDate: null,
-          selectableRange: null
-        }
-      const now = Date.now()
-      const formatMap = {
-        date: 'YYYY-MM-DD',
-        time: 'HH:mm:ss',
-        startTime: '00:00:00',
-        endTime: '23:59:59'
-      }
-
-      const pickDate = dayjs(val).format(formatMap.date)
-      const nowDate = dayjs(now).format(formatMap.date)
-      const nowTime = dayjs(now).format(formatMap.time)
-      if (val > now) {
-        item.dateTime = now
-      }
-      let op = {
-        disabledDate: time => {
-          return new Date(time).getTime() > now
-        }
-      }
-      if (pickDate === nowDate) {
-        op.selectableRange = `${formatMap.startTime} - ${nowTime}`
-      } else {
-        op.selectableRange = `${formatMap.startTime} - ${formatMap.endTime}`
-      }
-      return op
-    },
 
     start(ids) {
       this.buried(this.taskBuried.start)
@@ -509,34 +402,6 @@ export default {
     handleEditor(task = {}) {
       this.editDialogVisible = true
       this.editForm.id = task.id
-      this.editForm.name = task.name
-      this.editForm.storageTime = task.storageTime
-      let syncPoints = task.syncPoints
-      if (syncPoints) {
-        this.editForm.syncPoints = syncPoints
-      } else {
-        const [connectionId, connectionName] = Object.entries(task.connections[0])[0]
-        const sourceNodeIds = (task.dag?.edges || []).map(t => t.source)
-        const sourceNodes = (task.dag?.nodes || [])
-          .filter(node => sourceNodeIds.includes(node.id))
-          .map(node => ({
-            nodeId: node.id,
-            nodeName: node.name,
-            connectionId: connectionId,
-            connectionName: connectionName
-          }))
-        const result = sourceNodes.map(item => {
-          const point = {
-            ...item,
-            timeZone: this.systemTimeZone,
-            pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
-            dateTime: ''
-          }
-          return point
-        })
-        this.editForm.syncPoints = result
-      }
-      this.currentForm = JSON.parse(JSON.stringify(this.editForm))
     },
 
     openRoute(route, newTab = true) {
