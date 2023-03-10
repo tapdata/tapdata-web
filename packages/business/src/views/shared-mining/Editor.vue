@@ -20,15 +20,15 @@
       :model="editForm"
       :rules="rulesEdit"
     >
-      <ElFormItem size="mini" :label="$t('share_form_edit_name')" prop="name">
+      <ElFormItem size="mini" :label="$t('packages_business_shared_form_edit_name')" prop="name">
         <ElInput clearable v-model="editForm.name"></ElInput>
       </ElFormItem>
-      <ElFormItem size="mini" :label="$t('share_form_setting_log_time')">
+      <ElFormItem size="mini" :label="$t('packages_business_shared_form_setting_log_time')">
         <ElSelect v-model="editForm.storageTime" :placeholder="$t('public_select_placeholder')">
           <ElOption v-for="op in logSaveList" :key="op" :label="op + $t('public_time_d')" :value="op"> </ElOption>
         </ElSelect>
       </ElFormItem>
-      <ElFormItem size="mini" :label="$t('share_list_edit_title_start_time')">
+      <ElFormItem size="mini" :label="$t('packages_business_shared_list_edit_title_start_time')">
         <div v-for="(item, index) in editForm.syncPoints" :key="index">
           <ElSelect v-model="item.pointType" :placeholder="$t('public_select_placeholder')">
             <ElOption v-for="op in pointTypeOptions" :key="op.value" :label="op.label" :value="op.value"></ElOption>
@@ -64,7 +64,7 @@ export default {
     title: {
       type: String,
       default: () => {
-        return i18n.t('share_list_edit_title')
+        return i18n.t('packages_business_shared_list_edit_title')
       }
     },
     visible: {
@@ -86,7 +86,7 @@ export default {
         syncPoints: []
       },
       rulesEdit: {
-        name: [{ required: true, message: this.$t('shared_cdc_name'), trigger: 'blur' }]
+        name: [{ required: true, message: this.$t('packages_business_shared_cdc_name'), trigger: 'blur' }]
       },
       logSaveList: [1, 2, 3, 4, 5, 6, 7],
       pointTypeOptions: [
@@ -168,7 +168,7 @@ export default {
         if (valid) {
           logcollectorApi.patchId(this.taskId, this.editForm).then(() => {
             this.$emit('success', ...arguments)
-            this.$message.success(this.$t('shared_cdc_setting_message_edit_save'))
+            this.$message.success(this.$t('packages_business_shared_cdc_setting_message_edit_save'))
             this.init()
             this.handleClose()
           })

@@ -3,26 +3,28 @@
     <div class="share-detail-box share-detail-head flex justify-content-between fs-8">
       <div class="share-detail-head-left py-6 px-4">
         <div class="flex align-items-center">
-          <span class="fw-sub mb-4 fs-7">{{ $t('share_detail_mining_info') }}</span>
+          <span class="fw-sub mb-4 fs-7">{{ $t('packages_business_shared_detail_mining_info') }}</span>
         </div>
         <div class="flex justify-content-start mb-4 text-left fs-8">
-          <div class="fw-normal head-label font-color-light">{{ $t('share_detail_name') }}:</div>
+          <div class="fw-normal head-label font-color-light">{{ $t('packages_business_shared_detail_name') }}:</div>
           <ElTooltip effect="dark" :content="detailData.name" placement="top-start">
             <div class="name font-color-dark fw-normal">{{ detailData.name }}</div>
           </ElTooltip>
         </div>
         <div class="flex justify-content-start mb-4 text-left fs-8">
-          <div class="fw-normal head-label font-color-light">{{ $t('share_detail_log_mining_time') }}:</div>
+          <div class="fw-normal head-label font-color-light">
+            {{ $t('packages_business_shared_detail_log_mining_time') }}:
+          </div>
           <div class="font-color-dark fw-normal">{{ formatTime(detailData.logTime) }}</div>
         </div>
         <div class="flex justify-content-start mb-4 text-left fs-8">
-          <div class="fw-normal head-label font-color-light">{{ $t('share_detail_log_time') }}:</div>
+          <div class="fw-normal head-label font-color-light">{{ $t('packages_business_shared_detail_log_time') }}:</div>
           <div class="font-color-dark fw-normal">{{ detailData.storageTime }}</div>
         </div>
       </div>
       <div class="share-detail-head-center py-5 px-6" style="min-height: 250px">
         <div class="flex">
-          <span class="label font-color-dark fs-8">{{ $t('share_detail_statistics_time') }}</span>
+          <span class="label font-color-dark fs-8">{{ $t('packages_business_shared_detail_statistics_time') }}</span>
           <DatetimeRange
             v-model="timeRange"
             :range="2 * 365 * 24 * 60 * 60 * 1000"
@@ -42,7 +44,7 @@
             <div class="title fs-7 font-color-dark">{{ $t('public_event_incremental_delay') }}</div>
             <div class="time py-4 fs-2 text-primary">{{ getReplicateLagTime(replicateLag) }}</div>
             <div class="text-muted font-color-slight fs-8" v-if="detailData.cdcTime">
-              {{ $t('share_detail_incremental_time') }}：{{ formatTime(detailData.cdcTime) }}
+              {{ $t('packages_business_shared_detail_incremental_time') }}：{{ formatTime(detailData.cdcTime) }}
             </div>
           </div>
         </div>
@@ -71,7 +73,7 @@
           <div class="operate-columns">
             <ElButton size="mini" type="text" @click="goDetail(scope.row)">{{ $t('public_button_check') }}</ElButton>
             <ElButton size="mini" type="text" @click="getTables(scope.row.id)">{{
-              $t('share_detail_button_table_info')
+              $t('packages_business_shared_detail_button_table_info')
             }}</ElButton>
           </div>
         </template>
@@ -80,7 +82,7 @@
     <el-dialog
       width="400px"
       custom-class="edit-dialog"
-      :title="$t('share_detail_title')"
+      :title="$t('packages_business_shared_detail_title')"
       :close-on-click-modal="false"
       :visible.sync="tableDialogVisible"
     >
@@ -220,25 +222,25 @@ export default {
       operations: ['start', 'stop', 'forceStop'],
       columnsTableName: [
         {
-          label: i18n.t('modules_header_tablename'),
+          label: i18n.t('packages_business_tablename'),
           prop: 'tablename'
         }
       ],
       columns: [
         {
-          label: this.$t('share_detail_call_task'),
+          label: this.$t('packages_business_shared_detail_call_task'),
           prop: 'name'
         },
         {
-          label: this.$t('share_detail_source_time'),
+          label: this.$t('packages_business_shared_detail_source_time'),
           slotName: 'sourceTimestamp'
         },
         {
-          label: this.$t('share_detail_sycn_time_point'),
+          label: this.$t('packages_business_shared_detail_sycn_time_point'),
           slotName: 'syncTimestamp'
         },
         {
-          label: this.$t('share_detail_mining_status'),
+          label: this.$t('packages_business_shared_detail_mining_status'),
           slotName: 'status'
         },
         {
@@ -370,7 +372,7 @@ export default {
           })
         })
         // eslint-disable-next-line
-        console.log(i18n.t('daas_shared_mining_detail_wajuexiangqingx'), this.lineDataDeep.x.length, xArr)
+        console.log(i18n.t('packages_business_shared_mining_detail_wajuexiangqingx'), this.lineDataDeep.x.length, xArr)
         xArr.forEach((el, index) => {
           if (!this.lineDataDeep.x.includes(el)) {
             this.lineDataDeep.x.push(el)

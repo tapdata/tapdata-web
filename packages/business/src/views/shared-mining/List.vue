@@ -7,22 +7,26 @@
       <!--外存配置已上，这里关闭，稳定后相关注释代码可去掉-->
       <!--      <div slot="operation">-->
       <!--        <el-button class="btn btn-create" type="primary" size="mini" :loading="loadingConfig" @click="handleSetting">-->
-      <!--          <span>{{ $t('share_list_setting') }}</span>-->
       <!--        </el-button>-->
       <!--      </div>-->
-      <el-table-column min-width="250" :label="$t('share_list_name')" :show-overflow-tooltip="true">
+      <el-table-column min-width="250" :label="$t('packages_business_shared_list_name')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column min-width="160" :label="$t('share_list_time_excavation')">
+      <el-table-column min-width="160" :label="$t('packages_business_shared_list_time_excavation')">
         <template slot-scope="scope">
           {{ scope.row.logTime }}
         </template>
       </el-table-column>
-      <el-table-column sortable min-width="120" :label="$t('share_list_time')" prop="delayTime"></el-table-column>
+      <el-table-column
+        sortable
+        min-width="120"
+        :label="$t('packages_business_shared_list_time')"
+        prop="delayTime"
+      ></el-table-column>
       <el-table-column prop="createTime" min-width="160" :label="$t('public_create_time')" sortable> </el-table-column>
-      <el-table-column min-width="110" prop="status" :label="$t('share_list_status')">
+      <el-table-column min-width="110" prop="status" :label="$t('packages_business_shared_list_status')">
         <template #default="{ row }">
           <TaskStatus :task="row" />
         </template>
@@ -94,7 +98,7 @@
     <el-dialog
       width="500px"
       custom-class="setting-dialog"
-      :title="$t('share_list_setting')"
+      :title="$t('packages_business_shared_list_setting')"
       :close-on-click-modal="false"
       :visible.sync="settingDialogVisible"
     >
@@ -106,7 +110,11 @@
         :disabled="!showEditSettingBtn"
         :rules="rules"
       >
-        <el-form-item prop="persistenceMode" size="mini" :label="$t('shared_cdc_setting_select_mode')">
+        <el-form-item
+          prop="persistenceMode"
+          size="mini"
+          :label="$t('packages_business_shared_cdc_setting_select_mode')"
+        >
           <el-select v-model="digSettingForm.persistenceMode">
             <el-option v-for="item in enumsItems" :key="item" :label="item" :value="item"></el-option>
           </el-select>
@@ -124,7 +132,7 @@
           v-if="digSettingForm.persistenceMode === 'MongoDB'"
           prop="persistenceMongodb_collection"
           size="mini"
-          :label="$t('share_form_setting_table_name')"
+          :label="$t('packages_business_shared_form_setting_table_name')"
         >
           <el-input v-model="digSettingForm.persistenceMongodb_collection"> </el-input>
         </el-form-item>
@@ -132,20 +140,20 @@
           v-if="digSettingForm.persistenceMode === 'RocksDB'"
           prop="persistenceMongodb_collection"
           size="mini"
-          :label="$t('setting_share_cdc_persistence_rocksdb_path')"
+          :label="$t('packages_business_shared_cdc_persistence_rocksdb_path')"
         >
           <el-input type="textarea" v-model="digSettingForm.persistenceRocksdb_path"></el-input>
         </el-form-item>
         <el-form-item
           v-if="['MongoDB', 'RocksDB'].includes(digSettingForm.persistenceMode)"
           size="mini"
-          :label="$t('share_form_setting_log_time')"
+          :label="$t('packages_business_shared_form_setting_log_time')"
         >
           <el-select
             allow-create
             filterable
             v-model="digSettingForm.share_cdc_ttl_day"
-            :placeholder="$t('shared_cdc_setting_select_time_tip')"
+            :placeholder="$t('packages_business_shared_cdc_setting_select_time_tip')"
           >
             <el-option v-for="op in logSaveList" :key="op" :label="op + $t('public_time_d')" :value="op"> </el-option>
           </el-select>
@@ -188,12 +196,12 @@ export default {
       },
       filterItems: [
         {
-          placeholder: this.$t('shared_cdc_placeholder_task_name'),
+          placeholder: this.$t('packages_business_shared_cdc_placeholder_task_name'),
           key: 'taskName',
           type: 'input'
         },
         {
-          placeholder: this.$t('shared_cdc_placeholder_connection_name'),
+          placeholder: this.$t('packages_business_shared_cdc_placeholder_connection_name'),
           key: 'connectionName',
           type: 'input'
         }
@@ -218,10 +226,14 @@ export default {
       showEditSettingBtn: false, //禁用
       rules: {
         persistenceMongodb_uri_db: [
-          { required: true, message: this.$t('shared_cdc_setting_select_mongodb_tip'), trigger: 'blur' }
+          {
+            required: true,
+            message: this.$t('packages_business_shared_cdc_setting_select_mongodb_tip'),
+            trigger: 'blur'
+          }
         ],
         persistenceMongodb_collection: [
-          { required: true, message: this.$t('shared_cdc_setting_select_table_tip'), trigger: 'blur' }
+          { required: true, message: this.$t('packages_business_shared_cdc_setting_select_table_tip'), trigger: 'blur' }
         ]
       },
       taskBuried: {
@@ -386,9 +398,13 @@ export default {
     },
 
     stop(ids) {
-      this.$confirm(this.$t('task_list_stop_confirm_message'), this.$t('task_list_important_reminder'), {
-        type: 'warning'
-      }).then(resFlag => {
+      this.$confirm(
+        this.$t('packages_business_stop_confirm_message'),
+        this.$t('packages_business_important_reminder'),
+        {
+          type: 'warning'
+        }
+      ).then(resFlag => {
         if (!resFlag) {
           return
         }
