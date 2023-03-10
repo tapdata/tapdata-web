@@ -46,7 +46,7 @@ export default {
   public_button_preview: 'Preview',
   public_button_reload: 'Reload',
   public_button_restart: 'Restart',
-  public_button_start: 'start',
+  public_button_start: 'Start',
   public_button_stop: 'Stop',
   public_button_force_stop: 'Force stop',
   public_button_close: 'Close',
