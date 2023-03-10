@@ -566,5 +566,7 @@ export default {
   packages_dag_src_editor_shaohouqidong: 'Start later',
   packages_dag_src_editor_jixuqidong: 'Continue to start',
   packages_dag_src_editor_renwubaocunjianceshi:
-    'An alarm was found during task saving detection, which may cause the task to run abnormally. It is recommended that you check and resolve the alarm before starting the task'
+    'An alarm was found during task saving detection, which may cause the task to run abnormally. It is recommended that you check and resolve the alarm before starting the task',
+  packages_dag_monitor_leftsider_jibenxinxi: 'Basic information',
+  packages_dag_nodes_aggregate_waicunpeizhi: 'External storage configuration'
 }

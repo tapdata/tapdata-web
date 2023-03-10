@@ -536,5 +536,7 @@ export default {
   packages_dag_src_editor_shaohouqidong: '稍后启动',
   packages_dag_src_editor_jixuqidong: '继续启动',
   packages_dag_src_editor_renwubaocunjianceshi:
-    '任务保存检测时发现了告警，可能会导致任务运行出现异常，建议您查看并解决告警后再启动任务'
+    '任务保存检测时发现了告警，可能会导致任务运行出现异常，建议您查看并解决告警后再启动任务',
+  packages_dag_monitor_leftsider_jibenxinxi: '基本信息',
+  packages_dag_nodes_aggregate_waicunpeizhi: '外存配置'
 }
