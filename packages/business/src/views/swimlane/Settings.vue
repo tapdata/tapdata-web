@@ -32,7 +32,7 @@
       <div class="flex">
         <div class="w-50">
           <div class="mode-desc inline-block pt-4 cursor-pointer" @click="handleSelectMode('integration')">
-            <ElImage :src="require('@tap/assets/images/swimlane/data-integration-mode.png')"></ElImage>
+            <ElImage :src="require('@tap/assets/images/swimlane/data-integration-mode.svg')"></ElImage>
             <ul class="mode-ul mt-4">
               <li>• Database Replications</li>
               <li>• Move data to cloud</li>
@@ -42,7 +42,7 @@
         </div>
         <div class="w-50">
           <div class="mode-desc inline-block pt-4 cursor-pointer" @click="handleSelectMode('service')">
-            <ElImage :src="require('@tap/assets/images/swimlane/data-service-platform-mode.png')"></ElImage>
+            <ElImage :src="require('@tap/assets/images/swimlane/data-service-platform-mode.svg')"></ElImage>
             <ul class="mode-ul mt-4">
               <li>• All the Data Integration capability, plus the storage & services</li>
               <li>• Data are sync-ed to and cached in centralized data platform</li>
@@ -146,11 +146,6 @@ export default {
   data() {
     return {
       mode: '',
-      // <ElRadio label="integration" class="w-50 mr-0">Data Integration Mode</ElRadio>
-      // <ElRadio label="service" class="w-50 inline-flex align-items-center">
-      //   <span>Data Service Platform Mode</span>
-      //   <VIcon class="ml-1" size="28">beta</VIcon>
-      // </ElRadio>
       modeItems: [
         {
           label: 'Data Integration Mode',
