@@ -160,7 +160,7 @@
     </el-dialog>
 
     <el-dialog
-      width="400px"
+      width="800px"
       custom-class="edit-dialog"
       :title="$t('share_list_edit_title')"
       :close-on-click-modal="false"
