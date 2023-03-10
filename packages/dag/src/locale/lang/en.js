@@ -170,8 +170,8 @@ export default {
   packages_dag_migration_configpanel_moxing: 'model',
   packages_dag_migration_configpanel_peizhi: 'Configuration',
   packages_dag_migration_consolepanel_quanburizhi: 'All logs',
-  packages_dag_migration_consolepanel_dangqianjiancefaxian: 'Current detection and co-discovery',
-  packages_dag_migration_consolepanel_qingguanzhu: 'Please pay attention',
+  packages_dag_migration_consolepanel_dangqianjiancefaxian: 'Current detection, three are',
+  packages_dag_migration_consolepanel_qingguanzhu: 'have been found during the detection. Please pay attention.',
   packages_dag_migration_consolepanel_ge: 'a',
   packages_dag_migration_settingpanel_dangrenwufuhe:
     'When data verification is enabled, the task will automatically perform full verification and incremental verification for the data replication consistency. The verification results can be viewed on the Task Monitoring page. Note the verification currently does not support following scenarios, when one of the following happens, this feature will have no effect:\n 1. There is a processing node in the pipeline\n 2. The source connection does not support verification\n 3. The target connection does not support verification',

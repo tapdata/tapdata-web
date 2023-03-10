@@ -119,6 +119,11 @@ export default {
   public_time_last_day: '最近1天',
   public_time_last_three_days: '最近3天',
   public_time_custom_time: '自定義時間',
+  // 关系
+  public_or: '或',
+  public_and: '和',
+  // 单位
+  public_unit_ge: '個',
   // agent
   public_agent_name: 'Agent名稱',
   public_agent_button_create: '創建Agent',

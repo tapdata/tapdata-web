@@ -119,6 +119,11 @@ export default {
   public_time_last_day: 'Last 1 day',
   public_time_last_three_days: 'The last 3 days',
   public_time_custom_time: 'Custom time',
+  // relation
+  public_or: 'or',
+  public_and: 'and',
+  // unit
+  public_unit_ge: '',
   // agent
   public_agent_name: 'Agent name',
   public_agent_button_create: 'Create Agent',
