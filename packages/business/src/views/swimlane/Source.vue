@@ -183,6 +183,7 @@ export default {
       if (isLeaf) {
         let item = {
           id: row.id,
+          name: row.name,
           category: 'storage',
           type: 'table',
           connectionId: node?.parent?.data?.id

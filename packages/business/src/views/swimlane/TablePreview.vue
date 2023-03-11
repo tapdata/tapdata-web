@@ -1,5 +1,5 @@
 <template>
-  <Drawer class="sw-table-drawer" :visible.sync="visible" width="850px" v-loading="loading">
+  <Drawer v-if="visible" class="sw-table-drawer" :visible.sync="visible" width="850px" v-loading="loading">
     <header v-if="detailData">
       <div class="mb-4">
         <span class="table-name inline-block">{{ detailData.name }}</span>
@@ -21,7 +21,7 @@
       >
     </header>
     <section class="mt-6">
-      <el-tabs v-model="activeName">
+      <el-tabs v-model="activeName" @tab-click="handleTab">
         <el-tab-pane label="OverView" name="overView">
           <section class="mt-2">
             <div class="mb-4">
@@ -140,17 +140,32 @@
             </el-table-column>
           </el-table>
         </el-tab-pane>
-        <el-tab-pane label="APIs" name="apis">APIs</el-tab-pane>
-        <el-tab-pane label="Lineage" name="lineage">APIs</el-tab-pane>
+        <el-tab-pane label="APIs" name="apis">
+          <VTable
+            v-if="activeName === 'apis'"
+            ref="table"
+            :columns="apisColumns"
+            :remoteMethod="getApisData"
+            height="100%"
+            class="mt-4"
+          >
+            <template #status="{ row }">
+              <span class="status-block" :class="'status-' + row.status">{{ row.statusFmt }}</span>
+            </template>
+          </VTable>
+        </el-tab-pane>
+        <!--        <el-tab-pane label="Lineage" name="lineage">APIs</el-tab-pane>-->
       </el-tabs>
     </section>
   </Drawer>
 </template>
 
 <script>
+import { cloneDeep } from 'lodash'
+
 import { Drawer } from '@tap/component'
 import { VTable } from '@tap/component'
-import { discoveryApi, proxyApi, taskApi, metadataInstancesApi } from '@tap/api'
+import { discoveryApi, proxyApi, taskApi, metadataInstancesApi, modulesApi } from '@tap/api'
 import i18n from '@/i18n'
 import dayjs from 'dayjs'
 import { TaskStatus } from '../../components'
@@ -239,13 +254,62 @@ export default {
         error: this.$t('public_status_error'),
         draft: this.$t('public_status_wait_run'),
         normal: this.$t('public_status_renew_normal')
-      }
+      },
+      apisColumns: [
+        {
+          label: 'api服务名称',
+          prop: 'name'
+        },
+        {
+          label: '服务状态',
+          prop: 'status',
+          slotName: 'status'
+        },
+        {
+          label: '访问次数',
+          prop: 'name1'
+        },
+        {
+          label: 'API访问行数',
+          prop: 'name2'
+        },
+        {
+          label: 'API传输总量',
+          prop: 'name3'
+        },
+        {
+          label: '最后访问时间',
+          prop: 'last_updated',
+          dataType: 'time',
+          width: 160
+        }
+      ],
+      statusOptions: [
+        {
+          label: i18n.t('public_select_option_all'),
+          value: ''
+        },
+        {
+          label: i18n.t('modules_active'),
+          value: 'active'
+        },
+        {
+          label: i18n.t('modules_pending'),
+          value: 'pending'
+        },
+        {
+          label: i18n.t('api_monitor_total_api_list_status_generating'),
+          value: 'generating'
+        }
+      ],
+      selected: {}
     }
   },
   methods: {
     open(row) {
       this.visible = true
       this.connectionId = row.connectionId
+      this.selected = cloneDeep(row)
       this.getTableStorage(row)
     },
     getTableStorage(row) {
@@ -312,6 +376,32 @@ export default {
         this.lastDataChangeTime = res?.lastDataChangeTime
           ? dayjs(res?.lastDataChangeTime).format('YYYY-MM-DD HH:mm:ss')
           : '-'
+      })
+    },
+    handleTab(item) {
+      switch (item.name) {
+        case 'apis':
+          break
+      }
+    },
+    getApisData() {
+      const { connectionId, name } = this.selected || {}
+      const filter = {
+        where: {
+          connectionId,
+          tableName: name
+        }
+      }
+
+      return modulesApi.get({ filter: JSON.stringify(filter) }).then(data => {
+        return {
+          total: data.total || 0,
+          data:
+            data.items?.map(t => {
+              t.statusFmt = this.statusOptions.find(it => it.value === t.status)?.label || '-'
+              return t
+            }) || []
+        }
       })
     }
   }
