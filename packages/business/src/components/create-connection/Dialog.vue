@@ -6,8 +6,9 @@
     width="80%"
     top="10vh"
     custom-class="connection-dialog ldp-conection-dialog flex flex-column"
-    :before-close="handleBeforeClose"
     destroy-on-close
+    @open="handleOpen"
+    @close="handleClose"
   >
     <div slot="title" class="text-center font-color-dark fs-2 fw-bold">
       {{ showForm ? 'Configure Source' : title }}
@@ -17,7 +18,7 @@
       <ConnectionSelector v-bind="$attrs" :visible.sync="visible" @select="handleSelect"></ConnectionSelector>
     </div>
     <div v-else class="form__content flex flex-column">
-      <ServeForm v-if="activeTab" :params="formParams" class="flex-fill"></ServeForm>
+      <ServeForm v-if="['apiServices'].includes(activeTab)" :params="formParams" class="flex-fill"></ServeForm>
       <ConnectionForm
         v-else
         :params="formParams"
@@ -68,11 +69,11 @@ export default {
     init() {
       this.showForm = false
       this.formParams = {}
+      this.activeTab = ''
     },
 
-    handleBeforeClose() {
+    handleOpen() {
       this.init()
-      this.handleClose()
     },
 
     handleClose() {
@@ -82,9 +83,13 @@ export default {
 
     handleSelect(item) {
       this.activeTab = item.activeTab
-      if (!item.activeTab) {
-        const { pdkHash } = item
-        this.formParams = { pdkHash }
+      switch (this.activeTab) {
+        case 'apiServices':
+          // TODO apiServices
+          break
+        default:
+          this.formParams = { pdkHash: item.pdkHash }
+          break
       }
       this.showForm = true
     },
