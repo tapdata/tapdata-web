@@ -4,7 +4,12 @@
       <span class="fs-6">MDM / CURATED MODELS</span>
       <div class="operation">
         <VIcon size="16" class="icon-color ml-3">search-outline</VIcon>
-        <VIcon size="16" class="icon-color ml-3 rotate-90">more</VIcon>
+        <ElDropdown trigger="click" @command="handleCommand">
+          <VIcon size="16" class="icon-color ml-3 rotate-90">more</VIcon>
+          <ElDropdownMenu slot="dropdown">
+            <ElDropdownItem command="config"> Configure FDM </ElDropdownItem>
+          </ElDropdownMenu>
+        </ElDropdown>
       </div>
     </div>
     <div class="flex flex-column flex-1 min-h-0">
@@ -28,13 +33,10 @@ export default {
   components: { ClassificationTree, TablePreview },
 
   data() {
-    return {
-      keyword: ''
-    }
+    return {}
   },
 
   methods: {
-    searchFnc() {},
     handleViewDetails(data) {
       console.log('handleViewDetails', data) // eslint-disable-line
       this.$refs.tablePreview.open({
@@ -42,6 +44,14 @@ export default {
         category: data.category,
         type: data.type
       })
+    },
+
+    handleCommand(command) {
+      switch (command) {
+        case 'config':
+          this.$emit('show-settings')
+          break
+      }
     }
   }
 }

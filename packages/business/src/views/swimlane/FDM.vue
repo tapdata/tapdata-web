@@ -207,7 +207,7 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
     handleCommand(command) {
       switch (command) {
         case 'config':
-          this.showDialog()
+          this.$emit('show-settings')
           break
       }
     },

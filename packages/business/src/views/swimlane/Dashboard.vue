@@ -14,7 +14,7 @@
         ></ElInput>
       </div>
       <div>
-        <VIcon size="18 " class="icon-color-normal" @click="handleSwitch">list-view</VIcon>
+        <VIcon size="18 " class="icon-color-normal" @click="handleSettings">list-view</VIcon>
       </div>
     </div>
     <div class="list flex flex-fill overflow-hidden">
@@ -26,6 +26,7 @@
         :dragState="dragState"
         @create-connection="handleAdd"
         @node-drag-end="handleDragEnd"
+        @show-settings="handleSettings"
       ></component>
     </div>
     <CreateConnection
@@ -113,7 +114,7 @@ export default {
       this.dragState.form = ''
     },
 
-    handleSwitch() {
+    handleSettings() {
       this.settingsVisible = true
     },
 
