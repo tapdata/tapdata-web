@@ -74,21 +74,21 @@
               ></el-tab-pane>
             </el-tabs>
           </section>
-          <section class="mt-6">
-            <div class="change-history mb-4">Change History</div>
-            <ul>
-              <li>
-                <span>2023-02-03 12:21:34</span>
-                <span class="ml-8">Lucy</span>
-                <span class="ml-8">新增了标签603</span>
-              </li>
-              <li class="mt-2">
-                <span>2023-02-03 12:21:34</span>
-                <span class="ml-8">Lucy</span>
-                <span class="ml-8">新增了标签603</span>
-              </li>
-            </ul>
-          </section>
+          <!--          <section class="mt-6">-->
+          <!--            <div class="change-history mb-4">Change History</div>-->
+          <!--            <ul>-->
+          <!--              <li>-->
+          <!--                <span>2023-02-03 12:21:34</span>-->
+          <!--                <span class="ml-8">Lucy</span>-->
+          <!--                <span class="ml-8">新增了标签603</span>-->
+          <!--              </li>-->
+          <!--              <li class="mt-2">-->
+          <!--                <span>2023-02-03 12:21:34</span>-->
+          <!--                <span class="ml-8">Lucy</span>-->
+          <!--                <span class="ml-8">新增了标签603</span>-->
+          <!--              </li>-->
+          <!--            </ul>-->
+          <!--          </section>-->
         </el-tab-pane>
         <el-tab-pane label="Schema" name="schema">
           <VTable class="discovery-page-table" :columns="columns" :data="tableFields" :has-pagination="false">
@@ -97,7 +97,8 @@
         </el-tab-pane>
         <el-tab-pane label="Tasks" name="tasks">
           <div class="flex justify-content-between mb-4">
-            <span>以这个模型源/目标的任务</span><span class="color-primary">Create Task</span>
+            <span>以这个模型源/目标的任务</span
+            ><span class="color-primary cursor-pointer" @click="handleCreateTask">Create Task</span>
           </div>
           <el-table class="discovery-page-table" :data="taskData" :has-pagination="false">
             <el-table-column
@@ -109,7 +110,7 @@
             <el-table-column :label="$t('public_task_type')">
               <template #default="{ row }">
                 <span>
-                  {{ row.type ? taskType[row.type] : '' }}
+                  {{ getTaskType(row.type) }}
                 </span>
               </template>
             </el-table-column>
@@ -165,10 +166,13 @@ import { cloneDeep } from 'lodash'
 
 import { Drawer } from '@tap/component'
 import { VTable } from '@tap/component'
+import { calcUnit } from '@tap/shared'
 import { discoveryApi, proxyApi, taskApi, metadataInstancesApi, modulesApi } from '@tap/api'
 import i18n from '@/i18n'
 import dayjs from 'dayjs'
 import { TaskStatus } from '../../components'
+import { TASK_TYPE_MAP } from '../../shared'
+
 export default {
   name: 'TablePreview',
   components: { Drawer, VTable, TaskStatus },
@@ -200,7 +204,9 @@ export default {
       columns: [
         {
           label: i18n.t('public_name'),
-          prop: 'name'
+          prop: 'name',
+          className: 'text-nowrap',
+          minWidth: 120
         },
         {
           label: i18n.t('public_type'),
@@ -242,18 +248,13 @@ export default {
       taskData: [],
       storageSize: '',
       numOfRows: '',
-      taskType: {
-        initial_sync: this.$t('public_task_type_initial_sync'),
-        cdc: this.$t('public_task_type_cdc'),
-        'initial_sync+cdc': this.$t('public_task_type_initial_sync') + '+' + this.$t('public_task_type_cdc')
-      },
       tableStatus: '',
       cdcDelayTime: '',
       lastDataChangeTime: '',
       statusMap: {
-        error: this.$t('public_status_error'),
-        draft: this.$t('public_status_wait_run'),
-        normal: this.$t('public_status_renew_normal')
+        error: i18n.t('public_status_error'),
+        draft: i18n.t('public_status_wait_run'),
+        normal: i18n.t('public_status_renew_normal')
       },
       apisColumns: [
         {
@@ -351,7 +352,8 @@ export default {
         .then(res => {
           this.sampleData = res?.sampleData
           this.sampleHeader = Object.keys(this.sampleData.reduce((o, c) => Object.assign(0, c))) || []
-          this.storageSize = Math.floor(res?.tableInfo?.storageSize / 1024) || 0
+          // this.storageSize = Math.floor(res?.tableInfo?.storageSize / 1024) || 0
+          this.storageSize = calcUnit((res?.tableInfo?.storageSize || 0) * 1024, 1)
           this.numOfRows = res?.tableInfo?.numOfRows || 0
         })
         .finally(() => {
@@ -403,6 +405,16 @@ export default {
             }) || []
         }
       })
+    },
+
+    handleCreateTask() {
+      this.$router.push({
+        name: 'MigrateCreate'
+      })
+    },
+
+    getTaskType(type) {
+      return TASK_TYPE_MAP[type] || ''
     }
   }
 }
