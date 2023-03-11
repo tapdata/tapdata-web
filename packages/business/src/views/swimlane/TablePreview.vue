@@ -307,7 +307,20 @@ export default {
     }
   },
   methods: {
+    init() {
+      this.detailData = {}
+      this.tableFields = []
+      this.sampleData = []
+      this.sampleHeader = []
+      this.taskData = []
+      this.storageSize = ''
+      this.numOfRows = ''
+      this.tableStatus = ''
+      this.cdcDelayTime = ''
+      this.lastDataChangeTime = ''
+    },
     open(row) {
+      this.init()
       this.visible = true
       this.connectionId = row.connectionId
       this.selected = cloneDeep(row)
