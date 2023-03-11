@@ -54,74 +54,83 @@
           </div>
         </div>
       </div>
-      <div v-if="mode === 'service'" class="setting-card mt-6">
-        <div class="setting-card__header p-4">
-          <span>FDM Storage Backend</span>
-          <ElTooltip
-            class="ml-2"
-            placement="top"
-            content="Specify the database connection that will be used for LDP data storage"
-          >
-            <VIcon class="color-primary" size="14">info</VIcon>
-          </ElTooltip>
-        </div>
-        <div class="setting-card__content p-4">
-          <ElRadioGroup v-model="form.fdmStorageCluster" @change="handleChangeFDMStorage">
-            <ElRadio v-for="item in options" :label="item.value" :key="'FDM' + item.value" class="block mb-4">
-              <span>{{ item.label }}</span>
-              <ElTag class="ml-6 rounded-pill" effect="plain">{{ item.tag }}</ElTag>
-              <ElSelect
-                v-if="form.fdmStorageCluster === item.value"
-                v-model="form.fdmStorageConnectionId"
-                class="block mt-4"
-              >
-                <ElOption v-for="op in connectionsList" :label="op.label" :value="op.value" :key="op.value"></ElOption>
-              </ElSelect>
-            </ElRadio>
-          </ElRadioGroup>
-          <div class="flex align-items-center">
-            <VIcon class="color-primary mr-2" size="14">info</VIcon>
-            <span class="font-color-sslight"
-              >If you wish to change this setting later, you must migrate the data to your new database - manually for
-              now</span
+      <ElForm :model="form" :rules="rules" ref="form">
+        <div v-if="mode === 'service'" class="setting-card mt-6">
+          <div class="setting-card__header p-4">
+            <span>FDM Storage Backend</span>
+            <ElTooltip
+              class="ml-2"
+              placement="top"
+              content="Specify the database connection that will be used for LDP data storage"
             >
+              <VIcon class="color-primary" size="14">info</VIcon>
+            </ElTooltip>
+          </div>
+          <div class="setting-card__content p-4">
+            <ElRadioGroup v-model="form.fdmStorageCluster" @change="handleChangeFDMStorage">
+              <ElRadio v-for="item in options" :label="item.value" :key="'FDM' + item.value" class="block mb-4">
+                <span>{{ item.label }}</span>
+                <ElTag class="ml-6 rounded-pill" effect="plain">{{ item.tag }}</ElTag>
+                <ElFormItem v-if="form.fdmStorageCluster === item.value" prop="fdmStorageConnectionId">
+                  <ElSelect v-model="form.fdmStorageConnectionId" class="block mt-4">
+                    <ElOption
+                      v-for="op in connectionsList"
+                      :label="op.label"
+                      :value="op.value"
+                      :key="op.value"
+                    ></ElOption>
+                  </ElSelect>
+                </ElFormItem>
+              </ElRadio>
+            </ElRadioGroup>
+
+            <div class="flex align-items-center">
+              <VIcon class="color-primary mr-2" size="14">info</VIcon>
+              <span class="font-color-sslight"
+                >If you wish to change this setting later, you must migrate the data to your new database - manually for
+                now</span
+              >
+            </div>
           </div>
         </div>
-      </div>
-      <div v-if="mode === 'service'" class="setting-card mt-6">
-        <div class="setting-card__header p-4">
-          <span>FDM Storage Backend</span>
-          <ElTooltip
-            class="ml-2"
-            placement="top"
-            content="Specify the database connection that will be used for additional  data layer storage"
-          >
-            <VIcon class="color-primary" size="14">info</VIcon>
-          </ElTooltip>
-        </div>
-        <div class="setting-card__content p-4">
-          <ElRadioGroup v-model="form.mdmStorageCluster" @change="handleChangeMDMStorage">
-            <ElRadio v-for="item in options" :label="item.value" :key="'MDM' + item.value" class="block mb-4">
-              <span>{{ item.label }}</span>
-              <ElTag class="ml-6 rounded-pill" effect="plain">{{ item.tag }}</ElTag>
-              <ElSelect
-                v-if="form.mdmStorageCluster === item.value"
-                v-model="form.mdmStorageConnectionId"
-                class="block mt-4"
-              >
-                <ElOption v-for="op in connectionsList" :label="op.label" :value="op.value" :key="op.value"></ElOption>
-              </ElSelect>
-            </ElRadio>
-          </ElRadioGroup>
-          <div class="flex align-items-center">
-            <VIcon class="color-primary mr-2" size="14">info</VIcon>
-            <span class="font-color-sslight"
-              >If you wish to change this setting later, you must migrate the data to your new database - manually for
-              now</span
+        <div v-if="mode === 'service'" class="setting-card mt-6">
+          <div class="setting-card__header p-4">
+            <span>FDM Storage Backend</span>
+            <ElTooltip
+              class="ml-2"
+              placement="top"
+              content="Specify the database connection that will be used for additional  data layer storage"
             >
+              <VIcon class="color-primary" size="14">info</VIcon>
+            </ElTooltip>
+          </div>
+          <div class="setting-card__content p-4">
+            <ElRadioGroup v-model="form.mdmStorageCluster" @change="handleChangeMDMStorage">
+              <ElRadio v-for="item in options" :label="item.value" :key="'MDM' + item.value" class="block mb-4">
+                <span>{{ item.label }}</span>
+                <ElTag class="ml-6 rounded-pill" effect="plain">{{ item.tag }}</ElTag>
+                <ElFormItem v-if="form.mdmStorageCluster === item.value" prop="mdmStorageConnectionId">
+                  <ElSelect v-model="form.mdmStorageConnectionId" class="block mt-4">
+                    <ElOption
+                      v-for="op in connectionsList"
+                      :label="op.label"
+                      :value="op.value"
+                      :key="op.value"
+                    ></ElOption>
+                  </ElSelect>
+                </ElFormItem>
+              </ElRadio>
+            </ElRadioGroup>
+            <div class="flex align-items-center">
+              <VIcon class="color-primary mr-2" size="14">info</VIcon>
+              <span class="font-color-sslight"
+                >If you wish to change this setting later, you must migrate the data to your new database - manually for
+                now</span
+              >
+            </div>
           </div>
         </div>
-      </div>
+      </ElForm>
 
       <div class="text-end mt-13">
         <ElButton v-loading="loading" type="primary" @click="submit">SAVE&ENABLE</ElButton>
@@ -132,6 +141,7 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
 import { connectionsApi, liveDataPlatformApi } from '@tap/api'
 
 export default {
@@ -183,7 +193,11 @@ export default {
         mdmStorageCluster: '',
         mdmStorageConnectionId: ''
       },
-      loading: false
+      loading: false,
+      rules: {
+        fdmStorageConnectionId: [{ required: true, message: i18n.t('public_select_placeholder'), trigger: 'change' }],
+        mdmStorageConnectionId: [{ required: true, message: i18n.t('public_select_placeholder'), trigger: 'change' }]
+      }
     }
   },
 
@@ -206,8 +220,8 @@ export default {
         where: {
           connection_type: {
             in: ['source_and_target']
-          }
-          // database_type: 'MongoDB'
+          },
+          database_type: 'MongoDB'
         }
       }
       connectionsApi
@@ -263,19 +277,22 @@ export default {
     },
 
     submit() {
-      this.loading = true
-      const { mode, form } = this
-      liveDataPlatformApi
-        .patch({ mode, ...form })
-        .then(() => {
-          this.$message.success(this.$t('public_message_save_ok'))
-          this.$emit('success', { mode, ...form })
-          this.handleClose()
-        })
-        .finally(() => {
-          this.loading = false
-        })
-      this.loading = false
+      this.$refs.form.validate(v => {
+        if (!v) return
+        const { mode, form } = this
+        this.loading = true
+        liveDataPlatformApi
+          .patch({ mode, ...form })
+          .then(() => {
+            this.$message.success(this.$t('public_message_save_ok'))
+            this.$emit('success', { mode, ...form })
+            this.handleClose()
+          })
+          .finally(() => {
+            this.loading = false
+          })
+        this.loading = false
+      })
     },
 
     cancel() {
