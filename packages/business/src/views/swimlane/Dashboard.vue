@@ -26,7 +26,6 @@
         :dragState="dragState"
         @create-connection="handleAdd"
         @node-drag-end="handleDragEnd"
-        @vector="handleVector"
       ></component>
     </div>
     <CreateConnection
@@ -120,10 +119,6 @@ export default {
 
     handleSettingsSuccess(data) {
       this.mode = data.mode
-    },
-
-    handleVector(val) {
-      this.handleSwitch()
     }
   }
 }

@@ -18,7 +18,7 @@
         Tapdata can be used as a general data integration tool(ETL) , or as a data as a service platform. The key
         difference is Data Platform mode requires a storage backend.
       </div>
-      <ElRadioGroup v-model="mode" class="block">
+      <ElRadioGroup v-model="mode" class="block" @change="handleSelectMode">
         <ElRadio
           v-for="item in modeItems"
           :label="item.value"
@@ -66,12 +66,16 @@
           </ElTooltip>
         </div>
         <div class="setting-card__content p-4">
-          <ElRadioGroup v-model="FDMStorage.type" @change="handleChangeFDMStorage">
-            <ElRadio v-for="item in FDMRadioItems" :label="item.value" :key="'FDM' + item.value" class="block mb-4">
+          <ElRadioGroup v-model="form.fdmStorageCluster" @change="handleChangeFDMStorage">
+            <ElRadio v-for="item in options" :label="item.value" :key="'FDM' + item.value" class="block mb-4">
               <span>{{ item.label }}</span>
               <ElTag class="ml-6 rounded-pill" effect="plain">{{ item.tag }}</ElTag>
-              <ElSelect v-if="FDMStorage.type === item.value" v-model="FDMStorage.value" class="block mt-4">
-                <ElOption v-for="op in item.options" :label="op.label" :value="op.value" :key="op.value"></ElOption>
+              <ElSelect
+                v-if="form.fdmStorageCluster === item.value"
+                v-model="form.fdmStorageConnectionId"
+                class="block mt-4"
+              >
+                <ElOption v-for="op in connectionsList" :label="op.label" :value="op.value" :key="op.value"></ElOption>
               </ElSelect>
             </ElRadio>
           </ElRadioGroup>
@@ -96,12 +100,16 @@
           </ElTooltip>
         </div>
         <div class="setting-card__content p-4">
-          <ElRadioGroup v-model="MDMStorage.type" @change="handleChangeMDMStorage">
-            <ElRadio v-for="item in MDMRadioItems" :label="item.value" :key="'MDM' + item.value" class="block mb-4">
+          <ElRadioGroup v-model="form.mdmStorageCluster" @change="handleChangeMDMStorage">
+            <ElRadio v-for="item in options" :label="item.value" :key="'MDM' + item.value" class="block mb-4">
               <span>{{ item.label }}</span>
               <ElTag class="ml-6 rounded-pill" effect="plain">{{ item.tag }}</ElTag>
-              <ElSelect v-if="MDMStorage.type === item.value" v-model="MDMStorage.value" class="block mt-4">
-                <ElOption v-for="op in item.options" :label="op.label" :value="op.value" :key="op.value"></ElOption>
+              <ElSelect
+                v-if="form.mdmStorageCluster === item.value"
+                v-model="form.mdmStorageConnectionId"
+                class="block mt-4"
+              >
+                <ElOption v-for="op in connectionsList" :label="op.label" :value="op.value" :key="op.value"></ElOption>
               </ElSelect>
             </ElRadio>
           </ElRadioGroup>
@@ -124,8 +132,7 @@
 </template>
 
 <script>
-import i18n from '@tap/i18n'
-import { liveDataPlatformApi } from '@tap/api'
+import { connectionsApi, liveDataPlatformApi } from '@tap/api'
 
 export default {
   name: 'Settings',
@@ -146,6 +153,7 @@ export default {
   data() {
     return {
       mode: '',
+      connectionsList: [],
       modeItems: [
         {
           label: 'Data Integration Mode',
@@ -157,116 +165,33 @@ export default {
           beta: true
         }
       ],
-      FDMRadioItems: [
+      options: [
         {
           label: 'MongoDB Atlas Cluster',
-          value: 'MongoDB Atlas Cluster',
-          tag: 'Sync Atlas Cluster List',
-          options: [
-            {
-              label: 'Select Atlas Cluster',
-              value: 'Select Atlas Cluster'
-            },
-            {
-              label: 'Cluster in Singapore AZ',
-              value: 'Cluster in Singapore AZ'
-            },
-            {
-              label: 'Sharded Cluster in HK',
-              value: 'Sharded Cluster in HK'
-            }
-          ]
+          value: 'atlas',
+          tag: 'Sync Atlas Cluster List'
         },
         {
           label: 'Self Hosted MongoDB Cluster',
-          value: 'Self Hosted MongoDB Cluster',
-          tag: 'Add a New Connection',
-          options: [
-            {
-              label: 'Select A Configured Connection',
-              value: 'Select A Configured Connection'
-            },
-            {
-              label: 'MongoDB Cluster A',
-              value: 'MongoDB Cluster A'
-            },
-            {
-              label: 'MongoDB Cluster B',
-              value: 'MongoDB Cluster B'
-            }
-          ]
+          value: 'self',
+          tag: 'Add a New Connection'
         }
       ],
-      FDMStorage: {
-        type: '',
-        value: ''
-      },
-      MDMRadioItems: [
-        {
-          label: 'MongoDB Atlas Cluster',
-          value: 'MongoDB Atlas Cluster',
-          tag: 'Sync Atlas Cluster List',
-          options: [
-            {
-              label: 'Select Atlas Cluster',
-              value: 'Select Atlas Cluster'
-            },
-            {
-              label: 'Cluster in Singapore AZ',
-              value: 'Cluster in Singapore AZ'
-            },
-            {
-              label: 'Sharded Cluster in HK',
-              value: 'Sharded Cluster in HK'
-            }
-          ]
-        },
-        {
-          label: 'Self Hosted MongoDB Cluster',
-          value: 'Self Hosted MongoDB Cluster',
-          tag: 'Add a New Connection',
-          options: [
-            {
-              label: 'Select A Configured Connection',
-              value: 'Select A Configured Connection'
-            },
-            {
-              label: 'MongoDB Cluster A',
-              value: 'MongoDB Cluster A'
-            },
-            {
-              label: 'MongoDB Cluster B',
-              value: 'MongoDB Cluster B'
-            }
-          ]
-        }
-      ],
-      MDMStorage: {
-        type: '',
-        value: ''
+      form: {
+        fdmStorageCluster: '',
+        fdmStorageConnectionId: '',
+        mdmStorageCluster: '',
+        mdmStorageConnectionId: ''
       },
       loading: false
     }
   },
 
-  created() {
-    this.init()
-  },
-
   methods: {
     async init() {
+      this.loadConnections()
       const data = await this.getData()
-      console.log('init', data)
-      if (data) {
-        return this.setData(data)
-      }
-      this.mode = this.modeItems[0]?.value
-
-      this.FDMStorage.type = this.FDMRadioItems[0]?.value
-      this.handleChangeFDMStorage(this.FDMStorage.type)
-
-      this.MDMStorage.type = this.MDMRadioItems[0]?.value
-      this.handleChangeMDMStorage(this.MDMStorage.type)
+      this.setData(data?.items?.at(-1), true)
     },
 
     async getData() {
@@ -275,16 +200,43 @@ export default {
       })
     },
 
-    setData(data = {}) {
-      this.mode = data.mode
-      // TODO set FDMStorage and MDMStorage
-      this.FDMStorage.type = ''
-      this.FDMStorage.value = ''
+    loadConnections() {
+      const filter = {
+        limit: 999,
+        where: {
+          connection_type: {
+            in: ['source_and_target']
+          }
+          // database_type: 'MongoDB'
+        }
+      }
+      connectionsApi
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(data => {
+          this.connectionsList =
+            data?.items.map(t => {
+              return {
+                label: t.name,
+                value: t.id
+              }
+            }) || []
+        })
+    },
 
-      this.MDMStorage.type = ''
-      this.MDMStorage.value = ''
+    setData(data = {}, update = false) {
+      this.mode = data.mode || this.modeItems[0]?.value
+      if (this.mode === 'service') {
+        const { options, connectionsList } = this
+        this.form.fdmStorageCluster = data.fdmStorageCluster || options[0]?.value
+        this.form.fdmStorageConnectionId = data.fdmStorageConnectionId || connectionsList[0]?.value
 
-      this.$emit('update:mode', this.mode)
+        this.form.mdmStorageCluster = data.mdmStorageCluster || options[0]?.value
+        this.form.mdmStorageConnectionId = data.mdmStorageConnectionId || connectionsList[0]?.value
+      }
+
+      update && this.$emit('update:mode', this.mode)
     },
 
     handleOpen() {
@@ -297,28 +249,32 @@ export default {
     },
 
     handleSelectMode(type) {
-      this.mode = type
+      this.setData({
+        mode: type
+      })
     },
 
-    handleChangeFDMStorage(val) {
-      this.FDMStorage.value = this.FDMRadioItems.find(t => t.value === val)?.options[0]?.value
+    handleChangeFDMStorage() {
+      this.form.fdmStorageConnectionId = this.connectionsList[0]?.value
     },
 
-    handleChangeMDMStorage(val) {
-      this.MDMStorage.value = this.MDMRadioItems.find(t => t.value === val)?.options[0]?.value
+    handleChangeMDMStorage() {
+      this.form.mdmStorageConnectionId = this.connectionsList[0]?.value
     },
 
     submit() {
       this.loading = true
+      const { mode, form } = this
       liveDataPlatformApi
-        .patch()
-        .then()
+        .patch({ mode, ...form })
+        .then(() => {
+          this.$message.success(this.$t('public_message_save_ok'))
+          this.$emit('success', { mode, ...form })
+          this.handleClose()
+        })
         .finally(() => {
           this.loading = false
         })
-      const { mode, FDMStorage, MDMStorage } = this
-      this.$emit('success', { mode, FDMStorage, MDMStorage })
-      this.handleClose()
       this.loading = false
     },
 
