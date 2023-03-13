@@ -197,7 +197,8 @@ export default {
       rules: {
         fdmStorageConnectionId: [{ required: true, message: i18n.t('public_select_placeholder'), trigger: 'change' }],
         mdmStorageConnectionId: [{ required: true, message: i18n.t('public_select_placeholder'), trigger: 'change' }]
-      }
+      },
+      liveDataPlatformId: ''
     }
   },
 
@@ -205,11 +206,11 @@ export default {
     async init() {
       this.loadConnections()
       const data = await this.getData()
-      this.setData(data?.items?.at(-1), true)
+      this.setData(data, true)
     },
 
     async getData() {
-      return liveDataPlatformApi.get().catch(() => {
+      return liveDataPlatformApi.findOne().catch(() => {
         return null
       })
     },
@@ -241,6 +242,7 @@ export default {
 
     setData(data = {}, update = false) {
       this.mode = data.mode || this.modeItems[0]?.value
+      this.liveDataPlatformId = data.id
       if (this.mode === 'service') {
         const { options, connectionsList } = this
         this.form.fdmStorageCluster = data.fdmStorageCluster || options[0]?.value
@@ -264,7 +266,8 @@ export default {
 
     handleSelectMode(type) {
       this.setData({
-        mode: type
+        mode: type,
+        id: this.liveDataPlatformId
       })
     },
 
@@ -279,10 +282,10 @@ export default {
     submit() {
       this.$refs.form.validate(v => {
         if (!v) return
-        const { mode, form } = this
+        const { mode, form, liveDataPlatformId } = this
         this.loading = true
         liveDataPlatformApi
-          .patch({ mode, ...form })
+          .patch({ id: liveDataPlatformId, mode, ...form })
           .then(() => {
             this.$message.success(this.$t('public_message_save_ok'))
             this.$emit('success', { mode, ...form })
