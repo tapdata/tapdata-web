@@ -609,6 +609,7 @@ export default {
     '您的账户还没有进行微信绑定，如需通过微信接收通知信息，请先退出登录后通过微信扫码完成绑定',
   packages_business_connections_databaseform_bujiazai: '不加载',
   packages_business_custom_node_placeholder: '请输入节点名称搜索',
+  packages_business_custom_node_edit_confirm: '检测到以下运行中的任务调用了该节点，如需配置生效请重新启动任务',
   packages_business_task_list_sqLyuju: 'SQL语句:',
   packages_business_relation_details_waicunxinxi: '使用的外存信息',
   packages_business_milestone_list_cuowuxinxi: '错误信息',

@@ -124,7 +124,7 @@ export default {
         }
         this.$confirm(
           <div class="w-100">
-            <div>检测到以下运行中的任务调用了该节点，如需配置生效请重新启动任务</div>
+            <div>{this.$t('packages_business_custom_node_edit_confirm')}</div>
             <div class="p-3 mt-3" style="background: #FAFAFA; font-size: 12px;">
               {filterData.map(item => {
                 return (
@@ -134,7 +134,7 @@ export default {
                     target="_blank"
                     href={
                       this.$router.resolve({
-                        name: 'dataflowDetailsContainer',
+                        name: item.syncType === 'migrate' ? 'MigrationMonitor' : 'TaskMonitor',
                         params: {
                           id: item.id
                         }

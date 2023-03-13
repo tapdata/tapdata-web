@@ -630,6 +630,8 @@ export default {
     'Your account has not been bound to WeChat. If you want to receive notification information through WeChat, please log out and log in first and then scan the code to complete the binding through WeChat.',
   packages_business_connections_databaseform_bujiazai: 'not loaded',
   packages_business_custom_node_placeholder: 'Please enter the node name to search',
+  packages_business_custom_node_edit_confirm:
+    'The node is detected that the following running task has been invoked, and restart the task if the configuration needs to take effect',
   packages_business_task_list_sqLyuju: 'SQL statement:',
   packages_business_relation_details_waicunxinxi: 'External storage information used',
   packages_business_milestone_list_cuowuxinxi: 'Error information',
