@@ -159,20 +159,13 @@ export default {
 
     getRelationData() {
       const { id, syncType } = this.$attrs.dataflow || {}
-      if (['logCollector'].includes(syncType)) {
-        let filter = {
-          taskId: id,
-          type: syncType
-        }
-        logcollectorApi.relateTasks(filter).then(data => {
-          this.relationCount = data.total || 0
-        })
-        return
-      }
       const { taskRecordId } = this.$route.query || {}
       let filter = {
         taskId: id,
         taskRecordId
+      }
+      if (['logCollector'].includes(syncType)) {
+        filter.type = 'task_by_collector'
       }
       taskApi.taskConsoleRelations(filter).then(data => {
         this.relationCount = data?.length || 0

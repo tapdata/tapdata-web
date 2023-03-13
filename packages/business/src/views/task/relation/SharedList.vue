@@ -18,9 +18,9 @@
         <template #status="{ row }">
           <TaskStatus :task="row" />
         </template>
-        <template #operation="{ row }">
+        <template #tableNum="{ row }">
           <div class="operate-columns">
-            <ElButton size="mini" type="text" @click="handleDetail(row)">{{ 0 }}</ElButton>
+            <ElButton size="mini" type="text" @click="handleDetail(row)">{{ row.tableNum }}</ElButton>
           </div>
         </template>
       </VTable>
@@ -28,7 +28,7 @@
 
     <ElDialog
       :visible.sync="visible"
-      title="挖掘表信息"
+      :title="$t('packages_business_shared_mining_table_wajuebiaoxinxi')"
       width="1000px"
       :close-on-click-modal="false"
       :append-to-body="true"
@@ -37,6 +37,7 @@
       <SharedMiningTable
         ref="sharedMiningTable"
         :task-id="$route.params.id"
+        :params="sharedMiningTableParams"
         :show-title="false"
         class="shared-mining-table mt-n5"
       ></SharedMiningTable>
@@ -47,7 +48,7 @@
 <script>
 import { VTable } from '@tap/component'
 import { TaskStatus } from '@tap/business'
-import { logcollectorApi } from '@tap/api'
+import { taskApi } from '@tap/api'
 import { openUrl } from '@tap/shared'
 import i18n from '@tap/i18n'
 import { TASK_TYPE_MAP } from '@tap/business'
@@ -83,42 +84,47 @@ export default {
         },
         {
           label: i18n.t('public_create_time'),
-          prop: 'creatTime',
+          prop: 'createDate',
           dataType: 'time',
           default: '-',
           width: 180
         },
         {
           label: i18n.t('public_task_cdc_time_point'),
-          prop: 'creatTime1',
+          prop: 'currentEventTimestamp',
           dataType: 'time',
           default: '-',
           width: 180
         },
         {
-          label: '使用的挖掘表',
-          slotName: 'operation',
+          label: i18n.t('packages_business_relation_sharedlist_shiyongdewajue'),
+          slotName: 'tableNum',
           width: 200
         }
       ],
-      visible: false
+      visible: false,
+      sharedMiningTableParams: {
+        tableTaskId: ''
+      }
     }
   },
 
   methods: {
     remoteMethod() {
       const taskId = this.$route.params.id
-      const { syncType } = this.$attrs.dataflow || {}
-      return logcollectorApi
-        .relateTasks({
+      const { taskRecordId } = this.$attrs.dataflow || {}
+      return taskApi
+        .taskConsoleRelations({
           taskId,
-          type: syncType
+          // type: syncType
+          type: 'task_by_collector',
+          taskRecordId
         })
         .then(data => {
           return {
-            total: data.total,
-            data: (data.items || []).map(t => {
-              t.typeLabel = TASK_TYPE_MAP[t.type]
+            total: data.length || 0,
+            data: (data || []).map(t => {
+              t.typeLabel = TASK_TYPE_MAP[t.taskType]
               return t
             })
           }
@@ -126,10 +132,12 @@ export default {
     },
 
     handleDetail(row = {}) {
+      this.sharedMiningTableParams.tableTaskId = row.id
       this.visible = true
     },
 
-    handleName({ taskId, syncType }) {
+    handleName({ id, syncType }) {
+      console.log('handleName', syncType)
       const MAP = {
         migrate: 'MigrateViewer',
         sync: 'DataflowViewer'
@@ -137,7 +145,7 @@ export default {
       const routeUrl = this.$router.resolve({
         name: MAP[syncType],
         params: {
-          id: taskId
+          id
         }
       })
       openUrl(routeUrl.href)

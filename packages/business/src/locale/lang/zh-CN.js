@@ -714,5 +714,13 @@ export default {
   packages_business_stop_confirm_message: '初始化类型的任务暂停后如果再次启动，任务会从头开始同步，确定暂停?',
   packages_business_important_reminder: '重要提醒',
   packages_business_tablename: '表名称',
-  packages_business_shared_cdc_persistence_rocksdb_path: 'RocksDB存储的本地路径'
+  packages_business_shared_cdc_persistence_rocksdb_path: 'RocksDB存储的本地路径',
+  packages_business_shared_mining_table_jinriwajue: '今日挖掘',
+  packages_business_shared_mining_table_leijiwajue: '累计挖掘',
+  packages_business_shared_mining_table_zuixinrizhishi: '最新日志时间',
+  packages_business_shared_mining_table_shoutiaorizhishi: '首条日志时间',
+  packages_business_shared_mining_table_jiaruwajueshi: '加入挖掘时间',
+  packages_business_shared_mining_table_biaoming: '表名',
+  packages_business_shared_mining_table_wajuebiaoxinxi: '挖掘表信息',
+  packages_business_relation_sharedlist_shiyongdewajue: '使用的挖掘表'
 }

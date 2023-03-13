@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-column">
     <div class="flex justify-content-between mb-4">
-      <span v-if="showTitle" class="fw-bold">挖掘表信息</span>
+      <span v-if="showTitle" class="fw-bold">{{ $t('packages_business_shared_mining_table_wajuebiaoxinxi') }}</span>
       <ElInput
         class="search-input"
         v-model="keyword"
@@ -26,6 +26,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { debounce } from 'lodash'
 
 import { VTable } from '@tap/component'
@@ -58,41 +60,41 @@ export default {
       keyword: '',
       columns: [
         {
-          label: '表名',
+          label: i18n.t('packages_business_shared_mining_table_biaoming'),
           prop: 'tableName'
         },
         {
-          label: '连接名称',
+          label: i18n.t('public_connection_name'),
           prop: 'connectionName',
           default: '-'
         },
         {
-          label: '加入挖掘时间',
-          prop: 'startCdcTime',
-          dataType: 'time',
-          default: '-',
-          width: 160
-        },
-        {
-          label: '首条日志时间',
+          label: i18n.t('packages_business_shared_mining_table_jiaruwajueshi'),
           prop: 'time2',
           dataType: 'time',
           default: '-',
           width: 160
         },
         {
-          label: '最新日志时间',
+          label: i18n.t('packages_business_shared_mining_table_shoutiaorizhishi'),
+          prop: 'startCdcTime',
+          dataType: 'time',
+          default: '-',
+          width: 160
+        },
+        {
+          label: i18n.t('packages_business_shared_mining_table_zuixinrizhishi'),
           prop: 'currentEventTime',
           dataType: 'time',
           default: '-',
           width: 160
         },
         {
-          label: '累计挖掘',
+          label: i18n.t('packages_business_shared_mining_table_leijiwajue'),
           prop: 'allCount'
         },
         {
-          label: '今日挖掘',
+          label: i18n.t('packages_business_shared_mining_table_jinriwajue'),
           prop: 'count'
         }
       ]
@@ -102,12 +104,11 @@ export default {
   methods: {
     remoteMethod() {
       const { taskId, keyword } = this
-      console.log('remoteMethod', taskId)
       const filter = Object.assign({}, this.params, {
         taskId,
         keyword
       })
-      return shareCdcTableMetricsApi.get(filter).then(data => {
+      return shareCdcTableMetricsApi.listTask(filter).then(data => {
         return {
           total: data.total,
           data: data.items || []

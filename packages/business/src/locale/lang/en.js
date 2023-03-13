@@ -737,5 +737,13 @@ export default {
     'Pausing job while it is in the initial sync stage may cause it to run from the beginning, are you sure you want to pause?',
   packages_business_important_reminder: 'Important reminder',
   packages_business_tablename: 'Table name',
-  packages_business_shared_cdc_persistence_rocksdb_path: 'The local path to the RocksDB store'
+  packages_business_shared_cdc_persistence_rocksdb_path: 'The local path to the RocksDB store',
+  packages_business_shared_mining_table_jinriwajue: 'Mining Today',
+  packages_business_shared_mining_table_leijiwajue: 'Cumulative Mining',
+  packages_business_shared_mining_table_zuixinrizhishi: 'Latest log time',
+  packages_business_shared_mining_table_shoutiaorizhishi: 'Time of the first log',
+  packages_business_shared_mining_table_jiaruwajueshi: 'Add mining time',
+  packages_business_shared_mining_table_biaoming: 'Table Name',
+  packages_business_shared_mining_table_wajuebiaoxinxi: 'Mining table information',
+  packages_business_relation_sharedlist_shiyongdewajue: 'The mining table used'
 }
