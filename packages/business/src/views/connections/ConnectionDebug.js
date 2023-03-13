@@ -32,12 +32,24 @@ export const ConnectionDebug = observer(
           [
             {
               op: 'i',
+              table: 'a',
               after: {
                 A: 1
               }
             },
             {
+              op: 'u',
+              table: 'a',
+              before: {
+                A: 1
+              },
+              after: {
+                A: 2
+              }
+            },
+            {
               op: 'd',
+              table: 'a',
               before: {
                 A: 1
               }
