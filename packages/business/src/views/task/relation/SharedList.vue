@@ -12,18 +12,46 @@
         height="100"
         class="table-list mt-4"
       >
-        <template slot="status" slot-scope="scope">
-          <TaskStatus :task="scope.row" />
+        <template #name="{ row }">
+          <ElLink type="primary" @click="handleName(row)">{{ row.name }}</ElLink>
         </template>
-        <template slot="operation" slot-scope="scope">
+        <template #status="{ row }">
+          <TaskStatus :task="row" />
+        </template>
+        <template #operation="{ row }">
           <div class="operate-columns">
-            <ElButton size="mini" type="text" @click="handleDetail(scope.row)">{{
-              $t('public_button_details')
-            }}</ElButton>
+            <ElButton size="mini" type="text" @click="handleDetail(row)">{{ 0 }}</ElButton>
           </div>
         </template>
       </VTable>
     </div>
+
+    <ElDialog
+      :visible.sync="visible"
+      title="挖掘表信息"
+      width="1000px"
+      :close-on-click-modal="false"
+      :append-to-body="true"
+      @open="handleOpen"
+    >
+      <VTable
+        :columns="tableColumns"
+        :remoteMethod="tableRemoteMethod"
+        :page-options="{
+          layout: 'total, ->, prev, pager, next, sizes, jumper'
+        }"
+        :has-pagination="false"
+        ref="list"
+        height="100"
+        class="table-list mt-4"
+      >
+        <template #operation="{ row }">
+          <div class="operate-columns">
+            <ElButton size="mini" type="text" @click="handleDetail(row)">{{ $t('public_operation') }}</ElButton>
+          </div>
+        </template>
+      </VTable>
+    </ElDialog>
   </div>
 </template>
 
@@ -49,7 +77,8 @@ export default {
         },
         {
           label: i18n.t('public_task_name'),
-          prop: 'name'
+          prop: 'name',
+          slotName: 'name'
         },
         {
           label: i18n.t('public_task_type'),
@@ -79,7 +108,42 @@ export default {
           slotName: 'operation',
           width: 200
         }
-      ]
+      ],
+      tableColumns: [
+        {
+          label: '表名',
+          prop: 'tableName'
+        },
+        {
+          label: '连接名称',
+          prop: 'connectionName'
+        },
+        {
+          label: '加入挖掘时间',
+          prop: 'time1'
+        },
+        {
+          label: '首条日志时间',
+          prop: 'time2'
+        },
+        {
+          label: '最新日志时间',
+          prop: 'time3'
+        },
+        {
+          label: '累计挖掘',
+          prop: 'total'
+        },
+        {
+          label: '今日挖掘',
+          prop: 'today'
+        },
+        {
+          label: '操作',
+          slotName: 'operation'
+        }
+      ],
+      visible: false
     }
   },
 
@@ -103,17 +167,45 @@ export default {
         })
     },
 
+    tableRemoteMethod() {
+      const taskId = this.$route.params.id
+      const { syncType } = this.$attrs.dataflow || {}
+      return logcollectorApi
+        .relateTasks({
+          taskId,
+          type: syncType
+        })
+        .then(data => {
+          return {
+            total: data.total,
+            data: (data.items || []).map(t => {
+              t.typeLabel = TASK_TYPE_MAP[t.type]
+              return t
+            })
+          }
+        })
+    },
+
     handleDetail(row = {}) {
+      this.visible = true
+    },
+
+    handleName({ taskId, syncType }) {
+      const MAP = {
+        migrate: 'MigrateViewer',
+        sync: 'DataflowViewer'
+      }
       const routeUrl = this.$router.resolve({
-        name: 'relationTaskDetail',
+        name: MAP[syncType],
         params: {
-          id: row.id
-        },
-        query: {
-          type: row.type
+          id: taskId
         }
       })
       openUrl(routeUrl.href)
+    },
+
+    handleOpen() {
+      this.$refs.list.fetch()
     }
   }
 }
