@@ -62,6 +62,11 @@ export const ConnectionDebug = observer(
       let asSource = ref(false)
       let asTarget = ref(false)
       let connectionType
+      const LEVEL2CLS = {
+        INFO: 'font-color-dark',
+        ERROR: 'color-danger',
+        WARN: 'color-warning'
+      }
 
       watch(
         () => props.visible,
@@ -285,7 +290,12 @@ export const ConnectionDebug = observer(
                             )
                           }
                           return (
-                            <div class="js-log-list-item text-prewrap text-break p-2">
+                            <div
+                              class={[
+                                'js-log-list-item text-prewrap text-break p-2',
+                                LEVEL2CLS[item.level] || 'font-color-dark'
+                              ]}
+                            >
                               {item.errorStack || item.message}
                             </div>
                           )
