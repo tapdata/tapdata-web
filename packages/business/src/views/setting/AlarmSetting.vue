@@ -293,7 +293,7 @@ export default {
         item.ms = Math.ceil(item.ms * 1000) < 1 ? 1 : Math.ceil(item.ms * 1000)
         return item
       })
-      alarmRuleApi.save(this.alarmData).then(() => {
+      alarmRuleApi.save(data).then(() => {
         this.alarmRulesVisible = false
         this.$message.success(this.$t('public_message_save_ok'))
       })
