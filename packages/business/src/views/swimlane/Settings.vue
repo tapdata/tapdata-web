@@ -177,14 +177,14 @@ export default {
       ],
       options: [
         {
-          label: 'MongoDB Atlas Cluster',
-          value: 'atlas',
-          tag: 'Sync Atlas Cluster List'
-        },
-        {
           label: 'Self Hosted MongoDB Cluster',
           value: 'self',
           tag: 'Add a New Connection'
+        },
+        {
+          label: 'MongoDB Atlas Cluster',
+          value: 'atlas',
+          tag: 'Sync Atlas Cluster List'
         }
       ],
       form: {
