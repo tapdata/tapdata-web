@@ -1865,6 +1865,7 @@ export default {
       if (!id) return
       this.startLoopTaskTimer = setTimeout(async () => {
         const data = await taskApi.get(id)
+        if (this.destory) return
         if (data) {
           // 同步下任务上的属性，重置后会改变
           this.dataflow.attrs = data.attrs
