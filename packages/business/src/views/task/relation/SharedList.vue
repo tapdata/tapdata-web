@@ -1,6 +1,6 @@
 <template>
   <div class="log-container flex justify-content-between">
-    <div class="flex flex-column pt-5 w-100">
+    <div class="flex flex-column w-100">
       <VTable
         :columns="columns"
         :remoteMethod="remoteMethod"
@@ -10,7 +10,7 @@
         :has-pagination="false"
         ref="table"
         height="100"
-        class="table-list mt-4"
+        class="table-list"
       >
         <template #name="{ row }">
           <ElLink type="primary" @click="handleName(row)">{{ row.name }}</ElLink>
@@ -34,23 +34,12 @@
       :append-to-body="true"
       @open="handleOpen"
     >
-      <VTable
-        :columns="tableColumns"
-        :remoteMethod="tableRemoteMethod"
-        :page-options="{
-          layout: 'total, ->, prev, pager, next, sizes, jumper'
-        }"
-        :has-pagination="false"
-        ref="list"
-        height="100"
-        class="table-list mt-4"
-      >
-        <template #operation="{ row }">
-          <div class="operate-columns">
-            <ElButton size="mini" type="text" @click="handleDetail(row)">{{ $t('public_operation') }}</ElButton>
-          </div>
-        </template>
-      </VTable>
+      <SharedMiningTable
+        ref="sharedMiningTable"
+        :task-id="$route.params.id"
+        :show-title="false"
+        class="shared-mining-table mt-n5"
+      ></SharedMiningTable>
     </ElDialog>
   </div>
 </template>
@@ -62,11 +51,12 @@ import { logcollectorApi } from '@tap/api'
 import { openUrl } from '@tap/shared'
 import i18n from '@tap/i18n'
 import { TASK_TYPE_MAP } from '@tap/business'
+import SharedMiningTable from '@tap/business/src/views/shared-mining/Table'
 
 export default {
   name: 'RelationSharedList',
 
-  components: { VTable, TaskStatus },
+  components: { VTable, TaskStatus, SharedMiningTable },
 
   data() {
     return {
@@ -95,12 +85,14 @@ export default {
           label: i18n.t('public_create_time'),
           prop: 'creatTime',
           dataType: 'time',
+          default: '-',
           width: 180
         },
         {
           label: i18n.t('public_task_cdc_time_point'),
           prop: 'creatTime1',
           dataType: 'time',
+          default: '-',
           width: 180
         },
         {
@@ -109,65 +101,12 @@ export default {
           width: 200
         }
       ],
-      tableColumns: [
-        {
-          label: '表名',
-          prop: 'tableName'
-        },
-        {
-          label: '连接名称',
-          prop: 'connectionName'
-        },
-        {
-          label: '加入挖掘时间',
-          prop: 'time1'
-        },
-        {
-          label: '首条日志时间',
-          prop: 'time2'
-        },
-        {
-          label: '最新日志时间',
-          prop: 'time3'
-        },
-        {
-          label: '累计挖掘',
-          prop: 'total'
-        },
-        {
-          label: '今日挖掘',
-          prop: 'today'
-        },
-        {
-          label: '操作',
-          slotName: 'operation'
-        }
-      ],
       visible: false
     }
   },
 
   methods: {
     remoteMethod() {
-      const taskId = this.$route.params.id
-      const { syncType } = this.$attrs.dataflow || {}
-      return logcollectorApi
-        .relateTasks({
-          taskId,
-          type: syncType
-        })
-        .then(data => {
-          return {
-            total: data.total,
-            data: (data.items || []).map(t => {
-              t.typeLabel = TASK_TYPE_MAP[t.type]
-              return t
-            })
-          }
-        })
-    },
-
-    tableRemoteMethod() {
       const taskId = this.$route.params.id
       const { syncType } = this.$attrs.dataflow || {}
       return logcollectorApi
@@ -205,7 +144,10 @@ export default {
     },
 
     handleOpen() {
-      this.$refs.list.fetch()
+      this.$nextTick(() => {
+        console.log('this.$refs.sharedMiningTable', this.$refs.sharedMiningTable)
+        this.$refs.sharedMiningTable?.fetch?.()
+      })
     }
   }
 }
@@ -244,5 +186,8 @@ export default {
       top: 7px;
     }
   }
+}
+.shared-mining-table {
+  height: 350px;
 }
 </style>
