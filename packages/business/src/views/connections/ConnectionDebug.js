@@ -2,7 +2,7 @@ import { computed, defineComponent, ref, watch, reactive } from '@vue/compositio
 import { createForm, observer, Form, SchemaField, HighlightCode, FormItem } from '@tap/form'
 import i18n from '@tap/i18n'
 import resize from '@tap/component/src/directives/resize'
-import { VEmpty } from '@tap/component'
+import { VEmpty, VCodeEditor } from '@tap/component'
 import { proxyApi } from '@tap/api'
 import './style.scss'
 
@@ -18,7 +18,7 @@ export const ConnectionDebug = observer(
     directives: {
       resize
     },
-    setup(props, { emit }) {
+    setup(props, { emit, root }) {
       const logList = ref([])
       const logLoading = ref(false)
       const connForm = props.getForm()
@@ -27,7 +27,25 @@ export const ConnectionDebug = observer(
       })
       const params = reactive({
         connectType: '',
-        timeout: 10
+        timeout: 10,
+        input: JSON.stringify(
+          [
+            {
+              op: 'i',
+              after: {
+                A: 1
+              }
+            },
+            {
+              op: 'd',
+              before: {
+                A: 1
+              }
+            }
+          ],
+          null,
+          2
+        )
       })
       let asSource = ref(false)
       let asTarget = ref(false)
@@ -93,49 +111,49 @@ export const ConnectionDebug = observer(
         }
       })
       const handleRun = async () => {
-        form.validate().then(async () => {
-          logLoading.value = true
-          let query = {
-            // id: 'asdf',
-            // locale: 'string',
-            connectionId: props.pdkOptions.id,
-            type: params.connectType,
-            pdkHash: props.pdkOptions.pdkHash,
-            pdkType: props.pdkOptions.pdkType,
-            connectionConfig: {
-              ...connForm.values
-            },
-            nodeConfig: {},
-            command: 'testRun',
-            action: connForm.values.syncType,
-            argMap: {
-              input: [
-                {
-                  op: 'i',
-                  after: {
-                    A: 1
-                  }
-                },
-                {
-                  op: 'd',
-                  before: {
-                    A: 1
-                  }
-                }
-              ]
-            },
-            time: 0
-          }
+        form.validate().then(
+          async () => {
+            let inputArg
+            try {
+              inputArg = JSON.parse(params.input)
+            } catch (e) {
+              root.$message.error('模拟参数格式错误')
+              return
+            }
 
-          try {
-            let result = await proxyApi.command(query)
-            logList.value = result
-          } catch (e) {
-            console.error(e) // eslint-disable-line
-          }
+            logLoading.value = true
+            let query = {
+              // id: 'asdf',
+              // locale: 'string',
+              connectionId: props.pdkOptions.id,
+              type: params.connectType,
+              pdkHash: props.pdkOptions.pdkHash,
+              pdkType: props.pdkOptions.pdkType,
+              connectionConfig: {
+                ...connForm.values
+              },
+              nodeConfig: {},
+              command: 'testRun',
+              action: connForm.values.syncType,
+              argMap: {
+                input: inputArg
+              },
+              time: 0
+            }
 
-          logLoading.value = false
-        })
+            try {
+              let result = await proxyApi.command(query)
+              logList.value = result
+            } catch (e) {
+              console.error(e) // eslint-disable-line
+            }
+
+            logLoading.value = false
+          },
+          () => {
+            root.$message.error('请检查表单必填项')
+          }
+        )
       }
 
       return () => {
@@ -144,7 +162,7 @@ export const ConnectionDebug = observer(
         }
         return (
           props.visible && (
-            <div class="fixed-top fixed-bottom flex flex-column bg-white">
+            <div class="fixed-top fixed-bottom flex flex-column bg-white font-color-light">
               <div class="flex align-center border-bottom px-4 py-2">
                 <FormItem.BaseItem label="作为" layout="horizontal" feedbackLayout="none">
                   <ElRadioGroup
@@ -198,6 +216,21 @@ export const ConnectionDebug = observer(
               <div class="flex-1 flex w-100 min-h-0">
                 <div class="flex-1 overflow-y-auto p-4 border-end">
                   <Form layout="vertical" feedbackLayout="terse" class-name="form-wrap" form={form}>
+                    {params.connectType === 'target' && (
+                      <FormItem.BaseItem label="模拟参数">
+                        <VCodeEditor
+                          class="border rounded-2 p-0"
+                          theme="one_dark"
+                          value={params.input}
+                          lang="json"
+                          height={200}
+                          options={{ printMargin: false, wrap: 'free' }}
+                          onInput={v => {
+                            params.input = v
+                          }}
+                        />
+                      </FormItem.BaseItem>
+                    )}
                     <SchemaField schema={formSchema.value} />
                   </Form>
                 </div>
