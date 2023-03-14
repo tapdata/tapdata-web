@@ -29,24 +29,13 @@ export const JsonEditor = defineComponent({
     const onBlur = val => {
       if (val !== editorVal.value) {
         try {
-          if (props.type === 'object') val = JSON.parse(val)
+          if (val && props.type === 'object') val = JSON.parse(val)
         } catch (e) {
-          fieldRef.value.setFeedback({
-            type: 'error',
-            message: '格式错误'
-          })
           console.error(e) // eslint-disable-line
         }
         emit('change', val)
       }
     }
-
-    watch(
-      () => props.value,
-      v => {
-        editorVal.value = v
-      }
-    )
 
     return () => {
       const options = {

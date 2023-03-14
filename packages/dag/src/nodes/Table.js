@@ -335,6 +335,90 @@ export class Table extends NodeType {
                     type: 'array',
                     'x-component': 'DdlEventCheckbox'
                   },
+                  mongoMql: {
+                    type: 'void',
+                    properties: {
+                      isPipeline: {
+                        title: '聚合',
+                        type: 'boolean',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          layout: 'horizontal',
+                          tooltip: ''
+                        },
+                        'x-component': 'Switch',
+                        'x-reactions': {
+                          target: 'isMql',
+                          fulfill: {
+                            state: {
+                              disabled: '{{!!$self.value}}'
+                            }
+                          }
+                        }
+                      },
+                      pipeline: {
+                        type: 'array',
+                        required: true,
+                        'x-decorator': 'FormItem',
+                        'x-component': 'JsonEditor',
+                        'x-component-props': {
+                          options: { showPrintMargin: false, useWrapMode: true },
+                          type: 'object'
+                        },
+                        'x-reactions': {
+                          dependencies: ['isPipeline'],
+                          fulfill: {
+                            state: {
+                              display: '{{!$deps[0] ? "hidden":"visible"}}'
+                            }
+                          }
+                        }
+                      },
+                      isMql: {
+                        title: '全量自定义MQL',
+                        type: 'boolean',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          layout: 'horizontal',
+                          tooltip: ''
+                        },
+                        'x-component': 'Switch',
+                        'x-reactions': {
+                          target: 'isPipeline',
+                          fulfill: {
+                            state: {
+                              disabled: '{{!!$self.value}}'
+                            }
+                          }
+                        }
+                      },
+                      mql: {
+                        type: 'string',
+                        required: true,
+                        'x-decorator': 'FormItem',
+                        'x-component': 'SqlEditor',
+                        'x-component-props': {
+                          options: { showPrintMargin: false, useWrapMode: true }
+                        },
+                        'x-reactions': {
+                          dependencies: ['isMql'],
+                          fulfill: {
+                            state: {
+                              display: '{{!$deps[0] ? "hidden":"visible"}}'
+                            }
+                          }
+                        }
+                      }
+                    },
+                    'x-reactions': {
+                      dependencies: ['databaseType'],
+                      fulfill: {
+                        state: {
+                          display: '{{$deps[0]==="MongoDB"?"visible":"hidden"}}'
+                        }
+                      }
+                    }
+                  },
                   cdcMode: {
                     title: i18n.t('packages_dag_nodes_table_zengliangtongbufang'),
                     type: 'string',
