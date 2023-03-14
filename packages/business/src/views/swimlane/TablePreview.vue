@@ -273,12 +273,12 @@ export default {
         },
         {
           label: 'API访问行数',
-          prop: 'resRows',
+          prop: 'visitLine',
           default: 0
         },
         {
           label: 'API传输总量',
-          prop: 'reqBytes',
+          prop: 'transitQuantityLabel',
           default: 0
         },
         {
@@ -369,7 +369,7 @@ export default {
           this.sampleData = res?.sampleData
           this.sampleHeader = Object.keys(this.sampleData.reduce((o, c) => Object.assign(0, c))) || []
           // this.storageSize = Math.floor(res?.tableInfo?.storageSize / 1024) || 0
-          this.storageSize = calcUnit((res?.tableInfo?.storageSize || 0) * 1024, 1)
+          this.storageSize = calcUnit(res?.tableInfo?.storageSize || 0, 1)
           this.numOfRows = res?.tableInfo?.numOfRows || 0
         })
         .finally(() => {
@@ -404,19 +404,14 @@ export default {
     },
     getApisData() {
       const { connectionId, name } = this.selected || {}
-      const filter = {
-        where: {
-          connectionId,
-          tableName: name
-        }
-      }
 
-      return modulesApi.get({ filter: JSON.stringify(filter) }).then(data => {
+      return modulesApi.apiList({ connectionId, tableName: name }).then(data => {
         return {
           total: data.total || 0,
           data:
             data.items?.map(t => {
               t.statusFmt = this.statusOptions.find(it => it.value === t.status)?.label || '-'
+              t.transitQuantityLabel = calcUnit(t.transitQuantity, 1)
               return t
             }) || []
         }
