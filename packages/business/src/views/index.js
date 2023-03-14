@@ -17,6 +17,7 @@ import SwimlaneDashboard from './swimlane/Dashboard'
 import AlarmSetting from './setting/AlarmSetting'
 import AlarmNotification from './setting/AlarmNotification'
 import CustomNodeList from './custom-node/List'
+import SharedMiningList from './shared-mining/List'
 
 export {
   ConnectionForm,
@@ -37,7 +38,8 @@ export {
   SwimlaneDashboard,
   AlarmSetting,
   AlarmNotification,
-  CustomNodeList
+  CustomNodeList,
+  SharedMiningList
 }
 
 export * from './connections/util'

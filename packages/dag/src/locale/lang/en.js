@@ -17,9 +17,7 @@ export default {
   packages_dag_dataFlow_jetFlowEngineV2: 'Jet Flow Engine V2',
   packages_dag_dataFlow_setting_intellect: 'Intelligent de-rewrite',
   packages_dag_dataFlow_setting_compel: 'Force de-rewrite',
-  packages_dag_dataFlow_SyncInfo_localTZType: 'Local Timezone CDC Time',
   packages_dag_dataFlow_SyncInfo_connTZType: 'DB Timezone CDC Time',
-  packages_dag_dataFlow_SyncInfo_currentType: 'Current Time',
   packages_dag_dag_property_setting: 'Property Setting',
   packages_dag_dag_meta_data: 'Meta Data',
   packages_dag_meta_table_index: 'Index',
@@ -566,5 +564,7 @@ export default {
   packages_dag_src_editor_shaohouqidong: 'Start later',
   packages_dag_src_editor_jixuqidong: 'Continue to start',
   packages_dag_src_editor_renwubaocunjianceshi:
-    'An alarm was found during task saving detection, which may cause the task to run abnormally. It is recommended that you check and resolve the alarm before starting the task'
+    'An alarm was found during task saving detection, which may cause the task to run abnormally. It is recommended that you check and resolve the alarm before starting the task',
+  packages_dag_monitor_leftsider_jibenxinxi: 'Basic information',
+  packages_dag_nodes_aggregate_waicunpeizhi: 'External storage configuration'
 }

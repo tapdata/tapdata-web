@@ -458,7 +458,9 @@ export default {
       }
 
       const node = this.nodeById(id)
-
+      // 共享挖掘的节点，不触发选中
+      const flag = ['logCollector', 'hazelcastIMDG'].includes(node.type)
+      if (flag) return
       node && this.nodeSelected(node)
       if (setActive) {
         this.setActiveNode(node.id)

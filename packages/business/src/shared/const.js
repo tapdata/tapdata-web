@@ -27,6 +27,18 @@ export const TASK_STATUS_MAP = {
   finished: { text: i18n.t('public_status_finished'), icon: 'yiwancheng', type: 'success' }
 }
 
+export const TASK_TYPE_MAP = {
+  initial_sync: i18n.t('public_task_type_initial_sync'),
+  cdc: i18n.t('public_task_type_cdc'),
+  'initial_sync+cdc': i18n.t('public_task_type_initial_sync') + '+' + i18n.t('public_task_type_cdc')
+}
+
+export const TASK_SYNC_TYPE_MAP = {
+  logCollector: i18n.t('packages_business_task_monitor_mining_task'),
+  mem_cache: i18n.t('packages_business_relation_list_huancunrenwu'),
+  inspect: i18n.t('packages_business_relation_list_jiaoyanrenwu')
+}
+
 export const MILESTONE_STATUS_MAP = {
   waiting: { text: i18n.t('packages_business_milestone_list_status_waiting'), icon: 'daizhixing' },
   running: { text: i18n.t('packages_business_milestone_list_status_progressing'), icon: 'jinxingzhong' },

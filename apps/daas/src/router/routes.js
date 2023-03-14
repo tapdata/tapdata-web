@@ -98,6 +98,12 @@ const AlarmSetting = async () => {
   const { AlarmSetting } = await import('@tap/business')
   return AlarmSetting
 }
+
+const SharedMiningList = async () => {
+  const { SharedMiningList } = await import('@tap/business')
+  return SharedMiningList
+}
+
 export default [
   {
     path: '/login',
@@ -227,6 +233,15 @@ export default [
     meta: {
       title: 'page_title_run_monitor',
       code: 'v2_data_replication_record_monitor'
+    }
+  },
+  {
+    path: '/sharedMining/monitor/:id',
+    name: 'SharedMiningMonitor',
+    component: MigrationMonitor,
+    meta: {
+      title: 'page_title_run_monitor',
+      code: 'v2_data_replication_monitor'
     }
   },
   {
@@ -546,19 +561,10 @@ export default [
           {
             path: '',
             name: 'sharedMiningList',
-            component: () => import(/* webpackChunkName: "shared-mining" */ '@/views/shared-mining/List'),
+            component: SharedMiningList,
             meta: {
               title: 'page_title_shared_mining',
               code: 'v2_log_collector_menu'
-            }
-          },
-          {
-            path: 'details/:id',
-            name: 'SharedMiningDetails',
-            component: () => import(/* webpackChunkName: "shared-mining-details" */ '@/views/shared-mining/Detail'),
-            meta: {
-              title: 'page_title_shared_mining_details',
-              code: 'v2_log_collector_detail'
             }
           }
         ]

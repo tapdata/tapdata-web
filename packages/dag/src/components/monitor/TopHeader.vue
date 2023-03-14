@@ -82,7 +82,11 @@
       </ElTooltip>
       <VDivider class="mx-3" vertical></VDivider>
       <!--设置-->
-      <ElTooltip transition="tooltip-fade-in" :content="$t('public_button_setting')">
+      <ElTooltip
+        v-if="!['logCollector'].includes(dataflow.syncType)"
+        transition="tooltip-fade-in"
+        :content="$t('public_button_setting')"
+      >
         <button @click="$emit('showSettings')" class="icon-btn" :class="{ active: activeType === 'settings' }">
           <VIcon size="20">setting-outline</VIcon>
         </button>

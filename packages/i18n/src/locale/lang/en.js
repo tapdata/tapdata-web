@@ -1,6 +1,7 @@
 export default {
   // commonly used
   public_name: 'Name',
+  public_index: 'Index',
   public_type: 'Type',
   public_title: 'Title',
   public_description: 'Description',
@@ -10,6 +11,7 @@ export default {
   public_creator: 'Creator',
   public_update_time: 'Update time',
   public_change_time: 'Modification time',
+  public_serial_number: 'Serial number',
   // state
   public_status_ready: 'Valid',
   public_status_invalid: 'Invalid',
@@ -46,7 +48,7 @@ export default {
   public_button_preview: 'Preview',
   public_button_reload: 'Reload',
   public_button_restart: 'Restart',
-  public_button_start: 'start',
+  public_button_start: 'Start',
   public_button_stop: 'Stop',
   public_button_force_stop: 'Force stop',
   public_button_close: 'Close',
@@ -119,6 +121,8 @@ export default {
   public_time_last_day: 'Last 1 day',
   public_time_last_three_days: 'The last 3 days',
   public_time_custom_time: 'Custom time',
+  public_time_user_specified_time: 'User specified time',
+  public_time_current: 'Current Time',
   // relation
   public_or: 'or',
   public_and: 'and',

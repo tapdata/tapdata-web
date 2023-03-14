@@ -16,9 +16,7 @@ export default {
   packages_dag_dataFlow_jetFlowEngineV2: 'Jet Flow Engine V2',
   packages_dag_dataFlow_setting_intellect: '智能去重写入',
   packages_dag_dataFlow_setting_compel: '强制去重写入',
-  packages_dag_dataFlow_SyncInfo_localTZType: '用户指定时间',
   packages_dag_dataFlow_SyncInfo_connTZType: '数据库时区',
-  packages_dag_dataFlow_SyncInfo_currentType: '此刻',
   packages_dag_dag_property_setting: '属性设置',
   packages_dag_dag_meta_data: '元数据',
   packages_dag_meta_table_index: '序号',
@@ -536,5 +534,7 @@ export default {
   packages_dag_src_editor_shaohouqidong: '稍后启动',
   packages_dag_src_editor_jixuqidong: '继续启动',
   packages_dag_src_editor_renwubaocunjianceshi:
-    '任务保存检测时发现了告警，可能会导致任务运行出现异常，建议您查看并解决告警后再启动任务'
+    '任务保存检测时发现了告警，可能会导致任务运行出现异常，建议您查看并解决告警后再启动任务',
+  packages_dag_monitor_leftsider_jibenxinxi: '基本信息',
+  packages_dag_nodes_aggregate_waicunpeizhi: '外存配置'
 }

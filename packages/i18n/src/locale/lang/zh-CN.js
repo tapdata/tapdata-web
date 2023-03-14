@@ -1,6 +1,7 @@
 export default {
   // 常用
   public_name: '名称',
+  public_index: '索引',
   public_type: '类型',
   public_title: '标题',
   public_description: '描述',
@@ -10,6 +11,7 @@ export default {
   public_creator: '创建人',
   public_update_time: '更新时间',
   public_change_time: '修改时间',
+  public_serial_number: '序号',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '无效',
@@ -119,6 +121,8 @@ export default {
   public_time_last_day: '最近1天',
   public_time_last_three_days: '最近3天',
   public_time_custom_time: '自定义时间',
+  public_time_user_specified_time: '用户指定时间',
+  public_time_current: '此刻',
   // 关系
   public_or: '或',
   public_and: '和',
