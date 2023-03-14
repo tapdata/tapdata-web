@@ -113,6 +113,11 @@ const ObjectList = async () => {
   return ObjectList
 }
 
+const DataServerList = async () => {
+  const { DataServerList } = await import('@tap/business')
+  return DataServerList
+}
+
 export default [
   {
     path: '/login',
@@ -699,7 +704,7 @@ export default [
       {
         path: '/data-server',
         name: 'dataServer',
-        component: () => import(/* webpackChunkName: "data-server" */ '@/views/data-server/List.vue'),
+        component: DataServerList,
         meta: {
           title: 'page_title_data_server_list',
           code: 'v2_data-server-list'
