@@ -26,7 +26,11 @@
           @check="checkHandler"
           @node-drag-start="handleDragStart"
         >
-          <span class="custom-tree-node flex align-items-center" slot-scope="{ node, data }">
+          <span
+            class="custom-tree-node flex align-items-center"
+            slot-scope="{ node, data }"
+            @dblclick="openView(node, node.data.isLeaf)"
+          >
             <VIcon
               v-if="node.data.loadFieldsStatus === 'loading'"
               class="v-icon animation-rotate"
