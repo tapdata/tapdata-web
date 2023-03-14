@@ -304,6 +304,8 @@ export class Table extends NodeType {
                     type: 'boolean',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
+                      className: 'item-control-horizontal',
+                      layout: 'horizontal',
                       tooltip: i18n.t('packages_dag_nodes_database_kaiqihourenwu')
                     },
                     'x-component': 'Switch',
@@ -435,6 +437,9 @@ export class Table extends NodeType {
                     title: i18n.t('packages_dag_nodes_table_guolushezhi'),
                     default: false,
                     'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      layout: 'horizontal'
+                    },
                     'x-component': 'Switch',
                     'x-reactions': {
                       target: '*(conditions)',

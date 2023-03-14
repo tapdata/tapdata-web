@@ -17,3 +17,11 @@
     padding-right: 16px;
   }
 }
+
+.formily-element-form-item.item-control-horizontal {
+  .formily-element-form-item-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
