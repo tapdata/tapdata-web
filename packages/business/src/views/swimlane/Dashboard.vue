@@ -31,7 +31,7 @@
     </div>
     <CreateConnection
       :visible.sync="visible"
-      :params="createConnectionParams"
+      :selector-type="selectorType"
       @success="handleSuccess"
       @saveAndMore="handleSuccess"
     ></CreateConnection>
@@ -57,14 +57,14 @@ export default {
       keyword: '',
       visible: false,
       settingsVisible: false,
-      createConnectionParams: {},
       dragState: {
         isDragging: false,
         draggingObjects: [],
         dropNode: null,
         form: ''
       },
-      mode: ''
+      mode: '',
+      selectorType: ''
     }
   },
 
@@ -98,12 +98,12 @@ export default {
     searchFnc() {},
 
     handleAdd(type) {
-      this.createConnectionParams.type = type
+      this.selectorType = type
       this.visible = true
     },
 
     handleSuccess(value) {
-      const component = this.laneOptions.find(t => t.type === this.createConnectionParams.type)?.component
+      const component = this.laneOptions.find(t => t.type === this.selectorType)?.component
       this.$refs[component]?.[0]?.addItem(value)
     },
 
@@ -140,6 +140,11 @@ export default {
     .list__title {
       border-top: 1px solid #e1e3e9;
       border-bottom: 1px solid #e1e3e9;
+    }
+    .icon-color {
+      &:hover {
+        background-color: map-get($bgColor, hover);
+      }
     }
   }
 }
