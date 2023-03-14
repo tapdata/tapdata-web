@@ -268,15 +268,18 @@ export default {
         },
         {
           label: '访问次数',
-          prop: 'name1'
+          prop: 'visitCount',
+          default: 0
         },
         {
           label: 'API访问行数',
-          prop: 'name2'
+          prop: 'resRows',
+          default: 0
         },
         {
           label: 'API传输总量',
-          prop: 'name3'
+          prop: 'reqBytes',
+          default: 0
         },
         {
           label: '最后访问时间',
