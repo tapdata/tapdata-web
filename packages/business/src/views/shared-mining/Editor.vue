@@ -9,9 +9,6 @@
     @close="handleClose"
     @open="handleOpen"
   >
-    <div slot="title" class="text-center font-color-dark fs-2 fw-bold">
-      {{ title }}
-    </div>
     <ElForm
       v-loading="loading"
       ref="form"
@@ -19,6 +16,7 @@
       label-width="150px"
       :model="editForm"
       :rules="rulesEdit"
+      class="my-n6"
     >
       <ElFormItem size="mini" :label="$t('packages_business_shared_form_edit_name')" prop="name">
         <ElInput clearable v-model="editForm.name"></ElInput>
