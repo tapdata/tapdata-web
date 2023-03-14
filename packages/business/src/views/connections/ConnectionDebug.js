@@ -140,8 +140,6 @@ export const ConnectionDebug = observer(
 
             logLoading.value = true
             let query = {
-              // id: 'asdf',
-              // locale: 'string',
               connectionId: props.pdkOptions.id,
               type: params.connectType,
               pdkHash: props.pdkOptions.pdkHash,
@@ -153,7 +151,8 @@ export const ConnectionDebug = observer(
               command: 'testRun',
               action: connForm.values.syncType,
               argMap: {
-                input: inputArg
+                input: inputArg,
+                timeout: params.timeout
               },
               time: 0
             }
@@ -207,8 +206,8 @@ export const ConnectionDebug = observer(
                   <ElInputNumber
                     style="width: 100px;"
                     value={params.timeout}
-                    min={1}
-                    max={10}
+                    min={5}
+                    max={60}
                     onInput={val => {
                       params.timeout = val
                     }}
