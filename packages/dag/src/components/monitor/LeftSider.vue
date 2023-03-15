@@ -391,7 +391,7 @@ export default {
       initialListDialog: false,
       timeSelectLabel: '',
       collectorData: {
-        externalStorage: ''
+        externalStorage: {}
       },
       typeMapping: {
         mongodb: 'MongoDB',
@@ -600,7 +600,12 @@ export default {
     getCollectorData() {
       if (!['logCollector'].includes(this.dataflow.syncType) || this.collectorData.id) return
       logcollectorApi.getDetail(this.dataflow.id).then(data => {
-        this.collectorData = data
+        this.collectorData = Object.assign(
+          {
+            externalStorage: {}
+          },
+          data
+        )
       })
     },
 
