@@ -67,9 +67,10 @@
 import i18n from '@tap/i18n'
 
 import { VIcon, VirtualTree } from '@tap/component'
-import { metadataDefinitionsApi, userGroupsApi, discoveryApi } from '@tap/api'
+import { metadataDefinitionsApi, userGroupsApi, discoveryApi, connectionsApi, metadataInstancesApi } from '@tap/api'
 import Cookie from '@tap/shared/src/cookie'
 
+import { DatabaseIcon } from '../components'
 import { makeDragNodeImage } from '../shared/classification'
 export default {
   name: 'ClassificationTree',
@@ -122,6 +123,7 @@ export default {
       parent_id: '',
       title: '',
       iconMap: {
+        folder: 'folder-outline',
         table: 'table',
         defaultApi: 'apiServer_navbar'
       }
@@ -142,13 +144,15 @@ export default {
   },
   methods: {
     renderContent(h, { node, data, store }) {
-      let icon = 'folder-outline'
+      let icon
 
-      if (data.isObject) {
-        icon = this.iconMap[data.type]
+      if (data.LDP_TYPE === 'connection') {
+        icon = <DatabaseIcon item={data} size={20} />
+      } else {
+        icon = <VIcon size="18">{this.iconMap[data.LDP_TYPE]}</VIcon>
       }
 
-      if (data.objCount > 0) {
+      if (!data.parent_id || data.isLeaf === false) {
         node.isLeaf = false
       }
 
@@ -156,6 +160,9 @@ export default {
         <div
           class="custom-tree-node"
           on={{
+            dblclick: ev => {
+              console.log('dblclick', ev) // eslint-disable-line
+            },
             dragenter: ev => {
               ev.stopPropagation()
               this.handleTreeDragEnter(ev, data, node)
@@ -174,7 +181,7 @@ export default {
             }
           }}
         >
-          <div class="tree-item-icon flex align-center mr-2">{icon && <VIcon size="18">{icon}</VIcon>}</div>
+          <div class="tree-item-icon flex align-center mr-2">{icon}</div>
           <span class="table-label" title={data.name}>
             {data.name}
           </span>
@@ -282,38 +289,32 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(data => {
+          const ORDER = {
+            source: 1,
+            fdm: 2,
+            mdm: 3,
+            target: 4
+          }
           let items = data?.items || []
           let treeData = this.formatData(items)
 
-          this.treeData = [
-            {
-              id: '-',
-              name: '所有目录',
-              isRoot: true,
-              readOnly: true,
-              children: treeData
-            }
-          ]
+          treeData.sort((a, b) => {
+            let aType = a.item_type[0]
+            let bType = b.item_type[0]
+            return ORDER[aType] - ORDER[bType]
+          })
 
-          /*this.treeData =
-            this.isDaas && Cookie.get('isAdmin')
-              ? [
-                  {
-                    name: '所有目录',
-                    isRoot: true,
-                    readOnly: true,
-                    children: treeData
-                  }
-                ]
-              : treeData*/
+          this.treeData = treeData
 
           cb && cb(items)
-          //默认选中第一个
+
           this.$nextTick(() => {
             const first = this.treeData[0]
             let key = first.id
             this.expandedKeys = [key]
+            const node = this.$refs.tree.getNode(key)
             this.$refs.tree.setCurrentKey(key)
+            this.handleNodeExpand(first, node)
             this.emitCheckedNodes(first)
           })
         })
@@ -328,41 +329,39 @@ export default {
     },
     //格式化分类数据
     formatData(items) {
-      const userId = this.isDaas ? Cookie.get('user_id') : window.__USER_INFO__.userId
       if (items && items.length) {
-        let map = {}
-        let nodes = []
-
-        //遍历第一次， 先把所有子类按照id分成若干数组
-        items.forEach(it => {
-          it.name = it.value
-          it.isLeaf = it.objCount === 0
-          if (it.parent_id) {
-            let children = map[it.parent_id] || []
-            children.push(it)
-            map[it.parent_id] = children
-          } else {
-            //默认目录国际化
-            if (it?.item_type && it?.item_type.findIndex(t => t === 'default') > -1) {
-              it.name = i18n.t('packages_component_src_discoveryclassification_morenmuluji')
-              if (it?.userName && it?.user_id !== userId) {
-                it.name += `| ${it.userName}`
-              }
-            }
-            nodes.push(it)
-          }
-        })
-        //接着从没有子类的数据开始递归，将之前分好的数组分配给每一个类目
-        let checkChildren = nodes => {
+        const map = {}
+        const nodes = []
+        const setChildren = nodes => {
           return nodes.map(it => {
             let children = map[it.id]
             if (children) {
-              it.children = checkChildren(children)
+              it.children = setChildren(children)
             }
             return it
           })
         }
-        return checkChildren(nodes)
+
+        items.forEach(it => {
+          it.LDP_TYPE = 'folder'
+          it.children = []
+          if (it.parent_id) {
+            let children = map[it.parent_id] || []
+            children.push(it)
+            map[it.parent_id] = children
+            it.name = it.value
+          } else {
+            const itemType = it.item_type[0]
+            const TYPE2NAME = {
+              target: 'TARGET&SERVICE'
+            }
+            it.name = TYPE2NAME[itemType] || it.value
+            it.readOnly = itemType !== 'mdm'
+            nodes.push(it)
+          }
+        })
+
+        return setChildren(nodes)
       }
     },
     filterNode(value, data) {
@@ -661,12 +660,34 @@ export default {
       }, 2000)
     },
 
+    handleCurrentChange() {
+      console.log('handleCurrentChange', ...arguments) // eslint-disable-line
+    },
+
     async handleNodeExpand(data, node) {
       // 十秒内加载过资源，不再继续加载
       if (data.isRoot || (node.loadTime && Date.now() - node.loadTime < 10000)) return
 
       node.loadTime = Date.now()
-      const objects = await this.loadObjects(data)
+
+      let { LDP_TYPE } = data
+      let objects
+      let itemType = LDP_TYPE === 'connection' ? LDP_TYPE : data.item_type[0]
+
+      switch (itemType) {
+        case 'connection':
+          objects = await this.getTableList(data.id)
+          break
+        case 'source':
+          objects = await this.getConnectionList('source')
+          break
+        case 'target':
+          objects = await this.getConnectionList('target')
+          break
+        default:
+          objects = await this.loadObjects(data)
+      }
+
       console.log('handleNodeExpand', objects, data, node) // eslint-disable-line
       const childrenMap = data.children ? data.children.reduce((map, item) => ((map[item.id] = true), map), {}) : {}
       objects.forEach(item => {
@@ -675,10 +696,6 @@ export default {
         item.isObject = true
         this.$refs.tree.append(item, node)
       })
-    },
-
-    handleCurrentChange() {
-      console.log('handleCurrentChange', ...arguments) // eslint-disable-line
     },
 
     loadObjects(node) {
@@ -694,6 +711,45 @@ export default {
       return discoveryApi.discoveryList(where).then(res => {
         let { total, items } = res
         return res.items
+      })
+    },
+
+    async getConnectionList(type) {
+      let filter = {
+        limit: 999,
+        where: {
+          connection_type: {
+            in: ['source_and_target', type]
+          }
+        }
+      }
+      const res = await connectionsApi.get({
+        filter: JSON.stringify(filter)
+      })
+
+      return res.items.map(t => {
+        const { status, loadCount = 0, tableCount = 0 } = t
+        const disabled = status !== 'ready'
+        return {
+          ...t,
+          progress: !tableCount ? 0 : Math.round((loadCount / tableCount) * 10000) / 100,
+          children: [],
+          disabled,
+          LDP_TYPE: 'connection',
+          isLeaf: false
+        }
+      })
+    },
+
+    async getTableList(id) {
+      const res = await metadataInstancesApi.getSourceTablesValues(id)
+      return res.map(t => {
+        return {
+          id: t.tableId,
+          name: t.tableName,
+          isLeaf: true,
+          LDP_TYPE: 'table'
+        }
       })
     }
   }

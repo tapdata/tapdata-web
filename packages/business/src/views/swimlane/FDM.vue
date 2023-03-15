@@ -84,6 +84,7 @@ import { connectionsApi } from '@tap/api'
 import { AsyncSelect } from '@tap/form'
 import { VirtualTree } from '@tap/component'
 import { merge } from 'lodash'
+import { uuid } from '@tap/shared'
 
 export default {
   name: 'FDM',
@@ -305,6 +306,44 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
         parent = parent.parentNode
       }
       return parent
+    },
+
+    makeMigrateTask(from, to) {
+      let source = this.getDatabaseNode(from)
+      let target = this.getDatabaseNode(to)
+
+      Object.assign(source, {
+        migrateTableSelectType: 'expression',
+        tableExpression: '.*'
+      })
+
+      return {
+        // ...DEFAULT_SETTINGS,
+        syncType: 'migrate',
+        name: this.dialogConfig.taskName,
+        dag: {
+          edges: [{ source: source.id, target: target.id }],
+          nodes: [source, target]
+        }
+      }
+    },
+
+    getDatabaseNode(db) {
+      return {
+        id: uuid(),
+        type: 'database',
+        name: db.name,
+        connectionId: db.id,
+        databaseType: db.database_type,
+        attrs: {
+          connectionName: db.name,
+          connectionType: db.connection_type,
+          accessNodeProcessId: db.accessNodeProcessId,
+          pdkType: db.pdkType,
+          pdkHash: db.pdkHash,
+          capabilities: db.capabilities || []
+        }
+      }
     }
   }
 }
