@@ -48,147 +48,11 @@
             </el-row>
           </li>
         </ul>
-        <!--        <div class="headTitle">-->
-        <!--          <h4>{{ $t('role_funcPermission') }}</h4>-->
-        <!--          <p>{{ $t('role_choosePermissionTip') }}</p>-->
-        <!--        </div>-->
-        <!--        <ul class="role-table">-->
-        <!--          <li class="role-head">-->
-        <!--            <el-row class="e-row">-->
-        <!--              <el-col class="e-col" :span="3">-->
-        <!--                {{ $t('role_module') }}-->
-        <!--              </el-col>-->
-        <!--              <el-col class="e-col borderLeft" :span="18">-->
-        <!--                {{ $t('role_functionDataPermission') }}-->
-        <!--              </el-col>-->
-        <!--              <el-col class="e-col borderLeft" :span="3">{{ $t('role_bulkOperate') }} </el-col>-->
-        <!--            </el-row>-->
-        <!--          </li>-->
-        <!--          <li class="module-style">-->
-        <!--            <el-row class="e-row" v-for="item in moduleList" :key="item.id">-->
-        <!--              <el-col :span="3" style="line-height: 40px">-->
-        <!--                <span class="nav">{{ $t('role_module_meun_' + item.name) }}</span>-->
-        <!--              </el-col>-->
-        <!--              <el-col :span="21" class="e-col borderLine">-->
-        <!--                &lt;!&ndash; 权限 &ndash;&gt;-->
-        <!--                <el-row class="box">-->
-        <!--                  <el-col class="e-col" :span="20" v-if="item.children">-->
-        <!--                    <el-checkbox-->
-        <!--                      v-for="second in item.children"-->
-        <!--                      :key="second.name"-->
-        <!--                      v-model="second.checked"-->
-        <!--                      v-show="second.id"-->
-        <!--                      :disabled="second.type === 'read'"-->
-        <!--                      @change="handleOneCheckAll($event, item, item.children, second, 'children')"-->
-        <!--                      :class="[{ 'checkbox-position': !second.allName }, 'checkbox-radio']"-->
-        <!--                      v-cloak-->
-        <!--                    >-->
-        <!--                      <div>{{ $t('role_name_' + second.name) }}</div>-->
-        <!--                      <el-checkbox-->
-        <!--                        class="e-checkbox"-->
-        <!--                        v-show="second.allName"-->
-        <!--                        :disabled="!second.checked || second.allName === 'data_catalog_all_data'"-->
-        <!--                        v-model="second.checkAllData"-->
-        <!--                        @change="handleOneAllData($event, item, item.children, second, 'children')"-->
-        <!--                        v-cloak-->
-        <!--                      >-->
-        <!--                        <div>{{ $t('role_allData') }}</div>-->
-        <!--                      </el-checkbox>-->
-        <!--                    </el-checkbox>-->
-        <!--                  </el-col>-->
-        <!--                  <el-col :span="4" v-if="item.children" style="padding-top: 8px">-->
-        <!--                    <el-checkbox-->
-        <!--                      v-model="item.checkAll"-->
-        <!--                      @change="handleAuthoritySelectAll($event, item, item.children)"-->
-        <!--                      v-cloak-->
-        <!--                    >-->
-        <!--                      <div>{{ $t('role_chooseAllFunction') }}</div>-->
-        <!--                    </el-checkbox>-->
-        <!--                    <el-checkbox-->
-        <!--                      class="e-checkbox"-->
-        <!--                      v-model="item.checkedAllData"-->
-        <!--                      @change="handleCheckedAllData($event, item, item.children)"-->
-        <!--                      v-cloak-->
-        <!--                    >-->
-        <!--                      <div>{{ $t('role_chooseAllRole') }}</div>-->
-        <!--                    </el-checkbox>-->
-        <!--                  </el-col>-->
-        <!--                </el-row>-->
-        <!--                <div class="line" v-if="item.children && item.classification"></div>-->
-        <!--                &lt;!&ndash; 分类权限 &ndash;&gt;-->
-        <!--                <el-row class="box heightStyle" v-if="item.classification">-->
-        <!--                  <el-col class="e-col" :span="20">-->
-        <!--                    <el-checkbox-->
-        <!--                      v-for="second in item.classification"-->
-        <!--                      :key="second.name"-->
-        <!--                      v-model="second.checked"-->
-        <!--                      v-show="second.id"-->
-        <!--                      :disabled="second.type === 'read'"-->
-        <!--                      @change="handleOneCheckAll($event, item, item.classification, second, 'classify')"-->
-        <!--                      :class="[{ 'checkbox-position': !second.allName }, 'checkbox-radio']"-->
-        <!--                      v-cloak-->
-        <!--                    >-->
-        <!--                      <div>{{ $t('role_name_' + second.name) }}</div>-->
-        <!--                      &lt;!&ndash; <el-checkbox-->
-        <!--											class="e-checkbox"-->
-        <!--											v-show="second.allName"-->
-        <!--											:disabled="!item.checked"-->
-        <!--											v-model="second.checkAllData"-->
-        <!--											@change="handleChange($event, item, second)"-->
-        <!--											v-cloak-->
-        <!--										>-->
-        <!--											<div>All data</div>-->
-        <!--										</el-checkbox> &ndash;&gt;-->
-        <!--                    </el-checkbox>-->
-        <!--                  </el-col>-->
-        <!--                  <el-col class="e-col allSelectBox" :span="4">-->
-        <!--                    <el-checkbox-->
-        <!--                      class="checkbox-radio checkbox-position"-->
-        <!--                      v-model="item.classifiyCheckAll"-->
-        <!--                      @change="handleAuthoritySelectAll($event, item, item.classification)"-->
-        <!--                      v-cloak-->
-        <!--                    >-->
-        <!--                      <div>{{ $t('role_chooseAllFunction') }}</div>-->
-        <!--                    </el-checkbox>-->
-        <!--                  </el-col>-->
-        <!--                </el-row>-->
-        <!--                <div class="line" v-if="item.classification && item.functional"></div>-->
-        <!--                &lt;!&ndash; 导入导出 &ndash;&gt;-->
-        <!--                <el-row class="box heightStyle" v-if="item.functional">-->
-        <!--                  <el-col class="e-col" :span="20">-->
-        <!--                    <el-checkbox-->
-        <!--                      v-for="second in item.functional"-->
-        <!--                      :key="second.name"-->
-        <!--                      v-show="second.id"-->
-        <!--                      :disabled="second.type === 'read'"-->
-        <!--                      v-model="second.checked"-->
-        <!--                      @change="handleOneCheckAll($event, item, item.functional, second, 'functional')"-->
-        <!--                      :class="[{ 'checkbox-position': !second.allName }, 'checkbox-radio']"-->
-        <!--                      v-cloak-->
-        <!--                    >-->
-        <!--                      <div>{{ $t('role_name_' + second.name) }}</div>-->
-        <!--                    </el-checkbox>-->
-        <!--                  </el-col>-->
-        <!--                  <el-col class="e-col" :span="4">-->
-        <!--                    <el-checkbox-->
-        <!--                      class="checkbox-radio checkbox-position"-->
-        <!--                      v-model="item.functionCheckAll"-->
-        <!--                      @change="handleAuthoritySelectAll($event, item, item.functional)"-->
-        <!--                      v-cloak-->
-        <!--                    >-->
-        <!--                      <div>{{ $t('role_chooseAllFunction') }}</div>-->
-        <!--                    </el-checkbox>-->
-        <!--                  </el-col>-->
-        <!--                </el-row>-->
-        <!--              </el-col>-->
-        <!--            </el-row>-->
-        <!--          </li>-->
-        <!--        </ul>-->
       </div>
       <div class="btn">
-        <el-button size="mini" @click="back">{{ $t('button_back') }} </el-button>
+        <el-button size="mini" @click="back">{{ $t('public_button_back') }} </el-button>
         <el-button size="mini" type="primary" :loading="saveloading" @click="save('ruleForm')"
-          >{{ $t('app_save') }}
+          >{{ $t('public_button_save') }}
         </el-button>
       </div>
     </div>
@@ -248,6 +112,7 @@ let pageSort = [
       // { name: 'agents_menu' },
       // { name: 'servers_oversee_menu' },
       { name: 'v2_user_management_menu' },
+      { name: 'v2_external-storage_menu' },
       { name: 'v2_role_management_menu' }
       // { name: 'system_settings_menu' }
     ]
@@ -852,7 +717,7 @@ export default {
         })
         .then(() => {
           this.$emit('saveBack')
-          this.$message.success(this.$t('message_save_ok'))
+          this.$message.success(this.$t('public_message_save_ok'))
         })
         .finally(() => {
           self.saveloading = false
@@ -871,7 +736,7 @@ export default {
         .updatePermissionRoleMapping(roleId, data)
         .then(() => {
           this.$emit('saveBack')
-          this.$message.success(this.$t('message_save_ok'))
+          this.$message.success(this.$t('public_message_save_ok'))
           this.adds = []
           this.deletes = []
         })

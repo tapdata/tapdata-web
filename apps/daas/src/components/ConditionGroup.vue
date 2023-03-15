@@ -4,10 +4,10 @@
     <div class="query-build-header">
       <div class="query-build-header-left">
         <span class="fw-sub pr-5">{{ $t('query_build_match_condition') }}</span>
-        <el-radio v-model="value.operator" label="and">{{ $t('query_build_all') }}</el-radio>
+        <el-radio v-model="value.operator" label="and">{{ $t('public_select_option_all') }}</el-radio>
         <el-radio v-model="value.operator" label="or">{{ $t('query_build_any') }}</el-radio>
         <!-- <el-radio-group v-model="value.operator" size="mini" class="query-build-header-radio">
-          <el-radio-button label="and">{{ $t('query_build_all') }}</el-radio-button>
+          <el-radio-button label="and">{{ $t('public_select_option_all') }}</el-radio-button>
           <el-radio-button label="or">{{ $t('query_build_any') }}</el-radio-button>
         </el-radio-group> -->
       </div>
@@ -19,7 +19,9 @@
         </el-tooltip>
 
         <el-tooltip class="item" effect="dark" :content="$t('query_build_removeGroup')" placement="top">
-          <el-button v-if="level > 1" @click="removeGroup(value)" type="text">{{ $t('query_build_remove') }}</el-button>
+          <el-button v-if="level > 1" @click="removeGroup(value)" type="text">{{
+            $t('public_button_delete')
+          }}</el-button>
         </el-tooltip>
       </div>
     </div>
@@ -59,7 +61,7 @@
               </el-tooltip>
               <el-tooltip class="item" effect="dark" :content="$t('query_build_removeCondition')" placement="top">
                 <el-button v-if="conditionCount > 1" @click="removeChild(item, index)" type="text">{{
-                  $t('query_build_remove')
+                  $t('public_button_delete')
                 }}</el-button>
               </el-tooltip>
             </div>

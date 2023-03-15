@@ -83,10 +83,10 @@
           <EchartHeader :data="throughputObj.title" @change="changeHeaderFnc"></EchartHeader>
           <div class="floatLayer">
             <span style="background-color: rgba(72, 182, 226, 0.3); color: #409eff"
-              >{{ $t('dataFlow_input') }}:<span class="ml-1">{{ throughputObj.input }}</span></span
+              >{{ $t('public_time_input') }}:<span class="ml-1">{{ throughputObj.input }}</span></span
             >
             <span style="background-color: rgba(98, 165, 105, 0.3); color: #62a569"
-              >{{ $t('dataFlow_output') }}:<span class="ml-1">{{ throughputObj.output }}</span></span
+              >{{ $t('public_time_output') }}:<span class="ml-1">{{ throughputObj.output }}</span></span
             >
           </div>
           <Chart v-if="throughputObj.body" :extend="throughputObj.body" class="v-echart"></Chart>
@@ -320,8 +320,8 @@ export default {
             show: false
           },
           data: [
-            this.$t('dataFlow_totalOutput'),
-            this.$t('dataFlow_totalInput'),
+            this.$t('public_event_total_output'),
+            this.$t('public_event_total_input'),
             this.$t('dataFlow_totalInsert'),
             this.$t('dataFlow_totalUpdate'),
             this.$t('dataFlow_totalDelete')
@@ -423,7 +423,7 @@ export default {
         },
         series: [
           {
-            name: this.$t('dataFlow_input'),
+            name: this.$t('public_time_input'),
             type: 'line',
             smooth: true,
             data: inputCountList,
@@ -435,7 +435,7 @@ export default {
             }
           },
           {
-            name: this.$t('dataFlow_output'),
+            name: this.$t('public_time_output'),
             type: 'line',
             smooth: true,
             data: outputCountList,

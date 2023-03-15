@@ -26,7 +26,7 @@
             <el-select
               v-model="searchParams.ip"
               size="mini"
-              :placeholder="$t('cluster_placeholderSelect')"
+              :placeholder="$t('public_select_placeholder')"
               @input="table.fetch(1)"
             >
               <el-option v-for="item in ipList" :label="item.value" :value="item.value" :key="item.value"></el-option>
@@ -36,7 +36,7 @@
             <el-select
               v-model="searchParams.serverType"
               size="mini"
-              :placeholder="$t('cluster_placeholderSelect')"
+              :placeholder="$t('public_select_placeholder')"
               @input="table.fetch(1)"
             >
               <el-option
@@ -51,7 +51,7 @@
             <el-select
               v-model="searchParams.level"
               size="mini"
-              :placeholder="$t('cluster_placeholderSelect')"
+              :placeholder="$t('public_select_placeholder')"
               @input="table.fetch(1)"
             >
               <el-option
@@ -64,7 +64,7 @@
           </li>
           <li>
             <el-button type="text" class="restBtn" size="mini" @click="rest()">
-              {{ $t('button_reset') }}
+              {{ $t('public_button_reset') }}
             </el-button>
           </li>
         </ul>

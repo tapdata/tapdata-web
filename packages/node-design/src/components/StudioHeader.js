@@ -51,7 +51,7 @@ export const StudioHeader = observer(
               params: { id: data.id, action: 'nodeSave' }
             })
           }
-          root.$message.success(root.$t('packages_nodeDesign_message_save_ok'))
+          root.$message.success(root.$t('public_message_save_ok'))
         } catch (e) {
           // eslint-disable-next-line no-console
           console.log('CustomNode save error', e)

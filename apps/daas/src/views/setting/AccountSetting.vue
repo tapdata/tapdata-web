@@ -73,7 +73,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" size="mini" @click="save">{{ $t('app_save') }}</el-button>
+        <el-button type="primary" size="mini" @click="save">{{ $t('public_button_save') }}</el-button>
       </div>
     </el-dialog>
     <!-- 修改邮箱 -->
@@ -170,25 +170,25 @@ export default {
           label: this.$t('account_email'),
           value: '',
           key: 'email',
-          icon: this.$t('button_revise')
+          icon: this.$t('public_button_revise')
         },
         {
           label: this.$t('account_userName'),
           value: '',
           key: 'username',
-          icon: this.$t('button_revise')
+          icon: this.$t('public_button_revise')
         },
         {
-          label: this.$t('account_password'),
+          label: this.$t('public_connection_form_password'),
           value: '******',
           key: 'password',
-          icon: this.$t('button_revise')
+          icon: this.$t('public_button_revise')
         },
         {
           label: this.$t('account_accessCode'),
           value: '',
           key: 'accessCode',
-          icon: this.$t('button_refresh')
+          icon: this.$t('public_button_refresh')
         }
       ],
       emailDialogFalg: false,

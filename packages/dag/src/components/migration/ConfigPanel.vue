@@ -107,7 +107,7 @@ export default {
     },
 
     isMonitor() {
-      return ['TaskMonitor', 'MigrationMonitor'].includes(this.$route.name) && this.isDaas
+      return ['TaskMonitor', 'MigrationMonitor'].includes(this.$route.name)
     }
   },
 

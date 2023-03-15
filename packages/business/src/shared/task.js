@@ -1,5 +1,6 @@
 import i18n from '@tap/i18n'
 import { Cookie } from '@tap/shared'
+import { getIcon } from '@tap/assets/icons'
 // 获取子任务状态统计
 import { ETL_STATUS_MAP, ETL_SUB_STATUS_MAP } from './const'
 
@@ -86,41 +87,41 @@ export function getNodeIconSrc(node) {
     return `${BASE_URL}api/pdk/icon?access_token=${accessToken}&pdkHash=${pdkHash}`
   }
   let icon = node.type === 'table' || node.type === 'database' || node.databaseType ? node.databaseType : node.type
-  return icon ? require(`web-core/assets/icons/node/${icon}.svg`) : null
+  return icon ? getIcon(icon) : null
 }
 
 export const STATUS_MAP = {
   edit: {
-    i18n: 'packages_business_status_edit'
+    i18n: 'public_status_edit'
   },
   wait_start: {
-    i18n: 'packages_business_status_wait_start'
+    i18n: 'public_status_wait_run'
   },
   starting: {
-    i18n: 'packages_business_status_starting',
+    i18n: 'public_status_starting',
     in: ['preparing', 'scheduling', 'wait_run']
   },
   running: {
-    i18n: 'packages_business_status_running'
+    i18n: 'public_status_running'
   },
   complete: {
-    i18n: 'packages_business_status_complete'
+    i18n: 'public_status_finished'
   },
   stopping: {
-    i18n: 'packages_business_status_stopping'
+    i18n: 'public_status_stopping'
   },
   stop: {
-    i18n: 'packages_business_status_stop'
+    i18n: 'public_status_stop'
   },
   error: {
-    i18n: 'packages_business_status_error',
+    i18n: 'public_status_error',
     in: ['schedule_failed', 'error']
   },
   renewing: {
-    i18n: 'packages_business_status_renewing'
+    i18n: 'public_status_renewing'
   },
   renew_failed: {
-    i18n: 'packages_business_status_renew_failed'
+    i18n: 'public_status_renew_failed'
   }
 }
 
@@ -131,10 +132,11 @@ export const STATUS_MERGE = Object.entries(STATUS_MAP).reduce((merge, [key, valu
   return merge
 }, {})
 
+//'renewing' 不可以删除
 const BUTTON_WITH_STATUS = {
   start: ['wait_start', 'complete', 'error', 'stop'],
   edit: ['edit', 'wait_start', 'complete', 'error', 'stop', 'renew_failed'],
-  delete: ['edit', 'wait_start', 'complete', 'error', 'stop', 'renewing', 'renew_failed'],
+  delete: ['edit', 'wait_start', 'complete', 'error', 'stop', 'renew_failed'],
   stop: ['running'],
   forceStop: ['stopping'],
   reset: ['wait_start', 'complete', 'error', 'stop', 'renew_failed'],

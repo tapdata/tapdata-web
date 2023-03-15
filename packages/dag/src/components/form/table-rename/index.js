@@ -11,7 +11,7 @@ import './style.scss'
 
 export const TableRename = observer(
   defineComponent({
-    props: ['findParentNode', 'value', 'listStyle', 'disabled'],
+    props: ['findParentNodes', 'value', 'listStyle', 'disabled'],
     setup(props, { emit, root, refs }) {
       const itemSize = 38
       const formRef = useForm()
@@ -65,6 +65,20 @@ export const TableRename = observer(
                 tableMap[item.previousTableName] = true
                 return item.previousTableName
               })
+
+              // 新创建的源节点按表达式选表，tableNames 为空
+              // 导致表编辑校验时拿不到源表名无法正确的校验
+              // 这里把拿到的表名设置到源节点上（跟TM沟通，当表达式选表时，TM不会读取只会写入tableNames，所以不会影响到）
+              const parents = props.findParentNodes(form.values.id)
+              if (
+                tableDataRef.value.length &&
+                parents &&
+                parents.length &&
+                !parents[0].tableNames?.length &&
+                parents[0].migrateTableSelectType === 'expression'
+              ) {
+                parents[0].tableNames = tableDataRef.value.slice()
+              }
             })
             .finally(() => {
               loading.value = false
@@ -260,7 +274,7 @@ export const TableRename = observer(
               <div class="name-list-title pl-5 pr-4">{i18n.t('packages_form_table_rename_index_xinbiaoming')}</div>
               <div class="name-list-header-extra px-4">
                 <ElButton disabled={this.disabled} onClick={this.resetNames} size="mini" type="text">
-                  {i18n.t('packages_form_button_reset')}
+                  {i18n.t('public_button_reset')}
                 </ElButton>
               </div>
             </div>

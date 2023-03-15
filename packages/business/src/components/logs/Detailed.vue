@@ -34,7 +34,7 @@
         </li>
       </ul>
       <div v-else-if="keyword" class="text-center">{{ $t('packages_business_logs_detailed_sousuowushuju') }}</div>
-      <div v-else class="text-center">{{ $t('packages_business_dag_dialog_field_mapping_no_data') }}</div>
+      <div v-else class="text-center">{{ $t('public_data_no_data') }}</div>
     </div>
   </div>
 </template>
@@ -42,6 +42,8 @@
 <script>
 import dayjs from 'dayjs'
 import { logsApi } from '@tap/api'
+import { delayTrigger, toRegExp } from '@tap/shared'
+
 export default {
   props: {
     id: String
@@ -121,7 +123,6 @@ export default {
         }
       }
       if (keyword) {
-        const { toRegExp } = this.$util
         let query = { like: toRegExp(keyword), options: 'i' }
         filter.where.or = [{ threadName: query }, { loggerName: query }, { message: query }, { level: query }]
       }
@@ -186,7 +187,6 @@ export default {
       }
     },
     searchFnc(debounce) {
-      const { delayTrigger } = this.$util
       delayTrigger(() => {
         this.getLogs(true)
       }, debounce)

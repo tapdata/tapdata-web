@@ -77,10 +77,10 @@
 
 <script>
 import { VIcon } from '@tap/component'
-import error from 'web-core/assets/icons/svg/error.svg'
-import info from 'web-core/assets/icons/svg/info.svg'
-import success from 'web-core/assets/icons/svg/success.svg'
-import warning from 'web-core/assets/icons/svg/warning.svg'
+import error from '@tap/assets/icons/svg/error.svg'
+import info from '@tap/assets/icons/svg/info.svg'
+import success from '@tap/assets/icons/svg/success.svg'
+import warning from '@tap/assets/icons/svg/warning.svg'
 import i18n from '@/i18n'
 
 export default {
@@ -123,8 +123,8 @@ export default {
       dangerouslyUseHTMLString: false,
       distinguishCancelAndClose: false,
       width: '416px', // 需要完整的像素字符串
-      confirmButtonTextDefault: i18n.t('button_confirm'),
-      cancelButtonTextDefault: i18n.t('button_cancel')
+      confirmButtonTextDefault: i18n.t('public_button_confirm'),
+      cancelButtonTextDefault: i18n.t('public_button_cancel')
     }
   },
   computed: {

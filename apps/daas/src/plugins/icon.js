@@ -6,3 +6,5 @@ const requireAll = requireContext => {
 }
 requireAll(req)
 requireAll(colorSvg)
+import { importIcon } from '@tap/assets/icons'
+importIcon()

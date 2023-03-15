@@ -59,7 +59,7 @@
           <ElOption v-for="item in timezones" :label="item.label" :value="item.value" :key="item.value"></ElOption>
         </ElSelect>
         <ElButton v-readonlybtn="'API_data_explorer_export'" class="btn" size="mini" @click="exportDialog = true">
-          <span>{{ $t('button_export') }}</span>
+          <span>{{ $t('public_button_export') }}</span>
         </ElButton>
         <ElButton class="btn" size="mini" @click="showFilterDialog = true">
           <span>{{ $t('dataExplorer_query') }}</span>
@@ -75,7 +75,7 @@
           type="primary"
           @click="openCreate"
         >
-          <span>{{ $t('button_create') }}</span>
+          <span>{{ $t('public_button_create') }}</span>
         </ElButton>
       </div>
 
@@ -107,10 +107,10 @@
               />
               <div>
                 <ElButton @click="editOk(scope.row, item.text, item.type)" class="btn-text" type="text" size="small">
-                  {{ $t('button_save') }}
+                  {{ $t('public_button_save') }}
                 </ElButton>
                 <ElButton @click="editCancel(scope.row, item.text)" class="btn-text" type="text" size="small">
-                  {{ $t('button_cancel') }}
+                  {{ $t('public_button_cancel') }}
                 </ElButton>
               </div>
             </div>
@@ -118,10 +118,10 @@
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('column_operation')" width="220" fixed="right">
+      <el-table-column :label="$t('public_operation')" width="220" fixed="right">
         <template slot-scope="scope">
           <ElButton v-if="downloadFileUrl" size="mini" type="text" @click="downloadFile(scope.row)">
-            {{ $t('button_download') }}
+            {{ $t('public_button_download') }}
           </ElButton>
           <ElButton
             v-if="enableTag"
@@ -138,7 +138,7 @@
             size="mini"
             type="text"
             @click="remove(scope.row)"
-            >{{ $t('button_delete') }}</ElButton
+            >{{ $t('public_button_delete') }}</ElButton
           >
           <el-tooltip class="item" effect="dark" :content="$t('api_server_download_API_Server_config')" placement="top">
             <ElButton
@@ -152,7 +152,7 @@
                   'metadata.dk_new_filename': scope.row['dk_new_filename']
                 })
               "
-              >{{ $t('api_server_download') }}</ElButton
+              >{{ $t('public_button_download') }}</ElButton
             >
           </el-tooltip>
         </template>
@@ -170,7 +170,7 @@
       :close-on-click-modal="false"
       :visible.sync="exportDialog"
     >
-      <span class="pr-5">{{ $t('dataExplorer_type') }}:</span>
+      <span class="pr-5">{{ $t('public_type') }}:</span>
       <ElButton size="mini" @click="exportData('csv')">CSV</ElButton>
       <ElButton size="mini" @click="exportData('excel')">Excel</ElButton>
       <ElButton size="mini" @click="exportData('json')">JSON</ElButton>
@@ -205,7 +205,7 @@
       <span slot="footer" class="dialog-footer">
         <ElButton @click="openCreateDialog = false" size="mini">{{ $t('dialog_button_cancel') }}</ElButton>
         <ElButton @click="formatJson()" size="mini">{{ $t('dataExplorer_format') }}</ElButton>
-        <ElButton type="primary" @click="createSave()" size="mini">{{ $t('button_confirm') }}</ElButton>
+        <ElButton type="primary" @click="createSave()" size="mini">{{ $t('public_button_confirm') }}</ElButton>
       </span>
     </el-dialog>
   </section>
@@ -697,7 +697,7 @@ export default {
       _this.editDocId = item['_id']
       if (['float', 'double', 'short', 'bigDecimal', 'integer', 'long', 'number'].includes(type)) {
         if (!/^\d+$/.test(_this.editValue)) {
-          _this.$message.error(_this.$t('message_save_ok') + '-' + _this.$t('message_save_fail'))
+          _this.$message.error(_this.$t('public_message_save_ok') + '-' + _this.$t('public_message_save_fail'))
         } else {
           newValue = Number(_this.editValue)
         }
@@ -705,7 +705,7 @@ export default {
         try {
           newValue = JSON.parse(_this.editValue)
         } catch (e) {
-          _this.$message.error(_this.$t('message_save_ok') + '-' + _this.$t('message_save_fail'))
+          _this.$message.error(_this.$t('public_message_save_ok') + '-' + _this.$t('public_message_save_fail'))
           return false
         }
       } else if (/^\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d$/.test(item[text])) {
@@ -729,9 +729,9 @@ export default {
         this.editDocId = ''
         this.jsonDoc = ''
         _this.table.fetch()
-        _this.$message.success(_this.$t('message_save_ok'))
+        _this.$message.success(_this.$t('public_message_save_ok'))
       } else {
-        _this.$message.error(_this.$t('message_save_fail'))
+        _this.$message.error(_this.$t('public_message_save_fail'))
       }
     },
     // 取消保存
@@ -825,7 +825,7 @@ export default {
             if (res.response.status === 422) {
               let details = res.response.data.error.details
               if (details?.length) {
-                this.$message.error(this.$t('message_save_fail'))
+                this.$message.error(this.$t('public_message_save_fail'))
                 details.forEach(err => {
                   this.jsonDocHint.push('Field ' + err.path + ' ' + err.message)
                 })
@@ -863,15 +863,15 @@ export default {
             }
           })
           .catch(() => {
-            _this.saveTagMessage = this.$t('message_save_fail')
+            _this.saveTagMessage = this.$t('public_message_save_fail')
           })
       }
     },
     // 移除
     async remove(item) {
       const h = this.$createElement
-      let message = h('p', [this.$t('message_deleteOrNot') + ' ' + item.clientName])
-      this.$confirm(message, this.$t('message_prompt'), {
+      let message = h('p', [this.$t('public_message_delete_confirm') + ' ' + item.clientName])
+      this.$confirm(message, this.$t('public_message_title_prompt'), {
         type: 'warning'
       }).then(
         await (resFlag => {
@@ -879,12 +879,9 @@ export default {
             return
           }
           this.apiClient.deleteById(item._id).then(() => {
-            this.$message.success(this.$t('message_delete_ok'))
+            this.$message.success(this.$t('public_message_delete_ok'))
             this.table.fetch()
           })
-          // .catch(() => {
-          //   this.$message.info(this.$t('message_delete_fail'))
-          // })
         })
       )
     },
@@ -1209,10 +1206,9 @@ export default {
 
       settingsApi.update(where, parmas).then(() => {
         this.table.fetch()
-        // this.$message.success(this.$t('message_save_ok'))
       })
       // .catch(() => {
-      //   this.$message.error(this.$t('message_save_fail'))
+      //   this.$message.error(this.$t('public_message_save_fail'))
       // })
       // .finally(() => {
       //   this.timeZoneDialog = false

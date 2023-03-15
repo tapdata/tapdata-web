@@ -5,151 +5,150 @@
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </div>
       <div slot="operation">
-        <!--        <el-button-->
-        <!--          v-readonlybtn="'role_creation'"-->
-        <!--          type="primary"-->
-        <!--          class="btn btn-create"-->
-        <!--          size="mini"-->
-        <!--          @click="openCreateDialog()"-->
-        <!--        >-->
-        <!--          &lt;!&ndash; <i class="iconfont icon-jia add-btn-icon"></i> &ndash;&gt;-->
-        <!--          <span>{{ $t('role_list_create') }}</span>-->
-        <!--        </el-button>-->
+        <ElButton
+          v-readonlybtn="'role_creation'"
+          type="primary"
+          class="btn btn-create"
+          size="mini"
+          @click="openCreateDialog()"
+        >
+          <span>{{ $t('role_list_create') }}</span>
+        </ElButton>
       </div>
-      <el-table-column :label="$t('role_list_role_name')" :show-overflow-tooltip="true">
+      <ElTableColumn :label="$t('role_list_role_name')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <div>{{ scope.row.name }}</div>
         </template>
-      </el-table-column>
-      <el-table-column :label="$t('role_list_description')" :show-overflow-tooltip="true">
+      </ElTableColumn>
+      <ElTableColumn :label="$t('role_list_description')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <div>{{ scope.row.description }}</div>
         </template>
-      </el-table-column>
-      <el-table-column :label="$t('role_list_associat_users')" width="100">
+      </ElTableColumn>
+      <ElTableColumn :label="$t('role_list_associat_users')" width="100">
         <template slot-scope="scope">
           <span>{{ scope.row.userCount }}</span>
         </template>
-      </el-table-column>
-      <el-table-column :label="$t('role_list_founder')">
+      </ElTableColumn>
+      <ElTableColumn :label="$t('public_creator')">
         <template slot-scope="scope">
           <div>
             {{ scope.row.userEmail }}
           </div>
         </template>
-      </el-table-column>
-      <el-table-column :label="$t('role_list_default_role')" width="90">
+      </ElTableColumn>
+      <ElTableColumn :label="$t('role_list_default_role')" width="90">
         <template slot-scope="scope">
-          <el-switch
+          <ElSwitch
             v-model="scope.row.register_user_default"
             :disabled="!$has('role_edition')"
             @change="changeRowDefault(scope.row)"
           >
-          </el-switch>
+          </ElSwitch>
         </template>
-      </el-table-column>
-      <el-table-column :label="$t('column_operation')" width="310">
+      </ElTableColumn>
+      <ElTableColumn :label="$t('public_operation')" width="310">
         <template slot-scope="scope">
-          <el-button
+          <ElButton
             type="text"
             v-readonlybtn="'role_edition'"
             :disabled="$disabledByPermission('role_edition_all_data', scope.row.user_id)"
             @click="handleSettingPermissions(scope.row.id, scope.row.name)"
           >
             {{ $t('role_list_setting_permissions') }}
-          </el-button>
+          </ElButton>
           <ElDivider direction="vertical"></ElDivider>
-          <el-button
+          <ElButton
             type="text"
             @click="handleAssociatUsers(scope.row.id)"
             :disabled="$disabledByPermission('role_edition_all_data', scope.row.user_id) || scope.row.name === 'admin'"
             v-readonlybtn="'role_edition'"
           >
             {{ $t('role_list_associat_users') }}
-          </el-button>
+          </ElButton>
           <ElDivider direction="vertical"></ElDivider>
-          <el-button
+          <ElButton
             type="text"
             v-readonlybtn="'role_edition'"
             :disabled="$disabledByPermission('role_edition_all_data', scope.row.user_id)"
             @click="openCreateDialog(scope.row.id, scope.row)"
           >
-            {{ $t('button_edit') }}
-          </el-button>
+            {{ $t('public_button_edit') }}
+          </ElButton>
           <ElDivider direction="vertical"></ElDivider>
-          <!--          <el-button-->
-          <!--            type="text"-->
-          <!--            @click="handleDelete(scope.row)"-->
-          <!--            :disabled="$disabledByPermission('role_delete_all_data', scope.row.user_id) || scope.row.name === 'admin'"-->
-          <!--            v-readonlybtn="'role_delete'"-->
-          <!--          >-->
-          <!--            {{ $t('button_delete') }}-->
-          <!--          </el-button>-->
+          <ElButton
+            type="text"
+            @click="handleDelete(scope.row)"
+            :disabled="$disabledByPermission('role_delete_all_data', scope.row.user_id) || scope.row.name === 'admin'"
+            v-readonlybtn="'role_delete'"
+          >
+            {{ $t('public_button_delete') }}
+          </ElButton>
         </template>
-      </el-table-column>
+      </ElTableColumn>
     </TablePage>
     <!-- 创建角色 -->
-    <el-dialog
+    <ElDialog
       :title="roleId ? $t('role_list_edit') : $t('role_list_create')"
       :close-on-click-modal="false"
       :visible.sync="dialogFormVisible"
       custom-class="create-role"
       width="600px"
     >
-      <el-form :model="form" ref="form" label-width="120px">
-        <el-form-item
+      <ElForm :model="form" ref="form" label-width="120px">
+        <ElFormItem
           :label="$t('role_list_role_name')"
           prop="name"
           :rules="[{ required: true, message: $t('role_null'), trigger: 'blur' }]"
         >
-          <el-input v-model="form.name" :placeholder="$t('role_list_select_role_name')" size="small"></el-input>
-        </el-form-item>
-        <el-form-item
+          <ElInput v-model="form.name" :placeholder="$t('role_list_select_role_name')" size="small"></ElInput>
+        </ElFormItem>
+        <ElFormItem
           :label="$t('role_list_description')"
           prop="description"
           :rules="[{ required: true, message: $t('role_form_description'), trigger: 'blur' }]"
         >
-          <el-input
+          <ElInput
             type="textarea"
             v-model="form.description"
             autocomplete="off"
             maxlength="200"
             show-word-limit
-          ></el-input>
-        </el-form-item>
-        <el-form-item :label="$t('role_list_default_role')">
-          <el-switch
+          ></ElInput>
+        </ElFormItem>
+        <ElFormItem :label="$t('role_list_default_role')">
+          <ElSwitch
             v-model="form.register_user_default"
             inactive-color="#dcdfe6"
             :active-text="form.register_user_default ? $t('role_form_yes') : $t('role_form_no')"
             style="margin-right: 20px"
-          ></el-switch>
-        </el-form-item>
-      </el-form>
+          ></ElSwitch>
+        </ElFormItem>
+      </ElForm>
       <div slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="dialogFormVisible = false">{{ $t('button_cancel') }} </el-button>
-        <el-button size="mini" type="primary" @click="createSave">{{ $t('button_confirm') }} </el-button>
+        <ElButton size="mini" @click="dialogFormVisible = false">{{ $t('public_button_cancel') }} </ElButton>
+        <ElButton size="mini" type="primary" @click="createSave">{{ $t('public_button_confirm') }} </ElButton>
       </div>
-    </el-dialog>
+    </ElDialog>
 
     <!-- 关联用户 -->
-    <el-dialog
+    <ElDialog
       :title="$t('role_list_associat_users')"
       :close-on-click-modal="false"
       :visible.sync="dialogUserVisible"
       width="600px"
     >
       <div class="userBox">
-        <el-select v-model="roleusers" filterable multiple :placeholder="$t('role_form_selectUser')">
-          <el-option v-for="item in userGroup" :key="item.id" :label="item.email" :value="item.id"> </el-option>
-        </el-select>
+        <ElSelect v-model="roleusers" filterable multiple :placeholder="$t('role_form_selectUser')">
+          <ElOption v-for="item in userGroup" :key="item.id" :label="item.email" :value="item.id"> </ElOption>
+        </ElSelect>
         <div class="num fs-8">{{ $t('role_form_connected') }}: {{ roleusers.length }}</div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="dialogUserVisible = false">{{ $t('button_cancel') }}</el-button>
-        <el-button size="mini" type="primary" @click="saveUser">{{ $t('button_confirm') }}</el-button>
+        <ElButton size="mini" @click="dialogUserVisible = false">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton size="mini" type="primary" @click="saveUser">{{ $t('public_button_confirm') }}</ElButton>
       </span>
-    </el-dialog>
+    </ElDialog>
   </section>
 </template>
 
@@ -313,19 +312,18 @@ export default {
                         roleId: data?.id
                       })
                   })
-                  self
-                    .$api('users')
+                  usersApi
                     .deletePermissionRoleMapping(data?.id, {
                       data: { data: newRoleMappings }
                     })
                     .then(data => {
                       if (data) {
                         // roleMappingModel.post(newRoleMappings);
-                        this.$message.success(this.$t('message_save_ok'))
+                        this.$message.success(this.$t('public_message_save_ok'))
                       }
                     })
                 } else {
-                  this.$message.success(this.$t('message_save_ok'))
+                  this.$message.success(this.$t('public_message_save_ok'))
                 }
                 this.table.fetch()
               }
@@ -408,7 +406,7 @@ export default {
           })
 
           this.table.fetch()
-          this.$message.success(this.$t('message_save_ok'))
+          this.$message.success(this.$t('public_message_save_ok'))
         }
       })
       // .catch(e => {

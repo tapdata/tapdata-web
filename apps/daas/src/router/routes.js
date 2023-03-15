@@ -18,6 +18,10 @@ const MigrationMonitorViewer = async () => {
   const { MigrationMonitorViewer } = await import('@tap/dag')
   return MigrationMonitorViewer
 }
+const CustomNodeList = async () => {
+  const { CustomNodeList } = await import('@tap/business')
+  return CustomNodeList
+}
 const NodeEditor = async () => {
   const { Editor } = await import(/* webpackChunkName: "node-design" */ '@tap/node-design')
   return Editor
@@ -87,6 +91,17 @@ const VerificationHistory = async () => {
 const VerificationResult = async () => {
   const { VerificationResult } = await import('@tap/business')
   return VerificationResult
+}
+
+//告警设置
+const AlarmSetting = async () => {
+  const { AlarmSetting } = await import('@tap/business')
+  return AlarmSetting
+}
+
+const SharedMiningList = async () => {
+  const { SharedMiningList } = await import('@tap/business')
+  return SharedMiningList
 }
 
 export default [
@@ -218,6 +233,15 @@ export default [
     meta: {
       title: 'page_title_run_monitor',
       code: 'v2_data_replication_record_monitor'
+    }
+  },
+  {
+    path: '/sharedMining/monitor/:id',
+    name: 'SharedMiningMonitor',
+    component: MigrationMonitor,
+    meta: {
+      title: 'page_title_run_monitor',
+      code: 'v2_data_replication_monitor'
     }
   },
   {
@@ -537,19 +561,10 @@ export default [
           {
             path: '',
             name: 'sharedMiningList',
-            component: () => import(/* webpackChunkName: "shared-mining" */ '@/views/shared-mining/List'),
+            component: SharedMiningList,
             meta: {
               title: 'page_title_shared_mining',
               code: 'v2_log_collector_menu'
-            }
-          },
-          {
-            path: 'details/:id',
-            name: 'SharedMiningDetails',
-            component: () => import(/* webpackChunkName: "shared-mining-details" */ '@/views/shared-mining/Detail'),
-            meta: {
-              title: 'page_title_shared_mining_details',
-              code: 'v2_log_collector_detail'
             }
           }
         ]
@@ -624,8 +639,7 @@ export default [
           {
             path: '',
             name: 'customNodeList',
-            component: () =>
-              import(/* webpackChunkName: "custom-proccessor-node" */ '@/views/custom-proccessor-node/List'),
+            component: CustomNodeList,
             meta: {
               title: 'page_title_custom_node',
               code: 'v2_custom_node_menu'
@@ -783,7 +797,7 @@ export default [
         component: () => import(/* webpackChunkName: "external-storage" */ '@/views/external-storage/List'),
         meta: {
           title: 'page_title_external_storage',
-          code: ''
+          code: 'v2_external-storage_menu'
         }
       },
       /* ---------- 用户管理  ----------*/
@@ -876,7 +890,7 @@ export default [
           {
             path: 'alarmSetting',
             name: 'alarmSetting',
-            component: () => import(/* webpackChunkName: "system-setting" */ '@/views/setting/AlarmNotification'),
+            component: AlarmSetting,
             meta: {
               title: 'page_title_setting',
               code: 'v2_alarm_settings_menu',

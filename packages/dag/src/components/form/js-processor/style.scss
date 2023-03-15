@@ -114,7 +114,7 @@
   .js-log-list {
     &-item {
       line-height: 1.2;
-      border-bottom: 1px solid #F0F0F0;
+      border-bottom: 1px solid #f0f0f0;
     }
 
     .circular {
@@ -149,7 +149,9 @@
     text-align: justify;
   }
 
-  > :first-child, section > :first-child, td > :first-child {
+  > :first-child,
+  section > :first-child,
+  td > :first-child {
     margin-block-start: 0px !important;
   }
 

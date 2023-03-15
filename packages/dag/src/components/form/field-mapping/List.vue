@@ -41,7 +41,7 @@
             </ul>
             <div class="task-form-left__ul flex flex-column align-items-center" v-else>
               <div class="table__empty_img" style="margin-top: 22%"><img style="" :src="noData" /></div>
-              <div class="noData">{{ $t('packages_form_dag_dialog_field_mapping_no_data') }}</div>
+              <div class="noData">{{ $t('public_data_no_data') }}</div>
             </div>
           </div>
           <ElPagination
@@ -78,7 +78,7 @@
                 <VIcon>refresh</VIcon>
               </ElButton>
               <ElButton v-if="!readOnly" type="text" class="btn-rest" @click="updateMetaData">
-                {{ $t('packages_form_button_reset') }}
+                {{ $t('public_button_reset') }}
               </ElButton>
             </div>
           </div>
@@ -126,7 +126,7 @@
             </ElTableColumn>
             <div class="field-mapping-table__empty" slot="empty">
               <div class="table__empty_img" style="margin-left: 30%"><img style="" :src="noData" /></div>
-              <div class="noData">{{ $t('packages_form_dag_dialog_field_mapping_no_data') }}</div>
+              <div class="noData">{{ $t('public_data_no_data') }}</div>
             </div>
           </ElTable>
         </div>
@@ -171,21 +171,22 @@
         v-model="editValueType[currentOperationType]"
       ></ElInput>
       <span slot="footer" class="dialog-footer">
-        <ElButton @click="handleClose()">{{ $t('packages_form_button_cancel') }}</ElButton>
-        <ElButton type="primary" @click="editSave()">{{ $t('packages_form_button_confirm') }}</ElButton>
+        <ElButton @click="handleClose()">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton type="primary" @click="editSave()">{{ $t('public_button_confirm') }}</ElButton>
       </span>
     </ElDialog>
   </section>
 </template>
 
 <script>
+import { delayTrigger } from '@tap/shared'
 import { VIcon } from '@tap/component'
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
-import rollback from 'web-core/assets/icons/svg/rollback.svg'
-import refresh from 'web-core/assets/icons/svg/refresh.svg'
-import fieldMapping_table from 'web-core/assets/images/fieldMapping_table.png'
-import fieldMapping_table_error from 'web-core/assets/images/fieldMapping_table_error.png'
-import noData from 'web-core/assets/images/noData.png'
+import rollback from '@tap/assets/icons/svg/rollback.svg'
+import refresh from '@tap/assets/icons/svg/refresh.svg'
+import fieldMapping_table from '@tap/assets/images/fieldMapping_table.png'
+import fieldMapping_table_error from '@tap/assets/images/fieldMapping_table_error.png'
+import noData from '@tap/assets/images/noData.png'
 import { metadataInstancesApi, taskApi, typeMappingApi } from '@tap/api'
 import { mapState } from 'vuex'
 
@@ -320,7 +321,6 @@ export default {
     },
     search() {
       this.$nextTick(() => {
-        const { delayTrigger } = this.$util
         delayTrigger(() => {
           if (this.searchField.trim()) {
             this.searchField = this.searchField.trim().toString() //去空格

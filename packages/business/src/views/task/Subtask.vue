@@ -17,8 +17,8 @@
       </template>
       <template slot="schemaHeader">
         <div>
-          {{ $t('packages_business_connection_list_column_schema_status') }}
-          <ElTooltip placement="top" :content="$t('packages_business_connection_list_column_schema_status_tips')">
+          {{ $t('public_connection_schema_status') }}
+          <ElTooltip placement="top" :content="$t('public_connection_schema_status_tip')">
             <VIcon class="color-primary" size="14">info</VIcon>
           </ElTooltip>
         </div>
@@ -32,7 +32,7 @@
             type="text"
             @click="start(scope.row, arguments[0])"
           >
-            {{ $t('packages_business_task_button_start') }}
+            {{ $t('public_button_start') }}
           </VButton>
           <ElDivider direction="vertical"></ElDivider>
           <VButton
@@ -42,7 +42,7 @@
             type="text"
             @click="stop(scope.row, arguments[0])"
           >
-            {{ $t('packages_business_task_button_stop') }}
+            {{ $t('public_button_stop') }}
           </VButton>
           <ElDivider direction="vertical"></ElDivider>
           <VButton
@@ -52,7 +52,7 @@
             type="text"
             @click="renew(scope.row, arguments[0])"
           >
-            {{ $t('packages_business_task_button_reset') }}
+            {{ $t('public_button_reset') }}
           </VButton>
           <ElDivider direction="vertical"></ElDivider>
           <VButton auto-loading inner-loading type="text" @click="toStatistics(scope.row)">{{
@@ -96,7 +96,7 @@ export default {
           slotName: 'status'
         },
         {
-          label: this.$t('packages_business_column_operation'),
+          label: this.$t('public_operation'),
           prop: 'operation',
           slotName: 'operation'
         }
@@ -170,7 +170,7 @@ export default {
       subtaskApi
         .start(row.id)
         .then(data => {
-          this.$message.success(data?.message || this.$t('packages_business_message_operation_succuess'))
+          this.$message.success(data?.message || this.$t('public_message_operation_success'))
           this.table.fetch()
         })
         .finally(resetLoading)
@@ -179,7 +179,7 @@ export default {
       subtaskApi
         .stop(row.id)
         .then(data => {
-          this.$message.success(data?.message || this.$t('packages_business_message_operation_succuess'))
+          this.$message.success(data?.message || this.$t('public_message_operation_success'))
           this.table.fetch()
         })
         .finally(resetLoading)
@@ -188,7 +188,7 @@ export default {
       subtaskApi
         .renew(row.id)
         .then(data => {
-          this.$message.success(data?.message || this.$t('packages_business_message_operation_succuess'))
+          this.$message.success(data?.message || this.$t('public_message_operation_success'))
           this.table.fetch()
         })
         .finally(resetLoading)
@@ -197,7 +197,7 @@ export default {
       subtaskApi
         .pause(row.id)
         .then(data => {
-          this.$message.success(data?.message || this.$t('packages_business_message_operation_succuess'))
+          this.$message.success(data?.message || this.$t('public_message_operation_success'))
           this.table.fetch()
         })
         .finally(resetLoading)

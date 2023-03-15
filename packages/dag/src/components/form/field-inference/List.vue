@@ -68,16 +68,14 @@
         </div>
       </ElForm>
       <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="editDataTypeVisible = false">{{
-          $t('packages_business_button_cancel')
-        }}</ElButton>
+        <ElButton size="mini" @click="editDataTypeVisible = false">{{ $t('public_button_cancel') }}</ElButton>
         <ElButton
           size="mini"
           type="primary"
           :disabled="!currentData.newDataType || currentData.dataType === currentData.newDataType"
           :loading="editBtnLoading"
           @click="submitEdit"
-          >{{ $t('packages_business_button_confirm') }}</ElButton
+          >{{ $t('public_button_confirm') }}</ElButton
         >
       </span>
     </ElDialog>
@@ -166,7 +164,7 @@ export default {
           prop: 'comment'
         },
         {
-          label: i18n.t('packages_form_field_processor_index_caozuo'),
+          label: i18n.t('public_operation'),
           prop: 'operation',
           slotName: 'operation',
           headerSlot: 'operationHeader',
@@ -323,7 +321,7 @@ export default {
             }
           })
           this.editBtnLoading = false
-          this.$message.success(i18n.t('packages_form_field_inference_list_caozuochenggong'))
+          this.$message.success(i18n.t('public_message_operation_success'))
           this.editDataTypeVisible = false
         })
         .catch(() => {
@@ -359,7 +357,7 @@ export default {
           this.handleUpdate(
             this.fieldChangeRules.filter(t => !(t.scope === 'Field' && t.namespace?.[1] === qualified_name))
           )
-          this.$message.success(i18n.t('packages_form_field_inference_list_caozuochenggong'))
+          this.$message.success(i18n.t('public_message_operation_success'))
         }
       })
     },

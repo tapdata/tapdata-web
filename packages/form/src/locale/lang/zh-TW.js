@@ -1,7 +1,6 @@
 export default {
   packages_form_el_select_loading: '加載中',
   packages_form_el_select_noMatch: '無匹配資料',
-  packages_form_el_select_noData: '無資料',
   packages_form_el_select_placeholder: '請選擇',
   packages_form_message_exists_name: '名稱已存在',
   packages_form_button_edit: '編輯',
@@ -158,5 +157,10 @@ export default {
   packages_form_field_inference_main_ge: '個',
   packages_form_qingjianchajiedian: '請檢查節點配置',
   packages_form_load_schema_tree_load_fail: '加載失敗',
-  packages_form_load_schema_tree_form_values_change: '配置更改後需重新加載模型才可生效'
+  packages_form_load_schema_tree_form_values_change: '配置更改後需重新加載模型才可生效',
+  packages_form_batch_add_field_title: '批量新增',
+  packages_form_batch_add_field_prefix: '字段前綴',
+  packages_form_batch_add_field_type: '字段類型',
+  packages_form_batch_add_field_count: '字段數量',
+  packages_form_batch_add_field_start: '開始數字'
 }

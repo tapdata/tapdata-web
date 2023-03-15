@@ -26,13 +26,17 @@ export class Table extends NodeType {
         type: 'array',
         'x-display': 'hidden'
       },
+      type: {
+        type: 'string',
+        'x-display': 'hidden'
+      },
       databaseType: {
         type: 'string',
         'x-display': 'hidden'
       },
       name: {
         type: 'string',
-        title: i18n.t('packages_dag_nodes_database_jiedianmingcheng'),
+        title: i18n.t('public_node_name'),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input'
@@ -101,8 +105,9 @@ export class Table extends NodeType {
         'x-decorator-props': {
           asterisk: true,
           feedbackLayout: 'none',
-          connectionId: '',
-          title: i18n.t('packages_dag_dag_table')
+          connectionId: '{{$values.connectionId}}',
+          title: i18n.t('packages_dag_dag_table'),
+          target: 'tableNameWrap.tableName'
         },
         'x-component': 'FormFlex',
         'x-component-props': {
@@ -110,13 +115,10 @@ export class Table extends NodeType {
           align: 'start'
         },
         'x-reactions': {
-          dependencies: ['databaseType', '.connectionId'],
+          dependencies: ['databaseType'],
           fulfill: {
             state: {
               display: '{{ !["CSV","EXCEL","JSON","XML"].includes($deps[0]) ? "visible":"hidden"}}'
-            },
-            schema: {
-              'x-decorator-props.connectionId': `{{$deps[1]}}`
             }
           }
         },
@@ -348,15 +350,24 @@ export class Table extends NodeType {
                       { label: i18n.t('packages_dag_nodes_table_rizhicdc'), value: 'logCdc' },
                       { label: i18n.t('packages_dag_nodes_table_lunxun'), value: 'polling' }
                     ],
-                    'x-reactions': {
-                      target:
-                        '*(cdcPollingFields,cdcPollingFieldsDefaultValues,cdcPollingInterval,cdcPollingBatchSize)',
-                      fulfill: {
-                        state: {
-                          visible: '{{$self.value==="polling"}}'
+                    'x-reactions': [
+                      {
+                        fulfill: {
+                          state: {
+                            visible: `{{$values.attrs.capabilities.some(item => item.id === 'query_by_advance_filter_function')}}`
+                          }
+                        }
+                      },
+                      {
+                        target:
+                          '*(cdcPollingFields,cdcPollingFieldsDefaultValues,cdcPollingInterval,cdcPollingBatchSize)',
+                        fulfill: {
+                          state: {
+                            visible: '{{$self.value==="polling"}}'
+                          }
                         }
                       }
-                    }
+                    ]
                   },
                   cdcPollingFields: {
                     title: i18n.t('packages_dag_nodes_table_zhidinglunxunzi'),
@@ -670,6 +681,9 @@ export class Table extends NodeType {
                         'x-component-props': {
                           min: 1
                         },
+                        'x-decorator-props': {
+                          tooltip: i18n.t('packages_dag_nodes_database_xierumeipizui_tips')
+                        },
                         default: 3000
                       }
                     }
@@ -782,7 +796,15 @@ export class Table extends NodeType {
                             label: i18n.t('packages_dag_nodes_database_tongjizhuijiaxie'),
                             value: 'appendWrite'
                           }
-                        ]
+                        ],
+                        'x-reactions': {
+                          target: '*(dmlPolicy,updateConditionFields)',
+                          fulfill: {
+                            state: {
+                              display: '{{$self.value === "appendWrite" ? "hidden":"visible"}}'
+                            }
+                          }
+                        }
                       }
                     }
                   },
@@ -857,19 +879,12 @@ export class Table extends NodeType {
                           effect: 'light'
                         }
                       }
-                    },
-                    'x-reactions': {
-                      dependencies: ['writeStrategy'],
-                      fulfill: {
-                        state: {
-                          display: '{{$deps[0] === "appendWrite" ? "hidden":"visible"}}'
-                        }
-                      }
                     }
                   },
                   updateConditionFields: {
                     title: i18n.t('packages_dag_nodes_table_gengxintiaojianzi'),
                     type: 'array',
+                    'x-index': 1,
                     required: true,
                     default: null,
                     description: `{{ !$isDaas ? "${i18n.t(
@@ -883,20 +898,25 @@ export class Table extends NodeType {
                     'x-component-props': {
                       allowCreate: true,
                       multiple: true,
-                      filterable: true
+                      filterable: true,
+                      '@blur': `{{() => setDefaultPrimaryKey($self)}}`
                     },
                     'x-reactions': [
                       `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true}, $values.$inputs[0])}}`,
                       {
+                        dependencies: ['$inputs'],
+                        // 源节点连线时，字段值为null并且模型获取到后执行
+                        when: '{{$deps[0].length && !$self.value && $self.dataSource && $self.dataSource.length}}',
                         fulfill: {
-                          run: `
-                            if (!$self.value && $self.dataSource && $self.dataSource.length) {
-                              let isPrimaryKeyList = $self.dataSource.filter(item => item.isPrimaryKey)
-                              let indicesUniqueList = $self.dataSource.filter(item => item.indicesUnique)
-                              $self.setValue((isPrimaryKeyList.length ? isPrimaryKeyList : indicesUniqueList).map(item => item.value))
-                              $self.validate()
-                            }
-                          `
+                          run: `setDefaultPrimaryKey($self)`
+                        }
+                      },
+                      {
+                        dependencies: ['$inputs'],
+                        // 断开源节点的连线，如果更新条件为空[],设置值为null（为了下次连线触发设置默认值）
+                        when: '{{!$deps[0].length && $self.value && $self.value.length === 0}}',
+                        fulfill: {
+                          run: `$self.value=null`
                         }
                       }
                     ]

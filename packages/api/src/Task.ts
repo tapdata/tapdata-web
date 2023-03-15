@@ -163,5 +163,13 @@ export default class Task extends Http {
   rename(taskId, newName) {
     return this.axios.patch(`${this.url}/rename/${taskId}?newName=${encodeURIComponent(newName)}`)
   }
+
+  getTaskByConnection(params) {
+    return this.axios.get(`${this.url}/targetNode/connectionIds`, { params })
+  }
+  //根据表名获取任务
+  getTaskByTableName(params) {
+    return this.axios.get(`${this.url}/stats/task`, { params })
+  }
 }
 export { Task }

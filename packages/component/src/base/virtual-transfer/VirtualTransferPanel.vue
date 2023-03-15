@@ -48,7 +48,7 @@
       </el-checkbox-group>
       <p class="el-transfer-panel__empty" v-show="hasNoMatch">{{ $t('packages_component_no_match') }}</p>
       <p class="el-transfer-panel__empty" v-show="data.length === 0 && !hasNoMatch">
-        {{ $t('packages_component_no_data') }}
+        {{ $t('public_data_no_data1') }}
       </p>
     </div>
     <p class="el-transfer-panel__footer" v-if="hasFooter">

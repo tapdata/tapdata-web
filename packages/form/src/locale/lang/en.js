@@ -1,7 +1,6 @@
 export default {
   packages_form_el_select_loading: 'Loading',
   packages_form_el_select_noMatch: 'No matching data',
-  packages_form_el_select_noData: 'No data',
   packages_form_el_select_placeholder: 'Select',
   packages_form_message_exists_name: 'Name already exists',
   packages_form_button_edit: 'Edit',
@@ -165,5 +164,10 @@ export default {
   packages_form_qingjianchajiedian: 'Please check node configuration',
   packages_form_load_schema_tree_load_fail: 'Failed to load',
   packages_form_load_schema_tree_form_values_change:
-    'The model needs to be reloaded to take effect after configuration changes'
+    'The model needs to be reloaded to take effect after configuration changes',
+  packages_form_batch_add_field_title: 'Batch Add Field',
+  packages_form_batch_add_field_prefix: 'Prefix',
+  packages_form_batch_add_field_type: 'Type',
+  packages_form_batch_add_field_count: 'Count',
+  packages_form_batch_add_field_start: 'Start Number'
 }

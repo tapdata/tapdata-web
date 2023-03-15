@@ -48,7 +48,7 @@ export default observer({
             type: 'void',
             properties: {
               name: {
-                title: this.$t('packages_dag_task_stetting_name'), //任务名称
+                title: this.$t('public_task_name'), //任务名称
                 type: 'string',
                 required: 'true',
                 'x-decorator': 'FormItem',
@@ -77,11 +77,11 @@ export default observer({
                     value: 'initial_sync+cdc'
                   },
                   {
-                    label: this.$t('packages_dag_task_setting_initial_sync'), //全量
+                    label: this.$t('public_task_type_initial_sync'), //全量
                     value: 'initial_sync'
                   },
                   {
-                    label: this.$t('packages_dag_task_setting_cdc'), //增量
+                    label: this.$t('public_task_type_cdc'), //增量
                     value: 'cdc'
                   }
                 ]
@@ -206,10 +206,13 @@ export default observer({
                               type: 'string',
                               'x-component': 'PreviewText.Input',
                               'x-reactions': {
-                                dependencies: ['.connectionName'],
+                                dependencies: ['.connectionName', '.connectionId'],
                                 fulfill: {
                                   schema: {
                                     'x-component-props.content': `{{$deps[0] + '('+ $self.value + ')'}}`
+                                  },
+                                  state: {
+                                    display: '{{ $deps[1] ? "visible":"hidden"}}'
                                   }
                                 }
                               }
@@ -218,6 +221,10 @@ export default observer({
                               'x-display': 'hidden',
                               type: 'boolean',
                               'x-component': 'PreviewText.Input'
+                            },
+                            connectionId: {
+                              'x-display': 'hidden',
+                              type: 'string'
                             },
                             connectionName: {
                               'x-display': 'hidden',
@@ -229,20 +236,20 @@ export default observer({
                               'x-decorator': 'FormItem',
                               'x-component': 'Select',
                               'x-component-props': {
-                                placeholder: i18n.t('packages_dag_components_formpanel_qingxuanze')
+                                placeholder: i18n.t('public_select_placeholder')
                               },
                               default: 'current',
                               enum: [
                                 {
-                                  label: this.$t('packages_dag_dataFlow_SyncInfo_localTZType'),
+                                  label: this.$t('public_time_user_specified_time'),
                                   value: 'localTZ'
                                 },
-                                {
+                                /*{
                                   label: this.$t('packages_dag_dataFlow_SyncInfo_connTZType'),
                                   value: 'connTZ'
-                                },
+                                },*/
                                 {
-                                  label: this.$t('packages_dag_dataFlow_SyncInfo_currentType'),
+                                  label: this.$t('public_time_current'),
                                   value: 'current'
                                 }
                               ],
@@ -252,6 +259,14 @@ export default observer({
                                   fulfill: {
                                     state: {
                                       disabled: `{{$deps[0]}}`
+                                    }
+                                  }
+                                },
+                                {
+                                  dependencies: ['.connectionId'],
+                                  fulfill: {
+                                    state: {
+                                      display: '{{ $deps[0] ? "visible":"hidden"}}'
                                     }
                                   }
                                 }
@@ -366,7 +381,7 @@ export default observer({
                             'x-decorator': 'FormItem',
                             'x-decorator-props': {
                               feedbackLayout: 'none',
-                              addonAfter: i18n.t('packages_dag_dag_data_setting_second')
+                              addonAfter: i18n.t('public_time_s')
                             },
                             'x-component': 'InputNumber',
                             'x-component-props': {
@@ -534,6 +549,12 @@ export default observer({
   watch: {
     stateIsReadonly(v) {
       this.form.setState({ disabled: v })
+      if (v) {
+        // 监控模式禁用
+        this.form.setFieldState('*(accessNodeType,accessNodeProcessId)', {
+          disabled: true
+        })
+      }
     },
 
     accessNodeProcessIdArr: {
@@ -605,47 +626,7 @@ export default observer({
         .then(data => {
           resolve(data)
         })
-    }, 500),
-    // 获取所有节点
-    getAllNode() {
-      let timeZone = new Date().getTimezoneOffset() / 60
-      let systemTimeZone = ''
-      if (timeZone > 0) {
-        systemTimeZone = 0 - timeZone
-      } else {
-        systemTimeZone = '+' + -timeZone
-      }
-      const allNodes = this.$store.getters['dataflow/allNodes']
-      const oldPoints = this.settings.syncPoints
-      const oldPointsMap = oldPoints?.length
-        ? oldPoints.reduce((map, point) => {
-            if (point.connectionId) map[point.connectionId] = point
-            return map
-          }, {})
-        : {}
-      const connectionMap = allNodes
-        .filter(node => node.$outputs.length && !node.$inputs.length)
-        .reduce((map, node) => {
-          const { connectionId } = node
-          const item = (map[connectionId] = {
-            connectionId,
-            connectionName: node.attrs.connectionName,
-            pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
-            dateTime: '',
-            timeZone: systemTimeZone
-          })
-          if (oldPointsMap[connectionId]) {
-            const old = oldPointsMap[connectionId]
-            Object.assign(item, {
-              pointType: old.pointType,
-              dateTime: old.dateTime
-            })
-          }
-          return map
-        }, {})
-
-      this.settings.syncPoints = Object.values(connectionMap)
-    }
+    }, 500)
   }
 })
 </script>

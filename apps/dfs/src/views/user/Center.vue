@@ -23,17 +23,24 @@
             ></InlineInput>
           </ElCol>
           <ElCol :span="12" class="user-item">
-            <div class="user-item__label">{{ $t('user_password') }}{{ $t('symbol_colon') }}</div>
+            <div class="user-item__label">{{ $t('public_connection_form_password') }}{{ $t('symbol_colon') }}</div>
             <div class="user-item__value">******</div>
-            <ElLink type="primary" @click="editPassword">{{ $t('user_Center_xiuGai') }}</ElLink>
+            <ElLink type="primary" @click="editPassword">{{ $t('public_button_revise') }}</ElLink>
           </ElCol>
         </ElRow>
         <ElRow :gutter="40" class="section-header mb-6">
           <ElCol :span="12" class="user-item">
             <div class="user-item__label">{{ $t('user_phone_number') }}</div>
             <div class="user-item__value">{{ userData.telephone || $t('user_Center_weiBangDing') }}</div>
-            <ElLink v-if="userData.telephone" type="primary" @click="editPhone">{{ $t('user_Center_xiuGai') }}</ElLink>
-            <ElLink v-else type="primary" @click="dialogObj.bindPhone = true">{{ $t('button_bind') }}</ElLink>
+            <ElLink v-if="userData.telephone" type="primary" @click="editPhone">{{
+              $t('public_button_revise')
+            }}</ElLink>
+            <ElLink
+              v-if="!disabledBindingPhone && !userData.telephone"
+              type="primary"
+              @click="dialogObj.bindPhone = true"
+              >{{ $t('public_button_bind') }}</ElLink
+            >
           </ElCol>
           <ElCol :span="12" class="user-item">
             <div class="user-item__label">{{ $t('user_avatar') }}</div>
@@ -44,23 +51,23 @@
                 alt=""
                 style="position: absolute; top: -24px; left: 0; width: 56px; height: 56px; border-radius: 50%"
               />
-              <span v-else>{{ $t('data_no') }}</span>
+              <span v-else>{{ $t('public_data_no') }}</span>
             </div>
-            <ElLink type="primary" @click="editAvatar">{{ $t('user_Center_xiuGai') }}</ElLink>
+            <ElLink type="primary" @click="editAvatar">{{ $t('public_button_revise') }}</ElLink>
           </ElCol>
         </ElRow>
         <ElRow :gutter="40" class="section-header mb-6">
           <!--          <ElCol :span="12" class="user-item">-->
           <!--            <div class="user-item__label">{{ $t('user_wechat') + $t('symbol_colon') }}</div>-->
           <!--            <div class="user-item__value">{{ userData.wx || $t('user_Center_weiBangDing') }}</div>-->
-          <!--            <ElLink v-if="userData.wx" type="primary" @click="unbindWx">{{ $t('button_unbind') }}</ElLink>-->
-          <!--            <ElLink v-else type="primary" @click="dialogObj.bindWx = true">{{ $t('button_bind') }}</ElLink>-->
+          <!--            <ElLink v-if="userData.wx" type="primary" @click="unbindWx">{{ $t('public_button_unbind') }}</ElLink>-->
+          <!--            <ElLink v-else type="primary" @click="dialogObj.bindWx = true">{{ $t('public_button_bind') }}</ElLink>-->
           <!--          </ElCol>-->
           <ElCol :span="12" class="user-item">
             <div class="user-item__label">{{ $t('user_Center_youXiang') }}</div>
             <div class="user-item__value">{{ userData.email || $t('user_Center_weiBangDing') }}</div>
-            <ElLink v-if="userData.email" type="primary" @click="editEmail">{{ $t('user_Center_xiuGai') }}</ElLink>
-            <ElLink v-else type="primary" @click="dialogObj.bindEmail = true">{{ $t('button_bind') }}</ElLink>
+            <ElLink v-if="userData.email" type="primary" @click="editEmail">{{ $t('public_button_revise') }}</ElLink>
+            <ElLink v-else type="primary" @click="dialogObj.bindEmail = true">{{ $t('public_button_bind') }}</ElLink>
           </ElCol>
         </ElRow>
       </div>
@@ -103,8 +110,8 @@
           $t('user_Center_qiYeXinXiXiu')
         }}</VButton>
         <template v-else>
-          <VButton type="text" class="pl-0" @click="cancelEditEnData">{{ $t('button_cancel') }}</VButton>
-          <VButton type="text" auto-loading @click="saveEnData(arguments[0])">{{ $t('button_save') }}</VButton>
+          <VButton type="text" class="pl-0" @click="cancelEditEnData">{{ $t('public_button_cancel') }}</VButton>
+          <VButton type="text" auto-loading @click="saveEnData(arguments[0])">{{ $t('public_button_save') }}</VButton>
         </template>
       </div>
     </div>
@@ -135,7 +142,7 @@
                 v-clipboard:success="handleCopyAccessKey"
                 @mouseleave="accessKeyTooltip = false"
               >
-                <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
+                <i class="click-style">{{ $t('public_button_copy') }}</i>
               </span>
             </ElTooltip>
           </ElCol>
@@ -157,13 +164,53 @@
                 v-clipboard:success="handleCopySecretKey"
                 @mouseleave="secretKeyTooltip = false"
               >
-                <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
+                <i class="click-style">{{ $t('public_button_copy') }}</i>
               </span>
             </ElTooltip>
           </ElCol>
         </ElRow>
       </div>
     </div>
+
+    <section v-if="userData.enableLicense">
+      <div class="mt-12 fs-7">{{ $t('dfs_user_center_shouquanmaxinxi') }}</div>
+      <ElDivider class="my-6"></ElDivider>
+      <ul>
+        <li class="mb-4" v-for="(item, index) in userData.licenseCodes" :key="index">
+          <el-row
+            ><el-col :span="12"
+              ><span class="enterprise-item__label inline-block">{{ $t('dfs_user_center_shouquanma') }}</span
+              >{{ item.licenseCode }}</el-col
+            ></el-row
+          >
+          <el-row class="mt-2">
+            <el-col :span="12"
+              ><span class="enterprise-item__label inline-block">{{ $t('dfs_user_center_jihuoshijian') }}</span
+              >{{ item.activateTime }}</el-col
+            >
+            <el-col :span="12"
+              ><span class="enterprise-item__label inline-block">{{ $t('dfs_user_center_guoqishijian') }}</span
+              >{{ item.expiredTime }}
+              <span v-if="item.nearExpiration" class="expried inline-block">{{
+                $t('dfs_user_center_jijiangguoqi')
+              }}</span>
+            </el-col>
+          </el-row>
+        </li>
+      </ul>
+      <div v-if="userData.licenseCodes.length > 0" class="mt-4" style="margin-left: 100px">
+        <el-link type="primary" href="https://market.console.aliyun.com/imageconsole/index.htm" target="_blank">{{
+          $t('dfs_user_center_xufei')
+        }}</el-link>
+        <el-link
+          class="ml-4"
+          type="primary"
+          href="https://market.console.aliyun.com/receipt/index.htm"
+          target="_blank"
+          >{{ $t('dfs_user_center_kaifapiao') }}</el-link
+        >
+      </div>
+    </section>
     <ElDialog
       width="435px"
       append-to-body
@@ -180,9 +227,9 @@
         </UploadFile>
       </div>
       <div class="mt-6 text-center">
-        <VButton @click="dialogObj.avatar = false">{{ $t('button_cancel') }}</VButton>
+        <VButton @click="dialogObj.avatar = false">{{ $t('public_button_cancel') }}</VButton>
         <VButton type="primary" :disabled="avatarDisabled()" auto-loading @click="avatarConfirm(arguments[0])">{{
-          $t('button_confirm')
+          $t('public_button_confirm')
         }}</VButton>
       </div>
     </ElDialog>
@@ -239,9 +286,9 @@
       </ElForm>
 
       <span slot="footer" class="dialog-footer">
-        <VButton @click="dialogObj.password = false">{{ $t('button_cancel') }}</VButton>
+        <VButton @click="dialogObj.password = false">{{ $t('public_button_cancel') }}</VButton>
         <VButton type="primary" auto-loading @click="passwordConfirm(arguments[0])" @>{{
-          $t('button_confirm')
+          $t('public_button_confirm')
         }}</VButton>
       </span>
     </ElDialog>
@@ -278,9 +325,9 @@
       </ElForm>
 
       <span slot="footer" class="dialog-footer">
-        <VButton @click="dialogObj.bindPhone = false">{{ $t('button_cancel') }}</VButton>
+        <VButton @click="dialogObj.bindPhone = false">{{ $t('public_button_cancel') }}</VButton>
         <VButton type="primary" :disabled="!phoneForm.oldCode" auto-loading @click="bindPhoneConfirm(arguments[0])">{{
-          $t('button_confirm')
+          $t('public_button_confirm')
         }}</VButton>
       </span>
     </ElDialog>
@@ -339,9 +386,9 @@
       </ElForm>
 
       <span slot="footer" class="dialog-footer">
-        <VButton @click="dialogObj.editPhone = false">{{ $t('button_cancel') }}</VButton>
+        <VButton @click="dialogObj.editPhone = false">{{ $t('public_button_cancel') }}</VButton>
         <VButton type="primary" :disabled="editPhoneDisabled()" auto-loading @click="editPhoneConfirm(arguments[0])">{{
-          $t('button_confirm')
+          $t('public_button_confirm')
         }}</VButton>
       </span>
     </ElDialog>
@@ -387,13 +434,13 @@
       </ElForm>
 
       <span slot="footer" class="dialog-footer">
-        <VButton @click="dialogObj.bindEmail = false">{{ $t('button_cancel') }}</VButton>
+        <VButton @click="dialogObj.bindEmail = false">{{ $t('public_button_cancel') }}</VButton>
         <VButton
           type="primary"
           :disabled="!emailForm.email || !emailForm.code"
           auto-loading
           @click="bindEmailConfirm(arguments[0])"
-          >{{ $t('button_confirm') }}</VButton
+          >{{ $t('public_button_confirm') }}</VButton
         >
       </span>
     </ElDialog>
@@ -448,9 +495,9 @@
       </ElForm>
 
       <span slot="footer" class="dialog-footer">
-        <VButton @click="dialogObj.editEmail = false">{{ $t('button_cancel') }}</VButton>
+        <VButton @click="dialogObj.editEmail = false">{{ $t('public_button_cancel') }}</VButton>
         <VButton type="primary" :disabled="editEmailDisabled()" auto-loading @click="editEmailConfirm(arguments[0])">{{
-          $t('button_confirm')
+          $t('public_button_confirm')
         }}</VButton>
       </span>
     </ElDialog>
@@ -465,6 +512,7 @@ import VerificationCode from '@/components/VerificationCode'
 import UploadFile from '@/components/UploadFile'
 import { urlToBase64 } from '@/util'
 import CryptoJS from 'crypto-js'
+import dayjs from 'dayjs'
 
 export default {
   name: 'Center',
@@ -477,7 +525,9 @@ export default {
         avatar: '',
         telephone: '',
         wx: '',
-        email: ''
+        email: '',
+        enableLicense: false,
+        licenseCodes: []
       },
       nameForm: {
         nickname: ''
@@ -529,7 +579,8 @@ export default {
       },
       isEdit: false,
       accessKeyTooltip: false,
-      secretKeyTooltip: false
+      secretKeyTooltip: false,
+      disabledBindingPhone: window.__config__?.disabledBindingPhone
     }
   },
   mounted() {
@@ -541,6 +592,7 @@ export default {
       for (let key in userData) {
         userData[key] = window.__USER_INFO__[key]
       }
+
       userData.avatar = window.__USER_INFO__.avatar
       this.avatar = userData.avatar
       this.getEnterprise()
@@ -549,6 +601,12 @@ export default {
       this.resetPhoneForm()
       this.resetEmailForm()
       nameForm.nickname = userData.nickname
+
+      userData.licenseCodes = userData.licenseCodes.map(item => {
+        item.activateTime = item.activateTime ? dayjs(item.activateTime).format('YYYY-MM-DD HH:mm:ss') : ''
+        item.expiredTime = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD HH:mm:ss') : ''
+        return item
+      })
     },
     getEnterprise() {
       this.$axios.get('tm/api/Customer').then(data => {
@@ -886,7 +944,13 @@ export default {
   line-height: 34px;
 }
 .enterprise-item__label {
-  width: 80px;
+  width: 100px;
+}
+.expried {
+  padding: 2px 4px;
+  color: map-get($color, warning);
+  border-radius: 4px;
+  border: 1px solid map-get($color, warning);
 }
 .enterprise-item__value {
   width: 240px;

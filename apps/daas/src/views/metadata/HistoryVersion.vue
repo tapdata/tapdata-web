@@ -2,7 +2,7 @@
   <section class="history-list-wrap">
     <div class="history-head">
       <div>{{ $t('metadata_details_version_currentVersion') }} V{{ currentVersionNum }}</div>
-      <div>{{ $t('metadata_details_version_version') }} V{{ versionNum }}</div>
+      <div>{{ $t('public_version') }} V{{ versionNum }}</div>
     </div>
     <div class="attributes-table">
       <div class="left-table">
@@ -50,7 +50,7 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('metadata_details_name')" prop="base_field_name">
+          <el-table-column :label="$t('public_name')" prop="base_field_name">
             <template slot-scope="scope">
               <span :class="{ activeColor: scope.row.field_name_result !== 'eq' }">
                 {{ scope.row.base_field_name }}
@@ -149,7 +149,7 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('metadata_details_name')" prop="compare_field_name">
+          <el-table-column :label="$t('public_name')" prop="compare_field_name">
             <template slot-scope="scope">
               <span :class="{ activeColor: scope.row.field_name_result !== 'eq' }">
                 {{ scope.row.compare_field_name }}

@@ -31,13 +31,13 @@
         <div v-if="!isSearching" class="migration-table__empty" slot="empty">
           <VIcon size="120">no-data-color</VIcon>
           <div class="flex justify-content-center align-items-center lh-sm fs-7 font-color-sub">
-            <span>{{ $t('data_no_data') }}</span>
+            <span>{{ $t('public_data_no_data') }}</span>
           </div>
         </div>
         <div v-else class="migration-table__empty" slot="empty">
           <VIcon size="120">search-no-data-color</VIcon>
           <div class="flex justify-content-center align-items-center lh-sm fs-7 font-color-sub">
-            <span style="line-height: 20px">{{ $t('data_no_find_result') }}</span>
+            <span style="line-height: 20px">{{ $t('public_data_no_find_result') }}</span>
             <ElLink type="primary" class="fs-7" @click="reset">{{ $t('link_back_to_list') }}</ElLink>
           </div>
         </div>
@@ -49,6 +49,7 @@
 
 <script>
 import { VIcon, FilterBar, VTable } from '@tap/component'
+import { delayTrigger, toRegExp } from '@tap/shared'
 
 import i18n from '@/i18n'
 import { isEmpty } from '@/util'
@@ -72,7 +73,7 @@ export default {
       operationTypeOptions: [
         // 连接
         {
-          label: this.$t('operation_log_connection_create'),
+          label: this.$t('public_connection_button_create'),
           value: 'connection&&create',
           desc: this.$t('operation_log_connection_create_tip')
         },
@@ -215,7 +216,7 @@ export default {
         },
         // Agent
         {
-          label: this.$t('operation_log_agent_create'),
+          label: this.$t('public_agent_button_create'),
           value: 'agent&&create',
           desc: this.$t('operation_log_agent_create_tip')
         },
@@ -399,7 +400,6 @@ export default {
           query[key] = searchParams[key]
         }
       }
-      const { delayTrigger } = this.$util
       delayTrigger(() => {
         this.$router.replace({
           name: 'OperationLog',
@@ -433,7 +433,6 @@ export default {
       ]
     },
     getData({ page }) {
-      const { toRegExp } = this.$util
       let { current, size } = page
       let { operationType, parameter1, start, end, username } = this.searchParams
       let where = {

@@ -22,7 +22,7 @@ export class Aggregate extends NodeType {
       },
       name: {
         type: 'string',
-        title: i18n.t('packages_dag_nodes_database_jiedianmingcheng'),
+        title: i18n.t('public_node_name'),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input'
@@ -128,23 +128,23 @@ export class Aggregate extends NodeType {
           }
         }
       },
-      // TODO 按时屏蔽外存功能
-      // externalStorageId: {
-      //   title: '外存配置', //外存配置
-      //   type: 'string',
-      //   'x-decorator': 'FormItem',
-      //   'x-component': 'Select',
-      //   'x-reactions': [
-      //     '{{useAsyncDataSourceByConfig({service: loadExternalStorage, withoutField: true})}}',
-      //     {
-      //       fulfill: {
-      //         state: {
-      //           value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}'
-      //         }
-      //       }
-      //     }
-      //   ]
-      // },
+
+      externalStorageId: {
+        title: i18n.t('packages_dag_nodes_aggregate_waicunpeizhi'), //外存配置
+        type: 'string',
+        'x-decorator': 'FormItem',
+        'x-component': 'Select',
+        'x-reactions': [
+          '{{useAsyncDataSourceByConfig({service: loadExternalStorage, withoutField: true})}}',
+          {
+            fulfill: {
+              state: {
+                value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}'
+              }
+            }
+          }
+        ]
+      },
 
       return: {
         title: i18n.t('packages_dag_nodes_aggregate_fanhuishili'),

@@ -16,8 +16,8 @@ export const createComponentSchema = (component, decorator) => {
       properties: {
         'x-component-props': component
       }
-    },
-    'decorator-group': decorator && {
+    }
+    /*'decorator-group': decorator && {
       type: 'void',
       'x-component': 'CollapseItem',
       'x-component-props': { defaultExpand: false },
@@ -61,7 +61,7 @@ export const createComponentSchema = (component, decorator) => {
       properties: {
         'x-decorator-props.style': AllSchemas.CSSStyle
       }
-    }
+    }*/
   }
 }
 // eslint-disable-next-line
@@ -120,8 +120,8 @@ export const createFieldSchema = (component, decorator = AllSchemas.FormItem, wi
             'x-component': 'Switch'
           }
         }
-      }
-      // ...createComponentSchema(component, decorator)
+      },
+      ...createComponentSchema(component, decorator)
     }
   }
   if (!withEnum) {

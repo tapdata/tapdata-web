@@ -7,19 +7,19 @@ export const formatMs = (msTime = 0, type = 'time') => {
   let time = msTime / 1000
   let arr = []
   arr.push({
-    label: i18n.t('packages_business_task_info_d'),
+    label: i18n.t('public_time_d'),
     value: Math.floor(time / 60 / 60 / 24)
   }) // day
   arr.push({
-    label: i18n.t('packages_business_task_info_h'),
+    label: i18n.t('public_time_h'),
     value: Math.floor(time / 60 / 60) % 24
   }) // hour
   arr.push({
-    label: i18n.t('packages_business_task_info_m'),
+    label: i18n.t('public_time_m'),
     value: Math.floor(time / 60) % 60
   }) // minute
   arr.push({
-    label: i18n.t('packages_business_task_info_s'),
+    label: i18n.t('public_time_s'),
     value: Math.floor(time) % 60
   }) // second
   let result = ''
@@ -36,7 +36,7 @@ export const formatMs = (msTime = 0, type = 'time') => {
     }
   })
   if (!result) {
-    result = msTime + i18n.t('packages_business_task_info_ms')
+    result = msTime + i18n.t('public_time_ms')
   }
   return result
 }

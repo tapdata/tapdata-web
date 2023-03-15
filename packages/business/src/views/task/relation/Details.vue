@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div class="my-4 fs-5">{{ dataflow.name || $t('packages_business_task_name') }}</div>
+    <div class="my-4 fs-5">{{ dataflow.name || $t('public_task_name') }}</div>
     <div class="bg-white p-6">
-      <div class="mb-4 fs-8 fw-bold">
+      <div class="mb-4 fw-bold">
         {{
           $t('packages_business_relation_details_shiyonggaiguanlian', {
             val: taskTypeMap[type] || $t('packages_business_relation_details_renwu')
@@ -40,6 +40,42 @@
             </div>
             <div class="font-color-dark fw-normal">{{ detailData.storageTime }}</div>
           </div>
+          <section v-if="detailData.externalStorage">
+            <div class="flex align-items-center">
+              <span class="font-color-normal fw-bold mb-4 fs-7">{{
+                $t('packages_business_relation_details_waicunxinxi')
+              }}</span>
+            </div>
+            <div class="flex justify-content-start mb-4 text-left fs-8">
+              <div class="fw-normal head-label font-color-light">
+                {{ $t('daas_external_storage_list_waicunmingcheng') }}
+              </div>
+              <ElTooltip effect="dark" :content="detailData.externalStorage.name" placement="top-start">
+                <div class="name font-color-dark fw-normal">{{ detailData.externalStorage.name || '-' }}</div>
+              </ElTooltip>
+            </div>
+            <div class="flex justify-content-start mb-4 text-left fs-8">
+              <div class="fw-normal head-label font-color-light">
+                {{ $t('daas_external_storage_list_waicunleixing') }}
+              </div>
+              <div class="font-color-dark fw-normal">{{ typeMapping[detailData.externalStorage.type] || '-' }}</div>
+            </div>
+            <div class="flex justify-content-start mb-4 text-left fs-8">
+              <div class="fw-normal head-label font-color-light">
+                {{ $t('daas_external_storage_list_waicunxinxi') }}
+              </div>
+              <div class="font-color-dark fw-normal text-break">{{ detailData.externalStorage.uri || '-' }}</div>
+            </div>
+            <div
+              class="flex justify-content-start mb-4 text-left fs-8"
+              v-if="detailData.externalStorage && detailData.externalStorage.type === 'mongodb'"
+            >
+              <div class="fw-normal head-label font-color-light">
+                {{ $t('daas_external_storage_list_waicunbiaoming') }}
+              </div>
+              <div class="font-color-dark fw-normal text-break">{{ detailData.externalStorage.table || '-' }}</div>
+            </div>
+          </section>
         </div>
         <VTable
           :columns="columns"
@@ -91,28 +127,28 @@ export default {
       dataflow: {},
       columns: [
         {
-          label: i18n.t('packages_business_task_name'),
+          label: i18n.t('public_task_name'),
           prop: 'name'
         },
         {
-          label: i18n.t('packages_business_task_list_task_type'),
+          label: i18n.t('public_task_type'),
           prop: 'typeTitle',
           width: 150
         },
         {
-          label: i18n.t('packages_business_task_status'),
+          label: i18n.t('public_task_status'),
           prop: 'status',
           slotName: 'status',
           width: 150
         },
         {
-          label: i18n.t('packages_business_column_create_time'),
+          label: i18n.t('public_create_time'),
           prop: 'creatTime',
           dataType: 'time',
           width: 200
         },
         {
-          label: i18n.t('packages_business_connection_operate'),
+          label: i18n.t('public_operation'),
           slotName: 'operation',
           width: 150
         }
@@ -121,7 +157,12 @@ export default {
         logCollector: i18n.t('packages_business_relation_details_wajue'),
         mem_cache: i18n.t('packages_business_relation_details_huancun')
       },
-      detailData: {}
+      detailData: {},
+      typeMapping: {
+        mongodb: 'MongoDB',
+        rocksdb: 'RocksDB',
+        memory: 'MEM'
+      }
     }
   },
 
@@ -171,10 +212,9 @@ export default {
         size
       }
       const MAP = {
-        initial_sync: this.$t('packages_business_task_info_initial_sync'),
-        cdc: this.$t('packages_business_task_info_initial_cdc'),
-        'initial_sync+cdc':
-          this.$t('packages_business_task_info_initial_sync') + '+' + this.$t('packages_business_task_info_initial_cdc')
+        initial_sync: this.$t('public_task_type_initial_sync'),
+        cdc: this.$t('public_task_type_cdc'),
+        'initial_sync+cdc': this.$t('public_task_type_initial_sync') + '+' + this.$t('public_task_type_cdc')
       }
       return logcollectorApi.relateTasks(filter).then(data => {
         const { total = 0, items = [] } = data || {}

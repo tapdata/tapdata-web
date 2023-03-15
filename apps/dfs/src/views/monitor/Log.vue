@@ -97,6 +97,7 @@ import Time from '@tap/shared/src/time'
 import { VIcon } from '@tap/component'
 import { downloadBlob } from '@/util'
 import timeFunction from '@/mixins/timeFunction'
+import { delayTrigger, toRegExp } from '@tap/shared'
 
 export default {
   components: { VIcon },
@@ -117,15 +118,15 @@ export default {
         select: 6,
         items: [
           {
-            label: i18n.t('monitor_Log_zuiJinGeXiaoShi'),
+            label: i18n.t('public_time_Last_six_hours'),
             value: 6
           },
           {
-            label: i18n.t('monitor_Log_zuiJinTian3'),
+            label: i18n.t('public_time_last_day'),
             value: 24
           },
           {
-            label: i18n.t('monitor_Log_zuiJinTian2'),
+            label: i18n.t('public_time_last_three_days'),
             value: 3 * 24
           },
           {
@@ -159,7 +160,6 @@ export default {
   },
   methods: {
     search() {
-      const { delayTrigger } = this.$util
       delayTrigger(() => {
         this.getLogs(true)
       }, 1000)
@@ -236,7 +236,6 @@ export default {
         }
       }
       if (keyword) {
-        const { toRegExp } = this.$util
         let query = { $regex: toRegExp(keyword), $options: 'i' }
         filter.where.$or = [{ threadName: query }, { loggerName: query }, { message: query }, { level: query }]
       }

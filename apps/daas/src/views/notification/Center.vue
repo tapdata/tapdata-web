@@ -35,8 +35,8 @@
 import SystemNotification from './SystemNotification'
 import UserNotification from './UserNotification'
 import SystemAlarm from './SystemAlarm'
-import AlarmNotification from './AlarmNotification'
 import { VIcon } from '@tap/component'
+import { AlarmNotification } from '@tap/business'
 import { mapState } from 'vuex'
 
 export default {

@@ -50,7 +50,7 @@ export default {
     title: {
       type: String,
       default: () => {
-        return i18n.t('packages_dag_components_timeselect_zhouqi')
+        return i18n.t('public_time_period')
       }
     },
     options: {
@@ -65,7 +65,7 @@ export default {
           value: '1h'
         },
         {
-          label: i18n.t('packages_dag_components_timeselect_zuijintian'),
+          label: i18n.t('public_time_last_day'),
           value: '1d'
         },
         {
@@ -77,7 +77,7 @@ export default {
           value: 'full'
         },
         {
-          label: i18n.t('packages_dag_components_log_zidingyishijian'),
+          label: i18n.t('public_time_custom_time'),
           type: 'custom',
           value: 'custom'
         }
@@ -125,15 +125,21 @@ export default {
     }
   },
 
-  watch: {
-    value(v) {
-      this.setPeriod(v)
-    },
+  computed: {
+    optionsAndValue() {
+      const { value, options } = this
+      return { value, options }
+    }
+  },
 
-    options: {
+  watch: {
+    optionsAndValue: {
       deep: true,
       handler() {
-        this.setPeriod(this.value)
+        this.items = JSON.parse(JSON.stringify(this.options))
+        if (this.value) {
+          this.setPeriod(this.value)
+        }
       }
     }
   },
@@ -141,7 +147,6 @@ export default {
   mounted() {
     this.items = JSON.parse(JSON.stringify(this.options))
     this.setPeriod(this.value || this.items[0]?.value)
-    // this.changeFnc(this.period)
     this.$once('setMinAndMaxTime', () => {
       const picker = this.$refs.datetime?.picker
       const [startTime, endTime] = this.getRangeTime()
@@ -189,7 +194,8 @@ export default {
       }
 
       const { rangeSeparator, formatToString } = this.$refs.datetime
-      const label = formatToString(val)?.join(rangeSeparator)
+      console.log('formatToString(val)', formatToString(val))
+      const label = formatToString(val)?.join?.(rangeSeparator) || ''
       const valJoin = val?.map(t => new Date(t).getTime()).join()
       if (!valJoin) {
         return

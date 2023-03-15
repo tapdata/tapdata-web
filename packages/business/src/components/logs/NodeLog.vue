@@ -40,7 +40,7 @@
           @input="searchFnc"
         ></ElInput>
         <ElButton :loading="downloadLoading" type="text" size="mini" class="ml-4" @click="handleDownload">{{
-          $t('packages_dag_components_log_xiazai')
+          $t('public_button_download')
         }}</ElButton>
       </div>
       <div class="level-line mb-2">
@@ -83,11 +83,7 @@
               ></ElAlert>
               <VEmpty
                 v-if="!list.length"
-                :description="
-                  keyword
-                    ? $t('packages_dag_customer_logs_no_search_data')
-                    : $t('packages_dag_dag_dialog_field_mapping_no_data')
-                "
+                :description="keyword ? $t('packages_dag_customer_logs_no_search_data') : $t('public_data_no_data')"
               />
             </div>
           </template>
@@ -139,9 +135,9 @@
         </template>
       </ElForm>
       <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="handleClose">{{ $t('packages_dag_button_cancel') }}</ElButton>
+        <ElButton size="mini" @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>
         <ElButton :disabled="saveLoading" size="mini" type="primary" @click="handleSave">{{
-          $t('packages_dag_button_confirm')
+          $t('public_button_confirm')
         }}</ElButton>
       </span>
     </ElDialog>
@@ -248,23 +244,23 @@ export default {
       dialog: false,
       timeOptions: [
         {
-          label: i18n.t('packages_dag_components_log_quanbu'),
+          label: i18n.t('public_select_option_all'),
           value: 'full'
         },
         {
-          label: i18n.t('packages_dag_components_log_zuijingexiaoshi'),
+          label: i18n.t('public_time_Last_six_hours'),
           value: '6h'
         },
         {
-          label: i18n.t('packages_dag_components_log_zuixintian'),
+          label: i18n.t('public_time_last_day'),
           value: '1d'
         },
         {
-          label: i18n.t('packages_dag_components_log_zuijintian'),
+          label: i18n.t('public_time_last_three_days'),
           value: '3d'
         },
         {
-          label: i18n.t('packages_dag_components_log_zidingyishijian'),
+          label: i18n.t('public_time_custom_time'),
           type: 'custom',
           value: 'custom'
         }
@@ -352,11 +348,11 @@ export default {
       if (this.$route.name === 'MigrationMonitorViewer') {
         this.timeOptions = [
           {
-            label: i18n.t('packages_dag_components_log_quanbu'),
+            label: i18n.t('public_select_option_all'),
             value: 'full'
           },
           {
-            label: i18n.t('packages_dag_components_log_zidingyishijian'),
+            label: i18n.t('public_time_custom_time'),
             type: 'custom',
             value: 'custom'
           }
@@ -529,8 +525,7 @@ export default {
         obj.errorStack = row.errorStack?.slice(0, 20000)
 
         const { level, timestamp, nodeName, logTags, data, message, errorStack } = obj
-        const jsonStr = JSON.stringify(Object.assign({ message, errorStack }, obj), null, '\t')?.slice(0, 200)
-        row.titleDomStr = this.getTitleStringDom({ timestamp, nodeName }, jsonStr)
+        row.titleDomStr = this.getTitleStringDom({ timestamp }, message)
         row.jsonDomStr = this.getJsonString([
           { level },
           { timestamp },
@@ -545,7 +540,7 @@ export default {
     },
     getTitleStringDom(row = {}, extra = '') {
       let result = ''
-      result += `<span class="ml-1">${row.timestamp}</span>`
+      result += `<span class="ml-1 font-color-slight">[${row.timestamp}]</span>`
       if (row.nodeName) {
         result += `<span class="ml-1">[${this.getHighlightSpan(row.nodeName)}]</span>`
       }
@@ -700,14 +695,14 @@ export default {
       taskApi
         .putLogSetting(this.dataflow.id, params)
         .then(() => {
-          this.$message.success(this.$t('packages_dag_message_save_ok'))
+          this.$message.success(this.$t('public_message_save_ok'))
           this.dialog = false
         })
         .finally(() => {
           this.saveLoading = false
         })
         .catch(() => {
-          this.$message.error(this.$t('packages_dag_message_save_fail'))
+          this.$message.error(this.$t('public_message_save_fail'))
         })
     },
 

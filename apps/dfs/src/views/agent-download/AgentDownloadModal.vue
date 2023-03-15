@@ -57,7 +57,7 @@
                     v-clipboard:success="onCopy"
                     @mouseleave="showTooltip = false"
                   >
-                    <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
+                    <i class="click-style">{{ $t('public_button_copy') }}</i>
                   </span>
                 </ElTooltip>
               </li>
@@ -92,7 +92,7 @@
                     v-clipboard:success="onCopy"
                     @mouseleave="showTooltip = false"
                   >
-                    <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
+                    <i class="click-style">{{ $t('public_button_copy') }}</i>
                   </span>
                 </ElTooltip>
               </li>
@@ -127,7 +127,7 @@
                     v-clipboard:success="onCopy"
                     @mouseleave="showTooltip = false"
                   >
-                    <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
+                    <i class="click-style">{{ $t('public_button_copy') }}</i>
                   </span>
                 </ElTooltip>
               </li>
@@ -191,7 +191,7 @@
             <div class="ml-4">{{ $t('agent_download_AgentDownloadModal_buShuZhuangTaiJian') }}</div>
           </div>
           <div class="agent_download_status_btn">
-            <div @click="recordUserBehavior">{{ $t('agent_button_deploy_later') }}</div>
+            <div @click="recordUserBehavior">{{ $t('public_agent_button_deploy_later') }}</div>
           </div>
         </div>
         <div v-else class="finish-item">

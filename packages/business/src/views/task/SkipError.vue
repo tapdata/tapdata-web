@@ -27,8 +27,10 @@
       {{ $t('packages_business_dataFlow_skipError_strip') }}
     </div>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="dialogVisible = false" size="mini">{{ $t('packages_business_dataFlow_skipError_cancel') }}</el-button>
-      <el-button type="primary" size="mini" @click="skipErrorData">{{ $t('packages_business_dataFlow_skipError_startJob') }}</el-button>
+      <el-button @click="dialogVisible = false" size="mini">{{ $t('public_button_cancel') }}</el-button>
+      <el-button type="primary" size="mini" @click="skipErrorData">{{
+        $t('packages_business_dataFlow_skipError_startJob')
+      }}</el-button>
     </span>
   </el-dialog>
 </template>
