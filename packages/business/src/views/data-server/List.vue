@@ -6,11 +6,15 @@
       </template>
       <div slot="operation">
         <ElButton class="btn btn-create" type="primary" size="mini" @click.stop="showDrawer()">
-          <span>{{ $t('daas_data_server_drawer_chuangjianfuwu') }}</span>
+          <span>{{ $t('packages_business_data_server_drawer_chuangjianfuwu') }}</span>
         </ElButton>
       </div>
       <ElTableColumn type="selection" width="45" :reserve-selection="true"></ElTableColumn>
-      <ElTableColumn show-overflow-tooltip :label="$t('daas_data_server_list_fuwumingcheng')" min-width="180">
+      <ElTableColumn
+        show-overflow-tooltip
+        :label="$t('packages_business_data_server_list_fuwumingcheng')"
+        min-width="180"
+      >
         <template #default="{ row }">
           <ElLink
             class="ellipsis"
@@ -32,12 +36,16 @@
           {{ row.connectionName }}
         </template>
       </ElTableColumn>
-      <ElTableColumn show-overflow-tooltip :label="$t('daas_data_server_list_guanlianduixiang')" min-width="120">
+      <ElTableColumn
+        show-overflow-tooltip
+        :label="$t('packages_business_data_server_list_guanlianduixiang')"
+        min-width="120"
+      >
         <template #default="{ row }">
           {{ row.tableName }}
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('daas_data_server_list_fuwuzhuangtai')" min-width="100">
+      <ElTableColumn :label="$t('packages_business_data_server_list_fuwuzhuangtai')" min-width="100">
         <template #default="{ row }">
           <span class="status-block" :class="'status-' + row.status">{{ row.statusFmt }}</span>
         </template>
@@ -92,15 +100,15 @@ export default {
           value: ''
         },
         {
-          label: i18n.t('modules_active'),
+          label: i18n.t('public_status_published'),
           value: 'active'
         },
         {
-          label: i18n.t('modules_pending'),
+          label: i18n.t('public_status_unpublished'),
           value: 'pending'
         },
         {
-          label: i18n.t('api_monitor_total_api_list_status_generating'),
+          label: i18n.t('public_status_to_be_generated'),
           value: 'generating'
         }
       ]
@@ -125,7 +133,7 @@ export default {
     getFilterItems() {
       this.filterItems = [
         {
-          label: this.$t('connection_list_form_database_type'),
+          label: this.$t('public_connection_form_database_type'),
           key: 'type', //对象分类
           type: 'select-inner',
           items: async () => {
@@ -153,13 +161,13 @@ export default {
           }
         },
         {
-          label: i18n.t('modules_header_status'),
+          label: i18n.t('public_status'),
           key: 'status', //对象类型
           type: 'select-inner',
           items: this.statusOptions
         },
         {
-          placeholder: i18n.t('daas_data_discovery_previewdrawer_qingshurumingcheng'),
+          placeholder: i18n.t('public_input_placeholder') + i18n.t('public_name'),
           key: 'keyword', //输入搜索名称
           type: 'input'
         }
@@ -200,7 +208,7 @@ export default {
     },
     async getApiServerHost() {
       const showError = () => {
-        this.$message.error(i18n.t('daas_data_server_list_huoqufuwuyu'))
+        this.$message.error(i18n.t('packages_business_data_server_list_huoqufuwuyu'))
       }
       const data = await apiServerApi.get().catch(() => {
         showError()
@@ -215,7 +223,7 @@ export default {
       this.multipleSelection = val
     },
     async removeServer(row) {
-      const flag = await this.$confirm(i18n.t('daas_data_server_list_querenshanchufu'), '', {
+      const flag = await this.$confirm(i18n.t('packages_business_data_server_list_querenshanchufu'), '', {
         type: 'warning',
         showClose: false
       })
@@ -225,9 +233,9 @@ export default {
       }
     },
     async changeStatus(row) {
-      let msg = i18n.t('daas_data_server_list_quedingfabugai')
+      let msg = i18n.t('packages_business_data_server_list_quedingfabugai')
       if (row.status === 'active') {
-        msg = i18n.t('daas_data_server_list_quedingchexiaogai')
+        msg = i18n.t('packages_business_data_server_list_quedingchexiaogai')
       }
       const flag = await this.$confirm(msg, '', {
         type: 'warning',

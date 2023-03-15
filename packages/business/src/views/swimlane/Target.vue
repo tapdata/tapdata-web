@@ -34,7 +34,11 @@
                 <div class="task-list-content">
                   <div v-for="api in item.apiList" :key="api.name" class="task-list-item flex align-center">
                     <div class="p-1 ellipsis flex-1 align-center">
-                      <a class="el-link el-link--primary w-100 justify-content-start" title="{task.name}">
+                      <a
+                        class="el-link el-link--primary w-100 justify-content-start"
+                        title="{task.name}"
+                        @click="handleDetailApi(api)"
+                      >
                         <span class="ellipsis">{{ api.name }}</span>
                       </a>
                     </div>
@@ -82,6 +86,7 @@
       </ElDialog>
       <connectionPreview ref="targetconnectionView"></connectionPreview>
       <CreateRestApi v-model="apiDialog.visible"></CreateRestApi>
+      <DataServerDrawer ref="drawer" :host="apiServerHost"></DataServerDrawer>
     </div>
   </div>
 </template>
@@ -90,7 +95,7 @@
 import draggable from 'vuedraggable'
 import { defineComponent, ref } from '@vue/composition-api'
 
-import { connectionsApi, taskApi } from '@tap/api'
+import { apiServerApi, connectionsApi, taskApi } from '@tap/api'
 import { uuid } from '@tap/shared'
 import { getIcon } from '@tap/assets'
 
@@ -99,6 +104,7 @@ import connectionPreview from './connectionPreview'
 import { makeStatusAndDisabled } from '../../shared'
 import { TaskStatus } from '../../components'
 import CreateRestApi from './components/CreateRestApi'
+import DataServerDrawer from '../data-server/Drawer'
 
 const DEFAULT_SETTINGS = {
   name: '', // 任务名称
@@ -177,7 +183,7 @@ export default {
     dragState: Object
   },
 
-  components: { CreateRestApi, DatabaseIcon, connectionPreview, TaskList, draggable },
+  components: { CreateRestApi, DatabaseIcon, connectionPreview, TaskList, draggable, DataServerDrawer },
 
   data() {
     return {
@@ -194,7 +200,8 @@ export default {
       connectionTaskMap: {},
       apiDialog: {
         visible: false
-      }
+      },
+      apiServerHost: ''
     }
   },
 
@@ -207,6 +214,7 @@ export default {
       this.list = await this.getData()
       console.log('list', this.list) // eslint-disable-line
       this.loadTask(this.list)
+      this.getApiServerHost()
     },
 
     handleAdd() {
@@ -233,7 +241,95 @@ export default {
           type: 'service',
           apiList: [
             {
-              name: 'API_ProductInventory'
+              id: '640fe18ef9bd8501e58087a9',
+              createAt: '2023-03-14T02:53:02.812+00:00',
+              userId: '62bc5008d4958d013d97c7a6',
+              lastUpdBy: '62bc5008d4958d013d97c7a6',
+              createUser: 'admin@admin.com',
+              name: 'ken_api_001',
+              apiVersion: '',
+              basePath: 'nh75peluk0y',
+              readPreference: '',
+              readConcern: '',
+              prefix: '',
+              apiType: 'defaultApi',
+              status: 'active',
+              paths: [
+                {
+                  name: 'findPage',
+                  method: 'GET',
+                  result: 'Page<Document>',
+                  fields: [],
+                  type: 'preset',
+                  acl: ['admin'],
+                  params: [
+                    {
+                      name: 'page',
+                      type: 'number',
+                      defaultvalue: '1',
+                      description: '分页编号'
+                    },
+                    {
+                      name: 'limit',
+                      type: 'number',
+                      defaultvalue: '20',
+                      description: '每个分页返回的记录数'
+                    },
+                    {
+                      name: 'sort',
+                      type: 'object',
+                      description: '排序'
+                    },
+                    {
+                      name: 'filter',
+                      type: 'object',
+                      description: '过滤条件'
+                    }
+                  ],
+                  path: '/api/nh75peluk0y',
+                  where: [],
+                  sort: []
+                }
+              ],
+              fields: [
+                {
+                  autoincrement: 'NO',
+                  id: '640fd520fcba5c575f6c1cf2',
+                  source: 'auto',
+                  unique: false,
+                  comment: '',
+                  columnPosition: 1,
+                  originalDataType: 'varchar(12)',
+                  sourceDbType: 'Mysql',
+                  useDefaultValue: true,
+                  tapType: '{"byteRatio":3,"bytes":12,"defaultValue":1,"type":10}',
+                  data_type: 'varchar(12)',
+                  default_value: null,
+                  field_name: 'CLAIM_ID',
+                  is_auto_allowed: true,
+                  is_deleted: false,
+                  is_nullable: false,
+                  original_field_name: 'CLAIM_ID',
+                  primaryKey: true,
+                  primary_key_position: 1
+                }
+              ],
+              connectionId: '6401b224bbe4222fd32569c7',
+              connection: '6401b224bbe4222fd32569c7',
+              source: {
+                id: '6401b224bbe4222fd32569c7',
+                name: 'Martin-MySQL-31983',
+                status: 'ready',
+                database_type: 'Mysql'
+              },
+              user: 'admin@admin.com',
+              operationType: 'GET',
+              connectionType: 'Mysql',
+              connectionName: 'Martin-MySQL-31983',
+              pathAccessMethod: 'default',
+              last_updated: '2023-03-14T03:33:23.193+00:00',
+              datasource: '6401b224bbe4222fd32569c7',
+              tableName: 'AUTO_CLAIM'
             },
             {
               name: 'API_IM_STATIC_REF'
@@ -490,6 +586,23 @@ export default {
     addItem(value) {
       this.list.unshift(value)
       this.loadTask([value])
+    },
+
+    async getApiServerHost() {
+      const showError = () => {
+        this.$message.error(this.$t('packages_business_data_server_list_huoqufuwuyu'))
+      }
+      const data = await apiServerApi.get().catch(() => {
+        showError()
+      })
+      this.apiServerHost = data?.items?.[0]?.clientURI || ''
+      if (!this.apiServerHost) {
+        showError()
+      }
+    },
+
+    handleDetailApi(row = {}) {
+      this.$refs.drawer.open(row)
     }
   }
 }

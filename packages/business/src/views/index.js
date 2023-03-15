@@ -19,6 +19,7 @@ import AlarmNotification from './setting/AlarmNotification'
 import CustomNodeList from './custom-node/List'
 import CatalogView from './catalog/Catalogue'
 import ObjectList from './catalog/ObjectList'
+import DataServerList from './data-server/List'
 
 export {
   ConnectionForm,
@@ -41,7 +42,8 @@ export {
   AlarmNotification,
   CustomNodeList,
   CatalogView,
-  ObjectList
+  ObjectList,
+  DataServerList
 }
 
 export * from './connections/util'
