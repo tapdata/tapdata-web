@@ -10,7 +10,7 @@
       <ElTabPane v-for="item in comTabs" :key="item.value" :name="item.value" :label="item.label"></ElTabPane>
     </ElTabs>
     <div v-loading="loading">
-      <ul v-if="database.length" class="overflow-auto">
+      <ul v-if="database.length" class="overflow-auto inline-block">
         <li
           v-for="(item, index) in database"
           :key="index"
@@ -93,7 +93,7 @@ export default {
             }
           },
           {
-            label: 'All Connectors',
+            label: 'All Targets & Services',
             value: 'All'
           },
           {
