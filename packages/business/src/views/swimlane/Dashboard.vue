@@ -24,6 +24,7 @@
         :is="item.component"
         :ref="item.component"
         :dragState="dragState"
+        :settings="settings"
         @create-connection="handleAdd"
         @node-drag-end="handleDragEnd"
         @show-settings="handleSettings"
@@ -35,7 +36,12 @@
       @success="handleSuccess"
       @saveAndMore="handleSuccess"
     ></CreateConnection>
-    <Settings :mode.sync="mode" :visible.sync="settingsVisible" @success="handleSettingsSuccess"></Settings>
+    <Settings
+      :mode.sync="mode"
+      :visible.sync="settingsVisible"
+      @success="handleSettingsSuccess"
+      @init="handleSettingsInit"
+    ></Settings>
   </div>
 </template>
 
@@ -64,7 +70,8 @@ export default {
         form: ''
       },
       mode: '',
-      selectorType: ''
+      selectorType: '',
+      settings: null
     }
   },
 
@@ -120,6 +127,10 @@ export default {
 
     handleSettingsSuccess(data) {
       this.mode = data.mode
+    },
+
+    handleSettingsInit(settings) {
+      this.settings = settings
     }
   }
 }

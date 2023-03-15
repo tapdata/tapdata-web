@@ -37,30 +37,6 @@
       </div>
     </div>
 
-    <ElDialog :visible.sync="dialogConfig.visible" width="600" :close-on-click-modal="false">
-      <span slot="title" style="font-size: 14px"> Configure FDM </span>
-      <ElForm ref="form" :model="dialogConfig" label-width="180px">
-        <ElFormItem label="Select Connection">
-          <AsyncSelect
-            v-model="dialogConfig.connectionId"
-            :method="loadDatabases"
-            itemLabel="label"
-            itemValue="id"
-            itemQuery="name"
-            :current-label="dialogConfig.connectionName"
-            :onSetSelected="handleSelectConnection"
-          >
-          </AsyncSelect>
-        </ElFormItem>
-      </ElForm>
-      <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="dialogConfig.visible = false">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton size="mini" type="primary" @click="dialogSubmit">
-          {{ $t('public_button_confirm') }}
-        </ElButton>
-      </span>
-    </ElDialog>
-
     <ElDialog :visible.sync="taskDialogConfig.visible" width="600" :close-on-click-modal="false">
       <span slot="title" style="font-size: 14px">Create Cloning Pipeline</span>
       <ElForm ref="form" :model="dialogConfig" label-width="180px">
@@ -80,8 +56,7 @@
 </template>
 
 <script>
-import { connectionsApi } from '@tap/api'
-import { AsyncSelect } from '@tap/form'
+import { connectionsApi, ldpApi } from '@tap/api'
 import { VirtualTree } from '@tap/component'
 import { merge } from 'lodash'
 import { uuid } from '@tap/shared'
@@ -90,10 +65,11 @@ export default {
   name: 'FDM',
 
   props: {
-    dragState: Object
+    dragState: Object,
+    settings: Object
   },
 
-  components: { AsyncSelect, VirtualTree },
+  components: { VirtualTree },
 
   data() {
     return {
@@ -155,10 +131,6 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
       )
     },
 
-    handleSelectConnection(option) {
-      this.dialogConfig._connection = option
-    },
-
     async loadDatabases(filter) {
       try {
         const _filter = {
@@ -213,27 +185,16 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
       }
     },
 
-    showDialog() {
-      this.dialogConfig.visible = true
-      this.dialogConfig.connectionName = this.dialogConfig.connection?.name
-      this.dialogConfig.connectionId = this.dialogConfig.connection?.id
-    },
-
     showTaskDialog() {
       this.taskDialogConfig.visible = true
     },
 
-    dialogSubmit() {
-      localStorage.setItem('LDP_FDM_CONNECTION_ID', this.dialogConfig.connectionId)
-      localStorage.setItem('LDP_FDM_CONNECTION', JSON.stringify(this.dialogConfig._connection))
-      this.dialogConfig.connection = this.dialogConfig._connection
-      this.dialogConfig._connection = null
-      this.dialogConfig.visible = false
-    },
-
     taskDialogSubmit() {
       this.taskDialogConfig.visible = false
-      this.treeData.push(this.taskDialogConfig.treeData)
+      const { tableName, from } = this.taskDialogConfig
+      let task = this.makeMigrateTask(from, tableName)
+
+      ldpApi.createFDMTask(task)
     },
 
     handleDragOver(ev) {
@@ -262,40 +223,18 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
       const dropNode = this.findParentByClassName(ev.currentTarget, 'fdm-tree-wrap')
       dropNode.classList.remove('is-drop-inner')
 
-      if (!this.dialogConfig.connection) {
-        this.showDialog()
-        return
-      }
-
       const { draggingObjects } = this.dragState
       if (!draggingObjects.length) return
       const object = draggingObjects[0]
 
+      console.log('settings', this.settings) // eslint-disable-line
+
       if (object.data.type === 'connection') {
         this.taskDialogConfig.from = object.data
-        this.taskDialogConfig.to = this.dialogConfig.connection
         this.taskDialogConfig.tableName = null
-
-        this.taskDialogConfig.treeData = {
-          ...object.data
-        }
-
-        if (object.childNodes.length) {
-          this.taskDialogConfig.treeData.children = object.childNodes.map(node => node.data)
-        }
       } else if (object.data.type === 'table') {
         this.taskDialogConfig.from = object.parent.data
         this.taskDialogConfig.tableName = object.data.name
-        this.taskDialogConfig.to = this.dialogConfig.connection
-
-        this.taskDialogConfig.treeData = {
-          ...object.parent.data,
-          children: [
-            {
-              ...object.data
-            }
-          ]
-        }
       }
 
       this.showTaskDialog()
@@ -308,19 +247,67 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
       return parent
     },
 
-    makeMigrateTask(from, to) {
+    makeMigrateTask(from, tableName) {
+      let source = this.getSourceNode(from, tableName)
+      let target = this.getDatabaseNode({
+        id: this.settings.fdmStorageConnectionId,
+        database_type: 'MongoDB'
+      })
+      let tableReNameNode = this.getTableReNameNode()
+
+      return {
+        // ...DEFAULT_SETTINGS,
+        syncType: 'migrate',
+        name: this.getTaskName(from),
+        dag: {
+          edges: [
+            { source: source.id, target: tableReNameNode.id },
+            { source: tableReNameNode.id, target: target.id }
+          ],
+          nodes: [source, tableReNameNode, target]
+        }
+      }
+    },
+
+    getSourceNode(from, tableName) {
       let source = this.getDatabaseNode(from)
-      let target = this.getDatabaseNode(to)
+
+      Object.assign(
+        source,
+        tableName
+          ? {
+              migrateTableSelectType: 'custom',
+              tableNames: [tableName]
+            }
+          : {
+              migrateTableSelectType: 'expression',
+              tableExpression: '.*'
+            }
+      )
+
+      return source
+    },
+
+    getTaskName(from) {
+      return `${from.name}_Clone_To_FDM_${uuid()}`
+    },
+
+    makeMigrateTaskByTable(from, tableName) {
+      let source = this.getDatabaseNode(from)
+      let target = this.getDatabaseNode({
+        id: this.settings.fdmStorageConnectionId,
+        database_type: 'MongoDB'
+      })
 
       Object.assign(source, {
-        migrateTableSelectType: 'expression',
-        tableExpression: '.*'
+        migrateTableSelectType: 'custom',
+        tableNames: [tableName]
       })
 
       return {
         // ...DEFAULT_SETTINGS,
         syncType: 'migrate',
-        name: this.dialogConfig.taskName,
+        name: this.getTaskName(from),
         dag: {
           edges: [{ source: source.id, target: target.id }],
           nodes: [source, target]
@@ -343,6 +330,16 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
           pdkHash: db.pdkHash,
           capabilities: db.capabilities || []
         }
+      }
+    },
+
+    getTableReNameNode() {
+      return {
+        id: uuid(),
+        type: 'table_rename_processor',
+        name: '表编辑',
+        prefix: this.taskDialogConfig.prefix // 前缀
+        // suffix: config.suffix, // 后缀
       }
     }
   }

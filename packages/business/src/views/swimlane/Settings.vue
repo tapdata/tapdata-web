@@ -211,6 +211,7 @@ export default {
       this.loadConnections()
       const data = await this.getData()
       this.setData(data, true)
+      this.$emit('init', this.form)
     },
 
     async getData() {

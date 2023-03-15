@@ -156,6 +156,9 @@ const paidApi = new Paid()
 import LiveDataPlatform from './LiveDataPlatform'
 const liveDataPlatformApi = new LiveDataPlatform()
 
+import LDP from './LDP'
+const ldpApi = new LDP()
+
 export {
   connectionsApi,
   databaseTypesApi,
@@ -208,7 +211,8 @@ export {
   externalStorageApi,
   proxyApi,
   paidApi,
-  liveDataPlatformApi
+  liveDataPlatformApi,
+  ldpApi
 }
 export * from './ApiClient'
 
