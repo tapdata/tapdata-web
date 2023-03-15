@@ -335,8 +335,8 @@ export class Table extends NodeType {
                     type: 'array',
                     'x-component': 'DdlEventCheckbox'
                   },
-                  isPipeline: {
-                    title: '聚合',
+                  isCustomCommand: {
+                    title: '自定义查询',
                     type: 'boolean',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
@@ -354,15 +354,7 @@ export class Table extends NodeType {
                         }
                       },
                       {
-                        dependencies: ['isMql'],
-                        fulfill: {
-                          schema: {
-                            'x-component-props.disabled': '{{!!$deps[0]}}'
-                          }
-                        }
-                      },
-                      {
-                        target: 'pipeline',
+                        target: 'customCommand',
                         fulfill: {
                           state: {
                             display: '{{!$self.value ? "hidden":"visible"}}'
@@ -371,53 +363,7 @@ export class Table extends NodeType {
                       }
                     ]
                   },
-                  pipeline: {
-                    type: 'array',
-                    required: true,
-                    'x-decorator': 'FormItem',
-                    'x-component': 'JsonEditor',
-                    'x-component-props': {
-                      options: { showPrintMargin: false, useWrapMode: true },
-                      type: 'object'
-                    }
-                  },
-                  isMql: {
-                    title: '全量自定义MQL',
-                    type: 'boolean',
-                    'x-decorator': 'FormItem',
-                    'x-decorator-props': {
-                      layout: 'horizontal',
-                      tooltip: ''
-                    },
-                    'x-component': 'Switch',
-                    'x-reactions': [
-                      {
-                        dependencies: ['databaseType'],
-                        fulfill: {
-                          state: {
-                            visible: '{{$deps[0]==="MongoDB"}}'
-                          }
-                        }
-                      },
-                      {
-                        dependencies: ['isPipeline'],
-                        fulfill: {
-                          schema: {
-                            'x-component-props.disabled': '{{!!$deps[0]}}'
-                          }
-                        }
-                      },
-                      {
-                        target: 'mql',
-                        fulfill: {
-                          state: {
-                            display: '{{!$self.value ? "hidden":"visible"}}'
-                          }
-                        }
-                      }
-                    ]
-                  },
-                  mql: {
+                  customCommand: {
                     type: 'string',
                     required: true,
                     'x-decorator': 'FormItem',
