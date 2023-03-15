@@ -202,6 +202,10 @@ export default {
     }
   },
 
+  created() {
+    this.init()
+  },
+
   methods: {
     async init() {
       this.loadConnections()
