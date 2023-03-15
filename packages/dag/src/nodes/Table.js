@@ -26,6 +26,10 @@ export class Table extends NodeType {
         type: 'array',
         'x-display': 'hidden'
       },
+      type: {
+        type: 'string',
+        'x-display': 'hidden'
+      },
       databaseType: {
         type: 'string',
         'x-display': 'hidden'
