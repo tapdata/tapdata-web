@@ -38,6 +38,11 @@ export class Database extends NodeType {
         'x-reactions': '{{useSyncConnection}}'
       },
 
+      type: {
+        type: 'string',
+        'x-display': 'hidden'
+      },
+
       name: {
         type: 'string',
         title: i18n.t('public_node_name'),
