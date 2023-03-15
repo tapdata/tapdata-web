@@ -25,9 +25,11 @@
         :ref="item.component"
         :dragState="dragState"
         :settings="settings"
+        :directories="directoryMap[item.type]"
         @create-connection="handleAdd"
         @node-drag-end="handleDragEnd"
         @show-settings="handleSettings"
+        @load-directories="loadDirectories"
       ></component>
     </div>
     <CreateConnection
@@ -52,6 +54,7 @@ import TargetItem from './Target'
 import FDMItem from './FDM'
 import MDMItem from './MDM'
 import Settings from './Settings'
+import { metadataDefinitionsApi } from '@tap/api'
 
 export default {
   name: 'Dashboard',
@@ -71,7 +74,8 @@ export default {
       },
       mode: '',
       selectorType: '',
-      settings: null
+      settings: null,
+      directoryMap: {}
     }
   },
 
@@ -85,10 +89,12 @@ export default {
           level: 'base'
         },
         {
-          component: 'FDMItem'
+          component: 'FDMItem',
+          type: 'fdm'
         },
         {
-          component: 'MDMItem'
+          component: 'MDMItem',
+          type: 'fdm'
         },
         {
           type: 'target',
@@ -99,6 +105,10 @@ export default {
       ]
       return this.mode === 'service' ? result : result.filter(t => t.level === 'base')
     }
+  },
+
+  created() {
+    this.loadDirectories()
   },
 
   methods: {
@@ -131,6 +141,77 @@ export default {
 
     handleSettingsInit(settings) {
       this.settings = settings
+    },
+
+    loadDirectories() {
+      let filter = {
+        where: {
+          item_type: { $nin: ['database', 'dataflow', 'api'] }
+        },
+        fields: {
+          id: 1,
+          item_type: 1,
+          last_updated: 1,
+          value: 1,
+          objCount: 1,
+          parent_id: 1,
+          desc: 1,
+          readOnly: 1,
+          user_id: 1
+        }
+      }
+      this.loadingDirectory = true
+      metadataDefinitionsApi
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(data => {
+          let items = data?.items || []
+          let treeData = this.formatCatalog(items)
+          treeData.forEach(item => {
+            this.$set(this.directoryMap, item.item_type[0], item.children)
+          })
+        })
+        .finally(() => {
+          this.loadingDirectory = false
+        })
+    },
+
+    formatCatalog(items) {
+      if (items && items.length) {
+        const map = {}
+        const nodes = []
+        const setChildren = nodes => {
+          return nodes.map(it => {
+            let children = map[it.id]
+            if (children) {
+              it.children = setChildren(children)
+            }
+            return it
+          })
+        }
+
+        items.forEach(it => {
+          it.LDP_TYPE = 'folder'
+          it.children = []
+          if (it.parent_id) {
+            let children = map[it.parent_id] || []
+            children.push(it)
+            map[it.parent_id] = children
+            it.name = it.value
+          } else {
+            const itemType = it.item_type[0]
+            const TYPE2NAME = {
+              target: 'TARGET&SERVICE'
+            }
+            it.name = TYPE2NAME[itemType] || it.value
+            it.readOnly = itemType !== 'mdm'
+            nodes.push(it)
+          }
+        })
+
+        return setChildren(nodes)
+      }
     }
   }
 }

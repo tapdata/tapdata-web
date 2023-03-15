@@ -24,7 +24,7 @@
         ref="tree"
         node-key="id"
         highlight-current
-        :data="treeData"
+        :data="directories"
         draggable
         :render-content="renderContent"
         :render-after-expand="false"
@@ -47,7 +47,7 @@
       </ElForm>
       <span slot="footer" class="dialog-footer">
         <ElButton size="mini" @click="taskDialogConfig.visible = false">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton size="mini" type="primary" @click="taskDialogSubmit">
+        <ElButton :loading="creating" size="mini" type="primary" @click="taskDialogSubmit">
           {{ $t('public_button_confirm') }}
         </ElButton>
       </span>
@@ -66,7 +66,8 @@ export default {
 
   props: {
     dragState: Object,
-    settings: Object
+    settings: Object,
+    directories: Array
   },
 
   components: { VirtualTree },
@@ -91,7 +92,7 @@ export default {
         prefix: 'f_',
         tableName: null
       },
-      treeData: []
+      creating: false
     }
   },
 
@@ -189,12 +190,20 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
       this.taskDialogConfig.visible = true
     },
 
-    taskDialogSubmit() {
-      this.taskDialogConfig.visible = false
+    async taskDialogSubmit() {
       const { tableName, from } = this.taskDialogConfig
       let task = this.makeMigrateTask(from, tableName)
 
-      ldpApi.createFDMTask(task)
+      this.creating = true
+      try {
+        await ldpApi.createFDMTask(task)
+        this.taskDialogConfig.visible = false
+        this.$emit('load-directories')
+        this.$message.success(this.$t('public_message_operation_success'))
+      } catch (e) {
+        console.log(e) // eslint-disable-line
+      }
+      this.creating = false
     },
 
     handleDragOver(ev) {
