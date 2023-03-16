@@ -124,8 +124,8 @@ export default {
           label: i18n.t('packages_business_milestone_list_quanliangshujuqian')
         },
         {
-          key: 'STREAM_READ',
-          label: i18n.t('packages_business_milestone_list_zengliangshujuqian')
+          key: 'CDC',
+          label: i18n.t('packages_business_milestone_list_jinruzengliangshu')
         }
       ]
 
@@ -134,7 +134,7 @@ export default {
         t =>
           dataflowType === 'initial_sync+cdc' ||
           (dataflowType === 'cdc' && t.key !== 'SNAPSHOT') ||
-          (dataflowType === 'initial_sync' && t.key !== 'STREAM_READ')
+          (dataflowType === 'initial_sync' && t.key !== 'CDC')
       )
 
       const finishOpt = {
@@ -209,7 +209,7 @@ export default {
     nodeData() {
       const { nodeMilestones } = this
       const dataflowType = this.dataflow.type
-      const NODE_MAP = {
+      let NODE_MAP = {
         source: [
           {
             key: 'NODE',
@@ -220,11 +220,11 @@ export default {
             label: i18n.t('packages_business_milestone_list_duququanliangshu')
           },
           {
-            key: 'OPEN_STREAM_READ',
+            key: 'OPEN_CDC_READ',
             label: i18n.t('packages_business_milestone_list_kaiqizengliang')
           },
           {
-            key: 'STREAM_READ',
+            key: 'CDC_READ',
             label: i18n.t('packages_business_milestone_list_duquzengliangshu')
           }
         ],
@@ -236,10 +236,6 @@ export default {
           {
             key: 'TABLE_INIT',
             label: i18n.t('packages_business_milestone_list_chuangjianmubiaobiao')
-          },
-          {
-            key: 'WRITE_RECORD',
-            label: i18n.t('packages_business_milestone_list_mubiaoshujuxie')
           }
         ],
         processor: [
@@ -248,6 +244,27 @@ export default {
             label: i18n.t('packages_business_milestone_list_shujuchuli')
           }
         ]
+      }
+
+      if (dataflowType === 'cdc') {
+        NODE_MAP.target.push({
+          key: 'CDC_WRITE',
+          label: i18n.t('packages_business_milestone_list_zengliangshujuxie')
+        })
+      } else if (dataflowType === 'initial_sync') {
+        NODE_MAP.target.push({
+          key: 'SNAPSHOT_WRITE',
+          label: i18n.t('packages_business_milestone_list_quanliangshujuxie')
+        })
+      } else {
+        NODE_MAP.target.push({
+          key: 'SNAPSHOT_WRITE',
+          label: i18n.t('packages_business_milestone_list_quanliangshujuxie')
+        })
+        NODE_MAP.target.push({
+          key: 'CDC_WRITE',
+          label: i18n.t('packages_business_milestone_list_zengliangshujuxie')
+        })
       }
       const STATUS_MAP = {
         FINISH: {
@@ -277,7 +294,7 @@ export default {
           t =>
             dataflowType === 'initial_sync+cdc' ||
             (dataflowType === 'cdc' && !['SNAPSHOT_READ'].includes(t.key)) ||
-            (dataflowType === 'initial_sync' && !['OPEN_STREAM_READ', 'STREAM_READ'].includes(t.key))
+            (dataflowType === 'initial_sync' && !['OPEN_CDC_READ', 'CDC_READ'].includes(t.key))
         )
         .map(el => {
           const data = nodeMilestones[el.key]
