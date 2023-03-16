@@ -182,12 +182,12 @@
       <div
         v-if="codeDialog.data.describe"
         v-html="codeDialog.data.describe"
-        class="text-prewrap mt-n4 mb-4 ml-4 font-color-light"
+        class="text-prewrap mt-n4 mb-8 ml-4 font-color-light"
       ></div>
       <div
         v-if="codeDialog.data.errorStack"
         v-html="codeDialog.data.errorStack"
-        class="text-prewrap mt-n4 mb-4 ml-4 font-color-light"
+        class="text-prewrap mb-6 ml-4 font-color-light"
       ></div>
       <div
         v-if="codeDialog.data.seeAlso && codeDialog.data.seeAlso.length"
