@@ -334,6 +334,28 @@ export default observer({
                           }
                         }
                       },
+                      enforceShareCdc: {
+                        title: i18n.t('packages_dag_migration_settingpanel_danggongxiangwajue'),
+                        type: 'string',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          tooltip: i18n.t('packages_dag_migration_settingpanel_danggongxiangwajuetooltip')
+                        },
+                        'x-component': 'Select',
+                        default: true,
+                        enum: [
+                          { label: i18n.t('packages_dag_migration_settingpanel_renwuzhijiebao'), value: true },
+                          { label: i18n.t('packages_dag_migration_settingpanel_zhuanweiputongC'), value: false }
+                        ],
+                        'x-reactions': {
+                          dependencies: ['shareCdcEnable'],
+                          fulfill: {
+                            state: {
+                              visible: '{{!!$deps[0]}}'
+                            }
+                          }
+                        }
+                      },
                       isAutoInspect: {
                         title: this.$t('packages_dag_task_list_verify'),
                         type: 'boolean',

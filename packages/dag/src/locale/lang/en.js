@@ -566,5 +566,13 @@ export default {
   packages_dag_src_editor_renwubaocunjianceshi:
     'An alarm was found during task saving detection, which may cause the task to run abnormally. It is recommended that you check and resolve the alarm before starting the task',
   packages_dag_monitor_leftsider_jibenxinxi: 'Basic information',
-  packages_dag_nodes_aggregate_waicunpeizhi: 'External storage configuration'
+  packages_dag_nodes_aggregate_waicunpeizhi: 'External storage configuration',
+  packages_dag_field_inference_main_tuiyanyichang: 'Deduction exception',
+  packages_dag_field_inference_main_gengxintiaojianyi: 'The update condition is abnormal',
+  packages_dag_field_inference_main_quanbubiao: 'All tables',
+  packages_dag_migration_settingpanel_zhuanweiputongC: 'Switch to normal CDC mode',
+  packages_dag_migration_settingpanel_renwuzhijiebao: 'The task reports an error and stops',
+  packages_dag_migration_settingpanel_danggongxiangwajue: 'When shared mining is not available',
+  packages_dag_migration_settingpanel_danggongxiangwajuetooltip:
+    'Possible unavailable scenarios\n1. The switch is not turned on in the data connection\n2. The set start time is earlier than the first entry of the external storage log data\n3. The mining task reports an error and stops'
 }
