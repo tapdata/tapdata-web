@@ -10,8 +10,8 @@
       </div>
       <div class="main">
         <div class="content" v-if="waterfallData.length">
-          <el-row :gutter="20" class="waterfall">
-            <el-col class="list" :md="12" :sm="24" v-for="item in waterfallData" :key="item.id">
+          <el-row :gutter="20" class="waterfall" v-for="item in waterfallData" :key="item.id">
+            <el-col class="list" :md="12" :sm="24">
               <div :class="['grid-content', 'list-box']">
                 <div class="list-box-header">
                   <div class="list-box-header-left">
@@ -219,6 +219,41 @@
                       </div>
                     </el-col>
                   </el-row>
+                </div>
+              </div>
+            </el-col>
+            <el-col class="list" :md="12" :sm="24">
+              <div class="list-box">
+                <div class="list-box-header flex justify-content-between align-items-center">
+                  <div class="w-75">
+                    <div class="pt-2 mb-2 fs-5">{{ $t('daas_cluster_cluster_yinqingduiwaijian') }}</div>
+                    <span class="ip">{{ item.custIP ? item.custIP : item.systemInfo.ip }}</span>
+                  </div>
+                  <div class="w-25 fs-5">
+                    <span class="font-color-light">{{ $t('daas_cluster_cluster_lianjiezongshu') }}</span
+                    >:
+                    <span class="font-color-dark ml-3">{{ item.engine ? item.engine.netStatTotals || 0 : 0 }}</span>
+                  </div>
+                </div>
+                <div class="netstat p-4" v-if="item.engine && item.engine.netStat">
+                  <div class="flex mb-4">
+                    <div class="w-75 fs-6 fw-bold font-color-dark pl-3">
+                      {{ $t('daas_cluster_cluster_mubiaoIPhe') }}
+                    </div>
+                    <div class="w-25 fs-6 fw-bold font-color-dark">
+                      {{ $t('daas_cluster_cluster_lianjieshuliang') }}
+                    </div>
+                  </div>
+                  <div class="overflow-y-auto netstat__list">
+                    <div
+                      v-for="(netStatItem, netStatIndex) in item.engine.netStat"
+                      :key="netStatIndex"
+                      class="flex mb-4 font-color-light"
+                    >
+                      <div class="w-75 pl-3">{{ netStatItem.ip }}</div>
+                      <div class="w-25 pl-5">{{ netStatItem.numbers }}</div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </el-col>
@@ -587,6 +622,11 @@ export default {
         if (clusterData[i]?.engine?.status !== 'running') {
           clusterData[i]['metricValues'] = { CpuUsage: '-', HeapMemoryUsage: '-' }
         }
+        if (clusterData[i]?.engine?.netStat) {
+          clusterData[i].engine['netStatTotals'] = clusterData[i].engine.netStat.reduce((total, key) => {
+            return total + (key?.numbers || 0)
+          }, 0)
+        }
       }
       this.waterfallData = clusterData
     },
@@ -726,6 +766,7 @@ export default {
           background-color: map-get($bgColor, white);
           border-radius: 3px;
           border: 1px solid map-get($bgColor, main);
+          height: 340px;
           .list-box-header {
             overflow: hidden;
             display: flex;
@@ -756,14 +797,14 @@ export default {
                 .uuid {
                   color: map-get($fontColor, slight);
                 }
-                .ip {
-                  display: inline-block;
-                  padding: 2px 10px;
-                  color: map-get($color, primary);
-                  border-radius: 2px;
-                  background-color: #ebf3fd;
-                }
               }
+            }
+            .ip {
+              display: inline-block;
+              padding: 2px 10px;
+              color: map-get($color, primary);
+              border-radius: 2px;
+              background-color: #ebf3fd;
             }
             .iconfont {
               // color: #999;
@@ -928,6 +969,12 @@ export default {
       font-size: 12px;
       line-height: 15px;
     }
+  }
+  .netstat {
+    border-top: 1px solid #f2f2f2;
+  }
+  .netstat__list {
+    max-height: 190px;
   }
 }
 </style>
