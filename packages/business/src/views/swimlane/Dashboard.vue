@@ -26,6 +26,8 @@
         :dragState="dragState"
         :settings="settings"
         :directories="directoryMap[item.type]"
+        :fdmConnection="fdmConnection"
+        :mdmConnection="mdmConnection"
         @create-connection="handleAdd"
         @node-drag-end="handleDragEnd"
         @show-settings="handleSettings"
@@ -54,7 +56,7 @@ import TargetItem from './Target'
 import FDMItem from './FDM'
 import MDMItem from './MDM'
 import Settings from './Settings'
-import { metadataDefinitionsApi } from '@tap/api'
+import { connectionsApi, metadataDefinitionsApi } from '@tap/api'
 
 export default {
   name: 'Dashboard',
@@ -75,7 +77,9 @@ export default {
       mode: '',
       selectorType: '',
       settings: null,
-      directoryMap: {}
+      directoryMap: {},
+      fdmConnection: null,
+      mdmConnection: null
     }
   },
 
@@ -94,7 +98,7 @@ export default {
         },
         {
           component: 'MDMItem',
-          type: 'fdm'
+          type: 'mdm'
         },
         {
           type: 'target',
@@ -104,6 +108,18 @@ export default {
         }
       ]
       return this.mode === 'service' ? result : result.filter(t => t.level === 'base')
+    }
+  },
+
+  watch: {
+    async 'settings.mdmStorageConnectionId'(v) {
+      console.log('settings.mdmStorageConnectionId', v) // eslint-disable-line
+      this.mdmConnection = await connectionsApi.get(v)
+    },
+
+    async 'settings.fdmStorageConnectionId'(v) {
+      console.log('settings.fdmStorageConnectionId', v) // eslint-disable-line
+      this.fdmConnection = await connectionsApi.get(v)
     }
   },
 
@@ -171,6 +187,7 @@ export default {
           treeData.forEach(item => {
             this.$set(this.directoryMap, item.item_type[0], item.children)
           })
+          console.log('this.directoryMap', this.directoryMap) // eslint-disable-line
         })
         .finally(() => {
           this.loadingDirectory = false

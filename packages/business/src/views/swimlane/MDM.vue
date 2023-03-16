@@ -12,31 +12,62 @@
         </ElDropdown>
       </div>
     </div>
-    <div class="flex flex-column flex-1 min-h-0">
-      <ClassificationTree
-        ref="classify"
-        class="p-3 flex-1 overflow-auto"
-        show-view-details
-        @view-details="handleViewDetails"
-      ></ClassificationTree>
+    <div class="flex flex-column flex-1 min-h-0 p-3">
+      <VirtualTree
+        class="ldp-tree"
+        ref="tree"
+        node-key="id"
+        highlight-current
+        :data="directories"
+        draggable
+        :render-content="renderContent"
+        :render-after-expand="false"
+        :expand-on-click-node="false"
+        :allow-drop="() => false"
+      ></VirtualTree>
     </div>
     <TablePreview ref="tablePreview"></TablePreview>
   </div>
 </template>
 
 <script>
+import { VirtualTree } from '@tap/component'
 import ClassificationTree from '../../components/ClassificationTree'
 import TablePreview from './TablePreview'
 export default {
   name: 'MDM',
 
-  components: { ClassificationTree, TablePreview },
+  props: {
+    directories: Array
+  },
+
+  components: { VirtualTree, TablePreview },
 
   data() {
     return {}
   },
 
   methods: {
+    renderContent(h, { node, data }) {
+      let icon
+      if (data.type === 'table') {
+        node.isLeaf = true
+        icon = 'table'
+      } else {
+        node.isLeaf = false
+        icon = 'folder-outline'
+      }
+
+      return (
+        <div class="custom-tree-node">
+          <div class="tree-item-icon flex align-center mr-2">{icon && <VIcon size="18">{icon}</VIcon>}</div>
+          <span class="table-label" title={data.name}>
+            {data.name}
+          </span>
+        </div>
+      )
+    },
+
     handleViewDetails(data) {
       console.log('handleViewDetails', data) // eslint-disable-line
       this.$refs.tablePreview.open({

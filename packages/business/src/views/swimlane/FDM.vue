@@ -30,6 +30,7 @@
         :render-after-expand="false"
         :expand-on-click-node="false"
         :allow-drop="() => false"
+        @node-expand="handleNodeExpand"
       ></VirtualTree>
 
       <div class="drop-mask justify-center align-center absolute-fill font-color-light">
@@ -56,7 +57,7 @@
 </template>
 
 <script>
-import { connectionsApi, ldpApi } from '@tap/api'
+import { connectionsApi, discoveryApi, ldpApi } from '@tap/api'
 import { VirtualTree } from '@tap/component'
 import { merge } from 'lodash'
 import { uuid } from '@tap/shared'
@@ -67,6 +68,7 @@ export default {
   props: {
     dragState: Object,
     settings: Object,
+    fdmConnection: Object,
     directories: Array
   },
 
@@ -120,7 +122,14 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
     searchFnc() {},
 
     renderContent(h, { node, data }) {
-      let icon = data.type === 'table' ? 'table' : 'folder-outline'
+      let icon
+      if (data.type === 'table') {
+        node.isLeaf = true
+        icon = 'table'
+      } else {
+        node.isLeaf = false
+        icon = 'folder-outline'
+      }
 
       return (
         <div class="custom-tree-node">
@@ -258,10 +267,7 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
 
     makeMigrateTask(from, tableName) {
       let source = this.getSourceNode(from, tableName)
-      let target = this.getDatabaseNode({
-        id: this.settings.fdmStorageConnectionId,
-        database_type: 'MongoDB'
-      })
+      let target = this.getDatabaseNode(this.fdmConnection)
       let tableReNameNode = this.getTableReNameNode()
 
       return {
@@ -350,6 +356,40 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
         prefix: this.taskDialogConfig.prefix // 前缀
         // suffix: config.suffix, // 后缀
       }
+    },
+
+    async handleNodeExpand(data, node) {
+      // 十秒内加载过资源，不再继续加载
+      if (node.loadTime && Date.now() - node.loadTime < 10000) return
+
+      node.loadTime = Date.now()
+
+      let { LDP_TYPE } = data
+      let objects = await this.loadObjects(data)
+
+      console.log('handleNodeExpand', objects, data, node) // eslint-disable-line
+      const childrenMap = data.children ? data.children.reduce((map, item) => ((map[item.id] = true), map), {}) : {}
+      objects.forEach(item => {
+        if (childrenMap[item.id]) return
+        item.parent_id = data.id
+        item.isObject = true
+        this.$refs.tree.append(item, node)
+      })
+    },
+
+    loadObjects(node) {
+      let where = {
+        page: 1,
+        pageSize: 10000,
+        tagId: node.id,
+        range: 'current',
+        fields: {
+          allTags: 1
+        }
+      }
+      return discoveryApi.discoveryList(where).then(res => {
+        return res.items
+      })
     }
   }
 }
