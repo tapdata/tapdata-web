@@ -115,10 +115,10 @@
                       >[{{ item.timestampLabel }}]</span
                     >
                     <span
-                      v-if="item.errorStack"
+                      v-if="item.errorCode"
                       class="color-primary cursor-pointer mr-2 text-decoration-underline"
                       @click.stop.prevent="handleCode(item)"
-                      >errorCode</span
+                      >{{ item.errorCode }}</span
                     >
                     <div
                       class="text-truncate flex-1"
@@ -190,7 +190,7 @@
         class="text-prewrap mt-n4 mb-4 p-4 border overflow-y-auto"
         style="max-height: 400px"
       ></div>
-      <div class="fw-bold fs-6 mb-3">seeAlso</div>
+      <div v-if="codeDialog.data.seeAlso && codeDialog.data.seeAlso.length" class="fw-bold fs-6 mb-3">seeAlso</div>
       <p v-for="(item, index) in codeDialog.data.seeAlso" :key="index" class="flex align-items-center mb-2">
         <span>{{ index + 1 }}.</span>
         <ElLink type="primary" class="text-decoration-underline" @click="handleLink(item)">{{ item }}</ElLink>
@@ -613,7 +613,6 @@ export default {
     getTitleStringDom(row = {}, extra = '') {
       let result = ''
       result += `<span class="ml-1 font-color-slight">[${row.timestamp}]</span>`
-      // result += `<span class="color-primary cursor-pointer" @click="handleCode(item)">code</span>`
       if (row.nodeName) {
         result += `<span class="ml-1">[${this.getHighlightSpan(row.nodeName)}]</span>`
       }
@@ -827,7 +826,7 @@ export default {
       const params = {
         className: 'ErrorCodeService',
         method: 'getErrorCode',
-        args: [item.errorCode, 'en']
+        args: [item.errorCode, i18n.locale === 'en' ? 'en' : 'cn']
       }
       proxyApi.call(params).then(data => {
         this.codeDialog.data.errorStack = item.errorStack
