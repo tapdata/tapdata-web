@@ -171,27 +171,35 @@
 
     <ElDialog
       :title="$t('packages_dag_components_log_rizhidengjishe')"
-      width="880px"
+      width="1200px"
       :visible.sync="codeDialog.visible"
       :close-on-click-modal="false"
       :append-to-body="true"
     >
       <div slot="title">
-        <span>Error:{{ codeDialog.data.errorCode }}</span>
+        <span class="ml-4 fs-6">Error:{{ codeDialog.data.errorCode }}</span>
       </div>
       <div
         v-if="codeDialog.data.describe"
         v-html="codeDialog.data.describe"
-        class="text-prewrap mt-n4 mb-4 p-4 border overflow-y-auto"
+        class="text-prewrap mt-n4 mb-4 ml-4 font-color-light"
       ></div>
       <div
         v-if="codeDialog.data.errorStack"
         v-html="codeDialog.data.errorStack"
-        class="text-prewrap mt-n4 mb-4 p-4 border overflow-y-auto"
-        style="max-height: 400px"
+        class="text-prewrap mt-n4 mb-4 ml-4 font-color-light"
       ></div>
-      <div v-if="codeDialog.data.seeAlso && codeDialog.data.seeAlso.length" class="fw-bold fs-6 mb-3">seeAlso</div>
-      <p v-for="(item, index) in codeDialog.data.seeAlso" :key="index" class="flex align-items-center mb-2">
+      <div
+        v-if="codeDialog.data.seeAlso && codeDialog.data.seeAlso.length"
+        class="fw-bold fs-6 mb-3 ml-4 font-color-dark"
+      >
+        seeAlso
+      </div>
+      <p
+        v-for="(item, index) in codeDialog.data.seeAlso"
+        :key="index"
+        class="flex align-items-center mb-2 ml-4 font-color-normal"
+      >
         <span>{{ index + 1 }}.</span>
         <ElLink type="primary" class="text-decoration-underline" @click="handleLink(item)">{{ item }}</ElLink>
       </p>
