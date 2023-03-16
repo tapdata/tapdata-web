@@ -61,13 +61,13 @@
         </template>
       </ElTableColumn>
     </TablePage>
-    <Drawer ref="drawer" :host="apiServerHost" @save="table.fetch(1)"></Drawer>
+    <Drawer ref="drawer" :worker-status="workerStatus" :host="apiServerHost" @save="table.fetch(1)"></Drawer>
   </section>
 </template>
 <script>
 import i18n from '@/i18n'
 
-import { databaseTypesApi, modulesApi, metadataInstancesApi, apiServerApi } from '@tap/api'
+import { databaseTypesApi, modulesApi, metadataInstancesApi, apiServerApi, workerApi } from '@tap/api'
 import { TablePage } from '@tap/business'
 import { FilterBar } from '@tap/component'
 
@@ -103,7 +103,9 @@ export default {
           label: i18n.t('api_monitor_total_api_list_status_generating'),
           value: 'generating'
         }
-      ]
+      ],
+      intervalId: 0,
+      workerStatus: ''
     }
   },
   computed: {
@@ -120,6 +122,10 @@ export default {
     this.searchParams = Object.assign(this.searchParams, this.$route.query)
     this.getFilterItems()
     this.getApiServerHost()
+    this.getWorkers()
+  },
+  beforeDestroy() {
+    this.intervalId && clearTimeout(this.intervalId)
   },
   methods: {
     getFilterItems() {
@@ -254,6 +260,39 @@ export default {
     },
     showDrawer(item) {
       this.$refs.drawer.open(item)
+    },
+    getWorkers() {
+      let where = {
+        worker_type: 'api-server',
+        ping_time: {
+          gte: '$serverDate',
+          gte_offset: 30000
+        }
+      }
+      let filter = {
+        order: 'ping_time DESC',
+        limit: 1,
+        fields: {
+          worker_status: true
+        },
+        where
+      }
+      workerApi
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(data => {
+          if (data?.items?.length) {
+            const record = data.items[0] || {}
+            const workerStatus = record.workerStatus || record.worker_status || {}
+            if (this.status !== workerStatus.status) {
+              this.workerStatus = workerStatus.status
+            }
+          } else {
+            this.workerStatus = 'stop'
+          }
+        })
+      this.intervalId = setTimeout(this.getWorkers, 5000)
     }
   }
 }
