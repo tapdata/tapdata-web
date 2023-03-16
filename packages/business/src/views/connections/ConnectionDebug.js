@@ -97,7 +97,8 @@ export const ConnectionDebug = observer(
           'customBeforeOpr',
           'customBeforeScript',
           'customAfterOpr',
-          'customAfterScript'
+          'customAfterScript',
+          'cdcScript'
         ]
         return whiteList.reduce((prev, current) => {
           let field = (prev[current] = {
@@ -123,6 +124,7 @@ export const ConnectionDebug = observer(
             '__TAPDATA.connection_type': {
               type: 'string'
             },
+            syncType: { type: 'string' },
             ...filterProperties(props.schema.properties)
           }
         }
