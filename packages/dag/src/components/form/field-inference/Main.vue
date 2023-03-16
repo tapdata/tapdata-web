@@ -72,7 +72,7 @@
       </div>
       <div class="field-inference__content flex-fill flex flex-column">
         <div class="px-2">
-          <span>更新条件字段</span>
+          <span>{{ $t('packages_dag_nodes_table_gengxintiaojianzi') }}</span>
           <ElSelect
             v-model="updateList"
             :disabled="navLoading"
@@ -171,17 +171,17 @@ export default {
       tableClassification: [
         {
           type: '',
-          title: '全部表',
+          title: i18n.t('packages_dag_field_inference_main_quanbubiao'),
           total: 0
         },
         {
           type: 'updateEx',
-          title: '更新条件异常',
+          title: i18n.t('packages_dag_field_inference_main_gengxintiaojianyi'),
           total: 0
         },
         {
           type: 'transformEx',
-          title: '推演异常',
+          title: i18n.t('packages_dag_field_inference_main_tuiyanyichang'),
           total: 0
         }
       ]

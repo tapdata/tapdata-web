@@ -531,5 +531,13 @@ export default {
   packages_dag_src_editor_renwubaocunjianceshi:
     '任務保存檢測時發現了告警，可能會導致任務運行出現異常，建議您查看並解決告警後再啟動任務',
   packages_dag_monitor_leftsider_jibenxinxi: '基本信息',
-  packages_dag_nodes_aggregate_waicunpeizhi: '外存配置'
+  packages_dag_nodes_aggregate_waicunpeizhi: '外存配置',
+  packages_dag_field_inference_main_tuiyanyichang: '推演異常',
+  packages_dag_field_inference_main_gengxintiaojianyi: '更新條件異常',
+  packages_dag_field_inference_main_quanbubiao: '全部表',
+  packages_dag_migration_settingpanel_zhuanweiputongC: '轉為普通CDC模式',
+  packages_dag_migration_settingpanel_renwuzhijiebao: '任務直接報錯停止',
+  packages_dag_migration_settingpanel_danggongxiangwajue: '當共享挖掘不可用時',
+  packages_dag_migration_settingpanel_danggongxiangwajuetooltip:
+    '可能出現的不可用的場景\n1. 數據連接裡面沒有打開開關\n2. 設置的起始時間比外存日誌數據的第一條更早\n3. 挖掘任務報錯停止'
 }
