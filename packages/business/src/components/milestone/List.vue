@@ -60,12 +60,6 @@ export default {
       default: () => {
         return {}
       }
-    },
-    quota: {
-      type: Object,
-      default: () => {
-        return {}
-      }
     }
   },
 
@@ -109,29 +103,6 @@ export default {
       return this.dataflow.attrs?.nodeMilestones?.[activeNodeId] || {}
     },
 
-    totalData() {
-      const {
-        tableTotal = 0,
-        snapshotTableTotal = 0,
-        currentSnapshotTableInsertRowTotal = 0,
-        currentSnapshotTableRowTotal = 0,
-        snapshotRowTotal = 0,
-        snapshotInsertRowTotal = 0,
-        snapshotDoneAt,
-        snapshotStartAt
-      } = this.quota.samples?.totalData?.[0] || {}
-      return {
-        tableTotal,
-        snapshotTableTotal,
-        currentSnapshotTableInsertRowTotal,
-        currentSnapshotTableRowTotal,
-        snapshotRowTotal,
-        snapshotInsertRowTotal,
-        snapshotDoneAt,
-        snapshotStartAt
-      }
-    },
-
     wholeItems() {
       const milestone = this.dataflow.attrs?.milestone || {}
 
@@ -149,12 +120,12 @@ export default {
           label: i18n.t('packages_business_milestone_list_biaojiegouqianyi')
         },
         {
-          key: 'FULL_SYNC',
+          key: 'SNAPSHOT',
           label: i18n.t('packages_business_milestone_list_quanliangshujuqian')
         },
         {
-          key: 'STREAM_READ',
-          label: i18n.t('packages_business_milestone_list_zengliangshujuqian')
+          key: 'CDC',
+          label: i18n.t('packages_business_milestone_list_jinruzengliangshu')
         }
       ]
 
@@ -162,8 +133,8 @@ export default {
       result = result.filter(
         t =>
           dataflowType === 'initial_sync+cdc' ||
-          (dataflowType === 'cdc' && t.key !== 'FULL_SYNC') ||
-          (dataflowType === 'initial_sync' && t.key !== 'STREAM_READ')
+          (dataflowType === 'cdc' && t.key !== 'SNAPSHOT') ||
+          (dataflowType === 'initial_sync' && t.key !== 'CDC')
       )
 
       const finishOpt = {
@@ -198,45 +169,22 @@ export default {
         color: 'color-danger'
       }
       result.forEach(el => {
-        if (el.key === 'FULL_SYNC') {
-          const { snapshotDoneAt, snapshotStartAt } = this.totalData
-          if (snapshotDoneAt) {
+        const item = milestone[el.key]
+        switch (item?.status) {
+          case 'FINISH':
             Object.assign(el, finishOpt)
-          } else {
-            if (snapshotStartAt && ['running'].includes(this.dataflow.status)) {
-              const { progress, time } = this.getDueTimeAndProgress(this.totalData)
-              const p = progress > 99 ? 99 : progress
-              Object.assign(el, runningOpt, {
-                progress: p,
-                desc: i18n.t('packages_business_milestone_list_jinhangzhongpr', {
-                  val1: p,
-                  val2: calcTimeUnit(time)
-                })
-              })
-            } else if (['error', 'stop'].includes(this.dataflow.status)) {
-              Object.assign(el, stopOpt)
-            } else {
-              Object.assign(el, waitingOpt)
-            }
-          }
-        } else {
-          const item = milestone[el.key]
-          switch (item?.status) {
-            case 'FINISH':
-              Object.assign(el, finishOpt)
-              break
-            case 'ERROR':
-              Object.assign(el, errorOpt)
-              break
-            case 'RUNNING':
-              Object.assign(el, runningOpt, {
-                progress: (item.progress / item.totals) * 100
-              })
-              break
-            default:
-              Object.assign(el, waitingOpt)
-              break
-          }
+            break
+          case 'ERROR':
+            Object.assign(el, errorOpt)
+            break
+          case 'RUNNING':
+            Object.assign(el, runningOpt, {
+              progress: (item.progress / item.totals) * 100
+            })
+            break
+          default:
+            Object.assign(el, waitingOpt)
+            break
         }
       })
       const len = result.length
@@ -261,22 +209,22 @@ export default {
     nodeData() {
       const { nodeMilestones } = this
       const dataflowType = this.dataflow.type
-      const NODE_MAP = {
+      let NODE_MAP = {
         source: [
           {
             key: 'NODE',
             label: i18n.t('packages_business_milestone_list_lianjiebingyanzheng')
           },
           {
-            key: 'BATCH_READ',
+            key: 'SNAPSHOT_READ',
             label: i18n.t('packages_business_milestone_list_duququanliangshu')
           },
           {
-            key: 'OPEN_STREAM_READ',
+            key: 'OPEN_CDC_READ',
             label: i18n.t('packages_business_milestone_list_kaiqizengliang')
           },
           {
-            key: 'STREAM_READ',
+            key: 'CDC_READ',
             label: i18n.t('packages_business_milestone_list_duquzengliangshu')
           }
         ],
@@ -288,10 +236,6 @@ export default {
           {
             key: 'TABLE_INIT',
             label: i18n.t('packages_business_milestone_list_chuangjianmubiaobiao')
-          },
-          {
-            key: 'WRITE_RECORD',
-            label: i18n.t('packages_business_milestone_list_mubiaoshujuxie')
           }
         ],
         processor: [
@@ -300,6 +244,27 @@ export default {
             label: i18n.t('packages_business_milestone_list_shujuchuli')
           }
         ]
+      }
+
+      if (dataflowType === 'cdc') {
+        NODE_MAP.target.push({
+          key: 'CDC_WRITE',
+          label: i18n.t('packages_business_milestone_list_zengliangshujuxie')
+        })
+      } else if (dataflowType === 'initial_sync') {
+        NODE_MAP.target.push({
+          key: 'SNAPSHOT_WRITE',
+          label: i18n.t('packages_business_milestone_list_quanliangshujuxie')
+        })
+      } else {
+        NODE_MAP.target.push({
+          key: 'SNAPSHOT_WRITE',
+          label: i18n.t('packages_business_milestone_list_quanliangshujuxie')
+        })
+        NODE_MAP.target.push({
+          key: 'CDC_WRITE',
+          label: i18n.t('packages_business_milestone_list_zengliangshujuxie')
+        })
       }
       const STATUS_MAP = {
         FINISH: {
@@ -328,37 +293,15 @@ export default {
         .filter(
           t =>
             dataflowType === 'initial_sync+cdc' ||
-            (dataflowType === 'cdc' && !['BATCH_READ'].includes(t.key)) ||
-            (dataflowType === 'initial_sync' && !['OPEN_STREAM_READ', 'STREAM_READ'].includes(t.key))
+            (dataflowType === 'cdc' && !['SNAPSHOT_READ'].includes(t.key)) ||
+            (dataflowType === 'initial_sync' && !['OPEN_CDC_READ', 'CDC_READ'].includes(t.key))
         )
         .map(el => {
           const data = nodeMilestones[el.key]
           let t = Object.assign({}, el, data)
           let { status = 'WAITING' } = t
-          let label = ''
-          if (el.key === 'BATCH_READ') {
-            const { snapshotDoneAt, snapshotStartAt } = this.totalData
-            if (snapshotDoneAt) {
-              status = 'FINISH'
-            } else {
-              if (snapshotStartAt && ['running'].includes(this.dataflow.status)) {
-                status = 'RUNNING'
-                const { progress, time } = this.getDueTimeAndProgress(this.totalData)
-                label =
-                  STATUS_MAP[status]?.label +
-                  i18n.t('packages_business_milestone_list_progr', {
-                    val1: progress,
-                    val2: calcTimeUnit(time)
-                  })
-              } else if (['error', 'schedule_failed', 'stop'].includes(this.dataflow.status)) {
-                status = 'STOP'
-              } else {
-                status = 'WAITING'
-              }
-            }
-          }
           t.statusColor = STATUS_MAP[status]?.color
-          t.statusLabel = label || STATUS_MAP[status]?.label || '-'
+          t.statusLabel = STATUS_MAP[status]?.label || '-'
           t.diff =
             t.begin && t.end
               ? calcTimeUnit(t.end - t.begin, 2, {

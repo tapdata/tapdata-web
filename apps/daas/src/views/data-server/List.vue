@@ -121,6 +121,9 @@ export default {
     this.getFilterItems()
     this.getApiServerHost()
   },
+  beforeDestroy() {
+    this.intervalId && clearTimeout(this.intervalId)
+  },
   methods: {
     getFilterItems() {
       this.filterItems = [

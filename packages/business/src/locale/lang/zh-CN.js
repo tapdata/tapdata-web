@@ -723,5 +723,9 @@ export default {
   packages_business_shared_mining_table_jiaruwajueshi: '加入挖掘时间',
   packages_business_shared_mining_table_biaoming: '表名',
   packages_business_shared_mining_table_wajuebiaoxinxi: '挖掘表信息',
-  packages_business_relation_sharedlist_shiyongdewajue: '使用的挖掘表'
+  packages_business_relation_sharedlist_shiyongdewajue: '使用的挖掘表',
+  packages_business_components_classificationtree_suoyoumulu: '所有目录',
+  packages_business_milestone_list_zengliangshujuxie: '增量数据写入',
+  packages_business_milestone_list_quanliangshujuxie: '全量数据写入',
+  packages_business_milestone_list_jinruzengliangshu: '进入增量数据迁移'
 }

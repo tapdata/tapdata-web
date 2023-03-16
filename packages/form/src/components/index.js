@@ -17,5 +17,6 @@ export * from './Button'
 export * from './InputNumber'
 export * from './input'
 export * from './batch-add-field'
+export * from './json-editor'
 
 export * from '@formily/element'

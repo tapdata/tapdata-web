@@ -308,6 +308,8 @@ export class Table extends NodeType {
                     type: 'boolean',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
+                      className: 'item-control-horizontal',
+                      layout: 'horizontal',
                       tooltip: i18n.t('packages_dag_nodes_database_kaiqihourenwu')
                     },
                     'x-component': 'Switch',
@@ -336,6 +338,78 @@ export class Table extends NodeType {
                   disabledEvents: {
                     type: 'array',
                     'x-component': 'DdlEventCheckbox'
+                  },
+                  isCustomCommand: {
+                    title: '自定义查询',
+                    type: 'boolean',
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      layout: 'horizontal',
+                      tooltip: ''
+                    },
+                    'x-component': 'Switch',
+                    'x-reactions': [
+                      {
+                        fulfill: {
+                          state: {
+                            visible: `{{$settings.type === "initial_sync" && $values.attrs.capabilities.some(item => item.id === "run_raw_command_function")}}`
+                          }
+                        }
+                      },
+                      {
+                        target: 'customCommandMql',
+                        fulfill: {
+                          state: {
+                            visible: '{{$values.databaseType==="MongoDB"}}'
+                          }
+                        }
+                      },
+                      {
+                        target: 'customCommandSql',
+                        fulfill: {
+                          state: {
+                            visible: '{{$values.databaseType!=="MongoDB"}}'
+                          }
+                        }
+                      },
+                      {
+                        target: 'customCommand',
+                        fulfill: {
+                          state: {
+                            display: '{{!$self.value ? "hidden":"visible"}}',
+                            initialValue: `{{$values.databaseType==="MongoDB" ? \`db.getCollection("\${$values.tableName||''}").find({})\`:\`select * from \${$values.tableName||''}\`}}`
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  customCommandSql: {
+                    type: 'void',
+                    properties: {
+                      customCommand: {
+                        type: 'string',
+                        required: true,
+                        'x-decorator': 'FormItem',
+                        'x-component': 'SqlEditor',
+                        'x-component-props': {
+                          options: { showPrintMargin: false, useWrapMode: true }
+                        }
+                      }
+                    }
+                  },
+                  customCommandMql: {
+                    type: 'void',
+                    properties: {
+                      customCommand: {
+                        type: 'string',
+                        required: true,
+                        'x-decorator': 'FormItem',
+                        'x-component': 'JsEditor',
+                        'x-component-props': {
+                          options: { showPrintMargin: false, wrap: false }
+                        }
+                      }
+                    }
                   },
                   cdcMode: {
                     title: i18n.t('packages_dag_nodes_table_zengliangtongbufang'),
@@ -439,6 +513,9 @@ export class Table extends NodeType {
                     title: i18n.t('packages_dag_nodes_table_guolushezhi'),
                     default: false,
                     'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      layout: 'horizontal'
+                    },
                     'x-component': 'Switch',
                     'x-reactions': {
                       target: '*(conditions)',
