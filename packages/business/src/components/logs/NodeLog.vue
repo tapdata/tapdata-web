@@ -172,26 +172,28 @@
     <ElDialog
       :title="$t('packages_dag_components_log_rizhidengjishe')"
       width="880px"
-      :visible.sync="codeDialog"
+      :visible.sync="codeDialog.visible"
       :close-on-click-modal="false"
       :append-to-body="true"
     >
       <div slot="title">
-        <span>Error:10001</span>
+        <span>Error:{{ codeDialog.data.errorCode }}</span>
       </div>
       <div
-        v-html="selected.errorStack"
+        v-if="codeDialog.data.describe"
+        v-html="codeDialog.data.describe"
+        class="text-prewrap mt-n4 mb-4 p-4 border overflow-y-auto"
+      ></div>
+      <div
+        v-if="codeDialog.data.errorStack"
+        v-html="codeDialog.data.errorStack"
         class="text-prewrap mt-n4 mb-4 p-4 border overflow-y-auto"
         style="max-height: 400px"
       ></div>
-      <div class="fw-bold fs-6 mb-3">Links</div>
-      <p class="mb-2">
-        <span>1.</span>
-        <ElLink type="primary" class="text-decoration-underline" @click="handleLink">Link</ElLink>
-      </p>
-      <p>
-        <span>2.</span>
-        <ElLink type="primary" class="text-decoration-underline" @click="handleLink">Link</ElLink>
+      <div class="fw-bold fs-6 mb-3">seeAlso</div>
+      <p v-for="(item, index) in codeDialog.data.seeAlso" :key="index" class="flex align-items-center mb-2">
+        <span>{{ index + 1 }}.</span>
+        <ElLink type="primary" class="text-decoration-underline" @click="handleLink(item)">{{ item }}</ElLink>
       </p>
     </ElDialog>
   </div>
@@ -205,11 +207,11 @@ import { mapGetters } from 'vuex'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { debounce } from 'lodash'
 
-import { uniqueArr, downloadBlob, deepCopy } from '@tap/shared'
+import { uniqueArr, downloadBlob, deepCopy, openUrl } from '@tap/shared'
 import Time from '@tap/shared/src/time'
 import { VIcon, TimeSelect, VCollapse } from '@tap/component'
 import VEmpty from '@tap/component/src/base/v-empty/VEmpty.vue'
-import { monitoringLogsApi, taskApi } from '@tap/api'
+import { monitoringLogsApi, taskApi, proxyApi } from '@tap/api'
 import NodeIcon from '@tap/dag/src/components/NodeIcon'
 
 export default {
@@ -330,8 +332,10 @@ export default {
       newFilter: {},
       showNoMore: false,
       extraEnterCount: 0,
-      codeDialog: false,
-      selected: {},
+      codeDialog: {
+        visible: false,
+        data: {}
+      },
       showCols: []
     }
   },
@@ -819,30 +823,31 @@ export default {
       return Time.now()
     },
 
-    handleCode(item) {
-      console.log('handleCode', item)
-      this.selected = item
-      this.codeDialog = true
+    handleCode(item = {}) {
+      const params = {
+        className: 'ErrorCodeService',
+        method: 'getErrorCode',
+        args: [item.errorCode, 'en']
+      }
+      proxyApi.call(params).then(data => {
+        this.codeDialog.data.errorStack = item.errorStack
+        this.codeDialog.data.errorCode = item.errorCode
+        this.codeDialog.data.describe = data.describe
+        this.codeDialog.data.seeAlso = data.seeAlso || []
+        this.codeDialog.visible = true
+      })
     },
 
-    handleLink() {
-      console.log('handleLink')
+    handleLink(val) {
+      openUrl(val)
     },
 
     command(command) {
-      console.log('command', command)
       const index = this.showCols.findIndex(t => t === command)
       index > -1 ? this.showCols.splice(index, 1) : this.showCols.push(command)
-      // switch (command) {
-      //   case 'timestamp':
-      //     break
-      //   default:
-      //     break
-      // }
     },
 
     handleCheckbox(flag, val) {
-      console.log('handleCheckbox', flag, val)
       if (flag && val === 'DEBUG') {
         this.handleSetting()
       }
