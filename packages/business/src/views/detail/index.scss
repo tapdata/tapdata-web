@@ -134,9 +134,6 @@
   .border-right {
     border-right: 1px solid map-get($borderColor, light);
   }
-  .el-table th.el-table__cell > .cell {
-    font-weight: 700;
-  }
 
   .discovery-page-table {
     .el-table__body-wrapper {
