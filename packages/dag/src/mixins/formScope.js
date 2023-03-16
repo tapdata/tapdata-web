@@ -552,6 +552,12 @@ export default {
           const id = field.value
           const form = field.form
           const connection = await connectionsApi.get(id)
+
+          if (!connection) {
+            console.error('ConnectionNotFound', id) // eslint-disable-line
+            return
+          }
+
           const connectionType = form.getValuesIn('attrs.connectionType') || ''
           const accessNodeProcessId = form.getValuesIn('attrs.accessNodeProcessId') || ''
           const connectionName = form.getValuesIn('attrs.connectionName')

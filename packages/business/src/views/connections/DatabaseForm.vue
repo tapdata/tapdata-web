@@ -69,6 +69,7 @@
           <div class="footer-btn">
             <el-button @click="goBack()">{{ $t('public_button_back') }}</el-button>
             <el-button class="test" @click="startTest()">{{ $t('public_connection_button_test') }}</el-button>
+            <el-button v-if="pdkOptions.pdkId === 'custom'" class="test" @click="handleDebug">脚本调试</el-button>
             <el-button type="primary" :loading="submitBtnLoading" @click="submit">
               {{ $t('public_button_save') }}
             </el-button>
@@ -103,6 +104,7 @@
         }}</el-button>
       </span>
     </el-dialog>
+    <ConnectionDebug :visible.sync="showDebug" :schema="schemaData" :pdkOptions="pdkOptions" :get-form="getForm" />
   </div>
 </template>
 
@@ -117,10 +119,11 @@ import { checkConnectionName, isEmpty } from '@tap/shared'
 import Test from './Test'
 import { getConnectionIcon } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
+import { ConnectionDebug } from './ConnectionDebug'
 
 export default {
   name: 'DatabaseForm',
-  components: { Test, DatabaseTypeDialog, VIcon, SchemaToForm, GitBook },
+  components: { Test, DatabaseTypeDialog, VIcon, SchemaToForm, GitBook, ConnectionDebug },
   inject: ['checkAgent', 'buried'],
   data() {
     let validateRename = (rule, value, callback) => {
@@ -161,7 +164,8 @@ export default {
       schemaScope: null,
       pdkFormModel: {},
       doc: '',
-      pathUrl: ''
+      pathUrl: '',
+      showDebug: false
     }
   },
   computed: {
@@ -947,6 +951,14 @@ export default {
       pdkApi.doc(pdkHash).then(res => {
         this.doc = res?.data
       })
+    },
+
+    getForm() {
+      return this.schemaFormInstance
+    },
+
+    handleDebug() {
+      this.showDebug = true
     }
   }
 }

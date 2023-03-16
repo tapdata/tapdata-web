@@ -6,8 +6,8 @@
       :has-pagination="false"
       ref="table"
       height="100%"
-      stripe
       :key="!!canRevokeRules.length + ''"
+      :row-class-name="tableRowClassName"
     >
       <template slot="field_name" slot-scope="scope">
         <span class="flex align-center"
@@ -209,11 +209,12 @@ export default {
     },
 
     tableList() {
-      const { fields } = this.data
+      const { fields, resultItems = [] } = this.data
       let list = (fields || []).map(t => {
         t.source = this.findInRulesById(t.changeRuleId) || {}
         t.accept = t.source?.accept || t.accept
         t.data_type = t.source?.result?.dataType || t.data_type
+        t.transformEx = resultItems.some(f => f.item === t.field_name)
         return t
       })
       return this.showDelete ? list : list.filter(t => !t.is_deleted)
@@ -379,6 +380,10 @@ export default {
         Field: 'color-primary'
       }
       return map[this.getFieldScope(row)] || 'color-disable'
+    },
+
+    tableRowClassName({ row }) {
+      return row.transformEx ? 'warning-row' : ''
     }
   }
 }
@@ -387,5 +392,15 @@ export default {
 <style lang="scss" scoped>
 .field-inference__list {
   height: 100%;
+  ::v-deep {
+    .warning-row {
+      background: rgb(254, 229, 216);
+      &:hover {
+        > td.el-table__cell {
+          background: rgb(254, 229, 216);
+        }
+      }
+    }
+  }
 }
 </style>

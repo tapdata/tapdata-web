@@ -1880,7 +1880,7 @@ packages:
     dev: false
 
   /@formily/reactive-vue/2.2.13:
-    resolution: {integrity: sha512-YbrrVqhHYBLG5DSf5Un6TKFMogZOjrLBHgkudwMD7Py9bfPW3TzOVG4dSOuL5h2HDaCwUFoUtcoyuooFiCuW5Q==, registry: https://registry.npm.taobao.org/}
+    resolution: {integrity: sha512-YbrrVqhHYBLG5DSf5Un6TKFMogZOjrLBHgkudwMD7Py9bfPW3TzOVG4dSOuL5h2HDaCwUFoUtcoyuooFiCuW5Q==}
     engines: {npm: '>=3.0.0'}
     peerDependencies:
       '@vue/composition-api': ^1.0.0-beta.1
@@ -1910,7 +1910,7 @@ packages:
     dev: false
 
   /@formily/reactive/2.2.13:
-    resolution: {integrity: sha512-0YUkelY6q+KvaiXbhBMKM0j7sdss/R9WYf/EB9Ehd4E8f+iYZCh87APC11PA8tKFpUJ1mABekfDKCWLL+ildBQ==, registry: https://registry.npm.taobao.org/}
+    resolution: {integrity: sha512-0YUkelY6q+KvaiXbhBMKM0j7sdss/R9WYf/EB9Ehd4E8f+iYZCh87APC11PA8tKFpUJ1mABekfDKCWLL+ildBQ==}
     engines: {npm: '>=3.0.0'}
     dev: false
 
@@ -4222,7 +4222,7 @@ packages:
     dev: true
 
   /big.js/5.2.2:
-    resolution: {integrity: sha512-vyL2OymJxmarO8gxMr0mhChsO9QGwhynfuu4+MHTAW6czfq9humCB7rKpUjDd9YUiDPU4mzpyupFSvOClAwbmQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npm.taobao.org/big.js/-/big.js-5.2.2.tgz}
+    resolution: {integrity: sha512-vyL2OymJxmarO8gxMr0mhChsO9QGwhynfuu4+MHTAW6czfq9humCB7rKpUjDd9YUiDPU4mzpyupFSvOClAwbmQ==}
     dev: true
 
   /binary-extensions/1.13.1:
@@ -6372,7 +6372,7 @@ packages:
     dev: true
 
   /emojis-list/3.0.0:
-    resolution: {integrity: sha512-/kyM18EfinwXZbno9FyUGeFh87KC8HRQBQGildHZbEuRyWFOmv1U10o9BBp8XVZDVNNuQKyIGIu5ZYAAXJ0V2Q==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npm.taobao.org/emojis-list/-/emojis-list-3.0.0.tgz}
+    resolution: {integrity: sha512-/kyM18EfinwXZbno9FyUGeFh87KC8HRQBQGildHZbEuRyWFOmv1U10o9BBp8XVZDVNNuQKyIGIu5ZYAAXJ0V2Q==}
     engines: {node: '>= 4'}
     dev: true
 
@@ -8910,14 +8910,14 @@ packages:
     dev: true
 
   /json5/1.0.1:
-    resolution: {integrity: sha512-aKS4WQjPenRxiQsC93MNfjx+nbF4PAdYzmd/1JIj8HYzqfbu86beTuNgXDzPknWk0n0uARlyewZo4s++ES36Ow==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npm.taobao.org/json5/-/json5-1.0.1.tgz}
+    resolution: {integrity: sha512-aKS4WQjPenRxiQsC93MNfjx+nbF4PAdYzmd/1JIj8HYzqfbu86beTuNgXDzPknWk0n0uARlyewZo4s++ES36Ow==}
     hasBin: true
     dependencies:
       minimist: 1.2.6
     dev: true
 
   /json5/2.2.1:
-    resolution: {integrity: sha512-1hqLFMSrGHRHxav9q9gNjJ5EXznIxGVO09xQRrwplcS8qs28pZ8s8hupZAmqDwZUmVZ2Qb2jnyPOWcDH8m8dlA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npm.taobao.org/json5/-/json5-2.2.1.tgz}
+    resolution: {integrity: sha512-1hqLFMSrGHRHxav9q9gNjJ5EXznIxGVO09xQRrwplcS8qs28pZ8s8hupZAmqDwZUmVZ2Qb2jnyPOWcDH8m8dlA==}
     engines: {node: '>=6'}
     hasBin: true
     dev: true
@@ -9213,7 +9213,7 @@ packages:
     dev: true
 
   /loader-utils/1.4.0:
-    resolution: {integrity: sha512-qH0WSMBtn/oHuwjy/NucEgbx5dbxxnxup9s4PVXJUDHZBQY+s0NWA9rJf53RBnQZxfch7euUui7hpoAPvALZdA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npm.taobao.org/loader-utils/-/loader-utils-1.4.0.tgz}
+    resolution: {integrity: sha512-qH0WSMBtn/oHuwjy/NucEgbx5dbxxnxup9s4PVXJUDHZBQY+s0NWA9rJf53RBnQZxfch7euUui7hpoAPvALZdA==}
     engines: {node: '>=4.0.0'}
     dependencies:
       big.js: 5.2.2
@@ -9222,7 +9222,7 @@ packages:
     dev: true
 
   /loader-utils/2.0.2:
-    resolution: {integrity: sha512-TM57VeHptv569d/GKh6TAYdzKblwDNiumOdkFnejjD0XwTH87K90w3O7AiJRqdQoXygvi1VQTJTLGhJl7WqA7A==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npm.taobao.org/loader-utils/-/loader-utils-2.0.2.tgz}
+    resolution: {integrity: sha512-TM57VeHptv569d/GKh6TAYdzKblwDNiumOdkFnejjD0XwTH87K90w3O7AiJRqdQoXygvi1VQTJTLGhJl7WqA7A==}
     engines: {node: '>=8.9.0'}
     dependencies:
       big.js: 5.2.2
@@ -13319,7 +13319,7 @@ packages:
     dev: false
 
   /vue-demi/0.12.5:
-    resolution: {integrity: sha512-BREuTgTYlUr0zw0EZn3hnhC3I6gPWv+Kwh4MCih6QcAeaTlaIX0DwOVN0wHej7hSvDPecz4jygy/idsgKfW58Q==, registry: https://registry.npm.taobao.org/}
+    resolution: {integrity: sha512-BREuTgTYlUr0zw0EZn3hnhC3I6gPWv+Kwh4MCih6QcAeaTlaIX0DwOVN0wHej7hSvDPecz4jygy/idsgKfW58Q==}
     engines: {node: '>=12'}
     hasBin: true
     requiresBuild: true

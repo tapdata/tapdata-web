@@ -24,13 +24,15 @@ export default {
         total: 0
       }
       try {
-        const params = {
-          nodeId,
-          tableFilter: op.tableFilter,
-          fields: ['original_name', 'fields', 'qualified_name'],
-          page: op.page || 1,
-          pageSize: op.pageSize || 20
-        }
+        const params = Object.assign(
+          {
+            nodeId,
+            fields: ['original_name', 'fields', 'qualified_name'],
+            page: 1,
+            pageSize: 20
+          },
+          op
+        )
         data = await metadataInstancesApi.nodeSchemaPage(params)
       } catch (e) {
         // catch

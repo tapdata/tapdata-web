@@ -382,7 +382,9 @@
               </ElSelect>
               <div>{{ urls[debugMethod] }}</div>
             </div>
-            <ElButton type="primary" size="mini" @click="debugData">{{ $t('public_button_submit') }}</ElButton>
+            <ElButton type="primary" size="mini" :disabled="debugDisabled" @click="debugData">{{
+              $t('public_button_submit')
+            }}</ElButton>
           </div>
         </template>
         <template v-if="tab === 'debug'">
@@ -434,7 +436,8 @@ import getTemplate from './template'
 export default {
   components: { Drawer, VCodeEditor },
   props: {
-    host: String
+    host: String,
+    workerStatus: String
   },
   data() {
     const validateParams = (rule, value, callback) => {
@@ -532,6 +535,10 @@ export default {
       }
       this.form.path = '/api/' + arr.join('/')
       return '/api/' + arr.join('/')
+    },
+
+    debugDisabled() {
+      return this.workerStatus !== 'running'
     }
   },
   mounted() {

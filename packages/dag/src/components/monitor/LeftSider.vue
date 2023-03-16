@@ -134,6 +134,35 @@
           <span v-else>0</span>
         </div>
       </div>
+      <div v-if="['logCollector'].includes(dataflow.syncType)" class="info-box">
+        <div class="flex justify-content-between mb-2">
+          <span class="fw-bold fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_jibenxinxi') }}</span>
+        </div>
+        <div class="flex justify-content-between mb-2">
+          <span class="font-color-light">{{ $t('packages_business_relation_details_rizhiwajueshi') }}:</span>
+          <span class="font-color-dark">{{ formatTime(collectorData.logTime) }}</span>
+        </div>
+        <div class="flex justify-content-between mb-2">
+          <span class="font-color-light">{{ $t('packages_business_share_form_setting_log_time') }}:</span>
+          <span class="font-color-dark">{{ collectorData.storageTime }}</span>
+        </div>
+        <div class="flex justify-content-between mb-2">
+          <span class="font-color-light">{{ $t('daas_external_storage_list_waicunmingcheng') }}:</span>
+          <span class="font-color-dark">{{ collectorData.externalStorage.name || '-' }}</span>
+        </div>
+        <div class="flex justify-content-between mb-2">
+          <span class="font-color-light">{{ $t('daas_external_storage_list_waicunleixing') }}:</span>
+          <span class="font-color-dark">{{ typeMapping[collectorData.externalStorage.type] || '-' }}</span>
+        </div>
+        <div class="flex justify-content-between mb-2">
+          <span class="font-color-light">{{ $t('daas_external_storage_list_waicunbiaoming') }}:</span>
+          <span class="font-color-dark">{{ collectorData.externalStorage.table || '-' }}</span>
+        </div>
+        <div class="mb-2">
+          <span class="font-color-light">{{ $t('daas_external_storage_list_waicunxinxi') }}:</span>
+          <div class="text-break mt-1 font-color-dark">{{ collectorData.externalStorage.uri || '-' }}</div>
+        </div>
+      </div>
       <div class="info-box">
         <div class="flex justify-content-between mb-2">
           <span class="fs-7 fw-sub font-color-normal">{{
@@ -328,6 +357,7 @@ import InitialList from './components/InitialList'
 import dayjs from 'dayjs'
 import { calcTimeUnit, calcUnit } from '@tap/shared'
 import Time from '@tap/shared/src/time'
+import { logcollectorApi } from '@tap/api'
 
 export default {
   name: 'LeftSider',
@@ -359,7 +389,15 @@ export default {
     return {
       lineChartDialog: false,
       initialListDialog: false,
-      timeSelectLabel: ''
+      timeSelectLabel: '',
+      collectorData: {
+        externalStorage: {}
+      },
+      typeMapping: {
+        mongodb: 'MongoDB',
+        rocksdb: 'RocksDB',
+        memory: 'MEM'
+      }
     }
   },
 
@@ -491,6 +529,12 @@ export default {
     }
   },
 
+  watch: {
+    'dataflow.syncType'(v) {
+      v && this.getCollectorData()
+    }
+  },
+
   mounted() {
     this.timeSelectLabel = this.$refs.timeSelect?.getPeriod()?.label
   },
@@ -551,6 +595,22 @@ export default {
             autoHideMs: true
           })
         : i18n.t('public_data_no_data')
+    },
+
+    getCollectorData() {
+      if (!['logCollector'].includes(this.dataflow.syncType) || this.collectorData.id) return
+      logcollectorApi.getDetail(this.dataflow.id).then(data => {
+        this.collectorData = Object.assign(
+          {
+            externalStorage: {}
+          },
+          data
+        )
+      })
+    },
+
+    formatTime(date, f = 'YYYY-MM-DD HH:mm:ss') {
+      return date ? dayjs(date).format(f) : '-'
     }
   }
 }

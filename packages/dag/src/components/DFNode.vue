@@ -90,7 +90,7 @@ export default {
     },
 
     ins() {
-      return this.data.__Ctor
+      return this.data?.__Ctor || {}
     },
 
     allowTarget() {

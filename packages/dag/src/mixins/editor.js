@@ -458,7 +458,9 @@ export default {
       }
 
       const node = this.nodeById(id)
-
+      // 共享挖掘的节点，不触发选中
+      const flag = ['logCollector', 'hazelcastIMDG'].includes(node.type)
+      if (flag) return
       node && this.nodeSelected(node)
       if (setActive) {
         this.setActiveNode(node.id)
@@ -1865,6 +1867,7 @@ export default {
       if (!id) return
       this.startLoopTaskTimer = setTimeout(async () => {
         const data = await taskApi.get(id)
+        if (this.destory) return
         if (data) {
           // 同步下任务上的属性，重置后会改变
           this.dataflow.attrs = data.attrs

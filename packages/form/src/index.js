@@ -39,3 +39,4 @@ export { composeExport, langs, components }
 export * from './components'
 export * from './shared'
 export * from '@formily/vue'
+export * from '@formily/reactive-vue'

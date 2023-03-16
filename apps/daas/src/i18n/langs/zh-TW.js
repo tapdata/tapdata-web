@@ -1836,5 +1836,9 @@ export default {
   daas_data_server_drawer_base_path: '基礎路徑',
   daas_data_server_drawer_path: '訪問路徑',
   daas_data_server_drawer_confirm_tip: '重新生成會導致原API訪問路徑發生改變，是否確認重新生成？ ',
-  daas_notification_center_yonghucaozuo: '用戶操作'
+  daas_notification_center_yonghucaozuo: '用戶操作',
+  daas_cluster_cluster_lianjieshuliang: '連接數量',
+  daas_cluster_cluster_mubiaoIPhe: '目標IP和端口',
+  daas_cluster_cluster_lianjiezongshu: '連接總數',
+  daas_cluster_cluster_yinqingduiwaijian: '引擎對外建立的連接數'
 }

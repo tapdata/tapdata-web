@@ -1,5 +1,10 @@
 export function getIcon(icon, dir = 'node') {
-  return require(`./${dir}/${icon}.svg`)
+  try {
+    return require(`./${dir}/${icon}.svg`)
+  } catch (e) {
+    console.log('getIcon', e)
+    return null
+  }
 }
 
 export function importIcon() {

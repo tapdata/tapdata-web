@@ -1842,5 +1842,9 @@ export default {
   // 覆盖连接编辑、创建处的国际化文案
   packages_business_connection_form_source_and_target_tip: `此数据连接在 ${process.env.VUE_APP_PAGE_TITLE} 中能同时作为源和目标使用`,
   packages_business_connection_form_source_tip: `此数据连接在 ${process.env.VUE_APP_PAGE_TITLE} 中只能作为源使用，不能作用为目标`,
-  packages_business_connection_form_target_tip: `此数据连接在 ${process.env.VUE_APP_PAGE_TITLE} 中只能作为目标使用，不能作用为源`
+  packages_business_connection_form_target_tip: `此数据连接在 ${process.env.VUE_APP_PAGE_TITLE} 中只能作为目标使用，不能作用为源`,
+  daas_cluster_cluster_lianjieshuliang: '连接数量',
+  daas_cluster_cluster_mubiaoIPhe: '目标IP和端口',
+  daas_cluster_cluster_lianjiezongshu: '连接总数',
+  daas_cluster_cluster_yinqingduiwaijian: '引擎对外建立的连接数'
 }
