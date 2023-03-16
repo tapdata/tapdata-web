@@ -2,10 +2,9 @@ import { defineComponent, reactive, ref, watch, nextTick, onMounted } from '@vue
 import i18n from '@tap/i18n'
 import { FilterBar, Drawer, VIcon } from '@tap/component'
 import { discoveryApi } from '@tap/api'
-import { TablePage, DiscoveryClassification, ClassificationTree, makeDragNodeImage } from '../../index'
-import DrawerContent from './PreviewDrawer'
-import ObjectTable from './ObjectTable'
+import { TablePage, makeDragNodeImage } from '../../index'
 import TableView from '../../components/TableView'
+import ClassificationTree from '../../components/ClassificationTree'
 import { DatabaseIcon } from '../../components'
 import resize from '@tap/component/src/directives/resize'
 import './index.scss'
@@ -63,19 +62,11 @@ export default defineComponent({
       }
     }
 
-    const renderNode = ({ row }) => {
+    const renderName = ({ row }) => {
       return (
         <div class="cursor-pointer flex align-center">
           <div class="tree-item-icon flex align-center mr-2">{renderIcon(row)}</div>
-          <span
-            onClick={event => {
-              event.stopPropagation()
-              objectList.value = row.children
-              // handlePreview(row)
-            }}
-          >
-            {row.name}
-          </span>
+          <span>{row.name}</span>
         </div>
       )
     }
@@ -125,6 +116,10 @@ export default defineComponent({
       }, {})
     }
 
+    const handleRowClick = data => {
+      refs.tree.setCurrent(data)
+    }
+
     return () => {
       return (
         <section ref="root" class="discovery-page-wrap flex">
@@ -143,13 +138,14 @@ export default defineComponent({
                 }
               ]
             }}
-            class="page-left border-right"
+            class="page-left border-right pt-3 pr-3 overflow-auto"
           >
-            <DiscoveryClassification
-              ref="classify"
+            <ClassificationTree
+              ref="tree"
+              renderIcon={renderIcon}
               dragState={dragState}
               onNodeChecked={handleNodeClick}
-            ></DiscoveryClassification>
+            />
           </div>
           <div class="flex flex-column flex-1">
             <div class="p-3">
@@ -162,28 +158,30 @@ export default defineComponent({
             </div>
             <div staticClass="flex-1" class={{ none: data.isShowDetails }}>
               <ElTable
-                class={{ none: data.isShowDetails }}
+                class={['catalog-table', { none: data.isShowDetails }]}
                 ref="table"
                 row-key="id"
                 draggable
                 data={currentNode.value.children}
                 treeProps={{ children: 'no_children' }}
                 on={{
+                  'row-click': handleRowClick,
                   'row-dragstart': handleDragStart,
                   'row-dragend': handleDragEnd,
                   'selection-change': handleSelectionChange
                 }}
               >
-                <el-table-column type="selection" width="55"></el-table-column>
-                <el-table-column
-                  label={i18n.t('public_name')}
-                  prop="name"
-                  show-overflow-tooltip
-                  width="350px"
-                  scopedSlots={{
-                    default: renderNode
+                <el-table-column type="selection" width="24" class-name="ck-cell-wrap"></el-table-column>
+                <el-table-column label={i18n.t('public_name')} prop="name" show-overflow-tooltip width="350px">
+                  {({ row }) => {
+                    return (
+                      <div class="cursor-pointer flex align-center">
+                        <div class="tree-item-icon flex align-center mr-2">{renderIcon(row)}</div>
+                        <span>{row.name}</span>
+                      </div>
+                    )
                   }}
-                ></el-table-column>
+                </el-table-column>
                 <el-table-column label={i18n.t('public_change_time')} prop="changeTime"></el-table-column>
               </ElTable>
             </div>

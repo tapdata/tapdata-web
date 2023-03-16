@@ -189,3 +189,14 @@
     background: #f2994b;
   }
 }
+
+.catalog-table {
+  .ck-cell-wrap .cell {
+    padding: 0 !important;
+    text-align: center;
+  }
+
+  .el-table__row {
+    cursor: pointer;
+  }
+}

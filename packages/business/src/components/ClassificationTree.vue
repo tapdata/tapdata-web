@@ -14,7 +14,8 @@
       :expand-on-click-node="false"
       :allow-drag="checkAllowDrag"
       :allow-drop="checkAllowDrop"
-      @node-click="nodeClickHandler"
+      @node-click="handleNodeClick"
+      @current-change="handleCurrentChange"
       @node-drag-start="handleDragStart"
       @node-drop="handleDrop"
       @node-expand="handleNodeExpand"
@@ -86,7 +87,8 @@ export default {
       type: Object,
       default: () => ({})
     },
-    showViewDetails: Boolean
+    showViewDetails: Boolean,
+    renderIcon: Function
   },
 
   components: { VirtualTree },
@@ -144,13 +146,7 @@ export default {
   },
   methods: {
     renderContent(h, { node, data, store }) {
-      let icon
-
-      if (data.LDP_TYPE === 'connection') {
-        icon = <DatabaseIcon item={data} size={20} />
-      } else {
-        icon = <VIcon size="18">{this.iconMap[data.LDP_TYPE]}</VIcon>
-      }
+      let icon = this.renderIcon(data)
 
       if (!data.parent_id || data.isLeaf === false) {
         node.isLeaf = false
@@ -250,13 +246,22 @@ export default {
       )
     },
 
-    nodeClickHandler(data, node) {
+    handleNodeClick(data, node) {
       let { currentNode = {} } = this
       if (data.id === currentNode.id || data.isObject) return
       this.handleNodeExpand(data, node)
       this.currentNode = data
       this.emitCheckedNodes(data)
       console.log('node', node) // eslint-disable-line
+    },
+
+    setCurrent(data, expand) {
+      let key = data.id
+      const node = this.$refs.tree.getNode(key)
+      this.$refs.tree.setCurrentKey(key)
+      this.handleNodeClick(data, node)
+
+      if (expand) this.expandedKeys = [key]
     },
 
     emitCheckedNodes(node) {
@@ -309,13 +314,7 @@ export default {
           cb && cb(items)
 
           this.$nextTick(() => {
-            const first = this.treeData[0]
-            let key = first.id
-            this.expandedKeys = [key]
-            const node = this.$refs.tree.getNode(key)
-            this.$refs.tree.setCurrentKey(key)
-            this.handleNodeExpand(first, node)
-            this.emitCheckedNodes(first)
+            this.setCurrent(this.treeData[0], true)
           })
         })
         .finally(() => {
@@ -344,6 +343,7 @@ export default {
 
         items.forEach(it => {
           it.LDP_TYPE = 'folder'
+          it.isLeaf = false
           it.children = []
           if (it.parent_id) {
             let children = map[it.parent_id] || []
@@ -693,7 +693,6 @@ export default {
       objects.forEach(item => {
         if (childrenMap[item.id]) return
         item.parent_id = data.id
-        item.isObject = true
         this.$refs.tree.append(item, node)
       })
     },
@@ -709,8 +708,13 @@ export default {
         }
       }
       return discoveryApi.discoveryList(where).then(res => {
-        let { total, items } = res
-        return res.items
+        return res.items.map(item =>
+          Object.assign(item, {
+            isLeaf: true,
+            isObject: true,
+            LDP_TYPE: 'table'
+          })
+        )
       })
     },
 
@@ -736,7 +740,8 @@ export default {
           children: [],
           disabled,
           LDP_TYPE: 'connection',
-          isLeaf: false
+          isLeaf: false,
+          isObject: false
         }
       })
     },
@@ -748,9 +753,14 @@ export default {
           id: t.tableId,
           name: t.tableName,
           isLeaf: true,
+          isObject: true,
           LDP_TYPE: 'table'
         }
       })
+    },
+
+    handleCurrentChange(data, node) {
+      console.log('handleCurrentChange', data, node) // eslint-disable-line
     }
   }
 }
