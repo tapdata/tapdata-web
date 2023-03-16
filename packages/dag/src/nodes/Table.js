@@ -346,10 +346,25 @@ export class Table extends NodeType {
                     'x-component': 'Switch',
                     'x-reactions': [
                       {
-                        dependencies: ['databaseType'],
                         fulfill: {
                           state: {
-                            visible: '{{$deps[0]==="MongoDB"}}'
+                            visible: `{{$settings.type === "initial_sync" && $values.attrs.capabilities.some(item => item.id === "run_raw_command_function")}}`
+                          }
+                        }
+                      },
+                      {
+                        target: 'customCommandMql',
+                        fulfill: {
+                          state: {
+                            visible: '{{$values.databaseType==="MongoDB"}}'
+                          }
+                        }
+                      },
+                      {
+                        target: 'customCommandSql',
+                        fulfill: {
+                          state: {
+                            visible: '{{$values.databaseType!=="MongoDB"}}'
                           }
                         }
                       },
@@ -357,19 +372,39 @@ export class Table extends NodeType {
                         target: 'customCommand',
                         fulfill: {
                           state: {
-                            display: '{{!$self.value ? "hidden":"visible"}}'
+                            display: '{{!$self.value ? "hidden":"visible"}}',
+                            initialValue: `{{$values.databaseType==="MongoDB" ? \`db.getCollection("\${$values.tableName||''}").find({})\`:\`select * from \${$values.tableName||''}\`}}`
                           }
                         }
                       }
                     ]
                   },
-                  customCommand: {
-                    type: 'string',
-                    required: true,
-                    'x-decorator': 'FormItem',
-                    'x-component': 'SqlEditor',
-                    'x-component-props': {
-                      options: { showPrintMargin: false, useWrapMode: true }
+                  customCommandSql: {
+                    type: 'void',
+                    properties: {
+                      customCommand: {
+                        type: 'string',
+                        required: true,
+                        'x-decorator': 'FormItem',
+                        'x-component': 'SqlEditor',
+                        'x-component-props': {
+                          options: { showPrintMargin: false, useWrapMode: true }
+                        }
+                      }
+                    }
+                  },
+                  customCommandMql: {
+                    type: 'void',
+                    properties: {
+                      customCommand: {
+                        type: 'string',
+                        required: true,
+                        'x-decorator': 'FormItem',
+                        'x-component': 'JsEditor',
+                        'x-component-props': {
+                          options: { showPrintMargin: false, wrap: false }
+                        }
+                      }
                     }
                   },
                   cdcMode: {
