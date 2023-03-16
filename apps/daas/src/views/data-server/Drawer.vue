@@ -427,7 +427,15 @@ import i18n from '@/i18n'
 import axios from 'axios'
 import { cloneDeep } from 'lodash'
 
-import { databaseTypesApi, connectionsApi, metadataInstancesApi, modulesApi, applicationApi, roleApi } from '@tap/api'
+import {
+  databaseTypesApi,
+  connectionsApi,
+  metadataInstancesApi,
+  modulesApi,
+  applicationApi,
+  roleApi,
+  workerApi
+} from '@tap/api'
 import { Drawer, VCodeEditor } from '@tap/component'
 import { uid } from '@tap/shared'
 
@@ -436,8 +444,7 @@ import getTemplate from './template'
 export default {
   components: { Drawer, VCodeEditor },
   props: {
-    host: String,
-    workerStatus: String
+    host: String
   },
   data() {
     const validateParams = (rule, value, callback) => {
@@ -514,7 +521,8 @@ export default {
       templateType: 'java',
 
       token: '',
-      roles: []
+      roles: [],
+      workerStatus: ''
     }
   },
   computed: {
@@ -554,7 +562,9 @@ export default {
       this.debugMethod = 'GET'
       this.debugResult = ''
       this.allFields = []
+      this.workerStatus = ''
 
+      this.getWorkers()
       this.$refs?.form?.clearValidate()
       this.formatData(formData || {})
       if (!this.data.id) {
@@ -990,6 +1000,39 @@ export default {
           this.debugResult = JSON.stringify(result?.data, null, 2)
         }
       }
+    },
+
+    getWorkers() {
+      let where = {
+        worker_type: 'api-server',
+        ping_time: {
+          gte: '$serverDate',
+          gte_offset: 30000
+        }
+      }
+      let filter = {
+        order: 'ping_time DESC',
+        limit: 1,
+        fields: {
+          worker_status: true
+        },
+        where
+      }
+      workerApi
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(data => {
+          if (data?.items?.length) {
+            const record = data.items[0] || {}
+            const workerStatus = record.workerStatus || record.worker_status || {}
+            if (this.status !== workerStatus.status) {
+              this.workerStatus = workerStatus.status
+            }
+          } else {
+            this.workerStatus = 'stop'
+          }
+        })
     }
   }
 }
