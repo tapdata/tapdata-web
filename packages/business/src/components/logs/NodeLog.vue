@@ -42,6 +42,17 @@
         <ElButton :loading="downloadLoading" type="text" size="mini" class="ml-4" @click="handleDownload">{{
           $t('public_button_download')
         }}</ElButton>
+        <ElDropdown class="ml-3" placement="bottom" @command="command" command="help">
+          <span class="icon-btn py-1 px-3 cursor-pointer">
+            <VIcon size="18">setting-outline</VIcon>
+          </span>
+          <ElDropdownMenu slot="dropdown" class="no-triangle">
+            <ElDropdownItem command="timestamp">
+              <VIcon class="color-primary mr-2" :class="{ 'opacity-0': !showCols.includes('timestamp') }">check</VIcon>
+              <span class="pr-4">timestamp</span>
+            </ElDropdownItem>
+          </ElDropdownMenu>
+        </ElDropdown>
       </div>
       <div class="level-line mb-2">
         <ElCheckboxGroup
@@ -52,11 +63,14 @@
           class="inline-flex"
           @change="searchFnc"
         >
-          <ElCheckbox v-for="item in checkItems" :label="item.label" :key="item.label">{{ item.text }}</ElCheckbox>
+          <ElCheckbox
+            v-for="item in checkItems"
+            :label="item.label"
+            :key="item.label"
+            @change="handleCheckbox(arguments[0], item.label)"
+            >{{ item.text }}</ElCheckbox
+          >
         </ElCheckboxGroup>
-        <ElButton type="text" size="mini" class="ml-4" @click="handleSetting">{{
-          $t('packages_dag_components_log_rizhidengjishe')
-        }}</ElButton>
       </div>
       <div v-loading="loading" class="log-list flex-1 rounded-2" style="height: 0">
         <DynamicScroller
@@ -97,8 +111,21 @@
               <VCollapse active="0">
                 <template #header>
                   <div class="log-line flex align-items-center pr-6 flex font-color-light">
-                    <VIcon :class="`${item.level.toLowerCase()}-level`" size="16">{{ iconMap[item.level] }}</VIcon>
-                    <div v-html="item.titleDomStr" class="text-truncate flex-1"></div>
+                    <span v-if="showCols.includes('timestamp')" class="mr-1 font-color-slight"
+                      >[{{ item.timestampLabel }}]</span
+                    >
+                    <span
+                      v-if="item.errorStack"
+                      class="color-primary cursor-pointer mr-2 text-decoration-underline"
+                      @click.stop.prevent="handleCode(item)"
+                      >errorCode</span
+                    >
+                    <div
+                      class="text-truncate flex-1"
+                      :class="colorMap[item.level.toUpperCase()]"
+                      v-html="item.message"
+                    ></div>
+                    <!--                    <div v-html="item.titleDomStr" class="text-truncate flex-1"></div>-->
                   </div>
                 </template>
                 <template #content>
@@ -140,6 +167,32 @@
           $t('public_button_confirm')
         }}</ElButton>
       </span>
+    </ElDialog>
+
+    <ElDialog
+      :title="$t('packages_dag_components_log_rizhidengjishe')"
+      width="880px"
+      :visible.sync="codeDialog"
+      :close-on-click-modal="false"
+      :append-to-body="true"
+    >
+      <div slot="title">
+        <span>Error:10001</span>
+      </div>
+      <div
+        v-html="selected.errorStack"
+        class="text-prewrap mt-n4 mb-4 p-4 border overflow-y-auto"
+        style="max-height: 400px"
+      ></div>
+      <div class="fw-bold fs-6 mb-3">Links</div>
+      <p class="mb-2">
+        <span>1.</span>
+        <ElLink type="primary" class="text-decoration-underline" @click="handleLink">Link</ElLink>
+      </p>
+      <p>
+        <span>2.</span>
+        <ElLink type="primary" class="text-decoration-underline" @click="handleLink">Link</ElLink>
+      </p>
     </ElDialog>
   </div>
 </template>
@@ -192,7 +245,7 @@ export default {
     return {
       activeNodeId: 'all',
       keyword: '',
-      checkList: ['DEBUG', 'INFO', 'WARN', 'ERROR'],
+      checkList: [],
       checkItems: [
         {
           label: 'DEBUG',
@@ -224,6 +277,13 @@ export default {
         ERROR: 'error',
         FATAL: 'error',
         DEBUG: 'debug'
+      },
+      colorMap: {
+        INFO: 'color-info',
+        WARN: 'color-warning',
+        ERROR: 'color-danger',
+        FATAL: 'color-danger',
+        DEBUG: 'color-disable'
       },
       newPageObj: {
         page: 0,
@@ -269,7 +329,10 @@ export default {
       quotaTime: [],
       newFilter: {},
       showNoMore: false,
-      extraEnterCount: 0
+      extraEnterCount: 0,
+      codeDialog: false,
+      selected: {},
+      showCols: []
     }
   },
 
@@ -333,6 +396,10 @@ export default {
     'dataflow.startTime'() {
       this.init()
     }
+  },
+
+  created() {
+    this.checkList = ['error'].includes(this.dataflow.status) ? ['WARN', 'ERROR'] : ['INFO', 'WARN', 'ERROR']
   },
 
   mounted() {
@@ -525,12 +592,13 @@ export default {
         obj.errorStack = row.errorStack?.slice(0, 20000)
 
         const { level, timestamp, nodeName, logTags, data, message, errorStack } = obj
+        row.timestampLabel = obj.timestamp
         row.titleDomStr = this.getTitleStringDom({ timestamp }, message)
         row.jsonDomStr = this.getJsonString([
           { level },
-          { timestamp },
+          // { timestamp },
           { nodeName },
-          { logTags },
+          // { logTags },
           { data },
           { message },
           { errorStack }
@@ -541,6 +609,7 @@ export default {
     getTitleStringDom(row = {}, extra = '') {
       let result = ''
       result += `<span class="ml-1 font-color-slight">[${row.timestamp}]</span>`
+      // result += `<span class="color-primary cursor-pointer" @click="handleCode(item)">code</span>`
       if (row.nodeName) {
         result += `<span class="ml-1">[${this.getHighlightSpan(row.nodeName)}]</span>`
       }
@@ -748,6 +817,35 @@ export default {
 
     getTime() {
       return Time.now()
+    },
+
+    handleCode(item) {
+      console.log('handleCode', item)
+      this.selected = item
+      this.codeDialog = true
+    },
+
+    handleLink() {
+      console.log('handleLink')
+    },
+
+    command(command) {
+      console.log('command', command)
+      const index = this.showCols.findIndex(t => t === command)
+      index > -1 ? this.showCols.splice(index, 1) : this.showCols.push(command)
+      // switch (command) {
+      //   case 'timestamp':
+      //     break
+      //   default:
+      //     break
+      // }
+    },
+
+    handleCheckbox(flag, val) {
+      console.log('handleCheckbox', flag, val)
+      if (flag && val === 'DEBUG') {
+        this.handleSetting()
+      }
     }
   }
 }
@@ -832,6 +930,12 @@ export default {
   &:hover,
   &.active {
     background-color: rgba(229, 236, 255, 0.3);
+  }
+}
+
+.icon-btn {
+  &:hover {
+    background-color: map-get($bgColor, hover);
   }
 }
 </style>
