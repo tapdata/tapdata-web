@@ -127,6 +127,7 @@ const responseInterceptor = response => {
 
     let data = response?.data
     let code = data?.code
+
     if (code === 'ok') {
       // code 为 ok 则表示请求正常返回，进入then逻辑
       return resolve(data?.data)
@@ -150,6 +151,12 @@ const responseInterceptor = response => {
       if (response?.config.url?.match(/.json$/i)) {
         return resolve(response)
       }
+
+      // 特殊处理
+      if (!code) {
+        return resolve(data)
+      }
+
       let msg = data?.message || data?.msg || ''
       // eslint-disable-next-line
       console.log(`${code}： ${msg}`)
