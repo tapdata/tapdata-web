@@ -134,7 +134,7 @@
       </el-table-column>
       <el-table-column prop="status" :label="$t('public_task_status')" :min-width="colWidth.status">
         <template #default="{ row }">
-          <TaskStatus :task="row" :agentMap="agentMap" />
+          <TaskStatus :task="row" :agentMap="agentMap" :error-cause="taskErrorCause[row.id]" />
         </template>
       </el-table-column>
       <el-table-column sortable prop="currentEventTimestamp" :label="$t('public_task_cdc_time_point')" min-width="164">
@@ -371,7 +371,8 @@ export default {
       copyDelSql: "SELECT pg_drop_replication_slot('${slot_name}');",
       showTooltip: false,
       showDelTooltip: false,
-      failList: [] //错误列表
+      failList: [], //错误列表
+      taskErrorCause: {}
     }
   },
 
@@ -492,7 +493,16 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(data => {
-          let list = (data?.items || []).map(makeStatusAndDisabled)
+          let errorTaskIds = []
+          let list = (data?.items || []).map(item => {
+            makeStatusAndDisabled(item)
+            if (item.status === 'error') {
+              errorTaskIds.push(item.id)
+            }
+            return item
+          })
+
+          this.loadTaskErrorCause(errorTaskIds)
 
           // 有选中行，列表刷新后无法更新行数据，比如状态
           if (this.multipleSelection.length && list.length) {
@@ -909,6 +919,37 @@ export default {
     },
     onDelCopy() {
       this.showDelTooltip = true
+    },
+
+    async loadTaskErrorCause(taskIds) {
+      if (!taskIds.length) return
+      await Promise.all(taskIds.map(this.getTaskErrorCause))
+
+      console.log('result', this.taskErrorCause) // eslint-disable-line
+    },
+
+    async getTaskErrorCause(task_id) {
+      let cause
+      try {
+        const data = await this.$axios({
+          method: 'post',
+          // baseUrl: null,
+          url: '/private_ask',
+          data: {
+            task_id
+          }
+        })
+        cause = data?.resp
+      } catch (e) {
+        console.debug(e) // eslint-disable-line
+        // cause =
+        //   '\u6700\u8fd1\u4e00\u6bb5\u65f6\u95f4\u5185, \u60a8\u5171\u6709 1 \u4e2a\u4efb\u52a1\u51fa\u73b0\u9519\u8bef, \u7cfb\u7edf\u5206\u6790\u6210\u529f\u7684\u6570\u91cf\u6709: 1 \u4e2a, \u53ef\u80fd\u539f\u56e0\u5206\u522b\u5982\u4e0b:\\\\n\\\\n1. \u540d\u5b57\u4e3a \u65b0\u4efb\u52a1@19:02:39 \u7684\u4efb\u52a1, \u5728 2023-03-15 10:26:38 \u53d1\u751f\u62a5\u9519, \u7ecf\u5206\u6790, \u63d0\u4f9b\u7ed9\u60a8\u7684\u4fe1\u606f\u4e3a:  \u8fd9\u53ef\u80fd\u662f\u7531\u4e8e\u6570\u636e\u5e93\u4e2d\u51fa\u73b0\u6b7b\u9501\u5bfc\u81f4\u7684\uff0c\u53ef\u80fd\u662f\u7531\u4e8e\u591a\u4e2a\u7ebf\u7a0b\u540c\u65f6\u8bbf\u95ee\u6570\u636e\u5e93\u800c\u5bfc\u81f4\u7684\uff0c\u53ef\u4ee5\u5c1d\u8bd5\u4f18\u5316\u6570\u636e\u5e93\u8bbf\u95ee\uff0c\u51cf\u5c11\u591a\u7ebf\u7a0b\u540c\u65f6\u8bbf\u95ee\u6570\u636e\u5e93\u7684\u60c5\u51b5\uff0c\u4ee5\u907f\u514d\u6b7b\u9501\u7684\u53d1\u751f\u3002\\\\n\\\\n'
+      }
+
+      cause &&
+        cause !==
+          '\u6ca1\u6709\u53d1\u73b0\u60a8\u6700\u8fd1\u6709\u4efb\u52a1\u62a5\u9519, \u5982\u679c\u6709\u5176\u4ed6\u95ee\u9898, \u6b22\u8fce\u54a8\u8be2\u6211\u4eec\u7684\u4eba\u5de5\u5ba2\u670d' &&
+        this.$set(this.taskErrorCause, task_id, cause.replace(/\\\\n/g, '\n').replace(/(\n)+$/g, ''))
     }
   }
 }

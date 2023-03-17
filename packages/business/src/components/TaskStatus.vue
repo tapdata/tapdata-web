@@ -4,7 +4,7 @@
       {{ $t(STATUS_MAP[task.status].i18n) }}
     </span>
     <ElTooltip v-if="showCronTip" placement="top">
-      <VIcon size="18" class="ml-2" color="#008b58">task-process</VIcon>
+      <VIcon size="16" class="ml-2" color="#008b58">task-process</VIcon>
       <template #content>
         {{ getNextStartTime() }}
       </template>
@@ -17,7 +17,7 @@
         :visible-arrow="false"
         effect="light"
       >
-        <VIcon size="16" class="ml-2 color-warning">warning </VIcon>
+        <VIcon size="16" class="ml-2 color-warning">warning</VIcon>
         <template #content>
           <div class="flex flex-wrap align-center font-color-dark">
             <VIcon size="16" class="mr-2 color-warning"> warning </VIcon>
@@ -33,6 +33,15 @@
         </template>
       </ElTooltip>
     </template>
+
+    <template v-if="errorCause">
+      <VIcon @click="showErrorCause = true" size="16" class="ml-2 color-danger">question-circle</VIcon>
+      <ElDialog append-to-body :title="$t('public_task_reasons_for_error')" :visible.sync="showErrorCause">
+        <div class="p-4 rounded-4 bg-subtle mt-n4 text-preline font-color-dark">
+          {{ errorCause }}
+        </div>
+      </ElDialog>
+    </template>
   </div>
 </template>
 
@@ -46,12 +55,14 @@ export default {
   name: 'TaskStatus',
   props: {
     task: Object,
-    agentMap: Object
+    agentMap: Object,
+    errorCause: String
   },
   data() {
     return {
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
-      STATUS_MAP
+      STATUS_MAP,
+      showErrorCause: false
     }
   },
   computed: {

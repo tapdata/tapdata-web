@@ -166,6 +166,7 @@ export default {
   public_task_max_incremental_delay: '最大增量延迟',
   public_task_heartbeat_time: '任务心跳时间',
   public_task_mission_error: '任务出错',
+  public_task_reasons_for_error: '错误原因',
   // 节点
   public_node_name: '节点名称',
   public_node_type: '节点类型',

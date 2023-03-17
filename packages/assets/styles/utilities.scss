@@ -2548,6 +2548,10 @@
   white-space: pre-wrap !important;
 }
 
+.text-preline {
+  white-space: pre-line !important;
+}
+
 .text-pre {
   white-space: pre !important;
 }
@@ -2668,6 +2672,10 @@
   background-image: var(--bs-gradient) !important;
 }
 
+.bg-subtle {
+  background: #f6f8fa !important;
+}
+
 .user-select-all {
   -webkit-user-select: all !important;
   -moz-user-select: all !important;
@@ -2712,6 +2720,10 @@
 
 .rounded-3 {
   border-radius: 0.3rem !important;
+}
+
+.rounded-4 {
+  border-radius: 0.375rem !important;
 }
 
 .rounded-circle {

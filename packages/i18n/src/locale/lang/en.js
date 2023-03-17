@@ -166,6 +166,7 @@ export default {
   public_task_max_incremental_delay: 'Maximum incremental delay',
   public_task_heartbeat_time: 'Task heartbeat time',
   public_task_mission_error: 'Task error',
+  public_task_reasons_for_error: 'Reasons for error',
   // node
   public_node_name: 'node name',
   public_node_type: 'node type',
