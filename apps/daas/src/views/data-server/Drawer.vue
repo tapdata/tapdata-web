@@ -522,7 +522,8 @@ export default {
 
       token: '',
       roles: [],
-      workerStatus: ''
+      workerStatus: '',
+      intervalId: 0
     }
   },
   computed: {
@@ -549,6 +550,13 @@ export default {
       return this.workerStatus !== 'running'
     }
   },
+  watch: {
+    visible(v) {
+      if (!v) {
+        this.intervalId && clearTimeout(this.intervalId)
+      }
+    }
+  },
   mounted() {
     this.getRoles()
   },
@@ -564,7 +572,7 @@ export default {
       this.allFields = []
       this.workerStatus = ''
 
-      this.getWorkers()
+      setTimeout(this.getWorkers, 2000)
       this.$refs?.form?.clearValidate()
       this.formatData(formData || {})
       if (!this.data.id) {
@@ -1032,6 +1040,9 @@ export default {
           } else {
             this.workerStatus = 'stop'
           }
+        })
+        .finally(() => {
+          this.intervalId = setTimeout(this.getWorkers, 2000)
         })
     }
   }
