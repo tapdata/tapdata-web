@@ -39,7 +39,7 @@
               ref="schemaToForm"
               :schema="schemaData"
               :scope="schemaScope"
-              wrapperWidth="600px"
+              wrapperWidth="600"
               :colon="true"
               label-width="160"
             ></SchemaToForm>
