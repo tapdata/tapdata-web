@@ -56,8 +56,8 @@
 
 <script>
 import { VirtualTree } from '@tap/component'
-import ClassificationTree from '../../components/ClassificationTree'
 import TablePreview from './TablePreview'
+import { TASK_SETTINGS } from '../../shared'
 import { ldpApi } from '@tap/api'
 import { uuid } from '@tap/shared'
 export default {
@@ -199,7 +199,8 @@ export default {
       target.writeStrategy = 'appendWrite' // 追加写入模式
 
       return {
-        // ...DEFAULT_SETTINGS,
+        ...TASK_SETTINGS,
+        syncType: 'sync',
         name: this.getTaskName(from, tableName, newTableName),
         dag: {
           edges: [{ source: source.id, target: target.id }],

@@ -61,6 +61,7 @@ import { connectionsApi, discoveryApi, ldpApi } from '@tap/api'
 import { VirtualTree } from '@tap/component'
 import { merge } from 'lodash'
 import { uuid } from '@tap/shared'
+import { TASK_SETTINGS } from '../../shared'
 
 export default {
   name: 'FDM',
@@ -271,7 +272,7 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
       let tableReNameNode = this.getTableReNameNode()
 
       return {
-        // ...DEFAULT_SETTINGS,
+        ...TASK_SETTINGS,
         syncType: 'migrate',
         name: this.getTaskName(from),
         dag: {

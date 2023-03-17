@@ -105,23 +105,7 @@ import { makeStatusAndDisabled } from '../../shared'
 import { TaskStatus } from '../../components'
 import CreateRestApi from './components/CreateRestApi'
 import DataServerDrawer from '../data-server/Drawer'
-
-const DEFAULT_SETTINGS = {
-  name: '', // 任务名称
-  desc: '', // 任务描述
-  type: 'initial_sync+cdc', // 任务类型：全量+增量
-  isAutoCreateIndex: true, // 自动创建索引
-  isOpenAutoDDL: false, // 自动DDL
-  increOperationMode: false, // 增量数据处理模式：批量,
-  increaseReadSize: 1, // 增量批次读取行数
-  processorThreadNum: 1, // 处理器线程数
-  shareCdcEnable: false, //开启共享挖掘
-  isSchedule: false,
-  cronExpression: ' ',
-  accessNodeType: 'AUTOMATIC_PLATFORM_ALLOCATION',
-  isAutoInspect: false
-}
-
+import { TASK_SETTINGS } from '../../shared'
 const restApiIcon = getIcon('rest api')
 
 const TaskList = defineComponent({
@@ -466,7 +450,7 @@ export default {
       })
 
       return {
-        ...DEFAULT_SETTINGS,
+        ...TASK_SETTINGS,
         syncType: 'migrate',
         name: this.dialogConfig.taskName,
         dag: {
