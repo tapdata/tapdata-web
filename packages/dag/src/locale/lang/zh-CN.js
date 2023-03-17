@@ -544,5 +544,11 @@ export default {
   packages_dag_migration_settingpanel_renwuzhijiebao: '任务直接报错停止',
   packages_dag_migration_settingpanel_danggongxiangwajue: '当共享挖掘不可用时',
   packages_dag_migration_settingpanel_danggongxiangwajuetooltip:
-    '可能出现的不可用的场景\n1. 数据连接里面没有打开开关\n2. 设置的起始时间比外存日志数据的第一条更早\n3. 挖掘任务报错停止'
+    '可能出现的不可用的场景\n1. 数据连接里面没有打开开关\n2. 设置的起始时间比外存日志数据的第一条更早\n3. 挖掘任务报错停止',
+  packages_dag_field_inference_list_gaiziduanyingshe:
+    '该字段映射的目标数据类型为系统推测结果，该结果可能存在偏差，请检查并确认是否符合预期，并根据实际情况调整。',
+  packages_dag_field_inference_list_gaiziduanwufa: '该字段无法映射目标数据类型，将在数据写入时忽略该字段。',
+  packages_dag_field_inference_main_xuanzemorengeng:
+    '选择默认更新条件字段时默认优先按照主键字段关联，无主键的按照唯一索引字段关联，无主键且无唯一索引的按照全字段关联。选择指定字段时将按照指定更新条件字段进行关联',
+  packages_dag_nodes_table_zidingyichaxun: '自定义查询'
 }

@@ -56,3 +56,8 @@ export function getSchema(schema, values, pdkPropertiesMap) {
 
   return newSchema
 }
+
+export function getCanUseDataTypes(data = [], val = '') {
+  const index = data.findIndex(t => t === val)
+  return index > -1 ? data.slice(index) : []
+}
