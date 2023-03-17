@@ -13,7 +13,7 @@
       </div>
     </div>
     <div
-      class="flex flex-column flex-1 min-h-0 p-3 tree-wrap"
+      class="flex flex-column flex-1 position-relative min-h-0 p-3 tree-wrap"
       @dragover.stop="handleDragOver"
       @dragenter.stop="handleDragEnter"
       @dragleave.stop="handleDragLeave"
