@@ -727,5 +727,8 @@ export default {
   packages_business_components_classificationtree_suoyoumulu: '所有目录',
   packages_business_milestone_list_zengliangshujuxie: '增量数据写入',
   packages_business_milestone_list_quanliangshujuxie: '全量数据写入',
-  packages_business_milestone_list_jinruzengliangshu: '进入增量数据迁移'
+  packages_business_milestone_list_jinruzengliangshu: '进入增量数据迁移',
+  packages_business_logs_nodelog_cuowuduizhan: '错误堆栈',
+  packages_business_logs_nodelog_cuowumiaoshu: '错误描述',
+  packages_business_logs_nodelog_yuanyinfenxi: ' 原因分析'
 }

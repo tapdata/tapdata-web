@@ -175,25 +175,36 @@
       :visible.sync="codeDialog.visible"
       :close-on-click-modal="false"
       :append-to-body="true"
+      custom-class="error-code-dialog"
     >
       <div slot="title">
-        <span class="ml-4 fs-6">Error:{{ codeDialog.data.errorCode }}</span>
+        <span class="ml-4 fw-bold fs-5"
+          >Error {{ codeDialog.data.errorCode }}{{ $t('packages_business_logs_nodelog_yuanyinfenxi') }}</span
+        >
+      </div>
+
+      <div v-if="codeDialog.data.describe" class="fw-bold fs-6 mt-n4 mb-2 ml-4 font-color-dark">
+        {{ $t('packages_business_logs_nodelog_cuowumiaoshu') }}
       </div>
       <div
         v-if="codeDialog.data.describe"
         v-html="codeDialog.data.describe"
-        class="text-prewrap mt-n4 mb-8 ml-4 font-color-light"
+        class="text-prewrap mb-8 ml-4 font-color-light"
       ></div>
+
+      <div v-if="codeDialog.data.errorStack" class="fw-bold fs-6 mb-2 ml-4 font-color-dark">
+        {{ $t('packages_business_logs_nodelog_cuowuduizhan') }}
+      </div>
       <div
         v-if="codeDialog.data.errorStack"
         v-html="codeDialog.data.errorStack"
-        class="text-prewrap mb-6 ml-4 font-color-light"
+        class="error-stack-wrap text-prewrap mb-6 ml-4 font-color-light border overflow-y-auto bg-color-normal p-4"
       ></div>
       <div
         v-if="codeDialog.data.seeAlso && codeDialog.data.seeAlso.length"
         class="fw-bold fs-6 mb-3 ml-4 font-color-dark"
       >
-        seeAlso
+        See Also
       </div>
       <p
         v-for="(item, index) in codeDialog.data.seeAlso"
@@ -948,6 +959,18 @@ export default {
 .icon-btn {
   &:hover {
     background-color: map-get($bgColor, hover);
+  }
+}
+
+.error-stack-wrap {
+  height: 200px;
+}
+</style>
+
+<style lang="scss">
+.error-code-dialog {
+  .el-dialog__body {
+    height: 680px;
   }
 }
 </style>

@@ -750,5 +750,8 @@ export default {
   packages_business_relation_sharedlist_shiyongdewajue: 'The mining table used',
   packages_business_milestone_list_zengliangshujuxie: 'Incremental data write',
   packages_business_milestone_list_quanliangshujuxie: 'Full data write',
-  packages_business_milestone_list_jinruzengliangshu: 'Enter incremental data migration'
+  packages_business_milestone_list_jinruzengliangshu: 'Enter incremental data migration',
+  packages_business_logs_nodelog_cuowuduizhan: 'Error Stack',
+  packages_business_logs_nodelog_cuowumiaoshu: 'Error Description',
+  packages_business_logs_nodelog_yuanyinfenxi: 'Cause Analysis'
 }
