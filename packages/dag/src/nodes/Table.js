@@ -428,7 +428,7 @@ export class Table extends NodeType {
                       {
                         fulfill: {
                           state: {
-                            visible: `{{$values.attrs.capabilities.some(item => item.id === 'query_by_advance_filter_function')}}`
+                            visible: `{{$settings.type !== "initial_sync" && $values.attrs.capabilities.some(item => item.id === 'query_by_advance_filter_function')}}`
                           }
                         }
                       },
