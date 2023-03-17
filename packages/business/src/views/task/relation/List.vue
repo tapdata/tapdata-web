@@ -26,7 +26,7 @@
         <template slot="operation" slot-scope="scope">
           <div class="operate-columns">
             <ElButton size="mini" type="text" @click="handleDetail(scope.row)">{{
-              $t('public_button_details')
+              $t('packages_business_task_list_button_monitor')
             }}</ElButton>
           </div>
         </template>
@@ -150,12 +150,9 @@ export default {
 
     handleDetail(row = {}) {
       const routeUrl = this.$router.resolve({
-        name: 'relationTaskDetail',
+        name: 'SharedMiningMonitor',
         params: {
           id: row.id
-        },
-        query: {
-          type: row.type
         }
       })
       openUrl(routeUrl.href)
