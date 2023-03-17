@@ -73,6 +73,13 @@
       <div class="field-inference__content flex-fill flex flex-column">
         <div class="px-2">
           <span>{{ $t('packages_dag_nodes_table_gengxintiaojianzi') }}</span>
+          <ElTooltip
+            transition="tooltip-fade-in"
+            :content="$t('packages_dag_field_inference_main_xuanzemorengeng')"
+            class="ml-2"
+          >
+            <VIcon size="16" class="color-primary">info</VIcon>
+          </ElTooltip>
           <ElSelect
             v-model="updateList"
             :disabled="navLoading"
@@ -80,6 +87,7 @@
             allowCreate
             multiple
             filterable
+            :placeholder="$t('public_select_option_default')"
             @visible-change="handleVisibleChange"
             @remove-tag="handleRemoveTag"
           >
@@ -240,10 +248,11 @@ export default {
     filterFields() {
       let item = this.navList[this.position]
       let fields = item?.fields
+      const findPossibleDataTypes = item?.findPossibleDataTypes || {}
       if (this.searchField) {
         fields = item.fields.filter(t => t.field_name.toLowerCase().includes(this.searchField?.toLowerCase()))
       }
-      this.selected = Object.assign({}, item, { fields })
+      this.selected = Object.assign({}, item, { fields, findPossibleDataTypes })
       this.updateList = this.updateConditionFieldMap[this.selected.name] || []
     },
 

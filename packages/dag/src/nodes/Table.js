@@ -340,7 +340,7 @@ export class Table extends NodeType {
                     'x-component': 'DdlEventCheckbox'
                   },
                   isCustomCommand: {
-                    title: '自定义查询',
+                    title: i18n.t('packages_dag_nodes_table_zidingyichaxun'),
                     type: 'boolean',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {

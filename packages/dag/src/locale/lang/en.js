@@ -574,5 +574,12 @@ export default {
   packages_dag_migration_settingpanel_renwuzhijiebao: 'The task reports an error and stops',
   packages_dag_migration_settingpanel_danggongxiangwajue: 'When shared mining is not available',
   packages_dag_migration_settingpanel_danggongxiangwajuetooltip:
-    'Possible unavailable scenarios\n1. The switch is not turned on in the data connection\n2. The set start time is earlier than the first entry of the external storage log data\n3. The mining task reports an error and stops'
+    'Possible unavailable scenarios\n1. The switch is not turned on in the data connection\n2. The set start time is earlier than the first entry of the external storage log data\n3. The mining task reports an error and stops',
+  packages_dag_field_inference_list_gaiziduanyingshe:
+    'The target data type of this field mapping is the result of system speculation, and the result may be biased. Please check and confirm whether it meets expectations, and adjust it according to the actual situation. ',
+  packages_dag_field_inference_list_gaiziduanwufa:
+    'This field cannot be mapped to the target data type, and this field will be ignored when data is written. ',
+  packages_dag_field_inference_main_xuanzemorengeng:
+    'When selecting the default update condition field, the default priority is to associate with the primary key field, if there is no primary key, associate with the unique index field, and if there is no primary key and no unique index, associate with the full field. When the specified field is selected, it will be associated with the specified update condition field',
+  packages_dag_nodes_table_zidingyichaxun: 'custom query'
 }
