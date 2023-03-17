@@ -544,5 +544,14 @@ export default {
   packages_dag_migration_settingpanel_renwuzhijiebao: '任务直接报错停止',
   packages_dag_migration_settingpanel_danggongxiangwajue: '当共享挖掘不可用时',
   packages_dag_migration_settingpanel_danggongxiangwajuetooltip:
-    '可能出现的不可用的场景\n1. 数据连接里面没有打开开关\n2. 设置的起始时间比外存日志数据的第一条更早\n3. 挖掘任务报错停止'
+    '可能出现的不可用的场景\n1. 数据连接里面没有打开开关\n2. 设置的起始时间比外存日志数据的第一条更早\n3. 挖掘任务报错停止',
+  packages_dag_nodes_database_fenpianyipidu: '分片一批读取上限',
+  packages_dag_nodes_database_fenpianbingfaxian: '分片并发线程数',
+  packages_dag_nodes_database_fenpianshuliang: '分片数量',
+  packages_dag_nodes_database_fenpiandaxiao: '分片大小',
+  packages_dag_nodes_database_jiyucou: '基于count分片',
+  packages_dag_nodes_database_jiyumin: '基于min/max分片',
+  packages_dag_nodes_database_fenpianfangshi: '分片方式',
+  packages_dag_nodes_database_kaiqifenpian: '开启分片',
+  packages_dag_nodes_table_zidingyichaxun: '自定义查询'
 }

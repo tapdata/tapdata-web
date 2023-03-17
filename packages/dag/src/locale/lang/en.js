@@ -574,5 +574,14 @@ export default {
   packages_dag_migration_settingpanel_renwuzhijiebao: 'The task reports an error and stops',
   packages_dag_migration_settingpanel_danggongxiangwajue: 'When shared mining is not available',
   packages_dag_migration_settingpanel_danggongxiangwajuetooltip:
-    'Possible unavailable scenarios\n1. The switch is not turned on in the data connection\n2. The set start time is earlier than the first entry of the external storage log data\n3. The mining task reports an error and stops'
+    'Possible unavailable scenarios\n1. The switch is not turned on in the data connection\n2. The set start time is earlier than the first entry of the external storage log data\n3. The mining task reports an error and stops',
+  packages_dag_nodes_database_fenpianyipidu: 'Sharding batch read limit',
+  packages_dag_nodes_database_fenpianbingfaxian: 'Sharding concurrency thread count',
+  packages_dag_nodes_database_fenpianshuliang: 'Number of shards',
+  packages_dag_nodes_database_fenpiandaxiao: 'Shard Size',
+  packages_dag_nodes_database_jiyucou: 'Sharding based on count',
+  packages_dag_nodes_database_jiyumin: 'Sharding based on min/max',
+  packages_dag_nodes_database_fenpianfangshi: 'Sharding Method',
+  packages_dag_nodes_database_kaiqifenpian: 'Enable Sharding',
+  packages_dag_nodes_table_zidingyichaxun: 'Custom Query'
 }

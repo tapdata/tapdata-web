@@ -266,7 +266,7 @@ export class Database extends NodeType {
             'x-decorator': 'FormItem',
             properties: {
               enable: {
-                title: '开启分片',
+                title: i18n.t('packages_dag_nodes_database_kaiqifenpian'),
                 type: 'boolean',
                 default: false,
                 'x-decorator': 'FormItem',
@@ -281,16 +281,16 @@ export class Database extends NodeType {
                 }
               },
               splitType: {
-                title: '分片方式',
+                title: i18n.t('packages_dag_nodes_database_fenpianfangshi'),
                 type: 'number',
                 default: 10,
                 enum: [
                   {
-                    label: '基于min/max分片',
+                    label: i18n.t('packages_dag_nodes_database_jiyumin'),
                     value: 10
                   },
                   {
-                    label: '基于count分片',
+                    label: i18n.t('packages_dag_nodes_database_jiyucou'),
                     value: 1
                   }
                 ],
@@ -310,7 +310,7 @@ export class Database extends NodeType {
                 }
               },
               maxRecordInPartition: {
-                title: '分片大小',
+                title: i18n.t('packages_dag_nodes_database_fenpiandaxiao'),
                 type: 'number',
                 default: 200000,
                 'x-decorator': 'FormItem',
@@ -328,7 +328,7 @@ export class Database extends NodeType {
                 }
               },
               minMaxSplitPieces: {
-                title: '分片数量',
+                title: i18n.t('packages_dag_nodes_database_fenpianshuliang'),
                 type: 'number',
                 default: 100,
                 'x-decorator': 'FormItem',
@@ -346,7 +346,7 @@ export class Database extends NodeType {
                 }
               },
               partitionThreadCount: {
-                title: '分片并发线程数',
+                title: i18n.t('packages_dag_nodes_database_fenpianbingfaxian'),
                 type: 'number',
                 default: 8,
                 'x-decorator': 'FormItem',
@@ -364,7 +364,7 @@ export class Database extends NodeType {
                 }
               },
               partitionBatchCount: {
-                title: '分片一批读取上限',
+                title: i18n.t('packages_dag_nodes_database_fenpianyipidu'),
                 type: 'number',
                 default: 3000,
                 'x-decorator': 'FormItem',
