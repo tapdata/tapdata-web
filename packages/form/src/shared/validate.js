@@ -71,6 +71,64 @@ function recursiveField(form, schema, scope, basePath, name) {
     })
   }
 }
+function makeField(form, schema, scope, basePath, name) {
+  const fieldSchema = new Schema(schema)
+  const fieldProps = fieldSchema.toFieldProps({
+    scope
+  })
+
+  function recursiveProperties(propBasePath) {
+    fieldSchema.mapProperties((propSchema, propName) => {
+      makeField(form, propSchema, scope, propBasePath, propName)
+    })
+  }
+
+  if (name === undefined || name === null) {
+    recursiveProperties(basePath)
+    return
+  }
+
+  if (schema.type === 'object') {
+    const field = form.createObjectField({
+      ...fieldProps,
+      name,
+      basePath
+    })
+
+    recursiveProperties(field.address.toString())
+  } else if (schema.type === 'array') {
+    const field = form.createArrayField({
+      ...fieldProps,
+      name,
+      basePath
+    })
+
+    const fieldAddress = field.address.toString()
+    // const fieldValues = form.getValuesIn(fieldAddress)
+    const fieldValues = field.value
+    fieldValues?.forEach((value, index) => {
+      if (schema.items) {
+        const itemsSchema = Array.isArray(schema.items) ? schema.items[index] || schema.items[0] : schema.items
+
+        recursiveField(form, itemsSchema, scope, fieldAddress, index)
+      }
+    })
+  } else if (schema.type === 'void') {
+    const field = form.createVoidField({
+      ...fieldProps,
+      name,
+      basePath
+    })
+
+    recursiveProperties(field.address.toString())
+  } else {
+    form.createField({
+      ...fieldProps,
+      name,
+      basePath
+    })
+  }
+}
 
 /**
  * 根据schema校验表单数据
@@ -105,4 +163,23 @@ export const validateBySchema = (schema, values, scope, basePath) => {
   return form.validate().finally(() => {
     form.onUnmount() // 触发卸载
   })
+}
+
+/**
+ * 获取schema默认值
+ * @param schema
+ * @param scope
+ * @param path
+ * @returns {any}
+ */
+export const getInitialValuesInBySchema = (schema, scope, path) => {
+  const form = createForm()
+  try {
+    makeField(form, schema, scope)
+  } catch (e) {
+    console.log('error', e) // eslint-disable-line
+  }
+  const initialValue = form.getInitialValuesIn(path)
+  form.onUnmount() // 触发卸载
+  return { ...initialValue }
 }

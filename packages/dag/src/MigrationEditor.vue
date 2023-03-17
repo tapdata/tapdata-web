@@ -29,15 +29,12 @@
     />
     <section class="layout-wrap layout-has-sider position-relative">
       <!--左侧边栏-->
-      <VExpandXTransition>
-        <LeftSider
-          v-if="!stateIsReadonly"
-          @move-node="handleDragMoveNode"
-          @drop-node="handleAddNodeByDrag"
-          @add-node="handleAddNode"
-          @toggle-expand="handleToggleExpand"
-        />
-      </VExpandXTransition>
+      <LeftSider
+        @move-node="handleDragMoveNode"
+        @drop-node="handleAddNodeByDrag"
+        @add-node="handleAddNode"
+        @toggle-expand="handleToggleExpand"
+      />
       <section class="layout-wrap flex-1">
         <!--内容体-->
         <main id="dfEditorContent" ref="layoutContent" class="layout-content flex-1 overflow-hidden">
@@ -210,8 +207,13 @@ export default {
           type: 'migrate_field_rename_processor'
         },
         {
+          name: i18n.t('packages_dag_src_migrationeditor_jSchuli_standard'),
+          type: 'standard_migrate_js_processor'
+        },
+        {
           name: i18n.t('packages_dag_src_migrationeditor_jSchuli'),
-          type: 'migrate_js_processor'
+          type: 'migrate_js_processor',
+          beta: true
         }
       ])
       this.addResourceIns(allResourceIns)
@@ -277,7 +279,6 @@ export default {
         this.setTaskId(dataflow.id)
         this.setEditVersion(dataflow.editVersion)
         this.setTaskInfo(this.dataflow)
-        // this.$message.success(this.$t('packages_dag_message_save_ok'))
         await this.$router.replace({
           name: 'MigrateEditor',
           params: { id: dataflow.id, action: 'dataflowEdit' }
@@ -383,9 +384,10 @@ export default {
 
       try {
         this.initWS()
-        const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
+        // const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
+        const result = await taskApi.save(data)
         this.reformDataflow(result)
-        !needStart && this.$message.success(this.$t('packages_dag_message_save_ok'))
+        !needStart && this.$message.success(this.$t('public_message_save_ok'))
         this.setEditVersion(result.editVersion)
         this.isSaving = false
         isOk = true
@@ -431,6 +433,7 @@ export default {
         this.dataflow.disabledData.stop = true
         this.dataflow.disabledData.reset = true
         // this.gotoViewer()
+        this.beforeStartTask()
         this.buried('taskSubmit', { result: true })
       } else {
         this.buried('taskSubmit', { result: false })
@@ -439,6 +442,7 @@ export default {
 
     checkGotoViewer() {
       console.log('editor:checkGotoViewer') // eslint-disable-line
+      if (!this.dataflow.disabledData) return
       if (this.dataflow.disabledData.edit) {
         // 不可编辑
         // this.gotoViewer()

@@ -10,8 +10,8 @@
       </div>
       <div class="main">
         <div class="content" v-if="waterfallData.length">
-          <el-row :gutter="20" class="waterfall">
-            <el-col class="list" :md="12" :sm="24" v-for="item in waterfallData" :key="item.id">
+          <el-row :gutter="20" class="waterfall" v-for="item in waterfallData" :key="item.id">
+            <el-col class="list" :md="12" :sm="24">
               <div :class="['grid-content', 'list-box']">
                 <div class="list-box-header">
                   <div class="list-box-header-left">
@@ -71,7 +71,7 @@
                     </el-col>
                     <el-col :span="8">
                       <div class="btn txt fw-sub">
-                        {{ $t('column_operation') }}
+                        {{ $t('public_operation') }}
                       </div>
                     </el-col>
                   </el-row>
@@ -81,12 +81,12 @@
                     </el-col>
                     <el-col :span="4">
                       <span :class="['status-' + item.management.status, 'status']">{{
-                        $t('cluster_' + item.management.status)
+                        getStatus(item.management.status)
                       }}</span>
                     </el-col>
                     <el-col :span="4">
                       <span :class="['status-' + item.management.serviceStatus, 'status']">{{
-                        $t('cluster_' + item.management.serviceStatus)
+                        getStatus(item.management.serviceStatus)
                       }}</span>
                     </el-col>
                     <el-col :span="8">
@@ -95,7 +95,7 @@
                           type="text"
                           :disabled="item.management.status == 'stopped' ? false : true"
                           @click="startFn(item, item.management.status, 'management', 'start')"
-                          >{{ $t('button_start') }}
+                          >{{ $t('public_button_start') }}
                         </ElButton>
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
@@ -103,14 +103,14 @@
                           type="text"
                           :disabled="item.management.status == 'running' ? false : true"
                           @click="closeFn(item, item.management.status, 'management', 'stop')"
-                          >{{ $t('button_close') }}
+                          >{{ $t('public_button_close') }}
                         </ElButton>
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
                           type="text"
                           :disabled="item.management.status == 'running' ? false : true"
                           @click="restartFn(item, item.management.status, 'management', 'restart')"
-                          >{{ $t('button_restart') }}
+                          >{{ $t('public_button_restart') }}
                         </ElButton>
                       </div>
                     </el-col>
@@ -121,12 +121,12 @@
                     </el-col>
                     <el-col :span="4">
                       <span :class="['status-' + item.engine.status, 'status']">{{
-                        $t('cluster_' + item.engine.status)
+                        getStatus(item.engine.status)
                       }}</span>
                     </el-col>
                     <el-col :span="4">
                       <span :class="['status-' + item.engine.serviceStatus, 'status']">{{
-                        $t('cluster_' + item.engine.status)
+                        getStatus(item.engine.status)
                       }}</span>
                     </el-col>
                     <el-col :span="8">
@@ -136,7 +136,7 @@
                           type="text"
                           :disabled="item.engine.status == 'stopped' ? false : true"
                           @click="startFn(item, item.engine.status, 'engine')"
-                          >{{ $t('button_start') }}</ElButton
+                          >{{ $t('public_button_start') }}</ElButton
                         >
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
@@ -144,14 +144,14 @@
                           type="text"
                           :disabled="item.engine.status == 'running' ? false : true"
                           @click="closeFn(item, item.engine.status, 'engine')"
-                          >{{ $t('button_close') }}</ElButton
+                          >{{ $t('public_button_close') }}</ElButton
                         >
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
                           type="text"
                           :disabled="item.engine.status == 'running' ? false : true"
                           @click="restartFn(item, item.engine.status, 'engine')"
-                          >{{ $t('button_restart') }}</ElButton
+                          >{{ $t('public_button_restart') }}</ElButton
                         >
                       </div>
                     </el-col>
@@ -162,12 +162,12 @@
                     </el-col>
                     <el-col :span="4">
                       <span :class="['status-' + item.apiServer.status, 'status']">{{
-                        $t('cluster_' + item.apiServer.status)
+                        getStatus(item.apiServer.status)
                       }}</span>
                     </el-col>
                     <el-col :span="4">
                       <span :class="['status-' + item.apiServer.serviceStatus, 'status']">{{
-                        $t('cluster_' + item.apiServer.status)
+                        getStatus(item.apiServer.status)
                       }}</span>
                     </el-col>
                     <el-col :span="8">
@@ -177,7 +177,7 @@
                           type="text"
                           :disabled="item.apiServer.status == 'stopped' ? false : true"
                           @click="startFn(item, item.apiServer.status, 'apiServer')"
-                          >{{ $t('button_start') }}</ElButton
+                          >{{ $t('public_button_start') }}</ElButton
                         >
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
@@ -185,14 +185,14 @@
                           type="text"
                           :disabled="item.apiServer.status == 'running' ? false : true"
                           @click="closeFn(item, item.apiServer.status, 'apiServer')"
-                          >{{ $t('button_close') }}</ElButton
+                          >{{ $t('public_button_close') }}</ElButton
                         >
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
                           type="text"
                           :disabled="item.apiServer.status == 'running' ? false : true"
                           @click="restartFn(item, item.apiServer.status, 'apiServer')"
-                          >{{ $t('button_restart') }}</ElButton
+                          >{{ $t('public_button_restart') }}</ElButton
                         >
                       </div>
                     </el-col>
@@ -209,14 +209,51 @@
                     </el-col>
                     <el-col :md="8" v-readonlybtn="'Cluster_operation'">
                       <div class="btn">
-                        <ElButton type="text" @click="delServe(child, item.status)">{{ $t('button_delete') }}</ElButton>
+                        <ElButton type="text" @click="delServe(child, item.status)">{{
+                          $t('public_button_delete')
+                        }}</ElButton>
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton type="text" @click="editServe(child, item.status, item)">{{
-                          $t('button_edit')
+                          $t('public_button_edit')
                         }}</ElButton>
                       </div>
                     </el-col>
                   </el-row>
+                </div>
+              </div>
+            </el-col>
+            <el-col class="list" :md="12" :sm="24">
+              <div class="list-box">
+                <div class="list-box-header flex justify-content-between align-items-center">
+                  <div class="w-75">
+                    <div class="pt-2 mb-2 fs-5">{{ $t('daas_cluster_cluster_yinqingduiwaijian') }}</div>
+                    <span class="ip">{{ item.custIP ? item.custIP : item.systemInfo.ip }}</span>
+                  </div>
+                  <div class="w-25 fs-5">
+                    <span class="font-color-light">{{ $t('daas_cluster_cluster_lianjiezongshu') }}</span
+                    >:
+                    <span class="font-color-dark ml-3">{{ item.engine ? item.engine.netStatTotals || 0 : 0 }}</span>
+                  </div>
+                </div>
+                <div class="netstat p-4" v-if="item.engine && item.engine.netStat">
+                  <div class="flex mb-4">
+                    <div class="w-75 fs-6 fw-bold font-color-dark pl-3">
+                      {{ $t('daas_cluster_cluster_mubiaoIPhe') }}
+                    </div>
+                    <div class="w-25 fs-6 fw-bold font-color-dark">
+                      {{ $t('daas_cluster_cluster_lianjieshuliang') }}
+                    </div>
+                  </div>
+                  <div class="overflow-y-auto netstat__list">
+                    <div
+                      v-for="(netStatItem, netStatIndex) in item.engine.netStat"
+                      :key="netStatIndex"
+                      class="flex mb-4 font-color-light"
+                    >
+                      <div class="w-75 pl-3">{{ netStatItem.ip }}</div>
+                      <div class="w-25 pl-5">{{ netStatItem.numbers }}</div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </el-col>
@@ -240,8 +277,10 @@
     >
       <AddServe :data="currentData" :editItem="editItem" ref="childRules"></AddServe>
       <div slot="footer" class="dialog-footer">
-        <ElButton size="small" @click="closeDialogForm()">{{ $t('button_cancel') }}</ElButton>
-        <ElButton size="small" type="primary" @click="submitForm('ruleForm')">{{ $t('button_confirm') }}</ElButton>
+        <ElButton size="small" @click="closeDialogForm()">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton size="small" type="primary" @click="submitForm('ruleForm')">{{
+          $t('public_button_confirm')
+        }}</ElButton>
       </div>
     </el-dialog>
     <el-dialog
@@ -263,7 +302,7 @@
               show-word-limit
               :placeholder="$t('cluster_placeholder_mon_server')"
             ></el-input>
-            <ElButton type="text" class="rest-btn" @click="editNameRest">{{ $t('button_reduction') }}</ElButton>
+            <ElButton type="text" class="rest-btn" @click="editNameRest">{{ $t('public_button_reduction') }}</ElButton>
           </div>
         </el-form-item>
         <el-form-item :label="$t('cluster_ip_display')" prop="command">
@@ -274,9 +313,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <ElButton size="small" @click="editAgentDialog = false">{{ $t('button_cancel') }}</ElButton>
+        <ElButton size="small" @click="editAgentDialog = false">{{ $t('public_button_cancel') }}</ElButton>
         <ElButton size="small" type="primary" @click="submitEditAgent('editAgentForm')">{{
-          $t('button_confirm')
+          $t('public_button_confirm')
         }}</ElButton>
       </div>
     </el-dialog>
@@ -286,6 +325,7 @@
 import { FilterBar } from '@tap/component'
 import AddServe from './AddServe'
 import { workerApi, clusterApi } from '@tap/api'
+import { STATUS_MAP } from './const'
 
 export default {
   components: {
@@ -332,6 +372,12 @@ export default {
   created() {
     this.getDataApi()
   },
+  watch: {
+    '$route.query'() {
+      this.searchParams = this.$route.query
+      this.getDataApi()
+    }
+  },
   methods: {
     // 提交
     async submitForm() {
@@ -352,7 +398,7 @@ export default {
               .then(() => {
                 this.dialogForm = false
                 this.getDataApi()
-                this.$message.success(this.$t('message_save_ok'))
+                this.$message.success(this.$t('public_message_save_ok'))
               })
               .finally(() => {
                 this.dialogForm = false
@@ -364,10 +410,9 @@ export default {
               .then(() => {
                 this.dialogForm = false
                 this.getDataApi()
-                this.$message.success(this.$t('message_save_ok'))
+                this.$message.success(this.$t('public_message_save_ok'))
               })
               // .catch(() => {
-              //   this.$message.error(this.$t('message_save_fail'))
               // })
               .finally(() => {
                 this.dialogForm = false
@@ -391,7 +436,7 @@ export default {
       }
 
       if (status === 'running') {
-        this.$confirm(this.$t('cluster_deleteor_not') + '?', {
+        this.$confirm(this.$t('public_message_delete_confirm') + '?', {
           type: 'warning'
         }).then(resFlag => {
           if (!resFlag) {
@@ -399,10 +444,9 @@ export default {
           }
           clusterApi.removeMonitor(params).then(() => {
             this.getDataApi()
-            this.$message.success(this.$t('message_save_ok'))
+            this.$message.success(this.$t('public_message_save_ok'))
           })
           // .catch(() => {
-          //   this.$message.error(this.$t('message_save_fail'))
           // })
         })
       } else {
@@ -578,6 +622,11 @@ export default {
         if (clusterData[i]?.engine?.status !== 'running') {
           clusterData[i]['metricValues'] = { CpuUsage: '-', HeapMemoryUsage: '-' }
         }
+        if (clusterData[i]?.engine?.netStat) {
+          clusterData[i].engine['netStatTotals'] = clusterData[i].engine.netStat.reduce((total, key) => {
+            return total + (key?.numbers || 0)
+          }, 0)
+        }
       }
       this.waterfallData = clusterData
     },
@@ -593,7 +642,7 @@ export default {
       // this.delData.agentName = this.delData.agentName || this.delData.systemInfo.hostname
       let agentName = item.agentName || item.systemInfo.hostname
       const h = this.$createElement
-      let message = h('p', [this.$t('cluster_del_delete_or_not') + ' ' + agentName])
+      let message = h('p', [this.$t('public_message_delete_confirm') + ' ' + agentName])
       this.$confirm(message, {
         type: 'warning'
       }).then(resFlag => {
@@ -601,21 +650,19 @@ export default {
           return
         }
         clusterApi.delete(item.id, item.name).then(() => {
-          this.$message.success(this.$t('message_delete_ok'))
+          this.$message.success(this.$t('public_message_delete_ok'))
           this.getDataApi()
         })
         // .catch(() => {
-        //   this.$message.info(this.$t('message_delete_fail'))
         // })
       })
     },
     removeNode(id) {
       clusterApi.delete(id).then(() => {
         this.deleteDialogVisible = false
-        this.$message.success(this.$t('message_delete_ok'))
+        this.$message.success(this.$t('public_message_delete_ok'))
       })
       // .catch(() => {
-      //   this.$message.error(this.$t('message_delete_fail'))
       // })
     },
     //编辑
@@ -631,7 +678,7 @@ export default {
     submitEditAgent() {
       if (this.agentName === '') {
         this.agentName = this.currentNde.hostname
-        this.$message.error(this.$t('cluster_server_name') + this.$t('cluster_none_text'))
+        this.$message.error(this.$t('cluster_server_name') + this.$t('public_form_not_empty'))
         return
       }
       let data = {
@@ -640,10 +687,9 @@ export default {
       }
       clusterApi.editAgent(this.custId, data).then(() => {
         this.editAgentDialog = false
-        this.$message.success(this.$t('message_delete_ok'))
+        this.$message.success(this.$t('public_message_delete_ok'))
       })
       // .catch(() => {
-      //   this.$message.error(this.$t('message_delete_fail'))
       // })
     },
     editNameRest() {
@@ -654,6 +700,9 @@ export default {
       this.$router.push({
         name: 'dailyRecord'
       })
+    },
+    getStatus(type) {
+      return STATUS_MAP[type] || '-'
     }
   },
   destroyed() {
@@ -717,6 +766,7 @@ export default {
           background-color: map-get($bgColor, white);
           border-radius: 3px;
           border: 1px solid map-get($bgColor, main);
+          height: 340px;
           .list-box-header {
             overflow: hidden;
             display: flex;
@@ -747,14 +797,14 @@ export default {
                 .uuid {
                   color: map-get($fontColor, slight);
                 }
-                .ip {
-                  display: inline-block;
-                  padding: 2px 10px;
-                  color: map-get($color, primary);
-                  border-radius: 2px;
-                  background-color: #ebf3fd;
-                }
               }
+            }
+            .ip {
+              display: inline-block;
+              padding: 2px 10px;
+              color: map-get($color, primary);
+              border-radius: 2px;
+              background-color: #ebf3fd;
             }
             .iconfont {
               // color: #999;
@@ -919,6 +969,12 @@ export default {
       font-size: 12px;
       line-height: 15px;
     }
+  }
+  .netstat {
+    border-top: 1px solid #f2f2f2;
+  }
+  .netstat__list {
+    max-height: 190px;
   }
 }
 </style>

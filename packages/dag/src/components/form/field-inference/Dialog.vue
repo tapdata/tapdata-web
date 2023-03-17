@@ -14,9 +14,7 @@
         <ElCol :span="9">{{ $t('packages_form_field_inference_dialog_mubiaomorentui') }}</ElCol>
         <ElCol :span="3">&nbsp;</ElCol>
         <ElCol :span="9">{{ $t('packages_form_field_inference_dialog_xiugaihoudelei') }}</ElCol>
-        <ElCol v-if="!readonly" :span="3" class="text-center">{{
-          $t('packages_form_field_processor_index_caozuo')
-        }}</ElCol>
+        <ElCol v-if="!readonly" :span="3" class="text-center">{{ $t('public_operation') }}</ElCol>
       </ElRow>
       <ElRow v-for="(item, index) in ruleForm.list" :key="index" class="mt-4">
         <ElCol :span="9">
@@ -63,12 +61,12 @@
     </div>
     <div v-else class="flex flex-column align-items-center">
       <img width="120px" :src="noData" />
-      <div class="noData">{{ $t('packages_form_dag_dialog_field_mapping_no_data') }}</div>
+      <div class="noData">{{ $t('public_data_no_data') }}</div>
     </div>
     <span slot="footer" class="dialog-footer">
-      <ElButton size="mini" @click="handleCancel">{{ $t('button_cancel') }}</ElButton>
+      <ElButton size="mini" @click="handleCancel">{{ $t('public_button_cancel') }}</ElButton>
       <ElButton size="mini" type="primary" :disabled="getSubmitDisabled()" :loading="editBtnLoading" @click="submit">{{
-        $t('button_confirm')
+        $t('public_button_confirm')
       }}</ElButton>
     </span>
   </ElDialog>
@@ -80,7 +78,7 @@ import { cloneDeep } from 'lodash'
 
 import i18n from '@tap/i18n'
 import { metadataInstancesApi } from '@tap/api'
-import noData from 'web-core/assets/images/noData.png'
+import noData from '@tap/assets/images/noData.png'
 
 export default {
   name: 'FieldInferenceDialog',
@@ -192,7 +190,7 @@ export default {
             return
           }
           this.handleUpdate()
-          this.$message.success(i18n.t('packages_form_field_inference_list_caozuochenggong'))
+          this.$message.success(i18n.t('public_message_operation_success'))
         })
         .finally(() => {
           this.editBtnLoading = false

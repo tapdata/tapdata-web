@@ -91,7 +91,7 @@
             </ElLink>
             <span>{{ typeMap[item.msg] }}</span>
             <!-- <span v-if="item.CDCTime">{{ getLag(item.CDCTime) }}</span> -->
-            <span v-if="item.restDay">{{ item.restDay }} {{ $t('notify_day') }}</span>
+            <span v-if="item.restDay">{{ item.restDay }} {{ $t('public_time_d') }}</span>
           </div>
           <div class="list-item-time">
             <span>{{ item.createTime }}</span>

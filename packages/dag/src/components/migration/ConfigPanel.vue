@@ -107,7 +107,7 @@ export default {
     },
 
     isMonitor() {
-      return ['TaskMonitor', 'MigrationMonitor'].includes(this.$route.name) && this.isDaas
+      return ['TaskMonitor', 'MigrationMonitor'].includes(this.$route.name)
     }
   },
 
@@ -226,7 +226,7 @@ $headerHeight: 40px;
 .config-panel {
   position: relative;
   z-index: 11;
-  width: 600px;
+  width: 650px;
   height: 100%;
   overflow: auto;
   background-color: #fff;

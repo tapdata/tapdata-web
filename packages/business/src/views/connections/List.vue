@@ -31,7 +31,7 @@
           @click="$refs.table.showClassify(handleSelectTag())"
         >
           <i class="iconfont icon-biaoqian back-btn-icon"></i>
-          <span> {{ $t('packages_business_dataFlow_taskBulkTag') }}</span>
+          <span> {{ $t('public_button_bulk_tag') }}</span>
         </ElButton>
         <ElButton
           v-readonlybtn="'datasource_creation'"
@@ -41,16 +41,11 @@
           :disabled="$disabledReadonlyUserBtn()"
           @click="checkTestConnectionAvailable"
         >
-          <span> {{ $t('packages_business_connection_createNewDataSource') }}</span>
+          <span> {{ $t('public_connection_button_create') }}</span>
         </ElButton>
       </div>
       <ElTableColumn v-if="isDaas" type="selection" width="45" :reserve-selection="true"></ElTableColumn>
-      <ElTableColumn
-        show-overflow-tooltip
-        prop="name"
-        min-width="290"
-        :label="$t('packages_business_connection_column_name')"
-      >
+      <ElTableColumn show-overflow-tooltip prop="name" min-width="290" :label="$t('public_connection_name')">
         <template #default="{ row }">
           <span class="connection-name flex">
             <img class="connection-img mr-2" :src="getConnectionIcon(row.pdkHash)" alt="" />
@@ -69,7 +64,7 @@
           </span>
         </template>
       </ElTableColumn>
-      <ElTableColumn show-overflow-tooltip :label="$t('packages_business_connection_connectionInfo')" min-width="160">
+      <ElTableColumn show-overflow-tooltip :label="$t('public_connection_information')" min-width="160">
         <template slot-scope="scope">
           {{ scope.row.connectionUrl }}
         </template>
@@ -78,28 +73,25 @@
         <template #default="{ row }">
           <div>
             <span :class="['status-connection-' + row.status, 'status-block']">
-              {{ $t('packages_business_connection_status_' + row.status) }}
+              {{ getStatus(row.status) }}
             </span>
           </div>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="connection_type" min-width="135" :label="$t('packages_business_connection_connectionType')">
+      <ElTableColumn prop="connection_type" min-width="135" :label="$t('public_connection_type')">
         <template slot-scope="scope">
-          {{ $t('packages_business_connection_type_' + scope.row.connection_type) }}
+          {{ getType(scope.row.connection_type) }}
         </template>
       </ElTableColumn>
       <ElTableColumn min-width="140">
         <div slot="header" class="flex align-center">
-          <span>{{ $t('packages_business_connection_list_column_schema_status') }}</span>
-          <ElTooltip
-            class="ml-2"
-            placement="top"
-            :content="$t('packages_business_connection_list_column_schema_status_tips')"
-          >
+          <span>{{ $t('public_connection_schema_status') }}</span>
+          <ElTooltip class="ml-2" placement="top" :content="$t('public_connection_schema_status_tip')">
             <VIcon class="color-primary" size="14">info</VIcon>
           </ElTooltip>
         </div>
-        <template slot-scope="scope">
+        <div v-if="isFileSource(scope.row)" slot-scope="scope">-</div>
+        <template v-else slot-scope="scope">
           <SchemaProgress :data="scope.row"></SchemaProgress>
         </template>
       </ElTableColumn>
@@ -107,17 +99,20 @@
         prop="last_updated"
         sortable="last_updated"
         min-width="160"
-        :label="$t('packages_business_connection_lastUpdateTime')"
+        :label="$t('public_connection_table_structure_update_time')"
       >
+        <template slot-scope="scope">
+          {{ scope.row.loadSchemaTime }}
+        </template>
+      </ElTableColumn>
+      <ElTableColumn prop="last_updated" sortable="last_updated" min-width="160" :label="$t('public_change_time')">
         <template slot-scope="scope">
           {{ scope.row.lastUpdateTime }}
         </template>
       </ElTableColumn>
-      <ElTableColumn width="320" :label="$t('packages_business_connection_operate')">
+      <ElTableColumn width="320" :label="$t('public_operation')">
         <template slot-scope="scope">
-          <ElButton type="text" @click="testConnection(scope.row)"
-            >{{ $t('packages_business_connection_list_test_button') }}
-          </ElButton>
+          <ElButton type="text" @click="testConnection(scope.row)">{{ $t('public_connection_button_test') }} </ElButton>
           <ElDivider direction="vertical"></ElDivider>
           <ElTooltip
             :disabled="!isFileSource(scope.row)"
@@ -126,7 +121,7 @@
           >
             <span>
               <ElButton type="text" :disabled="isFileSource(scope.row)" @click="handleLoadSchema(scope.row)"
-                >{{ $t('packages_business_connection_preview_load_schema') }}
+                >{{ $t('public_connection_button_load_schema') }}
               </ElButton>
             </span>
           </ElTooltip>
@@ -138,7 +133,7 @@
               $disabledByPermission('datasource_edition_all_data', scope.row.user_id) || $disabledReadonlyUserBtn()
             "
             @click="edit(scope.row.id, scope.row)"
-            >{{ $t('packages_business_button_edit') }}
+            >{{ $t('public_button_edit') }}
           </ElButton>
           <ElDivider direction="vertical" v-readonlybtn="'datasource_edition'"></ElDivider>
           <ElButton
@@ -147,7 +142,7 @@
             :loading="scope.row.copyLoading"
             :disabled="$disabledReadonlyUserBtn()"
             @click="copy(scope.row)"
-            >{{ $t('packages_business_button_copy') }}
+            >{{ $t('public_button_copy') }}
           </ElButton>
           <ElDivider direction="vertical" v-readonlybtn="'datasource_creation'"></ElDivider>
           <ElButton
@@ -157,7 +152,7 @@
               $disabledByPermission('datasource_delete_all_data', scope.row.user_id) || $disabledReadonlyUserBtn()
             "
             @click="remove(scope.row)"
-            >{{ $t('packages_business_button_delete') }}
+            >{{ $t('public_button_delete') }}
           </ElButton>
         </template>
       </ElTableColumn>
@@ -169,19 +164,24 @@
       @databaseType="handleDatabaseType"
     ></DatabaseTypeDialog>
     <Test ref="test" :visible.sync="dialogTestVisible" :formData="testData" @returnTestData="returnTestData"></Test>
-    <ElDialog :title="$t('packages_business_connections_list_tishi')" width="40%" :visible.sync="connectionTaskDialog">
-      <span>{{ $t('packages_business_connections_list_gailianjieyibei') }}</span>
-      <div class="color-primary mt-2">
-        {{ $t('packages_business_connections_list_renwuzongshu') }}{{ connectionTaskListTotal }}
-      </div>
-      <ul class="mt-4">
-        <li v-for="item in connectionTaskList" :key="item.id" @click="goTaskList(item)">
-          <el-tooltip :content="item.name" placement="right-start">
-            <el-link type="primary">{{ item.name }}</el-link>
-          </el-tooltip>
-        </li>
-        <li v-if="connectionTaskListTotal > 10">...</li>
-      </ul>
+    <ElDialog :title="$t('public_message_title_prompt')" width="40%" :visible.sync="connectionTaskDialog">
+      <span>{{ $t('packages_business_connections_list_gailianjieyibei', { val1: connectionTaskListTotal }) }}</span>
+      <el-table class="mt-4" height="250px" :data="connectionTaskList">
+        <el-table-column min-width="240" :label="$t('public_task_name')" :show-overflow-tooltip="true">
+          <template #default="{ row }">
+            <span class="dataflow-name link-primary flex">
+              <ElLink
+                role="ellipsis"
+                type="primary"
+                class="justify-content-start ellipsis block"
+                :class="['name']"
+                @click.stop="goTaskList(row)"
+                >{{ row.name }}</ElLink
+              >
+            </span>
+          </template>
+        </el-table-column>
+      </el-table>
     </ElDialog>
   </section>
 </template>
@@ -197,6 +197,7 @@ import DatabaseTypeDialog from './DatabaseTypeDialog'
 import Preview from './Preview'
 import Test from './Test'
 import { defaultModel, verify, getConnectionIcon } from './util'
+import { CONNECTION_STATUS_MAP, CONNECTION_TYPE_MAP } from '@tap/business/src/shared'
 
 let timeout = null
 
@@ -218,37 +219,37 @@ export default {
       order: 'last_updated DESC',
       databaseModelOptions: [
         {
-          label: this.$t('packages_business_select_option_all'),
+          label: this.$t('public_select_option_all'),
           value: ''
         },
         {
-          label: this.$t('packages_business_connection_list_source'),
+          label: this.$t('public_connection_type_source'),
           value: 'source'
         },
         {
-          label: this.$t('packages_business_connection_list_target'),
+          label: this.$t('public_connection_type_target'),
           value: 'target'
         },
         {
-          label: this.$t('packages_business_connection_list_source_and_target'),
+          label: this.$t('public_connection_type_source_and_target'),
           value: 'source_and_target'
         }
       ],
       databaseStatusOptions: [
         {
-          label: this.$t('packages_business_select_option_all'),
+          label: this.$t('public_select_option_all'),
           value: ''
         },
         {
-          label: this.$t('packages_business_connection_list_efficient'),
+          label: this.$t('public_status_ready'),
           value: 'ready'
         },
         {
-          label: this.$t('packages_business_connection_list_invalidation'),
+          label: this.$t('public_status_invalid'),
           value: 'invalid'
         },
         {
-          label: this.$t('packages_business_connection_list_testing'),
+          label: this.$t('public_status_testing'),
           value: 'testing'
         }
       ],
@@ -410,6 +411,7 @@ export default {
             item.lastUpdateTime = item.last_updated = item.last_updated
               ? dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
               : '-'
+            item.loadSchemaTime = item.loadSchemaTime ? dayjs(item.loadSchemaTime).format('YYYY-MM-DD HH:mm:ss') : '-'
             return item
           })
 
@@ -462,7 +464,7 @@ export default {
         )
         .then(() => {
           this.table.fetch()
-          this.$message.success(this.$t('packages_business_connection_copyMsg'))
+          this.$message.success(this.$t('public_message_copy_success'))
         })
       // .catch(err => {
       //   if (err && err.response) {
@@ -502,7 +504,7 @@ export default {
               if (jobs.length > 0 || modules.length > 0) {
                 this.$message.error(this.$t('packages_business_connection_checkMsg'))
               } else {
-                this.$message.success(this.$t('packages_business_message_deleteOK'))
+                this.$message.success(this.$t('public_message_delete_ok'))
                 this.table.fetch()
               }
             })
@@ -526,7 +528,7 @@ export default {
         })
       } else {
         this.$router.push({
-          name: 'dataflow',
+          name: 'dataflowList',
           query: {
             keyword: item.name
           }
@@ -568,7 +570,7 @@ export default {
       }
       connectionsApi.batchUpdateListtags(attributes).then(() => {
         this.table.fetch()
-        this.$message.success(this.$t('packages_business_message_save_ok'))
+        this.$message.success(this.$t('public_message_save_ok'))
       })
     },
     //选择创建类型
@@ -628,16 +630,9 @@ export default {
       if (!data.status || data.status === null) return
       let status = data.status
       if (status === 'ready') {
-        this.$message.success(
-          this.$t('packages_business_connection_testConnection') + this.$t('packages_business_connection_status_ready'),
-          false
-        )
+        this.$message.success(this.$t('public_connection_button_test') + this.$t('public_status_ready'), false)
       } else {
-        this.$message.error(
-          this.$t('packages_business_connection_testConnection') +
-            this.$t('packages_business_connection_status_invalid'),
-          false
-        )
+        this.$message.error(this.$t('public_connection_button_test') + this.$t('public_status_invalid'), false)
       }
       this.buried('connectionTest', '', {
         result: status === 'ready'
@@ -654,7 +649,7 @@ export default {
           selectedWidth: '200px'
         },
         {
-          label: this.$t('packages_business_connection_list_type'),
+          label: this.$t('public_connection_type'),
           key: 'databaseModel',
           type: 'select-inner',
           items: this.databaseModelOptions
@@ -674,7 +669,7 @@ export default {
             )
             //默认全部
             let all = {
-              name: this.$t('packages_business_select_option_all'),
+              name: this.$t('public_select_option_all'),
               type: ''
             }
             databaseTypeOptions.unshift(all)
@@ -705,6 +700,12 @@ export default {
     },
     isFileSource(row) {
       return ['CSV', 'EXCEL', 'JSON', 'XML'].includes(row?.database_type)
+    },
+    getStatus(status) {
+      return CONNECTION_STATUS_MAP[status]?.text || '-'
+    },
+    getType(type) {
+      return CONNECTION_TYPE_MAP[type]?.text || '-'
     }
   }
 }

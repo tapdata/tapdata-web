@@ -23,8 +23,17 @@
           class="p-2"
           @input="handleSearchTable"
         ></ElInput>
-        <div class="flex bg-main justify-content-between pl-2" style="height: 40px">
-          {{ $t('packages_form_field_mapping_list_biaoming') }}
+        <div class="nav-filter__list flex text-center lh-1 mb-2">
+          <div
+            v-for="(item, index) in tableClassification"
+            :key="index"
+            class="nav-filter__item flex-fill py-1 cursor-pointer"
+            :class="{ active: activeClassification === item.type }"
+            @click="handleTableClass(item.type)"
+          >
+            <div class="mb-2 text-center">{{ item.title }}</div>
+            <span :class="[item.total && item.type ? 'color-danger' : 'color-info']">({{ item.total }})</span>
+          </div>
         </div>
         <div v-loading="navLoading" class="nav-list flex-fill font-color-normal">
           <ul v-if="navList.length">
@@ -41,7 +50,7 @@
           </ul>
           <div v-else class="task-form-left__ul flex flex-column align-items-center">
             <div class="table__empty_img" style="margin-top: 22%"><img style="" :src="noData" /></div>
-            <div class="noData">{{ $t('packages_form_dag_dialog_field_mapping_no_data') }}</div>
+            <div class="noData">{{ $t('public_data_no_data') }}</div>
           </div>
         </div>
         <ElPagination
@@ -62,6 +71,26 @@
         </ElPagination>
       </div>
       <div class="field-inference__content flex-fill flex flex-column">
+        <div class="px-2">
+          <span>{{ $t('packages_dag_nodes_table_gengxintiaojianzi') }}</span>
+          <ElSelect
+            v-model="updateList"
+            :disabled="navLoading"
+            size="mini"
+            allowCreate
+            multiple
+            filterable
+            @visible-change="handleVisibleChange"
+            @remove-tag="handleRemoveTag"
+          >
+            <ElOption v-for="(fItem, fIndex) in selected.fields" :key="fIndex" :value="fItem.field_name">
+              <div class="flex align-center">
+                {{ fItem.field_name }}
+                <VIcon v-if="fItem.primary_key_position > 0" size="12" class="text-warning ml-1"> key </VIcon>
+              </div>
+            </ElOption>
+          </ElSelect>
+        </div>
         <div class="flex align-items-center p-2">
           <ElInput
             v-model="searchField"
@@ -98,9 +127,9 @@
 import i18n from '@tap/i18n'
 
 import { mapGetters, mapState } from 'vuex'
-import { debounce } from 'lodash'
+import { debounce, cloneDeep } from 'lodash'
 
-import noData from 'web-core/assets/images/noData.png'
+import noData from '@tap/assets/images/noData.png'
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
 
 import mixins from './mixins'
@@ -135,7 +164,27 @@ export default {
       searchField: '',
       visible: false,
       fieldChangeRules: [],
-      noData
+      noData,
+      updateList: [],
+      updateConditionFieldMap: {},
+      activeClassification: '',
+      tableClassification: [
+        {
+          type: '',
+          title: i18n.t('packages_dag_field_inference_main_quanbubiao'),
+          total: 0
+        },
+        {
+          type: 'updateEx',
+          title: i18n.t('packages_dag_field_inference_main_gengxintiaojianyi'),
+          total: 0
+        },
+        {
+          type: 'transformEx',
+          title: i18n.t('packages_dag_field_inference_main_tuiyanyichang'),
+          total: 0
+        }
+      ]
     }
   },
 
@@ -153,6 +202,7 @@ export default {
   },
 
   mounted() {
+    this.activeClassification = this.tableClassification[0].type
     this.loadData()
   },
 
@@ -160,14 +210,24 @@ export default {
     async loadData() {
       this.navLoading = true
       this.fieldChangeRules = this.form.getValuesIn('fieldChangeRules') || []
+      this.updateConditionFieldMap = cloneDeep(this.form.getValuesIn('updateConditionFieldMap') || {})
       const { size, current } = this.page
-      const { items, total } = await this.getData({
+      const res = await this.getData({
         page: current,
         pageSize: size,
-        tableFilter: this.searchTable
+        tableFilter: this.searchTable,
+        filterType: this.activeClassification
       })
+      const { items, total } = res
       this.navList = items
       this.page.total = total
+      this.tableClassification.forEach(el => {
+        if (!el.type) {
+          el.total = res.wholeNum
+        } else {
+          el.total = res[el.type + 'Num']
+        }
+      })
       this.page.count = total ? Math.ceil(total / this.page.size) : 1
       this.handleSelect(this.navList[0])
       this.navLoading = false
@@ -184,6 +244,7 @@ export default {
         fields = item.fields.filter(t => t.field_name.toLowerCase().includes(this.searchField?.toLowerCase()))
       }
       this.selected = Object.assign({}, item, { fields })
+      this.updateList = this.updateConditionFieldMap[this.selected.name] || []
     },
 
     handleSelect(item, index = 0) {
@@ -199,7 +260,7 @@ export default {
         if (resFlag) {
           this.fieldChangeRules = []
           this.handleUpdate()
-          this.$message.success(i18n.t('packages_form_field_inference_list_caozuochenggong'))
+          this.$message.success(i18n.t('public_message_operation_success'))
         }
       })
     },
@@ -214,7 +275,26 @@ export default {
 
     handleSearchField: debounce(function () {
       this.filterFields()
-    }, 200)
+    }, 200),
+
+    handleTableClass(type) {
+      if (this.activeClassification === type) return
+      this.activeClassification = type
+      this.loadData()
+    },
+
+    handleVisibleChange(val) {
+      !val && this.handleUpdateList()
+    },
+
+    handleRemoveTag: debounce(function () {
+      this.handleUpdateList()
+    }, 1000),
+
+    handleUpdateList() {
+      this.updateConditionFieldMap[this.selected.name] = this.updateList
+      this.form.setValuesIn('updateConditionFieldMap', cloneDeep(this.updateConditionFieldMap))
+    }
   }
 }
 </script>
@@ -253,7 +333,6 @@ export default {
     .task-form-text-box {
       width: 140px;
       .target {
-        font-size: 12px;
         height: 40px;
         line-height: 40px;
         white-space: nowrap;
@@ -294,5 +373,13 @@ export default {
   color: map-get($color, primary);
   line-height: 22px;
   background-color: map-get($bgColor, pageCount);
+}
+.nav-filter__list {
+  background-color: #fafafa;
+}
+.nav-filter__item {
+  &.active {
+    background: map-get($bgColor, disactive);
+  }
 }
 </style>

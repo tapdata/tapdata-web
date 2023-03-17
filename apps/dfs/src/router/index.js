@@ -1,6 +1,5 @@
 import Parent from './Parent'
 import Layout from '../views/Layout.vue'
-import Error from '../views/Error.vue'
 import FastDownload from '@/views/agent-download/FastDownload.vue'
 import UpgradeVersion from '@/views/agent-download/UpgradeVersion.vue'
 import PaidUpgrade from '@/views/agent-download/PaidUpgrade.vue'
@@ -44,6 +43,22 @@ const VerifyDetails = async () => {
   const { VerifyDetails } = await import('@tap/business')
   return VerifyDetails
 }
+
+const SwimlaneDashboard = async () => {
+  const { SwimlaneDashboard } = await import('@tap/business')
+  return SwimlaneDashboard
+}
+
+const CustomNodeList = async () => {
+  const { CustomNodeList } = await import('@tap/business')
+  return CustomNodeList
+}
+
+const NodeEditor = async () => {
+  const { Editor } = await import(/* webpackChunkName: "node-design" */ '@tap/node-design')
+  return Editor
+}
+
 const routes = [
   {
     path: '/',
@@ -241,7 +256,27 @@ const routes = [
         component: () => import(/* webpackChunkName: "task-migration" */ '../views/data-server/list'),
         meta: {
           title: 'dfs_data_server',
+          hideTitle: true,
           icon: 'data-server'
+        }
+      },
+      {
+        path: '/swim-lane',
+        name: 'swimLane',
+        component: SwimlaneDashboard,
+        meta: {
+          title: 'dfs_data_server',
+          hideTitle: true,
+          icon: 'data-server'
+        }
+      },
+      /* ---------- 自定义节点  ----------*/
+      {
+        path: '/custom-node',
+        name: 'customNodeList',
+        component: CustomNodeList,
+        meta: {
+          title: 'page_title_custom_node'
         }
       }
     ]
@@ -287,46 +322,6 @@ const routes = [
     meta: {
       title: 'tap_upgrade'
     }
-  },
-  {
-    path: '/404',
-    name: '404',
-    component: Error
-  },
-  {
-    path: '/500',
-    name: '500',
-    component: Error
-  },
-  {
-    path: '/502',
-    name: '502',
-    component: Error
-  },
-  {
-    path: '/504',
-    name: '504',
-    component: Error
-  },
-  {
-    path: '/error',
-    name: 'error',
-    component: Error
-  },
-  {
-    path: '/invalid',
-    name: 'Invalid',
-    component: Error
-  },
-  {
-    path: '/freeze',
-    name: 'Freeze',
-    component: Error
-  },
-  {
-    path: '/off',
-    name: 'Off',
-    component: Error
   },
   {
     path: '/dataflow/editor',
@@ -381,6 +376,22 @@ const routes = [
       title: 'page_title_run_monitor',
       code: 'Data_SYNC_menu'
     }
+  },
+  {
+    path: '/node/editor',
+    name: 'NodeNew',
+    component: NodeEditor
+  },
+  {
+    path: '/node/editor/:id',
+    name: 'NodeEditor',
+    component: NodeEditor
+  },
+  //云市场对接
+  {
+    path: '/aliyun-market/license',
+    name: 'aliyunMarketLicense',
+    component: () => import('../views/aliyun-market/License.vue')
   }
 ]
 if (process.env.NODE_ENV === 'development') {

@@ -102,14 +102,16 @@
             <template v-if="item.category !== 'license'">
               <span class="btns py-3" v-if="item.category === 'SMTP'">
                 <a class="link-primary" @click="checkTemplate()">{{ $t('setting_email_template') }}</a>
-                <a class="link-primary" @click="connectAndTest()">{{ $t('setting_connect_and_test') }}</a>
+                <a class="link-primary" @click="connectAndTest()">{{ $t('public_connection_button_test') }}</a>
               </span>
             </template>
           </div>
         </div>
 
         <div class="footer">
-          <el-button @click="save" size="mini" type="primary">{{ $t('button_save') }}</el-button>
+          <el-button v-if="email === 'admin@admin.com'" @click="save" size="mini" type="primary">{{
+            $t('public_button_save')
+          }}</el-button>
         </div>
       </el-form>
     </div>
@@ -179,7 +181,7 @@
       </el-row>
       <div slot="footer" class="dialog-footer">
         <el-button size="mini" type="primary" @click="emailTemplateDialog = false">{{
-          $t('message_confirm')
+          $t('public_button_confirm')
         }}</el-button>
       </div>
     </el-dialog>
@@ -192,6 +194,8 @@ import { uniq, find } from 'lodash'
 import { VIcon, VTable } from '@tap/component'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
 import { licensesApi, settingsApi, alarmRuleApi } from '@tap/api'
+import Time from '@tap/shared/src/time'
+import Cookie from '@tap/shared/src/cookie'
 
 export default {
   name: 'Setting',
@@ -245,11 +249,13 @@ export default {
           label: i18n.t('daas_setting_alarmnotification_gaojingzhibiao'),
           slotName: 'valueSlot'
         }
-      ]
+      ],
+      email: ''
     }
   },
   created() {
     this.getData()
+    this.email = Cookie.get('email')
   },
   computed: {
     SMTP() {
@@ -347,7 +353,7 @@ export default {
         })
       })
       settingsApi.save(settingData).then(() => {
-        this.$message.success(this.$t('message_save_ok'))
+        this.$message.success(this.$t('public_message_save_ok'))
       })
       // .catch(e => {
       //   this.$message.error(e.response.msg)
@@ -360,7 +366,7 @@ export default {
     // 连接测试
     connectAndTest() {
       let lastTime = localStorage.getItem('Tapdata_settings_email_countdown')
-      let now = Date.now()
+      let now = Time.now()
       let duration = Math.floor((now - lastTime) / 1000)
       if (lastTime && duration < 60) {
         this.$message.success(this.$t('setting_test_email_countdown') + '(' + (60 - duration) + 's)')

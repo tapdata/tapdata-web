@@ -15,7 +15,7 @@ $selectedColor: #d3d3d3;
   &.--left,
   &.--right {
     top: 0;
-    width: 6px;
+    width: 2px;
     height: 100%;
     cursor: col-resize;
   }
@@ -50,6 +50,6 @@ $selectedColor: #d3d3d3;
 
   &.active,
   &:hover {
-    background-color: $borderColor;
+    background-color: map-get($color, primary);
   }
 }

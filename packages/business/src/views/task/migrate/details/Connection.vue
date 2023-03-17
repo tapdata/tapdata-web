@@ -18,13 +18,13 @@
       </template>
       <template slot="status" slot-scope="scope">
         <span :class="['status-connection-' + scope.row.status, 'status-block']">
-          {{ $t('packages_business_connection_status_' + scope.row.status) }}
+          {{ getStatus(scope.row.status) }}
         </span>
       </template>
       <template slot="schemaHeader">
         <div>
-          {{ $t('packages_business_connection_list_column_schema_status') }}
-          <ElTooltip placement="top" :content="$t('packages_business_connection_list_column_schema_status_tips')">
+          {{ $t('public_connection_schema_status') }}
+          <ElTooltip placement="top" :content="$t('public_connection_schema_status_tip')">
             <VIcon class="color-primary" size="14">info</VIcon>
           </ElTooltip>
         </div>
@@ -39,7 +39,7 @@
           }}</ElButton>
           <ElDivider direction="vertical"></ElDivider>
           <ElButton size="mini" type="text" @click="reload(scope.row)">{{
-            $t('packages_business_connection_preview_load_schema')
+            $t('public_connection_button_load_schema')
           }}</ElButton>
         </div>
       </template>
@@ -53,6 +53,7 @@
 import { connectionsApi } from '@tap/api'
 import { VIcon, VTable } from '@tap/component'
 import { deepCopy } from '@tap/shared'
+import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 
 import ConnectionTest from '../../../connections/Test.vue'
 import { SchemaProgress } from '../../../../components'
@@ -84,7 +85,7 @@ export default {
           slotName: 'status'
         },
         {
-          label: this.$t('packages_business_connection_list_type'),
+          label: this.$t('public_connection_type'),
           prop: 'connectType'
         },
         {
@@ -94,20 +95,20 @@ export default {
           slotName: 'schema'
         },
         {
-          label: this.$t('packages_business_connection_list_change_time'),
+          label: this.$t('public_change_time'),
           prop: 'last_updated',
           dataType: 'time'
         },
         {
-          label: this.$t('packages_business_connection_list_operate'),
+          label: this.$t('public_operation'),
           prop: 'operation',
           slotName: 'operation'
         }
       ],
       connectTypeMap: {
-        source: this.$t('packages_business_connection_list_source'),
-        target: this.$t('packages_business_connection_list_target'),
-        source_and_target: this.$t('packages_business_connection_list_source_and_target')
+        source: this.$t('public_connection_type_source'),
+        target: this.$t('public_connection_type_target'),
+        source_and_target: this.$t('public_connection_type_source_and_target')
       }
     }
   },
@@ -187,8 +188,8 @@ export default {
         let config = {
           title: this.$t('packages_business_connection_reloadTittle'),
           Message: this.$t('packages_business_connection_reloadMsg'),
-          confirmButtonText: this.$t('packages_business_button_confirm'),
-          cancelButtonText: this.$t('packages_business_button_close'),
+          confirmButtonText: this.$t('public_button_confirm'),
+          cancelButtonText: this.$t('public_button_close'),
           name: row.name,
           id: row.id
         }
@@ -224,6 +225,9 @@ export default {
     },
     getConnectionIcon() {
       return getConnectionIcon(...arguments)
+    },
+    getStatus(status) {
+      return CONNECTION_STATUS_MAP[status]?.text || '-'
     }
   }
 }

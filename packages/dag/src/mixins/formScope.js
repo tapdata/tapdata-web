@@ -5,6 +5,7 @@ import { merge, isEqual } from 'lodash'
 import { connectionsApi, metadataInstancesApi, clusterApi, proxyApi } from '@tap/api'
 import { externalStorageApi } from '@tap/api'
 import { isPlainObj } from '@tap/shared'
+import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 
 export default {
   data() {
@@ -251,7 +252,7 @@ export default {
                 id: item.id,
                 name: item.name,
                 label: `${item.name} ${
-                  item.status ? `(${this.$t('packages_dag_connection_status_' + item.status) || item.status})` : ''
+                  item.status ? `(${CONNECTION_STATUS_MAP[item.status]?.text || item.status})` : ''
                 }`,
                 value: item.id,
                 databaseType: item.database_type,
@@ -290,6 +291,16 @@ export default {
           }
           const data = await metadataInstancesApi.get({ filter: JSON.stringify(filter) }, config)
           data.items = data.items.map(item => item.original_name)
+          const table = filter.where.original_name?.like
+          if (table && !data.items.includes(table)) {
+            const res = await metadataInstancesApi.checkTableExist({
+              connectionId: filter.where['source.id'],
+              tableName: table
+            })
+            if (res?.exist) {
+              data.items.unshift(table)
+            }
+          }
           return data
         },
 
@@ -541,6 +552,12 @@ export default {
           const id = field.value
           const form = field.form
           const connection = await connectionsApi.get(id)
+
+          if (!connection) {
+            console.error('ConnectionNotFound', id) // eslint-disable-line
+            return
+          }
+
           const connectionType = form.getValuesIn('attrs.connectionType') || ''
           const accessNodeProcessId = form.getValuesIn('attrs.accessNodeProcessId') || ''
           const connectionName = form.getValuesIn('attrs.connectionName')
@@ -581,6 +598,20 @@ export default {
           } catch (e) {
             return []
           }
+        },
+
+        /**
+         * 设置主键默认值
+         * 目前的场景是更新条件字段
+         * @param field
+         */
+        setDefaultPrimaryKey(field) {
+          if (!field.value?.length && field.dataSource && field.dataSource.length) {
+            let isPrimaryKeyList = field.dataSource.filter(item => item.isPrimaryKey)
+            let indicesUniqueList = field.dataSource.filter(item => item.indicesUnique)
+            field.setValue((isPrimaryKeyList.length ? isPrimaryKeyList : indicesUniqueList).map(item => item.value))
+            field.validate()
+          }
         }
       }
     }
@@ -602,7 +633,10 @@ export default {
       this.scope.$agents = data.map(item => {
         return {
           value: item.processId,
-          label: `${item.hostName}（${item.ip}）`
+          label: `${item.hostName}（${
+            item.status === 'running' ? i18n.t('public_status_running') : i18n.t('public_agent_status_offline')
+          }）`,
+          disabled: item.status !== 'running'
         }
       })
       this.scope.$agentMap = data.reduce((obj, item) => ((obj[item.processId] = item), obj), {})

@@ -44,7 +44,7 @@
             <JsEditor v-model="form.script" ref="editor" height="200"></JsEditor>
           </div>
         </ElFormItem>
-        <ElFormItem prop="describe" :label="$t('function_describe_label') + ':'">
+        <ElFormItem prop="describe" :label="$t('public_description') + ':'">
           <ElInput
             v-model="form.describe"
             class="form-input"
@@ -74,8 +74,8 @@
       </ElForm>
     </div>
     <div class="footer p-6">
-      <ElButton class="btn" size="mini" @click="$router.back()">{{ $t('button_back') }}</ElButton>
-      <ElButton class="btn" type="primary" size="mini" @click="save">{{ $t('button_save') }}</ElButton>
+      <ElButton class="btn" size="mini" @click="$router.back()">{{ $t('public_button_back') }}</ElButton>
+      <ElButton class="btn" type="primary" size="mini" @click="save">{{ $t('public_button_save') }}</ElButton>
     </div>
 
     <!-- </div>
@@ -205,7 +205,7 @@ export default {
               })
             )
               .then(() => {
-                this.$message.success(this.$t('message_save_ok'))
+                this.$message.success(this.$t('public_message_save_ok'))
                 this.$router.back()
               })
               .finally(() => {

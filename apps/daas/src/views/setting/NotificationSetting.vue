@@ -27,7 +27,7 @@
                   <el-select
                     v-model="item.lagTimeUtil"
                     slot="append"
-                    :placeholder="$t('common_placeholder_select')"
+                    :placeholder="$t('public_select_placeholder')"
                     class="input-with-select"
                   >
                     <el-option label="hour" value="hour"></el-option>
@@ -52,7 +52,7 @@
                   <el-select
                     v-model="item.noticeIntervalUtil"
                     slot="append"
-                    :placeholder="$t('common_placeholder_select')"
+                    :placeholder="$t('public_select_placeholder')"
                     class="input-with-select"
                   >
                     <el-option label="hour" value="hour"></el-option>
@@ -71,7 +71,7 @@
                   <el-select
                     v-model="item.util"
                     slot="append"
-                    :placeholder="$t('common_placeholder_select')"
+                    :placeholder="$t('public_select_placeholder')"
                     class="input-with-select"
                   >
                     <el-option label="hour" value="hour"></el-option>
@@ -111,7 +111,7 @@
         size="mini"
         type="primary"
         :disabled="!runNotification || !systemNotification || !agentNotification"
-        >{{ $t('dataForm_submit') }}</ElButton
+        >{{ $t('public_button_save') }}</ElButton
       >
     </div>
     <!-- <div class="notification-main">
@@ -168,7 +168,7 @@ export default {
       settingsApi
         .enterpriseUpdate(where, data)
         .then(() => {
-          this.$message.success(this.$t('message_save_ok'))
+          this.$message.success(this.$t('public_message_save_ok'))
         })
         .finally(() => {
           this.loading = false

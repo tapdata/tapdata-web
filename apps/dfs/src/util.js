@@ -196,7 +196,7 @@ export const errorConfirmFnc = error => {
                 <input type="checkbox" id="errorConfirm" style="display: none" />
                 <div class="error-confirm-fold-content text-truncate">${mm}</div>
                 <label for="errorConfirm" class="color-primary cursor-pointer text-nowrap">${i18n.t(
-                  'button_zhanKai'
+                  'public_button_expand'
                 )}</label>
               </div>`
   }
@@ -205,7 +205,7 @@ export const errorConfirmFnc = error => {
     iconSize: 18,
     dangerouslyUseHTMLString: true,
     confirmButtonText: i18n.t('confirm_reload_label'),
-    cancelButtonText: i18n.t('button_close')
+    cancelButtonText: i18n.t('public_button_close')
   }).then(flag => {
     if (flag) {
       location.reload()

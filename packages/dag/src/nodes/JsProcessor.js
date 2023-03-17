@@ -1,3 +1,4 @@
+import i18n from '@tap/i18n'
 import { NodeType } from './extends/NodeType'
 import { AllLocales } from './locales'
 
@@ -7,6 +8,8 @@ export class JavaScript extends NodeType {
   }
 
   type = 'migrate_js_processor'
+
+  beta = true
 
   maxInputs = 1 // 最大输入个数
   maxOutputs = 1 // 最大输出个数
@@ -23,7 +26,7 @@ export class JavaScript extends NodeType {
       },
       name: {
         type: 'string',
-        title: '节点名称',
+        title: i18n.t('public_node_name'),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input'

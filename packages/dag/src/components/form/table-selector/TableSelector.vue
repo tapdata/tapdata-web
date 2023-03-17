@@ -19,9 +19,9 @@
           <i class="el-icon-loading mx-2"></i>
           <span>{{ progress }}%</span>
         </span>
-        <ElLink v-else-if="!disabled" type="primary" :disabled="stateIsReadonly" @click="reload()">
+        <ElLink v-else-if="!disabled && !hideReload" type="primary" :disabled="stateIsReadonly" @click="reload()">
           <div class="flex align-center">
-            <span>{{ $t('packages_form_button_reload') }}</span>
+            <span>{{ $t('public_button_reload') }}</span>
             <VIcon class="ml-1" size="9">icon_table_selector_load</VIcon>
           </div>
         </ElLink>
@@ -34,7 +34,7 @@
             v-model="table.searchKeyword"
             clearable
             suffix-icon="el-icon-search"
-            :placeholder="$t('packages_form_common_placeholder_search_input')"
+            :placeholder="$t('public_input_placeholder_search')"
           ></ElInput>
         </div>
         <ElCheckboxGroup
@@ -114,7 +114,7 @@
             v-model="selected.searchKeyword"
             clearable
             suffix-icon="el-icon-search"
-            :placeholder="$t('packages_form_common_placeholder_search_input')"
+            :placeholder="$t('public_input_placeholder_search')"
           ></ElInput>
         </div>
         <ElCheckboxGroup
@@ -196,8 +196,8 @@
           }}</ElLink>
         </div>
         <div v-if="isOpenClipMode" class="px-4 pb-4 text-end">
-          <!--          <ElButton @click="changeSeletedMode()">{{ $t('packages_form_button_cancel') }}</ElButton>-->
-          <ElButton type="primary" @click="submitClipboard">{{ $t('packages_form_button_confirm') }}</ElButton>
+          <!--          <ElButton @click="changeSeletedMode()">{{ $t('public_button_cancel') }}</ElButton>-->
+          <ElButton type="primary" @click="submitClipboard">{{ $t('public_button_confirm') }}</ElButton>
         </div>
       </div>
     </div>
@@ -368,7 +368,9 @@ export default {
       required: true
     },
     value: Array,
-    disabled: Boolean
+    disabled: Boolean,
+    hideReload: Boolean,
+    reloadTime: [String, Number]
   },
   data() {
     return {
@@ -461,6 +463,9 @@ export default {
     },
     'filterSelectedData.length'() {
       this.updateSelectedAllChecked()
+    },
+    reloadTime() {
+      this.getProgress()
     }
   },
   created() {
@@ -623,7 +628,14 @@ export default {
             setTimeout(() => {
               this.showProgress = false
               this.progress = 0 //加载完成
-              this.getTables() //更新schema
+              const { taskId, activeNodeId } = this.$store.state?.dataflow || {}
+              metadataInstancesApi
+                .logicSchema(taskId, {
+                  nodeId: activeNodeId
+                })
+                .then(() => {
+                  this.getTables() //更新schema
+                })
             }, 1000)
           } else {
             let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100

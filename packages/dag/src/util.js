@@ -1,4 +1,5 @@
 import { getConnectionIcon } from '@tap/business'
+import { getIcon } from '@tap/assets/icons'
 
 export function getNodeIconSrc(node) {
   if (!node) return
@@ -7,7 +8,7 @@ export function getNodeIconSrc(node) {
     return getConnectionIcon(pdkHash)
   }
   let icon = node.type === 'table' || node.type === 'database' || node.databaseType ? node.databaseType : node.type
-  return icon ? require(`web-core/assets/icons/node/${icon}.svg`) : null
+  return icon ? getIcon(icon) : null
 }
 
 const takeFieldValue = (schema, fieldName) => {
@@ -41,7 +42,7 @@ export function getSchema(schema, values, pdkPropertiesMap) {
     newSchema = JSON.parse(JSON.stringify(schema))
   }
 
-  const blacklist = ['Redis', 'CSV', 'EXCEL', 'JSON', 'XML']
+  const blacklist = ['CSV', 'EXCEL', 'JSON', 'XML']
 
   if (values.attrs.pdkHash && (values.type != 'database' || !blacklist.includes(values.databaseType))) {
     const pdkProperties = pdkPropertiesMap[values.attrs.pdkHash]

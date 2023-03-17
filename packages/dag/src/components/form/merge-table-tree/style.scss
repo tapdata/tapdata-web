@@ -12,7 +12,7 @@
   }
 
   .el-tree {
-    &-node{
+    &-node {
       margin-top: 1px;
 
       &__content {
@@ -45,14 +45,14 @@
       &.is-drop-inner > .el-tree-node__content {
         background-color: #d0deff;
       }
-    //rgba(47, 46, 63, 0.05)
+      //rgba(47, 46, 63, 0.05)
     }
 
     &__drop-indicator {
       height: 2px;
       background-color: #2c65ff;
       &:before {
-        content: "";
+        content: '';
         position: absolute;
         left: 0;
         top: 50%;

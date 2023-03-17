@@ -6,7 +6,7 @@
     <!-- 数据校验表格 start -->
     <ElTable :data="tableData" class="table-page-table" height="100%">
       <ElTableColumn :label="$t('metadata_details_version_versionNum')" prop="version"> </ElTableColumn>
-      <ElTableColumn :label="$t('metadata_details_version_updateTime')" prop="version_time">
+      <ElTableColumn :label="$t('public_update_time')" prop="version_time">
         <template slot-scope="scope">
           {{ scope.row.versionTimeFmt }}
         </template>
@@ -14,7 +14,7 @@
       <ElTableColumn :label="$t('metadata_details_version_operator')" prop="version_user_name"></ElTableColumn>
       <ElTableColumn :label="$t('metadata_details_version_modifyDescription')" prop="version_description">
       </ElTableColumn>
-      <ElTableColumn :label="$t('column_operation')" width="80">
+      <ElTableColumn :label="$t('public_operation')" width="80">
         <template slot-scope="scope">
           <ElButton v-readonlybtn="'data_catalog_edition'" size="mini" type="text" @click="toDetails(scope.row)">
             {{ $t('metadata_details_version_compared') }}

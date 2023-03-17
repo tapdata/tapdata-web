@@ -30,7 +30,7 @@
     <section class="layout-wrap layout-has-sider">
       <!--左侧边栏-->
       <LeftSidebar
-        v-if="!stateIsReadonly && dataflow.id"
+        v-if="dataflow.id"
         v-resize.right="{
           minWidth: 260,
           maxWidth: 400
@@ -215,8 +215,13 @@ export default {
           type: 'union_processor'
         },
         {
-          name: 'JavaScript',
-          type: 'js_processor'
+          name: i18n.t('packages_dag_src_migrationeditor_jSchuli_standard'),
+          type: 'standard_js_processor'
+        },
+        {
+          name: i18n.t('packages_dag_src_migrationeditor_jSchuli'),
+          type: 'js_processor',
+          beta: true
         },
         {
           name: 'Row Filter',
@@ -247,7 +252,7 @@ export default {
       if (this.isDaas) {
         let isDaasNode = [
           {
-            name: i18n.t('packages_dag_dag_connection'),
+            name: i18n.t('packages_dag_src_editor_join'),
             type: 'join_processor' //join 节点
           },
           {
@@ -343,13 +348,14 @@ export default {
 
       try {
         this.initWS()
-        const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
+        // const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
+        const result = await taskApi.save(data)
         this.reformDataflow(result)
-        !needStart && this.$message.success(this.$t('packages_dag_message_save_ok'))
+        !needStart && this.$message.success(this.$t('public_message_save_ok'))
         this.setEditVersion(result.editVersion)
         this.isSaving = false
-        // this.toggleConsole(true)
-        // this.$refs.console?.startAuto('checkDag') // 信息输出自动加载
+        this.toggleConsole(true)
+        this.$refs.console?.startAuto('checkDag') // 信息输出自动加载
         return true
       } catch (e) {
         this.isSaving = false
@@ -371,7 +377,6 @@ export default {
         this.setTaskId(dataflow.id)
         this.setEditVersion(dataflow.editVersion)
         this.setTaskInfo(this.dataflow)
-        // this.$message.success(this.$t('packages_dag_message_save_ok'))
         await this.$router.replace({
           name: 'DataflowEditor',
           params: { id: dataflow.id, action: 'dataflowEdit' }
@@ -565,6 +570,43 @@ export default {
           id: this.dataflow.id
         }
       })
+    },
+
+    async handleStart() {
+      this.buried('taskStart')
+      this.unWatchStatus?.()
+      this.unWatchStatus = this.$watch('dataflow.status', v => {
+        if (['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)) {
+          this.$refs.console?.loadData()
+          if (v !== 'running') {
+            this.$refs.console?.stopAuto()
+          } else {
+            this.toggleConsole(false)
+            this.gotoViewer(false)
+          }
+          // this.unWatchStatus()
+        }
+        if (['MigrateViewer', 'DataflowViewer'].includes(this.$route.name)) {
+          if (['renewing'].includes(v)) {
+            this.handleConsoleAutoLoad()
+          } else {
+            this.toggleConsole(false)
+          }
+        }
+      })
+      const flag = await this.save(true)
+
+      if (flag) {
+        this.dataflow.disabledData.edit = true
+        this.dataflow.disabledData.start = true
+        this.dataflow.disabledData.stop = true
+        this.dataflow.disabledData.reset = true
+        this.beforeStartTask()
+        // this.gotoViewer()
+        // this.buried('taskStart', { result: true })
+      } else {
+        this.buried('taskStart', { result: false })
+      }
     }
   }
 }

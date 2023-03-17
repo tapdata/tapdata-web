@@ -5,11 +5,11 @@
         <ElForm>
           <ElFormItem :label="$t('views_Lang_wenAnBaoHanDe')">
             <ElInput v-model="inc" type="textarea" :placeholder="$t('views_Lang_wenAnBaoHanDe')" autosize></ElInput>
-            <ElButton type="primary" class="mt-3" @click="saveIncludes">{{ $t('button_save') }}</ElButton>
+            <ElButton type="primary" class="mt-3" @click="saveIncludes">{{ $t('public_button_save') }}</ElButton>
           </ElFormItem>
           <ElFormItem :label="$t('views_Lang_wenAnDengYuDe')">
             <ElInput v-model="equal" type="textarea" :placeholder="$t('views_Lang_wenAnDengYuDe')" autosize></ElInput>
-            <ElButton type="primary" class="mt-3" @click="saveEqual">{{ $t('button_save') }}</ElButton>
+            <ElButton type="primary" class="mt-3" @click="saveEqual">{{ $t('public_button_save') }}</ElButton>
           </ElFormItem>
         </ElForm>
       </ElCollapseItem>
@@ -17,20 +17,28 @@
     <div class="flex justify-content-between mt-4">
       <FilterBar v-model="searchParams" :items="filterItems" @search="search"> </FilterBar>
       <div>
+        <UploadFile :upload="uploadModifyZhCN" accept="text/javascript" class="inline-block mr-4">
+          <ElButton>{{ $t('public_button_upload') + $t('lang_zh_cn') }}</ElButton>
+        </UploadFile>
         <UploadFile :upload="uploadModifyZhTW" accept="text/javascript" class="inline-block mr-4">
-          <ElButton>{{ $t('button_upload') + $t('lang_zh_tw') }}</ElButton>
+          <ElButton>{{ $t('public_button_upload') + $t('lang_zh_tw') }}</ElButton>
         </UploadFile>
         <UploadFile :upload="uploadModifyEn" accept="text/javascript" class="inline-block mr-4">
-          <ElButton>{{ $t('button_upload') + $t('lang_en') }}</ElButton>
+          <ElButton>{{ $t('public_button_upload') + $t('lang_en') }}</ElButton>
         </UploadFile>
-        <ElButton type="primary" @click="exportModifyZhTW">{{ $t('button_export') + $t('lang_zh_tw') }}</ElButton>
-        <ElButton type="primary" @click="exportModifyEn">{{ $t('button_export') + $t('lang_en') }}</ElButton>
+        <ElButton type="primary" @click="exportModifyZhCN">{{
+          $t('public_button_export') + $t('lang_zh_cn')
+        }}</ElButton>
+        <ElButton type="primary" @click="exportModifyZhTW">{{
+          $t('public_button_export') + $t('lang_zh_tw')
+        }}</ElButton>
+        <ElButton type="primary" @click="exportModifyEn">{{ $t('public_button_export') + $t('lang_en') }}</ElButton>
       </div>
     </div>
     <VTable ref="table" row-key="id" :columns="columns" :data="data" height="100%" class="mt-4" :isPage="true">
       <template slot="operation" slot-scope="scope">
         <div class="operate-columns">
-          <ElButton size="mini" type="text" @click="edit(scope.row)">{{ $t('button_edit') }}</ElButton>
+          <ElButton size="mini" type="text" @click="edit(scope.row)">{{ $t('public_button_edit') }}</ElButton>
         </div>
       </template>
       <template slot="name" slot-scope="scope">
@@ -47,11 +55,16 @@
         </ElFormItem>
         <ElFormItem :label="langMap['zh-CN']">
           <div>{{ dialog.form['zh-CN'] }}</div>
+          <ElInput
+            v-model.trim="dialog.form['zh-CN-modify']"
+            type="textarea"
+            :placeholder="$t('views_Lang_qingShuRuJiaoZheng')"
+          ></ElInput>
         </ElFormItem>
         <ElFormItem :label="langMap['zh-TW']">
           <div>{{ dialog.form['zh-TW'] }}</div>
           <ElInput
-            v-model="dialog.form['zh-TW-modify']"
+            v-model.trim="dialog.form['zh-TW-modify']"
             type="textarea"
             :placeholder="$t('views_Lang_qingShuRuJiaoZheng')"
           ></ElInput>
@@ -59,15 +72,15 @@
         <ElFormItem :label="langMap['en']">
           <div>{{ dialog.form['en'] }}</div>
           <ElInput
-            v-model="dialog.form['en-modify']"
+            v-model.trim="dialog.form['en-modify']"
             type="textarea"
             :placeholder="$t('views_Lang_qingShuRuJiaoZheng')"
           ></ElInput>
         </ElFormItem>
       </ElForm>
       <span slot="footer" class="dialog-footer">
-        <ElButton @click="dialog.visible = false">{{ $t('button_cancel') }}</ElButton>
-        <ElButton type="primary" @click="confirm">{{ $t('button_confirm') }}</ElButton>
+        <ElButton @click="dialog.visible = false">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton type="primary" @click="confirm">{{ $t('public_button_confirm') }}</ElButton>
       </span>
     </ElDialog>
   </div>
@@ -75,13 +88,13 @@
 
 <script>
 import i18n from '@/i18n'
-
 import { FilterBar, VTable } from '@tap/component'
-import zhCN from '@/i18n/langs/zh-CN'
-import enSource from '@/i18n/langs/en'
-import enModify from '@/i18n/modify/en'
-import zhTWSource from '@/i18n/langs/zh-TW'
-import zhTWModify from '@/i18n/modify/zh-TW'
+import { delayTrigger } from '@tap/shared'
+
+const zhCN = i18n.messages?.['zh-CN'] || {}
+const zhTWSource = i18n.messages?.['zh-TW'] || {}
+const enSource = i18n.messages?.['en'] || {}
+
 import UploadFile from '@/components/UploadFile'
 import { downloadBlob } from '@/util'
 
@@ -100,12 +113,14 @@ export default {
       'zh-CN': zhCN,
       'zh-TW': zhTWSource
     }
+    let localLangModifyZhCN = localStorage.getItem('localLangModifyZhCN')
     let localLangModifyZhTW = localStorage.getItem('localLangModifyZhTW')
     let localLangModifyEn = localStorage.getItem('localLangModifyEn')
     // 矫正的文案
     let modifyObject = {
-      en: localLangModifyEn ? Object.assign(JSON.parse(localLangModifyEn), enModify) : enModify,
-      'zh-TW': localLangModifyZhTW ? Object.assign(JSON.parse(localLangModifyZhTW), zhTWModify) : zhTWModify
+      en: localLangModifyEn ? JSON.parse(localLangModifyEn) : {},
+      'zh-TW': localLangModifyZhTW ? JSON.parse(localLangModifyZhTW) : {},
+      'zh-CN': localLangModifyZhCN ? JSON.parse(localLangModifyZhCN) : {}
     }
     let columns = [
       {
@@ -122,21 +137,21 @@ export default {
       })
     }
     columns.push({
-      label: i18n.t('list_operation'),
+      label: i18n.t('public_operation'),
       prop: 'operation',
       slotName: 'operation'
     })
     let list = []
     for (let key in sourceObject['zh-CN']) {
       let obj = {}
-      obj.key = key
-      Object.keys(langMap).forEach(el => {
-        obj[el] = sourceObject[el][key]
-        if (el !== 'zh-CN') {
+      if (typeof sourceObject['zh-CN'][key] === 'string') {
+        obj.key = key
+        Object.keys(langMap).forEach(el => {
+          obj[el] = sourceObject[el][key]
           obj[el + '-modify'] = modifyObject[el]?.[key] || ''
-        }
-      })
-      list.push(obj)
+        })
+        list.push(obj)
+      }
     }
     return {
       inc: '',
@@ -200,15 +215,14 @@ export default {
       this.$message.success('success, please refresh page!')
     },
     search(debounce) {
-      const { delayTrigger } = this.$util
       delayTrigger(() => {
         let { status, key, value } = this.searchParams
         let data = this.list
         if (status) {
           if (status === 'modify') {
-            data = this.list.filter(t => t['zh-TW-modify'] || t['en-modify'])
+            data = this.list.filter(t => t['zh-CN-modify'] || t['zh-TW-modify'] || t['en-modify'])
           } else if (status === 'no-modify') {
-            data = this.list.filter(t => !t['zh-TW-modify'] && !t['en-modify'])
+            data = this.list.filter(t => !t['zh-CN-modify'] && !t['zh-TW-modify'] && !t['en-modify'])
           }
         }
         if (key) {
@@ -230,15 +244,20 @@ export default {
       this.dialog.visible = false
       let { form } = this.dialog
       let findOne = this.list.find(t => t.key === form.key)
+      findOne['zh-CN-modify'] = form['zh-CN-modify']
       findOne['zh-TW-modify'] = form['zh-TW-modify']
       findOne['en-modify'] = form['en-modify']
       this.updateLocalStorage()
       this.$message.success(this.$t('operate_update_success'))
     },
     getModifyData() {
+      let zhCN = {}
       let zhTW = {}
       let en = {}
       this.list.forEach(el => {
+        if (el['zh-CN-modify']) {
+          zhCN[el.key] = el['zh-CN-modify']
+        }
         if (el['zh-TW-modify']) {
           zhTW[el.key] = el['zh-TW-modify']
         }
@@ -247,18 +266,26 @@ export default {
         }
       })
       return {
+        zhCN,
         zhTW,
         en
       }
     },
     updateLocalStorage() {
-      let { zhTW, en } = this.getModifyData()
+      let { zhCN, zhTW, en } = this.getModifyData()
+      if (Object.keys(zhCN).length) {
+        localStorage.setItem('localLangModifyZhCN', JSON.stringify(zhCN))
+      }
       if (Object.keys(zhTW).length) {
         localStorage.setItem('localLangModifyZhTW', JSON.stringify(zhTW))
       }
       if (Object.keys(en).length) {
         localStorage.setItem('localLangModifyEn', JSON.stringify(en))
       }
+    },
+    exportModifyZhCN() {
+      let { zhCN } = this.getModifyData()
+      this.downloadBlob(zhCN, 'zh-CN.js')
     },
     exportModifyZhTW() {
       let { zhTW } = this.getModifyData()
@@ -286,24 +313,31 @@ export default {
     },
     uploadModifyEn(evt) {
       this.upload(evt, data => {
-        let localLangModifyEn = localStorage.getItem('localLangModifyEn')
-        if (localLangModifyEn) {
-          Object.assign(data, JSON.parse(localLangModifyEn))
+        let res = localStorage.getItem('localLangModifyEn')
+        if (res) {
+          Object.assign(data, JSON.parse(res))
         }
         localStorage.setItem('localLangModifyEn', JSON.stringify(data))
       })
     },
     uploadModifyZhTW(evt) {
       this.upload(evt, data => {
-        let localLangModifyZhTW = localStorage.getItem('localLangModifyZhTW')
-        if (localLangModifyZhTW) {
-          Object.assign(data, JSON.parse(localLangModifyZhTW))
+        let res = localStorage.getItem('localLangModifyZhTW')
+        if (res) {
+          Object.assign(data, JSON.parse(res))
         }
         localStorage.setItem('localLangModifyZhTW', JSON.stringify(data))
+      })
+    },
+    uploadModifyZhCN(evt) {
+      this.upload(evt, data => {
+        let res = localStorage.getItem('localLangModifyZhCN')
+        if (res) {
+          Object.assign(data, JSON.parse(res))
+        }
+        localStorage.setItem('localLangModifyZhCN', JSON.stringify(data))
       })
     }
   }
 }
 </script>
-
-<style scoped></style>

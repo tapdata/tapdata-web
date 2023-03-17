@@ -44,7 +44,7 @@
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
               >
-                <i class="click-style">{{ $t('agent_deploy_upgrade_button_copy') }}</i>
+                <i class="click-style">{{ $t('public_button_copy') }}</i>
               </span>
             </ElTooltip>
           </div>
@@ -72,7 +72,7 @@
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
               >
-                <i class="click-style">{{ $t('agent_deploy_upgrade_button_copy') }}</i>
+                <i class="click-style">{{ $t('public_button_copy') }}</i>
               </span>
             </ElTooltip>
           </div>
@@ -115,7 +115,7 @@
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
               >
-                <i class="click-style">{{ $t('agent_deploy_upgrade_button_copy') }}</i>
+                <i class="click-style">{{ $t('public_button_copy') }}</i>
               </span>
             </ElTooltip>
           </div>
@@ -156,7 +156,7 @@
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
               >
-                <i class="click-style">{{ $t('agent_deploy_upgrade_button_copy') }}</i>
+                <i class="click-style">{{ $t('public_button_copy') }}</i>
               </span>
             </ElTooltip>
           </div>
@@ -165,7 +165,7 @@
       </div>
     </main>
     <footer class="footer">
-      <ElButton type="primary" @click="goBack()">{{ $t('button_finish') }}</ElButton>
+      <ElButton type="primary" @click="goBack()">{{ $t('public_status_complete') }}</ElButton>
     </footer>
   </section>
 </template>
@@ -209,7 +209,16 @@ export default {
   },
   created() {
     this.loadData()
-    this.loadChat()
+    if (!window.__config__?.disabledOnlineChat) {
+      this.loadChat()
+    }
+    if (window.__config__?.disabledAlibabaCloudComputingNest) {
+      this.downType = [
+        { name: 'Linux (64 bit)', value: 'Linux' },
+        { name: 'Docker', value: 'Docker' },
+        { name: 'Windows (64 bit)', value: 'windows' }
+      ]
+    }
   },
   methods: {
     loadData() {
@@ -269,6 +278,16 @@ export default {
       let t = d.getElementsByTagName('script')[0]
       t.parentNode.insertBefore(s, t)
       this.hideCustomTip()
+
+      $zoho.salesiq.ready = function () {
+        const user = window.__USER_INFO__
+        $zoho.salesiq.visitor.contactnumber(user.telephone)
+        $zoho.salesiq.visitor.info({
+          tapdata_username: user.nickname || user.username,
+          tapdata_phone: user.telephone,
+          tapdata_email: user.email
+        })
+      }
     }
   }
 }

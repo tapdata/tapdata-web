@@ -458,7 +458,9 @@ export default {
       }
 
       const node = this.nodeById(id)
-
+      // 共享挖掘的节点，不触发选中
+      const flag = ['logCollector', 'hazelcastIMDG'].includes(node.type)
+      if (flag) return
       node && this.nodeSelected(node)
       if (setActive) {
         this.setActiveNode(node.id)
@@ -844,7 +846,7 @@ export default {
       try {
         const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
         this.reformDataflow(result)
-        !needStart && this.$message.success(this.$t('packages_dag_message_save_ok'))
+        !needStart && this.$message.success(this.$t('public_message_save_ok'))
         this.setEditVersion(result.editVersion)
         this.isSaving = false
         isOk = true
@@ -1045,7 +1047,15 @@ export default {
       } catch (e) {
         // eslint-disable-next-line no-console
         console.log(i18n.t('packages_dag_mixins_editor_jiedianjiaoyancuo'), e)
-        this.setNodeError(node.id)
+        if (node.type === 'table_rename_processor') {
+          // 节点的特殊处理，直接拿表单校验结果设置错误信息
+          this.setNodeErrorMsg({
+            id: node.id,
+            msg: e[0].messages[0]
+          })
+        } else {
+          this.setNodeError(node.id)
+        }
       }
     },
 
@@ -1076,6 +1086,7 @@ export default {
           someErrorMsg = i18n.t('packages_dag_src_migrationmonitor_noden', {
             val1: node.name
           })
+          this.handleLocateNode(node)
           return true
         }
 
@@ -1690,7 +1701,7 @@ export default {
       console.debug(i18n.t('packages_dag_mixins_editor_debug5', { val1: result.data?.status }), result.data) // eslint-disable-line
       if (result.data) {
         if (result.data.id !== this.dataflow.id) {
-          console.debug('ws收到了其他任务的返回', result.data)
+          console.debug(i18n.t('packages_dag_mixins_editor_wsshoudaole'), result.data)
           return
         }
         this.reformDataflow(result.data, true)
@@ -1699,8 +1710,10 @@ export default {
     },
 
     handleLocateNode(node) {
-      this.$refs.paperScroller.centerNode(node)
       this.nodeSelectedById(node.id, true, true)
+      setTimeout(() => {
+        this.$refs.paperScroller.centerNode(node)
+      }, 300)
     },
 
     async handleStart() {
@@ -1737,7 +1750,7 @@ export default {
         await taskApi.stop(this.dataflow.id).catch(e => {
           this.handleError(e, this.$t('packages_dag_message_operation_error'))
         })
-        this.$message.success(this.$t('packages_dag_message_operation_succuess'))
+        this.$message.success(this.$t('public_message_operation_success'))
       })
     },
 
@@ -1771,7 +1784,7 @@ export default {
           this.toggleConsole(true)
           this.$refs.console?.startAuto('reset') // 信息输出自动加载
           const data = await taskApi.reset(this.dataflow.id)
-          this.responseHandler(data, this.$t('packages_dag_message_operation_succuess'))
+          this.responseHandler(data, this.$t('public_message_operation_success'))
         } catch (e) {
           this.handleError(e, this.$t('packages_dag_message_operation_error'))
         }
@@ -1854,6 +1867,7 @@ export default {
       if (!id) return
       this.startLoopTaskTimer = setTimeout(async () => {
         const data = await taskApi.get(id)
+        if (this.destory) return
         if (data) {
           // 同步下任务上的属性，重置后会改变
           this.dataflow.attrs = data.attrs
@@ -1869,6 +1883,7 @@ export default {
           }
           // 需要实时更新的字段
           this.dataflow.lastStartDate = data.lastStartDate
+          this.dataflow.startTime = data.startTime
           this.dataflow.pingTime = data.pingTime
           if (data.status === 'edit') data.btnDisabled.start = false // 任务编辑中，在编辑页面可以启动
           Object.assign(this.dataflow.disabledData, data.btnDisabled)
@@ -2007,6 +2022,48 @@ export default {
           return map
         }, {})
       )
+    },
+
+    getIsDataflow() {
+      const routeName = this.$route.name
+      return ['DataflowNew', 'DataflowEditor', 'DataflowViewer', 'TaskMonitor'].includes(routeName)
+    },
+
+    beforeStartTask() {
+      const buriedCode = this.getIsDataflow() ? 'taskStart' : 'migrationStart'
+      const { warnNum, errorNum, over } = this.$refs.console?.getData() || {}
+      if (!over) {
+        setTimeout(this.beforeStartTask, 800)
+      } else {
+        if (warnNum || errorNum) {
+          this.$confirm(i18n.t('packages_dag_src_editor_renwubaocunjianceshi'), '', {
+            type: 'warning',
+            confirmButtonText: i18n.t('packages_dag_src_editor_jixuqidong'),
+            cancelButtonText: i18n.t('packages_dag_src_editor_shaohouqidong')
+          }).then(resFlag => {
+            if (resFlag) {
+              this.startTask()
+              return
+            }
+            this.buried(buriedCode, { result: false })
+          })
+        } else {
+          this.startTask()
+        }
+      }
+    },
+
+    startTask() {
+      const buriedCode = this.getIsDataflow() ? 'taskStart' : 'migrationStart'
+      taskApi
+        .batchStart([this.dataflow.id])
+        .then(() => {
+          this.buried(buriedCode, { result: true })
+          this.gotoViewer()
+        })
+        .catch(() => {
+          this.buried(buriedCode, { result: false })
+        })
     }
   }
 }

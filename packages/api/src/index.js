@@ -153,6 +153,9 @@ const proxyApi = new Proxy()
 import Paid from './Paid'
 const paidApi = new Paid()
 
+import ShareCdcTableMetrics from './ShareCdcTableMetrics'
+const shareCdcTableMetricsApi = new ShareCdcTableMetrics()
+
 export {
   connectionsApi,
   databaseTypesApi,
@@ -204,7 +207,8 @@ export {
   alarmApi,
   externalStorageApi,
   proxyApi,
-  paidApi
+  paidApi,
+  shareCdcTableMetricsApi
 }
 export * from './ApiClient'
 

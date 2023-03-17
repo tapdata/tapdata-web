@@ -228,3 +228,18 @@ export function downloadBlob(res, name = '') {
 }
 
 export const isEmpty = obj => Reflect.ownKeys(obj).length === 0 && obj.constructor === Object
+
+export const getConnectionTypeImg = function (type) {
+  try {
+    return require(`./assets/icons/node/${type}.svg`)
+  } catch (e) {
+    return null
+  }
+}
+export const getConnectionTypeDialogImg = function (type) {
+  try {
+    return require(`./assets/icons/node/${type}.svg`)
+  } catch (e) {
+    return null
+  }
+}

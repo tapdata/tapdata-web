@@ -1,7 +1,6 @@
 export default {
   packages_form_el_select_loading: '加載中',
   packages_form_el_select_noMatch: '無匹配資料',
-  packages_form_el_select_noData: '無資料',
   packages_form_el_select_placeholder: '請選擇',
   packages_form_message_exists_name: '名稱已存在',
   packages_form_button_edit: '編輯',
@@ -94,10 +93,10 @@ export default {
   packages_form_field_mapping_list_qingshurubiaoming: '請輸入表名',
   packages_form_field_mod_type_index_mubiaoziduanlei: '目標字段類型',
   packages_form_field_mod_type_index_yuanziduanleixing: '源字段類型',
-  packages_form_field_processor_index_xiaoxie: '小寫',
-  packages_form_field_processor_index_daxie: '大寫',
+  packages_form_field_processor_index_xiaoxie: '转小寫',
+  packages_form_field_processor_index_daxie: '转大寫',
   packages_form_field_processor_index_bubian: '不變',
-  packages_form_field_processor_index_daxiaoxie: '大小寫',
+  packages_form_field_processor_index_daxiaoxie: '表名大小寫',
   packages_form_field_processor_index_houzhui: '後綴',
   packages_form_field_processor_index_qianzhui: '前綴',
   packages_form_field_processor_index_piliangcaozuo: '批量操作',
@@ -124,7 +123,7 @@ export default {
   packages_form_table_rename_index_yingyong: '應用',
   packages_form_table_rename_index_gaiwei: '改為',
   packages_form_table_rename_index_tihuan: '替換',
-  packages_form_table_rename_index_yixiacaozuojin: '以下操作僅對已搜索出來的原表名生效',
+  packages_form_table_rename_index_yixiacaozuojin: '以下操作對所有原表名生效',
   packages_form_table_rename_index_xinbiaoming: '新表名',
   packages_form_table_rename_index_yuanbiaoming: '原表名',
   packages_form_table_rename_index_sousuobiaoming: '搜索表名',
@@ -158,5 +157,10 @@ export default {
   packages_form_field_inference_main_ge: '個',
   packages_form_qingjianchajiedian: '請檢查節點配置',
   packages_form_load_schema_tree_load_fail: '加載失敗',
-  packages_form_load_schema_tree_form_values_change: '配置更改後需重新加載模型才可生效'
+  packages_form_load_schema_tree_form_values_change: '配置更改後需重新加載模型才可生效',
+  packages_form_batch_add_field_title: '批量新增',
+  packages_form_batch_add_field_prefix: '字段前綴',
+  packages_form_batch_add_field_type: '字段類型',
+  packages_form_batch_add_field_count: '字段數量',
+  packages_form_batch_add_field_start: '開始數字'
 }

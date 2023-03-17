@@ -33,7 +33,7 @@
           @click="$refs.table.showClassify(handleSelectTag())"
         >
           <!--<i class="iconfont icon-biaoqian back-btn-icon"></i>-->
-          <span> {{ $t('packages_business_dataFlow_taskBulkTag') }}</span>
+          <span> {{ $t('public_button_bulk_tag') }}</span>
         </el-button>
         <el-dropdown
           class="btn"
@@ -73,7 +73,7 @@
             @click="handleCommand('export')"
           >
             <!--<i class="iconfont icon-export back-btn-icon"></i>-->
-            <span> {{ $t('packages_business_dataFlow_dataFlowExport') }}</span>
+            <span> {{ $t('public_button_export') }}</span>
           </el-button>
           <el-button
             v-if="isDaas"
@@ -96,7 +96,7 @@
           :loading="createBtnLoading"
           @click="create"
         >
-          {{ $t('packages_business_button_create') }}
+          {{ $t('public_button_create') }}
         </el-button>
       </div>
 
@@ -108,7 +108,7 @@
         :selectable="row => !row.hasChildren && !$disabledByPermission('SYNC_job_operation_all_data', row.user_id)"
       >
       </el-table-column>
-      <el-table-column min-width="240" :label="$t('packages_business_task_list_name')" :show-overflow-tooltip="true">
+      <el-table-column min-width="240" :label="$t('public_task_name')" :show-overflow-tooltip="true">
         <template #default="{ row }">
           <span class="dataflow-name link-primary flex">
             <ElLink
@@ -125,39 +125,29 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('packages_business_task_list_task_type')" :min-width="colWidth.taskType">
+      <el-table-column :label="$t('public_task_type')" :min-width="colWidth.taskType">
         <template #default="{ row }">
           <span>
             {{ row.type ? taskType[row.type] : '' }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column prop="status" :label="$t('packages_business_task_list_status')" :min-width="colWidth.status">
+      <el-table-column prop="status" :label="$t('public_task_status')" :min-width="colWidth.status">
         <template #default="{ row }">
           <TaskStatus :task="row" :agentMap="agentMap" />
         </template>
       </el-table-column>
-      <el-table-column
-        sortable
-        prop="currentEventTimestamp"
-        :label="$t('packages_business_column_event_time')"
-        min-width="160"
-      >
+      <el-table-column sortable prop="currentEventTimestamp" :label="$t('public_task_cdc_time_point')" min-width="164">
         <template #default="{ row }">
           {{ formatTime(row.currentEventTimestamp) }}
         </template>
       </el-table-column>
-      <el-table-column
-        prop="createTime"
-        :label="$t('packages_business_column_create_time')"
-        min-width="160"
-        sortable="custom"
-      >
+      <el-table-column prop="lastStartDate" :label="$t('public_task_last_run_time')" min-width="164" sortable="custom">
         <template #default="{ row }">
-          {{ formatTime(row.createTime) }}
+          {{ formatTime(row.lastStartDate) }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('packages_business_column_operation')" :width="colWidth.operation">
+      <el-table-column :label="$t('public_operation')" :width="colWidth.operation">
         <template #default="{ row }">
           <div class="table-operations" v-if="!row.hasChildren">
             <ElLink
@@ -167,7 +157,7 @@
               :disabled="row.btnDisabled.start"
               @click="start([row.id])"
             >
-              {{ $t('packages_business_task_list_run') }}
+              {{ $t('public_button_start') }}
             </ElLink>
             <template v-else>
               <ElLink
@@ -177,7 +167,7 @@
                 :disabled="row.btnDisabled.forceStop"
                 @click="forceStop([row.id], row)"
               >
-                {{ $t('packages_business_task_list_force_stop') }}
+                {{ $t('public_button_force_stop') }}
               </ElLink>
               <ElLink
                 v-else
@@ -186,7 +176,7 @@
                 :disabled="row.btnDisabled.stop"
                 @click="stop([row.id], row)"
               >
-                {{ $t('packages_business_task_list_stop') }}
+                {{ $t('public_button_stop') }}
               </ElLink>
             </template>
             <ElDivider v-readonlybtn="'SYNC_job_operation'" direction="vertical"></ElDivider>
@@ -196,7 +186,7 @@
               :disabled="row.btnDisabled.edit || $disabledReadonlyUserBtn()"
               @click="handleEditor(row)"
             >
-              {{ $t('packages_business_button_edit') }}
+              {{ $t('public_button_edit') }}
             </ElLink>
             <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
             <ElLink
@@ -214,7 +204,7 @@
               :disabled="row.btnDisabled.reset || $disabledReadonlyUserBtn()"
               @click="initialize([row.id], row)"
             >
-              {{ $t('packages_business_task_list_reset') }}
+              {{ $t('public_button_reset') }}
             </ElLink>
             <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
             <ElLink
@@ -223,7 +213,7 @@
               :disabled="$disabledReadonlyUserBtn()"
               @click="copy([row.id], row)"
             >
-              {{ $t('packages_business_task_list_copy') }}
+              {{ $t('public_button_copy') }}
             </ElLink>
             <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
             <ElLink
@@ -232,7 +222,7 @@
               :disabled="row.btnDisabled.delete || $disabledReadonlyUserBtn()"
               @click="del([row.id], row)"
             >
-              {{ $t('packages_business_task_list_delete') }}
+              {{ $t('public_button_delete') }}
             </ElLink>
           </div>
         </template>
@@ -245,15 +235,15 @@
     <PaidUpgradeDialog :visible.sync="paidUpgradeVisible" :paidPlan="paidPlan"></PaidUpgradeDialog>
     <!-- 删除任务 pg数据源 slot 删除失败 自定义dialog 提示 -->
     <el-dialog
-      :title="$t('task_mapping_dialog_hint')"
+      :title="$t('public_message_title_prompt')"
       :visible.sync="dialogDelMsgVisible"
       width="52%"
       custom-class="dialogDelMsgDialog"
     >
       <span> {{ $t('packages_business_task_status_error_tip') }}</span>
       <div class="box mt-4">
-        <div class="mb-4">SQL语句:</div>
-        <div class="mt-2">//第一步 查询 slot_name</div>
+        <div class="mb-4">{{ $t('packages_business_task_list_sqLyuju') }}</div>
+        <div class="mt-2">{{ $t('packages_business_task_list_diyibuchaxun') }}</div>
         <div class="mb-4">
           {{ copySelectSql }}
           <ElTooltip
@@ -269,11 +259,11 @@
               v-clipboard:success="onCopy"
               @mouseleave="showTooltip = false"
             >
-              <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
+              <i class="click-style">{{ $t('public_button_copy') }}</i>
             </span>
           </ElTooltip>
         </div>
-        <div class="mt-2">// 第二步 删除 slot_name</div>
+        <div class="mt-2">{{ $t('packages_business_task_list_dierbushanchu') }}</div>
         <div>
           {{ copyDelSql }}
           <ElTooltip
@@ -289,14 +279,16 @@
               v-clipboard:success="onDelCopy"
               @mouseleave="showDelTooltip = false"
             >
-              <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
+              <i class="click-style">{{ $t('public_button_copy') }}</i>
             </span>
           </ElTooltip>
         </div>
       </div>
-      <div class="mt-2" v-for="item in failList" :key="item.id">连接名: {{ item.message }}</div>
+      <div class="mt-2" v-for="item in failList" :key="item.id">
+        {{ $t('packages_business_task_list_lianjieming') }}{{ item.message }}
+      </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogDelMsgVisible = false">关闭</el-button>
+        <el-button type="primary" @click="dialogDelMsgVisible = false">{{ $t('public_button_close') }}</el-button>
       </span>
     </el-dialog>
   </section>
@@ -346,23 +338,22 @@ export default {
       createBtnLoading: false,
       bulkOperation: this.$has('SYNC_job_export') || this.$has('SYNC_job_operation') || this.$has('SYNC_job_delete'),
       taskType: {
-        initial_sync: this.$t('packages_business_task_info_initial_sync'),
-        cdc: this.$t('packages_business_task_info_initial_cdc'),
-        'initial_sync+cdc':
-          this.$t('packages_business_task_info_initial_sync') + '+' + this.$t('packages_business_task_info_initial_cdc')
+        initial_sync: this.$t('public_task_type_initial_sync'),
+        cdc: this.$t('public_task_type_cdc'),
+        'initial_sync+cdc': this.$t('public_task_type_initial_sync') + '+' + this.$t('public_task_type_cdc')
       },
       typeOptions: [
-        { label: this.$t('packages_business_select_option_all'), value: '' },
+        { label: this.$t('public_select_option_all'), value: '' },
         {
-          label: this.$t('packages_business_dataFlow_initial_sync'),
+          label: this.$t('public_task_type_initial_sync'),
           value: 'initial_sync'
         },
         {
-          label: this.$t('packages_business_dataFlow_cdc'),
+          label: this.$t('public_task_type_cdc'),
           value: 'cdc'
         },
         {
-          label: this.$t('packages_business_dataFlow_initial_sync') + this.$t('packages_business_dataFlow_cdc'),
+          label: this.$t('public_task_type_initial_sync') + this.$t('public_task_type_cdc'),
           value: 'initial_sync+cdc'
         }
       ],
@@ -460,7 +451,10 @@ export default {
         stoppingTime: true,
         pingTime: true,
         canForceStopping: true,
-        currentEventTimestamp: true
+        currentEventTimestamp: true,
+        crontabExpressionFlag: true,
+        crontabExpression: true,
+        lastStartDate: true
       }
       let where = {
         syncType
@@ -528,7 +522,7 @@ export default {
     getFilterItems() {
       this.filterItems = [
         {
-          label: this.$t('packages_business_task_list_status'),
+          label: this.$t('public_task_status'),
           key: 'status',
           type: 'select-inner',
           items: this.statusOptions,
@@ -541,7 +535,7 @@ export default {
           items: this.typeOptions
         },
         {
-          placeholder: this.$t('packages_business_task_list_name'),
+          placeholder: this.$t('public_task_name'),
           key: 'keyword',
           type: 'input'
         }
@@ -637,7 +631,7 @@ export default {
       errorEvents && (attributes.errorEvents = errorEvents)
       taskApi.update(where, attributes).then(data => {
         this.table.fetch()
-        this.responseHandler(data, this.$t('packages_business_message_operation_succuess'))
+        this.responseHandler(data, this.$t('public_message_operation_success'))
       })
     },
 
@@ -718,7 +712,7 @@ export default {
         .then(data => {
           this.buried(this.taskBuried.start, '', { result: true })
           this.table.fetch()
-          this.responseHandler(data, this.$t('packages_business_message_operation_succuess'), canNotList)
+          this.responseHandler(data, this.$t('public_message_operation_success'), canNotList)
         })
         .catch(() => {
           this.buried(this.taskBuried.start, '', { result: false })
@@ -728,7 +722,7 @@ export default {
     copy(ids, node) {
       taskApi.copy(node.id).then(() => {
         this.table.fetch()
-        this.$message.success(this.$t('packages_business_message_copySuccess'))
+        this.$message.success(this.$t('public_message_copy_success'))
       })
     },
 
@@ -745,7 +739,7 @@ export default {
           .batchRenew(ids)
           .then(data => {
             this.table.fetch()
-            this.responseHandler(data, this.$t('packages_business_message_operation_succuess'), canNotList)
+            this.responseHandler(data, this.$t('public_message_operation_success'), canNotList)
           })
           .finally(() => {
             this.restLoading = false
@@ -766,7 +760,7 @@ export default {
           const { toggleRowSelection } = this.table.$refs.table
           selected.forEach(row => toggleRowSelection(row, false))
           this.table.fetch()
-          this.responseDelHandler(data, this.$t('packages_business_message_deleteOK'), canNotList)
+          this.responseDelHandler(data, this.$t('public_message_delete_ok'), canNotList)
         })
       })
     },
@@ -796,7 +790,7 @@ export default {
           return
         }
         taskApi.forceStop(ids).then(data => {
-          this.$message.success(data?.message || this.$t('packages_business_message_operation_succuess'), false)
+          this.$message.success(data?.message || this.$t('public_message_operation_success'), false)
           this.table.fetch()
         })
       })
@@ -814,7 +808,7 @@ export default {
         }
         taskApi.batchStop(ids).then(data => {
           this.table.fetch()
-          this.responseHandler(data, this.$t('packages_business_message_operation_succuess'), canNotList)
+          this.responseHandler(data, this.$t('public_message_operation_success'), canNotList)
         })
       })
     },

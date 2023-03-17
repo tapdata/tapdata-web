@@ -31,7 +31,7 @@
     >
       <template #status="{ result }">
         <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block', 'mr-2']">
-          {{ $t('packages_dag_task_preview_status_' + result[0].status) }}
+          {{ getTaskStatus(result[0].status) }}
         </span>
       </template>
     </TopHeader>
@@ -59,7 +59,7 @@
         >
           <template #status="{ result }">
             <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block']">
-              {{ $t('packages_dag_task_preview_status_' + result[0].status) }}
+              {{ getTaskStatus(result[0].status) }}
             </span>
           </template>
         </LeftSider>
@@ -121,6 +121,7 @@
           :alarmData="alarmData"
           :logTotals="logTotals"
           :taskRecord="taskRecord"
+          :quota="quota"
           @load-data="init"
           ref="bottomPanel"
           @showBottomPanel="handleShowBottomPanel"
@@ -149,6 +150,12 @@
         ref="nodeDetailDialog"
         @load-data="init"
       ></NodeDetailDialog>
+
+      <SharedMiningEditor
+        v-if="['logCollector'].includes(dataflow.syncType)"
+        :task-id="dataflow.id"
+        :visible.sync="sharedMiningEditorVisible"
+      ></SharedMiningEditor>
     </section>
   </section>
 </template>
@@ -166,8 +173,9 @@ import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers
 import { titleChange } from '@tap/component/src/mixins/titleChange'
 import { showMessage } from '@tap/component/src/mixins/showMessage'
 import resize from '@tap/component/src/directives/resize'
-import { ALARM_LEVEL_SORT } from '@tap/business'
+import { ALARM_LEVEL_SORT, TASK_STATUS_MAP } from '@tap/business'
 import Time from '@tap/shared/src/time'
+import SharedMiningEditor from '@tap/business/src/views/shared-mining/Editor'
 
 import PaperScroller from './components/PaperScroller'
 import TopHeader from './components/monitor/TopHeader'
@@ -207,14 +215,16 @@ export default {
     LeftSider,
     VIcon,
     NodeDetailDialog,
-    ConsolePanel
+    ConsolePanel,
+    SharedMiningEditor
   },
 
   data() {
     const dataflow = observable({
       id: '',
       name: '',
-      status: ''
+      status: '',
+      attrs: {}
     })
 
     return {
@@ -260,7 +270,8 @@ export default {
       taskRecord: {
         total: 0,
         items: []
-      }
+      },
+      sharedMiningEditorVisible: false
     }
   },
 
@@ -296,12 +307,12 @@ export default {
       const { firstStartTime, lastStopTime } = this
       let end = lastStopTime
       if (['running'].includes(this.dataflow.status)) {
-        end = Time.getTime()
+        end = Time.now()
       }
       if (end < firstStartTime) {
         end = firstStartTime + 5 * 60 * 1000
       }
-      return [firstStartTime, end || Time.getTime()]
+      return [firstStartTime, end || Time.now()]
     }
   },
 
@@ -315,7 +326,7 @@ export default {
       }
       this.watchStatusCount++
       if (this.watchStatusCount === 1) {
-        const flag = this.dataflow.syncType === 'migrate' && ['renewing', 'renew_failed'].includes(v1)
+        const flag = ['renewing', 'renew_failed'].includes(v1)
         this.toggleConsole(flag)
         this.handleBottomPanel(!flag)
       }
@@ -486,7 +497,7 @@ export default {
       // 根据任务类型(全量、增量),检查不支持此类型的节点
       // 脏代码。这里的校验是有节点错误信息提示的，和节点表单校验揉在了一起，但是校验没有一起做
       if (this.dataflow.type === 'initial_sync+cdc') {
-        typeName = i18n.t('packages_dag_components_formpanel_quanliangzengliang')
+        typeName = i18n.t('public_task_type_initial_sync_and_cdc')
         tableNode.forEach(node => {
           if (
             sourceMap[node.id] &&
@@ -500,7 +511,7 @@ export default {
           }
         })
       } else if (this.dataflow.type === 'initial_sync') {
-        typeName = i18n.t('packages_dag_task_setting_initial_sync')
+        typeName = i18n.t('public_task_type_initial_sync')
         tableNode.forEach(node => {
           if (sourceMap[node.id] && NONSUPPORT_SYNC.includes(node.databaseType)) {
             nodeNames.push(node.name)
@@ -511,7 +522,7 @@ export default {
           }
         })
       } else if (this.dataflow.type === 'cdc') {
-        typeName = i18n.t('packages_dag_task_setting_cdc')
+        typeName = i18n.t('public_task_type_cdc')
         tableNode.forEach(node => {
           if (sourceMap[node.id] && NONSUPPORT_CDC.includes(node.databaseType)) {
             nodeNames.push(node.name)
@@ -575,29 +586,41 @@ export default {
     },
 
     handlePageReturn() {
-      if (this.dataflow.syncType === 'migrate') {
-        this.$router.push({
-          name: 'migrateList'
-        })
-      } else {
-        this.$router.push({
-          name: 'dataflowList'
-        })
+      let name
+      switch (this.dataflow.syncType) {
+        case 'migrate':
+          name = 'migrateList'
+          break
+        case 'logCollector':
+          name = 'sharedMining'
+          break
+        default:
+          name = 'dataflowList'
+          break
       }
+      this.$router.push({
+        name
+      })
     },
 
     handleEdit() {
-      if (this.dataflow.syncType === 'sync') {
-        this.$router.push({
-          name: 'DataflowEditor',
-          params: { id: this.dataflow.id }
-        })
-        return
+      switch (this.dataflow.syncType) {
+        case 'migrate':
+          this.$router.push({
+            name: 'MigrateEditor',
+            params: { id: this.dataflow.id }
+          })
+          break
+        case 'sync':
+          this.$router.push({
+            name: 'DataflowEditor',
+            params: { id: this.dataflow.id }
+          })
+          break
+        case 'logCollector':
+          this.sharedMiningEditorVisible = true
+          break
       }
-      this.$router.push({
-        name: 'MigrateEditor',
-        params: { id: this.dataflow.id }
-      })
     },
 
     handleShowVerify() {
@@ -634,7 +657,7 @@ export default {
       try {
         this.wsAgentLive()
         await taskApi.start(this.dataflow.id)
-        this.$message.success(this.$t('packages_dag_message_operation_succuess'))
+        this.$message.success(this.$t('public_message_operation_success'))
         this.isSaving = false
         this.isReset = false
         this.loadDataflow(this.dataflow?.id)
@@ -662,7 +685,7 @@ export default {
             taskId,
             taskRecordId
           },
-          endAt: Time.getTime(), // 停止时间 || 当前时间
+          endAt: Time.now(), // 停止时间 || 当前时间
           fields: [
             'inputInsertTotal',
             'inputUpdateTotal',
@@ -688,7 +711,10 @@ export default {
             'currentSnapshotTableInsertRowTotal',
             'replicateLag',
             'snapshotStartAt',
-            'currentEventTimestamp'
+            'currentEventTimestamp',
+            'snapshotDoneCost',
+            'outputQpsMax',
+            'outputQpsAvg'
           ],
           type: 'instant' // 瞬时值
         },
@@ -768,7 +794,7 @@ export default {
             type: 'engine',
             engineId: agentId
           },
-          endAt: Time.getTime(),
+          endAt: Time.now(),
           fields: ['memoryRate', 'cpuUsage', 'gcRate'],
           type: 'instant'
         }
@@ -1031,9 +1057,9 @@ export default {
     getTimeRange(type) {
       let result
       const { status } = this.dataflow || {}
-      let endTimestamp = this.lastStopTime || Time.getTime()
+      let endTimestamp = this.lastStopTime || Time.now()
       if (status === 'running') {
-        endTimestamp = Time.getTime()
+        endTimestamp = Time.now()
       }
       switch (type) {
         case '5m':
@@ -1103,7 +1129,7 @@ export default {
           this.toggleConsole(true)
           this.$refs.console?.startAuto('reset') // 信息输出自动加载
           const data = await taskApi.reset(this.dataflow.id)
-          this.responseHandler(data, this.$t('packages_dag_message_operation_succuess'))
+          this.responseHandler(data, this.$t('public_message_operation_success'))
           if (!data?.fail?.length) {
             this.isReset = true
           }
@@ -1171,7 +1197,11 @@ export default {
     },
 
     getTime() {
-      return Time.getTime()
+      return Time.now()
+    },
+
+    getTaskStatus(type) {
+      return TASK_STATUS_MAP[type] || ''
     }
   }
 }

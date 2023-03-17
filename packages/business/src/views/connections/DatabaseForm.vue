@@ -6,11 +6,11 @@
           {{
             $route.params.id
               ? this.$t('packages_business_connection_form_edit_connection')
-              : this.$t('packages_business_connection_form_creat_connection')
+              : this.$t('public_connection_button_create')
           }}
         </div>
         <div class="connection-from-label" v-if="$route.params.id">
-          <label class="label">{{ $t('packages_business_connection_form_connection_name') }}: </label>
+          <label class="label">{{ $t('public_connection_name') }}: </label>
           <div class="content-box">
             <div class="img-box ml-2">
               <img :src="getConnectionIcon()" alt="" />
@@ -47,19 +47,19 @@
               <span class="error" v-if="['invalid'].includes(status)">
                 <VIcon>error</VIcon>
                 <span>
-                  {{ $t('packages_business_connection_status_invalid') }}
+                  {{ $t('public_status_invalid') }}
                 </span>
               </span>
               <span class="success" v-if="['ready'].includes(status)">
                 <i class="el-icon-success"></i>
                 <span>
-                  {{ $t('packages_business_connection_status_ready') }}
+                  {{ $t('public_status_ready') }}
                 </span>
               </span>
               <span class="warning" v-if="['testing'].includes(status)">
                 <i class="el-icon-warning"></i>
                 <span>
-                  {{ $t('packages_business_connection_status_testing') }}
+                  {{ $t('public_status_testing') }}
                 </span>
               </span>
             </span>
@@ -67,12 +67,11 @@
         </div>
         <footer slot="footer" class="footer">
           <div class="footer-btn">
-            <el-button @click="goBack()">{{ $t('packages_business_button_back') }}</el-button>
-            <el-button class="test" @click="startTest()">{{
-              $t('packages_business_connection_list_test_button')
-            }}</el-button>
+            <el-button @click="goBack()">{{ $t('public_button_back') }}</el-button>
+            <el-button class="test" @click="startTest()">{{ $t('public_connection_button_test') }}</el-button>
+            <el-button v-if="pdkOptions.pdkId === 'custom'" class="test" @click="handleDebug">脚本调试</el-button>
             <el-button type="primary" :loading="submitBtnLoading" @click="submit">
-              {{ $t('packages_business_button_save') }}
+              {{ $t('public_button_save') }}
             </el-button>
           </div>
         </footer>
@@ -99,12 +98,13 @@
         }}</span>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleCancelRename" size="mini">{{ $t('packages_business_button_cancel') }}</el-button>
+        <el-button @click="handleCancelRename" size="mini">{{ $t('public_button_cancel') }}</el-button>
         <el-button @click="submitEdit()" size="mini" type="primary" :loading="editBtnLoading">{{
-          $t('packages_business_button_confirm')
+          $t('public_button_confirm')
         }}</el-button>
       </span>
     </el-dialog>
+    <ConnectionDebug :visible.sync="showDebug" :schema="schemaData" :pdkOptions="pdkOptions" :get-form="getForm" />
   </div>
 </template>
 
@@ -112,36 +112,23 @@
 import { action } from '@formily/reactive'
 
 import i18n from '@tap/i18n'
-import {
-  clusterApi,
-  connectionsApi,
-  databaseTypesApi,
-  logcollectorApi,
-  pdkApi,
-  settingsApi,
-  externalStorageApi,
-  proxyApi
-} from '@tap/api'
+import { clusterApi, connectionsApi, databaseTypesApi, pdkApi, externalStorageApi, proxyApi } from '@tap/api'
 import { VIcon, GitBook } from '@tap/component'
 import { SchemaToForm } from '@tap/form'
 import { checkConnectionName, isEmpty } from '@tap/shared'
 import Test from './Test'
 import { getConnectionIcon } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
+import { ConnectionDebug } from './ConnectionDebug'
 
 export default {
   name: 'DatabaseForm',
-  components: { Test, DatabaseTypeDialog, VIcon, SchemaToForm, GitBook },
+  components: { Test, DatabaseTypeDialog, VIcon, SchemaToForm, GitBook, ConnectionDebug },
   inject: ['checkAgent', 'buried'],
   data() {
     let validateRename = (rule, value, callback) => {
       if (!this.renameData.rename || !this.renameData.rename.trim()) {
-        callback(
-          new Error(
-            this.$t('packages_business_dataForm_form_connectionName') +
-              this.$t('packages_business_formBuilder_noneText')
-          )
-        )
+        callback(new Error(this.$t('public_connection_name') + this.$t('public_form_not_empty')))
       } else if (!checkConnectionName(this.renameData.rename)) {
         callback(new Error(i18n.t('packages_business_connections_databaseform_mingchengguizezhong')))
       } else {
@@ -154,7 +141,6 @@ export default {
       id: '',
       commandCallbackFunctionId: '',
       visible: false,
-      showSystemConfig: false,
       model: {
         config: null
       },
@@ -178,7 +164,8 @@ export default {
       schemaScope: null,
       pdkFormModel: {},
       doc: '',
-      pathUrl: ''
+      pathUrl: '',
+      showDebug: false
     }
   },
   computed: {
@@ -197,10 +184,6 @@ export default {
     })
   },
   methods: {
-    //保存全局挖掘设置
-    saveSetting(digSettingForm) {
-      logcollectorApi.patchSystemConfig(digSettingForm)
-    },
     goBack() {
       let msg = this.$route.params.id
         ? i18n.t('packages_business_connections_databaseform_cicaozuohuidiu')
@@ -209,7 +192,7 @@ export default {
 
       this.$confirm(msg, '', {
         confirmButtonText: this.$t('packages_business_connection_form_give_up'),
-        cancelButtonText: this.$t('packages_business_button_cancel'),
+        cancelButtonText: this.$t('public_button_cancel'),
         type: 'warning',
         showClose: false
       }).then(resFlag => {
@@ -259,16 +242,6 @@ export default {
             config: formValues
           }
         )
-        if (this.showSystemConfig) {
-          //打开挖掘配置
-          let digSettingForm = {
-            persistenceMode: 'MongoDB',
-            persistenceMongodb_uri_db: params.persistenceMongodb_uri_db,
-            persistenceMongodb_collection: params.persistenceMongodb_collection,
-            share_cdc_ttl_day: params.share_cdc_ttl_day
-          }
-          this.saveSetting(digSettingForm)
-        }
         let promise = null
         if (id) {
           params.id = id
@@ -283,7 +256,7 @@ export default {
             this.buried('connectionSubmit', '', {
               result: true
             })
-            this.$message.success(this.$t('packages_business_message_saveOK'))
+            this.$message.success(this.$t('public_message_save_ok'))
             if (this.$route.query.step) {
               this.$router.push({
                 name: 'connections',
@@ -382,7 +355,7 @@ export default {
                 }
               })
               this.$refs['renameForm'].clearValidate()
-              this.$message.success(this.$t('packages_business_message_save_ok'))
+              this.$message.success(this.$t('public_message_save_ok'))
               this.dialogEditNameVisible = false
             })
             .catch(() => {
@@ -412,22 +385,22 @@ export default {
       }
       let connectionTypeJson = {
         type: 'string',
-        title: this.$t('packages_business_connection_form_connection_type'),
+        title: this.$t('public_connection_type'),
         required: true,
         default: this.pdkOptions.connectionType || 'source_and_target',
         enum: [
           {
-            label: this.$t('packages_business_connection_form_source_and_target'),
+            label: this.$t('public_connection_type_source_and_target'),
             value: 'source_and_target',
             tip: this.$t('packages_business_connection_form_source_and_target_tip')
           },
           {
-            label: this.$t('packages_business_connection_form_source'),
+            label: this.$t('public_connection_type_source'),
             value: 'source',
             tip: this.$t('packages_business_connection_form_source_tip')
           },
           {
-            label: this.$t('packages_business_connection_form_target'),
+            label: this.$t('public_connection_type_target'),
             value: 'target',
             tip: this.$t('packages_business_connection_form_target_tip')
           }
@@ -444,7 +417,7 @@ export default {
       if (this.pdkOptions.connectionType === 'source') {
         connectionTypeJson.enum = [
           {
-            label: this.$t('packages_business_connection_form_source'),
+            label: this.$t('public_connection_type_source'),
             value: 'source',
             tip: this.$t('packages_business_connection_form_source_tip')
           }
@@ -452,7 +425,7 @@ export default {
       } else if (this.pdkOptions.connectionType === 'target') {
         connectionTypeJson.enum = [
           {
-            label: this.$t('packages_business_connection_form_target'),
+            label: this.$t('public_connection_type_target'),
             value: 'target',
             tip: this.$t('packages_business_connection_form_target_tip')
           }
@@ -469,13 +442,8 @@ export default {
           }
         }
       }
-      const settings = await settingsApi.get()
       // 是否支持共享挖掘
-      if (
-        this.isDaas &&
-        this.pdkOptions.capabilities?.some(t => t.id === 'stream_read_function') &&
-        settings.some(it => it.key === 'share_cdc_enable' && it.value === 'true')
-      ) {
+      if (this.isDaas && this.pdkOptions.capabilities?.some(t => t.id === 'stream_read_function')) {
         END.properties.__TAPDATA.properties.shareCdcEnable = {
           type: 'boolean',
           default: false,
@@ -490,119 +458,33 @@ export default {
           }
         }
         // 共享挖掘设置
-        let shareFlag = await Promise.all([logcollectorApi.check(), logcollectorApi.getSystemConfig()]).then(
-          ([check, data]) => check && !data?.persistenceMongodb_uri_db
-        )
-        if (shareFlag) {
-          this.showSystemConfig = true
-          let config = {
-            // TODO 按时屏蔽外存功能
-            // externalStorageId: {
-            //   title: this.$t('packages_business_external_storage'), //外存配置
-            //   type: 'string',
-            //   'x-decorator': 'FormItem',
-            //   'x-component': 'Select',
-            //   'x-reactions': [
-            //     {
-            //       dependencies: ['__TAPDATA.shareCdcEnable'],
-            //       fulfill: {
-            //         state: {
-            //           display: '{{$deps[0] ? "visible" : "hidden"}}'
-            //         }
-            //       }
-            //     },
-            //     '{{useAsyncDataSource(loadExternalStorage)}}',
-            //     {
-            //       fulfill: {
-            //         state: {
-            //           value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}'
-            //         }
-            //       }
-            //     }
-            //   ]
-            // },
-            persistenceMongodb_uri_db: {
-              type: 'string',
-              title: this.$t('MongoDB URI'),
-              required: true,
-              'x-decorator': 'FormItem',
-              'x-component': 'Input',
-              'x-component-props': {
-                type: 'textarea'
+        let config = {
+          shareCDCExternalStorageId: {
+            title: this.$t('packages_business_external_storage'), //外存配置
+            type: 'string',
+            'x-decorator': 'FormItem',
+            'x-component': 'Select',
+            'x-reactions': [
+              {
+                dependencies: ['__TAPDATA.shareCdcEnable'],
+                fulfill: {
+                  state: {
+                    display: '{{$deps[0] ? "visible" : "hidden"}}'
+                  }
+                }
               },
-              'x-reactions': {
-                dependencies: ['__TAPDATA.shareCdcEnable'],
+              '{{useAsyncDataSource(loadExternalStorage)}}',
+              {
                 fulfill: {
                   state: {
-                    display: '{{$deps[0] ? "visible" : "hidden"}}'
+                    value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}'
                   }
                 }
               }
-            },
-            persistenceMongodb_collection: {
-              type: 'string',
-              title: this.$t('packages_business_share_form_setting_table_name'),
-              required: true,
-              'x-decorator': 'FormItem',
-              'x-component': 'Input',
-              'x-reactions': {
-                dependencies: ['__TAPDATA.shareCdcEnable'],
-                fulfill: {
-                  state: {
-                    display: '{{$deps[0] ? "visible" : "hidden"}}'
-                  }
-                }
-              }
-            },
-            share_cdc_ttl_day: {
-              type: 'string',
-              title: this.$t('packages_business_share_form_setting_log_time'),
-              required: true,
-              'x-decorator': 'FormItem',
-              default: 3,
-              enum: [
-                {
-                  label: 1 + this.$t('packages_business_share_form_edit_day'),
-                  value: 1
-                },
-                {
-                  label: 2 + this.$t('packages_business_share_form_edit_day'),
-                  value: 2
-                },
-                {
-                  label: 3 + this.$t('packages_business_share_form_edit_day'),
-                  value: 3
-                },
-                {
-                  label: 4 + this.$t('packages_business_share_form_edit_day'),
-                  value: 4
-                },
-                {
-                  label: 5 + this.$t('packages_business_share_form_edit_day'),
-                  value: 5
-                },
-                {
-                  label: 6 + this.$t('packages_business_share_form_edit_day'),
-                  value: 6
-                },
-                {
-                  label: 7 + this.$t('packages_business_share_form_edit_day'),
-                  value: 7
-                }
-              ],
-              'x-component': 'Select',
-              'x-reactions': {
-                dependencies: ['__TAPDATA.shareCdcEnable'],
-                fulfill: {
-                  state: {
-                    display: '{{$deps[0] ? "visible" : "hidden"}}'
-                  }
-                }
-              }
-            }
+            ]
           }
-          END.properties.__TAPDATA.properties = Object.assign({}, END.properties.__TAPDATA.properties, config)
         }
+        END.properties.__TAPDATA.properties = Object.assign({}, END.properties.__TAPDATA.properties, config)
       }
 
       // 是否支持包含表
@@ -617,7 +499,7 @@ export default {
             'x-component': 'Radio.Group',
             enum: [
               {
-                label: i18n.t('packages_business_select_option_all'),
+                label: i18n.t('public_select_option_all'),
                 value: true
               },
               {
@@ -756,6 +638,47 @@ export default {
             }
           }}}`
       }
+
+      END.properties.__TAPDATA.properties.schemaUpdateHour = {
+        type: 'string',
+        title: i18n.t('packages_business_connections_databaseform_moxingjiazaipin'),
+        'x-decorator': 'FormItem',
+        'x-component': 'Select',
+        'x-decorator-props': {
+          tooltip: i18n.t('packages_business_connections_databaseform_shujuyuanzhongmo')
+        },
+        default: '02:00',
+        enum: [
+          {
+            label: i18n.t('packages_business_connections_databaseform_bujiazai'),
+            value: 'false'
+          },
+          '00:00',
+          '01:00',
+          '02:00',
+          '03:00',
+          '04:00',
+          '05:00',
+          '06:00',
+          '07:00',
+          '08:00',
+          '09:00',
+          '10:00',
+          '11:00',
+          '12:00',
+          '13:00',
+          '14:00',
+          '15:00',
+          '16:00',
+          '17:00',
+          '18:00',
+          '19:00',
+          '20:00',
+          '21:00',
+          '22:00',
+          '23:00'
+        ]
+      }
       let result = {
         type: 'object',
         'x-component-props': {
@@ -771,7 +694,7 @@ export default {
                 properties: {
                   name: {
                     type: 'string',
-                    title: this.$t('packages_business_connection_form_connection_name'),
+                    title: this.$t('public_connection_name'),
                     required: true,
                     'x-decorator': 'FormItem',
                     'x-component': 'Input'
@@ -848,7 +771,7 @@ export default {
         this.getPdkData(id)
         delete result.properties.START.properties.__TAPDATA.properties.name
       }
-      //this.showSystemConfig = true
+
       this.schemaScope = {
         isEdit: !!id,
         useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
@@ -882,11 +805,15 @@ export default {
         },
         loadAccessNode: async () => {
           const data = await clusterApi.findAccessNodeInfo()
+
           return (
             data?.map(item => {
               return {
                 value: item.processId,
-                label: `${item.hostName}（${item.ip}）`
+                label: `${item.hostName}（${
+                  item.status === 'running' ? i18n.t('public_status_running') : i18n.t('public_agent_status_offline')
+                }）`,
+                disabled: item.status !== 'running'
               }
             }) || []
           )
@@ -964,7 +891,7 @@ export default {
         },
         async loadExternalStorage() {
           try {
-            const { items = [] } = await externalStorageApi.get()
+            const { items = [] } = await externalStorageApi.list()
             return items.map(item => {
               return {
                 label: item.name,
@@ -992,7 +919,9 @@ export default {
           accessNodeType,
           accessNodeProcessId,
           openTableExcludeFilter,
-          tableExcludeFilter
+          tableExcludeFilter,
+          schemaUpdateHour,
+          shareCDCExternalStorageId
         } = this.model
         this.schemaFormInstance.setValues({
           __TAPDATA: {
@@ -1004,7 +933,9 @@ export default {
             accessNodeType,
             accessNodeProcessId,
             openTableExcludeFilter,
-            tableExcludeFilter
+            tableExcludeFilter,
+            shareCDCExternalStorageId,
+            schemaUpdateHour
           },
           ...this.model?.config
         })
@@ -1020,6 +951,14 @@ export default {
       pdkApi.doc(pdkHash).then(res => {
         this.doc = res?.data
       })
+    },
+
+    getForm() {
+      return this.schemaFormInstance
+    },
+
+    handleDebug() {
+      this.showDebug = true
     }
   }
 }

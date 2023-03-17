@@ -29,11 +29,11 @@
                     :key="second.name"
                     v-model="second.checkAll"
                     v-if="second.id"
-                    @change="handleCheckChange($event, item)"
+                    @change="handleCheckChange($event, item, second)"
                     v-cloak
                   >
                     <span>
-                      {{ $t('role_page_' + second.name) }}
+                      {{ second.description }}
                     </span>
                   </el-checkbox>
                 </template>
@@ -48,147 +48,11 @@
             </el-row>
           </li>
         </ul>
-        <div class="headTitle">
-          <h4>{{ $t('role_funcPermission') }}</h4>
-          <p>{{ $t('role_choosePermissionTip') }}</p>
-        </div>
-        <ul class="role-table">
-          <li class="role-head">
-            <el-row class="e-row">
-              <el-col class="e-col" :span="3">
-                {{ $t('role_module') }}
-              </el-col>
-              <el-col class="e-col borderLeft" :span="18">
-                {{ $t('role_functionDataPermission') }}
-              </el-col>
-              <el-col class="e-col borderLeft" :span="3">{{ $t('role_bulkOperate') }} </el-col>
-            </el-row>
-          </li>
-          <li class="module-style">
-            <el-row class="e-row" v-for="item in moduleList" :key="item.id">
-              <el-col :span="3" style="line-height: 40px">
-                <span class="nav">{{ $t('role_module_meun_' + item.name) }}</span>
-              </el-col>
-              <el-col :span="21" class="e-col borderLine">
-                <!-- 权限 -->
-                <el-row class="box">
-                  <el-col class="e-col" :span="20" v-if="item.children">
-                    <el-checkbox
-                      v-for="second in item.children"
-                      :key="second.name"
-                      v-model="second.checked"
-                      v-show="second.id"
-                      :disabled="second.type === 'read'"
-                      @change="handleOneCheckAll($event, item, item.children, second, 'children')"
-                      :class="[{ 'checkbox-position': !second.allName }, 'checkbox-radio']"
-                      v-cloak
-                    >
-                      <div>{{ $t('role_name_' + second.name) }}</div>
-                      <el-checkbox
-                        class="e-checkbox"
-                        v-show="second.allName"
-                        :disabled="!second.checked || second.allName === 'data_catalog_all_data'"
-                        v-model="second.checkAllData"
-                        @change="handleOneAllData($event, item, item.children, second, 'children')"
-                        v-cloak
-                      >
-                        <div>{{ $t('role_allData') }}</div>
-                      </el-checkbox>
-                    </el-checkbox>
-                  </el-col>
-                  <el-col :span="4" v-if="item.children" style="padding-top: 8px">
-                    <el-checkbox
-                      v-model="item.checkAll"
-                      @change="handleAuthoritySelectAll($event, item, item.children)"
-                      v-cloak
-                    >
-                      <div>{{ $t('role_chooseAllFunction') }}</div>
-                    </el-checkbox>
-                    <el-checkbox
-                      class="e-checkbox"
-                      v-model="item.checkedAllData"
-                      @change="handleCheckedAllData($event, item, item.children)"
-                      v-cloak
-                    >
-                      <div>{{ $t('role_chooseAllRole') }}</div>
-                    </el-checkbox>
-                  </el-col>
-                </el-row>
-                <div class="line" v-if="item.children && item.classification"></div>
-                <!-- 分类权限 -->
-                <el-row class="box heightStyle" v-if="item.classification">
-                  <el-col class="e-col" :span="20">
-                    <el-checkbox
-                      v-for="second in item.classification"
-                      :key="second.name"
-                      v-model="second.checked"
-                      v-show="second.id"
-                      :disabled="second.type === 'read'"
-                      @change="handleOneCheckAll($event, item, item.classification, second, 'classify')"
-                      :class="[{ 'checkbox-position': !second.allName }, 'checkbox-radio']"
-                      v-cloak
-                    >
-                      <div>{{ $t('role_name_' + second.name) }}</div>
-                      <!-- <el-checkbox
-											class="e-checkbox"
-											v-show="second.allName"
-											:disabled="!item.checked"
-											v-model="second.checkAllData"
-											@change="handleChange($event, item, second)"
-											v-cloak
-										>
-											<div>All data</div>
-										</el-checkbox> -->
-                    </el-checkbox>
-                  </el-col>
-                  <el-col class="e-col allSelectBox" :span="4">
-                    <el-checkbox
-                      class="checkbox-radio checkbox-position"
-                      v-model="item.classifiyCheckAll"
-                      @change="handleAuthoritySelectAll($event, item, item.classification)"
-                      v-cloak
-                    >
-                      <div>{{ $t('role_chooseAllFunction') }}</div>
-                    </el-checkbox>
-                  </el-col>
-                </el-row>
-                <div class="line" v-if="item.classification && item.functional"></div>
-                <!-- 导入导出 -->
-                <el-row class="box heightStyle" v-if="item.functional">
-                  <el-col class="e-col" :span="20">
-                    <el-checkbox
-                      v-for="second in item.functional"
-                      :key="second.name"
-                      v-show="second.id"
-                      :disabled="second.type === 'read'"
-                      v-model="second.checked"
-                      @change="handleOneCheckAll($event, item, item.functional, second, 'functional')"
-                      :class="[{ 'checkbox-position': !second.allName }, 'checkbox-radio']"
-                      v-cloak
-                    >
-                      <div>{{ $t('role_name_' + second.name) }}</div>
-                    </el-checkbox>
-                  </el-col>
-                  <el-col class="e-col" :span="4">
-                    <el-checkbox
-                      class="checkbox-radio checkbox-position"
-                      v-model="item.functionCheckAll"
-                      @change="handleAuthoritySelectAll($event, item, item.functional)"
-                      v-cloak
-                    >
-                      <div>{{ $t('role_chooseAllFunction') }}</div>
-                    </el-checkbox>
-                  </el-col>
-                </el-row>
-              </el-col>
-            </el-row>
-          </li>
-        </ul>
       </div>
       <div class="btn">
-        <el-button size="mini" @click="back">{{ $t('button_back') }} </el-button>
-        <el-button size="mini" type="primary" :loading="saveloading" @click="saveSubmit('ruleForm')"
-          >{{ $t('app_save') }}
+        <el-button size="mini" @click="back">{{ $t('public_button_back') }} </el-button>
+        <el-button size="mini" type="primary" :loading="saveloading" @click="save('ruleForm')"
+          >{{ $t('public_button_save') }}
         </el-button>
       </div>
     </div>
@@ -196,44 +60,47 @@
 </template>
 
 <script>
-import { roleMappingsApi } from '@tap/api'
+import { roleMappingsApi, permissionsApi, usersApi } from '@tap/api'
 
 let pageSort = [
   // { children: [{ name: 'Dashboard_menu' }] },
-  { children: [{ name: 'datasource_menu' }] },
+  { children: [{ name: 'v2_datasource_menu' }] },
   {
     name: 'data_transmission',
     children: [
-      { name: 'Data_SYNC_menu' },
-      { name: 'Data_verify_menu' },
-      { name: 'log_collector_menu' },
-      { name: 'SYNC_Function_management_menu' },
-      { name: 'custom_node_menu' },
-      { name: 'shared_cache_menu' }
+      { name: 'v2_data_replication' },
+      { name: 'v2_data_flow' },
+      { name: 'v2_log_collector_menu' },
+      { name: 'v2_function_management_list' },
+      { name: 'v2_custom_node_menu' },
+      { name: 'v2_shared_cache_menu' }
     ]
   },
   {
-    name: 'data_government',
+    name: 'data_verify',
     children: [
-      { name: 'data_catalog_menu' },
-      { name: 'data_search_menu' }
-      // { name: 'data_quality_menu' },
-      // { name: 'time_to_live_menu' },
-      // { name: 'data_lineage_menu' },
-      // { name: 'data_rules_menu' },
-      // { name: 'Topology_menu' },
-      // { name: 'dictionary_menu' }
+      { name: 'v2_data_check_list' }
+      // { name: 'v2_data_check_create' },
+      // { name: 'v2_data_check_edit' },
+      // { name: 'v2_data_check_details' },
+      // { name: 'v2_data_check_history' },
+      // { name: 'v2_data_check_result_history' },
+      // { name: 'v2_data_check_result_details' },
+      // { name: 'v2_data_check_result' }
     ]
+  },
+  {
+    name: 'v2_data_discovery',
+    children: [{ name: 'v2_data_object' }, { name: 'v2_data_catalogue' }]
   },
   {
     name: 'data_publish',
     children: [
-      { name: 'API_management_menu' },
-      { name: 'API_data_explorer_menu' },
-      { name: 'API_doc_test_menu' },
-      { name: 'API_stats_menu' },
-      { name: 'API_clients_menu' },
-      { name: 'API_server_menu' }
+      { name: 'v2_data-server-list' },
+      { name: 'v2_api-client' },
+      { name: 'v2_api-servers' },
+      { name: 'v2_data_server_audit-list' },
+      { name: 'v2_api_monitor' }
     ]
   },
   // { children: [{ name: 'data_collect_menu' }] },
@@ -241,11 +108,12 @@ let pageSort = [
     name: 'system_management',
     children: [
       // { name: 'schedule_jobs_menu' },
-      { name: 'Cluster_management_menu' },
+      { name: 'v2_cluster-management_menu' },
       // { name: 'agents_menu' },
       // { name: 'servers_oversee_menu' },
-      { name: 'user_management_menu' },
-      { name: 'role_management_menu' }
+      { name: 'v2_user_management_menu' },
+      { name: 'v2_external-storage_menu' },
+      { name: 'v2_role_management_menu' }
       // { name: 'system_settings_menu' }
     ]
   }
@@ -390,15 +258,6 @@ let moduleMapping = [
     name: 'API_server',
     functional: [{ name: 'API_server' }, { name: 'API_server_management' }]
   },
-  // {
-  //   name: 'data_collect',
-  //   children: [{ name: 'data_collect', allName: 'data_collect_all_data' }]
-  // },
-
-  // {
-  //   name: 'schedule_jobs',
-  //   functional: [{ name: 'schedule_jobs' }, { name: 'schedule_jobs_management' }]
-  // },
   {
     name: 'Cluster_management',
     children: [
@@ -449,7 +308,9 @@ export default {
       permissionList: [],
       roleName: '',
       radio: 1,
-      moduleList: []
+      moduleList: [],
+      adds: [],
+      deletes: []
     }
   },
 
@@ -574,19 +435,21 @@ export default {
     getPermission() {
       let self = this
       this.permissLoading = true
-      self
-        .$api('Permissions')
-        .get({})
+      let filter = { where: { version: 'v2' } }
+
+      permissionsApi
+        .get({
+          filter: JSON.stringify(filter)
+        })
         .then(data => {
           if (data && data.length) {
             self.permissionList = data
 
             // 页面排序  ---- 开始
             let pageMap = {}
-            data.forEach(item => {
+            self.permissionList.forEach(item => {
               pageMap[item.name] = item
             })
-
             let pageMenu = items => {
               return items.map(item => {
                 let page = pageMap[item.name]
@@ -627,7 +490,7 @@ export default {
     },
 
     // 页面单选
-    handleCheckChange(event, item) {
+    handleCheckChange(event, item, data) {
       if (typeof item.checkAll === 'undefined') {
         this.$set(item, 'checkAll', false)
       }
@@ -636,6 +499,9 @@ export default {
         return el.checkAll
       })
       item.checked = checkedCount.length === item.children.length
+      //保留当前操作数据
+      this.updateData(data.checkAll, data)
+      console.log(data)
     },
 
     // 页面全选
@@ -654,6 +520,40 @@ export default {
             this.$set(item.children[i], 'checkAll', true)
           } else {
             this.$set(item.children[i], 'checkAll', false)
+          }
+          this.updateData(item.checkAll, item.children[i])
+        }
+      }
+    },
+    updateData(checked, data) {
+      //保留当前操作数据
+      const roleId = this.$route.query.id
+      if (checked) {
+        let add = {
+          principalType: 'PERMISSION',
+          principalId: data.name,
+          roleId: roleId
+        }
+        this.adds.push(add)
+        //同时清掉 deletes
+        if (this.deletes && this.deletes.length > 0) {
+          let index = this.deletes.findIndex(del => del.principalId === data.principalId)
+          if (index > -1) {
+            this.deletes.splice(index, -1)
+          }
+        }
+      } else {
+        let del = {
+          principalType: 'PERMISSION',
+          principalId: data.name,
+          roleId: roleId
+        }
+        this.deletes.push(del)
+        //同时清掉 adds
+        if (this.adds && this.adds.length > 0) {
+          let index = this.adds.findIndex(add => add.principalId === data.principalId)
+          if (index > -1) {
+            this.adds.splice(index, -1)
           }
         }
       }
@@ -811,20 +711,39 @@ export default {
           })
       })
 
-      self
-        .$api('users')
+      usersApi
         .deletePermissionRoleMapping(roleId, {
           data: { data: newRoleMappings }
         })
         .then(() => {
           this.$emit('saveBack')
-          this.$message.success(this.$t('message_save_ok'))
+          this.$message.success(this.$t('public_message_save_ok'))
         })
         .finally(() => {
           self.saveloading = false
         })
     },
-
+    //新的保存方法
+    save() {
+      //数据组装
+      const roleId = this.$route.query.id
+      this.saveloading = true
+      let data = {
+        adds: this.adds,
+        deletes: this.deletes
+      }
+      usersApi
+        .updatePermissionRoleMapping(roleId, data)
+        .then(() => {
+          this.$emit('saveBack')
+          this.$message.success(this.$t('public_message_save_ok'))
+          this.adds = []
+          this.deletes = []
+        })
+        .finally(() => {
+          this.saveloading = false
+        })
+    },
     // 返回
     back() {
       this.$router.push({ name: 'roles' })

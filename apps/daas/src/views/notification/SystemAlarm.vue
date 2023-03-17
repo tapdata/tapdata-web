@@ -22,7 +22,7 @@
       </template>
       <div slot="operation">
         <el-button class="btn btn-create" type="primary" size="mini" :loading="loadingConfig" @click="handleClose">
-          <span>{{ $t('text_close') }}</span>
+          <span>{{ $t('public_button_close') }}</span>
         </el-button>
       </div>
       <el-table-column type="selection"></el-table-column>
@@ -51,11 +51,12 @@
       <el-table-column
         :label="$t('packages_dag_components_alert_gaojingzuijinfa')"
         prop="lastOccurrenceTime"
+        :width="160"
       ></el-table-column>
-      <el-table-column fixed="right" :label="$t('column_operation')">
+      <el-table-column fixed="right" :label="$t('public_operation')">
         <template #default="{ row }">
           <el-button type="text" @click="handleClose(row.id)" :disabled="row.status === 'CLOESE'">{{
-            $t('packages_dag_components_alert_guanbi')
+            $t('public_button_close')
           }}</el-button>
           <el-divider direction="vertical"></el-divider>
           <el-button type="text" @click="goLog(row)">{{ $t('packages_dag_monitor_bottompanel_rizhi') }}</el-button>

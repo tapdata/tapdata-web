@@ -54,8 +54,10 @@
 <script>
 import { Chart, FilterBar } from '@tap/component'
 import { formatTime } from '@/utils/util'
-import { handleUnit, formatMs } from './utils'
 import { apiMonitorApi } from '@tap/api'
+import Time from '@tap/shared/src/time'
+import { handleUnit, formatMs } from './utils'
+
 export default {
   name: 'Detail',
   components: { FilterBar, Chart },
@@ -76,10 +78,10 @@ export default {
         { label: this.$t('api_monitor_detail_responseTime'), value: 'responseTime' }
       ],
       timeList: [
-        { label: this.$t('task_info_five_min'), value: 5 },
-        { label: this.$t('task_info_ten_min'), value: 10 },
-        { label: this.$t('task_info_thirty_min'), value: 30 },
-        { label: this.$t('task_info_last_hour'), value: 60 }
+        { label: this.$t('public_time_five_min'), value: 5 },
+        { label: this.$t('public_time_ten_min'), value: 10 },
+        { label: this.$t('public_time_thirty_min'), value: 30 },
+        { label: this.$t('public_time_last_hour'), value: 60 }
       ],
       allElection: [],
       clientName: [],
@@ -136,7 +138,7 @@ export default {
         },
         series: [
           {
-            name: this.$t('task_info_input'),
+            name: this.$t('public_time_input'),
             lineStyle: {
               color: 'rgba(24, 144, 255, 1)',
               width: 1
@@ -191,7 +193,7 @@ export default {
         id: this.id,
         guanluary: this.searchParams.guanluary || 5,
         clientId: [],
-        start: new Date().getTime(),
+        start: Time.now(),
         type: this.searchParams.type || 'visitTotalLine'
       }
       if (!hiddenLoading) {

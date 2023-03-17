@@ -1,5 +1,11 @@
-.formily-element-form-item-label-tooltip * {
-  cursor: pointer;
+.formily-element-form-item-label-tooltip {
+  * {
+    cursor: pointer;
+  }
+
+  &-content {
+    white-space: pre-wrap;
+  }
 }
 
 .formily-element-form-collapse.el-collapse.inset {
@@ -9,5 +15,13 @@
   .el-collapse-item__content {
     padding-left: 16px;
     padding-right: 16px;
+  }
+}
+
+.formily-element-form-item.item-control-horizontal {
+  .formily-element-form-item-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 }

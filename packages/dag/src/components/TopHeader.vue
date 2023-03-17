@@ -22,7 +22,7 @@
     <div class="operation-center flex align-center">
       <template v-if="!stateIsReadonly">
         <!--撤销-->
-        <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_undo') + `(${commandCode} + Z)`">
+        <ElTooltip transition="tooltip-fade-in" :content="$t('public_button_revoke') + `(${commandCode} + Z)`">
           <button @click="$emit('undo')" class="icon-btn">
             <VIcon size="20">undo</VIcon>
           </button>
@@ -37,7 +37,7 @@
           </button>
         </ElTooltip>
         <!--删除-->
-        <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_delete') + '(Del)'">
+        <ElTooltip transition="tooltip-fade-in" :content="$t('public_button_delete') + '(Del)'">
           <button @click="$emit('delete')" class="icon-btn">
             <VIcon size="20">delete</VIcon>
           </button>
@@ -114,7 +114,7 @@
         </button>
       </ElTooltip>
       <!--设置-->
-      <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_setting')">
+      <ElTooltip transition="tooltip-fade-in" :content="$t('public_button_setting')">
         <button @click="$emit('showSettings')" class="icon-btn" :class="{ active: activeType === 'settings' }">
           <VIcon size="20">setting-outline</VIcon>
         </button>
@@ -138,7 +138,7 @@
         @click="$emit('reset')"
       >
         <VIcon v-if="isViewer">reset</VIcon>
-        {{ $t('packages_dag_dataFlow_button_reset') }}
+        {{ $t('public_button_reset') }}
       </ElButton>
 
       <ElButton
@@ -150,7 +150,7 @@
         @click="$emit('save')"
       >
         <!--保存-->
-        {{ $t('packages_dag_button_save') }}
+        {{ $t('public_button_save') }}
       </ElButton>
       <template v-else>
         <ElButton
@@ -163,7 +163,7 @@
         >
           <VIcon>edit</VIcon>
           <!--编辑-->
-          {{ $t('packages_dag_button_edit') }}
+          {{ $t('public_button_edit') }}
         </ElButton>
 
         <ElButton
@@ -175,7 +175,7 @@
           @click="$emit('forceStop')"
         >
           <VIcon>stop</VIcon>
-          {{ $t('packages_dag_task_list_force_stop') }}
+          {{ $t('public_button_force_stop') }}
         </ElButton>
         <ElButton
           key="stop"
@@ -186,7 +186,7 @@
           @click="$emit('stop')"
         >
           <VIcon>stop</VIcon>
-          {{ $t('packages_dag_task_list_stop') }}
+          {{ $t('public_button_stop') }}
         </ElButton>
       </template>
 
@@ -197,7 +197,7 @@
         type="primary"
         @click="$emit('start')"
       >
-        {{ $t('packages_dag_task_list_run') }}
+        {{ $t('public_button_start') }}
       </ElButton>
     </div>
   </header>
@@ -231,9 +231,9 @@ export default {
       optionCode: isMacOs ? 'Option' : 'Alt',
       name: '',
       syncMap: {
-        'initial_sync+cdc': this.$t('packages_dag_dataFlow_initial_sync') + '+' + this.$t('packages_dag_dataFlow_cdc'),
-        initial_sync: this.$t('packages_dag_dataFlow_initial_sync'),
-        cdc: this.$t('packages_dag_dataFlow_cdc')
+        'initial_sync+cdc': this.$t('public_task_type_initial_sync') + '+' + this.$t('public_task_type_cdc'),
+        initial_sync: this.$t('public_task_type_initial_sync'),
+        cdc: this.$t('public_task_type_cdc')
       },
       chooseItems: [4, 2, 1.5, 1, 0.5, 0.25],
       showSearchNodePopover: false,

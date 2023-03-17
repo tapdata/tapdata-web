@@ -1,3 +1,4 @@
+import i18n from '@tap/i18n'
 import { NodeType } from './extends/NodeType'
 import { AllLocales } from './locales'
 
@@ -40,7 +41,7 @@ export class Join extends NodeType {
       },
       name: {
         type: 'string',
-        title: '节点名称',
+        title: i18n.t('public_node_name'),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input'
@@ -55,13 +56,13 @@ export class Join extends NodeType {
       },
 
       joinType: {
-        title: '连接类型',
+        title: i18n.t('public_connection_type'),
         type: 'string',
         required: true,
         default: 'left',
         enum: [
           {
-            label: '左连接',
+            label: i18n.t('packages_dag_nodes_join_zuolianjie'),
             value: 'left'
           } /*,
                   {
@@ -82,7 +83,7 @@ export class Join extends NodeType {
       },
 
       joinExpressions: {
-        title: '连接字段设置',
+        title: i18n.t('packages_dag_nodes_join_lianjieziduanshe'),
         type: 'array',
         required: true,
         default: [{ left: '', right: '', expression: '=' }],
@@ -90,7 +91,7 @@ export class Join extends NodeType {
           type: 'object',
           properties: {
             left: {
-              title: '左侧',
+              title: i18n.t('packages_dag_nodes_join_zuoce'),
               type: 'string',
               required: true,
               'x-decorator': 'FormItem',
@@ -105,7 +106,7 @@ export class Join extends NodeType {
               }
             },
             right: {
-              title: '右侧',
+              title: i18n.t('packages_dag_nodes_join_youce'),
               type: 'string',
               required: true,
               'x-decorator': 'FormItem',
@@ -148,24 +149,23 @@ export class Join extends NodeType {
             }
           }
         ]
+      },
+      externalStorageId: {
+        title: i18n.t('packages_dag_nodes_aggregate_waicunpeizhi'), //外存配置
+        type: 'string',
+        'x-decorator': 'FormItem',
+        'x-component': 'Select',
+        'x-reactions': [
+          '{{useAsyncDataSourceByConfig({service: loadExternalStorage, withoutField: true})}}',
+          {
+            fulfill: {
+              state: {
+                value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}'
+              }
+            }
+          }
+        ]
       }
-      // TODO 按时屏蔽外存功能
-      // externalStorageId: {
-      //   title: '外存配置', //外存配置
-      //   type: 'string',
-      //   'x-decorator': 'FormItem',
-      //   'x-component': 'Select',
-      //   'x-reactions': [
-      //     '{{useAsyncDataSourceByConfig({service: loadExternalStorage, withoutField: true})}}',
-      //     {
-      //       fulfill: {
-      //         state: {
-      //           value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}'
-      //         }
-      //       }
-      //     }
-      //   ]
-      // }
     }
   }
 

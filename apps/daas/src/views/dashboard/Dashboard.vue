@@ -5,12 +5,12 @@
         <el-col :span="18" class="isCard-title">{{ $t($route.meta.title) }}</el-col>
       </el-row>
       <template v-if="noPermission">
-        <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'Data_SYNC_menu'">
+        <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'v2_data_pipeline'">
           <el-col :span="6" v-for="item in taskList" :key="item.name" class="dashboard-col">
             <div class="dashboard-col-box">
-              <div class="fs-7 font-color-normal">{{ $t('dashboard_' + item.key) }}</div>
+              <div class="fs-7 font-color-normal">{{ item.title }}</div>
               <div class="dashboard-label fs-5 pt-4 text-center fw-sub font-color-normal">
-                {{ $t('dashboard_current_' + item.key) }}
+                {{ item.desc }}
               </div>
               <div
                 :class="[
@@ -29,7 +29,7 @@
           </el-col>
         </el-row>
         <!-- 复制任务概览 -->
-        <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'Data_SYNC_menu'">
+        <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'v2_data_pipeline'">
           <el-col :span="12" class="dashboard-col col">
             <div class="charts-list flex flex-row">
               <div class="charts-list-text">
@@ -152,7 +152,7 @@
           </el-col>
         </el-row>
         <!-- 服务器进程 -->
-        <div class="dashboard-row dashboard-col col" v-readonlybtn="'Cluster_management_menu'">
+        <div class="dashboard-row dashboard-col col" v-readonlybtn="'v2_cluster-management_menu'">
           <div class="dashboard-col">
             <div class="dashboard-col-box">
               <div class="fs-7 font-color-normal">{{ $t('dashboard_server_title') }}</div>
@@ -168,19 +168,19 @@
                         <li class="pr-5">
                           <label class="font-color-slight pr-2">{{ $t('dashboard_management') }}</label>
                           <span :style="`color: ${colorServeMap[item.management.status]};`">{{
-                            $t('dashboard_' + item.management.status)
+                            getStatus(item.management.status)
                           }}</span>
                         </li>
                         <li class="pr-5">
                           <label class="font-color-slight pr-2">{{ $t('dashboard_task_transfer') }}</label>
                           <span :style="`color: ${colorServeMap[item.engine.status]};`">{{
-                            $t('dashboard_' + item.engine.status)
+                            getStatus(item.engine.status)
                           }}</span>
                         </li>
                         <li>
                           <label class="font-color-slight pr-2">{{ $t('dashboard_api_service') }}</label>
                           <span :style="`color: ${colorServeMap[item.apiServer.status]};`">{{
-                            $t('dashboard_' + item.apiServer.status)
+                            getStatus(item.apiServer.status)
                           }}</span>
                         </li>
                       </ul>
@@ -217,6 +217,7 @@ import { Chart } from '@tap/component'
 import { clusterApi, taskApi } from '@tap/api'
 import { STATUS_MAP } from '@tap/business'
 import { toThousandsUnit } from '@/utils/util'
+import { STATUS_MAP as DASHBOARD_STATUS_MAP } from './const'
 
 export default {
   components: { Chart },
@@ -224,9 +225,9 @@ export default {
     return {
       h: this.$createElement,
       copyPieData: [],
-      copyTaskData: [],
+      // copyTaskData: [],
       syncPieData: [],
-      syncTaskData: [],
+      // syncTaskData: [],
       validBarData: [],
       serverTable: [],
       migrationTaskList: [],
@@ -301,18 +302,38 @@ export default {
       },
       syncValidFalg: this.$has('Data_verify_menu') || this.$has('Data_SYNC_menu'),
       taskList: [
-        { key: 'all_total', value: 0 },
-        { key: 'copy_total', value: 0 },
-        { key: 'sync_total', value: 0 },
-        { key: 'valid_total', value: 0 }
+        {
+          title: this.$t('dashboard_all_total'),
+          desc: this.$t('dashboard_current_all_total'),
+          key: 'all_total',
+          value: 0
+        },
+        {
+          title: this.$t('dashboard_copy_total'),
+          desc: this.$t('dashboard_current_copy_total'),
+          key: 'copy_total',
+          value: 0
+        },
+        {
+          title: this.$t('dashboard_sync_total'),
+          desc: this.$t('dashboard_current_sync_total'),
+          key: 'sync_total',
+          value: 0
+        },
+        {
+          title: this.$t('dashboard_valid_total'),
+          desc: this.$t('dashboard_current_valid_total'),
+          key: 'valid_total',
+          value: 0
+        }
       ],
       statusList: [
-        { name: this.$t('dashboard_status_running'), label: 'running', value: 0 },
-        { name: this.$t('dashboard_status_edit'), label: 'edit', value: 0 },
-        { name: this.$t('status_ready'), label: 'wait_start', value: 0 },
-        { name: this.$t('dashboard_status_stop'), label: 'stop', value: 0 },
-        { name: this.$t('dashboard_status_complete'), label: 'complete', value: 0 },
-        { name: this.$t('dashboard_status_error'), label: 'error', value: 0 }
+        { name: this.$t('public_status_running'), label: 'running', value: 0 },
+        { name: this.$t('public_status_edit'), label: 'edit', value: 0 },
+        { name: this.$t('public_status_wait_run'), label: 'wait_start', value: 0 },
+        { name: this.$t('public_status_stop'), label: 'stop', value: 0 },
+        { name: this.$t('public_status_complete'), label: 'complete', value: 0 },
+        { name: this.$t('public_status_error'), label: 'error', value: 0 }
       ],
 
       loading: false,
@@ -340,9 +361,9 @@ export default {
         stopped: '#FDB01C'
       },
       syncType: {
-        initial_sync: this.$t('dataFlow_initial_sync'),
-        cdc: this.$t('dataFlow_cdc'),
-        'initial_sync+cdc': this.$t('dataFlow_initial_sync') + '+' + this.$t('dataFlow_cdc')
+        initial_sync: this.$t('public_task_type_initial_sync'),
+        cdc: this.$t('public_task_type_cdc'),
+        'initial_sync+cdc': this.$t('public_task_type_initial_sync') + '+' + this.$t('public_task_type_cdc')
       },
 
       transfer: {
@@ -358,11 +379,18 @@ export default {
 
       // 传输总览颜色
       transBarData: [
-        { name: this.$t('dashboard_total_input'), value: 0, key: 'inputTotal', color: '#82C647' },
-        { name: this.$t('dashboard_total_output'), value: 0, key: 'outputTotal', color: '#2EA0EA' },
+        { name: this.$t('public_event_total_input'), value: 0, key: 'inputTotal', color: '#82C647' },
+        { name: this.$t('public_event_total_output'), value: 0, key: 'outputTotal', color: '#2EA0EA' },
         { name: this.$t('dashboard_total_insert'), value: 0, key: 'insertedTotal', color: '#AE86C9' },
         { name: this.$t('dashboard_total_update'), value: 0, key: 'updatedTotal', color: '#F7D762' },
         { name: this.$t('dashboard_total_delete'), value: 0, key: 'deletedTotal', color: '#88DBDA' }
+      ],
+      // 数据校验颜色
+      verifyBarData: [
+        { name: this.$t('dashboard_total'), value: 0, key: 'total', color: '#2EA0EA' },
+        { name: this.$t('dashboard_diff'), value: 0, key: 'diff', color: '#2EA0EA' },
+        { name: this.$t('dashboard_can'), value: 0, key: 'can', color: '#2EA0EA' },
+        { name: this.$t('dashboard_error'), value: 0, key: 'error', color: '#2EA0EA' }
       ],
       transBarOptions: {
         barWidth: '100%',
@@ -381,17 +409,17 @@ export default {
       unitData: [],
       kbData: [],
       unitType: '',
-      noPermission: this.$has('Data_SYNC_menu') || this.$has('Data_verify_menu') || this.$has('Cluster_management_menu')
+      noPermission: this.$has('v2_data_pipeline') || this.$has('Data_verify_menu') || this.$has('management_menu')
     }
   },
 
   mounted() {
-    if (this.$has('Data_SYNC') || this.$has('Data_verify')) {
+    if (this.$has('v2_data_pipeline') || this.$has('Data_verify')) {
       this.getDataFlowApi()
       // this.getMeasurement()
     }
 
-    if (this.$has('Cluster_management') || this.$has('Cluster_management_menu')) {
+    if (this.$has('v2_cluster-management_menu')) {
       this.getClsterDataApi()
     }
   },
@@ -482,10 +510,10 @@ export default {
             console.log('STATUS_MAP', STATUS_MAP) // eslint-disable-line
 
             self.copyPieData = setColor(self.migrationTaskList)
-            self.copyTaskData = this.handleChart(data.chart2)
+            // self.copyTaskData = this.handleChart(data.chart2)
             self.syncPieData = setColor(self.syncTaskList)
-            self.syncTaskData = this.handleChart(data.chart4)
-            self.validBarData = this.handleChart(data.chart5)
+            // self.syncTaskData = this.handleChart(data.chart4)
+            self.validBarData = this.handleChart(data.chart5, self.verifyBarData)
             self.transBarData = this.handleChart(data.chart6, self.transBarData)
           }
         })
@@ -502,7 +530,7 @@ export default {
           for (let item in data) {
             if (el.key === item)
               echartData.push({
-                name: el.name || this.$t('dashboard_' + item),
+                name: el.name,
                 value: data[item],
                 color: el.color
               })
@@ -511,7 +539,7 @@ export default {
       } else {
         for (let item in data) {
           echartData.push({
-            name: this.$t('dashboard_' + item),
+            name: '',
             value: data[item],
             color: '#2EA0EA'
           })
@@ -645,6 +673,10 @@ export default {
           }
         ]
       }
+    },
+
+    getStatus(type) {
+      return DASHBOARD_STATUS_MAP[type] || '-'
     }
   }
 }
@@ -706,7 +738,7 @@ export default {
             }
             span {
               display: inline-block;
-              width: 50px;
+              width: 60px;
               text-align: left;
               font-size: $fontBaseTitle;
               &::before {

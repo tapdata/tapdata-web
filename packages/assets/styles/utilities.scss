@@ -305,6 +305,10 @@
   overflow: auto !important;
 }
 
+.overflow-y-auto {
+  overflow-y: auto !important;
+}
+
 .overflow-hidden {
   overflow: hidden !important;
 }
@@ -2542,6 +2546,10 @@
 
 .text-prewrap {
   white-space: pre-wrap !important;
+}
+
+.text-pre {
+  white-space: pre !important;
 }
 
 /* rtl:begin:remove */
@@ -12289,4 +12297,15 @@
 .isCard-title{
   font-size: 18px;
   line-height: 24px;
+}
+
+//基本字体
+.fs-basic{
+  font-size: 14px;
+}
+.fs-basic-16{
+  font-size: 16px;
+}
+.color-white{
+  color: white;
 }

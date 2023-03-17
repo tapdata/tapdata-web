@@ -26,7 +26,7 @@
     >
       <template #status="{ result }">
         <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block', 'mr-2']">
-          {{ $t('packages_dag_task_preview_status_' + result[0].status) }}
+          {{ getTaskStatus(result[0].status) }}
         </span>
       </template>
     </TopHeader>
@@ -119,6 +119,7 @@ import { MoveNodeCommand } from './command'
 import NodeDetailDialog from './components/monitor/components/NodeDetailDialog'
 import { TIME_FORMAT_MAP, getTimeGranularity } from './components/monitor/util'
 import { mapMutations } from 'vuex'
+import { TASK_STATUS_MAP } from '@tap/business'
 
 export default {
   name: 'MigrationMonitorViewer',
@@ -243,7 +244,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations('dataflow', ['setPdkPropertiesMap']),
+    ...mapMutations('dataflow', ['setPdkPropertiesMap', 'setTaskInfo']),
 
     init() {
       this.timer && clearInterval(this.timer)
@@ -346,7 +347,7 @@ export default {
       // 根据任务类型(全量、增量),检查不支持此类型的节点
       // 脏代码。这里的校验是有节点错误信息提示的，和节点表单校验揉在了一起，但是校验没有一起做
       if (this.dataflow.type === 'initial_sync+cdc') {
-        typeName = i18n.t('packages_dag_components_formpanel_quanliangzengliang')
+        typeName = i18n.t('public_task_type_initial_sync_and_cdc')
         tableNode.forEach(node => {
           if (
             sourceMap[node.id] &&
@@ -360,7 +361,7 @@ export default {
           }
         })
       } else if (this.dataflow.type === 'initial_sync') {
-        typeName = i18n.t('packages_dag_task_setting_initial_sync')
+        typeName = i18n.t('public_task_type_initial_sync')
         tableNode.forEach(node => {
           if (sourceMap[node.id] && NONSUPPORT_SYNC.includes(node.databaseType)) {
             nodeNames.push(node.name)
@@ -371,7 +372,7 @@ export default {
           }
         })
       } else if (this.dataflow.type === 'cdc') {
-        typeName = i18n.t('packages_dag_task_setting_cdc')
+        typeName = i18n.t('public_task_type_cdc')
         tableNode.forEach(node => {
           if (sourceMap[node.id] && NONSUPPORT_CDC.includes(node.databaseType)) {
             nodeNames.push(node.name)
@@ -435,9 +436,15 @@ export default {
     },
 
     handlePageReturn() {
-      this.$router.push({
-        name: 'migrateList'
-      })
+      if (this.dataflow.syncType === 'migrate') {
+        this.$router.push({
+          name: 'migrateList'
+        })
+      } else {
+        this.$router.push({
+          name: 'dataflowList'
+        })
+      }
     },
 
     handleEdit() {
@@ -480,7 +487,7 @@ export default {
       this.isSaving = true
       try {
         await taskApi.start(this.dataflow.id)
-        this.$message.success(this.$t('packages_dag_message_operation_succuess'))
+        this.$message.success(this.$t('public_message_operation_success'))
         this.isSaving = false
       } catch (e) {
         this.handleError(e)
@@ -501,7 +508,7 @@ export default {
               type: 'task',
               taskId
             },
-            endAt: Time.getTime(), // 停止时间 || 当前时间
+            endAt: Time.now(), // 停止时间 || 当前时间
             fields: [
               'inputInsertTotal',
               'inputUpdateTotal',
@@ -701,9 +708,9 @@ export default {
     getTimeRange(type) {
       let result
       const { status } = this.dataflow || {}
-      let endTimestamp = this.lastStopTime || Time.getTime()
+      let endTimestamp = this.lastStopTime || Time.now()
       if (status === 'running') {
-        endTimestamp = Time.getTime()
+        endTimestamp = Time.now()
       }
       switch (type) {
         case '5m':
@@ -770,6 +777,7 @@ export default {
         }
         data.dag = data.temp || data.dag // 和后端约定了，如果缓存有数据则获取temp
         this.reformDataflow(data)
+        this.setTaskInfo(this.dataflow)
         return data
       } catch (e) {
         console.log(i18n.t('packages_dag_mixins_editor_renwujiazaichu'), e) // eslint-disable-line
@@ -800,7 +808,11 @@ export default {
     },
 
     getTime() {
-      return Time.getTime()
+      return Time.now()
+    },
+
+    getTaskStatus(type) {
+      return TASK_STATUS_MAP[type] || ''
     }
   }
 }

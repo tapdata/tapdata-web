@@ -56,28 +56,28 @@ const errorCallback = (error: AxiosError): Promise<AxiosError | string> => {
       case 401:
         signOut()
         setTimeout(() => {
-          Message.error({ message: i18n.t('message_401').toString() })
+          Message.error({ message: i18n.t('public_message_401').toString() })
         }, 500)
         break
       // 请求的资源不存在
       case 404:
-        Message.error({ message: i18n.t('message_404').toString() })
+        Message.error({ message: i18n.t('public_message_404').toString() })
         break
       case 504:
-        Message.error({ message: i18n.t('message_5xx').toString() })
+        Message.error({ message: i18n.t('public_message_5xx').toString() })
         break
       case 500:
-        Message.error({ message: i18n.t('message_5xx').toString() })
+        Message.error({ message: i18n.t('public_message_5xx').toString() })
         break
     }
   } else if (error.code === 'ECONNABORTED' /* || error.message === 'Network Error' || !window.navigator.onLine*/) {
     // 这两种情况已在ws-client.js里监听 👉 error.message === 'Network Error' || !window.navigator.onLine
     Message.error({
-      message: i18n.t('message_network_unconnected').toString()
+      message: i18n.t('public_message_network_unconnected').toString()
     })
   } else if (error.message && error.message.includes('timeout')) {
     Message.error({
-      message: i18n.t('message_request_timeout').toString()
+      message: i18n.t('public_message_request_timeout').toString()
     })
   }
   return Promise.reject(error)
@@ -126,14 +126,14 @@ axios.interceptors.response.use((response: AxiosResponse) => {
     if (code === 'ok') {
       return resolve(response.data.data)
     } else if (code === 'SystemError') {
-      Message.error(response.data.message || i18n.t('message_request_error').toString())
+      Message.error(response.data.message || i18n.t('public_message_request_error').toString())
       reject(response)
     } else {
       switch (code) {
         case 'SystemError':
           if (data.message === 'System error: null') {
             Message.error({
-              message: i18n.t('message_request_error').toString()
+              message: i18n.t('public_message_request_error').toString()
             })
           } else {
             Message.error({

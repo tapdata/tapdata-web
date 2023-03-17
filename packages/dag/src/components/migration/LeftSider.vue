@@ -14,7 +14,14 @@
                 <VIcon size="18" class="click-btn mr-1" :class="{ active: showDBInput }" @click.stop="handleShowDBInput"
                   >search-outline</VIcon
                 >
-                <VIcon size="20" class="click-btn" @mousedown.stop @click.stop="creat">add-outline</VIcon>
+                <VIcon
+                  size="20"
+                  class="click-btn"
+                  :class="{ 'click-btn-disabled': stateIsReadonly }"
+                  @mousedown.stop
+                  @click.stop="creat"
+                  >add-outline</VIcon
+                >
               </template>
             </div>
           </template>
@@ -62,7 +69,8 @@
                       onStop
                     }"
                     :key="db.id"
-                    class="db-item grabbable flex align-center px-1 user-select-none rounded-2"
+                    class="db-item flex align-center px-1 user-select-none rounded-2"
+                    :class="{ grabbable: !stateIsReadonly }"
                   >
                     <div class="flex-shrink-0 mr-2 db-item-icon">
                       <NodeIcon :node="db" />
@@ -105,7 +113,7 @@
           <div class="flex align-center flex-1">
             <span class="flex-1 user-select-none">
               <!--处理节点-->
-              {{ $t('packages_dag_dag_processor_node') }}
+              {{ $t('public_node_processor') }}
             </span>
           </div>
         </template>
@@ -122,7 +130,8 @@
               onDrop,
               onStop
             }"
-            class="node-item grabbable flex align-center px-2 user-select-none rounded-2"
+            class="node-item flex align-center px-2 user-select-none rounded-2"
+            :class="{ grabbable: !stateIsReadonly }"
           >
             <NodeIcon class="flex-shrink-0 mr-2" :node="n" />
             <OverflowTooltip
@@ -132,6 +141,7 @@
               placement="top"
               :open-delay="400"
             />
+            <VIcon class="ml-1" v-if="n.beta" size="32">beta</VIcon>
           </div>
         </ElScrollbar>
       </ElCollapseItem>
@@ -168,24 +178,25 @@
 </template>
 
 <script>
-import 'web-core/assets/icons/svg/magnify.svg'
-import 'web-core/assets/icons/svg/table.svg'
-import 'web-core/assets/icons/svg/javascript.svg'
-import 'web-core/assets/icons/svg/joint-cache.svg'
-import 'web-core/assets/icons/svg/row-filter.svg'
-import 'web-core/assets/icons/svg/aggregator.svg'
-import 'web-core/assets/icons/svg/field-processor.svg'
-import 'web-core/assets/icons/svg/join.svg'
-import 'web-core/assets/icons/svg/custom-node.svg'
-import 'web-core/assets/icons/svg/merge_table.svg'
-import 'web-core/assets/icons/svg/field_calc.svg'
-import 'web-core/assets/icons/svg/field_add_del.svg'
-import 'web-core/assets/icons/svg/field_rename.svg'
-import 'web-core/assets/icons/svg/field_mod_type.svg'
+import '@tap/assets/icons/svg/magnify.svg'
+import '@tap/assets/icons/svg/table.svg'
+import '@tap/assets/icons/svg/javascript.svg'
+import '@tap/assets/icons/svg/joint-cache.svg'
+import '@tap/assets/icons/svg/row-filter.svg'
+import '@tap/assets/icons/svg/aggregator.svg'
+import '@tap/assets/icons/svg/field-processor.svg'
+import '@tap/assets/icons/svg/join.svg'
+import '@tap/assets/icons/svg/custom-node.svg'
+import '@tap/assets/icons/svg/merge_table.svg'
+import '@tap/assets/icons/svg/field_calc.svg'
+import '@tap/assets/icons/svg/field_add_del.svg'
+import '@tap/assets/icons/svg/field_rename.svg'
+import '@tap/assets/icons/svg/field_mod_type.svg'
 import { mapGetters } from 'vuex'
 import mouseDrag from '@tap/component/src/directives/mousedrag'
 import { VIcon, VEmpty } from '@tap/component'
 import { ConnectionTypeSelector } from '@tap/business'
+import { getInitialValuesInBySchema } from '@tap/form'
 import resize from '@tap/component/src/directives/resize'
 import BaseNode from '../BaseNode'
 import { debounce } from 'lodash'
@@ -196,6 +207,7 @@ import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
 import NodeIcon from '../NodeIcon'
 import { escapeRegExp } from 'lodash'
 import ConnectionType from '../ConnectionType'
+import { getIcon } from '@tap/assets/icons'
 
 export default {
   name: 'LeftSider',
@@ -247,7 +259,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters('dataflow', ['processorNodeTypes', 'getCtor']),
+    ...mapGetters('dataflow', ['processorNodeTypes', 'getCtor', 'stateIsReadonly']),
 
     noDBMore() {
       return this.dbPage >= Math.ceil(this.dbTotal / 20)
@@ -288,7 +300,7 @@ export default {
 
     // 创建连接
     creat() {
-      this.connectionDialog = true
+      this.connectionDialog = !this.stateIsReadonly
     },
     async getDatabaseType() {
       await databaseTypesApi.get().then(res => {
@@ -342,7 +354,8 @@ export default {
           pdkType: 1,
           pdkHash: 1,
           capabilities: 1,
-          config: 1
+          config: 1,
+          connectionString: 1
         },
         order: ['status DESC', 'name ASC'],
         where: {
@@ -429,7 +442,7 @@ export default {
     },
 
     genIconSrc(item) {
-      return require(`web-core/assets/icons/node/${item.databaseType}.svg`)
+      return getIcon(item.databaseType)
     },
 
     async getDragDom() {
@@ -438,6 +451,7 @@ export default {
     },
 
     onStart(item) {
+      if (this.stateIsReadonly) return false
       const node = this.getNodeProps(item)
       const getResourceIns = this.$store.getters['dataflow/getResourceIns']
       const ins = getResourceIns(node)
@@ -451,6 +465,7 @@ export default {
     },
 
     onProcessorStart(item) {
+      if (this.stateIsReadonly) return false
       const node = item
       const getResourceIns = this.$store.getters['dataflow/getResourceIns']
       if (!item.__Ctor) {
@@ -497,12 +512,20 @@ export default {
     },
 
     getNodeProps(item) {
+      // 设置pdk节点配置默认值
+      const pdkProperties = this.$store.state.dataflow.pdkPropertiesMap[item.pdkHash]
+      let nodeConfig
+      if (pdkProperties) {
+        nodeConfig = getInitialValuesInBySchema(pdkProperties, {})
+      }
+
       return {
         name: item.name,
         type: 'database',
         databaseType: item.database_type,
         connectionId: item.id,
         migrateTableSelectType: 'custom',
+        nodeConfig,
         attrs: {
           connectionName: item.name,
           connectionType: item.connection_type,
@@ -603,6 +626,15 @@ $hoverBg: #eef3ff;
       &:hover {
         color: map-get($color, primary);
         background: $hoverBg;
+      }
+
+      &-disabled {
+        color: currentColor;
+        cursor: not-allowed;
+        &:hover {
+          color: currentColor;
+          background: rgba(242, 243, 245);
+        }
       }
     }
 

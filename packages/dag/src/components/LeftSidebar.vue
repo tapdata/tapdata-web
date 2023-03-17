@@ -14,7 +14,14 @@
                 <VIcon size="18" class="click-btn mr-1" :class="{ active: showDBInput }" @click.stop="handleShowDBInput"
                   >search-outline</VIcon
                 >
-                <VIcon size="20" class="click-btn" @mousedown.stop @click.stop="creat">add-outline</VIcon>
+                <VIcon
+                  size="20"
+                  class="click-btn"
+                  :class="{ 'click-btn-disabled': stateIsReadonly }"
+                  @mousedown.stop
+                  @click.stop="creat"
+                  >add-outline</VIcon
+                >
               </template>
               <span v-else class="flex-1 user-select-none text-truncate">{{ activeConnection.name }}</span>
             </div>
@@ -64,8 +71,8 @@
                       onStop
                     }"
                     :key="db.id"
-                    class="db-item grabbable flex align-center px-1 user-select-none rounded-2"
-                    :class="{ active: activeConnection.id === db.id }"
+                    class="db-item flex align-center px-1 user-select-none rounded-2"
+                    :class="{ grabbable: !stateIsReadonly, active: activeConnection.id === db.id }"
                     @click="handleSelectDB(db)"
                   >
                     <div class="flex-shrink-0 mr-2 db-item-icon">
@@ -110,11 +117,22 @@
             <span v-show="tbTotal > 0" class="badge">{{ tbTotal }}</span>
           </span>
           <!--创建新表作为节点使用-->
+          <ElTooltip :content="$t('public_button_reload')" placement="top">
+            <StageButton :connection-id="activeConnection.id" @complete="loadDatabaseTable()">
+              <VIcon class="click-btn refresh mr-1" size="16">refresh</VIcon>
+            </StageButton>
+          </ElTooltip>
           <VIcon size="18" class="click-btn mr-1" :class="{ active: showTBInput }" @click.stop="handleShowTBInput"
             >search-outline</VIcon
           >
           <ElTooltip :content="$t('packages_dag_dag_create_table_as_node')" placement="top">
-            <VIcon size="20" class="click-btn" @click.stop="handleAddTable">add-outline</VIcon>
+            <VIcon
+              size="20"
+              class="click-btn"
+              :class="{ 'click-btn-disabled': stateIsReadonly }"
+              @click.stop="handleAddTable"
+              >add-outline</VIcon
+            >
           </ElTooltip>
         </div>
 
@@ -144,38 +162,36 @@
             wrap-class="tb-list"
             :wrap-style="scrollbarWrapStyle"
           >
-            <ElSkeleton :loading="tbLoading" animated :throttle="skeletonThrottle">
+            <ElSkeleton v-show="tbLoading" class="position-absolute top-0 w-100 bg-white" :loading="tbLoading" animated>
               <template #template>
                 <div v-for="i in 5" :key="i" class="flex p-4 align-center">
                   <ElSkeletonItem variant="text"></ElSkeletonItem>
                 </div>
               </template>
-              <!--多加一层div包裹，避免骨架屏出现时，v-infinite-scroll指令dom指向骨架屏-->
-              <div>
-                <div v-infinite-scroll="loadMoreTable" :infinite-scroll-disabled="disabled" class="px-2 pb-2">
-                  <div
-                    v-for="tb in tbList"
-                    v-mouse-drag="{
-                      item: tb,
-                      container: '#dfEditorContent',
-                      getDragDom,
-                      onStart: onTBStart,
-                      onMove,
-                      onDrop,
-                      onStop
-                    }"
-                    :key="tb.id"
-                    class="tb-item grabbable flex align-center px-2 user-select-none rounded-2"
-                  >
-                    <OverflowTooltip :text="tb.name" placement="right" :open-delay="400"></OverflowTooltip>
-                  </div>
-                  <VEmpty v-if="!tbList.length" />
-                  <div v-if="tbLoadingMore" class="text-center text-black-50 fs-8 p-2">
-                    {{ $t('packages_dag_loading') }}<span class="dotting"></span>
-                  </div>
-                </div>
-              </div>
             </ElSkeleton>
+            <div v-infinite-scroll="loadMoreTable" :infinite-scroll-disabled="disabled" class="px-2 pb-2">
+              <div
+                v-for="tb in tbList"
+                v-mouse-drag="{
+                  item: tb,
+                  container: '#dfEditorContent',
+                  getDragDom,
+                  onStart: onTBStart,
+                  onMove,
+                  onDrop,
+                  onStop
+                }"
+                :key="tb.id"
+                class="tb-item flex align-center px-2 user-select-none rounded-2"
+                :class="{ grabbable: !stateIsReadonly }"
+              >
+                <OverflowTooltip :text="tb.name" placement="right" :open-delay="400"></OverflowTooltip>
+              </div>
+              <VEmpty v-if="!tbList.length" />
+              <div v-if="tbLoadingMore" class="text-center text-black-50 fs-8 p-2">
+                {{ $t('packages_dag_loading') }}<span class="dotting"></span>
+              </div>
+            </div>
           </ElScrollbar>
         </div>
       </div>
@@ -187,7 +203,7 @@
           <div class="flex align-center flex-1">
             <span class="flex-1 user-select-none">
               <!--处理节点-->
-              {{ $t('packages_dag_dag_processor_node') }}
+              {{ $t('public_node_processor') }}
             </span>
           </div>
         </template>
@@ -204,10 +220,12 @@
               onDrop,
               onStop
             }"
-            class="node-item grabbable flex align-center px-2 user-select-none rounded-2"
+            class="node-item flex align-center px-2 user-select-none rounded-2"
+            :class="{ grabbable: !stateIsReadonly }"
           >
             <NodeIcon class="flex-shrink-0 mr-2" :node="n" />
             <OverflowTooltip :text="n.name" popper-class="df-node-text-tooltip" placement="top" :open-delay="400" />
+            <VIcon class="ml-1" v-if="n.beta" size="32">beta</VIcon>
           </div>
         </ElScrollbar>
       </ElCollapseItem>
@@ -263,12 +281,14 @@ import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
 import { metadataInstancesApi, databaseTypesApi, CancelToken, connectionsApi } from '@tap/api'
 import { VIcon, VEmpty, OverflowTooltip } from '@tap/component'
 import { ConnectionTypeSelector } from '@tap/business'
+import { getInitialValuesInBySchema } from '@tap/form'
 import mouseDrag from '@tap/component/src/directives/mousedrag'
 import resize from '@tap/component/src/directives/resize'
 import BaseNode from './BaseNode'
 import CreateTable from './CreateTable'
 import NodeIcon from './NodeIcon'
 import ConnectionType from './ConnectionType'
+import StageButton from '@tap/business/src/components/StageButton'
 
 export default {
   name: 'LeftSidebar',
@@ -282,7 +302,8 @@ export default {
     VIcon,
     ConnectionType,
     ConnectionTypeSelector,
-    ElScrollbar: Select.components.ElScrollbar
+    ElScrollbar: Select.components.ElScrollbar,
+    StageButton
   },
 
   data() {
@@ -341,7 +362,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters('dataflow', ['processorNodeTypes', 'getCtor']),
+    ...mapGetters('dataflow', ['processorNodeTypes', 'getCtor', 'stateIsReadonly']),
 
     noMore() {
       return this.tbPage >= Math.ceil(this.tbTotal / 20)
@@ -361,7 +382,7 @@ export default {
 
     scrollbarWrapStyle() {
       let gutter = scrollbarWidth()
-      return `height: calc(100% + ${gutter}px);`
+      return `position:relative;height: calc(100% + ${gutter}px);`
     }
   },
 
@@ -386,7 +407,7 @@ export default {
   methods: {
     // 创建连接
     creat() {
-      this.connectionDialog = true
+      this.connectionDialog = !this.stateIsReadonly
     },
     getDatabaseType() {
       databaseTypesApi.get().then(res => {
@@ -445,7 +466,8 @@ export default {
           pdkType: 1,
           pdkHash: 1,
           capabilities: 1,
-          config: 1
+          config: 1,
+          connectionString: 1
         },
         order: ['status DESC', 'name ASC']
       }
@@ -615,6 +637,7 @@ export default {
     },
 
     initStart(node) {
+      if (this.stateIsReadonly) return false
       const getResourceIns = this.$store.getters['dataflow/getResourceIns']
       const ins = getResourceIns(node)
       Object.defineProperty(node, '__Ctor', {
@@ -628,15 +651,16 @@ export default {
 
     onStart(item) {
       const node = this.getNodeProps(item, '')
-      this.initStart(node)
+      return this.initStart(node)
     },
 
     onTBStart(item) {
       const node = this.getNodeProps(this.activeConnection, item.name)
-      this.initStart(node)
+      return this.initStart(node)
     },
 
     onProcessorStart(item) {
+      if (this.stateIsReadonly) return false
       const node = item
       const getResourceIns = this.$store.getters['dataflow/getResourceIns']
       if (!item.__Ctor) {
@@ -682,7 +706,7 @@ export default {
     },
 
     scrollTopOfTableList() {
-      if (this.$refs.tbList) this.$refs.tbList.wrap.scrollTop = 0
+      if (this.$refs.tbList && this.$refs.tbList.wrap.scrollTop > 0) this.$refs.tbList.wrap.scrollTop = 0
     },
 
     handleShowTBInput() {
@@ -720,7 +744,7 @@ export default {
     }, 100),
 
     handleAddTable() {
-      this.dialogData.visible = true
+      this.dialogData.visible = !this.stateIsReadonly
     },
 
     handleSaveTable(name) {
@@ -740,12 +764,19 @@ export default {
     },
 
     getNodeProps(connection, tableName) {
+      // 设置pdk节点配置默认值
+      const pdkProperties = this.$store.state.dataflow.pdkPropertiesMap[connection.pdkHash]
+      let nodeConfig
+      if (pdkProperties) {
+        nodeConfig = getInitialValuesInBySchema(pdkProperties, {})
+      }
       return {
         name: tableName || connection.name,
         type: 'table',
         databaseType: connection.database_type,
         connectionId: connection.id,
         tableName,
+        nodeConfig,
         attrs: {
           connectionName: connection.name,
           connectionType: connection.connection_type,
@@ -800,11 +831,22 @@ $hoverBg: #eef3ff;
       height: 24px !important;
       z-index: 2;
       border-radius: 4px;
-
+      &.refresh {
+        color: map-get($iconFillColor, normal);
+      }
       &:hover,
       &.active {
         color: map-get($color, primary);
         background: $hoverBg;
+      }
+
+      &-disabled {
+        color: currentColor;
+        cursor: not-allowed;
+        &:hover {
+          color: currentColor;
+          background: rgba(242, 243, 245);
+        }
       }
     }
 

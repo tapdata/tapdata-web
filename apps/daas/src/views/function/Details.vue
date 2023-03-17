@@ -27,7 +27,7 @@
             <span class="details-value">{{ details.methodName }}</span>
           </ElFormItem>
         </template>
-        <ElFormItem :label="$t('function_describe_label') + ':'">
+        <ElFormItem :label="$t('public_description') + ':'">
           <span class="details-value">{{ details.describe }}</span>
         </ElFormItem>
         <ElFormItem :label="$t('function_format') + ':'">
@@ -47,7 +47,7 @@
         </div>
       </div>
       <div class="footer pt-6">
-        <ElButton class="btn" size="mini" @click="$router.back()">{{ $t('button_back') }}</ElButton>
+        <ElButton class="btn" size="mini" @click="$router.back()">{{ $t('public_button_back') }}</ElButton>
       </div>
     </div>
 

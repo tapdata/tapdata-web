@@ -99,8 +99,8 @@ export default {
   data() {
     return {
       width: null,
-      cancelButtonTextDefault: i18n.t('button_cancel'),
-      confirmButtonTextDefault: i18n.t('button_confirm')
+      cancelButtonTextDefault: i18n.t('public_button_cancel'),
+      confirmButtonTextDefault: i18n.t('public_button_confirm')
     }
   },
 

@@ -1,3 +1,4 @@
+import i18n from '@tap/i18n'
 import { NodeType } from './extends/NodeType'
 
 export class MergeTable extends NodeType {
@@ -22,33 +23,33 @@ export class MergeTable extends NodeType {
         type: 'array',
         'x-display': 'hidden'
       },
+
+      externalStorageId: {
+        title: i18n.t('packages_dag_nodes_aggregate_waicunpeizhi'), //外存配置
+        type: 'string',
+        'x-decorator': 'FormItem',
+        'x-component': 'Select',
+        'x-reactions': [
+          '{{useAsyncDataSourceByConfig({service: loadExternalStorage, withoutField: true})}}',
+          {
+            fulfill: {
+              state: {
+                value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}'
+              }
+            }
+          }
+        ]
+      },
       name: {
         type: 'string',
-        title: '节点名称',
+        title: i18n.t('public_node_name'),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input'
       },
-      // TODO 按时屏蔽外存功能
-      // externalStorageId: {
-      //   title: '外存配置', //外存配置
-      //   type: 'string',
-      //   'x-decorator': 'FormItem',
-      //   'x-component': 'Select',
-      //   'x-reactions': [
-      //     '{{useAsyncDataSourceByConfig({service: loadExternalStorage, withoutField: true})}}',
-      //     {
-      //       fulfill: {
-      //         state: {
-      //           value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}'
-      //         }
-      //       }
-      //     }
-      //   ]
-      // },
 
       mergeProperties: {
-        title: '主从配置',
+        title: i18n.t('packages_dag_nodes_mergetable_zhucongpeizhi'),
         type: 'array',
         required: true,
         'x-decorator': 'FormItem',
@@ -72,13 +73,13 @@ export class MergeTable extends NodeType {
                 },
                 mergeType: {
                   type: 'string',
-                  title: '数据写入模式',
+                  title: i18n.t('packages_dag_nodes_mergetable_shujuxierumo'),
                   'x-decorator': 'FormItem',
                   'x-component': 'Select',
                   enum: [
-                    { label: '更新写入', value: 'updateWrite' },
-                    { label: '更新已存在或插入新数据', value: 'updateOrInsert' },
-                    { label: '更新进内嵌数组', value: 'updateIntoArray' }
+                    { label: i18n.t('packages_dag_editor_cell_link_writeMode_update'), value: 'updateWrite' },
+                    { label: i18n.t('packages_dag_editor_cell_link_writeMode_upsert'), value: 'updateOrInsert' },
+                    { label: i18n.t('packages_dag_nodes_mergetable_gengxinjinneiqian'), value: 'updateIntoArray' }
                   ]
                 },
                 wrap: {
@@ -87,7 +88,7 @@ export class MergeTable extends NodeType {
                   properties: {
                     targetPath: {
                       type: 'string',
-                      title: '关联后写入路径',
+                      title: i18n.t('packages_dag_nodes_mergetable_guanlianhouxieru'),
                       'x-decorator': 'FormItem',
                       'x-component': 'Input',
                       'x-reactions': [
@@ -106,7 +107,9 @@ export class MergeTable extends NodeType {
                                   const arr = $self.value.split('.')
                                   if (arr.length > 2) {
                                     $self.value = arr.slice(0,2).join('.')
-                                    $self.description = '最多支持两层嵌套'
+                                    $self.description = '${i18n.t(
+                                      'packages_dag_nodes_mergetable_const_zuiduozhichiliangceng'
+                                    )}'
                                   } else {
                                     $self.description = ''
                                   }
@@ -117,7 +120,7 @@ export class MergeTable extends NodeType {
                     },
                     arrayKeys: {
                       type: 'array',
-                      title: '内嵌数组匹配条件',
+                      title: i18n.t('packages_dag_nodes_mergetable_neiqianshuzupi'),
                       'x-decorator': 'FormItem',
                       'x-component': 'FieldSelect',
                       'x-component-props': {
@@ -138,7 +141,7 @@ export class MergeTable extends NodeType {
                     },
                     joinKeys: {
                       type: 'array',
-                      title: '关联条件',
+                      title: i18n.t('packages_dag_nodes_mergetable_guanliantiaojian'),
                       'x-decorator': 'FormItem',
                       'x-component': 'ArrayTable',
                       items: {
@@ -148,7 +151,7 @@ export class MergeTable extends NodeType {
                             type: 'void',
                             'x-component': 'ArrayTable.Column',
                             'x-component-props': {
-                              title: '当前表字段',
+                              title: i18n.t('packages_dag_nodes_mergetable_dangqianbiaoziduan'),
                               align: 'center',
                               asterisk: false
                             },
@@ -170,7 +173,7 @@ export class MergeTable extends NodeType {
                             type: 'void',
                             'x-component': 'ArrayTable.Column',
                             'x-component-props': {
-                              title: '目标表字段',
+                              title: i18n.t('packages_dag_nodes_mergetable_mubiaobiaoziduan'),
                               align: 'center',
                               asterisk: false
                             },

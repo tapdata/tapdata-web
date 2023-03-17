@@ -20,8 +20,8 @@
     </el-form>
 
     <span slot="footer" class="dialog-footer">
-      <el-button @click="closeDialogForm">{{ $t('packages_dag_button_cancel') }}</el-button>
-      <el-button type="primary" @click="confirm" @>{{ $t('packages_dag_button_confirm') }}</el-button>
+      <el-button @click="closeDialogForm">{{ $t('public_button_cancel') }}</el-button>
+      <el-button type="primary" @click="confirm" @>{{ $t('public_button_confirm') }}</el-button>
     </span>
   </ElDialog>
 </template>

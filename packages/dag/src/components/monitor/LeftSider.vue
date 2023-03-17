@@ -4,11 +4,7 @@
       <div class="info-box flex justify-content-between align-items-center">
         <TimeSelect :range="$attrs.range" ref="timeSelect" class="mb-1" @change="changeTimeSelect"></TimeSelect>
         <ElDivider direction="vertical" class="mx-1"></ElDivider>
-        <ElTooltip
-          transition="tooltip-fade-in"
-          :content="$t('packages_dag_components_nodedetaildialog_shuaxin')"
-          class="mt-n1"
-        >
+        <ElTooltip transition="tooltip-fade-in" :content="$t('public_button_refresh')" class="mt-n1">
           <VIcon size="16" class="color-primary" @click="$emit('load-data')">refresh</VIcon>
         </ElTooltip>
         <ElDivider direction="vertical" class="mx-1"></ElDivider>
@@ -51,21 +47,35 @@
             </ElTooltip>
           </div>
           <div class="mb-2 flex align-items-center">
-            <span class="mr-2 sync-info-item__title">{{
-              $t('packages_dag_components_nodedetaildialog_quanliangtongbujin')
-            }}</span>
+            <span class="mr-2 sync-info-item__title">{{ $t('public_task_full_sync_progress') }}</span>
             <span v-if="isFileSource" class="flex-1 text-end">{{
               $t('packages_dag_components_node_zanbuzhichi')
             }}</span>
-            <template v-else>
-              <ElProgress
-                class="flex-1 my-2"
-                :show-text="false"
-                style="width: 150px"
-                :percentage="totalDataPercentage"
-              />
-              <span class="ml-2">{{ totalData.snapshotTableTotal + '/' + totalData.tableTotal }}</span>
-            </template>
+            <ElTooltip v-else placement="bottom">
+              <div class="inline-flex">
+                <ElProgress
+                  class="flex-1 my-2"
+                  :show-text="false"
+                  style="width: 150px"
+                  :percentage="totalDataPercentage"
+                />
+                <span class="ml-2">{{ totalData.snapshotTableTotal + '/' + totalData.tableTotal }}</span>
+              </div>
+              <div slot="content" class="fs-8">
+                <div>
+                  <span>{{ $t('packages_dag_monitor_leftsider_quanliangwanchenghao') }}:</span>
+                  <span class="ml-2">{{ calcTimeUnit(totalData.snapshotDoneCost) }}</span>
+                </div>
+                <div>
+                  <span>{{ $t('packages_dag_monitor_leftsider_pingjunQps') }}:</span>
+                  <span class="ml-2">{{ totalData.outputQpsAvg }}</span>
+                </div>
+                <div>
+                  <span>{{ $t('packages_dag_monitor_leftsider_zuidaQps') }}:</span>
+                  <span class="ml-2">{{ totalData.outputQpsMax }}</span>
+                </div>
+              </div>
+            </ElTooltip>
           </div>
           <div
             v-if="dataflow.syncType === 'migrate' && totalData.currentSnapshotTableRowTotal"
@@ -124,6 +134,35 @@
           <span v-else>0</span>
         </div>
       </div>
+      <div v-if="['logCollector'].includes(dataflow.syncType)" class="info-box">
+        <div class="flex justify-content-between mb-2">
+          <span class="fw-bold fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_jibenxinxi') }}</span>
+        </div>
+        <div class="flex justify-content-between mb-2">
+          <span class="font-color-light">{{ $t('packages_business_relation_details_rizhiwajueshi') }}:</span>
+          <span class="font-color-dark">{{ formatTime(collectorData.logTime) }}</span>
+        </div>
+        <div class="flex justify-content-between mb-2">
+          <span class="font-color-light">{{ $t('packages_business_share_form_setting_log_time') }}:</span>
+          <span class="font-color-dark">{{ collectorData.storageTime }}</span>
+        </div>
+        <div class="flex justify-content-between mb-2">
+          <span class="font-color-light">{{ $t('daas_external_storage_list_waicunmingcheng') }}:</span>
+          <span class="font-color-dark">{{ collectorData.externalStorage.name || '-' }}</span>
+        </div>
+        <div class="flex justify-content-between mb-2">
+          <span class="font-color-light">{{ $t('daas_external_storage_list_waicunleixing') }}:</span>
+          <span class="font-color-dark">{{ typeMapping[collectorData.externalStorage.type] || '-' }}</span>
+        </div>
+        <div class="flex justify-content-between mb-2">
+          <span class="font-color-light">{{ $t('daas_external_storage_list_waicunbiaoming') }}:</span>
+          <span class="font-color-dark">{{ collectorData.externalStorage.table || '-' }}</span>
+        </div>
+        <div class="mb-2">
+          <span class="font-color-light">{{ $t('daas_external_storage_list_waicunxinxi') }}:</span>
+          <div class="text-break mt-1 font-color-dark">{{ collectorData.externalStorage.uri || '-' }}</div>
+        </div>
+      </div>
       <div class="info-box">
         <div class="flex justify-content-between mb-2">
           <span class="fs-7 fw-sub font-color-normal">{{
@@ -139,8 +178,8 @@
             placement="top"
             :content="$t('packages_dag_monitor_leftsider_qpSshizhi')"
           >
-            <span>
-              <span class="mr-2 font-color-dark fw-sub">QPS（Q/S）</span>
+            <span class="inline-flex align-items-center">
+              <span class="mr-2 font-color-dark fw-sub">QPS(Q/S)</span>
               <VIcon size="14" class="color-primary">info</VIcon>
             </span>
           </ElTooltip>
@@ -157,10 +196,8 @@
             placement="top"
             :content="$t('packages_dag_monitor_leftsider_shijiancongyuanku')"
           >
-            <span>
-              <span class="mr-2 font-color-dark fw-sub">{{
-                $t('packages_dag_components_nodedetaildialog_zengliangyanchi')
-              }}</span>
+            <span class="inline-flex align-items-center">
+              <span class="mr-2 font-color-dark fw-sub">{{ $t('public_event_incremental_delay') }}</span>
               <VIcon size="14" class="color-primary">info</VIcon>
             </span>
           </ElTooltip>
@@ -199,10 +236,15 @@
         </div>
         <div v-loading="!eventDataAll" class="flex">
           <div v-if="eventDataAll" class="w-50 pr-4">
-            <div>{{ $t('packages_dag_components_eventchart_zongshuru') }}</div>
-            <div class="mt-1 mb-2 font-color-normal fw-sub fs-3 din-font">
-              {{ eventDataAll.inputTotals.toLocaleString() }}
-            </div>
+            <div>{{ $t('public_event_total_input') }}</div>
+            <ElTooltip
+              transition="tooltip-fade-in"
+              placement="top"
+              :content="eventDataAll.inputTotals.toLocaleString()"
+              class="mt-1 mb-2 font-color-normal fw-sub fs-3 din-font"
+            >
+              <div>{{ eventDataAll.inputTotalsLabel }}</div>
+            </ElTooltip>
             <div class="mb-2">
               <span>{{ $t('packages_dag_monitor_leftsider_charu') }}</span>
               <span>{{ eventDataAll.inputInsertTotal.toLocaleString() }}</span>
@@ -224,10 +266,17 @@
           <div v-if="eventDataAll" class="output-item flex w-50">
             <div class="output-item__divider"></div>
             <div class="ml-4">
-              <div>{{ $t('packages_dag_components_eventchart_zongshuchu') }}</div>
-              <div class="mt-1 mb-2 font-color-normal fw-sub fs-3 din-font">
-                {{ eventDataAll.outputTotals.toLocaleString() }}
-              </div>
+              <div>{{ $t('public_event_total_output') }}</div>
+              <ElTooltip
+                transition="tooltip-fade-in"
+                placement="top"
+                :content="eventDataAll.outputTotals.toLocaleString()"
+                class="mt-1 mb-2 font-color-normal fw-sub fs-3 din-font"
+              >
+                <div>
+                  {{ eventDataAll.outputTotalsLabel }}
+                </div>
+              </ElTooltip>
               <div class="mb-2">
                 <span>{{ $t('packages_dag_monitor_leftsider_charu') }}</span>
                 <span>{{ eventDataAll.outputInsertTotal.toLocaleString() }}</span>
@@ -253,7 +302,7 @@
           <span class="fw-sub fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_tiaoshixinxi') }}</span>
         </div>
         <div class="mb-2 flex justify-content-between">
-          <span>{{ $t('packages_dag_monitor_topheader_renwuxintiaoshi') }}:</span>
+          <span>{{ $t('public_task_heartbeat_time') }}:</span>
           <span>{{ heartbeatTime }}</span>
         </div>
       </div>
@@ -269,13 +318,13 @@
       <LineChart
         :data="qpsData"
         :color="['#26CF6C', '#2C65FF']"
-        title="QPS（Q/S）"
+        title="QPS(Q/S)"
         :time-format="timeFormat"
         style="height: 200px"
       ></LineChart>
       <LineChart
         :data="replicateLagData"
-        :title="$t('packages_dag_components_nodedetaildialog_zengliangyanchi')"
+        :title="$t('public_event_incremental_delay')"
         :color="['#2C65FF']"
         :time-format="timeFormat"
         time-value
@@ -306,8 +355,9 @@ import { VIcon, TimeSelect } from '@tap/component'
 import Frequency from './components/Frequency'
 import InitialList from './components/InitialList'
 import dayjs from 'dayjs'
-import { calcTimeUnit } from '@tap/shared'
+import { calcTimeUnit, calcUnit } from '@tap/shared'
 import Time from '@tap/shared/src/time'
+import { logcollectorApi } from '@tap/api'
 
 export default {
   name: 'LeftSider',
@@ -339,7 +389,15 @@ export default {
     return {
       lineChartDialog: false,
       initialListDialog: false,
-      timeSelectLabel: ''
+      timeSelectLabel: '',
+      collectorData: {
+        externalStorage: {}
+      },
+      typeMapping: {
+        mongodb: 'MongoDB',
+        rocksdb: 'RocksDB',
+        memory: 'MEM'
+      }
     }
   },
 
@@ -359,10 +417,7 @@ export default {
       const { time = [] } = this.quota
       return {
         x: time,
-        name: [
-          i18n.t('packages_dag_components_nodedetaildialog_shuru'),
-          i18n.t('packages_dag_components_nodedetaildialog_shuchu')
-        ],
+        name: [i18n.t('public_time_input'), i18n.t('public_time_output')],
         value: [data.inputQps, data.outputQps]
       }
     },
@@ -402,7 +457,7 @@ export default {
     initialData() {
       const data = this.quota.samples?.totalData?.[0] || {}
       const { snapshotRowTotal = 0, snapshotInsertRowTotal = 0, snapshotDoneAt, snapshotStartAt, replicateLag } = data
-      const usedTime = Time.getTime() - snapshotStartAt
+      const usedTime = Time.now() - snapshotStartAt
       let time
       if (!snapshotInsertRowTotal || !snapshotRowTotal || !snapshotStartAt) {
         time = 0
@@ -422,12 +477,24 @@ export default {
         tableTotal = 0,
         snapshotTableTotal = 0,
         currentSnapshotTableInsertRowTotal = 0,
-        currentSnapshotTableRowTotal = 0
+        currentSnapshotTableRowTotal = 0,
+        snapshotDoneCost,
+        outputQpsMax = 0,
+        outputQpsAvg = 0
       } = this.quota.samples?.totalData?.[0] || {}
-      return { tableTotal, snapshotTableTotal, currentSnapshotTableInsertRowTotal, currentSnapshotTableRowTotal }
+      return {
+        tableTotal,
+        snapshotTableTotal,
+        currentSnapshotTableInsertRowTotal,
+        currentSnapshotTableRowTotal,
+        snapshotDoneCost,
+        outputQpsMax: Math.ceil(outputQpsMax),
+        outputQpsAvg: Math.ceil(outputQpsAvg)
+      }
     },
 
     totalDataPercentage() {
+      if (this.initialData.snapshotDoneAt) return 100
       const { tableTotal, snapshotTableTotal } = this.totalData
       return snapshotTableTotal && tableTotal ? (snapshotTableTotal / tableTotal) * 100 : 0
     },
@@ -451,7 +518,7 @@ export default {
 
     heartbeatTime() {
       const { pingTime, status } = this.dataflow
-      return status === 'running' && pingTime ? dayjs().to(dayjs(pingTime)) : '-'
+      return status === 'running' && pingTime ? dayjs(Time.now()).to(dayjs(pingTime)) : '-'
     },
 
     isFileSource() {
@@ -459,6 +526,12 @@ export default {
       if (!allNodes.length) return
       const fileType = ['CSV', 'EXCEL', 'JSON', 'XML']
       return allNodes.some(node => fileType.includes(node.databaseType))
+    }
+  },
+
+  watch: {
+    'dataflow.syncType'(v) {
+      v && this.getCollectorData()
     }
   },
 
@@ -503,6 +576,12 @@ export default {
       result.outputTotals = outputArr.reduce((total, key) => {
         return total + result[key] || 0
       }, 0)
+      const limit = 1000000000
+      result.inputTotalsLabel =
+        result.inputTotals >= limit ? calcUnit(result.inputTotals) : result.inputTotals.toLocaleString()
+
+      result.outputTotalsLabel =
+        result.outputTotals >= limit ? calcUnit(result.outputTotals) : result.outputTotals.toLocaleString()
       return result
     },
 
@@ -515,7 +594,23 @@ export default {
         ? calcTimeUnit(val, 2, {
             autoHideMs: true
           })
-        : i18n.t('packages_dag_dag_dialog_field_mapping_no_data')
+        : i18n.t('public_data_no_data')
+    },
+
+    getCollectorData() {
+      if (!['logCollector'].includes(this.dataflow.syncType) || this.collectorData.id) return
+      logcollectorApi.getDetail(this.dataflow.id).then(data => {
+        this.collectorData = Object.assign(
+          {
+            externalStorage: {}
+          },
+          data
+        )
+      })
+    },
+
+    formatTime(date, f = 'YYYY-MM-DD HH:mm:ss') {
+      return date ? dayjs(date).format(f) : '-'
     }
   }
 }

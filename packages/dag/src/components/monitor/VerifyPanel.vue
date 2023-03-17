@@ -58,11 +58,7 @@
           <div class="before-scroll-content text-center font-color-light py-1">
             <VEmpty
               v-if="!list.length"
-              :description="
-                keyword
-                  ? $t('packages_dag_customer_logs_no_search_data')
-                  : $t('packages_dag_dag_dialog_field_mapping_no_data')
-              "
+              :description="keyword ? $t('packages_dag_customer_logs_no_search_data') : $t('public_data_no_data')"
             />
             <div v-show="moreLoading">
               <i class="el-icon-loading"></i>
@@ -236,7 +232,7 @@ export default {
     },
 
     loadData(loadMore = false) {
-      const startStamp = Time.getTime()
+      const startStamp = Time.now()
       taskApi
         .autoInspectResultsGroupByTable(this.getFilter())
         .then(({ total, items = [] }) => {
@@ -267,7 +263,7 @@ export default {
               this.moreLoading = false
               this.loading = false
             },
-            Time.getTime() - startStamp < 1000 ? 1500 : 0
+            Time.now() - startStamp < 1000 ? 1500 : 0
           )
         })
     },

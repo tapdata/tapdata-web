@@ -121,9 +121,18 @@ $headerBg: #fff;
       .el-input-number--small {
         width: 130px;
       }
+
+      &-help,
+      &-extra {
+        white-space: pre-wrap;
+      }
     }
 
     .formily-element-form-item-layout-horizontal {
+      .formily-element-form-item-control-content-component > .el-switch {
+        height: 40px;
+        line-height: 40px;
+      }
       .formily-element-space-horizontal {
         .el-switch {
           height: 32px;

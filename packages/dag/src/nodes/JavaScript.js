@@ -1,3 +1,4 @@
+import i18n from '@tap/i18n'
 import { NodeType } from './extends/NodeType'
 import { AllLocales } from './locales'
 
@@ -7,6 +8,8 @@ export class JavaScript extends NodeType {
   }
 
   type = 'js_processor'
+
+  beta = true
 
   maxInputs = 1 // 最大输入个数
 
@@ -21,13 +24,13 @@ export class JavaScript extends NodeType {
       },
       name: {
         type: 'string',
-        title: '节点名称',
+        title: i18n.t('public_node_name'),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input'
       },
       script: {
-        title: '脚本',
+        title: i18n.t('packages_dag_nodes_javascript_jiaoben'),
         type: 'string',
         required: true,
         default: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}',

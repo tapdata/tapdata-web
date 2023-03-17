@@ -12,6 +12,7 @@ import { observer } from '@formily/reactive-vue'
 import FormRender from '../FormRender'
 import { debounce } from 'lodash'
 import { taskApi } from '@tap/api'
+import { getPickerOptionsBeforeTime } from '@tap/business/src/shared/util'
 
 export default observer({
   name: 'SettingPanel',
@@ -32,7 +33,8 @@ export default observer({
           return new Promise(resolve => {
             this.handleCheckName(resolve, value)
           })
-        }
+        },
+        getPickerOptionsBeforeTime
       },
 
       schema: {
@@ -46,7 +48,7 @@ export default observer({
             type: 'void',
             properties: {
               name: {
-                title: this.$t('packages_dag_task_stetting_name'), //任务名称
+                title: this.$t('public_task_name'), //任务名称
                 type: 'string',
                 required: 'true',
                 'x-decorator': 'FormItem',
@@ -75,11 +77,11 @@ export default observer({
                     value: 'initial_sync+cdc'
                   },
                   {
-                    label: this.$t('packages_dag_task_setting_initial_sync'), //全量
+                    label: this.$t('public_task_type_initial_sync'), //全量
                     value: 'initial_sync'
                   },
                   {
-                    label: this.$t('packages_dag_task_setting_cdc'), //增量
+                    label: this.$t('public_task_type_cdc'), //增量
                     value: 'cdc'
                   }
                 ]
@@ -163,7 +165,7 @@ export default observer({
                         required: 'true',
                         'x-validator': {
                           cron: true,
-                          message: 'Cron表达式格式有误'
+                          message: i18n.t('packages_dag_migration_settingpanel_cronbiao')
                         },
                         'x-decorator': 'FormItem',
                         'x-component': 'Input',
@@ -204,13 +206,25 @@ export default observer({
                               type: 'string',
                               'x-component': 'PreviewText.Input',
                               'x-reactions': {
-                                dependencies: ['.connectionName'],
+                                dependencies: ['.connectionName', '.connectionId'],
                                 fulfill: {
                                   schema: {
                                     'x-component-props.content': `{{$deps[0] + '('+ $self.value + ')'}}`
+                                  },
+                                  state: {
+                                    display: '{{ $deps[1] ? "visible":"hidden"}}'
                                   }
                                 }
                               }
+                            },
+                            hiddenPointType: {
+                              'x-display': 'hidden',
+                              type: 'boolean',
+                              'x-component': 'PreviewText.Input'
+                            },
+                            connectionId: {
+                              'x-display': 'hidden',
+                              type: 'string'
                             },
                             connectionName: {
                               'x-display': 'hidden',
@@ -222,21 +236,39 @@ export default observer({
                               'x-decorator': 'FormItem',
                               'x-component': 'Select',
                               'x-component-props': {
-                                placeholder: i18n.t('packages_dag_components_formpanel_qingxuanze')
+                                placeholder: i18n.t('public_select_placeholder')
                               },
                               default: 'current',
                               enum: [
                                 {
-                                  label: this.$t('packages_dag_dataFlow_SyncInfo_localTZType'),
+                                  label: this.$t('public_time_user_specified_time'),
                                   value: 'localTZ'
                                 },
-                                {
+                                /*{
                                   label: this.$t('packages_dag_dataFlow_SyncInfo_connTZType'),
                                   value: 'connTZ'
+                                },*/
+                                {
+                                  label: this.$t('public_time_current'),
+                                  value: 'current'
+                                }
+                              ],
+                              'x-reactions': [
+                                {
+                                  dependencies: ['.hiddenPointType'],
+                                  fulfill: {
+                                    state: {
+                                      disabled: `{{$deps[0]}}`
+                                    }
+                                  }
                                 },
                                 {
-                                  label: this.$t('packages_dag_dataFlow_SyncInfo_currentType'),
-                                  value: 'current'
+                                  dependencies: ['.connectionId'],
+                                  fulfill: {
+                                    state: {
+                                      display: '{{ $deps[0] ? "visible":"hidden"}}'
+                                    }
+                                  }
                                 }
                               ]
                             },
@@ -248,16 +280,27 @@ export default observer({
                               'x-component-props': {
                                 type: 'datetime',
                                 format: 'yyyy-MM-dd HH:mm:ss',
-                                valueFormat: 'timestamp'
+                                valueFormat: 'timestamp',
+                                popperClass: 'setting-panel__dateTimePicker'
                               },
-                              'x-reactions': {
-                                dependencies: ['.pointType'],
-                                fulfill: {
-                                  state: {
-                                    visible: '{{$deps[0] !== "current"}}'
+                              'x-reactions': [
+                                {
+                                  dependencies: ['.pointType'],
+                                  fulfill: {
+                                    state: {
+                                      visible: '{{$deps[0] !== "current"}}'
+                                    }
+                                  }
+                                },
+                                {
+                                  dependencies: ['.pointType'],
+                                  fulfill: {
+                                    schema: {
+                                      'x-component-props.pickerOptions': `{{$deps[0] === "localTZ" ? getPickerOptionsBeforeTime($self.value, Date.now()) : null}}`
+                                    }
                                   }
                                 }
-                              }
+                              ]
                             }
                           }
                         }
@@ -287,6 +330,28 @@ export default observer({
                           fulfill: {
                             state: {
                               visible: '{{$deps[0] !== "initial_sync" && $values.isDaas}}' // 只有增量或全量+增量支持
+                            }
+                          }
+                        }
+                      },
+                      enforceShareCdc: {
+                        title: i18n.t('packages_dag_migration_settingpanel_danggongxiangwajue'),
+                        type: 'string',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          tooltip: i18n.t('packages_dag_migration_settingpanel_danggongxiangwajuetooltip')
+                        },
+                        'x-component': 'Select',
+                        default: true,
+                        enum: [
+                          { label: i18n.t('packages_dag_migration_settingpanel_renwuzhijiebao'), value: true },
+                          { label: i18n.t('packages_dag_migration_settingpanel_zhuanweiputongC'), value: false }
+                        ],
+                        'x-reactions': {
+                          dependencies: ['shareCdcEnable'],
+                          fulfill: {
+                            state: {
+                              visible: '{{!!$deps[0]}}'
                             }
                           }
                         }
@@ -338,7 +403,7 @@ export default observer({
                             'x-decorator': 'FormItem',
                             'x-decorator-props': {
                               feedbackLayout: 'none',
-                              addonAfter: i18n.t('packages_dag_dag_data_setting_second')
+                              addonAfter: i18n.t('public_time_s')
                             },
                             'x-component': 'InputNumber',
                             'x-component-props': {
@@ -485,6 +550,7 @@ export default observer({
         .map(node => ({
           nodeId: node.id,
           nodeName: node.name,
+          hiddenPointType: node?.cdcMode === 'polling', //源节点开启了日志轮询则禁用增量采集时刻配置
           connectionId: node.connectionId,
           connectionName: node.attrs.connectionName
         }))
@@ -505,6 +571,12 @@ export default observer({
   watch: {
     stateIsReadonly(v) {
       this.form.setState({ disabled: v })
+      if (v) {
+        // 监控模式禁用
+        this.form.setFieldState('*(accessNodeType,accessNodeProcessId)', {
+          disabled: true
+        })
+      }
     },
 
     accessNodeProcessIdArr: {
@@ -550,7 +622,7 @@ export default observer({
           pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
           dateTime: ''
         }
-        if (old) {
+        if (old && !item.hiddenPointType) {
           Object.assign(point, {
             pointType: old.pointType,
             dateTime: old.dateTime
@@ -576,47 +648,7 @@ export default observer({
         .then(data => {
           resolve(data)
         })
-    }, 500),
-    // 获取所有节点
-    getAllNode() {
-      let timeZone = new Date().getTimezoneOffset() / 60
-      let systemTimeZone = ''
-      if (timeZone > 0) {
-        systemTimeZone = 0 - timeZone
-      } else {
-        systemTimeZone = '+' + -timeZone
-      }
-      const allNodes = this.$store.getters['dataflow/allNodes']
-      const oldPoints = this.settings.syncPoints
-      const oldPointsMap = oldPoints?.length
-        ? oldPoints.reduce((map, point) => {
-            if (point.connectionId) map[point.connectionId] = point
-            return map
-          }, {})
-        : {}
-      const connectionMap = allNodes
-        .filter(node => node.$outputs.length && !node.$inputs.length)
-        .reduce((map, node) => {
-          const { connectionId } = node
-          const item = (map[connectionId] = {
-            connectionId,
-            connectionName: node.attrs.connectionName,
-            pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
-            dateTime: '',
-            timeZone: systemTimeZone
-          })
-          if (oldPointsMap[connectionId]) {
-            const old = oldPointsMap[connectionId]
-            Object.assign(item, {
-              pointType: old.pointType,
-              dateTime: old.dateTime
-            })
-          }
-          return map
-        }, {})
-
-      this.settings.syncPoints = Object.values(connectionMap)
-    }
+    }, 500)
   }
 })
 </script>
@@ -632,6 +664,15 @@ export default observer({
     .el-collapse-item__header {
       font-size: $fontBaseTitle;
       font-weight: 500;
+    }
+  }
+}
+</style>
+<style lang="scss">
+.setting-panel__dateTimePicker {
+  .el-picker-panel__footer {
+    .el-button--text {
+      display: none;
     }
   }
 }

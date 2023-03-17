@@ -12,7 +12,7 @@
             :loading="createAgentLoading"
             :disabled="$disabledReadonlyUserBtn()"
           >
-            <span>{{ $t('agent_button_create') }}</span>
+            <span>{{ $t('public_agent_button_create') }}</span>
           </ElButton>
         </div>
       </div>
@@ -68,7 +68,12 @@
             </ElTooltip>
           </template>
         </ElTableColumn>
-        <ElTableColumn :label="$t('agent_task_number')" width="140">
+        <ElTableColumn width="180px" :label="$t('agent_heartbeat')">
+          <template slot-scope="scope">
+            <span>{{ handlePingTime(scope.row) }}</span>
+          </template>
+        </ElTableColumn>
+        <ElTableColumn :label="$t('agent_task_number')" width="160">
           <template slot-scope="scope">
             <div>
               <div class="flex align-center">
@@ -92,7 +97,7 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn :label="$t('agent_version')" width="200">
+        <ElTableColumn :label="$t('public_version')" width="200">
           <template slot-scope="scope">
             <div class="flex align-items-center">
               <span v-if="showVersionFlag(scope.row)">{{ scope.row.spec && scope.row.spec.version }}</span>
@@ -150,19 +155,18 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="createAt" sortable="custom" :label="$t('agent_create_time')" width="180">
+        <ElTableColumn prop="createAt" sortable="custom" :label="$t('public_create_time')" width="180">
           <template slot-scope="scope">
             <span>{{ formatTime(scope.row.createAt) }}</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn :label="$t('list_operation')" width="240">
+        <ElTableColumn :label="$t('public_operation')" width="240">
           <template slot-scope="scope">
             <ElButton
-
               type="text"
               :disabled="deployBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
               @click="toDeploy(scope.row)"
-              >{{ $t('agent_button_deploy') }}</ElButton
+              >{{ $t('public_agent_button_deploy') }}</ElButton
             >
             <ElDivider direction="vertical"></ElDivider>
             <ElButton
@@ -171,7 +175,7 @@
               :disabled="stopBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
               :loading="scope.row.btnLoading.stop"
               @click="handleStop(scope.row)"
-              >{{ $t('button_stop') }}</ElButton
+              >{{ $t('public_button_stop') }}</ElButton
             >
             <ElDivider direction="vertical"></ElDivider>
             <ElButton
@@ -180,7 +184,7 @@
               :loading="scope.row.btnLoading.delete"
               :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
               @click="handleDel(scope.row)"
-              >{{ $t('button_delete') }}</ElButton
+              >{{ $t('public_button_delete') }}</ElButton
             >
           </template>
         </ElTableColumn>
@@ -189,7 +193,7 @@
           <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
             <span>{{ $t('agent_list_empty_desc1') }}</span>
             <span class="color-primary cursor-pointer fs-7 ml-1" @click="createAgent">{{
-              $t('agent_button_create')
+              $t('public_agent_button_create')
             }}</span>
             <span>{{ $t('agent_list_empty_desc2') }}</span>
           </div>
@@ -197,7 +201,7 @@
         <div v-else class="instance-table__empty" slot="empty">
           <VIcon size="120">search-no-data-color</VIcon>
           <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
-            <span>{{ $t('data_no_find_result') }}</span>
+            <span>{{ $t('public_data_no_find_result') }}</span>
             <span class="color-primary cursor-pointer fs-7 ml-1" @click="reset">{{ $t('link_back_to_list') }}</span>
           </div>
         </div>
@@ -251,11 +255,11 @@
         <div class="dialog-btn flex justify-content-end mt-6">
           <div class="w-50" v-if="showAutoUpgrade">
             <ElButton type="primary" :disabled="disabledAutoUpgradeBtn" @click="autoUpgradeFnc">{{
-              $t('agent_button_auto_upgrade')
+              $t('public_agent_button_auto_upgrade')
             }}</ElButton>
           </div>
           <div class="text-end w-50">
-            <ElButton type="primary" @click="manualUpgradeFnc">{{ $t('agent_button_manual_upgrade') }}</ElButton>
+            <ElButton type="primary" @click="manualUpgradeFnc">{{ $t('public_agent_button_manual_upgrade') }}</ElButton>
           </div>
         </div>
         <div v-if="disabledAutoUpgradeBtn" class="mt-1 fs-8 text-break">({{ $t('agent_tip_auto_upgrade') }})</div>
@@ -266,11 +270,11 @@
         <div class="dialog-btn flex justify-content-evenly mt-6">
           <div class="text-center">
             <ElButton type="primary" :disabled="disabledAutoUpgradeBtn" @click="autoUpgradeFnc">{{
-              $t('button_retry')
+              $t('public_button_retry')
             }}</ElButton>
           </div>
           <div>
-            <ElButton type="primary" @click="manualUpgradeFnc">{{ $t('agent_button_manual_upgrade') }}</ElButton>
+            <ElButton type="primary" @click="manualUpgradeFnc">{{ $t('public_agent_button_manual_upgrade') }}</ElButton>
           </div>
         </div>
       </ElDialog>
@@ -295,7 +299,7 @@
             @click="toDeploy(selectedRow)"
           >
             <VIcon size="12">deploy</VIcon>
-            <span class="ml-1">{{ $t('agent_button_deploy') }}</span>
+            <span class="ml-1">{{ $t('public_agent_button_deploy') }}</span>
           </VButton>
           <VButton
             :loading="selectedRow.btnLoading.stop"
@@ -305,7 +309,7 @@
             @click="handleStop(selectedRow)"
           >
             <VIcon size="12">stop</VIcon>
-            <span class="ml-1">{{ $t('button_stop') }}</span>
+            <span class="ml-1">{{ $t('public_button_stop') }}</span>
           </VButton>
           <VButton
             :loading="selectedRow.btnLoading.delete"
@@ -314,7 +318,7 @@
             @click="handleDel(selectedRow)"
           >
             <VIcon size="12">delete</VIcon>
-            <span class="ml-1">{{ $t('button_delete') }}</span>
+            <span class="ml-1">{{ $t('public_button_delete') }}</span>
           </VButton>
         </div>
       </Details>
@@ -327,12 +331,14 @@
 import i18n from '@/i18n'
 import InlineInput from '../../components/InlineInput'
 import StatusTag from '../../components/StatusTag'
-import { INSTANCE_STATUS_MAP, AGENT_STATUS_MAP_EN } from '../../const'
+import { INSTANCE_STATUS_MAP } from '../../const'
 import Details from './Details'
 import timeFunction from '@/mixins/timeFunction'
 import { buried } from '@/plugins/buried'
 import { VIcon, FilterBar } from '@tap/component'
 import { dayjs } from '@tap/business'
+import Time from '@tap/shared/src/time'
+import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 
 let timer = null
 
@@ -385,7 +391,7 @@ export default {
       let filter = ['Creating', 'Running', 'Stopped']
       filter.forEach(el => {
         result.push({
-          label: this.$t('agent_status_' + el.toLowerCase()),
+          label: CONNECTION_STATUS_MAP[el.toLowerCase()],
           value: el
         })
       })
@@ -559,6 +565,10 @@ export default {
           }
         })
     },
+    handlePingTime(row) {
+      let pingTime = row?.tmInfo?.pingTime
+      return pingTime ? dayjs(pingTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+    },
     getImg(name) {
       return require(`../../../public/images/agent/${name}.png`)
     },
@@ -614,8 +624,8 @@ export default {
       let message = flag ? this.$t('agent_button_stop_tip_running') : this.$t('agent_button_stop_tip_no_running')
       this.$confirm(message, this.$t('agent_button_stop_tip'), {
         type: 'warning',
-        confirmButtonText: this.$t('button_confirm'),
-        cancelButtonText: this.$t('button_cancel')
+        confirmButtonText: this.$t('public_button_confirm'),
+        cancelButtonText: this.$t('public_button_cancel')
       }).then(res => {
         if (res) {
           if (row.btnLoading) {
@@ -648,13 +658,13 @@ export default {
       let title = null
       let message = this.$t('agent_button_delete_confirm_title')
       if (noDelFlag) {
-        title = this.$t('operate_delete_fail')
+        title = this.$t('public_message_delete_fail')
         message = this.$t('agent_button_delete_confirm_msg')
       }
       this.$confirm(message, title, {
         type: 'warning',
-        confirmButtonText: this.$t('button_confirm'),
-        cancelButtonText: this.$t('button_cancel'),
+        confirmButtonText: this.$t('public_button_confirm'),
+        cancelButtonText: this.$t('public_button_cancel'),
         customClass: 'delete-agent'
       }).then(res => {
         if (res) {
@@ -748,10 +758,11 @@ export default {
     },
     autoUpgradeFnc() {
       this.closeDialog() // 关闭升级方式选择窗口
-      if (this.selectedRow?.metric?.runningTaskNum) {
-        this.$alert(this.$t('agent_auto_upgrade_tip_running_task'))
-        return
-      }
+      //由于云版升级引擎导致原来任务执行的中断-前端 #132709
+      // if (this.selectedRow?.metric?.runningTaskNum) {
+      //   this.$alert(this.$t('agent_auto_upgrade_tip_running_task'))
+      //   return
+      // }
       let row = this.selectedRow
       this.$axios.get('api/tcm/config/version/latest/' + row.id).then(({ token }) => {
         this.$axios.get(`api/tcm/productRelease/${this.version}`).then(downloadUrl => {
@@ -772,17 +783,18 @@ export default {
     manualUpgradeFnc() {
       let row = this.selectedRow
       this.closeDialog() // 关闭升级方式选择窗口
-      if (row.metric?.runningTaskNum) {
-        this.$alert(this.$t('agent_auto_upgrade_tip_running_task'))
-      } else {
-        let routeUrl = this.$router.resolve({
-          name: 'UpgradeVersion',
-          query: {
-            agentId: row.id
-          }
-        })
-        window.open(routeUrl.href, '_blank')
-      }
+      //由于云版升级引擎导致原来任务执行的中断-前端 #132709
+      // if (row.metric?.runningTaskNum) {
+      //   this.$alert(this.$t('agent_auto_upgrade_tip_running_task'))
+      // }
+
+      let routeUrl = this.$router.resolve({
+        name: 'UpgradeVersion',
+        query: {
+          agentId: row.id
+        }
+      })
+      window.open(routeUrl.href, '_blank')
     },
     closeDialog() {
       this.upgradeDialog = false
@@ -857,8 +869,8 @@ export default {
     // deployConfirm(id) {
     //   this.$confirm(this.$t('agent_button_create_msg_success_desc'), this.$t('agent_button_create_msg_success'), {
     //     type: 'success',
-    //     confirmButtonText: this.$t('agent_button_deploy_now'),
-    //     cancelButtonText: this.$t('agent_button_deploy_later')
+    //     confirmButtonText: this.$t('public_agent_button_deploy_now'),
+    //     cancelButtonText: this.$t('public_agent_button_deploy_later')
     //   }).then(res => {
     //     if (res) {
     //       this.toDeploy({
@@ -905,7 +917,7 @@ export default {
     },
     upgradeFlag(row) {
       let { tmInfo } = row
-      let isOvertime = (new Date().getTime() - (tmInfo?.updatePingTime ?? 0)) / 1000 / 60 > 5
+      let isOvertime = (Time.now() - (tmInfo?.updatePingTime ?? 0)) / 1000 / 60 > 5
       // 刚完成5分钟内
       return tmInfo.updateStatus === 'done' && !isOvertime
     },

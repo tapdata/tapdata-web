@@ -1,3 +1,4 @@
+import i18n from '@tap/i18n'
 import { NodeType } from './extends/NodeType'
 
 export class TableProcessor extends NodeType {
@@ -21,7 +22,7 @@ export class TableProcessor extends NodeType {
       },
       name: {
         type: 'string',
-        title: '节点名称',
+        title: i18n.t('public_node_name'),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input'
@@ -30,10 +31,43 @@ export class TableProcessor extends NodeType {
         type: 'array',
         'x-component': 'TableRename',
         'x-component-props': {
-          findParentNode: '{{findParentNode}}',
+          findParentNodes: '{{findParentNodes}}',
           listStyle: {
             maxHeight: 'calc((100vh - 120px) * 0.618)'
           }
+        },
+        'x-validator': {
+          validator: `{{(value, rule) => {
+            console.debug('[DEBUG]: tableNames validate', value)
+            if (!value.length) return
+            const parents = findParentNodes($values.id)
+            if (parents && parents.length && parents[0].tableNames.length) {
+              let tableNames = parents[0].tableNames
+              let countByName = {}
+              let duplicateTableNames = new Set()
+              let tableNameMap = value.reduce((obj, item) => {
+                obj[item.previousTableName] = item.currentTableName
+                if (item.currentTableName in countByName) {
+                  countByName[item.currentTableName]++
+                  duplicateTableNames.add(item.currentTableName)
+                } else {
+                  countByName[item.currentTableName] = 1
+                }
+                return obj
+              }, {})
+              let currentTableNames = Object.values(tableNameMap)
+              // if (currentTableNames.length !== new Set(currentTableNames).size) return rule.message
+              tableNames.forEach(name => {
+                if (currentTableNames.includes(name) && !tableNameMap[name]) {
+                  duplicateTableNames.add(name)
+                }
+              })
+              if (duplicateTableNames.size) {
+                return \`\${rule.message}: \${[...duplicateTableNames].join(', ')}\` 
+              }
+            }
+          }}}`,
+          message: i18n.t('packages_dag_nodes_tableprocessor_biaomingchongfu')
         }
       }
     }

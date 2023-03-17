@@ -48,7 +48,7 @@
         :disabled="selectDisabled"
         :autocomplete="autoComplete || autocomplete"
         @focus="handleFocus"
-        @blur="softFocus = false"
+        @blur="handleBlur"
         @keyup="managePlaceholder"
         @keydown="resetInputState"
         @keydown.down.prevent="navigateOptions('next')"

@@ -15,7 +15,7 @@
         v-readonlybtn="authority"
         @click="showDialog()"
       >
-        {{ $t('packages_component_button_button') }}
+        <VIcon size="16" class="icon">add-fill</VIcon>
       </ElButton>
       <div class="title">
         <span>{{ comTitle }}</span>
@@ -57,8 +57,8 @@
               <ElDropdownItem command="add">
                 {{ $t('packages_component_classification_addChildernNode') }}
               </ElDropdownItem>
-              <ElDropdownItem command="edit">{{ $t('packages_component_classification_editNode') }}</ElDropdownItem>
-              <ElDropdownItem command="delete">{{ $t('packages_component_classification_deleteNode') }}</ElDropdownItem>
+              <ElDropdownItem command="edit">{{ $t('public_button_edit') }}</ElDropdownItem>
+              <ElDropdownItem command="delete">{{ $t('public_button_delete') }}</ElDropdownItem>
             </ElDropdownMenu>
           </ElDropdown>
         </span>
@@ -82,9 +82,9 @@
         show-word-limit
       ></ElInput>
       <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="hideDialog()">{{ $t('packages_component_button_cancel') }}</ElButton>
+        <ElButton size="mini" @click="hideDialog()">{{ $t('public_button_cancel') }}</ElButton>
         <ElButton size="mini" type="primary" @click="dialogSubmit()">
-          {{ $t('packages_component_button_confirm') }}
+          {{ $t('public_button_confirm') }}
         </ElButton>
       </span>
     </ElDialog>
@@ -386,7 +386,7 @@ export default {
             ? node
               ? this.$t('packages_component_classification_addChildernNode')
               : this.$t('packages_component_classification_addNode')
-            : this.$t('packages_component_classification_editNode')
+            : this.$t('public_button_edit')
       }
     },
     hideDialog() {
@@ -456,7 +456,7 @@ export default {
     deleteNode(id) {
       let that = this
       this.$confirm(this.$t('packages_component_classification_deteleMessage'), {
-        confirmButtonText: this.$t('packages_component_message_delete'),
+        confirmButtonText: this.$t('public_button_delete'),
         cancelButtonText: this.$t('packages_component_message_cancel'),
         type: 'warning',
         closeOnClickModal: false
@@ -528,7 +528,7 @@ export default {
     top: 4px;
   }
   .toggle {
-    margin-top: 56px;
+    margin-top: 18px;
     // color: map-get($color, lprimary);
     z-index: 2;
   }
@@ -550,7 +550,6 @@ export default {
 
     .btn-addIcon {
       position: absolute;
-      top: 2px;
       right: 12px;
       font-size: $fontBaseTitle;
       .iconfont.icon-jia {
@@ -681,12 +680,6 @@ export default {
 }
 </style>
 <style lang="scss">
-.classification-header {
-  .el-input .el-input__inner {
-    height: 24px;
-    line-height: 24px;
-  }
-}
 .classification-tree {
   padding-bottom: 50px;
   .el-tree-node__content {

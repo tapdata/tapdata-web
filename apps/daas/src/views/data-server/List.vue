@@ -22,12 +22,12 @@
           </ElLink>
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('connection_list_type')" min-width="120">
+      <ElTableColumn :label="$t('public_connection_type')" min-width="120">
         <template #default="{ row }">
           {{ row.connectionType }}
         </template>
       </ElTableColumn>
-      <ElTableColumn show-overflow-tooltip :label="$t('daas_data_server_drawer_lianjiemingcheng')" min-width="200">
+      <ElTableColumn show-overflow-tooltip :label="$t('public_connection_name')" min-width="200">
         <template #default="{ row }">
           {{ row.connectionName }}
         </template>
@@ -42,22 +42,22 @@
           <span class="status-block" :class="'status-' + row.status">{{ row.statusFmt }}</span>
         </template>
       </ElTableColumn>
-      <ElTableColumn width="180" :label="$t('column_operation')">
+      <ElTableColumn width="200" :label="$t('public_operation')">
         <template #default="{ row }">
           <ElButton
             v-if="row.status !== 'active'"
             :disabled="row.status !== 'pending'"
             type="text"
             @click="changeStatus(row)"
-            >{{ $t('button_public') }}</ElButton
+            >{{ $t('public_button_public') }}</ElButton
           >
           <ElButton v-if="row.status === 'active'" type="text" @click="changeStatus(row)">{{
-            $t('button_revoke')
+            $t('public_button_revoke')
           }}</ElButton>
           <ElDivider direction="vertical"></ElDivider>
-          <ElButton type="text" @click="output(row)">{{ $t('button_export') }}</ElButton>
+          <ElButton type="text" @click="output(row)">{{ $t('public_button_export') }}</ElButton>
           <ElDivider direction="vertical"></ElDivider>
-          <ElButton type="text" @click="removeServer(row)">{{ $t('button_delete') }}</ElButton>
+          <ElButton type="text" @click="removeServer(row)">{{ $t('public_button_delete') }}</ElButton>
         </template>
       </ElTableColumn>
     </TablePage>
@@ -88,7 +88,7 @@ export default {
       },
       statusOptions: [
         {
-          label: i18n.t('select_option_all'),
+          label: i18n.t('public_select_option_all'),
           value: ''
         },
         {
@@ -121,6 +121,9 @@ export default {
     this.getFilterItems()
     this.getApiServerHost()
   },
+  beforeDestroy() {
+    this.intervalId && clearTimeout(this.intervalId)
+  },
   methods: {
     getFilterItems() {
       this.filterItems = [
@@ -140,7 +143,7 @@ export default {
             )
             //默认全部
             let all = {
-              name: this.$t('select_option_all'),
+              name: this.$t('public_select_option_all'),
               type: ''
             }
             databaseTypeOptions.unshift(all)

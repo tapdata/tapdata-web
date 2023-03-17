@@ -6,7 +6,7 @@
     <template slot="operation" slot-scope="scope">
       <div class="operate-columns">
         <ElButton size="mini" type="text" @click="goShareCdcInfo(scope.row.id)">{{
-          $t('packages_business_task_info_info')
+          $t('public_button_details')
         }}</ElButton>
       </div>
     </template>
@@ -44,7 +44,7 @@ export default {
           slotName: 'status'
         },
         {
-          label: this.$t('packages_business_column_operation'),
+          label: this.$t('public_operation'),
           prop: 'operation',
           slotName: 'operation'
         }

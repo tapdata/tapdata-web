@@ -5,12 +5,13 @@ const crypto = require('crypto')
 const serveUrlMap = {
   mock: 'http://localhost:3000',
   dev: 'http://backend:3030',
-  test: 'https://dev.cloud.tapdata.net:8443',
+  test: 'https://test3.cloud.tapdata.net:7443',
   local: 'https://v3.test.cloud.tapdata.net',
   localTm: 'http://127.0.0.1:3030'
 }
 // const userId = '60b60af1147bce7705727188' // zed?
-const userId = '60cc0c304e190a579cbe306c' // jason
+const userId = '60b064e9a65d8e852c8523bc' // lemon
+//const userId = '60cc0c304e190a579cbe306c' // jason
 let origin
 const { argv } = process
 const { SERVE_ENV = 'mock' } = process.env
@@ -30,6 +31,10 @@ let varUrl = '~@tap/assets/styles/var.scss'
 let pages = {
   index: {
     entry: 'src/pages/main.js',
+    title: 'Tapdata Cloud'
+  },
+  license_code_activation: {
+    entry: 'src/pages/licenseCodeActivation.js',
     title: 'Tapdata Cloud'
   }
 }
@@ -93,6 +98,11 @@ module.exports = {
                   )
           }
   },
+  transpileDependencies: [
+    // 按需添加需要babel处理的模块
+    /[/\\]node_modules[/\\](.+?)?element-ui(.*)[/\\]packages[/\\]table[/\\]src/,
+    /[/\\]node_modules[/\\](.+?)?element-ui(.*)[/\\]packages[/\\]tooltip[/\\]src/
+  ],
   configureWebpack: config => {
     config.resolve.extensions = ['.js', 'jsx', '.vue', '.json', '.ts', '.tsx']
 
@@ -113,19 +123,34 @@ module.exports = {
         maxEntrypointSize: 10000000,
         maxAssetSize: 30000000
       }
+
+      const sassLoader = require.resolve('sass-loader')
+      config.module.rules
+        .filter(rule => {
+          return rule.test.toString().indexOf('scss') !== -1
+        })
+        .forEach(rule => {
+          rule.oneOf.forEach(oneOfRule => {
+            const sassLoaderIndex = oneOfRule.use.findIndex(item => item.loader === sassLoader)
+            oneOfRule.use.splice(sassLoaderIndex, 0, { loader: require.resolve('css-unicode-loader') })
+          })
+        })
     }
   },
   chainWebpack(config) {
+    config.resolve.alias.set('@', resolve('src'))
+
     const iconDir = resolve('src/assets/icons/svg')
     const colorIconDir = resolve('src/assets/icons/colorSvg')
-    const webCoreIconDir = resolve('../../packages/web-core/assets/icons/svg')
-
+    const assetsIconDir = resolve('../../packages/assets/icons/svg')
+    const assetsColorIconDir = resolve('../../packages/assets/icons/colorSvg')
     // svg loader排除 icon 目录
     config.module
       .rule('svg')
-      .exclude.add(iconDir)
+      .exclude.add(assetsIconDir)
+      .add(assetsColorIconDir)
+      .add(iconDir)
       .add(colorIconDir)
-      .add(webCoreIconDir)
       .end()
       .use('svgo-loader')
       .loader('svgo-loader')
@@ -135,8 +160,8 @@ module.exports = {
     config.module
       .rule('svg-sprite')
       .test(/\.svg$/)
-      .include.add(iconDir)
-      .add(webCoreIconDir)
+      .include.add(assetsIconDir)
+      .add(iconDir)
       .end()
       .use('svg-sprite-loader')
       .loader('svg-sprite-loader')
@@ -171,7 +196,8 @@ module.exports = {
     config.module
       .rule('color-svg-sprite')
       .test(/\.svg$/)
-      .include.add(colorIconDir)
+      .include.add(assetsColorIconDir)
+      .add(colorIconDir)
       .end()
       .use('svg-sprite-loader')
       .loader('svg-sprite-loader')
@@ -207,7 +233,7 @@ module.exports = {
       .loader('markdown-loader')
       .end()
 
-    config.resolve.alias.set('@', resolve('src')).set('web-core', resolve('../../packages/web-core'))
+    config.resolve.alias.set('@', resolve('src'))
     config.plugins.delete('prefetch-index')
 
     // ============ ts处理 ============

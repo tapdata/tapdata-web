@@ -3,10 +3,10 @@
     <ElTabs v-model="active">
       <ElTabPane v-for="item in tabs" :key="item.value" :name="item.value" :label="item.label"></ElTabPane>
     </ElTabs>
-    <div v-if="active === 'formal'">
+    <div v-if="active === 'GA'">
       <ul v-loading="loading" class="database-ul overflow-auto">
         <li
-          v-for="item in publicList"
+          v-for="item in gaList"
           :key="item.type"
           class="database-item float-start mb-4 cursor-pointer"
           @click="$emit('select', item)"
@@ -21,10 +21,7 @@
         </li>
       </ul>
     </div>
-    <div v-else-if="active === 'beta'">
-      <div class="my-4 fs-8">
-        {{ $t('packages_business_components_connectiontypeselectorsort_zhuyiBet') }}
-      </div>
+    <div v-else-if="active === 'Beta'">
       <ul v-loading="loading" class="database-ul overflow-auto">
         <li
           v-for="item in betaList"
@@ -42,17 +39,20 @@
         </li>
       </ul>
     </div>
-    <div v-else-if="active === 'coming'">
-      <div class="my-4 fs-8">
-        {{ $t('packages_business_components_connectiontypeselectorsort_shiyongbanzanbu') }}
-      </div>
+    <div v-else-if="active === 'Alpha'">
       <ul v-loading="loading" class="database-ul overflow-auto">
-        <li v-for="item in comingTypes" :key="item.type" class="database-item disable float-start mb-4">
+        <li
+          v-for="item in alphaList"
+          :key="item.type"
+          class="database-item float-start mb-4 cursor-pointer"
+          @click="$emit('select', item)"
+        >
           <div class="img-box rounded-3">
-            <ElImage :src="$util.getConnectionTypeDialogImg(item.type)" />
+            <ElImage v-if="item.pdkType" :src="getPdkIcon(item)">{{ item.pdkType }}</ElImage>
+            <ElImage v-else :src="$util.getConnectionTypeDialogImg(item)" />
           </div>
           <ElTooltip class="mt-2" effect="dark" :content="item.name" placement="bottom">
-            <div class="ellipsis text-center font-color-slight">{{ item.name }}</div>
+            <div class="ellipsis text-center font-color-normal">{{ item.name }}</div>
           </ElTooltip>
         </li>
       </ul>
@@ -111,55 +111,19 @@ export default {
   },
   data() {
     return {
-      active: 'formal',
-      comingTypes: [
-        { name: 'MongoDB', type: 'mongodb' },
-        { name: 'MySQL', type: 'mysql' },
-        { name: 'Oracle', type: 'oracle' },
-        { name: 'Elasticsearch', type: 'elasticsearch' },
-        { name: 'Redis', type: 'redis' },
-        { name: 'PostgreSQL', type: 'postgres' },
-        { name: 'SQL Server', type: 'sqlserver' },
-        // { name: 'GBase 8s', type: 'gbase-8s' },
-        { name: 'Sybase ASE', type: 'sybase ase' },
-        { name: 'GaussDB200', type: 'gaussdb200' },
-        { name: 'IBM Db2', type: 'db2' },
-        { name: 'Memory Cache', type: 'mem_cache' },
-        { name: 'KunDB', type: 'kundb' },
-        { name: 'Custom connection', type: 'custom' },
-        { name: 'REST API', type: 'rest api' },
-        { name: 'Dummy', type: 'dummy' },
-        { name: 'GridFS', type: 'gridfs' },
-        { name: 'Kafka', type: 'kafka' },
-        { name: 'MariaDB', type: 'mariadb' },
-        { name: 'MySQL PXC', type: 'mysql pxc' },
-        { name: 'jira', type: 'jira' },
-        { name: 'DM DB', type: 'dameng' },
-        { name: 'hive1', type: 'hive1' },
-        { name: 'TCP/IP', type: 'tcp_udp' },
-        // { name: 'MQ', type: 'mq' },
-        { name: 'HBase', type: 'hbase' },
-        { name: 'KUDU', type: 'kudu' },
-        { name: 'Greenplum', type: 'greenplum' },
-        { name: 'TiDB', type: 'tidb' },
-        { name: 'SAP HANA', type: 'hana' },
-        { name: 'ClickHouse', type: 'clickhouse' },
-        { name: 'ADB MySQL', type: 'adb_mysql' },
-        { name: 'ADB PostgreSQL', type: 'adb_postgres' },
-        { name: 'Hazelcast Cloud', type: 'hazelcast_cloud_cluster' }
-      ],
+      active: 'GA',
       tabs: [
         {
           label: i18n.t('packages_business_components_connectiontypeselectorsort_renzhengshujuyuan'),
-          value: 'formal'
+          value: 'GA'
         },
         {
           label: i18n.t('packages_business_components_connectiontypeselectorsort_betashu'),
-          value: 'beta'
+          value: 'Beta'
         },
         {
           label: i18n.t('packages_business_components_connectiontypeselectorsort_jijiangshangxian'),
-          value: 'coming'
+          value: 'Alpha'
         },
         {
           label: i18n.t('packages_business_components_connectiontypeselectorsort_wodeshujuyuan'),
@@ -169,38 +133,22 @@ export default {
     }
   },
   computed: {
-    publicList() {
-      return this.types.filter(t => t.scope === 'public' && !t.beta)
+    alphaList() {
+      return this.types.filter(t => t.scope === 'public' && t.qcType === 'Alpha')
     },
     betaList() {
-      return this.types.filter(t => t.scope === 'public' && t.beta)
+      return this.types.filter(t => t.scope === 'public' && t.qcType === 'Beta')
+    },
+    gaList() {
+      return this.types.filter(t => t.scope === 'public' && t.qcType === 'GA')
     },
     customerList() {
       return this.types.filter(t => t.scope === 'customer')
     }
   },
-  watch: {
-    types: {
-      deep: true,
-      handler() {
-        this.getComingTypes()
-      }
-    }
-  },
-  mounted() {
-    this.getComingTypes()
-  },
   methods: {
     getPdkIcon(item) {
       return getConnectionIcon(item.pdkHash)
-    },
-
-    getComingTypes() {
-      this.comingTypes = this.comingTypes.filter(f => !this.types.some(t => t.pdkId === f.type))
-    },
-
-    handleTab(item) {
-      this.active = item.value
     }
   }
 }

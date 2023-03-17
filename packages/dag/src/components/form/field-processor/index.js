@@ -359,7 +359,13 @@ export const FieldRenameProcessor = defineComponent({
             class="rename-table-item-input px-2"
             value={row.targetFieldName}
             onChange={event => {
-              updateName(row, event.target.value)
+              const val = event.target.value
+              if (val) {
+                row.targetFieldName = val
+                updateName(row, event.target.value)
+              } else {
+                event.target.value = row.targetFieldName
+              }
             }}
           />
         </div>
@@ -524,10 +530,10 @@ export const FieldRenameProcessor = defineComponent({
                   }
                   onClick={() => this.doVisible('visible', true)}
                 >
-                  {i18n.t('packages_form_field_processor_index_piliangcaozuo')}
+                  {i18n.t('public_button_bulk_operation')}
                 </ElButton>
                 <ElButton type="text" class="btn-rest mr-2" disabled={this.disabled} onClick={this.doOperationRest}>
-                  {i18n.t('packages_form_button_reset')}
+                  {i18n.t('public_button_reset')}
                 </ElButton>
               </div>
             </div>
@@ -564,7 +570,7 @@ export const FieldRenameProcessor = defineComponent({
               ></ElTableColumn>
               <ElTableColumn
                 show-overflow-tooltip
-                label={i18n.t('packages_form_field_processor_index_caozuo')}
+                label={i18n.t('public_operation')}
                 prop="isShow"
                 width={'60px'}
                 scopedSlots={{
@@ -597,7 +603,7 @@ export const FieldRenameProcessor = defineComponent({
           </span>
         </ElDialog>
         <ElDialog
-          title={i18n.t('packages_form_field_processor_index_piliangcaozuo')}
+          title={i18n.t('public_button_bulk_operation')}
           visible={this.config.visible}
           append-to-body
           before-close={() => this.doVisible('visible', false)}

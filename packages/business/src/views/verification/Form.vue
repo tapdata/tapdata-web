@@ -186,7 +186,7 @@
                 onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
                 onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
               >
-                <template slot="append"> {{ $t('packages_business_taskProgress_m') }} </template>
+                <template slot="append"> {{ $t('public_time_m') }} </template>
               </ElInput>
             </ElFormItem>
             <ElFormItem class="setting-item" prop="cdcBeginDate">
@@ -230,8 +230,8 @@
         ></ConditionBox>
       </div>
       <div class="mt-8">
-        <ElButton size="mini" @click="goBack()">{{ $t('button_back') }}</ElButton>
-        <ElButton type="primary" size="mini" @click="save">{{ $t('button_save') }}</ElButton>
+        <ElButton size="mini" @click="goBack()">{{ $t('public_button_back') }}</ElButton>
+        <ElButton type="primary" size="mini" @click="save">{{ $t('public_button_save') }}</ElButton>
       </div>
     </div>
 
@@ -250,8 +250,8 @@
         <GitBook :value="doc" class="example ml-4 color-primary"></GitBook>
       </div>
       <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="handleAddScriptClose">{{ $t('button_cancel') }}</ElButton>
-        <ElButton type="primary" size="mini" @click="submitScript">{{ $t('button_confirm') }}</ElButton>
+        <ElButton size="mini" @click="handleAddScriptClose">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton type="primary" size="mini" @click="submitScript">{{ $t('public_button_confirm') }}</ElButton>
       </span>
     </ElDialog>
   </section>
@@ -264,8 +264,8 @@ import { cloneDeep } from 'lodash'
 
 import { GitBook, VCodeEditor } from '@tap/component'
 
-import { DATA_NODE_TYPES } from '@/const.js'
-import { metadataInstancesApi, taskApi, inspectApi } from '@tap/api'
+import { taskApi, inspectApi } from '@tap/api'
+import Time from '@tap/shared/src/time'
 
 import ConditionBox from './components/ConditionBox'
 import { TABLE_PARAMS, META_INSTANCE_FIELDS } from './components/const'
@@ -304,8 +304,8 @@ export default {
         timing: {
           intervals: 24 * 60,
           intervalsUnit: 'minute',
-          start: new Date().getTime(),
-          end: new Date().getTime() + 24 * 60 * 60 * 1000
+          start: Time.now(),
+          end: Time.now() + 24 * 60 * 60 * 1000
         },
         limit: {
           keep: 100
@@ -577,7 +577,6 @@ export default {
             this.$router.back()
           })
           // .catch(err => {
-          //   let message = err?.data?.message || this.$t('message_operation_error')
           //   this.$message.error(message)
           // })
         }

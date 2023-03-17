@@ -6,8 +6,8 @@
       :has-pagination="false"
       ref="table"
       height="100%"
-      stripe
       :key="!!canRevokeRules.length + ''"
+      :row-class-name="tableRowClassName"
     >
       <template slot="field_name" slot-scope="scope">
         <span class="flex align-center"
@@ -68,16 +68,14 @@
         </div>
       </ElForm>
       <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="editDataTypeVisible = false">{{
-          $t('packages_business_button_cancel')
-        }}</ElButton>
+        <ElButton size="mini" @click="editDataTypeVisible = false">{{ $t('public_button_cancel') }}</ElButton>
         <ElButton
           size="mini"
           type="primary"
           :disabled="!currentData.newDataType || currentData.dataType === currentData.newDataType"
           :loading="editBtnLoading"
           @click="submitEdit"
-          >{{ $t('packages_business_button_confirm') }}</ElButton
+          >{{ $t('public_button_confirm') }}</ElButton
         >
       </span>
     </ElDialog>
@@ -166,7 +164,7 @@ export default {
           prop: 'comment'
         },
         {
-          label: i18n.t('packages_form_field_processor_index_caozuo'),
+          label: i18n.t('public_operation'),
           prop: 'operation',
           slotName: 'operation',
           headerSlot: 'operationHeader',
@@ -211,11 +209,12 @@ export default {
     },
 
     tableList() {
-      const { fields } = this.data
+      const { fields, resultItems = [] } = this.data
       let list = (fields || []).map(t => {
         t.source = this.findInRulesById(t.changeRuleId) || {}
         t.accept = t.source?.accept || t.accept
         t.data_type = t.source?.result?.dataType || t.data_type
+        t.transformEx = resultItems.some(f => f.item === t.field_name)
         return t
       })
       return this.showDelete ? list : list.filter(t => !t.is_deleted)
@@ -322,7 +321,7 @@ export default {
             }
           })
           this.editBtnLoading = false
-          this.$message.success(i18n.t('packages_form_field_inference_list_caozuochenggong'))
+          this.$message.success(i18n.t('public_message_operation_success'))
           this.editDataTypeVisible = false
         })
         .catch(() => {
@@ -358,7 +357,7 @@ export default {
           this.handleUpdate(
             this.fieldChangeRules.filter(t => !(t.scope === 'Field' && t.namespace?.[1] === qualified_name))
           )
-          this.$message.success(i18n.t('packages_form_field_inference_list_caozuochenggong'))
+          this.$message.success(i18n.t('public_message_operation_success'))
         }
       })
     },
@@ -381,6 +380,10 @@ export default {
         Field: 'color-primary'
       }
       return map[this.getFieldScope(row)] || 'color-disable'
+    },
+
+    tableRowClassName({ row }) {
+      return row.transformEx ? 'warning-row' : ''
     }
   }
 }
@@ -389,5 +392,15 @@ export default {
 <style lang="scss" scoped>
 .field-inference__list {
   height: 100%;
+  ::v-deep {
+    .warning-row {
+      background: rgb(254, 229, 216);
+      &:hover {
+        > td.el-table__cell {
+          background: rgb(254, 229, 216);
+        }
+      }
+    }
+  }
 }
 </style>

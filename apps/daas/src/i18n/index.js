@@ -7,7 +7,6 @@ import tcLocale from 'element-ui/lib/locale/lang/zh-TW'
 // 公共模块
 import componentLangs from '@tap/component/src/locale'
 import dagLangs from '@tap/dag/src/locale'
-import fieldMappingLangs from '@tap/field-mapping/src/locale'
 import formLangs from '@tap/form/src/locale'
 import businessLangs from '@tap/business/src/locale'
 // apps语言文件
@@ -29,7 +28,6 @@ const localLangs = {
 locale.i18n((key, value) => i18n.t(key, value)) // 重点：为了实现element插件的多语言切换
 i18n.merge(eleLangs)
 i18n.merge(dagLangs)
-i18n.merge(fieldMappingLangs)
 i18n.merge(formLangs)
 i18n.merge(componentLangs)
 i18n.merge(businessLangs)

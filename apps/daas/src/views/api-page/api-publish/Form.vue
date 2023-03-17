@@ -8,7 +8,7 @@
               v-model="createForm.datasource"
               filterable
               size="mini"
-              :placeholder="$t('common_placeholder_select')"
+              :placeholder="$t('public_select_placeholder')"
               :disabled="!!$route.query.id"
             >
               <ElOption v-for="item in databaseOptions" :key="item.value" :label="item.label" :value="item.value">
@@ -56,7 +56,7 @@
               <!-- <el-button size="mini" v-if="apiAuthority === 'edit'" @click="updateAuthority">{{
                 $t('module_form_security')
               }}</el-button>
-              <el-button size="mini" v-else @click="updateAuthority">{{ $t('module_form_edit') }}</el-button> -->
+              <el-button size="mini" v-else @click="updateAuthority">{{ $t('public_button_edit') }}</el-button> -->
               <el-button size="mini" v-if="createForm.status === 'active'" @click="openDocument">{{
                 $t('module_form_document')
               }}</el-button>
@@ -74,19 +74,19 @@
                 <div class="module-path-button-box">
                   <div class="module-path-item-role fw-sub">
                     <span>{{ $t('module_form_permission') }}: </span>
-                    <el-select v-model="item.acl" multiple size="mini" :placeholder="$t('common_placeholder_select')">
+                    <el-select v-model="item.acl" multiple size="mini" :placeholder="$t('public_select_placeholder')">
                       <el-option v-for="item in roles" :key="item.name" :label="item.name" :value="item.name">
                       </el-option>
                     </el-select>
                   </div>
                   <div style="margin-left: 10px">
-                    <el-tooltip class="item" effect="dark" :content="$t('button_delete')" placement="bottom">
+                    <el-tooltip class="item" effect="dark" :content="$t('public_button_delete')" placement="bottom">
                       <ElButton type="text" title="remove" size="mini" @click="removeApiPath(index)">
                         <!-- <i class="fa fa-times el-icon-delete"></i> -->
-                        {{ $t('button_delete') }}
+                        {{ $t('public_button_delete') }}
                       </ElButton>
                     </el-tooltip>
-                    <!-- <el-tooltip class="item" effect="dark" :content="$t('button_edit')" placement="left">
+                    <!-- <el-tooltip class="item" effect="dark" :content="$t('public_button_edit')" placement="left">
                       <span title="edit" @click="editApiPath(item)" v-if="item.type !== 'preset'"
                         ><i class="fa fa-edit el-icon-edit-outline"></i
                       ></span>
@@ -116,9 +116,9 @@
       </div>
       <div class="module-form-footer">
         <el-button class="cancel" @click="handleBack()" size="mini">
-          {{ $t('button_back') }}
+          {{ $t('public_button_back') }}
         </el-button>
-        <el-button type="primary" @click="submit()" size="mini"> {{ $t('button_save') }}</el-button>
+        <el-button type="primary" @click="submit()" size="mini"> {{ $t('public_button_save') }}</el-button>
       </div>
     </div>
   </section>
@@ -530,7 +530,7 @@ export default {
               this.$router.push({
                 name: 'apiPublish'
               })
-              this.$message.success(this.$t('message_save_ok'))
+              this.$message.success(this.$t('public_message_save_ok'))
             })
             .finally(() => {
               this.loadingFrom = false
@@ -622,13 +622,13 @@ export default {
           },
           {
             type: 'input',
-            label: this.$t('module_form_version'),
+            label: this.$t('public_version'),
             field: 'apiVersion',
             required: true
           },
           {
             type: 'input',
-            label: this.$t('module_form_name'),
+            label: this.$t('public_name'),
             field: 'name',
             required: true,
             rules: [
@@ -646,7 +646,7 @@ export default {
           },
           {
             type: 'input',
-            label: this.$t('module_form_describtion'),
+            label: this.$t('public_description'),
             field: 'describtion',
             domType: 'textarea',
             maxlength: 100,

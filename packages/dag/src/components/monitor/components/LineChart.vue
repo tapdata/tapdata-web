@@ -50,7 +50,7 @@ export default {
             '2000-06-19',
             '2000-06-20'
           ],
-          name: [i18n.t('packages_dag_components_linechart_biaoti')],
+          name: [i18n.t('public_title')],
           value: [12, 3, 42, 4, 78, 24, 7, 5, 44, 22, 12, 3, 42, 4, 78, 24, 7, 5, 44, 222]
         }
       }
@@ -115,7 +115,7 @@ export default {
       if (x.length) {
         options.xAxis.data = x
       } else {
-        const now = Time.getTime()
+        const now = Time.now()
         const count = this.limit || 5
         options.xAxis.data = Array(count)
           .fill()
@@ -156,7 +156,7 @@ export default {
                 fontWeight: '500',
                 opacity: 0.7
               },
-              text: i18n.t('packages_dag_dag_dialog_field_mapping_no_data'),
+              text: i18n.t('public_data_no_data'),
               left: 'center',
               top: 'center'
             }
