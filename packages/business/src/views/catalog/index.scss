@@ -191,6 +191,9 @@
 }
 
 .catalog-table {
+  thead th {
+    font-weight: 500;
+  }
   .ck-cell-wrap .cell {
     padding: 0 !important;
     text-align: center;

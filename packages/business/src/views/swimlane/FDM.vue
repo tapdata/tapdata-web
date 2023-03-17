@@ -304,30 +304,7 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
     },
 
     getTaskName(from) {
-      return `${from.name}_Clone_To_FDM_${uuid()}`
-    },
-
-    makeMigrateTaskByTable(from, tableName) {
-      let source = this.getDatabaseNode(from)
-      let target = this.getDatabaseNode({
-        id: this.settings.fdmStorageConnectionId,
-        database_type: 'MongoDB'
-      })
-
-      Object.assign(source, {
-        migrateTableSelectType: 'custom',
-        tableNames: [tableName]
-      })
-
-      return {
-        // ...DEFAULT_SETTINGS,
-        syncType: 'migrate',
-        name: this.getTaskName(from),
-        dag: {
-          edges: [{ source: source.id, target: target.id }],
-          nodes: [source, target]
-        }
-      }
+      return `${from.name}_Clone_To_FDM_${uuid(4)}`
     },
 
     getDatabaseNode(db) {

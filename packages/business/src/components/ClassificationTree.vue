@@ -15,7 +15,6 @@
       :allow-drag="checkAllowDrag"
       :allow-drop="checkAllowDrop"
       @node-click="handleNodeClick"
-      @current-change="handleCurrentChange"
       @node-drag-start="handleDragStart"
       @node-drop="handleDrop"
       @node-expand="handleNodeExpand"
@@ -277,7 +276,7 @@ export default {
       let filter = {
         where,
         fields: {
-          id: 1,
+          /*id: 1,
           item_type: 1,
           last_updated: 1,
           value: 1,
@@ -285,7 +284,7 @@ export default {
           parent_id: 1,
           desc: 1,
           readOnly: 1,
-          user_id: 1
+          user_id: 1*/
         }
       }
       this.loadingTree = true
@@ -660,10 +659,6 @@ export default {
       }, 2000)
     },
 
-    handleCurrentChange() {
-      console.log('handleCurrentChange', ...arguments) // eslint-disable-line
-    },
-
     async handleNodeExpand(data, node) {
       // 十秒内加载过资源，不再继续加载
       if (data.isRoot || (node.loadTime && Date.now() - node.loadTime < 10000)) return
@@ -740,6 +735,7 @@ export default {
           children: [],
           disabled,
           LDP_TYPE: 'connection',
+          readOnly: true,
           isLeaf: false,
           isObject: false
         }

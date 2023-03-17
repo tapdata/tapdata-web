@@ -158,7 +158,7 @@ export default defineComponent({
             </div>
             <div staticClass="flex-1" class={{ none: data.isShowDetails }}>
               <ElTable
-                class={['catalog-table', { none: data.isShowDetails }]}
+                class={['catalog-table']}
                 ref="table"
                 row-key="id"
                 draggable
