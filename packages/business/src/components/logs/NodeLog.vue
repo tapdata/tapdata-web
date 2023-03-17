@@ -42,6 +42,17 @@
         <ElButton :loading="downloadLoading" type="text" size="mini" class="ml-4" @click="handleDownload">{{
           $t('public_button_download')
         }}</ElButton>
+        <ElDropdown class="ml-3" placement="bottom" @command="command" command="help">
+          <span class="icon-btn py-1 px-3 cursor-pointer">
+            <VIcon size="18">setting-outline</VIcon>
+          </span>
+          <ElDropdownMenu slot="dropdown" class="no-triangle">
+            <ElDropdownItem command="timestamp">
+              <VIcon class="color-primary mr-2" :class="{ 'opacity-0': !showCols.includes('timestamp') }">check</VIcon>
+              <span class="pr-4">timestamp</span>
+            </ElDropdownItem>
+          </ElDropdownMenu>
+        </ElDropdown>
       </div>
       <div class="level-line mb-2">
         <ElCheckboxGroup
@@ -52,11 +63,14 @@
           class="inline-flex"
           @change="searchFnc"
         >
-          <ElCheckbox v-for="item in checkItems" :label="item.label" :key="item.label">{{ item.text }}</ElCheckbox>
+          <ElCheckbox
+            v-for="item in checkItems"
+            :label="item.label"
+            :key="item.label"
+            @change="handleCheckbox(arguments[0], item.label)"
+            >{{ item.text }}</ElCheckbox
+          >
         </ElCheckboxGroup>
-        <ElButton type="text" size="mini" class="ml-4" @click="handleSetting">{{
-          $t('packages_dag_components_log_rizhidengjishe')
-        }}</ElButton>
       </div>
       <div v-loading="loading" class="log-list flex-1 rounded-2" style="height: 0">
         <DynamicScroller
@@ -97,8 +111,21 @@
               <VCollapse active="0">
                 <template #header>
                   <div class="log-line flex align-items-center pr-6 flex font-color-light">
-                    <VIcon :class="`${item.level.toLowerCase()}-level`" size="16">{{ iconMap[item.level] }}</VIcon>
-                    <div v-html="item.titleDomStr" class="text-truncate flex-1"></div>
+                    <span v-if="showCols.includes('timestamp')" class="mr-1 font-color-slight"
+                      >[{{ item.timestampLabel }}]</span
+                    >
+                    <span
+                      v-if="item.errorCode"
+                      class="color-primary cursor-pointer mr-2 text-decoration-underline"
+                      @click.stop.prevent="handleCode(item)"
+                      >{{ item.errorCode }}</span
+                    >
+                    <div
+                      class="text-truncate flex-1"
+                      :class="colorMap[item.level.toUpperCase()]"
+                      v-html="item.message"
+                    ></div>
+                    <!--                    <div v-html="item.titleDomStr" class="text-truncate flex-1"></div>-->
                   </div>
                 </template>
                 <template #content>
@@ -141,6 +168,42 @@
         }}</ElButton>
       </span>
     </ElDialog>
+
+    <ElDialog
+      :title="$t('packages_dag_components_log_rizhidengjishe')"
+      width="1200px"
+      :visible.sync="codeDialog.visible"
+      :close-on-click-modal="false"
+      :append-to-body="true"
+    >
+      <div slot="title">
+        <span class="ml-4 fs-6">Error:{{ codeDialog.data.errorCode }}</span>
+      </div>
+      <div
+        v-if="codeDialog.data.describe"
+        v-html="codeDialog.data.describe"
+        class="text-prewrap mt-n4 mb-8 ml-4 font-color-light"
+      ></div>
+      <div
+        v-if="codeDialog.data.errorStack"
+        v-html="codeDialog.data.errorStack"
+        class="text-prewrap mb-6 ml-4 font-color-light"
+      ></div>
+      <div
+        v-if="codeDialog.data.seeAlso && codeDialog.data.seeAlso.length"
+        class="fw-bold fs-6 mb-3 ml-4 font-color-dark"
+      >
+        seeAlso
+      </div>
+      <p
+        v-for="(item, index) in codeDialog.data.seeAlso"
+        :key="index"
+        class="flex align-items-center mb-2 ml-4 font-color-normal"
+      >
+        <span>{{ index + 1 }}.</span>
+        <ElLink type="primary" class="text-decoration-underline" @click="handleLink(item)">{{ item }}</ElLink>
+      </p>
+    </ElDialog>
   </div>
 </template>
 
@@ -152,11 +215,11 @@ import { mapGetters } from 'vuex'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { debounce } from 'lodash'
 
-import { uniqueArr, downloadBlob, deepCopy } from '@tap/shared'
+import { uniqueArr, downloadBlob, deepCopy, openUrl } from '@tap/shared'
 import Time from '@tap/shared/src/time'
 import { VIcon, TimeSelect, VCollapse } from '@tap/component'
 import VEmpty from '@tap/component/src/base/v-empty/VEmpty.vue'
-import { monitoringLogsApi, taskApi } from '@tap/api'
+import { monitoringLogsApi, taskApi, proxyApi } from '@tap/api'
 import NodeIcon from '@tap/dag/src/components/NodeIcon'
 
 export default {
@@ -192,7 +255,7 @@ export default {
     return {
       activeNodeId: 'all',
       keyword: '',
-      checkList: ['DEBUG', 'INFO', 'WARN', 'ERROR'],
+      checkList: [],
       checkItems: [
         {
           label: 'DEBUG',
@@ -224,6 +287,13 @@ export default {
         ERROR: 'error',
         FATAL: 'error',
         DEBUG: 'debug'
+      },
+      colorMap: {
+        INFO: 'color-info',
+        WARN: 'color-warning',
+        ERROR: 'color-danger',
+        FATAL: 'color-danger',
+        DEBUG: 'color-disable'
       },
       newPageObj: {
         page: 0,
@@ -269,7 +339,12 @@ export default {
       quotaTime: [],
       newFilter: {},
       showNoMore: false,
-      extraEnterCount: 0
+      extraEnterCount: 0,
+      codeDialog: {
+        visible: false,
+        data: {}
+      },
+      showCols: []
     }
   },
 
@@ -333,6 +408,10 @@ export default {
     'dataflow.startTime'() {
       this.init()
     }
+  },
+
+  created() {
+    this.checkList = ['error'].includes(this.dataflow.status) ? ['WARN', 'ERROR'] : ['INFO', 'WARN', 'ERROR']
   },
 
   mounted() {
@@ -525,12 +604,13 @@ export default {
         obj.errorStack = row.errorStack?.slice(0, 20000)
 
         const { level, timestamp, nodeName, logTags, data, message, errorStack } = obj
+        row.timestampLabel = obj.timestamp
         row.titleDomStr = this.getTitleStringDom({ timestamp }, message)
         row.jsonDomStr = this.getJsonString([
           { level },
-          { timestamp },
+          // { timestamp },
           { nodeName },
-          { logTags },
+          // { logTags },
           { data },
           { message },
           { errorStack }
@@ -748,6 +828,36 @@ export default {
 
     getTime() {
       return Time.now()
+    },
+
+    handleCode(item = {}) {
+      const params = {
+        className: 'ErrorCodeService',
+        method: 'getErrorCode',
+        args: [item.errorCode, i18n.locale === 'en' ? 'en' : 'cn']
+      }
+      proxyApi.call(params).then(data => {
+        this.codeDialog.data.errorStack = item.errorStack
+        this.codeDialog.data.errorCode = item.errorCode
+        this.codeDialog.data.describe = data.describe
+        this.codeDialog.data.seeAlso = data.seeAlso || []
+        this.codeDialog.visible = true
+      })
+    },
+
+    handleLink(val) {
+      openUrl(val)
+    },
+
+    command(command) {
+      const index = this.showCols.findIndex(t => t === command)
+      index > -1 ? this.showCols.splice(index, 1) : this.showCols.push(command)
+    },
+
+    handleCheckbox(flag, val) {
+      if (flag && val === 'DEBUG') {
+        this.handleSetting()
+      }
     }
   }
 }
@@ -832,6 +942,12 @@ export default {
   &:hover,
   &.active {
     background-color: rgba(229, 236, 255, 0.3);
+  }
+}
+
+.icon-btn {
+  &:hover {
+    background-color: map-get($bgColor, hover);
   }
 }
 </style>
