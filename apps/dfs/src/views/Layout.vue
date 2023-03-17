@@ -38,6 +38,15 @@
             </template>
           </ElMenuItem>
         </template>
+        <ElMenuItem
+          v-if="!isDemoEnv"
+          :key="$t('dfs_agent_download_agentguidedialog_tiyan') + ' Demo'"
+          index="goDemo"
+          class="flex align-center border-top"
+        >
+          <span class="mr-4"><VIcon class="v-icon" size="17">open-in-new</VIcon></span>
+          <span class="text-decoration-underline">{{ $t('dfs_agent_download_agentguidedialog_tiyan') + ' Demo' }}</span>
+        </ElMenuItem>
       </ElMenu>
     </ElAside>
     <ElContainer direction="vertical" class="layout-main position-relative">
@@ -137,7 +146,8 @@ export default {
       agentGuideDialog: false,
       showAgentWarning: false,
       userInfo: '',
-      aliyunMaketVisible: false
+      aliyunMaketVisible: false,
+      isDemoEnv: document.domain === 'demo.cloud.tapdata.net'
     }
   },
   created() {
@@ -225,6 +235,10 @@ export default {
       this.dialogVisible = true
     },
     menuTrigger(path) {
+      if (['goDemo'].includes(path)) {
+        this.goDemo()
+        return
+      }
       if (this.$route.path === path) {
         return
       }
@@ -370,6 +384,11 @@ export default {
           data: expired
         }
       }
+    },
+
+    goDemo() {
+      buried('agentGuideDemo')
+      window.open('https://demo.cloud.tapdata.net/console/v3/')
     }
   }
 }
