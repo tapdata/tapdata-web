@@ -42,17 +42,8 @@
         <ElButton :loading="downloadLoading" type="text" size="mini" class="ml-4" @click="handleDownload">{{
           $t('public_button_download')
         }}</ElButton>
-        <ElDropdown class="ml-3" placement="bottom" @command="command" command="help">
-          <span class="icon-btn py-1 px-3 cursor-pointer">
-            <VIcon size="18">setting-outline</VIcon>
-          </span>
-          <ElDropdownMenu slot="dropdown" class="no-triangle">
-            <ElDropdownItem command="timestamp">
-              <VIcon class="color-primary mr-2" :class="{ 'opacity-0': !showCols.includes('timestamp') }">check</VIcon>
-              <span class="pr-4">timestamp</span>
-            </ElDropdownItem>
-          </ElDropdownMenu>
-        </ElDropdown>
+        <ElSwitch v-model="switchData.timestamp" class="ml-3 mr-1" @change="command('timestamp')"></ElSwitch>
+        <span>{{ $t('packages_business_logs_nodelog_xianshishijianchuo') }}</span>
       </div>
       <div class="level-line mb-2">
         <ElCheckboxGroup
@@ -355,7 +346,10 @@ export default {
         visible: false,
         data: {}
       },
-      showCols: []
+      showCols: [],
+      switchData: {
+        timestamp: false
+      }
     }
   },
 

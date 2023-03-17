@@ -727,5 +727,6 @@ export default {
   packages_business_milestone_list_jinruzengliangshu: '進入增量數據遷移',
   packages_business_logs_nodelog_cuowuduizhan: '錯誤堆棧',
   packages_business_logs_nodelog_cuowumiaoshu: '錯誤描述',
-  packages_business_logs_nodelog_yuanyinfenxi: ' 原因分析'
+  packages_business_logs_nodelog_yuanyinfenxi: ' 原因分析',
+  packages_business_logs_nodelog_xianshishijianchuo: '顯示時間'
 }
