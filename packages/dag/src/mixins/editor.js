@@ -458,8 +458,8 @@ export default {
       }
 
       const node = this.nodeById(id)
-      // 共享挖掘的节点，不触发选中
-      const flag = ['logCollector', 'hazelcastIMDG'].includes(node.type)
+      // 共享挖掘、心跳任务的节点，不触发选中
+      const flag = ['logCollector'].includes(this.dataflow.syncType)
       if (flag) return
       node && this.nodeSelected(node)
       if (setActive) {

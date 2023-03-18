@@ -82,11 +82,7 @@
       </ElTooltip>
       <VDivider class="mx-3" vertical></VDivider>
       <!--设置-->
-      <ElTooltip
-        v-if="!['logCollector'].includes(dataflow.syncType)"
-        transition="tooltip-fade-in"
-        :content="$t('public_button_setting')"
-      >
+      <ElTooltip v-if="!hideSetting" transition="tooltip-fade-in" :content="$t('public_button_setting')">
         <button @click="$emit('showSettings')" class="icon-btn" :class="{ active: activeType === 'settings' }">
           <VIcon size="20">setting-outline</VIcon>
         </button>
@@ -110,7 +106,7 @@
           {{ $t('public_button_reset') }}
         </ElButton>
         <ElButton
-          v-if="dataflow.disabledData && !dataflow.disabledData.edit"
+          v-if="(dataflow.disabledData && !dataflow.disabledData.edit) || !hideEdit"
           :disabled="$disabledReadonlyUserBtn()"
           class="mx-2"
           size="medium"
@@ -247,6 +243,16 @@ export default {
             ? (gcRate * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%'
             : ''
       }
+    },
+
+    hideSetting() {
+      // 挖掘、心跳任务，不显示设置
+      return !['logCollector'].includes(this.dataflow.syncType)
+    },
+
+    hideEdit() {
+      // 心跳任务，不显示编辑
+      return ![''].includes(this.dataflow.syncType)
     }
   },
 
