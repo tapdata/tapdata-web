@@ -245,6 +245,15 @@ export default [
     }
   },
   {
+    path: '/heartbeat/monitor/:id',
+    name: 'HeartbeatMonitor',
+    component: MigrationMonitor,
+    meta: {
+      title: 'page_title_run_monitor',
+      code: 'v2_data_replication_monitor'
+    }
+  },
+  {
     path: '/',
     name: 'layout',
     redirect: 'dashboard',
