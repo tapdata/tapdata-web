@@ -115,7 +115,8 @@ import i18n from '@tap/i18n'
 import { clusterApi, connectionsApi, databaseTypesApi, pdkApi, externalStorageApi, proxyApi } from '@tap/api'
 import { VIcon, GitBook } from '@tap/component'
 import { SchemaToForm } from '@tap/form'
-import { checkConnectionName, isEmpty } from '@tap/shared'
+import { checkConnectionName, isEmpty, openUrl } from '@tap/shared'
+
 import Test from './Test'
 import { getConnectionIcon } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
@@ -165,7 +166,8 @@ export default {
       pdkFormModel: {},
       doc: '',
       pathUrl: '',
-      showDebug: false
+      showDebug: false,
+      heartbeatTaskId: ''
     }
   },
   computed: {
@@ -679,6 +681,46 @@ export default {
           '23:00'
         ]
       }
+
+      END.properties.__TAPDATA.properties.heartbeatObject = {
+        type: 'void',
+        'x-component': 'Space',
+        properties: {
+          openHeartbeatWrite: {
+            type: 'boolean',
+            default: false,
+            title: '开启心跳表',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              tooltip:
+                '打开心跳表后，系统会自动在当前库创建一个心跳表tapheartbeat,并每 10s 更新一次该表的数据。通过该心跳表可以监测所有以当前库和库里的表作为源的任务的运行状态。'
+            },
+            'x-component': 'Switch'
+          },
+          heartbeatLink: {
+            type: 'void',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              colon: false
+            },
+            'x-component': 'Button',
+            'x-component-props': {
+              type: 'text',
+              class: 'text-decoration-underline',
+              onClick: '{{useAsyncDataSourceByConfig({service: toMonitor, withoutField: true}, $values)}}'
+            },
+            'x-content': '查看心跳任务',
+            'x-reactions': {
+              dependencies: ['__TAPDATA.openHeartbeatWrite'],
+              fulfill: {
+                state: {
+                  display: '{{$deps[0] ? "visible":"hidden"}}'
+                }
+              }
+            }
+          }
+        }
+      }
       let result = {
         type: 'object',
         'x-component-props': {
@@ -902,12 +944,27 @@ export default {
           } catch (e) {
             return []
           }
+        },
+        toMonitor: async () => {
+          const routeUrl = this.$router.resolve({
+            name: 'HeartbeatMonitor',
+            params: {
+              id: this.heartbeatTaskId
+            }
+          })
+          openUrl(routeUrl.href)
         }
       }
       this.schemaData = result
       this.loadingFrom = false
     },
-    getPdkData(id) {
+    async getPdkData(id) {
+      try {
+        this.heartbeatTaskId = await connectionsApi.heartbeatTask(id)
+      } catch (e) {
+        console.log('heartbeatTaskId', e) // eslint-disable-line
+        this.heartbeatTaskId = ''
+      }
       connectionsApi.getNoSchema(id).then(data => {
         this.model = data
         let {
