@@ -9,8 +9,8 @@ export default class LDP extends Http {
     return this.axios.post(`${this.url}/fdm/task`, params)
   }
 
-  createMDMTask(params) {
-    return this.axios.post(`${this.url}/mdm/task`, params)
+  createMDMTask(data, params) {
+    return this.axios.post(`${this.url}/mdm/task`, data, { params })
   }
 }
 export { LDP }

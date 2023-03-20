@@ -25,13 +25,13 @@
         :ref="item.component"
         :dragState="dragState"
         :settings="settings"
-        :directories="directoryMap[item.type]"
+        :directory="directoryMap[item.type]"
         :fdmConnection="fdmConnection"
         :mdmConnection="mdmConnection"
         @create-connection="handleAdd"
         @node-drag-end="handleDragEnd"
         @show-settings="handleSettings"
-        @load-directories="loadDirectories"
+        @load-directory="loadDirectory"
         @preview="handlePreview"
       ></component>
     </div>
@@ -130,7 +130,7 @@ export default {
   },
 
   created() {
-    this.loadDirectories()
+    this.loadDirectory()
   },
 
   methods: {
@@ -165,7 +165,7 @@ export default {
       this.settings = settings
     },
 
-    loadDirectories() {
+    loadDirectory() {
       let filter = {
         where: {
           item_type: { $nin: ['database', 'dataflow', 'api'] }
@@ -191,7 +191,7 @@ export default {
           let items = data?.items || []
           let treeData = this.formatCatalog(items)
           treeData.forEach(item => {
-            this.$set(this.directoryMap, item.item_type[0], item.children)
+            this.$set(this.directoryMap, item.item_type[0], item)
           })
           console.log('this.directoryMap', this.directoryMap) // eslint-disable-line
         })

@@ -25,7 +25,7 @@
           ref="tree"
           node-key="id"
           highlight-current
-          :data="directories"
+          :data="treeData"
           draggable
           :render-content="renderContent"
           :render-after-expand="false"
@@ -35,7 +35,12 @@
         ></VirtualTree>
       </div>
 
-      <div class="drop-mask justify-center align-center absolute-fill font-color-dark fs-6">Clone To FDM</div>
+      <div
+        class="drop-mask justify-center align-center absolute-fill font-color-dark fs-6"
+        :class="{ flex: allowDrop }"
+      >
+        Clone To FDM
+      </div>
     </div>
 
     <ElDialog :visible.sync="taskDialogConfig.visible" width="600" :close-on-click-modal="false">
@@ -70,7 +75,7 @@ export default {
     dragState: Object,
     settings: Object,
     fdmConnection: Object,
-    directories: Array
+    directory: Object
   },
 
   components: { VirtualTree },
@@ -100,6 +105,12 @@ export default {
   },
 
   computed: {
+    allowDrop() {
+      return this.dragState.isDragging && this.dragState.from === 'SOURCE'
+    },
+    treeData() {
+      return this.directory?.children || []
+    },
     taskDesc() {
       if (!this.taskDialogConfig.from) return ''
       const { from, tableName } = this.taskDialogConfig
@@ -224,7 +235,7 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
       try {
         await ldpApi.createFDMTask(task)
         this.taskDialogConfig.visible = false
-        this.$emit('load-directories')
+        this.$emit('load-directory')
         this.$message.success(this.$t('public_message_operation_success'))
       } catch (e) {
         console.log(e) // eslint-disable-line
@@ -239,6 +250,8 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
     handleDragEnter(ev) {
       ev.preventDefault()
 
+      if (!this.allowDrop) return
+
       const dropNode = this.findParentByClassName(ev.currentTarget, 'fdm-tree-wrap')
       dropNode.classList.add('is-drop-inner')
     },
@@ -246,6 +259,7 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
     handleDragLeave(ev) {
       ev.preventDefault()
 
+      if (!this.allowDrop) return
       if (!ev.currentTarget.contains(ev.relatedTarget)) {
         const dropNode = this.findParentByClassName(ev.currentTarget, 'fdm-tree-wrap')
         dropNode.classList.remove('is-drop-inner')
@@ -254,6 +268,8 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
 
     handleDrop(ev) {
       ev.preventDefault()
+
+      if (!this.allowDrop) return
 
       const dropNode = this.findParentByClassName(ev.currentTarget, 'fdm-tree-wrap')
       dropNode.classList.remove('is-drop-inner')
@@ -396,15 +412,18 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .drop-mask {
   display: none;
   backdrop-filter: blur(4px);
   background-color: rgba(255, 255, 255, 0.4);
 }
 
-.is-drop-inner .drop-mask {
-  display: flex;
+.is-drop-inner {
+  box-shadow: 0px 0px 0px 2px map-get($color, primary) inset;
+  .drop-mask {
+    display: none !important;
+  }
 }
 
 .pipeline-desc {

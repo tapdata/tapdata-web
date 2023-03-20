@@ -25,6 +25,7 @@
           :allow-drop="() => false"
           @check="checkHandler"
           @node-drag-start="handleDragStart"
+          @node-drag-end="handleDragEnd"
         >
           <span
             class="custom-tree-node flex align-items-center"
@@ -164,7 +165,7 @@ export default {
       ev.dataTransfer.effectAllowed = 'copy'
       this.dragState.isDragging = true
       this.dragState.draggingObjects = [draggingNode]
-      this.dragState.form = 'SOURCE'
+      this.dragState.from = 'SOURCE'
     },
 
     handleDragEnd() {
