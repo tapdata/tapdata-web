@@ -109,14 +109,13 @@
                       v-if="item.errorCode"
                       class="color-primary cursor-pointer mr-2 text-decoration-underline"
                       @click.stop.prevent="handleCode(item)"
-                      >{{ item.errorCode }}</span
+                      >{{ item.fullErrorCode || item.errorCode }}</span
                     >
                     <div
                       class="text-truncate flex-1"
                       :class="colorMap[item.level.toUpperCase()]"
                       v-html="item.message"
                     ></div>
-                    <!--                    <div v-html="item.titleDomStr" class="text-truncate flex-1"></div>-->
                   </div>
                 </template>
                 <template #content>
@@ -169,18 +168,13 @@
       custom-class="error-code-dialog"
     >
       <div slot="title">
-        <span class="ml-4 fw-bold fs-5"
-          >Error {{ codeDialog.data.errorCode }}{{ $t('packages_business_logs_nodelog_yuanyinfenxi') }}</span
-        >
+        <span class="ml-4 fw-bold fs-5">{{ codeDialog.data.fullErrorCode || codeDialog.data.errorCode }}</span>
       </div>
 
-      <div v-if="codeDialog.data.describe" class="fw-bold fs-6 mt-n4 mb-2 ml-4 font-color-dark">
-        {{ $t('packages_business_logs_nodelog_cuowumiaoshu') }}
-      </div>
       <div
         v-if="codeDialog.data.describe"
         v-html="codeDialog.data.describe"
-        class="text-prewrap mb-8 ml-4 font-color-light"
+        class="text-prewrap mt-n4 mb-8 ml-4 font-color-light"
       ></div>
 
       <div v-if="codeDialog.data.errorStack" class="fw-bold fs-6 mb-2 ml-4 font-color-dark">
@@ -844,6 +838,7 @@ export default {
       proxyApi.call(params).then(data => {
         this.codeDialog.data.errorStack = item.errorStack
         this.codeDialog.data.errorCode = item.errorCode
+        this.codeDialog.data.fullErrorCode = item.fullErrorCode
         this.codeDialog.data.describe = data.describe
         this.codeDialog.data.seeAlso = data.seeAlso || []
         this.codeDialog.visible = true
@@ -965,6 +960,7 @@ export default {
 .error-code-dialog {
   .el-dialog__body {
     height: 680px;
+    overflow-y: auto;
   }
 }
 </style>
