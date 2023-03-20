@@ -76,6 +76,7 @@
             v-model="currentData.newDataType"
             :fetch-suggestions="querySearch"
             :placeholder="$t('public_input_placeholder')"
+            @select="handleAutocomplete"
           ></ElAutocomplete>
         </ElFormItem>
         <div v-if="!hideBatch">
@@ -202,6 +203,7 @@ export default {
         fieldName: '',
         dataType: '',
         newDataType: '',
+        selectDataType: '',
         useToAll: false,
         errorMessage: '',
         source: {},
@@ -237,20 +239,16 @@ export default {
         t.accept = t.source?.accept || t.accept
         t.data_type = t.source?.result?.dataType || t.data_type
         t.transformEx = resultItems.some(f => f.item === t.field_name)
+        const selectDataType = t.source.result?.selectDataType
         const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[t.field_name] || {}
         t.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
-        t.matchedDataTypeLevel = !t.canUseDataTypes.includes(t.data_type)
-          ? 'error'
-          : t.canUseDataTypes.findIndex(c => c === t.data_type) === t.canUseDataTypes.length - 1
-          ? ''
-          : 'warning'
-        console.log(
-          't.matchedDataTypeLevel ',
-          t.matchedDataTypeLevel,
-          t.data_type,
-          t.canUseDataTypes.length,
-          t.canUseDataTypes.findIndex(c => c === t.data_type)
-        )
+        t.matchedDataTypeLevel =
+          selectDataType ||
+          (!selectDataType && t.canUseDataTypes.findIndex(c => c === t.data_type) === t.canUseDataTypes.length - 1)
+            ? ''
+            : !t.canUseDataTypes.includes(selectDataType || t.data_type)
+            ? 'error'
+            : 'warning'
         return t
       })
       return this.showDelete ? list : list.filter(t => !t.is_deleted)
@@ -286,6 +284,8 @@ export default {
       this.currentData.errorMessage = ''
       this.currentData.source = source
       this.currentData.canUseDataTypes = canUseDataTypes
+      const findRule = this.fieldChangeRules.find(t => t.id === this.currentData.changeRuleId)
+      this.currentData.selectDataType = findRule?.result?.selectDataType || ''
       this.editDataTypeVisible = true
     },
 
@@ -296,7 +296,7 @@ export default {
 
     submitEdit() {
       const { qualified_name, nodeId } = this.data
-      const { changeRuleId, fieldName, dataType, newDataType, useToAll } = this.currentData
+      const { changeRuleId, fieldName, dataType, newDataType, useToAll, selectDataType } = this.currentData
       const params = {
         databaseType: this.activeNode.databaseType,
         dataTypes: [newDataType]
@@ -323,19 +323,19 @@ export default {
                 // 删除节点规则
                 this.deleteRuleById(f.id)
                 // 修改批量规则
-                batchRule.result = { dataType: newDataType, tapType }
+                batchRule.result = { dataType: newDataType, tapType, selectDataType }
                 ruleId = batchRule.id
                 ruleAccept = newDataType
               } else {
                 // 修改规则为批量规则 scope、namespace
                 f.scope = 'Node'
                 f.namespace = [nodeId]
-                f.result = { dataType: newDataType, tapType }
+                f.result = { dataType: newDataType, tapType, selectDataType }
                 ruleAccept = newDataType
               }
             } else {
               // 修改字段规则
-              f.result = { dataType: newDataType, tapType }
+              f.result = { dataType: newDataType, tapType, selectDataType }
               ruleAccept = newDataType
             }
           } else {
@@ -345,7 +345,7 @@ export default {
               namespace: useToAll ? [nodeId] : [nodeId, qualified_name, fieldName],
               type: 'DataType',
               accept: dataType,
-              result: { dataType: newDataType, tapType }
+              result: { dataType: newDataType, tapType, selectDataType }
             }
             ruleId = op.id
             ruleAccept = dataType
@@ -430,8 +430,7 @@ export default {
           result = i18n.t('packages_dag_field_inference_list_gaiziduanwufa')
           break
         case 'warning':
-          result =
-            i18n.t('packages_dag_field_inference_list_gaiziduanyingshe')
+          result = i18n.t('packages_dag_field_inference_list_gaiziduanyingshe')
           break
         default:
           break
@@ -445,6 +444,10 @@ export default {
           return { value: t }
         }) || []
       )
+    },
+
+    handleAutocomplete(item) {
+      this.currentData.selectDataType = item.value
     }
   }
 }
