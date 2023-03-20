@@ -1,3 +1,5 @@
+import i18n from "../../index";
+
 export default {
   // 常用
   public_name: '名称',
@@ -163,6 +165,10 @@ export default {
   // 任务
   public_task_name: '任务名称',
   public_task_type: '任务类型',
+  public_task_type_migrate: '数据复制',
+  public_task_type_sync: '数据开发',
+  public_task_type_heartbeat: '心跳任务',
+  public_task_type_log_collector: '共享挖掘',
   public_task_type_initial_sync: '全量',
   public_task_type_cdc: '增量',
   public_task_type_initial_sync_and_cdc: '全量+增量',
