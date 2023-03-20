@@ -106,7 +106,7 @@
           {{ $t('public_button_reset') }}
         </ElButton>
         <ElButton
-          v-if="(dataflow.disabledData && !dataflow.disabledData.edit) || !hideEdit"
+          v-if="dataflow.disabledData && !dataflow.disabledData.edit && !hideEdit"
           :disabled="$disabledReadonlyUserBtn()"
           class="mx-2"
           size="medium"
@@ -247,12 +247,12 @@ export default {
 
     hideSetting() {
       // 挖掘、心跳任务，不显示设置
-      return !['logCollector'].includes(this.dataflow.syncType)
+      return ['logCollector', 'connHeartbeat'].includes(this.dataflow.syncType)
     },
 
     hideEdit() {
       // 心跳任务，不显示编辑
-      return ![''].includes(this.dataflow.syncType)
+      return ['connHeartbeat'].includes(this.dataflow.syncType)
     }
   },
 

@@ -703,8 +703,7 @@ export default {
               dependencies: ['__TAPDATA.connection_type'],
               fulfill: {
                 state: {
-                  display: '{{$deps[0] === "source_and_target" ? "visible":"hidden"}}',
-                  value: '{{$deps[0] !== "source_and_target" ? false : $self.value }}'
+                  display: '{{$deps[0] === "source_and_target" ? "visible":"hidden"}}'
                 }
               }
             }
