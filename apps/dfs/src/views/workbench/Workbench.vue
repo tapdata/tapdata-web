@@ -426,6 +426,13 @@ export default {
     loadNotices() {
       this.notices = [
         {
+          id: 9,
+          type: '',
+          name: 'Tapdata Cloud 3.1.9 Release Notes',
+          link: 'https://mp.weixin.qq.com/s/eBHKEZBVkuQ0ah8Kv0wRKQ',
+          time: '2023-03-20 21:00'
+        },
+        {
           id: 8,
           type: '',
           name: 'Tapdata Cloud 3.1.8 Release Notes',
