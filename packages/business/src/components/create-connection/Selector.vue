@@ -125,7 +125,7 @@ export default {
             label: 'Databases Connectors',
             value: 'Database'
           },
-          {
+          /*{
             label: 'Application Services',
             value: 'apiServices',
             display: 'card',
@@ -136,7 +136,7 @@ export default {
                 desc: 'Public Data APIs for application use.'
               }
             ]
-          },
+          },*/
           {
             label: 'My Custom Target',
             value: 'Custom'
@@ -170,6 +170,7 @@ export default {
   watch: {
     visible(v) {
       if (v) {
+        this.active = this.comTabs[0].value
         this.getData()
       } else {
         this.database = []
