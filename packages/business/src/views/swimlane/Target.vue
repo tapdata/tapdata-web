@@ -71,7 +71,7 @@
 
       <ElDialog :visible.sync="dialogConfig.visible" width="600" :close-on-click-modal="false">
         <span slot="title" style="font-size: 14px">{{ dialogConfig.title }}</span>
-        <ElForm ref="form" :model="dialogConfig" label-width="180px">
+        <ElForm ref="form" :model="dialogConfig" label-width="180px" @submit.prevent>
           <div class="pipeline-desc p-4 mb-4">{{ dialogConfig.desc }}</div>
           <ElFormItem label="Pipeline Name">
             <ElInput size="small" v-model="dialogConfig.taskName" maxlength="50" show-word-limit></ElInput>
@@ -187,6 +187,16 @@ export default {
     }
   },
 
+  computed: {
+    allowDrop() {
+      return (
+        this.dragState.isDragging &&
+        ['SOURCE', 'FDM', 'MDM'].includes(this.dragState.from) &&
+        ['connection', 'table'].includes(this.dragState.draggingObjects[0]?.data.LDP_TYPE)
+      )
+    }
+  },
+
   created() {
     this.init()
   },
@@ -249,13 +259,13 @@ export default {
 
     handleDragEnter(ev) {
       ev.preventDefault()
-      if (this.dragging) return
+      if (this.dragging || !this.allowDrop) return
       const dropNode = this.findParentByClassName(ev.currentTarget, 'wrap__item')
       dropNode.classList.add('is-drop-inner')
     },
 
     handleDragLeave(ev) {
-      if (this.dragging) return
+      if (this.dragging || !this.allowDrop) return
 
       if (!ev.currentTarget.contains(ev.relatedTarget)) {
         this.removeDropEffect(ev)
@@ -280,6 +290,7 @@ export default {
       if (item.type === 'service') {
         this.showApiDialog()
       } else {
+        if (!this.allowDrop) return
         if (object.data.type === 'connection') {
           this.dialogConfig.from = object.data
           this.dialogConfig.to = item
@@ -398,7 +409,7 @@ export default {
       taskInfo = this.mapTask(taskInfo)
 
       if (this.connectionTaskMap[to.id]) {
-        this.connectionTaskMap[to.id].push(taskInfo)
+        this.connectionTaskMap[to.id].unshift(taskInfo)
       } else {
         this.$set(this.connectionTaskMap, to.id, [taskInfo])
       }

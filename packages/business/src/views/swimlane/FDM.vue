@@ -31,6 +31,9 @@
           :render-after-expand="false"
           :expand-on-click-node="false"
           :allow-drop="() => false"
+          :allow-drag="checkAllowDrag"
+          @node-drag-start="handleDragStart"
+          @node-drag-end="handleDragEnd"
           @node-expand="handleNodeExpand"
         ></VirtualTree>
       </div>
@@ -45,7 +48,7 @@
 
     <ElDialog :visible.sync="taskDialogConfig.visible" width="600" :close-on-click-modal="false">
       <span slot="title" style="font-size: 14px">Create Cloning Pipeline</span>
-      <ElForm ref="form" :model="dialogConfig" label-width="180px">
+      <ElForm ref="form" :model="dialogConfig" label-width="180px" @submit.prevent>
         <div class="pipeline-desc p-4 mb-4 text-pre">{{ taskDesc }}</div>
         <ElFormItem label="Table Name Prefix">
           <ElInput size="small" v-model="taskDialogConfig.prefix"></ElInput>
@@ -66,7 +69,7 @@ import { connectionsApi, discoveryApi, ldpApi } from '@tap/api'
 import { VirtualTree } from '@tap/component'
 import { merge } from 'lodash'
 import { uuid } from '@tap/shared'
-import { TASK_SETTINGS } from '../../shared'
+import { makeDragNodeImage, TASK_SETTINGS } from '../../shared'
 
 export default {
   name: 'FDM',
@@ -407,6 +410,33 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
           })
         )
       })
+    },
+
+    checkAllowDrag(node) {
+      return node.data.LDP_TYPE === 'table'
+    },
+
+    handleDragStart(draggingNode, ev) {
+      draggingNode = {
+        ...draggingNode,
+        parent: {
+          data: this.fdmConnection
+        }
+      }
+      this.draggingNode = draggingNode
+      this.draggingNodeImage = makeDragNodeImage(
+        ev.currentTarget.querySelector('.tree-item-icon'),
+        draggingNode.data.name
+      )
+      ev.dataTransfer.setDragImage(this.draggingNodeImage, 4, 4)
+      ev.dataTransfer.effectAllowed = 'copy'
+      this.dragState.isDragging = true
+      this.dragState.draggingObjects = [draggingNode]
+      this.dragState.from = 'FDM'
+    },
+
+    handleDragEnd() {
+      this.$emit('node-drag-end')
     }
   }
 }

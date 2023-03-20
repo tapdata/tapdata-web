@@ -32,6 +32,8 @@
           :render-after-expand="false"
           :expand-on-click-node="false"
           :allow-drop="() => false"
+          @node-drag-start="handleDragStart"
+          @node-drag-end="handleDragEnd"
           @node-expand="handleNodeExpand"
         ></VirtualTree>
       </div>
@@ -46,7 +48,7 @@
 
     <ElDialog :visible.sync="taskDialogConfig.visible" width="600" :close-on-click-modal="false">
       <span slot="title" style="font-size: 14px">Create Sync Pipeline</span>
-      <ElForm ref="form" :model="taskDialogConfig" label-width="180px">
+      <ElForm ref="form" :model="taskDialogConfig" label-width="180px" @submit.prevent>
         <!--<div class="pipeline-desc p-4 mb-4 text-pre">{{ taskDesc }}</div>-->
         <ElFormItem label="Table Name">
           <ElInput size="small" v-model="taskDialogConfig.newTableName"></ElInput>
@@ -64,7 +66,7 @@
 
 <script>
 import { VirtualTree } from '@tap/component'
-import { TASK_SETTINGS } from '../../shared'
+import { makeDragNodeImage, TASK_SETTINGS } from '../../shared'
 import { discoveryApi, ldpApi } from '@tap/api'
 import { uuid } from '@tap/shared'
 export default {
@@ -100,7 +102,7 @@ export default {
     allowDrop() {
       return (
         this.dragState.isDragging &&
-        this.dragState.from === 'SOURCE' &&
+        ['SOURCE', 'FDM'].includes(this.dragState.from) &&
         this.dragState.draggingObjects[0]?.data.LDP_TYPE === 'table'
       )
     }
@@ -375,6 +377,29 @@ export default {
     removeDropEffect(ev, cls = 'wrap__item') {
       const dropNode = this.findParentByClassName(ev.currentTarget, cls)
       dropNode.classList.remove('is-drop-inner')
+    },
+
+    handleDragStart(draggingNode, ev) {
+      draggingNode = {
+        ...draggingNode,
+        parent: {
+          data: this.mdmConnection
+        }
+      }
+      this.draggingNode = draggingNode
+      this.draggingNodeImage = makeDragNodeImage(
+        ev.currentTarget.querySelector('.tree-item-icon'),
+        draggingNode.data.name
+      )
+      ev.dataTransfer.setDragImage(this.draggingNodeImage, 4, 4)
+      ev.dataTransfer.effectAllowed = 'copy'
+      this.dragState.isDragging = true
+      this.dragState.draggingObjects = [draggingNode]
+      this.dragState.from = 'MDM'
+    },
+
+    handleDragEnd() {
+      this.$emit('node-drag-end')
     }
   }
 }
