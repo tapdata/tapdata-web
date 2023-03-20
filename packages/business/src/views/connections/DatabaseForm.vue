@@ -686,7 +686,7 @@ export default {
         type: 'void',
         'x-component': 'Space',
         properties: {
-          openHeartbeatWrite: {
+          heartbeatEnable: {
             type: 'boolean',
             default: false,
             title: '开启心跳表',
@@ -695,7 +695,10 @@ export default {
               tooltip:
                 '打开心跳表后，系统会自动在当前库创建一个心跳表tapheartbeat,并每 10s 更新一次该表的数据。通过该心跳表可以监测所有以当前库和库里的表作为源的任务的运行状态。'
             },
-            'x-component': 'Switch'
+            'x-component': 'Switch',
+            'x-component-props': {
+              onChange: `{{ val => handleHeartbeatEnable(val, $form) }}`
+            }
           },
           heartbeatLink: {
             type: 'void',
@@ -707,11 +710,12 @@ export default {
             'x-component-props': {
               type: 'text',
               class: 'text-decoration-underline',
-              onClick: '{{useAsyncDataSourceByConfig({service: toMonitor, withoutField: true}, $values)}}'
+              onClick: '{{useAsyncDataSourceByConfig({service: toMonitor, withoutField: true}, $values)}}',
+              disabled: true
             },
             'x-content': '查看心跳任务',
             'x-reactions': {
-              dependencies: ['__TAPDATA.openHeartbeatWrite'],
+              dependencies: ['__TAPDATA.heartbeatEnable'],
               fulfill: {
                 state: {
                   display: '{{$deps[0] ? "visible":"hidden"}}'
@@ -953,18 +957,16 @@ export default {
             }
           })
           openUrl(routeUrl.href)
+        },
+        handleHeartbeatEnable: (value, $form) => {
+          if (!value) return
+          this.getHeartbeatTaskId($form)
         }
       }
       this.schemaData = result
       this.loadingFrom = false
     },
     async getPdkData(id) {
-      try {
-        this.heartbeatTaskId = await connectionsApi.heartbeatTask(id)
-      } catch (e) {
-        console.log('heartbeatTaskId', e) // eslint-disable-line
-        this.heartbeatTaskId = ''
-      }
       connectionsApi.getNoSchema(id).then(data => {
         this.model = data
         let {
@@ -1016,6 +1018,16 @@ export default {
 
     handleDebug() {
       this.showDebug = true
+    },
+
+    getHeartbeatTaskId($form = {}) {
+      const id = this.id || this.$route.params.id
+      if (!id) return
+      $form.query('__TAPDATA.heartbeatLink').take().setComponentProps({ disabled: true })
+      connectionsApi.heartbeatTask(id).then(data => {
+        this.heartbeatTaskId = data?.[0]
+        this.heartbeatTaskId && $form.query('__TAPDATA.heartbeatLink').take().setComponentProps({ disabled: false })
+      })
     }
   }
 }
