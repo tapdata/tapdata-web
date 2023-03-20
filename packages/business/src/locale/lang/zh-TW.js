@@ -721,5 +721,10 @@ export default {
   packages_business_shared_mining_table_jiaruwajueshi: '加入挖掘時間',
   packages_business_shared_mining_table_biaoming: '表名',
   packages_business_shared_mining_table_wajuebiaoxinxi: '挖掘表信息',
-  packages_business_relation_sharedlist_shiyongdewajue: '使用的挖掘表'
+  packages_business_relation_sharedlist_shiyongdewajue: '使用的挖掘表',
+  packages_business_connections_databaseform_chakanxintiaoren: '查看心跳任務',
+  packages_business_connections_databaseform_dakaixintiaobiao:
+    '打開心跳表後，系統會自動在當前庫創建一個心跳表tapheartbeat，並每 10 秒更新一次該表的數據。通過該心跳表可以監測所有以當前庫和庫裏的表作為源的任務的運行狀態。',
+  packages_business_connections_databaseform_kaiqixintiaobiao: '開啟心跳表',
+  packages_business_connections_databaseform_jiaobentiaoshi: '腳本調試'
 }

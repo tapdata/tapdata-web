@@ -69,7 +69,9 @@
           <div class="footer-btn">
             <el-button @click="goBack()">{{ $t('public_button_back') }}</el-button>
             <el-button class="test" @click="startTest()">{{ $t('public_connection_button_test') }}</el-button>
-            <el-button v-if="pdkOptions.pdkId === 'custom'" class="test" @click="handleDebug">脚本调试</el-button>
+            <el-button v-if="pdkOptions.pdkId === 'custom'" class="test" @click="handleDebug">{{
+              $t('packages_business_connections_databaseform_jiaobentiaoshi')
+            }}</el-button>
             <el-button type="primary" :loading="submitBtnLoading" @click="submit">
               {{ $t('public_button_save') }}
             </el-button>
@@ -689,11 +691,10 @@ export default {
           heartbeatEnable: {
             type: 'boolean',
             default: false,
-            title: '开启心跳表',
+            title: i18n.t('packages_business_connections_databaseform_kaiqixintiaobiao'),
             'x-decorator': 'FormItem',
             'x-decorator-props': {
-              tooltip:
-                '打开心跳表后，系统会自动在当前库创建一个心跳表tapheartbeat,并每 10s 更新一次该表的数据。通过该心跳表可以监测所有以当前库和库里的表作为源的任务的运行状态。'
+              tooltip: i18n.t('packages_business_connections_databaseform_dakaixintiaobiao')
             },
             'x-component': 'Switch',
             'x-component-props': {
@@ -721,7 +722,7 @@ export default {
               onClick: '{{useAsyncDataSourceByConfig({service: toMonitor, withoutField: true}, $values)}}',
               disabled: true
             },
-            'x-content': '查看心跳任务',
+            'x-content': i18n.t('packages_business_connections_databaseform_chakanxintiaoren'),
             'x-reactions': {
               dependencies: ['__TAPDATA.heartbeatEnable'],
               fulfill: {

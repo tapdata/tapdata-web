@@ -747,5 +747,10 @@ export default {
   packages_business_shared_mining_table_jiaruwajueshi: 'Add mining time',
   packages_business_shared_mining_table_biaoming: 'Table Name',
   packages_business_shared_mining_table_wajuebiaoxinxi: 'Mining table information',
-  packages_business_relation_sharedlist_shiyongdewajue: 'The mining table used'
+  packages_business_relation_sharedlist_shiyongdewajue: 'The mining table used',
+  packages_business_connections_databaseform_chakanxintiaoren: 'View heartbeat tasks',
+  packages_business_connections_databaseform_dakaixintiaobiao:
+    'After opening the heartbeat table, the system will automatically create a tapheartbeat table in the current database and update the data in the table every 10 seconds. The heartbeat table can be used to monitor the running status of all tasks that use the current database and tables in the database as the source.',
+  packages_business_connections_databaseform_kaiqixintiaobiao: 'Enable heartbeat table',
+  packages_business_connections_databaseform_jiaobentiaoshi: 'Script Debugging'
 }
