@@ -203,3 +203,33 @@
     cursor: pointer;
   }
 }
+
+.path-breadcrumb {
+  $fontSize: 20px;
+  height: $fontSize * 1.5;
+  line-height: $fontSize * 1.5;
+  font-size: $fontSize;
+
+  &-item {
+    color: #646a73;
+
+    &:last-child {
+      color: #1f2329;
+    }
+  }
+
+  &-item:not(:last-child) {
+    .path-breadcrumb-item__name {
+      cursor: pointer;
+      &:hover {
+        background-color: rgba(31,35,41, .1);
+      }
+    }
+  }
+}
+
+.catalog-container {
+  .object-preview-wrap {
+    z-index: 1;
+  }
+}

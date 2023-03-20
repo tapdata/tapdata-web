@@ -247,10 +247,12 @@ export default {
 
     handleNodeClick(data, node) {
       let { currentNode = {} } = this
-      if (data.id === currentNode.id || data.isObject) return
-      this.handleNodeExpand(data, node)
+
+      if (data.id === currentNode.id) return
+      if (!data.isObject) this.handleNodeExpand(data, node)
+
       this.currentNode = data
-      this.emitCheckedNodes(data)
+      this.emitCheckedNodes(data, node)
       console.log('node', node) // eslint-disable-line
     },
 
@@ -260,12 +262,12 @@ export default {
       this.$refs.tree.setCurrentKey(key)
       this.handleNodeClick(data, node)
 
-      if (expand) this.expandedKeys = [key]
+      if (expand && !data.isObject) this.expandedKeys = [key]
     },
 
-    emitCheckedNodes(node) {
-      if (!node) return
-      this.$emit('nodeChecked', node)
+    emitCheckedNodes(data, node) {
+      if (!data) return
+      this.$emit('nodeChecked', data, node)
     },
 
     getData(cb) {
@@ -697,16 +699,14 @@ export default {
         page: 1,
         pageSize: 10000,
         tagId: node.id,
-        range: 'current',
-        fields: {
-          allTags: 1
-        }
+        range: 'current'
       }
       return discoveryApi.discoveryList(where).then(res => {
         return res.items.map(item =>
           Object.assign(item, {
             isLeaf: true,
             isObject: true,
+            connectionId: item.sourceConId,
             LDP_TYPE: 'table'
           })
         )
@@ -748,6 +748,7 @@ export default {
         return {
           id: t.tableId,
           name: t.tableName,
+          connectionId: id,
           isLeaf: true,
           isObject: true,
           LDP_TYPE: 'table'

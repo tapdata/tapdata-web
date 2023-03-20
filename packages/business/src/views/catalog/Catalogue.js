@@ -1,8 +1,7 @@
 import { defineComponent, reactive, ref, watch, nextTick, onMounted } from '@vue/composition-api'
 import i18n from '@tap/i18n'
-import { FilterBar, Drawer, VIcon } from '@tap/component'
-import { discoveryApi } from '@tap/api'
-import { TablePage, makeDragNodeImage } from '../../index'
+import { VIcon, ProTable } from '@tap/component'
+import { makeDragNodeImage } from '../../index'
 import TableView from '../../components/TableView'
 import ClassificationTree from '../../components/ClassificationTree'
 import { DatabaseIcon } from '../../components'
@@ -23,7 +22,7 @@ export default defineComponent({
     const objectList = ref([])
     const catalogList = ref([])
     const { sourceType, queryKey } = root.$route.query || {}
-    const data = reactive({
+    const options = reactive({
       isShowDetails: false,
       isShowSourceDrawer: false, //资源绑定
       tableLoading: false,
@@ -41,17 +40,35 @@ export default defineComponent({
       filterItems: []
     })
     const currentNode = ref({})
+    const pathMatch = ref([])
 
-    const handleNodeClick = node => {
-      data.currentNode = node
-      objectList.value = node.children
-      currentNode.value = node
-      console.log('handleNodeClick', node) // eslint-disable-line
+    const matchParent = node => {
+      let arr = [node]
+      node = node.parent
+
+      while (node && node.level > 0) {
+        arr.unshift(node)
+        node = node.parent
+      }
+
+      return arr
     }
 
-    const iconMap = {
-      table: 'table',
-      defaultApi: 'apiServer_navbar'
+    const handleNodeClick = (data, node) => {
+      pathMatch.value = matchParent(node)
+      options.isShowDetails = data.isObject
+      if (data.isObject) {
+        nextTick(() => {
+          console.log('refs.tableView', refs.tableView) // eslint-disable-line
+          setTimeout(() => {
+            refs.tableView.open(data)
+          }, 100)
+        })
+      } else {
+        currentNode.value = data
+      }
+
+      console.log('handleNodeClick', data, node, matchParent(node)) // eslint-disable-line
     }
 
     const renderIcon = data => {
@@ -60,15 +77,6 @@ export default defineComponent({
       } else {
         return <VIcon size="18">{ICON[data.LDP_TYPE]}</VIcon>
       }
-    }
-
-    const renderName = ({ row }) => {
-      return (
-        <div class="cursor-pointer flex align-center">
-          <div class="tree-item-icon flex align-center mr-2">{renderIcon(row)}</div>
-          <span>{row.name}</span>
-        </div>
-      )
     }
 
     const dragState = reactive({
@@ -116,13 +124,13 @@ export default defineComponent({
       }, {})
     }
 
-    const handleRowClick = data => {
+    const setTreeCurrent = data => {
       refs.tree.setCurrent(data)
     }
 
     return () => {
       return (
-        <section ref="root" class="discovery-page-wrap flex">
+        <section ref="root" class="discovery-page-wrap flex catalog-container">
           <div
             {...{
               directives: [
@@ -149,23 +157,40 @@ export default defineComponent({
           </div>
           <div class="flex flex-column flex-1">
             <div class="p-3">
-              <ElBreadcrumb separator-class="el-icon-arrow-right">
-                <ElBreadcrumbItem class="discovery-title">Source</ElBreadcrumbItem>
-              </ElBreadcrumb>
+              <div class="path-breadcrumb flex align-center">
+                {pathMatch.value.map((node, i) => {
+                  let notLast = i < pathMatch.value.length - 1
+                  return (
+                    <div class="path-breadcrumb-item flex align-center">
+                      <div
+                        class="path-breadcrumb-item__name rounded-2 px-1"
+                        onClick={() => {
+                          notLast && setTreeCurrent(node.data)
+                        }}
+                      >
+                        {node.data.name}
+                      </div>
+                      {notLast && (
+                        <VIcon size={24} class="path-breadcrumb-item__separator ml-1">
+                          arrow-right
+                        </VIcon>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
             </div>
-            <div staticClass="flex-1" class={{ none: !data.isShowDetails }}>
-              <TableView ref="tableView"></TableView>
-            </div>
-            <div staticClass="flex-1" class={{ none: data.isShowDetails }}>
-              <ElTable
+            <div staticClass="flex-1 min-h-0 position-relative">
+              <ProTable
                 class={['catalog-table']}
                 ref="table"
                 row-key="id"
+                height="100%"
                 draggable
                 data={currentNode.value.children}
                 treeProps={{ children: 'no_children' }}
                 on={{
-                  'row-click': handleRowClick,
+                  'row-click': setTreeCurrent,
                   'row-dragstart': handleDragStart,
                   'row-dragend': handleDragEnd,
                   'selection-change': handleSelectionChange
@@ -183,7 +208,13 @@ export default defineComponent({
                   }}
                 </el-table-column>
                 <el-table-column label={i18n.t('public_change_time')} prop="changeTime"></el-table-column>
-              </ElTable>
+              </ProTable>
+
+              {options.isShowDetails && (
+                <div class="position-absolute top-0 bottom-0 left-0 right-0 w-100 bg-white object-preview-wrap pl-3">
+                  <TableView ref="tableView" class="border rounded-4 sw-table-drawer h-100 overflow-y-auto"></TableView>
+                </div>
+              )}
             </div>
           </div>
         </section>
