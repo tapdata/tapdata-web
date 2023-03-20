@@ -730,5 +730,10 @@ export default {
   packages_business_milestone_list_jinruzengliangshu: '进入增量数据迁移',
   packages_business_logs_nodelog_cuowuduizhan: '错误堆栈',
   packages_business_logs_nodelog_yuanyinfenxi: ' 原因分析',
-  packages_business_logs_nodelog_xianshishijianchuo: '显示时间'
+  packages_business_logs_nodelog_xianshishijianchuo: '显示时间',
+  packages_business_connections_databaseform_chakanxintiaoren: '查看心跳任务',
+  packages_business_connections_databaseform_dakaixintiaobiao:
+    '打开心跳表后，系统会自动在当前库创建一个心跳表tapheartbeat,并每 10s 更新一次该表的数据。通过该心跳表可以监测所有以当前库和库里的表作为源的任务的运行状态。',
+  packages_business_connections_databaseform_kaiqixintiaobiao: '开启心跳表',
+  packages_business_connections_databaseform_jiaobentiaoshi: '脚本调试',
 }

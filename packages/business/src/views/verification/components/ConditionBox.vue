@@ -266,7 +266,11 @@ export default {
       }
       try {
         const _filter = {
-          where: {},
+          where: {
+            createType: {
+              $ne: 'System'
+            }
+          },
           fields: {
             name: 1,
             id: 1,

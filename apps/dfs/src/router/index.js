@@ -378,6 +378,24 @@ const routes = [
     }
   },
   {
+    path: '/sharedMining/monitor/:id',
+    name: 'SharedMiningMonitor',
+    component: MigrationMonitor,
+    meta: {
+      title: 'page_title_run_monitor',
+      code: 'v2_data_replication_monitor'
+    }
+  },
+  {
+    path: '/heartbeat/monitor/:id',
+    name: 'HeartbeatMonitor',
+    component: MigrationMonitor,
+    meta: {
+      title: 'page_title_run_monitor',
+      code: 'v2_data_replication_monitor'
+    }
+  },
+  {
     path: '/node/editor',
     name: 'NodeNew',
     component: NodeEditor

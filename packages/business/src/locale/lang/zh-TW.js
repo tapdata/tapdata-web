@@ -727,5 +727,10 @@ export default {
   packages_business_milestone_list_jinruzengliangshu: '進入增量數據遷移',
   packages_business_logs_nodelog_cuowuduizhan: '錯誤堆棧',
   packages_business_logs_nodelog_yuanyinfenxi: ' 原因分析',
-  packages_business_logs_nodelog_xianshishijianchuo: '顯示時間'
+  packages_business_logs_nodelog_xianshishijianchuo: '顯示時間',
+  packages_business_connections_databaseform_chakanxintiaoren: '查看心跳任務',
+  packages_business_connections_databaseform_dakaixintiaobiao:
+    '打開心跳表後，系統會自動在當前庫創建一個心跳表tapheartbeat，並每 10 秒更新一次該表的數據。通過該心跳表可以監測所有以當前庫和庫裏的表作為源的任務的運行狀態。',
+  packages_business_connections_databaseform_kaiqixintiaobiao: '開啟心跳表',
+  packages_business_connections_databaseform_jiaobentiaoshi: '腳本調試'
 }

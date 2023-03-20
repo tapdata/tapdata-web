@@ -753,5 +753,10 @@ export default {
   packages_business_milestone_list_jinruzengliangshu: 'Enter incremental data migration',
   packages_business_logs_nodelog_cuowuduizhan: 'Error Stack',
   packages_business_logs_nodelog_yuanyinfenxi: 'Cause Analysis',
-  packages_business_logs_nodelog_xianshishijianchuo: 'Display Time'
+  packages_business_logs_nodelog_xianshishijianchuo: 'Display Time',
+  packages_business_connections_databaseform_chakanxintiaoren: 'View heartbeat tasks',
+  packages_business_connections_databaseform_dakaixintiaobiao:
+    'After opening the heartbeat table, the system will automatically create a tapheartbeat table in the current database and update the data in the table every 10 seconds. The heartbeat table can be used to monitor the running status of all tasks that use the current database and tables in the database as the source.',
+  packages_business_connections_databaseform_kaiqixintiaobiao: 'Enable heartbeat table',
+  packages_business_connections_databaseform_jiaobentiaoshi: 'Script Debugging'
 }
