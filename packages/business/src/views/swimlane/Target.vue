@@ -501,7 +501,7 @@ export default {
       let source = this.getTableNode(fromConnection, tableName)
       let target = this.getTableNode(to, tableName)
       return {
-        ...DEFAULT_SETTINGS,
+        ...TASK_SETTINGS,
         name: this.dialogConfig.taskName,
         dag: {
           edges: [{ source: source.id, target: target.id }],
