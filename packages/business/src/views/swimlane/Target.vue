@@ -214,6 +214,9 @@ export default {
         where: {
           connection_type: {
             in: ['source_and_target', 'target']
+          },
+          createType: {
+            $ne: 'System'
           }
         }
       }

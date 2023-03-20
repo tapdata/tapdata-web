@@ -361,6 +361,9 @@ export default {
         where: {
           database_type: {
             in: databaseTypeList
+          },
+          createType: {
+            $ne: 'System'
           }
         }
       }
