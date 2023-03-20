@@ -980,7 +980,8 @@ export default {
           openTableExcludeFilter,
           tableExcludeFilter,
           schemaUpdateHour,
-          shareCDCExternalStorageId
+          shareCDCExternalStorageId,
+          heartbeatEnable
         } = this.model
         this.schemaFormInstance.setValues({
           __TAPDATA: {
@@ -994,10 +995,12 @@ export default {
             openTableExcludeFilter,
             tableExcludeFilter,
             shareCDCExternalStorageId,
-            schemaUpdateHour
+            schemaUpdateHour,
+            heartbeatEnable
           },
           ...this.model?.config
         })
+        if (heartbeatEnable) this.getHeartbeatTaskId(this.schemaFormInstance)
         this.renameData.rename = this.model.name
       })
     },
