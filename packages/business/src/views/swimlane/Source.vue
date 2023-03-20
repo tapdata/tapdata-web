@@ -29,7 +29,7 @@
           <span
             class="custom-tree-node flex align-items-center"
             slot-scope="{ node, data }"
-            @dblclick="openView(node, node.data.isLeaf)"
+            @dblclick="$emit('preview', data)"
           >
             <VIcon
               v-if="node.data.loadFieldsStatus === 'loading'"
@@ -45,13 +45,11 @@
             </div>
             <VIcon v-else class="tree-item-icon mr-2" size="18">table</VIcon>
             <span :class="[{ 'color-disable': data.disabled }, 'table-label']" :title="data.name">{{ data.name }}</span>
-            <VIcon size="18" class="btn-menu" @click="openView(node, node.data.isLeaf)">view-details</VIcon>
+            <VIcon size="18" class="btn-menu" @click="$emit('preview', data)">view-details</VIcon>
           </span>
         </VirtualTree>
       </div>
     </div>
-    <connectionPreview ref="connectionView"></connectionPreview>
-    <TablePreview ref="tablePreview"></TablePreview>
   </div>
 </template>
 
@@ -73,7 +71,7 @@ export default {
     dragState: Object
   },
 
-  components: { NodeIcon, VirtualTree, connectionPreview, TablePreview, StageButton },
+  components: { NodeIcon, VirtualTree, StageButton },
 
   data() {
     return {
@@ -115,7 +113,8 @@ export default {
           children: [],
           isLeaf: false,
           disabled,
-          type: 'connection'
+          type: 'connection',
+          LDP_TYPE: 'connection'
         }
       })
     },
@@ -126,8 +125,10 @@ export default {
         return {
           id: t.tableId,
           name: t.tableName,
+          connectionId: id,
           isLeaf: true,
-          type: 'table'
+          type: 'table',
+          LDP_TYPE: 'table'
         }
       })
       return data.length
@@ -179,23 +180,6 @@ export default {
       const data = await this.getTableList(node.data?.id)
       this.loading = false
       return resolve(data)
-    },
-
-    //打开连接详情
-    openView(node, isLeaf) {
-      let row = node.data
-      if (isLeaf) {
-        let item = {
-          id: row.id,
-          name: row.name,
-          category: 'storage',
-          type: 'table',
-          connectionId: node?.parent?.data?.id
-        }
-        this.$refs.tablePreview.open(item)
-      } else {
-        this.$refs.connectionView.open(row)
-      }
     },
 
     getConnectionId(node) {

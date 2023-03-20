@@ -13,26 +13,28 @@
       </div>
     </div>
     <div
-      class="flex flex-column flex-1 position-relative min-h-0 p-3 tree-wrap"
+      class="flex flex-column flex-1 position-relative min-h-0 tree-wrap"
       @dragover.stop="handleDragOver"
       @dragenter.stop="handleDragEnter"
       @dragleave.stop="handleDragLeave"
       @drop.stop="handleDrop"
     >
-      <VirtualTree
-        class="ldp-tree"
-        ref="tree"
-        node-key="id"
-        highlight-current
-        :data="directories"
-        draggable
-        :render-content="renderContent"
-        :render-after-expand="false"
-        :expand-on-click-node="false"
-        :allow-drop="() => false"
-      ></VirtualTree>
+      <div class="p-3 overflow-auto">
+        <VirtualTree
+          class="ldp-tree"
+          ref="tree"
+          node-key="id"
+          highlight-current
+          :data="directories"
+          draggable
+          :render-content="renderContent"
+          :render-after-expand="false"
+          :expand-on-click-node="false"
+          :allow-drop="() => false"
+        ></VirtualTree>
+      </div>
 
-      <div class="drop-mask justify-center align-center absolute-fill font-color-light">Clone To MDM</div>
+      <div class="drop-mask justify-center align-center absolute-fill font-color-dark fs-6">Clone To MDM</div>
     </div>
     <TablePreview ref="tablePreview"></TablePreview>
 
@@ -89,7 +91,7 @@ export default {
   methods: {
     renderContent(h, { node, data }) {
       let icon
-      if (data.type === 'table') {
+      if (data.LDP_TYPE === 'table') {
         node.isLeaf = true
         icon = 'table'
       } else {
@@ -98,11 +100,27 @@ export default {
       }
 
       return (
-        <div class="custom-tree-node">
+        <div
+          class="custom-tree-node"
+          onDblclick={() => {
+            data.isObject && this.$emit('preview', data)
+          }}
+        >
           <div class="tree-item-icon flex align-center mr-2">{icon && <VIcon size="18">{icon}</VIcon>}</div>
           <span class="table-label" title={data.name}>
             {data.name}
           </span>
+          {data.isObject && (
+            <VIcon
+              size="18"
+              class="btn-menu"
+              onClick={() => {
+                this.$emit('preview', data)
+              }}
+            >
+              view-details
+            </VIcon>
+          )}
         </div>
       )
     },

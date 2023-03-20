@@ -136,7 +136,7 @@ import { taskApi } from '@tap/api'
 import { cloneDeep } from 'lodash'
 
 export default {
-  name: 'connectionPreview',
+  name: 'ConnectionPreview',
   props: ['connectionId', 'viewData'],
   components: { Drawer, SchemaProgress, TaskStatus },
   data() {

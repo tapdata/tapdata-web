@@ -32,6 +32,7 @@
         @node-drag-end="handleDragEnd"
         @show-settings="handleSettings"
         @load-directories="loadDirectories"
+        @preview="handlePreview"
       ></component>
     </div>
     <CreateConnection
@@ -46,6 +47,9 @@
       @success="handleSettingsSuccess"
       @init="handleSettingsInit"
     ></Settings>
+
+    <TablePreview ref="tablePreview" />
+    <ConnectionPreview ref="connectionView" />
   </div>
 </template>
 
@@ -56,12 +60,14 @@ import TargetItem from './Target'
 import FDMItem from './FDM'
 import MDMItem from './MDM'
 import Settings from './Settings'
+import TablePreview from './TablePreview'
+import ConnectionPreview from './ConnectionPreview'
 import { connectionsApi, metadataDefinitionsApi } from '@tap/api'
 
 export default {
   name: 'Dashboard',
 
-  components: { CreateConnection, SourceItem, TargetItem, FDMItem, MDMItem, Settings },
+  components: { CreateConnection, SourceItem, TargetItem, FDMItem, MDMItem, Settings, TablePreview, ConnectionPreview },
 
   data() {
     return {
@@ -228,6 +234,17 @@ export default {
         })
 
         return setChildren(nodes)
+      }
+    },
+
+    handlePreview(data) {
+      switch (data.LDP_TYPE) {
+        case 'table':
+          this.$refs.tablePreview.open(data)
+          break
+        case 'connection':
+          this.$refs.connectionView.open(data)
+          break
       }
     }
   }

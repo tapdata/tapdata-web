@@ -13,29 +13,29 @@
       </div>
     </div>
     <div
-      class="flex flex-column flex-1 min-h-0 position-relative fdm-tree-wrap p-3 overflow-auto"
+      class="flex flex-column flex-1 min-h-0 position-relative fdm-tree-wrap"
       @dragover.stop="handleDragOver"
       @dragenter.stop="handleDragEnter"
       @dragleave.stop="handleDragLeave"
       @drop.stop="handleDrop"
     >
-      <VirtualTree
-        class="ldp-tree"
-        ref="tree"
-        node-key="id"
-        highlight-current
-        :data="directories"
-        draggable
-        :render-content="renderContent"
-        :render-after-expand="false"
-        :expand-on-click-node="false"
-        :allow-drop="() => false"
-        @node-expand="handleNodeExpand"
-      ></VirtualTree>
-
-      <div class="drop-mask justify-center align-center absolute-fill font-color-light">
-        {{ dialogConfig.connection ? 'Clone To FDM' : 'Please Configure FDM' }}
+      <div class="p-3 overflow-auto">
+        <VirtualTree
+          class="ldp-tree"
+          ref="tree"
+          node-key="id"
+          highlight-current
+          :data="directories"
+          draggable
+          :render-content="renderContent"
+          :render-after-expand="false"
+          :expand-on-click-node="false"
+          :allow-drop="() => false"
+          @node-expand="handleNodeExpand"
+        ></VirtualTree>
       </div>
+
+      <div class="drop-mask justify-center align-center absolute-fill font-color-dark fs-6">Clone To FDM</div>
     </div>
 
     <ElDialog :visible.sync="taskDialogConfig.visible" width="600" :close-on-click-modal="false">
@@ -124,7 +124,7 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
 
     renderContent(h, { node, data }) {
       let icon
-      if (data.type === 'table') {
+      if (data.LDP_TYPE === 'table') {
         node.isLeaf = true
         icon = 'table'
       } else {
@@ -133,11 +133,27 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
       }
 
       return (
-        <div class="custom-tree-node">
+        <div
+          class="custom-tree-node"
+          onDblclick={() => {
+            data.isObject && this.$emit('preview', data)
+          }}
+        >
           <div class="tree-item-icon flex align-center mr-2">{icon && <VIcon size="18">{icon}</VIcon>}</div>
           <span class="table-label" title={data.name}>
             {data.name}
           </span>
+          {data.isObject && (
+            <VIcon
+              size="18"
+              class="btn-menu"
+              onClick={() => {
+                this.$emit('preview', data)
+              }}
+            >
+              view-details
+            </VIcon>
+          )}
         </div>
       )
     },
@@ -342,7 +358,6 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
 
       node.loadTime = Date.now()
 
-      let { LDP_TYPE } = data
       let objects = await this.loadObjects(data)
 
       console.log('handleNodeExpand', objects, data, node) // eslint-disable-line
@@ -351,6 +366,7 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
         if (childrenMap[item.id]) return
         item.parent_id = data.id
         item.isObject = true
+        item.connectionId = item.sourceConId
         this.$refs.tree.append(item, node)
       })
     },
@@ -366,7 +382,14 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
         }
       }
       return discoveryApi.discoveryList(where).then(res => {
-        return res.items
+        return res.items.map(item =>
+          Object.assign(item, {
+            isLeaf: true,
+            isObject: true,
+            connectionId: item.sourceConId,
+            LDP_TYPE: 'table'
+          })
+        )
       })
     }
   }
