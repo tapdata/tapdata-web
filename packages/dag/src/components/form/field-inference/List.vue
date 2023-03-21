@@ -93,7 +93,7 @@
         <ElButton
           size="mini"
           type="primary"
-          :disabled="!currentData.newDataType || currentData.dataType === currentData.newDataType"
+          :disabled="!currentData.newDataType"
           :loading="editBtnLoading"
           @click="submitEdit"
           >{{ $t('public_button_confirm') }}</ElButton
