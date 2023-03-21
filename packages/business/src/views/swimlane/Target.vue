@@ -13,7 +13,7 @@
         <div
           v-for="item in list"
           :key="item.id"
-          class="wrap__item rounded-2 mb-3"
+          class="wrap__item rounded-4 mb-3"
           @dragover="handleDragOver"
           @dragenter.stop="handleDragEnter"
           @dragleave.stop="handleDragLeave"
@@ -473,7 +473,7 @@ export default {
   border: 1px solid #e1e3e9;
 
   &:hover {
-    background-color: #f2f3f5;
+    //background-color: #f2f3f5;
   }
 
   &.is-drop-inner {

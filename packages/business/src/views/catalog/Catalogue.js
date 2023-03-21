@@ -5,6 +5,7 @@ import { makeDragNodeImage } from '../../index'
 import TableView from '../../components/TableView'
 import ClassificationTree from '../../components/ClassificationTree'
 import { DatabaseIcon } from '../../components'
+import TablePreview from '../swimlane/TablePreview'
 import resize from '@tap/component/src/directives/resize'
 import './index.scss'
 
@@ -212,7 +213,11 @@ export default defineComponent({
 
               {options.isShowDetails && (
                 <div class="position-absolute top-0 bottom-0 left-0 right-0 w-100 bg-white object-preview-wrap pl-3">
-                  <TableView ref="tableView" class="border rounded-4 sw-table-drawer h-100 overflow-y-auto"></TableView>
+                  <TablePreview
+                    tag="div"
+                    ref="tableView"
+                    class="border rounded-4 sw-table-drawer h-100 overflow-y-auto"
+                  ></TablePreview>
                 </div>
               )}
             </div>

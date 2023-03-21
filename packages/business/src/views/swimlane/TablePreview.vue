@@ -1,5 +1,5 @@
 <template>
-  <Drawer v-if="visible" class="sw-table-drawer" :visible.sync="visible" width="850px" v-loading="loading">
+  <component :is="tag" v-if="visible" class="sw-table-drawer" :visible.sync="visible" width="850px" v-loading="loading">
     <header v-if="detailData">
       <div class="mb-4">
         <span class="table-name inline-block">{{ detailData.name }}</span>
@@ -102,12 +102,20 @@
             ><span class="color-primary cursor-pointer" @click="handleCreateTask">Create Task</span>
           </div>
           <el-table class="discovery-page-table" :data="taskData" :has-pagination="false">
-            <el-table-column
-              :label="$t('public_task_name')"
-              prop="name"
-              width="200px"
-              show-overflow-tooltip
-            ></el-table-column>
+            <el-table-column :label="$t('public_task_name')" prop="name" width="200px" show-overflow-tooltip>
+              <template #default="{ row }">
+                <span class="dataflow-name link-primary flex">
+                  <ElLink
+                    role="ellipsis"
+                    type="primary"
+                    class="justify-content-start ellipsis block"
+                    :class="['name', { 'has-children': row.hasChildren }]"
+                    @click.stop="handleClickName(row)"
+                    >{{ row.name }}</ElLink
+                  >
+                </span>
+              </template>
+            </el-table-column>
             <el-table-column :label="$t('public_task_type')">
               <template #default="{ row }">
                 <span>
@@ -159,7 +167,7 @@
         <!--        <el-tab-pane label="Lineage" name="lineage">APIs</el-tab-pane>-->
       </el-tabs>
     </section>
-  </Drawer>
+  </component>
 </template>
 
 <script>
@@ -175,6 +183,12 @@ import { TASK_TYPE_MAP } from '../../shared'
 
 export default {
   name: 'TablePreview',
+  props: {
+    tag: {
+      type: String,
+      default: 'Drawer'
+    }
+  },
   components: { Drawer, VTable, TaskStatus, VEmpty },
   data() {
     return {
@@ -426,6 +440,32 @@ export default {
 
     getTaskType(type) {
       return TASK_TYPE_MAP[type] || ''
+    },
+
+    openRoute(route, newTab = true) {
+      if (newTab) {
+        window.open(this.$router.resolve(route).href)
+      } else {
+        this.$router.push(route)
+      }
+    },
+
+    handleClickName(row) {
+      if (this.$disabledReadonlyUserBtn()) return
+      let routeName
+
+      if (!['edit', 'wait_start'].includes(row.status)) {
+        routeName = row.syncType === 'migrate' ? 'MigrationMonitor' : 'TaskMonitor'
+      } else {
+        routeName = row.syncType === 'migrate' ? 'MigrateEditor' : 'DataflowEditor'
+      }
+
+      this.openRoute({
+        name: routeName,
+        params: {
+          id: row.id
+        }
+      })
     }
   }
 }
