@@ -28,6 +28,7 @@
         :directory="directoryMap[item.type]"
         :fdmConnection="fdmConnection"
         :mdmConnection="mdmConnection"
+        :event-driver="eventDriver"
         @create-connection="handleAdd"
         @node-drag-end="handleDragEnd"
         @show-settings="handleSettings"
@@ -62,6 +63,7 @@ import MDMItem from './MDM'
 import Settings from './Settings'
 import TablePreview from './TablePreview'
 import ConnectionPreview from './ConnectionPreview'
+import { EventEmitter } from '../../shared'
 import { connectionsApi, metadataDefinitionsApi } from '@tap/api'
 
 export default {
@@ -85,7 +87,9 @@ export default {
       settings: null,
       directoryMap: {},
       fdmConnection: null,
-      mdmConnection: null
+      mdmConnection: null,
+
+      eventDriver: new EventEmitter()
     }
   },
 

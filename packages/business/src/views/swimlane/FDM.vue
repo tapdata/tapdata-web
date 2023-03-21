@@ -13,6 +13,7 @@
       </div>
     </div>
     <div
+      ref="treeWrap"
       class="flex flex-column flex-1 min-h-0 position-relative fdm-tree-wrap"
       @dragover.stop="handleDragOver"
       @dragenter.stop="handleDragEnter"
@@ -78,7 +79,8 @@ export default {
     dragState: Object,
     settings: Object,
     fdmConnection: Object,
-    directory: Object
+    directory: Object,
+    eventDriver: Object
   },
 
   components: { VirtualTree },
@@ -133,6 +135,16 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
     }
   },
 
+  mounted() {
+    this.eventDriver.on('source-drag-end', ev => {
+      this.$refs.treeWrap?.classList.remove('is-drop-inner')
+    })
+  },
+
+  beforeDestroy() {
+    this.eventDriver.off('source-drag-end')
+  },
+
   methods: {
     searchFnc() {},
 
@@ -152,6 +164,7 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
           onDblclick={() => {
             data.isObject && this.$emit('preview', data)
           }}
+          onDrop={this.handleTreeNodeDrop}
         >
           <div class="tree-item-icon flex align-center mr-2">{icon && <VIcon size="18">{icon}</VIcon>}</div>
           <span class="table-label" title={data.name}>
@@ -264,8 +277,7 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
 
       if (!this.allowDrop) return
       if (!ev.currentTarget.contains(ev.relatedTarget)) {
-        const dropNode = this.findParentByClassName(ev.currentTarget, 'fdm-tree-wrap')
-        dropNode.classList.remove('is-drop-inner')
+        this.removeDropEffect(ev, 'fdm-tree-wrap')
       }
     },
 
@@ -274,14 +286,11 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
 
       if (!this.allowDrop) return
 
-      const dropNode = this.findParentByClassName(ev.currentTarget, 'fdm-tree-wrap')
-      dropNode.classList.remove('is-drop-inner')
+      this.removeDropEffect(ev, 'fdm-tree-wrap')
 
       const { draggingObjects } = this.dragState
       if (!draggingObjects.length) return
       const object = draggingObjects[0]
-
-      console.log('settings', this.settings) // eslint-disable-line
 
       if (object.data.type === 'connection') {
         this.taskDialogConfig.from = object.data
@@ -292,6 +301,16 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
       }
 
       this.showTaskDialog()
+    },
+
+    removeDropEffect(ev, cls = 'wrap__item') {
+      const dropNode = this.findParentByClassName(ev.currentTarget, cls)
+      dropNode.classList.remove('is-drop-inner')
+    },
+
+    handleTreeNodeDrop(ev) {
+      ev.stopPropagation()
+      this.handleDrop(ev)
     },
 
     findParentByClassName(parent, cls) {

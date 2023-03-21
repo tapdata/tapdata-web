@@ -69,7 +69,8 @@ export default {
   name: 'Source',
 
   props: {
-    dragState: Object
+    dragState: Object,
+    eventDriver: Object
   },
 
   components: { NodeIcon, VirtualTree, StageButton },
@@ -161,15 +162,16 @@ export default {
         ev.currentTarget.querySelector('.tree-item-icon'),
         draggingNode.data.name
       )
-      ev.dataTransfer.setDragImage(this.draggingNodeImage, 4, 4)
+      ev.dataTransfer.setDragImage(this.draggingNodeImage, 0, 0)
       ev.dataTransfer.effectAllowed = 'copy'
       this.dragState.isDragging = true
       this.dragState.draggingObjects = [draggingNode]
       this.dragState.from = 'SOURCE'
     },
 
-    handleDragEnd() {
-      this.$emit('node-drag-end')
+    handleDragEnd(draggingNode, dropNode, positon, ev) {
+      this.$emit('node-drag-end', ev)
+      this.eventDriver.emit('source-drag-end', ev)
     },
 
     async loadNode(node, resolve) {
