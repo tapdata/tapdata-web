@@ -28,7 +28,7 @@
             v-for="(item, index) in tableClassification"
             :key="index"
             class="nav-filter__item flex-fill py-1 cursor-pointer"
-            :class="{ active: activeClassification === item.type }"
+            :class="[{ active: activeClassification === item.type }, { none: index && !item.total }]"
             @click="handleTableClass(item.type)"
           >
             <div class="mb-2 text-center">{{ item.title }}</div>
@@ -260,7 +260,7 @@ export default {
           : ''
         return t
       })
-      console.log('this.navList', this.navList)
+
       this.page.total = total
       this.tableClassification.forEach(el => {
         if (!el.type) {
