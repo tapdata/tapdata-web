@@ -305,7 +305,7 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
       let source = this.getSourceNode(from, tableName)
       let target = this.getDatabaseNode(this.fdmConnection)
       let tableReNameNode = this.getTableReNameNode()
-
+      target.writeStrategy = 'appendWrite' // 追加写入模式
       return {
         ...TASK_SETTINGS,
         syncType: 'migrate',
