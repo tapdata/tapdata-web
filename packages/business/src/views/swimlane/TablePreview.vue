@@ -37,7 +37,7 @@
             <el-row>
               <el-col :span="4">
                 <div class="table-dec-label">Rows</div>
-                <div class="table-dec-txt mt-4">{{ numOfRows }}</div>
+                <div class="table-dec-txt mt-4">{{ numOfRows || '-' }}</div>
               </el-col>
               <el-col :span="4">
                 <div class="table-dec-label">Columns</div>
@@ -45,7 +45,7 @@
               </el-col>
               <el-col :span="4">
                 <div class="table-dec-label">Storage Size</div>
-                <div class="table-dec-txt mt-4">{{ storageSize }}</div>
+                <div class="table-dec-txt mt-4">{{ storageSize || '-' }}</div>
               </el-col>
               <el-col :span="6">
                 <div class="table-dec-label">Connection</div>
@@ -67,7 +67,8 @@
                 </VTable>
               </el-tab-pane>
               <el-tab-pane label="Sample Data" name="sampleData">
-                <el-table :data="sampleData" v-loading="loadingSampleData" max-height="381px">
+                <VEmpty v-if="!sampleHeader.length"></VEmpty>
+                <el-table v-else :data="sampleData" v-loading="loadingSampleData" max-height="381px">
                   <el-table-column type="index" label="#"></el-table-column>
                   <el-table-column v-for="(item, index) in sampleHeader" :key="index" :prop="item" :label="item">
                   </el-table-column> </el-table
@@ -164,8 +165,7 @@
 <script>
 import { cloneDeep } from 'lodash'
 
-import { Drawer } from '@tap/component'
-import { VTable } from '@tap/component'
+import { Drawer, VTable, VEmpty } from '@tap/component'
 import { calcUnit } from '@tap/shared'
 import { discoveryApi, proxyApi, taskApi, metadataInstancesApi, modulesApi } from '@tap/api'
 import i18n from '@/i18n'
@@ -175,7 +175,7 @@ import { TASK_TYPE_MAP } from '../../shared'
 
 export default {
   name: 'TablePreview',
-  components: { Drawer, VTable, TaskStatus },
+  components: { Drawer, VTable, TaskStatus, VEmpty },
   data() {
     return {
       visible: false,
