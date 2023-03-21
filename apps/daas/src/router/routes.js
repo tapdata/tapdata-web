@@ -1001,7 +1001,7 @@ export default [
         name: 'dataConsole',
         component: SwimlaneDashboard,
         meta: {
-          title: 'dfs_data_server',
+          title: 'page_title_data_console',
           hideTitle: true,
           icon: 'data-server'
         }
