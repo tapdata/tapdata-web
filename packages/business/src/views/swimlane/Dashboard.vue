@@ -2,16 +2,7 @@
   <div class="swim-lane flex flex-column h-100">
     <div class="p-6 flex justify-content-between">
       <div>
-        <span class="fs-5 font-color-dark">Dashboard</span>
-        <ElInput
-          class="search-input ml-4"
-          v-model="keyword"
-          prefix-icon="el-icon-search"
-          size="small"
-          clearable
-          style="width: 240px"
-          @input="searchFnc"
-        ></ElInput>
+        <span class="fs-5 font-color-dark">Data Console</span>
       </div>
       <div>
         <VIcon size="18 " class="icon-color-normal" @click="handleSettings">list-view</VIcon>
