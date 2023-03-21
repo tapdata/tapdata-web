@@ -320,7 +320,6 @@ export default {
     makeMigrateTask(from, to) {
       let source = this.getDatabaseNode(from)
       let target = this.getDatabaseNode(to)
-      target.writeStrategy = 'appendWrite' // 追加写入模式
       Object.assign(source, {
         migrateTableSelectType: 'expression',
         tableExpression: '.*'
@@ -377,7 +376,6 @@ export default {
     makeSyncTask(fromConnection, tableName, to) {
       let source = this.getTableNode(fromConnection, tableName)
       let target = this.getTableNode(to, tableName)
-      target.writeStrategy = 'appendWrite' // 追加写入模式
       return {
         ...TASK_SETTINGS,
         name: this.dialogConfig.taskName,

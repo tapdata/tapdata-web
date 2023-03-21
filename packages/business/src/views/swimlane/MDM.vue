@@ -255,9 +255,6 @@ export default {
     makeTask(from, tableName, newTableName) {
       let source = this.getTableNode(from, tableName)
       let target = this.getTableNode(this.mdmConnection, newTableName)
-
-      target.writeStrategy = 'appendWrite' // 追加写入模式
-
       return {
         ...TASK_SETTINGS,
         syncType: 'sync',
