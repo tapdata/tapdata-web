@@ -268,7 +268,9 @@ import { taskApi, inspectApi } from '@tap/api'
 import Time from '@tap/shared/src/time'
 
 import ConditionBox from './components/ConditionBox'
-import { TABLE_PARAMS, META_INSTANCE_FIELDS } from './components/const'
+import { TABLE_PARAMS } from './components/const'
+
+const FILTER_DATABASE_TYPES = ['Doris']
 
 export default {
   components: { VCodeEditor, GitBook, ConditionBox },
@@ -520,6 +522,20 @@ export default {
       this.$refs.baseForm.validate(valid => {
         if (valid) {
           let tasks = this.$refs.conditionBox.getList()
+          // Doris数据源只支持count
+          if (this.form.inspectMethod !== 'row_count') {
+            const flag = tasks.some(
+              t =>
+                FILTER_DATABASE_TYPES.includes(t.source.databaseType) ||
+                FILTER_DATABASE_TYPES.includes(t.target.databaseType)
+            )
+
+            const msg = {
+              field: this.$t('packages_business_verification_contentVerifyTip'),
+              jointField: this.$t('packages_business_verification_jointFieldTip')
+            }
+            if (flag) return this.$message.error(msg[this.form.inspectMethod])
+          }
           if (!tasks.length) {
             return this.$message.error(this.$t('packages_business_verification_tasksVerifyCondition'))
           }
