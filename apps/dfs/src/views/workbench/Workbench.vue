@@ -50,7 +50,7 @@
       <!--暂时不分类-->
       <div class="explore-examples explore-examples-wrap">
         <div class="main-title mb-2">{{ $t('_workbench_workbench_tansuoshili') }}</div>
-        <ul class="flex flex-row">
+        <ul class="flex flex-row overflow-x-auto">
           <li
             class="cursor-pointer mr-6"
             v-for="(item, index) in examplesList"
@@ -106,7 +106,7 @@
         </ElCol>
         <ElCol :span="6">
           <div class="aside-main notice-list flex-grow-1 p-6">
-            <ul class="notice-list__list">
+            <ul class="notice-list__list h-100 overflow-y-auto">
               <li
                 v-for="(item, index) in notices.slice(0, 5)"
                 :key="index"
