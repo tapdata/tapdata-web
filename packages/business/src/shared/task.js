@@ -4,6 +4,22 @@ import { getIcon } from '@tap/assets/icons'
 // 获取子任务状态统计
 import { ETL_STATUS_MAP, ETL_SUB_STATUS_MAP } from './const'
 
+export const TASK_SETTINGS = {
+  name: '', // 任务名称
+  desc: '', // 任务描述
+  type: 'initial_sync+cdc', // 任务类型：全量+增量
+  isAutoCreateIndex: true, // 自动创建索引
+  isOpenAutoDDL: false, // 自动DDL
+  increOperationMode: false, // 增量数据处理模式：批量,
+  increaseReadSize: 1, // 增量批次读取行数
+  processorThreadNum: 1, // 处理器线程数
+  shareCdcEnable: false, //开启共享挖掘
+  isSchedule: false,
+  cronExpression: ' ',
+  accessNodeType: 'AUTOMATIC_PLATFORM_ALLOCATION',
+  isAutoInspect: false
+}
+
 export function getSubTaskStatus(rows = []) {
   const statusMap = {
     running: ['wait_run', 'scheduling', 'running', 'stopping'],

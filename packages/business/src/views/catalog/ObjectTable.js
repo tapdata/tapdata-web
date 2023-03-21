@@ -1,9 +1,8 @@
 import { defineComponent, reactive, ref, nextTick, watch, onMounted } from '@vue/composition-api'
-import i18n from '@/i18n'
+import i18n from '@tap/i18n'
 import { FilterBar } from '@tap/component'
-import { TablePage } from '@tap/business'
 import { discoveryApi } from '@tap/api'
-import { useMessage } from '@/hooks'
+import { TablePage } from '../../index'
 import './index.scss'
 
 export default defineComponent({
@@ -11,7 +10,7 @@ export default defineComponent({
   setup(props, { root, emit, refs }) {
     const { category, type, sourceCategory, sourceType, queryKey } = root.$route.query || {}
     const list = ref([])
-    const { error, success } = useMessage()
+    const { error, success } = root.$message
     const multipleSelection = ref([])
     const data = reactive({
       searchParams: {
@@ -59,7 +58,6 @@ export default defineComponent({
             let usedRow = t?.allTags.filter(tag => tag.id === props.parentNode?.id) || []
             if (usedRow?.length > 0) {
               nextTick(() => {
-                // @ts-ignore
                 refs.multipleTable?.toggleRowSelection(t, true)
               })
             }
@@ -180,12 +178,10 @@ export default defineComponent({
     watch(
       () => root.$route.query,
       val => {
-        // @ts-ignore
         refs.multipleTable.fetch(1)
       }
     )
     onMounted(() => {
-      // @ts-ignore
       refs.multipleTable.fetch(1)
     })
     return {

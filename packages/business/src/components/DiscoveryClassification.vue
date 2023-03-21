@@ -1,6 +1,6 @@
 <template>
   <div class="classification" :class="{ expand: isExpand }">
-    <div class="classification-header pl-0">
+    <!--<div class="classification-header pl-0">
       <div class="search-box">
         <ElInput size="mini" v-model="filterText">
           <span slot="suffix" class="el-input__icon h-100 ml-1">
@@ -8,7 +8,7 @@
           </span>
         </ElInput>
       </div>
-    </div>
+    </div>-->
     <ClassificationTree class="tree-block pr-3" v-loading="loadingTree" v-bind="$attrs" v-on="$listeners" />
   </div>
 </template>

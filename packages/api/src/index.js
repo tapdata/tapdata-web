@@ -153,6 +153,12 @@ const proxyApi = new Proxy()
 import Paid from './Paid'
 const paidApi = new Paid()
 
+import LiveDataPlatform from './LiveDataPlatform'
+const liveDataPlatformApi = new LiveDataPlatform()
+
+import LDP from './LDP'
+const ldpApi = new LDP()
+
 import ShareCdcTableMetrics from './ShareCdcTableMetrics'
 const shareCdcTableMetricsApi = new ShareCdcTableMetrics()
 
@@ -208,7 +214,9 @@ export {
   externalStorageApi,
   proxyApi,
   paidApi,
-  shareCdcTableMetricsApi
+  shareCdcTableMetricsApi,
+  liveDataPlatformApi,
+  ldpApi
 }
 export * from './ApiClient'
 

@@ -134,9 +134,6 @@
   .border-right {
     border-right: 1px solid map-get($borderColor, light);
   }
-  .el-table th.el-table__cell > .cell {
-    font-weight: 700;
-  }
 
   .discovery-page-table {
     .el-table__body-wrapper {
@@ -190,5 +187,49 @@
   }
   &.method--TOKEN {
     background: #f2994b;
+  }
+}
+
+.catalog-table {
+  thead th {
+    font-weight: 500;
+  }
+  .ck-cell-wrap .cell {
+    padding: 0 !important;
+    text-align: center;
+  }
+
+  .el-table__row {
+    cursor: pointer;
+  }
+}
+
+.path-breadcrumb {
+  $fontSize: 20px;
+  height: $fontSize * 1.5;
+  line-height: $fontSize * 1.5;
+  font-size: $fontSize;
+
+  &-item {
+    color: #646a73;
+
+    &:last-child {
+      color: #1f2329;
+    }
+  }
+
+  &-item:not(:last-child) {
+    .path-breadcrumb-item__name {
+      cursor: pointer;
+      &:hover {
+        background-color: rgba(31,35,41, .1);
+      }
+    }
+  }
+}
+
+.catalog-container {
+  .object-preview-wrap {
+    z-index: 1;
   }
 }

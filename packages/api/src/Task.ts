@@ -115,6 +115,11 @@ export default class Task extends Http {
     return this.axios.get(this.url + '/getNodeTableInfo', config)
   }
 
+  //表的状态
+  tableStatus(connectionId, tableName) {
+    return this.axios.get(this.url + '/table/status?connectionId=' + connectionId + '&tableName=' + tableName)
+  }
+
   getConsole(params) {
     return this.axios.get('/api/task-console', { params })
   }

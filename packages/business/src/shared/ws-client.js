@@ -3,7 +3,7 @@
  */
 import { Message } from 'element-ui'
 import { merge } from 'lodash'
-import EventEmitter from './event'
+import { EventEmitter } from './event'
 import i18n from '@/i18n'
 
 class WSClient extends EventEmitter {

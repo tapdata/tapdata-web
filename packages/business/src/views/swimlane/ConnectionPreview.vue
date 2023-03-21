@@ -82,49 +82,72 @@
           <div class="table-info-name">以该连接作为源/目标的任务</div>
           <el-button type="primary" size="mini">新建</el-button>
         </header>
-        <VTable :columns="columns" :data="tableFields" :has-pagination="false">
-          <div slot="empty">{{ $t('public_data_no_data') }}</div>
-        </VTable>
+        <el-table class="discovery-page-table" :data="taskData" :has-pagination="false">
+          <el-table-column
+            :label="$t('public_task_name')"
+            prop="name"
+            width="200px"
+            show-overflow-tooltip
+          ></el-table-column>
+          <el-table-column :label="$t('public_task_type')">
+            <template #default="{ row }">
+              <span>
+                {{ row.type ? taskType[row.type] : '' }}
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="status" :label="$t('public_task_status')">
+            <template #default="{ row }">
+              <TaskStatus :task="row" />
+            </template>
+          </el-table-column>
+          <el-table-column
+            sortable
+            prop="currentEventTimestamp"
+            :label="$t('public_task_cdc_time_point')"
+            min-width="164"
+          >
+            <template #default="{ row }">
+              {{ formatTime(row.currentEventTimestamp) }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="lastStartDate"
+            :label="$t('public_task_last_run_time')"
+            min-width="164"
+            sortable="custom"
+          >
+            <template #default="{ row }">
+              {{ formatTime(row.lastStartDate) }}
+            </template>
+          </el-table-column>
+        </el-table>
       </section>
     </section>
   </Drawer>
 </template>
 
 <script>
-import { Drawer, VTable } from '@tap/component'
+import { Drawer } from '@tap/component'
 import { CONNECTION_STATUS_MAP, CONNECTION_TYPE_MAP } from '@tap/business/src/shared'
-import { SchemaProgress } from '../../components'
+import { SchemaProgress, TaskStatus } from '../../components'
 import dayjs from 'dayjs'
+import { taskApi } from '@tap/api'
+import { cloneDeep } from 'lodash'
 
 export default {
-  name: 'connectionPreview',
+  name: 'ConnectionPreview',
   props: ['connectionId', 'viewData'],
-  components: { Drawer, SchemaProgress, VTable },
+  components: { Drawer, SchemaProgress, TaskStatus },
   data() {
     return {
       visible: false,
-      columns: [
-        {
-          label: '任务名称',
-          prop: 'name'
-        },
-        {
-          label: '任务类型',
-          prop: 'dataType'
-        },
-        {
-          label: '任务状态',
-          prop: 'businessDesc'
-        },
-        {
-          label: '增量时间点',
-          prop: 'businessDesc'
-        },
-        {
-          label: '上次运行时间',
-          prop: 'businessDesc'
-        }
-      ]
+      taskData: [],
+      taskType: {
+        initial_sync: this.$t('public_task_type_initial_sync'),
+        cdc: this.$t('public_task_type_cdc'),
+        'initial_sync+cdc': this.$t('public_task_type_initial_sync') + '+' + this.$t('public_task_type_cdc')
+      }
     }
   },
   methods: {
@@ -132,9 +155,12 @@ export default {
       this.visible = true
       this.viewData = row
       //组装数据
-      this.viewData['last_updated'] = dayjs(row.last_updated).format('YYYY-MM-DD HH:mm:ss')
-      this.viewData['createTime'] = dayjs(row.createTime).format('YYYY-MM-DD HH:mm:ss')
-      this.viewData['loadSchemaTime'] = dayjs(row.loadSchemaTime).format('YYYY-MM-DD HH:mm:ss')
+      this.getTasks()
+      let data = cloneDeep(this.viewData)
+      data['last_updated'] = dayjs(row.last_updated).format('YYYY-MM-DD HH:mm:ss')
+      data['createTime'] = dayjs(row.createTime).format('YYYY-MM-DD HH:mm:ss')
+      data['loadSchemaTime'] = dayjs(row.loadSchemaTime).format('YYYY-MM-DD HH:mm:ss')
+      this.viewData = data
     },
     edit() {
       const { id, pdkHash } = this.viewData
@@ -157,6 +183,18 @@ export default {
     },
     getType(type) {
       return CONNECTION_TYPE_MAP[type]?.text || '-'
+    },
+    getTasks() {
+      let params = {
+        connectionId: this.viewData.id,
+        tableName: null
+      }
+      taskApi.getTaskByTableName(params).then(res => {
+        this.taskData = res
+      })
+    },
+    formatTime(time) {
+      return time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
     }
   }
 }
