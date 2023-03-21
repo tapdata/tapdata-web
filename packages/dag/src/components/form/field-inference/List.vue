@@ -110,7 +110,6 @@ import { VTable } from '@tap/component'
 import i18n from '@tap/i18n'
 import { metadataInstancesApi } from '@tap/api'
 import { uuid } from '@tap/shared'
-import { getCanUseDataTypes } from '@tap/dag/src/util'
 
 export default {
   name: 'List',
@@ -239,16 +238,6 @@ export default {
         t.accept = t.source?.accept || t.accept
         t.data_type = t.source?.result?.dataType || t.data_type
         t.transformEx = resultItems.some(f => f.item === t.field_name)
-        const selectDataType = t.source.result?.selectDataType
-        const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[t.field_name] || {}
-        t.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
-        t.matchedDataTypeLevel =
-          selectDataType ||
-          (!selectDataType && t.canUseDataTypes.findIndex(c => c === t.data_type) === t.canUseDataTypes.length - 1)
-            ? ''
-            : !t.canUseDataTypes.includes(selectDataType || t.data_type)
-            ? 'error'
-            : 'warning'
         return t
       })
       return this.showDelete ? list : list.filter(t => !t.is_deleted)
