@@ -17,6 +17,7 @@ import SwimlaneDashboard from './swimlane/Dashboard'
 import AlarmSetting from './setting/AlarmSetting'
 import AlarmNotification from './setting/AlarmNotification'
 import CustomNodeList from './custom-node/List'
+import SharedMiningList from './shared-mining/List'
 import CatalogView from './catalog/Catalogue'
 import ObjectList from './catalog/ObjectList'
 import DataServerList from './data-server/List'
@@ -41,6 +42,7 @@ export {
   AlarmSetting,
   AlarmNotification,
   CustomNodeList,
+  SharedMiningList,
   CatalogView,
   ObjectList,
   DataServerList

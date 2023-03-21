@@ -42,7 +42,7 @@ export function getSchema(schema, values, pdkPropertiesMap) {
     newSchema = JSON.parse(JSON.stringify(schema))
   }
 
-  const blacklist = ['Redis', 'CSV', 'EXCEL', 'JSON', 'XML']
+  const blacklist = ['CSV', 'EXCEL', 'JSON', 'XML']
 
   if (values.attrs.pdkHash && (values.type != 'database' || !blacklist.includes(values.databaseType))) {
     const pdkProperties = pdkPropertiesMap[values.attrs.pdkHash]
@@ -55,4 +55,9 @@ export function getSchema(schema, values, pdkPropertiesMap) {
   }
 
   return newSchema
+}
+
+export function getCanUseDataTypes(data = [], val = '') {
+  const index = data.findIndex(t => t === val)
+  return index > -1 ? data.slice(index) : []
 }

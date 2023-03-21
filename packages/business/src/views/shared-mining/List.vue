@@ -7,41 +7,90 @@
       <!--外存配置已上，这里关闭，稳定后相关注释代码可去掉-->
       <!--      <div slot="operation">-->
       <!--        <el-button class="btn btn-create" type="primary" size="mini" :loading="loadingConfig" @click="handleSetting">-->
-      <!--          <span>{{ $t('share_list_setting') }}</span>-->
       <!--        </el-button>-->
       <!--      </div>-->
-      <el-table-column min-width="250" :label="$t('share_list_name')" :show-overflow-tooltip="true">
+      <el-table-column min-width="250" :label="$t('packages_business_shared_list_name')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column
-        prop="connections"
-        min-width="160"
-        :label="$t('column_connection')"
-        :show-overflow-tooltip="true"
-      >
-        <template slot-scope="scope">
-          <div v-for="item in scope.row.connections" :key="item.id" class="ellipsis">
-            <span v-for="op in item" :key="op">{{ op }}</span>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column min-width="160" :label="$t('share_list_time_excavation')">
+      <el-table-column min-width="160" :label="$t('packages_business_shared_list_time_excavation')">
         <template slot-scope="scope">
           {{ scope.row.logTime }}
         </template>
       </el-table-column>
-      <el-table-column sortable min-width="120" :label="$t('share_list_time')" prop="delayTime"></el-table-column>
+      <el-table-column
+        sortable
+        min-width="120"
+        :label="$t('packages_business_shared_list_time')"
+        prop="delayTime"
+      ></el-table-column>
       <el-table-column prop="createTime" min-width="160" :label="$t('public_create_time')" sortable> </el-table-column>
-      <el-table-column min-width="110" prop="status" :label="$t('share_list_status')">
+      <el-table-column min-width="110" prop="status" :label="$t('packages_business_shared_list_status')">
         <template #default="{ row }">
           <TaskStatus :task="row" />
         </template>
       </el-table-column>
-      <el-table-column width="210" fixed="right" :label="$t('public_operation')">
+      <el-table-column width="220" fixed="right" :label="$t('public_operation')">
         <template #default="{ row }">
-          <TaskButtons :task="row" :hide-list="['del']" @trigger="taskButtonsHandler"></TaskButtons>
+          <div class="table-operations">
+            <ElLink
+              v-if="row.btnDisabled.stop && row.btnDisabled.forceStop"
+              v-readonlybtn="'SYNC_job_operation'"
+              type="primary"
+              :disabled="row.btnDisabled.start"
+              @click="start([row.id])"
+            >
+              {{ $t('public_button_start') }}
+            </ElLink>
+            <template v-else>
+              <ElLink
+                v-if="row.status === 'stopping'"
+                v-readonlybtn="'SYNC_job_operation'"
+                type="primary"
+                :disabled="row.btnDisabled.forceStop"
+                @click="forceStop([row.id])"
+              >
+                {{ $t('public_button_force_stop') }}
+              </ElLink>
+              <ElLink
+                v-else
+                v-readonlybtn="'SYNC_job_operation'"
+                type="primary"
+                :disabled="row.btnDisabled.stop"
+                @click="stop([row.id])"
+              >
+                {{ $t('public_button_stop') }}
+              </ElLink>
+            </template>
+            <ElDivider v-readonlybtn="'SYNC_job_operation'" direction="vertical"></ElDivider>
+            <ElLink
+              v-readonlybtn="'SYNC_job_edition'"
+              type="primary"
+              :disabled="row.btnDisabled.edit || $disabledReadonlyUserBtn()"
+              @click="handleEditor(row)"
+            >
+              {{ $t('public_button_edit') }}
+            </ElLink>
+            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+            <ElLink
+              v-readonlybtn="'SYNC_job_edition'"
+              type="primary"
+              :disabled="row.btnDisabled.monitor && !row.startTime"
+              @click="handleDetails(row)"
+            >
+              {{ $t('packages_business_task_list_button_monitor') }}
+            </ElLink>
+            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+            <ElLink
+              v-readonlybtn="'SYNC_job_edition'"
+              type="primary"
+              :disabled="row.btnDisabled.reset || $disabledReadonlyUserBtn()"
+              @click="handleReset(row)"
+            >
+              {{ $t('public_button_reset') }}
+            </ElLink>
+          </div>
         </template>
       </el-table-column>
     </TablePage>
@@ -49,7 +98,7 @@
     <el-dialog
       width="500px"
       custom-class="setting-dialog"
-      :title="$t('share_list_setting')"
+      :title="$t('packages_business_shared_list_setting')"
       :close-on-click-modal="false"
       :visible.sync="settingDialogVisible"
     >
@@ -61,7 +110,11 @@
         :disabled="!showEditSettingBtn"
         :rules="rules"
       >
-        <el-form-item prop="persistenceMode" size="mini" :label="$t('shared_cdc_setting_select_mode')">
+        <el-form-item
+          prop="persistenceMode"
+          size="mini"
+          :label="$t('packages_business_shared_cdc_setting_select_mode')"
+        >
           <el-select v-model="digSettingForm.persistenceMode">
             <el-option v-for="item in enumsItems" :key="item" :label="item" :value="item"></el-option>
           </el-select>
@@ -79,7 +132,7 @@
           v-if="digSettingForm.persistenceMode === 'MongoDB'"
           prop="persistenceMongodb_collection"
           size="mini"
-          :label="$t('share_form_setting_table_name')"
+          :label="$t('packages_business_shared_form_setting_table_name')"
         >
           <el-input v-model="digSettingForm.persistenceMongodb_collection"> </el-input>
         </el-form-item>
@@ -87,20 +140,20 @@
           v-if="digSettingForm.persistenceMode === 'RocksDB'"
           prop="persistenceMongodb_collection"
           size="mini"
-          :label="$t('setting_share_cdc_persistence_rocksdb_path')"
+          :label="$t('packages_business_shared_cdc_persistence_rocksdb_path')"
         >
           <el-input type="textarea" v-model="digSettingForm.persistenceRocksdb_path"></el-input>
         </el-form-item>
         <el-form-item
           v-if="['MongoDB', 'RocksDB'].includes(digSettingForm.persistenceMode)"
           size="mini"
-          :label="$t('share_form_setting_log_time')"
+          :label="$t('packages_business_shared_form_setting_log_time')"
         >
           <el-select
             allow-create
             filterable
             v-model="digSettingForm.share_cdc_ttl_day"
-            :placeholder="$t('shared_cdc_setting_select_time_tip')"
+            :placeholder="$t('packages_business_shared_cdc_setting_select_time_tip')"
           >
             <el-option v-for="op in logSaveList" :key="op" :label="op + $t('public_time_d')" :value="op"> </el-option>
           </el-select>
@@ -114,65 +167,26 @@
       </span>
     </el-dialog>
 
-    <el-dialog
-      width="400px"
-      custom-class="edit-dialog"
-      :title="$t('share_list_edit_title')"
-      :close-on-click-modal="false"
-      :destroy-on-close="true"
-      :visible.sync="editDialogVisible"
-    >
-      <el-form ref="editForm" label-position="left" label-width="150px" :model="editForm" :rules="rulesEdit">
-        <el-form-item size="mini" :label="$t('share_form_edit_name')" prop="name">
-          <el-input clearable v-model="editForm.name"></el-input>
-        </el-form-item>
-        <el-form-item size="mini" :label="$t('share_form_setting_log_time')">
-          <el-select v-model="editForm.storageTime" :placeholder="$t('public_select_placeholder')">
-            <el-option v-for="op in logSaveList" :key="op" :label="op + $t('public_time_d')" :value="op"> </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item size="mini" :label="$t('share_list_edit_title_start_time')">
-          <div v-for="(item, index) in editForm.syncPoints" :key="index">
-            <el-select v-model="item.pointType" :placeholder="$t('public_select_placeholder')">
-              <el-option v-for="op in pointTypeOptions" :key="op.value" :label="op.label" :value="op.value"></el-option>
-            </el-select>
-            <el-date-picker
-              v-if="item.pointType !== 'current'"
-              v-model="item.dateTime"
-              :picker-options="getPickerOptions(item.dateTime, item)"
-              popperClass="hide-current__dateTime"
-              type="datetime"
-              format="yyyy-MM-dd HH:mm:ss"
-              valueFormat="timestamp"
-              class="mt-4"
-            ></el-date-picker>
-          </div>
-        </el-form-item>
-      </el-form>
-      <span class="dialog-footer" slot="footer">
-        <el-button @click="cancelEdit" size="mini">{{ $t('public_button_cancel') }}</el-button>
-        <el-button size="mini" type="primary" @click="saveEdit()">{{ $t('public_button_save') }}</el-button>
-      </span>
-    </el-dialog>
+    <Editor :task-id="editForm.id" :visible.sync="editDialogVisible" @success="table.fetch(1)"></Editor>
   </section>
 </template>
 
 <script>
 import dayjs from 'dayjs'
-import { logcollectorApi } from '@tap/api'
+import { logcollectorApi, taskApi, workerApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage, TaskStatus, makeStatusAndDisabled } from '@tap/business'
-import Time from '@tap/shared/src/time'
 
-import TaskButtons from '@/components/TaskButtons'
+import Editor from './Editor'
 
 let timeout = null
 export default {
+  inject: ['buried'],
   components: {
     TablePage,
     FilterBar,
-    TaskButtons,
-    TaskStatus
+    TaskStatus,
+    Editor
   },
   data() {
     return {
@@ -182,12 +196,12 @@ export default {
       },
       filterItems: [
         {
-          placeholder: this.$t('shared_cdc_placeholder_task_name'),
+          placeholder: this.$t('packages_business_shared_cdc_placeholder_task_name'),
           key: 'taskName',
           type: 'input'
         },
         {
-          placeholder: this.$t('shared_cdc_placeholder_connection_name'),
+          placeholder: this.$t('packages_business_shared_cdc_placeholder_connection_name'),
           key: 'connectionName',
           type: 'input'
         }
@@ -206,46 +220,32 @@ export default {
       },
       enumsItems: ['Mem', 'MongoDB', 'RocksDB'],
       editForm: {
-        id: '',
-        name: '',
-        storageTime: 3,
-        syncPoints: []
+        id: ''
       },
-      currentForm: {},
       logSaveList: [1, 2, 3, 4, 5, 6, 7],
       showEditSettingBtn: false, //禁用
       rules: {
         persistenceMongodb_uri_db: [
-          { required: true, message: this.$t('shared_cdc_setting_select_mongodb_tip'), trigger: 'blur' }
+          {
+            required: true,
+            message: this.$t('packages_business_shared_cdc_setting_select_mongodb_tip'),
+            trigger: 'blur'
+          }
         ],
         persistenceMongodb_collection: [
-          { required: true, message: this.$t('shared_cdc_setting_select_table_tip'), trigger: 'blur' }
+          { required: true, message: this.$t('packages_business_shared_cdc_setting_select_table_tip'), trigger: 'blur' }
         ]
       },
-      rulesEdit: {
-        name: [{ required: true, message: this.$t('shared_cdc_name'), trigger: 'blur' }]
-      },
-      pointTypeOptions: [
-        {
-          label: this.$t('packages_dag_dataFlow_SyncInfo_localTZType'),
-          value: 'localTZ'
-        },
-        {
-          label: this.$t('packages_dag_dataFlow_SyncInfo_connTZType'),
-          value: 'connTZ'
-        },
-        {
-          label: this.$t('packages_dag_dataFlow_SyncInfo_currentType'),
-          value: 'current'
-        }
-      ]
+      taskBuried: {
+        start: 'sharedMiningStart'
+      }
     }
   },
   mounted() {
     //定时轮询
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
-    }, 10000)
+    }, 8000)
   },
   computed: {
     table() {
@@ -358,101 +358,116 @@ export default {
         }
       })
     },
-    taskButtonsHandler(event, task) {
-      if (event === 'edit') {
-        this.editDialogVisible = true
-        this.editForm.id = task.id
-        this.editForm.name = task.name
-        this.editForm.storageTime = task.storageTime
-        let syncPoints = task.syncPoints
-        if (syncPoints) {
-          this.editForm.syncPoints = syncPoints
-        } else {
-          const [connectionId, connectionName] = Object.entries(task.connections[0])[0]
-          const sourceNodeIds = (task.dag?.edges || []).map(t => t.source)
-          const sourceNodes = (task.dag?.nodes || [])
-            .filter(node => sourceNodeIds.includes(node.id))
-            .map(node => ({
-              nodeId: node.id,
-              nodeName: node.name,
-              connectionId: connectionId,
-              connectionName: connectionName
-            }))
-          const result = sourceNodes.map(item => {
-            const point = {
-              ...item,
-              timeZone: this.systemTimeZone,
-              pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
-              dateTime: ''
-            }
-            return point
-          })
-          this.editForm.syncPoints = result
+
+    start(ids) {
+      this.buried(this.taskBuried.start)
+      let filter = {
+        where: {
+          id: ids[0]
         }
-        this.currentForm = JSON.parse(JSON.stringify(this.editForm))
-      } else if (event === 'details') {
-        this.$router.push({
-          name: 'relationTaskDetail',
-          params: {
-            id: task.id
-          },
-          query: {
-            type: 'logCollector'
-          }
+      }
+      taskApi.get({ filter: JSON.stringify(filter) }).then(() => {
+        taskApi
+          .batchStart(ids)
+          .then(data => {
+            this.buried(this.taskBuried.start, '', { result: true })
+            this.$message.success(data?.message || this.$t('public_message_operation_success'))
+            this.table.fetch()
+          })
+          .catch(() => {
+            this.buried(this.taskBuried.start, '', { result: false })
+          })
+      })
+    },
+
+    forceStop(ids) {
+      let msgObj = this.getConfirmMessage('force_stop')
+      this.$confirm(msgObj.msg, '', {
+        type: 'warning',
+        showClose: false,
+        dangerouslyUseHTMLString: true
+      }).then(resFlag => {
+        if (!resFlag) {
+          return
+        }
+        taskApi.forceStop(ids).then(data => {
+          this.$message.success(data?.message || this.$t('public_message_operation_success'))
+          this.table.fetch()
         })
+      })
+    },
+
+    stop(ids) {
+      this.$confirm(
+        this.$t('packages_business_stop_confirm_message'),
+        this.$t('packages_business_important_reminder'),
+        {
+          type: 'warning'
+        }
+      ).then(resFlag => {
+        if (!resFlag) {
+          return
+        }
+        taskApi.batchStop(ids).then(data => {
+          this.$message.success(data?.message || this.$t('public_message_operation_success'))
+          this.table.fetch()
+        })
+      })
+    },
+
+    handleEditor(task = {}) {
+      this.editDialogVisible = true
+      this.editForm.id = task.id
+    },
+
+    openRoute(route, newTab = true) {
+      if (newTab) {
+        window.open(this.$router.resolve(route).href)
       } else {
-        this.table.fetch()
+        this.$router.push(route)
       }
     },
-    // 取消编辑
-    cancelEdit() {
-      this.editDialogVisible = false
-    },
-    // 保存编辑
-    saveEdit() {
-      this.$refs['editForm'].validate(valid => {
-        if (valid) {
-          let id = this.editForm?.id
-          logcollectorApi.patchId(id, this.editForm).then(() => {
-            this.editDialogVisible = false
-            this.table.fetch(1)
-            this.$message.success(this.$t('shared_cdc_setting_message_edit_save'))
-          })
+
+    handleDetails(task = {}) {
+      this.openRoute({
+        name: 'SharedMiningMonitor',
+        params: {
+          id: task.id
         }
       })
     },
 
-    getPickerOptions(val, item) {
-      if (item.pointType === 'connTZ')
-        return {
-          disabledDate: null,
-          selectableRange: null
-        }
-      const now = Date.now()
-      const formatMap = {
-        date: 'YYYY-MM-DD',
-        time: 'HH:mm:ss',
-        startTime: '00:00:00',
-        endTime: '23:59:59'
+    getConfirmMessage(operateStr, task) {
+      let title = operateStr + '_confirm_title',
+        message = operateStr + '_confirm_message'
+      let strArr = this.$t('dataFlow_' + message).split('xxx')
+      let msg = `
+        <p>
+          ${strArr[0]}
+          <span class="color-primary">${task.name}</span>
+          ${strArr[1]}
+        </p>`
+      return {
+        msg,
+        title: this.$t('dataFlow_' + title)
       }
+    },
 
-      const pickDate = dayjs(val).format(formatMap.date)
-      const nowDate = dayjs(now).format(formatMap.date)
-      const nowTime = dayjs(now).format(formatMap.time)
-      if (val > now) {
-        item.dateTime = now
-      }
-      let op = {
-        disabledDate: time => {
-          return new Date(time).getTime() > now
+    handleReset(row) {
+      const id = row.id
+      let msgObj = this.getConfirmMessage('initialize', row)
+      this.$confirm(msgObj.msg, msgObj.title, {
+        type: 'warning',
+        dangerouslyUseHTMLString: true
+      }).then(resFlag => {
+        if (!resFlag) {
+          return
         }
-      }
-      if (pickDate === nowDate) {
-        op.selectableRange = `${formatMap.startTime} - ${nowTime}`
-      } else {
-        op.selectableRange = `${formatMap.startTime} - ${formatMap.endTime}`
-      }
-      return op
+        taskApi.batchRenew([id]).then(data => {
+          this.$message.success(data?.message || this.$t('public_message_operation_success'))
+          this.table.fetch()
+        })
+      })
     }
   }
 }

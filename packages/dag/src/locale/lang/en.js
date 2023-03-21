@@ -17,9 +17,7 @@ export default {
   packages_dag_dataFlow_jetFlowEngineV2: 'Jet Flow Engine V2',
   packages_dag_dataFlow_setting_intellect: 'Intelligent de-rewrite',
   packages_dag_dataFlow_setting_compel: 'Force de-rewrite',
-  packages_dag_dataFlow_SyncInfo_localTZType: 'Local Timezone CDC Time',
   packages_dag_dataFlow_SyncInfo_connTZType: 'DB Timezone CDC Time',
-  packages_dag_dataFlow_SyncInfo_currentType: 'Current Time',
   packages_dag_dag_property_setting: 'Property Setting',
   packages_dag_dag_meta_data: 'Meta Data',
   packages_dag_meta_table_index: 'Index',
@@ -170,8 +168,8 @@ export default {
   packages_dag_migration_configpanel_moxing: 'model',
   packages_dag_migration_configpanel_peizhi: 'Configuration',
   packages_dag_migration_consolepanel_quanburizhi: 'All logs',
-  packages_dag_migration_consolepanel_dangqianjiancefaxian: 'Current detection and co-discovery',
-  packages_dag_migration_consolepanel_qingguanzhu: 'Please pay attention',
+  packages_dag_migration_consolepanel_dangqianjiancefaxian: 'Current detection, three are',
+  packages_dag_migration_consolepanel_qingguanzhu: 'have been found during the detection. Please pay attention.',
   packages_dag_migration_consolepanel_ge: 'a',
   packages_dag_migration_settingpanel_dangrenwufuhe:
     'When data verification is enabled, the task will automatically perform full verification and incremental verification for the data replication consistency. The verification results can be viewed on the Task Monitoring page. Note the verification currently does not support following scenarios, when one of the following happens, this feature will have no effect:\n 1. There is a processing node in the pipeline\n 2. The source connection does not support verification\n 3. The target connection does not support verification',
@@ -566,5 +564,22 @@ export default {
   packages_dag_src_editor_shaohouqidong: 'Start later',
   packages_dag_src_editor_jixuqidong: 'Continue to start',
   packages_dag_src_editor_renwubaocunjianceshi:
-    'An alarm was found during task saving detection, which may cause the task to run abnormally. It is recommended that you check and resolve the alarm before starting the task'
+    'An alarm was found during task saving detection, which may cause the task to run abnormally. It is recommended that you check and resolve the alarm before starting the task',
+  packages_dag_monitor_leftsider_jibenxinxi: 'Basic information',
+  packages_dag_nodes_aggregate_waicunpeizhi: 'External storage configuration',
+  packages_dag_field_inference_main_tuiyanyichang: 'Deduction exception',
+  packages_dag_field_inference_main_gengxintiaojianyi: 'The update condition is abnormal',
+  packages_dag_field_inference_main_quanbubiao: 'All tables',
+  packages_dag_migration_settingpanel_zhuanweiputongC: 'Switch to normal CDC mode',
+  packages_dag_migration_settingpanel_renwuzhijiebao: 'The task reports an error and stops',
+  packages_dag_migration_settingpanel_danggongxiangwajue: 'When shared mining is not available',
+  packages_dag_migration_settingpanel_danggongxiangwajuetooltip:
+    'Possible unavailable scenarios\n1. The switch is not turned on in the data connection\n2. The set start time is earlier than the first entry of the external storage log data\n3. The mining task reports an error and stops',
+  packages_dag_field_inference_list_gaiziduanyingshe:
+    'The target data type of this field mapping is the result of system speculation, and the result may be biased. Please check and confirm whether it meets expectations, and adjust it according to the actual situation. ',
+  packages_dag_field_inference_list_gaiziduanwufa:
+    'This field cannot be mapped to the target data type, and this field will be ignored when data is written. ',
+  packages_dag_field_inference_main_xuanzemorengeng:
+    'When selecting the default update condition field, the default priority is to associate with the primary key field, if there is no primary key, associate with the unique index field, and if there is no primary key and no unique index, associate with the full field. When the specified field is selected, it will be associated with the specified update condition field',
+  packages_dag_nodes_table_zidingyichaxun: 'custom query'
 }

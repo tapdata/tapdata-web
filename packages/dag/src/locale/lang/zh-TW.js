@@ -16,9 +16,7 @@ export default {
   packages_dag_dataFlow_jetFlowEngineV2: 'Jet Flow Engine V2',
   packages_dag_dataFlow_setting_intellect: '智能去重寫入',
   packages_dag_dataFlow_setting_compel: '強制去重寫入',
-  packages_dag_dataFlow_SyncInfo_localTZType: '用戶瀏覽器時區',
   packages_dag_dataFlow_SyncInfo_connTZType: '數據庫時區',
-  packages_dag_dataFlow_SyncInfo_currentType: '此刻',
   packages_dag_dag_property_setting: '屬性設置',
   packages_dag_dag_meta_data: '元數據',
   packages_dag_meta_table_index: '序號',
@@ -159,7 +157,7 @@ export default {
   packages_dag_migration_configpanel_moxing: '模型',
   packages_dag_migration_configpanel_peizhi: '配置',
   packages_dag_migration_consolepanel_quanburizhi: '全部日誌',
-  packages_dag_migration_consolepanel_dangqianjiancefaxian: '當前檢測共發現',
+  packages_dag_migration_consolepanel_dangqianjiancefaxian: '當前檢測共發現，',
   packages_dag_migration_consolepanel_qingguanzhu: '請關注',
   packages_dag_migration_consolepanel_ge: '個',
   packages_dag_migration_settingpanel_dangrenwufuhe:
@@ -531,5 +529,21 @@ export default {
   packages_dag_src_editor_shaohouqidong: '稍後啟動',
   packages_dag_src_editor_jixuqidong: '繼續啟動',
   packages_dag_src_editor_renwubaocunjianceshi:
-    '任務保存檢測時發現了告警，可能會導致任務運行出現異常，建議您查看並解決告警後再啟動任務'
+    '任務保存檢測時發現了告警，可能會導致任務運行出現異常，建議您查看並解決告警後再啟動任務',
+  packages_dag_monitor_leftsider_jibenxinxi: '基本信息',
+  packages_dag_nodes_aggregate_waicunpeizhi: '外存配置',
+  packages_dag_field_inference_main_tuiyanyichang: '推演異常',
+  packages_dag_field_inference_main_gengxintiaojianyi: '更新條件異常',
+  packages_dag_field_inference_main_quanbubiao: '全部表',
+  packages_dag_migration_settingpanel_zhuanweiputongC: '轉為普通CDC模式',
+  packages_dag_migration_settingpanel_renwuzhijiebao: '任務直接報錯停止',
+  packages_dag_migration_settingpanel_danggongxiangwajue: '當共享挖掘不可用時',
+  packages_dag_migration_settingpanel_danggongxiangwajuetooltip:
+    '可能出現的不可用的場景\n1. 數據連接裡面沒有打開開關\n2. 設置的起始時間比外存日誌數據的第一條更早\n3. 挖掘任務報錯停止',
+  packages_dag_field_inference_list_gaiziduanyingshe:
+    '該字段映射的目標數據類型為系統推測結果，該結果可能存在偏差，請檢查並確認是否符合預期，並根據實際情況調整。 ',
+  packages_dag_field_inference_list_gaiziduanwufa: '該字段無法映射目標數據類型，將在數據寫入時忽略該字段。 ',
+  packages_dag_field_inference_main_xuanzemorengeng:
+    '選擇默認更新條件字段時默認優先按照主鍵字段關聯，無主鍵的按照唯一索引字段關聯，無主鍵且無唯一索引的按照全字段關聯。選擇指定字段時將按照指定更新條件字段進行關聯',
+  packages_dag_nodes_table_zidingyichaxun: '自定義查詢'
 }

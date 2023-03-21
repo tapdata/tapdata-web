@@ -49,8 +49,9 @@
 
           <pre v-if="warnNum || errorNum" class="flex m-0 px-1">
             <span class="mr-1">{{ $t('packages_dag_migration_consolepanel_dangqianjiancefaxian') }}</span>
-            <span v-if="warnNum" class="color-warning mr-1">{{ warnNum + $t('packages_dag_migration_consolepanel_ge') }}WARN,</span>
-            <span v-if="errorNum" class="color-danger mr-1">{{ errorNum + $t('packages_dag_migration_consolepanel_ge') }}ERROR,</span>
+            <span v-if="warnNum" class="color-warning mr-1">{{ warnNum + $t('public_unit_ge') }}<span class="ml-1">WARN</span></span>
+            <span v-if="warnNum && errorNum" class="mr-1">{{ $t('public_and') }}</span>
+            <span v-if="errorNum" class="color-danger mr-1">{{ errorNum + $t('public_unit_ge') }}<span class="ml-1">ERROR,</span></span>
             <span>{{ $t('packages_dag_migration_consolepanel_qingguanzhu') }}</span>
           </pre>
 

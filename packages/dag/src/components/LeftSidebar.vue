@@ -469,12 +469,17 @@ export default {
           config: 1,
           connectionString: 1
         },
-        order: ['status DESC', 'name ASC']
+        order: ['status DESC', 'name ASC'],
+        where: {}
       }
 
       const txt = escapeRegExp(this.dbSearchTxt.trim())
       if (txt) {
         filter.where = { name: { like: txt, options: 'i' } }
+      }
+
+      filter.where.createType = {
+        $ne: 'System'
       }
 
       return { filter: JSON.stringify(filter) }

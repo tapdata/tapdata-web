@@ -1,6 +1,5 @@
 import Parent from './Parent'
 import Layout from '../views/Layout.vue'
-import Error from '../views/Error.vue'
 import FastDownload from '@/views/agent-download/FastDownload.vue'
 import UpgradeVersion from '@/views/agent-download/UpgradeVersion.vue'
 import PaidUpgrade from '@/views/agent-download/PaidUpgrade.vue'
@@ -325,46 +324,6 @@ const routes = [
     }
   },
   {
-    path: '/404',
-    name: '404',
-    component: Error
-  },
-  {
-    path: '/500',
-    name: '500',
-    component: Error
-  },
-  {
-    path: '/502',
-    name: '502',
-    component: Error
-  },
-  {
-    path: '/504',
-    name: '504',
-    component: Error
-  },
-  {
-    path: '/error',
-    name: 'error',
-    component: Error
-  },
-  {
-    path: '/invalid',
-    name: 'Invalid',
-    component: Error
-  },
-  {
-    path: '/freeze',
-    name: 'Freeze',
-    component: Error
-  },
-  {
-    path: '/off',
-    name: 'Off',
-    component: Error
-  },
-  {
     path: '/dataflow/editor',
     name: 'DataflowNew',
     component: DagEditor
@@ -416,6 +375,24 @@ const routes = [
     meta: {
       title: 'page_title_run_monitor',
       code: 'Data_SYNC_menu'
+    }
+  },
+  {
+    path: '/sharedMining/monitor/:id',
+    name: 'SharedMiningMonitor',
+    component: MigrationMonitor,
+    meta: {
+      title: 'page_title_run_monitor',
+      code: 'v2_data_replication_monitor'
+    }
+  },
+  {
+    path: '/heartbeat/monitor/:id',
+    name: 'HeartbeatMonitor',
+    component: MigrationMonitor,
+    meta: {
+      title: 'page_title_run_monitor',
+      code: 'v2_data_replication_monitor'
     }
   },
   {

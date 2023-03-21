@@ -150,6 +150,12 @@
         ref="nodeDetailDialog"
         @load-data="init"
       ></NodeDetailDialog>
+
+      <SharedMiningEditor
+        v-if="['logCollector'].includes(dataflow.syncType)"
+        :task-id="dataflow.id"
+        :visible.sync="sharedMiningEditorVisible"
+      ></SharedMiningEditor>
     </section>
   </section>
 </template>
@@ -169,6 +175,7 @@ import { showMessage } from '@tap/component/src/mixins/showMessage'
 import resize from '@tap/component/src/directives/resize'
 import { ALARM_LEVEL_SORT, TASK_STATUS_MAP } from '@tap/business'
 import Time from '@tap/shared/src/time'
+import SharedMiningEditor from '@tap/business/src/views/shared-mining/Editor'
 
 import PaperScroller from './components/PaperScroller'
 import TopHeader from './components/monitor/TopHeader'
@@ -208,14 +215,16 @@ export default {
     LeftSider,
     VIcon,
     NodeDetailDialog,
-    ConsolePanel
+    ConsolePanel,
+    SharedMiningEditor
   },
 
   data() {
     const dataflow = observable({
       id: '',
       name: '',
-      status: ''
+      status: '',
+      attrs: {}
     })
 
     return {
@@ -261,7 +270,8 @@ export default {
       taskRecord: {
         total: 0,
         items: []
-      }
+      },
+      sharedMiningEditorVisible: false
     }
   },
 
@@ -576,29 +586,41 @@ export default {
     },
 
     handlePageReturn() {
-      if (this.dataflow.syncType === 'migrate') {
-        this.$router.push({
-          name: 'migrateList'
-        })
-      } else {
-        this.$router.push({
-          name: 'dataflowList'
-        })
+      let name
+      switch (this.dataflow.syncType) {
+        case 'migrate':
+          name = 'migrateList'
+          break
+        case 'logCollector':
+          name = 'sharedMining'
+          break
+        default:
+          name = 'dataflowList'
+          break
       }
+      this.$router.push({
+        name
+      })
     },
 
     handleEdit() {
-      if (this.dataflow.syncType === 'sync') {
-        this.$router.push({
-          name: 'DataflowEditor',
-          params: { id: this.dataflow.id }
-        })
-        return
+      switch (this.dataflow.syncType) {
+        case 'migrate':
+          this.$router.push({
+            name: 'MigrateEditor',
+            params: { id: this.dataflow.id }
+          })
+          break
+        case 'sync':
+          this.$router.push({
+            name: 'DataflowEditor',
+            params: { id: this.dataflow.id }
+          })
+          break
+        case 'logCollector':
+          this.sharedMiningEditorVisible = true
+          break
       }
-      this.$router.push({
-        name: 'MigrateEditor',
-        params: { id: this.dataflow.id }
-      })
     },
 
     handleShowVerify() {

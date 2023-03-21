@@ -241,7 +241,7 @@ export default observer({
                               default: 'current',
                               enum: [
                                 {
-                                  label: this.$t('packages_dag_dataFlow_SyncInfo_localTZType'),
+                                  label: this.$t('public_time_user_specified_time'),
                                   value: 'localTZ'
                                 },
                                 /*{
@@ -249,7 +249,7 @@ export default observer({
                                   value: 'connTZ'
                                 },*/
                                 {
-                                  label: this.$t('packages_dag_dataFlow_SyncInfo_currentType'),
+                                  label: this.$t('public_time_current'),
                                   value: 'current'
                                 }
                               ],
@@ -330,6 +330,28 @@ export default observer({
                           fulfill: {
                             state: {
                               visible: '{{$deps[0] !== "initial_sync" && $values.isDaas}}' // 只有增量或全量+增量支持
+                            }
+                          }
+                        }
+                      },
+                      enforceShareCdc: {
+                        title: i18n.t('packages_dag_migration_settingpanel_danggongxiangwajue'),
+                        type: 'string',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          tooltip: i18n.t('packages_dag_migration_settingpanel_danggongxiangwajuetooltip')
+                        },
+                        'x-component': 'Select',
+                        default: true,
+                        enum: [
+                          { label: i18n.t('packages_dag_migration_settingpanel_renwuzhijiebao'), value: true },
+                          { label: i18n.t('packages_dag_migration_settingpanel_zhuanweiputongC'), value: false }
+                        ],
+                        'x-reactions': {
+                          dependencies: ['shareCdcEnable'],
+                          fulfill: {
+                            state: {
+                              visible: '{{!!$deps[0]}}'
                             }
                           }
                         }

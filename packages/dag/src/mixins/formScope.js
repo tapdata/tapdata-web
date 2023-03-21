@@ -213,7 +213,11 @@ export default {
           try {
             const { isSource, isTarget } = filter
             const _filter = {
-              where: {},
+              where: {
+                createType: {
+                  $ne: 'System'
+                }
+              },
               fields: {
                 name: 1,
                 id: 1,
@@ -552,6 +556,12 @@ export default {
           const id = field.value
           const form = field.form
           const connection = await connectionsApi.get(id)
+
+          if (!connection) {
+            console.error('ConnectionNotFound', id) // eslint-disable-line
+            return
+          }
+
           const connectionType = form.getValuesIn('attrs.connectionType') || ''
           const accessNodeProcessId = form.getValuesIn('attrs.accessNodeProcessId') || ''
           const connectionName = form.getValuesIn('attrs.connectionName')

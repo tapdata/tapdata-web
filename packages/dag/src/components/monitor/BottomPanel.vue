@@ -8,7 +8,7 @@
             v-if="currentTab === 'milestone'"
             v-bind="$attrs"
             :currentTab="currentTab"
-            ref="log"
+            ref="milestoneList"
           ></MilestoneList>
         </ElTabPane>
         <ElTabPane :label="$t('packages_dag_monitor_bottompanel_rizhi')" name="log">
@@ -26,9 +26,16 @@
             @load-data="$emit('load-data')"
           ></Alert>
         </ElTabPane>
-        <ElTabPane :label="$t('packages_dag_monitor_bottompanel_guanlianrenwu')" name="relation">
+        <ElTabPane v-if="relationCount" :label="$t('packages_dag_monitor_bottompanel_guanlianrenwu')" name="relation">
+          <RelationSharedList
+            v-if="['logCollector'].includes($attrs.dataflow.syncType)"
+            v-bind="$attrs"
+            :currentTab="currentTab"
+            @change-tab="changeTab"
+            @load-data="$emit('load-data')"
+          ></RelationSharedList>
           <RelationList
-            v-if="currentTab === 'relation'"
+            v-else
             v-bind="$attrs"
             :currentTab="currentTab"
             @change-tab="changeTab"
@@ -50,16 +57,17 @@ import resize from '@tap/component/src/directives/resize'
 import focusSelect from '@tap/component/src/directives/focusSelect'
 import NodeLog from '@tap/business/src/components/logs/NodeLog'
 import RelationList from '@tap/business/src/views/task/relation/List.vue'
+import RelationSharedList from '@tap/business/src/views/task/relation/SharedList.vue'
 import MilestoneList from '@tap/business/src/components/milestone/List'
-import Time from '@tap/shared/src/time'
 
 import Record from './components/Record'
 import Alert from './components/Alert'
+import { logcollectorApi, taskApi } from '@tap/api'
 
 export default {
   name: 'ConfigPanel',
 
-  components: { Record, Alert, RelationList, NodeLog, MilestoneList },
+  components: { Record, Alert, RelationList, RelationSharedList, NodeLog, MilestoneList },
 
   directives: {
     resize,
@@ -76,7 +84,8 @@ export default {
   data() {
     return {
       currentTab: 'milestone',
-      name: this.activeNode?.name
+      name: this.activeNode?.name,
+      relationCount: 0
     }
   },
 
@@ -99,6 +108,7 @@ export default {
         end: end * 1
       })
     }
+    this.getRelationData()
   },
 
   methods: {
@@ -144,6 +154,21 @@ export default {
           const end = data.end ? data.end + len : t + len
           data.start && this.getLogRef()?.$refs.timeSelect.changeTime([start, end])
         }
+      })
+    },
+
+    getRelationData() {
+      const { id, syncType } = this.$attrs.dataflow || {}
+      const { taskRecordId } = this.$route.query || {}
+      let filter = {
+        taskId: id,
+        taskRecordId
+      }
+      if (['logCollector'].includes(syncType)) {
+        filter.type = 'task_by_collector'
+      }
+      taskApi.taskConsoleRelations(filter).then(data => {
+        this.relationCount = data?.length || 0
       })
     }
   }

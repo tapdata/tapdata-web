@@ -384,6 +384,10 @@ export default {
         },
         enum: [
           {
+            label: '<=',
+            value: -1
+          },
+          {
             label: '>=',
             value: 1
           }

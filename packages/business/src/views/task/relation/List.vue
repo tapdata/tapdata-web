@@ -26,7 +26,7 @@
         <template slot="operation" slot-scope="scope">
           <div class="operate-columns">
             <ElButton size="mini" type="text" @click="handleDetail(scope.row)">{{
-              $t('public_button_details')
+              $t('packages_business_task_list_button_monitor')
             }}</ElButton>
           </div>
         </template>
@@ -82,7 +82,25 @@ export default {
           slotName: 'operation',
           width: 100
         }
-      ]
+      ],
+      map: {
+        logCollector: {
+          label: i18n.t('packages_business_task_monitor_mining_task'),
+          monitor: 'SharedMiningMonitor'
+        },
+        connHeartbeat: {
+          label: i18n.t('public_task_type_heartbeat'),
+          monitor: 'HeartbeatMonitor'
+        },
+        sync: {
+          label: i18n.t('public_task_type_sync'),
+          monitor: 'TaskMonitor'
+        },
+        migrate: {
+          label: i18n.t('public_task_type_migrate'),
+          monitor: 'MigrationMonitor'
+        }
+      }
     }
   },
 
@@ -96,21 +114,20 @@ export default {
     },
 
     getSearchItems() {
+      let items = []
+      for (let key in this.map) {
+        const temp = this.map[key]
+        items.push({
+          label: temp.label,
+          value: key
+        })
+      }
       this.filterItems = [
         {
           label: i18n.t('public_task_type'),
           key: 'type',
           type: 'dark-select',
-          items: [
-            {
-              label: i18n.t('packages_business_task_monitor_mining_task'),
-              value: 'logCollector'
-            },
-            {
-              label: i18n.t('packages_business_relation_list_huancunrenwu'),
-              value: 'mem_cache'
-            }
-          ]
+          items: items
         },
         {
           placeholder: i18n.t('packages_business_relation_list_qingshururenwu'),
@@ -124,11 +141,6 @@ export default {
       const taskId = this.$route.params.id
       const { taskRecordId } = this.$route.query || {}
       const { keyword, type, status } = this.searchParams
-      const MAP = {
-        logCollector: i18n.t('packages_business_task_monitor_mining_task'),
-        mem_cache: i18n.t('packages_business_relation_list_huancunrenwu'),
-        inspect: i18n.t('packages_business_relation_list_jiaoyanrenwu')
-      }
       let filter = {
         keyword,
         taskId,
@@ -141,7 +153,7 @@ export default {
           total: 0,
           data:
             data.map(t => {
-              t.typeLabel = MAP[t.type]
+              t.typeLabel = this.map[t.type]?.label
               return t
             }) || []
         }
@@ -150,12 +162,9 @@ export default {
 
     handleDetail(row = {}) {
       const routeUrl = this.$router.resolve({
-        name: 'relationTaskDetail',
+        name: this.map[row.type]?.monitor,
         params: {
           id: row.id
-        },
-        query: {
-          type: row.type
         }
       })
       openUrl(routeUrl.href)

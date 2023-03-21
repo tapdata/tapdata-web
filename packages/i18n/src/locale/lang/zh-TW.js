@@ -1,6 +1,7 @@
 export default {
   // 常用
   public_name: '名稱',
+  public_index: '索引',
   public_type: '類型',
   public_title: '標題',
   public_status: '狀態',
@@ -12,6 +13,7 @@ export default {
   public_creator: '創建人',
   public_update_time: '更新時間',
   public_change_time: '修改時間',
+  public_serial_number: '序號',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '無效',
@@ -131,6 +133,13 @@ export default {
   public_time_last_day: '最近1天',
   public_time_last_three_days: '最近3天',
   public_time_custom_time: '自定義時間',
+  public_time_user_specified_time: '用戶指定時間',
+  public_time_current: '此刻',
+  // 关系
+  public_or: '或',
+  public_and: '和',
+  // 单位
+  public_unit_ge: '個',
   // agent
   public_agent_name: 'Agent名稱',
   public_agent_button_create: '創建Agent',
@@ -168,6 +177,10 @@ export default {
   // 任務
   public_task_name: '任務名稱',
   public_task_type: '任務類型',
+  public_task_type_migrate: '數據複製',
+  public_task_type_sync: '數據開發',
+  public_task_type_heartbeat: '心跳任務',
+  public_task_type_log_collector: '共享挖掘',
   public_task_type_initial_sync: '全量',
   public_task_type_cdc: '增量',
   public_task_type_initial_sync_and_cdc: '全量+增量',

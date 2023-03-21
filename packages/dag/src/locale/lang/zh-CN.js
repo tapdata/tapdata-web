@@ -16,9 +16,7 @@ export default {
   packages_dag_dataFlow_jetFlowEngineV2: 'Jet Flow Engine V2',
   packages_dag_dataFlow_setting_intellect: '智能去重写入',
   packages_dag_dataFlow_setting_compel: '强制去重写入',
-  packages_dag_dataFlow_SyncInfo_localTZType: '用户指定时间',
   packages_dag_dataFlow_SyncInfo_connTZType: '数据库时区',
-  packages_dag_dataFlow_SyncInfo_currentType: '此刻',
   packages_dag_dag_property_setting: '属性设置',
   packages_dag_dag_meta_data: '元数据',
   packages_dag_meta_table_index: '序号',
@@ -159,7 +157,7 @@ export default {
   packages_dag_migration_configpanel_moxing: '模型',
   packages_dag_migration_configpanel_peizhi: '配置',
   packages_dag_migration_consolepanel_quanburizhi: '全部日志',
-  packages_dag_migration_consolepanel_dangqianjiancefaxian: '当前检测共发现',
+  packages_dag_migration_consolepanel_dangqianjiancefaxian: '当前检测共发现，',
   packages_dag_migration_consolepanel_qingguanzhu: '请关注',
   packages_dag_migration_consolepanel_ge: '个',
   packages_dag_migration_settingpanel_dangrenwufuhe:
@@ -536,5 +534,21 @@ export default {
   packages_dag_src_editor_shaohouqidong: '稍后启动',
   packages_dag_src_editor_jixuqidong: '继续启动',
   packages_dag_src_editor_renwubaocunjianceshi:
-    '任务保存检测时发现了告警，可能会导致任务运行出现异常，建议您查看并解决告警后再启动任务'
+    '任务保存检测时发现了告警，可能会导致任务运行出现异常，建议您查看并解决告警后再启动任务',
+  packages_dag_monitor_leftsider_jibenxinxi: '基本信息',
+  packages_dag_nodes_aggregate_waicunpeizhi: '外存配置',
+  packages_dag_field_inference_main_tuiyanyichang: '推演异常',
+  packages_dag_field_inference_main_gengxintiaojianyi: '更新条件异常',
+  packages_dag_field_inference_main_quanbubiao: '全部表',
+  packages_dag_migration_settingpanel_zhuanweiputongC: '转为普通CDC模式',
+  packages_dag_migration_settingpanel_renwuzhijiebao: '任务直接报错停止',
+  packages_dag_migration_settingpanel_danggongxiangwajue: '当共享挖掘不可用时',
+  packages_dag_migration_settingpanel_danggongxiangwajuetooltip:
+    '可能出现的不可用的场景\n1. 数据连接里面没有打开开关\n2. 设置的起始时间比外存日志数据的第一条更早\n3. 挖掘任务报错停止',
+  packages_dag_field_inference_list_gaiziduanyingshe:
+    '该字段映射的目标数据类型为系统推测结果，该结果可能存在偏差，请检查并确认是否符合预期，并根据实际情况调整。',
+  packages_dag_field_inference_list_gaiziduanwufa: '该字段无法映射目标数据类型，将在数据写入时忽略该字段。',
+  packages_dag_field_inference_main_xuanzemorengeng:
+    '选择默认更新条件字段时默认优先按照主键字段关联，无主键的按照唯一索引字段关联，无主键且无唯一索引的按照全字段关联。选择指定字段时将按照指定更新条件字段进行关联',
+  packages_dag_nodes_table_zidingyichaxun: '自定义查询'
 }

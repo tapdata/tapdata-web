@@ -159,6 +159,9 @@ const liveDataPlatformApi = new LiveDataPlatform()
 import LDP from './LDP'
 const ldpApi = new LDP()
 
+import ShareCdcTableMetrics from './ShareCdcTableMetrics'
+const shareCdcTableMetricsApi = new ShareCdcTableMetrics()
+
 export {
   connectionsApi,
   databaseTypesApi,
@@ -211,6 +214,7 @@ export {
   externalStorageApi,
   proxyApi,
   paidApi,
+  shareCdcTableMetricsApi,
   liveDataPlatformApi,
   ldpApi
 }

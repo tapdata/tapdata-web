@@ -1894,5 +1894,9 @@ export default {
   daas_data_server_drawer_base_path: 'Base Path',
   daas_data_server_drawer_path: 'Path',
   daas_data_server_drawer_confirm_tip: 'This will re-generate the API path, do you wish to continue?',
-  daas_notification_center_yonghucaozuo: 'User action'
+  daas_notification_center_yonghucaozuo: 'User action',
+  daas_cluster_cluster_lianjieshuliang: 'Number of connections',
+  daas_cluster_cluster_mubiaoIPhe: 'Target IP and port',
+  daas_cluster_cluster_lianjiezongshu: 'Total number of connections',
+  daas_cluster_cluster_yinqingduiwaijian: 'The number of external connections established by the engine'
 }

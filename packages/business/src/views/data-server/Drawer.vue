@@ -397,7 +397,9 @@
               </ElSelect>
               <div>{{ urls[debugMethod] }}</div>
             </div>
-            <ElButton type="primary" size="mini" @click="debugData">{{ $t('public_button_submit') }}</ElButton>
+            <ElButton type="primary" size="mini" :disabled="debugDisabled" @click="debugData">{{
+              $t('public_button_submit')
+            }}</ElButton>
           </div>
         </template>
         <template v-if="tab === 'debug'">
@@ -440,7 +442,15 @@ import i18n from '@/i18n'
 import axios from 'axios'
 import { cloneDeep } from 'lodash'
 
-import { databaseTypesApi, connectionsApi, metadataInstancesApi, modulesApi, applicationApi, roleApi } from '@tap/api'
+import {
+  databaseTypesApi,
+  connectionsApi,
+  metadataInstancesApi,
+  modulesApi,
+  applicationApi,
+  roleApi,
+  workerApi
+} from '@tap/api'
 import { Drawer, VCodeEditor } from '@tap/component'
 import { uid } from '@tap/shared'
 
@@ -542,7 +552,9 @@ export default {
       templateType: 'java',
 
       token: '',
-      roles: []
+      roles: [],
+      workerStatus: '',
+      intervalId: 0
     }
   },
   computed: {
@@ -563,6 +575,17 @@ export default {
       }
       this.form.path = '/api/' + arr.join('/')
       return '/api/' + arr.join('/')
+    },
+
+    debugDisabled() {
+      return this.workerStatus !== 'running'
+    }
+  },
+  watch: {
+    visible(v) {
+      if (!v) {
+        this.intervalId && clearTimeout(this.intervalId)
+      }
     }
   },
   mounted() {
@@ -578,7 +601,9 @@ export default {
       this.debugMethod = 'GET'
       this.debugResult = ''
       this.allFields = []
+      this.workerStatus = ''
 
+      setTimeout(this.getWorkers, 2000)
       this.$refs?.form?.clearValidate()
       this.formatData(formData || {})
       if (!this.data.id) {
@@ -1014,6 +1039,42 @@ export default {
           this.debugResult = JSON.stringify(result?.data, null, 2)
         }
       }
+    },
+
+    getWorkers() {
+      let where = {
+        worker_type: 'api-server',
+        ping_time: {
+          gte: '$serverDate',
+          gte_offset: 30000
+        }
+      }
+      let filter = {
+        order: 'ping_time DESC',
+        limit: 1,
+        fields: {
+          worker_status: true
+        },
+        where
+      }
+      workerApi
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(data => {
+          if (data?.items?.length) {
+            const record = data.items[0] || {}
+            const workerStatus = record.workerStatus || record.worker_status || {}
+            if (this.status !== workerStatus.status) {
+              this.workerStatus = workerStatus.status
+            }
+          } else {
+            this.workerStatus = 'stop'
+          }
+        })
+        .finally(() => {
+          this.intervalId = setTimeout(this.getWorkers, 2000)
+        })
     }
   }
 }

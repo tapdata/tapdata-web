@@ -191,7 +191,10 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
           where: {
             status: 'ready',
             database_type: 'MongoDB',
-            connection_type: 'source_and_target'
+            connection_type: 'source_and_target',
+            createType: {
+              $ne: 'System'
+            }
           },
           fields: {
             name: 1,

@@ -1,6 +1,7 @@
 export default {
   // commonly used
   public_name: 'Name',
+  public_index: 'Index',
   public_type: 'Type',
   public_title: 'Title',
   public_status: 'Status',
@@ -12,6 +13,7 @@ export default {
   public_creator: 'Creator',
   public_update_time: 'Update time',
   public_change_time: 'Modification time',
+  public_serial_number: 'Serial number',
   // state
   public_status_ready: 'Valid',
   public_status_invalid: 'Invalid',
@@ -52,7 +54,7 @@ export default {
   public_button_preview: 'Preview',
   public_button_reload: 'Reload',
   public_button_restart: 'Restart',
-  public_button_start: 'start',
+  public_button_start: 'Start',
   public_button_stop: 'Stop',
   public_button_force_stop: 'Force stop',
   public_button_close: 'Close',
@@ -131,6 +133,13 @@ export default {
   public_time_last_day: 'Last 1 day',
   public_time_last_three_days: 'The last 3 days',
   public_time_custom_time: 'Custom time',
+  public_time_user_specified_time: 'User specified time',
+  public_time_current: 'Current Time',
+  // relation
+  public_or: 'or',
+  public_and: 'and',
+  // unit
+  public_unit_ge: '',
   // agent
   public_agent_name: 'Agent name',
   public_agent_button_create: 'Create Agent',
@@ -166,8 +175,12 @@ export default {
   public_connection_form_time_zone_of_time_type: 'Time zone of time type',
   public_connection_form_link_plugin_source: 'Link Plugin Source',
   // Task
-  public_task_name: 'Task name',
-  public_task_type: 'Task type',
+  public_task_name: 'Task Name',
+  public_task_type: 'Task Type',
+  public_task_type_migrate: 'Data Copy',
+  public_task_type_sync: 'Data Development',
+  public_task_type_heartbeat: 'Heartbeat Task',
+  public_task_type_log_collector: 'Shared Mining',
   public_task_type_initial_sync: 'INITIAL SYNC',
   public_task_type_cdc: 'CDC',
   public_task_type_initial_sync_and_cdc: 'INITIAL SYNC+CDC',
