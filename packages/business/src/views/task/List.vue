@@ -408,7 +408,7 @@ export default {
           }
         : {
             taskType: 80,
-            status: 100,
+            status: 110,
             operation: 280
           }
     }
@@ -955,7 +955,7 @@ export default {
       cause &&
         cause !==
           '\u6ca1\u6709\u53d1\u73b0\u60a8\u6700\u8fd1\u6709\u4efb\u52a1\u62a5\u9519, \u5982\u679c\u6709\u5176\u4ed6\u95ee\u9898, \u6b22\u8fce\u54a8\u8be2\u6211\u4eec\u7684\u4eba\u5de5\u5ba2\u670d' &&
-        this.$set(this.taskErrorCause, task_id, cause.replace(/\\\\n/g, '\n').replace(/(\n)+$/g, ''))
+        this.$set(this.taskErrorCause, task_id, cause.replace(/\\n/g, '\n').replace(/(\n)+$/g, ''))
     }
   }
 }
