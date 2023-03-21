@@ -299,7 +299,8 @@ export default {
             id: item.id,
             name: item.name,
             label: `${item.name} ${item.status ? `(${CONNECTION_STATUS_MAP[item.status]?.text || item.status})` : ''}`,
-            value: item.id
+            value: item.id,
+            databaseType: item.database_type
           }
         })
 
@@ -473,7 +474,9 @@ export default {
               sourceConnectionId: el.connectionId,
               sourceConnectionName: el.attrs?.connectionName,
               targetConnectionId: targetNode.connectionId,
-              targetConnectionName: targetNode.attrs?.connectionName
+              targetConnectionName: targetNode.attrs?.connectionName,
+              sourceDatabaseType: el.databaseType,
+              targetDatabaseType: targetNode.databaseType
             })
           }
         })
@@ -577,7 +580,9 @@ export default {
               sourceConnectionId,
               targetConnectionId,
               sourceConnectionName,
-              targetConnectionName
+              targetConnectionName,
+              sourceDatabaseType,
+              targetDatabaseType
             } = m
             const getAllTablesInNodeSource = this.getAllTablesInNode(source)
             const getAllTablesInNodeTarget = this.getAllTablesInNode(target)
@@ -589,6 +594,7 @@ export default {
               let item = this.getItemOptions()
               item.source.nodeId = source
               item.source.nodeName = sourceName
+              item.source.databaseType = sourceDatabaseType
               item.source.connectionId = `${source}/${sourceConnectionId}`
               item.source.connectionName = `${sourceName} / ${sourceConnectionName}`
               item.source.table = findTable.original_name
@@ -597,6 +603,7 @@ export default {
 
               item.target.nodeId = target
               item.target.nodeName = targetName
+              item.target.databaseType = targetDatabaseType
               item.target.connectionId = `${target}/${targetConnectionId}`
               item.target.connectionName = `${targetName} / ${targetConnectionName}`
               item.target.table = findTargetTable.original_name
@@ -669,6 +676,7 @@ export default {
       if (this.taskId) {
         item.nodeName = item.connectionName?.split(' / ')?.[0]
       }
+      item.databaseType = val?.databaseType
     },
 
     handleChangeTable(val, item, index, type) {
@@ -687,12 +695,14 @@ export default {
       const sourceNode = this.flowStages.find(t => t.id === item.source.nodeId)
       const targetNodeId = sourceNode?.outputLanes?.[0]
       const targetNode = this.flowStages.find(t => t.id === targetNodeId)
+      item.source.databaseType = sourceNode.databaseType
       if (!targetNode) return
 
       const nodeId = targetNode.id
       const nodeName = targetNode.name
       const connectionId = targetNode.connectionId
       const connectionName = targetNode.attrs?.connectionName
+      item.target.databaseType = targetNode.databaseType
       item.target.nodeId = nodeId
       item.target.nodeName = nodeName
       item.target.connectionId = `${nodeId}/${connectionId}`
