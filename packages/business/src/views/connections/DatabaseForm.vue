@@ -687,12 +687,12 @@ export default {
       END.properties.__TAPDATA.properties.heartbeatObject = {
         type: 'void',
         'x-component': 'Space',
+        title: i18n.t('packages_business_connections_databaseform_kaiqixintiaobiao'),
+        'x-decorator': 'FormItem',
         properties: {
           heartbeatEnable: {
             type: 'boolean',
             default: false,
-            title: i18n.t('packages_business_connections_databaseform_kaiqixintiaobiao'),
-            'x-decorator': 'FormItem',
             'x-decorator-props': {
               tooltip: i18n.t('packages_business_connections_databaseform_dakaixintiaobiao')
             },
@@ -711,7 +711,6 @@ export default {
           },
           heartbeatLink: {
             type: 'void',
-            'x-decorator': 'FormItem',
             'x-decorator-props': {
               colon: false
             },
