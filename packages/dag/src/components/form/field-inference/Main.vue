@@ -51,7 +51,7 @@
                 v-if="item.matchedDataTypeLevel === 'error'"
                 placement="top"
                 transition="tooltip-fade-in"
-                content="该表存在不止的数据类型"
+                :content="$t('packages_dag_field_inference_main_gaibiaocunzaibu')"
                 class="mr-1"
               >
                 <VIcon size="16" class="color-warning">warning</VIcon>

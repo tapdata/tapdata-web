@@ -550,5 +550,6 @@ export default {
   packages_dag_field_inference_list_gaiziduanwufa: '该字段无法映射目标数据类型，将在数据写入时忽略该字段。',
   packages_dag_field_inference_main_xuanzemorengeng:
     '选择默认更新条件字段时默认优先按照主键字段关联，无主键的按照唯一索引字段关联，无主键且无唯一索引的按照全字段关联。选择指定字段时将按照指定更新条件字段进行关联',
-  packages_dag_nodes_table_zidingyichaxun: '自定义查询'
+  packages_dag_nodes_table_zidingyichaxun: '自定义查询',
+  packages_dag_field_inference_main_gaibiaocunzaibu: '该表存在不止的数据类型'
 }
