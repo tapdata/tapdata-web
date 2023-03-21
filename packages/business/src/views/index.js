@@ -18,6 +18,9 @@ import AlarmSetting from './setting/AlarmSetting'
 import AlarmNotification from './setting/AlarmNotification'
 import CustomNodeList from './custom-node/List'
 import SharedMiningList from './shared-mining/List'
+import CatalogView from './catalog/Catalogue'
+import ObjectList from './catalog/ObjectList'
+import DataServerList from './data-server/List'
 
 export {
   ConnectionForm,
@@ -39,7 +42,10 @@ export {
   AlarmSetting,
   AlarmNotification,
   CustomNodeList,
-  SharedMiningList
+  SharedMiningList,
+  CatalogView,
+  ObjectList,
+  DataServerList
 }
 
 export * from './connections/util'

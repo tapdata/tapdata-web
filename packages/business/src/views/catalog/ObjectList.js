@@ -1,16 +1,14 @@
-import { defineComponent, reactive, ref, computed, watch, onMounted } from '@vue/composition-api'
-import i18n from '@/i18n'
-import { FilterBar, Drawer } from '@tap/component'
-import { TablePage } from '@tap/business'
-import DrawerContent from './PreviewDrawer'
-import { useMessage } from '@/hooks'
+import { defineComponent, reactive, ref, watch, onMounted } from '@vue/composition-api'
+import i18n from '@tap/i18n'
 import { discoveryApi } from '@tap/api'
+import { FilterBar, Drawer } from '@tap/component'
+import { TablePage } from '../../index'
+import DrawerContent from './PreviewDrawer'
 import './index.scss'
 
 export default defineComponent({
   props: [''],
   setup(props, { refs, root }) {
-    const { success } = useMessage()
     const list = ref([])
     const { category, type, sourceCategory, sourceType, queryKey } = root.$route.query || {}
     const data = reactive({
@@ -54,7 +52,6 @@ export default defineComponent({
       })
     }
     const rest = () => {
-      // @ts-ignore
       refs.table.fetch(1)
     }
     //请求筛选条件-下拉列表
@@ -109,7 +106,7 @@ export default defineComponent({
     //打开对象概览
     const handlePreview = row => {
       data.isShowDetails = true
-      // @ts-ignore
+
       refs.drawerContent.loadData(row)
     }
     const closeDrawer = val => {
@@ -133,19 +130,16 @@ export default defineComponent({
     watch(
       () => root.$route.query,
       val => {
-        // @ts-ignore
         refs.table.fetch(1)
       }
     )
     onMounted(() => {
-      // @ts-ignore
       refs.table.fetch(1)
     })
     loadFilterList()
     return {
       data,
       list,
-      success,
       loadData,
       renderNode,
       closeDrawer,

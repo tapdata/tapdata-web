@@ -14,7 +14,7 @@
       :expand-on-click-node="false"
       :allow-drag="checkAllowDrag"
       :allow-drop="checkAllowDrop"
-      @node-click="nodeClickHandler"
+      @node-click="handleNodeClick"
       @node-drag-start="handleDragStart"
       @node-drop="handleDrop"
       @node-expand="handleNodeExpand"
@@ -67,9 +67,10 @@
 import i18n from '@tap/i18n'
 
 import { VIcon, VirtualTree } from '@tap/component'
-import { metadataDefinitionsApi, userGroupsApi, discoveryApi } from '@tap/api'
+import { metadataDefinitionsApi, userGroupsApi, discoveryApi, connectionsApi, metadataInstancesApi } from '@tap/api'
 import Cookie from '@tap/shared/src/cookie'
 
+import { DatabaseIcon } from '../components'
 import { makeDragNodeImage } from '../shared/classification'
 export default {
   name: 'ClassificationTree',
@@ -85,7 +86,8 @@ export default {
       type: Object,
       default: () => ({})
     },
-    showViewDetails: Boolean
+    showViewDetails: Boolean,
+    renderIcon: Function
   },
 
   components: { VirtualTree },
@@ -122,6 +124,7 @@ export default {
       parent_id: '',
       title: '',
       iconMap: {
+        folder: 'folder-outline',
         table: 'table',
         defaultApi: 'apiServer_navbar'
       }
@@ -142,13 +145,9 @@ export default {
   },
   methods: {
     renderContent(h, { node, data, store }) {
-      let icon = 'folder-outline'
+      let icon = this.renderIcon(data)
 
-      if (data.isObject) {
-        icon = this.iconMap[data.type]
-      }
-
-      if (data.objCount > 0) {
+      if (!data.parent_id || data.isLeaf === false) {
         node.isLeaf = false
       }
 
@@ -156,6 +155,9 @@ export default {
         <div
           class="custom-tree-node"
           on={{
+            dblclick: ev => {
+              console.log('dblclick', ev) // eslint-disable-line
+            },
             dragenter: ev => {
               ev.stopPropagation()
               this.handleTreeDragEnter(ev, data, node)
@@ -174,7 +176,7 @@ export default {
             }
           }}
         >
-          <div class="tree-item-icon flex align-center mr-2">{icon && <VIcon size="18">{icon}</VIcon>}</div>
+          <div class="tree-item-icon flex align-center mr-2">{icon}</div>
           <span class="table-label" title={data.name}>
             {data.name}
           </span>
@@ -243,16 +245,29 @@ export default {
       )
     },
 
-    nodeClickHandler(data) {
+    handleNodeClick(data, node) {
       let { currentNode = {} } = this
-      if (data.id === currentNode.id || data.isObject) return
+
+      if (data.id === currentNode.id) return
+      if (!data.isObject) this.handleNodeExpand(data, node)
+
       this.currentNode = data
-      this.emitCheckedNodes(data)
+      this.emitCheckedNodes(data, node)
+      console.log('node', node) // eslint-disable-line
     },
 
-    emitCheckedNodes(node) {
-      if (!node) return
-      this.$emit('nodeChecked', node)
+    setCurrent(data, expand) {
+      let key = data.id
+      const node = this.$refs.tree.getNode(key)
+      this.$refs.tree.setCurrentKey(key)
+      this.handleNodeClick(data, node)
+
+      if (expand && !data.isObject) this.expandedKeys = [key]
+    },
+
+    emitCheckedNodes(data, node) {
+      if (!data) return
+      this.$emit('nodeChecked', data, node)
     },
 
     getData(cb) {
@@ -263,7 +278,7 @@ export default {
       let filter = {
         where,
         fields: {
-          id: 1,
+          /*id: 1,
           item_type: 1,
           last_updated: 1,
           value: 1,
@@ -271,7 +286,7 @@ export default {
           parent_id: 1,
           desc: 1,
           readOnly: 1,
-          user_id: 1
+          user_id: 1*/
         }
       }
       this.loadingTree = true
@@ -280,37 +295,27 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(data => {
+          const ORDER = {
+            source: 1,
+            fdm: 2,
+            mdm: 3,
+            target: 4
+          }
           let items = data?.items || []
           let treeData = this.formatData(items)
 
-          this.treeData = [
-            {
-              name: '所有目录',
-              isRoot: true,
-              readOnly: true,
-              children: treeData
-            }
-          ]
+          treeData.sort((a, b) => {
+            let aType = a.item_type[0]
+            let bType = b.item_type[0]
+            return ORDER[aType] - ORDER[bType]
+          })
 
-          /*this.treeData =
-            this.isDaas && Cookie.get('isAdmin')
-              ? [
-                  {
-                    name: '所有目录',
-                    isRoot: true,
-                    readOnly: true,
-                    children: treeData
-                  }
-                ]
-              : treeData*/
+          this.treeData = treeData
 
           cb && cb(items)
-          //默认选中第一个
+
           this.$nextTick(() => {
-            let key = treeData?.[0]?.id
-            this.expandedKeys = [key]
-            this.$refs.tree.setCurrentKey(key)
-            this.emitCheckedNodes(treeData?.[0])
+            this.setCurrent(this.treeData[0], true)
           })
         })
         .finally(() => {
@@ -324,41 +329,40 @@ export default {
     },
     //格式化分类数据
     formatData(items) {
-      const userId = this.isDaas ? Cookie.get('user_id') : window.__USER_INFO__.userId
       if (items && items.length) {
-        let map = {}
-        let nodes = []
-
-        //遍历第一次， 先把所有子类按照id分成若干数组
-        items.forEach(it => {
-          it.name = it.value
-          it.isLeaf = it.objCount === 0
-          if (it.parent_id) {
-            let children = map[it.parent_id] || []
-            children.push(it)
-            map[it.parent_id] = children
-          } else {
-            //默认目录国际化
-            if (it?.item_type && it?.item_type.findIndex(t => t === 'default') > -1) {
-              it.name = i18n.t('packages_component_src_discoveryclassification_morenmuluji')
-              if (it?.userName && it?.user_id !== userId) {
-                it.name += `| ${it.userName}`
-              }
-            }
-            nodes.push(it)
-          }
-        })
-        //接着从没有子类的数据开始递归，将之前分好的数组分配给每一个类目
-        let checkChildren = nodes => {
+        const map = {}
+        const nodes = []
+        const setChildren = nodes => {
           return nodes.map(it => {
             let children = map[it.id]
             if (children) {
-              it.children = checkChildren(children)
+              it.children = setChildren(children)
             }
             return it
           })
         }
-        return checkChildren(nodes)
+
+        items.forEach(it => {
+          it.LDP_TYPE = 'folder'
+          it.isLeaf = false
+          it.children = []
+          if (it.parent_id) {
+            let children = map[it.parent_id] || []
+            children.push(it)
+            map[it.parent_id] = children
+            it.name = it.value
+          } else {
+            const itemType = it.item_type[0]
+            const TYPE2NAME = {
+              target: 'TARGET&SERVICE'
+            }
+            it.name = TYPE2NAME[itemType] || it.value
+            it.readOnly = itemType !== 'mdm'
+            nodes.push(it)
+          }
+        })
+
+        return setChildren(nodes)
       }
     },
     filterNode(value, data) {
@@ -634,10 +638,10 @@ export default {
           objCategory: t.category
         }
       })
-      await discoveryApi.patchTags({
+      /*await discoveryApi.patchTags({
         tagBindingParams,
         tagIds: [from]
-      })
+      })*/
       await discoveryApi.postTags({
         tagBindingParams,
         tagIds: [to],
@@ -657,24 +661,37 @@ export default {
       }, 2000)
     },
 
-    async handleNodeExpand(data, node, el) {
+    async handleNodeExpand(data, node) {
       // 十秒内加载过资源，不再继续加载
       if (data.isRoot || (node.loadTime && Date.now() - node.loadTime < 10000)) return
 
       node.loadTime = Date.now()
-      const objects = await this.loadObjects(data)
+
+      let { LDP_TYPE } = data
+      let objects
+      let itemType = LDP_TYPE === 'connection' ? LDP_TYPE : data.item_type[0]
+
+      switch (itemType) {
+        case 'connection':
+          objects = await this.getTableList(data.id)
+          break
+        case 'source':
+          objects = await this.getConnectionList('source')
+          break
+        case 'target':
+          objects = await this.getConnectionList('target')
+          break
+        default:
+          objects = await this.loadObjects(data)
+      }
+
       console.log('handleNodeExpand', objects, data, node) // eslint-disable-line
       const childrenMap = data.children ? data.children.reduce((map, item) => ((map[item.id] = true), map), {}) : {}
       objects.forEach(item => {
         if (childrenMap[item.id]) return
         item.parent_id = data.id
-        item.isObject = true
         this.$refs.tree.append(item, node)
       })
-    },
-
-    handleCurrentChange() {
-      console.log('handleCurrentChange', ...arguments) // eslint-disable-line
     },
 
     loadObjects(node) {
@@ -682,15 +699,65 @@ export default {
         page: 1,
         pageSize: 10000,
         tagId: node.id,
-        range: 'current',
-        fields: {
-          allTags: 1
-        }
+        range: 'current'
       }
       return discoveryApi.discoveryList(where).then(res => {
-        let { total, items } = res
-        return res.items
+        return res.items.map(item =>
+          Object.assign(item, {
+            isLeaf: true,
+            isObject: true,
+            connectionId: item.sourceConId,
+            LDP_TYPE: 'table'
+          })
+        )
       })
+    },
+
+    async getConnectionList(type) {
+      let filter = {
+        limit: 999,
+        where: {
+          connection_type: {
+            in: ['source_and_target', type]
+          }
+        }
+      }
+      const res = await connectionsApi.get({
+        filter: JSON.stringify(filter)
+      })
+
+      return res.items.map(t => {
+        const { status, loadCount = 0, tableCount = 0 } = t
+        const disabled = status !== 'ready'
+        return {
+          ...t,
+          progress: !tableCount ? 0 : Math.round((loadCount / tableCount) * 10000) / 100,
+          children: [],
+          disabled,
+          LDP_TYPE: 'connection',
+          readOnly: true,
+          isLeaf: false,
+          isObject: false
+        }
+      })
+    },
+
+    async getTableList(id) {
+      const res = await metadataInstancesApi.getSourceTablesValues(id)
+      return res.map(t => {
+        return {
+          id: t.tableId,
+          name: t.tableName,
+          connectionId: id,
+          isLeaf: true,
+          isObject: true,
+          LDP_TYPE: 'table'
+        }
+      })
+    },
+
+    handleCurrentChange(data, node) {
+      console.log('handleCurrentChange', data, node) // eslint-disable-line
     }
   }
 }

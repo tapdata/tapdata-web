@@ -1,5 +1,5 @@
 <template>
-  <component :is="tag" v-if="visible" class="sw-table-drawer" :visible.sync="visible" width="850px" v-loading="loading">
+  <div v-loading="loading">
     <header v-if="detailData">
       <div class="mb-4">
         <span class="table-name inline-block">{{ detailData.name }}</span>
@@ -21,7 +21,7 @@
       >
     </header>
     <section class="mt-6">
-      <el-tabs v-model="activeName" @tab-click="handleTab">
+      <el-tabs v-model="activeName">
         <el-tab-pane label="OverView" name="overView">
           <section class="mt-2">
             <div class="mb-4">
@@ -37,7 +37,7 @@
             <el-row>
               <el-col :span="4">
                 <div class="table-dec-label">Rows</div>
-                <div class="table-dec-txt mt-4">{{ numOfRows || '-' }}</div>
+                <div class="table-dec-txt mt-4">{{ numOfRows }}</div>
               </el-col>
               <el-col :span="4">
                 <div class="table-dec-label">Columns</div>
@@ -45,7 +45,7 @@
               </el-col>
               <el-col :span="4">
                 <div class="table-dec-label">Storage Size</div>
-                <div class="table-dec-txt mt-4">{{ storageSize || '-' }}</div>
+                <div class="table-dec-txt mt-4">{{ storageSize }}</div>
               </el-col>
               <el-col :span="6">
                 <div class="table-dec-label">Connection</div>
@@ -67,29 +67,28 @@
                 </VTable>
               </el-tab-pane>
               <el-tab-pane label="Sample Data" name="sampleData">
-                <VEmpty v-if="!sampleHeader.length"></VEmpty>
-                <el-table v-else :data="sampleData" v-loading="loadingSampleData" max-height="381px">
+                <el-table :data="sampleData" v-loading="loadingSampleData" max-height="381px">
                   <el-table-column type="index" label="#"></el-table-column>
                   <el-table-column v-for="(item, index) in sampleHeader" :key="index" :prop="item" :label="item">
                   </el-table-column> </el-table
               ></el-tab-pane>
             </el-tabs>
           </section>
-          <!--          <section class="mt-6">-->
-          <!--            <div class="change-history mb-4">Change History</div>-->
-          <!--            <ul>-->
-          <!--              <li>-->
-          <!--                <span>2023-02-03 12:21:34</span>-->
-          <!--                <span class="ml-8">Lucy</span>-->
-          <!--                <span class="ml-8">新增了标签603</span>-->
-          <!--              </li>-->
-          <!--              <li class="mt-2">-->
-          <!--                <span>2023-02-03 12:21:34</span>-->
-          <!--                <span class="ml-8">Lucy</span>-->
-          <!--                <span class="ml-8">新增了标签603</span>-->
-          <!--              </li>-->
-          <!--            </ul>-->
-          <!--          </section>-->
+          <section class="mt-6">
+            <div class="change-history mb-4">Change History</div>
+            <ul>
+              <li>
+                <span>2023-02-03 12:21:34</span>
+                <span class="ml-8">Lucy</span>
+                <span class="ml-8">新增了标签603</span>
+              </li>
+              <li class="mt-2">
+                <span>2023-02-03 12:21:34</span>
+                <span class="ml-8">Lucy</span>
+                <span class="ml-8">新增了标签603</span>
+              </li>
+            </ul>
+          </section>
         </el-tab-pane>
         <el-tab-pane label="Schema" name="schema">
           <VTable class="discovery-page-table" :columns="columns" :data="tableFields" :has-pagination="false">
@@ -98,28 +97,19 @@
         </el-tab-pane>
         <el-tab-pane label="Tasks" name="tasks">
           <div class="flex justify-content-between mb-4">
-            <span>以这个模型源/目标的任务</span
-            ><span class="color-primary cursor-pointer" @click="handleCreateTask">Create Task</span>
+            <span>以这个模型源/目标的任务</span><span class="color-primary">Create Task</span>
           </div>
           <el-table class="discovery-page-table" :data="taskData" :has-pagination="false">
-            <el-table-column :label="$t('public_task_name')" prop="name" width="200px" show-overflow-tooltip>
-              <template #default="{ row }">
-                <span class="dataflow-name link-primary flex">
-                  <ElLink
-                    role="ellipsis"
-                    type="primary"
-                    class="justify-content-start ellipsis block"
-                    :class="['name', { 'has-children': row.hasChildren }]"
-                    @click.stop="handleClickName(row)"
-                    >{{ row.name }}</ElLink
-                  >
-                </span>
-              </template>
-            </el-table-column>
+            <el-table-column
+              :label="$t('public_task_name')"
+              prop="name"
+              width="200px"
+              show-overflow-tooltip
+            ></el-table-column>
             <el-table-column :label="$t('public_task_type')">
               <template #default="{ row }">
                 <span>
-                  {{ getTaskType(row.type) }}
+                  {{ row.type ? taskType[row.type] : '' }}
                 </span>
               </template>
             </el-table-column>
@@ -150,46 +140,22 @@
             </el-table-column>
           </el-table>
         </el-tab-pane>
-        <el-tab-pane label="APIs" name="apis">
-          <VTable
-            v-if="activeName === 'apis'"
-            ref="table"
-            :columns="apisColumns"
-            :remoteMethod="getApisData"
-            height="100%"
-            class="mt-4"
-          >
-            <template #status="{ row }">
-              <span class="status-block" :class="'status-' + row.status">{{ row.statusFmt }}</span>
-            </template>
-          </VTable>
-        </el-tab-pane>
-        <!--        <el-tab-pane label="Lineage" name="lineage">APIs</el-tab-pane>-->
+        <el-tab-pane label="APIs" name="apis">APIs</el-tab-pane>
+        <el-tab-pane label="Lineage" name="lineage">APIs</el-tab-pane>
       </el-tabs>
     </section>
-  </component>
+  </div>
 </template>
 
 <script>
-import { cloneDeep } from 'lodash'
-
-import { Drawer, VTable, VEmpty } from '@tap/component'
-import { calcUnit } from '@tap/shared'
-import { discoveryApi, proxyApi, taskApi, metadataInstancesApi, modulesApi } from '@tap/api'
-import i18n from '@/i18n'
+import { VTable } from '@tap/component'
+import { discoveryApi, proxyApi, taskApi, metadataInstancesApi } from '@tap/api'
+import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
-import { TaskStatus } from '../../components'
-import { TASK_TYPE_MAP } from '../../shared'
-
+import TaskStatus from './TaskStatus'
 export default {
   name: 'TablePreview',
-  props: {
-    tag: {
-      type: String,
-      default: 'Drawer'
-    }
-  },
-  components: { Drawer, VTable, TaskStatus, VEmpty },
+  components: { VTable, TaskStatus },
   data() {
     return {
       visible: false,
@@ -218,9 +184,7 @@ export default {
       columns: [
         {
           label: i18n.t('public_name'),
-          prop: 'name',
-          className: 'text-nowrap',
-          minWidth: 120
+          prop: 'name'
         },
         {
           label: i18n.t('public_type'),
@@ -262,85 +226,25 @@ export default {
       taskData: [],
       storageSize: '',
       numOfRows: '',
+      taskType: {
+        initial_sync: this.$t('public_task_type_initial_sync'),
+        cdc: this.$t('public_task_type_cdc'),
+        'initial_sync+cdc': this.$t('public_task_type_initial_sync') + '+' + this.$t('public_task_type_cdc')
+      },
       tableStatus: '',
       cdcDelayTime: '',
       lastDataChangeTime: '',
       statusMap: {
-        error: i18n.t('public_status_error'),
-        draft: i18n.t('public_status_wait_run'),
-        normal: i18n.t('public_status_renew_normal')
-      },
-      apisColumns: [
-        {
-          label: 'api服务名称',
-          prop: 'name'
-        },
-        {
-          label: '服务状态',
-          prop: 'status',
-          slotName: 'status'
-        },
-        {
-          label: '访问次数',
-          prop: 'visitCount',
-          default: 0
-        },
-        {
-          label: 'API访问行数',
-          prop: 'visitLine',
-          default: 0
-        },
-        {
-          label: 'API传输总量',
-          prop: 'transitQuantityLabel',
-          default: 0
-        },
-        {
-          label: '最后访问时间',
-          prop: 'last_updated',
-          dataType: 'time',
-          width: 160
-        }
-      ],
-      statusOptions: [
-        {
-          label: i18n.t('public_select_option_all'),
-          value: ''
-        },
-        {
-          label: i18n.t('modules_active'),
-          value: 'active'
-        },
-        {
-          label: i18n.t('modules_pending'),
-          value: 'pending'
-        },
-        {
-          label: i18n.t('api_monitor_total_api_list_status_generating'),
-          value: 'generating'
-        }
-      ],
-      selected: {}
+        error: this.$t('public_status_error'),
+        draft: this.$t('public_status_wait_run'),
+        normal: this.$t('public_status_renew_normal')
+      }
     }
   },
   methods: {
-    init() {
-      this.detailData = {}
-      this.tableFields = []
-      this.sampleData = []
-      this.sampleHeader = []
-      this.taskData = []
-      this.storageSize = ''
-      this.numOfRows = ''
-      this.tableStatus = ''
-      this.cdcDelayTime = ''
-      this.lastDataChangeTime = ''
-    },
     open(row) {
-      this.init()
       this.visible = true
       this.connectionId = row.connectionId
-      this.selected = cloneDeep(row)
       this.getTableStorage(row)
     },
     getTableStorage(row) {
@@ -382,8 +286,7 @@ export default {
         .then(res => {
           this.sampleData = res?.sampleData
           this.sampleHeader = Object.keys(this.sampleData.reduce((o, c) => Object.assign(0, c))) || []
-          // this.storageSize = Math.floor(res?.tableInfo?.storageSize / 1024) || 0
-          this.storageSize = calcUnit(res?.tableInfo?.storageSize || 0, 1)
+          this.storageSize = Math.floor(res?.tableInfo?.storageSize / 1024) || 0
           this.numOfRows = res?.tableInfo?.numOfRows || 0
         })
         .finally(() => {
@@ -397,7 +300,7 @@ export default {
     saveTableDesc() {
       metadataInstancesApi.updateTableDesc({
         id: this.detailData.id,
-        description: this.detailData.description
+        description: this.detailData.comment
       })
     },
     //获取表状态
@@ -408,63 +311,6 @@ export default {
         this.lastDataChangeTime = res?.lastDataChangeTime
           ? dayjs(res?.lastDataChangeTime).format('YYYY-MM-DD HH:mm:ss')
           : '-'
-      })
-    },
-    handleTab(item) {
-      switch (item.name) {
-        case 'apis':
-          break
-      }
-    },
-    getApisData() {
-      const { connectionId, name } = this.selected || {}
-
-      return modulesApi.apiList({ connectionId, tableName: name }).then(data => {
-        return {
-          total: data.total || 0,
-          data:
-            data.items?.map(t => {
-              t.statusFmt = this.statusOptions.find(it => it.value === t.status)?.label || '-'
-              t.transitQuantityLabel = calcUnit(t.transitQuantity, 1)
-              return t
-            }) || []
-        }
-      })
-    },
-
-    handleCreateTask() {
-      this.$router.push({
-        name: 'MigrateCreate'
-      })
-    },
-
-    getTaskType(type) {
-      return TASK_TYPE_MAP[type] || ''
-    },
-
-    openRoute(route, newTab = true) {
-      if (newTab) {
-        window.open(this.$router.resolve(route).href)
-      } else {
-        this.$router.push(route)
-      }
-    },
-
-    handleClickName(row) {
-      if (this.$disabledReadonlyUserBtn()) return
-      let routeName
-
-      if (!['edit', 'wait_start'].includes(row.status)) {
-        routeName = row.syncType === 'migrate' ? 'MigrationMonitor' : 'TaskMonitor'
-      } else {
-        routeName = row.syncType === 'migrate' ? 'MigrateEditor' : 'DataflowEditor'
-      }
-
-      this.openRoute({
-        name: routeName,
-        params: {
-          id: row.id
-        }
       })
     }
   }

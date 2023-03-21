@@ -142,5 +142,9 @@ export default class MetadataInstances extends Http {
   pageTables(params) {
     return this.axios.get(this.url + '/page-tables', { params })
   }
+  //更新表描述
+  updateTableDesc(params) {
+    return this.axios.post(this.url + '/updateTableDesc', params)
+  }
 }
 export { MetadataInstances }

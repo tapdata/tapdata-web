@@ -104,6 +104,26 @@ const SharedMiningList = async () => {
   return SharedMiningList
 }
 
+const SwimlaneDashboard = async () => {
+  const { SwimlaneDashboard } = await import('@tap/business')
+  return SwimlaneDashboard
+}
+
+const CatalogView = async () => {
+  const { CatalogView } = await import('@tap/business')
+  return CatalogView
+}
+
+const ObjectList = async () => {
+  const { ObjectList } = await import('@tap/business')
+  return ObjectList
+}
+
+const DataServerList = async () => {
+  const { DataServerList } = await import('@tap/business')
+  return DataServerList
+}
+
 export default [
   {
     path: '/login',
@@ -321,7 +341,7 @@ export default [
           {
             path: '',
             name: 'objectList',
-            component: () => import(/* webpackChunkName: "connection-list" */ '@/views/data-discovery/ObjectList.tsx'),
+            component: ObjectList,
             meta: {
               title: 'page_title_data_object',
               code: 'v2_data_object'
@@ -342,7 +362,7 @@ export default [
           {
             path: '',
             name: 'catalogueList',
-            component: () => import(/* webpackChunkName: "connection-list" */ '@/views/data-discovery/Catalogue.tsx'),
+            component: CatalogView,
             meta: {
               title: 'page_title_data_catalogue',
               code: 'v2_data_catalogue'
@@ -699,7 +719,7 @@ export default [
       {
         path: '/data-server',
         name: 'dataServer',
-        component: () => import(/* webpackChunkName: "data-server" */ '@/views/data-server/List.vue'),
+        component: DataServerList,
         meta: {
           title: 'page_title_data_server_list',
           code: 'v2_data-server-list'
@@ -974,6 +994,16 @@ export default [
         meta: {
           title: 'daas_router_routes_guanlianrenwuxiang',
           hideTitle: true
+        }
+      },
+      {
+        path: '/data-console',
+        name: 'dataConsole',
+        component: SwimlaneDashboard,
+        meta: {
+          title: 'dfs_data_server',
+          hideTitle: true,
+          icon: 'data-server'
         }
       }
     ]

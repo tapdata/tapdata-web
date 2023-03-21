@@ -13,7 +13,7 @@
         <div
           v-for="item in list"
           :key="item.id"
-          class="wrap__item rounded-2 mb-3"
+          class="wrap__item rounded-4 mb-3"
           @dragover="handleDragOver"
           @dragenter.stop="handleDragEnter"
           @dragleave.stop="handleDragLeave"
@@ -21,11 +21,7 @@
         >
           <template v-if="item.type === 'service'">
             <div class="item__header flex p-3">
-              <ElImage
-                style="width: 20px; height: 20px"
-                class="item__icon mt-1 flex-shrink-0"
-                :src="$util.getConnectionTypeDialogImg('rest api')"
-              />
+              <ElImage style="width: 20px; height: 20px" class="item__icon mt-1 flex-shrink-0" :src="restApiIcon" />
               <div class="flex-fill ml-2">
                 <div class="flex justify-content-between">
                   <span class="font-color-normal fw-sub fs-6">{{ item.name }}</span>
@@ -36,9 +32,13 @@
             <div class="item__content position-relative p-2">
               <div class="task-list">
                 <div class="task-list-content">
-                  <div v-for="api in item.apiList" key="{i}" class="task-list-item flex align-center">
+                  <div v-for="api in item.apiList" :key="api.name" class="task-list-item flex align-center">
                     <div class="p-1 ellipsis flex-1 align-center">
-                      <a class="el-link el-link--primary w-100 justify-content-start" title="{task.name}">
+                      <a
+                        class="el-link el-link--primary w-100 justify-content-start"
+                        title="{task.name}"
+                        @click="handleDetailApi(api)"
+                      >
                         <span class="ellipsis">{{ api.name }}</span>
                       </a>
                     </div>
@@ -52,12 +52,12 @@
           </template>
           <template v-else>
             <div class="item__header flex p-3">
-              <NodeIcon :node="item" :size="20" class="item__icon mt-1" />
-              <div class="flex-fill ml-2">
+              <DatabaseIcon :item="item" :size="20" class="item__icon mt-1" />
+              <div class="flex-1 ml-2 overflow-hidden">
                 <div class="flex justify-content-between">
-                  <span class="font-color-normal fw-sub fs-6">{{ item.name }}</span>
-                  <span class="operation-line">
-                    <VIcon size="16" class="cursor-pointer" @click="openView(item)">copy</VIcon>
+                  <span class="font-color-normal fw-sub fs-6 ellipsis" :title="item.name">{{ item.name }}</span>
+                  <span class="operation-line ml-2">
+                    <VIcon size="16" class="cursor-pointer" @click="$emit('preview', item)">view-details</VIcon>
                     <VIcon size="18" class="ml-3">setting</VIcon>
                   </span>
                 </div>
@@ -71,7 +71,7 @@
 
       <ElDialog :visible.sync="dialogConfig.visible" width="600" :close-on-click-modal="false">
         <span slot="title" style="font-size: 14px">{{ dialogConfig.title }}</span>
-        <ElForm ref="form" :model="dialogConfig" label-width="180px">
+        <ElForm ref="form" :model="dialogConfig" label-width="180px" @submit.prevent>
           <div class="pipeline-desc p-4 mb-4">{{ dialogConfig.desc }}</div>
           <ElFormItem label="Pipeline Name">
             <ElInput size="small" v-model="dialogConfig.taskName" maxlength="50" show-word-limit></ElInput>
@@ -84,38 +84,27 @@
           </ElButton>
         </span>
       </ElDialog>
-      <connectionPreview ref="targetconnectionView"></connectionPreview>
+      <CreateRestApi v-model="apiDialog.visible"></CreateRestApi>
+      <DataServerDrawer ref="drawer" :host="apiServerHost"></DataServerDrawer>
     </div>
   </div>
 </template>
 
 <script>
 import draggable from 'vuedraggable'
-
-import { connectionsApi, taskApi } from '@tap/api'
-import NodeIcon from '@tap/dag/src/components/NodeIcon'
-import connectionPreview from './connectionPreview'
-import { uuid } from '@tap/shared'
-
-import { makeStatusAndDisabled } from '../../shared'
-import { TaskStatus } from '../../components'
 import { defineComponent, ref } from '@vue/composition-api'
 
-const DEFAULT_SETTINGS = {
-  name: '', // 任务名称
-  desc: '', // 任务描述
-  type: 'initial_sync+cdc', // 任务类型：全量+增量
-  isAutoCreateIndex: true, // 自动创建索引
-  isOpenAutoDDL: false, // 自动DDL
-  increOperationMode: false, // 增量数据处理模式：批量,
-  increaseReadSize: 1, // 增量批次读取行数
-  processorThreadNum: 1, // 处理器线程数
-  shareCdcEnable: false, //开启共享挖掘
-  isSchedule: false,
-  cronExpression: ' ',
-  accessNodeType: 'AUTOMATIC_PLATFORM_ALLOCATION',
-  isAutoInspect: false
-}
+import { apiServerApi, connectionsApi, taskApi } from '@tap/api'
+import { uuid } from '@tap/shared'
+import { getIcon } from '@tap/assets'
+
+import { DatabaseIcon } from '../../components'
+import { makeStatusAndDisabled } from '../../shared'
+import { TaskStatus } from '../../components'
+import CreateRestApi from './components/CreateRestApi'
+import DataServerDrawer from '../data-server/Drawer'
+import { TASK_SETTINGS } from '../../shared'
+const restApiIcon = getIcon('rest api')
 
 const TaskList = defineComponent({
   props: ['list'],
@@ -176,10 +165,11 @@ export default {
     dragState: Object
   },
 
-  components: { NodeIcon, connectionPreview, TaskList, draggable },
+  components: { CreateRestApi, DatabaseIcon, TaskList, draggable, DataServerDrawer },
 
   data() {
     return {
+      restApiIcon,
       dragging: false,
       list: [],
       dialogConfig: {
@@ -189,7 +179,21 @@ export default {
         syncType: '',
         visible: false
       },
-      connectionTaskMap: {}
+      connectionTaskMap: {},
+      apiDialog: {
+        visible: false
+      },
+      apiServerHost: ''
+    }
+  },
+
+  computed: {
+    allowDrop() {
+      return (
+        this.dragState.isDragging &&
+        ['SOURCE', 'FDM', 'MDM'].includes(this.dragState.from) &&
+        ['connection', 'table'].includes(this.dragState.draggingObjects[0]?.data.LDP_TYPE)
+      )
     }
   },
 
@@ -202,6 +206,7 @@ export default {
       this.list = await this.getData()
       console.log('list', this.list) // eslint-disable-line
       this.loadTask(this.list)
+      this.getApiServerHost()
     },
 
     handleAdd() {
@@ -224,57 +229,10 @@ export default {
         filter: JSON.stringify(filter)
       })
 
-      return [
-        {
-          id: 'Product Catalog',
-          name: 'Product Catalog',
-          type: 'service',
-          apiList: [
-            {
-              name: 'API_ProductInventory'
-            },
-            {
-              name: 'API_IM_STATIC_REF'
-            }
-          ]
-        },
-        {
-          id: 'Discount',
-          name: 'Discount',
-          type: 'service',
-          apiList: [
-            {
-              name: 'API_bomCertificate'
-            }
-          ]
-        },
-        {
-          id: '业绩宝',
-          name: '业绩宝',
-          type: 'service',
-          apiList: [
-            {
-              name: 'API_marketingKeyword'
-            },
-            {
-              name: 'API_PC_refinement'
-            },
-            {
-              name: 'API_modelPriceGroup'
-            }
-          ]
-        },
-        {
-          id: 'POSS',
-          name: 'POSS',
-          type: 'service',
-          apiList: [
-            {
-              name: 'API_pos'
-            }
-          ]
-        }
-      ].concat(res.items)
+      return res.items.map(item => {
+        item.LDP_TYPE = 'connection'
+        return item
+      })
     },
 
     async loadTask(list) {
@@ -304,59 +262,71 @@ export default {
 
     handleDragEnter(ev) {
       ev.preventDefault()
-      if (this.dragging) return
+      if (this.dragging || !this.allowDrop) return
       const dropNode = this.findParentByClassName(ev.currentTarget, 'wrap__item')
       dropNode.classList.add('is-drop-inner')
     },
 
     handleDragLeave(ev) {
-      if (this.dragging) return
+      if (this.dragging || !this.allowDrop) return
+
       if (!ev.currentTarget.contains(ev.relatedTarget)) {
-        const dropNode = this.findParentByClassName(ev.currentTarget, 'wrap__item')
-        dropNode.classList.remove('is-drop-inner')
+        this.removeDropEffect(ev)
       }
+    },
+
+    removeDropEffect(ev, cls = 'wrap__item') {
+      const dropNode = this.findParentByClassName(ev.currentTarget, cls)
+      dropNode.classList.remove('is-drop-inner')
     },
 
     handleDrop(ev, item) {
       ev.preventDefault()
-      if (this.dragging || item.type === 'service') return
-      const dropNode = this.findParentByClassName(ev.currentTarget, 'wrap__item')
-      dropNode.classList.remove('is-drop-inner')
-      console.log('handleDrop', this.dragState, item) // eslint-disable-line
+      this.removeDropEffect(ev)
+
+      if (this.dragging) return
 
       const { draggingObjects } = this.dragState
       if (!draggingObjects.length) return
       const object = draggingObjects[0]
 
-      if (object.data.type === 'connection') {
-        this.dialogConfig.from = object.data
-        this.dialogConfig.to = item
-        this.dialogConfig.title = 'Create Migrate Pipeline'
-        this.dialogConfig.syncType = 'migrate'
-        this.dialogConfig.desc = `Tapdata will create a pipeline task to sync [ ${object.data.name} ] to [ ${item.name} ],  please click button below to continue. You can also change the pipeline name`
-      } else if (object.data.type === 'table') {
-        this.dialogConfig.from = object.parent.data
-        this.dialogConfig.tableName = object.data.name
-        this.dialogConfig.to = item
-        this.dialogConfig.title = 'Create Sync Pipeline'
-        this.dialogConfig.syncType = 'sync'
-        this.dialogConfig.desc = `Tapdata will create a pipeline task to sync [ ${object.data.name} ] from [ ${object.parent.data.name} ] to [ ${item.name} ],  please click button below to continue. You can also change the pipeline name`
-      }
+      if (item.type === 'service') {
+        this.showApiDialog()
+      } else {
+        if (!this.allowDrop) return
+        if (object.data.type === 'connection') {
+          this.dialogConfig.from = object.data
+          this.dialogConfig.to = item
+          this.dialogConfig.title = 'Create Migrate Pipeline'
+          this.dialogConfig.syncType = 'migrate'
+          this.dialogConfig.desc = `Tapdata will create a pipeline task to sync [ ${object.data.name} ] to [ ${item.name} ],  please click button below to continue. You can also change the pipeline name`
+        } else if (object.data.type === 'table') {
+          this.dialogConfig.from = object.parent.data
+          this.dialogConfig.tableName = object.data.name
+          this.dialogConfig.to = item
+          this.dialogConfig.title = 'Create Sync Pipeline'
+          this.dialogConfig.syncType = 'sync'
+          this.dialogConfig.desc = `Tapdata will create a pipeline task to sync [ ${object.data.name} ] from [ ${object.parent.data.name} ] to [ ${item.name} ],  please click button below to continue. You can also change the pipeline name`
+        }
 
-      this.showDialog()
+        this.showDialog()
+      }
+    },
+
+    showApiDialog() {
+      this.apiDialog.visible = true
     },
 
     makeMigrateTask(from, to) {
       let source = this.getDatabaseNode(from)
       let target = this.getDatabaseNode(to)
-
       Object.assign(source, {
         migrateTableSelectType: 'expression',
         tableExpression: '.*'
       })
 
       return {
-        ...DEFAULT_SETTINGS,
+        ...TASK_SETTINGS,
         syncType: 'migrate',
         name: this.dialogConfig.taskName,
         dag: {
@@ -407,7 +377,7 @@ export default {
       let source = this.getTableNode(fromConnection, tableName)
       let target = this.getTableNode(to, tableName)
       return {
-        ...DEFAULT_SETTINGS,
+        ...TASK_SETTINGS,
         name: this.dialogConfig.taskName,
         dag: {
           edges: [{ source: source.id, target: target.id }],
@@ -441,7 +411,7 @@ export default {
       taskInfo = this.mapTask(taskInfo)
 
       if (this.connectionTaskMap[to.id]) {
-        this.connectionTaskMap[to.id].push(taskInfo)
+        this.connectionTaskMap[to.id].unshift(taskInfo)
       } else {
         this.$set(this.connectionTaskMap, to.id, [taskInfo])
       }
@@ -476,6 +446,23 @@ export default {
     addItem(value) {
       this.list.unshift(value)
       this.loadTask([value])
+    },
+
+    async getApiServerHost() {
+      const showError = () => {
+        this.$message.error(this.$t('packages_business_data_server_list_huoqufuwuyu'))
+      }
+      const data = await apiServerApi.get().catch(() => {
+        showError()
+      })
+      this.apiServerHost = data?.items?.[0]?.clientURI || ''
+      if (!this.apiServerHost) {
+        showError()
+      }
+    },
+
+    handleDetailApi(row = {}) {
+      this.$refs.drawer.open(row)
     }
   }
 }
@@ -486,7 +473,7 @@ export default {
   border: 1px solid #e1e3e9;
 
   &:hover {
-    background-color: #f2f3f5;
+    //background-color: #f2f3f5;
   }
 
   &.is-drop-inner {
