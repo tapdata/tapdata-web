@@ -29,6 +29,7 @@
         :fdmConnection="fdmConnection"
         :mdmConnection="mdmConnection"
         :event-driver="eventDriver"
+        :loadingDirectory="loadingDirectory"
         @create-connection="handleAdd"
         @node-drag-end="handleDragEnd"
         @show-settings="handleSettings"
@@ -88,7 +89,7 @@ export default {
       directoryMap: {},
       fdmConnection: null,
       mdmConnection: null,
-
+      loadingDirectory: true,
       eventDriver: new EventEmitter()
     }
   },
@@ -173,8 +174,8 @@ export default {
       let filter = {
         where: {
           item_type: { $nin: ['database', 'dataflow', 'api'] }
-        },
-        fields: {
+        }
+        /*fields: {
           id: 1,
           item_type: 1,
           last_updated: 1,
@@ -184,7 +185,7 @@ export default {
           desc: 1,
           readOnly: 1,
           user_id: 1
-        }
+        }*/
       }
       this.loadingDirectory = true
       metadataDefinitionsApi

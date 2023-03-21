@@ -2,7 +2,6 @@ import { defineComponent, reactive, ref, watch, nextTick, onMounted } from '@vue
 import i18n from '@tap/i18n'
 import { VIcon, ProTable } from '@tap/component'
 import { makeDragNodeImage } from '../../index'
-import TableView from '../../components/TableView'
 import ClassificationTree from '../../components/ClassificationTree'
 import { DatabaseIcon } from '../../components'
 import TablePreview from '../swimlane/TablePreview'

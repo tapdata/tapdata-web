@@ -28,6 +28,7 @@
           highlight-current
           :data="treeData"
           draggable
+          :default-expanded-keys="expandedKeys"
           :render-content="renderContent"
           :render-after-expand="false"
           :expand-on-click-node="false"
@@ -76,7 +77,9 @@ export default {
     directory: Object,
     settings: Object,
     dragState: Object,
-    mdmConnection: Object
+    mdmConnection: Object,
+    eventDriver: Object,
+    loadingDirectory: Boolean
   },
 
   components: { VirtualTree },
@@ -91,7 +94,8 @@ export default {
         prefix: 'f_',
         tableName: null,
         newTableName: null
-      }
+      },
+      expandedKeys: []
     }
   },
 
@@ -109,18 +113,15 @@ export default {
   },
 
   watch: {
-    directory() {
-      console.log('watch:directory', ...arguments) // eslint-disable-line
-      this.$nextTick(() => {
-        this.handleNodeExpand(this.directory, this.$refs.tree.root)
-      })
-    },
-
-    'directory.id'() {
-      /*this.$nextTick(() => {
-        this.handleNodeExpand(this.directory, this.$refs.tree.root)
-      })*/
+    loadingDirectory(v) {
+      if (!v) {
+        this.setNodeExpand()
+      }
     }
+  },
+
+  mounted() {
+    // this.setNodeExpand()
   },
 
   methods: {
@@ -244,7 +245,11 @@ export default {
       try {
         await ldpApi.createMDMTask(task, { tagId })
         this.taskDialogConfig.visible = false
-        this.$emit('load-directory')
+        // this.$emit('load-directory')
+
+        setTimeout(() => {
+          this.setNodeExpand(tagId)
+        }, 1000)
         this.$message.success(this.$t('public_message_operation_success'))
       } catch (e) {
         console.log(e) // eslint-disable-line
@@ -306,6 +311,16 @@ export default {
         item.connectionId = item.sourceConId
         this.$refs.tree.append(item, node)
       })
+    },
+
+    setNodeExpand(tagId) {
+      if (tagId) {
+        const node = this.$refs.tree.getNode(tagId)
+        this.handleNodeExpand(node.data, node)
+        this.expandedKeys = [tagId]
+      } else {
+        this.directory?.id && this.handleNodeExpand(this.directory, this.$refs.tree.root)
+      }
     },
 
     loadObjects(node) {

@@ -28,6 +28,7 @@
           highlight-current
           :data="treeData"
           draggable
+          :default-expanded-keys="expandedKeys"
           :render-content="renderContent"
           :render-after-expand="false"
           :expand-on-click-node="false"
@@ -105,7 +106,8 @@ export default {
         prefix: 'f_',
         tableName: null
       },
-      creating: false
+      creating: false,
+      expandedKeys: []
     }
   },
 
@@ -243,6 +245,7 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
     },
 
     showTaskDialog() {
+      this.taskDialogConfig.prefix = 'f_'
       this.taskDialogConfig.visible = true
     },
 
@@ -254,7 +257,8 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
       try {
         await ldpApi.createFDMTask(task)
         this.taskDialogConfig.visible = false
-        this.$emit('load-directory')
+        // this.$emit('load-directory')
+        this.setNodeExpand()
         this.$message.success(this.$t('public_message_operation_success'))
       } catch (e) {
         console.log(e) // eslint-disable-line
@@ -458,6 +462,20 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
 
     handleDragEnd() {
       this.$emit('node-drag-end')
+    },
+
+    setNodeExpand() {
+      const target = this.treeData.find(item => item.linkId === this.taskDialogConfig.from.id)
+      if (target) {
+        setTimeout(() => {
+          const node = this.$refs.tree.getNode(target.id)
+          this.handleNodeExpand(node.data, node)
+          this.expandedKeys = [target.id]
+        }, 1000)
+      } else {
+        this.$emit('load-directory')
+      }
+      // this.taskDialogConfig.from
     }
   }
 }
