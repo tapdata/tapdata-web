@@ -383,7 +383,7 @@ export default {
     saveTableDesc() {
       metadataInstancesApi.updateTableDesc({
         id: this.detailData.id,
-        description: this.detailData.comment
+        description: this.detailData.description
       })
     },
     //获取表状态
