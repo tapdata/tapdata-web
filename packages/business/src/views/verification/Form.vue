@@ -531,10 +531,13 @@ export default {
             )
 
             const msg = {
-              field: this.$t('packages_business_verification_contentVerifyTip'),
-              jointField: this.$t('packages_business_verification_jointFieldTip')
+              field: this.$t('packages_business_verification_content_verify'),
+              jointField: this.$t('packages_business_verification_joint_verify')
             }
-            if (flag) return this.$message.error(msg[this.form.inspectMethod])
+            if (flag)
+              return this.$message.error(
+                msg[this.form.inspectMethod] + ', ' + this.$t('packages_business_verification_form_zanbuzhichi_doris')
+              )
           }
           if (!tasks.length) {
             return this.$message.error(this.$t('packages_business_verification_tasksVerifyCondition'))
