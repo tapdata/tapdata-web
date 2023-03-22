@@ -105,7 +105,7 @@
           </ul>
         </ElCol>
         <ElCol :span="6">
-          <div class="aside-main notice-list flex-grow-1 p-6">
+          <div class="aside-main notice-list flex-grow-1 p-4">
             <ul class="notice-list__list h-100 overflow-y-auto">
               <li
                 v-for="(item, index) in notices.slice(0, 5)"
@@ -804,7 +804,7 @@ export default {
 .notice-list__time {
   color: map-get($fontColor, light);
   white-space: nowrap;
-  width: 80px;
+  //width: 80px;
   text-align: right;
 }
 .guide-list {
