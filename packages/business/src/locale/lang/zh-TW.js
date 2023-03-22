@@ -490,11 +490,11 @@ export default {
   packages_business_verification_returnedData: '返回的data',
   packages_business_verification_sourceTableData: '源表數據',
   packages_business_verification_fastCountTip:
-    '快速count僅對源表和目標表的行數進行count校驗，速度極快，但是不會展示差異的具體字段內容。 ',
+    '快速count僅對源表和目標表的行數進行count校驗，速度極快，但是不會展示差異的具體字段內容。',
   packages_business_verification_contentVerifyTip:
-    '全表字段值校驗會對源表和目標表的全部字段進行逐行校驗，能查出所有字段的差異，但是速度慢。暫不支持Doris。 ',
+    '全表字段值校驗會對源表和目標表的全部字段進行逐行校驗，能查出所有字段的差異，但是速度慢。',
   packages_business_verification_jointFieldTip:
-    '關聯鍵校驗只對源表和目標表的關聯字段的值進行比對校驗，速度快於全表字段值校驗模式。暫不支持Doris。',
+    '關聯鍵校驗只對源表和目標表的關聯字段的值進行比對校驗，速度快於全表字段值校驗模式。',
   packages_business_verification_waiting: '待校驗',
   packages_business_verification_scheduling: '校驗啟動中',
   packages_business_verification_error: '校驗失敗',
