@@ -22,7 +22,7 @@ const _axios = axios.create({
 })
 
 const getPendingKey = config => {
-  let { url, method, params } = config
+  let { url, method, data, params } = config
   let headers = {}
   for (const key in config.headers) {
     let value = config.headers[key]
@@ -33,6 +33,7 @@ const getPendingKey = config => {
   let key = JSON.stringify({
     url,
     method,
+    data,
     params,
     headers
   })

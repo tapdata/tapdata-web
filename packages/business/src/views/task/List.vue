@@ -944,10 +944,8 @@ export default {
           data: {
             task_id
           },
-          config: {
-            params: {
-              _t: Date.now()
-            }
+          params: {
+            _: Date.now()
           }
         })
         cause = data?.resp
