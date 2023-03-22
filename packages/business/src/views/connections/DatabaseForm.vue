@@ -112,12 +112,13 @@
 
 <script>
 import { action } from '@formily/reactive'
+import { cloneDeep } from 'lodash'
 
 import i18n from '@tap/i18n'
 import { clusterApi, connectionsApi, databaseTypesApi, pdkApi, externalStorageApi, proxyApi } from '@tap/api'
 import { VIcon, GitBook } from '@tap/component'
 import { SchemaToForm } from '@tap/form'
-import { checkConnectionName, isEmpty, openUrl } from '@tap/shared'
+import { checkConnectionName, isEmpty, openUrl, submitForm } from '@tap/shared'
 
 import Test from './Test'
 import { getConnectionIcon } from './util'
@@ -822,9 +823,11 @@ export default {
         }
       }
       if (id) {
-        this.getPdkData(id)
+        await this.getPdkData(id)
         delete result.properties.START.properties.__TAPDATA.properties.name
       }
+
+      this.setConnectionConfig()
 
       this.schemaScope = {
         isEdit: !!id,
@@ -969,13 +972,33 @@ export default {
         handleHeartbeatEnable: (value, $form) => {
           if (!value) return
           this.getHeartbeatTaskId($form)
+        },
+        goToAuthorized: async params => {
+          const routeQuery = cloneDeep(this.$route.query)
+          const routeParams = this.$route.params
+          delete routeQuery['connectionConfig']
+          let routeUrl = this.$router.resolve({
+            name: routeParams?.id ? 'connectionsEdit' : 'connectionCreate',
+            query: routeQuery,
+            params: routeParams
+          })
+
+          const { __TAPDATA, ...__TAPDATA_CONFIG } = this.$refs.schemaToForm?.getFormValues?.() || {}
+          const data = Object.assign({}, params, {
+            url: location.origin + location.pathname + routeUrl.href,
+            connectionConfig: {
+              __TAPDATA,
+              __TAPDATA_CONFIG
+            }
+          })
+          submitForm(params?.target, data)
         }
       }
       this.schemaData = result
       this.loadingFrom = false
     },
     async getPdkData(id) {
-      connectionsApi.getNoSchema(id).then(data => {
+      await connectionsApi.getNoSchema(id).then(data => {
         this.model = data
         let {
           name,
@@ -1039,6 +1062,32 @@ export default {
         this.heartbeatTaskId = data?.[0]
         this.heartbeatTaskId && $form.query('__TAPDATA.heartbeatLink').take().setComponentProps({ disabled: false })
       })
+    },
+    async setConnectionConfig() {
+      const { connectionConfig, pdkHash } = this.$route.query || {}
+      if (connectionConfig) {
+        const params = {
+          pdkHash,
+          connectionConfig: JSON.parse(connectionConfig),
+          command: 'OAuth',
+          type: 'connection'
+        }
+        const res = await proxyApi.command(params)
+        const { __TAPDATA, __TAPDATA_CONFIG = {}, ...trace } = res || JSON.parse(connectionConfig) || {}
+        Object.assign(
+          this.model,
+          __TAPDATA,
+          {
+            config: __TAPDATA_CONFIG
+          },
+          trace
+        )
+        this.schemaFormInstance.setValues({
+          __TAPDATA,
+          ...__TAPDATA_CONFIG,
+          ...trace
+        })
+      }
     }
   }
 }
