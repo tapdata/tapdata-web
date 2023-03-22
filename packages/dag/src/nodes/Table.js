@@ -423,12 +423,11 @@ export class Table extends NodeType {
                                 }
                               },
                               filter: {
-                                type: 'object',
+                                type: 'string',
                                 'x-decorator': 'FormItem',
                                 'x-component': 'JsonEditor',
                                 'x-component-props': {
-                                  options: { showPrintMargin: false, useWrapMode: true },
-                                  type: 'object'
+                                  options: { showPrintMargin: false, useWrapMode: true }
                                 }
                               }
                             }
@@ -455,12 +454,11 @@ export class Table extends NodeType {
                                 }
                               },
                               pipeline: {
-                                type: 'array',
+                                type: 'string',
                                 'x-decorator': 'FormItem',
                                 'x-component': 'JsonEditor',
                                 'x-component-props': {
-                                  options: { showPrintMargin: false, useWrapMode: true },
-                                  type: 'object'
+                                  options: { showPrintMargin: false, useWrapMode: true }
                                 }
                               }
                             }
