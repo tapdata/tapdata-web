@@ -165,7 +165,7 @@ export default {
   packages_dag_components_leftsidebar_xuanzeshujuyuan: 'Select data source type',
   packages_dag_components_metapane_geziduan: ' fields',
   packages_dag_components_metapane_gongyou: 'Total',
-  packages_dag_migration_configpanel_moxing: 'model',
+  packages_dag_migration_configpanel_moxing: 'Model',
   packages_dag_migration_configpanel_peizhi: 'Configuration',
   packages_dag_migration_consolepanel_quanburizhi: 'All logs',
   packages_dag_migration_consolepanel_dangqianjiancefaxian: 'Current detection, three are',
