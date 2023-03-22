@@ -1,4 +1,4 @@
-import i18n from "../../index";
+import i18n from '../../index'
 
 export default {
   // 常用
@@ -16,6 +16,8 @@ export default {
   public_update_time: '更新时间',
   public_change_time: '修改时间',
   public_serial_number: '序号',
+  public_query: '查询',
+  public_aggregate: '聚合',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '无效',

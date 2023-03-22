@@ -14,6 +14,8 @@ export default {
   public_update_time: 'Update time',
   public_change_time: 'Modification time',
   public_serial_number: 'Serial number',
+  public_query: 'Query',
+  public_aggregate: 'Aggregate',
   // state
   public_status_ready: 'Valid',
   public_status_invalid: 'Invalid',
