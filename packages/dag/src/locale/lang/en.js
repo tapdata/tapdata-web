@@ -583,7 +583,6 @@ export default {
     'When selecting the default update condition field, the default priority is to associate with the primary key field, if there is no primary key, associate with the unique index field, and if there is no primary key and no unique index, associate with the full field. When the specified field is selected, it will be associated with the specified update condition field',
   packages_dag_nodes_table_zidingyichaxun: 'Fully Customizable Query',
   packages_dag_field_inference_main_gaibiaocunzaibu: 'This table has more than one data type',
-    'Possible unavailable scenarios\n1. The switch is not turned on in the data connection\n2. The set start time is earlier than the first entry of the external storage log data\n3. The mining task reports an error and stops',
   packages_dag_nodes_database_fenpianyipidu: 'Sharding batch read limit',
   packages_dag_nodes_database_fenpianbingfaxian: 'Sharding concurrency thread count',
   packages_dag_nodes_database_fenpianshuliang: 'Number of shards',
