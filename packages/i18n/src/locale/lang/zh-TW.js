@@ -14,6 +14,8 @@ export default {
   public_update_time: '更新時間',
   public_change_time: '修改時間',
   public_serial_number: '序號',
+  public_query: '查詢',
+  public_aggregate: '聚合',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '無效',
