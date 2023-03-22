@@ -270,10 +270,9 @@ export class Database extends NodeType {
                 default: false,
                 'x-decorator': 'IconLabel',
                 'x-decorator-props': {
-                  title: '全量断点续传',
+                  title: i18n.t('packages_dag_nodes_database_quanliangduandianxu'),
                   iconSize: 30,
-                  tooltip:
-                    '全量断点适用于数据规模超过1e的场景,并会造成任务开始同步数据的等待时间变长,开启后,全量阶段的任务可中断'
+                  tooltip: i18n.t('packages_dag_nodes_database_quanliangduandianshi')
                 },
                 'x-component': 'Switch',
                 'x-reactions': {

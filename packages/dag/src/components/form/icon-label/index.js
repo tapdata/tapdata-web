@@ -1,4 +1,4 @@
-import {defineComponent, ref} from '@vue/composition-api'
+import { defineComponent, ref } from '@vue/composition-api'
 import { observer } from '@formily/reactive-vue'
 
 import { FormItem, useForm } from '@tap/form'
@@ -13,8 +13,10 @@ export const IconLabel = observer(
       return () => {
         const label = (
           <div class="inline-flex align-center">
-            <span class="mr-2">{props.title}</span>
-            <VIcon size={props.iconSize || 20}>{props.icon || 'beta'}</VIcon>
+            <span>{props.title}</span>
+            <VIcon size={props.iconSize || 20} class="ml-2">
+              {props.icon || 'beta'}
+            </VIcon>
           </div>
         )
 

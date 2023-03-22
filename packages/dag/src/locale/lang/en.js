@@ -591,4 +591,12 @@ export default {
   packages_dag_nodes_database_jiyumin: 'Sharding based on min/max',
   packages_dag_nodes_database_fenpianfangshi: 'Sharding Method',
   packages_dag_nodes_database_kaiqifenpian: 'Enable Sharding',
+  packages_dag_nodes_database_quanliangduandianshi:
+    'The full breakpoint is suitable for scenarios where the data size exceeds 1e, and it will cause the waiting time for the task to start synchronizing data to become longer. After it is enabled, the task in the full phase can be interrupted',
+  packages_dag_nodes_database_quanliangduandianxu: 'Full breakpoint resume',
+  packages_dag_nodes_table_depskai:
+    'It is not supported to enable filtering settings when enabling full breakpoint resume upload.',
+  packages_dag_nodes_table_depskai2: 'It is not supported to open custom SQL when full breakpoint resume is enabled.',
+  packages_dag_nodes_table_depsd:
+    'After enabling the custom SQL/filtering settings, it is not supported to enable full resuming of breakpoints.'
 }

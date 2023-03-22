@@ -554,5 +554,11 @@ export default {
   packages_dag_nodes_database_jiyucou: '基於count分片',
   packages_dag_nodes_database_jiyumin: '基於min/max分片',
   packages_dag_nodes_database_fenpianfangshi: '分片方式',
-  packages_dag_nodes_database_kaiqifenpian: '開啟分片'
+  packages_dag_nodes_database_kaiqifenpian: '開啟分片',
+  packages_dag_nodes_database_quanliangduandianshi:
+    '全量斷點適用於數據規模超過1e的場景,並會造成任務開始同步數據的等待時間變長,開啟後,全量階段的任務可中斷',
+  packages_dag_nodes_database_quanliangduandianxu: '全量斷點續傳',
+  packages_dag_nodes_table_depskai: '開啟全量斷點續傳時不支持開啟過濾設置。 ',
+  packages_dag_nodes_table_depskai2: '開啟全量斷點續傳時不支持開啟自定義SQL。 ',
+  packages_dag_nodes_table_depsd: '開啟自定義SQL/過濾設置後，不支持開啟全量斷點續傳。 '
 }
