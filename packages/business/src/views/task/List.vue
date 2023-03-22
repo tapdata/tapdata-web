@@ -943,6 +943,11 @@ export default {
           url: '/private_ask',
           data: {
             task_id
+          },
+          config: {
+            params: {
+              _t: Date.now()
+            }
           }
         })
         cause = data?.resp
