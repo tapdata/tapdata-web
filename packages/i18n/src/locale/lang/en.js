@@ -196,16 +196,16 @@ export default {
   public_task_heartbeat_time: 'Task heartbeat time',
   public_task_mission_error: 'Task error',
   // node
-  public_node_name: 'node name',
-  public_node_type: 'node type',
-  public_node_source: 'source node',
-  public_node_processor: 'processing node',
-  public_node_target: 'target node',
+  public_node_name: 'Node Name',
+  public_node_type: 'Node Type',
+  public_node_source: 'Source Node',
+  public_node_processor: 'Processing Node',
+  public_node_target: 'Target Node',
   // task event
   public_event_incremental_delay: 'Incremental delay',
   public_event_total_input: 'Total input',
-  public_event_total_output: 'total output',
-  public_event_insert: 'insert',
+  public_event_total_output: 'Total output',
+  public_event_insert: 'Insert',
   public_event_update: 'Update',
   public_event_ddl: 'DDL'
 }

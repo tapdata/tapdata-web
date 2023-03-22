@@ -547,5 +547,7 @@ export default {
     '選擇默認更新條件字段時默認優先按照主鍵字段關聯，無主鍵的按照唯一索引字段關聯，無主鍵且無唯一索引的按照全字段關聯。選擇指定字段時將按照指定更新條件字段進行關聯',
   packages_dag_nodes_table_zidingyichaxun: '自定義查詢',
   packages_dag_field_inference_main_gaibiaocunzaibu: '該表存在不止的數據類型',
-  packages_dag_validate_customsql_fail: '當啟用全量自定義查詢後，處理節點僅支持使用JS節點'
+  packages_dag_validate_customsql_fail: '當啟用全量自定義查詢後，處理節點僅支持使用JS節點',
+  packages_dag_validate_customsql_target_fail:
+    '當啟用全量自定義查詢後，只有弱schema類型的數據源才能作為目標，例如：MongoDB、Kafka、ES'
 }

@@ -6,8 +6,8 @@ export default {
   packages_dag_task_stetting_basic_setting: 'Settings',
   packages_dag_task_stetting_most_setting: 'Advanced settings',
   packages_dag_loading: 'Loading',
-  packages_dag_dag_connection: 'connection',
-  packages_dag_dag_table: 'table',
+  packages_dag_dag_connection: 'Connection',
+  packages_dag_dag_table: 'Table',
   packages_dag_dag_create_table_as_node: 'Create a new table to use as a node',
   packages_dag_dialog_createTable: 'Create a new table',
   packages_dag_dialog_placeholderTable:
@@ -382,7 +382,7 @@ export default {
   packages_dag_nodes_table_fuzhibiaoming: 'Copy table name',
   packages_dag_nodes_table_qingxuanzebiao: 'Please select a table',
   packages_dag_nodes_table_fuzhishujuku: 'Copy database name',
-  packages_dag_nodes_table_shujuku: 'database',
+  packages_dag_nodes_table_shujuku: 'Database',
   packages_dag_nodes_targetdatabase_mubiaocunzaishi: 'Update when target exists',
   packages_dag_nodes_targetdatabase_baochimubiaoduan:
     'Keep the original table structure of the target and clear the data',
@@ -551,7 +551,7 @@ export default {
   packages_dag_nodes_table_lunxunziduanmo: 'Polling field default value',
   packages_dag_nodes_table_zhidinglunxunzi: 'Specify the polling field',
   packages_dag_nodes_table_lunxun: 'Polling',
-  packages_dag_nodes_table_rizhicdc: 'log cdc',
+  packages_dag_nodes_table_rizhicdc: 'Log cdc',
   packages_dag_nodes_table_tedingziduande: 'Incremental collection of data by polling of specific fields',
   packages_dag_nodes_table_zengliangtongbufang: 'Incremental synchronization method',
   packages_dag_table_list_card_index_zanshimeiyoupi: 'There is no matching table yet',
@@ -584,5 +584,7 @@ export default {
   packages_dag_nodes_table_zidingyichaxun: 'Fully Customizable Query',
   packages_dag_field_inference_main_gaibiaocunzaibu: 'This table has more than one data type',
   packages_dag_validate_customsql_fail:
-    'Once full custom query is enabled, processing nodes only support using JS nodes.'
+    'Once full custom query is enabled, processing nodes only support using JS nodes.',
+  packages_dag_validate_customsql_target_fail:
+    'Once full custom query is enabled, only weak schema type data sources can be used as targets, such as Mongo, Kafka, and ES.'
 }
