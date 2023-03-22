@@ -1300,6 +1300,26 @@ export default {
       }
     },
 
+    // 当开启了全量自定义查询后，处理节点仅支持使用JS节点
+    validateCustomSql() {
+      let enable
+      let notInWhitelist
+      let whitelist = ['table', 'database', 'migrate_js_processor', 'js_processor']
+      return (
+        this.allNodes.some(node => {
+          if (node.enableCustomCommand) {
+            enable = true
+          }
+          if (!whitelist.includes(node.type)) {
+            notInWhitelist = true
+          }
+          if (enable && notInWhitelist) {
+            return true
+          }
+        }) && i18n.t('packages_dag_validate_customsql_fail')
+      )
+    },
+
     async eachValidate(...fns) {
       for (let fn of fns) {
         let result = fn()
@@ -1325,6 +1345,7 @@ export default {
         this.validateAgent,
         this.validateLink,
         this.validateDDL,
+        this.validateCustomSql,
         this.validateTaskType
       )
     },
