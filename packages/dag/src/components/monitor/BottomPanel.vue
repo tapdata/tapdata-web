@@ -191,7 +191,7 @@ $headerHeight: 40px;
   //transition: height 0.24s;
   will-change: width;
   box-sizing: border-box;
-
+  z-index: 11;
   &.show-record {
     width: 320px;
   }

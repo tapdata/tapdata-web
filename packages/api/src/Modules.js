@@ -43,5 +43,9 @@ export default class Modules extends Http {
   batchUpdateListtags(params) {
     return this.axios.patch(`${this.url}/batchUpdateListtags`, params)
   }
+
+  apiList(params) {
+    return this.axios.get(`${this.url}/apiList`, { params })
+  }
 }
 export { Modules }

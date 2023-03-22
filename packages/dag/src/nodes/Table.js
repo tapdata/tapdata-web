@@ -339,7 +339,7 @@ export class Table extends NodeType {
                     type: 'array',
                     'x-component': 'DdlEventCheckbox'
                   },
-                  isCustomCommand: {
+                  enableCustomCommand: {
                     title: i18n.t('packages_dag_nodes_table_zidingyichaxun'),
                     type: 'boolean',
                     'x-decorator': 'FormItem',
@@ -352,23 +352,7 @@ export class Table extends NodeType {
                       {
                         fulfill: {
                           state: {
-                            visible: `{{$settings.type === "initial_sync" && $values.attrs.capabilities.some(item => item.id === "run_raw_command_function")}}`
-                          }
-                        }
-                      },
-                      {
-                        target: 'customCommandMql',
-                        fulfill: {
-                          state: {
-                            visible: '{{$values.databaseType==="MongoDB"}}'
-                          }
-                        }
-                      },
-                      {
-                        target: 'customCommandSql',
-                        fulfill: {
-                          state: {
-                            visible: '{{$values.databaseType!=="MongoDB"}}'
+                            visible: `{{$settings.type !== "cdc" && $values.attrs.capabilities.some(item => item.id === "execute_command_function")}}`
                           }
                         }
                       },
@@ -376,37 +360,125 @@ export class Table extends NodeType {
                         target: 'customCommand',
                         fulfill: {
                           state: {
-                            display: '{{!$self.value ? "hidden":"visible"}}',
-                            initialValue: `{{$values.databaseType==="MongoDB" ? \`db.getCollection("\${$values.tableName||''}").find({})\`:\`select * from \${$values.tableName||''}\`}}`
+                            visible: '{{!!$self.value}}'
+                          }
+                        }
+                      },
+                      {
+                        dependencies: ['isFilter'],
+                        fulfill: {
+                          schema: {
+                            'x-component-props.disabled': '{{!!$deps[0]}}'
                           }
                         }
                       }
                     ]
                   },
-                  customCommandSql: {
-                    type: 'void',
+                  customCommand: {
+                    type: 'object',
                     properties: {
-                      customCommand: {
+                      command: {
                         type: 'string',
-                        required: true,
+                        default: 'executeQuery',
                         'x-decorator': 'FormItem',
-                        'x-component': 'SqlEditor',
-                        'x-component-props': {
-                          options: { showPrintMargin: false, useWrapMode: true }
+                        'x-component': 'Radio.Group',
+                        enum: [
+                          { label: i18n.t('public_query'), value: 'executeQuery' },
+                          { label: i18n.t('public_aggregate'), value: 'aggregate' }
+                        ],
+                        'x-reactions': {
+                          fulfill: {
+                            state: {
+                              display: '{{$values.databaseType==="MongoDB"?"visible":"hidden"}}'
+                            }
+                          }
                         }
-                      }
-                    }
-                  },
-                  customCommandMql: {
-                    type: 'void',
-                    properties: {
-                      customCommand: {
-                        type: 'string',
-                        required: true,
-                        'x-decorator': 'FormItem',
-                        'x-component': 'JsEditor',
-                        'x-component-props': {
-                          options: { showPrintMargin: false, wrap: false }
+                      },
+                      params: {
+                        type: 'object',
+                        properties: {
+                          mongoQuery: {
+                            type: 'void',
+                            'x-reactions': {
+                              dependencies: ['customCommand.command'],
+                              fulfill: {
+                                state: {
+                                  visible: '{{$values.databaseType==="MongoDB" && $deps[0]==="executeQuery"}}'
+                                }
+                              }
+                            },
+                            properties: {
+                              op: {
+                                type: 'string',
+                                default: 'find'
+                              },
+                              collection: {
+                                type: 'string',
+                                'x-reactions': {
+                                  fulfill: {
+                                    state: {
+                                      value: '{{$values.tableName}}'
+                                    }
+                                  }
+                                }
+                              },
+                              filter: {
+                                type: 'string',
+                                'x-decorator': 'FormItem',
+                                'x-component': 'JsonEditor',
+                                'x-component-props': {
+                                  options: { showPrintMargin: false, useWrapMode: true }
+                                }
+                              }
+                            }
+                          },
+                          mongoAgg: {
+                            type: 'void',
+                            'x-reactions': {
+                              dependencies: ['customCommand.command'],
+                              fulfill: {
+                                state: {
+                                  visible: '{{$values.databaseType==="MongoDB" && $deps[0]==="aggregate"}}'
+                                }
+                              }
+                            },
+                            properties: {
+                              collection: {
+                                type: 'string',
+                                'x-reactions': {
+                                  fulfill: {
+                                    state: {
+                                      value: '{{$values.tableName}}'
+                                    }
+                                  }
+                                }
+                              },
+                              pipeline: {
+                                type: 'string',
+                                'x-decorator': 'FormItem',
+                                'x-component': 'JsonEditor',
+                                'x-component-props': {
+                                  options: { showPrintMargin: false, useWrapMode: true }
+                                }
+                              }
+                            }
+                          },
+                          sql: {
+                            type: 'string',
+                            required: true,
+                            'x-decorator': 'FormItem',
+                            'x-component': 'SqlEditor',
+                            'x-component-props': {
+                              options: { showPrintMargin: false, useWrapMode: true }
+                            },
+                            'x-reactions': {
+                              fulfill: {
+                                state: {
+                                  visible: '{{$values.databaseType!=="MongoDB"}}'
+                                }
+                              }
+                            }
+                          }
                         }
                       }
                     }
@@ -517,14 +589,24 @@ export class Table extends NodeType {
                       layout: 'horizontal'
                     },
                     'x-component': 'Switch',
-                    'x-reactions': {
-                      target: '*(conditions)',
-                      fulfill: {
-                        state: {
-                          visible: '{{$self.value===true}}'
+                    'x-reactions': [
+                      {
+                        dependencies: ['enableCustomCommand'],
+                        fulfill: {
+                          schema: {
+                            'x-component-props.disabled': '{{!!$deps[0]}}'
+                          }
+                        }
+                      },
+                      {
+                        target: '*(conditions)',
+                        fulfill: {
+                          state: {
+                            visible: '{{$self.value===true}}'
+                          }
                         }
                       }
-                    }
+                    ]
                   },
 
                   readPartitionOptions: {

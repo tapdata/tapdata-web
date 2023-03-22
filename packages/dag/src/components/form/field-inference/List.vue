@@ -15,9 +15,24 @@
           <VIcon v-if="scope.row.primary_key_position > 0" size="12" class="text-warning ml-1">key</VIcon>
         </span>
       </template>
+      <template slot="dataTypeHeader">
+        <span class="pl-4">
+          {{ $t('packages_dag_meta_table_field_type') }}
+        </span>
+      </template>
       <template slot="data_type" slot-scope="scope">
+        <ElTooltip
+          transition="tooltip-fade-in"
+          :disabled="!scope.row.matchedDataTypeLevel"
+          :content="getCanUseDataTypesTooltip(scope.row.matchedDataTypeLevel)"
+          class="ml-n2 mr-1"
+        >
+          <VIcon size="16" class="color-warning" :class="{ 'opacity-0': !scope.row.matchedDataTypeLevel }"
+            >warning</VIcon
+          >
+        </ElTooltip>
         <span v-if="readonly">{{ scope.row.data_type }}</span>
-        <div v-else class="cursor-pointer" @click="openEditDataTypeVisible(scope.row)">
+        <div v-else class="cursor-pointer inline-block" @click="openEditDataTypeVisible(scope.row)">
           <span>{{ scope.row.data_type }}</span>
           <VIcon class="ml-2">arrow-down</VIcon>
         </div>
@@ -56,7 +71,13 @@
           inline-message
           required
         >
-          <ElInput v-model="currentData.newDataType" maxlength="100" show-word-limit></ElInput>
+          <ElAutocomplete
+            class="inline-input"
+            v-model="currentData.newDataType"
+            :fetch-suggestions="querySearch"
+            :placeholder="$t('public_input_placeholder')"
+            @select="handleAutocomplete"
+          ></ElAutocomplete>
         </ElFormItem>
         <div v-if="!hideBatch">
           <ElCheckbox v-model="currentData.useToAll">{{
@@ -72,7 +93,7 @@
         <ElButton
           size="mini"
           type="primary"
-          :disabled="!currentData.newDataType || currentData.dataType === currentData.newDataType"
+          :disabled="!currentData.newDataType"
           :loading="editBtnLoading"
           @click="submitEdit"
           >{{ $t('public_button_confirm') }}</ElButton
@@ -181,9 +202,11 @@ export default {
         fieldName: '',
         dataType: '',
         newDataType: '',
+        selectDataType: '',
         useToAll: false,
         errorMessage: '',
-        source: {}
+        source: {},
+        canUseDataTypes: []
       },
       editBtnLoading: false
     }
@@ -209,7 +232,7 @@ export default {
     },
 
     tableList() {
-      const { fields, resultItems = [] } = this.data
+      const { fields, resultItems = [], findPossibleDataTypes = {} } = this.data
       let list = (fields || []).map(t => {
         t.source = this.findInRulesById(t.changeRuleId) || {}
         t.accept = t.source?.accept || t.accept
@@ -241,7 +264,7 @@ export default {
     },
 
     openEditDataTypeVisible(row) {
-      const source = row.source || {}
+      const { source = {}, canUseDataTypes = [] } = row || {}
       this.currentData.changeRuleId = row.changeRuleId
       this.currentData.dataType = source?.accept || row.data_type
       this.currentData.fieldName = row.field_name
@@ -249,6 +272,9 @@ export default {
       this.currentData.useToAll = false
       this.currentData.errorMessage = ''
       this.currentData.source = source
+      this.currentData.canUseDataTypes = canUseDataTypes
+      const findRule = this.fieldChangeRules.find(t => t.id === this.currentData.changeRuleId)
+      this.currentData.selectDataType = findRule?.result?.selectDataType || ''
       this.editDataTypeVisible = true
     },
 
@@ -259,7 +285,7 @@ export default {
 
     submitEdit() {
       const { qualified_name, nodeId } = this.data
-      const { changeRuleId, fieldName, dataType, newDataType, useToAll } = this.currentData
+      const { changeRuleId, fieldName, dataType, newDataType, useToAll, selectDataType } = this.currentData
       const params = {
         databaseType: this.activeNode.databaseType,
         dataTypes: [newDataType]
@@ -286,19 +312,19 @@ export default {
                 // 删除节点规则
                 this.deleteRuleById(f.id)
                 // 修改批量规则
-                batchRule.result = { dataType: newDataType, tapType }
+                batchRule.result = { dataType: newDataType, tapType, selectDataType }
                 ruleId = batchRule.id
                 ruleAccept = newDataType
               } else {
                 // 修改规则为批量规则 scope、namespace
                 f.scope = 'Node'
                 f.namespace = [nodeId]
-                f.result = { dataType: newDataType, tapType }
+                f.result = { dataType: newDataType, tapType, selectDataType }
                 ruleAccept = newDataType
               }
             } else {
               // 修改字段规则
-              f.result = { dataType: newDataType, tapType }
+              f.result = { dataType: newDataType, tapType, selectDataType }
               ruleAccept = newDataType
             }
           } else {
@@ -308,7 +334,7 @@ export default {
               namespace: useToAll ? [nodeId] : [nodeId, qualified_name, fieldName],
               type: 'DataType',
               accept: dataType,
-              result: { dataType: newDataType, tapType }
+              result: { dataType: newDataType, tapType, selectDataType }
             }
             ruleId = op.id
             ruleAccept = dataType
@@ -384,6 +410,33 @@ export default {
 
     tableRowClassName({ row }) {
       return row.transformEx ? 'warning-row' : ''
+    },
+
+    getCanUseDataTypesTooltip(matchedDataTypeLevel) {
+      let result = ''
+      switch (matchedDataTypeLevel) {
+        case 'error':
+          result = i18n.t('packages_dag_field_inference_list_gaiziduanwufa')
+          break
+        case 'warning':
+          result = i18n.t('packages_dag_field_inference_list_gaiziduanyingshe')
+          break
+        default:
+          break
+      }
+      return result
+    },
+
+    querySearch(val, cb) {
+      cb(
+        this.currentData.canUseDataTypes?.map(t => {
+          return { value: t }
+        }) || []
+      )
+    },
+
+    handleAutocomplete(item) {
+      this.currentData.selectDataType = item.value
     }
   }
 }

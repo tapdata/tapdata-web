@@ -344,7 +344,11 @@ export default {
     getData({ page, tags }) {
       let { current, size } = page
       let { keyword, databaseType, databaseModel, status, sourceType } = this.searchParams
-      let where = {}
+      let where = {
+        createType: {
+          $ne: 'System'
+        }
+      }
       //精准搜索 iModel
       if (keyword && keyword.trim()) {
         where.name = { like: verify(keyword), options: 'i' }

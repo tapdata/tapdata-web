@@ -28,7 +28,7 @@
             v-for="(item, index) in tableClassification"
             :key="index"
             class="nav-filter__item flex-fill py-1 cursor-pointer"
-            :class="{ active: activeClassification === item.type }"
+            :class="[{ active: activeClassification === item.type }, { none: index && !item.total }]"
             @click="handleTableClass(item.type)"
           >
             <div class="mb-2 text-center">{{ item.title }}</div>
@@ -41,11 +41,21 @@
               v-for="(item, index) in navList"
               :key="index"
               :class="{ active: position === index }"
+              class="flex align-items-center justify-content-between"
               @click="handleSelect(item, index)"
             >
-              <div class="task-form-text-box pl-4">
+              <div class="task-form-text-box pl-4 inline-block">
                 <OverflowTooltip class="w-100 text-truncate target" :text="item.name" placement="right" />
               </div>
+              <ElTooltip
+                v-if="item.matchedDataTypeLevel === 'error'"
+                placement="top"
+                transition="tooltip-fade-in"
+                :content="$t('packages_dag_field_inference_main_gaibiaocunzaibu')"
+                class="mr-1"
+              >
+                <VIcon size="16" class="color-warning">warning</VIcon>
+              </ElTooltip>
             </li>
           </ul>
           <div v-else class="task-form-left__ul flex flex-column align-items-center">
@@ -73,6 +83,13 @@
       <div class="field-inference__content flex-fill flex flex-column">
         <div class="px-2">
           <span>{{ $t('packages_dag_nodes_table_gengxintiaojianzi') }}</span>
+          <ElTooltip
+            transition="tooltip-fade-in"
+            :content="$t('packages_dag_field_inference_main_xuanzemorengeng')"
+            class="ml-2"
+          >
+            <VIcon size="16" class="color-primary">info</VIcon>
+          </ElTooltip>
           <ElSelect
             v-model="updateList"
             :disabled="navLoading"
@@ -80,6 +97,7 @@
             allowCreate
             multiple
             filterable
+            :placeholder="$t('public_select_option_default')"
             @visible-change="handleVisibleChange"
             @remove-tag="handleRemoveTag"
           >
@@ -131,6 +149,7 @@ import { debounce, cloneDeep } from 'lodash'
 
 import noData from '@tap/assets/images/noData.png'
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
+import { getCanUseDataTypes } from '@tap/dag/src/util'
 
 import mixins from './mixins'
 import List from './List'
@@ -219,7 +238,29 @@ export default {
         filterType: this.activeClassification
       })
       const { items, total } = res
-      this.navList = items
+      this.navList = items.map(t => {
+        const { fields = [], findPossibleDataTypes = {} } = t
+        fields.forEach(el => {
+          const source = this.findInRulesById(el.changeRuleId) || {}
+          const selectDataType = source.result?.selectDataType
+          const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[el.field_name] || {}
+          el.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
+          el.matchedDataTypeLevel =
+            selectDataType ||
+            (!selectDataType && el.canUseDataTypes.findIndex(c => c === el.data_type) === el.canUseDataTypes.length - 1)
+              ? ''
+              : !el.canUseDataTypes.includes(selectDataType || el.data_type)
+              ? 'error'
+              : 'warning'
+        })
+        t.matchedDataTypeLevel = fields.some(f => f.matchedDataTypeLevel === 'error')
+          ? 'error'
+          : fields.some(f => f.matchedDataTypeLevel === 'warning')
+          ? 'warning'
+          : ''
+        return t
+      })
+
       this.page.total = total
       this.tableClassification.forEach(el => {
         if (!el.type) {
@@ -240,10 +281,11 @@ export default {
     filterFields() {
       let item = this.navList[this.position]
       let fields = item?.fields
+      const findPossibleDataTypes = item?.findPossibleDataTypes || {}
       if (this.searchField) {
         fields = item.fields.filter(t => t.field_name.toLowerCase().includes(this.searchField?.toLowerCase()))
       }
-      this.selected = Object.assign({}, item, { fields })
+      this.selected = Object.assign({}, item, { fields, findPossibleDataTypes })
       this.updateList = this.updateConditionFieldMap[this.selected.name] || []
     },
 
@@ -294,6 +336,10 @@ export default {
     handleUpdateList() {
       this.updateConditionFieldMap[this.selected.name] = this.updateList
       this.form.setValuesIn('updateConditionFieldMap', cloneDeep(this.updateConditionFieldMap))
+    },
+
+    findInRulesById(id) {
+      return this.fieldChangeRules.find(t => t.id === id)
     }
   }
 }

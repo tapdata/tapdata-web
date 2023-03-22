@@ -1,17 +1,23 @@
+import i18n from '../../index'
+
 export default {
   // 常用
   public_name: '名称',
   public_index: '索引',
   public_type: '类型',
   public_title: '标题',
+  public_status: '状态',
   public_description: '描述',
   public_version: '版本',
   public_operation: '操作',
+  public_object: '对象',
   public_create_time: '创建时间',
   public_creator: '创建人',
   public_update_time: '更新时间',
   public_change_time: '修改时间',
   public_serial_number: '序号',
+  public_query: '查询',
+  public_aggregate: '聚合',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '无效',
@@ -33,6 +39,10 @@ export default {
   public_status_schedule_failed: '调度失败',
   public_status_renewing: '重置中',
   public_status_renew_failed: '重置失败',
+  public_status_renew_normal: '正常',
+  public_status_published: '已发布',
+  public_status_unpublished: '未发布',
+  public_status_to_be_generated: '待生成',
   // 按钮
   public_button_edit: '编辑',
   public_button_confirm: '确定',
@@ -70,6 +80,9 @@ export default {
   public_button_retry: '重试',
   public_button_expand: '展开',
   public_button_fold: '折叠',
+  public_button_inquire: '查询',
+  public_button_generate: '生成',
+  public_button_sort: '排序',
   // 消息
   public_message_title_prompt: '提示',
   public_message_delete_confirm: '是否删除',
@@ -104,6 +117,9 @@ export default {
   public_data_no_data1: '无数据',
   public_data_no: '暂无',
   public_data_no_find_result: '没有查到符合条件的结果',
+  public_data_default: '默认值',
+  public_data_filter_condition: '过滤条件',
+  public_data_type: '数据类型',
   // 时间
   public_time_ms: '毫秒',
   public_time_s: '秒',
@@ -139,6 +155,7 @@ export default {
   public_agent_status_offline: '离线',
   public_agent_status_to_be_deployed: '待部署',
   // 连接
+  public_connection: '连接',
   public_connection_name: '连接名称',
   public_connection_type: '连接类型',
   public_connection_type_source: '源头',
@@ -152,6 +169,7 @@ export default {
   public_connection_button_test: '连接测试',
   public_connection_button_load_schema: '加载Schema',
   public_connection_form_database_name: '数据库名称',
+  public_connection_form_database_type: '数据库类型',
   public_connection_form_database_address: '数据库地址',
   public_connection_form_host: '端口',
   public_connection_form_account: '账号',
@@ -163,6 +181,10 @@ export default {
   // 任务
   public_task_name: '任务名称',
   public_task_type: '任务类型',
+  public_task_type_migrate: '数据复制',
+  public_task_type_sync: '数据开发',
+  public_task_type_heartbeat: '心跳任务',
+  public_task_type_log_collector: '共享挖掘',
   public_task_type_initial_sync: '全量',
   public_task_type_cdc: '增量',
   public_task_type_initial_sync_and_cdc: '全量+增量',

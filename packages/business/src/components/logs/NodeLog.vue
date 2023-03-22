@@ -1,5 +1,5 @@
 <template>
-  <div class="log-container flex justify-content-between">
+  <div class="log-container flex justify-content-between" :class="{ fullscreen: fullscreen }">
     <div v-show="!hideFilter" class="filter-items border-end">
       <div class="px-2 py-3">
         <div
@@ -22,37 +22,38 @@
       </div>
     </div>
     <div class="main flex-fill flex flex-column px-4 py-3">
-      <div class="flex mb-2 align-items-center">
-        <TimeSelect
-          :options="timeOptions"
-          :range="[firstStartTime, lastStopTime || getTime()]"
-          ref="timeSelect"
-          @change="changeTime"
-        ></TimeSelect>
-        <ElInput
-          class="search-input ml-4"
-          v-model="keyword"
-          prefix-icon="el-icon-search"
-          :placeholder="$t('packages_dag_components_log_qingshururizhi')"
-          size="mini"
-          clearable
-          style="width: 240px"
-          @input="searchFnc"
-        ></ElInput>
-        <ElButton :loading="downloadLoading" type="text" size="mini" class="ml-4" @click="handleDownload">{{
-          $t('public_button_download')
-        }}</ElButton>
-        <ElDropdown class="ml-3" placement="bottom" @command="command" command="help">
-          <span class="icon-btn py-1 px-3 cursor-pointer">
-            <VIcon size="18">setting-outline</VIcon>
+      <div class="flex mb-2 align-items-center justify-content-between">
+        <div class="flex align-items-center">
+          <TimeSelect
+            :options="timeOptions"
+            :range="[firstStartTime, lastStopTime || getTime()]"
+            ref="timeSelect"
+            @change="changeTime"
+          ></TimeSelect>
+          <ElInput
+            class="search-input ml-4"
+            v-model="keyword"
+            prefix-icon="el-icon-search"
+            :placeholder="$t('packages_dag_components_log_qingshururizhi')"
+            size="mini"
+            clearable
+            style="width: 240px"
+            @input="searchFnc"
+          ></ElInput>
+          <ElButton :loading="downloadLoading" type="text" size="mini" class="ml-4" @click="handleDownload">{{
+            $t('public_button_download')
+          }}</ElButton>
+          <ElSwitch v-model="switchData.timestamp" class="ml-3 mr-1" @change="command('timestamp')"></ElSwitch>
+          <span>{{ $t('packages_business_logs_nodelog_xianshishijianchuo') }}</span>
+        </div>
+        <div>
+          <span class="color-primary cursor-pointer" @click="handleFullScreen">
+            <VIcon class="mr-1">{{ fullscreen ? 'suoxiao' : 'fangda' }}</VIcon>
+            <span>{{
+              fullscreen ? $t('packages_form_js_editor_exit_fullscreen') : $t('packages_form_js_editor_fullscreen')
+            }}</span>
           </span>
-          <ElDropdownMenu slot="dropdown" class="no-triangle">
-            <ElDropdownItem command="timestamp">
-              <VIcon class="color-primary mr-2" :class="{ 'opacity-0': !showCols.includes('timestamp') }">check</VIcon>
-              <span class="pr-4">timestamp</span>
-            </ElDropdownItem>
-          </ElDropdownMenu>
-        </ElDropdown>
+        </div>
       </div>
       <div class="level-line mb-2">
         <ElCheckboxGroup
@@ -118,14 +119,13 @@
                       v-if="item.errorCode"
                       class="color-primary cursor-pointer mr-2 text-decoration-underline"
                       @click.stop.prevent="handleCode(item)"
-                      >{{ item.errorCode }}</span
+                      >{{ item.fullErrorCode || item.errorCode }}</span
                     >
                     <div
                       class="text-truncate flex-1"
                       :class="colorMap[item.level.toUpperCase()]"
                       v-html="item.message"
                     ></div>
-                    <!--                    <div v-html="item.titleDomStr" class="text-truncate flex-1"></div>-->
                   </div>
                 </template>
                 <template #content>
@@ -170,7 +170,6 @@
     </ElDialog>
 
     <ElDialog
-      :title="$t('packages_dag_components_log_rizhidengjishe')"
       width="1200px"
       :visible.sync="codeDialog.visible"
       :close-on-click-modal="false"
@@ -178,18 +177,13 @@
       custom-class="error-code-dialog"
     >
       <div slot="title">
-        <span class="ml-4 fw-bold fs-5"
-          >Error {{ codeDialog.data.errorCode }}{{ $t('packages_business_logs_nodelog_yuanyinfenxi') }}</span
-        >
+        <span class="ml-4 fw-bold fs-5">{{ codeDialog.data.fullErrorCode || codeDialog.data.errorCode }}</span>
       </div>
 
-      <div v-if="codeDialog.data.describe" class="fw-bold fs-6 mt-n4 mb-2 ml-4 font-color-dark">
-        {{ $t('packages_business_logs_nodelog_cuowumiaoshu') }}
-      </div>
       <div
         v-if="codeDialog.data.describe"
         v-html="codeDialog.data.describe"
-        class="text-prewrap mb-8 ml-4 font-color-light"
+        class="text-prewrap mt-n4 mb-8 ml-4 font-color-light"
       ></div>
 
       <div v-if="codeDialog.data.errorStack" class="fw-bold fs-6 mb-2 ml-4 font-color-dark">
@@ -355,7 +349,11 @@ export default {
         visible: false,
         data: {}
       },
-      showCols: []
+      showCols: [],
+      switchData: {
+        timestamp: false
+      },
+      fullscreen: false
     }
   },
 
@@ -770,6 +768,9 @@ export default {
     },
 
     handleClose() {
+      const index = this.checkList.findIndex(t => t === 'DEBUG')
+      this.checkList.splice(index, 1)
+      this.searchFnc()
       this.dialog = false
     },
 
@@ -850,6 +851,7 @@ export default {
       proxyApi.call(params).then(data => {
         this.codeDialog.data.errorStack = item.errorStack
         this.codeDialog.data.errorCode = item.errorCode
+        this.codeDialog.data.fullErrorCode = item.fullErrorCode
         this.codeDialog.data.describe = data.describe
         this.codeDialog.data.seeAlso = data.seeAlso || []
         this.codeDialog.visible = true
@@ -869,6 +871,10 @@ export default {
       if (flag && val === 'DEBUG') {
         this.handleSetting()
       }
+    },
+
+    handleFullScreen() {
+      this.fullscreen = !this.fullscreen
     }
   }
 }
@@ -877,6 +883,15 @@ export default {
 <style lang="scss" scoped>
 .log-container {
   height: inherit;
+  &.fullscreen {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    background: #fff;
+  }
 }
 .filter-items {
   width: 200px;
@@ -971,6 +986,7 @@ export default {
 .error-code-dialog {
   .el-dialog__body {
     height: 680px;
+    overflow-y: auto;
   }
 }
 </style>

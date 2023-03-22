@@ -118,7 +118,8 @@
                   'dataflowList',
                   'connectionsList',
                   'users',
-                  'customNodeList'
+                  'customNodeList',
+                  'dataConsole'
                 ].includes($route.name)
               },
               {
@@ -130,7 +131,8 @@
                   'dataflowList',
                   'connectionsList',
                   'users',
-                  'customNodeList'
+                  'customNodeList',
+                  'dataConsole'
                 ].includes($route.name)
               }
             ]"
@@ -240,7 +242,7 @@
       display: none;
     }
     .menu {
-      width: 200px;
+      width: 220px;
       //flex: 1;
       padding-bottom: 48px;
       background: map-get($bgColor, disable);
@@ -358,7 +360,6 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    min-width: 1238px;
   }
   .expire-msg {
     margin-right: 25px;
@@ -388,6 +389,11 @@ import { signOut } from '../utils/util'
 
 let menuSetting = [
   { name: 'dashboard', icon: 'gongzuotai', alias: 'page_title_dashboard' },
+  {
+    name: 'dataConsole',
+    label: 'Data Console(Preview)',
+    icon: 'process-platform'
+  },
   { name: 'connectionsList', icon: 'agent', code: 'v2_datasource_menu', parent: 'connections' },
   {
     name: 'dataPipeline',

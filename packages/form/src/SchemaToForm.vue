@@ -90,6 +90,38 @@ export default {
     .formily-element-form-item-label-tooltip {
       margin-left: 0;
     }
+    .formily-element-form-item {
+      font-size: $fontBaseTitle;
+      &-label {
+        label {
+          color: map-get($fontColor, light);
+        }
+      }
+      .el-input-number {
+        width: 180px;
+      }
+      .el-input-number--small {
+        width: 130px;
+      }
+
+      &-help,
+      &-extra {
+        white-space: pre-wrap;
+      }
+    }
+
+    .formily-element-form-item-layout-horizontal {
+      .formily-element-form-item-control-content-component > .el-switch {
+        height: 40px;
+        line-height: 40px;
+      }
+      .formily-element-space-horizontal {
+        .el-switch {
+          height: 32px;
+          line-height: 32px;
+        }
+      }
+    }
   }
 }
 </style>

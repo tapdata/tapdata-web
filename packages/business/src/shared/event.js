@@ -13,7 +13,7 @@ function internal(obj) {
 // let _callbacks = {};
 
 /** Class EventEmitter for event-driven architecture. */
-export default class EventEmitter {
+export class EventEmitter {
   /**
    * Constructor.
    *
