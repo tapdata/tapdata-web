@@ -699,14 +699,6 @@ export default {
             'x-component': 'Switch',
             'x-component-props': {
               onChange: `{{ val => handleHeartbeatEnable(val, $form) }}`
-            },
-            'x-reactions': {
-              dependencies: ['__TAPDATA.connection_type'],
-              fulfill: {
-                state: {
-                  display: '{{$deps[0] === "source_and_target" ? "visible":"hidden"}}'
-                }
-              }
             }
           },
           heartbeatLink: {
@@ -729,6 +721,14 @@ export default {
                   display: '{{$deps[0] ? "visible":"hidden"}}'
                 }
               }
+            }
+          }
+        },
+        'x-reactions': {
+          dependencies: ['__TAPDATA.connection_type'],
+          fulfill: {
+            state: {
+              display: '{{$deps[0] === "source_and_target" ? "visible":"hidden"}}'
             }
           }
         }
