@@ -1,5 +1,5 @@
 <template>
-  <div class="log-container flex justify-content-between">
+  <div class="log-container flex justify-content-between" :class="{ fullscreen: fullscreen }">
     <div v-show="!hideFilter" class="filter-items border-end">
       <div class="px-2 py-3">
         <div
@@ -22,28 +22,38 @@
       </div>
     </div>
     <div class="main flex-fill flex flex-column px-4 py-3">
-      <div class="flex mb-2 align-items-center">
-        <TimeSelect
-          :options="timeOptions"
-          :range="[firstStartTime, lastStopTime || getTime()]"
-          ref="timeSelect"
-          @change="changeTime"
-        ></TimeSelect>
-        <ElInput
-          class="search-input ml-4"
-          v-model="keyword"
-          prefix-icon="el-icon-search"
-          :placeholder="$t('packages_dag_components_log_qingshururizhi')"
-          size="mini"
-          clearable
-          style="width: 240px"
-          @input="searchFnc"
-        ></ElInput>
-        <ElButton :loading="downloadLoading" type="text" size="mini" class="ml-4" @click="handleDownload">{{
-          $t('public_button_download')
-        }}</ElButton>
-        <ElSwitch v-model="switchData.timestamp" class="ml-3 mr-1" @change="command('timestamp')"></ElSwitch>
-        <span>{{ $t('packages_business_logs_nodelog_xianshishijianchuo') }}</span>
+      <div class="flex mb-2 align-items-center justify-content-between">
+        <div class="flex align-items-center">
+          <TimeSelect
+            :options="timeOptions"
+            :range="[firstStartTime, lastStopTime || getTime()]"
+            ref="timeSelect"
+            @change="changeTime"
+          ></TimeSelect>
+          <ElInput
+            class="search-input ml-4"
+            v-model="keyword"
+            prefix-icon="el-icon-search"
+            :placeholder="$t('packages_dag_components_log_qingshururizhi')"
+            size="mini"
+            clearable
+            style="width: 240px"
+            @input="searchFnc"
+          ></ElInput>
+          <ElButton :loading="downloadLoading" type="text" size="mini" class="ml-4" @click="handleDownload">{{
+            $t('public_button_download')
+          }}</ElButton>
+          <ElSwitch v-model="switchData.timestamp" class="ml-3 mr-1" @change="command('timestamp')"></ElSwitch>
+          <span>{{ $t('packages_business_logs_nodelog_xianshishijianchuo') }}</span>
+        </div>
+        <div>
+          <span class="color-primary cursor-pointer" @click="handleFullScreen">
+            <VIcon class="mr-1">{{ fullscreen ? 'suoxiao' : 'fangda' }}</VIcon>
+            <span>{{
+              fullscreen ? $t('packages_form_js_editor_exit_fullscreen') : $t('packages_form_js_editor_fullscreen')
+            }}</span>
+          </span>
+        </div>
       </div>
       <div class="level-line mb-2">
         <ElCheckboxGroup
@@ -160,7 +170,6 @@
     </ElDialog>
 
     <ElDialog
-      :title="$t('packages_dag_components_log_rizhidengjishe')"
       width="1200px"
       :visible.sync="codeDialog.visible"
       :close-on-click-modal="false"
@@ -343,7 +352,8 @@ export default {
       showCols: [],
       switchData: {
         timestamp: false
-      }
+      },
+      fullscreen: false
     }
   },
 
@@ -758,6 +768,9 @@ export default {
     },
 
     handleClose() {
+      const index = this.checkList.findIndex(t => t === 'DEBUG')
+      this.checkList.splice(index, 1)
+      this.searchFnc()
       this.dialog = false
     },
 
@@ -858,6 +871,10 @@ export default {
       if (flag && val === 'DEBUG') {
         this.handleSetting()
       }
+    },
+
+    handleFullScreen() {
+      this.fullscreen = !this.fullscreen
     }
   }
 }
@@ -866,6 +883,15 @@ export default {
 <style lang="scss" scoped>
 .log-container {
   height: inherit;
+  &.fullscreen {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    background: #fff;
+  }
 }
 .filter-items {
   width: 200px;
