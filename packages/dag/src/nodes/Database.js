@@ -266,10 +266,15 @@ export class Database extends NodeType {
             'x-decorator': 'FormItem',
             properties: {
               enable: {
-                title: i18n.t('packages_dag_nodes_database_kaiqifenpian'),
                 type: 'boolean',
                 default: false,
-                'x-decorator': 'FormItem',
+                'x-decorator': 'IconLabel',
+                'x-decorator-props': {
+                  title: '全量断点续传',
+                  iconSize: 30,
+                  tooltip:
+                    '全量断点适用于数据规模超过1e的场景,并会造成任务开始同步数据的等待时间变长,开启后,全量阶段的任务可中断'
+                },
                 'x-component': 'Switch',
                 'x-reactions': {
                   fulfill: {
@@ -379,6 +384,13 @@ export class Database extends NodeType {
                       display: '{{$deps[0] ? "visible" :"hidden"}}'
                     }
                   }
+                }
+              }
+            },
+            'x-reactions': {
+              fulfill: {
+                state: {
+                  display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
                 }
               }
             }

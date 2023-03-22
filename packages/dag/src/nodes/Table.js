@@ -282,6 +282,154 @@ export class Table extends NodeType {
                   //     }
                   //   }
                   // },
+                  readPartitionOptions: {
+                    type: 'object',
+                    'x-decorator': 'FormItem',
+                    properties: {
+                      enable: {
+                        type: 'boolean',
+                        default: false,
+                        'x-decorator': 'IconLabel',
+                        'x-decorator-props': {
+                          title: '全量断点续传',
+                          iconSize: 30,
+                          tooltip:
+                            '全量断点适用于数据规模超过1e的场景,并会造成任务开始同步数据的等待时间变长,开启后,全量阶段的任务可中断'
+                        },
+                        'x-component': 'Switch',
+                        'x-reactions': [
+                          {
+                            fulfill: {
+                              state: {
+                                display:
+                                  '{{$values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") ? "visible" :"hidden"}}'
+                              }
+                            }
+                          },
+                          {
+                            dependencies: ['isFilter', 'enableCustomCommand'],
+                            fulfill: {
+                              schema: {
+                                'x-component-props.disabled': '{{!!$deps[0] || !!$deps[1]}}'
+                              },
+                              state: {
+                                description: `{{!!$deps[0] || !!$deps[1] ? '开启自定义SQL/过滤设置后，不支持开启全量断点续传。':''}}`
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      splitType: {
+                        title: i18n.t('packages_dag_nodes_database_fenpianfangshi'),
+                        type: 'number',
+                        default: 10,
+                        enum: [
+                          {
+                            label: i18n.t('packages_dag_nodes_database_jiyumin'),
+                            value: 10
+                          },
+                          {
+                            label: i18n.t('packages_dag_nodes_database_jiyucou'),
+                            value: 1
+                          }
+                        ],
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Select',
+                        'x-reactions': {
+                          dependencies: ['.enable'],
+                          fulfill: {
+                            run: `{{ $values.splitTyp !== 10 && $values.attrs.capabilities.some(t => t.id === 'count_by_partition_filter_function') && $self.setValue(1) }}`,
+                            state: {
+                              display: '{{$deps[0] ? "visible" :"hidden"}}'
+                            },
+                            schema: {
+                              'x-component-props.options': `{{options=[$self.dataSource[0]],$values.attrs.capabilities.some(item => item.id ==='count_by_partition_filter_function') && options.push($self.dataSource[1]),options}}`
+                            }
+                          }
+                        }
+                      },
+                      maxRecordInPartition: {
+                        title: i18n.t('packages_dag_nodes_database_fenpiandaxiao'),
+                        type: 'number',
+                        default: 200000,
+                        'x-decorator': 'FormItem',
+                        'x-component': 'InputNumber',
+                        'x-component-props': {
+                          min: 0
+                        },
+                        'x-reactions': {
+                          dependencies: ['.enable', '.splitType'],
+                          fulfill: {
+                            state: {
+                              display: '{{$deps[0] && $deps[1] === 1 ? "visible" :"hidden"}}'
+                            }
+                          }
+                        }
+                      },
+                      minMaxSplitPieces: {
+                        title: i18n.t('packages_dag_nodes_database_fenpianshuliang'),
+                        type: 'number',
+                        default: 100,
+                        'x-decorator': 'FormItem',
+                        'x-component': 'InputNumber',
+                        'x-component-props': {
+                          min: 0
+                        },
+                        'x-reactions': {
+                          dependencies: ['.enable', '.splitType'],
+                          fulfill: {
+                            state: {
+                              display: '{{$deps[0] && $deps[1] === 10 ? "visible" :"hidden"}}'
+                            }
+                          }
+                        }
+                      },
+                      partitionThreadCount: {
+                        title: i18n.t('packages_dag_nodes_database_fenpianbingfaxian'),
+                        type: 'number',
+                        default: 8,
+                        'x-decorator': 'FormItem',
+                        'x-component': 'InputNumber',
+                        'x-component-props': {
+                          min: 0
+                        },
+                        'x-reactions': {
+                          dependencies: ['.enable'],
+                          fulfill: {
+                            state: {
+                              display: '{{$deps[0] ? "visible" :"hidden"}}'
+                            }
+                          }
+                        }
+                      },
+                      partitionBatchCount: {
+                        title: i18n.t('packages_dag_nodes_database_fenpianyipidu'),
+                        type: 'number',
+                        default: 3000,
+                        'x-decorator': 'FormItem',
+                        'x-component': 'InputNumber',
+                        'x-component-props': {
+                          min: 0
+                        },
+                        'x-reactions': {
+                          dependencies: ['.enable'],
+                          fulfill: {
+                            state: {
+                              display: '{{$deps[0] ? "visible" :"hidden"}}'
+                            }
+                          }
+                        }
+                      }
+                    },
+                    'x-reactions': {
+                      fulfill: {
+                        state: {
+                          display:
+                            '{{$settings.type === "cdc" || !["Mysql", "MongoDB"].includes($values.databaseType) ? "hidden":"visible"}}'
+                        }
+                      }
+                    }
+                  },
                   readBatchSize: {
                     title: i18n.t('packages_dag_nodes_database_piliangduqutiao'), //增量批次读取条数
                     type: 'string',
@@ -365,10 +513,13 @@ export class Table extends NodeType {
                         }
                       },
                       {
-                        dependencies: ['isFilter'],
+                        dependencies: ['isFilter', 'readPartitionOptions.enable'],
                         fulfill: {
                           schema: {
-                            'x-component-props.disabled': '{{!!$deps[0]}}'
+                            'x-component-props.disabled': '{{!!$deps[0] || !!$deps[1]}}'
+                          },
+                          state: {
+                            description: `{{!!$deps[1] ? '开启全量断点续传时不支持开启自定义SQL。':''}}`
                           }
                         }
                       }
@@ -591,10 +742,13 @@ export class Table extends NodeType {
                     'x-component': 'Switch',
                     'x-reactions': [
                       {
-                        dependencies: ['enableCustomCommand'],
+                        dependencies: ['enableCustomCommand', 'readPartitionOptions.enable'],
                         fulfill: {
                           schema: {
-                            'x-component-props.disabled': '{{!!$deps[0]}}'
+                            'x-component-props.disabled': '{{!!$deps[0] || !!$deps[1] }}'
+                          },
+                          state: {
+                            description: `{{!!$deps[1] ? '开启全量断点续传时不支持开启过滤设置。':''}}`
                           }
                         }
                       },
@@ -607,129 +761,6 @@ export class Table extends NodeType {
                         }
                       }
                     ]
-                  },
-
-                  readPartitionOptions: {
-                    type: 'object',
-                    'x-decorator': 'FormItem',
-                    properties: {
-                      enable: {
-                        title: i18n.t('packages_dag_nodes_database_kaiqifenpian'),
-                        type: 'boolean',
-                        default: false,
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Switch',
-                        'x-reactions': {
-                          fulfill: {
-                            state: {
-                              display:
-                                '{{$values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") ? "visible" :"hidden"}}'
-                            }
-                          }
-                        }
-                      },
-                      splitType: {
-                        title: i18n.t('packages_dag_nodes_database_fenpianfangshi'),
-                        type: 'number',
-                        default: 10,
-                        enum: [
-                          {
-                            label: i18n.t('packages_dag_nodes_database_jiyumin'),
-                            value: 10
-                          },
-                          {
-                            label: i18n.t('packages_dag_nodes_database_jiyucou'),
-                            value: 1
-                          }
-                        ],
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Select',
-                        'x-reactions': {
-                          dependencies: ['.enable'],
-                          fulfill: {
-                            run: `{{ $values.splitTyp !== 10 && $values.attrs.capabilities.some(t => t.id === 'count_by_partition_filter_function') && $self.setValue(1) }}`,
-                            state: {
-                              display: '{{$deps[0] ? "visible" :"hidden"}}'
-                            },
-                            schema: {
-                              'x-component-props.options': `{{options=[$self.dataSource[0]],$values.attrs.capabilities.some(item => item.id ==='count_by_partition_filter_function') && options.push($self.dataSource[1]),options}}`
-                            }
-                          }
-                        }
-                      },
-                      maxRecordInPartition: {
-                        title: i18n.t('packages_dag_nodes_database_fenpiandaxiao'),
-                        type: 'number',
-                        default: 200000,
-                        'x-decorator': 'FormItem',
-                        'x-component': 'InputNumber',
-                        'x-component-props': {
-                          min: 0
-                        },
-                        'x-reactions': {
-                          dependencies: ['.enable', '.splitType'],
-                          fulfill: {
-                            state: {
-                              display: '{{$deps[0] && $deps[1] === 1 ? "visible" :"hidden"}}'
-                            }
-                          }
-                        }
-                      },
-                      minMaxSplitPieces: {
-                        title: i18n.t('packages_dag_nodes_database_fenpianshuliang'),
-                        type: 'number',
-                        default: 100,
-                        'x-decorator': 'FormItem',
-                        'x-component': 'InputNumber',
-                        'x-component-props': {
-                          min: 0
-                        },
-                        'x-reactions': {
-                          dependencies: ['.enable', '.splitType'],
-                          fulfill: {
-                            state: {
-                              display: '{{$deps[0] && $deps[1] === 10 ? "visible" :"hidden"}}'
-                            }
-                          }
-                        }
-                      },
-                      partitionThreadCount: {
-                        title: i18n.t('packages_dag_nodes_database_fenpianbingfaxian'),
-                        type: 'number',
-                        default: 8,
-                        'x-decorator': 'FormItem',
-                        'x-component': 'InputNumber',
-                        'x-component-props': {
-                          min: 0
-                        },
-                        'x-reactions': {
-                          dependencies: ['.enable'],
-                          fulfill: {
-                            state: {
-                              display: '{{$deps[0] ? "visible" :"hidden"}}'
-                            }
-                          }
-                        }
-                      },
-                      partitionBatchCount: {
-                        title: i18n.t('packages_dag_nodes_database_fenpianyipidu'),
-                        type: 'number',
-                        default: 3000,
-                        'x-decorator': 'FormItem',
-                        'x-component': 'InputNumber',
-                        'x-component-props': {
-                          min: 0
-                        },
-                        'x-reactions': {
-                          dependencies: ['.enable'],
-                          fulfill: {
-                            state: {
-                              display: '{{$deps[0] ? "visible" :"hidden"}}'
-                            }
-                          }
-                        }
-                      }
-                    }
                   },
 
                   /*limitWrap: {
