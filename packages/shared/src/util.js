@@ -216,6 +216,22 @@ export function openUrl(url, target = '_blank', name = '') {
   window.URL.revokeObjectURL(url)
 }
 
+export function submitForm(url, obj = {}, method = 'post') {
+  const form = document.createElement('form')
+  form.action = url
+  form.method = method
+  for (let key in obj) {
+    const dom = document.createElement('input')
+    dom.setAttribute('type', 'hidden')
+    dom.setAttribute('name', key)
+    dom.value = typeof obj[key] === 'object' ? JSON.stringify(obj[key]) : obj[key]
+    form.appendChild(dom)
+  }
+  document.body.appendChild(form)
+  form.submit()
+  form.parentNode.removeChild(form)
+}
+
 // 下载Blob
 export function downloadBlob(res, name = '') {
   if (!res) {
