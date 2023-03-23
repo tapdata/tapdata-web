@@ -1,0 +1,58 @@
+.t-button {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  color: #646a73;
+  font-size: 14px;
+  font-variant: tabular-nums;
+  line-height: 1.5715;
+  list-style: none;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  white-space: nowrap;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+  border: 1px solid #fff;
+  background: none;
+  transition: color 0.1s ease-in, background-color 0.1s ease-in, border-color 0.1s ease-in, width 0.2s ease-in;
+  touch-action: manipulation;
+  text-decoration: none;
+  &--icon {
+    padding: 4px;
+    min-width: 0;
+    height: auto;
+    border: none;
+    line-height: 0;
+    border-radius: 6px;
+
+    &:hover {
+      color: #2b2f36;
+      background: rgba(31,35,41,0.1);
+      border-color: rgba(0,0,0,0);
+    }
+
+    &-xs {
+      font-size: 12px;
+    }
+
+    &-sm {
+      font-size: 16px;
+    }
+
+    &-md {
+      font-size: 20px;
+    }
+
+    &-lg {
+      font-size: 24px;
+    }
+
+    &-xl {
+      font-size: 28px;
+    }
+  }
+}
