@@ -88,9 +88,9 @@
           </ElFormItem>-->
           <ElFormItem required class="form-item" :label="$t('packages_business_verification_type') + ': '">
             <ElRadioGroup v-model="form.inspectMethod">
-              <ElRadioButton label="row_count">{{ $t('packages_business_verification_row_verify') }}</ElRadioButton>
-              <ElRadioButton label="field">{{ $t('packages_business_verification_content_verify') }}</ElRadioButton>
-              <ElRadioButton label="jointField">{{ $t('packages_business_verification_joint_verify') }}</ElRadioButton>
+              <ElRadioButton label="row_count">{{ inspectMethodMap['row_count'] }}</ElRadioButton>
+              <ElRadioButton label="field">{{ inspectMethodMap['field'] }}</ElRadioButton>
+              <ElRadioButton label="jointField">{{ inspectMethodMap['jointField'] }}</ElRadioButton>
               <!-- <ElRadioButton label="cdcCount"
               >动态校验
               <ElTooltip
@@ -107,9 +107,18 @@
               <i class="el-icon-info color-primary mr-1"></i>
               <span style="font-size: 12px">{{
                 {
-                  row_count: $t('packages_business_verification_fastCountTip'),
-                  field: $t('packages_business_verification_contentVerifyTip'),
-                  jointField: $t('packages_business_verification_jointFieldTip')
+                  row_count:
+                    $t('packages_business_verification_fastCountTip') +
+                    this.$t('packages_dag_components_node_zanbuzhichi') +
+                    notSupport['row_count'].join(),
+                  field:
+                    $t('packages_business_verification_contentVerifyTip') +
+                    this.$t('packages_dag_components_node_zanbuzhichi') +
+                    notSupport['field'].join(),
+                  jointField:
+                    $t('packages_business_verification_jointFieldTip') +
+                    this.$t('packages_dag_components_node_zanbuzhichi') +
+                    notSupport['jointField'].join()
                 }[form.inspectMethod]
               }}</span>
             </div>
@@ -353,7 +362,17 @@ export default {
       formIndex: '',
       webScript: '',
       jsEngineName: 'graal.js',
-      jointErrorMessage: ''
+      jointErrorMessage: '',
+      notSupport: {
+        row_count: ['Clickhouse', 'Kafka'],
+        field: ['Doris', 'Kafka'],
+        jointField: ['Doris', 'Kafka']
+      },
+      inspectMethodMap: {
+        row_count: i18n.t('packages_business_verification_row_verify'),
+        field: i18n.t('packages_business_verification_content_verify'),
+        jointField: i18n.t('packages_business_verification_joint_verify')
+      }
     }
   },
   created() {
@@ -522,23 +541,23 @@ export default {
       this.$refs.baseForm.validate(valid => {
         if (valid) {
           let tasks = this.$refs.conditionBox.getList()
-          // Doris数据源只支持count
-          if (this.form.inspectMethod !== 'row_count') {
-            const flag = tasks.some(
-              t =>
-                FILTER_DATABASE_TYPES.includes(t.source.databaseType) ||
-                FILTER_DATABASE_TYPES.includes(t.target.databaseType)
+          // 检查校验类型是否支持
+          const notSupportList = this.notSupport[this.form.inspectMethod]
+          let notSupportStr = ''
+          tasks.forEach(t => {
+            if (notSupportList.includes(t.source.databaseType) || notSupportList.includes(t.target.databaseType)) {
+              notSupportStr = t.source.databaseType
+            }
+          })
+
+          if (notSupportStr)
+            return this.$message.error(
+              this.inspectMethodMap[this.form.inspectMethod] +
+                ', ' +
+                this.$t('packages_dag_components_node_zanbuzhichi') +
+                notSupportStr
             )
 
-            const msg = {
-              field: this.$t('packages_business_verification_content_verify'),
-              jointField: this.$t('packages_business_verification_joint_verify')
-            }
-            if (flag)
-              return this.$message.error(
-                msg[this.form.inspectMethod] + ', ' + this.$t('packages_business_verification_form_zanbuzhichi_doris')
-              )
-          }
           if (!tasks.length) {
             return this.$message.error(this.$t('packages_business_verification_tasksVerifyCondition'))
           }

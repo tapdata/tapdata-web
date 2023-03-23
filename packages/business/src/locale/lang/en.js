@@ -507,9 +507,9 @@ export default {
   packages_business_verification_fastCountTip:
     'Fast count mode which only verify the number of rows of source and target tables has a extremely fast speed but does not show the differential field values.',
   packages_business_verification_contentVerifyTip:
-    'Table field value verify mode which will verify all fields of source and target tables row by row can find out the differences of all fields, but has a slow speed.Doris is not currently supported.',
+    'Table field value verify mode which will verify all fields of source and target tables row by row can find out the differences of all fields, but has a slow speed.',
   packages_business_verification_jointFieldTip:
-    'Joint fields value verify mode only compares the joint field value of source and target tables，faster than table field value verify mode.Doris is not currently supported.',
+    'Joint fields value verify mode only compares the joint field value of source and target tables，faster than table field value verify mode.',
   packages_business_verification_waiting: 'To be verified',
   packages_business_verification_scheduling: 'Scheduling',
   packages_business_verification_error: 'Error',
