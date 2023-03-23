@@ -700,6 +700,13 @@ export default {
             'x-component': 'Switch',
             'x-component-props': {
               onChange: `{{ val => handleHeartbeatEnable(val, $form) }}`
+            },
+            'x-reactions': {
+              target: '__TAPDATA.heartbeatLink',
+              effect: ['onFieldMount'],
+              fulfill: {
+                run: '{{handleHeartbeatEnable($self.value, $form)}}'
+              }
             }
           },
           heartbeatLink: {
