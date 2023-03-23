@@ -1,32 +1,40 @@
 <template>
   <div class="swim-lane flex flex-column h-100">
-    <div class="p-6 flex justify-content-between">
-      <div>
-        <span class="fs-5 font-color-dark">Data Console</span>
-      </div>
-      <div>
-        <VIcon size="18 " class="icon-color-normal" @click="handleSettings">list-view</VIcon>
-      </div>
+    <div class="page-header-title flex align-center">
+      <span>Data Console</span>
+      <div class="flex-grow-1"></div>
+      <ElTooltip v-if="currentView === 'swimlane'" content="切换至目录视图" key="swimlane">
+        <IconButton @click="toggleView('catalog')" md>list-view</IconButton>
+      </ElTooltip>
+      <ElTooltip v-else content="切换至 Console 视图" key="console">
+        <IconButton @click="toggleView('swimlane')" md>swimlane</IconButton>
+      </ElTooltip>
+      <IconButton class="ml-3" @click="handleSettings" md>cog-o</IconButton>
     </div>
     <div class="list flex flex-fill overflow-hidden">
-      <component
-        v-for="(item, index) in laneOptions"
-        :key="index"
-        :is="item.component"
-        :ref="item.component"
-        :dragState="dragState"
-        :settings="settings"
-        :directory="directoryMap[item.type]"
-        :fdmConnection="fdmConnection"
-        :mdmConnection="mdmConnection"
-        :event-driver="eventDriver"
-        :loadingDirectory="loadingDirectory"
-        @create-connection="handleAdd"
-        @node-drag-end="handleDragEnd"
-        @show-settings="handleSettings"
-        @load-directory="loadDirectory"
-        @preview="handlePreview"
-      ></component>
+      <div v-if="currentView === 'catalog'" class="px-5 pb-5 w-100 border-top">
+        <Catalogue></Catalogue>
+      </div>
+      <template v-else>
+        <component
+          v-for="(item, index) in laneOptions"
+          :key="index"
+          :is="item.component"
+          :ref="item.component"
+          :dragState="dragState"
+          :settings="settings"
+          :directory="directoryMap[item.type]"
+          :fdmConnection="fdmConnection"
+          :mdmConnection="mdmConnection"
+          :event-driver="eventDriver"
+          :loadingDirectory="loadingDirectory"
+          @create-connection="handleAdd"
+          @node-drag-end="handleDragEnd"
+          @show-settings="handleSettings"
+          @load-directory="loadDirectory"
+          @preview="handlePreview"
+        ></component>
+      </template>
     </div>
     <CreateConnection
       :visible.sync="visible"
@@ -56,12 +64,25 @@ import Settings from './Settings'
 import TablePreview from './TablePreview'
 import ConnectionPreview from './ConnectionPreview'
 import { EventEmitter } from '../../shared'
+import { IconButton } from '@tap/component'
 import { connectionsApi, metadataDefinitionsApi } from '@tap/api'
+import Catalogue from '../catalog/Catalogue'
 
 export default {
   name: 'Dashboard',
 
-  components: { CreateConnection, SourceItem, TargetItem, FDMItem, MDMItem, Settings, TablePreview, ConnectionPreview },
+  components: {
+    CreateConnection,
+    SourceItem,
+    TargetItem,
+    FDMItem,
+    MDMItem,
+    Settings,
+    TablePreview,
+    ConnectionPreview,
+    IconButton,
+    Catalogue
+  },
 
   data() {
     return {
@@ -81,7 +102,8 @@ export default {
       fdmConnection: null,
       mdmConnection: null,
       loadingDirectory: true,
-      eventDriver: new EventEmitter()
+      eventDriver: new EventEmitter(),
+      currentView: 'swimlane' // catalog
     }
   },
 
@@ -130,7 +152,9 @@ export default {
   },
 
   methods: {
-    searchFnc() {},
+    toggleView(view) {
+      this.currentView = view
+    },
 
     handleAdd(type) {
       this.selectorType = type
@@ -251,6 +275,10 @@ export default {
 .list {
   ::v-deep {
     .list__title {
+      height: 48px;
+      min-height: 48px;
+      border-top: 1px solid #e1e3e9;
+      border-bottom: 1px solid #e1e3e9;
       background: #f3f7fa;
     }
     .list__item {
@@ -258,10 +286,6 @@ export default {
       &:first-child {
         border-left: none;
       }
-    }
-    .list__title {
-      border-top: 1px solid #e1e3e9;
-      border-bottom: 1px solid #e1e3e9;
     }
     .icon-color {
       &:hover {

@@ -66,3 +66,5 @@ export * from './base'
 export * from './virtual-tree'
 
 export * from './pro-table'
+
+export * from './icon-button'

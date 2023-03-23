@@ -1,12 +1,11 @@
 <template>
   <div class="list__item flex flex-column flex-1 overflow-hidden">
-    <div class="list__title flex justify-content-between p-4">
+    <div class="list__title flex align-center px-4">
       <span class="fs-6">SOURCES</span>
-      <div class="operation">
-        <VIcon size="16" class="icon-color" @click="handleAdd">add-fill</VIcon>
-        <VIcon size="16" class="icon-color ml-3">search-outline</VIcon>
-        <VIcon size="16" class="icon-color ml-3 rotate-90">more</VIcon>
-      </div>
+      <div class="flex-grow-1"></div>
+      <IconButton @click="handleAdd">plus</IconButton>
+      <!--<IconButton>search-outline</IconButton>-->
+      <!--<IconButton>more</IconButton>-->
     </div>
     <div class="flex flex-column flex-1 min-h-0">
       <div v-loading="loading" class="p-3 flex-fill tree-list">
@@ -58,7 +57,7 @@
 import { debounce } from 'lodash'
 
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
-import { VirtualTree } from '@tap/component'
+import { VirtualTree, IconButton } from '@tap/component'
 import connectionPreview from './connectionPreview'
 import TablePreview from './TablePreview'
 import NodeIcon from '@tap/dag/src/components/NodeIcon'
@@ -73,7 +72,7 @@ export default {
     eventDriver: Object
   },
 
-  components: { NodeIcon, VirtualTree, StageButton },
+  components: { NodeIcon, VirtualTree, StageButton, IconButton },
 
   data() {
     return {

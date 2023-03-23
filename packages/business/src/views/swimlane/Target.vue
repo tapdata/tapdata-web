@@ -1,12 +1,10 @@
 <template>
   <div class="list__item flex flex-column flex-1 overflow-hidden">
-    <div class="list__title flex justify-content-between p-4">
+    <div class="list__title flex align-center px-4">
       <span class="fs-6">SERVICES / TARGETS</span>
-      <div class="operation">
-        <VIcon size="16" class="icon-color" @click="handleAdd">add-fill</VIcon>
-        <VIcon size="16" class="icon-color ml-3">search-outline</VIcon>
-        <VIcon size="16" class="icon-color ml-3 rotate-90">more</VIcon>
-      </div>
+      <div class="flex-grow-1"></div>
+      <IconButton @click="handleAdd">plus</IconButton>
+      <IconButton class="ml-3">search-outline</IconButton>
     </div>
     <div class="p-3 flex-fill min-h-0 overflow-auto">
       <draggable v-model="list" @start="dragging = true" @end="dragging = false">
@@ -97,6 +95,7 @@ import { defineComponent, ref } from '@vue/composition-api'
 import { apiServerApi, connectionsApi, taskApi } from '@tap/api'
 import { uuid } from '@tap/shared'
 import { getIcon } from '@tap/assets'
+import { IconButton } from '@tap/component'
 
 import { DatabaseIcon } from '../../components'
 import { makeStatusAndDisabled } from '../../shared'
@@ -165,7 +164,7 @@ export default {
     dragState: Object
   },
 
-  components: { CreateRestApi, DatabaseIcon, TaskList, draggable, DataServerDrawer },
+  components: { CreateRestApi, DatabaseIcon, TaskList, draggable, DataServerDrawer, IconButton },
 
   data() {
     return {
