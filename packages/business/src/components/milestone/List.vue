@@ -130,6 +130,10 @@ export default {
       ]
 
       const dataflowType = this.dataflow.type
+      if (['logCollector'].includes(this.dataflow.syncType)) {
+        delete result[2]
+      }
+
       result = result.filter(
         t =>
           dataflowType === 'initial_sync+cdc' ||
@@ -244,6 +248,10 @@ export default {
             label: i18n.t('packages_business_milestone_list_shujuchuli')
           }
         ]
+      }
+
+      if (['logCollector'].includes(this.dataflow.syncType)) {
+        delete NODE_MAP.target[1]
       }
 
       if (dataflowType === 'cdc') {
