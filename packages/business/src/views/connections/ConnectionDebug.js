@@ -136,7 +136,7 @@ export const ConnectionDebug = observer(
             try {
               inputArg = JSON.parse(params.input)
             } catch (e) {
-              root.$message.error('模拟参数格式错误')
+              root.$message.error(i18n.t('packages_business_connection_debug_input_arg_error'))
               return
             }
 
@@ -169,7 +169,7 @@ export const ConnectionDebug = observer(
             logLoading.value = false
           },
           () => {
-            root.$message.error('请检查表单必填项')
+            root.$message.error(i18n.t('packages_business_connection_debug_form_error'))
           }
         )
       }
@@ -182,7 +182,11 @@ export const ConnectionDebug = observer(
           props.visible && (
             <div class="fixed-top fixed-bottom flex flex-column bg-white font-color-light">
               <div class="flex align-center border-bottom px-4 py-2">
-                <FormItem.BaseItem label="作为" layout="horizontal" feedbackLayout="none">
+                <FormItem.BaseItem
+                  label={i18n.t('packages_business_connection_debug_as')}
+                  layout="horizontal"
+                  feedbackLayout="none"
+                >
                   <ElRadioGroup
                     value={params.connectType}
                     onInput={val => {
@@ -200,8 +204,8 @@ export const ConnectionDebug = observer(
                 </FormItem.BaseItem>
                 <FormItem.BaseItem
                   class="ml-4"
-                  label="超过"
-                  addonAfter="秒，未返回结果时自动终止试运行"
+                  label={i18n.t('packages_business_more_than')}
+                  addonAfter={i18n.t('packages_business_more_than_after')}
                   layout="horizontal"
                   feedbackLayout="none"
                 >
@@ -235,7 +239,7 @@ export const ConnectionDebug = observer(
                 <div class="flex-1 overflow-y-auto p-4 border-end">
                   <Form layout="vertical" feedbackLayout="terse" class-name="form-wrap" form={form}>
                     {params.connectType === 'target' && (
-                      <FormItem.BaseItem label="模拟参数">
+                      <FormItem.BaseItem label={i18n.t('packages_business_connection_debug_input_arg')}>
                         <VCodeEditor
                           class="border rounded-2 p-0"
                           theme="one_dark"
@@ -309,8 +313,6 @@ export const ConnectionDebug = observer(
                       <span class="ml-1 font-color-light">{i18n.t('packages_dag_loading')}</span>
                     </div>
                   </div>
-                  {/*<div class="js-processor-editor-console-panel h-100 overflow-auto">
-                  </div>*/}
                 </div>
               </div>
             </div>

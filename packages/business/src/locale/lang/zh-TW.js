@@ -778,5 +778,11 @@ export default {
   packages_business_data_server_drawer_prefix: '前綴',
   packages_business_data_server_drawer_base_path: '基礎路徑',
   packages_business_data_server_drawer_path: '訪問路徑',
-  packages_business_data_server_drawer_confirm_tip: '重新生成會導致原API訪問路徑發生改變，是否確認重新生成？ '
+  packages_business_data_server_drawer_confirm_tip: '重新生成會導致原API訪問路徑發生改變，是否確認重新生成？ ',
+  packages_business_connection_debug_input_arg: '模拟參數',
+  packages_business_connection_debug_input_arg_error: '模拟參數格式錯誤',
+  packages_business_more_than: '超過',
+  packages_business_more_than_after: '秒，未返回結果時自動終止試運行',
+  packages_business_connection_debug_form_error: '請檢查表單必填項',
+  packages_business_connection_debug_as: '作為'
 }

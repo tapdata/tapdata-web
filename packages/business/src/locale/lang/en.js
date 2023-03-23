@@ -805,5 +805,11 @@ export default {
   packages_business_data_server_drawer_prefix: 'Prefix',
   packages_business_data_server_drawer_base_path: 'Base Path',
   packages_business_data_server_drawer_path: 'Path',
-  packages_business_data_server_drawer_confirm_tip: 'This will re-generate the API path, do you wish to continue?'
+  packages_business_data_server_drawer_confirm_tip: 'This will re-generate the API path, do you wish to continue?',
+  packages_business_connection_debug_input_arg: 'Simulation Parameter',
+  packages_business_connection_debug_input_arg_error: 'Simulation parameter error',
+  packages_business_more_than: 'More than',
+  packages_business_more_than_after: 'seconds, automatically terminate the trial run when no result is returned.',
+  packages_business_connection_debug_form_error: 'Please check the required fields on the form.',
+  packages_business_connection_debug_as: 'As the'
 }
