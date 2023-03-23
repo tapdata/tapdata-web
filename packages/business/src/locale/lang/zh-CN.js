@@ -782,5 +782,11 @@ export default {
   packages_business_data_server_drawer_prefix: '前缀',
   packages_business_data_server_drawer_base_path: '基础路径',
   packages_business_data_server_drawer_path: '访问路径',
-  packages_business_data_server_drawer_confirm_tip: '重新生成会导致原API访问路径发生改变，是否确认重新生成？'
+  packages_business_data_server_drawer_confirm_tip: '重新生成会导致原API访问路径发生改变，是否确认重新生成？',
+  packages_business_connection_debug_input_arg: '模拟参数',
+  packages_business_connection_debug_input_arg_error: '模拟参数格式错误',
+  packages_business_more_than: '超过',
+  packages_business_more_than_after: '秒，未返回结果时自动终止试运行',
+  packages_business_connection_debug_form_error: '请检查表单必填项',
+  packages_business_connection_debug_as: '作为'
 }
