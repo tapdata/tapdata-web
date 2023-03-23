@@ -15,6 +15,15 @@ import en from './langs/en'
 import zhCN from './langs/zh-CN'
 import zhTW from './langs/zh-TW'
 
+const localLangModifyZhCN = localStorage.getItem('localLangModifyZhCN') || '{}'
+const localLangModifyZhTW = localStorage.getItem('localLangModifyZhTW') || '{}'
+const localLangModifyEn = localStorage.getItem('localLangModifyEn') || '{}'
+const localStorageLangs = {
+  'zh-CN': JSON.parse(localLangModifyZhCN),
+  'zh-TW': JSON.parse(localLangModifyZhTW),
+  en: JSON.parse(localLangModifyEn)
+}
+
 const eleLangs = {
   'zh-CN': zhLocale,
   'zh-TW': tcLocale,
@@ -36,5 +45,7 @@ i18n.merge(businessLangs)
 i18n.merge(dagLangs)
 // apps语言文件，最后覆盖
 i18n.merge(localLangs)
+// 本地矫正文案
+i18n.merge(localStorageLangs)
 
 export default i18n
