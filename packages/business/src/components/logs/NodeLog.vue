@@ -755,8 +755,9 @@ export default {
         })
     },
 
-    handleSetting() {
+    handleSetting(val) {
       const { level, intervalCeiling, recordCeiling } = this.logSetting
+      this.form.level = val
       if (level) {
         this.form = {
           level,
@@ -869,7 +870,7 @@ export default {
 
     handleCheckbox(flag, val) {
       if (flag && val === 'DEBUG') {
-        this.handleSetting()
+        this.handleSetting(val)
       }
     },
 
