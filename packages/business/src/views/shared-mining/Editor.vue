@@ -85,7 +85,6 @@ export default {
       rulesEdit: {
         name: [{ required: true, message: this.$t('packages_business_shared_cdc_name'), trigger: 'blur' }]
       },
-      logSaveList: [1, 2, 3, 4, 5, 6, 7],
       pointTypeOptions: [
         {
           label: this.$t('public_time_user_specified_time'),
