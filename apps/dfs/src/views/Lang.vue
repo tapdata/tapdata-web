@@ -31,7 +31,16 @@
         <ElButton type="primary" @click="exportModifyEn">{{ $t('button_export') + $t('lang_en') }}</ElButton>
       </div>
     </div>
-    <VTable ref="table" row-key="id" :columns="columns" :data="data" height="100%" class="mt-4" :isPage="true">
+    <VTable
+      ref="table"
+      row-key="id"
+      :columns="columns"
+      :data="data"
+      height="100%"
+      class="mt-4"
+      :isPage="true"
+      @sort-change="handleSortTable"
+    >
       <template slot="operation" slot-scope="scope">
         <div class="operate-columns">
           <ElButton size="mini" type="text" @click="edit(scope.row)">{{ $t('button_edit') }}</ElButton>
@@ -122,14 +131,16 @@ export default {
       {
         label: 'key',
         prop: 'key',
-        minWidth: 100
+        minWidth: 100,
+        sortable: true
       }
     ]
     for (let key in langMap) {
       columns.push({
         label: langMap[key],
         prop: key,
-        slotName: 'name'
+        slotName: 'name',
+        sortable: true
       })
     }
     columns.push({
@@ -332,6 +343,14 @@ export default {
           Object.assign(data, JSON.parse(res))
         }
         localStorage.setItem('localLangModifyZhCN', JSON.stringify(data))
+      })
+    },
+    handleSortTable({ order, prop }) {
+      this.data = this.data.sort((a, b) => {
+        if (order === 'ascending') {
+          return a[prop] > b[prop] ? 1 : -1
+        }
+        return a[prop] > b[prop] ? -1 : 1
       })
     }
   }
