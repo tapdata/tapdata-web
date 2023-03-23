@@ -832,6 +832,9 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
     font-weight: 500;
     color: map-get($fontColor, dark);
   }
+  .el-dialog__headerbtn {
+    font-size: 24px;
+  }
   .el-dialog__close {
     color: map-get($color, primary);
   }
