@@ -1038,7 +1038,6 @@ export default {
           },
           ...this.model?.config
         })
-        if (heartbeatEnable) this.getHeartbeatTaskId(this.schemaFormInstance)
         this.renameData.rename = this.model.name
       })
     },
