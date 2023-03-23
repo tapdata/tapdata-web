@@ -22,9 +22,8 @@
         <ElInput clearable v-model="editForm.name"></ElInput>
       </ElFormItem>
       <ElFormItem size="mini" :label="$t('packages_business_shared_form_setting_log_time')">
-        <ElSelect v-model="editForm.storageTime" :placeholder="$t('public_select_placeholder')">
-          <ElOption v-for="op in logSaveList" :key="op" :label="op + $t('public_time_d')" :value="op"> </ElOption>
-        </ElSelect>
+        <ElInputNumber v-model="editForm.storageTime" :precision="0" :step="1" :min="1"></ElInputNumber>
+        <span class="ml-2">{{ $t('public_time_d') }}</span>
       </ElFormItem>
       <ElFormItem size="mini" :label="$t('packages_business_shared_list_edit_title_start_time')">
         <div v-for="(item, index) in editForm.syncPoints" :key="index">
