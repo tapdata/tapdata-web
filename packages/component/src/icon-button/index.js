@@ -7,7 +7,10 @@ export const IconButton = defineComponent({
     iconSize: [Number, String],
     xs: Boolean,
     sm: Boolean,
-    md: Boolean,
+    md: {
+      type: Boolean,
+      default: true
+    },
     lg: Boolean,
     xl: Boolean
   },

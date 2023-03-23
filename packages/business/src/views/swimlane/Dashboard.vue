@@ -1,16 +1,15 @@
 <template>
   <div class="swim-lane flex flex-column h-100">
-    <div class="page-header-title flex justify-content-between">
+    <div class="page-header-title flex align-center">
       <span>Data Console</span>
-      <div>
-        <ElTooltip v-if="currentView === 'swimlane'" content="切换至目录视图" key="swimlane">
-          <IconButton @click="toggleView('catalog')" md>list-view</IconButton>
-        </ElTooltip>
-        <ElTooltip v-else content="切换至 Console 视图" key="console">
-          <IconButton @click="toggleView('swimlane')" md>swimlane</IconButton>
-        </ElTooltip>
-        <IconButton class="ml-3" @click="handleSettings" md>cog-o</IconButton>
-      </div>
+      <div class="flex-grow-1"></div>
+      <ElTooltip v-if="currentView === 'swimlane'" content="切换至目录视图" key="swimlane">
+        <IconButton @click="toggleView('catalog')" md>list-view</IconButton>
+      </ElTooltip>
+      <ElTooltip v-else content="切换至 Console 视图" key="console">
+        <IconButton @click="toggleView('swimlane')" md>swimlane</IconButton>
+      </ElTooltip>
+      <IconButton class="ml-3" @click="handleSettings" md>cog-o</IconButton>
     </div>
     <div class="list flex flex-fill overflow-hidden">
       <div v-if="currentView === 'catalog'" class="px-5 pb-5 w-100 border-top">
@@ -276,6 +275,10 @@ export default {
 .list {
   ::v-deep {
     .list__title {
+      height: 48px;
+      min-height: 48px;
+      border-top: 1px solid #e1e3e9;
+      border-bottom: 1px solid #e1e3e9;
       background: #f3f7fa;
     }
     .list__item {
@@ -283,10 +286,6 @@ export default {
       &:first-child {
         border-left: none;
       }
-    }
-    .list__title {
-      border-top: 1px solid #e1e3e9;
-      border-bottom: 1px solid #e1e3e9;
     }
     .icon-color {
       &:hover {

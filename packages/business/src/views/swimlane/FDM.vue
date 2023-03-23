@@ -1,16 +1,15 @@
 <template>
   <div class="list__item flex flex-column flex-1 overflow-hidden">
-    <div class="list__title flex justify-content-between p-4">
+    <div class="list__title flex align-center px-4">
       <span class="fs-6">FDM / CACHE</span>
-      <div class="operation">
-        <VIcon size="16" class="icon-color ml-3">search-outline</VIcon>
-        <ElDropdown trigger="click" @command="handleCommand">
-          <VIcon size="16" class="icon-color ml-3 rotate-90">more</VIcon>
-          <ElDropdownMenu slot="dropdown">
-            <ElDropdownItem command="config"> Configure FDM </ElDropdownItem>
-          </ElDropdownMenu>
-        </ElDropdown>
-      </div>
+      <div class="flex-grow-1"></div>
+      <IconButton>search-outline</IconButton>
+      <ElDropdown trigger="click" @command="handleCommand">
+        <IconButton class="ml-3">more</IconButton>
+        <ElDropdownMenu slot="dropdown">
+          <ElDropdownItem command="config"> Configure </ElDropdownItem>
+        </ElDropdownMenu>
+      </ElDropdown>
     </div>
     <div
       ref="treeWrap"
@@ -68,7 +67,7 @@
 
 <script>
 import { connectionsApi, discoveryApi, ldpApi } from '@tap/api'
-import { VirtualTree } from '@tap/component'
+import { VirtualTree, IconButton } from '@tap/component'
 import { merge } from 'lodash'
 import { uuid } from '@tap/shared'
 import { makeDragNodeImage, TASK_SETTINGS } from '../../shared'
@@ -84,7 +83,7 @@ export default {
     eventDriver: Object
   },
 
-  components: { VirtualTree },
+  components: { VirtualTree, IconButton },
 
   data() {
     return {
