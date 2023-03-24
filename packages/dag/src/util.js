@@ -61,3 +61,16 @@ export function getCanUseDataTypes(data = [], val = '') {
   const index = data.findIndex(t => t === val)
   return index > -1 ? data.slice(index) : []
 }
+
+export function getMatchedDataTypeLevel(field, canUseDataTypes = [], fieldChangeRules = []) {
+  const { data_type, changeRuleId } = field || {}
+  const { selectDataType } = fieldChangeRules.find(t => t.id === changeRuleId)?.result?.selectDataType || {}
+  return selectDataType ||
+    (!selectDataType &&
+      canUseDataTypes.length &&
+      canUseDataTypes.findIndex(c => c === data_type) === canUseDataTypes.length - 1)
+    ? ''
+    : !canUseDataTypes.includes(selectDataType || data_type)
+    ? 'error'
+    : 'warning'
+}

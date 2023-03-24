@@ -73,7 +73,13 @@
           </div>
         </footer>
       </main>
-      <GitBook :value="doc" class="git-book"></GitBook>
+      <GitBook
+        v-resize.left="{
+          minWidth: 350
+        }"
+        :value="doc"
+        class="git-book"
+      ></GitBook>
     </div>
     <Test ref="test" :visible.sync="dialogTestVisible" :formData="model" @returnTestData="returnTestData"></Test>
     <el-dialog
@@ -119,11 +125,15 @@ import { SchemaToForm } from '@tap/form'
 import { checkConnectionName, isEmpty } from '@tap/shared'
 import Test from '@tap/business/src/views/connections/Test'
 import { getConnectionIcon } from '@tap/business/src/views/connections/util'
+import resize from '@tap/component/src/directives/resize'
 
 export default {
   name: 'DatabaseForm',
   components: { Test, VIcon, SchemaToForm, GitBook },
   inject: ['checkAgent', 'buried'],
+  directives: {
+    resize
+  },
   props: {
     params: {
       type: Object,

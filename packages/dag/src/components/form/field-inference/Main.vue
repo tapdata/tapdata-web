@@ -149,7 +149,7 @@ import { debounce, cloneDeep } from 'lodash'
 
 import noData from '@tap/assets/images/noData.png'
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
-import { getCanUseDataTypes } from '@tap/dag/src/util'
+import { getCanUseDataTypes, getMatchedDataTypeLevel } from '@tap/dag/src/util'
 
 import mixins from './mixins'
 import List from './List'
@@ -241,17 +241,9 @@ export default {
       this.navList = items.map(t => {
         const { fields = [], findPossibleDataTypes = {} } = t
         fields.forEach(el => {
-          const source = this.findInRulesById(el.changeRuleId) || {}
-          const selectDataType = source.result?.selectDataType
           const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[el.field_name] || {}
           el.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
-          el.matchedDataTypeLevel =
-            selectDataType ||
-            (!selectDataType && el.canUseDataTypes.findIndex(c => c === el.data_type) === el.canUseDataTypes.length - 1)
-              ? ''
-              : !el.canUseDataTypes.includes(selectDataType || el.data_type)
-              ? 'error'
-              : 'warning'
+          el.matchedDataTypeLevel = getMatchedDataTypeLevel(el, el.canUseDataTypes, this.fieldChangeRules)
         })
         t.matchedDataTypeLevel = fields.some(f => f.matchedDataTypeLevel === 'error')
           ? 'error'
@@ -336,10 +328,6 @@ export default {
     handleUpdateList() {
       this.updateConditionFieldMap[this.selected.name] = this.updateList
       this.form.setValuesIn('updateConditionFieldMap', cloneDeep(this.updateConditionFieldMap))
-    },
-
-    findInRulesById(id) {
-      return this.fieldChangeRules.find(t => t.id === id)
     }
   }
 }

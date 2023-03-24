@@ -256,7 +256,14 @@
           <VCodeEditor v-model="webScript" height="500" class="js-editor"></VCodeEditor>
           <div class="js-fixText">}</div>
         </div>
-        <GitBook :value="doc" class="example ml-4 color-primary"></GitBook>
+        <GitBook
+          v-resize.left="{
+            minWidth: 350,
+            maxWidth: 500
+          }"
+          :value="doc"
+          class="example ml-4 color-primary"
+        ></GitBook>
       </div>
       <span slot="footer" class="dialog-footer">
         <ElButton size="mini" @click="handleAddScriptClose">{{ $t('public_button_cancel') }}</ElButton>
@@ -272,7 +279,7 @@ import i18n from '@tap/i18n'
 import { cloneDeep } from 'lodash'
 
 import { GitBook, VCodeEditor } from '@tap/component'
-
+import resize from '@tap/component/src/directives/resize'
 import { taskApi, inspectApi } from '@tap/api'
 import Time from '@tap/shared/src/time'
 
@@ -283,6 +290,9 @@ const FILTER_DATABASE_TYPES = ['Doris']
 
 export default {
   components: { VCodeEditor, GitBook, ConditionBox },
+  directives: {
+    resize
+  },
   data() {
     let self = this
     let requiredValidator = (msg, check) => {

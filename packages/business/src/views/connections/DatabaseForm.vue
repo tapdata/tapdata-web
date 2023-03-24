@@ -78,7 +78,12 @@
           </div>
         </footer>
       </main>
-      <GitBook :value="doc"></GitBook>
+      <GitBook
+        v-resize.left="{
+          minWidth: 350
+        }"
+        :value="doc"
+      ></GitBook>
     </div>
     <Test ref="test" :visible.sync="dialogTestVisible" :formData="model" @returnTestData="returnTestData"></Test>
     <DatabaseTypeDialog
@@ -119,6 +124,7 @@ import { clusterApi, connectionsApi, databaseTypesApi, pdkApi, externalStorageAp
 import { VIcon, GitBook } from '@tap/component'
 import { SchemaToForm } from '@tap/form'
 import { checkConnectionName, isEmpty, openUrl, submitForm } from '@tap/shared'
+import resize from '@tap/component/src/directives/resize'
 
 import Test from './Test'
 import { getConnectionIcon } from './util'
@@ -129,6 +135,9 @@ export default {
   name: 'DatabaseForm',
   components: { Test, DatabaseTypeDialog, VIcon, SchemaToForm, GitBook, ConnectionDebug },
   inject: ['checkAgent', 'buried'],
+  directives: {
+    resize
+  },
   data() {
     let validateRename = (rule, value, callback) => {
       if (!this.renameData.rename || !this.renameData.rename.trim()) {
