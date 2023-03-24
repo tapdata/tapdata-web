@@ -232,12 +232,11 @@ export default {
     },
 
     tableList() {
-      const { fields, resultItems = [], findPossibleDataTypes = {} } = this.data
+      const { fields } = this.data
       let list = (fields || []).map(t => {
         t.source = this.findInRulesById(t.changeRuleId) || {}
         t.accept = t.source?.accept || t.accept
         t.data_type = t.source?.result?.dataType || t.data_type
-        t.transformEx = resultItems.some(f => f.item === t.field_name)
         return t
       })
       return this.showDelete ? list : list.filter(t => !t.is_deleted)
@@ -409,7 +408,7 @@ export default {
     },
 
     tableRowClassName({ row }) {
-      return row.transformEx ? 'warning-row' : ''
+      return row.matchedDataTypeLevel === 'error' ? 'warning-row' : ''
     },
 
     getCanUseDataTypesTooltip(matchedDataTypeLevel) {

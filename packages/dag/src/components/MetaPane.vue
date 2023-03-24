@@ -17,7 +17,7 @@ import { mapState, mapGetters } from 'vuex'
 
 import List from './form/field-inference/List'
 import mixins from './form/field-inference/mixins.js'
-import { getCanUseDataTypes } from '@tap/dag/src/util'
+import { getCanUseDataTypes, getMatchedDataTypeLevel } from '@tap/dag/src/util'
 
 export default {
   name: 'MetaPane',
@@ -96,18 +96,9 @@ export default {
           items.map(t => {
             const { fields = [], findPossibleDataTypes = {} } = t
             fields.forEach(el => {
-              const source = this.findInRulesById(el.changeRuleId) || {}
-              const selectDataType = source.result?.selectDataType
               const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[el.field_name] || {}
               el.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
-              el.matchedDataTypeLevel =
-                selectDataType ||
-                (!selectDataType &&
-                  el.canUseDataTypes.findIndex(c => c === el.data_type) === el.canUseDataTypes.length - 1)
-                  ? ''
-                  : !el.canUseDataTypes.includes(selectDataType || el.data_type)
-                  ? 'error'
-                  : 'warning'
+              el.matchedDataTypeLevel = getMatchedDataTypeLevel(el, el.canUseDataTypes, this.fieldChangeRules)
             })
             return t
           })?.[0] || {}
@@ -120,10 +111,6 @@ export default {
 
     loadFieldChangeRules() {
       this.fieldChangeRules = this.form.getValuesIn('fieldChangeRules') || []
-    },
-
-    findInRulesById(id) {
-      return this.fieldChangeRules.find(t => t.id === id)
     }
   }
 }
