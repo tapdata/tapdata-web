@@ -109,29 +109,32 @@
               :data-index="index"
               :size-dependencies="[item.id, item.message, item.errorStack, item.dataText]"
             >
-              <VCollapse active="0">
-                <template #header>
-                  <div class="log-line flex align-items-center pr-6 flex font-color-light">
-                    <span v-if="showCols.includes('timestamp')" class="mr-1 font-color-slight"
-                      >[{{ item.timestampLabel }}]</span
-                    >
-                    <span
-                      v-if="item.errorCode"
-                      class="color-primary cursor-pointer mr-2 text-decoration-underline"
-                      @click.stop.prevent="handleCode(item)"
-                      >{{ item.fullErrorCode || item.errorCode }}</span
-                    >
-                    <div
-                      class="text-truncate flex-1"
-                      :class="colorMap[item.level.toUpperCase()]"
-                      v-html="item.message"
-                    ></div>
-                  </div>
-                </template>
-                <template #content>
-                  <div v-html="item.jsonDomStr" class="log-line pl-10 pr-4 py-2 font-color-light white-space-pre"></div>
-                </template>
-              </VCollapse>
+              <div class="log-line pr-6 font-color-light">
+                <div
+                  class="log-item"
+                  :class="{ 'hide-content cursor-pointer': handleHideContent(arguments[0], item) }"
+                  :ref="'icon' + item.id"
+                  @click="handleLog(item)"
+                >
+                  <VIcon class="expand-icon mr-1" :class="{ 'rotate-90': item.expand }">arrow-right</VIcon>
+                  <span v-if="showCols.includes('timestamp')" class="font-color-slight"
+                    >[{{ item.timestampLabel }}]</span
+                  >
+                  <span
+                    v-if="item.errorCode"
+                    class="color-primary cursor-pointer mr-2 text-decoration-underline"
+                    @click.stop.prevent="handleCode(item)"
+                    >{{ item.fullErrorCode || item.errorCode }}</span
+                  >
+                  <span :class="colorMap[item.level.toUpperCase()]" v-html="item.message"></span>
+                </div>
+                <div v-if="item.expand" class="log-detail bg-color-normal p-3">
+                  <p v-if="item.message" class="mb-2 fw-bold font-color-dark">message:</p>
+                  <div v-if="item.message" v-html="item.message" class="mb-4"></div>
+                  <p v-if="item.errorStack" class="mb-2 fw-bold font-color-dark">errorStack:</p>
+                  <div v-if="item.errorStack" v-html="item.errorStack"></div>
+                </div>
+              </div>
             </DynamicScrollerItem>
           </template>
         </DynamicScroller>
@@ -183,7 +186,7 @@
       <div
         v-if="codeDialog.data.describe"
         v-html="codeDialog.data.describe"
-        class="text-prewrap mt-n4 mb-8 ml-4 font-color-light"
+        class="text-prewrap mt-n4 mb-6 ml-4 font-color-light"
       ></div>
 
       <div v-if="codeDialog.data.errorStack" class="fw-bold fs-6 mb-2 ml-4 font-color-dark">
@@ -193,6 +196,7 @@
         v-if="codeDialog.data.errorStack"
         v-html="codeDialog.data.errorStack"
         class="error-stack-wrap text-prewrap mb-6 ml-4 font-color-light border overflow-y-auto bg-color-normal p-4"
+        :class="{ 'has-describe': codeDialog.data.hasDescribe }"
       ></div>
       <div
         v-if="codeDialog.data.seeAlso && codeDialog.data.seeAlso.length"
@@ -602,56 +606,11 @@ export default {
     getFormatRow(rowData = []) {
       let result = deepCopy(rowData)
       result.forEach(row => {
-        let obj = {}
-        row.timestamp = new Date(row.date).getTime()
-        obj.level = row.level
-        obj.timestamp = this.formatTime(row.timestamp)
-        obj.nodeName = this.getHighlightSpan(row.nodeName)
-        obj.logTags = row.logTags?.map(t => `[${this.getHighlightSpan(t)}]`) || []
-        obj.data = row.data.length ? JSON.stringify(row.data?.slice(0, 10)) : ''
-        obj.message = row.message?.slice(0, 10000)
-        obj.errorStack = row.errorStack?.slice(0, 20000)
-
-        const { level, timestamp, nodeName, logTags, data, message, errorStack } = obj
-        row.timestampLabel = obj.timestamp
-        row.titleDomStr = this.getTitleStringDom({ timestamp }, message)
-        row.jsonDomStr = this.getJsonString([
-          { level },
-          // { timestamp },
-          { nodeName },
-          // { logTags },
-          { data },
-          { message },
-          { errorStack }
-        ])
+        row.timestampLabel = this.formatTime(row.date)
+        row.expand = false
+        row.hideContent = false
       })
       return result
-    },
-    getTitleStringDom(row = {}, extra = '') {
-      let result = ''
-      result += `<span class="ml-1 font-color-slight">[${row.timestamp}]</span>`
-      if (row.nodeName) {
-        result += `<span class="ml-1">[${this.getHighlightSpan(row.nodeName)}]</span>`
-      }
-      if (extra) {
-        result += `<span class="ml-1">${extra}</span>`
-      }
-      return result
-    },
-
-    getJsonString(data = []) {
-      let result = `<div class="bg-color-normal">{`
-      data.forEach((obj, i) => {
-        for (let key in obj) {
-          const val = obj[key]
-          if (val) {
-            result += `<div class="flex pl-4">`
-            result += `<span class="log__label warn-level">"${key}"</span>: <span class="debug-level">"${val}"</span>`
-            result += `,</div>`
-          }
-        }
-      })
-      return (result += `}</div>`)
     },
 
     getHighlightSpan(str = '') {
@@ -854,6 +813,7 @@ export default {
         this.codeDialog.data.errorCode = item.errorCode
         this.codeDialog.data.fullErrorCode = item.fullErrorCode
         this.codeDialog.data.describe = data.describe
+        this.codeDialog.data.hasDescribe = data.hasDescribe
         this.codeDialog.data.seeAlso = data.seeAlso || []
         this.codeDialog.visible = true
       })
@@ -876,6 +836,18 @@ export default {
 
     handleFullScreen() {
       this.fullscreen = !this.fullscreen
+    },
+
+    handleHideContent(data) {
+      const { item = {} } = data || {}
+      const dom = this.$refs['icon' + item.id] || {}
+      item.hideContent = dom.scrollHeight > dom.offsetHeight
+      return item.hideContent
+    },
+
+    handleLog(item) {
+      if (!item.hideContent) return
+      item.expand = !item.expand
     }
   }
 }
@@ -919,8 +891,26 @@ export default {
   background-color: rgba(229, 236, 255, 0.22);
   ::v-deep {
     .log-line {
+      padding: 8px 16px;
+      background-color: #fff;
+      border-bottom: 1px solid #ebeef5;
       width: 100%;
       font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+      .log-item {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        .expand-icon {
+          display: none;
+        }
+        &.hide-content {
+          .expand-icon {
+            display: inline-flex;
+          }
+        }
+      }
       .info-level {
         color: #c9cdd4;
       }
@@ -979,7 +969,10 @@ export default {
 }
 
 .error-stack-wrap {
-  height: 200px;
+  height: 480px;
+  &.has-describe {
+    height: 280px;
+  }
 }
 </style>
 
