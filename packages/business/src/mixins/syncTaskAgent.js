@@ -23,7 +23,8 @@ export default {
     this.loop(this.isDaas ? this.getClusterStatus : this.getAgentStatus, 30000)
   },
 
-  beforeDestroy() {
+  destroyed() {
+    this.isDestroyed = true
     clearTimeout(this.syncTaskAgentTimer)
   },
 
@@ -67,6 +68,13 @@ export default {
 
     async loop(callback, timeout) {
       await callback()
+
+      if (this.syncTaskAgentTimer) {
+        clearTimeout(this.syncTaskAgentTimer)
+        this.syncTaskAgentTimer = null
+      }
+      if (this.isDestroyed) return
+
       this.syncTaskAgentTimer = setTimeout(() => {
         this.loop(callback, timeout)
       }, timeout)
