@@ -504,6 +504,8 @@ export default {
             makeStatusAndDisabled(item)
             if (item.status === 'error') {
               errorTaskIds.push(item.id)
+            } else if (this.taskErrorCause[item.id]) {
+              this.$delete(this.taskErrorCause, item.id)
             }
             return item
           })

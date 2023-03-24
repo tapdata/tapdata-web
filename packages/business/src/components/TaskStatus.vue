@@ -34,7 +34,7 @@
       </ElTooltip>
     </template>
 
-    <template v-if="errorCause">
+    <template v-if="errorCause && task.status === 'error'">
       <VIcon @click="showErrorCause = true" size="16" class="ml-2 color-danger">question-circle</VIcon>
       <ElDialog append-to-body :title="$t('public_task_reasons_for_error')" :visible.sync="showErrorCause">
         <div class="p-4 rounded-4 bg-subtle mt-n4 text-preline font-color-dark">
