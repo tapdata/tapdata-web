@@ -40,5 +40,9 @@ export default class TCM extends Http {
   getEcsList(id, params) {
     return this.axios.get(this.url + '/ecs/list/' + id, { params })
   }
+  // 当前可用阿里云授权码
+  licenseAvailable(params) {
+    return this.axios.get(`${this.url}/license/available`, { params })
+  }
 }
 export { TCM }

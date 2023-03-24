@@ -322,6 +322,10 @@
           </VButton>
         </div>
       </Details>
+      <!--   创建订阅   -->
+      <CreateDialog v-model="createDialog"></CreateDialog>
+      <!--   选择授权码   -->
+      <SelectListDialog v-model="selectListDialog"></SelectListDialog>
     </div>
   </section>
   <RouterView v-else></RouterView>
@@ -340,6 +344,9 @@ import { dayjs } from '@tap/business'
 import Time from '@tap/shared/src/time'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 
+const CreateDialog = () => import(/* webpackChunkName: "CreateInstanceDialog" */ './Create')
+const SelectListDialog = () => import(/* webpackChunkName: "SelectListInstanceDialog" */ './SelectList')
+
 let timer = null
 
 export default {
@@ -348,7 +355,9 @@ export default {
     StatusTag,
     VIcon,
     Details,
-    FilterBar
+    FilterBar,
+    CreateDialog,
+    SelectListDialog
   },
   mixins: [timeFunction],
   data() {
@@ -382,7 +391,9 @@ export default {
       currentVersionInfo: '',
       showDetails: false,
       detailId: null,
-      filterItems: []
+      filterItems: [],
+      createDialog: false,
+      selectListDialog: false
     }
   },
   computed: {
@@ -846,39 +857,17 @@ export default {
     // 创建Agent
     createAgent() {
       this.createAgentLoading = true
-      this.$axios
-        .post('api/tcm/orders', {
-          agentType: 'Local'
-        })
-        .then(data => {
-          buried('agentCreate')
-          this.fetch()
-          this.toDeploy({
-            id: data.agentId
-          })
-          //创建agnet成功后直接跳转到部署页面
-          // this.deployConfirm(data.agentId)
-        })
-        .catch(() => {
-          this.$router.replace('/500')
-        })
-        .finally(() => {
-          this.createAgentLoading = false
-        })
+      const userInfo = window.__USER_INFO__ || {}
+      console.log('userInfo', userInfo)
+      // 开启授权码
+      if (userInfo.enableLicense) {
+        // 请求检查是否有数据
+        this.selectListDialog = true
+      } else {
+        this.createDialog = true
+      }
+      this.createAgentLoading = false
     },
-    // deployConfirm(id) {
-    //   this.$confirm(this.$t('agent_button_create_msg_success_desc'), this.$t('agent_button_create_msg_success'), {
-    //     type: 'success',
-    //     confirmButtonText: this.$t('public_agent_button_deploy_now'),
-    //     cancelButtonText: this.$t('public_agent_button_deploy_later')
-    //   }).then(res => {
-    //     if (res) {
-    //       this.toDeploy({
-    //         id: id
-    //       })
-    //     }
-    //   })
-    // },
     // 禁用部署
     deployBtnDisabled(row) {
       return row.agentType === 'Cloud' || !!row.deployDisable
