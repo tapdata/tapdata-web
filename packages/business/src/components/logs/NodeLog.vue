@@ -109,15 +109,31 @@
               :data-index="index"
               :size-dependencies="[item.id, item.message, item.errorStack, item.dataText]"
             >
-              <div class="log-line flex align-items-center pr-6 flex font-color-light">
-                <span v-if="showCols.includes('timestamp')" class="font-color-slight">[{{ item.timestampLabel }}]</span>
-                <span
-                  v-if="item.errorCode"
-                  class="color-primary cursor-pointer ml-2 text-decoration-underline"
-                  @click.stop.prevent="handleCode(item)"
-                  >{{ item.fullErrorCode || item.errorCode }}</span
+              <div class="log-line pr-6 font-color-light">
+                <div
+                  class="log-item"
+                  :class="{ 'hide-content cursor-pointer': handleHideContent(arguments[0], item) }"
+                  :ref="'icon' + item.id"
+                  @click="handleLog(item)"
                 >
-                <div class="ml-2 message-item" :class="colorMap[item.level.toUpperCase()]" v-html="item.message"></div>
+                  <VIcon class="expand-icon mr-1" :class="{ 'rotate-90': item.expand }">arrow-right</VIcon>
+                  <span v-if="showCols.includes('timestamp')" class="font-color-slight"
+                    >[{{ item.timestampLabel }}]</span
+                  >
+                  <span
+                    v-if="item.errorCode"
+                    class="color-primary cursor-pointer mr-2 text-decoration-underline"
+                    @click.stop.prevent="handleCode(item)"
+                    >{{ item.fullErrorCode || item.errorCode }}</span
+                  >
+                  <span :class="colorMap[item.level.toUpperCase()]" v-html="item.message"></span>
+                </div>
+                <div v-if="item.expand" class="log-detail bg-color-normal p-3">
+                  <p v-if="item.message" class="mb-2 fw-bold font-color-dark">message:</p>
+                  <div v-if="item.message" v-html="item.message" class="mb-4"></div>
+                  <p v-if="item.errorStack" class="mb-2 fw-bold font-color-dark">errorStack:</p>
+                  <div v-if="item.errorStack" v-html="item.errorStack"></div>
+                </div>
               </div>
             </DynamicScrollerItem>
           </template>
@@ -591,6 +607,8 @@ export default {
       let result = deepCopy(rowData)
       result.forEach(row => {
         row.timestampLabel = this.formatTime(row.date)
+        row.expand = false
+        row.hideContent = false
       })
       return result
     },
@@ -818,6 +836,18 @@ export default {
 
     handleFullScreen() {
       this.fullscreen = !this.fullscreen
+    },
+
+    handleHideContent(data) {
+      const { item = {} } = data || {}
+      const dom = this.$refs['icon' + item.id] || {}
+      item.hideContent = dom.scrollHeight > dom.offsetHeight
+      return item.hideContent
+    },
+
+    handleLog(item) {
+      if (!item.hideContent) return
+      item.expand = !item.expand
     }
   }
 }
@@ -866,6 +896,21 @@ export default {
       border-bottom: 1px solid #ebeef5;
       width: 100%;
       font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+      .log-item {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        .expand-icon {
+          display: none;
+        }
+        &.hide-content {
+          .expand-icon {
+            display: inline-flex;
+          }
+        }
+      }
       .info-level {
         color: #c9cdd4;
       }
@@ -928,14 +973,6 @@ export default {
   &.has-describe {
     height: 280px;
   }
-}
-
-.message-item {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
 }
 </style>
 
