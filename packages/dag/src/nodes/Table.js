@@ -828,9 +828,9 @@ export class Table extends NodeType {
                         },
                         'x-component-props': {
                           min: 1,
-                          max: 100000
+                          max: 10000000
                         },
-                        default: 2000
+                        default: 1000
                       },
                       writeBatchWaitMs: {
                         title: i18n.t('packages_dag_nodes_database_xierumeipizui'), //增量批次读取条数
@@ -843,7 +843,7 @@ export class Table extends NodeType {
                         'x-decorator-props': {
                           tooltip: i18n.t('packages_dag_nodes_database_xierumeipizui_tips')
                         },
-                        default: 3000
+                        default: 500
                       }
                     }
                   },
