@@ -411,8 +411,8 @@ export default {
   packages_dag_monitor_leftsider_shanchu: 'Delete:',
   packages_dag_monitor_leftsider_gengxin: 'Update:',
   packages_dag_monitor_leftsider_charu: 'Insert:',
-  packages_dag_monitor_leftsider_renwushijiantong: 'Task event statistics (articles)',
-  packages_dag_monitor_leftsider_zuidazengliangyan: 'Maximum incremental delay:',
+  packages_dag_monitor_leftsider_renwushijiantong: 'Processed Event Stats(Rows)',
+  packages_dag_monitor_leftsider_zuidazengliangyan: 'Maximum replication delay:',
   packages_dag_monitor_leftsider_tongbuxinxi: 'Sync Information',
   packages_dag_monitor_leftsider_tiaoshixinxi: 'Debug Information',
   packages_dag_monitor_leftsider_chayixiangqing: 'Difference Details',
@@ -435,7 +435,7 @@ export default {
   packages_dag_monitor_leftsider_renwuchuliwan:
     'The processing time for completing a new event is calculated as the total time required for task processing. In cases where there are multiple targets, only the longest processing time is considered.',
   packages_dag_monitor_leftsider_shijiancongyuanku:
-    'The delay time between the event being generated from the source library and the completion of writing to the target after the task is processed, Taking into account the maximum incremental delay time when multiple targets are involved.',
+    'The delay time between the event being generated from the source library and the completion of writing to the target after the task is processed, Taking into account the maximum replication delay time when multiple targets are involved.',
   packages_dag_monitor_leftsider_qpSshizhi:
     'QPS refers to the average number of input events and output events processed by the task per second',
   packages_dag_components_nodedetaildialog_zengliangduquyan2:

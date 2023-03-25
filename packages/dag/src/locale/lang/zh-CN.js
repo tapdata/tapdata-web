@@ -405,7 +405,7 @@ export default {
   packages_dag_monitor_leftsider_shanchu: '删除：',
   packages_dag_monitor_leftsider_gengxin: '更新：',
   packages_dag_monitor_leftsider_charu: '插入：',
-  packages_dag_monitor_leftsider_renwushijiantong: '任务事件统计（条）',
+  packages_dag_monitor_leftsider_renwushijiantong: '处理数据统计(条）',
   packages_dag_monitor_leftsider_chayixiangqing: '差异详情',
   packages_dag_monitor_leftsider_zuidazengliangyan: '最大增量延迟：',
   packages_dag_monitor_leftsider_tongbuxinxi: '同步信息',

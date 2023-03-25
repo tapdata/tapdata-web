@@ -615,7 +615,7 @@ export default {
   packages_business_setting_alarmnotification_dangshujuwufa:
     'It takes time when the data cannot be connected to the network',
   packages_business_setting_alarmnotification_dangrenwudezeng:
-    'When the incremental delay of the task exceeds the threshold',
+    'When the replication delay of the task exceeds the threshold',
   packages_business_setting_alarmnotification_dangrenwutingzhi: 'When the task stops',
   packages_business_setting_alarmnotification_dangrenwuzengliang: 'When the task increment start',
   packages_business_setting_alarmnotification_dangrenwuquanliang: 'When the task is fully completed',

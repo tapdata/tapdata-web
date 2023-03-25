@@ -163,7 +163,7 @@ export default {
   public_task_full_start_time: 'Full start time',
   public_task_full_completion_time: 'Full completion time',
   public_task_full_sync_progress: 'Full sync progress',
-  public_task_max_incremental_delay: 'Maximum incremental delay',
+  public_task_max_incremental_delay: 'Maximum replication delay',
   public_task_heartbeat_time: 'Task heartbeat time',
   public_task_mission_error: 'Task Error',
   public_task_reasons_for_error: 'Reasons for error',
