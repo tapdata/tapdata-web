@@ -402,7 +402,7 @@ export default {
   packages_dag_monitor_leftsider_shanchu: '刪除：',
   packages_dag_monitor_leftsider_gengxin: '更新：',
   packages_dag_monitor_leftsider_charu: '插入：',
-  packages_dag_monitor_leftsider_renwushijiantong: '任務事件統計（條）',
+  packages_dag_monitor_leftsider_renwushijiantong: '处理数据統計(條）',
   packages_dag_monitor_leftsider_chayixiangqing: '差異詳情',
   packages_dag_monitor_leftsider_zuidazengliangyan: '最大增量延遲：',
   packages_dag_monitor_leftsider_tongbuxinxi: '同步信息',
