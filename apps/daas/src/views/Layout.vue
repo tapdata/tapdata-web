@@ -12,7 +12,7 @@
           {{ $t('dataFlow_createNew') }}
         </ElButton>
         <NotificationPopover v-if="$getSettingByKey('SHOW_NOTIFICATION')" class="ml-4"></NotificationPopover>
-        <ElDropdown v-if="showHelp" class="btn" placement="bottom" @command="command" command="help" show-timeout="0">
+        <ElDropdown v-if="showHelp" class="btn" placement="bottom" @command="command" command="help" :show-timeout="0">
           <div class="flex align-center icon-btn p-2 ml-2">
             <VIcon size="18">wenda</VIcon>
           </div>
@@ -25,7 +25,7 @@
           class="btn"
           placement="bottom"
           @command="command"
-          show-timeout="0"
+          :show-timeout="0"
         >
           <div class="flex align-center icon-btn p-2 ml-2">
             <VIcon size="18">shezhi</VIcon>
@@ -45,7 +45,7 @@
           class="btn"
           placement="bottom"
           @command="changeLanguage"
-          show-timeout="0"
+          :show-timeout="0"
         >
           <div class="flex align-center icon-btn p-2 ml-2">
             <VIcon size="18">language_icon</VIcon>
@@ -58,7 +58,7 @@
           </ElDropdownMenu>
         </ElDropdown>
         <ElDivider direction="vertical" class="divider mx-6"></ElDivider>
-        <ElDropdown class="menu-user btn" placement="bottom" @command="command" show-timeout="0">
+        <ElDropdown class="menu-user btn" placement="bottom" @command="command" :show-timeout="0">
           <div class="flex align-center icon-btn p-2">
             <span class="user-initials mr-2">{{ initials }}</span>
             <span>{{ userName }}<i class="el-icon-arrow-down ml-2"></i></span>
