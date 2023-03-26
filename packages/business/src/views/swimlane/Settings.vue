@@ -57,7 +57,7 @@
       <ElForm :model="form" :rules="rules" ref="form">
         <div v-if="mode === 'service'" class="setting-card mt-6">
           <div class="setting-card__header p-4">
-            <span>FDM Storage Backend</span>
+            <span>FDM/MDM Storage Backend</span>
             <ElTooltip
               class="ml-2"
               placement="top"
@@ -93,7 +93,7 @@
             </div>
           </div>
         </div>
-        <div v-if="mode === 'service'" class="setting-card mt-6">
+        <!--<div v-if="mode === 'service'" class="setting-card mt-6">
           <div class="setting-card__header p-4">
             <span>FDM Storage Backend</span>
             <ElTooltip
@@ -129,7 +129,7 @@
               >
             </div>
           </div>
-        </div>
+        </div>-->
       </ElForm>
 
       <div class="text-end mt-13">
@@ -177,14 +177,14 @@ export default {
       ],
       options: [
         {
-          label: 'Self Hosted MongoDB Cluster',
-          value: 'self',
-          tag: 'Add a New Connection'
-        },
-        {
           label: 'MongoDB Atlas Cluster',
           value: 'atlas',
           tag: 'Sync Atlas Cluster List'
+        },
+        {
+          label: 'Self Hosted MongoDB Cluster',
+          value: 'self',
+          tag: 'Add a New Connection'
         }
       ],
       form: {

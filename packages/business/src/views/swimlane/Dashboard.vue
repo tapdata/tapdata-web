@@ -29,6 +29,7 @@
           :event-driver="eventDriver"
           :loadingDirectory="loadingDirectory"
           @create-connection="handleAdd"
+          @create-target="handleCreateTarget"
           @node-drag-end="handleDragEnd"
           @show-settings="handleSettings"
           @load-directory="loadDirectory"
@@ -42,13 +43,18 @@
       @success="handleSuccess"
       @saveAndMore="handleSuccess"
     ></CreateConnection>
+    <SceneDialog
+      :visible.sync="showSceneDialog"
+      :selector-type="selectorType"
+      @success="handleSuccess"
+      @saveAndMore="handleSuccess"
+    ></SceneDialog>
     <Settings
       :mode.sync="mode"
       :visible.sync="settingsVisible"
       @success="handleSettingsSuccess"
       @init="handleSettingsInit"
     ></Settings>
-
     <TablePreview ref="tablePreview" />
     <ConnectionPreview ref="connectionView" />
   </div>
@@ -56,6 +62,7 @@
 
 <script>
 import CreateConnection from '../../components/create-connection/Dialog'
+import SceneDialog from '../../components/create-connection/SceneDialog'
 import SourceItem from './Source'
 import TargetItem from './Target'
 import FDMItem from './FDM'
@@ -81,13 +88,15 @@ export default {
     TablePreview,
     ConnectionPreview,
     IconButton,
-    Catalogue
+    Catalogue,
+    SceneDialog
   },
 
   data() {
     return {
       keyword: '',
       visible: false,
+      showSceneDialog: false,
       settingsVisible: false,
       dragState: {
         isDragging: false,
@@ -159,6 +168,11 @@ export default {
     handleAdd(type) {
       this.selectorType = type
       this.visible = true
+    },
+
+    handleCreateTarget(type) {
+      this.selectorType = type
+      this.showSceneDialog = true
     },
 
     handleSuccess(value) {

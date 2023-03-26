@@ -4,12 +4,12 @@
       <span class="fs-6">FDM / CACHE</span>
       <div class="flex-grow-1"></div>
       <IconButton>search-outline</IconButton>
-      <ElDropdown trigger="click" @command="handleCommand">
+      <!--<ElDropdown trigger="click" @command="handleCommand">
         <IconButton class="ml-3">more</IconButton>
         <ElDropdownMenu slot="dropdown">
           <ElDropdownItem command="config"> Configure </ElDropdownItem>
         </ElDropdownMenu>
-      </ElDropdown>
+      </ElDropdown>-->
     </div>
     <div
       ref="treeWrap"
@@ -172,15 +172,15 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
             {data.name}
           </span>
           {data.isObject && (
-            <VIcon
-              size="18"
+            <IconButton
               class="btn-menu"
+              sm
               onClick={() => {
                 this.$emit('preview', data)
               }}
             >
               view-details
-            </VIcon>
+            </IconButton>
           )}
         </div>
       )

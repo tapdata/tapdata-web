@@ -3,13 +3,14 @@
     <div class="list__title flex align-center px-4">
       <span class="fs-6">MDM / CURATED MODELS</span>
       <div class="flex-grow-1"></div>
+      <IconButton @click="showDialog(directory, 'add')">add</IconButton>
       <IconButton>search-outline</IconButton>
-      <ElDropdown trigger="click" @command="handleCommand">
+      <!--<ElDropdown trigger="click" @command="handleCommand">
         <IconButton class="ml-3">more</IconButton>
         <ElDropdownMenu slot="dropdown">
           <ElDropdownItem command="config"> Configure </ElDropdownItem>
         </ElDropdownMenu>
-      </ElDropdown>
+      </ElDropdown>-->
     </div>
     <div
       ref="treeWrap"
@@ -61,13 +62,55 @@
         </ElButton>
       </span>
     </ElDialog>
+
+    <ElDialog :visible.sync="dialogConfig.visible" width="30%" :close-on-click-modal="false">
+      <span slot="title" style="font-size: 14px">{{ dialogConfig.title }}</span>
+      <ElForm ref="form" :model="dialogConfig" label-width="90px">
+        <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumingcheng')">
+          <ElInput
+            size="mini"
+            v-model="dialogConfig.label"
+            :placeholder="$t('packages_component_classification_nodeName')"
+            maxlength="50"
+            show-word-limit
+          ></ElInput>
+        </ElFormItem>
+        <ElFormItem
+          :label="$t('packages_component_src_discoveryclassification_mulufenlei')"
+          v-if="dialogConfig.isParent"
+        >
+          <ElSelect v-model="dialogConfig.itemType" :disabled="dialogConfig.type === 'edit'">
+            <el-option
+              :label="$t('packages_component_src_discoveryclassification_ziyuanmulu')"
+              value="resource"
+            ></el-option>
+            <!--            <el-option label="任务目录" value="task"></el-option>-->
+          </ElSelect>
+        </ElFormItem>
+        <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumiaoshu')">
+          <ElInput
+            type="textarea"
+            v-model="dialogConfig.desc"
+            :placeholder="$t('packages_component_src_discoveryclassification_qingshurumulu')"
+            maxlength="50"
+            show-word-limit
+          ></ElInput>
+        </ElFormItem>
+      </ElForm>
+      <span slot="footer" class="dialog-footer">
+        <ElButton size="mini" @click="hideDialog()">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton size="mini" type="primary" @click="dialogSubmit()">
+          {{ $t('public_button_confirm') }}
+        </ElButton>
+      </span>
+    </ElDialog>
   </div>
 </template>
 
 <script>
 import { VirtualTree, IconButton } from '@tap/component'
 import { makeDragNodeImage, TASK_SETTINGS } from '../../shared'
-import { discoveryApi, ldpApi } from '@tap/api'
+import { discoveryApi, ldpApi, metadataDefinitionsApi, userGroupsApi } from '@tap/api'
 import { uuid } from '@tap/shared'
 export default {
   name: 'MDM',
@@ -94,7 +137,17 @@ export default {
         tableName: null,
         newTableName: null
       },
-      expandedKeys: []
+      expandedKeys: [],
+      dialogConfig: {
+        type: 'add',
+        id: '',
+        gid: '',
+        label: '',
+        title: '',
+        itemType: 'resource',
+        desc: '',
+        visible: false
+      }
     }
   },
 
@@ -163,16 +216,28 @@ export default {
           <span class="table-label" title={data.name}>
             {data.name}
           </span>
-          {data.isObject && (
-            <VIcon
-              size="18"
+          {data.isObject ? (
+            <IconButton
               class="btn-menu"
+              sm
               onClick={() => {
                 this.$emit('preview', data)
               }}
             >
               view-details
-            </VIcon>
+            </IconButton>
+          ) : (
+            <span class="btn-menu">
+              <IconButton
+                sm
+                onClick={ev => {
+                  ev.stopPropagation()
+                  this.showDialog(data, 'add')
+                }}
+              >
+                add
+              </IconButton>
+            </span>
           )}
         </div>
       )
@@ -411,6 +476,65 @@ export default {
 
     handleDragEnd() {
       this.$emit('node-drag-end')
+    },
+
+    showDialog(data, dialogType) {
+      let type = dialogType || 'add'
+      let itemType = 'resource'
+      if (data && data.item_type) {
+        itemType = data.item_type?.join('')
+      }
+      this.dialogConfig = {
+        itemType: itemType,
+        visible: true,
+        type,
+        id: data ? data.id : '',
+        gid: data?.gid || '',
+        label: type === 'edit' ? data.name : '',
+        isParent: true,
+        desc: type === 'edit' ? data?.desc : '',
+        title:
+          type === 'add' ? this.$t('packages_component_classification_addChildernNode') : this.$t('public_button_edit')
+      }
+    },
+    hideDialog() {
+      this.dialogConfig = {
+        visible: false
+      }
+    },
+    async dialogSubmit() {
+      let config = this.dialogConfig
+      let value = config.label
+      let id = config.id
+      let gid = config.gid
+      let itemType = [config.itemType]
+      let method = 'post'
+
+      if (!value || value.trim() === '') {
+        this.$message.error(this.$t('packages_component_classification_nodeName'))
+        return
+      }
+
+      let params = {
+        item_type: itemType,
+        desc: config.desc,
+        value
+      }
+      if (config.type === 'edit') {
+        method = 'changeById'
+        params.id = id
+        delete params.item_type
+      } else if (id) {
+        params.parent_id = id
+      }
+      metadataDefinitionsApi[method](params)
+        .then(() => {
+          this.hideDialog()
+          this.$emit('load-directory')
+        })
+        .catch(err => {
+          this.$message.error(err.message)
+        })
     }
   }
 }

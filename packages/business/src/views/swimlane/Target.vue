@@ -3,7 +3,7 @@
     <div class="list__title flex align-center px-4">
       <span class="fs-6">SERVICES / TARGETS</span>
       <div class="flex-grow-1"></div>
-      <IconButton @click="handleAdd">plus</IconButton>
+      <IconButton @click="handleAdd">add</IconButton>
       <IconButton class="ml-3">search-outline</IconButton>
     </div>
     <div class="p-3 flex-fill min-h-0 overflow-auto">
@@ -209,7 +209,7 @@ export default {
     },
 
     handleAdd() {
-      this.$emit('create-connection', 'target')
+      this.$emit('create-target', 'target')
     },
 
     async getData() {

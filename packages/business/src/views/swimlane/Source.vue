@@ -3,7 +3,7 @@
     <div class="list__title flex align-center px-4">
       <span class="fs-6">SOURCES</span>
       <div class="flex-grow-1"></div>
-      <IconButton @click="handleAdd">plus</IconButton>
+      <IconButton @click="handleAdd">add</IconButton>
       <!--<IconButton>search-outline</IconButton>-->
       <!--<IconButton>more</IconButton>-->
     </div>
@@ -45,7 +45,7 @@
             </div>
             <VIcon v-else class="tree-item-icon mr-2" size="18">table</VIcon>
             <span :class="[{ 'color-disable': data.disabled }, 'table-label']" :title="data.name">{{ data.name }}</span>
-            <VIcon size="18" class="btn-menu" @click="$emit('preview', data)">view-details</VIcon>
+            <IconButton class="btn-menu" sm @click="$emit('preview', data)"> view-details </IconButton>
           </span>
         </VirtualTree>
       </div>
