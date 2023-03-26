@@ -12,10 +12,10 @@
           {{ $t('dataFlow_createNew') }}
         </ElButton>
         <NotificationPopover v-if="$getSettingByKey('SHOW_NOTIFICATION')" class="ml-4"></NotificationPopover>
-        <ElDropdown v-if="showHelp" class="btn" placement="bottom" @command="command" command="help">
-          <span class="icon-btn py-1 px-3">
+        <ElDropdown v-if="showHelp" class="btn" placement="bottom" @command="command" command="help" show-timeout="0">
+          <div class="flex align-center icon-btn p-2 ml-2">
             <VIcon size="18">wenda</VIcon>
-          </span>
+          </div>
           <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem command="help">{{ $t('app_document') }}</ElDropdownItem>
           </ElDropdownMenu>
@@ -25,10 +25,11 @@
           class="btn"
           placement="bottom"
           @command="command"
+          show-timeout="0"
         >
-          <span class="icon-btn py-1 px-3">
+          <div class="flex align-center icon-btn p-2 ml-2">
             <VIcon size="18">shezhi</VIcon>
-          </span>
+          </div>
           <!-- <VIcon class="icon-btn" size="16">shezhi</VIcon> -->
           <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem command="settings" v-if="settingCode && email === 'admin@admin.com'">{{
@@ -39,10 +40,16 @@
             }}</ElDropdownItem>
           </ElDropdownMenu>
         </ElDropdown>
-        <ElDropdown v-if="$getSettingByKey('SHOW_LANGUAGE')" class="btn" placement="bottom" @command="changeLanguage">
-          <span class="icon-btn py-1 px-3">
+        <ElDropdown
+          v-if="$getSettingByKey('SHOW_LANGUAGE')"
+          class="btn"
+          placement="bottom"
+          @command="changeLanguage"
+          show-timeout="0"
+        >
+          <div class="flex align-center icon-btn p-2 ml-2">
             <VIcon size="18">language_icon</VIcon>
-          </span>
+          </div>
           <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem v-for="(value, key) in languages" :key="key" :command="key">
               <span v-if="lang === key" class="color-primary">{{ value }}</span>
@@ -51,11 +58,11 @@
           </ElDropdownMenu>
         </ElDropdown>
         <ElDivider direction="vertical" class="divider mx-6"></ElDivider>
-        <ElDropdown class="menu-user btn pl-2" placement="bottom" @command="command">
-          <span class="icon-btn">
+        <ElDropdown class="menu-user btn" placement="bottom" @command="command" show-timeout="0">
+          <div class="flex align-center icon-btn p-2">
             <span class="user-initials mr-2">{{ initials }}</span>
             <span>{{ userName }}<i class="el-icon-arrow-down ml-2"></i></span>
-          </span>
+          </div>
           <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem command="account">{{ $t('app_account') }}</ElDropdownItem>
             <ElDropdownItem command="version">{{ $t('app_version') }}</ElDropdownItem>
@@ -193,8 +200,7 @@
       margin-right: 23px;
       display: flex;
       align-items: center;
-      .btn {
-        padding: 6px 0;
+      .icon-btn {
         color: rgba(255, 255, 255, 0.85);
         cursor: pointer;
         i {
@@ -206,7 +212,7 @@
         }
         &:hover {
           background-color: rgba(239, 241, 244, 0.23);
-          border-radius: 4px;
+          border-radius: 6px;
           // color: map-get($color, primary);
         }
       }
@@ -337,14 +343,9 @@
   }
   .item-badge {
     .el-badge__content {
-      height: 15px;
-      line-height: 13px;
-      padding: 0 5px;
-      border: none;
-    }
-    .el-badge__content.is-fixed {
-      right: 26px;
-      top: 3px;
+      height: 16px;
+      line-height: 16px;
+      border: 0;
     }
   }
   .layout-main {
