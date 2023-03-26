@@ -192,7 +192,7 @@ export default {
   public_task_full_start_time: 'Full start time',
   public_task_full_completion_time: 'Full completion time',
   public_task_full_sync_progress: 'full sync progress',
-  public_task_max_incremental_delay: 'Maximum incremental delay',
+  public_task_max_incremental_delay: 'Maximum replication delay',
   public_task_heartbeat_time: 'Task heartbeat time',
   public_task_mission_error: 'Task error',
   // node
@@ -202,7 +202,7 @@ export default {
   public_node_processor: 'Processing Node',
   public_node_target: 'Target Node',
   // task event
-  public_event_incremental_delay: 'Incremental delay',
+  public_event_incremental_delay: 'Replication Delay',
   public_event_total_input: 'Total input',
   public_event_total_output: 'Total output',
   public_event_insert: 'Insert',

@@ -199,7 +199,7 @@ export default {
   packages_dag_components_log_xiazai: 'download',
   packages_dag_components_log_qingshururizhi: 'Please enter the log content...',
   packages_dag_components_nodedetaildialog_chulihaoshi: 'processing time',
-  packages_dag_components_nodedetaildialog_xingnengzhibiao: 'Performance metrics',
+  packages_dag_components_nodedetaildialog_xingnengzhibiao: 'Performance Metrics',
   packages_dag_components_nodedetaildialog_zengliangshijiandian: 'Incremental time point',
   packages_dag_components_nodedetaildialog_xieyilianjiehao: 'The protocol connection takes time',
   packages_dag_components_nodedetaildialog_tcPlianjie: 'TCP connection time consuming',
@@ -408,9 +408,9 @@ export default {
   packages_dag_monitor_leftsider_shanchu: 'Delete:',
   packages_dag_monitor_leftsider_gengxin: 'Update:',
   packages_dag_monitor_leftsider_charu: 'Insert:',
-  packages_dag_monitor_leftsider_renwushijiantong: 'Task event statistics (strips)',
-  packages_dag_monitor_leftsider_zuidazengliangyan: 'Maximum incremental delay:',
-  packages_dag_monitor_leftsider_tongbuxinxi: 'Sync information',
+  packages_dag_monitor_leftsider_renwushijiantong: 'Processed Event Stats(Rows)',
+  packages_dag_monitor_leftsider_zuidazengliangyan: 'Maximum replication delay:',
+  packages_dag_monitor_leftsider_tongbuxinxi: 'Sync Information',
   packages_dag_monitor_leftsider_tiaoshixinxi: 'Debug information',
   packages_dag_monitor_leftsider_chayixiangqing: 'Difference details',
   packages_dag_components_nodedetaildialog_chulixieruhao: 'Processing/writing time',
@@ -433,7 +433,7 @@ export default {
   packages_dag_monitor_leftsider_renwuchuliwan:
     'The total time required for task processing to complete a newly generated event, when there are multiple targets, only the maximum processing time is counted',
   packages_dag_monitor_leftsider_shijiancongyuanku:
-    'The delay time between the event being generated from the source library and the completion of writing to the target after the task is processed. When there are multiple targets, only the maximum incremental delay time is counted',
+    'The delay time between the event being generated from the source library and the completion of writing to the target after the task is processed. When there are multiple targets, only the maximum Replication Delay time is counted',
   packages_dag_monitor_leftsider_qpSshizhi:
     'QPS refers to the average number of input events and output events processed by the task per second',
   packages_dag_components_nodedetaildialog_zengliangduquyan2:
