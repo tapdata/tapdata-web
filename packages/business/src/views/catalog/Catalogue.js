@@ -155,7 +155,7 @@ export default defineComponent({
               onNodeChecked={handleNodeClick}
             />
           </div>
-          <div class="flex flex-column flex-1">
+          <div class="flex flex-column flex-1 min-w-0">
             <div class="p-3">
               <div class="path-breadcrumb flex align-center">
                 {pathMatch.value.map((node, i) => {
