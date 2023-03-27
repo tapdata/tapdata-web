@@ -752,10 +752,11 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
   th.el-table__cell {
     padding: 0;
     height: 40px;
-    .cell {
-      //word-break: break-word;
-      word-break: normal;
-    }
+  }
+
+  .cell {
+    overflow-wrap: break-word;
+    word-break: normal;
   }
 }
 .el-table--small {
