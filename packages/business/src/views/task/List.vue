@@ -137,12 +137,12 @@
           <TaskStatus :task="row" :agentMap="agentMap" />
         </template>
       </el-table-column>
-      <el-table-column sortable prop="currentEventTimestamp" :label="$t('public_task_cdc_time_point')" min-width="164">
+      <el-table-column sortable prop="currentEventTimestamp" :label="$t('public_task_cdc_time_point')" min-width="168">
         <template #default="{ row }">
           {{ formatTime(row.currentEventTimestamp) }}
         </template>
       </el-table-column>
-      <el-table-column prop="lastStartDate" :label="$t('public_task_last_run_time')" min-width="164" sortable="custom">
+      <el-table-column prop="lastStartDate" :label="$t('public_task_last_run_time')" min-width="168" sortable="custom">
         <template #default="{ row }">
           {{ formatTime(row.lastStartDate) }}
         </template>
