@@ -258,14 +258,17 @@ export default {
     inputQueryWait: {
       type: Number,
       default: 100
+    },
+    pageSize: {
+      type: Number,
+      default: 20
     }
   },
 
   data() {
     return {
       pagination: {
-        page: 1,
-        size: 20
+        page: 1
       },
 
       total: 0,
@@ -314,7 +317,7 @@ export default {
     },
 
     noMore() {
-      return this.pagination.page >= Math.ceil(this.total / this.pagination.size)
+      return this.pagination.page >= Math.ceil(this.total / this.pageSize)
     },
 
     scrollDisabled() {
@@ -462,7 +465,9 @@ export default {
     },
 
     getFilter() {
-      const filter = merge({}, this.params, this.pagination)
+      const filter = merge({}, this.params, this.pagination, {
+        size: this.pageSize
+      })
       const query = this.query.trim()
 
       if (query) {
