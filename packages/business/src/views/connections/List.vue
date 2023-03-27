@@ -41,7 +41,7 @@
           :disabled="$disabledReadonlyUserBtn()"
           @click="checkTestConnectionAvailable"
         >
-          <span> {{ $t('public_connection_button_create') }}</span>
+          <span> {{ $t('public_button_create') }}</span>
         </ElButton>
       </div>
       <ElTableColumn v-if="isDaas" type="selection" width="45" :reserve-selection="true"></ElTableColumn>
