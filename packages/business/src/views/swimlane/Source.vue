@@ -7,48 +7,48 @@
       <!--<IconButton>search-outline</IconButton>-->
       <!--<IconButton>more</IconButton>-->
     </div>
-    <div class="flex flex-column flex-1 min-h-0">
-      <div v-loading="loading" class="p-3 flex-fill tree-list">
-        <VirtualTree
-          class="ldp-tree"
-          ref="tree"
-          node-key="id"
-          highlight-current
-          :props="props"
-          draggable
-          lazy
-          :load="loadNode"
-          :filter-node-method="filterNode"
-          :render-after-expand="false"
-          :expand-on-click-node="false"
-          :allow-drop="() => false"
-          @check="checkHandler"
-          @node-drag-start="handleDragStart"
-          @node-drag-end="handleDragEnd"
+    <div class="flex-1 min-h-0" v-loading="loading">
+      <VirtualTree
+        class="ldp-tree h-100"
+        ref="tree"
+        node-key="id"
+        highlight-current
+        :props="props"
+        draggable
+        lazy
+        height="100%"
+        wrapper-class-name="p-2"
+        :load="loadNode"
+        :filter-node-method="filterNode"
+        :render-after-expand="false"
+        :expand-on-click-node="false"
+        :allow-drop="() => false"
+        @check="checkHandler"
+        @node-drag-start="handleDragStart"
+        @node-drag-end="handleDragEnd"
+      >
+        <span
+          class="custom-tree-node flex align-items-center"
+          slot-scope="{ node, data }"
+          @dblclick="$emit('preview', data)"
         >
-          <span
-            class="custom-tree-node flex align-items-center"
-            slot-scope="{ node, data }"
-            @dblclick="$emit('preview', data)"
+          <VIcon
+            v-if="node.data.loadFieldsStatus === 'loading'"
+            class="v-icon animation-rotate"
+            size="14"
+            color="rgb(61, 156, 64)"
+            >loading-circle</VIcon
           >
-            <VIcon
-              v-if="node.data.loadFieldsStatus === 'loading'"
-              class="v-icon animation-rotate"
-              size="14"
-              color="rgb(61, 156, 64)"
-              >loading-circle</VIcon
-            >
-            <NodeIcon v-if="!node.data.isLeaf" :node="node.data" :size="18" class="tree-item-icon mr-2" />
-            <div v-else-if="node.data.isEmpty" class="flex align-items-center">
-              <span class="mr-1">{{ $t('public_data_no_data') }}</span>
-              <StageButton :connection-id="getConnectionId(node)"> </StageButton>
-            </div>
-            <VIcon v-else class="tree-item-icon mr-2" size="18">table</VIcon>
-            <span :class="[{ 'color-disable': data.disabled }, 'table-label']" :title="data.name">{{ data.name }}</span>
-            <IconButton class="btn-menu" sm @click="$emit('preview', data)"> view-details </IconButton>
-          </span>
-        </VirtualTree>
-      </div>
+          <NodeIcon v-if="!node.data.isLeaf" :node="node.data" :size="18" class="tree-item-icon mr-2" />
+          <div v-else-if="node.data.isEmpty" class="flex align-items-center">
+            <span class="mr-1">{{ $t('public_data_no_data') }}</span>
+            <StageButton :connection-id="getConnectionId(node)"> </StageButton>
+          </div>
+          <VIcon v-else class="tree-item-icon mr-2" size="18">table</VIcon>
+          <span :class="[{ 'color-disable': data.disabled }, 'table-label']" :title="data.name">{{ data.name }}</span>
+          <IconButton class="btn-menu" sm @click="$emit('preview', data)"> view-details </IconButton>
+        </span>
+      </VirtualTree>
     </div>
   </div>
 </template>

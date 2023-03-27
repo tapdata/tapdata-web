@@ -20,24 +20,24 @@
       @dragleave.stop="handleDragLeave"
       @drop.stop="handleDrop"
     >
-      <div class="p-3 overflow-auto">
-        <VirtualTree
-          class="ldp-tree"
-          ref="tree"
-          node-key="id"
-          highlight-current
-          :data="treeData"
-          draggable
-          :default-expanded-keys="expandedKeys"
-          :render-content="renderContent"
-          :render-after-expand="false"
-          :expand-on-click-node="false"
-          :allow-drop="() => false"
-          @node-drag-start="handleDragStart"
-          @node-drag-end="handleDragEnd"
-          @node-expand="handleNodeExpand"
-        ></VirtualTree>
-      </div>
+      <VirtualTree
+        class="ldp-tree h-100"
+        ref="tree"
+        node-key="id"
+        highlight-current
+        :data="treeData"
+        draggable
+        height="100%"
+        wrapper-class-name="p-2"
+        :default-expanded-keys="expandedKeys"
+        :render-content="renderContent"
+        :render-after-expand="false"
+        :expand-on-click-node="false"
+        :allow-drop="() => false"
+        @node-drag-start="handleDragStart"
+        @node-drag-end="handleDragEnd"
+        @node-expand="handleNodeExpand"
+      ></VirtualTree>
 
       <div
         class="drop-mask justify-center align-center absolute-fill font-color-dark fs-6"
@@ -64,7 +64,7 @@
     </ElDialog>
 
     <ElDialog :visible.sync="dialogConfig.visible" width="30%" :close-on-click-modal="false">
-      <span slot="title" style="font-size: 14px">{{ dialogConfig.title }}</span>
+      <span slot="title" class="fs-6 fw-sub">{{ dialogConfig.title }}</span>
       <ElForm ref="form" :model="dialogConfig" label-width="90px">
         <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumingcheng')">
           <ElInput
@@ -75,7 +75,7 @@
             show-word-limit
           ></ElInput>
         </ElFormItem>
-        <ElFormItem
+        <!--<ElFormItem
           :label="$t('packages_component_src_discoveryclassification_mulufenlei')"
           v-if="dialogConfig.isParent"
         >
@@ -84,9 +84,9 @@
               :label="$t('packages_component_src_discoveryclassification_ziyuanmulu')"
               value="resource"
             ></el-option>
-            <!--            <el-option label="任务目录" value="task"></el-option>-->
+            &lt;!&ndash;            <el-option label="任务目录" value="task"></el-option>&ndash;&gt;
           </ElSelect>
-        </ElFormItem>
+        </ElFormItem>-->
         <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumiaoshu')">
           <ElInput
             type="textarea"

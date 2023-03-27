@@ -11,6 +11,7 @@
   >
     <virtual-list
       v-if="height"
+      :class="wrapperClassName"
       :style="{ 'max-height': height, 'overflow-y': 'auto' }"
       :data-key="getNodeKey"
       :data-sources="visibleList"
@@ -65,7 +66,8 @@ export default {
     extraLine: {
       type: Number,
       default: 8
-    }
+    },
+    wrapperClassName: [String, Array]
   },
   computed: {
     visibleList() {

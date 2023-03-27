@@ -19,25 +19,25 @@
       @dragleave.stop="handleDragLeave"
       @drop.stop="handleDrop"
     >
-      <div class="p-3 overflow-auto">
-        <VirtualTree
-          class="ldp-tree"
-          ref="tree"
-          node-key="id"
-          highlight-current
-          :data="treeData"
-          draggable
-          :default-expanded-keys="expandedKeys"
-          :render-content="renderContent"
-          :render-after-expand="false"
-          :expand-on-click-node="false"
-          :allow-drop="() => false"
-          :allow-drag="checkAllowDrag"
-          @node-drag-start="handleDragStart"
-          @node-drag-end="handleDragEnd"
-          @node-expand="handleNodeExpand"
-        ></VirtualTree>
-      </div>
+      <VirtualTree
+        class="ldp-tree h-100"
+        ref="tree"
+        node-key="id"
+        highlight-current
+        :data="treeData"
+        draggable
+        height="100%"
+        wrapper-class-name="p-2"
+        :default-expanded-keys="expandedKeys"
+        :render-content="renderContent"
+        :render-after-expand="false"
+        :expand-on-click-node="false"
+        :allow-drop="() => false"
+        :allow-drag="checkAllowDrag"
+        @node-drag-start="handleDragStart"
+        @node-drag-end="handleDragEnd"
+        @node-expand="handleNodeExpand"
+      ></VirtualTree>
 
       <div
         class="drop-mask justify-center align-center absolute-fill font-color-dark fs-6"

@@ -67,7 +67,8 @@ export default {
     showCheckbox: {
       type: Boolean,
       default: false
-    }
+    },
+    onNodeExpand: Function
   },
 
   components: {
