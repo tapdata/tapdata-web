@@ -121,10 +121,10 @@ export default {
           name: '推荐场景',
           types: ['BigQuery', 'Tablestore']
         },
-        {
+        /*{
           name: 'API 发布',
           types: ['RESTful API', 'GraphQL']
-        },
+        },*/
         {
           name: '入数仓',
           types: [
