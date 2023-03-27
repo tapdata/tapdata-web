@@ -156,7 +156,6 @@
             ref="table"
             :columns="apisColumns"
             :remoteMethod="getApisData"
-            height="100%"
             class="mt-4"
           >
             <template #status="{ row }">

@@ -83,12 +83,20 @@
           <el-button type="primary" size="mini">新建</el-button>
         </header>
         <el-table class="discovery-page-table" :data="taskData" :has-pagination="false">
-          <el-table-column
-            :label="$t('public_task_name')"
-            prop="name"
-            width="200px"
-            show-overflow-tooltip
-          ></el-table-column>
+          <el-table-column :label="$t('public_task_name')" prop="name" width="200px" show-overflow-tooltip>
+            <template #default="{ row }">
+              <span class="dataflow-name link-primary flex">
+                <ElLink
+                  role="ellipsis"
+                  type="primary"
+                  class="justify-content-start ellipsis block"
+                  :class="['name', { 'has-children': row.hasChildren }]"
+                  @click.stop="handleClickName(row)"
+                  >{{ row.name }}</ElLink
+                >
+              </span>
+            </template>
+          </el-table-column>
           <el-table-column :label="$t('public_task_type')">
             <template #default="{ row }">
               <span>
@@ -195,6 +203,30 @@ export default {
     },
     formatTime(time) {
       return time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
+    },
+    openRoute(route, newTab = true) {
+      if (newTab) {
+        window.open(this.$router.resolve(route).href)
+      } else {
+        this.$router.push(route)
+      }
+    },
+    handleClickName(row) {
+      if (this.$disabledReadonlyUserBtn()) return
+      let routeName
+
+      if (!['edit', 'wait_start'].includes(row.status)) {
+        routeName = row.syncType === 'migrate' ? 'MigrationMonitor' : 'TaskMonitor'
+      } else {
+        routeName = row.syncType === 'migrate' ? 'MigrateEditor' : 'DataflowEditor'
+      }
+
+      this.openRoute({
+        name: routeName,
+        params: {
+          id: row.id
+        }
+      })
     }
   }
 }
