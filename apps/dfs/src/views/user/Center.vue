@@ -211,6 +211,27 @@
         >
       </div>
     </section>
+
+    <section>
+      <div class="mt-12 fs-7">服务订阅信息</div>
+      <VTable
+        :columns="columns"
+        :remoteMethod="remoteMethod"
+        :page-options="{
+          layout: 'total, ->, prev, pager, next, sizes, jumper'
+        }"
+        :has-pagination="false"
+        ref="table"
+        class="mt-4"
+      >
+        <template #operation="{ row }">
+          <ElButton type="text" @click="handleRecord(row)">记录</ElButton>
+          <ElButton type="text">续订</ElButton>
+          <ElButton type="text" @click="handleUnsubscribe(row)">退订</ElButton>
+        </template>
+      </VTable>
+    </section>
+
     <ElDialog
       width="435px"
       append-to-body
@@ -501,6 +522,18 @@
         }}</VButton>
       </span>
     </ElDialog>
+    <!--  订阅记录  -->
+    <ElDialog width="618px" append-to-body :close-on-click-modal="false" :visible.sync="recordData.visible">
+      <div class="mt-n11 mx-n2 mb-4 p-4 bg-color-normal text-center rounded-4">
+        <div class="font-color-dark text-center fs-5">{{ recordData.title }}</div>
+        <p class="font-color-dark fs-1 text-center">{{ recordData.number }}</p>
+        <p class="mt-4 font-color-sslight text-center">{{ recordData.statusLabel }}</p>
+      </div>
+      <div v-for="(item, index) in recordData.items" :key="index" class="flex justify-content-between mb-2">
+        <span class="font-color-light">{{ item.label }}</span>
+        <span class="font-color-dark">{{ item.value }}</span>
+      </div>
+    </ElDialog>
   </div>
 </template>
 
@@ -513,10 +546,12 @@ import UploadFile from '@/components/UploadFile'
 import { urlToBase64 } from '@/util'
 import CryptoJS from 'crypto-js'
 import dayjs from 'dayjs'
+import { connectionsApi } from '@tap/api'
+import { VTable } from '@tap/component'
 
 export default {
   name: 'Center',
-  components: { InlineInput, VerificationCode, UploadFile },
+  components: { InlineInput, VerificationCode, UploadFile, VTable },
   data() {
     return {
       userData: {
@@ -580,7 +615,63 @@ export default {
       isEdit: false,
       accessKeyTooltip: false,
       secretKeyTooltip: false,
-      disabledBindingPhone: window.__config__?.disabledBindingPhone
+      disabledBindingPhone: window.__config__?.disabledBindingPhone,
+      columns: [
+        {
+          label: '订阅内容',
+          prop: 'name'
+        },
+        {
+          label: '订阅周期',
+          prop: 'createTime',
+          dataType: 'time'
+        },
+        {
+          label: '订阅周期',
+          prop: 'extendArray'
+        },
+        {
+          label: '订阅数量',
+          prop: 'extendArray'
+        },
+        {
+          label: '金额',
+          prop: 'extendArray'
+        },
+        {
+          label: '状态',
+          prop: 'extendArray'
+        },
+        {
+          label: '操作 ',
+          prop: 'extendArray',
+          slotName: 'operation'
+        }
+      ],
+      recordData: {
+        visible: false,
+        title: '连续包月方式订阅 4C8G 实例',
+        number: 10,
+        statusLabel: '交易成功',
+        items: [
+          {
+            label: '付款方式',
+            value: '微信支付'
+          },
+          {
+            label: '创建时间',
+            value: '2023-03-04 17:56:33'
+          },
+          {
+            label: '支付时间',
+            value: '2023-03-04 17:56:40'
+          },
+          {
+            label: '订单号',
+            value: '2023030419203919321'
+          }
+        ]
+      }
     }
   },
   mounted() {
@@ -922,6 +1013,30 @@ export default {
     },
     handleCopySecretKey() {
       this.secretKeyTooltip = true
+    },
+    remoteMethod() {
+      return connectionsApi.get().then(data => {
+        console.log('data', data)
+        return {
+          total: 0,
+          data: data.items
+        }
+      })
+    },
+    handleRecord(item) {
+      console.log('handleRecord', item)
+      this.recordData.visible = true
+    },
+    handleUnsubscribe() {
+      this.$confirm('您将退订“连续包月方式订阅4C8G实例”业务，退订后您将不再享受该服务，确定是否退订？', '退订服务', {
+        type: 'warning',
+        confirmButtonText: this.$t('public_button_confirm'),
+        cancelButtonText: this.$t('public_button_cancel')
+      }).then(res => {
+        if (res) {
+          alert('退订')
+        }
+      })
     }
   }
 }

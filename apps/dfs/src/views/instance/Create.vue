@@ -54,10 +54,13 @@
         <ElButton size="mini" type="primary" @click="submit">订阅</ElButton>
       </span>
     </template>
-    <div v-else>
-      <p>账单已发送至邮箱，请查收</p>
-      <ElButton size="mini" @click="back">返回</ElButton>
-      <ElButton size="mini" type="primary" @click="finish">支付完成</ElButton>
+    <div v-else class="text-center">
+      <img style="height: 60px" :src="require('@tap/assets/images/passed.png')" />
+      <p class="mb-4 mt-4 fs-6">账单已发送至邮箱，请查收</p>
+      <div class="inline-block">
+        <ElButton @click="back">返回</ElButton>
+        <ElButton type="primary" @click="finish">支付完成</ElButton>
+      </div>
     </div>
   </ElDialog>
 </template>
@@ -171,6 +174,12 @@ export default {
     submit() {
       this.$refs.from.validate(valid => {
         if (!valid) return
+        const params = {
+          priceId: ''
+        }
+        this.$axios.post('api/tcm/paid/plan/createPaidSubscribe', params).then(data => {
+          console.log('api/tcm/paid/plan/createPaidSubscribe', data)
+        })
         this.showResult = true
       })
     },

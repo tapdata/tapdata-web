@@ -325,7 +325,7 @@
       <!--   创建订阅   -->
       <CreateDialog v-model="createDialog"></CreateDialog>
       <!--   选择授权码   -->
-      <SelectListDialog v-model="selectListDialog"></SelectListDialog>
+      <SelectListDialog v-model="selectListDialog" :type="selectListType"></SelectListDialog>
     </div>
   </section>
   <RouterView v-else></RouterView>
@@ -343,6 +343,7 @@ import { VIcon, FilterBar } from '@tap/component'
 import { dayjs } from '@tap/business'
 import Time from '@tap/shared/src/time'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
+import { tcmApi } from '@tap/api'
 
 const CreateDialog = () => import(/* webpackChunkName: "CreateInstanceDialog" */ './Create')
 const SelectListDialog = () => import(/* webpackChunkName: "SelectListInstanceDialog" */ './SelectList')
@@ -393,7 +394,8 @@ export default {
       detailId: null,
       filterItems: [],
       createDialog: false,
-      selectListDialog: false
+      selectListDialog: false,
+      selectListType: 'code'
     }
   },
   computed: {
@@ -860,13 +862,31 @@ export default {
       const userInfo = window.__USER_INFO__ || {}
       console.log('userInfo', userInfo)
       // 开启授权码
-      if (userInfo.enableLicense) {
-        // 请求检查是否有数据
+      if (!userInfo.enableLicense) {
+        this.selectListType = 'code'
         this.selectListDialog = true
-      } else {
-        this.createDialog = true
+        this.createAgentLoading = false
+        return
       }
-      this.createAgentLoading = false
+      console.log('请求')
+      // tcmApi
+      //   .paidSubscriptionsAvailable()
+      this.$axios
+        .get('api/tcm/paid/subscriptions/available')
+        .then(data => {
+          console.log('paidSubscriptionsAvailable', data)
+          if (data) {
+            this.selectListType = 'order'
+            this.selectListDialog = true
+            return
+          }
+          this.createDialog = true
+        })
+        .finally(() => {
+          this.createAgentLoading = false
+        }).catch(() => {
+        this.createDialog = true
+      })
     },
     // 禁用部署
     deployBtnDisabled(row) {
