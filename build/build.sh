@@ -23,4 +23,7 @@ sed -i.bak "s|DAAS_BUILD_NUMBER|$DAAS_BUILD_NUMBER|g" $base/apps/$app/.env
 
 echo "pnpm build:$app --dest $dist --mode $mode"
 
-pnpm i --no-frozen-lockfile && pnpm build:$app --dest $dist --mode $mode
+echo "pnpm version: "
+pnpm --version
+
+pnpm i --frozen-lockfile && pnpm build:$app --dest $dist --mode $mode
