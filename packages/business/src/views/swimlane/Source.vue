@@ -22,7 +22,6 @@
         :filter-node-method="filterNode"
         :render-after-expand="false"
         :expand-on-click-node="false"
-        :allow-drag="node => node.data.isObject"
         :allow-drop="() => false"
         @check="checkHandler"
         @node-drag-start="handleDragStart"

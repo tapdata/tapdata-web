@@ -71,9 +71,9 @@
 
       <ElDialog :visible.sync="dialogConfig.visible" width="600" :close-on-click-modal="false">
         <span slot="title" style="font-size: 14px">{{ dialogConfig.title }}</span>
-        <ElForm ref="form" :model="dialogConfig" label-width="180px" @submit.prevent>
+        <ElForm ref="form" :model="dialogConfig" label-width="180px" @submit.prevent :rules="formRules">
           <div class="pipeline-desc p-4 mb-4">{{ dialogConfig.desc }}</div>
-          <ElFormItem label="Pipeline Name">
+          <ElFormItem prop="taskName" :label="$t('public_task_name')">
             <ElInput size="small" v-model="dialogConfig.taskName" maxlength="50" show-word-limit></ElInput>
           </ElFormItem>
         </ElForm>
@@ -105,6 +105,7 @@ import { TaskStatus } from '../../components'
 import CreateRestApi from './components/CreateRestApi'
 import DataServerDrawer from '../data-server/Drawer'
 import { TASK_SETTINGS } from '../../shared'
+import { debounce } from 'lodash'
 const restApiIcon = getIcon('rest api')
 
 const TaskList = defineComponent({
@@ -169,6 +170,22 @@ export default {
   components: { CreateRestApi, DatabaseIcon, TaskList, draggable, DataServerDrawer, IconButton },
 
   data() {
+    const validateTaskName = async (rule, value, callback) => {
+      value = value.trim()
+      if (!value) {
+        callback(new Error(this.$t('packages_business_relation_list_qingshururenwu')))
+      } else {
+        const isExist = await taskApi.checkName({
+          name: value
+        })
+        if (isExist) {
+          callback(new Error(this.$t('packages_dag_task_form_error_name_duplicate')))
+        } else {
+          callback()
+        }
+      }
+    }
+
     return {
       restApiIcon,
       dragging: false,
@@ -184,7 +201,10 @@ export default {
       apiDialog: {
         visible: false
       },
-      apiServerHost: ''
+      apiServerHost: '',
+      formRules: {
+        taskName: [{ validator: validateTaskName, trigger: 'blur' }]
+      }
     }
   },
 
@@ -397,27 +417,31 @@ export default {
     },
 
     async dialogSubmit() {
-      const { syncType, from, to, tableName } = this.dialogConfig
-      let task
+      this.$refs.form.validate(async valid => {
+        if (valid) {
+          const { syncType, from, to, tableName } = this.dialogConfig
+          let task
 
-      if (syncType === 'sync') {
-        task = this.makeSyncTask(from, tableName, to)
-      } else if (syncType === 'migrate') {
-        task = this.makeMigrateTask(from, to)
-      }
+          if (syncType === 'sync') {
+            task = this.makeSyncTask(from, tableName, to)
+          } else if (syncType === 'migrate') {
+            task = this.makeMigrateTask(from, to)
+          }
 
-      this.dialogConfig.visible = false
+          let taskInfo = await taskApi.post(task)
+          taskInfo = this.mapTask(taskInfo)
 
-      let taskInfo = await taskApi.post(task)
-      taskInfo = this.mapTask(taskInfo)
+          this.dialogConfig.visible = false
 
-      if (this.connectionTaskMap[to.id]) {
-        this.connectionTaskMap[to.id].unshift(taskInfo)
-      } else {
-        this.$set(this.connectionTaskMap, to.id, [taskInfo])
-      }
+          if (this.connectionTaskMap[to.id]) {
+            this.connectionTaskMap[to.id].unshift(taskInfo)
+          } else {
+            this.$set(this.connectionTaskMap, to.id, [taskInfo])
+          }
 
-      this.$message.success('任务创建成功')
+          this.$message.success('任务创建成功')
+        }
+      })
     },
 
     handleEditInDag(task) {

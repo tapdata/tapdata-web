@@ -109,7 +109,11 @@ export default {
 
   computed: {
     allowDrop() {
-      return this.dragState.isDragging && this.dragState.from === 'SOURCE'
+      return (
+        this.dragState.isDragging &&
+        this.dragState.from === 'SOURCE' &&
+        this.dragState.draggingObjects[0]?.data.LDP_TYPE === 'table'
+      )
     },
     treeData() {
       return this.directory?.children || []
