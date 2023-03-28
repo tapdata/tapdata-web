@@ -122,7 +122,11 @@ export default {
     dragState: Object,
     mdmConnection: Object,
     eventDriver: Object,
-    loadingDirectory: Boolean
+    loadingDirectory: Boolean,
+    mapCatalog: {
+      type: Function,
+      require: true
+    }
   },
 
   components: { VirtualTree, IconButton },
@@ -513,6 +517,7 @@ export default {
         itemType: itemType,
         visible: true,
         type,
+        parent: data,
         id: data ? data.id : '',
         gid: data?.gid || '',
         label: type === 'edit' ? data.name : '',
@@ -523,15 +528,12 @@ export default {
       }
     },
     hideDialog() {
-      this.dialogConfig = {
-        visible: false
-      }
+      this.dialogConfig.visible = false
     },
     async dialogSubmit() {
       let config = this.dialogConfig
       let value = config.label
       let id = config.id
-      let gid = config.gid
       let itemType = [config.itemType]
       let method = 'post'
 
@@ -545,6 +547,7 @@ export default {
         desc: config.desc,
         value
       }
+
       if (config.type === 'edit') {
         method = 'changeById'
         params.id = id
@@ -552,14 +555,17 @@ export default {
       } else if (id) {
         params.parent_id = id
       }
-      metadataDefinitionsApi[method](params)
-        .then(() => {
-          this.hideDialog()
-          this.$emit('load-directory')
-        })
-        .catch(err => {
-          this.$message.error(err.message)
-        })
+
+      try {
+        const data = await metadataDefinitionsApi[method](params)
+        this.hideDialog()
+        this.$message.success(this.$t('public_message_operation_success'))
+        if (data && config.type === 'add') {
+          this.dialogConfig.parent.children.push(this.mapCatalog(data))
+        }
+      } catch (err) {
+        this.$message.error(err.message)
+      }
     },
 
     checkAllowDrop(draggingNode, dropNode, type) {
@@ -585,7 +591,7 @@ export default {
         oldTagIds: [from]
       })
       objects.forEach(item => (item.parent_id = to))
-      this.$message.success('操作成功')
+      this.$message.success(this.$t('public_message_operation_success'))
     }
   }
 }
