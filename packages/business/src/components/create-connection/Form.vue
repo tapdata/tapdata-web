@@ -36,7 +36,6 @@
               ref="schemaToForm"
               :schema="schemaData"
               :scope="schemaScope"
-              wrapperWidth="600px"
               :colon="true"
               label-width="160"
             ></SchemaToForm>
@@ -1218,6 +1217,7 @@ export default {
 }
 
 .git-book {
+  width: 400px;
   border-top: 1px solid #e1e3e9;
 }
 </style>
