@@ -1,9 +1,12 @@
 <template>
   <div class="list__item flex flex-column flex-1 overflow-hidden">
     <div class="list__title flex align-center px-4">
-      <span class="fs-6">MDM / CURATED MODELS</span>
+      <span class="fs-6">Master Data Management</span>
       <div class="flex-grow-1"></div>
-      <IconButton @click="showDialog(directory, 'add')">add</IconButton>
+      <ElTooltip placement="top" content="新增分类">
+        <IconButton @click="showDialog(directory, 'add')">folder-plus</IconButton>
+      </ElTooltip>
+
       <IconButton>search-outline</IconButton>
       <!--<ElDropdown trigger="click" @command="handleCommand">
         <IconButton class="ml-3">more</IconButton>
@@ -12,14 +15,7 @@
         </ElDropdownMenu>
       </ElDropdown>-->
     </div>
-    <div
-      ref="treeWrap"
-      class="flex flex-column flex-1 position-relative min-h-0 tree-wrap"
-      @dragover.stop="handleDragOver"
-      @dragenter.stop="handleDragEnter"
-      @dragleave.stop="handleDragLeave"
-      @drop.stop="handleDrop"
-    >
+    <div ref="treeWrap" class="flex flex-column flex-1 position-relative min-h-0 tree-wrap">
       <VirtualTree
         class="ldp-tree h-100"
         ref="tree"
@@ -33,15 +29,20 @@
         :render-content="renderContent"
         :render-after-expand="false"
         :expand-on-click-node="false"
-        :allow-drop="() => false"
+        :allow-drop="checkAllowDrop"
+        @dragover.native.stop="handleDragOver"
+        @dragenter.native.stop="handleDragEnter"
+        @dragleave.native.stop="handleDragLeave"
+        @drop.native.stop="handleDrop"
         @node-drag-start="handleDragStart"
         @node-drag-end="handleDragEnd"
+        @node-drop="handleSelfDrop"
         @node-expand="handleNodeExpand"
       ></VirtualTree>
 
       <div
         class="drop-mask justify-center align-center absolute-fill font-color-dark fs-6"
-        :class="{ flex: allowDrop }"
+        :class="{ flex: allowDrop && !isDragSelf }"
       >
         Clone To MDM
       </div>
@@ -161,6 +162,9 @@ export default {
         ['SOURCE', 'FDM'].includes(this.dragState.from) &&
         this.dragState.draggingObjects[0]?.data.LDP_TYPE === 'table'
       )
+    },
+    isDragSelf() {
+      return this.dragState.isDragging && this.dragState.from === 'MDM'
     }
   },
 
@@ -184,12 +188,12 @@ export default {
         icon = 'table'
       } else {
         node.isLeaf = false
-        icon = 'folder-outline'
+        icon = 'folder-o'
       }
 
       return (
         <div
-          class="custom-tree-node"
+          class="custom-tree-node grabbable"
           on={{
             dblclick: () => {
               data.isObject && this.$emit('preview', data)
@@ -212,7 +216,7 @@ export default {
             }
           }}
         >
-          <div class="tree-item-icon flex align-center mr-2">{icon && <VIcon size="18">{icon}</VIcon>}</div>
+          <div class="tree-item-icon flex align-center mr-1">{icon && <VIcon size="18">{icon}</VIcon>}</div>
           <span class="table-label" title={data.name}>
             {data.name}
           </span>
@@ -260,8 +264,8 @@ export default {
 
       if (!this.allowDrop) return
 
-      const dropNode = this.findParentByClassName(ev.currentTarget, 'tree-wrap')
-      dropNode.classList.add('is-drop-inner')
+      const dropNode = this.findParentByClassName(ev.currentTarget, 'ldp-tree')
+      dropNode.classList.add('is-drop')
     },
 
     handleDragLeave(ev) {
@@ -269,14 +273,14 @@ export default {
 
       if (!this.allowDrop) return
       if (!ev.currentTarget.contains(ev.relatedTarget)) {
-        this.removeDropEffect(ev, 'tree-wrap')
+        this.removeDropEffect(ev, 'ldp-tree', 'is-drop')
       }
     },
 
     handleDrop(ev) {
       ev.preventDefault()
 
-      this.removeDropEffect(ev, 'tree-wrap')
+      this.removeDropEffect(ev, 'ldp-tree', 'is-drop')
 
       if (!this.allowDrop) return
 
@@ -416,7 +420,7 @@ export default {
     handleTreeDragEnter(ev, data) {
       ev.preventDefault()
 
-      if (!this.allowDrop) return
+      if (!this.allowDrop && !this.isDragSelf) return
 
       const dropNode = this.findParentNodeByClassName(ev.currentTarget, 'el-tree-node')
       dropNode.classList.add('is-drop-inner')
@@ -425,7 +429,7 @@ export default {
     handleTreeDragLeave(ev, data) {
       ev.preventDefault()
 
-      if (!this.allowDrop) return
+      if (!this.allowDrop && !this.isDragSelf) return
       if (!ev.currentTarget.contains(ev.relatedTarget)) {
         this.removeDropEffect(ev, 'el-tree-node')
       }
@@ -437,9 +441,30 @@ export default {
       if (!this.allowDrop) return
 
       this.removeDropEffect(ev, 'el-tree-node')
-      this.removeDropEffect(ev, 'tree-wrap')
+      this.removeDropEffect(ev, 'ldp-tree', 'is-drop')
+
       this.showTaskDialog(data.id)
       console.log('handleTreeDrop') // eslint-disable-line
+    },
+
+    handleSelfDrop(draggingNode, dropNode, dropType, ev) {
+      if (!draggingNode.data.isObject) {
+        metadataDefinitionsApi
+          .changeById({
+            id: draggingNode.data.id,
+            parent_id: dropNode.data.id || ''
+          })
+          .then(() => {
+            this.$message.success('操作成功')
+            draggingNode.data.parent_id = dropNode.data.id
+            // this.getData()
+          })
+          .catch(err => {
+            this.$message.error(err.message)
+          })
+      } else {
+        this.moveTag(draggingNode.data.parent_id, dropNode.data.id, [draggingNode.data])
+      }
     },
 
     findParentNodeByClassName(el, cls) {
@@ -450,9 +475,9 @@ export default {
       return parent
     },
 
-    removeDropEffect(ev, cls = 'wrap__item') {
+    removeDropEffect(ev, cls = 'wrap__item', removeCls = 'is-drop-inner') {
       const dropNode = this.findParentByClassName(ev.currentTarget, cls)
-      dropNode.classList.remove('is-drop-inner')
+      dropNode.classList.remove(removeCls)
     },
 
     handleDragStart(draggingNode, ev) {
@@ -535,23 +560,35 @@ export default {
         .catch(err => {
           this.$message.error(err.message)
         })
+    },
+
+    checkAllowDrop(draggingNode, dropNode, type) {
+      return type === 'inner' && this.isDragSelf
+    },
+
+    async moveTag(from, to, objects) {
+      if (from === to) return
+
+      const tagBindingParams = objects.map(t => {
+        return {
+          id: t.id,
+          objCategory: t.category
+        }
+      })
+      /*await discoveryApi.patchTags({
+        tagBindingParams,
+        tagIds: [from]
+      })*/
+      await discoveryApi.postTags({
+        tagBindingParams,
+        tagIds: [to],
+        oldTagIds: [from]
+      })
+      objects.forEach(item => (item.parent_id = to))
+      this.$message.success('操作成功')
     }
   }
 }
 </script>
 
-<style scoped lang="scss">
-.drop-mask {
-  display: none;
-  pointer-events: none;
-  backdrop-filter: blur(4px);
-  background-color: rgba(255, 255, 255, 0.4);
-}
-
-.is-drop-inner {
-  box-shadow: 0px 0px 0px 2px map-get($color, primary) inset;
-  .drop-mask {
-    display: none !important;
-  }
-}
-</style>
+<style scoped lang="scss"></style>

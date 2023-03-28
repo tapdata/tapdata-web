@@ -308,4 +308,22 @@ export default {
     }
   }
 }
+
+.swim-lane {
+  ::v-deep {
+    .drop-mask {
+      display: none;
+      pointer-events: none;
+      backdrop-filter: blur(4px);
+      background-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .ldp-tree.is-drop {
+      box-shadow: 0px 0px 0px 2px map-get($color, primary) inset;
+      & + .drop-mask {
+        display: none !important;
+      }
+    }
+  }
+}
 </style>

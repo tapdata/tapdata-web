@@ -9,7 +9,7 @@ import resize from '@tap/component/src/directives/resize'
 import './index.scss'
 
 const ICON = {
-  folder: 'folder-outline',
+  folder: 'folder-o',
   table: 'table',
   api: 'apiServer_navbar'
 }
@@ -201,7 +201,7 @@ export default defineComponent({
                   {({ row }) => {
                     return (
                       <div class="cursor-pointer flex align-center">
-                        <div class="tree-item-icon flex align-center mr-2">{renderIcon(row)}</div>
+                        <div class="tree-item-icon flex align-center mr-1">{renderIcon(row)}</div>
                         <span>{row.name}</span>
                       </div>
                     )

@@ -53,10 +53,12 @@
               <DatabaseIcon :item="item" :size="20" class="item__icon mt-1" />
               <div class="flex-1 ml-2 overflow-hidden">
                 <div class="flex justify-content-between">
-                  <span class="font-color-normal fw-sub fs-6 ellipsis" :title="item.name">{{ item.name }}</span>
+                  <span class="font-color-normal fw-sub fs-6 ellipsis lh-base" :title="item.name">{{ item.name }}</span>
+
                   <span class="operation-line ml-2">
-                    <VIcon size="16" class="cursor-pointer" @click="$emit('preview', item)">view-details</VIcon>
-                    <VIcon size="18" class="ml-3">setting</VIcon>
+                    <IconButton @click="$emit('preview', item)" sm>view-details</IconButton>
+                    <!--<VIcon size="16" class="cursor-pointer" @click="$emit('preview', item)">view-details</VIcon>-->
+                    <!--<VIcon size="18" class="ml-3">setting</VIcon>-->
                   </span>
                 </div>
                 <div class="mt-2 font-color-light">Sync data to {{ item.database_type }} for analytics</div>
@@ -513,9 +515,6 @@ export default {
 }
 .item__icon {
   //border: 1px solid #4e5969;
-}
-.operation-line {
-  min-width: 50px;
 }
 
 .pipeline-desc {

@@ -28,7 +28,7 @@
         @node-drag-end="handleDragEnd"
       >
         <span
-          class="custom-tree-node flex align-items-center"
+          class="custom-tree-node flex align-items-center grabbable"
           slot-scope="{ node, data }"
           @dblclick="$emit('preview', data)"
         >
@@ -171,7 +171,7 @@ export default {
       this.dragState.from = 'SOURCE'
     },
 
-    handleDragEnd(draggingNode, dropNode, positon, ev) {
+    handleDragEnd(draggingNode, dropNode, dropType, ev) {
       this.$emit('node-drag-end', ev)
       this.eventDriver.emit('source-drag-end', ev)
     },
