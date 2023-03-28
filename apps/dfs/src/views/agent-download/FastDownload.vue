@@ -115,7 +115,7 @@
             <span>{{ $t('agent_deploy_start_install_linux_second') }}</span>
             <img class="mt-2 block" :src="getImg('downloadLinux')" alt="" />
           </li>
-          <li>
+          <li class="mt-2">
             <span>{{ $t('agent_deploy_start_install_linux_third') }}</span>
             <ElLink type="primary" @click="linuxToAgent">{{ $t('agent_deploy_link_agent_operation') }}</ElLink>
             <span>{{ $t('agent_deploy_link_agent_operation_desc') }}</span>
@@ -425,7 +425,7 @@ export default {
     width: 100%;
     height: calc(100% - 80px);
     margin: 0 auto;
-    padding: 0 20% 100px;
+    padding: 0 16% 100px;
     box-sizing: border-box;
     overflow: auto;
 
@@ -438,7 +438,7 @@ export default {
     }
     .title-text {
       line-height: 22px;
-      font-size: 12px;
+      font-size: $fontBaseTitle;
       color: #666;
     }
     .text-style {
@@ -490,7 +490,7 @@ export default {
         overflow: hidden;
         margin-right: 20px;
         padding: 10px 50px;
-        font-size: 12px;
+        font-size: $fontBaseTitle;
         cursor: pointer;
         color: map-get($iconFillColor, normal);
         background: map-get($bgColor, main);

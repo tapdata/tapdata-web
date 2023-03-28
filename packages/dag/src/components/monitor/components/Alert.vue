@@ -144,7 +144,7 @@ export default {
         {
           label: i18n.t('packages_dag_components_alert_gaojingzhuangtai'),
           prop: 'statusLabel',
-          width: 80
+          width: 100
         },
         {
           label: i18n.t('packages_dag_components_alert_gaojingmiaoshu'),
