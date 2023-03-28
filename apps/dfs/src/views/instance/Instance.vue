@@ -48,7 +48,7 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn :label="$t('agent_status')" width="120">
+        <ElTableColumn :label="$t('agent_status')" width="140">
           <template slot-scope="scope">
             <StatusTag type="tag" :status="scope.row.status" default-status="Stopped"></StatusTag>
             <ElTooltip v-if="scope.row.status == 'Stopped'" placement="top">

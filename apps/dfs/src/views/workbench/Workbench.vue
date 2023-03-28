@@ -729,7 +729,7 @@ export default {
 }
 // 快速开始
 .create-list__item {
-  width: 230px;
+  width: 276px;
   height: 70px;
   margin-right: 24px;
   background-color: #fff;

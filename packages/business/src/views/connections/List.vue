@@ -105,7 +105,7 @@
           {{ scope.row.loadSchemaTime }}
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="last_updated" sortable="last_updated" min-width="160" :label="$t('public_change_time')">
+      <ElTableColumn prop="last_updated" sortable="last_updated" min-width="170" :label="$t('public_change_time')">
         <template slot-scope="scope">
           {{ scope.row.lastUpdateTime }}
         </template>
