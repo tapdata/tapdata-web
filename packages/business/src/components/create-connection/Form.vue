@@ -1,7 +1,7 @@
 <template>
   <div class="connection-from" v-loading="loadingFrom">
     <div class="connection-from-body">
-      <main class="connection-from-main">
+      <main class="connection-from-main min-w-0">
         <div class="connection-from-title">
           {{
             params.id
