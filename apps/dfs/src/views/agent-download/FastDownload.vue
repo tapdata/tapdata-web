@@ -280,7 +280,8 @@ export default {
       version: '',
       trialUrl: '',
       url: '',
-      agentId: ''
+      agentId: '',
+      timer: null
     }
   },
   created() {
@@ -295,8 +296,40 @@ export default {
         { name: 'Windows (64 bit)', value: 'windows' }
       ]
     }
+    this.getInstance()
+  },
+  destroyed() {
+    this.timer = null
+    clearTimeout(this.timer)
   },
   methods: {
+    //获取当前实例状态
+    getInstance() {
+      this.timer = null
+      clearTimeout(this.timer)
+      this.$axios.get('api/tcm/agent/' + this.$route.query?.id).then(data => {
+        if (data?.status !== 'Creating') {
+          this.timer = null
+          clearTimeout(this.timer)
+          this.open()
+        } else {
+          let self = this
+          this.timer = setTimeout(function () {
+            self.getInstance()
+          }, 5000)
+        }
+      })
+    },
+    open() {
+      this.$confirm(this.$t('dfs_agent_down_tishi'), this.$t('task_mapping_dialog_hint'), {
+        confirmButtonText: this.$t('dfs_agent_down_goback'),
+        type: 'warning',
+        showClose: false,
+        showCancelButton: false
+      }).then(() => {
+        this.$router.push('/instance')
+      })
+    },
     getUrl() {
       this.$axios.get('api/tcm/productRelease/deploy/' + this.$route.query?.id).then(async data => {
         this.downloadUrl = data.downloadUrl || ''

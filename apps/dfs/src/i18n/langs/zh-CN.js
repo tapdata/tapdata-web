@@ -1060,6 +1060,10 @@ export default {
   dfs_user_center_acces:
     'AccessKey是您访问系统API的秘钥，具有账号的完全权限，请您务必妥善保管！不要以任何方式公开AccessKey到外部渠道（例如GitHub），避免被他人利用造成安全威胁。',
   dfs_user_center_kaifaxinxi: '开发信息',
+
+  //实例
+  dfs_agent_down_tishi: 'Agent实例已删除，不能继续部署。',
+  dfs_agent_down_goback: '返回Agent管理',
   dfs_agent_download_agentdownloadmodal_aliyunjisuan: '阿里云计算巢',
   dfs_agent_download_agentdownloadmodal_bushuwanchenghou:
     '4. 部署完成后，返回我们的【Agent管理页面】等待2分钟直到【状态】变为【运行中】。恭喜您！已经完成了Tapdata  Alould 计算环境的部署，可以去创建数据任务了。',

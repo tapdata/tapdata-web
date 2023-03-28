@@ -1130,6 +1130,10 @@ export default {
   dfs_user_center_acces:
     'AccessKey is the secret key for accessing the system API and has complete account permissions. Please make sure to keep it safe! Do not disclose the AccessKey in any way to external channels (such as GitHub) to prevent it from being used by others and causing security threats.',
   dfs_user_center_kaifaxinxi: 'Development Information',
+
+  //instance
+  dfs_agent_down_tishi: 'The agent has been deleted and the deployment cannot continue',
+  dfs_agent_down_goback: 'Return to Agent management',
   dfs_agent_download_agentdownloadmodal_aliyunjisuan: 'Alibaba Cloud Computing Nest',
   dfs_agent_download_agentdownloadmodal_bushuwanchenghou:
     '4. After the deployment is complete, return to our [Agent Management Page] and wait for 2 minutes until the [Status] changes to [Running]. congratulations. The deployment of the Tapdata Alould computing environment has been completed, and the data task can be created. ',
