@@ -22,13 +22,15 @@
         :filter-node-method="filterNode"
         :render-after-expand="false"
         :expand-on-click-node="false"
+        :allow-drag="node => node.data.isObject"
         :allow-drop="() => false"
         @check="checkHandler"
         @node-drag-start="handleDragStart"
         @node-drag-end="handleDragEnd"
       >
         <span
-          class="custom-tree-node flex align-items-center grabbable"
+          class="custom-tree-node flex align-items-center"
+          :class="{ grabbable: data.isObject }"
           slot-scope="{ node, data }"
           @dblclick="$emit('preview', data)"
         >
@@ -131,6 +133,7 @@ export default {
           name: t.tableName,
           connectionId: id,
           isLeaf: true,
+          isObject: true,
           type: 'table',
           LDP_TYPE: 'table'
         }

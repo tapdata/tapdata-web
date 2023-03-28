@@ -170,7 +170,7 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
           }}
           onDrop={this.handleTreeNodeDrop}
         >
-          <div class="tree-item-icon flex align-center mr-1">{icon && <VIcon size="18">{icon}</VIcon>}</div>
+          <div class="tree-item-icon flex align-center mr-2">{icon && <VIcon size="18">{icon}</VIcon>}</div>
           <span class="table-label" title={data.name}>
             {data.name}
           </span>
