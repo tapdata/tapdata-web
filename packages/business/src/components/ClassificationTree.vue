@@ -124,7 +124,7 @@ export default {
       parent_id: '',
       title: '',
       iconMap: {
-        folder: 'folder-outline',
+        folder: 'folder-o',
         table: 'table',
         defaultApi: 'apiServer_navbar'
       }
@@ -176,7 +176,7 @@ export default {
             }
           }}
         >
-          <div class="tree-item-icon flex align-center mr-2">{icon}</div>
+          <div class="tree-item-icon flex align-center mr-1">{icon}</div>
           <span class="table-label" title={data.name}>
             {data.name}
           </span>
@@ -766,6 +766,9 @@ export default {
 <style lang="scss">
 $nodeH: 28px;
 .ldp-tree {
+  &.el-tree.is-dragging .el-tree-node__content {
+    cursor: grabbing;
+  }
   &.el-tree.is-dragging.is-drop-not-allow .el-tree-node__content {
     cursor: default;
   }

@@ -65,6 +65,7 @@ import { roleMappingsApi, permissionsApi, usersApi } from '@tap/api'
 let pageSort = [
   // { children: [{ name: 'Dashboard_menu' }] },
   { children: [{ name: 'v2_datasource_menu' }] },
+  { children: [{ name: 'v2_data-console' }] },
   {
     name: 'data_transmission',
     children: [

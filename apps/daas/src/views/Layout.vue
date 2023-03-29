@@ -393,7 +393,8 @@ let menuSetting = [
   {
     name: 'dataConsole',
     label: 'Data Console(Preview)',
-    icon: 'process-platform'
+    icon: 'process-platform',
+    code: 'v2_data-console'
   },
   { name: 'connectionsList', icon: 'agent', code: 'v2_datasource_menu', parent: 'connections' },
   {

@@ -9,7 +9,7 @@ import resize from '@tap/component/src/directives/resize'
 import './index.scss'
 
 const ICON = {
-  folder: 'folder-outline',
+  folder: 'folder-o',
   table: 'table',
   api: 'apiServer_navbar'
 }

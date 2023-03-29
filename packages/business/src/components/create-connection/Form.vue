@@ -1,7 +1,7 @@
 <template>
   <div class="connection-from" v-loading="loadingFrom">
     <div class="connection-from-body">
-      <main class="connection-from-main">
+      <main class="connection-from-main min-w-0">
         <div class="connection-from-title">
           {{
             params.id
@@ -36,7 +36,6 @@
               ref="schemaToForm"
               :schema="schemaData"
               :scope="schemaScope"
-              wrapperWidth="600px"
               :colon="true"
               label-width="160"
             ></SchemaToForm>
@@ -227,7 +226,8 @@ export default {
       this.buried('connectionSubmit')
       this.pdkFormModel = this.$refs.schemaToForm?.getForm?.()
       this.schemaFormInstance?.validate().then(() => {
-        if (!addNext) this.submitBtnLoading = true
+        this.submitBtnLoading = true
+        this.saveAndMoreLoading = true
         // 保存数据源
         let id = this.params?.id
         let { pdkOptions } = this
@@ -235,26 +235,20 @@ export default {
         let { __TAPDATA } = formValues
         formValues.__connectionType = __TAPDATA.connection_type
         delete formValues['__TAPDATA']
-        let params = Object.assign(
-          {
-            ...__TAPDATA,
-            database_type: pdkOptions.type,
-            pdkHash: pdkOptions.pdkHash
-          },
-          {
-            status: 'testing',
-            schema: {},
-            retry: 0,
-            nextRetry: null,
-            response_body: {},
-            project: '',
-            submit: true,
-            pdkType: 'pdk'
-          },
-          {
-            config: formValues
-          }
-        )
+        let params = {
+          ...__TAPDATA,
+          database_type: pdkOptions.type,
+          pdkHash: pdkOptions.pdkHash,
+          status: 'testing',
+          schema: {},
+          retry: 0,
+          nextRetry: null,
+          response_body: {},
+          project: '',
+          submit: true,
+          pdkType: 'pdk',
+          config: formValues
+        }
         if (this.showSystemConfig) {
           //打开挖掘配置
           let digSettingForm = {
@@ -294,7 +288,6 @@ export default {
       })
     },
     saveAndMore() {
-      this.saveAndMoreLoading = true
       this.submit(true)
     },
     //开始测试
@@ -317,12 +310,24 @@ export default {
       let formValues = this.$refs.schemaToForm?.getFormValues?.()
       let { __TAPDATA } = formValues
       formValues.__connectionType = __TAPDATA.connection_type
-      Object.assign(this.model, __TAPDATA)
       delete formValues['__TAPDATA']
-      this.model.config = formValues
-      this.model.pdkType = 'pdk'
-      this.model.pdkHash = this.params?.pdkHash
+      Object.assign(this.model, {
+        ...__TAPDATA,
+        database_type: this.pdkOptions.type,
+        pdkHash: this.pdkOptions.pdkHash,
+        id: this.params.id,
+        status: 'testing',
+        schema: {},
+        retry: 0,
+        nextRetry: null,
+        response_body: {},
+        project: '',
+        submit: true,
+        pdkType: 'pdk',
+        config: formValues
+      })
       this.dialogTestVisible = true
+
       if (this.params.id) {
         //编辑需要特殊标识 updateSchema = false editTest = true
         this.$refs.test.start(false, true)
@@ -451,11 +456,7 @@ export default {
       }
       const settings = await settingsApi.get()
       // 是否支持共享挖掘
-      if (
-        this.isDaas &&
-        this.pdkOptions.capabilities?.some(t => t.id === 'stream_read_function') &&
-        settings.some(it => it.key === 'share_cdc_enable' && it.value === 'true')
-      ) {
+      if (this.isDaas && this.pdkOptions.capabilities?.some(t => t.id === 'stream_read_function')) {
         END.properties.__TAPDATA.properties.shareCdcEnable = {
           type: 'boolean',
           default: false,
@@ -470,119 +471,33 @@ export default {
           }
         }
         // 共享挖掘设置
-        let shareFlag = await Promise.all([logcollectorApi.check(), logcollectorApi.getSystemConfig()]).then(
-          ([check, data]) => check && !data?.persistenceMongodb_uri_db
-        )
-        if (shareFlag) {
-          this.showSystemConfig = true
-          let config = {
-            // TODO 按时屏蔽外存功能
-            // externalStorageId: {
-            //   title: this.$t('packages_business_external_storage'), //外存配置
-            //   type: 'string',
-            //   'x-decorator': 'FormItem',
-            //   'x-component': 'Select',
-            //   'x-reactions': [
-            //     {
-            //       dependencies: ['__TAPDATA.shareCdcEnable'],
-            //       fulfill: {
-            //         state: {
-            //           display: '{{$deps[0] ? "visible" : "hidden"}}'
-            //         }
-            //       }
-            //     },
-            //     '{{useAsyncDataSource(loadExternalStorage)}}',
-            //     {
-            //       fulfill: {
-            //         state: {
-            //           value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}'
-            //         }
-            //       }
-            //     }
-            //   ]
-            // },
-            persistenceMongodb_uri_db: {
-              type: 'string',
-              title: this.$t('MongoDB URI'),
-              required: true,
-              'x-decorator': 'FormItem',
-              'x-component': 'Input',
-              'x-component-props': {
-                type: 'textarea'
+        let config = {
+          shareCDCExternalStorageId: {
+            title: this.$t('packages_business_external_storage'), //外存配置
+            type: 'string',
+            'x-decorator': 'FormItem',
+            'x-component': 'Select',
+            'x-reactions': [
+              {
+                dependencies: ['__TAPDATA.shareCdcEnable'],
+                fulfill: {
+                  state: {
+                    display: '{{$deps[0] ? "visible" : "hidden"}}'
+                  }
+                }
               },
-              'x-reactions': {
-                dependencies: ['__TAPDATA.shareCdcEnable'],
+              '{{useAsyncDataSource(loadExternalStorage)}}',
+              {
                 fulfill: {
                   state: {
-                    display: '{{$deps[0] ? "visible" : "hidden"}}'
+                    value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}'
                   }
                 }
               }
-            },
-            persistenceMongodb_collection: {
-              type: 'string',
-              title: this.$t('packages_business_share_form_setting_table_name'),
-              required: true,
-              'x-decorator': 'FormItem',
-              'x-component': 'Input',
-              'x-reactions': {
-                dependencies: ['__TAPDATA.shareCdcEnable'],
-                fulfill: {
-                  state: {
-                    display: '{{$deps[0] ? "visible" : "hidden"}}'
-                  }
-                }
-              }
-            },
-            share_cdc_ttl_day: {
-              type: 'string',
-              title: this.$t('packages_business_share_form_setting_log_time'),
-              required: true,
-              'x-decorator': 'FormItem',
-              default: 3,
-              enum: [
-                {
-                  label: 1 + this.$t('public_time_d'),
-                  value: 1
-                },
-                {
-                  label: 2 + this.$t('public_time_d'),
-                  value: 2
-                },
-                {
-                  label: 3 + this.$t('public_time_d'),
-                  value: 3
-                },
-                {
-                  label: 4 + this.$t('public_time_d'),
-                  value: 4
-                },
-                {
-                  label: 5 + this.$t('public_time_d'),
-                  value: 5
-                },
-                {
-                  label: 6 + this.$t('public_time_d'),
-                  value: 6
-                },
-                {
-                  label: 7 + this.$t('public_time_d'),
-                  value: 7
-                }
-              ],
-              'x-component': 'Select',
-              'x-reactions': {
-                dependencies: ['__TAPDATA.shareCdcEnable'],
-                fulfill: {
-                  state: {
-                    display: '{{$deps[0] ? "visible" : "hidden"}}'
-                  }
-                }
-              }
-            }
+            ]
           }
-          END.properties.__TAPDATA.properties = Object.assign({}, END.properties.__TAPDATA.properties, config)
         }
+        END.properties.__TAPDATA.properties = Object.assign({}, END.properties.__TAPDATA.properties, config)
       }
 
       // 是否支持包含表
@@ -1218,6 +1133,7 @@ export default {
 }
 
 .git-book {
+  width: 400px;
   border-top: 1px solid #e1e3e9;
 }
 </style>

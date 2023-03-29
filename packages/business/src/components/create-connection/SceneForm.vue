@@ -289,12 +289,24 @@ export default {
       let formValues = this.$refs.schemaToForm?.getFormValues?.()
       let { __TAPDATA } = formValues
       formValues.__connectionType = __TAPDATA.connection_type
-      Object.assign(this.model, __TAPDATA)
       delete formValues['__TAPDATA']
-      this.model.config = formValues
-      this.model.pdkType = 'pdk'
-      this.model.pdkHash = this.params?.pdkHash
+      Object.assign(this.model, {
+        ...__TAPDATA,
+        database_type: this.pdkOptions.type,
+        pdkHash: this.pdkOptions.pdkHash,
+        id: this.params.id,
+        status: 'testing',
+        schema: {},
+        retry: 0,
+        nextRetry: null,
+        response_body: {},
+        project: '',
+        submit: true,
+        pdkType: 'pdk',
+        config: formValues
+      })
       this.dialogTestVisible = true
+
       if (this.params.id) {
         //编辑需要特殊标识 updateSchema = false editTest = true
         this.$refs.test.start(false, true)

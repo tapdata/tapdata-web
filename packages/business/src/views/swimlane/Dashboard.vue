@@ -28,6 +28,7 @@
           :mdmConnection="mdmConnection"
           :event-driver="eventDriver"
           :loadingDirectory="loadingDirectory"
+          :mapCatalog="mapCatalog"
           @create-connection="handleAdd"
           @create-target="handleCreateTarget"
           @node-drag-end="handleDragEnd"
@@ -75,6 +76,10 @@ import { IconButton } from '@tap/component'
 import { connectionsApi, metadataDefinitionsApi } from '@tap/api'
 import Catalogue from '../catalog/Catalogue'
 
+const TYPE2NAME = {
+  target: 'TARGET&SERVICE'
+}
+
 export default {
   name: 'Dashboard',
 
@@ -112,7 +117,7 @@ export default {
       mdmConnection: null,
       loadingDirectory: true,
       eventDriver: new EventEmitter(),
-      currentView: 'swimlane' // catalog
+      currentView: 'swimlane'
     }
   },
 
@@ -153,6 +158,13 @@ export default {
     async 'settings.fdmStorageConnectionId'(v) {
       console.log('settings.fdmStorageConnectionId', v) // eslint-disable-line
       this.fdmConnection = await connectionsApi.get(v)
+    },
+
+    currentView(type) {
+      if (type === 'swimlane') {
+        this.directoryMap = {}
+        this.loadDirectory()
+      }
     }
   },
 
@@ -234,6 +246,21 @@ export default {
         })
     },
 
+    mapCatalog(item) {
+      item.LDP_TYPE = 'folder'
+      item.children = []
+
+      if (item.parent_id) {
+        item.name = item.value
+      } else {
+        const itemType = item.item_type[0]
+        item.name = TYPE2NAME[itemType] || item.value
+        item.readOnly = itemType !== 'mdm'
+      }
+
+      return item
+    },
+
     formatCatalog(items) {
       if (items && items.length) {
         const map = {}
@@ -249,20 +276,12 @@ export default {
         }
 
         items.forEach(it => {
-          it.LDP_TYPE = 'folder'
-          it.children = []
+          this.mapCatalog(it)
           if (it.parent_id) {
             let children = map[it.parent_id] || []
             children.push(it)
             map[it.parent_id] = children
-            it.name = it.value
           } else {
-            const itemType = it.item_type[0]
-            const TYPE2NAME = {
-              target: 'TARGET&SERVICE'
-            }
-            it.name = TYPE2NAME[itemType] || it.value
-            it.readOnly = itemType !== 'mdm'
             nodes.push(it)
           }
         })
@@ -304,6 +323,24 @@ export default {
     .icon-color {
       &:hover {
         background-color: map-get($bgColor, hover);
+      }
+    }
+  }
+}
+
+.swim-lane {
+  ::v-deep {
+    .drop-mask {
+      display: none;
+      pointer-events: none;
+      backdrop-filter: blur(4px);
+      background-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .ldp-tree.is-drop {
+      box-shadow: 0px 0px 0px 2px map-get($color, primary) inset;
+      & + .drop-mask {
+        display: none !important;
       }
     }
   }

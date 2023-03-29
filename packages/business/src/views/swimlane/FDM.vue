@@ -1,7 +1,7 @@
 <template>
   <div class="list__item flex flex-column flex-1 overflow-hidden">
     <div class="list__title flex align-center px-4">
-      <span class="fs-6">FDM / CACHE</span>
+      <span class="fs-6">Foundation Data Model</span>
       <div class="flex-grow-1"></div>
       <IconButton>search-outline</IconButton>
       <!--<ElDropdown trigger="click" @command="handleCommand">
@@ -11,14 +11,7 @@
         </ElDropdownMenu>
       </ElDropdown>-->
     </div>
-    <div
-      ref="treeWrap"
-      class="flex flex-column flex-1 min-h-0 position-relative fdm-tree-wrap"
-      @dragover.stop="handleDragOver"
-      @dragenter.stop="handleDragEnter"
-      @dragleave.stop="handleDragLeave"
-      @drop.stop="handleDrop"
-    >
+    <div ref="treeWrap" class="flex flex-column flex-1 min-h-0 position-relative fdm-tree-wrap">
       <VirtualTree
         class="ldp-tree h-100"
         ref="tree"
@@ -34,6 +27,10 @@
         :expand-on-click-node="false"
         :allow-drop="() => false"
         :allow-drag="checkAllowDrag"
+        @dragover.native.stop="handleDragOver"
+        @dragenter.native.stop="handleDragEnter"
+        @dragleave.native.stop="handleDragLeave"
+        @drop.native.stop="handleDrop"
         @node-drag-start="handleDragStart"
         @node-drag-end="handleDragEnd"
         @node-expand="handleNodeExpand"
@@ -112,7 +109,11 @@ export default {
 
   computed: {
     allowDrop() {
-      return this.dragState.isDragging && this.dragState.from === 'SOURCE'
+      return (
+        this.dragState.isDragging &&
+        this.dragState.from === 'SOURCE' &&
+        this.dragState.draggingObjects[0]?.data.LDP_TYPE === 'table'
+      )
     },
     treeData() {
       return this.directory?.children || []
@@ -138,7 +139,7 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
 
   mounted() {
     this.eventDriver.on('source-drag-end', ev => {
-      this.$refs.treeWrap?.classList.remove('is-drop-inner')
+      this.$refs.tree?.$el.classList.remove('is-drop')
     })
   },
 
@@ -151,17 +152,23 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
 
     renderContent(h, { node, data }) {
       let icon
+      let className = ['custom-tree-node']
+
+      if (data.isObject) {
+        className.push('grabbable')
+      }
+
       if (data.LDP_TYPE === 'table') {
         node.isLeaf = true
         icon = 'table'
       } else {
         node.isLeaf = false
-        icon = 'folder-outline'
+        icon = 'folder-o'
       }
 
       return (
         <div
-          class="custom-tree-node"
+          class={className}
           onDblclick={() => {
             data.isObject && this.$emit('preview', data)
           }}
@@ -274,8 +281,8 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
 
       if (!this.allowDrop) return
 
-      const dropNode = this.findParentByClassName(ev.currentTarget, 'fdm-tree-wrap')
-      dropNode.classList.add('is-drop-inner')
+      const dropNode = this.findParentByClassName(ev.currentTarget, 'ldp-tree')
+      dropNode.classList.add('is-drop')
     },
 
     handleDragLeave(ev) {
@@ -283,7 +290,7 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
 
       if (!this.allowDrop) return
       if (!ev.currentTarget.contains(ev.relatedTarget)) {
-        this.removeDropEffect(ev, 'fdm-tree-wrap')
+        this.removeDropEffect(ev, 'ldp-tree', 'is-drop')
       }
     },
 
@@ -292,7 +299,7 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
 
       if (!this.allowDrop) return
 
-      this.removeDropEffect(ev, 'fdm-tree-wrap')
+      this.removeDropEffect(ev, 'ldp-tree', 'is-drop')
 
       const { draggingObjects } = this.dragState
       if (!draggingObjects.length) return
@@ -309,9 +316,9 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
       this.showTaskDialog()
     },
 
-    removeDropEffect(ev, cls = 'wrap__item') {
+    removeDropEffect(ev, cls = 'wrap__item', removeCls = 'is-drop-inner') {
       const dropNode = this.findParentByClassName(ev.currentTarget, cls)
-      dropNode.classList.remove('is-drop-inner')
+      dropNode.classList.remove(removeCls)
     },
 
     handleTreeNodeDrop(ev) {
@@ -481,19 +488,6 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
 </script>
 
 <style scoped lang="scss">
-.drop-mask {
-  display: none;
-  backdrop-filter: blur(4px);
-  background-color: rgba(255, 255, 255, 0.4);
-}
-
-.is-drop-inner {
-  box-shadow: 0px 0px 0px 2px map-get($color, primary) inset;
-  .drop-mask {
-    display: none !important;
-  }
-}
-
 .pipeline-desc {
   background-color: #f8f8fa;
   border-radius: 8px;

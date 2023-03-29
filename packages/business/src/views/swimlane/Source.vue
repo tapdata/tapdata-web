@@ -29,6 +29,7 @@
       >
         <span
           class="custom-tree-node flex align-items-center"
+          :class="{ grabbable: data.isObject }"
           slot-scope="{ node, data }"
           @dblclick="$emit('preview', data)"
         >
@@ -131,6 +132,7 @@ export default {
           name: t.tableName,
           connectionId: id,
           isLeaf: true,
+          isObject: true,
           type: 'table',
           LDP_TYPE: 'table'
         }
@@ -171,7 +173,7 @@ export default {
       this.dragState.from = 'SOURCE'
     },
 
-    handleDragEnd(draggingNode, dropNode, positon, ev) {
+    handleDragEnd(draggingNode, dropNode, dropType, ev) {
       this.$emit('node-drag-end', ev)
       this.eventDriver.emit('source-drag-end', ev)
     },
