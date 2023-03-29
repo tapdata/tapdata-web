@@ -94,6 +94,22 @@
         <el-tab-pane label="Schema" name="schema">
           <VTable class="discovery-page-table" :columns="columns" :data="tableFields" :has-pagination="false">
             <div slot="empty">{{ $t('public_data_no_data') }}</div>
+            <template #primaryKey="{ row }">
+              <VIcon v-if="row.primaryKey" class="font-color-light">check</VIcon>
+              <span v-else>-</span>
+            </template>
+            <template #foreignKey="{ row }">
+              <VIcon v-if="row.foreignKey" class="font-color-light">check</VIcon>
+              <span v-else>-</span>
+            </template>
+            <template #index="{ row }">
+              <VIcon v-if="row.index" class="font-color-light">check</VIcon>
+              <span v-else>-</span>
+            </template>
+            <template #notNull="{ row }">
+              <VIcon v-if="row.notNull" class="font-color-light">check</VIcon>
+              <span v-else>-</span>
+            </template>
           </VTable>
         </el-tab-pane>
         <el-tab-pane label="Tasks" name="tasks">
@@ -223,23 +239,31 @@ export default {
         },
         {
           label: i18n.t('public_type'),
-          prop: 'dataType'
+          prop: 'dataType',
+          minWidth: 120
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_zhujian'),
-          prop: 'primaryKey'
+          slotName: 'primaryKey',
+          align: 'center'
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_waijian'),
-          prop: 'foreignKey'
+          prop: 'foreignKey',
+          slotName: 'foreignKey',
+          align: 'center'
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_suoyin'),
-          prop: 'index'
+          prop: 'index',
+          slotName: 'index',
+          align: 'center'
         },
         {
           label: i18n.t('meta_table_not_null'),
-          prop: 'notNull'
+          prop: 'notNull',
+          slotName: 'notNull',
+          align: 'center'
         },
         {
           label: i18n.t('meta_table_default'),
