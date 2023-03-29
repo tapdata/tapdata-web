@@ -50,10 +50,15 @@
         </ElTableColumn>
         <ElTableColumn width="120px" label="规格">
           <template slot-scope="scope">
-            <span>{{ scope.row.specLabel }}</span>
+            <span>{{ scope.row.specLabel || '-' }}</span>
           </template>
         </ElTableColumn>
         <ElTableColumn width="120px" label="订阅方式">
+          <template slot-scope="scope">
+            <span>{{ scope.row.subscriptionMethodLabel }}</span>
+          </template>
+        </ElTableColumn>
+        <ElTableColumn width="120px" label="有效期">
           <template slot-scope="scope">
             <span>{{ scope.row.subscriptionMethodLabel }}</span>
           </template>
@@ -884,8 +889,18 @@ export default {
       const userInfo = window.__USER_INFO__ || {}
       // 开启授权码
       if (userInfo.enableLicense) {
-        this.handleSelectListDialog('code')
-        this.createAgentLoading = false
+        this.$axios
+          .get('api/tcm/aliyun/market/license/available')
+          .then(data => {
+            if (data.length) {
+              this.handleSelectListDialog('code')
+            } else {
+              this.handleCreateAuthorizationCode()
+            }
+          })
+          .finally(() => {
+            this.createAgentLoading = false
+          })
         return
       }
       this.$axios
@@ -989,6 +1004,25 @@ export default {
         .finally(() => {
           this.createAgentLoading = false
         })
+    },
+    handleCreateAuthorizationCode() {
+      const href =
+        'https://market.aliyun.com/products/56024006/cmgj00061912.html?spm=5176.730005.result.4.519c3524QzKxHM&innerSource=search_tapdata#sku=yuncode5591200001'
+      this.$confirm(
+        `<p class="flex align-content-center">点击打开<a class="color-primary text-decoration-underline" href="${href}" target="_blank">阿里云市场</a>购买实例，并获取授权码</p>`,
+        '授权码服务',
+        {
+          dangerouslyUseHTMLString: true,
+          confirmButtonText: '激活授权码',
+          type: 'warning'
+        }
+      ).then(resFlag => {
+        if (resFlag) {
+          this.$router.push({
+            name: 'aliyunMarketLicense'
+          })
+        }
+      })
     }
   }
 }

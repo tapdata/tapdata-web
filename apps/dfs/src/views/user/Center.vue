@@ -209,10 +209,11 @@
           target="_blank"
           >{{ $t('dfs_user_center_kaifapiao') }}</el-link
         >
+        <el-link class="ml-4" type="primary" @click="goLicense">激活授权码</el-link>
       </div>
     </section>
 
-    <section>
+    <section v-if="!userData.enableLicense">
       <div class="mt-12 fs-7">服务订阅信息</div>
       <VTable
         :columns="columns"
@@ -224,16 +225,14 @@
         ref="table"
         class="mt-4"
       >
+        <template #bindAgent="{ row }">
+          <ElLink v-if="row.agentId" type="primary" @click="handleAgent(row)">已绑定实例</ElLink>
+          <span v-else>未绑定</span>
+        </template>
         <template #operation="{ row }">
           <ElButton type="text" @click="handleRecord(row)">记录</ElButton>
-          <ElButton type="text">续订</ElButton>
+          <ElButton v-if="row.type !== 'recurring'" type="text" @click="handleRenew(row)">续订</ElButton>
           <ElButton :disabled="row.status !== 'pay'" type="text" @click="handleUnsubscribe(row)">退订</ElButton>
-          <ElButton
-            :disabled="row.type !== 'recurring' || row.status !== 'pay'"
-            type="text"
-            @click="handleCancelSubscribe(row)"
-            >取消订阅</ElButton
-          >
         </template>
       </VTable>
     </section>
@@ -555,6 +554,7 @@ import dayjs from 'dayjs'
 import { VTable } from '@tap/component'
 import { getSpec, getPaymentMethod } from '../instance/utils'
 import { ORDER_STATUS_MAP, CURRENCY_SYMBOL_MAP } from '@tap/business'
+import { openUrl } from '@tap/shared'
 
 export default {
   name: 'Center',
@@ -643,7 +643,8 @@ export default {
         },
         {
           label: '绑定实例状态',
-          prop: 'bindAgent'
+          prop: 'bindAgent',
+          slotName: 'bindAgent'
         },
         {
           label: '状态',
@@ -1077,48 +1078,63 @@ export default {
       this.recordData.visible = true
     },
     handleUnsubscribe(row = {}) {
-      this.$confirm(`您将退订“${row.content}”业务，退订后您将不再享受该服务，确定是否退订？`, '退订服务', {
+      const titleObj = {
+        recurring: `退订服务`,
+        one_time: `退订服务`
+      }
+      const msgObj = {
+        recurring: `您将取消订阅“${row.content}实例”业务，取消后您将不再享受该服务，确定是否取消订阅？`,
+        one_time: `您将退订“${row.content}”业务，退订后您将不再享受该服务，确定是否退订？`
+      }
+      this.$confirm(msgObj['one_time'], titleObj['one_time'], {
         type: 'warning',
         confirmButtonText: this.$t('public_button_confirm'),
         cancelButtonText: this.$t('public_button_cancel')
       }).then(res => {
-        if (res) {
-          // 取消订阅
-          if (row.type === 'recurring') {
-            this.$axios
-              .post('api/tcm/paid/plan/subscribe/cancel', { id: row.id, subscribeId: row.subscribeId })
-              .then(() => {
-                this.$message.success(this.$t('public_message_operation_success'))
-              })
-            return
-          }
-          // 取消订购
-          this.$axios.post('api/tcm/paid/plan/oneTime/refunds', { id: row.id, chargeId: row.chargeId }).then(() => {
-            this.$message.success(this.$t('public_message_operation_success'))
-          })
+        if (!res) return
+        if (row.type === 'recurring') {
+          this.$axios
+            .post('api/tcm/paid/plan/subscribe/cancel', { id: row.id, subscribeId: row.subscribeId })
+            .then(() => {
+              this.$message.success(this.$t('public_message_operation_success'))
+            })
+          return
+        }
+        this.$axios.post('api/tcm/paid/plan/oneTime/refunds', { id: row.id, chargeId: row.chargeId }).then(() => {
+          this.$message.success(this.$t('public_message_operation_success'))
+        })
+      })
+    },
+    handleAgent(row = {}) {
+      this.$router.push({
+        name: 'Instance',
+        query: {
+          keyword: row.agentId
         }
       })
     },
-    handleCancelSubscribe(row = {}) {
-      this.$confirm(
-        `您将取消订阅“${row.content}实例”业务，取消后您将不再享受该服务，确定是否取消订阅？`,
-        '取消订阅服务',
-        {
-          type: 'warning',
-          confirmButtonText: this.$t('public_button_confirm'),
-          cancelButtonText: this.$t('public_button_cancel')
-        }
-      ).then(res => {
+    goLicense() {
+      this.$router.push({
+        name: 'aliyunMarketLicense'
+      })
+    },
+    handleRenew(row = {}) {
+      this.$confirm(`您将续订“${row.content}”业务，续订后您将继续享受该服务，确定是否续订？`, '续订服务', {
+        type: 'warning'
+      }).then(res => {
         if (res) {
-          // 取消订阅
-          if (row.type === 'recurring') {
-            this.$axios
-              .post('api/tcm/paid/plan/subscribe/cancelSubscribe', { id: row.id, subscribeId: row.subscribeId })
-              .then(() => {
-                this.$message.success(this.$t('public_message_operation_success'))
-              })
-            return
+          const { id, priceId, currency } = row
+          const params = {
+            id,
+            priceId,
+            currency,
+            successUrl: location.href,
+            cancelUrl: location.href,
+            renew: true
           }
+          this.$axios.post('api/tcm/paid/plan/oneTime/paymentLink', params).then(data => {
+            openUrl(data)
+          })
         }
       })
     }

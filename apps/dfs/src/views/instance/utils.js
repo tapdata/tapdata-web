@@ -2,6 +2,7 @@ import { NUMBER_MAP } from '@tap/business'
 
 export function getSpec(item = {}) {
   const { cpu = 0, memory = 0 } = item
+  if (!cpu || !memory) return ''
   return `${cpu}C${memory}G`
 }
 
