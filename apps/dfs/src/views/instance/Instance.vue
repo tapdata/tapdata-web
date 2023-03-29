@@ -48,6 +48,16 @@
             </div>
           </template>
         </ElTableColumn>
+        <ElTableColumn width="120px" label="规格">
+          <template slot-scope="scope">
+            <span>{{ scope.row.specLabel }}</span>
+          </template>
+        </ElTableColumn>
+        <ElTableColumn width="120px" label="订阅方式">
+          <template slot-scope="scope">
+            <span>{{ scope.row.subscriptionMethodLabel }}</span>
+          </template>
+        </ElTableColumn>
         <ElTableColumn :label="$t('agent_status')" width="120">
           <template slot-scope="scope">
             <StatusTag type="tag" :status="scope.row.status" default-status="Stopped"></StatusTag>
@@ -323,9 +333,14 @@
         </div>
       </Details>
       <!--   创建订阅   -->
-      <CreateDialog v-model="createDialog"></CreateDialog>
+      <CreateDialog v-model="createDialog" @finish="fetch"></CreateDialog>
       <!--   选择授权码   -->
-      <SelectListDialog v-model="selectListDialog" :type="selectListType"></SelectListDialog>
+      <SelectListDialog
+        v-model="selectListDialog"
+        :type="selectListType"
+        @create="createDialog = true"
+        @new-agent="handleNewAgent"
+      ></SelectListDialog>
     </div>
   </section>
   <RouterView v-else></RouterView>
@@ -343,7 +358,7 @@ import { VIcon, FilterBar } from '@tap/component'
 import { dayjs } from '@tap/business'
 import Time from '@tap/shared/src/time'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
-import { tcmApi } from '@tap/api'
+import { getSpec, getPaymentMethod } from './utils'
 
 const CreateDialog = () => import(/* webpackChunkName: "CreateInstanceDialog" */ './Create')
 const SelectListDialog = () => import(/* webpackChunkName: "SelectListInstanceDialog" */ './SelectList')
@@ -534,6 +549,13 @@ export default {
           let list = data.items || []
           this.list = list.map(item => {
             // item.status = item.status === 'Running' ? 'Running' : item.status === 'Stopping' ? 'Stopping' : 'Offline'
+            item.deployDisable = item.tmInfo.pingTime || false
+            const { paidSubscribeDto = {} } = item.orderInfo || {}
+            const { periodStart, periodEnd } = paidSubscribeDto
+            item.specLabel = getSpec(item.spec)
+            item.subscriptionMethodLabel = getPaymentMethod(paidSubscribeDto)
+            item.periodLabel =
+              dayjs(periodStart).format('YYYY-MM-DD HH:mm:ss') + ' - ' + dayjs(periodEnd).format('YYYY-MM-DD HH:mm:ss')
             item.deployDisable = item.tmInfo.pingTime || false
             // item.updateStatus = ''
             if (!item.tmInfo) {
@@ -860,33 +882,27 @@ export default {
     createAgent() {
       this.createAgentLoading = true
       const userInfo = window.__USER_INFO__ || {}
-      console.log('userInfo', userInfo)
       // 开启授权码
-      if (!userInfo.enableLicense) {
-        this.selectListType = 'code'
-        this.selectListDialog = true
+      if (userInfo.enableLicense) {
+        this.handleSelectListDialog('code')
         this.createAgentLoading = false
         return
       }
-      console.log('请求')
-      // tcmApi
-      //   .paidSubscriptionsAvailable()
       this.$axios
-        .get('api/tcm/paid/subscriptions/available')
+        .get('api/tcm/paid/plan/queryAvailableSubscribe')
         .then(data => {
-          console.log('paidSubscriptionsAvailable', data)
-          if (data) {
-            this.selectListType = 'order'
-            this.selectListDialog = true
+          if (data.length) {
+            this.handleSelectListDialog('order')
             return
           }
           this.createDialog = true
         })
         .finally(() => {
           this.createAgentLoading = false
-        }).catch(() => {
-        this.createDialog = true
-      })
+        })
+        .catch(() => {
+          this.createDialog = true
+        })
     },
     // 禁用部署
     deployBtnDisabled(row) {
@@ -949,6 +965,30 @@ export default {
     },
     isWindons(row) {
       return row?.metric?.systemInfo?.os?.includes('win')
+    },
+    handleSelectListDialog(type = 'code') {
+      this.selectListType = type
+      this.selectListDialog = true
+    },
+    handleNewAgent(params = {}) {
+      this.$axios
+        .post('api/tcm/orders', {
+          agentType: 'Local',
+          ...params
+        })
+        .then(data => {
+          buried('agentCreate')
+          this.fetch()
+          this.toDeploy({
+            id: data.agentId
+          })
+        })
+        .catch(e => {
+          this.$message.error(e.message)
+        })
+        .finally(() => {
+          this.createAgentLoading = false
+        })
     }
   }
 }

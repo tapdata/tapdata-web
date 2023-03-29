@@ -14,7 +14,7 @@
         请根据数据量和任务数量选择合适的实例规格进行订阅，订阅成功后，不可变更
       </p>
       <p class="font-color-light mb-2">选择实例规格</p>
-      <ElSelect v-model="form.specification">
+      <ElSelect v-model="form.specification" @change="handleChange">
         <ElOption
           v-for="item in specificationItems"
           :label="item.label"
@@ -22,12 +22,12 @@
           :key="item.value"
         ></ElOption>
       </ElSelect>
-      <ul class="my-6 flex justify-content-between">
+      <ul v-loading="loading" class="my-6">
         <li
-          v-for="item in packageItems"
+          v-for="(item, index) in packageItems"
           :key="item.value"
-          class="packages-item position-relative text-center p-4 cursor-pointer"
-          :class="{ active: form.package === item.value }"
+          class="packages-item position-relative text-center inline-block mb-4 p-4 cursor-pointer"
+          :class="{ active: selected.value === item.value, 'mr-6': index !== packageItems.length - 1 }"
           @click="handlePackage(item)"
         >
           <span v-if="item.recommend" class="recommend-item position-absolute top-0 bg-primary color-white py-1 px-6"
@@ -35,28 +35,29 @@
           >
           <p class="mb-4 pt-2 fs-6 font-color-normal">{{ item.label }}</p>
           <p class="mb-4 color-primary">
-            <span class="fs-6">¥</span>
-            <span class="fs-5">{{ item.number }}</span>
+            <span class="fs-5">{{ item.price }}</span>
           </p>
           <p class="font-color-sslight fs-8">{{ item.desc }}</p>
         </li>
       </ul>
-      <p class="font-color-sslight">本次订购只适用4C8G规格的实例</p>
+      <!--      <p class="font-color-sslight">本次订购只适用4C8G规格的实例</p>-->
 
-      <p class="mt-4 mb-2">接收账单的邮箱</p>
+      <p v-if="selected.type === 'recurring'" class="mt-4 mb-2">接收账单的邮箱</p>
       <ElForm :model="form" ref="from">
-        <ElFormItem prop="email" :rules="emailRules">
+        <ElFormItem v-if="selected.type === 'recurring'" prop="email" :rules="emailRules">
           <ElInput v-model="form.email" placeholder="请输入您的邮箱"></ElInput>
         </ElFormItem>
       </ElForm>
 
       <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" type="primary" @click="submit">订阅</ElButton>
+        <ElButton size="mini" type="primary" :loading="submitLoading" @click="submit">订阅</ElButton>
       </span>
     </template>
     <div v-else class="text-center">
-      <img style="height: 60px" :src="require('@tap/assets/images/passed.png')" />
-      <p class="mb-4 mt-4 fs-6">账单已发送至邮箱，请查收</p>
+      <div>
+        <img style="height: 60px" :src="require('@tap/assets/images/passed.png')" />
+      </div>
+      <p v-if="selected.type === 'recurring'" class="mb-4 mt-4 fs-6">账单已发送至邮箱，请查收</p>
       <div class="inline-block">
         <ElButton @click="back">返回</ElButton>
         <ElButton type="primary" @click="finish">支付完成</ElButton>
@@ -66,6 +67,10 @@
 </template>
 
 <script>
+import { uniqueArr, openUrl } from '@tap/shared'
+import { CURRENCY_SYMBOL_MAP } from '@tap/business'
+import { getSpec, getPaymentMethod } from './utils'
+
 export default {
   name: 'Create',
 
@@ -79,59 +84,14 @@ export default {
   data() {
     return {
       visible: false,
-      specificationItems: [
-        {
-          label: '4C8G',
-          value: '4C8G'
-        },
-        {
-          label: '8C16G',
-          value: '8C16G'
-        },
-        {
-          label: '12C24G',
-          value: '12C24G'
-        },
-        {
-          label: '16C32G',
-          value: '16C32G'
-        },
-        {
-          label: '32C64G',
-          value: '32C64G'
-        }
-      ],
-      packageItems: [
-        {
-          label: '连续包月',
-          value: '1',
-          number: 10,
-          desc: '本次订购只适用4C8G规格的实例',
-          recommend: true
-        },
-        {
-          label: '连续包年',
-          value: '2',
-          number: 12000,
-          desc: '本次订购只适用4C8G规格的实例',
-          recommend: true
-        },
-        {
-          label: '订购一个月',
-          value: '3',
-          number: 10,
-          desc: '本次订购只适用4C8G规格的实例'
-        },
-        {
-          label: '订购一年',
-          value: '4',
-          number: 12000,
-          desc: '本次订购只适用4C8G规格的实例'
-        }
-      ],
+      loading: false,
+      submitLoading: false,
+      specificationItems: [],
+      allPackages: [],
+      packageItems: [],
+      selected: {},
       form: {
         specification: '',
-        package: '',
         email: ''
       },
       showResult: false,
@@ -158,8 +118,74 @@ export default {
   methods: {
     init() {
       this.showResult = false
-      this.form.specification = this.specificationItems[0].value
-      this.form.package = this.packageItems[0].value
+      this.loadData()
+    },
+
+    loadData() {
+      const params = {
+        productType: 'selfHost'
+      }
+      this.loading = true
+      this.$axios
+        .get('api/tcm/paid/plan/getPaidPlan', { params })
+        .then(data => {
+          const { paidPrice = [] } = data?.[0] || {}
+
+          // 规格
+          this.specificationItems = uniqueArr(
+            paidPrice.map(t => {
+              const { cpu = 0, memory = 0 } = t.spec || {}
+              return {
+                label: getSpec(t.spec),
+                value: getSpec(t.spec),
+                cpu,
+                memory
+              }
+            }),
+            'value'
+          )
+          this.handleSpecification(this.specificationItems[0])
+
+          // 价格套餐
+          this.allPackages = paidPrice.map(t => {
+            return Object.assign(t, {
+              label: getPaymentMethod(t),
+              value: t.priceId,
+              price:
+                CURRENCY_SYMBOL_MAP[t.currency] +
+                (t.price / 100).toLocaleString('zh', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                }),
+              desc: '',
+              specification: getSpec(t.spec)
+            })
+          })
+          this.loadPackageItems()
+          this.handlePackage(this.packageItems[0])
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    },
+
+    loadPackageItems() {
+      const specificationLabel = this.specificationItems.find(t => t.value === this.form.specification)?.label
+      this.packageItems = this.allPackages
+        .filter(t => this.form.specification === t.specification)
+        .map(t => {
+          return Object.assign(t, {
+            desc: `本次订购只适用${specificationLabel}规格的实例`
+          })
+        })
+        .sort((a, b) => {
+          return a.order > b.order ? -1 : 1
+        })
+    },
+
+    handleChange() {
+      this.loadPackageItems()
+      this.handlePackage(this.packageItems[0])
     },
 
     handleCancel() {
@@ -167,20 +193,45 @@ export default {
       this.$emit('input', this.visible)
     },
 
+    handleSpecification(item = {}) {
+      this.form.specification = item.value
+    },
+
     handlePackage(item) {
-      this.form.package = item.value
+      this.selected = item
     },
 
     submit() {
       this.$refs.from.validate(valid => {
         if (!valid) return
-        const params = {
-          priceId: ''
+
+        // 订阅
+        const { type, priceId, currency } = this.selected
+        if (type === 'recurring') {
+          const params = {
+            priceId,
+            email: this.form.email
+          }
+          this.submitLoading = true
+          this.$axios.post('api/tcm/paid/plan/createPaidSubscribe', params).then(data => {
+            openUrl(data)
+            this.submitLoading = false
+            this.showResult = true
+          })
+          return
         }
-        this.$axios.post('api/tcm/paid/plan/createPaidSubscribe', params).then(data => {
-          console.log('api/tcm/paid/plan/createPaidSubscribe', data)
+        const params = {
+          priceId,
+          currency,
+          successUrl: location.href,
+          cancelUrl: location.href
+        }
+        this.submitLoading = true
+        this.$axios.post('api/tcm/paid/plan/oneTime/paymentLink', params).then(data => {
+          openUrl(data)
+          this.submitLoading = false
+          this.showResult = true
         })
-        this.showResult = true
       })
     },
 
@@ -189,7 +240,8 @@ export default {
     },
 
     finish() {
-      console.log('finish')
+      this.$emit('finish')
+      this.handleCancel()
     }
   }
 }

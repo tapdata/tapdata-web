@@ -78,3 +78,36 @@ export const ALARM_LEVEL_MAP = {
 }
 
 export const ALARM_LEVEL_SORT = ['EMERGENCY', 'CRITICAL', 'WARNING', 'NORMAL', 'RECOVERY']
+
+export const ORDER_STATUS_MAP = {
+  unPay: '未支付',
+  pay: '已支付',
+  payFail: '支付失败',
+  refund: '已退款',
+  refundFail: '退款失败',
+  refunding: '退款中',
+  expire: '失效',
+  cancelSubscribe: '已取消'
+}
+
+export const CURRENCY_SYMBOL_MAP = {
+  usd: '$',
+  hkd: 'HK$',
+  cny: '¥'
+}
+
+export const NUMBER_MAP = {
+  0: '零',
+  1: '一',
+  2: '二',
+  3: '三',
+  4: '四',
+  5: '五',
+  6: '六',
+  7: '七',
+  8: '八',
+  9: '九',
+  10: '十',
+  11: '十一',
+  12: '十二'
+}
