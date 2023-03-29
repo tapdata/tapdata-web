@@ -752,9 +752,11 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
   th.el-table__cell {
     padding: 0;
     height: 40px;
-    .cell {
-      word-break: break-word;
-    }
+  }
+
+  .cell {
+    overflow-wrap: break-word;
+    word-break: normal;
   }
 }
 .el-table--small {
@@ -831,8 +833,14 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
     font-weight: 500;
     color: map-get($fontColor, dark);
   }
+  .el-dialog__headerbtn {
+    font-size: 24px;
+  }
   .el-dialog__close {
     color: map-get($color, primary);
+  }
+  .el-dialog__body {
+    word-break: break-word;
   }
 }
 
