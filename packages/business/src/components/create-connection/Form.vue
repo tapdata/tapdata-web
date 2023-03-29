@@ -226,7 +226,8 @@ export default {
       this.buried('connectionSubmit')
       this.pdkFormModel = this.$refs.schemaToForm?.getForm?.()
       this.schemaFormInstance?.validate().then(() => {
-        if (!addNext) this.submitBtnLoading = true
+        this.submitBtnLoading = true
+        this.saveAndMoreLoading = true
         // 保存数据源
         let id = this.params?.id
         let { pdkOptions } = this
@@ -234,26 +235,20 @@ export default {
         let { __TAPDATA } = formValues
         formValues.__connectionType = __TAPDATA.connection_type
         delete formValues['__TAPDATA']
-        let params = Object.assign(
-          {
-            ...__TAPDATA,
-            database_type: pdkOptions.type,
-            pdkHash: pdkOptions.pdkHash
-          },
-          {
-            status: 'testing',
-            schema: {},
-            retry: 0,
-            nextRetry: null,
-            response_body: {},
-            project: '',
-            submit: true,
-            pdkType: 'pdk'
-          },
-          {
-            config: formValues
-          }
-        )
+        let params = {
+          ...__TAPDATA,
+          database_type: pdkOptions.type,
+          pdkHash: pdkOptions.pdkHash,
+          status: 'testing',
+          schema: {},
+          retry: 0,
+          nextRetry: null,
+          response_body: {},
+          project: '',
+          submit: true,
+          pdkType: 'pdk',
+          config: formValues
+        }
         if (this.showSystemConfig) {
           //打开挖掘配置
           let digSettingForm = {
@@ -293,7 +288,6 @@ export default {
       })
     },
     saveAndMore() {
-      this.saveAndMoreLoading = true
       this.submit(true)
     },
     //开始测试
