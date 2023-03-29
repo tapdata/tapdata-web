@@ -38,7 +38,7 @@
       <SharedMiningTable
         ref="sharedMiningTable"
         :task-id="$route.params.id"
-        :params="{ nodeId: nodeId }"
+        :params="{ nodeId: currentNodeId }"
         class="shared-mining-table mt-6"
       ></SharedMiningTable>
     </div>
@@ -227,7 +227,8 @@ export default {
       quotaTime: [],
       quotaTimeType: '5m',
       loading: false,
-      refreshRate: 5000
+      refreshRate: 5000,
+      currentNodeId: ''
     }
   },
 
@@ -450,6 +451,7 @@ export default {
       if (!this.selected) {
         this.selected = this.nodeId
       }
+      this.currentNodeId = this.selected //当前nodeId
       this.setPeriod()
       this.timer && clearInterval(this.timer)
       this.timer = setInterval(() => {
