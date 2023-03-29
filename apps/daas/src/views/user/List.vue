@@ -658,7 +658,7 @@ export default {
                 }
 
                 // 删除以前角色id
-                that.roleMappding.forEach(rolemapping => {
+                data.roleMappings.forEach(rolemapping => {
                   roleMappingsApi.delete(rolemapping.id)
                 })
 
