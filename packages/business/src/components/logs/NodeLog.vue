@@ -196,7 +196,6 @@
         v-if="codeDialog.data.errorStack"
         v-html="codeDialog.data.errorStack"
         class="error-stack-wrap text-prewrap mb-6 ml-4 font-color-light border overflow-y-auto bg-color-normal p-4"
-        :class="{ 'has-describe': codeDialog.data.hasDescribe }"
       ></div>
       <div
         v-if="codeDialog.data.seeAlso && codeDialog.data.seeAlso.length"
@@ -969,7 +968,7 @@ export default {
 }
 
 .error-stack-wrap {
-  height: 480px;
+  height: 465px;
   &.has-describe {
     height: 280px;
   }
