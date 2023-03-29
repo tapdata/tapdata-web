@@ -645,34 +645,7 @@ export default {
           usersApi[that.createForm.id ? 'patch' : 'post'](params)
             .then(data => {
               if (data) {
-                // 过滤不存在角色
-                let roleIdArr = []
-                if (data.roleMappings?.length) {
-                  that.createFormConfig.items[3].options.filter(item => {
-                    if (that.createForm.roleusers.indexOf(item.value) > -1) {
-                      roleIdArr.push(item.value)
-                    }
-                  })
-                } else {
-                  roleIdArr = that.createForm.roleusers
-                }
-
-                // 删除以前角色id
-                data?.roleMappings.forEach(rolemapping => {
-                  roleMappingsApi.delete(rolemapping.id)
-                })
-
-                let newRoleMappings = []
-                roleIdArr.forEach(roleuser => {
-                  newRoleMappings.push({
-                    principalType: 'USER',
-                    principalId: data.id,
-                    roleId: roleuser
-                  })
-                })
-                roleMappingsApi.saveAll(newRoleMappings).then(() => {
-                  that.$message.success(this.$t('public_message_save_ok'))
-                })
+                that.$message.success(this.$t('public_message_save_ok'))
                 this.table.fetch()
               }
             })
