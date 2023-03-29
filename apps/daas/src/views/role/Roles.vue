@@ -298,33 +298,10 @@ export default {
           if (this.roleId) {
             record.id = this.roleId
           }
-          let newRoleMappings = []
-
           roleApi[method](record)
             .then(data => {
               if (data) {
-                if (method === 'post') {
-                  this.permissions.forEach(selectPermission => {
-                    if (selectPermission.type === 'read' && !selectPermission.isMenu)
-                      newRoleMappings.push({
-                        principalType: 'PERMISSION',
-                        principalId: selectPermission.name,
-                        roleId: data?.id
-                      })
-                  })
-                  usersApi
-                    .deletePermissionRoleMapping(data?.id, {
-                      data: { data: newRoleMappings }
-                    })
-                    .then(data => {
-                      if (data) {
-                        // roleMappingModel.post(newRoleMappings);
-                        this.$message.success(this.$t('public_message_save_ok'))
-                      }
-                    })
-                } else {
-                  this.$message.success(this.$t('public_message_save_ok'))
-                }
+                this.$message.success(this.$t('public_message_save_ok'))
                 this.table.fetch()
               }
             })
