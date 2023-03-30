@@ -68,7 +68,9 @@
             <el-button type="primary" :loading="submitBtnLoading" @click="submit()">
               {{ $t('public_button_save') }}
             </el-button>
-            <el-button type="primary" :loading="saveAndMoreLoading" @click="saveAndMore">SAVE & ADD MORE</el-button>
+            <el-button type="primary" :loading="saveAndMoreLoading" @click="saveAndMore">{{
+              $t('packages_business_save_and_more')
+            }}</el-button>
           </div>
         </footer>
       </main>

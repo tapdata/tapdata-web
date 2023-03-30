@@ -67,12 +67,12 @@
             </ElTooltip>
           </div>
           <div class="setting-card__content p-4">
-            <ElRadioGroup v-model="form.fdmStorageCluster" @change="handleChangeFDMStorage">
+            <ElRadioGroup v-model="form.fdmStorageCluster" @change="handleChangeFDMStorage" :disabled="disabled">
               <ElRadio v-for="item in options" :label="item.value" :key="'FDM' + item.value" class="block mb-4">
                 <span>{{ item.label }}</span>
-                <ElTag class="ml-6 rounded-pill" effect="plain">{{ item.tag }}</ElTag>
+                <!--<ElTag class="ml-6 rounded-pill" effect="plain">{{ item.tag }}</ElTag>-->
                 <ElFormItem v-if="form.fdmStorageCluster === item.value" prop="fdmStorageConnectionId">
-                  <ElSelect v-model="form.fdmStorageConnectionId" class="block mt-4">
+                  <ElSelect v-model="form.fdmStorageConnectionId" class="block mt-4" :disabled="disabled">
                     <ElOption
                       v-for="op in connectionsList"
                       :label="op.label"
@@ -86,10 +86,17 @@
 
             <div class="flex align-items-center">
               <VIcon class="color-primary mr-2" size="14">info</VIcon>
-              <span class="font-color-sslight"
+              <!--<span class="font-color-sslight"
                 >If you wish to change this setting later, you must migrate the data to your new database - manually for
                 now</span
-              >
+              >-->
+              <span class="font-color-sslight"
+                >Don't have the connection you want? You can add a connection in Connection Management.
+              </span>
+            </div>
+            <div class="flex align-items-center">
+              <VIcon class="color-primary mr-2" size="14">info</VIcon>
+              <span class="font-color-sslight">The Settings cannot be modified after being saved.</span>
             </div>
           </div>
         </div>
@@ -133,7 +140,7 @@
       </ElForm>
 
       <div class="text-end mt-13">
-        <ElButton v-loading="loading" type="primary" @click="submit">SAVE&ENABLE</ElButton>
+        <ElButton v-loading="loading" type="primary" :disabled="disabled" @click="submit">SAVE&ENABLE</ElButton>
         <ElButton class="ml-4" @click="cancel">CANCEL</ElButton>
       </div>
     </div>
@@ -198,7 +205,20 @@ export default {
         fdmStorageConnectionId: [{ required: true, message: i18n.t('public_select_placeholder'), trigger: 'change' }],
         mdmStorageConnectionId: [{ required: true, message: i18n.t('public_select_placeholder'), trigger: 'change' }]
       },
-      liveDataPlatformId: ''
+      liveDataPlatformId: '',
+
+      setting: null
+    }
+  },
+
+  computed: {
+    disabled() {
+      return (
+        this.setting &&
+        this.setting.fdmStorageCluster === this.form.fdmStorageCluster &&
+        this.setting.fdmStorageConnectionId === this.form.fdmStorageConnectionId &&
+        this.mode === this.setting.mode
+      )
     }
   },
 
@@ -210,6 +230,7 @@ export default {
     async init() {
       this.loadConnections()
       const data = await this.getData()
+      this.setting = data
       this.setData(data, true)
       this.$emit('init', this.form)
     },
@@ -289,6 +310,11 @@ export default {
         if (!v) return
         const { mode, form, liveDataPlatformId } = this
         this.loading = true
+
+        // FDM & MDM 暂时合并一个
+        form.mdmStorageCluster = form.fdmStorageCluster
+        form.mdmStorageConnectionId = form.fdmStorageConnectionId
+
         liveDataPlatformApi
           .patch({ id: liveDataPlatformId, mode, ...form })
           .then(() => {

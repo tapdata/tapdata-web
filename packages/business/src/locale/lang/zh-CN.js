@@ -810,5 +810,6 @@ export default {
   packages_business_table_count: '包含表数量',
   packages_business_overview: '概览',
   packages_business_tasks: '任务',
-  packages_business_model_update_time: '模型更新时间'
+  packages_business_model_update_time: '模型更新时间',
+  packages_business_save_and_more: '保存并添加更多'
 }

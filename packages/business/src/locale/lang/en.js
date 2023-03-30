@@ -833,5 +833,6 @@ export default {
   packages_business_table_count: 'Table Count',
   packages_business_overview: 'Overview',
   packages_business_tasks: 'Tasks',
-  packages_business_model_update_time: 'Model Update Time'
+  packages_business_model_update_time: 'Model Update Time',
+  packages_business_save_and_more: 'Save & Add More'
 }
