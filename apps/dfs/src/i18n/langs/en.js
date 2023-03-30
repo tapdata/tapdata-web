@@ -1317,7 +1317,6 @@ export default {
     'The server has encountered an error that prevents it from providing the service for the request.',
   dfs_views_error_zhaobudaoyemian: 'Page not found',
   dfs_user_center_kaifapiao: 'Invoicing',
-  dfs_user_center_xufei: 'Renewal',
   dfs_user_center_guoqishijian: 'Expiration Time: ',
   dfs_user_center_jihuoshijian: 'Activation Time: ',
   dfs_user_center_shouquanma: 'Authorization Code: ',

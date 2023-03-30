@@ -1197,7 +1197,6 @@ export default {
   dfs_views_error_fuwuqiyudao: '服務器遇到一個妨礙它為請求提供服務的錯誤。 ',
   dfs_views_error_zhaobudaoyemian: '找不到頁面',
   dfs_user_center_kaifapiao: '開發票',
-  dfs_user_center_xufei: '續費',
   dfs_user_center_guoqishijian: '過期時間： ',
   dfs_user_center_jihuoshijian: '激活時間： ',
   dfs_user_center_shouquanma: '授權碼: ',

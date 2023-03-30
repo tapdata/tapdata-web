@@ -14,7 +14,7 @@ export function getPaymentMethod(item = {}) {
   }
   const val = labelMap[`${type}_${periodUnit}`]
   if (val) return val
+  if (!period) return ''
   if (periodUnit === 'year') return '订购' + NUMBER_MAP[period] + '年'
   return '订购' + NUMBER_MAP[period] + '个月'
 }
-

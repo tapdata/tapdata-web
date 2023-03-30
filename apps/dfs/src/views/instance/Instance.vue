@@ -50,7 +50,7 @@
         </ElTableColumn>
         <ElTableColumn width="120px" label="规格">
           <template slot-scope="scope">
-            <span>{{ scope.row.specLabel || '-' }}</span>
+            <span>{{ scope.row.specLabel }}</span>
           </template>
         </ElTableColumn>
         <ElTableColumn width="120px" label="订阅方式">
@@ -58,9 +58,9 @@
             <span>{{ scope.row.subscriptionMethodLabel }}</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn width="120px" label="有效期">
+        <ElTableColumn width="180" label="到期时间">
           <template slot-scope="scope">
-            <span>{{ scope.row.subscriptionMethodLabel }}</span>
+            <span>{{ scope.row.expiredTime }}</span>
           </template>
         </ElTableColumn>
         <ElTableColumn :label="$t('agent_status')" width="140">
@@ -555,14 +555,16 @@ export default {
           this.list = list.map(item => {
             // item.status = item.status === 'Running' ? 'Running' : item.status === 'Stopping' ? 'Stopping' : 'Offline'
             item.deployDisable = item.tmInfo.pingTime || false
-            const { paidSubscribeDto = {} } = item.orderInfo || {}
+            const { paidSubscribeDto = {}, license = {}, chargeProvider } = item.orderInfo || {}
             const { periodStart, periodEnd } = paidSubscribeDto
-            item.specLabel = getSpec(item.spec)
-            item.subscriptionMethodLabel = getPaymentMethod(paidSubscribeDto)
+            item.specLabel = getSpec(item.spec) || '-'
+            item.subscriptionMethodLabel = getPaymentMethod(paidSubscribeDto) || '-'
             item.periodLabel =
               dayjs(periodStart).format('YYYY-MM-DD HH:mm:ss') + ' - ' + dayjs(periodEnd).format('YYYY-MM-DD HH:mm:ss')
+
+            const expiredTime = chargeProvider === 'Aliyun' ? license.expiredTime : periodEnd
+            item.expiredTime = expiredTime ? dayjs(expiredTime).format('YYYY-MM-DD HH:mm:ss') : '-'
             item.deployDisable = item.tmInfo.pingTime || false
-            // item.updateStatus = ''
             if (!item.tmInfo) {
               item.tmInfo = {}
             }

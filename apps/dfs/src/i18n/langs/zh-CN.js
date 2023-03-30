@@ -1226,7 +1226,6 @@ export default {
   dfs_views_error_fuwuqiyudao: '服务器遇到一个妨碍它为请求提供服务的错误。',
   dfs_views_error_zhaobudaoyemian: '找不到页面',
   dfs_user_center_kaifapiao: '开发票',
-  dfs_user_center_xufei: '续费',
   dfs_user_center_guoqishijian: '过期时间： ',
   dfs_user_center_jihuoshijian: '激活时间： ',
   dfs_user_center_shouquanma: '授权码: ',

@@ -14,15 +14,24 @@
         请根据数据量和任务数量选择合适的实例规格进行订阅，订阅成功后，不可变更
       </p>
       <p class="font-color-light mb-2">选择实例规格</p>
-      <ElSelect v-model="form.specification" @change="handleChange">
-        <ElOption
-          v-for="item in specificationItems"
-          :label="item.label"
-          :value="item.value"
-          :key="item.value"
-        ></ElOption>
-      </ElSelect>
-      <ul v-loading="loading" class="my-6">
+      <ul class="flex justify-content-start">
+        <li
+          v-for="(item, index) in specificationItems"
+          :key="index"
+          class="specification-item cursor-pointer py-2 px-4"
+          :class="{ active: form.specification === item.value, 'mr-4': index !== specificationItems.length - 1 }"
+          @click="handleChange(item)"
+        >
+          {{ item.label }}
+        </li>
+      </ul>
+      <p class="mt-4 mb-2">接收账单的邮箱</p>
+      <ElForm :model="form" ref="from">
+        <ElFormItem prop="email" :rules="getEmailRules()">
+          <ElInput v-model="form.email" :placeholder="getPlaceholder()"></ElInput>
+        </ElFormItem>
+      </ElForm>
+      <ul v-loading="loading" class="mt-6">
         <li
           v-for="(item, index) in packageItems"
           :key="item.value"
@@ -41,13 +50,6 @@
         </li>
       </ul>
       <!--      <p class="font-color-sslight">本次订购只适用4C8G规格的实例</p>-->
-
-      <p v-if="selected.type === 'recurring'" class="mt-4 mb-2">接收账单的邮箱</p>
-      <ElForm :model="form" ref="from">
-        <ElFormItem v-if="selected.type === 'recurring'" prop="email" :rules="emailRules">
-          <ElInput v-model="form.email" placeholder="请输入您的邮箱"></ElInput>
-        </ElFormItem>
-      </ElForm>
 
       <span slot="footer" class="dialog-footer">
         <ElButton size="mini" type="primary" :loading="submitLoading" @click="submit">订阅</ElButton>
@@ -94,17 +96,17 @@ export default {
         specification: '',
         email: ''
       },
-      showResult: false,
-      emailRules: [
-        {
-          required: true,
-          message: '请输入您的邮箱'
-        },
-        {
-          type: 'email',
-          message: '请输入正确的邮箱地址'
-        }
-      ]
+      showResult: false
+      // emailRules: [
+      //   {
+      //     required: true,
+      //     message: '请输入您的邮箱'
+      //   },
+      //   {
+      //     type: 'email',
+      //     message: '请输入正确的邮箱地址'
+      //   }
+      // ]
     }
   },
 
@@ -118,6 +120,7 @@ export default {
   methods: {
     init() {
       this.showResult = false
+      this.form.email = window.__USER_INFO__.email
       this.loadData()
     },
 
@@ -143,7 +146,9 @@ export default {
               }
             }),
             'value'
-          )
+          ).sort((a, b) => {
+            return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
+          })
           this.handleSpecification(this.specificationItems[0])
 
           // 价格套餐
@@ -183,7 +188,8 @@ export default {
         })
     },
 
-    handleChange() {
+    handleChange(item = {}) {
+      this.form.specification = item.value
       this.loadPackageItems()
       this.handlePackage(this.packageItems[0])
     },
@@ -242,6 +248,23 @@ export default {
     finish() {
       this.$emit('finish')
       this.handleCancel()
+    },
+
+    getEmailRules() {
+      return [
+        {
+          required: this.selected.type === 'recurring',
+          message: '请输入您的邮箱'
+        },
+        {
+          type: 'email',
+          message: '请输入正确的邮箱地址'
+        }
+      ]
+    },
+
+    getPlaceholder() {
+      return this.selected.type === 'recurring' ? '用于接收每期订阅支付账单' : '（可选）'
     }
   }
 }
@@ -256,7 +279,7 @@ export default {
 
 .packages-item {
   box-shadow: 0px 4px 4px rgba(29, 33, 41, 0.05);
-  border-radius: 10px;
+  border-radius: 8px;
   border: 1px solid map-get($borderColor, light);
   &.active {
     border-color: map-get($color, primary);
@@ -266,5 +289,13 @@ export default {
 .el-select,
 .el-input {
   width: 494px;
+}
+
+.specification-item {
+  border: 1px solid map-get($borderColor, normal);
+  border-radius: 8px;
+  &.active {
+    border-color: map-get($color, primary);
+  }
 }
 </style>
