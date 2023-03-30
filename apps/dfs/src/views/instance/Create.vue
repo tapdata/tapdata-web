@@ -8,7 +8,9 @@
     :close-on-press-escape="false"
     @close="handleCancel"
   >
-    <div slot="title" class="mb-6 font-color-dark fs-3 fw-bold">{{ $t('dfs_instance_create_xuyaogengduode') }}</div>
+    <div slot="title" class="mb-6 font-color-dark fs-3 fw-bold">
+      {{ showResult ? $t('dfs_user_center_zhifufuwu') : $t('dfs_instance_create_xuyaogengduode') }}
+    </div>
     <template v-if="!showResult">
       <p class="mt-n10 mb-4 font-color-sslight">{{ $t('dfs_instance_create_qinggenjushuju') }}</p>
       <p class="font-color-light mb-2">{{ $t('dfs_instance_create_xuanzeshiligui') }}</p>
@@ -59,12 +61,9 @@
       <div>
         <img style="height: 60px" :src="require('@tap/assets/images/passed.png')" />
       </div>
-      <p class="mb-4 mt-4 fs-6">
-        {{ $t('dfs_instance_create_zhangdanyifasong') }}
-      </p>
-      <div class="inline-block mt-4">
-        <ElButton @click="back">{{ $t('public_button_back') }}</ElButton>
-        <ElButton type="primary" @click="finish">{{ $t('dfs_instance_create_zhifuwancheng') }}</ElButton>
+      <p class="mt-6 mb-4 fs-6 font-color-light">支付完成后，请点击“已完成”刷新状态</p>
+      <div class="inline-block">
+        <ElButton type="primary" class="finish-button" @click="finish">{{ $t('public_status_finished') }}</ElButton>
       </div>
     </div>
   </ElDialog>
@@ -213,15 +212,14 @@ export default {
     },
 
     submit() {
-      this.$refs.from.validate(valid => {
-        if (!valid) return
-
-        // 订阅
-        const { type, priceId, currency } = this.selected
-        if (type === 'recurring') {
+      const { type, priceId, currency } = this.selected
+      const { email } = this.form
+      if (type === 'recurring') {
+        this.$refs.from.validate(valid => {
+          if (!valid) return
           const params = {
             priceId,
-            email: this.form.email
+            email
           }
           this.submitLoading = true
           this.$axios.post('api/tcm/paid/plan/createPaidSubscribe', params).then(data => {
@@ -229,20 +227,21 @@ export default {
             this.submitLoading = false
             this.showResult = true
           })
-          return
-        }
-        const params = {
-          priceId,
-          currency,
-          successUrl: location.href,
-          cancelUrl: location.href
-        }
-        this.submitLoading = true
-        this.$axios.post('api/tcm/paid/plan/oneTime/paymentLink', params).then(data => {
-          openUrl(data)
-          this.submitLoading = false
-          this.showResult = true
         })
+        return
+      }
+      const params = {
+        priceId,
+        currency,
+        successUrl: location.href,
+        cancelUrl: location.href,
+        email
+      }
+      this.submitLoading = true
+      this.$axios.post('api/tcm/paid/plan/oneTime/paymentLink', params).then(data => {
+        openUrl(data)
+        this.submitLoading = false
+        this.showResult = true
       })
     },
 
@@ -304,5 +303,10 @@ export default {
   &.active {
     border-color: map-get($color, primary);
   }
+}
+
+.finish-button {
+  width: 250px;
+  height: 42px;
 }
 </style>

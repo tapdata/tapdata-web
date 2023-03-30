@@ -124,6 +124,7 @@ export default {
   public_time_thirty_min: '最近三十分钟',
   public_time_last_hour: '最近一小时',
   public_time_period: '周期',
+  public_time_every_day: '每天',
   public_time_Last_six_hours: '最近6个小时',
   public_time_last_day: '最近1天',
   public_time_last_three_days: '最近3天',

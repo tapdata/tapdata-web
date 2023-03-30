@@ -12,6 +12,7 @@ export function getPaymentMethod(item = {}) {
   const s = isEn ? ' ' : ''
   const { type, periodUnit, period = 0 } = item
   const labelMap = {
+    recurring_day: i18n.t('dfs_instance_utils_lianxu') + s + i18n.t('public_time_every_day'),
     recurring_month: i18n.t('dfs_instance_utils_lianxu') + s + i18n.t('dfs_instance_utils_baoyue'),
     recurring_year: i18n.t('dfs_instance_utils_lianxu') + s + i18n.t('dfs_instance_utils_baonian')
   }

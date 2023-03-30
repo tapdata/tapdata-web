@@ -124,6 +124,7 @@ export default {
   public_time_thirty_min: 'The last thirty minutes',
   public_time_last_hour: 'The last hour',
   public_time_period: 'Period',
+  public_time_every_day: 'Every day',
   public_time_Last_six_hours: 'The last 6 hours',
   public_time_last_day: 'Last 1 day',
   public_time_last_three_days: 'The last 3 days',
