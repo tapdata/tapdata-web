@@ -1000,6 +1000,9 @@ export default {
           })
 
           const { __TAPDATA, ...__TAPDATA_CONFIG } = this.$refs.schemaToForm?.getFormValues?.() || {}
+          params.oauthUrl = params?.oauthUrl.replace(/@\{(\w+)\}@/gi, function (val, sub) {
+            return __TAPDATA_CONFIG[sub]
+          })
           const data = Object.assign({}, params, {
             url: location.origin + location.pathname + routeUrl.href,
             connectionConfig: {
