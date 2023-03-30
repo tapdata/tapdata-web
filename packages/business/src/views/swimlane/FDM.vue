@@ -431,16 +431,19 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
           const result = await ldpApi.createFDMTask(task)
           this.taskDialogConfig.visible = false
           this.setNodeExpand()
+          const h = this.$createElement
           this.$message.success({
-            message: (
-              <span
-                class="color-primary fs-7"
-                onClick={() => {
-                  this.handleClickName(result)
-                }}
-              >
-                任务创建成功，点击查看
-              </span>
+            message: h(
+              'span',
+              {
+                class: 'color-primary fs-7 clickable',
+                on: {
+                  click: () => {
+                    this.handleClickName(result)
+                  }
+                }
+              },
+              '任务创建成功，点击查看'
             )
           })
         } catch (e) {
@@ -459,7 +462,7 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
 
       if (!this.allowDrop) return
 
-      const dropNode = this.findParentByClassName(ev.currentTarget, 'ldp-tree')
+      const dropNode = this.findParentByClassName(ev.currentTarget, 'tree-wrap')
       dropNode.classList.add('is-drop')
     },
 
@@ -468,7 +471,7 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
 
       if (!this.allowDrop) return
       if (!ev.currentTarget.contains(ev.relatedTarget)) {
-        this.removeDropEffect(ev, 'ldp-tree', 'is-drop')
+        this.removeDropEffect(ev, 'tree-wrap', 'is-drop')
       }
     },
 
@@ -477,7 +480,7 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
 
       if (!this.allowDrop) return
 
-      this.removeDropEffect(ev, 'ldp-tree', 'is-drop')
+      this.removeDropEffect(ev, 'tree-wrap', 'is-drop')
 
       const { draggingObjects } = this.dragState
       if (!draggingObjects.length) return

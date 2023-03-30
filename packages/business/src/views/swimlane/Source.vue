@@ -45,7 +45,7 @@
         >
           <span
             class="custom-tree-node flex align-items-center"
-            :class="{ grabbable: data.isObject }"
+            :class="{ grabbable: data.isObject, 'opacity-50': data.disabled }"
             slot-scope="{ node, data }"
             @dblclick="$emit('preview', data)"
           >
@@ -58,7 +58,10 @@
             >
             <NodeIcon v-if="!node.data.isLeaf" :node="node.data" :size="18" class="tree-item-icon mr-2" />
             <VIcon v-else class="tree-item-icon mr-2" size="18">table</VIcon>
-            <span :class="[{ 'color-disable': data.disabled }, 'table-label']" :title="data.name">{{ data.name }}</span>
+            <span class="table-label" :title="data.name"
+              >{{ data.name }}
+              <ElTag v-if="data.disabled" type="info" size="mini">{{ $t('public_status_invalid') }}</ElTag>
+            </span>
             <ElTag v-if="data.disabled" size="mini">{{ $t('public_status_invalid') }}</ElTag>
             <IconButton class="btn-menu" sm @click="$emit('preview', data)"> view-details </IconButton>
           </span>
