@@ -203,7 +203,9 @@ export default {
           title: i18n.t('packages_dag_field_inference_main_tuiyanyichang'),
           total: 0
         }
-      ]
+      ],
+      transformExNum: 0,
+      updateExNum: 0
     }
   },
 
@@ -224,6 +226,15 @@ export default {
     this.activeClassification = this.tableClassification[0].type
     this.loadData()
   },
+  watch: {
+    updateExNum(newVal, oldVal) {
+      if (oldVal === 1 && newVal === 0) {
+        //当前更新异常表全部更新完成
+        this.activeClassification = ''
+        this.loadData()
+      }
+    }
+  },
 
   methods: {
     async loadData() {
@@ -238,6 +249,8 @@ export default {
         filterType: this.activeClassification
       })
       const { items, total } = res
+      this.updateExNum = res.updateExNum
+      this.transformExNum = res.transformExNum
       this.navList = items.map(t => {
         const { fields = [], findPossibleDataTypes = {} } = t
         fields.forEach(el => {
