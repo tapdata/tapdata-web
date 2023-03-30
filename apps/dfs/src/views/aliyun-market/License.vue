@@ -8,12 +8,12 @@
         </div>
         <ul class="step mt-4">
           <li class="flex align-items-center">
-            <span>1.点击打开</span>
+            <span>{{ $t('dfs_aliyun_market_license_dianjidakai') }}</span>
             <a
               class="color-primary text-decoration-underline"
               href="https://market.aliyun.com/products/56024006/cmgj00061912.html?spm=5176.730005.result.4.519c3524QzKxHM&innerSource=search_tapdata#sku=yuncode5591200001"
               target="_blank"
-              >阿里云市场</a
+              >{{ $t('dfs_aliyun_market_license_aliyunshichang') }}</a
             >
           </li>
           <li>{{ $t('dfs_aliyun_market_license_chuangjianshouquanma') }}</li>
@@ -24,7 +24,7 @@
           <el-input v-model="licenseCode" type="textarea" rows="2" autofocus></el-input>
         </div>
         <div class="mt-8 pt-4 text-end">
-          <el-button class="mr-4" @click="$router.go(-1)">返回</el-button>
+          <el-button class="mr-4" @click="$router.go(-1)">{{ $t('public_button_back') }}</el-button>
           <a v-if="showGoDashboard" type="primary" href="./">{{
             $t('dfs_aliyun_market_license_qianwanggongzuotai')
           }}</a>

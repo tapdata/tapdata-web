@@ -21,21 +21,28 @@
       class="mt-4 v-table"
     >
       <template #operation="{ row }">
-        <ElButton type="text" @click="submit(row)">创建</ElButton>
+        <ElButton type="text" @click="submit(row)">{{ $t('public_button_create') }}</ElButton>
       </template>
     </VTable>
 
     <span slot="footer" class="dialog-footer">
       <template v-if="type === 'code'">
-        <ElButton size="mini" type="primary" @click="goLicense">激活授权码</ElButton>
-        <ElButton size="mini" type="primary" @click="handleCreateCode">购买新实例</ElButton>
+        <ElButton size="mini" type="primary" @click="goLicense">{{
+          $t('dfs_aliyun_market_checklicnese_jihuoshouquanma')
+        }}</ElButton>
+        <ElButton size="mini" type="primary" @click="handleCreateCode">{{
+          $t('dfs_instance_selectlist_goumaixinshili')
+        }}</ElButton>
       </template>
-      <ElButton v-else size="mini" type="primary" @click="create">创建新实例</ElButton>
+      <ElButton v-else size="mini" type="primary" @click="create">{{
+        $t('dfs_instance_selectlist_chuangjianxinshili')
+      }}</ElButton>
     </span>
   </ElDialog>
 </template>
 
 <script>
+import i18n from '@/i18n'
 import { VTable } from '@tap/component'
 import { openUrl } from '@tap/shared'
 import { dayjs } from '@tap/business/src/shared/dayjs'
@@ -63,31 +70,31 @@ export default {
       visible: false,
       map: {
         code: {
-          title: '选择授权码?',
-          desc: '授权码是在阿里云市场购买生成的授权码',
+          title: i18n.t('dfs_instance_selectlist_xuanzeshouquanma'),
+          desc: i18n.t('dfs_instance_selectlist_shouquanmashizai'),
           columns: [
             {
               type: 'index'
             },
             {
-              label: '授权码',
+              label: i18n.t('dfs_instance_selectlist_shouquanma'),
               prop: 'licenseCode'
             },
             {
-              label: '有效期',
+              label: i18n.t('dfs_instance_selectlist_youxiaoqi'),
               prop: 'expiredTime',
               dataType: 'time'
             },
             {
-              label: '实例规格',
+              label: i18n.t('dfs_instance_selectlist_shiliguige'),
               prop: 'specLabel'
             },
             {
-              label: '绑定实例状态',
+              label: i18n.t('dfs_instance_selectlist_bangdingshilizhuang'),
               prop: 'bindAgent'
             },
             {
-              label: '操作',
+              label: i18n.t('public_operation'),
               prop: 'operation',
               slotName: 'operation',
               width: 80
@@ -95,27 +102,27 @@ export default {
           ]
         },
         order: {
-          title: '选择订阅？',
-          desc: '可以选择已有未使用的订阅创建实例，可以创建新实例选择更多规格',
+          title: i18n.t('dfs_instance_selectlist_xuanzedingyue'),
+          desc: i18n.t('dfs_instance_selectlist_keyixuanzeyi'),
           columns: [
             {
               type: 'index'
             },
             {
-              label: '订阅内容',
+              label: i18n.t('dfs_instance_selectlist_dingyueneirong'),
               prop: 'content'
             },
             {
-              label: '订阅周期',
+              label: i18n.t('dfs_instance_selectlist_dingyuezhouqi'),
               prop: 'periodLabel',
               width: 320
             },
             {
-              label: '绑定实例状态',
+              label: i18n.t('dfs_instance_selectlist_bangdingshilizhuang'),
               prop: 'bindAgent'
             },
             {
-              label: '操作',
+              label: i18n.t('public_operation'),
               prop: 'operation',
               slotName: 'operation',
               width: 80
@@ -152,7 +159,9 @@ export default {
           total: data.length,
           data:
             data.map((t = {}) => {
-              t.bindAgent = t.agentId ? '已绑定' + t.agentId : '未绑定'
+              t.bindAgent = t.agentId
+                ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
+                : i18n.t('user_Center_weiBangDing')
               t.specLabel = getSpec(t.spec)
               return t
             }) || []
@@ -164,11 +173,13 @@ export default {
       return this.$axios.get('api/tcm/paid/plan/queryAvailableSubscribe').then(data => {
         const items =
           data.map((t = {}) => {
-            t.content = `${getPaymentMethod(t)} ${getSpec(t.spec)} 实例`
+            t.content = `${getPaymentMethod(t)} ${getSpec(t.spec)} ${i18n.t('public_agent')}`
             const { periodStart, periodEnd } = t
             t.periodLabel =
               dayjs(periodStart).format('YYYY-MM-DD HH:mm:ss') + ' - ' + dayjs(periodEnd).format('YYYY-MM-DD HH:mm:ss')
-            t.bindAgent = t.agentId ? '已绑定' + t.agentId : '未绑定'
+            t.bindAgent = t.agentId
+              ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
+              : i18n.t('user_Center_weiBangDing')
             return t
           }) || []
         return {

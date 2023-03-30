@@ -48,17 +48,17 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn width="120px" label="规格">
+        <ElTableColumn width="120px" :label="$t('dfs_instance_instance_guige')">
           <template slot-scope="scope">
             <span>{{ scope.row.specLabel }}</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn width="120px" label="订阅方式">
+        <ElTableColumn width="120px" :label="$t('dfs_instance_instance_dingyuefangshi')">
           <template slot-scope="scope">
             <span>{{ scope.row.subscriptionMethodLabel }}</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn width="180" label="到期时间">
+        <ElTableColumn width="180" :label="$t('dfs_instance_instance_daoqishijian')">
           <template slot-scope="scope">
             <span>{{ scope.row.expiredTime }}</span>
           </template>
@@ -1011,11 +1011,11 @@ export default {
       const href =
         'https://market.aliyun.com/products/56024006/cmgj00061912.html?spm=5176.730005.result.4.519c3524QzKxHM&innerSource=search_tapdata#sku=yuncode5591200001'
       this.$confirm(
-        `<p class="flex align-content-center">点击打开<a class="color-primary text-decoration-underline" href="${href}" target="_blank">阿里云市场</a>购买实例，并获取授权码</p>`,
-        '授权码服务',
+        i18n.t('dfs_instance_instance_pclas', { val1: href }),
+        i18n.t('dfs_instance_instance_shouquanmafuwu'),
         {
           dangerouslyUseHTMLString: true,
-          confirmButtonText: '激活授权码',
+          confirmButtonText: i18n.t('dfs_aliyun_market_checklicnese_jihuoshouquanma'),
           type: 'warning'
         }
       ).then(resFlag => {

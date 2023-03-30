@@ -184,7 +184,7 @@
           target="_blank"
           >{{ $t('dfs_user_center_kaifapiao') }}</el-link
         >
-        <el-link type="primary" @click="goLicense">激活授权码</el-link>
+        <el-link type="primary" @click="goLicense">{{ $t('dfs_aliyun_market_checklicnese_jihuoshouquanma') }}</el-link>
       </div>
       <VTable
         :columns="codeColumns"
@@ -197,17 +197,19 @@
         class="mt-4"
       >
         <template #bindAgent="{ row }">
-          <ElLink v-if="row.agentId" type="primary" @click="handleAgent(row)">已绑定"{{ row.agentId }}"实例</ElLink>
-          <span v-else>未绑定</span>
+          <ElLink v-if="row.agentId" type="primary" @click="handleAgent(row)">{{
+            $t('dfs_instance_selectlist_yibangding') + row.agentId + $t('public_agent')
+          }}</ElLink>
+          <span v-else>{{ $t('user_Center_weiBangDing') }}</span>
         </template>
         <template #operation="{ row }">
-          <ElButton type="text" @click="handleRenewal(row)">续期</ElButton>
+          <ElButton type="text" @click="handleRenewal(row)">{{ $t('public_button_renewal') }}</ElButton>
         </template>
       </VTable>
     </section>
 
     <section v-if="!userData.enableLicense">
-      <div class="mt-12 fs-7">服务订阅信息</div>
+      <div class="mt-12 fs-7">{{ $t('dfs_user_center_fuwudingyuexin') }}</div>
       <VTable
         :columns="columns"
         :remoteMethod="remoteMethod"
@@ -219,12 +221,16 @@
         class="mt-4"
       >
         <template #bindAgent="{ row }">
-          <ElLink v-if="row.agentId" type="primary" @click="handleAgent(row)">已绑定实例</ElLink>
-          <span v-else>未绑定</span>
+          <ElLink v-if="row.agentId" type="primary" @click="handleAgent(row)">{{
+            $t('dfs_user_center_yibangdingshili')
+          }}</ElLink>
+          <span v-else>{{ $t('user_Center_weiBangDing') }}</span>
         </template>
         <template #operation="{ row }">
           <!--          <ElButton type="text" @click="handleRecord(row)">记录</ElButton>-->
-          <ElButton v-if="row.type !== 'recurring'" type="text" @click="handleRenew(row)">续订</ElButton>
+          <ElButton v-if="row.type !== 'recurring'" type="text" @click="handleRenew(row)">{{
+            $t('public_button_renew')
+          }}</ElButton>
           <ElButton
             v-if="row.type === 'recurring'"
             :disabled="row.status !== 'pay'"
@@ -232,8 +238,12 @@
             @click="handleCancelSubscription(row)"
             >{{ $t('public_button_cancel') }}{{ $t('public_button_subscription') }}</ElButton
           >
-          <ElButton v-else :disabled="row.status !== 'pay'" type="text" @click="handleUnsubscribe(row)">退订</ElButton>
-          <ElButton v-if="row.status === 'unPay'" type="text" @click="handlePay(row)">支付</ElButton>
+          <ElButton v-else :disabled="row.status !== 'pay'" type="text" @click="handleUnsubscribe(row)">{{
+            $t('public_button_unsubscribe')
+          }}</ElButton>
+          <ElButton v-if="row.status === 'unPay'" type="text" @click="handlePay(row)">{{
+            $t('public_button_pay')
+          }}</ElButton>
         </template>
       </VTable>
     </section>
@@ -626,59 +636,59 @@ export default {
       disabledBindingPhone: window.__config__?.disabledBindingPhone,
       columns: [
         {
-          label: '订阅内容',
+          label: i18n.t('dfs_instance_selectlist_dingyueneirong'),
           prop: 'content'
         },
         {
-          label: '订阅周期',
+          label: i18n.t('dfs_instance_selectlist_dingyuezhouqi'),
           prop: 'periodLabel',
           width: 320
         },
         {
-          label: '订阅数量',
+          label: i18n.t('dfs_user_center_dingyueshuliang'),
           prop: 'quantity'
         },
         {
-          label: '金额',
+          label: i18n.t('dfs_user_center_jine'),
           prop: 'priceLabel'
         },
         {
-          label: '绑定实例状态',
+          label: i18n.t('dfs_instance_selectlist_bangdingshilizhuang'),
           prop: 'bindAgent',
           slotName: 'bindAgent'
         },
         {
-          label: '状态',
+          label: i18n.t('task_monitor_status'),
           prop: 'statusLabel'
         },
         {
-          label: '操作 ',
+          label: i18n.t('public_operation'),
           prop: 'extendArray',
           slotName: 'operation'
         }
       ],
       codeColumns: [
         {
-          label: '授权码',
+          label: i18n.t('dfs_instance_selectlist_shouquanma'),
           prop: 'licenseCode'
         },
         {
-          label: '激活时间',
+          label: i18n.t('dfs_user_center_jihuoshijian2'),
           prop: 'activateTimeLabel',
           width: 320
         },
         {
-          label: '过期时间',
+          label: i18n.t('dfs_user_center_guoqishijian2'),
           prop: 'expiredTimeLabel',
           width: 320
         },
         {
-          label: '绑定实例状态',
+          label: i18n.t('dfs_instance_selectlist_bangdingshilizhuang'),
           prop: 'bindAgent',
           slotName: 'bindAgent'
         },
         {
-          label: '操作 ',
+          label: i18n.t('public_operation'),
           prop: 'extendArray',
           slotName: 'operation',
           width: 100
@@ -688,22 +698,22 @@ export default {
         visible: false,
         content: '',
         price: 0,
-        statusLabel: '交易成功',
+        statusLabel: i18n.t('dfs_user_center_jiaoyichenggong'),
         items: [
           {
-            label: '付款方式',
-            value: '微信支付'
+            label: i18n.t('dfs_user_center_fukuanfangshi'),
+            value: i18n.t('dfs_user_center_weixinzhifu')
           },
           {
-            label: '创建时间',
+            label: i18n.t('public_create_time'),
             value: '2023-03-04 17:56:33'
           },
           {
-            label: '支付时间',
+            label: i18n.t('dfs_user_center_zhifushijian'),
             value: '2023-03-04 17:56:40'
           },
           {
-            label: '订单号',
+            label: i18n.t('dfs_user_center_dingdanhao'),
             value: '2023030419203919321'
           }
         ]
@@ -1068,7 +1078,7 @@ export default {
                 periodUnit,
                 period
               })
-              t.content = `${t.subscriptionMethodLabel} ${getSpec(spec)} 实例`
+              t.content = `${t.subscriptionMethodLabel} ${getSpec(spec)} ${i18n.t('public_agent')}`
               t.periodLabel =
                 dayjs(t.periodStart).format('YYYY-MM-DD HH:mm:ss') +
                 ' - ' +
@@ -1079,7 +1089,9 @@ export default {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2
                 })
-              t.bindAgent = t.agentId ? '已绑定' + t.agentId : '未绑定'
+              t.bindAgent = t.agentId
+                ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
+                : i18n.t('user_Center_weiBangDing')
               return t
             }) || []
         }
@@ -1104,7 +1116,9 @@ export default {
             items.map(t => {
               t.activateTimeLabel = t.activateTime ? dayjs(t.activateTime).format('YYYY-MM-DD HH:mm:ss') : '-'
               t.expiredTimeLabel = t.expiredTime ? dayjs(t.expiredTime).format('YYYY-MM-DD HH:mm:ss') : '-'
-              t.bindAgent = t.agentId ? '已绑定' + t.agentId : '未绑定'
+              t.bindAgent = t.agentId
+                ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
+                : i18n.t('user_Center_weiBangDing')
               return t
             }) || []
         }
@@ -1117,28 +1131,32 @@ export default {
       this.recordData.statusLabel = statusLabel
       this.recordData.items = [
         {
-          label: '付款方式',
+          label: i18n.t('dfs_user_center_fukuanfangshi'),
           value: '-'
         },
         {
-          label: '创建时间',
+          label: i18n.t('public_create_time'),
           value: createAt ? dayjs(createAt).format('YYYY-MM-DD HH:mm:ss') : '-'
         },
         {
-          label: '支付时间',
+          label: i18n.t('dfs_user_center_zhifushijian'),
           value: '-'
         },
         {
-          label: '订单号',
+          label: i18n.t('dfs_user_center_dingdanhao'),
           value: invoiceId || '-'
         }
       ]
       this.recordData.visible = true
     },
     handleUnsubscribe(row = {}) {
-      this.$confirm(`您将退订“${row.content}”业务，退订后您将不再享受该服务，确定是否继续？`, '退订服务', {
-        type: 'warning'
-      }).then(res => {
+      this.$confirm(
+        i18n.t('dfs_user_center_ninjiangtuidingr', { val1: row.content }),
+        i18n.t('dfs_user_center_tuidingfuwu'),
+        {
+          type: 'warning'
+        }
+      ).then(res => {
         res &&
           this.$axios.post('api/tcm/paid/plan/oneTime/refunds', { id: row.id, chargeId: row.chargeId }).then(() => {
             this.$message.success(this.$t('public_message_operation_success'))
@@ -1146,9 +1164,13 @@ export default {
       })
     },
     handleCancelSubscription(row = {}) {
-      this.$confirm(`您将取消订阅“${row.content}实例”业务，取消后您将不再享受该服务，确定是否继续？`, '取消订阅服务', {
-        type: 'warning'
-      }).then(res => {
+      this.$confirm(
+        i18n.t('dfs_user_center_ninjiangquxiaoding', { val1: row.content }),
+        i18n.t('dfs_user_center_quxiaodingyuefu'),
+        {
+          type: 'warning'
+        }
+      ).then(res => {
         res &&
           this.$axios
             .post('api/tcm/paid/plan/subscribe/cancel', { id: row.id, subscribeId: row.subscribeId })
@@ -1172,10 +1194,15 @@ export default {
     },
     handleRenew(row = {}) {
       const { period, periodUnit } = row
-      const label = NUMBER_MAP[period] + (periodUnit === 'year' ? '年' : '个月')
+      const label =
+        NUMBER_MAP[period] +
+        (periodUnit === 'year' ? i18n.t('public_time_year') : i18n.t('dfs_instance_utils_geyue'))
       this.$confirm(
-        `您将续订“${row.content}”业务<span class="fw-bolder font-color-dark">${label}</span>，确定是否继续？`,
-        '续订服务',
+        i18n.t('dfs_user_center_ninjiangxudingr', {
+          val1: row.content,
+          val2: label
+        }),
+        i18n.t('dfs_user_center_xudingfuwu'),
         {
           type: 'warning',
           dangerouslyUseHTMLString: true
@@ -1199,10 +1226,14 @@ export default {
     },
     handlePay(row = {}) {
       openUrl(row.payUrl)
-      this.$confirm(`您将支付“${row.content}”业务，支付后您将享受该服务，确定是否继续？`, '支付服务', {
-        type: 'warning',
-        confirmButtonText: '支付完成'
-      }).then(() => {
+      this.$confirm(
+        i18n.t('dfs_user_center_ninjiangzhifur', { val1: row.content }),
+        i18n.t('dfs_user_center_zhifufuwu'),
+        {
+          type: 'warning',
+          confirmButtonText: i18n.t('dfs_instance_create_zhifuwancheng')
+        }
+      ).then(() => {
         this.$refs.table?.fetch()
       })
     },

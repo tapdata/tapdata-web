@@ -8,12 +8,10 @@
     :close-on-press-escape="false"
     @close="handleCancel"
   >
-    <div slot="title" class="mb-6 font-color-dark fs-3 fw-bold">需要更多的服务？</div>
+    <div slot="title" class="mb-6 font-color-dark fs-3 fw-bold">{{ $t('dfs_instance_create_xuyaogengduode') }}</div>
     <template v-if="!showResult">
-      <p class="mt-n10 mb-4 font-color-sslight">
-        请根据数据量和任务数量选择合适的实例规格进行订阅，订阅成功后，不可变更
-      </p>
-      <p class="font-color-light mb-2">选择实例规格</p>
+      <p class="mt-n10 mb-4 font-color-sslight">{{ $t('dfs_instance_create_qinggenjushuju') }}</p>
+      <p class="font-color-light mb-2">{{ $t('dfs_instance_create_xuanzeshiligui') }}</p>
       <ul class="flex justify-content-start">
         <li
           v-for="(item, index) in specificationItems"
@@ -25,7 +23,7 @@
           {{ item.label }}
         </li>
       </ul>
-      <p class="mt-4 mb-2">接收账单的邮箱</p>
+      <p class="mt-4 mb-2">{{ $t('dfs_instance_create_jieshouzhangdande') }}</p>
       <ElForm :model="form" ref="from">
         <ElFormItem prop="email" :rules="getEmailRules()">
           <ElInput v-model="form.email" :placeholder="getPlaceholder()"></ElInput>
@@ -39,9 +37,9 @@
           :class="{ active: selected.value === item.value, 'mr-6': index !== packageItems.length - 1 }"
           @click="handlePackage(item)"
         >
-          <span v-if="item.recommend" class="recommend-item position-absolute top-0 bg-primary color-white py-1 px-6"
-            >推荐</span
-          >
+          <span v-if="item.recommend" class="recommend-item position-absolute top-0 bg-primary color-white py-1 px-6">{{
+            $t('dfs_instance_create_tuijian')
+          }}</span>
           <p class="mb-4 pt-2 fs-6 font-color-normal">{{ item.label }}</p>
           <p class="mb-4 color-primary">
             <span class="fs-5">{{ item.price }}</span>
@@ -52,23 +50,28 @@
       <!--      <p class="font-color-sslight">本次订购只适用4C8G规格的实例</p>-->
 
       <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" type="primary" :loading="submitLoading" @click="submit">订阅</ElButton>
+        <ElButton size="mini" type="primary" :loading="submitLoading" @click="submit">{{
+          $t('public_button_subscription')
+        }}</ElButton>
       </span>
     </template>
     <div v-else class="text-center">
       <div>
         <img style="height: 60px" :src="require('@tap/assets/images/passed.png')" />
       </div>
-      <p v-if="selected.type === 'recurring'" class="mb-4 mt-4 fs-6">账单已发送至邮箱，请查收</p>
-      <div class="inline-block">
-        <ElButton @click="back">返回</ElButton>
-        <ElButton type="primary" @click="finish">支付完成</ElButton>
+      <p class="mb-4 mt-4 fs-6">
+        {{ $t('dfs_instance_create_zhangdanyifasong') }}
+      </p>
+      <div class="inline-block mt-4">
+        <ElButton @click="back">{{ $t('public_button_back') }}</ElButton>
+        <ElButton type="primary" @click="finish">{{ $t('dfs_instance_create_zhifuwancheng') }}</ElButton>
       </div>
     </div>
   </ElDialog>
 </template>
 
 <script>
+import i18n from '@/i18n'
 import { uniqueArr, openUrl } from '@tap/shared'
 import { CURRENCY_SYMBOL_MAP } from '@tap/business'
 import { getSpec, getPaymentMethod } from './utils'
@@ -180,7 +183,9 @@ export default {
         .filter(t => this.form.specification === t.specification)
         .map(t => {
           return Object.assign(t, {
-            desc: `本次订购只适用${specificationLabel}规格的实例`
+            desc: i18n.t('dfs_instance_create_bencidinggouzhi', {
+              val1: specificationLabel
+            })
           })
         })
         .sort((a, b) => {
@@ -254,17 +259,19 @@ export default {
       return [
         {
           required: this.selected.type === 'recurring',
-          message: '请输入您的邮箱'
+          message: i18n.t('dfs_instance_create_qingshuruninde')
         },
         {
           type: 'email',
-          message: '请输入正确的邮箱地址'
+          message: i18n.t('dfs_instance_create_qingshuruzhengque')
         }
       ]
     },
 
     getPlaceholder() {
-      return this.selected.type === 'recurring' ? '用于接收每期订阅支付账单' : '（可选）'
+      return this.selected.type === 'recurring'
+        ? i18n.t('dfs_instance_create_yongyujieshoumei')
+        : i18n.t('dfs_instance_create_kexuan')
     }
   }
 }
