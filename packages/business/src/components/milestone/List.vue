@@ -30,6 +30,7 @@
         <div class="ml-4 step__line_pt flex-fill">
           <span class="font-color-normal fw-bold">{{ item.label }}: </span>
           <span v-if="item.desc" class="mt-2 color-info">{{ item.desc }}</span>
+          <span v-if="item.dataDesc" class="mt-2 color-info">{{ item.dataDesc }}</span>
           <ElProgress
             v-if="typeof item.percentage === 'number'"
             :percentage="item.percentage"
@@ -50,6 +51,7 @@ import { calcTimeUnit } from '@tap/shared'
 import Time from '@tap/shared/src/time'
 
 import NodeList from '../nodes/List'
+import dayjs from 'dayjs'
 
 export default {
   name: 'List',
@@ -105,6 +107,7 @@ export default {
 
     wholeItems() {
       const milestone = this.dataflow.attrs?.milestone || {}
+      let agentId = this.dataflow.agentId
 
       let result = [
         {
@@ -174,6 +177,10 @@ export default {
       }
       result.forEach(el => {
         const item = milestone[el.key]
+        let time = dayjs(item.begin - item.end).format('SSS')
+        time = time === '000' ? '0' : time
+        let begin = dayjs(item.begin).format('HH:MM:ss')
+        let end = dayjs(item.end).format('HH:MM:ss')
         switch (item?.status) {
           case 'FINISH':
             Object.assign(el, finishOpt)
@@ -188,6 +195,33 @@ export default {
             break
           default:
             Object.assign(el, waitingOpt)
+            break
+        }
+        switch (el.key) {
+          case 'TASK':
+            Object.assign(el, {
+              dataDesc: `,任务被调度到 ${agentId},耗时 ${time} ms,${begin}~${end}`
+            })
+            break
+          case 'DATA_NODE_INIT':
+            Object.assign(el, {
+              dataDesc: `,连接成功,耗时 ${time} ms,${begin} ~ ${end}`
+            })
+            break
+          case 'TABLE_INIT':
+            Object.assign(el, {
+              dataDesc: `,共迁移 ${item.totals} 张表结构,耗时 ${time} ms,${begin} ~ ${end}`
+            })
+            break
+          case 'SNAPSHOT':
+            Object.assign(el, {
+              dataDesc: `,共迁移 ${item.totals} 条数据,耗时 ${time} ms,${begin} ~ ${end}`
+            })
+            break
+          case 'CDC':
+            Object.assign(el, {
+              dataDesc: `,增量启动成功,耗时 ${time} ms, ${begin} ~ ${end}`
+            })
             break
         }
       })
@@ -373,7 +407,7 @@ export default {
 
 <style lang="scss" scoped>
 .pro-line {
-  width: 650px;
+  width: 700px;
 }
 .node-list {
   width: 224px;
