@@ -230,7 +230,7 @@
             :disabled="row.status !== 'pay'"
             type="text"
             @click="handleCancelSubscription(row)"
-            >取消订阅</ElButton
+            >{{ $t('public_button_cancel') }}{{ $t('public_button_subscription') }}</ElButton
           >
           <ElButton v-else :disabled="row.status !== 'pay'" type="text" @click="handleUnsubscribe(row)">退订</ElButton>
           <ElButton v-if="row.status === 'unPay'" type="text" @click="handlePay(row)">支付</ElButton>
@@ -554,7 +554,7 @@ import CryptoJS from 'crypto-js'
 import dayjs from 'dayjs'
 import { VTable } from '@tap/component'
 import { getSpec, getPaymentMethod } from '../instance/utils'
-import { ORDER_STATUS_MAP, CURRENCY_SYMBOL_MAP } from '@tap/business'
+import { ORDER_STATUS_MAP, CURRENCY_SYMBOL_MAP, NUMBER_MAP } from '@tap/business'
 import { openUrl } from '@tap/shared'
 
 export default {
@@ -1063,11 +1063,12 @@ export default {
             items.map(t => {
               t.statusLabel = ORDER_STATUS_MAP[t.status]
               const { spec, type, periodUnit, period } = t || {}
-              t.content = `${getPaymentMethod({
+              t.subscriptionMethodLabel = getPaymentMethod({
                 type,
                 periodUnit,
                 period
-              })} ${getSpec(spec)} 实例`
+              })
+              t.content = `${t.subscriptionMethodLabel} ${getSpec(spec)} 实例`
               t.periodLabel =
                 dayjs(t.periodStart).format('YYYY-MM-DD HH:mm:ss') +
                 ' - ' +
@@ -1135,7 +1136,7 @@ export default {
       this.recordData.visible = true
     },
     handleUnsubscribe(row = {}) {
-      this.$confirm(`您将退订“${row.content}”业务，退订后您将不再享受该服务，确定是否退订？`, '退订服务', {
+      this.$confirm(`您将退订“${row.content}”业务，退订后您将不再享受该服务，确定是否继续？`, '退订服务', {
         type: 'warning'
       }).then(res => {
         res &&
@@ -1145,13 +1146,9 @@ export default {
       })
     },
     handleCancelSubscription(row = {}) {
-      this.$confirm(
-        `您将取消订阅“${row.content}实例”业务，取消后您将不再享受该服务，确定是否取消订阅？`,
-        '取消订阅服务',
-        {
-          type: 'warning'
-        }
-      ).then(res => {
+      this.$confirm(`您将取消订阅“${row.content}实例”业务，取消后您将不再享受该服务，确定是否继续？`, '取消订阅服务', {
+        type: 'warning'
+      }).then(res => {
         res &&
           this.$axios
             .post('api/tcm/paid/plan/subscribe/cancel', { id: row.id, subscribeId: row.subscribeId })
@@ -1174,9 +1171,16 @@ export default {
       })
     },
     handleRenew(row = {}) {
-      this.$confirm(`您将续订“${row.content}”业务，续订后您将继续享受该服务，确定是否续订？`, '续订服务', {
-        type: 'warning'
-      }).then(res => {
+      const { period, periodUnit } = row
+      const label = NUMBER_MAP[period] + (periodUnit === 'year' ? '年' : '个月')
+      this.$confirm(
+        `您将续订“${row.content}”业务<span class="fw-bolder font-color-dark">${label}</span>，确定是否继续？`,
+        '续订服务',
+        {
+          type: 'warning',
+          dangerouslyUseHTMLString: true
+        }
+      ).then(res => {
         if (res) {
           const { id, priceId, currency } = row
           const params = {

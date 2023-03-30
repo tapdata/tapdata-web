@@ -68,6 +68,10 @@ export default {
   public_button_retry: '重試',
   public_button_expand: '展開',
   public_button_fold: '折疊',
+  public_button_subscription: '訂閱',
+  public_button_unsubscribe: '退訂',
+  public_button_renew: '續訂',
+  public_button_pay: '支付',
   // 消息
   public_message_title_prompt: '提示',
   public_message_delete_confirm: '是否刪除',

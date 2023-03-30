@@ -68,6 +68,10 @@ export default {
   public_button_retry: 'Retry',
   public_button_expand: 'Expand',
   public_button_fold: 'Fold',
+  public_button_subscription: 'Subscription',
+  public_button_unsubscribe: 'Unsubscribe',
+  public_button_renew: 'Renew',
+  public_button_pay: 'Pay',
   // information
   public_message_title_prompt: 'Prompt',
   public_message_delete_confirm: 'Delete',
