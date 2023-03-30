@@ -72,6 +72,8 @@ export default {
   public_button_unsubscribe: 'Unsubscribe',
   public_button_renew: 'Renew',
   public_button_pay: 'Pay',
+  public_button_renewal: 'Renewal',
+  public_button_order: 'Order',
   // information
   public_message_title_prompt: 'Prompt',
   public_message_delete_confirm: 'Delete',
@@ -112,6 +114,9 @@ export default {
   public_time_m: 'Minute',
   public_time_h: 'Hour',
   public_time_d: 'Day',
+  public_time_day: 'Day',
+  public_time_month: 'Month',
+  public_time_year: 'Year',
   public_time_input: 'Input',
   public_time_output: 'Output',
   public_time_five_min: 'The last five minutes',
@@ -124,6 +129,7 @@ export default {
   public_time_last_three_days: 'The last 3 days',
   public_time_custom_time: 'Custom Time',
   // agent
+  public_agent: 'Agent',
   public_agent_name: 'Agent Name',
   public_agent_button_create: 'Create Agent',
   public_agent_button_deploy: 'Deploy',

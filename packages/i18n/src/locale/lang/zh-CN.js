@@ -72,6 +72,8 @@ export default {
   public_button_unsubscribe: '退订',
   public_button_renew: '续订',
   public_button_pay: '支付',
+  public_button_renewal: '续期',
+  public_button_order: '订购',
   // 消息
   public_message_title_prompt: '提示',
   public_message_delete_confirm: '是否删除',
@@ -112,6 +114,9 @@ export default {
   public_time_m: '分钟',
   public_time_h: '小时',
   public_time_d: '天',
+  public_time_day: '日',
+  public_time_month: '月',
+  public_time_year: '年',
   public_time_input: '输入',
   public_time_output: '输出',
   public_time_five_min: '最近五分钟',
@@ -124,6 +129,7 @@ export default {
   public_time_last_three_days: '最近3天',
   public_time_custom_time: '自定义时间',
   // agent
+  public_agent: '实例',
   public_agent_name: 'Agent名称',
   public_agent_button_create: '创建Agent',
   public_agent_button_deploy: '部署',
