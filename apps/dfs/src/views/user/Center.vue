@@ -209,8 +209,34 @@
           target="_blank"
           >{{ $t('dfs_user_center_kaifapiao') }}</el-link
         >
+        <el-link class="ml-4" type="primary" @click="goLicense">激活授权码</el-link>
       </div>
     </section>
+
+    <section v-if="!userData.enableLicense">
+      <div class="mt-12 fs-7">服务订阅信息</div>
+      <VTable
+        :columns="columns"
+        :remoteMethod="remoteMethod"
+        :page-options="{
+          layout: 'total, ->, prev, pager, next, sizes, jumper'
+        }"
+        :has-pagination="false"
+        ref="table"
+        class="mt-4"
+      >
+        <template #bindAgent="{ row }">
+          <ElLink v-if="row.agentId" type="primary" @click="handleAgent(row)">已绑定实例</ElLink>
+          <span v-else>未绑定</span>
+        </template>
+        <template #operation="{ row }">
+          <ElButton type="text" @click="handleRecord(row)">记录</ElButton>
+          <ElButton v-if="row.type !== 'recurring'" type="text" @click="handleRenew(row)">续订</ElButton>
+          <ElButton :disabled="row.status !== 'pay'" type="text" @click="handleUnsubscribe(row)">退订</ElButton>
+        </template>
+      </VTable>
+    </section>
+
     <ElDialog
       width="435px"
       append-to-body
@@ -501,6 +527,18 @@
         }}</VButton>
       </span>
     </ElDialog>
+    <!--  订阅记录  -->
+    <ElDialog width="618px" append-to-body :close-on-click-modal="false" :visible.sync="recordData.visible">
+      <div class="mt-n11 mx-n2 mb-4 p-4 bg-color-normal text-center rounded-4">
+        <div class="font-color-dark text-center fs-5">{{ recordData.content }}</div>
+        <p class="mt-4 font-color-dark fs-1 text-center">{{ recordData.price }}</p>
+        <p class="mt-4 font-color-sslight text-center">{{ recordData.statusLabel }}</p>
+      </div>
+      <div v-for="(item, index) in recordData.items" :key="index" class="flex justify-content-between mb-2">
+        <span class="font-color-light">{{ item.label }}</span>
+        <span class="font-color-dark">{{ item.value }}</span>
+      </div>
+    </ElDialog>
   </div>
 </template>
 
@@ -513,10 +551,14 @@ import UploadFile from '@/components/UploadFile'
 import { urlToBase64 } from '@/util'
 import CryptoJS from 'crypto-js'
 import dayjs from 'dayjs'
+import { VTable } from '@tap/component'
+import { getSpec, getPaymentMethod } from '../instance/utils'
+import { ORDER_STATUS_MAP, CURRENCY_SYMBOL_MAP } from '@tap/business'
+import { openUrl } from '@tap/shared'
 
 export default {
   name: 'Center',
-  components: { InlineInput, VerificationCode, UploadFile },
+  components: { InlineInput, VerificationCode, UploadFile, VTable },
   data() {
     return {
       userData: {
@@ -580,7 +622,64 @@ export default {
       isEdit: false,
       accessKeyTooltip: false,
       secretKeyTooltip: false,
-      disabledBindingPhone: window.__config__?.disabledBindingPhone
+      disabledBindingPhone: window.__config__?.disabledBindingPhone,
+      columns: [
+        {
+          label: '订阅内容',
+          prop: 'content'
+        },
+        {
+          label: '订阅周期',
+          prop: 'periodLabel',
+          width: 320
+        },
+        {
+          label: '订阅数量',
+          prop: 'quantity'
+        },
+        {
+          label: '金额',
+          prop: 'priceLabel'
+        },
+        {
+          label: '绑定实例状态',
+          prop: 'bindAgent',
+          slotName: 'bindAgent'
+        },
+        {
+          label: '状态',
+          prop: 'statusLabel'
+        },
+        {
+          label: '操作 ',
+          prop: 'extendArray',
+          slotName: 'operation'
+        }
+      ],
+      recordData: {
+        visible: false,
+        content: '',
+        price: 0,
+        statusLabel: '交易成功',
+        items: [
+          {
+            label: '付款方式',
+            value: '微信支付'
+          },
+          {
+            label: '创建时间',
+            value: '2023-03-04 17:56:33'
+          },
+          {
+            label: '支付时间',
+            value: '2023-03-04 17:56:40'
+          },
+          {
+            label: '订单号',
+            value: '2023030419203919321'
+          }
+        ]
+      }
     }
   },
   mounted() {
@@ -602,11 +701,12 @@ export default {
       this.resetEmailForm()
       nameForm.nickname = userData.nickname
 
-      userData.licenseCodes = userData.licenseCodes.map(item => {
-        item.activateTime = item.activateTime ? dayjs(item.activateTime).format('YYYY-MM-DD HH:mm:ss') : ''
-        item.expiredTime = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD HH:mm:ss') : ''
-        return item
-      })
+      userData.licenseCodes =
+        userData.licenseCodes?.map(item => {
+          item.activateTime = item.activateTime ? dayjs(item.activateTime).format('YYYY-MM-DD HH:mm:ss') : ''
+          item.expiredTime = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD HH:mm:ss') : ''
+          return item
+        }) || []
     },
     getEnterprise() {
       this.$axios.get('tm/api/Customer').then(data => {
@@ -922,6 +1022,121 @@ export default {
     },
     handleCopySecretKey() {
       this.secretKeyTooltip = true
+    },
+    remoteMethod() {
+      return this.$axios.get('api/tcm/paid/plan/paidSubscribe').then(data => {
+        return {
+          total: 0,
+          data:
+            data.items.map(t => {
+              t.statusLabel = ORDER_STATUS_MAP[t.status]
+              const { spec, type, periodUnit, period } = t || {}
+              t.content = `${getPaymentMethod({
+                type,
+                periodUnit,
+                period
+              })} ${getSpec(spec)} 实例`
+              t.periodLabel =
+                dayjs(t.periodStart).format('YYYY-MM-DD HH:mm:ss') +
+                ' - ' +
+                dayjs(t.periodEnd).format('YYYY-MM-DD HH:mm:ss')
+              t.priceLabel =
+                CURRENCY_SYMBOL_MAP[t.currency] +
+                (t.price / 100).toLocaleString('zh', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                })
+              t.bindAgent = t.agentId ? '已绑定' + t.agentId : '未绑定'
+              return t
+            }) || []
+        }
+      })
+    },
+    handleRecord(item = {}) {
+      const { content, priceLabel, createAt, statusLabel, invoiceId } = item
+      this.recordData.content = content
+      this.recordData.price = priceLabel
+      this.recordData.statusLabel = statusLabel
+      this.recordData.items = [
+        {
+          label: '付款方式',
+          value: '-'
+        },
+        {
+          label: '创建时间',
+          value: createAt ? dayjs(createAt).format('YYYY-MM-DD HH:mm:ss') : '-'
+        },
+        {
+          label: '支付时间',
+          value: '-'
+        },
+        {
+          label: '订单号',
+          value: invoiceId || '-'
+        }
+      ]
+      this.recordData.visible = true
+    },
+    handleUnsubscribe(row = {}) {
+      const titleObj = {
+        recurring: `退订服务`,
+        one_time: `退订服务`
+      }
+      const msgObj = {
+        recurring: `您将取消订阅“${row.content}实例”业务，取消后您将不再享受该服务，确定是否取消订阅？`,
+        one_time: `您将退订“${row.content}”业务，退订后您将不再享受该服务，确定是否退订？`
+      }
+      this.$confirm(msgObj['one_time'], titleObj['one_time'], {
+        type: 'warning',
+        confirmButtonText: this.$t('public_button_confirm'),
+        cancelButtonText: this.$t('public_button_cancel')
+      }).then(res => {
+        if (!res) return
+        if (row.type === 'recurring') {
+          this.$axios
+            .post('api/tcm/paid/plan/subscribe/cancel', { id: row.id, subscribeId: row.subscribeId })
+            .then(() => {
+              this.$message.success(this.$t('public_message_operation_success'))
+            })
+          return
+        }
+        this.$axios.post('api/tcm/paid/plan/oneTime/refunds', { id: row.id, chargeId: row.chargeId }).then(() => {
+          this.$message.success(this.$t('public_message_operation_success'))
+        })
+      })
+    },
+    handleAgent(row = {}) {
+      this.$router.push({
+        name: 'Instance',
+        query: {
+          keyword: row.agentId
+        }
+      })
+    },
+    goLicense() {
+      this.$router.push({
+        name: 'aliyunMarketLicense'
+      })
+    },
+    handleRenew(row = {}) {
+      this.$confirm(`您将续订“${row.content}”业务，续订后您将继续享受该服务，确定是否续订？`, '续订服务', {
+        type: 'warning'
+      }).then(res => {
+        if (res) {
+          const { id, priceId, currency } = row
+          const params = {
+            id,
+            priceId,
+            currency,
+            successUrl: location.href,
+            cancelUrl: location.href,
+            renew: true
+          }
+          this.$axios.post('api/tcm/paid/plan/oneTime/paymentLink', params).then(data => {
+            openUrl(data)
+          })
+        }
+      })
     }
   }
 }

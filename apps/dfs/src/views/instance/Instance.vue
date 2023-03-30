@@ -48,6 +48,21 @@
             </div>
           </template>
         </ElTableColumn>
+        <ElTableColumn width="120px" label="规格">
+          <template slot-scope="scope">
+            <span>{{ scope.row.specLabel || '-' }}</span>
+          </template>
+        </ElTableColumn>
+        <ElTableColumn width="120px" label="订阅方式">
+          <template slot-scope="scope">
+            <span>{{ scope.row.subscriptionMethodLabel }}</span>
+          </template>
+        </ElTableColumn>
+        <ElTableColumn width="120px" label="有效期">
+          <template slot-scope="scope">
+            <span>{{ scope.row.subscriptionMethodLabel }}</span>
+          </template>
+        </ElTableColumn>
         <ElTableColumn :label="$t('agent_status')" width="140">
           <template slot-scope="scope">
             <StatusTag type="tag" :status="scope.row.status" default-status="Stopped"></StatusTag>
@@ -322,6 +337,15 @@
           </VButton>
         </div>
       </Details>
+      <!--   创建订阅   -->
+      <CreateDialog v-model="createDialog" @finish="fetch"></CreateDialog>
+      <!--   选择授权码   -->
+      <SelectListDialog
+        v-model="selectListDialog"
+        :type="selectListType"
+        @create="createDialog = true"
+        @new-agent="handleNewAgent"
+      ></SelectListDialog>
     </div>
   </section>
   <RouterView v-else></RouterView>
@@ -339,6 +363,10 @@ import { VIcon, FilterBar } from '@tap/component'
 import { dayjs } from '@tap/business'
 import Time from '@tap/shared/src/time'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
+import { getSpec, getPaymentMethod } from './utils'
+
+const CreateDialog = () => import(/* webpackChunkName: "CreateInstanceDialog" */ './Create')
+const SelectListDialog = () => import(/* webpackChunkName: "SelectListInstanceDialog" */ './SelectList')
 
 let timer = null
 
@@ -348,7 +376,9 @@ export default {
     StatusTag,
     VIcon,
     Details,
-    FilterBar
+    FilterBar,
+    CreateDialog,
+    SelectListDialog
   },
   mixins: [timeFunction],
   data() {
@@ -382,7 +412,10 @@ export default {
       currentVersionInfo: '',
       showDetails: false,
       detailId: null,
-      filterItems: []
+      filterItems: [],
+      createDialog: false,
+      selectListDialog: false,
+      selectListType: 'code'
     }
   },
   computed: {
@@ -521,6 +554,13 @@ export default {
           let list = data.items || []
           this.list = list.map(item => {
             // item.status = item.status === 'Running' ? 'Running' : item.status === 'Stopping' ? 'Stopping' : 'Offline'
+            item.deployDisable = item.tmInfo.pingTime || false
+            const { paidSubscribeDto = {} } = item.orderInfo || {}
+            const { periodStart, periodEnd } = paidSubscribeDto
+            item.specLabel = getSpec(item.spec)
+            item.subscriptionMethodLabel = getPaymentMethod(paidSubscribeDto)
+            item.periodLabel =
+              dayjs(periodStart).format('YYYY-MM-DD HH:mm:ss') + ' - ' + dayjs(periodEnd).format('YYYY-MM-DD HH:mm:ss')
             item.deployDisable = item.tmInfo.pingTime || false
             // item.updateStatus = ''
             if (!item.tmInfo) {
@@ -846,39 +886,39 @@ export default {
     // 创建Agent
     createAgent() {
       this.createAgentLoading = true
-      this.$axios
-        .post('api/tcm/orders', {
-          agentType: 'Local'
-        })
-        .then(data => {
-          buried('agentCreate')
-          this.fetch()
-          this.toDeploy({
-            id: data.agentId
+      const userInfo = window.__USER_INFO__ || {}
+      // 开启授权码
+      if (userInfo.enableLicense) {
+        this.$axios
+          .get('api/tcm/aliyun/market/license/available')
+          .then(data => {
+            if (data.length) {
+              this.handleSelectListDialog('code')
+            } else {
+              this.handleCreateAuthorizationCode()
+            }
           })
-          //创建agnet成功后直接跳转到部署页面
-          // this.deployConfirm(data.agentId)
-        })
-        .catch(() => {
-          this.$router.replace('/500')
+          .finally(() => {
+            this.createAgentLoading = false
+          })
+        return
+      }
+      this.$axios
+        .get('api/tcm/paid/plan/queryAvailableSubscribe')
+        .then(data => {
+          if (data.length) {
+            this.handleSelectListDialog('order')
+            return
+          }
+          this.createDialog = true
         })
         .finally(() => {
           this.createAgentLoading = false
         })
+        .catch(() => {
+          this.createDialog = true
+        })
     },
-    // deployConfirm(id) {
-    //   this.$confirm(this.$t('agent_button_create_msg_success_desc'), this.$t('agent_button_create_msg_success'), {
-    //     type: 'success',
-    //     confirmButtonText: this.$t('public_agent_button_deploy_now'),
-    //     cancelButtonText: this.$t('public_agent_button_deploy_later')
-    //   }).then(res => {
-    //     if (res) {
-    //       this.toDeploy({
-    //         id: id
-    //       })
-    //     }
-    //   })
-    // },
     // 禁用部署
     deployBtnDisabled(row) {
       return row.agentType === 'Cloud' || !!row.deployDisable
@@ -940,6 +980,49 @@ export default {
     },
     isWindons(row) {
       return row?.metric?.systemInfo?.os?.includes('win')
+    },
+    handleSelectListDialog(type = 'code') {
+      this.selectListType = type
+      this.selectListDialog = true
+    },
+    handleNewAgent(params = {}) {
+      this.$axios
+        .post('api/tcm/orders', {
+          agentType: 'Local',
+          ...params
+        })
+        .then(data => {
+          buried('agentCreate')
+          this.fetch()
+          this.toDeploy({
+            id: data.agentId
+          })
+        })
+        .catch(e => {
+          this.$message.error(e.message)
+        })
+        .finally(() => {
+          this.createAgentLoading = false
+        })
+    },
+    handleCreateAuthorizationCode() {
+      const href =
+        'https://market.aliyun.com/products/56024006/cmgj00061912.html?spm=5176.730005.result.4.519c3524QzKxHM&innerSource=search_tapdata#sku=yuncode5591200001'
+      this.$confirm(
+        `<p class="flex align-content-center">点击打开<a class="color-primary text-decoration-underline" href="${href}" target="_blank">阿里云市场</a>购买实例，并获取授权码</p>`,
+        '授权码服务',
+        {
+          dangerouslyUseHTMLString: true,
+          confirmButtonText: '激活授权码',
+          type: 'warning'
+        }
+      ).then(resFlag => {
+        if (resFlag) {
+          this.$router.push({
+            name: 'aliyunMarketLicense'
+          })
+        }
+      })
     }
   }
 }
