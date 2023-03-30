@@ -15,8 +15,6 @@
               <div
                 :class="[
                   'dashboard-num',
-                  'pt-4',
-                  'pb-2',
                   'text-center',
                   'din-font',
                   { 'cursor-pointer': item.key === 'copy_total' || item.key === 'sync_total' }
@@ -93,7 +91,7 @@
         </el-row>
         <!-- 数据校验 -->
         <el-row :gutter="20" class="dashboard-row mb-5" v-if="syncValidFalg">
-          <el-col :span="12" class="dashboard-col col" v-readonlybtn="'Data_verify_menu'">
+          <el-col :span="12" class="dashboard-col col --dense" v-readonlybtn="'Data_verify_menu'">
             <div class="dashboard-col-box">
               <div class="fs-7 font-color-normal">{{ $t('dashboard_valid_title') }}</div>
               <div class="chart line-chart flex flex-column">
@@ -116,11 +114,11 @@
                     "
                   ></div>
                 </div>
-                <Chart v-else type="bar" class="bar-chart" :data="validBarData" :options="barOptions"></Chart>
+                <Chart v-else type="bar" class="bar-chart flex-1" :data="validBarData" :options="barOptions"></Chart>
               </div>
             </div>
           </el-col>
-          <el-col :span="12" class="dashboard-col col" v-readonlybtn="'Data_SYNC_menu'">
+          <el-col :span="12" class="dashboard-col col --dense" v-readonlybtn="'Data_SYNC_menu'">
             <div class="charts-list flex flex-row">
               <div class="charts-list-text">
                 <div class="fs-7 font-color-normal">{{ $t('dashboard_transfer_overview') }}</div>
@@ -349,6 +347,7 @@ export default {
         running: '#82C647',
         paused: '#AE86C9',
         wait_run: '#AE86C9',
+        wait_start: '#fdf1c8',
         edit: '#88DBDA',
         error: '#F7D762',
         stop: '#E6B450',
@@ -693,10 +692,14 @@ export default {
         height: 210px;
         border-radius: 3px;
         box-sizing: border-box;
+
+        &.--dense {
+          height: 200px;
+        }
       }
       .dashboard-col-box {
         height: 100%;
-        padding: 20px;
+        padding: 16px;
         border-radius: 4px;
         background-color: map-get($bgColor, white);
         box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
@@ -718,10 +721,10 @@ export default {
         .charts-list-text {
           float: left;
           width: 40%;
-          padding: 20px 30px 12px 20px;
+          padding: 16px 30px 12px 16px;
         }
         .job-list {
-          padding: 16px 30px 20px 60px;
+          padding: 16px 30px 16px 60px;
           box-sizing: border-box;
           li {
             margin-bottom: 5px;
