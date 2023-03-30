@@ -1266,5 +1266,14 @@ export default {
   dfs_user_center_dingyueshuliang: '訂閱數量',
   dfs_user_center_yibangdingshili: '已綁定實例',
   dfs_user_center_fuwudingyuexin: '服務訂閱信息',
-  dfs_user_center_qingxianshanchushi: '請先刪除实例'
+  dfs_user_center_qingxianshanchushi: '請先刪除实例',
+  dfs_src_const_anliangjifei: '按量計費',
+  dfs_src_const_baoyuejifei: '包月計費',
+  dfs_src_const_daguige: '大規格',
+  dfs_src_const_zhongguige: '中規格',
+  dfs_src_const_biaozhunguige: '標準規格',
+  dfs_src_const_xiaoguige: '小規格',
+  dfs_src_const_shuangxiangtongbu: '雙向同步',
+  dfs_src_const_danxiangtongbu: '單向同步',
+  dfs_instance_create_zhifuwanchenghou: '支付完成後，請點擊“已完成”刷新狀態'
 }

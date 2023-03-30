@@ -1390,5 +1390,14 @@ export default {
   dfs_user_center_dingyueshuliang: 'The number of subscriptions',
   dfs_user_center_yibangdingshili: 'Bound Instance',
   dfs_user_center_fuwudingyuexin: 'Service Subscription Information',
-  dfs_user_center_qingxianshanchushi: 'Please delete the example first.'
+  dfs_user_center_qingxianshanchushi: 'Please delete the example first.',
+  dfs_src_const_anliangjifei: 'Based on billing',
+  dfs_src_const_baoyuejifei: 'Monthly billing',
+  dfs_src_const_daguige: 'Large size',
+  dfs_src_const_zhongguige: 'Zhongguige',
+  dfs_src_const_biaozhunguige: 'Standard specification',
+  dfs_src_const_xiaoguige: 'Small Specification',
+  dfs_src_const_shuangxiangtongbu: 'Two-way Synchronization',
+  dfs_src_const_danxiangtongbu: 'One-way Synchronization',
+  dfs_instance_create_zhifuwanchenghou: 'After the payment is completed, please click "Completed" to refresh the status'
 }

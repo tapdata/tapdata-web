@@ -1,7 +1,7 @@
 import i18n from '@/i18n'
 let directionMap = {
-  unidirectional: '单向同步',
-  bidirectional: '双向同步'
+  unidirectional: i18n.t('dfs_src_const_danxiangtongbu'),
+  bidirectional: i18n.t('dfs_src_const_shuangxiangtongbu')
 }
 let topologyMap = {}
 for (const dKey in directionMap) {
@@ -49,14 +49,14 @@ export const TOPOLOGY_MAP = topologyMap,
     paused: { text: i18n.t('task_milestone_paused'), icon: 'yizanting', type: 'info' }
   },
   SPEC_MAP = {
-    micro: '小规格',
-    small: '标准规格',
-    medium: '中规格',
-    large: '大规格'
+    micro: i18n.t('dfs_src_const_xiaoguige'),
+    small: i18n.t('dfs_src_const_biaozhunguige'),
+    medium: i18n.t('dfs_src_const_zhongguige'),
+    large: i18n.t('dfs_src_const_daguige')
   },
   CHARGE_MAP = {
-    '1,month': '包月计费',
-    '2,1': '按量计费'
+    '1,month': i18n.t('dfs_src_const_baoyuejifei'),
+    '2,1': i18n.t('dfs_src_const_anliangjifei')
   },
   SUPPORT_DB = [
     'mysql',

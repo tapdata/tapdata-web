@@ -61,7 +61,7 @@
       <div>
         <img style="height: 60px" :src="require('@tap/assets/images/passed.png')" />
       </div>
-      <p class="mt-6 mb-4 fs-6 font-color-light">支付完成后，请点击“已完成”刷新状态</p>
+      <p class="mt-6 mb-4 fs-6 font-color-light">{{ $t('dfs_instance_create_zhifuwanchenghou') }}</p>
       <div class="inline-block">
         <ElButton type="primary" class="finish-button" @click="finish">{{ $t('public_status_finished') }}</ElButton>
       </div>
