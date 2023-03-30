@@ -1364,6 +1364,9 @@ export default {
   dfs_instance_utils_baonian: 'Annually',
   dfs_instance_utils_lianxu: 'Continuous',
   dfs_instance_utils_baoyue: 'Monthly Subscription',
+  dfs_instance_expired_time_tip1: 'Restricted behaviors after expiration:',
+  dfs_instance_expired_time_tip2: '1. Prohibition of scheduling new tasks to run on expired instances.',
+  dfs_instance_expired_time_tip3: '2. Continued unrestricted operation of old tasks.',
   dfs_user_center_zhifufuwu: 'Payment Service',
   dfs_user_center_ninjiangzhifur:
     'You will pay for the "{val1}" service, and you will enjoy the service after payment. Are you sure whether to continue? ',

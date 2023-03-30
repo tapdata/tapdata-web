@@ -60,7 +60,27 @@
         </ElTableColumn>
         <ElTableColumn width="180" :label="$t('dfs_instance_instance_daoqishijian')">
           <template slot-scope="scope">
-            <span>{{ scope.row.expiredTime }}</span>
+            <div>
+              <span>{{ scope.row.expiredTimeLabel }}</span>
+              <ElTooltip
+                v-if="getExpiredTimeLevel(scope.row)"
+                placement="top"
+                :visible-arrow="false"
+                effect="light"
+                class="ml-2"
+              >
+                <VIcon v-if="getExpiredTimeLevel(scope.row) === 'expired'" class="color-info">error</VIcon>
+                <VIcon v-else class="color-warning">warning</VIcon>
+                <template #content>
+                  <div v-if="getExpiredTimeLevel(scope.row) === 'expired'" class="font-color-dark">
+                    <p>{{ $t('dfs_instance_expired_time_tip1') }}</p>
+                    <p>{{ $t('dfs_instance_expired_time_tip2') }}</p>
+                    <p>{{ $t('dfs_instance_expired_time_tip3') }}</p>
+                  </div>
+                  <span v-else>{{ $t('dfs_user_center_jijiangguoqi') }}</span>
+                </template>
+              </ElTooltip>
+            </div>
           </template>
         </ElTableColumn>
         <ElTableColumn :label="$t('agent_status')" width="140">
@@ -563,7 +583,7 @@ export default {
               dayjs(periodStart).format('YYYY-MM-DD HH:mm:ss') + ' - ' + dayjs(periodEnd).format('YYYY-MM-DD HH:mm:ss')
 
             const expiredTime = chargeProvider === 'Aliyun' ? license.expiredTime : periodEnd
-            item.expiredTime = expiredTime ? dayjs(expiredTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+            item.expiredTimeLabel = expiredTime ? dayjs(expiredTime).format('YYYY-MM-DD HH:mm:ss') : '-'
             item.deployDisable = item.tmInfo.pingTime || false
             if (!item.tmInfo) {
               item.tmInfo = {}
@@ -1025,6 +1045,14 @@ export default {
           })
         }
       })
+    },
+    getExpiredTimeLevel(row = {}) {
+      const { expiredTime } = row
+      if (!expiredTime) return ''
+      const t = new Date(expiredTime).getTime()
+      if (Time.now() > t) return 'expired'
+      if (Time.now() > t - 7 * 24 * 3600) return 'expiringSoon'
+      return ''
     }
   }
 }
