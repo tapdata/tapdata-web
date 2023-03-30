@@ -343,6 +343,10 @@ export default {
         display: none !important;
       }
     }
+
+    .is-drop .drop-mask {
+      display: none !important;
+    }
   }
 }
 </style>

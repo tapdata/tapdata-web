@@ -4,12 +4,21 @@
       <span class="fs-6">{{ $t('packages_business_data_console_targets') }}</span>
       <div class="flex-grow-1"></div>
       <IconButton @click="handleAdd">add</IconButton>
-      <IconButton class="ml-3">search-outline</IconButton>
+      <IconButton :class="{ active: enableSearch }" @click="toggleEnableSearch">search-outline</IconButton>
     </div>
-    <div class="p-3 flex-fill min-h-0 overflow-auto">
-      <draggable v-model="list" @start="dragging = true" @end="dragging = false">
+    <div class="flex-fill min-h-0 flex flex-column">
+      <div v-if="enableSearch" class="px-2 pt-2">
+        <ElInput v-model="search" size="mini" clearable @keydown.native.stop @keyup.native.stop @click.native.stop>
+          <template #prefix>
+            <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
+          </template>
+        </ElInput>
+      </div>
+
+      <div class="flex-fill min-h-0 overflow-auto p-2">
+        <!--<draggable v-model="filterList" @start="dragging = true" @end="dragging = false">-->
         <div
-          v-for="item in list"
+          v-for="item in filterList"
           :key="item.id"
           class="wrap__item rounded-4 mb-3"
           @dragover="handleDragOver"
@@ -67,7 +76,8 @@
             <TaskList :list="connectionTaskMap[item.id] || []" @edit-in-dag="handleEditInDag"></TaskList>
           </template>
         </div>
-      </draggable>
+        <!--</draggable>-->
+      </div>
 
       <ElDialog :visible.sync="dialogConfig.visible" width="600" :close-on-click-modal="false">
         <span slot="title" style="font-size: 14px">{{ dialogConfig.title }}</span>
@@ -204,7 +214,12 @@ export default {
       apiServerHost: '',
       formRules: {
         taskName: [{ validator: validateTaskName, trigger: 'blur' }]
-      }
+      },
+
+      searchIng: false,
+      search: '',
+      enableSearch: false,
+      filterTreeData: []
     }
   },
 
@@ -215,6 +230,12 @@ export default {
         ['SOURCE', 'FDM', 'MDM'].includes(this.dragState.from) &&
         ['connection', 'table'].includes(this.dragState.draggingObjects[0]?.data.LDP_TYPE)
       )
+    },
+
+    filterList() {
+      if (!this.search) return this.list
+
+      return this.list.filter(item => item.name.includes(this.search))
     }
   },
 
@@ -488,6 +509,20 @@ export default {
 
     handleDetailApi(row = {}) {
       this.$refs.drawer.open(row)
+    },
+
+    handleSearch(val) {
+      this.searchIng = true
+      this.debouncedSearch(val)
+    },
+
+    toggleEnableSearch() {
+      if (this.enableSearch) {
+        this.search = ''
+        this.enableSearch = false
+      } else {
+        this.enableSearch = true
+      }
     }
   }
 }

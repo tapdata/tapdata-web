@@ -6,8 +6,7 @@
       <ElTooltip placement="top" content="新增分类">
         <IconButton @click="showDialog(directory, 'add')">folder-plus</IconButton>
       </ElTooltip>
-
-      <IconButton>search-outline</IconButton>
+      <IconButton :class="{ active: enableSearch }" @click="toggleEnableSearch">search-outline</IconButton>
       <!--<ElDropdown trigger="click" @command="handleCommand">
         <IconButton class="ml-3">more</IconButton>
         <ElDropdownMenu slot="dropdown">
@@ -15,30 +14,77 @@
         </ElDropdownMenu>
       </ElDropdown>-->
     </div>
-    <div ref="treeWrap" class="flex flex-column flex-1 position-relative min-h-0 tree-wrap">
-      <VirtualTree
-        class="ldp-tree h-100"
-        ref="tree"
-        node-key="id"
-        highlight-current
-        :data="treeData"
-        draggable
-        height="100%"
-        wrapper-class-name="p-2"
-        :default-expanded-keys="expandedKeys"
-        :render-content="renderContent"
-        :render-after-expand="false"
-        :expand-on-click-node="false"
-        :allow-drop="checkAllowDrop"
-        @dragover.native.stop="handleDragOver"
-        @dragenter.native.stop="handleDragEnter"
-        @dragleave.native.stop="handleDragLeave"
-        @drop.native.stop="handleDrop"
-        @node-drag-start="handleDragStart"
-        @node-drag-end="handleDragEnd"
-        @node-drop="handleSelfDrop"
-        @node-expand="handleNodeExpand"
-      ></VirtualTree>
+    <div
+      ref="treeWrap"
+      class="flex flex-column flex-1 position-relative min-h-0 tree-wrap"
+      @dragover.stop="handleDragOver"
+      @dragenter.stop="handleDragEnter"
+      @dragleave.stop="handleDragLeave"
+      @drop.stop="handleDrop"
+    >
+      <div v-if="enableSearch" class="px-2 pt-2">
+        <ElInput
+          v-model="search"
+          size="mini"
+          clearable
+          @keydown.native.stop
+          @keyup.native.stop
+          @click.native.stop
+          @input="handleSearch"
+        >
+          <template #prefix>
+            <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
+          </template>
+        </ElInput>
+      </div>
+
+      <div class="flex-1 min-h-0 position-relative">
+        <div
+          v-if="search || searchIng"
+          class="search-view position-absolute top-0 left-0 w-100 h-100 bg-white"
+          v-loading="searchIng"
+        >
+          <VirtualTree
+            class="ldp-tree h-100"
+            ref="tree"
+            node-key="id"
+            highlight-current
+            :data="filterTreeData"
+            draggable
+            default-expand-all
+            height="100%"
+            wrapper-class-name="p-2"
+            :render-content="renderContent"
+            :render-after-expand="false"
+            :expand-on-click-node="false"
+            :allow-drop="checkAllowDrop"
+            @node-drag-start="handleDragStart"
+            @node-drag-end="handleDragEnd"
+            @node-drop="handleSelfDrop"
+            @node-expand="handleNodeExpand"
+          ></VirtualTree>
+        </div>
+        <VirtualTree
+          v-else
+          class="ldp-tree h-100"
+          ref="tree"
+          node-key="id"
+          highlight-current
+          :data="treeData"
+          draggable
+          height="100%"
+          wrapper-class-name="p-2"
+          :default-expanded-keys="expandedKeys"
+          :render-content="renderContent"
+          :render-after-expand="false"
+          :expand-on-click-node="false"
+          :allow-drop="checkAllowDrop"
+          @node-drag-start="handleDragStart"
+          @node-drag-end="handleDragEnd"
+          @node-drop="handleSelfDrop"
+          @node-expand="handleNodeExpand"
+        ></VirtualTree>
+      </div>
 
       <div
         class="drop-mask justify-center align-center absolute-fill font-color-dark fs-6"
@@ -113,6 +159,7 @@ import { VirtualTree, IconButton } from '@tap/component'
 import { makeDragNodeImage, TASK_SETTINGS } from '../../shared'
 import { discoveryApi, ldpApi, metadataDefinitionsApi, userGroupsApi } from '@tap/api'
 import { uuid } from '@tap/shared'
+import { debounce } from 'lodash'
 export default {
   name: 'MDM',
 
@@ -152,14 +199,25 @@ export default {
         itemType: 'resource',
         desc: '',
         visible: false
-      }
+      },
+      searchIng: false,
+      search: '',
+      enableSearch: false,
+      filterTreeData: []
     }
   },
 
   computed: {
+    nodesMap() {
+      return this.flattenTree(this.treeData)
+    },
+
     treeData() {
       return this.directory?.children || []
     },
+
+    cloneTreeData() {},
+
     allowDrop() {
       return (
         this.dragState.isDragging &&
@@ -180,8 +238,80 @@ export default {
     }
   },
 
+  created() {
+    this.debouncedSearch = debounce(async search => {
+      this.searchIng = true
+      const result = await this.loadObjects(this.directory, false, search)
+      const map = result.reduce((obj, item) => {
+        let id = item.listtags[0].id
+        let children = obj[id] || []
+        children.push(item)
+        obj[id] = children
+        return obj
+      }, {})
+
+      const filterTree = node => {
+        const { children } = node
+
+        if (children?.length) {
+          node.children = children.filter(child => {
+            filterTree(child)
+            return child.LDP_TYPE === 'folder' && (child.name.includes(search) || child.children.length)
+            // if (child.LDP_TYPE === 'folder') {
+            //   return child.name.includes(search) || map[child.id]
+            // }
+            // filterTree(child)
+          })
+        }
+
+        if (map[node.id]) {
+          node.children.push(...map[node.id])
+        }
+
+        // node.children = children.filter(child => {
+        //   if (child.LDP_TYPE === 'folder') {
+        //     return child.name.includes(search) || map[child.id]
+        //   }
+        //   filterTree(child)
+        // })
+
+        // if (!node.visible && children.length) {
+        //   let allHidden = true
+        //   allHidden = !children.some(child => child.visible)
+        //
+        //   node.visible = allHidden
+        //   node.children = children.filter()
+        // }
+        //
+        // return data.reduce((map, item) => {
+        //   if (item.LDP_TYPE === 'folder') {
+        //     let children = item.children.filter()
+        //     map[item.id] = { ...item, children: [] }
+        //
+        //     if (item.children.length) {
+        //       Object.assign(map, this.flattenTree(item.children))
+        //     }
+        //   }
+        //   return map
+        // }, {})
+      }
+
+      let root = { ...this.directory }
+      filterTree(root)
+      this.searchIng = false
+      this.filterTreeData = root.children
+      console.log('result', result, map, this.nodesMap) // eslint-disable-line
+      console.log('filter', root) // eslint-disable-line
+    }, 300)
+  },
+
   mounted() {
     // this.setNodeExpand()
+    if (!this.loadingDirectory) {
+      this.$nextTick(() => {
+        this.setNodeExpand()
+      })
+    }
   },
 
   methods: {
@@ -268,7 +398,7 @@ export default {
 
       if (!this.allowDrop) return
 
-      const dropNode = this.findParentByClassName(ev.currentTarget, 'ldp-tree')
+      const dropNode = this.findParentByClassName(ev.currentTarget, 'tree-wrap')
       dropNode.classList.add('is-drop')
     },
 
@@ -277,14 +407,14 @@ export default {
 
       if (!this.allowDrop) return
       if (!ev.currentTarget.contains(ev.relatedTarget)) {
-        this.removeDropEffect(ev, 'ldp-tree', 'is-drop')
+        this.removeDropEffect(ev, 'tree-wrap', 'is-drop')
       }
     },
 
     handleDrop(ev) {
       ev.preventDefault()
 
-      this.removeDropEffect(ev, 'ldp-tree', 'is-drop')
+      this.removeDropEffect(ev, 'tree-wrap', 'is-drop')
 
       if (!this.allowDrop) return
 
@@ -395,12 +525,15 @@ export default {
       }
     },
 
-    loadObjects(node) {
+    loadObjects(node, isCurrent = true, queryKey) {
       let where = {
         page: 1,
         pageSize: 10000,
         tagId: node.id,
-        range: 'current',
+        range: isCurrent ? 'current' : undefined,
+        sourceType: 'table',
+        queryKey,
+        regUnion: false,
         fields: {
           allTags: 1
         }
@@ -445,7 +578,7 @@ export default {
       if (!this.allowDrop) return
 
       this.removeDropEffect(ev, 'el-tree-node')
-      this.removeDropEffect(ev, 'ldp-tree', 'is-drop')
+      this.removeDropEffect(ev, 'tree-wrap', 'is-drop')
 
       this.showTaskDialog(data.id)
       console.log('handleTreeDrop') // eslint-disable-line
@@ -592,6 +725,38 @@ export default {
       })
       objects.forEach(item => (item.parent_id = to))
       this.$message.success(this.$t('public_message_operation_success'))
+    },
+
+    handleSearch(val) {
+      if (!val) {
+        this.searchIng = false
+        this.debouncedSearch.cancel()
+        return
+      }
+      this.searchIng = true
+      this.debouncedSearch(val)
+    },
+
+    flattenTree(data) {
+      return data.reduce((map, item) => {
+        if (item.LDP_TYPE === 'folder') {
+          map[item.id] = { ...item, children: [] }
+
+          if (item.children.length) {
+            Object.assign(map, this.flattenTree(item.children))
+          }
+        }
+        return map
+      }, {})
+    },
+
+    toggleEnableSearch() {
+      if (this.enableSearch) {
+        this.search = ''
+        this.enableSearch = false
+      } else {
+        this.enableSearch = true
+      }
     }
   }
 }
