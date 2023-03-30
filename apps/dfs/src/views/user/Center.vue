@@ -1150,6 +1150,7 @@ export default {
       this.recordData.visible = true
     },
     handleUnsubscribe(row = {}) {
+      if (row.agentId) return this.$message.error(i18n.t('dfs_user_center_qingxianshanchushi'))
       this.$confirm(
         i18n.t('dfs_user_center_ninjiangtuidingr', { val1: row.content }),
         i18n.t('dfs_user_center_tuidingfuwu'),

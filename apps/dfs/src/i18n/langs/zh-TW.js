@@ -1266,5 +1266,6 @@ export default {
   dfs_user_center_jine: '金額',
   dfs_user_center_dingyueshuliang: '訂閱數量',
   dfs_user_center_yibangdingshili: '已綁定實例',
-  dfs_user_center_fuwudingyuexin: '服務訂閱信息'
+  dfs_user_center_fuwudingyuexin: '服務訂閱信息',
+  dfs_user_center_qingxianshanchushi: '請先刪除实例'
 }

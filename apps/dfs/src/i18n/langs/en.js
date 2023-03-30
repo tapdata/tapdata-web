@@ -1390,5 +1390,6 @@ export default {
   dfs_user_center_jine: 'Amount',
   dfs_user_center_dingyueshuliang: 'The number of subscriptions',
   dfs_user_center_yibangdingshili: 'Bound Instance',
-  dfs_user_center_fuwudingyuexin: 'Service Subscription Information'
+  dfs_user_center_fuwudingyuexin: 'Service Subscription Information',
+  dfs_user_center_qingxianshanchushi: 'Please delete the example first.'
 }
