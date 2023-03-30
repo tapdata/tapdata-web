@@ -1,7 +1,7 @@
 <template>
   <div class="list__item flex flex-column flex-1 overflow-hidden">
     <div class="list__title flex align-center px-4">
-      <span class="fs-6">SERVICES / TARGETS</span>
+      <span class="fs-6">{{ $t('packages_business_data_console_targets') }}</span>
       <div class="flex-grow-1"></div>
       <IconButton @click="handleAdd">add</IconButton>
       <IconButton class="ml-3">search-outline</IconButton>
@@ -318,14 +318,14 @@ export default {
         if (object.data.type === 'connection') {
           this.dialogConfig.from = object.data
           this.dialogConfig.to = item
-          this.dialogConfig.title = 'Create Migrate Pipeline'
+          this.dialogConfig.title = this.$t('packages_business_create_clone_task')
           this.dialogConfig.syncType = 'migrate'
           this.dialogConfig.desc = `Tapdata will create a pipeline task to sync [ ${object.data.name} ] to [ ${item.name} ],  please click button below to continue. You can also change the pipeline name`
         } else if (object.data.type === 'table') {
           this.dialogConfig.from = object.parent.data
           this.dialogConfig.tableName = object.data.name
           this.dialogConfig.to = item
-          this.dialogConfig.title = 'Create Sync Pipeline'
+          this.dialogConfig.title = this.$t('packages_business_create_sync_task')
           this.dialogConfig.syncType = 'sync'
           this.dialogConfig.desc = `Tapdata will create a pipeline task to sync [ ${object.data.name} ] from [ ${object.parent.data.name} ] to [ ${item.name} ],  please click button below to continue. You can also change the pipeline name`
         }

@@ -788,5 +788,14 @@ export default {
   packages_business_more_than: '超过',
   packages_business_more_than_after: '秒，未返回结果时自动终止试运行',
   packages_business_connection_debug_form_error: '请检查表单必填项',
-  packages_business_connection_debug_as: '作为'
+  packages_business_connection_debug_as: '作为',
+
+  // LDP
+  packages_business_data_console_sources: '源数据层',
+  packages_business_data_console_fdm: '平台缓存层',
+  packages_business_data_console_mdm: '平台加工层',
+  packages_business_data_console_targets: '数据目标和服务层',
+  packages_business_create_clone_task: '创建数据复制任务',
+  packages_business_create_sync_task: '创建数据开发任务',
+  packages_business_table_prefix: '表前缀'
 }

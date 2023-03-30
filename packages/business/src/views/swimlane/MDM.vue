@@ -1,7 +1,7 @@
 <template>
   <div class="list__item flex flex-column flex-1 overflow-hidden">
     <div class="list__title flex align-center px-4">
-      <span class="fs-6">Master Data Model</span>
+      <span class="fs-6">{{ $t('packages_business_data_console_mdm') }}</span>
       <div class="flex-grow-1"></div>
       <ElTooltip placement="top" content="新增分类">
         <IconButton @click="showDialog(directory, 'add')">folder-plus</IconButton>
@@ -49,7 +49,7 @@
     </div>
 
     <ElDialog :visible.sync="taskDialogConfig.visible" width="600" :close-on-click-modal="false">
-      <span slot="title" style="font-size: 14px">Create Sync Pipeline</span>
+      <span slot="title" style="font-size: 14px">{{ $t('packages_business_create_sync_task') }}</span>
       <ElForm ref="form" :model="taskDialogConfig" label-width="180px" @submit.prevent>
         <!--<div class="pipeline-desc p-4 mb-4 text-pre">{{ taskDesc }}</div>-->
         <ElFormItem label="Table Name">

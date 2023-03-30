@@ -1,7 +1,7 @@
 <template>
   <div class="list__item flex flex-column flex-1 overflow-hidden">
     <div class="list__title flex align-center px-4">
-      <span class="fs-6">Foundation Data Model</span>
+      <span class="fs-6">{{ $t('packages_business_data_console_fdm') }}</span>
       <div class="flex-grow-1"></div>
       <IconButton>search-outline</IconButton>
       <!--<ElDropdown trigger="click" @command="handleCommand">
@@ -45,11 +45,28 @@
     </div>
 
     <ElDialog :visible.sync="taskDialogConfig.visible" width="600" :close-on-click-modal="false">
-      <span slot="title" style="font-size: 14px">Create Cloning Pipeline</span>
-      <ElForm ref="form" :model="dialogConfig" label-width="180px" @submit.prevent>
-        <div class="pipeline-desc p-4 mb-4 text-pre">{{ taskDesc }}</div>
-        <ElFormItem label="Table Name Prefix">
-          <ElInput size="small" v-model="taskDialogConfig.prefix"></ElInput>
+      <span slot="title" class="font-color-dark fs-6 fw-sub">{{ $t('packages_business_create_clone_task') }}</span>
+      <ElForm ref="form" :model="taskDialogConfig" label-width="180px" @submit.prevent :rules="formRules">
+        <div class="pipeline-desc p-4 mb-4 text-preline rounded-4">
+          <!--TODO 国际化-->
+          <span>Tapdata 将自动创建一个数据复制管道任务，将您选择的</span
+          ><span v-if="taskDialogConfig.from" class="inline-flex px-1 font-color-dark fw-sub"
+            ><DatabaseIcon :item="taskDialogConfig.from" :key="taskDialogConfig.from.pdkType" :size="20" class="mr-1" />
+            <span>{{ taskDialogConfig.from.name }}</span> </span
+          ><span v-if="taskDialogConfig.tableName" class="inline-flex font-color-dark fw-sub"
+            >/<span class="px-1">{{ taskDialogConfig.tableName }}</span> </span
+          ><span
+            >的结构和数据自动复制到数据平台的 Cache 层并保持源库和Cache
+            层数据的准实时同步及自动校验。在大部分时候源库的结构改动(DDL)也会被复制到Cache 层。您可以在通过点击Cache
+            层里面的库名右侧的ICON来监控该管道任务的运行状态。您也可以选择现在修改在Cache 层的物理表名。</span
+          >
+        </div>
+
+        <ElFormItem :label="$t('packages_business_table_prefix')" prop="prefix">
+          <ElInput size="small" v-model="taskDialogConfig.prefix" :maxlength="maxPrefixLength">
+            <template slot="prepend">{{ fixedPrefix }}</template>
+            <template slot="append"> _&lt;original_table_name&gt; </template>
+          </ElInput>
         </ElFormItem>
       </ElForm>
       <span slot="footer" class="dialog-footer">
@@ -63,11 +80,12 @@
 </template>
 
 <script>
-import { connectionsApi, discoveryApi, ldpApi } from '@tap/api'
+import { connectionsApi, discoveryApi, ldpApi, taskApi } from '@tap/api'
 import { VirtualTree, IconButton } from '@tap/component'
 import { merge } from 'lodash'
 import { uuid } from '@tap/shared'
 import { makeDragNodeImage, TASK_SETTINGS } from '../../shared'
+import { DatabaseIcon } from '../../components'
 
 export default {
   name: 'FDM',
@@ -80,30 +98,36 @@ export default {
     eventDriver: Object
   },
 
-  components: { VirtualTree, IconButton },
+  components: { VirtualTree, IconButton, DatabaseIcon },
 
   data() {
+    const validatePrefix = (rule, value, callback) => {
+      value = value.trim()
+      if (!value) {
+        callback(new Error(this.$t('public_form_not_empty')))
+      } else if (!/\w+/.test(value)) {
+        callback(new Error(this.$t('packages_business_data_server_drawer_geshicuowu')))
+      } else {
+        callback()
+      }
+    }
+
     return {
+      fixedPrefix: 'FDM_',
+      maxPrefixLength: 10,
       keyword: '',
-      dialogConfig: {
-        title: '',
-        connection: null,
-        connectionId: '',
-        connectionName: '',
-        desc: '',
-        taskName: '',
-        syncType: '',
-        visible: false
-      },
       taskDialogConfig: {
         from: null,
         to: null,
         visible: false,
-        prefix: 'f_',
+        prefix: '',
         tableName: null
       },
       creating: false,
-      expandedKeys: []
+      expandedKeys: [],
+      formRules: {
+        prefix: [{ validator: validatePrefix, trigger: 'blur' }]
+      }
     }
   },
 
@@ -131,12 +155,6 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
     }
   },
 
-  created() {
-    if (localStorage.LDP_FDM_CONNECTION) {
-      this.dialogConfig.connection = JSON.parse(localStorage.LDP_FDM_CONNECTION)
-    }
-  },
-
   mounted() {
     this.eventDriver.on('source-drag-end', ev => {
       this.$refs.tree?.$el.classList.remove('is-drop')
@@ -148,7 +166,30 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
   },
 
   methods: {
-    searchFnc() {},
+    openRoute(route, newTab = true) {
+      if (newTab) {
+        window.open(this.$router.resolve(route).href)
+      } else {
+        this.$router.push(route)
+      }
+    },
+
+    handleClickName(task) {
+      let routeName
+
+      if (!['edit', 'wait_start'].includes(task.status)) {
+        routeName = task.syncType === 'migrate' ? 'MigrationMonitor' : 'TaskMonitor'
+      } else {
+        routeName = task.syncType === 'migrate' ? 'MigrateEditor' : 'DataflowEditor'
+      }
+
+      this.openRoute({
+        name: routeName,
+        params: {
+          id: task.id
+        }
+      })
+    },
 
     renderContent(h, { node, data }) {
       let icon
@@ -251,25 +292,39 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
     },
 
     showTaskDialog() {
-      this.taskDialogConfig.prefix = 'f_'
+      this.taskDialogConfig.prefix = this.getSmartPrefix(this.taskDialogConfig.from.name)
       this.taskDialogConfig.visible = true
     },
 
     async taskDialogSubmit() {
-      const { tableName, from } = this.taskDialogConfig
-      let task = this.makeMigrateTask(from, tableName)
+      this.$refs.form.validate(async valid => {
+        if (!valid) return
 
-      this.creating = true
-      try {
-        await ldpApi.createFDMTask(task)
-        this.taskDialogConfig.visible = false
-        // this.$emit('load-directory')
-        this.setNodeExpand()
-        this.$message.success(this.$t('public_message_operation_success'))
-      } catch (e) {
-        console.log(e) // eslint-disable-line
-      }
-      this.creating = false
+        const { tableName, from } = this.taskDialogConfig
+        let task = this.makeMigrateTask(from, tableName)
+
+        this.creating = true
+        try {
+          const result = await ldpApi.createFDMTask(task)
+          this.taskDialogConfig.visible = false
+          this.setNodeExpand()
+          this.$message.success({
+            message: (
+              <span
+                class="color-primary fs-7"
+                onClick={() => {
+                  this.handleClickName(result)
+                }}
+              >
+                任务创建成功，点击查看
+              </span>
+            )
+          })
+        } catch (e) {
+          console.log(e) // eslint-disable-line
+        }
+        this.creating = false
+      })
     },
 
     handleDragOver(ev) {
@@ -397,8 +452,7 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
         id: uuid(),
         type: 'table_rename_processor',
         name: '表编辑',
-        prefix: this.taskDialogConfig.prefix // 前缀
-        // suffix: config.suffix, // 后缀
+        prefix: `${this.fixedPrefix}${this.taskDialogConfig.prefix}_`
       }
     },
 
@@ -482,6 +536,13 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
         this.$emit('load-directory')
       }
       // this.taskDialogConfig.from
+    },
+
+    getSmartPrefix(connectionName) {
+      let planA = connectionName.split('_').shift()
+      let planB = connectionName.split('-').shift()
+
+      return (planA.length < planB.length ? planA : planB).substr(0, 5)
     }
   }
 }
@@ -490,6 +551,6 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
 <style scoped lang="scss">
 .pipeline-desc {
   background-color: #f8f8fa;
-  border-radius: 8px;
+  border-left: 4px solid map-get($color, primary);
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="list__item flex flex-column flex-1 overflow-hidden">
     <div class="list__title flex align-center px-4">
-      <span class="fs-6">SOURCES</span>
+      <span class="fs-6">{{ $t('packages_business_data_console_sources') }}</span>
       <div class="flex-grow-1"></div>
       <IconButton @click="handleAdd">add</IconButton>
       <!--<IconButton>search-outline</IconButton>-->

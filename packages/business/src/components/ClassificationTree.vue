@@ -764,7 +764,7 @@ export default {
 </script>
 
 <style lang="scss">
-$nodeH: 28px;
+$nodeH: 32px;
 .ldp-tree {
   &.el-tree.is-dragging .el-tree-node__content {
     cursor: grabbing;

@@ -863,6 +863,11 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
 
 /* Input
 --------------------------*/
-.el-input__inner{
-  font-size:  $fontBaseTitle;
+.el-input {
+  .el-input__inner{
+    font-size: $fontBaseTitle;
+  }
+  .el-input-group__prepend, .el-input-group__append {
+    padding: 0 12px;
+  }
 }
