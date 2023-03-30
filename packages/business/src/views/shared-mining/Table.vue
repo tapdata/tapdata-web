@@ -21,6 +21,7 @@
       ref="table"
       height="100%"
     >
+      <div slot="empty">{{ $t('public_data_no_data') }}</div>
     </VTable>
   </div>
 </template>
@@ -98,6 +99,13 @@ export default {
           prop: 'count'
         }
       ]
+    }
+  },
+  watch: {
+    params(oldval, newval) {
+      if (newval?.nodeId !== oldval?.nodeId) {
+        this.remoteMethod() //node节点改变更新table数据
+      }
     }
   },
 

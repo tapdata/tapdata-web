@@ -27,9 +27,9 @@
           <div v-if="index + 1 !== wholeItems.length" class="step__line position-absolute"></div>
           <VIcon :class="[item.color, 'mt-1 position-relative']" size="16">{{ item.icon }}</VIcon>
         </div>
-        <div class="ml-4 pb-4 flex-fill">
-          <span class="font-color-normal fw-bold">{{ item.label }}</span>
-          <div v-if="item.desc" class="mt-2 color-info">{{ item.desc }}</div>
+        <div class="ml-4 step__line_pt flex-fill">
+          <span class="font-color-normal fw-bold">{{ item.label }}: </span>
+          <span v-if="item.desc" class="mt-2 color-info">{{ item.desc }}</span>
           <ElProgress
             v-if="typeof item.percentage === 'number'"
             :percentage="item.percentage"
@@ -390,9 +390,12 @@ export default {
 }
 .step__line {
   left: 50%;
-  top: 28px;
+  top: 24px;
   bottom: 4px;
-  border-left: 1px dashed #dee2e6;
+  border-left: 1px dashed map-get($color, primary);
   transform: translateX(-50%);
+}
+.step__line_pt {
+  padding-bottom: 23.5px;
 }
 </style>

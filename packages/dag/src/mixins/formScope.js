@@ -531,7 +531,7 @@ export default {
           const func = (policy, policyField) => {
             if (!policy || !policy.alternatives) {
               setTimeout(() => {
-                policyField.setPattern('readPretty')
+                policyField.setState({ display: 'none' })
               }, 50)
               policyField.setValue(policyField.initialValue)
             } else {

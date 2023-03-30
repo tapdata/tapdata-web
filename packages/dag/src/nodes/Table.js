@@ -1173,6 +1173,12 @@ export class Table extends NodeType {
         'x-display': 'hidden'
       },
 
+      'attrs.capabilities': {
+        type: 'array',
+        'x-display': 'hidden',
+        'x-reactions': '{{useDmlPolicy}}'
+      },
+
       loadSchemaTree: {
         type: 'void',
         title: '',
