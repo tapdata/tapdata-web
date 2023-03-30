@@ -319,7 +319,7 @@ export default {
               argMap: {
                 key: search,
                 page,
-                size: 1000
+                size: size || 1000
               }
             }
             let result = await proxyApi.command(params)
