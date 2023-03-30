@@ -365,7 +365,8 @@ export default {
       },
       count1: 0,
       count2: 0,
-      userRole: []
+      userRole: [],
+      roleList: []
     }
   },
   created() {
@@ -486,6 +487,7 @@ export default {
     getDbOptions() {
       roleApi.get({}).then(data => {
         let items = data?.items || []
+        this.roleList = items
         let options = []
         items.forEach(db => {
           if (db.name !== 'admin') {
@@ -557,25 +559,14 @@ export default {
     // 创建用户弹窗
     openCreateDialog() {
       this.createDialogVisible = true
-      // let roleusers = []
-      // let parmas = {
-      //   filter: {
-      //     where: {
-      //       register_user_default: true
-      //     }
-      //   }
-      // }
-      // roleApi.get(parmas).then(data => {
-      //   let items = data?.items || []
-      //   items.forEach(item => {
-      //     roleusers.push(item.id)
-      //   })
-      // })
+      //过滤出默认角色register_user_default
+      let data = this.roleList.filter(it => it.register_user_default)
+      let roleusers = data.map(it => it.id) || []
       this.createForm = {
         username: '',
         email: '',
         password: '',
-        roleusers: '',
+        roleusers: roleusers,
         status: 'activated',
         accesscode: '',
         emailVerified: true,
