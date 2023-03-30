@@ -95,11 +95,14 @@ export default {
         this.selected =
           items.map(t => {
             const { fields = [], findPossibleDataTypes = {} } = t
-            fields.forEach(el => {
-              const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[el.field_name] || {}
-              el.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
-              el.matchedDataTypeLevel = getMatchedDataTypeLevel(el, el.canUseDataTypes, this.fieldChangeRules)
-            })
+            //如果findPossibleDataTypes = {}，不做类型校验
+            if (JSON.stringify(findPossibleDataTypes) !== '{}') {
+              fields.forEach(el => {
+                const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[el.field_name] || {}
+                el.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
+                el.matchedDataTypeLevel = getMatchedDataTypeLevel(el, el.canUseDataTypes, this.fieldChangeRules)
+              })
+            }
             return t
           })?.[0] || {}
       } catch (e) {
