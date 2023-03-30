@@ -1080,9 +1080,11 @@ export default {
               })
               t.content = `${t.subscriptionMethodLabel} ${getSpec(spec)} ${i18n.t('public_agent')}`
               t.periodLabel =
-                dayjs(t.periodStart).format('YYYY-MM-DD HH:mm:ss') +
-                ' - ' +
-                dayjs(t.periodEnd).format('YYYY-MM-DD HH:mm:ss')
+                t.status === 'unPay'
+                  ? '-'
+                  : dayjs(t.periodStart).format('YYYY-MM-DD HH:mm:ss') +
+                    ' - ' +
+                    dayjs(t.periodEnd).format('YYYY-MM-DD HH:mm:ss')
               t.priceLabel =
                 CURRENCY_SYMBOL_MAP[t.currency] +
                 (t.price / 100).toLocaleString('zh', {
