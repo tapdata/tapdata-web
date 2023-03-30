@@ -59,9 +59,9 @@
     </template>
     <div v-else class="text-center">
       <div>
-        <img style="height: 60px" :src="require('@tap/assets/images/passed.png')" />
+        <img style="height: 80px" :src="require('@tap/assets/images/passed.png')" />
       </div>
-      <p class="mt-6 mb-4 fs-6 font-color-light">{{ $t('dfs_instance_create_zhifuwanchenghou') }}</p>
+      <p class="my-6 mb-4 fs-6 font-color-light">{{ $t('dfs_instance_create_zhifuwanchenghou') }}</p>
       <div class="inline-block">
         <ElButton type="primary" class="finish-button" @click="finish">{{ $t('public_status_finished') }}</ElButton>
       </div>
