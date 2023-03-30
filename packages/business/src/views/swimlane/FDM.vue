@@ -274,11 +274,7 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
     }, 300)
   },
 
-  mounted() {
-    this.eventDriver.on('source-drag-end', ev => {
-      this.$refs.tree?.$el.classList.remove('is-drop')
-    })
-  },
+  mounted() {},
 
   unmounted() {
     this.debouncedSearch.cancel()

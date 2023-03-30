@@ -337,7 +337,8 @@ export default {
       background-color: rgba(255, 255, 255, 0.4);
     }
 
-    .ldp-tree.is-drop {
+    .ldp-tree.is-drop,
+    .is-drop .ldp-tree {
       box-shadow: 0px 0px 0px 2px map-get($color, primary) inset;
       & + .drop-mask {
         display: none !important;

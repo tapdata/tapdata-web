@@ -404,9 +404,10 @@ export default {
 
     handleDragLeave(ev) {
       ev.preventDefault()
-
+      console.log('handleDragLeave') // eslint-disable-line
       if (!this.allowDrop) return
       if (!ev.currentTarget.contains(ev.relatedTarget)) {
+        console.log('handleDragLeave✌️', ev) // eslint-disable-line
         this.removeDropEffect(ev, 'tree-wrap', 'is-drop')
       }
     },
@@ -557,6 +558,7 @@ export default {
     handleTreeDragEnter(ev, data) {
       ev.preventDefault()
 
+      if (this.allowDrop && data.isObject) return
       if (!this.allowDrop && !this.isDragSelf) return
 
       const dropNode = this.findParentNodeByClassName(ev.currentTarget, 'el-tree-node')
@@ -565,10 +567,12 @@ export default {
 
     handleTreeDragLeave(ev, data) {
       ev.preventDefault()
-
       if (!this.allowDrop && !this.isDragSelf) return
       if (!ev.currentTarget.contains(ev.relatedTarget)) {
         this.removeDropEffect(ev, 'el-tree-node')
+        if (!ev.relatedTarget) {
+          this.removeDropEffect(ev, 'tree-wrap', 'is-drop')
+        }
       }
     },
 
