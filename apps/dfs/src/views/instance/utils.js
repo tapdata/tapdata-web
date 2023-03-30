@@ -8,14 +8,17 @@ export function getSpec(item = {}) {
 }
 
 export function getPaymentMethod(item = {}) {
+  const isEn = i18n.locale === 'en'
+  const s = isEn ? ' ' : ''
   const { type, periodUnit, period = 0 } = item
   const labelMap = {
-    recurring_month: i18n.t('dfs_instance_utils_lianxu') + i18n.t('dfs_instance_utils_baoyue'),
-    recurring_year: i18n.t('dfs_instance_utils_lianxu') + i18n.t('dfs_instance_utils_baonian')
+    recurring_month: i18n.t('dfs_instance_utils_lianxu') + s + i18n.t('dfs_instance_utils_baoyue'),
+    recurring_year: i18n.t('dfs_instance_utils_lianxu') + s + i18n.t('dfs_instance_utils_baonian')
   }
   const val = labelMap[`${type}_${periodUnit}`]
   if (val) return val
   if (!period) return ''
-  if (periodUnit === 'year') return i18n.t('public_button_order') + NUMBER_MAP[period] + i18n.t('public_time_year')
-  return i18n.t('public_button_order') + NUMBER_MAP[period] + i18n.t('dfs_instance_utils_geyue')
+  if (periodUnit === 'year')
+    return i18n.t('public_button_order') + s + NUMBER_MAP[period] + s + i18n.t('public_time_year')
+  return i18n.t('public_button_order') + s + NUMBER_MAP[period] + s + i18n.t('dfs_instance_utils_geyue')
 }

@@ -1361,7 +1361,7 @@ export default {
   dfs_instance_selectlist_chuangjianxinshili: 'Create a new instance',
   dfs_instance_selectlist_goumaixinshili: 'Purchase a new instance',
   dfs_instance_utils_geyue: 'Month',
-  dfs_instance_utils_baonian: 'Baonian',
+  dfs_instance_utils_baonian: 'Annually',
   dfs_instance_utils_lianxu: 'Continuous',
   dfs_instance_utils_baoyue: 'Monthly Subscription',
   dfs_user_center_zhifufuwu: 'Payment Service',

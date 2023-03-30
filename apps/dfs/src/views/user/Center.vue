@@ -1196,6 +1196,7 @@ export default {
       const { period, periodUnit } = row
       const label =
         NUMBER_MAP[period] +
+        (i18n?.locale === 'en' ? ' ' : '') +
         (periodUnit === 'year' ? i18n.t('public_time_year') : i18n.t('dfs_instance_utils_geyue'))
       this.$confirm(
         i18n.t('dfs_user_center_ninjiangxudingr', {
