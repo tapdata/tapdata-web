@@ -355,7 +355,8 @@ export default {
           pdkHash: 1,
           capabilities: 1,
           config: 1,
-          connectionString: 1
+          connectionString: 1,
+          encryptConfig: 1
         },
         order: ['status DESC', 'name ASC'],
         where: {

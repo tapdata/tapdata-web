@@ -537,9 +537,9 @@ export default {
   packages_dag_field_inference_main_quanbubiao: '全部表',
   packages_dag_migration_settingpanel_zhuanweiputongC: '轉為普通CDC模式',
   packages_dag_migration_settingpanel_renwuzhijiebao: '任務直接報錯停止',
-  packages_dag_migration_settingpanel_danggongxiangwajue: '當共享挖掘不可用時',
+  packages_dag_migration_settingpanel_danggongxiangwajue: '當共享挖掘不可用(任務啟動時)',
   packages_dag_migration_settingpanel_danggongxiangwajuetooltip:
-    '可能出現的不可用的場景\n1. 數據連接裡面沒有打開開關\n2. 設置的起始時間比外存日誌數據的第一條更早\n3. 挖掘任務報錯停止',
+    '在任務啟動時會對共享挖掘的可用性進行檢測，當挖掘不可用時按照下方所選策略進行處理。\n可能出現的不可用的場景\n1. 數據連接裡面沒有打開開關\n2. 設置的起始時間比外存日誌數據的第一條更早\n3. 挖掘任務報錯停止',
   packages_dag_field_inference_list_gaiziduanyingshe:
     '該字段映射的目標數據類型為系統推測結果，該結果可能存在偏差，請檢查並確認是否符合預期，並根據實際情況調整。 ',
   packages_dag_field_inference_list_gaiziduanwufa: '該字段無法映射目標數據類型，將在數據寫入時忽略該字段。 ',

@@ -555,8 +555,11 @@ export default {
           const notSupportList = this.notSupport[this.form.inspectMethod]
           let notSupportStr = ''
           tasks.forEach(t => {
-            if (notSupportList.includes(t.source.databaseType) || notSupportList.includes(t.target.databaseType)) {
+            if (notSupportList.includes(t.source.databaseType)) {
               notSupportStr = t.source.databaseType
+            }
+            if (notSupportList.includes(t.target.databaseType)) {
+              notSupportStr = t.target.databaseType
             }
           })
 

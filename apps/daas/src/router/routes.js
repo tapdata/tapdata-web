@@ -784,7 +784,7 @@ export default [
         component: () => import(/* webpackChunkName: "api-monitor" */ '@/views/api-page/api-monitor/ApiMonitor'),
         meta: {
           title: 'page_title_api_monitor',
-          code: 'API_server_menu'
+          code: 'v2_api_monitor'
         }
       },
       /* ---------- 元数据管理  ----------*/
@@ -1003,7 +1003,8 @@ export default [
         meta: {
           title: 'page_title_data_console',
           hideTitle: true,
-          icon: 'data-server'
+          icon: 'data-server',
+          code: 'v2_data-console'
         }
       }
     ]
