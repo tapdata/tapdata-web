@@ -80,14 +80,14 @@ export const ALARM_LEVEL_MAP = {
 export const ALARM_LEVEL_SORT = ['EMERGENCY', 'CRITICAL', 'WARNING', 'NORMAL', 'RECOVERY']
 
 export const ORDER_STATUS_MAP = {
-  unPay: '未支付',
-  pay: '已支付',
-  payFail: '支付失败',
-  refund: '已退款',
-  refundFail: '退款失败',
-  refunding: '退款中',
-  expire: '失效',
-  cancelSubscribe: '已取消'
+  unPay: i18n.t('packages_business_shared_const_weizhifu'),
+  pay: i18n.t('packages_business_shared_const_yizhifu'),
+  payFail: i18n.t('packages_business_shared_const_zhifushibai'),
+  refund: i18n.t('packages_business_shared_const_yituikuan'),
+  refundFail: i18n.t('packages_business_shared_const_tuikuanshibai'),
+  refunding: i18n.t('packages_business_shared_const_tuikuanzhong'),
+  expire: i18n.t('packages_business_shared_const_shixiao'),
+  cancelSubscribe: i18n.t('packages_business_shared_const_yiquxiao')
 }
 
 export const CURRENCY_SYMBOL_MAP = {
@@ -97,17 +97,17 @@ export const CURRENCY_SYMBOL_MAP = {
 }
 
 export const NUMBER_MAP = {
-  0: '零',
-  1: '一',
-  2: '二',
-  3: '三',
-  4: '四',
-  5: '五',
-  6: '六',
-  7: '七',
-  8: '八',
-  9: '九',
-  10: '十',
-  11: '十一',
-  12: '十二'
+  0: i18n.t('packages_business_shared_const_ling'),
+  1: i18n.t('packages_business_shared_const_yi'),
+  2: i18n.t('packages_business_shared_const_er'),
+  3: i18n.t('packages_business_shared_const_san'),
+  4: i18n.t('packages_business_shared_const_si'),
+  5: i18n.t('packages_business_shared_const_wu'),
+  6: i18n.t('packages_business_shared_const_liu'),
+  7: i18n.t('packages_business_shared_const_qi'),
+  8: i18n.t('packages_business_shared_const_ba'),
+  9: i18n.t('packages_business_shared_const_jiu'),
+  10: i18n.t('packages_business_shared_const_shi'),
+  11: i18n.t('packages_business_shared_const_shiyi'),
+  12: i18n.t('packages_business_shared_const_shier')
 }
