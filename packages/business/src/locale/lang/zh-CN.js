@@ -797,5 +797,18 @@ export default {
   packages_business_data_console_targets: '数据目标和服务层',
   packages_business_create_clone_task: '创建数据复制任务',
   packages_business_create_sync_task: '创建数据开发任务',
-  packages_business_table_prefix: '表前缀'
+  packages_business_table_prefix: '表前缀',
+  packages_business_last_data_change_time: '数据最后更新时间',
+  packages_business_cdc_delay_time: '增量数据延迟',
+  packages_business_rows: '行数',
+  packages_business_columns: '列数',
+  packages_business_storage_size: '存储大小',
+  packages_business_columns_preview: '列预览',
+  packages_business_sample_data: '样本数据',
+  packages_business_table_preview_task: '以这个模型作为源/目标的任务',
+  packages_business_table_preview_connection_task: '以该连接作为源/目标的任务',
+  packages_business_table_count: '包含表数量',
+  packages_business_overview: '概览',
+  packages_business_tasks: '任务',
+  packages_business_model_update_time: '模型更新时间'
 }

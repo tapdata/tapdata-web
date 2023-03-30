@@ -4,11 +4,11 @@
       <header>
         <div class="flex justify-content-between">
           <div class="connection-name mb-2 ellipsis">{{ viewData.name }}</div>
-          <div class="flex justify-content-end mt-4 mb-4">
+          <!--<div class="flex justify-content-end mt-4 mb-4">
             <el-button size="mini" type="primary">加载Schema</el-button>
             <el-button size="mini" @click="edit">编辑</el-button>
             <el-button size="mini">测试连接</el-button>
-          </div>
+          </div>-->
         </div>
         <div class="color-info mb-4">
           {{ getType(viewData.connection_type) }}
@@ -20,24 +20,25 @@
       <section class="basics-info">
         <el-row>
           <el-col :span="8">
-            <span class="table-dec-label">包含表数量 : </span> <span class="mt-2 ml-2">{{ viewData.tableCount }}</span>
+            <span class="table-dec-label">{{ $t('packages_business_table_count') }} : </span>
+            <span class="mt-2 ml-2">{{ viewData.tableCount }}</span>
           </el-col>
           <el-col :span="8">
-            <span class="table-dec-label">模型更新时间 :</span>
+            <span class="table-dec-label">{{ $t('packages_business_model_update_time') }} :</span>
             <span class="mt-2 ml-2">{{ viewData.loadSchemaTime }}</span>
           </el-col>
           <el-col :span="8">
-            <span class="table-dec-label">创建时间 : </span>
+            <span class="table-dec-label">{{ $t('public_create_time') }} : </span>
             <span class="mt-2 ml-2">{{ viewData.createTime }}</span>
           </el-col>
         </el-row>
         <el-row class="mt-4">
           <el-col :span="8">
-            <span class="table-dec-label">修改时间 : </span>
+            <span class="table-dec-label">{{ $t('public_change_time') }} : </span>
             <span class="mt-2 ml-2">{{ viewData.last_updated }}</span>
           </el-col>
           <el-col :span="8" class="flex items-center">
-            <span class="table-dec-label">Schema状态 : </span>
+            <span class="table-dec-label">{{ $t('public_connection_schema_status') }} : </span>
             <span class="ml-2" v-if="isFileSource(viewData.database_type)">-</span>
             <span class="ml-2" v-else>
               <SchemaProgress :data="viewData"></SchemaProgress>
@@ -48,39 +49,40 @@
       <section class="detailed-info" v-if="viewData.config">
         <el-row class="mb-2">
           <el-col :span="12">
-            <span class="table-dec-label inline-block">数据库地址：</span>
+            <span class="table-dec-label inline-block">{{ $t('public_connection_form_database_address') }}：</span>
             <span>{{ viewData.config.host || viewData.config.uri }}</span>
           </el-col>
           <el-col :span="12">
-            <span class="table-dec-label inline-block">数据库端口：</span>
+            <span class="table-dec-label inline-block">{{ $t('public_connection_form_host') }}：</span>
             <span>{{ viewData.config.port || '-' }}</span>
           </el-col>
         </el-row>
         <el-row class="mb-2">
           <el-col :span="12"
-            ><span class="table-dec-label inline-block">账号：</span
+            ><span class="table-dec-label inline-block">{{ $t('public_connection_form_database_name') }}：</span
             ><span>{{ viewData.config.user || '-' }}</span></el-col
           >
           <el-col :span="12"
-            ><span class="table-dec-label inline-block">Schema:</span
+            ><span class="table-dec-label inline-block">{{ $t('public_connection_form_schema') }}:</span
             ><span>{{ viewData.config.schema || '-' }}</span></el-col
           >
         </el-row>
         <el-row class="mb-2">
           <el-col :span="12"
-            ><span class="table-dec-label inline-block">其它连接串参数:</span
+            ><span class="table-dec-label inline-block"
+              >{{ $t('public_connection_form_other_connection_string') }}:</span
             ><span>{{ viewData.config.additionalString || '-' }}</span></el-col
           >
           <el-col :span="12"
-            ><span class="table-dec-label inline-block">时间类型的时区:</span
+            ><span class="table-dec-label inline-block">{{ $t('public_connection_form_time_zone_of_time_type') }}:</span
             ><span>{{ viewData.config.database_datetype_without_timezone || '-' }}</span></el-col
           >
         </el-row>
       </section>
       <section class="table-info mt-4">
         <header class="header flex justify-content-between mb-4">
-          <div class="table-info-name">以该连接作为源/目标的任务</div>
-          <el-button type="primary" size="mini">新建</el-button>
+          <div class="table-info-name">{{ $t('packages_business_table_preview_connection_task') }}</div>
+          <!--<el-button type="primary" size="mini">新建</el-button>-->
         </header>
         <el-table class="discovery-page-table" :data="taskData" :has-pagination="false">
           <el-table-column :label="$t('public_task_name')" prop="name" width="200px" show-overflow-tooltip>

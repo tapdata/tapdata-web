@@ -386,11 +386,6 @@ export default {
             tip: this.$t('packages_business_connection_form_source_and_target_tip')
           },
           {
-            label: this.$t('public_connection_type_source'),
-            value: 'source',
-            tip: this.$t('packages_business_connection_form_source_tip')
-          },
-          {
             label: this.$t('public_connection_type_target'),
             value: 'target',
             tip: this.$t('packages_business_connection_form_target_tip')

@@ -820,5 +820,18 @@ export default {
   packages_business_data_console_targets: 'Target & Services',
   packages_business_create_clone_task: 'Create Cloning Pipeline',
   packages_business_create_sync_task: 'Create Sync Pipeline',
-  packages_business_table_prefix: 'Table Prefix'
+  packages_business_table_prefix: 'Table Prefix',
+  packages_business_last_data_change_time: 'Last Updated Date',
+  packages_business_cdc_delay_time: 'CDC Delay Date',
+  packages_business_rows: 'Rows',
+  packages_business_columns: 'Columns',
+  packages_business_storage_size: 'Storage Size',
+  packages_business_columns_preview: 'Columns Preview',
+  packages_business_sample_data: 'Sample Data',
+  packages_business_table_preview_task: 'This task of source/target model',
+  packages_business_table_preview_connection_task: 'Task with this connection as source/target',
+  packages_business_table_count: 'Table Count',
+  packages_business_overview: 'Overview',
+  packages_business_tasks: 'Tasks',
+  packages_business_model_update_time: 'Model Update Time'
 }
