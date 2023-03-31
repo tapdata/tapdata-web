@@ -213,10 +213,6 @@ export default {
   },
 
   computed: {
-    nodesMap() {
-      return this.flattenTree(this.treeData)
-    },
-
     treeData() {
       return this.directory?.children || []
     },
@@ -273,7 +269,6 @@ export default {
       filterTree(root)
       this.searchIng = false
       this.filterTreeData = root.children
-      console.log('result', result, map, this.nodesMap) // eslint-disable-line
       console.log('filter', root) // eslint-disable-line
     }, 300)
   },
