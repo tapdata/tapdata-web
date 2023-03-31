@@ -223,11 +223,15 @@ export default {
             email
           }
           this.submitLoading = true
-          this.$axios.post('api/tcm/paid/plan/createPaidSubscribe', params).then(data => {
-            openUrl(data)
-            this.submitLoading = false
-            this.showResult = true
-          })
+          this.$axios
+            .post('api/tcm/paid/plan/createPaidSubscribe', params)
+            .then(data => {
+              openUrl(data)
+              this.showResult = true
+            })
+            .finally(() => {
+              this.submitLoading = false
+            })
         })
         return
       }
@@ -239,11 +243,16 @@ export default {
         email
       }
       this.submitLoading = true
-      this.$axios.post('api/tcm/paid/plan/oneTime/paymentLink', params).then(data => {
-        openUrl(data)
-        this.submitLoading = false
-        this.showResult = true
-      })
+      this.$axios
+        .post('api/tcm/paid/plan/oneTime/paymentLink', params)
+        .then(data => {
+          openUrl(data)
+          this.submitLoading = false
+          this.showResult = true
+        })
+        .finally(() => {
+          this.submitLoading = false
+        })
     },
 
     back() {
