@@ -8,7 +8,15 @@
     </div>
     <div class="flex-fill min-h-0 flex flex-column">
       <div v-if="enableSearch" class="px-2 pt-2">
-        <ElInput v-model="search" size="mini" clearable @keydown.native.stop @keyup.native.stop @click.native.stop>
+        <ElInput
+          ref="search"
+          v-model="search"
+          size="mini"
+          clearable
+          @keydown.native.stop
+          @keyup.native.stop
+          @click.native.stop
+        >
           <template #prefix>
             <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
           </template>
@@ -115,7 +123,8 @@ import { TaskStatus } from '../../components'
 import CreateRestApi from './components/CreateRestApi'
 import DataServerDrawer from '../data-server/Drawer'
 import { TASK_SETTINGS } from '../../shared'
-import { debounce } from 'lodash'
+import commonMix from './mixins/common'
+
 const restApiIcon = getIcon('rest api')
 
 const TaskList = defineComponent({
@@ -178,6 +187,8 @@ export default {
   },
 
   components: { CreateRestApi, DatabaseIcon, TaskList, draggable, DataServerDrawer, IconButton },
+
+  mixins: [commonMix],
 
   data() {
     const validateTaskName = async (rule, value, callback) => {
@@ -514,15 +525,6 @@ export default {
     handleSearch(val) {
       this.searchIng = true
       this.debouncedSearch(val)
-    },
-
-    toggleEnableSearch() {
-      if (this.enableSearch) {
-        this.search = ''
-        this.enableSearch = false
-      } else {
-        this.enableSearch = true
-      }
     }
   }
 }

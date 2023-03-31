@@ -10,9 +10,11 @@
     <div class="flex-1 min-h-0 flex flex-column">
       <div v-if="enableSearch" class="px-2 pt-2">
         <ElInput
+          ref="search"
           v-model="search"
           size="mini"
           clearable
+          autofocus
           @keydown.native.stop
           @keyup.native.stop
           @click.native.stop
@@ -129,6 +131,7 @@ import TablePreview from './TablePreview'
 import NodeIcon from '@tap/dag/src/components/NodeIcon'
 import StageButton from '@tap/business/src/components/StageButton'
 import { makeDragNodeImage } from '../../shared'
+import commonMix from './mixins/common'
 
 export default {
   name: 'Source',
@@ -139,6 +142,8 @@ export default {
   },
 
   components: { NodeIcon, VirtualTree, StageButton, IconButton },
+
+  mixins: [commonMix],
 
   data() {
     return {
@@ -329,38 +334,6 @@ export default {
       } else {
         this.$refs.tree.append(data, 0)
       }
-    },
-
-    toggleEnableSearch() {
-      if (this.enableSearch) {
-        this.search = ''
-        this.enableSearch = false
-      } else {
-        this.enableSearch = true
-      }
-    },
-
-    handleSearch(val) {
-      if (!val) {
-        this.searchIng = false
-        this.debouncedSearch.cancel()
-        return
-      }
-      this.searchIng = true
-      this.debouncedSearch(val)
-    },
-
-    flattenTree(data) {
-      return data.reduce((map, item) => {
-        if (item.LDP_TYPE === 'folder') {
-          map[item.id] = { ...item, children: [] }
-
-          if (item.children.length) {
-            Object.assign(map, this.flattenTree(item.children))
-          }
-        }
-        return map
-      }, {})
     }
   }
 }
