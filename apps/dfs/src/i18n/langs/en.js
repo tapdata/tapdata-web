@@ -1133,6 +1133,7 @@ export default {
 
   //instance
   dfs_agent_down_tishi: 'Agent has been deleted and deployment cannot continue.',
+  dfs_agent_down_tishi_running: 'Agent is running and the deployment cannot continue。',
   dfs_agent_down_goback: 'Return to Agent management',
   dfs_agent_download_agentdownloadmodal_aliyunjisuan: 'Alibaba Cloud Computing Nest',
   dfs_agent_download_agentdownloadmodal_bushuwanchenghou:
