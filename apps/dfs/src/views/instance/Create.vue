@@ -188,7 +188,7 @@ export default {
           })
         })
         .sort((a, b) => {
-          return a.order > b.order ? -1 : 1
+          return a.order < b.order ? -1 : a.periodUnit < b.periodUnit ? -1 : 1
         })
     },
 
