@@ -296,23 +296,6 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
       }
     },
 
-    handleClickName(task) {
-      let routeName
-
-      if (!['edit', 'wait_start'].includes(task.status)) {
-        routeName = task.syncType === 'migrate' ? 'MigrationMonitor' : 'TaskMonitor'
-      } else {
-        routeName = task.syncType === 'migrate' ? 'MigrateEditor' : 'DataflowEditor'
-      }
-
-      this.openRoute({
-        name: routeName,
-        params: {
-          id: task.id
-        }
-      })
-    },
-
     renderContent(h, { node, data }) {
       let icon
       let className = ['custom-tree-node']

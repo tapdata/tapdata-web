@@ -221,8 +221,6 @@ export default {
       return this.directory?.children || []
     },
 
-    cloneTreeData() {},
-
     allowDrop() {
       return (
         this.dragState.isDragging &&
@@ -230,6 +228,7 @@ export default {
         this.dragState.draggingObjects[0]?.data.LDP_TYPE === 'table'
       )
     },
+
     isDragSelf() {
       return this.dragState.isDragging && this.dragState.from === 'MDM'
     }
@@ -262,43 +261,12 @@ export default {
           node.children = children.filter(child => {
             filterTree(child)
             return child.LDP_TYPE === 'folder' && (child.name.includes(search) || child.children.length)
-            // if (child.LDP_TYPE === 'folder') {
-            //   return child.name.includes(search) || map[child.id]
-            // }
-            // filterTree(child)
           })
         }
 
         if (map[node.id]) {
           node.children.push(...map[node.id])
         }
-
-        // node.children = children.filter(child => {
-        //   if (child.LDP_TYPE === 'folder') {
-        //     return child.name.includes(search) || map[child.id]
-        //   }
-        //   filterTree(child)
-        // })
-
-        // if (!node.visible && children.length) {
-        //   let allHidden = true
-        //   allHidden = !children.some(child => child.visible)
-        //
-        //   node.visible = allHidden
-        //   node.children = children.filter()
-        // }
-        //
-        // return data.reduce((map, item) => {
-        //   if (item.LDP_TYPE === 'folder') {
-        //     let children = item.children.filter()
-        //     map[item.id] = { ...item, children: [] }
-        //
-        //     if (item.children.length) {
-        //       Object.assign(map, this.flattenTree(item.children))
-        //     }
-        //   }
-        //   return map
-        // }, {})
       }
 
       let root = { ...this.directory }
@@ -449,18 +417,55 @@ export default {
       const { tableName, from, newTableName, tagId } = this.taskDialogConfig
       let task = this.makeTask(from, tableName, newTableName)
       this.creating = true
-
+      const h = this.$createElement
       try {
-        await ldpApi.createMDMTask(task, { tagId })
+        const result = await ldpApi.createMDMTask(task, { tagId })
         this.taskDialogConfig.visible = false
-        // this.$emit('load-directory')
-
+        this.$message.success({
+          message: h(
+            'span',
+            {
+              class: 'color-primary fs-7 clickable',
+              on: {
+                click: () => {
+                  this.handleClickName(result)
+                }
+              }
+            },
+            '任务创建成功，点击查看'
+          )
+        })
         setTimeout(() => {
           this.setNodeExpand(tagId)
         }, 1000)
-        this.$message.success(this.$t('public_message_operation_success'))
-      } catch (e) {
-        console.log(e) // eslint-disable-line
+      } catch (response) {
+        console.log(response) // eslint-disable-line
+        if (response?.data?.code === 'Ldp.MdmTargetNoPrimaryKey') {
+          const data = response?.data?.data
+
+          if (!data) return
+
+          this.taskDialogConfig.visible = false
+          this.$message.warning({
+            duration: 6000,
+            showClose: true,
+            message: h(
+              'span',
+              {
+                class: 'color-primary fs-7 clickable',
+                on: {
+                  click: () => {
+                    this.handleClickName(data)
+                  }
+                }
+              },
+              '任务已经创建，但由于您的表没有主键，需要进入任务编辑手动设置更新条件字段，点击查看任务'
+            )
+          })
+          setTimeout(() => {
+            this.setNodeExpand(tagId)
+          }, 1000)
+        }
       }
       this.creating = false
     },

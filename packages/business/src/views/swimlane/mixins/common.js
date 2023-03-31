@@ -20,6 +20,31 @@ export default {
       }
       this.searchIng = true
       this.debouncedSearch(val)
+    },
+
+    openRoute(route, newTab = true) {
+      if (newTab) {
+        window.open(this.$router.resolve(route).href)
+      } else {
+        this.$router.push(route)
+      }
+    },
+
+    handleClickName(task) {
+      let routeName
+
+      if (!['edit', 'wait_start'].includes(task.status)) {
+        routeName = task.syncType === 'migrate' ? 'MigrationMonitor' : 'TaskMonitor'
+      } else {
+        routeName = task.syncType === 'migrate' ? 'MigrateEditor' : 'DataflowEditor'
+      }
+
+      this.openRoute({
+        name: routeName,
+        params: {
+          id: task.id
+        }
+      })
     }
   }
 }
