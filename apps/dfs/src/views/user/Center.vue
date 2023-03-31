@@ -1062,42 +1062,43 @@ export default {
       this.secretKeyTooltip = true
     },
     remoteMethod() {
-      return this.$axios.get('api/tcm/paid/plan/paidSubscribe').then(data => {
-        const items =
-          data.items?.sort((a, b) => {
-            return a.type > b.type ? 1 : -1
-          }) || []
-        return {
-          total: 0,
-          data:
-            items.map(t => {
-              t.statusLabel = ORDER_STATUS_MAP[t.status]
-              const { spec, type, periodUnit, period } = t || {}
-              t.subscriptionMethodLabel = getPaymentMethod({
-                type,
-                periodUnit,
-                period
-              })
-              t.content = `${t.subscriptionMethodLabel} ${getSpec(spec)} ${i18n.t('public_agent')}`
-              t.periodLabel =
-                t.status === 'unPay'
-                  ? '-'
-                  : dayjs(t.periodStart).format('YYYY-MM-DD HH:mm:ss') +
-                    ' - ' +
-                    dayjs(t.periodEnd).format('YYYY-MM-DD HH:mm:ss')
-              t.priceLabel =
-                CURRENCY_SYMBOL_MAP[t.currency] +
-                (t.price / 100).toLocaleString('zh', {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
+      return this.$axios
+        .get(
+          `api/tcm/paid/plan/paidSubscribe?filter=${encodeURIComponent(JSON.stringify({ sort: ['createAt desc'] }))}`
+        )
+        .then(data => {
+          const items = data.items || []
+          return {
+            total: 0,
+            data:
+              items.map(t => {
+                t.statusLabel = ORDER_STATUS_MAP[t.status]
+                const { spec, type, periodUnit, period } = t || {}
+                t.subscriptionMethodLabel = getPaymentMethod({
+                  type,
+                  periodUnit,
+                  period
                 })
-              t.bindAgent = t.agentId
-                ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
-                : i18n.t('user_Center_weiBangDing')
-              return t
-            }) || []
-        }
-      })
+                t.content = `${t.subscriptionMethodLabel} ${getSpec(spec)} ${i18n.t('public_agent')}`
+                t.periodLabel =
+                  t.status === 'unPay'
+                    ? '-'
+                    : dayjs(t.periodStart).format('YYYY-MM-DD HH:mm:ss') +
+                      ' - ' +
+                      dayjs(t.periodEnd).format('YYYY-MM-DD HH:mm:ss')
+                t.priceLabel =
+                  CURRENCY_SYMBOL_MAP[t.currency] +
+                  (t.price / 100).toLocaleString('zh', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  })
+                t.bindAgent = t.agentId
+                  ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
+                  : i18n.t('user_Center_weiBangDing')
+                return t
+              }) || []
+          }
+        })
     },
     codeRemoteMethod() {
       return this.$axios.get('api/tcm/aliyun/market/license/list').then(data => {
