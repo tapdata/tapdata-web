@@ -499,7 +499,7 @@ export default [
             component: VerificationList,
             meta: {
               title: 'page_title_data_verify',
-              code: 'v2_data_check_list'
+              code: 'v2_data_check'
             }
           },
           {
@@ -593,7 +593,7 @@ export default [
             component: SharedMiningList,
             meta: {
               title: 'page_title_shared_mining',
-              code: 'v2_log_collector_menu'
+              code: 'v2_log_collector'
             }
           }
         ]
@@ -614,7 +614,7 @@ export default [
             component: () => import(/* webpackChunkName: "function-list" */ '@/views/function/List'),
             meta: {
               title: 'page_title_function',
-              code: 'v2_function_management_list'
+              code: 'v2_function_management'
             }
           },
           {
@@ -671,7 +671,7 @@ export default [
             component: CustomNodeList,
             meta: {
               title: 'page_title_custom_node',
-              code: 'v2_custom_node_menu'
+              code: 'v2_custom_node'
             }
           }
         ]
@@ -692,7 +692,7 @@ export default [
             component: () => import(/* webpackChunkName: "shared-cache" */ '@/views/shared-cache/List'),
             meta: {
               title: 'page_title_shared_cache',
-              code: 'v2_shared_cache_menu'
+              code: 'v2_shared_cache'
             }
           },
           {
@@ -753,7 +753,7 @@ export default [
         redirect: 'data-server-audit/',
         meta: {
           title: 'page_title_api_audit',
-          code: 'v2_data_server_audit-list'
+          code: 'v2_data_server_audit'
         },
         children: [
           {
@@ -762,7 +762,7 @@ export default [
             component: () => import(/* webpackChunkName: "data-server-audit" */ '@/views/data-server-audit/List'),
             meta: {
               title: 'page_title_api_audit',
-              code: 'v2_data_server_audit-list'
+              code: 'v2_data_server_audit'
             }
           },
           {
@@ -855,7 +855,7 @@ export default [
             component: () => import(/* webpackChunkName: "role-list" */ '@/views/role/Roles'),
             meta: {
               title: 'page_title_role',
-              code: 'v2_role_management_menu'
+              code: 'v2_role_management'
             }
           },
           {
