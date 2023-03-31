@@ -1402,5 +1402,5 @@ export default {
     'After the payment is completed, please click "Completed" to refresh the status',
   dfs_instance_instance_mianfei: 'Free',
   dfs_instance_utils_baozhouqi: 'Fixed-term Package',
-  dfs_instance_selectlist_shiyongzhegeding: 'Create Agent using this subscription: {val1}'
+  dfs_instance_selectlist_shiyongzhegeding: 'Create {val1} Agent using this license code.'
 }

@@ -1304,5 +1304,5 @@ export default {
   dfs_instance_create_zhifuwanchenghou: '支付完成后，请点击“已完成”刷新状态',
   dfs_instance_instance_mianfei: '免费',
   dfs_instance_utils_baozhouqi: '包周期',
-  dfs_instance_selectlist_shiyongzhegeding: '使用这个订阅创建 {val1} Agent'
+  dfs_instance_selectlist_shiyongzhegeding: '使用这个授权码创建 {val1} Agent'
 }
