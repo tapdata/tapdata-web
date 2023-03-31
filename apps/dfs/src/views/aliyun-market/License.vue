@@ -7,7 +7,15 @@
           <img class="text-center" :src="getImg('aliyun-license-code')" />
         </div>
         <ul class="step mt-4">
-          <li>{{ $t('dfs_aliyun_market_license_dakaialiyun') }}</li>
+          <li class="flex align-items-center">
+            <span>{{ $t('dfs_aliyun_market_license_dianjidakai') }}</span>
+            <a
+              class="color-primary text-decoration-underline"
+              href="https://market.aliyun.com/products/56024006/cmgj00061912.html?spm=5176.730005.result.4.519c3524QzKxHM&innerSource=search_tapdata#sku=yuncode5591200001"
+              target="_blank"
+              >{{ $t('dfs_aliyun_market_license_aliyunshichang') }}</a
+            >
+          </li>
           <li>{{ $t('dfs_aliyun_market_license_chuangjianshouquanma') }}</li>
           <li>{{ $t('dfs_aliyun_market_license_niantiedaoxiafang') }}</li>
         </ul>
@@ -15,11 +23,12 @@
           <span class="label mb-2">{{ $t('dfs_aliyun_market_license_shouquanma') }}</span>
           <el-input v-model="licenseCode" type="textarea" rows="2" autofocus></el-input>
         </div>
-        <div class="mt-8">
-          <a v-if="showGoDashboard" class="mt-4 float-end button" type="primary" href="index.html">{{
+        <div class="mt-8 pt-4 text-end">
+          <el-button class="mr-4" @click="$router.go(-1)">{{ $t('public_button_back') }}</el-button>
+          <a v-if="showGoDashboard" type="primary" href="./">{{
             $t('dfs_aliyun_market_license_qianwanggongzuotai')
           }}</a>
-          <el-button v-else class="mt-4 float-end" type="primary" @click="save">{{
+          <el-button v-else :loading="saveLoading" type="primary" @click="save">{{
             $t('dfs_aliyun_market_license_jihuo')
           }}</el-button>
         </div>
@@ -36,7 +45,8 @@ export default {
   data() {
     return {
       licenseCode: '',
-      showGoDashboard: false
+      showGoDashboard: false,
+      saveLoading: false
     }
   },
   mounted() {
@@ -45,18 +55,24 @@ export default {
   },
   methods: {
     save() {
-      this.$axios.post('api/tcm/aliyun/market/license/activate', { licenseCode: this.licenseCode }).then(data => {
-        if (data.licenseStatus === 'ACTIVATED') {
-          this.$message.success(i18n.t('dfs_aliyun_market_license_jihuochenggongS'))
-          this.showGoDashboard = true
-          this.$axios.get('api/tcm/user').then(data => {
-            window.__USER_INFO__ = data
-          })
-          setTimeout(() => {
-            window.location.href = 'index.html'
-          }, 30000)
-        }
-      })
+      this.saveLoading = true
+      this.$axios
+        .post('api/tcm/aliyun/market/license/activate', { licenseCode: this.licenseCode })
+        .then(data => {
+          if (data.licenseStatus === 'ACTIVATED') {
+            this.$message.success(i18n.t('dfs_aliyun_market_license_jihuochenggongS'))
+            this.showGoDashboard = true
+            this.$axios.get('api/tcm/user').then(data => {
+              window.__USER_INFO__ = data
+            })
+            setTimeout(() => {
+              window.location.href = 'index.html'
+            }, 30000)
+          }
+        })
+        .finally(() => {
+          this.saveLoading = false
+        })
     },
     getImg(name) {
       return require(`../../../public/images/dashboard/${name}.svg`)

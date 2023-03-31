@@ -173,44 +173,81 @@
     </div>
 
     <section v-if="userData.enableLicense">
-      <div class="mt-12 fs-7">{{ $t('dfs_user_center_shouquanmaxinxi') }}</div>
-      <ElDivider class="my-6"></ElDivider>
-      <ul>
-        <li class="mb-4" v-for="(item, index) in userData.licenseCodes" :key="index">
-          <el-row
-            ><el-col :span="12"
-              ><span class="enterprise-item__label inline-block">{{ $t('dfs_user_center_shouquanma') }}</span
-              >{{ item.licenseCode }}</el-col
-            ></el-row
-          >
-          <el-row class="mt-2">
-            <el-col :span="12"
-              ><span class="enterprise-item__label inline-block">{{ $t('dfs_user_center_jihuoshijian') }}</span
-              >{{ item.activateTime }}</el-col
-            >
-            <el-col :span="12"
-              ><span class="enterprise-item__label inline-block">{{ $t('dfs_user_center_guoqishijian') }}</span
-              >{{ item.expiredTime }}
-              <span v-if="item.nearExpiration" class="expried inline-block">{{
-                $t('dfs_user_center_jijiangguoqi')
-              }}</span>
-            </el-col>
-          </el-row>
-        </li>
-      </ul>
-      <div v-if="userData.licenseCodes.length > 0" class="mt-4" style="margin-left: 100px">
-        <el-link type="primary" href="https://market.console.aliyun.com/imageconsole/index.htm" target="_blank">{{
-          $t('dfs_user_center_xufei')
-        }}</el-link>
+      <div class="mt-12 fs-7">
+        {{ $t('dfs_user_center_shouquanmaxinxi') }}
+      </div>
+      <div class="mt-2">
         <el-link
-          class="ml-4"
+          class="mr-4"
           type="primary"
           href="https://market.console.aliyun.com/receipt/index.htm"
           target="_blank"
           >{{ $t('dfs_user_center_kaifapiao') }}</el-link
         >
+        <el-link type="primary" @click="goLicense">{{ $t('dfs_aliyun_market_checklicnese_jihuoshouquanma') }}</el-link>
       </div>
+      <VTable
+        :columns="codeColumns"
+        :remoteMethod="codeRemoteMethod"
+        :page-options="{
+          layout: 'total, ->, prev, pager, next, sizes, jumper'
+        }"
+        hide-on-single-page
+        ref="table"
+        class="mt-4"
+      >
+        <template #bindAgent="{ row }">
+          <ElLink v-if="row.agentId" type="primary" @click="handleAgent(row)">{{
+            $t('dfs_instance_selectlist_yibangding') + row.agentId + $t('public_agent')
+          }}</ElLink>
+          <span v-else>{{ $t('user_Center_weiBangDing') }}</span>
+        </template>
+        <template #operation="{ row }">
+          <ElButton type="text" @click="handleRenewal(row)">{{ $t('public_button_renewal') }}</ElButton>
+        </template>
+      </VTable>
     </section>
+
+    <section v-if="!userData.enableLicense">
+      <div class="mt-12 fs-7">{{ $t('dfs_user_center_fuwudingyuexin') }}</div>
+      <VTable
+        :columns="columns"
+        :remoteMethod="remoteMethod"
+        :page-options="{
+          layout: 'total, ->, prev, pager, next, sizes, jumper'
+        }"
+        hide-on-single-page
+        ref="table"
+        class="mt-4"
+      >
+        <template #bindAgent="{ row }">
+          <ElLink v-if="row.agentId" type="primary" @click="handleAgent(row)">{{
+            $t('dfs_user_center_yibangdingshili')
+          }}</ElLink>
+          <span v-else>{{ $t('user_Center_weiBangDing') }}</span>
+        </template>
+        <template #operation="{ row }">
+          <!--          <ElButton type="text" @click="handleRecord(row)">记录</ElButton>-->
+          <ElButton v-if="row.type !== 'recurring'" type="text" @click="handleRenew(row)">{{
+            $t('public_button_renew')
+          }}</ElButton>
+          <ElButton
+            v-if="row.type === 'recurring'"
+            :disabled="row.status !== 'pay'"
+            type="text"
+            @click="handleCancelSubscription(row)"
+            >{{ $t('public_button_cancel') }}{{ $t('public_button_subscription') }}</ElButton
+          >
+          <ElButton v-else :disabled="row.status !== 'pay'" type="text" @click="handleUnsubscribe(row)">{{
+            $t('public_button_unsubscribe')
+          }}</ElButton>
+          <ElButton v-if="row.status === 'unPay'" type="text" @click="handlePay(row)">{{
+            $t('public_button_pay')
+          }}</ElButton>
+        </template>
+      </VTable>
+    </section>
+
     <ElDialog
       width="435px"
       append-to-body
@@ -501,6 +538,18 @@
         }}</VButton>
       </span>
     </ElDialog>
+    <!--  订阅记录  -->
+    <ElDialog width="618px" append-to-body :close-on-click-modal="false" :visible.sync="recordData.visible">
+      <div class="mt-n11 mx-n2 mb-4 p-4 bg-color-normal text-center rounded-4">
+        <div class="font-color-dark text-center fs-5">{{ recordData.content }}</div>
+        <p class="mt-4 font-color-dark fs-1 text-center">{{ recordData.price }}</p>
+        <p class="mt-4 font-color-sslight text-center">{{ recordData.statusLabel }}</p>
+      </div>
+      <div v-for="(item, index) in recordData.items" :key="index" class="flex justify-content-between mb-2">
+        <span class="font-color-light">{{ item.label }}</span>
+        <span class="font-color-dark">{{ item.value }}</span>
+      </div>
+    </ElDialog>
   </div>
 </template>
 
@@ -513,10 +562,14 @@ import UploadFile from '@/components/UploadFile'
 import { urlToBase64 } from '@/util'
 import CryptoJS from 'crypto-js'
 import dayjs from 'dayjs'
+import { VTable } from '@tap/component'
+import { getSpec, getPaymentMethod } from '../instance/utils'
+import { ORDER_STATUS_MAP, CURRENCY_SYMBOL_MAP, NUMBER_MAP } from '@tap/business'
+import { openUrl } from '@tap/shared'
 
 export default {
   name: 'Center',
-  components: { InlineInput, VerificationCode, UploadFile },
+  components: { InlineInput, VerificationCode, UploadFile, VTable },
   data() {
     return {
       userData: {
@@ -580,7 +633,91 @@ export default {
       isEdit: false,
       accessKeyTooltip: false,
       secretKeyTooltip: false,
-      disabledBindingPhone: window.__config__?.disabledBindingPhone
+      disabledBindingPhone: window.__config__?.disabledBindingPhone,
+      columns: [
+        {
+          label: i18n.t('dfs_instance_selectlist_dingyueneirong'),
+          prop: 'content'
+        },
+        {
+          label: i18n.t('dfs_instance_selectlist_dingyuezhouqi'),
+          prop: 'periodLabel',
+          width: 320
+        },
+        {
+          label: i18n.t('dfs_user_center_dingyueshuliang'),
+          prop: 'quantity'
+        },
+        {
+          label: i18n.t('dfs_user_center_jine'),
+          prop: 'priceLabel'
+        },
+        {
+          label: i18n.t('dfs_instance_selectlist_bangdingshilizhuang'),
+          prop: 'bindAgent',
+          slotName: 'bindAgent'
+        },
+        {
+          label: i18n.t('task_monitor_status'),
+          prop: 'statusLabel'
+        },
+        {
+          label: i18n.t('public_operation'),
+          prop: 'extendArray',
+          slotName: 'operation'
+        }
+      ],
+      codeColumns: [
+        {
+          label: i18n.t('dfs_instance_selectlist_shouquanma'),
+          prop: 'licenseCode'
+        },
+        {
+          label: i18n.t('dfs_user_center_jihuoshijian2'),
+          prop: 'activateTimeLabel',
+          width: 320
+        },
+        {
+          label: i18n.t('dfs_user_center_guoqishijian2'),
+          prop: 'expiredTimeLabel',
+          width: 320
+        },
+        {
+          label: i18n.t('dfs_instance_selectlist_bangdingshilizhuang'),
+          prop: 'bindAgent',
+          slotName: 'bindAgent'
+        },
+        {
+          label: i18n.t('public_operation'),
+          prop: 'extendArray',
+          slotName: 'operation',
+          width: 100
+        }
+      ],
+      recordData: {
+        visible: false,
+        content: '',
+        price: 0,
+        statusLabel: i18n.t('dfs_user_center_jiaoyichenggong'),
+        items: [
+          {
+            label: i18n.t('dfs_user_center_fukuanfangshi'),
+            value: i18n.t('dfs_user_center_weixinzhifu')
+          },
+          {
+            label: i18n.t('public_create_time'),
+            value: '2023-03-04 17:56:33'
+          },
+          {
+            label: i18n.t('dfs_user_center_zhifushijian'),
+            value: '2023-03-04 17:56:40'
+          },
+          {
+            label: i18n.t('dfs_user_center_dingdanhao'),
+            value: '2023030419203919321'
+          }
+        ]
+      }
     }
   },
   mounted() {
@@ -602,11 +739,12 @@ export default {
       this.resetEmailForm()
       nameForm.nickname = userData.nickname
 
-      userData.licenseCodes = userData.licenseCodes.map(item => {
-        item.activateTime = item.activateTime ? dayjs(item.activateTime).format('YYYY-MM-DD HH:mm:ss') : ''
-        item.expiredTime = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD HH:mm:ss') : ''
-        return item
-      })
+      userData.licenseCodes =
+        userData.licenseCodes?.map(item => {
+          item.activateTime = item.activateTime ? dayjs(item.activateTime).format('YYYY-MM-DD HH:mm:ss') : ''
+          item.expiredTime = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD HH:mm:ss') : ''
+          return item
+        }) || []
     },
     getEnterprise() {
       this.$axios.get('tm/api/Customer').then(data => {
@@ -922,6 +1060,190 @@ export default {
     },
     handleCopySecretKey() {
       this.secretKeyTooltip = true
+    },
+    remoteMethod() {
+      return this.$axios.get('api/tcm/paid/plan/paidSubscribe').then(data => {
+        const items =
+          data.items?.sort((a, b) => {
+            return a.type > b.type ? 1 : -1
+          }) || []
+        return {
+          total: 0,
+          data:
+            items.map(t => {
+              t.statusLabel = ORDER_STATUS_MAP[t.status]
+              const { spec, type, periodUnit, period } = t || {}
+              t.subscriptionMethodLabel = getPaymentMethod({
+                type,
+                periodUnit,
+                period
+              })
+              t.content = `${t.subscriptionMethodLabel} ${getSpec(spec)} ${i18n.t('public_agent')}`
+              t.periodLabel =
+                t.status === 'unPay'
+                  ? '-'
+                  : dayjs(t.periodStart).format('YYYY-MM-DD HH:mm:ss') +
+                    ' - ' +
+                    dayjs(t.periodEnd).format('YYYY-MM-DD HH:mm:ss')
+              t.priceLabel =
+                CURRENCY_SYMBOL_MAP[t.currency] +
+                (t.price / 100).toLocaleString('zh', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                })
+              t.bindAgent = t.agentId
+                ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
+                : i18n.t('user_Center_weiBangDing')
+              return t
+            }) || []
+        }
+      })
+    },
+    codeRemoteMethod() {
+      return this.$axios.get('api/tcm/aliyun/market/license/list').then(data => {
+        console.log('codeRemoteMethod', data)
+        // {
+        //   label: '激活时间',
+        //     prop: 'activateTimeLabel',
+        //   width: 320
+        // },
+        // {
+        //   label: '过期时间',
+        //     prop: 'expiredTimeLabel'
+        // },
+        const items = data.items || []
+        return {
+          total: 0,
+          data:
+            items.map(t => {
+              t.activateTimeLabel = t.activateTime ? dayjs(t.activateTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+              t.expiredTimeLabel = t.expiredTime ? dayjs(t.expiredTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+              t.bindAgent = t.agentId
+                ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
+                : i18n.t('user_Center_weiBangDing')
+              return t
+            }) || []
+        }
+      })
+    },
+    handleRecord(item = {}) {
+      const { content, priceLabel, createAt, statusLabel, invoiceId } = item
+      this.recordData.content = content
+      this.recordData.price = priceLabel
+      this.recordData.statusLabel = statusLabel
+      this.recordData.items = [
+        {
+          label: i18n.t('dfs_user_center_fukuanfangshi'),
+          value: '-'
+        },
+        {
+          label: i18n.t('public_create_time'),
+          value: createAt ? dayjs(createAt).format('YYYY-MM-DD HH:mm:ss') : '-'
+        },
+        {
+          label: i18n.t('dfs_user_center_zhifushijian'),
+          value: '-'
+        },
+        {
+          label: i18n.t('dfs_user_center_dingdanhao'),
+          value: invoiceId || '-'
+        }
+      ]
+      this.recordData.visible = true
+    },
+    handleUnsubscribe(row = {}) {
+      if (row.agentId) return this.$message.error(i18n.t('dfs_user_center_qingxianshanchushi'))
+      this.$confirm(
+        i18n.t('dfs_user_center_ninjiangtuidingr', { val1: row.content }),
+        i18n.t('dfs_user_center_tuidingfuwu'),
+        {
+          type: 'warning'
+        }
+      ).then(res => {
+        res &&
+          this.$axios.post('api/tcm/paid/plan/oneTime/refunds', { id: row.id, chargeId: row.chargeId }).then(() => {
+            this.$message.success(this.$t('public_message_operation_success'))
+          })
+      })
+    },
+    handleCancelSubscription(row = {}) {
+      this.$confirm(
+        i18n.t('dfs_user_center_ninjiangquxiaoding', { val1: row.content }),
+        i18n.t('dfs_user_center_quxiaodingyuefu'),
+        {
+          type: 'warning'
+        }
+      ).then(res => {
+        res &&
+          this.$axios
+            .post('api/tcm/paid/plan/subscribe/cancel', { id: row.id, subscribeId: row.subscribeId })
+            .then(() => {
+              this.$message.success(this.$t('public_message_operation_success'))
+            })
+      })
+    },
+    handleAgent(row = {}) {
+      this.$router.push({
+        name: 'Instance',
+        query: {
+          keyword: row.agentId
+        }
+      })
+    },
+    goLicense() {
+      this.$router.push({
+        name: 'aliyunMarketLicense'
+      })
+    },
+    handleRenew(row = {}) {
+      const { period, periodUnit } = row
+      const label =
+        NUMBER_MAP[period] +
+        (i18n?.locale === 'en' ? ' ' : '') +
+        (periodUnit === 'year' ? i18n.t('public_time_year') : i18n.t('dfs_instance_utils_geyue'))
+      this.$confirm(
+        i18n.t('dfs_user_center_ninjiangxudingr', {
+          val1: row.content,
+          val2: label
+        }),
+        i18n.t('dfs_user_center_xudingfuwu'),
+        {
+          type: 'warning',
+          dangerouslyUseHTMLString: true
+        }
+      ).then(res => {
+        if (res) {
+          const { id, priceId, currency } = row
+          const params = {
+            id,
+            priceId,
+            currency,
+            successUrl: location.href,
+            cancelUrl: location.href,
+            renew: true
+          }
+          this.$axios.post('api/tcm/paid/plan/oneTime/paymentLink', params).then(data => {
+            openUrl(data)
+          })
+        }
+      })
+    },
+    handlePay(row = {}) {
+      openUrl(row.payUrl)
+      this.$confirm(
+        i18n.t('dfs_user_center_ninjiangzhifur', { val1: row.content }),
+        i18n.t('dfs_user_center_zhifufuwu'),
+        {
+          type: 'warning',
+          confirmButtonText: i18n.t('dfs_instance_create_zhifuwancheng')
+        }
+      ).then(() => {
+        this.$refs.table?.fetch()
+      })
+    },
+    handleRenewal() {
+      const href = 'https://market.console.aliyun.com/imageconsole/index.htm'
+      openUrl(href)
     }
   }
 }

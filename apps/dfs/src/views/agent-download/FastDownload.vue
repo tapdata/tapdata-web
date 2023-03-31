@@ -367,6 +367,7 @@ export default {
       this.showTooltipVersion = true
     },
     handleNextStep() {
+      clearTimeout(this.timer)
       this.$router.push({ name: 'Instance' })
     },
     getImg(name) {

@@ -1132,21 +1132,21 @@ export default {
   dfs_user_center_kaifaxinxi: 'Development Information',
 
   //instance
-  dfs_agent_down_tishi: 'The agent has been deleted and the deployment cannot continue',
+  dfs_agent_down_tishi: 'Agent has been deleted and deployment cannot continue.',
   dfs_agent_down_tishi_running: 'Agent is running and the deployment cannot continue。',
   dfs_agent_down_goback: 'Return to Agent management',
   dfs_agent_download_agentdownloadmodal_aliyunjisuan: 'Alibaba Cloud Computing Nest',
   dfs_agent_download_agentdownloadmodal_bushuwanchenghou:
     '4. After the deployment is complete, return to our [Agent Management Page] and wait for 2 minutes until the [Status] changes to [Running]. congratulations. The deployment of the Tapdata Alould computing environment has been completed, and the data task can be created. ',
   dfs_agent_download_agentdownloadmodal_querenjisuanchao: '3. Confirm that the Compute Nest deployment is complete. ',
-  dfs_agent_download_agentdownloadmodal_shilitok: 'Instance token:',
+  dfs_agent_download_agentdownloadmodal_shilitok: 'Agent Token:',
   dfs_agent_download_agentdownloadmodal_shilibanben: 'Instance version:',
   dfs_agent_download_agentdownloadmodal_womenyijingwei:
     '2. We have automatically filled in the information in "Application Instance Configuration" for you, you can also manually copy/paste the following information if necessary. ',
   dfs_agent_download_agentdownloadmodal_fufeibushu: 'Paid Deployment',
   dfs_agent_download_agentdownloadmodal_santianshiyong: 'Trial for three days',
   dfs_agent_download_agentdownloadmodal_ninkeyixuanze:
-    ' 1. You can choose to pay by flow rate or prepaid monthly/yearly, or you can try it for 3 days for free. After 3 days, the server resources will be automatically recovered. You need to redeploy the Agent to continue to use TapData. According to your payment method, please click below Click the button to jump to Alibaba Cloud to create your cloud server. Tapdata Agent will be automatically installed on the new instance. If you do not have an account, you can register on site: ',
+    '1. You can choose to pay by traffic or prepaid monthly/year, or you can try it for free for 3 days. After 3 days, the server resources will be automatically recovered. You need to redeploy the Agent to continue using TapData. According to your payment method, please click the button below Jump to Alibaba Cloud to create your cloud server, and Tapdata Agent will be automatically installed on the instance. If you do not have an account, you can register on site:',
   dfs_agent_download_agentdownloadmodal_zhunbeiguanliyun:
     'Prepare an Alibaba Cloud account to manage your cloud server, or click the button below to create one on the spot.',
   dfs_agent_download_agentdownloadmodal_jisuanchaoCo:
@@ -1155,7 +1155,7 @@ export default {
   dfs_agent_download_fastdownload_bushuwanchenghou:
     '4. After the deployment is complete, return to our [Agent Management Page] and wait for 2 minutes until the [Status] changes to [Running]. congratulations. The deployment of the Tapdata Alould computing environment has been completed, and the data task can be created. ',
   dfs_agent_download_fastdownload_ninkeyixuanze:
-    '1. You can choose to pay by flow rate or prepaid monthly/yearly, or you can try it for free for 3 days. After 3 days, the server resources will be automatically recovered. You need to redeploy the Agent to continue to use TapData. According to your payment method, please click below Click the button to jump to Alibaba Cloud to create your cloud server. Tapdata Agent will be automatically installed on the new instance. If you do not have an account, you can register on site: ',
+    '1. You can choose to pay by traffic or prepaid monthly/year, or you can try it for free for 3 days. After 3 days, the server resources will be automatically recovered. You need to redeploy the Agent to continue using TapData. According to your payment method, please click the button below Jump to Alibaba Cloud to create your cloud server, and Tapdata Agent will be automatically installed on the instance. If you do not have an account, you can register on site:',
   dfs_agent_download_fastdownload_jisuanchaoCo:
     'Compute Nest" is an enterprise software service provided by Alibaba Cloud for the automatic deployment and management of Tapdata, which can save you time on server deployment and operation and maintenance.',
   dfs_agent_download_upgradeversion_jinruyuanAg:
@@ -1175,8 +1175,6 @@ export default {
   dfs_agent_download_upgradeversion_jisuanchaodenglu: 'Compute Nest login address',
   dfs_agent_download_upgradeversion_denglualiyun:
     '1. Log in to Alibaba Cloud Computing Nest console and find the service instance where Agent is deployed.',
-  dfs_the_header_header_jichuban: 'Basic',
-  dfs_the_header_header_biaozhun: 'Standard',
   dfs_agent_download_paidupgrade_qingxuanzelianxi: 'Please select a contact phone number',
   dfs_agent_download_paidupgrade_qingshurulianxi: 'Please enter the contact name',
   dfs_agent_download_paidupgrade_fanhuikongzhitai: 'Return to console',
@@ -1318,10 +1316,88 @@ export default {
     'The server has encountered an error that prevents it from providing the service for the request.',
   dfs_views_error_zhaobudaoyemian: 'Page not found',
   dfs_user_center_kaifapiao: 'Invoicing',
-  dfs_user_center_xufei: 'Renewal',
   dfs_user_center_guoqishijian: 'Expiration Time: ',
   dfs_user_center_jihuoshijian: 'Activation Time: ',
   dfs_user_center_shouquanma: 'Authorization Code: ',
   dfs_user_center_shouquanmaxinxi: 'Authorization code information',
-  dfs_user_center_jijiangguoqi: 'Expiring Soon'
+  dfs_user_center_jijiangguoqi: 'Expiring Soon',
+  dfs_plugins_element_chongfuxiaoxi: 'Repeat Message',
+  dfs_aliyun_market_license_aliyunshichang: 'Aliyun Market',
+  dfs_aliyun_market_license_dianjidakai: '1. Click to open',
+  dfs_instance_create_kexuan: '(optional)',
+  dfs_instance_create_yongyujieshoumei: 'Used to receive monthly subscription payment bills',
+  dfs_instance_create_qingshuruzhengque: 'Please enter a correct email address',
+  dfs_instance_create_qingshuruninde: 'Please enter your email',
+  dfs_instance_create_bencidinggouzhi: 'This order is only applicable to instances of {val1} specification',
+  dfs_instance_create_zhifuwancheng: 'Payment Completed',
+  dfs_instance_create_tuijian: 'Recommended',
+  dfs_instance_create_jieshouzhangdande: 'Email for receiving bills',
+  dfs_instance_create_xuanzeshiligui: 'Select instance specification',
+  dfs_instance_create_qinggenjushuju:
+    'Please select the appropriate instance specification according to the amount of data and the number of tasks to subscribe. After the subscription is successful, it cannot be changed',
+  dfs_instance_create_xuyaogengduode: 'Need more services',
+  dfs_instance_instance_shouquanmafuwu: 'Authorization code service',
+  dfs_instance_instance_pclas:
+    '<p class="flex align-content-center">Click to open <a class="color-primary text-decoration-underline" href="{val1}" target="_blank">Aliyun Market</a> Purchase an instance and obtain an authorization code</p>',
+  dfs_instance_instance_daoqishijian: 'Expiration Time',
+  dfs_instance_instance_dingyuefangshi: 'Subscription Method',
+  dfs_instance_instance_guige: 'Specification',
+  dfs_instance_selectlist_yibangding: 'Already Bound',
+  dfs_instance_selectlist_bangdingshilizhuang: 'Binding instance status',
+  dfs_instance_selectlist_dingyuezhouqi: 'Subscription Cycle',
+  dfs_instance_selectlist_dingyueneirong: 'Subscription Content',
+  dfs_instance_selectlist_keyixuanzeyi:
+    'You can choose existing unused subscriptions to create instances, you can create new instances and choose more specifications',
+  dfs_instance_selectlist_xuanzedingyue: 'Choose an available subscription to create an instance',
+  public_operation: 'Operation',
+  dfs_instance_selectlist_shiliguige: 'Instance Specification',
+  dfs_instance_selectlist_youxiaoqi: 'Validity Period',
+  dfs_instance_selectlist_shouquanma: 'Authorization Code',
+  dfs_instance_selectlist_shouquanmashizai:
+    'The authorization code is the authorization code generated by purchasing in the Aliyun market',
+  dfs_instance_selectlist_xuanzeshouquanma: 'Select an available authorization code to create an instance',
+  dfs_instance_selectlist_chuangjianxinshili: 'Create a new instance',
+  dfs_instance_selectlist_goumaixinshili: 'Purchase a new instance',
+  dfs_instance_utils_geyue: 'Month',
+  dfs_instance_utils_baonian: 'Annually',
+  dfs_instance_utils_lianxu: 'Continuous',
+  dfs_instance_utils_baoyue: 'Monthly Subscription',
+  dfs_instance_expired_time_tip1: 'Restricted behaviors after expiration:',
+  dfs_instance_expired_time_tip2: '1. Prohibition of scheduling new tasks to run on expired instances.',
+  dfs_instance_expired_time_tip3: '2. Continued unrestricted operation of old tasks.',
+  dfs_user_center_zhifufuwu: 'Payment Service',
+  dfs_user_center_ninjiangzhifur:
+    'You will pay for the "{val1}" service, and you will enjoy the service after payment. Are you sure whether to continue? ',
+  dfs_user_center_xudingfuwu: 'Renewal Service',
+  dfs_user_center_ninjiangxudingr:
+    'You are about to renew the "{val1}" business <span class="fw-bolder font-color-dark">{val2}</span>, are you sure whether to continue? ',
+  dfs_user_center_quxiaodingyuefu: 'Cancel subscription service',
+  dfs_user_center_ninjiangquxiaoding:
+    'You will unsubscribe the "{val1} instance" business, after which you will no longer enjoy the service, are you sure whether to continue? ',
+  dfs_user_center_tuidingfuwu: 'Unsubscribe Service',
+  dfs_user_center_ninjiangtuidingr:
+    'You are about to unsubscribe from the "{val1}" service. After unsubscribing, you will no longer enjoy the service. Are you sure whether to continue? ',
+  dfs_user_center_dingdanhao: 'Order Number',
+  dfs_user_center_zhifushijian: 'Payment Time',
+  dfs_user_center_fukuanfangshi: 'Payment Method',
+  public_create_time: 'Create time',
+  dfs_user_center_weixinzhifu: 'WeChat Payment',
+  dfs_user_center_jiaoyichenggong: 'The transaction was successful',
+  dfs_user_center_guoqishijian2: 'Expiration Time',
+  dfs_user_center_jihuoshijian2: 'Activation Time',
+  dfs_user_center_jine: 'Amount',
+  dfs_user_center_dingyueshuliang: 'The number of subscriptions',
+  dfs_user_center_yibangdingshili: 'Bound Instance',
+  dfs_user_center_fuwudingyuexin: 'Service Subscription Information',
+  dfs_user_center_qingxianshanchushi: 'Please delete the example first.',
+  dfs_src_const_anliangjifei: 'Based on billing',
+  dfs_src_const_baoyuejifei: 'Monthly billing',
+  dfs_src_const_daguige: 'Large size',
+  dfs_src_const_zhongguige: 'Zhongguige',
+  dfs_src_const_biaozhunguige: 'Standard specification',
+  dfs_src_const_xiaoguige: 'Small Specification',
+  dfs_src_const_shuangxiangtongbu: 'Two-way Synchronization',
+  dfs_src_const_danxiangtongbu: 'One-way Synchronization',
+  dfs_instance_create_zhifuwanchenghou: 'After the payment is completed, please click "Completed" to refresh the status',
+  dfs_instance_instance_mianfei: 'Free'
 }

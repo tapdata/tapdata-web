@@ -141,7 +141,7 @@ const responseInterceptor = response => {
       return reject(msg)
     } else {
       // 其他情况交由业务端自行处理
-      if (['Datasource.TableNotFound'].includes(code)) {
+      if (['Datasource.TableNotFound', 'SubscribeFailed.OrderLimit'].includes(code)) {
         return reject(Object.assign(response))
       }
       // 文件处理

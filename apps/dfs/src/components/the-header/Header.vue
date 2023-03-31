@@ -42,9 +42,6 @@
             />
             <VIcon v-else class="mr-2" size="20">account</VIcon>
             <span>{{ user.username || user.nickname || user.phone || user.email }}</span>
-            <span class="ml-2 current">{{
-              paidPlansCode === 'standard' ? $t('dfs_the_header_header_biaozhun') : $t('dfs_the_header_header_jichuban')
-            }}</span>
           </div>
 
           <ElDropdownMenu slot="dropdown">
@@ -78,14 +75,12 @@ export default {
       officialWebsiteAddress: window.__config__?.officialWebsiteAddress || 'https://tapdata.net',
       lang: '',
       languages: langMenu,
-      paidPlansCode: '',
       domain: document.domain,
       onlyEnglishLanguage: false
     }
   },
   created() {
     this.lang = getCurrentLanguage()
-    this.getPaidPlan()
     setCurrentLanguage(this.lang, this.$i18n)
     if (window.__config__?.onlyEnglishLanguage) {
       this.onlyEnglishLanguage = true
@@ -189,12 +184,6 @@ export default {
           document.cookie = keys[i] + '=0;path=/;domain=' + document.domain + ';expires=' + new Date(0).toUTCString()
         }
       }
-    },
-    //用户是否是付费用户
-    getPaidPlan() {
-      this.$axios.get('api/tcm/user/paidPlan').then(data => {
-        this.paidPlansCode = data?.paidPlans?.[0].code
-      })
     },
 
     //处理跳转

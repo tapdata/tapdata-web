@@ -23,7 +23,7 @@
         @sort-change="sortChange"
         @row-click="rowClick"
       >
-        <ElTableColumn min-width="200px" :label="$t('agent_name')">
+        <ElTableColumn min-width="290px" :label="$t('agent_name')">
           <template slot-scope="scope">
             <div class="flex">
               <div>
@@ -45,6 +45,44 @@
                   style="height: 18px"
                 />
               </div>
+            </div>
+          </template>
+        </ElTableColumn>
+        <ElTableColumn width="110px" :label="$t('dfs_instance_instance_guige')">
+          <template slot-scope="scope">
+            <span>{{ scope.row.specLabel }}</span>
+          </template>
+        </ElTableColumn>
+        <ElTableColumn width="120px" :label="$t('dfs_instance_instance_dingyuefangshi')">
+          <template slot-scope="scope">
+            <span v-if="scope.row.chargeProvider === 'FreeTier'" class="color-success">{{
+              $t('dfs_instance_instance_mianfei')
+            }}</span>
+            <span v-else>{{ scope.row.subscriptionMethodLabel }}</span>
+          </template>
+        </ElTableColumn>
+        <ElTableColumn width="180" :label="$t('dfs_instance_instance_daoqishijian')">
+          <template slot-scope="scope">
+            <div>
+              <span>{{ scope.row.expiredTimeLabel }}</span>
+              <ElTooltip
+                v-if="getExpiredTimeLevel(scope.row)"
+                placement="top"
+                :visible-arrow="false"
+                effect="light"
+                class="ml-2"
+              >
+                <VIcon v-if="getExpiredTimeLevel(scope.row) === 'expired'" class="color-info">error</VIcon>
+                <VIcon v-else class="color-warning">warning</VIcon>
+                <template #content>
+                  <div v-if="getExpiredTimeLevel(scope.row) === 'expired'" class="font-color-dark">
+                    <p>{{ $t('dfs_instance_expired_time_tip1') }}</p>
+                    <p>{{ $t('dfs_instance_expired_time_tip2') }}</p>
+                    <p>{{ $t('dfs_instance_expired_time_tip3') }}</p>
+                  </div>
+                  <span v-else>{{ $t('dfs_user_center_jijiangguoqi') }}</span>
+                </template>
+              </ElTooltip>
             </div>
           </template>
         </ElTableColumn>
@@ -322,6 +360,15 @@
           </VButton>
         </div>
       </Details>
+      <!--   创建订阅   -->
+      <CreateDialog v-model="createDialog" @finish="fetch"></CreateDialog>
+      <!--   选择授权码   -->
+      <SelectListDialog
+        v-model="selectListDialog"
+        :type="selectListType"
+        @create="createDialog = true"
+        @new-agent="handleNewAgent"
+      ></SelectListDialog>
     </div>
   </section>
   <RouterView v-else></RouterView>
@@ -339,6 +386,10 @@ import { VIcon, FilterBar } from '@tap/component'
 import { dayjs } from '@tap/business'
 import Time from '@tap/shared/src/time'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
+import { getSpec, getPaymentMethod } from './utils'
+
+const CreateDialog = () => import(/* webpackChunkName: "CreateInstanceDialog" */ './Create')
+const SelectListDialog = () => import(/* webpackChunkName: "SelectListInstanceDialog" */ './SelectList')
 
 let timer = null
 
@@ -348,7 +399,9 @@ export default {
     StatusTag,
     VIcon,
     Details,
-    FilterBar
+    FilterBar,
+    CreateDialog,
+    SelectListDialog
   },
   mixins: [timeFunction],
   data() {
@@ -382,7 +435,10 @@ export default {
       currentVersionInfo: '',
       showDetails: false,
       detailId: null,
-      filterItems: []
+      filterItems: [],
+      createDialog: false,
+      selectListDialog: false,
+      selectListType: 'code'
     }
   },
   computed: {
@@ -522,7 +578,18 @@ export default {
           this.list = list.map(item => {
             // item.status = item.status === 'Running' ? 'Running' : item.status === 'Stopping' ? 'Stopping' : 'Offline'
             item.deployDisable = item.tmInfo.pingTime || false
-            // item.updateStatus = ''
+            const { paidSubscribeDto = {}, license = {}, chargeProvider } = item.orderInfo || {}
+            const { periodStart, periodEnd } = paidSubscribeDto
+            item.chargeProvider = chargeProvider
+            item.specLabel = getSpec(item.spec) || '-'
+            item.subscriptionMethodLabel = getPaymentMethod(paidSubscribeDto) || '-'
+            item.periodLabel =
+              dayjs(periodStart).format('YYYY-MM-DD HH:mm:ss') + ' - ' + dayjs(periodEnd).format('YYYY-MM-DD HH:mm:ss')
+
+            const expiredTime =
+              chargeProvider === 'Aliyun' ? license.expiredTime : chargeProvider === 'Stripe' ? periodEnd : ''
+            item.expiredTimeLabel = expiredTime ? dayjs(expiredTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+            item.deployDisable = item.tmInfo.pingTime || false
             if (!item.tmInfo) {
               item.tmInfo = {}
             }
@@ -844,41 +911,43 @@ export default {
         .catch(() => {})
     },
     // 创建Agent
-    createAgent() {
+    async createAgent() {
       this.createAgentLoading = true
-      this.$axios
-        .post('api/tcm/orders', {
-          agentType: 'Local'
-        })
-        .then(data => {
-          buried('agentCreate')
-          this.fetch()
-          this.toDeploy({
-            id: data.agentId
+      const userInfo = window.__USER_INFO__ || {}
+      // 免费实例
+      if (await this.handleFreeAgent()) return (this.createAgentLoading = false)
+      // 开启授权码
+      if (userInfo.enableLicense) {
+        this.$axios
+          .get('api/tcm/aliyun/market/license/available')
+          .then(data => {
+            if (data.length) {
+              this.handleSelectListDialog('code')
+            } else {
+              this.handleCreateAuthorizationCode()
+            }
           })
-          //创建agnet成功后直接跳转到部署页面
-          // this.deployConfirm(data.agentId)
-        })
-        .catch(() => {
-          this.$router.replace('/500')
+          .finally(() => {
+            this.createAgentLoading = false
+          })
+        return
+      }
+      this.$axios
+        .get('api/tcm/paid/plan/queryAvailableSubscribe')
+        .then(data => {
+          if (data.length) {
+            this.handleSelectListDialog('order')
+            return
+          }
+          this.createDialog = true
         })
         .finally(() => {
           this.createAgentLoading = false
         })
+        .catch(() => {
+          this.createDialog = true
+        })
     },
-    // deployConfirm(id) {
-    //   this.$confirm(this.$t('agent_button_create_msg_success_desc'), this.$t('agent_button_create_msg_success'), {
-    //     type: 'success',
-    //     confirmButtonText: this.$t('public_agent_button_deploy_now'),
-    //     cancelButtonText: this.$t('public_agent_button_deploy_later')
-    //   }).then(res => {
-    //     if (res) {
-    //       this.toDeploy({
-    //         id: id
-    //       })
-    //     }
-    //   })
-    // },
     // 禁用部署
     deployBtnDisabled(row) {
       return row.agentType === 'Cloud' || !!row.deployDisable
@@ -940,6 +1009,63 @@ export default {
     },
     isWindons(row) {
       return row?.metric?.systemInfo?.os?.includes('win')
+    },
+    handleSelectListDialog(type = 'code') {
+      this.selectListType = type
+      this.selectListDialog = true
+    },
+    async handleNewAgent(params = {}) {
+      try {
+        const data = await this.$axios.post('api/tcm/orders', {
+          agentType: 'Local',
+          ...params
+        })
+        buried('agentCreate')
+        this.fetch()
+        this.toDeploy({
+          id: data.agentId
+        })
+        this.createAgentLoading = false
+        return true
+      } catch (e) {
+        this.createAgentLoading = false
+        return false
+      }
+    },
+    handleCreateAuthorizationCode() {
+      const href =
+        'https://market.aliyun.com/products/56024006/cmgj00061912.html?spm=5176.730005.result.4.519c3524QzKxHM&innerSource=search_tapdata#sku=yuncode5591200001'
+      this.$confirm(
+        i18n.t('dfs_instance_instance_pclas', { val1: href }),
+        i18n.t('dfs_instance_instance_shouquanmafuwu'),
+        {
+          dangerouslyUseHTMLString: true,
+          confirmButtonText: i18n.t('dfs_aliyun_market_checklicnese_jihuoshouquanma'),
+          type: 'warning'
+        }
+      ).then(resFlag => {
+        if (resFlag) {
+          this.$router.push({
+            name: 'aliyunMarketLicense'
+          })
+        }
+      })
+    },
+    getExpiredTimeLevel(row = {}) {
+      const { expiredTime } = row
+      if (!expiredTime) return ''
+      const t = new Date(expiredTime).getTime()
+      if (Time.now() > t) return 'expired'
+      if (Time.now() > t - 7 * 24 * 3600) return 'expiringSoon'
+      return ''
+    },
+    async handleFreeAgent() {
+      const count = await this.$axios.get('api/tcm/agent/count')
+      if (count) return false
+      const flag = await this.handleNewAgent({
+        chargeProvider: 'FreeTier'
+      })
+      return flag
     }
   }
 }

@@ -237,8 +237,6 @@
     <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
     <!-- 导入 -->
     <Upload v-if="isDaas" :type="'dataflow'" ref="upload" @success="table.fetch()"></Upload>
-    <!--付费 -->
-    <PaidUpgradeDialog :visible.sync="paidUpgradeVisible" :paidPlan="paidPlan"></PaidUpgradeDialog>
     <!-- 删除任务 pg数据源 slot 删除失败 自定义dialog 提示 -->
     <el-dialog
       :title="$t('public_message_title_prompt')"
@@ -304,14 +302,14 @@
 import i18n from '@tap/i18n'
 
 import dayjs from 'dayjs'
-import { taskApi, workerApi, paidApi } from '@tap/api'
+import { taskApi, workerApi } from '@tap/api'
 import { TablePage, TaskStatus } from '../../components'
 import SkipError from './SkipError'
 import Upload from '../../components/UploadDialog'
 import { makeStatusAndDisabled, STATUS_MAP } from '../../shared'
 import syncTaskAgent from '../../mixins/syncTaskAgent'
 import { toRegExp } from '@tap/shared'
-import { FilterBar, PaidUpgradeDialog } from '@tap/component'
+import { FilterBar } from '@tap/component'
 
 export default {
   name: 'List',
@@ -324,7 +322,7 @@ export default {
 
   inject: ['checkAgent', 'buried'],
 
-  components: { FilterBar, TablePage, SkipError, Upload, TaskStatus, PaidUpgradeDialog },
+  components: { FilterBar, TablePage, SkipError, Upload, TaskStatus },
 
   mixins: [syncTaskAgent],
 
@@ -368,9 +366,6 @@ export default {
         status: '',
         type: ''
       },
-      //付费升级
-      paidUpgradeVisible: false,
-      paidPlan: '',
       //删除任务 pg数据源 slot 删除失败 自定义dialog 提示
       dialogDelMsgVisible: false,
       copySelectSql: `SELECT slot_name FROM pg_replication_slots WHERE slot_name like 'tapdata_cdc_%' and active='false';`,
@@ -695,15 +690,6 @@ export default {
     async create() {
       this.buried(this.taskBuried.new)
       this.createBtnLoading = true
-      if (!this.isDaas) {
-        // true 付费计划有效，false 付费计划无效
-        this.paidPlan = await paidApi.getUserPaidPlan()
-      }
-      if (!this.isDaas && !this.paidPlan?.valid) {
-        this.paidUpgradeVisible = true
-        this.createBtnLoading = false
-        return
-      }
       this.checkAgent(() => {
         this.$router.push({
           name: this.route.new
