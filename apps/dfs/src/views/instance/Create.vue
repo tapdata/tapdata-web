@@ -31,12 +31,12 @@
           <ElInput v-model="form.email" :placeholder="getPlaceholder()"></ElInput>
         </ElFormItem>
       </ElForm>
-      <ul v-loading="loading" class="mt-6">
+      <ul v-loading="loading" class="mt-6 flex">
         <li
           v-for="(item, index) in packageItems"
           :key="item.value"
-          class="packages-item position-relative text-center inline-block mb-4 p-4 cursor-pointer"
-          :class="{ active: selected.value === item.value, 'mr-6': index !== packageItems.length - 1 }"
+          class="packages-item position-relative text-center mb-4 p-4 cursor-pointer"
+          :class="{ active: selected.value === item.value, 'mr-6': index !== packageItems.length - 1, 'is-en': isEn }"
           @click="handlePackage(item)"
         >
           <span v-if="item.recommend" class="recommend-item position-absolute top-0 bg-primary color-white py-1 px-6">{{
@@ -98,7 +98,8 @@ export default {
         specification: '',
         email: ''
       },
-      showResult: false
+      showResult: false,
+      isEn: i18n.locale === 'en'
       // emailRules: [
       //   {
       //     required: true,
@@ -287,8 +288,13 @@ export default {
   box-shadow: 0px 4px 4px rgba(29, 33, 41, 0.05);
   border-radius: 8px;
   border: 1px solid map-get($borderColor, light);
+  width: 210px;
+  height: 150px;
   &.active {
     border-color: map-get($color, primary);
+  }
+  &.is-en {
+    height: 190px;
   }
 }
 
