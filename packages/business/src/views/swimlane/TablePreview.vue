@@ -11,7 +11,7 @@
       >
       <span class="ml-8"
         ><span class="table-dec-label">{{ $t('packages_business_last_data_change_time') }}：</span
-        ><span class="table-dec-txt">{{ lastDataChangeTime || '-' }}123</span></span
+        ><span class="table-dec-txt">{{ lastDataChangeTime || '-' }}</span></span
       >
       <span class="ml-8"
         ><span class="table-dec-label">{{ $t('packages_business_cdc_delay_time') }}：</span

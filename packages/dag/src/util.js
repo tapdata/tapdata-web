@@ -88,3 +88,8 @@ export function getMatchedDataTypeLevel(
     ? 'error'
     : 'warning'
 }
+export function errorFiledType(field) {
+  const { tapType } = field || {}
+  let type = JSON.parse(tapType).type
+  return type === 7 ? 'error' : ''
+}

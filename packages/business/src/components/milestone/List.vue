@@ -25,7 +25,11 @@
       <div v-for="(item, index) in wholeItems" :key="index" class="pro-line flex">
         <div class="position-relative">
           <div v-if="index + 1 !== wholeItems.length" class="step__line position-absolute"></div>
-          <VIcon :class="[item.color, 'mt-1 position-relative']" size="16">{{ item.icon }}</VIcon>
+          <VIcon
+            :class="[item.color, 'mt-1 position-relative', { 'loading-circle': item.icon === 'loading-circle' }]"
+            size="16"
+            >{{ item.icon }}</VIcon
+          >
         </div>
         <div class="ml-4 step__line_pt flex-fill">
           <span class="font-color-normal fw-bold">{{ item.label }}: </span>
@@ -107,7 +111,7 @@ export default {
 
     wholeItems() {
       const milestone = this.dataflow.attrs?.milestone || {}
-      let agentId = this.dataflow.agentId
+      let hostName = this.dataflow.hostName
 
       let result = [
         {
@@ -177,13 +181,44 @@ export default {
       }
       result.forEach(el => {
         const item = milestone[el.key]
-        let time = item.begin - item.end ? dayjs(item.begin - item.end).format('SSS') : ''
-        time = time === '000' ? '0' : time
+        let time =
+          item.begin && item.end
+            ? calcTimeUnit(item.end - item.begin, 2, {
+                autoHideMs: true
+              })
+            : '-'
         const begin = dayjs(item.begin).format('HH:mm:ss')
         const end = item.end ? dayjs(item.end).format('HH:mm:ss') : ''
         switch (item?.status) {
           case 'FINISH':
             Object.assign(el, finishOpt)
+            switch (el.key) {
+              case 'TASK':
+                Object.assign(el, {
+                  dataDesc: `,任务被调度到 ${hostName} ,耗时 ${time} ,${begin}~${end}`
+                })
+                break
+              case 'DATA_NODE_INIT':
+                Object.assign(el, {
+                  dataDesc: `,连接成功,耗时 ${time} ,${begin} ~ ${end}`
+                })
+                break
+              case 'TABLE_INIT':
+                Object.assign(el, {
+                  dataDesc: `,共迁移 ${item.totals} 张表结构,耗时 ${time},${begin} ~ ${end}`
+                })
+                break
+              case 'SNAPSHOT':
+                Object.assign(el, {
+                  dataDesc: `,耗时 ${time} ,${begin} ~ ${end}`
+                })
+                break
+              case 'CDC':
+                Object.assign(el, {
+                  dataDesc: `,耗时 ${time} , ${begin} ~ ${end}`
+                })
+                break
+            }
             break
           case 'ERROR':
             Object.assign(el, errorOpt)
@@ -195,33 +230,6 @@ export default {
             break
           default:
             Object.assign(el, waitingOpt)
-            break
-        }
-        switch (el.key) {
-          case 'TASK':
-            Object.assign(el, {
-              dataDesc: `,任务被调度到 ${agentId},耗时 ${time} ms,${begin}~${end}`
-            })
-            break
-          case 'DATA_NODE_INIT':
-            Object.assign(el, {
-              dataDesc: `,连接成功,耗时 ${time} ms,${begin} ~ ${end}`
-            })
-            break
-          case 'TABLE_INIT':
-            Object.assign(el, {
-              dataDesc: `,共迁移 ${item.totals} 张表结构,耗时 ${time} ms,${begin} ~ ${end}`
-            })
-            break
-          case 'SNAPSHOT':
-            Object.assign(el, {
-              dataDesc: `,共迁移 ${item.totals} 条数据,耗时 ${time} ms,${begin} ~ ${end}`
-            })
-            break
-          case 'CDC':
-            Object.assign(el, {
-              dataDesc: `,耗时 ${time} ms, ${begin} ~ ${end}`
-            })
             break
         }
       })
@@ -431,5 +439,25 @@ export default {
 }
 .step__line_pt {
   padding-bottom: 23px;
+}
+.loading-circle {
+  animation: rotate 2s linear infinite;
+}
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(90deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  75% {
+    transform: rotate(270deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>

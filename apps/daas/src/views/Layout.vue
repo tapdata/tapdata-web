@@ -394,7 +394,8 @@ let menuSetting = [
     name: 'dataConsole',
     label: 'Data Console(Preview)',
     icon: 'process-platform',
-    code: 'v2_data-console'
+    code: 'v2_data-console',
+    hidden: process.env.VUE_APP_ENABLE_LDP !== 'true'
   },
   { name: 'connectionsList', icon: 'agent', code: 'v2_datasource_menu', parent: 'connections' },
   {
@@ -417,6 +418,7 @@ let menuSetting = [
     label: 'page_title_data_discovery',
     icon: 'dataDiscovery_navbar',
     code: 'v2_data_discovery',
+    hidden: process.env.VUE_APP_ENABLE_LDP === 'true',
     children: [
       { name: 'objectList', code: 'v2_data_object', parent: 'object' },
       { name: 'catalogueList', code: 'v2_data_catalogue', parent: 'catalogue' }
@@ -572,15 +574,16 @@ export default {
           } else {
             menu.label = this.$t(label)
           }
-          let matched = !menu.code || permissions.some(p => p.code === menu.code)
 
-          menu.hidden = !matched
-          if (matched && menu.children) {
+          menu.hidden = menu.hidden || (menu.code && !permissions.some(p => p.code === menu.code))
+
+          if (!menu.hidden && menu.children) {
             menu.children = formatMenu(menu.children)
             if (menu.children.every(m => m.hidden)) {
               menu.hidden = true
             }
           }
+
           return menu
         })
       }
