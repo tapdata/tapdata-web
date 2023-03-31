@@ -311,7 +311,7 @@ export default {
         if (data?.status !== 'Creating') {
           this.timer = null
           clearTimeout(this.timer)
-          this.open()
+          this.open(data?.status)
         } else {
           let self = this
           this.timer = setTimeout(function () {
@@ -320,13 +320,17 @@ export default {
         }
       })
     },
-    open() {
-      this.$confirm(this.$t('dfs_agent_down_tishi'), this.$t('task_mapping_dialog_hint'), {
-        confirmButtonText: this.$t('dfs_agent_down_goback'),
-        type: 'warning',
-        showClose: false,
-        showCancelButton: false
-      }).then(() => {
+    open(status) {
+      this.$confirm(
+        status !== 'Running' ? this.$t('dfs_agent_down_tishi') : this.$t('dfs_agent_down_tishi_running'),
+        this.$t('task_mapping_dialog_hint'),
+        {
+          confirmButtonText: this.$t('dfs_agent_down_goback'),
+          type: 'warning',
+          showClose: false,
+          showCancelButton: false
+        }
+      ).then(() => {
         this.$router.push('/instance')
       })
     },

@@ -1032,6 +1032,7 @@ export default {
 
   //实例
   dfs_agent_down_tishi: 'Agent 實例已刪除，不能繼續部署。',
+  dfs_agent_down_tishi_running: 'Agent 實例运行中，不能繼續部署。',
   dfs_agent_down_goback: '返回Agent管理',
   dfs_agent_download_agentdownloadmodal_aliyunjisuan: '阿里雲計算巢',
   dfs_agent_download_agentdownloadmodal_bushuwanchenghou:
