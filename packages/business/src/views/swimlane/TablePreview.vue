@@ -11,7 +11,7 @@
       >
       <span class="ml-8"
         ><span class="table-dec-label">{{ $t('packages_business_last_data_change_time') }}：</span
-        ><span class="table-dec-txt">{{ lastDataChangeTime || '-' }}</span></span
+        ><span class="table-dec-txt">{{ lastDataChangeTime || '-' }}123</span></span
       >
       <span class="ml-8"
         ><span class="table-dec-label">{{ $t('packages_business_cdc_delay_time') }}：</span
@@ -69,8 +69,12 @@
                 <el-table v-else :data="sampleData" v-loading="loadingSampleData" max-height="381px">
                   <el-table-column type="index" label="#"></el-table-column>
                   <el-table-column v-for="(item, index) in sampleHeader" :key="index" :prop="item" :label="item">
-                  </el-table-column> </el-table
-              ></el-tab-pane>
+                    <template #header="{ column }">
+                      <span :title="column.label">{{ column.label }}</span>
+                    </template>
+                  </el-table-column>
+                </el-table></el-tab-pane
+              >
             </el-tabs>
           </section>
           <!--          <section class="mt-6">-->
@@ -287,9 +291,9 @@ export default {
       cdcDelayTime: '',
       lastDataChangeTime: '',
       statusMap: {
-        error: i18n.t('public_status_error'),
-        draft: i18n.t('public_status_wait_run'),
-        normal: i18n.t('public_status_renew_normal')
+        error: i18n.t('packages_business_table_status_error'), // 异常
+        draft: i18n.t('packages_business_table_status_draft'), // 草稿
+        normal: i18n.t('packages_business_table_status_normal') // 正常
       },
       apisColumns: [
         {
@@ -402,7 +406,7 @@ export default {
         .call(params)
         .then(res => {
           this.sampleData = res?.sampleData
-          this.sampleHeader = Object.keys(this.sampleData.reduce((o, c) => Object.assign(0, c))) || []
+          this.sampleHeader = this.sampleData ? Object.keys(this.sampleData.reduce((o, c) => Object.assign(0, c))) : []
           // this.storageSize = Math.floor(res?.tableInfo?.storageSize / 1024) || 0
           this.storageSize = calcUnit(res?.tableInfo?.storageSize || 0, 1)
           this.numOfRows = res?.tableInfo?.numOfRows || 0
@@ -495,6 +499,12 @@ export default {
 <style scoped lang="scss">
 .sw-table-drawer {
   padding: 24px;
+  ::v-deep {
+    th .cell {
+      white-space: nowrap;
+    }
+  }
+
   .table-name {
     font-weight: 500;
     font-size: 32px;

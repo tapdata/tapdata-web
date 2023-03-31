@@ -71,11 +71,11 @@ let pageSort = [
     children: [
       { name: 'v2_data_replication' },
       { name: 'v2_data_flow' },
-      { name: 'v2_data_check_list' },
-      { name: 'v2_log_collector_menu' },
-      { name: 'v2_function_management_list' },
-      { name: 'v2_custom_node_menu' },
-      { name: 'v2_shared_cache_menu' }
+      { name: 'v2_data_check' },
+      { name: 'v2_log_collector' },
+      { name: 'v2_function_management' },
+      { name: 'v2_custom_node' },
+      { name: 'v2_shared_cache' }
     ]
   },
   {
@@ -88,7 +88,7 @@ let pageSort = [
       { name: 'v2_data-server-list' },
       { name: 'v2_api-client' },
       { name: 'v2_api-servers' },
-      { name: 'v2_data_server_audit-list' },
+      { name: 'v2_data_server_audit' },
       { name: 'v2_api_monitor' }
     ]
   },
@@ -98,7 +98,7 @@ let pageSort = [
       { name: 'v2_cluster-management_menu' },
       { name: 'v2_external-storage_menu' },
       { name: 'v2_user_management_menu' },
-      { name: 'v2_role_management_menu' }
+      { name: 'v2_role_management' }
     ]
   }
 ]

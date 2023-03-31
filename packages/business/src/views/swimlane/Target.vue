@@ -8,7 +8,15 @@
     </div>
     <div class="flex-fill min-h-0 flex flex-column">
       <div v-if="enableSearch" class="px-2 pt-2">
-        <ElInput v-model="search" size="mini" clearable @keydown.native.stop @keyup.native.stop @click.native.stop>
+        <ElInput
+          ref="search"
+          v-model="search"
+          size="mini"
+          clearable
+          @keydown.native.stop
+          @keyup.native.stop
+          @click.native.stop
+        >
           <template #prefix>
             <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
           </template>
@@ -70,7 +78,9 @@
                     <!--<VIcon size="18" class="ml-3">setting</VIcon>-->
                   </span>
                 </div>
-                <div class="mt-2 font-color-light">Sync data to {{ item.database_type }} for analytics</div>
+                <div class="mt-2 font-color-light">
+                  {{ $t('packages_business_data_console_target_connection_desc', { val: item.database_type }) }}
+                </div>
               </div>
             </div>
             <TaskList :list="connectionTaskMap[item.id] || []" @edit-in-dag="handleEditInDag"></TaskList>
@@ -108,6 +118,7 @@ import { apiServerApi, connectionsApi, taskApi } from '@tap/api'
 import { uuid } from '@tap/shared'
 import { getIcon } from '@tap/assets'
 import { IconButton } from '@tap/component'
+import i18n from '@tap/i18n'
 
 import { DatabaseIcon } from '../../components'
 import { makeStatusAndDisabled } from '../../shared'
@@ -115,7 +126,8 @@ import { TaskStatus } from '../../components'
 import CreateRestApi from './components/CreateRestApi'
 import DataServerDrawer from '../data-server/Drawer'
 import { TASK_SETTINGS } from '../../shared'
-import { debounce } from 'lodash'
+import commonMix from './mixins/common'
+
 const restApiIcon = getIcon('rest api')
 
 const TaskList = defineComponent({
@@ -149,7 +161,7 @@ const TaskList = defineComponent({
               </div>
             </div>
           ) : (
-            <span class="font-color-sslight">No tasks configured for this target</span>
+            <span class="font-color-sslight">{i18n.t('packages_business_data_console_target_no_task')}</span>
           )}
 
           <ElButton
@@ -161,7 +173,7 @@ const TaskList = defineComponent({
             staticClass="task-list-item-more position-absolute fs-8"
             class={{ 'is-reverse': !isLimit.value }}
           >
-            {isLimit.value ? '查看更多' : '收起'}
+            {i18n.t(isLimit.value ? 'packages_business_view_more' : 'packages_business_view_collapse')}
             <VIcon class="ml-1">arrow-down</VIcon>
           </ElButton>
         </div>
@@ -178,6 +190,8 @@ export default {
   },
 
   components: { CreateRestApi, DatabaseIcon, TaskList, draggable, DataServerDrawer, IconButton },
+
+  mixins: [commonMix],
 
   data() {
     const validateTaskName = async (rule, value, callback) => {
@@ -514,15 +528,6 @@ export default {
     handleSearch(val) {
       this.searchIng = true
       this.debouncedSearch(val)
-    },
-
-    toggleEnableSearch() {
-      if (this.enableSearch) {
-        this.search = ''
-        this.enableSearch = false
-      } else {
-        this.enableSearch = true
-      }
     }
   }
 }

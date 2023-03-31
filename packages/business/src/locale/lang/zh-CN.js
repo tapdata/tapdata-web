@@ -811,5 +811,12 @@ export default {
   packages_business_overview: '概览',
   packages_business_tasks: '任务',
   packages_business_model_update_time: '模型更新时间',
-  packages_business_save_and_more: '保存并添加更多'
+  packages_business_save_and_more: '保存并添加更多',
+  packages_business_table_status_error: '异常',
+  packages_business_table_status_draft: '草稿',
+  packages_business_table_status_normal: '正常',
+  packages_business_data_console_target_no_task: '未为此目标配置任何任务',
+  packages_business_data_console_target_connection_desc: '将数据同步到 {val} 进行分析',
+  packages_business_view_more: '查看更多',
+  packages_business_view_collapse: '收起'
 }

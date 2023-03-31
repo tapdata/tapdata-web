@@ -615,8 +615,29 @@ export default {
       }
       //匹配CPU使用率
       for (let i = 0; i < clusterData.length; i++) {
+        let isStopped = clusterData[i].status !== 'running'
+        const { management, engine, apiServer } = clusterData[i]
+
+        // 停止了上报状态后，因为不再上报状态了，所以各个服务的状态就不再更新了。
+        if (isStopped) {
+          if (management) {
+            management.status = 'stopped'
+            management.serviceStatus = 'stopped'
+          }
+          if (engine) {
+            engine.status = 'stopped'
+            engine.serviceStatus = 'stopped'
+            engine.netStat = []
+            engine.netStatTotals = 0
+          }
+          if (apiServer) {
+            apiServer.status = 'stopped'
+            apiServer.serviceStatus = 'stopped'
+          }
+        }
+
         clusterData[i].canUpdate = false //allCdc && datas[i].curVersion == this.toVersion && datas[i].status != 'down';
-        clusterData[i]['metricValues'] = metricValuesData[clusterData[i].systemInfo?.process_id]
+        clusterData[i].metricValues = metricValuesData[clusterData[i].systemInfo?.process_id]
           ? metricValuesData[clusterData[i].systemInfo?.process_id]
           : { CpuUsage: '-', HeapMemoryUsage: '-' }
         if (clusterData[i]?.engine?.status !== 'running') {

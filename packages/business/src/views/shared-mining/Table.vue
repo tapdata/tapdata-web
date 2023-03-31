@@ -71,14 +71,14 @@ export default {
         },
         {
           label: i18n.t('packages_business_shared_mining_table_jiaruwajueshi'),
-          prop: 'time2',
+          prop: 'startCdcTime',
           dataType: 'time',
           default: '-',
           width: 160
         },
         {
           label: i18n.t('packages_business_shared_mining_table_shoutiaorizhishi'),
-          prop: 'startCdcTime',
+          prop: 'firstEventTime',
           dataType: 'time',
           default: '-',
           width: 160
@@ -110,11 +110,14 @@ export default {
   },
 
   methods: {
-    remoteMethod() {
+    remoteMethod({ page }) {
       const { taskId, keyword } = this
+      const { current, size } = page
       const filter = Object.assign({}, this.params, {
         taskId,
-        keyword
+        keyword,
+        page: current,
+        size: size
       })
       return shareCdcTableMetricsApi.listTask(filter).then(data => {
         return {
@@ -125,7 +128,7 @@ export default {
     },
 
     fetch() {
-      this.$refs.table?.fetch?.()
+      this.$refs.table?.fetch?.(1)
     },
 
     handleSearch: debounce(function () {

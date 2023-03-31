@@ -177,10 +177,10 @@ export default {
       }
       result.forEach(el => {
         const item = milestone[el.key]
-        let time = dayjs(item.begin - item.end).format('SSS')
+        let time = item.begin - item.end ? dayjs(item.begin - item.end).format('SSS') : ''
         time = time === '000' ? '0' : time
-        let begin = dayjs(item.begin).format('HH:MM:ss')
-        let end = dayjs(item.end).format('HH:MM:ss')
+        const begin = dayjs(item.begin).format('HH:mm:ss')
+        const end = item.end ? dayjs(item.end).format('HH:mm:ss') : ''
         switch (item?.status) {
           case 'FINISH':
             Object.assign(el, finishOpt)
@@ -220,7 +220,7 @@ export default {
             break
           case 'CDC':
             Object.assign(el, {
-              dataDesc: `,增量启动成功,耗时 ${time} ms, ${begin} ~ ${end}`
+              dataDesc: `,耗时 ${time} ms, ${begin} ~ ${end}`
             })
             break
         }
@@ -430,6 +430,6 @@ export default {
   transform: translateX(-50%);
 }
 .step__line_pt {
-  padding-bottom: 23.5px;
+  padding-bottom: 23px;
 }
 </style>
