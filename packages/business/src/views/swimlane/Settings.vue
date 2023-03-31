@@ -140,7 +140,7 @@
       </ElForm>
 
       <div class="text-end mt-13">
-        <ElButton v-loading="loading" type="primary" :disabled="disabled" @click="submit">SAVE&ENABLE</ElButton>
+        <ElButton v-loading="loading" type="primary" :disabled="disabledBtn" @click="submit">SAVE&ENABLE</ElButton>
         <ElButton class="ml-4" @click="cancel">CANCEL</ElButton>
       </div>
     </div>
@@ -216,9 +216,12 @@ export default {
       return (
         this.setting &&
         this.setting.fdmStorageCluster === this.form.fdmStorageCluster &&
-        this.setting.fdmStorageConnectionId === this.form.fdmStorageConnectionId &&
-        this.mode === 'service'
+        this.setting.fdmStorageConnectionId === this.form.fdmStorageConnectionId
       )
+    },
+
+    disabledBtn() {
+      return this.disabled && this.mode === 'service' && this.mode === this.setting?.mode
     }
   },
 
@@ -318,9 +321,12 @@ export default {
         liveDataPlatformApi
           .patch({ id: liveDataPlatformId, mode, ...form })
           .then(() => {
+            const result = { mode, ...form }
             this.$message.success(this.$t('public_message_save_ok'))
-            this.$emit('success', { mode, ...form })
+            this.$emit('success', result)
             this.handleClose()
+
+            Object.assign(this.setting, result)
           })
           .finally(() => {
             this.loading = false
