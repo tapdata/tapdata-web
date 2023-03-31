@@ -111,3 +111,13 @@ export const NUMBER_MAP = {
   11: i18n.t('packages_business_shared_const_shiyi'),
   12: i18n.t('packages_business_shared_const_shier')
 }
+
+export const AGENT_SPEC_MAP = {
+  '1C2G': 'Mini',
+  '2C4G': 'Small',
+  '4C8G': 'Medium',
+  '8C16G': 'Large',
+  '12C24G': 'XLarge',
+  '16C32G': '2Large',
+  '32C64G': '4Large'
+}

@@ -1,10 +1,11 @@
 import i18n from '@/i18n'
-import { NUMBER_MAP } from '@tap/business'
+import { AGENT_SPEC_MAP, NUMBER_MAP } from '@tap/business'
 
 export function getSpec(item = {}) {
-  const { cpu = 0, memory = 0 } = item
+  const { name = '', cpu = 0, memory = 0 } = item
+  if (name) return name
   if (!cpu || !memory) return ''
-  return `${cpu}C${memory}G`
+  return AGENT_SPEC_MAP[`${cpu}C${memory}G`]
 }
 
 export function getPaymentMethod(item = {}) {
