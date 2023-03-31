@@ -21,20 +21,22 @@
         </span>
       </template>
       <template slot="data_type" slot-scope="scope">
-        <ElTooltip
-          transition="tooltip-fade-in"
-          :disabled="!scope.row.matchedDataTypeLevel"
-          :content="getCanUseDataTypesTooltip(scope.row.matchedDataTypeLevel)"
-          class="ml-n2 mr-1"
-        >
-          <VIcon size="16" class="color-warning" :class="{ 'opacity-0': !scope.row.matchedDataTypeLevel }"
-            >warning</VIcon
+        <div class="position-relative" :class="{ 'pl-4': !!getCanUseDataTypesTooltip(scope.row.matchedDataTypeLevel) }">
+          <ElTooltip
+            transition="tooltip-fade-in"
+            :disabled="!scope.row.matchedDataTypeLevel"
+            :content="getCanUseDataTypesTooltip(scope.row.matchedDataTypeLevel)"
+            class="type-warning position-absolute"
           >
-        </ElTooltip>
-        <span v-if="readonly">{{ scope.row.data_type }}</span>
-        <div v-else class="cursor-pointer inline-block" @click="openEditDataTypeVisible(scope.row)">
-          <span>{{ scope.row.data_type }}</span>
-          <VIcon class="ml-2">arrow-down</VIcon>
+            <VIcon size="16" class="color-warning" :class="{ 'opacity-0': !scope.row.matchedDataTypeLevel }"
+              >warning</VIcon
+            >
+          </ElTooltip>
+          <span v-if="readonly">{{ scope.row.data_type }}</span>
+          <div v-else class="cursor-pointer inline-block" @click="openEditDataTypeVisible(scope.row)">
+            <span>{{ scope.row.data_type }}</span>
+            <VIcon class="ml-2">arrow-down</VIcon>
+          </div>
         </div>
       </template>
       <template slot="is_nullable" slot-scope="scope">
@@ -454,5 +456,10 @@ export default {
       }
     }
   }
+}
+
+.type-warning {
+  top: 3px;
+  left: 0;
 }
 </style>
