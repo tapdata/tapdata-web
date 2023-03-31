@@ -34,7 +34,6 @@
         @node-click="nodeClickHandler"
         @node-drag-start="handleDragStart"
         @node-drop="handleDrop"
-        @node-expand="handleNodeExpand"
       />
       <!--<ElButton v-if="treeData && treeData.length === 0 && isExpand" type="text" @click="showDialog()" class="create">
         {{ $t('packages_component_classification_creatDataClassification') }}
@@ -190,7 +189,10 @@ export default {
           }}
         >
           <div class="tree-item-icon flex align-center mr-2">{icon && <VIcon size="16">{icon}</VIcon>}</div>
-          <span class="table-label">{data.name}</span>
+          <span class="table-label">
+            {data.name}
+            {!data.isRoot && <span class="count-label mr-2 ml-2">({data.objCount})</span>}
+          </span>
           {!data.readOnly && !data.isObject && (
             <span class="btn-menu">
               <VIcon
