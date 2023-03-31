@@ -8,7 +8,14 @@ export function getSpec(item = {}) {
   return AGENT_SPEC_MAP[`${cpu}C${memory}G`]
 }
 
-export function getPaymentMethod(item = {}) {
+export function getPaymentMethod(item = {}, chargeProvider = '') {
+  const map = {
+    Aliyun: i18n.t('dfs_instance_utils_baozhouqi'),
+    FreeTier: i18n.t('dfs_instance_instance_mianfei')
+  }
+
+  if (map[chargeProvider]) return map[chargeProvider]
+
   const isEn = i18n.locale === 'en'
   const s = isEn ? ' ' : ''
   const { type, periodUnit, period = 0 } = item

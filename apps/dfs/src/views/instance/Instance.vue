@@ -55,10 +55,9 @@
         </ElTableColumn>
         <ElTableColumn width="120px" :label="$t('dfs_instance_instance_dingyuefangshi')">
           <template slot-scope="scope">
-            <span v-if="scope.row.chargeProvider === 'FreeTier'" class="color-success">{{
-              $t('dfs_instance_instance_mianfei')
+            <span :class="{ 'color-success': scope.row.chargeProvider === 'FreeTier' }">{{
+              scope.row.subscriptionMethodLabel
             }}</span>
-            <span v-else>{{ scope.row.subscriptionMethodLabel }}</span>
           </template>
         </ElTableColumn>
         <ElTableColumn width="180" :label="$t('dfs_instance_instance_daoqishijian')">
@@ -582,7 +581,7 @@ export default {
             const { periodStart, periodEnd } = paidSubscribeDto
             item.chargeProvider = chargeProvider
             item.specLabel = getSpec(item.spec) || '-'
-            item.subscriptionMethodLabel = getPaymentMethod(paidSubscribeDto) || '-'
+            item.subscriptionMethodLabel = getPaymentMethod(paidSubscribeDto, chargeProvider) || '-'
             item.periodLabel =
               dayjs(periodStart).format('YYYY-MM-DD HH:mm:ss') + ' - ' + dayjs(periodEnd).format('YYYY-MM-DD HH:mm:ss')
 
