@@ -198,7 +198,7 @@
       >
         <template #bindAgent="{ row }">
           <ElLink v-if="row.agentId" type="primary" @click="handleAgent(row)">{{
-            $t('dfs_instance_selectlist_yibangding') + row.agentId + $t('public_agent')
+            $t('dfs_instance_selectlist_yibangding') + ' ' + $t('public_agent') + ' : ' + row.agentId
           }}</ElLink>
           <span v-else>{{ $t('user_Center_weiBangDing') }}</span>
         </template>

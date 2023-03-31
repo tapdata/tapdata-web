@@ -87,8 +87,7 @@ export default {
             },
             {
               label: i18n.t('dfs_instance_selectlist_youxiaoqi'),
-              prop: 'expiredTime',
-              dataType: 'time'
+              prop: 'expiredTimeLabel'
             },
             {
               label: i18n.t('dfs_instance_selectlist_shiliguige'),
@@ -168,6 +167,7 @@ export default {
                 ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
                 : i18n.t('user_Center_weiBangDing')
               t.specLabel = getSpec(t.spec)
+              t.expiredTimeLabel = t.expiredTime ? dayjs(t.expiredTime).format('YYYY-MM-DD') : '-'
               return t
             }) || []
         }
