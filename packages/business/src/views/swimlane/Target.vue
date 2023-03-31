@@ -118,6 +118,7 @@ import { apiServerApi, connectionsApi, taskApi } from '@tap/api'
 import { uuid } from '@tap/shared'
 import { getIcon } from '@tap/assets'
 import { IconButton } from '@tap/component'
+import i18n from '@tap/i18n'
 
 import { DatabaseIcon } from '../../components'
 import { makeStatusAndDisabled } from '../../shared'
@@ -160,7 +161,7 @@ const TaskList = defineComponent({
               </div>
             </div>
           ) : (
-            <span class="font-color-sslight">{{$t('packages_business_data_console_target_no_task')}</span>
+            <span class="font-color-sslight">{i18n.t('packages_business_data_console_target_no_task')}</span>
           )}
 
           <ElButton
@@ -172,7 +173,7 @@ const TaskList = defineComponent({
             staticClass="task-list-item-more position-absolute fs-8"
             class={{ 'is-reverse': !isLimit.value }}
           >
-            {isLimit.value ? $t('packages_business_view_more') : $t('packages_business_view_collapse')}
+            {i18n.t(isLimit.value ? 'packages_business_view_more' : 'packages_business_view_collapse')}
             <VIcon class="ml-1">arrow-down</VIcon>
           </ElButton>
         </div>
