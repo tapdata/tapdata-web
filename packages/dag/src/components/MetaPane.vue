@@ -17,7 +17,7 @@ import { mapState, mapGetters } from 'vuex'
 
 import List from './form/field-inference/List'
 import mixins from './form/field-inference/mixins.js'
-import { getCanUseDataTypes, getMatchedDataTypeLevel } from '@tap/dag/src/util'
+import { getCanUseDataTypes, getMatchedDataTypeLevel, errorFiledType } from '@tap/dag/src/util'
 
 export default {
   name: 'MetaPane',
@@ -96,7 +96,7 @@ export default {
           items.map(t => {
             const { fields = [], findPossibleDataTypes = {} } = t
             //如果findPossibleDataTypes = {}，不做类型校验
-            if (JSON.stringify(findPossibleDataTypes) !== '{}') {
+            if (this.isTarget) {
               fields.forEach(el => {
                 const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[el.field_name] || {}
                 el.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
@@ -106,6 +106,13 @@ export default {
                   this.fieldChangeRules,
                   findPossibleDataTypes
                 )
+              })
+            } else {
+              // 源节点 JSON.parse('{\"type\":7}').type==7
+              fields.forEach(el => {
+                const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[el.field_name] || {}
+                el.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
+                el.matchedDataTypeLevel = errorFiledType(el)
               })
             }
             return t
