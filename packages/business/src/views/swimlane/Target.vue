@@ -78,7 +78,9 @@
                     <!--<VIcon size="18" class="ml-3">setting</VIcon>-->
                   </span>
                 </div>
-                <div class="mt-2 font-color-light">Sync data to {{ item.database_type }} for analytics</div>
+                <div class="mt-2 font-color-light">
+                  {{ $t('packages_business_data_console_target_connection_desc', { val: item.database_type }) }}
+                </div>
               </div>
             </div>
             <TaskList :list="connectionTaskMap[item.id] || []" @edit-in-dag="handleEditInDag"></TaskList>
@@ -158,7 +160,7 @@ const TaskList = defineComponent({
               </div>
             </div>
           ) : (
-            <span class="font-color-sslight">No tasks configured for this target</span>
+            <span class="font-color-sslight">{{$t('packages_business_data_console_target_no_task')}</span>
           )}
 
           <ElButton
@@ -170,7 +172,7 @@ const TaskList = defineComponent({
             staticClass="task-list-item-more position-absolute fs-8"
             class={{ 'is-reverse': !isLimit.value }}
           >
-            {isLimit.value ? '查看更多' : '收起'}
+            {isLimit.value ? $t('packages_business_view_more') : $t('packages_business_view_collapse')}
             <VIcon class="ml-1">arrow-down</VIcon>
           </ElButton>
         </div>
