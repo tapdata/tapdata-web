@@ -906,9 +906,11 @@ export default {
         .catch(() => {})
     },
     // 创建Agent
-    createAgent() {
+    async createAgent() {
       this.createAgentLoading = true
       const userInfo = window.__USER_INFO__ || {}
+      // 免费实例
+      if (await this.handleFreeAgent()) return (this.createAgentLoading = false)
       // 开启授权码
       if (userInfo.enableLicense) {
         this.$axios
@@ -1007,25 +1009,23 @@ export default {
       this.selectListType = type
       this.selectListDialog = true
     },
-    handleNewAgent(params = {}) {
-      this.$axios
-        .post('api/tcm/orders', {
+    async handleNewAgent(params = {}) {
+      try {
+        const data = await this.$axios.post('api/tcm/orders', {
           agentType: 'Local',
           ...params
         })
-        .then(data => {
-          buried('agentCreate')
-          this.fetch()
-          this.toDeploy({
-            id: data.agentId
-          })
+        buried('agentCreate')
+        this.fetch()
+        this.toDeploy({
+          id: data.agentId
         })
-        .catch(e => {
-          this.$message.error(e.message)
-        })
-        .finally(() => {
-          this.createAgentLoading = false
-        })
+        this.createAgentLoading = false
+        return true
+      } catch (e) {
+        this.createAgentLoading = false
+        return false
+      }
     },
     handleCreateAuthorizationCode() {
       const href =
@@ -1053,6 +1053,14 @@ export default {
       if (Time.now() > t) return 'expired'
       if (Time.now() > t - 7 * 24 * 3600) return 'expiringSoon'
       return ''
+    },
+    async handleFreeAgent() {
+      const count = await this.$axios.get('api/tcm/agent/count')
+      if (count) return false
+      const flag = await this.handleNewAgent({
+        chargeProvider: 'FreeTier'
+      })
+      return flag
     }
   }
 }
