@@ -1397,5 +1397,6 @@ export default {
   dfs_src_const_xiaoguige: 'Small Specification',
   dfs_src_const_shuangxiangtongbu: 'Two-way Synchronization',
   dfs_src_const_danxiangtongbu: 'One-way Synchronization',
-  dfs_instance_create_zhifuwanchenghou: 'After the payment is completed, please click "Completed" to refresh the status'
+  dfs_instance_create_zhifuwanchenghou: 'After the payment is completed, please click "Completed" to refresh the status',
+  dfs_instance_instance_mianfei: 'Free'
 }

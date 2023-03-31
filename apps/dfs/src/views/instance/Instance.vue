@@ -23,7 +23,7 @@
         @sort-change="sortChange"
         @row-click="rowClick"
       >
-        <ElTableColumn min-width="200px" :label="$t('agent_name')">
+        <ElTableColumn min-width="290px" :label="$t('agent_name')">
           <template slot-scope="scope">
             <div class="flex">
               <div>
@@ -48,14 +48,17 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn width="120px" :label="$t('dfs_instance_instance_guige')">
+        <ElTableColumn width="110px" :label="$t('dfs_instance_instance_guige')">
           <template slot-scope="scope">
             <span>{{ scope.row.specLabel }}</span>
           </template>
         </ElTableColumn>
         <ElTableColumn width="120px" :label="$t('dfs_instance_instance_dingyuefangshi')">
           <template slot-scope="scope">
-            <span>{{ scope.row.subscriptionMethodLabel }}</span>
+            <span v-if="scope.row.chargeProvider === 'FreeTier'" class="color-success">{{
+              $t('dfs_instance_instance_mianfei')
+            }}</span>
+            <span v-else>{{ scope.row.subscriptionMethodLabel }}</span>
           </template>
         </ElTableColumn>
         <ElTableColumn width="180" :label="$t('dfs_instance_instance_daoqishijian')">
@@ -577,12 +580,14 @@ export default {
             item.deployDisable = item.tmInfo.pingTime || false
             const { paidSubscribeDto = {}, license = {}, chargeProvider } = item.orderInfo || {}
             const { periodStart, periodEnd } = paidSubscribeDto
+            item.chargeProvider = chargeProvider
             item.specLabel = getSpec(item.spec) || '-'
             item.subscriptionMethodLabel = getPaymentMethod(paidSubscribeDto) || '-'
             item.periodLabel =
               dayjs(periodStart).format('YYYY-MM-DD HH:mm:ss') + ' - ' + dayjs(periodEnd).format('YYYY-MM-DD HH:mm:ss')
 
-            const expiredTime = chargeProvider === 'Aliyun' ? license.expiredTime : periodEnd
+            const expiredTime =
+              chargeProvider === 'Aliyun' ? license.expiredTime : chargeProvider === 'Stripe' ? periodEnd : ''
             item.expiredTimeLabel = expiredTime ? dayjs(expiredTime).format('YYYY-MM-DD HH:mm:ss') : '-'
             item.deployDisable = item.tmInfo.pingTime || false
             if (!item.tmInfo) {

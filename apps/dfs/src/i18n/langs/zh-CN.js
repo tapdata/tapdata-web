@@ -1300,5 +1300,6 @@ export default {
   dfs_src_const_xiaoguige: '小规格',
   dfs_src_const_shuangxiangtongbu: '双向同步',
   dfs_src_const_danxiangtongbu: '单向同步',
-  dfs_instance_create_zhifuwanchenghou: '支付完成后，请点击“已完成”刷新状态'
+  dfs_instance_create_zhifuwanchenghou: '支付完成后，请点击“已完成”刷新状态',
+  dfs_instance_instance_mianfei: '免费'
 }
