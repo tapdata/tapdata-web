@@ -130,7 +130,7 @@ export default {
   public_time_last_three_days: '最近3天',
   public_time_custom_time: '自定義時間',
   // agent
-  public_agent: '实例',
+  public_agent: 'Agent',
   public_agent_name: 'Agent名稱',
   public_agent_button_create: '創建Agent',
   public_agent_button_deploy: '部署',

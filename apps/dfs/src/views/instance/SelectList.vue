@@ -22,7 +22,9 @@
     >
       <template #operation="{ row }">
         <ElTooltip v-if="type === 'code'" placement="top" :content="getContent(row)">
-          <ElButton type="text" @click="submit(row)">{{ $t('public_button_create') + $t('public_agent') }}</ElButton>
+          <ElButton type="text" @click="submit(row)">{{
+            $t('public_button_create') + ' ' + $t('public_agent')
+          }}</ElButton>
         </ElTooltip>
         <ElButton v-else type="text" @click="submit(row)">{{ $t('public_button_create') }}</ElButton>
       </template>
@@ -100,7 +102,7 @@ export default {
               label: i18n.t('public_operation'),
               prop: 'operation',
               slotName: 'operation',
-              width: 80
+              width: 120
             }
           ]
         },
@@ -128,7 +130,7 @@ export default {
               label: i18n.t('public_operation'),
               prop: 'operation',
               slotName: 'operation',
-              width: 80
+              width: 100
             }
           ]
         }
@@ -228,7 +230,7 @@ export default {
       })
     },
     getContent(row = {}) {
-      return `使用这个订阅创建 ${row.specLabel} Agent`
+      return i18n.t('dfs_instance_selectlist_shiyongzhegeding', { val1: row.specLabel })
     }
   }
 }
