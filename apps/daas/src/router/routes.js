@@ -341,7 +341,7 @@ export default [
           {
             path: '',
             name: 'objectList',
-            component: ObjectList,
+            component: () => import(/* webpackChunkName: "connection-list" */ '@/views/data-discovery/ObjectList.tsx'),
             meta: {
               title: 'page_title_data_object',
               code: 'v2_data_object'
@@ -362,7 +362,7 @@ export default [
           {
             path: '',
             name: 'catalogueList',
-            component: CatalogView,
+            component: () => import(/* webpackChunkName: "connection-list" */ '@/views/data-discovery/Catalogue.tsx'),
             meta: {
               title: 'page_title_data_catalogue',
               code: 'v2_data_catalogue'
