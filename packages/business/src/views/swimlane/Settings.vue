@@ -217,7 +217,7 @@ export default {
         this.setting &&
         this.setting.fdmStorageCluster === this.form.fdmStorageCluster &&
         this.setting.fdmStorageConnectionId === this.form.fdmStorageConnectionId &&
-        this.mode === this.setting.mode
+        this.mode === 'service'
       )
     }
   },
