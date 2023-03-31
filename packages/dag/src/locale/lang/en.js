@@ -582,7 +582,7 @@ export default {
   packages_dag_field_inference_main_xuanzemorengeng:
     'When selecting the default update condition field, the default priority is to associate with the primary key field, if there is no primary key, associate with the unique index field, and if there is no primary key and no unique index, associate with the full field. When the specified field is selected, it will be associated with the specified update condition field',
   packages_dag_nodes_table_zidingyichaxun: 'Fully Customizable Query',
-  packages_dag_field_inference_main_gaibiaocunzaibu: 'This table has more than one data type',
+  packages_dag_field_inference_main_gaibiaocunzaibu: 'The table has an unsupported data type',
   packages_dag_validate_customsql_fail:
     'Once full custom query is enabled, processing nodes only support using JS nodes.',
   packages_dag_validate_customsql_target_fail:
