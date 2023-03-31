@@ -24,6 +24,7 @@
     >
       <div v-if="enableSearch" class="px-2 pt-2">
         <ElInput
+          ref="search"
           v-model="search"
           size="mini"
           clearable
@@ -155,11 +156,13 @@
 </template>
 
 <script>
+import { debounce } from 'lodash'
 import { VirtualTree, IconButton } from '@tap/component'
-import { makeDragNodeImage, TASK_SETTINGS } from '../../shared'
 import { discoveryApi, ldpApi, metadataDefinitionsApi, userGroupsApi } from '@tap/api'
 import { uuid } from '@tap/shared'
-import { debounce } from 'lodash'
+import { makeDragNodeImage, TASK_SETTINGS } from '../../shared'
+import commonMix from './mixins/common'
+
 export default {
   name: 'MDM',
 
@@ -177,6 +180,8 @@ export default {
   },
 
   components: { VirtualTree, IconButton },
+
+  mixins: [commonMix],
 
   data() {
     return {
@@ -729,38 +734,6 @@ export default {
       })
       objects.forEach(item => (item.parent_id = to))
       this.$message.success(this.$t('public_message_operation_success'))
-    },
-
-    handleSearch(val) {
-      if (!val) {
-        this.searchIng = false
-        this.debouncedSearch.cancel()
-        return
-      }
-      this.searchIng = true
-      this.debouncedSearch(val)
-    },
-
-    flattenTree(data) {
-      return data.reduce((map, item) => {
-        if (item.LDP_TYPE === 'folder') {
-          map[item.id] = { ...item, children: [] }
-
-          if (item.children.length) {
-            Object.assign(map, this.flattenTree(item.children))
-          }
-        }
-        return map
-      }, {})
-    },
-
-    toggleEnableSearch() {
-      if (this.enableSearch) {
-        this.search = ''
-        this.enableSearch = false
-      } else {
-        this.enableSearch = true
-      }
     }
   }
 }
