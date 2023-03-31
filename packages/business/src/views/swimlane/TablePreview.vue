@@ -287,9 +287,9 @@ export default {
       cdcDelayTime: '',
       lastDataChangeTime: '',
       statusMap: {
-        error: i18n.t('public_status_error'),
-        draft: i18n.t('public_status_wait_run'),
-        normal: i18n.t('public_status_renew_normal')
+        error: i18n.t('packages_business_table_status_error'), // 异常
+        draft: i18n.t('packages_business_table_status_draft'), // 草稿
+        normal: i18n.t('packages_business_table_status_normal') // 正常
       },
       apisColumns: [
         {

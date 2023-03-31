@@ -834,5 +834,8 @@ export default {
   packages_business_overview: 'Overview',
   packages_business_tasks: 'Tasks',
   packages_business_model_update_time: 'Model Update Time',
-  packages_business_save_and_more: 'Save & Add More'
+  packages_business_save_and_more: 'Save & Add More',
+  packages_business_table_status_error: 'Error',
+  packages_business_table_status_draft: 'Draft',
+  packages_business_table_status_normal: 'Normal'
 }
