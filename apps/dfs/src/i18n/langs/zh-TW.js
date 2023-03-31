@@ -1067,8 +1067,6 @@ export default {
   dfs_agent_download_upgradeversion_ruguoninbushu: '如果您部署的是“3天試用實例”請打開計算巢“試用服務”選項卡',
   dfs_agent_download_upgradeversion_jisuanchaodenglu: '計算巢登錄地址',
   dfs_agent_download_upgradeversion_denglualiyun: '1. 登錄阿里雲計算巢控制台，找到部署Agent的服務實例.',
-  dfs_the_header_header_jichuban: '基礎版',
-  dfs_the_header_header_biaozhun: '標準版',
   dfs_agent_download_paidupgrade_qingxuanzelianxi: '請選擇聯繫人手機號碼',
   dfs_agent_download_paidupgrade_qingshurulianxi: '請輸入聯繫人姓名',
   dfs_agent_download_paidupgrade_fanhuikongzhitai: '返回控制台',

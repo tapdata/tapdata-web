@@ -1174,8 +1174,6 @@ export default {
   dfs_agent_download_upgradeversion_jisuanchaodenglu: 'Compute Nest login address',
   dfs_agent_download_upgradeversion_denglualiyun:
     '1. Log in to Alibaba Cloud Computing Nest console and find the service instance where Agent is deployed.',
-  dfs_the_header_header_jichuban: 'Basic',
-  dfs_the_header_header_biaozhun: 'Standard',
   dfs_agent_download_paidupgrade_qingxuanzelianxi: 'Please select a contact phone number',
   dfs_agent_download_paidupgrade_qingshurulianxi: 'Please enter the contact name',
   dfs_agent_download_paidupgrade_fanhuikongzhitai: 'Return to console',

@@ -186,7 +186,6 @@
         <el-button type="primary" @click="showUpgrade = false">{{ $t('public_button_cancel') }}</el-button>
       </span>
     </el-dialog>
-    <PaidUpgradeDialog :visible.sync="paidUpgradeVisible" :paidPlan="paidPlan"></PaidUpgradeDialog>
     <CheckLicense :visible.sync="aliyunMaketVisible" :user="userInfo"></CheckLicense>
   </div>
   <RouterView v-else></RouterView>
@@ -195,15 +194,15 @@
 <script>
 import i18n from '@/i18n'
 
-import { connectionsApi, taskApi, paidApi } from '@tap/api'
-import { VIcon, Chart, PaidUpgradeDialog } from '@tap/component'
+import { connectionsApi, taskApi } from '@tap/api'
+import { VIcon, Chart } from '@tap/component'
 import { numToThousands } from '@/util'
 import timeFunction from '@/mixins/timeFunction'
 import CheckLicense from '@/views/aliyun-market/CheckLicnese'
 
 export default {
   name: 'Workbench',
-  components: { VIcon, Chart, PaidUpgradeDialog, CheckLicense },
+  components: { VIcon, Chart, CheckLicense },
   inject: ['checkAgent'],
   mixins: [timeFunction],
   data() {
@@ -313,9 +312,6 @@ export default {
       lineDataY: [],
       colorList: ['rgba(44, 101, 255, 0.85)', 'rgba(44, 101, 255, 0.5)'],
       showUpgrade: false, //版本升级弹窗
-      //付费升级
-      paidUpgradeVisible: false,
-      paidPlan: '',
       //探索实例
       examplesList: [
         {
@@ -518,11 +514,6 @@ export default {
       })
     },
     async createTask() {
-      this.paidPlan = await paidApi.getUserPaidPlan()
-      if (!this.paidPlan?.valid) {
-        this.paidUpgradeVisible = true
-        return
-      }
       this.checkAgent(() => {
         this.$router.push({
           name: 'MigrateCreate'
