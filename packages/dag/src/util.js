@@ -8,6 +8,14 @@ export function getNodeIconSrc(node) {
     return getConnectionIcon(pdkHash)
   }
   let icon = node.type === 'table' || node.type === 'database' || node.databaseType ? node.databaseType : node.type
+  if (node.type === 'hazelcastIMDG') {
+    const map = {
+      memory: 'memory',
+      mongodb: 'mongodb',
+      rocksdb: 'rocksdb'
+    }
+    icon = map[node.externaltype]
+  }
   return icon ? getIcon(icon) : null
 }
 
