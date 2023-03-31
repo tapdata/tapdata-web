@@ -100,7 +100,12 @@ export default {
               fields.forEach(el => {
                 const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[el.field_name] || {}
                 el.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
-                el.matchedDataTypeLevel = getMatchedDataTypeLevel(el, el.canUseDataTypes, this.fieldChangeRules)
+                el.matchedDataTypeLevel = getMatchedDataTypeLevel(
+                  el,
+                  el.canUseDataTypes,
+                  this.fieldChangeRules,
+                  findPossibleDataTypes
+                )
               })
             }
             return t
