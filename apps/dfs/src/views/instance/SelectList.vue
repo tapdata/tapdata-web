@@ -21,7 +21,10 @@
       class="mt-4 v-table"
     >
       <template #operation="{ row }">
-        <ElButton type="text" @click="submit(row)">{{ $t('public_button_create') }}</ElButton>
+        <ElTooltip v-if="type === 'code'" placement="top" :content="getContent(row)">
+          <ElButton type="text" @click="submit(row)">{{ $t('public_button_create') + $t('public_agent') }}</ElButton>
+        </ElTooltip>
+        <ElButton v-else type="text" @click="submit(row)">{{ $t('public_button_create') }}</ElButton>
       </template>
     </VTable>
 
@@ -223,6 +226,9 @@ export default {
       this.$router.push({
         name: 'aliyunMarketLicense'
       })
+    },
+    getContent(row = {}) {
+      return `使用这个订阅创建 ${row.specLabel} Agent`
     }
   }
 }

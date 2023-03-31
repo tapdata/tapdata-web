@@ -23,12 +23,12 @@
         @sort-change="sortChange"
         @row-click="rowClick"
       >
-        <ElTableColumn min-width="290px" :label="$t('agent_name')">
+        <ElTableColumn min-width="200px" :label="$t('agent_name')">
           <template slot-scope="scope">
             <div class="flex">
               <div>
                 <InlineInput
-                  :class="['color-primary', { 'cursor-pointer': scope.row.agentType !== 'Cloud' }]"
+                  :class="['inline-input', 'color-primary', { 'cursor-pointer': scope.row.agentType !== 'Cloud' }]"
                   :value="scope.row.name"
                   :icon-config="{ class: 'color-primary', size: '12' }"
                   type="icon"
@@ -60,7 +60,7 @@
             }}</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn width="180" :label="$t('dfs_instance_instance_daoqishijian')">
+        <ElTableColumn width="130" :label="$t('dfs_instance_instance_daoqishijian')">
           <template slot-scope="scope">
             <div>
               <span>{{ scope.row.expiredTimeLabel }}</span>
@@ -197,7 +197,7 @@
             <span>{{ formatTime(scope.row.createAt) }}</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn :label="$t('public_operation')" width="240">
+        <ElTableColumn :label="$t('public_operation')" width="176">
           <template slot-scope="scope">
             <ElButton
               type="text"
@@ -587,7 +587,7 @@ export default {
 
             const expiredTime =
               chargeProvider === 'Aliyun' ? license.expiredTime : chargeProvider === 'Stripe' ? periodEnd : ''
-            item.expiredTimeLabel = expiredTime ? dayjs(expiredTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+            item.expiredTimeLabel = expiredTime ? dayjs(expiredTime).format('YYYY-MM-DD') : '-'
             item.deployDisable = item.tmInfo.pingTime || false
             if (!item.tmInfo) {
               item.tmInfo = {}
@@ -1123,7 +1123,7 @@ export default {
     border-bottom: none;
     color: rgba(0, 0, 0, 0.65);
     .el-divider--vertical {
-      margin: 0 16px;
+      margin: 0 8px;
     }
   }
   .instance-table__empty {
@@ -1188,9 +1188,11 @@ export default {
 }
 .inline-input {
   ::v-deep {
+    .input {
+      width: 180px;
+    }
     .el-input--mini .el-input__inner {
-      height: 20px;
-      line-height: 20px;
+      padding: 0;
     }
     .icon-button {
       width: 20px;

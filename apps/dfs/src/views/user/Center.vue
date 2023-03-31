@@ -1118,7 +1118,7 @@ export default {
           data:
             items.map(t => {
               t.activateTimeLabel = t.activateTime ? dayjs(t.activateTime).format('YYYY-MM-DD HH:mm:ss') : '-'
-              t.expiredTimeLabel = t.expiredTime ? dayjs(t.expiredTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+              t.expiredTimeLabel = t.expiredTime ? dayjs(t.expiredTime).format('YYYY-MM-DD') : '-'
               t.bindAgent = t.agentId
                 ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
                 : i18n.t('user_Center_weiBangDing')
