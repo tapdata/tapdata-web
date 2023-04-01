@@ -1113,7 +1113,7 @@ export class Table extends NodeType {
                             }
                           }
                         }
-                        if (!nodeData.updateConditionFields?.length) return '该字段是必填字段!'
+                        if (!$values.updateConditionFields?.length) return '该字段是必填字段!'
                         console.debug('[DEBUG]: updateConditionFields validate', value, field, ctx, options, nodeData)
                       }}}`
                     }
