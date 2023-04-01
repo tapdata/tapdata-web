@@ -38,7 +38,7 @@
           <ElProgress
             v-if="typeof item.percentage === 'number'"
             :percentage="item.percentage"
-            class="mt-1"
+            class="milestone-mt-1"
             :show-text="false"
           ></ElProgress>
         </div>
@@ -195,27 +195,27 @@ export default {
             switch (el.key) {
               case 'TASK':
                 Object.assign(el, {
-                  dataDesc: `,任务被调度到 ${hostName} ,耗时 ${time} ,${begin}~${end}`
+                  dataDesc: ` , 任务被调度到 ${hostName}, 耗时 ${time}, ${begin}~${end}`
                 })
                 break
               case 'DATA_NODE_INIT':
                 Object.assign(el, {
-                  dataDesc: `,连接成功,耗时 ${time} ,${begin} ~ ${end}`
+                  dataDesc: `, 连接成功, 耗时 ${time}, ${begin} ~ ${end}`
                 })
                 break
               case 'TABLE_INIT':
                 Object.assign(el, {
-                  dataDesc: `,共迁移 ${item.totals} 张表结构,耗时 ${time},${begin} ~ ${end}`
+                  dataDesc: `, 共迁移 ${item.totals} 张表结构, 耗时 ${time}, ${begin} ~ ${end}`
                 })
                 break
               case 'SNAPSHOT':
                 Object.assign(el, {
-                  dataDesc: `,耗时 ${time} ,${begin} ~ ${end}`
+                  dataDesc: `, 耗时 ${time}, ${begin} ~ ${end}`
                 })
                 break
               case 'CDC':
                 Object.assign(el, {
-                  dataDesc: `,耗时 ${time} , ${begin} ~ ${end}`
+                  dataDesc: `, 耗时 ${time}, ${begin} ~ ${end}`
                 })
                 break
             }
@@ -429,6 +429,9 @@ export default {
       }
     }
   }
+}
+.milestone-mt-1 {
+  margin-top: 10px;
 }
 .step__line {
   left: 50%;

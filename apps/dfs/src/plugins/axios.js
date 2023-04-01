@@ -105,6 +105,9 @@ const requestInterceptor = config => {
   }
   config.withCredentials = true
 
+  // 业务内设置了cancel
+  if (config.cancelToken) return config
+
   // 获取取消请求的函数
   let cancelFunc = null
   config.cancelToken = new CancelToken(c => {
