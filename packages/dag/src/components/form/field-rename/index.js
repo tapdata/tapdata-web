@@ -137,7 +137,7 @@ export const FieldRename = connect(
                               class="el-input__inner"
                               value={data.field_name}
                               onChange={event => {
-                                const val = event.target.value
+                                const val = event.target.value?.trim()
                                 if (val) {
                                   data.field_name = val
                                   this.handleRename(node, data)
@@ -241,9 +241,7 @@ export const FieldRename = connect(
           console.log('fieldProcessor.handleRename', node, data) //eslint-disable-line
           let nativeData = this.getNativeData(data.id) //查找初始schema
           let existsName = this.handleExistsName(node, data)
-          //字段名首尾去空格
-          data.field_name = data.field_name?.trim()
-          if (existsName || data.field_name === '') {
+          if (existsName) {
             data.field_name = nativeData.field_name
             return
           }
