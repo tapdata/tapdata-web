@@ -150,12 +150,11 @@ export default {
           label: i18n.t('packages_dag_components_alert_gaojingmiaoshu'),
           prop: 'summary'
         },
-        // {
-        //   label: i
-        //   18n.t('packages_dag_components_alert_gaojingshoucifa'),
-        //   prop: 'first_occurrence_time',
-        //   dataType: 'time'
-        // },
+        {
+          label: i18n.t('packages_dag_components_alert_gaojingshoucifa'),
+          prop: 'firstOccurrenceTime',
+          dataType: 'time'
+        },
         {
           label: i18n.t('packages_dag_components_alert_gaojingzuijinfa'),
           prop: 'lastOccurrenceTime',
