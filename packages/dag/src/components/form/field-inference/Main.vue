@@ -98,6 +98,7 @@
             multiple
             filterable
             :placeholder="$t('public_select_option_default')"
+            :class="['update-list-select', { error: isErrorSelect }]"
             @visible-change="handleVisibleChange"
             @remove-tag="handleRemoveTag"
           >
@@ -220,6 +221,11 @@ export default {
 
     readonly() {
       return this.stateIsReadonly
+    },
+
+    isErrorSelect() {
+      const { hasPrimaryKey, hasUnionIndex, hasUpdateField } = this.selected || {}
+      return !(hasPrimaryKey || hasUnionIndex || hasUpdateField)
     }
   },
 
@@ -443,6 +449,16 @@ export default {
 .nav-filter__item {
   &.active {
     background: map-get($bgColor, disactive);
+  }
+}
+
+.update-list-select {
+  &.error {
+    ::v-deep {
+      .el-input__inner {
+        border-color: map-get($color, danger);
+      }
+    }
   }
 }
 </style>
