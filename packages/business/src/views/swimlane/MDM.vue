@@ -158,7 +158,7 @@
 <script>
 import { debounce } from 'lodash'
 import { VirtualTree, IconButton } from '@tap/component'
-import { discoveryApi, ldpApi, metadataDefinitionsApi, userGroupsApi } from '@tap/api'
+import { CancelToken, discoveryApi, ldpApi, metadataDefinitionsApi, userGroupsApi } from '@tap/api'
 import { uuid } from '@tap/shared'
 import { makeDragNodeImage, TASK_SETTINGS } from '../../shared'
 import commonMix from './mixins/common'
@@ -240,8 +240,10 @@ export default {
 
   created() {
     this.debouncedSearch = debounce(async search => {
+      this.cancelSource?.cancel()
+      this.cancelSource = CancelToken.source()
       this.searchIng = true
-      const result = await this.loadObjects(this.directory, false, search)
+      const result = await this.loadObjects(this.directory, false, search, this.cancelSource.token)
       const map = result.reduce((obj, item) => {
         let id = item.listtags[0].id
         let children = obj[id] || []
@@ -531,7 +533,7 @@ export default {
       }
     },
 
-    loadObjects(node, isCurrent = true, queryKey) {
+    loadObjects(node, isCurrent = true, queryKey, cancelToken) {
       let where = {
         page: 1,
         pageSize: 10000,
@@ -544,16 +546,20 @@ export default {
           allTags: 1
         }
       }
-      return discoveryApi.discoveryList(where).then(res => {
-        return res.items.map(item =>
-          Object.assign(item, {
-            isLeaf: true,
-            isObject: true,
-            connectionId: item.sourceConId,
-            LDP_TYPE: 'table'
-          })
-        )
-      })
+      return discoveryApi
+        .discoveryList(where, {
+          cancelToken
+        })
+        .then(res => {
+          return res.items.map(item =>
+            Object.assign(item, {
+              isLeaf: true,
+              isObject: true,
+              connectionId: item.sourceConId,
+              LDP_TYPE: 'table'
+            })
+          )
+        })
     },
 
     handleTreeDragOver(ev) {

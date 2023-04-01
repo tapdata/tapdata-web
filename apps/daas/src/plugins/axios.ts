@@ -101,6 +101,9 @@ axios.interceptors.request.use(function (config: AxiosRequestConfig): AxiosReque
   }
   config.headers['x-requested-with'] = 'XMLHttpRequest'
 
+  // 业务内设置了cancel
+  if (config.cancelToken) return config
+
   const key = getPendingKey(config)
   let cancelFunc = null
   config.cancelToken = new CancelToken(c => {
