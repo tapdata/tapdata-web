@@ -106,7 +106,8 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import { mapGetters } from 'vuex'
+import { cloneDeep } from 'lodash'
 
 import { VTable } from '@tap/component'
 import i18n from '@tap/i18n'
@@ -119,12 +120,6 @@ export default {
   components: { VTable },
 
   props: {
-    form: {
-      type: Object,
-      default: () => {
-        return {}
-      }
-    },
     data: {
       type: Object,
       default: () => {
@@ -214,7 +209,8 @@ export default {
         source: {},
         canUseDataTypes: []
       },
-      editBtnLoading: false
+      editBtnLoading: false,
+      rules: []
     }
   },
 
@@ -250,22 +246,30 @@ export default {
 
     canRevokeRules() {
       const { qualified_name } = this.data
-      return this.fieldChangeRules.filter(t => t.scope === 'Field' && t.namespace?.[1] === qualified_name) || []
+      return this.rules.filter(t => t.scope === 'Field' && t.namespace?.[1] === qualified_name) || []
     }
   },
 
+  mounted() {
+    this.setRules(this.fieldChangeRules)
+  },
+
   methods: {
+    setRules(data = []) {
+      this.rules = cloneDeep(data)
+    },
+
     findInRulesById(id) {
-      return this.fieldChangeRules.find(t => t.id === id)
+      return this.rules.find(t => t.id === id)
     },
 
     findNodeRuleByType(type) {
-      return this.fieldChangeRules.find(t => t.accept === type && t.scope === 'Node')
+      return this.rules.find(t => t.accept === type && t.scope === 'Node')
     },
 
     deleteRuleById(id) {
-      const index = this.fieldChangeRules.findIndex(t => t.id === id)
-      this.fieldChangeRules.splice(index, 1)
+      const index = this.rules.findIndex(t => t.id === id)
+      this.rules.splice(index, 1)
     },
 
     openEditDataTypeVisible(row) {
@@ -278,14 +282,13 @@ export default {
       this.currentData.errorMessage = ''
       this.currentData.source = source
       this.currentData.canUseDataTypes = canUseDataTypes
-      const findRule = this.fieldChangeRules.find(t => t.id === this.currentData.changeRuleId)
+      const findRule = this.rules.find(t => t.id === this.currentData.changeRuleId)
       this.currentData.selectDataType = findRule?.result?.selectDataType || ''
       this.editDataTypeVisible = true
     },
 
     handleUpdate(data) {
-      this.form?.setValuesIn?.('fieldChangeRules', data || this.fieldChangeRules)
-      this.$emit('update:fieldChangeRules', data || this.fieldChangeRules)
+      this.$emit('update-rules', cloneDeep(data || this.rules))
     },
 
     submitEdit() {
@@ -343,7 +346,7 @@ export default {
             }
             ruleId = op.id
             ruleAccept = dataType
-            this.fieldChangeRules.push(op)
+            this.rules.push(op)
           }
           this.handleUpdate()
           this.data.fields.find(t => {
@@ -369,8 +372,8 @@ export default {
       }
       if (f.scope === 'Field') {
         row.data_type = f.accept
-        const index = this.fieldChangeRules.findIndex(t => t.id === f.id)
-        this.fieldChangeRules.splice(index, 1)
+        const index = this.rules.findIndex(t => t.id === f.id)
+        this.rules.splice(index, 1)
       }
       this.handleUpdate()
     },
@@ -385,9 +388,7 @@ export default {
       }).then(resFlag => {
         if (resFlag) {
           const { qualified_name } = this.data
-          this.handleUpdate(
-            this.fieldChangeRules.filter(t => !(t.scope === 'Field' && t.namespace?.[1] === qualified_name))
-          )
+          this.handleUpdate(this.rules.filter(t => !(t.scope === 'Field' && t.namespace?.[1] === qualified_name)))
           this.$message.success(i18n.t('public_message_operation_success'))
         }
       })

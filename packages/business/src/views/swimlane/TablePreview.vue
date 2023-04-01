@@ -68,7 +68,13 @@
                 <VEmpty v-if="!sampleHeader.length"></VEmpty>
                 <el-table v-else :data="sampleData" v-loading="loadingSampleData" max-height="381px">
                   <el-table-column type="index" label="#"></el-table-column>
-                  <el-table-column v-for="(item, index) in sampleHeader" :key="index" :prop="item" :label="item">
+                  <el-table-column
+                    v-for="(item, index) in sampleHeader"
+                    :key="index"
+                    :prop="item"
+                    :label="item"
+                    min-width="200"
+                  >
                     <template #header="{ column }">
                       <span :title="column.label">{{ column.label }}</span>
                     </template>
@@ -406,7 +412,8 @@ export default {
         .call(params)
         .then(res => {
           this.sampleData = res?.sampleData
-          this.sampleHeader = this.sampleData ? Object.keys(this.sampleData.reduce((o, c) => Object.assign(0, c))) : []
+          //schema返回的数据组装数据
+          this.sampleHeader = this.tableFields.map(it => it.name)
           // this.storageSize = Math.floor(res?.tableInfo?.storageSize / 1024) || 0
           this.storageSize = calcUnit(res?.tableInfo?.storageSize || 0, 1)
           this.numOfRows = res?.tableInfo?.numOfRows || 0

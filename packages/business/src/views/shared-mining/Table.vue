@@ -112,7 +112,7 @@ export default {
   methods: {
     remoteMethod({ page }) {
       const { taskId, keyword } = this
-      const { current, size } = page
+      const { current, size } = page || { current: 1, size: 20 }
       const filter = Object.assign({}, this.params, {
         taskId,
         keyword,

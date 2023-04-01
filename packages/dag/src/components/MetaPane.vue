@@ -4,11 +4,11 @@
       ref="table"
       v-bind="$attrs"
       :data="selected"
-      :form="form"
       :readonly="stateIsReadonly || !isTarget"
       :fieldChangeRules.sync="fieldChangeRules"
       :type="isTarget ? 'target' : isSource ? 'source' : ''"
       hide-batch
+      @update-rules="handleUpdateRules"
     ></List>
   </div>
 </template>
@@ -132,6 +132,12 @@ export default {
 
     loadFieldChangeRules() {
       this.fieldChangeRules = this.form.getValuesIn('fieldChangeRules') || []
+      this.$refs.table.setRules(this.fieldChangeRules)
+    },
+
+    handleUpdateRules(val = []) {
+      this.fieldChangeRules = val
+      this.form?.setValuesIn?.('fieldChangeRules', this.fieldChangeRules)
     }
   }
 }
