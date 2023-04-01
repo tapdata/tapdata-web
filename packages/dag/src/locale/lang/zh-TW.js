@@ -542,12 +542,15 @@ export default {
     '在任務啟動時會對共享挖掘的可用性進行檢測，當挖掘不可用時按照下方所選策略進行處理。\n可能出現的不可用的場景\n1. 數據連接裡面沒有打開開關\n2. 設置的起始時間比外存日誌數據的第一條更早\n3. 挖掘任務報錯停止',
   packages_dag_field_inference_list_gaiziduanyingshe:
     '該字段映射的目標數據類型為系統推測結果，該結果可能存在偏差，請檢查並確認是否符合預期，並根據實際情況調整。 ',
-  packages_dag_field_inference_list_gaiziduanwufa: '該字段無法映射目標數據類型，將在數據寫入時忽略該字段。 ',
+  packages_dag_field_inference_list_gaiziduanwufa:
+    '该字段类型暂不支持，为避免数据处理故障，可以使用字段编辑功能将该字段屏蔽。',
   packages_dag_field_inference_main_xuanzemorengeng:
     '選擇默認更新條件字段時默認優先按照主鍵字段關聯，無主鍵的按照唯一索引字段關聯，無主鍵且無唯一索引的按照全字段關聯。選擇指定字段時將按照指定更新條件字段進行關聯',
   packages_dag_nodes_table_zidingyichaxun: '自定義查詢',
   packages_dag_field_inference_main_gaibiaocunzaibu: '該表存在不支持的數據類型',
   packages_dag_validate_customsql_fail: '當啟用全量自定義查詢後，處理節點僅支持使用JS節點',
   packages_dag_validate_customsql_target_fail:
-    '當啟用全量自定義查詢後，只有弱schema類型的數據源才能作為目標，例如：MongoDB、Kafka、ES'
+    '當啟用全量自定義查詢後，只有弱schema類型的數據源才能作為目標，例如：MongoDB、Kafka、ES',
+  packages_dag_field_inference_list_gaiziduanshuju:
+    '该字段数据类型暂不支持，为避免由于该字段处理导致任务执行故障，请先将该字段屏蔽。'
 }

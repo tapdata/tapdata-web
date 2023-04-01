@@ -153,6 +153,10 @@ export default {
     hideBatch: {
       type: Boolean,
       default: false
+    },
+    type: {
+      type: String,
+      default: 'target'
     }
   },
 
@@ -414,18 +418,14 @@ export default {
     },
 
     getCanUseDataTypesTooltip(matchedDataTypeLevel) {
-      let result = ''
-      switch (matchedDataTypeLevel) {
-        case 'error':
-          result = i18n.t('packages_dag_field_inference_list_gaiziduanwufa')
-          break
-        case 'warning':
-          result = i18n.t('packages_dag_field_inference_list_gaiziduanyingshe')
-          break
-        default:
-          break
+      const map = {
+        error:
+          this.type === 'target'
+            ? i18n.t('packages_dag_field_inference_list_gaiziduanshuju')
+            : i18n.t('packages_dag_field_inference_list_gaiziduanwufa'),
+        warning: i18n.t('packages_dag_field_inference_list_gaiziduanyingshe')
       }
-      return result
+      return map[matchedDataTypeLevel]
     },
 
     querySearch(val, cb) {

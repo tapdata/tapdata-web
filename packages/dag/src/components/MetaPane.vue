@@ -7,6 +7,7 @@
       :form="form"
       :readonly="stateIsReadonly || !isTarget"
       :fieldChangeRules.sync="fieldChangeRules"
+      :type="isTarget ? 'target' : isSource ? 'source' : ''"
       hide-batch
     ></List>
   </div>
@@ -47,6 +48,11 @@ export default {
 
     showLoading() {
       return this.loading
+    },
+
+    isSource() {
+      const { type, $inputs } = this.activeNode || {}
+      return (type === 'database' || type === 'table') && !$inputs.length
     },
 
     isTarget() {
