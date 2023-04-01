@@ -241,7 +241,9 @@ export const FieldRename = connect(
           console.log('fieldProcessor.handleRename', node, data) //eslint-disable-line
           let nativeData = this.getNativeData(data.id) //查找初始schema
           let existsName = this.handleExistsName(node, data)
-          if (existsName) {
+          //字段名首尾去空格
+          data.field_name = data.field_name?.trim()
+          if (existsName || data.field_name === '') {
             data.field_name = nativeData.field_name
             return
           }
