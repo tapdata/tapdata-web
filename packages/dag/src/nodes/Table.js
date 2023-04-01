@@ -1067,19 +1067,19 @@ export class Table extends NodeType {
                       {
                         dependencies: ['$inputs'],
                         // 源节点连线时，字段值为null并且模型获取到后执行
-                        when: '{{$deps[0].length && !$self.value && $self.dataSource && $self.dataSource.length}}',
+                        // when: '{{$deps[0].length && !$self.value && $self.dataSource && $self.dataSource.length}}',
                         fulfill: {
-                          run: `setDefaultPrimaryKey($self)`
+                          run: `$self.validate()`
                         }
-                      },
-                      {
+                      }
+                      /*{
                         dependencies: ['$inputs'],
                         // 断开源节点的连线，如果更新条件为空[],设置值为null（为了下次连线触发设置默认值）
                         when: '{{!$deps[0].length && $self.value && $self.value.length === 0}}',
                         fulfill: {
                           run: `$self.value=null`
                         }
-                      }
+                      }*/
                     ],
                     'x-validator': {
                       validator: `{{async (value, rule, ctx) => {
