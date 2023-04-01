@@ -10,7 +10,7 @@
     <div class="flex mb-4 align-items-center">
       <div class="select__row flex align-items-center" @click.stop="handleSelect">
         <span>{{ $t('packages_dag_components_nodedetaildialog_jiedian') }}</span>
-        <ElSelect v-model="selected" class="ml-2 dark" ref="nodeSelect" filterable @change="init">
+        <ElSelect v-model="selected" class="ml-2 dark" ref="nodeSelect" filterable @change="init()">
           <ElOption v-for="(item, index) in nodeItems" :key="index" :label="item.label" :value="item.value">
             <div class="flex align-center mx-n1">
               <NodeIcon class="mr-2" :node="item.node" :size="18" />
@@ -36,6 +36,7 @@
       </div>
 
       <SharedMiningTable
+        v-if="!isLogCollectorIstarget"
         ref="sharedMiningTable"
         :task-id="$route.params.id"
         :params="{ nodeId: currentNodeId }"
@@ -228,7 +229,8 @@ export default {
       quotaTimeType: '5m',
       loading: false,
       refreshRate: 5000,
-      currentNodeId: ''
+      currentNodeId: '',
+      isLogCollectorIstarget: false
     }
   },
 
@@ -452,6 +454,9 @@ export default {
         this.selected = this.nodeId
       }
       this.currentNodeId = this.selected //当前nodeId
+      let node = this.allNodes.find(t => this.selected === t.id) || {}
+      const { $outputs } = node
+      this.isLogCollectorIstarget = !$outputs.length
       this.setPeriod()
       this.timer && clearInterval(this.timer)
       this.timer = setInterval(() => {
