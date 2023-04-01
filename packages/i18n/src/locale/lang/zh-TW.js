@@ -207,5 +207,11 @@ export default {
   public_event_total_output: '總輸出',
   public_event_insert: '插入',
   public_event_update: '更新',
-  public_event_ddl: 'DDL'
+  public_event_ddl: 'DDL',
+
+  //里程碑
+  public_milestone_time_consuming: '耗時',
+  public_milestone_time_table_structure: '共遷移 {val} 張表結構',
+  public_milestone_time_scheduling: ' 任務被調度到{val}',
+  public_milestone_connection_succeeded: ' 連接成功'
 }

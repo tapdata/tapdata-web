@@ -195,27 +195,33 @@ export default {
             switch (el.key) {
               case 'TASK':
                 Object.assign(el, {
-                  dataDesc: ` , 任务被调度到 ${hostName}, 耗时 ${time}, ${begin}~${end}`
+                  dataDesc: ` , ${i18n.t('public_milestone_time_scheduling', { val: hostName })} , ${i18n.t(
+                    'public_milestone_time_consuming'
+                  )}${time}, ${begin}~${end}`
                 })
                 break
               case 'DATA_NODE_INIT':
                 Object.assign(el, {
-                  dataDesc: `, 连接成功, 耗时 ${time}, ${begin} ~ ${end}`
+                  dataDesc: `, ${i18n.t('public_milestone_connection_succeeded')},  ${i18n.t(
+                    'public_milestone_time_consuming'
+                  )} ${time}, ${begin} ~ ${end}`
                 })
                 break
               case 'TABLE_INIT':
                 Object.assign(el, {
-                  dataDesc: `, 共迁移 ${item.totals} 张表结构, 耗时 ${time}, ${begin} ~ ${end}`
+                  dataDesc: `,${i18n.t('public_milestone_time_table_structure', { val: item.totals })}, ${i18n.t(
+                    'public_milestone_time_consuming'
+                  )} ${time}, ${begin} ~ ${end}`
                 })
                 break
               case 'SNAPSHOT':
                 Object.assign(el, {
-                  dataDesc: `, 耗时 ${time}, ${begin} ~ ${end}`
+                  dataDesc: `,  ${i18n.t('public_milestone_time_consuming')} ${time}, ${begin} ~ ${end}`
                 })
                 break
               case 'CDC':
                 Object.assign(el, {
-                  dataDesc: `, 耗时 ${time}, ${begin} ~ ${end}`
+                  dataDesc: `,  ${i18n.t('public_milestone_time_consuming')} ${time}, ${begin} ~ ${end}`
                 })
                 break
             }
