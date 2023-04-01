@@ -42,7 +42,7 @@
               :key="index"
               :class="{ active: position === index }"
               class="flex align-items-center justify-content-between"
-              @click="handleSelect(item, index)"
+              @click="handleSelect(index)"
             >
               <div class="task-form-text-box pl-4 inline-block">
                 <OverflowTooltip class="w-100 text-truncate target" :text="item.name" placement="right" />
@@ -123,12 +123,13 @@
           </ElButton>
         </div>
         <List
-          :form="form"
+          ref="list"
           :data="selected"
           :show-columns="['index', 'field_name', 'data_type', 'operation']"
           :fieldChangeRules.sync="fieldChangeRules"
           :readonly="readonly"
           class="content__list flex-fill"
+          @update-rules="handleUpdateRules"
         ></List>
       </div>
     </div>
@@ -237,9 +238,10 @@ export default {
   },
 
   methods: {
-    async loadData() {
+    async loadData(resetSelect = false) {
       this.navLoading = true
       this.fieldChangeRules = this.form.getValuesIn('fieldChangeRules') || []
+      this.$refs.list.setRules(this.fieldChangeRules)
       this.updateConditionFieldMap = cloneDeep(this.form.getValuesIn('updateConditionFieldMap') || {})
       const { size, current } = this.page
       const res = await this.getData({
@@ -280,7 +282,11 @@ export default {
         }
       })
       this.page.count = total ? Math.ceil(total / this.page.size) : 1
-      this.handleSelect(this.navList[0])
+      if (resetSelect) {
+        this.handleSelect(this.position)
+      } else {
+        this.handleSelect()
+      }
       this.navLoading = false
     },
 
@@ -299,7 +305,7 @@ export default {
       this.updateList = this.updateConditionFieldMap[this.selected.name] || []
     },
 
-    handleSelect(item, index = 0) {
+    handleSelect(index = 0) {
       this.position = index
       this.filterFields()
     },
@@ -346,6 +352,11 @@ export default {
     handleUpdateList() {
       this.updateConditionFieldMap[this.selected.name] = this.updateList
       this.form.setValuesIn('updateConditionFieldMap', cloneDeep(this.updateConditionFieldMap))
+    },
+
+    handleUpdateRules(val = []) {
+      this.fieldChangeRules = val
+      this.handleUpdate()
     }
   }
 }
