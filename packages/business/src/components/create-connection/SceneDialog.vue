@@ -257,13 +257,10 @@ export default {
 <style scoped lang="scss">
 ::v-deep {
   .ldp-connection-dialog {
-    margin: 0 !important;
-    position: absolute;
-    left: 50%;
-    top: 50%;
+    margin-top: 32px !important;
+    margin-bottom: 32px !important;
     height: calc(100% - 64px);
     overflow: hidden;
-    transform: translate(-50%, -50%);
 
     .el-dialog__header {
       height: 64px;
