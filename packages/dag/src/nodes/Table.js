@@ -1044,21 +1044,20 @@ export class Table extends NodeType {
                     title: i18n.t('packages_dag_nodes_table_gengxintiaojianzi'),
                     type: 'array',
                     'x-index': 1,
-                    required: true,
+                    // required: true,
                     default: null,
                     description: `{{ !$isDaas ? "${i18n.t(
                       'packages_dag_nodes_table_isDaa_ruguoyuanweimongodb'
                     )}" : ""}}`,
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      wrapperWidth: 300
+                      asterisk: true
                     },
                     'x-component': 'FieldSelect',
                     'x-component-props': {
-                      allowCreate: true,
+                      // allowCreate: true,
                       multiple: true,
-                      filterable: true,
-                      '@blur': `{{() => setDefaultPrimaryKey($self)}}`
+                      filterable: true
                     },
                     'x-reactions': [
                       `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true}, $values.$inputs[0])}}`,
@@ -1078,7 +1077,43 @@ export class Table extends NodeType {
                           run: `$self.value=null`
                         }
                       }
-                    ]
+                    ],
+                    'x-validator': {
+                      validator: `{{async (value, rule, ctx) => {
+                        let field = ctx.field
+                        let form = field.form
+                        let options = field.dataSource
+                        let nodeData = findNodeById($values.id)
+
+                        console.log('验证关联条件', value, $values)
+
+                        if (!options || !options.length) {
+                          options = await loadNodeFieldOptions($values.$inputs[0])
+                        }
+
+                        if (options.length) {
+                          let isPrimaryKeyList = options.filter(item => item.isPrimaryKey)
+                          let indicesUniqueList = options.filter(item => item.indicesUnique)
+                          let defaultList = (isPrimaryKeyList.length ? isPrimaryKeyList : indicesUniqueList).map(item => item.value)
+
+                          if (!value || !value.length) {
+                            nodeData.updateConditionFields = defaultList
+                            $values.updateConditionFields = nodeData.updateConditionFields
+                          } else {
+                            let fieldMap = options.reduce((obj, item) => (obj[item.value]=true,obj), {})
+                            let filterValue = value.filter(v => fieldMap[v])
+
+                            if (value && value.length !== filterValue.length) {
+                              nodeData.updateConditionFields = filterValue.length ? filterValue : defaultList
+                              $values.updateConditionFields = nodeData.updateConditionFields
+                              console.log('更新关联条件字段')
+                            }
+                          }
+                        }
+                        if (!nodeData.updateConditionFields?.length) return '该字段是必填字段!'
+                        console.debug('[DEBUG]: updateConditionFields validate', value, field, ctx, options, nodeData)
+                      }}}`
+                    }
                   },
 
                   initialConcurrentSpace: {
