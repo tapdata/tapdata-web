@@ -166,10 +166,6 @@ export const FieldRenameProcessor = defineComponent({
         delete fields[row.sourceFieldName]
       } else {
         //先生成所有fields
-        val = val?.trim()
-        if (target === 'rename' && val === '') {
-          val = row.sourceFieldName //字段名不能为空
-        }
         fields[row.sourceFieldName] = {
           sourceFieldName: row.sourceFieldName,
           targetFieldName: target === 'rename' ? val : row.targetFieldName,
@@ -363,7 +359,7 @@ export const FieldRenameProcessor = defineComponent({
             class="rename-table-item-input px-2"
             value={row.targetFieldName}
             onChange={event => {
-              const val = event.target.value
+              const val = event.target.value?.trim()
               if (val) {
                 row.targetFieldName = val
                 updateName(row, event.target.value)
