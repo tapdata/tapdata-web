@@ -578,7 +578,7 @@ export default {
   packages_dag_field_inference_list_gaiziduanyingshe:
     'The target data type of this field mapping is the result of system speculation, and the result may be biased. Please check and confirm whether it meets expectations, and adjust it according to the actual situation. ',
   packages_dag_field_inference_list_gaiziduanwufa:
-    'This field cannot be mapped to the target data type, and this field will be ignored when data is written. ',
+    'This field type is not currently supported. To avoid data processing errors, you can use the field editing function to hide this field.',
   packages_dag_field_inference_main_xuanzemorengeng:
     'When selecting the default update condition field, the default priority is to associate with the primary key field, if there is no primary key, associate with the unique index field, and if there is no primary key and no unique index, associate with the full field. When the specified field is selected, it will be associated with the specified update condition field',
   packages_dag_nodes_table_zidingyichaxun: 'Fully Customizable Query',
@@ -586,5 +586,7 @@ export default {
   packages_dag_validate_customsql_fail:
     'Once full custom query is enabled, processing nodes only support using JS nodes.',
   packages_dag_validate_customsql_target_fail:
-    'Once full custom query is enabled, only weak schema type data sources can be used as targets, such as Mongo, Kafka, and ES.'
+    'Once full custom query is enabled, only weak schema type data sources can be used as targets, such as Mongo, Kafka, and ES.',
+  packages_dag_field_inference_list_gaiziduanshuju:
+    'The data type of this field is not supported at the moment. In order to avoid task execution failure due to the processing of this field, please mask this field first. '
 }
