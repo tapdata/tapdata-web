@@ -139,8 +139,10 @@ export default {
 
       const dataflowType = this.dataflow.type
       let iconRunning = 'loading-circle'
+      let iconRunningColor = 'color-success'
       if (this.dataflow.status != "running") {
         iconRunning = "time"
+        iconRunningColor = 'color-primary'
       }
       if (['logCollector'].includes(this.dataflow.syncType)) {
         delete result[2]
@@ -171,7 +173,7 @@ export default {
         desc: i18n.t('packages_business_milestone_list_status_cdc_progressing'),
         icon: iconRunning,
         progress: 0,
-        color: 'color-success'
+        color: iconRunningColor
       }
       const waitingOpt = {
         status: 'WAITING',
