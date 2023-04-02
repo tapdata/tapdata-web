@@ -169,8 +169,15 @@ export default {
         color: 'color-primary'
       }
       const cdcRunningOpt = {
-        status: 'FINISH',
+        status: 'RUNNING',
         desc: i18n.t('packages_business_milestone_list_status_cdc_progressing'),
+        icon: iconRunning,
+        progress: 0,
+        color: 'color-primary'
+      }
+      const cdcFinishOpt = {
+        status: 'FINISH',
+        desc: i18n.t('packages_business_milestone_list_status_cdc_finish'),
         icon: iconRunning,
         progress: 0,
         color: iconRunningColor
@@ -242,7 +249,7 @@ export default {
                 })
                 break
               case 'CDC':
-                Object.assign(el, cdcRunningOpt)
+                Object.assign(el, cdcFinishOpt)
                 Object.assign(el, {
                   dataDesc: `, ${i18n.t('public_milestone_time_cdc_consuming')} ${time}, ${begin} ~ - `
                 })
@@ -253,9 +260,17 @@ export default {
             Object.assign(el, errorOpt)
             break
           case 'RUNNING':
-            Object.assign(el, runningOpt, {
-              progress: (item.progress / item.totals) * 100
-            })
+            switch (el.key) {
+                case 'CDC':
+                  Object.assign(el, cdcRunningOpt, {
+                    progress: (item.progress / item.totals) * 100
+                  })
+                  break
+                default:
+                  Object.assign(el, runningOpt, {
+                    progress: (item.progress / item.totals) * 100
+                  })
+            }
             break
           default:
             Object.assign(el, waitingOpt)
