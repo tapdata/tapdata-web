@@ -38,6 +38,7 @@
           <ElProgress
             v-if="typeof item.percentage === 'number'"
             :percentage="item.percentage"
+            :stroke-width=10
             class="milestone-mt-1"
             :show-text="false"
           ></ElProgress>
@@ -137,6 +138,10 @@ export default {
       ]
 
       const dataflowType = this.dataflow.type
+      let iconRunning = 'loading-circle'
+      if (this.dataflow.status != "running") {
+        iconRunning = "time"
+      }
       if (['logCollector'].includes(this.dataflow.syncType)) {
         delete result[2]
       }
@@ -157,9 +162,16 @@ export default {
       const runningOpt = {
         status: 'RUNNING',
         desc: i18n.t('packages_business_milestone_list_status_progressing'),
-        icon: 'loading-circle',
+        icon: iconRunning,
         progress: 0,
         color: 'color-primary'
+      }
+      const cdcRunningOpt = {
+        status: 'FINISH',
+        desc: i18n.t('packages_business_milestone_list_status_cdc_progressing'),
+        icon: iconRunning,
+        progress: 0,
+        color: 'color-success'
       }
       const waitingOpt = {
         status: 'WAITING',
@@ -180,7 +192,15 @@ export default {
         color: 'color-danger'
       }
       result.forEach(el => {
-        const item = milestone[el.key]
+        let item = milestone[el.key]
+        if (item == undefined) {
+            item = {
+                "begin": 0,
+                "end": 0,
+                "totals": "-",
+                "progress": "-"
+            }
+        }
         let time =
           item.begin && item.end
             ? calcTimeUnit(item.end - item.begin, 2, {
@@ -195,7 +215,7 @@ export default {
             switch (el.key) {
               case 'TASK':
                 Object.assign(el, {
-                  dataDesc: ` , ${i18n.t('public_milestone_time_scheduling', { val: hostName })} , ${i18n.t(
+                  dataDesc: `, ${i18n.t('public_milestone_time_scheduling', { val: hostName })}, ${i18n.t(
                     'public_milestone_time_consuming'
                   )}${time}, ${begin}~${end}`
                 })
@@ -209,19 +229,20 @@ export default {
                 break
               case 'TABLE_INIT':
                 Object.assign(el, {
-                  dataDesc: `,${i18n.t('public_milestone_time_table_structure', { val: item.totals })}, ${i18n.t(
+                  dataDesc: `, ${i18n.t('public_milestone_time_table_structure', { val: item.totals })}, ${i18n.t(
                     'public_milestone_time_consuming'
                   )} ${time}, ${begin} ~ ${end}`
                 })
                 break
               case 'SNAPSHOT':
                 Object.assign(el, {
-                  dataDesc: `,  ${i18n.t('public_milestone_time_consuming')} ${time}, ${begin} ~ ${end}`
+                  dataDesc: `, ${i18n.t('public_milestone_time_consuming')} ${time}, ${begin} ~ ${end}`
                 })
                 break
               case 'CDC':
+                Object.assign(el, cdcRunningOpt)
                 Object.assign(el, {
-                  dataDesc: `,  ${i18n.t('public_milestone_time_consuming')} ${time}, ${begin} ~ ${end}`
+                  dataDesc: `, ${i18n.t('public_milestone_time_cdc_consuming')} ${time}, ${begin} ~ - `
                 })
                 break
             }
@@ -241,19 +262,22 @@ export default {
       })
       const len = result.length
       const finishedLen = result.filter(t => t.status === 'FINISH').length
+      let currentLen = finishedLen + 1
+      if (currentLen > len) {
+          currentLen = currentLen - 1
+      }
+
       const per = (finishedLen / len) * 100
       result.unshift({
         label: i18n.t('packages_business_milestone_list_zhengtijindu'),
         icon: 'device',
         percentage: per,
         desc:
-          per >= 100
-            ? i18n.t('public_status_complete')
-            : i18n.t('packages_business_milestone_list_finis', {
-                val1: finishedLen,
-                val2: len,
-                val3: result.find(t => t.status !== 'FINISH')?.label
-              })
+          i18n.t('packages_business_milestone_list_finish', {
+          val1: finishedLen,
+          val2: len,
+          val3: result[currentLen-1].label + " " + result[currentLen-1].desc,
+        })
       })
       return result
     },
@@ -437,7 +461,7 @@ export default {
   }
 }
 .milestone-mt-1 {
-  margin-top: 10px;
+  margin-top: 15px;
 }
 .step__line {
   left: 50%;
@@ -450,7 +474,7 @@ export default {
   padding-bottom: 23px;
 }
 .loading-circle {
-  animation: rotate 2s linear infinite;
+  animation: rotate 3s linear infinite;
 }
 @keyframes rotate {
   0% {

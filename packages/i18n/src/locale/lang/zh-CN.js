@@ -212,6 +212,7 @@ export default {
   public_event_ddl: 'DDL',
 
   //里程碑
+  public_milestone_time_cdc_consuming: '启动耗时',
   public_milestone_time_consuming: '耗时',
   public_milestone_time_table_structure: '共迁移 {val} 张表结构',
   public_milestone_time_scheduling: ' 任务被调度到{val}',

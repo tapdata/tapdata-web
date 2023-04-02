@@ -210,6 +210,7 @@ export default {
   public_event_ddl: 'DDL',
 
   //milestone
+  public_milestone_time_cdcconsuming: 'start time-consuming',
   public_milestone_time_consuming: 'time-consuming',
   public_milestone_time_table_structure: 'A total of migration {val} table structure',
   public_milestone_time_scheduling: 'Task is scheduled to {val}',
