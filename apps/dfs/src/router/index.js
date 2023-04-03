@@ -278,6 +278,11 @@ const routes = [
         meta: {
           title: 'page_title_custom_node'
         }
+      },
+      {
+        path: '/lang',
+        name: 'lang',
+        component: Lang
       }
     ]
   },
@@ -412,12 +417,5 @@ const routes = [
     component: () => import('../views/aliyun-market/License.vue')
   }
 ]
-if (process.env.NODE_ENV === 'development') {
-  routes[0].children?.push({
-    path: '/lang',
-    name: 'lang',
-    component: Lang
-  })
-}
 
 export default routes

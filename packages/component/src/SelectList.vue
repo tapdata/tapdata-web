@@ -253,7 +253,7 @@ export default {
     },
     selectedWidth: {
       type: String,
-      default: '80px'
+      default: '120px'
     }
   },
 

@@ -81,6 +81,12 @@ export default {
   public_button_inquire: '查詢',
   public_button_generate: '生成',
   public_button_sort: '排序',
+  public_button_subscription: '訂閱',
+  public_button_unsubscribe: '退訂',
+  public_button_renew: '續訂',
+  public_button_pay: '支付',
+  public_button_renewal: '续期',
+  public_button_order: '訂購',
   // 消息
   public_message_title_prompt: '提示',
   public_message_delete_confirm: '是否刪除',
@@ -124,6 +130,9 @@ export default {
   public_time_m: '分鐘',
   public_time_h: '小時',
   public_time_d: '天',
+  public_time_day: '日',
+  public_time_month: '月',
+  public_time_year: '年',
   public_time_input: '輸入',
   public_time_output: '輸出',
   public_time_five_min: '最近五分鐘',
@@ -131,6 +140,7 @@ export default {
   public_time_thirty_min: '最近三十分鐘',
   public_time_last_hour: '最近一小時',
   public_time_period: '週期',
+  public_time_every_day: '每天',
   public_time_Last_six_hours: '最近6個小時',
   public_time_last_day: '最近1天',
   public_time_last_three_days: '最近3天',
@@ -143,6 +153,7 @@ export default {
   // 单位
   public_unit_ge: '個',
   // agent
+  public_agent: 'Agent',
   public_agent_name: 'Agent名稱',
   public_agent_button_create: '創建Agent',
   public_agent_button_deploy: '部署',
@@ -195,6 +206,7 @@ export default {
   public_task_max_incremental_delay: '最大增量延遲',
   public_task_heartbeat_time: '任務心跳時間',
   public_task_mission_error: '任務出錯',
+  public_task_reasons_for_error: '錯誤原因',
   // 任節點
   public_node_name: '節點名稱',
   public_node_type: '節點類型',

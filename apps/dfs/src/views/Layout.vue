@@ -38,6 +38,15 @@
             </template>
           </ElMenuItem>
         </template>
+        <ElMenuItem
+          v-if="!isDemoEnv"
+          :key="$t('dfs_agent_download_agentguidedialog_tiyan') + ' Demo'"
+          index="goDemo"
+          class="flex align-center border-top"
+        >
+          <span class="mr-4"><VIcon class="v-icon" size="17">open-in-new</VIcon></span>
+          <span class="text-decoration-underline">{{ $t('dfs_agent_download_agentguidedialog_tiyan') + ' Demo' }}</span>
+        </ElMenuItem>
       </ElMenu>
     </ElAside>
     <ElContainer direction="vertical" class="layout-main position-relative">
@@ -50,7 +59,7 @@
     <AgentGuideDialog :visible.sync="agentGuideDialog" @openAgentDownload="openAgentDownload"></AgentGuideDialog>
     <AgentDownloadModal :visible.sync="agentDownload.visible" :source="agentDownload.data"></AgentDownloadModal>
     <BindPhone :visible.sync="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>
-    <CheckLicense :visible.sync="aliyunMaketVisible" :user="userInfo"></CheckLicense>
+    <!--    <CheckLicense :visible.sync="aliyunMaketVisible" :user="userInfo"></CheckLicense>-->
   </ElContainer>
 </template>
 
@@ -63,7 +72,6 @@ import ConnectionTypeDialog from '@/components/ConnectionTypeDialog'
 import AgentDownloadModal from '@/views/agent-download/AgentDownloadModal'
 import AgentGuideDialog from '@/views/agent-download/AgentGuideDialog'
 import BindPhone from '@/views/user/components/BindPhone'
-import CheckLicense from '@/views/aliyun-market/CheckLicnese'
 import { buried } from '@/plugins/buried'
 import Cookie from '@tap/shared/src/cookie'
 
@@ -76,8 +84,7 @@ export default {
     AgentDownloadModal,
     AgentGuideDialog,
     BindPhone,
-    PageHeader,
-    CheckLicense
+    PageHeader
   },
   data() {
     const $t = this.$t.bind(this)
@@ -137,7 +144,8 @@ export default {
       agentGuideDialog: false,
       showAgentWarning: false,
       userInfo: '',
-      aliyunMaketVisible: false
+      // aliyunMaketVisible: false,
+      isDemoEnv: document.domain === 'demo.cloud.tapdata.net'
     }
   },
   created() {
@@ -182,9 +190,9 @@ export default {
     let user = window.__USER_INFO__
     this.userInfo = user
     //检查是云市场用户授权码有效期
-    if (user?.enableLicense) {
-      this.checkLicense(user)
-    }
+    // if (user?.enableLicense) {
+    //   this.checkLicense(user)
+    // }
     let isCurrentUser = Cookie.get('deployLaterUser') === user?.userId
     if (Cookie.get('deployLater') == 1 && isCurrentUser) return
     this.checkDialogState()
@@ -225,6 +233,10 @@ export default {
       this.dialogVisible = true
     },
     menuTrigger(path) {
+      if (['goDemo'].includes(path)) {
+        this.goDemo()
+        return
+      }
       if (this.$route.path === path) {
         return
       }
@@ -370,6 +382,11 @@ export default {
           data: expired
         }
       }
+    },
+
+    goDemo() {
+      buried('agentGuideDemo')
+      window.open('https://demo.cloud.tapdata.net/console/v3/')
     }
   }
 }

@@ -305,6 +305,10 @@
   overflow: auto !important;
 }
 
+.overflow-x-auto {
+  overflow-y: auto !important;
+}
+
 .overflow-y-auto {
   overflow-y: auto !important;
 }
@@ -2670,6 +2674,10 @@
 
 .bg-gradient {
   background-image: var(--bs-gradient) !important;
+}
+
+.bg-subtle {
+  background: #f6f8fa !important;
 }
 
 .user-select-all {

@@ -50,7 +50,7 @@
       <!--暂时不分类-->
       <div class="explore-examples explore-examples-wrap">
         <div class="main-title mb-2">{{ $t('_workbench_workbench_tansuoshili') }}</div>
-        <ul class="flex flex-row">
+        <ul class="flex flex-row overflow-x-auto">
           <li
             class="cursor-pointer mr-6"
             v-for="(item, index) in examplesList"
@@ -105,8 +105,8 @@
           </ul>
         </ElCol>
         <ElCol :span="6">
-          <div class="aside-main notice-list flex-grow-1 p-6">
-            <ul class="notice-list__list">
+          <div class="aside-main notice-list flex-grow-1 p-4">
+            <ul class="notice-list__list h-100 overflow-y-auto">
               <li
                 v-for="(item, index) in notices.slice(0, 5)"
                 :key="index"
@@ -186,7 +186,6 @@
         <el-button type="primary" @click="showUpgrade = false">{{ $t('public_button_cancel') }}</el-button>
       </span>
     </el-dialog>
-    <PaidUpgradeDialog :visible.sync="paidUpgradeVisible" :paidPlan="paidPlan"></PaidUpgradeDialog>
     <CheckLicense :visible.sync="aliyunMaketVisible" :user="userInfo"></CheckLicense>
   </div>
   <RouterView v-else></RouterView>
@@ -195,15 +194,15 @@
 <script>
 import i18n from '@/i18n'
 
-import { connectionsApi, taskApi, paidApi } from '@tap/api'
-import { VIcon, Chart, PaidUpgradeDialog } from '@tap/component'
+import { connectionsApi, taskApi } from '@tap/api'
+import { VIcon, Chart } from '@tap/component'
 import { numToThousands } from '@/util'
 import timeFunction from '@/mixins/timeFunction'
 import CheckLicense from '@/views/aliyun-market/CheckLicnese'
 
 export default {
   name: 'Workbench',
-  components: { VIcon, Chart, PaidUpgradeDialog, CheckLicense },
+  components: { VIcon, Chart, CheckLicense },
   inject: ['checkAgent'],
   mixins: [timeFunction],
   data() {
@@ -313,9 +312,6 @@ export default {
       lineDataY: [],
       colorList: ['rgba(44, 101, 255, 0.85)', 'rgba(44, 101, 255, 0.5)'],
       showUpgrade: false, //版本升级弹窗
-      //付费升级
-      paidUpgradeVisible: false,
-      paidPlan: '',
       //探索实例
       examplesList: [
         {
@@ -426,6 +422,13 @@ export default {
     loadNotices() {
       this.notices = [
         {
+          id: 9,
+          type: '',
+          name: 'Tapdata Cloud 3.1.9 Release Notes',
+          link: 'https://mp.weixin.qq.com/s/eBHKEZBVkuQ0ah8Kv0wRKQ',
+          time: '2023-03-20 21:00'
+        },
+        {
           id: 8,
           type: '',
           name: 'Tapdata Cloud 3.1.8 Release Notes',
@@ -511,11 +514,6 @@ export default {
       })
     },
     async createTask() {
-      this.paidPlan = await paidApi.getUserPaidPlan()
-      if (!this.paidPlan?.valid) {
-        this.paidUpgradeVisible = true
-        return
-      }
       this.checkAgent(() => {
         this.$router.push({
           name: 'MigrateCreate'
@@ -722,7 +720,7 @@ export default {
 }
 // 快速开始
 .create-list__item {
-  width: 230px;
+  width: 276px;
   height: 70px;
   margin-right: 24px;
   background-color: #fff;
@@ -797,7 +795,7 @@ export default {
 .notice-list__time {
   color: map-get($fontColor, light);
   white-space: nowrap;
-  width: 80px;
+  //width: 80px;
   text-align: right;
 }
 .guide-list {

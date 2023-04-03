@@ -136,7 +136,7 @@ export const JsProcessor = observer(
           runningText.value = i18n.t('packages_form_js_processor_index_rengzaipinmingjia')
         }
 
-        if (queryTimes > 20) {
+        if (queryTimes > 40) {
           resetQuery()
           root.$message.error(i18n.t('packages_form_js_processor_index_qingqiuchaoshiqing'))
           return

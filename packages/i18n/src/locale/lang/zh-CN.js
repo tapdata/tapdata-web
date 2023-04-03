@@ -1,5 +1,3 @@
-import i18n from '../../index'
-
 export default {
   // 常用
   public_name: '名称',
@@ -83,6 +81,12 @@ export default {
   public_button_inquire: '查询',
   public_button_generate: '生成',
   public_button_sort: '排序',
+  public_button_subscription: '订阅',
+  public_button_unsubscribe: '退订',
+  public_button_renew: '续订',
+  public_button_pay: '支付',
+  public_button_renewal: '续期',
+  public_button_order: '订购',
   // 消息
   public_message_title_prompt: '提示',
   public_message_delete_confirm: '是否删除',
@@ -126,6 +130,9 @@ export default {
   public_time_m: '分钟',
   public_time_h: '小时',
   public_time_d: '天',
+  public_time_day: '日',
+  public_time_month: '月',
+  public_time_year: '年',
   public_time_input: '输入',
   public_time_output: '输出',
   public_time_five_min: '最近五分钟',
@@ -133,6 +140,7 @@ export default {
   public_time_thirty_min: '最近三十分钟',
   public_time_last_hour: '最近一小时',
   public_time_period: '周期',
+  public_time_every_day: '每天',
   public_time_Last_six_hours: '最近6个小时',
   public_time_last_day: '最近1天',
   public_time_last_three_days: '最近3天',
@@ -145,6 +153,7 @@ export default {
   // 单位
   public_unit_ge: '个',
   // agent
+  public_agent: 'Agent',
   public_agent_name: 'Agent名称',
   public_agent_button_create: '创建Agent',
   public_agent_button_deploy: '部署',
@@ -197,6 +206,7 @@ export default {
   public_task_max_incremental_delay: '最大增量延迟',
   public_task_heartbeat_time: '任务心跳时间',
   public_task_mission_error: '任务出错',
+  public_task_reasons_for_error: '错误原因',
   // 节点
   public_node_name: '节点名称',
   public_node_type: '节点类型',

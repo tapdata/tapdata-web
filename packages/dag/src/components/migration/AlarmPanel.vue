@@ -10,7 +10,7 @@ import { createForm, onFormValuesChange } from '@formily/core'
 import { observer } from '@formily/reactive-vue'
 import FormRender from '../FormRender'
 import { debounce } from 'lodash'
-import { taskApi } from '@tap/api'
+import { alarmApi, taskApi } from '@tap/api'
 
 export default {
   name: 'SettingPanel',
@@ -32,7 +32,9 @@ export default {
 
       form: createForm(),
 
-      allNodesResult: []
+      allNodesResult: [],
+
+      channels: ['wechat', 'system', 'sms', 'email']
     }
   },
 
@@ -58,7 +60,12 @@ export default {
           this.allNodesResult = this.allNodes
         }
       }
-      this.loadSchema()
+      //获取支持通知方式
+      alarmApi.channels().then(data => {
+        this.channels = []
+        this.channels = data.map(item => item.type)
+        this.loadSchema()
+      })
     }, 300),
 
     // 绑定表单事件
@@ -309,21 +316,32 @@ export default {
         type: 'array',
         'x-decorator': 'FormItem',
         'x-component': 'Checkbox.Group',
-        enum: [
-          { label: i18n.t('packages_dag_migration_alarmpanel_xitongtongzhi'), value: 'SYSTEM' },
-          { label: i18n.t('packages_dag_migration_alarmpanel_youjiantongzhi'), value: 'EMAIL' }
-        ],
+        enum: [],
         'x-component-props': {
           onChange: `{{val=>{$form.setValuesIn('${key}', !!val.length)}}}`
         },
         default: ['SYSTEM']
       }
+      let enums = []
+      if (this.channels.includes('system')) {
+        enums.push({ label: i18n.t('packages_dag_migration_alarmpanel_xitongtongzhi'), value: 'SYSTEM' })
+      }
+      if (this.channels.includes('email')) {
+        enums.push({ label: i18n.t('packages_dag_migration_alarmpanel_youjiantongzhi'), value: 'EMAIL' })
+      }
       if (process.env.VUE_APP_PLATFORM !== 'DAAS') {
         let isOpenid = window.__USER_INFO__?.openid
-        let enums = [
-          { label: i18n.t('packages_business_notify_webchat_notification'), value: 'WECHAT', disabled: !isOpenid },
-          { label: i18n.t('packages_business_notify_sms_notification'), value: 'SMS' }
-        ]
+        if (this.channels.includes('wechat')) {
+          enums.push({
+            label: i18n.t('packages_business_notify_webchat_notification'),
+            value: 'WECHAT',
+            disabled: !isOpenid
+          })
+        }
+        if (this.channels.includes('sms')) {
+          enums.push({ label: i18n.t('packages_business_notify_sms_notification'), value: 'SMS' })
+        }
+
         options.enum = [...options.enum, ...enums]
       }
       if (key) {

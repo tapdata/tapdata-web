@@ -153,6 +153,9 @@ const proxyApi = new Proxy()
 import Paid from './Paid'
 const paidApi = new Paid()
 
+import TCM from './Tcm'
+const tcmApi = new TCM()
+
 import LiveDataPlatform from './LiveDataPlatform'
 const liveDataPlatformApi = new LiveDataPlatform()
 
@@ -214,6 +217,7 @@ export {
   externalStorageApi,
   proxyApi,
   paidApi,
+  tcmApi,
   shareCdcTableMetricsApi,
   liveDataPlatformApi,
   ldpApi

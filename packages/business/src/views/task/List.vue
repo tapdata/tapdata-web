@@ -46,12 +46,18 @@
             <i class="el-icon-arrow-down el-icon--right"></i>
           </el-button>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="start" v-readonlybtn="'SYNC_job_operation'">{{
-              $t('packages_business_dataFlow_bulkScheuled')
-            }}</el-dropdown-item>
-            <el-dropdown-item command="stop" v-readonlybtn="'SYNC_job_operation'">{{
-              $t('packages_business_dataFlow_bulkStopping')
-            }}</el-dropdown-item>
+            <el-dropdown-item
+              command="start"
+              v-readonlybtn="'SYNC_job_operation'"
+              :disabled="$disabledReadonlyUserBtn()"
+              >{{ $t('packages_business_dataFlow_bulkScheuled') }}</el-dropdown-item
+            >
+            <el-dropdown-item
+              command="stop"
+              v-readonlybtn="'SYNC_job_operation'"
+              :disabled="$disabledReadonlyUserBtn()"
+              >{{ $t('packages_business_dataFlow_bulkStopping') }}</el-dropdown-item
+            >
             <el-dropdown-item
               command="initialize"
               v-readonlybtn="'SYNC_job_operation'"
@@ -134,7 +140,7 @@
       </el-table-column>
       <el-table-column prop="status" :label="$t('public_task_status')" :min-width="colWidth.status">
         <template #default="{ row }">
-          <TaskStatus :task="row" :agentMap="agentMap" />
+          <TaskStatus :task="row" :agentMap="agentMap" :error-cause="taskErrorCause[row.id]" />
         </template>
       </el-table-column>
       <el-table-column sortable prop="currentEventTimestamp" :label="$t('public_task_cdc_time_point')" min-width="168">
@@ -154,7 +160,7 @@
               v-if="row.btnDisabled.stop && row.btnDisabled.forceStop"
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
-              :disabled="row.btnDisabled.start"
+              :disabled="row.btnDisabled.start || $disabledReadonlyUserBtn()"
               @click="start([row.id])"
             >
               {{ $t('public_button_start') }}
@@ -164,7 +170,7 @@
                 v-if="row.status === 'stopping'"
                 v-readonlybtn="'SYNC_job_operation'"
                 type="primary"
-                :disabled="row.btnDisabled.forceStop"
+                :disabled="row.btnDisabled.forceStop || $disabledReadonlyUserBtn()"
                 @click="forceStop([row.id], row)"
               >
                 {{ $t('public_button_force_stop') }}
@@ -173,7 +179,7 @@
                 v-else
                 v-readonlybtn="'SYNC_job_operation'"
                 type="primary"
-                :disabled="row.btnDisabled.stop"
+                :disabled="row.btnDisabled.stop || $disabledReadonlyUserBtn()"
                 @click="stop([row.id], row)"
               >
                 {{ $t('public_button_stop') }}
@@ -231,8 +237,6 @@
     <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
     <!-- 导入 -->
     <Upload v-if="isDaas" :type="'dataflow'" ref="upload" @success="table.fetch()"></Upload>
-    <!--付费 -->
-    <PaidUpgradeDialog :visible.sync="paidUpgradeVisible" :paidPlan="paidPlan"></PaidUpgradeDialog>
     <!-- 删除任务 pg数据源 slot 删除失败 自定义dialog 提示 -->
     <el-dialog
       :title="$t('public_message_title_prompt')"
@@ -298,14 +302,14 @@
 import i18n from '@tap/i18n'
 
 import dayjs from 'dayjs'
-import { taskApi, workerApi, paidApi } from '@tap/api'
+import { taskApi, workerApi } from '@tap/api'
 import { TablePage, TaskStatus } from '../../components'
 import SkipError from './SkipError'
 import Upload from '../../components/UploadDialog'
 import { makeStatusAndDisabled, STATUS_MAP } from '../../shared'
 import syncTaskAgent from '../../mixins/syncTaskAgent'
 import { toRegExp } from '@tap/shared'
-import { FilterBar, PaidUpgradeDialog } from '@tap/component'
+import { FilterBar } from '@tap/component'
 
 export default {
   name: 'List',
@@ -318,7 +322,7 @@ export default {
 
   inject: ['checkAgent', 'buried'],
 
-  components: { FilterBar, TablePage, SkipError, Upload, TaskStatus, PaidUpgradeDialog },
+  components: { FilterBar, TablePage, SkipError, Upload, TaskStatus },
 
   mixins: [syncTaskAgent],
 
@@ -362,16 +366,14 @@ export default {
         status: '',
         type: ''
       },
-      //付费升级
-      paidUpgradeVisible: false,
-      paidPlan: '',
       //删除任务 pg数据源 slot 删除失败 自定义dialog 提示
       dialogDelMsgVisible: false,
       copySelectSql: `SELECT slot_name FROM pg_replication_slots WHERE slot_name like 'tapdata_cdc_%' and active='false';`,
       copyDelSql: "SELECT pg_drop_replication_slot('${slot_name}');",
       showTooltip: false,
       showDelTooltip: false,
-      failList: [] //错误列表
+      failList: [], //错误列表
+      taskErrorCause: {}
     }
   },
 
@@ -396,12 +398,12 @@ export default {
       return locale === 'en'
         ? {
             taskType: 140,
-            status: 130,
+            status: 145,
             operation: 340
           }
         : {
             taskType: 80,
-            status: 100,
+            status: 110,
             operation: 280
           }
     }
@@ -492,7 +494,18 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(data => {
-          let list = (data?.items || []).map(makeStatusAndDisabled)
+          let errorTaskIds = []
+          let list = (data?.items || []).map(item => {
+            makeStatusAndDisabled(item)
+            if (item.status === 'error') {
+              errorTaskIds.push(item.id)
+            } else if (this.taskErrorCause[item.id]) {
+              this.$delete(this.taskErrorCause, item.id)
+            }
+            return item
+          })
+
+          this.loadTaskErrorCause(errorTaskIds)
 
           // 有选中行，列表刷新后无法更新行数据，比如状态
           if (this.multipleSelection.length && list.length) {
@@ -677,15 +690,6 @@ export default {
     async create() {
       this.buried(this.taskBuried.new)
       this.createBtnLoading = true
-      if (!this.isDaas) {
-        // true 付费计划有效，false 付费计划无效
-        this.paidPlan = await paidApi.getUserPaidPlan()
-      }
-      if (!this.isDaas && !this.paidPlan?.valid) {
-        this.paidUpgradeVisible = true
-        this.createBtnLoading = false
-        return
-      }
       this.checkAgent(() => {
         this.$router.push({
           name: this.route.new
@@ -909,6 +913,40 @@ export default {
     },
     onDelCopy() {
       this.showDelTooltip = true
+    },
+
+    async loadTaskErrorCause(taskIds) {
+      if (!taskIds.length) return
+      await Promise.all(taskIds.map(this.getTaskErrorCause))
+
+      console.log('result', this.taskErrorCause) // eslint-disable-line
+    },
+
+    async getTaskErrorCause(task_id) {
+      let cause
+      try {
+        const data = await this.$axios({
+          method: 'post',
+          // baseUrl: null,
+          url: '/private_ask',
+          data: {
+            task_id
+          },
+          params: {
+            _: Date.now()
+          }
+        })
+        cause = data?.resp
+      } catch (e) {
+        console.debug(e) // eslint-disable-line
+        // cause =
+        //   '\u6700\u8fd1\u4e00\u6bb5\u65f6\u95f4\u5185, \u60a8\u5171\u6709 1 \u4e2a\u4efb\u52a1\u51fa\u73b0\u9519\u8bef, \u7cfb\u7edf\u5206\u6790\u6210\u529f\u7684\u6570\u91cf\u6709: 1 \u4e2a, \u53ef\u80fd\u539f\u56e0\u5206\u522b\u5982\u4e0b:\\\\n\\\\n1. \u540d\u5b57\u4e3a \u65b0\u4efb\u52a1@19:02:39 \u7684\u4efb\u52a1, \u5728 2023-03-15 10:26:38 \u53d1\u751f\u62a5\u9519, \u7ecf\u5206\u6790, \u63d0\u4f9b\u7ed9\u60a8\u7684\u4fe1\u606f\u4e3a:  \u8fd9\u53ef\u80fd\u662f\u7531\u4e8e\u6570\u636e\u5e93\u4e2d\u51fa\u73b0\u6b7b\u9501\u5bfc\u81f4\u7684\uff0c\u53ef\u80fd\u662f\u7531\u4e8e\u591a\u4e2a\u7ebf\u7a0b\u540c\u65f6\u8bbf\u95ee\u6570\u636e\u5e93\u800c\u5bfc\u81f4\u7684\uff0c\u53ef\u4ee5\u5c1d\u8bd5\u4f18\u5316\u6570\u636e\u5e93\u8bbf\u95ee\uff0c\u51cf\u5c11\u591a\u7ebf\u7a0b\u540c\u65f6\u8bbf\u95ee\u6570\u636e\u5e93\u7684\u60c5\u51b5\uff0c\u4ee5\u907f\u514d\u6b7b\u9501\u7684\u53d1\u751f\u3002\\\\n\\\\n'
+      }
+
+      cause &&
+        cause !==
+          '\u6ca1\u6709\u53d1\u73b0\u60a8\u6700\u8fd1\u6709\u4efb\u52a1\u62a5\u9519, \u5982\u679c\u6709\u5176\u4ed6\u95ee\u9898, \u6b22\u8fce\u54a8\u8be2\u6211\u4eec\u7684\u4eba\u5de5\u5ba2\u670d' &&
+        this.$set(this.taskErrorCause, task_id, cause.replace(/\\n/g, '\n').replace(/(\n)+$/g, ''))
     }
   }
 }

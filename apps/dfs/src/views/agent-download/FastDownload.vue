@@ -115,7 +115,7 @@
             <span>{{ $t('agent_deploy_start_install_linux_second') }}</span>
             <img class="mt-2 block" :src="getImg('downloadLinux')" alt="" />
           </li>
-          <li>
+          <li class="mt-2">
             <span>{{ $t('agent_deploy_start_install_linux_third') }}</span>
             <ElLink type="primary" @click="linuxToAgent">{{ $t('agent_deploy_link_agent_operation') }}</ElLink>
             <span>{{ $t('agent_deploy_link_agent_operation_desc') }}</span>
@@ -280,7 +280,8 @@ export default {
       version: '',
       trialUrl: '',
       url: '',
-      agentId: ''
+      agentId: '',
+      timer: null
     }
   },
   created() {
@@ -295,8 +296,44 @@ export default {
         { name: 'Windows (64 bit)', value: 'windows' }
       ]
     }
+    this.getInstance()
+  },
+  destroyed() {
+    this.timer = null
+    clearTimeout(this.timer)
   },
   methods: {
+    //获取当前实例状态
+    getInstance() {
+      this.timer = null
+      clearTimeout(this.timer)
+      this.$axios.get('api/tcm/agent/' + this.$route.query?.id).then(data => {
+        if (data?.status !== 'Creating') {
+          this.timer = null
+          clearTimeout(this.timer)
+          this.open(data?.status)
+        } else {
+          let self = this
+          this.timer = setTimeout(function () {
+            self.getInstance()
+          }, 5000)
+        }
+      })
+    },
+    open(status) {
+      this.$confirm(
+        status !== 'Running' ? this.$t('dfs_agent_down_tishi') : this.$t('dfs_agent_down_tishi_running'),
+        this.$t('task_mapping_dialog_hint'),
+        {
+          confirmButtonText: this.$t('dfs_agent_down_goback'),
+          type: 'warning',
+          showClose: false,
+          showCancelButton: false
+        }
+      ).then(() => {
+        this.$router.push('/instance')
+      })
+    },
     getUrl() {
       this.$axios.get('api/tcm/productRelease/deploy/' + this.$route.query?.id).then(async data => {
         this.downloadUrl = data.downloadUrl || ''
@@ -330,6 +367,7 @@ export default {
       this.showTooltipVersion = true
     },
     handleNextStep() {
+      clearTimeout(this.timer)
       this.$router.push({ name: 'Instance' })
     },
     getImg(name) {
@@ -425,7 +463,7 @@ export default {
     width: 100%;
     height: calc(100% - 80px);
     margin: 0 auto;
-    padding: 0 20% 100px;
+    padding: 0 16% 100px;
     box-sizing: border-box;
     overflow: auto;
 
@@ -438,7 +476,7 @@ export default {
     }
     .title-text {
       line-height: 22px;
-      font-size: 12px;
+      font-size: $fontBaseTitle;
       color: #666;
     }
     .text-style {
@@ -490,7 +528,7 @@ export default {
         overflow: hidden;
         margin-right: 20px;
         padding: 10px 50px;
-        font-size: 12px;
+        font-size: $fontBaseTitle;
         cursor: pointer;
         color: map-get($iconFillColor, normal);
         background: map-get($bgColor, main);

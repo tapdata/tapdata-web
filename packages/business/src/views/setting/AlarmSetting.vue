@@ -14,20 +14,28 @@
         <div class="flex">
           <el-switch style="margin-right: 20px" v-model="scope.row.open"></el-switch>
           <el-checkbox-group v-model="scope.row.notify">
-            <el-checkbox label="SYSTEM">{{ $t('packages_business_notify_system_notice') }}</el-checkbox>
-            <el-checkbox label="EMAIL">{{ $t('packages_business_notify_email_notification') }}</el-checkbox>
-            <el-tooltip
-              placement="top"
-              :content="$t('packages_business_notify_no_webchat_notification')"
-              v-if="!isOpenid && !isDaas"
-              ><el-checkbox label="WECHAT" v-if="!isDaas" :disabled="!isOpenid">{{
-                $t('packages_business_notify_webchat_notification')
-              }}</el-checkbox></el-tooltip
-            >
-            <el-checkbox label="WECHAT" v-if="!isDaas && isOpenid">{{
-              $t('packages_business_notify_webchat_notification')
+            <el-checkbox label="SYSTEM" v-if="channels.includes('system')">{{
+              $t('packages_business_notify_system_notice')
             }}</el-checkbox>
-            <el-checkbox label="SMS" v-if="!isDaas">{{ $t('packages_business_notify_sms_notification') }}</el-checkbox>
+            <el-checkbox label="EMAIL" v-if="channels.includes('email')">{{
+              $t('packages_business_notify_email_notification')
+            }}</el-checkbox>
+            <div v-if="!isDaas">
+              <el-tooltip
+                placement="top"
+                :content="$t('packages_business_notify_no_webchat_notification')"
+                v-if="!isOpenid"
+                ><el-checkbox label="WECHAT" v-if="channels.includes('webchat')" :disabled="!isOpenid">{{
+                  $t('packages_business_notify_webchat_notification')
+                }}</el-checkbox></el-tooltip
+              >
+              <el-checkbox label="WECHAT" v-if="channels.includes('webchat') && isOpenid">{{
+                $t('packages_business_notify_webchat_notification')
+              }}</el-checkbox>
+              <el-checkbox label="SMS" v-if="channels.includes('sms')">{{
+                $t('packages_business_notify_sms_notification')
+              }}</el-checkbox>
+            </div>
           </el-checkbox-group>
         </div>
       </template>
@@ -49,9 +57,13 @@
       </header>
       <ElForm ref="form" class="e-form" label-position="left" label-width="390px" :model="form">
         <ElFormItem :label="$t('notify_agent_status_offline')" style="border-bottom: 1px solid #ebeef5">
-          <el-checkbox v-model="form.connectionInterrupted.sms" size="mini" @change="handleSettingValue">{{
-            $t('notify_sms_notification')
-          }}</el-checkbox>
+          <el-checkbox
+            v-if="channels.includes('sms')"
+            v-model="form.connectionInterrupted.sms"
+            size="mini"
+            @change="handleSettingValue"
+            >{{ $t('notify_sms_notification') }}</el-checkbox
+          >
           <el-checkbox v-model="form.connectionInterrupted.email" size="mini" @change="handleSettingValue">{{
             $t('notify_email_notification')
           }}</el-checkbox>
@@ -59,17 +71,13 @@
           <el-tooltip
             placement="top"
             :content="$t('packages_business_notify_no_webchat_notification')"
-            v-if="!isOpenid && !isDaas"
-            ><el-checkbox
-              label="WECHAT"
-              v-if="!isDaas"
-              v-model="form.connectionInterrupted.weChat"
-              :disabled="!isOpenid"
-              >{{ $t('packages_business_notify_webchat_notification') }}</el-checkbox
-            ></el-tooltip
+            v-if="!isOpenid && channels.includes('wechat')"
+            ><el-checkbox label="WECHAT" v-model="form.connectionInterrupted.weChat" :disabled="!isOpenid">{{
+              $t('packages_business_notify_webchat_notification')
+            }}</el-checkbox></el-tooltip
           >
           <el-checkbox
-            v-if="isOpenid && !isDaas"
+            v-if="isOpenid && channels.includes('wechat')"
             v-model="form.connectionInterrupted.weChat"
             size="mini"
             :disabled="!isOpenid"
@@ -79,24 +87,31 @@
           >
         </ElFormItem>
         <ElFormItem :label="$t('notify_agent_status_running')" style="border-bottom: 1px solid #ebeef5">
-          <el-checkbox v-model="form.connected.sms" size="mini" @change="handleSettingValue">{{
-            $t('notify_sms_notification')
-          }}</el-checkbox>
-          <el-checkbox v-model="form.connected.email" @change="handleSettingValue">{{
+          <el-checkbox
+            v-if="channels.includes('sms')"
+            v-model="form.connected.sms"
+            size="mini"
+            @change="handleSettingValue"
+            >{{ $t('notify_sms_notification') }}</el-checkbox
+          >
+          <el-checkbox v-if="channels.includes('email')" v-model="form.connected.email" @change="handleSettingValue">{{
             $t('notify_email_notification')
           }}</el-checkbox>
           <br />
           <el-tooltip
             placement="top"
             :content="$t('packages_business_notify_no_webchat_notification')"
-            v-if="!isOpenid && !isDaas"
+            v-if="!isOpenid && channels.includes('wechat')"
             ><el-checkbox label="WECHAT" v-if="!isDaas" v-model="form.connected.weChat" :disabled="!isOpenid">{{
               $t('packages_business_notify_webchat_notification')
             }}</el-checkbox></el-tooltip
           >
-          <el-checkbox v-if="isOpenid && !isDaas" v-model="form.connected.weChat" @change="handleSettingValue">{{
-            $t('notify_webchat_notification')
-          }}</el-checkbox>
+          <el-checkbox
+            v-if="isOpenid && channels.includes('wechat')"
+            v-model="form.connected.weChat"
+            @change="handleSettingValue"
+            >{{ $t('notify_webchat_notification') }}</el-checkbox
+          >
         </ElFormItem>
       </ElForm>
     </section>
@@ -151,7 +166,7 @@
 import i18n from '@/i18n'
 
 import { VTable } from '@tap/component'
-import { alarmRuleApi, settingsApi } from '@tap/api'
+import { alarmRuleApi, settingsApi, alarmApi } from '@tap/api'
 import { cloneDeep } from 'lodash'
 export default {
   name: 'AlarmNotification',
@@ -222,7 +237,8 @@ export default {
         }
       },
       userId: '',
-      currentData: []
+      currentData: [],
+      channels: ['wechat', 'system', 'sms', 'email']
     }
   },
   mounted() {
@@ -239,6 +255,7 @@ export default {
         }
       })
       this.isOpenid = window.__USER_INFO__?.openid
+      this.getChannels()
     }
   },
   methods: {
@@ -303,6 +320,14 @@ export default {
         notification: this.form
       }
       this.$axios.patch(`tm/api/users/${this.userId}`, data)
+    },
+
+    //获取支持通知方式
+    getChannels() {
+      alarmApi.channels().then(data => {
+        this.channels = []
+        this.channels = data.map(item => item.type)
+      })
     }
   }
 }
