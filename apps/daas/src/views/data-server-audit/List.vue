@@ -44,7 +44,7 @@
       <el-table-column prop="codeMsg" :label="$t('apiaudit_reason_fail')" :show-overflow-tooltip="true">
         <template #default="{ row }"> {{ row.code == 200 ? '-' : row.codeMsg }} </template>
       </el-table-column>
-      <el-table-column :label="$t('public_operation')" width="70" fixed="right">
+      <el-table-column :label="$t('public_operation')" width="100" fixed="right">
         <template slot-scope="scope">
           <el-button v-readonlybtn="'API_clients_amangement'" size="mini" type="text" @click="toDetails(scope.row)">
             {{ $t('public_button_details') }}
