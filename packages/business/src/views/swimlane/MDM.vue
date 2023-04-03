@@ -96,9 +96,22 @@
     </div>
 
     <ElDialog :visible.sync="taskDialogConfig.visible" width="600" :close-on-click-modal="false">
-      <span slot="title" style="font-size: 14px">{{ $t('packages_business_create_sync_task') }}</span>
+      <span slot="title" class="font-color-dark fs-6 fw-sub">{{ $t('packages_business_create_sync_task') }}</span>
       <ElForm ref="form" :model="taskDialogConfig" label-width="180px" @submit.prevent>
-        <!--<div class="pipeline-desc p-4 mb-4 text-pre">{{ taskDesc }}</div>-->
+        <div class="pipeline-desc p-4 mb-4 text-preline rounded-4">
+          <!--TODO 国际化-->
+          这个将在数据平台的 Curated 层创建一个加工模型。创建加工模型的常见场景有以下几种：
+          <ul>
+            <li>需要对 Cache 层的数据做一些转型，增强，加计算字段等处理</li>
+            <li>需要对数个 Cache 层的表的结构进行合并，构建一个宽表</li>
+            <li>需要对数个 Cache 层的表的数据进行合并，构建一个合并表</li>
+          </ul>
+          <div>
+            注意: 你可以直接在Cache 层直接发布API
+            或者做数据复制任务到目标端。如果是因为这两个原因，你无需创建加工层模型。
+          </div>
+          <div>请输入打算新构建在Curated 层里面的表名。如果该表名已经存在，默认将覆盖已有的数据</div>
+        </div>
         <ElFormItem label="Table Name">
           <ElInput size="small" v-model="taskDialogConfig.newTableName"></ElInput>
         </ElFormItem>
@@ -162,6 +175,7 @@ import { CancelToken, discoveryApi, ldpApi, metadataDefinitionsApi, userGroupsAp
 import { uuid } from '@tap/shared'
 import { makeDragNodeImage, TASK_SETTINGS } from '../../shared'
 import commonMix from './mixins/common'
+import { DatabaseIcon } from '../../components'
 
 export default {
   name: 'MDM',
@@ -179,7 +193,7 @@ export default {
     }
   },
 
-  components: { VirtualTree, IconButton },
+  components: { DatabaseIcon, VirtualTree, IconButton },
 
   mixins: [commonMix],
 
@@ -745,4 +759,15 @@ export default {
 }
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.pipeline-desc {
+  background-color: #f8f8fa;
+  border-left: 4px solid map-get($color, primary);
+  line-height: 22px;
+  li {
+    margin-left: 20px;
+    padding-left: 4px;
+    list-style-type: circle;
+  }
+}
+</style>

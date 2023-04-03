@@ -662,5 +662,6 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
 .pipeline-desc {
   background-color: #f8f8fa;
   border-left: 4px solid map-get($color, primary);
+  line-height: 22px;
 }
 </style>
