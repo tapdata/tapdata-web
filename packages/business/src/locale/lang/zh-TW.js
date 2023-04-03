@@ -819,6 +819,18 @@ export default {
   packages_business_view_collapse: '收起',
   packages_business_switch_directory_view: '切換至目錄視圖',
   packages_business_switch_data_console_view: '切換至面板視圖',
+  packages_business_task_created_success: '任務創建成功，點擊查看',
   packages_business_task_created_fail_no_primary_key:
-    '任務已經創建，但由於您的表沒有主鍵，需要進入任務編輯手動設置更新條件字段，點擊查看任務'
+    '任務已經創建，但由於您的表沒有主鍵，需要進入任務編輯手動設置更新條件字段，點擊查看任務',
+  packages_business_fdm_create_task_dialog_desc_prefix: 'Tapdata 將自動創建一個數據複製管道任務，將您選擇的',
+  packages_business_fdm_create_task_dialog_desc_suffix:
+    '的結構和數據自動複製到數據平台的 Cache 層並保持源庫和Cache 層數據的准實時同步及自動校驗。在大部分時候源庫的結構改動(DDL)也會被複製到Cache 層。您可以在通過點擊Cache 層裡面的庫名右側的ICON來監控該管道任務的運行狀態。您也可以選擇現在修改在Cache 層的物理表名。',
+  packages_business_mdm_create_task_dialog_desc_prefix: 'Tapdata 將自動創建一個數據複製管道任務，將您選擇的',
+  packages_business_fdm_create_task_dialog_desc_li1: '需要對 Cache 層的數據做一些轉型，增強，加計算字段等處理',
+  packages_business_fdm_create_task_dialog_desc_li2: '需要對數個 Cache 層的表的結構進行合併，構建一個寬表',
+  packages_business_fdm_create_task_dialog_desc_li3: '需要對數個 Cache 層的表的數據進行合併，構建一個合併表',
+  packages_business_mdm_create_task_dialog_desc_suffix:
+    '注意: 你可以直接在Cache 層直接發佈API或者做數據複製任務到目標端。如果是因為這兩個原因，你無需創建加工層模型。',
+  packages_business_mdm_create_task_dialog_desc_table_name:
+    '請輸入打算新構建在Curated 層裡面的表名。如果該表名已經存在，默認將覆蓋已有的數據'
 }
