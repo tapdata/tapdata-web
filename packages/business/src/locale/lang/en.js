@@ -884,7 +884,7 @@ export default {
   packages_business_shared_ws_client_webso6: 'Websocket exceeds the maximum number of reconnections',
   packages_business_shared_ws_client_cizhonglian: 'Reconnection',
   packages_business_shared_ws_client_webso7: 'Websocket attempt first',
-  packages_business_shared_ws_client_webso8: 'The websocket connection failed, trying to reconnect'
+  packages_business_shared_ws_client_webso8: 'The websocket connection failed, trying to reconnect',
   packages_business_switch_directory_view: 'Switch to the catalog view',
   packages_business_switch_data_console_view: 'Switch to the data console view',
   packages_business_task_created_success: 'Task created successfully, click to view',
