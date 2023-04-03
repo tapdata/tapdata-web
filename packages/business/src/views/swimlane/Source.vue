@@ -39,13 +39,15 @@
           wrapper-class-name="p-2"
           :default-expanded-keys="searchExpandedKeys"
           :data="filterTreeData"
+          :render-content="renderContent"
           :expand-on-click-node="false"
           :allow-drag="node => node.data.isObject"
           :allow-drop="() => false"
           @node-drag-start="handleDragStart"
           @node-drag-end="handleDragEnd"
+          @node-expand="handleNodeExpand"
         >
-          <span
+          <!--          <span
             class="custom-tree-node flex align-items-center"
             :class="{ grabbable: data.isObject, 'opacity-50': data.disabled }"
             slot-scope="{ node, data }"
@@ -64,9 +66,8 @@
               >{{ data.name }}
               <ElTag v-if="data.disabled" type="info" size="mini">{{ $t('public_status_invalid') }}</ElTag>
             </span>
-            <ElTag v-if="data.disabled" size="mini">{{ $t('public_status_invalid') }}</ElTag>
             <IconButton class="btn-menu" sm @click="$emit('preview', data)"> view-details </IconButton>
-          </span>
+          </span>-->
         </VirtualTree>
         <VirtualTree
           key="tree"
@@ -206,6 +207,7 @@ export default {
           }
 
           connectionList.push({
+            reExpand: !children.length,
             ...connection,
             children
           })
@@ -218,6 +220,78 @@ export default {
   },
 
   methods: {
+    renderContent(h, { node, data }) {
+      let className = ['custom-tree-node']
+
+      if (data.isObject) {
+        className.push('grabbable')
+      }
+
+      if (data.disabled) {
+        className.push('opacity-50')
+      }
+
+      if (data.reExpand) node.isLeaf = false
+
+      /*<span
+        class="custom-tree-node flex align-items-center"
+            :class="{ grabbable: data.isObject, 'opacity-50': data.disabled }"
+      slot-scope="{ node, data }"
+    @dblclick="$emit('preview', data)"
+        >
+        <VIcon
+      v-if="node.data.loadFieldsStatus === 'loading'"
+        class="v-icon animation-rotate"
+      size="14"
+      color="rgb(61, 156, 64)"
+        >loading-circle</VIcon
+        >
+        <NodeIcon v-if="!node.data.isLeaf" :node="node.data" :size="18" class="tree-item-icon mr-2" />
+        <VIcon v-else class="tree-item-icon mr-2" size="18">table</VIcon>
+      <span class="table-label" :title="data.name"
+        >{{ data.name }}
+      <ElTag v-if="data.disabled" type="info" size="mini">{{ $t('public_status_invalid') }}</ElTag>
+    </span>
+      <ElTag v-if="data.disabled" size="mini">{{ $t('public_status_invalid') }}</ElTag>
+      <IconButton class="btn-menu" sm @click="$emit('preview', data)"> view-details </IconButton>
+    </span>*/
+
+      return (
+        <div
+          class={className}
+          onDblclick={() => {
+            this.$emit('preview', data)
+          }}
+        >
+          {!data.isLeaf ? (
+            <NodeIcon node={data} size={18} class="tree-item-icon mr-2" />
+          ) : (
+            <VIcon class="tree-item-icon mr-2" size="18">
+              table
+            </VIcon>
+          )}
+          <span class="table-label" title={data.name}>
+            {data.name}
+          </span>
+          {data.disabled && (
+            <ElTag type="info" size="mini">
+              {this.$t('public_status_invalid')}
+            </ElTag>
+          )}
+          <IconButton
+            class="btn-menu"
+            sm
+            onClick={() => {
+              this.$emit('preview', data)
+            }}
+          >
+            {' '}
+            view-details{' '}
+          </IconButton>
+        </div>
+      )
+    },
+
     handleAdd() {
       this.$emit('create-connection', 'source')
     },
@@ -334,6 +408,16 @@ export default {
       } else {
         this.$refs.tree.append(data, 0)
       }
+    },
+
+    async handleNodeExpand(data, node) {
+      console.log('handleNodeExpand', data, node) // eslint-disable-line
+      if (!data.reExpand || data.children.length) return
+
+      node.loadTime = Date.now()
+      node.loading = true
+      data.children = await this.getTableList(data.id)
+      node.loading = false
     }
   }
 }
