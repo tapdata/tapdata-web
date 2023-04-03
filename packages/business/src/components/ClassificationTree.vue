@@ -305,9 +305,9 @@ export default {
           let treeData = this.formatData(items)
 
           treeData.sort((a, b) => {
-            let aType = a.item_type[0]
-            let bType = b.item_type[0]
-            return ORDER[aType] - ORDER[bType]
+            let aType = ORDER[a.item_type[0]] || 0
+            let bType = ORDER[b.item_type[0]] || 0
+            return aType - bType
           })
 
           this.treeData = treeData

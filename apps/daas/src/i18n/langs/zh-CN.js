@@ -16,7 +16,7 @@ export default {
   dialog_tip_copied: '已复制',
   //页面标题
   page_title_overview: '概览',
-  page_title_dashboard: '控制台',
+  page_title_dashboard: 'Dashboard',
   page_title_connections: '连接管理',
   page_title_connections_create: '创建连接',
   page_title_connections_edit: '编辑连接',
@@ -66,7 +66,7 @@ export default {
   page_title_verification_create: '新建校验',
   page_title_verification_edit: '编辑校验',
   page_title_verification_history: '校验历史',
-  page_title_data_console: 'Data Console',
+  page_title_data_console: '数据面板',
   // -- 多表选择器
   component_table_selector_candidate_label: '待复制表',
   component_table_selector_checked_label: '已选择表',
