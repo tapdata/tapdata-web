@@ -866,5 +866,9 @@ export default {
   packages_business_mdm_create_task_dialog_desc_table_name:
     '請輸入打算新構建在Curated 層裡面的表名。如果該表名已經存在，默認將覆蓋已有的數據',
   packages_business_save_and_run_now: '保存並運行',
-  packages_business_save_only: '僅保存'
+  packages_business_save_only: '僅保存',
+  packages_business_target_create_task_dialog_desc_prefix_clone: 'Tapdata將創建一個數據複製任務，將',
+  packages_business_target_create_task_dialog_desc_prefix_sync: 'Tapdata將創建一個數據開發任務，將',
+  packages_business_target_create_task_dialog_desc_to: '同步到',
+  packages_business_target_create_task_dialog_desc_suffix: '請點擊下面的按鈕繼續,您也可以更改任務名稱。'
 }
