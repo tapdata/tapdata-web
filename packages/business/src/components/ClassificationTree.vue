@@ -273,7 +273,7 @@ export default {
     getData(cb) {
       let where = {}
       where.item_type = {
-        $nin: ['database', 'dataflow', 'api']
+        $nin: ['database', 'dataflow', 'api', 'default']
       }
       let filter = {
         where,
