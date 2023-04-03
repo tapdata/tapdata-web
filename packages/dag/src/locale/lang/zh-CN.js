@@ -163,7 +163,7 @@ export default {
   packages_dag_migration_settingpanel_dangrenwufuhe:
     '开启数据校验开关后，任务会自动对同步结果的一致性进行全量校验和增量校验，并会在运行监控页面将校验不一致的数据行数展示出来。需要注意，当任务符合以下情况时，即使开启校验开关任务也不会进行校验\n 1. 添加了中间处理节点\n 2. 源连接不支持校验\n 3. 目标连接不支持校验',
   packages_dag_monitor_bottompanel_yunxingjilu: '运行记录',
-  packages_dag_monitor_bottompanel_rizhi: '日志',
+  packages_dag_monitor_bottompanel_rizhi: '任务日志',
   packages_dag_components_eventchart_qita: '其他',
   packages_dag_components_eventchart_suoxuanzhouqilei: '所选周期累计',
   packages_dag_components_eventchart_renwuyunxinglei: '任务运行累计',
