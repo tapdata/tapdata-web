@@ -843,5 +843,7 @@ export default {
   packages_business_data_console_target_no_task: 'No tasks configured for this target',
   packages_business_data_console_target_connection_desc: 'Sync data to {val} for analytics',
   packages_business_view_more: 'View More',
-  packages_business_view_collapse: 'Collapse'
+  packages_business_view_collapse: 'Collapse',
+  packages_business_switch_directory_view: 'Switch to the catalog view',
+  packages_business_switch_data_console_view: 'Switch to the data console view'
 }

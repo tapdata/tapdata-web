@@ -15,7 +15,7 @@ export default {
   dialog_button_cancel: '取 消',
   //頁面標題
   page_title_overview: '概覽',
-  page_title_dashboard: '控制台',
+  page_title_dashboard: 'Dashboard',
   page_title_connections: '連接管理',
   page_title_connections_create: '創建連接',
   page_title_connections_edit: '編輯連接',
