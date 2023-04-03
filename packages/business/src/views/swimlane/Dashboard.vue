@@ -1,7 +1,7 @@
 <template>
   <div class="swim-lane flex flex-column h-100">
     <div class="page-header-title flex align-center">
-      <span>Data Console</span>
+      <span>{{ $t('page_title_data_console') }}</span>
       <div class="flex-grow-1"></div>
       <ElTooltip v-if="currentView === 'swimlane'" content="切换至目录视图" key="swimlane">
         <IconButton @click="toggleView('catalog')" md>list-view</IconButton>
