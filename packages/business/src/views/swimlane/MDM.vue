@@ -3,9 +3,7 @@
     <div class="list__title flex align-center px-4">
       <span class="fs-6">{{ $t('packages_business_data_console_mdm') }}</span>
       <div class="flex-grow-1"></div>
-      <ElTooltip placement="top">
-        <IconButton @click="showDialog(directory, 'add')">folder-plus</IconButton>
-      </ElTooltip>
+      <IconButton @click="showDialog(directory, 'add')">folder-plus</IconButton>
       <IconButton :class="{ active: enableSearch }" @click="toggleEnableSearch">search-outline</IconButton>
       <!--<ElDropdown trigger="click" @command="handleCommand">
         <IconButton class="ml-3">more</IconButton>
