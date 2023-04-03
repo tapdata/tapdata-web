@@ -13,6 +13,7 @@
                 {{ item.desc }}
               </div>
               <div
+                class="mt-1"
                 :class="[
                   'dashboard-num',
                   'text-center',
