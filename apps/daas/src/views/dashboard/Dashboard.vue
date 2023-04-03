@@ -749,6 +749,9 @@ export default {
                 content: '';
               }
             }
+            span:not(.num) {
+              width: 72px;
+            }
           }
         }
         .chart {
