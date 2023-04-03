@@ -822,5 +822,19 @@ export default {
   packages_business_view_more: '查看更多',
   packages_business_view_collapse: '收起',
   packages_business_switch_directory_view: '切换至目录视图',
-  packages_business_switch_data_console_view: '切换至面板视图'
+  packages_business_switch_data_console_view: '切换至面板视图',
+  packages_business_task_created_success: '任务创建成功，点击查看',
+  packages_business_task_created_fail_no_primary_key:
+    '任务已经创建，但由于您的表没有主键，需要进入任务编辑手动设置更新条件字段，点击查看任务',
+  packages_business_fdm_create_task_dialog_desc_prefix: 'Tapdata 将自动创建一个数据复制管道任务，将您选择的',
+  packages_business_fdm_create_task_dialog_desc_suffix:
+    '的结构和数据自动复制到数据平台的 Cache 层并保持源库和Cache 层数据的准实时同步及自动校验。在大部分时候源库的结构改动(DDL)也会被复制到Cache 层。您可以在通过点击Cache 层里面的库名右侧的ICON来监控该管道任务的运行状态。您也可以选择现在修改在Cache 层的物理表名。',
+  packages_business_mdm_create_task_dialog_desc_prefix: 'Tapdata 将自动创建一个数据复制管道任务，将您选择的',
+  packages_business_fdm_create_task_dialog_desc_li1: '需要对 Cache 层的数据做一些转型，增强，加计算字段等处理',
+  packages_business_fdm_create_task_dialog_desc_li2: '需要对数个 Cache 层的表的结构进行合并，构建一个宽表',
+  packages_business_fdm_create_task_dialog_desc_li3: '需要对数个 Cache 层的表的数据进行合并，构建一个合并表',
+  packages_business_mdm_create_task_dialog_desc_suffix:
+    '注意: 你可以直接在Cache 层直接发布API或者做数据复制任务到目标端。如果是因为这两个原因，你无需创建加工层模型。',
+  packages_business_mdm_create_task_dialog_desc_table_name:
+    '请输入打算新构建在Curated 层里面的表名。如果该表名已经存在，默认将覆盖已有的数据'
 }

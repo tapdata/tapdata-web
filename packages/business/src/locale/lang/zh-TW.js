@@ -818,5 +818,7 @@ export default {
   packages_business_view_more: '查看更多',
   packages_business_view_collapse: '收起',
   packages_business_switch_directory_view: '切換至目錄視圖',
-  packages_business_switch_data_console_view: '切換至面板視圖'
+  packages_business_switch_data_console_view: '切換至面板視圖',
+  packages_business_task_created_fail_no_primary_key:
+    '任務已經創建，但由於您的表沒有主鍵，需要進入任務編輯手動設置更新條件字段，點擊查看任務'
 }
