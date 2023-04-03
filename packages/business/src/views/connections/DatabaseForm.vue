@@ -319,6 +319,7 @@ export default {
       this.model.config = formValues
       this.model.pdkType = 'pdk'
       this.model.pdkHash = this.$route.query?.pdkHash
+      this.model.database_type = this.pdkOptions.pdkId
       this.dialogTestVisible = true
       if (this.$route.params.id) {
         //编辑需要特殊标识 updateSchema = false editTest = true
