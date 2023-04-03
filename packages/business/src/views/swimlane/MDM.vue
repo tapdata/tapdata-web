@@ -3,7 +3,7 @@
     <div class="list__title flex align-center px-4">
       <span class="fs-6">{{ $t('packages_business_data_console_mdm') }}</span>
       <div class="flex-grow-1"></div>
-      <ElTooltip placement="top" content="新增分类">
+      <ElTooltip placement="top">
         <IconButton @click="showDialog(directory, 'add')">folder-plus</IconButton>
       </ElTooltip>
       <IconButton :class="{ active: enableSearch }" @click="toggleEnableSearch">search-outline</IconButton>
@@ -100,17 +100,16 @@
       <ElForm ref="form" :model="taskDialogConfig" label-width="180px" @submit.prevent>
         <div class="pipeline-desc p-4 mb-4 text-preline rounded-4">
           <!--TODO 国际化-->
-          这个将在数据平台的 Curated 层创建一个加工模型。创建加工模型的常见场景有以下几种：
+          {{ $t('packages_business_mdm_create_task_dialog_desc_prefix') }}
           <ul>
-            <li>需要对 Cache 层的数据做一些转型，增强，加计算字段等处理</li>
-            <li>需要对数个 Cache 层的表的结构进行合并，构建一个宽表</li>
-            <li>需要对数个 Cache 层的表的数据进行合并，构建一个合并表</li>
+            <li>{{ $t('packages_business_fdm_create_task_dialog_desc_li1') }}</li>
+            <li>{{ $t('packages_business_fdm_create_task_dialog_desc_li2') }}</li>
+            <li>{{ $t('packages_business_fdm_create_task_dialog_desc_li3') }}</li>
           </ul>
           <div>
-            注意: 你可以直接在Cache 层直接发布API
-            或者做数据复制任务到目标端。如果是因为这两个原因，你无需创建加工层模型。
+            {{ $t('packages_business_mdm_create_task_dialog_desc_suffix') }}
           </div>
-          <div>请输入打算新构建在Curated 层里面的表名。如果该表名已经存在，默认将覆盖已有的数据</div>
+          <div>{{ $t('packages_business_mdm_create_task_dialog_desc_table_name') }}</div>
         </div>
         <ElFormItem label="Table Name">
           <ElInput size="small" v-model="taskDialogConfig.newTableName"></ElInput>
@@ -443,7 +442,7 @@ export default {
                 }
               }
             },
-            '任务创建成功，点击查看'
+            this.$t('packages_business_task_created_success')
           )
         })
         setTimeout(() => {
@@ -470,7 +469,7 @@ export default {
                   }
                 }
               },
-              '任务已经创建，但由于您的表没有主键，需要进入任务编辑手动设置更新条件字段，点击查看任务'
+              this.$t('packages_business_task_created_fail_no_primary_key')
             )
           })
           setTimeout(() => {
@@ -621,7 +620,7 @@ export default {
             parent_id: dropNode.data.id || ''
           })
           .then(() => {
-            this.$message.success('操作成功')
+            this.$message.success(this.$t('public_message_operation_success'))
             draggingNode.data.parent_id = dropNode.data.id
             // this.getData()
           })
