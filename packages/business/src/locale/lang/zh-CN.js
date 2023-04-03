@@ -868,5 +868,11 @@ export default {
   packages_business_mdm_create_task_dialog_desc_suffix:
     '注意: 你可以直接在Cache 层直接发布API或者做数据复制任务到目标端。如果是因为这两个原因，你无需创建加工层模型。',
   packages_business_mdm_create_task_dialog_desc_table_name:
-    '请输入打算新构建在Curated 层里面的表名。如果该表名已经存在，默认将覆盖已有的数据'
+    '请输入打算新构建在Curated 层里面的表名。如果该表名已经存在，默认将覆盖已有的数据',
+  packages_business_save_and_run_now: '保存并运行',
+  packages_business_save_only: '仅保存',
+  packages_business_target_create_task_dialog_desc_prefix_clone: 'Tapdata将创建一个数据复制任务，将',
+  packages_business_target_create_task_dialog_desc_prefix_sync: 'Tapdata将创建一个数据开发任务，将',
+  packages_business_target_create_task_dialog_desc_to: '同步到',
+  packages_business_target_create_task_dialog_desc_suffix: '请点击下面的按钮继续,您也可以更改任务名称。'
 }

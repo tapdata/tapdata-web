@@ -99,7 +99,6 @@
       <span slot="title" class="font-color-dark fs-6 fw-sub">{{ $t('packages_business_create_sync_task') }}</span>
       <ElForm ref="form" :model="taskDialogConfig" label-width="180px" @submit.prevent>
         <div class="pipeline-desc p-4 mb-4 text-preline rounded-4">
-          <!--TODO 国际化-->
           {{ $t('packages_business_mdm_create_task_dialog_desc_prefix') }}
           <ul>
             <li>{{ $t('packages_business_fdm_create_task_dialog_desc_li1') }}</li>
@@ -757,16 +756,3 @@ export default {
   }
 }
 </script>
-
-<style scoped lang="scss">
-.pipeline-desc {
-  background-color: #f8f8fa;
-  border-left: 4px solid map-get($color, primary);
-  line-height: 22px;
-  li {
-    margin-left: 20px;
-    padding-left: 4px;
-    list-style-type: circle;
-  }
-}
-</style>

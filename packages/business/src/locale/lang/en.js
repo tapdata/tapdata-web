@@ -891,7 +891,7 @@ export default {
   packages_business_task_created_fail_no_primary_key:
     'The task has been created, but since your table does not have a primary key, you need to enter the task editor to manually set the update condition field. Click to view the task.',
   packages_business_fdm_create_task_dialog_desc_prefix:
-    'Tapdata will automatically create a data replication pipeline task, which will automatically copy the structure and data of the selected',
+    'Tapdata will automatically create a cloning pipeline task, which will automatically copy the structure and data of the selected',
   packages_business_fdm_create_task_dialog_desc_suffix:
     'to the Cache layer of the data platform and keep the source database and Cache layer data in real-time synchronization and automatic verification. In most cases, the structure changes (DDL) of the source database will also be copied to the Cache layer. You can monitor the running status of the pipeline task by clicking the ICON on the right side of the database name in the Cache layer. You can also choose to modify the physical table name in the Cache layer now.',
   packages_business_mdm_create_task_dialog_desc_prefix:
@@ -905,5 +905,12 @@ export default {
   packages_business_mdm_create_task_dialog_desc_suffix:
     'Note: You can directly publish API or do data replication tasks to the target end at the Cache layer. If it is for these two reasons, you do not need to create a processing layer model.',
   packages_business_mdm_create_task_dialog_desc_table_name:
-    'Please enter the table name to be newly constructed in the Curated layer. If the table name already exists, the existing data will be overwritten by default.'
+    'Please enter the table name to be newly constructed in the Curated layer. If the table name already exists, the existing data will be overwritten by default.',
+  packages_business_save_and_run_now: 'Save and Run',
+  packages_business_save_only: 'Only Save',
+  packages_business_target_create_task_dialog_desc_prefix_clone: 'Tapdata will create a cloning pipeline task to sync',
+  packages_business_target_create_task_dialog_desc_prefix_sync: 'Tapdata will create a sync pipeline task to sync',
+  packages_business_target_create_task_dialog_desc_to: 'to',
+  packages_business_target_create_task_dialog_desc_suffix:
+    'Please click button below to continue. You can also change the task name'
 }

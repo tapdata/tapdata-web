@@ -352,6 +352,17 @@ export default {
     .is-drop .drop-mask {
       display: none !important;
     }
+
+    .pipeline-desc {
+      background-color: #f8f8fa;
+      border-left: 4px solid map-get($color, primary);
+      line-height: 22px;
+      li {
+        margin-left: 20px;
+        padding-left: 4px;
+        list-style-type: circle;
+      }
+    }
   }
 }
 </style>

@@ -864,5 +864,7 @@ export default {
   packages_business_mdm_create_task_dialog_desc_suffix:
     '注意: 你可以直接在Cache 層直接發佈API或者做數據複製任務到目標端。如果是因為這兩個原因，你無需創建加工層模型。',
   packages_business_mdm_create_task_dialog_desc_table_name:
-    '請輸入打算新構建在Curated 層裡面的表名。如果該表名已經存在，默認將覆蓋已有的數據'
+    '請輸入打算新構建在Curated 層裡面的表名。如果該表名已經存在，默認將覆蓋已有的數據',
+  packages_business_save_and_run_now: '保存並運行',
+  packages_business_save_only: '僅保存'
 }

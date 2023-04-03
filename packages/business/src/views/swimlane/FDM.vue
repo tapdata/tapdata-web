@@ -96,9 +96,8 @@
       <span slot="title" class="font-color-dark fs-6 fw-sub">{{ $t('packages_business_create_clone_task') }}</span>
       <ElForm ref="form" :model="taskDialogConfig" label-width="180px" @submit.prevent :rules="formRules">
         <div class="pipeline-desc p-4 mb-4 text-preline rounded-4">
-          <!--TODO 国际化-->
           <span>{{ $t('packages_business_fdm_create_task_dialog_desc_prefix') }}</span
-          ><span v-if="taskDialogConfig.from" class="inline-flex px-1 font-color-dark fw-sub"
+          ><span v-if="taskDialogConfig.from" class="inline-flex align-center px-1 font-color-dark fw-sub"
             ><DatabaseIcon :item="taskDialogConfig.from" :key="taskDialogConfig.from.pdkType" :size="20" class="mr-1" />
             <span>{{ taskDialogConfig.from.name }}</span> </span
           ><span v-if="taskDialogConfig.tableName" class="inline-flex font-color-dark fw-sub"
@@ -653,11 +652,3 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
   }
 }
 </script>
-
-<style scoped lang="scss">
-.pipeline-desc {
-  background-color: #f8f8fa;
-  border-left: 4px solid map-get($color, primary);
-  line-height: 22px;
-}
-</style>
