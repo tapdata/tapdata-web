@@ -567,7 +567,7 @@ export default {
   packages_business_relation_details_wajuemingcheng: '挖掘名称',
   packages_business_relation_details_wajuexinxi: '挖掘信息',
   packages_business_connections_databaseform_shujuyuanzhongmo: '数据源中模型数量大于1万时，会按本参数设置进行模型刷新',
-  packages_business_connections_databaseform_moxingjiazaipin: '模型加载频率',
+  packages_business_connections_databaseform_moxingjiazaipin: '模型加载时间',
   packages_business_task_list_lianjieming: '连接名: ',
   packages_business_task_list_dierbushanchu: '// 第二步 删除 slot_name',
   packages_business_task_list_diyibuchaxun: '//第一步 查询 slot_name',
@@ -735,7 +735,7 @@ export default {
   packages_business_logs_nodelog_xianshishijianchuo: '显示时间',
   packages_business_connections_databaseform_chakanxintiaoren: '查看心跳任务',
   packages_business_connections_databaseform_dakaixintiaobiao:
-    '打开心跳表后，系统会自动在当前库创建一个心跳表tapheartbeat,并每 10s 更新一次该表的数据。通过该心跳表可以监测所有以当前库和库里的表作为源的任务的运行状态。',
+    '开启此功能后, 平台会在源库内新建一张表, 并以每秒 1 次的频率, 向源库的这张表内做更新, 借助这张表, 平台可以实现精准的数据延迟探测, 并可以有效监控任务健康状况, 此功能需要对源库具有写权限才会生效。',
   packages_business_connections_databaseform_kaiqixintiaobiao: '开启心跳表',
   packages_business_connections_databaseform_jiaobentiaoshi: '脚本调试',
   // api服务管理

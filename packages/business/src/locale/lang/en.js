@@ -596,7 +596,7 @@ export default {
   packages_business_relation_details_wajuexinxi: 'Mining information',
   packages_business_connections_databaseform_shujuyuanzhongmo:
     'When the number of models in the data source is greater than 10,000, the model will be refreshed according to this parameter setting',
-  packages_business_connections_databaseform_moxingjiazaipin: 'Model Load Frequency',
+  packages_business_connections_databaseform_moxingjiazaipin: 'Model load time',
   packages_business_task_list_lianjieming: 'Connection name: ',
   packages_business_task_list_dierbushanchu: '// The second step delete slot_name',
   packages_business_task_list_diyibuchaxun: '//The first step is to query slot_name',
@@ -766,7 +766,7 @@ export default {
   packages_business_logs_nodelog_xianshishijianchuo: 'Display Time',
   packages_business_connections_databaseform_chakanxintiaoren: 'View heartbeat tasks',
   packages_business_connections_databaseform_dakaixintiaobiao:
-    'After opening the heartbeat table, the system will automatically create a tapheartbeat table in the current database and update the data in the table every 10 seconds. The heartbeat table can be used to monitor the running status of all tasks that use the current database and tables in the database as the source.',
+    'After enabling this function, the platform will create a new table in the source database, and update this table in the source database at a frequency of once per second. With the help of this table, the platform can realize accurate data delay detection, And it can effectively monitor the health status of tasks. This function needs to have write permission on the source library to take effect.',
   packages_business_connections_databaseform_kaiqixintiaobiao: 'Enable heartbeat table',
   packages_business_connections_databaseform_jiaobentiaoshi: 'Script Debugging',
   // api服务管理
