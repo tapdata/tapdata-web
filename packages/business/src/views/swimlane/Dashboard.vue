@@ -1,12 +1,16 @@
 <template>
   <div class="swim-lane flex flex-column h-100">
     <div class="page-header-title flex align-center">
-      <span>Data Console</span>
+      <span>{{ $t('page_title_data_console') }}</span>
       <div class="flex-grow-1"></div>
-      <ElTooltip v-if="currentView === 'swimlane'" content="切换至目录视图" key="swimlane">
+      <ElTooltip
+        v-if="currentView === 'swimlane'"
+        :content="$t('packages_business_switch_directory_view')"
+        key="swimlane"
+      >
         <IconButton @click="toggleView('catalog')" md>list-view</IconButton>
       </ElTooltip>
-      <ElTooltip v-else content="切换至 Console 视图" key="console">
+      <ElTooltip v-else :content="$t('packages_business_switch_data_console_view')" key="console">
         <IconButton @click="toggleView('swimlane')" md>swimlane</IconButton>
       </ElTooltip>
       <IconButton class="ml-3" @click="handleSettings" md>cog-o</IconButton>
@@ -347,6 +351,17 @@ export default {
 
     .is-drop .drop-mask {
       display: none !important;
+    }
+
+    .pipeline-desc {
+      background-color: #f8f8fa;
+      border-left: 4px solid map-get($color, primary);
+      line-height: 22px;
+      li {
+        margin-left: 20px;
+        padding-left: 4px;
+        list-style-type: circle;
+      }
     }
   }
 }

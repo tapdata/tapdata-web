@@ -158,9 +158,9 @@ export default {
     }
     if (!window.__config__?.showSwimLane) {
       let swimLane = {
-        name: 'swimLane',
-        title: 'Data Console(Preview)',
-        icon: 'operation-log'
+        name: 'dataConsole',
+        title: this.$t('page_title_data_console'),
+        icon: 'process-platform'
       }
       this.sortMenus.push(swimLane)
     }

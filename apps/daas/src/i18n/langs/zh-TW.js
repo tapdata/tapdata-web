@@ -15,7 +15,7 @@ export default {
   dialog_button_cancel: '取 消',
   //頁面標題
   page_title_overview: '概覽',
-  page_title_dashboard: '控制台',
+  page_title_dashboard: 'Dashboard',
   page_title_connections: '連接管理',
   page_title_connections_create: '創建連接',
   page_title_connections_edit: '編輯連接',
@@ -65,7 +65,7 @@ export default {
   page_title_verification_create: '新建校驗',
   page_title_verification_edit: '編輯校驗',
   page_title_verification_history: '校驗歷史',
-  page_title_data_console: 'Data Console',
+  page_title_data_console: '數據面板',
   // -- 多表選擇器
   component_table_selector_candidate_label: '待覆制表',
   component_table_selector_checked_label: '已選擇表',
