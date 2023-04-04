@@ -564,7 +564,7 @@ import CryptoJS from 'crypto-js'
 import dayjs from 'dayjs'
 import { VTable } from '@tap/component'
 import { getSpec, getPaymentMethod } from '../instance/utils'
-import { ORDER_STATUS_MAP, CURRENCY_SYMBOL_MAP, NUMBER_MAP } from '@tap/business'
+import { ORDER_STATUS_MAP, CURRENCY_SYMBOL_MAP, NUMBER_MAP, TIME_MAP } from '@tap/business'
 import { openUrl } from '@tap/shared'
 
 export default {
@@ -1086,12 +1086,14 @@ export default {
                     : dayjs(t.periodStart).format('YYYY-MM-DD HH:mm:ss') +
                       ' - ' +
                       dayjs(t.periodEnd).format('YYYY-MM-DD HH:mm:ss')
+                t.priceSuffix = t.type === 'recurring' ? '/' + TIME_MAP[t.periodUnit] : ''
                 t.priceLabel =
                   CURRENCY_SYMBOL_MAP[t.currency] +
                   (t.price / 100).toLocaleString('zh', {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2
-                  })
+                  }) +
+                  t.priceSuffix
                 t.bindAgent = t.agentId
                   ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
                   : i18n.t('user_Center_weiBangDing')
@@ -1102,16 +1104,6 @@ export default {
     },
     codeRemoteMethod() {
       return this.$axios.get('api/tcm/aliyun/market/license/list').then(data => {
-        console.log('codeRemoteMethod', data)
-        // {
-        //   label: '激活时间',
-        //     prop: 'activateTimeLabel',
-        //   width: 320
-        // },
-        // {
-        //   label: '过期时间',
-        //     prop: 'expiredTimeLabel'
-        // },
         const items = data.items || []
         return {
           total: 0,

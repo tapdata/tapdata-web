@@ -133,3 +133,9 @@ export const AGENT_SPEC_MAP = {
   '16C32G': '2Large',
   '32C64G': '4Large'
 }
+
+export const TIME_MAP = {
+  year: i18n.t('public_time_year'),
+  month: i18n.t('public_time_month'),
+  day: i18n.t('public_time_d')
+}

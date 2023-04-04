@@ -45,6 +45,7 @@
           <p class="mb-4 pt-2 fs-6 font-color-normal">{{ item.label }}</p>
           <p class="mb-4 color-primary">
             <span class="fs-5">{{ item.price }}</span>
+            <span v-if="item.priceSuffix" class="fs-5">/{{ item.priceSuffix }}</span>
           </p>
           <p class="font-color-sslight fs-8">{{ item.desc }}</p>
         </li>
@@ -72,7 +73,7 @@
 <script>
 import i18n from '@/i18n'
 import { uniqueArr, openUrl } from '@tap/shared'
-import { CURRENCY_SYMBOL_MAP } from '@tap/business'
+import { CURRENCY_SYMBOL_MAP, TIME_MAP } from '@tap/business'
 import { getSpec, getPaymentMethod } from './utils'
 
 export default {
@@ -165,6 +166,7 @@ export default {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2
                 }),
+              priceSuffix: t.type === 'recurring' ? TIME_MAP[t.periodUnit] : '',
               desc: '',
               specification: getSpec(t.spec)
             })

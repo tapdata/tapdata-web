@@ -63,22 +63,28 @@
         <ElTableColumn width="130" :label="$t('dfs_instance_instance_daoqishijian')">
           <template slot-scope="scope">
             <div>
-              <span>{{ scope.row.expiredTimeLabel }}</span>
               <ElTooltip
-                v-if="getExpiredTimeLevel(scope.row)"
+                :disabled="!getExpiredTimeLevel(scope.row)"
                 placement="top"
                 :visible-arrow="false"
                 effect="light"
-                class="ml-2"
               >
-                <VIcon v-if="getExpiredTimeLevel(scope.row) === 'expired'" class="color-info">error</VIcon>
-                <VIcon v-else class="color-warning">warning</VIcon>
+                <div>
+                  <span>{{ scope.row.expiredTimeLabel }}</span>
+                  <VIcon v-if="getExpiredTimeLevel(scope.row) === 'expired'" class="ml-2 color-info">error</VIcon>
+                  <VIcon v-else-if="getExpiredTimeLevel(scope.row) === 'expiringSoon'" class="ml-2 color-warning"
+                    >warning</VIcon
+                  >
+                </div>
                 <template #content>
                   <div v-if="getExpiredTimeLevel(scope.row) === 'expired'" class="font-color-dark">
                     <p>{{ $t('dfs_instance_expired_time_tip1') }}</p>
                     <p>{{ $t('dfs_instance_expired_time_tip2') }}</p>
                     <p>{{ $t('dfs_instance_expired_time_tip3') }}</p>
                   </div>
+                  <span v-else-if="scope.row.paidType === 'recurring'">{{
+                    $t('dfs_instance_instance_xiacifufeishi')
+                  }}</span>
                   <span v-else>{{ $t('dfs_user_center_jijiangguoqi') }}</span>
                 </template>
               </ElTooltip>
@@ -585,9 +591,11 @@ export default {
             item.periodLabel =
               dayjs(periodStart).format('YYYY-MM-DD HH:mm:ss') + ' - ' + dayjs(periodEnd).format('YYYY-MM-DD HH:mm:ss')
 
-            const expiredTime =
+            item.expiredTime =
               chargeProvider === 'Aliyun' ? license.expiredTime : chargeProvider === 'Stripe' ? periodEnd : ''
-            item.expiredTimeLabel = expiredTime ? dayjs(expiredTime).format('YYYY-MM-DD') : '-'
+            item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD') : '-'
+            item.paidType =
+              chargeProvider === 'Aliyun' ? license.type : chargeProvider === 'Stripe' ? paidSubscribeDto.type : ''
             item.deployDisable = item.tmInfo.pingTime || false
             if (!item.tmInfo) {
               item.tmInfo = {}
