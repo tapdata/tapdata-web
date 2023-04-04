@@ -106,9 +106,19 @@
         </div>
 
         <ElFormItem :label="$t('packages_business_table_prefix')" prop="prefix">
-          <ElInput size="small" v-model="taskDialogConfig.prefix" :maxlength="maxPrefixLength">
+          <ElInput
+            size="small"
+            v-model="taskDialogConfig.prefix"
+            :maxlength="maxPrefixLength"
+            class="inline-flex inline-flex-input"
+          >
             <template slot="prepend">{{ fixedPrefix }}</template>
-            <template slot="append"> _&lt;original_table_name&gt; </template>
+            <template slot="append">
+              <span v-if="taskDialogConfig.tableName" :title="taskDialogConfig.tableName">
+                _{{ taskDialogConfig.tableName }}
+              </span>
+              <span v-else> _&lt;original_table_name&gt; </span>
+            </template>
           </ElInput>
         </ElFormItem>
       </ElForm>
@@ -652,3 +662,33 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
   }
 }
 </script>
+
+<style lang="scss" scope>
+.pipeline-desc {
+  background-color: #f8f8fa;
+  border-left: 4px solid map-get($color, primary);
+  line-height: 22px;
+  li {
+    margin-left: 20px;
+    padding-left: 4px;
+    list-style-type: circle;
+  }
+}
+
+.inline-flex-input {
+  .el-input-group__prepend {
+    flex-shrink: 0;
+  }
+  .el-input-group__append,
+  .el-input-group__prepend {
+    width: auto;
+    line-height: 30px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  input {
+    width: auto;
+  }
+}
+</style>
