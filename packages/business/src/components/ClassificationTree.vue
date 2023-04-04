@@ -354,7 +354,7 @@ export default {
           } else {
             const itemType = it.item_type[0]
             const TYPE2NAME = {
-              target: 'TARGET&SERVICE'
+              target: 'Targets & Services'
             }
             it.name = TYPE2NAME[itemType] || it.value
             it.readOnly = itemType !== 'mdm'
