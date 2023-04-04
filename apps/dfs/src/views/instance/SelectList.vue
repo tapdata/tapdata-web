@@ -206,7 +206,7 @@ export default {
     },
 
     create() {
-      this.$emit(this.type === 'code' ? 'create-code' : 'create')
+      this.$emit('create')
       this.handleCancel()
     },
 
