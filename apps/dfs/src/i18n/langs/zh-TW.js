@@ -1276,5 +1276,6 @@ export default {
   dfs_instance_instance_mianfei: '免費',
   dfs_instance_utils_baozhouqi: '包周期',
   dfs_instance_selectlist_shiyongzhegeding: '使用这个授權碼创建 {val1} Agent',
-  page_title_data_console: '數據面板'
+  page_title_data_console: '數據面板',
+  dfs_instance_instance_xiacifufeishi: '下次付費時間'
 }

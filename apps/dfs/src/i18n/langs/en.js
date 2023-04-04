@@ -1403,5 +1403,6 @@ export default {
   dfs_instance_instance_mianfei: 'Free',
   dfs_instance_utils_baozhouqi: 'Fixed-term Package',
   dfs_instance_selectlist_shiyongzhegeding: 'Create {val1} Agent using this license code.',
-  page_title_data_console: 'Data Console'
+  page_title_data_console: 'Data Console',
+  dfs_instance_instance_xiacifufeishi: 'Next paid time'
 }

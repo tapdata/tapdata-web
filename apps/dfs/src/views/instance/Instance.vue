@@ -82,7 +82,9 @@
                     <p>{{ $t('dfs_instance_expired_time_tip2') }}</p>
                     <p>{{ $t('dfs_instance_expired_time_tip3') }}</p>
                   </div>
-                  <span v-else-if="scope.row.paidType === 'recurring'">下次付费时间</span>
+                  <span v-else-if="scope.row.paidType === 'recurring'">{{
+                    $t('dfs_instance_instance_xiacifufeishi')
+                  }}</span>
                   <span v-else>{{ $t('dfs_user_center_jijiangguoqi') }}</span>
                 </template>
               </ElTooltip>
