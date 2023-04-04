@@ -54,7 +54,7 @@ export default {
         number: this.formatNumber
       }
       if (map[item.dataType]) {
-        return map[item.dataType]?.(val) || item.default
+        return map[item.dataType]?.(val, item.format) || item.default
       }
       return val
     }

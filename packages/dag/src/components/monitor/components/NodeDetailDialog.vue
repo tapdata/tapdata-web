@@ -34,14 +34,6 @@
           <EventChart :samples="[eventDataAll, eventDataPeriod]"></EventChart>
         </div>
       </div>
-
-      <SharedMiningTable
-        v-if="!isLogCollectorIstarget"
-        ref="sharedMiningTable"
-        :task-id="$route.params.id"
-        :params="{ nodeId: currentNodeId }"
-        class="shared-mining-table mt-6"
-      ></SharedMiningTable>
     </div>
     <template v-else>
       <div class="flex justify-content-between">
@@ -189,7 +181,6 @@ import { measurementApi } from '@tap/api'
 import { calcTimeUnit } from '@tap/shared'
 import Time from '@tap/shared/src/time'
 import { TimeSelect } from '@tap/component'
-import SharedMiningTable from '@tap/business/src/views/shared-mining/Table'
 
 import EventChart from './EventChart'
 import LineChart from './LineChart'
@@ -200,7 +191,7 @@ import NodeIcon from '../../NodeIcon'
 export default {
   name: 'NodeDetailDialog',
 
-  components: { NodeIcon, EventChart, LineChart, TimeSelect, Frequency, SharedMiningTable },
+  components: { NodeIcon, EventChart, LineChart, TimeSelect, Frequency },
 
   props: {
     value: {
@@ -229,8 +220,7 @@ export default {
       quotaTimeType: '5m',
       loading: false,
       refreshRate: 5000,
-      currentNodeId: '',
-      isLogCollectorIstarget: false
+      currentNodeId: ''
     }
   },
 
@@ -454,9 +444,6 @@ export default {
         this.selected = this.nodeId
       }
       this.currentNodeId = this.selected //当前nodeId
-      let node = this.allNodes.find(t => this.selected === t.id) || {}
-      const { $outputs } = node
-      this.isLogCollectorIstarget = !$outputs.length
       this.setPeriod()
       this.timer && clearInterval(this.timer)
       this.timer = setInterval(() => {

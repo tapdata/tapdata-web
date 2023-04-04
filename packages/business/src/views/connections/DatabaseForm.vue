@@ -700,13 +700,13 @@ export default {
         'x-component': 'Space',
         title: i18n.t('packages_business_connections_databaseform_kaiqixintiaobiao'),
         'x-decorator': 'FormItem',
+        'x-decorator-props': {
+          tooltip: i18n.t('packages_business_connections_databaseform_dakaixintiaobiao')
+        },
         properties: {
           heartbeatEnable: {
             type: 'boolean',
             default: false,
-            'x-decorator-props': {
-              tooltip: i18n.t('packages_business_connections_databaseform_dakaixintiaobiao')
-            },
             'x-component': 'Switch',
             'x-component-props': {
               onChange: `{{ val => handleHeartbeatEnable(val, $form) }}`

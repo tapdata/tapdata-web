@@ -33,6 +33,7 @@ export default {
   page_title_diff_verification_history: '差异校验历史',
   page_title_diff_verification_details: '差异校验详情',
   page_title_shared_mining: '共享挖掘',
+  page_title_heartbeat_table: '心跳任务',
   page_title_shared_mining_details: '挖掘详情',
   page_title_function: '函数管理',
   page_title_function_import: '导入函数',

@@ -408,6 +408,7 @@ let menuSetting = [
       { name: 'dataflowList', code: 'v2_data_flow', parent: 'dataflow' },
       { name: 'dataVerificationList', code: 'v2_data_check', parent: 'dataVerification' },
       { name: 'sharedMiningList', code: 'v2_log_collector', parent: 'sharedMining' },
+      { name: 'HeartbeatTableList', code: 'v2_log_collector', parent: 'sharedMining' },
       { name: 'functionList', code: 'v2_function_management', parent: 'function' },
       { name: 'customNodeList', code: 'v2_custom_node', parent: 'customNode' },
       { name: 'sharedCacheList', code: 'v2_shared_cache', parent: 'sharedCache' } // PDK暂时不支持共享缓存，暂时屏蔽

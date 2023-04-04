@@ -62,7 +62,9 @@
               :content="connection[temp.key].toString()"
               placement="right-end"
             >
-              <div class="box-line__value ellipsis">{{ connection[temp.key] || '-' }}</div>
+              <div class="box-line__value ellipsis" :class="[temp.class]" @click="handleClick(temp)">
+                {{ temp.value || connection[temp.key] || '-' }}
+              </div>
             </el-tooltip>
             <!-- MQ文字转换 start -->
             <div v-else-if="connection[temp.key] && temp.key === 'mqType'" class="box-line__value ellipsis">
@@ -82,7 +84,9 @@
               <span>{{ connection[temp.key] ? $t('packages_business_text_open') : $t('public_button_close') }}</span>
             </div>
             <!-- MQ文字转换 end -->
-            <div v-else class="box-line__value ellipsis">{{ connection[temp.key] || '-' }}</div>
+            <div v-else class="box-line__value ellipsis">
+              {{ connection[temp.key] || '-' }}
+            </div>
           </div>
         </div>
       </div>
@@ -103,6 +107,7 @@ import { getIcon } from '@tap/assets/icons'
 import { StatusTag } from '../../components'
 import Test from '../connections/Test.vue'
 import { getConnectionIcon } from './util'
+import { openUrl } from '@tap/shared'
 
 export default {
   name: 'DetailsDrawer',
@@ -294,6 +299,8 @@ export default {
           row.additionalString = regResult.groups.query
         }
       }
+      row.heartbeatTable = this.connection['heartbeatTable']
+
       return row
     },
     open(row) {
@@ -303,7 +310,7 @@ export default {
       this.connection = this.transformData(row)
       //组装数据
       this.connection['last_updated'] = dayjs(row.last_updated).format('YYYY-MM-DD HH:mm:ss')
-      this.loadList(row.database_type)
+      this.loadList(row)
     },
     edit() {
       const { connection = {} } = this
@@ -408,7 +415,9 @@ export default {
       if (!data.status || data.status === null) return
       this.status = data.status
     },
-    loadList() {
+    async loadList(row = {}) {
+      const heartbeatTable = await this.loadHeartbeatTable(row)
+      this.connection['heartbeatTable'] = heartbeatTable?.[0]
       this.list = [
         ...this.configModel['default'],
         ...(this.isDaas
@@ -423,7 +432,29 @@ export default {
                   }
                 ]
               }
-            ])
+            ]),
+        this.connection['heartbeatTable']
+          ? {
+              icon: 'link',
+              items: [
+                {
+                  label: i18n.t('packages_business_connections_databaseform_kaiqixintiaobiao'),
+                  key: 'heartbeatTable',
+                  value: i18n.t('packages_business_connections_databaseform_chakanxintiaoren'),
+                  class: 'cursor-pointer color-primary text-decoration-underline',
+                  action: () => {
+                    const routeUrl = this.$router.resolve({
+                      name: 'HeartbeatMonitor',
+                      params: {
+                        id: this.connection.heartbeatTable
+                      }
+                    })
+                    openUrl(routeUrl.href)
+                  }
+                }
+              ]
+            }
+          : {}
       ]
     },
     getConnectionIcon() {
@@ -459,6 +490,15 @@ export default {
 
     isFileSource() {
       return ['CSV', 'EXCEL', 'JSON', 'XML'].includes(this.connection?.database_type)
+    },
+
+    async loadHeartbeatTable(row = {}) {
+      if (!row.heartbeatEnable) return []
+      return await connectionsApi.heartbeatTask(row.id)
+    },
+
+    handleClick(temp = {}) {
+      temp.action?.()
     }
   }
 }

@@ -124,6 +124,12 @@ const DataServerList = async () => {
   return DataServerList
 }
 
+// 心跳任务
+const HeartbeatTableList = async () => {
+  const { HeartbeatTableList } = await import('@tap/business')
+  return HeartbeatTableList
+}
+
 export default [
   {
     path: '/login',
@@ -593,6 +599,27 @@ export default [
             component: SharedMiningList,
             meta: {
               title: 'page_title_shared_mining',
+              code: 'v2_log_collector'
+            }
+          }
+        ]
+      },
+      /* ---------- 心跳任务  ----------*/
+      {
+        path: '/heartbeat-table',
+        name: 'heartbeatTable',
+        component: Parent,
+        redirect: 'heartbeatTable/',
+        meta: {
+          title: 'page_title_heartbeat_table'
+        },
+        children: [
+          {
+            path: '',
+            name: 'HeartbeatTableList',
+            component: HeartbeatTableList,
+            meta: {
+              title: 'page_title_heartbeat_table',
               code: 'v2_log_collector'
             }
           }
