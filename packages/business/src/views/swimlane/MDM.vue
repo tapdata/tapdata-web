@@ -85,7 +85,7 @@
             @node-expand="handleNodeExpand"
           ></VirtualTree>
           <div
-            v-show="!treeData.length"
+            v-if="!treeData.length"
             class="flex justify-center align-center absolute-fill fs-7 font-color-light px-3"
           >
             <span class="text-center lh-base" v-html="$t('packages_business_mdm_empty_text')"></span>
