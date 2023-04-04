@@ -47,6 +47,14 @@
           <span class="mr-4"><VIcon class="v-icon" size="17">open-in-new</VIcon></span>
           <span class="text-decoration-underline">{{ $t('dfs_agent_download_agentguidedialog_tiyan') + ' Demo' }}</span>
         </ElMenuItem>
+        <ElMenuItem
+          :key="$t('dfs_agent_download_agentguidedialog_tiyan') + ' Demo'"
+          index="goGuide"
+          class="flex align-center border-top"
+        >
+          <span class="mr-4"><VIcon class="v-icon" size="17">open-in-new</VIcon></span>
+          <span class="text-decoration-underline">产品引导</span>
+        </ElMenuItem>
       </ElMenu>
     </ElAside>
     <ElContainer direction="vertical" class="layout-main position-relative">
@@ -237,6 +245,10 @@ export default {
         this.goDemo()
         return
       }
+      if (['goGuide'].includes(path)) {
+        this.goGuide()
+        return
+      }
       if (this.$route.path === path) {
         return
       }
@@ -387,6 +399,10 @@ export default {
     goDemo() {
       buried('agentGuideDemo')
       window.open('https://demo.cloud.tapdata.net/console/v3/')
+    },
+    goGuide() {
+      buried('agentGuideDemo')
+      window.open('https://cloud.justinmind.com/usernote/tests/74235065/75024663/75024665/index.html')
     }
   }
 }
