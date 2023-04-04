@@ -66,6 +66,15 @@
             >
               {{ $t('public_button_reset') }}
             </ElLink>
+            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+            <ElLink
+              v-readonlybtn="'SYNC_job_edition'"
+              type="primary"
+              :disabled="row.btnDisabled.delete || $disabledReadonlyUserBtn()"
+              @click="del([row.id], row)"
+            >
+              {{ $t('public_button_delete') }}
+            </ElLink>
           </div>
         </template>
       </el-table-column>
@@ -281,6 +290,21 @@ export default {
         taskApi.batchRenew([id]).then(data => {
           this.$message.success(data?.message || this.$t('public_message_operation_success'))
           this.table.fetch()
+        })
+      })
+    },
+
+    del(ids, item = {}, canNotList) {
+      let msgObj = this.getConfirmMessage('delete', ids.length > 1, item.name)
+      this.$confirm(msgObj.msg, '', {
+        type: 'warning'
+      }).then(resFlag => {
+        if (!resFlag) {
+          return
+        }
+        taskApi.batchDelete(ids).then(data => {
+          this.table.fetch()
+          this.responseDelHandler(data, this.$t('public_message_delete_ok'), canNotList)
         })
       })
     }
