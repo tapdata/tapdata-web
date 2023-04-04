@@ -15,7 +15,7 @@ export default {
   dialog_button_cancel: 'Cancel',
   //页面标题
   page_title_overview: 'Overview',
-  page_title_dashboard: 'Console',
+  page_title_dashboard: 'Dashboard',
   page_title_connections: 'Connection',
   page_title_connections_create: 'Create a connection',
   page_title_connections_edit: 'Edit connections',

@@ -108,6 +108,10 @@ export default {
           return this.$store.state.dataflow.NodeMap[id]
         },
 
+        clearNodeError: id => {
+          return this.$store.commit('dataflow/clearNodeError', id)
+        },
+
         findParentNode: id => {
           let node = this.scope.findNodeById(id)
           let parentId = node.$inputs?.[0]

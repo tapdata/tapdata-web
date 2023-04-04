@@ -106,6 +106,7 @@ export default {
   packages_form_field_processor_index_daxie: 'Uppercase',
   packages_form_field_processor_index_bubian: 'Unchanged',
   packages_form_field_processor_index_daxiaoxie: 'Table name case',
+  packages_form_field_processor_filed_name_daxiaoxie: 'Filed name case',
   packages_form_field_processor_index_houzhui: 'Suffix',
   packages_form_field_processor_index_qianzhui: 'Prefix',
   packages_form_field_processor_index_piliangcaozuo: 'Batch Operation',

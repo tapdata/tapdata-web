@@ -96,18 +96,13 @@
       <span slot="title" class="font-color-dark fs-6 fw-sub">{{ $t('packages_business_create_clone_task') }}</span>
       <ElForm ref="form" :model="taskDialogConfig" label-width="180px" @submit.prevent :rules="formRules">
         <div class="pipeline-desc p-4 mb-4 text-preline rounded-4">
-          <!--TODO 国际化-->
-          <span>Tapdata 将自动创建一个数据复制管道任务，将您选择的</span
-          ><span v-if="taskDialogConfig.from" class="inline-flex px-1 font-color-dark fw-sub"
+          <span>{{ $t('packages_business_fdm_create_task_dialog_desc_prefix') }}</span
+          ><span v-if="taskDialogConfig.from" class="inline-flex align-center px-1 font-color-dark fw-sub"
             ><DatabaseIcon :item="taskDialogConfig.from" :key="taskDialogConfig.from.pdkType" :size="20" class="mr-1" />
             <span>{{ taskDialogConfig.from.name }}</span> </span
           ><span v-if="taskDialogConfig.tableName" class="inline-flex font-color-dark fw-sub"
             >/<span class="px-1">{{ taskDialogConfig.tableName }}</span> </span
-          ><span
-            >的结构和数据自动复制到数据平台的 Cache 层并保持源库和Cache
-            层数据的准实时同步及自动校验。在大部分时候源库的结构改动(DDL)也会被复制到Cache 层。您可以在通过点击Cache
-            层里面的库名右侧的ICON来监控该管道任务的运行状态。您也可以选择现在修改在Cache 层的物理表名。</span
-          >
+          ><span>{{ $t('packages_business_fdm_create_task_dialog_desc_suffix') }}</span>
         </div>
 
         <ElFormItem :label="$t('packages_business_table_prefix')" prop="prefix">
@@ -425,7 +420,7 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
                   }
                 }
               },
-              '任务创建成功，点击查看'
+              this.$t('packages_business_task_created_success')
             )
           })
         } catch (e) {
@@ -657,11 +652,3 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
   }
 }
 </script>
-
-<style scoped lang="scss">
-.pipeline-desc {
-  background-color: #f8f8fa;
-  border-left: 4px solid map-get($color, primary);
-  line-height: 22px;
-}
-</style>
