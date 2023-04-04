@@ -179,10 +179,6 @@ export default {
 
   created() {
     this.loadDirectory()
-
-    setTimeout(() => {
-      this.settings.fdmStorageConnectionId = '6356703d1e30791b7bd0cc09'
-    }, 10000)
   },
 
   methods: {
