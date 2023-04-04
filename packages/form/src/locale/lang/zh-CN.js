@@ -97,6 +97,7 @@ export default {
   packages_form_field_processor_index_daxie: '转大写',
   packages_form_field_processor_index_bubian: '不变',
   packages_form_field_processor_index_daxiaoxie: '表名大小写',
+  packages_form_field_processor_filed_name_daxiaoxie: '字段名大小写',
   packages_form_field_processor_index_houzhui: '后缀',
   packages_form_field_processor_index_qianzhui: '前缀',
   packages_form_field_processor_index_piliangcaozuo: '批量操作',
