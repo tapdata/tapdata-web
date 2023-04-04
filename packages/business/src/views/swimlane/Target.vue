@@ -211,10 +211,11 @@ export default {
   name: 'Target',
 
   props: {
-    dragState: Object
+    dragState: Object,
+    fdmAndMdmId: Array
   },
 
-  components: { CreateRestApi, DatabaseIcon, TaskList, draggable, DataServerDrawer, IconButton },
+  components: { CreateRestApi, DatabaseIcon, TaskList, DataServerDrawer, IconButton },
 
   mixins: [commonMix],
 
@@ -275,9 +276,9 @@ export default {
     },
 
     filterList() {
-      if (!this.search) return this.list
+      if (!this.search) return this.list.filter(item => !this.fdmAndMdmId.includes(item.id))
 
-      return this.list.filter(item => item.name.includes(this.search))
+      return this.list.filter(item => !this.fdmAndMdmId.includes(item.id) && item.name.includes(this.search))
     }
   },
 

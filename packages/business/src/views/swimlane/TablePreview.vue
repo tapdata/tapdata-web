@@ -3,20 +3,24 @@
     <header v-if="detailData">
       <div class="mb-4">
         <span class="table-name inline-block">{{ detailData.name }}</span>
-        <span :class="['status', 'ml-4', 'status-' + tableStatus]">{{ statusMap[tableStatus] }}</span>
+        <span v-if="swimType !== 'source'" :class="['status', 'ml-4', 'status-' + tableStatus]">{{
+          statusMap[tableStatus]
+        }}</span>
       </div>
       <span class="mr-2"> <VIcon class="tree-item-icon" size="18">table</VIcon></span>
       <span class="ml-8">
         <span>{{ detailData.sourceType }}</span></span
       >
-      <span class="ml-8"
-        ><span class="table-dec-label">{{ $t('packages_business_last_data_change_time') }}：</span
-        ><span class="table-dec-txt">{{ lastDataChangeTime || '-' }}</span></span
-      >
-      <span class="ml-8"
-        ><span class="table-dec-label">{{ $t('packages_business_cdc_delay_time') }}：</span
-        ><span class="table-dec-txt">{{ cdcDelayTime || '-' }}</span></span
-      >
+      <template v-if="swimType !== 'source'">
+        <span class="ml-8"
+          ><span class="table-dec-label">{{ $t('packages_business_last_data_change_time') }}：</span
+          ><span class="table-dec-txt">{{ lastDataChangeTime || '-' }}</span></span
+        >
+        <span class="ml-8"
+          ><span class="table-dec-label">{{ $t('packages_business_cdc_delay_time') }}：</span
+          ><span class="table-dec-txt">{{ cdcDelayTime || '-' }}</span></span
+        >
+      </template>
     </header>
     <section class="mt-6">
       <el-tabs v-model="activeName" @tab-click="handleTab">
@@ -351,7 +355,8 @@ export default {
           value: 'generating'
         }
       ],
-      selected: {}
+      selected: {},
+      swimType: '' // source/fdm/mdm/target
     }
   },
   methods: {
@@ -370,6 +375,7 @@ export default {
     open(row) {
       this.init()
       this.visible = true
+      this.swimType = row.SWIM_TYPE
       this.connectionId = row.connectionId
       this.selected = cloneDeep(row)
       this.getTableStorage(row)
