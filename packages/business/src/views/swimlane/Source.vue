@@ -139,7 +139,8 @@ export default {
 
   props: {
     dragState: Object,
-    eventDriver: Object
+    eventDriver: Object,
+    fdmAndMdmId: Array
   },
 
   components: { NodeIcon, VirtualTree, StageButton, IconButton },
@@ -180,6 +181,8 @@ export default {
         const { conId } = item
         let children = tableMap[conId]
 
+        if (this.fdmAndMdmId.includes(conId)) return
+
         if (item.type === 'metadata') {
           children = children || []
           children.push({
@@ -219,6 +222,10 @@ export default {
     }, 300)
   },
 
+  beforeDestroyed() {
+    this.unwatchFdmAndMdm?.()
+  },
+
   methods: {
     renderContent(h, { node, data }) {
       let className = ['custom-tree-node']
@@ -232,29 +239,6 @@ export default {
       }
 
       if (data.reExpand) node.isLeaf = false
-
-      /*<span
-        class="custom-tree-node flex align-items-center"
-            :class="{ grabbable: data.isObject, 'opacity-50': data.disabled }"
-      slot-scope="{ node, data }"
-    @dblclick="$emit('preview', data)"
-        >
-        <VIcon
-      v-if="node.data.loadFieldsStatus === 'loading'"
-        class="v-icon animation-rotate"
-      size="14"
-      color="rgb(61, 156, 64)"
-        >loading-circle</VIcon
-        >
-        <NodeIcon v-if="!node.data.isLeaf" :node="node.data" :size="18" class="tree-item-icon mr-2" />
-        <VIcon v-else class="tree-item-icon mr-2" size="18">table</VIcon>
-      <span class="table-label" :title="data.name"
-        >{{ data.name }}
-      <ElTag v-if="data.disabled" type="info" size="mini">{{ $t('public_status_invalid') }}</ElTag>
-    </span>
-      <ElTag v-if="data.disabled" size="mini">{{ $t('public_status_invalid') }}</ElTag>
-      <IconButton class="btn-menu" sm @click="$emit('preview', data)"> view-details </IconButton>
-    </span>*/
 
       return (
         <div
@@ -312,7 +296,12 @@ export default {
         filter: JSON.stringify(filter)
       })
       this.connectionMap = {}
-      return res.items.map(t => {
+      const items = []
+
+      this.watchFdmAndMdm()
+      res.items.forEach(t => {
+        if (this.fdmAndMdmId.includes(t.id)) return
+
         const { status, loadCount = 0, tableCount = 0 } = t
         const disabled = status !== 'ready'
         const conn = {
@@ -325,8 +314,10 @@ export default {
           LDP_TYPE: 'connection'
         }
         this.connectionMap[t.id] = conn
-        return conn
+        items.push(conn)
       })
+
+      return items
     },
 
     async getTableList(id) {
@@ -418,6 +409,19 @@ export default {
       node.loading = true
       data.children = await this.getTableList(data.id)
       node.loading = false
+    },
+
+    watchFdmAndMdm() {
+      // 用于监听FDM/MDM的设置变化,删除掉已经渲染的连接节点
+      this.unwatchFdmAndMdm?.()
+      this.unwatchFdmAndMdm = this.$watch('fdmAndMdmId', val => {
+        this.$refs.tree.remove({
+          id: val[0]
+        })
+        this.$refs.tree.remove({
+          id: val[1]
+        })
+      })
     }
   }
 }

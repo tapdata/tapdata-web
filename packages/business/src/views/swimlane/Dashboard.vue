@@ -32,6 +32,7 @@
           :mdmConnection="mdmConnection"
           :event-driver="eventDriver"
           :loadingDirectory="loadingDirectory"
+          :fdmAndMdmId="fdmAndMdmId"
           :mapCatalog="mapCatalog"
           @create-connection="handleAdd"
           @create-target="handleCreateTarget"
@@ -150,6 +151,10 @@ export default {
         }
       ]
       return this.mode === 'service' ? result : result.filter(t => t.level === 'base')
+    },
+
+    fdmAndMdmId() {
+      return [this.settings?.fdmStorageConnectionId, this.settings?.mdmStorageConnectionId]
     }
   },
 
@@ -174,6 +179,10 @@ export default {
 
   created() {
     this.loadDirectory()
+
+    setTimeout(() => {
+      this.settings.fdmStorageConnectionId = '6356703d1e30791b7bd0cc09'
+    }, 10000)
   },
 
   methods: {
