@@ -707,39 +707,7 @@ export default {
           heartbeatEnable: {
             type: 'boolean',
             default: false,
-            'x-component': 'Switch',
-            'x-component-props': {
-              onChange: `{{ val => handleHeartbeatEnable(val, $form) }}`
-            },
-            'x-reactions': {
-              target: '__TAPDATA.heartbeatLink',
-              effect: ['onFieldMount'],
-              fulfill: {
-                run: '{{handleHeartbeatEnable($self.value, $form)}}'
-              }
-            }
-          },
-          heartbeatLink: {
-            type: 'void',
-            'x-decorator-props': {
-              colon: false
-            },
-            'x-component': 'Button',
-            'x-component-props': {
-              type: 'text',
-              class: 'text-decoration-underline',
-              onClick: '{{useAsyncDataSourceByConfig({service: toMonitor, withoutField: true}, $values)}}',
-              disabled: true
-            },
-            'x-content': i18n.t('packages_business_connections_databaseform_chakanxintiaoren'),
-            'x-reactions': {
-              dependencies: ['__TAPDATA.heartbeatEnable'],
-              fulfill: {
-                state: {
-                  display: '{{$deps[0] ? "visible":"hidden"}}'
-                }
-              }
-            }
+            'x-component': 'Switch'
           }
         },
         'x-reactions': {
@@ -977,19 +945,6 @@ export default {
             return []
           }
         },
-        toMonitor: async () => {
-          const routeUrl = this.$router.resolve({
-            name: 'HeartbeatMonitor',
-            params: {
-              id: this.heartbeatTaskId
-            }
-          })
-          openUrl(routeUrl.href)
-        },
-        handleHeartbeatEnable: (value, $form) => {
-          if (!value) return
-          this.getHeartbeatTaskId($form)
-        },
         goToAuthorized: async params => {
           const routeQuery = cloneDeep(this.$route.query)
           const routeParams = this.$route.params
@@ -1073,15 +1028,6 @@ export default {
       this.showDebug = true
     },
 
-    getHeartbeatTaskId($form = {}) {
-      const id = this.id || this.$route.params.id
-      if (!id) return
-      $form.query('__TAPDATA.heartbeatLink').take().setComponentProps({ disabled: true })
-      connectionsApi.heartbeatTask(id).then(data => {
-        this.heartbeatTaskId = data?.[0]
-        this.heartbeatTaskId && $form.query('__TAPDATA.heartbeatLink').take().setComponentProps({ disabled: false })
-      })
-    },
     async setConnectionConfig() {
       const { connectionConfig, pdkHash } = this.$route.query || {}
       if (connectionConfig) {

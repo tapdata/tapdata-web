@@ -59,7 +59,7 @@
                 connection[temp.key].toString()
               "
               effect="dark"
-              :content="connection[temp.key].toString()"
+              :content="(temp.value || connection[temp.key]).toString()"
               placement="right-end"
             >
               <div class="box-line__value ellipsis" :class="[temp.class]" @click="handleClick(temp)">
@@ -299,7 +299,7 @@ export default {
           row.additionalString = regResult.groups.query
         }
       }
-      row.heartbeatTable = this.connection['heartbeatTable']
+      row.heartbeatTable = this.connection.heartbeatTable
 
       return row
     },
@@ -417,7 +417,7 @@ export default {
     },
     async loadList(row = {}) {
       const heartbeatTable = await this.loadHeartbeatTable(row)
-      this.connection['heartbeatTable'] = heartbeatTable?.[0]
+      this.connection.heartbeatTable = heartbeatTable?.[0]
       this.list = [
         ...this.configModel['default'],
         ...(this.isDaas
@@ -433,7 +433,7 @@ export default {
                 ]
               }
             ]),
-        this.connection['heartbeatTable']
+        this.connection.heartbeatTable
           ? {
               icon: 'link',
               items: [
