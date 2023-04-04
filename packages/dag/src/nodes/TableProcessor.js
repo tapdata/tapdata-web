@@ -39,7 +39,10 @@ export class TableProcessor extends NodeType {
         'x-validator': {
           validator: `{{(value, rule) => {
             console.debug('[DEBUG]: tableNames validate', value)
-            if (!value.length) return
+            if (!value.length) {
+              clearNodeError($values.id)
+              return
+            }
             const parents = findParentNodes($values.id)
             if (parents && parents.length && parents[0].tableNames.length) {
               let tableNames = parents[0].tableNames
@@ -63,9 +66,10 @@ export class TableProcessor extends NodeType {
                 }
               })
               if (duplicateTableNames.size) {
-                return \`\${rule.message}: \${[...duplicateTableNames].join(', ')}\` 
+                return \`\${rule.message}: \${[...duplicateTableNames].join(', ')}\`
               }
             }
+            clearNodeError($values.id)
           }}}`,
           message: i18n.t('packages_dag_nodes_tableprocessor_biaomingchongfu')
         }
