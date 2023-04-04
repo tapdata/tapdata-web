@@ -856,7 +856,7 @@ export default {
     '任務已經創建，但由於您的表沒有主鍵，需要進入任務編輯手動設置更新條件字段，點擊查看任務',
   packages_business_fdm_create_task_dialog_desc_prefix: 'Tapdata 將自動創建一個數據複製管道任務，將您選擇的',
   packages_business_fdm_create_task_dialog_desc_suffix:
-    '的結構和數據自動複製到數據平台的 Cache 層並保持源庫和Cache 層數據的准實時同步及自動校驗。在大部分時候源庫的結構改動(DDL)也會被複製到Cache 層。您可以在通過點擊Cache 層裡面的庫名右側的ICON來監控該管道任務的運行狀態。您也可以選擇現在修改在Cache 層的物理表名。',
+    '的結構和數據自動複製到數據平台的 Cache 層並保持源庫和Cache 層數據的准實時同步及自動校驗。在大部分時候源庫的結構改動(DDL)也會被複製到Cache 層。您可以在通過點擊Cache 層裡面的庫名右側的ICON來監控該管道任務的運行狀態。您也可以選擇現在修改在Cache 層的物理表名前綴。',
   packages_business_mdm_create_task_dialog_desc_prefix: 'Tapdata 將自動創建一個數據複製管道任務，將您選擇的',
   packages_business_fdm_create_task_dialog_desc_li1: '需要對 Cache 層的數據做一些轉型，增強，加計算字段等處理',
   packages_business_fdm_create_task_dialog_desc_li2: '需要對數個 Cache 層的表的結構進行合併，構建一個寬表',

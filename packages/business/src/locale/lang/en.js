@@ -893,7 +893,7 @@ export default {
   packages_business_fdm_create_task_dialog_desc_prefix:
     'Tapdata will automatically create a cloning pipeline task, which will automatically copy the structure and data of the selected',
   packages_business_fdm_create_task_dialog_desc_suffix:
-    'to the Cache layer of the data platform and keep the source database and Cache layer data in real-time synchronization and automatic verification. In most cases, the structure changes (DDL) of the source database will also be copied to the Cache layer. You can monitor the running status of the pipeline task by clicking the ICON on the right side of the database name in the Cache layer. You can also choose to modify the physical table name in the Cache layer now.',
+    'to the Cache layer of the data platform and keep the source database and Cache layer data in real-time synchronization and automatic verification. In most cases, the structure changes (DDL) of the source database will also be copied to the Cache layer. You can monitor the running status of the pipeline task by clicking the ICON on the right side of the database name in the Cache layer. You can also choose to modify the physical table name prefix in the Cache layer now.',
   packages_business_mdm_create_task_dialog_desc_prefix:
     "This will create a processing model on the Data Platform's Curated layer. Common scenarios for creating a processing model include the following:",
   packages_business_fdm_create_task_dialog_desc_li1:
