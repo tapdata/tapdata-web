@@ -261,8 +261,8 @@ const routes = [
         }
       },
       {
-        path: '/swim-lane',
-        name: 'swimLane',
+        path: '/data-console',
+        name: 'dataConsole',
         component: SwimlaneDashboard,
         meta: {
           title: 'dfs_data_server',

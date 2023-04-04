@@ -850,7 +850,7 @@ export default {
   packages_business_table_status_draft: 'Draft',
   packages_business_table_status_normal: 'Normal',
   packages_business_data_console_target_no_task: 'No tasks configured for this target',
-  packages_business_data_console_target_connection_desc: 'Sync data to {val} for analytics',
+  packages_business_data_console_target_connection_desc: 'Sync data to {val}',
   packages_business_view_more: 'View More',
   packages_business_view_collapse: 'Collapse',
 

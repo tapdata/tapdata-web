@@ -814,7 +814,7 @@ export default {
   packages_business_table_status_draft: '草稿',
   packages_business_table_status_normal: '正常',
   packages_business_data_console_target_no_task: '未為此目標配置任何任務',
-  packages_business_data_console_target_connection_desc: '將數據同步到 {val} 進行分析',
+  packages_business_data_console_target_connection_desc: '將數據同步到 {val}',
   packages_business_view_more: '查看更多',
   packages_business_view_collapse: '收起',
 
