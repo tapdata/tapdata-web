@@ -63,26 +63,34 @@
             @node-expand="handleNodeExpand"
           ></VirtualTree>
         </div>
-        <VirtualTree
-          v-else
-          class="ldp-tree h-100"
-          ref="tree"
-          node-key="id"
-          highlight-current
-          :data="treeData"
-          draggable
-          height="100%"
-          wrapper-class-name="p-2"
-          :default-expanded-keys="expandedKeys"
-          :render-content="renderContent"
-          :render-after-expand="false"
-          :expand-on-click-node="false"
-          :allow-drop="checkAllowDrop"
-          @node-drag-start="handleDragStart"
-          @node-drag-end="handleDragEnd"
-          @node-drop="handleSelfDrop"
-          @node-expand="handleNodeExpand"
-        ></VirtualTree>
+        <template v-else>
+          <VirtualTree
+            class="ldp-tree h-100"
+            ref="tree"
+            node-key="id"
+            highlight-current
+            :data="treeData"
+            draggable
+            height="100%"
+            wrapper-class-name="p-2"
+            :empty-text="''"
+            :default-expanded-keys="expandedKeys"
+            :render-content="renderContent"
+            :render-after-expand="false"
+            :expand-on-click-node="false"
+            :allow-drop="checkAllowDrop"
+            @node-drag-start="handleDragStart"
+            @node-drag-end="handleDragEnd"
+            @node-drop="handleSelfDrop"
+            @node-expand="handleNodeExpand"
+          ></VirtualTree>
+          <div
+            v-show="!treeData.length"
+            class="flex justify-center align-center absolute-fill fs-7 font-color-light px-3"
+          >
+            <span class="text-center lh-base" v-html="$t('packages_business_mdm_empty_text')"></span>
+          </div>
+        </template>
       </div>
 
       <div

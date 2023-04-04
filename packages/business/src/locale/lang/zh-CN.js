@@ -861,7 +861,8 @@ export default {
   packages_business_fdm_create_task_dialog_desc_prefix: 'Tapdata 将自动创建一个数据复制管道任务，将您选择的',
   packages_business_fdm_create_task_dialog_desc_suffix:
     '的结构和数据自动复制到数据平台的 Cache 层并保持源库和Cache 层数据的准实时同步及自动校验。在大部分时候源库的结构改动(DDL)也会被复制到Cache 层。您可以在通过点击Cache 层里面的库名右侧的ICON来监控该管道任务的运行状态。您也可以选择现在修改在 Cache 层的物理表名前缀。',
-  packages_business_mdm_create_task_dialog_desc_prefix: 'Tapdata 将自动创建一个数据复制管道任务，将您选择的',
+  packages_business_mdm_create_task_dialog_desc_prefix:
+    '这将在数据平台的 Curated 层创建一个加工模型。创建加工模型的常见场景有以下几种：',
   packages_business_fdm_create_task_dialog_desc_li1: '需要对 Cache 层的数据做一些转型，增强，加计算字段等处理',
   packages_business_fdm_create_task_dialog_desc_li2: '需要对数个 Cache 层的表的结构进行合并，构建一个宽表',
   packages_business_fdm_create_task_dialog_desc_li3: '需要对数个 Cache 层的表的数据进行合并，构建一个合并表',
@@ -874,5 +875,7 @@ export default {
   packages_business_target_create_task_dialog_desc_prefix_clone: 'Tapdata将创建一个数据复制任务，将',
   packages_business_target_create_task_dialog_desc_prefix_sync: 'Tapdata将创建一个数据开发任务，将',
   packages_business_target_create_task_dialog_desc_to: '同步到',
-  packages_business_target_create_task_dialog_desc_suffix: '请点击下面的按钮继续,您也可以更改任务名称。'
+  packages_business_target_create_task_dialog_desc_suffix: '请点击下面的按钮继续,您也可以更改任务名称。',
+  packages_business_fdm_empty_text: '请将<strong>源数据层</strong>中的表拖拽至此<br/>即可开始复制数据',
+  packages_business_mdm_empty_text: '请将<strong>源数据层/平台缓存层</strong>中的表拖拽至此<br/>即可开始同步数据'
 }

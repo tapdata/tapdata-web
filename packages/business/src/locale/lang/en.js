@@ -912,5 +912,9 @@ export default {
   packages_business_target_create_task_dialog_desc_prefix_sync: 'Tapdata will create a sync pipeline task to sync',
   packages_business_target_create_task_dialog_desc_to: 'to',
   packages_business_target_create_task_dialog_desc_suffix:
-    'Please click button below to continue. You can also change the task name'
+    'Please click button below to continue. You can also change the task name',
+  packages_business_fdm_empty_text:
+    'Please drag the table from <strong>Sources</strong> here to start cloning the data.',
+  packages_business_mdm_empty_text:
+    'Please drag the table from <strong>Source/Foundation Data Model</strong> here to start synchronizing data'
 }
