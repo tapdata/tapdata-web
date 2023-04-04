@@ -585,9 +585,9 @@ export default {
             item.periodLabel =
               dayjs(periodStart).format('YYYY-MM-DD HH:mm:ss') + ' - ' + dayjs(periodEnd).format('YYYY-MM-DD HH:mm:ss')
 
-            const expiredTime =
+            item.expiredTime =
               chargeProvider === 'Aliyun' ? license.expiredTime : chargeProvider === 'Stripe' ? periodEnd : ''
-            item.expiredTimeLabel = expiredTime ? dayjs(expiredTime).format('YYYY-MM-DD') : '-'
+            item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD') : '-'
             item.deployDisable = item.tmInfo.pingTime || false
             if (!item.tmInfo) {
               item.tmInfo = {}
