@@ -916,5 +916,5 @@ export default {
   packages_business_fdm_empty_text:
     'Please drag the table from <strong>Sources</strong> here to start cloning the data.',
   packages_business_mdm_empty_text:
-    'Please drag the table from <strong>Source/Foundation Data Model</strong> here to start synchronizing data'
+    'Please drag the table from <strong>Sources/Foundation Data Model</strong> here to start synchronizing data'
 }
