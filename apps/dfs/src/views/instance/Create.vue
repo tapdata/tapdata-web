@@ -79,6 +79,8 @@ import { getSpec, getPaymentMethod } from './utils'
 export default {
   name: 'Create',
 
+  inject: ['buried'],
+
   props: {
     value: {
       type: Boolean,
@@ -225,11 +227,24 @@ export default {
             email
           }
           this.submitLoading = true
+          this.buried('newAgentStripe', '', {
+            type
+          })
           this.$axios
             .post('api/tcm/paid/plan/createPaidSubscribe', params)
             .then(data => {
               openUrl(data)
               this.showResult = true
+              this.buried('newAgentStripe', '', {
+                type,
+                result: true
+              })
+            })
+            .catch(() => {
+              this.buried('newAgentStripe', '', {
+                type,
+                result: false
+              })
             })
             .finally(() => {
               this.submitLoading = false
@@ -245,12 +260,25 @@ export default {
         email
       }
       this.submitLoading = true
+      this.buried('newAgentStripe', '', {
+        type
+      })
       this.$axios
         .post('api/tcm/paid/plan/oneTime/paymentLink', params)
         .then(data => {
           openUrl(data)
           this.submitLoading = false
           this.showResult = true
+          this.buried('newAgentStripe', '', {
+            type,
+            result: true
+          })
+        })
+        .catch(() => {
+          this.buried('newAgentStripe', '', {
+            type,
+            result: false
+          })
         })
         .finally(() => {
           this.submitLoading = false

@@ -57,6 +57,8 @@ import { getPaymentMethod, getSpec } from './utils'
 export default {
   name: 'SelectList',
 
+  inject: ['buried'],
+
   components: { VTable },
 
   props: {
@@ -200,13 +202,15 @@ export default {
     },
 
     handleCreateCode() {
+      this.buried('createAliyunCode')
       const href =
         'https://market.aliyun.com/products/56024006/cmgj00061912.html?spm=5176.730005.result.4.519c3524QzKxHM&innerSource=search_tapdata#sku=yuncode5591200001'
       openUrl(href)
     },
 
     create() {
-      this.$emit(this.type === 'code' ? 'create-code' : 'create')
+      this.$emit('create')
+      this.buried('newAgentStripeDialog')
       this.handleCancel()
     },
 
@@ -221,10 +225,16 @@ export default {
           subscriptionId: row.id
         }
       }
+      const buriedMap = {
+        code: 'selectAgentAliyun',
+        order: 'selectAgentStripe'
+      }
+      this.buried(buriedMap[this.type])
       this.$emit('new-agent', map[this.type])
       setTimeout(this.handleCancel, 1200)
     },
     goLicense() {
+      this.buried('goActivateAliyunCode')
       this.$router.push({
         name: 'aliyunMarketLicense'
       })

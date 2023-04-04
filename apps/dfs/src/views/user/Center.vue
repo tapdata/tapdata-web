@@ -569,6 +569,7 @@ import { openUrl } from '@tap/shared'
 
 export default {
   name: 'Center',
+  inject: ['buried'],
   components: { InlineInput, VerificationCode, UploadFile, VTable },
   data() {
     return {
@@ -1153,9 +1154,20 @@ export default {
           type: 'warning'
         }
       ).then(res => {
-        res &&
-          this.$axios.post('api/tcm/paid/plan/oneTime/refunds', { id: row.id, chargeId: row.chargeId }).then(() => {
+        if (!res) return
+        this.buired('unsubscribeAgentStripe')
+        this.$axios
+          .post('api/tcm/paid/plan/oneTime/refunds', { id: row.id, chargeId: row.chargeId })
+          .then(() => {
             this.$message.success(this.$t('public_message_operation_success'))
+            this.buired('unsubscribeAgentStripe', '', {
+              result: true
+            })
+          })
+          .catch(() => {
+            this.buired('unsubscribeAgentStripe', '', {
+              result: false
+            })
           })
       })
     },
@@ -1167,12 +1179,21 @@ export default {
           type: 'warning'
         }
       ).then(res => {
-        res &&
-          this.$axios
-            .post('api/tcm/paid/plan/subscribe/cancel', { id: row.id, subscribeId: row.subscribeId })
-            .then(() => {
-              this.$message.success(this.$t('public_message_operation_success'))
+        if (!res) return
+        this.buired('cancelSubscribeAgentStripe')
+        this.$axios
+          .post('api/tcm/paid/plan/subscribe/cancel', { id: row.id, subscribeId: row.subscribeId })
+          .then(() => {
+            this.$message.success(this.$t('public_message_operation_success'))
+            this.buired('cancelSubscribeAgentStripe', '', {
+              result: true
             })
+          })
+          .catch(() => {
+            this.buired('cancelSubscribeAgentStripe', '', {
+              result: false
+            })
+          })
       })
     },
     handleAgent(row = {}) {
@@ -1215,13 +1236,25 @@ export default {
             cancelUrl: location.href,
             renew: true
           }
-          this.$axios.post('api/tcm/paid/plan/oneTime/paymentLink', params).then(data => {
-            openUrl(data)
-          })
+          this.buried('renewAgentStripe')
+          this.$axios
+            .post('api/tcm/paid/plan/oneTime/paymentLink', params)
+            .then(data => {
+              openUrl(data)
+              this.buried('renewAgentStripe', '', {
+                result: true
+              })
+            })
+            .catch(() => {
+              this.buried('renewAgentStripe', '', {
+                result: false
+              })
+            })
         }
       })
     },
     handlePay(row = {}) {
+      this.buired('payAgentStripe')
       openUrl(row.payUrl)
       this.$confirm(
         i18n.t('dfs_user_center_ninjiangzhifur', { val1: row.content }),
@@ -1235,6 +1268,7 @@ export default {
       })
     },
     handleRenewal() {
+      this.buried('goRenewalAliyunCode')
       const href = 'https://market.console.aliyun.com/imageconsole/index.htm'
       openUrl(href)
     }
