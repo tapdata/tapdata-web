@@ -751,7 +751,8 @@ export default {
           connectionId: id,
           isLeaf: true,
           isObject: true,
-          LDP_TYPE: 'table'
+          LDP_TYPE: 'table',
+          SWIM_TYPE: 'source'
         }
       })
     },

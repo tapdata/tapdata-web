@@ -330,7 +330,8 @@ export default {
           isLeaf: true,
           isObject: true,
           type: 'table',
-          LDP_TYPE: 'table'
+          LDP_TYPE: 'table',
+          SWIM_TYPE: 'source'
         }
       })
       return data.length
