@@ -192,10 +192,18 @@ export default {
       return this.$refs.schemaToForm.getForm?.()
     }
   },
-  created() {
+  async created() {
     this.id = this.params.id || ''
-    this.getPdkForm()
     this.getPdkDoc()
+    await this.getPdkForm()
+    this.$router.push({
+      query: {
+        ...this.$route.query,
+        type: undefined,
+        pdkHash: undefined,
+        connectionConfig: undefined
+      }
+    })
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
@@ -780,6 +788,7 @@ export default {
         delete result.properties.START.properties.__TAPDATA.properties.name
       }
       //this.showSystemConfig = true
+      this.setConnectionConfig()
       this.schemaScope = {
         isEdit: !!id,
         useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
@@ -929,8 +938,11 @@ export default {
           const routeParams = this.$route.params
           delete routeQuery['connectionConfig']
           let routeUrl = this.$router.resolve({
-            name: routeParams?.id ? 'connectionsEdit' : 'connectionCreate',
-            query: routeQuery,
+            name: 'dataConsole',
+            query: {
+              type: 'add-connection',
+              pdkHash: this.params.pdkHash
+            },
             params: routeParams
           })
 
@@ -993,6 +1005,36 @@ export default {
       pdkApi.doc(pdkHash).then(res => {
         this.doc = res?.data
       })
+    },
+    async setConnectionConfig() {
+      const { connectionConfig } = this.$route.query || {}
+      if (connectionConfig) {
+        // delete this.$route.query.connectionConfig
+        // delete this.$route.query.type
+        // delete this.$route.query.pdkHash
+        console.log({ ...this.$route }, this.$route.query) // eslint-disable-line
+        const params = {
+          pdkHash: this.params.pdkHash,
+          connectionConfig: JSON.parse(connectionConfig),
+          command: 'OAuth',
+          type: 'connection'
+        }
+        const res = await proxyApi.command(params)
+        const { __TAPDATA, __TAPDATA_CONFIG = {}, ...trace } = res || JSON.parse(connectionConfig) || {}
+        Object.assign(
+          this.model,
+          __TAPDATA,
+          {
+            config: __TAPDATA_CONFIG
+          },
+          trace
+        )
+        this.schemaFormInstance.setValues({
+          __TAPDATA,
+          ...__TAPDATA_CONFIG,
+          ...trace
+        })
+      }
     }
   }
 }
