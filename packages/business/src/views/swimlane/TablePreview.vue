@@ -201,7 +201,7 @@
 import { cloneDeep } from 'lodash'
 
 import { Drawer, VTable, VEmpty } from '@tap/component'
-import { calcUnit } from '@tap/shared'
+import { calcTimeUnit, calcUnit, isNum } from '@tap/shared'
 import { discoveryApi, proxyApi, taskApi, metadataInstancesApi, modulesApi } from '@tap/api'
 import i18n from '@/i18n'
 import dayjs from 'dayjs'
@@ -442,7 +442,12 @@ export default {
     getTaskStatus() {
       taskApi.tableStatus(this.connectionId, this.detailData.name).then(res => {
         this.tableStatus = res?.status
-        this.cdcDelayTime = res?.cdcDelayTime || '-'
+        this.cdcDelayTime =
+          isNum(res?.cdcDelayTime) && res.cdcDelayTime >= 0
+            ? calcTimeUnit(res.cdcDelayTime, 2, {
+                autoHideMs: true
+              })
+            : '-'
         this.lastDataChangeTime = res?.lastDataChangeTime
           ? dayjs(res?.lastDataChangeTime).format('YYYY-MM-DD HH:mm:ss')
           : '-'
