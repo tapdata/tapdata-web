@@ -203,7 +203,7 @@
             <span>{{ formatTime(scope.row.createAt) }}</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn :label="$t('public_operation')" width="176">
+        <ElTableColumn :label="$t('public_operation')" width="200">
           <template slot-scope="scope">
             <ElButton
               type="text"
@@ -228,6 +228,15 @@
               :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
               @click="handleDel(scope.row)"
               >{{ $t('public_button_delete') }}</ElButton
+            >
+            <ElDivider direction="vertical"></ElDivider>
+            <ElButton
+              size="mini"
+              type="text"
+              :loading="scope.row.btnLoading.delete"
+              :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
+              @click="handleUnsubscribe(scope.row)"
+              >{{ $t('public_button_unsubscribe') }}</ElButton
             >
           </template>
         </ElTableColumn>
@@ -386,7 +395,6 @@ import StatusTag from '../../components/StatusTag'
 import { INSTANCE_STATUS_MAP } from '../../const'
 import Details from './Details'
 import timeFunction from '@/mixins/timeFunction'
-import { buried } from '@/plugins/buried'
 import { VIcon, FilterBar } from '@tap/component'
 import { dayjs } from '@tap/business'
 import Time from '@tap/shared/src/time'
@@ -408,6 +416,7 @@ export default {
     CreateDialog,
     SelectListDialog
   },
+  inject: ['buried'],
   mixins: [timeFunction],
   data() {
     return {
@@ -590,7 +599,7 @@ export default {
             item.subscriptionMethodLabel = getPaymentMethod(paidSubscribeDto, chargeProvider) || '-'
             item.periodLabel =
               dayjs(periodStart).format('YYYY-MM-DD HH:mm:ss') + ' - ' + dayjs(periodEnd).format('YYYY-MM-DD HH:mm:ss')
-
+            item.content = `${item.subscriptionMethodLabel} ${item.specLabel} ${i18n.t('public_agent')}`
             item.expiredTime =
               chargeProvider === 'Aliyun' ? license.expiredTime : chargeProvider === 'Stripe' ? periodEnd : ''
             item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD') : '-'
@@ -1023,10 +1032,7 @@ export default {
     },
     async handleNewAgent(params = {}) {
       try {
-        const data = await this.$axios.post('api/tcm/orders', {
-          agentType: 'Local',
-          ...params
-        })
+        const data = await this.$axios.post('api/tcm/orders', params)
         buried('agentCreate')
         this.fetch()
         this.toDeploy({
@@ -1070,9 +1076,41 @@ export default {
       const count = await this.$axios.get('api/tcm/agent/count')
       if (count) return false
       const flag = await this.handleNewAgent({
+        agentType: 'Local',
         chargeProvider: 'FreeTier'
       })
       return flag
+    },
+    handleUnsubscribe(row = {}) {
+      this.$confirm(
+        i18n.t('dfs_user_center_ninjiangtuidingr', { val1: row.content }),
+        i18n.t('dfs_user_center_tuidingfuwu'),
+        {
+          type: 'warning'
+        }
+      ).then(res => {
+        if (!res) return
+        const { paidType } = row
+        this.buried('unsubscribeAgentStripe', '', {
+          type: paidType
+        })
+        this.$axios
+          .post('api/tcm/orders/cancel', { instanceId: row.id })
+          .then(() => {
+            this.fetch()
+            this.buried('unsubscribeAgentStripe', '', {
+              result: true,
+              type: paidType
+            })
+            this.$message.success(this.$t('public_message_operation_success'))
+          })
+          .catch(() => {
+            this.buried('unsubscribeAgentStripe', '', {
+              result: false,
+              type: paidType
+            })
+          })
+      })
     }
   }
 }

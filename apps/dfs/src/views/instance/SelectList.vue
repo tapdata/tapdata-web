@@ -217,10 +217,12 @@ export default {
     submit(row = {}) {
       const map = {
         code: {
+          agentType: 'Local',
           chargeProvider: 'Aliyun',
           licenseId: row.id
         },
         order: {
+          agentType: 'Local',
           chargeProvider: 'Stripe',
           subscriptionId: row.id
         }
