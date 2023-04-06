@@ -380,7 +380,7 @@ import Cookie from '@tap/shared/src/cookie'
 import Time from '@tap/shared/src/time'
 import { VIcon } from '@tap/component'
 import { langMenu, getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
-import { usersApi, timeStampApi, licensesApi } from '@tap/api'
+import { usersApi, timeStampApi, licensesApi, taskApi, logcollectorApi } from '@tap/api'
 import { PageHeader } from '@tap/business'
 
 import CustomerService from '@/components/CustomerService'
@@ -501,8 +501,9 @@ export default {
       this.getActiveMenu()
     }
   },
-  created() {
-    this.getMenus()
+  async created() {
+    const hideMenuMap = await this.getHideMenuItem()
+    this.getMenus(hideMenuMap)
     this.getActiveMenu()
 
     this.userName = Cookie.get('username') || Cookie.get('email')?.split('@')?.[0] || ''
@@ -547,7 +548,7 @@ export default {
       let activeRoute = matched.find(r => activeMap[r.name])
       this.activeMenu = activeMap[activeRoute?.name] || ''
     },
-    getMenus() {
+    getMenus(hideMenuMap = {}) {
       let permissions = sessionStorage.getItem('tapdata_permissions')
 
       permissions = permissions ? JSON.parse(permissions) : []
@@ -576,8 +577,8 @@ export default {
             menu.label = this.$t(label)
           }
 
-          menu.hidden = menu.hidden || (menu.code && !permissions.some(p => p.code === menu.code))
-
+          menu.hidden =
+            menu.hidden || hideMenuMap[menu.name] || (menu.code && !permissions.some(p => p.code === menu.code))
           if (!menu.hidden && menu.children) {
             menu.children = formatMenu(menu.children)
             if (menu.children.every(m => m.hidden)) {
@@ -685,6 +686,28 @@ export default {
         }
         this.licenseExpireDate = dayjs(expires_on).format('YYYY-MM-DD HH:mm:ss')
       })
+    },
+
+    async getHideMenuItem() {
+      const map = {
+        sharedMiningList: (await logcollectorApi.get({ filter: JSON.stringify({}) }))?.total || 0,
+        HeartbeatTableList:
+          (
+            await taskApi.get({
+              filter: JSON.stringify({
+                where: {
+                  syncType: 'connHeartbeat'
+                }
+              })
+            })
+          )?.total || 0
+      }
+      return Object.keys(map).reduce((result, key) => {
+        if (!map[key]) {
+          result[key] = true
+        }
+        return result
+      }, {})
     }
   }
 }
