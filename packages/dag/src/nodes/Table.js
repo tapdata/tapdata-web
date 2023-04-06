@@ -298,14 +298,6 @@ export class Table extends NodeType {
                         'x-component': 'Switch',
                         'x-reactions': [
                           {
-                            fulfill: {
-                              state: {
-                                display:
-                                  '{{$values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") ? "visible" :"hidden"}}'
-                              }
-                            }
-                          },
-                          {
                             dependencies: ['isFilter', 'enableCustomCommand'],
                             fulfill: {
                               schema: {
@@ -419,14 +411,6 @@ export class Table extends NodeType {
                               display: '{{$deps[0] ? "visible" :"hidden"}}'
                             }
                           }
-                        }
-                      }
-                    },
-                    'x-reactions': {
-                      fulfill: {
-                        state: {
-                          display:
-                            '{{$settings.type === "cdc" || !["Mysql", "MongoDB"].includes($values.databaseType) ? "hidden":"visible"}}'
                         }
                       }
                     }
@@ -835,6 +819,24 @@ export class Table extends NodeType {
                           state: {
                             loading: '{{$self.loading}}',
                             dataSource: '{{$self.value}}'
+                          }
+                        }
+                      },
+                      {
+                        target: '*(readPartitionOptions.enable)',
+                        fulfill: {
+                          state: {
+                            value:
+                              '{{$self.value?.some(t => t.isPrimaryKey) && $values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") && ($settings.type !== "cdc" && ["Mysql", "MongoDB"].includes($values.databaseType)) ? $values.readPartitionOptions.enable:false}}'
+                          }
+                        }
+                      },
+                      {
+                        target: '*(readPartitionOptions)',
+                        fulfill: {
+                          state: {
+                            display:
+                              '{{$self.value?.some(t => t.isPrimaryKey) && $values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") && ($settings.type !== "cdc" && ["Mysql", "MongoDB"].includes($values.databaseType)) ? "visible":"hidden"}}'
                           }
                         }
                       }
