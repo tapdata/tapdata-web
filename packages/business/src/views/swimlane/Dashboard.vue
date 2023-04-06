@@ -13,6 +13,7 @@
       <ElTooltip placement="top" v-else :content="$t('packages_business_switch_data_console_view')" key="console">
         <IconButton class="ml-3" @click="toggleView('swimlane')" md>swimlane</IconButton>
       </ElTooltip>
+      <div class="flex-grow-1"></div>
       <IconButton class="ml-3" @click="handleSettings" md>cog-o</IconButton>
     </div>
     <div class="list flex flex-fill overflow-hidden">
