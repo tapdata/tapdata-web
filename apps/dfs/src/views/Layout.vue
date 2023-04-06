@@ -38,20 +38,11 @@
             </template>
           </ElMenuItem>
         </template>
-        <ElMenuItem
-          v-if="!isDemoEnv"
-          :key="$t('dfs_agent_download_agentguidedialog_tiyan') + ' Demo'"
-          index="goDemo"
-          class="flex align-center border-top"
-        >
+        <ElMenuItem v-if="!isDemoEnv" key="goDemo" index="goDemo" class="flex align-center border-top">
           <span class="mr-4"><VIcon class="v-icon" size="17">open-in-new</VIcon></span>
           <span class="text-decoration-underline">{{ $t('dfs_agent_download_agentguidedialog_tiyan') + ' Demo' }}</span>
         </ElMenuItem>
-        <ElMenuItem
-          :key="$t('dfs_agent_download_agentguidedialog_tiyan') + ' Demo'"
-          index="goGuide"
-          class="flex align-center border-top"
-        >
+        <ElMenuItem key="goGuide" index="goGuide" class="flex align-center border-top">
           <span class="mr-4"><VIcon class="v-icon" size="17">open-in-new</VIcon></span>
           <span class="text-decoration-underline">产品引导</span>
         </ElMenuItem>
