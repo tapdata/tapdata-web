@@ -2,16 +2,16 @@
   <div class="swim-lane flex flex-column h-100">
     <div class="page-header-title flex align-center">
       <span>{{ $t('page_title_data_console') }}</span>
-      <div class="flex-grow-1"></div>
       <ElTooltip
+        placement="top"
         v-if="currentView === 'swimlane'"
         :content="$t('packages_business_switch_directory_view')"
         key="swimlane"
       >
-        <IconButton @click="toggleView('catalog')" md>list-view</IconButton>
+        <IconButton class="ml-3" @click="toggleView('catalog')" md>list-view</IconButton>
       </ElTooltip>
-      <ElTooltip v-else :content="$t('packages_business_switch_data_console_view')" key="console">
-        <IconButton @click="toggleView('swimlane')" md>swimlane</IconButton>
+      <ElTooltip placement="top" v-else :content="$t('packages_business_switch_data_console_view')" key="console">
+        <IconButton class="ml-3" @click="toggleView('swimlane')" md>swimlane</IconButton>
       </ElTooltip>
       <IconButton class="ml-3" @click="handleSettings" md>cog-o</IconButton>
     </div>
@@ -197,8 +197,7 @@ export default {
     },
 
     handleSuccess(value) {
-      const component = this.laneOptions.find(t => t.type === this.selectorType)?.component
-      this.$refs[component]?.[0]?.addItem(value)
+      this.$refs.SourceItem?.[0]?.addItem(value)
     },
 
     handleDragEnd() {

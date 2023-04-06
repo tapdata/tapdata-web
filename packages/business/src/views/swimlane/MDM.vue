@@ -342,29 +342,49 @@ export default {
           <span class="table-label" title={data.name}>
             {data.name}
           </span>
-          {data.isObject ? (
-            <IconButton
-              class="btn-menu"
-              sm
-              onClick={() => {
-                this.$emit('preview', data)
-              }}
-            >
-              view-details
-            </IconButton>
-          ) : (
-            <span class="btn-menu">
+          <div class="btn-menu">
+            {!data.isObject ? (
+              [
+                <IconButton
+                  sm
+                  onClick={ev => {
+                    ev.stopPropagation()
+                    this.showDialog(data, 'add')
+                  }}
+                >
+                  add
+                </IconButton>,
+                <ElDropdown
+                  class="inline-flex"
+                  placement="bottom"
+                  trigger="click"
+                  onCommand={command => this.handleMoreCommand(command, data)}
+                >
+                  <IconButton
+                    onClick={ev => {
+                      ev.stopPropagation()
+                    }}
+                    sm
+                  >
+                    more
+                  </IconButton>
+                  <ElDropdownMenu slot="dropdown">
+                    <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
+                    <ElDropdownItem command="delete">{this.$t('public_button_delete')}</ElDropdownItem>
+                  </ElDropdownMenu>
+                </ElDropdown>
+              ]
+            ) : (
               <IconButton
                 sm
-                onClick={ev => {
-                  ev.stopPropagation()
-                  this.showDialog(data, 'add')
+                onClick={() => {
+                  this.$emit('preview', data)
                 }}
               >
-                add
+                view-details
               </IconButton>
-            </span>
-          )}
+            )}
+          </div>
         </div>
       )
     },
@@ -683,7 +703,7 @@ export default {
         itemType: itemType,
         visible: true,
         type,
-        parent: data,
+        item: data,
         id: data ? data.id : '',
         gid: data?.gid || '',
         label: type === 'edit' ? data.name : '',
@@ -727,7 +747,10 @@ export default {
         this.hideDialog()
         this.$message.success(this.$t('public_message_operation_success'))
         if (data && config.type === 'add') {
-          this.dialogConfig.parent.children.push(this.mapCatalog(data))
+          this.dialogConfig.item.children.push(this.mapCatalog(data))
+        } else if (config.type === 'edit') {
+          this.dialogConfig.item.name = params.value
+          this.dialogConfig.item.desc = params.desc
         }
       } catch (err) {
         this.$message.error(err.message)
@@ -758,6 +781,37 @@ export default {
       })
       objects.forEach(item => (item.parent_id = to))
       this.$message.success(this.$t('public_message_operation_success'))
+    },
+
+    handleMoreCommand(command, data) {
+      switch (command) {
+        case 'add':
+        case 'edit':
+          this.showDialog(data, command)
+          break
+        case 'delete':
+          this.deleteNode(data)
+      }
+    },
+
+    deleteNode(data) {
+      this.$confirm(
+        this.$t('packages_business_catalog_delete_confirm_message'),
+        `${this.$t('public_message_delete_confirm')}: ${data.name}?`,
+        {
+          confirmButtonText: this.$t('public_button_delete'),
+          cancelButtonText: this.$t('packages_component_message_cancel'),
+          type: 'warning',
+          closeOnClickModal: false
+        }
+      ).then(resFlag => {
+        if (!resFlag) {
+          return
+        }
+        metadataDefinitionsApi.delete(data.id).then(() => {
+          this.$refs.tree.remove(data.id)
+        })
+      })
     }
   }
 }

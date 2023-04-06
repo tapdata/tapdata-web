@@ -99,7 +99,6 @@
         Clone To FDM
       </div>
     </div>
-
     <ElDialog :visible.sync="taskDialogConfig.visible" width="600" :close-on-click-modal="false">
       <span slot="title" class="font-color-dark fs-6 fw-sub">{{ $t('packages_business_create_clone_task') }}</span>
       <ElForm ref="form" :model="taskDialogConfig" label-width="180px" @submit.prevent :rules="formRules">
@@ -137,12 +136,53 @@
         </ElButton>
       </span>
     </ElDialog>
+    <ElDialog :visible.sync="dialogConfig.visible" width="30%" :close-on-click-modal="false">
+      <span slot="title" class="fs-6 fw-sub">{{ dialogConfig.title }}</span>
+      <ElForm ref="form" :model="dialogConfig" label-width="90px">
+        <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumingcheng')">
+          <ElInput
+            size="mini"
+            v-model="dialogConfig.label"
+            :placeholder="$t('packages_component_classification_nodeName')"
+            maxlength="50"
+            show-word-limit
+          ></ElInput>
+        </ElFormItem>
+        <!--<ElFormItem
+          :label="$t('packages_component_src_discoveryclassification_mulufenlei')"
+          v-if="dialogConfig.isParent"
+        >
+          <ElSelect v-model="dialogConfig.itemType" :disabled="dialogConfig.type === 'edit'">
+            <el-option
+              :label="$t('packages_component_src_discoveryclassification_ziyuanmulu')"
+              value="resource"
+            ></el-option>
+            &lt;!&ndash;            <el-option label="任务目录" value="task"></el-option>&ndash;&gt;
+          </ElSelect>
+        </ElFormItem>-->
+        <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumiaoshu')">
+          <ElInput
+            type="textarea"
+            v-model="dialogConfig.desc"
+            :placeholder="$t('packages_component_src_discoveryclassification_qingshurumulu')"
+            maxlength="50"
+            show-word-limit
+          ></ElInput>
+        </ElFormItem>
+      </ElForm>
+      <span slot="footer" class="dialog-footer">
+        <ElButton size="mini" @click="hideDialog()">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton size="mini" type="primary" @click="dialogSubmit()">
+          {{ $t('public_button_confirm') }}
+        </ElButton>
+      </span>
+    </ElDialog>
   </div>
 </template>
 
 <script>
 import { merge, debounce } from 'lodash'
-import { connectionsApi, discoveryApi, ldpApi, taskApi } from '@tap/api'
+import { connectionsApi, discoveryApi, ldpApi, metadataDefinitionsApi, taskApi, userGroupsApi } from '@tap/api'
 import { VirtualTree, IconButton } from '@tap/component'
 import { uuid } from '@tap/shared'
 import { makeDragNodeImage, TASK_SETTINGS } from '../../shared'
@@ -195,7 +235,17 @@ export default {
       searchIng: false,
       search: '',
       enableSearch: false,
-      filterTreeData: []
+      filterTreeData: [],
+      dialogConfig: {
+        type: 'add',
+        id: '',
+        gid: '',
+        label: '',
+        title: '',
+        itemType: 'resource',
+        desc: '',
+        visible: false
+      }
     }
   },
 
@@ -337,17 +387,38 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
           <span class="table-label" title={data.name}>
             {data.name}
           </span>
-          {data.isObject && (
-            <IconButton
-              class="btn-menu"
-              sm
-              onClick={() => {
-                this.$emit('preview', data)
-              }}
-            >
-              view-details
-            </IconButton>
-          )}
+          <div class="btn-menu">
+            {!data.isObject ? (
+              <ElDropdown
+                class="inline-flex"
+                placement="bottom"
+                trigger="click"
+                onCommand={command => this.handleMoreCommand(command, data)}
+              >
+                <IconButton
+                  onClick={ev => {
+                    ev.stopPropagation()
+                  }}
+                  sm
+                >
+                  more
+                </IconButton>
+                <ElDropdownMenu slot="dropdown">
+                  <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
+                  <ElDropdownItem command="delete">{this.$t('public_button_delete')}</ElDropdownItem>
+                </ElDropdownMenu>
+              </ElDropdown>
+            ) : (
+              <IconButton
+                sm
+                onClick={() => {
+                  this.$emit('preview', data)
+                }}
+              >
+                view-details
+              </IconButton>
+            )}
+          </div>
         </div>
       )
     },
@@ -666,6 +737,103 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
       let planB = connectionName.split('-').shift()
 
       return (planA.length < planB.length ? planA : planB).substr(0, 5)
+    },
+
+    handleMoreCommand(command, data) {
+      switch (command) {
+        case 'add':
+        case 'edit':
+          this.showDialog(data, command)
+          break
+        case 'delete':
+          this.deleteNode(data)
+      }
+    },
+
+    showDialog(data, dialogType) {
+      let type = dialogType || 'add'
+      let itemType = 'resource'
+      if (data && data.item_type) {
+        itemType = data.item_type?.join('')
+      }
+      this.dialogConfig = {
+        itemType: itemType,
+        visible: true,
+        type,
+        item: data,
+        id: data ? data.id : '',
+        gid: data?.gid || '',
+        label: type === 'edit' ? data.name : '',
+        isParent: true,
+        desc: type === 'edit' ? data?.desc : '',
+        title:
+          type === 'add' ? this.$t('packages_component_classification_addChildernNode') : this.$t('public_button_edit')
+      }
+    },
+
+    hideDialog() {
+      this.dialogConfig.visible = false
+    },
+
+    deleteNode(data) {
+      this.$confirm(
+        this.$t('packages_business_catalog_delete_confirm_message'),
+        `${this.$t('public_message_delete_confirm')}: ${data.name}?`,
+        {
+          confirmButtonText: this.$t('public_button_delete'),
+          cancelButtonText: this.$t('packages_component_message_cancel'),
+          type: 'warning',
+          closeOnClickModal: false
+        }
+      ).then(resFlag => {
+        if (!resFlag) {
+          return
+        }
+        metadataDefinitionsApi.delete(data.id).then(() => {
+          this.$refs.tree.remove(data.id)
+        })
+      })
+    },
+
+    async dialogSubmit() {
+      let config = this.dialogConfig
+      let value = config.label
+      let id = config.id
+      let itemType = [config.itemType]
+      let method = 'post'
+
+      if (!value || value.trim() === '') {
+        this.$message.error(this.$t('packages_component_classification_nodeName'))
+        return
+      }
+
+      let params = {
+        item_type: itemType,
+        desc: config.desc,
+        value
+      }
+
+      if (config.type === 'edit') {
+        method = 'changeById'
+        params.id = id
+        delete params.item_type
+      } else if (id) {
+        params.parent_id = id
+      }
+
+      try {
+        const data = await metadataDefinitionsApi[method](params)
+        this.hideDialog()
+        this.$message.success(this.$t('public_message_operation_success'))
+        if (data && config.type === 'add') {
+          this.dialogConfig.item.children.push(this.mapCatalog(data))
+        } else if (config.type === 'edit') {
+          this.dialogConfig.item.name = params.value
+          this.dialogConfig.item.desc = params.desc
+        }
+      } catch (err) {
+        this.$message.error(err.message)
+      }
     }
   }
 }

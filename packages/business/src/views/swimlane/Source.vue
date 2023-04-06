@@ -304,20 +304,26 @@ export default {
 
         const { status, loadCount = 0, tableCount = 0 } = t
         const disabled = status !== 'ready'
-        const conn = {
-          ...t,
-          progress: !tableCount ? 0 : Math.round((loadCount / tableCount) * 10000) / 100,
-          children: [],
-          isLeaf: false,
-          disabled,
-          type: 'connection',
-          LDP_TYPE: 'connection'
-        }
-        this.connectionMap[t.id] = conn
-        items.push(conn)
+        const connection = this.mapConnection(t)
+        this.connectionMap[t.id] = connection
+        items.push(connection)
       })
 
       return items
+    },
+
+    mapConnection(connection) {
+      const { status, loadCount = 0, tableCount = 0 } = connection
+      const disabled = status !== 'ready'
+      return {
+        ...connection,
+        progress: !tableCount ? 0 : Math.round((loadCount / tableCount) * 10000) / 100,
+        children: [],
+        isLeaf: false,
+        disabled,
+        type: 'connection',
+        LDP_TYPE: 'connection'
+      }
     },
 
     async getTableList(id) {
@@ -393,12 +399,14 @@ export default {
     },
 
     addItem(data) {
+      const connection = this.mapConnection(data)
+      this.connectionMap[data.id] = connection
       const { root = {} } = this.$refs.tree
       const firstChildKey = root.childNodes[0]?.key
       if (firstChildKey) {
-        this.$refs.tree.insertBefore(data, firstChildKey)
+        this.$refs.tree.insertBefore(connection, firstChildKey)
       } else {
-        this.$refs.tree.append(data, 0)
+        this.$refs.tree.append(connection, 0)
       }
     },
 

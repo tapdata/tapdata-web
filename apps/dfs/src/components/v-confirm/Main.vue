@@ -100,7 +100,7 @@ export default {
       hideIcon: false,
       icon: '', // 图标
       iconColor: '',
-      iconSize: 25,
+      iconSize: 22,
       title: '', // 标题
       message: '', // 内容
       type: '', // 常用的几种提示类型： success、info、warning、error。不然需要自己传递 icon的属性
@@ -219,9 +219,9 @@ export default {
 }
 .message-box__header {
   display: inline-block;
-  padding: 24px 16px 0;
+  padding: 24px 24px 0;
   //padding-right: 16px;
-  font-size: 14px;
+  font-size: 16px;
   color: rgba(0, 0, 0, 0.75);
   font-weight: 700;
 }
@@ -250,7 +250,8 @@ export default {
   padding: 0 24px;
   flex: 1;
   overflow: auto;
-  font-size: 12px;
+  font-size: 14px;
+  line-height: 22px;
   color: rgba(0, 0, 0, 0.65);
 }
 .message-box__content {
@@ -258,6 +259,7 @@ export default {
   flex: 1;
   width: 0;
   box-sizing: border-box;
+  word-break: break-word;
 }
 .message-box__btns {
   padding: 0 24px 24px;

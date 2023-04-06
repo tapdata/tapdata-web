@@ -916,5 +916,7 @@ export default {
   packages_business_fdm_empty_text:
     'Please drag the table from <strong>Sources</strong> here to start cloning the data.',
   packages_business_mdm_empty_text:
-    'Please drag the table from <strong>Sources/Foundation Data Model</strong> here to start synchronizing data'
+    'Please drag the table from <strong>Sources/Foundation Data Model</strong> here to start synchronizing data',
+  packages_business_catalog_delete_confirm_message:
+    'This operation will only delete the category. If you want to delete the physical tables under this category, please do it yourself.'
 }

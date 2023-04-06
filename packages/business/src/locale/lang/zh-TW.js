@@ -873,5 +873,7 @@ export default {
   packages_business_target_create_task_dialog_desc_to: '同步到',
   packages_business_target_create_task_dialog_desc_suffix: '請點擊下面的按鈕繼續,您也可以更改任務名稱。',
   packages_business_fdm_empty_text: '請將<strong>源數據層</strong>中的表拖拽至此<br/>即可開始複製數據',
-  packages_business_mdm_empty_text: '請將<strong>源數據層/平台緩存層</strong>中的表拖拽至此<br/>即可開始同步數據'
+  packages_business_mdm_empty_text: '請將<strong>源數據層/平台緩存層</strong>中的表拖拽至此<br/>即可開始同步數據',
+  packages_business_catalog_delete_confirm_message:
+    '此操作僅會將該分類及其子分類刪除，如需刪除分類下的物理表,請您自行操作。'
 }
