@@ -203,7 +203,7 @@
             <span>{{ formatTime(scope.row.createAt) }}</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn :label="$t('public_operation')" width="176">
+        <ElTableColumn :label="$t('public_operation')" width="200">
           <template slot-scope="scope">
             <ElButton
               type="text"
@@ -228,6 +228,15 @@
               :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
               @click="handleDel(scope.row)"
               >{{ $t('public_button_delete') }}</ElButton
+            >
+            <ElDivider direction="vertical"></ElDivider>
+            <ElButton
+              size="mini"
+              type="text"
+              :loading="scope.row.btnLoading.delete"
+              :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
+              @click="handleUnsubscribe(scope.row)"
+              >{{ $t('public_button_unsubscribe') }}</ElButton
             >
           </template>
         </ElTableColumn>
@@ -590,8 +599,8 @@ export default {
             item.subscriptionMethodLabel = getPaymentMethod(paidSubscribeDto, chargeProvider) || '-'
             item.periodLabel =
               dayjs(periodStart).format('YYYY-MM-DD HH:mm:ss') + ' - ' + dayjs(periodEnd).format('YYYY-MM-DD HH:mm:ss')
-
-            item.expiredTime =
+            item.content = `${item.subscriptionMethodLabel} ${item.specLabel} ${i18n.t('public_agent')}`
+            const expiredTime =
               chargeProvider === 'Aliyun' ? license.expiredTime : chargeProvider === 'Stripe' ? periodEnd : ''
             item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD') : '-'
             item.paidType =
@@ -1073,6 +1082,21 @@ export default {
         chargeProvider: 'FreeTier'
       })
       return flag
+    },
+    handleUnsubscribe(row = {}) {
+      this.$confirm(
+        i18n.t('dfs_user_center_ninjiangtuidingr', { val1: row.content }),
+        i18n.t('dfs_user_center_tuidingfuwu'),
+        {
+          type: 'warning'
+        }
+      ).then(res => {
+        res &&
+          this.$axios.post('api/tcm/orders/cancel', { instanceId: row.id }).then(() => {
+            this.fetch()
+            this.$message.success(this.$t('public_message_operation_success'))
+          })
+      })
     }
   }
 }

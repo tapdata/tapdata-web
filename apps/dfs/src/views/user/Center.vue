@@ -238,9 +238,6 @@
             @click="handleCancelSubscription(row)"
             >{{ $t('public_button_cancel') }}{{ $t('public_button_subscription') }}</ElButton
           >
-          <ElButton v-else :disabled="row.status !== 'pay'" type="text" @click="handleUnsubscribe(row)">{{
-            $t('public_button_unsubscribe')
-          }}</ElButton>
           <ElButton v-if="row.status === 'unPay'" type="text" @click="handlePay(row)">{{
             $t('public_button_pay')
           }}</ElButton>
@@ -1145,32 +1142,6 @@ export default {
       ]
       this.recordData.visible = true
     },
-    handleUnsubscribe(row = {}) {
-      if (row.agentId) return this.$message.error(i18n.t('dfs_user_center_qingxianshanchushi'))
-      this.$confirm(
-        i18n.t('dfs_user_center_ninjiangtuidingr', { val1: row.content }),
-        i18n.t('dfs_user_center_tuidingfuwu'),
-        {
-          type: 'warning'
-        }
-      ).then(res => {
-        if (!res) return
-        this.buired('unsubscribeAgentStripe')
-        this.$axios
-          .post('api/tcm/paid/plan/oneTime/refunds', { id: row.id, chargeId: row.chargeId })
-          .then(() => {
-            this.$message.success(this.$t('public_message_operation_success'))
-            this.buired('unsubscribeAgentStripe', '', {
-              result: true
-            })
-          })
-          .catch(() => {
-            this.buired('unsubscribeAgentStripe', '', {
-              result: false
-            })
-          })
-      })
-    },
     handleCancelSubscription(row = {}) {
       this.$confirm(
         i18n.t('dfs_user_center_ninjiangquxiaoding', { val1: row.content }),
@@ -1182,7 +1153,7 @@ export default {
         if (!res) return
         this.buired('cancelSubscribeAgentStripe')
         this.$axios
-          .post('api/tcm/paid/plan/subscribe/cancel', { id: row.id, subscribeId: row.subscribeId })
+          .post('api/tcm/orders/cancel', { instanceId: row.agentId })
           .then(() => {
             this.$message.success(this.$t('public_message_operation_success'))
             this.buired('cancelSubscribeAgentStripe', '', {
@@ -1227,11 +1198,12 @@ export default {
         }
       ).then(res => {
         if (res) {
-          const { id, priceId, currency } = row
+          const { id, priceId, currency, type } = row
           const params = {
             id,
             priceId,
             currency,
+            type,
             successUrl: location.href,
             cancelUrl: location.href,
             renew: true
