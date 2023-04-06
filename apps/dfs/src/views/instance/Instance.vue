@@ -1032,10 +1032,7 @@ export default {
     },
     async handleNewAgent(params = {}) {
       try {
-        const data = await this.$axios.post('api/tcm/orders', {
-          agentType: 'Local',
-          ...params
-        })
+        const data = await this.$axios.post('api/tcm/orders', params)
         buried('agentCreate')
         this.fetch()
         this.toDeploy({
@@ -1079,6 +1076,7 @@ export default {
       const count = await this.$axios.get('api/tcm/agent/count')
       if (count) return false
       const flag = await this.handleNewAgent({
+        agentType: 'Local',
         chargeProvider: 'FreeTier'
       })
       return flag
