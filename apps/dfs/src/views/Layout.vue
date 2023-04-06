@@ -66,6 +66,7 @@
     <ConnectionTypeDialog :dialogVisible.sync="dialogVisible" @databaseType="createConnection"></ConnectionTypeDialog>
     <AgentGuideDialog :visible.sync="agentGuideDialog" @openAgentDownload="openAgentDownload"></AgentGuideDialog>
     <AgentDownloadModal :visible.sync="agentDownload.visible" :source="agentDownload.data"></AgentDownloadModal>
+    <SubscriptionModelDialog :visible.sync="subscriptionModelVisible"></SubscriptionModelDialog>
     <BindPhone :visible.sync="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>
     <!--    <CheckLicense :visible.sync="aliyunMaketVisible" :user="userInfo"></CheckLicense>-->
   </ElContainer>
@@ -81,6 +82,7 @@ import AgentDownloadModal from '@/views/agent-download/AgentDownloadModal'
 import AgentGuideDialog from '@/views/agent-download/AgentGuideDialog'
 import BindPhone from '@/views/user/components/BindPhone'
 import Cookie from '@tap/shared/src/cookie'
+import SubscriptionModelDialog from '@/views/agent-download/SubscriptionModelDialog'
 
 export default {
   inject: ['checkAgent', 'buried'],
@@ -91,6 +93,7 @@ export default {
     AgentDownloadModal,
     AgentGuideDialog,
     BindPhone,
+    SubscriptionModelDialog,
     PageHeader
   },
   data() {
@@ -150,6 +153,7 @@ export default {
       bindPhoneVisible: false,
       agentGuideDialog: false,
       showAgentWarning: false,
+      subscriptionModelVisible: true,
       userInfo: '',
       // aliyunMaketVisible: false,
       isDemoEnv: document.domain === 'demo.cloud.tapdata.net'
