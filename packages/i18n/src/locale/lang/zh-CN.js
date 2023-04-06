@@ -16,6 +16,7 @@ export default {
   public_serial_number: '序号',
   public_query: '查询',
   public_aggregate: '聚合',
+  public_table_name: '表名',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '无效',

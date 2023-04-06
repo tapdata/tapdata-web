@@ -143,6 +143,9 @@ const responseInterceptor = response => {
       console.log(i18n.t('dfs_plugins_axios_qingqiushibai') + msg, response)
       return reject(msg)
     } else {
+      if (response.config.silenceMessage) {
+        return reject(response)
+      }
       // 其他情况交由业务端自行处理
       if (['Datasource.TableNotFound', 'SubscribeFailed.OrderLimit'].includes(code)) {
         return reject(Object.assign(response))

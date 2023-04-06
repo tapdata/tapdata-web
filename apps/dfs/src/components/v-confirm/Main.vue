@@ -8,7 +8,7 @@
         <div class="message-box__header position-relative">
           <div class="message-box__title flex align-items-center">
             <VIcon
-              v-if="icon && haveTitleAndMessage"
+              v-if="icon && (haveTitleAndMessage || onlyTitle)"
               :size="iconSize"
               :color="iconColor"
               :class="['v-icon', iconClass]"
@@ -124,7 +124,8 @@ export default {
       distinguishCancelAndClose: false,
       width: '416px', // 需要完整的像素字符串
       confirmButtonTextDefault: i18n.t('public_button_confirm'),
-      cancelButtonTextDefault: i18n.t('public_button_cancel')
+      cancelButtonTextDefault: i18n.t('public_button_cancel'),
+      onlyTitle: false
     }
   },
   computed: {

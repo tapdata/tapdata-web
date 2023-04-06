@@ -918,5 +918,6 @@ export default {
   packages_business_mdm_empty_text:
     'Please drag the table from <strong>Sources/Foundation Data Model</strong> here to start synchronizing data',
   packages_business_catalog_delete_confirm_message:
-    'This operation will only delete the category. If you want to delete the physical tables under this category, please do it yourself.'
+    'This operation will only delete the category. If you want to delete the physical tables under this category, please do it yourself.',
+  packages_business_mdm_table_duplication_confirm: '目標表已經存在，請確定是否繼續？'
 }

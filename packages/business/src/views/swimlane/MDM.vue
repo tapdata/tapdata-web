@@ -116,13 +116,13 @@
           </div>
           <div>{{ $t('packages_business_mdm_create_task_dialog_desc_table_name') }}</div>
         </div>
-        <ElFormItem label="Table Name">
+        <ElFormItem :label="$t('public_table_name')">
           <ElInput size="small" v-model="taskDialogConfig.newTableName"></ElInput>
         </ElFormItem>
       </ElForm>
       <span slot="footer" class="dialog-footer">
         <ElButton size="mini" @click="taskDialogConfig.visible = false">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton :loading="creating" size="mini" type="primary" @click="taskDialogSubmit">
+        <ElButton :loading="creating" size="mini" type="primary" @click="taskDialogSubmit()">
           {{ $t('public_button_confirm') }}
         </ElButton>
       </span>
@@ -448,13 +448,13 @@ export default {
       this.taskDialogConfig.visible = true
     },
 
-    async taskDialogSubmit() {
+    async taskDialogSubmit(confirmTable) {
       const { tableName, from, newTableName, tagId } = this.taskDialogConfig
       let task = this.makeTask(from, tableName, newTableName)
       this.creating = true
       const h = this.$createElement
       try {
-        const result = await ldpApi.createMDMTask(task, { tagId })
+        const result = await ldpApi.createMDMTask(task, { silenceMessage: true, params: { tagId, confirmTable } })
         this.taskDialogConfig.visible = false
         this.$message.success({
           message: h(
@@ -475,7 +475,8 @@ export default {
         }, 1000)
       } catch (response) {
         console.log(response) // eslint-disable-line
-        if (response?.data?.code === 'Ldp.MdmTargetNoPrimaryKey') {
+        const code = response?.data?.code
+        if (code === 'Ldp.MdmTargetNoPrimaryKey') {
           const data = response?.data?.data
 
           if (!data) return
@@ -500,6 +501,17 @@ export default {
           setTimeout(() => {
             this.setNodeExpand(tagId)
           }, 1000)
+        } else if (code === 'Ldp.RepeatTableName') {
+          this.$confirm('', '目标表已经存在，请确定是否继续？', {
+            onlyTitle: true,
+            type: 'warning',
+            closeOnClickModal: false
+          }).then(resFlag => {
+            if (!resFlag) {
+              return
+            }
+            this.taskDialogSubmit(true)
+          })
         }
       }
       this.creating = false
