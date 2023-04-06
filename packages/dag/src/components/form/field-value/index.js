@@ -26,6 +26,7 @@ export const FieldValue = connect(
           originalFields: [],
           fields: [],
           checkAll: false,
+          searchFiledName: '',
           scriptDialog: {
             open: false,
             script: '//Enter you code at here',
@@ -61,10 +62,30 @@ export const FieldValue = connect(
         fields = fields.filter(item => !item.is_deleted)
         fields = convertSchemaToTreeData(fields) || []
         fields = this.checkOps(fields) || []
+        this.searchFiledName = this.searchFiledName.trim().toString() //去空格
+        if (this.searchFiledName !== '') {
+          fields = fields.filter(v => {
+            let str = v.label.toLowerCase()
+            return str.indexOf(this.searchFiledName.toLowerCase()) > -1
+          })
+        }
         this.fields = fields
         this.originalFields = JSON.parse(JSON.stringify(fields))
         return (
           <div class="field-processors-tree-warp bg-body pt-2 pb-5" v-loading={this.loading}>
+            <div class={['mb-2', 'flex']}>
+              <ElInput
+                placeholder={i18n.t('packages_form_field_mapping_list_qingshuruziduan')}
+                v-model={this.searchFiledName}
+                suffix-icon="el-icon-search"
+              ></ElInput>
+              <ElButton
+                class={['ml-2']}
+                type={'default'}
+                onClick={() => this.handleInput('')}
+                icon="el-icon-refresh"
+              ></ElButton>
+            </div>
             <div class="field-processor-operation flex">
               <span class="flex-1 text inline-block ml-6">
                 {i18n.t('packages_form_field_add_del_index_ziduanmingcheng')}
@@ -81,7 +102,7 @@ export const FieldValue = connect(
                 </VIcon>
               </span>
             </div>
-            <div className="field-processors-tree-warp">
+            <div class="field-processors-tree-warp">
               <ElTree
                 ref="tree"
                 data={fields}
@@ -221,6 +242,9 @@ export const FieldValue = connect(
             if (parentFieldName) fieldName = parentFieldName + '.' + fieldName
           }
           return fieldName
+        },
+        handleInput(val) {
+          this.searchFiledName = val
         },
         /**
          *

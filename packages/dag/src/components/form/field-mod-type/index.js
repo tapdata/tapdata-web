@@ -25,6 +25,7 @@ export const FieldModType = connect(
       data() {
         return {
           nodeKey: '',
+          searchFiledName: '',
           selectList: [
             {
               label: 'String',
@@ -88,10 +89,30 @@ export const FieldModType = connect(
         fields = fields.filter(item => !item.is_deleted)
         fields = convertSchemaToTreeData(fields) || [] //将模型转换成tree
         fields = this.checkOps(fields)
+        this.searchFiledName = this.searchFiledName.trim().toString() //去空格
+        if (this.searchFiledName !== '') {
+          fields = fields.filter(v => {
+            let str = v.label.toLowerCase()
+            return str.indexOf(this.searchFiledName.toLowerCase()) > -1
+          })
+        }
         this.fields = fields
         this.originalFields = JSON.parse(JSON.stringify(fields))
         return (
           <div class="field-processors-tree-warp bg-body pt-2 pb-5" v-loading={this.loading}>
+            <div class={['mb-2', 'flex']}>
+              <ElInput
+                placeholder={i18n.t('packages_form_field_mapping_list_qingshuruziduan')}
+                v-model={this.searchFiledName}
+                suffix-icon="el-icon-search"
+              ></ElInput>
+              <ElButton
+                class={['ml-2']}
+                type={'default'}
+                onClick={() => this.handleInput('')}
+                icon="el-icon-refresh"
+              ></ElButton>
+            </div>
             <div class="field-processor-operation flex">
               <span class="flex-1 text inline-block  ml-6">
                 {i18n.t('packages_form_field_add_del_index_ziduanmingcheng')}
@@ -196,6 +217,9 @@ export const FieldModType = connect(
             }
           }
           return fields
+        },
+        handleInput(val) {
+          this.searchFiledName = val
         },
         handleDataType(node, data) {
           console.log('fieldProcessor.handleDataType', node, data) //eslint-disable-line
