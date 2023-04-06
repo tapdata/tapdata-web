@@ -123,11 +123,6 @@ export default {
           beta: true
         },
         {
-          name: 'dataServerList',
-          title: $t('dfs_data_server'),
-          icon: 'data-server'
-        },
-        {
           name: 'OperationLog',
           title: $t('operation_log_manage'),
           icon: 'operation-log'
@@ -158,7 +153,8 @@ export default {
       let swimLane = {
         name: 'dataConsole',
         title: this.$t('page_title_data_console'),
-        icon: 'process-platform'
+        icon: 'process-platform',
+        beta: true
       }
       this.sortMenus.push(swimLane)
     }
