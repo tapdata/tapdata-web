@@ -1,7 +1,6 @@
 import Parent from './Parent'
 
 const FunctionForm = () => import(/* webpackChunkName: "function-form" */ '@/views/function/Form')
-const SharedCacheForm = () => import(/* webpackChunkName: "shared-cache-form" */ '@/views/shared-cache/Form')
 const DagEditor = async () => {
   const { Editor } = await import(/* webpackChunkName: "dag" */ '@tap/dag')
   return Editor
@@ -128,6 +127,17 @@ const DataServerList = async () => {
 const HeartbeatTableList = async () => {
   const { HeartbeatTableList } = await import('@tap/business')
   return HeartbeatTableList
+}
+
+// 共享缓存
+const SharedCacheList = async () => {
+  const { SharedCacheList } = await import('@tap/business')
+  return SharedCacheList
+}
+
+const SharedCacheForm = async () => {
+  const { SharedCacheForm } = await import('@tap/business')
+  return SharedCacheForm
 }
 
 export default [
@@ -273,6 +283,15 @@ export default [
   {
     path: '/heartbeat/monitor/:id',
     name: 'HeartbeatMonitor',
+    component: MigrationMonitor,
+    meta: {
+      title: 'page_title_run_monitor',
+      code: 'v2_data_replication_monitor'
+    }
+  },
+  {
+    path: '/shared-cache/monitor/:id',
+    name: 'SharedCacheMonitor',
     component: MigrationMonitor,
     meta: {
       title: 'page_title_run_monitor',
@@ -716,7 +735,7 @@ export default [
           {
             path: '',
             name: 'sharedCacheList',
-            component: () => import(/* webpackChunkName: "shared-cache" */ '@/views/shared-cache/List'),
+            component: SharedCacheList,
             meta: {
               title: 'page_title_shared_cache',
               code: 'v2_shared_cache'

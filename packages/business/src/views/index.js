@@ -22,6 +22,8 @@ import CatalogView from './catalog/Catalogue'
 import ObjectList from './catalog/ObjectList'
 import DataServerList from './data-server/List'
 import HeartbeatTableList from './heartbeat-table/List'
+import SharedCacheList from './shared-cache/List'
+import SharedCacheForm from './shared-cache/Form'
 
 export {
   ConnectionForm,
@@ -47,7 +49,9 @@ export {
   CatalogView,
   ObjectList,
   DataServerList,
-  HeartbeatTableList
+  HeartbeatTableList,
+  SharedCacheList,
+  SharedCacheForm
 }
 
 export * from './connections/util'
