@@ -231,13 +231,6 @@
           <ElButton v-if="row.type !== 'recurring'" type="text" @click="handleRenew(row)">{{
             $t('public_button_renew')
           }}</ElButton>
-          <ElButton
-            v-if="row.type === 'recurring'"
-            :disabled="row.status !== 'pay'"
-            type="text"
-            @click="handleCancelSubscription(row)"
-            >{{ $t('public_button_cancel') }}{{ $t('public_button_subscription') }}</ElButton
-          >
           <ElButton v-if="row.status === 'unPay'" type="text" @click="handlePay(row)">{{
             $t('public_button_pay')
           }}</ElButton>
@@ -1142,31 +1135,6 @@ export default {
       ]
       this.recordData.visible = true
     },
-    handleCancelSubscription(row = {}) {
-      this.$confirm(
-        i18n.t('dfs_user_center_ninjiangquxiaoding', { val1: row.content }),
-        i18n.t('dfs_user_center_quxiaodingyuefu'),
-        {
-          type: 'warning'
-        }
-      ).then(res => {
-        if (!res) return
-        this.buired('cancelSubscribeAgentStripe')
-        this.$axios
-          .post('api/tcm/orders/cancel', { instanceId: row.agentId })
-          .then(() => {
-            this.$message.success(this.$t('public_message_operation_success'))
-            this.buired('cancelSubscribeAgentStripe', '', {
-              result: true
-            })
-          })
-          .catch(() => {
-            this.buired('cancelSubscribeAgentStripe', '', {
-              result: false
-            })
-          })
-      })
-    },
     handleAgent(row = {}) {
       this.$router.push({
         name: 'Instance',
@@ -1226,7 +1194,7 @@ export default {
       })
     },
     handlePay(row = {}) {
-      this.buired('payAgentStripe')
+      this.buried('payAgentStripe')
       openUrl(row.payUrl)
       this.$confirm(
         i18n.t('dfs_user_center_ninjiangzhifur', { val1: row.content }),

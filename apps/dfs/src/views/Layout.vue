@@ -80,11 +80,10 @@ import ConnectionTypeDialog from '@/components/ConnectionTypeDialog'
 import AgentDownloadModal from '@/views/agent-download/AgentDownloadModal'
 import AgentGuideDialog from '@/views/agent-download/AgentGuideDialog'
 import BindPhone from '@/views/user/components/BindPhone'
-import { buried } from '@/plugins/buried'
 import Cookie from '@tap/shared/src/cookie'
 
 export default {
-  inject: ['checkAgent'],
+  inject: ['checkAgent', 'buried'],
   components: {
     TheHeader,
     VIcon,
@@ -221,7 +220,7 @@ export default {
     },
     createConnection(item) {
       this.dialogVisible = false
-      buried('connectionCreate')
+      this.buried('connectionCreate')
       const { pdkHash } = item
       let query = {
         pdkHash
@@ -397,11 +396,11 @@ export default {
     },
 
     goDemo() {
-      buried('agentGuideDemo')
+      this.buried('agentGuideDemo')
       window.open('https://demo.cloud.tapdata.net/console/v3/')
     },
     goGuide() {
-      buried('agentGuideDemo')
+      this.buried('agentGuideDemo')
       window.open('https://cloud.justinmind.com/usernote/tests/74235065/75024663/75024665/index.html')
     }
   }

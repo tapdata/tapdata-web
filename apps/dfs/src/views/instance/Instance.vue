@@ -395,7 +395,6 @@ import StatusTag from '../../components/StatusTag'
 import { INSTANCE_STATUS_MAP } from '../../const'
 import Details from './Details'
 import timeFunction from '@/mixins/timeFunction'
-import { buried } from '@/plugins/buried'
 import { VIcon, FilterBar } from '@tap/component'
 import { dayjs } from '@tap/business'
 import Time from '@tap/shared/src/time'
@@ -417,6 +416,7 @@ export default {
     CreateDialog,
     SelectListDialog
   },
+  inject: ['buried'],
   mixins: [timeFunction],
   data() {
     return {
@@ -600,7 +600,7 @@ export default {
             item.periodLabel =
               dayjs(periodStart).format('YYYY-MM-DD HH:mm:ss') + ' - ' + dayjs(periodEnd).format('YYYY-MM-DD HH:mm:ss')
             item.content = `${item.subscriptionMethodLabel} ${item.specLabel} ${i18n.t('public_agent')}`
-            const expiredTime =
+            item.expiredTime =
               chargeProvider === 'Aliyun' ? license.expiredTime : chargeProvider === 'Stripe' ? periodEnd : ''
             item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD') : '-'
             item.paidType =
@@ -1089,10 +1089,26 @@ export default {
           type: 'warning'
         }
       ).then(res => {
-        res &&
-          this.$axios.post('api/tcm/orders/cancel', { instanceId: row.id }).then(() => {
+        if (!res) return
+        const { paidType } = row
+        this.buried('unsubscribeAgentStripe', '', {
+          type: paidType
+        })
+        this.$axios
+          .post('api/tcm/orders/cancel', { instanceId: row.id })
+          .then(() => {
             this.fetch()
+            this.buried('unsubscribeAgentStripe', '', {
+              result: true,
+              type: paidType
+            })
             this.$message.success(this.$t('public_message_operation_success'))
+          })
+          .catch(() => {
+            this.buried('unsubscribeAgentStripe', '', {
+              result: false,
+              type: paidType
+            })
           })
       })
     }
