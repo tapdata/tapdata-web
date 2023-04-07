@@ -117,58 +117,25 @@
         </template>
       </ElTableColumn>
     </TablePage>
-    <Drawer class="shared-cache-details" :visible.sync="isShowDetails">
-      <div v-if="details.id" class="shared-cache-details--header flex pb-3">
-        <div class="img-box">
-          <VIcon class="icon">text</VIcon>
-        </div>
-        <div class="flex-fill ml-4 overflow-hidden">
-          <div class="fs-6 ellipsis">{{ details.name }}</div>
-          <TaskStatus class="mt-2" :task="details" />
-        </div>
-      </div>
-      <ul class="mt-2">
-        <li v-for="item in info" :key="item.label" class="drawer-info__item">
-          <VIcon class="fs-7 mt-2">{{ item.icon }}</VIcon>
-          <div class="body ml-4">
-            <label class="label">{{ item.label }}</label>
-            <p class="value mt-2">{{ item.value }}</p>
-          </div>
-        </li>
-      </ul>
-      <div class="shared-cache--keys">
-        <div class="title">{{ $t('packages_business_shared_cache_keys') }}</div>
-        <div class="content">
-          <div v-for="key in details.cacheKeysArr" :key="key">{{ key }}</div>
-        </div>
-      </div>
-      <div class="shared-cache--keys">
-        <div class="title">{{ $t('packages_business_shared_cache_fields') }}</div>
-        <div class="content">
-          <div v-for="key in details.fields" :key="key" class="mt-2">{{ key }}</div>
-        </div>
-      </div>
-      <div class="mt-4">{{ $t('packages_business_shared_cache_code') }}</div>
-      <CodeView class="mt-2" :data="details"></CodeView>
-    </Drawer>
     <Editor :task-id="selected.id" :visible.sync="visible" @success="table.fetch(1)"></Editor>
+    <Details ref="details" :visible.sync="detailsVisible" width="380px"></Details>
   </section>
 </template>
 
 <script>
 import dayjs from 'dayjs'
 import { sharedCacheApi, taskApi } from '@tap/api'
-import { FilterBar, Drawer } from '@tap/component'
+import { FilterBar } from '@tap/component'
 import { TablePage, TaskStatus, makeStatusAndDisabled } from '@tap/business'
 
 import { toRegExp } from '@/utils/util'
 
-import CodeView from './CodeView.vue'
 import Editor from './Editor'
+import Details from './Details'
 
 export default {
   inject: ['buried'],
-  components: { TablePage, FilterBar, Drawer, CodeView, TaskStatus, Editor },
+  components: { TablePage, FilterBar, TaskStatus, Editor, Details },
   data() {
     return {
       searchParams: {
@@ -187,9 +154,6 @@ export default {
           type: 'input'
         }
       ],
-      details: {},
-      info: [],
-      isShowDetails: false,
       order: 'cacheTimeAt DESC',
       taskBuried: {
         start: 'sharedMiningStart'
@@ -197,7 +161,8 @@ export default {
       selected: {
         id: ''
       },
-      visible: false
+      visible: false,
+      detailsVisible: false
     }
   },
   computed: {
@@ -248,21 +213,8 @@ export default {
       })
     },
     checkDetails(row) {
-      row.cacheKeysArr = row.cacheKeys?.split(',') || []
-      this.details = row
-      this.info = [
-        { label: this.$t('public_creator'), value: row.createUser, icon: 'createUser' },
-        { label: this.$t('packages_business_shared_cache_time'), value: row.cacheTimeAtFmt, icon: 'cacheTimeAtFmt' },
-        {
-          label: this.$t('packages_business_shared_cache_column_connection'),
-          value: row.connectionName,
-          icon: 'connectionName'
-        },
-        { label: this.$t('packages_business_shared_cache_column_table'), value: row.tableName, icon: 'table' },
-        { label: this.$t('public_external_memory_name'), value: row.externalStorageName, icon: 'table' },
-        { label: this.$t('packages_business_shared_cache_max_memory'), value: row.maxMemory, icon: 'record' }
-      ]
-      this.isShowDetails = true
+      this.$refs.details.getData(row.id)
+      this.detailsVisible = true
     },
     del(row = {}) {
       this.$confirm(this.$t('public_message_delete_confirm'), this.$t('public_message_title_prompt'), {
