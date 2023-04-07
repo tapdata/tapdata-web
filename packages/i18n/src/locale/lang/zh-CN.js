@@ -228,5 +228,6 @@ export default {
   public_milestone_time_scheduling: ' 任务被调度到 {val}',
   public_milestone_connection_succeeded: ' 连接成功',
   // 外存
-  public_external_memory_name: '外存名称'
+  public_external_memory_name: '外存名称',
+  public_external_memory_configuration: '外存配置'
 }

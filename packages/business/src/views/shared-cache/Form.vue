@@ -3,7 +3,7 @@
     <ElForm
       ref="form"
       class="flex-fill overflow-auto pb-4"
-      label-width="140px"
+      :label-width="isEn ? '180px' : '140px'"
       label-position="left"
       :model="form"
       :rules="rules"
@@ -86,7 +86,7 @@
         ></ElInputNumber>
         <span class="ml-1">M</span>
       </ElFormItem>
-      <ElFormItem prop="externalStorageId" label="外存配置">
+      <ElFormItem prop="externalStorageId" :label="$t('public_external_memory_configuration')">
         <ElSelect v-model="form.externalStorageId" filterable :loading="!externalStorageOptions">
           <ElOption
             v-for="opt in externalStorageOptions"
@@ -115,6 +115,7 @@ import { VirtualSelect } from '@tap/component'
 import FieldSelector from './FieldSelector'
 import CodeView from './CodeView.vue'
 import { sharedCacheApi, metadataInstancesApi, connectionsApi, externalStorageApi } from '@tap/api'
+import i18n from '@tap/i18n'
 
 export default {
   components: { VirtualSelect, FieldSelector, CodeView },
@@ -162,7 +163,8 @@ export default {
             message: this.$t('packages_business_shared_cache_placeholder_external_storage')
           }
         ]
-      }
+      },
+      isEn: i18n.locale === 'en'
     }
   },
   created() {
