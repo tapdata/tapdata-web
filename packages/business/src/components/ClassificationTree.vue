@@ -780,6 +780,10 @@ $nodeH: 32px;
   }
 
   .el-tree-node {
+    &__expand-icon {
+      color: #646a73;
+    }
+
     &__content {
       height: $nodeH;
       margin-bottom: 1px;
