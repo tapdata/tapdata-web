@@ -1,18 +1,10 @@
 export default {
-  // 通用提示
-  // 通用下拉框
-  // 公共区
   // 通用按钮
   button_reload: 'Reload',
   button_button: 'Add',
   // 通用消息
   message_loading: 'Loading',
   message_network_connected: 'Network is restored',
-  // 表格
-  column_connection: 'From connection',
-  column_table: 'From table',
-  // dialog按钮
-  dialog_button_cancel: 'Cancel',
   //页面标题
   page_title_overview: 'Overview',
   page_title_dashboard: 'Dashboard',
@@ -39,7 +31,7 @@ export default {
   page_title_function_create: 'Create function',
   page_title_function_edit: 'Edit function',
   page_title_function_details: 'Function details',
-  page_title_shared_cache: 'Shared cache',
+  page_title_shared_cache: 'Shared Cache',
   page_title_shared_cache_create: 'Create cache',
   page_title_shared_cache_edit: 'Edit cache',
   page_title_data_discovery: 'Data Discovery',

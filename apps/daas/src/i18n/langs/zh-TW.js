@@ -1,18 +1,10 @@
 export default {
-  // 通用提示
-  // 通用下拉框
-  // 公共区
   // 通用按钮
   button_reload: '重新加載schema',
   button_button: '新增',
   // 通用消息
   message_loading: '正在加載',
   message_network_connected: '網絡已恢復',
-  // 表格
-  column_connection: '所屬連接',
-  column_table: '所屬表',
-  // dialog按鈕
-  dialog_button_cancel: '取 消',
   //頁面標題
   page_title_overview: '概覽',
   page_title_dashboard: 'Dashboard',

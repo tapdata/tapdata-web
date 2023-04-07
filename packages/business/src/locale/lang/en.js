@@ -936,6 +936,6 @@ export default {
   packages_business_shared_cache_max_memory_tooltip:
     'The maximum amount of memory the system will save, if it exceeds, the least commonly used data will be deleted according to the calling time',
   packages_business_shared_cache_code_tooltip: 'You can enter this code in the JS node to use the cache',
-  packages_business_shared_cache_column_connection: 'From connection',
+  packages_business_shared_cache_column_connection: 'From Connection',
   packages_business_shared_cache_column_table: 'From table'
 }

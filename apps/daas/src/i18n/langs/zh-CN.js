@@ -1,18 +1,10 @@
 export default {
-  // 通用提示
-  // 通用下拉框
-  // 公共区
   // 通用按钮
   button_reload: '重新加载',
   button_button: '新增',
   // 通用消息
   message_loading: '正在加载',
   message_network_connected: '网络已恢复',
-  // 表格
-  column_connection: '所属连接',
-  column_table: '所属表',
-  // dialog按钮
-  dialog_button_cancel: '取 消',
   dialog_tip_copied: '已复制',
   //页面标题
   page_title_overview: '概览',

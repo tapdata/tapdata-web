@@ -12,7 +12,6 @@
       <ElTableColumn
         show-overflow-tooltip
         prop="name"
-        min-width="180"
         :label="$t('packages_business_shared_cache_name')"
       >
         <template #default="{ row }">
@@ -22,31 +21,31 @@
       <ElTableColumn
         show-overflow-tooltip
         prop="connectionName"
-        min-width="100"
+        width="260"
         :label="$t('packages_business_shared_cache_column_connection')"
       ></ElTableColumn>
       <ElTableColumn
         show-overflow-tooltip
         prop="tableName"
-        min-width="100"
+        width="240"
         :label="$t('packages_business_shared_cache_column_table')"
       ></ElTableColumn>
-      <ElTableColumn :label="$t('packages_business_shared_cache_status')" min-width="70">
+      <ElTableColumn :label="$t('packages_business_shared_cache_status')" width="120">
         <template #default="{ row }">
           <TaskStatus :task="row" />
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="createTime" :label="$t('public_create_time')" min-width="160" sortable="createTime">
+      <ElTableColumn prop="createTime" :label="$t('public_create_time')" width="160" sortable="createTime">
         <template slot-scope="scope">
           {{ scope.row.createTimeFmt }}
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="cacheTimeAt" min-width="160" :label="$t('packages_business_shared_cache_time')">
+      <ElTableColumn prop="cacheTimeAt" width="160" :label="$t('packages_business_shared_cache_time')">
         <template slot-scope="scope">
           {{ scope.row.cacheTimeAtFmt }}
         </template>
       </ElTableColumn>
-      <ElTableColumn min-width="140" :label="$t('public_operation')">
+      <ElTableColumn width="280" :label="$t('public_operation')">
         <template #default="{ row }">
           <div class="table-operations">
             <ElLink

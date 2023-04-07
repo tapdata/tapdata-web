@@ -203,7 +203,7 @@
         <li v-for="(item, index) in jsonDocHint" :key="index">{{ item }}</li>
       </ul>
       <span slot="footer" class="dialog-footer">
-        <ElButton @click="openCreateDialog = false" size="mini">{{ $t('dialog_button_cancel') }}</ElButton>
+        <ElButton @click="openCreateDialog = false" size="mini">{{ $t('public_button_cancel') }}</ElButton>
         <ElButton @click="formatJson()" size="mini">{{ $t('dataExplorer_format') }}</ElButton>
         <ElButton type="primary" @click="createSave()" size="mini">{{ $t('public_button_confirm') }}</ElButton>
       </span>
