@@ -645,7 +645,7 @@ export default {
       this.removeDropEffect(ev, 'el-tree-node')
       this.removeDropEffect(ev, 'tree-wrap', 'is-drop')
 
-      this.showTaskDialog(data.id)
+      this.showTaskDialog(!data.isObject ? data.id : undefined)
       console.log('handleTreeDrop') // eslint-disable-line
     },
 
