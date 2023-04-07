@@ -784,7 +784,7 @@ $nodeH: 32px;
       height: $nodeH;
       margin-bottom: 1px;
       overflow: hidden;
-      border-radius: 4px;
+      border-radius: 6px;
     }
 
     &.is-current > .el-tree-node__content {
