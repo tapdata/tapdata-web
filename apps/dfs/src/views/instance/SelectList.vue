@@ -1,6 +1,6 @@
 <template>
   <ElDialog
-    width="980px"
+    width="1000px"
     append-to-body
     :visible.sync="visible"
     :close-on-click-modal="false"
@@ -121,7 +121,7 @@ export default {
             {
               label: i18n.t('dfs_instance_selectlist_dingyuezhouqi'),
               prop: 'periodLabel',
-              width: 320
+              width: 340
             },
             {
               label: i18n.t('dfs_instance_selectlist_bangdingshilizhuang'),
