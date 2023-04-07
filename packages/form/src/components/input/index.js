@@ -11,17 +11,19 @@ export const Input = defineComponent({
   },
   setup(props, { attrs, listeners }) {
     return () => {
-      const { value } = attrs
       return (
         <_Input
           attrs={{ ...attrs }}
           on={{
             ...listeners,
-            change: val => {
+            blur: ev => {
+              let val = ev.target.value
+              let newVal = val
+
               if (props.trim) {
-                val = val.trim()
+                newVal = val?.trim()
               }
-              listeners.change(val)
+              if (newVal !== val) listeners.change(newVal)
             }
           }}
         />
