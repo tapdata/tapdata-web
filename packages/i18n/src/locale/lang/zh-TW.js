@@ -226,5 +226,7 @@ export default {
   public_milestone_time_consuming: '耗時',
   public_milestone_time_table_structure: '共遷移 {val} 張表結構',
   public_milestone_time_scheduling: ' 任務被調度到{val}',
-  public_milestone_connection_succeeded: ' 連接成功'
+  public_milestone_connection_succeeded: ' 連接成功',
+  // 外存
+  public_external_memory_name: '外存名稱'
 }

@@ -912,5 +912,30 @@ export default {
   packages_business_target_create_task_dialog_desc_prefix_sync: 'Tapdata will create a sync pipeline task to sync',
   packages_business_target_create_task_dialog_desc_to: 'to',
   packages_business_target_create_task_dialog_desc_suffix:
-    'Please click button below to continue. You can also change the task name'
+    'Please click button below to continue. You can also change the task name',
+  // 共享緩存
+  packages_business_shared_cache_create: 'Create Cache',
+  packages_business_shared_cache_edit: 'Edit Cache',
+  packages_business_shared_cache_placeholder_task_name: 'Please enter the cache task name to search',
+  packages_business_shared_cache_placeholder_connection_name: 'Please enter the connection name to search',
+  packages_business_shared_cache_button_create: 'New Cache',
+  packages_business_shared_cache_name: 'Cache Name',
+  packages_business_shared_cache_status: 'Cache Status',
+  packages_business_shared_cache_time: 'Cache Time',
+  packages_business_shared_cache_keys: 'Cache Keys',
+  packages_business_shared_cache_fields: 'Cache Fields',
+  packages_business_shared_cache_code: 'Application Code',
+  packages_business_shared_cache_placeholder_name: 'Please enter the cache name',
+  packages_business_shared_cache_placeholder_connection: 'Please select a connection',
+  packages_business_shared_cache_placeholder_table: 'Please select a table',
+  packages_business_shared_cache_placeholder_keys: 'Please select a cache key',
+  packages_business_shared_cache_placeholder_fields: 'Please select a cache field',
+  packages_business_shared_cache_max_memory: 'Maximum Memory',
+  packages_business_shared_cache_keys_tooltip: 'Use this field as the primary key to identify data for caching',
+  packages_business_shared_cache_fields_tooltip: 'Common fields that need to be cached',
+  packages_business_shared_cache_max_memory_tooltip:
+    'The maximum amount of memory the system will save, if it exceeds, the least commonly used data will be deleted according to the calling time',
+  packages_business_shared_cache_code_tooltip: 'You can enter this code in the JS node to use the cache',
+  packages_business_shared_cache_column_connection: 'From connection',
+  packages_business_shared_cache_column_table: 'From table'
 }

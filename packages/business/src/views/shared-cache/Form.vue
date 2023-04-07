@@ -8,10 +8,14 @@
       :model="form"
       :rules="rules"
     >
-      <ElFormItem prop="name" :label="$t('shared_cache_name') + ':'">
-        <ElInput v-model="form.name" class="form-input" :placeholder="$t('shared_cache_placeholder_name')"></ElInput>
+      <ElFormItem prop="name" :label="$t('packages_business_shared_cache_name') + ':'">
+        <ElInput
+          v-model="form.name"
+          class="form-input"
+          :placeholder="$t('packages_business_shared_cache_placeholder_name')"
+        ></ElInput>
       </ElFormItem>
-      <ElFormItem prop="connectionId" :label="$t('column_connection') + ':'">
+      <ElFormItem prop="connectionId" :label="$t('packages_business_shared_cache_column_connection') + ':'">
         <VirtualSelect
           v-model="form.connectionId"
           filterable
@@ -19,11 +23,11 @@
           :item-size="34"
           :items="connectionOptions"
           :loading="!connectionOptions.length"
-          :placeholder="$t('shared_cache_placeholder_connection')"
+          :placeholder="$t('packages_business_shared_cache_placeholder_connection')"
           @input="connectionInputHandler"
         />
       </ElFormItem>
-      <ElFormItem prop="tableName" :label="$t('column_table') + ':'">
+      <ElFormItem prop="tableName" :label="$t('packages_business_shared_cache_column_table') + ':'">
         <VirtualSelect
           v-model="form.tableName"
           filterable
@@ -31,14 +35,14 @@
           :item-size="34"
           :items="tableOptions"
           :loading="tableOptionsLoading"
-          :placeholder="$t('shared_cache_placeholder_table')"
+          :placeholder="$t('packages_business_shared_cache_placeholder_table')"
           @input="tableInputHandler"
         />
       </ElFormItem>
-      <ElFormItem prop="cacheKeys" :label="$t('shared_cache_keys') + ':'">
+      <ElFormItem prop="cacheKeys" :label="$t('packages_business_shared_cache_keys') + ':'">
         <template slot="label">
-          <span>{{ $t('shared_cache_keys') }}</span>
-          <el-tooltip placement="top" :content="$t('shared_cache_keys_tooltip')">
+          <span>{{ $t('packages_business_shared_cache_keys') }}</span>
+          <el-tooltip placement="top" :content="$t('packages_business_shared_cache_keys_tooltip')">
             <i class="el-icon-info color-primary ml-1"></i>
           </el-tooltip>
           <span>:</span>
@@ -47,13 +51,13 @@
           v-model="form.cacheKeys"
           class="form-field-selector"
           :options="fieldOptions"
-          :placeholder="$t('shared_cache_placeholder_keys')"
+          :placeholder="$t('packages_business_shared_cache_placeholder_keys')"
         ></FieldSelector>
       </ElFormItem>
-      <ElFormItem prop="fields" :label="$t('shared_cache_fields') + ':'">
+      <ElFormItem prop="fields" :label="$t('packages_business_shared_cache_fields') + ':'">
         <template slot="label">
-          <span>{{ $t('shared_cache_fields') }}</span>
-          <el-tooltip placement="top" :content="$t('shared_cache_fields_tooltip')">
+          <span>{{ $t('packages_business_shared_cache_fields') }}</span>
+          <el-tooltip placement="top" :content="$t('packages_business_shared_cache_fields_tooltip')">
             <i class="el-icon-info color-primary ml-1"></i>
           </el-tooltip>
           <span>:</span>
@@ -62,13 +66,13 @@
           v-model="form.fields"
           class="form-field-selector"
           :options="fieldOptions"
-          :placeholder="$t('shared_cache_placeholder_fields')"
+          :placeholder="$t('packages_business_shared_cache_placeholder_fields')"
         ></FieldSelector>
       </ElFormItem>
       <ElFormItem prop="maxMemory">
         <template slot="label">
-          <span>{{ $t('shared_cache_max_memory') }}</span>
-          <el-tooltip placement="top" :content="$t('shared_cache_max_memory_tooltip')">
+          <span>{{ $t('packages_business_shared_cache_max_memory') }}</span>
+          <el-tooltip placement="top" :content="$t('packages_business_shared_cache_max_memory_tooltip')">
             <i class="el-icon-info color-primary ml-1"></i>
           </el-tooltip>
           <span>:</span>
@@ -94,8 +98,8 @@
       </ElFormItem>
       <ElFormItem>
         <template slot="label">
-          <span>{{ $t('shared_cache_code') }}</span>
-          <el-tooltip placement="top" :content="$t('shared_cache_code_tooltip')">
+          <span>{{ $t('packages_business_shared_cache_code') }}</span>
+          <el-tooltip placement="top" :content="$t('packages_business_shared_cache_code_tooltip')">
             <i class="el-icon-info color-primary ml-1"></i>
           </el-tooltip>
           <span>:</span>
@@ -133,14 +137,30 @@ export default {
       fieldOptionsLoading: false,
 
       rules: {
-        name: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_name') }],
-        connectionId: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_connection') }],
-        tableName: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_table') }],
-        cacheKeys: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_keys') }],
-        fields: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_fields') }],
-        maxMemory: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_max_memory') }],
+        name: [
+          { required: true, trigger: 'blur', message: this.$t('packages_business_shared_cache_placeholder_name') }
+        ],
+        connectionId: [
+          { required: true, trigger: 'blur', message: this.$t('packages_business_shared_cache_placeholder_connection') }
+        ],
+        tableName: [
+          { required: true, trigger: 'blur', message: this.$t('packages_business_shared_cache_placeholder_table') }
+        ],
+        cacheKeys: [
+          { required: true, trigger: 'blur', message: this.$t('packages_business_shared_cache_placeholder_keys') }
+        ],
+        fields: [
+          { required: true, trigger: 'blur', message: this.$t('packages_business_shared_cache_placeholder_fields') }
+        ],
+        maxMemory: [
+          { required: true, trigger: 'blur', message: this.$t('packages_business_shared_cache_placeholder_max_memory') }
+        ],
         externalStorageId: [
-          { required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_external_storage') }
+          {
+            required: true,
+            trigger: 'blur',
+            message: this.$t('packages_business_shared_cache_placeholder_external_storage')
+          }
         ]
       }
     }
@@ -261,7 +281,7 @@ export default {
             let fields = table.fields || []
             this.fieldOptions = fields.map(opt => opt.field_name)
           } else {
-            this.$message.error(this.$t('shared_cache_messge_no_table'))
+            this.$message.error(this.$t('packages_business_shared_cache_messge_no_table'))
           }
         })
         .finally(() => {

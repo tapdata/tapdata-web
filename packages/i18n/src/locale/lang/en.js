@@ -226,5 +226,7 @@ export default {
   public_milestone_time_consuming: 'time-consuming',
   public_milestone_time_table_structure: 'A total of migration {val} table structure',
   public_milestone_time_scheduling: 'Task is scheduled to {val}',
-  public_milestone_connection_succeeded: 'Connection succeeded'
+  public_milestone_connection_succeeded: 'Connection succeeded',
+  // 外存
+  public_external_memory_name: 'Storage Name'
 }

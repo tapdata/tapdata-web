@@ -6,10 +6,15 @@
       </template>
       <div slot="operation">
         <ElButton class="btn btn-create" type="primary" size="mini" @click="create">
-          <span> {{ $t('shared_cache_button_create') }}</span>
+          <span> {{ $t('packages_business_shared_cache_button_create') }}</span>
         </ElButton>
       </div>
-      <ElTableColumn show-overflow-tooltip prop="name" min-width="180" :label="$t('shared_cache_name')">
+      <ElTableColumn
+        show-overflow-tooltip
+        prop="name"
+        min-width="180"
+        :label="$t('packages_business_shared_cache_name')"
+      >
         <template #default="{ row }">
           <ElLink style="display: inline" type="primary" @click.stop="checkDetails(row)">{{ row.name }}</ElLink>
         </template>
@@ -18,10 +23,15 @@
         show-overflow-tooltip
         prop="connectionName"
         min-width="100"
-        :label="$t('column_connection')"
+        :label="$t('packages_business_shared_cache_column_connection')"
       ></ElTableColumn>
-      <ElTableColumn show-overflow-tooltip prop="tableName" min-width="100" :label="$t('column_table')"></ElTableColumn>
-      <ElTableColumn :label="$t('shared_cache_status')" min-width="70">
+      <ElTableColumn
+        show-overflow-tooltip
+        prop="tableName"
+        min-width="100"
+        :label="$t('packages_business_shared_cache_column_table')"
+      ></ElTableColumn>
+      <ElTableColumn :label="$t('packages_business_shared_cache_status')" min-width="70">
         <template #default="{ row }">
           <TaskStatus :task="row" />
         </template>
@@ -31,7 +41,7 @@
           {{ scope.row.createTimeFmt }}
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="cacheTimeAt" min-width="160" :label="$t('shared_cache_time')">
+      <ElTableColumn prop="cacheTimeAt" min-width="160" :label="$t('packages_business_shared_cache_time')">
         <template slot-scope="scope">
           {{ scope.row.cacheTimeAtFmt }}
         </template>
@@ -128,18 +138,18 @@
         </li>
       </ul>
       <div class="shared-cache--keys">
-        <div class="title">{{ $t('shared_cache_keys') }}</div>
+        <div class="title">{{ $t('packages_business_shared_cache_keys') }}</div>
         <div class="content">
           <div v-for="key in details.cacheKeysArr" :key="key">{{ key }}</div>
         </div>
       </div>
       <div class="shared-cache--keys">
-        <div class="title">{{ $t('shared_cache_fields') }}</div>
+        <div class="title">{{ $t('packages_business_shared_cache_fields') }}</div>
         <div class="content">
           <div v-for="key in details.fields" :key="key" class="mt-2">{{ key }}</div>
         </div>
       </div>
-      <div class="mt-4">{{ $t('shared_cache_code') }}</div>
+      <div class="mt-4">{{ $t('packages_business_shared_cache_code') }}</div>
       <CodeView class="mt-2" :data="details"></CodeView>
     </Drawer>
     <Editor :task-id="selected.id" :visible.sync="visible" @success="table.fetch(1)"></Editor>
@@ -168,12 +178,12 @@ export default {
       },
       filterItems: [
         {
-          placeholder: this.$t('shared_cache_placeholder_task_name'),
+          placeholder: this.$t('packages_business_shared_cache_placeholder_task_name'),
           key: 'name',
           type: 'input'
         },
         {
-          placeholder: this.$t('shared_cache_placeholder_connection_name'),
+          placeholder: this.$t('packages_business_shared_cache_placeholder_connection_name'),
           key: 'connectionName',
           type: 'input'
         }
@@ -243,11 +253,15 @@ export default {
       this.details = row
       this.info = [
         { label: this.$t('public_creator'), value: row.createUser, icon: 'createUser' },
-        { label: this.$t('shared_cache_time'), value: row.cacheTimeAtFmt, icon: 'cacheTimeAtFmt' },
-        { label: this.$t('column_connection'), value: row.connectionName, icon: 'connectionName' },
-        { label: this.$t('column_table'), value: row.tableName, icon: 'table' },
-        { label: this.$t('daas_external_storage_list_waicunmingcheng'), value: row.externalStorageName, icon: 'table' },
-        { label: this.$t('shared_cache_max_memory'), value: row.maxMemory, icon: 'record' }
+        { label: this.$t('packages_business_shared_cache_time'), value: row.cacheTimeAtFmt, icon: 'cacheTimeAtFmt' },
+        {
+          label: this.$t('packages_business_shared_cache_column_connection'),
+          value: row.connectionName,
+          icon: 'connectionName'
+        },
+        { label: this.$t('packages_business_shared_cache_column_table'), value: row.tableName, icon: 'table' },
+        { label: this.$t('public_external_memory_name'), value: row.externalStorageName, icon: 'table' },
+        { label: this.$t('packages_business_shared_cache_max_memory'), value: row.maxMemory, icon: 'record' }
       ]
       this.isShowDetails = true
     },

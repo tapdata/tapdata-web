@@ -1,6 +1,6 @@
 <template>
   <ElDialog
-    :title="taskId ? $t('page_title_shared_cache_edit') : $t('page_title_shared_cache_create')"
+    :title="taskId ? $t('packages_business_shared_cache_edit') : $t('packages_business_shared_cache_create')"
     :visible="visible"
     :append-to-body="true"
     :close-on-click-modal="false"
