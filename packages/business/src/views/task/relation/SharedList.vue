@@ -2,7 +2,7 @@
   <div class="log-container flex justify-content-between">
     <div class="flex flex-column w-100">
       <VTable
-        :columns="columns"
+        :columns="cols"
         :remoteMethod="remoteMethod"
         :page-options="{
           layout: 'total, ->, prev, pager, next, sizes, jumper'
@@ -59,49 +59,15 @@ export default {
 
   components: { VTable, TaskStatus, SharedMiningTable },
 
+  props: {
+    type: {
+      type: String,
+      default: 'logCollector'
+    }
+  },
+
   data() {
     return {
-      columns: [
-        {
-          label: i18n.t('public_serial_number'),
-          type: 'index'
-        },
-        {
-          label: i18n.t('public_task_name'),
-          prop: 'name',
-          slotName: 'name'
-        },
-        {
-          label: i18n.t('public_task_type'),
-          prop: 'typeLabel',
-          width: 120
-        },
-        {
-          label: i18n.t('public_task_status'),
-          prop: 'status',
-          slotName: 'status',
-          width: 150
-        },
-        {
-          label: i18n.t('public_create_time'),
-          prop: 'createDate',
-          dataType: 'time',
-          default: '-',
-          width: 180
-        },
-        {
-          label: i18n.t('public_task_cdc_time_point'),
-          prop: 'currentEventTimestamp',
-          dataType: 'time',
-          default: '-',
-          width: 180
-        },
-        {
-          label: i18n.t('packages_business_relation_sharedlist_shiyongdewajue'),
-          slotName: 'tableNum',
-          width: 200
-        }
-      ],
       visible: false,
       sharedMiningTableParams: {
         tableTaskId: ''
@@ -109,8 +75,122 @@ export default {
     }
   },
 
+  computed: {
+    cols() {
+      const map = {
+        logCollector: [
+          {
+            label: i18n.t('public_serial_number'),
+            type: 'index'
+          },
+          {
+            label: i18n.t('public_task_name'),
+            prop: 'name',
+            slotName: 'name'
+          },
+          {
+            label: i18n.t('public_task_type'),
+            prop: 'typeLabel',
+            width: 120
+          },
+          {
+            label: i18n.t('public_task_status'),
+            prop: 'status',
+            slotName: 'status',
+            width: 150
+          },
+          {
+            label: i18n.t('public_create_time'),
+            prop: 'createDate',
+            dataType: 'time',
+            default: '-',
+            width: 180
+          },
+          {
+            label: i18n.t('public_task_cdc_time_point'),
+            prop: 'currentEventTimestamp',
+            dataType: 'time',
+            default: '-',
+            width: 180
+          },
+          {
+            label: i18n.t('packages_business_relation_sharedlist_shiyongdewajue'),
+            slotName: 'tableNum',
+            width: 200
+          }
+        ],
+        sync: [
+          {
+            label: i18n.t('public_serial_number'),
+            type: 'index'
+          },
+          {
+            label: i18n.t('public_task_name'),
+            prop: 'name',
+            slotName: 'name'
+          },
+          {
+            label: i18n.t('public_task_type'),
+            prop: 'typeLabel',
+            width: 120
+          },
+          {
+            label: i18n.t('public_task_status'),
+            prop: 'status',
+            slotName: 'status',
+            width: 150
+          },
+          {
+            label: i18n.t('public_create_time'),
+            prop: 'createDate',
+            dataType: 'time',
+            default: '-',
+            width: 180
+          },
+          {
+            label: i18n.t('public_task_cdc_time_point'),
+            prop: 'currentEventTimestamp',
+            dataType: 'time',
+            default: '-',
+            width: 180
+          }
+        ]
+      }
+      return map[this.type]
+    }
+  },
+
   methods: {
     remoteMethod() {
+      const map = {
+        logCollector: this.logCollectorRemote,
+        sync: this.syncRemote
+      }
+      return map[this.type]?.()
+    },
+
+    logCollectorRemote() {
+      const taskId = this.$route.params.id
+      const { taskRecordId } = this.$attrs.dataflow || {}
+      return taskApi
+        .taskConsoleRelations({
+          taskId,
+          // type: syncType
+          type: 'task_by_collector',
+          taskRecordId
+        })
+        .then(data => {
+          return {
+            total: data.length || 0,
+            data: (data || []).map(t => {
+              t.typeLabel = TASK_TYPE_MAP[t.taskType]
+              return t
+            })
+          }
+        })
+    },
+
+    syncRemote() {
       const taskId = this.$route.params.id
       const { taskRecordId } = this.$attrs.dataflow || {}
       return taskApi
@@ -137,7 +217,6 @@ export default {
     },
 
     handleName({ id, syncType }) {
-      console.log('handleName', syncType)
       const MAP = {
         migrate: 'MigrateViewer',
         sync: 'DataflowViewer'
@@ -153,7 +232,6 @@ export default {
 
     handleOpen() {
       this.$nextTick(() => {
-        console.log('this.$refs.sharedMiningTable', this.$refs.sharedMiningTable)
         this.$refs.sharedMiningTable?.fetch?.()
       })
     }

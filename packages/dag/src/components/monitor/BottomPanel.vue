@@ -31,6 +31,7 @@
             v-if="['logCollector'].includes($attrs.dataflow.syncType)"
             v-bind="$attrs"
             :currentTab="currentTab"
+            :type="$attrs.dataflow.syncType"
             @change-tab="changeTab"
             @load-data="$emit('load-data')"
           ></RelationSharedList>
