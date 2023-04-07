@@ -25,7 +25,7 @@
           v-for="(item, index) in laneOptions"
           :key="index"
           :is="item.component"
-          :ref="item.component"
+          :ref="item.type"
           :dragState="dragState"
           :settings="settings"
           :directory="directoryMap[item.type]"
@@ -47,13 +47,13 @@
     <CreateConnection
       :visible.sync="visible"
       :selector-type="selectorType"
-      @success="handleSuccess"
+      @success="handleSuccess($event, 'source')"
       @saveAndMore="handleSuccess"
     ></CreateConnection>
     <SceneDialog
       :visible.sync="showSceneDialog"
       :selector-type="selectorType"
-      @success="handleSuccess"
+      @success="handleSuccess($event, 'target')"
       @saveAndMore="handleSuccess"
     ></SceneDialog>
     <Settings
@@ -197,8 +197,8 @@ export default {
       this.showSceneDialog = true
     },
 
-    handleSuccess(value) {
-      this.$refs.SourceItem?.[0]?.addItem(value)
+    handleSuccess(value, comRef) {
+      this.$refs[comRef]?.[0]?.addItem(value)
     },
 
     handleDragEnd() {
