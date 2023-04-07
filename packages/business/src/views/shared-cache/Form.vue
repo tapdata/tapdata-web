@@ -1,134 +1,111 @@
 <template>
-  <section class="shared-cache-form" v-loading="loading">
-    <div class="section-wrap-box flex">
-      <div class="title mb-6">
-        {{ $t($route.params.id ? 'page_title_shared_cache_edit' : 'page_title_shared_cache_create') }}
-      </div>
-      <ElForm
-        ref="form"
-        class="flex-fill overflow-auto pb-4"
-        label-width="120px"
-        label-position="left"
-        :model="form"
-        :rules="rules"
-      >
-        <ElFormItem prop="name" :label="$t('shared_cache_name') + ':'">
-          <ElInput v-model="form.name" class="form-input" :placeholder="$t('shared_cache_placeholder_name')"></ElInput>
-        </ElFormItem>
-        <ElFormItem prop="connectionId" :label="$t('column_connection') + ':'">
-          <VirtualSelect
-            v-model="form.connectionId"
-            filterable
-            class="form-input"
-            :item-size="34"
-            :items="connectionOptions"
-            :loading="!connectionOptions.length"
-            :placeholder="$t('shared_cache_placeholder_connection')"
-            @input="connectionInputHandler"
-          />
-        </ElFormItem>
-        <ElFormItem prop="tableName" :label="$t('column_table') + ':'">
-          <VirtualSelect
-            v-model="form.tableName"
-            filterable
-            class="form-input"
-            :item-size="34"
-            :items="tableOptions"
-            :loading="tableOptionsLoading"
-            :placeholder="$t('shared_cache_placeholder_table')"
-            @input="tableInputHandler"
-          />
-        </ElFormItem>
-        <ElFormItem prop="cacheKeys" :label="$t('shared_cache_keys') + ':'">
-          <template slot="label">
-            <span>{{ $t('shared_cache_keys') }}</span>
-            <el-tooltip placement="top" :content="$t('shared_cache_keys_tooltip')">
-              <i class="el-icon-info color-primary ml-1"></i>
-            </el-tooltip>
-            <span>:</span>
-          </template>
-          <FieldSelector
-            v-model="form.cacheKeys"
-            class="form-field-selector"
-            :options="fieldOptions"
-            :placeholder="$t('shared_cache_placeholder_keys')"
-          ></FieldSelector>
-        </ElFormItem>
-        <ElFormItem prop="fields" :label="$t('shared_cache_fields') + ':'">
-          <template slot="label">
-            <span>{{ $t('shared_cache_fields') }}</span>
-            <el-tooltip placement="top" :content="$t('shared_cache_fields_tooltip')">
-              <i class="el-icon-info color-primary ml-1"></i>
-            </el-tooltip>
-            <span>:</span>
-          </template>
-          <FieldSelector
-            v-model="form.fields"
-            class="form-field-selector"
-            :options="fieldOptions"
-            :placeholder="$t('shared_cache_placeholder_fields')"
-          ></FieldSelector>
-        </ElFormItem>
-        <ElFormItem prop="maxMemory">
-          <template slot="label">
-            <span>{{ $t('shared_cache_max_memory') }}</span>
-            <el-tooltip placement="top" :content="$t('shared_cache_max_memory_tooltip')">
-              <i class="el-icon-info color-primary ml-1"></i>
-            </el-tooltip>
-            <span>:</span>
-          </template>
-          <ElInputNumber
-            v-model="form.maxMemory"
-            style="width: 200px"
-            controls-position="right"
-            :min="1"
-            :max="999999999"
-          ></ElInputNumber>
-          <span class="ml-1">M</span>
-        </ElFormItem>
-        <ElFormItem prop="externalStorageId" label="外存配置">
-          <ElSelect v-model="form.externalStorageId" filterable :loading="!externalStorageOptions">
-            <ElOption
-              v-for="opt in externalStorageOptions"
-              :key="opt.value"
-              :value="opt.value"
-              :label="opt.label"
-            ></ElOption>
-          </ElSelect>
-        </ElFormItem>
-        <ElFormItem>
-          <template slot="label">
-            <span>{{ $t('shared_cache_code') }}</span>
-            <el-tooltip placement="top" :content="$t('shared_cache_code_tooltip')">
-              <i class="el-icon-info color-primary ml-1"></i>
-            </el-tooltip>
-            <span>:</span>
-          </template>
-        </ElFormItem>
-        <CodeView :data="form"></CodeView>
-      </ElForm>
-      <div class="pt-6">
-        <ElButton @click="$router.back()">{{ $t('public_button_back') }}</ElButton>
-        <ElButton type="primary" @click="submit">{{ $t('public_button_save') }}</ElButton>
-      </div>
-    </div>
+  <section v-loading="loading">
+    <ElForm
+      ref="form"
+      class="flex-fill overflow-auto pb-4"
+      label-width="140px"
+      label-position="left"
+      :model="form"
+      :rules="rules"
+    >
+      <ElFormItem prop="name" :label="$t('shared_cache_name') + ':'">
+        <ElInput v-model="form.name" class="form-input" :placeholder="$t('shared_cache_placeholder_name')"></ElInput>
+      </ElFormItem>
+      <ElFormItem prop="connectionId" :label="$t('column_connection') + ':'">
+        <VirtualSelect
+          v-model="form.connectionId"
+          filterable
+          class="form-input"
+          :item-size="34"
+          :items="connectionOptions"
+          :loading="!connectionOptions.length"
+          :placeholder="$t('shared_cache_placeholder_connection')"
+          @input="connectionInputHandler"
+        />
+      </ElFormItem>
+      <ElFormItem prop="tableName" :label="$t('column_table') + ':'">
+        <VirtualSelect
+          v-model="form.tableName"
+          filterable
+          class="form-input"
+          :item-size="34"
+          :items="tableOptions"
+          :loading="tableOptionsLoading"
+          :placeholder="$t('shared_cache_placeholder_table')"
+          @input="tableInputHandler"
+        />
+      </ElFormItem>
+      <ElFormItem prop="cacheKeys" :label="$t('shared_cache_keys') + ':'">
+        <template slot="label">
+          <span>{{ $t('shared_cache_keys') }}</span>
+          <el-tooltip placement="top" :content="$t('shared_cache_keys_tooltip')">
+            <i class="el-icon-info color-primary ml-1"></i>
+          </el-tooltip>
+          <span>:</span>
+        </template>
+        <FieldSelector
+          v-model="form.cacheKeys"
+          class="form-field-selector"
+          :options="fieldOptions"
+          :placeholder="$t('shared_cache_placeholder_keys')"
+        ></FieldSelector>
+      </ElFormItem>
+      <ElFormItem prop="fields" :label="$t('shared_cache_fields') + ':'">
+        <template slot="label">
+          <span>{{ $t('shared_cache_fields') }}</span>
+          <el-tooltip placement="top" :content="$t('shared_cache_fields_tooltip')">
+            <i class="el-icon-info color-primary ml-1"></i>
+          </el-tooltip>
+          <span>:</span>
+        </template>
+        <FieldSelector
+          v-model="form.fields"
+          class="form-field-selector"
+          :options="fieldOptions"
+          :placeholder="$t('shared_cache_placeholder_fields')"
+        ></FieldSelector>
+      </ElFormItem>
+      <ElFormItem prop="maxMemory">
+        <template slot="label">
+          <span>{{ $t('shared_cache_max_memory') }}</span>
+          <el-tooltip placement="top" :content="$t('shared_cache_max_memory_tooltip')">
+            <i class="el-icon-info color-primary ml-1"></i>
+          </el-tooltip>
+          <span>:</span>
+        </template>
+        <ElInputNumber
+          v-model="form.maxMemory"
+          style="width: 200px"
+          controls-position="right"
+          :min="1"
+          :max="999999999"
+        ></ElInputNumber>
+        <span class="ml-1">M</span>
+      </ElFormItem>
+      <ElFormItem prop="externalStorageId" label="外存配置">
+        <ElSelect v-model="form.externalStorageId" filterable :loading="!externalStorageOptions">
+          <ElOption
+            v-for="opt in externalStorageOptions"
+            :key="opt.value"
+            :value="opt.value"
+            :label="opt.label"
+          ></ElOption>
+        </ElSelect>
+      </ElFormItem>
+      <ElFormItem>
+        <template slot="label">
+          <span>{{ $t('shared_cache_code') }}</span>
+          <el-tooltip placement="top" :content="$t('shared_cache_code_tooltip')">
+            <i class="el-icon-info color-primary ml-1"></i>
+          </el-tooltip>
+          <span>:</span>
+        </template>
+      </ElFormItem>
+      <CodeView :data="form" class="w-100"></CodeView>
+    </ElForm>
   </section>
 </template>
-<style lang="scss" scoped>
-.shared-cache-form .title {
-  font-size: 14px;
-  font-weight: 500;
-  color: rgba(0, 0, 0, 0.85);
-  line-height: 22px;
-}
-.form-input {
-  width: 504px;
-}
-.form-field-selector {
-  width: 905px;
-  max-width: 100%;
-}
-</style>
+
 <script>
 import { VirtualSelect } from '@tap/component'
 import FieldSelector from './FieldSelector'
@@ -137,18 +114,15 @@ import { sharedCacheApi, metadataInstancesApi, connectionsApi, externalStorageAp
 
 export default {
   components: { VirtualSelect, FieldSelector, CodeView },
+  props: {
+    taskId: {
+      type: String
+    }
+  },
   data() {
     return {
       loading: false,
-      form: {
-        name: '',
-        connectionId: '',
-        tableName: '',
-        cacheKeys: '',
-        fields: '',
-        maxMemory: 500,
-        externalStorageId: ''
-      },
+      form: {},
       connectionOptions: [],
       externalStorageOptions: null,
 
@@ -174,12 +148,23 @@ export default {
   created() {
     this.getConnectionOptions()
     this.getExternalStorageOptions()
-    let id = this.$route.params.id
-    if (id) {
-      this.getData(id)
-    }
+    this.init()
   },
   methods: {
+    init() {
+      this.form = {
+        name: '',
+        connectionId: '',
+        tableName: '',
+        cacheKeys: '',
+        fields: '',
+        maxMemory: 500,
+        externalStorageId: ''
+      }
+      if (this.taskId) {
+        this.getData(this.taskId)
+      }
+    },
     getData(id) {
       this.loading = true
       sharedCacheApi
@@ -214,7 +199,7 @@ export default {
           }
           return { label: it.name, value: it.id }
         }) || []
-      if (!this.$route.params.id) {
+      if (!this.taskId) {
         this.form.externalStorageId = defaultStorageId
       }
     },
@@ -300,7 +285,7 @@ export default {
       this.$refs.form.validate(flag => {
         if (flag) {
           let { name, connectionId, tableName, cacheKeys, fields, maxMemory, externalStorageId } = this.form
-          let id = this.$route.params.id
+          let id = this.taskId
           let params = {
             id,
             name,
@@ -325,16 +310,14 @@ export default {
             }
           }
           let method = id ? 'patch' : 'post'
-          this.loading = true
+          this.$emit('update:loading', true)
           sharedCacheApi[method](params)
             .then(() => {
               this.$message.success(this.$t('public_message_save_ok'))
-              this.$router.replace({
-                name: 'sharedCacheList'
-              })
+              this.$emit('success')
             })
             .finally(() => {
-              this.loading = false
+              this.$emit('update:loading', false)
             })
         }
       })
@@ -342,3 +325,13 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.el-input,
+.el-select,
+.form-input,
+.fields-selector {
+  width: 100%;
+  max-width: 600px;
+}
+</style>

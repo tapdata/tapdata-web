@@ -142,6 +142,7 @@
       <div class="mt-4">{{ $t('shared_cache_code') }}</div>
       <CodeView class="mt-2" :data="details"></CodeView>
     </Drawer>
+    <Editor :task-id="selected.id" :visible.sync="visible" @success="table.fetch(1)"></Editor>
   </section>
 </template>
 
@@ -154,10 +155,11 @@ import { TablePage, TaskStatus, makeStatusAndDisabled } from '@tap/business'
 import { toRegExp } from '@/utils/util'
 
 import CodeView from './CodeView.vue'
+import Editor from './Editor'
 
 export default {
   inject: ['buried'],
-  components: { TablePage, FilterBar, Drawer, CodeView, TaskStatus },
+  components: { TablePage, FilterBar, Drawer, CodeView, TaskStatus, Editor },
   data() {
     return {
       searchParams: {
@@ -182,7 +184,11 @@ export default {
       order: 'cacheTimeAt DESC',
       taskBuried: {
         start: 'sharedMiningStart'
-      }
+      },
+      selected: {
+        id: ''
+      },
+      visible: false
     }
   },
   computed: {
@@ -228,8 +234,8 @@ export default {
         })
     },
     create() {
-      this.$router.push({
-        name: 'sharedCacheCreate'
+      this.handleEditor({
+        id: ''
       })
     },
     checkDetails(row) {
@@ -320,12 +326,8 @@ export default {
     },
 
     handleEditor(row = {}) {
-      this.$router.push({
-        name: 'sharedCacheEdit',
-        params: {
-          id: row.id
-        }
-      })
+      this.selected = row
+      this.visible = true
     },
 
     openRoute(route, newTab = true) {
