@@ -48,6 +48,7 @@ export default {
   page_title_data_catalogue: '数据目录',
   page_title_data_service: '数据服务',
   page_title_data_server_list: '服务管理',
+  page_title_application_list: '应用管理',
   page_title_api_client: 'API客户端',
   page_title_api_servers: 'API服务器',
   page_title_api_audit: '服务审计',

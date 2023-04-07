@@ -47,6 +47,7 @@ export default {
   page_title_data_catalogue: '數據目錄',
   page_title_data_service: '數據服務',
   page_title_data_server_list: '服務管理',
+  page_title_application_list: '應用管理',
   page_title_api_client: 'API客戶端',
   page_title_api_servers: 'API服務器',
   page_title_api_audit: '服務審計',

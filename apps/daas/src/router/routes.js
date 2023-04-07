@@ -130,6 +130,12 @@ const HeartbeatTableList = async () => {
   return HeartbeatTableList
 }
 
+// 应用管理
+const ApplicationList = async () => {
+  const { ApplicationList } = await import('@tap/business')
+  return ApplicationList
+}
+
 export default [
   {
     path: '/login',
@@ -749,6 +755,16 @@ export default [
         component: DataServerList,
         meta: {
           title: 'page_title_data_server_list',
+          code: 'v2_data-server-list'
+        }
+      },
+      /* ---------- 应用管理  ----------*/
+      {
+        path: '/application',
+        name: 'application',
+        component: ApplicationList,
+        meta: {
+          title: 'page_title_application_list',
           code: 'v2_data-server-list'
         }
       },

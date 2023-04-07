@@ -47,6 +47,7 @@ export default {
   page_title_data_catalogue: 'Data catalog',
   page_title_data_service: 'Data Service',
   page_title_data_server_list: 'API Management',
+  page_title_application_list: 'Application Management',
   page_title_api_client: 'API client',
   page_title_api_servers: 'API Servers',
   page_title_api_audit: 'Server Audit',
