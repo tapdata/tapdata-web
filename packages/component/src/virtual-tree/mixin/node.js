@@ -100,7 +100,8 @@ export default {
     },
 
     handleExpandIconClick() {
-      const node = this.node || this.source
+      // const node = this.node || this.source
+      const node = this.source
 
       if (node.isLeaf) return
       if (this.expanded) {

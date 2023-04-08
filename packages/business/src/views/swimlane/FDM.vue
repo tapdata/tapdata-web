@@ -59,7 +59,6 @@
             :allow-drag="checkAllowDrag"
             @node-drag-start="handleDragStart"
             @node-drag-end="handleDragEnd"
-            @node-expand="handleNodeExpand"
           ></VirtualTree>
         </div>
         <template v-else>
@@ -82,6 +81,7 @@
             @node-drag-start="handleDragStart"
             @node-drag-end="handleDragEnd"
             @node-expand="handleNodeExpand"
+            @node-collapse="handeNodeCollapse"
           ></VirtualTree>
           <div
             v-if="!treeData.length"
@@ -183,7 +183,7 @@
 <script>
 import { merge, debounce } from 'lodash'
 import { connectionsApi, discoveryApi, ldpApi, metadataDefinitionsApi, taskApi, userGroupsApi } from '@tap/api'
-import { VirtualTree, IconButton } from '@tap/component'
+import { VirtualTree, IconButton, VExpandXTransition } from '@tap/component'
 import { uuid } from '@tap/shared'
 import { makeDragNodeImage, TASK_SETTINGS } from '../../shared'
 import { DatabaseIcon } from '../../components'
@@ -197,10 +197,11 @@ export default {
     settings: Object,
     fdmConnection: Object,
     directory: Object,
-    eventDriver: Object
+    eventDriver: Object,
+    mapCatalog: Function
   },
 
-  components: { VirtualTree, IconButton, DatabaseIcon },
+  components: { VirtualTree, IconButton, DatabaseIcon, VExpandXTransition },
 
   mixins: [commonMix],
 
@@ -260,16 +261,8 @@ export default {
     treeData() {
       return this.directory?.children || []
     },
-    taskDesc() {
-      if (!this.taskDialogConfig.from) return ''
-      const { from, tableName } = this.taskDialogConfig
-      return `This will clone ${
-        tableName ? `Source Table: [${tableName}]` : `Source Database: [${from.name}]`
-      } to FDM Layer.
-
-所有的源表将统一存储到 FDM 库里,遵从以下的命名规范
-
-${this.taskDialogConfig.prefix}<original_table_name>`
+    treeMap() {
+      return this.treeData.reduce((obj, item) => ((obj[item.id] = item), obj), {})
     }
   },
 
@@ -284,7 +277,6 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
         obj[id] = children
         return obj
       }, {})
-
       const filterTree = node => {
         const { children } = node
 
@@ -292,51 +284,20 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
           node.children = children.filter(child => {
             filterTree(child)
             return child.LDP_TYPE === 'folder' && (child.name.includes(search) || child.children.length)
-            // if (child.LDP_TYPE === 'folder') {
-            //   return child.name.includes(search) || map[child.id]
-            // }
-            // filterTree(child)
           })
         }
 
         if (map[node.id]) {
           node.children.push(...map[node.id])
         }
-
-        // node.children = children.filter(child => {
-        //   if (child.LDP_TYPE === 'folder') {
-        //     return child.name.includes(search) || map[child.id]
-        //   }
-        //   filterTree(child)
-        // })
-
-        // if (!node.visible && children.length) {
-        //   let allHidden = true
-        //   allHidden = !children.some(child => child.visible)
-        //
-        //   node.visible = allHidden
-        //   node.children = children.filter()
-        // }
-        //
-        // return data.reduce((map, item) => {
-        //   if (item.LDP_TYPE === 'folder') {
-        //     let children = item.children.filter()
-        //     map[item.id] = { ...item, children: [] }
-        //
-        //     if (item.children.length) {
-        //       Object.assign(map, this.flattenTree(item.children))
-        //     }
-        //   }
-        //   return map
-        // }, {})
       }
 
       let root = { ...this.directory }
       filterTree(root)
       this.searchIng = false
       this.filterTreeData = root.children
-      console.log('result', result, map, this.nodesMap) // eslint-disable-line
-      console.log('filter', root) // eslint-disable-line
+      // console.log('result', result, map, this.nodesMap) // eslint-disable-line
+      // console.log('filter', root) // eslint-disable-line
     }, 300)
   },
 
@@ -375,6 +336,8 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
         icon = 'folder-o'
       }
 
+      console.log('renderContent', data, node) // eslint-disable-line
+
       return (
         <div
           class={className}
@@ -383,6 +346,21 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
           }}
           onDrop={this.handleTreeNodeDrop}
         >
+          {!data.isObject && (
+            <VExpandXTransition>
+              {data.showProgress && (
+                <el-progress
+                  class="mr-2"
+                  color="#2c65ff"
+                  width={16}
+                  stroke-width={2}
+                  type="circle"
+                  percentage={50}
+                  show-text={false}
+                ></el-progress>
+              )}
+            </VExpandXTransition>
+          )}
           <div class="tree-item-icon flex align-center mr-2">{icon && <VIcon size="18">{icon}</VIcon>}</div>
           <span class="table-label" title={data.name}>
             {data.name}
@@ -496,7 +474,6 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
         try {
           const result = await ldpApi.createFDMTask(task)
           this.taskDialogConfig.visible = false
-          this.setNodeExpand()
           const h = this.$createElement
           this.$message.success({
             message: h(
@@ -512,11 +489,33 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
               this.$t('packages_business_task_created_success')
             )
           })
+          await this.loadFDMDirectory()
+          this.setNodeExpand()
         } catch (e) {
           console.log(e) // eslint-disable-line
         }
         this.creating = false
       })
+    },
+
+    async loadFDMDirectory() {
+      const { items } = await metadataDefinitionsApi.get({
+        filter: JSON.stringify({
+          where: {
+            item_type: { $nin: ['database', 'dataflow', 'api'] },
+            parent_id: this.directory.id
+          }
+        })
+      })
+      this.directory.children = items.map(item => {
+        item = this.mapCatalog(item)
+        if (this.treeMap[item.id]?.children.length) {
+          item.children = this.treeMap[item.id]?.children
+        }
+        return item
+      })
+      await this.$nextTick()
+      this.$refs.tree.$forceUpdate()
     },
 
     handleDragOver(ev) {
@@ -649,6 +648,7 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
     },
 
     async handleNodeExpand(data, node) {
+      this.setExpand(data.id, true)
       // 十秒内加载过资源，不再继续加载
       if (node.loadTime && Date.now() - node.loadTime < 10000) return
 
@@ -656,7 +656,16 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
 
       let objects = await this.loadObjects(data)
 
-      console.log('handleNodeExpand', objects, data, node) // eslint-disable-line
+      objects = objects.map(item => {
+        item.parent_id = data.id
+        item.isObject = true
+        item.connectionId = item.sourceConId
+        return item
+      })
+
+      this.$refs.tree.updateKeyChildren(data.id, objects)
+
+      /*console.log('handleNodeExpand', objects, data, node) // eslint-disable-line
       const childrenMap = data.children ? data.children.reduce((map, item) => ((map[item.id] = true), map), {}) : {}
       objects.forEach(item => {
         if (childrenMap[item.id]) return
@@ -664,7 +673,11 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
         item.isObject = true
         item.connectionId = item.sourceConId
         this.$refs.tree.append(item, node)
-      })
+      })*/
+    },
+
+    handeNodeCollapse(data) {
+      this.setExpand(data.id, false)
     },
 
     loadObjects(node, isCurrent = true, queryKey) {
@@ -721,15 +734,30 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
     setNodeExpand() {
       const target = this.treeData.find(item => item.linkId === this.taskDialogConfig.from.id)
       if (target) {
-        setTimeout(() => {
-          const node = this.$refs.tree.getNode(target.id)
-          this.handleNodeExpand(node.data, node)
-          this.expandedKeys = [target.id]
+        setTimeout(async () => {
+          this.setExpand(target.id, true)
+          let objects = await this.loadObjects(target)
+          objects = objects.map(item => {
+            item.parent_id = target.id
+            item.isObject = true
+            item.connectionId = item.sourceConId
+            return item
+          })
+          this.$refs.tree.updateKeyChildren(target.id, objects)
         }, 1000)
       } else {
         this.$emit('load-directory')
       }
       // this.taskDialogConfig.from
+    },
+
+    setExpand(id, isExpand) {
+      const i = this.expandedKeys.indexOf(id)
+      if (!isExpand) {
+        if (~i) this.expandedKeys.splice(i, 1)
+      } else {
+        if (!~i) this.expandedKeys.push(id)
+      }
     },
 
     getSmartPrefix(connectionName) {

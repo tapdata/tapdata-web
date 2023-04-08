@@ -780,7 +780,7 @@ $nodeH: 32px;
   }
 
   .el-tree-node {
-    &__expand-icon {
+    &__expand-icon:not(.is-leaf) {
       color: #646a73;
     }
 

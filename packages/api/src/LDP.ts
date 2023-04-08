@@ -16,5 +16,11 @@ export default class LDP extends Http {
   searchSources(params) {
     return this.axios.get(`${this.url}/fuzzy/search`, { params })
   }
+
+  getTaskByTag(tags) {
+    return this.axios.get(`${this.url}/fdm/task/byTags`, {
+      params: { tags }
+    })
+  }
 }
 export { LDP }
