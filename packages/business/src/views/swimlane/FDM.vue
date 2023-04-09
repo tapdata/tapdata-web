@@ -653,9 +653,9 @@ export default {
       if (node.loadTime && Date.now() - node.loadTime < 10000) return
 
       node.loadTime = Date.now()
-
+      node.loading = true
       let objects = await this.loadObjects(data)
-
+      node.loading = false
       objects = objects.map(item => {
         item.parent_id = data.id
         item.isObject = true
@@ -735,6 +735,8 @@ export default {
       const target = this.treeData.find(item => item.linkId === this.taskDialogConfig.from.id)
       if (target) {
         setTimeout(async () => {
+          const node = this.$refs.tree.getNode(target.id)
+          node && (node.loading = true)
           this.setExpand(target.id, true)
           let objects = await this.loadObjects(target)
           objects = objects.map(item => {
@@ -744,6 +746,7 @@ export default {
             return item
           })
           this.$refs.tree.updateKeyChildren(target.id, objects)
+          node && (node.loading = false)
         }, 1000)
       } else {
         this.$emit('load-directory')
