@@ -1,7 +1,7 @@
 <template>
   <div class="user-center g-panel-container flex-fill">
-    <div class="fs-7">{{ $t('user_Center_geRenXinXi') }}</div>
-    <ElDivider class="my-6"></ElDivider>
+    <div class="fs-6 fw-sub">{{ $t('user_Center_geRenXinXi') }}</div>
+    <ElDivider></ElDivider>
     <div>
       <div>
         <ElRow :gutter="40" class="section-header mb-6">
@@ -72,8 +72,8 @@
         </ElRow>
       </div>
     </div>
-    <div class="mt-12 fs-7">{{ $t('user_Center_qiYeXinXi') }}</div>
-    <ElDivider class="my-6"></ElDivider>
+    <div class="mt-12 fs-6 fw-sub">{{ $t('user_Center_qiYeXinXi') }}</div>
+    <ElDivider></ElDivider>
     <div>
       <div>
         <ElRow :gutter="40" class="section-header mb-2">
@@ -115,8 +115,8 @@
         </template>
       </div>
     </div>
-    <div class="mt-12 fs-7">{{ $t('dfs_user_center_kaifaxinxi') }}</div>
-    <ElDivider class="my-6"></ElDivider>
+    <div class="mt-12 fs-6 fw-sub">{{ $t('dfs_user_center_kaifaxinxi') }}</div>
+    <ElDivider></ElDivider>
     <div class="access-key__desc py-2 px-4 inline-flex align-items-center">
       <VIcon class="color-primary">info</VIcon>
       <span class="ml-1">{{ $t('dfs_user_center_acces') }}</span>
@@ -173,7 +173,7 @@
     </div>
 
     <section v-if="userData.enableLicense">
-      <div class="mt-12 fs-7">
+      <div class="mt-12 fs-6 fw-sub">
         {{ $t('dfs_user_center_shouquanmaxinxi') }}
       </div>
       <div class="mt-2">
@@ -209,7 +209,7 @@
     </section>
 
     <section v-if="!userData.enableLicense">
-      <div class="mt-12 fs-7">{{ $t('dfs_user_center_fuwudingyuexin') }}</div>
+      <div class="mt-12 fs-6 fw-sub">{{ $t('dfs_user_center_fuwudingyuexin') }}</div>
       <VTable
         :columns="columns"
         :remoteMethod="remoteMethod"
@@ -1260,6 +1260,9 @@ export default {
   border-radius: 50%;
 }
 ::v-deep {
+  .el-divider--horizontal {
+    margin: 8px 0 16px 0;
+  }
   .el-form-item__label {
     text-align: left;
   }
