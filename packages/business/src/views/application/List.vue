@@ -17,19 +17,11 @@
       </div>
       <el-table-column min-width="250" label="应用名称" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          {{ scope.row.name }}
+          {{ scope.row.value }}
         </template>
       </el-table-column>
-      <el-table-column min-width="160" label="总API数量">
-        <template slot-scope="scope">
-          {{ scope.row.logTime }}
-        </template>
-      </el-table-column>
-      <el-table-column min-width="160" label="已发布API数量">
-        <template slot-scope="scope">
-          {{ scope.row.logTime }}
-        </template>
-      </el-table-column>
+      <el-table-column min-width="160" label="总API数量" prop="apiCount"> </el-table-column>
+      <el-table-column min-width="160" label="已发布API数量" prop="publishedApiCount"> </el-table-column>
       <el-table-column prop="createTime" min-width="160" :label="$t('public_create_time')" sortable> </el-table-column>
       <el-table-column width="220" fixed="right" :label="$t('public_operation')">
         <template #default="{ row }">
@@ -51,16 +43,18 @@
     </TablePage>
 
     <Editor ref="editor" :task-id="editForm.id" :visible.sync="editVisible" @success="table.fetch(1)"></Editor>
+    <Details ref="details" :visible.sync="detailsVisible" width="380px"></Details>
   </section>
 </template>
 
 <script>
 import dayjs from 'dayjs'
-import { logcollectorApi, taskApi, workerApi } from '@tap/api'
+import { logcollectorApi, taskApi, appApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
-import { TablePage, TaskStatus, makeStatusAndDisabled } from '@tap/business'
+import { TablePage, makeStatusAndDisabled } from '@tap/business'
 
 import Editor from './Editor'
+import Details from './Details'
 
 let timeout = null
 export default {
@@ -68,8 +62,8 @@ export default {
   components: {
     TablePage,
     FilterBar,
-    TaskStatus,
-    Editor
+    Editor,
+    Details
   },
   data() {
     return {
@@ -116,7 +110,8 @@ export default {
       taskBuried: {
         start: 'sharedMiningStart'
       },
-      editVisible: false
+      editVisible: false,
+      detailsVisible: false
     }
   },
   mounted() {
@@ -154,7 +149,9 @@ export default {
     getData({ page }) {
       let { current, size } = page
       let { taskName, connectionName } = this.searchParams
-      let where = {}
+      let where = {
+        item_type: 'app'
+      }
       taskName && (where.taskName = taskName)
       connectionName && (where.connectionName = connectionName)
       let filter = {
@@ -163,7 +160,7 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return logcollectorApi
+      return appApi
         .get({
           filter: JSON.stringify(filter)
         })
@@ -306,8 +303,6 @@ export default {
       }
     },
 
-    handleDetails(task = {}) {},
-
     getConfirmMessage(operateStr, task) {
       let title = operateStr + '_confirm_title',
         message = operateStr + '_confirm_message'
@@ -324,10 +319,28 @@ export default {
       }
     },
 
-    handleDelete(row) {}
+    handleDetails(row = {}) {
+      this.$refs.details.getData(row.id, row)
+      this.detailsVisible = true
+    },
+
+    handleDelete(row = {}) {
+      this.$confirm('删除任务将无法恢复, 确定删除', '', {
+        type: 'warning'
+      }).then(resFlag => {
+        if (!resFlag) {
+          return
+        }
+        appApi.delete(row.id).then(() => {
+          this.table.fetch()
+          this.$message.success(this.$t('public_message_delete_ok'))
+        })
+      })
+    }
   }
 }
 </script>
+
 <style lang="scss" scoped>
 .share-list-wrap {
   height: 100%;

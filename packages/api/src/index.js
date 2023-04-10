@@ -165,6 +165,9 @@ const ldpApi = new LDP()
 import ShareCdcTableMetrics from './ShareCdcTableMetrics'
 const shareCdcTableMetricsApi = new ShareCdcTableMetrics()
 
+import App from './App'
+const appApi = new App()
+
 export {
   connectionsApi,
   databaseTypesApi,
@@ -220,7 +223,8 @@ export {
   tcmApi,
   shareCdcTableMetricsApi,
   liveDataPlatformApi,
-  ldpApi
+  ldpApi,
+  appApi
 }
 export * from './ApiClient'
 

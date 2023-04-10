@@ -1,6 +1,6 @@
 <template>
   <ElDialog
-    :title="title"
+    :title="taskId ? $t('public_button_edit') : $t('public_button_create')"
     :visible="visible"
     :append-to-body="true"
     width="800px"
@@ -9,17 +9,27 @@
     @close="handleClose"
     @open="handleOpen"
   >
-    <ElForm v-loading="loading" ref="form" label-position="left" label-width="150px" :model="editForm" class="my-n6">
-      <ElFormItem size="mini" label="应用名" prop="name" required>
-        <ElInput v-model="editForm.name" clearable></ElInput>
+    <ElForm
+      v-loading="loading"
+      ref="form"
+      label-position="left"
+      label-width="150px"
+      :model="editForm"
+      :rules="rulesEdit"
+      class="my-n6"
+    >
+      <ElFormItem size="mini" label="应用名" prop="value">
+        <ElInput v-model="editForm.value" clearable></ElInput>
       </ElFormItem>
-      <ElFormItem size="mini" label="应用描述" prop="description" required>
-        <ElInput v-model="editForm.description" type="textarea"></ElInput>
+      <ElFormItem size="mini" label="应用描述" prop="desc">
+        <ElInput v-model="editForm.desc" type="textarea"></ElInput>
       </ElFormItem>
     </ElForm>
     <span class="dialog-footer" slot="footer">
       <ElButton @click="handleClose" size="mini">{{ $t('public_button_cancel') }}</ElButton>
-      <ElButton size="mini" type="primary" @click="handleSave">{{ $t('public_button_save') }}</ElButton>
+      <ElButton size="mini" type="primary" :loading="saveLoading" @click="handleSave">{{
+        $t('public_button_save')
+      }}</ElButton>
     </span>
   </ElDialog>
 </template>
@@ -27,17 +37,11 @@
 <script>
 import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
-import { logcollectorApi } from '@tap/api'
+import { logcollectorApi, appApi } from '@tap/api'
 
 export default {
   name: 'Editor',
   props: {
-    title: {
-      type: String,
-      default: () => {
-        return i18n.t('packages_business_shared_list_edit_title')
-      }
-    },
     visible: {
       required: true,
       value: Boolean
@@ -50,51 +54,31 @@ export default {
   data() {
     return {
       loading: false,
-      editForm: {}
+      saveLoading: false,
+      editForm: {},
+      rulesEdit: {
+        value: [{ required: true, message: '应用名称不能为空', trigger: 'blur' }],
+        desc: [{ required: true, message: '应用描述不能为空', trigger: 'blur' }]
+      }
     }
   },
   methods: {
     init() {
       this.editForm = {
         id: '',
-        name: '',
-        description: ''
+        value: '',
+        desc: ''
       }
       this.taskId && this.loadData(this.taskId)
     },
 
     loadData(id) {
       this.loading = true
-      logcollectorApi
-        .getDetail(this.taskId)
+      appApi
+        .detail(id)
         .then(task => {
-          this.editForm.name = task.name
-          this.editForm.storageTime = task.storageTime
-          let syncPoints = task.syncPoints
-          if (syncPoints) {
-            this.editForm.syncPoints = syncPoints
-          } else {
-            const [connectionId, connectionName] = Object.entries(task.connections[0])[0]
-            const sourceNodeIds = (task.dag?.edges || []).map(t => t.source)
-            const sourceNodes = (task.dag?.nodes || [])
-              .filter(node => sourceNodeIds.includes(node.id))
-              .map(node => ({
-                nodeId: node.id,
-                nodeName: node.name,
-                connectionId: connectionId,
-                connectionName: connectionName
-              }))
-            const result = sourceNodes.map(item => {
-              const point = {
-                ...item,
-                timeZone: this.systemTimeZone,
-                pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
-                dateTime: ''
-              }
-              return point
-            })
-            this.editForm.syncPoints = result
-          }
+          this.editForm.value = task.value
+          this.editForm.desc = task.desc
         })
         .finally(() => {
           this.loading = false
@@ -113,12 +97,17 @@ export default {
     handleSave() {
       this.$refs.form?.validate(valid => {
         if (valid) {
-          logcollectorApi.patchId(this.taskId, this.editForm).then(() => {
-            this.$emit('success', ...arguments)
-            this.$message.success(this.$t('packages_business_shared_cdc_setting_message_edit_save'))
-            this.init()
-            this.handleClose()
-          })
+          this.saveLoading = true
+          ;(this.taskId ? appApi.patchId(this.taskId, this.editForm) : appApi.post(this.editForm))
+            .then(() => {
+              this.$emit('success', ...arguments)
+              this.$message.success(this.$t('public_message_save_ok'))
+              this.init()
+              this.handleClose()
+            })
+            .finally(() => {
+              this.saveLoading = false
+            })
         }
       })
     }
