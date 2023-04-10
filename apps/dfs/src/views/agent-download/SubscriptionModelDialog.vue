@@ -148,12 +148,13 @@
               </ElFormItem>
             </ElForm>
           </div>
-          <div v-else>
-            <div class="mt-4">授权码：{{ codeData.licenseCode }}</div>
-            <div class="mt-4">到期时间：{{ codeData.expiredTime }}</div>
+          <div class="flex-1" v-else>
+            <div class="mt-4" v-if="currentCode.spec">计算资源：{{ specMap[currentCode.spec.name] }}</div>
+            <div class="mt-4">授权码：{{ currentCode.licenseCode }}</div>
+            <div class="mt-4">到期时间：{{ currentCode.expiredTime }}</div>
           </div>
           <footer class="flex justify-content-end align-items-center mt-4">
-            <div class="mr-6">
+            <div class="mr-6" v-if="productType !== 'aliyun'">
               Total: <span>{{ selected.price }}</span>
             </div>
             <el-button @click="next('second')">Previous</el-button>
@@ -340,6 +341,7 @@ export default {
         ? i18n.t('dfs_instance_create_yongyujieshoumei')
         : i18n.t('dfs_instance_create_kexuan')
     },
+    //提交订单
     submit() {
       const { type, priceId, currency, chargeProvider } = this.selected
       const { email } = this.form
@@ -350,17 +352,27 @@ export default {
           id: ''
         }
       })
+      let params = {}
 
-      const params = {
-        agentType: 'Local',
-        chargeProvider,
-        priceId,
-        currency,
-        successUrl: location.origin + '/' + fastDownloadUrl.href,
-        cancelUrl: location.href,
-        email,
-        type
+      if (this.productType === 'aliyun') {
+        params = {
+          agentType: 'Local',
+          chargeProvider: 'Aliyun',
+          licenseId: this.currentCode?.id
+        }
+      } else {
+        params = {
+          agentType: 'Local',
+          chargeProvider,
+          priceId,
+          currency,
+          successUrl: location.origin + '/' + fastDownloadUrl.href,
+          cancelUrl: location.href,
+          email,
+          type
+        }
       }
+
       this.buried('newAgentStripe', '', {
         type
       })
@@ -407,7 +419,10 @@ export default {
         .post('api/tcm/aliyun/market/license/activate', { licenseCode: this.licenseCode })
         .then(data => {
           if (data.licenseStatus === 'ACTIVATED') {
-            this.codeData = data
+            this.currentCode = data
+            this.currentCode.expiredTime = this.currentCode.expiredTime
+              ? dayjs(this.currentCode.expiredTime).format('YYYY-MM-DD')
+              : '-'
             this.$message.success(i18n.t('dfs_aliyun_market_license_jihuochenggongS'))
             this.activeName = 'third'
             this.buried('activateAliyunCode', '', {
@@ -430,120 +445,6 @@ export default {
     },
     getAvailableCode() {
       this.$axios.get('api/tcm/aliyun/market/license/available').then(data => {
-        data = [
-          {
-            id: '6426b81239dc124786580ede',
-            customerId: '60cc0c304e190a579cbe306c',
-            createAt: '2023-03-31T10:38:10.676+00:00',
-            lastUpdAt: '2023-04-10T07:39:49.402+00:00',
-            createBy: '60cc0c304e190a579cbe306c',
-            createUser: 'jason@tapdata.io',
-            licenseProvider: 'aliyun',
-            productName: '数据实时迁移/复制/同步',
-            productCode: 'cmgj00061912',
-            productSkuId: 'yuncode5591200001',
-            activateTime: '2023-03-31T18:38Z',
-            expiredTime: '2024-02-01T00:00Z',
-            createTime: '2023-03-31T18:37Z',
-            licenseCode: 'PY-EOSYRXFZAS_BBJRXCELV5P3OK9HYWP-0VDGSCWMDI5OZ0XZYD2QZOG_RPKUXO',
-            licenseStatus: 'ACTIVATED',
-            instanceId: '70743040',
-            supplierName: '深圳钛铂数据有限公司',
-            extendInfo: {
-              aliUid: 1809821306098986,
-              accountQuantity: 1
-            },
-            spec: {
-              cpu: 2,
-              memory: 4,
-              name: 'Small'
-            }
-          },
-          {
-            id: '6426b81239dc124786580ede',
-            customerId: '60cc0c304e190a579cbe306c',
-            createAt: '2023-03-31T10:38:10.676+00:00',
-            lastUpdAt: '2023-04-10T07:39:49.402+00:00',
-            createBy: '60cc0c304e190a579cbe306c',
-            createUser: 'jason@tapdata.io',
-            licenseProvider: 'aliyun',
-            productName: '数据实时迁移/复制/同步',
-            productCode: 'cmgj00061912',
-            productSkuId: 'yuncode5591200001',
-            activateTime: '2023-03-31T18:38Z',
-            expiredTime: '2024-02-01T00:00Z',
-            createTime: '2023-03-31T18:37Z',
-            licenseCode: 'PY-EOSYRXFZAS_BBJRXCELV5P3OK9HYWP-0VDGSCWMDI5OZ0XZYD2QZOG_RPKUXO',
-            licenseStatus: 'ACTIVATED',
-            instanceId: '70743040',
-            supplierName: '深圳钛铂数据有限公司',
-            extendInfo: {
-              aliUid: 1809821306098986,
-              accountQuantity: 1
-            },
-            spec: {
-              cpu: 2,
-              memory: 4,
-              name: 'Small'
-            }
-          },
-          {
-            id: '6426b81239dc124786580ede',
-            customerId: '60cc0c304e190a579cbe306c',
-            createAt: '2023-03-31T10:38:10.676+00:00',
-            lastUpdAt: '2023-04-10T07:39:49.402+00:00',
-            createBy: '60cc0c304e190a579cbe306c',
-            createUser: 'jason@tapdata.io',
-            licenseProvider: 'aliyun',
-            productName: '数据实时迁移/复制/同步',
-            productCode: 'cmgj00061912',
-            productSkuId: 'yuncode5591200001',
-            activateTime: '2023-03-31T18:38Z',
-            expiredTime: '2024-02-01T00:00Z',
-            createTime: '2023-03-31T18:37Z',
-            licenseCode: 'PY-EOSYRXFZAS_BBJRXCELV5P3OK9HYWP-0VDGSCWMDI5OZ0XZYD2QZOG_RPKUXO',
-            licenseStatus: 'ACTIVATED',
-            instanceId: '70743040',
-            supplierName: '深圳钛铂数据有限公司',
-            extendInfo: {
-              aliUid: 1809821306098986,
-              accountQuantity: 1
-            },
-            spec: {
-              cpu: 2,
-              memory: 4,
-              name: 'Small'
-            }
-          },
-          {
-            id: '6426b81239dc124786580ede',
-            customerId: '60cc0c304e190a579cbe306c',
-            createAt: '2023-03-31T10:38:10.676+00:00',
-            lastUpdAt: '2023-04-10T07:39:49.402+00:00',
-            createBy: '60cc0c304e190a579cbe306c',
-            createUser: 'jason@tapdata.io',
-            licenseProvider: 'aliyun',
-            productName: '数据实时迁移/复制/同步',
-            productCode: 'cmgj00061912',
-            productSkuId: 'yuncode5591200001',
-            activateTime: '2023-03-31T18:38Z',
-            expiredTime: '2024-02-01T00:00Z',
-            createTime: '2023-03-31T18:37Z',
-            licenseCode: 'PY-EOSYRXFZAS_BBJRXCELV5P3OK9HYWP-0VDGSCWMDI5OZ0XZYD2QZOG_RPKUXO',
-            licenseStatus: 'ACTIVATED',
-            instanceId: '70743040',
-            supplierName: '深圳钛铂数据有限公司',
-            extendInfo: {
-              aliUid: 1809821306098986,
-              accountQuantity: 1
-            },
-            spec: {
-              cpu: 2,
-              memory: 4,
-              name: 'Small'
-            }
-          }
-        ]
         this.codeData =
           data.map((t = {}) => {
             t.bindAgent = t.agentId
