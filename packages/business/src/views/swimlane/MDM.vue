@@ -116,13 +116,13 @@
           </div>
           <div>{{ $t('packages_business_mdm_create_task_dialog_desc_table_name') }}</div>
         </div>
-        <ElFormItem label="Table Name">
+        <ElFormItem :label="$t('public_table_name')">
           <ElInput size="small" v-model="taskDialogConfig.newTableName"></ElInput>
         </ElFormItem>
       </ElForm>
       <span slot="footer" class="dialog-footer">
         <ElButton size="mini" @click="taskDialogConfig.visible = false">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton :loading="creating" size="mini" type="primary" @click="taskDialogSubmit">
+        <ElButton :loading="creating" size="mini" type="primary" @click="taskDialogSubmit()">
           {{ $t('public_button_confirm') }}
         </ElButton>
       </span>
@@ -176,7 +176,7 @@
 import { debounce } from 'lodash'
 import { VirtualTree, IconButton } from '@tap/component'
 import { CancelToken, discoveryApi, ldpApi, metadataDefinitionsApi, userGroupsApi } from '@tap/api'
-import { uuid } from '@tap/shared'
+import { uuid, generateId } from '@tap/shared'
 import { makeDragNodeImage, TASK_SETTINGS } from '../../shared'
 import commonMix from './mixins/common'
 import { DatabaseIcon } from '../../components'
@@ -342,29 +342,49 @@ export default {
           <span class="table-label" title={data.name}>
             {data.name}
           </span>
-          {data.isObject ? (
-            <IconButton
-              class="btn-menu"
-              sm
-              onClick={() => {
-                this.$emit('preview', data)
-              }}
-            >
-              view-details
-            </IconButton>
-          ) : (
-            <span class="btn-menu">
+          <div class="btn-menu">
+            {!data.isObject ? (
+              [
+                <IconButton
+                  sm
+                  onClick={ev => {
+                    ev.stopPropagation()
+                    this.showDialog(data, 'add')
+                  }}
+                >
+                  add
+                </IconButton>,
+                <ElDropdown
+                  class="inline-flex"
+                  placement="bottom"
+                  trigger="click"
+                  onCommand={command => this.handleMoreCommand(command, data)}
+                >
+                  <IconButton
+                    onClick={ev => {
+                      ev.stopPropagation()
+                    }}
+                    sm
+                  >
+                    more
+                  </IconButton>
+                  <ElDropdownMenu slot="dropdown">
+                    <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
+                    <ElDropdownItem command="delete">{this.$t('public_button_delete')}</ElDropdownItem>
+                  </ElDropdownMenu>
+                </ElDropdown>
+              ]
+            ) : (
               <IconButton
                 sm
-                onClick={ev => {
-                  ev.stopPropagation()
-                  this.showDialog(data, 'add')
+                onClick={() => {
+                  this.$emit('preview', data)
                 }}
               >
-                add
+                view-details
               </IconButton>
-            </span>
-          )}
+            )}
+          </div>
         </div>
       )
     },
@@ -428,13 +448,13 @@ export default {
       this.taskDialogConfig.visible = true
     },
 
-    async taskDialogSubmit() {
+    async taskDialogSubmit(confirmTable) {
       const { tableName, from, newTableName, tagId } = this.taskDialogConfig
       let task = this.makeTask(from, tableName, newTableName)
       this.creating = true
       const h = this.$createElement
       try {
-        const result = await ldpApi.createMDMTask(task, { tagId })
+        const result = await ldpApi.createMDMTask(task, { silenceMessage: true, params: { tagId, confirmTable } })
         this.taskDialogConfig.visible = false
         this.$message.success({
           message: h(
@@ -455,7 +475,8 @@ export default {
         }, 1000)
       } catch (response) {
         console.log(response) // eslint-disable-line
-        if (response?.data?.code === 'Ldp.MdmTargetNoPrimaryKey') {
+        const code = response?.data?.code
+        if (code === 'Ldp.MdmTargetNoPrimaryKey') {
           const data = response?.data?.data
 
           if (!data) return
@@ -480,6 +501,17 @@ export default {
           setTimeout(() => {
             this.setNodeExpand(tagId)
           }, 1000)
+        } else if (code === 'Ldp.RepeatTableName') {
+          this.$confirm('', '目标表已经存在，请确定是否继续？', {
+            onlyTitle: true,
+            type: 'warning',
+            closeOnClickModal: false
+          }).then(resFlag => {
+            if (!resFlag) {
+              return
+            }
+            this.taskDialogSubmit(true)
+          })
         }
       }
       this.creating = false
@@ -519,7 +551,7 @@ export default {
     },
 
     getTaskName(from, tableName, newTableName) {
-      return `${from.name}_Sync_${tableName}_To_MDM_${newTableName}_${uuid(4)}`
+      return `${from.name}_Sync_${tableName}_To_MDM_${newTableName}_${generateId(6)}`
     },
 
     async handleNodeExpand(data, node) {
@@ -613,7 +645,7 @@ export default {
       this.removeDropEffect(ev, 'el-tree-node')
       this.removeDropEffect(ev, 'tree-wrap', 'is-drop')
 
-      this.showTaskDialog(data.id)
+      this.showTaskDialog(!data.isObject ? data.id : undefined)
       console.log('handleTreeDrop') // eslint-disable-line
     },
 
@@ -683,7 +715,7 @@ export default {
         itemType: itemType,
         visible: true,
         type,
-        parent: data,
+        item: data,
         id: data ? data.id : '',
         gid: data?.gid || '',
         label: type === 'edit' ? data.name : '',
@@ -727,7 +759,10 @@ export default {
         this.hideDialog()
         this.$message.success(this.$t('public_message_operation_success'))
         if (data && config.type === 'add') {
-          this.dialogConfig.parent.children.push(this.mapCatalog(data))
+          this.dialogConfig.item.children.push(this.mapCatalog(data))
+        } else if (config.type === 'edit') {
+          this.dialogConfig.item.name = params.value
+          this.dialogConfig.item.desc = params.desc
         }
       } catch (err) {
         this.$message.error(err.message)
@@ -758,6 +793,37 @@ export default {
       })
       objects.forEach(item => (item.parent_id = to))
       this.$message.success(this.$t('public_message_operation_success'))
+    },
+
+    handleMoreCommand(command, data) {
+      switch (command) {
+        case 'add':
+        case 'edit':
+          this.showDialog(data, command)
+          break
+        case 'delete':
+          this.deleteNode(data)
+      }
+    },
+
+    deleteNode(data) {
+      this.$confirm(
+        this.$t('packages_business_catalog_delete_confirm_message'),
+        `${this.$t('public_message_delete_confirm')}: ${data.name}?`,
+        {
+          confirmButtonText: this.$t('public_button_delete'),
+          cancelButtonText: this.$t('packages_component_message_cancel'),
+          type: 'warning',
+          closeOnClickModal: false
+        }
+      ).then(resFlag => {
+        if (!resFlag) {
+          return
+        }
+        metadataDefinitionsApi.delete(data.id).then(() => {
+          this.$refs.tree.remove(data.id)
+        })
+      })
     }
   }
 }

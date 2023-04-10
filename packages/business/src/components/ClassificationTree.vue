@@ -780,11 +780,15 @@ $nodeH: 32px;
   }
 
   .el-tree-node {
+    &__expand-icon:not(.is-leaf) {
+      color: #646a73;
+    }
+
     &__content {
       height: $nodeH;
       margin-bottom: 1px;
       overflow: hidden;
-      border-radius: 4px;
+      border-radius: 6px;
     }
 
     &.is-current > .el-tree-node__content {

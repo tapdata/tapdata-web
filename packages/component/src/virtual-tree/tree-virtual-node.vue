@@ -26,6 +26,7 @@
     <div class="el-tree-node__content">
       <span aria-hidden="true" :style="{ 'min-width': (source.level - 1) * tree.indent + 'px' }"></span>
       <span
+        v-if="!source.loading"
         @click.stop="handleExpandIconClick"
         :class="[
           { 'is-leaf': source.isLeaf, expanded: !source.isLeaf && expanded },

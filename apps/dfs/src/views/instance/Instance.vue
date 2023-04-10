@@ -682,7 +682,7 @@ export default {
       if (this.deployBtnDisabled(row)) {
         return
       }
-      buried('agentDeploy')
+      this.buried('agentDeploy')
       let downloadUrl = window.App.$router.resolve({
         name: 'FastDownload',
         query: {
@@ -1033,7 +1033,7 @@ export default {
     async handleNewAgent(params = {}) {
       try {
         const data = await this.$axios.post('api/tcm/orders', params)
-        buried('agentCreate')
+        this.buried('agentCreate')
         this.fetch()
         this.toDeploy({
           id: data.agentId
