@@ -197,7 +197,7 @@ export default {
         .taskConsoleRelations({
           taskId,
           // type: syncType
-          type: 'task_by_collector',
+          // type: 'task_by_collector',
           taskRecordId
         })
         .then(data => {

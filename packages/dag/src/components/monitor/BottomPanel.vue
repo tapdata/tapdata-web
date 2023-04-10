@@ -28,7 +28,7 @@
         </ElTabPane>
         <ElTabPane v-if="relationCount" :label="$t('packages_dag_monitor_bottompanel_guanlianrenwu')" name="relation">
           <RelationSharedList
-            v-if="['logCollector'].includes($attrs.dataflow.syncType)"
+            v-if="['SharedMiningMonitor', 'SharedCacheMonitor'].includes($route.name)"
             v-bind="$attrs"
             :currentTab="currentTab"
             :type="$attrs.dataflow.syncType"
@@ -167,6 +167,8 @@ export default {
       }
       if (['logCollector'].includes(syncType)) {
         filter.type = 'task_by_collector'
+      } else if (['sync'].includes(syncType)) {
+        // filter.type = 'task_by_collector'
       }
       taskApi.taskConsoleRelations(filter).then(data => {
         this.relationCount = data?.length || 0
