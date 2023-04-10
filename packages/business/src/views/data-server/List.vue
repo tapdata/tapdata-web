@@ -181,7 +181,7 @@ export default {
       let { current, size } = page
       let { type, status, keyword } = this.searchParams
       let where = {}
-      if (keyword && keyword.trim()) {
+      if (keyword?.trim()) {
         where.name = { like: toRegExp(keyword), options: 'i' }
       }
       if (type) {
