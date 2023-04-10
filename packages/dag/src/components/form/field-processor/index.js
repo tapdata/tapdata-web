@@ -539,6 +539,7 @@ export const FieldRenameProcessor = defineComponent({
             </div>
             <ElTable
               class="field-mapping-table"
+              border
               height="100%"
               ref={'table'}
               data={this.tableList}
@@ -616,7 +617,7 @@ export const FieldRenameProcessor = defineComponent({
               <ElInput v-model={this.config.operation.suffix} clearable />
             </FormItem.BaseItem>
 
-            <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_daxiaoxie')}>
+            <FormItem.BaseItem label={i18n.t('packages_form_field_processor_filed_name_daxiaoxie')}>
               <ElSelect v-model={this.config.operation.capitalized}>
                 <ElOption value="" label={i18n.t('packages_form_field_processor_index_bubian')} />
                 <ElOption value="toUpperCase" label={i18n.t('packages_form_field_processor_index_daxie')} />

@@ -774,7 +774,6 @@ export default {
 .role {
   height: 100%;
   box-sizing: border-box;
-  overflow: hidden;
   .head {
     display: block;
     border-bottom: 1px solid #dedee4;
@@ -798,9 +797,8 @@ export default {
   }
 
   .role-tableBox {
-    // display: flex;
-    // flex-direction: column;
-    height: calc(100% - 120px);
+    display: flex;
+    flex-direction: column;
     padding: 10px 0;
     box-sizing: border-box;
     overflow: auto;
