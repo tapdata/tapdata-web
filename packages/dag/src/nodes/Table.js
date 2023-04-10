@@ -412,6 +412,24 @@ export class Table extends NodeType {
                             }
                           }
                         }
+                      },
+                      hasKVStorage: {
+                        type: 'boolean',
+                        title: i18n.t('packages_dag_nodes_database_fenpianpilianghezengliang'),
+                        default: true,
+                        'x-component': 'Switch',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          tooltip: i18n.t('packages_dag_nodes_database_guanbicigongnenghoufenpian')
+                        },
+                        'x-reactions': {
+                          dependencies: ['.enable'],
+                          fulfill: {
+                            state: {
+                              display: '{{$deps[0] ? "visible" :"hidden"}}'
+                            }
+                          }
+                        }
                       }
                     }
                   },

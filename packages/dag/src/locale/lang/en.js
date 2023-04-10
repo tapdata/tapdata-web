@@ -591,6 +591,10 @@ export default {
   packages_dag_nodes_database_jiyumin: 'Sharding based on min/max',
   packages_dag_nodes_database_fenpianfangshi: 'Sharding Method',
   packages_dag_nodes_database_kaiqifenpian: 'Enable Sharding',
+  packages_dag_nodes_database_fenpianpilianghezengliang:
+    'Shard batches and incremental data are merged locally before sending',
+  packages_dag_nodes_database_guanbicigongnenghoufenpian:
+    'When this function is turned off, the shard batch and incremental data will not be merged locally, but will be sent directly to the target. This feature is suitable for scenarios where there is only batching or no incremental events will occur during the batching process. ',
   packages_dag_nodes_database_quanliangduandianshi:
     'The full breakpoint is suitable for scenarios where the data size exceeds 1e, and it will cause the waiting time for the task to start synchronizing data to become longer. After it is enabled, the task in the full phase can be interrupted',
   packages_dag_nodes_database_quanliangduandianxu: 'Full breakpoint resume',

@@ -560,6 +560,9 @@ export default {
   packages_dag_nodes_database_jiyumin: '基于min/max分片',
   packages_dag_nodes_database_fenpianfangshi: '分片方式',
   packages_dag_nodes_database_kaiqifenpian: '开启分片',
+  packages_dag_nodes_database_fenpianpilianghezengliang: '分片批量和增量数据本地合并之后再发送',
+  packages_dag_nodes_database_guanbicigongnenghoufenpian:
+    '关闭此功能后分片批量和增量数据不会在本地进行合并， 而是直接发送到目标。 此功能适用于只有批量或者在批量过程中不会发生增量事件的场景。',
   packages_dag_nodes_database_quanliangduandianshi:
     '全量断点适用于数据规模超过1e的场景,并会造成任务开始同步数据的等待时间变长,开启后,全量阶段的任务可中断',
   packages_dag_nodes_database_quanliangduandianxu: '全量断点续传',
