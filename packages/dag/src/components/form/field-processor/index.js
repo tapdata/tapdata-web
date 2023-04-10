@@ -539,6 +539,7 @@ export const FieldRenameProcessor = defineComponent({
             </div>
             <ElTable
               class="field-mapping-table"
+              border
               height="100%"
               ref={'table'}
               data={this.tableList}
