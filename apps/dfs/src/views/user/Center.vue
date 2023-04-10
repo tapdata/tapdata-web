@@ -6,13 +6,13 @@
       <div>
         <ElRow :gutter="40" class="section-header mb-6">
           <ElCol :span="12" class="user-item">
-            <div class="user-item__label">{{ $t('user_name') }}{{ $t('symbol_colon') }}</div>
+            <div class="user-item__label font-color-light">{{ $t('user_name') }}{{ $t('symbol_colon') }}</div>
             <div class="user-item__value">{{ userData.username }}</div>
           </ElCol>
         </ElRow>
         <ElRow :gutter="40" class="section-header mb-6">
           <ElCol :span="12" class="user-item">
-            <div class="user-item__label">{{ $t('user_Center_yongHuNiCheng') }}</div>
+            <div class="user-item__label font-color-light">{{ $t('user_Center_yongHuNiCheng') }}</div>
             <InlineInput
               class="inline-input fs-8"
               :value="userData.nickname"
@@ -23,14 +23,16 @@
             ></InlineInput>
           </ElCol>
           <ElCol :span="12" class="user-item">
-            <div class="user-item__label">{{ $t('public_connection_form_password') }}{{ $t('symbol_colon') }}</div>
+            <div class="user-item__label font-color-light">
+              {{ $t('public_connection_form_password') }}{{ $t('symbol_colon') }}
+            </div>
             <div class="user-item__value">******</div>
             <ElLink type="primary" @click="editPassword">{{ $t('public_button_revise') }}</ElLink>
           </ElCol>
         </ElRow>
         <ElRow :gutter="40" class="section-header mb-6">
           <ElCol :span="12" class="user-item">
-            <div class="user-item__label">{{ $t('user_phone_number') }}</div>
+            <div class="user-item__label font-color-light">{{ $t('user_phone_number') }}</div>
             <div class="user-item__value">{{ userData.telephone || $t('user_Center_weiBangDing') }}</div>
             <ElLink v-if="userData.telephone" type="primary" @click="editPhone">{{
               $t('public_button_revise')
@@ -43,7 +45,7 @@
             >
           </ElCol>
           <ElCol :span="12" class="user-item">
-            <div class="user-item__label">{{ $t('user_avatar') }}</div>
+            <div class="user-item__label font-color-light">{{ $t('user_avatar') }}</div>
             <div class="user-item__value position-relative">
               <img
                 v-if="userData.avatar"
@@ -64,7 +66,7 @@
           <!--            <ElLink v-else type="primary" @click="dialogObj.bindWx = true">{{ $t('public_button_bind') }}</ElLink>-->
           <!--          </ElCol>-->
           <ElCol :span="12" class="user-item">
-            <div class="user-item__label">{{ $t('user_Center_youXiang') }}</div>
+            <div class="user-item__label font-color-light">{{ $t('user_Center_youXiang') }}</div>
             <div class="user-item__value">{{ userData.email || $t('user_Center_weiBangDing') }}</div>
             <ElLink v-if="userData.email" type="primary" @click="editEmail">{{ $t('public_button_revise') }}</ElLink>
             <ElLink v-else type="primary" @click="dialogObj.bindEmail = true">{{ $t('public_button_bind') }}</ElLink>
@@ -78,14 +80,14 @@
       <div>
         <ElRow :gutter="40" class="section-header mb-2">
           <ElCol :span="12" class="enterprise-item">
-            <div class="enterprise-item__label">{{ $t('user_Center_gongSiMingCheng') }}</div>
+            <div class="enterprise-item__label font-color-light">{{ $t('user_Center_gongSiMingCheng') }}</div>
             <div v-if="!isEdit" class="enterprise-item__value">
               {{ enData.companyName || $t('user_Center_weiTianXie') }}
             </div>
             <ElInput v-else v-model="enForm.companyName" class="enterprise-item__value"></ElInput>
           </ElCol>
           <ElCol :span="12" class="enterprise-item">
-            <div class="enterprise-item__label">{{ $t('user_Center_gongSiGuanWang') }}</div>
+            <div class="enterprise-item__label font-color-light">{{ $t('user_Center_gongSiGuanWang') }}</div>
             <div v-if="!isEdit" class="enterprise-item__value">
               {{ enData.website || $t('user_Center_weiTianXie') }}
             </div>
@@ -94,14 +96,14 @@
         </ElRow>
         <ElRow :gutter="40" class="section-header mb-2">
           <ElCol :span="12" class="enterprise-item">
-            <div class="enterprise-item__label">{{ $t('user_Center_suoShuHangYe') }}</div>
+            <div class="enterprise-item__label font-color-light">{{ $t('user_Center_suoShuHangYe') }}</div>
             <div v-if="!isEdit" class="enterprise-item__value">
               {{ enData.industry || $t('user_Center_weiTianXie') }}
             </div>
             <ElInput v-else v-model="enForm.industry" class="enterprise-item__value"></ElInput>
           </ElCol>
           <ElCol :span="12" class="enterprise-item">
-            <div class="enterprise-item__label">{{ $t('user_Center_suoShuChengShi') }}</div>
+            <div class="enterprise-item__label font-color-light">{{ $t('user_Center_suoShuChengShi') }}</div>
             <div v-if="!isEdit" class="enterprise-item__value">{{ enData.city || $t('user_Center_weiTianXie') }}</div>
             <ElInput v-else v-model="enForm.city" class="enterprise-item__value"></ElInput>
           </ElCol>
@@ -125,7 +127,7 @@
       <div>
         <ElRow :gutter="40" class="section-header mb-2">
           <ElCol :span="12" class="enterprise-item">
-            <div class="enterprise-item__label">Access Key：</div>
+            <div class="enterprise-item__label font-color-light">Access Key：</div>
             <div>
               {{ keyForm.accessKey }}
             </div>
@@ -147,7 +149,7 @@
             </ElTooltip>
           </ElCol>
           <ElCol :span="12" class="enterprise-item">
-            <div class="enterprise-item__label">Secret Key：</div>
+            <div class="enterprise-item__label font-color-light">Secret Key：</div>
             <div>
               {{ keyForm.secretKey }}
             </div>
