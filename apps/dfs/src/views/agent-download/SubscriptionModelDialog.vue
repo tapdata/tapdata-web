@@ -94,9 +94,20 @@
         </section>
         <section v-else>
           <div class="spec-main">
-            <div class="flex justify-content-center align-items-center">
-              <img class="text-center" :src="getAliyunImg('aliyun-license-code')" />
-            </div>
+            <VTable
+              v-if="codeData.length > 0"
+              :columns="columns"
+              :data="codeData"
+              :has-pagination="false"
+              ref="tables"
+              class="subscript-table"
+              max-height="280px"
+              @selection-change="handleSelectionChange"
+            >
+              <template #operation="{ row }">
+                <ElButton type="text" @click="submit(row)">{{ $t('public_button_create') }}</ElButton>
+              </template>
+            </VTable>
             <ul class="step mt-4">
               <li class="flex align-items-center">
                 <span>{{ $t('dfs_aliyun_market_license_dianjidakai') }}</span>
@@ -114,19 +125,20 @@
               <span class="label-code mb-2">{{ $t('dfs_aliyun_market_license_shouquanma') }}</span>
               <el-input v-model="licenseCode" type="textarea" rows="2" autofocus></el-input>
             </div>
+            <el-button class="mt-2" style="margin-left: 70px" type="primary" :loading="saveLoading" @click="save()">{{
+              $t('dfs_aliyun_market_license_jihuo')
+            }}</el-button>
           </div>
           <footer class="flex justify-content-end mt-4">
             <el-button @click="next('first')">Previous</el-button>
-            <el-button type="primary" :loading="saveLoading" @click="save()">{{
-              $t('dfs_aliyun_market_license_jihuo')
-            }}</el-button>
+            <el-button type="primary" @click="next('third')">Next</el-button>
           </footer>
         </section>
       </el-tab-pane>
-      <el-tab-pane label="Review & Confirm" name="third" v-if="productType !== 'aliyun'">
+      <el-tab-pane label="Review & Confirm" name="third">
         <div class="flex flex-column review">
           <div class="mt-4">Configuration Summary</div>
-          <div class="flex-1">
+          <div class="flex-1" v-if="productType !== 'aliyun'">
             <div class="mt-4">计算资源：{{ specMap[specification] || specification }}</div>
             <div class="mt-4">订阅方式：{{ selected.label }}</div>
             <div class="mt-4">接收账单的邮箱</div>
@@ -135,6 +147,10 @@
                 <ElInput v-model="form.email" :placeholder="getPlaceholder()"></ElInput>
               </ElFormItem>
             </ElForm>
+          </div>
+          <div v-else>
+            <div class="mt-4">授权码：{{ codeData.licenseCode }}</div>
+            <div class="mt-4">到期时间：{{ codeData.expiredTime }}</div>
           </div>
           <footer class="flex justify-content-end align-items-center mt-4">
             <div class="mr-6">
@@ -151,13 +167,16 @@
 
 <script>
 import { openUrl, uniqueArr } from '@tap/shared'
+import { VTable } from '@tap/component'
 import { getPaymentMethod, getSpec } from '../instance/utils'
 import { CURRENCY_SYMBOL_MAP, TIME_MAP } from '@tap/business'
 import i18n from '@/i18n'
+import { dayjs } from '@tap/business/src/shared/dayjs'
 
 export default {
   name: 'subscriptionModelDialog',
   inject: ['buried'],
+  components: { VTable },
   props: {
     visible: {
       type: Boolean
@@ -177,14 +196,39 @@ export default {
         email: ''
       },
       specMap: {
-        'min small': 'EXTRA SMALL: 1C 2G - FREE',
+        'min small': 'EXTRA SMALL: 1C 2G - FREE(只能创建一个)',
         Small: 'SMALL: 2C 4G, up to 4 Concurrent Pipelines',
         Medium: 'MEDIUM: 4C 8G, up to 8 Concurrent Pipeliens',
         Large: 'LARGE: 8C 16G, up to 16 Pipeline tssks',
         '2Large': 'EXTRA LARGE: 16C 32G'
       },
       licenseCode: '',
-      saveLoading: false
+      saveLoading: false,
+      codeData: [],
+      codeTotal: 0,
+      currentCode: {},
+      columns: [
+        {
+          type: 'selection'
+        },
+        {
+          label: i18n.t('dfs_instance_selectlist_shouquanma'),
+          prop: 'licenseCode',
+          minWidth: 300
+        },
+        {
+          label: i18n.t('dfs_instance_selectlist_youxiaoqi'),
+          prop: 'expiredTimeLabel'
+        },
+        {
+          label: i18n.t('dfs_instance_selectlist_shiliguige'),
+          prop: 'specLabel'
+        },
+        {
+          label: i18n.t('dfs_instance_selectlist_bangdingshilizhuang'),
+          prop: 'bindAgent'
+        }
+      ]
     }
   },
   mounted() {
@@ -198,6 +242,7 @@ export default {
     changeProductType() {
       this.productType = 'aliyun'
       this.activeName = 'second'
+      this.getAvailableCode()
     },
     getImg(name) {
       return require(`../../../public/images/agent/${name}.jpg`)
@@ -221,9 +266,12 @@ export default {
             }
           }),
           'value'
-        ).sort((a, b) => {
-          return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
-        })
+        )
+          .sort((a, b) => {
+            return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
+          })
+          .filter(it => !['XLarge', '4Large'].includes(it.label)) //过滤不需要的规格
+
         this.specification = this.specificationItems[0]?.value
         // 价格套餐
         this.allPackages = paidPrice.map(t => {
@@ -319,7 +367,18 @@ export default {
       this.$axios
         .post('api/tcm/orders', params)
         .then(data => {
-          openUrl(data?.paymentUrl)
+          if (chargeProvider === 'FreeTier') {
+            let downloadUrl = window.App.$router.resolve({
+              name: 'FastDownload',
+              query: {
+                id: data?.agentId
+              }
+            })
+
+            window.open(downloadUrl.href, '_blank')
+          } else {
+            openUrl(data?.paymentUrl)
+          }
           this.finish()
           this.buried('newAgentStripe', '', {
             type,
@@ -348,17 +407,12 @@ export default {
         .post('api/tcm/aliyun/market/license/activate', { licenseCode: this.licenseCode })
         .then(data => {
           if (data.licenseStatus === 'ACTIVATED') {
+            this.codeData = data
             this.$message.success(i18n.t('dfs_aliyun_market_license_jihuochenggongS'))
-            this.showGoDashboard = true
-            this.$axios.get('api/tcm/user').then(data => {
-              window.__USER_INFO__ = data
-            })
+            this.activeName = 'third'
             this.buried('activateAliyunCode', '', {
               result: true
             })
-            setTimeout(() => {
-              window.location.href = 'index.html'
-            }, 30000)
           } else {
             this.buried('activateAliyunCode', '', {
               result: false
@@ -374,8 +428,140 @@ export default {
           this.saveLoading = false
         })
     },
-    getAliyunImg(name) {
-      return require(`../../../public/images/dashboard/${name}.svg`)
+    getAvailableCode() {
+      this.$axios.get('api/tcm/aliyun/market/license/available').then(data => {
+        data = [
+          {
+            id: '6426b81239dc124786580ede',
+            customerId: '60cc0c304e190a579cbe306c',
+            createAt: '2023-03-31T10:38:10.676+00:00',
+            lastUpdAt: '2023-04-10T07:39:49.402+00:00',
+            createBy: '60cc0c304e190a579cbe306c',
+            createUser: 'jason@tapdata.io',
+            licenseProvider: 'aliyun',
+            productName: '数据实时迁移/复制/同步',
+            productCode: 'cmgj00061912',
+            productSkuId: 'yuncode5591200001',
+            activateTime: '2023-03-31T18:38Z',
+            expiredTime: '2024-02-01T00:00Z',
+            createTime: '2023-03-31T18:37Z',
+            licenseCode: 'PY-EOSYRXFZAS_BBJRXCELV5P3OK9HYWP-0VDGSCWMDI5OZ0XZYD2QZOG_RPKUXO',
+            licenseStatus: 'ACTIVATED',
+            instanceId: '70743040',
+            supplierName: '深圳钛铂数据有限公司',
+            extendInfo: {
+              aliUid: 1809821306098986,
+              accountQuantity: 1
+            },
+            spec: {
+              cpu: 2,
+              memory: 4,
+              name: 'Small'
+            }
+          },
+          {
+            id: '6426b81239dc124786580ede',
+            customerId: '60cc0c304e190a579cbe306c',
+            createAt: '2023-03-31T10:38:10.676+00:00',
+            lastUpdAt: '2023-04-10T07:39:49.402+00:00',
+            createBy: '60cc0c304e190a579cbe306c',
+            createUser: 'jason@tapdata.io',
+            licenseProvider: 'aliyun',
+            productName: '数据实时迁移/复制/同步',
+            productCode: 'cmgj00061912',
+            productSkuId: 'yuncode5591200001',
+            activateTime: '2023-03-31T18:38Z',
+            expiredTime: '2024-02-01T00:00Z',
+            createTime: '2023-03-31T18:37Z',
+            licenseCode: 'PY-EOSYRXFZAS_BBJRXCELV5P3OK9HYWP-0VDGSCWMDI5OZ0XZYD2QZOG_RPKUXO',
+            licenseStatus: 'ACTIVATED',
+            instanceId: '70743040',
+            supplierName: '深圳钛铂数据有限公司',
+            extendInfo: {
+              aliUid: 1809821306098986,
+              accountQuantity: 1
+            },
+            spec: {
+              cpu: 2,
+              memory: 4,
+              name: 'Small'
+            }
+          },
+          {
+            id: '6426b81239dc124786580ede',
+            customerId: '60cc0c304e190a579cbe306c',
+            createAt: '2023-03-31T10:38:10.676+00:00',
+            lastUpdAt: '2023-04-10T07:39:49.402+00:00',
+            createBy: '60cc0c304e190a579cbe306c',
+            createUser: 'jason@tapdata.io',
+            licenseProvider: 'aliyun',
+            productName: '数据实时迁移/复制/同步',
+            productCode: 'cmgj00061912',
+            productSkuId: 'yuncode5591200001',
+            activateTime: '2023-03-31T18:38Z',
+            expiredTime: '2024-02-01T00:00Z',
+            createTime: '2023-03-31T18:37Z',
+            licenseCode: 'PY-EOSYRXFZAS_BBJRXCELV5P3OK9HYWP-0VDGSCWMDI5OZ0XZYD2QZOG_RPKUXO',
+            licenseStatus: 'ACTIVATED',
+            instanceId: '70743040',
+            supplierName: '深圳钛铂数据有限公司',
+            extendInfo: {
+              aliUid: 1809821306098986,
+              accountQuantity: 1
+            },
+            spec: {
+              cpu: 2,
+              memory: 4,
+              name: 'Small'
+            }
+          },
+          {
+            id: '6426b81239dc124786580ede',
+            customerId: '60cc0c304e190a579cbe306c',
+            createAt: '2023-03-31T10:38:10.676+00:00',
+            lastUpdAt: '2023-04-10T07:39:49.402+00:00',
+            createBy: '60cc0c304e190a579cbe306c',
+            createUser: 'jason@tapdata.io',
+            licenseProvider: 'aliyun',
+            productName: '数据实时迁移/复制/同步',
+            productCode: 'cmgj00061912',
+            productSkuId: 'yuncode5591200001',
+            activateTime: '2023-03-31T18:38Z',
+            expiredTime: '2024-02-01T00:00Z',
+            createTime: '2023-03-31T18:37Z',
+            licenseCode: 'PY-EOSYRXFZAS_BBJRXCELV5P3OK9HYWP-0VDGSCWMDI5OZ0XZYD2QZOG_RPKUXO',
+            licenseStatus: 'ACTIVATED',
+            instanceId: '70743040',
+            supplierName: '深圳钛铂数据有限公司',
+            extendInfo: {
+              aliUid: 1809821306098986,
+              accountQuantity: 1
+            },
+            spec: {
+              cpu: 2,
+              memory: 4,
+              name: 'Small'
+            }
+          }
+        ]
+        this.codeData =
+          data.map((t = {}) => {
+            t.bindAgent = t.agentId
+              ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
+              : i18n.t('user_Center_weiBangDing')
+            t.specLabel = getSpec(t.spec)
+            t.expiredTimeLabel = t.expiredTime ? dayjs(t.expiredTime).format('YYYY-MM-DD') : '-'
+            return t
+          }) || []
+        this.codeTotal = data.length
+      })
+    },
+    handleSelectionChange(rows) {
+      if (rows.length > 1) {
+        this.$refs?.tables?.$children?.[0]?.clearSelection()
+        this.$refs?.tables?.$children?.[0]?.toggleRowSelection(rows.pop())
+      }
+      this.currentCode = rows.pop()
     }
   }
 }
@@ -456,5 +642,12 @@ export default {
 }
 .label-code {
   width: 70px;
+}
+.subscript-table {
+  ::v-deep {
+    .subscript-table thead .el-table-column--selection .cell {
+      display: none;
+    }
+  }
 }
 </style>
