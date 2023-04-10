@@ -184,7 +184,7 @@
 import { merge, debounce } from 'lodash'
 import { connectionsApi, discoveryApi, ldpApi, metadataDefinitionsApi, taskApi, userGroupsApi } from '@tap/api'
 import { VirtualTree, IconButton, VExpandXTransition } from '@tap/component'
-import { uuid } from '@tap/shared'
+import { uuid, generateId } from '@tap/shared'
 import { makeDragNodeImage, TASK_SETTINGS } from '../../shared'
 import { DatabaseIcon } from '../../components'
 import commonMix from './mixins/common'
@@ -617,7 +617,7 @@ export default {
     },
 
     getTaskName(from) {
-      return `${from.name}_Clone_To_FDM_${uuid(4)}`
+      return `${from.name}_Clone_To_FDM_${generateId(6)}`
     },
 
     getDatabaseNode(db) {

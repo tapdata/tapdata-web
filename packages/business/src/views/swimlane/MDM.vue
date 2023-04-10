@@ -176,7 +176,7 @@
 import { debounce } from 'lodash'
 import { VirtualTree, IconButton } from '@tap/component'
 import { CancelToken, discoveryApi, ldpApi, metadataDefinitionsApi, userGroupsApi } from '@tap/api'
-import { uuid } from '@tap/shared'
+import { uuid, generateId } from '@tap/shared'
 import { makeDragNodeImage, TASK_SETTINGS } from '../../shared'
 import commonMix from './mixins/common'
 import { DatabaseIcon } from '../../components'
@@ -551,7 +551,7 @@ export default {
     },
 
     getTaskName(from, tableName, newTableName) {
-      return `${from.name}_Sync_${tableName}_To_MDM_${newTableName}_${uuid(4)}`
+      return `${from.name}_Sync_${tableName}_To_MDM_${newTableName}_${generateId(6)}`
     },
 
     async handleNodeExpand(data, node) {
