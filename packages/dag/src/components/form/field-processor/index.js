@@ -1,6 +1,6 @@
 import { debounce } from 'lodash'
 import i18n from '@tap/i18n'
-import { defineComponent, ref, reactive, nextTick, watch } from '@vue/composition-api'
+import { defineComponent, ref, reactive, nextTick, watch, computed } from '@vue/composition-api'
 import { metadataInstancesApi, taskApi } from '@tap/api'
 import { FormItem } from '@tap/form'
 import { useForm } from '@tap/form'
@@ -98,6 +98,19 @@ export const FieldRenameProcessor = defineComponent({
         tableList.value = config.target
       }
     }
+
+    const filterFieldList = computed(() => {
+      const search = config.searchField.trim().toLowerCase()
+      if (search) {
+        return tableList.value.filter(v => {
+          let str = (v.sourceFieldName + '' + v.targetFieldName).toLowerCase()
+          return str.includes(search)
+        })
+      } else {
+        return tableList.value
+      }
+    })
+
     let fieldsMapping = props.value || []
     const restOp = {
       prefix: '',
@@ -405,6 +418,7 @@ export const FieldRenameProcessor = defineComponent({
     return {
       list,
       tableList,
+      filterFieldList,
       config,
       loadData,
       doVisible,
@@ -432,7 +446,7 @@ export const FieldRenameProcessor = defineComponent({
                 <ElInput
                   size="mini"
                   placeholder={i18n.t('packages_form_field_mapping_list_qingshurubiaoming')}
-                  suffix-icon="el-icon-search"
+                  prefix-icon="el-icon-search"
                   clearable
                   v-model={this.config.searchTable}
                   onInput={this.doSearchTables}
@@ -515,7 +529,7 @@ export const FieldRenameProcessor = defineComponent({
                 <ElInput
                   size="mini"
                   placeholder={i18n.t('packages_form_field_mapping_list_qingshuruziduan')}
-                  suffix-icon="el-icon-search"
+                  prefix-icon="el-icon-search"
                   clearable
                   v-model={this.config.searchField}
                   onInput={this.doSearchField}
@@ -542,7 +556,7 @@ export const FieldRenameProcessor = defineComponent({
               border
               height="100%"
               ref={'table'}
-              data={this.tableList}
+              data={this.filterFieldList}
               v-loading={this.config.loadingTable}
               row-class-name={this.tableRowClassName}
               onSelection-change={this.doSelectionField}
