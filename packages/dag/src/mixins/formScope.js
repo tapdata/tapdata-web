@@ -108,6 +108,10 @@ export default {
           return this.$store.state.dataflow.NodeMap[id]
         },
 
+        clearNodeError: id => {
+          return this.$store.commit('dataflow/clearNodeError', id)
+        },
+
         findParentNode: id => {
           let node = this.scope.findNodeById(id)
           let parentId = node.$inputs?.[0]
@@ -323,7 +327,7 @@ export default {
               argMap: {
                 key: search,
                 page,
-                size: 1000
+                size: size || 1000
               }
             }
             let result = await proxyApi.command(params)
@@ -531,7 +535,7 @@ export default {
           const func = (policy, policyField) => {
             if (!policy || !policy.alternatives) {
               setTimeout(() => {
-                policyField.setPattern('readPretty')
+                policyField.setState({ display: 'none' })
               }, 50)
               policyField.setValue(policyField.initialValue)
             } else {

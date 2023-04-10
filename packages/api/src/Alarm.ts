@@ -18,5 +18,8 @@ export default class AlarmAPI extends Http {
   close(ids) {
     return this.axios.post(`${this.url}/close?ids=${ids}`)
   }
+  channels() {
+    return this.axios.get(`${this.url}/channels`)
+  }
 }
 export { AlarmAPI }

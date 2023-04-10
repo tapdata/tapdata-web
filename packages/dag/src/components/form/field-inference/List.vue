@@ -21,20 +21,22 @@
         </span>
       </template>
       <template slot="data_type" slot-scope="scope">
-        <ElTooltip
-          transition="tooltip-fade-in"
-          :disabled="!scope.row.matchedDataTypeLevel"
-          :content="getCanUseDataTypesTooltip(scope.row.matchedDataTypeLevel)"
-          class="ml-n2 mr-1"
-        >
-          <VIcon size="16" class="color-warning" :class="{ 'opacity-0': !scope.row.matchedDataTypeLevel }"
-            >warning</VIcon
+        <div class="position-relative" :class="{ 'pl-4': !!getCanUseDataTypesTooltip(scope.row.matchedDataTypeLevel) }">
+          <ElTooltip
+            transition="tooltip-fade-in"
+            :disabled="!scope.row.matchedDataTypeLevel"
+            :content="getCanUseDataTypesTooltip(scope.row.matchedDataTypeLevel)"
+            class="type-warning position-absolute"
           >
-        </ElTooltip>
-        <span v-if="readonly">{{ scope.row.data_type }}</span>
-        <div v-else class="cursor-pointer inline-block" @click="openEditDataTypeVisible(scope.row)">
-          <span>{{ scope.row.data_type }}</span>
-          <VIcon class="ml-2">arrow-down</VIcon>
+            <VIcon size="16" class="color-warning" :class="{ 'opacity-0': !scope.row.matchedDataTypeLevel }"
+              >warning</VIcon
+            >
+          </ElTooltip>
+          <span v-if="readonly">{{ scope.row.data_type }}</span>
+          <div v-else class="cursor-pointer inline-block" @click="openEditDataTypeVisible(scope.row)">
+            <span>{{ scope.row.data_type }}</span>
+            <VIcon class="ml-2">arrow-down</VIcon>
+          </div>
         </div>
       </template>
       <template slot="is_nullable" slot-scope="scope">
@@ -104,7 +106,8 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import { mapGetters } from 'vuex'
+import { cloneDeep } from 'lodash'
 
 import { VTable } from '@tap/component'
 import i18n from '@tap/i18n'
@@ -117,12 +120,6 @@ export default {
   components: { VTable },
 
   props: {
-    form: {
-      type: Object,
-      default: () => {
-        return {}
-      }
-    },
     data: {
       type: Object,
       default: () => {
@@ -151,6 +148,10 @@ export default {
     hideBatch: {
       type: Boolean,
       default: false
+    },
+    type: {
+      type: String,
+      default: 'target'
     }
   },
 
@@ -208,7 +209,8 @@ export default {
         source: {},
         canUseDataTypes: []
       },
-      editBtnLoading: false
+      editBtnLoading: false,
+      rules: []
     }
   },
 
@@ -232,12 +234,11 @@ export default {
     },
 
     tableList() {
-      const { fields, resultItems = [], findPossibleDataTypes = {} } = this.data
+      const { fields } = this.data
       let list = (fields || []).map(t => {
         t.source = this.findInRulesById(t.changeRuleId) || {}
         t.accept = t.source?.accept || t.accept
         t.data_type = t.source?.result?.dataType || t.data_type
-        t.transformEx = resultItems.some(f => f.item === t.field_name)
         return t
       })
       return this.showDelete ? list : list.filter(t => !t.is_deleted)
@@ -245,22 +246,30 @@ export default {
 
     canRevokeRules() {
       const { qualified_name } = this.data
-      return this.fieldChangeRules.filter(t => t.scope === 'Field' && t.namespace?.[1] === qualified_name) || []
+      return this.rules.filter(t => t.scope === 'Field' && t.namespace?.[1] === qualified_name) || []
     }
   },
 
+  mounted() {
+    this.setRules(this.fieldChangeRules)
+  },
+
   methods: {
+    setRules(data = []) {
+      this.rules = cloneDeep(data)
+    },
+
     findInRulesById(id) {
-      return this.fieldChangeRules.find(t => t.id === id)
+      return this.rules.find(t => t.id === id)
     },
 
     findNodeRuleByType(type) {
-      return this.fieldChangeRules.find(t => t.accept === type && t.scope === 'Node')
+      return this.rules.find(t => t.accept === type && t.scope === 'Node')
     },
 
     deleteRuleById(id) {
-      const index = this.fieldChangeRules.findIndex(t => t.id === id)
-      this.fieldChangeRules.splice(index, 1)
+      const index = this.rules.findIndex(t => t.id === id)
+      this.rules.splice(index, 1)
     },
 
     openEditDataTypeVisible(row) {
@@ -273,14 +282,13 @@ export default {
       this.currentData.errorMessage = ''
       this.currentData.source = source
       this.currentData.canUseDataTypes = canUseDataTypes
-      const findRule = this.fieldChangeRules.find(t => t.id === this.currentData.changeRuleId)
+      const findRule = this.rules.find(t => t.id === this.currentData.changeRuleId)
       this.currentData.selectDataType = findRule?.result?.selectDataType || ''
       this.editDataTypeVisible = true
     },
 
     handleUpdate(data) {
-      this.form?.setValuesIn?.('fieldChangeRules', data || this.fieldChangeRules)
-      this.$emit('update:fieldChangeRules', data || this.fieldChangeRules)
+      this.$emit('update-rules', cloneDeep(data || this.rules))
     },
 
     submitEdit() {
@@ -338,7 +346,7 @@ export default {
             }
             ruleId = op.id
             ruleAccept = dataType
-            this.fieldChangeRules.push(op)
+            this.rules.push(op)
           }
           this.handleUpdate()
           this.data.fields.find(t => {
@@ -364,8 +372,8 @@ export default {
       }
       if (f.scope === 'Field') {
         row.data_type = f.accept
-        const index = this.fieldChangeRules.findIndex(t => t.id === f.id)
-        this.fieldChangeRules.splice(index, 1)
+        const index = this.rules.findIndex(t => t.id === f.id)
+        this.rules.splice(index, 1)
       }
       this.handleUpdate()
     },
@@ -380,9 +388,7 @@ export default {
       }).then(resFlag => {
         if (resFlag) {
           const { qualified_name } = this.data
-          this.handleUpdate(
-            this.fieldChangeRules.filter(t => !(t.scope === 'Field' && t.namespace?.[1] === qualified_name))
-          )
+          this.handleUpdate(this.rules.filter(t => !(t.scope === 'Field' && t.namespace?.[1] === qualified_name)))
           this.$message.success(i18n.t('public_message_operation_success'))
         }
       })
@@ -409,22 +415,18 @@ export default {
     },
 
     tableRowClassName({ row }) {
-      return row.transformEx ? 'warning-row' : ''
+      return row.matchedDataTypeLevel === 'error' ? 'warning-row' : ''
     },
 
     getCanUseDataTypesTooltip(matchedDataTypeLevel) {
-      let result = ''
-      switch (matchedDataTypeLevel) {
-        case 'error':
-          result = i18n.t('packages_dag_field_inference_list_gaiziduanwufa')
-          break
-        case 'warning':
-          result = i18n.t('packages_dag_field_inference_list_gaiziduanyingshe')
-          break
-        default:
-          break
+      const map = {
+        error:
+          this.type === 'target'
+            ? i18n.t('packages_dag_field_inference_list_gaiziduanshuju')
+            : i18n.t('packages_dag_field_inference_list_gaiziduanwufa'),
+        warning: i18n.t('packages_dag_field_inference_list_gaiziduanyingshe')
       }
-      return result
+      return map[matchedDataTypeLevel]
     },
 
     querySearch(val, cb) {
@@ -455,5 +457,10 @@ export default {
       }
     }
   }
+}
+
+.type-warning {
+  top: 3px;
+  left: 0;
 }
 </style>

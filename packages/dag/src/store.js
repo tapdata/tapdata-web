@@ -78,6 +78,7 @@ const getState = () => ({
   nodeOutputsWatcher: null,
   showConsole: false,
   pdkPropertiesMap: {},
+  pdkSchemaFreeMap: {},
   taskSaving: false
 })
 
@@ -858,6 +859,10 @@ const mutations = {
 
   setPdkPropertiesMap(state, map) {
     Vue.set(state, 'pdkPropertiesMap', map)
+  },
+
+  setPdkSchemaFreeMap(state, map) {
+    Vue.set(state, 'pdkSchemaFreeMap', map)
   },
 
   toggleTaskSaving(state, flag = !state.taskSaving) {

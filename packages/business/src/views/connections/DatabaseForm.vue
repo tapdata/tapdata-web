@@ -78,7 +78,12 @@
           </div>
         </footer>
       </main>
-      <GitBook :value="doc"></GitBook>
+      <GitBook
+        v-resize.left="{
+          minWidth: 350
+        }"
+        :value="doc"
+      ></GitBook>
     </div>
     <Test ref="test" :visible.sync="dialogTestVisible" :formData="model" @returnTestData="returnTestData"></Test>
     <DatabaseTypeDialog
@@ -112,12 +117,14 @@
 
 <script>
 import { action } from '@formily/reactive'
+import { cloneDeep } from 'lodash'
 
 import i18n from '@tap/i18n'
 import { clusterApi, connectionsApi, databaseTypesApi, pdkApi, externalStorageApi, proxyApi } from '@tap/api'
 import { VIcon, GitBook } from '@tap/component'
 import { SchemaToForm } from '@tap/form'
-import { checkConnectionName, isEmpty, openUrl } from '@tap/shared'
+import { checkConnectionName, isEmpty, openUrl, submitForm } from '@tap/shared'
+import resize from '@tap/component/src/directives/resize'
 
 import Test from './Test'
 import { getConnectionIcon } from './util'
@@ -128,6 +135,9 @@ export default {
   name: 'DatabaseForm',
   components: { Test, DatabaseTypeDialog, VIcon, SchemaToForm, GitBook, ConnectionDebug },
   inject: ['checkAgent', 'buried'],
+  directives: {
+    resize
+  },
   data() {
     let validateRename = (rule, value, callback) => {
       if (!this.renameData.rename || !this.renameData.rename.trim()) {
@@ -309,6 +319,7 @@ export default {
       this.model.config = formValues
       this.model.pdkType = 'pdk'
       this.model.pdkHash = this.$route.query?.pdkHash
+      this.model.database_type = this.pdkOptions.pdkId
       this.dialogTestVisible = true
       if (this.$route.params.id) {
         //编辑需要特殊标识 updateSchema = false editTest = true
@@ -689,39 +700,14 @@ export default {
         'x-component': 'Space',
         title: i18n.t('packages_business_connections_databaseform_kaiqixintiaobiao'),
         'x-decorator': 'FormItem',
+        'x-decorator-props': {
+          tooltip: i18n.t('packages_business_connections_databaseform_dakaixintiaobiao')
+        },
         properties: {
           heartbeatEnable: {
             type: 'boolean',
             default: false,
-            'x-decorator-props': {
-              tooltip: i18n.t('packages_business_connections_databaseform_dakaixintiaobiao')
-            },
-            'x-component': 'Switch',
-            'x-component-props': {
-              onChange: `{{ val => handleHeartbeatEnable(val, $form) }}`
-            }
-          },
-          heartbeatLink: {
-            type: 'void',
-            'x-decorator-props': {
-              colon: false
-            },
-            'x-component': 'Button',
-            'x-component-props': {
-              type: 'text',
-              class: 'text-decoration-underline',
-              onClick: '{{useAsyncDataSourceByConfig({service: toMonitor, withoutField: true}, $values)}}',
-              disabled: true
-            },
-            'x-content': i18n.t('packages_business_connections_databaseform_chakanxintiaoren'),
-            'x-reactions': {
-              dependencies: ['__TAPDATA.heartbeatEnable'],
-              fulfill: {
-                state: {
-                  display: '{{$deps[0] ? "visible":"hidden"}}'
-                }
-              }
-            }
+            'x-component': 'Switch'
           }
         },
         'x-reactions': {
@@ -822,9 +808,11 @@ export default {
         }
       }
       if (id) {
-        this.getPdkData(id)
+        await this.getPdkData(id)
         delete result.properties.START.properties.__TAPDATA.properties.name
       }
+
+      this.setConnectionConfig()
 
       this.schemaScope = {
         isEdit: !!id,
@@ -889,7 +877,7 @@ export default {
               argMap: {
                 key: search,
                 page,
-                size: 1000
+                size: size || 1000
               }
             }
             if (!params.pdkHash || !params.connectionId) {
@@ -957,25 +945,35 @@ export default {
             return []
           }
         },
-        toMonitor: async () => {
-          const routeUrl = this.$router.resolve({
-            name: 'HeartbeatMonitor',
-            params: {
-              id: this.heartbeatTaskId
+        goToAuthorized: async params => {
+          const routeQuery = cloneDeep(this.$route.query)
+          const routeParams = this.$route.params
+          delete routeQuery['connectionConfig']
+          let routeUrl = this.$router.resolve({
+            name: routeParams?.id ? 'connectionsEdit' : 'connectionCreate',
+            query: routeQuery,
+            params: routeParams
+          })
+
+          const { __TAPDATA, ...__TAPDATA_CONFIG } = this.$refs.schemaToForm?.getFormValues?.() || {}
+          params.oauthUrl = params?.oauthUrl.replace(/@\{(\w+)\}@/gi, function (val, sub) {
+            return __TAPDATA_CONFIG[sub]
+          })
+          const data = Object.assign({}, params, {
+            url: location.origin + location.pathname + routeUrl.href,
+            connectionConfig: {
+              __TAPDATA,
+              __TAPDATA_CONFIG
             }
           })
-          openUrl(routeUrl.href)
-        },
-        handleHeartbeatEnable: (value, $form) => {
-          if (!value) return
-          this.getHeartbeatTaskId($form)
+          submitForm(params?.target, data)
         }
       }
       this.schemaData = result
       this.loadingFrom = false
     },
     async getPdkData(id) {
-      connectionsApi.getNoSchema(id).then(data => {
+      await connectionsApi.getNoSchema(id).then(data => {
         this.model = data
         let {
           name,
@@ -1008,7 +1006,6 @@ export default {
           },
           ...this.model?.config
         })
-        if (heartbeatEnable) this.getHeartbeatTaskId(this.schemaFormInstance)
         this.renameData.rename = this.model.name
       })
     },
@@ -1031,14 +1028,31 @@ export default {
       this.showDebug = true
     },
 
-    getHeartbeatTaskId($form = {}) {
-      const id = this.id || this.$route.params.id
-      if (!id) return
-      $form.query('__TAPDATA.heartbeatLink').take().setComponentProps({ disabled: true })
-      connectionsApi.heartbeatTask(id).then(data => {
-        this.heartbeatTaskId = data?.[0]
-        this.heartbeatTaskId && $form.query('__TAPDATA.heartbeatLink').take().setComponentProps({ disabled: false })
-      })
+    async setConnectionConfig() {
+      const { connectionConfig, pdkHash } = this.$route.query || {}
+      if (connectionConfig) {
+        const params = {
+          pdkHash,
+          connectionConfig: JSON.parse(connectionConfig),
+          command: 'OAuth',
+          type: 'connection'
+        }
+        const res = await proxyApi.command(params)
+        const { __TAPDATA, __TAPDATA_CONFIG = {}, ...trace } = res || JSON.parse(connectionConfig) || {}
+        Object.assign(
+          this.model,
+          __TAPDATA,
+          {
+            config: __TAPDATA_CONFIG
+          },
+          trace
+        )
+        this.schemaFormInstance.setValues({
+          __TAPDATA,
+          ...__TAPDATA_CONFIG,
+          ...trace
+        })
+      }
     }
   }
 }

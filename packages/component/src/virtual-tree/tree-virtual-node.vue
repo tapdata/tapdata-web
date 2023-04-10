@@ -52,7 +52,7 @@ import emitter from 'element-ui/src/mixins/emitter';
 import mixinNode from './mixin/node';
 
 export default {
-  name: 'ElTreeVirtualNode',
+  name: 'ElTreeNode',
   componentName: 'ElTreeVirtualNode',
 
   mixins: [emitter, mixinNode],
@@ -67,7 +67,8 @@ export default {
     showCheckbox: {
       type: Boolean,
       default: false
-    }
+    },
+    onNodeExpand: Function
   },
 
   components: {

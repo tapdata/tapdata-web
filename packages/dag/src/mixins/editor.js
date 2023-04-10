@@ -120,7 +120,8 @@ export default {
       'setValidateLanguage',
       'addProcessorNode',
       'toggleConsole',
-      'setPdkPropertiesMap'
+      'setPdkPropertiesMap',
+      'setPdkSchemaFreeMap'
     ]),
 
     ...mapActions('dataflow', ['addNodeAsync', 'updateDag', 'loadCustomNode']),
@@ -458,8 +459,8 @@ export default {
       }
 
       const node = this.nodeById(id)
-      // 共享挖掘、心跳任务的节点，不触发选中
-      const flag = ['logCollector', 'connHeartbeat'].includes(this.dataflow.syncType)
+      // 心跳任务的节点，不触发选中
+      const flag = ['connHeartbeat'].includes(this.dataflow.syncType)
       if (flag) return
       node && this.nodeSelected(node)
       if (setActive) {
@@ -1300,6 +1301,39 @@ export default {
       }
     },
 
+    // 当开启了全量自定义查询后，处理节点仅支持使用JS节点
+    validateCustomSql() {
+      let error
+      let enable
+      let notInWhitelist
+      let notAllowTarget
+      let whitelist = ['table', 'database', 'migrate_js_processor', 'js_processor', 'custom_processor']
+      const schemaFree = this.$store.state.dataflow.pdkSchemaFreeMap
+
+      this.allNodes.some(node => {
+        if (node.enableCustomCommand) {
+          enable = true
+        }
+        if (!whitelist.includes(node.type)) {
+          notInWhitelist = true
+        }
+        // 目标是否是弱schema类型
+        if (node.$inputs.length && !node.$outputs.length && !schemaFree[node.attrs.pdkHash]) {
+          notAllowTarget = true
+        }
+        if (enable && notInWhitelist) {
+          error = i18n.t('packages_dag_validate_customsql_fail')
+          return true
+        }
+        if (enable && notAllowTarget) {
+          error = i18n.t('packages_dag_validate_customsql_target_fail')
+          return true
+        }
+      })
+
+      return error
+    },
+
     async eachValidate(...fns) {
       for (let fn of fns) {
         let result = fn()
@@ -1325,6 +1359,7 @@ export default {
         this.validateAgent,
         this.validateLink,
         this.validateDDL,
+        this.validateCustomSql,
         this.validateTaskType
       )
     },
@@ -2008,20 +2043,29 @@ export default {
         filter: JSON.stringify({
           fields: {
             messages: true,
+            tags: true,
             pdkHash: true,
             properties: true
           }
         })
       })
-      this.setPdkPropertiesMap(
-        databaseItems.reduce((map, item) => {
-          const properties = item.properties?.node
-          if (properties) {
-            map[item.pdkHash] = properties
-          }
-          return map
-        }, {})
-      )
+      let tagsMap = {}
+      let propertiesMap = {}
+
+      databaseItems.forEach(({ properties, pdkHash, tags }) => {
+        const nodeProperties = properties?.node
+
+        if (nodeProperties) {
+          propertiesMap[pdkHash] = nodeProperties
+        }
+        if (tags?.includes('schema-free')) {
+          tagsMap[pdkHash] = true
+        }
+      })
+      this.setPdkPropertiesMap(propertiesMap)
+      this.setPdkSchemaFreeMap(tagsMap)
+
+      console.log(propertiesMap, tagsMap) // eslint-disable-line
     },
 
     getIsDataflow() {

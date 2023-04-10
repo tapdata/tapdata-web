@@ -365,7 +365,8 @@ export default {
       },
       count1: 0,
       count2: 0,
-      userRole: []
+      userRole: [],
+      roleList: []
     }
   },
   created() {
@@ -486,6 +487,7 @@ export default {
     getDbOptions() {
       roleApi.get({}).then(data => {
         let items = data?.items || []
+        this.roleList = items
         let options = []
         items.forEach(db => {
           if (db.name !== 'admin') {
@@ -557,25 +559,14 @@ export default {
     // 创建用户弹窗
     openCreateDialog() {
       this.createDialogVisible = true
-      // let roleusers = []
-      // let parmas = {
-      //   filter: {
-      //     where: {
-      //       register_user_default: true
-      //     }
-      //   }
-      // }
-      // roleApi.get(parmas).then(data => {
-      //   let items = data?.items || []
-      //   items.forEach(item => {
-      //     roleusers.push(item.id)
-      //   })
-      // })
+      //过滤出默认角色register_user_default
+      let data = this.roleList.filter(it => it.register_user_default)
+      let roleusers = data.map(it => it.id) || []
       this.createForm = {
         username: '',
         email: '',
         password: '',
-        roleusers: '',
+        roleusers: roleusers,
         status: 'activated',
         accesscode: '',
         emailVerified: true,
@@ -645,34 +636,7 @@ export default {
           usersApi[that.createForm.id ? 'patch' : 'post'](params)
             .then(data => {
               if (data) {
-                // 过滤不存在角色
-                let roleIdArr = []
-                if (data.roleMappings?.length) {
-                  that.createFormConfig.items[3].options.filter(item => {
-                    if (that.createForm.roleusers.indexOf(item.value) > -1) {
-                      roleIdArr.push(item.value)
-                    }
-                  })
-                } else {
-                  roleIdArr = that.createForm.roleusers
-                }
-
-                // 删除以前角色id
-                that.roleMappding.forEach(rolemapping => {
-                  roleMappingsApi.delete(rolemapping.id)
-                })
-
-                let newRoleMappings = []
-                roleIdArr.forEach(roleuser => {
-                  newRoleMappings.push({
-                    principalType: 'USER',
-                    principalId: data.id,
-                    roleId: roleuser
-                  })
-                })
-                roleMappingsApi.saveAll(newRoleMappings).then(() => {
-                  that.$message.success(this.$t('public_message_save_ok'))
-                })
+                that.$message.success(this.$t('public_message_save_ok'))
                 this.table.fetch()
               }
             })

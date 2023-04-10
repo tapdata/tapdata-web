@@ -12,10 +12,10 @@
           {{ $t('dataFlow_createNew') }}
         </ElButton>
         <NotificationPopover v-if="$getSettingByKey('SHOW_NOTIFICATION')" class="ml-4"></NotificationPopover>
-        <ElDropdown v-if="showHelp" class="btn" placement="bottom" @command="command" command="help">
-          <span class="icon-btn py-1 px-3">
+        <ElDropdown v-if="showHelp" class="btn" placement="bottom" @command="command" command="help" :show-timeout="0">
+          <div class="flex align-center icon-btn p-2 ml-2">
             <VIcon size="18">wenda</VIcon>
-          </span>
+          </div>
           <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem command="help">{{ $t('app_document') }}</ElDropdownItem>
           </ElDropdownMenu>
@@ -25,10 +25,11 @@
           class="btn"
           placement="bottom"
           @command="command"
+          :show-timeout="0"
         >
-          <span class="icon-btn py-1 px-3">
+          <div class="flex align-center icon-btn p-2 ml-2">
             <VIcon size="18">shezhi</VIcon>
-          </span>
+          </div>
           <!-- <VIcon class="icon-btn" size="16">shezhi</VIcon> -->
           <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem command="settings" v-if="settingCode && email === 'admin@admin.com'">{{
@@ -39,10 +40,16 @@
             }}</ElDropdownItem>
           </ElDropdownMenu>
         </ElDropdown>
-        <ElDropdown v-if="$getSettingByKey('SHOW_LANGUAGE')" class="btn" placement="bottom" @command="changeLanguage">
-          <span class="icon-btn py-1 px-3">
+        <ElDropdown
+          v-if="$getSettingByKey('SHOW_LANGUAGE')"
+          class="btn"
+          placement="bottom"
+          @command="changeLanguage"
+          :show-timeout="0"
+        >
+          <div class="flex align-center icon-btn p-2 ml-2">
             <VIcon size="18">language_icon</VIcon>
-          </span>
+          </div>
           <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem v-for="(value, key) in languages" :key="key" :command="key">
               <span v-if="lang === key" class="color-primary">{{ value }}</span>
@@ -51,11 +58,11 @@
           </ElDropdownMenu>
         </ElDropdown>
         <ElDivider direction="vertical" class="divider mx-6"></ElDivider>
-        <ElDropdown class="menu-user btn pl-2" placement="bottom" @command="command">
-          <span class="icon-btn">
+        <ElDropdown class="menu-user btn" placement="bottom" @command="command" :show-timeout="0">
+          <div class="flex align-center icon-btn p-2">
             <span class="user-initials mr-2">{{ initials }}</span>
             <span>{{ userName }}<i class="el-icon-arrow-down ml-2"></i></span>
-          </span>
+          </div>
           <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem command="account">{{ $t('app_account') }}</ElDropdownItem>
             <ElDropdownItem command="version">{{ $t('app_version') }}</ElDropdownItem>
@@ -193,8 +200,7 @@
       margin-right: 23px;
       display: flex;
       align-items: center;
-      .btn {
-        padding: 6px 0;
+      .icon-btn {
         color: rgba(255, 255, 255, 0.85);
         cursor: pointer;
         i {
@@ -206,7 +212,7 @@
         }
         &:hover {
           background-color: rgba(239, 241, 244, 0.23);
-          border-radius: 4px;
+          border-radius: 6px;
           // color: map-get($color, primary);
         }
       }
@@ -337,14 +343,9 @@
   }
   .item-badge {
     .el-badge__content {
-      height: 15px;
-      line-height: 13px;
-      padding: 0 5px;
-      border: none;
-    }
-    .el-badge__content.is-fixed {
-      right: 26px;
-      top: 3px;
+      height: 16px;
+      line-height: 16px;
+      border: 0;
     }
   }
   .layout-main {
@@ -379,7 +380,7 @@ import Cookie from '@tap/shared/src/cookie'
 import Time from '@tap/shared/src/time'
 import { VIcon } from '@tap/component'
 import { langMenu, getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
-import { usersApi, timeStampApi, licensesApi } from '@tap/api'
+import { usersApi, timeStampApi, licensesApi, taskApi, logcollectorApi } from '@tap/api'
 import { PageHeader } from '@tap/business'
 
 import CustomerService from '@/components/CustomerService'
@@ -392,7 +393,9 @@ let menuSetting = [
   {
     name: 'dataConsole',
     label: 'Data Console(Preview)',
-    icon: 'process-platform'
+    icon: 'process-platform',
+    code: 'v2_data-console',
+    hidden: process.env.VUE_APP_ENABLE_LDP !== 'true'
   },
   { name: 'connectionsList', icon: 'agent', code: 'v2_datasource_menu', parent: 'connections' },
   {
@@ -403,11 +406,12 @@ let menuSetting = [
     children: [
       { name: 'migrateList', code: 'v2_data_replication', parent: 'migrate' },
       { name: 'dataflowList', code: 'v2_data_flow', parent: 'dataflow' },
-      { name: 'dataVerificationList', code: 'v2_data_check_list', parent: 'dataVerification' },
-      { name: 'sharedMiningList', code: 'v2_log_collector_menu', parent: 'sharedMining' },
-      { name: 'functionList', code: 'v2_function_management_list', parent: 'function' },
-      { name: 'customNodeList', code: 'v2_custom_node_menu', parent: 'customNode' },
-      { name: 'sharedCacheList', code: 'v2_shared_cache_menu', parent: 'sharedCache' } // PDK暂时不支持共享缓存，暂时屏蔽
+      { name: 'dataVerificationList', code: 'v2_data_check', parent: 'dataVerification' },
+      { name: 'sharedMiningList', code: 'v2_log_collector', parent: 'sharedMining' },
+      { name: 'HeartbeatTableList', code: 'v2_log_collector', parent: 'sharedMining' },
+      { name: 'functionList', code: 'v2_function_management', parent: 'function' },
+      { name: 'customNodeList', code: 'v2_custom_node', parent: 'customNode' },
+      { name: 'sharedCacheList', code: 'v2_shared_cache', parent: 'sharedCache' } // PDK暂时不支持共享缓存，暂时屏蔽
     ]
   },
   {
@@ -415,6 +419,7 @@ let menuSetting = [
     label: 'page_title_data_discovery',
     icon: 'dataDiscovery_navbar',
     code: 'v2_data_discovery',
+    hidden: process.env.VUE_APP_ENABLE_LDP === 'true',
     children: [
       { name: 'objectList', code: 'v2_data_object', parent: 'object' },
       { name: 'catalogueList', code: 'v2_data_catalogue', parent: 'catalogue' }
@@ -429,7 +434,7 @@ let menuSetting = [
       { name: 'dataServer', code: 'v2_data-server-list', parent: 'dataServer' },
       { name: 'apiClient', code: 'v2_api-client', parent: 'apiClient' },
       { name: 'apiServer', code: 'v2_api-servers', parent: 'apiServer' },
-      { name: 'dataServerAuditList', code: 'v2_data_server_audit-list', parent: 'dataServerAudit' },
+      { name: 'dataServerAuditList', code: 'v2_data_server_audit', parent: 'dataServerAudit' },
       { name: 'apiMonitor', code: 'v2_api_monitor', parent: 'apiMonitor' }
     ]
   },
@@ -442,7 +447,7 @@ let menuSetting = [
       { name: 'clusterManagement', code: 'v2_cluster-management_menu' },
       { name: 'externalStorage', code: 'v2_external-storage_menu' },
       { name: 'users', code: 'v2_user_management_menu', parent: 'users' },
-      { name: 'roleList', code: 'v2_role_management_menu', parent: 'roleList' }
+      { name: 'roleList', code: 'v2_role_management', parent: 'roleList' }
     ]
   }
 ]
@@ -496,8 +501,9 @@ export default {
       this.getActiveMenu()
     }
   },
-  created() {
-    this.getMenus()
+  async created() {
+    const hideMenuMap = await this.getHideMenuItem()
+    this.getMenus(hideMenuMap)
     this.getActiveMenu()
 
     this.userName = Cookie.get('username') || Cookie.get('email')?.split('@')?.[0] || ''
@@ -542,7 +548,7 @@ export default {
       let activeRoute = matched.find(r => activeMap[r.name])
       this.activeMenu = activeMap[activeRoute?.name] || ''
     },
-    getMenus() {
+    getMenus(hideMenuMap = {}) {
       let permissions = sessionStorage.getItem('tapdata_permissions')
 
       permissions = permissions ? JSON.parse(permissions) : []
@@ -570,15 +576,16 @@ export default {
           } else {
             menu.label = this.$t(label)
           }
-          let matched = !menu.code || permissions.some(p => p.code === menu.code)
 
-          menu.hidden = !matched
-          if (matched && menu.children) {
+          menu.hidden =
+            menu.hidden || hideMenuMap[menu.name] || (menu.code && !permissions.some(p => p.code === menu.code))
+          if (!menu.hidden && menu.children) {
             menu.children = formatMenu(menu.children)
             if (menu.children.every(m => m.hidden)) {
               menu.hidden = true
             }
           }
+
           return menu
         })
       }
@@ -679,6 +686,28 @@ export default {
         }
         this.licenseExpireDate = dayjs(expires_on).format('YYYY-MM-DD HH:mm:ss')
       })
+    },
+
+    async getHideMenuItem() {
+      const map = {
+        sharedMiningList: (await logcollectorApi.get({ filter: JSON.stringify({}) }))?.total || 0,
+        HeartbeatTableList:
+          (
+            await taskApi.get({
+              filter: JSON.stringify({
+                where: {
+                  syncType: 'connHeartbeat'
+                }
+              })
+            })
+          )?.total || 0
+      }
+      return Object.keys(map).reduce((result, key) => {
+        if (!map[key]) {
+          result[key] = true
+        }
+        return result
+      }, {})
     }
   }
 }

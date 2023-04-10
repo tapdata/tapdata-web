@@ -5,27 +5,25 @@
         <span class="table-name inline-block">{{ detailData.name }}</span>
         <span :class="['status', 'ml-4', 'status-' + tableStatus]">{{ statusMap[tableStatus] }}</span>
       </div>
-      <span class="mr-2">
-        <VIcon class="tree-item-icon" size="18">table</VIcon> <span class="table-dec-txt">Table</span></span
-      >
+      <span class="mr-2"> <VIcon class="tree-item-icon" size="18">table</VIcon></span>
       <span class="ml-8">
         <span>{{ detailData.sourceType }}</span></span
       >
       <span class="ml-8"
-        ><span class="table-dec-label">数据最后更新时间：</span
+        ><span class="table-dec-label">{{ $t('packages_business_last_data_change_time') }}：</span
         ><span class="table-dec-txt">{{ lastDataChangeTime || '-' }}</span></span
       >
       <span class="ml-8"
-        ><span class="table-dec-label">增量数据延迟：</span
+        ><span class="table-dec-label">{{ $t('packages_business_cdc_delay_time') }}：</span
         ><span class="table-dec-txt">{{ cdcDelayTime || '-' }}</span></span
       >
     </header>
     <section class="mt-6">
       <el-tabs v-model="activeName" @tab-click="handleTab">
-        <el-tab-pane label="OverView" name="overView">
+        <el-tab-pane :label="$t('packages_business_overview')" name="overView">
           <section class="mt-2">
             <div class="mb-4">
-              <span class="table-dec-label mb-4">Table Description：</span
+              <span class="table-dec-label mb-4">{{ $t('public_description') }}：</span
               ><el-input
                 type="textarea"
                 row="4"
@@ -36,26 +34,26 @@
             </div>
             <el-row>
               <el-col :span="4">
-                <div class="table-dec-label">Rows</div>
+                <div class="table-dec-label">{{ $t('packages_business_rows') }}</div>
                 <div class="table-dec-txt mt-4">{{ numOfRows || '-' }}</div>
               </el-col>
               <el-col :span="4">
-                <div class="table-dec-label">Columns</div>
+                <div class="table-dec-label">{{ $t('packages_business_columns') }}</div>
                 <div class="table-dec-txt mt-4">{{ tableFields.length }}</div>
               </el-col>
               <el-col :span="4">
-                <div class="table-dec-label">Storage Size</div>
+                <div class="table-dec-label">{{ $t('packages_business_storage_size') }}</div>
                 <div class="table-dec-txt mt-4">{{ storageSize || '-' }}</div>
               </el-col>
               <el-col :span="6">
-                <div class="table-dec-label">Connection</div>
+                <div class="table-dec-label">{{ $t('public_connection') }}</div>
                 <div class="table-dec-txt mt-4" v-if="detailData">{{ detailData.connectionName }}</div>
               </el-col>
             </el-row>
           </section>
           <section class="mt-6">
             <el-tabs v-model="activeNameItems">
-              <el-tab-pane label="Columns Preview" name="columnsPreview">
+              <el-tab-pane :label="$t('packages_business_columns_preview')" name="columnsPreview">
                 <VTable
                   class="discovery-page-table"
                   :columns="columnsPreview"
@@ -66,13 +64,23 @@
                   <div slot="empty">{{ $t('public_data_no_data') }}</div>
                 </VTable>
               </el-tab-pane>
-              <el-tab-pane label="Sample Data" name="sampleData">
+              <el-tab-pane :label="$t('packages_business_sample_data')" name="sampleData">
                 <VEmpty v-if="!sampleHeader.length"></VEmpty>
                 <el-table v-else :data="sampleData" v-loading="loadingSampleData" max-height="381px">
                   <el-table-column type="index" label="#"></el-table-column>
-                  <el-table-column v-for="(item, index) in sampleHeader" :key="index" :prop="item" :label="item">
-                  </el-table-column> </el-table
-              ></el-tab-pane>
+                  <el-table-column
+                    v-for="(item, index) in sampleHeader"
+                    :key="index"
+                    :prop="item"
+                    :label="item"
+                    min-width="200"
+                  >
+                    <template #header="{ column }">
+                      <span :title="column.label">{{ column.label }}</span>
+                    </template>
+                  </el-table-column>
+                </el-table></el-tab-pane
+              >
             </el-tabs>
           </section>
           <!--          <section class="mt-6">-->
@@ -91,14 +99,30 @@
           <!--            </ul>-->
           <!--          </section>-->
         </el-tab-pane>
-        <el-tab-pane label="Schema" name="schema">
+        <el-tab-pane :label="$t('public_connection_form_schema')" name="schema">
           <VTable class="discovery-page-table" :columns="columns" :data="tableFields" :has-pagination="false">
             <div slot="empty">{{ $t('public_data_no_data') }}</div>
+            <template #primaryKey="{ row }">
+              <VIcon v-if="row.primaryKey" class="font-color-light">check</VIcon>
+              <span v-else>-</span>
+            </template>
+            <template #foreignKey="{ row }">
+              <VIcon v-if="row.foreignKey" class="font-color-light">check</VIcon>
+              <span v-else>-</span>
+            </template>
+            <template #index="{ row }">
+              <VIcon v-if="row.index" class="font-color-light">check</VIcon>
+              <span v-else>-</span>
+            </template>
+            <template #notNull="{ row }">
+              <VIcon v-if="row.notNull" class="font-color-light">check</VIcon>
+              <span v-else>-</span>
+            </template>
           </VTable>
         </el-tab-pane>
-        <el-tab-pane label="Tasks" name="tasks">
+        <el-tab-pane :label="$t('packages_business_tasks')" name="tasks">
           <div class="flex justify-content-between mb-4">
-            <span>以这个模型源/目标的任务</span
+            <span>{{ $t('packages_business_table_preview_task') }}</span
             ><span class="color-primary cursor-pointer" @click="handleCreateTask">Create Task</span>
           </div>
           <el-table class="discovery-page-table" :data="taskData" :has-pagination="false">
@@ -150,20 +174,19 @@
             </el-table-column>
           </el-table>
         </el-tab-pane>
-        <el-tab-pane label="APIs" name="apis">
+        <!--<el-tab-pane label="APIs" name="apis">
           <VTable
             v-if="activeName === 'apis'"
             ref="table"
             :columns="apisColumns"
             :remoteMethod="getApisData"
-            height="100%"
             class="mt-4"
           >
             <template #status="{ row }">
               <span class="status-block" :class="'status-' + row.status">{{ row.statusFmt }}</span>
             </template>
           </VTable>
-        </el-tab-pane>
+        </el-tab-pane>-->
         <!--        <el-tab-pane label="Lineage" name="lineage">APIs</el-tab-pane>-->
       </el-tabs>
     </section>
@@ -224,23 +247,31 @@ export default {
         },
         {
           label: i18n.t('public_type'),
-          prop: 'dataType'
+          prop: 'dataType',
+          minWidth: 120
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_zhujian'),
-          prop: 'primaryKey'
+          slotName: 'primaryKey',
+          align: 'center'
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_waijian'),
-          prop: 'foreignKey'
+          prop: 'foreignKey',
+          slotName: 'foreignKey',
+          align: 'center'
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_suoyin'),
-          prop: 'index'
+          prop: 'index',
+          slotName: 'index',
+          align: 'center'
         },
         {
           label: i18n.t('meta_table_not_null'),
-          prop: 'notNull'
+          prop: 'notNull',
+          slotName: 'notNull',
+          align: 'center'
         },
         {
           label: i18n.t('meta_table_default'),
@@ -266,9 +297,9 @@ export default {
       cdcDelayTime: '',
       lastDataChangeTime: '',
       statusMap: {
-        error: i18n.t('public_status_error'),
-        draft: i18n.t('public_status_wait_run'),
-        normal: i18n.t('public_status_renew_normal')
+        error: i18n.t('packages_business_table_status_error'), // 异常
+        draft: i18n.t('packages_business_table_status_draft'), // 草稿
+        normal: i18n.t('packages_business_table_status_normal') // 正常
       },
       apisColumns: [
         {
@@ -381,7 +412,8 @@ export default {
         .call(params)
         .then(res => {
           this.sampleData = res?.sampleData
-          this.sampleHeader = Object.keys(this.sampleData.reduce((o, c) => Object.assign(0, c))) || []
+          //schema返回的数据组装数据
+          this.sampleHeader = this.tableFields.map(it => it.name)
           // this.storageSize = Math.floor(res?.tableInfo?.storageSize / 1024) || 0
           this.storageSize = calcUnit(res?.tableInfo?.storageSize || 0, 1)
           this.numOfRows = res?.tableInfo?.numOfRows || 0
@@ -474,6 +506,12 @@ export default {
 <style scoped lang="scss">
 .sw-table-drawer {
   padding: 24px;
+  ::v-deep {
+    th .cell {
+      white-space: nowrap;
+    }
+  }
+
   .table-name {
     font-weight: 500;
     font-size: 32px;

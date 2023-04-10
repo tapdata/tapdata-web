@@ -22,7 +22,7 @@ const _axios = axios.create({
 })
 
 const getPendingKey = config => {
-  let { url, method, params } = config
+  let { url, method, data, params } = config
   let headers = {}
   for (const key in config.headers) {
     let value = config.headers[key]
@@ -33,6 +33,7 @@ const getPendingKey = config => {
   let key = JSON.stringify({
     url,
     method,
+    data,
     params,
     headers
   })
@@ -105,6 +106,9 @@ const requestInterceptor = config => {
   }
   config.withCredentials = true
 
+  // 业务内设置了cancel
+  if (config.cancelToken) return config
+
   // 获取取消请求的函数
   let cancelFunc = null
   config.cancelToken = new CancelToken(c => {
@@ -127,6 +131,7 @@ const responseInterceptor = response => {
 
     let data = response?.data
     let code = data?.code
+
     if (code === 'ok') {
       // code 为 ok 则表示请求正常返回，进入then逻辑
       return resolve(data?.data)
@@ -139,7 +144,7 @@ const responseInterceptor = response => {
       return reject(msg)
     } else {
       // 其他情况交由业务端自行处理
-      if (['Datasource.TableNotFound'].includes(code)) {
+      if (['Datasource.TableNotFound', 'SubscribeFailed.OrderLimit'].includes(code)) {
         return reject(Object.assign(response))
       }
       // 文件处理
@@ -150,6 +155,12 @@ const responseInterceptor = response => {
       if (response?.config.url?.match(/.json$/i)) {
         return resolve(response)
       }
+
+      // 特殊处理
+      if (!code) {
+        return resolve(data)
+      }
+
       let msg = data?.message || data?.msg || ''
       // eslint-disable-next-line
       console.log(`${code}： ${msg}`)

@@ -6,8 +6,8 @@
     @show="handleShow"
     @hide="handleHide"
   >
-    <div class="btn" slot="reference" @click="toCenter()">
-      <el-badge class="item-badge icon-btn px-3" :value="unRead" :max="99" :hidden="!unRead">
+    <div class="icon-btn flex align-center p-2" slot="reference" @click="toCenter()">
+      <el-badge class="item-badge" :value="unRead" :max="99" :hidden="!unRead">
         <VIcon size="18">xiaoxi-2</VIcon>
       </el-badge>
     </div>

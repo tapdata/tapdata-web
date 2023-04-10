@@ -28,8 +28,8 @@ export default class Discovery extends Http {
   filterList(filterType) {
     return this.axios.get(`${this.url}/filterList?filterType=${filterType}`)
   }
-  discoveryList(params) {
-    const config = { params }
+  discoveryList(params, option) {
+    const config = { params, ...option }
     if (isPlainObj(params)) {
       Object.assign(config, params)
     }

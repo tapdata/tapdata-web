@@ -75,7 +75,7 @@ class WSClient extends EventEmitter {
     } catch (e) {
       if (!this.retryCount) {
         // eslint-disable-next-line
-        console.log('websocket 连接失败，准备尝试重连', e)
+        console.log(i18n.t('packages_business_shared_ws_client_webso8'), e)
       }
       this.reconnect()
     }
@@ -87,12 +87,12 @@ class WSClient extends EventEmitter {
       this.retryCount++
       setTimeout(() => {
         // eslint-disable-next-line
-        console.log('websocket 尝试第' + this.retryCount + '次重连')
+        console.log(i18n.t('packages_business_shared_ws_client_webso7') + this.retryCount + i18n.t('packages_business_shared_ws_client_cizhonglian'))
         this.connect()
       }, opts.retryInterval)
     } else {
       // eslint-disable-next-line
-      console.log('websocket 超过最大重连次数 ' + this.retryTimes)
+      console.log(i18n.t('packages_business_shared_ws_client_webso6') + this.retryTimes)
       this.retryCount = 0
     }
   }
@@ -108,7 +108,7 @@ class WSClient extends EventEmitter {
     let ws = this.ws
     ws.onopen = () => {
       // eslint-disable-next-line
-      console.log('websocket 已连接')
+      console.log(i18n.t('packages_business_shared_ws_client_webso5'))
       this.emit('open')
     }
     ws.onmessage = e => {
@@ -116,7 +116,7 @@ class WSClient extends EventEmitter {
     }
     ws.onerror = () => {
       // eslint-disable-next-line
-      console.log('websocket 断开连接')
+      console.log(i18n.t('packages_business_shared_ws_client_webso4'))
       this.ws = null
       if (this.retryCount === 0) {
         this.reconnect()
@@ -124,7 +124,7 @@ class WSClient extends EventEmitter {
     }
     ws.onclose = () => {
       // eslint-disable-next-line
-      console.log('websocket 已关闭')
+      console.log(i18n.t('packages_business_shared_ws_client_webso3'))
       this.ws = null
       if (this.retryCount === 0) {
         this.reconnect()
@@ -138,7 +138,7 @@ class WSClient extends EventEmitter {
     try {
       if (msg === 'UserId is blank') {
         // access_token 过期
-        console.debug('access_token 过期', event) // eslint-disable-line
+        console.debug(i18n.t('packages_business_shared_ws_client_acces'), event) // eslint-disable-line
         this.emit('401')
         this.connect()
       } else if (typeof msg === 'string' && /^"?\{.*\}"?$/.test(msg)) {
@@ -155,11 +155,11 @@ class WSClient extends EventEmitter {
           this.emit(message.type, message)
         }
       } else {
-        throw new Error('websocket 接收消息格式错误: ' + msg)
+        throw new Error(i18n.t('packages_business_shared_ws_client_webso2') + msg)
       }
     } catch (e) {
       // eslint-disable-next-line
-      console.log('websocket 消息解析失败: ' + msg, e)
+      console.log(i18n.t('packages_business_shared_ws_client_webso') + msg, e)
     }
   }
 

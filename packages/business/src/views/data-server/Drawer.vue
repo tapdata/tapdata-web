@@ -904,7 +904,7 @@ export default {
     async getFields() {
       this.fieldLoading = true
       let filter = {
-        where: { 'source.id': this.form.connectionId, original_name: this.form.tableName, is_deleted: false }
+        where: { 'source.id': this.form.connectionId, original_name: this.form.tableName, is_deleted: false, sourceType: 'SOURCE' }
       }
       const data = await metadataInstancesApi
         .get({

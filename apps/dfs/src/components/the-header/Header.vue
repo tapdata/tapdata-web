@@ -21,7 +21,7 @@
         </div>
 
         <NotificationPopover class="command-item mr-2 flex align-items-center"></NotificationPopover>
-        <ElDropdown class="mr-2" placement="bottom" @command="changeLanguage">
+        <ElDropdown class="mr-2" placement="bottom" @command="changeLanguage" v-if="!onlyEnglishLanguage">
           <span class="cursor-pointer command-item icon-btn">
             <VIcon size="20">{{ 'language-' + lang }}</VIcon>
           </span>
@@ -42,9 +42,6 @@
             />
             <VIcon v-else class="mr-2" size="20">account</VIcon>
             <span>{{ user.username || user.nickname || user.phone || user.email }}</span>
-            <span class="ml-2 current">{{
-              paidPlansCode === 'standard' ? $t('dfs_the_header_header_biaozhun') : $t('dfs_the_header_header_jichuban')
-            }}</span>
           </div>
 
           <ElDropdownMenu slot="dropdown">
@@ -78,16 +75,18 @@ export default {
       officialWebsiteAddress: window.__config__?.officialWebsiteAddress || 'https://tapdata.net',
       lang: '',
       languages: langMenu,
-      paidPlansCode: '',
-      domain: document.domain
+      domain: document.domain,
+      onlyEnglishLanguage: false
     }
   },
   created() {
     this.lang = getCurrentLanguage()
-    this.getPaidPlan()
     setCurrentLanguage(this.lang, this.$i18n)
     if (window.__config__?.onlyEnglishLanguage) {
-      this.languages = { en: 'English' }
+      this.onlyEnglishLanguage = true
+      //默认只有英文则当前浏览器语言设置为英文
+      this.lang = 'en'
+      setCurrentLanguage(this.lang, this.$i18n)
     }
     //如果没有配置topBarLinks 给默认值
     if (!window.__config__?.topBarLinks) {
@@ -185,12 +184,6 @@ export default {
           document.cookie = keys[i] + '=0;path=/;domain=' + document.domain + ';expires=' + new Date(0).toUTCString()
         }
       }
-    },
-    //用户是否是付费用户
-    getPaidPlan() {
-      this.$axios.get('api/tcm/user/paidPlan').then(data => {
-        this.paidPlansCode = data?.paidPlans?.[0].code
-      })
     },
 
     //处理跳转

@@ -68,7 +68,7 @@ export default class Task extends Http {
   }
 
   saveAndStart(params) {
-    return this.axios.patch(this.url + '/confirmStart/' + params.id, params)
+    return this.axios.patch(this.url + '/confirmStart/' + params.id || '', params)
   }
 
   getMetadata(params) {

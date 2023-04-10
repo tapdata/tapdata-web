@@ -10,7 +10,7 @@
     <div class="flex mb-4 align-items-center">
       <div class="select__row flex align-items-center" @click.stop="handleSelect">
         <span>{{ $t('packages_dag_components_nodedetaildialog_jiedian') }}</span>
-        <ElSelect v-model="selected" class="ml-2 dark" ref="nodeSelect" filterable @change="init">
+        <ElSelect v-model="selected" class="ml-2 dark" ref="nodeSelect" filterable @change="init()">
           <ElOption v-for="(item, index) in nodeItems" :key="index" :label="item.label" :value="item.value">
             <div class="flex align-center mx-n1">
               <NodeIcon class="mr-2" :node="item.node" :size="18" />
@@ -34,13 +34,6 @@
           <EventChart :samples="[eventDataAll, eventDataPeriod]"></EventChart>
         </div>
       </div>
-
-      <SharedMiningTable
-        ref="sharedMiningTable"
-        :task-id="$route.params.id"
-        :params="{ nodeId: nodeId }"
-        class="shared-mining-table mt-6"
-      ></SharedMiningTable>
     </div>
     <template v-else>
       <div class="flex justify-content-between">
@@ -188,7 +181,6 @@ import { measurementApi } from '@tap/api'
 import { calcTimeUnit } from '@tap/shared'
 import Time from '@tap/shared/src/time'
 import { TimeSelect } from '@tap/component'
-import SharedMiningTable from '@tap/business/src/views/shared-mining/Table'
 
 import EventChart from './EventChart'
 import LineChart from './LineChart'
@@ -199,7 +191,7 @@ import NodeIcon from '../../NodeIcon'
 export default {
   name: 'NodeDetailDialog',
 
-  components: { NodeIcon, EventChart, LineChart, TimeSelect, Frequency, SharedMiningTable },
+  components: { NodeIcon, EventChart, LineChart, TimeSelect, Frequency },
 
   props: {
     value: {
@@ -227,7 +219,8 @@ export default {
       quotaTime: [],
       quotaTimeType: '5m',
       loading: false,
-      refreshRate: 5000
+      refreshRate: 5000,
+      currentNodeId: ''
     }
   },
 
@@ -450,6 +443,7 @@ export default {
       if (!this.selected) {
         this.selected = this.nodeId
       }
+      this.currentNodeId = this.selected //当前nodeId
       this.setPeriod()
       this.timer && clearInterval(this.timer)
       this.timer = setInterval(() => {

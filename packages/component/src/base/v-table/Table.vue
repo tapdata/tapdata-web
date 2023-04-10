@@ -233,4 +233,12 @@ export default {
   overflow: auto;
   border-bottom: none;
 }
+.el-pagination {
+  line-height: 28px;
+  ::v-deep {
+    * {
+      line-height: inherit;
+    }
+  }
+}
 </style>

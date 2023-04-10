@@ -752,10 +752,11 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
   th.el-table__cell {
     padding: 0;
     height: 40px;
-    .cell {
-      //word-break: break-word;
-      word-break: normal;
-    }
+  }
+
+  .cell {
+    overflow-wrap: break-word;
+    word-break: normal;
   }
 }
 .el-table--small {
@@ -832,8 +833,14 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
     font-weight: 500;
     color: map-get($fontColor, dark);
   }
+  .el-dialog__headerbtn {
+    font-size: 24px;
+  }
   .el-dialog__close {
     color: map-get($color, primary);
+  }
+  .el-dialog__body {
+    word-break: break-word;
   }
 }
 
@@ -856,6 +863,11 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
 
 /* Input
 --------------------------*/
-.el-input__inner{
-  font-size:  $fontBaseTitle;
+.el-input {
+  .el-input__inner{
+    font-size: $fontBaseTitle;
+  }
+  .el-input-group__prepend, .el-input-group__append {
+    padding: 0 12px;
+  }
 }

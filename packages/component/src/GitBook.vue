@@ -48,7 +48,6 @@ export default {
 
 <style lang="scss">
 .git-book {
-  max-width: 550px;
   padding: 10px 20px;
   overflow-y: auto;
   background-color: rgba(250, 250, 250, 100);

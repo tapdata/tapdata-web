@@ -353,13 +353,13 @@ export default {
           label: i18n.t('operation_log_List_caoZuoLeiXing'),
           prop: 'operationType',
           slotName: 'operationType',
-          width: 120
+          width: 140
         },
         {
           label: i18n.t('operation_log_List_caoZuoMiaoShu'),
           prop: 'desc',
           slotName: 'desc',
-          minWidth: 300
+          minWidth: 340
         }
       ]
     }

@@ -373,21 +373,6 @@ export default observer({
                           }
                         }
                       },
-                      increSyncConcurrency: {
-                        title: this.$t('packages_dag_task_setting_cdc_concurrency'),
-                        type: 'boolean',
-                        default: true,
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Switch',
-                        'x-reactions': {
-                          dependencies: ['type'],
-                          fulfill: {
-                            state: {
-                              display: '{{$deps[0]!=="initial_sync" ? "visible" : "hidden"}}'
-                            }
-                          }
-                        }
-                      },
                       increHysteresisSpace: {
                         type: 'void',
                         title: this.$t('packages_dag_task_setting_lag_time'),
@@ -427,12 +412,6 @@ export default observer({
                             }
                           }
                         }
-                      },
-                      processorThreadNum: {
-                        type: 'number',
-                        title: this.$t('packages_dag_task_setting_processorThreadNum'),
-                        'x-decorator': 'FormItem',
-                        'x-component': 'InputNumber'
                       },
                       increOperationModeSpace: {
                         type: 'void',

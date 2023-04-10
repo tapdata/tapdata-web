@@ -11,7 +11,7 @@ export const fieldInference = observer(
       const form = formRef.value
 
       useAfterTaskSaved(root, formRef.value.values.$inputs, () => {
-        refs.fieldMapping?.loadData()
+        refs.fieldMapping?.loadData(true)
       })
 
       return () => {

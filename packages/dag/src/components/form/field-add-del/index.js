@@ -52,6 +52,7 @@ export const FieldAddDel = connect(
           checkAll: false,
           deleteAllFieldsData: false,
           fields: [],
+          searchFiledName: '',
           /*字段处理器支持功能类型*/
           REMOVE_OPS_TPL: {
             id: '',
@@ -80,13 +81,32 @@ export const FieldAddDel = connect(
         //fields = this.checkOps(fields)
         this.originalFields = JSON.parse(JSON.stringify(fields))
         fields = this.checkOps(fields) || []
+        this.searchFiledName = this.searchFiledName.trim().toString() //去空格
+        if (this.searchFiledName !== '') {
+          fields = fields.filter(v => {
+            let str = v.label.toLowerCase()
+            return str.indexOf(this.searchFiledName.toLowerCase()) > -1
+          })
+        }
         this.fields = fields
         //初始化
         let formValues = { ...this.form.values }
         this.deleteAllFieldsData = formValues?.deleteAllFields || false
-
         return (
           <div class="field-processors-tree-warp bg-body pt-2" v-loading={this.loading}>
+            <div class={['mb-2', 'flex']}>
+              <ElInput
+                placeholder={i18n.t('packages_form_field_mapping_list_qingshuruziduan')}
+                v-model={this.searchFiledName}
+                suffix-icon="el-icon-search"
+              ></ElInput>
+              <ElButton
+                class={['ml-2']}
+                type={'default'}
+                onClick={() => this.handleInput('')}
+                icon="el-icon-refresh"
+              ></ElButton>
+            </div>
             <div class="field-processor-operation flex">
               {/*<ElCheckbox class="check-all" v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />*/}
               <span class="flex-1 text inline-block ml-6">
@@ -123,7 +143,7 @@ export const FieldAddDel = connect(
                 </VIcon>
               </span>
             </div>
-            <div className="field-processors-tree-warp">
+            <div class="field-processors-tree-warp">
               <VirtualTree
                 ref="tree"
                 height="calc(100vh - 240px)"
@@ -263,6 +283,9 @@ export const FieldAddDel = connect(
             }
           }
           return fields
+        },
+        handleInput(val) {
+          this.searchFiledName = val
         },
         getNativeData(id) {
           let fields = this.originalFields || []

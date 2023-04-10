@@ -163,7 +163,7 @@ export default {
   packages_dag_migration_settingpanel_dangrenwufuhe:
     '开启数据校验开关后，任务会自动对同步结果的一致性进行全量校验和增量校验，并会在运行监控页面将校验不一致的数据行数展示出来。需要注意，当任务符合以下情况时，即使开启校验开关任务也不会进行校验\n 1. 添加了中间处理节点\n 2. 源连接不支持校验\n 3. 目标连接不支持校验',
   packages_dag_monitor_bottompanel_yunxingjilu: '运行记录',
-  packages_dag_monitor_bottompanel_rizhi: '日志',
+  packages_dag_monitor_bottompanel_rizhi: '任务日志',
   packages_dag_components_eventchart_qita: '其他',
   packages_dag_components_eventchart_suoxuanzhouqilei: '所选周期累计',
   packages_dag_components_eventchart_renwuyunxinglei: '任务运行累计',
@@ -403,7 +403,7 @@ export default {
   packages_dag_monitor_leftsider_shanchu: '删除：',
   packages_dag_monitor_leftsider_gengxin: '更新：',
   packages_dag_monitor_leftsider_charu: '插入：',
-  packages_dag_monitor_leftsider_renwushijiantong: '任务事件统计（条）',
+  packages_dag_monitor_leftsider_renwushijiantong: '处理数据统计(条）',
   packages_dag_monitor_leftsider_chayixiangqing: '差异详情',
   packages_dag_monitor_leftsider_zuidazengliangyan: '最大增量延迟：',
   packages_dag_monitor_leftsider_tongbuxinxi: '同步信息',
@@ -542,16 +542,22 @@ export default {
   packages_dag_field_inference_main_quanbubiao: '全部表',
   packages_dag_migration_settingpanel_zhuanweiputongC: '转为普通CDC模式',
   packages_dag_migration_settingpanel_renwuzhijiebao: '任务直接报错停止',
-  packages_dag_migration_settingpanel_danggongxiangwajue: '当共享挖掘不可用时',
+  packages_dag_migration_settingpanel_danggongxiangwajue: '当共享挖掘不可用(任务启动时)',
   packages_dag_migration_settingpanel_danggongxiangwajuetooltip:
-    '可能出现的不可用的场景\n1. 数据连接里面没有打开开关\n2. 设置的起始时间比外存日志数据的第一条更早\n3. 挖掘任务报错停止',
+    '在任务启动时会对共享挖掘的可用性进行检测，当挖掘不可用时按照下方所选策略进行处理。\n可能出现的不可用的场景\n1. 数据连接里面没有打开开关\n2. 设置的起始时间比外存日志数据的第一条更早\n3. 挖掘任务报错停止',
   packages_dag_field_inference_list_gaiziduanyingshe:
     '该字段映射的目标数据类型为系统推测结果，该结果可能存在偏差，请检查并确认是否符合预期，并根据实际情况调整。',
-  packages_dag_field_inference_list_gaiziduanwufa: '该字段无法映射目标数据类型，将在数据写入时忽略该字段。',
+  packages_dag_field_inference_list_gaiziduanwufa:
+    '该字段类型暂不支持，为避免数据处理故障，可以使用字段编辑功能将该字段屏蔽。',
   packages_dag_field_inference_main_xuanzemorengeng:
     '选择默认更新条件字段时默认优先按照主键字段关联，无主键的按照唯一索引字段关联，无主键且无唯一索引的按照全字段关联。选择指定字段时将按照指定更新条件字段进行关联',
   packages_dag_nodes_table_zidingyichaxun: '全量自定义查询',
-  packages_dag_field_inference_main_gaibiaocunzaibu: '该表存在不止的数据类型',
+  packages_dag_field_inference_main_gaibiaocunzaibu: '该表存在不支持的数据类型',
+  packages_dag_validate_customsql_fail: '当开启了全量自定义查询后，处理节点仅支持使用JS节点',
+  packages_dag_validate_customsql_target_fail:
+    '当开启了全量自定义查询后，只有弱schema类型的数据源才能作为目标，比如：MongoDB，Kafka，ES',
+  packages_dag_field_inference_list_gaiziduanshuju:
+    '该字段数据类型暂不支持，为避免由于该字段处理导致任务执行故障，请先将该字段屏蔽。',
   packages_dag_nodes_database_fenpianyipidu: '分片一批读取上限',
   packages_dag_nodes_database_fenpianbingfaxian: '分片并发线程数',
   packages_dag_nodes_database_fenpianshuliang: '分片数量',

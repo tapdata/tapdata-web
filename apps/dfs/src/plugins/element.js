@@ -1,3 +1,4 @@
+import i18n from '@/i18n'
 import Vue from 'vue'
 import {
   Alert,
@@ -89,7 +90,7 @@ class MessageConstructor {
       const message = typeof options === 'string' ? options : options.message
       for (const dom of domList) {
         if (message === dom.innerText) {
-          console.log('重复消息', dom) // eslint-disable-line
+          console.log(i18n.t('dfs_plugins_element_chongfuxiaoxi'), dom) // eslint-disable-line
           canShow = false
           break
         }

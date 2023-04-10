@@ -454,9 +454,9 @@ export class Database extends NodeType {
                 },
                 'x-component-props': {
                   min: 1,
-                  max: 100000
+                  max: 10000000
                 },
-                default: 2000
+                default: 1000
               },
               writeBatchWaitMs: {
                 title: i18n.t('packages_dag_nodes_database_xierumeipizui'), //增量批次读取条数
@@ -466,7 +466,7 @@ export class Database extends NodeType {
                 'x-component-props': {
                   min: 1
                 },
-                default: 3000
+                default: 500
               }
             }
           },
@@ -751,9 +751,5 @@ export class Database extends NodeType {
         'x-display': 'hidden'
       }
     }
-  }
-
-  selector(node) {
-    return ['database', 'logCollector'].includes(node.type)
   }
 }

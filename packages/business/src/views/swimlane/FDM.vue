@@ -1,33 +1,77 @@
 <template>
   <div class="list__item flex flex-column flex-1 overflow-hidden">
-    <div class="list__title flex justify-content-between p-4">
-      <span class="fs-6">FDM / CACHE</span>
-      <div class="operation">
-        <VIcon size="16" class="icon-color ml-3">search-outline</VIcon>
-        <ElDropdown trigger="click" @command="handleCommand">
-          <VIcon size="16" class="icon-color ml-3 rotate-90">more</VIcon>
-          <ElDropdownMenu slot="dropdown">
-            <ElDropdownItem command="config"> Configure FDM </ElDropdownItem>
-          </ElDropdownMenu>
-        </ElDropdown>
-      </div>
+    <div class="list__title flex align-center px-4">
+      <span class="fs-6">{{ $t('packages_business_data_console_fdm') }}</span>
+      <div class="flex-grow-1"></div>
+      <IconButton :class="{ active: enableSearch }" @click="toggleEnableSearch">search-outline</IconButton>
+      <!--<ElDropdown trigger="click" @command="handleCommand">
+        <IconButton class="ml-3">more</IconButton>
+        <ElDropdownMenu slot="dropdown">
+          <ElDropdownItem command="config"> Configure </ElDropdownItem>
+        </ElDropdownMenu>
+      </ElDropdown>-->
     </div>
     <div
       ref="treeWrap"
-      class="flex flex-column flex-1 min-h-0 position-relative fdm-tree-wrap"
+      class="flex flex-column flex-1 position-relative min-h-0 tree-wrap"
       @dragover.stop="handleDragOver"
       @dragenter.stop="handleDragEnter"
       @dragleave.stop="handleDragLeave"
       @drop.stop="handleDrop"
     >
-      <div class="p-3 overflow-auto">
+      <div v-if="enableSearch" class="px-2 pt-2">
+        <ElInput
+          ref="search"
+          v-model="search"
+          size="mini"
+          clearable
+          @keydown.native.stop
+          @keyup.native.stop
+          @click.native.stop
+          @input="handleSearch"
+        >
+          <template #prefix>
+            <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
+          </template>
+        </ElInput>
+      </div>
+
+      <div class="flex-1 min-h-0 position-relative">
+        <div
+          v-if="search || searchIng"
+          class="search-view position-absolute top-0 left-0 w-100 h-100 bg-white"
+          v-loading="searchIng"
+        >
+          <VirtualTree
+            class="ldp-tree h-100"
+            ref="tree"
+            node-key="id"
+            highlight-current
+            :data="filterTreeData"
+            draggable
+            default-expand-all
+            height="100%"
+            wrapper-class-name="p-2"
+            :render-content="renderContent"
+            :render-after-expand="false"
+            :expand-on-click-node="false"
+            :allow-drop="() => false"
+            :allow-drag="checkAllowDrag"
+            @node-drag-start="handleDragStart"
+            @node-drag-end="handleDragEnd"
+            @node-expand="handleNodeExpand"
+          ></VirtualTree>
+        </div>
         <VirtualTree
-          class="ldp-tree"
+          v-else
+          class="ldp-tree h-100"
           ref="tree"
           node-key="id"
           highlight-current
           :data="treeData"
           draggable
+          height="100%"
+          wrapper-class-name="p-2"
           :default-expanded-keys="expandedKeys"
           :render-content="renderContent"
           :render-after-expand="false"
@@ -49,11 +93,23 @@
     </div>
 
     <ElDialog :visible.sync="taskDialogConfig.visible" width="600" :close-on-click-modal="false">
-      <span slot="title" style="font-size: 14px">Create Cloning Pipeline</span>
-      <ElForm ref="form" :model="dialogConfig" label-width="180px" @submit.prevent>
-        <div class="pipeline-desc p-4 mb-4 text-pre">{{ taskDesc }}</div>
-        <ElFormItem label="Table Name Prefix">
-          <ElInput size="small" v-model="taskDialogConfig.prefix"></ElInput>
+      <span slot="title" class="font-color-dark fs-6 fw-sub">{{ $t('packages_business_create_clone_task') }}</span>
+      <ElForm ref="form" :model="taskDialogConfig" label-width="180px" @submit.prevent :rules="formRules">
+        <div class="pipeline-desc p-4 mb-4 text-preline rounded-4">
+          <span>{{ $t('packages_business_fdm_create_task_dialog_desc_prefix') }}</span
+          ><span v-if="taskDialogConfig.from" class="inline-flex align-center px-1 font-color-dark fw-sub"
+            ><DatabaseIcon :item="taskDialogConfig.from" :key="taskDialogConfig.from.pdkType" :size="20" class="mr-1" />
+            <span>{{ taskDialogConfig.from.name }}</span> </span
+          ><span v-if="taskDialogConfig.tableName" class="inline-flex font-color-dark fw-sub"
+            >/<span class="px-1">{{ taskDialogConfig.tableName }}</span> </span
+          ><span>{{ $t('packages_business_fdm_create_task_dialog_desc_suffix') }}</span>
+        </div>
+
+        <ElFormItem :label="$t('packages_business_table_prefix')" prop="prefix">
+          <ElInput size="small" v-model="taskDialogConfig.prefix" :maxlength="maxPrefixLength">
+            <template slot="prepend">{{ fixedPrefix }}</template>
+            <template slot="append"> _&lt;original_table_name&gt; </template>
+          </ElInput>
         </ElFormItem>
       </ElForm>
       <span slot="footer" class="dialog-footer">
@@ -67,11 +123,13 @@
 </template>
 
 <script>
-import { connectionsApi, discoveryApi, ldpApi } from '@tap/api'
-import { VirtualTree } from '@tap/component'
-import { merge } from 'lodash'
+import { merge, debounce } from 'lodash'
+import { connectionsApi, discoveryApi, ldpApi, taskApi } from '@tap/api'
+import { VirtualTree, IconButton } from '@tap/component'
 import { uuid } from '@tap/shared'
 import { makeDragNodeImage, TASK_SETTINGS } from '../../shared'
+import { DatabaseIcon } from '../../components'
+import commonMix from './mixins/common'
 
 export default {
   name: 'FDM',
@@ -84,36 +142,52 @@ export default {
     eventDriver: Object
   },
 
-  components: { VirtualTree },
+  components: { VirtualTree, IconButton, DatabaseIcon },
+
+  mixins: [commonMix],
 
   data() {
+    const validatePrefix = (rule, value, callback) => {
+      value = value.trim()
+      if (!value) {
+        callback(new Error(this.$t('public_form_not_empty')))
+      } else if (!/\w+/.test(value)) {
+        callback(new Error(this.$t('packages_business_data_server_drawer_geshicuowu')))
+      } else {
+        callback()
+      }
+    }
+
     return {
+      fixedPrefix: 'FDM_',
+      maxPrefixLength: 10,
       keyword: '',
-      dialogConfig: {
-        title: '',
-        connection: null,
-        connectionId: '',
-        connectionName: '',
-        desc: '',
-        taskName: '',
-        syncType: '',
-        visible: false
-      },
       taskDialogConfig: {
         from: null,
         to: null,
         visible: false,
-        prefix: 'f_',
+        prefix: '',
         tableName: null
       },
       creating: false,
-      expandedKeys: []
+      expandedKeys: [],
+      formRules: {
+        prefix: [{ validator: validatePrefix, trigger: 'blur' }]
+      },
+      searchIng: false,
+      search: '',
+      enableSearch: false,
+      filterTreeData: []
     }
   },
 
   computed: {
     allowDrop() {
-      return this.dragState.isDragging && this.dragState.from === 'SOURCE'
+      return (
+        this.dragState.isDragging &&
+        this.dragState.from === 'SOURCE' &&
+        this.dragState.draggingObjects[0]?.data.LDP_TYPE === 'table'
+      )
     },
     treeData() {
       return this.directory?.children || []
@@ -132,15 +206,76 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
   },
 
   created() {
-    if (localStorage.LDP_FDM_CONNECTION) {
-      this.dialogConfig.connection = JSON.parse(localStorage.LDP_FDM_CONNECTION)
-    }
+    this.debouncedSearch = debounce(async search => {
+      this.searchIng = true
+      const result = await this.loadObjects(this.directory, false, search)
+      const map = result.reduce((obj, item) => {
+        let id = item.listtags[0].id
+        let children = obj[id] || []
+        children.push(item)
+        obj[id] = children
+        return obj
+      }, {})
+
+      const filterTree = node => {
+        const { children } = node
+
+        if (children?.length) {
+          node.children = children.filter(child => {
+            filterTree(child)
+            return child.LDP_TYPE === 'folder' && (child.name.includes(search) || child.children.length)
+            // if (child.LDP_TYPE === 'folder') {
+            //   return child.name.includes(search) || map[child.id]
+            // }
+            // filterTree(child)
+          })
+        }
+
+        if (map[node.id]) {
+          node.children.push(...map[node.id])
+        }
+
+        // node.children = children.filter(child => {
+        //   if (child.LDP_TYPE === 'folder') {
+        //     return child.name.includes(search) || map[child.id]
+        //   }
+        //   filterTree(child)
+        // })
+
+        // if (!node.visible && children.length) {
+        //   let allHidden = true
+        //   allHidden = !children.some(child => child.visible)
+        //
+        //   node.visible = allHidden
+        //   node.children = children.filter()
+        // }
+        //
+        // return data.reduce((map, item) => {
+        //   if (item.LDP_TYPE === 'folder') {
+        //     let children = item.children.filter()
+        //     map[item.id] = { ...item, children: [] }
+        //
+        //     if (item.children.length) {
+        //       Object.assign(map, this.flattenTree(item.children))
+        //     }
+        //   }
+        //   return map
+        // }, {})
+      }
+
+      let root = { ...this.directory }
+      filterTree(root)
+      this.searchIng = false
+      this.filterTreeData = root.children
+      console.log('result', result, map, this.nodesMap) // eslint-disable-line
+      console.log('filter', root) // eslint-disable-line
+    }, 300)
   },
 
-  mounted() {
-    this.eventDriver.on('source-drag-end', ev => {
-      this.$refs.treeWrap?.classList.remove('is-drop-inner')
-    })
+  mounted() {},
+
+  unmounted() {
+    this.debouncedSearch.cancel()
   },
 
   beforeDestroy() {
@@ -148,21 +283,33 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
   },
 
   methods: {
-    searchFnc() {},
+    openRoute(route, newTab = true) {
+      if (newTab) {
+        window.open(this.$router.resolve(route).href)
+      } else {
+        this.$router.push(route)
+      }
+    },
 
     renderContent(h, { node, data }) {
       let icon
+      let className = ['custom-tree-node']
+
+      if (data.isObject) {
+        className.push('grabbable')
+      }
+
       if (data.LDP_TYPE === 'table') {
         node.isLeaf = true
         icon = 'table'
       } else {
         node.isLeaf = false
-        icon = 'folder-outline'
+        icon = 'folder-o'
       }
 
       return (
         <div
-          class="custom-tree-node"
+          class={className}
           onDblclick={() => {
             data.isObject && this.$emit('preview', data)
           }}
@@ -173,15 +320,15 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
             {data.name}
           </span>
           {data.isObject && (
-            <VIcon
-              size="18"
+            <IconButton
               class="btn-menu"
+              sm
               onClick={() => {
                 this.$emit('preview', data)
               }}
             >
               view-details
-            </VIcon>
+            </IconButton>
           )}
         </div>
       )
@@ -245,25 +392,42 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
     },
 
     showTaskDialog() {
-      this.taskDialogConfig.prefix = 'f_'
+      this.taskDialogConfig.prefix = this.getSmartPrefix(this.taskDialogConfig.from.name)
       this.taskDialogConfig.visible = true
     },
 
     async taskDialogSubmit() {
-      const { tableName, from } = this.taskDialogConfig
-      let task = this.makeMigrateTask(from, tableName)
+      this.$refs.form.validate(async valid => {
+        if (!valid) return
 
-      this.creating = true
-      try {
-        await ldpApi.createFDMTask(task)
-        this.taskDialogConfig.visible = false
-        // this.$emit('load-directory')
-        this.setNodeExpand()
-        this.$message.success(this.$t('public_message_operation_success'))
-      } catch (e) {
-        console.log(e) // eslint-disable-line
-      }
-      this.creating = false
+        const { tableName, from } = this.taskDialogConfig
+        let task = this.makeMigrateTask(from, tableName)
+
+        this.creating = true
+        try {
+          const result = await ldpApi.createFDMTask(task)
+          this.taskDialogConfig.visible = false
+          this.setNodeExpand()
+          const h = this.$createElement
+          this.$message.success({
+            message: h(
+              'span',
+              {
+                class: 'color-primary fs-7 clickable',
+                on: {
+                  click: () => {
+                    this.handleClickName(result)
+                  }
+                }
+              },
+              this.$t('packages_business_task_created_success')
+            )
+          })
+        } catch (e) {
+          console.log(e) // eslint-disable-line
+        }
+        this.creating = false
+      })
     },
 
     handleDragOver(ev) {
@@ -275,8 +439,8 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
 
       if (!this.allowDrop) return
 
-      const dropNode = this.findParentByClassName(ev.currentTarget, 'fdm-tree-wrap')
-      dropNode.classList.add('is-drop-inner')
+      const dropNode = this.findParentByClassName(ev.currentTarget, 'tree-wrap')
+      dropNode.classList.add('is-drop')
     },
 
     handleDragLeave(ev) {
@@ -284,7 +448,7 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
 
       if (!this.allowDrop) return
       if (!ev.currentTarget.contains(ev.relatedTarget)) {
-        this.removeDropEffect(ev, 'fdm-tree-wrap')
+        this.removeDropEffect(ev, 'tree-wrap', 'is-drop')
       }
     },
 
@@ -293,7 +457,7 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
 
       if (!this.allowDrop) return
 
-      this.removeDropEffect(ev, 'fdm-tree-wrap')
+      this.removeDropEffect(ev, 'tree-wrap', 'is-drop')
 
       const { draggingObjects } = this.dragState
       if (!draggingObjects.length) return
@@ -310,9 +474,9 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
       this.showTaskDialog()
     },
 
-    removeDropEffect(ev, cls = 'wrap__item') {
+    removeDropEffect(ev, cls = 'wrap__item', removeCls = 'is-drop-inner') {
       const dropNode = this.findParentByClassName(ev.currentTarget, cls)
-      dropNode.classList.remove('is-drop-inner')
+      dropNode.classList.remove(removeCls)
     },
 
     handleTreeNodeDrop(ev) {
@@ -391,8 +555,7 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
         id: uuid(),
         type: 'table_rename_processor',
         name: '表编辑',
-        prefix: this.taskDialogConfig.prefix // 前缀
-        // suffix: config.suffix, // 后缀
+        prefix: `${this.fixedPrefix}${this.taskDialogConfig.prefix}_`
       }
     },
 
@@ -415,12 +578,14 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
       })
     },
 
-    loadObjects(node) {
+    loadObjects(node, isCurrent = true, queryKey) {
       let where = {
         page: 1,
         pageSize: 10000,
         tagId: node.id,
-        range: 'current',
+        range: isCurrent ? 'current' : undefined,
+        sourceType: 'table',
+        queryKey,
         fields: {
           allTags: 1
         }
@@ -476,27 +641,14 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
         this.$emit('load-directory')
       }
       // this.taskDialogConfig.from
+    },
+
+    getSmartPrefix(connectionName) {
+      let planA = connectionName.split('_').shift()
+      let planB = connectionName.split('-').shift()
+
+      return (planA.length < planB.length ? planA : planB).substr(0, 5)
     }
   }
 }
 </script>
-
-<style scoped lang="scss">
-.drop-mask {
-  display: none;
-  backdrop-filter: blur(4px);
-  background-color: rgba(255, 255, 255, 0.4);
-}
-
-.is-drop-inner {
-  box-shadow: 0px 0px 0px 2px map-get($color, primary) inset;
-  .drop-mask {
-    display: none !important;
-  }
-}
-
-.pipeline-desc {
-  background-color: #f8f8fa;
-  border-radius: 8px;
-}
-</style>

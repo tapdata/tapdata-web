@@ -124,6 +124,12 @@ const DataServerList = async () => {
   return DataServerList
 }
 
+// 心跳任务
+const HeartbeatTableList = async () => {
+  const { HeartbeatTableList } = await import('@tap/business')
+  return HeartbeatTableList
+}
+
 export default [
   {
     path: '/login',
@@ -341,7 +347,7 @@ export default [
           {
             path: '',
             name: 'objectList',
-            component: ObjectList,
+            component: () => import(/* webpackChunkName: "connection-list" */ '@/views/data-discovery/ObjectList.tsx'),
             meta: {
               title: 'page_title_data_object',
               code: 'v2_data_object'
@@ -362,7 +368,7 @@ export default [
           {
             path: '',
             name: 'catalogueList',
-            component: CatalogView,
+            component: () => import(/* webpackChunkName: "connection-list" */ '@/views/data-discovery/Catalogue.tsx'),
             meta: {
               title: 'page_title_data_catalogue',
               code: 'v2_data_catalogue'
@@ -499,7 +505,7 @@ export default [
             component: VerificationList,
             meta: {
               title: 'page_title_data_verify',
-              code: 'v2_data_check_list'
+              code: 'v2_data_check'
             }
           },
           {
@@ -593,7 +599,28 @@ export default [
             component: SharedMiningList,
             meta: {
               title: 'page_title_shared_mining',
-              code: 'v2_log_collector_menu'
+              code: 'v2_log_collector'
+            }
+          }
+        ]
+      },
+      /* ---------- 心跳任务  ----------*/
+      {
+        path: '/heartbeat-table',
+        name: 'heartbeatTable',
+        component: Parent,
+        redirect: 'heartbeatTable/',
+        meta: {
+          title: 'page_title_heartbeat_table'
+        },
+        children: [
+          {
+            path: '',
+            name: 'HeartbeatTableList',
+            component: HeartbeatTableList,
+            meta: {
+              title: 'page_title_heartbeat_table',
+              code: 'v2_log_collector'
             }
           }
         ]
@@ -614,7 +641,7 @@ export default [
             component: () => import(/* webpackChunkName: "function-list" */ '@/views/function/List'),
             meta: {
               title: 'page_title_function',
-              code: 'v2_function_management_list'
+              code: 'v2_function_management'
             }
           },
           {
@@ -671,7 +698,7 @@ export default [
             component: CustomNodeList,
             meta: {
               title: 'page_title_custom_node',
-              code: 'v2_custom_node_menu'
+              code: 'v2_custom_node'
             }
           }
         ]
@@ -692,7 +719,7 @@ export default [
             component: () => import(/* webpackChunkName: "shared-cache" */ '@/views/shared-cache/List'),
             meta: {
               title: 'page_title_shared_cache',
-              code: 'v2_shared_cache_menu'
+              code: 'v2_shared_cache'
             }
           },
           {
@@ -753,7 +780,7 @@ export default [
         redirect: 'data-server-audit/',
         meta: {
           title: 'page_title_api_audit',
-          code: 'v2_data_server_audit-list'
+          code: 'v2_data_server_audit'
         },
         children: [
           {
@@ -762,7 +789,7 @@ export default [
             component: () => import(/* webpackChunkName: "data-server-audit" */ '@/views/data-server-audit/List'),
             meta: {
               title: 'page_title_api_audit',
-              code: 'v2_data_server_audit-list'
+              code: 'v2_data_server_audit'
             }
           },
           {
@@ -784,7 +811,7 @@ export default [
         component: () => import(/* webpackChunkName: "api-monitor" */ '@/views/api-page/api-monitor/ApiMonitor'),
         meta: {
           title: 'page_title_api_monitor',
-          code: 'API_server_menu'
+          code: 'v2_api_monitor'
         }
       },
       /* ---------- 元数据管理  ----------*/
@@ -855,7 +882,7 @@ export default [
             component: () => import(/* webpackChunkName: "role-list" */ '@/views/role/Roles'),
             meta: {
               title: 'page_title_role',
-              code: 'v2_role_management_menu'
+              code: 'v2_role_management'
             }
           },
           {
@@ -1003,7 +1030,8 @@ export default [
         meta: {
           title: 'page_title_data_console',
           hideTitle: true,
-          icon: 'data-server'
+          icon: 'data-server',
+          code: 'v2_data-console'
         }
       }
     ]

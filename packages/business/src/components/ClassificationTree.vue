@@ -124,7 +124,7 @@ export default {
       parent_id: '',
       title: '',
       iconMap: {
-        folder: 'folder-outline',
+        folder: 'folder-o',
         table: 'table',
         defaultApi: 'apiServer_navbar'
       }
@@ -176,7 +176,7 @@ export default {
             }
           }}
         >
-          <div class="tree-item-icon flex align-center mr-2">{icon}</div>
+          <div class="tree-item-icon flex align-center mr-1">{icon}</div>
           <span class="table-label" title={data.name}>
             {data.name}
           </span>
@@ -273,7 +273,7 @@ export default {
     getData(cb) {
       let where = {}
       where.item_type = {
-        $nin: ['database', 'dataflow', 'api']
+        $nin: ['database', 'dataflow', 'api', 'default']
       }
       let filter = {
         where,
@@ -305,9 +305,9 @@ export default {
           let treeData = this.formatData(items)
 
           treeData.sort((a, b) => {
-            let aType = a.item_type[0]
-            let bType = b.item_type[0]
-            return ORDER[aType] - ORDER[bType]
+            let aType = ORDER[a.item_type[0]] || 0
+            let bType = ORDER[b.item_type[0]] || 0
+            return aType - bType
           })
 
           this.treeData = treeData
@@ -764,8 +764,11 @@ export default {
 </script>
 
 <style lang="scss">
-$nodeH: 28px;
+$nodeH: 32px;
 .ldp-tree {
+  &.el-tree.is-dragging .el-tree-node__content {
+    cursor: grabbing;
+  }
   &.el-tree.is-dragging.is-drop-not-allow .el-tree-node__content {
     cursor: default;
   }

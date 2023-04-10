@@ -305,6 +305,10 @@
   overflow: auto !important;
 }
 
+.overflow-x-auto {
+  overflow-y: auto !important;
+}
+
 .overflow-y-auto {
   overflow-y: auto !important;
 }
@@ -2548,6 +2552,10 @@
   white-space: pre-wrap !important;
 }
 
+.text-preline {
+  white-space: pre-line !important;
+}
+
 .text-pre {
   white-space: pre !important;
 }
@@ -2666,6 +2674,10 @@
 
 .bg-gradient {
   background-image: var(--bs-gradient) !important;
+}
+
+.bg-subtle {
+  background: #f6f8fa !important;
 }
 
 .user-select-all {

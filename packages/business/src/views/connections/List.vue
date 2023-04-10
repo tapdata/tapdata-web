@@ -41,7 +41,7 @@
           :disabled="$disabledReadonlyUserBtn()"
           @click="checkTestConnectionAvailable"
         >
-          <span> {{ $t('public_connection_button_create') }}</span>
+          <span> {{ $t('public_button_create') }}</span>
         </ElButton>
       </div>
       <ElTableColumn v-if="isDaas" type="selection" width="45" :reserve-selection="true"></ElTableColumn>
@@ -98,14 +98,14 @@
       <ElTableColumn
         prop="last_updated"
         sortable="last_updated"
-        min-width="160"
+        min-width="168"
         :label="$t('public_connection_table_structure_update_time')"
       >
         <template slot-scope="scope">
           {{ scope.row.loadSchemaTime }}
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="last_updated" sortable="last_updated" min-width="160" :label="$t('public_change_time')">
+      <ElTableColumn prop="last_updated" sortable="last_updated" min-width="168" :label="$t('public_change_time')">
         <template slot-scope="scope">
           {{ scope.row.lastUpdateTime }}
         </template>

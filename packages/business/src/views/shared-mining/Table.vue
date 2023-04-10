@@ -20,7 +20,11 @@
       }"
       ref="table"
       height="100%"
+      :style="{
+        height: height
+      }"
     >
+      <div slot="empty">{{ $t('public_data_no_data') }}</div>
     </VTable>
   </div>
 </template>
@@ -52,6 +56,10 @@ export default {
     showTitle: {
       type: Boolean,
       default: true
+    },
+    height: {
+      type: String,
+      default: '100%'
     }
   },
 
@@ -61,23 +69,33 @@ export default {
       columns: [
         {
           label: i18n.t('packages_business_shared_mining_table_biaoming'),
-          prop: 'tableName'
+          prop: 'tableName',
+          minWidth: 120
         },
         {
           label: i18n.t('public_connection_name'),
           prop: 'connectionName',
-          default: '-'
+          default: '-',
+          minWidth: 200
+        },
+        {
+          label: i18n.t('packages_business_shared_mining_table_leijiwajue'),
+          prop: 'allCount'
+        },
+        {
+          label: i18n.t('packages_business_shared_mining_table_jinriwajue'),
+          prop: 'count'
         },
         {
           label: i18n.t('packages_business_shared_mining_table_jiaruwajueshi'),
-          prop: 'time2',
+          prop: 'startCdcTime',
           dataType: 'time',
           default: '-',
           width: 160
         },
         {
           label: i18n.t('packages_business_shared_mining_table_shoutiaorizhishi'),
-          prop: 'startCdcTime',
+          prop: 'firstEventTime',
           dataType: 'time',
           default: '-',
           width: 160
@@ -88,25 +106,27 @@ export default {
           dataType: 'time',
           default: '-',
           width: 160
-        },
-        {
-          label: i18n.t('packages_business_shared_mining_table_leijiwajue'),
-          prop: 'allCount'
-        },
-        {
-          label: i18n.t('packages_business_shared_mining_table_jinriwajue'),
-          prop: 'count'
         }
       ]
     }
   },
+  watch: {
+    params(oldval, newval) {
+      if (newval?.nodeId !== oldval?.nodeId) {
+        this.remoteMethod() //node节点改变更新table数据
+      }
+    }
+  },
 
   methods: {
-    remoteMethod() {
+    remoteMethod({ page }) {
       const { taskId, keyword } = this
+      const { current, size } = page || { current: 1, size: 20 }
       const filter = Object.assign({}, this.params, {
         taskId,
-        keyword
+        keyword,
+        page: current,
+        size: size
       })
       return shareCdcTableMetricsApi.listTask(filter).then(data => {
         return {
@@ -117,7 +137,7 @@ export default {
     },
 
     fetch() {
-      this.$refs.table?.fetch?.()
+      this.$refs.table?.fetch?.(1)
     },
 
     handleSearch: debounce(function () {

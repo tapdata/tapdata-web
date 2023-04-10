@@ -80,6 +80,7 @@ import { TablePage } from '@tap/business'
 import { FilterBar } from '@tap/component'
 
 import Drawer from './Drawer'
+import { toRegExp } from '@tap/shared'
 
 export default {
   components: { TablePage, FilterBar, Drawer },
@@ -180,9 +181,8 @@ export default {
       let { current, size } = page
       let { type, status, keyword } = this.searchParams
       let where = {}
-      //精准搜索 iModel
-      if (keyword && keyword.trim()) {
-        where['or'] = [{ basePath: { like: keyword, options: 'i' } }, { description: { like: keyword, options: 'i' } }]
+      if (keyword?.trim()) {
+        where.name = { like: toRegExp(keyword), options: 'i' }
       }
       if (type) {
         where['connectionType'] = type

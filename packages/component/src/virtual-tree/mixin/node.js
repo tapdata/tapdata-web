@@ -108,7 +108,8 @@ export default {
         node.collapse()
       } else {
         node.expand()
-        this.$emit('node-expand', node.data, node, this)
+        // this.$emit('node-expand', node.data, node, this)
+        this.onNodeExpand?.(node.data, node, this)
       }
     },
 

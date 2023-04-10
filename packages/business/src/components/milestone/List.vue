@@ -25,15 +25,21 @@
       <div v-for="(item, index) in wholeItems" :key="index" class="pro-line flex">
         <div class="position-relative">
           <div v-if="index + 1 !== wholeItems.length" class="step__line position-absolute"></div>
-          <VIcon :class="[item.color, 'mt-1 position-relative']" size="16">{{ item.icon }}</VIcon>
+          <VIcon
+            :class="[item.color, 'mt-1 position-relative', { 'loading-circle': item.icon === 'loading-circle' }]"
+            size="16"
+            >{{ item.icon }}</VIcon
+          >
         </div>
-        <div class="ml-4 pb-4 flex-fill">
-          <span class="font-color-normal fw-bold">{{ item.label }}</span>
-          <div v-if="item.desc" class="mt-2 color-info">{{ item.desc }}</div>
+        <div class="ml-4 step__line_pt flex-fill">
+          <span class="font-color-normal fw-bold">{{ item.label }}: </span>
+          <span v-if="item.desc" class="mt-2 color-info">{{ item.desc }}</span>
+          <span v-if="item.dataDesc" class="mt-2 color-info">{{ item.dataDesc }}</span>
           <ElProgress
             v-if="typeof item.percentage === 'number'"
             :percentage="item.percentage"
-            class="mt-1"
+            :stroke-width=10
+            class="milestone-mt-1"
             :show-text="false"
           ></ElProgress>
         </div>
@@ -50,6 +56,7 @@ import { calcTimeUnit } from '@tap/shared'
 import Time from '@tap/shared/src/time'
 
 import NodeList from '../nodes/List'
+import dayjs from 'dayjs'
 
 export default {
   name: 'List',
@@ -105,6 +112,7 @@ export default {
 
     wholeItems() {
       const milestone = this.dataflow.attrs?.milestone || {}
+      let hostName = this.dataflow.hostName
 
       let result = [
         {
@@ -130,6 +138,16 @@ export default {
       ]
 
       const dataflowType = this.dataflow.type
+      let iconRunning = 'loading-circle'
+      let iconRunningColor = 'color-success'
+      if (this.dataflow.status != "running") {
+        iconRunning = "time"
+        iconRunningColor = 'color-primary'
+      }
+      if (['logCollector'].includes(this.dataflow.syncType)) {
+        delete result[2]
+      }
+
       result = result.filter(
         t =>
           dataflowType === 'initial_sync+cdc' ||
@@ -146,9 +164,23 @@ export default {
       const runningOpt = {
         status: 'RUNNING',
         desc: i18n.t('packages_business_milestone_list_status_progressing'),
-        icon: 'loading-circle',
+        icon: iconRunning,
         progress: 0,
         color: 'color-primary'
+      }
+      const cdcRunningOpt = {
+        status: 'RUNNING',
+        desc: i18n.t('packages_business_milestone_list_status_cdc_progressing'),
+        icon: iconRunning,
+        progress: 0,
+        color: 'color-primary'
+      }
+      const cdcFinishOpt = {
+        status: 'FINISH',
+        desc: i18n.t('packages_business_milestone_list_status_cdc_finish'),
+        icon: iconRunning,
+        progress: 0,
+        color: iconRunningColor
       }
       const waitingOpt = {
         status: 'WAITING',
@@ -169,18 +201,76 @@ export default {
         color: 'color-danger'
       }
       result.forEach(el => {
-        const item = milestone[el.key]
+        let item = milestone[el.key]
+        if (item == undefined) {
+            item = {
+                "begin": 0,
+                "end": 0,
+                "totals": "-",
+                "progress": "-"
+            }
+        }
+        let time =
+          item.begin && item.end
+            ? calcTimeUnit(item.end - item.begin, 2, {
+                autoHideMs: true
+              })
+            : '-'
+        const begin = dayjs(item.begin).format('HH:mm:ss')
+        const end = item.end ? dayjs(item.end).format('HH:mm:ss') : ''
         switch (item?.status) {
           case 'FINISH':
             Object.assign(el, finishOpt)
+            switch (el.key) {
+              case 'TASK':
+                Object.assign(el, {
+                  dataDesc: `, ${i18n.t('public_milestone_time_scheduling', { val: hostName })}, ${i18n.t(
+                    'public_milestone_time_consuming'
+                  )}${time}, ${begin}~${end}`
+                })
+                break
+              case 'DATA_NODE_INIT':
+                Object.assign(el, {
+                  dataDesc: `, ${i18n.t('public_milestone_connection_succeeded')},  ${i18n.t(
+                    'public_milestone_time_consuming'
+                  )} ${time}, ${begin} ~ ${end}`
+                })
+                break
+              case 'TABLE_INIT':
+                Object.assign(el, {
+                  dataDesc: `, ${i18n.t('public_milestone_time_table_structure', { val: item.totals })}, ${i18n.t(
+                    'public_milestone_time_consuming'
+                  )} ${time}, ${begin} ~ ${end}`
+                })
+                break
+              case 'SNAPSHOT':
+                Object.assign(el, {
+                  dataDesc: `, ${i18n.t('public_milestone_time_consuming')} ${time}, ${begin} ~ ${end}`
+                })
+                break
+              case 'CDC':
+                Object.assign(el, cdcFinishOpt)
+                Object.assign(el, {
+                  dataDesc: `, ${i18n.t('public_milestone_time_cdc_consuming')} ${time}, ${begin} ~ - `
+                })
+                break
+            }
             break
           case 'ERROR':
             Object.assign(el, errorOpt)
             break
           case 'RUNNING':
-            Object.assign(el, runningOpt, {
-              progress: (item.progress / item.totals) * 100
-            })
+            switch (el.key) {
+                case 'CDC':
+                  Object.assign(el, cdcRunningOpt, {
+                    progress: (item.progress / item.totals) * 100
+                  })
+                  break
+                default:
+                  Object.assign(el, runningOpt, {
+                    progress: (item.progress / item.totals) * 100
+                  })
+            }
             break
           default:
             Object.assign(el, waitingOpt)
@@ -189,19 +279,22 @@ export default {
       })
       const len = result.length
       const finishedLen = result.filter(t => t.status === 'FINISH').length
+      let currentLen = finishedLen + 1
+      if (currentLen > len) {
+          currentLen = currentLen - 1
+      }
+
       const per = (finishedLen / len) * 100
       result.unshift({
         label: i18n.t('packages_business_milestone_list_zhengtijindu'),
         icon: 'device',
         percentage: per,
         desc:
-          per >= 100
-            ? i18n.t('public_status_complete')
-            : i18n.t('packages_business_milestone_list_finis', {
-                val1: finishedLen,
-                val2: len,
-                val3: result.find(t => t.status !== 'FINISH')?.label
-              })
+          i18n.t('packages_business_milestone_list_finish', {
+          val1: finishedLen,
+          val2: len,
+          val3: result[currentLen-1].label + " " + result[currentLen-1].desc,
+        })
       })
       return result
     },
@@ -244,6 +337,10 @@ export default {
             label: i18n.t('packages_business_milestone_list_shujuchuli')
           }
         ]
+      }
+
+      if (['logCollector'].includes(this.dataflow.syncType)) {
+        delete NODE_MAP.target[1]
       }
 
       if (dataflowType === 'cdc') {
@@ -365,7 +462,7 @@ export default {
 
 <style lang="scss" scoped>
 .pro-line {
-  width: 650px;
+  width: 700px;
 }
 .node-list {
   width: 224px;
@@ -380,11 +477,37 @@ export default {
     }
   }
 }
+.milestone-mt-1 {
+  margin-top: 15px;
+}
 .step__line {
   left: 50%;
-  top: 28px;
+  top: 24px;
   bottom: 4px;
-  border-left: 1px dashed #dee2e6;
+  border-left: 1px dashed map-get($color, primary);
   transform: translateX(-50%);
+}
+.step__line_pt {
+  padding-bottom: 23px;
+}
+.loading-circle {
+  animation: rotate 3s linear infinite;
+}
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(90deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  75% {
+    transform: rotate(270deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>

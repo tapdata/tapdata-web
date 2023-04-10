@@ -21,6 +21,7 @@ import SharedMiningList from './shared-mining/List'
 import CatalogView from './catalog/Catalogue'
 import ObjectList from './catalog/ObjectList'
 import DataServerList from './data-server/List'
+import HeartbeatTableList from './heartbeat-table/List'
 
 export {
   ConnectionForm,
@@ -45,7 +46,8 @@ export {
   SharedMiningList,
   CatalogView,
   ObjectList,
-  DataServerList
+  DataServerList,
+  HeartbeatTableList
 }
 
 export * from './connections/util'

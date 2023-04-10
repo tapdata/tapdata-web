@@ -185,12 +185,11 @@ export default {
     getConnectionTypeDialogImg,
 
     async getData(noLoading = false) {
-      let authentication = ''
+      let authentication = 'All'
       let tag = this.active
       const { showAlpha, showBeta } = this.settings
-      if (showAlpha && showBeta) {
-        authentication = 'All'
-      } else if (showAlpha && !showBeta) {
+
+      if (showAlpha && !showBeta) {
         authentication = 'Alpha'
       } else if (!showAlpha && showBeta) {
         authentication = 'Beta'

@@ -23,6 +23,7 @@
           </li>
           <li v-for="item in dataList" :key="item.id">
             <el-row class="e-row">
+              <el-col class="ml-4 font-weight-bold">{{ item.description }}</el-col>
               <el-col class="e-col borderRight" :span="21">
                 <template v-for="second in item.children">
                   <el-checkbox
@@ -63,30 +64,18 @@
 import { roleMappingsApi, permissionsApi, usersApi } from '@tap/api'
 
 let pageSort = [
-  // { children: [{ name: 'Dashboard_menu' }] },
+  { children: [{ name: 'v2_data-console' }] },
   { children: [{ name: 'v2_datasource_menu' }] },
   {
-    name: 'data_transmission',
+    name: 'v2_data_pipeline',
     children: [
       { name: 'v2_data_replication' },
       { name: 'v2_data_flow' },
-      { name: 'v2_log_collector_menu' },
-      { name: 'v2_function_management_list' },
-      { name: 'v2_custom_node_menu' },
-      { name: 'v2_shared_cache_menu' }
-    ]
-  },
-  {
-    name: 'data_verify',
-    children: [
-      { name: 'v2_data_check_list' }
-      // { name: 'v2_data_check_create' },
-      // { name: 'v2_data_check_edit' },
-      // { name: 'v2_data_check_details' },
-      // { name: 'v2_data_check_history' },
-      // { name: 'v2_data_check_result_history' },
-      // { name: 'v2_data_check_result_details' },
-      // { name: 'v2_data_check_result' }
+      { name: 'v2_data_check' },
+      { name: 'v2_log_collector' },
+      { name: 'v2_function_management' },
+      { name: 'v2_custom_node' },
+      { name: 'v2_shared_cache' }
     ]
   },
   {
@@ -94,27 +83,22 @@ let pageSort = [
     children: [{ name: 'v2_data_object' }, { name: 'v2_data_catalogue' }]
   },
   {
-    name: 'data_publish',
+    name: 'v2_data-server',
     children: [
       { name: 'v2_data-server-list' },
       { name: 'v2_api-client' },
       { name: 'v2_api-servers' },
-      { name: 'v2_data_server_audit-list' },
+      { name: 'v2_data_server_audit' },
       { name: 'v2_api_monitor' }
     ]
   },
-  // { children: [{ name: 'data_collect_menu' }] },
   {
-    name: 'system_management',
+    name: 'v2_system-management',
     children: [
-      // { name: 'schedule_jobs_menu' },
       { name: 'v2_cluster-management_menu' },
-      // { name: 'agents_menu' },
-      // { name: 'servers_oversee_menu' },
-      { name: 'v2_user_management_menu' },
       { name: 'v2_external-storage_menu' },
-      { name: 'v2_role_management_menu' }
-      // { name: 'system_settings_menu' }
+      { name: 'v2_user_management_menu' },
+      { name: 'v2_role_management' }
     ]
   }
 ]
@@ -450,6 +434,7 @@ export default {
             self.permissionList.forEach(item => {
               pageMap[item.name] = item
             })
+
             let pageMenu = items => {
               return items.map(item => {
                 let page = pageMap[item.name]
@@ -500,8 +485,7 @@ export default {
       })
       item.checked = checkedCount.length === item.children.length
       //保留当前操作数据
-      this.updateData(data.checkAll, data)
-      console.log(data)
+      this.updateData(data.checkAll, data, item)
     },
 
     // 页面全选
@@ -521,42 +505,76 @@ export default {
           } else {
             this.$set(item.children[i], 'checkAll', false)
           }
-          this.updateData(item.checkAll, item.children[i])
+          this.updateData(item.checkAll, item.children[i], item)
         }
       }
     },
-    updateData(checked, data) {
+    updateData(checked, data, parentData) {
       //保留当前操作数据
       const roleId = this.$route.query.id
       if (checked) {
-        let add = {
-          principalType: 'PERMISSION',
-          principalId: data.name,
-          roleId: roleId
+        let childrenItem = this.checkPrincipalId(this.adds, data.name)
+        if (childrenItem?.length === 0) {
+          this.adds.push({
+            principalType: 'PERMISSION',
+            principalId: data.name,
+            roleId: roleId
+          })
         }
-        this.adds.push(add)
+        let parentItem = this.checkPrincipalId(this.adds, parentData.name)
+        if (parentItem?.length === 0) {
+          this.adds.push({
+            principalType: 'PERMISSION',
+            principalId: parentData.name, //父级
+            roleId: roleId
+          })
+        }
         //同时清掉 deletes
         if (this.deletes && this.deletes.length > 0) {
-          let index = this.deletes.findIndex(del => del.principalId === data.principalId)
+          let index = this.deletes.findIndex(del => del.principalId === data.name)
           if (index > -1) {
             this.deletes.splice(index, -1)
           }
+
+          let p_index = this.deletes.findIndex(del => del.principalId === parentData.name)
+          if (p_index > -1) {
+            this.deletes.splice(p_index, -1)
+          }
         }
       } else {
-        let del = {
-          principalType: 'PERMISSION',
-          principalId: data.name,
-          roleId: roleId
+        let childrenItem = this.checkPrincipalId(this.deletes, data.name)
+        if (childrenItem?.length === 0) {
+          this.deletes.push({
+            principalType: 'PERMISSION',
+            principalId: data.name,
+            roleId: roleId
+          })
         }
-        this.deletes.push(del)
+        let parentItem = this.checkPrincipalId(this.deletes, parentData.name)
+        if (parentItem?.length === 0) {
+          this.deletes.push({
+            principalType: 'PERMISSION',
+            principalId: parentData.name, //父级
+            roleId: roleId
+          })
+        }
         //同时清掉 adds
         if (this.adds && this.adds.length > 0) {
-          let index = this.adds.findIndex(add => add.principalId === data.principalId)
+          let index = this.adds.findIndex(add => add.principalId === data.name)
           if (index > -1) {
             this.adds.splice(index, -1)
           }
+
+          let p_index = this.adds.findIndex(add => add.principalId === parentData.name)
+          if (p_index > -1) {
+            this.adds.splice(p_index, -1)
+          }
         }
       }
+    },
+    //查找是否存在某个字段
+    checkPrincipalId(data, principalId) {
+      return data.filter(item => item.principalId === principalId) || []
     },
 
     // 权限单个选择
@@ -756,7 +774,6 @@ export default {
 .role {
   height: 100%;
   box-sizing: border-box;
-  overflow: hidden;
   .head {
     display: block;
     border-bottom: 1px solid #dedee4;
@@ -780,9 +797,8 @@ export default {
   }
 
   .role-tableBox {
-    // display: flex;
-    // flex-direction: column;
-    height: calc(100% - 120px);
+    display: flex;
+    flex-direction: column;
     padding: 10px 0;
     box-sizing: border-box;
     overflow: auto;

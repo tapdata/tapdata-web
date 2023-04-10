@@ -49,7 +49,7 @@
                 v-readonlybtn="'SYNC_job_operation'"
                 type="primary"
                 :disabled="row.btnDisabled.forceStop"
-                @click="forceStop([row.id])"
+                @click="forceStop([row.id], row)"
               >
                 {{ $t('public_button_force_stop') }}
               </ElLink>
@@ -380,8 +380,8 @@ export default {
       })
     },
 
-    forceStop(ids) {
-      let msgObj = this.getConfirmMessage('force_stop')
+    forceStop(ids, row) {
+      let msgObj = this.getConfirmMessage('force_stop', row)
       this.$confirm(msgObj.msg, '', {
         type: 'warning',
         showClose: false,

@@ -8,6 +8,14 @@ export function getNodeIconSrc(node) {
     return getConnectionIcon(pdkHash)
   }
   let icon = node.type === 'table' || node.type === 'database' || node.databaseType ? node.databaseType : node.type
+  if (node.type === 'hazelcastIMDG') {
+    const map = {
+      memory: 'memory',
+      mongodb: 'mongodb',
+      rocksdb: 'rocksdb'
+    }
+    icon = map[node.externaltype]
+  }
   return icon ? getIcon(icon) : null
 }
 
@@ -60,4 +68,28 @@ export function getSchema(schema, values, pdkPropertiesMap) {
 export function getCanUseDataTypes(data = [], val = '') {
   const index = data.findIndex(t => t === val)
   return index > -1 ? data.slice(index) : []
+}
+
+export function getMatchedDataTypeLevel(
+  field,
+  canUseDataTypes = [],
+  fieldChangeRules = [],
+  findPossibleDataTypes = {}
+) {
+  const { data_type, changeRuleId, field_name } = field || {}
+  if (!findPossibleDataTypes[field_name]) return ''
+  const { selectDataType } = fieldChangeRules.find(t => t.id === changeRuleId)?.result?.selectDataType || {}
+  return selectDataType ||
+    (!selectDataType &&
+      canUseDataTypes.length &&
+      canUseDataTypes.findIndex(c => c === data_type) === canUseDataTypes.length - 1)
+    ? ''
+    : !canUseDataTypes.includes(selectDataType || data_type)
+    ? 'error'
+    : 'warning'
+}
+export function errorFiledType(field) {
+  const { tapType } = field || {}
+  let type = JSON.parse(tapType).type
+  return type === 7 ? 'error' : ''
 }

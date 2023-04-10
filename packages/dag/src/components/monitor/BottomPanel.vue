@@ -161,7 +161,7 @@ export default {
       const { id, syncType } = this.$attrs.dataflow || {}
       const { taskRecordId } = this.$route.query || {}
       let filter = {
-        taskId: id,
+        taskId: this.$route.params.id || id,
         taskRecordId
       }
       if (['logCollector'].includes(syncType)) {

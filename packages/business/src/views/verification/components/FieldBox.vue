@@ -52,52 +52,60 @@
               <VIcon> plus</VIcon>{{ $t('packages_business_components_fieldbox_tianjiahang') }}</ElButton
             >
           </div>
-          <div class="list-table__content" :id="'list-table__content' + index">
-            <div
-              v-for="(fItem, fIndex) in getFilterList()"
-              :key="fIndex"
-              class="list-table__line flex mt-3 align-items-center"
+          <div>
+            <DynamicScroller
+              :items="getFilterList()"
+              :min-item-size="46"
+              :id="'list-table__content' + index"
+              ref="virtualScroller"
+              key-field="id"
+              class="list-table__content scroller h-100"
             >
-              <span class="px-2">{{ fIndex + 1 }}</span>
-              <ElSelect
-                v-model="fItem.source"
-                :class="['flex-fill', { 'empty-data': !fItem.source }]"
-                :allow-create="sourceDynamicSchema"
-                :placeholder="
-                  sourceDynamicSchema ? $t('packages_business_select_placeholder') : $t('public_select_placeholder')
-                "
-                filterable
-                class="flex-fill"
-                @change="handleChange"
-              >
-                <ElOption
-                  v-for="op in sourceFields"
-                  :key="op.field_name + 'source'"
-                  :label="op.field_name"
-                  :value="op.field_name"
-                ></ElOption>
-              </ElSelect>
-              <ElSelect
-                v-model="fItem.target"
-                :class="['flex-fill ml-5', { 'empty-data': !fItem.target }]"
-                :allow-create="targetDynamicSchema"
-                :placeholder="
-                  targetDynamicSchema ? $t('packages_business_select_placeholder') : $t('public_select_placeholder')
-                "
-                filterable
-                @change="handleChange"
-              >
-                <ElOption
-                  v-for="op in targetFields"
-                  :key="op.field_name + 'target'"
-                  :label="op.field_name"
-                  :value="op.field_name"
-                ></ElOption>
-              </ElSelect>
-              <ElButton type="text" class="mx-2 px-2 color-primary" @click="handleDelete(fIndex)">
-                <VIcon> delete</VIcon>
-              </ElButton>
-            </div>
+              <template #default="{ item: fItem, index: fIndex, active }">
+                <DynamicScrollerItem
+                  :item="fItem"
+                  :active="active"
+                  :data-index="fIndex"
+                  :size-dependencies="[fItem.id, fItem.source, fItem.target]"
+                >
+                  <div class="list-table__line flex pt-3 align-items-center">
+                    <span class="px-2">{{ fIndex + 1 }}</span>
+                    <VirtualSelect
+                      v-model="fItem.source"
+                      :item-size="30"
+                      :items="sourceFields"
+                      :class="['flex-fill', { 'empty-data': !fItem.source }]"
+                      :allow-create="sourceDynamicSchema"
+                      :placeholder="
+                        sourceDynamicSchema
+                          ? $t('packages_business_select_placeholder')
+                          : $t('public_select_placeholder')
+                      "
+                      filterable
+                      class="flex-fill"
+                      @change="handleChange"
+                    />
+                    <VirtualSelect
+                      v-model="fItem.target"
+                      :item-size="34"
+                      :items="targetFields"
+                      :class="['flex-fill ml-5', { 'empty-data': !fItem.target }]"
+                      :allow-create="targetDynamicSchema"
+                      :placeholder="
+                        targetDynamicSchema
+                          ? $t('packages_business_select_placeholder')
+                          : $t('public_select_placeholder')
+                      "
+                      filterable
+                      @change="handleChange"
+                    />
+                    <ElButton type="text" class="mx-2 px-2 color-primary" @click="handleDelete(fIndex)">
+                      <VIcon> delete</VIcon>
+                    </ElButton>
+                  </div>
+                </DynamicScrollerItem>
+              </template>
+            </DynamicScroller>
           </div>
         </div>
       </div>
@@ -106,16 +114,19 @@
 </template>
 
 <script>
+import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
+
 import MultiSelection from '../MultiSelection'
 import { uuid } from '@tap/shared'
 import { TABLE_PARAMS } from './const'
 import { cloneDeep } from 'lodash'
 import { metadataInstancesApi } from '@tap/api'
+import { VirtualSelect } from '@tap/component'
 
 export default {
   name: 'FieldBox',
 
-  components: { MultiSelection },
+  components: { MultiSelection, DynamicScroller, DynamicScrollerItem, VirtualSelect },
 
   props: {
     item: {
@@ -325,6 +336,8 @@ export default {
           return {
             id: t.id,
             field_name: t.fieldName,
+            label: t.fieldName,
+            value: t.fieldName,
             primary_key_position: t.primaryKeyPosition
           }
         })
@@ -345,6 +358,8 @@ export default {
           return {
             id: t.id,
             field_name: t.fieldName,
+            label: t.fieldName,
+            value: t.fieldName,
             primary_key_position: t.primaryKeyPosition
           }
         })
@@ -369,6 +384,8 @@ export default {
           return {
             id: t.id,
             field_name: t.field_name,
+            label: t.field_name,
+            value: t.field_name,
             primary_key_position: t.primary_key_position
           }
         })
@@ -386,6 +403,8 @@ export default {
           return {
             id: t.id,
             field_name: t.field_name,
+            label: t.field_name,
+            value: t.field_name,
             primary_key_position: t.primary_key_position
           }
         })
@@ -406,7 +425,12 @@ export default {
 
     getFilterList() {
       const { keyword } = this
-      return this.list.filter(t => (t.source + t.target).includes(keyword))
+      return this.list
+        .filter(t => (t.source + t.target).includes(keyword))
+        .map(t => {
+          t.id = t.source + t.target
+          return t
+        })
     },
 
     handleChangeModeType(val) {

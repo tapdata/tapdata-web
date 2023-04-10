@@ -1,17 +1,32 @@
 <template>
   <div class="list__item flex flex-column flex-1 overflow-hidden">
-    <div class="list__title flex justify-content-between p-4">
-      <span class="fs-6">SERVICES / TARGETS</span>
-      <div class="operation">
-        <VIcon size="16" class="icon-color" @click="handleAdd">add-fill</VIcon>
-        <VIcon size="16" class="icon-color ml-3">search-outline</VIcon>
-        <VIcon size="16" class="icon-color ml-3 rotate-90">more</VIcon>
-      </div>
+    <div class="list__title flex align-center px-4">
+      <span class="fs-6">{{ $t('packages_business_data_console_targets') }}</span>
+      <div class="flex-grow-1"></div>
+      <IconButton @click="handleAdd">add</IconButton>
+      <IconButton :class="{ active: enableSearch }" @click="toggleEnableSearch">search-outline</IconButton>
     </div>
-    <div class="p-3 flex-fill min-h-0 overflow-auto">
-      <draggable v-model="list" @start="dragging = true" @end="dragging = false">
+    <div class="flex-fill min-h-0 flex flex-column">
+      <div v-if="enableSearch" class="px-2 pt-2">
+        <ElInput
+          ref="search"
+          v-model="search"
+          size="mini"
+          clearable
+          @keydown.native.stop
+          @keyup.native.stop
+          @click.native.stop
+        >
+          <template #prefix>
+            <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
+          </template>
+        </ElInput>
+      </div>
+
+      <div class="flex-fill min-h-0 overflow-auto p-2">
+        <!--<draggable v-model="filterList" @start="dragging = true" @end="dragging = false">-->
         <div
-          v-for="item in list"
+          v-for="item in filterList"
           :key="item.id"
           class="wrap__item rounded-4 mb-3"
           @dragover="handleDragOver"
@@ -55,32 +70,62 @@
               <DatabaseIcon :item="item" :size="20" class="item__icon mt-1" />
               <div class="flex-1 ml-2 overflow-hidden">
                 <div class="flex justify-content-between">
-                  <span class="font-color-normal fw-sub fs-6 ellipsis" :title="item.name">{{ item.name }}</span>
+                  <span class="font-color-normal fw-sub fs-6 ellipsis lh-base" :title="item.name">{{ item.name }}</span>
+
                   <span class="operation-line ml-2">
-                    <VIcon size="16" class="cursor-pointer" @click="$emit('preview', item)">view-details</VIcon>
-                    <VIcon size="18" class="ml-3">setting</VIcon>
+                    <IconButton @click="$emit('preview', item)" sm>view-details</IconButton>
+                    <!--<VIcon size="16" class="cursor-pointer" @click="$emit('preview', item)">view-details</VIcon>-->
+                    <!--<VIcon size="18" class="ml-3">setting</VIcon>-->
                   </span>
                 </div>
-                <div class="mt-2 font-color-light">Sync data to {{ item.database_type }} for analytics</div>
+                <div class="mt-2 font-color-light">
+                  {{ $t('packages_business_data_console_target_connection_desc', { val: item.database_type }) }}
+                </div>
               </div>
             </div>
             <TaskList :list="connectionTaskMap[item.id] || []" @edit-in-dag="handleEditInDag"></TaskList>
           </template>
         </div>
-      </draggable>
+        <!--</draggable>-->
+      </div>
 
       <ElDialog :visible.sync="dialogConfig.visible" width="600" :close-on-click-modal="false">
-        <span slot="title" style="font-size: 14px">{{ dialogConfig.title }}</span>
-        <ElForm ref="form" :model="dialogConfig" label-width="180px" @submit.prevent>
-          <div class="pipeline-desc p-4 mb-4">{{ dialogConfig.desc }}</div>
-          <ElFormItem label="Pipeline Name">
+        <span slot="title" class="font-color-dark fs-6 fw-sub">{{ dialogConfig.title }}</span>
+        <ElForm ref="form" :model="dialogConfig" label-width="180px" @submit.prevent :rules="formRules">
+          <!--          <div class="pipeline-desc p-4 mb-4 text-preline rounded-4">{{ dialogConfig.desc }}</div>-->
+          <div class="pipeline-desc p-4 mb-4 text-preline rounded-4">
+            <span>{{
+              $t(
+                dialogConfig.tableName
+                  ? 'packages_business_target_create_task_dialog_desc_prefix_sync'
+                  : 'packages_business_target_create_task_dialog_desc_prefix_clone'
+              )
+            }}</span
+            ><span v-if="dialogConfig.from" class="inline-flex align-center px-1 font-color-dark fw-sub"
+              ><DatabaseIcon :item="dialogConfig.from" :key="dialogConfig.from.database_type" :size="20" class="mr-1" />
+              <span>{{ dialogConfig.from.name }}</span> </span
+            ><span v-if="dialogConfig.tableName" class="font-color-dark fw-sub"
+              >/<span class="px-1">{{ dialogConfig.tableName }}</span> </span
+            ><span>
+              {{ $t('packages_business_target_create_task_dialog_desc_to') }}
+              <span v-if="dialogConfig.to" class="inline-flex align-center px-1 font-color-dark fw-sub"
+                ><DatabaseIcon :item="dialogConfig.to" :key="dialogConfig.to.database_type" :size="20" class="mr-1" />
+                <span>{{ dialogConfig.to.name }}</span>
+              </span></span
+            >
+            <div>{{ $t('packages_business_target_create_task_dialog_desc_suffix') }}</div>
+          </div>
+          <ElFormItem prop="taskName" :label="$t('public_task_name')">
             <ElInput size="small" v-model="dialogConfig.taskName" maxlength="50" show-word-limit></ElInput>
           </ElFormItem>
         </ElForm>
         <span slot="footer" class="dialog-footer">
           <ElButton size="mini" @click="hideDialog">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton size="mini" type="primary" @click="dialogSubmit">
-            {{ $t('public_button_confirm') }}
+          <ElButton :loading="creating" size="mini" @click="dialogSubmit(false)">{{
+            $t('packages_business_save_only')
+          }}</ElButton>
+          <ElButton :loading="creating" size="mini" type="primary" @click="dialogSubmit(true)">
+            {{ $t('packages_business_save_and_run_now') }}
           </ElButton>
         </span>
       </ElDialog>
@@ -97,6 +142,8 @@ import { defineComponent, ref } from '@vue/composition-api'
 import { apiServerApi, connectionsApi, taskApi } from '@tap/api'
 import { uuid } from '@tap/shared'
 import { getIcon } from '@tap/assets'
+import { IconButton } from '@tap/component'
+import i18n from '@tap/i18n'
 
 import { DatabaseIcon } from '../../components'
 import { makeStatusAndDisabled } from '../../shared'
@@ -104,6 +151,8 @@ import { TaskStatus } from '../../components'
 import CreateRestApi from './components/CreateRestApi'
 import DataServerDrawer from '../data-server/Drawer'
 import { TASK_SETTINGS } from '../../shared'
+import commonMix from './mixins/common'
+
 const restApiIcon = getIcon('rest api')
 
 const TaskList = defineComponent({
@@ -137,7 +186,7 @@ const TaskList = defineComponent({
               </div>
             </div>
           ) : (
-            <span class="font-color-sslight">No tasks configured for this target</span>
+            <span class="font-color-sslight">{i18n.t('packages_business_data_console_target_no_task')}</span>
           )}
 
           <ElButton
@@ -149,7 +198,7 @@ const TaskList = defineComponent({
             staticClass="task-list-item-more position-absolute fs-8"
             class={{ 'is-reverse': !isLimit.value }}
           >
-            {isLimit.value ? '查看更多' : '收起'}
+            {i18n.t(isLimit.value ? 'packages_business_view_more' : 'packages_business_view_collapse')}
             <VIcon class="ml-1">arrow-down</VIcon>
           </ElButton>
         </div>
@@ -165,9 +214,27 @@ export default {
     dragState: Object
   },
 
-  components: { CreateRestApi, DatabaseIcon, TaskList, draggable, DataServerDrawer },
+  components: { CreateRestApi, DatabaseIcon, TaskList, draggable, DataServerDrawer, IconButton },
+
+  mixins: [commonMix],
 
   data() {
+    const validateTaskName = async (rule, value, callback) => {
+      value = value.trim()
+      if (!value) {
+        callback(new Error(this.$t('packages_business_relation_list_qingshururenwu')))
+      } else {
+        const isExist = await taskApi.checkName({
+          name: value
+        })
+        if (isExist) {
+          callback(new Error(this.$t('packages_dag_task_form_error_name_duplicate')))
+        } else {
+          callback()
+        }
+      }
+    }
+
     return {
       restApiIcon,
       dragging: false,
@@ -177,13 +244,24 @@ export default {
         desc: '',
         taskName: '',
         syncType: '',
-        visible: false
+        visible: false,
+        from: null,
+        to: null
       },
       connectionTaskMap: {},
       apiDialog: {
         visible: false
       },
-      apiServerHost: ''
+      apiServerHost: '',
+      formRules: {
+        taskName: [{ validator: validateTaskName, trigger: 'blur' }]
+      },
+
+      searchIng: false,
+      search: '',
+      enableSearch: false,
+      filterTreeData: [],
+      creating: false
     }
   },
 
@@ -194,6 +272,12 @@ export default {
         ['SOURCE', 'FDM', 'MDM'].includes(this.dragState.from) &&
         ['connection', 'table'].includes(this.dragState.draggingObjects[0]?.data.LDP_TYPE)
       )
+    },
+
+    filterList() {
+      if (!this.search) return this.list
+
+      return this.list.filter(item => item.name.includes(this.search))
     }
   },
 
@@ -206,11 +290,11 @@ export default {
       this.list = await this.getData()
       console.log('list', this.list) // eslint-disable-line
       this.loadTask(this.list)
-      this.getApiServerHost()
+      // this.getApiServerHost()
     },
 
     handleAdd() {
-      this.$emit('create-connection', 'target')
+      this.$emit('create-target', 'target')
     },
 
     async getData() {
@@ -244,7 +328,7 @@ export default {
       })
 
       Object.keys(data).forEach(key => {
-        this.$set(this.connectionTaskMap, key, data[key].map(this.mapTask))
+        this.$set(this.connectionTaskMap, key, data[key].reverse().map(this.mapTask))
       })
     },
 
@@ -294,17 +378,19 @@ export default {
         this.showApiDialog()
       } else {
         if (!this.allowDrop) return
+        console.log('object.data', object.data) // eslint-disable-line
         if (object.data.type === 'connection') {
           this.dialogConfig.from = object.data
+          this.dialogConfig.tableName = null
           this.dialogConfig.to = item
-          this.dialogConfig.title = 'Create Migrate Pipeline'
+          this.dialogConfig.title = this.$t('packages_business_create_clone_task')
           this.dialogConfig.syncType = 'migrate'
           this.dialogConfig.desc = `Tapdata will create a pipeline task to sync [ ${object.data.name} ] to [ ${item.name} ],  please click button below to continue. You can also change the pipeline name`
         } else if (object.data.type === 'table') {
           this.dialogConfig.from = object.parent.data
           this.dialogConfig.tableName = object.data.name
           this.dialogConfig.to = item
-          this.dialogConfig.title = 'Create Sync Pipeline'
+          this.dialogConfig.title = this.$t('packages_business_create_sync_task')
           this.dialogConfig.syncType = 'sync'
           this.dialogConfig.desc = `Tapdata will create a pipeline task to sync [ ${object.data.name} ] from [ ${object.parent.data.name} ] to [ ${item.name} ],  please click button below to continue. You can also change the pipeline name`
         }
@@ -395,28 +481,47 @@ export default {
       this.dialogConfig.visible = false
     },
 
-    async dialogSubmit() {
-      const { syncType, from, to, tableName } = this.dialogConfig
-      let task
+    async dialogSubmit(ifStart) {
+      this.$refs.form.validate(async valid => {
+        if (valid) {
+          const { syncType, from, to, tableName } = this.dialogConfig
+          let task
+          this.creating = true
 
-      if (syncType === 'sync') {
-        task = this.makeSyncTask(from, tableName, to)
-      } else if (syncType === 'migrate') {
-        task = this.makeMigrateTask(from, to)
-      }
+          if (syncType === 'sync') {
+            task = this.makeSyncTask(from, tableName, to)
+          } else if (syncType === 'migrate') {
+            task = this.makeMigrateTask(from, to)
+          }
 
-      this.dialogConfig.visible = false
+          let taskInfo = await taskApi[ifStart ? 'saveAndStart' : 'post'](task)
+          taskInfo = this.mapTask(taskInfo)
+          this.dialogConfig.visible = false
+          this.creating = false
 
-      let taskInfo = await taskApi.post(task)
-      taskInfo = this.mapTask(taskInfo)
+          if (this.connectionTaskMap[to.id]) {
+            this.connectionTaskMap[to.id].unshift(taskInfo)
+          } else {
+            this.$set(this.connectionTaskMap, to.id, [taskInfo])
+          }
 
-      if (this.connectionTaskMap[to.id]) {
-        this.connectionTaskMap[to.id].unshift(taskInfo)
-      } else {
-        this.$set(this.connectionTaskMap, to.id, [taskInfo])
-      }
-
-      this.$message.success('任务创建成功')
+          const h = this.$createElement
+          this.$message.success({
+            message: h(
+              'span',
+              {
+                class: 'color-primary fs-7 clickable',
+                on: {
+                  click: () => {
+                    this.handleClickName(taskInfo)
+                  }
+                }
+              },
+              this.$t('packages_business_task_created_success')
+            )
+          })
+        }
+      })
     },
 
     handleEditInDag(task) {
@@ -463,6 +568,11 @@ export default {
 
     handleDetailApi(row = {}) {
       this.$refs.drawer.open(row)
+    },
+
+    handleSearch(val) {
+      this.searchIng = true
+      this.debouncedSearch(val)
     }
   }
 }
@@ -514,13 +624,5 @@ export default {
 }
 .item__icon {
   //border: 1px solid #4e5969;
-}
-.operation-line {
-  min-width: 50px;
-}
-
-.pipeline-desc {
-  background-color: #f8f8fa;
-  border-radius: 8px;
 }
 </style>

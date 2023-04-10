@@ -42,7 +42,7 @@
               :key="index"
               :class="{ active: position === index }"
               class="flex align-items-center justify-content-between"
-              @click="handleSelect(item, index)"
+              @click="handleSelect(index)"
             >
               <div class="task-form-text-box pl-4 inline-block">
                 <OverflowTooltip class="w-100 text-truncate target" :text="item.name" placement="right" />
@@ -98,6 +98,7 @@
             multiple
             filterable
             :placeholder="$t('public_select_option_default')"
+            :class="['update-list-select', { error: isErrorSelect }]"
             @visible-change="handleVisibleChange"
             @remove-tag="handleRemoveTag"
           >
@@ -123,12 +124,13 @@
           </ElButton>
         </div>
         <List
-          :form="form"
+          ref="list"
           :data="selected"
           :show-columns="['index', 'field_name', 'data_type', 'operation']"
           :fieldChangeRules.sync="fieldChangeRules"
           :readonly="readonly"
           class="content__list flex-fill"
+          @update-rules="handleUpdateRules"
         ></List>
       </div>
     </div>
@@ -149,7 +151,7 @@ import { debounce, cloneDeep } from 'lodash'
 
 import noData from '@tap/assets/images/noData.png'
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
-import { getCanUseDataTypes } from '@tap/dag/src/util'
+import { getCanUseDataTypes, getMatchedDataTypeLevel } from '@tap/dag/src/util'
 
 import mixins from './mixins'
 import List from './List'
@@ -203,7 +205,9 @@ export default {
           title: i18n.t('packages_dag_field_inference_main_tuiyanyichang'),
           total: 0
         }
-      ]
+      ],
+      transformExNum: 0,
+      updateExNum: 0
     }
   },
 
@@ -217,6 +221,11 @@ export default {
 
     readonly() {
       return this.stateIsReadonly
+    },
+
+    isErrorSelect() {
+      const { hasPrimaryKey, hasUnionIndex, hasUpdateField } = this.selected || {}
+      return !(hasPrimaryKey || hasUnionIndex || hasUpdateField)
     }
   },
 
@@ -224,11 +233,21 @@ export default {
     this.activeClassification = this.tableClassification[0].type
     this.loadData()
   },
+  watch: {
+    updateExNum(newVal, oldVal) {
+      if (oldVal === 1 && newVal === 0) {
+        //当前更新异常表全部更新完成
+        this.activeClassification = ''
+        this.loadData()
+      }
+    }
+  },
 
   methods: {
-    async loadData() {
+    async loadData(resetSelect = false) {
       this.navLoading = true
       this.fieldChangeRules = this.form.getValuesIn('fieldChangeRules') || []
+      this.$refs.list.setRules(this.fieldChangeRules)
       this.updateConditionFieldMap = cloneDeep(this.form.getValuesIn('updateConditionFieldMap') || {})
       const { size, current } = this.page
       const res = await this.getData({
@@ -238,20 +257,19 @@ export default {
         filterType: this.activeClassification
       })
       const { items, total } = res
+      this.updateExNum = res.updateExNum
+      this.transformExNum = res.transformExNum
       this.navList = items.map(t => {
         const { fields = [], findPossibleDataTypes = {} } = t
         fields.forEach(el => {
-          const source = this.findInRulesById(el.changeRuleId) || {}
-          const selectDataType = source.result?.selectDataType
           const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[el.field_name] || {}
           el.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
-          el.matchedDataTypeLevel =
-            selectDataType ||
-            (!selectDataType && el.canUseDataTypes.findIndex(c => c === el.data_type) === el.canUseDataTypes.length - 1)
-              ? ''
-              : !el.canUseDataTypes.includes(selectDataType || el.data_type)
-              ? 'error'
-              : 'warning'
+          el.matchedDataTypeLevel = getMatchedDataTypeLevel(
+            el,
+            el.canUseDataTypes,
+            this.fieldChangeRules,
+            findPossibleDataTypes
+          )
         })
         t.matchedDataTypeLevel = fields.some(f => f.matchedDataTypeLevel === 'error')
           ? 'error'
@@ -270,7 +288,11 @@ export default {
         }
       })
       this.page.count = total ? Math.ceil(total / this.page.size) : 1
-      this.handleSelect(this.navList[0])
+      if (resetSelect) {
+        this.handleSelect(this.position)
+      } else {
+        this.handleSelect()
+      }
       this.navLoading = false
     },
 
@@ -289,7 +311,7 @@ export default {
       this.updateList = this.updateConditionFieldMap[this.selected.name] || []
     },
 
-    handleSelect(item, index = 0) {
+    handleSelect(index = 0) {
       this.position = index
       this.filterFields()
     },
@@ -338,8 +360,9 @@ export default {
       this.form.setValuesIn('updateConditionFieldMap', cloneDeep(this.updateConditionFieldMap))
     },
 
-    findInRulesById(id) {
-      return this.fieldChangeRules.find(t => t.id === id)
+    handleUpdateRules(val = []) {
+      this.fieldChangeRules = val
+      this.handleUpdate()
     }
   }
 }
@@ -426,6 +449,16 @@ export default {
 .nav-filter__item {
   &.active {
     background: map-get($bgColor, disactive);
+  }
+}
+
+.update-list-select {
+  &.error {
+    ::v-deep {
+      .el-input__inner {
+        border-color: map-get($color, danger);
+      }
+    }
   }
 }
 </style>
