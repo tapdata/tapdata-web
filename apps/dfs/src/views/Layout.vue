@@ -55,7 +55,7 @@
       </ElMain>
     </ElContainer>
     <ConnectionTypeDialog :dialogVisible.sync="dialogVisible" @databaseType="createConnection"></ConnectionTypeDialog>
-    <AgentGuideDialog :visible.sync="agentGuideDialog" @openAgentDownload="openAgentDownload"></AgentGuideDialog>
+    <!--    <AgentGuideDialog :visible.sync="agentGuideDialog" @openAgentDownload="openAgentDownload"></AgentGuideDialog>-->
     <AgentDownloadModal :visible.sync="agentDownload.visible" :source="agentDownload.data"></AgentDownloadModal>
     <SubscriptionModelDialog :visible.sync="subscriptionModelVisible"></SubscriptionModelDialog>
     <BindPhone :visible.sync="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>
@@ -70,7 +70,7 @@ import { PageHeader } from '@tap/business'
 
 import ConnectionTypeDialog from '@/components/ConnectionTypeDialog'
 import AgentDownloadModal from '@/views/agent-download/AgentDownloadModal'
-import AgentGuideDialog from '@/views/agent-download/AgentGuideDialog'
+// import AgentGuideDialog from '@/views/agent-download/AgentGuideDialog'
 import BindPhone from '@/views/user/components/BindPhone'
 import Cookie from '@tap/shared/src/cookie'
 import SubscriptionModelDialog from '@/views/agent-download/SubscriptionModelDialog'
@@ -82,7 +82,6 @@ export default {
     VIcon,
     ConnectionTypeDialog,
     AgentDownloadModal,
-    AgentGuideDialog,
     BindPhone,
     SubscriptionModelDialog,
     PageHeader
@@ -139,7 +138,7 @@ export default {
       bindPhoneVisible: false,
       agentGuideDialog: false,
       showAgentWarning: false,
-      subscriptionModelVisible: true,
+      subscriptionModelVisible: false,
       userInfo: '',
       // aliyunMaketVisible: false,
       isDemoEnv: document.domain === 'demo.cloud.tapdata.net'
@@ -267,8 +266,8 @@ export default {
     checkAgentInstall() {
       this.$axios.get('api/tcm/orders/checkAgent').then(data => {
         if (data.agentId) {
-          this.agentGuideDialog = true
-          this.agentDownload.data = data
+          this.subscriptionModelVisible = true
+          // this.agentDownload.data = data
         }
       })
     },

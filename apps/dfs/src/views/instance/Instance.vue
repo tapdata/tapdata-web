@@ -6,12 +6,7 @@
           <FilterBar v-model="searchParams" :items="filterItems" @search="search" @fetch="fetch"></FilterBar>
         </div>
         <div class="instance-operation-right">
-          <ElButton
-            type="primary"
-            @click="createAgent"
-            :loading="createAgentLoading"
-            :disabled="$disabledReadonlyUserBtn()"
-          >
+          <ElButton type="primary" @click="subscriptionModelVisible = true" :disabled="$disabledReadonlyUserBtn()">
             <span>{{ $t('public_agent_button_create') }}</span>
           </ElButton>
         </div>
@@ -220,15 +215,15 @@
               @click="handleStop(scope.row)"
               >{{ $t('public_button_stop') }}</ElButton
             >
-            <ElDivider direction="vertical"></ElDivider>
-            <ElButton
-              size="mini"
-              type="text"
-              :loading="scope.row.btnLoading.delete"
-              :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
-              @click="handleDel(scope.row)"
-              >{{ $t('public_button_delete') }}</ElButton
-            >
+            <!--            <ElDivider direction="vertical"></ElDivider>-->
+            <!--            <ElButton-->
+            <!--              size="mini"-->
+            <!--              type="text"-->
+            <!--              :loading="scope.row.btnLoading.delete"-->
+            <!--              :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"-->
+            <!--              @click="handleDel(scope.row)"-->
+            <!--              >{{ $t('public_button_delete') }}</ElButton-->
+            <!--            >-->
             <ElDivider direction="vertical"></ElDivider>
             <ElButton
               size="mini"
@@ -383,6 +378,8 @@
         @create="createDialog = true"
         @new-agent="handleNewAgent"
       ></SelectListDialog>
+      <!-- 新的创建实例 -->
+      <SubscriptionModelDialog :visible.sync="subscriptionModelVisible"></SubscriptionModelDialog>
     </div>
   </section>
   <RouterView v-else></RouterView>
@@ -400,6 +397,7 @@ import { dayjs } from '@tap/business'
 import Time from '@tap/shared/src/time'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 import { getSpec, getPaymentMethod } from './utils'
+import SubscriptionModelDialog from '@/views/agent-download/SubscriptionModelDialog'
 
 const CreateDialog = () => import(/* webpackChunkName: "CreateInstanceDialog" */ './Create')
 const SelectListDialog = () => import(/* webpackChunkName: "SelectListInstanceDialog" */ './SelectList')
@@ -414,7 +412,8 @@ export default {
     Details,
     FilterBar,
     CreateDialog,
-    SelectListDialog
+    SelectListDialog,
+    SubscriptionModelDialog
   },
   inject: ['buried'],
   mixins: [timeFunction],
@@ -452,7 +451,8 @@ export default {
       filterItems: [],
       createDialog: false,
       selectListDialog: false,
-      selectListType: 'code'
+      selectListType: 'code',
+      subscriptionModelVisible: false
     }
   },
   computed: {

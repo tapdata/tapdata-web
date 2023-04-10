@@ -1,5 +1,12 @@
 <template>
-  <el-dialog :visible.sync="visible" title="Configure Live Data Platform" width="75%">
+  <el-dialog
+    :visible.sync="visible"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+    title="Configure Live Data Platform"
+    width="75%"
+    :before-close="close"
+  >
     <el-tabs v-model="activeName">
       <el-tab-pane label="Select Deployment Type" name="first">
         <div class="configure-main">
@@ -52,6 +59,7 @@
                     <el-radio
                       class="mt-4 block"
                       v-for="(item, index) in specificationItems"
+                      :disabled="agentCount > 0 && item.label === 'min small'"
                       :key="index"
                       :label="item.value"
                       >{{ specMap[item.label] || item.label }}</el-radio
@@ -173,6 +181,7 @@ import { getPaymentMethod, getSpec } from '../instance/utils'
 import { CURRENCY_SYMBOL_MAP, TIME_MAP } from '@tap/business'
 import i18n from '@/i18n'
 import { dayjs } from '@tap/business/src/shared/dayjs'
+import Cookie from '@tap/shared/src/cookie'
 
 export default {
   name: 'subscriptionModelDialog',
@@ -206,7 +215,7 @@ export default {
       licenseCode: '',
       saveLoading: false,
       codeData: [],
-      codeTotal: 0,
+      agentCount: 0,
       currentCode: {},
       columns: [
         {
@@ -233,10 +242,13 @@ export default {
     }
   },
   mounted() {
-    this.getPrice()
+    this.checkAgentCount()
     this.form.email = window.__USER_INFO__.email
   },
   methods: {
+    close() {
+      this.$emit('update:visible', false)
+    },
     next(val) {
       this.activeName = val
     },
@@ -244,6 +256,13 @@ export default {
       this.productType = 'aliyun'
       this.activeName = 'second'
       this.getAvailableCode()
+    },
+    checkAgentCount() {
+      let filter = { where: { 'orderInfo.chargeProvider': 'FreeTier' } }
+      this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
+        this.agentCount = data?.total
+        this.getPrice()
+      })
     },
     getImg(name) {
       return require(`../../../public/images/agent/${name}.jpg`)
@@ -272,8 +291,7 @@ export default {
             return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
           })
           .filter(it => !['XLarge', '4Large'].includes(it.label)) //过滤不需要的规格
-
-        this.specification = this.specificationItems[0]?.value
+        this.specification = this.agentCount > 0 ? this.specificationItems[1]?.value : this.specificationItems[0]?.value
         // 价格套餐
         this.allPackages = paidPrice.map(t => {
           return Object.assign(t, {
