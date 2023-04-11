@@ -11,7 +11,7 @@
     <el-tabs v-model="activeName">
       <el-tab-pane label="Select Deployment Type" name="first">
         <div class="configure-main">
-          <el-radio-group class="flex mb-4" v-model="productType">
+          <el-radio-group class="flex mb-4" v-model="productType" @change="selectProductType">
             <el-radio class="width50 fs-6 fw-sub" label="selfHost">半托管模式</el-radio>
             <el-radio class="fs-6 fw-sub" label="fullManagement" disabled>全托管模式 (即将上线)</el-radio>
           </el-radio-group>
@@ -282,11 +282,16 @@ export default {
     },
     next(val) {
       this.activeName = val
+      this.buried('productTypeNext')
     },
     changeProductType() {
       this.productType = 'aliyun'
       this.activeName = 'second'
       this.getAvailableCode()
+      this.buried('productTypeAliyunCode')
+    },
+    selectProductType() {
+      this.buried('productTypeSelfHost')
     },
     checkAgentCount() {
       let filter = { where: { 'orderInfo.chargeProvider': 'FreeTier' } }
@@ -366,10 +371,12 @@ export default {
     },
     handleChange(item = {}) {
       this.selected = item
+      this.buried('changeSubscriptionMethod')
     },
     changeSpec() {
       this.loadPackageItems()
       this.handleChange(this.packageItems[0])
+      this.buried('changeSpec')
     },
     getEmailRules() {
       return [
@@ -407,6 +414,7 @@ export default {
           chargeProvider: 'Aliyun',
           licenseId: row?.id
         }
+        this.buried('selectAgentAliyun')
       } else {
         params = {
           agentType: 'Local',
@@ -461,6 +469,7 @@ export default {
     //激活
     handleNewCode(val) {
       this.hiddenNewCode = val
+      this.buried('goActivateCode')
     },
     save() {
       this.saveLoading = true
