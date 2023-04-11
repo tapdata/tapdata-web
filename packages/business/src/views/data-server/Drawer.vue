@@ -73,7 +73,9 @@
         <ElFormItem class="flex-1 mt-4" size="small" label="所属应用" prop="kennen">
           <AsyncSelect
             v-model="form.appValue"
+            :disabled="!isEdit"
             :method="getAppList"
+            :current-label="form.appLabel"
             item-label="value"
             item-value="id"
             filterable
@@ -665,8 +667,8 @@ export default {
       // 若为新建时，则默认值为 ‘默认查询(defaultApi)’ 的值
 
       const appData = listtags?.[0] || {}
-      const appValue = appData.appValue
-      const appLabel = appData.appLabel
+      const appValue = appData.id
+      const appLabel = appData.value
 
       let apiType = formData?.apiType || 'defaultApi'
       this.data = {
@@ -689,9 +691,13 @@ export default {
         where: path.where || [],
         sort: path.sort || [],
         path: path.path || '',
-        acl: path.acl
+        acl: path.acl,
+        appValue,
+        appLabel
       }
       this.form.description = this.data.description
+      this.form.appValue = this.data.appValue
+      this.form.appLabel = this.data.appLabel
       this.form.acl = path.acl || ['admin']
       let host = this.host
       let _path = this.data.path
