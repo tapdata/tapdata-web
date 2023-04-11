@@ -190,6 +190,7 @@ export default {
   // 任务
   public_task_name: '任务名称',
   public_task_type: '任务类型',
+  public_task_sync_type: '同步类型',
   public_task_type_migrate: '数据复制',
   public_task_type_sync: '数据开发',
   public_task_type_heartbeat: '心跳任务',

@@ -190,6 +190,7 @@ export default {
   // Task
   public_task_name: 'Task Name',
   public_task_type: 'Task Type',
+  public_task_sync_type: 'Sync Type',
   public_task_type_migrate: 'Data Copy',
   public_task_type_sync: 'Data Development',
   public_task_type_heartbeat: 'Heartbeat Task',

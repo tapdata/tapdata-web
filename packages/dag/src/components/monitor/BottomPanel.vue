@@ -27,18 +27,10 @@
           ></Alert>
         </ElTabPane>
         <ElTabPane v-if="relationCount" :label="$t('packages_dag_monitor_bottompanel_guanlianrenwu')" name="relation">
-          <RelationSharedList
-            v-if="$attrs.dataflow.syncType === 'logCollector' || $attrs.dataflow.shareCache"
+          <RelationList
             v-bind="$attrs"
             :currentTab="currentTab"
             :type="$attrs.dataflow.shareCache ? 'shareCache' : $attrs.dataflow.syncType"
-            @change-tab="changeTab"
-            @load-data="$emit('load-data')"
-          ></RelationSharedList>
-          <RelationList
-            v-else
-            v-bind="$attrs"
-            :currentTab="currentTab"
             @change-tab="changeTab"
             @load-data="$emit('load-data')"
           ></RelationList>
@@ -58,7 +50,6 @@ import resize from '@tap/component/src/directives/resize'
 import focusSelect from '@tap/component/src/directives/focusSelect'
 import NodeLog from '@tap/business/src/components/logs/NodeLog'
 import RelationList from '@tap/business/src/views/task/relation/List.vue'
-import RelationSharedList from '@tap/business/src/views/task/relation/SharedList.vue'
 import MilestoneList from '@tap/business/src/components/milestone/List'
 
 import Record from './components/Record'
@@ -68,7 +59,7 @@ import { logcollectorApi, taskApi } from '@tap/api'
 export default {
   name: 'ConfigPanel',
 
-  components: { Record, Alert, RelationList, RelationSharedList, NodeLog, MilestoneList },
+  components: { Record, Alert, RelationList, NodeLog, MilestoneList },
 
   directives: {
     resize,

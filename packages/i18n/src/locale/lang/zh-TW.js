@@ -190,6 +190,7 @@ export default {
   // 任務
   public_task_name: '任務名稱',
   public_task_type: '任務類型',
+  public_task_sync_type: '同步類型',
   public_task_type_migrate: '數據複製',
   public_task_type_sync: '數據開發',
   public_task_type_heartbeat: '心跳任務',
