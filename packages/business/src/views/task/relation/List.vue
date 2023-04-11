@@ -99,6 +99,10 @@ export default {
         migrate: {
           label: i18n.t('public_task_type_migrate'),
           monitor: 'MigrationMonitor'
+        },
+        mem_cache: {
+          label: '共享缓存',
+          monitor: 'SharedCacheMonitor'
         }
       }
     }

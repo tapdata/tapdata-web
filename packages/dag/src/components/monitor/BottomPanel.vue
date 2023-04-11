@@ -28,10 +28,10 @@
         </ElTabPane>
         <ElTabPane v-if="relationCount" :label="$t('packages_dag_monitor_bottompanel_guanlianrenwu')" name="relation">
           <RelationSharedList
-            v-if="['SharedMiningMonitor', 'SharedCacheMonitor'].includes($route.name)"
+            v-if="$attrs.dataflow.syncType === 'logCollector' || $attrs.dataflow.shareCache"
             v-bind="$attrs"
             :currentTab="currentTab"
-            :type="$attrs.dataflow.syncType"
+            :type="$attrs.dataflow.shareCache ? 'shareCache' : $attrs.dataflow.syncType"
             @change-tab="changeTab"
             @load-data="$emit('load-data')"
           ></RelationSharedList>

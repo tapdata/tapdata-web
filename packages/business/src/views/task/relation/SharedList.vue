@@ -119,7 +119,7 @@ export default {
             width: 200
           }
         ],
-        sync: [
+        shareCache: [
           {
             label: i18n.t('public_serial_number'),
             type: 'index'
@@ -141,15 +141,8 @@ export default {
             width: 150
           },
           {
-            label: i18n.t('public_create_time'),
-            prop: 'createDate',
-            dataType: 'time',
-            default: '-',
-            width: 180
-          },
-          {
-            label: i18n.t('public_task_cdc_time_point'),
-            prop: 'currentEventTimestamp',
+            label: i18n.t('packages_dag_monitor_topheader_qidongshijian'),
+            prop: 'startTime',
             dataType: 'time',
             default: '-',
             width: 180
@@ -164,7 +157,7 @@ export default {
     remoteMethod() {
       const map = {
         logCollector: this.logCollectorRemote,
-        sync: this.syncRemote
+        shareCache: this.syncRemote
       }
       return map[this.type]?.()
     },

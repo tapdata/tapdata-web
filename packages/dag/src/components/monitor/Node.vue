@@ -8,6 +8,7 @@ import i18n from '@tap/i18n'
 import { VIcon } from '@tap/component'
 import { calcTimeUnit, calcUnit } from '@tap/shared'
 import Time from '@tap/shared/src/time'
+import { TaskStatus } from '@tap/business'
 import DFNode from '../DFNode'
 
 dayjs.extend(relativeTime)
@@ -29,7 +30,8 @@ export default defineComponent({
   name: 'Node',
   components: {
     DFNode,
-    VIcon
+    VIcon,
+    TaskStatus
   },
 
   props: {
@@ -429,6 +431,7 @@ export default defineComponent({
     return () => {
       let nodeProps = { props: { ...attrs }, attrs }
       let alarmCls = alarmLevel.value ? `alarm-${alarmLevel.value}` : null
+      const { sharedCache = [] } = props.node.attrs || {}
 
       return (
         <DFNode
@@ -466,6 +469,19 @@ export default defineComponent({
               {isSource.value && hasInitalSync && (
                 <ElProgress class="mt-2" show-text={false} percentage={initialSyncProcess.value} />
               )}
+
+              {!!sharedCache.length && (
+                <ul class="shared-cache-list rounded-4 p-2 mt-4">
+                  {sharedCache.map(item => (
+                    <li class="flex justify-content-between align-items-center">
+                      <ElLink type="primary" onClick={() => emit('open-shared-cache', item)}>
+                        {item.name}
+                      </ElLink>
+                      <TaskStatus task={item} />
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
 
             <div class="statistic-card">
@@ -483,7 +499,7 @@ export default defineComponent({
 .node-card {
   position: absolute;
   min-width: 240px;
-  z-index: -1;
+  z-index: -2;
   top: 100%;
   left: 50%;
   background-color: #fff;
@@ -568,6 +584,10 @@ export default defineComponent({
   .statistic-value {
     color: #d44d4d;
   }
+}
+
+.shared-cache-list {
+  background-color: #f5f8fe;
 }
 </style>
 

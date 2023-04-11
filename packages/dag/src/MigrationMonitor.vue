@@ -101,6 +101,7 @@
               @delete="handleDeleteById"
               @show-node-popover="showNodePopover"
               @open-detail="handleOpenDetail(n)"
+              @open-shared-cache="handleOpenSharedCache"
             ></Node>
           </PaperScroller>
           <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
@@ -156,6 +157,8 @@
         :task-id="dataflow.id"
         :visible.sync="sharedMiningEditorVisible"
       ></SharedMiningEditor>
+
+      <SharedCacheDetails ref="sharedCacheDetails" width="380px"></SharedCacheDetails>
     </section>
   </section>
 </template>
@@ -176,6 +179,7 @@ import resize from '@tap/component/src/directives/resize'
 import { ALARM_LEVEL_SORT, TASK_STATUS_MAP } from '@tap/business'
 import Time from '@tap/shared/src/time'
 import SharedMiningEditor from '@tap/business/src/views/shared-mining/Editor'
+import SharedCacheDetails from '@tap/business/src/views/shared-cache/Details'
 
 import PaperScroller from './components/PaperScroller'
 import TopHeader from './components/monitor/TopHeader'
@@ -216,7 +220,8 @@ export default {
     VIcon,
     NodeDetailDialog,
     ConsolePanel,
-    SharedMiningEditor
+    SharedMiningEditor,
+    SharedCacheDetails
   },
 
   data() {
@@ -1202,6 +1207,10 @@ export default {
 
     getTaskStatus(type) {
       return TASK_STATUS_MAP[type] || ''
+    },
+
+    handleOpenSharedCache(row = {}) {
+      this.$refs.sharedCacheDetails?.getData(row.id)
     }
   }
 }

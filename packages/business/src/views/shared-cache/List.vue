@@ -118,7 +118,7 @@
       </ElTableColumn>
     </TablePage>
     <Editor :task-id="selected.id" :visible.sync="visible" @success="table.fetch(1)"></Editor>
-    <Details ref="details" :visible.sync="detailsVisible" width="380px"></Details>
+    <Details ref="details" width="380px"></Details>
   </section>
 </template>
 
@@ -161,8 +161,7 @@ export default {
       selected: {
         id: ''
       },
-      visible: false,
-      detailsVisible: false
+      visible: false
     }
   },
   computed: {
@@ -199,7 +198,6 @@ export default {
             total: data?.total,
             data: list.map(item => {
               item.createTimeFmt = item.createTime ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') : '-'
-              item.cacheTimeAtFmt = item.cacheTimeAt ? dayjs(item.cacheTimeAt).format('YYYY-MM-DD HH:mm:ss') : '-'
 
               makeStatusAndDisabled(item)
               return item
@@ -214,7 +212,6 @@ export default {
     },
     checkDetails(row) {
       this.$refs.details.getData(row.id)
-      this.detailsVisible = true
     },
     del(row = {}) {
       this.$confirm(this.$t('public_message_delete_confirm'), this.$t('public_message_title_prompt'), {

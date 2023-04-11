@@ -2,7 +2,7 @@
   <Drawer
     v-loading="loading"
     class="shared-cache-details"
-    :visible.sync="drawerVisible"
+    :visible.sync="visible"
     v-bind="$attrs"
     @visible="handleVisible"
   >
@@ -42,28 +42,22 @@
 </template>
 
 <script>
-import { sharedCacheApi } from '@tap/api'
+import { sharedCacheApi, externalStorageApi } from '@tap/api'
 import { Drawer } from '@tap/component'
 import { TaskStatus } from '@tap/business'
 
 import CodeView from './CodeView'
+import dayjs from 'dayjs'
 
 export default {
   name: 'Details',
 
   components: { Drawer, CodeView, TaskStatus },
 
-  props: {
-    visible: {
-      required: true,
-      value: Boolean
-    }
-  },
-
   data() {
     return {
       loading: false,
-      drawerVisible: false,
+      visible: false,
       details: {
         id: '',
         name: '',
@@ -74,24 +68,29 @@ export default {
     }
   },
 
-  watch: {
-    visible(v) {
-      this.drawerVisible = v
-    }
-  },
-
   methods: {
     getData(id) {
       this.loading = true
       sharedCacheApi
-        .findOne(id)
+        .get(id)
         .then(data => {
           data.cacheKeysArr = data.cacheKeys?.split(',') || []
-          this.getInfo(data)
-          this.details = data
+          data.cacheTimeAtFmt = data.cacheTimeAt ? dayjs(data.cacheTimeAt).format('YYYY-MM-DD HH:mm:ss') : '-'
+          externalStorageApi
+            .get(data.externalStorageId, {
+              fields: JSON.stringify({
+                name: true
+              })
+            })
+            .then(d => {
+              data.externalStorageName = d.name
+              this.getInfo(data)
+              this.details = data
+            })
         })
         .finally(() => {
           this.loading = false
+          this.visible = true
         })
     },
 
@@ -110,8 +109,8 @@ export default {
       ]
     },
 
-    handleVisible(val) {
-      this.$emit('update:visible', val)
+    handleVisible() {
+      this.visible = false
     }
   }
 }
