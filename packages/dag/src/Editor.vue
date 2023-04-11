@@ -246,6 +246,10 @@ export default {
         {
           name: i18n.t('packages_dag_src_editor_zengshanziduan'),
           type: 'field_add_del_processor'
+        },
+        {
+          name: '时间运算',
+          type: 'date_processor'
         }
       ]
       //仅企业版有的节点

@@ -225,12 +225,16 @@ const getters = {
 const actions = {
   patchTask: debounce(async function ({ state, commit }) {
     commit('toggleTaskSaving', true)
-    const data = await taskApi.patch({
-      id: state.taskId,
-      editVersion: state.editVersion,
-      dag: state.dag
-    })
-    commit('setEditVersion', data.editVersion)
+    try {
+      const data = await taskApi.patch({
+        id: state.taskId,
+        editVersion: state.editVersion,
+        dag: state.dag
+      })
+      commit('setEditVersion', data.editVersion)
+    } catch (e) {
+      console.error(e) // eslint-disable-line
+    }
     commit('toggleTaskSaving', false)
   }, 50),
 

@@ -391,6 +391,32 @@ export default {
             .filter(item => !item.is_deleted)
         },
 
+        loadDateFieldOptions: async nodeId => {
+          const fields = await this.scope.loadNodeFieldsById(nodeId)
+          const set = new Set()
+          fields.forEach(f => {
+            const tapType = JSON.parse(f.tapType)
+            if (tapType.type === 1 || tapType.type === 6) {
+              set.add(f.data_type)
+            }
+          })
+          return [...set]
+        },
+
+        useFieldDateType: id => {
+          return field => {
+            field.loading = true
+            this.scope.loadDateFieldOptions(id).then(
+              action.bound(data => {
+                field.dataSource = data
+                field.loading = false
+
+                if (!field.value?.length) field.value = data
+              })
+            )
+          }
+        },
+
         /**
          * 返回的是数组包对象
          * @param nodeId
