@@ -347,12 +347,7 @@ export default {
           return a.order < b.order ? -1 : a.periodUnit < b.periodUnit ? -1 : 1
         })
       if (specificationLabel === '1C2G') {
-        this.packageItems = [
-          { label: '连续包月', price: 0, value: '0', chargeProvider: 'FreeTier' },
-          { label: '订购一个月', price: 0, value: '1', chargeProvider: 'FreeTier' },
-          { label: '连续包年', price: 0, value: '2', chargeProvider: 'FreeTier' },
-          { label: '订购一年', price: 0, value: '3', chargeProvider: 'FreeTier' }
-        ]
+        this.packageItems = [{ label: '永久', price: 0, value: '0', chargeProvider: 'FreeTier' }]
       }
     },
     handleChange(item = {}) {
