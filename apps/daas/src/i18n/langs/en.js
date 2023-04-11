@@ -1832,12 +1832,8 @@ export default {
   daas_external_storage_list_qingshuruwaicun2: 'Please enter the external storage table name',
   daas_external_storage_list_sheweimoren: 'Set as default',
   daas_external_storage_list_cunchulujing: 'Storage path',
-  daas_external_storage_list_waicunbiaoming: 'External storage table name',
-  daas_external_storage_list_waicunleixing: 'External Storage Type',
-  daas_external_storage_list_waicunmingcheng: 'External Storage Name',
   daas_external_storage_list_chuangjianwaicun: 'Create External Storage',
   daas_external_storage_list_bianjiwaicun: 'Edit External Storage',
-  daas_external_storage_list_waicunxinxi: 'External Storage Information',
   daas_external_storage_list_tishi:
     'This external storage has been called by {val1} tasks, please delete or modify the configuration and try again.',
   daas_function_importform_shangchuanwenjianda: 'Upload file size cannot exceed {val1}M',

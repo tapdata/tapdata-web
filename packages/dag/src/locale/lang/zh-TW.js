@@ -552,5 +552,6 @@ export default {
   packages_dag_validate_customsql_target_fail:
     '當啟用全量自定義查詢後，只有弱schema類型的數據源才能作為目標，例如：MongoDB、Kafka、ES',
   packages_dag_field_inference_list_gaiziduanshuju:
-    '该字段数据类型暂不支持，为避免由于该字段处理导致任务执行故障，请先将该字段屏蔽。'
+    '该字段数据类型暂不支持，为避免由于该字段处理导致任务执行故障，请先将该字段屏蔽。',
+  packages_dag_monitor_leftsider_huancunkaishishi: '緩存開始時間'
 }

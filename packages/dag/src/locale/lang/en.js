@@ -591,5 +591,6 @@ export default {
   packages_dag_validate_customsql_target_fail:
     'Once full custom query is enabled, only weak schema type data sources can be used as targets, such as Mongo, Kafka, and ES.',
   packages_dag_field_inference_list_gaiziduanshuju:
-    'The data type of this field is not supported at the moment. In order to avoid task execution failure due to the processing of this field, please mask this field first. '
+    'The data type of this field is not supported at the moment. In order to avoid task execution failure due to the processing of this field, please mask this field first. ',
+  packages_dag_monitor_leftsider_huancunkaishishi: 'Cache start time'
 }

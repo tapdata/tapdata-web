@@ -9,12 +9,7 @@
           <span>{{ $t('daas_external_storage_list_chuangjianwaicun') }}</span>
         </ElButton>
       </div>
-      <ElTableColumn
-        show-overflow-tooltip
-        min-width="180"
-        :label="$t('daas_external_storage_list_waicunmingcheng')"
-        prop="name"
-      >
+      <ElTableColumn show-overflow-tooltip min-width="180" :label="$t('public_external_memory_name')" prop="name">
         <template #default="{ row }">
           <ElLink style="display: inline" type="primary" @click.stop="checkDetails(row)">{{ row.name }}</ElLink>
         </template>
@@ -22,13 +17,13 @@
       <ElTableColumn
         show-overflow-tooltip
         min-width="150"
-        :label="$t('daas_external_storage_list_waicunleixing')"
+        :label="$t('public_external_memory_type')"
         prop="typeFmt"
       ></ElTableColumn>
       <ElTableColumn
         show-overflow-tooltip
         min-width="300"
-        :label="$t('daas_external_storage_list_waicunxinxi')"
+        :label="$t('public_external_memory_info')"
         prop="uri"
       ></ElTableColumn>
       <ElTableColumn
@@ -69,10 +64,10 @@
         :model="form"
         :rules="rules"
       >
-        <ElFormItem :label="$t('daas_external_storage_list_waicunmingcheng')" prop="name">
+        <ElFormItem :label="$t('public_external_memory_name')" prop="name">
           <ElInput v-model="form.name"></ElInput>
         </ElFormItem>
-        <ElFormItem required :label="$t('daas_external_storage_list_waicunleixing')">
+        <ElFormItem required :label="$t('public_external_memory_type')">
           <ElSelect v-model="form.type">
             <ElOption label="MongoDB" value="mongodb"></ElOption>
             <ElOption label="RocksDB" value="rocksdb"></ElOption>
@@ -90,12 +85,7 @@
             resize="none"
           ></ElInput>
         </ElFormItem>
-        <ElFormItem
-          v-if="form.type === 'mongodb'"
-          :label="$t('daas_external_storage_list_waicunbiaoming')"
-          required
-          prop="table"
-        >
+        <ElFormItem v-if="form.type === 'mongodb'" :label="$t('public_external_memory_name')" required prop="table">
           <ElInput v-model="form.table"></ElInput>
         </ElFormItem>
         <ElFormItem :label="$t('daas_external_storage_list_sheweimoren')">
@@ -346,13 +336,13 @@ export default {
     checkDetails(row) {
       this.details = row
       this.info = [
-        //{ label: this.$t('daas_external_storage_list_waicunmingcheng'), value: row.name, icon: 'createUser' },
+        //{ label: this.$t('public_external_memory_name'), value: row.name, icon: 'createUser' },
         {
-          label: this.$t('daas_external_storage_list_waicunleixing'),
+          label: this.$t('public_external_memory_type'),
           value: row.typeFmt,
           icon: 'name'
         },
-        { label: this.$t('daas_external_storage_list_waicunbiaoming'), value: row.table, icon: 'table' },
+        { label: this.$t('public_external_memory_name'), value: row.table, icon: 'table' },
         { label: this.$t('public_create_time'), value: row.createTimeFmt, icon: 'cacheTimeAtFmt' },
         { label: this.$t('daas_external_storage_list_cunchulujing'), value: row.uri, icon: 'database' },
         { label: this.$t('daas_external_storage_list_sheweimoren'), value: row.defaultStorage, icon: 'record' }

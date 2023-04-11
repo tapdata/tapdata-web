@@ -232,5 +232,6 @@ export default {
   public_external_memory_configuration: '外存配置',
   public_external_memory_type: '外存类型',
   public_external_memory_table: '外存表名',
-  public_external_memory_connection: '外存表名'
+  public_external_memory_connection: '外存连接',
+  public_external_memory_info: '外存信息'
 }

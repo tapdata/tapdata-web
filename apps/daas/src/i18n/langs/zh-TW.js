@@ -1776,12 +1776,8 @@ export default {
   daas_external_storage_list_qingshuruwaicun2: '請輸入外存表名稱',
   daas_external_storage_list_sheweimoren: '設為默認',
   daas_external_storage_list_cunchulujing: '存儲路徑',
-  daas_external_storage_list_waicunbiaoming: '外存表名',
-  daas_external_storage_list_waicunleixing: '外存類型',
-  daas_external_storage_list_waicunmingcheng: '外存名稱',
   daas_external_storage_list_chuangjianwaicun: '創建外存',
   daas_external_storage_list_bianjiwaicun: '編輯外存',
-  daas_external_storage_list_waicunxinxi: '外存信息',
   daas_external_storage_list_tishi: '該外存已被 {val1} 调用，請刪除或修改配置後重試。',
 
   daas_function_importform_shangchuanwenjianda: '上傳文件大小不能超過 {val1}M',

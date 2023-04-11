@@ -595,19 +595,19 @@ export default {
             value: this.formatTime(logTime)
           },
           {
-            label: this.$t('daas_external_storage_list_waicunmingcheng'),
+            label: this.$t('public_external_memory_name'),
             value: externalStorage.name
           },
           {
-            label: this.$t('daas_external_storage_list_waicunleixing'),
+            label: this.$t('public_external_memory_type'),
             value: externalStorage.type
           },
           {
-            label: this.$t('daas_external_storage_list_waicunbiaoming'),
+            label: this.$t('public_external_memory_table'),
             value: externalStorage.table
           },
           {
-            label: this.$t('daas_external_storage_list_waicunxinxi'),
+            label: this.$t('public_external_memory_connection'),
             value: externalStorage.uri,
             block: true
           }
@@ -623,23 +623,23 @@ export default {
       sharedCacheApi.findOne(id).then(data => {
         this.infoList = [
           {
-            label: '缓存开始时间',
+            label: i18n.t('packages_dag_monitor_leftsider_huancunkaishishi'),
             key: ''
           },
           {
-            label: '外存名称',
+            label: i18n.t('public_external_memory_name'),
             value: data['name']
           },
           {
-            label: '外存类型',
+            label: i18n.t('public_external_memory_type'),
             key: ''
           },
           {
-            label: '外存表名',
+            label: i18n.t('public_external_memory_table'),
             value: data['tableName']
           },
           {
-            label: '外存连接',
+            label: i18n.t('public_external_memory_connection'),
             value: data['connectionName']
           }
         ]

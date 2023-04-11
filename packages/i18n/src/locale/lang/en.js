@@ -232,5 +232,6 @@ export default {
   public_external_memory_configuration: 'External storage configuration',
   public_external_memory_type: 'External memory type',
   public_external_memory_table: 'External storage table name',
-  public_external_memory_connection: 'External storage table name'
+  public_external_memory_connection: 'External memory connection',
+  public_external_memory_info: 'External storage information'
 }
