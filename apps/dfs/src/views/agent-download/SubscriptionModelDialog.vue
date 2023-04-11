@@ -449,6 +449,7 @@ export default {
       this.$message.success(this.$t('public_message_operation_success'))
       this.close()
     },
+    //激活
     save() {
       this.saveLoading = true
       this.buried('activateAliyunCode')
@@ -460,11 +461,12 @@ export default {
             this.currentCode.expiredTime = this.currentCode.expiredTime
               ? dayjs(this.currentCode.expiredTime).format('YYYY-MM-DD')
               : '-'
-            this.$message.success(i18n.t('dfs_aliyun_market_license_jihuochenggongS'))
+            this.finish()
             this.buried('activateAliyunCode', '', {
               result: true
             })
           } else {
+            this.close()
             this.buried('activateAliyunCode', '', {
               result: false
             })

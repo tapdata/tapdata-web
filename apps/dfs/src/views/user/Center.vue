@@ -210,7 +210,7 @@
       </VTable>
     </section>
 
-    <section v-if="!userData.enableLicense">
+    <section>
       <div class="mt-12 fs-6 fw-sub">{{ $t('dfs_user_center_fuwudingyuexin') }}</div>
       <VTable
         :columns="columns"
