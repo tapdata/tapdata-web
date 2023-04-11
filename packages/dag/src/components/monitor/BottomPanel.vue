@@ -30,7 +30,7 @@
           <RelationList
             v-bind="$attrs"
             :currentTab="currentTab"
-            :type="$attrs.dataflow.shareCache ? 'shareCache' : $attrs.dataflow.syncType"
+            :type="$attrs.dataflow.shareCache ? 'mem_cache' : $attrs.dataflow.syncType"
             @change-tab="changeTab"
             @load-data="$emit('load-data')"
           ></RelationList>

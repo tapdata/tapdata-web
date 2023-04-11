@@ -112,7 +112,7 @@ export default {
           monitor: 'MigrationMonitor'
         },
         mem_cache: {
-          label: '共享缓存',
+          label: i18n.t('packages_business_relation_list_gongxianghuancun'),
           monitor: 'SharedCacheMonitor'
         }
       }
@@ -202,7 +202,7 @@ export default {
             width: 100
           }
         ],
-        shareCache: [
+        mem_cache: [
           {
             label: i18n.t('public_serial_number'),
             type: 'index'

@@ -901,5 +901,6 @@ export default {
   packages_business_shared_cache_max_memory_tooltip: '系统会保存的最大内存量，超过则按调用时间，将最不常用的数据删掉',
   packages_business_shared_cache_code_tooltip: '可在JS节点中输入这段代码使用该缓存',
   packages_business_shared_cache_column_connection: '所属连接',
-  packages_business_shared_cache_column_table: '所属表'
+  packages_business_shared_cache_column_table: '所属表',
+  packages_business_relation_list_gongxianghuancun: '共享缓存'
 }
