@@ -1,18 +1,10 @@
 export default {
-  // 通用提示
-  // 通用下拉框
-  // 公共区
   // 通用按钮
   button_reload: 'Reload',
   button_button: 'Add',
   // 通用消息
   message_loading: 'Loading',
   message_network_connected: 'Network is restored',
-  // 表格
-  column_connection: 'From connection',
-  column_table: 'From table',
-  // dialog按钮
-  dialog_button_cancel: 'Cancel',
   //页面标题
   page_title_overview: 'Overview',
   page_title_dashboard: 'Dashboard',
@@ -39,7 +31,7 @@ export default {
   page_title_function_create: 'Create function',
   page_title_function_edit: 'Edit function',
   page_title_function_details: 'Function details',
-  page_title_shared_cache: 'Shared cache',
+  page_title_shared_cache: 'Shared Cache',
   page_title_shared_cache_create: 'Create cache',
   page_title_shared_cache_edit: 'Edit cache',
   page_title_data_discovery: 'Data Discovery',
@@ -410,27 +402,6 @@ export default {
   share_detail_button_table_info: 'Table details',
   share_detail_statistics_time: 'Statistics time',
   share_detail_incremental_time: 'The time point',
-  // 共享緩存
-  shared_cache_placeholder_task_name: 'Please enter the cache task name to search',
-  shared_cache_placeholder_connection_name: 'Please enter the connection name to search',
-  shared_cache_button_create: 'New cache',
-  shared_cache_name: 'Cache name',
-  shared_cache_status: 'Cache status',
-  shared_cache_time: 'Cache time',
-  shared_cache_keys: 'Cache keys',
-  shared_cache_fields: 'Cache fields',
-  shared_cache_code: 'Application code',
-  shared_cache_placeholder_name: 'Please enter the cache name',
-  shared_cache_placeholder_connection: 'Please select a connection',
-  shared_cache_placeholder_table: 'Please select a table',
-  shared_cache_placeholder_keys: 'Please select a cache key',
-  shared_cache_placeholder_fields: 'Please select a cache field',
-  shared_cache_max_memory: 'Maximum memory',
-  shared_cache_keys_tooltip: 'Use this field as the primary key to identify data for caching',
-  shared_cache_fields_tooltip: 'Common fields that need to be cached',
-  shared_cache_max_memory_tooltip:
-    'The maximum amount of memory the system will save, if it exceeds, the least commonly used data will be deleted according to the calling time',
-  shared_cache_code_tooltip: 'You can enter this code in the JS node to use the cache',
   // 设置
   setting_email_template: 'Email template',
   setting_saveSuccess: 'Save successfully, take effect in one minute',
@@ -1861,12 +1832,8 @@ export default {
   daas_external_storage_list_qingshuruwaicun2: 'Please enter the external storage table name',
   daas_external_storage_list_sheweimoren: 'Set as default',
   daas_external_storage_list_cunchulujing: 'Storage path',
-  daas_external_storage_list_waicunbiaoming: 'External storage table name',
-  daas_external_storage_list_waicunleixing: 'External Storage Type',
-  daas_external_storage_list_waicunmingcheng: 'External Storage Name',
   daas_external_storage_list_chuangjianwaicun: 'Create External Storage',
   daas_external_storage_list_bianjiwaicun: 'Edit External Storage',
-  daas_external_storage_list_waicunxinxi: 'External Storage Information',
   daas_external_storage_list_tishi:
     'This external storage has been called by {val1} tasks, please delete or modify the configuration and try again.',
   daas_function_importform_shangchuanwenjianda: 'Upload file size cannot exceed {val1}M',

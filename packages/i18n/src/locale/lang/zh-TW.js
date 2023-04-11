@@ -190,6 +190,7 @@ export default {
   // 任務
   public_task_name: '任務名稱',
   public_task_type: '任務類型',
+  public_task_sync_type: '同步類型',
   public_task_type_migrate: '數據複製',
   public_task_type_sync: '數據開發',
   public_task_type_heartbeat: '心跳任務',
@@ -226,5 +227,12 @@ export default {
   public_milestone_time_consuming: '耗時',
   public_milestone_time_table_structure: '共遷移 {val} 張表結構',
   public_milestone_time_scheduling: ' 任務被調度到{val}',
-  public_milestone_connection_succeeded: ' 連接成功'
+  public_milestone_connection_succeeded: ' 連接成功',
+  // 外存
+  public_external_memory_name: '外存名稱',
+  public_external_memory_configuration: '外存配置',
+  public_external_memory_type: '外存類型',
+  public_external_memory_table: '外存表名',
+  public_external_memory_connection: '外存連接',
+  public_external_memory_info: '外存信息'
 }

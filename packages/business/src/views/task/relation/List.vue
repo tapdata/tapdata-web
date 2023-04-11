@@ -1,16 +1,17 @@
 <template>
   <div class="log-container flex justify-content-between">
-    <div class="flex flex-column pt-5 w-100">
+    <div class="flex flex-column w-100">
       <FilterBar
+        v-if="showFilter"
         v-model="searchParams"
         :items="filterItems"
         :change-route="false"
-        class="ml-2"
+        class="ml-2 pt-3"
         @search="handleFetch"
         @fetch="handleFetch"
       ></FilterBar>
       <VTable
-        :columns="columns"
+        :columns="cols"
         :remoteMethod="remoteMethod"
         :page-options="{
           layout: 'total, ->, prev, pager, next, sizes, jumper'
@@ -18,20 +19,45 @@
         :has-pagination="false"
         ref="table"
         height="100"
-        class="table-list mt-4"
+        class="table-list"
       >
-        <template slot="status" slot-scope="scope">
-          <TaskStatus :task="scope.row" />
+        <template #name="{ row }">
+          <ElLink type="primary" @click="handleName(row)">{{ row.name }}</ElLink>
         </template>
-        <template slot="operation" slot-scope="scope">
+        <template #status="{ row }">
+          <TaskStatus :task="row" />
+        </template>
+        <template #tableNum="{ row }">
           <div class="operate-columns">
-            <ElButton size="mini" type="text" @click="handleDetail(scope.row)">{{
+            <ElButton size="mini" type="text" @click="handleTableNum(row)">{{ row.tableNum }}</ElButton>
+          </div>
+        </template>
+        <template #operation="{ row }">
+          <div class="operate-columns">
+            <ElButton size="mini" type="text" @click="handleMonitor(row)">{{
               $t('packages_business_task_list_button_monitor')
             }}</ElButton>
           </div>
         </template>
       </VTable>
     </div>
+
+    <ElDialog
+      :visible.sync="visible"
+      :title="$t('packages_business_shared_mining_table_wajuebiaoxinxi')"
+      width="1000px"
+      :close-on-click-modal="false"
+      :append-to-body="true"
+      @open="handleOpen"
+    >
+      <SharedMiningTable
+        ref="sharedMiningTable"
+        :task-id="$route.params.id"
+        :params="sharedMiningTableParams"
+        :show-title="false"
+        class="shared-mining-table mt-n5"
+      ></SharedMiningTable>
+    </ElDialog>
   </div>
 </template>
 
@@ -41,24 +67,69 @@ import { TaskStatus } from '@tap/business'
 import { taskApi } from '@tap/api'
 import { openUrl } from '@tap/shared'
 import i18n from '@tap/i18n'
+import { TASK_TYPE_MAP } from '@tap/business'
+import SharedMiningTable from '@tap/business/src/views/shared-mining/Table'
 
 export default {
-  name: 'RelationList',
+  name: 'RelationSharedList',
 
-  components: { VTable, FilterBar, TaskStatus },
+  components: { VTable, FilterBar, TaskStatus, SharedMiningTable },
+
+  props: {
+    type: {
+      type: String,
+      default: 'logCollector'
+    }
+  },
 
   data() {
     return {
+      visible: false,
+      sharedMiningTableParams: {
+        tableTaskId: ''
+      },
       searchParams: {
         type: '',
         status: '',
         keyword: ''
       },
       filterItems: [],
-      columns: [
+      map: {
+        logCollector: {
+          label: i18n.t('packages_business_task_monitor_mining_task'),
+          monitor: 'SharedMiningMonitor'
+        },
+        connHeartbeat: {
+          label: i18n.t('public_task_type_heartbeat'),
+          monitor: 'HeartbeatMonitor'
+        },
+        sync: {
+          label: i18n.t('public_task_type_sync'),
+          monitor: 'TaskMonitor'
+        },
+        migrate: {
+          label: i18n.t('public_task_type_migrate'),
+          monitor: 'MigrationMonitor'
+        },
+        mem_cache: {
+          label: i18n.t('packages_business_relation_list_gongxianghuancun'),
+          monitor: 'SharedCacheMonitor'
+        }
+      }
+    }
+  },
+
+  computed: {
+    showFilter() {
+      return ['migrate', 'sync'].includes(this.type)
+    },
+
+    cols() {
+      const result = [
         {
           label: i18n.t('public_task_name'),
-          prop: 'name'
+          prop: 'name',
+          slotName: 'name'
         },
         {
           label: i18n.t('public_task_type'),
@@ -82,25 +153,96 @@ export default {
           slotName: 'operation',
           width: 100
         }
-      ],
-      map: {
-        logCollector: {
-          label: i18n.t('packages_business_task_monitor_mining_task'),
-          monitor: 'SharedMiningMonitor'
-        },
-        connHeartbeat: {
-          label: i18n.t('public_task_type_heartbeat'),
-          monitor: 'HeartbeatMonitor'
-        },
-        sync: {
-          label: i18n.t('public_task_type_sync'),
-          monitor: 'TaskMonitor'
-        },
-        migrate: {
-          label: i18n.t('public_task_type_migrate'),
-          monitor: 'MigrationMonitor'
-        }
+      ]
+
+      const map = {
+        logCollector: [
+          {
+            label: i18n.t('public_serial_number'),
+            type: 'index'
+          },
+          {
+            label: i18n.t('public_task_name'),
+            prop: 'name',
+            slotName: 'name'
+          },
+          {
+            label: i18n.t('public_task_type'),
+            prop: 'typeLabel',
+            width: 120
+          },
+          {
+            label: i18n.t('public_task_status'),
+            prop: 'status',
+            slotName: 'status',
+            width: 150
+          },
+          {
+            label: i18n.t('public_create_time'),
+            prop: 'createDate',
+            dataType: 'time',
+            default: '-',
+            width: 180
+          },
+          {
+            label: i18n.t('public_task_cdc_time_point'),
+            prop: 'currentEventTimestamp',
+            dataType: 'time',
+            default: '-',
+            width: 180
+          },
+          {
+            label: i18n.t('packages_business_relation_sharedlist_shiyongdewajue'),
+            slotName: 'tableNum',
+            width: 200
+          },
+          {
+            label: i18n.t('public_operation'),
+            slotName: 'operation',
+            width: 100
+          }
+        ],
+        mem_cache: [
+          {
+            label: i18n.t('public_serial_number'),
+            type: 'index'
+          },
+          {
+            label: i18n.t('public_task_name'),
+            prop: 'name',
+            slotName: 'name'
+          },
+          {
+            label: i18n.t('public_task_type'),
+            prop: 'typeLabel',
+            width: 120
+          },
+          {
+            label: i18n.t('public_task_sync_type'),
+            prop: 'syncTypeLabel',
+            width: 120
+          },
+          {
+            label: i18n.t('public_task_status'),
+            prop: 'status',
+            slotName: 'status',
+            width: 150
+          },
+          {
+            label: i18n.t('packages_dag_monitor_topheader_qidongshijian'),
+            prop: 'startTime',
+            dataType: 'time',
+            default: '-',
+            width: 180
+          },
+          {
+            label: i18n.t('public_operation'),
+            slotName: 'operation',
+            width: 100
+          }
+        ]
       }
+      return map[this.type] || result
     }
   },
 
@@ -139,14 +281,24 @@ export default {
 
     remoteMethod() {
       const taskId = this.$route.params.id
-      const { taskRecordId } = this.$route.query || {}
-      const { keyword, type, status } = this.searchParams
+      const { taskRecordId } = this.$route.query || this.$attrs.dataflow || {}
+
       let filter = {
-        keyword,
         taskId,
-        type,
-        status,
         taskRecordId
+      }
+      if (this.showFilter) {
+        const { keyword, type, status } = this.searchParams
+        filter = {
+          keyword,
+          taskId,
+          type,
+          status,
+          taskRecordId
+        }
+      }
+      if (this.type === 'logCollector') {
+        filter.type = 'task_by_collector'
       }
       return taskApi.taskConsoleRelations(filter).then(data => {
         return {
@@ -154,13 +306,43 @@ export default {
           data:
             data.map(t => {
               t.typeLabel = this.map[t.type]?.label
+              t.syncTypeLabel = TASK_TYPE_MAP[t.taskType]
               return t
             }) || []
         }
       })
     },
 
-    handleDetail(row = {}) {
+    handleTableNum(row = {}) {
+      this.sharedMiningTableParams.tableTaskId = row.id
+      this.visible = true
+    },
+
+    handleName({ id, syncType }) {
+      const MAP = {
+        migrate: 'MigrationMonitor',
+        sync: 'TaskMonitor'
+      }
+      const routeUrl = this.$router.resolve({
+        name: MAP[syncType],
+        params: {
+          id
+        }
+      })
+      openUrl(routeUrl.href)
+    },
+
+    handleOpen() {
+      this.$nextTick(() => {
+        this.$refs.sharedMiningTable?.fetch?.()
+      })
+    },
+
+    handleFetch() {
+      this.$refs.table?.fetch(1)
+    },
+
+    handleMonitor(row = {}) {
       const routeUrl = this.$router.resolve({
         name: this.map[row.type]?.monitor,
         params: {
@@ -168,10 +350,6 @@ export default {
         }
       })
       openUrl(routeUrl.href)
-    },
-
-    handleFetch() {
-      this.$refs.table?.fetch(1)
     }
   }
 }
@@ -210,5 +388,8 @@ export default {
       top: 7px;
     }
   }
+}
+.shared-mining-table {
+  height: 350px;
 }
 </style>

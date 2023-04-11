@@ -190,6 +190,7 @@ export default {
   // Task
   public_task_name: 'Task Name',
   public_task_type: 'Task Type',
+  public_task_sync_type: 'Sync Type',
   public_task_type_migrate: 'Data Copy',
   public_task_type_sync: 'Data Development',
   public_task_type_heartbeat: 'Heartbeat Task',
@@ -226,5 +227,12 @@ export default {
   public_milestone_time_consuming: 'time-consuming',
   public_milestone_time_table_structure: 'A total of migration {val} table structure',
   public_milestone_time_scheduling: 'Task is scheduled to {val}',
-  public_milestone_connection_succeeded: 'Connection succeeded'
+  public_milestone_connection_succeeded: 'Connection succeeded',
+  // 外存
+  public_external_memory_name: 'Storage Name',
+  public_external_memory_configuration: 'External storage configuration',
+  public_external_memory_type: 'External memory type',
+  public_external_memory_table: 'External storage table name',
+  public_external_memory_connection: 'External memory connection',
+  public_external_memory_info: 'External storage information'
 }

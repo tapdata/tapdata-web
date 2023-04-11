@@ -1,18 +1,10 @@
 export default {
-  // 通用提示
-  // 通用下拉框
-  // 公共区
   // 通用按钮
   button_reload: '重新加载',
   button_button: '新增',
   // 通用消息
   message_loading: '正在加载',
   message_network_connected: '网络已恢复',
-  // 表格
-  column_connection: '所属连接',
-  column_table: '所属表',
-  // dialog按钮
-  dialog_button_cancel: '取 消',
   dialog_tip_copied: '已复制',
   //页面标题
   page_title_overview: '概览',
@@ -401,29 +393,6 @@ export default {
   share_detail_button_table_info: '表详情',
   share_detail_statistics_time: '统计时间',
   share_detail_incremental_time: '所处的时间点',
-  // 共享缓存
-  shared_cache_placeholder_task_name: '请输入缓存任务名搜索',
-  shared_cache_placeholder_connection_name: '请输入连接名称搜索',
-  shared_cache_button_create: '新建缓存',
-  shared_cache_name: '缓存名称',
-  shared_cache_status: '缓存状态',
-  shared_cache_time: '缓存时间',
-  shared_cache_keys: '缓存键',
-  shared_cache_fields: '缓存字段',
-  shared_cache_code: '应用代码',
-  shared_cache_placeholder_name: '请输入缓存名称',
-  shared_cache_placeholder_connection: '请选择连接',
-  shared_cache_placeholder_table: '请选择表',
-  shared_cache_placeholder_keys: '请选择缓存键',
-  shared_cache_placeholder_fields: '请选择缓存字段',
-  shared_cache_messge_no_table: '找不对所选表模型',
-  shared_cache_max_memory: '缓存最大内存',
-  shared_cache_placeholder_max_memory: '请输入缓存最大内存',
-  shared_cache_placeholder_external_storage: '请选择外存配置',
-  shared_cache_keys_tooltip: '以该字段作为主键识别数据进行缓存',
-  shared_cache_fields_tooltip: '需要进行缓存的常用字段',
-  shared_cache_max_memory_tooltip: '系统会保存的最大内存量，超过则按调用时间，将最不常用的数据删掉',
-  shared_cache_code_tooltip: '可在JS节点中输入这段代码使用该缓存',
   // 设置
   setting_email_template: '邮件模板',
   setting_saveSuccess: '保存成功，一分钟后生效',
@@ -1807,12 +1776,8 @@ export default {
   daas_external_storage_list_qingshuruwaicun2: '请输入外存表名称',
   daas_external_storage_list_sheweimoren: '设为默认',
   daas_external_storage_list_cunchulujing: '存储路径',
-  daas_external_storage_list_waicunbiaoming: '外存表名',
-  daas_external_storage_list_waicunleixing: '外存类型',
-  daas_external_storage_list_waicunmingcheng: '外存名称',
   daas_external_storage_list_chuangjianwaicun: '创建外存',
   daas_external_storage_list_bianjiwaicun: '编辑外存',
-  daas_external_storage_list_waicunxinxi: '外存信息',
   daas_external_storage_list_tishi: '该外存已被 {val1} 个任务调用，请删除或者修改配置后重试',
   daas_function_importform_shangchuanwenjianda: '上传文件大小不能超过 {val1}M',
   daas_login_login_dengluchenggong: '登录成功：',

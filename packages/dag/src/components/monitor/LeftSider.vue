@@ -134,35 +134,22 @@
           <span v-else>0</span>
         </div>
       </div>
-      <div v-if="['logCollector'].includes(dataflow.syncType)" class="info-box">
+
+      <div v-if="['SharedMiningMonitor', 'SharedCacheMonitor'].includes($route.name)" class="info-box">
         <div class="flex justify-content-between mb-2">
           <span class="fw-bold fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_jibenxinxi') }}</span>
         </div>
-        <div class="flex justify-content-between mb-2">
-          <span class="font-color-light">{{ $t('packages_business_relation_details_rizhiwajueshi') }}:</span>
-          <span class="font-color-dark">{{ formatTime(collectorData.logTime) }}</span>
-        </div>
-        <div class="flex justify-content-between mb-2">
-          <span class="font-color-light">{{ $t('packages_business_share_form_setting_log_time') }}:</span>
-          <span class="font-color-dark">{{ collectorData.storageTime }}</span>
-        </div>
-        <div class="flex justify-content-between mb-2">
-          <span class="font-color-light">{{ $t('daas_external_storage_list_waicunmingcheng') }}:</span>
-          <span class="font-color-dark">{{ collectorData.externalStorage.name || '-' }}</span>
-        </div>
-        <div class="flex justify-content-between mb-2">
-          <span class="font-color-light">{{ $t('daas_external_storage_list_waicunleixing') }}:</span>
-          <span class="font-color-dark">{{ typeMapping[collectorData.externalStorage.type] || '-' }}</span>
-        </div>
-        <div class="flex justify-content-between mb-2">
-          <span class="font-color-light">{{ $t('daas_external_storage_list_waicunbiaoming') }}:</span>
-          <span class="font-color-dark">{{ collectorData.externalStorage.table || '-' }}</span>
-        </div>
-        <div class="mb-2">
-          <span class="font-color-light">{{ $t('daas_external_storage_list_waicunxinxi') }}:</span>
-          <div class="text-break mt-1 font-color-dark">{{ collectorData.externalStorage.uri || '-' }}</div>
+        <div
+          v-for="(item, index) in infoList"
+          :key="index"
+          class="mb-2"
+          :class="[item.block ? 'block' : 'flex justify-content-between']"
+        >
+          <div class="font-color-light">{{ item.label }}:</div>
+          <div class="font-color-dark">{{ item.value || '-' }}</div>
         </div>
       </div>
+
       <div class="info-box">
         <div class="flex justify-content-between mb-2">
           <span class="fs-7 fw-sub font-color-normal">{{
@@ -357,7 +344,7 @@ import InitialList from './components/InitialList'
 import dayjs from 'dayjs'
 import { calcTimeUnit, calcUnit } from '@tap/shared'
 import Time from '@tap/shared/src/time'
-import { logcollectorApi } from '@tap/api'
+import { logcollectorApi, sharedCacheApi } from '@tap/api'
 
 export default {
   name: 'LeftSider',
@@ -393,11 +380,13 @@ export default {
       collectorData: {
         externalStorage: {}
       },
+
       typeMapping: {
         mongodb: 'MongoDB',
         rocksdb: 'RocksDB',
         memory: 'MEM'
-      }
+      },
+      infoList: []
     }
   },
 
@@ -531,7 +520,7 @@ export default {
 
   watch: {
     'dataflow.syncType'(v) {
-      v && this.getCollectorData()
+      v && this.getBasicInformation()
     }
   },
 
@@ -598,19 +587,71 @@ export default {
     },
 
     getCollectorData() {
-      if (!['logCollector'].includes(this.dataflow.syncType) || this.collectorData.id) return
       logcollectorApi.getDetail(this.dataflow.id).then(data => {
-        this.collectorData = Object.assign(
+        const { externalStorage = {}, logTime, name } = data
+        this.infoList = [
           {
-            externalStorage: {}
+            label: this.$t('packages_business_relation_details_rizhiwajueshi'),
+            value: this.formatTime(logTime)
           },
-          data
-        )
+          {
+            label: this.$t('public_external_memory_name'),
+            value: externalStorage.name
+          },
+          {
+            label: this.$t('public_external_memory_type'),
+            value: externalStorage.type
+          },
+          {
+            label: this.$t('public_external_memory_table'),
+            value: externalStorage.table
+          },
+          {
+            label: this.$t('public_external_memory_connection'),
+            value: externalStorage.uri,
+            block: true
+          }
+        ]
       })
     },
 
     formatTime(date, f = 'YYYY-MM-DD HH:mm:ss') {
       return date ? dayjs(date).format(f) : '-'
+    },
+
+    getSharedCacheData(id) {
+      sharedCacheApi.findOne(id).then(data => {
+        this.infoList = [
+          {
+            label: i18n.t('packages_dag_monitor_leftsider_huancunkaishishi'),
+            key: ''
+          },
+          {
+            label: i18n.t('public_external_memory_name'),
+            value: data['name']
+          },
+          {
+            label: i18n.t('public_external_memory_type'),
+            key: ''
+          },
+          {
+            label: i18n.t('public_external_memory_table'),
+            value: data['tableName']
+          },
+          {
+            label: i18n.t('public_external_memory_connection'),
+            value: data['connectionName']
+          }
+        ]
+      })
+    },
+
+    async getBasicInformation() {
+      const map = {
+        SharedMiningMonitor: this.getCollectorData,
+        SharedCacheMonitor: this.getSharedCacheData
+      }
+      map[this.$route.name]?.(this.dataflow.id)
     }
   }
 }

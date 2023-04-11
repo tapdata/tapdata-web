@@ -1,18 +1,10 @@
 export default {
-  // 通用提示
-  // 通用下拉框
-  // 公共区
   // 通用按钮
   button_reload: '重新加載schema',
   button_button: '新增',
   // 通用消息
   message_loading: '正在加載',
   message_network_connected: '網絡已恢復',
-  // 表格
-  column_connection: '所屬連接',
-  column_table: '所屬表',
-  // dialog按鈕
-  dialog_button_cancel: '取 消',
   //頁面標題
   page_title_overview: '概覽',
   page_title_dashboard: 'Dashboard',
@@ -398,26 +390,6 @@ export default {
   share_detail_button_table_info: '表詳情',
   share_detail_statistics_time: '統計時間',
   share_detail_incremental_time: '所處的時間點',
-  // 共享緩存
-  shared_cache_placeholder_task_name: '請輸入緩存任務名搜索',
-  shared_cache_placeholder_connection_name: '請輸入連接名稱搜索',
-  shared_cache_button_create: '新建緩存',
-  shared_cache_name: '緩存名稱',
-  shared_cache_status: '緩存狀態',
-  shared_cache_time: '緩存時間',
-  shared_cache_keys: '緩存鍵',
-  shared_cache_fields: '緩存欄位',
-  shared_cache_code: '應用代碼',
-  shared_cache_placeholder_name: '請輸入緩存名稱',
-  shared_cache_placeholder_connection: '請選擇連接',
-  shared_cache_placeholder_table: '請選擇表',
-  shared_cache_placeholder_keys: '請選擇緩存鍵',
-  shared_cache_placeholder_fields: '請選擇緩存欄位',
-  shared_cache_max_memory: '緩存最大內存',
-  shared_cache_keys_tooltip: '以該字段作為主鍵識別數據進行緩存',
-  shared_cache_fields_tooltip: '需要進行緩存的常用字段',
-  shared_cache_max_memory_tooltip: '系統會保存的最大內存量，超過則按調用時間，將最不常用的數據刪掉',
-  shared_cache_code_tooltip: '可在JS節點中輸入這段代碼使用該緩存',
   // 设置
   setting_email_template: '郵件模板',
   setting_saveSuccess: '保存成功，一分鐘後生效',
@@ -1804,12 +1776,8 @@ export default {
   daas_external_storage_list_qingshuruwaicun2: '請輸入外存表名稱',
   daas_external_storage_list_sheweimoren: '設為默認',
   daas_external_storage_list_cunchulujing: '存儲路徑',
-  daas_external_storage_list_waicunbiaoming: '外存表名',
-  daas_external_storage_list_waicunleixing: '外存類型',
-  daas_external_storage_list_waicunmingcheng: '外存名稱',
   daas_external_storage_list_chuangjianwaicun: '創建外存',
   daas_external_storage_list_bianjiwaicun: '編輯外存',
-  daas_external_storage_list_waicunxinxi: '外存信息',
   daas_external_storage_list_tishi: '該外存已被 {val1} 调用，請刪除或修改配置後重試。',
 
   daas_function_importform_shangchuanwenjianda: '上傳文件大小不能超過 {val1}M',

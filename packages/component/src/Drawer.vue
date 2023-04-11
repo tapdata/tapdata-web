@@ -47,6 +47,7 @@ export default {
         if (drawer) {
           if (!drawer.contains(e.target)) {
             this.$emit('update:visible', false)
+            this.$emit('visible', false)
           }
         }
       }

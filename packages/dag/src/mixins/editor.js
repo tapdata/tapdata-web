@@ -1,7 +1,7 @@
 import i18n from '@tap/i18n'
 import { merge } from 'lodash'
 import Mousetrap from 'mousetrap'
-import { databaseTypesApi, taskApi } from '@tap/api'
+import { databaseTypesApi, sharedCacheApi, taskApi } from '@tap/api'
 import { makeStatusAndDisabled } from '@tap/business'
 import { connectorActiveStyle } from '../style'
 import { DEFAULT_SETTINGS, NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH } from '../constants'
@@ -131,6 +131,21 @@ export default {
       const getResourceIns = this.$store.getters['dataflow/getResourceIns']
       const outputsMap = {}
       const inputsMap = {}
+      const { usedShareCache = {} } = this.dataflow?.attrs || {}
+      const sharedCacheRes = await sharedCacheApi.get({
+        filter: JSON.stringify({
+          limit: 1000,
+          where: {
+            name: {
+              $in: Object.keys(usedShareCache)
+            }
+          }
+        })
+      })
+      const sharedCacheMap = sharedCacheRes.items?.reduce(
+        (pre, { id, name, status }) => ({ ...pre, [name]: { id, name, status } }),
+        {}
+      )
 
       edges.forEach(({ source, target }) => {
         let _source = outputsMap[source]
@@ -150,6 +165,8 @@ export default {
       })
 
       nodes.forEach(node => {
+        let sharedCache = []
+
         node.$inputs = inputsMap[node.id] || []
         node.$outputs = outputsMap[node.id] || []
 
@@ -165,6 +182,19 @@ export default {
           value: ins,
           enumerable: false
         })
+
+        for (let key in usedShareCache) {
+          if (usedShareCache[key].includes(node.id)) {
+            const item = sharedCacheMap[key] || {}
+            sharedCache.push({
+              name: key,
+              id: item.id,
+              status: item.status
+            })
+          }
+        }
+        node.attrs.sharedCache = sharedCache
+
         this.addNode(node)
       })
 
