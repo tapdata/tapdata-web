@@ -1047,8 +1047,6 @@ export class Table extends NodeType {
                     title: i18n.t('packages_dag_nodes_table_gengxintiaojianzi'),
                     type: 'array',
                     'x-index': 1,
-                    // required: true,
-                    default: null,
                     description: `{{ !$isDaas ? "${i18n.t(
                       'packages_dag_nodes_table_isDaa_ruguoyuanweimongodb'
                     )}" : ""}}`,
@@ -1065,21 +1063,11 @@ export class Table extends NodeType {
                     'x-reactions': [
                       `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true}, $values.$inputs[0])}}`,
                       {
-                        dependencies: ['$inputs'],
-                        // 源节点连线时，字段值为null并且模型获取到后执行
-                        // when: '{{$deps[0].length && !$self.value && $self.dataSource && $self.dataSource.length}}',
+                        effects: ['onFieldMount'],
                         fulfill: {
-                          run: `$self.validate()`
+                          run: '$self.visible && $self.validate(); console.log("updateConditionFields", $self)'
                         }
                       }
-                      /*{
-                        dependencies: ['$inputs'],
-                        // 断开源节点的连线，如果更新条件为空[],设置值为null（为了下次连线触发设置默认值）
-                        when: '{{!$deps[0].length && $self.value && $self.value.length === 0}}',
-                        fulfill: {
-                          run: `$self.value=null`
-                        }
-                      }*/
                     ],
                     'x-validator': {
                       validator: `{{async (value, rule, ctx) => {

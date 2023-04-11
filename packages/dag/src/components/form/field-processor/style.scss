@@ -60,6 +60,7 @@
     border-radius: 4px;
     .task-form-left {
       padding-top: 8px;
+      width: 200px;
       border-right: 1px solid map-get($borderColor, light);
       .table-name {
         font-size: 12px;
@@ -73,28 +74,27 @@
     }
     .task-form-left__ul {
       flex: 1;
-      max-width: 210px;
       overflow-x: hidden;
       overflow-y: auto;
       li {
         background: map-get($bgColor, white);
-        box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
+        border-left: 2px solid transparent;
         border-bottom: 1px solid map-get($borderColor, light);
         display: flex;
-        padding: 10px 0 10px 10px;
+        padding: 10px;
         &:hover {
           background: map-get($bgColor, disactive);
           cursor: pointer;
-          border-left: 2px solid map-get($color, primary);
+          border-left-color: map-get($color, primary);
         }
         &.active {
           background: map-get($bgColor, disactive);
-          border-left: 2px solid map-get($color, primary);
+          border-left-color: map-get($color, primary);
           cursor: pointer;
         }
         .task-form-text-box {
-          margin-left: 10px;
-          width: 120px;
+          flex: 1;
+          min-width: 0;
           .target {
             font-size: 12px;
             font-weight: 400;
@@ -165,39 +165,47 @@
       line-height: 15px;
     }
   }
-  .field-mapping-table {
-    ::v-deep {
-      .el-table {
-        border: none;
-      }
-      .el-table__empty-block {
-        height: 100% !important;
-      }
-      .el-table__header {
-        .el-table__cell {
-          border-right: 0;
-          &.is-leaf {
-            border-bottom: 0;
-          }
-          &:hover {
-            border-right: 1px solid map-get($borderColor, light);
-          }
-        }
-        th {
-          color: map-get($fontColor, normal);
-          font-weight: 500;
-          white-space: nowrap;
-          background-color: map-get($bgColor, normal);
-        }
-      }
-      .el-table__body {
-        td {
-          color: map-get($fontColor, light);
-        }
-      }
-      &:after {
-        width: 0;
-      }
+
+  .field-mapping-table.el-table {
+    .ck-cell-wrap .cell {
+      padding: 0 !important;
+      text-align: center;
     }
   }
+
+  .table-checkbox-wrap {
+    border-top: 1px solid #ebeef5;
+  }
+
+  .field-search-input-wrap {
+    width: 180px;
+  }
+  /*.el-table__empty-block {
+    height: 100% !important;
+  }
+  .el-table__header {
+    .el-table__cell {
+      border-right: 0;
+      &.is-leaf {
+        border-bottom: 0;
+      }
+      &:hover {
+        border-right: 1px solid map-get($borderColor, light);
+      }
+    }
+    th {
+      color: map-get($fontColor, normal);
+      font-weight: 500;
+      white-space: nowrap;
+      background-color: map-get($bgColor, normal);
+    }
+  }
+  .el-table__body {
+    td {
+      color: map-get($fontColor, light);
+    }
+  }
+  &:after {
+    width: 0;
+  }*/
 }

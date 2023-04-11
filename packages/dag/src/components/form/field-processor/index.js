@@ -1,6 +1,6 @@
 import { debounce } from 'lodash'
 import i18n from '@tap/i18n'
-import { defineComponent, ref, reactive, nextTick, watch } from '@vue/composition-api'
+import { defineComponent, ref, reactive, nextTick, watch, computed } from '@vue/composition-api'
 import { metadataInstancesApi, taskApi } from '@tap/api'
 import { FormItem } from '@tap/form'
 import { useForm } from '@tap/form'
@@ -98,6 +98,19 @@ export const FieldRenameProcessor = defineComponent({
         tableList.value = config.target
       }
     }
+
+    const filterFieldList = computed(() => {
+      const search = config.searchField.trim().toLowerCase()
+      if (search) {
+        return tableList.value.filter(v => {
+          let str = (v.sourceFieldName + '' + v.targetFieldName).toLowerCase()
+          return str.includes(search)
+        })
+      } else {
+        return tableList.value
+      }
+    })
+
     let fieldsMapping = props.value || []
     const restOp = {
       prefix: '',
@@ -392,6 +405,31 @@ export const FieldRenameProcessor = defineComponent({
       )
       return props.disabled ? disabled : show
     }
+
+    const showBatchRemove = computed(() => {
+      return config.checkedFields.some(field => !!field.isShow)
+    })
+
+    const batchRemove = () => {
+      console.log('config.checkedFields', config.checkedFields) // eslint-disable-line
+      config.checkedFields.forEach(field => {
+        field.isShow = false
+        doUpdateField(field, 'del', false)
+      })
+      updateDeletedNum(config.selectTableRow)
+      refs.table?.clearSelection()
+    }
+
+    const batchShow = () => {
+      console.log('config.checkedFields', config.checkedFields) // eslint-disable-line
+      config.checkedFields.forEach(field => {
+        field.isShow = true
+        doUpdateField(field, 'del', true)
+      })
+      updateDeletedNum(config.selectTableRow)
+      refs.table?.clearSelection()
+    }
+
     watch(
       () => root.$store.state.dataflow.transformLoading,
       v => {
@@ -401,10 +439,12 @@ export const FieldRenameProcessor = defineComponent({
         }
       }
     )
+
     loadData()
     return {
       list,
       tableList,
+      filterFieldList,
       config,
       loadData,
       doVisible,
@@ -419,7 +459,10 @@ export const FieldRenameProcessor = defineComponent({
       updateView,
       doOperationRest,
       doSearchField,
-      doSearchTables
+      doSearchTables,
+      batchRemove,
+      batchShow,
+      showBatchRemove
     }
   },
   render() {
@@ -432,14 +475,14 @@ export const FieldRenameProcessor = defineComponent({
                 <ElInput
                   size="mini"
                   placeholder={i18n.t('packages_form_field_mapping_list_qingshurubiaoming')}
-                  suffix-icon="el-icon-search"
+                  prefix-icon="el-icon-search"
                   clearable
                   v-model={this.config.searchTable}
                   onInput={this.doSearchTables}
                 ></ElInput>
               </div>
             </div>
-            <div class="bg-main flex justify-content-between line-height processor-ml-10">
+            <div class="bg-main flex justify-content-between line-height processor-ml-10 table-checkbox-wrap">
               <span>
                 <el-checkbox v-model={this.config.checkAll} onChange={this.doCheckAllChange}></el-checkbox>
                 <span class="table-name ml-2">{i18n.t('packages_form_field_mapping_list_biaoming')}</span>
@@ -511,11 +554,11 @@ export const FieldRenameProcessor = defineComponent({
           </div>
           <div class="main">
             <div class="flex ml-2 text-start justify-content-between" style="margin-bottom: 8px">
-              <div class="flex">
+              <div class="flex field-search-input-wrap">
                 <ElInput
                   size="mini"
                   placeholder={i18n.t('packages_form_field_mapping_list_qingshuruziduan')}
-                  suffix-icon="el-icon-search"
+                  prefix-icon="el-icon-search"
                   clearable
                   v-model={this.config.searchField}
                   onInput={this.doSearchField}
@@ -532,23 +575,54 @@ export const FieldRenameProcessor = defineComponent({
                 >
                   {i18n.t('public_button_bulk_operation')}
                 </ElButton>
+
+                {this.config.checkedFields.length > 0 &&
+                  (this.showBatchRemove ? (
+                    <ElButton
+                      key="batchRemove"
+                      type="text"
+                      class="btn-operation"
+                      onClick={this.batchRemove}
+                      disabled={
+                        (this.config.checkedTables.length === 0 && this.config.checkedFields.length === 0) ||
+                        this.disabled
+                      }
+                    >
+                      {i18n.t('packages_form_field_processor_index_pingbi')}
+                    </ElButton>
+                  ) : (
+                    <ElButton
+                      key="batchShow"
+                      type="text"
+                      class="btn-operation"
+                      onClick={this.batchShow}
+                      disabled={
+                        (this.config.checkedTables.length === 0 && this.config.checkedFields.length === 0) ||
+                        this.disabled
+                      }
+                    >
+                      {i18n.t('packages_form_field_processor_index_huifu')}
+                    </ElButton>
+                  ))}
+
                 <ElButton type="text" class="btn-rest mr-2" disabled={this.disabled} onClick={this.doOperationRest}>
                   {i18n.t('public_button_reset')}
                 </ElButton>
               </div>
             </div>
             <ElTable
-              class="field-mapping-table"
+              class="field-mapping-table border-start-0 border-end-0 border-bottom-0"
               border
               height="100%"
               ref={'table'}
-              data={this.tableList}
+              data={this.filterFieldList}
               v-loading={this.config.loadingTable}
               row-class-name={this.tableRowClassName}
               onSelection-change={this.doSelectionField}
             >
-              <ElTableColumn type="selection" width="55"></ElTableColumn>
+              <ElTableColumn type="selection" width="32" class-name="ck-cell-wrap"></ElTableColumn>
               <ElTableColumn
+                align="center"
                 type="index"
                 width="55"
                 label={i18n.t('packages_form_field_mapping_list_xuhao')}
@@ -562,6 +636,7 @@ export const FieldRenameProcessor = defineComponent({
                 }}
               ></ElTableColumn>
               <ElTableColumn
+                class-name="p-0"
                 show-overflow-tooltip
                 label={i18n.t('packages_form_field_processor_index_xinziduanming')}
                 prop="targetFieldName"
@@ -570,7 +645,7 @@ export const FieldRenameProcessor = defineComponent({
                 }}
               ></ElTableColumn>
               <ElTableColumn
-                show-overflow-tooltip
+                align="center"
                 label={i18n.t('public_operation')}
                 prop="isShow"
                 width={'60px'}
