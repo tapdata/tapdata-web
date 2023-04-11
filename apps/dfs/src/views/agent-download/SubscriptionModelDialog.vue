@@ -5,7 +5,7 @@
     :close-on-press-escape="false"
     :show-close="showClose"
     title="Configure Live Data Platform"
-    width="65%"
+    width="75%"
     :before-close="close"
   >
     <el-tabs v-model="activeName">
@@ -17,8 +17,8 @@
           </el-radio-group>
           <div class="flex">
             <section class="content-left width50">
-              <div class="mt-2 fs-6 fw-sub">在这种模式下, 你提供自己的计算资源和存储资源(如果选择了DaaS 模式).</div>
-              <div class="mt-2 fs-6 fw-sub">使用半托管模式的好处：</div>
+              <div class="mt-2 fw-sub">在这种模式下, 你提供自己的计算资源和存储资源(如果选择了DaaS 模式).</div>
+              <div class="mt-2 fw-sub">使用半托管模式的好处：</div>
               <ul>
                 <li class="mt-2 font-color-light">- 成本更可控, Tapdata 不会收取这部分的费用</li>
                 <li class="mt-2 font-color-light">- 更加安全: 核心的数据不会经过或存到 Tapdata 网络内</li>
@@ -28,8 +28,8 @@
               </ul>
             </section>
             <section class="content-right width50">
-              <div class="mt-2 fs-6 fw-sub">在这种模式下, Tapdata 提供所有的计算及存储资源.</div>
-              <div class="mt-2 fs-6 fw-sub">使用全托管模式的好处：</div>
+              <div class="mt-2 fw-sub">在这种模式下, Tapdata 提供所有的计算及存储资源.</div>
+              <div class="mt-2 fw-sub">使用全托管模式的好处：</div>
               <ul>
                 <li class="mt-2 font-color-light">- 更加方便, 交钥匙方案</li>
                 <li class="mt-2 font-color-light">- 更加可靠,由Tapdata来保障服务的稳定运行，服务更加可靠</li>
@@ -58,14 +58,14 @@
                   <div>(每个Core我们不建议超过2个任务)</div>
                 </div>
                 <div class="value">
-                  <el-radio-group v-model="specification" @change="changeSpec()">
+                  <el-radio-group v-model="specification" @change="changeSpec">
                     <el-radio
                       class="mt-4 block"
                       v-for="(item, index) in specificationItems"
                       :disabled="agentCount > 0 && item.name === '1C2G'"
                       :key="index"
                       :label="item.value"
-                      >{{ specMap[item.name] || item.label }}</el-radio
+                      >{{ specMap[item.name] || item.name }}</el-radio
                     >
                   </el-radio-group>
                 </div>
@@ -73,14 +73,13 @@
               <div class="flex align-items-center mt-8">
                 <div class="label">订阅方式</div>
                 <div class="value">
-                  <ul class="flex justify-content-start">
+                  <ul class="flex justify-content-start flex-wrap">
                     <li
                       v-for="(item, index) in packageItems"
                       :key="index"
-                      class="specification-item cursor-pointer py-2 px-4"
+                      class="specification-item cursor-pointer py-2 px-4 mr-4 mt-4"
                       :class="{
-                        active: selected.value === item.value,
-                        'mr-4': index !== packageItems.length - 1
+                        active: selected.value === item.value
                       }"
                       @click="handleChange(item)"
                     >
@@ -95,7 +94,9 @@
               <ul class="flex flex-1 content">
                 <li class="item">Compute: {{ selected.price }}</li>
               </ul>
-              <div class="total">Total: {{ selected.price }}</div>
+              <div class="total">
+                Total: <span class="price">{{ selected.price }}</span>
+              </div>
             </div>
           </div>
           <footer class="flex justify-content-end mt-4">
@@ -104,7 +105,7 @@
           </footer>
         </section>
         <section v-else>
-          <div class="spec-main">
+          <div class="aliyun-main">
             <VTable
               v-if="codeData.length > 0"
               :columns="columns"
@@ -119,37 +120,46 @@
                 <ElButton type="text" @click="submit(row)">{{ $t('public_button_create') }}</ElButton>
               </template>
             </VTable>
-            <ul class="step mt-4">
-              <li class="flex align-items-center">
-                <span>{{ $t('dfs_aliyun_market_license_dianjidakai') }}</span>
-                <a
-                  class="color-primary text-decoration-underline"
-                  href="https://market.aliyun.com/products/56024006/cmgj00061912.html?spm=5176.730005.result.4.519c3524QzKxHM&innerSource=search_tapdata#sku=yuncode5591200001"
-                  target="_blank"
-                  >{{ $t('dfs_aliyun_market_license_aliyunshichang') }}</a
-                >
-                购买
-              </li>
-              <li>{{ $t('dfs_aliyun_market_license_chuangjianshouquanma') }}</li>
-              <li>{{ $t('dfs_aliyun_market_license_niantiedaoxiafang') }}</li>
-            </ul>
-            <div class="flex mt-4">
-              <span class="label-code mb-2">{{ $t('dfs_aliyun_market_license_shouquanma') }}</span>
-              <el-input v-model="licenseCode" type="textarea" rows="2" autofocus></el-input>
+            <div v-else>
+              <div class="flex justify-content-center align-items-center">
+                <img class="text-center" :src="getAliiyunImg('aliyun-license-code')" />
+              </div>
+              <ul class="step mt-4">
+                <li class="flex align-items-center">
+                  <span>{{ $t('dfs_aliyun_market_license_dianjidakai') }}</span>
+                  <a
+                    class="color-primary text-decoration-underline"
+                    href="https://market.aliyun.com/products/56024006/cmgj00061912.html?spm=5176.730005.result.4.519c3524QzKxHM&innerSource=search_tapdata#sku=yuncode5591200001"
+                    target="_blank"
+                    >{{ $t('dfs_aliyun_market_license_aliyunshichang') }}</a
+                  >
+                  购买
+                </li>
+                <li>{{ $t('dfs_aliyun_market_license_chuangjianshouquanma') }}</li>
+                <li>{{ $t('dfs_aliyun_market_license_niantiedaoxiafang') }}</li>
+              </ul>
+              <div class="flex mt-4">
+                <span class="label-code mb-2">{{ $t('dfs_aliyun_market_license_shouquanma') }}</span>
+                <el-input v-model="licenseCode" type="textarea" rows="2" autofocus></el-input>
+              </div>
+              <el-button class="mt-4" style="margin-left: 65px" type="primary" :loading="saveLoading" @click="save()"
+                >{{ $t('dfs_aliyun_market_license_jihuo') }}并部署</el-button
+              >
             </div>
-            <el-button class="mt-2" style="margin-left: 70px" type="primary" :loading="saveLoading" @click="save()">{{
-              $t('dfs_aliyun_market_license_jihuo')
-            }}</el-button>
           </div>
         </section>
       </el-tab-pane>
       <el-tab-pane label="Review & Confirm" name="third" v-if="productType !== 'aliyun'">
         <div class="flex flex-column review">
-          <div class="mt-4">Configuration Summary</div>
-          <div class="flex-1">
-            <div class="mt-4">计算资源：{{ specMap[specification] || specification }}</div>
-            <div class="mt-4">订阅方式：{{ selected.label }}</div>
-            <div class="mt-4">接收账单的邮箱</div>
+          <div class="flex-1 px-4">
+            <div class="mt-4 fx-6 font-color-dark">Configuration Summary</div>
+            <div class="mt-4 font-color-light">
+              计算资源：<span class="font-color-dark">{{ specMap[currentSpecName] || specification }}</span>
+            </div>
+            <div class="mt-4 font-color-light">
+              订阅方式：<span class="font-color-dark">{{ selected.label }}</span>
+            </div>
+            <div class="mt-4 font-color-light">接收账单的邮箱</div>
             <ElForm class="mt-4" style="width: 520px" :model="form" ref="from">
               <ElFormItem prop="email" :rules="getEmailRules()">
                 <ElInput v-model="form.email" :placeholder="getPlaceholder()"></ElInput>
@@ -158,7 +168,7 @@
           </div>
           <footer class="flex justify-content-end align-items-center mt-4">
             <div class="mr-6">
-              Total: <span>{{ selected.price }}</span>
+              Total: <span class="price">{{ selected.price || 0 }}</span>
             </div>
             <el-button @click="next('second')">Previous</el-button>
             <el-button type="primary" @click="submit()">CONFIRM</el-button>
@@ -223,6 +233,7 @@ export default {
       codeData: [],
       agentCount: 0,
       currentCode: {},
+      currentSpecName: '1C2G',
       columns: [
         {
           type: 'selection'
@@ -273,6 +284,9 @@ export default {
     getImg(name) {
       return require(`../../../public/images/agent/${name}.jpg`)
     },
+    getAliiyunImg(name) {
+      return require(`../../../public/images/dashboard/${name}.svg`)
+    },
     //查询定价列表
     getPrice() {
       const params = {
@@ -318,7 +332,8 @@ export default {
       })
     },
     loadPackageItems() {
-      const specificationLabel = this.specificationItems.find(t => t.value === this.specification)?.label
+      const specificationLabel = this.specificationItems.find(t => t.value === this.specification)?.name
+      this.currentSpecName = specificationLabel
       this.packageItems = this.allPackages
         .filter(t => this.specification === t.specification)
         .map(t => {
@@ -331,7 +346,7 @@ export default {
         .sort((a, b) => {
           return a.order < b.order ? -1 : a.periodUnit < b.periodUnit ? -1 : 1
         })
-      if (specificationLabel === 'min small') {
+      if (specificationLabel === '1C2G') {
         this.packageItems = [
           { label: '连续包月', price: 0, value: '0', chargeProvider: 'FreeTier' },
           { label: '订购一个月', price: 0, value: '1', chargeProvider: 'FreeTier' },
@@ -343,7 +358,7 @@ export default {
     handleChange(item = {}) {
       this.selected = item
     },
-    changeSpec() {
+    changeSpec(val) {
       this.loadPackageItems()
       this.handleChange(this.packageItems[0])
     },
@@ -497,6 +512,10 @@ export default {
   padding: 20px 40px;
   height: 467px;
 }
+.aliyun-main {
+  padding: 20px 40px;
+  height: 541px;
+}
 .width50 {
   width: 50%;
 }
@@ -564,6 +583,11 @@ export default {
 }
 .label-code {
   width: 70px;
+}
+.price {
+  font-weight: 400;
+  font-size: 24px;
+  color: map-get($color, primary);
 }
 .subscript-table {
   ::v-deep {
