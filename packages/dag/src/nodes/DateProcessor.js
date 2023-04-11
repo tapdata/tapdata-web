@@ -1,6 +1,5 @@
 import i18n from '@tap/i18n'
 import { NodeType } from './extends/NodeType'
-import { action } from '@formily/reactive'
 
 export class DateProcessor extends NodeType {
   constructor() {
@@ -48,22 +47,6 @@ export class DateProcessor extends NodeType {
         'x-decorator': 'FormItem',
         'x-decorator-props': {
           asterisk: true
-        },
-        useAsyncDataSourceByConfig: (config, ...serviceParams) => {
-          // withoutField: 不往service方法传field参数
-          const { service, fieldName = 'dataSource', withoutField = false } = config
-          return field => {
-            field.loading = true
-            let fetch = withoutField ? service(...serviceParams) : service(field, ...serviceParams)
-            fetch.then(
-              action.bound(data => {
-                if (fieldName === 'value') {
-                  field.setValue(data)
-                } else field[fieldName] = data
-                field.loading = false
-              })
-            )
-          }
         },
         'x-component': 'Space',
         properties: {
