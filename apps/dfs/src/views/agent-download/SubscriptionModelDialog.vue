@@ -17,11 +17,11 @@
           </el-radio-group>
           <div class="flex">
             <section class="content-left width50">
-              <div class="mt-2 fw-sub">在这种模式下, 你提供自己的计算资源和存储资源(如果选择了DaaS 模式).</div>
+              <div class="mt-2 fw-sub">在这种模式下, 你需要自己提供自己计算资源与存储资源</div>
               <div class="mt-2 fw-sub">使用半托管模式的好处：</div>
               <ul>
-                <li class="mt-2 font-color-light">- 成本更可控, Tapdata 不会收取这部分的费用</li>
-                <li class="mt-2 font-color-light">- 更加安全: 核心的数据不会经过或存到 Tapdata 网络内</li>
+                <li class="mt-2 font-color-light">- 成本更低: 充分利用已有硬件资源, 同样的规格下产品价格低很多</li>
+                <li class="mt-2 font-color-light">- 更加安全: 用户的数据不会经过包括 Tapdata 在内的任意外部网络</li>
                 <li class="img-box mt-4">
                   <el-image :src="getImg('halfManagement')" alt="" />
                 </li>
@@ -31,8 +31,8 @@
               <div class="mt-2 fw-sub">在这种模式下, Tapdata 提供所有的计算及存储资源.</div>
               <div class="mt-2 fw-sub">使用全托管模式的好处：</div>
               <ul>
-                <li class="mt-2 font-color-light">- 更加方便, 交钥匙方案</li>
-                <li class="mt-2 font-color-light">- 更加可靠,由Tapdata来保障服务的稳定运行，服务更加可靠</li>
+                <li class="mt-2 font-color-light">- 更加方便: 免部署, 一键交付使用</li>
+                <li class="mt-2 font-color-light">- 更加可靠: 由 Tapdata 提供资源使用的维护与监控, 运行更可靠</li>
                 <li class="img-box mt-4">
                   <el-image :src="getImg('fullManagement')" alt="" />
                 </li>
@@ -54,24 +54,28 @@
             <div class="flex flex-column flex-1">
               <div class="flex align-items-center">
                 <div class="label">
-                  <div>选择你所需要的计算资源大小</div>
-                  <div>(每个Core我们不建议超过2个任务)</div>
+                  <div class="agent_size">请选择您需要的产品规格</div>
+                  <div class="agent_size_cap">
+                    规格说明: 此规格需要至少 {{ agentSizeCap.mem }} 可用内存, 建议的任务数不超过
+                    {{ agentSizeCap.pipeline }} 个, 预估每秒同步的性能在 {{ agentSizeCap.tps }} 左右
+                  </div>
                 </div>
-                <div class="value">
+                <div class="value agent_plan">
                   <el-radio-group v-model="specification" @change="changeSpec">
                     <el-radio
                       class="mt-4 block"
                       v-for="(item, index) in specificationItems"
-                      :disabled="agentCount > 0 && item.name === '1C2G'"
+                      :disabled="agentCount > 0 && item.chargeProvider === 'FreeTrial'"
                       :key="index"
                       :label="item.value"
-                      >{{ specMap[item.name] || item.name }}</el-radio
+                      >{{ item.name }}: {{ item.desc }}</el-radio
                     >
                   </el-radio-group>
                 </div>
+
               </div>
               <div class="flex align-items-center mt-8">
-                <div class="label">订阅方式</div>
+                <div class="label payment_plan">订阅方式</div>
                 <div class="value">
                   <ul class="flex justify-content-start flex-wrap">
                     <li
@@ -231,11 +235,7 @@ export default {
         email: ''
       },
       specMap: {
-        '1C2G': 'EXTRA SMALL: 1C 2G - FREE(只能创建一个)',
-        '2C4G': 'SMALL: 2C 4G, up to 4 Concurrent Pipelines',
-        '4C8G': 'MEDIUM: 4C 8G, up to 8 Concurrent Pipeliens',
-        '8C16G': 'LARGE: 8C 16G, up to 16 Pipeline',
-        '16C32G': 'EXTRA LARGE: 16C 32G'
+        '1C2G': 'EXTRA SMALL: 1C 2G - FREE(只能创建一个)'
       },
       licenseCode: '',
       saveLoading: false,
@@ -245,6 +245,11 @@ export default {
       hiddenNewCode: false,
       aliyunLoading: false,
       currentSpecName: '1C2G',
+      agentSizeCap: {
+        mem: '-',
+        pipeline: '-',
+        tps: '-'
+      },
       columns: [
         {
           label: i18n.t('dfs_instance_selectlist_shouquanma'),
@@ -302,6 +307,22 @@ export default {
       return require(`../../../public/images/dashboard/${name}.svg`)
     },
     //查询定价列表
+    getSuggestPipelineNumber(cpu, memory) {
+      if (memory == 2) {
+        return 3
+      }
+      if (memory == 4) {
+        return 5
+      }
+      return memory / 0.8
+    },
+    updateAgentCap(cpu, memory) {
+      this.agentSizeCap = {
+        mem: parseInt(memory * 1.1 + 2) + 'G',
+        pipeline: this.getSuggestPipelineNumber(cpu, memory),
+        tps: cpu * 2000
+      }
+    },
     getPrice() {
       const params = {
         productType: this.productType
@@ -312,12 +333,18 @@ export default {
         this.specificationItems = uniqueArr(
           paidPrice.map(t => {
             const { cpu = 0, memory = 0 } = t.spec || {}
+            let desc = '任务数建议小于 ' + this.getSuggestPipelineNumber(cpu, memory) + ' 个'
+            if (t.chargeProvider == 'FreeTier') {
+              desc = '免费实例, 最多允许创建 3 个任务'
+            }
             return {
               label: getSpec(t.spec),
               value: getSpec(t.spec),
               cpu,
               memory,
-              name: cpu + 'C' + memory + 'G'
+              name: t.spec.name.toUpperCase(),
+              chargeProvider: t.chargeProvider,
+              desc: desc,
             }
           }),
           'value'
@@ -346,7 +373,10 @@ export default {
       })
     },
     loadPackageItems() {
+      const specification = this.specificationItems.find(t => t.value === this.specification)
+      this.updateAgentCap(specification.cpu, specification.memory)
       const specificationLabel = this.specificationItems.find(t => t.value === this.specification)?.name
+      const chargeProvider = this.specificationItems.find(t => t.value === this.specification)?.chargeProvider
       this.currentSpecName = specificationLabel
       this.packageItems = this.allPackages
         .filter(t => this.specification === t.specification)
@@ -360,7 +390,7 @@ export default {
         .sort((a, b) => {
           return a.order < b.order ? -1 : a.periodUnit < b.periodUnit ? -1 : 1
         })
-      if (specificationLabel === '1C2G') {
+      if (chargeProvider === 'FreeTier') {
         this.packageItems = [{ label: '永久', price: 0, value: '0', chargeProvider: 'FreeTier' }]
       }
     },
@@ -605,5 +635,21 @@ export default {
       display: none;
     }
   }
+}
+.agent_size {
+  padding-bottom: 50px;
+  font-size: 18px;
+}
+
+.agent_size_cap {
+  line-height: 2;
+}
+.agent_plan {
+  margin-left: 50px;
+}
+.payment_plan {
+  font-size: 16px;
+  padding-top: 20px;
+  color: #2c65ff;
 }
 </style>
