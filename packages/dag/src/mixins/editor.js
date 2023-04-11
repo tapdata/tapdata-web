@@ -1307,7 +1307,15 @@ export default {
       let enable
       let notInWhitelist
       let notAllowTarget
-      let whitelist = ['table', 'database', 'migrate_js_processor', 'js_processor', 'custom_processor']
+      let whitelist = [
+        'table',
+        'database',
+        'migrate_js_processor',
+        'standard_migrate_js_processor',
+        'js_processor',
+        'standard_js_processor',
+        'custom_processor'
+      ]
       const schemaFree = this.$store.state.dataflow.pdkSchemaFreeMap
 
       this.allNodes.some(node => {
