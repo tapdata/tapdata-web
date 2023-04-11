@@ -229,5 +229,8 @@ export default {
   public_milestone_connection_succeeded: ' 连接成功',
   // 外存
   public_external_memory_name: '外存名称',
-  public_external_memory_configuration: '外存配置'
+  public_external_memory_configuration: '外存配置',
+  public_external_memory_type: '外存类型',
+  public_external_memory_table: '外存表名',
+  public_external_memory_connection: '外存表名'
 }
