@@ -211,8 +211,8 @@ export default {
 
     handleName({ id, syncType }) {
       const MAP = {
-        migrate: 'MigrateViewer',
-        sync: 'DataflowViewer'
+        migrate: 'MigrationMonitor',
+        sync: 'TaskMonitor'
       }
       const routeUrl = this.$router.resolve({
         name: MAP[syncType],
