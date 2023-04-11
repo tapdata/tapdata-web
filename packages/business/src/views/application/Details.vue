@@ -2,7 +2,7 @@
   <Drawer
     v-loading="loading"
     class="shared-cache-details"
-    :visible.sync="drawerVisible"
+    :visible.sync="visible"
     width="800px"
     v-bind="$attrs"
     @visible="handleVisible"
@@ -25,26 +25,18 @@
 
 <script>
 import i18n from '@tap/i18n'
-import { sharedCacheApi, appApi, modulesApi } from '@tap/api'
+import { modulesApi } from '@tap/api'
 import { Drawer, VTable } from '@tap/component'
-import { TaskStatus } from '@tap/business'
 
 export default {
   name: 'Details',
 
-  components: { Drawer, VTable, TaskStatus },
-
-  props: {
-    visible: {
-      required: true,
-      value: Boolean
-    }
-  },
+  components: { Drawer, VTable },
 
   data() {
     return {
       loading: false,
-      drawerVisible: false,
+      visible: false,
       details: {
         value: '',
         desc: ''
@@ -70,27 +62,21 @@ export default {
     }
   },
 
-  watch: {
-    visible(v) {
-      this.drawerVisible = v
-    }
-  },
-
   methods: {
     getData(id, data) {
       this.taskId = id
       this.details = data
+      this.visible = true
       this.$nextTick(() => {
         this.$refs.table?.fetch()
       })
     },
 
-    handleVisible(val) {
-      this.$emit('update:visible', val)
+    handleVisible() {
+      this.visible = false
     },
 
     remoteMethod({ page }) {
-      console.log('remoteMethod', this.taskId)
       let { current, size } = page
       let where = {}
       let filter = {
@@ -123,10 +109,11 @@ export default {
         .then(data => {
           return {
             total: 0,
-            data: data?.items.map(t => {
-              t.statusFmt = statusOptions.find(it => it.value === t.status)?.label || '-'
-              return t
-            }) || []
+            data:
+              data?.items.map(t => {
+                t.statusFmt = statusOptions.find(it => it.value === t.status)?.label || '-'
+                return t
+              }) || []
           }
         })
     }

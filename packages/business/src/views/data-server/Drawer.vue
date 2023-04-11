@@ -70,6 +70,18 @@
           </ElSelect>
         </ElFormItem>
 
+        <ElFormItem class="flex-1 mt-4" size="small" label="所属应用" prop="kennen">
+          <AsyncSelect
+            v-model="form.appValue"
+            :method="getAppList"
+            item-label="value"
+            item-value="id"
+            filterable
+            @change="handleChange"
+          >
+          </AsyncSelect>
+        </ElFormItem>
+
         <!-- 基础信息 -->
         <ul v-if="tab === 'form'" class="flex flex-wrap bg-main p-2 mt-4 rounded-1">
           <li class="data-server-form-base__item">
@@ -437,11 +449,11 @@
 </template>
 
 <script>
-import i18n from '@/i18n'
-
 import axios from 'axios'
 import { cloneDeep } from 'lodash'
 
+import i18n from '@/i18n'
+import { AsyncSelect } from '@tap/form'
 import {
   databaseTypesApi,
   connectionsApi,
@@ -449,7 +461,8 @@ import {
   modulesApi,
   applicationApi,
   roleApi,
-  workerApi
+  workerApi,
+  appApi
 } from '@tap/api'
 import { Drawer, VCodeEditor } from '@tap/component'
 import { uid } from '@tap/shared'
@@ -457,7 +470,7 @@ import { uid } from '@tap/shared'
 import getTemplate from './template'
 
 export default {
-  components: { Drawer, VCodeEditor },
+  components: { Drawer, VCodeEditor, AsyncSelect },
   props: {
     host: String
   },
@@ -496,7 +509,9 @@ export default {
         apiVersion: 'v1',
         prefix: '',
         basePath: '',
-        acl: ['admin']
+        acl: ['admin'],
+        appValue: '',
+        appLabel: ''
       },
       tab: 'form',
       isEdit: false,
@@ -527,7 +542,8 @@ export default {
         param: [{ required: true, validator: validateParams, trigger: ['blur', 'change'] }],
         basePath: [{ required: true, validator: validateBasePath, trigger: ['blur', 'change'] }],
         prefix: [{ required: false, validator: validatePrefix, trigger: ['blur', 'change'] }],
-        apiVersion: [{ required: true, validator: validateBasePath, trigger: ['blur', 'change'] }]
+        apiVersion: [{ required: true, validator: validateBasePath, trigger: ['blur', 'change'] }],
+        appValue: [{ required: true, message: '请选择所属应用', trigger: ['blur', 'change'] }]
       },
       apiTypeMap: {
         defaultApi: i18n.t('packages_business_data_server_drawer_morenchaxun'),
@@ -554,7 +570,11 @@ export default {
       token: '',
       roles: [],
       workerStatus: '',
-      intervalId: 0
+      intervalId: 0,
+      appData: {
+        label: '',
+        value: ''
+      }
     }
   },
   computed: {
@@ -639,9 +659,15 @@ export default {
         basePath,
         apiVersion,
         prefix,
-        pathAccessMethod
+        pathAccessMethod,
+        listtags
       } = formData
       // 若为新建时，则默认值为 ‘默认查询(defaultApi)’ 的值
+
+      const appData = listtags?.[0] || {}
+      const appValue = appData.appValue
+      const appLabel = appData.appLabel
+
       let apiType = formData?.apiType || 'defaultApi'
       this.data = {
         status: status || 'generating', // generating,pending,active
@@ -762,7 +788,9 @@ export default {
             connectionName,
             apiVersion,
             prefix,
-            pathAccessMethod
+            pathAccessMethod,
+            appLabel,
+            appValue
           } = this.form
           // basePath
           if (basePath && basePath !== '') {
@@ -793,7 +821,12 @@ export default {
             apiVersion: apiVersion, // 冗余老字段
             prefix: prefix,
             pathAccessMethod: pathAccessMethod, // 冗余老字段
-            listtags: [], // 冗余老字段
+            listtags: [
+              {
+                id: appValue,
+                value: appLabel
+              }
+            ], // 冗余老字段
 
             paths: [
               {
@@ -904,7 +937,12 @@ export default {
     async getFields() {
       this.fieldLoading = true
       let filter = {
-        where: { 'source.id': this.form.connectionId, original_name: this.form.tableName, is_deleted: false, sourceType: 'SOURCE' }
+        where: {
+          'source.id': this.form.connectionId,
+          original_name: this.form.tableName,
+          is_deleted: false,
+          sourceType: 'SOURCE'
+        }
       }
       const data = await metadataInstancesApi
         .get({
@@ -1075,6 +1113,26 @@ export default {
         .finally(() => {
           this.intervalId = setTimeout(this.getWorkers, 2000)
         })
+    },
+
+    async getAppList(filter = {}) {
+      const { page, size } = filter
+      const params = {
+        where: {
+          item_type: 'app'
+        },
+        order: 'createTime DESC',
+        limit: size,
+        skip: (page - 1) * size
+      }
+      return await appApi.get({
+        filter: JSON.stringify(params)
+      })
+    },
+
+    handleChange(val, opt) {
+      const { label } = opt
+      this.form.appLabel = label
     }
   }
 }

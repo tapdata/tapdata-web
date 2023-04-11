@@ -43,7 +43,7 @@
     </TablePage>
 
     <Editor ref="editor" :task-id="editForm.id" :visible.sync="editVisible" @success="table.fetch(1)"></Editor>
-    <Details ref="details" :visible.sync="detailsVisible" width="380px"></Details>
+    <Details ref="details" width="380px"></Details>
   </section>
 </template>
 
@@ -110,8 +110,7 @@ export default {
       taskBuried: {
         start: 'sharedMiningStart'
       },
-      editVisible: false,
-      detailsVisible: false
+      editVisible: false
     }
   },
   mounted() {
@@ -321,7 +320,6 @@ export default {
 
     handleDetails(row = {}) {
       this.$refs.details.getData(row.id, row)
-      this.detailsVisible = true
     },
 
     handleDelete(row = {}) {
