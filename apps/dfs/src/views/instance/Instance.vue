@@ -6,7 +6,7 @@
           <FilterBar v-model="searchParams" :items="filterItems" @search="search" @fetch="fetch"></FilterBar>
         </div>
         <div class="instance-operation-right">
-          <ElButton type="primary" @click="subscriptionModelVisible = true" :disabled="$disabledReadonlyUserBtn()">
+          <ElButton type="primary" @click="handleCreateAgent" :disabled="$disabledReadonlyUserBtn()">
             <span>{{ $t('public_agent_button_create') }}</span>
           </ElButton>
         </div>
@@ -925,6 +925,10 @@ export default {
           })
         })
         .catch(() => {})
+    },
+    handleCreateAgent() {
+      this.subscriptionModelVisible = true
+      this.buried('newAgentStripeDialog')
     },
     // 创建Agent
     async createAgent() {

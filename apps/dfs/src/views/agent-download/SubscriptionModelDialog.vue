@@ -104,22 +104,25 @@
             <el-button type="primary" @click="next('third')">Next</el-button>
           </footer>
         </section>
-        <section v-else>
+        <section v-else v-loading="aliyunLoading">
           <div class="aliyun-main">
-            <VTable
-              v-if="codeData.length > 0"
-              :columns="columns"
-              :data="codeData"
-              :has-pagination="false"
-              ref="tables"
-              class="subscript-table"
-              max-height="280px"
-              @selection-change="handleSelectionChange"
-            >
-              <template #operation="{ row }">
-                <ElButton type="text" @click="submit(row)">{{ $t('public_button_create') }}</ElButton>
-              </template>
-            </VTable>
+            <div v-if="hiddenNewCode">
+              <VTable
+                :columns="columns"
+                :data="codeData"
+                :has-pagination="false"
+                ref="tables"
+                class="subscript-table"
+                max-height="280px"
+              >
+                <template #operation="{ row }">
+                  <ElButton type="text" @click="submit(row)">{{
+                    $t('public_button_create') + ' ' + $t('public_agent')
+                  }}</ElButton>
+                </template>
+              </VTable>
+              <div class="mt-4 cursor-pointer color-primary" @click="handleNewCode(false)">激活新授权码</div>
+            </div>
             <div v-else>
               <div class="flex justify-content-center align-items-center">
                 <img class="text-center" :src="getAliiyunImg('aliyun-license-code')" />
@@ -144,6 +147,12 @@
               </div>
               <el-button class="mt-4" style="margin-left: 65px" type="primary" :loading="saveLoading" @click="save()"
                 >{{ $t('dfs_aliyun_market_license_jihuo') }}并部署</el-button
+              >
+              <span
+                v-if="codeData.length > 0"
+                class="ml-4 mt-4 cursor-pointer font-color-light"
+                @click="handleNewCode(true)"
+                >您有已激活未绑定的授权码，点击创建实例</span
               >
             </div>
           </div>
@@ -233,11 +242,10 @@ export default {
       codeData: [],
       agentCount: 0,
       currentCode: {},
+      hiddenNewCode: false,
+      aliyunLoading: false,
       currentSpecName: '1C2G',
       columns: [
-        {
-          type: 'selection'
-        },
         {
           label: i18n.t('dfs_instance_selectlist_shouquanma'),
           prop: 'licenseCode',
@@ -254,6 +262,12 @@ export default {
         {
           label: i18n.t('dfs_instance_selectlist_bangdingshilizhuang'),
           prop: 'bindAgent'
+        },
+        {
+          label: i18n.t('public_operation'),
+          prop: 'operation',
+          slotName: 'operation',
+          width: 120
         }
       ]
     }
@@ -375,7 +389,7 @@ export default {
         : i18n.t('dfs_instance_create_kexuan')
     },
     //提交订单
-    submit() {
+    submit(row = {}) {
       const { type, priceId, currency, chargeProvider } = this.selected
       const { email } = this.form
 
@@ -391,7 +405,7 @@ export default {
         params = {
           agentType: 'Local',
           chargeProvider: 'Aliyun',
-          licenseId: this.currentCode?.id
+          licenseId: row?.id
         }
       } else {
         params = {
@@ -445,6 +459,9 @@ export default {
       this.close()
     },
     //激活
+    handleNewCode(val) {
+      this.hiddenNewCode = val
+    },
     save() {
       this.saveLoading = true
       this.buried('activateAliyunCode')
@@ -452,11 +469,7 @@ export default {
         .post('api/tcm/aliyun/market/license/activate', { licenseCode: this.licenseCode })
         .then(data => {
           if (data.licenseStatus === 'ACTIVATED') {
-            this.currentCode = data
-            this.currentCode.expiredTime = this.currentCode.expiredTime
-              ? dayjs(this.currentCode.expiredTime).format('YYYY-MM-DD')
-              : '-'
-            this.submit()
+            this.submit(data)
             this.buried('activateAliyunCode', '', {
               result: true
             })
@@ -477,24 +490,25 @@ export default {
         })
     },
     getAvailableCode() {
-      this.$axios.get('api/tcm/aliyun/market/license/available').then(data => {
-        this.codeData =
-          data.map((t = {}) => {
-            t.bindAgent = t.agentId
-              ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
-              : i18n.t('user_Center_weiBangDing')
-            t.specLabel = getSpec(t.spec)
-            t.expiredTimeLabel = t.expiredTime ? dayjs(t.expiredTime).format('YYYY-MM-DD') : '-'
-            return t
-          }) || []
-      })
-    },
-    handleSelectionChange(rows) {
-      if (rows.length > 1) {
-        this.$refs?.tables?.$children?.[0]?.clearSelection()
-        this.$refs?.tables?.$children?.[0]?.toggleRowSelection(rows.pop())
-      }
-      this.currentCode = rows.pop()
+      this.aliyunLoading = true
+      this.$axios
+        .get('api/tcm/aliyun/market/license/available')
+        .then(data => {
+          this.codeData =
+            data.map((t = {}) => {
+              t.bindAgent = t.agentId
+                ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
+                : i18n.t('user_Center_weiBangDing')
+              t.specLabel = getSpec(t.spec)
+              t.expiredTimeLabel = t.expiredTime ? dayjs(t.expiredTime).format('YYYY-MM-DD') : '-'
+              return t
+            }) || []
+          this.hiddenNewCode = this.codeData?.length > 0
+          this.aliyunLoading = false
+        })
+        .finally(() => {
+          this.aliyunLoading = false
+        })
     }
   }
 }
