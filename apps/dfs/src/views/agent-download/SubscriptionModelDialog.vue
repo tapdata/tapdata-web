@@ -353,7 +353,7 @@ export default {
     handleChange(item = {}) {
       this.selected = item
     },
-    changeSpec(val) {
+    changeSpec() {
       this.loadPackageItems()
       this.handleChange(this.packageItems[0])
     },
@@ -456,7 +456,7 @@ export default {
             this.currentCode.expiredTime = this.currentCode.expiredTime
               ? dayjs(this.currentCode.expiredTime).format('YYYY-MM-DD')
               : '-'
-            this.finish()
+            this.submit()
             this.buried('activateAliyunCode', '', {
               result: true
             })
@@ -487,7 +487,6 @@ export default {
             t.expiredTimeLabel = t.expiredTime ? dayjs(t.expiredTime).format('YYYY-MM-DD') : '-'
             return t
           }) || []
-        this.codeTotal = data.length
       })
     },
     handleSelectionChange(rows) {
