@@ -1060,8 +1060,9 @@ export default {
           `api/tcm/paid/plan/paidSubscribe?filter=${encodeURIComponent(JSON.stringify({ sort: ['createAt desc'] }))}`
         )
         .then(data => {
-          const items = data.items || []
-          //
+          let items = data.items || []
+          //过滤 invild
+          items = items.filter(it => it.status !== 'invalid')
           return {
             total: 0,
             data:
