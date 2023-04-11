@@ -2,7 +2,7 @@ import i18n from '@tap/i18n'
 import { action } from '@formily/reactive'
 import { mapGetters, mapState } from 'vuex'
 import { merge, isEqual } from 'lodash'
-import { connectionsApi, metadataInstancesApi, clusterApi, proxyApi } from '@tap/api'
+import { connectionsApi, metadataInstancesApi, clusterApi, proxyApi, databaseTypesApi } from '@tap/api'
 import { externalStorageApi } from '@tap/api'
 import { isPlainObj } from '@tap/shared'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
@@ -405,6 +405,11 @@ export default {
 
         useFieldDateType: id => {
           return field => {
+            if (!id) {
+              field.value = []
+              return
+            }
+
             field.loading = true
             this.scope.loadDateFieldOptions(id).then(
               action.bound(data => {
@@ -414,6 +419,38 @@ export default {
                 if (!field.value?.length) field.value = data
               })
             )
+          }
+        },
+
+        usePdkFieldDateType: () => {
+          return async field => {
+            const $values = field.form.values
+            const [parent] = this.scope.findParentNodes($values.id)
+
+            if (!parent) {
+              field.value = []
+              return
+            }
+
+            try {
+              field.loading = true
+              const pdk = await databaseTypesApi.pdkHash(parent.attrs.pdkHash)
+              const expression = JSON.parse(pdk.expression)
+              const dataTypes = Object.keys(expression).filter(key => {
+                const { to } = expression[key]
+                return to === 'TapDateTime' || to === 'TapTime'
+              })
+              const handleBatch = action.bound(data => {
+                field.dataSource = data
+                field.loading = false
+
+                if (!field.value?.length) field.value = data
+              })
+              handleBatch(dataTypes)
+            } catch (e) {
+              field.loading = false
+              console.error(e) // eslint-disable-line
+            }
           }
         },
 

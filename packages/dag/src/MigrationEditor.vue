@@ -214,6 +214,10 @@ export default {
           name: i18n.t('packages_dag_src_migrationeditor_jSchuli'),
           type: 'migrate_js_processor',
           beta: true
+        },
+        {
+          name: '时间运算',
+          type: 'migrate_date_processor'
         }
       ])
       this.addResourceIns(allResourceIns)

@@ -1,12 +1,12 @@
 import i18n from '@tap/i18n'
 import { NodeType } from './extends/NodeType'
 
-export class DateProcessor extends NodeType {
+export class MigrateDateProcessor extends NodeType {
   constructor() {
     super()
   }
 
-  type = 'date_processor'
+  type = 'migrate_date_processor'
 
   maxInputs = 1 // 最大输入个数
   maxOutputs = 1 // 最大输出个数
@@ -36,7 +36,7 @@ export class DateProcessor extends NodeType {
         'x-component-props': {
           multiple: true
         },
-        'x-reactions': [`{{useFieldDateType($values.$inputs[0])}}`]
+        'x-reactions': [`{{usePdkFieldDateType($values.$inputs[0])}}`]
       },
       space: {
         type: 'void',
