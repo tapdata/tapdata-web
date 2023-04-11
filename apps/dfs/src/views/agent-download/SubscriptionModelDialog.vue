@@ -3,48 +3,50 @@
     :visible.sync="visible"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
-    :show-close="showClose || true"
+    :show-close="showClose"
     title="Configure Live Data Platform"
-    width="75%"
+    width="65%"
     :before-close="close"
   >
-    <el-tabs v-model="activeName" @change="changeTabs">
+    <el-tabs v-model="activeName">
       <el-tab-pane label="Select Deployment Type" name="first">
         <div class="configure-main">
           <el-radio-group class="flex mb-4" v-model="productType">
-            <el-radio class="width50 font-weight-bold" label="selfHost">半托管模式</el-radio>
-            <el-radio class="font-weight-bold" label="fullManagement" disabled>全托管模式</el-radio>
+            <el-radio class="width50 fs-6 fw-sub" label="selfHost">半托管模式</el-radio>
+            <el-radio class="fs-6 fw-sub" label="fullManagement" disabled>全托管模式 (即将上线)</el-radio>
           </el-radio-group>
           <div class="flex">
             <section class="content-left width50">
-              <div class="mt-2">在这种模式下, 你提供自己的计算资源和存储资源(如果选择了DaaS 模式).</div>
-              <div class="mt-2">使用半托管模式的好处：</div>
+              <div class="mt-2 fs-6 fw-sub">在这种模式下, 你提供自己的计算资源和存储资源(如果选择了DaaS 模式).</div>
+              <div class="mt-2 fs-6 fw-sub">使用半托管模式的好处：</div>
               <ul>
-                <li class="mt-2">- 成本更可控, Tapdata 不会收取这部分的费用</li>
-                <li class="mt-2">- 更加安全: 核心的数据不会经过或存到 Tapdata 网络内</li>
+                <li class="mt-2 font-color-light">- 成本更可控, Tapdata 不会收取这部分的费用</li>
+                <li class="mt-2 font-color-light">- 更加安全: 核心的数据不会经过或存到 Tapdata 网络内</li>
                 <li class="img-box mt-4">
                   <el-image :src="getImg('halfManagement')" alt="" />
                 </li>
               </ul>
             </section>
             <section class="content-right width50">
-              <div class="mt-2">在这种模式下, Tapdata 提供所有的计算及存储资源.</div>
-              <div class="mt-2">使用全托管模式的好处：</div>
+              <div class="mt-2 fs-6 fw-sub">在这种模式下, Tapdata 提供所有的计算及存储资源.</div>
+              <div class="mt-2 fs-6 fw-sub">使用全托管模式的好处：</div>
               <ul>
-                <li class="mt-2">- 更加方便, 交钥匙方案</li>
-                <li class="mt-2">- 更加可靠,由Tapdata来保障服务的稳定运行，服务更加可靠</li>
+                <li class="mt-2 font-color-light">- 更加方便, 交钥匙方案</li>
+                <li class="mt-2 font-color-light">- 更加可靠,由Tapdata来保障服务的稳定运行，服务更加可靠</li>
                 <li class="img-box mt-4">
                   <el-image :src="getImg('fullManagement')" alt="" />
                 </li>
               </ul>
             </section>
           </div>
-          <el-link @click="changeProductType">直接使用阿里云市场授权码</el-link>
-          <footer class="flex justify-content-end">
-            <el-button type="primary" @click="next('second')">Next</el-button>
-          </footer>
-          <el-link class="flex justify-content-center">依然不知道如何选择? 点击 这里 了解更多的区别</el-link>
+          <el-link type="primary" @click="changeProductType">直接使用阿里云市场授权码</el-link>
+          <span class="ml-4"
+            >依然不知道如何选择? <span class="color-primary cursor-pointer">点击这里</span>了解更多的区别</span
+          >
         </div>
+        <footer class="flex justify-content-end">
+          <el-button type="primary" @click="next('second')">Next</el-button>
+        </footer>
       </el-tab-pane>
       <el-tab-pane label="Configure Deployment Spec" name="second">
         <section v-if="productType !== 'aliyun'">
@@ -60,10 +62,10 @@
                     <el-radio
                       class="mt-4 block"
                       v-for="(item, index) in specificationItems"
-                      :disabled="agentCount > 0 && item.label === 'min small'"
+                      :disabled="agentCount > 0 && item.name === '1C2G'"
                       :key="index"
                       :label="item.value"
-                      >{{ specMap[item.label] || item.label }}</el-radio
+                      >{{ specMap[item.name] || item.label }}</el-radio
                     >
                   </el-radio-group>
                 </div>
@@ -126,6 +128,7 @@
                   target="_blank"
                   >{{ $t('dfs_aliyun_market_license_aliyunshichang') }}</a
                 >
+                购买
               </li>
               <li>{{ $t('dfs_aliyun_market_license_chuangjianshouquanma') }}</li>
               <li>{{ $t('dfs_aliyun_market_license_niantiedaoxiafang') }}</li>
@@ -138,16 +141,12 @@
               $t('dfs_aliyun_market_license_jihuo')
             }}</el-button>
           </div>
-          <footer class="flex justify-content-end mt-4">
-            <el-button @click="next('first')">Previous</el-button>
-            <el-button type="primary" @click="next('third')">Next</el-button>
-          </footer>
         </section>
       </el-tab-pane>
-      <el-tab-pane label="Review & Confirm" name="third">
+      <el-tab-pane label="Review & Confirm" name="third" v-if="productType !== 'aliyun'">
         <div class="flex flex-column review">
           <div class="mt-4">Configuration Summary</div>
-          <div class="flex-1" v-if="productType !== 'aliyun'">
+          <div class="flex-1">
             <div class="mt-4">计算资源：{{ specMap[specification] || specification }}</div>
             <div class="mt-4">订阅方式：{{ selected.label }}</div>
             <div class="mt-4">接收账单的邮箱</div>
@@ -157,13 +156,8 @@
               </ElFormItem>
             </ElForm>
           </div>
-          <div class="flex-1" v-else>
-            <div class="mt-4" v-if="currentCode.spec">计算资源：{{ specMap[currentCode.spec.name] }}</div>
-            <div class="mt-4">授权码：{{ currentCode.licenseCode }}</div>
-            <div class="mt-4">到期时间：{{ currentCode.expiredTime }}</div>
-          </div>
           <footer class="flex justify-content-end align-items-center mt-4">
-            <div class="mr-6" v-if="productType !== 'aliyun'">
+            <div class="mr-6">
               Total: <span>{{ selected.price }}</span>
             </div>
             <el-button @click="next('second')">Previous</el-button>
@@ -218,11 +212,11 @@ export default {
         email: ''
       },
       specMap: {
-        'min small': 'EXTRA SMALL: 1C 2G - FREE(只能创建一个)',
-        Small: 'SMALL: 2C 4G, up to 4 Concurrent Pipelines',
-        Medium: 'MEDIUM: 4C 8G, up to 8 Concurrent Pipeliens',
-        Large: 'LARGE: 8C 16G, up to 16 Pipeline tssks',
-        '2Large': 'EXTRA LARGE: 16C 32G'
+        '1C2G': 'EXTRA SMALL: 1C 2G - FREE(只能创建一个)',
+        '2C4G': 'SMALL: 2C 4G, up to 4 Concurrent Pipelines',
+        '4C8G': 'MEDIUM: 4C 8G, up to 8 Concurrent Pipeliens',
+        '8C16G': 'LARGE: 8C 16G, up to 16 Pipeline',
+        '16C32G': 'EXTRA LARGE: 16C 32G'
       },
       licenseCode: '',
       saveLoading: false,
@@ -269,11 +263,6 @@ export default {
       this.activeName = 'second'
       this.getAvailableCode()
     },
-    changeTabs() {
-      if ((this.activeName = 'second' && this.productType === 'aliyun')) {
-        this.getAvailableCode()
-      }
-    },
     checkAgentCount() {
       let filter = { where: { 'orderInfo.chargeProvider': 'FreeTier' } }
       this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
@@ -299,15 +288,14 @@ export default {
               label: getSpec(t.spec),
               value: getSpec(t.spec),
               cpu,
-              memory
+              memory,
+              name: cpu + 'C' + memory + 'G'
             }
           }),
           'value'
-        )
-          .sort((a, b) => {
-            return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
-          })
-          .filter(it => !['XLarge', '4Large'].includes(it.label)) //过滤不需要的规格
+        ).sort((a, b) => {
+          return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
+        })
         this.specification = this.agentCount > 0 ? this.specificationItems[1]?.value : this.specificationItems[0]?.value
         // 价格套餐
         this.allPackages = paidPrice.map(t => {
@@ -458,7 +446,6 @@ export default {
               ? dayjs(this.currentCode.expiredTime).format('YYYY-MM-DD')
               : '-'
             this.$message.success(i18n.t('dfs_aliyun_market_license_jihuochenggongS'))
-            this.activeName = 'third'
             this.buried('activateAliyunCode', '', {
               result: true
             })
@@ -504,18 +491,18 @@ export default {
 
 <style scoped lang="scss">
 .configure-main {
-  padding: 20px 40px;
+  padding: 20px 40px 0 40px;
 }
 .spec-main {
   padding: 20px 40px;
-  // height: 544px;
+  height: 467px;
 }
 .width50 {
   width: 50%;
 }
 .img-box {
   width: 400px;
-  height: 330px;
+  height: 310px;
   img {
     width: 100%;
     height: 100%;
@@ -559,7 +546,7 @@ export default {
   border-top: 1px solid map-get($borderColor, normal);
 }
 .review {
-  height: 400px;
+  height: 541px;
 }
 .specification-item {
   border: 1px solid map-get($borderColor, normal);

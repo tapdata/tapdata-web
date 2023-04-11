@@ -380,9 +380,7 @@ export default {
     },
     //windows 下载
     handleDownLoadApplication() {
-      this.$axios.get('api/tcm/agent/' + this.$route.query?.id).then(async data => {
-        console.log(data)
-      })
+      window.location = window.origin + '/api/tcm/agent/' + this.$route.query?.id + '/config'
     },
     // 选择下载安装类型
     chooseDownLoadType(val) {
