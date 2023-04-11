@@ -3,11 +3,12 @@
     :visible.sync="visible"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
+    :show-close="showClose || true"
     title="Configure Live Data Platform"
     width="75%"
     :before-close="close"
   >
-    <el-tabs v-model="activeName">
+    <el-tabs v-model="activeName" @change="changeTabs">
       <el-tab-pane label="Select Deployment Type" name="first">
         <div class="configure-main">
           <el-radio-group class="flex mb-4" v-model="productType">
@@ -181,7 +182,6 @@ import { getPaymentMethod, getSpec } from '../instance/utils'
 import { CURRENCY_SYMBOL_MAP, TIME_MAP } from '@tap/business'
 import i18n from '@/i18n'
 import { dayjs } from '@tap/business/src/shared/dayjs'
-import Cookie from '@tap/shared/src/cookie'
 
 export default {
   name: 'subscriptionModelDialog',
@@ -190,6 +190,18 @@ export default {
   props: {
     visible: {
       type: Boolean
+    },
+    showClose: {
+      type: Boolean,
+      default: true
+    }
+  },
+  watch: {
+    visible(val) {
+      if (val) {
+        this.checkAgentCount()
+        this.activeName = 'first'
+      }
     }
   },
   data() {
@@ -256,6 +268,11 @@ export default {
       this.productType = 'aliyun'
       this.activeName = 'second'
       this.getAvailableCode()
+    },
+    changeTabs() {
+      if ((this.activeName = 'second' && this.productType === 'aliyun')) {
+        this.getAvailableCode()
+      }
     },
     checkAgentCount() {
       let filter = { where: { 'orderInfo.chargeProvider': 'FreeTier' } }
@@ -427,8 +444,7 @@ export default {
     },
     finish() {
       this.$message.success(this.$t('public_message_operation_success'))
-      this.$emit('finish')
-      this.handleCancel()
+      this.close()
     },
     save() {
       this.saveLoading = true
