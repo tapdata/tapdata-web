@@ -558,5 +558,6 @@ export default {
     '当开启了全量自定义查询后，只有弱schema类型的数据源才能作为目标，比如：MongoDB，Kafka，ES',
   packages_dag_field_inference_list_gaiziduanshuju:
     '该字段数据类型暂不支持，为避免由于该字段处理导致任务执行故障，请先将该字段屏蔽。',
-  packages_dag_monitor_leftsider_huancunkaishishi: '缓存开始时间'
+  packages_dag_monitor_leftsider_huancunkaishishi: '缓存开始时间',
+  packages_dag_monitor_node_zhengzaishiyongdehuancun: '正在使用的缓存'
 }

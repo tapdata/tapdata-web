@@ -1,4 +1,4 @@
-<script>
+{{$t('packages_dag_monitor_node_elpop')}}{{$t('packages_dag_monitor_node_impor')}}<script>
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -470,8 +470,9 @@ export default defineComponent({
                 <ElProgress class="mt-2" show-text={false} percentage={initialSyncProcess.value} />
               )}
 
+              {!!sharedCache.length && <div class="fw-bold my-2">{i18n.t('packages_dag_monitor_node_zhengzaishiyongdehuancun')}</div>}
               {!!sharedCache.length && (
-                <ul class="shared-cache-list rounded-4 p-2 mt-4">
+                <ul class="shared-cache-list rounded-4 p-2">
                   {sharedCache.map(item => (
                     <li class="flex justify-content-between align-items-center">
                       <ElLink type="primary" onClick={() => emit('open-shared-cache', item)}>
