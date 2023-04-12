@@ -436,17 +436,27 @@ export default {
               field.loading = true
               const pdk = await databaseTypesApi.pdkHash(parent.attrs.pdkHash)
               const expression = JSON.parse(pdk.expression)
-              const dataTypes = Object.keys(expression).filter(key => {
+              const dataTypes = []
+              const dataTypeOptions = []
+
+              Object.keys(expression).forEach(key => {
                 const { to } = expression[key]
-                return to === 'TapDateTime' || to === 'TapTime'
+
+                if (to === 'TapDateTime' || to === 'TapTime') {
+                  dataTypes.push(key)
+                  dataTypeOptions.push({
+                    label: key.replace(/\[?\(\$[^\]]+\)]?/, '(n)'),
+                    value: key
+                  })
+                }
               })
-              const handleBatch = action.bound(data => {
-                field.dataSource = data
+              const handleBatch = action.bound((value, dataSource) => {
+                field.dataSource = dataSource
                 field.loading = false
 
-                if (!field.value?.length) field.value = data
+                if (!field.value?.length) field.value = value
               })
-              handleBatch(dataTypes)
+              handleBatch(dataTypes, dataTypeOptions)
             } catch (e) {
               field.loading = false
               console.error(e) // eslint-disable-line
