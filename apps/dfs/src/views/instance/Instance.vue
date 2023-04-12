@@ -55,7 +55,7 @@
             }}</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn width="130" :label="$t('dfs_instance_instance_daoqishijian')">
+        <ElTableColumn width="200" :label="$t('dfs_instance_instance_daoqishijian')">
           <template slot-scope="scope">
             <div>
               <ElTooltip
@@ -240,7 +240,7 @@
           <VIcon size="120">no-data-color</VIcon>
           <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
             <span>{{ $t('agent_list_empty_desc1') }}</span>
-            <span class="color-primary cursor-pointer fs-7 ml-1" @click="createAgent">{{
+            <span class="color-primary cursor-pointer fs-7 ml-1" @click="handleCreateAgent">{{
               $t('public_agent_button_create')
             }}</span>
             <span>{{ $t('agent_list_empty_desc2') }}</span>
@@ -603,7 +603,7 @@ export default {
             item.content = `${item.subscriptionMethodLabel} ${item.specLabel} ${i18n.t('public_agent')}`
             item.expiredTime =
               chargeProvider === 'Aliyun' ? license.expiredTime : chargeProvider === 'Stripe' ? periodEnd : ''
-            item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD') : '-'
+            item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD HH:mm:ss') : '-'
             item.paidType =
               chargeProvider === 'Aliyun' ? license.type : chargeProvider === 'Stripe' ? paidSubscribeDto.type : ''
             item.deployDisable = item.tmInfo.pingTime || false
