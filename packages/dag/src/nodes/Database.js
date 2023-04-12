@@ -261,6 +261,158 @@ export class Database extends NodeType {
             }
           },
 
+          readPartitionOptions: {
+            type: 'object',
+            'x-decorator': 'FormItem',
+            properties: {
+              enable: {
+                type: 'boolean',
+                default: false,
+                'x-decorator': 'IconLabel',
+                'x-decorator-props': {
+                  title: i18n.t('packages_dag_nodes_database_quanliangduandianxu'),
+                  iconSize: 30,
+                  tooltip: i18n.t('packages_dag_nodes_database_quanliangduandianshi')
+                },
+                'x-component': 'Switch',
+                'x-reactions': {
+                  fulfill: {
+                    state: {
+                      display:
+                        '{{$values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") ? "visible" :"hidden"}}'
+                    }
+                  }
+                }
+              },
+              splitType: {
+                title: i18n.t('packages_dag_nodes_database_fenpianfangshi'),
+                type: 'number',
+                default: 10,
+                enum: [
+                  {
+                    label: i18n.t('packages_dag_nodes_database_jiyumin'),
+                    value: 10
+                  },
+                  {
+                    label: i18n.t('packages_dag_nodes_database_jiyucou'),
+                    value: 1
+                  }
+                ],
+                'x-decorator': 'FormItem',
+                'x-component': 'Select',
+                'x-reactions': {
+                  dependencies: ['.enable'],
+                  fulfill: {
+                    run: `{{ $values.splitTyp !== 10 && $values.attrs.capabilities.some(t => t.id === 'count_by_partition_filter_function') && $self.setValue(1) }}`,
+                    state: {
+                      display: '{{$deps[0] ? "visible" :"hidden"}}'
+                    },
+                    schema: {
+                      'x-component-props.options': `{{options=[$self.dataSource[0]],$values.attrs.capabilities.some(item => item.id ==='count_by_partition_filter_function') && options.push($self.dataSource[1]),options}}`
+                    }
+                  }
+                }
+              },
+              maxRecordInPartition: {
+                title: i18n.t('packages_dag_nodes_database_fenpiandaxiao'),
+                type: 'number',
+                default: 200000,
+                'x-decorator': 'FormItem',
+                'x-component': 'InputNumber',
+                'x-component-props': {
+                  min: 0
+                },
+                'x-reactions': {
+                  dependencies: ['.enable', '.splitType'],
+                  fulfill: {
+                    state: {
+                      display: '{{$deps[0] && $deps[1] === 1 ? "visible" :"hidden"}}'
+                    }
+                  }
+                }
+              },
+              minMaxSplitPieces: {
+                title: i18n.t('packages_dag_nodes_database_fenpianshuliang'),
+                type: 'number',
+                default: 100,
+                'x-decorator': 'FormItem',
+                'x-component': 'InputNumber',
+                'x-component-props': {
+                  min: 0
+                },
+                'x-reactions': {
+                  dependencies: ['.enable', '.splitType'],
+                  fulfill: {
+                    state: {
+                      display: '{{$deps[0] && $deps[1] === 10 ? "visible" :"hidden"}}'
+                    }
+                  }
+                }
+              },
+              partitionThreadCount: {
+                title: i18n.t('packages_dag_nodes_database_fenpianbingfaxian'),
+                type: 'number',
+                default: 8,
+                'x-decorator': 'FormItem',
+                'x-component': 'InputNumber',
+                'x-component-props': {
+                  min: 0
+                },
+                'x-reactions': {
+                  dependencies: ['.enable'],
+                  fulfill: {
+                    state: {
+                      display: '{{$deps[0] ? "visible" :"hidden"}}'
+                    }
+                  }
+                }
+              },
+              partitionBatchCount: {
+                title: i18n.t('packages_dag_nodes_database_fenpianyipidu'),
+                type: 'number',
+                default: 3000,
+                'x-decorator': 'FormItem',
+                'x-component': 'InputNumber',
+                'x-component-props': {
+                  min: 0
+                },
+                'x-reactions': {
+                  dependencies: ['.enable'],
+                  fulfill: {
+                    state: {
+                      display: '{{$deps[0] ? "visible" :"hidden"}}'
+                    }
+                  }
+                }
+              },
+              hasKVStorage: {
+                type: 'boolean',
+                title: i18n.t('packages_dag_nodes_database_fenpianpilianghezengliang'),
+                default: true,
+                'x-component': 'Switch',
+                'x-decorator': 'FormItem',
+                'x-decorator-props': {
+                  tooltip: i18n.t('packages_dag_nodes_database_guanbicigongnenghoufenpian')
+                },
+                'x-reactions': {
+                  dependencies: ['.enable'],
+                  fulfill: {
+                    state: {
+                      display: '{{$deps[0] ? "visible" :"hidden"}}'
+                    }
+                  }
+                }
+              }
+            },
+            'x-reactions': {
+              fulfill: {
+                state: {
+                  display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
+                }
+              }
+            }
+          },
+
           nodeConfig: {
             type: 'object'
           }
