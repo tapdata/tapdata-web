@@ -231,7 +231,7 @@
         <template #operation="{ row }">
           <!--          <ElButton type="text" @click="handleRecord(row)">记录</ElButton>-->
           <ElButton
-            v-if="['expire', 'pay', 'cancelSubscribe'].includes(row.status)"
+            v-if="['expire', 'pay', 'cancelSubscribe'].includes(row.status) && row.type === 'one_time'"
             type="text"
             @click="handleRenew(row)"
             >{{ $t('public_button_renew') }}</ElButton
@@ -1184,7 +1184,7 @@ export default {
           this.$axios
             .post('api/tcm/orders/renew', params)
             .then(data => {
-              openUrl(data)
+              openUrl(data.paymentUrl)
               this.buried('renewAgentStripe', '', {
                 result: true
               })

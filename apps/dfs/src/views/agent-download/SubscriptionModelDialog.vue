@@ -91,7 +91,7 @@
                   </ul>
                 </div>
               </div>
-              <div class="flex align-items-center mt-8">
+              <div class="flex align-items-center mt-8" v-if="selected.chargeProvider !== 'FreeTier'">
                 <div class="label payment_plan">选择币种</div>
                 <div class="value">
                   <ul class="flex justify-content-start flex-wrap">
@@ -423,17 +423,20 @@ export default {
     },
     handleChange(item = {}) {
       this.selected = item
-      let node = [
-        {
-          amount: item.price,
-          currency: item.currency
-        }
-      ]
-      this.currencyOption = [...node, ...item.currencyOption] || []
-      this.currency = this.currencyOption.filter(it => it.currency === this.currencyType)?.[0]
+      if (item?.chargeProvider !== 'FreeTier') {
+        let node = [
+          {
+            amount: item.price,
+            currency: item.currency
+          }
+        ]
+        this.currencyOption = [...node, ...item.currencyOption] || []
+        this.currency = this.currencyOption.filter(it => it.currency === this.currencyType)?.[0]
+      }
       this.buried('changeSubscriptionMethod')
     },
     formatPrice(item) {
+      if (!item || item?.chargeProvider === 'FreeTier') return 0
       return (
         CURRENCY_SYMBOL_MAP[item.currency] +
         (item.amount / 100).toLocaleString('zh', {
@@ -444,6 +447,7 @@ export default {
     },
     changeSpec() {
       this.loadPackageItems()
+      this.changeCurrency(this.packageItems[0])
       this.handleChange(this.packageItems[0])
       this.buried('changeSpec')
     },

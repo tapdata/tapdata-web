@@ -525,7 +525,7 @@ export default {
       this.fetch()
       // 是否触发创建agent
       if (query?.create) {
-        this.createAgent()
+        this.handleCreateAgent()
         // 清除创建标记
         this.$router.replace({
           name: 'Instance'
