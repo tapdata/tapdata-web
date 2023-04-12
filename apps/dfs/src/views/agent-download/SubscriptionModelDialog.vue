@@ -40,9 +40,9 @@
             </section>
           </div>
           <el-link type="primary" @click="changeProductType">直接使用阿里云市场授权码</el-link>
-          <span class="ml-4"
-            >依然不知道如何选择? <span class="color-primary cursor-pointer">点击这里</span>了解更多的区别</span
-          >
+          <!--          <span class="ml-4"-->
+          <!--            >依然不知道如何选择? <span class="color-primary cursor-pointer">点击这里</span>了解更多的区别</span-->
+          <!--          >-->
         </div>
         <footer class="flex justify-content-end">
           <el-button type="primary" @click="next('second')">Next</el-button>
