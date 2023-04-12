@@ -314,10 +314,60 @@ export default {
         filter: JSON.stringify(filter)
       })
 
-      return res.items.map(item => {
-        item.LDP_TYPE = 'connection'
-        return item
-      })
+      return [
+        {
+          id: 'Product Catalog',
+          name: 'Product Catalog',
+          type: 'service',
+          apiList: [
+            { name: 'API_ProductInventory' },
+            {
+              name: 'API_IM_STATIC_REF'
+            }
+          ]
+        },
+        {
+          id: 'Discount',
+          name: 'Discount',
+          type: 'service',
+          apiList: [
+            {
+              name: 'API_bomCertificate'
+            }
+          ]
+        },
+        {
+          id: '业绩宝',
+          name: '业绩宝',
+          type: 'service',
+          apiList: [
+            {
+              name: 'API_marketingKeyword'
+            },
+            {
+              name: 'API_PC_refinement'
+            },
+            {
+              name: 'API_modelPriceGroup'
+            }
+          ]
+        },
+        {
+          id: 'POSS',
+          name: 'POSS',
+          type: 'service',
+          apiList: [
+            {
+              name: 'API_pos'
+            }
+          ]
+        }
+      ].concat(
+        res.items.map(item => {
+          item.LDP_TYPE = 'connection'
+          return item
+        })
+      )
     },
 
     async loadTask(list) {
