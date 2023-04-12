@@ -625,7 +625,6 @@ export default {
       this.allFields = []
       this.workerStatus = ''
 
-      setTimeout(this.getWorkers, 2000)
       this.$refs?.form?.clearValidate()
       this.formatData(formData || {})
       if (!this.data.id) {
@@ -640,6 +639,7 @@ export default {
         this.data.params.forEach(p => {
           debugParams[p.name] = p.defaultvalue || ''
         })
+        setTimeout(this.getWorkers, 2000)
       }
       this.debugParams = debugParams
     },
@@ -1123,7 +1123,7 @@ export default {
 
     async getAppList(filter = {}) {
       const { page, size } = filter
-      const params = {
+      let params = {
         where: {
           item_type: 'app'
         },
@@ -1131,6 +1131,14 @@ export default {
         limit: size,
         skip: (page - 1) * size
       }
+
+      const { label } = filter.where || {}
+      if (label) {
+        Object.assign(params.where, {
+          'listtags.value': label
+        })
+      }
+
       return await appApi.get({
         filter: JSON.stringify(params)
       })

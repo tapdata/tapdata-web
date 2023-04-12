@@ -7,5 +7,10 @@ export default class App extends Http {
   detail(id) {
     return this.axios.get(`${this.url}/detail/${id}`)
   }
+  move(id, moveId) {
+    return this.axios.put(`${this.url}/move/${id}`, {
+      moveId
+    })
+  }
 }
 export { App }

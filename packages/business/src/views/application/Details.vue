@@ -1,7 +1,7 @@
 <template>
   <Drawer
     v-loading="loading"
-    class="shared-cache-details"
+    class="app-details"
     :visible.sync="visible"
     width="800px"
     v-bind="$attrs"
@@ -10,28 +10,24 @@
     <div class="mb-4">{{ details.value }}</div>
     <ElInput :value="details.desc" type="textarea" disabled class="mb-6"></ElInput>
 
-    <VTable height="100%" ref="table" :has-pagination="false" :columns="columns" :remoteMethod="remoteMethod">
-      <template #status="{ row }">
-        <span class="status-block" :class="'status-' + row.status">{{ row.statusFmt }}</span>
-      </template>
-      <template #operation="{ row }">
-        <ElButton type="text">发布</ElButton>
-        <ElButton type="text">导出</ElButton>
-        <ElButton type="text">删除</ElButton>
-      </template>
-    </VTable>
+    <DataServerList
+      :show-filter="false"
+      :columns="listColumns"
+      :params="listParams"
+      ref="table"
+      class="h-auto"
+    ></DataServerList>
   </Drawer>
 </template>
 
 <script>
-import i18n from '@tap/i18n'
-import { modulesApi } from '@tap/api'
-import { Drawer, VTable } from '@tap/component'
+import { Drawer } from '@tap/component'
+import DataServerList from '@tap/business/src/views/data-server/List.vue'
 
 export default {
   name: 'Details',
 
-  components: { Drawer, VTable },
+  components: { Drawer, DataServerList },
 
   data() {
     return {
@@ -41,31 +37,35 @@ export default {
         value: '',
         desc: ''
       },
-      info: [],
-      columns: [
+      listColumns: [
         {
-          label: 'API名称',
-          prop: 'name'
+          label: this.$t('packages_business_data_server_list_fuwumingcheng'),
+          prop: 'name',
+          slotName: 'name',
+          'min-width': 180,
+          'show-overflow-tooltip': true
         },
         {
-          label: '服务状态',
-          prop: 'status',
-          slotName: 'status'
+          label: this.$t('packages_business_data_server_list_fuwuzhuangtai'),
+          'min-width': 100,
+          prop: 'statusFmt',
+          slotName: 'statusFmt'
         },
         {
-          label: '操作',
+          label: this.$t('public_operation'),
+          width: 200,
           prop: 'operation',
-          slotName: 'operation',
-          width: 160
+          slotName: 'operation'
         }
-      ]
+      ],
+      listParams: {}
     }
   },
 
   methods: {
-    getData(id, data) {
-      this.taskId = id
+    loadData(data, opt = {}) {
       this.details = data
+      this.listParams = opt
       this.visible = true
       this.$nextTick(() => {
         this.$refs.table?.fetch()
@@ -74,93 +74,14 @@ export default {
 
     handleVisible() {
       this.visible = false
-    },
-
-    remoteMethod({ page }) {
-      let { current, size } = page
-      let where = {}
-      let filter = {
-        limit: size,
-        skip: (current - 1) * size,
-        where
-      }
-      const statusOptions = [
-        {
-          label: i18n.t('public_select_option_all'),
-          value: ''
-        },
-        {
-          label: i18n.t('public_status_published'),
-          value: 'active'
-        },
-        {
-          label: i18n.t('public_status_unpublished'),
-          value: 'pending'
-        },
-        {
-          label: i18n.t('public_status_to_be_generated'),
-          value: 'generating'
-        }
-      ]
-      return modulesApi
-        .get({
-          filter: JSON.stringify(filter)
-        })
-        .then(data => {
-          return {
-            total: 0,
-            data:
-              data?.items.map(t => {
-                t.statusFmt = statusOptions.find(it => it.value === t.status)?.label || '-'
-                return t
-              }) || []
-          }
-        })
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.shared-cache-details {
+.app-details {
   padding: 16px;
-}
-.shared-cache-details--header {
-  border-bottom: 1px solid map-get($borderColor, light);
-  .icon {
-    font-size: 18px;
-  }
-}
-.drawer-info__item {
-  display: flex;
-  .body {
-    flex: 1;
-    padding: 8px 0;
-    line-height: 17px;
-    border-bottom: 1px solid map-get($borderColor, light);
-    .label {
-      font-size: $fontBaseTitle;
-      color: rgba(0, 0, 0, 0.6);
-    }
-    .value {
-      font-size: $fontBaseTitle;
-      color: map-get($fontColor, dark);
-    }
-  }
-}
-.shared-cache--keys {
-  margin-top: 8px;
-  border-radius: 4px;
-  border: 1px solid #edeeee;
-  .title {
-    padding: 0 16px;
-    height: 38px;
-    line-height: 38px;
-    background: map-get($bgColor, normal);
-  }
-  .content {
-    padding: 0 16px 8px 16px;
-    background-color: map-get($bgColor, white);
-  }
+  z-index: 2000;
 }
 </style>

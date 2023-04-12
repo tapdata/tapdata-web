@@ -26,7 +26,12 @@
       <el-table-column width="220" fixed="right" :label="$t('public_operation')">
         <template #default="{ row }">
           <div class="table-operations">
-            <ElLink v-readonlybtn="'SYNC_job_edition'" type="primary" @click="handleEditor(row)">
+            <ElLink
+              v-readonlybtn="'SYNC_job_edition'"
+              :disabled="row.readOnly"
+              type="primary"
+              @click="handleEditor(row)"
+            >
               {{ $t('public_button_edit') }}
             </ElLink>
             <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
@@ -34,7 +39,12 @@
               {{ $t('public_button_details') }}
             </ElLink>
             <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
-            <ElLink v-readonlybtn="'SYNC_job_edition'" type="primary" @click="handleDelete(row)">
+            <ElLink
+              v-readonlybtn="'SYNC_job_edition'"
+              :disabled="row.readOnly"
+              type="primary"
+              @click="handleDelete(row)"
+            >
               {{ $t('public_button_delete') }}
             </ElLink>
           </div>
@@ -44,6 +54,7 @@
 
     <Editor ref="editor" :task-id="editForm.id" :visible.sync="editVisible" @success="table.fetch(1)"></Editor>
     <Details ref="details" width="380px"></Details>
+    <Delete ref="delete" width="380px" @success="table.fetch(1)"></Delete>
   </section>
 </template>
 
@@ -55,6 +66,7 @@ import { TablePage, makeStatusAndDisabled } from '@tap/business'
 
 import Editor from './Editor'
 import Details from './Details'
+import Delete from './Delete'
 
 let timeout = null
 export default {
@@ -63,7 +75,8 @@ export default {
     TablePage,
     FilterBar,
     Editor,
-    Details
+    Details,
+    Delete
   },
   data() {
     return {
@@ -151,7 +164,11 @@ export default {
       let where = {
         item_type: 'app'
       }
-      taskName && (where.taskName = taskName)
+      taskName &&
+        (where.value = {
+          option: 'i',
+          like: taskName
+        })
       connectionName && (where.connectionName = connectionName)
       let filter = {
         order: this.order,
@@ -319,21 +336,15 @@ export default {
     },
 
     handleDetails(row = {}) {
-      this.$refs.details.getData(row.id, row)
+      this.$refs.details.loadData(row, {
+        where: {
+          'listtags.id': row.id
+        }
+      })
     },
 
     handleDelete(row = {}) {
-      this.$confirm('删除任务将无法恢复, 确定删除', '', {
-        type: 'warning'
-      }).then(resFlag => {
-        if (!resFlag) {
-          return
-        }
-        appApi.delete(row.id).then(() => {
-          this.table.fetch()
-          this.$message.success(this.$t('public_message_delete_ok'))
-        })
-      })
+      this.$refs.delete?.init(row)
     }
   }
 }
@@ -342,12 +353,6 @@ export default {
 <style lang="scss" scoped>
 .share-list-wrap {
   height: 100%;
-  .refresh {
-    color: map-get($color, primary);
-    font-weight: normal;
-    font-size: 12px;
-    cursor: pointer;
-  }
   .share-list {
     .search-bar {
       display: flex;
@@ -359,35 +364,8 @@ export default {
       margin-left: 5px;
     }
     .btn {
-      i.iconfont {
-        font-size: 12px;
-      }
-      &.btn-dropdowm {
-        margin-left: 5px;
-      }
       &.btn-create {
         margin-left: 5px;
-      }
-    }
-    .metadata-name {
-      .name {
-        color: map-get($color, primary);
-        a {
-          color: inherit;
-          cursor: pointer;
-        }
-      }
-      .name:hover {
-        text-decoration: underline;
-      }
-      .tag {
-        margin-left: 5px;
-        color: map-get($fontColor, slight);
-        background: map-get($bgColor, main);
-        border: 1px solid #dedee4;
-      }
-      .parent {
-        color: map-get($fontColor, slight);
       }
     }
   }

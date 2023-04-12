@@ -1,88 +1,68 @@
 <template>
-  <section class="data-server-wrapper">
-    <TablePage ref="table" row-key="id" :remoteMethod="getData" @selection-change="handleSelectionChange">
-      <template slot="search">
-        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
+  <section class="data-server-wrapper flex flex-column">
+    <div v-if="showFilter" class="flex justify-content-between my-2">
+      <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
+      <ElButton class="btn btn-create" type="primary" size="mini" @click.stop="showDrawer()">
+        <span>{{ $t('packages_business_data_server_drawer_chuangjianfuwu') }}</span>
+      </ElButton>
+    </div>
+    <VTable :columns="cols" :remote-method="getData" ref="table" class="flex-fill">
+      <template #name="{ row }">
+        <ElLink class="ellipsis" type="primary" style="display: block; line-height: 20px" @click.stop="showDrawer(row)">
+          {{ row.name }}
+        </ElLink>
       </template>
-      <div slot="operation">
-        <ElButton class="btn btn-create" type="primary" size="mini" @click.stop="showDrawer()">
-          <span>{{ $t('packages_business_data_server_drawer_chuangjianfuwu') }}</span>
-        </ElButton>
-      </div>
-      <ElTableColumn type="selection" width="45" :reserve-selection="true"></ElTableColumn>
-      <ElTableColumn
-        show-overflow-tooltip
-        :label="$t('packages_business_data_server_list_fuwumingcheng')"
-        min-width="180"
-      >
-        <template #default="{ row }">
-          <ElLink
-            class="ellipsis"
-            type="primary"
-            style="display: block; line-height: 20px"
-            @click.stop="showDrawer(row)"
-          >
-            {{ row.name }}
-          </ElLink>
-        </template>
-      </ElTableColumn>
-      <ElTableColumn :label="$t('public_connection_type')" min-width="120">
-        <template #default="{ row }">
-          {{ row.connectionType }}
-        </template>
-      </ElTableColumn>
-      <ElTableColumn show-overflow-tooltip :label="$t('public_connection_name')" min-width="200">
-        <template #default="{ row }">
-          {{ row.connectionName }}
-        </template>
-      </ElTableColumn>
-      <ElTableColumn
-        show-overflow-tooltip
-        :label="$t('packages_business_data_server_list_guanlianduixiang')"
-        min-width="120"
-      >
-        <template #default="{ row }">
-          {{ row.tableName }}
-        </template>
-      </ElTableColumn>
-      <ElTableColumn :label="$t('packages_business_data_server_list_fuwuzhuangtai')" min-width="100">
-        <template #default="{ row }">
-          <span class="status-block" :class="'status-' + row.status">{{ row.statusFmt }}</span>
-        </template>
-      </ElTableColumn>
-      <ElTableColumn width="200" :label="$t('public_operation')">
-        <template #default="{ row }">
-          <ElButton
-            v-if="row.status !== 'active'"
-            :disabled="row.status !== 'pending'"
-            type="text"
-            @click="changeStatus(row)"
-            >{{ $t('public_button_public') }}</ElButton
-          >
-          <ElButton v-if="row.status === 'active'" type="text" @click="changeStatus(row)">{{
-            $t('public_button_revoke')
-          }}</ElButton>
-          <ElDivider direction="vertical"></ElDivider>
-          <ElButton type="text" @click="output(row)">{{ $t('public_button_export') }}</ElButton>
-          <ElDivider direction="vertical"></ElDivider>
-          <ElButton type="text" @click="removeServer(row)">{{ $t('public_button_delete') }}</ElButton>
-        </template>
-      </ElTableColumn>
-    </TablePage>
+      <template #statusFmt="{ row }">
+        <span class="status-block" :class="'status-' + row.status">{{ row.statusFmt }}</span>
+      </template>
+      <template #operation="{ row }">
+        <ElButton
+          v-if="row.status !== 'active'"
+          :disabled="row.status !== 'pending'"
+          type="text"
+          @click="changeStatus(row)"
+          >{{ $t('public_button_public') }}</ElButton
+        >
+        <ElButton v-if="row.status === 'active'" type="text" @click="changeStatus(row)">{{
+          $t('public_button_revoke')
+        }}</ElButton>
+        <ElDivider direction="vertical"></ElDivider>
+        <ElButton type="text" @click="output(row)">{{ $t('public_button_export') }}</ElButton>
+        <ElDivider direction="vertical"></ElDivider>
+        <ElButton type="text" @click="removeServer(row)">{{ $t('public_button_delete') }}</ElButton>
+      </template>
+
+      <VEmpty large slot="empty"></VEmpty>
+    </VTable>
     <Drawer ref="drawer" :host="apiServerHost" @save="table.fetch(1)"></Drawer>
   </section>
 </template>
 <script>
 import i18n from '@/i18n'
 
-import { databaseTypesApi, modulesApi, metadataInstancesApi, apiServerApi } from '@tap/api'
-import { TablePage } from '@tap/business'
-import { FilterBar } from '@tap/component'
+import { databaseTypesApi, modulesApi, metadataInstancesApi, apiServerApi, appApi } from '@tap/api'
+import { FilterBar, VTable, VEmpty } from '@tap/component'
 
 import Drawer from './Drawer'
 
 export default {
-  components: { TablePage, FilterBar, Drawer },
+  components: { FilterBar, Drawer, VTable, VEmpty },
+  props: {
+    showFilter: {
+      type: Boolean,
+      default: true
+    },
+    columns: {
+      type: Array,
+      default: () => []
+    },
+    params: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    }
+  },
   data() {
     return {
       filterItems: [],
@@ -92,7 +72,8 @@ export default {
       searchParams: {
         type: '',
         status: '',
-        keyword: ''
+        keyword: '',
+        appId: ''
       },
       statusOptions: [
         {
@@ -117,6 +98,50 @@ export default {
   computed: {
     table() {
       return this.$refs.table
+    },
+
+    cols() {
+      if (this.columns.length) return this.columns
+      return [
+        {
+          label: '应用名称',
+          prop: 'appName'
+        },
+        {
+          label: this.$t('packages_business_data_server_list_fuwumingcheng'),
+          prop: 'name',
+          slotName: 'name',
+          'min-width': 180,
+          'show-overflow-tooltip': true
+        },
+        {
+          label: this.$t('public_connection_type'),
+          prop: 'connectionType',
+          'min-width': 120
+        },
+        {
+          label: this.$t('public_connection_name'),
+          prop: 'connectionName',
+          'min-width': 200
+        },
+        {
+          label: this.$t('packages_business_data_server_list_guanlianduixiang'),
+          'min-width': 120,
+          prop: 'tableName'
+        },
+        {
+          label: this.$t('packages_business_data_server_list_fuwuzhuangtai'),
+          'min-width': 100,
+          prop: 'statusFmt',
+          slotName: 'statusFmt'
+        },
+        {
+          label: this.$t('public_operation'),
+          width: 200,
+          prop: 'operation',
+          slotName: 'operation'
+        }
+      ]
     }
   },
   watch: {
@@ -135,6 +160,36 @@ export default {
   methods: {
     getFilterItems() {
       this.filterItems = [
+        {
+          label: '应用名称',
+          key: 'appId',
+          type: 'select-inner',
+          placeholder: '请选择应用名称',
+          items: async () => {
+            let params = {
+              where: {
+                item_type: 'app'
+              },
+              order: 'createTime DESC',
+              limit: 1000
+            }
+            let res = await appApi.get({ filter: JSON.stringify(params) })
+            let data =
+              res.items.map(t => {
+                return {
+                  label: t.value,
+                  value: t.id
+                }
+              }) || []
+            //默认全部
+            let all = {
+              label: this.$t('public_select_option_all'),
+              value: ''
+            }
+            data.unshift(all)
+            return data
+          }
+        },
         {
           label: this.$t('public_connection_form_database_type'),
           key: 'type', //对象分类
@@ -176,9 +231,9 @@ export default {
         }
       ]
     },
-    getData({ page }) {
+    getData({ page = {} }) {
       let { current, size } = page
-      let { type, status, keyword } = this.searchParams
+      let { type, status, keyword, appId } = this.searchParams
       let where = {}
       //精准搜索 iModel
       if (keyword && keyword.trim()) {
@@ -187,13 +242,23 @@ export default {
       if (type) {
         where['connectionType'] = type
       }
+      if (appId) {
+        where['listtags.id'] = appId
+      }
+
       status && (where.status = status)
+
       let filter = {
         order: this.order,
         limit: size,
         skip: (current - 1) * size,
         where
       }
+
+      if (this.params) {
+        Object.assign(filter, this.params)
+      }
+
       return modulesApi
         .get({
           filter: JSON.stringify(filter)
@@ -201,6 +266,7 @@ export default {
         .then(data => {
           let list = (data?.items || []).map(item => {
             item.statusFmt = this.statusOptions.find(it => it.value === item.status)?.label || '-'
+            item.appName = item.listtags?.[0]?.value || '-'
             return item
           })
           return {
@@ -265,6 +331,9 @@ export default {
     },
     showDrawer(item) {
       this.$refs.drawer.open(item)
+    },
+    fetch() {
+      this.table.fetch()
     }
   }
 }
