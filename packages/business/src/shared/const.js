@@ -107,6 +107,11 @@ export const CURRENCY_SYMBOL_MAP = {
   hkd: 'HK$',
   cny: '¥'
 }
+export const CURRENCY_MAP = {
+  usd: '美元',
+  hkd: '港币',
+  cny: '人民币'
+}
 
 export const NUMBER_MAP = {
   0: i18n.t('packages_business_shared_const_ling'),

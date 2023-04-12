@@ -91,14 +91,32 @@
                   </ul>
                 </div>
               </div>
+              <div class="flex align-items-center mt-8">
+                <div class="label payment_plan">选择币种</div>
+                <div class="value">
+                  <ul class="flex justify-content-start flex-wrap">
+                    <li
+                      v-for="(item, index) in currencyOption"
+                      :key="index"
+                      class="specification-item cursor-pointer py-2 px-4 mr-4 mt-4"
+                      :class="{
+                        active: currencyType === item.currency
+                      }"
+                      @click="changeCurrency(item)"
+                    >
+                      {{ CURRENCY_MAP[item.currency] }}
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </div>
             <div class="price-list flex flex-column">
               <div class="title">Estimated Monthly Cost</div>
               <ul class="flex flex-1 content">
-                <li class="item">Compute: {{ selected.price }}</li>
+                <li class="item">Compute: {{ formatPrice(currency) }}</li>
               </ul>
               <div class="total">
-                Total: <span class="price">{{ selected.price }}</span>
+                Total: <span class="price">{{ formatPrice(currency) }}</span>
               </div>
             </div>
           </div>
@@ -180,7 +198,7 @@
           </div>
           <footer class="flex justify-content-end align-items-center mt-4">
             <div class="mr-6">
-              Total: <span class="price">{{ selected.price || 0 }}</span>
+              Total: <span class="price">{{ formatPrice(currency) || 0 }}</span>
             </div>
             <el-button @click="next('second')">Previous</el-button>
             <el-button type="primary" @click="submit()">CONFIRM</el-button>
@@ -195,7 +213,7 @@
 import { openUrl, uniqueArr } from '@tap/shared'
 import { VTable } from '@tap/component'
 import { getPaymentMethod, getSpec } from '../instance/utils'
-import { CURRENCY_SYMBOL_MAP, TIME_MAP } from '@tap/business'
+import { CURRENCY_SYMBOL_MAP, TIME_MAP, CURRENCY_MAP } from '@tap/business'
 import i18n from '@/i18n'
 import { dayjs } from '@tap/business/src/shared/dayjs'
 
@@ -236,6 +254,7 @@ export default {
       specMap: {
         '1C2G': 'EXTRA SMALL: 1C 2G - FREE(只能创建一个)'
       },
+      CURRENCY_MAP: CURRENCY_MAP,
       licenseCode: '',
       saveLoading: false,
       codeData: [],
@@ -244,6 +263,9 @@ export default {
       hiddenNewCode: false,
       aliyunLoading: false,
       currentSpecName: '1C2G',
+      currencyOption: [],
+      currency: '',
+      currencyType: '',
       agentSizeCap: {
         mem: '-',
         pipeline: '-',
@@ -293,6 +315,10 @@ export default {
       this.activeName = 'second'
       this.getAvailableCode()
       this.buried('productTypeAliyunCode')
+    },
+    changeCurrency(item) {
+      this.currencyType = item.currency
+      this.currency = item
     },
     selectProductType() {
       this.buried('productTypeSelfHost')
@@ -361,12 +387,7 @@ export default {
           return Object.assign(t, {
             label: getPaymentMethod(t),
             value: t.priceId,
-            price:
-              CURRENCY_SYMBOL_MAP[t.currency] +
-              (t.price / 100).toLocaleString('zh', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-              }),
+            price: t.price,
             priceSuffix: t.type === 'recurring' ? TIME_MAP[t.periodUnit] : '',
             desc: '',
             specification: getSpec(t.spec),
@@ -374,6 +395,7 @@ export default {
           })
         })
         this.loadPackageItems()
+        this.changeCurrency(this.packageItems[0])
         this.handleChange(this.packageItems[0])
       })
     },
@@ -401,7 +423,24 @@ export default {
     },
     handleChange(item = {}) {
       this.selected = item
+      let node = [
+        {
+          amount: item.price,
+          currency: item.currency
+        }
+      ]
+      this.currencyOption = [...node, ...item.currencyOption] || []
+      this.currency = this.currencyOption.filter(it => it.currency === this.currencyType)?.[0]
       this.buried('changeSubscriptionMethod')
+    },
+    formatPrice(item) {
+      return (
+        CURRENCY_SYMBOL_MAP[item.currency] +
+        (item.amount / 100).toLocaleString('zh', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        })
+      )
     },
     changeSpec() {
       this.loadPackageItems()
