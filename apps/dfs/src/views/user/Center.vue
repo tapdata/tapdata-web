@@ -223,17 +223,20 @@
         class="mt-4"
       >
         <template #bindAgent="{ row }">
-          <ElLink v-if="row.agentId" type="primary" @click="handleAgent(row)">{{
-            $t('dfs_user_center_yibangdingshili')
+          <ElLink v-if="row.agentId && row.status === 'pay'" type="primary" @click="handleAgent(row)">{{
+            row.agentId
           }}</ElLink>
-          <span v-else>{{ $t('user_Center_weiBangDing') }}</span>
+          <span v-else>-</span>
         </template>
         <template #operation="{ row }">
           <!--          <ElButton type="text" @click="handleRecord(row)">记录</ElButton>-->
-          <ElButton v-if="row.type !== 'recurring'" type="text" @click="handleRenew(row)">{{
-            $t('public_button_renew')
-          }}</ElButton>
-          <ElButton v-if="row.status === 'unPay'" type="text" @click="handlePay(row)">{{
+          <ElButton
+            v-if="['expire', 'pay', 'cancelSubscribe'].includes(row.status)"
+            type="text"
+            @click="handleRenew(row)"
+            >{{ $t('public_button_renew') }}</ElButton
+          >
+          <ElButton v-if="['payFail', 'unPay'].includes(row.status)" type="text" @click="handlePay(row)">{{
             $t('public_button_pay')
           }}</ElButton>
         </template>
@@ -647,7 +650,7 @@ export default {
         },
         {
           label: i18n.t('dfs_instance_selectlist_bangdingshilizhuang'),
-          prop: 'bindAgent',
+          prop: 'agentId',
           slotName: 'bindAgent'
         },
         {
@@ -1152,6 +1155,7 @@ export default {
         name: 'aliyunMarketLicense'
       })
     },
+    //续订
     handleRenew(row = {}) {
       const { period, periodUnit } = row
       const label =
@@ -1170,19 +1174,15 @@ export default {
         }
       ).then(res => {
         if (res) {
-          const { id, priceId, currency, type } = row
+          const { agentId } = row
           const params = {
-            id,
-            priceId,
-            currency,
-            type,
+            agentId,
             successUrl: location.href,
-            cancelUrl: location.href,
-            renew: true
+            cancelUrl: location.href
           }
           this.buried('renewAgentStripe')
           this.$axios
-            .post('api/tcm/paid/plan/oneTime/paymentLink', params)
+            .post('api/tcm/orders/renew', params)
             .then(data => {
               openUrl(data)
               this.buried('renewAgentStripe', '', {

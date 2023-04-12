@@ -1251,7 +1251,7 @@ export default {
   dfs_instance_instance_dingyuefangshi: '订阅方式',
   dfs_instance_instance_guige: '规格',
   dfs_instance_selectlist_yibangding: '已绑定',
-  dfs_instance_selectlist_bangdingshilizhuang: '绑定Agent状态',
+  dfs_instance_selectlist_bangdingshilizhuang: 'Agent Id',
   dfs_instance_selectlist_dingyuezhouqi: '订阅周期',
   dfs_instance_selectlist_dingyueneirong: '订阅内容',
   dfs_instance_selectlist_keyixuanzeyi: '可以选择已有未使用的订阅创建Agent，可以创建新Agent选择更多规格',

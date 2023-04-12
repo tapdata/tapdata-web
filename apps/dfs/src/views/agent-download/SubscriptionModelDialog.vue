@@ -72,7 +72,6 @@
                     >
                   </el-radio-group>
                 </div>
-
               </div>
               <div class="flex align-items-center mt-8">
                 <div class="label payment_plan">订阅方式</div>
@@ -349,7 +348,7 @@ export default {
               memory,
               name: t.spec.name.toUpperCase(),
               chargeProvider: t.chargeProvider,
-              desc: desc,
+              desc: desc
             }
           }),
           'value'
@@ -370,7 +369,8 @@ export default {
               }),
             priceSuffix: t.type === 'recurring' ? TIME_MAP[t.periodUnit] : '',
             desc: '',
-            specification: getSpec(t.spec)
+            specification: getSpec(t.spec),
+            currencyOption: t.currencyOption
           })
         })
         this.loadPackageItems()
