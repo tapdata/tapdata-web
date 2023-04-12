@@ -707,8 +707,8 @@ export default {
   page_title_overview: 'Overview',
   metadata_meta_type_table: 'Data Table',
   packages_business_create_connection_dialog_xuanzeshujuyuan: 'Choose Data Source Type',
-  packages_business_create_connection_dialog_neirongSho: 'Show Connectors in Aplha State',
-  packages_business_create_connection_dialog_neirongSho2: 'Show Connectors in Beta State',
+  packages_business_create_connection_dialog_neirongSho: 'Show Connectors in ALPHA State',
+  packages_business_create_connection_dialog_neirongSho2: 'Show Connectors in BETA State',
   packages_business_create_connection_dialog_neirongCho:
     'Choose a data source connector from below and configure the connection & credentials.',
   // 共享挖掘
