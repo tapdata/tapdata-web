@@ -65,7 +65,7 @@
                     <el-radio
                       class="mt-4 block"
                       v-for="(item, index) in specificationItems"
-                      :disabled="agentCount > 0 && item.chargeProvider === 'FreeTrial'"
+                      :disabled="agentCount > 0 && item.chargeProvider === 'FreeTier'"
                       :key="index"
                       :label="item.value"
                       >{{ item.name }}: {{ item.desc }}</el-radio
