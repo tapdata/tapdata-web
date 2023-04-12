@@ -848,7 +848,7 @@ export class Table extends NodeType {
                         fulfill: {
                           state: {
                             value:
-                              '{{$self.value?.some(t => t.isPrimaryKey) && $values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") && ($settings.type !== "cdc" && ["Mysql", "MongoDB"].includes($values.databaseType)) ? $values.readPartitionOptions.enable:false}}'
+                              '{{$values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") && ($settings.type !== "cdc") ? $values.readPartitionOptions.enable:false}}'
                           }
                         }
                       },
@@ -857,7 +857,7 @@ export class Table extends NodeType {
                         fulfill: {
                           state: {
                             display:
-                              '{{$self.value?.some(t => t.isPrimaryKey) && $values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") && ($settings.type !== "cdc" && ["Mysql", "MongoDB"].includes($values.databaseType)) ? "visible":"hidden"}}'
+                              '{{$values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") && ($settings.type !== "cdc") ? "visible":"hidden"}}'
                           }
                         }
                       }
