@@ -408,7 +408,7 @@ export default {
 }
 
 .mode-card {
-  width: 256px;
+  width: 240px;
   transition: box-shadow 0.15s linear 0s;
 
   &-image {
