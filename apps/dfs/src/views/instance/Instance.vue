@@ -55,7 +55,7 @@
             }}</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn width="130" :label="$t('dfs_instance_instance_daoqishijian')">
+        <ElTableColumn width="200" :label="$t('dfs_instance_instance_daoqishijian')">
           <template slot-scope="scope">
             <div>
               <ElTooltip
@@ -215,19 +215,20 @@
               @click="handleStop(scope.row)"
               >{{ $t('public_button_stop') }}</ElButton
             >
-            <!--            <ElDivider direction="vertical"></ElDivider>-->
-            <!--            <ElButton-->
-            <!--              size="mini"-->
-            <!--              type="text"-->
-            <!--              :loading="scope.row.btnLoading.delete"-->
-            <!--              :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"-->
-            <!--              @click="handleDel(scope.row)"-->
-            <!--              >{{ $t('public_button_delete') }}</ElButton-->
-            <!--            >-->
             <ElDivider direction="vertical"></ElDivider>
             <ElButton
               size="mini"
               type="text"
+              v-if="scope.row.orderInfo.type === 'recurring'"
+              :loading="scope.row.btnLoading.delete"
+              :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
+              @click="cancelPaidSubscribe(scope.row)"
+              >取消订阅</ElButton
+            >
+            <ElButton
+              size="mini"
+              type="text"
+              v-else
               :loading="scope.row.btnLoading.delete"
               :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
               @click="handleUnsubscribe(scope.row)"
@@ -239,7 +240,7 @@
           <VIcon size="120">no-data-color</VIcon>
           <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
             <span>{{ $t('agent_list_empty_desc1') }}</span>
-            <span class="color-primary cursor-pointer fs-7 ml-1" @click="createAgent">{{
+            <span class="color-primary cursor-pointer fs-7 ml-1" @click="handleCreateAgent">{{
               $t('public_agent_button_create')
             }}</span>
             <span>{{ $t('agent_list_empty_desc2') }}</span>
@@ -525,7 +526,7 @@ export default {
       this.fetch()
       // 是否触发创建agent
       if (query?.create) {
-        this.createAgent()
+        this.handleCreateAgent()
         // 清除创建标记
         this.$router.replace({
           name: 'Instance'
@@ -602,7 +603,7 @@ export default {
             item.content = `${item.subscriptionMethodLabel} ${item.specLabel} ${i18n.t('public_agent')}`
             item.expiredTime =
               chargeProvider === 'Aliyun' ? license.expiredTime : chargeProvider === 'Stripe' ? periodEnd : ''
-            item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD') : '-'
+            item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD HH:mm:ss') : '-'
             item.paidType =
               chargeProvider === 'Aliyun' ? license.type : chargeProvider === 'Stripe' ? paidSubscribeDto.type : ''
             item.deployDisable = item.tmInfo.pingTime || false
@@ -1085,6 +1086,7 @@ export default {
       })
       return flag
     },
+    //退订
     handleUnsubscribe(row = {}) {
       this.$confirm(
         i18n.t('dfs_user_center_ninjiangtuidingr', { val1: row.content }),
@@ -1100,6 +1102,39 @@ export default {
         })
         this.$axios
           .post('api/tcm/orders/cancel', { instanceId: row.id })
+          .then(() => {
+            this.fetch()
+            this.buried('unsubscribeAgentStripe', '', {
+              result: true,
+              type: paidType
+            })
+            this.$message.success(this.$t('public_message_operation_success'))
+          })
+          .catch(() => {
+            this.buried('unsubscribeAgentStripe', '', {
+              result: false,
+              type: paidType
+            })
+          })
+      })
+    },
+
+    //取消订阅
+    cancelPaidSubscribe(row = {}) {
+      this.$confirm(
+        i18n.t('dfs_user_center_ninjiangtuidingr', { val1: row.content }),
+        i18n.t('dfs_user_center_quxiaodingyuefu'),
+        {
+          type: 'warning'
+        }
+      ).then(res => {
+        if (!res) return
+        const { paidType } = row
+        this.buried('unsubscribeAgentStripe', '', {
+          type: paidType
+        })
+        this.$axios
+          .post('api/tcm/orders/cancelPaidSubscribe', { instanceId: row.id })
           .then(() => {
             this.fetch()
             this.buried('unsubscribeAgentStripe', '', {
