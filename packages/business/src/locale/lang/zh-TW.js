@@ -676,7 +676,7 @@ export default {
   metadata_meta_type_table: '数据表',
   packages_business_create_connection_dialog_xuanzeshujuyuan: '選擇數據源類型',
   packages_business_create_connection_dialog_neirongSho: '顯示處於 ALPHA 狀態的連接器',
-  packages_business_create_connection_dialog_neirongSho2: '顯示處於測試狀態的連接器',
+  packages_business_create_connection_dialog_neirongSho2: '顯示處於 BETA 狀態的連接器',
   packages_business_create_connection_dialog_neirongCho: '從下面選擇一個數據源連接器並配置連接和憑據。',
   // 共享挖掘
   packages_business_shared_cdc_placeholder_task_name: '請輸入挖掘任務名搜索',
