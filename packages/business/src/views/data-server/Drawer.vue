@@ -70,6 +70,21 @@
           </ElSelect>
         </ElFormItem>
 
+        <ElFormItem
+          class="flex-1 mt-4"
+          size="small"
+          :label="$t('packages_business_data_server_drawer_suoshuyingyong')"
+          prop="kennen"
+        >
+          <ListSelect
+            :value.sync="form.appValue"
+            :label.sync="form.appLabel"
+            :disabled="!isEdit"
+            item-label="value"
+            item-value="id"
+          ></ListSelect>
+        </ElFormItem>
+
         <!-- 基础信息 -->
         <ul v-if="tab === 'form'" class="flex flex-wrap bg-main p-2 mt-4 rounded-1">
           <li class="data-server-form-base__item">
@@ -437,11 +452,10 @@
 </template>
 
 <script>
-import i18n from '@/i18n'
-
 import axios from 'axios'
 import { cloneDeep } from 'lodash'
 
+import i18n from '@/i18n'
 import {
   databaseTypesApi,
   connectionsApi,
@@ -455,9 +469,10 @@ import { Drawer, VCodeEditor } from '@tap/component'
 import { uid } from '@tap/shared'
 
 import getTemplate from './template'
+import ListSelect from '../api-application/ListSelect'
 
 export default {
-  components: { Drawer, VCodeEditor },
+  components: { Drawer, VCodeEditor, ListSelect },
   props: {
     host: String
   },
@@ -496,7 +511,9 @@ export default {
         apiVersion: 'v1',
         prefix: '',
         basePath: '',
-        acl: ['admin']
+        acl: ['admin'],
+        appValue: '',
+        appLabel: ''
       },
       tab: 'form',
       isEdit: false,
@@ -527,7 +544,14 @@ export default {
         param: [{ required: true, validator: validateParams, trigger: ['blur', 'change'] }],
         basePath: [{ required: true, validator: validateBasePath, trigger: ['blur', 'change'] }],
         prefix: [{ required: false, validator: validatePrefix, trigger: ['blur', 'change'] }],
-        apiVersion: [{ required: true, validator: validateBasePath, trigger: ['blur', 'change'] }]
+        apiVersion: [{ required: true, validator: validateBasePath, trigger: ['blur', 'change'] }],
+        appValue: [
+          {
+            required: true,
+            message: i18n.t('packages_business_data_server_drawer_qingxuanzesuoshu'),
+            trigger: ['blur', 'change']
+          }
+        ]
       },
       apiTypeMap: {
         defaultApi: i18n.t('packages_business_data_server_drawer_morenchaxun'),
@@ -554,7 +578,11 @@ export default {
       token: '',
       roles: [],
       workerStatus: '',
-      intervalId: 0
+      intervalId: 0,
+      appData: {
+        label: '',
+        value: ''
+      }
     }
   },
   computed: {
@@ -603,7 +631,6 @@ export default {
       this.allFields = []
       this.workerStatus = ''
 
-      setTimeout(this.getWorkers, 2000)
       this.$refs?.form?.clearValidate()
       this.formatData(formData || {})
       if (!this.data.id) {
@@ -618,6 +645,7 @@ export default {
         this.data.params.forEach(p => {
           debugParams[p.name] = p.defaultvalue || ''
         })
+        setTimeout(this.getWorkers, 2000)
       }
       this.debugParams = debugParams
     },
@@ -639,9 +667,15 @@ export default {
         basePath,
         apiVersion,
         prefix,
-        pathAccessMethod
+        pathAccessMethod,
+        listtags
       } = formData
       // 若为新建时，则默认值为 ‘默认查询(defaultApi)’ 的值
+
+      const appData = listtags?.[0] || {}
+      const appValue = appData.id
+      const appLabel = appData.value
+
       let apiType = formData?.apiType || 'defaultApi'
       this.data = {
         status: status || 'generating', // generating,pending,active
@@ -663,9 +697,13 @@ export default {
         where: path.where || [],
         sort: path.sort || [],
         path: path.path || '',
-        acl: path.acl
+        acl: path.acl,
+        appValue,
+        appLabel
       }
       this.form.description = this.data.description
+      this.form.appValue = this.data.appValue
+      this.form.appLabel = this.data.appLabel
       this.form.acl = path.acl || ['admin']
       let host = this.host
       let _path = this.data.path
@@ -762,7 +800,9 @@ export default {
             connectionName,
             apiVersion,
             prefix,
-            pathAccessMethod
+            pathAccessMethod,
+            appLabel,
+            appValue
           } = this.form
           // basePath
           if (basePath && basePath !== '') {
@@ -793,7 +833,12 @@ export default {
             apiVersion: apiVersion, // 冗余老字段
             prefix: prefix,
             pathAccessMethod: pathAccessMethod, // 冗余老字段
-            listtags: [], // 冗余老字段
+            listtags: [
+              {
+                id: appValue,
+                value: appLabel
+              }
+            ], // 冗余老字段
 
             paths: [
               {
@@ -904,7 +949,12 @@ export default {
     async getFields() {
       this.fieldLoading = true
       let filter = {
-        where: { 'source.id': this.form.connectionId, original_name: this.form.tableName, is_deleted: false, sourceType: 'SOURCE' }
+        where: {
+          'source.id': this.form.connectionId,
+          original_name: this.form.tableName,
+          is_deleted: false,
+          sourceType: 'SOURCE'
+        }
       }
       const data = await metadataInstancesApi
         .get({

@@ -1,0 +1,87 @@
+<template>
+  <Drawer
+    v-loading="loading"
+    class="app-details"
+    :visible.sync="visible"
+    width="800px"
+    v-bind="$attrs"
+    @visible="handleVisible"
+  >
+    <div class="mb-4">{{ details.value }}</div>
+    <ElInput :value="details.desc" type="textarea" disabled class="mb-6"></ElInput>
+
+    <DataServerList
+      :show-filter="false"
+      :columns="listColumns"
+      :params="listParams"
+      ref="table"
+      class="h-auto"
+    ></DataServerList>
+  </Drawer>
+</template>
+
+<script>
+import { Drawer } from '@tap/component'
+import DataServerList from '@tap/business/src/views/data-server/List.vue'
+
+export default {
+  name: 'Details',
+
+  components: { Drawer, DataServerList },
+
+  data() {
+    return {
+      loading: false,
+      visible: false,
+      details: {
+        value: '',
+        desc: ''
+      },
+      listColumns: [
+        {
+          label: this.$t('packages_business_data_server_list_fuwumingcheng'),
+          prop: 'name',
+          slotName: 'name',
+          'min-width': 180,
+          'show-overflow-tooltip': true
+        },
+        {
+          label: this.$t('packages_business_data_server_list_fuwuzhuangtai'),
+          'min-width': 100,
+          prop: 'statusFmt',
+          slotName: 'statusFmt'
+        },
+        {
+          label: this.$t('public_operation'),
+          width: 200,
+          prop: 'operation',
+          slotName: 'operation'
+        }
+      ],
+      listParams: {}
+    }
+  },
+
+  methods: {
+    loadData(data, opt = {}) {
+      this.details = data
+      this.listParams = opt
+      this.visible = true
+      this.$nextTick(() => {
+        this.$refs.table?.fetch()
+      })
+    },
+
+    handleVisible() {
+      this.visible = false
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.app-details {
+  padding: 16px;
+  z-index: 2000;
+}
+</style>

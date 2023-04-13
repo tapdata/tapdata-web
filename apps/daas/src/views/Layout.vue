@@ -431,6 +431,7 @@ let menuSetting = [
     icon: 'apiServer_navbar',
     code: 'v2_data-server',
     children: [
+      { name: 'apiApplication', code: 'v2_api-application', parent: 'dataServer' },
       { name: 'dataServer', code: 'v2_data-server-list', parent: 'dataServer' },
       { name: 'apiClient', code: 'v2_api-client', parent: 'apiClient' },
       { name: 'apiServer', code: 'v2_api-servers', parent: 'apiServer' },

@@ -140,6 +140,12 @@ const SharedCacheForm = async () => {
   return SharedCacheForm
 }
 
+// 应用管理
+const ApiApplicationList = async () => {
+  const { ApiApplicationList } = await import('@tap/business')
+  return ApiApplicationList
+}
+
 export default [
   {
     path: '/login',
@@ -769,6 +775,16 @@ export default [
         meta: {
           title: 'page_title_data_server_list',
           code: 'v2_data-server-list'
+        }
+      },
+      /* ---------- 应用管理  ----------*/
+      {
+        path: '/api-application',
+        name: 'apiApplication',
+        component: ApiApplicationList,
+        meta: {
+          title: 'page_title_api_application',
+          code: 'v2_api-application'
         }
       },
       /* ---------- API客户端  ----------*/

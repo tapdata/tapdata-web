@@ -938,5 +938,21 @@ export default {
   packages_business_shared_cache_code_tooltip: 'You can enter this code in the JS node to use the cache',
   packages_business_shared_cache_column_connection: 'From Connection',
   packages_business_shared_cache_column_table: 'From Table',
-  packages_business_relation_list_gongxianghuancun: 'Shared Cache'
+  packages_business_relation_list_gongxianghuancun: 'Shared Cache',
+  packages_business_application_delete_shanchuyingyong: 'Delete Application',
+  packages_business_application_delete_ninzhengzaishanchu:
+    'You are deleting the application <span class="fw-bolder font-color-dark">{val1}</span>, are you sure to delete',
+  packages_business_application_delete_ninzhengzaishanchu2:
+    'You are deleting the application <span class="fw-bolder font-color-dark">{val1}</span>, the API under this application will be moved to',
+  packages_business_application_delete_yingyongmiaoshubu: 'Application description cannot be empty',
+  packages_business_application_delete_yingyongmingchengbu: 'The application name cannot be empty',
+  packages_business_application_delete_shifouquerenshan: 'Are you sure to delete',
+  packages_business_application_editor_yingyongmiaoshu: 'Application Description',
+  packages_business_application_list_qingshuruyingyong: 'Please enter the application name',
+  packages_business_application_list_yifabuAp: 'Number of published APIs',
+  packages_business_application_list_zongApIshu: 'Total number of APIs',
+  packages_business_application_list_yingyongmingcheng: 'Application Name',
+  packages_business_application_list_chuangjianyingyong: 'Create Application',
+  packages_business_data_server_drawer_qingxuanzesuoshu: 'Please select the application',
+  packages_business_data_server_drawer_suoshuyingyong: 'Owner Application'
 }

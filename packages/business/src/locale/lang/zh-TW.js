@@ -895,5 +895,21 @@ export default {
   packages_business_shared_cache_code_tooltip: '可在JS節點中輸入這段代碼使用該緩存',
   packages_business_shared_cache_column_connection: '所屬連接',
   packages_business_shared_cache_column_table: '所屬表',
-  packages_business_relation_list_gongxianghuancun: '共享緩存'
+  packages_business_relation_list_gongxianghuancun: '共享緩存',
+  packages_business_application_delete_shanchuyingyong: '删除应用',
+  packages_business_application_delete_ninzhengzaishanchu:
+    '您正在删除应用<span class="fw-bolder font-color-dark">{val1}</span>，是否确认删除',
+  packages_business_application_delete_ninzhengzaishanchu2:
+    '您正在删除应用<span class="fw-bolder font-color-dark">{val1}</span>，该应用下的API将移动到',
+  packages_business_application_delete_yingyongmiaoshubu: '应用描述不能为空',
+  packages_business_application_delete_yingyongmingchengbu: '应用名称不能为空',
+  packages_business_application_delete_shifouquerenshan: '是否确认删除',
+  packages_business_application_editor_yingyongmiaoshu: '应用描述',
+  packages_business_application_list_qingshuruyingyong: '请输入应用名称',
+  packages_business_application_list_yifabuAp: '已发布API数量',
+  packages_business_application_list_zongApIshu: '总API数量',
+  packages_business_application_list_yingyongmingcheng: '应用名称',
+  packages_business_application_list_chuangjianyingyong: '创建应用',
+  packages_business_data_server_drawer_qingxuanzesuoshu: '请选择所属应用',
+  packages_business_data_server_drawer_suoshuyingyong: '所属应用'
 }
