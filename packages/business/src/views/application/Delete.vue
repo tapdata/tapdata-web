@@ -153,6 +153,7 @@ export default {
         .then(() => {
           this.$emit('success')
           this.$message.success(this.$t('public_message_delete_ok'))
+          this.handleClose()
         })
         .finally(() => {
           this.saveLoading = false

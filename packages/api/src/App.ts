@@ -8,9 +8,7 @@ export default class App extends Http {
     return this.axios.get(`${this.url}/detail/${id}`)
   }
   move(id, moveId) {
-    return this.axios.put(`${this.url}/move/${id}`, {
-      moveId
-    })
+    return this.axios.put(`${this.url}/move/${id}?moveId=${moveId}`)
   }
 }
 export { App }
