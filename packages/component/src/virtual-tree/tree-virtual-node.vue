@@ -105,6 +105,12 @@ export default {
     };
   },
 
+  computed: {
+    node() {
+      return this.source
+    }
+  },
+
   watch: {
 
     'source.indeterminate'(val) {
@@ -125,7 +131,6 @@ export default {
 
   created() {
     const parent = this.$parent.$parent.$parent;
-    this.node = this.source;
     this.creator(parent, 'source');
   }
 };
