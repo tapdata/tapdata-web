@@ -1282,10 +1282,12 @@ export default {
 .inline-input {
   ::v-deep {
     .input {
-      width: 180px;
+      flex: 1;
+      min-width: 0;
+      width: auto;
     }
     .el-input--mini .el-input__inner {
-      padding: 0;
+      padding: 0 4px;
     }
     .icon-button {
       width: 20px;
