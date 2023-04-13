@@ -17,7 +17,7 @@
         <ElTabPane :label="$t('packages_dag_monitor_bottompanel_yunxingjilu')" name="record">
           <Record v-if="currentTab === 'record'" v-bind="$attrs" :currentTab="currentTab"></Record>
         </ElTabPane>
-        <ElTabPane :label="$t('packages_dag_monitor_bottompanel_gaojingliebiao')" name="alert">
+        <ElTabPane v-if="showAlert" :label="$t('packages_dag_monitor_bottompanel_gaojingliebiao')" name="alert">
           <Alert
             v-if="currentTab === 'alert'"
             v-bind="$attrs"
@@ -82,7 +82,11 @@ export default {
   },
 
   computed: {
-    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly'])
+    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
+
+    showAlert() {
+      return !['SharedCacheMonitor'].includes(this.$route.name)
+    }
   },
 
   watch: {
