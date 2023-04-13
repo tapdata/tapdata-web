@@ -613,5 +613,14 @@ export default {
     'It is not supported to enable filtering settings when enabling full breakpoint resume upload.',
   packages_dag_nodes_table_depskai2: 'It is not supported to open custom SQL when full breakpoint resume is enabled.',
   packages_dag_nodes_table_depsd:
-    'After enabling the custom SQL/filtering settings, it is not supported to enable full resuming of breakpoints.'
+    'After enabling the custom SQL/filtering settings, it is not supported to enable full resuming of breakpoints.',
+  packages_dag_migration_settingpanel_shirenwubaocuo: 'When the task reports an error, stop',
+  packages_dag_migration_settingpanel_dangtiaoguoshijian: 'When the number of skip events exceeds',
+  packages_dag_migration_settingpanel_dangtiaoguoshijian2:
+    'When the percentage of skipped events to synchronized events exceeds',
+  packages_dag_migration_settingpanel_zhidingtiaoguoce: 'Specify skip strategy',
+  packages_dag_migration_settingpanel_renwutiaoguoshi: 'Stop the task when the task skip event exceeds the threshold',
+  packages_dag_migration_settingpanel_tiaoguoyichangshi: 'Skip abnormal events, the task continues to run',
+  packages_dag_migration_settingpanel_dangdanbiaotongbu:
+    'When there is an error writing to the target for single table synchronization'
 }
