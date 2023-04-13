@@ -548,7 +548,7 @@ export default {
           chargeProvider,
           priceId,
           currency: this.currencyType || currency,
-          successUrl: location.origin + '/' + fastDownloadUrl.href,
+          successUrl: location.origin + location.pathname + fastDownloadUrl.href,
           cancelUrl: location.href,
           email,
           type
