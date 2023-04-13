@@ -23,10 +23,6 @@ export default {
     value: {
       type: [String, Number]
     },
-    type: {
-      type: String,
-      default: 'connection'
-    },
     params: {
       type: Object,
       default: () => {
@@ -58,18 +54,7 @@ export default {
       this.$emit('update:value', this.form.value).$emit('update:label', this.form.label).$emit('change', val, opt)
     },
 
-    async getData() {
-      const map = {
-        connection: this.getConnectionList,
-        app: this.getAppList
-      }
-
-      return await map[this.type]?.(...arguments)
-    },
-
-    async getConnectionList() {},
-
-    async getAppList(filter = {}) {
+    async getData(filter = {}) {
       const { page, size } = filter
       let params = {
         where: {

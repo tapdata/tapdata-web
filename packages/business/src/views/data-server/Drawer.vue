@@ -76,17 +76,13 @@
           :label="$t('packages_business_data_server_drawer_suoshuyingyong')"
           prop="kennen"
         >
-          <AsyncSelect
-            v-model="form.appValue"
+          <ListSelect
+            :value.sync="form.appValue"
+            :label.sync="form.appLabel"
             :disabled="!isEdit"
-            :method="getAppList"
-            :current-label="form.appLabel"
             item-label="value"
             item-value="id"
-            filterable
-            @change="handleChange"
-          >
-          </AsyncSelect>
+          ></ListSelect>
         </ElFormItem>
 
         <!-- 基础信息 -->
@@ -468,16 +464,16 @@ import {
   modulesApi,
   applicationApi,
   roleApi,
-  workerApi,
-  appApi
+  workerApi
 } from '@tap/api'
 import { Drawer, VCodeEditor } from '@tap/component'
 import { uid } from '@tap/shared'
 
 import getTemplate from './template'
+import ListSelect from '../api-application/ListSelect'
 
 export default {
-  components: { Drawer, VCodeEditor, AsyncSelect },
+  components: { Drawer, VCodeEditor, ListSelect },
   props: {
     host: String
   },
@@ -1130,34 +1126,6 @@ export default {
         .finally(() => {
           this.intervalId = setTimeout(this.getWorkers, 2000)
         })
-    },
-
-    async getAppList(filter = {}) {
-      const { page, size } = filter
-      let params = {
-        where: {
-          item_type: 'app'
-        },
-        order: 'createTime DESC',
-        limit: size,
-        skip: (page - 1) * size
-      }
-
-      const { label } = filter.where || {}
-      if (label) {
-        Object.assign(params.where, {
-          'listtags.value': label
-        })
-      }
-
-      return await appApi.get({
-        filter: JSON.stringify(params)
-      })
-    },
-
-    handleChange(val, opt) {
-      const { label } = opt
-      this.form.appLabel = label
     }
   }
 }

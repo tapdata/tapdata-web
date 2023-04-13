@@ -17,7 +17,6 @@
         :value.sync="form.appValue"
         :label.sync="form.appLabel"
         :format="handleFormat"
-        type="app"
         item-label="value"
         item-value="id"
         class="my-3"
@@ -37,7 +36,7 @@
 import i18n from '@tap/i18n'
 
 import { appApi, modulesApi } from '@tap/api'
-import ListSelect from '@tap/business/src/components/ListSelect'
+import ListSelect from './ListSelect'
 
 export default {
   name: 'Delete',
