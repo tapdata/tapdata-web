@@ -87,7 +87,7 @@ export default {
           })
         })
         .then(data => {
-          if (!data.total) {
+          if (data.total) {
             this.details.id = row.id
             this.details.value = row.value
             this.loadData()
