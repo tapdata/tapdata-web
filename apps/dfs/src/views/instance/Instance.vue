@@ -228,7 +228,7 @@
             <ElButton
               size="mini"
               type="text"
-              v-else
+              v-if="scope.row.orderInfo.type === 'one_time'"
               :loading="scope.row.btnLoading.delete"
               :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
               @click="handleUnsubscribe(scope.row)"
