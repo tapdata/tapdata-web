@@ -456,7 +456,6 @@ import axios from 'axios'
 import { cloneDeep } from 'lodash'
 
 import i18n from '@/i18n'
-import { AsyncSelect } from '@tap/form'
 import {
   databaseTypesApi,
   connectionsApi,
