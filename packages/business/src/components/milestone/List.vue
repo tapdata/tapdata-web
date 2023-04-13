@@ -38,7 +38,7 @@
           <ElProgress
             v-if="typeof item.percentage === 'number'"
             :percentage="item.percentage"
-            :stroke-width=10
+            :stroke-width="10"
             class="milestone-mt-1"
             :show-text="false"
           ></ElProgress>
@@ -140,8 +140,8 @@ export default {
       const dataflowType = this.dataflow.type
       let iconRunning = 'loading-circle'
       let iconRunningColor = 'color-success'
-      if (this.dataflow.status != "running") {
-        iconRunning = "time"
+      if (this.dataflow.status != 'running') {
+        iconRunning = 'time'
         iconRunningColor = 'color-primary'
       }
       if (['logCollector'].includes(this.dataflow.syncType)) {
@@ -203,12 +203,12 @@ export default {
       result.forEach(el => {
         let item = milestone[el.key]
         if (item == undefined) {
-            item = {
-                "begin": 0,
-                "end": 0,
-                "totals": "-",
-                "progress": "-"
-            }
+          item = {
+            begin: 0,
+            end: 0,
+            totals: '-',
+            progress: '-'
+          }
         }
         let time =
           item.begin && item.end
@@ -226,7 +226,7 @@ export default {
                 Object.assign(el, {
                   dataDesc: `, ${i18n.t('public_milestone_time_scheduling', { val: hostName })}, ${i18n.t(
                     'public_milestone_time_consuming'
-                  )}${time}, ${begin}~${end}`
+                  )}${time}, ${begin} ~ ${end}`
                 })
                 break
               case 'DATA_NODE_INIT':
@@ -261,15 +261,15 @@ export default {
             break
           case 'RUNNING':
             switch (el.key) {
-                case 'CDC':
-                  Object.assign(el, cdcRunningOpt, {
-                    progress: (item.progress / item.totals) * 100
-                  })
-                  break
-                default:
-                  Object.assign(el, runningOpt, {
-                    progress: (item.progress / item.totals) * 100
-                  })
+              case 'CDC':
+                Object.assign(el, cdcRunningOpt, {
+                  progress: (item.progress / item.totals) * 100
+                })
+                break
+              default:
+                Object.assign(el, runningOpt, {
+                  progress: (item.progress / item.totals) * 100
+                })
             }
             break
           default:
@@ -281,7 +281,7 @@ export default {
       const finishedLen = result.filter(t => t.status === 'FINISH').length
       let currentLen = finishedLen + 1
       if (currentLen > len) {
-          currentLen = currentLen - 1
+        currentLen = currentLen - 1
       }
 
       const per = (finishedLen / len) * 100
@@ -289,11 +289,10 @@ export default {
         label: i18n.t('packages_business_milestone_list_zhengtijindu'),
         icon: 'device',
         percentage: per,
-        desc:
-          i18n.t('packages_business_milestone_list_finish', {
+        desc: i18n.t('packages_business_milestone_list_finish', {
           val1: finishedLen,
           val2: len,
-          val3: result[currentLen-1].label + " " + result[currentLen-1].desc,
+          val3: result[currentLen - 1].label + ' ' + result[currentLen - 1].desc
         })
       })
       return result
