@@ -1404,5 +1404,63 @@ export default {
   dfs_instance_utils_baozhouqi: 'Fixed-term Package',
   dfs_instance_selectlist_shiyongzhegeding: 'Create {val1} Agent using this license code.',
   page_title_data_console: 'Data Console',
-  dfs_instance_instance_xiacifufeishi: 'Next paid time'
+
+  dfs_instance_instance_xiacifufeishi: 'Next payment time',
+  dfs_agent_download_fastdownload_fuzhiTok: 'Copy Token, deploy and start Agent on the command line',
+  dfs_agent_download_fastdownload_shuangjizhixingt:
+    '3. Double-click to execute tapdata.exe to start the installation. ',
+  dfs_agent_download_fastdownload_jiangwenjianta:
+    ' 2. Put the files tapdata.exe and application.yml into the directory you want to install. The installation path cannot contain Chinese and special characters. ',
+  dfs_agent_download_fastdownload_he: 'and',
+  dfs_agent_download_fastdownload_shiyongpeizhiwen: 'Use configuration file deployment to start Agent',
+  dfs_agent_download_subscriptionmodeldialog_yongjiu: 'Permanent',
+  dfs_agent_download_subscriptionmodeldialog_mianfeishilizui: 'Free instance, up to 3 tasks are allowed',
+  dfs_agent_download_subscriptionmodeldialog_ge: '',
+  dfs_agent_download_subscriptionmodeldialog_renwushujianyi: 'The recommended number of tasks is less than',
+  dfs_agent_download_subscriptionmodeldialog_extra: 'EXTRA SMALL: 1C 2G - FREE (only one can be created)',
+  dfs_agent_download_subscriptionmodeldialog_dingyuefangshi: 'Subscription method:',
+  dfs_agent_download_subscriptionmodeldialog_jisuanziyuan: 'Computing resources:',
+  dfs_agent_download_subscriptionmodeldialog_ninyouyijihuo:
+    'You have activated an unbound authorization code, click to create an instance',
+  dfs_agent_download_subscriptionmodeldialog_bingbushu: 'and deploy',
+  dfs_agent_download_subscriptionmodeldialog_goumai: 'Purchase',
+  dfs_agent_download_subscriptionmodeldialog_jihuoxinshouquan: 'Activate a new authorization code',
+  dfs_agent_download_subscriptionmodeldialog_xuanzebizhong: 'Select currency',
+  dfs_agent_download_subscriptionmodeldialog_zuoyou: 'left and right',
+  dfs_agent_download_subscriptionmodeldialog_geyugumeimiao:
+    ', the estimated performance of synchronization per second is ',
+  dfs_agent_download_subscriptionmodeldialog_keyongneicunjian:
+    'Available memory, the recommended number of tasks does not exceed',
+  dfs_agent_download_subscriptionmodeldialog_guigeshuomingci: 'Specification: This specification requires at least ',
+  dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu: 'Please select the product specification you need',
+  dfs_agent_download_subscriptionmodeldialog_zhijieshiyonga:
+    'Directly use the authorization code of Alibaba Cloud market',
+  dfs_agent_download_subscriptionmodeldialog_gengjiakekaoyou:
+    '- More reliable: The maintenance and monitoring of resource usage is provided by Tapdata, and the operation is more reliable',
+  dfs_agent_download_subscriptionmodeldialog_gengjiafangbianmian:
+    '- more convenient: no deployment, one-click delivery',
+  dfs_agent_download_subscriptionmodeldialog_shiyongquantuoguan: 'The benefits of using the fully managed mode:',
+  dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi:
+    'In this mode, Tapdata provides all computing and storage resources.',
+  dfs_agent_download_subscriptionmodeldialog_gengjiaanquanyong:
+    '- More secure: user data will not pass through any external network including Tapdata',
+  dfs_agent_download_subscriptionmodeldialog_chengbengengdichong:
+    '- Lower cost: make full use of existing hardware resources, and the product price is much lower under the same specification',
+  dfs_agent_download_subscriptionmodeldialog_shiyongbantuoguan: 'The benefits of using the semi-hosted mode:',
+  dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi2:
+    'In this mode, you need to provide your own computing resources and storage resources',
+  dfs_agent_download_subscriptionmodeldialog_quantuoguanmoshi: 'Full Managed Mode (Coming Soon)',
+  dfs_agent_download_subscriptionmodeldialog_bantuoguanmoshi: 'Semi Managed Mode',
+  dfs_instance_instance_quxiaodingyue: 'Unsubscribe',
+  dfs_views_layout_chanpinyindao: 'Product Guide',
+  dfs_agent_download_subscriptionmodeldialog_chakanbingqueren: 'Select Deployment Type',
+  dfs_agent_download_subscriptionmodeldialog_peizhibushugui: 'Configure Deployment Spec',
+  dfs_agent_download_subscriptionmodeldialog_xuanzebushulei: 'Review & Confirm',
+  dfs_agent_download_subscriptionmodeldialog_peizhishishishu: 'Configure Live Data Platform',
+  dfs_agent_download_subscriptionmodeldialog_peizhizhaiyao: 'Configuration Summary',
+  dfs_agent_download_subscriptionmodeldialog_jisuan: 'Compute: ',
+  dfs_agent_download_subscriptionmodeldialog_meiyuefeiyongyu: 'Estimated Monthly Cost',
+  dfs_agent_download_subscriptionmodeldialog_usd: 'USD',
+  dfs_agent_download_subscriptionmodeldialog_cny: 'CNY',
+  dfs_agent_download_subscriptionmodeldialog_hkd: 'HKD'
 }

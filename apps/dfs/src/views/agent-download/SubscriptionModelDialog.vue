@@ -4,60 +4,76 @@
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :show-close="showClose"
-    title="Configure Live Data Platform"
+    :title="$t('dfs_agent_download_subscriptionmodeldialog_peizhishishishu')"
     width="75%"
     :before-close="close"
   >
     <el-tabs v-model="activeName">
-      <el-tab-pane label="Select Deployment Type" name="first">
+      <el-tab-pane :label="$t('dfs_agent_download_subscriptionmodeldialog_chakanbingqueren')" name="first">
         <div class="configure-main">
           <el-radio-group class="flex mb-4" v-model="productType" @change="selectProductType">
-            <el-radio class="width50 fs-6 fw-sub" label="selfHost">半托管模式</el-radio>
-            <el-radio class="fs-6 fw-sub" label="fullManagement" disabled>全托管模式 (即将上线)</el-radio>
+            <el-radio class="width50 fs-6 fw-sub" label="selfHost">{{
+              $t('dfs_agent_download_subscriptionmodeldialog_bantuoguanmoshi')
+            }}</el-radio>
+            <el-radio class="fs-6 fw-sub" label="fullManagement" disabled>{{
+              $t('dfs_agent_download_subscriptionmodeldialog_quantuoguanmoshi')
+            }}</el-radio>
           </el-radio-group>
           <div class="flex">
             <section class="content-left width50">
-              <div class="mt-2 fw-sub">在这种模式下, 你需要自己提供自己计算资源与存储资源</div>
-              <div class="mt-2 fw-sub">使用半托管模式的好处：</div>
+              <div class="mt-2 fw-sub">{{ $t('dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi2') }}</div>
+              <div class="mt-2 fw-sub">{{ $t('dfs_agent_download_subscriptionmodeldialog_shiyongbantuoguan') }}</div>
               <ul>
-                <li class="mt-2 font-color-light">- 成本更低: 充分利用已有硬件资源, 同样的规格下产品价格低很多</li>
-                <li class="mt-2 font-color-light">- 更加安全: 用户的数据不会经过包括 Tapdata 在内的任意外部网络</li>
+                <li class="mt-2 font-color-light">
+                  {{ $t('dfs_agent_download_subscriptionmodeldialog_chengbengengdichong') }}
+                </li>
+                <li class="mt-2 font-color-light">
+                  {{ $t('dfs_agent_download_subscriptionmodeldialog_gengjiaanquanyong') }}
+                </li>
                 <li class="img-box mt-4">
                   <el-image :src="getImg('halfManagement')" alt="" />
                 </li>
               </ul>
             </section>
             <section class="content-right width50">
-              <div class="mt-2 fw-sub">在这种模式下, Tapdata 提供所有的计算及存储资源.</div>
-              <div class="mt-2 fw-sub">使用全托管模式的好处：</div>
+              <div class="mt-2 fw-sub">{{ $t('dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi') }}</div>
+              <div class="mt-2 fw-sub">{{ $t('dfs_agent_download_subscriptionmodeldialog_shiyongquantuoguan') }}</div>
               <ul>
-                <li class="mt-2 font-color-light">- 更加方便: 免部署, 一键交付使用</li>
-                <li class="mt-2 font-color-light">- 更加可靠: 由 Tapdata 提供资源使用的维护与监控, 运行更可靠</li>
+                <li class="mt-2 font-color-light">
+                  {{ $t('dfs_agent_download_subscriptionmodeldialog_gengjiafangbianmian') }}
+                </li>
+                <li class="mt-2 font-color-light">
+                  {{ $t('dfs_agent_download_subscriptionmodeldialog_gengjiakekaoyou') }}
+                </li>
                 <li class="img-box mt-4">
                   <el-image :src="getImg('fullManagement')" alt="" />
                 </li>
               </ul>
             </section>
           </div>
-          <el-link type="primary" @click="changeProductType">直接使用阿里云市场授权码</el-link>
+          <el-link type="primary" @click="changeProductType">{{
+            $t('dfs_agent_download_subscriptionmodeldialog_zhijieshiyonga')
+          }}</el-link>
           <!--          <span class="ml-4"-->
           <!--            >依然不知道如何选择? <span class="color-primary cursor-pointer">点击这里</span>了解更多的区别</span-->
           <!--          >-->
         </div>
         <footer class="flex justify-content-end">
-          <el-button type="primary" @click="next('second')">Next</el-button>
+          <el-button type="primary" @click="next('second')">{{ $t('public_button_next') }}</el-button>
         </footer>
       </el-tab-pane>
-      <el-tab-pane label="Configure Deployment Spec" name="second">
+      <el-tab-pane :label="$t('dfs_agent_download_subscriptionmodeldialog_peizhibushugui')" name="second">
         <section v-if="productType !== 'aliyun'">
           <div class="spec-main flex justify-content-between mt-6">
             <div class="flex flex-column flex-1">
               <div class="flex align-items-center">
                 <div class="label">
-                  <div class="agent_size">请选择您需要的产品规格</div>
+                  <div class="agent_size">{{ $t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu') }}</div>
                   <div class="agent_size_cap">
-                    规格说明: 此规格需要至少 {{ agentSizeCap.mem }} 可用内存, 建议的任务数不超过
-                    {{ agentSizeCap.pipeline }} 个, 预估每秒同步的性能在 {{ agentSizeCap.tps }} 左右
+                    {{ $t('dfs_agent_download_subscriptionmodeldialog_guigeshuomingci') }}{{ agentSizeCap.mem
+                    }}{{ $t('dfs_agent_download_subscriptionmodeldialog_keyongneicunjian') }}{{ agentSizeCap.pipeline
+                    }}{{ $t('dfs_agent_download_subscriptionmodeldialog_geyugumeimiao') }}{{ agentSizeCap.tps
+                    }}{{ $t('dfs_agent_download_subscriptionmodeldialog_zuoyou') }}
                   </div>
                 </div>
                 <div class="value agent_plan">
@@ -74,7 +90,7 @@
                 </div>
               </div>
               <div class="flex align-items-center mt-8">
-                <div class="label payment_plan">订阅方式</div>
+                <div class="label payment_plan">{{ $t('dfs_instance_instance_dingyuefangshi') }}</div>
                 <div class="value">
                   <ul class="flex justify-content-start flex-wrap">
                     <li
@@ -92,7 +108,9 @@
                 </div>
               </div>
               <div class="flex align-items-center mt-8" v-if="selected.chargeProvider !== 'FreeTier'">
-                <div class="label payment_plan">选择币种</div>
+                <div class="label payment_plan">
+                  {{ $t('dfs_agent_download_subscriptionmodeldialog_xuanzebizhong') }}
+                </div>
                 <div class="value">
                   <ul class="flex justify-content-start flex-wrap">
                     <li
@@ -111,18 +129,20 @@
               </div>
             </div>
             <div class="price-list flex flex-column">
-              <div class="title">Estimated Monthly Cost</div>
+              <div class="title">{{ $t('dfs_agent_download_subscriptionmodeldialog_meiyuefeiyongyu') }}</div>
               <ul class="flex flex-1 content">
-                <li class="item">Compute: {{ formatPrice(currency) }}</li>
+                <li class="item">
+                  {{ $t('dfs_agent_download_subscriptionmodeldialog_jisuan') }}{{ formatPrice(currency) }}
+                </li>
               </ul>
               <div class="total">
-                Total: <span class="price">{{ formatPrice(currency) }}</span>
+                {{ $t('public_total') }}: <span class="price">{{ formatPrice(currency) }}</span>
               </div>
             </div>
           </div>
           <footer class="flex justify-content-end mt-4">
-            <el-button @click="next('first')">Previous</el-button>
-            <el-button type="primary" @click="next('third')">Next</el-button>
+            <el-button @click="next('first')">{{ $t('public_button_previous') }}</el-button>
+            <el-button type="primary" @click="next('third')">{{ $t('public_button_next') }}</el-button>
           </footer>
         </section>
         <section v-else v-loading="aliyunLoading">
@@ -142,7 +162,9 @@
                   }}</ElButton>
                 </template>
               </VTable>
-              <div class="mt-4 cursor-pointer color-primary" @click="handleNewCode(false)">激活新授权码</div>
+              <div class="mt-4 cursor-pointer color-primary" @click="handleNewCode(false)">
+                {{ $t('dfs_agent_download_subscriptionmodeldialog_jihuoxinshouquan') }}
+              </div>
             </div>
             <div v-else>
               <div class="flex justify-content-center align-items-center">
@@ -157,7 +179,7 @@
                     target="_blank"
                     >{{ $t('dfs_aliyun_market_license_aliyunshichang') }}</a
                   >
-                  购买
+                  {{ $t('dfs_agent_download_subscriptionmodeldialog_goumai') }}
                 </li>
                 <li>{{ $t('dfs_aliyun_market_license_chuangjianshouquanma') }}</li>
                 <li>{{ $t('dfs_aliyun_market_license_niantiedaoxiafang') }}</li>
@@ -167,29 +189,38 @@
                 <el-input v-model="licenseCode" type="textarea" rows="2" autofocus></el-input>
               </div>
               <el-button class="mt-4" style="margin-left: 65px" type="primary" :loading="saveLoading" @click="save()"
-                >{{ $t('dfs_aliyun_market_license_jihuo') }}并部署</el-button
+                >{{ $t('dfs_aliyun_market_license_jihuo')
+                }}{{ $t('dfs_agent_download_subscriptionmodeldialog_bingbushu') }}</el-button
               >
               <span
                 v-if="codeData.length > 0"
                 class="ml-4 mt-4 cursor-pointer font-color-light"
                 @click="handleNewCode(true)"
-                >您有已激活未绑定的授权码，点击创建实例</span
+                >{{ $t('dfs_agent_download_subscriptionmodeldialog_ninyouyijihuo') }}</span
               >
             </div>
           </div>
         </section>
       </el-tab-pane>
-      <el-tab-pane label="Review & Confirm" name="third" v-if="productType !== 'aliyun'">
+      <el-tab-pane
+        :label="$t('dfs_agent_download_subscriptionmodeldialog_xuanzebushulei')"
+        name="third"
+        v-if="productType !== 'aliyun'"
+      >
         <div class="flex flex-column review">
           <div class="flex-1 px-4">
-            <div class="mt-4 fx-6 font-color-dark">Configuration Summary</div>
-            <div class="mt-4 font-color-light">
-              计算资源：<span class="font-color-dark">{{ specMap[currentSpecName] || specification }}</span>
+            <div class="mt-4 fx-6 font-color-dark">
+              {{ $t('dfs_agent_download_subscriptionmodeldialog_peizhizhaiyao') }}
             </div>
             <div class="mt-4 font-color-light">
-              订阅方式：<span class="font-color-dark">{{ selected.label }}</span>
+              {{ $t('dfs_agent_download_subscriptionmodeldialog_jisuanziyuan')
+              }}<span class="font-color-dark">{{ specMap[currentSpecName] || specification }}</span>
             </div>
-            <div class="mt-4 font-color-light">接收账单的邮箱</div>
+            <div class="mt-4 font-color-light">
+              {{ $t('dfs_agent_download_subscriptionmodeldialog_dingyuefangshi')
+              }}<span class="font-color-dark">{{ selected.label }}</span>
+            </div>
+            <div class="mt-4 font-color-light">{{ $t('dfs_instance_create_jieshouzhangdande') }}</div>
             <ElForm class="mt-4" style="width: 520px" :model="form" ref="from">
               <ElFormItem prop="email" :rules="getEmailRules()">
                 <ElInput v-model="form.email" :placeholder="getPlaceholder()"></ElInput>
@@ -200,8 +231,8 @@
             <div class="mr-6">
               Total: <span class="price">{{ formatPrice(currency) || 0 }}</span>
             </div>
-            <el-button @click="next('second')">Previous</el-button>
-            <el-button type="primary" @click="submit()">CONFIRM</el-button>
+            <el-button @click="next('second')">{{ $t('public_button_previous') }}</el-button>
+            <el-button type="primary" @click="submit()">{{ $t('public_button_confirm') }}</el-button>
           </footer>
         </div>
       </el-tab-pane>
@@ -252,7 +283,7 @@ export default {
         email: ''
       },
       specMap: {
-        '1C2G': 'EXTRA SMALL: 1C 2G - FREE(只能创建一个)'
+        '1C2G': i18n.t('dfs_agent_download_subscriptionmodeldialog_extra')
       },
       CURRENCY_MAP: CURRENCY_MAP,
       licenseCode: '',
@@ -363,9 +394,12 @@ export default {
         this.specificationItems = uniqueArr(
           paidPrice.map(t => {
             const { cpu = 0, memory = 0 } = t.spec || {}
-            let desc = '任务数建议小于 ' + this.getSuggestPipelineNumber(cpu, memory) + ' 个'
+            let desc =
+              i18n.t('dfs_agent_download_subscriptionmodeldialog_renwushujianyi') +
+              this.getSuggestPipelineNumber(cpu, memory) +
+              i18n.t('dfs_agent_download_subscriptionmodeldialog_ge')
             if (t.chargeProvider == 'FreeTier') {
-              desc = '免费实例, 最多允许创建 3 个任务'
+              desc = i18n.t('dfs_agent_download_subscriptionmodeldialog_mianfeishilizui')
             }
             return {
               label: getSpec(t.spec),
@@ -418,7 +452,14 @@ export default {
           return a.order < b.order ? -1 : a.periodUnit < b.periodUnit ? -1 : 1
         })
       if (chargeProvider === 'FreeTier') {
-        this.packageItems = [{ label: '永久', price: 0, value: '0', chargeProvider: 'FreeTier' }]
+        this.packageItems = [
+          {
+            label: i18n.t('dfs_agent_download_subscriptionmodeldialog_yongjiu'),
+            price: 0,
+            value: '0',
+            chargeProvider: 'FreeTier'
+          }
+        ]
       }
     },
     handleChange(item = {}) {
