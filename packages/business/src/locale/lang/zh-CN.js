@@ -883,5 +883,10 @@ export default {
   packages_business_mdm_table_duplication_confirm: '目标表已经存在，请确定是否继续？',
   packages_business_data_console_mode: '产品能力模式',
   packages_business_data_console_mode_integration: '数据集成',
-  packages_business_data_console_mode_service: '数据服务平台'
+  packages_business_data_console_mode_service: '数据服务平台',
+  packages_business_data_console_fdm_mdm_storage: '平台缓存层和加工层存储',
+  packages_business_data_console_fdm_mdm_storage_tooltip: '请指定用于额外数据层存储的数据库连接',
+  packages_business_mongodb_atlas_cluster: 'MongoDB Atlas 集群',
+  packages_business_mongodb_self_hosted_cluster: '自托管 MongoDB 集群',
+  packages_business_data_console_setting_saved_tooltip: '保存后暂不支持修改'
 }

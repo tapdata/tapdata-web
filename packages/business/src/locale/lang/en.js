@@ -923,5 +923,11 @@ export default {
     'The target table already exists. Please confirm if you want to continue?',
   packages_business_data_console_mode: 'Product Capability Mode',
   packages_business_data_console_mode_integration: 'Data Integration',
-  packages_business_data_console_mode_service: 'Data Service Platform'
+  packages_business_data_console_mode_service: 'Data Service Platform',
+  packages_business_data_console_fdm_mdm_storage: 'FDM & MDM Storage Backend',
+  packages_business_data_console_fdm_mdm_storage_tooltip:
+    'Specify the database connection that will be used for additional data layer storage',
+  packages_business_mongodb_atlas_cluster: 'MongoDB Atlas Cluster',
+  packages_business_mongodb_self_hosted_cluster: 'Self Hosted MongoDB Cluster',
+  packages_business_data_console_setting_saved_tooltip: 'The Settings cannot be modified after being saved.'
 }

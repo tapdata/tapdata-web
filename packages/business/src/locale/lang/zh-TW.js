@@ -879,5 +879,10 @@ export default {
   packages_business_mdm_table_duplication_confirm: '目標表已經存在，請確定是否繼續？',
   packages_business_data_console_mode: '產品能力模式',
   packages_business_data_console_mode_integration: '數據集成',
-  packages_business_data_console_mode_service: '數據服務平台'
+  packages_business_data_console_mode_service: '數據服務平台',
+  packages_business_data_console_fdm_mdm_storage: '平台緩存和加工層存儲',
+  packages_business_data_console_fdm_mdm_storage_tooltip: '請指定用於額外數據層存儲的數據庫連接',
+  packages_business_mongodb_atlas_cluster: 'MongoDB Atlas 集群',
+  packages_business_mongodb_self_hosted_cluster: '自托管 MongoDB 集群',
+  packages_business_data_console_setting_saved_tooltip: '保存後暫不支持修改'
 }
