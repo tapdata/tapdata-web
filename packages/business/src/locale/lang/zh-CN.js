@@ -880,5 +880,8 @@ export default {
   packages_business_mdm_empty_text: '请将<strong>源数据层/平台缓存层</strong>中的表拖拽至此<br/>即可开始同步数据',
   packages_business_catalog_delete_confirm_message:
     '此操作仅会将该分类及其子分类删除，如需删除分类下的物理表,请您自行操作。',
-  packages_business_mdm_table_duplication_confirm: '目标表已经存在，请确定是否继续？'
+  packages_business_mdm_table_duplication_confirm: '目标表已经存在，请确定是否继续？',
+  packages_business_data_console_mode: '产品能力模式',
+  packages_business_data_console_mode_integration: '数据集成',
+  packages_business_data_console_mode_service: '数据服务平台'
 }
