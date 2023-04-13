@@ -9,7 +9,7 @@
     :before-close="close"
   >
     <el-tabs v-model="activeName">
-      <el-tab-pane :label="$t('dfs_agent_download_subscriptionmodeldialog_chakanbingqueren')" name="first">
+      <el-tab-pane :label="$t('dfs_agent_download_subscriptionmodeldialog_xuanzebushulei')" name="first">
         <div class="configure-main">
           <el-radio-group class="flex mb-4" v-model="productType" @change="selectProductType">
             <el-radio class="width50 fs-6 fw-sub" label="selfHost">{{
@@ -203,7 +203,7 @@
         </section>
       </el-tab-pane>
       <el-tab-pane
-        :label="$t('dfs_agent_download_subscriptionmodeldialog_xuanzebushulei')"
+        :label="$t('dfs_agent_download_subscriptionmodeldialog_chakanbingqueren')"
         name="third"
         v-if="productType !== 'aliyun'"
       >
