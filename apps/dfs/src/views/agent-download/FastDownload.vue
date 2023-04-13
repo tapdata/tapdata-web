@@ -18,7 +18,7 @@
         </div>
       </div>
       <template v-if="downLoadType === 'windows'">
-        <el-collapse v-model="activeName" accordion>
+        <el-collapse v-model="activeName">
           <el-collapse-item :title="$t('dfs_agent_download_fastdownload_shiyongpeizhiwen')" name="1">
             <ul class="pt-5 ul-style">
               <li>
@@ -28,10 +28,12 @@
                 {{ $t('agent_deploy_start_install_windows_first') }}
                 <ElLink type="primary" @click="handleDownLoad">{{
                   $t('agent_deploy_start_install_windows_first_download')
-                }}</ElLink>{{$t('dfs_agent_download_fastdownload_he')}}<ElLink type="primary" @click="handleDownLoadApplication">application.yml </ElLink>
+                }}</ElLink>
+                {{ $t('dfs_agent_download_fastdownload_he')
+                }}<ElLink type="primary" @click="handleDownLoadApplication">application.yml </ElLink>
               </li>
-              <li class="mt-3">{{$t('dfs_agent_download_fastdownload_jiangwenjianta')}}</li>
-              <li class="mt-3">{{$t('dfs_agent_download_fastdownload_shuangjizhixingt')}}</li>
+              <li class="mt-3">{{ $t('dfs_agent_download_fastdownload_jiangwenjianta') }}</li>
+              <li class="mt-3">{{ $t('dfs_agent_download_fastdownload_shuangjizhixingt') }}</li>
             </ul>
           </el-collapse-item>
           <el-collapse-item :title="$t('dfs_agent_download_fastdownload_fuzhiTok')" name="2">
@@ -609,6 +611,11 @@ export default {
     border: 1px solid #dcdcdc;
     background-color: #fff;
     width: 220px;
+  }
+  ::v-deep {
+    .el-collapse-item__header {
+      font-size: $fontSubtitle;
+    }
   }
 }
 </style>

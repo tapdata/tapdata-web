@@ -1406,13 +1406,13 @@ export default {
   page_title_data_console: 'Data Console',
 
   dfs_instance_instance_xiacifufeishi: 'Next payment time',
-  dfs_agent_download_fastdownload_fuzhiTok: 'Copy Token, deploy and start Agent on the command line',
+  dfs_agent_download_fastdownload_fuzhiTok: 'Method Two: Copy Token, deploy and start Agent on the command line',
   dfs_agent_download_fastdownload_shuangjizhixingt:
     '3. Double-click to execute tapdata.exe to start the installation. ',
   dfs_agent_download_fastdownload_jiangwenjianta:
     ' 2. Put the files tapdata.exe and application.yml into the directory you want to install. The installation path cannot contain Chinese and special characters. ',
   dfs_agent_download_fastdownload_he: 'and',
-  dfs_agent_download_fastdownload_shiyongpeizhiwen: 'Use configuration file deployment to start Agent',
+  dfs_agent_download_fastdownload_shiyongpeizhiwen: 'Method One: Use configuration file deployment to start Agent',
   dfs_agent_download_subscriptionmodeldialog_yongjiu: 'Permanent',
   dfs_agent_download_subscriptionmodeldialog_mianfeishilizui: 'Free instance, up to 3 tasks are allowed',
   dfs_agent_download_subscriptionmodeldialog_ge: '',

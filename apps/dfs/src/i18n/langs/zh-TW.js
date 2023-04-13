@@ -1279,12 +1279,12 @@ export default {
   page_title_data_console: '數據面板',
   dfs_instance_instance_xiacifufeishi: '下次付費時間',
 
-  dfs_agent_download_fastdownload_fuzhiTok: '複製Token,在命令行部署啟動Agent',
+  dfs_agent_download_fastdownload_fuzhiTok: '方法二: 複製Token,在命令行部署啟動Agent',
   dfs_agent_download_fastdownload_shuangjizhixingt: '3. 雙擊執行tapdata.exe開始安裝。 ',
   dfs_agent_download_fastdownload_jiangwenjianta:
     ' 2. 將文件 tapdata.exe 和 application.yml 放入您要安裝的目錄，安裝路徑不能有中文和特殊字符。 ',
   dfs_agent_download_fastdownload_he: '和',
-  dfs_agent_download_fastdownload_shiyongpeizhiwen: '使用配置文件部署啟動Agent',
+  dfs_agent_download_fastdownload_shiyongpeizhiwen: '方法一: 使用配置文件部署啟動Agent',
   dfs_agent_download_subscriptionmodeldialog_yongjiu: '永久',
   dfs_agent_download_subscriptionmodeldialog_mianfeishilizui: '免費實例, 最多允許創建 3 個任務',
   dfs_agent_download_subscriptionmodeldialog_ge: ' 個',

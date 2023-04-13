@@ -581,7 +581,7 @@ export default {
             result: true
           })
         })
-        .catch(err => {
+        .catch(() => {
           this.buried('newAgentStripe', '', {
             type,
             result: false
