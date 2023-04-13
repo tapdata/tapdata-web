@@ -135,7 +135,7 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn :label="$t('public_version')" width="200">
+        <ElTableColumn :label="$t('public_version')" width="140">
           <template slot-scope="scope">
             <div class="flex align-items-center">
               <span v-if="showVersionFlag(scope.row)">{{ scope.row.spec && scope.row.spec.version }}</span>
