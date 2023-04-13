@@ -1,14 +1,13 @@
 <template>
   <div class="connection-from" v-loading="loadingFrom">
     <div class="connection-from-body">
-      <main class="connection-from-main">
+      <main class="connection-from-main min-w-0">
         <div class="form-wrap">
           <div class="form pt-3 pr-3">
             <SchemaToForm
               ref="schemaToForm"
               :schema="schemaData"
               :scope="schemaScope"
-              wrapperWidth="600px"
               :colon="true"
               label-width="160"
             ></SchemaToForm>
@@ -1148,6 +1147,6 @@ export default {
 }
 
 .git-book {
-  //border-top: 1px solid #e1e3e9;
+  width: 400px;
 }
 </style>

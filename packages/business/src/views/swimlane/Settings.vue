@@ -21,7 +21,7 @@
         Tapdata can be used as a general data integration tool(ETL) , or as a data as a service platform. The key
         difference is Data Platform mode requires a storage backend.
       </div>-->
-      <div class="flex gap-6 justify-content-center p-4 rounded-4 bg-light mode-card-container">
+      <div class="flex gap-6 justify-content-center p-4 rounded-4 mode-card-container">
         <div
           class="rounded-xl bg-white border mode-card overflow-hidden clickable"
           :class="{ active: mode === 'integration' }"
@@ -92,9 +92,19 @@
           </div>
         </div>
       </div>-->
-      <ElForm :model="form" :rules="rules" ref="form" label-position="top">
+      <ElForm :model="form" :rules="rules" ref="form" label-position="top" class="mode-setting-form">
         <div v-if="mode === 'service'" class="mt-4 px-4 py-3 border rounded-4">
-          <ElFormItem label="FDM/MDM Storage Backend">
+          <ElFormItem>
+            <span slot="label" class="inline-flex align-center">
+              <span>{{ $t('packages_business_data_console_fdm_mdm_storage') }}</span>
+              <ElTooltip
+                class="ml-2"
+                placement="top"
+                :content="$t('packages_business_data_console_fdm_mdm_storage_tooltip')"
+              >
+                <VIcon size="14">info</VIcon>
+              </ElTooltip>
+            </span>
             <ElRadioGroup v-model="form.fdmStorageCluster" @change="handleChangeFDMStorage" :disabled="disabled">
               <ElRadio
                 v-for="item in options"
@@ -114,19 +124,19 @@
             </ElSelect>
           </ElFormItem>
 
-          <div class="flex align-items-center">
+          <!--<div class="flex align-items-center">
             <VIcon class="color-primary mr-2" size="14">info</VIcon>
-            <!--<span class="font-color-sslight"
+            &lt;!&ndash;<span class="font-color-sslight"
               >If you wish to change this setting later, you must migrate the data to your new database - manually for
               now</span
-            >-->
+            >&ndash;&gt;
             <span class="font-color-sslight"
               >Don't have the connection you want? You can add a connection in Connection Management.
             </span>
-          </div>
+          </div>-->
           <div class="flex align-items-center">
-            <VIcon class="color-primary mr-2" size="14">info</VIcon>
-            <span class="font-color-sslight">The Settings cannot be modified after being saved.</span>
+            <VIcon class="mr-2" size="14">info</VIcon>
+            <span class="font-color-sslight">{{ $t('packages_business_data_console_setting_saved_tooltip') }}</span>
           </div>
 
           <!--<div class="setting-card__header p-4">
@@ -225,12 +235,12 @@ export default {
       ],
       options: [
         {
-          label: 'MongoDB Atlas Cluster',
+          label: this.$t('packages_business_mongodb_atlas_cluster'),
           value: 'atlas',
           tag: 'Sync Atlas Cluster List'
         },
         {
-          label: 'Self Hosted MongoDB Cluster',
+          label: this.$t('packages_business_mongodb_self_hosted_cluster'),
           value: 'self',
           tag: 'Add a New Connection'
         }
@@ -404,7 +414,7 @@ export default {
 }
 
 .mode-card-container {
-  background-color: #f8f9fa;
+  background-color: #f5f7fa;
 }
 
 .mode-card {
@@ -430,6 +440,14 @@ export default {
   &:hover {
     box-shadow: 0 10px 36px 10px rgba(31, 35, 41, 0.04), 0 8px 24px rgba(31, 35, 41, 0.04),
       0 6px 12px -10px rgba(31, 35, 41, 0.06);
+  }
+}
+
+.mode-setting-form.el-form--label-top {
+  ::v-deep {
+    .el-form-item__label {
+      padding-bottom: 0;
+    }
   }
 }
 </style>

@@ -650,6 +650,7 @@ export default {
     },
 
     handleSelfDrop(draggingNode, dropNode, dropType, ev) {
+      if (dropNode.data.isObject) return
       if (!draggingNode.data.isObject) {
         metadataDefinitionsApi
           .changeById({
@@ -770,7 +771,7 @@ export default {
     },
 
     checkAllowDrop(draggingNode, dropNode, type) {
-      return type === 'inner' && this.isDragSelf
+      return type === 'inner' && this.isDragSelf && !dropNode.data.isObject
     },
 
     async moveTag(from, to, objects) {
