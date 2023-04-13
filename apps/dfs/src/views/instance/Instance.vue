@@ -242,6 +242,15 @@
               @click="handleUnsubscribe(scope.row)"
               >{{ $t('public_button_unsubscribe') }}</ElButton
             >
+            <ElButton
+              size="mini"
+              type="text"
+              v-if="!scope.row.orderInfo.chargeProvider"
+              :loading="scope.row.btnLoading.delete"
+              :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
+              @click="handleUnsubscribe(scope.row)"
+              >{{ $t('public_button_unsubscribe') }}</ElButton
+            >
           </template>
         </ElTableColumn>
         <div v-if="!isSearching" class="instance-table__empty" slot="empty">
