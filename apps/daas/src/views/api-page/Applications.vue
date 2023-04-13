@@ -56,7 +56,6 @@
         :label="$t('application_header_redirect_uri')"
         :show-overflow-tooltip="true"
         prop="redirectUrisStr"
-        sortable="redirectUrisStr"
         min-width="140"
       >
       </el-table-column>
@@ -117,7 +116,6 @@
           <ElInput
             v-model="createForm.redirectUrisStr"
             type="textarea"
-            size="mini"
             :maxlength="200"
             :showWordLimit="true"
           ></ElInput>
@@ -213,8 +211,7 @@ export default {
       this.$nextTick(() => {
         this.$refs.form.clearValidate()
       })
-      item.redirectUrisStr = item.redirectUris?.join()
-      this.createForm = item
+      Object.assign(this.createForm, item)
     },
     // 移除
     remove(item) {
@@ -289,7 +286,11 @@ export default {
         .then(data => {
           return {
             total: data?.total || 0,
-            data: data?.items || []
+            data:
+              data?.items.map(item => {
+                item.redirectUrisStr = item.redirectUris ? item.redirectUris.join(',') : ''
+                return item
+              }) || []
           }
         })
     },

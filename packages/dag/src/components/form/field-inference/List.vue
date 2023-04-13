@@ -11,7 +11,7 @@
     >
       <template slot="field_name" slot-scope="scope">
         <span class="flex align-center"
-          >{{ scope.row.field_name }}
+          ><span class="ellipsis">{{ scope.row.field_name }}</span>
           <VIcon v-if="scope.row.primary_key_position > 0" size="12" class="text-warning ml-1">key</VIcon>
         </span>
       </template>
@@ -168,7 +168,8 @@ export default {
           label: i18n.t('packages_form_field_add_del_index_ziduanmingcheng'),
           prop: 'field_name',
           slotName: 'field_name',
-          'min-width': '90px'
+          'min-width': '90px',
+          'show-overflow-tooltip': true
         },
         {
           label: i18n.t('packages_form_dag_dialog_field_mapping_type'),
