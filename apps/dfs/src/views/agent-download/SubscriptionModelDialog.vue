@@ -235,7 +235,9 @@
               {{ $t('public_total') }}: <span class="price">{{ formatPrice(currency) || 0 }}</span>
             </div>
             <el-button @click="next('second')">{{ $t('public_button_previous') }}</el-button>
-            <el-button type="primary" @click="submit()">{{ $t('public_button_confirm') }}</el-button>
+            <el-button :loading="submitLoading" type="primary" @click="submit()">{{
+              $t('public_button_confirm')
+            }}</el-button>
           </footer>
         </div>
       </el-tab-pane>
@@ -292,6 +294,7 @@ export default {
       CURRENCY_MAP: CURRENCY_MAP,
       licenseCode: '',
       saveLoading: false,
+      submitLoading: false,
       codeData: [],
       agentCount: 0,
       currentCode: {},
@@ -555,9 +558,11 @@ export default {
       this.buried('newAgentStripe', '', {
         type
       })
+      this.submitLoading = true
       this.$axios
         .post('api/tcm/orders', params)
         .then(data => {
+          this.submitLoading = false
           if (chargeProvider === 'FreeTier') {
             let downloadUrl = window.App.$router.resolve({
               name: 'FastDownload',
@@ -568,7 +573,7 @@ export default {
 
             window.open(downloadUrl.href, '_blank')
           } else {
-            openUrl(data?.paymentUrl)
+            window.open(data?.paymentUrl, '_blank')
           }
           this.finish()
           this.buried('newAgentStripe', '', {
@@ -576,7 +581,7 @@ export default {
             result: true
           })
         })
-        .catch(() => {
+        .catch(err => {
           this.buried('newAgentStripe', '', {
             type,
             result: false

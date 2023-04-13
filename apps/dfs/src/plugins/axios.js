@@ -135,7 +135,7 @@ const responseInterceptor = response => {
     if (code === 'ok') {
       // code 为 ok 则表示请求正常返回，进入then逻辑
       return resolve(data?.data)
-    } else if (code === 'SystemError') {
+    } else if (['SystemError', 'SubscribeFailed.OrderLimit'].includes(code)) {
       // code 为 SystemError 则表示请求异常，提示信息
       let msg = data?.message || data?.msg || ''
       Message.error(`SystemError： ${msg === msg.substring(0, 20) ? msg : msg.substring(0, 20) + '...'}`)
