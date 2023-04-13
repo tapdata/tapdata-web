@@ -104,7 +104,7 @@ export default {
       if (this.columns.length) return this.columns
       return [
         {
-          label: '应用名称',
+          label: i18n.t('packages_business_application_list_yingyongmingcheng'),
           prop: 'appName'
         },
         {
@@ -161,10 +161,9 @@ export default {
     getFilterItems() {
       this.filterItems = [
         {
-          label: '应用名称',
+          label: i18n.t('packages_business_application_list_yingyongmingcheng'),
           key: 'appId',
           type: 'select-inner',
-          placeholder: '请选择应用名称',
           items: async () => {
             let params = {
               where: {

@@ -18,10 +18,10 @@
       :rules="rulesEdit"
       class="my-n6"
     >
-      <ElFormItem size="mini" label="应用名" prop="value">
+      <ElFormItem size="mini" :label="$t('packages_business_application_list_yingyongmingcheng')" prop="value">
         <ElInput v-model="editForm.value" clearable></ElInput>
       </ElFormItem>
-      <ElFormItem size="mini" label="应用描述" prop="desc">
+      <ElFormItem size="mini" :label="$t('packages_business_application_editor_yingyongmiaoshu')" prop="desc">
         <ElInput v-model="editForm.desc" type="textarea"></ElInput>
       </ElFormItem>
     </ElForm>
@@ -57,8 +57,16 @@ export default {
       saveLoading: false,
       editForm: {},
       rulesEdit: {
-        value: [{ required: true, message: '应用名称不能为空', trigger: 'blur' }],
-        desc: [{ required: true, message: '应用描述不能为空', trigger: 'blur' }]
+        value: [
+          {
+            required: true,
+            message: i18n.t('packages_business_application_delete_yingyongmingchengbu'),
+            trigger: 'blur'
+          }
+        ],
+        desc: [
+          { required: true, message: i18n.t('packages_business_application_delete_yingyongmiaoshubu'), trigger: 'blur' }
+        ]
       }
     }
   },

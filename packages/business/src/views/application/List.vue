@@ -12,16 +12,26 @@
           size="mini"
           @click="handleEditor"
         >
-          <span>创建应用</span>
+          <span>{{ $t('packages_business_application_list_chuangjianyingyong') }}</span>
         </ElButton>
       </div>
-      <el-table-column min-width="250" label="应用名称" :show-overflow-tooltip="true">
+      <el-table-column
+        min-width="250"
+        :label="$t('packages_business_application_list_yingyongmingcheng')"
+        :show-overflow-tooltip="true"
+      >
         <template slot-scope="scope">
           {{ scope.row.value }}
         </template>
       </el-table-column>
-      <el-table-column min-width="160" label="总API数量" prop="apiCount"> </el-table-column>
-      <el-table-column min-width="160" label="已发布API数量" prop="publishedApiCount"> </el-table-column>
+      <el-table-column min-width="160" :label="$t('packages_business_application_list_zongApIshu')" prop="apiCount">
+      </el-table-column>
+      <el-table-column
+        min-width="160"
+        :label="$t('packages_business_application_list_yifabuAp')"
+        prop="publishedApiCount"
+      >
+      </el-table-column>
       <el-table-column prop="createTime" min-width="160" :label="$t('public_create_time')" sortable> </el-table-column>
       <el-table-column width="220" fixed="right" :label="$t('public_operation')">
         <template #default="{ row }">
@@ -59,6 +69,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import dayjs from 'dayjs'
 import { logcollectorApi, taskApi, appApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
@@ -85,7 +97,7 @@ export default {
       },
       filterItems: [
         {
-          placeholder: '请输入应用名称',
+          placeholder: i18n.t('packages_business_application_list_qingshuruyingyong'),
           key: 'name',
           type: 'input'
         }

@@ -70,7 +70,12 @@
           </ElSelect>
         </ElFormItem>
 
-        <ElFormItem class="flex-1 mt-4" size="small" label="所属应用" prop="kennen">
+        <ElFormItem
+          class="flex-1 mt-4"
+          size="small"
+          :label="$t('packages_business_data_server_drawer_suoshuyingyong')"
+          prop="kennen"
+        >
           <AsyncSelect
             v-model="form.appValue"
             :disabled="!isEdit"
@@ -545,7 +550,13 @@ export default {
         basePath: [{ required: true, validator: validateBasePath, trigger: ['blur', 'change'] }],
         prefix: [{ required: false, validator: validatePrefix, trigger: ['blur', 'change'] }],
         apiVersion: [{ required: true, validator: validateBasePath, trigger: ['blur', 'change'] }],
-        appValue: [{ required: true, message: '请选择所属应用', trigger: ['blur', 'change'] }]
+        appValue: [
+          {
+            required: true,
+            message: i18n.t('packages_business_data_server_drawer_qingxuanzesuoshu'),
+            trigger: ['blur', 'change']
+          }
+        ]
       },
       apiTypeMap: {
         defaultApi: i18n.t('packages_business_data_server_drawer_morenchaxun'),

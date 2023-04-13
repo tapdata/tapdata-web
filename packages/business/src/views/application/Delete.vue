@@ -9,7 +9,7 @@
   >
     <div class="flex align-items-center" slot="title">
       <VIcon class="color-warning mr-2">warning</VIcon>
-      <span>删除应用</span>
+      <span>{{ $t('packages_business_application_delete_shanchuyingyong') }}</span>
     </div>
     <div>
       <div v-html="desc"></div>
@@ -22,7 +22,7 @@
         item-value="id"
         class="my-3"
       ></ListSelect>
-      <div>是否确认删除</div>
+      <div>{{ $t('packages_business_application_delete_shifouquerenshan') }}</div>
     </div>
     <span class="dialog-footer" slot="footer">
       <ElButton @click="handleClose" size="mini">{{ $t('public_button_cancel') }}</ElButton>
@@ -34,6 +34,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { appApi, modulesApi } from '@tap/api'
 import ListSelect from '@tap/business/src/components/ListSelect'
 
@@ -50,8 +52,16 @@ export default {
       loading: false,
       saveLoading: false,
       rulesEdit: {
-        value: [{ required: true, message: '应用名称不能为空', trigger: 'blur' }],
-        desc: [{ required: true, message: '应用描述不能为空', trigger: 'blur' }]
+        value: [
+          {
+            required: true,
+            message: i18n.t('packages_business_application_delete_yingyongmingchengbu'),
+            trigger: 'blur'
+          }
+        ],
+        desc: [
+          { required: true, message: i18n.t('packages_business_application_delete_yingyongmiaoshubu'), trigger: 'blur' }
+        ]
       },
       form: {
         appValue: '',
@@ -62,7 +72,7 @@ export default {
 
   computed: {
     desc() {
-      return `您正在删除应用<span class="fw-bolder font-color-dark">${this.details.value}</span>，该应用下的API将移动到`
+      return i18n.t('packages_business_application_delete_ninzhengzaishanchu2', { val1: this.details.value })
     }
   },
 
@@ -84,8 +94,8 @@ export default {
             return
           }
           this.$confirm(
-            `您正在删除应用<span class="fw-bolder font-color-dark">${row.value}</span>，是否确认删除`,
-            '删除应用',
+            i18n.t('packages_business_application_delete_ninzhengzaishanchu', { val1: row.value }),
+            i18n.t('packages_business_application_delete_shanchuyingyong'),
             {
               type: 'warning',
               dangerouslyUseHTMLString: true

@@ -912,5 +912,21 @@ export default {
   packages_business_target_create_task_dialog_desc_prefix_sync: 'Tapdata will create a sync pipeline task to sync',
   packages_business_target_create_task_dialog_desc_to: 'to',
   packages_business_target_create_task_dialog_desc_suffix:
-    'Please click button below to continue. You can also change the task name'
+    'Please click button below to continue. You can also change the task name',
+  packages_business_application_delete_shanchuyingyong: 'Delete Application',
+  packages_business_application_delete_ninzhengzaishanchu:
+    'You are deleting the application <span class="fw-bolder font-color-dark">{val1}</span>, are you sure to delete',
+  packages_business_application_delete_ninzhengzaishanchu2:
+    'You are deleting the application <span class="fw-bolder font-color-dark">{val1}</span>, the API under this application will be moved to',
+  packages_business_application_delete_yingyongmiaoshubu: 'Application description cannot be empty',
+  packages_business_application_delete_yingyongmingchengbu: 'The application name cannot be empty',
+  packages_business_application_delete_shifouquerenshan: 'Are you sure to delete',
+  packages_business_application_editor_yingyongmiaoshu: 'Application Description',
+  packages_business_application_list_qingshuruyingyong: 'Please enter the application name',
+  packages_business_application_list_yifabuAp: 'Number of published APIs',
+  packages_business_application_list_zongApIshu: 'Total number of APIs',
+  packages_business_application_list_yingyongmingcheng: 'Application Name',
+  packages_business_application_list_chuangjianyingyong: 'Create Application',
+  packages_business_data_server_drawer_qingxuanzesuoshu: 'Please select the application',
+  packages_business_data_server_drawer_suoshuyingyong: 'Owner Application'
 }

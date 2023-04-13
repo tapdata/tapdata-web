@@ -870,5 +870,21 @@ export default {
   packages_business_target_create_task_dialog_desc_prefix_clone: 'Tapdata將創建一個數據複製任務，將',
   packages_business_target_create_task_dialog_desc_prefix_sync: 'Tapdata將創建一個數據開發任務，將',
   packages_business_target_create_task_dialog_desc_to: '同步到',
-  packages_business_target_create_task_dialog_desc_suffix: '請點擊下面的按鈕繼續,您也可以更改任務名稱。'
+  packages_business_target_create_task_dialog_desc_suffix: '請點擊下面的按鈕繼續,您也可以更改任務名稱。',
+  packages_business_application_delete_shanchuyingyong: '删除应用',
+  packages_business_application_delete_ninzhengzaishanchu:
+    '您正在删除应用<span class="fw-bolder font-color-dark">{val1}</span>，是否确认删除',
+  packages_business_application_delete_ninzhengzaishanchu2:
+    '您正在删除应用<span class="fw-bolder font-color-dark">{val1}</span>，该应用下的API将移动到',
+  packages_business_application_delete_yingyongmiaoshubu: '应用描述不能为空',
+  packages_business_application_delete_yingyongmingchengbu: '应用名称不能为空',
+  packages_business_application_delete_shifouquerenshan: '是否确认删除',
+  packages_business_application_editor_yingyongmiaoshu: '应用描述',
+  packages_business_application_list_qingshuruyingyong: '请输入应用名称',
+  packages_business_application_list_yifabuAp: '已发布API数量',
+  packages_business_application_list_zongApIshu: '总API数量',
+  packages_business_application_list_yingyongmingcheng: '应用名称',
+  packages_business_application_list_chuangjianyingyong: '创建应用',
+  packages_business_data_server_drawer_qingxuanzesuoshu: '请选择所属应用',
+  packages_business_data_server_drawer_suoshuyingyong: '所属应用'
 }
