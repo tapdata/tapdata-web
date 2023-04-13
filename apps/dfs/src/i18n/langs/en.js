@@ -1459,7 +1459,7 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_peizhishishishu: 'Configure Live Data Platform',
   dfs_agent_download_subscriptionmodeldialog_peizhizhaiyao: 'Configuration Summary',
   dfs_agent_download_subscriptionmodeldialog_jisuan: 'Compute: ',
-  dfs_agent_download_subscriptionmodeldialog_meiyuefeiyongyu: 'Estimated Monthly Cost',
+  dfs_agent_download_subscriptionmodeldialog_meiyuefeiyongyu: 'Estimated Cost',
   dfs_agent_download_subscriptionmodeldialog_usd: 'USD',
   dfs_agent_download_subscriptionmodeldialog_cny: 'CNY',
   dfs_agent_download_subscriptionmodeldialog_hkd: 'HKD'

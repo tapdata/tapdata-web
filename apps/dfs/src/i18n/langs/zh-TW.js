@@ -1324,7 +1324,7 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_peizhishishishu: '配置實時數據平台',
   dfs_agent_download_subscriptionmodeldialog_peizhizhaiyao: '配置摘要',
   dfs_agent_download_subscriptionmodeldialog_jisuan: '計算: ',
-  dfs_agent_download_subscriptionmodeldialog_meiyuefeiyongyu: '每月費用預估',
+  dfs_agent_download_subscriptionmodeldialog_meiyuefeiyongyu: '費用預估',
   dfs_agent_download_subscriptionmodeldialog_usd: '美元',
   dfs_agent_download_subscriptionmodeldialog_cny: '人民幣',
   dfs_agent_download_subscriptionmodeldialog_hkd: '港幣'
