@@ -219,16 +219,25 @@
             <ElButton
               size="mini"
               type="text"
-              v-if="scope.row.orderInfo.type === 'recurring'"
+              v-if="scope.row.cancelSubscribe && scope.row.orderInfo.type === 'recurring'"
               :loading="scope.row.btnLoading.delete"
               :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
               @click="cancelPaidSubscribe(scope.row)"
-              >取消订阅</ElButton
+              >{{ $t('dfs_instance_instance_quxiaodingyue') }}</ElButton
             >
             <ElButton
               size="mini"
               type="text"
-              v-else
+              v-if="!scope.row.cancelSubscribe && scope.row.orderInfo.type === 'recurring'"
+              :loading="scope.row.btnLoading.delete"
+              :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
+              @click="handleDel(scope.row)"
+              >{{ $t('public_button_delete') }}</ElButton
+            >
+            <ElButton
+              size="mini"
+              type="text"
+              v-if="scope.row.orderInfo.type === 'one_time'"
               :loading="scope.row.btnLoading.delete"
               :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
               @click="handleUnsubscribe(scope.row)"
@@ -603,7 +612,7 @@ export default {
             item.content = `${item.subscriptionMethodLabel} ${item.specLabel} ${i18n.t('public_agent')}`
             item.expiredTime =
               chargeProvider === 'Aliyun' ? license.expiredTime : chargeProvider === 'Stripe' ? periodEnd : ''
-            item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+            item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD') : '-'
             item.paidType =
               chargeProvider === 'Aliyun' ? license.type : chargeProvider === 'Stripe' ? paidSubscribeDto.type : ''
             item.deployDisable = item.tmInfo.pingTime || false

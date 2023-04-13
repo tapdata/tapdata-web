@@ -19,7 +19,7 @@
       </div>
       <template v-if="downLoadType === 'windows'">
         <el-collapse v-model="activeName" accordion>
-          <el-collapse-item title="使用配置文件部署启动Agent" name="1">
+          <el-collapse-item :title="$t('dfs_agent_download_fastdownload_shiyongpeizhiwen')" name="1">
             <ul class="pt-5 ul-style">
               <li>
                 <div class="my-5 text-style">{{ $t('agent_deploy_start_install') }}</div>
@@ -28,17 +28,13 @@
                 {{ $t('agent_deploy_start_install_windows_first') }}
                 <ElLink type="primary" @click="handleDownLoad">{{
                   $t('agent_deploy_start_install_windows_first_download')
-                }}</ElLink>
-                和
-                <ElLink type="primary" @click="handleDownLoadApplication">application.yml </ElLink>
+                }}</ElLink>{{$t('dfs_agent_download_fastdownload_he')}}<ElLink type="primary" @click="handleDownLoadApplication">application.yml </ElLink>
               </li>
-              <li class="mt-3">
-                2. 将文件 tapdata.exe 和 application.yml 放入您要安装的目录，安装路径不能有中文和特殊字符。
-              </li>
-              <li class="mt-3">3. 双击执行tapdata.exe开始安装。</li>
+              <li class="mt-3">{{$t('dfs_agent_download_fastdownload_jiangwenjianta')}}</li>
+              <li class="mt-3">{{$t('dfs_agent_download_fastdownload_shuangjizhixingt')}}</li>
             </ul>
           </el-collapse-item>
-          <el-collapse-item title="复制Token,在命令行部署启动Agent" name="2">
+          <el-collapse-item :title="$t('dfs_agent_download_fastdownload_fuzhiTok')" name="2">
             <ul class="pt-5 ul-style">
               <!--          <li class="flex">-->
               <!--            <span>{{ $t('agent_deploy_before_prepare_windows_first') }}</span>-->

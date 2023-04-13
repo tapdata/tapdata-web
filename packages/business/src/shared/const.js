@@ -108,9 +108,9 @@ export const CURRENCY_SYMBOL_MAP = {
   cny: '¥'
 }
 export const CURRENCY_MAP = {
-  usd: '美元',
-  hkd: '港币',
-  cny: '人民币'
+  usd: i18n.t('dfs_agent_download_subscriptionmodeldialog_usd'),
+  hkd: i18n.t('dfs_agent_download_subscriptionmodeldialog_hkd'),
+  cny: i18n.t('dfs_agent_download_subscriptionmodeldialog_cny')
 }
 
 export const NUMBER_MAP = {

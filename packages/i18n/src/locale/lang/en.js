@@ -17,6 +17,7 @@ export default {
   public_query: 'Query',
   public_aggregate: 'Aggregate',
   public_table_name: 'Table Name',
+  public_total: 'Total',
   // state
   public_status_ready: 'Valid',
   public_status_invalid: 'Invalid',
@@ -88,6 +89,8 @@ export default {
   public_button_pay: 'Pay',
   public_button_renewal: 'Renewal',
   public_button_order: 'Order',
+  public_button_next: 'Next',
+  public_button_previous: 'Previous',
   // information
   public_message_title_prompt: 'Prompt',
   public_message_delete_confirm: 'Delete',
