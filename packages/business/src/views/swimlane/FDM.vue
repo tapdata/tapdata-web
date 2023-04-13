@@ -472,7 +472,9 @@ export default {
 
         this.creating = true
         try {
-          const result = await ldpApi.createFDMTask(task)
+          const result = await ldpApi.createFDMTask(task, {
+            silenceMessage: true
+          })
           this.taskDialogConfig.visible = false
           const h = this.$createElement
           this.$message.success({
@@ -491,8 +493,16 @@ export default {
           })
           await this.loadFDMDirectory()
           this.setNodeExpand()
-        } catch (e) {
-          console.log(e) // eslint-disable-line
+        } catch (error) {
+          console.log(error) // eslint-disable-line
+          let msg
+
+          if (error?.data?.code === 'Task.ListWarnMessage' && error.data.data) {
+            const keys = Object.keys(error.data.data)
+            msg = error.data.data[keys[0]]?.[0]?.msg
+          }
+
+          this.$message.error(msg || error?.data?.message || this.$t('public_message_save_fail'))
         }
         this.creating = false
       })
@@ -734,9 +744,9 @@ export default {
     setNodeExpand() {
       const target = this.treeData.find(item => item.linkId === this.taskDialogConfig.from.id)
       if (target) {
+        const node = this.$refs.tree.getNode(target.id)
+        node && (node.loading = true)
         setTimeout(async () => {
-          const node = this.$refs.tree.getNode(target.id)
-          node && (node.loading = true)
           this.setExpand(target.id, true)
           let objects = await this.loadObjects(target)
           objects = objects.map(item => {
