@@ -1416,7 +1416,7 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_yongjiu: 'Permanent',
   dfs_agent_download_subscriptionmodeldialog_mianfeishilizui: 'Free instance, up to 3 tasks are allowed',
   dfs_agent_download_subscriptionmodeldialog_ge: '',
-  dfs_agent_download_subscriptionmodeldialog_renwushujianyi: 'The recommended number of tasks is less than',
+  dfs_agent_download_subscriptionmodeldialog_renwushujianyi: 'The recommended number of tasks is less than ',
   dfs_agent_download_subscriptionmodeldialog_extra: 'EXTRA SMALL: 1C 2G - FREE (only one can be created)',
   dfs_agent_download_subscriptionmodeldialog_dingyuefangshi: 'Subscription method:',
   dfs_agent_download_subscriptionmodeldialog_jisuanziyuan: 'Computing resources:',

@@ -228,6 +228,15 @@
             <ElButton
               size="mini"
               type="text"
+              v-if="!scope.row.cancelSubscribe && scope.row.orderInfo.type === 'recurring'"
+              :loading="scope.row.btnLoading.delete"
+              :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
+              @click="handleDel(scope.row)"
+              >{{ $t('public_button_delete') }}</ElButton
+            >
+            <ElButton
+              size="mini"
+              type="text"
               v-if="scope.row.orderInfo.type === 'one_time'"
               :loading="scope.row.btnLoading.delete"
               :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"

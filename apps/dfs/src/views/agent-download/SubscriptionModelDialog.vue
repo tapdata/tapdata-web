@@ -266,6 +266,7 @@ export default {
       if (val) {
         this.checkAgentCount()
         this.activeName = 'first'
+        this.productType = 'selfHost'
       }
     }
   },
