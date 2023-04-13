@@ -112,7 +112,7 @@ export default {
 
     wholeItems() {
       const milestone = this.dataflow.attrs?.milestone || {}
-      let hostName = this.dataflow.hostName
+      let agentName = this.dataflow.agentName
 
       let result = [
         {
@@ -224,9 +224,7 @@ export default {
             switch (el.key) {
               case 'TASK':
                 Object.assign(el, {
-                  dataDesc: `, ${i18n.t('public_milestone_time_scheduling', { val: hostName })}, ${i18n.t(
-                    'public_milestone_time_consuming'
-                  )}${time}, ${begin} ~ ${end}`
+                  dataDesc: `, ${i18n.t('public_milestone_time_scheduling', { val: agentName })}, ${end}`
                 })
                 break
               case 'DATA_NODE_INIT':
