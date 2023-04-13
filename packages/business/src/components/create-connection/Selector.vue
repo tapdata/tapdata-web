@@ -1,7 +1,7 @@
 <template>
   <div class="database">
     <div class="inline-flex align-items-center mt-2 mb-4">
-      <ElCheckbox v-model="settings.showBeta" class="m-0" @change="getData(false)"></ElCheckbox>
+      <ElCheckbox v-model="settings.showBeta" class="m-0"></ElCheckbox>
       <span class="ml-2">{{ $t('packages_business_create_connection_dialog_neirongSho2') }}</span>
       <ElCheckbox v-model="settings.showAlpha" class="ml-8 mr-0" @change="getData(false)"></ElCheckbox>
       <span class="ml-2">{{ $t('packages_business_create_connection_dialog_neirongSho') }}</span>
@@ -10,9 +10,9 @@
       <ElTabPane v-for="item in comTabs" :key="item.value" :name="item.value" :label="item.label"></ElTabPane>
     </ElTabs>
     <div v-loading="loading">
-      <ul v-if="database.length" class="overflow-auto inline-block">
+      <ul v-if="filterDatabase.length" class="overflow-auto inline-block">
         <li
-          v-for="(item, index) in database"
+          v-for="(item, index) in filterDatabase"
           :key="index"
           class="float-start cursor-pointer text-center"
           :class="[
@@ -165,6 +165,21 @@ export default {
           value: 'Custom'
         }
       ]
+    },
+
+    filterDatabase() {
+      const { showAlpha, showBeta } = this.settings
+      if (!showAlpha && !showBeta) return this.database.filter(t => t.qcType !== 'Alpha' && t.qcType !== 'Beta')
+
+      if (!showAlpha) {
+        return this.database.filter(t => t.qcType !== 'Alpha')
+      }
+
+      if (!showBeta) {
+        return this.database.filter(t => t.qcType !== 'Beta')
+      }
+
+      return this.database
     }
   },
   watch: {
@@ -188,12 +203,6 @@ export default {
       let authentication = 'All'
       let tag = this.active
       const { showAlpha, showBeta } = this.settings
-
-      if (showAlpha && !showBeta) {
-        authentication = 'Alpha'
-      } else if (!showAlpha && showBeta) {
-        authentication = 'Beta'
-      }
 
       if (this.activeTabData.filter) {
         tag = 'All'

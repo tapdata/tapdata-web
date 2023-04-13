@@ -195,36 +195,40 @@ export default {
             </span>
           ) : !data.readOnly && !data.isObject ? (
             <span class="btn-menu">
-              <VIcon
-                size="14"
-                class="color-primary mr-2"
-                onClick={ev => {
-                  ev.stopPropagation()
-                  data.isRoot ? this.showDialog() : this.showDialog(node, 'add')
-                }}
-              >
-                add
-              </VIcon>
-              <ElDropdown
-                class="inline-flex"
-                placement="bottom"
-                trigger="click"
-                onCommand={ev => this.handleRowCommand(ev, node)}
-              >
+              {data.item_type[0] !== 'fdm' && (
                 <VIcon
+                  size="14"
+                  class="color-primary mr-2"
                   onClick={ev => {
                     ev.stopPropagation()
+                    data.isRoot ? this.showDialog() : this.showDialog(node, 'add')
                   }}
-                  size="16"
-                  class="color-primary"
                 >
-                  more-circle
+                  add
                 </VIcon>
-                <ElDropdownMenu slot="dropdown">
-                  <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
-                  <ElDropdownItem command="delete">{this.$t('public_button_delete')}</ElDropdownItem>
-                </ElDropdownMenu>
-              </ElDropdown>
+              )}
+              {data.parent_id && (
+                <ElDropdown
+                  class="inline-flex"
+                  placement="bottom"
+                  trigger="click"
+                  onCommand={ev => this.handleRowCommand(ev, node)}
+                >
+                  <VIcon
+                    onClick={ev => {
+                      ev.stopPropagation()
+                    }}
+                    size="16"
+                    class="color-primary"
+                  >
+                    more-circle
+                  </VIcon>
+                  <ElDropdownMenu slot="dropdown">
+                    <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
+                    <ElDropdownItem command="delete">{this.$t('public_button_delete')}</ElDropdownItem>
+                  </ElDropdownMenu>
+                </ElDropdown>
+              )}
             </span>
           ) : (
             data.isObject &&
@@ -346,6 +350,8 @@ export default {
           it.LDP_TYPE = 'folder'
           it.isLeaf = false
           it.children = []
+          const itemType = it.item_type[0]
+          it.readOnly = itemType !== 'mdm' && itemType !== 'fdm'
           if (it.parent_id) {
             let children = map[it.parent_id] || []
             children.push(it)
@@ -354,10 +360,9 @@ export default {
           } else {
             const itemType = it.item_type[0]
             const TYPE2NAME = {
-              target: 'TARGET&SERVICE'
+              target: 'Targets & Services'
             }
             it.name = TYPE2NAME[itemType] || it.value
-            it.readOnly = itemType !== 'mdm'
             nodes.push(it)
           }
         })
@@ -751,7 +756,8 @@ export default {
           connectionId: id,
           isLeaf: true,
           isObject: true,
-          LDP_TYPE: 'table'
+          LDP_TYPE: 'table',
+          SWIM_TYPE: 'source'
         }
       })
     },
@@ -774,11 +780,15 @@ $nodeH: 32px;
   }
 
   .el-tree-node {
+    &__expand-icon:not(.is-leaf) {
+      color: #646a73;
+    }
+
     &__content {
       height: $nodeH;
       margin-bottom: 1px;
       overflow: hidden;
-      border-radius: 4px;
+      border-radius: 6px;
     }
 
     &.is-current > .el-tree-node__content {

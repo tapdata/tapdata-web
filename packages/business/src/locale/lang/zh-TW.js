@@ -676,7 +676,7 @@ export default {
   metadata_meta_type_table: '数据表',
   packages_business_create_connection_dialog_xuanzeshujuyuan: '選擇數據源類型',
   packages_business_create_connection_dialog_neirongSho: '顯示處於 ALPHA 狀態的連接器',
-  packages_business_create_connection_dialog_neirongSho2: '顯示處於測試狀態的連接器',
+  packages_business_create_connection_dialog_neirongSho2: '顯示處於 BETA 狀態的連接器',
   packages_business_create_connection_dialog_neirongCho: '從下面選擇一個數據源連接器並配置連接和憑據。',
   // 共享挖掘
   packages_business_shared_cdc_placeholder_task_name: '請輸入挖掘任務名搜索',
@@ -856,8 +856,9 @@ export default {
     '任務已經創建，但由於您的表沒有主鍵，需要進入任務編輯手動設置更新條件字段，點擊查看任務',
   packages_business_fdm_create_task_dialog_desc_prefix: 'Tapdata 將自動創建一個數據複製管道任務，將您選擇的',
   packages_business_fdm_create_task_dialog_desc_suffix:
-    '的結構和數據自動複製到數據平台的 Cache 層並保持源庫和Cache 層數據的准實時同步及自動校驗。在大部分時候源庫的結構改動(DDL)也會被複製到Cache 層。您可以在通過點擊Cache 層裡面的庫名右側的ICON來監控該管道任務的運行狀態。您也可以選擇現在修改在Cache 層的物理表名。',
-  packages_business_mdm_create_task_dialog_desc_prefix: 'Tapdata 將自動創建一個數據複製管道任務，將您選擇的',
+    '的結構和數據自動複製到數據平台的 Cache 層並保持源庫和Cache 層數據的准實時同步及自動校驗。在大部分時候源庫的結構改動(DDL)也會被複製到Cache 層。您可以在通過點擊Cache 層裡面的庫名右側的ICON來監控該管道任務的運行狀態。您也可以選擇現在修改在Cache 層的物理表名前綴。',
+  packages_business_mdm_create_task_dialog_desc_prefix:
+    '這將在數據平台的 Curated 層創建一個加工模型。創建加工模型的常見場景有以下幾種：',
   packages_business_fdm_create_task_dialog_desc_li1: '需要對 Cache 層的數據做一些轉型，增強，加計算字段等處理',
   packages_business_fdm_create_task_dialog_desc_li2: '需要對數個 Cache 層的表的結構進行合併，構建一個寬表',
   packages_business_fdm_create_task_dialog_desc_li3: '需要對數個 Cache 層的表的數據進行合併，構建一個合併表',
@@ -871,6 +872,19 @@ export default {
   packages_business_target_create_task_dialog_desc_prefix_sync: 'Tapdata將創建一個數據開發任務，將',
   packages_business_target_create_task_dialog_desc_to: '同步到',
   packages_business_target_create_task_dialog_desc_suffix: '請點擊下面的按鈕繼續,您也可以更改任務名稱。',
+  packages_business_fdm_empty_text: '請將<strong>源數據層</strong>中的表拖拽至此<br/>即可開始複製數據',
+  packages_business_mdm_empty_text: '請將<strong>源數據層/平台緩存層</strong>中的表拖拽至此<br/>即可開始同步數據',
+  packages_business_catalog_delete_confirm_message:
+    '此操作僅會將該分類及其子分類刪除，如需刪除分類下的物理表,請您自行操作。',
+  packages_business_mdm_table_duplication_confirm: '目標表已經存在，請確定是否繼續？',
+  packages_business_data_console_mode: '產品能力模式',
+  packages_business_data_console_mode_integration: '數據集成',
+  packages_business_data_console_mode_service: '數據服務平台',
+  packages_business_data_console_fdm_mdm_storage: '平台緩存和加工層存儲',
+  packages_business_data_console_fdm_mdm_storage_tooltip: '請指定用於額外數據層存儲的數據庫連接',
+  packages_business_mongodb_atlas_cluster: 'MongoDB Atlas 集群',
+  packages_business_mongodb_self_hosted_cluster: '自托管 MongoDB 集群',
+  packages_business_data_console_setting_saved_tooltip: '保存後暫不支持修改',
   // 共享緩存
   packages_business_shared_cache_create: '創建緩存',
   packages_business_shared_cache_edit: '編輯緩存',

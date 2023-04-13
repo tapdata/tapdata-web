@@ -38,14 +38,13 @@
             </template>
           </ElMenuItem>
         </template>
-        <ElMenuItem
-          v-if="!isDemoEnv"
-          :key="$t('dfs_agent_download_agentguidedialog_tiyan') + ' Demo'"
-          index="goDemo"
-          class="flex align-center border-top"
-        >
+        <ElMenuItem v-if="!isDemoEnv" key="goDemo" index="goDemo" class="flex align-center border-top">
           <span class="mr-4"><VIcon class="v-icon" size="17">open-in-new</VIcon></span>
           <span class="text-decoration-underline">{{ $t('dfs_agent_download_agentguidedialog_tiyan') + ' Demo' }}</span>
+        </ElMenuItem>
+        <ElMenuItem key="goGuide" index="goGuide" class="flex align-center border-top">
+          <span class="mr-4"><VIcon class="v-icon" size="17">open-in-new</VIcon></span>
+          <span class="text-decoration-underline">{{$t('dfs_views_layout_chanpinyindao')}}</span>
         </ElMenuItem>
       </ElMenu>
     </ElAside>
@@ -56,8 +55,9 @@
       </ElMain>
     </ElContainer>
     <ConnectionTypeDialog :dialogVisible.sync="dialogVisible" @databaseType="createConnection"></ConnectionTypeDialog>
-    <AgentGuideDialog :visible.sync="agentGuideDialog" @openAgentDownload="openAgentDownload"></AgentGuideDialog>
+    <!--    <AgentGuideDialog :visible.sync="agentGuideDialog" @openAgentDownload="openAgentDownload"></AgentGuideDialog>-->
     <AgentDownloadModal :visible.sync="agentDownload.visible" :source="agentDownload.data"></AgentDownloadModal>
+    <SubscriptionModelDialog :visible.sync="subscriptionModelVisible" :showClose="false"></SubscriptionModelDialog>
     <BindPhone :visible.sync="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>
     <!--    <CheckLicense :visible.sync="aliyunMaketVisible" :user="userInfo"></CheckLicense>-->
   </ElContainer>
@@ -70,20 +70,20 @@ import { PageHeader } from '@tap/business'
 
 import ConnectionTypeDialog from '@/components/ConnectionTypeDialog'
 import AgentDownloadModal from '@/views/agent-download/AgentDownloadModal'
-import AgentGuideDialog from '@/views/agent-download/AgentGuideDialog'
+// import AgentGuideDialog from '@/views/agent-download/AgentGuideDialog'
 import BindPhone from '@/views/user/components/BindPhone'
-import { buried } from '@/plugins/buried'
 import Cookie from '@tap/shared/src/cookie'
+import SubscriptionModelDialog from '@/views/agent-download/SubscriptionModelDialog'
 
 export default {
-  inject: ['checkAgent'],
+  inject: ['checkAgent', 'buried'],
   components: {
     TheHeader,
     VIcon,
     ConnectionTypeDialog,
     AgentDownloadModal,
-    AgentGuideDialog,
     BindPhone,
+    SubscriptionModelDialog,
     PageHeader
   },
   data() {
@@ -125,11 +125,6 @@ export default {
           beta: true
         },
         {
-          name: 'dataServerList',
-          title: $t('dfs_data_server'),
-          icon: 'data-server'
-        },
-        {
           name: 'OperationLog',
           title: $t('operation_log_manage'),
           icon: 'operation-log'
@@ -143,6 +138,7 @@ export default {
       bindPhoneVisible: false,
       agentGuideDialog: false,
       showAgentWarning: false,
+      subscriptionModelVisible: false,
       userInfo: '',
       // aliyunMaketVisible: false,
       isDemoEnv: document.domain === 'demo.cloud.tapdata.net'
@@ -160,7 +156,8 @@ export default {
       let swimLane = {
         name: 'dataConsole',
         title: this.$t('page_title_data_console'),
-        icon: 'process-platform'
+        icon: 'process-platform',
+        beta: true
       }
       this.sortMenus.push(swimLane)
     }
@@ -213,7 +210,7 @@ export default {
     },
     createConnection(item) {
       this.dialogVisible = false
-      buried('connectionCreate')
+      this.buried('connectionCreate')
       const { pdkHash } = item
       let query = {
         pdkHash
@@ -235,6 +232,10 @@ export default {
     menuTrigger(path) {
       if (['goDemo'].includes(path)) {
         this.goDemo()
+        return
+      }
+      if (['goGuide'].includes(path)) {
+        this.goGuide()
         return
       }
       if (this.$route.path === path) {
@@ -264,9 +265,8 @@ export default {
     // 检查是否有安装过agent
     checkAgentInstall() {
       this.$axios.get('api/tcm/orders/checkAgent').then(data => {
-        if (data.agentId) {
-          this.agentGuideDialog = true
-          this.agentDownload.data = data
+        if (data === 0) {
+          this.subscriptionModelVisible = true
         }
       })
     },
@@ -385,8 +385,12 @@ export default {
     },
 
     goDemo() {
-      buried('agentGuideDemo')
+      this.buried('agentGuideDemo')
       window.open('https://demo.cloud.tapdata.net/console/v3/')
+    },
+    goGuide() {
+      this.buried('agentGuideDemo')
+      window.open('https://cloud.justinmind.com/usernote/tests/74235065/75024663/75024665/index.html')
     }
   }
 }

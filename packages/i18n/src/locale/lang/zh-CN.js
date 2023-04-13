@@ -16,6 +16,9 @@ export default {
   public_serial_number: '序号',
   public_query: '查询',
   public_aggregate: '聚合',
+  public_table_name: '表名',
+  public_total: '共计',
+
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '无效',
@@ -87,6 +90,8 @@ export default {
   public_button_pay: '支付',
   public_button_renewal: '续期',
   public_button_order: '订购',
+  public_button_next: '下一步',
+  public_button_previous: '上一步',
   // 消息
   public_message_title_prompt: '提示',
   public_message_delete_confirm: '是否删除',

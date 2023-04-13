@@ -107,6 +107,11 @@ export const CURRENCY_SYMBOL_MAP = {
   hkd: 'HK$',
   cny: '¥'
 }
+export const CURRENCY_MAP = {
+  usd: i18n.t('dfs_agent_download_subscriptionmodeldialog_usd'),
+  hkd: i18n.t('dfs_agent_download_subscriptionmodeldialog_hkd'),
+  cny: i18n.t('dfs_agent_download_subscriptionmodeldialog_cny')
+}
 
 export const NUMBER_MAP = {
   0: i18n.t('packages_business_shared_const_ling'),
@@ -132,4 +137,10 @@ export const AGENT_SPEC_MAP = {
   '12C24G': 'XLarge',
   '16C32G': '2Large',
   '32C64G': '4Large'
+}
+
+export const TIME_MAP = {
+  year: i18n.t('public_time_year'),
+  month: i18n.t('public_time_month'),
+  day: i18n.t('public_time_d')
 }

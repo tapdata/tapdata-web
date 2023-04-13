@@ -3,20 +3,24 @@
     <header v-if="detailData">
       <div class="mb-4">
         <span class="table-name inline-block">{{ detailData.name }}</span>
-        <span :class="['status', 'ml-4', 'status-' + tableStatus]">{{ statusMap[tableStatus] }}</span>
+        <span v-if="swimType !== 'source'" :class="['status', 'ml-4', 'status-' + tableStatus]">{{
+          statusMap[tableStatus]
+        }}</span>
       </div>
       <span class="mr-2"> <VIcon class="tree-item-icon" size="18">table</VIcon></span>
       <span class="ml-8">
         <span>{{ detailData.sourceType }}</span></span
       >
-      <span class="ml-8"
-        ><span class="table-dec-label">{{ $t('packages_business_last_data_change_time') }}：</span
-        ><span class="table-dec-txt">{{ lastDataChangeTime || '-' }}</span></span
-      >
-      <span class="ml-8"
-        ><span class="table-dec-label">{{ $t('packages_business_cdc_delay_time') }}：</span
-        ><span class="table-dec-txt">{{ cdcDelayTime || '-' }}</span></span
-      >
+      <template v-if="swimType !== 'source'">
+        <span class="ml-8"
+          ><span class="table-dec-label">{{ $t('packages_business_last_data_change_time') }}：</span
+          ><span class="table-dec-txt">{{ lastDataChangeTime || '-' }}</span></span
+        >
+        <span class="ml-8"
+          ><span class="table-dec-label">{{ $t('packages_business_cdc_delay_time') }}：</span
+          ><span class="table-dec-txt">{{ cdcDelayTime || '-' }}</span></span
+        >
+      </template>
     </header>
     <section class="mt-6">
       <el-tabs v-model="activeName" @tab-click="handleTab">
@@ -121,9 +125,9 @@
           </VTable>
         </el-tab-pane>
         <el-tab-pane :label="$t('packages_business_tasks')" name="tasks">
-          <div class="flex justify-content-between mb-4">
+          <div class="flex mb-4">
             <span>{{ $t('packages_business_table_preview_task') }}</span
-            ><span class="color-primary cursor-pointer" @click="handleCreateTask">Create Task</span>
+            ><!--<span class="color-primary cursor-pointer" @click="handleCreateTask">Create Task</span>-->
           </div>
           <el-table class="discovery-page-table" :data="taskData" :has-pagination="false">
             <el-table-column :label="$t('public_task_name')" prop="name" width="200px" show-overflow-tooltip>
@@ -197,7 +201,7 @@
 import { cloneDeep } from 'lodash'
 
 import { Drawer, VTable, VEmpty } from '@tap/component'
-import { calcUnit } from '@tap/shared'
+import { calcTimeUnit, calcUnit, isNum } from '@tap/shared'
 import { discoveryApi, proxyApi, taskApi, metadataInstancesApi, modulesApi } from '@tap/api'
 import i18n from '@/i18n'
 import dayjs from 'dayjs'
@@ -351,7 +355,8 @@ export default {
           value: 'generating'
         }
       ],
-      selected: {}
+      selected: {},
+      swimType: '' // source/fdm/mdm/target
     }
   },
   methods: {
@@ -370,6 +375,7 @@ export default {
     open(row) {
       this.init()
       this.visible = true
+      this.swimType = row.SWIM_TYPE
       this.connectionId = row.connectionId
       this.selected = cloneDeep(row)
       this.getTableStorage(row)
@@ -436,7 +442,12 @@ export default {
     getTaskStatus() {
       taskApi.tableStatus(this.connectionId, this.detailData.name).then(res => {
         this.tableStatus = res?.status
-        this.cdcDelayTime = res?.cdcDelayTime || '-'
+        this.cdcDelayTime =
+          isNum(res?.cdcDelayTime) && res.cdcDelayTime >= 0
+            ? calcTimeUnit(res.cdcDelayTime, 2, {
+                autoHideMs: true
+              })
+            : '-'
         this.lastDataChangeTime = res?.lastDataChangeTime
           ? dayjs(res?.lastDataChangeTime).format('YYYY-MM-DD HH:mm:ss')
           : '-'

@@ -170,7 +170,11 @@ export const FieldRenameProcessor = defineComponent({
           qualifiedName: qualifiedName,
           previousTableName: targetObjectName,
           originTableName: sourceObjectName,
-          operation: config.operation,
+          operation: {
+            prefix: '',
+            suffix: '',
+            capitalized: ''
+          },
           fields: []
         }
       }
@@ -294,7 +298,7 @@ export const FieldRenameProcessor = defineComponent({
         refs.table?.clearSelection()
         config.checkedTables = []
         config.checkAll = false
-        config.operation = restOp
+        Object.assign(config.operation, restOp)
       })
       doVisible('visible', false)
     }

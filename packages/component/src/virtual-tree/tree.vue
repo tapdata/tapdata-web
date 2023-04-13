@@ -1,6 +1,6 @@
 <template>
   <div
-    class="el-tree"
+    class="el-tree virtual-tree"
     :class="{
       'el-tree--highlight-current': highlightCurrent,
       'is-dragging': !!dragState.draggingNode,
@@ -89,3 +89,15 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.virtual-tree {
+  .el-tree-node__loading-icon {
+    margin-right: 0;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    text-align: center;
+  }
+}
+</style>

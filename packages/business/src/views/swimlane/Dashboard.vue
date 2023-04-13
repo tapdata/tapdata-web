@@ -2,17 +2,18 @@
   <div class="swim-lane flex flex-column h-100">
     <div class="page-header-title flex align-center">
       <span>{{ $t('page_title_data_console') }}</span>
-      <div class="flex-grow-1"></div>
       <ElTooltip
+        placement="top"
         v-if="currentView === 'swimlane'"
         :content="$t('packages_business_switch_directory_view')"
         key="swimlane"
       >
-        <IconButton @click="toggleView('catalog')" md>list-view</IconButton>
+        <IconButton class="ml-3" @click="toggleView('catalog')" md>list-view</IconButton>
       </ElTooltip>
-      <ElTooltip v-else :content="$t('packages_business_switch_data_console_view')" key="console">
-        <IconButton @click="toggleView('swimlane')" md>swimlane</IconButton>
+      <ElTooltip placement="top" v-else :content="$t('packages_business_switch_data_console_view')" key="console">
+        <IconButton class="ml-3" @click="toggleView('swimlane')" md>swimlane</IconButton>
       </ElTooltip>
+      <div class="flex-grow-1"></div>
       <IconButton class="ml-3" @click="handleSettings" md>cog-o</IconButton>
     </div>
     <div class="list flex flex-fill overflow-hidden">
@@ -24,7 +25,7 @@
           v-for="(item, index) in laneOptions"
           :key="index"
           :is="item.component"
-          :ref="item.component"
+          :ref="item.type"
           :dragState="dragState"
           :settings="settings"
           :directory="directoryMap[item.type]"
@@ -32,6 +33,7 @@
           :mdmConnection="mdmConnection"
           :event-driver="eventDriver"
           :loadingDirectory="loadingDirectory"
+          :fdmAndMdmId="fdmAndMdmId"
           :mapCatalog="mapCatalog"
           @create-connection="handleAdd"
           @create-target="handleCreateTarget"
@@ -45,13 +47,13 @@
     <CreateConnection
       :visible.sync="visible"
       :selector-type="selectorType"
-      @success="handleSuccess"
+      @success="handleSuccess($event, 'source')"
       @saveAndMore="handleSuccess"
     ></CreateConnection>
     <SceneDialog
       :visible.sync="showSceneDialog"
       :selector-type="selectorType"
-      @success="handleSuccess"
+      @success="handleSuccess($event, 'target')"
       @saveAndMore="handleSuccess"
     ></SceneDialog>
     <Settings
@@ -150,6 +152,10 @@ export default {
         }
       ]
       return this.mode === 'service' ? result : result.filter(t => t.level === 'base')
+    },
+
+    fdmAndMdmId() {
+      return [this.settings?.fdmStorageConnectionId, this.settings?.mdmStorageConnectionId]
     }
   },
 
@@ -191,9 +197,8 @@ export default {
       this.showSceneDialog = true
     },
 
-    handleSuccess(value) {
-      const component = this.laneOptions.find(t => t.type === this.selectorType)?.component
-      this.$refs[component]?.[0]?.addItem(value)
+    handleSuccess(value, comRef) {
+      this.$refs[comRef]?.[0]?.addItem(value)
     },
 
     handleDragEnd() {

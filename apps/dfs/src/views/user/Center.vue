@@ -1,18 +1,18 @@
 <template>
   <div class="user-center g-panel-container flex-fill">
-    <div class="fs-7">{{ $t('user_Center_geRenXinXi') }}</div>
-    <ElDivider class="my-6"></ElDivider>
+    <div class="fs-6 fw-sub">{{ $t('user_Center_geRenXinXi') }}</div>
+    <ElDivider></ElDivider>
     <div>
       <div>
         <ElRow :gutter="40" class="section-header mb-6">
           <ElCol :span="12" class="user-item">
-            <div class="user-item__label">{{ $t('user_name') }}{{ $t('symbol_colon') }}</div>
+            <div class="user-item__label font-color-light">{{ $t('user_name') }}{{ $t('symbol_colon') }}</div>
             <div class="user-item__value">{{ userData.username }}</div>
           </ElCol>
         </ElRow>
         <ElRow :gutter="40" class="section-header mb-6">
           <ElCol :span="12" class="user-item">
-            <div class="user-item__label">{{ $t('user_Center_yongHuNiCheng') }}</div>
+            <div class="user-item__label font-color-light">{{ $t('user_Center_yongHuNiCheng') }}</div>
             <InlineInput
               class="inline-input fs-8"
               :value="userData.nickname"
@@ -23,14 +23,16 @@
             ></InlineInput>
           </ElCol>
           <ElCol :span="12" class="user-item">
-            <div class="user-item__label">{{ $t('public_connection_form_password') }}{{ $t('symbol_colon') }}</div>
+            <div class="user-item__label font-color-light">
+              {{ $t('public_connection_form_password') }}{{ $t('symbol_colon') }}
+            </div>
             <div class="user-item__value">******</div>
             <ElLink type="primary" @click="editPassword">{{ $t('public_button_revise') }}</ElLink>
           </ElCol>
         </ElRow>
         <ElRow :gutter="40" class="section-header mb-6">
           <ElCol :span="12" class="user-item">
-            <div class="user-item__label">{{ $t('user_phone_number') }}</div>
+            <div class="user-item__label font-color-light">{{ $t('user_phone_number') }}</div>
             <div class="user-item__value">{{ userData.telephone || $t('user_Center_weiBangDing') }}</div>
             <ElLink v-if="userData.telephone" type="primary" @click="editPhone">{{
               $t('public_button_revise')
@@ -43,7 +45,7 @@
             >
           </ElCol>
           <ElCol :span="12" class="user-item">
-            <div class="user-item__label">{{ $t('user_avatar') }}</div>
+            <div class="user-item__label font-color-light">{{ $t('user_avatar') }}</div>
             <div class="user-item__value position-relative">
               <img
                 v-if="userData.avatar"
@@ -64,7 +66,7 @@
           <!--            <ElLink v-else type="primary" @click="dialogObj.bindWx = true">{{ $t('public_button_bind') }}</ElLink>-->
           <!--          </ElCol>-->
           <ElCol :span="12" class="user-item">
-            <div class="user-item__label">{{ $t('user_Center_youXiang') }}</div>
+            <div class="user-item__label font-color-light">{{ $t('user_Center_youXiang') }}</div>
             <div class="user-item__value">{{ userData.email || $t('user_Center_weiBangDing') }}</div>
             <ElLink v-if="userData.email" type="primary" @click="editEmail">{{ $t('public_button_revise') }}</ElLink>
             <ElLink v-else type="primary" @click="dialogObj.bindEmail = true">{{ $t('public_button_bind') }}</ElLink>
@@ -72,20 +74,20 @@
         </ElRow>
       </div>
     </div>
-    <div class="mt-12 fs-7">{{ $t('user_Center_qiYeXinXi') }}</div>
-    <ElDivider class="my-6"></ElDivider>
+    <div class="mt-12 fs-6 fw-sub">{{ $t('user_Center_qiYeXinXi') }}</div>
+    <ElDivider></ElDivider>
     <div>
       <div>
         <ElRow :gutter="40" class="section-header mb-2">
           <ElCol :span="12" class="enterprise-item">
-            <div class="enterprise-item__label">{{ $t('user_Center_gongSiMingCheng') }}</div>
+            <div class="enterprise-item__label font-color-light">{{ $t('user_Center_gongSiMingCheng') }}</div>
             <div v-if="!isEdit" class="enterprise-item__value">
               {{ enData.companyName || $t('user_Center_weiTianXie') }}
             </div>
             <ElInput v-else v-model="enForm.companyName" class="enterprise-item__value"></ElInput>
           </ElCol>
           <ElCol :span="12" class="enterprise-item">
-            <div class="enterprise-item__label">{{ $t('user_Center_gongSiGuanWang') }}</div>
+            <div class="enterprise-item__label font-color-light">{{ $t('user_Center_gongSiGuanWang') }}</div>
             <div v-if="!isEdit" class="enterprise-item__value">
               {{ enData.website || $t('user_Center_weiTianXie') }}
             </div>
@@ -94,14 +96,14 @@
         </ElRow>
         <ElRow :gutter="40" class="section-header mb-2">
           <ElCol :span="12" class="enterprise-item">
-            <div class="enterprise-item__label">{{ $t('user_Center_suoShuHangYe') }}</div>
+            <div class="enterprise-item__label font-color-light">{{ $t('user_Center_suoShuHangYe') }}</div>
             <div v-if="!isEdit" class="enterprise-item__value">
               {{ enData.industry || $t('user_Center_weiTianXie') }}
             </div>
             <ElInput v-else v-model="enForm.industry" class="enterprise-item__value"></ElInput>
           </ElCol>
           <ElCol :span="12" class="enterprise-item">
-            <div class="enterprise-item__label">{{ $t('user_Center_suoShuChengShi') }}</div>
+            <div class="enterprise-item__label font-color-light">{{ $t('user_Center_suoShuChengShi') }}</div>
             <div v-if="!isEdit" class="enterprise-item__value">{{ enData.city || $t('user_Center_weiTianXie') }}</div>
             <ElInput v-else v-model="enForm.city" class="enterprise-item__value"></ElInput>
           </ElCol>
@@ -115,8 +117,8 @@
         </template>
       </div>
     </div>
-    <div class="mt-12 fs-7">{{ $t('dfs_user_center_kaifaxinxi') }}</div>
-    <ElDivider class="my-6"></ElDivider>
+    <div class="mt-12 fs-6 fw-sub">{{ $t('dfs_user_center_kaifaxinxi') }}</div>
+    <ElDivider></ElDivider>
     <div class="access-key__desc py-2 px-4 inline-flex align-items-center">
       <VIcon class="color-primary">info</VIcon>
       <span class="ml-1">{{ $t('dfs_user_center_acces') }}</span>
@@ -125,7 +127,7 @@
       <div>
         <ElRow :gutter="40" class="section-header mb-2">
           <ElCol :span="12" class="enterprise-item">
-            <div class="enterprise-item__label">Access Key：</div>
+            <div class="enterprise-item__label font-color-light">Access Key：</div>
             <div>
               {{ keyForm.accessKey }}
             </div>
@@ -147,7 +149,7 @@
             </ElTooltip>
           </ElCol>
           <ElCol :span="12" class="enterprise-item">
-            <div class="enterprise-item__label">Secret Key：</div>
+            <div class="enterprise-item__label font-color-light">Secret Key：</div>
             <div>
               {{ keyForm.secretKey }}
             </div>
@@ -173,7 +175,7 @@
     </div>
 
     <section v-if="userData.enableLicense">
-      <div class="mt-12 fs-7">
+      <div class="mt-12 fs-6 fw-sub">
         {{ $t('dfs_user_center_shouquanmaxinxi') }}
       </div>
       <div class="mt-2">
@@ -208,8 +210,8 @@
       </VTable>
     </section>
 
-    <section v-if="!userData.enableLicense">
-      <div class="mt-12 fs-7">{{ $t('dfs_user_center_fuwudingyuexin') }}</div>
+    <section>
+      <div class="mt-12 fs-6 fw-sub">{{ $t('dfs_user_center_fuwudingyuexin') }}</div>
       <VTable
         :columns="columns"
         :remoteMethod="remoteMethod"
@@ -221,27 +223,20 @@
         class="mt-4"
       >
         <template #bindAgent="{ row }">
-          <ElLink v-if="row.agentId" type="primary" @click="handleAgent(row)">{{
-            $t('dfs_user_center_yibangdingshili')
+          <ElLink v-if="row.agentId && row.status === 'pay'" type="primary" @click="handleAgent(row)">{{
+            row.agentId
           }}</ElLink>
-          <span v-else>{{ $t('user_Center_weiBangDing') }}</span>
+          <span v-else>-</span>
         </template>
         <template #operation="{ row }">
           <!--          <ElButton type="text" @click="handleRecord(row)">记录</ElButton>-->
-          <ElButton v-if="row.type !== 'recurring'" type="text" @click="handleRenew(row)">{{
-            $t('public_button_renew')
-          }}</ElButton>
           <ElButton
-            v-if="row.type === 'recurring'"
-            :disabled="row.status !== 'pay'"
+            v-if="['expire', 'pay', 'cancelSubscribe'].includes(row.status) && row.type === 'one_time'"
             type="text"
-            @click="handleCancelSubscription(row)"
-            >{{ $t('public_button_cancel') }}{{ $t('public_button_subscription') }}</ElButton
+            @click="handleRenew(row)"
+            >{{ $t('public_button_renew') }}</ElButton
           >
-          <ElButton v-else :disabled="row.status !== 'pay'" type="text" @click="handleUnsubscribe(row)">{{
-            $t('public_button_unsubscribe')
-          }}</ElButton>
-          <ElButton v-if="row.status === 'unPay'" type="text" @click="handlePay(row)">{{
+          <ElButton v-if="['payFail', 'unPay'].includes(row.status)" type="text" @click="handlePay(row)">{{
             $t('public_button_pay')
           }}</ElButton>
         </template>
@@ -564,11 +559,12 @@ import CryptoJS from 'crypto-js'
 import dayjs from 'dayjs'
 import { VTable } from '@tap/component'
 import { getSpec, getPaymentMethod } from '../instance/utils'
-import { ORDER_STATUS_MAP, CURRENCY_SYMBOL_MAP, NUMBER_MAP } from '@tap/business'
+import { ORDER_STATUS_MAP, CURRENCY_SYMBOL_MAP, NUMBER_MAP, TIME_MAP } from '@tap/business'
 import { openUrl } from '@tap/shared'
 
 export default {
   name: 'Center',
+  inject: ['buried'],
   components: { InlineInput, VerificationCode, UploadFile, VTable },
   data() {
     return {
@@ -654,7 +650,7 @@ export default {
         },
         {
           label: i18n.t('dfs_instance_selectlist_bangdingshilizhuang'),
-          prop: 'bindAgent',
+          prop: 'agentId',
           slotName: 'bindAgent'
         },
         {
@@ -1067,7 +1063,9 @@ export default {
           `api/tcm/paid/plan/paidSubscribe?filter=${encodeURIComponent(JSON.stringify({ sort: ['createAt desc'] }))}`
         )
         .then(data => {
-          const items = data.items || []
+          let items = data.items || []
+          //过滤 invild
+          items = items.filter(it => it.status !== 'invalid')
           return {
             total: 0,
             data:
@@ -1086,12 +1084,14 @@ export default {
                     : dayjs(t.periodStart).format('YYYY-MM-DD HH:mm:ss') +
                       ' - ' +
                       dayjs(t.periodEnd).format('YYYY-MM-DD HH:mm:ss')
+                t.priceSuffix = t.type === 'recurring' ? '/' + TIME_MAP[t.periodUnit] : ''
                 t.priceLabel =
                   CURRENCY_SYMBOL_MAP[t.currency] +
                   (t.price / 100).toLocaleString('zh', {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2
-                  })
+                  }) +
+                  t.priceSuffix
                 t.bindAgent = t.agentId
                   ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
                   : i18n.t('user_Center_weiBangDing')
@@ -1102,22 +1102,12 @@ export default {
     },
     codeRemoteMethod() {
       return this.$axios.get('api/tcm/aliyun/market/license/list').then(data => {
-        console.log('codeRemoteMethod', data)
-        // {
-        //   label: '激活时间',
-        //     prop: 'activateTimeLabel',
-        //   width: 320
-        // },
-        // {
-        //   label: '过期时间',
-        //     prop: 'expiredTimeLabel'
-        // },
         const items = data.items || []
         return {
           total: 0,
           data:
             items.map(t => {
-              t.activateTimeLabel = t.activateTime ? dayjs(t.activateTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+              t.activateTimeLabel = t.activateTime ? dayjs(t.activateTime).format('YYYY-MM-DD') : '-'
               t.expiredTimeLabel = t.expiredTime ? dayjs(t.expiredTime).format('YYYY-MM-DD') : '-'
               t.bindAgent = t.agentId
                 ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
@@ -1152,37 +1142,6 @@ export default {
       ]
       this.recordData.visible = true
     },
-    handleUnsubscribe(row = {}) {
-      if (row.agentId) return this.$message.error(i18n.t('dfs_user_center_qingxianshanchushi'))
-      this.$confirm(
-        i18n.t('dfs_user_center_ninjiangtuidingr', { val1: row.content }),
-        i18n.t('dfs_user_center_tuidingfuwu'),
-        {
-          type: 'warning'
-        }
-      ).then(res => {
-        res &&
-          this.$axios.post('api/tcm/paid/plan/oneTime/refunds', { id: row.id, chargeId: row.chargeId }).then(() => {
-            this.$message.success(this.$t('public_message_operation_success'))
-          })
-      })
-    },
-    handleCancelSubscription(row = {}) {
-      this.$confirm(
-        i18n.t('dfs_user_center_ninjiangquxiaoding', { val1: row.content }),
-        i18n.t('dfs_user_center_quxiaodingyuefu'),
-        {
-          type: 'warning'
-        }
-      ).then(res => {
-        res &&
-          this.$axios
-            .post('api/tcm/paid/plan/subscribe/cancel', { id: row.id, subscribeId: row.subscribeId })
-            .then(() => {
-              this.$message.success(this.$t('public_message_operation_success'))
-            })
-      })
-    },
     handleAgent(row = {}) {
       this.$router.push({
         name: 'Instance',
@@ -1196,6 +1155,7 @@ export default {
         name: 'aliyunMarketLicense'
       })
     },
+    //续订
     handleRenew(row = {}) {
       const { period, periodUnit } = row
       const label =
@@ -1214,22 +1174,31 @@ export default {
         }
       ).then(res => {
         if (res) {
-          const { id, priceId, currency } = row
+          const { agentId } = row
           const params = {
-            id,
-            priceId,
-            currency,
+            agentId,
             successUrl: location.href,
-            cancelUrl: location.href,
-            renew: true
+            cancelUrl: location.href
           }
-          this.$axios.post('api/tcm/paid/plan/oneTime/paymentLink', params).then(data => {
-            openUrl(data)
-          })
+          this.buried('renewAgentStripe')
+          this.$axios
+            .post('api/tcm/orders/renew', params)
+            .then(data => {
+              openUrl(data.paymentUrl)
+              this.buried('renewAgentStripe', '', {
+                result: true
+              })
+            })
+            .catch(() => {
+              this.buried('renewAgentStripe', '', {
+                result: false
+              })
+            })
         }
       })
     },
     handlePay(row = {}) {
+      this.buried('payAgentStripe')
       openUrl(row.payUrl)
       this.$confirm(
         i18n.t('dfs_user_center_ninjiangzhifur', { val1: row.content }),
@@ -1243,6 +1212,7 @@ export default {
       })
     },
     handleRenewal() {
+      this.buried('goRenewalAliyunCode')
       const href = 'https://market.console.aliyun.com/imageconsole/index.htm'
       openUrl(href)
     }
@@ -1294,6 +1264,9 @@ export default {
   border-radius: 50%;
 }
 ::v-deep {
+  .el-divider--horizontal {
+    margin: 8px 0 16px 0;
+  }
   .el-form-item__label {
     text-align: left;
   }

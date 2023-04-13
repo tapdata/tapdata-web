@@ -42,6 +42,7 @@ import i18n from '@/i18n'
 
 export default {
   name: 'License',
+  inject: ['buried'],
   data() {
     return {
       licenseCode: '',
@@ -56,6 +57,7 @@ export default {
   methods: {
     save() {
       this.saveLoading = true
+      this.buried('activateAliyunCode')
       this.$axios
         .post('api/tcm/aliyun/market/license/activate', { licenseCode: this.licenseCode })
         .then(data => {
@@ -65,10 +67,22 @@ export default {
             this.$axios.get('api/tcm/user').then(data => {
               window.__USER_INFO__ = data
             })
+            this.buried('activateAliyunCode', '', {
+              result: true
+            })
             setTimeout(() => {
               window.location.href = 'index.html'
             }, 30000)
+          } else {
+            this.buried('activateAliyunCode', '', {
+              result: false
+            })
           }
+        })
+        .catch(() => {
+          this.buried('activateAliyunCode', '', {
+            result: false
+          })
         })
         .finally(() => {
           this.saveLoading = false

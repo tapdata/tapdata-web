@@ -1,7 +1,7 @@
 <template>
   <ElDialog
     :title="title"
-    :visible="visible"
+    :visible.sync="showDialog"
     :append-to-body="true"
     width="80%"
     top="10vh"
@@ -20,6 +20,7 @@
     <div v-else class="form__content flex flex-column">
       <ServeForm v-if="['apiServices'].includes(activeTab)" :params="formParams" class="flex-fill"></ServeForm>
       <ConnectionForm
+        ref="form"
         v-else
         :params="formParams"
         class="flex-fill"
@@ -59,10 +60,30 @@ export default {
   },
   data() {
     return {
+      showDialog: this.visible,
       formParams: {},
       showForm: false,
       timer: null,
       activeTab: ''
+    }
+  },
+  watch: {
+    visible(v) {
+      this.showDialog = v
+    },
+    showDialog(v) {
+      this.$emit('update:visible', v)
+    }
+  },
+  mounted() {
+    console.log('ConnectionDialog') // eslint-disable-line
+    const { type, pdkHash } = this.$route.query
+    if (type === 'add-connection') {
+      this.showDialog = true
+      this.$nextTick(() => {
+        this.formParams = { pdkHash }
+        this.showForm = true
+      })
     }
   },
   methods: {

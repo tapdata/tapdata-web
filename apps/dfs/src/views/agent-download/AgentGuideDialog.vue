@@ -166,12 +166,12 @@
   </ElDialog>
 </template>
 <script>
-import { buried } from '@/plugins/buried'
 import Cookie from '@tap/shared/src/cookie'
 import { VIcon } from '@tap/component'
 
 export default {
   name: 'AgentGuideDialog',
+  inject: ['buried'],
   components: { VIcon },
   props: {
     visible: {
@@ -218,13 +218,13 @@ export default {
             }
     },
     changeImg(type) {
-      buried('agentGuide' + type)
+      this.buried('agentGuide' + type)
       this.showTip = false
       this.current = type //extranet外网  intranet 内网
       this.type = type + '-sync' //init 初始化  sync 数据同步 login 入湖边入仓
     },
     changeType(type) {
-      buried('agentGuide' + type)
+      this.buried('agentGuide' + type)
       this.type = type //init 初始化  sync 数据同步 login 入湖边入仓
     },
     //下一步
@@ -233,12 +233,12 @@ export default {
         this.showTip = true
         return
       }
-      buried('agentGuideNext')
+      this.buried('agentGuideNext')
       this.step = 2
     },
     //关闭当前弹窗-弹出agent下载页面
     openAgentDownloadModal() {
-      buried('agentGuideInstall')
+      this.buried('agentGuideInstall')
       this.$emit('openAgentDownload')
     },
     close() {
@@ -249,13 +249,13 @@ export default {
     },
     //去官网报价
     goOnPrem() {
-      buried('agentGuideTapdataOnPrem')
+      this.buried('agentGuideTapdataOnPrem')
       this.showClose = true
       window.open('https://tapdata.net/tapdata-on-prem/demo.html')
     },
     //去demo环境体验
     goDemo() {
-      buried('agentGuideDemo')
+      this.buried('agentGuideDemo')
       this.showClose = true
       window.open('https://demo.cloud.tapdata.net/console/v3/')
     }

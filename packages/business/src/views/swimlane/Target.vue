@@ -211,10 +211,11 @@ export default {
   name: 'Target',
 
   props: {
-    dragState: Object
+    dragState: Object,
+    fdmAndMdmId: Array
   },
 
-  components: { CreateRestApi, DatabaseIcon, TaskList, draggable, DataServerDrawer, IconButton },
+  components: { CreateRestApi, DatabaseIcon, TaskList, DataServerDrawer, IconButton },
 
   mixins: [commonMix],
 
@@ -275,9 +276,9 @@ export default {
     },
 
     filterList() {
-      if (!this.search) return this.list
+      if (!this.search) return this.list.filter(item => !this.fdmAndMdmId.includes(item.id))
 
-      return this.list.filter(item => item.name.includes(this.search))
+      return this.list.filter(item => !this.fdmAndMdmId.includes(item.id) && item.name.includes(this.search))
     }
   },
 
@@ -313,10 +314,60 @@ export default {
         filter: JSON.stringify(filter)
       })
 
-      return res.items.map(item => {
-        item.LDP_TYPE = 'connection'
-        return item
-      })
+      return [
+        {
+          id: 'Product Catalog',
+          name: 'Product Catalog',
+          type: 'service',
+          apiList: [
+            { name: 'API_ProductInventory' },
+            {
+              name: 'API_IM_STATIC_REF'
+            }
+          ]
+        },
+        {
+          id: 'Discount',
+          name: 'Discount',
+          type: 'service',
+          apiList: [
+            {
+              name: 'API_bomCertificate'
+            }
+          ]
+        },
+        {
+          id: '业绩宝',
+          name: '业绩宝',
+          type: 'service',
+          apiList: [
+            {
+              name: 'API_marketingKeyword'
+            },
+            {
+              name: 'API_PC_refinement'
+            },
+            {
+              name: 'API_modelPriceGroup'
+            }
+          ]
+        },
+        {
+          id: 'POSS',
+          name: 'POSS',
+          type: 'service',
+          apiList: [
+            {
+              name: 'API_pos'
+            }
+          ]
+        }
+      ].concat(
+        res.items.map(item => {
+          item.LDP_TYPE = 'connection'
+          return item
+        })
+      )
     },
 
     async loadTask(list) {

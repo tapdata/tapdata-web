@@ -1,6 +1,6 @@
 <template>
   <ElDialog
-    width="980px"
+    width="1000px"
     append-to-body
     :visible.sync="visible"
     :close-on-click-modal="false"
@@ -56,6 +56,8 @@ import { getPaymentMethod, getSpec } from './utils'
 
 export default {
   name: 'SelectList',
+
+  inject: ['buried'],
 
   components: { VTable },
 
@@ -119,7 +121,7 @@ export default {
             {
               label: i18n.t('dfs_instance_selectlist_dingyuezhouqi'),
               prop: 'periodLabel',
-              width: 320
+              width: 340
             },
             {
               label: i18n.t('dfs_instance_selectlist_bangdingshilizhuang'),
@@ -200,31 +202,41 @@ export default {
     },
 
     handleCreateCode() {
+      this.buried('createAliyunCode')
       const href =
         'https://market.aliyun.com/products/56024006/cmgj00061912.html?spm=5176.730005.result.4.519c3524QzKxHM&innerSource=search_tapdata#sku=yuncode5591200001'
       openUrl(href)
     },
 
     create() {
-      this.$emit(this.type === 'code' ? 'create-code' : 'create')
+      this.$emit('create')
+      this.buried('newAgentStripeDialog')
       this.handleCancel()
     },
 
     submit(row = {}) {
       const map = {
         code: {
+          agentType: 'Local',
           chargeProvider: 'Aliyun',
           licenseId: row.id
         },
         order: {
+          agentType: 'Local',
           chargeProvider: 'Stripe',
           subscriptionId: row.id
         }
       }
+      const buriedMap = {
+        code: 'selectAgentAliyun',
+        order: 'selectAgentStripe'
+      }
+      this.buried(buriedMap[this.type])
       this.$emit('new-agent', map[this.type])
       setTimeout(this.handleCancel, 1200)
     },
     goLicense() {
+      this.buried('goActivateAliyunCode')
       this.$router.push({
         name: 'aliyunMarketLicense'
       })

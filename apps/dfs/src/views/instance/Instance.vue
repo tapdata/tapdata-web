@@ -6,12 +6,7 @@
           <FilterBar v-model="searchParams" :items="filterItems" @search="search" @fetch="fetch"></FilterBar>
         </div>
         <div class="instance-operation-right">
-          <ElButton
-            type="primary"
-            @click="createAgent"
-            :loading="createAgentLoading"
-            :disabled="$disabledReadonlyUserBtn()"
-          >
+          <ElButton type="primary" @click="handleCreateAgent" :disabled="$disabledReadonlyUserBtn()">
             <span>{{ $t('public_agent_button_create') }}</span>
           </ElButton>
         </div>
@@ -60,25 +55,31 @@
             }}</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn width="130" :label="$t('dfs_instance_instance_daoqishijian')">
+        <ElTableColumn width="200" :label="$t('dfs_instance_instance_daoqishijian')">
           <template slot-scope="scope">
             <div>
-              <span>{{ scope.row.expiredTimeLabel }}</span>
               <ElTooltip
-                v-if="getExpiredTimeLevel(scope.row)"
+                :disabled="!getExpiredTimeLevel(scope.row)"
                 placement="top"
                 :visible-arrow="false"
                 effect="light"
-                class="ml-2"
               >
-                <VIcon v-if="getExpiredTimeLevel(scope.row) === 'expired'" class="color-info">error</VIcon>
-                <VIcon v-else class="color-warning">warning</VIcon>
+                <div>
+                  <span>{{ scope.row.expiredTimeLabel }}</span>
+                  <VIcon v-if="getExpiredTimeLevel(scope.row) === 'expired'" class="ml-2 color-info">error</VIcon>
+                  <VIcon v-else-if="getExpiredTimeLevel(scope.row) === 'expiringSoon'" class="ml-2 color-warning"
+                    >warning</VIcon
+                  >
+                </div>
                 <template #content>
                   <div v-if="getExpiredTimeLevel(scope.row) === 'expired'" class="font-color-dark">
                     <p>{{ $t('dfs_instance_expired_time_tip1') }}</p>
                     <p>{{ $t('dfs_instance_expired_time_tip2') }}</p>
                     <p>{{ $t('dfs_instance_expired_time_tip3') }}</p>
                   </div>
+                  <span v-else-if="scope.row.paidType === 'recurring'">{{
+                    $t('dfs_instance_instance_xiacifufeishi')
+                  }}</span>
                   <span v-else>{{ $t('dfs_user_center_jijiangguoqi') }}</span>
                 </template>
               </ElTooltip>
@@ -197,7 +198,7 @@
             <span>{{ formatTime(scope.row.createAt) }}</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn :label="$t('public_operation')" width="176">
+        <ElTableColumn :label="$t('public_operation')" width="200">
           <template slot-scope="scope">
             <ElButton
               type="text"
@@ -218,10 +219,28 @@
             <ElButton
               size="mini"
               type="text"
+              v-if="scope.row.cancelSubscribe && scope.row.orderInfo.type === 'recurring'"
+              :loading="scope.row.btnLoading.delete"
+              @click="cancelPaidSubscribe(scope.row)"
+              >{{ $t('dfs_instance_instance_quxiaodingyue') }}</ElButton
+            >
+            <ElButton
+              size="mini"
+              type="text"
+              v-if="!scope.row.cancelSubscribe && scope.row.orderInfo.type === 'recurring'"
               :loading="scope.row.btnLoading.delete"
               :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
               @click="handleDel(scope.row)"
               >{{ $t('public_button_delete') }}</ElButton
+            >
+            <ElButton
+              size="mini"
+              type="text"
+              v-if="scope.row.orderInfo.type === 'one_time'"
+              :loading="scope.row.btnLoading.delete"
+              :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
+              @click="handleUnsubscribe(scope.row)"
+              >{{ $t('public_button_unsubscribe') }}</ElButton
             >
           </template>
         </ElTableColumn>
@@ -229,7 +248,7 @@
           <VIcon size="120">no-data-color</VIcon>
           <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
             <span>{{ $t('agent_list_empty_desc1') }}</span>
-            <span class="color-primary cursor-pointer fs-7 ml-1" @click="createAgent">{{
+            <span class="color-primary cursor-pointer fs-7 ml-1" @click="handleCreateAgent">{{
               $t('public_agent_button_create')
             }}</span>
             <span>{{ $t('agent_list_empty_desc2') }}</span>
@@ -368,6 +387,8 @@
         @create="createDialog = true"
         @new-agent="handleNewAgent"
       ></SelectListDialog>
+      <!-- 新的创建实例 -->
+      <SubscriptionModelDialog :visible.sync="subscriptionModelVisible"></SubscriptionModelDialog>
     </div>
   </section>
   <RouterView v-else></RouterView>
@@ -380,12 +401,12 @@ import StatusTag from '../../components/StatusTag'
 import { INSTANCE_STATUS_MAP } from '../../const'
 import Details from './Details'
 import timeFunction from '@/mixins/timeFunction'
-import { buried } from '@/plugins/buried'
 import { VIcon, FilterBar } from '@tap/component'
 import { dayjs } from '@tap/business'
 import Time from '@tap/shared/src/time'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 import { getSpec, getPaymentMethod } from './utils'
+import SubscriptionModelDialog from '@/views/agent-download/SubscriptionModelDialog'
 
 const CreateDialog = () => import(/* webpackChunkName: "CreateInstanceDialog" */ './Create')
 const SelectListDialog = () => import(/* webpackChunkName: "SelectListInstanceDialog" */ './SelectList')
@@ -400,8 +421,10 @@ export default {
     Details,
     FilterBar,
     CreateDialog,
-    SelectListDialog
+    SelectListDialog,
+    SubscriptionModelDialog
   },
+  inject: ['buried'],
   mixins: [timeFunction],
   data() {
     return {
@@ -437,7 +460,8 @@ export default {
       filterItems: [],
       createDialog: false,
       selectListDialog: false,
-      selectListType: 'code'
+      selectListType: 'code',
+      subscriptionModelVisible: false
     }
   },
   computed: {
@@ -510,7 +534,7 @@ export default {
       this.fetch()
       // 是否触发创建agent
       if (query?.create) {
-        this.createAgent()
+        this.handleCreateAgent()
         // 清除创建标记
         this.$router.replace({
           name: 'Instance'
@@ -584,10 +608,12 @@ export default {
             item.subscriptionMethodLabel = getPaymentMethod(paidSubscribeDto, chargeProvider) || '-'
             item.periodLabel =
               dayjs(periodStart).format('YYYY-MM-DD HH:mm:ss') + ' - ' + dayjs(periodEnd).format('YYYY-MM-DD HH:mm:ss')
-
-            const expiredTime =
+            item.content = `${item.subscriptionMethodLabel} ${item.specLabel} ${i18n.t('public_agent')}`
+            item.expiredTime =
               chargeProvider === 'Aliyun' ? license.expiredTime : chargeProvider === 'Stripe' ? periodEnd : ''
-            item.expiredTimeLabel = expiredTime ? dayjs(expiredTime).format('YYYY-MM-DD') : '-'
+            item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD') : '-'
+            item.paidType =
+              chargeProvider === 'Aliyun' ? license.type : chargeProvider === 'Stripe' ? paidSubscribeDto.type : ''
             item.deployDisable = item.tmInfo.pingTime || false
             if (!item.tmInfo) {
               item.tmInfo = {}
@@ -665,7 +691,7 @@ export default {
       if (this.deployBtnDisabled(row)) {
         return
       }
-      buried('agentDeploy')
+      this.buried('agentDeploy')
       let downloadUrl = window.App.$router.resolve({
         name: 'FastDownload',
         query: {
@@ -909,6 +935,10 @@ export default {
         })
         .catch(() => {})
     },
+    handleCreateAgent() {
+      this.subscriptionModelVisible = true
+      this.buried('newAgentStripeDialog')
+    },
     // 创建Agent
     async createAgent() {
       this.createAgentLoading = true
@@ -1015,11 +1045,8 @@ export default {
     },
     async handleNewAgent(params = {}) {
       try {
-        const data = await this.$axios.post('api/tcm/orders', {
-          agentType: 'Local',
-          ...params
-        })
-        buried('agentCreate')
+        const data = await this.$axios.post('api/tcm/orders', params)
+        this.buried('agentCreate')
         this.fetch()
         this.toDeploy({
           id: data.agentId
@@ -1062,9 +1089,75 @@ export default {
       const count = await this.$axios.get('api/tcm/agent/count')
       if (count) return false
       const flag = await this.handleNewAgent({
+        agentType: 'Local',
         chargeProvider: 'FreeTier'
       })
       return flag
+    },
+    //退订
+    handleUnsubscribe(row = {}) {
+      this.$confirm(
+        i18n.t('dfs_user_center_ninjiangtuidingr', { val1: row.content }),
+        i18n.t('dfs_user_center_tuidingfuwu'),
+        {
+          type: 'warning'
+        }
+      ).then(res => {
+        if (!res) return
+        const { paidType } = row
+        this.buried('unsubscribeAgentStripe', '', {
+          type: paidType
+        })
+        this.$axios
+          .post('api/tcm/orders/cancel', { instanceId: row.id })
+          .then(() => {
+            this.fetch()
+            this.buried('unsubscribeAgentStripe', '', {
+              result: true,
+              type: paidType
+            })
+            this.$message.success(this.$t('public_message_operation_success'))
+          })
+          .catch(() => {
+            this.buried('unsubscribeAgentStripe', '', {
+              result: false,
+              type: paidType
+            })
+          })
+      })
+    },
+
+    //取消订阅
+    cancelPaidSubscribe(row = {}) {
+      this.$confirm(
+        i18n.t('dfs_user_center_ninjiangtuidingr', { val1: row.content }),
+        i18n.t('dfs_user_center_quxiaodingyuefu'),
+        {
+          type: 'warning'
+        }
+      ).then(res => {
+        if (!res) return
+        const { paidType } = row
+        this.buried('unsubscribeAgentStripe', '', {
+          type: paidType
+        })
+        this.$axios
+          .post('api/tcm/orders/cancelPaidSubscribe', { instanceId: row.id })
+          .then(() => {
+            this.fetch()
+            this.buried('unsubscribeAgentStripe', '', {
+              result: true,
+              type: paidType
+            })
+            this.$message.success(this.$t('public_message_operation_success'))
+          })
+          .catch(() => {
+            this.buried('unsubscribeAgentStripe', '', {
+              result: false,
+              type: paidType
+            })
+          })
+      })
     }
   }
 }

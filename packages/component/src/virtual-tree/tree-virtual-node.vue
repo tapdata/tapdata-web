@@ -26,6 +26,7 @@
     <div class="el-tree-node__content">
       <span aria-hidden="true" :style="{ 'min-width': (source.level - 1) * tree.indent + 'px' }"></span>
       <span
+        v-if="!source.loading"
         @click.stop="handleExpandIconClick"
         :class="[
           { 'is-leaf': source.isLeaf, expanded: !source.isLeaf && expanded },
@@ -104,6 +105,12 @@ export default {
     };
   },
 
+  computed: {
+    node() {
+      return this.source
+    }
+  },
+
   watch: {
 
     'source.indeterminate'(val) {
@@ -124,7 +131,6 @@ export default {
 
   created() {
     const parent = this.$parent.$parent.$parent;
-    this.node = this.source;
     this.creator(parent, 'source');
   }
 };
