@@ -563,7 +563,7 @@ export default {
         .post('api/tcm/orders', params)
         .then(data => {
           this.submitLoading = false
-          if (chargeProvider === 'FreeTier') {
+          if (chargeProvider === 'FreeTier' || this.productType === 'aliyun') {
             let downloadUrl = window.App.$router.resolve({
               name: 'FastDownload',
               query: {
