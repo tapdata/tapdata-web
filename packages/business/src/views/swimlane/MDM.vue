@@ -122,8 +122,11 @@
       </ElForm>
       <span slot="footer" class="dialog-footer">
         <ElButton size="mini" @click="taskDialogConfig.visible = false">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton :loading="creating" size="mini" type="primary" @click="taskDialogSubmit()">
-          {{ $t('public_button_confirm') }}
+        <ElButton :loading="creating" size="mini" @click="taskDialogSubmit(false)">{{
+          $t('packages_business_save_only')
+        }}</ElButton>
+        <ElButton :loading="creating" size="mini" type="primary" @click="taskDialogSubmit(true)">
+          {{ $t('packages_business_save_and_run_now') }}
         </ElButton>
       </span>
     </ElDialog>
@@ -448,13 +451,16 @@ export default {
       this.taskDialogConfig.visible = true
     },
 
-    async taskDialogSubmit(confirmTable) {
+    async taskDialogSubmit(start, confirmTable) {
       const { tableName, from, newTableName, tagId } = this.taskDialogConfig
       let task = this.makeTask(from, tableName, newTableName)
       this.creating = true
       const h = this.$createElement
       try {
-        const result = await ldpApi.createMDMTask(task, { silenceMessage: true, params: { tagId, confirmTable } })
+        const result = await ldpApi.createMDMTask(task, {
+          silenceMessage: true,
+          params: { tagId, confirmTable, start }
+        })
         this.taskDialogConfig.visible = false
         this.$message.success({
           message: h(
@@ -510,7 +516,7 @@ export default {
             if (!resFlag) {
               return
             }
-            this.taskDialogSubmit(true)
+            this.taskDialogSubmit(start, true)
           })
         }
       }
