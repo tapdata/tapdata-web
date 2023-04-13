@@ -221,7 +221,6 @@
               type="text"
               v-if="scope.row.cancelSubscribe && scope.row.orderInfo.type === 'recurring'"
               :loading="scope.row.btnLoading.delete"
-              :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
               @click="cancelPaidSubscribe(scope.row)"
               >{{ $t('dfs_instance_instance_quxiaodingyue') }}</ElButton
             >

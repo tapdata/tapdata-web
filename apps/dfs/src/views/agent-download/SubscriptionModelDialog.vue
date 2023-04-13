@@ -65,6 +65,7 @@
       <el-tab-pane :label="$t('dfs_agent_download_subscriptionmodeldialog_peizhibushugui')" name="second">
         <section v-if="productType !== 'aliyun'">
           <div class="spec-main flex justify-content-between mt-6">
+            <!--规格配置-->
             <div class="flex flex-column flex-1">
               <div class="flex align-items-center">
                 <div class="label">
@@ -107,7 +108,8 @@
                   </ul>
                 </div>
               </div>
-              <div class="flex align-items-center mt-8" v-if="selected.chargeProvider !== 'FreeTier'">
+              <!--选择币种-->
+              <div class="flex align-items-center mt-8" v-if="currencyOption && currencyOption.length !== 0">
                 <div class="label payment_plan">
                   {{ $t('dfs_agent_download_subscriptionmodeldialog_xuanzebizhong') }}
                 </div>
@@ -128,6 +130,7 @@
                 </div>
               </div>
             </div>
+            <!--价格清单 -->
             <div class="price-list flex flex-column">
               <div class="title">{{ $t('dfs_agent_download_subscriptionmodeldialog_meiyuefeiyongyu') }}</div>
               <ul class="flex flex-1 content">
@@ -229,7 +232,7 @@
           </div>
           <footer class="flex justify-content-end align-items-center mt-4">
             <div class="mr-6">
-              Total: <span class="price">{{ formatPrice(currency) || 0 }}</span>
+              {{ $t('public_total') }}: <span class="price">{{ formatPrice(currency) || 0 }}</span>
             </div>
             <el-button @click="next('second')">{{ $t('public_button_previous') }}</el-button>
             <el-button type="primary" @click="submit()">{{ $t('public_button_confirm') }}</el-button>
@@ -333,6 +336,7 @@ export default {
   mounted() {
     this.checkAgentCount()
     this.form.email = window.__USER_INFO__.email
+    this.currencyType = window.__config__?.currencyType
   },
   methods: {
     close() {
@@ -342,15 +346,49 @@ export default {
       this.activeName = val
       this.buried('productTypeNext')
     },
+    //选择订阅模式
     changeProductType() {
       this.productType = 'aliyun'
       this.activeName = 'second'
       this.getAvailableCode()
       this.buried('productTypeAliyunCode')
     },
+    //切换规格
+    changeSpec() {
+      this.loadPackageItems()
+      if (!this.currencyType) {
+        this.currencyType = this.packageItems[0]?.currency
+      }
+      this.handleChange(this.packageItems[0])
+      this.buried('changeSpec')
+    },
+    //切换订阅方式
+    handleChange(item = {}) {
+      this.selected = item
+      if (item?.chargeProvider !== 'FreeTier') {
+        this.currencyOption = item.currencyOption
+        this.currency = this.currencyOption.filter(it => it.currency === this.currencyType)?.[0] || {}
+      } else {
+        this.currencyOption = []
+        this.currency = item
+      }
+      this.buried('changeSubscriptionMethod')
+    },
+    //切换币种
     changeCurrency(item) {
       this.currencyType = item.currency
       this.currency = item
+    },
+    //格式化价格
+    formatPrice(item) {
+      if (!item || item?.chargeProvider === 'FreeTier') return 0
+      return (
+        CURRENCY_SYMBOL_MAP[item.currency] +
+        (item.amount / 100).toLocaleString('zh', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        })
+      )
     },
     selectProductType() {
       this.buried('productTypeSelfHost')
@@ -458,40 +496,11 @@ export default {
             label: i18n.t('dfs_agent_download_subscriptionmodeldialog_yongjiu'),
             price: 0,
             value: '0',
-            chargeProvider: 'FreeTier'
+            chargeProvider: 'FreeTier',
+            currencyOption: []
           }
         ]
       }
-    },
-    handleChange(item = {}) {
-      this.selected = item
-      if (item?.chargeProvider !== 'FreeTier') {
-        let node = [
-          {
-            amount: item.price,
-            currency: item.currency
-          }
-        ]
-        this.currencyOption = [...node, ...item.currencyOption] || []
-        this.currency = this.currencyOption.filter(it => it.currency === this.currencyType)?.[0]
-      }
-      this.buried('changeSubscriptionMethod')
-    },
-    formatPrice(item) {
-      if (!item || item?.chargeProvider === 'FreeTier') return 0
-      return (
-        CURRENCY_SYMBOL_MAP[item.currency] +
-        (item.amount / 100).toLocaleString('zh', {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2
-        })
-      )
-    },
-    changeSpec() {
-      this.loadPackageItems()
-      this.changeCurrency(this.packageItems[0])
-      this.handleChange(this.packageItems[0])
-      this.buried('changeSpec')
     },
     getEmailRules() {
       return [
@@ -535,7 +544,7 @@ export default {
           agentType: 'Local',
           chargeProvider,
           priceId,
-          currency,
+          currency: this.currencyType || currency,
           successUrl: location.origin + '/' + fastDownloadUrl.href,
           cancelUrl: location.href,
           email,

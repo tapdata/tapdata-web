@@ -1348,7 +1348,7 @@ export default {
   dfs_instance_instance_quxiaodingyue: '取消订阅',
   dfs_views_layout_chanpinyindao: '产品引导',
   dfs_agent_download_subscriptionmodeldialog_chakanbingqueren: '查看并确认',
-  dfs_agent_download_subscriptionmodeldialog_peizhibushugui: '配置部署规格',
+  dfs_agent_download_subscriptionmodeldialog_peizhibushugui: '选择实例规格',
   dfs_agent_download_subscriptionmodeldialog_xuanzebushulei: '选择部署类型',
   dfs_agent_download_subscriptionmodeldialog_peizhishishishu: '配置实时数据平台',
   dfs_agent_download_subscriptionmodeldialog_peizhizhaiyao: '配置摘要',
