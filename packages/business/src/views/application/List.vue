@@ -81,12 +81,12 @@ export default {
   data() {
     return {
       searchParams: {
-        taskName: ''
+        name: ''
       },
       filterItems: [
         {
           placeholder: '请输入应用名称',
-          key: 'taskName',
+          key: 'name',
           type: 'input'
         }
       ],
@@ -160,14 +160,14 @@ export default {
     // 获取列表数据
     getData({ page }) {
       let { current, size } = page
-      let { taskName, connectionName } = this.searchParams
+      let { name, connectionName } = this.searchParams
       let where = {
         item_type: 'app'
       }
-      taskName &&
+      name &&
         (where.value = {
-          option: 'i',
-          like: taskName
+          options: 'i',
+          like: name
         })
       connectionName && (where.connectionName = connectionName)
       let filter = {

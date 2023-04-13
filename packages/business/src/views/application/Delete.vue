@@ -13,18 +13,15 @@
     </div>
     <div>
       <div v-html="desc"></div>
-      <AsyncSelect
-        v-model="form.appValue"
-        :method="getAppList"
-        :current-label="form.appLabel"
+      <ListSelect
+        :value.sync="form.appValue"
+        :label.sync="form.appLabel"
+        :format="handleFormat"
+        type="app"
         item-label="value"
         item-value="id"
-        filterable
-        style="width: 300px"
         class="my-3"
-        @change="handleChange"
-      >
-      </AsyncSelect>
+      ></ListSelect>
       <div>是否确认删除</div>
     </div>
     <span class="dialog-footer" slot="footer">
@@ -37,14 +34,12 @@
 </template>
 
 <script>
-import i18n from '@tap/i18n'
-import dayjs from 'dayjs'
-import { logcollectorApi, appApi, modulesApi } from '@tap/api'
-import { AsyncSelect } from '@tap/form'
+import { appApi, modulesApi } from '@tap/api'
+import ListSelect from '@tap/business/src/components/ListSelect'
 
 export default {
   name: 'Delete',
-  components: { AsyncSelect },
+  components: { ListSelect },
   data() {
     return {
       visible: false,
@@ -82,7 +77,7 @@ export default {
           })
         })
         .then(data => {
-          if (data.total) {
+          if (!data.total) {
             this.details.id = row.id
             this.details.value = row.value
             this.loadData()
@@ -126,38 +121,6 @@ export default {
         })
     },
 
-    async getAppList(filter = {}) {
-      const { page, size } = filter
-      let params = {
-        where: {
-          item_type: 'app'
-        },
-        order: 'createTime DESC',
-        limit: size,
-        skip: (page - 1) * size
-      }
-
-      const { label } = filter.where || {}
-      if (label) {
-        Object.assign(params.where, {
-          'listtags.value': label
-        })
-      }
-
-      const res = await appApi.get({
-        filter: JSON.stringify(params)
-      })
-
-      res.items = res.items.filter(t => this.details.id !== t.id)
-
-      return res
-    },
-
-    handleChange(val, opt) {
-      const { label } = opt
-      this.form.appLabel = label
-    },
-
     handleClose() {
       this.visible = false
     },
@@ -184,6 +147,10 @@ export default {
         .finally(() => {
           this.saveLoading = false
         })
+    },
+
+    handleFormat(data) {
+      return data.filter(t => t.id !== this.details.id)
     }
   }
 }
