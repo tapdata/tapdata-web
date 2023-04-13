@@ -219,7 +219,7 @@
             <ElButton
               size="mini"
               type="text"
-              v-if="scope.row.orderInfo.type === 'recurring'"
+              v-if="scope.row.cancelSubscribe && scope.row.orderInfo.type === 'recurring'"
               :loading="scope.row.btnLoading.delete"
               :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
               @click="cancelPaidSubscribe(scope.row)"
