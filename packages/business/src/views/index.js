@@ -22,7 +22,7 @@ import CatalogView from './catalog/Catalogue'
 import ObjectList from './catalog/ObjectList'
 import DataServerList from './data-server/List'
 import HeartbeatTableList from './heartbeat-table/List'
-import ApplicationList from './application/List'
+import ApiApplicationList from './api-application/List'
 
 export {
   ConnectionForm,
@@ -49,7 +49,7 @@ export {
   ObjectList,
   DataServerList,
   HeartbeatTableList,
-  ApplicationList
+  ApiApplicationList
 }
 
 export * from './connections/util'
