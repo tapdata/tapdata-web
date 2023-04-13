@@ -125,9 +125,9 @@
           </VTable>
         </el-tab-pane>
         <el-tab-pane :label="$t('packages_business_tasks')" name="tasks">
-          <div class="flex justify-content-between mb-4">
+          <div class="flex mb-4">
             <span>{{ $t('packages_business_table_preview_task') }}</span
-            ><span class="color-primary cursor-pointer" @click="handleCreateTask">Create Task</span>
+            ><!--<span class="color-primary cursor-pointer" @click="handleCreateTask">Create Task</span>-->
           </div>
           <el-table class="discovery-page-table" :data="taskData" :has-pagination="false">
             <el-table-column :label="$t('public_task_name')" prop="name" width="200px" show-overflow-tooltip>
