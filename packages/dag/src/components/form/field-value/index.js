@@ -162,11 +162,12 @@ export const FieldValue = connect(
               append-to-body
               custom-class="scriptDialog"
               close-on-click-modal={false}
+              before-close={() => (this.scriptDialog.open = false)}
             >
               <ElForm>
                 <ElFormItem>
                   <ElInput
-                    placeholder="$t('packages_form_editor_cell_processor_field_form_expression')"
+                    placeholder={i18n.t('packages_form_editor_cell_processor_field_form_expression')}
                     v-model={this.scriptDialog.script}
                     size="mini"
                   >
