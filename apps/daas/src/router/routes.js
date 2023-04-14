@@ -29,18 +29,11 @@ const ConnectionForm = async () => {
   const { ConnectionForm } = await import('@tap/business')
   return ConnectionForm
 }
-const EtlList = async () => {
-  const { EtlList } = await import('@tap/business')
-  return EtlList
+const TaskList = async () => {
+  const { TaskList } = await import('@tap/business')
+  return TaskList
 }
-const EtlDetails = async () => {
-  const { EtlDetails } = await import('@tap/business')
-  return EtlDetails
-}
-const EtlStatistics = async () => {
-  const { EtlStatistics } = await import('@tap/business')
-  return EtlStatistics
-}
+
 const ConnectionList = async () => {
   const { ConnectionList } = await import('@tap/business')
   return ConnectionList
@@ -49,19 +42,10 @@ const MigrateList = async () => {
   const { MigrateList } = await import('@tap/business')
   return MigrateList
 }
-const MigrateDetails = async () => {
-  const { MigrateDetails } = await import('@tap/business')
-  return MigrateDetails
-}
 
 const VerifyDetails = async () => {
   const { VerifyDetails } = await import('@tap/business')
   return VerifyDetails
-}
-
-const RelationTaskDetails = async () => {
-  const { RelationTaskDetails } = await import('@tap/business')
-  return RelationTaskDetails
 }
 
 const RoleDetails = () => import(/* webpackChunkName: "role-details" */ '@/views/role/Role')
@@ -419,24 +403,6 @@ export default [
               title: 'page_title_data_copy',
               code: 'v2_data_replication'
             }
-          },
-          {
-            path: 'details/:id',
-            name: 'MigrateDetails',
-            component: MigrateDetails,
-            meta: {
-              title: 'page_title_task_details',
-              code: 'v2_data_replication'
-            }
-          },
-          {
-            path: 'Statistics',
-            name: 'MigrateStatistics',
-            component: MigrateDetails,
-            meta: {
-              title: 'page_title_run_monitor',
-              code: 'v2_data_replication'
-            }
           }
         ]
       },
@@ -453,41 +419,11 @@ export default [
           {
             path: '',
             name: 'dataflowList',
-            component: EtlList,
+            component: TaskList,
             meta: {
               title: 'page_title_data_develop',
               code: 'v2_data_flow'
             }
-          },
-          {
-            path: 'statistics/:id',
-            name: 'dataflowStatistics',
-            component: EtlStatistics,
-            meta: {
-              title: 'page_title_task_stat',
-              code: 'v2_data_flow'
-            }
-          },
-          /* ---------- 数据开发任务详情  ----------*/
-          {
-            path: 'details/:id',
-            name: 'dataflowDetailsContainer',
-            component: Parent,
-            redirect: 'details/:id/',
-            meta: {
-              title: 'page_title_run_monitor'
-            },
-            children: [
-              {
-                path: '',
-                name: 'dataflowDetails',
-                component: EtlDetails,
-                meta: {
-                  title: 'page_title_run_monitor',
-                  code: 'Data_SYNC_menu'
-                }
-              }
-            ]
           }
         ]
       },
@@ -1047,15 +983,6 @@ export default [
         component: () => import('@/views/solutions/Index'),
         meta: {
           title: 'solution_name'
-        }
-      },
-      {
-        path: 'relationTask/detail/:id',
-        name: 'relationTaskDetail',
-        component: RelationTaskDetails,
-        meta: {
-          title: 'daas_router_routes_guanlianrenwuxiang',
-          hideTitle: true
         }
       },
       {

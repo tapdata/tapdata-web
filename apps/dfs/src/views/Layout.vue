@@ -108,12 +108,12 @@ export default {
           icon: 'connection'
         },
         {
-          name: 'migrateList',
+          name: 'migrate',
           title: $t('task_manage_migrate'),
           icon: 'migrate'
         },
         {
-          name: 'dataflowList',
+          name: 'dataflow',
           title: $t('task_manage_etl'),
           icon: 'task',
           beta: true

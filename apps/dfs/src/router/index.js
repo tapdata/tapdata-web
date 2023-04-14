@@ -15,14 +15,22 @@ const MigrationEditor = async () => {
   const { MigrationEditor } = await import('@tap/dag')
   return MigrationEditor
 }
-const MigrateDetails = async () => {
-  const { MigrateDetails } = await import('@tap/business')
-  return MigrateDetails
-}
+
 const ConnectionForm = async () => {
   const { ConnectionForm } = await import('@tap/business')
   return ConnectionForm
 }
+
+const TaskList = async () => {
+  const { TaskList } = await import('@tap/business')
+  return TaskList
+}
+
+const MigrateList = async () => {
+  const { MigrateList } = await import('@tap/business')
+  return MigrateList
+}
+
 const MigrationMonitor = async () => {
   const { MigrationMonitor } = await import('@tap/dag')
   return MigrationMonitor
@@ -31,14 +39,7 @@ const MigrationMonitorViewer = async () => {
   const { MigrationMonitorViewer } = await import('@tap/dag')
   return MigrationMonitorViewer
 }
-const EtlDetails = async () => {
-  const { EtlDetails } = await import('@tap/business')
-  return EtlDetails
-}
-const EtlStatistics = async () => {
-  const { EtlStatistics } = await import('@tap/business')
-  return EtlStatistics
-}
+
 const VerifyDetails = async () => {
   const { VerifyDetails } = await import('@tap/business')
   return VerifyDetails
@@ -154,63 +155,52 @@ const routes = [
           }
         ]
       },
+      /* ---------- 数据复制  ----------*/
       {
         path: '/migrate',
-        name: 'migrateList',
-        component: () => import(/* webpackChunkName: "task-migration" */ '../views/task/MigrationList.tsx'),
+        name: 'migrate',
+        redirect: 'migrate/',
+        component: Parent,
         meta: {
           title: 'task_manage_migrate',
-          desc: 'task_manage_migrate_desc',
           icon: 'task'
         },
         children: [
           {
-            path: 'details/:id',
-            name: 'MigrateDetails',
-            component: MigrateDetails,
+            path: '',
+            name: 'migrateList',
+            component: MigrateList,
             meta: {
-              title: 'tap_task_details'
-            }
-          },
-          {
-            path: 'Statistics',
-            name: 'MigrateStatistics',
-            component: MigrateDetails,
-            meta: {
-              title: 'tap_monitor'
+              title: 'task_manage_migrate',
+              desc: 'task_manage_migrate_desc',
+              code: 'v2_data_replication'
             }
           }
         ]
       },
+      /* ---------- 数据开发  ----------*/
       {
-        path: '/etl',
-        name: 'dataflowList',
-        component: () => import(/* webpackChunkName: "task-migration" */ '../views/task/EtlList.tsx'),
+        path: '/dataflow',
+        name: 'dataflow',
+        component: Parent,
+        redirect: 'dataflow/',
         meta: {
           title: 'task_manage_etl',
-          desc: 'task_manage_desc',
           icon: 'task'
         },
         children: [
           {
-            path: 'details/:id',
-            name: 'dataflowDetails',
-            component: EtlDetails,
+            path: '',
+            name: 'dataflowList',
+            component: TaskList,
             meta: {
-              title: 'tap_task_details'
-            }
-          },
-          {
-            path: 'statistics/:id',
-            name: 'dataflowStatistics',
-            component: EtlStatistics,
-            meta: {
-              title: 'tap_monitor'
+              title: 'task_manage_etl',
+              desc: 'task_manage_desc',
+              code: 'v2_data_flow'
             }
           }
         ]
       },
-
       {
         path: '/operationLog',
         name: 'OperationLog',

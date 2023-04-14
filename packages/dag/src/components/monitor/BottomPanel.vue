@@ -54,7 +54,7 @@ import MilestoneList from '@tap/business/src/components/milestone/List'
 
 import Record from './components/Record'
 import Alert from './components/Alert'
-import { logcollectorApi, taskApi } from '@tap/api'
+import { taskApi } from '@tap/api'
 
 export default {
   name: 'ConfigPanel',
