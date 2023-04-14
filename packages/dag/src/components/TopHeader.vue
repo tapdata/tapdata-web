@@ -123,7 +123,7 @@
     <!--复制dag查看不显示-->
     <div class="flex align-center flex-grow-1">
       <div class="flex-grow-1"></div>
-      <ElButton v-if="stateIsReadonly" size="medium" class="mx-1 btn--text" @click="$emit('detail')">
+      <ElButton v-if="stateIsReadonly" size="medium" class="ml-3 btn--text" @click="$emit('detail')">
         <VIcon>monitoring</VIcon>
         <!--运行监控-->
         {{ $t('packages_dag_task_list_button_monitor') }}
@@ -133,7 +133,8 @@
         v-if="!(dataflow.disabledData && dataflow.disabledData.reset)"
         :disabled="$disabledReadonlyUserBtn()"
         key="reset"
-        :class="[isViewer ? 'btn--text mx-2' : 'mx-1']"
+        class="ml-3"
+        :class="{ 'btn--text': isViewer }"
         size="medium"
         @click="$emit('reset')"
       >
@@ -145,7 +146,7 @@
         v-if="!stateIsReadonly"
         :loading="isSaving"
         :disabled="(dataflow.disabledData && dataflow.disabledData.edit) || $disabledReadonlyUserBtn()"
-        class="mx-2"
+        class="ml-3"
         size="medium"
         @click="$emit('save')"
       >
@@ -156,7 +157,7 @@
         <ElButton
           v-if="$route.name !== 'MigrateEditor'"
           key="edit"
-          class="mx-1 btn--text"
+          class="ml-3 btn--text"
           size="medium"
           :disabled="(dataflow.disabledData && dataflow.disabledData.edit) || $disabledReadonlyUserBtn()"
           @click="$emit('edit')"
@@ -169,7 +170,7 @@
         <ElButton
           key="forceStop"
           v-if="dataflow.status === 'stopping'"
-          class="mx-1 btn--text"
+          class="ml-3 btn--text"
           :disabled="dataflow.disabledData && dataflow.disabledData.forceStop"
           size="medium"
           @click="$emit('forceStop')"
@@ -180,7 +181,7 @@
         <ElButton
           key="stop"
           v-else
-          class="mx-1 btn--text"
+          class="ml-3 btn--text"
           :disabled="dataflow.disabledData && dataflow.disabledData.stop"
           size="medium"
           @click="$emit('stop')"
@@ -192,7 +193,7 @@
 
       <ElButton
         :disabled="isSaving || (dataflow.disabledData && dataflow.disabledData.start) || transformLoading"
-        class="mx-2"
+        class="mx-3"
         size="medium"
         type="primary"
         @click="$emit('start')"
