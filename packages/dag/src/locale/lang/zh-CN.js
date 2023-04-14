@@ -584,5 +584,12 @@ export default {
   packages_dag_date_processor_increase: '增加',
   packages_dag_date_processor_decrease: '减少',
   packages_dag_nodes_table_shiligro: '示例: {"$group": { "_id": "$name", totalQuantity: { $sum: "$quantity" } }}',
-  packages_dag_nodes_table_jinzhichiqu: '仅支持query, 例如: { "_id": "apples", "qty": 5 }'
+  packages_dag_nodes_table_jinzhichiqu: '仅支持query, 例如: { "_id": "apples", "qty": 5 }',
+  packages_dag_migration_settingpanel_shirenwubaocuo: '时，任务报错停止',
+  packages_dag_migration_settingpanel_dangtiaoguoshijian: '当跳过事件数超过',
+  packages_dag_migration_settingpanel_dangtiaoguoshijian2: '当跳过事件占已同步事件的百分比超过',
+  packages_dag_migration_settingpanel_zhidingtiaoguoce: '指定跳过策略',
+  packages_dag_migration_settingpanel_renwutiaoguoshi: '任务跳过事件超过阈值时停止任务',
+  packages_dag_migration_settingpanel_tiaoguoyichangshi: '跳过异常事件，任务继续运行',
+  packages_dag_migration_settingpanel_dangdanbiaotongbu: '当单表同步出现向目标写入错误时'
 }

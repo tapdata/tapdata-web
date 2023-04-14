@@ -622,5 +622,14 @@ export default {
   packages_dag_date_processor_increase: 'Increase',
   packages_dag_date_processor_decrease: 'Decrease',
   packages_dag_nodes_table_shiligro: 'Example: {"$group": { "_id": "$name", totalQuantity: { $sum: "$quantity" } }}',
-  packages_dag_nodes_table_jinzhichiqu: 'Only support query, for example: { "_id": "apples", "qty": 5 }'
+  packages_dag_nodes_table_jinzhichiqu: 'Only support query, for example: { "_id": "apples", "qty": 5 }',
+  packages_dag_migration_settingpanel_shirenwubaocuo: 'When the task reports an error, stop',
+  packages_dag_migration_settingpanel_dangtiaoguoshijian: 'When the number of skip events exceeds',
+  packages_dag_migration_settingpanel_dangtiaoguoshijian2:
+    'When the percentage of skipped events to synchronized events exceeds',
+  packages_dag_migration_settingpanel_zhidingtiaoguoce: 'Specify skip strategy',
+  packages_dag_migration_settingpanel_renwutiaoguoshi: 'Stop the task when the task skip event exceeds the threshold',
+  packages_dag_migration_settingpanel_tiaoguoyichangshi: 'Skip abnormal events, the task continues to run',
+  packages_dag_migration_settingpanel_dangdanbiaotongbu:
+    'When there is an error writing to the target for single table synchronization'
 }
