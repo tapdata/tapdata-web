@@ -19,10 +19,42 @@
           <ElLink @click="remove(index)"><i class="el-icon-close"></i></ElLink>
         </div>
       </div>
-      <ClipButton class="fields-selector--clip" :value="value"></ClipButton>
+      <ClipboardButton class="fields-selector--clip" :content="value" icon></ClipboardButton>
     </template>
   </span>
 </template>
+
+<script>
+import { ClipboardButton } from '@tap/form'
+
+export default {
+  components: { ClipboardButton },
+  props: {
+    value: {
+      type: [String],
+      required: true
+    },
+    placeholder: String,
+    options: Array
+  },
+  computed: {
+    values() {
+      let value = this.value
+      return value && value.length ? value.split(',') : []
+    }
+  },
+  methods: {
+    inputHandler(values) {
+      //过滤空字符串并去重，之后使用逗号分隔
+      this.$emit('input', Array.from(new Set(values.filter(v => !!v.trim()))).join(','))
+    },
+    remove(index) {
+      this.values.splice(index, 1)
+      this.inputHandler(this.values)
+    }
+  }
+}
+</script>
 
 <style lang="scss">
 .fields-selector {
@@ -56,34 +88,3 @@
   top: 45px;
 }
 </style>
-
-<script>
-import ClipButton from '@/components/ClipButton'
-export default {
-  components: { ClipButton },
-  props: {
-    value: {
-      type: [String],
-      required: true
-    },
-    placeholder: String,
-    options: Array
-  },
-  computed: {
-    values() {
-      let value = this.value
-      return value && value.length ? value.split(',') : []
-    }
-  },
-  methods: {
-    inputHandler(values) {
-      //过滤空字符串并去重，之后使用逗号分隔
-      this.$emit('input', Array.from(new Set(values.filter(v => !!v.trim()))).join(','))
-    },
-    remove(index) {
-      this.values.splice(index, 1)
-      this.inputHandler(this.values)
-    }
-  }
-}
-</script>

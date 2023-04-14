@@ -1,16 +1,26 @@
 import { defineComponent, ref, nextTick } from 'vue-demi'
 
+import i18n from '@tap/i18n'
+
 export const ClipboardButton = defineComponent({
   props: {
     content: String,
     title: String,
     tooltip: {
       type: String,
-      default: 'Copy'
+      default: () => {
+        return i18n.t('public_button_copy')
+      }
     },
     finishTooltip: {
       type: String,
-      default: 'Copied'
+      default: () => {
+        return i18n.t('public_message_copied')
+      }
+    },
+    icon: {
+      type: Boolean,
+      default: false
     }
   },
   setup(props, { attrs, refs }) {
@@ -39,7 +49,7 @@ export const ClipboardButton = defineComponent({
       input.select() // 这里会触发ElTooltip -> Button 的blur，下面要主动focus
       document.execCommand?.('copy')
       document.body.removeChild(input)
-      refs.btn.$el.focus()
+      props.icon ? refs.icon.focus() : refs.btn.$el.focus()
       contentRef.value = props.finishTooltip
 
       // 提示内容改变，更新popper位置
@@ -51,17 +61,28 @@ export const ClipboardButton = defineComponent({
     return () => {
       return (
         <ElTooltip ref="tooltip" transition="tooltip-fade-in" placement="top" content={contentRef.value}>
-          <ElButton
-            ref="btn"
-            class="p-2"
-            style="min-width: unset;"
-            icon="el-icon-document-copy"
-            attrs={attrs}
-            onClick={onCopy}
-            vOn:mouseleave_native={onMouseleave}
-          >
-            {props.title}
-          </ElButton>
+          {props.icon ? (
+            <i
+              ref="icon"
+              class="p-2 cursor-pointer iconfont icon-fuzhi1"
+              style="min-width: unset;"
+              attrs={attrs}
+              onClick={onCopy}
+              on={onMouseleave}
+            ></i>
+          ) : (
+            <ElButton
+              ref="btn"
+              class="p-2"
+              style="min-width: unset;"
+              icon="el-icon-document-copy"
+              attrs={attrs}
+              onClick={onCopy}
+              vOn:mouseleave_native={onMouseleave}
+            >
+              {props.title}
+            </ElButton>
+          )}
         </ElTooltip>
       )
     }

@@ -15,7 +15,7 @@
         );<br />
         <span class="bold">record</span>.category_name = cachedRow.category_name;<br />
       </div>
-      <ClipButton :value="script[0]"></ClipButton>
+      <ClipboardButton :content="script[0]" icon></ClipboardButton>
     </div>
     <div class="my-2">OR</div>
     <div class="flex">
@@ -29,17 +29,17 @@
         </span>
         );
       </div>
-      <ClipButton :value="script[1]"></ClipButton>
+      <ClipboardButton :content="script[1]" icon></ClipboardButton>
     </div>
   </div>
 </template>
 
 <script>
-import ClipButton from '@/components/ClipButton'
+import { ClipboardButton } from '@tap/form'
 import { getCode } from '@tap/shared'
 export default {
   components: {
-    ClipButton
+    ClipboardButton
   },
   props: {
     data: {

@@ -98,6 +98,7 @@ export default {
   public_message_save_fail: 'Save Failed',
   public_message_copy_success: 'Copy Successful',
   public_message_copy_fail: 'Copy Failed',
+  public_message_copied: 'Copied',
   public_message_delete_ok: 'Delete Successful',
   public_message_delete_fail: 'Delete Failed',
   public_message_deleting: 'Deleting',

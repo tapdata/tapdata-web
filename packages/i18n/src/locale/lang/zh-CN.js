@@ -99,6 +99,7 @@ export default {
   public_message_save_fail: '保存失败',
   public_message_copy_success: '复制成功',
   public_message_copy_fail: '复制失败',
+  public_message_copied: '已复制',
   public_message_delete_ok: '删除成功',
   public_message_delete_fail: '删除失败',
   public_message_deleting: '删除中',

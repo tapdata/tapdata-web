@@ -98,6 +98,7 @@ export default {
   public_message_save_fail: '保存失敗',
   public_message_copy_success: '複製成功',
   public_message_copy_fail: '複製失敗',
+  public_message_copied: '已復制',
   public_message_delete_ok: '刪除成功',
   public_message_delete_fail: '刪除失敗',
   public_message_deleting: '刪除中',

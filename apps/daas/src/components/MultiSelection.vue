@@ -14,15 +14,15 @@
     >
       <el-option v-for="opt in options.filter(i => !!i)" :key="opt" :label="opt" :value="opt"> </el-option>
     </el-select>
-    <ClipButton :value="value" v-if="showCopyBtn"></ClipButton>
+    <ClipboardButton v-if="showCopyBtn" :content="value" icon></ClipboardButton>
   </div>
 </template>
 
 <script>
-import ClipButton from '@/components/ClipButton'
+import { ClipboardButton } from '@tap/form'
 export default {
   components: {
-    ClipButton
+    ClipboardButton
   },
   props: {
     value: {
