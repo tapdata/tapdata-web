@@ -95,7 +95,7 @@ export default {
           label: i18n.t('packages_dag_components_initiallist_quanliangtongbuzhuang'),
           prop: 'syncStatus',
           slotName: 'syncStatus',
-          width: 100
+          width: 120
         }
         // {
         //   label: '操作',
@@ -103,7 +103,8 @@ export default {
         //   slotName: 'operation',
         //   width: 60
         // }
-      ]
+      ],
+      timer: null
     }
   },
 
@@ -112,6 +113,8 @@ export default {
       this.visible = !!v
       if (this.visible) {
         this.init()
+      } else {
+        this.clearTimer()
       }
     }
   },
@@ -119,6 +122,9 @@ export default {
   methods: {
     init() {
       this.startLoadData()
+      this.timer = setInterval(() => {
+        this.$refs.table?.fetch?.(null, null, true)
+      }, 5000)
     },
 
     startLoadData() {
@@ -155,6 +161,10 @@ export default {
           })
         }
       })
+    },
+
+    clearTimer() {
+      clearInterval(this.timer)
     }
   }
 }

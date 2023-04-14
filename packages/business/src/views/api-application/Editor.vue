@@ -84,9 +84,13 @@ export default {
       this.loading = true
       appApi
         .detail(id)
-        .then(task => {
-          this.editForm.value = task.value
-          this.editForm.desc = task.desc
+        .then((task = {}) => {
+          const { id, value, desc } = task
+          this.editForm = {
+            id,
+            value,
+            desc
+          }
         })
         .finally(() => {
           this.loading = false
@@ -106,7 +110,7 @@ export default {
       this.$refs.form?.validate(valid => {
         if (valid) {
           this.saveLoading = true
-          ;(this.taskId ? appApi.patchId(this.taskId, this.editForm) : appApi.post(this.editForm))
+          ;(this.taskId ? appApi.patch(this.editForm) : appApi.post(this.editForm))
             .then(() => {
               this.$emit('success', ...arguments)
               this.$message.success(this.$t('public_message_save_ok'))

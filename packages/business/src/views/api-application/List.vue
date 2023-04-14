@@ -20,8 +20,10 @@
         :label="$t('packages_business_application_list_yingyongmingcheng')"
         :show-overflow-tooltip="true"
       >
-        <template slot-scope="scope">
-          {{ scope.row.value }}
+        <template #default="{ row }">
+          <ElLink v-readonlybtn="'SYNC_job_edition'" type="primary" @click="handleDetails(row)">
+            {{ row.value }}
+          </ElLink>
         </template>
       </el-table-column>
       <el-table-column min-width="160" :label="$t('packages_business_application_list_zongApIshu')" prop="apiCount">
