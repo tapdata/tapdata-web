@@ -58,7 +58,7 @@
                       </a>
                     </div>
                     <div class="p-1">
-                      <span class="status-block status-active">已发布</span>
+                      <span class="status-block status-active">{{ $t('public_status_published') }}</span>
                     </div>
                   </div>
                 </div>
@@ -337,8 +337,8 @@ export default {
           ]
         },
         {
-          id: '业绩宝',
-          name: '业绩宝',
+          id: i18n.t('packages_business_swimlane_target_yejibao'),
+          name: i18n.t('packages_business_swimlane_target_yejibao'),
           type: 'service',
           apiList: [
             {

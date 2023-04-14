@@ -18,6 +18,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { SchemaToForm } from '@tap/form'
 
 export default {
@@ -62,7 +64,7 @@ export default {
         properties: {
           name: {
             type: 'string',
-            title: '分类名称',
+            title: i18n.t('packages_business_create_connection_serveform_fenleimingcheng'),
             required: true,
             'x-decorator': 'FormItem',
             'x-component': 'Input'

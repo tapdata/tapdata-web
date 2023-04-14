@@ -181,6 +181,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { merge, debounce } from 'lodash'
 import { connectionsApi, discoveryApi, ldpApi, metadataDefinitionsApi, taskApi, userGroupsApi } from '@tap/api'
 import { VirtualTree, IconButton, VExpandXTransition } from '@tap/component'
@@ -652,7 +654,7 @@ export default {
       return {
         id: uuid(),
         type: 'table_rename_processor',
-        name: '表编辑',
+        name: i18n.t('packages_business_swimlane_fdm_biaobianji'),
         prefix: `${this.fixedPrefix}${this.taskDialogConfig.prefix}_`
       }
     },

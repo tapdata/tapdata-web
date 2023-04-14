@@ -971,5 +971,27 @@ export default {
   packages_business_application_list_yingyongmingcheng: 'Application Name',
   packages_business_application_list_chuangjianyingyong: 'Create Application',
   packages_business_data_server_drawer_qingxuanzesuoshu: 'Please select the application',
-  packages_business_data_server_drawer_suoshuyingyong: 'Owner Application'
+  packages_business_data_server_drawer_suoshuyingyong: 'Owner Application',
+  packages_business_create_connection_scenedialog_gongzuoliu: 'Workflow',
+  packages_business_create_connection_scenedialog_duiliegongshu: 'Queue Supply',
+  packages_business_create_connection_scenedialog_guochantidai: 'Domestic Alternative',
+  packages_business_create_connection_scenedialog_shujukutongbu: 'Database Synchronization',
+  packages_business_create_connection_scenedialog_chaxunjiasu: 'Query Acceleration',
+  packages_business_create_connection_scenedialog_rushucang: 'Into the warehouse',
+  packages_business_create_connection_scenedialog_tuijianchangjing: 'Recommended Scene',
+  packages_business_create_connection_scenedialog_qingxuanzeninde: 'Please select your usage scenario',
+  packages_business_create_connection_serveform_fenleimingcheng: 'Category Name',
+  packages_business_components_tableview_yizhegemoxing: 'Tasks with this model source/target',
+  packages_business_components_tableview_xinzenglebiaoqian: 'New label 603',
+  packages_business_components_tableview_zengliangshujuyan: 'Incremental data delay:',
+  packages_business_components_tableview_shujuzuihougeng: 'Data last update time:',
+  packages_business_swimlane_fdm_biaobianji: 'Table Edit',
+  packages_business_swimlane_tablepreview_zuihoufangwenshi: 'Last visit time',
+  packages_business_swimlane_tablepreview_apIchuanshu: 'The total amount of API transfer',
+  packages_business_swimlane_tablepreview_apIfangwen: 'The number of API access rows',
+  packages_business_swimlane_tablepreview_fangwencishu: 'Number of visits',
+  packages_business_swimlane_tablepreview_apifuwu: 'Api service name',
+  packages_business_swimlane_target_yejibao: 'Yejibao',
+  packages_business_task_list_meiyoufaxiannin:
+    "I didn't find that you have recently reported task errors, if you have other questions, please consult our manual customer service"
 }

@@ -176,6 +176,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { debounce } from 'lodash'
 import { VirtualTree, IconButton } from '@tap/component'
 import { CancelToken, discoveryApi, ldpApi, metadataDefinitionsApi, userGroupsApi } from '@tap/api'
@@ -508,7 +510,7 @@ export default {
             this.setNodeExpand(tagId)
           }, 1000)
         } else if (code === 'Ldp.RepeatTableName') {
-          this.$confirm('', '目标表已经存在，请确定是否继续？', {
+          this.$confirm('', i18n.t('packages_business_mdm_table_duplication_confirm'), {
             onlyTitle: true,
             type: 'warning',
             closeOnClickModal: false

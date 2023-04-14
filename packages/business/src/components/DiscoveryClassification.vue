@@ -274,7 +274,7 @@ export default {
           let treeData = this.formatData(items)
           this.treeData = [
             {
-              name: '所有目录',
+              name: i18n.t('packages_business_components_classificationtree_suoyoumulu'),
               isRoot: true,
               readOnly: true,
               children: treeData
@@ -524,7 +524,7 @@ export default {
             parent_id: dropNode.data.id || ''
           })
           .then(() => {
-            this.$message.success('操作成功')
+            this.$message.success(i18n.t('public_message_operation_success'))
             draggingNode.data.parent_id = dropNode.data.id
             // this.getData()
           })
@@ -626,7 +626,7 @@ export default {
     loadNode(node, resolve) {
       console.log('loadNode', node, node.level) // eslint-disable-line
       if (node.level === 0) {
-        return resolve([{ name: '所有目录' }])
+        return resolve([{ name: i18n.t('packages_business_components_classificationtree_suoyoumulu') }])
       }
       setTimeout(() => {
         resolve()

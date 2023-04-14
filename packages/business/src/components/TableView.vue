@@ -12,11 +12,11 @@
         <span>{{ detailData.sourceType }}</span></span
       >
       <span class="ml-8"
-        ><span class="table-dec-label">数据最后更新时间：</span
+        ><span class="table-dec-label">{{ $t('packages_business_components_tableview_shujuzuihougeng') }}</span
         ><span class="table-dec-txt">{{ lastDataChangeTime || '-' }}</span></span
       >
       <span class="ml-8"
-        ><span class="table-dec-label">增量数据延迟：</span
+        ><span class="table-dec-label">{{ $t('packages_business_components_tableview_zengliangshujuyan') }}</span
         ><span class="table-dec-txt">{{ cdcDelayTime || '-' }}</span></span
       >
     </header>
@@ -80,12 +80,12 @@
               <li>
                 <span>2023-02-03 12:21:34</span>
                 <span class="ml-8">Lucy</span>
-                <span class="ml-8">新增了标签603</span>
+                <span class="ml-8">{{ $t('packages_business_components_tableview_xinzenglebiaoqian') }}</span>
               </li>
               <li class="mt-2">
                 <span>2023-02-03 12:21:34</span>
                 <span class="ml-8">Lucy</span>
-                <span class="ml-8">新增了标签603</span>
+                <span class="ml-8">{{ $t('packages_business_components_tableview_xinzenglebiaoqian') }}</span>
               </li>
             </ul>
           </section>
@@ -97,7 +97,8 @@
         </el-tab-pane>
         <el-tab-pane label="Tasks" name="tasks">
           <div class="flex justify-content-between mb-4">
-            <span>以这个模型源/目标的任务</span><span class="color-primary">Create Task</span>
+            <span>{{ $t('packages_business_components_tableview_yizhegemoxing') }}</span
+            ><span class="color-primary">Create Task</span>
           </div>
           <el-table class="discovery-page-table" :data="taskData" :has-pagination="false">
             <el-table-column

@@ -11,7 +11,7 @@
   >
     <div slot="title" class="flex font-color-dark fs-6 fw-sub position-relative align-center">
       <template v-if="!showForm">
-        <span>请选择您的使用场景</span>
+        <span>{{ $t('packages_business_create_connection_scenedialog_qingxuanzeninde') }}</span>
         <ElInput
           v-model="search"
           class="position-absolute start-50 top-50 translate-middle ldp-connection-search-input"
@@ -79,6 +79,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import ConnectionForm from './SceneForm'
 import ServeForm from './ServeForm'
 import { VEmpty, IconButton } from '@tap/component'
@@ -114,11 +116,11 @@ export default {
       sceneList: [
         {
           key: 'all',
-          name: '全部'
+          name: i18n.t('public_select_option_all')
         },
         {
           key: 'recommended',
-          name: '推荐场景',
+          name: i18n.t('packages_business_create_connection_scenedialog_tuijianchangjing'),
           types: ['BigQuery', 'Tablestore', 'MongoDB', 'Redis', 'SelectDB']
         },
         /*{
@@ -126,7 +128,7 @@ export default {
           types: ['RESTful API', 'GraphQL']
         },*/
         {
-          name: '入数仓',
+          name: i18n.t('packages_business_create_connection_scenedialog_rushucang'),
           types: [
             'BigQuery',
             'SelectDB',
@@ -139,19 +141,19 @@ export default {
           ]
         },
         {
-          name: '查询加速',
+          name: i18n.t('packages_business_create_connection_scenedialog_chaxunjiasu'),
           types: ['MongoDB', 'Redis', 'Elasticsearch']
         },
         {
-          name: '数据库同步',
+          name: i18n.t('packages_business_create_connection_scenedialog_shujukutongbu'),
           types: ['MongoDB']
         },
         {
-          name: '国产替代',
+          name: i18n.t('packages_business_create_connection_scenedialog_guochantidai'),
           types: ['Dameng', 'GBase-8a', 'KingBaseES-R3', 'KingBaseES-R6', 'Tidb', 'Oceanbase']
         },
         {
-          name: '队列供数',
+          name: i18n.t('packages_business_create_connection_scenedialog_duiliegongshu'),
           types: ['Kafka', 'ActiveMQ', 'RocketMQ', 'RabbitMQ']
         },
         {
@@ -159,7 +161,7 @@ export default {
           types: ['vika', 'QingCloud']
         },
         {
-          name: '工作流',
+          name: i18n.t('packages_business_create_connection_scenedialog_gongzuoliu'),
           types: ['Lark-IM', 'LarkTask']
         }
       ],

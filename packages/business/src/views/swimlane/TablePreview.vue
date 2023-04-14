@@ -307,31 +307,31 @@ export default {
       },
       apisColumns: [
         {
-          label: 'api服务名称',
+          label: i18n.t('packages_business_swimlane_tablepreview_apifuwu'),
           prop: 'name'
         },
         {
-          label: '服务状态',
+          label: i18n.t('packages_business_data_server_list_fuwuzhuangtai'),
           prop: 'status',
           slotName: 'status'
         },
         {
-          label: '访问次数',
+          label: i18n.t('packages_business_swimlane_tablepreview_fangwencishu'),
           prop: 'visitCount',
           default: 0
         },
         {
-          label: 'API访问行数',
+          label: i18n.t('packages_business_swimlane_tablepreview_apIfangwen'),
           prop: 'visitLine',
           default: 0
         },
         {
-          label: 'API传输总量',
+          label: i18n.t('packages_business_swimlane_tablepreview_apIchuanshu'),
           prop: 'transitQuantityLabel',
           default: 0
         },
         {
-          label: '最后访问时间',
+          label: i18n.t('packages_business_swimlane_tablepreview_zuihoufangwenshi'),
           prop: 'last_updated',
           dataType: 'time',
           width: 160
