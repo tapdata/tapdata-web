@@ -1,15 +1,6 @@
 import i18n from '@/i18n'
-let directionMap = {
-  unidirectional: i18n.t('dfs_src_const_danxiangtongbu'),
-  bidirectional: i18n.t('dfs_src_const_shuangxiangtongbu')
-}
-let topologyMap = {}
-for (const dKey in directionMap) {
-  let dValue = directionMap[dKey]
-  topologyMap[dKey] = `${dValue}`
-}
-export const TOPOLOGY_MAP = topologyMap,
-  INSTANCE_STATUS_MAP = {
+
+export const INSTANCE_STATUS_MAP = {
     Creating: { text: i18n.t('public_agent_status_to_be_deployed'), type: 'warning' },
     Running: { text: i18n.t('public_status_running'), type: 'success' },
     Stopping: { text: i18n.t('public_status_stopping'), type: 'danger' },
@@ -47,37 +38,4 @@ export const TOPOLOGY_MAP = topologyMap,
     error: { text: i18n.t('public_status_error'), icon: 'cuowu', type: 'danger' },
     finish: { text: i18n.t('public_status_finished'), icon: 'yiwancheng', type: 'success' },
     paused: { text: i18n.t('task_milestone_paused'), icon: 'yizanting', type: 'info' }
-  },
-  SPEC_MAP = {
-    micro: i18n.t('dfs_src_const_xiaoguige'),
-    small: i18n.t('dfs_src_const_biaozhunguige'),
-    medium: i18n.t('dfs_src_const_zhongguige'),
-    large: i18n.t('dfs_src_const_daguige')
-  },
-  CHARGE_MAP = {
-    '1,month': i18n.t('dfs_src_const_baoyuejifei'),
-    '2,1': i18n.t('dfs_src_const_anliangjifei')
-  },
-  SUPPORT_DB = [
-    'mysql',
-    'oracle',
-    'mongodb',
-    'sqlserver',
-    'postgres',
-    'elasticsearch',
-    'redis',
-    'file',
-    'db2',
-    'kafka',
-    'mariadb',
-    'mysql pxc',
-    'jira',
-    'dameng'
-    // 'gbase-8s',
-    // 'sybase ase',
-    // 'gaussdb200',
-    // 'dummy db',
-    // 'rest api',
-    // 'custom_connection',
-    // 'gridfs'
-  ] //目前白名单,
+  }
