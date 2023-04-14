@@ -615,5 +615,10 @@ export default {
   packages_dag_nodes_table_depsd:
     'After enabling the custom SQL/filtering settings, it is not supported to enable full resuming of breakpoints.',
   packages_dag_task_old_version_confirm:
-    'Detected an update to the current task, please refresh the page to load the latest version.'
+    'Detected an update to the current task, please refresh the page to load the latest version.',
+  packages_dag_date_processor: 'Time Calculation ',
+  packages_dag_date_processor_data_types: 'Please select the type of time you want to calculate',
+  packages_dag_date_processor_method: 'Please select the calculation method',
+  packages_dag_date_processor_increase: 'Increase',
+  packages_dag_date_processor_decrease: 'Decrease'
 }
