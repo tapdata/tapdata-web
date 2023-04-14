@@ -307,16 +307,6 @@ export default {
         })
     },
 
-    getDataflowDataToSave() {
-      const dag = this.$store.getters['dataflow/dag']
-      const editVersion = this.$store.state.dataflow.editVersion
-      return {
-        dag,
-        editVersion,
-        ...this.dataflow
-      }
-    },
-
     // 循环检查检查链路的末尾节点类型是否是表节点
     isEndOfTable(source, sourceMap, nodeMap) {
       if (!sourceMap[source.id]) {
@@ -348,12 +338,14 @@ export default {
         return this.saveAsNewDataflow()
       }
 
-      const data = this.getDataflowDataToSave()
+      const data = this.getDataflowDataToSave('sync')
 
       try {
         this.initWS()
         // const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
-        const result = await taskApi.save(data)
+        const result = await taskApi.save(data, {
+          silenceMessage: true
+        })
         this.reformDataflow(result)
         !needStart && this.$message.success(this.$t('public_message_save_ok'))
         this.setEditVersion(result.editVersion)
@@ -373,7 +365,7 @@ export default {
     async saveAsNewDataflow() {
       this.buried('taskSubmit')
       this.isSaving = true
-      const data = this.getDataflowDataToSave()
+      const data = this.getDataflowDataToSave('sync')
       try {
         const dataflow = await taskApi.post(data)
         this.buried('taskSubmit', { result: true })

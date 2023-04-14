@@ -63,8 +63,8 @@ export default class Task extends Http {
   batchUpdateListtags(params) {
     return this.axios.patch(`${this.url}/batchUpdateListtags`, params)
   }
-  save(params) {
-    return this.axios.patch(this.url + '/confirm/' + params.id, params)
+  save(params, config) {
+    return this.axios.patch(this.url + '/confirm/' + params.id, params, config)
   }
 
   saveAndStart(params) {

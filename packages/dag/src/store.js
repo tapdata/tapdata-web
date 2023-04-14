@@ -223,26 +223,43 @@ const getters = {
 
 // actions
 const actions = {
-  patchTask: debounce(async function ({ state, commit }) {
+  patchTask: debounce(async function ({ state, commit }, { vm }) {
     commit('toggleTaskSaving', true)
     try {
-      const data = await taskApi.patch({
-        id: state.taskId,
-        editVersion: state.editVersion,
-        dag: state.dag
-      })
-      commit('setEditVersion', data.editVersion)
+      const data = await taskApi.patch(
+        {
+          id: state.taskId,
+          editVersion: state.editVersion,
+          dag: state.dag
+        },
+        {
+          silenceMessage: true
+        }
+      )
+      data?.editVersion && commit('setEditVersion', data.editVersion)
     } catch (e) {
       console.error(e) // eslint-disable-line
+      if (e?.data?.code === 'Task.OldVersion') {
+        vm.$confirm('', i18n.t('packages_dag_task_old_version_confirm'), {
+          onlyTitle: true,
+          type: 'warning',
+          closeOnClickModal: false,
+          confirmButtonText: i18n.t('public_button_refresh')
+        }).then(resFlag => {
+          resFlag && location.reload()
+        })
+      } else if (e?.data?.message) {
+        vm.$message.error(e.data.message)
+      }
     }
     commit('toggleTaskSaving', false)
   }, 50),
 
-  async updateDag({ state, commit, dispatch }) {
-    console.log('updateDag') // eslint-disable-line
+  async updateDag({ state, commit, dispatch }, data = {}) {
     if (!state.taskId || state.stateIsReadonly) return
+
     commit('toggleTaskSaving', true)
-    dispatch('patchTask')
+    dispatch('patchTask', data)
   },
 
   async addNodeAsync({ dispatch, commit }, nodeData) {
@@ -703,7 +720,7 @@ const mutations = {
   },
 
   setEditVersion(state, editVersion) {
-    state.editVersion = editVersion
+    if (editVersion) state.editVersion = editVersion
   },
 
   /**

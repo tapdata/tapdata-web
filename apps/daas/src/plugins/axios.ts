@@ -5,6 +5,10 @@ import { Message } from '@/plugins/element'
 import i18n from '@/i18n'
 import Qs from 'qs'
 
+type AxiosRequestConfigPro = AxiosRequestConfig & {
+  silenceMessage?: boolean
+}
+
 const pending = [] //声明一个数组用于存储每个ajax请求的取消函数和ajax标识
 
 const CancelToken = axios.CancelToken
@@ -132,6 +136,10 @@ axios.interceptors.response.use((response: AxiosResponse) => {
       Message.error(response.data.message || i18n.t('public_message_request_error').toString())
       reject(response)
     } else {
+      if ((response.config as AxiosRequestConfigPro).silenceMessage) {
+        return reject(response)
+      }
+
       switch (code) {
         case 'SystemError':
           if (data.message === 'System error: null') {

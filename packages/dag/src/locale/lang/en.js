@@ -613,5 +613,7 @@ export default {
     'It is not supported to enable filtering settings when enabling full breakpoint resume upload.',
   packages_dag_nodes_table_depskai2: 'It is not supported to open custom SQL when full breakpoint resume is enabled.',
   packages_dag_nodes_table_depsd:
-    'After enabling the custom SQL/filtering settings, it is not supported to enable full resuming of breakpoints.'
+    'After enabling the custom SQL/filtering settings, it is not supported to enable full resuming of breakpoints.',
+  packages_dag_task_old_version_confirm:
+    'Detected an update to the current task, please refresh the page to load the latest version.'
 }

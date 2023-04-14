@@ -643,7 +643,7 @@ export default {
         this.stopDagWatch = this.$watch(
           () => this.allNodes.length + this.allEdges.length,
           () => {
-            this.updateDag()
+            this.updateDag({ vm: this })
           }
         )
         this.startLoopTask(id)
@@ -685,7 +685,7 @@ export default {
         this.stopDagWatch = this.$watch(
           () => this.allNodes.length + this.allEdges.length,
           () => {
-            this.updateDag()
+            this.updateDag({ vm: this })
           }
         )
       }
@@ -842,14 +842,14 @@ export default {
       })
     },
 
-    getDataflowDataToSave() {
+    getDataflowDataToSave(syncType = 'migrate') {
       const dag = this.$store.getters['dataflow/dag']
       const editVersion = this.$store.state.dataflow.editVersion
       return {
+        ...this.dataflow,
         dag,
         editVersion,
-        ...this.dataflow,
-        syncType: 'migrate'
+        syncType
       }
     },
 
@@ -1728,7 +1728,8 @@ export default {
     },
 
     handleError(error, msg = i18n.t('packages_dag_src_editor_chucuole')) {
-      if (error?.data?.code === 'Task.ListWarnMessage') {
+      const code = error?.data?.code
+      if (code === 'Task.ListWarnMessage') {
         let names = []
         if (error.data?.data) {
           const keys = Object.keys(error.data.data)
@@ -1751,6 +1752,18 @@ export default {
             }
           }
         }
+      } else if (code === 'Task.OldVersion') {
+        this.$confirm('', i18n.t('packages_dag_task_old_version_confirm'), {
+          onlyTitle: true,
+          type: 'warning',
+          closeOnClickModal: false,
+          confirmButtonText: i18n.t('public_button_refresh')
+        }).then(resFlag => {
+          resFlag && location.reload()
+        })
+      } else {
+        const msg = error?.data?.message || msg
+        this.$message.error(msg)
       }
     },
 

@@ -14,8 +14,8 @@ export default class Http {
     return this.axios.get(this.url + '/count', { params })
   }
 
-  patch(params: unknown) {
-    return this.axios.patch(this.url, params)
+  patch(params: unknown, config) {
+    return this.axios.patch(this.url, params, config)
   }
 
   updateById(id: string, attributes: unknown) {
