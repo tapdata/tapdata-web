@@ -339,7 +339,12 @@ export default {
   mounted() {
     this.checkAgentCount()
     this.form.email = window.__USER_INFO__.email
-    this.currencyType = window.__config__?.currencyType
+    const currencyType = window.__config__?.currencyType
+
+    if (currencyType) {
+      this.currencyType = currencyType
+      this.defaultCurrencyType = currencyType
+    }
   },
   methods: {
     close() {
@@ -369,8 +374,8 @@ export default {
     handleChange(item = {}) {
       this.selected = item
       if (item?.chargeProvider !== 'FreeTier') {
-        this.currencyOption = item.currencyOption
-        this.currency = this.currencyOption.filter(it => it.currency === this.currencyType)?.[0] || {}
+        this.changeCurrencyOption(item)
+        this.currency = this.currencyOption.find(it => it.currency === this.currencyType) || {}
       } else {
         this.currencyOption = []
         this.currency = item
@@ -381,6 +386,19 @@ export default {
     changeCurrency(item) {
       this.currencyType = item.currency
       this.currency = item
+    },
+    changeCurrencyOption(item) {
+      const options = item.currencyOption
+      const { defaultCurrencyType } = this
+      // 设置了默认币种, 币种选项默认的排到第一位
+      if (options.length && defaultCurrencyType && options[0] !== defaultCurrencyType) {
+        options.sort((a, b) => {
+          let aVal = a.currency === defaultCurrencyType ? 0 : 1
+          let bVal = b.currency === defaultCurrencyType ? 0 : 1
+          return aVal - bVal
+        })
+      }
+      this.currencyOption = options
     },
     //格式化价格
     formatPrice(item) {
@@ -471,7 +489,10 @@ export default {
           })
         })
         this.loadPackageItems()
-        this.changeCurrency(this.packageItems[0])
+        // this.changeCurrency(this.packageItems[0])
+        if (!this.currencyType) {
+          this.currencyType = this.packageItems[0]?.currencyOption[0]?.currency
+        }
         this.handleChange(this.packageItems[0])
       })
     },
