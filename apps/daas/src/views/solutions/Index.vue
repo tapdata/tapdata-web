@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { delayTrigger } from '@/utils/util'
+import { delayTrigger } from '@tap/shared'
 import { customerJobLogsApi } from '@tap/api'
 
 export default {
