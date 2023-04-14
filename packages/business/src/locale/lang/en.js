@@ -707,8 +707,8 @@ export default {
   page_title_overview: 'Overview',
   metadata_meta_type_table: 'Data Table',
   packages_business_create_connection_dialog_xuanzeshujuyuan: 'Choose Data Source Type',
-  packages_business_create_connection_dialog_neirongSho: 'Show Connectors in Aplha State',
-  packages_business_create_connection_dialog_neirongSho2: 'Show Connectors in Beta State',
+  packages_business_create_connection_dialog_neirongSho: 'Show Connectors in ALPHA State',
+  packages_business_create_connection_dialog_neirongSho2: 'Show Connectors in BETA State',
   packages_business_create_connection_dialog_neirongCho:
     'Choose a data source connector from below and configure the connection & credentials.',
   // 共享挖掘
@@ -828,7 +828,7 @@ export default {
   packages_business_data_console_sources: 'Sources',
   packages_business_data_console_fdm: 'Foundation Data Model',
   packages_business_data_console_mdm: 'Master Data Model',
-  packages_business_data_console_targets: 'Target & Services',
+  packages_business_data_console_targets: 'Targets & Services',
   packages_business_create_clone_task: 'Create Cloning Pipeline',
   packages_business_create_sync_task: 'Create Sync Pipeline',
   packages_business_table_prefix: 'Table Prefix',
@@ -893,7 +893,7 @@ export default {
   packages_business_fdm_create_task_dialog_desc_prefix:
     'Tapdata will automatically create a cloning pipeline task, which will automatically copy the structure and data of the selected',
   packages_business_fdm_create_task_dialog_desc_suffix:
-    'to the Cache layer of the data platform and keep the source database and Cache layer data in real-time synchronization and automatic verification. In most cases, the structure changes (DDL) of the source database will also be copied to the Cache layer. You can monitor the running status of the pipeline task by clicking the ICON on the right side of the database name in the Cache layer. You can also choose to modify the physical table name in the Cache layer now.',
+    'to the Cache layer of the data platform and keep the source database and Cache layer data in real-time synchronization and automatic verification. In most cases, the structure changes (DDL) of the source database will also be copied to the Cache layer. You can monitor the running status of the pipeline task by clicking the ICON on the right side of the database name in the Cache layer. You can also choose to modify the physical table name prefix in the Cache layer now.',
   packages_business_mdm_create_task_dialog_desc_prefix:
     "This will create a processing model on the Data Platform's Curated layer. Common scenarios for creating a processing model include the following:",
   packages_business_fdm_create_task_dialog_desc_li1:
@@ -913,6 +913,23 @@ export default {
   packages_business_target_create_task_dialog_desc_to: 'to',
   packages_business_target_create_task_dialog_desc_suffix:
     'Please click button below to continue. You can also change the task name',
+  packages_business_fdm_empty_text:
+    'Please drag the table from <strong>Sources</strong> here to start cloning the data.',
+  packages_business_mdm_empty_text:
+    'Please drag the table from <strong>Sources/Foundation Data Model</strong> here to start synchronizing data',
+  packages_business_catalog_delete_confirm_message:
+    'This operation will only delete the category. If you want to delete the physical tables under this category, please do it yourself.',
+  packages_business_mdm_table_duplication_confirm:
+    'The target table already exists. Please confirm if you want to continue?',
+  packages_business_data_console_mode: 'Product Capability Mode',
+  packages_business_data_console_mode_integration: 'Data Integration',
+  packages_business_data_console_mode_service: 'Data Service Platform',
+  packages_business_data_console_fdm_mdm_storage: 'FDM & MDM Storage Backend',
+  packages_business_data_console_fdm_mdm_storage_tooltip:
+    'Specify the database connection that will be used for additional data layer storage',
+  packages_business_mongodb_atlas_cluster: 'MongoDB Atlas Cluster',
+  packages_business_mongodb_self_hosted_cluster: 'Self Hosted MongoDB Cluster',
+  packages_business_data_console_setting_saved_tooltip: 'The Settings cannot be modified after being saved.',
   // 共享緩存
   packages_business_shared_cache_create: 'Create Cache',
   packages_business_shared_cache_edit: 'Edit Cache',

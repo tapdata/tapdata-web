@@ -119,7 +119,7 @@ export default {
         {
           key: 'recommended',
           name: '推荐场景',
-          types: ['BigQuery', 'Tablestore']
+          types: ['BigQuery', 'Tablestore', 'MongoDB', 'Redis', 'SelectDB']
         },
         /*{
           name: 'API 发布',

@@ -135,7 +135,7 @@ const responseInterceptor = response => {
     if (code === 'ok') {
       // code 为 ok 则表示请求正常返回，进入then逻辑
       return resolve(data?.data)
-    } else if (code === 'SystemError') {
+    } else if (['SystemError', 'SubscribeFailed.OrderLimit'].includes(code)) {
       // code 为 SystemError 则表示请求异常，提示信息
       let msg = data?.message || data?.msg || ''
       Message.error(`SystemError： ${msg === msg.substring(0, 20) ? msg : msg.substring(0, 20) + '...'}`)
@@ -143,6 +143,9 @@ const responseInterceptor = response => {
       console.log(i18n.t('dfs_plugins_axios_qingqiushibai') + msg, response)
       return reject(msg)
     } else {
+      if (response.config.silenceMessage) {
+        return reject(response)
+      }
       // 其他情况交由业务端自行处理
       if (['Datasource.TableNotFound', 'SubscribeFailed.OrderLimit'].includes(code)) {
         return reject(Object.assign(response))

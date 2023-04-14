@@ -3,22 +3,60 @@
     :title="title"
     :visible="visible"
     :append-to-body="true"
-    width="1234px"
+    width="800px"
     top="10vh"
-    destroy-on-close
     @open="handleOpen"
     @close="handleClose"
   >
-    <div slot="title" class="text-center font-color-dark fs-2 fw-bold">
-      {{ title }}
+    <div slot="title" class="font-color-dark fs-6 fw-sub">
+      {{ $t('packages_business_data_console_mode') }}
     </div>
-    <div class="dialog__content text-break">
-      <div class="fs-6 mb-2 font-color-normal text-center">Product Capability Mode</div>
-      <div class="font-color-sslight mb-12">
+    <div class="my-n3">
+      <!--<div class="fs-6 mb-4 font-color-dark">Product Capability Mode</div>-->
+      <!--<div class="font-color-sslight">
+        Tapdata可以作为一个实时的数据同步与加工产品使用,也可以作为一个实时数据服务平台使用,当作为服务平台使用时,除了基基本的数据同步与处理
+        能力之外,通过预置的数据存储中心,您可以通过不同的分层模式式,便捷完成数据模型的构建,并支持通过各种终端服务对数据模型进行发布与展示
+      </div>-->
+      <!--<div class="font-color-sslight mb-12">
         Tapdata can be used as a general data integration tool(ETL) , or as a data as a service platform. The key
         difference is Data Platform mode requires a storage backend.
+      </div>-->
+      <div class="flex gap-6 justify-content-center p-4 rounded-4 mode-card-container">
+        <div
+          class="rounded-xl bg-white border mode-card overflow-hidden clickable"
+          :class="{ active: mode === 'integration' }"
+          @click="handleSelectMode('integration')"
+        >
+          <ElImage
+            class="p-4 mode-card-image align-top"
+            :src="require('@tap/assets/images/swimlane/data-integration-mode.svg')"
+          ></ElImage>
+          <div class="px-4 flex align-center mode-card-title">
+            <ElRadio v-model="mode" class="mr-0" label="integration">
+              <span class="fs-7 font-color-dark">{{ $t('packages_business_data_console_mode_integration') }}</span>
+            </ElRadio>
+          </div>
+        </div>
+        <div
+          class="rounded-xl bg-white border mode-card overflow-hidden clickable"
+          :class="{ active: mode === 'service' }"
+          @click="handleSelectMode('service')"
+        >
+          <ElImage
+            class="p-4 mode-card-image align-top"
+            :src="require('@tap/assets/images/swimlane/data-service-platform-mode.svg')"
+          ></ElImage>
+          <div class="px-4 flex align-center mode-card-title">
+            <ElRadio v-model="mode" class="mr-0" label="service">
+              <span class="fs-7 font-color-dark"
+                >{{ $t('packages_business_data_console_mode_service') }}<VIcon class="ml-1" size="32">beta</VIcon></span
+              >
+            </ElRadio>
+          </div>
+        </div>
       </div>
-      <ElRadioGroup v-model="mode" class="block" @change="handleSelectMode">
+
+      <!--<ElRadioGroup v-model="mode" class="block" @change="handleSelectMode">
         <ElRadio
           v-for="item in modeItems"
           :label="item.value"
@@ -28,8 +66,8 @@
           <span>{{ item.label }}</span>
           <VIcon v-if="item.beta" class="ml-1" size="28">beta</VIcon>
         </ElRadio>
-      </ElRadioGroup>
-      <div class="flex">
+      </ElRadioGroup>-->
+      <!--<div class="flex">
         <div class="w-50">
           <div class="mode-desc inline-block pt-4 cursor-pointer" @click="handleSelectMode('integration')">
             <ElImage :src="require('@tap/assets/images/swimlane/data-integration-mode.svg')"></ElImage>
@@ -53,10 +91,55 @@
             </ul>
           </div>
         </div>
-      </div>
-      <ElForm :model="form" :rules="rules" ref="form">
-        <div v-if="mode === 'service'" class="setting-card mt-6">
-          <div class="setting-card__header p-4">
+      </div>-->
+      <ElForm :model="form" :rules="rules" ref="form" label-position="top" class="mode-setting-form">
+        <div v-if="mode === 'service'" class="mt-4 px-4 py-3 border rounded-4">
+          <ElFormItem>
+            <span slot="label" class="inline-flex align-center">
+              <span>{{ $t('packages_business_data_console_fdm_mdm_storage') }}</span>
+              <ElTooltip
+                class="ml-2"
+                placement="top"
+                :content="$t('packages_business_data_console_fdm_mdm_storage_tooltip')"
+              >
+                <VIcon size="14">info</VIcon>
+              </ElTooltip>
+            </span>
+            <ElRadioGroup v-model="form.fdmStorageCluster" @change="handleChangeFDMStorage" :disabled="disabled">
+              <ElRadio
+                v-for="item in options"
+                :label="item.value"
+                :key="'FDM' + item.value"
+                border
+                class="rounded-2 mr-4 ml-0"
+              >
+                <span>{{ item.label }}</span>
+              </ElRadio>
+            </ElRadioGroup>
+          </ElFormItem>
+
+          <ElFormItem prop="fdmStorageConnectionId">
+            <ElSelect v-model="form.fdmStorageConnectionId" :disabled="disabled" class="w-100">
+              <ElOption v-for="op in connectionsList" :label="op.label" :value="op.value" :key="op.value"></ElOption>
+            </ElSelect>
+          </ElFormItem>
+
+          <!--<div class="flex align-items-center">
+            <VIcon class="color-primary mr-2" size="14">info</VIcon>
+            &lt;!&ndash;<span class="font-color-sslight"
+              >If you wish to change this setting later, you must migrate the data to your new database - manually for
+              now</span
+            >&ndash;&gt;
+            <span class="font-color-sslight"
+              >Don't have the connection you want? You can add a connection in Connection Management.
+            </span>
+          </div>-->
+          <div class="flex align-items-center">
+            <VIcon class="mr-2" size="14">info</VIcon>
+            <span class="font-color-sslight">{{ $t('packages_business_data_console_setting_saved_tooltip') }}</span>
+          </div>
+
+          <!--<div class="setting-card__header p-4">
             <span>FDM/MDM Storage Backend</span>
             <ElTooltip
               class="ml-2"
@@ -65,40 +148,7 @@
             >
               <VIcon class="color-primary" size="14">info</VIcon>
             </ElTooltip>
-          </div>
-          <div class="setting-card__content p-4">
-            <ElRadioGroup v-model="form.fdmStorageCluster" @change="handleChangeFDMStorage" :disabled="disabled">
-              <ElRadio v-for="item in options" :label="item.value" :key="'FDM' + item.value" class="block mb-4">
-                <span>{{ item.label }}</span>
-                <!--<ElTag class="ml-6 rounded-pill" effect="plain">{{ item.tag }}</ElTag>-->
-                <ElFormItem v-if="form.fdmStorageCluster === item.value" prop="fdmStorageConnectionId">
-                  <ElSelect v-model="form.fdmStorageConnectionId" class="block mt-4" :disabled="disabled">
-                    <ElOption
-                      v-for="op in connectionsList"
-                      :label="op.label"
-                      :value="op.value"
-                      :key="op.value"
-                    ></ElOption>
-                  </ElSelect>
-                </ElFormItem>
-              </ElRadio>
-            </ElRadioGroup>
-
-            <div class="flex align-items-center">
-              <VIcon class="color-primary mr-2" size="14">info</VIcon>
-              <!--<span class="font-color-sslight"
-                >If you wish to change this setting later, you must migrate the data to your new database - manually for
-                now</span
-              >-->
-              <span class="font-color-sslight"
-                >Don't have the connection you want? You can add a connection in Connection Management.
-              </span>
-            </div>
-            <div class="flex align-items-center">
-              <VIcon class="color-primary mr-2" size="14">info</VIcon>
-              <span class="font-color-sslight">The Settings cannot be modified after being saved.</span>
-            </div>
-          </div>
+          </div>-->
         </div>
         <!--<div v-if="mode === 'service'" class="setting-card mt-6">
           <div class="setting-card__header p-4">
@@ -138,11 +188,12 @@
           </div>
         </div>-->
       </ElForm>
-
-      <div class="text-end mt-13">
-        <ElButton v-loading="loading" type="primary" :disabled="disabledBtn" @click="submit">SAVE&ENABLE</ElButton>
-        <ElButton class="ml-4" @click="cancel">CANCEL</ElButton>
-      </div>
+    </div>
+    <div slot="footer">
+      <ElButton class="ml-4" @click="cancel">{{ $t('public_button_cancel') }}</ElButton>
+      <ElButton v-loading="loading" type="primary" :disabled="disabledBtn" @click="submit">{{
+        $t('public_button_save')
+      }}</ElButton>
     </div>
   </ElDialog>
 </template>
@@ -158,7 +209,7 @@ export default {
     title: {
       type: String,
       default: () => {
-        return 'Live Data Platform Settings'
+        return 'Product Capability Mode'
       }
     },
     visible: {
@@ -184,12 +235,12 @@ export default {
       ],
       options: [
         {
-          label: 'MongoDB Atlas Cluster',
+          label: this.$t('packages_business_mongodb_atlas_cluster'),
           value: 'atlas',
           tag: 'Sync Atlas Cluster List'
         },
         {
-          label: 'Self Hosted MongoDB Cluster',
+          label: this.$t('packages_business_mongodb_self_hosted_cluster'),
           value: 'self',
           tag: 'Add a New Connection'
         }
@@ -360,5 +411,43 @@ export default {
 .setting-card__content {
   border: 1px solid #f2f2f2;
   border-top: none;
+}
+
+.mode-card-container {
+  background-color: #f5f7fa;
+}
+
+.mode-card {
+  width: 240px;
+  transition: box-shadow 0.15s linear 0s;
+
+  &-image {
+    width: 100%;
+    height: auto;
+    background-color: #f6f8fa;
+  }
+
+  &-title {
+    height: 48px;
+  }
+
+  &.active {
+    border-color: map-get($color, primary) !important;
+    .mode-card-image {
+    }
+  }
+
+  &:hover {
+    box-shadow: 0 10px 36px 10px rgba(31, 35, 41, 0.04), 0 8px 24px rgba(31, 35, 41, 0.04),
+      0 6px 12px -10px rgba(31, 35, 41, 0.06);
+  }
+}
+
+.mode-setting-form.el-form--label-top {
+  ::v-deep {
+    .el-form-item__label {
+      padding-bottom: 0;
+    }
+  }
 }
 </style>

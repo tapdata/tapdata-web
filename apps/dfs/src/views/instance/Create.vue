@@ -45,6 +45,7 @@
           <p class="mb-4 pt-2 fs-6 font-color-normal">{{ item.label }}</p>
           <p class="mb-4 color-primary">
             <span class="fs-5">{{ item.price }}</span>
+            <span v-if="item.priceSuffix" class="fs-5">/{{ item.priceSuffix }}</span>
           </p>
           <p class="font-color-sslight fs-8">{{ item.desc }}</p>
         </li>
@@ -72,11 +73,13 @@
 <script>
 import i18n from '@/i18n'
 import { uniqueArr, openUrl } from '@tap/shared'
-import { CURRENCY_SYMBOL_MAP } from '@tap/business'
+import { CURRENCY_SYMBOL_MAP, TIME_MAP } from '@tap/business'
 import { getSpec, getPaymentMethod } from './utils'
 
 export default {
   name: 'Create',
+
+  inject: ['buried'],
 
   props: {
     value: {
@@ -165,6 +168,7 @@ export default {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2
                 }),
+              priceSuffix: t.type === 'recurring' ? TIME_MAP[t.periodUnit] : '',
               desc: '',
               specification: getSpec(t.spec)
             })
@@ -215,40 +219,47 @@ export default {
     submit() {
       const { type, priceId, currency } = this.selected
       const { email } = this.form
-      if (type === 'recurring') {
-        this.$refs.from.validate(valid => {
-          if (!valid) return
-          const params = {
-            priceId,
-            email
-          }
-          this.submitLoading = true
-          this.$axios
-            .post('api/tcm/paid/plan/createPaidSubscribe', params)
-            .then(data => {
-              openUrl(data)
-              this.showResult = true
-            })
-            .finally(() => {
-              this.submitLoading = false
-            })
-        })
-        return
-      }
+
+      const fastDownloadUrl = window.App.$router.resolve({
+        name: 'FastDownload',
+        query: {
+          id: ''
+        }
+      })
+
       const params = {
+        agentType: 'Local',
+        chargeProvider: 'Stripe',
         priceId,
         currency,
-        successUrl: location.href,
+        successUrl: location.origin + '/' + fastDownloadUrl.href,
         cancelUrl: location.href,
-        email
+        email,
+        type
       }
+
       this.submitLoading = true
+      this.submitLoading = true
+      this.buried('newAgentStripe', '', {
+        type
+      })
       this.$axios
-        .post('api/tcm/paid/plan/oneTime/paymentLink', params)
+        .post('api/tcm/orders', params)
         .then(data => {
-          openUrl(data)
-          this.submitLoading = false
-          this.showResult = true
+          openUrl(data?.paymentUrl)
+          // this.submitLoading = false
+          // this.showResult = true
+          this.finish()
+          this.buried('newAgentStripe', '', {
+            type,
+            result: true
+          })
+        })
+        .catch(() => {
+          this.buried('newAgentStripe', '', {
+            type,
+            result: false
+          })
         })
         .finally(() => {
           this.submitLoading = false
@@ -260,6 +271,7 @@ export default {
     },
 
     finish() {
+      this.$message.success(this.$t('public_message_operation_success'))
       this.$emit('finish')
       this.handleCancel()
     },

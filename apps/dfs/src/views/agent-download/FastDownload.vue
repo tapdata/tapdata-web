@@ -18,63 +18,84 @@
         </div>
       </div>
       <template v-if="downLoadType === 'windows'">
-        <ul class="pt-5 ul-style">
-          <!--          <li class="flex">-->
-          <!--            <span>{{ $t('agent_deploy_before_prepare_windows_first') }}</span>-->
-          <!--            <ElLink class="ml-3" type="primary" @click="windowsToJava">{{-->
-          <!--              $t('agent_deploy_before_prepare_windows_first_link')-->
-          <!--            }}</ElLink>-->
-          <!--          </li>-->
-          <!--          <li>{{ $t('agent_deploy_before_prepare_windows_second') }}</li>-->
-          <!--          <li>{{ $t('agent_deploy_before_prepare_windows_third') }}</li>-->
-          <!--          <li>{{ $t('agent_deploy_before_prepare_windows_four') }}</li>-->
-          <!--          <li>-->
-          <!--            <ElButton class="mt-5" type="primary" @click="handleDownLoad">{{-->
-          <!--              $t('agent_deploy_before_prepare_windows_second_download')-->
-          <!--            }}</ElButton>-->
-          <!--          </li>-->
-          <li>
-            <div class="my-5 text-style">{{ $t('agent_deploy_start_install') }}</div>
-          </li>
-          <li>
-            {{ $t('agent_deploy_start_install_windows_first') }}
-            <ElLink type="primary" @click="handleDownLoad">{{
-              $t('agent_deploy_start_install_windows_first_download')
-            }}</ElLink>
-          </li>
-          <li class="mt-3">
-            {{ $t('agent_deploy_start_install_windows_second') }}
-          </li>
-          <li class="mt-3">
-            {{ $t('agent_deploy_start_install_windows_third') }}
-          </li>
-          <li class="mt-3">
-            {{ $t('agent_deploy_start_install_windows_fourth') }}
-          </li>
-          <li class="box title-text mt-2">
-            <span class="link-line">{{ windowsLink }}</span>
-            <ElTooltip
-              placement="top"
-              manual
-              :content="$t('agent_deploy_start_install_button_copied')"
-              popper-class="copy-tooltip"
-              :value="showTooltip"
-            >
-              <span
-                class="operaKey"
-                v-clipboard:copy="windowsLink"
-                v-clipboard:success="onCopy"
-                @mouseleave="showTooltip = false"
-                @click="handleCopy"
-              >
-                <i class="click-style">{{ $t('public_button_copy') }}</i>
-              </span>
-            </ElTooltip>
-          </li>
-          <li class="mt-3">
-            <span>{{ $t('agent_deploy_start_install_windows_fifth') }}</span>
-          </li>
-        </ul>
+        <el-collapse v-model="activeName">
+          <el-collapse-item :title="$t('dfs_agent_download_fastdownload_shiyongpeizhiwen')" name="1">
+            <ul class="pt-5 ul-style">
+              <li>
+                <div class="my-5 text-style">{{ $t('agent_deploy_start_install') }}</div>
+              </li>
+              <li>
+                {{ $t('agent_deploy_start_install_windows_first') }}
+                <ElLink type="primary" @click="handleDownLoad">{{
+                  $t('agent_deploy_start_install_windows_first_download')
+                }}</ElLink>
+                {{ $t('dfs_agent_download_fastdownload_he')
+                }}<ElLink type="primary" @click="handleDownLoadApplication">application.yml </ElLink>
+              </li>
+              <li class="mt-3">{{ $t('dfs_agent_download_fastdownload_jiangwenjianta') }}</li>
+              <li class="mt-3">{{ $t('dfs_agent_download_fastdownload_shuangjizhixingt') }}</li>
+            </ul>
+          </el-collapse-item>
+          <el-collapse-item :title="$t('dfs_agent_download_fastdownload_fuzhiTok')" name="2">
+            <ul class="pt-5 ul-style">
+              <!--          <li class="flex">-->
+              <!--            <span>{{ $t('agent_deploy_before_prepare_windows_first') }}</span>-->
+              <!--            <ElLink class="ml-3" type="primary" @click="windowsToJava">{{-->
+              <!--              $t('agent_deploy_before_prepare_windows_first_link')-->
+              <!--            }}</ElLink>-->
+              <!--          </li>-->
+              <!--          <li>{{ $t('agent_deploy_before_prepare_windows_second') }}</li>-->
+              <!--          <li>{{ $t('agent_deploy_before_prepare_windows_third') }}</li>-->
+              <!--          <li>{{ $t('agent_deploy_before_prepare_windows_four') }}</li>-->
+              <!--          <li>-->
+              <!--            <ElButton class="mt-5" type="primary" @click="handleDownLoad">{{-->
+              <!--              $t('agent_deploy_before_prepare_windows_second_download')-->
+              <!--            }}</ElButton>-->
+              <!--          </li>-->
+              <li>
+                <div class="my-5 text-style">{{ $t('agent_deploy_start_install') }}</div>
+              </li>
+              <li>
+                {{ $t('agent_deploy_start_install_windows_first') }}
+                <ElLink type="primary" @click="handleDownLoad">{{
+                  $t('agent_deploy_start_install_windows_first_download')
+                }}</ElLink>
+              </li>
+              <li class="mt-3">
+                {{ $t('agent_deploy_start_install_windows_second') }}
+              </li>
+              <li class="mt-3">
+                {{ $t('agent_deploy_start_install_windows_third') }}
+              </li>
+              <li class="mt-3">
+                {{ $t('agent_deploy_start_install_windows_fourth') }}
+              </li>
+              <li class="box title-text mt-2">
+                <span class="link-line">{{ windowsLink }}</span>
+                <ElTooltip
+                  placement="top"
+                  manual
+                  :content="$t('agent_deploy_start_install_button_copied')"
+                  popper-class="copy-tooltip"
+                  :value="showTooltip"
+                >
+                  <span
+                    class="operaKey"
+                    v-clipboard:copy="windowsLink"
+                    v-clipboard:success="onCopy"
+                    @mouseleave="showTooltip = false"
+                    @click="handleCopy"
+                  >
+                    <i class="click-style">{{ $t('public_button_copy') }}</i>
+                  </span>
+                </ElTooltip>
+              </li>
+              <li class="mt-3">
+                <span>{{ $t('agent_deploy_start_install_windows_fifth') }}</span>
+              </li>
+            </ul>
+          </el-collapse-item>
+        </el-collapse>
       </template>
       <template v-if="downLoadType === 'Linux'">
         <div class="text-style">{{ $t('agent_deploy_before_prepare_title') }}</div>
@@ -281,7 +302,8 @@ export default {
       trialUrl: '',
       url: '',
       agentId: '',
-      timer: null
+      timer: null,
+      activeName: '1'
     }
   },
   created() {
@@ -353,6 +375,10 @@ export default {
     handleDownLoad() {
       window.location = `${this.downloadUrl}tapdata.exe`
       this.buried('downloadTapdataExe')
+    },
+    //windows 下载
+    handleDownLoadApplication() {
+      window.location = window.origin + '/api/tcm/agent/' + this.$route.query?.id + '/config'
     },
     // 选择下载安装类型
     chooseDownLoadType(val) {
@@ -585,6 +611,11 @@ export default {
     border: 1px solid #dcdcdc;
     background-color: #fff;
     width: 220px;
+  }
+  ::v-deep {
+    .el-collapse-item__header {
+      font-size: $fontSubtitle;
+    }
   }
 }
 </style>

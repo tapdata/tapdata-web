@@ -1,14 +1,13 @@
 <template>
   <div class="connection-from" v-loading="loadingFrom">
     <div class="connection-from-body">
-      <main class="connection-from-main">
+      <main class="connection-from-main min-w-0">
         <div class="form-wrap">
           <div class="form pt-3 pr-3">
             <SchemaToForm
               ref="schemaToForm"
               :schema="schemaData"
               :scope="schemaScope"
-              wrapperWidth="600px"
               :colon="true"
               label-width="160"
             ></SchemaToForm>
@@ -94,10 +93,11 @@ import {
 } from '@tap/api'
 import { VIcon, GitBook } from '@tap/component'
 import { SchemaToForm } from '@tap/form'
-import { checkConnectionName, isEmpty } from '@tap/shared'
+import { checkConnectionName, isEmpty, openUrl, submitForm } from '@tap/shared'
 import Test from '@tap/business/src/views/connections/Test'
 import { getConnectionIcon } from '@tap/business/src/views/connections/util'
 import resize from '@tap/component/src/directives/resize'
+import { cloneDeep } from 'lodash'
 
 export default {
   name: 'SceneForm',
@@ -789,11 +789,15 @@ export default {
         },
         loadAccessNode: async () => {
           const data = await clusterApi.findAccessNodeInfo()
+
           return (
             data?.map(item => {
               return {
                 value: item.processId,
-                label: `${item.hostName}（${item.ip}）`
+                label: `${item.hostName}（${
+                  item.status === 'running' ? i18n.t('public_status_running') : i18n.t('public_agent_status_offline')
+                }）`,
+                disabled: item.status !== 'running'
               }
             }) || []
           )
@@ -815,7 +819,7 @@ export default {
               argMap: {
                 key: search,
                 page,
-                size: 1000
+                size: size || 1000
               }
             }
             if (!params.pdkHash || !params.connectionId) {
@@ -871,7 +875,7 @@ export default {
         },
         async loadExternalStorage() {
           try {
-            const { items = [] } = await externalStorageApi.get()
+            const { items = [] } = await externalStorageApi.list()
             return items.map(item => {
               return {
                 label: item.name,
@@ -882,6 +886,42 @@ export default {
           } catch (e) {
             return []
           }
+        },
+        toMonitor: async () => {
+          const routeUrl = this.$router.resolve({
+            name: 'HeartbeatMonitor',
+            params: {
+              id: this.heartbeatTaskId
+            }
+          })
+          openUrl(routeUrl.href)
+        },
+        handleHeartbeatEnable: (value, $form) => {
+          if (!value) return
+          this.getHeartbeatTaskId($form)
+        },
+        goToAuthorized: async params => {
+          const routeQuery = cloneDeep(this.$route.query)
+          const routeParams = this.$route.params
+          delete routeQuery['connectionConfig']
+          let routeUrl = this.$router.resolve({
+            name: routeParams?.id ? 'connectionsEdit' : 'connectionCreate',
+            query: routeQuery,
+            params: routeParams
+          })
+
+          const { __TAPDATA, ...__TAPDATA_CONFIG } = this.$refs.schemaToForm?.getFormValues?.() || {}
+          params.oauthUrl = params?.oauthUrl.replace(/@\{(\w+)\}@/gi, function (val, sub) {
+            return __TAPDATA_CONFIG[sub]
+          })
+          const data = Object.assign({}, params, {
+            url: location.origin + location.pathname + routeUrl.href,
+            connectionConfig: {
+              __TAPDATA,
+              __TAPDATA_CONFIG
+            }
+          })
+          submitForm(params?.target, data)
         }
       }
       this.schemaData = result
@@ -1107,6 +1147,6 @@ export default {
 }
 
 .git-book {
-  //border-top: 1px solid #e1e3e9;
+  width: 400px;
 }
 </style>

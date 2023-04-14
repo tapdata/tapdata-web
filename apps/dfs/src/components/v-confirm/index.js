@@ -7,7 +7,7 @@ let currentMsg, instance
 const defaults = {
   icon: '', // 图标
   iconColor: '',
-  iconSize: 25,
+  iconSize: 22,
   title: '', // 标题
   message: '', // 内容
   type: '', // 常用的几种提示类型： success、info、warning、error。不然需要自己传递 icon的属性

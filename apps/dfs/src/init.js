@@ -115,6 +115,14 @@ export default ({ routes }) => {
         next()
       }
     })
+    router.onError(error => {
+      const pattern = /Loading chunk (\d)+ failed/g
+      const isChunkLoadFailed = error.message.match(pattern)
+      if (isChunkLoadFailed) {
+        // 用路由的replace方法，并没有相当于F5刷新页面，失败的js文件并没有从新请求，会导致一直尝试replace页面导致死循环
+        location.reload()
+      }
+    })
     return router
   }
   loading = window.loading({ fullscreen: true })
