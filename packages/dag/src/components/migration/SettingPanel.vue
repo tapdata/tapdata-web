@@ -188,10 +188,11 @@ export default observer({
                               }
                             },
                             'x-reactions': {
-                              dependencies: ['.limitMode'],
+                              dependencies: ['.errorMode', '.limitMode'],
                               fulfill: {
                                 state: {
-                                  display: '{{$deps[0] === "SkipByLimit" ? "visible" : "hidden"}}'
+                                  display:
+                                    '{{$deps[0] === "SkipData" && $deps[1] === "SkipByLimit" ? "visible" : "hidden"}}'
                                 }
                               }
                             }
@@ -218,10 +219,11 @@ export default observer({
                               }
                             },
                             'x-reactions': {
-                              dependencies: ['.limitMode'],
+                              dependencies: ['.errorMode', '.limitMode'],
                               fulfill: {
                                 state: {
-                                  display: '{{$deps[0] === "SkipByRate" ? "visible" : "hidden"}}'
+                                  display:
+                                    '{{$deps[0] === "SkipData" && $deps[1] === "SkipByRate" ? "visible" : "hidden"}}'
                                 }
                               }
                             }
