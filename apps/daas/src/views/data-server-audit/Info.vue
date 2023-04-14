@@ -68,8 +68,8 @@
 import dayjs from 'dayjs'
 
 import { apiCallsApi } from '@tap/api'
-
-import { formatMs, handleUnit } from '@/utils/util'
+import { handleUnit } from '@tap/shared'
+import { formatMs } from '@/utils/util'
 
 export default {
   data() {

@@ -181,9 +181,8 @@
 <script>
 import { Chart, FilterBar, VTable } from '@tap/component'
 import { apiMonitorApi } from '@tap/api'
-import { calcTimeUnit, toRegExp } from '@tap/shared'
+import { calcTimeUnit, toRegExp, handleUnit } from '@tap/shared'
 
-import { handleUnit } from './utils'
 import Detail from './Detail'
 
 export default {

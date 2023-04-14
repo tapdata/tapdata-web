@@ -121,7 +121,7 @@ import StatusTag from '@/components/StatusTag'
 import timeFunction from '@/mixins/timeFunction'
 import { AGENT_STATUS_MAP_EN } from '../../const'
 import i18n from '@/i18n'
-import { handleUnit } from '@/util'
+import { handleUnit } from '@tap/shared'
 import { measurementApi } from '@tap/api'
 import Time from '@tap/shared/src/time'
 

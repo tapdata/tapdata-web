@@ -56,7 +56,8 @@ import { Chart, FilterBar } from '@tap/component'
 import { formatTime } from '@/utils/util'
 import { apiMonitorApi } from '@tap/api'
 import Time from '@tap/shared/src/time'
-import { handleUnit, formatMs } from './utils'
+import { handleUnit } from '@tap/shared'
+import { formatMs } from './utils'
 
 export default {
   name: 'Detail',

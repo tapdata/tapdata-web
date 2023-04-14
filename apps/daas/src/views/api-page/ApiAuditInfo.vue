@@ -61,9 +61,10 @@
 </template>
 
 <script>
-import { formatMs, handleUnit } from '@/utils/util'
+import { formatMs } from '@/utils/util'
 import dayjs from 'dayjs'
 import { apiCallsApi } from '@tap/api'
+import { handleUnit } from '@tap/shared'
 
 export default {
   name: 'ApiAudit',
