@@ -11,6 +11,7 @@
     <ElInput :value="details.desc" type="textarea" disabled class="mb-6"></ElInput>
 
     <DataServerList
+      v-if="visible"
       :show-filter="false"
       :columns="listColumns"
       :params="listParams"
@@ -22,7 +23,7 @@
 
 <script>
 import { Drawer } from '@tap/component'
-import DataServerList from '@tap/business/src/views/data-server/List.vue'
+import DataServerList from '../data-server/List'
 
 export default {
   name: 'Details',
@@ -67,9 +68,6 @@ export default {
       this.details = data
       this.listParams = opt
       this.visible = true
-      this.$nextTick(() => {
-        this.$refs.table?.fetch()
-      })
     },
 
     handleVisible() {
