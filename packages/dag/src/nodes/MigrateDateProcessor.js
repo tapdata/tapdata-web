@@ -29,7 +29,7 @@ export class MigrateDateProcessor extends NodeType {
       },
       dataTypes: {
         type: 'array',
-        title: '请选择您要运算的时间类型',
+        title: i18n.t('packages_dag_date_processor_data_types'),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Select',
@@ -40,7 +40,7 @@ export class MigrateDateProcessor extends NodeType {
       },
       space: {
         type: 'void',
-        title: '请选择运算方式',
+        title: i18n.t('packages_dag_date_processor_method'),
         'x-decorator': 'FormItem',
         'x-decorator-props': {
           asterisk: true
@@ -54,11 +54,11 @@ export class MigrateDateProcessor extends NodeType {
             default: true,
             enum: [
               {
-                label: '增加',
+                label: i18n.t('packages_dag_date_processor_increase'),
                 value: true
               },
               {
-                label: '减少',
+                label: i18n.t('packages_dag_date_processor_decrease'),
                 value: false
               }
             ]
@@ -68,7 +68,7 @@ export class MigrateDateProcessor extends NodeType {
             default: 8,
             'x-decorator': 'FormItem',
             'x-decorator-props': {
-              addonAfter: '小时'
+              addonAfter: i18n.t('public_time_h')
             },
             'x-component': 'InputNumber',
             'x-component-props': {

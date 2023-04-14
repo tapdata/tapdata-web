@@ -248,7 +248,7 @@ export default {
           type: 'field_add_del_processor'
         },
         {
-          name: '时间运算',
+          name: i18n.t('packages_dag_date_processor'),
           type: 'date_processor'
         }
       ]

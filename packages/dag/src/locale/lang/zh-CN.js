@@ -577,5 +577,10 @@ export default {
   packages_dag_nodes_table_depskai: '开启全量断点续传时不支持开启过滤设置。',
   packages_dag_nodes_table_depskai2: '开启全量断点续传时不支持开启自定义SQL。',
   packages_dag_nodes_table_depsd: '开启自定义SQL/过滤设置后，不支持开启全量断点续传。',
-  packages_dag_task_old_version_confirm: '检测到当前任务有更新，请刷新页面加载最新版本'
+  packages_dag_task_old_version_confirm: '检测到当前任务有更新，请刷新页面加载最新版本',
+  packages_dag_date_processor: '时间运算',
+  packages_dag_date_processor_data_types: '请选择您要运算的时间类型',
+  packages_dag_date_processor_method: '请选择运算方式',
+  packages_dag_date_processor_increase: '增加',
+  packages_dag_date_processor_decrease: '减少'
 }

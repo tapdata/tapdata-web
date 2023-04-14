@@ -216,7 +216,7 @@ export default {
           beta: true
         },
         {
-          name: '时间运算',
+          name: i18n.t('packages_dag_date_processor'),
           type: 'migrate_date_processor'
         }
       ])

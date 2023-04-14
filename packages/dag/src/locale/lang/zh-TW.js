@@ -572,5 +572,10 @@ export default {
   packages_dag_nodes_table_depskai: '開啟全量斷點續傳時不支持開啟過濾設置。 ',
   packages_dag_nodes_table_depskai2: '開啟全量斷點續傳時不支持開啟自定義SQL。 ',
   packages_dag_nodes_table_depsd: '開啟自定義SQL/過濾設置後，不支持開啟全量斷點續傳。 ',
-  packages_dag_task_old_version_confirm: '檢測到當前任務有更新，請刷新頁面加載最新版本'
+  packages_dag_task_old_version_confirm: '檢測到當前任務有更新，請刷新頁面加載最新版本',
+  packages_dag_date_processor: '時間運算',
+  packages_dag_date_processor_data_types: '請選擇您要運算的時間類型',
+  packages_dag_date_processor_method: '請選擇運算方式',
+  packages_dag_date_processor_increase: '增加',
+  packages_dag_date_processor_decrease: '減少'
 }
