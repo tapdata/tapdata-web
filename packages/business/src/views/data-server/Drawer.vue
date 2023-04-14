@@ -77,6 +77,7 @@
           prop="kennen"
         >
           <ListSelect
+            v-if="visible"
             :value.sync="form.appValue"
             :label.sync="form.appLabel"
             :disabled="!isEdit"
