@@ -221,9 +221,9 @@ import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
 import { mapGetters } from 'vuex'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
-import { debounce } from 'lodash'
+import { debounce, cloneDeep } from 'lodash'
 
-import { uniqueArr, downloadBlob, deepCopy, openUrl } from '@tap/shared'
+import { uniqueArr, downloadBlob, openUrl } from '@tap/shared'
 import Time from '@tap/shared/src/time'
 import { VIcon, TimeSelect, VCollapse } from '@tap/component'
 import VEmpty from '@tap/component/src/base/v-empty/VEmpty.vue'
@@ -603,7 +603,7 @@ export default {
     },
 
     getFormatRow(rowData = []) {
-      let result = deepCopy(rowData)
+      let result = cloneDeep(rowData)
       result.forEach(row => {
         row.timestampLabel = this.formatTime(row.date)
         row.expand = false

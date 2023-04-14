@@ -201,13 +201,13 @@
 </template>
 
 <script>
+import { cloneDeep } from 'lodash'
 import i18n from '@tap/i18n'
 
 import dayjs from 'dayjs'
 
 import { dataFlowInsightsApi, subtaskApi } from '@tap/api'
 import { VStep, VTable } from '@tap/component'
-import { deepCopy } from '@tap/shared'
 import { TASK_STATUS_MAP } from '@tap/business'
 
 import Milestone from './Milestone'
@@ -559,7 +559,7 @@ export default {
     getSyncOverViewData() {
       subtaskApi.syncOverView(this.id).then(data => {
         this.syncOverViewData = data || {}
-        this.$emit('sync', deepCopy(data))
+        this.$emit('sync', cloneDeep(data))
         this.syncOverViewData.finishDuration = this.handleTime(this.syncOverViewData?.finishDuration)
       })
     },

@@ -48,7 +48,7 @@ import { debounce } from 'lodash'
 
 import { TYPEMAP } from './tyepMap'
 import { VIcon } from '@tap/component'
-import { uniqueArr } from '@/util'
+import { uniqueArr } from '@tap/shared'
 import timeFunction from '@/mixins/timeFunction'
 import { notificationApi } from '@tap/api'
 import { ALARM_LEVEL_MAP } from '@tap/business'

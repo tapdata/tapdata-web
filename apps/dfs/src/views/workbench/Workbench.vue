@@ -134,7 +134,7 @@
         <div class="fs-7" style="color: #000">
           <span class="mr-4">{{ $t('workbench_statistics__sub_title') }}</span>
           <span class="mr-1">{{ $t('workbench_statistics__sub_title_label') }}</span>
-          <span class="color-primary" style="font-family: DIN">{{ numToThousands(taskInputNumber) }}</span>
+          <span class="color-primary" style="font-family: DIN">{{ taskInputNumber }}</span>
         </div>
         <div class="pr-4" style="height: 200px">
           <Chart type="pie" :extend="getLineOption()"></Chart>
@@ -196,7 +196,6 @@ import i18n from '@/i18n'
 
 import { connectionsApi, taskApi } from '@tap/api'
 import { VIcon, Chart } from '@tap/component'
-import { numToThousands } from '@/util'
 import timeFunction from '@/mixins/timeFunction'
 import CheckLicense from '@/views/aliyun-market/CheckLicnese'
 
@@ -494,7 +493,7 @@ export default {
         })
         .then(data => {
           const list = data.inputDataStatistics || []
-          this.taskInputNumber = data.totalInputDataCount || 0
+          this.taskInputNumber = (data.totalInputDataCount || 0).toLocaleString()
           this.lineDataX = list.map(el => el.time)
           this.lineDataY = list.map(el => {
             let value = el.count
@@ -544,9 +543,6 @@ export default {
         return
       }
       window.open(item.url, '_blank')
-    },
-    numToThousands() {
-      return numToThousands(...arguments)
     },
 
     //获取探索示例-背景图
@@ -646,7 +642,7 @@ export default {
             if (val === 1.1) {
               val = 1
             }
-            val = numToThousands(val)
+            val = val.toLocaleString()
             let html = val
             return html
           }

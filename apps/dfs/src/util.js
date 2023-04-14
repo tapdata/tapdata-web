@@ -2,83 +2,8 @@ import VConfirm from '@/components/v-confirm'
 import i18n from '@/i18n'
 import timeFunction from '@/mixins/timeFunction'
 
-export function toDecimal2(x) {
-  var float = parseFloat(x)
-  if (isNaN(float)) {
-    return false
-  }
-  var f = Math.round(x * 100) / 100
-  var s = f.toString()
-  var rs = s.indexOf('.')
-  if (rs < 0) {
-    rs = s.length
-    s += '.'
-  }
-  while (s.length <= rs + 2) {
-    s += '0'
-  }
-  return s
-}
-export function toRegExp(word) {
-  let arr = ['\\', '$', '(', ')', '*', '+', '.', '[', ']', '?', '^', '{', '}', '|', '-']
-  for (let i = 0; i < arr.length; i++) {
-    let str = '\\' + arr[i]
-    word = word.replace(new RegExp(str, 'g'), '\\' + arr[i])
-  }
-  return word
-}
-export const deepCopy = obj => JSON.parse(JSON.stringify(obj))
 export const formatTime = timeFunction.methods.formatTime
-// 根据类型做时间格式化，精确到哪种级别
-export const formatTimeByTime = (time, type) => {
-  let result = time
-  switch (type) {
-    case 'second':
-      result = formatTime(time, '', 'HH:mm:ss')
-      break
-    case 'minute':
-      result = formatTime(time, '', 'HH:mm')
-      break
-    case 'hour':
-      result = formatTime(time, '', 'HH:00')
-      break
-    case 'day':
-      result = formatTime(time, '', 'MM-DD')
-      break
-  }
-  return result
-}
 
-// 判断对象是否为空
-export const isEmpty = obj => Reflect.ownKeys(obj).length === 0 && obj.constructor === Object
-// 数组去重
-export function uniqueArr(arr = [], key = 'id') {
-  if (typeof arr[0] !== 'object') {
-    return Array.from(new Set(arr))
-  }
-  let obj = {}
-  return arr.reduce((cur, next) => {
-    if (!obj[next[key]]) {
-      obj[next[key]] = true
-      cur.push(next)
-    }
-    return cur
-  }, [])
-}
-let timeout = null
-export function delayTrigger(func, t) {
-  if (t) {
-    if (timeout) {
-      window.clearTimeout(timeout)
-    }
-    timeout = setTimeout(() => {
-      func && func()
-      timeout = null
-    }, t)
-  } else {
-    func && func()
-  }
-}
 // 支持的数据源 'mysql','mariadb','mysql pxc','mongodb','postgres','oracle','sqlserver','redis'
 // 不支持 'rest api','db2','sybase','gbase','gaussdb200','kafka','elasticsearch'
 export const TYPEMAP = {
@@ -104,69 +29,6 @@ export const TYPEMAP = {
   'mysql pxc': 'MySQL PXC',
   jira: 'jira',
   clickhouse: 'ClickHouse'
-}
-// 转base64
-export const urlToBase64 = url => {
-  return new Promise((resolve, reject) => {
-    let image = new Image()
-    image.onload = function () {
-      let canvas = document.createElement('canvas')
-      canvas.width = this.naturalWidth
-      canvas.height = this.naturalHeight
-      // 将图片插入画布并开始绘制
-      canvas.getContext('2d').drawImage(image, 0, 0)
-      // result
-      let result = canvas.toDataURL('image/png')
-      resolve(result)
-    }
-    // CORS 策略，会存在跨域问题https://stackoverflow.com/questions/20424279/canvas-todataurl-securityerror
-    image.setAttribute('crossOrigin', 'Anonymous')
-    image.src = url
-    // 图片加载失败的错误处理
-    image.onerror = () => {
-      reject(new Error('urlToBase64 error'))
-    }
-  })
-}
-// 千分符
-export const numToThousands = (num, index = 3, symbol = ',') => {
-  let reg = new RegExp('(?!^)(?=(\\d{' + index + '})+$)', 'g')
-  return String(num).replace(reg, symbol)
-}
-// 下载Blob
-export const downloadBlob = (res, name = '') => {
-  if (!res) {
-    return
-  }
-  const { data, headers } = res
-  const fileName = name || headers['content-disposition'].replace(/\w+;\s*filename="(.*)"/, '$1')
-  const blob = new Blob([data], { type: headers['content-type'] })
-  let dom = document.createElement('a')
-  let url = window.URL.createObjectURL(blob)
-  dom.href = url
-  dom.download = decodeURI(fileName)
-  dom.style.display = 'none'
-  document.body.appendChild(dom)
-  dom.click()
-  dom.parentNode.removeChild(dom)
-  window.URL.revokeObjectURL(url)
-}
-// 设置数据源
-export const setDatabaseTypes = (data = []) => {
-  localStorage.setItem('DatabaseTypes', JSON.stringify(data))
-}
-// 支持的数据源
-export const getDatabaseTypes = (mapping = false) => {
-  let str = localStorage.getItem('DatabaseTypes')
-  let result = str ? JSON.parse(str) : []
-  if (mapping) {
-    let obj = {}
-    result.forEach(el => {
-      obj[el.type] = el.name
-    })
-    return obj
-  }
-  return result
 }
 
 // 500错误弹窗
@@ -213,44 +75,41 @@ export const errorConfirmFnc = error => {
   })
 }
 
-export const addEvent = (target, eventType, handle) => {
-  if (document.addEventListener) {
-    target.addEventListener(eventType, handle)
-  } else {
-    target.attachEvent('on' + eventType, handle)
+// 毫秒换算成时分秒
+export const formatMs = (msTime = 0, type = 'time') => {
+  let time = msTime / 1000
+  let arr = []
+  arr.push({
+    label: i18n.t('public_time_d'),
+    value: Math.floor(time / 60 / 60 / 24)
+  }) // day
+  arr.push({
+    label: i18n.t('public_time_h'),
+    value: Math.floor(time / 60 / 60) % 24
+  }) // hour
+  arr.push({
+    label: i18n.t('public_time_m'),
+    value: Math.floor(time / 60) % 60
+  }) // minute
+  arr.push({
+    label: i18n.t('public_time_s'),
+    value: Math.floor(time) % 60
+  }) // second
+  let result = ''
+  if (type === 'time') {
+    result = arr
+      .slice(1)
+      .map(t => (t.value + '').padStart(2, '0'))
+      .join(':')
+    return result
   }
-}
-export function handleUnit(limit) {
-  if (!limit) return 0
-  var size = ''
-  if (limit < 0.1 * 1024) {
-    //小于0.1KB，则转化成B
-    size = limit.toFixed(1) + 'B'
-  } else if (limit < 0.1 * 1024 * 1024) {
-    //小于0.1MB，则转化成KB
-    size = (limit / 1024).toFixed(1) + 'KB'
-  } else if (limit < 0.1 * 1024 * 1024 * 1024) {
-    //小于0.1GB，则转化成MB
-    size = (limit / (1024 * 1024)).toFixed(1) + 'M'
-  } else {
-    //其他转化成GB
-    size = (limit / (1024 * 1024 * 1024)).toFixed(1) + 'G'
+  arr.forEach(el => {
+    if (el.value) {
+      result += el.value + el.label
+    }
+  })
+  if (!result) {
+    result = msTime + i18n.t('public_time_ms')
   }
-
-  var sizeStr = size + '' //转成字符串
-  var index = sizeStr.indexOf('.') //获取小数点处的索引
-  var dou = sizeStr.substr(index + 1, 1) //获取小数点后一位的值
-  if (dou === '00') {
-    //判断后两位是否为00，如果是则删除0
-    return sizeStr.substring(0, index) + sizeStr.substr(index + 2, 1)
-  }
-  return size
-}
-
-export const removeEvent = (target, eventType, handle) => {
-  if (document.removeEventListener) {
-    target.removeEventListener(eventType, handle)
-  } else {
-    target.detachEvent('on' + eventType, handle)
-  }
+  return result
 }

@@ -94,6 +94,7 @@
 </template>
 
 <script>
+import { cloneDeep } from 'lodash'
 import i18n from '@tap/i18n'
 
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
@@ -101,7 +102,7 @@ import { mapGetters } from 'vuex'
 import { debounce } from 'lodash'
 
 import { Chart } from '@tap/component'
-import { calcUnit, deepCopy } from '@tap/shared'
+import { calcUnit } from '@tap/shared'
 import Time from '@tap/shared/src/time'
 import { taskApi } from '@tap/api'
 import { VEmpty } from '@tap/component'
@@ -404,7 +405,7 @@ export default {
       // 只有第一页数据时，自动更新列表
       if (this.page === 1 && (!items.length || !flag)) {
         this.scrollTopOfDBList()
-        this.list = deepCopy(items).map((t, i) => {
+        this.list = cloneDeep(items).map((t, i) => {
           t.id = i + 1
           t.counts = t.counts.toLocaleString()
           return t

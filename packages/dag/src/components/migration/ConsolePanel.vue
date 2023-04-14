@@ -71,8 +71,8 @@
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import dayjs from 'dayjs'
+import { cloneDeep } from 'lodash'
 import i18n from '@tap/i18n'
-import { deepCopy } from '@tap/shared'
 
 import '@tap/component/src/directives/resize/index.scss'
 import resize from '@tap/component/src/directives/resize'
@@ -228,17 +228,17 @@ export default {
           let { resetTimes = 0, resetAllTimes = 0 } = el
           const rest = resetAllTimes - resetTimes
           if (rest) {
-            let startItem = deepCopy(item)
+            let startItem = cloneDeep(item)
             startItem.log = `${time} ${i18n.t('packages_dag_auto_reset_start', Object.assign({}, el, { rest }))}`
             result.push(startItem)
           }
           if (resetTimes) {
-            let nthItem = deepCopy(item)
+            let nthItem = cloneDeep(item)
             nthItem.log = `${time} ${i18n.t('packages_dag_auto_reset_start_nth', el)}`
             result.push(nthItem)
           }
           if (resetAllTimes && resetAllTimes === resetTimes) {
-            let resultItem = deepCopy(item)
+            let resultItem = cloneDeep(item)
             resultItem.log = `${time} ${i18n.t('packages_dag_auto_reset_start_result', el)}`
             result.push(resultItem)
           }

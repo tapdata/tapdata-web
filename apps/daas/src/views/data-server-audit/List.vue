@@ -61,8 +61,7 @@ import dayjs from 'dayjs'
 import { apiCallsApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage } from '@tap/business'
-
-import { toRegExp } from '../../utils/util'
+import { toRegExp } from '@tap/shared'
 
 export default {
   components: {

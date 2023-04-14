@@ -65,9 +65,10 @@
 </template>
 
 <script>
+import { cloneDeep } from 'lodash'
+
 import { subtaskApi } from '@tap/api'
 import { VIcon, VTable } from '@tap/component'
-import { deepCopy } from '@tap/shared'
 
 let timeout = null
 export default {
@@ -158,7 +159,7 @@ export default {
           let items = data || []
           let list = items.map(item => {
             item.status = item.status === 'edit' ? 'ready' : item.status
-            return deepCopy(item)
+            return cloneDeep(item)
           })
           return {
             total: list.length,

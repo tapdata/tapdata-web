@@ -183,8 +183,6 @@ export const os = (function () {
   }
 })()
 
-// 深拷贝
-export const deepCopy = obj => JSON.parse(JSON.stringify(obj))
 // 数组去重
 export function uniqueArr(arr = [], key = 'id') {
   if (typeof arr[0] !== 'object') {
@@ -269,4 +267,55 @@ export function generateId(len = 8) {
   const arr = new Uint8Array(len / 2)
   window.crypto.getRandomValues(arr)
   return Array.from(arr, dec2hex).join('')
+}
+
+// 转base64
+export const urlToBase64 = url => {
+  return new Promise((resolve, reject) => {
+    let image = new Image()
+    image.onload = function () {
+      let canvas = document.createElement('canvas')
+      canvas.width = this.naturalWidth
+      canvas.height = this.naturalHeight
+      // 将图片插入画布并开始绘制
+      canvas.getContext('2d').drawImage(image, 0, 0)
+      // result
+      let result = canvas.toDataURL('image/png')
+      resolve(result)
+    }
+    // CORS 策略，会存在跨域问题https://stackoverflow.com/questions/20424279/canvas-todataurl-securityerror
+    image.setAttribute('crossOrigin', 'Anonymous')
+    image.src = url
+    // 图片加载失败的错误处理
+    image.onerror = () => {
+      reject(new Error('urlToBase64 error'))
+    }
+  })
+}
+
+export function handleUnit(limit) {
+  if (!limit) return 0
+  var size = ''
+  if (limit < 0.1 * 1024) {
+    //小于0.1KB，则转化成B
+    size = limit.toFixed(1) + 'B'
+  } else if (limit < 0.1 * 1024 * 1024) {
+    //小于0.1MB，则转化成KB
+    size = (limit / 1024).toFixed(1) + 'KB'
+  } else if (limit < 0.1 * 1024 * 1024 * 1024) {
+    //小于0.1GB，则转化成MB
+    size = (limit / (1024 * 1024)).toFixed(1) + 'M'
+  } else {
+    //其他转化成GB
+    size = (limit / (1024 * 1024 * 1024)).toFixed(1) + 'G'
+  }
+
+  var sizeStr = size + '' //转成字符串
+  var index = sizeStr.indexOf('.') //获取小数点处的索引
+  var dou = sizeStr.substr(index + 1, 1) //获取小数点后一位的值
+  if (dou === '00') {
+    //判断后两位是否为00，如果是则删除0
+    return sizeStr.substring(0, index) + sizeStr.substr(index + 2, 1)
+  }
+  return size
 }

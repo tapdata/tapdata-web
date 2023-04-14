@@ -178,9 +178,7 @@ import dayjs from 'dayjs'
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage } from '@tap/business'
-import { delayTrigger } from '@tap/shared'
-
-import { toRegExp } from '../../utils/util'
+import { delayTrigger, toRegExp } from '@tap/shared'
 
 export default {
   components: {

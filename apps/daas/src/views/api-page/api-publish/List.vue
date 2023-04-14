@@ -189,8 +189,7 @@ import dayjs from 'dayjs'
 import { modulesApi, workerApi, metadataInstancesApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage, UploadDialog } from '@tap/business'
-
-import { toRegExp } from '@/utils/util'
+import { toRegExp } from '@tap/shared'
 import { STATUS_MAP } from '../const'
 
 export default {

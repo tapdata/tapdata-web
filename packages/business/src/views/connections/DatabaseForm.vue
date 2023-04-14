@@ -123,7 +123,7 @@ import i18n from '@tap/i18n'
 import { clusterApi, connectionsApi, databaseTypesApi, pdkApi, externalStorageApi, proxyApi } from '@tap/api'
 import { VIcon, GitBook } from '@tap/component'
 import { SchemaToForm } from '@tap/form'
-import { checkConnectionName, isEmpty, openUrl, submitForm } from '@tap/shared'
+import { checkConnectionName, isEmpty, submitForm } from '@tap/shared'
 import resize from '@tap/component/src/directives/resize'
 
 import Test from './Test'

@@ -100,8 +100,7 @@ const zhTWSource = i18n.messages?.['zh-TW'] || {}
 const enSource = i18n.messages?.['en'] || {}
 
 import UploadFile from '@/components/UploadFile'
-import { downloadBlob } from '@/util'
-import { delayTrigger } from '@tap/shared'
+import { downloadBlob, delayTrigger } from '@tap/shared'
 
 export default {
   name: 'Lang',

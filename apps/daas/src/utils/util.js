@@ -34,15 +34,6 @@ export function signOut() {
   return null
 }
 
-export function toRegExp(word) {
-  let arr = ['\\', '$', '(', ')', '*', '+', '.', '[', ']', '?', '^', '{', '}', '|', '-']
-  for (let i = 0; i < arr.length; i++) {
-    let str = '\\' + arr[i]
-    word = word.replace(new RegExp(str, 'g'), '\\' + arr[i])
-  }
-  return word
-}
-
 export function getUrlSearch(name) {
   // 未传参，返回空
   if (!name) return null
@@ -66,26 +57,6 @@ export const formatTime = (date, format = 'YYYY-MM-DD HH:mm:ss') => {
   return date ? dayjs(date).format(format) : ''
 }
 
-// TODO 去掉
-// 根据类型做时间格式化，精确到哪种级别
-export const formatTimeByTime = (time, type) => {
-  let result = time
-  switch (type) {
-    case 'second':
-      result = dayjs(time).format('HH:mm:ss')
-      break
-    case 'minute':
-      result = dayjs(time).format('HH:mm')
-      break
-    case 'hour':
-      result = dayjs(time).format('HH:00')
-      break
-    case 'day':
-      result = dayjs(time).format('MM-DD')
-      break
-  }
-  return result
-}
 // TODO 去掉
 // 毫秒换算成时分秒
 export const formatMs = (msTime = 0, type = 'time') => {
@@ -140,31 +111,4 @@ export function toThousandsUnit(val) {
   } else {
     return val
   }
-}
-
-export function handleUnit(limit) {
-  if (!limit) return 0
-  var size = ''
-  if (limit < 0.1 * 1024) {
-    //小于0.1KB，则转化成B
-    size = limit.toFixed(1) + 'B'
-  } else if (limit < 0.1 * 1024 * 1024) {
-    //小于0.1MB，则转化成KB
-    size = (limit / 1024).toFixed(1) + 'KB'
-  } else if (limit < 0.1 * 1024 * 1024 * 1024) {
-    //小于0.1GB，则转化成MB
-    size = (limit / (1024 * 1024)).toFixed(1) + 'M'
-  } else {
-    //其他转化成GB
-    size = (limit / (1024 * 1024 * 1024)).toFixed(1) + 'G'
-  }
-
-  var sizeStr = size + '' //转成字符串
-  var index = sizeStr.indexOf('.') //获取小数点处的索引
-  var dou = sizeStr.substr(index + 1, 1) //获取小数点后一位的值
-  if (dou === '00') {
-    //判断后两位是否为00，如果是则删除0
-    return sizeStr.substring(0, index) + sizeStr.substr(index + 2, 1)
-  }
-  return size
 }

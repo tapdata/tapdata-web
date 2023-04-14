@@ -141,8 +141,7 @@ import { cloneDeep } from 'lodash'
 import { roleApi, applicationApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage } from '@tap/business'
-
-import { toRegExp } from '../../utils/util'
+import { toRegExp } from '@tap/shared'
 
 export default {
   name: 'Applications',

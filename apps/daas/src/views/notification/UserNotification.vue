@@ -78,7 +78,7 @@
 <script>
 import UserOperation from './UserOperation'
 import { DatetimeRange, SelectList } from '@tap/component'
-import { toRegExp } from '../../utils/util'
+import { toRegExp } from '@tap/shared'
 import Cookie from '@tap/shared/src/cookie'
 import dayjs from 'dayjs'
 import { userLogsApi, usersApi } from '@tap/api'

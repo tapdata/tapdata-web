@@ -50,9 +50,10 @@
 </template>
 
 <script>
+import { cloneDeep } from 'lodash'
+
 import { connectionsApi } from '@tap/api'
 import { VIcon, VTable } from '@tap/component'
-import { deepCopy } from '@tap/shared'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 
 import ConnectionTest from '../../../connections/Test.vue'
@@ -144,7 +145,7 @@ export default {
         .then(data => {
           let list = (data?.items || []).map(item => {
             item.connectType = this.connectTypeMap[item.connection_type]
-            return deepCopy(item)
+            return cloneDeep(item)
           })
           return {
             total: data?.total || 0,

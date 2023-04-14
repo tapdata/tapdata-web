@@ -170,9 +170,11 @@
 </template>
 
 <script>
+import { cloneDeep } from 'lodash'
+
 import i18n from '@/i18n'
 
-import { deepCopy, uniqueArr } from '@/util'
+import { uniqueArr } from '@tap/shared'
 import { Select } from 'element-ui'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
@@ -328,9 +330,9 @@ export default {
         if (typeof items === 'function') {
           this.list = await this.items()
         } else {
-          this.list = deepCopy(this.items)
+          this.list = cloneDeep(this.items)
         }
-        this.filteredItems = deepCopy(this.list)
+        this.filteredItems = cloneDeep(this.list)
         this.getSelectLabel()
       }
     },
@@ -375,7 +377,7 @@ export default {
      * */
     getData(val, isSearch = false, isEcho = false) {
       let { size, page } = this.pageObj
-      let filter = deepCopy(
+      let filter = cloneDeep(
         Object.assign({}, this.params, {
           size: size,
           page: page
@@ -474,7 +476,7 @@ export default {
               return item.label.indexOf(val) !== -1
             })
           } else {
-            this.filteredItems = deepCopy(this.list)
+            this.filteredItems = cloneDeep(this.list)
           }
         }
 

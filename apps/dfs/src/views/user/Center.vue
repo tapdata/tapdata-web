@@ -554,13 +554,12 @@ import i18n from '@/i18n'
 import InlineInput from '@/components/InlineInput'
 import VerificationCode from '@/components/VerificationCode'
 import UploadFile from '@/components/UploadFile'
-import { urlToBase64 } from '@/util'
 import CryptoJS from 'crypto-js'
 import dayjs from 'dayjs'
 import { VTable } from '@tap/component'
 import { getSpec, getPaymentMethod } from '../instance/utils'
 import { ORDER_STATUS_MAP, CURRENCY_SYMBOL_MAP, NUMBER_MAP, TIME_MAP } from '@tap/business'
-import { openUrl } from '@tap/shared'
+import { openUrl, urlToBase64 } from '@tap/shared'
 
 export default {
   name: 'Center',

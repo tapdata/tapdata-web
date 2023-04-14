@@ -49,10 +49,9 @@
 
 <script>
 import { VIcon, FilterBar, VTable } from '@tap/component'
-import { delayTrigger, toRegExp } from '@tap/shared'
+import { delayTrigger, toRegExp, isEmpty } from '@tap/shared'
 
 import i18n from '@/i18n'
-import { isEmpty } from '@/util'
 
 export default {
   components: { VIcon, FilterBar, VTable },

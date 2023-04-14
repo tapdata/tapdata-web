@@ -246,7 +246,7 @@
 </template>
 
 <script>
-import { openUrl, uniqueArr } from '@tap/shared'
+import { uniqueArr } from '@tap/shared'
 import { VTable } from '@tap/component'
 import { getPaymentMethod, getSpec } from '../instance/utils'
 import { CURRENCY_SYMBOL_MAP, TIME_MAP, CURRENCY_MAP } from '@tap/business'

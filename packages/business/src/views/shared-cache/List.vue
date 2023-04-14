@@ -127,8 +127,7 @@ import dayjs from 'dayjs'
 import { sharedCacheApi, taskApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage, TaskStatus, makeStatusAndDisabled } from '@tap/business'
-
-import { toRegExp } from '@/utils/util'
+import { toRegExp } from '@tap/shared'
 
 import Editor from './Editor'
 import Details from './Details'
