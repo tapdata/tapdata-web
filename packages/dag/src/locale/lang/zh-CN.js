@@ -582,5 +582,7 @@ export default {
   packages_dag_date_processor_data_types: '请选择您要运算的时间类型',
   packages_dag_date_processor_method: '请选择运算方式',
   packages_dag_date_processor_increase: '增加',
-  packages_dag_date_processor_decrease: '减少'
+  packages_dag_date_processor_decrease: '减少',
+  packages_dag_nodes_table_shiligro: '示例: {"$group": { "_id": "$name", totalQuantity: { $sum: "$quantity" } }}',
+  packages_dag_nodes_table_jinzhichiqu: '仅支持query, 例如: { "_id": "apples", "qty": 5 }'
 }

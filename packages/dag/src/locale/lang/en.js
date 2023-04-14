@@ -620,5 +620,7 @@ export default {
   packages_dag_date_processor_data_types: 'Please select the type of time you want to calculate',
   packages_dag_date_processor_method: 'Please select the calculation method',
   packages_dag_date_processor_increase: 'Increase',
-  packages_dag_date_processor_decrease: 'Decrease'
+  packages_dag_date_processor_decrease: 'Decrease',
+  packages_dag_nodes_table_shiligro: 'Example: {"$group": { "_id": "$name", totalQuantity: { $sum: "$quantity" } }}',
+  packages_dag_nodes_table_jinzhichiqu: 'Only support query, for example: { "_id": "apples", "qty": 5 }'
 }

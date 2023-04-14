@@ -18,7 +18,7 @@ const getState = function () {
 
 // 初始化 state
 const state = getState()
-console.log(state, '当前分类标签store')
+console.log(state, 'init current store')
 
 // getters
 const getters = {

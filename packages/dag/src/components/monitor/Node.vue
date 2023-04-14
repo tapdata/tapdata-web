@@ -1,4 +1,4 @@
-{{$t('packages_dag_monitor_node_elpop')}}{{$t('packages_dag_monitor_node_impor')}}<script>
+<script>
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn'
 import relativeTime from 'dayjs/plugin/relativeTime'

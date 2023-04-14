@@ -579,7 +579,7 @@ export class Table extends NodeType {
                               filter: {
                                 type: 'string',
                                 'x-decorator': 'FormItem',
-                                description: '仅支持query, 例如: { "_id": "apples", "qty": 5 }',
+                                description: i18n.t('packages_dag_nodes_table_jinzhichiqu'),
                                 'x-component': 'JsonEditor',
                                 'x-component-props': {
                                   options: { showPrintMargin: false, useWrapMode: true }
@@ -611,8 +611,7 @@ export class Table extends NodeType {
                               pipeline: {
                                 type: 'string',
                                 'x-decorator': 'FormItem',
-                                description:
-                                  '示例: {"$group": { "_id": "$name", totalQuantity: { $sum: "$quantity" } }}',
+                                description: i18n.t('packages_dag_nodes_table_shiligro'),
                                 'x-component': 'JsonEditor',
                                 'x-component-props': {
                                   options: { showPrintMargin: false, useWrapMode: true }
