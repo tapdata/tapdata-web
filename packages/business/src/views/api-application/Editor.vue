@@ -110,7 +110,7 @@ export default {
       this.$refs.form?.validate(valid => {
         if (valid) {
           this.saveLoading = true
-          ;(this.taskId ? appApi.patch(this.editForm) : appApi.post(this.editForm))
+          ;(this.taskId ? appApi.updateById(this.taskId, this.editForm) : appApi.post(this.editForm))
             .then(() => {
               this.$emit('success', ...arguments)
               this.$message.success(this.$t('public_message_save_ok'))
