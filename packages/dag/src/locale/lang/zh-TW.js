@@ -571,5 +571,6 @@ export default {
   packages_dag_nodes_database_quanliangduandianxu: '全量斷點續傳',
   packages_dag_nodes_table_depskai: '開啟全量斷點續傳時不支持開啟過濾設置。 ',
   packages_dag_nodes_table_depskai2: '開啟全量斷點續傳時不支持開啟自定義SQL。 ',
-  packages_dag_nodes_table_depsd: '開啟自定義SQL/過濾設置後，不支持開啟全量斷點續傳。 '
+  packages_dag_nodes_table_depsd: '開啟自定義SQL/過濾設置後，不支持開啟全量斷點續傳。 ',
+  packages_dag_task_old_version_confirm: '檢測到當前任務有更新，請刷新頁面加載最新版本'
 }

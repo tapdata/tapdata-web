@@ -576,5 +576,6 @@ export default {
   packages_dag_nodes_database_quanliangduandianxu: '全量断点续传',
   packages_dag_nodes_table_depskai: '开启全量断点续传时不支持开启过滤设置。',
   packages_dag_nodes_table_depskai2: '开启全量断点续传时不支持开启自定义SQL。',
-  packages_dag_nodes_table_depsd: '开启自定义SQL/过滤设置后，不支持开启全量断点续传。'
+  packages_dag_nodes_table_depsd: '开启自定义SQL/过滤设置后，不支持开启全量断点续传。',
+  packages_dag_task_old_version_confirm: '检测到当前任务有更新，请刷新页面加载最新版本'
 }

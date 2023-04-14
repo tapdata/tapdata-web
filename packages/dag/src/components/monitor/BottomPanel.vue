@@ -119,7 +119,7 @@ export default {
             name
           }
         })
-        this.updateDag()
+        this.updateDag({ vm: this })
       } else {
         this.name = this.activeNode.name
       }

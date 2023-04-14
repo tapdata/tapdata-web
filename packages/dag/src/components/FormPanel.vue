@@ -223,7 +223,7 @@ export default {
         id: form.values.id,
         properties: JSON.parse(JSON.stringify(formValues))
       })
-      this.updateDag()
+      this.updateDag({ vm: this })
       clearTimeout(this.confirmTimer)
       this.confirmTimer = setTimeout(() => this.confirmNodeHasError(), 10)
     },
