@@ -8,7 +8,6 @@
     top="10vh"
     custom-class="connection-dialog ldp-conection-dialog flex flex-column"
     @close="handleClose"
-    @open="handleOpen"
   >
     <Form ref="form" :task-id="taskId" :loading.sync="loading" class="mt-n6" @success="handleSuccess"></Form>
     <span class="dialog-footer" slot="footer">
@@ -28,17 +27,10 @@ export default {
 
   components: { Form },
 
-  props: {
-    visible: {
-      required: true,
-      value: Boolean
-    },
-    taskId: {
-      type: String
-    }
-  },
   data() {
     return {
+      visible: false,
+      taskId: '',
       loading: false
     }
   },
@@ -49,13 +41,14 @@ export default {
       })
     },
 
-    handleOpen() {
+    open(id) {
+      this.taskId = id
       this.init()
+      this.visible = true
     },
 
     handleClose() {
-      this.$emit('visible', false)
-      this.$emit('update:visible', false)
+      this.visible = false
     },
 
     handleSave() {

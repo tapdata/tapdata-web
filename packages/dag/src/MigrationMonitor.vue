@@ -159,6 +159,8 @@
       ></SharedMiningEditor>
 
       <SharedCacheDetails ref="sharedCacheDetails" width="380px"></SharedCacheDetails>
+
+      <SharedCacheEditor ref="sharedCacheEditor"></SharedCacheEditor>
     </section>
   </section>
 </template>
@@ -180,6 +182,7 @@ import { ALARM_LEVEL_SORT, TASK_STATUS_MAP } from '@tap/business'
 import Time from '@tap/shared/src/time'
 import SharedMiningEditor from '@tap/business/src/views/shared-mining/Editor'
 import SharedCacheDetails from '@tap/business/src/views/shared-cache/Details'
+import SharedCacheEditor from '@tap/business/src/views/shared-cache/Editor'
 
 import PaperScroller from './components/PaperScroller'
 import TopHeader from './components/monitor/TopHeader'
@@ -221,7 +224,8 @@ export default {
     NodeDetailDialog,
     ConsolePanel,
     SharedMiningEditor,
-    SharedCacheDetails
+    SharedCacheDetails,
+    SharedCacheEditor
   },
 
   data() {
@@ -609,6 +613,11 @@ export default {
     },
 
     handleEdit() {
+      // 共享缓存
+      if (this.dataflow.shareCache) {
+        this.$refs.sharedCacheEditor.open(this.dataflow.id)
+        return
+      }
       switch (this.dataflow.syncType) {
         case 'migrate':
           this.$router.push({

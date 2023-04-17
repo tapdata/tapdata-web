@@ -117,7 +117,7 @@
         </template>
       </ElTableColumn>
     </TablePage>
-    <Editor :task-id="selected.id" :visible.sync="visible" @success="table.fetch(1)"></Editor>
+    <Editor ref="editor" @success="table.fetch(1)"></Editor>
     <Details ref="details" width="380px"></Details>
   </section>
 </template>
@@ -156,11 +156,7 @@ export default {
       order: 'cacheTimeAt DESC',
       taskBuried: {
         start: 'sharedMiningStart'
-      },
-      selected: {
-        id: ''
-      },
-      visible: false
+      }
     }
   },
   computed: {
@@ -287,8 +283,7 @@ export default {
     },
 
     handleEditor(row = {}) {
-      this.selected = row
-      this.visible = true
+      this.$refs.editor.open(row.id)
     },
 
     openRoute(route, newTab = true) {
