@@ -132,6 +132,7 @@ import { toRegExp } from '@tap/shared'
 import Editor from './Editor'
 import Details from './Details'
 
+let timeout = null
 export default {
   inject: ['buried'],
   components: { TablePage, FilterBar, TaskStatus, Editor, Details },
@@ -168,6 +169,15 @@ export default {
     '$route.query'() {
       this.table.fetch(1)
     }
+  },
+  mounted() {
+    //定时轮询
+    timeout = setInterval(() => {
+      this.table.fetch(null, 0, true)
+    }, 8000)
+  },
+  destroyed() {
+    clearInterval(timeout)
   },
   methods: {
     getData({ page }) {
