@@ -71,6 +71,7 @@ const getState = () => ({
 
   dagPromise: null,
   editVersion: null,
+  pageVersion: Date.now().toString(),
 
   canBeConnectedNodeIds: [],
   LOCALES_STORE: observable.ref({}),
@@ -230,6 +231,7 @@ const actions = {
         {
           id: state.taskId,
           editVersion: state.editVersion,
+          pageVersion: state.pageVersion,
           dag: state.dag
         },
         {
