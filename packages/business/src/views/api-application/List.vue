@@ -206,7 +206,7 @@ export default {
               } else {
                 item.pointTime = item.syncTimeZone
               }
-              item.createTime = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+              item.createTime = item.createTime ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') : '-'
               item.logTime = item.logTime ? dayjs(item.logTime).format('YYYY-MM-DD HH:mm:ss') : '-'
               item.delayTime = item.delayTime < 0 ? '-' : item.delayTime
               makeStatusAndDisabled(item)
