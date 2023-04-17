@@ -167,7 +167,7 @@
       </span>
     </el-dialog>
 
-    <Editor :task-id="editForm.id" :visible.sync="editDialogVisible" @success="table.fetch(1)"></Editor>
+    <Editor ref="editor" @success="table.fetch(1)"></Editor>
   </section>
 </template>
 
@@ -209,7 +209,6 @@ export default {
       order: 'createTime DESC',
       list: null,
       settingDialogVisible: false,
-      editDialogVisible: false,
       loadingConfig: false,
       digSettingForm: {
         persistenceMode: 'Mem', // 存储模式
@@ -219,9 +218,6 @@ export default {
         share_cdc_ttl_day: 3
       },
       enumsItems: ['Mem', 'MongoDB', 'RocksDB'],
-      editForm: {
-        id: ''
-      },
       logSaveList: [1, 2, 3, 4, 5, 6, 7],
       showEditSettingBtn: false, //禁用
       rules: {
@@ -416,8 +412,7 @@ export default {
     },
 
     handleEditor(task = {}) {
-      this.editDialogVisible = true
-      this.editForm.id = task.id
+      this.$refs.editor.open(task.id)
     },
 
     openRoute(route, newTab = true) {

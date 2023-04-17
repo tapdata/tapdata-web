@@ -1,13 +1,12 @@
 <template>
   <ElDialog
-    :title="title"
+    :title="$t('packages_business_shared_list_edit_title')"
     :visible="visible"
     :append-to-body="true"
     width="800px"
     top="10vh"
     custom-class="connection-dialog ldp-conection-dialog flex flex-column"
     @close="handleClose"
-    @open="handleOpen"
   >
     <ElForm
       v-loading="loading"
@@ -51,30 +50,16 @@
 </template>
 
 <script>
-import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
 import { logcollectorApi } from '@tap/api'
 
 export default {
   name: 'Editor',
-  props: {
-    title: {
-      type: String,
-      default: () => {
-        return i18n.t('packages_business_shared_list_edit_title')
-      }
-    },
-    visible: {
-      required: true,
-      value: Boolean
-    },
-    taskId: {
-      required: true,
-      value: Boolean
-    }
-  },
+
   data() {
     return {
+      visible: false,
+      taskId: '',
       loading: false,
       editForm: {
         id: '',
@@ -97,6 +82,7 @@ export default {
       ]
     }
   },
+
   methods: {
     init() {
       this.editForm = {
@@ -146,13 +132,14 @@ export default {
         })
     },
 
-    handleOpen() {
+    open(id) {
+      this.taskId = id
       this.init()
+      this.visible = true
     },
 
     handleClose() {
-      this.$emit('visible', false)
-      this.$emit('update:visible', false)
+      this.visible = false
     },
 
     handleSave() {

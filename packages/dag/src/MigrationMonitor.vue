@@ -154,13 +154,12 @@
 
       <SharedMiningEditor
         v-if="['logCollector'].includes(dataflow.syncType)"
-        :task-id="dataflow.id"
-        :visible.sync="sharedMiningEditorVisible"
+        ref="sharedMiningEditor"
       ></SharedMiningEditor>
 
       <SharedCacheDetails ref="sharedCacheDetails" width="380px"></SharedCacheDetails>
 
-      <SharedCacheEditor ref="sharedCacheEditor"></SharedCacheEditor>
+      <SharedCacheEditor v-if="dataflow.shareCache" ref="sharedCacheEditor"></SharedCacheEditor>
     </section>
   </section>
 </template>
@@ -279,8 +278,7 @@ export default {
       taskRecord: {
         total: 0,
         items: []
-      },
-      sharedMiningEditorVisible: false
+      }
     }
   },
 
@@ -632,7 +630,7 @@ export default {
           })
           break
         case 'logCollector':
-          this.sharedMiningEditorVisible = true
+          this.$refs.sharedMiningEditor.open(this.dataflow.id)
           break
       }
     },
