@@ -204,16 +204,6 @@
                 <span class="label-code mb-2">{{ $t('dfs_aliyun_market_license_shouquanma') }}</span>
                 <el-input v-model="licenseCode" type="textarea" rows="2" autofocus></el-input>
               </div>
-              <el-button class="mt-4" style="margin-left: 65px" type="primary" :loading="saveLoading" @click="save()"
-                >{{ $t('dfs_aliyun_market_license_jihuo')
-                }}{{ $t('dfs_agent_download_subscriptionmodeldialog_bingbushu') }}</el-button
-              >
-              <span
-                v-if="codeData.length > 0"
-                class="ml-4 mt-4 cursor-pointer font-color-light"
-                @click="handleNewCode(true)"
-                >{{ $t('dfs_agent_download_subscriptionmodeldialog_ninyouyijihuo') }}</span
-              >
             </div>
           </div>
         </section>
@@ -256,6 +246,13 @@
       <el-link v-if="activeStep === 1" type="primary" @click="changeProductType">{{
         $t('dfs_agent_download_subscriptionmodeldialog_zhijieshiyonga')
       }}</el-link>
+
+      <el-link
+        v-if="activeStep === 2 && productType === 'aliyun' && !hiddenNewCode && codeData.length > 0"
+        type="primary"
+        @click="handleNewCode(true)"
+        >{{ $t('dfs_agent_download_subscriptionmodeldialog_ninyouyijihuo') }}</el-link
+      >
       <div class="flex-grow-1"></div>
 
       <el-button v-if="activeStep > 1" @click="prevStep">{{ $t('public_button_previous') }}</el-button>
@@ -267,6 +264,12 @@
         <el-button v-else-if="activeStep === steps.length" type="primary" @click="submit()">{{
           $t('public_button_confirm')
         }}</el-button>
+      </template>
+      <template v-else>
+        <el-button v-if="!hiddenNewCode" type="primary" :loading="saveLoading" @click="save()"
+          >{{ $t('dfs_aliyun_market_license_jihuo')
+          }}{{ $t('dfs_agent_download_subscriptionmodeldialog_bingbushu') }}</el-button
+        >
       </template>
     </div>
   </el-dialog>

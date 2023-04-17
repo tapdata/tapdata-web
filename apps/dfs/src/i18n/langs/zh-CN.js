@@ -1232,7 +1232,7 @@ export default {
   dfs_user_center_jijiangguoqi: '即将过期',
   dfs_plugins_element_chongfuxiaoxi: '重复消息',
   dfs_aliyun_market_license_aliyunshichang: '阿里云市场',
-  dfs_aliyun_market_license_dianjidakai: '1.点击打开',
+  dfs_aliyun_market_license_dianjidakai: '1. 点击打开',
   dfs_instance_create_kexuan: '（可选）',
   dfs_instance_create_yongyujieshoumei: '用于接收每期订阅支付账单',
   dfs_instance_create_qingshuruzhengque: '请输入正确的邮箱地址',
