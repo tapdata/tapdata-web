@@ -20,7 +20,7 @@
     <div class="subscription-steps-content mt-4">
       <div v-if="activeStep === 1" class="flex gap-6 px-5">
         <div
-          class="product-type-card rounded-xl border flex flex-column flex-1 position-relative overflow-hidden"
+          class="product-type-card rounded-xl border flex flex-column flex-1 position-relative overflow-hidden clickable"
           :class="{
             active: productType === 'selfHost'
           }"
@@ -60,7 +60,7 @@
           </div>
         </div>
         <div
-          class="product-type-card rounded-xl border flex flex-column flex-1 position-relative overflow-hidden disabled"
+          class="product-type-card rounded-xl border flex flex-column flex-1 position-relative overflow-hidden clickable disabled"
           :class="{
             active: productType === 'fullManagement'
           }"
@@ -236,7 +236,7 @@
                 {{ specMap[currentSpecName] || currentSpecName }}
               </span>
             </ElFormItem>
-            <ElFormItem :label="$t('dfs_instance_instance_dingyuefangshi')">
+            <ElFormItem :label="$t('dfs_instance_instance_dingyuefangshi') + ':'">
               <span class="font-color-dark">
                 {{ selected.label }}
               </span>
@@ -765,8 +765,7 @@ export default {
   height: 467px;
 }
 .aliyun-main {
-  padding: 20px 40px;
-  height: 541px;
+  padding: 0 40px;
 }
 .width50 {
   width: 50%;
@@ -938,6 +937,7 @@ export default {
   &.disabled {
     background-color: #fafafa;
     border-width: 0 !important;
+    cursor: not-allowed;
 
     .product-type-card-title {
       color: #86909c !important;
