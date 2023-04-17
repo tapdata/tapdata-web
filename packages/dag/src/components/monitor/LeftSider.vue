@@ -344,7 +344,7 @@ import InitialList from './components/InitialList'
 import dayjs from 'dayjs'
 import { calcTimeUnit, calcUnit } from '@tap/shared'
 import Time from '@tap/shared/src/time'
-import { logcollectorApi, sharedCacheApi } from '@tap/api'
+import { logcollectorApi, sharedCacheApi, externalStorageApi } from '@tap/api'
 
 export default {
   name: 'LeftSider',
@@ -621,28 +621,30 @@ export default {
 
     getSharedCacheData(id) {
       sharedCacheApi.findOne(id).then(data => {
-        this.infoList = [
-          {
-            label: i18n.t('packages_dag_monitor_leftsider_huancunkaishishi'),
-            key: ''
-          },
-          {
-            label: i18n.t('public_external_memory_name'),
-            value: data['name']
-          },
-          {
-            label: i18n.t('public_external_memory_type'),
-            key: ''
-          },
-          {
-            label: i18n.t('public_external_memory_table'),
-            value: data['tableName']
-          },
-          {
-            label: i18n.t('public_external_memory_connection'),
-            value: data['connectionName']
-          }
-        ]
+        externalStorageApi.get(data.externalStorageId).then((ext = {}) => {
+          this.infoList = [
+            // {
+            //   label: i18n.t('packages_dag_monitor_leftsider_huancunkaishishi'),
+            //   value: dayjs(data.createTime).format('YYYY-MM-DD HH:mm:ss')
+            // },
+            {
+              label: i18n.t('public_external_memory_name'),
+              value: data['name']
+            },
+            {
+              label: i18n.t('public_external_memory_type'),
+              value: ext.name
+            },
+            {
+              label: i18n.t('public_external_memory_table'),
+              value: data['tableName']
+            },
+            {
+              label: i18n.t('public_external_memory_connection'),
+              value: data['connectionName']
+            }
+          ]
+        })
       })
     },
 
