@@ -55,7 +55,7 @@
             }}</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn width="200" :label="$t('dfs_instance_instance_daoqishijian')">
+        <ElTableColumn width="160" :label="$t('dfs_instance_instance_daoqishijian')">
           <template slot-scope="scope">
             <div>
               <ElTooltip
@@ -135,7 +135,7 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn :label="$t('public_version')" width="140">
+        <ElTableColumn :label="$t('public_version')" width="100">
           <template slot-scope="scope">
             <div class="flex align-items-center">
               <span v-if="showVersionFlag(scope.row)">{{ scope.row.spec && scope.row.spec.version }}</span>
@@ -193,11 +193,11 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="createAt" sortable="custom" :label="$t('public_create_time')" width="180">
-          <template slot-scope="scope">
-            <span>{{ formatTime(scope.row.createAt) }}</span>
-          </template>
-        </ElTableColumn>
+        <!--        <ElTableColumn prop="createAt" sortable="custom" :label="$t('public_create_time')" width="180">-->
+        <!--          <template slot-scope="scope">-->
+        <!--            <span>{{ formatTime(scope.row.createAt) }}</span>-->
+        <!--          </template>-->
+        <!--        </ElTableColumn>-->
         <ElTableColumn :label="$t('public_operation')" width="200">
           <template slot-scope="scope">
             <ElButton
@@ -219,44 +219,9 @@
             <ElButton
               size="mini"
               type="text"
-              v-if="
-                scope.row.cancelSubscribe &&
-                scope.row.orderInfo.paidSubscribeDto &&
-                scope.row.orderInfo.paidSubscribeDto.type === 'recurring'
-              "
-              :loading="scope.row.btnLoading.delete"
-              @click="cancelPaidSubscribe(scope.row)"
-              >{{ $t('dfs_instance_instance_quxiaodingyue') }}</ElButton
-            >
-            <ElButton
-              size="mini"
-              type="text"
-              v-if="
-                !scope.row.cancelSubscribe &&
-                scope.row.orderInfo.paidSubscribeDto &&
-                scope.row.orderInfo.paidSubscribeDto.type === 'recurring'
-              "
               :loading="scope.row.btnLoading.delete"
               :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
-              @click="handleDel(scope.row)"
-              >{{ $t('public_button_delete') }}</ElButton
-            >
-            <ElButton
-              size="mini"
-              type="text"
-              v-if="scope.row.orderInfo.type === 'one_time'"
-              :loading="scope.row.btnLoading.delete"
-              :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
-              @click="handleUnsubscribe(scope.row)"
-              >{{ $t('public_button_unsubscribe') }}</ElButton
-            >
-            <ElButton
-              size="mini"
-              type="text"
-              v-if="!scope.row.orderInfo.chargeProvider"
-              :loading="scope.row.btnLoading.delete"
-              :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
-              @click="handleUnsubscribe(scope.row)"
+              @click="getUnsubscribePrice(scope.row)"
               >{{ $t('public_button_unsubscribe') }}</ElButton
             >
           </template>
@@ -406,6 +371,46 @@
       ></SelectListDialog>
       <!-- 新的创建实例 -->
       <SubscriptionModelDialog :visible.sync="subscriptionModelVisible"></SubscriptionModelDialog>
+      <ElDialog :visible.sync="showUnsubscribeDetailVisible" title="退订实例">
+        <section>
+          <ul class="subscription-ul">
+            <li class="mt-2">1.退订金额计算公式请查看 退订规则说明。</li>
+            <li class="mt-2">2.退订只退还实付金额的部分，已使用优惠卷不退还。</li>
+            <li class="mt-2">3.请仔细核对退订实例的信息，并确认退订规则和退订金额，实例一经退订无法恢复。</li>
+          </ul>
+          <div class="mt-4 fs-6 font-color-dark">退订实例</div>
+          <VTable
+            ref="table"
+            row-key="id"
+            :columns="columns"
+            :data="paidDetailList"
+            height="100%"
+            :has-pagination="false"
+            class="mt-4 mb-4"
+          ></VTable>
+          <el-form label-position="top">
+            <el-form-item label="退订原因" required>
+              <el-radio-group v-model="form.refundReason">
+                <el-radio label="configurationOptionError">配置选项错误</el-radio>
+                <el-radio label="unableDeployProperly">无法正常部署</el-radio>
+                <el-radio label="notconsistentWithExpectations">性能或者功能不符合预期</el-radio>
+                <el-radio label="unsubscribeAfterBusinessTesting">业务测试完毕退订</el-radio>
+                <el-radio label="other">其他</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item v-if="form.refundReason === 'other'">
+              <el-input v-model="form.refundDescribe" type="textarea" show-word-limit> </el-input>
+            </el-form-item>
+            <el-form-item label="退款渠道">
+              <el-input v-model="form.refundChannel" disabled show-word-limit style="width: 200px"> </el-input>
+            </el-form-item>
+          </el-form>
+        </section>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="showUnsubscribeDetailVisible = false">取消</el-button>
+          <el-button type="primary" @click="cancelSubmit">立即退订</el-button>
+        </span>
+      </ElDialog>
     </div>
   </section>
   <RouterView v-else></RouterView>
@@ -418,7 +423,7 @@ import StatusTag from '../../components/StatusTag'
 import { INSTANCE_STATUS_MAP } from '../../const'
 import Details from './Details'
 import timeFunction from '@/mixins/timeFunction'
-import { VIcon, FilterBar } from '@tap/component'
+import { VIcon, FilterBar, VTable } from '@tap/component'
 import { dayjs } from '@tap/business'
 import Time from '@tap/shared/src/time'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
@@ -437,6 +442,7 @@ export default {
     VIcon,
     Details,
     FilterBar,
+    VTable,
     CreateDialog,
     SelectListDialog,
     SubscriptionModelDialog
@@ -478,7 +484,45 @@ export default {
       createDialog: false,
       selectListDialog: false,
       selectListType: 'code',
-      subscriptionModelVisible: false
+      subscriptionModelVisible: false,
+      showUnsubscribeDetailVisible: false,
+      paidDetailList: [],
+      form: {
+        refundReason: '',
+        refundDescribe: '',
+        refundChannel: ' 原路退回'
+      },
+      currentRow: '',
+      columns: [
+        {
+          label: '开始时间',
+          prop: 'periodStart',
+          dataType: 'time',
+          minWidth: 160
+        },
+        {
+          label: '结束时间',
+          prop: 'periodEnd',
+          dataType: 'time',
+          minWidth: 160
+        },
+        {
+          label: '实付金额',
+          prop: 'price',
+          minWidth: 160
+        },
+        {
+          label: '已消耗金额',
+          prop: 'discountAmount',
+          minWidth: 160
+        },
+        {
+          label: '退订金额',
+          prop: 'actualAmount',
+          minWidth: 160
+        }
+      ],
+      paidRenewDetail: []
     }
   },
   computed: {
@@ -1111,36 +1155,31 @@ export default {
       })
       return flag
     },
+    //退订详情费用
+    getUnsubscribePrice(row = {}) {
+      this.currentRow = row
+      this.$axios.get('api/tcm/orders/calculateRefundAmount?agentId=' + row.id).then(res => {
+        this.paidDetailList = res?.paidDetailList || []
+        this.showUnsubscribeDetailVisible = true
+      })
+    },
     //退订
-    handleUnsubscribe(row = {}) {
-      this.$confirm(
-        i18n.t('dfs_user_center_ninjiangtuidingr', { val1: row.content }),
-        i18n.t('dfs_user_center_tuidingfuwu'),
-        {
-          type: 'warning'
-        }
-      ).then(res => {
-        if (!res) return
-        const { paidType } = row
+    cancelSubmit() {
+      const { paidType, id } = this.currentRow
+      const { refundReason, refundDescribe } = this.form
+      let param = {
+        instanceId: id,
+        refundReason,
+        refundDescribe
+      }
+      this.$axios.post('api/tcm/orders/cancel', param).then(() => {
+        this.fetch()
         this.buried('unsubscribeAgentStripe', '', {
+          result: true,
           type: paidType
         })
-        this.$axios
-          .post('api/tcm/orders/cancel', { instanceId: row.id })
-          .then(() => {
-            this.fetch()
-            this.buried('unsubscribeAgentStripe', '', {
-              result: true,
-              type: paidType
-            })
-            this.$message.success(this.$t('public_message_operation_success'))
-          })
-          .catch(() => {
-            this.buried('unsubscribeAgentStripe', '', {
-              result: false,
-              type: paidType
-            })
-          })
+        this.$message.success(this.$t('public_message_operation_success'))
+        this.showUnsubscribeDetailVisible = false
       })
     },
 
@@ -1330,6 +1369,12 @@ export default {
       padding: 0 20px 40px 20px;
     }
   }
+}
+.subscription-ul {
+  background: #e9e9eb;
+  border: 1px solid #e9e9eb;
+  border-radius: 4px;
+  padding: 8px 12px;
 }
 </style>
 <style lang="scss">
