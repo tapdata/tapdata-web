@@ -844,11 +844,12 @@ export default {
 
     getDataflowDataToSave(syncType = 'migrate') {
       const dag = this.$store.getters['dataflow/dag']
-      const editVersion = this.$store.state.dataflow.editVersion
+      const { editVersion, pageVersion } = this.$store.state.dataflow
       return {
         ...this.dataflow,
         dag,
         editVersion,
+        pageVersion,
         syncType
       }
     },
