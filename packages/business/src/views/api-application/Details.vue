@@ -11,12 +11,12 @@
     <ElInput :value="details.desc" type="textarea" disabled class="mb-6"></ElInput>
 
     <DataServerList
-      v-if="visible"
       :show-filter="false"
       :columns="listColumns"
       :params="listParams"
       ref="table"
       class="h-auto"
+      @drawer-visible="handleDataServerListVisible"
     ></DataServerList>
   </Drawer>
 </template>
@@ -67,11 +67,20 @@ export default {
     loadData(data, opt = {}) {
       this.details = data
       this.listParams = opt
+      this.$refs.table?.fetch()
       this.visible = true
     },
 
     handleVisible() {
       this.visible = false
+    },
+
+    handleDataServerListVisible(val) {
+      if (!val) {
+        setTimeout(() => {
+          this.loadData(this.details, this.listParams)
+        }, 80)
+      }
     }
   }
 }

@@ -1,5 +1,11 @@
 <template>
-  <Drawer v-loading="loading" class="overflow-hidden" style="width: 838px" :visible.sync="visible">
+  <Drawer
+    v-loading="loading"
+    class="overflow-hidden"
+    style="width: 838px"
+    :visible.sync="visible"
+    @visible="$emit('visible', arguments[0])"
+  >
     <div class="flex flex-column overflow-hidden pt-2 h-100">
       <!-- 顶部 标题 Tab -->
       <div class="flex position-relative">

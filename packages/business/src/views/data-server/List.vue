@@ -34,7 +34,12 @@
 
       <VEmpty large slot="empty"></VEmpty>
     </VTable>
-    <Drawer ref="drawer" :host="apiServerHost" @save="table.fetch(1)"></Drawer>
+    <Drawer
+      ref="drawer"
+      :host="apiServerHost"
+      @save="table.fetch(1)"
+      @visible="$emit('drawer-visible', arguments[0])"
+    ></Drawer>
   </section>
 </template>
 <script>

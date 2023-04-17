@@ -35,21 +35,11 @@
 
 <script>
 import i18n from '@tap/i18n'
-import dayjs from 'dayjs'
-import { logcollectorApi, appApi } from '@tap/api'
+import { appApi } from '@tap/api'
 
 export default {
   name: 'Editor',
-  // props: {
-  //   visible: {
-  //     required: true,
-  //     value: Boolean
-  //   },
-  //   taskId: {
-  //     required: true,
-  //     value: Boolean
-  //   }
-  // },
+
   data() {
     return {
       visible: false,
@@ -71,6 +61,7 @@ export default {
       }
     }
   },
+
   methods: {
     init() {
       this.editForm = {
