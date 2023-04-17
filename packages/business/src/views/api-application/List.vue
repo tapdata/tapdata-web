@@ -64,7 +64,7 @@
       </el-table-column>
     </TablePage>
 
-    <Editor ref="editor" :task-id="editForm.id" :visible.sync="editVisible" @success="table.fetch(1)"></Editor>
+    <Editor ref="editor" @success="table.fetch(1)"></Editor>
     <Details ref="details" width="380px"></Details>
     <Delete ref="delete" width="380px" @success="table.fetch(1)"></Delete>
   </section>
@@ -117,9 +117,6 @@ export default {
         share_cdc_ttl_day: 3
       },
       enumsItems: ['Mem', 'MongoDB', 'RocksDB'],
-      editForm: {
-        id: ''
-      },
       logSaveList: [1, 2, 3, 4, 5, 6, 7],
       showEditSettingBtn: false, //禁用
       rules: {
@@ -137,7 +134,6 @@ export default {
       taskBuried: {
         start: 'sharedMiningStart'
       },
-      editVisible: false
     }
   },
   mounted() {
@@ -321,8 +317,7 @@ export default {
     },
 
     handleEditor(task = {}) {
-      this.editForm = task
-      this.editVisible = true
+      this.$refs.editor.open(task.id)
     },
 
     openRoute(route, newTab = true) {

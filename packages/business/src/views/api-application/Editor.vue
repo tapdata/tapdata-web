@@ -7,7 +7,6 @@
     top="10vh"
     custom-class="connection-dialog ldp-conection-dialog flex flex-column"
     @close="handleClose"
-    @open="handleOpen"
   >
     <ElForm
       v-loading="loading"
@@ -41,18 +40,20 @@ import { logcollectorApi, appApi } from '@tap/api'
 
 export default {
   name: 'Editor',
-  props: {
-    visible: {
-      required: true,
-      value: Boolean
-    },
-    taskId: {
-      required: true,
-      value: Boolean
-    }
-  },
+  // props: {
+  //   visible: {
+  //     required: true,
+  //     value: Boolean
+  //   },
+  //   taskId: {
+  //     required: true,
+  //     value: Boolean
+  //   }
+  // },
   data() {
     return {
+      visible: false,
+      taskId: '',
       loading: false,
       saveLoading: false,
       editForm: {},
@@ -97,13 +98,14 @@ export default {
         })
     },
 
-    handleOpen() {
+    open(id) {
+      this.taskId = id
       this.init()
+      this.visible = true
     },
 
     handleClose() {
-      this.$emit('visible', false)
-      this.$emit('update:visible', false)
+      this.visible = false
     },
 
     handleSave() {
