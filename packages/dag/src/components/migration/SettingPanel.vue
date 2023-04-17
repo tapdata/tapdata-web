@@ -110,6 +110,7 @@ export default observer({
                     properties: {
                       skipErrorEvent: {
                         type: 'object',
+                        'x-component': 'FormContent',
                         properties: {
                           errorMode: {
                             type: 'string',
@@ -207,7 +208,7 @@ export default observer({
                                 'x-decorator': 'FormItem',
                                 'x-decorator-props': {
                                   feedbackLayout: 'none',
-                                  addonAfter: i18n.t('packages_dag_migration_settingpanel_shirenwubaocuo')
+                                  addonAfter: '% ' + i18n.t('packages_dag_migration_settingpanel_shirenwubaocuo')
                                 },
                                 'x-component': 'InputNumber',
                                 default: 1,
