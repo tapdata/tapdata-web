@@ -7,147 +7,160 @@
     :title="$t('dfs_agent_download_subscriptionmodeldialog_peizhishishishu')"
     width="75%"
     :before-close="close"
+    custom-class="tap-dialog"
   >
-    <el-tabs v-model="activeName">
-      <el-tab-pane :label="$t('dfs_agent_download_subscriptionmodeldialog_xuanzebushulei')" name="first">
-        <div class="configure-main">
-          <el-radio-group class="flex mb-4" v-model="productType" @change="selectProductType">
-            <el-radio class="width50 fs-6 fw-sub" label="selfHost">{{
-              $t('dfs_agent_download_subscriptionmodeldialog_bantuoguanmoshi')
-            }}</el-radio>
-            <el-radio class="fs-6 fw-sub" label="fullManagement" disabled>{{
-              $t('dfs_agent_download_subscriptionmodeldialog_quantuoguanmoshi')
-            }}</el-radio>
-          </el-radio-group>
-          <div class="flex">
-            <section class="content-left width50">
-              <div class="mt-2 fw-sub">{{ $t('dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi2') }}</div>
-              <div class="mt-2 fw-sub">{{ $t('dfs_agent_download_subscriptionmodeldialog_shiyongbantuoguan') }}</div>
-              <ul>
-                <li class="mt-2 font-color-light">
-                  {{ $t('dfs_agent_download_subscriptionmodeldialog_chengbengengdichong') }}
-                </li>
-                <li class="mt-2 font-color-light">
-                  {{ $t('dfs_agent_download_subscriptionmodeldialog_gengjiaanquanyong') }}
-                </li>
-                <li class="img-box mt-4">
-                  <el-image :src="getImg('halfManagement')" alt="" />
-                </li>
-              </ul>
-            </section>
-            <section class="content-right width50">
-              <div class="mt-2 fw-sub">{{ $t('dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi') }}</div>
-              <div class="mt-2 fw-sub">{{ $t('dfs_agent_download_subscriptionmodeldialog_shiyongquantuoguan') }}</div>
-              <ul>
-                <li class="mt-2 font-color-light">
-                  {{ $t('dfs_agent_download_subscriptionmodeldialog_gengjiafangbianmian') }}
-                </li>
-                <li class="mt-2 font-color-light">
-                  {{ $t('dfs_agent_download_subscriptionmodeldialog_gengjiakekaoyou') }}
-                </li>
-                <li class="img-box mt-4">
-                  <el-image :src="getImg('fullManagement')" alt="" />
-                </li>
-              </ul>
-            </section>
+    <div class="subscription-steps-wrap">
+      <el-steps class="subscription-steps bg-transparent mx-auto" :active="activeStep" simple>
+        <el-step v-for="(step, i) in steps" :key="i" :title="step.title">
+          <span slot="icon">{{ i + 1 }}</span>
+        </el-step>
+      </el-steps>
+    </div>
+
+    <div class="subscription-steps-content mt-4">
+      <div v-if="activeStep === 1" class="flex gap-6 px-5">
+        <div
+          class="product-type-card rounded-xl border flex flex-column flex-1 position-relative overflow-hidden"
+          :class="{
+            active: productType === 'selfHost'
+          }"
+          @click="productType = 'selfHost'"
+        >
+          <div class="is-active position-absolute top-0 end-0">
+            <div class="is-active-triangle"></div>
+            <VIcon size="16" class="is-active-icon">check-bold</VIcon>
           </div>
-          <el-link type="primary" @click="changeProductType">{{
-            $t('dfs_agent_download_subscriptionmodeldialog_zhijieshiyonga')
-          }}</el-link>
-          <!--          <span class="ml-4"-->
-          <!--            >依然不知道如何选择? <span class="color-primary cursor-pointer">点击这里</span>了解更多的区别</span-->
-          <!--          >-->
+          <div class="flex justify-content-center gap-5 p-6 align-items-start font-color-dark fs-8">
+            <el-image class="w-100 product-type-image" :src="require('@/assets/image/self_host_managed.png')" />
+          </div>
+          <div class="px-6 mb-4 flex-1">
+            <div class="text-center font-color-dark fs-5 mb-2">
+              {{ $t('dfs_agent_download_subscriptionmodeldialog_bantuoguanmoshi') }}
+            </div>
+            <div class="text-center font-color-light fs-7">
+              {{ $t('dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi2') }}
+            </div>
+          </div>
+          <div class="px-6 mb-6">
+            <div class="fs-6 text-center font-color-dark mb-2">
+              {{ $t('dfs_agent_download_subscriptionmodeldialog_shiyongbantuoguan') }}
+            </div>
+            <div class="flex justify-content-center">
+              <ul>
+                <li>
+                  <VIcon size="16" class="mr-2">check-bold</VIcon
+                  >{{ $t('dfs_agent_download_subscriptionmodeldialog_chengbengengdichong') }}
+                </li>
+                <li>
+                  <VIcon size="16" class="mr-2">check-bold</VIcon
+                  >{{ $t('dfs_agent_download_subscriptionmodeldialog_gengjiaanquanyong') }}
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
-        <footer class="flex justify-content-end">
-          <el-button type="primary" @click="next('second')">{{ $t('public_button_next') }}</el-button>
-        </footer>
-      </el-tab-pane>
-      <el-tab-pane :label="$t('dfs_agent_download_subscriptionmodeldialog_peizhibushugui')" name="second">
-        <section v-if="productType !== 'aliyun'">
-          <div class="spec-main flex justify-content-between mt-6">
-            <!--规格配置-->
-            <div class="flex flex-column flex-1">
-              <div class="flex align-items-center">
-                <div class="label">
-                  <div class="agent_size">{{ $t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu') }}</div>
-                  <div class="agent_size_cap">
-                    {{ $t('dfs_agent_download_subscriptionmodeldialog_guigeshuomingci') }}{{ agentSizeCap.mem
-                    }}{{ $t('dfs_agent_download_subscriptionmodeldialog_keyongneicunjian') }}{{ agentSizeCap.pipeline
-                    }}{{ $t('dfs_agent_download_subscriptionmodeldialog_geyugumeimiao') }}{{ agentSizeCap.tps
-                    }}{{ $t('dfs_agent_download_subscriptionmodeldialog_zuoyou') }}
-                  </div>
-                </div>
-                <div class="value agent_plan">
-                  <el-radio-group v-model="specification" @change="changeSpec">
-                    <el-radio
-                      class="mt-4 block"
-                      v-for="(item, index) in specificationItems"
-                      :disabled="agentCount > 0 && item.chargeProvider === 'FreeTier'"
-                      :key="index"
-                      :label="item.value"
-                      >{{ item.name }}: {{ item.desc }}</el-radio
-                    >
-                  </el-radio-group>
-                </div>
-              </div>
-              <div class="flex align-items-center mt-8">
-                <div class="label payment_plan">{{ $t('dfs_instance_instance_dingyuefangshi') }}</div>
-                <div class="value">
-                  <ul class="flex justify-content-start flex-wrap">
-                    <li
-                      v-for="(item, index) in packageItems"
-                      :key="index"
-                      class="specification-item cursor-pointer py-2 px-4 mr-4 mt-4"
-                      :class="{
-                        active: selected.value === item.value
-                      }"
-                      @click="handleChange(item)"
-                    >
-                      {{ item.label }}
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <!--选择币种-->
-              <div class="flex align-items-center mt-8" v-if="currencyOption && currencyOption.length !== 0">
-                <div class="label payment_plan">
-                  {{ $t('dfs_agent_download_subscriptionmodeldialog_xuanzebizhong') }}
-                </div>
-                <div class="value">
-                  <ul class="flex justify-content-start flex-wrap">
-                    <li
-                      v-for="(item, index) in currencyOption"
-                      :key="index"
-                      class="specification-item cursor-pointer py-2 px-4 mr-4 mt-4"
-                      :class="{
-                        active: currencyType === item.currency
-                      }"
-                      @click="changeCurrency(item)"
-                    >
-                      {{ CURRENCY_MAP[item.currency] }}
-                    </li>
-                  </ul>
-                </div>
-              </div>
+        <div
+          class="product-type-card rounded-xl border flex flex-column flex-1 position-relative overflow-hidden disabled"
+          :class="{
+            active: productType === 'fullManagement'
+          }"
+        >
+          <div class="is-active position-absolute top-0 end-0">
+            <div class="is-active-triangle"></div>
+            <VIcon size="16" class="is-active-icon">check-bold</VIcon>
+          </div>
+          <div class="flex justify-content-center gap-5 p-6 align-items-start font-color-dark fs-8">
+            <el-image class="w-100 product-type-image" :src="require('@/assets/image/fully_managed.png')" />
+          </div>
+          <div class="px-6 mb-4 flex-1">
+            <div class="product-type-card-title text-center font-color-dark fs-5 mb-2">
+              {{ $t('dfs_agent_download_subscriptionmodeldialog_quantuoguanmoshi') }}
             </div>
-            <!--价格清单 -->
-            <div class="price-list flex flex-column">
-              <div class="title">{{ $t('dfs_agent_download_subscriptionmodeldialog_meiyuefeiyongyu') }}</div>
-              <ul class="flex flex-1 content">
-                <li class="item">
-                  {{ $t('dfs_agent_download_subscriptionmodeldialog_jisuan') }}{{ formatPrice(currency) }}
-                </li>
-              </ul>
-              <div class="total">
-                {{ $t('public_total') }}: <span class="price">{{ formatPrice(currency) }}</span>
-              </div>
+            <div class="text-center font-color-light fs-7">
+              {{ $t('dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi') }}
             </div>
           </div>
-          <footer class="flex justify-content-end mt-4">
-            <el-button @click="next('first')">{{ $t('public_button_previous') }}</el-button>
-            <el-button type="primary" @click="next('third')">{{ $t('public_button_next') }}</el-button>
-          </footer>
-        </section>
+          <div class="px-6 mb-6">
+            <div class="fs-6 text-center font-color-dark mb-2">
+              {{ $t('dfs_agent_download_subscriptionmodeldialog_shiyongquantuoguan') }}
+            </div>
+            <div class="flex justify-content-center">
+              <ul>
+                <li>
+                  <VIcon size="16" class="mr-2">check-bold</VIcon
+                  >{{ $t('dfs_agent_download_subscriptionmodeldialog_gengjiafangbianmian') }}
+                </li>
+                <li>
+                  <VIcon size="16" class="mr-2">check-bold</VIcon
+                  >{{ $t('dfs_agent_download_subscriptionmodeldialog_gengjiakekaoyou') }}
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="activeStep === 2" class="px-1">
+        <ElForm v-if="productType !== 'aliyun'" label-position="top">
+          <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu')">
+            <ElSelect v-model="specification" @change="changeSpec" class="w-50 rounded-4">
+              <ElOption
+                v-for="(item, i) in specificationItems"
+                :key="i"
+                :label="item.name"
+                :value="item.value"
+                :disabled="agentCount > 0 && item.chargeProvider === 'FreeTier'"
+              >
+                <span>{{ item.name }}: </span>
+                <span>{{ item.desc }}</span>
+              </ElOption>
+            </ElSelect>
+            <div>
+              {{ $t('dfs_agent_download_subscriptionmodeldialog_guigeshuomingci') }}{{ agentSizeCap.mem
+              }}{{ $t('dfs_agent_download_subscriptionmodeldialog_keyongneicunjian') }}{{ agentSizeCap.pipeline
+              }}{{ $t('dfs_agent_download_subscriptionmodeldialog_geyugumeimiao') }}{{ agentSizeCap.tps
+              }}{{ $t('dfs_agent_download_subscriptionmodeldialog_zuoyou') }}
+            </div>
+          </ElFormItem>
+          <ElFormItem :label="$t('dfs_instance_instance_dingyuefangshi')">
+            <ElRadioGroup v-model="currentPackage" @input="handleChange">
+              <ElRadio
+                v-for="(item, index) in packageItems"
+                :key="index"
+                :label="item.value"
+                border
+                class="rounded-4"
+                >{{ item.label }}</ElRadio
+              >
+            </ElRadioGroup>
+          </ElFormItem>
+          <ElFormItem
+            :label="$t('dfs_agent_download_subscriptionmodeldialog_xuanzebizhong')"
+            v-if="currencyOption && currencyOption.length > 0"
+          >
+            <ElRadioGroup v-model="currencyType" @input="changeCurrency">
+              <ElRadio
+                v-for="(item, index) in currencyOption"
+                :key="index"
+                :label="item.currency"
+                border
+                class="rounded-4"
+                >{{ CURRENCY_MAP[item.currency] }}</ElRadio
+              >
+            </ElRadioGroup>
+          </ElFormItem>
+          <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_meiyuefeiyongyu')">
+            <div class="border rounded-4">
+              <div class="border-bottom px-3 py-1">
+                {{ $t('dfs_agent_download_subscriptionmodeldialog_jisuan') }}{{ formatPrice(currency) }}
+              </div>
+              <div class="text-end px-3 py-1">
+                {{ $t('public_total') }}: <span class="color-primary fs-5 ml-1">{{ formatPrice(currency) }}</span>
+              </div>
+            </div>
+          </ElFormItem>
+        </ElForm>
+
         <section v-else v-loading="aliyunLoading">
           <div class="aliyun-main">
             <div v-if="hiddenNewCode">
@@ -204,49 +217,63 @@
             </div>
           </div>
         </section>
-      </el-tab-pane>
-      <el-tab-pane
-        :label="$t('dfs_agent_download_subscriptionmodeldialog_chakanbingqueren')"
-        name="third"
-        v-if="productType !== 'aliyun'"
-      >
-        <div class="flex flex-column review">
-          <div class="flex-1 px-4">
-            <div class="mt-4 fx-6 font-color-dark">
-              {{ $t('dfs_agent_download_subscriptionmodeldialog_peizhizhaiyao') }}
-            </div>
-            <div class="mt-4 font-color-light">
-              {{ $t('dfs_agent_download_subscriptionmodeldialog_jisuanziyuan')
-              }}<span class="font-color-dark">{{ specMap[currentSpecName] || specification }}</span>
-            </div>
-            <div class="mt-4 font-color-light">
-              {{ $t('dfs_agent_download_subscriptionmodeldialog_dingyuefangshi')
-              }}<span class="font-color-dark">{{ selected.label }}</span>
-            </div>
-            <div class="mt-4 font-color-light">{{ $t('dfs_instance_create_jieshouzhangdande') }}</div>
-            <ElForm class="mt-4" style="width: 520px" :model="form" ref="from">
-              <ElFormItem prop="email" :rules="getEmailRules()">
-                <ElInput v-model="form.email" :placeholder="getPlaceholder()"></ElInput>
-              </ElFormItem>
-            </ElForm>
+      </div>
+
+      <div v-if="activeStep === 3" class="px-1">
+        <div class="border rounded-4 p-4">
+          <div class="fs-6 font-color-dark mb-4">
+            {{ $t('dfs_agent_download_subscriptionmodeldialog_peizhizhaiyao') }}
           </div>
-          <footer class="flex justify-content-end align-items-center mt-4">
-            <div class="mr-6">
-              {{ $t('public_total') }}: <span class="price">{{ formatPrice(currency) || 0 }}</span>
-            </div>
-            <el-button @click="next('second')">{{ $t('public_button_previous') }}</el-button>
-            <el-button :loading="submitLoading" type="primary" @click="submit()">{{
-              $t('public_button_confirm')
-            }}</el-button>
-          </footer>
+
+          <ElForm
+            :model="form"
+            ref="confirmForm"
+            :label-width="this.$i18n.locale === 'en' ? '200px' : '130px'"
+            label-position="right"
+          >
+            <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_jisuanziyuan')">
+              <span class="font-color-dark">
+                {{ specMap[currentSpecName] || currentSpecName }}
+              </span>
+            </ElFormItem>
+            <ElFormItem :label="$t('dfs_instance_instance_dingyuefangshi')">
+              <span class="font-color-dark">
+                {{ selected.label }}
+              </span>
+            </ElFormItem>
+            <ElFormItem :label="$t('dfs_instance_create_jieshouzhangdande')" prop="email" :rules="getEmailRules()">
+              <ElInput v-model="form.email" :placeholder="getPlaceholder()" style="width: 300px"></ElInput>
+            </ElFormItem>
+            <ElFormItem :label="$t('public_total')">
+              <span class="color-primary fs-5 ml-1">{{ formatPrice(currency) }}</span>
+            </ElFormItem>
+          </ElForm>
         </div>
-      </el-tab-pane>
-    </el-tabs>
+      </div>
+    </div>
+
+    <div slot="footer" class="flex">
+      <el-link v-if="activeStep === 1" type="primary" @click="changeProductType">{{
+        $t('dfs_agent_download_subscriptionmodeldialog_zhijieshiyonga')
+      }}</el-link>
+      <div class="flex-grow-1"></div>
+
+      <el-button v-if="activeStep > 1" @click="prevStep">{{ $t('public_button_previous') }}</el-button>
+
+      <template v-if="productType !== 'aliyun'">
+        <el-button v-if="activeStep < steps.length" type="primary" @click="next('second')">{{
+          $t('public_button_next')
+        }}</el-button>
+        <el-button v-else-if="activeStep === steps.length" type="primary" @click="submit()">{{
+          $t('public_button_confirm')
+        }}</el-button>
+      </template>
+    </div>
   </el-dialog>
 </template>
 
 <script>
-import { openUrl, uniqueArr } from '@tap/shared'
+import { isStr, isObj, openUrl, uniqueArr } from '@tap/shared'
 import { VTable } from '@tap/component'
 import { getPaymentMethod, getSpec } from '../instance/utils'
 import { CURRENCY_SYMBOL_MAP, TIME_MAP, CURRENCY_MAP } from '@tap/business'
@@ -270,13 +297,14 @@ export default {
     visible(val) {
       if (val) {
         this.checkAgentCount()
-        this.activeName = 'first'
+        this.activeStep = 1
         this.productType = 'selfHost'
       }
     }
   },
   data() {
     return {
+      activeStep: 1,
       productType: 'selfHost',
       activeName: 'first',
       allPackages: '',
@@ -333,9 +361,33 @@ export default {
           slotName: 'operation',
           width: 120
         }
-      ]
+      ],
+      currentPackage: ''
     }
   },
+
+  computed: {
+    steps() {
+      const steps = [
+        {
+          title: this.$t('dfs_agent_download_subscriptionmodeldialog_xuanzebushulei')
+        },
+        {
+          title: this.$t('dfs_agent_download_subscriptionmodeldialog_peizhibushugui')
+        },
+        {
+          title: this.$t('dfs_agent_download_subscriptionmodeldialog_chakanbingqueren')
+        }
+      ]
+
+      if (this.productType === 'aliyun') {
+        steps.pop()
+      }
+
+      return steps
+    }
+  },
+
   mounted() {
     this.checkAgentCount()
     this.form.email = window.__USER_INFO__.email
@@ -350,14 +402,21 @@ export default {
     close() {
       this.$emit('update:visible', false)
     },
-    next(val) {
-      this.activeName = val
+    prevStep() {
+      this.activeStep--
+      if (this.productType === 'aliyun') {
+        this.productType = 'selfHost'
+      }
+    },
+    next() {
+      this.activeStep++
       this.buried('productTypeNext')
     },
     //选择订阅模式
     changeProductType() {
       this.productType = 'aliyun'
       this.activeName = 'second'
+      this.activeStep = 2
       this.getAvailableCode()
       this.buried('productTypeAliyunCode')
     },
@@ -372,6 +431,10 @@ export default {
     },
     //切换订阅方式
     handleChange(item = {}) {
+      if (!isObj(item)) {
+        item = this.packageItems.find(it => it.value === item)
+      }
+      this.currentPackage = item.value
       this.selected = item
       if (item?.chargeProvider !== 'FreeTier') {
         this.changeCurrencyOption(item)
@@ -384,8 +447,13 @@ export default {
     },
     //切换币种
     changeCurrency(item) {
-      this.currencyType = item.currency
-      this.currency = item
+      if (isStr(item)) {
+        this.currencyType = item
+        this.currency = this.currencyOption.find(it => it.currency === item)
+      } else {
+        this.currencyType = item.currency
+        this.currency = item
+      }
     },
     changeCurrencyOption(item) {
       const options = item.currencyOption
@@ -494,6 +562,8 @@ export default {
           this.currencyType = this.packageItems[0]?.currencyOption[0]?.currency
         }
         this.handleChange(this.packageItems[0])
+
+        console.log('specificationItems', this.specificationItems) // eslint-disable-line
       })
     },
     loadPackageItems() {
@@ -543,8 +613,17 @@ export default {
         ? i18n.t('dfs_instance_create_yongyujieshoumei')
         : i18n.t('dfs_instance_create_kexuan')
     },
+
+    validateForm(ref) {
+      return new Promise(resolve => {
+        this.$refs[ref].validate(valid => {
+          resolve(valid)
+        })
+      })
+    },
+
     //提交订单
-    submit(row = {}) {
+    async submit(row = {}) {
       const { type, priceId, currency, chargeProvider } = this.selected
       const { email } = this.form
 
@@ -564,6 +643,10 @@ export default {
         }
         this.buried('selectAgentAliyun')
       } else {
+        const valid = await this.validateForm('confirmForm')
+
+        if (!valid) return
+
         params = {
           agentType: 'Local',
           chargeProvider,
@@ -583,7 +666,6 @@ export default {
       this.$axios
         .post('api/tcm/orders', params)
         .then(data => {
-          this.submitLoading = false
           if (chargeProvider === 'FreeTier' || this.productType === 'aliyun') {
             let downloadUrl = window.App.$router.resolve({
               name: 'FastDownload',
@@ -601,6 +683,7 @@ export default {
             type,
             result: true
           })
+          this.submitLoading = false
         })
         .catch(() => {
           this.buried('newAgentStripe', '', {
@@ -780,5 +863,103 @@ export default {
   font-size: 16px;
   padding-top: 20px;
   color: #2c65ff;
+}
+
+.subscription-steps {
+  ::v-deep {
+    .el-step {
+      &.is-simple:not(:last-of-type) .el-step__title {
+        max-width: unset;
+      }
+
+      .el-step__icon {
+        width: 24px;
+        height: 24px;
+        font-size: 14px;
+      }
+
+      .el-step__head.is-finish {
+        .el-step__icon {
+          color: #fff;
+          background-color: map-get($color, primary);
+        }
+      }
+
+      .el-step__head.is-process {
+        color: #86909c;
+        border-color: #86909c;
+      }
+      .el-step__title.is-process {
+        color: #86909c;
+        font-weight: 400;
+      }
+    }
+  }
+}
+
+.subscription-steps-content {
+  ::v-deep {
+    .el-input__inner,
+    .el-textarea__inner {
+      border-radius: 6px;
+    }
+  }
+}
+
+.product-type-card {
+  .product-type-image {
+    height: 176px;
+  }
+  .is-active {
+    display: none;
+  }
+  &.active {
+    $primary: map-get($color, primary);
+    border-color: $primary !important;
+    box-shadow: 0 2px 16px rgba(44, 101, 255, 0.2);
+    .is-active {
+      display: block;
+      &-triangle {
+        width: 0;
+        height: 0;
+        border-top: 18px solid $primary;
+        border-left: 18px solid transparent;
+        border-bottom: 18px solid transparent;
+        border-right: 18px solid $primary;
+      }
+      &-icon {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        color: #fff;
+      }
+    }
+  }
+  &.disabled {
+    background-color: #fafafa;
+    border-width: 0 !important;
+
+    .product-type-card-title {
+      color: #86909c !important;
+    }
+  }
+}
+</style>
+
+<style lang="scss">
+.tap-dialog {
+  .el-dialog__header {
+    height: 64px;
+    min-height: 64px;
+    border-bottom: 1px solid #dee2e6;
+  }
+
+  .el-dialog__body {
+    padding: 16px 24px;
+  }
+
+  .el-dialog__footer {
+    padding: 24px;
+  }
 }
 </style>

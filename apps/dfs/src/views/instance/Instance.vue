@@ -118,18 +118,27 @@
                 {{ $t('task_manage_migrate') }}：
                 <ElLink
                   type="primary"
-                  :disabled="(scope.row.metric ? scope.row.metric.runningTask.migrate || 0 : 0) < 1"
+                  :disabled="
+                    (scope.row.metric && scope.row.metric.runningTask ? scope.row.metric.runningTask.migrate || 0 : 0) <
+                    1
+                  "
                   @click="toDataFlow(scope.row.tmInfo.agentId)"
-                  >{{ scope.row.metric ? scope.row.metric.runningTask.migrate || 0 : 0 }}</ElLink
+                  >{{
+                    scope.row.metric && scope.row.metric.runningTask ? scope.row.metric.runningTask.migrate || 0 : 0
+                  }}</ElLink
                 >
               </div>
               <div class="flex align-center">
                 {{ $t('task_manage_etl') }}：
                 <ElLink
                   type="primary"
-                  :disabled="(scope.row.metric ? scope.row.metric.runningTask.sync || 0 : 0) < 1"
+                  :disabled="
+                    (scope.row.metric && scope.row.metric.runningTask ? scope.row.metric.runningTask.sync || 0 : 0) < 1
+                  "
                   @click="toDataFlow(scope.row.tmInfo.agentId, 'dataflowList')"
-                  >{{ scope.row.metric ? scope.row.metric.runningTask.sync || 0 : 0 }}</ElLink
+                  >{{
+                    scope.row.metric && scope.row.metric.runningTask ? scope.row.metric.runningTask.sync || 0 : 0
+                  }}</ElLink
                 >
               </div>
             </div>

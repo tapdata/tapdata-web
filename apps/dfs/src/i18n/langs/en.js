@@ -1331,7 +1331,7 @@ export default {
   dfs_instance_create_bencidinggouzhi: 'This order is only applicable to instances of {val1} specification',
   dfs_instance_create_zhifuwancheng: 'Payment Completed',
   dfs_instance_create_tuijian: 'Recommended',
-  dfs_instance_create_jieshouzhangdande: 'Email for receiving bills',
+  dfs_instance_create_jieshouzhangdande: 'Email for receiving bills:',
   dfs_instance_create_xuanzeshiligui: 'Select instance specification',
   dfs_instance_create_qinggenjushuju:
     'Please select the appropriate instance specification according to the amount of data and the number of tasks to subscribe. After the subscription is successful, it cannot be changed',
@@ -1425,27 +1425,26 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_bingbushu: 'and deploy',
   dfs_agent_download_subscriptionmodeldialog_goumai: 'Purchase',
   dfs_agent_download_subscriptionmodeldialog_jihuoxinshouquan: 'Activate a new authorization code',
-  dfs_agent_download_subscriptionmodeldialog_xuanzebizhong: 'Select currency',
-  dfs_agent_download_subscriptionmodeldialog_zuoyou: 'left and right',
+  dfs_agent_download_subscriptionmodeldialog_xuanzebizhong: 'Select Currency',
+  dfs_agent_download_subscriptionmodeldialog_zuoyou: ' left and right',
   dfs_agent_download_subscriptionmodeldialog_geyugumeimiao:
     ', the estimated performance of synchronization per second is ',
   dfs_agent_download_subscriptionmodeldialog_keyongneicunjian:
-    'Available memory, the recommended number of tasks does not exceed',
+    ' Available memory, the recommended number of tasks does not exceed ',
   dfs_agent_download_subscriptionmodeldialog_guigeshuomingci: 'Specification: This specification requires at least ',
   dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu: 'Please select the product specification you need',
   dfs_agent_download_subscriptionmodeldialog_zhijieshiyonga:
     'Directly use the authorization code of Alibaba Cloud market',
   dfs_agent_download_subscriptionmodeldialog_gengjiakekaoyou:
-    '- More reliable: The maintenance and monitoring of resource usage is provided by Tapdata, and the operation is more reliable',
-  dfs_agent_download_subscriptionmodeldialog_gengjiafangbianmian:
-    '- more convenient: no deployment, one-click delivery',
+    'More reliable: The maintenance and monitoring of resource usage is provided by Tapdata, and the operation is more reliable',
+  dfs_agent_download_subscriptionmodeldialog_gengjiafangbianmian: 'More convenient: no deployment, one-click delivery',
   dfs_agent_download_subscriptionmodeldialog_shiyongquantuoguan: 'The benefits of using the fully managed mode:',
   dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi:
     'In this mode, Tapdata provides all computing and storage resources.',
   dfs_agent_download_subscriptionmodeldialog_gengjiaanquanyong:
-    '- More secure: user data will not pass through any external network including Tapdata',
+    'More secure: user data will not pass through any external network including Tapdata',
   dfs_agent_download_subscriptionmodeldialog_chengbengengdichong:
-    '- Lower cost: make full use of existing hardware resources, and the product price is much lower under the same specification',
+    'Lower cost: make full use of existing hardware resources, and the product price is much lower under the same specification',
   dfs_agent_download_subscriptionmodeldialog_shiyongbantuoguan: 'The benefits of using the semi-hosted mode:',
   dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi2:
     'In this mode, you need to provide your own computing resources and storage resources',
