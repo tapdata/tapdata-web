@@ -1327,5 +1327,7 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_meiyuefeiyongyu: '費用預估',
   dfs_agent_download_subscriptionmodeldialog_usd: '美元',
   dfs_agent_download_subscriptionmodeldialog_cny: '人民幣',
-  dfs_agent_download_subscriptionmodeldialog_hkd: '港幣'
+  dfs_agent_download_subscriptionmodeldialog_hkd: '港幣',
+  dfs_agent_specification_description:
+    '此規格需要至少 <strong>{mem}</strong> 可用內存, 建議的任務數不超過 <strong>{pipeline}</strong> 個, 預估 TPS 同步的性能在 <strong>{tps}</strong> 左右'
 }

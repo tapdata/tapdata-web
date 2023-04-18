@@ -1461,5 +1461,7 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_meiyuefeiyongyu: 'Estimated Cost',
   dfs_agent_download_subscriptionmodeldialog_usd: 'USD',
   dfs_agent_download_subscriptionmodeldialog_cny: 'CNY',
-  dfs_agent_download_subscriptionmodeldialog_hkd: 'HKD'
+  dfs_agent_download_subscriptionmodeldialog_hkd: 'HKD',
+  dfs_agent_specification_description:
+    'This specification requires at least  <strong>{mem}</strong> available memory, the recommended number of tasks does not exceed <strong>{pipeline}</strong> ,the estimated performance of TPS synchronization is around <strong>{tps}</strong>.'
 }
