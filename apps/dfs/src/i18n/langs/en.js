@@ -1467,7 +1467,7 @@ export default {
   dfs_instance_instance_qingshurutuiding: 'Please enter the reason for unsubscribing',
   dfs_instance_instance_tuidingjine: 'Unsubscribe Amount',
   dfs_instance_instance_yixiaohaojine: 'Amount Consumed',
-  dfs_instance_instance_shifujine: 'actual payment',
+  dfs_instance_instance_shifujine: 'Actual Payment',
   dfs_instance_instance_yuanlutuihui: 'Return to the original route',
   dfs_instance_instance_ketuidingjine: 'Refundable subscription amount:',
   dfs_instance_instance_tuikuanqudao: 'Refund channel',
