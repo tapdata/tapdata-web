@@ -129,7 +129,7 @@
           </ElFormItem>
 
           <ElFormItem prop="fdmStorageConnectionId">
-            <ElSelect v-model="form.fdmStorageConnectionId" :disabled="fdmStorageDisabled" class="w-100">
+            <ElSelect v-model="form.fdmStorageConnectionId" :disabled="disabled" class="w-100">
               <ElOption v-for="op in connectionsList" :label="op.label" :value="op.value" :key="op.value"></ElOption>
             </ElSelect>
           </ElFormItem>
