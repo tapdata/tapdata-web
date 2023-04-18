@@ -593,20 +593,14 @@ export default {
     },
 
     handlePageReturn() {
-      let name
-      switch (this.dataflow.syncType) {
-        case 'migrate':
-          name = 'migrateList'
-          break
-        case 'logCollector':
-          name = 'sharedMining'
-          break
-        default:
-          name = 'dataflowList'
-          break
+      const map = {
+        migrate: 'migrateList',
+        logCollector: 'sharedMining',
+        shareCache: 'sharedCache',
+        connHeartbeat: 'heartbeatTable'
       }
       this.$router.push({
-        name
+        name: map[this.dataflow.syncType] || 'dataflowList'
       })
     },
 
