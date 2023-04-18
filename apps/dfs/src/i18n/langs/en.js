@@ -1463,5 +1463,25 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_cny: 'CNY',
   dfs_agent_download_subscriptionmodeldialog_hkd: 'HKD',
   dfs_agent_specification_description:
-    'This specification requires at least  <strong>{mem}</strong> available memory, the recommended number of tasks does not exceed <strong>{pipeline}</strong> ,the estimated performance of TPS synchronization is around <strong>{tps}</strong>.'
+    'This specification requires at least  <strong>{mem}</strong> available memory, the recommended number of tasks does not exceed <strong>{pipeline}</strong> ,the estimated performance of TPS synchronization is around <strong>{tps}</strong>.',
+  dfs_instance_instance_qingshurutuiding: 'Please enter the reason for unsubscribing',
+  dfs_instance_instance_tuidingjine: 'Unsubscribe Amount',
+  dfs_instance_instance_yixiaohaojine: 'Amount Consumed',
+  dfs_instance_instance_shifujine: 'Actual Payment',
+  dfs_instance_instance_yuanlutuihui: 'Return to the original route',
+  dfs_instance_instance_ketuidingjine: 'Refundable subscription amount:',
+  dfs_instance_instance_tuikuanqudao: 'Refund channel',
+  dfs_instance_instance_qita: 'Other',
+  dfs_instance_instance_yewuceshiwan: 'Unsubscribe after business test',
+  dfs_instance_instance_xingnenghuozhegong: 'Performance or function does not meet expectations',
+  dfs_instance_instance_wufazhengchangbu: 'Unable to deploy normally',
+  dfs_instance_instance_peizhixuanxiangcuo: 'Configuration option error',
+  dfs_instance_instance_tuidingyuanyin: 'Reason for unsubscribing',
+  dfs_instance_instance_tuidingshili: 'Unsubscribe Instance',
+  dfs_instance_instance_qingzixihedui:
+    '3. Please carefully check the unsubscribed instance information, and confirm the unsubscribed rules and unsubscribed amount. Once the instance is unsubscribed, it cannot be restored. ',
+  dfs_instance_instance_tuidingzhituihuan:
+    '2. Only the actual paid amount will be refunded when unsubscribing, and the used coupons will not be refunded. ',
+  dfs_instance_instance_tuidingjineji: '1. Please check the calculation formula of unsubscribe amount',
+  dfs_instance_instance_tuifeiguize: 'Description of refund rules'
 }
