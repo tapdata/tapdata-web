@@ -13,6 +13,7 @@
 <script>
 import { AsyncSelect } from '@tap/form'
 import { appApi } from '@tap/api'
+import { toRegExp } from '@tap/shared'
 
 export default {
   name: 'ListSelect',
@@ -74,6 +75,14 @@ export default {
 
       let res = await appApi.get({
         filter: JSON.stringify(Object.assign(params, this.params))
+      })
+
+      res.items = res.items.map(t => {
+        return {
+          label: t.value,
+          value: t.id,
+          data: t
+        }
       })
 
       if (this.format) {

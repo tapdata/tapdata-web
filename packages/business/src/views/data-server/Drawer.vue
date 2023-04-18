@@ -87,8 +87,6 @@
             :value.sync="form.appValue"
             :label.sync="form.appLabel"
             :disabled="!isEdit"
-            item-label="value"
-            item-value="id"
           ></ListSelect>
         </ElFormItem>
 

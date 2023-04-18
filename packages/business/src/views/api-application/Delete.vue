@@ -17,8 +17,6 @@
         :value.sync="form.appValue"
         :label.sync="form.appLabel"
         :format="handleFormat"
-        item-label="value"
-        item-value="id"
         class="my-3"
       ></ListSelect>
       <div>{{ $t('packages_business_application_delete_shifouquerenshan') }}</div>
@@ -148,7 +146,7 @@ export default {
     },
 
     handleFormat(data) {
-      return data.filter(t => t.id !== this.details.id)
+      return data.filter(t => t.value !== this.details.id)
     }
   }
 }
