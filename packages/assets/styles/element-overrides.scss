@@ -727,7 +727,7 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
   background: map-get($bgColor, white);
 }
 
-.el-radio.is-bordered {
+.el-radio.is-bordered:not(.is-disabled) {
   &:hover {
     .el-radio__input .el-radio__inner {
       border-color: map-get($color, primary);

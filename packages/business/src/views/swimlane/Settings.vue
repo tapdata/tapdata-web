@@ -31,13 +31,12 @@
             class="p-4 mode-card-image align-top"
             :src="require('@tap/assets/images/swimlane/data-integration-mode.svg')"
           ></ElImage>
-          <div class="px-4 flex align-center mode-card-title">
+          <div class="px-4 flex align-center mode-card-title border-bottom">
             <ElRadio v-model="mode" class="mr-0" label="integration">
               <span class="fs-7 font-color-dark">{{ $t('packages_business_data_console_mode_integration') }}</span>
             </ElRadio>
           </div>
-          <ElDivider></ElDivider>
-          <div class="px-4 mode-desc">
+          <div class="px-4 py-2 mode-desc">
             1. {{ $t('packages_business_data_console_mode_integration_tooltip_1') }} <br />
             2. {{ $t('packages_business_data_console_mode_integration_tooltip_2') }}
           </div>
@@ -51,15 +50,14 @@
             class="p-4 mode-card-image align-top"
             :src="require('@tap/assets/images/swimlane/data-service-platform-mode.svg')"
           ></ElImage>
-          <div class="px-4 flex align-center mode-card-title">
+          <div class="px-4 flex align-center mode-card-title border-bottom">
             <ElRadio v-model="mode" class="mr-0" label="service">
               <span class="fs-7 font-color-dark"
                 >{{ $t('packages_business_data_console_mode_service') }}<VIcon class="ml-1" size="32">beta</VIcon></span
               >
             </ElRadio>
           </div>
-          <ElDivider></ElDivider>
-          <div class="px-4 mode-desc">
+          <div class="px-4 py-2 mode-desc">
             1. {{ $t('packages_business_data_console_mode_service_tooltip_1') }} <br />
             2. {{ $t('packages_business_data_console_mode_service_tooltip_2') }} <br />
             3. {{ $t('packages_business_data_console_mode_service_tooltip_3') }}
@@ -410,9 +408,6 @@ export default {
 }
 .mode-ul {
   list-style-type: disc;
-}
-.mode-desc {
-  width: 475px;
 }
 .setting-card__header {
   border-radius: 4px 4px 0 0;
