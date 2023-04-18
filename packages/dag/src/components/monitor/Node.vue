@@ -385,6 +385,9 @@ export default defineComponent({
           return [cdcTime, inputEvent, outputEvent, qps]
         }
         if (isProcessor.value) {
+          if (props.node.hiddenMap?.totalData) {
+            return [cdcTime]
+          }
           return [cdcTime, inputEvent, outputEvent, processingTime, qps]
         }
         return [cdcTime, inputEvent, outputEvent, targetWriteTime, qps]
@@ -395,6 +398,9 @@ export default defineComponent({
           return [syncProcess, qps, inputEvent, outputEvent]
         }
         if (isProcessor.value) {
+          if (props.node.hiddenMap?.totalData) {
+            return [cdcTime]
+          }
           return [inputEvent, outputEvent, processingTime, qps]
         }
         return [inputEvent, outputEvent, targetWriteTime, processingTime, qps]

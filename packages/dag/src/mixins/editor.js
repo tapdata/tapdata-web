@@ -196,7 +196,8 @@ export default {
         node.attrs.sharedCache = sharedCache
         // 需要隐藏的内容
         node.hiddenMap = {
-          setting: this.loadNodeHiddenSetting(node)
+          setting: this.loadNodeHiddenSetting(node),
+          totalData: this.loadNodeHiddenTotalData(node)
         }
         this.addNode(node)
       })
@@ -218,6 +219,15 @@ export default {
         flag = true
       } else if (['logCollector'].includes(syncType) && type === 'hazelcastIMDG') {
         // 共享挖掘，目标节点
+        flag = true
+      }
+      return flag
+    },
+
+    loadNodeHiddenTotalData(node = {}) {
+      let flag = false
+      const { syncType } = this.dataflow || {}
+      if (['shareCache'].includes(syncType) && node.type === 'mem_cache') {
         flag = true
       }
       return flag
