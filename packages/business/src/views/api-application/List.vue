@@ -77,6 +77,7 @@ import dayjs from 'dayjs'
 import { logcollectorApi, taskApi, appApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage, makeStatusAndDisabled } from '@tap/business'
+import { toRegExp } from '@tap/shared'
 
 import Editor from './Editor'
 import Details from './Details'
@@ -177,7 +178,7 @@ export default {
       name &&
         (where.value = {
           options: 'i',
-          like: name
+          like: toRegExp(name)
         })
       connectionName && (where.connectionName = connectionName)
       let filter = {
