@@ -228,9 +228,19 @@
             <ElButton
               size="mini"
               type="text"
+              v-if="scope.row.orderInfo && scope.row.orderInfo.chargeProvider === 'Stripe'"
               :loading="scope.row.btnLoading.delete"
               :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
               @click="getUnsubscribePrice(scope.row)"
+              >{{ $t('public_button_unsubscribe') }}</ElButton
+            >
+            <ElButton
+              size="mini"
+              type="text"
+              v-else
+              :loading="scope.row.btnLoading.delete"
+              :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
+              @click="handleUnsubscribe(scope.row)"
               >{{ $t('public_button_unsubscribe') }}</ElButton
             >
           </template>
@@ -420,7 +430,7 @@
                 <el-radio class="mt-2" label="other">{{ $t('dfs_instance_instance_qita') }}</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item v-if="form.refundReason === 'other'" required prop="refundDescribe">
+            <el-form-item v-if="form.refundReason === 'other'" prop="refundDescribe">
               <el-input
                 v-model="form.refundDescribe"
                 type="textarea"
@@ -437,7 +447,7 @@
         <span slot="footer" class="dialog-footer">
           <span class="mr-4"
             ><span class="fs-6 font-color-dark font-weight-light">{{ $t('dfs_instance_instance_ketuidingjine') }}</span
-            ><span class="color-primary fs-4">{{ refundAmount }}</span></span
+            ><span class="color-primary fs-4"> {{ refundAmount }}</span></span
           >
           <el-button @click="showUnsubscribeDetailVisible = false">{{ $t('public_button_cancel') }}</el-button>
           <el-button :disabled="!form.refundReason" type="primary" @click="cancelSubmit">{{
@@ -1221,6 +1231,7 @@ export default {
         })
       )
     },
+
     //退订
     cancelSubmit() {
       this.$refs.ruleForm.validate(valid => {
@@ -1244,7 +1255,38 @@ export default {
         }
       })
     },
-
+    //退订
+    handleUnsubscribe(row = {}) {
+      this.$confirm(
+        i18n.t('dfs_user_center_ninjiangtuidingr', { val1: row.content }),
+        i18n.t('dfs_user_center_tuidingfuwu'),
+        {
+          type: 'warning'
+        }
+      ).then(res => {
+        if (!res) return
+        const { paidType } = row
+        this.buried('unsubscribeAgentStripe', '', {
+          type: paidType
+        })
+        this.$axios
+          .post('api/tcm/orders/cancel', { instanceId: row.id })
+          .then(() => {
+            this.fetch()
+            this.buried('unsubscribeAgentStripe', '', {
+              result: true,
+              type: paidType
+            })
+            this.$message.success(this.$t('public_message_operation_success'))
+          })
+          .catch(() => {
+            this.buried('unsubscribeAgentStripe', '', {
+              result: false,
+              type: paidType
+            })
+          })
+      })
+    },
     //取消订阅
     cancelPaidSubscribe(row = {}) {
       this.$confirm(

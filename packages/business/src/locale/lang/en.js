@@ -929,7 +929,7 @@ export default {
   packages_business_data_console_mode_service_tooltip_1: 'All Features Of Data Integration',
   packages_business_data_console_mode_service_tooltip_2: 'Data Cache Layer In Platform',
   packages_business_data_console_mode_service_tooltip_3: 'Support Multiple Service Publish',
-  packages_business_data_console_fdm_mdm_storage: 'FDM & MDM Storage Backend',
+  packages_business_data_console_fdm_mdm_storage: 'Data Center Storage',
   packages_business_data_console_fdm_mdm_storage_tooltip:
     'Specify the database connection that will be used for additional data layer storage',
   packages_business_mongodb_atlas_cluster: 'MongoDB Atlas Cluster',
