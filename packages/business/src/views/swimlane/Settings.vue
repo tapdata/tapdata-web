@@ -36,6 +36,11 @@
               <span class="fs-7 font-color-dark">{{ $t('packages_business_data_console_mode_integration') }}</span>
             </ElRadio>
           </div>
+          <ElDivider></ElDivider>
+          <div class="px-4 mode-desc">
+            1. {{ $t('packages_business_data_console_mode_integration_tooltip_1') }} <br />
+            2. {{ $t('packages_business_data_console_mode_integration_tooltip_2') }}
+          </div>
         </div>
         <div
           class="rounded-xl bg-white border mode-card overflow-hidden clickable"
@@ -52,6 +57,12 @@
                 >{{ $t('packages_business_data_console_mode_service') }}<VIcon class="ml-1" size="32">beta</VIcon></span
               >
             </ElRadio>
+          </div>
+          <ElDivider></ElDivider>
+          <div class="px-4 mode-desc">
+            1. {{ $t('packages_business_data_console_mode_service_tooltip_1') }} <br />
+            2. {{ $t('packages_business_data_console_mode_service_tooltip_2') }} <br />
+            3. {{ $t('packages_business_data_console_mode_service_tooltip_3') }}
           </div>
         </div>
       </div>
@@ -418,7 +429,6 @@ export default {
 }
 
 .mode-card {
-  width: 240px;
   transition: box-shadow 0.15s linear 0s;
 
   &-image {
@@ -449,5 +459,13 @@ export default {
       padding-bottom: 0;
     }
   }
+}
+
+.mode-desc {
+  line-height: 2;
+  padding-bottom: 10px;
+}
+.el-divider--horizontal {
+  margin: 5px 5px !important;
 }
 </style>
