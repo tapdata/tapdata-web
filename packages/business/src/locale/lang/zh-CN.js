@@ -886,7 +886,7 @@ export default {
   packages_business_data_console_mode_integration_tooltip_1: '支持异构数据与结构自动实时同步',
   packages_business_data_console_mode_integration_tooltip_2: '支持数据的实时加工与转换',
   packages_business_data_console_mode_service_tooltip_1: '支持数据集成模式全部能力',
-  packages_business_data_console_mode_service_tooltip_2: '支持平台缓存企业数据',
+  packages_business_data_console_mode_service_tooltip_2: '支持平台缓存并标准化企业关键数据模型',
   packages_business_data_console_mode_service_tooltip_3: '支持多种下游服务集成与发布管理',
   packages_business_data_console_mode_service: '作为数据服务平台使用',
   packages_business_data_console_fdm_mdm_storage: '平台缓存层和加工层存储',

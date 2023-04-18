@@ -28,8 +28,8 @@
           @click="handleSelectMode('integration')"
         >
           <ElImage
-            class="p-4 mode-card-image align-top"
-            :src="require('@tap/assets/images/swimlane/data-integration-mode.svg')"
+            class="px-5 py-2 mode-card-image align-top"
+            :src="require('@tap/assets/images/swimlane/data-integration-mode.png')"
           ></ElImage>
           <div class="px-4 flex align-center mode-card-title border-bottom">
             <ElRadio v-model="mode" class="mr-0" label="integration">
@@ -47,8 +47,8 @@
           @click="handleSelectMode('service')"
         >
           <ElImage
-            class="p-4 mode-card-image align-top"
-            :src="require('@tap/assets/images/swimlane/data-service-platform-mode.svg')"
+            class="px-5 py-2 mode-card-image align-top"
+            :src="require('@tap/assets/images/swimlane/data-service-platform-mode.png')"
           ></ElImage>
           <div class="px-4 flex align-center mode-card-title border-bottom">
             <ElRadio v-model="mode" class="mr-0" label="service">
