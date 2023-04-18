@@ -23,7 +23,7 @@
         </div>
         <div class="flex-1 mt-5 text-center">
           <header class="api-monitor-total__tittle">{{ $t('api_monitor_total_transmitTotal') }}</header>
-          <div class="api-monitor-total__text din-font">{{ handleUnit(previewData.transmitTotal) || 0 }}</div>
+          <div class="api-monitor-total__text din-font">{{ calcUnit(previewData.transmitTotal, 'b') || 0 }}</div>
         </div>
       </section>
       <!--api 排行榜 -->
@@ -159,7 +159,7 @@
           <el-table-column prop="visitCount" :label="$t('api_monitor_total_api_list_visitCount')"> </el-table-column>
           <el-table-column prop="transitQuantity" :label="$t('api_monitor_total_api_list_transitQuantity')">
             <template #default="{ row }">
-              <span>{{ handleUnit(row.transitQuantity) || '-' }}</span>
+              <span>{{ calcUnit(row.transitQuantity, 'b') || '-' }}</span>
             </template>
           </el-table-column>
         </el-table>
@@ -181,7 +181,7 @@
 <script>
 import { Chart, FilterBar, VTable } from '@tap/component'
 import { apiMonitorApi } from '@tap/api'
-import { calcTimeUnit, toRegExp, handleUnit } from '@tap/shared'
+import { calcTimeUnit, toRegExp, calcUnit } from '@tap/shared'
 
 import Detail from './Detail'
 
@@ -280,9 +280,8 @@ export default {
         }, 10000)
       })
     },
-
-    handleUnit(limit) {
-      return handleUnit(limit)
+    calcUnit() {
+      return calcUnit(...arguments)
     },
     formatMs(time) {
       if (time === 0 || !time) return 0

@@ -81,7 +81,7 @@
           </span>
         </template>
         <template slot="fileSize" slot-scope="scope">
-          <span>{{ handleUnit(scope.row.fileSize) }}</span>
+          <span>{{ calcUnit(scope.row.fileSize, 'b') }}</span>
         </template>
         <template slot="operation" slot-scope="scope">
           <ElButton
@@ -121,7 +121,7 @@ import StatusTag from '@/components/StatusTag'
 import timeFunction from '@/mixins/timeFunction'
 import { AGENT_STATUS_MAP_EN } from '../../const'
 import i18n from '@/i18n'
-import { handleUnit } from '@tap/shared'
+import { calcUnit } from '@tap/shared'
 import { measurementApi } from '@tap/api'
 import Time from '@tap/shared/src/time'
 
@@ -421,8 +421,8 @@ export default {
           this.loadingUpload = false
         })
     },
-    handleUnit(limit) {
-      return handleUnit(limit)
+    calcUnit() {
+      return calcUnit(...arguments)
     },
     //打开日志列表
     open(id, status) {

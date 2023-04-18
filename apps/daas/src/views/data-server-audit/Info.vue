@@ -44,7 +44,7 @@
               class="link-primary pt-4 din-font details-box-item-num"
               v-else-if="item.value > 0 && ['speed'].includes(item.key)"
             >
-              {{ item.value ? handleUnit(item.value) + '/S' : '0 M/S' }}
+              {{ item.value ? calcUnit(item.value, 'b') + '/S' : '0 M/S' }}
             </div>
             <div v-else class="link-primary pt-4 din-font details-box-item-num">
               {{ item.value }}
@@ -68,7 +68,7 @@
 import dayjs from 'dayjs'
 
 import { apiCallsApi } from '@tap/api'
-import { handleUnit } from '@tap/shared'
+import { calcUnit } from '@tap/shared'
 import { formatMs } from '@/utils/util'
 
 export default {
@@ -128,8 +128,8 @@ export default {
     formatMs(ms) {
       return formatMs(ms)
     },
-    handleUnit(limit) {
-      return handleUnit(limit)
+    calcUnit() {
+      return calcUnit(...arguments)
     }
   }
 }

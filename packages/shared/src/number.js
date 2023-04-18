@@ -16,14 +16,18 @@ export function calcUnit(val, type, fix = 1, sp = [1000]) {
     list = type
   } else {
     // 内置单位数组
-    switch (type) {
+    switch ((type + '').toLowerCase()) {
       // 内存
-      case 1:
+      case '1':
+      case 'b':
+      case 'kb':
+      case 'byte':
         sp = [1024]
-        list = ['B', 'KB', 'M', 'G']
+        list = ['B', 'KB', 'M', 'G', 'T', 'P']
         break
       // 时间
-      case 2:
+      case '2':
+      case 'time':
         sp = [1000, 60, 60, 24, 30, 12]
         list = ['ms', 's', 'min', 'h', 'd', 'M', 'Y']
         break

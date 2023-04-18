@@ -8,7 +8,7 @@
         </div>
         <div class="flex-1">
           <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_visitQuantity') }}</div>
-          <div class="api-monitor-detail-wrap__value">{{ handleUnit(detail.visitQuantity) || 0 }}</div>
+          <div class="api-monitor-detail-wrap__value">{{ calcUnit(detail.visitQuantity, 'b') || 0 }}</div>
         </div>
         <div class="flex-1 cursor-pointer" @click="getDetail(false, 'latency')">
           <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_timeConsuming') }}</div>
@@ -23,7 +23,7 @@
         <div class="flex-1 cursor-pointer" @click="getDetail(false, 'speed')">
           <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_speed') }}</div>
           <div class="api-monitor-detail-wrap__value">
-            {{ detail.speed ? handleUnit(detail.speed) + '/S' : '0 M/S' }}
+            {{ detail.speed ? calcUnit(detail.speed, 'b') + '/S' : '0 M/S' }}
           </div>
         </div>
         <div class="flex-1 cursor-pointer" @click="getDetail(false, 'responseTime')">
@@ -56,7 +56,7 @@ import { Chart, FilterBar } from '@tap/component'
 import { formatTime } from '@/utils/util'
 import { apiMonitorApi } from '@tap/api'
 import Time from '@tap/shared/src/time'
-import { handleUnit } from '@tap/shared'
+import { calcUnit } from '@tap/shared'
 import { formatMs } from './utils'
 
 export default {
@@ -178,8 +178,8 @@ export default {
     this.timer && clearInterval(this.timer)
   },
   methods: {
-    handleUnit(limit) {
-      return handleUnit(limit)
+    calcUnit() {
+      return calcUnit(...arguments)
     },
     formatMs(time) {
       if (time === 0 || !time) return 0
