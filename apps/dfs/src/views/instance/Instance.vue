@@ -450,9 +450,13 @@
             ><span class="color-primary fs-4"> {{ refundAmount }}</span></span
           >
           <el-button @click="showUnsubscribeDetailVisible = false">{{ $t('public_button_cancel') }}</el-button>
-          <el-button :disabled="!form.refundReason" type="primary" @click="cancelSubmit">{{
-            $t('public_button_unsubscribe')
-          }}</el-button>
+          <el-button
+            :disabled="!form.refundReason"
+            type="primary"
+            :loading="loadingCancelSubmit"
+            @click="cancelSubmit"
+            >{{ $t('public_button_unsubscribe') }}</el-button
+          >
         </span>
       </ElDialog>
     </div>
@@ -530,6 +534,7 @@ export default {
       selectListType: 'code',
       subscriptionModelVisible: false,
       showUnsubscribeDetailVisible: false,
+      loadingCancelSubmit: false,
       paidDetailList: [],
       form: {
         refundReason: '',
@@ -1236,6 +1241,7 @@ export default {
     cancelSubmit() {
       this.$refs.ruleForm.validate(valid => {
         if (valid) {
+          this.loadingCancelSubmit = true
           const { paidType, id } = this.currentRow
           const { refundReason, refundDescribe } = this.form
           let param = {
@@ -1243,15 +1249,22 @@ export default {
             refundReason,
             refundDescribe
           }
-          this.$axios.post('api/tcm/orders/cancel', param).then(() => {
-            this.fetch()
-            this.buried('unsubscribeAgentStripe', '', {
-              result: true,
-              type: paidType
+          this.$axios
+            .post('api/tcm/orders/cancel', param)
+            .then(() => {
+              this.fetch()
+              this.buried('unsubscribeAgentStripe', '', {
+                result: true,
+                type: paidType
+              })
+              this.$message.success(this.$t('public_message_operation_success'))
+              this.showUnsubscribeDetailVisible = false
+              this.loadingCancelSubmit = false
             })
-            this.$message.success(this.$t('public_message_operation_success'))
-            this.showUnsubscribeDetailVisible = false
-          })
+            .finally(() => {
+              this.showUnsubscribeDetailVisible = false
+              this.loadingCancelSubmit = false
+            })
         }
       })
     },
