@@ -115,12 +115,7 @@
                 <span>{{ item.desc }}</span>
               </ElOption>
             </ElSelect>
-            <div>
-              {{ $t('dfs_agent_download_subscriptionmodeldialog_guigeshuomingci') }}{{ agentSizeCap.mem
-              }}{{ $t('dfs_agent_download_subscriptionmodeldialog_keyongneicunjian') }}{{ agentSizeCap.pipeline
-              }}{{ $t('dfs_agent_download_subscriptionmodeldialog_geyugumeimiao') }}{{ agentSizeCap.tps
-              }}{{ $t('dfs_agent_download_subscriptionmodeldialog_zuoyou') }}
-            </div>
+            <div class="mt-1 lh-base" v-html="$t('dfs_agent_specification_description', agentSizeCap)"></div>
           </ElFormItem>
           <ElFormItem :label="$t('dfs_instance_instance_dingyuefangshi')">
             <ElRadioGroup v-model="currentPackage" @input="handleChange">
