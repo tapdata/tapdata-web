@@ -55,7 +55,7 @@
             }}</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn width="160" :label="$t('dfs_instance_instance_daoqishijian')">
+        <ElTableColumn width="180" :label="$t('dfs_instance_instance_daoqishijian')">
           <template slot-scope="scope">
             <div>
               <ElTooltip
@@ -727,9 +727,22 @@ export default {
             item.periodLabel =
               dayjs(periodStart).format('YYYY-MM-DD HH:mm:ss') + ' - ' + dayjs(periodEnd).format('YYYY-MM-DD HH:mm:ss')
             item.content = `${item.subscriptionMethodLabel} ${item.specLabel} ${i18n.t('public_agent')}`
-            item.expiredTime =
-              chargeProvider === 'Aliyun' ? license.expiredTime : chargeProvider === 'Stripe' ? periodEnd : ''
-            item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD') : '-'
+            if (chargeProvider === 'Aliyun') {
+              item.expiredTime = license.expiredTime
+              item.expiredTimeLabel = item.expiredTime
+                ? new Date(item.expiredTime.replace('Z', '+08:00')).toLocaleString()
+                : '-'
+            } else if (chargeProvider === 'Stripe') {
+              item.expiredTime = periodEnd
+              item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD  HH:mm:ss') : '-'
+            } else {
+              item.expiredTime = ''
+              item.expiredTimeLabel = '-'
+            }
+            // item.expiredTime =
+            //   chargeProvider === 'Aliyun' ? license.expiredTime : chargeProvider === 'Stripe' ? periodEnd : ''
+            // item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD') : '-'
+
             item.paidType =
               chargeProvider === 'Aliyun' ? license.type : chargeProvider === 'Stripe' ? paidSubscribeDto.type : ''
             item.deployDisable = item.tmInfo.pingTime || false
