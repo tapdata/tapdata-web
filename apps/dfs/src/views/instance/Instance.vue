@@ -228,9 +228,19 @@
             <ElButton
               size="mini"
               type="text"
+              v-if="scope.row.orderInfo && scope.row.orderInfo.chargeProvider === 'Stripe'"
               :loading="scope.row.btnLoading.delete"
               :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
               @click="getUnsubscribePrice(scope.row)"
+              >{{ $t('public_button_unsubscribe') }}</ElButton
+            >
+            <ElButton
+              size="mini"
+              type="text"
+              v-else
+              :loading="scope.row.btnLoading.delete"
+              :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
+              @click="handleUnsubscribe(scope.row)"
               >{{ $t('public_button_unsubscribe') }}</ElButton
             >
           </template>
@@ -1221,6 +1231,7 @@ export default {
         })
       )
     },
+
     //退订
     cancelSubmit() {
       this.$refs.ruleForm.validate(valid => {
@@ -1244,7 +1255,38 @@ export default {
         }
       })
     },
-
+    //退订
+    handleUnsubscribe(row = {}) {
+      this.$confirm(
+        i18n.t('dfs_user_center_ninjiangtuidingr', { val1: row.content }),
+        i18n.t('dfs_user_center_tuidingfuwu'),
+        {
+          type: 'warning'
+        }
+      ).then(res => {
+        if (!res) return
+        const { paidType } = row
+        this.buried('unsubscribeAgentStripe', '', {
+          type: paidType
+        })
+        this.$axios
+          .post('api/tcm/orders/cancel', { instanceId: row.id })
+          .then(() => {
+            this.fetch()
+            this.buried('unsubscribeAgentStripe', '', {
+              result: true,
+              type: paidType
+            })
+            this.$message.success(this.$t('public_message_operation_success'))
+          })
+          .catch(() => {
+            this.buried('unsubscribeAgentStripe', '', {
+              result: false,
+              type: paidType
+            })
+          })
+      })
+    },
     //取消订阅
     cancelPaidSubscribe(row = {}) {
       this.$confirm(
