@@ -430,7 +430,7 @@
                 <el-radio class="mt-2" label="other">{{ $t('dfs_instance_instance_qita') }}</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item v-if="form.refundReason === 'other'" required prop="refundDescribe">
+            <el-form-item v-if="form.refundReason === 'other'" prop="refundDescribe">
               <el-input
                 v-model="form.refundDescribe"
                 type="textarea"
