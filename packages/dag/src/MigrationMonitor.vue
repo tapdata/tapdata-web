@@ -159,7 +159,7 @@
 
       <SharedCacheDetails ref="sharedCacheDetails" width="380px"></SharedCacheDetails>
 
-      <SharedCacheEditor v-if="dataflow.shareCache" ref="sharedCacheEditor"></SharedCacheEditor>
+      <SharedCacheEditor v-if="['shareCache'].includes(dataflow.syncType)" ref="sharedCacheEditor"></SharedCacheEditor>
     </section>
   </section>
 </template>
@@ -611,11 +611,6 @@ export default {
     },
 
     handleEdit() {
-      // 共享缓存
-      if (this.dataflow.shareCache) {
-        this.$refs.sharedCacheEditor.open(this.dataflow.id)
-        return
-      }
       switch (this.dataflow.syncType) {
         case 'migrate':
           this.$router.push({
@@ -631,6 +626,9 @@ export default {
           break
         case 'logCollector':
           this.$refs.sharedMiningEditor.open(this.dataflow.id)
+          break
+        case 'shareCache':
+          this.$refs.sharedCacheEditor.open(this.dataflow.id)
           break
       }
     },

@@ -194,7 +194,10 @@ export default {
           }
         }
         node.attrs.sharedCache = sharedCache
-
+        // 需要隐藏的内容
+        node.hiddenMap = {
+          setting: this.loadNodeHiddenSetting(node)
+        }
         this.addNode(node)
       })
 
@@ -204,6 +207,20 @@ export default {
       edges.forEach(({ source, target }) => {
         this.jsPlumbIns.connect({ uuids: [`${NODE_PREFIX}${source}_source`, `${NODE_PREFIX}${target}_target`] })
       })
+    },
+
+    loadNodeHiddenSetting(node = {}) {
+      let flag = false
+      const { syncType } = this.dataflow || {}
+      const { type } = node
+      // 心跳任务、共享缓存
+      if (['connHeartbeat', 'shareCache'].includes(syncType)) {
+        flag = true
+      } else if (['logCollector'].includes(syncType) && type === 'hazelcastIMDG') {
+        // 共享挖掘，目标节点
+        flag = true
+      }
+      return flag
     },
 
     getRealId(str) {
@@ -489,9 +506,7 @@ export default {
       }
 
       const node = this.nodeById(id)
-      // 心跳任务的节点，不触发选中
-      const flag = ['connHeartbeat'].includes(this.dataflow.syncType)
-      if (flag) return
+      if (node?.hiddenMap?.setting) return
       node && this.nodeSelected(node)
       if (setActive) {
         this.setActiveNode(node.id)
@@ -1935,6 +1950,8 @@ export default {
           return
         }
         data.dag = data.temp || data.dag // 和后端约定了，如果缓存有数据则获取temp
+        // 共享缓存
+        data.syncType = data.shareCache ? 'shareCache' : data.syncType
         this.reformDataflow(data)
         this.setTaskInfo(this.dataflow)
         this.startLoopTask(id)

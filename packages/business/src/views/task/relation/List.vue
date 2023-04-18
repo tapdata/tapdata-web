@@ -168,7 +168,7 @@ export default {
           },
           {
             label: i18n.t('public_task_type'),
-            prop: 'typeLabel',
+            prop: 'syncTypeLabel',
             width: 120
           },
           {
@@ -202,7 +202,7 @@ export default {
             width: 100
           }
         ],
-        mem_cache: [
+        shareCache: [
           {
             label: i18n.t('public_serial_number'),
             type: 'index'
@@ -214,12 +214,12 @@ export default {
           },
           {
             label: i18n.t('public_task_type'),
-            prop: 'typeLabel',
+            prop: 'syncTypeLabel',
             width: 120
           },
           {
             label: i18n.t('public_task_sync_type'),
-            prop: 'syncTypeLabel',
+            prop: 'tongbuLabel',
             width: 120
           },
           {
@@ -306,7 +306,8 @@ export default {
           data:
             data.map(t => {
               t.typeLabel = this.map[t.type]?.label
-              t.syncTypeLabel = TASK_TYPE_MAP[t.taskType]
+              t.syncTypeLabel = this.map[t.syncType]?.label
+              t.tongbuLabel = TASK_TYPE_MAP[t.taskType]
               return t
             }) || []
         }
@@ -343,13 +344,7 @@ export default {
     },
 
     handleMonitor(row = {}) {
-      const routeUrl = this.$router.resolve({
-        name: this.map[row.type]?.monitor,
-        params: {
-          id: row.id
-        }
-      })
-      openUrl(routeUrl.href)
+      this.handleName(row)
     }
   }
 }
