@@ -437,7 +437,7 @@
         <span slot="footer" class="dialog-footer">
           <span class="mr-4"
             ><span class="fs-6 font-color-dark font-weight-light">{{ $t('dfs_instance_instance_ketuidingjine') }}</span
-            ><span class="color-primary fs-4">{{ refundAmount }}</span></span
+            ><span class="color-primary fs-4"> {{ refundAmount }}</span></span
           >
           <el-button @click="showUnsubscribeDetailVisible = false">{{ $t('public_button_cancel') }}</el-button>
           <el-button :disabled="!form.refundReason" type="primary" @click="cancelSubmit">{{
