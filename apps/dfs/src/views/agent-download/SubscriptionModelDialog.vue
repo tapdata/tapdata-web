@@ -585,7 +585,11 @@ export default {
           })
         })
         .sort((a, b) => {
-          return a.order < b.order ? -1 : a.periodUnit < b.periodUnit ? -1 : 1
+          const aType = a.type === 'recurring' ? 1 : 2
+          const bType = b.type === 'recurring' ? 1 : 2
+          const aOrder = a.order
+          const bOrder = b.order
+          return aType + aOrder - (bType + bOrder)
         })
       if (chargeProvider === 'FreeTier') {
         this.packageItems = [
