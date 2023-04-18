@@ -380,14 +380,19 @@
       ></SelectListDialog>
       <!-- 新的创建实例 -->
       <SubscriptionModelDialog :visible.sync="subscriptionModelVisible"></SubscriptionModelDialog>
-      <ElDialog :visible.sync="showUnsubscribeDetailVisible" title="退订实例">
+      <ElDialog :visible.sync="showUnsubscribeDetailVisible" :title="$t('dfs_instance_instance_tuidingshili')">
         <section>
           <ul class="subscription-ul">
-            <li class="mt-2">1.退订金额计算公式请查看 退订规则说明。</li>
-            <li class="mt-2">2.退订只退还实付金额的部分，已使用优惠卷不退还。</li>
-            <li class="mt-2">3.请仔细核对退订实例的信息，并确认退订规则和退订金额，实例一经退订无法恢复。</li>
+            <li class="mt-2">
+              {{ $t('dfs_instance_instance_tuidingjineji') }}
+              <el-link style="vertical-align: top" href="https://docs.tapdata.io/cloud/billing/refund" type="primary">{{
+                $t('dfs_instance_instance_tuifeiguize')
+              }}</el-link>
+            </li>
+            <li class="mt-2">{{ $t('dfs_instance_instance_tuidingzhituihuan') }}</li>
+            <li class="mt-2">{{ $t('dfs_instance_instance_qingzixihedui') }}</li>
           </ul>
-          <div class="mt-4 fs-6 font-color-dark">退订实例</div>
+          <div class="mt-4 fs-6 font-color-dark">{{ $t('dfs_instance_instance_tuidingshili') }}</div>
           <VTable
             ref="table"
             row-key="id"
@@ -398,31 +403,46 @@
             class="mt-4 mb-4"
           ></VTable>
           <el-form label-position="top" :model="form" :rules="rules" ref="ruleForm">
-            <el-form-item label="退订原因" required>
+            <el-form-item :label="$t('dfs_instance_instance_tuidingyuanyin')" required>
               <el-radio-group v-model="form.refundReason">
-                <el-radio label="configurationOptionError">配置选项错误</el-radio>
-                <el-radio label="unableDeployProperly">无法正常部署</el-radio>
-                <el-radio label="notconsistentWithExpectations">性能或者功能不符合预期</el-radio>
-                <el-radio label="unsubscribeAfterBusinessTesting">业务测试完毕退订</el-radio>
-                <el-radio label="other">其他</el-radio>
+                <el-radio class="mt-2" label="configurationOptionError">{{
+                  $t('dfs_instance_instance_peizhixuanxiangcuo')
+                }}</el-radio>
+                <el-radio class="mt-2" label="unableDeployProperly">{{
+                  $t('dfs_instance_instance_wufazhengchangbu')
+                }}</el-radio>
+                <el-radio class="mt-2" label="notconsistentWithExpectations">{{
+                  $t('dfs_instance_instance_xingnenghuozhegong')
+                }}</el-radio>
+                <el-radio class="mt-2" label="unsubscribeAfterBusinessTesting">{{
+                  $t('dfs_instance_instance_yewuceshiwan')
+                }}</el-radio>
+                <el-radio class="mt-2" label="other">{{ $t('dfs_instance_instance_qita') }}</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item v-if="form.refundReason === 'other'" required prop="refundDescribe">
-              <el-input v-model="form.refundDescribe" type="textarea" placeholder="请输入退订原因" show-word-limit>
+              <el-input
+                v-model="form.refundDescribe"
+                type="textarea"
+                :placeholder="$t('dfs_instance_instance_qingshurutuiding')"
+                show-word-limit
+              >
               </el-input>
             </el-form-item>
-            <el-form-item label="退款渠道">
+            <el-form-item :label="$t('dfs_instance_instance_tuikuanqudao')">
               <el-input v-model="form.refundChannel" disabled show-word-limit style="width: 200px"> </el-input>
             </el-form-item>
           </el-form>
         </section>
         <span slot="footer" class="dialog-footer">
           <span class="mr-4"
-            ><span class="fs-6 font-color-dark font-weight-light">可退订金额：</span
+            ><span class="fs-6 font-color-dark font-weight-light">{{ $t('dfs_instance_instance_ketuidingjine') }}</span
             ><span class="color-primary fs-4">{{ refundAmount }}</span></span
           >
-          <el-button @click="showUnsubscribeDetailVisible = false">取消</el-button>
-          <el-button :disabled="!form.refundReason" type="primary" @click="cancelSubmit">立即退订</el-button>
+          <el-button @click="showUnsubscribeDetailVisible = false">{{ $t('public_button_cancel') }}</el-button>
+          <el-button :disabled="!form.refundReason" type="primary" @click="cancelSubmit">{{
+            $t('public_button_unsubscribe')
+          }}</el-button>
         </span>
       </ElDialog>
     </div>
@@ -504,45 +524,45 @@ export default {
       form: {
         refundReason: '',
         refundDescribe: '',
-        refundChannel: ' 原路退回'
+        refundChannel: i18n.t('dfs_instance_instance_yuanlutuihui')
       },
       currentRow: '',
       refundAmount: '',
       columns: [
         {
-          label: 'Agent Name',
+          label: this.$t('agent_name'),
           prop: 'agentName',
           minWidth: 120
         },
         {
-          label: '规格',
+          label: this.$t('dfs_instance_instance_guige'),
           prop: 'spec'
         },
         {
-          label: '开始时间',
+          label: this.$t('start_time'),
           prop: 'periodStart',
           dataType: 'time'
         },
         {
-          label: '结束时间',
+          label: this.$t('end_time'),
           prop: 'periodEnd',
           dataType: 'time'
         },
         {
-          label: '实付金额',
+          label: i18n.t('dfs_instance_instance_shifujine'),
           prop: 'actualAmount'
         },
         {
-          label: '已消耗金额',
+          label: i18n.t('dfs_instance_instance_yixiaohaojine'),
           prop: 'spentAmount'
         },
         {
-          label: '退订金额',
+          label: i18n.t('dfs_instance_instance_tuidingjine'),
           prop: 'refundAmount'
         }
       ],
       rules: {
-        refundDescribe: [{ required: true, message: '请输入退订原因', trigger: 'blur' }]
+        refundDescribe: [{ required: true, message: i18n.t('dfs_instance_instance_qingshurutuiding'), trigger: 'blur' }]
       },
       paidRenewDetail: []
     }

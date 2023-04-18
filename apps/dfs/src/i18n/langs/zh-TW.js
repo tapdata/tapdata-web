@@ -1329,5 +1329,23 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_cny: '人民幣',
   dfs_agent_download_subscriptionmodeldialog_hkd: '港幣',
   dfs_agent_specification_description:
-    '此規格需要至少 <strong>{mem}</strong> 可用內存, 建議的任務數不超過 <strong>{pipeline}</strong> 個, 預估 TPS 同步的性能在 <strong>{tps}</strong> 左右'
+    '此規格需要至少 <strong>{mem}</strong> 可用內存, 建議的任務數不超過 <strong>{pipeline}</strong> 個, 預估 TPS 同步的性能在 <strong>{tps}</strong> 左右',
+  dfs_instance_instance_qingshurutuiding: '請輸入退訂原因',
+  dfs_instance_instance_tuidingjine: '退訂金額',
+  dfs_instance_instance_yixiaohaojine: '已消耗金額',
+  dfs_instance_instance_shifujine: '實付金額',
+  dfs_instance_instance_yuanlutuihui: ' 原路退回',
+  dfs_instance_instance_ketuidingjine: '可退訂金額：',
+  dfs_instance_instance_tuikuanqudao: '退款渠道',
+  dfs_instance_instance_qita: '其他',
+  dfs_instance_instance_yewuceshiwan: '業務測試完畢退訂',
+  dfs_instance_instance_xingnenghuozhegong: '性能或者功能不符合預期',
+  dfs_instance_instance_wufazhengchangbu: '無法正常部署',
+  dfs_instance_instance_peizhixuanxiangcuo: '配置選項錯誤',
+  dfs_instance_instance_tuidingyuanyin: '退訂原因',
+  dfs_instance_instance_tuidingshili: '退訂實例',
+  dfs_instance_instance_qingzixihedui: '3.請仔細核對退訂實例的信息，並確認退訂規則和退訂金額，實例一經退訂無法恢復。 ',
+  dfs_instance_instance_tuidingzhituihuan: '2.退訂只退還實付金額的部分，已使用優惠卷不退還。 ',
+  dfs_instance_instance_tuidingjineji: '1.退訂金額計算公式請查看',
+  dfs_instance_instance_tuifeiguize: '退費規則說明'
 }
