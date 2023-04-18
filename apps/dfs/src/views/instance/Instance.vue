@@ -416,6 +416,9 @@
           </el-form>
         </section>
         <span slot="footer" class="dialog-footer">
+          <span class="mr-4"
+            ><span>可退订金额：</span><span class="color-primary fs-4">{{ refundAmount }}</span></span
+          >
           <el-button @click="showUnsubscribeDetailVisible = false">取消</el-button>
           <el-button type="primary" @click="cancelSubmit">立即退订</el-button>
         </span>
@@ -433,7 +436,7 @@ import { INSTANCE_STATUS_MAP } from '../../const'
 import Details from './Details'
 import timeFunction from '@/mixins/timeFunction'
 import { VIcon, FilterBar, VTable } from '@tap/component'
-import { dayjs } from '@tap/business'
+import { CURRENCY_SYMBOL_MAP, dayjs } from '@tap/business'
 import Time from '@tap/shared/src/time'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 import { getSpec, getPaymentMethod } from './utils'
@@ -502,33 +505,38 @@ export default {
         refundChannel: ' 原路退回'
       },
       currentRow: '',
+      refundAmount: '',
       columns: [
+        {
+          label: 'Agent Name',
+          prop: 'agentName',
+          minWidth: 120
+        },
+        {
+          label: '规格',
+          prop: 'spec'
+        },
         {
           label: '开始时间',
           prop: 'periodStart',
-          dataType: 'time',
-          minWidth: 160
+          dataType: 'time'
         },
         {
           label: '结束时间',
           prop: 'periodEnd',
-          dataType: 'time',
-          minWidth: 160
+          dataType: 'time'
         },
         {
           label: '实付金额',
-          prop: 'price',
-          minWidth: 160
+          prop: 'actualAmount'
         },
         {
           label: '已消耗金额',
-          prop: 'discountAmount',
-          minWidth: 160
+          prop: 'spentAmount'
         },
         {
           label: '退订金额',
-          prop: 'actualAmount',
-          minWidth: 160
+          prop: 'refundAmount'
         }
       ],
       paidRenewDetail: []
@@ -1168,9 +1176,25 @@ export default {
     getUnsubscribePrice(row = {}) {
       this.currentRow = row
       this.$axios.get('api/tcm/orders/calculateRefundAmount?agentId=' + row.id).then(res => {
-        this.paidDetailList = res?.paidDetailList || []
+        let { currency, agentName, spec, actualAmount, periodStart, periodEnd, refundAmount, spentAmount } = res
+        //格式化价
+        actualAmount = this.formatPrice(currency, actualAmount)
+        spentAmount = this.formatPrice(currency, spentAmount)
+        refundAmount = this.formatPrice(currency, refundAmount)
+        spec = spec.name
+        this.refundAmount = refundAmount
+        this.paidDetailList = [{ agentName, spec, actualAmount, periodStart, periodEnd, refundAmount, spentAmount }]
         this.showUnsubscribeDetailVisible = true
       })
+    },
+    formatPrice(currency, price) {
+      return (
+        CURRENCY_SYMBOL_MAP[currency] +
+        (price / 100).toLocaleString('zh', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        })
+      )
     },
     //退订
     cancelSubmit() {
