@@ -38,7 +38,8 @@
           </div>
           <div class="px-4 py-2 mode-desc">
             1. {{ $t('packages_business_data_console_mode_integration_tooltip_1') }} <br />
-            2. {{ $t('packages_business_data_console_mode_integration_tooltip_2') }}
+            2. {{ $t('packages_business_data_console_mode_integration_tooltip_2') }} <br />
+            3. {{ $t('packages_business_data_console_mode_integration_tooltip_3') }}
           </div>
         </div>
         <div
@@ -128,7 +129,7 @@
           </ElFormItem>
 
           <ElFormItem prop="fdmStorageConnectionId">
-            <ElSelect v-model="form.fdmStorageConnectionId" :disabled="disabled" class="w-100">
+            <ElSelect v-model="form.fdmStorageConnectionId" :disabled="fdmStorageDisabled" class="w-100">
               <ElOption v-for="op in connectionsList" :label="op.label" :value="op.value" :key="op.value"></ElOption>
             </ElSelect>
           </ElFormItem>
@@ -244,11 +245,6 @@ export default {
       ],
       options: [
         {
-          label: this.$t('packages_business_mongodb_atlas_cluster'),
-          value: 'atlas',
-          tag: 'Sync Atlas Cluster List'
-        },
-        {
           label: this.$t('packages_business_mongodb_self_hosted_cluster'),
           value: 'self',
           tag: 'Add a New Connection'
@@ -279,6 +275,10 @@ export default {
         this.setting.fdmStorageConnectionId === this.form.fdmStorageConnectionId
       )
     },
+    fdmStorageDisabled() {
+      return this.form.fdmStorageConnectionId != null
+    },
+
 
     disabledBtn() {
       return this.disabled && this.mode === 'service' && this.mode === this.setting?.mode
