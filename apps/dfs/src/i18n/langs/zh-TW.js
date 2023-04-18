@@ -1239,6 +1239,8 @@ export default {
   dfs_instance_utils_baonian: '包年',
   dfs_instance_utils_lianxu: '連續',
   dfs_instance_utils_baoyue: '包月',
+  dfs_instance_utils_one_month_only: '訂購一個月',
+  dfs_instance_utils_one_year_only: '訂購一年',
   dfs_instance_expired_time_tip1: '過期後的限制行為：',
   dfs_instance_expired_time_tip2: '1.禁止調度新任務到過期的Agent上去運行',
   dfs_instance_expired_time_tip3: '2.舊任務繼續運行不受限制',

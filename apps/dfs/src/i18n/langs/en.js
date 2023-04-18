@@ -1362,6 +1362,8 @@ export default {
   dfs_instance_utils_baonian: 'Annually',
   dfs_instance_utils_lianxu: 'Continuous',
   dfs_instance_utils_baoyue: 'Monthly',
+  dfs_instance_utils_one_month_only: 'One Month Only',
+  dfs_instance_utils_one_year_only: 'One Year Only',
   dfs_instance_expired_time_tip1: 'Restricted behaviors after expiration:',
   dfs_instance_expired_time_tip2: '1. Prohibition of scheduling new tasks to run on expired instances.',
   dfs_instance_expired_time_tip3: '2. Continued unrestricted operation of old tasks.',
