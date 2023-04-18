@@ -217,7 +217,7 @@
           ></LineChart>
         </div>-->
       </div>
-      <div class="info-box py-2 px-4">
+      <div v-if="!hideTotalData" class="info-box py-2 px-4">
         <div class="flex justify-content-between mb-2">
           <span class="fw-sub fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_renwushijiantong') }}</span>
         </div>
@@ -515,6 +515,10 @@ export default {
       if (!allNodes.length) return
       const fileType = ['CSV', 'EXCEL', 'JSON', 'XML']
       return allNodes.some(node => fileType.includes(node.databaseType))
+    },
+
+    hideTotalData() {
+      return ['shareCache'].includes(this.dataflow?.syncType)
     }
   },
 
