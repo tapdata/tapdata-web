@@ -397,7 +397,7 @@
             :has-pagination="false"
             class="mt-4 mb-4"
           ></VTable>
-          <el-form label-position="top">
+          <el-form label-position="top" :model="form" :rules="rules" ref="ruleForm">
             <el-form-item label="退订原因" required>
               <el-radio-group v-model="form.refundReason">
                 <el-radio label="configurationOptionError">配置选项错误</el-radio>
@@ -407,8 +407,9 @@
                 <el-radio label="other">其他</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item v-if="form.refundReason === 'other'">
-              <el-input v-model="form.refundDescribe" type="textarea" show-word-limit> </el-input>
+            <el-form-item v-if="form.refundReason === 'other'" required prop="refundDescribe">
+              <el-input v-model="form.refundDescribe" type="textarea" placeholder="请输入退订原因" show-word-limit>
+              </el-input>
             </el-form-item>
             <el-form-item label="退款渠道">
               <el-input v-model="form.refundChannel" disabled show-word-limit style="width: 200px"> </el-input>
@@ -417,10 +418,11 @@
         </section>
         <span slot="footer" class="dialog-footer">
           <span class="mr-4"
-            ><span>可退订金额：</span><span class="color-primary fs-4">{{ refundAmount }}</span></span
+            ><span class="fs-6 font-color-dark font-weight-light">可退订金额：</span
+            ><span class="color-primary fs-4">{{ refundAmount }}</span></span
           >
           <el-button @click="showUnsubscribeDetailVisible = false">取消</el-button>
-          <el-button type="primary" @click="cancelSubmit">立即退订</el-button>
+          <el-button :disabled="!form.refundReason" type="primary" @click="cancelSubmit">立即退订</el-button>
         </span>
       </ElDialog>
     </div>
@@ -539,6 +541,9 @@ export default {
           prop: 'refundAmount'
         }
       ],
+      rules: {
+        refundDescribe: [{ required: true, message: '请输入退订原因', trigger: 'blur' }]
+      },
       paidRenewDetail: []
     }
   },
@@ -1198,21 +1203,25 @@ export default {
     },
     //退订
     cancelSubmit() {
-      const { paidType, id } = this.currentRow
-      const { refundReason, refundDescribe } = this.form
-      let param = {
-        instanceId: id,
-        refundReason,
-        refundDescribe
-      }
-      this.$axios.post('api/tcm/orders/cancel', param).then(() => {
-        this.fetch()
-        this.buried('unsubscribeAgentStripe', '', {
-          result: true,
-          type: paidType
-        })
-        this.$message.success(this.$t('public_message_operation_success'))
-        this.showUnsubscribeDetailVisible = false
+      this.$refs.ruleForm.validate(valid => {
+        if (valid) {
+          const { paidType, id } = this.currentRow
+          const { refundReason, refundDescribe } = this.form
+          let param = {
+            instanceId: id,
+            refundReason,
+            refundDescribe
+          }
+          this.$axios.post('api/tcm/orders/cancel', param).then(() => {
+            this.fetch()
+            this.buried('unsubscribeAgentStripe', '', {
+              result: true,
+              type: paidType
+            })
+            this.$message.success(this.$t('public_message_operation_success'))
+            this.showUnsubscribeDetailVisible = false
+          })
+        }
       })
     },
 
