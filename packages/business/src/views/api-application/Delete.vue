@@ -50,18 +50,6 @@ export default {
       },
       loading: false,
       saveLoading: false,
-      rulesEdit: {
-        value: [
-          {
-            required: true,
-            message: i18n.t('packages_business_application_delete_yingyongmingchengbu'),
-            trigger: 'blur'
-          }
-        ],
-        desc: [
-          { required: true, message: i18n.t('packages_business_application_delete_yingyongmiaoshubu'), trigger: 'blur' }
-        ]
-      },
       form: {
         appValue: '',
         appLabel: ''
