@@ -1062,8 +1062,8 @@ export default {
   dfs_user_center_kaifaxinxi: '开发信息',
 
   //Agent
-  dfs_agent_down_tishi: 'Agent已删除，不能继续部署。',
-  dfs_agent_down_tishi_running: 'Agent实例运行中，不能继续部署。',
+  dfs_agent_down_tishi: 'Agent 已被删除，请返回管理页面重新创建',
+  dfs_agent_down_tishi_running: 'Agent 已经在运行中, 请返回管理页面查看',
   dfs_agent_down_goback: '返回Agent管理',
   dfs_agent_download_agentdownloadmodal_aliyunjisuan: '阿里云计算巢',
   dfs_agent_download_agentdownloadmodal_bushuwanchenghou:
@@ -1358,7 +1358,7 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_cny: '人民币',
   dfs_agent_download_subscriptionmodeldialog_hkd: '港币',
   dfs_agent_specification_description:
-    '此规格需要至少 <strong>{mem}</strong> 可用内存, 建议的任务数不超过 <strong>{pipeline}</strong> 个, 预估 TPS 同步的性能在 <strong>{tps}</strong> 左右',
+    '此规格需要至少 <strong>{mem}</strong> 可用内存, 建议的任务数不超过 <strong>{pipeline}</strong> 个, 预计 同步的性能在 <strong>{tps}</strong> TPS 左右',
   dfs_instance_instance_qingshurutuiding: '请输入退订原因',
   dfs_instance_instance_tuidingjine: '退订金额',
   dfs_instance_instance_yixiaohaojine: '已消耗金额',
