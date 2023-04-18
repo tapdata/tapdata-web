@@ -1340,7 +1340,7 @@ export default {
   dfs_instance_instance_pclas:
     '<p class="flex align-content-center">Click to open <a class="color-primary text-decoration-underline" href="{val1}" target="_blank">Aliyun Market</a> Purchase an instance and obtain an authorization code</p>',
   dfs_instance_instance_daoqishijian: 'Expiration Time',
-  dfs_instance_instance_dingyuefangshi: 'Subscription Method',
+  dfs_instance_instance_dingyuefangshi: 'Subscription Period',
   dfs_instance_instance_guige: 'Specification',
   dfs_instance_selectlist_yibangding: 'Already Bound',
   dfs_instance_selectlist_bangdingshilizhuang: 'Binding instance status',
@@ -1361,7 +1361,7 @@ export default {
   dfs_instance_utils_geyue: 'Month',
   dfs_instance_utils_baonian: 'Annually',
   dfs_instance_utils_lianxu: 'Continuous',
-  dfs_instance_utils_baoyue: 'Monthly Subscription',
+  dfs_instance_utils_baoyue: 'Monthly',
   dfs_instance_expired_time_tip1: 'Restricted behaviors after expiration:',
   dfs_instance_expired_time_tip2: '1. Prohibition of scheduling new tasks to run on expired instances.',
   dfs_instance_expired_time_tip3: '2. Continued unrestricted operation of old tasks.',
@@ -1483,5 +1483,7 @@ export default {
   dfs_instance_instance_tuidingzhituihuan:
     '2. Only the actual paid amount will be refunded when unsubscribing, and the used coupons will not be refunded. ',
   dfs_instance_instance_tuidingjineji: '1. Please check the calculation formula of unsubscribe amount',
-  dfs_instance_instance_tuifeiguize: 'Description of refund rules'
+  dfs_instance_instance_tuifeiguize: 'Description of refund rules',
+  dfs_agent_subscription_discount: '{val}% off',
+  dfs_agent_step_aliyun_code: 'Using Alibaba Cloud Marketplace authorization code'
 }

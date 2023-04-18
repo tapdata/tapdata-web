@@ -118,28 +118,42 @@
             <div class="mt-1 lh-base" v-html="$t('dfs_agent_specification_description', agentSizeCap)"></div>
           </ElFormItem>
           <ElFormItem :label="$t('dfs_instance_instance_dingyuefangshi')">
-            <ElRadioGroup v-model="currentPackage" @input="handleChange">
+            <ElRadioGroup v-model="currentPackage" @input="handleChange" class="flex gap-4">
               <ElRadio
                 v-for="(item, index) in packageItems"
                 :key="index"
                 :label="item.value"
                 border
-                class="rounded-4"
-                >{{ item.label }}</ElRadio
+                class="rounded-4 subscription-radio m-0 position-relative"
               >
+                <span class="inline-flex align-center">
+                  {{ item.label }}
+                  <ElTag
+                    v-if="item.type === 'recurring' || item.periodUnit === 'year'"
+                    class="discount-tag fw-sub rounded-4 border-0 ml-2"
+                    >{{ $t('dfs_agent_subscription_discount', { val: getDiscount(item) }) }}</ElTag
+                  >
+
+                  <VIcon
+                    v-if="item.type === 'recurring' && item.periodUnit === 'year'"
+                    class="position-absolute discount-hot-icon"
+                    >hot-o</VIcon
+                  >
+                </span>
+              </ElRadio>
             </ElRadioGroup>
           </ElFormItem>
           <ElFormItem
             :label="$t('dfs_agent_download_subscriptionmodeldialog_xuanzebizhong')"
             v-if="currencyOption && currencyOption.length > 0"
           >
-            <ElRadioGroup v-model="currencyType" @input="changeCurrency">
+            <ElRadioGroup v-model="currencyType" @input="changeCurrency" class="flex gap-4">
               <ElRadio
                 v-for="(item, index) in currencyOption"
                 :key="index"
                 :label="item.currency"
                 border
-                class="rounded-4"
+                class="rounded-4 m-0"
                 >{{ CURRENCY_MAP[item.currency] }}</ElRadio
               >
             </ElRadioGroup>
@@ -147,10 +161,25 @@
           <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_meiyuefeiyongyu')">
             <div class="border rounded-4">
               <div class="border-bottom px-3 py-1">
-                {{ $t('dfs_agent_download_subscriptionmodeldialog_jisuan') }}{{ formatPrice(currency) }}
+                <div>
+                  <span class="price-detail-label text-end inline-block mr-2">{{
+                    $t('dfs_agent_download_subscriptionmodeldialog_jisuan')
+                  }}</span>
+                  <span class="font-color-dark">{{ formatPrice(currency, true) }}</span>
+                </div>
+                <div v-if="getDiscount(this.selected)">
+                  <span class="price-detail-label text-end inline-block mr-2"
+                    >{{ $t('dfs_agent_subscription_discount', { val: getDiscount(this.selected) }) }}:
+                  </span>
+                  <span class="discount-color fw-sub">-{{ formatPriceOff(currency) }}</span>
+                </div>
               </div>
               <div class="text-end px-3 py-1">
-                {{ $t('public_total') }}: <span class="color-primary fs-5 ml-1">{{ formatPrice(currency) }}</span>
+                {{ $t('public_total') }}:
+                <span class="color-primary fs-5 ml-1">{{ formatPrice(currency) }}</span>
+                <span class="text-decoration-line-through font-color-slight ml-2">{{
+                  formatPrice(currency, true)
+                }}</span>
               </div>
             </div>
           </ElFormItem>
@@ -229,7 +258,7 @@
             <ElFormItem :label="$t('dfs_instance_create_jieshouzhangdande')" prop="email" :rules="getEmailRules()">
               <ElInput v-model="form.email" :placeholder="getPlaceholder()" style="width: 300px"></ElInput>
             </ElFormItem>
-            <ElFormItem :label="$t('public_total')">
+            <ElFormItem :label="$t('public_total') + ':'">
               <span class="color-primary fs-5 ml-1">{{ formatPrice(currency) }}</span>
             </ElFormItem>
           </ElForm>
@@ -366,7 +395,18 @@ export default {
 
   computed: {
     steps() {
-      const steps = [
+      if (this.productType === 'aliyun') {
+        return [
+          {
+            title: this.$t('dfs_agent_download_subscriptionmodeldialog_xuanzebushulei')
+          },
+          {
+            title: this.$t('dfs_agent_step_aliyun_code')
+          }
+        ]
+      }
+
+      return [
         {
           title: this.$t('dfs_agent_download_subscriptionmodeldialog_xuanzebushulei')
         },
@@ -377,12 +417,15 @@ export default {
           title: this.$t('dfs_agent_download_subscriptionmodeldialog_chakanbingqueren')
         }
       ]
-
-      if (this.productType === 'aliyun') {
-        steps.pop()
-      }
-
-      return steps
+    },
+    singleMonth() {
+      return this.packageItems.find(item => item.type === 'one_time' && item.periodUnit === 'month')
+    },
+    singleMonthAmount() {
+      return this.singleMonth?.currencyOption.find(item => item.currency === this.currencyType)?.amount
+    },
+    singleYearAmount() {
+      return this.singleMonthAmount ? this.singleMonthAmount * 12 : this.singleMonthAmount
     }
   },
 
@@ -466,12 +509,41 @@ export default {
       }
       this.currencyOption = options
     },
-    //格式化价格
-    formatPrice(item) {
+    getAmount(item, isOriginalPrice) {
+      const current = this.selected
+      let amount = item.amount
+
+      // 基于单月算原价
+      if (isOriginalPrice && (current.type === 'recurring' || current.periodUnit === 'year')) {
+        if (this.selected.periodUnit === 'month') {
+          amount = this.singleMonthAmount
+        } else if (this.selected.periodUnit === 'year') {
+          amount = this.singleYearAmount
+        }
+      }
+
+      return amount
+    },
+    formatPriceOff(item) {
       if (!item || item?.chargeProvider === 'FreeTier') return 0
+
+      const amount = this.getAmount(item, true) - this.getAmount(item)
       return (
         CURRENCY_SYMBOL_MAP[item.currency] +
-        (item.amount / 100).toLocaleString('zh', {
+        (amount / 100).toLocaleString('zh', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        })
+      )
+    },
+    //格式化价格
+    formatPrice(item, isOriginalPrice) {
+      if (!item || item?.chargeProvider === 'FreeTier') return 0
+
+      let amount = this.getAmount(item, isOriginalPrice)
+      return (
+        CURRENCY_SYMBOL_MAP[item.currency] +
+        (amount / 100).toLocaleString('zh', {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2
         })
@@ -753,6 +825,15 @@ export default {
         .finally(() => {
           this.aliyunLoading = false
         })
+    },
+    getDiscount(item) {
+      const { locale } = this.$i18n
+
+      if (item.type === 'recurring' && item.periodUnit === 'month') {
+        return locale === 'en' ? 5 : 95
+      } else if (item.periodUnit === 'year') {
+        return locale === 'en' ? 10 : 9
+      }
     }
   }
 }
@@ -904,6 +985,33 @@ export default {
     .el-textarea__inner {
       border-radius: 6px;
     }
+
+    .subscription-radio.el-radio {
+      padding: 0 12px;
+      line-height: 30px;
+    }
+  }
+
+  .discount-color {
+    color: #ff7d00;
+  }
+
+  .discount-tag {
+    padding: 0 6px;
+    color: #ff7d00;
+    background: rgba(255, 125, 0, 0.1);
+  }
+
+  .discount-hot-icon {
+    color: #ff7d00;
+    right: -12px;
+    top: -12px;
+    font-size: 24px;
+    background: #fff;
+  }
+
+  .price-detail-label {
+    width: 80px;
   }
 }
 

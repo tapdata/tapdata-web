@@ -1347,5 +1347,7 @@ export default {
   dfs_instance_instance_qingzixihedui: '3.請仔細核對退訂實例的信息，並確認退訂規則和退訂金額，實例一經退訂無法恢復。 ',
   dfs_instance_instance_tuidingzhituihuan: '2.退訂只退還實付金額的部分，已使用優惠卷不退還。 ',
   dfs_instance_instance_tuidingjineji: '1.退訂金額計算公式請查看',
-  dfs_instance_instance_tuifeiguize: '退費規則說明'
+  dfs_instance_instance_tuifeiguize: '退費規則說明',
+  dfs_agent_subscription_discount: '{val}折',
+  dfs_agent_step_aliyun_code: '使用阿里雲市場授權碼'
 }
