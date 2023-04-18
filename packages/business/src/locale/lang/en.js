@@ -993,5 +993,7 @@ export default {
   packages_business_swimlane_tablepreview_apifuwu: 'Api service name',
   packages_business_swimlane_target_yejibao: 'Yejibao',
   packages_business_task_list_meiyoufaxiannin:
-    "I didn't find that you have recently reported task errors, if you have other questions, please consult our manual customer service"
+    "I didn't find that you have recently reported task errors, if you have other questions, please consult our manual customer service",
+  packages_business_api_application_list_xitongmorenchuang:
+    '(Applications created by the system by default, cannot be edited or deleted)'
 }

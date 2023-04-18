@@ -953,5 +953,6 @@ export default {
   packages_business_swimlane_tablepreview_fangwencishu: '访问次数',
   packages_business_swimlane_tablepreview_apifuwu: 'api服务名称',
   packages_business_swimlane_target_yejibao: '业绩宝',
-  packages_business_task_list_meiyoufaxiannin: '没有发现您最近有任务报错, 如果有其他问题, 欢迎咨询我们的人工客服'
+  packages_business_task_list_meiyoufaxiannin: '没有发现您最近有任务报错, 如果有其他问题, 欢迎咨询我们的人工客服',
+  packages_business_api_application_list_xitongmorenchuang: '(系统默认创建的应用，不可编辑和删除)'
 }

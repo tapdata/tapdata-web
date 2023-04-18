@@ -192,19 +192,13 @@ export default {
         })
         .then(data => {
           let list = data?.items || []
-          let pointTime = new Date()
           return {
             total: data?.total || 0,
             data: list.map(item => {
-              this.$set(item, 'pointTime', pointTime)
-              if (item.syncTimePoint === 'current') {
-                item.pointTime = dayjs(pointTime).format('YYYY-MM-DD HH:mm:ss')
-              } else {
-                item.pointTime = item.syncTimeZone
+              if (item.value === 'Default') {
+                item.value += ' ' + i18n.t('packages_business_api_application_list_xitongmorenchuang')
               }
               item.createTime = item.createTime ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') : '-'
-              item.logTime = item.logTime ? dayjs(item.logTime).format('YYYY-MM-DD HH:mm:ss') : '-'
-              item.delayTime = item.delayTime < 0 ? '-' : item.delayTime
               makeStatusAndDisabled(item)
               if (item.status === 'edit') {
                 item.btnDisabled.start = false
