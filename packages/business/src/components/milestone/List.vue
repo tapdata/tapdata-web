@@ -113,6 +113,7 @@ export default {
     wholeItems() {
       const milestone = this.dataflow.attrs?.milestone || {}
       let agentName = this.dataflow.agentName
+      let shareCache = this.dataflow.shareCache
 
       let result = [
         {
@@ -293,6 +294,10 @@ export default {
           val3: result[currentLen - 1].label + ' ' + result[currentLen - 1].desc
         })
       })
+      //缓存任务没有表结构复制这一步骤
+      if (shareCache) {
+        result = result.filter(it => it.key !== 'TABLE_INIT')
+      }
       return result
     },
 
