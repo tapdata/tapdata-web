@@ -430,59 +430,6 @@ export class Database extends NodeType {
           }
         },
         properties: {
-          writeBachSpace: {
-            type: 'void',
-            'x-component': 'Space',
-            'x-component-props': {
-              size: 'middle'
-            },
-            'x-reactions': {
-              fulfill: {
-                state: {
-                  display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
-                }
-              }
-            },
-            properties: {
-              writeBatchSize: {
-                title: i18n.t('packages_dag_nodes_database_piliangxierutiao'), //增量批次读取条数
-                type: 'string',
-                'x-decorator': 'FormItem',
-                'x-component': 'InputNumber',
-                'x-decorator-props': {
-                  tooltip: i18n.t('packages_dag_nodes_database_quanliangmeipici2')
-                },
-                'x-component-props': {
-                  min: 1,
-                  max: 10000000
-                },
-                default: 1000
-              },
-              writeBatchWaitMs: {
-                title: i18n.t('packages_dag_nodes_database_xierumeipizui'), //增量批次读取条数
-                type: 'string',
-                'x-decorator': 'FormItem',
-                'x-component': 'InputNumber',
-                'x-component-props': {
-                  min: 1
-                },
-                default: 500
-              }
-            }
-          },
-          ddlEvents: {
-            type: 'void',
-            title: i18n.t('packages_dag_nodes_database_ddLshijian'),
-            'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              tooltip: i18n.t('packages_dag_nodes_database_dangqianjiedianzhi'),
-              feedbackLayout: 'none'
-            },
-            'x-component': 'DdlEventList',
-            'x-component-props': {
-              findParentNodes: '{{findParentNodes}}'
-            }
-          },
           fieldMapping: {
             type: 'void',
             title: i18n.t('packages_dag_nodes_database_tuiyanjieguo'),
@@ -512,6 +459,115 @@ export class Database extends NodeType {
                   title: i18n.t('packages_dag_task_stetting_most_setting')
                 },
                 properties: {
+                  initialConcurrentSpace: {
+                    title: i18n.t('packages_dag_nodes_database_quanliangduoxiancheng'),
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      layout: 'horizontal'
+                    },
+                    type: 'void',
+                    'x-component': 'Space',
+                    'x-component-props': {
+                      size: 'middle'
+                    },
+                    properties: {
+                      initialConcurrent: {
+                        type: 'boolean',
+                        default: true,
+                        'x-component': 'Switch',
+                        'x-reactions': {
+                          target: '.initialConcurrentWriteNum',
+                          fulfill: {
+                            state: {
+                              visible: '{{!!$self.value}}'
+                            }
+                          }
+                        }
+                      },
+                      initialConcurrentWriteNum: {
+                        type: 'number',
+                        default: 8,
+                        'x-component': 'InputNumber',
+                        'x-component-props': {
+                          min: 0
+                        }
+                      }
+                    }
+                  },
+                  cdcConcurrentSpace: {
+                    type: 'void',
+                    title: i18n.t('packages_dag_nodes_database_zengliangduoxiancheng'),
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      layout: 'horizontal'
+                    },
+                    'x-component': 'Space',
+                    'x-component-props': {
+                      size: 'middle'
+                    },
+                    properties: {
+                      cdcConcurrent: {
+                        type: 'boolean',
+                        'x-component': 'Switch',
+                        'x-reactions': {
+                          target: '.cdcConcurrentWriteNum',
+                          fulfill: {
+                            state: {
+                              visible: '{{!!$self.value}}'
+                            }
+                          }
+                        }
+                      },
+                      cdcConcurrentWriteNum: {
+                        type: 'number',
+                        default: 4,
+                        'x-component': 'InputNumber',
+                        'x-component-props': {
+                          min: 0
+                        }
+                      }
+                    }
+                  },
+                  writeBachSpace: {
+                    type: 'void',
+                    'x-component': 'Space',
+                    'x-component-props': {
+                      size: 'middle'
+                    },
+                    'x-reactions': {
+                      fulfill: {
+                        state: {
+                          display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
+                        }
+                      }
+                    },
+                    properties: {
+                      writeBatchSize: {
+                        title: i18n.t('packages_dag_nodes_database_piliangxierutiao'), //增量批次读取条数
+                        type: 'string',
+                        'x-decorator': 'FormItem',
+                        'x-component': 'InputNumber',
+                        'x-decorator-props': {
+                          tooltip: i18n.t('packages_dag_nodes_database_quanliangmeipici2')
+                        },
+                        'x-component-props': {
+                          min: 1,
+                          max: 10000000
+                        },
+                        default: 1000
+                      },
+                      writeBatchWaitMs: {
+                        title: i18n.t('packages_dag_nodes_database_xierumeipizui'), //增量批次读取条数
+                        type: 'string',
+                        'x-decorator': 'FormItem',
+                        'x-component': 'InputNumber',
+                        'x-component-props': {
+                          min: 1
+                        },
+                        default: 500
+                      }
+                    }
+                  },
                   existDataProcessMode: {
                     type: 'string',
                     title: i18n.t('packages_dag_nodes_database_chongfuchulice'),
@@ -660,74 +716,17 @@ export class Database extends NodeType {
                       }
                     }
                   },
-
-                  initialConcurrentSpace: {
-                    title: i18n.t('packages_dag_nodes_database_quanliangduoxiancheng'),
+                  ddlEvents: {
+                    type: 'void',
+                    title: i18n.t('packages_dag_nodes_database_ddLshijian'),
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      layout: 'horizontal'
+                      tooltip: i18n.t('packages_dag_nodes_database_dangqianjiedianzhi'),
+                      feedbackLayout: 'none'
                     },
-                    type: 'void',
-                    'x-component': 'Space',
+                    'x-component': 'DdlEventList',
                     'x-component-props': {
-                      size: 'middle'
-                    },
-                    properties: {
-                      initialConcurrent: {
-                        type: 'boolean',
-                        default: true,
-                        'x-component': 'Switch',
-                        'x-reactions': {
-                          target: '.initialConcurrentWriteNum',
-                          fulfill: {
-                            state: {
-                              visible: '{{!!$self.value}}'
-                            }
-                          }
-                        }
-                      },
-                      initialConcurrentWriteNum: {
-                        type: 'number',
-                        default: 8,
-                        'x-component': 'InputNumber',
-                        'x-component-props': {
-                          min: 0
-                        }
-                      }
-                    }
-                  },
-                  cdcConcurrentSpace: {
-                    type: 'void',
-                    title: i18n.t('packages_dag_nodes_database_zengliangduoxiancheng'),
-                    'x-decorator': 'FormItem',
-                    'x-decorator-props': {
-                      layout: 'horizontal'
-                    },
-                    'x-component': 'Space',
-                    'x-component-props': {
-                      size: 'middle'
-                    },
-                    properties: {
-                      cdcConcurrent: {
-                        type: 'boolean',
-                        'x-component': 'Switch',
-                        'x-reactions': {
-                          target: '.cdcConcurrentWriteNum',
-                          fulfill: {
-                            state: {
-                              visible: '{{!!$self.value}}'
-                            }
-                          }
-                        }
-                      },
-                      cdcConcurrentWriteNum: {
-                        type: 'number',
-                        default: 4,
-                        'x-component': 'InputNumber',
-                        'x-component-props': {
-                          min: 0
-                        }
-                      }
+                      findParentNodes: '{{findParentNodes}}'
                     }
                   },
                   nodeConfig: {

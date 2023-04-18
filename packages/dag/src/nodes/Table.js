@@ -192,6 +192,75 @@ export class Table extends NodeType {
         }
       },
 
+      updateConditionFields: {
+        title: i18n.t('packages_dag_nodes_table_gengxintiaojianzi'),
+        type: 'array',
+        description: `{{ !$isDaas ? "${i18n.t('packages_dag_nodes_table_isDaa_ruguoyuanweimongodb')}" : ""}}`,
+        'x-decorator': 'FormItem',
+        'x-decorator-props': {
+          asterisk: true
+        },
+        'x-component': 'FieldSelect',
+        'x-component-props': {
+          // allowCreate: true,
+          multiple: true,
+          filterable: true
+        },
+        'x-reactions': [
+          {
+            dependencies: ['$inputs'],
+            fulfill: {
+              state: {
+                display: '{{$deps[0].length > 0 ? "visible":"hidden"}}'
+              }
+            }
+          },
+          `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true}, $values.$inputs[0])}}`,
+          {
+            effects: ['onFieldMount'],
+            fulfill: {
+              run: '$self.visible && $self.validate(); console.log("updateConditionFields", $self)'
+            }
+          }
+        ],
+        'x-validator': {
+          validator: `{{async (value, rule, ctx) => {
+                        let field = ctx.field
+                        let form = field.form
+                        let options = field.dataSource
+                        let nodeData = findNodeById($values.id)
+
+                        console.log('验证关联条件', value, $values)
+
+                        if (!options || !options.length) {
+                          options = await loadNodeFieldOptions($values.$inputs[0])
+                        }
+
+                        if (options.length) {
+                          let isPrimaryKeyList = options.filter(item => item.isPrimaryKey)
+                          let indicesUniqueList = options.filter(item => item.indicesUnique)
+                          let defaultList = (isPrimaryKeyList.length ? isPrimaryKeyList : indicesUniqueList).map(item => item.value)
+
+                          if (!value || !value.length) {
+                            nodeData.updateConditionFields = defaultList
+                            $values.updateConditionFields = nodeData.updateConditionFields
+                          } else {
+                            let fieldMap = options.reduce((obj, item) => (obj[item.value]=true,obj), {})
+                            let filterValue = value.filter(v => fieldMap[v])
+
+                            if (value && value.length !== filterValue.length) {
+                              nodeData.updateConditionFields = filterValue.length ? filterValue : defaultList
+                              $values.updateConditionFields = nodeData.updateConditionFields
+                              console.log('更新关联条件字段')
+                            }
+                          }
+                        }
+                        if (!$values.updateConditionFields?.length) return '该字段是必填字段!'
+                        console.debug('[DEBUG]: updateConditionFields validate', value, field, ctx, options, nodeData)
+                      }}}`
+        }
+      },
+
       // 指定agent
       'attrs.accessNodeProcessId': {
         type: 'string',
@@ -981,6 +1050,75 @@ export class Table extends NodeType {
                   }
                 },
                 properties: {
+                  initialConcurrentSpace: {
+                    title: i18n.t('packages_dag_nodes_database_quanliangduoxiancheng'),
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      layout: 'horizontal'
+                    },
+                    type: 'void',
+                    'x-component': 'Space',
+                    'x-component-props': {
+                      size: 'middle'
+                    },
+                    properties: {
+                      initialConcurrent: {
+                        type: 'boolean',
+                        default: true,
+                        'x-component': 'Switch',
+                        'x-reactions': {
+                          target: '.initialConcurrentWriteNum',
+                          fulfill: {
+                            state: {
+                              visible: '{{!!$self.value}}'
+                            }
+                          }
+                        }
+                      },
+                      initialConcurrentWriteNum: {
+                        type: 'number',
+                        default: 8,
+                        'x-component': 'InputNumber',
+                        'x-component-props': {
+                          min: 0
+                        }
+                      }
+                    }
+                  },
+                  cdcConcurrentSpace: {
+                    type: 'void',
+                    title: i18n.t('packages_dag_nodes_database_zengliangduoxiancheng'),
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      layout: 'horizontal'
+                    },
+                    'x-component': 'Space',
+                    'x-component-props': {
+                      size: 'middle'
+                    },
+                    properties: {
+                      cdcConcurrent: {
+                        type: 'boolean',
+                        'x-component': 'Switch',
+                        'x-reactions': {
+                          target: '.cdcConcurrentWriteNum',
+                          fulfill: {
+                            state: {
+                              visible: '{{!!$self.value}}'
+                            }
+                          }
+                        }
+                      },
+                      cdcConcurrentWriteNum: {
+                        type: 'number',
+                        default: 4,
+                        'x-component': 'InputNumber',
+                        'x-component-props': {
+                          min: 0
+                        }
+                      }
+                    }
+                  },
                   writeBachSpace: {
                     type: 'void',
                     'x-component': 'Space',
@@ -1022,18 +1160,6 @@ export class Table extends NodeType {
                         },
                         default: 500
                       }
-                    }
-                  },
-                  ddlEvents: {
-                    type: 'void',
-                    title: i18n.t('packages_dag_nodes_database_ddLshijian'),
-                    'x-decorator': 'FormItem',
-                    'x-decorator-props': {
-                      feedbackLayout: 'none'
-                    },
-                    'x-component': 'DdlEventList',
-                    'x-component-props': {
-                      findParentNodes: '{{findParentNodes}}'
                     }
                   },
                   existDataProcessMode: {
@@ -1217,137 +1343,16 @@ export class Table extends NodeType {
                       }
                     }
                   },
-                  updateConditionFields: {
-                    title: i18n.t('packages_dag_nodes_table_gengxintiaojianzi'),
-                    type: 'array',
-                    'x-index': 1,
-                    description: `{{ !$isDaas ? "${i18n.t(
-                      'packages_dag_nodes_table_isDaa_ruguoyuanweimongodb'
-                    )}" : ""}}`,
-                    'x-decorator': 'FormItem',
-                    'x-decorator-props': {
-                      asterisk: true
-                    },
-                    'x-component': 'FieldSelect',
-                    'x-component-props': {
-                      // allowCreate: true,
-                      multiple: true,
-                      filterable: true
-                    },
-                    'x-reactions': [
-                      `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true}, $values.$inputs[0])}}`,
-                      {
-                        effects: ['onFieldMount'],
-                        fulfill: {
-                          run: '$self.visible && $self.validate(); console.log("updateConditionFields", $self)'
-                        }
-                      }
-                    ],
-                    'x-validator': {
-                      validator: `{{async (value, rule, ctx) => {
-                        let field = ctx.field
-                        let form = field.form
-                        let options = field.dataSource
-                        let nodeData = findNodeById($values.id)
-
-                        console.log('验证关联条件', value, $values)
-
-                        if (!options || !options.length) {
-                          options = await loadNodeFieldOptions($values.$inputs[0])
-                        }
-
-                        if (options.length) {
-                          let isPrimaryKeyList = options.filter(item => item.isPrimaryKey)
-                          let indicesUniqueList = options.filter(item => item.indicesUnique)
-                          let defaultList = (isPrimaryKeyList.length ? isPrimaryKeyList : indicesUniqueList).map(item => item.value)
-
-                          if (!value || !value.length) {
-                            nodeData.updateConditionFields = defaultList
-                            $values.updateConditionFields = nodeData.updateConditionFields
-                          } else {
-                            let fieldMap = options.reduce((obj, item) => (obj[item.value]=true,obj), {})
-                            let filterValue = value.filter(v => fieldMap[v])
-
-                            if (value && value.length !== filterValue.length) {
-                              nodeData.updateConditionFields = filterValue.length ? filterValue : defaultList
-                              $values.updateConditionFields = nodeData.updateConditionFields
-                              console.log('更新关联条件字段')
-                            }
-                          }
-                        }
-                        if (!$values.updateConditionFields?.length) return '该字段是必填字段!'
-                        console.debug('[DEBUG]: updateConditionFields validate', value, field, ctx, options, nodeData)
-                      }}}`
-                    }
-                  },
-
-                  initialConcurrentSpace: {
-                    title: i18n.t('packages_dag_nodes_database_quanliangduoxiancheng'),
-                    'x-decorator': 'FormItem',
-                    'x-decorator-props': {
-                      layout: 'horizontal'
-                    },
+                  ddlEvents: {
                     type: 'void',
-                    'x-component': 'Space',
-                    'x-component-props': {
-                      size: 'middle'
-                    },
-                    properties: {
-                      initialConcurrent: {
-                        type: 'boolean',
-                        default: true,
-                        'x-component': 'Switch',
-                        'x-reactions': {
-                          target: '.initialConcurrentWriteNum',
-                          fulfill: {
-                            state: {
-                              visible: '{{!!$self.value}}'
-                            }
-                          }
-                        }
-                      },
-                      initialConcurrentWriteNum: {
-                        type: 'number',
-                        default: 8,
-                        'x-component': 'InputNumber',
-                        'x-component-props': {
-                          min: 0
-                        }
-                      }
-                    }
-                  },
-                  cdcConcurrentSpace: {
-                    type: 'void',
-                    title: i18n.t('packages_dag_nodes_database_zengliangduoxiancheng'),
+                    title: i18n.t('packages_dag_nodes_database_ddLshijian'),
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      layout: 'horizontal'
+                      feedbackLayout: 'none'
                     },
-                    'x-component': 'Space',
+                    'x-component': 'DdlEventList',
                     'x-component-props': {
-                      size: 'middle'
-                    },
-                    properties: {
-                      cdcConcurrent: {
-                        type: 'boolean',
-                        'x-component': 'Switch',
-                        'x-reactions': {
-                          target: '.cdcConcurrentWriteNum',
-                          fulfill: {
-                            state: {
-                              visible: '{{!!$self.value}}'
-                            }
-                          }
-                        }
-                      },
-                      cdcConcurrentWriteNum: {
-                        type: 'number',
-                        default: 4,
-                        'x-component': 'InputNumber',
-                        'x-component-props': {
-                          min: 0
-                        }
-                      }
+                      findParentNodes: '{{findParentNodes}}'
                     }
                   }
                 }
