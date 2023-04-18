@@ -262,7 +262,7 @@ export default [
     }
   },
   {
-    path: '/sharedMining/monitor/:id',
+    path: '/shared-mining/monitor/:id',
     name: 'SharedMiningMonitor',
     component: MigrationMonitor,
     meta: {
@@ -546,10 +546,10 @@ export default [
       },
       /* ---------- 共享挖掘  ----------*/
       {
-        path: '/sharedMining',
+        path: '/shared-mining',
         name: 'sharedMining',
         component: Parent,
-        redirect: 'sharedMining/',
+        redirect: 'shared-mining/',
         meta: {
           title: 'page_title_shared_mining'
         },
