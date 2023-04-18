@@ -589,7 +589,8 @@ export default {
   packages_dag_migration_settingpanel_dangtiaoguoshijian: '当跳过事件数超过',
   packages_dag_migration_settingpanel_dangtiaoguoshijian2: '当跳过事件占已同步事件的百分比超过',
   packages_dag_migration_settingpanel_zhidingtiaoguoce: '指定跳过策略',
-  packages_dag_migration_settingpanel_renwutiaoguoshi: '任务跳过事件超过阈值时停止任务',
+  packages_dag_migration_settingpanel_renwutiaoguoshi: '跳过事件超过阈值时停止任务',
   packages_dag_migration_settingpanel_tiaoguoyichangshi: '跳过异常事件，任务继续运行',
-  packages_dag_migration_settingpanel_dangdanbiaotongbu: '当单表同步出现向目标写入错误时'
+  packages_dag_migration_settingpanel_dangdanbiaotongbu: '事件处理出现异常时',
+  packages_dag_migration_settingpanel_anzhaomorenzhong: '按照默认重试逻辑进行重试'
 }

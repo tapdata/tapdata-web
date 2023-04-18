@@ -127,12 +127,12 @@ export default observer({
                               //   value: 'SkipTable'
                               // },
                               {
-                                label: i18n.t('packages_dag_migration_settingpanel_tiaoguoyichangshi'),
-                                value: 'SkipData'
+                                label: i18n.t('packages_dag_migration_settingpanel_anzhaomorenzhong'),
+                                value: 'Disable'
                               },
                               {
-                                label: i18n.t('packages_dag_migration_settingpanel_renwuzhijiebao'),
-                                value: 'Disable'
+                                label: i18n.t('packages_dag_migration_settingpanel_tiaoguoyichangshi'),
+                                value: 'SkipData'
                               }
                             ]
                           },
@@ -146,10 +146,10 @@ export default observer({
                             },
                             default: 'Disable',
                             enum: [
-                              {
-                                label: i18n.t('packages_dag_migration_settingpanel_zhidingtiaoguoce'),
-                                value: 'Disable'
-                              },
+                              // {
+                              //   label: i18n.t('packages_dag_migration_settingpanel_zhidingtiaoguoce'),
+                              //   value: 'Disable'
+                              // },
                               {
                                 label: i18n.t('packages_dag_migration_settingpanel_dangtiaoguoshijian2'),
                                 value: 'SkipByRate'

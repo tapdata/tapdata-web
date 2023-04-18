@@ -628,8 +628,8 @@ export default {
   packages_dag_migration_settingpanel_dangtiaoguoshijian2:
     'When the percentage of skipped events to synchronized events exceeds',
   packages_dag_migration_settingpanel_zhidingtiaoguoce: 'Specify skip strategy',
-  packages_dag_migration_settingpanel_renwutiaoguoshi: 'Stop the task when the task skip event exceeds the threshold',
+  packages_dag_migration_settingpanel_renwutiaoguoshi: 'Stop task when skip event exceeds threshold',
   packages_dag_migration_settingpanel_tiaoguoyichangshi: 'Skip abnormal events, the task continues to run',
-  packages_dag_migration_settingpanel_dangdanbiaotongbu:
-    'When there is an error writing to the target for single table synchronization'
+  packages_dag_migration_settingpanel_dangdanbiaotongbu: 'When the event processing is abnormal',
+  packages_dag_migration_settingpanel_anzhaomorenzhong: 'Retry according to the default retry logic'
 }
