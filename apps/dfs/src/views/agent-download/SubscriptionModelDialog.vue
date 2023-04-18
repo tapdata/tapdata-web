@@ -5,7 +5,7 @@
     :close-on-press-escape="false"
     :show-close="showClose"
     :title="$t('dfs_agent_download_subscriptionmodeldialog_peizhishishishu')"
-    width="75%"
+    width="1000px"
     :before-close="close"
     custom-class="tap-dialog"
   >
@@ -908,9 +908,6 @@ export default {
 }
 
 .product-type-card {
-  .product-type-image {
-    height: 176px;
-  }
   .is-active {
     display: none;
   }

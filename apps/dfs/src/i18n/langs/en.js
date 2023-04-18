@@ -1438,18 +1438,18 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_gengjiakekaoyou:
     'More reliable: The maintenance and monitoring of resource usage is provided by Tapdata, and the operation is more reliable',
   dfs_agent_download_subscriptionmodeldialog_gengjiafangbianmian: 'More convenient: no deployment, one-click delivery',
-  dfs_agent_download_subscriptionmodeldialog_shiyongquantuoguan: 'The benefits of using the fully managed mode:',
+  dfs_agent_download_subscriptionmodeldialog_shiyongquantuoguan: 'The benefits of using the Fully-Managed mode:',
   dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi:
     'In this mode, Tapdata provides all computing and storage resources.',
   dfs_agent_download_subscriptionmodeldialog_gengjiaanquanyong:
     'More secure: user data will not pass through any external network including Tapdata',
   dfs_agent_download_subscriptionmodeldialog_chengbengengdichong:
-    'Lower cost: make full use of existing hardware resources, and the product price is much lower under the same specification',
-  dfs_agent_download_subscriptionmodeldialog_shiyongbantuoguan: 'The benefits of using the semi-hosted mode:',
+    'Lower cost: make full use of existing hardware resources, and the price is significantly lower under the same specification',
+  dfs_agent_download_subscriptionmodeldialog_shiyongbantuoguan: 'The benefits of using the Semi-Managed mode:',
   dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi2:
     'In this mode, you need to provide your own computing resources and storage resources',
-  dfs_agent_download_subscriptionmodeldialog_quantuoguanmoshi: 'Full Managed Mode (Coming Soon)',
-  dfs_agent_download_subscriptionmodeldialog_bantuoguanmoshi: 'Semi Managed Mode',
+  dfs_agent_download_subscriptionmodeldialog_quantuoguanmoshi: 'Fully-Managed Mode (Coming Soon)',
+  dfs_agent_download_subscriptionmodeldialog_bantuoguanmoshi: 'Semi-Managed Mode',
   dfs_instance_instance_quxiaodingyue: 'Unsubscribe',
   dfs_views_layout_chanpinyindao: 'Product Guide',
   dfs_agent_download_subscriptionmodeldialog_chakanbingqueren: 'Review & Confirm',
