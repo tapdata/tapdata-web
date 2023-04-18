@@ -23,7 +23,7 @@
       </div>-->
       <div class="flex gap-6 justify-content-center p-4 rounded-4 mode-card-container">
         <div
-          class="rounded-xl bg-white border mode-card overflow-hidden clickable"
+          class="flex-1 rounded-xl bg-white border mode-card overflow-hidden clickable"
           :class="{ active: mode === 'integration' }"
           @click="handleSelectMode('integration')"
         >
@@ -33,7 +33,7 @@
           ></ElImage>
           <div class="px-4 flex align-center mode-card-title border-bottom">
             <ElRadio v-model="mode" class="mr-0" label="integration">
-              <span class="fs-7 font-color-dark">{{ $t('packages_business_data_console_mode_integration') }}</span>
+              <span class="fs-7 fw-sub">{{ $t('packages_business_data_console_mode_integration') }}</span>
             </ElRadio>
           </div>
           <div class="px-4 py-2 mode-desc">
@@ -42,7 +42,7 @@
           </div>
         </div>
         <div
-          class="rounded-xl bg-white border mode-card overflow-hidden clickable"
+          class="flex-1 rounded-xl bg-white border mode-card overflow-hidden clickable"
           :class="{ active: mode === 'service' }"
           @click="handleSelectMode('service')"
         >
@@ -52,7 +52,7 @@
           ></ElImage>
           <div class="px-4 flex align-center mode-card-title border-bottom">
             <ElRadio v-model="mode" class="mr-0" label="service">
-              <span class="fs-7 font-color-dark"
+              <span class="fs-7 fw-sub"
                 >{{ $t('packages_business_data_console_mode_service') }}<VIcon class="ml-1" size="32">beta</VIcon></span
               >
             </ElRadio>

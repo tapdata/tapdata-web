@@ -33,7 +33,7 @@
           <div class="flex justify-content-center gap-5 p-6 align-items-start font-color-dark fs-8">
             <el-image class="w-100 product-type-image" :src="require('@/assets/image/self_host_managed.png')" />
           </div>
-          <div class="px-6 mb-4 flex-1">
+          <div class="px-6 mb-4">
             <div class="text-center font-color-dark fs-5 mb-2">
               {{ $t('dfs_agent_download_subscriptionmodeldialog_bantuoguanmoshi') }}
             </div>
@@ -72,7 +72,7 @@
           <div class="flex justify-content-center gap-5 p-6 align-items-start font-color-dark fs-8">
             <el-image class="w-100 product-type-image" :src="require('@/assets/image/fully_managed.png')" />
           </div>
-          <div class="px-6 mb-4 flex-1">
+          <div class="px-6 mb-4">
             <div class="product-type-card-title text-center font-color-dark fs-5 mb-2">
               {{ $t('dfs_agent_download_subscriptionmodeldialog_quantuoguanmoshi') }}
             </div>
