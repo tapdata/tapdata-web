@@ -312,6 +312,11 @@ export default {
           return data
         },
 
+        loadTableFirstData: async (params = {}) => {
+          const data = await this.scope.loadTable(params)
+          return data.items?.[0]
+        },
+
         loadCommandList: async (filter, val) => {
           try {
             const { $values = {}, command, where = {}, page, size } = filter
