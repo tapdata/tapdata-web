@@ -42,21 +42,6 @@ export class Table extends NodeType {
         'x-component': 'Input'
       },
 
-      tableName: {
-        type: 'string',
-        'x-reactions': [
-          {
-            dependencies: ['databaseType'],
-            fulfill: {
-              state: {
-                display: '{{ !["CSV","EXCEL","JSON","XML"].includes($deps[0]) ? "visible":"hidden"}}'
-              }
-            }
-          },
-          `{{useAsyncDataSourceByConfig({service: loadTableFirstData, withoutField: true, fieldName: 'value'}, { where: { 'source.id': $values.connectionId, taskId: $settings.id } })}}`
-        ]
-      },
-
       connectionIdWrap: {
         type: 'void',
         title: i18n.t('packages_dag_nodes_table_shujuku'),
