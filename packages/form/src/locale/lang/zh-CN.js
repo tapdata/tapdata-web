@@ -128,6 +128,7 @@ export default {
   packages_form_table_rename_index_xinbiaoming: '新表名',
   packages_form_table_rename_index_yuanbiaoming: '原表名',
   packages_form_table_rename_index_sousuobiaoming: '搜索表名',
+  packages_form_table_rename_rule_config: '规则配置',
   packages_form_text_file_reader_index_shangchuanwenjianda: '上传文件大小不能超过 {val1}KB',
   packages_form_src_index_cronbiao: 'Cron表达式格式有误',
   packages_form_js_editor_fullscreen: '全屏',

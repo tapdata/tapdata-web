@@ -124,14 +124,6 @@ export const TableRename = observer(
           }
           if (n !== after) {
             if (nameMap[n] === after) return
-            /*if (
-              (target.includes(after) && (!nameMap[after] || nameMap[after] === after)) ||
-              Object.values(nameMap).includes(after)
-            ) {
-              skipTableName.push(n)
-              console.log('导致表名重复') // eslint-disable-line
-              return
-            }*/
             set(nameMap, n, after)
             flag = true
           } else if (n in nameMap) {
@@ -140,24 +132,9 @@ export const TableRename = observer(
           }
         })
 
-        form.setValues({
-          replaceBefore: config.replaceBefore, // 替换前
-          replaceAfter: config.replaceAfter, // 替换后
-          prefix: config.prefix, // 前缀
-          suffix: config.suffix, // 后缀
-          transferCase: config.transferCase // toUpperCase ｜ toLowerCase
-        })
+        updateConfig()
 
         flag && emitChange()
-
-        /*if (skipTableName.length) {
-          // `自动跳过针对 [${skipTableName.join(', ')}] 表名的操作，原因是会导致表名重复`
-          root.$message.warning(
-            i18n.t('packages_form_table_rename_index_daozhibiaomingchongfu', {
-              val1: skipTableName.join(', ')
-            })
-          )
-        }*/
       }
 
       const doReset = () => {
@@ -169,9 +146,11 @@ export const TableRename = observer(
           suffix: '',
           transferCase: ''
         })
+        updateConfig()
       }
 
       const resetNames = () => {
+        doReset()
         const keys = Object.keys(nameMap)
         if (keys.length) {
           keys.forEach(key => del(nameMap, key))
@@ -201,6 +180,16 @@ export const TableRename = observer(
         emit('change', arr)
       }
 
+      const updateConfig = () => {
+        form.setValues({
+          replaceBefore: config.replaceBefore, // 替换前
+          replaceAfter: config.replaceAfter, // 替换后
+          prefix: config.prefix, // 前缀
+          suffix: config.suffix, // 后缀
+          transferCase: config.transferCase // toUpperCase ｜ toLowerCase
+        })
+      }
+
       const scrollToItem = index => {
         refs.nameList.scrollTop = index * itemSize
       }
@@ -222,48 +211,69 @@ export const TableRename = observer(
     },
 
     render() {
+      const label = (
+        <div class="inline-flex align-center">
+          <span class="mr-2 flex-1">{i18n.t('packages_form_table_rename_rule_config')}</span>
+          <ElButton disabled={this.disabled} onClick={this.resetNames} size="mini" type="text">
+            {i18n.t('public_button_reset')}
+          </ElButton>
+        </div>
+      )
       return (
         <div class="table-rename" v-loading={this.$store.state.dataflow.transformLoading || this.loading}>
-          <div class="border border-form p-4 mt-4 rounded-2">
-            <div class="font-color-light">{i18n.t('packages_form_table_rename_index_yixiacaozuojin')}</div>
-            <FormItem.BaseItem label={i18n.t('packages_form_table_rename_index_tihuan')}>
-              <div class="flex">
-                <ElInput v-model={this.config.replaceBefore} disabled={this.disabled} clearable />
-                <div class="px-4 text-nowrap font-color-light">{i18n.t('packages_form_table_rename_index_gaiwei')}</div>
-                <ElInput v-model={this.config.replaceAfter} disabled={this.disabled} clearable />
+          <FormItem.BaseItem label={label}>
+            <div class="border border-form px-4 pb-2 rounded-4">
+              <FormItem.BaseItem label={i18n.t('packages_form_table_rename_index_tihuan')}>
+                <div class="flex">
+                  <ElInput
+                    v-model={this.config.replaceBefore}
+                    disabled={this.disabled}
+                    clearable
+                    onInput={this.doModify}
+                  />
+                  <div class="px-4 text-nowrap font-color-light">
+                    {i18n.t('packages_form_table_rename_index_gaiwei')}
+                  </div>
+                  <ElInput
+                    v-model={this.config.replaceAfter}
+                    disabled={this.disabled}
+                    clearable
+                    onInput={this.doModify}
+                  />
+                </div>
+              </FormItem.BaseItem>
+              <div class="flex gap-4">
+                <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_daxiaoxie')}>
+                  <ElSelect
+                    v-model={this.config.transferCase}
+                    disabled={this.disabled}
+                    onChange={this.doModify}
+                    class="w-auto"
+                  >
+                    <ElOption value="" label={i18n.t('packages_form_field_processor_index_bubian')} />
+                    <ElOption value="toUpperCase" label={i18n.t('packages_form_field_processor_index_daxie')} />
+                    <ElOption value="toLowerCase" label={i18n.t('packages_form_field_processor_index_xiaoxie')} />
+                  </ElSelect>
+                </FormItem.BaseItem>
+                <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_qianzhui')}>
+                  <ElInput v-model={this.config.prefix} disabled={this.disabled} clearable onInput={this.doModify} />
+                </FormItem.BaseItem>
+                <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_houzhui')}>
+                  <ElInput v-model={this.config.suffix} disabled={this.disabled} clearable onInput={this.doModify} />
+                </FormItem.BaseItem>
               </div>
-            </FormItem.BaseItem>
-            <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_qianzhui')}>
-              <ElInput v-model={this.config.prefix} disabled={this.disabled} clearable />
-            </FormItem.BaseItem>
-            <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_houzhui')}>
-              <ElInput v-model={this.config.suffix} disabled={this.disabled} clearable />
-            </FormItem.BaseItem>
-            <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_daxiaoxie')}>
-              <ElSelect v-model={this.config.transferCase} disabled={this.disabled}>
-                <ElOption value="" label={i18n.t('packages_form_field_processor_index_bubian')} />
-                <ElOption value="toUpperCase" label={i18n.t('packages_form_field_processor_index_daxie')} />
-                <ElOption value="toLowerCase" label={i18n.t('packages_form_field_processor_index_xiaoxie')} />
-              </ElSelect>
-            </FormItem.BaseItem>
-            <div class="mt-4">
-              <ElButton onClick={this.doModify} disabled={this.disabled} size="small" type="primary">
-                {i18n.t('packages_form_table_rename_index_yingyong')}
-              </ElButton>
-              <ElButton onClick={this.doReset} disabled={this.disabled} size="small">
-                {i18n.t('packages_form_table_rename_index_qingkong')}
-              </ElButton>
             </div>
-          </div>
+          </FormItem.BaseItem>
 
-          <FormItem.BaseItem label={i18n.t('packages_form_table_rename_index_sousuobiaoming')}>
+          <div class="flex mt-4">
             <ElInput
               v-model={this.config.search}
               disabled={this.disabled}
               prefixIcon="el-icon-search"
               clearable
+              placeholder={i18n.t('packages_form_table_rename_index_sousuobiaoming')}
             ></ElInput>
-          </FormItem.BaseItem>
+          </div>
 
           <div
             class="name-list flex flex-column border border-form rounded-2 overflow-hidden mt-4"
@@ -272,11 +282,6 @@ export const TableRename = observer(
             <div class="name-list-header flex flex-shrink-0">
               <div class="name-list-title px-4">{i18n.t('packages_form_table_rename_index_yuanbiaoming')}</div>
               <div class="name-list-title pl-5 pr-4">{i18n.t('packages_form_table_rename_index_xinbiaoming')}</div>
-              <div class="name-list-header-extra px-4">
-                <ElButton disabled={this.disabled} onClick={this.resetNames} size="mini" type="text">
-                  {i18n.t('public_button_reset')}
-                </ElButton>
-              </div>
             </div>
             <div ref="nameList" class="name-list-content font-color-light overflow-auto">
               {this.filterNames.length ? (
@@ -292,97 +297,6 @@ export const TableRename = observer(
                   emitChange={this.emitChange}
                 ></List>
               ) : (
-                /*<RecycleScroller
-                  items={this.filterNames}
-                  itemSize={38}
-                  buffer={50}
-                  scopedSlots={{
-                    default: ({ item: name }) => {
-                      let inputVal = this.nameMap[name] || name
-                      return (
-                        <div class="name-list-item flex align-center position-relative">
-                          <div class="flex-1 px-4 text-truncate">
-                            <span title={name}>{name}</span>
-                          </div>
-                          <div
-                            class={[
-                              'flex-1 px-4 text-truncate',
-                              {
-                                'color-primary': !!this.nameMap[name]
-                              }
-                            ]}
-                          >
-                            <input
-                              readOnly={this.disabled}
-                              class="name-list-item-input px-2"
-                              v-model={inputVal}
-                              onChange={event => {
-                                const val = event.target.value
-                                console.log('this.nameMap', this.nameMap) // eslint-disable-line
-                                if (val) {
-                                  if (this.tableData.includes(val) || Object.values(this.nameMap).includes(val)) {
-                                    event.target.value = this.nameMap[name] || name
-                                    return
-                                  }
-                                  this.updateName(val, name)
-                                  this.emitChange()
-                                } else {
-                                  event.target.value = name
-                                  if (this.nameMap[name]) {
-                                    this.$delete(this.nameMap, name)
-                                    this.emitChange()
-                                  }
-                                }
-                              }}
-                            />
-                          </div>
-                          <VIcon size="12" class="name-list-item-center font-color-light">
-                            left
-                          </VIcon>
-                        </div>
-                      )
-                    }
-                  }}
-                ></RecycleScroller>*/
-                /*this.filterNames.map(name => {
-                  return (
-                    <div key={name} class="name-list-item flex align-center position-relative">
-                      <div class="flex-1 px-4 text-truncate">
-                        <span title={name}>{name}</span>
-                      </div>
-                      <div
-                        class={[
-                          'flex-1 px-4 text-truncate',
-                          {
-                            'color-primary': !!this.nameMap[name]
-                          }
-                        ]}
-                      >
-                        <input
-                          readOnly={this.disabled}
-                          class="name-list-item-input px-2"
-                          value={this.nameMap[name] || name}
-                          onChange={event => {
-                            const val = event.target.value
-                            if (val) {
-                              this.updateName(val, name)
-                              this.emitChange()
-                            } else {
-                              event.target.value = name
-                              if (this.nameMap[name]) {
-                                this.$delete(this.nameMap, name)
-                                this.emitChange()
-                              }
-                            }
-                          }}
-                        />
-                      </div>
-                      <VIcon size="12" class="name-list-item-center font-color-light">
-                        left
-                      </VIcon>
-                    </div>
-                  )
-                })*/
                 <EmptyItem></EmptyItem>
               )}
             </div>
