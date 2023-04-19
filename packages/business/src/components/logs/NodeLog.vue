@@ -221,9 +221,9 @@ import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
 import { mapGetters } from 'vuex'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
-import { debounce, cloneDeep } from 'lodash'
+import { debounce, cloneDeep, uniqBy } from 'lodash'
 
-import { uniqueArr, downloadBlob, openUrl } from '@tap/shared'
+import { downloadBlob, openUrl } from '@tap/shared'
 import Time from '@tap/shared/src/time'
 import { VIcon, TimeSelect, VCollapse } from '@tap/component'
 import VEmpty from '@tap/component/src/base/v-empty/VEmpty.vue'
@@ -546,7 +546,7 @@ export default {
           this.oldPageObj.total = data.total || 0
           this.oldPageObj.page = filter.page
           if (this.list.length && this.oldPageObj.page !== 1) {
-            this.list = Object.freeze(uniqueArr([...items, ...this.list]))
+            this.list = Object.freeze(uniqBy([...items, ...this.list], 'id'))
             this.scrollToItem(items.length - 1)
           } else {
             this.list = Object.freeze(items)
@@ -585,7 +585,7 @@ export default {
       monitoringLogsApi.query(filter).then((data = {}) => {
         const items = this.getFormatRow(data.items)
         this.newPageObj.total = data.total || 0
-        const arr = uniqueArr([...this.list, ...items])
+        const arr = uniqBy([...this.list, ...items], 'id')
         if (arr.length === this.list.length) {
           this.resetNewPage()
           return

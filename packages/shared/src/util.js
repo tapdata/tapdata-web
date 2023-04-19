@@ -183,20 +183,6 @@ export const os = (function () {
   }
 })()
 
-// 数组去重
-export function uniqueArr(arr = [], key = 'id') {
-  if (typeof arr[0] !== 'object') {
-    return Array.from(new Set(arr))
-  }
-  let obj = {}
-  return arr.reduce((cur, next) => {
-    if (!obj[next[key]]) {
-      obj[next[key]] = true
-      cur.push(next)
-    }
-    return cur
-  }, [])
-}
 export function checkConnectionName(name) {
   return /^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(name)
 }

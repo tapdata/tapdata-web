@@ -170,11 +170,10 @@
 </template>
 
 <script>
-import { cloneDeep } from 'lodash'
+import { cloneDeep, uniqBy } from 'lodash'
 
 import i18n from '@/i18n'
 
-import { uniqueArr } from '@tap/shared'
 import { Select } from 'element-ui'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
@@ -420,7 +419,7 @@ export default {
         if (isSearch) {
           this.filteredItems = data.items
         } else {
-          this.filteredItems = uniqueArr([...this.filteredItems, ...data.items], 'value')
+          this.filteredItems = uniqBy([...this.filteredItems, ...data.items], 'value')
         }
         // 回显
         if (isEcho) {

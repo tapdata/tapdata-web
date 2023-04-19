@@ -199,8 +199,8 @@ import i18n from '@tap/i18n'
 
 import { AsyncSelect } from '@tap/form'
 import { connectionsApi, metadataInstancesApi, taskApi } from '@tap/api'
-import { merge, cloneDeep } from 'lodash'
-import { uuid, uniqueArr } from '@tap/shared'
+import { merge, cloneDeep, uniqBy } from 'lodash'
+import { uuid } from '@tap/shared'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 
 import FieldBox from './FieldBox'
@@ -366,7 +366,7 @@ export default {
       } else {
         arr = this.flowStages
       }
-      const result = uniqueArr(
+      const result = uniqBy(
         arr.map(t => {
           const nodeId = t.id
           const nodeName = t.name

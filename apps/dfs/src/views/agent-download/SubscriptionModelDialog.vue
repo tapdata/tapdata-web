@@ -246,7 +246,7 @@
 </template>
 
 <script>
-import { uniqueArr } from '@tap/shared'
+import { uniqBy } from 'lodash'
 import { VTable } from '@tap/component'
 import { getPaymentMethod, getSpec } from '../instance/utils'
 import { CURRENCY_SYMBOL_MAP, TIME_MAP, CURRENCY_MAP } from '@tap/business'
@@ -433,7 +433,7 @@ export default {
       this.$axios.get('api/tcm/paid/plan/getPaidPlan', { params }).then(data => {
         const { paidPrice = [] } = data?.[0] || {}
         // 规格
-        this.specificationItems = uniqueArr(
+        this.specificationItems = uniqBy(
           paidPrice.map(t => {
             const { cpu = 0, memory = 0 } = t.spec || {}
             let desc =

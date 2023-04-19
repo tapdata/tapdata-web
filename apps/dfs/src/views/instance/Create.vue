@@ -71,8 +71,9 @@
 </template>
 
 <script>
+import { uniqBy } from 'lodash'
 import i18n from '@/i18n'
-import { uniqueArr, openUrl } from '@tap/shared'
+import { openUrl } from '@tap/shared'
 import { CURRENCY_SYMBOL_MAP, TIME_MAP } from '@tap/business'
 import { getSpec, getPaymentMethod } from './utils'
 
@@ -141,7 +142,7 @@ export default {
           const { paidPrice = [] } = data?.[0] || {}
 
           // 规格
-          this.specificationItems = uniqueArr(
+          this.specificationItems = uniqBy(
             paidPrice.map(t => {
               const { cpu = 0, memory = 0 } = t.spec || {}
               return {

@@ -176,9 +176,10 @@
 </template>
 
 <script>
+import { uniq } from 'lodash'
 import i18n from '@tap/i18n'
 import Time from '@tap/shared/src/time'
-import { delayTrigger, uniqueArr } from '@tap/shared'
+import { delayTrigger } from '@tap/shared'
 import { VTable } from '@tap/component'
 import { taskApi } from '@tap/api'
 
@@ -342,7 +343,7 @@ export default {
               sourceData: [],
               targetData: []
             }
-            const notPrimaryKeyFields = uniqueArr([
+            const notPrimaryKeyFields = uniq([
               ...Object.keys(sourceData || {}),
               ...Object.keys(targetData || {})
             ]).filter(t => !Object.keys(originalKeymap).includes(t))

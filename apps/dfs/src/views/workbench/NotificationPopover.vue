@@ -44,11 +44,10 @@
 </template>
 
 <script>
-import { debounce } from 'lodash'
+import { debounce, uniqBy } from 'lodash'
 
 import { TYPEMAP } from './tyepMap'
 import { VIcon } from '@tap/component'
-import { uniqueArr } from '@tap/shared'
 import timeFunction from '@/mixins/timeFunction'
 import { notificationApi } from '@tap/api'
 import { ALARM_LEVEL_MAP } from '@tap/business'
@@ -101,7 +100,7 @@ export default {
             if (data) {
               data.levelLabel = ALARM_LEVEL_MAP[data.level].text
               data.levelType = ALARM_LEVEL_MAP[data.level].type
-              this.listData = uniqueArr([data, ...this.listData])
+              this.listData = uniqBy([data, ...this.listData])
             }
           }, 800)
         )
