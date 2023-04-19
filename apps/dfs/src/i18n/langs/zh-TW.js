@@ -1351,5 +1351,16 @@ export default {
   dfs_instance_instance_tuidingjineji: '1.退訂金額計算公式請查看',
   dfs_instance_instance_tuifeiguize: '退費規則說明',
   dfs_agent_subscription_discount: '{val}折',
-  dfs_agent_step_aliyun_code: '使用阿里雲市場授權碼'
+  dfs_agent_step_aliyun_code: '使用阿里雲市場授權碼',
+  dfs_agent_download_subscriptionmodeldialog_zhuanzhangzhifu: '轉賬支付',
+  dfs_agent_download_subscriptionmodeldialog_zaixianzhifu: '在線支付',
+  dfs_agent_download_transferdialog_zaiwanchengzhuanzhang:
+    '在完成轉賬一天內, 我們將會為您開通服務, 並通過郵箱(郵箱地址)通知您',
+  dfs_agent_download_transferdialog_caozuoshuoming: '操作說明',
+  dfs_agent_download_transferdialog_huikuanzhanghao: '匯款賬號：',
+  dfs_agent_download_transferdialog_zhongguominshengyin: '中國民生銀行深圳蛇口支行',
+  dfs_agent_download_transferdialog_kaihuyinhang: '開戶銀行：',
+  dfs_agent_download_transferdialog_shenzhentaiboshu: '深圳鈦鉑數據有限公司 ',
+  dfs_agent_download_transferdialog_kaihumingcheng: '開戶名稱：',
+  dfs_agent_download_transferdialog_zhuanzhangxinxi: '轉賬信息'
 }

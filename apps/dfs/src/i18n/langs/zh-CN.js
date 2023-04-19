@@ -1380,5 +1380,16 @@ export default {
   dfs_instance_instance_tuidingjineji: '1.退订金额计算公式请查看',
   dfs_instance_instance_tuifeiguize: '退费规则说明',
   dfs_agent_subscription_discount: '{val}折',
-  dfs_agent_step_aliyun_code: '使用阿里云市场授权码'
+  dfs_agent_step_aliyun_code: '使用阿里云市场授权码',
+  dfs_agent_download_subscriptionmodeldialog_zhuanzhangzhifu: '转账支付',
+  dfs_agent_download_subscriptionmodeldialog_zaixianzhifu: '在线支付',
+  dfs_agent_download_transferdialog_zaiwanchengzhuanzhang:
+    '在完成转账一天内, 我们将会为您开通服务, 并通过邮箱(邮箱地址)通知您',
+  dfs_agent_download_transferdialog_caozuoshuoming: '操作说明',
+  dfs_agent_download_transferdialog_huikuanzhanghao: '汇款账号：',
+  dfs_agent_download_transferdialog_zhongguominshengyin: '中国民生银行深圳蛇口支行',
+  dfs_agent_download_transferdialog_kaihuyinhang: '开户银行：',
+  dfs_agent_download_transferdialog_shenzhentaiboshu: '深圳钛铂数据有限公司 ',
+  dfs_agent_download_transferdialog_kaihumingcheng: '开户名称：',
+  dfs_agent_download_transferdialog_zhuanzhangxinxi: '转账信息'
 }

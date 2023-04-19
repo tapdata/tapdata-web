@@ -545,6 +545,8 @@
         <span class="font-color-dark">{{ item.value }}</span>
       </div>
     </ElDialog>
+    <!--转账支付-->
+    <transferDialog :visible.sync="showTransferDialogVisible"></transferDialog>
   </div>
 </template>
 
@@ -553,6 +555,7 @@ import i18n from '@/i18n'
 
 import InlineInput from '@/components/InlineInput'
 import VerificationCode from '@/components/VerificationCode'
+import transferDialog from '../agent-download/transferDialog'
 import UploadFile from '@/components/UploadFile'
 import { urlToBase64 } from '@/util'
 import CryptoJS from 'crypto-js'
@@ -565,9 +568,10 @@ import { openUrl } from '@tap/shared'
 export default {
   name: 'Center',
   inject: ['buried'],
-  components: { InlineInput, VerificationCode, UploadFile, VTable },
+  components: { InlineInput, VerificationCode, transferDialog, UploadFile, VTable },
   data() {
     return {
+      showTransferDialogVisible: false,
       userData: {
         username: '',
         nickname: '',
@@ -1199,19 +1203,24 @@ export default {
         }
       })
     },
+    //支付
     handlePay(row = {}) {
       this.buried('payAgentStripe')
-      openUrl(row.payUrl)
-      this.$confirm(
-        i18n.t('dfs_user_center_ninjiangzhifur', { val1: row.content }),
-        i18n.t('dfs_user_center_zhifufuwu'),
-        {
-          type: 'warning',
-          confirmButtonText: i18n.t('dfs_instance_create_zhifuwancheng')
-        }
-      ).then(() => {
-        this.$refs.table?.fetch()
-      })
+      if (row.paymentType === 'offline') {
+        this.showTransferDialogVisible = true
+      } else {
+        openUrl(row.payUrl)
+        this.$confirm(
+          i18n.t('dfs_user_center_ninjiangzhifur', { val1: row.content }),
+          i18n.t('dfs_user_center_zhifufuwu'),
+          {
+            type: 'warning',
+            confirmButtonText: i18n.t('dfs_instance_create_zhifuwancheng')
+          }
+        ).then(() => {
+          this.$refs.table?.fetch()
+        })
+      }
     },
     handleRenewal() {
       this.buried('goRenewalAliyunCode')
