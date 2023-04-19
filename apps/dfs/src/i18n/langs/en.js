@@ -1487,5 +1487,16 @@ export default {
   dfs_instance_instance_tuidingjineji: '1. Please check the calculation formula of unsubscribe amount',
   dfs_instance_instance_tuifeiguize: 'Description of refund rules',
   dfs_agent_subscription_discount: '{val}% off',
-  dfs_agent_step_aliyun_code: 'Using Alibaba Cloud Marketplace authorization code'
+  dfs_agent_step_aliyun_code: 'Using Alibaba Cloud Marketplace authorization code',
+  dfs_agent_download_subscriptionmodeldialog_zhuanzhangzhifu: 'Transfer Payment',
+  dfs_agent_download_subscriptionmodeldialog_zaixianzhifu: 'Online Payment',
+  dfs_agent_download_transferdialog_zaiwanchengzhuanzhang:
+    'Within one day after completing the transfer, we will activate the service for you and notify you by email (email address)',
+  dfs_agent_download_transferdialog_caozuoshuoming: 'operation instructions',
+  dfs_agent_download_transferdialog_huikuanzhanghao: 'Remittance Account: ',
+  dfs_agent_download_transferdialog_zhongguominshengyin: 'China Minsheng Bank Shenzhen Shekou Branch',
+  dfs_agent_download_transferdialog_kaihuyinhang: 'Account Bank: ',
+  dfs_agent_download_transferdialog_shenzhentaiboshu: 'Shenzhen Titanium Platinum Data Co., Ltd',
+  dfs_agent_download_transferdialog_kaihumingcheng: 'Account Name: ',
+  dfs_agent_download_transferdialog_zhuanzhangxinxi: 'Tansfer Information'
 }

@@ -265,7 +265,6 @@
         </div>
       </div>
     </div>
-
     <div slot="footer" class="flex">
       <el-link v-if="activeStep === 1" type="primary" @click="changeProductType">{{
         $t('dfs_agent_download_subscriptionmodeldialog_zhijieshiyonga')
@@ -285,9 +284,10 @@
         <el-button v-if="activeStep < steps.length" type="primary" @click="next('second')">{{
           $t('public_button_next')
         }}</el-button>
-        <el-button v-else-if="activeStep === steps.length" type="primary" @click="submit()">{{
-          $t('public_button_confirm')
-        }}</el-button>
+        <div v-else-if="activeStep === steps.length" class="ml-2">
+          <el-button type="primary" @click="submit()">{{$t('dfs_agent_download_subscriptionmodeldialog_zaixianzhifu')}}</el-button>
+          <el-button type="primary" :loading="submitLoading" @click="submit({}, 'offline')">{{$t('dfs_agent_download_subscriptionmodeldialog_zhuanzhangzhifu')}}</el-button>
+        </div>
       </template>
       <template v-else>
         <el-button v-if="!hiddenNewCode" type="primary" :loading="saveLoading" @click="save()"
@@ -296,6 +296,7 @@
         >
       </template>
     </div>
+    <transferDialog :visible.sync="showTransferDialogVisible"></transferDialog>
   </el-dialog>
 </template>
 
@@ -306,11 +307,12 @@ import { getPaymentMethod, getSpec } from '../instance/utils'
 import { CURRENCY_SYMBOL_MAP, TIME_MAP, CURRENCY_MAP } from '@tap/business'
 import i18n from '@/i18n'
 import { dayjs } from '@tap/business/src/shared/dayjs'
+import transferDialog from './transferDialog'
 
 export default {
   name: 'subscriptionModelDialog',
   inject: ['buried'],
-  components: { VTable },
+  components: { VTable, transferDialog },
   props: {
     visible: {
       type: Boolean
@@ -389,7 +391,8 @@ export default {
           width: 120
         }
       ],
-      currentPackage: ''
+      currentPackage: '',
+      showTransferDialogVisible: false //转测信息弹窗
     }
   },
 
@@ -697,7 +700,7 @@ export default {
     },
 
     //提交订单
-    async submit(row = {}) {
+    async submit(row = {}, paymentType = 'online') {
       const { type, priceId, currency, chargeProvider } = this.selected
       const { email } = this.form
 
@@ -728,6 +731,7 @@ export default {
           currency: this.currencyType || currency,
           successUrl: location.origin + location.pathname + fastDownloadUrl.href,
           cancelUrl: location.href,
+          paymentType: paymentType, //增加支付方式
           email,
           type
         }
@@ -749,10 +753,13 @@ export default {
             })
 
             window.open(downloadUrl.href, '_blank')
-          } else {
+          } else if (paymentType === 'online') {
+            this.finish()
             window.open(data?.paymentUrl, '_blank')
+          } else {
+            this.close()
+            this.showTransferDialogVisible = true
           }
-          this.finish()
           this.buried('newAgentStripe', '', {
             type,
             result: true
