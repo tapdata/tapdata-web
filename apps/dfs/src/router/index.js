@@ -415,6 +415,12 @@ const routes = [
     path: '/aliyun-market/license',
     name: 'aliyunMarketLicense',
     component: () => import('../views/aliyun-market/License.vue')
+  },
+  //产品引导
+  {
+    path: '/product',
+    name: 'productDemo',
+    component: () => import('../views/productDemo')
   }
 ]
 

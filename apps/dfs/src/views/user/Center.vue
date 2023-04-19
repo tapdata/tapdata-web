@@ -1107,10 +1107,10 @@ export default {
           total: 0,
           data:
             items.map(t => {
-              t.activateTimeLabel = t.activateTime
-                ? new Date(t.activateTime.replace('Z', '+08:00')).toLocaleString()
-                : '-'
-              t.expiredTimeLabel = t.expiredTime ? new Date(t.expiredTime.replace('Z', '+08:00')).toLocaleString() : '-'
+              let activateTime = new Date(t.activateTime.replace('Z', '+08:00')).toLocaleString()
+              let expiredTime = new Date(t.expiredTime.replace('Z', '+08:00')).toLocaleString()
+              t.activateTimeLabel = t.activateTime ? dayjs(activateTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+              t.expiredTimeLabel = t.expiredTime ? dayjs(expiredTime).format('YYYY-MM-DD HH:mm:ss') : '-'
               t.bindAgent = t.agentId
                 ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
                 : i18n.t('user_Center_weiBangDing')

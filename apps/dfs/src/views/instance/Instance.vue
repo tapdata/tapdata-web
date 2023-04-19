@@ -737,9 +737,8 @@ export default {
             item.content = `${item.subscriptionMethodLabel} ${item.specLabel} ${i18n.t('public_agent')}`
             if (chargeProvider === 'Aliyun') {
               item.expiredTime = license.expiredTime
-              item.expiredTimeLabel = item.expiredTime
-                ? new Date(item.expiredTime.replace('Z', '+08:00')).toLocaleString()
-                : '-'
+              let time = new Date(item.expiredTime.replace('Z', '+08:00')).toLocaleString()
+              item.expiredTimeLabel = item.expiredTime ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
             } else if (chargeProvider === 'Stripe') {
               item.expiredTime = periodEnd
               item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD  HH:mm:ss') : '-'
