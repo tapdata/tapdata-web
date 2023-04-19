@@ -32,7 +32,12 @@ export class Table extends NodeType {
       },
       databaseType: {
         type: 'string',
-        'x-display': 'hidden'
+        'x-display': 'hidden',
+        'x-reactions': {
+          fulfill: {
+            run: `{{ ["CSV","EXCEL","JSON","XML"].includes($self.value) && !$values.tableName && ($values.tableName = 'tapdata') }}`
+          }
+        }
       },
       name: {
         type: 'string',
