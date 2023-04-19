@@ -1309,7 +1309,7 @@ export default {
   dfs_instance_selectlist_shiyongzhegeding: '使用这个授权码创建 {val1} Agent',
   page_title_data_console: '数据面板',
 
-  dfs_instance_instance_xiacifufeishi: '下次付费时间',
+  dfs_instance_instance_xiacifufeishi: '到期自动扣费',
   dfs_agent_download_fastdownload_fuzhiTok: '方法二: 复制Token,在命令行部署启动Agent',
   dfs_agent_download_fastdownload_shuangjizhixingt: '3. 双击执行tapdata.exe开始安装。',
   dfs_agent_download_fastdownload_jiangwenjianta:

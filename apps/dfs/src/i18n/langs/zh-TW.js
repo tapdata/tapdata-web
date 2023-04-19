@@ -1279,7 +1279,7 @@ export default {
   dfs_instance_utils_baozhouqi: '包周期',
   dfs_instance_selectlist_shiyongzhegeding: '使用这个授權碼创建 {val1} Agent',
   page_title_data_console: '數據面板',
-  dfs_instance_instance_xiacifufeishi: '下次付費時間',
+  dfs_instance_instance_xiacifufeishi: '到期自動扣費',
 
   dfs_agent_download_fastdownload_fuzhiTok: '方法二: 複製Token,在命令行部署啟動Agent',
   dfs_agent_download_fastdownload_shuangjizhixingt: '3. 雙擊執行tapdata.exe開始安裝。 ',

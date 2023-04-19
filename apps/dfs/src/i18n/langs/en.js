@@ -1407,7 +1407,7 @@ export default {
   dfs_instance_selectlist_shiyongzhegeding: 'Create {val1} Agent using this license code.',
   page_title_data_console: 'Data Console',
 
-  dfs_instance_instance_xiacifufeishi: 'Next payment time',
+  dfs_instance_instance_xiacifufeishi: 'Automatic deduction when due',
   dfs_agent_download_fastdownload_fuzhiTok: 'Method Two: Copy Token, deploy and start Agent on the command line',
   dfs_agent_download_fastdownload_shuangjizhixingt:
     '3. Double-click to execute tapdata.exe to start the installation. ',
