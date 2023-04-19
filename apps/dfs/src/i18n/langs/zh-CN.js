@@ -1385,7 +1385,9 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_zhuanzhangzhifu: '转账支付',
   dfs_agent_download_subscriptionmodeldialog_zaixianzhifu: '在线支付',
   dfs_agent_download_transferdialog_zaiwanchengzhuanzhang:
-    '在完成转账后一天内, 我们将会为您开通服务, 并通过账单邮箱通知您, 您也可以通过下方客服联系我们马上开通服务',
+    '在完成转账后一天内, 我们将会为您开通服务, 您也可以通过下方客服联系我们马上开通服务',
+  dfs_agent_download_transferdialog_reopen_tips:
+    '如您关闭此页面, 可通过右上角, 用户名 -> 用户中心, 在下方 服务订阅信息 处重新进行支付, 如有任何问题, 欢迎通过邮件 team@tapdata.io 与我们联系',
   dfs_agent_download_transferdialog_caozuoshuoming: '操作说明',
   dfs_agent_download_transferdialog_huikuanzhanghao: '汇款账号：',
   dfs_agent_download_transferdialog_zhongguominshengyin: '中国民生银行深圳蛇口支行',
