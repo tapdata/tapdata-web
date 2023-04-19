@@ -1493,6 +1493,8 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_zaixianzhifu: 'Online Payment',
   dfs_agent_download_transferdialog_zaiwanchengzhuanzhang:
     'Within one day after completing the transfer, we will activate the service for you and notify you by billing email',
+  dfs_agent_download_transferdialog_reopen_tips:
+    'If you close this page, you can re-pay through the upper right corner of the page, user name -> user center, and at the bottom service subscription information, please email us with team@tapdata.io if you have any questions',
   dfs_agent_download_transferdialog_caozuoshuoming: 'operation instructions',
   dfs_agent_download_transferdialog_huikuanzhanghao: 'Remittance Account: ',
   dfs_agent_download_transferdialog_zhongguominshengyin: 'China Minsheng Bank Shenzhen Shekou Branch',

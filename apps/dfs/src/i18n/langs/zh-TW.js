@@ -1357,6 +1357,8 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_zaixianzhifu: '在線支付',
   dfs_agent_download_transferdialog_zaiwanchengzhuanzhang:
     '在完成轉賬一天內, 我們將會為您開通服務, 並通過郵箱通知您',
+  dfs_agent_download_transferdialog_reopen_tips:
+    '如您關閉此頁面, 可通過右上角, 用戶名 -> 用戶中心, 在下方 服務訂閱信息 處重新進行支付, 如有任何問題, 歡迎通過郵件 team@tapdata.io 與我們聯繫',
   dfs_agent_download_transferdialog_caozuoshuoming: '操作說明',
   dfs_agent_download_transferdialog_huikuanzhanghao: '匯款賬號：',
   dfs_agent_download_transferdialog_zhongguominshengyin: '中國民生銀行深圳蛇口支行',

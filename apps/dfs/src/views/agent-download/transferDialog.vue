@@ -37,6 +37,10 @@
     <div class="secondary">
       {{ $t('dfs_agent_download_transferdialog_zaiwanchengzhuanzhang') }}
     </div>
+    <br/>
+    <div class="primary">
+      {{ $t('dfs_agent_download_transferdialog_reopen_tips') }}
+    </div>
     <div slot="footer">
       <el-button @click="close">{{ $t('public_button_cancel') }}</el-button>
       <el-button type="primary" @click="close">{{ $t('public_button_confirm') }}</el-button>
