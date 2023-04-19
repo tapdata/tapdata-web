@@ -882,6 +882,7 @@ export default {
   packages_business_data_console_mode_service: '數據服務平台',
   packages_business_data_console_mode_integration_tooltip_1: '支援異構數據同結構自動實時同步',
   packages_business_data_console_mode_integration_tooltip_2: '支援數據的實時加工與轉換',
+  packages_business_data_console_mode_integration_tooltip_3: '100+連接器，包括資料庫、消息隊列、檔案、API 等',
   packages_business_data_console_mode_service_tooltip_1: '支援數據集成模式全部能力',
   packages_business_data_console_mode_service_tooltip_2: '支援平台快取企業數據',
   packages_business_data_console_mode_service_tooltip_3: '支援多種下游服務集成與發布管理',
