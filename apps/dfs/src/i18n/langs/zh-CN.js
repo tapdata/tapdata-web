@@ -1271,8 +1271,8 @@ export default {
   dfs_instance_utils_one_month_only: '订购一个月',
   dfs_instance_utils_one_year_only: '订购一年',
   dfs_instance_expired_time_tip1: '过期后的限制行为：',
-  dfs_instance_expired_time_tip2: '1.禁止调度新任务到过期的Agent上去运行',
-  dfs_instance_expired_time_tip3: '2.旧任务继续运行不受限制',
+  dfs_instance_expired_time_tip2: '1.禁止调度新任务到过期的 Agent 上去运行',
+  dfs_instance_expired_time_tip3: '2.旧任务可以继续运行, 但无法进行停止重启等操作',
   dfs_user_center_zhifufuwu: '支付服务',
   dfs_user_center_ninjiangzhifur: '您将支付“{val1}”业务，支付后您将享受该服务，确定是否继续？',
   dfs_user_center_xudingfuwu: '续订服务',
@@ -1322,7 +1322,8 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_renwushujianyi: '任务数建议小于 ',
   dfs_agent_download_subscriptionmodeldialog_extra: 'EXTRA SMALL: 1C 2G - FREE(只能创建一个)',
   dfs_agent_download_subscriptionmodeldialog_dingyuefangshi: '订阅方式:',
-  dfs_agent_download_subscriptionmodeldialog_jisuanziyuan: '计算资源:',
+  dfs_agent_download_subscriptionmodeldialog_jisuanziyuan: '实例规格:',
+  dfs_agent_zhuanzhang_price: '汇款金额',
   dfs_agent_download_subscriptionmodeldialog_ninyouyijihuo: '您有已激活未绑定的授权码，点击创建实例',
   dfs_agent_download_subscriptionmodeldialog_bingbushu: '并部署',
   dfs_agent_download_subscriptionmodeldialog_goumai: '购买',
@@ -1384,12 +1385,12 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_zhuanzhangzhifu: '转账支付',
   dfs_agent_download_subscriptionmodeldialog_zaixianzhifu: '在线支付',
   dfs_agent_download_transferdialog_zaiwanchengzhuanzhang:
-    '在完成转账一天内, 我们将会为您开通服务, 并通过邮箱(邮箱地址)通知您',
+    '在完成转账后一天内, 我们将会为您开通服务, 并通过账单邮箱通知您, 您也可以通过下方客服联系我们马上开通服务',
   dfs_agent_download_transferdialog_caozuoshuoming: '操作说明',
   dfs_agent_download_transferdialog_huikuanzhanghao: '汇款账号：',
   dfs_agent_download_transferdialog_zhongguominshengyin: '中国民生银行深圳蛇口支行',
   dfs_agent_download_transferdialog_kaihuyinhang: '开户银行：',
   dfs_agent_download_transferdialog_shenzhentaiboshu: '深圳钛铂数据有限公司 ',
   dfs_agent_download_transferdialog_kaihumingcheng: '开户名称：',
-  dfs_agent_download_transferdialog_zhuanzhangxinxi: '转账信息'
+  dfs_agent_download_transferdialog_zhuanzhangxinxi: '公司账户信息'
 }
