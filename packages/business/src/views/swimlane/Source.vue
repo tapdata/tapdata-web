@@ -46,29 +46,7 @@
           @node-drag-start="handleDragStart"
           @node-drag-end="handleDragEnd"
           @node-expand="handleNodeExpand"
-        >
-          <!--          <span
-            class="custom-tree-node flex align-items-center"
-            :class="{ grabbable: data.isObject, 'opacity-50': data.disabled }"
-            slot-scope="{ node, data }"
-            @dblclick="$emit('preview', data)"
-          >
-            <VIcon
-              v-if="node.data.loadFieldsStatus === 'loading'"
-              class="v-icon animation-rotate"
-              size="14"
-              color="rgb(61, 156, 64)"
-              >loading-circle</VIcon
-            >
-            <NodeIcon v-if="!node.data.isLeaf" :node="node.data" :size="18" class="tree-item-icon mr-2" />
-            <VIcon v-else class="tree-item-icon mr-2" size="18">table</VIcon>
-            <span class="table-label" :title="data.name"
-              >{{ data.name }}
-              <ElTag v-if="data.disabled" type="info" size="mini">{{ $t('public_status_invalid') }}</ElTag>
-            </span>
-            <IconButton class="btn-menu" sm @click="$emit('preview', data)"> view-details </IconButton>
-          </span>-->
-        </VirtualTree>
+        />
         <VirtualTree
           key="tree"
           v-else

@@ -482,11 +482,8 @@ export default {
       } catch (response) {
         console.log(response) // eslint-disable-line
         const code = response?.data?.code
-        if (code === 'Ldp.MdmTargetNoPrimaryKey') {
-          const data = response?.data?.data
-
-          if (!data) return
-
+        const data = response?.data?.data
+        if (code === 'Ldp.MdmTargetNoPrimaryKey' && data) {
           this.taskDialogConfig.visible = false
           this.$message.warning({
             duration: 6000,
@@ -518,6 +515,10 @@ export default {
             }
             this.taskDialogSubmit(start, true)
           })
+        } else if (code === 'Task.ListWarnMessage' && data) {
+          const keys = Object.keys(data)
+          const msg = data[keys[0]]?.[0]?.msg
+          this.$message.error(msg || response.data.message || this.$t('public_message_save_fail'))
         }
       }
       this.creating = false
