@@ -275,11 +275,6 @@ export default {
         this.setting.fdmStorageConnectionId === this.form.fdmStorageConnectionId
       )
     },
-    fdmStorageDisabled() {
-      return this.form.fdmStorageConnectionId != null
-    },
-
-
     disabledBtn() {
       return this.disabled && this.mode === 'service' && this.mode === this.setting?.mode
     }
@@ -332,7 +327,7 @@ export default {
     setData(data = {}, update = false) {
       this.mode = data.mode || this.modeItems[0]?.value
       this.liveDataPlatformId = data.id
-      if (this.mode === 'service') {
+      if (this.mode === 'service' && update) {
         const { options, connectionsList } = this
         this.form.fdmStorageCluster = data.fdmStorageCluster || options[0]?.value
         this.form.fdmStorageConnectionId = data.fdmStorageConnectionId || connectionsList[0]?.value
