@@ -197,7 +197,7 @@ export default {
             total: data?.total || 0,
             data: list.map(item => {
               if (item.value === 'Default') {
-                item.value += ' ' + i18n.t('packages_business_api_application_list_xitongmorenchuang')
+                item.desc = i18n.t('packages_business_api_application_list_xitongmorenchuang')
               }
               item.createTime = item.createTime ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') : '-'
               makeStatusAndDisabled(item)
