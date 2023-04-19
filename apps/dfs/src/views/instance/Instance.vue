@@ -395,9 +395,13 @@
           <ul class="subscription-ul">
             <li class="mt-2">
               {{ $t('dfs_instance_instance_tuidingjineji') }}
-              <el-link style="vertical-align: top" href="https://docs.tapdata.io/cloud/billing/refund" type="primary">{{
-                $t('dfs_instance_instance_tuifeiguize')
-              }}</el-link>
+              <el-link
+                style="vertical-align: top"
+                :href="unsubscribeHelpDocumentation"
+                type="primary"
+                target="_blank"
+                >{{ $t('dfs_instance_instance_tuifeiguize') }}</el-link
+              >
             </li>
             <li class="mt-2">{{ $t('dfs_instance_instance_tuidingzhituihuan') }}</li>
             <li class="mt-2">{{ $t('dfs_instance_instance_qingzixihedui') }}</li>
@@ -579,7 +583,8 @@ export default {
       rules: {
         refundDescribe: [{ required: true, message: i18n.t('dfs_instance_instance_qingshurutuiding'), trigger: 'blur' }]
       },
-      paidRenewDetail: []
+      paidRenewDetail: [],
+      unsubscribeHelpDocumentation: ''
     }
   },
   computed: {
@@ -623,6 +628,9 @@ export default {
   },
   created() {
     this.init()
+    this.unsubscribeHelpDocumentation =
+      window.__config__?.unsubscribeHelpDocumentation ||
+      'https://deploy-preview-75--tapdata.netlify.app/cloud/billing/refund/#%E9%80%80%E6%AC%BE%E8%AF%B4%E6%98%8E'
     timer = setInterval(() => {
       // let list = this.list || []
       let flag = true
