@@ -1422,6 +1422,7 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_extra: 'EXTRA SMALL: 1C 2G - FREE (only one can be created)',
   dfs_agent_download_subscriptionmodeldialog_dingyuefangshi: 'Subscription method:',
   dfs_agent_download_subscriptionmodeldialog_jisuanziyuan: 'Computing resources:',
+  dfs_agent_zhuanzhang_price: 'Payment Price',
   dfs_agent_download_subscriptionmodeldialog_ninyouyijihuo:
     'You have activated an unbound authorization code, click to create an instance',
   dfs_agent_download_subscriptionmodeldialog_bingbushu: 'and deploy',
@@ -1491,7 +1492,7 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_zhuanzhangzhifu: 'Transfer Payment',
   dfs_agent_download_subscriptionmodeldialog_zaixianzhifu: 'Online Payment',
   dfs_agent_download_transferdialog_zaiwanchengzhuanzhang:
-    'Within one day after completing the transfer, we will activate the service for you and notify you by email (email address)',
+    'Within one day after completing the transfer, we will activate the service for you and notify you by billing email',
   dfs_agent_download_transferdialog_caozuoshuoming: 'operation instructions',
   dfs_agent_download_transferdialog_huikuanzhanghao: 'Remittance Account: ',
   dfs_agent_download_transferdialog_zhongguominshengyin: 'China Minsheng Bank Shenzhen Shekou Branch',

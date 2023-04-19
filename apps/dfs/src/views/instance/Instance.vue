@@ -43,19 +43,19 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn width="110px" :label="$t('dfs_instance_instance_guige')">
+        <ElTableColumn width="80px" :label="$t('dfs_instance_instance_guige')">
           <template slot-scope="scope">
             <span>{{ scope.row.specLabel }}</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn width="120px" :label="$t('dfs_instance_instance_dingyuefangshi')">
+        <ElTableColumn width="90px" :label="$t('dfs_instance_instance_dingyuefangshi')">
           <template slot-scope="scope">
             <span :class="{ 'color-success': scope.row.chargeProvider === 'FreeTier' }">{{
               scope.row.subscriptionMethodLabel
             }}</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn width="180" :label="$t('dfs_instance_instance_daoqishijian')">
+        <ElTableColumn width="185" :label="$t('dfs_instance_instance_daoqishijian')">
           <template slot-scope="scope">
             <div>
               <ElTooltip
@@ -86,7 +86,7 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn :label="$t('agent_status')" width="140">
+        <ElTableColumn :label="$t('agent_status')" width="80">
           <template slot-scope="scope">
             <StatusTag type="tag" :status="scope.row.status" default-status="Stopped"></StatusTag>
             <ElTooltip v-if="scope.row.status == 'Stopped'" placement="top">
@@ -733,15 +733,15 @@ export default {
             item.specLabel = getSpec(item.spec) || '-'
             item.subscriptionMethodLabel = getPaymentMethod(paidSubscribeDto, chargeProvider) || '-'
             item.periodLabel =
-              dayjs(periodStart).format('YYYY-MM-DD HH:mm:ss') + ' - ' + dayjs(periodEnd).format('YYYY-MM-DD HH:mm:ss')
+              dayjs(periodStart).format('YY-MM-DD HH:mm:ss') + ' - ' + dayjs(periodEnd).format('YY-MM-DD HH:mm:ss')
             item.content = `${item.subscriptionMethodLabel} ${item.specLabel} ${i18n.t('public_agent')}`
             if (chargeProvider === 'Aliyun') {
               item.expiredTime = license.expiredTime
               let time = new Date(item.expiredTime.replace('Z', '+08:00')).toLocaleString()
-              item.expiredTimeLabel = item.expiredTime ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
+              item.expiredTimeLabel = item.expiredTime ? dayjs(time).format('YY-MM-DD HH:mm:ss') : '-'
             } else if (chargeProvider === 'Stripe') {
               item.expiredTime = periodEnd
-              item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD  HH:mm:ss') : '-'
+              item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YY-MM-DD  HH:mm:ss') : '-'
             } else {
               item.expiredTime = ''
               item.expiredTimeLabel = '-'
@@ -797,7 +797,7 @@ export default {
     },
     handlePingTime(row) {
       let pingTime = row?.tmInfo?.pingTime
-      return pingTime ? dayjs(pingTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+      return pingTime ? dayjs(pingTime).format('YY-MM-DD HH:mm:ss') : '-'
     },
     getImg(name) {
       return require(`../../../public/images/agent/${name}.png`)

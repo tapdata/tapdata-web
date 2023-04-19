@@ -1294,6 +1294,7 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_extra: 'EXTRA SMALL: 1C 2G - FREE(只能創建一個)',
   dfs_agent_download_subscriptionmodeldialog_dingyuefangshi: '訂閱方式：',
   dfs_agent_download_subscriptionmodeldialog_jisuanziyuan: '計算資源：',
+  dfs_agent_zhuanzhang_price: '匯款金額',
   dfs_agent_download_subscriptionmodeldialog_ninyouyijihuo: '您有已激活未綁定的授權碼，點擊創建實例',
   dfs_agent_download_subscriptionmodeldialog_bingbushu: '並部署',
   dfs_agent_download_subscriptionmodeldialog_goumai: '購買',
@@ -1355,7 +1356,7 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_zhuanzhangzhifu: '轉賬支付',
   dfs_agent_download_subscriptionmodeldialog_zaixianzhifu: '在線支付',
   dfs_agent_download_transferdialog_zaiwanchengzhuanzhang:
-    '在完成轉賬一天內, 我們將會為您開通服務, 並通過郵箱(郵箱地址)通知您',
+    '在完成轉賬一天內, 我們將會為您開通服務, 並通過郵箱通知您',
   dfs_agent_download_transferdialog_caozuoshuoming: '操作說明',
   dfs_agent_download_transferdialog_huikuanzhanghao: '匯款賬號：',
   dfs_agent_download_transferdialog_zhongguominshengyin: '中國民生銀行深圳蛇口支行',

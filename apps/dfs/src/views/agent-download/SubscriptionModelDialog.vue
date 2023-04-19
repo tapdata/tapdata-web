@@ -285,8 +285,12 @@
           $t('public_button_next')
         }}</el-button>
         <div v-else-if="activeStep === steps.length" class="ml-2">
-          <el-button type="primary" @click="submit()">{{$t('dfs_agent_download_subscriptionmodeldialog_zaixianzhifu')}}</el-button>
-          <el-button type="primary" :loading="submitLoading" @click="submit({}, 'offline')">{{$t('dfs_agent_download_subscriptionmodeldialog_zhuanzhangzhifu')}}</el-button>
+          <el-button type="primary" @click="submit()">{{
+            $t('dfs_agent_download_subscriptionmodeldialog_zaixianzhifu')
+          }}</el-button>
+          <el-button type="primary" :loading="submitLoading" @click="submit({}, 'offline')">{{
+            $t('dfs_agent_download_subscriptionmodeldialog_zhuanzhangzhifu')
+          }}</el-button>
         </div>
       </template>
       <template v-else>
@@ -296,7 +300,11 @@
         >
       </template>
     </div>
-    <transferDialog :visible.sync="showTransferDialogVisible"></transferDialog>
+    <transferDialog
+      :price="formatPrice(currency, true)"
+      :email="this.email"
+      :visible.sync="showTransferDialogVisible"
+    ></transferDialog>
   </el-dialog>
 </template>
 
@@ -546,6 +554,7 @@ export default {
       let amount = this.getAmount(item, isOriginalPrice)
       return (
         CURRENCY_SYMBOL_MAP[item.currency] +
+        ' ' +
         (amount / 100).toLocaleString('zh', {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2

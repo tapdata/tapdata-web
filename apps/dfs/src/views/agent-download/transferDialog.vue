@@ -8,6 +8,9 @@
     width="1000px"
     custom-class="tap-dialog"
   >
+    <div class="transfer-info transfer-price mt-4 mb-4">
+      {{ $t('dfs_agent_zhuanzhang_price') }}: <span class="font-color-dark fw-normal ml-1">{{ price }}</span>
+    </div>
     <div class="transfer-info mt-4 mb-4">
       <header class="fs-6 font-color-dark fw-normal mb-4">
         {{ $t('dfs_agent_download_transferdialog_zhuanzhangxinxi') }}
@@ -48,6 +51,12 @@ export default {
   props: {
     visible: {
       type: Boolean
+    },
+    price: {
+      type: String
+    },
+    email: {
+      type: String
     }
   },
   methods: {
@@ -89,5 +98,7 @@ export default {
   .el-dialog__footer {
     padding: 24px;
   }
+}
+.transfer-price {
 }
 </style>
