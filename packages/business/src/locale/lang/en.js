@@ -926,6 +926,7 @@ export default {
   packages_business_data_console_mode_service: 'Data Service Platform',
   packages_business_data_console_mode_integration_tooltip_1: 'RealTime Data Sync Between Databases',
   packages_business_data_console_mode_integration_tooltip_2: 'ETL Data Processing',
+  packages_business_data_console_mode_integration_tooltip_3: '100+ Connectors, Including DB, MQ, File, API',
   packages_business_data_console_mode_service_tooltip_1: 'All Features Of Data Integration',
   packages_business_data_console_mode_service_tooltip_2: 'Data Cache Layer In Platform',
   packages_business_data_console_mode_service_tooltip_3: 'Support Multiple Service Publish',

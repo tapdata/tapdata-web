@@ -38,7 +38,8 @@
           </div>
           <div class="px-4 py-2 mode-desc">
             1. {{ $t('packages_business_data_console_mode_integration_tooltip_1') }} <br />
-            2. {{ $t('packages_business_data_console_mode_integration_tooltip_2') }}
+            2. {{ $t('packages_business_data_console_mode_integration_tooltip_2') }} <br />
+            3. {{ $t('packages_business_data_console_mode_integration_tooltip_3') }}
           </div>
         </div>
         <div
@@ -244,11 +245,6 @@ export default {
       ],
       options: [
         {
-          label: this.$t('packages_business_mongodb_atlas_cluster'),
-          value: 'atlas',
-          tag: 'Sync Atlas Cluster List'
-        },
-        {
           label: this.$t('packages_business_mongodb_self_hosted_cluster'),
           value: 'self',
           tag: 'Add a New Connection'
@@ -279,7 +275,6 @@ export default {
         this.setting.fdmStorageConnectionId === this.form.fdmStorageConnectionId
       )
     },
-
     disabledBtn() {
       return this.disabled && this.mode === 'service' && this.mode === this.setting?.mode
     }
@@ -332,7 +327,7 @@ export default {
     setData(data = {}, update = false) {
       this.mode = data.mode || this.modeItems[0]?.value
       this.liveDataPlatformId = data.id
-      if (this.mode === 'service') {
+      if (this.mode === 'service' && update) {
         const { options, connectionsList } = this
         this.form.fdmStorageCluster = data.fdmStorageCluster || options[0]?.value
         this.form.fdmStorageConnectionId = data.fdmStorageConnectionId || connectionsList[0]?.value

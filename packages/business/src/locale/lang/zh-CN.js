@@ -882,16 +882,17 @@ export default {
     '此操作仅会将该分类及其子分类删除，如需删除分类下的物理表,请您自行操作。',
   packages_business_mdm_table_duplication_confirm: '目标表已经存在，请确定是否继续？',
   packages_business_data_console_mode: '请选择产品能力模式',
-  packages_business_data_console_mode_integration: '作为数据集成工具使用',
+  packages_business_data_console_mode_integration: '作为数据集成平台使用',
   packages_business_data_console_mode_integration_tooltip_1: '支持异构数据与结构自动实时同步',
   packages_business_data_console_mode_integration_tooltip_2: '支持数据的实时加工与转换',
+  packages_business_data_console_mode_integration_tooltip_3: '100+连接器, 包括数据库,消息队列,文件,API 等',
   packages_business_data_console_mode_service_tooltip_1: '支持数据集成模式全部能力',
   packages_business_data_console_mode_service_tooltip_2: '支持平台缓存并标准化企业关键数据模型',
-  packages_business_data_console_mode_service_tooltip_3: '支持100+ 数据源, 包括数据库, SaaS, 文件等',
+  packages_business_data_console_mode_service_tooltip_3: '支持多种下游服务集成与发布管理',
   packages_business_data_console_mode_service: '作为数据服务平台使用',
   packages_business_data_console_fdm_mdm_storage: '平台缓存层和加工层存储',
   packages_business_data_console_fdm_mdm_storage_tooltip: '请指定用于额外数据层存储的数据库连接',
   packages_business_mongodb_atlas_cluster: 'MongoDB Atlas 集群',
   packages_business_mongodb_self_hosted_cluster: '自托管 MongoDB 集群',
-  packages_business_data_console_setting_saved_tooltip: '保存后暂不支持修改'
+  packages_business_data_console_setting_saved_tooltip: '存储中心保存后, 暂不支持修改, 请谨慎设置'
 }
