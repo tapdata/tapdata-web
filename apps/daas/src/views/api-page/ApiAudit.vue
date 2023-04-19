@@ -55,9 +55,9 @@
 </template>
 
 <script>
+import { escapeRegExp } from 'lodash'
 import { FilterBar } from '@tap/component'
 import { TablePage } from '@tap/business'
-import { toRegExp } from '@tap/shared'
 import dayjs from 'dayjs'
 import { apiCallsApi } from '@tap/api'
 
@@ -129,7 +129,7 @@ export default {
         where.end = end
       }
       if (keyword && keyword.trim()) {
-        let filterObj = { like: toRegExp(keyword), options: 'i' }
+        let filterObj = { like: escapeRegExp(keyword), options: 'i' }
         where.or = [{ name: filterObj }, { id: filterObj }]
       }
 

@@ -74,10 +74,10 @@
 import i18n from '@tap/i18n'
 
 import dayjs from 'dayjs'
+import { escapeRegExp } from 'lodash'
 import { logcollectorApi, taskApi, appApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage, makeStatusAndDisabled } from '@tap/business'
-import { toRegExp } from '@tap/shared'
 
 import Editor from './Editor'
 import Details from './Details'
@@ -178,7 +178,7 @@ export default {
       name &&
         (where.value = {
           options: 'i',
-          like: toRegExp(name)
+          like: escapeRegExp(name)
         })
       connectionName && (where.connectionName = connectionName)
       let filter = {

@@ -42,15 +42,6 @@ export function signOut() {
   }
 }
 
-export function toRegExp(word) {
-  let arr = ['\\', '$', '(', ')', '*', '+', '.', '[', ']', '?', '^', '{', '}', '|', '-']
-  for (let i = 0; i < arr.length; i++) {
-    let str = '\\' + arr[i]
-    word = word.replace(new RegExp(str, 'g'), '\\' + arr[i])
-  }
-  return word
-}
-
 export function getUrlSearch(name) {
   // 未传参，返回空
   if (!name) return null

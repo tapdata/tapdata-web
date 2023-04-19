@@ -41,8 +41,9 @@
 
 <script>
 import dayjs from 'dayjs'
+import { escapeRegExp } from 'lodash'
 import { logsApi } from '@tap/api'
-import { delayTrigger, toRegExp } from '@tap/shared'
+import { delayTrigger } from '@tap/shared'
 
 export default {
   props: {
@@ -123,7 +124,7 @@ export default {
         }
       }
       if (keyword) {
-        let query = { like: toRegExp(keyword), options: 'i' }
+        let query = { like: escapeRegExp(keyword), options: 'i' }
         filter.where.or = [{ threadName: query }, { loggerName: query }, { message: query }, { level: query }]
       }
       if (!isSearch && this.logs.length) {

@@ -13,7 +13,6 @@
 <script>
 import { AsyncSelect } from '@tap/form'
 import { appApi } from '@tap/api'
-import { toRegExp } from '@tap/shared'
 
 export default {
   name: 'ListSelect',

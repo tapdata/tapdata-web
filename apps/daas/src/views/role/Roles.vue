@@ -153,10 +153,10 @@
 </template>
 
 <script>
+import { escapeRegExp } from 'lodash'
 import { roleApi, usersApi, roleMappingsApi, permissionsApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage } from '@tap/business'
-import { toRegExp } from '@tap/shared'
 
 export default {
   components: {
@@ -211,7 +211,7 @@ export default {
       let { keyword } = this.searchParams
       let where = {}
       if (keyword && keyword.trim()) {
-        let filterObj = { like: toRegExp(keyword), options: 'i' }
+        let filterObj = { like: escapeRegExp(keyword), options: 'i' }
         where.or = [{ name: filterObj }]
       }
       let filter = {

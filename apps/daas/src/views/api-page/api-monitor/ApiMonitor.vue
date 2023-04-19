@@ -179,9 +179,10 @@
 </template>
 
 <script>
+import { escapeRegExp } from 'lodash'
 import { Chart, FilterBar, VTable } from '@tap/component'
 import { apiMonitorApi } from '@tap/api'
-import { calcTimeUnit, toRegExp, calcUnit } from '@tap/shared'
+import { calcTimeUnit, calcUnit } from '@tap/shared'
 
 import Detail from './Detail'
 
@@ -432,7 +433,7 @@ export default {
 
       let where = {}
       if (keyword && keyword.trim()) {
-        where.name = { like: toRegExp(keyword), options: 'i' }
+        where.name = { like: escapeRegExp(keyword), options: 'i' }
       }
       if (status) {
         where.status = status

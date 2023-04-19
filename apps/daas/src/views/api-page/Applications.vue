@@ -136,12 +136,11 @@
 </template>
 
 <script>
-import { cloneDeep } from 'lodash'
+import { cloneDeep, escapeRegExp } from 'lodash'
 
 import { roleApi, applicationApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage } from '@tap/business'
-import { toRegExp } from '@tap/shared'
 
 export default {
   name: 'Applications',
@@ -268,7 +267,7 @@ export default {
       let { keyword } = this.searchParams
       let where = {}
       if (keyword && keyword.trim()) {
-        let filterObj = { like: toRegExp(keyword), options: 'i' }
+        let filterObj = { like: escapeRegExp(keyword), options: 'i' }
         where.or = [{ clientName: filterObj }]
       }
 

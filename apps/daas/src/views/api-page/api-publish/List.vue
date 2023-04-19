@@ -185,11 +185,11 @@
 
 <script>
 import dayjs from 'dayjs'
+import { escapeRegExp } from 'lodash'
 
 import { modulesApi, workerApi, metadataInstancesApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage, UploadDialog } from '@tap/business'
-import { toRegExp } from '@tap/shared'
 import { STATUS_MAP } from '../const'
 
 export default {
@@ -292,7 +292,7 @@ export default {
         'source.user_id': true
       }
       if (keyword && keyword.trim()) {
-        let filterObj = { like: toRegExp(keyword), options: 'i' }
+        let filterObj = { like: escapeRegExp(keyword), options: 'i' }
         where.or = [{ basePath: filterObj }, { description: filterObj }]
       }
       status && (where.status = status)

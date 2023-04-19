@@ -175,10 +175,11 @@
 
 <script>
 import dayjs from 'dayjs'
+import { escapeRegExp } from 'lodash'
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage } from '@tap/business'
-import { delayTrigger, toRegExp } from '@tap/shared'
+import { delayTrigger } from '@tap/shared'
 
 export default {
   components: {
@@ -316,7 +317,7 @@ export default {
         user_id: true
       }
       if (keyword && keyword.trim()) {
-        let filterObj = { like: toRegExp(keyword), options: 'i' }
+        let filterObj = { like: escapeRegExp(keyword), options: 'i' }
         where.or = [{ name: filterObj }, { original_name: filterObj }, { 'source.name': filterObj }]
       }
 

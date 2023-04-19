@@ -124,10 +124,10 @@
 
 <script>
 import dayjs from 'dayjs'
+import { escapeRegExp } from 'lodash'
 import { sharedCacheApi, taskApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage, TaskStatus, makeStatusAndDisabled } from '@tap/business'
-import { toRegExp } from '@tap/shared'
 
 import Editor from './Editor'
 import Details from './Details'
@@ -184,8 +184,8 @@ export default {
       let { current, size } = page
       let { name, connectionName } = this.searchParams
       let where = {}
-      name && (where.name = { like: toRegExp(name), options: 'i' })
-      connectionName && (where.connectionName = { like: toRegExp(connectionName), options: 'i' })
+      name && (where.name = { like: escapeRegExp(name), options: 'i' })
+      connectionName && (where.connectionName = { like: escapeRegExp(connectionName), options: 'i' })
 
       let filter = {
         order: this.order,

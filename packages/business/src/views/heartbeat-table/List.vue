@@ -84,10 +84,10 @@
 
 <script>
 import dayjs from 'dayjs'
+import { escapeRegExp } from 'lodash'
 import { taskApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage, TaskStatus, makeStatusAndDisabled, TASK_TYPE_MAP } from '@tap/business'
-import { toRegExp } from '@tap/shared'
 
 let timeout = null
 export default {
@@ -165,7 +165,7 @@ export default {
         where
       }
       if (keyword && keyword.trim()) {
-        where.name = { like: toRegExp(keyword), options: 'i' }
+        where.name = { like: escapeRegExp(keyword), options: 'i' }
       }
       return taskApi
         .get({

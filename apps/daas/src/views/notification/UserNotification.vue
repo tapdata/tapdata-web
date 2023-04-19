@@ -76,12 +76,12 @@
   </div>
 </template>
 <script>
-import UserOperation from './UserOperation'
-import { DatetimeRange, SelectList } from '@tap/component'
-import { toRegExp } from '@tap/shared'
-import Cookie from '@tap/shared/src/cookie'
+import { escapeRegExp } from 'lodash'
 import dayjs from 'dayjs'
+import { DatetimeRange, SelectList } from '@tap/component'
+import Cookie from '@tap/shared/src/cookie'
 import { userLogsApi, usersApi } from '@tap/api'
+import UserOperation from './UserOperation'
 
 export default {
   components: {
@@ -135,7 +135,7 @@ export default {
         type: 'userOperation'
       }
       if (keyword && keyword.trim()) {
-        where.parameter1 = { like: toRegExp(keyword), options: 'i' }
+        where.parameter1 = { like: escapeRegExp(keyword), options: 'i' }
       }
       if (userId) {
         where.username = userId

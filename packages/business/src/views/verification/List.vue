@@ -160,12 +160,11 @@
 import i18n from '@tap/i18n'
 
 import dayjs from 'dayjs'
-
+import { escapeRegExp } from 'lodash'
 import { FilterBar } from '@tap/component'
-import { toRegExp } from '@tap/shared'
 import { VIcon } from '@tap/component'
 import { TablePage } from '@tap/business'
-import { taskApi, inspectApi, metadataInstancesApi } from '@tap/api'
+import { inspectApi, metadataInstancesApi } from '@tap/api'
 
 let timeout = null
 export default {
@@ -268,7 +267,7 @@ export default {
       let where = {}
       //精准搜索 iModel
       if (keyword && keyword.trim()) {
-        let filterObj = { like: toRegExp(keyword), options: 'i' }
+        let filterObj = { like: escapeRegExp(keyword), options: 'i' }
         where['or'] = [{ name: filterObj }, { dataFlowName: filterObj }]
       }
       if (enabled) {

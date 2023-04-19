@@ -86,11 +86,11 @@
 </template>
 
 <script>
+import { escapeRegExp } from 'lodash'
 import { apiServerApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage } from '@tap/business'
 import Cookie from '@tap/shared/src/cookie'
-import { toRegExp } from '@tap/shared'
 
 export default {
   name: 'ApiServer',
@@ -243,7 +243,7 @@ export default {
       let { keyword } = this.searchParams
       let where = {}
       if (keyword && keyword.trim()) {
-        let filterObj = { like: toRegExp(keyword), options: 'i' }
+        let filterObj = { like: escapeRegExp(keyword), options: 'i' }
         where.or = [{ clientName: filterObj }]
       }
 

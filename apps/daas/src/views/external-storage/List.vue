@@ -141,8 +141,7 @@
 import i18n from '@/i18n'
 
 import dayjs from 'dayjs'
-import { cloneDeep } from 'lodash'
-import { toRegExp } from '@tap/shared'
+import { cloneDeep, escapeRegExp } from 'lodash'
 
 import { externalStorageApi } from '@tap/api'
 import { TablePage } from '@tap/business'
@@ -232,7 +231,7 @@ export default {
       let where = {}
 
       if (keyword && keyword.trim()) {
-        where.name = { like: toRegExp(keyword), options: 'i' }
+        where.name = { like: escapeRegExp(keyword), options: 'i' }
       }
       type && (where.type = type)
 

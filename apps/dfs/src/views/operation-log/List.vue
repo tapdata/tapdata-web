@@ -48,8 +48,9 @@
 </template>
 
 <script>
+import { escapeRegExp } from 'lodash'
 import { VIcon, FilterBar, VTable } from '@tap/component'
-import { delayTrigger, toRegExp, isEmpty } from '@tap/shared'
+import { delayTrigger, isEmpty } from '@tap/shared'
 
 import i18n from '@/i18n'
 
@@ -445,10 +446,10 @@ export default {
       }
       // 操作对象
       if (parameter1) {
-        where['parameter1'] = { $regex: toRegExp(parameter1), $options: 'i' }
+        where['parameter1'] = { $regex: escapeRegExp(parameter1), $options: 'i' }
       }
       if (username) {
-        where['username'] = { $regex: toRegExp(username), $options: 'i' }
+        where['username'] = { $regex: escapeRegExp(username), $options: 'i' }
       }
       let dateObj = {}
       // 开始时间

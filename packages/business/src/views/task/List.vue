@@ -299,17 +299,16 @@
 </template>
 
 <script>
-import i18n from '@tap/i18n'
-
+import { escapeRegExp } from 'lodash'
 import dayjs from 'dayjs'
+import i18n from '@tap/i18n'
 import { taskApi, workerApi } from '@tap/api'
+import { FilterBar } from '@tap/component'
 import { TablePage, TaskStatus } from '../../components'
 import SkipError from './SkipError'
 import Upload from '../../components/UploadDialog'
 import { makeStatusAndDisabled, STATUS_MAP } from '../../shared'
 import syncTaskAgent from '../../mixins/syncTaskAgent'
-import { toRegExp } from '@tap/shared'
-import { FilterBar } from '@tap/component'
 
 export default {
   name: 'List',
@@ -462,7 +461,7 @@ export default {
         syncType
       }
       if (keyword && keyword.trim()) {
-        where.name = { like: toRegExp(keyword), options: 'i' }
+        where.name = { like: escapeRegExp(keyword), options: 'i' }
       }
       if (tags && tags.length) {
         where['listtags.id'] = {

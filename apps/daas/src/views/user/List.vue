@@ -217,11 +217,11 @@
 
 <script>
 import dayjs from 'dayjs'
+import { escapeRegExp } from 'lodash'
 
 import { usersApi, roleApi, roleMappingsApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage } from '@tap/business'
-import { toRegExp } from '@tap/shared'
 
 export default {
   components: {
@@ -401,7 +401,7 @@ export default {
       let { isFuzzy, keyword } = this.searchParams
       let where = {}
       if (keyword && keyword.trim()) {
-        let filterObj = isFuzzy ? { like: toRegExp(keyword), options: 'i' } : keyword
+        let filterObj = isFuzzy ? { like: escapeRegExp(keyword), options: 'i' } : keyword
         where.or = [{ username: filterObj }, { email: filterObj }]
       }
       if (this.activePanel !== 'all') {

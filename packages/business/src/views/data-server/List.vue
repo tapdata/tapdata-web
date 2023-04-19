@@ -43,13 +43,13 @@
   </section>
 </template>
 <script>
+import { escapeRegExp } from 'lodash'
 import i18n from '@/i18n'
 
 import { databaseTypesApi, modulesApi, metadataInstancesApi, apiServerApi, appApi } from '@tap/api'
 import { FilterBar, VTable, VEmpty } from '@tap/component'
 
 import Drawer from './Drawer'
-import { toRegExp } from '@tap/shared'
 
 export default {
   components: { FilterBar, Drawer, VTable, VEmpty },
@@ -241,7 +241,7 @@ export default {
       let { type, status, keyword, appId } = this.searchParams
       let where = {}
       if (keyword?.trim()) {
-        where.name = { like: toRegExp(keyword), options: 'i' }
+        where.name = { like: escapeRegExp(keyword), options: 'i' }
       }
       if (type) {
         where['connectionType'] = type
