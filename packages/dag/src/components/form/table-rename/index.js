@@ -63,6 +63,12 @@ export const TableRename = observer(
               tableDataRef.value = items.map(item => {
                 prevMap[item.previousTableName] = item.sourceObjectName
                 tableMap[item.previousTableName] = true
+
+                // TM会主动修改表编辑节点,节点不会自动刷新,在这里同步最新的表推演
+                if (item.previousTableName !== item.sinkObjectName && !nameMap[item.previousTableName]) {
+                  set(nameMap, item.previousTableName, item.sinkObjectName)
+                }
+
                 return item.previousTableName
               })
 
@@ -212,11 +218,14 @@ export const TableRename = observer(
 
     render() {
       const label = (
-        <div class="inline-flex align-center">
+        <div class="inline-flex align-center position-absolute w-100">
           <span class="mr-2 flex-1">{i18n.t('packages_form_table_rename_rule_config')}</span>
-          <ElButton disabled={this.disabled} onClick={this.resetNames} size="mini" type="text">
-            {i18n.t('public_button_reset')}
-          </ElButton>
+          <ElLink disabled={this.disabled} onClick={this.resetNames} size="mini" type="primary">
+            <div class="flex align-center px-1">
+              <VIcon class="mr-1">reset</VIcon>
+              {i18n.t('public_button_reset')}
+            </div>
+          </ElLink>
         </div>
       )
       return (

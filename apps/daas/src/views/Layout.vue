@@ -609,8 +609,7 @@ export default {
           this.dialogVisible = true
           break
         case 'help':
-          // window.open('https://docs.tapdata.io/', '_blank')
-          window.open('https://tapdata.net/docs-tapdata-enterprise.html', '_blank')
+          window.open('https://docs.tapdata.net/')
           break
         case 'question':
           this.isShowCustomerService = !this.isShowCustomerService
