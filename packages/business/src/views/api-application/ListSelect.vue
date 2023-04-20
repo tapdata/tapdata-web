@@ -68,7 +68,7 @@ export default {
       const { label } = filter.where || {}
       if (label) {
         Object.assign(params.where, {
-          'listtags.value': label
+          value: label
         })
       }
 
