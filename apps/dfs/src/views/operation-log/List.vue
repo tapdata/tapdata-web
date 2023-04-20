@@ -48,9 +48,9 @@
 </template>
 
 <script>
-import { escapeRegExp } from 'lodash'
+import { escapeRegExp, isEmpty } from 'lodash'
 import { VIcon, FilterBar, VTable } from '@tap/component'
-import { delayTrigger, isEmpty } from '@tap/shared'
+import { delayTrigger } from '@tap/shared'
 
 import i18n from '@/i18n'
 
