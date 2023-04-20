@@ -34,10 +34,9 @@
         </li>
       </ul>
     </div>
-    <div class="secondary">
+    <div class="secondary mt-4">
       {{ $t('dfs_agent_download_transferdialog_zaiwanchengzhuanzhang') }}
     </div>
-    <br/>
     <div class="primary">
       {{ $t('dfs_agent_download_transferdialog_reopen_tips') }}
     </div>
@@ -57,9 +56,6 @@ export default {
       type: Boolean
     },
     price: {
-      type: String
-    },
-    email: {
       type: String
     }
   },
