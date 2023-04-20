@@ -103,7 +103,7 @@
 <script>
 import { debounce } from 'lodash'
 
-import { connectionsApi, metadataInstancesApi, ldpApi } from '@tap/api'
+import { connectionsApi, metadataInstancesApi, ldpApi, CancelToken } from '@tap/api'
 import { VirtualTree, IconButton } from '@tap/component'
 import connectionPreview from './connectionPreview'
 import TablePreview from './TablePreview'
@@ -151,11 +151,18 @@ export default {
 
   created() {
     this.debouncedSearch = debounce(async search => {
+      this.cancelSource?.cancel()
+      this.cancelSource = CancelToken.source()
       this.searchIng = true
-      const result = await ldpApi.searchSources({
-        key: search,
-        connectionType: ['source', 'source_and_target'].join(',')
-      })
+      const result = await ldpApi.searchSources(
+        {
+          key: search,
+          connectionType: ['source', 'source_and_target'].join(',')
+        },
+        {
+          cancelToken: this.cancelSource.token
+        }
+      )
       this.searchIng = false
       const tableMap = {}
       const connectionList = []

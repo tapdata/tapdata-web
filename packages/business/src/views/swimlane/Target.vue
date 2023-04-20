@@ -340,7 +340,6 @@ export default {
   methods: {
     async init() {
       this.list = await this.getData()
-      console.log('list', this.list) // eslint-disable-line
       this.loadTask(this.list)
       // this.getApiServerHost()
     },
