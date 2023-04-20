@@ -1066,14 +1066,17 @@ export default {
       let filter = {
         limit: size,
         skip: size * (current - 1),
-        sort: ['createAt desc']
+        sort: ['createAt desc'],
+        where: {
+          status: {
+            $ne: 'invalid' //过滤 invild
+          }
+        }
       }
       return this.$axios
         .get(`api/tcm/paid/plan/paidSubscribe?filter=${encodeURIComponent(JSON.stringify(filter))}`)
         .then(data => {
           let items = data.items || []
-          //过滤 invild
-          items = items.filter(it => it.status !== 'invalid')
           return {
             total: data.total,
             data:
