@@ -212,11 +212,14 @@ export const TableRename = observer(
 
     render() {
       const label = (
-        <div class="inline-flex align-center">
+        <div class="inline-flex align-center position-absolute w-100">
           <span class="mr-2 flex-1">{i18n.t('packages_form_table_rename_rule_config')}</span>
-          <ElButton disabled={this.disabled} onClick={this.resetNames} size="mini" type="text">
-            {i18n.t('public_button_reset')}
-          </ElButton>
+          <ElLink disabled={this.disabled} onClick={this.resetNames} size="mini" type="primary">
+            <div class="flex align-center px-1">
+              <VIcon class="mr-1">reset</VIcon>
+              {i18n.t('public_button_reset')}
+            </div>
+          </ElLink>
         </div>
       )
       return (
