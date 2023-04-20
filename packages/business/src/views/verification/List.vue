@@ -434,7 +434,8 @@ export default {
       this.$confirm(row.errorMsg, i18n.t('packages_business_milestone_list_cuowuxinxi'), {
         type: 'warning',
         closeOnClickModal: false,
-        customClass: 'verify-list-error-msg'
+        customClass: 'verify-list-error-msg',
+        width: '600px'
       })
     }
   }

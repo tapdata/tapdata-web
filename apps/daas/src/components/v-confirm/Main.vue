@@ -9,7 +9,7 @@
       aria-modal="true"
       :aria-label="title || 'dialog'"
     >
-      <div class="el-message-box" :class="[customClass, center && 'el-message-box--center']" :style="{ width }">
+      <div class="el-message-box" :class="[customClass, center && 'el-message-box--center']" :style="{ width, height }">
         <div class="el-message-box__header" v-if="title">
           <div class="el-message-box__title flex align-center">
             <VIcon v-if="icon" class="mr-3" :size="iconSize" :color="iconColor" :class="statusClass">{{ icon }}</VIcon>
@@ -28,7 +28,7 @@
         </div>
         <div class="el-message-box__content" :class="{ 'mt-3': !title }">
           <div class="el-message-box__container">
-            <div class="el-message-box__message flex" v-if="message !== ''">
+            <div class="el-message-box__message" v-if="message !== ''">
               <VIcon
                 v-if="icon"
                 :size="iconSize"
@@ -99,6 +99,7 @@ export default {
   data() {
     return {
       width: null,
+      height: null,
       cancelButtonTextDefault: i18n.t('public_button_cancel'),
       confirmButtonTextDefault: i18n.t('public_button_confirm')
     }
@@ -128,7 +129,8 @@ export default {
 .el-message-box__wrapper {
   .el-message-box {
     padding-bottom: 24px;
-
+    display: inline-flex;
+    flex-direction: column;
     &__header {
       padding: 24px 24px 0;
     }
@@ -138,6 +140,19 @@ export default {
     }
     &__content {
       padding: 10px 24px;
+      height: 0;
+      flex: 1 1 auto;
+    }
+    &__container {
+      height: 100%;
+    }
+    &__message {
+      display: flex;
+      height: 100%;
+      p {
+        height: 100%;
+        overflow-y: auto;
+      }
     }
     &__btns {
       padding: 14px 24px 0;

@@ -29,6 +29,7 @@ const defaults = {
   dangerouslyUseHTMLString: false,
   distinguishCancelAndClose: false,
   width: '416px', // 需要完整的像素字符串
+  height: '80vh', // 需要完整的像素字符串
   beforeClose: null
 }
 
