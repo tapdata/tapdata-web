@@ -1,17 +1,9 @@
 import hljs from 'highlight.js/lib/core'
 import javascript from 'highlight.js/lib/languages/javascript'
 import json from 'highlight.js/lib/languages/json'
+import { escape } from 'lodash'
 hljs.registerLanguage('javascript', javascript)
 hljs.registerLanguage('json', json)
-
-function escapeHTML(value) {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#x27;')
-}
 
 function hasValueOrEmptyAttribute(value) {
   return Boolean(value || value === '')
@@ -36,7 +28,7 @@ export default {
       if (!this.autoDetect && !hljs.getLanguage(this.language)) {
         console.warn(`The language "${this.language}" you specified could not be found.`) // eslint-disable-line
         this.unknownLanguage = true
-        return escapeHTML(this.code)
+        return escape(this.code)
       }
 
       let result = {}

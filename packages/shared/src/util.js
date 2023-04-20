@@ -131,15 +131,6 @@ export const uuid = function () {
   })
 }
 
-export function escapeHTML(value) {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#x27;')
-}
-
 /**
  * 比较两个数字是否近似相等
  * 0.1 + 0.2 === 0.3 => false
