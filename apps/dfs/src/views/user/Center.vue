@@ -218,7 +218,6 @@
         :page-options="{
           layout: 'total, ->, prev, pager, next, sizes, jumper'
         }"
-        hide-on-single-page
         ref="table"
         class="mt-4"
       >
@@ -1071,7 +1070,7 @@ export default {
           //过滤 invild
           items = items.filter(it => it.status !== 'invalid')
           return {
-            total: 0,
+            total: data.total,
             data:
               items.map(t => {
                 t.statusLabel = ORDER_STATUS_MAP[t.status]
