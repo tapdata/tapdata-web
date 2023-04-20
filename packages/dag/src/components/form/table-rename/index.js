@@ -63,6 +63,12 @@ export const TableRename = observer(
               tableDataRef.value = items.map(item => {
                 prevMap[item.previousTableName] = item.sourceObjectName
                 tableMap[item.previousTableName] = true
+
+                // TM会主动修改表编辑节点,节点不会自动刷新,在这里同步最新的表推演
+                if (item.previousTableName !== item.sinkObjectName && !nameMap[item.previousTableName]) {
+                  set(nameMap, item.previousTableName, item.sinkObjectName)
+                }
+
                 return item.previousTableName
               })
 
