@@ -216,7 +216,7 @@ export class Table extends NodeType {
             dependencies: ['$inputs'],
             fulfill: {
               state: {
-                display: '{{$deps[0].length > 0 ? "visible":"hidden"}}'
+                visible: '{{$deps[0].length > 0}}'
               }
             }
           },
@@ -234,14 +234,15 @@ export class Table extends NodeType {
                         let form = field.form
                         let options = field.dataSource
                         let nodeData = findNodeById($values.id)
-
-                        console.log('验证关联条件', value, $values)
+                        console.debug('[DEBUG]: validate updateConditionFields', $self.visible, $self.display, $values.name)
+                        
+                        if (!$values.$inputs[0]) return
 
                         if (!options || !options.length) {
                           options = await loadNodeFieldOptions($values.$inputs[0])
                         }
 
-                        if (options.length) {
+                        if (options && options.length) {
                           let isPrimaryKeyList = options.filter(item => item.isPrimaryKey)
                           let indicesUniqueList = options.filter(item => item.indicesUnique)
                           let defaultList = (isPrimaryKeyList.length ? isPrimaryKeyList : indicesUniqueList).map(item => item.value)
@@ -256,12 +257,11 @@ export class Table extends NodeType {
                             if (value && value.length !== filterValue.length) {
                               nodeData.updateConditionFields = filterValue.length ? filterValue : defaultList
                               $values.updateConditionFields = nodeData.updateConditionFields
-                              console.log('更新关联条件字段')
                             }
                           }
                         }
+                        
                         if (!$values.updateConditionFields?.length) return '该字段是必填字段!'
-                        console.debug('[DEBUG]: updateConditionFields validate', value, field, ctx, options, nodeData)
                       }}}`
         }
       },
