@@ -144,7 +144,7 @@ import dayjs from 'dayjs'
 import { cloneDeep, escapeRegExp } from 'lodash'
 
 import { externalStorageApi } from '@tap/api'
-import { TablePage } from '@tap/business'
+import { TablePage, EXTERNAL_STORAGE_TYPE_MAP } from '@tap/business'
 import { FilterBar, Drawer } from '@tap/component'
 
 export default {
@@ -164,11 +164,6 @@ export default {
       searchParams: {
         type: '',
         keyword: ''
-      },
-      typeMapping: {
-        mongodb: 'MongoDB',
-        rocksdb: 'RocksDB',
-        memory: 'MEM'
       },
       dialogVisible: false,
       form: {},
@@ -204,8 +199,8 @@ export default {
   methods: {
     getFilterItems() {
       let typeOptions = [{ label: i18n.t('public_select_option_all'), value: '' }]
-      for (const key in this.typeMapping) {
-        const label = this.typeMapping[key]
+      for (const key in EXTERNAL_STORAGE_TYPE_MAP) {
+        const label = EXTERNAL_STORAGE_TYPE_MAP[key]
         typeOptions.push({
           label,
           value: key
@@ -247,7 +242,7 @@ export default {
         })
         .then(data => {
           let list = (data?.items || []).map(item => {
-            item.typeFmt = this.typeMapping[item.type] || '-'
+            item.typeFmt = EXTERNAL_STORAGE_TYPE_MAP[item.type] || '-'
             item.createTimeFmt = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') || '-'
             return item
           })

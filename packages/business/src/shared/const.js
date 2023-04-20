@@ -144,3 +144,9 @@ export const TIME_MAP = {
   month: i18n.t('public_time_month'),
   day: i18n.t('public_time_d')
 }
+
+export const EXTERNAL_STORAGE_TYPE_MAP = {
+  mongodb: 'MongoDB',
+  rocksdb: 'RocksDB',
+  memory: 'MEM'
+}

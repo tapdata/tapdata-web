@@ -345,6 +345,7 @@ import dayjs from 'dayjs'
 import { calcTimeUnit, calcUnit } from '@tap/shared'
 import Time from '@tap/shared/src/time'
 import { logcollectorApi, sharedCacheApi, externalStorageApi } from '@tap/api'
+import { EXTERNAL_STORAGE_TYPE_MAP } from '@tap/business'
 
 export default {
   name: 'LeftSider',
@@ -379,12 +380,6 @@ export default {
       timeSelectLabel: '',
       collectorData: {
         externalStorage: {}
-      },
-
-      typeMapping: {
-        mongodb: 'MongoDB',
-        rocksdb: 'RocksDB',
-        memory: 'MEM'
       },
       infoList: []
     }
@@ -604,14 +599,14 @@ export default {
           },
           {
             label: this.$t('public_external_memory_type'),
-            value: externalStorage.type
+            value: EXTERNAL_STORAGE_TYPE_MAP[externalStorage.type]
           },
           {
             label: this.$t('public_external_memory_table'),
             value: externalStorage.table
           },
           {
-            label: this.$t('public_external_memory_connection'),
+            label: this.$t('public_external_memory_info'),
             value: externalStorage.uri,
             block: true
           }
@@ -633,19 +628,19 @@ export default {
             // },
             {
               label: i18n.t('public_external_memory_name'),
-              value: data['name']
-            },
-            {
-              label: i18n.t('public_external_memory_type'),
               value: ext.name
             },
             {
-              label: i18n.t('public_external_memory_table'),
-              value: data['tableName']
+              label: i18n.t('public_external_memory_type'),
+              value: EXTERNAL_STORAGE_TYPE_MAP[ext.type]
             },
             {
-              label: i18n.t('public_external_memory_connection'),
-              value: data['connectionName']
+              label: i18n.t('public_external_memory_table'),
+              value: ext.table
+            },
+            {
+              label: i18n.t('public_external_memory_info'),
+              value: ext.uri
             }
           ]
         })
