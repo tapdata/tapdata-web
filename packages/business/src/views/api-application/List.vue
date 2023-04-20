@@ -77,7 +77,7 @@ import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash'
 import { logcollectorApi, taskApi, appApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
-import { TablePage, makeStatusAndDisabled } from '@tap/business'
+import { TablePage } from '@tap/business'
 
 import Editor from './Editor'
 import Details from './Details'
@@ -200,10 +200,6 @@ export default {
                 item.desc = i18n.t('packages_business_api_application_list_xitongmorenchuang')
               }
               item.createTime = item.createTime ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') : '-'
-              makeStatusAndDisabled(item)
-              if (item.status === 'edit') {
-                item.btnDisabled.start = false
-              }
               return item
             })
           }
