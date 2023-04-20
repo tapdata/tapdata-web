@@ -285,7 +285,7 @@
           $t('public_button_next')
         }}</el-button>
         <div v-else-if="activeStep === steps.length" class="ml-2">
-          <el-button type="primary" @click="submit()">{{
+          <el-button type="primary" :loading="submitOnlineLoading" @click="submit()">{{
             $t('dfs_agent_download_subscriptionmodeldialog_zaixianzhifu')
           }}</el-button>
           <el-button type="primary" :loading="submitLoading" @click="submit({}, 'offline')">{{
@@ -360,6 +360,7 @@ export default {
       licenseCode: '',
       saveLoading: false,
       submitLoading: false,
+      submitOnlineLoading: false,
       codeData: [],
       agentCount: 0,
       currentCode: {},
@@ -749,7 +750,11 @@ export default {
       this.buried('newAgentStripe', '', {
         type
       })
-      this.submitLoading = true
+      if (paymentType === 'online') {
+        this.submitOnlineLoading = true
+      } else {
+        this.submitLoading = true
+      }
       this.$axios
         .post('api/tcm/orders', params)
         .then(data => {
@@ -773,7 +778,11 @@ export default {
             type,
             result: true
           })
-          this.submitLoading = false
+          if (paymentType === 'online') {
+            this.submitOnlineLoading = false
+          } else {
+            this.submitLoading = false
+          }
         })
         .catch(() => {
           this.buried('newAgentStripe', '', {
@@ -783,6 +792,7 @@ export default {
         })
         .finally(() => {
           this.submitLoading = false
+          this.submitOnlineLoading = false
         })
     },
     finish() {
