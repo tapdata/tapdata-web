@@ -300,11 +300,7 @@
         >
       </template>
     </div>
-    <transferDialog
-      :price="formatPrice(currency, true)"
-      :email="this.email"
-      :visible.sync="showTransferDialogVisible"
-    ></transferDialog>
+    <transferDialog :price="formatPrice(currency)" :visible.sync="showTransferDialogVisible"></transferDialog>
   </el-dialog>
 </template>
 
