@@ -28,7 +28,7 @@
       <div class="flex-fill min-h-0" v-loading="loading || searchIng">
         <VirtualTree
           key="searchTree"
-          v-if="search || searchIng"
+          v-if="showSearch"
           class="ldp-tree h-100"
           ref="tree"
           node-key="id"
@@ -143,6 +143,12 @@ export default {
     }
   },
 
+  computed: {
+    showSearch() {
+      return this.search || this.searchIng
+    }
+  },
+
   created() {
     this.debouncedSearch = debounce(async search => {
       this.searchIng = true
@@ -188,7 +194,6 @@ export default {
           }
 
           connectionList.push({
-            reExpand: !children.length,
             ...connection,
             children
           })
@@ -196,7 +201,6 @@ export default {
       })
       this.filterTreeData = connectionList
       this.searchExpandedKeys = firstExpand ? [firstExpand] : []
-      console.log('result', result) // eslint-disable-line
     }, 300)
   },
 
@@ -216,7 +220,7 @@ export default {
         className.push('opacity-50')
       }
 
-      if (data.reExpand) node.isLeaf = false
+      if (!data.isObject && !data.children?.length) node.isLeaf = false
 
       return (
         <div
@@ -225,7 +229,7 @@ export default {
             this.$emit('preview', data)
           }}
         >
-          {!data.isLeaf ? (
+          {!data.isObject ? (
             <NodeIcon node={data} size={18} class="tree-item-icon mr-2" />
           ) : (
             <VIcon class="tree-item-icon mr-2" size="18">
@@ -381,6 +385,9 @@ export default {
       this.connectionMap[data.id] = connection
       const { root = {} } = this.$refs.tree
       const firstChildKey = root.childNodes[0]?.key
+
+      if (this.showSearch && !connection.name.includes(this.search)) return
+
       if (firstChildKey) {
         this.$refs.tree.insertBefore(connection, firstChildKey)
       } else {
@@ -389,8 +396,7 @@ export default {
     },
 
     async handleNodeExpand(data, node) {
-      console.log('handleNodeExpand', data, node) // eslint-disable-line
-      if (!data.reExpand || data.children.length) return
+      if (data.children.length) return
 
       node.loadTime = Date.now()
       node.loading = true
