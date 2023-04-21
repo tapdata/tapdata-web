@@ -1305,34 +1305,19 @@ export default {
     validateCustomSql() {
       let error
       let enable
-      let notInWhitelist
       let notAllowTarget
-      let whitelist = [
-        'table',
-        'database',
-        'migrate_js_processor',
-        'standard_migrate_js_processor',
-        'js_processor',
-        'standard_js_processor',
-        'custom_processor'
-      ]
       const schemaFree = this.$store.state.dataflow.pdkSchemaFreeMap
 
       this.allNodes.some(node => {
         if (node.enableCustomCommand) {
           enable = true
         }
-        if (!whitelist.includes(node.type)) {
-          notInWhitelist = true
-        }
+
         // 目标是否是弱schema类型
         if (node.$inputs.length && !node.$outputs.length && !schemaFree[node.attrs.pdkHash]) {
           notAllowTarget = true
         }
-        if (enable && notInWhitelist) {
-          error = i18n.t('packages_dag_validate_customsql_fail')
-          return true
-        }
+
         if (enable && notAllowTarget) {
           error = i18n.t('packages_dag_validate_customsql_target_fail')
           return true
