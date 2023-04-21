@@ -255,7 +255,7 @@ const routes = [
         name: 'dataConsole',
         component: SwimlaneDashboard,
         meta: {
-          title: 'dfs_data_server',
+          title: 'page_title_data_console',
           hideTitle: true,
           icon: 'data-server'
         }
@@ -405,6 +405,12 @@ const routes = [
     path: '/aliyun-market/license',
     name: 'aliyunMarketLicense',
     component: () => import('../views/aliyun-market/License.vue')
+  },
+  //产品引导
+  {
+    path: '/product',
+    name: 'productDemo',
+    component: () => import('../views/productDemo')
   }
 ]
 

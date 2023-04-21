@@ -209,7 +209,7 @@ export default {
             items: [
               {
                 label: this.$t('public_connection_form_other_connection_string'),
-                key: 'additionalString'
+                key: 'addtionalString'
               }
             ]
           },
@@ -282,7 +282,7 @@ export default {
       row.database_name = row.config.database
       row.database_owner = row.config.schema
       row.database_username = row.config.user || row.config.username
-      row.additionalString = row.config.extParams || row.config.additionalString
+      row.addtionalString = row.config.extParams || row.config.addtionalString
       row.database_datetype_without_timezone = row.config.timezone
       row.sourceFrom = this.getSourceFrom(row)
       if (row.config.uri && row.config.isUri !== false) {
@@ -296,7 +296,7 @@ export default {
           row.database_port = hostArr[1]
           row.database_name = regResult.groups.database
           row.database_username = regResult.groups.username
-          row.additionalString = regResult.groups.query
+          row.addtionalString = regResult.groups.query
         }
       }
       row.heartbeatTable = this.connection.heartbeatTable

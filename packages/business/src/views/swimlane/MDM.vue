@@ -262,40 +262,7 @@ export default {
   },
 
   created() {
-    this.debouncedSearch = debounce(async search => {
-      this.cancelSource?.cancel()
-      this.cancelSource = CancelToken.source()
-      this.searchIng = true
-      const result = await this.loadObjects(this.directory, false, search, this.cancelSource.token)
-      const map = result.reduce((obj, item) => {
-        let id = item.listtags[0].id
-        let children = obj[id] || []
-        children.push(item)
-        obj[id] = children
-        return obj
-      }, {})
-
-      const filterTree = node => {
-        const { children } = node
-
-        if (children?.length) {
-          node.children = children.filter(child => {
-            filterTree(child)
-            return child.LDP_TYPE === 'folder' && (child.name.includes(search) || child.children.length)
-          })
-        }
-
-        if (map[node.id]) {
-          node.children.push(...map[node.id])
-        }
-      }
-
-      let root = { ...this.directory }
-      filterTree(root)
-      this.searchIng = false
-      this.filterTreeData = root.children
-      console.log('filter', root) // eslint-disable-line
-    }, 300)
+    this.debouncedSearch = debounce(this.searchObject, 300)
   },
 
   mounted() {
@@ -484,11 +451,8 @@ export default {
       } catch (response) {
         console.log(response) // eslint-disable-line
         const code = response?.data?.code
-        if (code === 'Ldp.MdmTargetNoPrimaryKey') {
-          const data = response?.data?.data
-
-          if (!data) return
-
+        const data = response?.data?.data
+        if (code === 'Ldp.MdmTargetNoPrimaryKey' && data) {
           this.taskDialogConfig.visible = false
           this.$message.warning({
             duration: 6000,
@@ -520,6 +484,10 @@ export default {
             }
             this.taskDialogSubmit(start, true)
           })
+        } else if (code === 'Task.ListWarnMessage' && data) {
+          const keys = Object.keys(data)
+          const msg = data[keys[0]]?.[0]?.msg
+          this.$message.error(msg || response.data.message || this.$t('public_message_save_fail'))
         }
       }
       this.creating = false
@@ -589,35 +557,6 @@ export default {
       } else {
         this.directory?.id && this.handleNodeExpand(this.directory, this.$refs.tree.root)
       }
-    },
-
-    loadObjects(node, isCurrent = true, queryKey, cancelToken) {
-      let where = {
-        page: 1,
-        pageSize: 10000,
-        tagId: node.id,
-        range: isCurrent ? 'current' : undefined,
-        sourceType: 'table',
-        queryKey,
-        regUnion: false,
-        fields: {
-          allTags: 1
-        }
-      }
-      return discoveryApi
-        .discoveryList(where, {
-          cancelToken
-        })
-        .then(res => {
-          return res.items.map(item =>
-            Object.assign(item, {
-              isLeaf: true,
-              isObject: true,
-              connectionId: item.sourceConId,
-              LDP_TYPE: 'table'
-            })
-          )
-        })
     },
 
     handleTreeDragOver(ev) {

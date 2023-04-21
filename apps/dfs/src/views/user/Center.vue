@@ -218,7 +218,6 @@
         :page-options="{
           layout: 'total, ->, prev, pager, next, sizes, jumper'
         }"
-        hide-on-single-page
         ref="table"
         class="mt-4"
       >
@@ -545,6 +544,8 @@
         <span class="font-color-dark">{{ item.value }}</span>
       </div>
     </ElDialog>
+    <!--转账支付-->
+    <transferDialog :visible.sync="showTransferDialogVisible" :price="pricePay"></transferDialog>
   </div>
 </template>
 
@@ -553,6 +554,7 @@ import i18n from '@/i18n'
 
 import InlineInput from '@/components/InlineInput'
 import VerificationCode from '@/components/VerificationCode'
+import transferDialog from '../agent-download/transferDialog'
 import UploadFile from '@/components/UploadFile'
 import CryptoJS from 'crypto-js'
 import dayjs from 'dayjs'
@@ -564,9 +566,11 @@ import { openUrl, urlToBase64 } from '@tap/shared'
 export default {
   name: 'Center',
   inject: ['buried'],
-  components: { InlineInput, VerificationCode, UploadFile, VTable },
+  components: { InlineInput, VerificationCode, transferDialog, UploadFile, VTable },
   data() {
     return {
+      showTransferDialogVisible: false,
+      pricePay: '',
       userData: {
         username: '',
         nickname: '',
@@ -1056,17 +1060,24 @@ export default {
     handleCopySecretKey() {
       this.secretKeyTooltip = true
     },
-    remoteMethod() {
+    remoteMethod({ page }) {
+      let { current, size } = page
+      let filter = {
+        limit: size,
+        skip: size * (current - 1),
+        sort: ['createAt desc'],
+        where: {
+          status: {
+            $ne: 'invalid' //过滤 invild
+          }
+        }
+      }
       return this.$axios
-        .get(
-          `api/tcm/paid/plan/paidSubscribe?filter=${encodeURIComponent(JSON.stringify({ sort: ['createAt desc'] }))}`
-        )
+        .get(`api/tcm/paid/plan/paidSubscribe?filter=${encodeURIComponent(JSON.stringify(filter))}`)
         .then(data => {
           let items = data.items || []
-          //过滤 invild
-          items = items.filter(it => it.status !== 'invalid')
           return {
-            total: 0,
+            total: data.total,
             data:
               items.map(t => {
                 t.statusLabel = ORDER_STATUS_MAP[t.status]
@@ -1084,13 +1095,13 @@ export default {
                       ' - ' +
                       dayjs(t.periodEnd).format('YYYY-MM-DD HH:mm:ss')
                 t.priceSuffix = t.type === 'recurring' ? '/' + TIME_MAP[t.periodUnit] : ''
-                t.priceLabel =
+                t.formatPrice =
                   CURRENCY_SYMBOL_MAP[t.currency] +
                   (t.price / 100).toLocaleString('zh', {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2
-                  }) +
-                  t.priceSuffix
+                  })
+                t.priceLabel = t.formatPrice + t.priceSuffix
                 t.bindAgent = t.agentId
                   ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
                   : i18n.t('user_Center_weiBangDing')
@@ -1106,8 +1117,10 @@ export default {
           total: 0,
           data:
             items.map(t => {
-              t.activateTimeLabel = t.activateTime ? dayjs(t.activateTime).format('YYYY-MM-DD') : '-'
-              t.expiredTimeLabel = t.expiredTime ? dayjs(t.expiredTime).format('YYYY-MM-DD') : '-'
+              let activateTime = new Date(t.activateTime.replace('Z', '+08:00')).toLocaleString()
+              let expiredTime = new Date(t.expiredTime.replace('Z', '+08:00')).toLocaleString()
+              t.activateTimeLabel = t.activateTime ? dayjs(activateTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+              t.expiredTimeLabel = t.expiredTime ? dayjs(expiredTime).format('YYYY-MM-DD HH:mm:ss') : '-'
               t.bindAgent = t.agentId
                 ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
                 : i18n.t('user_Center_weiBangDing')
@@ -1196,19 +1209,25 @@ export default {
         }
       })
     },
+    //支付
     handlePay(row = {}) {
       this.buried('payAgentStripe')
-      openUrl(row.payUrl)
-      this.$confirm(
-        i18n.t('dfs_user_center_ninjiangzhifur', { val1: row.content }),
-        i18n.t('dfs_user_center_zhifufuwu'),
-        {
-          type: 'warning',
-          confirmButtonText: i18n.t('dfs_instance_create_zhifuwancheng')
-        }
-      ).then(() => {
-        this.$refs.table?.fetch()
-      })
+      if (row.paymentType === 'offline') {
+        this.showTransferDialogVisible = true
+        this.pricePay = row.formatPrice
+      } else {
+        openUrl(row.payUrl)
+        this.$confirm(
+          i18n.t('dfs_user_center_ninjiangzhifur', { val1: row.content }),
+          i18n.t('dfs_user_center_zhifufuwu'),
+          {
+            type: 'warning',
+            confirmButtonText: i18n.t('dfs_instance_create_zhifuwancheng')
+          }
+        ).then(() => {
+          this.$refs.table?.fetch()
+        })
+      }
     },
     handleRenewal() {
       this.buried('goRenewalAliyunCode')

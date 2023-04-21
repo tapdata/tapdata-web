@@ -921,10 +921,16 @@ export default {
     'This operation will only delete the category. If you want to delete the physical tables under this category, please do it yourself.',
   packages_business_mdm_table_duplication_confirm:
     'The target table already exists. Please confirm if you want to continue?',
-  packages_business_data_console_mode: 'Product Capability Mode',
+  packages_business_data_console_mode: 'Select Product Capability Mode',
   packages_business_data_console_mode_integration: 'Data Integration',
   packages_business_data_console_mode_service: 'Data Service Platform',
-  packages_business_data_console_fdm_mdm_storage: 'FDM & MDM Storage Backend',
+  packages_business_data_console_mode_integration_tooltip_1: 'RealTime Data Sync Between Databases',
+  packages_business_data_console_mode_integration_tooltip_2: 'ETL Data Processing',
+  packages_business_data_console_mode_integration_tooltip_3: '100+ Connectors, Including DB, MQ, File, API',
+  packages_business_data_console_mode_service_tooltip_1: 'All Features Of Data Integration',
+  packages_business_data_console_mode_service_tooltip_2: 'Data Cache Layer In Platform',
+  packages_business_data_console_mode_service_tooltip_3: 'Support Multiple Service Publish',
+  packages_business_data_console_fdm_mdm_storage: 'Data Center Storage',
   packages_business_data_console_fdm_mdm_storage_tooltip:
     'Specify the database connection that will be used for additional data layer storage',
   packages_business_mongodb_atlas_cluster: 'MongoDB Atlas Cluster',

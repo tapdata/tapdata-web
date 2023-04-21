@@ -23,35 +23,45 @@
       </div>-->
       <div class="flex gap-6 justify-content-center p-4 rounded-4 mode-card-container">
         <div
-          class="rounded-xl bg-white border mode-card overflow-hidden clickable"
+          class="flex-1 rounded-xl bg-white border mode-card overflow-hidden clickable"
           :class="{ active: mode === 'integration' }"
           @click="handleSelectMode('integration')"
         >
           <ElImage
-            class="p-4 mode-card-image align-top"
-            :src="require('@tap/assets/images/swimlane/data-integration-mode.svg')"
+            class="px-5 py-2 mode-card-image align-top"
+            :src="require('@tap/assets/images/swimlane/data-integration-mode.png')"
           ></ElImage>
-          <div class="px-4 flex align-center mode-card-title">
+          <div class="px-4 flex align-center mode-card-title border-bottom">
             <ElRadio v-model="mode" class="mr-0" label="integration">
-              <span class="fs-7 font-color-dark">{{ $t('packages_business_data_console_mode_integration') }}</span>
+              <span class="fs-7 fw-sub">{{ $t('packages_business_data_console_mode_integration') }}</span>
             </ElRadio>
+          </div>
+          <div class="px-4 py-2 mode-desc">
+            1. {{ $t('packages_business_data_console_mode_integration_tooltip_1') }} <br />
+            2. {{ $t('packages_business_data_console_mode_integration_tooltip_2') }} <br />
+            3. {{ $t('packages_business_data_console_mode_integration_tooltip_3') }}
           </div>
         </div>
         <div
-          class="rounded-xl bg-white border mode-card overflow-hidden clickable"
+          class="flex-1 rounded-xl bg-white border mode-card overflow-hidden clickable"
           :class="{ active: mode === 'service' }"
           @click="handleSelectMode('service')"
         >
           <ElImage
-            class="p-4 mode-card-image align-top"
-            :src="require('@tap/assets/images/swimlane/data-service-platform-mode.svg')"
+            class="px-5 py-2 mode-card-image align-top"
+            :src="require('@tap/assets/images/swimlane/data-service-platform-mode.png')"
           ></ElImage>
-          <div class="px-4 flex align-center mode-card-title">
+          <div class="px-4 flex align-center mode-card-title border-bottom">
             <ElRadio v-model="mode" class="mr-0" label="service">
-              <span class="fs-7 font-color-dark"
+              <span class="fs-7 fw-sub"
                 >{{ $t('packages_business_data_console_mode_service') }}<VIcon class="ml-1" size="32">beta</VIcon></span
               >
             </ElRadio>
+          </div>
+          <div class="px-4 py-2 mode-desc">
+            1. {{ $t('packages_business_data_console_mode_service_tooltip_1') }} <br />
+            2. {{ $t('packages_business_data_console_mode_service_tooltip_2') }} <br />
+            3. {{ $t('packages_business_data_console_mode_service_tooltip_3') }}
           </div>
         </div>
       </div>
@@ -235,11 +245,6 @@ export default {
       ],
       options: [
         {
-          label: this.$t('packages_business_mongodb_atlas_cluster'),
-          value: 'atlas',
-          tag: 'Sync Atlas Cluster List'
-        },
-        {
           label: this.$t('packages_business_mongodb_self_hosted_cluster'),
           value: 'self',
           tag: 'Add a New Connection'
@@ -270,7 +275,6 @@ export default {
         this.setting.fdmStorageConnectionId === this.form.fdmStorageConnectionId
       )
     },
-
     disabledBtn() {
       return this.disabled && this.mode === 'service' && this.mode === this.setting?.mode
     }
@@ -323,7 +327,7 @@ export default {
     setData(data = {}, update = false) {
       this.mode = data.mode || this.modeItems[0]?.value
       this.liveDataPlatformId = data.id
-      if (this.mode === 'service') {
+      if (this.mode === 'service' && update) {
         const { options, connectionsList } = this
         this.form.fdmStorageCluster = data.fdmStorageCluster || options[0]?.value
         this.form.fdmStorageConnectionId = data.fdmStorageConnectionId || connectionsList[0]?.value
@@ -400,9 +404,6 @@ export default {
 .mode-ul {
   list-style-type: disc;
 }
-.mode-desc {
-  width: 475px;
-}
 .setting-card__header {
   border-radius: 4px 4px 0 0;
   background: rgba(78, 89, 105, 0.08);
@@ -418,7 +419,6 @@ export default {
 }
 
 .mode-card {
-  width: 240px;
   transition: box-shadow 0.15s linear 0s;
 
   &-image {
@@ -449,5 +449,13 @@ export default {
       padding-bottom: 0;
     }
   }
+}
+
+.mode-desc {
+  line-height: 2;
+  padding-bottom: 10px;
+}
+.el-divider--horizontal {
+  margin: 5px 5px !important;
 }
 </style>

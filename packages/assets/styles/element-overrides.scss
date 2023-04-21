@@ -187,7 +187,7 @@ $--radio-disabled-icon-color: $--disabled-fill-base !default;
 $--radio-disabled-checked-input-border-color: $--disabled-border-base !default;
 $--radio-disabled-checked-input-fill: $--disabled-fill-base !default;
 
-$--radio-checked-font-color: $--color-text-primary !default;
+$--radio-checked-font-color: $--color-primary !default;
 $--radio-checked-text-color: $--color-primary !default;
 $--radio-checked-input-border-color: $--color-primary !default;
 $--radio-checked-input-fill: $--color-white !default;
@@ -725,6 +725,18 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
 }
 .el-radio-button__inner {
   background: map-get($bgColor, white);
+}
+
+.el-radio.is-bordered:not(.is-disabled) {
+  &:hover {
+    .el-radio__input .el-radio__inner {
+      border-color: map-get($color, primary);
+    }
+
+    .el-radio__label {
+      color: map-get($color, primary);
+    }
+  }
 }
 
 /* Link

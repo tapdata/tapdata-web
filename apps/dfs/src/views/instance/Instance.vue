@@ -43,19 +43,19 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn width="110px" :label="$t('dfs_instance_instance_guige')">
+        <ElTableColumn width="80px" :label="$t('dfs_instance_instance_guige')">
           <template slot-scope="scope">
             <span>{{ scope.row.specLabel }}</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn width="120px" :label="$t('dfs_instance_instance_dingyuefangshi')">
+        <ElTableColumn width="90px" :label="$t('dfs_instance_instance_dingyuefangshi')">
           <template slot-scope="scope">
             <span :class="{ 'color-success': scope.row.chargeProvider === 'FreeTier' }">{{
               scope.row.subscriptionMethodLabel
             }}</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn width="200" :label="$t('dfs_instance_instance_daoqishijian')">
+        <ElTableColumn width="185" :label="$t('dfs_instance_instance_daoqishijian')">
           <template slot-scope="scope">
             <div>
               <ElTooltip
@@ -86,7 +86,7 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn :label="$t('agent_status')" width="140">
+        <ElTableColumn :label="$t('agent_status')" width="80">
           <template slot-scope="scope">
             <StatusTag type="tag" :status="scope.row.status" default-status="Stopped"></StatusTag>
             <ElTooltip v-if="scope.row.status == 'Stopped'" placement="top">
@@ -118,24 +118,33 @@
                 {{ $t('task_manage_migrate') }}：
                 <ElLink
                   type="primary"
-                  :disabled="(scope.row.metric ? scope.row.metric.runningTask.migrate || 0 : 0) < 1"
+                  :disabled="
+                    (scope.row.metric && scope.row.metric.runningTask ? scope.row.metric.runningTask.migrate || 0 : 0) <
+                    1
+                  "
                   @click="toDataFlow(scope.row.tmInfo.agentId)"
-                  >{{ scope.row.metric ? scope.row.metric.runningTask.migrate || 0 : 0 }}</ElLink
+                  >{{
+                    scope.row.metric && scope.row.metric.runningTask ? scope.row.metric.runningTask.migrate || 0 : 0
+                  }}</ElLink
                 >
               </div>
               <div class="flex align-center">
                 {{ $t('task_manage_etl') }}：
                 <ElLink
                   type="primary"
-                  :disabled="(scope.row.metric ? scope.row.metric.runningTask.sync || 0 : 0) < 1"
+                  :disabled="
+                    (scope.row.metric && scope.row.metric.runningTask ? scope.row.metric.runningTask.sync || 0 : 0) < 1
+                  "
                   @click="toDataFlow(scope.row.tmInfo.agentId, 'dataflowList')"
-                  >{{ scope.row.metric ? scope.row.metric.runningTask.sync || 0 : 0 }}</ElLink
+                  >{{
+                    scope.row.metric && scope.row.metric.runningTask ? scope.row.metric.runningTask.sync || 0 : 0
+                  }}</ElLink
                 >
               </div>
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn :label="$t('public_version')" width="200">
+        <ElTableColumn :label="$t('public_version')" width="100">
           <template slot-scope="scope">
             <div class="flex align-items-center">
               <span v-if="showVersionFlag(scope.row)">{{ scope.row.spec && scope.row.spec.version }}</span>
@@ -193,11 +202,11 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="createAt" sortable="custom" :label="$t('public_create_time')" width="180">
-          <template slot-scope="scope">
-            <span>{{ formatTime(scope.row.createAt) }}</span>
-          </template>
-        </ElTableColumn>
+        <!--        <ElTableColumn prop="createAt" sortable="custom" :label="$t('public_create_time')" width="180">-->
+        <!--          <template slot-scope="scope">-->
+        <!--            <span>{{ formatTime(scope.row.createAt) }}</span>-->
+        <!--          </template>-->
+        <!--        </ElTableColumn>-->
         <ElTableColumn :label="$t('public_operation')" width="200">
           <template slot-scope="scope">
             <ElButton
@@ -219,24 +228,16 @@
             <ElButton
               size="mini"
               type="text"
-              v-if="scope.row.cancelSubscribe && scope.row.orderInfo.type === 'recurring'"
-              :loading="scope.row.btnLoading.delete"
-              @click="cancelPaidSubscribe(scope.row)"
-              >{{ $t('dfs_instance_instance_quxiaodingyue') }}</ElButton
-            >
-            <ElButton
-              size="mini"
-              type="text"
-              v-if="!scope.row.cancelSubscribe && scope.row.orderInfo.type === 'recurring'"
+              v-if="scope.row.orderInfo && scope.row.orderInfo.chargeProvider === 'Stripe'"
               :loading="scope.row.btnLoading.delete"
               :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
-              @click="handleDel(scope.row)"
-              >{{ $t('public_button_delete') }}</ElButton
+              @click="getUnsubscribePrice(scope.row)"
+              >{{ $t('public_button_unsubscribe') }}</ElButton
             >
             <ElButton
               size="mini"
               type="text"
-              v-if="scope.row.orderInfo.type === 'one_time'"
+              v-else
               :loading="scope.row.btnLoading.delete"
               :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
               @click="handleUnsubscribe(scope.row)"
@@ -389,6 +390,79 @@
       ></SelectListDialog>
       <!-- 新的创建实例 -->
       <SubscriptionModelDialog :visible.sync="subscriptionModelVisible"></SubscriptionModelDialog>
+      <ElDialog :visible.sync="showUnsubscribeDetailVisible" :title="$t('dfs_instance_instance_tuidingshili')">
+        <section>
+          <ul class="subscription-ul">
+            <li class="mt-2">
+              {{ $t('dfs_instance_instance_tuidingjineji') }}
+              <el-link
+                style="vertical-align: top"
+                :href="unsubscribeHelpDocumentation"
+                type="primary"
+                target="_blank"
+                >{{ $t('dfs_instance_instance_tuifeiguize') }}</el-link
+              >
+            </li>
+            <li class="mt-2">{{ $t('dfs_instance_instance_tuidingzhituihuan') }}</li>
+            <li class="mt-2">{{ $t('dfs_instance_instance_qingzixihedui') }}</li>
+          </ul>
+          <div class="mt-4 fs-6 font-color-dark">{{ $t('dfs_instance_instance_tuidingshili') }}</div>
+          <VTable
+            ref="table"
+            row-key="id"
+            :columns="columns"
+            :data="paidDetailList"
+            height="100%"
+            :has-pagination="false"
+            class="mt-4 mb-4"
+          ></VTable>
+          <el-form label-position="top" :model="form" :rules="rules" ref="ruleForm">
+            <el-form-item :label="$t('dfs_instance_instance_tuidingyuanyin')" required>
+              <el-radio-group v-model="form.refundReason">
+                <el-radio class="mt-2" label="configurationOptionError">{{
+                  $t('dfs_instance_instance_peizhixuanxiangcuo')
+                }}</el-radio>
+                <el-radio class="mt-2" label="unableDeployProperly">{{
+                  $t('dfs_instance_instance_wufazhengchangbu')
+                }}</el-radio>
+                <el-radio class="mt-2" label="notconsistentWithExpectations">{{
+                  $t('dfs_instance_instance_xingnenghuozhegong')
+                }}</el-radio>
+                <el-radio class="mt-2" label="unsubscribeAfterBusinessTesting">{{
+                  $t('dfs_instance_instance_yewuceshiwan')
+                }}</el-radio>
+                <el-radio class="mt-2" label="other">{{ $t('dfs_instance_instance_qita') }}</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item v-if="form.refundReason === 'other'" prop="refundDescribe">
+              <el-input
+                v-model="form.refundDescribe"
+                type="textarea"
+                :placeholder="$t('dfs_instance_instance_qingshurutuiding')"
+                show-word-limit
+              >
+              </el-input>
+            </el-form-item>
+            <el-form-item :label="$t('dfs_instance_instance_tuikuanqudao')">
+              <el-input v-model="form.refundChannel" disabled show-word-limit style="width: 200px"> </el-input>
+            </el-form-item>
+          </el-form>
+        </section>
+        <span slot="footer" class="dialog-footer">
+          <span class="mr-4"
+            ><span class="fs-6 font-color-dark font-weight-light">{{ $t('dfs_instance_instance_ketuidingjine') }}</span
+            ><span class="color-primary fs-4"> {{ refundAmount }}</span></span
+          >
+          <el-button @click="showUnsubscribeDetailVisible = false">{{ $t('public_button_cancel') }}</el-button>
+          <el-button
+            :disabled="!form.refundReason"
+            type="primary"
+            :loading="loadingCancelSubmit"
+            @click="cancelSubmit"
+            >{{ $t('public_button_unsubscribe') }}</el-button
+          >
+        </span>
+      </ElDialog>
     </div>
   </section>
   <RouterView v-else></RouterView>
@@ -401,8 +475,8 @@ import StatusTag from '../../components/StatusTag'
 import { INSTANCE_STATUS_MAP } from '../../const'
 import Details from './Details'
 import timeFunction from '@/mixins/timeFunction'
-import { VIcon, FilterBar } from '@tap/component'
-import { dayjs } from '@tap/business'
+import { VIcon, FilterBar, VTable } from '@tap/component'
+import { CURRENCY_SYMBOL_MAP, dayjs } from '@tap/business'
 import Time from '@tap/shared/src/time'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 import { getSpec, getPaymentMethod } from './utils'
@@ -420,6 +494,7 @@ export default {
     VIcon,
     Details,
     FilterBar,
+    VTable,
     CreateDialog,
     SelectListDialog,
     SubscriptionModelDialog
@@ -461,7 +536,55 @@ export default {
       createDialog: false,
       selectListDialog: false,
       selectListType: 'code',
-      subscriptionModelVisible: false
+      subscriptionModelVisible: false,
+      showUnsubscribeDetailVisible: false,
+      loadingCancelSubmit: false,
+      paidDetailList: [],
+      form: {
+        refundReason: '',
+        refundDescribe: '',
+        refundChannel: i18n.t('dfs_instance_instance_yuanlutuihui')
+      },
+      currentRow: '',
+      refundAmount: '',
+      columns: [
+        {
+          label: this.$t('agent_name'),
+          prop: 'agentName',
+          minWidth: 120
+        },
+        {
+          label: this.$t('dfs_instance_instance_guige'),
+          prop: 'spec'
+        },
+        {
+          label: this.$t('start_time'),
+          prop: 'periodStart',
+          dataType: 'time'
+        },
+        {
+          label: this.$t('end_time'),
+          prop: 'periodEnd',
+          dataType: 'time'
+        },
+        {
+          label: i18n.t('dfs_instance_instance_shifujine'),
+          prop: 'actualAmount'
+        },
+        {
+          label: i18n.t('dfs_instance_instance_yixiaohaojine'),
+          prop: 'spentAmount'
+        },
+        {
+          label: i18n.t('dfs_instance_instance_tuidingjine'),
+          prop: 'refundAmount'
+        }
+      ],
+      rules: {
+        refundDescribe: [{ required: true, message: i18n.t('dfs_instance_instance_qingshurutuiding'), trigger: 'blur' }]
+      },
+      paidRenewDetail: [],
+      unsubscribeHelpDocumentation: ''
     }
   },
   computed: {
@@ -505,6 +628,9 @@ export default {
   },
   created() {
     this.init()
+    this.unsubscribeHelpDocumentation =
+      window.__config__?.unsubscribeHelpDocumentation ||
+      'https://deploy-preview-75--tapdata.netlify.app/cloud/billing/refund/#%E9%80%80%E6%AC%BE%E8%AF%B4%E6%98%8E'
     timer = setInterval(() => {
       // let list = this.list || []
       let flag = true
@@ -607,11 +733,23 @@ export default {
             item.specLabel = getSpec(item.spec) || '-'
             item.subscriptionMethodLabel = getPaymentMethod(paidSubscribeDto, chargeProvider) || '-'
             item.periodLabel =
-              dayjs(periodStart).format('YYYY-MM-DD HH:mm:ss') + ' - ' + dayjs(periodEnd).format('YYYY-MM-DD HH:mm:ss')
+              dayjs(periodStart).format('YY-MM-DD HH:mm:ss') + ' - ' + dayjs(periodEnd).format('YY-MM-DD HH:mm:ss')
             item.content = `${item.subscriptionMethodLabel} ${item.specLabel} ${i18n.t('public_agent')}`
-            item.expiredTime =
-              chargeProvider === 'Aliyun' ? license.expiredTime : chargeProvider === 'Stripe' ? periodEnd : ''
-            item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD') : '-'
+            if (chargeProvider === 'Aliyun') {
+              item.expiredTime = license.expiredTime
+              let time = new Date(item.expiredTime.replace('Z', '+08:00')).toLocaleString()
+              item.expiredTimeLabel = item.expiredTime ? dayjs(time).format('YY-MM-DD HH:mm:ss') : '-'
+            } else if (chargeProvider === 'Stripe') {
+              item.expiredTime = periodEnd
+              item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YY-MM-DD  HH:mm:ss') : '-'
+            } else {
+              item.expiredTime = ''
+              item.expiredTimeLabel = '-'
+            }
+            // item.expiredTime =
+            //   chargeProvider === 'Aliyun' ? license.expiredTime : chargeProvider === 'Stripe' ? periodEnd : ''
+            // item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD') : '-'
+
             item.paidType =
               chargeProvider === 'Aliyun' ? license.type : chargeProvider === 'Stripe' ? paidSubscribeDto.type : ''
             item.deployDisable = item.tmInfo.pingTime || false
@@ -659,7 +797,7 @@ export default {
     },
     handlePingTime(row) {
       let pingTime = row?.tmInfo?.pingTime
-      return pingTime ? dayjs(pingTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+      return pingTime ? dayjs(pingTime).format('YY-MM-DD HH:mm:ss') : '-'
     },
     getImg(name) {
       return require(`../../../public/images/agent/${name}.png`)
@@ -1094,6 +1232,62 @@ export default {
       })
       return flag
     },
+    //退订详情费用
+    getUnsubscribePrice(row = {}) {
+      this.currentRow = row
+      this.$axios.get('api/tcm/orders/calculateRefundAmount?agentId=' + row.id).then(res => {
+        let { currency, agentName, spec, actualAmount, periodStart, periodEnd, refundAmount, spentAmount } = res
+        //格式化价
+        actualAmount = this.formatPrice(currency, actualAmount)
+        spentAmount = this.formatPrice(currency, spentAmount)
+        refundAmount = this.formatPrice(currency, refundAmount)
+        spec = spec.name
+        this.refundAmount = refundAmount
+        this.paidDetailList = [{ agentName, spec, actualAmount, periodStart, periodEnd, refundAmount, spentAmount }]
+        this.showUnsubscribeDetailVisible = true
+      })
+    },
+    formatPrice(currency, price) {
+      return (
+        CURRENCY_SYMBOL_MAP[currency] +
+        (price / 100).toLocaleString('zh', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        })
+      )
+    },
+
+    //退订
+    cancelSubmit() {
+      this.$refs.ruleForm.validate(valid => {
+        if (valid) {
+          this.loadingCancelSubmit = true
+          const { paidType, id } = this.currentRow
+          const { refundReason, refundDescribe } = this.form
+          let param = {
+            instanceId: id,
+            refundReason,
+            refundDescribe
+          }
+          this.$axios
+            .post('api/tcm/orders/cancel', param)
+            .then(() => {
+              this.fetch()
+              this.buried('unsubscribeAgentStripe', '', {
+                result: true,
+                type: paidType
+              })
+              this.$message.success(this.$t('public_message_operation_success'))
+              this.showUnsubscribeDetailVisible = false
+              this.loadingCancelSubmit = false
+            })
+            .finally(() => {
+              this.showUnsubscribeDetailVisible = false
+              this.loadingCancelSubmit = false
+            })
+        }
+      })
+    },
     //退订
     handleUnsubscribe(row = {}) {
       this.$confirm(
@@ -1126,7 +1320,6 @@ export default {
           })
       })
     },
-
     //取消订阅
     cancelPaidSubscribe(row = {}) {
       this.$confirm(
@@ -1282,10 +1475,12 @@ export default {
 .inline-input {
   ::v-deep {
     .input {
-      width: 180px;
+      flex: 1;
+      min-width: 0;
+      width: auto;
     }
     .el-input--mini .el-input__inner {
-      padding: 0;
+      padding: 0 4px;
     }
     .icon-button {
       width: 20px;
@@ -1311,6 +1506,12 @@ export default {
       padding: 0 20px 40px 20px;
     }
   }
+}
+.subscription-ul {
+  background: #e9e9eb;
+  border: 1px solid #e9e9eb;
+  border-radius: 4px;
+  padding: 8px 12px;
 }
 </style>
 <style lang="scss">

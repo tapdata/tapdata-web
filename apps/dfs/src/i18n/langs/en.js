@@ -1132,8 +1132,8 @@ export default {
   dfs_user_center_kaifaxinxi: 'Development Information',
 
   //instance
-  dfs_agent_down_tishi: 'Agent has been deleted and deployment cannot continue.',
-  dfs_agent_down_tishi_running: 'Agent is running and the deployment cannot continue。',
+  dfs_agent_down_tishi: 'Agent has been deleted, please create a new one to deploy',
+  dfs_agent_down_tishi_running: 'Agent is running, please return management page。',
   dfs_agent_down_goback: 'Return to Agent management',
   dfs_agent_download_agentdownloadmodal_aliyunjisuan: 'Alibaba Cloud Computing Nest',
   dfs_agent_download_agentdownloadmodal_bushuwanchenghou:
@@ -1331,7 +1331,7 @@ export default {
   dfs_instance_create_bencidinggouzhi: 'This order is only applicable to instances of {val1} specification',
   dfs_instance_create_zhifuwancheng: 'Payment Completed',
   dfs_instance_create_tuijian: 'Recommended',
-  dfs_instance_create_jieshouzhangdande: 'Email for receiving bills',
+  dfs_instance_create_jieshouzhangdande: 'Email for receiving bills:',
   dfs_instance_create_xuanzeshiligui: 'Select instance specification',
   dfs_instance_create_qinggenjushuju:
     'Please select the appropriate instance specification according to the amount of data and the number of tasks to subscribe. After the subscription is successful, it cannot be changed',
@@ -1340,7 +1340,7 @@ export default {
   dfs_instance_instance_pclas:
     '<p class="flex align-content-center">Click to open <a class="color-primary text-decoration-underline" href="{val1}" target="_blank">Aliyun Market</a> Purchase an instance and obtain an authorization code</p>',
   dfs_instance_instance_daoqishijian: 'Expiration Time',
-  dfs_instance_instance_dingyuefangshi: 'Subscription Method',
+  dfs_instance_instance_dingyuefangshi: 'Subscription Period',
   dfs_instance_instance_guige: 'Specification',
   dfs_instance_selectlist_yibangding: 'Already Bound',
   dfs_instance_selectlist_bangdingshilizhuang: 'Binding instance status',
@@ -1361,7 +1361,9 @@ export default {
   dfs_instance_utils_geyue: 'Month',
   dfs_instance_utils_baonian: 'Annually',
   dfs_instance_utils_lianxu: 'Continuous',
-  dfs_instance_utils_baoyue: 'Monthly Subscription',
+  dfs_instance_utils_baoyue: 'Monthly',
+  dfs_instance_utils_one_month_only: 'One Month Only',
+  dfs_instance_utils_one_year_only: 'One Year Only',
   dfs_instance_expired_time_tip1: 'Restricted behaviors after expiration:',
   dfs_instance_expired_time_tip2: '1. Prohibition of scheduling new tasks to run on expired instances.',
   dfs_instance_expired_time_tip3: '2. Continued unrestricted operation of old tasks.',
@@ -1405,7 +1407,7 @@ export default {
   dfs_instance_selectlist_shiyongzhegeding: 'Create {val1} Agent using this license code.',
   page_title_data_console: 'Data Console',
 
-  dfs_instance_instance_xiacifufeishi: 'Next payment time',
+  dfs_instance_instance_xiacifufeishi: 'Automatic deduction when due',
   dfs_agent_download_fastdownload_fuzhiTok: 'Method Two: Copy Token, deploy and start Agent on the command line',
   dfs_agent_download_fastdownload_shuangjizhixingt:
     '3. Double-click to execute tapdata.exe to start the installation. ',
@@ -1420,37 +1422,37 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_extra: 'EXTRA SMALL: 1C 2G - FREE (only one can be created)',
   dfs_agent_download_subscriptionmodeldialog_dingyuefangshi: 'Subscription method:',
   dfs_agent_download_subscriptionmodeldialog_jisuanziyuan: 'Computing resources:',
+  dfs_agent_zhuanzhang_price: 'Payment Price',
   dfs_agent_download_subscriptionmodeldialog_ninyouyijihuo:
     'You have activated an unbound authorization code, click to create an instance',
   dfs_agent_download_subscriptionmodeldialog_bingbushu: 'and deploy',
   dfs_agent_download_subscriptionmodeldialog_goumai: 'Purchase',
   dfs_agent_download_subscriptionmodeldialog_jihuoxinshouquan: 'Activate a new authorization code',
-  dfs_agent_download_subscriptionmodeldialog_xuanzebizhong: 'Select currency',
-  dfs_agent_download_subscriptionmodeldialog_zuoyou: 'left and right',
+  dfs_agent_download_subscriptionmodeldialog_xuanzebizhong: 'Select Currency',
+  dfs_agent_download_subscriptionmodeldialog_zuoyou: ' left and right',
   dfs_agent_download_subscriptionmodeldialog_geyugumeimiao:
     ', the estimated performance of synchronization per second is ',
   dfs_agent_download_subscriptionmodeldialog_keyongneicunjian:
-    'Available memory, the recommended number of tasks does not exceed',
+    ' Available memory, the recommended number of tasks does not exceed ',
   dfs_agent_download_subscriptionmodeldialog_guigeshuomingci: 'Specification: This specification requires at least ',
   dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu: 'Please select the product specification you need',
   dfs_agent_download_subscriptionmodeldialog_zhijieshiyonga:
     'Directly use the authorization code of Alibaba Cloud market',
   dfs_agent_download_subscriptionmodeldialog_gengjiakekaoyou:
-    '- More reliable: The maintenance and monitoring of resource usage is provided by Tapdata, and the operation is more reliable',
-  dfs_agent_download_subscriptionmodeldialog_gengjiafangbianmian:
-    '- more convenient: no deployment, one-click delivery',
-  dfs_agent_download_subscriptionmodeldialog_shiyongquantuoguan: 'The benefits of using the fully managed mode:',
+    'More reliable: The maintenance and monitoring of resource usage is provided by Tapdata, and the operation is more reliable',
+  dfs_agent_download_subscriptionmodeldialog_gengjiafangbianmian: 'More convenient: no deployment, one-click delivery',
+  dfs_agent_download_subscriptionmodeldialog_shiyongquantuoguan: 'The benefits of using the Fully-Managed mode:',
   dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi:
     'In this mode, Tapdata provides all computing and storage resources.',
   dfs_agent_download_subscriptionmodeldialog_gengjiaanquanyong:
-    '- More secure: user data will not pass through any external network including Tapdata',
+    'More secure: user data will not pass through any external network including Tapdata',
   dfs_agent_download_subscriptionmodeldialog_chengbengengdichong:
-    '- Lower cost: make full use of existing hardware resources, and the product price is much lower under the same specification',
-  dfs_agent_download_subscriptionmodeldialog_shiyongbantuoguan: 'The benefits of using the semi-hosted mode:',
+    'Lower cost: make full use of existing hardware resources, and the price is significantly lower under the same specification',
+  dfs_agent_download_subscriptionmodeldialog_shiyongbantuoguan: 'The benefits of using the Semi-Managed mode:',
   dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi2:
     'In this mode, you need to provide your own computing resources and storage resources',
-  dfs_agent_download_subscriptionmodeldialog_quantuoguanmoshi: 'Full Managed Mode (Coming Soon)',
-  dfs_agent_download_subscriptionmodeldialog_bantuoguanmoshi: 'Semi Managed Mode',
+  dfs_agent_download_subscriptionmodeldialog_quantuoguanmoshi: 'Fully-Managed Mode (Coming Soon)',
+  dfs_agent_download_subscriptionmodeldialog_bantuoguanmoshi: 'Semi-Managed Mode',
   dfs_instance_instance_quxiaodingyue: 'Unsubscribe',
   dfs_views_layout_chanpinyindao: 'Product Guide',
   dfs_agent_download_subscriptionmodeldialog_chakanbingqueren: 'Review & Confirm',
@@ -1459,8 +1461,45 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_peizhishishishu: 'Configure Live Data Platform',
   dfs_agent_download_subscriptionmodeldialog_peizhizhaiyao: 'Configuration Summary',
   dfs_agent_download_subscriptionmodeldialog_jisuan: 'Compute: ',
-  dfs_agent_download_subscriptionmodeldialog_meiyuefeiyongyu: 'Estimated Monthly Cost',
+  dfs_agent_download_subscriptionmodeldialog_meiyuefeiyongyu: 'Estimated Cost',
   dfs_agent_download_subscriptionmodeldialog_usd: 'USD',
   dfs_agent_download_subscriptionmodeldialog_cny: 'CNY',
-  dfs_agent_download_subscriptionmodeldialog_hkd: 'HKD'
+  dfs_agent_download_subscriptionmodeldialog_hkd: 'HKD',
+  dfs_agent_specification_description:
+    'This specification requires at least  <strong>{mem}</strong> available memory, the recommended number of tasks does not exceed <strong>{pipeline}</strong> ,the estimated performance of TPS synchronization is around <strong>{tps}</strong>.',
+  dfs_instance_instance_qingshurutuiding: 'Please enter the reason for unsubscribing',
+  dfs_instance_instance_tuidingjine: 'Unsubscribe Amount',
+  dfs_instance_instance_yixiaohaojine: 'Amount Consumed',
+  dfs_instance_instance_shifujine: 'Actual Payment',
+  dfs_instance_instance_yuanlutuihui: 'Return to the original route',
+  dfs_instance_instance_ketuidingjine: 'Refundable subscription amount:',
+  dfs_instance_instance_tuikuanqudao: 'Refund channel',
+  dfs_instance_instance_qita: 'Other',
+  dfs_instance_instance_yewuceshiwan: 'Project completed',
+  dfs_instance_instance_xingnenghuozhegong: 'Missing features',
+  dfs_instance_instance_wufazhengchangbu: 'Unable to deploy',
+  dfs_instance_instance_peizhixuanxiangcuo: 'Configuration error',
+  dfs_instance_instance_tuidingyuanyin: 'Reason for unsubscribing',
+  dfs_instance_instance_tuidingshili: 'Unsubscribe Instance',
+  dfs_instance_instance_qingzixihedui:
+    '3. Please carefully check the unsubscribed instance information, and confirm the unsubscribed rules and unsubscribed amount. Once the instance is unsubscribed, it cannot be restored. ',
+  dfs_instance_instance_tuidingzhituihuan:
+    '2. Only the actual paid amount will be refunded when unsubscribing, and the used coupons will not be refunded. ',
+  dfs_instance_instance_tuidingjineji: '1. Please check the calculation formula of unsubscribe amount',
+  dfs_instance_instance_tuifeiguize: 'Description of refund rules',
+  dfs_agent_subscription_discount: '{val}% off',
+  dfs_agent_step_aliyun_code: 'Using Alibaba Cloud Marketplace authorization code',
+  dfs_agent_download_subscriptionmodeldialog_zhuanzhangzhifu: 'Transfer Payment',
+  dfs_agent_download_subscriptionmodeldialog_zaixianzhifu: 'Online Payment',
+  dfs_agent_download_transferdialog_zaiwanchengzhuanzhang:
+    'Within one day after completing the transfer, we will activate the service for you and notify you by billing email',
+  dfs_agent_download_transferdialog_reopen_tips:
+    'If you close this page, you can re-pay through the upper right corner of the page, user name -> user center, and at the bottom service subscription information, please email us with team@tapdata.io if you have any questions',
+  dfs_agent_download_transferdialog_caozuoshuoming: 'operation instructions',
+  dfs_agent_download_transferdialog_huikuanzhanghao: 'Remittance Account: ',
+  dfs_agent_download_transferdialog_zhongguominshengyin: 'China Minsheng Bank Shenzhen Shekou Branch',
+  dfs_agent_download_transferdialog_kaihuyinhang: 'Account Bank: ',
+  dfs_agent_download_transferdialog_shenzhentaiboshu: 'Shenzhen Titanium Platinum Data Co., Ltd',
+  dfs_agent_download_transferdialog_kaihumingcheng: 'Account Name: ',
+  dfs_agent_download_transferdialog_zhuanzhangxinxi: 'Tansfer Information'
 }
