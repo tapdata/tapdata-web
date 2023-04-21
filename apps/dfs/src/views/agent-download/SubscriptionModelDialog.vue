@@ -285,12 +285,19 @@
           $t('public_button_next')
         }}</el-button>
         <div v-else-if="activeStep === steps.length" class="ml-2">
-          <el-button type="primary" :loading="submitOnlineLoading" @click="submit()">{{
-            $t('dfs_agent_download_subscriptionmodeldialog_zaixianzhifu')
-          }}</el-button>
-          <el-button type="primary" :loading="submitLoading" @click="submit({}, 'offline')">{{
-            $t('dfs_agent_download_subscriptionmodeldialog_zhuanzhangzhifu')
-          }}</el-button>
+          <div v-if="selected.chargeProvider === 'FreeTier'">
+            <el-button type="primary" :loading="submitOnlineLoading" @click="submit()">{{
+              $t('public_button_confirm')
+            }}</el-button>
+          </div>
+          <div v-else>
+            <el-button type="primary" :loading="submitOnlineLoading" @click="submit()">{{
+              $t('dfs_agent_download_subscriptionmodeldialog_zaixianzhifu')
+            }}</el-button>
+            <el-button type="primary" :loading="submitLoading" @click="submit({}, 'offline')">{{
+              $t('dfs_agent_download_subscriptionmodeldialog_zhuanzhangzhifu')
+            }}</el-button>
+          </div>
         </div>
       </template>
       <template v-else>
@@ -755,6 +762,7 @@ export default {
         .post('api/tcm/orders', params)
         .then(data => {
           if (chargeProvider === 'FreeTier' || this.productType === 'aliyun') {
+            this.finish()
             let downloadUrl = window.App.$router.resolve({
               name: 'FastDownload',
               query: {
