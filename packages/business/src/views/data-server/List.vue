@@ -6,7 +6,7 @@
         <span>{{ $t('packages_business_data_server_drawer_chuangjianfuwu') }}</span>
       </ElButton>
     </div>
-    <VTable :columns="cols" :remote-method="getData" ref="table" class="flex-fill">
+    <VTable :columns="cols" :remote-method="getData" ref="table" height="100%" class="flex-fill">
       <template #name="{ row }">
         <ElLink class="ellipsis" type="primary" style="display: block; line-height: 20px" @click.stop="showDrawer(row)">
           {{ row.name }}
