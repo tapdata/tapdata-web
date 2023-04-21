@@ -81,12 +81,6 @@
         </button>
       </ElTooltip>
       <VDivider class="mx-3" vertical></VDivider>
-      <!--设置-->
-      <ElTooltip v-if="!hideSetting" transition="tooltip-fade-in" :content="$t('public_button_setting')">
-        <button @click="$emit('showSettings')" class="icon-btn" :class="{ active: activeType === 'settings' }">
-          <VIcon size="20">setting-outline</VIcon>
-        </button>
-      </ElTooltip>
       <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_monitor_bottompanel_rizhi')">
         <button :class="{ active: showBottomPanel }" class="icon-btn" @click="$emit('showBottomPanel')">
           <VIcon size="16">list</VIcon>
@@ -95,29 +89,33 @@
     </div>
     <div class="flex-grow-1"></div>
     <div class="flex align-center ml-2">
+      <ElButton v-if="!hideSetting" class="ml-3" size="medium" @click="$emit('showSettings')">
+        <VIcon class="mr-1">cog-o</VIcon>{{ $t('public_button_setting') }}
+      </ElButton>
       <template v-if="!hideMenus.includes('operation')">
+        <ElButton
+          v-if="dataflow.disabledData && !dataflow.disabledData.edit && !hideEdit"
+          :disabled="$disabledReadonlyUserBtn()"
+          class="ml-3"
+          size="medium"
+          @click="$emit('edit')"
+        >
+          <VIcon class="mr-1">edit-outline</VIcon>{{ $t('public_button_edit') }}
+        </ElButton>
         <ElButton
           v-if="!(dataflow.disabledData && dataflow.disabledData.reset)"
           :disabled="$disabledReadonlyUserBtn()"
-          class="mx-2"
+          class="ml-3"
           size="medium"
+          type="warning"
           @click="$emit('reset')"
         >
           {{ $t('public_button_reset') }}
         </ElButton>
         <ElButton
-          v-if="dataflow.disabledData && !dataflow.disabledData.edit && !hideEdit"
-          :disabled="$disabledReadonlyUserBtn()"
-          class="mx-2"
-          size="medium"
-          @click="$emit('edit')"
-        >
-          {{ $t('public_button_edit') }}
-        </ElButton>
-        <ElButton
           v-if="!(dataflow.disabledData && dataflow.disabledData.start)"
           :disabled="$disabledReadonlyUserBtn()"
-          class="mx-2"
+          class="ml-3"
           size="medium"
           type="primary"
           @click="$emit('start')"
@@ -129,7 +127,7 @@
             v-if="isShowForceStop(dataflow)"
             :disabled="(dataflow.disabledData && dataflow.disabledData.forceStop) || $disabledReadonlyUserBtn()"
             key="forceStop"
-            class="mx-2"
+            class="ml-3"
             size="medium"
             type="danger"
             @click="$emit('forceStop')"
@@ -142,7 +140,7 @@
             key="stop"
             size="medium"
             type="danger"
-            class="mx-2"
+            class="ml-3"
             @click="$emit('stop')"
           >
             {{ $t('public_button_stop') }}
@@ -312,7 +310,7 @@ export default {
 <style scoped lang="scss">
 $sidebarW: 236px;
 $hoverBg: #eef3ff;
-$radius: 4px;
+$radius: 6px;
 $baseHeight: 26px;
 $sidebarBg: #fff;
 

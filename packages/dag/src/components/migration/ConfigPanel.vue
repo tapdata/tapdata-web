@@ -45,6 +45,8 @@
           </ElTabs>
           <span v-else>{{ $t('packages_dag_task_stetting_basic_setting') }}</span>
         </div>
+
+        <VIcon class="close-icon" size="16" @click="handleClosePanel">close</VIcon>
       </div>
       <div v-if="titleCurrentTab === '0'" class="panel-content flex-1">
         <SettingPanel ref="setting" v-bind="$attrs" v-on="$listeners" v-show="activeType === 'settings'" />
