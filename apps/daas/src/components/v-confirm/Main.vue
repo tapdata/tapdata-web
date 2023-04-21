@@ -139,6 +139,10 @@ export default {
     &__content {
       padding: 10px 24px;
     }
+    &__message {
+      max-height: 300px;
+      overflow-y: auto;
+    }
     &__btns {
       padding: 14px 24px 0;
     }
