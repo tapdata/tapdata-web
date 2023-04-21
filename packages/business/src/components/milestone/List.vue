@@ -149,12 +149,17 @@ export default {
         delete result[2]
       }
 
+      // 全量不显示增量信息
       result = result.filter(
         t =>
           dataflowType === 'initial_sync+cdc' ||
           (dataflowType === 'cdc' && t.key !== 'SNAPSHOT') ||
           (dataflowType === 'initial_sync' && t.key !== 'CDC')
       )
+      //缓存任务没有表结构复制这一步骤
+      if (shareCache) {
+        result = result.filter(it => it.key !== 'TABLE_INIT')
+      }
 
       const finishOpt = {
         status: 'FINISH',
@@ -294,10 +299,7 @@ export default {
           val3: result[currentLen - 1].label + ' ' + result[currentLen - 1].desc
         })
       })
-      //缓存任务没有表结构复制这一步骤
-      if (shareCache) {
-        result = result.filter(it => it.key !== 'TABLE_INIT')
-      }
+
       return result
     },
 
