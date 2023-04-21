@@ -1,7 +1,7 @@
 <template>
   <Drawer
     v-loading="loading"
-    class="app-details"
+    class="app-details flex flex-column"
     :visible.sync="visible"
     width="800px"
     v-bind="$attrs"
@@ -15,7 +15,7 @@
       :columns="listColumns"
       :params="listParams"
       ref="table"
-      class="h-auto"
+      class="flex-fill"
       @drawer-visible="handleDataServerListVisible"
     ></DataServerList>
   </Drawer>
