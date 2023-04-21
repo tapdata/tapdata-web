@@ -378,7 +378,7 @@ export default {
     },
     //windows 下载
     handleDownLoadApplication() {
-      window.location = window.origin + '/api/tcm/agent/' + this.$route.query?.id + '/config'
+      window.location = location.origin + location.pathname + 'api/tcm/agent/' + this.$route.query?.id + '/config'
     },
     // 选择下载安装类型
     chooseDownLoadType(val) {

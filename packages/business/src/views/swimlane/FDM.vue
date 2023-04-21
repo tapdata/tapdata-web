@@ -38,7 +38,7 @@
 
       <div class="flex-1 min-h-0 position-relative">
         <div
-          v-if="search || searchIng"
+          v-if="showSearch"
           class="search-view position-absolute top-0 left-0 w-100 h-100 bg-white"
           v-loading="searchIng"
         >
@@ -184,7 +184,15 @@
 import i18n from '@tap/i18n'
 
 import { merge, debounce } from 'lodash'
-import { connectionsApi, discoveryApi, ldpApi, metadataDefinitionsApi, taskApi, userGroupsApi } from '@tap/api'
+import {
+  CancelToken,
+  connectionsApi,
+  discoveryApi,
+  ldpApi,
+  metadataDefinitionsApi,
+  taskApi,
+  userGroupsApi
+} from '@tap/api'
 import { VirtualTree, IconButton, VExpandXTransition } from '@tap/component'
 import { uuid, generateId } from '@tap/shared'
 import { makeDragNodeImage, TASK_SETTINGS } from '../../shared'
@@ -253,6 +261,9 @@ export default {
   },
 
   computed: {
+    showSearch() {
+      return this.search || this.searchIng
+    },
     allowDrop() {
       return (
         this.dragState.isDragging &&
@@ -269,45 +280,10 @@ export default {
   },
 
   created() {
-    this.debouncedSearch = debounce(async search => {
-      this.searchIng = true
-      const result = await this.loadObjects(this.directory, false, search)
-      const map = result.reduce((obj, item) => {
-        let id = item.listtags[0].id
-        let children = obj[id] || []
-        children.push(item)
-        obj[id] = children
-        return obj
-      }, {})
-      const filterTree = node => {
-        const { children } = node
-
-        if (children?.length) {
-          node.children = children.filter(child => {
-            filterTree(child)
-            return child.LDP_TYPE === 'folder' && (child.name.includes(search) || child.children.length)
-          })
-        }
-
-        if (map[node.id]) {
-          node.children.push(...map[node.id])
-        }
-      }
-
-      let root = { ...this.directory }
-      filterTree(root)
-      this.searchIng = false
-      this.filterTreeData = root.children
-      // console.log('result', result, map, this.nodesMap) // eslint-disable-line
-      // console.log('filter', root) // eslint-disable-line
-    }, 300)
+    this.debouncedSearch = debounce(this.searchObject, 300)
   },
 
   mounted() {},
-
-  unmounted() {
-    this.debouncedSearch.cancel()
-  },
 
   beforeDestroy() {
     this.eventDriver.off('source-drag-end')
@@ -676,44 +652,10 @@ export default {
       })
 
       this.$refs.tree.updateKeyChildren(data.id, objects)
-
-      /*console.log('handleNodeExpand', objects, data, node) // eslint-disable-line
-      const childrenMap = data.children ? data.children.reduce((map, item) => ((map[item.id] = true), map), {}) : {}
-      objects.forEach(item => {
-        if (childrenMap[item.id]) return
-        item.parent_id = data.id
-        item.isObject = true
-        item.connectionId = item.sourceConId
-        this.$refs.tree.append(item, node)
-      })*/
     },
 
     handeNodeCollapse(data) {
       this.setExpand(data.id, false)
-    },
-
-    loadObjects(node, isCurrent = true, queryKey) {
-      let where = {
-        page: 1,
-        pageSize: 10000,
-        tagId: node.id,
-        range: isCurrent ? 'current' : undefined,
-        sourceType: 'table',
-        queryKey,
-        fields: {
-          allTags: 1
-        }
-      }
-      return discoveryApi.discoveryList(where).then(res => {
-        return res.items.map(item =>
-          Object.assign(item, {
-            isLeaf: true,
-            isObject: true,
-            connectionId: item.sourceConId,
-            LDP_TYPE: 'table'
-          })
-        )
-      })
     },
 
     checkAllowDrag(node) {

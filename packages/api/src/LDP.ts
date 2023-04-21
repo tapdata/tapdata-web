@@ -13,8 +13,8 @@ export default class LDP extends Http {
     return this.axios.post(`${this.url}/mdm/task`, data, config)
   }
 
-  searchSources(params) {
-    return this.axios.get(`${this.url}/fuzzy/search`, { params })
+  searchSources(params, config) {
+    return this.axios.get(`${this.url}/fuzzy/search`, { params, ...config })
   }
 
   getTaskByTag(tags) {

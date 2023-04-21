@@ -283,13 +283,63 @@ export default {
   },
 
   created() {
+    this.apiDemoData = ['dGpAdGFwZGF0YS5pbw=='].includes(window.btoa(window.__USER_INFO__?.email))
+      ? [
+          {
+            id: 'Product Catalog',
+            name: 'Product Catalog',
+            type: 'service',
+            apiList: [
+              { name: 'API_ProductInventory' },
+              {
+                name: 'API_IM_STATIC_REF'
+              }
+            ]
+          },
+          {
+            id: 'Discount',
+            name: 'Discount',
+            type: 'service',
+            apiList: [
+              {
+                name: 'API_bomCertificate'
+              }
+            ]
+          },
+          {
+            id: i18n.t('packages_business_swimlane_target_yejibao'),
+            name: i18n.t('packages_business_swimlane_target_yejibao'),
+            type: 'service',
+            apiList: [
+              {
+                name: 'API_marketingKeyword'
+              },
+              {
+                name: 'API_PC_refinement'
+              },
+              {
+                name: 'API_modelPriceGroup'
+              }
+            ]
+          },
+          {
+            id: 'POSS',
+            name: 'POSS',
+            type: 'service',
+            apiList: [
+              {
+                name: 'API_pos'
+              }
+            ]
+          }
+        ]
+      : []
     this.init()
   },
 
   methods: {
     async init() {
       this.list = await this.getData()
-      console.log('list', this.list) // eslint-disable-line
       this.loadTask(this.list)
       // this.getApiServerHost()
     },
@@ -314,55 +364,7 @@ export default {
         filter: JSON.stringify(filter)
       })
 
-      return [
-        {
-          id: 'Product Catalog',
-          name: 'Product Catalog',
-          type: 'service',
-          apiList: [
-            { name: 'API_ProductInventory' },
-            {
-              name: 'API_IM_STATIC_REF'
-            }
-          ]
-        },
-        {
-          id: 'Discount',
-          name: 'Discount',
-          type: 'service',
-          apiList: [
-            {
-              name: 'API_bomCertificate'
-            }
-          ]
-        },
-        {
-          id: i18n.t('packages_business_swimlane_target_yejibao'),
-          name: i18n.t('packages_business_swimlane_target_yejibao'),
-          type: 'service',
-          apiList: [
-            {
-              name: 'API_marketingKeyword'
-            },
-            {
-              name: 'API_PC_refinement'
-            },
-            {
-              name: 'API_modelPriceGroup'
-            }
-          ]
-        },
-        {
-          id: 'POSS',
-          name: 'POSS',
-          type: 'service',
-          apiList: [
-            {
-              name: 'API_pos'
-            }
-          ]
-        }
-      ].concat(
+      return this.apiDemoData.concat(
         res.items.map(item => {
           item.LDP_TYPE = 'connection'
           return item

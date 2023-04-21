@@ -78,12 +78,12 @@
           </div>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="connection_type" min-width="135" :label="$t('public_connection_type')">
+      <ElTableColumn width="100" prop="connection_type" min-width="135" :label="$t('public_connection_type')">
         <template slot-scope="scope">
           {{ getType(scope.row.connection_type) }}
         </template>
       </ElTableColumn>
-      <ElTableColumn min-width="140">
+      <ElTableColumn min-width="125">
         <div slot="header" class="flex align-center">
           <span>{{ $t('public_connection_schema_status') }}</span>
           <ElTooltip class="ml-2" placement="top" :content="$t('public_connection_schema_status_tip')">
@@ -98,16 +98,11 @@
       <ElTableColumn
         prop="last_updated"
         sortable="last_updated"
-        min-width="168"
+        min-width="150"
         :label="$t('public_connection_table_structure_update_time')"
       >
         <template slot-scope="scope">
           {{ scope.row.loadSchemaTime }}
-        </template>
-      </ElTableColumn>
-      <ElTableColumn prop="last_updated" sortable="last_updated" min-width="168" :label="$t('public_change_time')">
-        <template slot-scope="scope">
-          {{ scope.row.lastUpdateTime }}
         </template>
       </ElTableColumn>
       <ElTableColumn width="320" :label="$t('public_operation')">
@@ -413,9 +408,9 @@ export default {
             }
 
             item.lastUpdateTime = item.last_updated = item.last_updated
-              ? dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+              ? dayjs(item.last_updated).format('YY-MM-DD HH:mm:ss')
               : '-'
-            item.loadSchemaTime = item.loadSchemaTime ? dayjs(item.loadSchemaTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+            item.loadSchemaTime = item.loadSchemaTime ? dayjs(item.loadSchemaTime).format('YY-MM-DD HH:mm:ss') : '-'
             return item
           })
 
