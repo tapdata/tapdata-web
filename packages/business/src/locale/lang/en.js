@@ -343,7 +343,7 @@ export default {
   packages_business_components_alert_huifu: 'Restore',
   packages_business_shared_const_yiban: 'General',
   packages_business_shared_const_jinggao: 'Warning',
-  packages_business_shared_const_yanzhong: 'Serious',
+  packages_business_shared_const_yanzhong: 'Severe',
   packages_business_shared_const_jinji: 'Urgent',
   packages_business_external_storage: 'External Storage',
   packages_business_relation_details_chakanrenwu: 'View Tasks',
@@ -632,6 +632,7 @@ export default {
   packages_business_notify_unread_notice: 'Unread Message',
   packages_business_notify_mask_read: 'Mark this page as read',
   packages_business_notify_mask_read_all: 'Mark All Read',
+  packages_business_notify_notice_level: 'Level',
   packages_business_notify_no_notice: 'No notice yet',
   packages_business_setting_alarmnotification_cichugaojinggui:
     'The alarm rule setting here is the system global alarm rule setting, and the priority of the alarm rule setting on the task running monitoring page is higher than the system global setting',
