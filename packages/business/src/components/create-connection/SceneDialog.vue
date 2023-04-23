@@ -29,8 +29,8 @@
       </template>
       <template v-else>
         <IconButton @click="showForm = false" class="mr-2">left</IconButton>
-        <DatabaseIcon class="mr-2" :size="24" :item="selected"></DatabaseIcon>
-        <span>{{ selected.name }}</span>
+        <DatabaseIcon class="mr-2" :size="24" :item="formParams"></DatabaseIcon>
+        <span>{{ formParams.name }}</span>
       </template>
     </div>
     <div v-if="!showForm" class="flex border-top flex-1 min-h-0">
@@ -127,7 +127,10 @@ export default {
   data() {
     return {
       search: '',
-      formParams: {},
+      formParams: {
+        name: '',
+        pdkHash: null
+      },
       selected: {},
       showForm: false,
       timer: null,
@@ -284,7 +287,7 @@ export default {
       this.$emit('update:selectorType', type.split('-').pop())
       this.showDialog = true
       this.$nextTick(() => {
-        this.formParams = { pdkHash }
+        this.formParams.pdkHash = pdkHash
         this.showForm = true
       })
     }
@@ -294,7 +297,7 @@ export default {
     getIcon,
     init() {
       this.showForm = false
-      this.formParams = {}
+      Object.assign(this.formParams, { name: '', pdkHash: null })
       this.activeTab = ''
     },
 
@@ -314,7 +317,7 @@ export default {
           // TODO apiServices
           break
         default:
-          this.formParams = { pdkHash: item.pdkHash }
+          this.formParams = { pdkHash: item.pdkHash, name: item.name }
           break
       }
       this.showForm = true

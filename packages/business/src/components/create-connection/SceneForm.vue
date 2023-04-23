@@ -219,26 +219,20 @@ export default {
         let { __TAPDATA } = formValues
         formValues.__connectionType = __TAPDATA.connection_type
         delete formValues['__TAPDATA']
-        let params = Object.assign(
-          {
-            ...__TAPDATA,
-            database_type: pdkOptions.type,
-            pdkHash: pdkOptions.pdkHash
-          },
-          {
-            status: 'testing',
-            schema: {},
-            retry: 0,
-            nextRetry: null,
-            response_body: {},
-            project: '',
-            submit: true,
-            pdkType: 'pdk'
-          },
-          {
-            config: formValues
-          }
-        )
+        let params = {
+          ...__TAPDATA,
+          database_type: pdkOptions.type,
+          pdkHash: pdkOptions.pdkHash,
+          status: 'testing',
+          schema: {},
+          retry: 0,
+          nextRetry: null,
+          response_body: {},
+          project: '',
+          submit: true,
+          pdkType: 'pdk',
+          config: formValues
+        }
         if (this.showSystemConfig) {
           //打开挖掘配置
           let digSettingForm = {
@@ -382,6 +376,7 @@ export default {
       const pdkHash = this.params?.pdkHash
       const data = await databaseTypesApi.pdkHash(pdkHash)
       let id = this.id || this.params.id
+      this.params.name = data.name
       this.pdkOptions = data || {}
       if (this.pdkOptions.capabilities?.some(t => t.id === 'command_callback_function')) {
         this.commandCallbackFunctionId = await proxyApi.getId()
@@ -763,11 +758,13 @@ export default {
           END: END
         }
       }
+
       if (id) {
         this.getPdkData(id)
         delete result.properties.START.properties.__TAPDATA.properties.name
       }
-      //this.showSystemConfig = true
+
+      this.setConnectionConfig()
       this.schemaScope = {
         isEdit: !!id,
         useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
@@ -984,6 +981,32 @@ export default {
       pdkApi.doc(pdkHash).then(res => {
         this.doc = res?.data
       })
+    },
+    async setConnectionConfig() {
+      const { connectionConfig } = this.$route.query || {}
+      if (connectionConfig) {
+        const params = {
+          pdkHash: this.params.pdkHash,
+          connectionConfig: JSON.parse(connectionConfig),
+          command: 'OAuth',
+          type: 'connection'
+        }
+        const res = await proxyApi.command(params)
+        const { __TAPDATA, __TAPDATA_CONFIG = {}, ...trace } = res || JSON.parse(connectionConfig) || {}
+        Object.assign(
+          this.model,
+          __TAPDATA,
+          {
+            config: __TAPDATA_CONFIG
+          },
+          trace
+        )
+        this.schemaFormInstance.setValues({
+          __TAPDATA,
+          ...__TAPDATA_CONFIG,
+          ...trace
+        })
+      }
     }
   }
 }
