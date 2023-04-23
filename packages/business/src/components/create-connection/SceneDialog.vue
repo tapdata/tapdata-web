@@ -316,6 +316,10 @@ export default {
     },
 
     handleSelect(item) {
+      if (this.selectorType === 'source_and_target') {
+        this.$emit('selected', item)
+        return
+      }
       this.selected = item
       switch (this.activeTab) {
         case 'apiServices':
@@ -358,7 +362,10 @@ export default {
       }
       if (!noLoading) this.loading = true
       const res = await databaseTypesApi.getDatabases({ filter: JSON.stringify(params) })
-      const data = res?.filter(t => t.connectionType.includes(this.selectorType) && !!t.pdkHash) || []
+      const data =
+        this.selectorType !== 'source_and_target'
+          ? res?.filter(t => t.connectionType.includes(this.selectorType) && !!t.pdkHash) || []
+          : res
       this.database = data
       this.loading = false
     },
