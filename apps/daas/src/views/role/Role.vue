@@ -85,6 +85,7 @@ let pageSort = [
   {
     name: 'v2_data-server',
     children: [
+      { name: 'v2_api-application' },
       { name: 'v2_data-server-list' },
       { name: 'v2_api-client' },
       { name: 'v2_api-servers' },
