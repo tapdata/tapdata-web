@@ -113,7 +113,9 @@ export default {
       default: () => {
         return {}
       }
-    }
+    },
+
+    selectorType: String
   },
   data() {
     let validateRename = (rule, value, callback) => {
@@ -163,11 +165,21 @@ export default {
       return this.$refs.schemaToForm.getForm?.()
     }
   },
-  created() {
+
+  async created() {
     this.id = this.params.id || ''
-    this.getPdkForm()
     this.getPdkDoc()
+    await this.getPdkForm()
+    this.$router.push({
+      query: {
+        ...this.$route.query,
+        type: undefined,
+        pdkHash: undefined,
+        connectionConfig: undefined
+      }
+    })
   },
+
   beforeRouteEnter(to, from, next) {
     next(vm => {
       vm.pathUrl = from?.fullPath
@@ -375,23 +387,31 @@ export default {
       if (this.pdkOptions.capabilities?.some(t => t.id === 'command_callback_function')) {
         this.commandCallbackFunctionId = await proxyApi.getId()
       }
+
+      const enumMap = {
+        sourceAndTarget: {
+          label: this.$t('public_connection_type_source_and_target'),
+          value: 'source_and_target',
+          tip: this.$t('packages_business_connection_form_source_and_target_tip')
+        },
+        source: {
+          label: this.$t('public_connection_type_source'),
+          value: 'source',
+          tip: this.$t('packages_business_connection_form_source_tip')
+        },
+        target: {
+          label: this.$t('public_connection_type_target'),
+          value: 'target',
+          tip: this.$t('packages_business_connection_form_target_tip')
+        }
+      }
+
       let connectionTypeJson = {
         type: 'string',
         title: this.$t('public_connection_type'),
         required: true,
         default: this.pdkOptions.connectionType || 'source_and_target',
-        enum: [
-          {
-            label: this.$t('public_connection_type_source_and_target'),
-            value: 'source_and_target',
-            tip: this.$t('packages_business_connection_form_source_and_target_tip')
-          },
-          {
-            label: this.$t('public_connection_type_target'),
-            value: 'target',
-            tip: this.$t('packages_business_connection_form_target_tip')
-          }
-        ],
+        enum: Object.values(enumMap),
         'x-decorator': 'FormItem',
         'x-decorator-props': {
           feedbackLayout: 'none'
@@ -401,23 +421,15 @@ export default {
           optionType: 'button'
         }
       }
-      if (this.pdkOptions.connectionType === 'source') {
-        connectionTypeJson.enum = [
-          {
-            label: this.$t('public_connection_type_source'),
-            value: 'source',
-            tip: this.$t('packages_business_connection_form_source_tip')
-          }
-        ]
-      } else if (this.pdkOptions.connectionType === 'target') {
-        connectionTypeJson.enum = [
-          {
-            label: this.$t('public_connection_type_target'),
-            value: 'target',
-            tip: this.$t('packages_business_connection_form_target_tip')
-          }
-        ]
+
+      if (enumMap[this.selectorType]) {
+        connectionTypeJson.enum = [enumMap.sourceAndTarget, enumMap[this.selectorType]]
       }
+
+      if (this.pdkOptions.connectionType === 'source' || this.pdkOptions.connectionType === 'target') {
+        connectionTypeJson.enum = [enumMap[this.pdkOptions.connectionType]]
+      }
+
       let END = {
         type: 'void',
         'x-index': 1000000,
@@ -906,8 +918,11 @@ export default {
           const routeParams = this.$route.params
           delete routeQuery['connectionConfig']
           let routeUrl = this.$router.resolve({
-            name: routeParams?.id ? 'connectionsEdit' : 'connectionCreate',
-            query: routeQuery,
+            name: 'dataConsole',
+            query: {
+              type: `add-${this.selectorType}`,
+              pdkHash: this.params.pdkHash
+            },
             params: routeParams
           })
 

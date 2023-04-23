@@ -953,5 +953,6 @@ export default {
   packages_business_swimlane_tablepreview_apifuwu: 'api服務名稱',
   packages_business_swimlane_target_yejibao: '業績寶',
   packages_business_task_list_meiyoufaxiannin: '沒有發現您最近有任務報錯, 如果有其他問題, 歡迎諮詢我們的人工客服',
-  packages_business_api_application_list_xitongmorenchuang: '系統默認創建的應用，不可編輯和刪除'
+  packages_business_api_application_list_xitongmorenchuang: '系統默認創建的應用，不可編輯和刪除',
+  packages_business_create_connection_title_select_type: '请选择数据源类型'
 }

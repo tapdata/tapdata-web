@@ -1001,5 +1001,6 @@ export default {
   packages_business_task_list_meiyoufaxiannin:
     "I didn't find that you have recently reported task errors, if you have other questions, please consult our manual customer service",
   packages_business_api_application_list_xitongmorenchuang:
-    'Applications created by the system by default, cannot be edited or deleted.'
+    'Applications created by the system by default, cannot be edited or deleted.',
+  packages_business_create_connection_title_select_type: 'Choose Data Source Type'
 }
