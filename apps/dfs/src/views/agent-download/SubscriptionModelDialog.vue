@@ -285,12 +285,19 @@
           $t('public_button_next')
         }}</el-button>
         <div v-else-if="activeStep === steps.length" class="ml-2">
-          <el-button type="primary" @click="submit()">{{
-            $t('dfs_agent_download_subscriptionmodeldialog_zaixianzhifu')
-          }}</el-button>
-          <el-button type="primary" :loading="submitLoading" @click="submit({}, 'offline')">{{
-            $t('dfs_agent_download_subscriptionmodeldialog_zhuanzhangzhifu')
-          }}</el-button>
+          <div v-if="selected.chargeProvider === 'FreeTier'">
+            <el-button type="primary" :loading="submitOnlineLoading" @click="submit()">{{
+              $t('public_button_confirm')
+            }}</el-button>
+          </div>
+          <div v-else>
+            <el-button type="primary" :loading="submitOnlineLoading" @click="submit()">{{
+              $t('dfs_agent_download_subscriptionmodeldialog_zaixianzhifu')
+            }}</el-button>
+            <el-button type="primary" :loading="submitLoading" @click="submit({}, 'offline')">{{
+              $t('dfs_agent_download_subscriptionmodeldialog_zhuanzhangzhifu')
+            }}</el-button>
+          </div>
         </div>
       </template>
       <template v-else>
@@ -300,11 +307,7 @@
         >
       </template>
     </div>
-    <transferDialog
-      :price="formatPrice(currency, true)"
-      :email="this.email"
-      :visible.sync="showTransferDialogVisible"
-    ></transferDialog>
+    <transferDialog :price="formatPrice(currency)" :visible.sync="showTransferDialogVisible"></transferDialog>
   </el-dialog>
 </template>
 
@@ -360,6 +363,7 @@ export default {
       licenseCode: '',
       saveLoading: false,
       submitLoading: false,
+      submitOnlineLoading: false,
       codeData: [],
       agentCount: 0,
       currentCode: {},
@@ -749,11 +753,16 @@ export default {
       this.buried('newAgentStripe', '', {
         type
       })
-      this.submitLoading = true
+      if (paymentType === 'online') {
+        this.submitOnlineLoading = true
+      } else {
+        this.submitLoading = true
+      }
       this.$axios
         .post('api/tcm/orders', params)
         .then(data => {
           if (chargeProvider === 'FreeTier' || this.productType === 'aliyun') {
+            this.finish()
             let downloadUrl = window.App.$router.resolve({
               name: 'FastDownload',
               query: {
@@ -773,7 +782,11 @@ export default {
             type,
             result: true
           })
-          this.submitLoading = false
+          if (paymentType === 'online') {
+            this.submitOnlineLoading = false
+          } else {
+            this.submitLoading = false
+          }
         })
         .catch(() => {
           this.buried('newAgentStripe', '', {
@@ -783,6 +796,7 @@ export default {
         })
         .finally(() => {
           this.submitLoading = false
+          this.submitOnlineLoading = false
         })
     },
     finish() {

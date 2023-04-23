@@ -545,7 +545,7 @@
       </div>
     </ElDialog>
     <!--转账支付-->
-    <transferDialog :visible.sync="showTransferDialogVisible"></transferDialog>
+    <transferDialog :visible.sync="showTransferDialogVisible" :price="pricePay"></transferDialog>
   </div>
 </template>
 
@@ -571,6 +571,7 @@ export default {
   data() {
     return {
       showTransferDialogVisible: false,
+      pricePay: '',
       userData: {
         username: '',
         nickname: '',
@@ -1060,15 +1061,22 @@ export default {
     handleCopySecretKey() {
       this.secretKeyTooltip = true
     },
-    remoteMethod() {
+    remoteMethod({ page }) {
+      let { current, size } = page
+      let filter = {
+        limit: size,
+        skip: size * (current - 1),
+        sort: ['createAt desc'],
+        where: {
+          status: {
+            $ne: 'invalid' //过滤 invild
+          }
+        }
+      }
       return this.$axios
-        .get(
-          `api/tcm/paid/plan/paidSubscribe?filter=${encodeURIComponent(JSON.stringify({ sort: ['createAt desc'] }))}`
-        )
+        .get(`api/tcm/paid/plan/paidSubscribe?filter=${encodeURIComponent(JSON.stringify(filter))}`)
         .then(data => {
           let items = data.items || []
-          //过滤 invild
-          items = items.filter(it => it.status !== 'invalid')
           return {
             total: data.total,
             data:
@@ -1088,13 +1096,13 @@ export default {
                       ' - ' +
                       dayjs(t.periodEnd).format('YYYY-MM-DD HH:mm:ss')
                 t.priceSuffix = t.type === 'recurring' ? '/' + TIME_MAP[t.periodUnit] : ''
-                t.priceLabel =
+                t.formatPrice =
                   CURRENCY_SYMBOL_MAP[t.currency] +
                   (t.price / 100).toLocaleString('zh', {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2
-                  }) +
-                  t.priceSuffix
+                  })
+                t.priceLabel = t.formatPrice + t.priceSuffix
                 t.bindAgent = t.agentId
                   ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
                   : i18n.t('user_Center_weiBangDing')
@@ -1207,6 +1215,7 @@ export default {
       this.buried('payAgentStripe')
       if (row.paymentType === 'offline') {
         this.showTransferDialogVisible = true
+        this.pricePay = row.formatPrice
       } else {
         openUrl(row.payUrl)
         this.$confirm(
