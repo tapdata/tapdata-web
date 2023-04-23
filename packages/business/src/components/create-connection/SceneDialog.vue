@@ -34,7 +34,12 @@
       </template>
     </div>
     <div v-if="!showForm" class="flex border-top flex-1 min-h-0">
-      <div class="flex flex-column border-end scene-name-list-wrap overflow-x-hidden pt-4 pb-2">
+      <div
+        class="flex flex-column border-end scene-name-list-wrap overflow-x-hidden pt-4 pb-2"
+        :class="{
+          'is-en': $i18n.locale === 'en'
+        }"
+      >
         <div class="scene-name-list overflow-y-auto">
           <div
             class="scene-name-item px-4 rounded-4 user-select-none ellipsis cursor-pointer"
@@ -417,6 +422,10 @@ export default {
 
     .scene-name-list-wrap {
       width: 196px;
+
+      &.is-en {
+        width: 218px;
+      }
     }
 
     .scene-name-list {
