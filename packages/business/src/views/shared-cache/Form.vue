@@ -171,11 +171,10 @@ export default {
     }
   },
   created() {
-    this.getExternalStorageOptions()
     this.init()
   },
   methods: {
-    init() {
+    async init() {
       this.form = {
         name: '',
         connectionId: '',
@@ -188,12 +187,13 @@ export default {
         externalStorageId: ''
       }
       if (this.taskId) {
-        this.getData(this.taskId)
+        await this.getData(this.taskId)
       }
+      await this.getExternalStorageOptions()
     },
-    getData(id) {
+    async getData(id) {
       this.loading = true
-      sharedCacheApi
+      await sharedCacheApi
         .findOne(id)
         .then(data => {
           data = data || {}
@@ -216,9 +216,22 @@ export default {
         })
     },
     async getExternalStorageOptions() {
-      const data = await externalStorageApi.get().catch(() => {
-        this.externalStorageOptions = []
-      })
+      let filter = {
+        where: {}
+      }
+
+      const { externalStorageId } = this.form
+      if (externalStorageId) {
+        const ext = await externalStorageApi.get(externalStorageId)
+        filter.where.type = ext.type
+      }
+      const data = await externalStorageApi
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .catch(() => {
+          this.externalStorageOptions = []
+        })
       let defaultStorageId = ''
       this.externalStorageOptions =
         data?.items?.map(it => {
