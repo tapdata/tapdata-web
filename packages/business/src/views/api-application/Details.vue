@@ -1,7 +1,8 @@
 <template>
   <Drawer
     v-loading="loading"
-    class="app-details flex flex-column"
+    class="app-details"
+    :class="{ 'flex flex-column': visible }"
     :visible.sync="visible"
     width="800px"
     v-bind="$attrs"
