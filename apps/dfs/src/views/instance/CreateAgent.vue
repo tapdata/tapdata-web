@@ -71,87 +71,135 @@
             </div>
           </div>
         </div>
-        <div v-if="activeStep === 2" class="flex gap-6 px-5">
-          <div
-            class="product-type-card rounded-xl border flex flex-column flex-1 position-relative overflow-hidden clickable"
-            :class="{
-              active: agentDeploy === 'selfHost'
-            }"
-            @click="changeAgentDeploy('selfHost')"
-          >
-            <div class="is-active position-absolute top-0 end-0">
-              <div class="is-active-triangle"></div>
-              <VIcon size="16" class="is-active-icon">check-bold</VIcon>
-            </div>
-            <div class="flex justify-content-center gap-5 p-6 align-items-start font-color-dark fs-8">
-              <el-image class="w-100 product-type-image" :src="require('@/assets/image/self_host_managed.png')" />
-            </div>
-            <div class="px-6 mb-4">
-              <div class="text-center font-color-dark fs-5 mb-2">
-                {{ $t('dfs_agent_download_subscriptionmodeldialog_bantuoguanmoshi') }}
+        <div v-if="activeStep === 2">
+          <section v-if="agentDeploy !== 'aliyun'" class="flex gap-6 px-5">
+            <div
+              class="product-type-card rounded-xl border flex flex-column flex-1 position-relative overflow-hidden clickable"
+              :class="{
+                active: agentDeploy === 'selfHost'
+              }"
+              @click="changeAgentDeploy('selfHost')"
+            >
+              <div class="is-active position-absolute top-0 end-0">
+                <div class="is-active-triangle"></div>
+                <VIcon size="16" class="is-active-icon">check-bold</VIcon>
               </div>
-              <div class="text-center font-color-light fs-7">
-                {{ $t('dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi2') }}
+              <div class="flex justify-content-center gap-5 p-6 align-items-start font-color-dark fs-8">
+                <el-image class="w-100 product-type-image" :src="require('@/assets/image/self_host_managed.png')" />
+              </div>
+              <div class="px-6 mb-4">
+                <div class="text-center font-color-dark fs-5 mb-2">
+                  {{ $t('dfs_agent_download_subscriptionmodeldialog_bantuoguanmoshi') }}
+                </div>
+                <div class="text-center font-color-light fs-7">
+                  {{ $t('dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi2') }}
+                </div>
+              </div>
+              <div class="px-6 mb-6">
+                <div class="fs-6 text-center font-color-dark mb-2">
+                  {{ $t('dfs_agent_download_subscriptionmodeldialog_shiyongbantuoguan') }}
+                </div>
+                <div class="flex justify-content-center">
+                  <ul>
+                    <li>
+                      <VIcon size="16" class="mr-2">check-bold</VIcon
+                      >{{ $t('dfs_agent_download_subscriptionmodeldialog_chengbengengdichong') }}
+                    </li>
+                    <li>
+                      <VIcon size="16" class="mr-2">check-bold</VIcon
+                      >{{ $t('dfs_agent_download_subscriptionmodeldialog_gengjiaanquanyong') }}
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
-            <div class="px-6 mb-6">
-              <div class="fs-6 text-center font-color-dark mb-2">
-                {{ $t('dfs_agent_download_subscriptionmodeldialog_shiyongbantuoguan') }}
+            <div
+              class="product-type-card rounded-xl border flex flex-column flex-1 position-relative overflow-hidden clickable"
+              :class="{
+                active: agentDeploy === 'fullManagement'
+              }"
+              @click="changeAgentDeploy('fullManagement')"
+            >
+              <div class="is-active position-absolute top-0 end-0">
+                <div class="is-active-triangle"></div>
+                <VIcon size="16" class="is-active-icon">check-bold</VIcon>
               </div>
-              <div class="flex justify-content-center">
-                <ul>
-                  <li>
-                    <VIcon size="16" class="mr-2">check-bold</VIcon
-                    >{{ $t('dfs_agent_download_subscriptionmodeldialog_chengbengengdichong') }}
+              <div class="flex justify-content-center gap-5 p-6 align-items-start font-color-dark fs-8">
+                <el-image class="w-100 product-type-image" :src="require('@/assets/image/fully_managed.png')" />
+              </div>
+              <div class="px-6 mb-4">
+                <div class="product-type-card-title text-center font-color-dark fs-5 mb-2">
+                  {{ $t('dfs_agent_download_subscriptionmodeldialog_quantuoguanmoshi') }}
+                </div>
+                <div class="text-center font-color-light fs-7">
+                  {{ $t('dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi') }}
+                </div>
+              </div>
+              <div class="px-6 mb-6">
+                <div class="fs-6 text-center font-color-dark mb-2">
+                  {{ $t('dfs_agent_download_subscriptionmodeldialog_shiyongquantuoguan') }}
+                </div>
+                <div class="flex justify-content-center">
+                  <ul>
+                    <li>
+                      <VIcon size="16" class="mr-2">check-bold</VIcon
+                      >{{ $t('dfs_agent_download_subscriptionmodeldialog_gengjiafangbianmian') }}
+                    </li>
+                    <li>
+                      <VIcon size="16" class="mr-2">check-bold</VIcon
+                      >{{ $t('dfs_agent_download_subscriptionmodeldialog_gengjiakekaoyou') }}
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section v-else v-loading="aliyunLoading">
+            <div class="aliyun-main">
+              <div v-if="hiddenNewCode">
+                <VTable
+                  :columns="columns"
+                  :data="codeData"
+                  :has-pagination="false"
+                  ref="tables"
+                  class="subscript-table"
+                  max-height="280px"
+                >
+                  <template #operation="{ row }">
+                    <ElButton type="text" @click="handleNewAgentActiveCode(row)">{{
+                      $t('public_button_create') + ' ' + $t('public_agent')
+                    }}</ElButton>
+                  </template>
+                </VTable>
+                <div class="mt-4 cursor-pointer color-primary" @click="handleNewCode(false)">
+                  {{ $t('dfs_agent_download_subscriptionmodeldialog_jihuoxinshouquan') }}
+                </div>
+              </div>
+              <div v-else>
+                <div class="flex justify-content-center align-items-center">
+                  <img class="text-center" :src="getAliiyunImg('aliyun-license-code')" />
+                </div>
+                <ul class="step mt-4">
+                  <li class="flex align-items-center">
+                    <span>{{ $t('dfs_aliyun_market_license_dianjidakai') }}</span>
+                    <a
+                      class="color-primary text-decoration-underline"
+                      href="https://market.aliyun.com/products/56024006/cmgj00061912.html?spm=5176.730005.result.4.519c3524QzKxHM&innerSource=search_tapdata#sku=yuncode5591200001"
+                      target="_blank"
+                      >{{ $t('dfs_aliyun_market_license_aliyunshichang') }}</a
+                    >
+                    {{ $t('dfs_agent_download_subscriptionmodeldialog_goumai') }}
                   </li>
-                  <li>
-                    <VIcon size="16" class="mr-2">check-bold</VIcon
-                    >{{ $t('dfs_agent_download_subscriptionmodeldialog_gengjiaanquanyong') }}
-                  </li>
+                  <li>{{ $t('dfs_aliyun_market_license_chuangjianshouquanma') }}</li>
+                  <li>{{ $t('dfs_aliyun_market_license_niantiedaoxiafang') }}</li>
                 </ul>
+                <div class="flex mt-4">
+                  <span class="label-code mb-2">{{ $t('dfs_aliyun_market_license_shouquanma') }}</span>
+                  <el-input v-model="licenseCode" type="textarea" rows="2" autofocus></el-input>
+                </div>
               </div>
             </div>
-          </div>
-          <div
-            class="product-type-card rounded-xl border flex flex-column flex-1 position-relative overflow-hidden clickable"
-            :class="{
-              active: agentDeploy === 'fullManagement'
-            }"
-            @click="changeAgentDeploy('fullManagement')"
-          >
-            <div class="is-active position-absolute top-0 end-0">
-              <div class="is-active-triangle"></div>
-              <VIcon size="16" class="is-active-icon">check-bold</VIcon>
-            </div>
-            <div class="flex justify-content-center gap-5 p-6 align-items-start font-color-dark fs-8">
-              <el-image class="w-100 product-type-image" :src="require('@/assets/image/fully_managed.png')" />
-            </div>
-            <div class="px-6 mb-4">
-              <div class="product-type-card-title text-center font-color-dark fs-5 mb-2">
-                {{ $t('dfs_agent_download_subscriptionmodeldialog_quantuoguanmoshi') }}
-              </div>
-              <div class="text-center font-color-light fs-7">
-                {{ $t('dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi') }}
-              </div>
-            </div>
-            <div class="px-6 mb-6">
-              <div class="fs-6 text-center font-color-dark mb-2">
-                {{ $t('dfs_agent_download_subscriptionmodeldialog_shiyongquantuoguan') }}
-              </div>
-              <div class="flex justify-content-center">
-                <ul>
-                  <li>
-                    <VIcon size="16" class="mr-2">check-bold</VIcon
-                    >{{ $t('dfs_agent_download_subscriptionmodeldialog_gengjiafangbianmian') }}
-                  </li>
-                  <li>
-                    <VIcon size="16" class="mr-2">check-bold</VIcon
-                    >{{ $t('dfs_agent_download_subscriptionmodeldialog_gengjiakekaoyou') }}
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
+          </section>
         </div>
 
         <div v-if="activeStep === 3" class="px-1">
@@ -171,7 +219,7 @@
               </ElSelect>
               <div class="mt-1 lh-base" v-html="$t('dfs_agent_specification_description', agentSizeCap)"></div>
             </ElFormItem>
-            <ElFormItem label="请选择您希望部署的共有云及地区">
+            <ElFormItem label="请选择您希望部署的共有云及地区" v-if="agentDeploy === 'fullManagement'">
               <div class="flex">
                 <span class="font-color-light inline-block form-label">云服务商</span>
                 <ElRadioGroup v-model="provider" @input="changeProvider" class="flex gap-4">
@@ -272,53 +320,46 @@
               </div>
             </ElFormItem>
           </ElForm>
-
-          <section v-else v-loading="aliyunLoading">
-            <div class="aliyun-main">
-              <div v-if="hiddenNewCode">
-                <VTable
-                  :columns="columns"
-                  :data="codeData"
-                  :has-pagination="false"
-                  ref="tables"
-                  class="subscript-table"
-                  max-height="280px"
-                >
-                  <template #operation="{ row }">
-                    <ElButton type="text" @click="submit(row)">{{
-                      $t('public_button_create') + ' ' + $t('public_agent')
-                    }}</ElButton>
-                  </template>
-                </VTable>
-                <div class="mt-4 cursor-pointer color-primary" @click="handleNewCode(false)">
-                  {{ $t('dfs_agent_download_subscriptionmodeldialog_jihuoxinshouquan') }}
-                </div>
+          <ElForm v-else label-position="top">
+            <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu')">
+              <ElInput v-model="specificationAliyunCode.name" disabled class="w-50 rounded-4"></ElInput>
+              <div class="mt-1 lh-base" v-html="$t('dfs_agent_specification_description', agentSizeCap)"></div>
+            </ElFormItem>
+            <ElFormItem label="请选择您希望部署的共有云及地区">
+              <div class="flex">
+                <span class="font-color-light inline-block form-label">云服务商</span>
+                <ElRadioGroup v-model="provider" @input="changeProvider" class="flex gap-4">
+                  <ElRadio
+                    v-for="(item, index) in cloudProviderList"
+                    :key="index"
+                    :label="item.cloudProvider"
+                    border
+                    class="rounded-4 subscription-radio m-0 position-relative"
+                  >
+                    <span class="inline-flex align-center">
+                      {{ item.cloudProviderName }}
+                    </span>
+                  </ElRadio>
+                </ElRadioGroup>
               </div>
-              <div v-else>
-                <div class="flex justify-content-center align-items-center">
-                  <img class="text-center" :src="getAliiyunImg('aliyun-license-code')" />
-                </div>
-                <ul class="step mt-4">
-                  <li class="flex align-items-center">
-                    <span>{{ $t('dfs_aliyun_market_license_dianjidakai') }}</span>
-                    <a
-                      class="color-primary text-decoration-underline"
-                      href="https://market.aliyun.com/products/56024006/cmgj00061912.html?spm=5176.730005.result.4.519c3524QzKxHM&innerSource=search_tapdata#sku=yuncode5591200001"
-                      target="_blank"
-                      >{{ $t('dfs_aliyun_market_license_aliyunshichang') }}</a
-                    >
-                    {{ $t('dfs_agent_download_subscriptionmodeldialog_goumai') }}
-                  </li>
-                  <li>{{ $t('dfs_aliyun_market_license_chuangjianshouquanma') }}</li>
-                  <li>{{ $t('dfs_aliyun_market_license_niantiedaoxiafang') }}</li>
-                </ul>
-                <div class="flex mt-4">
-                  <span class="label-code mb-2">{{ $t('dfs_aliyun_market_license_shouquanma') }}</span>
-                  <el-input v-model="licenseCode" type="textarea" rows="2" autofocus></el-input>
-                </div>
+              <div class="flex mt-4">
+                <span class="font-color-light inline-block form-label">地区</span>
+                <ElRadioGroup v-model="region" class="flex gap-4">
+                  <ElRadio
+                    v-for="(item, index) in cloudDetail"
+                    :key="index"
+                    :label="item.region"
+                    border
+                    class="rounded-4 subscription-radio m-0 position-relative"
+                  >
+                    <span class="inline-flex align-center">
+                      {{ item.regionName }}
+                    </span>
+                  </ElRadio>
+                </ElRadioGroup>
               </div>
-            </div>
-          </section>
+            </ElFormItem>
+          </ElForm>
         </div>
 
         <div v-if="activeStep === 4" class="px-1">
@@ -343,20 +384,13 @@
                   {{ selected.label }}
                 </span>
               </ElFormItem>
-              <ElFormItem label="云厂商">
-                <span class="font-color-dark">
-                  {{ provider }}
-                </span>
-              </ElFormItem>
-              <ElFormItem label="可用区">
-                <span class="font-color-dark">
-                  {{ region }}
-                </span>
+              <ElFormItem label="云厂商|可用区" v-if="agentDeploy !== 'selfHost' && currentAliyunAgentType === 'Cloud'">
+                <span class="font-color-dark"> {{ provider }} | {{ region }} </span>
               </ElFormItem>
               <ElFormItem :label="$t('dfs_instance_create_jieshouzhangdande')" prop="email" :rules="getEmailRules()">
                 <ElInput v-model="form.email" :placeholder="getPlaceholder()" style="width: 300px"></ElInput>
               </ElFormItem>
-              <ElFormItem :label="$t('public_total') + ':'">
+              <ElFormItem :label="$t('public_total') + ':'" v-if="agentDeploy !== 'aliyun'">
                 <span class="color-primary fs-5 ml-1">{{ formatPrice(currency) }}</span>
               </ElFormItem>
             </ElForm>
@@ -365,22 +399,16 @@
       </div>
       <el-link
         class="aliyun-wrap flex justify-content-center align-items-center mt-6 mb-6"
-        v-if="activeStep === 2"
+        v-if="activeStep === 2 && agentDeploy !== 'aliyun'"
         type="primary"
         @click="changeAgentDeploy('aliyun')"
         >{{ $t('dfs_agent_download_subscriptionmodeldialog_zhijieshiyonga') }}</el-link
       >
     </div>
     <div class="footer flex justify-content-center align-items-center">
-      <el-link
-        v-if="activeStep === 2 && agentDeploy === 'aliyun' && !hiddenNewCode && codeData.length > 0"
-        type="primary"
-        @click="handleNewCode(true)"
-        >{{ $t('dfs_agent_download_subscriptionmodeldialog_ninyouyijihuo') }}</el-link
-      >
-      <el-button v-if="activeStep > 1" @click="prevStep">{{ $t('public_button_previous') }}</el-button>
-
+      <!--非授权码-->
       <template v-if="agentDeploy !== 'aliyun'">
+        <el-button v-if="activeStep > 1" @click="prevStep">{{ $t('public_button_previous') }}</el-button>
         <el-button v-if="activeStep < steps.length" type="primary" @click="next('second')">{{
           $t('public_button_next')
         }}</el-button>
@@ -400,10 +428,31 @@
           </div>
         </div>
       </template>
+      <!--授权码-->
       <template v-else>
-        <el-button v-if="!hiddenNewCode" type="primary" :loading="saveLoading" @click="save()"
-          >{{ $t('dfs_aliyun_market_license_jihuo')
-          }}{{ $t('dfs_agent_download_subscriptionmodeldialog_bingbushu') }}</el-button
+        <el-link
+          v-if="activeStep === 2 && agentDeploy === 'aliyun' && !hiddenNewCode && codeData.length > 0"
+          type="primary"
+          class="mr-4"
+          @click="handleNewCode(true)"
+          >{{ $t('dfs_agent_download_subscriptionmodeldialog_ninyouyijihuo') }}</el-link
+        >
+        <el-button v-if="activeStep > 1" @click="prevStep">{{ $t('public_button_previous') }}</el-button>
+        <!--第2步 半托管没有下一步 直接部署-->
+        <el-button v-if="activeStep < steps.length && activeStep !== 2" type="primary" @click="next('second')">{{
+          $t('public_button_next')
+        }}</el-button>
+        <!---第2步 新激活授权码 半托管-->
+        <el-button v-if="!hiddenNewCode && activeStep === 2" type="primary" :loading="saveLoading" @click="save()"
+          >{{ $t('dfs_aliyun_market_license_jihuo') }}<span>&</span>{{ $t('public_button_next') }}</el-button
+        >
+        <!--最后一步-->
+        <el-button
+          v-if="activeStep === steps.length"
+          type="primary"
+          :loading="submitOnlineLoading"
+          @click="submit(currentAliyunCode)"
+          >部署</el-button
         >
       </template>
     </div>
@@ -412,7 +461,7 @@
 </template>
 
 <script>
-import { isStr, isObj, openUrl, uniqueArr } from '@tap/shared'
+import { isStr, isObj, uniqueArr } from '@tap/shared'
 import { VTable } from '@tap/component'
 import { getPaymentMethod, getSpec } from '../instance/utils'
 import { CURRENCY_SYMBOL_MAP, TIME_MAP, CURRENCY_MAP } from '@tap/business'
@@ -437,6 +486,9 @@ export default {
       provider: '',
       specificationItems: [],
       specification: '',
+      currentAliyunCode: '',
+      specificationAliyunCode: '',
+      currentAliyunAgentType: '',
       email: '',
       selected: {},
       form: {
@@ -510,6 +562,10 @@ export default {
           prop: 'specLabel'
         },
         {
+          label: '托管方式',
+          prop: 'agentType'
+        },
+        {
           label: i18n.t('dfs_instance_selectlist_bangdingshilizhuang'),
           prop: 'bindAgent'
         },
@@ -534,6 +590,12 @@ export default {
           },
           {
             title: this.$t('dfs_agent_step_aliyun_code')
+          },
+          {
+            title: this.$t('dfs_agent_download_subscriptionmodeldialog_peizhibushugui')
+          },
+          {
+            title: this.$t('dfs_agent_download_subscriptionmodeldialog_chakanbingqueren')
           }
         ]
       }
@@ -577,7 +639,7 @@ export default {
   methods: {
     prevStep() {
       this.activeStep--
-      if (this.agentDeploy === 'aliyun') {
+      if (this.agentDeploy === 'aliyun' && this.activeStep === 2) {
         this.agentDeploy = 'selfHost'
       }
     },
@@ -588,14 +650,12 @@ export default {
     //选择订阅模式
     changeAgentDeploy(type) {
       this.agentDeploy = type
+      this.getCloudProvider()
       if (type === 'aliyun') {
-        this.agentDeploy = 'aliyun'
-        this.activeStep = 3
         this.getAvailableCode()
         this.buried('productTypeAliyunCode')
       } else if (type === 'fullManagement') {
         this.getPrice()
-        this.getCloudProvider()
       }
     },
     //切换规格
@@ -692,9 +752,6 @@ export default {
         })
       )
     },
-    selectAgentDeploy() {
-      this.buried('productTypeSelfHost')
-    },
     checkAgentCount() {
       let filter = { where: { 'orderInfo.chargeProvider': 'FreeTier' } }
       this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
@@ -719,7 +776,7 @@ export default {
       return memory / 0.8
     },
     updateAgentCap(cpu, memory) {
-      this.agentSizeCap = {
+      return {
         mem: parseInt(memory * 1.1 + 2) + 'G',
         pipeline: this.getSuggestPipelineNumber(cpu, memory),
         tps: cpu * 2000
@@ -790,7 +847,7 @@ export default {
     },
     loadPackageItems() {
       const specification = this.specificationItems.find(t => t.value === this.specification)
-      this.updateAgentCap(specification.cpu, specification.memory)
+      this.agentSizeCap = this.updateAgentCap(specification.cpu, specification.memory)
       const specificationLabel = this.specificationItems.find(t => t.value === this.specification)?.name
       const chargeProvider = this.specificationItems.find(t => t.value === this.specification)?.chargeProvider
       this.currentSpecName = specificationLabel
@@ -868,15 +925,19 @@ export default {
       let params = {
         agentDeploy: this.agentDeploy,
         platform: this.platform,
-        version: 'v3.1.9-1'
+        version: ''
       }
 
       if (this.agentDeploy === 'aliyun') {
         params = Object.assign(params, {
-          agentType: 'Local',
+          agentType: row.agentType,
           chargeProvider: 'Aliyun',
           licenseId: row?.id
         })
+        if (row.agentType === 'Cloud') {
+          params.region = this.region
+          params.provider = this.provider
+        }
         this.buried('selectAgentAliyun')
       } else {
         const valid = await this.validateForm('confirmForm')
@@ -913,8 +974,8 @@ export default {
       this.$axios
         .post('api/tcm/orders', params)
         .then(data => {
-          //免费实例 授权码 直接去部署页面
-          if (chargeProvider === 'FreeTier' || this.agentDeploy === 'aliyun') {
+          //免费实例（授权码）-半托管-直接部署页面
+          if (chargeProvider === 'FreeTier' || (this.agentDeploy === 'aliyun' && row.agentType === 'Local')) {
             this.finish()
             let downloadUrl = window.App.$router.resolve({
               name: 'FastDownload',
@@ -923,6 +984,9 @@ export default {
               }
             })
             window.open(downloadUrl.href, '_blank')
+          } else if (this.agentDeploy === 'aliyun' && row.agentType === 'Cloud') {
+            //授权码 全托管-打开Agent管理页面
+            window.open(agentUrl.href, '_blank')
           } else if (paymentType === 'online') {
             //在线支付 打开付款页面
             this.finish()
@@ -955,6 +1019,24 @@ export default {
     finish() {
       this.$message.success(this.$t('public_message_operation_success'))
     },
+    //创建agent
+    handleNewAgentActiveCode(row) {
+      this.currentAliyunAgentType = row?.agentType
+      if (row?.agentType === 'Cloud') {
+        //全托管，跳转到下一步
+        this.saveCrrentAliyun(row)
+      } else {
+        //半托管直接创建订单
+        this.submit(row)
+      }
+    },
+    //授权码下一步数据保留
+    saveCrrentAliyun(row) {
+      this.activeStep++
+      this.currentAliyunCode = row
+      this.specificationAliyunCode = row.spec
+      this.agentSizeCap = this.updateAgentCap(this.specificationAliyunCode.cpu, this.specificationAliyunCode.memory)
+    },
     //激活
     handleNewCode(val) {
       this.hiddenNewCode = val
@@ -967,7 +1049,11 @@ export default {
         .post('api/tcm/aliyun/market/license/activate', { licenseCode: this.licenseCode })
         .then(data => {
           if (data.licenseStatus === 'ACTIVATED') {
-            this.submit(data)
+            if (data?.agentType === 'Cloud') {
+              this.saveCrrentAliyun(data)
+            } else {
+              this.submit(data)
+            }
             this.buried('activateAliyunCode', '', {
               result: true
             })
