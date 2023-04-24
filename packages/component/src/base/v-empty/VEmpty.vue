@@ -1,6 +1,6 @@
 <template functional>
   <div
-    class="empty-wrap"
+    class="v-empty-wrap"
     :class="{
       'empty-small': props.small,
       'empty-large': props.large
@@ -90,8 +90,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.empty-wrap {
+<style lang="scss">
+.v-empty-wrap {
   margin: 32px 0;
   font-size: 13px;
   line-height: 1.5715;

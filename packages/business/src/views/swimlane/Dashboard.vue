@@ -44,15 +44,9 @@
         ></component>
       </template>
     </div>
-    <CreateConnection
-      :visible.sync="visible"
-      :selector-type="selectorType"
-      @success="handleSuccess($event, 'source')"
-      @saveAndMore="handleSuccess"
-    ></CreateConnection>
     <SceneDialog
       :visible.sync="showSceneDialog"
-      :selector-type="selectorType"
+      :selector-type.sync="selectorType"
       @success="handleSuccess($event, 'target')"
       @saveAndMore="handleSuccess"
     ></SceneDialog>
@@ -189,7 +183,7 @@ export default {
 
     handleAdd(type) {
       this.selectorType = type
-      this.visible = true
+      this.showSceneDialog = true
     },
 
     handleCreateTarget(type) {
