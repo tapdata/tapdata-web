@@ -21,6 +21,7 @@ import HeartbeatTableList from './heartbeat-table/List'
 import SharedCacheList from './shared-cache/List'
 import SharedCacheForm from './shared-cache/Form'
 import ApiApplicationList from './api-application/List'
+import ExternalStorageList from './external-storage/List'
 
 export {
   ConnectionForm,
@@ -45,7 +46,8 @@ export {
   HeartbeatTableList,
   SharedCacheList,
   SharedCacheForm,
-  ApiApplicationList
+  ApiApplicationList,
+  ExternalStorageList
 }
 
 export * from './connections/util'

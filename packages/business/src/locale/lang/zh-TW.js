@@ -954,5 +954,15 @@ export default {
   packages_business_swimlane_target_yejibao: '業績寶',
   packages_business_task_list_meiyoufaxiannin: '沒有發現您最近有任務報錯, 如果有其他問題, 歡迎諮詢我們的人工客服',
   packages_business_api_application_list_xitongmorenchuang: '系統默認創建的應用，不可編輯和刪除',
-  packages_business_create_connection_title_select_type: '请选择数据源类型'
+  packages_business_create_connection_title_select_type: '请选择数据源类型',
+  // 外存管理
+  packages_business_external_storage_list_querenshanchuwai: '確認刪除外存？',
+  packages_business_external_storage_list_qingshurucunchu: '請輸入存儲路徑',
+  packages_business_external_storage_list_qingshuruwaicun: '請輸入外存名稱',
+  packages_business_external_storage_list_qingshuruwaicun2: '請輸入外存表名稱',
+  packages_business_external_storage_list_sheweimoren: '設為默認',
+  packages_business_external_storage_list_cunchulujing: '存儲路徑',
+  packages_business_external_storage_list_chuangjianwaicun: '創建外存',
+  packages_business_external_storage_list_bianjiwaicun: '編輯外存',
+  packages_business_external_storage_list_tishi: '該外存已被 {val1} 调用，請刪除或修改配置後重試。',
 }

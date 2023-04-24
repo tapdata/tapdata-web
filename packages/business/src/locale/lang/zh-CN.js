@@ -961,5 +961,15 @@ export default {
   packages_business_swimlane_target_yejibao: '业绩宝',
   packages_business_task_list_meiyoufaxiannin: '没有发现您最近有任务报错, 如果有其他问题, 欢迎咨询我们的人工客服',
   packages_business_api_application_list_xitongmorenchuang: '系统默认创建的应用，不可编辑和删除',
-  packages_business_create_connection_title_select_type: '请选择数据源类型'
+  packages_business_create_connection_title_select_type: '请选择数据源类型',
+  // 外存管理
+  packages_business_external_storage_list_querenshanchuwai: '确认删除外存？',
+  packages_business_external_storage_list_qingshurucunchu: '请输入存储路径',
+  packages_business_external_storage_list_qingshuruwaicun: '请输入外存名称',
+  packages_business_external_storage_list_qingshuruwaicun2: '请输入外存表名称',
+  packages_business_external_storage_list_sheweimoren: '设为默认',
+  packages_business_external_storage_list_cunchulujing: '存储路径',
+  packages_business_external_storage_list_chuangjianwaicun: '创建外存',
+  packages_business_external_storage_list_bianjiwaicun: '编辑外存',
+  packages_business_external_storage_list_tishi: '该外存已被 {val1} 个任务调用，请删除或者修改配置后重试',
 }

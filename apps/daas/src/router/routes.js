@@ -130,6 +130,12 @@ const ApiApplicationList = async () => {
   return ApiApplicationList
 }
 
+// 外存管理
+const ExternalStorageList = async () => {
+  const { ExternalStorageList } = await import('@tap/business')
+  return ExternalStorageList
+}
+
 export default [
   {
     path: '/login',
@@ -821,7 +827,7 @@ export default [
       {
         path: '/external-storage',
         name: 'externalStorage',
-        component: () => import(/* webpackChunkName: "external-storage" */ '@/views/external-storage/List'),
+        component: ExternalStorageList,
         meta: {
           title: 'page_title_external_storage',
           code: 'v2_external-storage_menu'

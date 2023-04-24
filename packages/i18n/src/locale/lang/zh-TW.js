@@ -117,6 +117,7 @@ export default {
   public_select_option_default: '默認',
   // 輸入框
   public_input_placeholder: '請輸入',
+  public_input_placeholder_name: '请输入名称',
   public_input_placeholder_search: '請輸入搜索內容...',
   // 表單
   public_form_not_empty: '不能為空',

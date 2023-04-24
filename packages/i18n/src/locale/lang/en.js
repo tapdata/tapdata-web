@@ -117,6 +117,7 @@ export default {
   public_select_option_default: 'Default',
   // Input box
   public_input_placeholder: 'Please Enter..',
+  public_input_placeholder_name: 'Please enter a name',
   public_input_placeholder_search: 'Type here to search..',
   // form
   public_form_not_empty: 'Cannot be empty',

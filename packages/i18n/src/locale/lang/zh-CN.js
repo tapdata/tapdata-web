@@ -118,6 +118,7 @@ export default {
   public_select_option_default: '默认',
   // 输入框
   public_input_placeholder: '请输入',
+  public_input_placeholder_name: '请输入名称',
   public_input_placeholder_search: '请输入搜索内容...',
   // 表单
   public_form_not_empty: '不能为空',

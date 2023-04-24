@@ -1002,5 +1002,16 @@ export default {
     "I didn't find that you have recently reported task errors, if you have other questions, please consult our manual customer service",
   packages_business_api_application_list_xitongmorenchuang:
     'Applications created by the system by default, cannot be edited or deleted.',
-  packages_business_create_connection_title_select_type: 'Choose Data Source Type'
+  packages_business_create_connection_title_select_type: 'Choose Data Source Type',
+  // 外存管理
+  packages_business_external_storage_list_querenshanchuwai: 'Are you sure to delete the external storage?',
+  packages_business_external_storage_list_qingshurucunchu: 'Please enter the storage path',
+  packages_business_external_storage_list_qingshuruwaicun: 'Please enter the external storage name',
+  packages_business_external_storage_list_qingshuruwaicun2: 'Please enter the external storage table name',
+  packages_business_external_storage_list_sheweimoren: 'Set as default',
+  packages_business_external_storage_list_cunchulujing: 'Storage path',
+  packages_business_external_storage_list_chuangjianwaicun: 'Create External Storage',
+  packages_business_external_storage_list_bianjiwaicun: 'Edit External Storage',
+  packages_business_external_storage_list_tishi:
+    'This external storage has been called by {val1} tasks, please delete or modify the configuration and try again.',
 }
