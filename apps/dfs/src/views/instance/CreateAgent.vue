@@ -859,10 +859,16 @@ export default {
           id: ''
         }
       })
+      const agentUrl = window.App.$router.resolve({
+        name: 'Instance',
+        query: {
+          id: ''
+        }
+      })
       let params = {
         agentDeploy: this.agentDeploy,
         platform: this.platform,
-        version: 'v3.2.1-16'
+        version: 'v3.1.9-1'
       }
 
       if (this.agentDeploy === 'aliyun') {
@@ -892,6 +898,7 @@ export default {
           params.agentType = 'Cloud'
           params.region = this.region
           params.provider = this.provider
+          params.successUrl = location.origin + location.pathname + agentUrl.href
         }
       }
 
@@ -906,6 +913,7 @@ export default {
       this.$axios
         .post('api/tcm/orders', params)
         .then(data => {
+          //免费实例 授权码 直接去部署页面
           if (chargeProvider === 'FreeTier' || this.agentDeploy === 'aliyun') {
             this.finish()
             let downloadUrl = window.App.$router.resolve({
@@ -916,9 +924,11 @@ export default {
             })
             window.open(downloadUrl.href, '_blank')
           } else if (paymentType === 'online') {
+            //在线支付 打开付款页面
             this.finish()
             window.open(data?.paymentUrl, '_blank')
           } else {
+            //转账支付 打开支付详情弹窗
             this.showTransferDialogVisible = true
           }
           this.buried('newAgentStripe', '', {

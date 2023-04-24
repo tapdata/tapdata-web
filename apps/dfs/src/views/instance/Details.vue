@@ -35,9 +35,13 @@
         </div>
       </div>
       <div class="mt-4">
-        <ElButton size="mini" type="primary" :disabled="!showUpload" @click="open(agent.id, agent.status)">{{
-          $t('dfs_instance_instance_rizhishangchuan')
-        }}</ElButton>
+        <ElButton
+          size="mini"
+          type="primary"
+          :disabled="!showUpload || agent.agentType === 'Cloud'"
+          @click="open(agent.id, agent.status)"
+          >{{ $t('dfs_instance_instance_rizhishangchuan') }}</ElButton
+        >
       </div>
     </div>
     <!-- 日志上传   -->
