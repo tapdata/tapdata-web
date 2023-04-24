@@ -445,7 +445,6 @@ export default defineComponent({
       let alarmCls = alarmLevel.value ? `alarm-${alarmLevel.value}` : null
       let sharedCache = (props.node.attrs?.sharedCache || []).filter(t => !!t.id)
       const { usedShareCache = {} } = props.dataflow?.attrs || {}
-      console.log('Object.values(usedShareCache)', Object.values(usedShareCache), props.node.id)
       if (Object.values(usedShareCache).every(t => !t.includes(props.node.id))) {
         sharedCache = []
       }
