@@ -112,6 +112,14 @@ const routes = [
         },
         children: [
           {
+            path: 'create',
+            name: 'createAgent',
+            component: () => import(/* webpackChunkName: "instance-details" */ '../views/instance/CreateAgent'),
+            meta: {
+              title: '配置实时数据平台'
+            }
+          },
+          {
             path: '/instanceDetails',
             name: 'InstanceDetails',
             // route level code-splitting
