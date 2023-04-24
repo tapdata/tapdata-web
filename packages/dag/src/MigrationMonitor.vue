@@ -87,6 +87,7 @@
               :class="{
                 'options-active': nodeMenu.typeId === n.id
               }"
+              :dataflow="dataflow"
               :task-type="dataflow.type"
               :sync-type="dataflow.syncType"
               :sample="dagData ? dagData[n.id] : {}"
@@ -664,7 +665,8 @@ export default {
         this.$message.success(this.$t('public_message_operation_success'))
         this.isSaving = false
         this.isReset = false
-        this.loadDataflow(this.dataflow?.id)
+        // this.loadDataflow(this.dataflow?.id)
+        this.openDataflow(this.dataflow?.id)
         this.toggleConsole(false)
         this.handleBottomPanel(true)
       } catch (e) {
