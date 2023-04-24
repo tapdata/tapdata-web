@@ -39,11 +39,10 @@
             </div>
           </div>
           <div
-            class="product-type-card rounded-xl border flex flex-column flex-1 position-relative overflow-hidden clickable"
+            class="product-type-card rounded-xl border flex flex-column flex-1 position-relative overflow-hidden clickable disabled"
             :class="{
               active: platform === 'realTime'
             }"
-            @click="platform = 'realTime'"
           >
             <div class="is-active position-absolute top-0 end-0">
               <div class="is-active-triangle"></div>
@@ -76,9 +75,9 @@
           <div
             class="product-type-card rounded-xl border flex flex-column flex-1 position-relative overflow-hidden clickable"
             :class="{
-              active: productType === 'selfHost'
+              active: agentDeploy === 'selfHost'
             }"
-            @click="productType = 'selfHost'"
+            @click="changeAgentDeploy('selfHost')"
           >
             <div class="is-active position-absolute top-0 end-0">
               <div class="is-active-triangle"></div>
@@ -116,9 +115,9 @@
           <div
             class="product-type-card rounded-xl border flex flex-column flex-1 position-relative overflow-hidden clickable"
             :class="{
-              active: productType === 'fullManagement'
+              active: agentDeploy === 'fullManagement'
             }"
-            @click="productType = 'fullManagement'"
+            @click="changeAgentDeploy('fullManagement')"
           >
             <div class="is-active position-absolute top-0 end-0">
               <div class="is-active-triangle"></div>
@@ -156,7 +155,7 @@
         </div>
 
         <div v-if="activeStep === 3" class="px-1">
-          <ElForm v-if="productType !== 'aliyun'" label-position="top">
+          <ElForm v-if="agentDeploy !== 'aliyun'" label-position="top">
             <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu')">
               <ElSelect v-model="specification" @change="changeSpec" class="w-50 rounded-4">
                 <ElOption
@@ -171,6 +170,40 @@
                 </ElOption>
               </ElSelect>
               <div class="mt-1 lh-base" v-html="$t('dfs_agent_specification_description', agentSizeCap)"></div>
+            </ElFormItem>
+            <ElFormItem label="请选择您希望部署的共有云及地区">
+              <div class="flex">
+                <span class="font-color-light inline-block form-label">云服务商</span>
+                <ElRadioGroup v-model="provider" @input="changeProvider" class="flex gap-4">
+                  <ElRadio
+                    v-for="(item, index) in cloudProviderList"
+                    :key="index"
+                    :label="item.cloudProvider"
+                    border
+                    class="rounded-4 subscription-radio m-0 position-relative"
+                  >
+                    <span class="inline-flex align-center">
+                      {{ item.cloudProviderName }}
+                    </span>
+                  </ElRadio>
+                </ElRadioGroup>
+              </div>
+              <div class="flex mt-4">
+                <span class="font-color-light inline-block form-label">地区</span>
+                <ElRadioGroup v-model="region" class="flex gap-4">
+                  <ElRadio
+                    v-for="(item, index) in cloudDetail"
+                    :key="index"
+                    :label="item.region"
+                    border
+                    class="rounded-4 subscription-radio m-0 position-relative"
+                  >
+                    <span class="inline-flex align-center">
+                      {{ item.regionName }}
+                    </span>
+                  </ElRadio>
+                </ElRadioGroup>
+              </div>
             </ElFormItem>
             <ElFormItem :label="$t('dfs_instance_instance_dingyuefangshi')">
               <ElRadioGroup v-model="currentPackage" @input="handleChange" class="flex gap-4">
@@ -310,6 +343,16 @@
                   {{ selected.label }}
                 </span>
               </ElFormItem>
+              <ElFormItem label="云厂商">
+                <span class="font-color-dark">
+                  {{ provider }}
+                </span>
+              </ElFormItem>
+              <ElFormItem label="可用区">
+                <span class="font-color-dark">
+                  {{ region }}
+                </span>
+              </ElFormItem>
               <ElFormItem :label="$t('dfs_instance_create_jieshouzhangdande')" prop="email" :rules="getEmailRules()">
                 <ElInput v-model="form.email" :placeholder="getPlaceholder()" style="width: 300px"></ElInput>
               </ElFormItem>
@@ -324,20 +367,20 @@
         class="aliyun-wrap flex justify-content-center align-items-center mt-6 mb-6"
         v-if="activeStep === 2"
         type="primary"
-        @click="changeProductType"
+        @click="changeAgentDeploy('aliyun')"
         >{{ $t('dfs_agent_download_subscriptionmodeldialog_zhijieshiyonga') }}</el-link
       >
     </div>
     <div class="footer flex justify-content-center align-items-center">
       <el-link
-        v-if="activeStep === 2 && productType === 'aliyun' && !hiddenNewCode && codeData.length > 0"
+        v-if="activeStep === 2 && agentDeploy === 'aliyun' && !hiddenNewCode && codeData.length > 0"
         type="primary"
         @click="handleNewCode(true)"
         >{{ $t('dfs_agent_download_subscriptionmodeldialog_ninyouyijihuo') }}</el-link
       >
       <el-button v-if="activeStep > 1" @click="prevStep">{{ $t('public_button_previous') }}</el-button>
 
-      <template v-if="productType !== 'aliyun'">
+      <template v-if="agentDeploy !== 'aliyun'">
         <el-button v-if="activeStep < steps.length" type="primary" @click="next('second')">{{
           $t('public_button_next')
         }}</el-button>
@@ -384,11 +427,14 @@ export default {
   data() {
     return {
       activeStep: 1,
-      productType: 'selfHost',
+      agentDeploy: 'selfHost',
       platform: 'integration',
-      activeName: 'first',
       allPackages: '',
       packageItems: [],
+      cloudProviderList: [],
+      cloudDetail: [],
+      region: '',
+      provider: '',
       specificationItems: [],
       specification: '',
       email: '',
@@ -481,7 +527,7 @@ export default {
 
   computed: {
     steps() {
-      if (this.productType === 'aliyun') {
+      if (this.agentDeploy === 'aliyun') {
         return [
           {
             title: this.$t('dfs_agent_download_subscriptionmodeldialog_xuanzebushulei')
@@ -531,8 +577,8 @@ export default {
   methods: {
     prevStep() {
       this.activeStep--
-      if (this.productType === 'aliyun') {
-        this.productType = 'selfHost'
+      if (this.agentDeploy === 'aliyun') {
+        this.agentDeploy = 'selfHost'
       }
     },
     next() {
@@ -540,12 +586,17 @@ export default {
       this.buried('productTypeNext')
     },
     //选择订阅模式
-    changeProductType() {
-      this.productType = 'aliyun'
-      this.activeName = 'second'
-      this.activeStep = 2
-      this.getAvailableCode()
-      this.buried('productTypeAliyunCode')
+    changeAgentDeploy(type) {
+      this.agentDeploy = type
+      if (type === 'aliyun') {
+        this.agentDeploy = 'aliyun'
+        this.activeStep = 3
+        this.getAvailableCode()
+        this.buried('productTypeAliyunCode')
+      } else if (type === 'fullManagement') {
+        this.getPrice()
+        this.getCloudProvider()
+      }
     },
     //切换规格
     changeSpec() {
@@ -555,6 +606,11 @@ export default {
       }
       this.handleChange(this.packageItems[0])
       this.buried('changeSpec')
+    },
+    //切换云厂商
+    changeProvider() {
+      this.cloudDetail = this.cloudProviderList.filter(it => it.cloudProvider === this.provider)?.[0].cloudDetail || []
+      this.region = this.cloudDetail?.[0]?.region
     },
     //切换订阅方式
     handleChange(item = {}) {
@@ -636,7 +692,7 @@ export default {
         })
       )
     },
-    selectProductType() {
+    selectAgentDeploy() {
       this.buried('productTypeSelfHost')
     },
     checkAgentCount() {
@@ -669,9 +725,18 @@ export default {
         tps: cpu * 2000
       }
     },
+    //查找云厂商
+    getCloudProvider() {
+      this.$axios.get('api/tcm/orders/queryCloudProvider').then(data => {
+        this.cloudProviderList = data?.items || []
+        //初始化云厂商
+        this.provider = this.cloudProviderList?.[0].cloudProvider
+        this.changeProvider()
+      })
+    },
     getPrice() {
       const params = {
-        productType: this.productType
+        productType: this.agentDeploy
       }
       this.$axios.get('api/tcm/paid/plan/getPaidPlan', { params }).then(data => {
         const { paidPrice = [] } = data?.[0] || {}
@@ -794,21 +859,25 @@ export default {
           id: ''
         }
       })
-      let params = {}
+      let params = {
+        agentDeploy: this.agentDeploy,
+        platform: this.platform,
+        version: 'v3.2.1-16'
+      }
 
-      if (this.productType === 'aliyun') {
-        params = {
+      if (this.agentDeploy === 'aliyun') {
+        params = Object.assign(params, {
           agentType: 'Local',
           chargeProvider: 'Aliyun',
           licenseId: row?.id
-        }
+        })
         this.buried('selectAgentAliyun')
       } else {
         const valid = await this.validateForm('confirmForm')
 
         if (!valid) return
 
-        params = {
+        params = Object.assign(params, {
           agentType: 'Local',
           chargeProvider,
           priceId,
@@ -818,6 +887,11 @@ export default {
           paymentType: paymentType, //增加支付方式
           email,
           type
+        })
+        if (this.agentDeploy === 'fullManagement') {
+          params.agentType = 'Cloud'
+          params.region = this.region
+          params.provider = this.provider
         }
       }
 
@@ -832,7 +906,7 @@ export default {
       this.$axios
         .post('api/tcm/orders', params)
         .then(data => {
-          if (chargeProvider === 'FreeTier' || this.productType === 'aliyun') {
+          if (chargeProvider === 'FreeTier' || this.agentDeploy === 'aliyun') {
             this.finish()
             let downloadUrl = window.App.$router.resolve({
               name: 'FastDownload',
@@ -840,13 +914,11 @@ export default {
                 id: data?.agentId
               }
             })
-
             window.open(downloadUrl.href, '_blank')
           } else if (paymentType === 'online') {
             this.finish()
             window.open(data?.paymentUrl, '_blank')
           } else {
-            this.close()
             this.showTransferDialogVisible = true
           }
           this.buried('newAgentStripe', '', {
@@ -872,7 +944,6 @@ export default {
     },
     finish() {
       this.$message.success(this.$t('public_message_operation_success'))
-      this.close()
     },
     //激活
     handleNewCode(val) {
@@ -957,6 +1028,9 @@ export default {
 }
 .label-code {
   width: 70px;
+}
+.form-label {
+  width: 90px;
 }
 .subscript-table {
   ::v-deep {

@@ -228,6 +228,16 @@
             <ElButton
               size="mini"
               type="text"
+              v-if="scope.row.agentType === 'Cloud'"
+              :loading="scope.row.btnLoading.delete"
+              :disabled="renewBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
+              @click="handleRenew(scope.row)"
+              >重启</ElButton
+            >
+            <ElDivider direction="vertical"></ElDivider>
+            <ElButton
+              size="mini"
+              type="text"
               v-if="scope.row.orderInfo && scope.row.orderInfo.chargeProvider === 'Stripe'"
               :loading="scope.row.btnLoading.delete"
               :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
@@ -1140,6 +1150,10 @@ export default {
       }
       return flag
     },
+    // 重启
+    renewBtnDisabled(row) {
+      return row.metric.runningTaskNum > 0
+    },
     showVersionFlag(row) {
       let { status, tmInfo } = row
       return !(status === 'Creating' && !tmInfo?.pingTime)
@@ -1231,6 +1245,12 @@ export default {
         chargeProvider: 'FreeTier'
       })
       return flag
+    },
+    //全托管-重启
+    handleRenew(row) {
+      this.$axios.post('api/tcm/agent/restart?agentId=' + row.id).then(() => {
+        this.$message.success(this.$t('public_message_operation_success'))
+      })
     },
     //退订详情费用
     getUnsubscribePrice(row = {}) {
