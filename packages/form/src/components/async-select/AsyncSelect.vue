@@ -624,7 +624,7 @@ export default {
 
     emitChange(val, option) {
       if (!valueEquals(this.value, val)) {
-        this.$emit('change', val, option)
+        this.$emit('change', val, this.items.find(t => t.value === val) || {})
         if (this.multiple) {
           const uniqArr = uniqBy([...this.selected, ...this.cachedOptions, ...this.options], 'value') || []
           const changeLabels = uniqArr.filter(t => val.includes(t.value)).map(t => t.currentLabel || t.label)

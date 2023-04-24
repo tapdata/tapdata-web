@@ -16,16 +16,19 @@
         ></ElInput>
       </ElFormItem>
       <ElFormItem prop="connectionId" :label="$t('packages_business_shared_cache_column_connection') + ':'">
-        <VirtualSelect
-          v-model="form.connectionId"
-          filterable
-          class="form-input"
-          :item-size="34"
-          :items="connectionOptions"
-          :loading="!connectionOptions.length"
+        <ConnectionListSelect
+          :value.sync="form.connectionId"
+          :label.sync="form.connectionName"
           :placeholder="$t('packages_business_shared_cache_placeholder_connection')"
-          @input="connectionInputHandler"
-        />
+          filterable
+          :params="{
+            where: {
+              connection_type: { in: ['source', 'source_and_target'] }
+            }
+          }"
+          class="form-input"
+          @change="connectionInputHandler"
+        ></ConnectionListSelect>
       </ElFormItem>
       <ElFormItem prop="tableName" :label="$t('packages_business_shared_cache_column_table') + ':'">
         <VirtualSelect
@@ -114,11 +117,12 @@
 import { VirtualSelect } from '@tap/component'
 import FieldSelector from './FieldSelector'
 import CodeView from './CodeView.vue'
-import { sharedCacheApi, metadataInstancesApi, connectionsApi, externalStorageApi } from '@tap/api'
+import { sharedCacheApi, metadataInstancesApi, externalStorageApi } from '@tap/api'
 import i18n from '@tap/i18n'
+import ConnectionListSelect from '@tap/business/src/views/connections/ListSelect'
 
 export default {
-  components: { VirtualSelect, FieldSelector, CodeView },
+  components: { VirtualSelect, FieldSelector, CodeView, ConnectionListSelect },
   props: {
     taskId: {
       type: String
@@ -128,7 +132,6 @@ export default {
     return {
       loading: false,
       form: {},
-      connectionOptions: [],
       externalStorageOptions: null,
 
       tableOptions: [],
@@ -168,7 +171,6 @@ export default {
     }
   },
   created() {
-    this.getConnectionOptions()
     this.getExternalStorageOptions()
     this.init()
   },
@@ -177,6 +179,8 @@ export default {
       this.form = {
         name: '',
         connectionId: '',
+        connectionName: '',
+        databaseType: '',
         tableName: '',
         cacheKeys: '',
         fields: '',
@@ -196,6 +200,8 @@ export default {
           this.form = {
             name: data.name,
             connectionId: data.connectionId,
+            connectionName: data.connectionName,
+            databaseType: data.databaseType,
             tableName: data.tableName,
             cacheKeys: data.cacheKeys,
             fields: data.fields?.join(',') || '',
@@ -224,22 +230,6 @@ export default {
       if (!this.taskId) {
         this.form.externalStorageId = defaultStorageId
       }
-    },
-    getConnectionOptions() {
-      let filter = {
-        order: 'createTime DESC',
-        fields: {
-          id: true,
-          name: true
-        },
-        where: {
-          connection_type: { in: ['source', 'source_and_target'] }
-        }
-      }
-      connectionsApi.listAll(filter).then(data => {
-        let options = data || []
-        this.connectionOptions = options.map(opt => ({ label: opt.name, value: opt.id }))
-      })
     },
     getTableOptions(connectionId) {
       this.tableOptionsLoading = true
@@ -290,10 +280,11 @@ export default {
           this.fieldOptionsLoading = false
         })
     },
-    connectionInputHandler(connectionId) {
+    connectionInputHandler(connectionId, opt) {
       this.form.tableName = ''
       this.form.cacheKeys = ''
       this.form.fields = ''
+      this.form.databaseType = opt.data?.definitionPdkId
       this.fieldOptions = []
       this.getTableOptions(connectionId)
     },
@@ -306,7 +297,17 @@ export default {
     submit() {
       this.$refs.form.validate(flag => {
         if (flag) {
-          let { name, connectionId, tableName, cacheKeys, fields, maxMemory, externalStorageId } = this.form
+          let {
+            name,
+            connectionId,
+            connectionName,
+            databaseType,
+            tableName,
+            cacheKeys,
+            fields,
+            maxMemory,
+            externalStorageId
+          } = this.form
           let id = this.taskId
           let params = {
             id,
@@ -314,13 +315,14 @@ export default {
             dag: {
               nodes: [
                 {
-                  type: 'collection',
+                  type: 'table',
                   attrs: {
                     fields: fields.split(',')
                   },
-                  tableName: tableName,
-                  databaseType: 'mongodb',
-                  connectionId: connectionId
+                  tableName,
+                  databaseType,
+                  connectionId,
+                  connectionName
                 },
                 {
                   cacheKeys: cacheKeys,
