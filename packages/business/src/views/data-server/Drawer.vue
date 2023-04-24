@@ -80,7 +80,7 @@
           class="flex-1 mt-4"
           size="small"
           :label="$t('packages_business_data_server_drawer_suoshuyingyong')"
-          prop="kennen"
+          prop="appValue"
         >
           <ListSelect
             v-if="visible"
