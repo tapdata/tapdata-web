@@ -102,7 +102,7 @@
         :label="$t('public_connection_table_structure_update_time')"
       >
         <template slot-scope="scope">
-          {{ scope.row.loadSchemaTime }}
+          {{ scope.row.loadSchemaTimeLabel }}
         </template>
       </ElTableColumn>
       <ElTableColumn width="320" :label="$t('public_operation')">
@@ -410,7 +410,9 @@ export default {
             item.lastUpdateTime = item.last_updated = item.last_updated
               ? dayjs(item.last_updated).format('YY-MM-DD HH:mm:ss')
               : '-'
-            item.loadSchemaTime = item.loadSchemaTime ? dayjs(item.loadSchemaTime).format('YY-MM-DD HH:mm:ss') : '-'
+            item.loadSchemaTimeLabel = item.loadSchemaTime
+              ? dayjs(item.loadSchemaTime).format('YY-MM-DD HH:mm:ss')
+              : '-'
             return item
           })
 
