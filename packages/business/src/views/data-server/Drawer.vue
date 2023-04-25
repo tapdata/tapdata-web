@@ -895,7 +895,7 @@ export default {
     },
     generateHttp() {
       this.form = cloneDeep(this.data)
-      let basePath = uid(11, true)
+      let basePath = uid(11, 'a')
       this.form.basePath = basePath
       this.form.path = `/api/${basePath}`
       this.form.status = 'pending'
