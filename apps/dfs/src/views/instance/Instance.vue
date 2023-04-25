@@ -31,15 +31,6 @@
                   @save="updateName($event, scope.row.id)"
                 ></InlineInput>
               </div>
-              <div class="flex align-items-center">
-                <img
-                  v-if="scope.row.agentType === 'Cloud'"
-                  src="../../../public/images/only_test.png"
-                  alt=""
-                  class="ml-3"
-                  style="height: 18px"
-                />
-              </div>
             </div>
           </template>
         </ElTableColumn>
@@ -228,6 +219,16 @@
             <ElButton
               size="mini"
               type="text"
+              v-if="scope.row.agentType === 'Cloud'"
+              :loading="scope.row.btnLoading.delete"
+              :disabled="renewBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
+              @click="handleRenew(scope.row)"
+              >重启</ElButton
+            >
+            <ElDivider direction="vertical"></ElDivider>
+            <ElButton
+              size="mini"
+              type="text"
               v-if="scope.row.orderInfo && scope.row.orderInfo.chargeProvider === 'Stripe'"
               :loading="scope.row.btnLoading.delete"
               :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
@@ -310,12 +311,17 @@
           </div>
         </div>
         <div class="dialog-btn flex justify-content-end mt-6">
-          <div class="w-50" v-if="showAutoUpgrade">
+          <div class="w-50" v-if="showAutoUpgrade && selectedRow.agentType !== 'Cloud'">
             <ElButton type="primary" :disabled="disabledAutoUpgradeBtn" @click="autoUpgradeFnc">{{
               $t('public_agent_button_auto_upgrade')
             }}</ElButton>
           </div>
-          <div class="text-end w-50">
+          <div class="text-end w-50" v-if="selectedRow.agentType === 'Cloud'">
+            <ElButton type="primary" @click="fullManagementUpgradeFnc">{{
+              $t('public_agent_button_manual_upgrade')
+            }}</ElButton>
+          </div>
+          <div class="text-end w-50" v-else>
             <ElButton type="primary" @click="manualUpgradeFnc">{{ $t('public_agent_button_manual_upgrade') }}</ElButton>
           </div>
         </div>
@@ -976,7 +982,7 @@ export default {
     },
     showUpgradeDialogFnc(row) {
       this.rowClick(row)
-      // windons不支持自动升级
+      // windons 全托管不支持自动升级
       if (this.isWindons(row)) {
         this.manualUpgradeFnc()
         return
@@ -1008,6 +1014,18 @@ export default {
               this.fetch()
             })
         })
+      })
+    },
+    //全托管升级
+    fullManagementUpgradeFnc() {
+      let params = {
+        agentId: this.selectedRow.id,
+        version: this.version //最新版本号
+      }
+      this.$axios.post('api/tcm/orders/change', params).then(() => {
+        this.$message.success(this.$t('agent_auto_upgrade_tip_start'))
+        this.closeDialog()
+        this.fetch()
       })
     },
     manualUpgradeFnc() {
@@ -1140,15 +1158,19 @@ export default {
       }
       return flag
     },
+    // 重启
+    renewBtnDisabled(row) {
+      return row.metric.runningTaskNum > 0
+    },
     showVersionFlag(row) {
       let { status, tmInfo } = row
       return !(status === 'Creating' && !tmInfo?.pingTime)
     },
     showUpgradeIcon(row) {
       let { version } = this
-      if (row.agentType === 'Cloud') {
-        return false
-      }
+      // if (row.agentType === 'Cloud') {
+      //   return false
+      // }
       return !!(version && row?.tmInfo?.pingTime && row?.spec?.version !== version)
     },
     upgradeFlag(row) {
@@ -1231,6 +1253,12 @@ export default {
         chargeProvider: 'FreeTier'
       })
       return flag
+    },
+    //全托管-重启
+    handleRenew(row) {
+      this.$axios.post('api/tcm/agent/restart?agentId=' + row.id).then(() => {
+        this.$message.success(this.$t('public_message_operation_success'))
+      })
     },
     //退订详情费用
     getUnsubscribePrice(row = {}) {

@@ -971,5 +971,5 @@ export default {
   packages_business_external_storage_list_cunchulujing: '存储路径',
   packages_business_external_storage_list_chuangjianwaicun: '创建外存',
   packages_business_external_storage_list_bianjiwaicun: '编辑外存',
-  packages_business_external_storage_list_tishi: '该外存已被 {val1} 个任务调用，请删除或者修改配置后重试',
+  packages_business_external_storage_list_tishi: '该外存已被 {val1} 个任务调用，请删除或者修改配置后重试'
 }
