@@ -82,7 +82,7 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn :label="$t('agent_status')" width="80">
+        <ElTableColumn :label="$t('agent_status')" width="100">
           <template slot-scope="scope">
             <StatusTag type="tag" :status="scope.row.status" default-status="Stopped"></StatusTag>
             <ElTooltip v-if="scope.row.status == 'Stopped'" placement="top">
