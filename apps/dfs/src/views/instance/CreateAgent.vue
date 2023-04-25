@@ -456,7 +456,6 @@
         >
       </template>
     </div>
-    <transferDialog :price="formatPrice(currency)" :visible.sync="showTransferDialogVisible"></transferDialog>
   </section>
 </template>
 
@@ -467,12 +466,11 @@ import { getPaymentMethod, getSpec } from '../instance/utils'
 import { CURRENCY_SYMBOL_MAP, TIME_MAP, CURRENCY_MAP } from '@tap/business'
 import i18n from '@/i18n'
 import { dayjs } from '@tap/business/src/shared/dayjs'
-import transferDialog from '../agent-download/transferDialog'
 
 export default {
   name: 'CreatAgent',
   inject: ['buried'],
-  components: { VTable, transferDialog },
+  components: { VTable },
   data() {
     return {
       activeStep: 1,
@@ -576,8 +574,7 @@ export default {
           width: 120
         }
       ],
-      currentPackage: '',
-      showTransferDialogVisible: false //转测信息弹窗
+      currentPackage: ''
     }
   },
 
@@ -633,14 +630,15 @@ export default {
 
     if (currencyType) {
       this.currencyType = currencyType
-      this.defaultCurrencyType = currencyType
     }
   },
   methods: {
     prevStep() {
       this.activeStep--
-      if (this.agentDeploy === 'aliyun' && this.activeStep === 2) {
+      //授权码 特殊的第二步
+      if (this.agentDeploy === 'aliyun' && this.activeStep === 1) {
         this.agentDeploy = 'selfHost'
+        this.activeStep++
       }
     },
     next() {
@@ -975,7 +973,7 @@ export default {
         .post('api/tcm/orders', params)
         .then(data => {
           //免费实例（授权码）-半托管-直接部署页面
-          if (chargeProvider === 'FreeTier' || (this.agentDeploy === 'aliyun' && row.agentType === 'Local')) {
+          if (data.chargeProvider === 'FreeTier' || (data.chargeProvider === 'Aliyun' && row.agentType === 'Local')) {
             this.finish()
             let downloadUrl = window.App.$router.resolve({
               name: 'FastDownload',
@@ -983,17 +981,23 @@ export default {
                 id: data?.agentId
               }
             })
-            window.open(downloadUrl.href, '_blank')
-          } else if (this.agentDeploy === 'aliyun' && row.agentType === 'Cloud') {
+            window.open(downloadUrl.href, '_self')
+          } else if (data.chargeProvider === 'Aliyun' && row.agentType === 'Cloud') {
             //授权码 全托管-打开Agent管理页面
-            window.open(agentUrl.href, '_blank')
+            window.open(agentUrl.href, '_self')
           } else if (paymentType === 'online') {
             //在线支付 打开付款页面
             this.finish()
-            window.open(data?.paymentUrl, '_blank')
+            window.open(data?.paymentUrl, '_self')
           } else {
             //转账支付 打开支付详情弹窗
-            this.showTransferDialogVisible = true
+            this.$router.push({
+              name: 'Instance',
+              params: {
+                showTransferDialogVisible: true,
+                price: this.formatPrice(this.currency)
+              }
+            })
           }
           this.buried('newAgentStripe', '', {
             type,

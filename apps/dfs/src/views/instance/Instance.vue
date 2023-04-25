@@ -394,6 +394,8 @@
         @create="createDialog = true"
         @new-agent="handleNewAgent"
       ></SelectListDialog>
+      <!--转账支付弹窗信息--->
+      <transferDialog :price="price" :visible.sync="showTransferDialogVisible"></transferDialog>
       <!-- 新的创建实例 -->
       <SubscriptionModelDialog :visible.sync="subscriptionModelVisible"></SubscriptionModelDialog>
       <ElDialog :visible.sync="showUnsubscribeDetailVisible" :title="$t('dfs_instance_instance_tuidingshili')">
@@ -487,6 +489,7 @@ import Time from '@tap/shared/src/time'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 import { getSpec, getPaymentMethod } from './utils'
 import SubscriptionModelDialog from '@/views/agent-download/SubscriptionModelDialog'
+import transferDialog from '@/views/agent-download/transferDialog'
 
 const CreateDialog = () => import(/* webpackChunkName: "CreateInstanceDialog" */ './Create')
 const SelectListDialog = () => import(/* webpackChunkName: "SelectListInstanceDialog" */ './SelectList')
@@ -503,6 +506,7 @@ export default {
     VTable,
     CreateDialog,
     SelectListDialog,
+    transferDialog,
     SubscriptionModelDialog
   },
   inject: ['buried'],
@@ -544,6 +548,9 @@ export default {
       selectListType: 'code',
       subscriptionModelVisible: false,
       showUnsubscribeDetailVisible: false,
+      //转账支付
+      showTransferDialogVisible: false,
+      price: 0,
       loadingCancelSubmit: false,
       paidDetailList: [],
       form: {
@@ -625,6 +632,12 @@ export default {
       if (route.name === 'Instance') {
         let oldQuery = { ...oldRoute.query, detailId: undefined }
         let query = { ...route.query, detailId: undefined }
+        let params = { ...route.params }
+        if (params?.showTransferDialogVisible) {
+          this.showTransferDialogVisible = params?.showTransferDialogVisible
+          this.price = params?.price
+          return
+        }
         let queryStr = JSON.stringify(query)
         if (JSON.stringify(oldQuery) === queryStr) return
         this.searchParams.status = query.status || ''
@@ -1092,7 +1105,9 @@ export default {
         .catch(() => {})
     },
     handleCreateAgent() {
-      this.subscriptionModelVisible = true
+      this.$router.push({
+        name: 'createAgent'
+      })
       this.buried('newAgentStripeDialog')
     },
     // 创建Agent
