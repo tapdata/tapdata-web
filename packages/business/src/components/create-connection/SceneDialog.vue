@@ -29,12 +29,17 @@
       </template>
       <template v-else>
         <IconButton @click="showForm = false" class="mr-2">left</IconButton>
-        <DatabaseIcon class="mr-2" :size="24" :item="selected"></DatabaseIcon>
-        <span>{{ selected.name }}</span>
+        <DatabaseIcon class="mr-2" :size="24" :item="formParams"></DatabaseIcon>
+        <span>{{ formParams.name }}</span>
       </template>
     </div>
     <div v-if="!showForm" class="flex border-top flex-1 min-h-0">
-      <div class="flex flex-column border-end scene-name-list-wrap overflow-x-hidden pt-4 pb-2">
+      <div
+        class="flex flex-column border-end scene-name-list-wrap overflow-x-hidden pt-4 pb-2"
+        :class="{
+          'is-en': $i18n.locale === 'en'
+        }"
+      >
         <div class="scene-name-list overflow-y-auto">
           <div
             class="scene-name-item px-4 rounded-4 user-select-none ellipsis cursor-pointer"
@@ -127,7 +132,10 @@ export default {
   data() {
     return {
       search: '',
-      formParams: {},
+      formParams: {
+        name: '',
+        pdkHash: null
+      },
       selected: {},
       showForm: false,
       timer: null,
@@ -284,7 +292,7 @@ export default {
       this.$emit('update:selectorType', type.split('-').pop())
       this.showDialog = true
       this.$nextTick(() => {
-        this.formParams = { pdkHash }
+        this.formParams.pdkHash = pdkHash
         this.showForm = true
       })
     }
@@ -294,7 +302,7 @@ export default {
     getIcon,
     init() {
       this.showForm = false
-      this.formParams = {}
+      Object.assign(this.formParams, { name: '', pdkHash: null })
       this.activeTab = ''
     },
 
@@ -308,13 +316,17 @@ export default {
     },
 
     handleSelect(item) {
+      if (this.selectorType === 'source_and_target') {
+        this.$emit('selected', item)
+        return
+      }
       this.selected = item
       switch (this.activeTab) {
         case 'apiServices':
           // TODO apiServices
           break
         default:
-          this.formParams = { pdkHash: item.pdkHash }
+          this.formParams = { pdkHash: item.pdkHash, name: item.name }
           break
       }
       this.showForm = true
@@ -350,7 +362,10 @@ export default {
       }
       if (!noLoading) this.loading = true
       const res = await databaseTypesApi.getDatabases({ filter: JSON.stringify(params) })
-      const data = res?.filter(t => t.connectionType.includes(this.selectorType) && !!t.pdkHash) || []
+      const data =
+        this.selectorType !== 'source_and_target'
+          ? res?.filter(t => t.connectionType.includes(this.selectorType) && !!t.pdkHash) || []
+          : res
       this.database = data
       this.loading = false
     },
@@ -414,6 +429,10 @@ export default {
 
     .scene-name-list-wrap {
       width: 196px;
+
+      &.is-en {
+        width: 218px;
+      }
     }
 
     .scene-name-list {

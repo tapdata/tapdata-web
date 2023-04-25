@@ -153,11 +153,16 @@
       </ElTableColumn>
     </TablePage>
     <Preview ref="preview" @test="testConnection"></Preview>
-    <DatabaseTypeDialog
+    <!--    <DatabaseTypeDialog
       :dialogVisible="dialogDatabaseTypeVisible"
       @dialogVisible="handleDialogDatabaseTypeVisible"
       @databaseType="handleDatabaseType"
-    ></DatabaseTypeDialog>
+    ></DatabaseTypeDialog>-->
+    <SceneDialog
+      :visible.sync="dialogDatabaseTypeVisible"
+      selector-type="source_and_target"
+      @selected="handleDatabaseType"
+    ></SceneDialog>
     <Test ref="test" :visible.sync="dialogTestVisible" :formData="testData" @returnTestData="returnTestData"></Test>
     <ElDialog :title="$t('public_message_title_prompt')" width="40%" :visible.sync="connectionTaskDialog">
       <span>{{ $t('packages_business_connections_list_gailianjieyibei', { val1: connectionTaskListTotal }) }}</span>
@@ -193,11 +198,12 @@ import Preview from './Preview'
 import Test from './Test'
 import { defaultModel, verify, getConnectionIcon } from './util'
 import { CONNECTION_STATUS_MAP, CONNECTION_TYPE_MAP } from '@tap/business/src/shared'
+import SceneDialog from '../../components/create-connection/SceneDialog.vue'
 
 let timeout = null
 
 export default {
-  components: { TablePage, DatabaseTypeDialog, Preview, Test, VIcon, SchemaProgress, FilterBar },
+  components: { SceneDialog, TablePage, DatabaseTypeDialog, Preview, Test, VIcon, SchemaProgress, FilterBar },
   inject: ['checkAgent', 'buried'],
   data() {
     return {

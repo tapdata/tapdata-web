@@ -70,7 +70,7 @@ export default {
   header_log_out_title: 'Logout',
   header_log_out_tip: 'Are you sure you want to log out? ',
   header_notify: 'Notification',
-  header_notification_content: 'Notification Content',
+  header_notification_content: 'Notifications',
   header_your: 'Your ',
   header_no_notice: 'No notice yet',
   header_setting: 'Settings',
