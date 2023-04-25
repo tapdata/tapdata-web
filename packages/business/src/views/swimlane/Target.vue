@@ -106,7 +106,7 @@
           </ElButton>
         </span>
       </ElDialog>
-      <CreateRestApi v-model="apiDialog.visible"></CreateRestApi>
+      <CreateRestApi v-model="apiDialog.visible" :params="apiDialog"></CreateRestApi>
       <DataServerDrawer ref="drawer" :host="apiServerHost"></DataServerDrawer>
     </div>
   </div>
@@ -377,10 +377,17 @@ export default {
       if (!draggingObjects.length) return
       const object = draggingObjects[0]
 
-      if (item.type === 'service') {
+      if (!this.allowDrop) return
+
+      if (item.LDP_TYPE === 'app') {
+        if (object.data.type === 'table') {
+          this.apiDialog.from = object.parent.data
+          this.apiDialog.tableName = object.data.name
+          this.apiDialog.to = item
+        }
+
         this.showApiDialog()
       } else {
-        if (!this.allowDrop) return
         console.log('object.data', object.data) // eslint-disable-line
         if (object.data.type === 'connection') {
           this.dialogConfig.from = object.data
