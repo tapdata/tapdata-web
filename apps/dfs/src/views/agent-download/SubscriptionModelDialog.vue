@@ -178,7 +178,10 @@
                   <span>{{ agentTypeMap[row.agentType || 'local'] }}</span>
                 </template>
                 <template #operation="{ row }">
-                  <ElButton type="text" @click="handleNewAgentActiveCode(row)">{{
+                  <ElButton v-if="row.agentType !== 'Cloud'" type="text" @click="handleNewAgentActiveCode(row)"
+                    >立即部署</ElButton
+                  >
+                  <ElButton v-else type="text" @click="handleNewAgentActiveCode(row)">{{
                     $t('public_button_create') + ' ' + $t('public_agent')
                   }}</ElButton>
                 </template>
@@ -250,7 +253,7 @@
             </div>
             <div class="flex mt-4">
               <span class="font-color-light inline-block form-label">地区</span>
-              <ElRadioGroup v-model="region" class="flex gap-4">
+              <ElRadioGroup v-model="region" class="flex gap-4" @input="changeRegion">
                 <ElRadio
                   v-for="(item, index) in cloudDetail"
                   :key="index"
@@ -396,8 +399,8 @@
                 {{ selected.label }}
               </span>
             </ElFormItem>
-            <ElFormItem label="云厂商|可用区:" v-if="agentDeploy !== 'selfHost' && currentAliyunAgentType === 'Cloud'">
-              <span class="font-color-dark"> {{ provider }} | {{ region }} </span>
+            <ElFormItem label="云厂商|可用区:" v-if="agentDeploy !== 'selfHost' || currentAliyunAgentType === 'Cloud'">
+              <span class="font-color-dark"> {{ cloudProviderName }} | {{ regionName }} </span>
             </ElFormItem>
             <ElFormItem :label="$t('dfs_instance_create_jieshouzhangdande')" prop="email" :rules="getEmailRules()">
               <ElInput v-model="form.email" :placeholder="getPlaceholder()" style="width: 300px"></ElInput>
@@ -514,6 +517,8 @@ export default {
       cloudDetail: [],
       region: '',
       provider: '',
+      regionName: '',
+      cloudProviderName: '',
       specificationItems: [],
       specification: '',
       currentAliyunCode: '',
@@ -705,8 +710,15 @@ export default {
     },
     //切换云厂商
     changeProvider() {
-      this.cloudDetail = this.cloudProviderList.filter(it => it.cloudProvider === this.provider)?.[0].cloudDetail || []
+      let cloudProvider = this.cloudProviderList.filter(it => it.cloudProvider === this.provider) || []
+      this.cloudProviderName = cloudProvider?.[0]?.cloudProviderName
+      this.cloudDetail = cloudProvider?.[0].cloudDetail || []
       this.region = this.cloudDetail?.[0]?.region
+      this.changeRegion()
+    },
+    changeRegion() {
+      let region = this.cloudDetail.filter(it => it.region === this.region) || []
+      this.regionName = region?.[0]?.regionName
     },
     //切换订阅方式
     handleChange(item = {}) {
@@ -1062,17 +1074,18 @@ export default {
       this.currentAliyunAgentType = row?.agentType
       if (row?.agentType === 'Cloud') {
         //全托管，跳转到下一步
-        this.saveCrrentAliyun(row)
+        this.saveCurrentAliyun(row)
       } else {
         //半托管直接创建订单
         this.submit(row)
       }
     },
     //授权码下一步数据保留
-    saveCrrentAliyun(row) {
+    saveCurrentAliyun(row) {
       this.activeStep++
       this.currentAliyunCode = row
       this.specificationAliyunCode = row.spec
+      this.specificationAliyunCode.name = this.specificationAliyunCode.name?.toUpperCase()
       this.agentSizeCap = this.updateAgentCap(this.specificationAliyunCode.cpu, this.specificationAliyunCode.memory)
     },
     //激活
@@ -1088,7 +1101,7 @@ export default {
         .then(data => {
           if (data.licenseStatus === 'ACTIVATED') {
             if (data?.agentType === 'Cloud') {
-              this.saveCrrentAliyun(data)
+              this.saveCurrentAliyun(data)
             } else {
               this.submit(data)
             }
