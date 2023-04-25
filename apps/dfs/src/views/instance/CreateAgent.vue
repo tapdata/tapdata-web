@@ -379,7 +379,7 @@
                   {{ specMap[currentSpecName] || currentSpecName }}
                 </span>
               </ElFormItem>
-              <ElFormItem :label="$t('dfs_instance_instance_dingyuefangshi') + ':'">
+              <ElFormItem v-if="agentDeploy !== 'aliyun'" :label="$t('dfs_instance_instance_dingyuefangshi') + ':'">
                 <span class="font-color-dark">
                   {{ selected.label }}
                 </span>
