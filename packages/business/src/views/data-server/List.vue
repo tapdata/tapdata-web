@@ -18,12 +18,13 @@
       <template #operation="{ row }">
         <ElButton
           v-if="row.status !== 'active'"
+          key="public"
           :disabled="row.status !== 'pending'"
           type="text"
           @click="changeStatus(row)"
           >{{ $t('public_button_public') }}</ElButton
         >
-        <ElButton v-if="row.status === 'active'" type="text" @click="changeStatus(row)">{{
+        <ElButton v-if="row.status === 'active'" type="text" key="revoke" @click="changeStatus(row)">{{
           $t('public_button_revoke')
         }}</ElButton>
         <ElDivider direction="vertical"></ElDivider>
