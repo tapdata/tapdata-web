@@ -964,5 +964,6 @@ export default {
   packages_business_external_storage_list_cunchulujing: '存儲路徑',
   packages_business_external_storage_list_chuangjianwaicun: '創建外存',
   packages_business_external_storage_list_bianjiwaicun: '編輯外存',
-  packages_business_external_storage_list_tishi: '該外存已被 {val1} 调用，請刪除或修改配置後重試。'
+  packages_business_external_storage_list_tishi: '該外存已被 {val1} 调用，請刪除或修改配置後重試。',
+  packages_business_api_application: 'API 應用'
 }

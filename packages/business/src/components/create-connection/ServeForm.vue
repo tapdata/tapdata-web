@@ -3,9 +3,10 @@
     <SchemaToForm
       ref="schemaToForm"
       :schema="schemaData"
-      wrapperWidth="600px"
-      :colon="true"
-      label-width="160"
+      :colon="false"
+      layout="vertical"
+      :label-width="null"
+      :wrapper-col="12"
       class="schema-form flex-fill"
     ></SchemaToForm>
     <div class="footer-operation pt-4">
@@ -21,6 +22,7 @@
 import i18n from '@tap/i18n'
 
 import { SchemaToForm } from '@tap/form'
+import { appApi } from '@tap/api'
 
 export default {
   name: 'ServeForm',
@@ -58,16 +60,24 @@ export default {
     getForm() {
       let result = {
         type: 'object',
-        'x-component-props': {
-          width: 500
-        },
         properties: {
-          name: {
+          value: {
             type: 'string',
-            title: i18n.t('packages_business_create_connection_serveform_fenleimingcheng'),
+            title: i18n.t('public_name'),
             required: true,
             'x-decorator': 'FormItem',
             'x-component': 'Input'
+          },
+          desc: {
+            type: 'string',
+            title: i18n.t('public_description'),
+            'x-decorator': 'FormItem',
+            'x-component': 'Input.TextArea',
+            'x-component-props': {
+              autosize: {
+                minRows: 2
+              }
+            }
           }
         }
       }
@@ -77,8 +87,17 @@ export default {
     submit(addNext = false) {
       this.schemaFormInstance?.validate().then(() => {
         this.submitBtnLoading = true
-        // TODO 新增分类前，检查是否已存在 this.$emit(addNext ? 'saveAndMore' : 'success', data)
-        this.submitBtnLoading = false
+        const { values } = this.schemaFormInstance
+        console.log('this.schemaFormInstance', values, this.schemaFormInstance) // eslint-disable-line
+        appApi
+          .post(values)
+          .then(data => {
+            data.LDP_TYPE = 'app'
+            this.$emit(addNext ? 'saveAndMore' : 'success', data)
+          })
+          .finally(() => {
+            this.submitBtnLoading = false
+          })
       })
     },
 

@@ -1016,4 +1016,5 @@ export default {
   packages_business_external_storage_list_bianjiwaicun: 'Edit External Storage',
   packages_business_external_storage_list_tishi:
     'This external storage has been called by {val1} tasks, please delete or modify the configuration and try again.',
+  packages_business_api_application: 'API Application'
 }
