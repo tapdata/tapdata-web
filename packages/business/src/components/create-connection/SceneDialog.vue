@@ -67,7 +67,9 @@
                 <div class="connector-item-title font-color-dark flex align-center">
                   <span class="ellipsis mr-1">{{ item.name }}</span>
                   <VIcon v-if="item.qcType === 'GA'" size="24" class="ml-auto color-success">verified</VIcon>
-                  <ElTag v-else-if="item.qcType" size="mini" class="text-uppercase ml-auto">{{ item.qcType }}</ElTag>
+                  <ElTag v-else-if="item.qcType" size="mini" class="text-uppercase ml-auto px-1 connector-item-tag">{{
+                    item.qcType
+                  }}</ElTag>
                 </div>
               </div>
             </div>
@@ -153,10 +155,10 @@ export default {
           name: i18n.t('packages_business_create_connection_scenedialog_tuijianchangjing'),
           types: ['BigQuery', 'Tablestore', 'MongoDB', 'Redis', 'SelectDB']
         },
-        /*{
+        {
           name: 'API 发布',
           types: ['RESTful API', 'GraphQL']
-        },*/
+        },
         {
           name: i18n.t('packages_business_create_connection_scenedialog_rushucang'),
           types: [
@@ -465,6 +467,11 @@ export default {
       &-title {
         font-size: 15px;
         line-height: 38px;
+      }
+
+      &-tag {
+        height: 18px;
+        line-height: 16px;
       }
 
       &:hover {
