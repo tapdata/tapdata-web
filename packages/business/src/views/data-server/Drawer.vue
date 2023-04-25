@@ -554,7 +554,7 @@ export default {
           {
             required: true,
             message: i18n.t('packages_business_data_server_drawer_qingxuanzesuoshu'),
-            trigger: ['blur', 'change']
+            trigger: 'blur'
           }
         ]
       },
