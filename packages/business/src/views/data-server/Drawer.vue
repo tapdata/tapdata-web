@@ -82,12 +82,7 @@
           :label="$t('packages_business_data_server_drawer_suoshuyingyong')"
           prop="appValue"
         >
-          <ListSelect
-            v-if="visible"
-            :value.sync="form.appValue"
-            :label.sync="form.appLabel"
-            :disabled="!isEdit"
-          ></ListSelect>
+          <ListSelect :value.sync="form.appValue" :label.sync="form.appLabel" :disabled="!isEdit"></ListSelect>
         </ElFormItem>
 
         <!-- 基础信息 -->
@@ -554,7 +549,7 @@ export default {
           {
             required: true,
             message: i18n.t('packages_business_data_server_drawer_qingxuanzesuoshu'),
-            trigger: 'blur'
+            trigger: ['blur', 'change']
           }
         ]
       },
