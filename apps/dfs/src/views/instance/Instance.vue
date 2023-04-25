@@ -39,6 +39,11 @@
             <span>{{ scope.row.specLabel }}</span>
           </template>
         </ElTableColumn>
+        <ElTableColumn width="80px" label="托管方式">
+          <template slot-scope="scope">
+            <span>{{ agentTypeMap[scope.row.agentType] }}</span>
+          </template>
+        </ElTableColumn>
         <ElTableColumn width="90px" :label="$t('dfs_instance_instance_dingyuefangshi')">
           <template slot-scope="scope">
             <span :class="{ 'color-success': scope.row.chargeProvider === 'FreeTier' }">{{
@@ -487,7 +492,7 @@ import { VIcon, FilterBar, VTable } from '@tap/component'
 import { CURRENCY_SYMBOL_MAP, dayjs } from '@tap/business'
 import Time from '@tap/shared/src/time'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
-import { getSpec, getPaymentMethod } from './utils'
+import { getSpec, getPaymentMethod, AGENT_TYPE_MAP } from './utils'
 import SubscriptionModelDialog from '@/views/agent-download/SubscriptionModelDialog'
 import transferDialog from '@/views/agent-download/transferDialog'
 
@@ -527,6 +532,7 @@ export default {
       },
       order: 'createAt desc',
       statusMap: INSTANCE_STATUS_MAP,
+      agentTypeMap: AGENT_TYPE_MAP,
       upgradeDialog: false,
       upgradeErrorDialog: false,
       selectedRow: {
@@ -1175,7 +1181,7 @@ export default {
     },
     // 重启
     renewBtnDisabled(row) {
-      return row.metric.runningTaskNum > 0
+      return row.metric.runningTaskNum > 0 || row.status !== 'Running'
     },
     showVersionFlag(row) {
       let { status, tmInfo } = row

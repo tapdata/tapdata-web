@@ -198,6 +198,9 @@
         ref="table"
         class="mt-4"
       >
+        <template #agentType="{ row }">
+          <span>{{ agentTypeMap[row.agentType || 'local'] }}</span>
+        </template>
         <template #bindAgent="{ row }">
           <ElLink v-if="row.agentId" type="primary" @click="handleAgent(row)">{{
             $t('dfs_instance_selectlist_yibangding') + ' ' + $t('public_agent') + ' : ' + row.agentId
@@ -560,7 +563,7 @@ import { urlToBase64 } from '@/util'
 import CryptoJS from 'crypto-js'
 import dayjs from 'dayjs'
 import { VTable } from '@tap/component'
-import { getSpec, getPaymentMethod } from '../instance/utils'
+import { getSpec, getPaymentMethod, AGENT_TYPE_MAP } from '../instance/utils'
 import { ORDER_STATUS_MAP, CURRENCY_SYMBOL_MAP, NUMBER_MAP, TIME_MAP } from '@tap/business'
 import { openUrl } from '@tap/shared'
 
@@ -572,6 +575,7 @@ export default {
     return {
       showTransferDialogVisible: false,
       pricePay: '',
+      agentTypeMap: AGENT_TYPE_MAP,
       userData: {
         username: '',
         nickname: '',
@@ -649,6 +653,10 @@ export default {
           prop: 'quantity'
         },
         {
+          label: '托管方式',
+          prop: 'agentDeploy'
+        },
+        {
           label: i18n.t('dfs_user_center_jine'),
           prop: 'priceLabel'
         },
@@ -676,6 +684,11 @@ export default {
           label: i18n.t('dfs_user_center_jihuoshijian2'),
           prop: 'activateTimeLabel',
           width: 320
+        },
+        {
+          label: '托管方式',
+          prop: 'agentType',
+          slotName: 'agentType'
         },
         {
           label: i18n.t('dfs_user_center_guoqishijian2'),
@@ -1088,6 +1101,7 @@ export default {
                   periodUnit,
                   period
                 })
+                t.agentDeploy = this.agentTypeMap[t.agentDeploy || 'selfHost']
                 t.content = `${t.subscriptionMethodLabel} ${getSpec(spec)} ${i18n.t('public_agent')}`
                 t.periodLabel =
                   t.status === 'unPay'

@@ -165,6 +165,9 @@
                   class="subscript-table"
                   max-height="280px"
                 >
+                  <template #agentType="{ row }">
+                    <span>{{ agentTypeMap[row.agentType || 'local'] }}</span>
+                  </template>
                   <template #operation="{ row }">
                     <ElButton type="text" @click="handleNewAgentActiveCode(row)">{{
                       $t('public_button_create') + ' ' + $t('public_agent')
@@ -462,7 +465,7 @@
 <script>
 import { isStr, isObj, uniqueArr } from '@tap/shared'
 import { VTable } from '@tap/component'
-import { getPaymentMethod, getSpec } from '../instance/utils'
+import { getPaymentMethod, getSpec, AGENT_TYPE_MAP } from '../instance/utils'
 import { CURRENCY_SYMBOL_MAP, TIME_MAP, CURRENCY_MAP } from '@tap/business'
 import i18n from '@/i18n'
 import { dayjs } from '@tap/business/src/shared/dayjs'
@@ -527,6 +530,7 @@ export default {
         }
       ],
       CURRENCY_MAP: CURRENCY_MAP,
+      agentTypeMap: AGENT_TYPE_MAP,
       licenseCode: '',
       saveLoading: false,
       submitLoading: false,
@@ -561,7 +565,8 @@ export default {
         },
         {
           label: '托管方式',
-          prop: 'agentType'
+          prop: 'agentType',
+          slotName: 'agentType'
         },
         {
           label: i18n.t('dfs_instance_selectlist_bangdingshilizhuang'),

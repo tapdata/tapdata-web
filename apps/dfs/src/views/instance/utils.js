@@ -30,3 +30,11 @@ export function getPaymentMethod(item = {}, chargeProvider = '') {
   if (periodUnit === 'year') return i18n.t('dfs_instance_utils_one_year_only')
   return i18n.t('dfs_instance_utils_one_month_only')
 }
+export const AGENT_TYPE_MAP = {
+  local: '半托管',
+  cloud: '全托管',
+  selfHost: '半托管',
+  fullManagement: '全托管',
+  Local: '半托管',
+  Cloud: '全托管'
+}
