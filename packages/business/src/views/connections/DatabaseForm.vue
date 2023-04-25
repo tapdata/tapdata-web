@@ -86,10 +86,11 @@
       ></GitBook>
     </div>
     <Test ref="test" :visible.sync="dialogTestVisible" :formData="model" @returnTestData="returnTestData"></Test>
-    <DatabaseTypeDialog
-      :dialogVisible.sync="dialogDatabaseTypeVisible"
-      @databaseType="handleDatabaseType"
-    ></DatabaseTypeDialog>
+    <SceneDialog
+      :visible.sync="dialogDatabaseTypeVisible"
+      selector-type="source_and_target"
+      @selected="handleDatabaseType"
+    ></SceneDialog>
     <el-dialog
       :title="$t('packages_business_connection_rename')"
       :close-on-click-modal="false"
@@ -128,12 +129,12 @@ import resize from '@tap/component/src/directives/resize'
 
 import Test from './Test'
 import { getConnectionIcon } from './util'
-import DatabaseTypeDialog from './DatabaseTypeDialog'
 import { ConnectionDebug } from './ConnectionDebug'
+import SceneDialog from '../../components/create-connection/SceneDialog.vue'
 
 export default {
   name: 'DatabaseForm',
-  components: { Test, DatabaseTypeDialog, VIcon, SchemaToForm, GitBook, ConnectionDebug },
+  components: { SceneDialog, Test, VIcon, SchemaToForm, GitBook, ConnectionDebug },
   inject: ['checkAgent', 'buried'],
   directives: {
     resize
