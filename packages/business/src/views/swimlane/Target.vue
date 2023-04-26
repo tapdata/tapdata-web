@@ -28,7 +28,7 @@
         <div
           v-for="item in filterList"
           :key="item.id"
-          class="wrap__item rounded-4 mb-3"
+          class="wrap__item rounded-lg mb-3"
           @dragover="handleDragOver"
           @dragenter.stop="handleDragEnter"
           @dragleave.stop="handleDragLeave"

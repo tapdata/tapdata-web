@@ -64,7 +64,7 @@
           <div
             v-for="item in sceneDatabases"
             :key="item.pdkId"
-            class="connector-item rounded-4 p-3 overflow-hidden bg-white clickable"
+            class="connector-item rounded-lg p-3 overflow-hidden bg-white clickable"
             :class="{ active: item.pdkId === selected.pdkId }"
             @click="handleSelect(item)"
           >
@@ -89,7 +89,7 @@
           <div
             v-for="item in specialScene[currentScene]"
             :key="item.key"
-            class="connector-item rounded-4 p-3 overflow-hidden bg-white clickable"
+            class="connector-item rounded-lg p-3 overflow-hidden bg-white clickable"
             @click="handleSelectSpecial(item)"
           >
             <div class="flex gap-3">
