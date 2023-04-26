@@ -284,7 +284,7 @@ export default {
   packages_dag_src_editor_join: 'Join',
   packages_dag_src_migrationeditor_jSchuli: 'Enhanced JS',
   packages_dag_src_migrationeditor_jSchuli_standard: 'Standard JS',
-  packages_dag_src_migrationeditor_ziduanbianji: 'Field Edit',
+  packages_dag_src_migrationeditor_ziduanbianji: 'Field Editor',
   packages_dag_src_migrationeditor_biaobianji: 'Table Editor',
   packages_dag_src_migrationeditor_zhuangtaijanting: 'Status monitoring',
   packages_dag_src_migrationmonitor_gaijiedianbuzhi: 'This node does not support',
