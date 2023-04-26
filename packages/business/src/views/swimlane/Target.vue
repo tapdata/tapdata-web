@@ -39,7 +39,7 @@
               <div class="flex align-center gap-2 overflow-hidden">
                 <VIcon size="20">mini-app</VIcon>
                 <span class="font-color-normal fw-sub fs-6 ellipsis lh-base" :title="item.value">{{ item.value }}</span>
-                <IconButton class="ml-auto" sm>open-in-new</IconButton>
+                <!--<IconButton class="ml-auto" sm>open-in-new</IconButton>-->
               </div>
               <div v-if="item.desc" class="mt-2 font-color-light">{{ item.desc }}</div>
             </div>
