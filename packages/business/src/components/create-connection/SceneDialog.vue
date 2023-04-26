@@ -29,7 +29,14 @@
       </template>
       <template v-else>
         <IconButton @click="showForm = false" class="mr-2">left</IconButton>
-        <DatabaseIcon class="mr-2" :size="24" :item="formParams"></DatabaseIcon>
+        <DatabaseIcon
+          key="databaseIcon"
+          v-if="formParams.pdkHash"
+          class="mr-2"
+          :size="24"
+          :item="formParams"
+        ></DatabaseIcon>
+        <VIcon v-else key="icon" class="mr-2" :size="24">{{ formParams.icon }}</VIcon>
         <span>{{ formParams.name }}</span>
       </template>
     </div>
@@ -78,15 +85,34 @@
             </div>
           </div>
         </div>
+        <div v-else-if="specialScene[currentScene]" class="connector-list grid gap-4">
+          <div
+            v-for="item in specialScene[currentScene]"
+            :key="item.key"
+            class="connector-item rounded-4 p-3 overflow-hidden bg-white clickable"
+            @click="handleSelectSpecial(item)"
+          >
+            <div class="flex gap-3">
+              <VIcon size="38">{{ item.icon }}</VIcon>
+              <div class="connector-item-content flex-1 overflow-hidden">
+                <div class="connector-item-title font-color-dark flex align-center">
+                  <span class="ellipsis mr-1">{{ item.name }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <VEmpty v-else></VEmpty>
       </div>
     </div>
     <div v-else class="form__content flex flex-column h-100 overflow-hidden border-top">
       <ServeForm
-        v-if="['apiServices'].includes(activeTab)"
+        v-if="!formParams.pdkHash"
         :params="formParams"
         :selector-type="selectorType"
         class="flex-fill"
+        @success="handleSuccess"
+        @saveAndMore="handleSaveAndMore"
       ></ServeForm>
       <ConnectionForm
         v-else
@@ -156,8 +182,9 @@ export default {
           types: ['BigQuery', 'Tablestore', 'MongoDB', 'Redis', 'SelectDB']
         },
         {
-          name: 'API 发布',
-          types: ['RESTful API', 'GraphQL']
+          key: 'api',
+          name: 'API 发布' /*,
+          types: ['RESTful API', 'GraphQL']*/
         },
         {
           name: i18n.t('packages_business_create_connection_scenedialog_rushucang'),
@@ -231,7 +258,16 @@ export default {
           name: 'My Connectors',
           key: 'Custom'
         }
-      ]
+      ],
+      specialScene: {
+        api: [
+          {
+            key: 'apiApp',
+            icon: 'mini-app',
+            name: this.$t('packages_business_api_application')
+          }
+        ]
+      }
     }
   },
   computed: {
@@ -253,7 +289,7 @@ export default {
 
       if (this.selectorType === 'target') {
         const types = this.sceneMap[this.currentScene]
-        return this.database.filter(db => types.includes(db.type))
+        return types?.length ? this.database.filter(db => types.includes(db.type)) : []
       }
 
       return this.database.filter(db => db.tags?.includes(this.currentScene))
@@ -322,15 +358,14 @@ export default {
         this.$emit('selected', item)
         return
       }
+
+      Object.assign(this.formParams, { name: item.name, icon: null, pdkHash: item.pdkHash })
       this.selected = item
-      switch (this.activeTab) {
-        case 'apiServices':
-          // TODO apiServices
-          break
-        default:
-          this.formParams = { pdkHash: item.pdkHash, name: item.name }
-          break
-      }
+      this.showForm = true
+    },
+
+    handleSelectSpecial(item) {
+      Object.assign(this.formParams, { name: item.name, icon: item.icon, pdkHash: null })
       this.showForm = true
     },
 

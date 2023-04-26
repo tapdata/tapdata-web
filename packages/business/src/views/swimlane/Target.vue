@@ -34,53 +34,30 @@
           @dragleave.stop="handleDragLeave"
           @drop.stop="handleDrop($event, item)"
         >
-          <template v-if="item.type === 'service'">
-            <div class="item__header flex p-3">
-              <ElImage style="width: 20px; height: 20px" class="item__icon mt-1 flex-shrink-0" :src="restApiIcon" />
-              <div class="flex-fill ml-2">
-                <div class="flex justify-content-between">
-                  <span class="font-color-normal fw-sub fs-6">{{ item.name }}</span>
-                </div>
-                <div class="mt-2 font-color-light">A set of APIs for 3rd party integration with Tapdata Cloud</div>
+          <template v-if="item.LDP_TYPE === 'app'">
+            <div class="item__header p-3">
+              <div class="flex align-center gap-2 overflow-hidden">
+                <VIcon size="20">mini-app</VIcon>
+                <span class="font-color-normal fw-sub fs-6 ellipsis lh-base" :title="item.value">{{ item.value }}</span>
+                <IconButton class="ml-auto" sm>open-in-new</IconButton>
               </div>
+              <div v-if="item.desc" class="mt-2 font-color-light">{{ item.desc }}</div>
             </div>
             <div class="item__content position-relative p-2">
               <div class="task-list">
-                <div class="task-list-content">
-                  <div v-for="api in item.apiList" :key="api.name" class="task-list-item flex align-center">
-                    <div class="p-1 ellipsis flex-1 align-center">
-                      <a
-                        class="el-link el-link--primary w-100 justify-content-start"
-                        title="{task.name}"
-                        @click="handleDetailApi(api)"
-                      >
-                        <span class="ellipsis">{{ api.name }}</span>
-                      </a>
-                    </div>
-                    <div class="p-1">
-                      <span class="status-block status-active">{{ $t('public_status_published') }}</span>
-                    </div>
-                  </div>
-                </div>
+                <div class="task-list-content"></div>
               </div>
             </div>
           </template>
           <template v-else>
-            <div class="item__header flex p-3">
-              <DatabaseIcon :item="item" :size="20" class="item__icon mt-1" />
-              <div class="flex-1 ml-2 overflow-hidden">
-                <div class="flex justify-content-between">
-                  <span class="font-color-normal fw-sub fs-6 ellipsis lh-base" :title="item.name">{{ item.name }}</span>
-
-                  <span class="operation-line ml-2">
-                    <IconButton @click="$emit('preview', item)" sm>view-details</IconButton>
-                    <!--<VIcon size="16" class="cursor-pointer" @click="$emit('preview', item)">view-details</VIcon>-->
-                    <!--<VIcon size="18" class="ml-3">setting</VIcon>-->
-                  </span>
-                </div>
-                <div class="mt-2 font-color-light">
-                  {{ $t('packages_business_data_console_target_connection_desc', { val: item.database_type }) }}
-                </div>
+            <div class="item__header p-3">
+              <div class="flex align-center gap-2 overflow-hidden">
+                <DatabaseIcon :item="item" :size="20" class="item__icon flex-shrink-0" />
+                <span class="font-color-normal fw-sub fs-6 ellipsis lh-base" :title="item.name">{{ item.name }}</span>
+                <IconButton class="ml-auto" @click="$emit('preview', item)" sm>view-details</IconButton>
+              </div>
+              <div class="mt-2 font-color-light">
+                {{ $t('packages_business_data_console_target_connection_desc', { val: item.database_type }) }}
               </div>
             </div>
             <TaskList :list="connectionTaskMap[item.id] || []" @edit-in-dag="handleEditInDag"></TaskList>
@@ -129,7 +106,7 @@
           </ElButton>
         </span>
       </ElDialog>
-      <CreateRestApi v-model="apiDialog.visible"></CreateRestApi>
+      <CreateRestApi v-model="apiDialog.visible" :params="apiDialog"></CreateRestApi>
       <DataServerDrawer ref="drawer" :host="apiServerHost"></DataServerDrawer>
     </div>
   </div>
@@ -139,10 +116,10 @@
 import draggable from 'vuedraggable'
 import { defineComponent, ref } from '@vue/composition-api'
 
-import { apiServerApi, connectionsApi, taskApi } from '@tap/api'
+import { apiServerApi, appApi, connectionsApi, taskApi } from '@tap/api'
 import { uuid } from '@tap/shared'
 import { getIcon } from '@tap/assets'
-import { IconButton } from '@tap/component'
+import { VIcon, IconButton } from '@tap/component'
 import i18n from '@tap/i18n'
 
 import { DatabaseIcon } from '../../components'
@@ -152,6 +129,8 @@ import CreateRestApi from './components/CreateRestApi'
 import DataServerDrawer from '../data-server/Drawer'
 import { TASK_SETTINGS } from '../../shared'
 import commonMix from './mixins/common'
+import { escapeRegExp } from 'lodash'
+import dayjs from 'dayjs'
 
 const restApiIcon = getIcon('rest api')
 
@@ -215,7 +194,7 @@ export default {
     fdmAndMdmId: Array
   },
 
-  components: { CreateRestApi, DatabaseIcon, TaskList, DataServerDrawer, IconButton },
+  components: { CreateRestApi, DatabaseIcon, TaskList, DataServerDrawer, IconButton, VIcon },
 
   mixins: [commonMix],
 
@@ -240,6 +219,7 @@ export default {
       restApiIcon,
       dragging: false,
       list: [],
+      appList: [],
       dialogConfig: {
         title: '',
         desc: '',
@@ -283,65 +263,17 @@ export default {
   },
 
   created() {
-    this.apiDemoData = ['dGpAdGFwZGF0YS5pbw=='].includes(window.btoa(window.__USER_INFO__?.email))
-      ? [
-          {
-            id: 'Product Catalog',
-            name: 'Product Catalog',
-            type: 'service',
-            apiList: [
-              { name: 'API_ProductInventory' },
-              {
-                name: 'API_IM_STATIC_REF'
-              }
-            ]
-          },
-          {
-            id: 'Discount',
-            name: 'Discount',
-            type: 'service',
-            apiList: [
-              {
-                name: 'API_bomCertificate'
-              }
-            ]
-          },
-          {
-            id: i18n.t('packages_business_swimlane_target_yejibao'),
-            name: i18n.t('packages_business_swimlane_target_yejibao'),
-            type: 'service',
-            apiList: [
-              {
-                name: 'API_marketingKeyword'
-              },
-              {
-                name: 'API_PC_refinement'
-              },
-              {
-                name: 'API_modelPriceGroup'
-              }
-            ]
-          },
-          {
-            id: 'POSS',
-            name: 'POSS',
-            type: 'service',
-            apiList: [
-              {
-                name: 'API_pos'
-              }
-            ]
-          }
-        ]
-      : []
     this.init()
   },
 
   methods: {
     async init() {
-      this.list = await this.getData()
-      this.loadTask(this.list)
-      // this.getApiServerHost()
+      const connectionList = await this.getData()
+      const appList = await this.getApiAppList()
+      this.list = appList
+        .concat(connectionList)
+        .sort((obj1, obj2) => new Date(obj2.createTime) - new Date(obj1.createTime))
+      this.loadTask(connectionList)
     },
 
     handleAdd() {
@@ -364,12 +296,10 @@ export default {
         filter: JSON.stringify(filter)
       })
 
-      return this.apiDemoData.concat(
-        res.items.map(item => {
-          item.LDP_TYPE = 'connection'
-          return item
-        })
-      )
+      return res.items.map(item => {
+        item.LDP_TYPE = 'connection'
+        return item
+      })
     },
 
     async loadTask(list) {
@@ -383,6 +313,26 @@ export default {
       Object.keys(data).forEach(key => {
         this.$set(this.connectionTaskMap, key, data[key].reverse().map(this.mapTask))
       })
+    },
+
+    getApiAppList() {
+      let filter = {
+        limit: 999,
+        where: {
+          item_type: 'app'
+        }
+      }
+
+      return appApi
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(({ items }) => {
+          return items.map(item => {
+            item.LDP_TYPE = 'app'
+            return item
+          })
+        })
     },
 
     findParentByClassName(parent, cls) {
@@ -427,10 +377,17 @@ export default {
       if (!draggingObjects.length) return
       const object = draggingObjects[0]
 
-      if (item.type === 'service') {
+      if (!this.allowDrop) return
+
+      if (item.LDP_TYPE === 'app') {
+        if (object.data.type === 'table') {
+          this.apiDialog.from = object.parent.data
+          this.apiDialog.tableName = object.data.name
+          this.apiDialog.to = item
+        }
+
         this.showApiDialog()
       } else {
-        if (!this.allowDrop) return
         console.log('object.data', object.data) // eslint-disable-line
         if (object.data.type === 'connection') {
           this.dialogConfig.from = object.data
@@ -601,9 +558,12 @@ export default {
       this.$refs.targetconnectionView.open(row)
     },
 
-    addItem(value) {
-      this.list.unshift(value)
-      this.loadTask([value])
+    addItem(item) {
+      this.list.unshift(item)
+
+      if (item.LDP_TYPE !== 'app') {
+        this.loadTask([item])
+      }
     },
 
     async getApiServerHost() {

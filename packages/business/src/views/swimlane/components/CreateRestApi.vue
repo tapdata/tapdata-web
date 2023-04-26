@@ -7,7 +7,7 @@
     :close-on-click-modal="false"
   >
     <span slot="title" class="fs-6 fw-sub font-color-dark">
-      {{ $t('daas_data_server_drawer_chuangjianfuwu') }}
+      {{ $t('packages_business_chuangjianfuwu') }}
     </span>
     <ElForm
       hide-required-asterisk
@@ -21,14 +21,10 @@
     >
       <div class="flex gap-4">
         <ElFormItem :label="$t('public_name')" class="flex-1 form-item-name" size="small" prop="name">
-          <ElInput
-            v-if="isEdit"
-            v-model="form.name"
-            :placeholder="$t('daas_data_discovery_previewdrawer_qingshurumingcheng')"
-          ></ElInput>
+          <ElInput v-if="isEdit" v-model="form.name" :placeholder="$t('public_input_placeholder_name')"></ElInput>
           <div v-else class="fw-sub fs-7 font-color-normal">{{ data.name }}</div>
         </ElFormItem>
-        <ElFormItem class="flex-1" size="small" :label="$t('daas_data_server_drawer_quanxianfanwei')" prop="acl">
+        <ElFormItem class="flex-1" size="small" :label="$t('packages_business_quanxianfanwei')" prop="acl">
           <ElSelect v-model="form.acl" multiple :disabled="!isEdit" @change="aclChanged" class="w-100">
             <ElOption v-for="item in roles" :label="item.name" :value="item.name" :key="item.id"></ElOption>
           </ElSelect>
@@ -43,19 +39,19 @@
         ></ElInput>
       </ElFormItem>
       <!-- 基础信息 -->
-      <ul class="flex flex-wrap bg-main pt-3 px-1 rounded-2 data-server-form-group">
+      <ul class="flex flex-wrap bg-subtle pt-3 px-1 rounded-4 data-server-form-group">
         <li class="data-server-form-base__item px-2">
-          <ElFormItem :label="$t('daas_data_server_drawer_caozuoleixing')" label-width="86px">
+          <ElFormItem :label="$t('packages_business_caozuoleixing')" label-width="86px">
             <div class="text">{{ $t('dataExplorer_query') }}</div>
           </ElFormItem>
         </li>
         <li class="data-server-form-base__item px-2">
-          <ElFormItem :label="$t('daas_data_server_drawer_fabujiedian')" label-width="86px">
+          <ElFormItem :label="$t('packages_business_fabujiedian')" label-width="86px">
             <div class="text">{{ $t('public_select_option_all') }}</div>
           </ElFormItem>
         </li>
         <li class="data-server-form-base__item px-2">
-          <ElFormItem :label="$t('daas_data_server_drawer_jiekouleixing')" label-width="86px">
+          <ElFormItem :label="$t('packages_business_jiekouleixing')" label-width="86px">
             <ElSelect v-if="isEdit" v-model="form.apiType" @change="apiTypeChanged">
               <ElOption v-for="(label, value) in apiTypeMap" :key="value" :value="value" :label="label"></ElOption>
             </ElSelect>
@@ -106,11 +102,11 @@
       </ul>
       <!-- 访问路径设置-->
       <section v-if="tab === 'form'">
-        <div class="mt-4 fs-7 data-server-panel__title">{{ $t('daas_data_server_drawer_aPI_path_Settings') }}</div>
+        <div class="mt-4 fs-7 data-server-panel__title">{{ $t('packages_business_aPI_path_Settings') }}</div>
         <div class="flex-1 mt-4" size="small">
           <el-radio-group v-model="form.pathAccessMethod" :disabled="!isEdit">
-            <el-radio label="default">{{ $t('daas_data_server_drawer_default_path') }}</el-radio>
-            <el-radio label="customize">{{ $t('daas_data_server_drawer_custom_path') }}</el-radio>
+            <el-radio label="default">{{ $t('packages_business_default_path') }}</el-radio>
+            <el-radio label="customize">{{ $t('packages_business_custom_path') }}</el-radio>
           </el-radio-group>
         </div>
         <ElFormItem
@@ -126,7 +122,7 @@
         <ElFormItem
           class="flex-1 mt-4"
           size="small"
-          :label="$t('daas_data_server_drawer_prefix')"
+          :label="$t('packages_business_prefix')"
           prop="prefix"
           v-if="form.pathAccessMethod === 'customize'"
         >
@@ -135,7 +131,7 @@
         <ElFormItem
           class="flex-1 mt-4"
           size="small"
-          :label="$t('daas_data_server_drawer_base_path')"
+          :label="$t('packages_business_base_path')"
           prop="basePath"
           v-if="form.pathAccessMethod === 'customize'"
         >
@@ -144,7 +140,7 @@
         <ElFormItem
           class="flex-1 mt-4"
           size="small"
-          :label="$t('daas_data_server_drawer_path')"
+          :label="$t('packages_business_path')"
           v-if="form.pathAccessMethod === 'customize'"
         >
           <ElInput v-model="customizePath" :disabled="true"></ElInput>
@@ -154,7 +150,7 @@
       <!-- 輸入参数 -->
       <div class="data-server-panel__title">
         <div>
-          <span>{{ $t('daas_data_server_drawer_shurucanshu') }}</span>
+          <span>{{ $t('packages_business_shurucanshu') }}</span>
           <i
             v-if="isEdit && form.apiType === 'customerQuery'"
             class="el-icon-circle-plus icon-button color-primary ml-4"
@@ -163,7 +159,7 @@
         </div>
       </div>
       <ElTable class="flex-1" :data="isEdit ? form.params : data.params">
-        <ElTableColumn :label="$t('daas_data_server_drawer_canshumingcheng')" prop="name" min-width="120">
+        <ElTableColumn :label="$t('packages_business_canshumingcheng')" prop="name" min-width="120">
           <template #default="{ row, $index }">
             <div v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'">
               <ElFormItem
@@ -210,7 +206,7 @@
             <div v-else>{{ row.description }}</div>
           </template>
         </ElTableColumn>
-        <ElTableColumn v-if="debugParams" :label="$t('daas_data_server_drawer_canshuzhi')" key="value" min-width="100">
+        <ElTableColumn v-if="debugParams" :label="$t('packages_business_canshuzhi')" key="value" min-width="100">
           <template #default="{ row }">
             <ElInput v-model="debugParams[row.name]" size="mini"></ElInput>
           </template>
@@ -226,7 +222,7 @@
         <!-- 筛选条件 -->
         <div class="data-server-panel__title">
           <div>
-            <span>{{ $t('daas_data_server_drawer_shaixuantiaojian') }}</span>
+            <span>{{ $t('packages_business_shaixuantiaojian') }}</span>
             <i v-if="isEdit" class="el-icon-circle-plus icon-button color-primary ml-4" @click="addItem('where')"></i>
           </div>
         </div>
@@ -271,7 +267,7 @@
         <!-- 排列条件 -->
         <div class="data-server-panel__title">
           <div>
-            <span>{{ $t('daas_data_server_drawer_pailietiaojian') }}</span>
+            <span>{{ $t('packages_business_pailietiaojian') }}</span>
             <i v-if="isEdit" class="el-icon-circle-plus icon-button color-primary ml-4" @click="addItem('sort')"></i>
           </div>
         </div>
@@ -302,7 +298,7 @@
 
       <!-- 输出结果 -->
       <template v-if="tab === 'form'">
-        <div class="data-server-panel__title">{{ $t('daas_data_server_drawer_shuchujieguo') }}</div>
+        <div class="data-server-panel__title">{{ $t('packages_business_shuchujieguo') }}</div>
         <ElTable
           ref="fieldTable"
           :data="isEdit ? allFields : data.fields"
@@ -318,7 +314,7 @@
       <!--服务访问 -->
       <template v-if="tab === 'form'">
         <div class="data-server-panel__title">
-          <span>{{ $t('daas_data_server_drawer_fuwufangwen') }}</span>
+          <span>{{ $t('packages_business_fuwufangwen') }}</span>
           <ElButton
             v-if="this.data.id && form.pathAccessMethod === 'default' && data.status !== 'active'"
             type="primary"
@@ -337,9 +333,9 @@
         </ul>
       </template>
 
-      <!-- {{$t('daas_data_server_drawer_diaoyongfangshi')}} -->
+      <!-- {{$t('packages_business_diaoyongfangshi')}} -->
       <template v-if="tab === 'debug'">
-        <div class="data-server-panel__title">{{ $t('daas_data_server_drawer_diaoyongfangshi') }}</div>
+        <div class="data-server-panel__title">{{ $t('packages_business_diaoyongfangshi') }}</div>
         <div class="flex">
           <div class="data-server-debug__url flex-1 flex align-center mr-4">
             <ElSelect v-model="debugMethod" class="data-server-debug__method mr-4" style="width: 100px" size="mini">
@@ -351,7 +347,7 @@
         </div>
       </template>
       <template v-if="tab === 'debug'">
-        <div class="data-server-panel__title">{{ $t('daas_data_server_drawer_fanhuijieguo') }}</div>
+        <div class="data-server-panel__title">{{ $t('packages_business_fanhuijieguo') }}</div>
         <VCodeEditor
           height="280"
           lang="json"
@@ -360,11 +356,11 @@
         ></VCodeEditor>
       </template>
 
-      <!--  {{$t('daas_data_server_drawer_shilidaima2')}} -->
+      <!--  {{$t('packages_business_shilidaima2')}} -->
       <template v-if="tab === 'debug'">
         <div class="flex position-relative mt-8 mb-4">
           <div class="position-absolute top-0 start-0 fs-7 fw-sub font-color-dark" style="line-height: 36px">
-            {{ $t('daas_data_server_drawer_shilidaima') }}
+            {{ $t('packages_business_shilidaima') }}
           </div>
           <ElTabs v-model="templateType" class="data-server__tabs flex-1">
             <ElTabPane label="JAVA" name="java"></ElTabPane>
@@ -383,7 +379,7 @@
 
     <div slot="footer">
       <el-button @click="handleVisible(false)">{{ $t('public_button_cancel') }}</el-button>
-      <el-button type="primary" @click="handleSave">{{ $t('public_button_save') }}</el-button>
+      <el-button type="primary" @click="handleSave()">{{ $t('public_button_save') }}</el-button>
     </div>
   </ElDialog>
 </template>
@@ -401,7 +397,8 @@ export default {
   name: 'CreateRestApi',
   props: {
     host: String,
-    value: Boolean
+    value: Boolean,
+    params: Object
   },
   components: { VCodeEditor },
   data() {
@@ -410,7 +407,7 @@ export default {
       if (/^([^\x00-\xff]|[a-zA-Z_$])([^\x00-\xff]|[a-zA-Z0-9_$])*$/.test(value)) {
         callback()
       } else {
-        callback(i18n.t('daas_data_server_drawer_geshicuowu'))
+        callback(i18n.t('packages_business_geshicuowu'))
       }
     }
     const validateBasePath = (rule, value, callback) => {
@@ -418,7 +415,7 @@ export default {
       if (/^[a-zA-Z\$_\u4e00-\u9fa5][a-zA-Z\u4e00-\u9fa5\d\$_]*$/.test(value)) {
         callback()
       } else {
-        callback(i18n.t('daas_data_server_drawer_validate'))
+        callback(i18n.t('packages_business_validate'))
       }
     }
     const validatePrefix = (rule, value, callback) => {
@@ -426,7 +423,7 @@ export default {
       if (/^[a-zA-Z\$_\u4e00-\u9fa5][a-zA-Z\u4e00-\u9fa5\d\$_]*$/.test(value) || value === '') {
         callback()
       } else {
-        callback(i18n.t('daas_data_server_drawer_validate'))
+        callback(i18n.t('packages_business_validate'))
       }
     }
 
@@ -443,21 +440,19 @@ export default {
       tab: 'form',
       isEdit: true,
       rules: {
-        name: [{ required: true, message: i18n.t('daas_data_server_drawer_qingshurufuwu'), trigger: 'blur' }],
-        acl: [{ required: true, message: i18n.t('daas_data_server_drawer_selectPermissions'), trigger: 'blur' }],
-        connectionType: [
-          { required: true, message: i18n.t('daas_data_server_drawer_qingxuanzelianjie'), trigger: 'blur' }
-        ],
+        name: [{ required: true, message: i18n.t('packages_business_qingshurufuwu'), trigger: 'blur' }],
+        acl: [{ required: true, message: i18n.t('packages_business_selectPermissions'), trigger: 'blur' }],
+        connectionType: [{ required: true, message: i18n.t('packages_business_qingxuanzelianjie'), trigger: 'blur' }],
         connectionId: [{ required: true, message: i18n.t('shared_cache_placeholder_connection'), trigger: 'blur' }],
-        tableName: [{ required: true, message: i18n.t('daas_data_server_drawer_qingxuanzeduixiang'), trigger: 'blur' }],
+        tableName: [{ required: true, message: i18n.t('packages_business_qingxuanzeduixiang'), trigger: 'blur' }],
         param: [{ required: true, validator: validateParams, trigger: ['blur', 'change'] }],
         basePath: [{ required: true, validator: validateBasePath, trigger: ['blur', 'change'] }],
         prefix: [{ required: false, validator: validatePrefix, trigger: ['blur', 'change'] }],
         apiVersion: [{ required: true, validator: validateBasePath, trigger: ['blur', 'change'] }]
       },
       apiTypeMap: {
-        defaultApi: i18n.t('daas_data_server_drawer_morenchaxun'),
-        customerQuery: i18n.t('daas_data_server_drawer_zidingyichaxun')
+        defaultApi: i18n.t('packages_business_morenchaxun'),
+        customerQuery: i18n.t('packages_business_zidingyichaxun')
       },
       databaseTypes: null,
       connectionOptions: null,
@@ -523,9 +518,9 @@ export default {
       this.debugMethod = 'GET'
       this.debugResult = ''
       this.allFields = []
-
       this.$refs?.form?.clearValidate()
       this.formatData(formData || {})
+
       if (!this.data.id) {
         this.edit()
       }
@@ -613,21 +608,21 @@ export default {
           name: 'page',
           type: 'number',
           defaultvalue: '1',
-          description: i18n.t('daas_data_server_drawer_fenyebianhao'),
+          description: i18n.t('packages_business_fenyebianhao'),
           required: true
         },
         {
           name: 'limit',
           type: 'number',
           defaultvalue: '20',
-          description: i18n.t('daas_data_server_drawer_meigefenyefan'),
+          description: i18n.t('packages_business_meigefenyefan'),
           required: true
         }
       ]
       if (apiType === 'defaultApi') {
         params.push(
           ...[
-            { name: 'sort', type: 'object', description: i18n.t('daas_data_server_drawer_paixu') },
+            { name: 'sort', type: 'object', description: i18n.t('packages_business_paixu') },
             { name: 'filter', type: 'object', description: i18n.t('module_form_condition') }
           ]
         )
@@ -639,6 +634,10 @@ export default {
       this.isEdit = true
       this.form = cloneDeep(this.data)
       this.form.status = 'generating'
+      this.form.connectionName = this.params.from.name
+      this.form.connectionType = this.params.from.database_type
+      this.form.connectionId = this.params.from.id
+      this.form.tableName = this.params.tableName
       // 若为新建时，则默认值为 ‘默认查询(defaultApi)’ 的值
       this.form.pathAccessMethod = this.data?.pathAccessMethod || 'default'
       this.getDatabaseTypes()
@@ -651,7 +650,7 @@ export default {
       }
     },
     // 保存，新建和修改
-    handleSave() {
+    handleSave(type) {
       this.$refs.form.validate(async valid => {
         if (valid) {
           this.handleVisible(false)
@@ -664,6 +663,7 @@ export default {
               this.form.path = '/api/' + this.form.basePath
             }
           }
+
           let {
             id,
             name,
@@ -691,7 +691,7 @@ export default {
             status = 'pending'
           }
           if (params.some(it => !it.name.trim())) {
-            return this.$message.error(i18n.t('daas_data_server_drawer_qingshurucanshu'))
+            return this.$message.error(i18n.t('packages_business_qingshurucanshu'))
           }
           this.loading = true
           let formData = {
@@ -753,7 +753,7 @@ export default {
     },
     generate() {
       if (this.data.basePath && this.data.basePath !== '') {
-        this.$confirm(this.$t('daas_data_server_drawer_confirm_tip'), {
+        this.$confirm(this.$t('packages_business_confirm_tip'), {
           type: 'warning'
         }).then(resFlag => {
           if (!resFlag) {
