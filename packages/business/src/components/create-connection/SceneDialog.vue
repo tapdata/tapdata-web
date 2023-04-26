@@ -403,7 +403,9 @@ export default {
         this.selectorType !== 'source_and_target'
           ? res?.filter(t => t.connectionType.includes(this.selectorType) && !!t.pdkHash) || []
           : res
-      this.database = data.sort(() => {})
+      this.database = data.sort((o1, o2) => {
+        return o1.name.localeCompare(o2.name)
+      })
       this.loading = false
     },
 
