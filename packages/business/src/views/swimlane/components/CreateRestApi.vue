@@ -323,7 +323,7 @@
             >{{ $t('application_generator') }}</ElButton
           >
         </div>
-        <ul v-if="data.path" class="data-server-path">
+        <ul v-if="form.path" class="data-server-path">
           <li v-for="(url, method) in urls" :key="method" class="data-server-path__item">
             <div class="data-server-path__method" :class="'method--' + method">
               {{ method }}
@@ -391,7 +391,7 @@ import axios from 'axios'
 import i18n from '@tap/i18n'
 import { VCodeEditor } from '@tap/component'
 import { applicationApi, connectionsApi, databaseTypesApi, metadataInstancesApi, modulesApi, roleApi } from '@tap/api'
-import { uid } from '@tap/shared'
+import { generateId } from '@tap/shared'
 
 export default {
   name: 'CreateRestApi',
@@ -585,11 +585,7 @@ export default {
       let host = this.host
       let _path = this.data.path
       let baseUrl = host + _path
-      this.urls = {
-        POST: `${baseUrl}/find`,
-        GET: `${baseUrl}`,
-        TOKEN: `${location.origin + location.pathname}oauth/token`
-      }
+
       if (this.data.status === 'active') {
         this.getAPIServerToken(token => {
           this.templates = getTemplate(baseUrl, token)
@@ -633,13 +629,25 @@ export default {
     edit() {
       this.isEdit = true
       this.form = cloneDeep(this.data)
-      this.form.status = 'generating'
+      // this.form.status = 'active' // 发布状态
+      this.form.status = 'pending' // 发布状态
+      const basePath = Math.floor(Math.random() * 26 + 10).toString(36) + generateId(10) // 首位要求小写字母
+      this.form.basePath = basePath
+      this.form.path = `/api/${basePath}`
       this.form.connectionName = this.params.from.name
       this.form.connectionType = this.params.from.database_type
       this.form.connectionId = this.params.from.id
       this.form.tableName = this.params.tableName
       // 若为新建时，则默认值为 ‘默认查询(defaultApi)’ 的值
       this.form.pathAccessMethod = this.data?.pathAccessMethod || 'default'
+
+      let baseUrl = this.host + this.form.path
+      this.urls = {
+        POST: `${baseUrl}/find`,
+        GET: `${baseUrl}`,
+        TOKEN: `${location.origin + location.pathname}oauth/token`
+      }
+
       this.getDatabaseTypes()
       let { connectionId, tableName } = this.form
       if (connectionId) {
@@ -686,13 +694,11 @@ export default {
             prefix,
             pathAccessMethod
           } = this.form
-          // basePath
-          if (basePath && basePath !== '') {
-            status = 'pending'
-          }
+
           if (params.some(it => !it.name.trim())) {
             return this.$message.error(i18n.t('packages_business_qingshurucanshu'))
           }
+
           this.loading = true
           let formData = {
             id,
@@ -715,7 +721,12 @@ export default {
             apiVersion: apiVersion, // 冗余老字段
             prefix: prefix,
             pathAccessMethod: pathAccessMethod, // 冗余老字段
-            listtags: [], // 冗余老字段
+            listtags: [
+              {
+                id: this.params.to.id,
+                value: this.params.to.value
+              }
+            ], // 冗余老字段
 
             paths: [
               {
@@ -737,16 +748,20 @@ export default {
             //生成按钮 不传fields覆盖数据库已有数据 (open 抽屉this.allFields 就清空了数据)
             formData.fields = this.allFields
           }
-          const data = await modulesApi[id ? 'patch' : 'post'](formData).finally(() => {
-            this.loading = false
-          })
-          data.connection = connectionId
-          data.source = {
-            database_type: connectionType,
-            name: connectionName
-          }
-          this.formatData(data || [])
-          this.$emit('save')
+          let data = await modulesApi.post(formData)
+          data.status = 'pending'
+          data = await modulesApi.patch(data)
+          data.status = 'active'
+          data = await modulesApi.patch(data)
+          this.loading = false
+
+          // data.connection = connectionId
+          // data.source = {
+          //   database_type: connectionType,
+          //   name: connectionName
+          // }
+          // this.formatData(data || [])
+          this.$emit('save', data, this.params.to)
           this.isEdit = false
         }
       })

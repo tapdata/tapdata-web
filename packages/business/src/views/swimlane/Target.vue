@@ -45,7 +45,23 @@
             </div>
             <div class="item__content position-relative p-2">
               <div class="task-list">
-                <div class="task-list-content"></div>
+                <div class="task-list-content">
+                  <template v-if="item.modules">
+                    <div v-for="(m, i) in item.modules" :key="i" class="task-list-item flex align-center">
+                      <div class="p-1 ellipsis flex-1 align-center">
+                        <a class="el-link el-link--primary w-100 justify-content-start" :title="m.name">
+                          <span class="ellipsis">{{ m.name }}</span>
+                        </a>
+                      </div>
+                      <div class="p-1">
+                        <span class="status-block" :class="'status-' + m.status">{{ m.statusText }}</span>
+                      </div>
+                    </div>
+                  </template>
+                  <span v-else class="font-color-sslight">{{
+                    $t('packages_business_data_console_target_no_task')
+                  }}</span>
+                </div>
               </div>
             </div>
           </template>
@@ -106,7 +122,12 @@
           </ElButton>
         </span>
       </ElDialog>
-      <CreateRestApi v-model="apiDialog.visible" :params="apiDialog"></CreateRestApi>
+      <CreateRestApi
+        v-model="apiDialog.visible"
+        :params="apiDialog"
+        :host="apiServerHost"
+        @save="handleAddApi"
+      ></CreateRestApi>
       <DataServerDrawer ref="drawer" :host="apiServerHost"></DataServerDrawer>
     </div>
   </div>
@@ -116,7 +137,7 @@
 import draggable from 'vuedraggable'
 import { defineComponent, ref } from '@vue/composition-api'
 
-import { apiServerApi, appApi, connectionsApi, taskApi } from '@tap/api'
+import { apiServerApi, appApi, connectionsApi, modulesApi, taskApi } from '@tap/api'
 import { uuid } from '@tap/shared'
 import { getIcon } from '@tap/assets'
 import { VIcon, IconButton } from '@tap/component'
@@ -242,7 +263,12 @@ export default {
       search: '',
       enableSearch: false,
       filterTreeData: [],
-      creating: false
+      creating: false,
+      apiStatusMap: {
+        active: this.$t('public_status_published'),
+        pending: this.$t('public_status_unpublished'),
+        generating: this.$t('public_status_to_be_generated')
+      }
     }
   },
 
@@ -264,12 +290,16 @@ export default {
 
   created() {
     this.init()
+    this.getApiServerHost()
   },
 
   methods: {
     async init() {
       const connectionList = await this.getData()
       const appList = await this.getApiAppList()
+      const apiModules = await this.loadApiModule(appList[0].id)
+      appList[0].modules = apiModules
+      console.log('apiModules', apiModules) // eslint-disable-line
       this.list = appList
         .concat(connectionList)
         .sort((obj1, obj2) => new Date(obj2.createTime) - new Date(obj1.createTime))
@@ -318,6 +348,7 @@ export default {
     getApiAppList() {
       let filter = {
         limit: 999,
+        order: 'createTime DESC',
         where: {
           item_type: 'app'
         }
@@ -333,6 +364,29 @@ export default {
             return item
           })
         })
+    },
+
+    loadApiModule(appId) {
+      let filter = {
+        limit: 999,
+        order: 'createAt DESC',
+        where: {
+          'listtags.id': appId
+        }
+      }
+
+      return modulesApi
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(({ items }) => {
+          return items.map(this.mapApi)
+        })
+    },
+
+    mapApi(item) {
+      item.statusText = this.apiStatusMap[item.status] || '--'
+      return item
     },
 
     findParentByClassName(parent, cls) {
@@ -586,6 +640,13 @@ export default {
     handleSearch(val) {
       this.searchIng = true
       this.debouncedSearch(val)
+    },
+
+    handleAddApi(data, app) {
+      data = this.mapApi(data)
+      console.log('handleAddApi', data, app) // eslint-disable-line
+      if (!app.modules) app.modules = [data]
+      else app.modules.unshift(data)
     }
   }
 }
