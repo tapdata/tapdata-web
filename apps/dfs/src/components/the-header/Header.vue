@@ -21,7 +21,13 @@
         </div>
 
         <NotificationPopover class="command-item mr-2 flex align-items-center"></NotificationPopover>
-        <ElDropdown class="mr-2" placement="bottom" @command="changeLanguage" v-if="!onlyEnglishLanguage">
+        <ElDropdown
+          class="mr-2"
+          placement="bottom"
+          :show-timeout="0"
+          @command="changeLanguage"
+          v-if="!onlyEnglishLanguage"
+        >
           <span class="cursor-pointer command-item icon-btn">
             <VIcon size="20">{{ 'language-' + lang }}</VIcon>
           </span>
@@ -31,7 +37,7 @@
             </ElDropdownItem>
           </ElDropdownMenu>
         </ElDropdown>
-        <ElDropdown class="command-item menu-user" placement="bottom" @command="command">
+        <ElDropdown class="command-item menu-user" placement="bottom" :show-timeout="0" @command="command">
           <div class="username flex align-items-center">
             <img
               v-if="user.avatar"
