@@ -228,7 +228,7 @@
               :loading="scope.row.btnLoading.delete"
               :disabled="renewBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
               @click="handleRenew(scope.row)"
-              >{{$t('dfs_instance_instance_zhongqi')}}</ElButton
+              >{{ $t('dfs_instance_instance_zhongqi') }}</ElButton
             >
             <ElDivider direction="vertical"></ElDivider>
             <ElButton
@@ -491,7 +491,6 @@ import timeFunction from '@/mixins/timeFunction'
 import { VIcon, FilterBar, VTable } from '@tap/component'
 import { CURRENCY_SYMBOL_MAP, dayjs } from '@tap/business'
 import Time from '@tap/shared/src/time'
-import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 import { getSpec, getPaymentMethod, AGENT_TYPE_MAP } from './utils'
 import SubscriptionModelDialog from '@/views/agent-download/SubscriptionModelDialog'
 import transferDialog from '@/views/agent-download/transferDialog'
@@ -612,7 +611,7 @@ export default {
       let filter = ['Creating', 'Running', 'Stopped']
       filter.forEach(el => {
         result.push({
-          label: CONNECTION_STATUS_MAP[el.toLowerCase()],
+          label: this.statusMap[el]?.text,
           value: el
         })
       })
