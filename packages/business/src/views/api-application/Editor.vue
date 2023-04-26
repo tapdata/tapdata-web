@@ -18,7 +18,7 @@
       class="my-n6"
     >
       <ElFormItem size="mini" :label="$t('packages_business_application_list_yingyongmingcheng')" prop="value">
-        <ElInput v-model="editForm.value" clearable></ElInput>
+        <ElInput v-model="editForm.value" type="text" maxlength="50" clearable></ElInput>
       </ElFormItem>
       <ElFormItem size="mini" :label="$t('packages_business_application_editor_yingyongmiaoshu')" prop="desc">
         <ElInput v-model="editForm.desc" type="textarea"></ElInput>

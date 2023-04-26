@@ -567,7 +567,8 @@ export default {
   packages_business_relation_details_rizhiwajueshi: '日誌挖掘時間',
   packages_business_relation_details_wajuemingcheng: '挖掘名稱',
   packages_business_relation_details_wajuexinxi: '挖掘信息',
-  packages_business_connections_databaseform_shujuyuanzhongmo: '數據源中模型數量大於1萬時，會按本參數設置進行模型刷新',
+  packages_business_connections_databaseform_shujuyuanzhongmo:
+    '當數據源中模型數量小於1萬時，會按照每小時一次進行模型刷新；當數據源中模型數量大於1萬時，會每天按照指定的時間進行模型刷新。',
   packages_business_connections_databaseform_moxingjiazaipin: '模型加載時間',
   packages_business_task_list_lianjieming: '連接名: ',
   packages_business_task_list_dierbushanchu: '// 第二步 刪除 slot_name',

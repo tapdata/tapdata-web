@@ -595,7 +595,7 @@ export default {
   packages_business_relation_details_wajuemingcheng: 'Mining Name',
   packages_business_relation_details_wajuexinxi: 'Mining information',
   packages_business_connections_databaseform_shujuyuanzhongmo:
-    'When the number of models in the data source is greater than 10,000, the model will be refreshed according to this parameter setting',
+    'When the number of models in the data source is less than 10,000, the model will be refreshed once an hour; when the number of models in the data source is greater than 10,000, the model will be refreshed at the specified time every day.',
   packages_business_connections_databaseform_moxingjiazaipin: 'Model load time',
   packages_business_task_list_lianjieming: 'Connection name: ',
   packages_business_task_list_dierbushanchu: '// The second step delete slot_name',

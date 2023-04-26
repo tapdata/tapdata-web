@@ -43,8 +43,13 @@ export default {
     }
   },
 
-  mounted() {
-    this.form.value = this.value
+  watch: {
+    value(v) {
+      if (this.form.value !== v) {
+        this.form.value = v
+        this.form.label = this.label
+      }
+    }
   },
 
   methods: {

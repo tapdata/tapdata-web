@@ -10,6 +10,7 @@
 </template>
 
 <script>
+import { merge } from 'lodash'
 import { AsyncSelect } from '@tap/form'
 import { connectionsApi } from '@tap/api'
 
@@ -68,7 +69,6 @@ export default {
 
     async getData(filter = {}) {
       const { page = 1, size = 20 } = filter
-      console.log('getData', filter, page, size)
       let params = {
         order: 'createTime DESC',
         limit: size,
@@ -80,15 +80,13 @@ export default {
       const { label } = filter.where || {}
       if (label) {
         Object.assign(params.where, {
-          value: label
+          name: label
         })
       }
-      console.log('ooo', Object.assign(params, this.params))
-      let res = await connectionsApi.get({
-        filter: JSON.stringify(Object.assign(params, this.params))
-      })
 
-      console.log('res', res)
+      let res = await connectionsApi.get({
+        filter: JSON.stringify(merge(params, this.params))
+      })
 
       res.items = res.items.map(t => {
         return {
@@ -97,8 +95,6 @@ export default {
           data: t
         }
       })
-
-      console.log(' res.items', res.items)
 
       if (this.format) {
         res.items = this.format(res.items)
