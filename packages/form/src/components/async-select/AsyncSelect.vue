@@ -522,7 +522,7 @@ export default {
       await this.loadData(true)
     },
 
-    async handleQueryChange(val) {
+    handleQueryChange: debounce(async function (val) {
       if (this.previousQuery === val || this.isOnComposition) return
       if (
         this.previousQuery === null &&
@@ -555,7 +555,7 @@ export default {
       if (this.defaultFirstOption && (this.filterable || this.remote) && this.total) {
         this.checkDefaultFirstOption()
       }
-    },
+    }, 200),
 
     async scrollToOption(option) {
       let target = Array.isArray(option) && option[0] ? option[0].$el : option.$el
