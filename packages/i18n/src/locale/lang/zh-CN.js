@@ -44,6 +44,8 @@ export default {
   public_status_published: '已发布',
   public_status_unpublished: '未发布',
   public_status_to_be_generated: '待生成',
+  public_status_to_be_restart: '等待重启',
+  public_status_restarting: '重启中',
   // 按钮
   public_button_edit: '编辑',
   public_button_confirm: '确定',

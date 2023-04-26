@@ -43,6 +43,8 @@ export default {
   public_status_published: 'Published',
   public_status_unpublished: 'Unpublished',
   public_status_to_be_generated: 'Generating',
+  public_status_to_be_restart: 'Wait for restart',
+  public_status_restarting: 'Restarting',
   // button
   public_button_edit: 'Edit',
   public_button_confirm: 'Ok',
