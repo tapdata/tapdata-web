@@ -217,7 +217,7 @@
                   :key="i"
                   :label="item.name"
                   :value="item.value"
-                  :disabled="agentCount > 0 && item.chargeProvider === 'FreeTier'"
+                  :disabled="(agentCount > 0 || agentDeploy !== 'selfHost') && item.chargeProvider === 'FreeTier'"
                 >
                   <span>{{ item.name }}: </span>
                   <span>{{ item.desc }}</span>
@@ -672,12 +672,11 @@ export default {
     //选择订阅模式
     changeAgentDeploy(type) {
       this.agentDeploy = type
+      this.getPrice()
       this.getCloudProvider()
       if (type === 'aliyun') {
         this.getAvailableCode()
         this.buried('productTypeAliyunCode')
-      } else if (type === 'fullManagement') {
-        this.getPrice()
       }
     },
     //切换规格
@@ -851,7 +850,10 @@ export default {
         ).sort((a, b) => {
           return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
         })
-        this.specification = this.agentCount > 0 ? this.specificationItems[1]?.value : this.specificationItems[0]?.value
+        this.specification =
+          this.agentCount > 0 || this.agentDeploy !== 'selfHost'
+            ? this.specificationItems[1]?.value
+            : this.specificationItems[0]?.value
         // 价格套餐
         this.allPackages = paidPrice.map(t => {
           return Object.assign(t, {

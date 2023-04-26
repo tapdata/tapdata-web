@@ -1346,7 +1346,7 @@ export default {
     '成本更低: 充分利用已有硬件资源, 同样的规格下产品价格低很多',
   dfs_agent_download_subscriptionmodeldialog_shiyongbantuoguan: '使用半托管模式的好处：',
   dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi2: '在这种模式下, 你需要自己提供自己计算资源与存储资源',
-  dfs_agent_download_subscriptionmodeldialog_quantuoguanmoshi: '全托管模式 (即将上线)',
+  dfs_agent_download_subscriptionmodeldialog_quantuoguanmoshi: '全托管模式',
   dfs_agent_download_subscriptionmodeldialog_bantuoguanmoshi: '半托管模式',
   dfs_instance_instance_quxiaodingyue: '取消订阅',
   dfs_views_layout_chanpinyindao: '产品引导',

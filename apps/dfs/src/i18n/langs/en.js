@@ -1451,7 +1451,7 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_shiyongbantuoguan: 'The benefits of using the Semi-Managed mode:',
   dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi2:
     'In this mode, you need to provide your own computing resources and storage resources',
-  dfs_agent_download_subscriptionmodeldialog_quantuoguanmoshi: 'Fully-Managed Mode (Coming Soon)',
+  dfs_agent_download_subscriptionmodeldialog_quantuoguanmoshi: 'Fully-Managed Mode',
   dfs_agent_download_subscriptionmodeldialog_bantuoguanmoshi: 'Semi-Managed Mode',
   dfs_instance_instance_quxiaodingyue: 'Unsubscribe',
   dfs_views_layout_chanpinyindao: 'Product Guide',
