@@ -49,7 +49,11 @@
                   <template v-if="item.modules && item.modules.length">
                     <div v-for="(m, i) in item.modules" :key="i" class="task-list-item flex align-center">
                       <div class="p-1 ellipsis flex-1 align-center">
-                        <a class="el-link el-link--primary w-100 justify-content-start" :title="m.name">
+                        <a
+                          class="el-link el-link--primary w-100 justify-content-start"
+                          :title="m.name"
+                          @click="handlePreviewApi(m)"
+                        >
                           <span class="ellipsis">{{ m.name }}</span>
                         </a>
                       </div>
@@ -128,7 +132,7 @@
         :host="apiServerHost"
         @save="handleAddApi"
       ></CreateRestApi>
-      <DataServerDrawer ref="drawer" :host="apiServerHost"></DataServerDrawer>
+      <ApiPreview ref="apiPreview" :host="apiServerHost"></ApiPreview>
     </div>
   </div>
 </template>
@@ -147,7 +151,7 @@ import { DatabaseIcon } from '../../components'
 import { makeStatusAndDisabled } from '../../shared'
 import { TaskStatus } from '../../components'
 import CreateRestApi from './components/CreateRestApi'
-import DataServerDrawer from '../data-server/Drawer'
+import ApiPreview from '../data-server/Drawer'
 import { TASK_SETTINGS } from '../../shared'
 import commonMix from './mixins/common'
 import { escapeRegExp } from 'lodash'
@@ -215,7 +219,7 @@ export default {
     fdmAndMdmId: Array
   },
 
-  components: { CreateRestApi, DatabaseIcon, TaskList, DataServerDrawer, IconButton, VIcon },
+  components: { ApiPreview, CreateRestApi, DatabaseIcon, TaskList, IconButton, VIcon },
 
   mixins: [commonMix],
 
@@ -636,8 +640,8 @@ export default {
       }
     },
 
-    handleDetailApi(row = {}) {
-      this.$refs.drawer.open(row)
+    handlePreviewApi(row = {}) {
+      this.$refs.apiPreview.open(row)
     },
 
     handleSearch(val) {
