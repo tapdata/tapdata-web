@@ -297,9 +297,11 @@ export default {
     async init() {
       const connectionList = await this.getData()
       const appList = await this.getApiAppList()
-      const apiModules = await this.loadApiModule(appList[0].id)
-      appList[0].modules = apiModules
-      console.log('apiModules', apiModules) // eslint-disable-line
+      Promise.all(appList.map(({ id }) => this.loadApiModule(id))).then(list => {
+        appList.forEach((app, i) => {
+          this.$set(app, 'modules', list[i])
+        })
+      })
       this.list = appList
         .concat(connectionList)
         .sort((obj1, obj2) => new Date(obj2.createTime) - new Date(obj1.createTime))
@@ -644,8 +646,8 @@ export default {
 
     handleAddApi(data, app) {
       data = this.mapApi(data)
-      console.log('handleAddApi', data, app) // eslint-disable-line
-      if (!app.modules) app.modules = [data]
+
+      if (!app.modules) this.$set(app, 'modules', [data])
       else app.modules.unshift(data)
     }
   }
