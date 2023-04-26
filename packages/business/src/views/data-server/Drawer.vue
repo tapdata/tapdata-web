@@ -41,6 +41,8 @@
             <ElInput
               v-if="isEdit"
               v-model="form.name"
+              type="text"
+              maxlength="50"
               :placeholder="$t('public_input_placeholder') + $t('public_name')"
             ></ElInput>
             <div v-else class="fw-sub fs-7 font-color-normal">{{ data.name }}</div>
