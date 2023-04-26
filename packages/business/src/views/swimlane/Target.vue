@@ -46,7 +46,7 @@
             <div class="item__content position-relative p-2">
               <div class="task-list">
                 <div class="task-list-content">
-                  <template v-if="item.modules">
+                  <template v-if="item.modules && item.modules.length">
                     <div v-for="(m, i) in item.modules" :key="i" class="task-list-item flex align-center">
                       <div class="p-1 ellipsis flex-1 align-center">
                         <a class="el-link el-link--primary w-100 justify-content-start" :title="m.name">
@@ -59,7 +59,7 @@
                     </div>
                   </template>
                   <span v-else class="font-color-sslight">{{
-                    $t('packages_business_data_console_target_no_task')
+                    $t('packages_business_data_console_target_no_api')
                   }}</span>
                 </div>
               </div>
@@ -237,6 +237,7 @@ export default {
     }
 
     return {
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       restApiIcon,
       dragging: false,
       list: [],
@@ -290,7 +291,7 @@ export default {
 
   created() {
     this.init()
-    this.getApiServerHost()
+    this.isDaas && this.getApiServerHost()
   },
 
   methods: {
