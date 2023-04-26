@@ -31,10 +31,10 @@ export function getPaymentMethod(item = {}, chargeProvider = '') {
   return i18n.t('dfs_instance_utils_one_month_only')
 }
 export const AGENT_TYPE_MAP = {
-  local: '半托管',
-  cloud: '全托管',
-  selfHost: '半托管',
-  fullManagement: '全托管',
-  Local: '半托管',
-  Cloud: '全托管'
+  local: i18n.t('dfs_instance_utils_bantuoguan'),
+  cloud: i18n.t('dfs_instance_utils_quantuoguan'),
+  selfHost: i18n.t('dfs_instance_utils_bantuoguan'),
+  fullManagement: i18n.t('dfs_instance_utils_quantuoguan'),
+  Local: i18n.t('dfs_instance_utils_bantuoguan'),
+  Cloud: i18n.t('dfs_instance_utils_quantuoguan')
 }

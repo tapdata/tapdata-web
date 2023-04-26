@@ -25,14 +25,14 @@
               <el-image class="w-100 product-type-image" :src="require('@/assets/image/intergration.png')" />
             </div>
             <div class="px-6 mb-6">
-              <div class="product-type-card-title text-center font-color-dark fs-5 mb-2">企业数据集成平台</div>
-              <div class="fs-7 font-color-light mb-3">
-                企业数据集成平台,可以用来连接打通企业的各个数据系统,并在这些系统中进行实时的数据传输,转换和加工。
+              <div class="product-type-card-title text-center font-color-dark fs-5 mb-2">
+                {{ $t('dfs_agent_download_subscriptionmodeldialog_qiyeshujuji2') }}
               </div>
-              <div class="fs-7 font-color-light mb-3">
-                类似于Fivetran, Airbyte, Hevodata这些产品,但是支持更实时的数据体验和更低的成本,同时支持云上和线下部署。
+              <div class="fs-7 font-color-light mb-3">{{ $t('dfs_instance_createagent_qiyeshujuji') }}</div>
+              <div class="fs-7 font-color-light mb-3">{{ $t('dfs_instance_createagent_leisiyuFi') }}</div>
+              <div class="text-center font-color-dark fs-5 mb-3">
+                {{ $t('dfs_agent_download_subscriptionmodeldialog_zhuyaoshiyongchang') }}
               </div>
-              <div class="text-center font-color-dark fs-5 mb-3">主要使用场景</div>
               <div class="flex justify-content-center align-items-center flex-wrap">
                 <el-tag class="mr-4 mt-4" v-for="(item, index) in interTag" :key="index">{{ item.value }}</el-tag>
               </div>
@@ -52,18 +52,18 @@
               <el-image class="w-100 product-type-image" :src="require('@/assets/image/real-time.png')" />
             </div>
             <div class="px-6 mb-4">
-              <div class="product-type-card-title text-center font-color-dark fs-5 mb-2">企业实时数据服务平台</div>
-              <div class="font-color-light fs-7 mb-3">
-                企业实时数据服务平台.通过将数据实时集成到中央化平台，经过简单治理后，
-                在中台里统一为下游数据业务场景提供实时的API数据服务或数据推送服务.
+              <div class="product-type-card-title text-center font-color-dark fs-5 mb-2">
+                {{ $t('dfs_agent_download_subscriptionmodeldialog_qiyeshishishu2') }}
               </div>
-              <div class="font-color-light fs-7 mb-3">
-                和IPaas
-                相比,最大的区别是使用了一个中央存储来对企业核心数据提供共享服务.具有对源库性能影响低,可扩展,可进行数据治理等优势.
+              <div class="font-color-light fs-7 mb-3">{{ $t('dfs_instance_createagent_qiyeshishishu') }}</div>
+              <div class="font-color-light fs-7 mb-3">{{ $t('dfs_instance_createagent_heIPaa') }}</div>
+              <div class="product-type-card-title text-center font-color-dark fs-5 mb-2">
+                {{ $t('dfs_agent_download_subscriptionmodeldialog_zhuyaoshiyongchang') }}
               </div>
-              <div class="product-type-card-title text-center font-color-dark fs-5 mb-2">主要使用场景</div>
               <div class="flex justify-content-center align-items-center flex-column">
-                <div class="font-color-light fs-7 mb-3 text-center">除支持所有的数据集成平台的场景外，还支持：</div>
+                <div class="font-color-light fs-7 mb-3 text-center">
+                  {{ $t('dfs_agent_download_subscriptionmodeldialog_chuzhichisuoyou') }}
+                </div>
                 <div>
                   <el-tag class="mr-4" v-for="(item, index) in realTimeTag" :key="index">{{ item.value }}</el-tag>
                 </div>
@@ -169,9 +169,9 @@
                     <span>{{ agentTypeMap[row.agentType || 'local'] }}</span>
                   </template>
                   <template #operation="{ row }">
-                    <ElButton v-if="row.agentType !== 'Cloud'" type="text" @click="handleNewAgentActiveCode(row)"
-                      >立即部署</ElButton
-                    >
+                    <ElButton v-if="row.agentType !== 'Cloud'" type="text" @click="handleNewAgentActiveCode(row)">{{
+                      $t('agent_button_deploy_now')
+                    }}</ElButton>
                     <ElButton v-else type="text" @click="handleNewAgentActiveCode(row)">{{
                       $t('public_button_create') + ' ' + $t('public_agent')
                     }}</ElButton>
@@ -225,9 +225,14 @@
               </ElSelect>
               <div class="mt-1 lh-base" v-html="$t('dfs_agent_specification_description', agentSizeCap)"></div>
             </ElFormItem>
-            <ElFormItem label="请选择您希望部署的共有云及地区" v-if="agentDeploy === 'fullManagement'">
+            <ElFormItem
+              :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxi')"
+              v-if="agentDeploy === 'fullManagement'"
+            >
               <div class="flex">
-                <span class="font-color-light inline-block form-label">云服务商</span>
+                <span class="font-color-light inline-block form-label">{{
+                  $t('dfs_agent_download_subscriptionmodeldialog_yunfuwushang')
+                }}</span>
                 <ElRadioGroup v-model="provider" @input="changeProvider" class="flex gap-4">
                   <ElRadio
                     v-for="(item, index) in cloudProviderList"
@@ -243,7 +248,9 @@
                 </ElRadioGroup>
               </div>
               <div class="flex mt-4">
-                <span class="font-color-light inline-block form-label">地区</span>
+                <span class="font-color-light inline-block form-label">{{
+                  $t('dfs_agent_download_subscriptionmodeldialog_diqu')
+                }}</span>
                 <ElRadioGroup v-model="region" class="flex gap-4">
                   <ElRadio
                     v-for="(item, index) in cloudDetail"
@@ -331,9 +338,11 @@
               <ElInput v-model="specificationAliyunCode.name" disabled class="w-50 rounded-4"></ElInput>
               <div class="mt-1 lh-base" v-html="$t('dfs_agent_specification_description', agentSizeCap)"></div>
             </ElFormItem>
-            <ElFormItem label="请选择您希望部署的共有云及地区">
+            <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxi')">
               <div class="flex">
-                <span class="font-color-light inline-block form-label">云服务商</span>
+                <span class="font-color-light inline-block form-label">{{
+                  $t('dfs_agent_download_subscriptionmodeldialog_yunfuwushang')
+                }}</span>
                 <ElRadioGroup v-model="provider" @input="changeProvider" class="flex gap-4">
                   <ElRadio
                     v-for="(item, index) in cloudProviderList"
@@ -349,7 +358,9 @@
                 </ElRadioGroup>
               </div>
               <div class="flex mt-4">
-                <span class="font-color-light inline-block form-label">地区</span>
+                <span class="font-color-light inline-block form-label">{{
+                  $t('dfs_agent_download_subscriptionmodeldialog_diqu')
+                }}</span>
                 <ElRadioGroup v-model="region" class="flex gap-4" @input="changeRegion">
                   <ElRadio
                     v-for="(item, index) in cloudDetail"
@@ -390,7 +401,10 @@
                   {{ selected.label }}
                 </span>
               </ElFormItem>
-              <ElFormItem label="云厂商|可用区" v-if="agentDeploy !== 'selfHost' || currentAliyunAgentType === 'Cloud'">
+              <ElFormItem
+                :label="$t('dfs_instance_createagent_yunchangshangkeyong')"
+                v-if="agentDeploy !== 'selfHost' || currentAliyunAgentType === 'Cloud'"
+              >
                 <span class="font-color-dark"> {{ cloudProviderName }} | {{ regionName }} </span>
               </ElFormItem>
               <ElFormItem :label="$t('dfs_instance_create_jieshouzhangdande')" prop="email" :rules="getEmailRules()">
@@ -458,7 +472,7 @@
           type="primary"
           :loading="submitOnlineLoading"
           @click="submit(currentAliyunCode)"
-          >部署</el-button
+          >{{ $t('agent_button_deploy') }}</el-button
         >
       </template>
     </div>
@@ -505,33 +519,33 @@ export default {
       },
       realTimeTag: [
         {
-          value: 'API服务发布'
+          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_apIfuwu')
         },
         {
-          value: '工作量集成'
+          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_gongzuoliangjicheng')
         },
         {
-          value: '数据ETL'
+          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_shujuEtl')
         }
       ],
       interTag: [
         {
-          value: '实时数据同步'
+          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_shishishujutong')
         },
         {
-          value: '数据ETL'
+          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_shujuEtl')
         },
         {
-          value: '数据上云/跨云同步'
+          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_shujushangyunkua')
         },
         {
-          value: '数据上云/跨云同步'
+          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_shujushangyunkua')
         },
         {
-          value: '数据库国产替代'
+          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_shujukuguochan')
         },
         {
-          value: 'Kafka供数'
+          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_kafka')
         }
       ],
       CURRENCY_MAP: CURRENCY_MAP,
@@ -569,7 +583,7 @@ export default {
           prop: 'specLabel'
         },
         {
-          label: '托管方式',
+          label: i18n.t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi'),
           prop: 'agentType',
           slotName: 'agentType'
         },
@@ -609,7 +623,7 @@ export default {
 
       return [
         {
-          title: '选择产品模式'
+          title: i18n.t('dfs_agent_download_subscriptionmodeldialog_xuanzechanpinmo')
         },
         {
           title: this.$t('dfs_agent_download_subscriptionmodeldialog_xuanzebushulei')

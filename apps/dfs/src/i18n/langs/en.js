@@ -1501,5 +1501,45 @@ export default {
   dfs_agent_download_transferdialog_kaihuyinhang: 'Account Bank: ',
   dfs_agent_download_transferdialog_shenzhentaiboshu: 'Shenzhen Titanium Platinum Data Co., Ltd',
   dfs_agent_download_transferdialog_kaihumingcheng: 'Account Name: ',
-  dfs_agent_download_transferdialog_zhuanzhangxinxi: 'Tansfer Information'
+  dfs_agent_download_transferdialog_zhuanzhangxinxi: 'Tansfer Information',
+
+  dfs_agent_download_subscriptionmodeldialog_xuanzechanpinmo: 'Select product model',
+  dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi: 'Hosting Method',
+  dfs_agent_download_subscriptionmodeldialog_kafka: 'Kafka for data',
+  dfs_agent_download_subscriptionmodeldialog_shujukuguochan: 'Database domestic replacement',
+  dfs_agent_download_subscriptionmodeldialog_shujushangyunkua: 'Data upload to cloud/cross-cloud synchronization',
+  dfs_agent_download_subscriptionmodeldialog_shujuEtl: 'Data ETL',
+  dfs_agent_download_subscriptionmodeldialog_shishishujutong: 'Real-time data synchronization',
+  dfs_agent_download_subscriptionmodeldialog_gongzuoliangjicheng: 'workload integration',
+  dfs_agent_download_subscriptionmodeldialog_apIfuwu: 'API service publishing',
+  dfs_agent_download_subscriptionmodeldialog_yunchangshangkeyong: 'Cloud vendor|Availability zone:',
+  dfs_agent_download_subscriptionmodeldialog_diqu: 'Region',
+  dfs_agent_download_subscriptionmodeldialog_yunfuwushang: 'Cloud service provider',
+  dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxi:
+    'Please select the public cloud and region you want to deploy',
+  dfs_agent_download_subscriptionmodeldialog_chuzhichisuoyou:
+    'In addition to supporting all data integration platform scenarios, it also supports:',
+  dfs_agent_download_subscriptionmodeldialog_zhuyaoshiyongchang: 'Main usage scenarios',
+  dfs_agent_download_subscriptionmodeldialog_heIPaa:
+    'Compared with IPaas, the biggest difference is that it uses a central storage to provide shared services for enterprise core data. It has the advantages of low impact on source database performance, scalability, and data governance.',
+  dfs_agent_download_subscriptionmodeldialog_qiyeshishishu:
+    'Enterprise real-time data service platform. By integrating data into the centralized platform in real time, after simple management, the central platform provides real-time API data services or data push services for downstream data business scenarios.',
+  dfs_agent_download_subscriptionmodeldialog_qiyeshishishu2: 'Real Time Data as a Service',
+  dfs_agent_download_subscriptionmodeldialog_leisiyuFi:
+    'Similar to products such as Fivetran, Airbyte, and Hevodata, but supports more real-time data experience and lower costs, and supports both cloud and offline deployment. ',
+  dfs_agent_download_subscriptionmodeldialog_qiyeshujuji:
+    'Enterprise data integration platform can be used to connect various data systems of enterprises, and carry out real-time data transmission, transformation and processing in these systems. ',
+  dfs_agent_download_subscriptionmodeldialog_qiyeshujuji2: 'Integration Platform as a Service',
+  dfs_instance_createagent_yunchangshangkeyong: 'Cloud Vendor | Availability Zone',
+  dfs_instance_createagent_heIPaa:
+    'Compared with IPaas, the biggest difference is that it uses a central storage to provide shared services for enterprise core data. It has the advantages of low impact on source database performance, scalability, and data governance.',
+  dfs_instance_createagent_qiyeshishishu:
+    'Enterprise real-time data service platform. By integrating data into the centralized platform in real time, after simple management, the central platform provides real-time API data services or data push services for downstream data business scenarios.',
+  dfs_instance_createagent_leisiyuFi:
+    'Similar to products such as Fivetran, Airbyte, and Hevodata, but supports more real-time data experience and lower costs, and supports both cloud and offline deployment. ',
+  dfs_instance_createagent_qiyeshujuji:
+    'Enterprise data integration platform can be used to connect various data systems of enterprises, and carry out real-time data transmission, conversion and processing in these systems. ',
+  dfs_instance_instance_zhongqi: 'Restart',
+  dfs_instance_utils_quantuoguan: 'Full Management',
+  dfs_instance_utils_bantuoguan: 'Semi Management'
 }

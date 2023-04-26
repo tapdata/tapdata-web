@@ -1355,8 +1355,7 @@ export default {
   dfs_agent_step_aliyun_code: '使用阿里雲市場授權碼',
   dfs_agent_download_subscriptionmodeldialog_zhuanzhangzhifu: '轉賬支付',
   dfs_agent_download_subscriptionmodeldialog_zaixianzhifu: '在線支付',
-  dfs_agent_download_transferdialog_zaiwanchengzhuanzhang:
-    '在完成轉賬一天內, 我們將會為您開通服務, 並通過郵箱通知您',
+  dfs_agent_download_transferdialog_zaiwanchengzhuanzhang: '在完成轉賬一天內, 我們將會為您開通服務, 並通過郵箱通知您',
   dfs_agent_download_transferdialog_reopen_tips:
     '如您關閉此頁面, 可通過右上角, 用戶名 -> 用戶中心, 在下方 服務訂閱信息 處重新進行支付, 如有任何問題, 歡迎通過郵件 team@tapdata.io 與我們聯繫',
   dfs_agent_download_transferdialog_caozuoshuoming: '操作說明',
@@ -1365,5 +1364,42 @@ export default {
   dfs_agent_download_transferdialog_kaihuyinhang: '開戶銀行：',
   dfs_agent_download_transferdialog_shenzhentaiboshu: '深圳鈦鉑數據有限公司 ',
   dfs_agent_download_transferdialog_kaihumingcheng: '開戶名稱：',
-  dfs_agent_download_transferdialog_zhuanzhangxinxi: '轉賬信息'
+  dfs_agent_download_transferdialog_zhuanzhangxinxi: '轉賬信息',
+  dfs_agent_download_subscriptionmodeldialog_xuanzechanpinmo: '選擇產品模式',
+  dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi: '託管方式',
+  dfs_agent_download_subscriptionmodeldialog_kafka: 'Kafka供數',
+  dfs_agent_download_subscriptionmodeldialog_shujukuguochan: '數據庫國產替代',
+  dfs_agent_download_subscriptionmodeldialog_shujushangyunkua: '數據上雲/跨云同步',
+  dfs_agent_download_subscriptionmodeldialog_shujuEtl: '數據ETL',
+  dfs_agent_download_subscriptionmodeldialog_shishishujutong: '實時數據同步',
+  dfs_agent_download_subscriptionmodeldialog_gongzuoliangjicheng: '工作量集成',
+  dfs_agent_download_subscriptionmodeldialog_apIfuwu: 'API服務發布',
+  dfs_agent_download_subscriptionmodeldialog_yunchangshangkeyong: '雲廠商|可用區:',
+  dfs_agent_download_subscriptionmodeldialog_diqu: '地區',
+  dfs_agent_download_subscriptionmodeldialog_yunfuwushang: '雲服務商',
+  dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxi: '請選擇您希望部署的共有云及地區',
+  dfs_agent_download_subscriptionmodeldialog_chuzhichisuoyou: '除支持所有的數據集成平台的場景外，還支持：',
+  dfs_agent_download_subscriptionmodeldialog_zhuyaoshiyongchang: '主要使用場景',
+  dfs_agent_download_subscriptionmodeldialog_heIPaa:
+    '和IPaas相比,最大的區別是使用了一個中央存儲來對企業核心數據提供共享服務.具有對源庫性能影響低,可擴展,可進行數據治理等優勢.',
+  dfs_agent_download_subscriptionmodeldialog_qiyeshishishu:
+    '企業實時數據服務平台.通過將數據實時集成到中央化平台，經過簡單治理後，在中台裡統一為下游數據業務場景提供實時的API數據服務或數據推送服務.',
+  dfs_agent_download_subscriptionmodeldialog_qiyeshishishu2: '企業實時數據服務平台',
+  dfs_agent_download_subscriptionmodeldialog_leisiyuFi:
+    '類似於Fivetran, Airbyte, Hevodata這些產品,但是支持更實時的數據體驗和更低的成本,同時支持雲上和線下部署。 ',
+  dfs_agent_download_subscriptionmodeldialog_qiyeshujuji:
+    '企業數據集成平台,可以用來連接打通企業的各個數據系統,並在這些系統中進行實時的數據傳輸,轉換和加工。 ',
+  dfs_agent_download_subscriptionmodeldialog_qiyeshujuji2: '企業數據集成平台',
+  dfs_instance_createagent_yunchangshangkeyong: '雲廠商|可用區',
+  dfs_instance_createagent_heIPaa:
+    '和IPaas相比,最大的區別是使用了一個中央存儲來對企業核心數據提供共享服務.具有對源庫性能影響低,可擴展,可進行數據治理等優勢.',
+  dfs_instance_createagent_qiyeshishishu:
+    '企業實時數據服務平台.通過將數據實時集成到中央化平台，經過簡單治理後，在中台裡統一為下游數據業務場景提供實時的API數據服務或數據推送服務.',
+  dfs_instance_createagent_leisiyuFi:
+    '類似於Fivetran, Airbyte, Hevodata這些產品,但是支持更實時的數據體驗和更低的成本,同時支持雲上和線下部署。 ',
+  dfs_instance_createagent_qiyeshujuji:
+    '企業數據集成平台,可以用來連接打通企業的各個數據系統,並在這些系統中進行實時的數據傳輸,轉換和加工。 ',
+  dfs_instance_instance_zhongqi: '重啟',
+  dfs_instance_utils_quantuoguan: '全託管',
+  dfs_instance_utils_bantuoguan: '半託管'
 }

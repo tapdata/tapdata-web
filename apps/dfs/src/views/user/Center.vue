@@ -653,7 +653,7 @@ export default {
           prop: 'quantity'
         },
         {
-          label: '托管方式',
+          label: i18n.t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi'),
           prop: 'agentDeploy'
         },
         {
@@ -686,7 +686,7 @@ export default {
           width: 320
         },
         {
-          label: '托管方式',
+          label: i18n.t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi'),
           prop: 'agentType',
           slotName: 'agentType'
         },

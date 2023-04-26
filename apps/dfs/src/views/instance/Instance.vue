@@ -39,7 +39,7 @@
             <span>{{ scope.row.specLabel }}</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn width="80px" label="托管方式">
+        <ElTableColumn width="80px" :label="$t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi')">
           <template slot-scope="scope">
             <span>{{ agentTypeMap[scope.row.agentType] }}</span>
           </template>
@@ -228,7 +228,7 @@
               :loading="scope.row.btnLoading.delete"
               :disabled="renewBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
               @click="handleRenew(scope.row)"
-              >重启</ElButton
+              >{{$t('dfs_instance_instance_zhongqi')}}</ElButton
             >
             <ElDivider direction="vertical"></ElDivider>
             <ElButton
