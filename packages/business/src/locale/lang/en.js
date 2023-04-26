@@ -606,7 +606,6 @@ export default {
   packages_business_notify_system_notice: 'System Notification',
   packages_business_notify_alarm_title: 'Agent Alarm Setting',
   packages_business_setting_alarm_notification_notify_noticeInterval: 'Sending Interval',
-  packages_business_notify_notice_level: 'Notice Level',
   packages_business_setting_notification_alarm_notification_gaojingtongzhi: 'Alarm Notification',
   packages_business_setting_alarmnotification_gaojingzhibiao: 'Alarm Indicator',
   packages_business_setting_alarmnotification_dangjiediandeping:
