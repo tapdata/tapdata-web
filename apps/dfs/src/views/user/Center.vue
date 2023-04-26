@@ -224,6 +224,9 @@
         ref="table"
         class="mt-4"
       >
+        <template #agentType="{ row }">
+          <span>{{ agentTypeMap[row.agentType || 'local'] }}</span>
+        </template>
         <template #bindAgent="{ row }">
           <ElLink v-if="row.agentId && row.status === 'pay'" type="primary" @click="handleAgent(row)">{{
             row.agentId
@@ -654,7 +657,8 @@ export default {
         },
         {
           label: i18n.t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi'),
-          prop: 'agentDeploy'
+          prop: 'agentType',
+          slotName: 'agentType'
         },
         {
           label: i18n.t('dfs_user_center_jine'),
