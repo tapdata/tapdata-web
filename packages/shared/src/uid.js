@@ -7,7 +7,7 @@ export function uid(len, beginString = '') {
     num = len || 11
   while (num--) str += HEX[(Math.random() * 36) | 0]
   if (beginString && /^\d/.test(str)) {
-    str = beginString + uid.substring(1)
+    str = beginString + str.substring(1)
   }
   return str
 }
