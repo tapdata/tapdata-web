@@ -1364,9 +1364,17 @@ export default {
   dfs_instance_utils_baoyue: 'Monthly',
   dfs_instance_utils_one_month_only: 'One Month Only',
   dfs_instance_utils_one_year_only: 'One Year Only',
-  dfs_instance_expired_time_tip1: 'Restricted behaviors after expiration:',
-  dfs_instance_expired_time_tip2: '1. Prohibition of scheduling new tasks to run on expired instances.',
-  dfs_instance_expired_time_tip3: '2. Continued unrestricted operation of old tasks.',
+  dfs_instance_expired_time_tip1: 'Limit behavior after expiration:',
+  dfs_instance_expired_time_tip2:
+    '1. It is forbidden to schedule new tasks to run on the expired Agent after 1 day of expiration',
+  dfs_instance_expired_time_tip3:
+    '2. The old task can continue to run, but when the task is restarted, it will not be rescheduled to run on the expired Agent',
+  dfs_instance_expired_time_tip4:
+    '3. When the instance is prohibited from being scheduled due to expiration, the instance can be resumed by renewal to continue scheduling running tasks',
+  dfs_instance_expired_time_full_tip2:
+    '1. After 1 day expires, the Agent will be automatically stopped (the tasks running on the Agent will also be stopped)',
+  dfs_instance_expired_time_full_tip3:
+    '2. When the instance is stopped due to expiration, the instance can be resumed by renewal to continue running tasks',
   dfs_user_center_zhifufuwu: 'Payment Service',
   dfs_user_center_ninjiangzhifur:
     'You will pay for the "{val1}" service, and you will enjoy the service after payment. Are you sure whether to continue? ',

@@ -70,8 +70,15 @@
                 <template #content>
                   <div v-if="getExpiredTimeLevel(scope.row) === 'expired'" class="font-color-dark">
                     <p>{{ $t('dfs_instance_expired_time_tip1') }}</p>
-                    <p>{{ $t('dfs_instance_expired_time_tip2') }}</p>
-                    <p>{{ $t('dfs_instance_expired_time_tip3') }}</p>
+                    <div v-if="scope.row.agentType === 'Cloud'">
+                      <p>{{ $t('dfs_instance_expired_time_full_tip2') }}</p>
+                      <p>{{ $t('dfs_instance_expired_time_full_tip3') }}</p>
+                    </div>
+                    <div v-else>
+                      <p>{{ $t('dfs_instance_expired_time_tip2') }}</p>
+                      <p>{{ $t('dfs_instance_expired_time_tip3') }}</p>
+                      <p>{{ $t('dfs_instance_expired_time_tip4') }}</p>
+                    </div>
                   </div>
                   <span v-else-if="scope.row.paidType === 'recurring'">{{
                     $t('dfs_instance_instance_xiacifufeishi')
