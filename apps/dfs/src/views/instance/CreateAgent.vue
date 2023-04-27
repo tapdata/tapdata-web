@@ -392,7 +392,10 @@
               label-position="right"
             >
               <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_jisuanziyuan')">
-                <span class="font-color-dark">
+                <span class="font-color-dark" v-if="agentDeploy === 'aliyun'">
+                  {{ specificationAliyunCode.name }}
+                </span>
+                <span class="font-color-dark" v-else>
                   {{ specMap[currentSpecName] || currentSpecName }}
                 </span>
               </ElFormItem>

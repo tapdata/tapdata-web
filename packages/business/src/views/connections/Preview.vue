@@ -149,8 +149,8 @@ export default {
             icon: 'time',
             items: [
               {
-                label: this.$t('public_connection_button_load_schema'),
-                key: 'last_updated'
+                label: this.$t('public_connection_table_structure_update_time'),
+                key: 'loadSchemaTime'
               }
             ]
           },
