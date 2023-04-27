@@ -234,7 +234,7 @@
                 :key="i"
                 :label="item.name"
                 :value="item.value"
-                :disabled="agentCount > 0 && item.chargeProvider === 'FreeTier'"
+                :disabled="(agentCount > 0 || agentDeploy !== 'selfHost') && item.chargeProvider === 'FreeTier'"
               >
                 <span>{{ item.name }}: </span>
                 <span>{{ item.desc }}</span>
