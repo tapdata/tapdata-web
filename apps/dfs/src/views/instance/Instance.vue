@@ -91,7 +91,13 @@
         </ElTableColumn>
         <ElTableColumn :label="$t('agent_status')" width="100">
           <template slot-scope="scope">
-            <StatusTag type="tag" :status="scope.row.status" default-status="Stopped"></StatusTag>
+            <StatusTag
+              v-if="scope.row.agentType === 'Cloud' && scope.row.status === 'Creating'"
+              type="tag"
+              status="Deploying"
+              default-status="Stopped"
+            ></StatusTag>
+            <StatusTag v-else type="tag" :status="scope.row.status" default-status="Stopped"></StatusTag>
             <ElTooltip v-if="scope.row.status == 'Stopped'" placement="top">
               <VIcon size="14" class="ml-2 color-primary">question-circle</VIcon>
               <template #content>
