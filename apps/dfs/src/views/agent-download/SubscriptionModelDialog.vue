@@ -897,7 +897,10 @@ export default {
         ).sort((a, b) => {
           return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
         })
-        this.specification = this.agentCount > 0 ? this.specificationItems[1]?.value : this.specificationItems[0]?.value
+        this.specification =
+          this.agentCount > 0 || this.agentDeploy !== 'selfHost'
+            ? this.specificationItems[1]?.value
+            : this.specificationItems[0]?.value
         // 价格套餐
         this.allPackages = paidPrice.map(t => {
           return Object.assign(t, {
