@@ -1170,9 +1170,9 @@ export default {
     delBtnDisabled(row) {
       let flag = false
       if (row.agentType === 'Cloud') {
-        if (['Creating'].includes(row.status)) {
-          flag = true
-        }
+        flag =
+          !['Creating', 'Running', 'Stopped', 'Error', 'Freezing', 'Freeze'].includes(row.status) ||
+          row.metric.runningTaskNum > 0
       } else {
         flag = !['Creating', 'Stopped'].includes(row.status)
       }
