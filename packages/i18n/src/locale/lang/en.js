@@ -48,6 +48,7 @@ export default {
   public_status_to_be_restart: 'Wait for restart',
   public_status_restarting: 'Restarting',
   public_status_deploying: 'Deploying',
+  public_status_altering: 'Altering',
   // button
   public_button_edit: 'Edit',
   public_button_confirm: 'Ok',

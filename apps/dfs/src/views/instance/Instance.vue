@@ -577,7 +577,7 @@ export default {
       showUnsubscribeDetailVisible: false,
       //转账支付
       showTransferDialogVisible: false,
-      price: 0,
+      price: '0',
       loadingCancelSubmit: false,
       paidDetailList: [],
       form: {
@@ -624,7 +624,8 @@ export default {
         refundDescribe: [{ required: true, message: i18n.t('dfs_instance_instance_qingshurutuiding'), trigger: 'blur' }]
       },
       paidRenewDetail: [],
-      unsubscribeHelpDocumentation: ''
+      unsubscribeHelpDocumentation: '',
+      supportResPools: [] //可用资源列表
     }
   },
   computed: {
@@ -689,6 +690,7 @@ export default {
         this.fetch(null, true)
       }
     }, 10000)
+    this.getLatestVersion()
   },
   beforeDestroy() {
     clearInterval(timer)
@@ -733,8 +735,11 @@ export default {
         }
       ]
     },
-    async getVersion(id) {
-      return this.$axios.get('api/tcm/config/version/latest/' + id)
+    getLatestVersion() {
+      this.$axios.get('api/tcm/config/version/latest').then(data => {
+        this.version = data.version
+        this.supportResPools = data.supportResPools
+      })
     },
     search() {
       this.$router.replace({
@@ -809,25 +814,6 @@ export default {
             }
             return item
           })
-
-          // 版本号
-          if (this.list?.[0]?.id) {
-            let getVersion = await this.getVersion(this.list[0]?.id)
-            //升级弹窗使用
-            let { packageSize, changeList, estimatedUpgradeTime, version, releaseNoteUri } = getVersion
-            this.currentVersionInfo = {
-              packageSize: (packageSize ? (packageSize / (1024 * 1024)).toFixed(1) + ' MB' : '-') || '-',
-              changeList: changeList || '',
-              estimatedUpgradeTime:
-                (estimatedUpgradeTime
-                  ? (Math.floor(estimatedUpgradeTime / 60) % 60) + i18n.t('dfs_instance_instance_fenzhong')
-                  : '-') || '-',
-              releaseNoteUri: releaseNoteUri,
-              version: version
-            }
-            this.version = getVersion?.version
-          }
-
           this.page.total = data.total
           if (!list.length && data.total > 0) {
             setTimeout(() => {
@@ -1027,7 +1013,22 @@ export default {
         this.manualUpgradeFnc()
         return
       }
-      this.upgradeDialog = true
+      // 版本号
+      this.$axios.get('api/tcm/config/version/latest/' + row.id).then(getVersion => {
+        //升级弹窗使用
+        let { packageSize, changeList, estimatedUpgradeTime, version, releaseNoteUri } = getVersion
+        this.currentVersionInfo = {
+          packageSize: (packageSize ? (packageSize / (1024 * 1024)).toFixed(1) + ' MB' : '-') || '-',
+          changeList: changeList || '',
+          estimatedUpgradeTime:
+            (estimatedUpgradeTime
+              ? (Math.floor(estimatedUpgradeTime / 60) % 60) + i18n.t('dfs_instance_instance_fenzhong')
+              : '-') || '-',
+          releaseNoteUri: releaseNoteUri,
+          version: version
+        }
+        this.upgradeDialog = true
+      })
     },
     showUpgradeErrorDialogFnc() {
       this.upgradeErrorDialog = true
@@ -1210,11 +1211,11 @@ export default {
     },
     showUpgradeIcon(row) {
       let { version } = this
-      // if (row.agentType === 'Cloud') {
-      //   return false
-      // }
       if (row.agentType === 'Cloud') {
-        return !!(version && row.status === 'Running' && row?.spec?.version !== version)
+        //全托管升级必须在支持升级可用资源区
+        let available =
+          this.supportResPools.filter(it => it.provider === row.provider && it.region === row.region) || []
+        return !!(version && row.status === 'Running' && row?.spec?.version !== version && available?.length > 0)
       }
       return !!(version && row?.tmInfo?.pingTime && row?.spec?.version !== version)
     },

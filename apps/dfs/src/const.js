@@ -16,7 +16,9 @@ export const TOPOLOGY_MAP = topologyMap,
     Stopped: { text: i18n.t('public_agent_status_offline'), type: 'disable' },
     WaitingRestart: { text: i18n.t('public_status_to_be_restart'), type: 'disable' },
     Restarting: { text: i18n.t('public_status_restarting'), type: 'disable' },
-    Deploying: { text: i18n.t('public_status_deploying'), type: 'disable' }
+    Deploying: { text: i18n.t('public_status_deploying'), type: 'disable' },
+    Altering: { text: i18n.t('public_status_altering'), type: 'disable' },
+    Error: { text: i18n.t('public_status_error'), type: 'danger' }
   },
   TASK_STATUS_MAP = {
     running: { text: i18n.t('public_status_running'), icon: 'yunxingzhong', type: 'success' },

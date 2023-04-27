@@ -48,6 +48,7 @@ export default {
   public_status_to_be_restart: '等待重啟',
   public_status_restarting: '重啟中',
   public_status_deploying: '部署中',
+  public_status_altering: '升级中',
   // 按鈕
   public_button_edit: '編輯',
   public_button_confirm: '確定',
