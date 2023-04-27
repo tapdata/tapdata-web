@@ -29,7 +29,14 @@
       </template>
       <template v-else>
         <IconButton @click="showForm = false" class="mr-2">left</IconButton>
-        <DatabaseIcon class="mr-2" :size="24" :item="formParams"></DatabaseIcon>
+        <DatabaseIcon
+          key="databaseIcon"
+          v-if="formParams.pdkHash"
+          class="mr-2"
+          :size="24"
+          :item="formParams"
+        ></DatabaseIcon>
+        <VIcon v-else key="icon" class="mr-2" :size="24">{{ formParams.icon }}</VIcon>
         <span>{{ formParams.name }}</span>
       </template>
     </div>
@@ -57,7 +64,7 @@
           <div
             v-for="item in sceneDatabases"
             :key="item.pdkId"
-            class="connector-item rounded-4 p-3 overflow-hidden bg-white clickable"
+            class="connector-item rounded-lg p-3 overflow-hidden bg-white clickable"
             :class="{ active: item.pdkId === selected.pdkId }"
             @click="handleSelect(item)"
           >
@@ -67,7 +74,9 @@
                 <div class="connector-item-title font-color-dark flex align-center">
                   <span class="ellipsis mr-1">{{ item.name }}</span>
                   <VIcon v-if="item.qcType === 'GA'" size="24" class="ml-auto color-success">verified</VIcon>
-                  <ElTag v-else-if="item.qcType" size="mini" class="text-uppercase ml-auto">{{ item.qcType }}</ElTag>
+                  <ElTag v-else-if="item.qcType" size="mini" class="text-uppercase ml-auto px-1 connector-item-tag">{{
+                    item.qcType
+                  }}</ElTag>
                 </div>
               </div>
             </div>
@@ -76,15 +85,34 @@
             </div>
           </div>
         </div>
+        <div v-else-if="specialScene[currentScene]" class="connector-list grid gap-4">
+          <div
+            v-for="item in specialScene[currentScene]"
+            :key="item.key"
+            class="connector-item rounded-lg p-3 overflow-hidden bg-white clickable"
+            @click="handleSelectSpecial(item)"
+          >
+            <div class="flex gap-3">
+              <VIcon size="38">{{ item.icon }}</VIcon>
+              <div class="connector-item-content flex-1 overflow-hidden">
+                <div class="connector-item-title font-color-dark flex align-center">
+                  <span class="ellipsis mr-1">{{ item.name }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <VEmpty v-else></VEmpty>
       </div>
     </div>
     <div v-else class="form__content flex flex-column h-100 overflow-hidden border-top">
       <ServeForm
-        v-if="['apiServices'].includes(activeTab)"
+        v-if="!formParams.pdkHash"
         :params="formParams"
         :selector-type="selectorType"
         class="flex-fill"
+        @success="handleSuccess"
+        @saveAndMore="handleSaveAndMore"
       ></ServeForm>
       <ConnectionForm
         v-else
@@ -130,11 +158,14 @@ export default {
     selectorType: String
   },
   data() {
+    const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
     return {
+      isDaas,
       search: '',
       formParams: {
         name: '',
-        pdkHash: null
+        pdkHash: null,
+        md: null
       },
       selected: {},
       showForm: false,
@@ -153,10 +184,12 @@ export default {
           name: i18n.t('packages_business_create_connection_scenedialog_tuijianchangjing'),
           types: ['BigQuery', 'Tablestore', 'MongoDB', 'Redis', 'SelectDB']
         },
-        /*{
-          name: 'API 发布',
-          types: ['RESTful API', 'GraphQL']
-        },*/
+        {
+          key: 'api',
+          name: i18n.t('packages_business_api_publish'),
+          hidden: !isDaas /*,
+          types: ['RESTful API', 'GraphQL']*/
+        },
         {
           name: i18n.t('packages_business_create_connection_scenedialog_rushucang'),
           types: [
@@ -229,7 +262,17 @@ export default {
           name: 'My Connectors',
           key: 'Custom'
         }
-      ]
+      ],
+      specialScene: {
+        api: [
+          {
+            key: 'apiApp',
+            icon: 'mini-app',
+            name: this.$t('packages_business_api_application'),
+            md: this.$t('packages_business_api_application_md')
+          }
+        ]
+      }
     }
   },
   computed: {
@@ -251,16 +294,14 @@ export default {
 
       if (this.selectorType === 'target') {
         const types = this.sceneMap[this.currentScene]
-        return this.database.filter(db => types.includes(db.type))
+        return types?.length ? this.database.filter(db => types.includes(db.type)) : []
       }
 
       return this.database.filter(db => db.tags?.includes(this.currentScene))
     },
     options() {
-      if (this.selectorType === 'target') {
-        return this.sceneList
-      }
-      return this.tagList
+      let list = this.selectorType === 'target' ? this.sceneList : this.tagList
+      return list.filter(item => !item.hidden)
     },
     title() {
       if (this.selectorType === 'target') {
@@ -320,15 +361,14 @@ export default {
         this.$emit('selected', item)
         return
       }
+
+      Object.assign(this.formParams, { name: item.name, icon: null, pdkHash: item.pdkHash })
       this.selected = item
-      switch (this.activeTab) {
-        case 'apiServices':
-          // TODO apiServices
-          break
-        default:
-          this.formParams = { pdkHash: item.pdkHash, name: item.name }
-          break
-      }
+      this.showForm = true
+    },
+
+    handleSelectSpecial(item) {
+      Object.assign(this.formParams, { ...item, pdkHash: null })
       this.showForm = true
     },
 
@@ -366,7 +406,9 @@ export default {
         this.selectorType !== 'source_and_target'
           ? res?.filter(t => t.connectionType.includes(this.selectorType) && !!t.pdkHash) || []
           : res
-      this.database = data
+      this.database = data.sort((o1, o2) => {
+        return o1.name.localeCompare(o2.name)
+      })
       this.loading = false
     },
 
@@ -465,6 +507,11 @@ export default {
       &-title {
         font-size: 15px;
         line-height: 38px;
+      }
+
+      &-tag {
+        height: 18px;
+        line-height: 16px;
       }
 
       &:hover {
