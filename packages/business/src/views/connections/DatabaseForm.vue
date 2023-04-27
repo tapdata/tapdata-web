@@ -86,10 +86,11 @@
       ></GitBook>
     </div>
     <Test ref="test" :visible.sync="dialogTestVisible" :formData="model" @returnTestData="returnTestData"></Test>
-    <DatabaseTypeDialog
-      :dialogVisible.sync="dialogDatabaseTypeVisible"
-      @databaseType="handleDatabaseType"
-    ></DatabaseTypeDialog>
+    <SceneDialog
+      :visible.sync="dialogDatabaseTypeVisible"
+      selector-type="source_and_target"
+      @selected="handleDatabaseType"
+    ></SceneDialog>
     <el-dialog
       :title="$t('packages_business_connection_rename')"
       :close-on-click-modal="false"
@@ -117,23 +118,23 @@
 
 <script>
 import { action } from '@formily/reactive'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash'
 
 import i18n from '@tap/i18n'
 import { clusterApi, connectionsApi, databaseTypesApi, pdkApi, externalStorageApi, proxyApi } from '@tap/api'
 import { VIcon, GitBook } from '@tap/component'
 import { SchemaToForm } from '@tap/form'
-import { checkConnectionName, isEmpty, openUrl, submitForm } from '@tap/shared'
+import { checkConnectionName, submitForm } from '@tap/shared'
 import resize from '@tap/component/src/directives/resize'
 
 import Test from './Test'
 import { getConnectionIcon } from './util'
-import DatabaseTypeDialog from './DatabaseTypeDialog'
 import { ConnectionDebug } from './ConnectionDebug'
+import SceneDialog from '../../components/create-connection/SceneDialog.vue'
 
 export default {
   name: 'DatabaseForm',
-  components: { Test, DatabaseTypeDialog, VIcon, SchemaToForm, GitBook, ConnectionDebug },
+  components: { SceneDialog, Test, VIcon, SchemaToForm, GitBook, ConnectionDebug },
   inject: ['checkAgent', 'buried'],
   directives: {
     resize
