@@ -18,7 +18,7 @@
         @sort-change="sortChange"
         @row-click="rowClick"
       >
-        <ElTableColumn min-width="200px" :label="$t('agent_name')">
+        <ElTableColumn min-width="140px" :label="$t('agent_name')">
           <template slot-scope="scope">
             <div class="flex">
               <div>
@@ -140,7 +140,7 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn :label="$t('public_version')" width="100">
+        <ElTableColumn :label="$t('public_version')" width="120">
           <template slot-scope="scope">
             <div class="flex align-items-center">
               <span v-if="showVersionFlag(scope.row)">{{ scope.row.spec && scope.row.spec.version }}</span>
@@ -380,14 +380,23 @@
             <span class="ml-1">{{ $t('public_button_stop') }}</span>
           </VButton>
           <VButton
+            v-if="selectedRow.orderInfo && selectedRow.orderInfo.chargeProvider === 'Stripe'"
+            type="primary"
             :loading="selectedRow.btnLoading.delete"
             :disabled="delBtnDisabled(selectedRow) || $disabledReadonlyUserBtn()"
-            class="flex-fill min-w-0"
-            @click="handleDel(selectedRow)"
+            @click="getUnsubscribePrice(selectedRow)"
           >
-            <VIcon size="12">delete</VIcon>
-            <span class="ml-1">{{ $t('public_button_delete') }}</span>
-          </VButton>
+            <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></VButton
+          >
+          <VButton
+            v-else
+            type="primary"
+            :loading="selectedRow.btnLoading.delete"
+            :disabled="delBtnDisabled(selectedRow) || $disabledReadonlyUserBtn()"
+            @click="handleUnsubscribe(selectedRow)"
+          >
+            <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></VButton
+          >
         </div>
       </Details>
       <!--   创建订阅   -->
@@ -1191,6 +1200,9 @@ export default {
       // if (row.agentType === 'Cloud') {
       //   return false
       // }
+      if (row.agentType === 'Cloud') {
+        return !!(version && row.status === 'Running' && row?.spec?.version !== version)
+      }
       return !!(version && row?.tmInfo?.pingTime && row?.spec?.version !== version)
     },
     upgradeFlag(row) {
