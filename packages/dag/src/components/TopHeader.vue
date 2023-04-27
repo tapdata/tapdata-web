@@ -131,8 +131,9 @@
         <!--保存-->
         {{ $t('public_button_save') }}
       </ElButton>
+
       <ElButton
-        v-if="!(dataflow.disabledData && dataflow.disabledData.reset)"
+        v-if="dataflow.disabledData && !dataflow.disabledData.reset"
         :disabled="$disabledReadonlyUserBtn()"
         key="reset"
         class="ml-3"
