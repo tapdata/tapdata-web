@@ -1133,6 +1133,7 @@ export default {
         .catch(() => {})
     },
     handleCreateAgent() {
+      //this.subscriptionModelVisible = true
       this.$router.push({
         name: 'createAgent'
       })

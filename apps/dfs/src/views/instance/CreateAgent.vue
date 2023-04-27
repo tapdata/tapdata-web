@@ -9,9 +9,9 @@
         </el-steps>
       </div>
       <div class="subscription-steps-content mt-4">
-        <div v-if="activeStep === 1" class="flex gap-6 px-5">
+        <div v-if="activeStep === 1" class="flex gap-6 px-5 justify-content-center align-items-center">
           <div
-            class="product-type-card rounded-xl border flex flex-column flex-1 position-relative overflow-hidden clickable"
+            class="product-type-card rounded-xl border flex flex-column position-relative overflow-hidden clickable"
             :class="{
               active: platform === 'integration'
             }"
@@ -25,12 +25,12 @@
               <el-image class="w-100 product-type-image" :src="require('@/assets/image/intergration.png')" />
             </div>
             <div class="px-6 mb-6">
-              <div class="product-type-card-title text-center font-color-dark fs-5 mb-2">
+              <div class="product-type-card-title text-center font-color-dark mb-2">
                 {{ $t('dfs_agent_download_subscriptionmodeldialog_qiyeshujuji2') }}
               </div>
-              <div class="fs-7 font-color-light mb-3">{{ $t('dfs_instance_createagent_qiyeshujuji') }}</div>
-              <div class="fs-7 font-color-light mb-3">{{ $t('dfs_instance_createagent_leisiyuFi') }}</div>
-              <div class="text-center font-color-dark fs-5 mb-3">
+              <div class="fs-7 font-color-sslight mb-3">{{ $t('dfs_instance_createagent_qiyeshujuji') }}</div>
+              <div class="fs-7 font-color-sslight mb-3">{{ $t('dfs_instance_createagent_leisiyuFi') }}</div>
+              <div class="text-center font-color-dark fs-6 mb-3">
                 {{ $t('dfs_agent_download_subscriptionmodeldialog_zhuyaoshiyongchang') }}
               </div>
               <div class="flex justify-content-center align-items-center flex-wrap">
@@ -39,7 +39,7 @@
             </div>
           </div>
           <div
-            class="product-type-card rounded-xl border flex flex-column flex-1 position-relative overflow-hidden clickable disabled"
+            class="product-type-card rounded-xl border flex flex-column position-relative overflow-hidden clickable disabled"
             :class="{
               active: platform === 'realTime'
             }"
@@ -52,16 +52,16 @@
               <el-image class="w-100 product-type-image" :src="require('@/assets/image/real-time.png')" />
             </div>
             <div class="px-6 mb-4">
-              <div class="product-type-card-title text-center font-color-dark fs-5 mb-2">
+              <div class="product-type-card-title text-center font-color-dark font-weight-bold mb-2">
                 {{ $t('dfs_agent_download_subscriptionmodeldialog_qiyeshishishu2') }}
               </div>
-              <div class="font-color-light fs-7 mb-3">{{ $t('dfs_instance_createagent_qiyeshishishu') }}</div>
-              <div class="font-color-light fs-7 mb-3">{{ $t('dfs_instance_createagent_heIPaa') }}</div>
-              <div class="product-type-card-title text-center font-color-dark fs-5 mb-2">
+              <div class="font-color-sslight fs-7 mb-3">{{ $t('dfs_instance_createagent_qiyeshishishu') }}</div>
+              <div class="font-color-sslight fs-7 mb-3">{{ $t('dfs_instance_createagent_heIPaa') }}</div>
+              <div class="text-center font-color-dark fs-6 mb-2">
                 {{ $t('dfs_agent_download_subscriptionmodeldialog_zhuyaoshiyongchang') }}
               </div>
               <div class="flex justify-content-center align-items-center flex-column">
-                <div class="font-color-light fs-7 mb-3 text-center">
+                <div class="font-color-sslight fs-7 mb-3 text-center">
                   {{ $t('dfs_agent_download_subscriptionmodeldialog_chuzhichisuoyou') }}
                 </div>
                 <div>
@@ -72,9 +72,9 @@
           </div>
         </div>
         <div v-if="activeStep === 2">
-          <section v-if="agentDeploy !== 'aliyun'" class="flex gap-6 px-5">
+          <section v-if="agentDeploy !== 'aliyun'" class="flex gap-6 px-5 justify-content-center align-items-center">
             <div
-              class="product-type-card rounded-xl border flex flex-column flex-1 position-relative overflow-hidden clickable"
+              class="product-type-card rounded-xl border flex flex-column position-relative overflow-hidden clickable"
               :class="{
                 active: agentDeploy === 'selfHost'
               }"
@@ -88,24 +88,24 @@
                 <el-image class="w-100 product-type-image" :src="require('@/assets/image/self_host_managed.png')" />
               </div>
               <div class="px-6 mb-4">
-                <div class="text-center font-color-dark fs-5 mb-2">
+                <div class="product-type-card-title text-center font-color-dark mb-2">
                   {{ $t('dfs_agent_download_subscriptionmodeldialog_bantuoguanmoshi') }}
                 </div>
-                <div class="text-center font-color-light fs-7">
+                <div class="text-center font-color-sslight fs-7">
                   {{ $t('dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi2') }}
                 </div>
               </div>
               <div class="px-6 mb-6">
-                <div class="fs-6 text-center font-color-dark mb-2">
+                <div class="fs-6 text-center font-color-dark font-weight-light mb-2">
                   {{ $t('dfs_agent_download_subscriptionmodeldialog_shiyongbantuoguan') }}
                 </div>
                 <div class="flex justify-content-center">
                   <ul>
-                    <li>
+                    <li class="fs-7 font-color-sslight">
                       <VIcon size="16" class="mr-2">check-bold</VIcon
                       >{{ $t('dfs_agent_download_subscriptionmodeldialog_chengbengengdichong') }}
                     </li>
-                    <li>
+                    <li class="fs-7 font-color-sslight">
                       <VIcon size="16" class="mr-2">check-bold</VIcon
                       >{{ $t('dfs_agent_download_subscriptionmodeldialog_gengjiaanquanyong') }}
                     </li>
@@ -114,7 +114,7 @@
               </div>
             </div>
             <div
-              class="product-type-card rounded-xl border flex flex-column flex-1 position-relative overflow-hidden clickable"
+              class="product-type-card rounded-xl border flex flex-column position-relative overflow-hidden clickable"
               :class="{
                 active: agentDeploy === 'fullManagement'
               }"
@@ -128,24 +128,24 @@
                 <el-image class="w-100 product-type-image" :src="require('@/assets/image/fully_managed.png')" />
               </div>
               <div class="px-6 mb-4">
-                <div class="product-type-card-title text-center font-color-dark fs-5 mb-2">
+                <div class="product-type-card-title text-center font-color-dark mb-2">
                   {{ $t('dfs_agent_download_subscriptionmodeldialog_quantuoguanmoshi') }}
                 </div>
-                <div class="text-center font-color-light fs-7">
+                <div class="text-center font-color-sslight fs-7">
                   {{ $t('dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi') }}
                 </div>
               </div>
               <div class="px-6 mb-6">
-                <div class="fs-6 text-center font-color-dark mb-2">
+                <div class="fs-6 text-center font-color-dark font-weight-light mb-2">
                   {{ $t('dfs_agent_download_subscriptionmodeldialog_shiyongquantuoguan') }}
                 </div>
                 <div class="flex justify-content-center">
                   <ul>
-                    <li>
+                    <li class="fs-7 font-color-sslight">
                       <VIcon size="16" class="mr-2">check-bold</VIcon
                       >{{ $t('dfs_agent_download_subscriptionmodeldialog_gengjiafangbianmian') }}
                     </li>
-                    <li>
+                    <li class="fs-7 font-color-sslight">
                       <VIcon size="16" class="mr-2">check-bold</VIcon
                       >{{ $t('dfs_agent_download_subscriptionmodeldialog_gengjiakekaoyou') }}
                     </li>
@@ -1245,6 +1245,11 @@ export default {
 }
 
 .product-type-card {
+  width: 400px;
+  .product-type-card-title {
+    font-size: $fontTitle;
+    font-weight: 700;
+  }
   .is-active {
     display: none;
   }

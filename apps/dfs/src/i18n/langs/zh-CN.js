@@ -1417,12 +1417,12 @@ export default {
     '和IPaas相比,最大的区别是使用了一个中央存储来对企业核心数据提供共享服务.具有对源库性能影响低,可扩展,可进行数据治理等优势.',
   dfs_agent_download_subscriptionmodeldialog_qiyeshishishu:
     '企业实时数据服务平台.通过将数据实时集成到中央化平台，经过简单治理后，在中台里统一为下游数据业务场景提供实时的API数据服务或数据推送服务.',
-  dfs_agent_download_subscriptionmodeldialog_qiyeshishishu2: '企业实时数据服务平台',
+  dfs_agent_download_subscriptionmodeldialog_qiyeshishishu2: '实时数据服务',
   dfs_agent_download_subscriptionmodeldialog_leisiyuFi:
     '类似于Fivetran, Airbyte, Hevodata这些产品,但是支持更实时的数据体验和更低的成本,同时支持云上和线下部署。',
   dfs_agent_download_subscriptionmodeldialog_qiyeshujuji:
     '企业数据集成平台,可以用来连接打通企业的各个数据系统,并在这些系统中进行实时的数据传输,转换和加工。',
-  dfs_agent_download_subscriptionmodeldialog_qiyeshujuji2: '企业数据集成平台',
+  dfs_agent_download_subscriptionmodeldialog_qiyeshujuji2: '实时数据集成',
   dfs_instance_createagent_yunchangshangkeyong: '云厂商|可用区',
   dfs_instance_createagent_heIPaa:
     '和IPaas相比,最大的区别是使用了一个中央存储来对企业核心数据提供共享服务.具有对源库性能影响低,可扩展,可进行数据治理等优势.',
