@@ -18,6 +18,8 @@ export default {
   public_aggregate: 'Aggregate',
   public_table_name: 'Table Name',
   public_total: 'Total',
+  public_database: 'Database',
+  public_file: 'File',
   // state
   public_status_ready: 'Valid',
   public_status_invalid: 'Invalid',

@@ -247,7 +247,7 @@ export default {
           name: i18n.t('public_select_option_all')
         },
         {
-          name: 'Databases',
+          name: i18n.t('public_database'),
           key: 'Database'
         },
         {
@@ -255,11 +255,11 @@ export default {
           key: 'SaaS'
         },
         {
-          name: 'File',
+          name: i18n.t('public_file'),
           key: 'File'
         },
         {
-          name: 'My Connectors',
+          name: i18n.t('packages_business_components_connectiontypeselectorsort_wodeshujuyuan'),
           key: 'Custom'
         }
       ],
