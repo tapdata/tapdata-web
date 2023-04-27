@@ -711,12 +711,11 @@ export default {
     //选择订阅模式
     changeAgentDeploy(type) {
       this.agentDeploy = type
+      this.getPrice()
       this.getCloudProvider()
       if (type === 'aliyun') {
         this.getAvailableCode()
         this.buried('productTypeAliyunCode')
-      } else if (type === 'fullManagement') {
-        this.getPrice()
       }
     },
     //切换规格
