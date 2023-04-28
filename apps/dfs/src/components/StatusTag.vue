@@ -113,7 +113,7 @@ export default {
   padding: 4px 8px;
   border-radius: 4px;
   background-color: #ecf5ff;
-  color: #409eff;
+  color: #2c65ff;
   &.tag--success {
     color: #2b8a6a;
     background-color: #ccf4d2;
@@ -126,6 +126,10 @@ export default {
   &.tag--warning {
     background-color: #fdf1c8;
     color: #c39700;
+  }
+  &.tag--waiting {
+    background-color: #e8fffb;
+    color: #0aa5a8;
   }
   &.tag--danger {
     background-color: #fef0f0;

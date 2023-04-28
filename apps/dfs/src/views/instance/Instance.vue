@@ -336,7 +336,7 @@
           </div>
           <div class="text-end w-50" v-if="selectedRow.agentType === 'Cloud'">
             <ElButton type="primary" @click="fullManagementUpgradeFnc">{{
-              $t('public_agent_button_manual_upgrade')
+              $t('public_agent_button_auto_upgrade')
             }}</ElButton>
           </div>
           <div class="text-end w-50" v-else>

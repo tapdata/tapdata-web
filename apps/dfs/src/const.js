@@ -10,14 +10,14 @@ for (const dKey in directionMap) {
 }
 export const TOPOLOGY_MAP = topologyMap,
   INSTANCE_STATUS_MAP = {
-    Creating: { text: i18n.t('public_agent_status_to_be_deployed'), type: 'warning' },
+    Creating: { text: i18n.t('public_agent_status_to_be_deployed'), type: 'waiting' },
     Running: { text: i18n.t('public_status_running'), type: 'success' },
-    Stopping: { text: i18n.t('public_status_stopping'), type: 'danger' },
+    Stopping: { text: i18n.t('public_status_stopping') },
     Stopped: { text: i18n.t('public_agent_status_offline'), type: 'disable' },
-    WaitingRestart: { text: i18n.t('public_status_to_be_restart'), type: 'disable' },
-    Restarting: { text: i18n.t('public_status_restarting'), type: 'disable' },
-    Deploying: { text: i18n.t('public_status_deploying'), type: 'disable' },
-    Altering: { text: i18n.t('public_status_altering'), type: 'disable' },
+    WaitingRestart: { text: i18n.t('public_status_to_be_restart'), type: 'waiting' },
+    Restarting: { text: i18n.t('public_status_restarting') },
+    Deploying: { text: i18n.t('public_status_deploying'), type: 'waiting' },
+    Altering: { text: i18n.t('public_status_altering') },
     Error: { text: i18n.t('public_status_error'), type: 'danger' }
   },
   TASK_STATUS_MAP = {
