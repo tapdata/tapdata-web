@@ -1061,5 +1061,16 @@ export default {
   packages_business_prefix: 'Prefix',
   packages_business_base_path: 'Base Path',
   packages_business_path: 'Path',
-  packages_business_confirm_tip: 'This will re-generate the API path, do you wish to continue?'
+  packages_business_confirm_tip: 'This will re-generate the API path, do you wish to continue?',
+  packages_business_create_connection_scenedialog_table:
+    'Tablestore is a distributed NoSQL data storage service with high reliability, high performance, flexibility and scalability, suitable for application scenarios such as real-time data query and analysis. ',
+  packages_business_create_connection_scenedialog_select:
+    'SelectDB Cloud is a fully managed real-time data warehouse service based on the Apache Doris kernel. It has the advantages of high reliability, high performance, ease of use and low cost, and is suitable for query and analysis requirements for processing massive data. ',
+  packages_business_create_connection_scenedialog_redis:
+    'Redis is a high-performance memory database that supports multiple data structures and persistence methods. It is scalable and reliable, and is suitable for application scenarios such as caching, session management, leaderboards, and message queues. ',
+  packages_business_create_connection_scenedialog_mongo:
+    'MongoDB is a non-relational database with flexibility, high performance, ease of use and scalability, suitable for application scenarios that need to process large amounts of unstructured data and require fast query and scalability. ',
+  packages_business_create_connection_scenedialog_bigQu:
+    'BigQuery is a managed data warehouse provided by Google Cloud. It is famous for its high speed, scalability and security. It can process PB-level data, integrate with multiple tools, and is suitable for various data analysis and mining scenarios. ',
+  packages_business_swimlane_tablepreview_chuangjianrenwu: 'Create task'
 }

@@ -118,7 +118,7 @@
         </li>
       </ul>
     </Drawer>
-    <el-dialog :visible.sync="showUsingTaskDialog" title="提示">
+    <el-dialog :visible.sync="showUsingTaskDialog" :title="$t('public_message_title_prompt')">
       <div>{{ $t('packages_business_external_storage_list_tishi', { val1: usingTasks.length }) }}</div>
       <el-table class="mt-4" height="250px" :data="usingTasks">
         <el-table-column min-width="240" :label="$t('public_task_name')" :show-overflow-tooltip="true">
