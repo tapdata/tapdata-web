@@ -975,7 +975,12 @@ export default {
   packages_business_external_storage_list_bianjiwaicun: '编辑外存',
   packages_business_external_storage_list_tishi: '该外存已被 {val1} 个任务调用，请删除或者修改配置后重试',
   // API
+  packages_business_api_publish: 'API 发布',
   packages_business_api_application: 'API 应用',
+  packages_business_api_application_md: `## API 应用
+- 您可以轻松地创建新的应用，将 API 分类到不同的应用中，实现API的差异化管理，从而提高业务安全性和效率
+- 您可以将数据库表拖放到应用上，快速地发布 API
+      `,
   packages_business_qingshurucanshu: '请输入参数名称',
   packages_business_paixu: '排序',
   packages_business_meigefenyefan: '每个分页返回的记录数',

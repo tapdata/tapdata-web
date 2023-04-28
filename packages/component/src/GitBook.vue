@@ -54,4 +54,42 @@ export default {
   border: 1px solid rgba(222, 222, 228, 100);
   border-top: none;
 }
+
+.markdown-body-wrap {
+  .markdown-body {
+    h2 {
+      font-size: 18px;
+    }
+    h3 {
+      font-size: 16px;
+    }
+    h4 {
+      font-size: 15px;
+    }
+    h5 {
+      font-size: 14px;
+    }
+    p {
+      font-size: 14px;
+      line-height: 22px;
+    }
+    ul,
+    ol,
+    li {
+      font-size: 14px;
+    }
+    blockquote {
+      margin: 0 0 20px;
+      padding: 10px 20px;
+      p {
+        margin: 0 0 10px;
+      }
+      p:last-child,
+      ul:last-child,
+      ol:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
 </style>

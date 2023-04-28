@@ -71,10 +71,18 @@
           </template>
           <template v-else>
             <div class="item__header p-3">
-              <div class="flex align-center gap-2 overflow-hidden">
+              <div class="flex align-center overflow-hidden">
                 <DatabaseIcon :item="item" :size="20" class="item__icon flex-shrink-0" />
-                <span class="font-color-normal fw-sub fs-6 ellipsis lh-base" :title="item.name">{{ item.name }}</span>
-                <IconButton class="ml-auto" @click="$emit('preview', item)" sm>view-details</IconButton>
+                <span class="font-color-normal fw-sub fs-6 ellipsis lh-base flex-1 ml-2" :title="item.name">{{
+                  item.name
+                }}</span>
+                <IconButton class="ml-1" @click="$emit('preview', item)" sm>view-details</IconButton>
+                <IconButton
+                  v-if="item.showConnectorWebsite && connectionWebsiteMap[item.id]"
+                  sm
+                  @click="handleOpenWebsite(connectionWebsiteMap[item.id])"
+                  >open-in-new</IconButton
+                >
               </div>
               <div class="mt-2 font-color-light">
                 {{ $t('packages_business_data_console_target_connection_desc', { val: item.database_type }) }}
@@ -141,7 +149,7 @@
 import draggable from 'vuedraggable'
 import { defineComponent, ref } from '@vue/composition-api'
 
-import { apiServerApi, appApi, connectionsApi, modulesApi, taskApi } from '@tap/api'
+import { apiServerApi, appApi, connectionsApi, modulesApi, proxyApi, taskApi } from '@tap/api'
 import { uuid } from '@tap/shared'
 import { getIcon } from '@tap/assets'
 import { VIcon, IconButton } from '@tap/component'
@@ -273,7 +281,8 @@ export default {
         active: this.$t('public_status_published'),
         pending: this.$t('public_status_unpublished'),
         generating: this.$t('public_status_to_be_generated')
-      }
+      },
+      connectionWebsiteMap: {}
     }
   },
 
@@ -335,6 +344,13 @@ export default {
 
       return res.items.map(item => {
         item.LDP_TYPE = 'connection'
+        item.showConnectorWebsite = item?.capabilities.some(c => c.id === 'connector_website_function')
+        item.showTableWebsite = item?.capabilities.some(c => c.id === 'connector_website_function')
+
+        if (item.showConnectorWebsite) {
+          this.getWebsite(item.id)
+        }
+
         return item
       })
     },
@@ -394,6 +410,19 @@ export default {
     mapApi(item) {
       item.statusText = this.apiStatusMap[item.status] || '--'
       return item
+    },
+
+    getWebsite(connectionId) {
+      return proxyApi
+        .call({
+          className: 'PDKConnectionService',
+          method: 'getConnectorWebsite',
+          args: [connectionId]
+        })
+        .then(data => {
+          data?.url && this.$set(this.connectionWebsiteMap, connectionId, data.url)
+          return data?.url
+        })
     },
 
     findParentByClassName(parent, cls) {
@@ -654,6 +683,10 @@ export default {
 
       if (!app.modules) this.$set(app, 'modules', [data])
       else app.modules.unshift(data)
+    },
+
+    handleOpenWebsite(url) {
+      window.open(url)
     }
   }
 }

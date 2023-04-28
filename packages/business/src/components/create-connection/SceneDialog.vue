@@ -162,7 +162,8 @@ export default {
       search: '',
       formParams: {
         name: '',
-        pdkHash: null
+        pdkHash: null,
+        md: null
       },
       selected: {},
       showForm: false,
@@ -183,7 +184,7 @@ export default {
         },
         {
           key: 'api',
-          name: 'API 发布' /*,
+          name: i18n.t('packages_business_api_publish') /*,
           types: ['RESTful API', 'GraphQL']*/
         },
         {
@@ -264,7 +265,8 @@ export default {
           {
             key: 'apiApp',
             icon: 'mini-app',
-            name: this.$t('packages_business_api_application')
+            name: this.$t('packages_business_api_application'),
+            md: this.$t('packages_business_api_application_md')
           }
         ]
       }
@@ -365,7 +367,7 @@ export default {
     },
 
     handleSelectSpecial(item) {
-      Object.assign(this.formParams, { name: item.name, icon: item.icon, pdkHash: null })
+      Object.assign(this.formParams, { ...item, pdkHash: null })
       this.showForm = true
     },
 

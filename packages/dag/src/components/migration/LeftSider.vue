@@ -524,18 +524,23 @@ export default {
           {
             properties: {
               $inputs: {
-                type: 'array',
-                'x-display': 'hidden'
+                default: [],
+                type: 'array'
               },
               $outputs: {
-                type: 'array',
-                'x-display': 'hidden'
+                default: [],
+                type: 'array'
               },
-              ...pdkProperties.properties
+              wrap: {
+                ...pdkProperties,
+                type: 'void'
+              }
             }
           },
           {}
         )
+        delete nodeConfig.$inputs
+        delete nodeConfig.$outputs
       }
 
       return {

@@ -968,7 +968,11 @@ export default {
   packages_business_external_storage_list_bianjiwaicun: '編輯外存',
   packages_business_external_storage_list_tishi: '該外存已被 {val1} 调用，請刪除或修改配置後重試。',
   // API
+  packages_business_api_publish: 'API 發佈',
   packages_business_api_application: 'API 應用',
+  packages_business_api_application_md: `## API 應用 
+  - 您可以輕鬆地創建新的應用，將 API 分類到不同的應用中，實現API的差異化管理，從而提高業務安全性和效率 
+  - 您可以將數據庫表拖放到應用上，快速地發佈 API `,
   packages_business_qingshurucanshu: '請輸入參數名稱',
   packages_business_paixu: '排序',
   packages_business_meigefenyefan: '每個分頁返回的記錄數',

@@ -1017,7 +1017,12 @@ export default {
   packages_business_external_storage_list_tishi:
     'This external storage has been called by {val1} tasks, please delete or modify the configuration and try again.',
   // API
+  packages_business_api_publish: 'API Publish',
   packages_business_api_application: 'API Application',
+  packages_business_api_application_md: `## API Application
+- You can easily create new applications to categorize APIs and achieve differentiated management, thereby improving business security and efficiency.
+- You can drag and drop database tables onto the application to quickly publish APIs.
+      `,
   packages_business_qingshurucanshu: 'Please enter parameter name',
   packages_business_paixu: 'Sort',
   packages_business_meigefenyefan: 'Number of records returned per page',
