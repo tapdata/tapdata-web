@@ -632,7 +632,15 @@ export default {
       this.debugResult = ''
       this.allFields = []
       this.workerStatus = ''
-
+      this.form = {
+        pathAccessMethod: 'default',
+        apiVersion: 'v1',
+        prefix: '',
+        basePath: '',
+        acl: ['admin'],
+        appValue: '',
+        appLabel: ''
+      }
       this.$refs?.form?.clearValidate()
       this.formatData(formData || {})
       if (!this.data.id) {
@@ -860,6 +868,9 @@ export default {
           }
           if (!type) {
             //生成按钮 不传fields覆盖数据库已有数据 (open 抽屉this.allFields 就清空了数据)
+            if (connectionId && tableName) {
+              await this.loadAllFields()
+            }
             formData.fields = this.allFields
           }
           const data = await modulesApi[id ? 'patch' : 'post'](formData).finally(() => {
@@ -1127,6 +1138,29 @@ export default {
         .finally(() => {
           this.intervalId = setTimeout(this.getWorkers, 2000)
         })
+    },
+
+    async loadAllFields() {
+      let filter = {
+        where: {
+          'source.id': this.form.connectionId,
+          original_name: this.form.tableName,
+          is_deleted: false,
+          sourceType: 'SOURCE'
+        }
+      }
+      const data = await metadataInstancesApi.get({
+        filter: JSON.stringify(filter)
+      })
+      this.allFields =
+        data?.items?.[0]?.fields?.map(it => {
+          return Object.assign({}, it, {
+            id: it.id,
+            field_name: it.field_name,
+            originalDataType: it.data_type,
+            comment: ''
+          })
+        }) || []
     }
   }
 }
