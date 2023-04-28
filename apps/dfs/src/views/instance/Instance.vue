@@ -1204,7 +1204,7 @@ export default {
     },
     // 重启
     renewBtnDisabled(row) {
-      return row.metric.runningTaskNum > 0 || row.status !== 'Running'
+      return !['Running', 'Error'].includes(row.status)
     },
     showVersionFlag(row) {
       let { status, tmInfo } = row
