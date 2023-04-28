@@ -1309,6 +1309,16 @@ export default {
     },
     //退订详情费用
     getUnsubscribePrice(row = {}) {
+      if (row?.refund) {
+        let param = {
+          instanceId: row.id
+        }
+        this.$axios.post('api/tcm/orders/cancel', param).then(() => {
+          this.$message.success(this.$t('public_message_operation_success'))
+          this.fetch()
+        })
+        return
+      }
       this.currentRow = row
       this.$axios.get('api/tcm/orders/calculateRefundAmount?agentId=' + row.id).then(res => {
         let { currency, agentName, spec, actualAmount, periodStart, periodEnd, refundAmount, spentAmount } = res
