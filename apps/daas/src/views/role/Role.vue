@@ -758,6 +758,9 @@ export default {
           this.$message.success(this.$t('public_message_save_ok'))
           this.adds = []
           this.deletes = []
+          this.$router.push({
+            name: 'roleList'
+          })
         })
         .finally(() => {
           this.saveloading = false
