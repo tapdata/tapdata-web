@@ -56,7 +56,7 @@
       @success="handleSettingsSuccess"
       @init="handleSettingsInit"
     ></Settings>
-    <TablePreview ref="tablePreview" />
+    <TablePreview ref="tablePreview" @create-single-task="hanldeCreateSingleTask" />
     <ConnectionPreview ref="connectionView" />
   </div>
 </template>
@@ -301,6 +301,41 @@ export default {
         case 'connection':
           this.$refs.connectionView.open(data)
           break
+      }
+    },
+
+    hanldeCreateSingleTask(data = {}, swimType = '') {
+      switch (swimType) {
+        case 'mdm':
+          this.openRoute({
+            name: 'DataflowNew',
+            query: {
+              addNode: true,
+              connectionId: data.connectionId,
+              tableName: data.name
+            }
+          })
+          break
+        case 'fdm':
+          this.openRoute({
+            name: 'MigrateCreate',
+            query: {
+              addNode: true,
+              connectionId: data.connectionId,
+              tableName: data.name
+            }
+          })
+          break
+        default:
+          break
+      }
+    },
+
+    openRoute(route, newTab = true) {
+      if (newTab) {
+        window.open(this.$router.resolve(route).href)
+      } else {
+        this.$router.push(route)
       }
     }
   }

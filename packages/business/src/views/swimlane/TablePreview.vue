@@ -126,8 +126,8 @@
         </el-tab-pane>
         <el-tab-pane :label="$t('packages_business_tasks')" name="tasks">
           <div class="flex mb-4">
-            <span>{{ $t('packages_business_table_preview_task') }}</span
-            ><!--<span class="color-primary cursor-pointer" @click="handleCreateTask">Create Task</span>-->
+            <span>{{ $t('packages_business_table_preview_task') }}</span>
+            <span class="color-primary cursor-pointer ml-2" @click="handleCreateTask">创建任务</span>
           </div>
           <el-table class="discovery-page-table" :data="taskData" :has-pagination="false">
             <el-table-column :label="$t('public_task_name')" prop="name" width="200px" show-overflow-tooltip>
@@ -476,9 +476,7 @@ export default {
     },
 
     handleCreateTask() {
-      this.$router.push({
-        name: 'MigrateCreate'
-      })
+      this.$emit('create-single-task', this.selected, this.swimType)
     },
 
     getTaskType(type) {
