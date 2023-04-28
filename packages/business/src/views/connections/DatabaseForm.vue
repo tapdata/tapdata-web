@@ -910,17 +910,16 @@ export default {
             $form.setValuesIn(field.name, str)
           })
         },
-        getCommandAndSetValue: async ($form, others) => {
+        getCommandAndSetValue: async ($form, others = {}) => {
           const getState = $form.getState()
           const { pdkHash } = this.pdkOptions
           const { __TAPDATA, ...formValues } = getState?.values || {}
-          const { command } = others
           const getValues = Object.assign({}, this.model?.config || {}, formValues)
           let params = {
             pdkHash,
             connectionId: this.model?.id || this.commandCallbackFunctionId,
             connectionConfig: isEmpty(formValues) ? this.model?.config || {} : getValues,
-            command,
+            ...others,
             type: 'connection'
           }
           proxyApi.command(params).then(data => {
