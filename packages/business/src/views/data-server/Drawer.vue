@@ -814,13 +814,19 @@ export default {
             appLabel,
             appValue
           } = this.form
+
           // basePath
           if (basePath && basePath !== '') {
             status = 'pending'
           }
+
           if (params.some(it => !it.name.trim())) {
             return this.$message.error(i18n.t('packages_business_data_server_drawer_qingshurucanshu'))
           }
+
+          // 排除 fields: [null]
+          fields = fields.filter(f => !!f)
+
           this.loading = true
           let formData = {
             id,
@@ -873,6 +879,7 @@ export default {
             }
             formData.fields = this.allFields
           }
+
           const data = await modulesApi[id ? 'patch' : 'post'](formData).finally(() => {
             this.loading = false
           })
