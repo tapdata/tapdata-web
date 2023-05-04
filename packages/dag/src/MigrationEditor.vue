@@ -99,7 +99,7 @@ import { titleChange } from '@tap/component/src/mixins/titleChange'
 import { showMessage } from '@tap/component/src/mixins/showMessage'
 import ConfigPanel from './components/migration/ConfigPanel'
 import { uuid } from '@tap/shared'
-import { taskApi } from '@tap/api'
+import { connectionsApi, taskApi } from '@tap/api'
 import resize from '@tap/component/src/directives/resize'
 import { merge } from 'lodash'
 import formScope from './mixins/formScope'
@@ -174,6 +174,7 @@ export default {
     // 收集pdk上节点的schema
     await this.initPdkProperties()
     this.initNodeType()
+    this.autoAddNode()
     this.jsPlumbIns.ready(async () => {
       try {
         this.initCommand()
@@ -457,6 +458,35 @@ export default {
       } else {
         this.setStateReadonly(false)
       }
+    },
+
+    autoAddNode() {
+      const { addNode, connectionId, tableName } = this.$route.query || {}
+      if (!addNode) return
+
+      this.jsPlumbIns.ready(async () => {
+        try {
+          const con = await connectionsApi.get(connectionId)
+          this.handleAddNodeToPos([-300, 300], {
+            name: tableName,
+            type: 'database',
+            databaseType: con.database_type,
+            migrateTableSelectType: 'custom',
+            connectionId,
+            tableName,
+            attrs: {
+              connectionName: con.name,
+              connectionType: con.connection_type,
+              accessNodeProcessId: '',
+              pdkType: 'pdk',
+              pdkHash: con.pdkHash,
+              capabilities: con.capabilities
+            }
+          })
+        } catch (error) {
+          console.error(error) // eslint-disable-line
+        }
+      })
     }
   }
 }

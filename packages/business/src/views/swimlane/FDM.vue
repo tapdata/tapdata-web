@@ -313,7 +313,7 @@ export default {
         node.isLeaf = false
         icon = 'folder-o'
       }
-
+      data.SWIM_TYPE = 'fdm'
       console.log('renderContent', data, node) // eslint-disable-line
 
       return (

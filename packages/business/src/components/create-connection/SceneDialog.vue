@@ -226,16 +226,11 @@ export default {
         }
       ],
       connectorDescMap: {
-        BigQuery:
-          'BigQuery是Google Cloud提供的托管式数据仓库，以高速、可扩展和安全著称，可以处理PB级数据，与多个工具集成，适用于各种数据分析和挖掘场景。',
-        MongoDB:
-          'MongoDB是一种非关系型数据库，具有灵活性、高性能、易用性和可扩展性，适用于需要处理大量非结构化数据和需要快速查询和可扩展性的应用场景。',
-        Redis:
-          'Redis是一种高性能内存数据库，支持多种数据结构和持久化方式，具有可扩展性和可靠性，适用于缓存、会话管理、排行榜、消息队列等应用场景。',
-        SelectDB:
-          'SelectDB Cloud是一种基于Apache Doris内核的全托管实时数据仓库服务，具有高可靠性、高性能、易用性和低成本等优点，适用于处理海量数据的查询和分析需求。',
-        Tablestore:
-          'Tablestore是一种高可靠性、高性能、灵活性和可扩展性的分布式NoSQL数据存储服务，适用于实时数据查询和分析等应用场景。'
+        BigQuery: i18n.t('packages_business_create_connection_scenedialog_bigQu'),
+        MongoDB: i18n.t('packages_business_create_connection_scenedialog_mongo'),
+        Redis: i18n.t('packages_business_create_connection_scenedialog_redis'),
+        SelectDB: i18n.t('packages_business_create_connection_scenedialog_selec'),
+        Tablestore: i18n.t('packages_business_create_connection_scenedialog_table')
       },
       currentScene: 'recommended',
       tagList: [

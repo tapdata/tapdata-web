@@ -300,7 +300,7 @@ export default {
     filterList() {
       if (!this.search) return this.list.filter(item => !this.fdmAndMdmId.includes(item.id))
 
-      return this.list.filter(item => !this.fdmAndMdmId.includes(item.id) && item.name.includes(this.search))
+      return this.list.filter(item => !this.fdmAndMdmId?.includes(item.id) && item.name?.includes(this.search))
     }
   },
 

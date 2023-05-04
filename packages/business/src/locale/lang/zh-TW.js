@@ -970,8 +970,8 @@ export default {
   // API
   packages_business_api_publish: 'API 發佈',
   packages_business_api_application: 'API 應用',
-  packages_business_api_application_md: `## API 應用 
-  - 您可以輕鬆地創建新的應用，將 API 分類到不同的應用中，實現API的差異化管理，從而提高業務安全性和效率 
+  packages_business_api_application_md: `## API 應用
+  - 您可以輕鬆地創建新的應用，將 API 分類到不同的應用中，實現API的差異化管理，從而提高業務安全性和效率
   - 您可以將數據庫表拖放到應用上，快速地發佈 API `,
   packages_business_qingshurucanshu: '請輸入參數名稱',
   packages_business_paixu: '排序',
@@ -1011,5 +1011,16 @@ export default {
   packages_business_prefix: '前綴',
   packages_business_base_path: '基礎路徑',
   packages_business_path: '訪問路徑',
-  packages_business_confirm_tip: '重新生成會導致原API訪問路徑發生改變，是否確認重新生成？ '
+  packages_business_confirm_tip: '重新生成會導致原API訪問路徑發生改變，是否確認重新生成？ ',
+  packages_business_create_connection_scenedialog_table:
+    'Tablestore是一種高可靠性、高性能、靈活性和可擴展性的分佈式NoSQL數據存儲服務，適用於實時數據查詢和分析等應用場景。 ',
+  packages_business_create_connection_scenedialog_selec:
+    'SelectDB Cloud是一種基於Apache Doris內核的全託管實時數據倉庫服務，具有高可靠性、高性能、易用性和低成本等優點，適用於處理海量數據的查詢和分析需求。 ',
+  packages_business_create_connection_scenedialog_redis:
+    'Redis是一種高性能內存數據庫，支持多種數據結構和持久化方式，具有可擴展性和可靠性，適用於緩存、會話管理、排行榜、消息隊列等應用場景。 ',
+  packages_business_create_connection_scenedialog_mongo:
+    'MongoDB是一種非關係型數據庫，具有靈活性、高性能、易用性和可擴展性，適用於需要處理大量非結構化數據和需要快速查詢和可擴展性的應用場景。 ',
+  packages_business_create_connection_scenedialog_bigQu:
+    'BigQuery是Google Cloud提供的託管式數據倉庫，以高速、可擴展和安全著稱，可以處理PB級數據，與多個工具集成，適用於各種數據分析和挖掘場景。 ',
+  packages_business_swimlane_tablepreview_chuangjianrenwu: '創建任務'
 }

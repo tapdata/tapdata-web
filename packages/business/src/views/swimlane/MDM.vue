@@ -284,7 +284,7 @@ export default {
         node.isLeaf = false
         icon = 'folder-o'
       }
-
+      data.SWIM_TYPE = 'mdm'
       return (
         <div
           class="custom-tree-node grabbable"

@@ -341,9 +341,9 @@ export default {
         if (this.channels.includes('sms')) {
           enums.push({ label: i18n.t('packages_business_notify_sms_notification'), value: 'SMS' })
         }
-
-        options.enum = [...options.enum, ...enums]
       }
+
+      options.enum = [...options.enum, ...enums]
       if (key) {
         options['x-reactions'] = {
           dependencies: [key],
