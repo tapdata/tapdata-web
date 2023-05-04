@@ -477,7 +477,8 @@ export default {
           this.$confirm('', i18n.t('packages_business_mdm_table_duplication_confirm'), {
             onlyTitle: true,
             type: 'warning',
-            closeOnClickModal: false
+            closeOnClickModal: false,
+            zIndex: 999999
           }).then(resFlag => {
             if (!resFlag) {
               return
@@ -530,9 +531,9 @@ export default {
       return `${from.name}_Sync_${tableName}_To_MDM_${newTableName}_${generateId(6)}`
     },
 
-    async handleNodeExpand(data, node) {
+    async handleNodeExpand(data, node, forceLoadTable) {
       // 十秒内加载过资源，不再继续加载
-      if (node.loadTime && Date.now() - node.loadTime < 10000) return
+      if (!forceLoadTable && node.loadTime && Date.now() - node.loadTime < 10000) return
 
       node.loadTime = Date.now()
 
@@ -549,13 +550,13 @@ export default {
       })
     },
 
-    setNodeExpand(tagId) {
-      if (tagId) {
-        const node = this.$refs.tree.getNode(tagId)
-        this.handleNodeExpand(node.data, node)
-        this.expandedKeys = [tagId]
+    setNodeExpand(tagId, forceLoadTable) {
+      if (!tagId || tagId === this.directory?.id) {
+        this.directory?.id && this.handleNodeExpand(this.directory, this.$refs.tree.root, forceLoadTable)
       } else {
-        this.directory?.id && this.handleNodeExpand(this.directory, this.$refs.tree.root)
+        const node = this.$refs.tree.getNode(tagId)
+        this.handleNodeExpand(node.data, node, forceLoadTable)
+        this.expandedKeys = [tagId]
       }
     },
 
@@ -770,6 +771,9 @@ export default {
         }
         metadataDefinitionsApi.delete(data.id).then(() => {
           this.$refs.tree.remove(data.id)
+
+          // 删除目录刷新上一级加载被删除目录下的表
+          this.setNodeExpand(data.parent_id, true)
         })
       })
     }
