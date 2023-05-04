@@ -5,7 +5,7 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import { defineComponent, computed, ref, onMounted, watch } from '@vue/composition-api'
 
 import i18n from '@tap/i18n'
-import { VIcon } from '@tap/component'
+import { VIcon, IconButton } from '@tap/component'
 import { calcTimeUnit, calcUnit } from '@tap/shared'
 import Time from '@tap/shared/src/time'
 import { TaskStatus } from '@tap/business'
@@ -443,11 +443,7 @@ export default defineComponent({
     return () => {
       let nodeProps = { props: { ...attrs }, attrs }
       let alarmCls = alarmLevel.value ? `alarm-${alarmLevel.value}` : null
-      let sharedCache = (props.node.attrs?.sharedCache || []).filter(t => !!t.id)
-      const { usedShareCache = {} } = props.dataflow?.attrs || {}
-      if (Object.values(usedShareCache).every(t => !t.includes(props.node.id))) {
-        sharedCache = []
-      }
+      let sharedCache = props.node.attrs?.sharedCache || []
 
       return (
         <DFNode
@@ -487,7 +483,12 @@ export default defineComponent({
               )}
 
               {!!sharedCache.length && (
-                <div class="fw-bold my-2">{i18n.t('packages_dag_monitor_node_zhengzaishiyongdehuancun')}</div>
+                <div class="fw-bold my-2 flex align-center">
+                  {i18n.t('packages_dag_monitor_node_zhengzaishiyongdehuancun')}{' '}
+                  <IconButton onClick={() => emit('refresh-shared-cache')} class="ml-0.5" sm>
+                    refresh
+                  </IconButton>
+                </div>
               )}
               {!!sharedCache.length && (
                 <ul class="shared-cache-list rounded-4 p-2">

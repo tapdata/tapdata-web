@@ -1148,6 +1148,10 @@
   margin-top: 0 !important;
 }
 
+.mt-0\.5 {
+  margin-top: 0.125rem !important;
+}
+
 .mt-1 {
   margin-top: 0.25rem !important;
 }
@@ -1218,6 +1222,10 @@
 
 .mr-0 {
   margin-right: 0 !important;
+}
+
+.mr-0\.5 {
+  margin-right: 0.125rem !important;
 }
 
 .mr-1 {
@@ -1292,6 +1300,10 @@
   margin-bottom: 0 !important;
 }
 
+.mb-0\.5 {
+  margin-bottom: 0.125rem !important;
+}
+
 .mb-1 {
   margin-bottom: 0.25rem !important;
 }
@@ -1362,6 +1374,10 @@
 
 .ml-0 {
   margin-left: 0 !important;
+}
+// TODO 使用Tailwind CSS 或者 Windi CSS 替换原子类
+.ml-0\.5 {
+  margin-left: 0.125rem !important;
 }
 
 .ml-1 {
