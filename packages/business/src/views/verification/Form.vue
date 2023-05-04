@@ -523,11 +523,10 @@ export default {
       this.dialogAddScriptVisible = true
     },
     submitScript() {
-      let script = JSON.parse(JSON.stringify(this.webScript))
-      let formIndex = JSON.parse(JSON.stringify(this.formIndex))
-      let jsEngineName = JSON.parse(JSON.stringify(this.jsEngineName))
-      this.form.tasks[formIndex].webScript = script
-      this.form.tasks[formIndex].jsEngineName = jsEngineName
+      let tasks = this.$refs.conditionBox.getList()
+      let formIndex = this.formIndex
+      tasks[formIndex].webScript = this.webScript
+      tasks[formIndex].jsEngineName = this.jsEngineName
       this.jsEngineName = ''
       this.webScript = ''
       this.formIndex = ''

@@ -743,7 +743,7 @@ export default {
     },
 
     addScript(index) {
-      this.$emit('addScript')
+      this.$emit('addScript', index)
       // this.formIndex = index
       // this.webScript = ''
       // this.jsEngineName = 'graal.js'
