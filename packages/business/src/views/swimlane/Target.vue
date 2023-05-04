@@ -76,13 +76,15 @@
                 <span class="font-color-normal fw-sub fs-6 ellipsis lh-base flex-1 ml-2" :title="item.name">{{
                   item.name
                 }}</span>
-                <IconButton class="ml-1" @click="$emit('preview', item)" sm>view-details</IconButton>
+                <IconButton class="ml-1" @click="$emit('preview', item)">view-details</IconButton>
                 <IconButton
                   v-if="item.showConnectorWebsite && connectionWebsiteMap[item.id]"
-                  sm
                   @click="handleOpenWebsite(connectionWebsiteMap[item.id])"
                   >open-in-new</IconButton
                 >
+                <!--                <ElTag size="mini" class="ml-1 px-1 flex align-center"
+                  ><VIcon class="mr-1" size="14">open-in-new</VIcon>首页</ElTag
+                >-->
               </div>
               <div class="mt-2 font-color-light">
                 {{ $t('packages_business_data_console_target_connection_desc', { val: item.database_type }) }}
