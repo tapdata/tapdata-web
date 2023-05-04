@@ -552,7 +552,7 @@ export default {
       this.loadData()
       this.lastQuery = val
       this.broadcast('ElOptionGroup', 'queryChange')
-      if (this.defaultFirstOption && (this.filterable || this.remote) && this.total) {
+      if (this.defaultFirstOption && (this.filterable || this.remote) && (this.total || this.filteredOptionsCount)) {
         this.checkDefaultFirstOption()
       }
     }, 200),
