@@ -995,7 +995,8 @@ export default {
   top: 50%;
   max-height: calc(100% - 64px);
   overflow: hidden;
-  transform: translate(-50%, -50%);
+  transform-style: preserve-3d;
+  transform: translate3d(-50%, -50%, 0);
   .el-dialog__header {
     padding: 24px !important;
   }
