@@ -450,7 +450,17 @@
             height="100%"
             :has-pagination="false"
             class="mt-4 mb-4"
-          ></VTable>
+          >
+            <template #actualAmount="{ row }">
+              <span class="font-color-dark fw-normal">{{ row.actualAmount }}</span>
+            </template>
+            <template #spentAmount="{ row }">
+              <span class="color-danger fw-normal"> -{{ row.spentAmount }}</span>
+            </template>
+            <template #refundAmount="{ row }">
+              <span class="color-primary fw-normal">{{ row.refundAmount }}</span>
+            </template>
+          </VTable>
           <el-form label-position="top" :model="form" :rules="rules" ref="ruleForm">
             <el-form-item :label="$t('dfs_instance_instance_tuidingyuanyin')" required>
               <el-radio-group v-model="form.refundReason">
@@ -609,15 +619,18 @@ export default {
         },
         {
           label: i18n.t('dfs_instance_instance_shifujine'),
-          prop: 'actualAmount'
+          prop: 'actualAmount',
+          slotName: 'actualAmount'
         },
         {
           label: i18n.t('dfs_instance_instance_yixiaohaojine'),
-          prop: 'spentAmount'
+          prop: 'spentAmount',
+          slotName: 'spentAmount'
         },
         {
           label: i18n.t('dfs_instance_instance_tuidingjine'),
-          prop: 'refundAmount'
+          prop: 'refundAmount',
+          slotName: 'refundAmount'
         }
       ],
       rules: {
