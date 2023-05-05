@@ -618,7 +618,7 @@ export const FieldRenameProcessor = defineComponent({
             </ElPagination>
           </div>
           <div class="main">
-            <div class="flex ml-2 text-start justify-content-between" style="margin-bottom: 8px">
+            <div class="flex ml-2 text-start justify-content-between" style="margin-bottom: 8px;margin-right: -1px;">
               <div class="flex field-search-input-wrap">
                 <ElInput
                   size="mini"

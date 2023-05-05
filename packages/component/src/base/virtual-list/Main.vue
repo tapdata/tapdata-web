@@ -1,5 +1,5 @@
 <template>
-  <div :class="['virtual-list-wrap', { border }]">
+  <div :class="['virtual-list-wrap', { 'is-border': border }]">
     <div class="header-wrapper">
       <div class="header__list flex">
         <div
@@ -274,10 +274,19 @@ export default {
   flex-direction: column;
   height: 100%;
 
-  &.border {
+  &.is-border {
     .column-item {
       border-right: 1px solid #ebeef5;
       border-bottom: 1px solid #ebeef5;
+    }
+
+    .header-wrapper {
+      border-top: 1px solid #ebeef5;
+      border-left: 1px solid #ebeef5;
+    }
+
+    .body-wrapper {
+      border-left: 1px solid #ebeef5;
     }
   }
 }
@@ -286,7 +295,6 @@ export default {
   background-color: #fafafa;
   color: #333c4a;
   font-weight: 500;
-  border-bottom: 1px solid #ebeef5;
 }
 
 .body-wrapper {
