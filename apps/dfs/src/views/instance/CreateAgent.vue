@@ -210,62 +210,6 @@
 
         <div v-if="activeStep === 3" class="px-1">
           <ElForm v-if="agentDeploy !== 'aliyun'" label-position="top">
-            <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu')">
-              <ElSelect v-model="specification" @change="changeSpec" class="w-50 rounded-4">
-                <ElOption
-                  v-for="(item, i) in specificationItems"
-                  :key="i"
-                  :label="item.name"
-                  :value="item.value"
-                  :disabled="(agentCount > 0 || agentDeploy !== 'selfHost') && item.chargeProvider === 'FreeTier'"
-                >
-                  <span>{{ item.name }}: </span>
-                  <span>{{ item.desc }}</span>
-                </ElOption>
-              </ElSelect>
-              <div class="mt-1 lh-base" v-html="$t('dfs_agent_specification_description', agentSizeCap)"></div>
-            </ElFormItem>
-            <ElFormItem
-              :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxi')"
-              v-if="agentDeploy === 'fullManagement'"
-            >
-              <div class="flex">
-                <span class="font-color-light inline-block form-label">{{
-                  $t('dfs_agent_download_subscriptionmodeldialog_yunfuwushang')
-                }}</span>
-                <ElRadioGroup v-model="provider" @input="changeProvider" class="flex gap-4">
-                  <ElRadio
-                    v-for="(item, index) in cloudProviderList"
-                    :key="index"
-                    :label="item.cloudProvider"
-                    border
-                    class="rounded-4 subscription-radio m-0 position-relative"
-                  >
-                    <span class="inline-flex align-center">
-                      {{ item.cloudProviderName }}
-                    </span>
-                  </ElRadio>
-                </ElRadioGroup>
-              </div>
-              <div class="flex mt-4">
-                <span class="font-color-light inline-block form-label">{{
-                  $t('dfs_agent_download_subscriptionmodeldialog_diqu')
-                }}</span>
-                <ElRadioGroup v-model="region" class="flex gap-4">
-                  <ElRadio
-                    v-for="(item, index) in cloudDetail"
-                    :key="index"
-                    :label="item.region"
-                    border
-                    class="rounded-4 subscription-radio m-0 position-relative"
-                  >
-                    <span class="inline-flex align-center">
-                      {{ item.regionName }}
-                    </span>
-                  </ElRadio>
-                </ElRadioGroup>
-              </div>
-            </ElFormItem>
             <ElFormItem :label="$t('dfs_instance_instance_dingyuefangshi')">
               <ElRadioGroup v-model="currentPackage" @input="handleChange" class="flex gap-4">
                 <ElRadio
@@ -307,30 +251,31 @@
                 >
               </ElRadioGroup>
             </ElFormItem>
-            <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_meiyuefeiyongyu')">
-              <div class="border rounded-4">
-                <div class="border-bottom px-3 py-1">
-                  <div>
-                    <span class="price-detail-label text-end inline-block mr-2">{{
-                      $t('dfs_agent_download_subscriptionmodeldialog_jisuan')
-                    }}</span>
-                    <span class="font-color-dark">{{ formatPrice(currency, true) }}</span>
+            <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu')">
+              <ul class="flex flex-wrap">
+                <li
+                  class="spec-li position-relative px-4 py-2 mt-4 mr-4"
+                  :class="{
+                    active: specification === item.value
+                  }"
+                  v-for="(item, i) in specificationItems"
+                  :key="i"
+                  @click="changeSpec(item.value)"
+                >
+                  <div class="is-active position-absolute top-0 end-0">
+                    <div class="is-active-triangle"></div>
+                    <VIcon size="16" class="is-active-icon">check-bold</VIcon>
                   </div>
-                  <div v-if="getDiscount(this.selected)">
-                    <span class="price-detail-label text-end inline-block mr-2"
-                      >{{ $t('dfs_agent_subscription_discount', { val: getDiscount(this.selected) }) }}:
-                    </span>
-                    <span class="discount-color fw-sub">-{{ formatPriceOff(currency) }}</span>
+                  <div class="mt-1 lh-base fw-bold font-color-dark">
+                    <span>{{ item.name }}: </span>
+                    <span>{{ item.desc }}</span>
                   </div>
-                </div>
-                <div class="text-end px-3 py-1">
-                  {{ $t('public_total') }}:
-                  <span class="color-primary fs-5 ml-1">{{ formatPrice(currency) }}</span>
-                  <span class="text-decoration-line-through font-color-slight ml-2">{{
-                    formatPrice(currency, true)
-                  }}</span>
-                </div>
-              </div>
+                  <div
+                    class="mt-1 lh-base font-color-sslight"
+                    v-html="$t('dfs_agent_specification_description', updateAgentCap(item.cpu, item.memory))"
+                  ></div>
+                </li>
+              </ul>
             </ElFormItem>
           </ElForm>
           <ElForm v-else label-position="top">
@@ -378,8 +323,60 @@
             </ElFormItem>
           </ElForm>
         </div>
-
         <div v-if="activeStep === 4" class="px-1">
+          <ElForm label-position="top">
+            <ElFormItem label="请选择您需要的存储资源规格：">
+              <ElSelect v-model="specification" @change="changeSpec" class="w-50 rounded-4">
+                <ElOption>MongoDB Atlas Dedicated Cluster 8C 16G</ElOption>
+              </ElSelect>
+            </ElFormItem>
+            <ElFormItem label="请选择您需要的存储空间：">
+              <el-slider class="w-50" v-model="specification" show-input> </el-slider>
+            </ElFormItem>
+            <ElFormItem
+              :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxi')"
+              v-if="agentDeploy === 'fullManagement'"
+            >
+              <div class="flex">
+                <span class="font-color-light inline-block form-label">{{
+                  $t('dfs_agent_download_subscriptionmodeldialog_yunfuwushang')
+                }}</span>
+                <ElRadioGroup v-model="provider" @input="changeProvider" class="flex gap-4">
+                  <ElRadio
+                    v-for="(item, index) in cloudProviderList"
+                    :key="index"
+                    :label="item.cloudProvider"
+                    border
+                    class="rounded-4 subscription-radio m-0 position-relative"
+                  >
+                    <span class="inline-flex align-center">
+                      {{ item.cloudProviderName }}
+                    </span>
+                  </ElRadio>
+                </ElRadioGroup>
+              </div>
+              <div class="flex mt-4">
+                <span class="font-color-light inline-block form-label">{{
+                  $t('dfs_agent_download_subscriptionmodeldialog_diqu')
+                }}</span>
+                <ElRadioGroup v-model="region" class="flex gap-4">
+                  <ElRadio
+                    v-for="(item, index) in cloudDetail"
+                    :key="index"
+                    :label="item.region"
+                    border
+                    class="rounded-4 subscription-radio m-0 position-relative"
+                  >
+                    <span class="inline-flex align-center">
+                      {{ item.regionName }}
+                    </span>
+                  </ElRadio>
+                </ElRadioGroup>
+              </div>
+            </ElFormItem>
+          </ElForm>
+        </div>
+        <div v-if="activeStep === 5" class="px-1">
           <div class="border rounded-4 p-4">
             <div class="fs-6 font-color-dark mb-4">
               {{ $t('dfs_agent_download_subscriptionmodeldialog_peizhizhaiyao') }}
@@ -413,8 +410,30 @@
               <ElFormItem :label="$t('dfs_instance_create_jieshouzhangdande')" prop="email" :rules="getEmailRules()">
                 <ElInput v-model="form.email" :placeholder="getPlaceholder()" style="width: 300px"></ElInput>
               </ElFormItem>
-              <ElFormItem :label="$t('public_total') + ':'" v-if="agentDeploy !== 'aliyun'">
-                <span class="color-primary fs-5 ml-1">{{ formatPrice(currency) }}</span>
+              <ElFormItem>
+                <div class="border rounded-4">
+                  <div class="border-bottom px-3 py-1">
+                    <div>
+                      <span class="price-detail-label text-end inline-block mr-2">{{
+                        $t('dfs_agent_download_subscriptionmodeldialog_jisuan')
+                      }}</span>
+                      <span class="font-color-dark">{{ formatPrice(currency, true) }}</span>
+                    </div>
+                    <div v-if="getDiscount(this.selected)">
+                      <span class="price-detail-label text-end inline-block mr-2"
+                        >{{ $t('dfs_agent_subscription_discount', { val: getDiscount(this.selected) }) }}:
+                      </span>
+                      <span class="discount-color fw-sub">-{{ formatPriceOff(currency) }}</span>
+                    </div>
+                  </div>
+                  <div class="text-end px-3 py-1">
+                    {{ $t('public_total') }}:
+                    <span class="color-primary fs-5 ml-1">{{ formatPrice(currency) }}</span>
+                    <span class="text-decoration-line-through font-color-slight ml-2">{{
+                      formatPrice(currency, true)
+                    }}</span>
+                  </div>
+                </div>
               </ElFormItem>
             </ElForm>
           </div>
@@ -635,6 +654,9 @@ export default {
           title: this.$t('dfs_agent_download_subscriptionmodeldialog_peizhibushugui')
         },
         {
+          title: '选择存储方案'
+        },
+        {
           title: this.$t('dfs_agent_download_subscriptionmodeldialog_chakanbingqueren')
         }
       ]
@@ -683,7 +705,8 @@ export default {
       }
     },
     //切换规格
-    changeSpec() {
+    changeSpec(item) {
+      this.specification = item
       this.loadPackageItems()
       if (!this.currencyType) {
         this.currencyType = this.packageItems[0]?.currency
@@ -1243,6 +1266,40 @@ export default {
 
   .price-detail-label {
     width: 80px;
+  }
+}
+.spec-li {
+  width: 489px;
+  border: 1px solid #dedede;
+  border-radius: 4px;
+  .is-active {
+    display: none;
+  }
+  &.active {
+    $primary: map-get($color, primary);
+    border-color: $primary !important;
+    .is-active {
+      display: block;
+      &-triangle {
+        width: 0;
+        height: 0;
+        border-top: 18px solid $primary;
+        border-left: 18px solid transparent;
+        border-bottom: 18px solid transparent;
+        border-right: 18px solid $primary;
+      }
+      &-icon {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        color: #fff;
+      }
+    }
+  }
+  &.disabled {
+    background-color: #fafafa;
+    border-width: 0 !important;
+    cursor: not-allowed;
   }
 }
 
