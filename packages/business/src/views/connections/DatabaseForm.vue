@@ -1097,18 +1097,20 @@ export default {
       const { connectionConfig, pdkHash } = this.$route.query || {}
       if (connectionConfig) {
         let subscribeIds = []
-        if (__TAPDATA.accessNodeProcessId) {
-          subscribeIds = [`processId_${__TAPDATA.accessNodeProcessId}`]
+        const connectionConfigObj = JSON.parse(connectionConfig)
+        const accessNodeProcessId = connectionConfigObj['__TAPDATA']?.accessNodeProcessId
+        if (accessNodeProcessId) {
+          subscribeIds = [`processId_${accessNodeProcessId}`]
         }
         const params = {
           pdkHash,
-          connectionConfig: JSON.parse(connectionConfig),
+          connectionConfig: connectionConfigObj,
           command: 'OAuth',
           type: 'connection',
           subscribeIds
         }
         const res = await proxyApi.command(params)
-        const { __TAPDATA, __TAPDATA_CONFIG = {}, ...trace } = res || JSON.parse(connectionConfig) || {}
+        const { __TAPDATA, __TAPDATA_CONFIG = {}, ...trace } = res || connectionConfigObj || {}
         Object.assign(
           this.model,
           __TAPDATA,
