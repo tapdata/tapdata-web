@@ -74,9 +74,9 @@
               <div class="flex align-center overflow-hidden">
                 <DatabaseIcon :item="item" :size="20" class="item__icon flex-shrink-0" />
                 <span
-                  class="font-color-normal fw-sub fs-6 ellipsis lh-base flex-1 ml-2 flex align-center"
+                  class="font-color-normal fw-sub fs-6 lh-base flex-1 ml-2 flex align-center overflow-hidden"
                   :title="item.name"
-                  >{{ item.name }}
+                  ><span class="ellipsis">{{ item.name }}</span>
                   <ElTag
                     v-if="item.showConnectorWebsite && connectionWebsiteMap[item.id]"
                     size="small"
