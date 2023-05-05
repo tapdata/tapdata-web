@@ -485,7 +485,7 @@ export default defineComponent({
               {!!sharedCache.length && (
                 <div class="fw-bold my-2 flex align-center">
                   {i18n.t('packages_dag_monitor_node_zhengzaishiyongdehuancun')}{' '}
-                  <IconButton onClick={() => emit('refresh-shared-cache')} class="ml-0.5" sm>
+                  <IconButton onClick={() => emit('refresh-shared-cache')} class="ml-0.5" sm clickAndRotate>
                     refresh
                   </IconButton>
                 </div>

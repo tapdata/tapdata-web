@@ -54,4 +54,15 @@
       font-size: 28px;
     }
   }
+
+  &__rotating {
+    .v-icon {
+      transform: rotate(360deg);
+      transition: 1s ease-in-out;
+    }
+    &:active .v-icon {
+      transform: rotate(0);
+      transition: 0s;
+    }
+  }
 }
