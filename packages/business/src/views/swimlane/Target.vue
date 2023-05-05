@@ -96,7 +96,7 @@
                 {{ $t('packages_business_data_console_target_connection_desc', { val: item.database_type }) }}
               </div>
             </div>
-            <TaskList :list="connectionTaskMap[item.id] || []" @edit-in-dag="handleEditInDag"></TaskList>
+            <TaskList :list="connectionTaskMap[item.id] || []" @edit-in-dag="handleClickName"></TaskList>
           </template>
         </div>
         <!--</draggable>-->
