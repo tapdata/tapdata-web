@@ -1,6 +1,6 @@
 <template>
-  <section class="subscription-steps-wrap flex flex-column flex-1">
-    <div class="main flex-1">
+  <section class="subscription-steps-wrap flex flex-column flex-1 overflow-hidden">
+    <div class="main flex-1 overflow-auto" :class="{ 'main-en': this.$i18n.locale === 'en' }">
       <div>
         <el-steps class="subscription-steps bg-transparent mx-auto" :active="activeStep" simple>
           <el-step v-for="(step, i) in steps" :key="i" :title="step.title">
@@ -8,7 +8,7 @@
           </el-step>
         </el-steps>
       </div>
-      <div class="subscription-steps-content mt-4">
+      <div class="subscription-steps-content mt-4 pb-4">
         <div v-if="activeStep === 1" class="flex gap-6 px-5 justify-content-center align-items-center">
           <div
             class="product-type-card rounded-xl border flex flex-column position-relative overflow-hidden clickable"
@@ -65,7 +65,7 @@
                   {{ $t('dfs_agent_download_subscriptionmodeldialog_chuzhichisuoyou') }}
                 </div>
                 <div>
-                  <el-tag class="mr-4" v-for="(item, index) in realTimeTag" :key="index">{{ item.value }}</el-tag>
+                  <el-tag class="mr-4 mt-4" v-for="(item, index) in realTimeTag" :key="index">{{ item.value }}</el-tag>
                 </div>
               </div>
             </div>
@@ -1137,7 +1137,6 @@ export default {
     },
     getDiscount(item) {
       const { locale } = this.$i18n
-
       if (item.type === 'recurring' && item.periodUnit === 'month') {
         return locale === 'en' ? 5 : 95
       } else if (item.periodUnit === 'year') {
@@ -1151,6 +1150,9 @@ export default {
 <style scoped lang="scss">
 .main {
   padding: 0 140px;
+}
+.main-en {
+  padding: 0 5%;
 }
 .footer {
   padding: 16px 0;
