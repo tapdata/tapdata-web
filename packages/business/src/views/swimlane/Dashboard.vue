@@ -22,8 +22,8 @@
       </div>
       <template v-else>
         <component
-          v-for="(item, index) in laneOptions"
-          :key="index"
+          v-for="item in laneOptions"
+          :key="item.type"
           :is="item.component"
           :ref="item.type"
           :dragState="dragState"

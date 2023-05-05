@@ -73,17 +73,23 @@
             <div class="item__header p-3">
               <div class="flex align-center overflow-hidden">
                 <DatabaseIcon :item="item" :size="20" class="item__icon flex-shrink-0" />
-                <span class="font-color-normal fw-sub fs-6 ellipsis lh-base flex-1 ml-2" :title="item.name">{{
-                  item.name
-                }}</span>
+                <span
+                  class="font-color-normal fw-sub fs-6 ellipsis lh-base flex-1 ml-2 flex align-center"
+                  :title="item.name"
+                  >{{ item.name }}
+                  <ElTag
+                    v-if="item.showConnectorWebsite && connectionWebsiteMap[item.id]"
+                    size="small"
+                    class="ml-1 px-1 flex align-center clickable"
+                    @click="handleOpenWebsite(connectionWebsiteMap[item.id])"
+                    ><VIcon class="mr-1" size="14">open-in-new</VIcon>首页</ElTag
+                  ></span
+                >
                 <IconButton class="ml-1" @click="$emit('preview', item)">view-details</IconButton>
-                <IconButton
+                <!--                <IconButton
                   v-if="item.showConnectorWebsite && connectionWebsiteMap[item.id]"
                   @click="handleOpenWebsite(connectionWebsiteMap[item.id])"
                   >open-in-new</IconButton
-                >
-                <!--                <ElTag size="mini" class="ml-1 px-1 flex align-center"
-                  ><VIcon class="mr-1" size="14">open-in-new</VIcon>首页</ElTag
                 >-->
               </div>
               <div class="mt-2 font-color-light">
@@ -152,7 +158,7 @@ import draggable from 'vuedraggable'
 import { defineComponent, ref } from '@vue/composition-api'
 
 import { apiServerApi, appApi, connectionsApi, modulesApi, proxyApi, taskApi } from '@tap/api'
-import { uuid } from '@tap/shared'
+import { uuid, generateId } from '@tap/shared'
 import { getIcon } from '@tap/assets'
 import { VIcon, IconButton } from '@tap/component'
 import i18n from '@tap/i18n'
@@ -195,6 +201,27 @@ const TaskList = defineComponent({
                     <div class="p-1">
                       <TaskStatus task={task}></TaskStatus>
                     </div>
+                    {task.website && (
+                      <IconButton
+                        onClick={() => {
+                          window.open(task.website)
+                        }}
+                      >
+                        open-in-new
+                      </IconButton>
+                      /*<ElTag
+                        size="small"
+                        class="ml-1 px-1 flex align-center clickable"
+                        onClick={() => {
+                          window.open(task.website)
+                        }}
+                      >
+                        <VIcon class="mr-1" size="14">
+                          open-in-new
+                        </VIcon>
+                        首页
+                      </ElTag>*/
+                    )}
                   </div>
                 ))}{' '}
               </div>
@@ -308,7 +335,7 @@ export default {
     }
   },
 
-  created() {
+  mounted() {
     this.init()
     this.isDaas && this.getApiServerHost()
   },
@@ -348,22 +375,16 @@ export default {
         filter: JSON.stringify(filter)
       })
 
-      return res.items.map(item => {
-        item.LDP_TYPE = 'connection'
-        item.showConnectorWebsite = item?.capabilities.some(c => c.id === 'connector_website_function')
-        item.showTableWebsite = item?.capabilities.some(c => c.id === 'connector_website_function')
-
-        if (item.showConnectorWebsite) {
-          this.getWebsite(item.id)
-        }
-
-        return item
-      })
+      return res.items.map(this.mapConnection)
     },
 
     async loadTask(list) {
       if (!list.length) return
-      const ids = list.map(item => item.id)
+      const spec = []
+      const ids = list.map(item => {
+        if (item.showTableWebsite) spec.push(item.id)
+        return item.id
+      })
       const data = await taskApi.getTaskByConnection({
         connectionIds: ids.join(','),
         position: 'target'
@@ -372,6 +393,50 @@ export default {
       Object.keys(data).forEach(key => {
         this.$set(this.connectionTaskMap, key, data[key].reverse().map(this.mapTask))
       })
+
+      if (spec.length) {
+        spec.forEach(id => {
+          const taskList = data[id]
+          if (taskList?.length) {
+            const mapTaskList = this.connectionTaskMap[id]
+            taskList.forEach((task, i) => {
+              const table = this.getTableByTask(task)
+              if (table) this.getTableWebsite(id, table, mapTaskList[i])
+            })
+          }
+        })
+      }
+    },
+
+    getTableByTask(task) {
+      const { dag = {} } = task
+      if (dag.edges?.length && dag.nodes?.length) {
+        const outputsMap = {}
+        const inputsMap = {}
+
+        dag.edges.forEach(({ source, target }) => {
+          let _source = outputsMap[source]
+          let _target = inputsMap[target]
+
+          if (!_source) {
+            outputsMap[source] = [target]
+          } else {
+            _source.push(target)
+          }
+
+          if (!_target) {
+            inputsMap[target] = [source]
+          } else {
+            _target.push(source)
+          }
+        })
+
+        const targetNode = dag.nodes.find(node => {
+          return node.type === 'table' && inputsMap[node.id] && !outputsMap[node.id]
+        })
+
+        return targetNode?.tableName
+      }
     },
 
     getApiAppList() {
@@ -431,6 +496,20 @@ export default {
         })
     },
 
+    getTableWebsite(connectionId, table, task) {
+      return proxyApi
+        .call({
+          className: 'PDKConnectionService',
+          method: 'getTableWebsite',
+          args: [connectionId, [table]],
+          _: generateId(4)
+        })
+        .then(data => {
+          data?.url && this.$set(task, 'website', data.url)
+          return data?.url
+        })
+    },
+
     findParentByClassName(parent, cls) {
       while (parent && !parent.classList.contains(cls)) {
         parent = parent.parentNode
@@ -484,7 +563,6 @@ export default {
 
         this.showApiDialog()
       } else {
-        console.log('object.data', object.data) // eslint-disable-line
         if (object.data.type === 'connection') {
           this.dialogConfig.from = object.data
           this.dialogConfig.tableName = null
@@ -601,14 +679,18 @@ export default {
           }
 
           let taskInfo = await taskApi[ifStart ? 'saveAndStart' : 'post'](task)
-          taskInfo = this.mapTask(taskInfo)
+          const table = this.getTableByTask(taskInfo)
+          const mapTask = this.mapTask(taskInfo)
+
+          if (table) this.getTableWebsite(to.id, table, mapTask)
+
           this.dialogConfig.visible = false
           this.creating = false
 
           if (this.connectionTaskMap[to.id]) {
-            this.connectionTaskMap[to.id].unshift(taskInfo)
+            this.connectionTaskMap[to.id].unshift(mapTask)
           } else {
-            this.$set(this.connectionTaskMap, to.id, [taskInfo])
+            this.$set(this.connectionTaskMap, to.id, [mapTask])
           }
 
           const h = this.$createElement
@@ -649,17 +731,30 @@ export default {
       return { id, name, status, syncType }
     },
 
+    mapConnection(item) {
+      item.LDP_TYPE = 'connection'
+      item.showConnectorWebsite = item?.capabilities.some(c => c.id === 'connector_website_function')
+      item.showTableWebsite = item?.capabilities.some(c => c.id === 'connector_website_function')
+
+      if (item.showConnectorWebsite) {
+        this.getWebsite(item.id)
+      }
+
+      return item
+    },
+
     //打开连接详情
     openView(row) {
       this.$refs.targetconnectionView.open(row)
     },
 
     addItem(item) {
-      this.list.unshift(item)
-
       if (item.LDP_TYPE !== 'app') {
+        this.mapConnection(item)
         this.loadTask([item])
       }
+
+      this.list.unshift(item)
     },
 
     async getApiServerHost() {
