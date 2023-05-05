@@ -868,10 +868,15 @@ export default {
             const { __TAPDATA, ...formValues } = $values
             const search = where.label?.like
             const getValues = Object.assign({}, this.model?.config || {}, formValues)
+            let subscribeIds = []
+            if (__TAPDATA.accessNodeProcessId) {
+              subscribeIds = [`processId_${__TAPDATA.accessNodeProcessId}`]
+            }
             let params = {
               pdkHash,
               connectionId: id || this.commandCallbackFunctionId,
               connectionConfig: isEmpty(formValues) ? this.model?.config || {} : getValues,
+              subscribeIds,
               command,
               type: 'connection',
               action: search ? 'search' : 'list',
@@ -915,11 +920,16 @@ export default {
           const { pdkHash } = this.pdkOptions
           const { __TAPDATA, ...formValues } = getState?.values || {}
           const getValues = Object.assign({}, this.model?.config || {}, formValues)
+          let subscribeIds = []
+          if (__TAPDATA.accessNodeProcessId) {
+            subscribeIds = [`processId_${__TAPDATA.accessNodeProcessId}`]
+          }
           let params = {
             pdkHash,
             connectionId: this.model?.id || this.commandCallbackFunctionId,
             connectionConfig: isEmpty(formValues) ? this.model?.config || {} : getValues,
             ...others,
+            subscribeIds,
             type: 'connection'
           }
           proxyApi.command(params).then(data => {
@@ -1031,11 +1041,16 @@ export default {
     async setConnectionConfig() {
       const { connectionConfig, pdkHash } = this.$route.query || {}
       if (connectionConfig) {
+        let subscribeIds = []
+        if (__TAPDATA.accessNodeProcessId) {
+          subscribeIds = [`processId_${__TAPDATA.accessNodeProcessId}`]
+        }
         const params = {
           pdkHash,
           connectionConfig: JSON.parse(connectionConfig),
           command: 'OAuth',
-          type: 'connection'
+          type: 'connection',
+          subscribeIds
         }
         const res = await proxyApi.command(params)
         const { __TAPDATA, __TAPDATA_CONFIG = {}, ...trace } = res || JSON.parse(connectionConfig) || {}
