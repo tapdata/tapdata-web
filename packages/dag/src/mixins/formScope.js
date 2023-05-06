@@ -7,6 +7,26 @@ import { externalStorageApi } from '@tap/api'
 import { isPlainObj } from '@tap/shared'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 
+const editorKeyboard = {
+  handleKeyboard: function ({ editor }, hash, keyString, keyCode, event) {
+    if (keyString === '.' && keyCode !== undefined) {
+      setTimeout(() => {
+        editor.execCommand('startAutocomplete')
+      }, 10)
+    }
+  }
+}
+
+const getPrefix = (line, index) => {
+  let prefix = ''
+  let i = index - 1
+  while (i >= 0 && /^[a-zA-Z0-9_]+$/.test(line.charAt(i))) {
+    prefix = line.charAt(i) + prefix
+    i--
+  }
+  return prefix
+}
+
 export default {
   data() {
     function addDeclaredCompleter(editor, tools, params1) {
@@ -698,6 +718,51 @@ export default {
             field.setValue((isPrimaryKeyList.length ? isPrimaryKeyList : indicesUniqueList).map(item => item.value))
             field.validate()
           }
+        },
+
+        async addEditorFieldCompletion(editor, nodeId, $inputs, isMigrate) {
+          let nodeFields = []
+          if (!$inputs.length) return
+          if (isMigrate) {
+            let result = await metadataInstancesApi.nodeSchemaPage({
+              nodeId,
+              fields: ['original_name', 'fields', 'qualified_name'],
+              page: 1,
+              pageSize: 1
+            })
+            nodeFields = result.items[0]?.fields || []
+          } else {
+            const data = await metadataInstancesApi.nodeSchema(nodeId)
+            nodeFields = data?.[0]?.fields || []
+          }
+          nodeFields =
+            nodeFields
+              .filter(item => !item.is_deleted)
+              .map(f => {
+                return {
+                  value: f.field_name,
+                  score: 1000,
+                  meta: f.data_type
+                }
+              }) || []
+          editor.completers.push({
+            // 获取补全提示列表
+            getCompletions: function (editor, session, pos, prefix, callback) {
+              // 判断当前行是否包含 '.'
+              const line = session.getLine(pos.row)
+              const index = pos.column - 1
+              if (index >= 0 && line.charAt(index) === '.') {
+                // 获取前缀
+                const prefix = getPrefix(line, index)
+                if (prefix === 'record') {
+                  callback(null, nodeFields)
+                }
+              }
+            }
+          })
+          // 绑定 '.' 按键事件
+          editor.keyBinding.removeKeyboardHandler(editorKeyboard)
+          editor.keyBinding.addKeyboardHandler(editorKeyboard)
         }
       }
     }
