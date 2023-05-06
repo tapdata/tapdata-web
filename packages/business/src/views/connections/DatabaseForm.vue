@@ -616,7 +616,8 @@ export default {
             effects: ['onFieldInputValueChange'],
             fulfill: {
               state: {
-                value: '{{$target.value || $target.dataSource[0].value}}'
+                value:
+                  '{{$target.value || ($target.dataSource && $target.dataSource[0] ? $target.dataSource[0].value : null)}}'
               }
             }
           }
@@ -631,7 +632,7 @@ export default {
         },
         'x-component': 'Select',
         'x-reactions': [
-          '{{useAsyncDataSource(loadAccessNode)}}',
+          '{{useAsyncDataSource(loadAccessNode, "dataSource", {value: $self.value})}}',
           // 根据下拉数据判断是否存在已选的agent
           {
             fulfill: {
@@ -878,19 +879,21 @@ export default {
             )
           }
         },
-        loadAccessNode: async () => {
+        loadAccessNode: async (fieldName, others = {}) => {
           const data = await clusterApi.findAccessNodeInfo()
 
           return (
-            data?.map(item => {
-              return {
-                value: item.processId,
-                label: `${item.hostName}（${
-                  item.status === 'running' ? i18n.t('public_status_running') : i18n.t('public_agent_status_offline')
-                }）`,
-                disabled: item.status !== 'running'
-              }
-            }) || []
+            data
+              ?.filter(t => t.status === 'running' || t.processId === others.value)
+              ?.map(item => {
+                return {
+                  value: item.processId,
+                  label: `${item.hostName}（${
+                    item.status === 'running' ? i18n.t('public_status_running') : i18n.t('public_agent_status_offline')
+                  }）`,
+                  disabled: item.status !== 'running'
+                }
+              }) || []
           )
         },
         loadCommandList: async (filter, val) => {
