@@ -520,7 +520,27 @@ export default {
       const pdkProperties = this.$store.state.dataflow.pdkPropertiesMap[item.pdkHash]
       let nodeConfig
       if (pdkProperties) {
-        nodeConfig = getInitialValuesInBySchema(pdkProperties, {})
+        nodeConfig = getInitialValuesInBySchema(
+          {
+            properties: {
+              $inputs: {
+                default: [],
+                type: 'array'
+              },
+              $outputs: {
+                default: [],
+                type: 'array'
+              },
+              wrap: {
+                ...pdkProperties,
+                type: 'void'
+              }
+            }
+          },
+          {}
+        )
+        delete nodeConfig.$inputs
+        delete nodeConfig.$outputs
       }
 
       return {

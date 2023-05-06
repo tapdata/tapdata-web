@@ -85,6 +85,7 @@ let pageSort = [
   {
     name: 'v2_data-server',
     children: [
+      { name: 'v2_api-application' },
       { name: 'v2_data-server-list' },
       { name: 'v2_api-client' },
       { name: 'v2_api-servers' },
@@ -757,6 +758,9 @@ export default {
           this.$message.success(this.$t('public_message_save_ok'))
           this.adds = []
           this.deletes = []
+          this.$router.push({
+            name: 'roleList'
+          })
         })
         .finally(() => {
           this.saveloading = false

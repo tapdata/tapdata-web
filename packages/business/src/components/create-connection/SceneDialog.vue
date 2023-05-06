@@ -2,6 +2,8 @@
   <ElDialog
     :visible="visible"
     :append-to-body="true"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
     width="80%"
     top="10vh"
     custom-class="connection-dialog ldp-connection-dialog flex flex-column"
@@ -11,13 +13,14 @@
   >
     <div slot="title" class="flex font-color-dark fs-6 fw-sub position-relative align-center">
       <template v-if="!showForm">
-        <span>{{ $t('packages_business_create_connection_scenedialog_qingxuanzeninde') }}</span>
+        <span>{{ title }}</span>
         <ElInput
           v-model="search"
           class="position-absolute start-50 top-50 translate-middle ldp-connection-search-input"
           size="small"
           clearable
           :placeholder="$t('public_input_placeholder_search')"
+          @input="handleSearchInput"
         >
           <template #prefix>
             <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
@@ -26,17 +29,29 @@
       </template>
       <template v-else>
         <IconButton @click="showForm = false" class="mr-2">left</IconButton>
-        <DatabaseIcon class="mr-2" :size="24" :item="selected"></DatabaseIcon>
-        <span>{{ selected.name }}</span>
+        <DatabaseIcon
+          key="databaseIcon"
+          v-if="formParams.pdkHash"
+          class="mr-2"
+          :size="24"
+          :item="formParams"
+        ></DatabaseIcon>
+        <VIcon v-else key="icon" class="mr-2" :size="24">{{ formParams.icon }}</VIcon>
+        <span>{{ formParams.name }}</span>
       </template>
     </div>
     <div v-if="!showForm" class="flex border-top flex-1 min-h-0">
-      <div class="flex flex-column border-end scene-name-list-wrap overflow-x-hidden pt-4 pb-2">
+      <div
+        class="flex flex-column border-end scene-name-list-wrap overflow-x-hidden pt-4 pb-2"
+        :class="{
+          'is-en': $i18n.locale === 'en'
+        }"
+      >
         <div class="scene-name-list overflow-y-auto">
           <div
             class="scene-name-item px-4 rounded-4 user-select-none ellipsis cursor-pointer"
             :class="{ active: (currentScene === item.key || currentScene === item.name) && !search }"
-            v-for="(item, i) in sceneList"
+            v-for="(item, i) in options"
             :key="i"
             @click="handleSelectScene(item)"
           >
@@ -44,31 +59,65 @@
           </div>
         </div>
       </div>
-      <div v-loading="loading" class="flex-1 bg-light p-3 overflow-y-auto">
-        <ul v-if="sceneDatabases.length" class="overflow-auto inline-block">
-          <li
-            v-for="(item, index) in sceneDatabases"
+      <div ref="connectorContainer" v-loading="loading" class="flex-1 bg-light p-4 overflow-y-auto">
+        <div v-if="sceneDatabases.length" class="connector-list grid gap-4">
+          <div
+            v-for="item in sceneDatabases"
             :key="item.pdkId"
-            class="float-start cursor-pointer text-center database-item"
+            class="connector-item rounded-lg p-3 overflow-hidden bg-white clickable"
             :class="{ active: item.pdkId === selected.pdkId }"
             @click="handleSelect(item)"
           >
-            <div class="img-box inline-flex justify-content-center align-items-center rounded-circle">
-              <DatabaseIcon :size="42" :item="item"></DatabaseIcon>
+            <div class="flex gap-3">
+              <DatabaseIcon :size="38" :item="item"></DatabaseIcon>
+              <div class="connector-item-content flex-1 overflow-hidden">
+                <div class="connector-item-title font-color-dark flex align-center">
+                  <span class="ellipsis mr-1">{{ item.name }}</span>
+                  <VIcon v-if="item.qcType === 'GA'" size="24" class="ml-auto color-success">verified</VIcon>
+                  <ElTag v-else-if="item.qcType" size="mini" class="text-uppercase ml-auto px-1 connector-item-tag">{{
+                    item.qcType
+                  }}</ElTag>
+                </div>
+              </div>
             </div>
-            <ElTooltip class="mt-2" effect="dark" :content="item.name" placement="bottom">
-              <div class="ellipsis text-center font-color-normal">{{ item.name }}</div>
-            </ElTooltip>
-          </li>
-        </ul>
+            <div v-if="currentScene === 'recommended' && !search" class="font-color-light fs-8 mt-2">
+              {{ connectorDescMap[item.type] }}
+            </div>
+          </div>
+        </div>
+        <div v-else-if="specialScene[currentScene]" class="connector-list grid gap-4">
+          <div
+            v-for="item in specialScene[currentScene]"
+            :key="item.key"
+            class="connector-item rounded-lg p-3 overflow-hidden bg-white clickable"
+            @click="handleSelectSpecial(item)"
+          >
+            <div class="flex gap-3">
+              <VIcon size="38">{{ item.icon }}</VIcon>
+              <div class="connector-item-content flex-1 overflow-hidden">
+                <div class="connector-item-title font-color-dark flex align-center">
+                  <span class="ellipsis mr-1">{{ item.name }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <VEmpty v-else></VEmpty>
       </div>
     </div>
     <div v-else class="form__content flex flex-column h-100 overflow-hidden border-top">
-      <ServeForm v-if="['apiServices'].includes(activeTab)" :params="formParams" class="flex-fill"></ServeForm>
+      <ServeForm
+        v-if="!formParams.pdkHash"
+        :params="formParams"
+        :selector-type="selectorType"
+        class="flex-fill"
+        @success="handleSuccess"
+        @saveAndMore="handleSaveAndMore"
+      ></ServeForm>
       <ConnectionForm
         v-else
         :params="formParams"
+        :selector-type="selectorType"
         class="flex-fill"
         @back="init"
         @success="handleSuccess"
@@ -101,18 +150,28 @@ export default {
     visible: {
       required: true,
       value: Boolean
-    }
+    },
+    type: {
+      type: String,
+      default: 'scene' // tag
+    },
+    selectorType: String
   },
   data() {
     return {
       search: '',
-      formParams: {},
+      formParams: {
+        name: '',
+        pdkHash: null,
+        md: null
+      },
       selected: {},
       showForm: false,
       timer: null,
       activeTab: '',
       database: [],
       loading: false,
+      showDialog: this.visible,
       sceneList: [
         {
           key: 'all',
@@ -123,10 +182,11 @@ export default {
           name: i18n.t('packages_business_create_connection_scenedialog_tuijianchangjing'),
           types: ['BigQuery', 'Tablestore', 'MongoDB', 'Redis', 'SelectDB']
         },
-        /*{
-          name: 'API 发布',
-          types: ['RESTful API', 'GraphQL']
-        },*/
+        {
+          key: 'api',
+          name: i18n.t('packages_business_api_publish') /*,
+          types: ['RESTful API', 'GraphQL']*/
+        },
         {
           name: i18n.t('packages_business_create_connection_scenedialog_rushucang'),
           types: [
@@ -165,7 +225,46 @@ export default {
           types: ['Lark-IM', 'LarkTask']
         }
       ],
-      currentScene: 'recommended'
+      connectorDescMap: {
+        BigQuery: i18n.t('packages_business_create_connection_scenedialog_bigQu'),
+        MongoDB: i18n.t('packages_business_create_connection_scenedialog_mongo'),
+        Redis: i18n.t('packages_business_create_connection_scenedialog_redis'),
+        SelectDB: i18n.t('packages_business_create_connection_scenedialog_selec'),
+        Tablestore: i18n.t('packages_business_create_connection_scenedialog_table')
+      },
+      currentScene: 'recommended',
+      tagList: [
+        {
+          key: 'all',
+          name: i18n.t('public_select_option_all')
+        },
+        {
+          name: 'Databases',
+          key: 'Database'
+        },
+        {
+          name: 'SaaS',
+          key: 'SaaS'
+        },
+        {
+          name: 'File',
+          key: 'File'
+        },
+        {
+          name: 'My Connectors',
+          key: 'Custom'
+        }
+      ],
+      specialScene: {
+        api: [
+          {
+            key: 'apiApp',
+            icon: 'mini-app',
+            name: this.$t('packages_business_api_application'),
+            md: this.$t('packages_business_api_application_md')
+          }
+        ]
+      }
     }
   },
   computed: {
@@ -180,25 +279,65 @@ export default {
         let search = this.search.toLowerCase()
         return this.database.filter(db => db.name.toLowerCase().includes(search))
       }
+
       if (this.currentScene === 'all') {
         return this.database
       }
-      const types = this.sceneMap[this.currentScene]
-      return this.database.filter(db => types.includes(db.type))
+
+      if (this.selectorType === 'target') {
+        const types = this.sceneMap[this.currentScene]
+        return types?.length ? this.database.filter(db => types.includes(db.type)) : []
+      }
+
+      return this.database.filter(db => db.tags?.includes(this.currentScene))
+    },
+    options() {
+      if (this.selectorType === 'target') {
+        return this.sceneList
+      }
+      return this.tagList
+    },
+    title() {
+      if (this.selectorType === 'target') {
+        return this.$t('packages_business_create_connection_scenedialog_qingxuanzeninde')
+      }
+      return this.$t('packages_business_create_connection_title_select_type')
     }
   },
   watch: {
     visible(v) {
+      this.showDialog = v
       if (v) {
+        console.log('visible', this.selectorType) // eslint-disable-line
+        this.search = ''
+        this.currentScene = this.selectorType === 'target' ? 'recommended' : 'all'
         this.getData()
       }
+    },
+    showDialog(v) {
+      this.$emit('update:visible', v)
     }
   },
+
+  mounted() {
+    const { type, pdkHash } = this.$route.query
+
+    // add-source/add-target
+    if (type?.startsWith('add-')) {
+      this.$emit('update:selectorType', type.split('-').pop())
+      this.showDialog = true
+      this.$nextTick(() => {
+        this.formParams.pdkHash = pdkHash
+        this.showForm = true
+      })
+    }
+  },
+
   methods: {
     getIcon,
     init() {
       this.showForm = false
-      this.formParams = {}
+      Object.assign(this.formParams, { name: '', pdkHash: null })
       this.activeTab = ''
     },
 
@@ -212,15 +351,18 @@ export default {
     },
 
     handleSelect(item) {
-      this.selected = item
-      switch (this.activeTab) {
-        case 'apiServices':
-          // TODO apiServices
-          break
-        default:
-          this.formParams = { pdkHash: item.pdkHash }
-          break
+      if (this.selectorType === 'source_and_target') {
+        this.$emit('selected', item)
+        return
       }
+
+      Object.assign(this.formParams, { name: item.name, icon: null, pdkHash: item.pdkHash })
+      this.selected = item
+      this.showForm = true
+    },
+
+    handleSelectSpecial(item) {
+      Object.assign(this.formParams, { ...item, pdkHash: null })
       this.showForm = true
     },
 
@@ -236,7 +378,13 @@ export default {
     },
 
     handleSelectScene(item) {
+      this.search = ''
       this.currentScene = item.key || item.name
+      this.resetScroll()
+    },
+
+    resetScroll() {
+      this.$refs.connectorContainer.scrollTop = 0
     },
 
     async getData(noLoading = false) {
@@ -248,9 +396,18 @@ export default {
       }
       if (!noLoading) this.loading = true
       const res = await databaseTypesApi.getDatabases({ filter: JSON.stringify(params) })
-      const data = res?.filter(t => t.connectionType.includes('target') && !!t.pdkHash) || []
-      this.database = data
+      const data =
+        this.selectorType !== 'source_and_target'
+          ? res?.filter(t => t.connectionType.includes(this.selectorType) && !!t.pdkHash) || []
+          : res
+      this.database = data.sort((o1, o2) => {
+        return o1.name.localeCompare(o2.name)
+      })
       this.loading = false
+    },
+
+    handleSearchInput() {
+      this.resetScroll()
     }
   }
 }
@@ -308,15 +465,20 @@ export default {
 
     .scene-name-list-wrap {
       width: 196px;
+
+      &.is-en {
+        width: 218px;
+      }
     }
 
     .scene-name-list {
     }
 
     .scene-name-item {
-      margin: 0px 8px 1px;
+      margin: 0 8px 1px;
       height: 36px;
       line-height: 36px;
+      transition: background 0.2s;
 
       &:hover {
         background-color: rgba(31, 35, 41, 0.08);
@@ -325,6 +487,30 @@ export default {
       &.active {
         color: map-get($color, primary);
         background-color: #f0f4ff;
+      }
+    }
+
+    .connector-list {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .connector-item {
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02);
+      transition: box-shadow 0.2s;
+
+      &-title {
+        font-size: 15px;
+        line-height: 38px;
+      }
+
+      &-tag {
+        height: 18px;
+        line-height: 16px;
+      }
+
+      &:hover {
+        box-shadow: 0 1px 2px -2px rgba(0, 0, 0, 0.16), 0 3px 6px 0 rgba(0, 0, 0, 0.12),
+          0 5px 12px 4px rgba(0, 0, 0, 0.09);
       }
     }
   }

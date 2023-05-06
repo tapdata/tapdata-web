@@ -22,8 +22,8 @@
       </div>
       <template v-else>
         <component
-          v-for="(item, index) in laneOptions"
-          :key="index"
+          v-for="item in laneOptions"
+          :key="item.type"
           :is="item.component"
           :ref="item.type"
           :dragState="dragState"
@@ -44,15 +44,9 @@
         ></component>
       </template>
     </div>
-    <CreateConnection
-      :visible.sync="visible"
-      :selector-type="selectorType"
-      @success="handleSuccess($event, 'source')"
-      @saveAndMore="handleSuccess"
-    ></CreateConnection>
     <SceneDialog
       :visible.sync="showSceneDialog"
-      :selector-type="selectorType"
+      :selector-type.sync="selectorType"
       @success="handleSuccess($event, 'target')"
       @saveAndMore="handleSuccess"
     ></SceneDialog>
@@ -62,7 +56,7 @@
       @success="handleSettingsSuccess"
       @init="handleSettingsInit"
     ></Settings>
-    <TablePreview ref="tablePreview" />
+    <TablePreview ref="tablePreview" @create-single-task="hanldeCreateSingleTask" />
     <ConnectionPreview ref="connectionView" />
   </div>
 </template>
@@ -189,7 +183,7 @@ export default {
 
     handleAdd(type) {
       this.selectorType = type
-      this.visible = true
+      this.showSceneDialog = true
     },
 
     handleCreateTarget(type) {
@@ -307,6 +301,41 @@ export default {
         case 'connection':
           this.$refs.connectionView.open(data)
           break
+      }
+    },
+
+    hanldeCreateSingleTask(data = {}, swimType = '') {
+      switch (swimType) {
+        case 'mdm':
+          this.openRoute({
+            name: 'DataflowNew',
+            query: {
+              addNode: true,
+              connectionId: data.connectionId,
+              tableName: data.name
+            }
+          })
+          break
+        case 'fdm':
+          this.openRoute({
+            name: 'MigrateCreate',
+            query: {
+              addNode: true,
+              connectionId: data.connectionId,
+              tableName: data.name
+            }
+          })
+          break
+        default:
+          break
+      }
+    },
+
+    openRoute(route, newTab = true) {
+      if (newTab) {
+        window.open(this.$router.resolve(route).href)
+      } else {
+        this.$router.push(route)
       }
     }
   }

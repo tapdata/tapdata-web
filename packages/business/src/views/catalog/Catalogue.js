@@ -5,8 +5,12 @@ import { makeDragNodeImage } from '../../index'
 import ClassificationTree from '../../components/ClassificationTree'
 import { DatabaseIcon } from '../../components'
 import TablePreview from '../swimlane/TablePreview'
+import ApiPreview from '../data-server/Drawer'
 import resize from '@tap/component/src/directives/resize'
 import './index.scss'
+import { apiServerApi, modulesApi } from '@tap/api'
+
+const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
 
 const ICON = {
   folder: 'folder-o',
@@ -41,6 +45,7 @@ export default defineComponent({
     })
     const currentNode = ref({})
     const pathMatch = ref([])
+    const apiServerHost = ref('')
 
     const matchParent = node => {
       let arr = [node]
@@ -54,22 +59,43 @@ export default defineComponent({
       return arr
     }
 
-    const handleNodeClick = (data, node) => {
+    const handleNodeClick = async (data, node) => {
       pathMatch.value = matchParent(node)
       options.isShowDetails = data.isObject
+      currentNode.value = data
+      console.log('handleNodeClick', data) // eslint-disable-line
       if (data.isObject) {
-        nextTick(() => {
-          console.log('refs.tableView', refs.tableView) // eslint-disable-line
-          setTimeout(() => {
-            refs.tableView.open(data)
-          }, 100)
-        })
+        if (data.type === 'defaultApi') {
+          const apiInfo = await modulesApi.get(data.id)
+          refs.preview.open(apiInfo)
+        } else {
+          nextTick(() => {
+            setTimeout(() => {
+              refs.preview.open(data)
+            }, 100)
+          })
+        }
       } else {
-        currentNode.value = data
+        // currentNode.value = data
       }
 
       console.log('handleNodeClick', data, node, matchParent(node)) // eslint-disable-line
     }
+
+    const getApiServerHost = async () => {
+      const showError = () => {
+        root.$message.error(this.$t('packages_business_data_server_list_huoqufuwuyu'))
+      }
+      const data = await apiServerApi.get().catch(() => {
+        showError()
+      })
+      apiServerHost.value = data?.items?.[0]?.clientURI || ''
+      if (!apiServerHost.value) {
+        showError()
+      }
+    }
+
+    isDaas && getApiServerHost()
 
     const renderIcon = data => {
       if (data.LDP_TYPE === 'connection') {
@@ -212,11 +238,20 @@ export default defineComponent({
 
               {options.isShowDetails && (
                 <div class="position-absolute top-0 bottom-0 left-0 right-0 w-100 bg-white object-preview-wrap pl-3">
-                  <TablePreview
-                    tag="div"
-                    ref="tableView"
-                    class="border rounded-4 sw-table-drawer h-100 overflow-y-auto"
-                  ></TablePreview>
+                  {currentNode.value.type === 'defaultApi' ? (
+                    <ApiPreview
+                      tag="div"
+                      ref="preview"
+                      host={apiServerHost.value}
+                      class="border rounded-4 sw-table-drawer h-100 overflow-y-auto"
+                    ></ApiPreview>
+                  ) : (
+                    <TablePreview
+                      tag="div"
+                      ref="preview"
+                      class="border rounded-4 sw-table-drawer h-100 overflow-y-auto"
+                    ></TablePreview>
+                  )}
                 </div>
               )}
             </div>

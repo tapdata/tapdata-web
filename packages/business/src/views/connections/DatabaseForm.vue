@@ -86,10 +86,11 @@
       ></GitBook>
     </div>
     <Test ref="test" :visible.sync="dialogTestVisible" :formData="model" @returnTestData="returnTestData"></Test>
-    <DatabaseTypeDialog
-      :dialogVisible.sync="dialogDatabaseTypeVisible"
-      @databaseType="handleDatabaseType"
-    ></DatabaseTypeDialog>
+    <SceneDialog
+      :visible.sync="dialogDatabaseTypeVisible"
+      selector-type="source_and_target"
+      @selected="handleDatabaseType"
+    ></SceneDialog>
     <el-dialog
       :title="$t('packages_business_connection_rename')"
       :close-on-click-modal="false"
@@ -128,12 +129,12 @@ import resize from '@tap/component/src/directives/resize'
 
 import Test from './Test'
 import { getConnectionIcon } from './util'
-import DatabaseTypeDialog from './DatabaseTypeDialog'
 import { ConnectionDebug } from './ConnectionDebug'
+import SceneDialog from '../../components/create-connection/SceneDialog.vue'
 
 export default {
   name: 'DatabaseForm',
-  components: { Test, DatabaseTypeDialog, VIcon, SchemaToForm, GitBook, ConnectionDebug },
+  components: { SceneDialog, Test, VIcon, SchemaToForm, GitBook, ConnectionDebug },
   inject: ['checkAgent', 'buried'],
   directives: {
     resize
@@ -867,10 +868,15 @@ export default {
             const { __TAPDATA, ...formValues } = $values
             const search = where.label?.like
             const getValues = Object.assign({}, this.model?.config || {}, formValues)
+            let subscribeIds = []
+            if (__TAPDATA.accessNodeProcessId) {
+              subscribeIds = [`processId_${__TAPDATA.accessNodeProcessId}`]
+            }
             let params = {
               pdkHash,
               connectionId: id || this.commandCallbackFunctionId,
               connectionConfig: isEmpty(formValues) ? this.model?.config || {} : getValues,
+              subscribeIds,
               command,
               type: 'connection',
               action: search ? 'search' : 'list',
@@ -909,17 +915,21 @@ export default {
             $form.setValuesIn(field.name, str)
           })
         },
-        getCommandAndSetValue: async ($form, others) => {
+        getCommandAndSetValue: async ($form, others = {}) => {
           const getState = $form.getState()
           const { pdkHash } = this.pdkOptions
           const { __TAPDATA, ...formValues } = getState?.values || {}
-          const { command } = others
           const getValues = Object.assign({}, this.model?.config || {}, formValues)
+          let subscribeIds = []
+          if (__TAPDATA.accessNodeProcessId) {
+            subscribeIds = [`processId_${__TAPDATA.accessNodeProcessId}`]
+          }
           let params = {
             pdkHash,
             connectionId: this.model?.id || this.commandCallbackFunctionId,
             connectionConfig: isEmpty(formValues) ? this.model?.config || {} : getValues,
-            command,
+            ...others,
+            subscribeIds,
             type: 'connection'
           }
           proxyApi.command(params).then(data => {
@@ -1031,14 +1041,21 @@ export default {
     async setConnectionConfig() {
       const { connectionConfig, pdkHash } = this.$route.query || {}
       if (connectionConfig) {
+        let subscribeIds = []
+        const connectionConfigObj = JSON.parse(connectionConfig)
+        const accessNodeProcessId = connectionConfigObj['__TAPDATA']?.accessNodeProcessId
+        if (accessNodeProcessId) {
+          subscribeIds = [`processId_${accessNodeProcessId}`]
+        }
         const params = {
           pdkHash,
-          connectionConfig: JSON.parse(connectionConfig),
+          connectionConfig: connectionConfigObj,
           command: 'OAuth',
-          type: 'connection'
+          type: 'connection',
+          subscribeIds
         }
         const res = await proxyApi.command(params)
-        const { __TAPDATA, __TAPDATA_CONFIG = {}, ...trace } = res || JSON.parse(connectionConfig) || {}
+        const { __TAPDATA, __TAPDATA_CONFIG = {}, ...trace } = res || connectionConfigObj || {}
         Object.assign(
           this.model,
           __TAPDATA,

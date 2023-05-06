@@ -1,8 +1,9 @@
 <template>
-  <Drawer
+  <component
+    :is="tag"
     v-loading="loading"
     class="overflow-hidden"
-    style="width: 838px"
+    width="850px"
     :visible.sync="visible"
     @visible="$emit('visible', arguments[0])"
   >
@@ -41,6 +42,8 @@
             <ElInput
               v-if="isEdit"
               v-model="form.name"
+              type="text"
+              maxlength="50"
               :placeholder="$t('public_input_placeholder') + $t('public_name')"
             ></ElInput>
             <div v-else class="fw-sub fs-7 font-color-normal">{{ data.name }}</div>
@@ -77,17 +80,13 @@
         </ElFormItem>
 
         <ElFormItem
+          v-if="tag !== 'div'"
           class="flex-1 mt-4"
           size="small"
           :label="$t('packages_business_data_server_drawer_suoshuyingyong')"
-          prop="kennen"
+          prop="appValue"
         >
-          <ListSelect
-            v-if="visible"
-            :value.sync="form.appValue"
-            :label.sync="form.appLabel"
-            :disabled="!isEdit"
-          ></ListSelect>
+          <ListSelect :value.sync="form.appValue" :label.sync="form.appLabel" :disabled="!isEdit"></ListSelect>
         </ElFormItem>
 
         <!-- 基础信息 -->
@@ -453,7 +452,7 @@
         </template>
       </ElForm>
     </div>
-  </Drawer>
+  </component>
 </template>
 
 <script>
@@ -479,7 +478,11 @@ import ListSelect from '../api-application/ListSelect'
 export default {
   components: { Drawer, VCodeEditor, ListSelect },
   props: {
-    host: String
+    host: String,
+    tag: {
+      type: String,
+      default: 'Drawer'
+    }
   },
   data() {
     const validateParams = (rule, value, callback) => {
@@ -635,7 +638,15 @@ export default {
       this.debugResult = ''
       this.allFields = []
       this.workerStatus = ''
-
+      this.form = {
+        pathAccessMethod: 'default',
+        apiVersion: 'v1',
+        prefix: '',
+        basePath: '',
+        acl: ['admin'],
+        appValue: '',
+        appLabel: ''
+      }
       this.$refs?.form?.clearValidate()
       this.formatData(formData || {})
       if (!this.data.id) {
@@ -809,13 +820,19 @@ export default {
             appLabel,
             appValue
           } = this.form
+
           // basePath
           if (basePath && basePath !== '') {
             status = 'pending'
           }
+
           if (params.some(it => !it.name.trim())) {
             return this.$message.error(i18n.t('packages_business_data_server_drawer_qingshurucanshu'))
           }
+
+          // 排除 fields: [null]
+          fields = fields.filter(f => !!f)
+
           this.loading = true
           let formData = {
             id,
@@ -863,8 +880,12 @@ export default {
           }
           if (!type) {
             //生成按钮 不传fields覆盖数据库已有数据 (open 抽屉this.allFields 就清空了数据)
+            if (connectionId && tableName) {
+              await this.loadAllFields()
+            }
             formData.fields = this.allFields
           }
+
           const data = await modulesApi[id ? 'patch' : 'post'](formData).finally(() => {
             this.loading = false
           })
@@ -895,7 +916,7 @@ export default {
     },
     generateHttp() {
       this.form = cloneDeep(this.data)
-      let basePath = uid()
+      let basePath = uid(11, 'a')
       this.form.basePath = basePath
       this.form.path = `/api/${basePath}`
       this.form.status = 'pending'
@@ -1130,6 +1151,29 @@ export default {
         .finally(() => {
           this.intervalId = setTimeout(this.getWorkers, 2000)
         })
+    },
+
+    async loadAllFields() {
+      let filter = {
+        where: {
+          'source.id': this.form.connectionId,
+          original_name: this.form.tableName,
+          is_deleted: false,
+          sourceType: 'SOURCE'
+        }
+      }
+      const data = await metadataInstancesApi.get({
+        filter: JSON.stringify(filter)
+      })
+      this.allFields =
+        data?.items?.[0]?.fields?.map(it => {
+          return Object.assign({}, it, {
+            id: it.id,
+            field_name: it.field_name,
+            originalDataType: it.data_type,
+            comment: ''
+          })
+        }) || []
     }
   }
 }

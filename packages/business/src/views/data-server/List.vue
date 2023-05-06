@@ -18,12 +18,13 @@
       <template #operation="{ row }">
         <ElButton
           v-if="row.status !== 'active'"
+          key="public"
           :disabled="row.status !== 'pending'"
           type="text"
           @click="changeStatus(row)"
           >{{ $t('public_button_public') }}</ElButton
         >
-        <ElButton v-if="row.status === 'active'" type="text" @click="changeStatus(row)">{{
+        <ElButton v-if="row.status === 'active'" type="text" key="revoke" @click="changeStatus(row)">{{
           $t('public_button_revoke')
         }}</ElButton>
         <ElDivider direction="vertical"></ElDivider>
@@ -110,15 +111,15 @@ export default {
       if (this.columns.length) return this.columns
       return [
         {
-          label: i18n.t('packages_business_application_list_yingyongmingcheng'),
-          prop: 'appName'
-        },
-        {
           label: this.$t('packages_business_data_server_list_fuwumingcheng'),
           prop: 'name',
           slotName: 'name',
           'min-width': 180,
           'show-overflow-tooltip': true
+        },
+        {
+          label: i18n.t('packages_business_application_list_yingyongmingcheng'),
+          prop: 'appName'
         },
         {
           label: this.$t('public_connection_type'),

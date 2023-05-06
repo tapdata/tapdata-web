@@ -6,7 +6,7 @@
       </template>
       <div slot="operation">
         <ElButton class="btn btn-create" type="primary" size="mini" @click="openDialog()">
-          <span>{{ $t('daas_external_storage_list_chuangjianwaicun') }}</span>
+          <span>{{ $t('packages_business_external_storage_list_chuangjianwaicun') }}</span>
         </ElButton>
       </div>
       <ElTableColumn show-overflow-tooltip min-width="180" :label="$t('public_external_memory_name')" prop="name">
@@ -34,7 +34,7 @@
       ></ElTableColumn>
       <ElTableColumn width="220" :label="$t('public_operation')">
         <template #default="{ row }">
-          <span class="mr-2">{{ $t('daas_external_storage_list_sheweimoren') }}</span>
+          <span class="mr-2">{{ $t('packages_business_external_storage_list_sheweimoren') }}</span>
           <ElSwitch
             type="text"
             v-model="row.defaultStorage"
@@ -52,7 +52,9 @@
       append-to-body
       :visible.sync="dialogVisible"
       :title="
-        form.id ? $t('daas_external_storage_list_bianjiwaicun') : $t('daas_external_storage_list_chuangjianwaicun')
+        form.id
+          ? $t('packages_business_external_storage_list_bianjiwaicun')
+          : $t('packages_business_external_storage_list_chuangjianwaicun')
       "
     >
       <ElForm
@@ -73,7 +75,7 @@
             <ElOption label="RocksDB" value="rocksdb"></ElOption>
           </ElSelect>
         </ElFormItem>
-        <ElFormItem :label="$t('daas_external_storage_list_cunchulujing')" prop="uri">
+        <ElFormItem :label="$t('packages_business_external_storage_list_cunchulujing')" prop="uri">
           <ElInput
             v-model="form.uri"
             :placeholder="
@@ -88,7 +90,7 @@
         <ElFormItem v-if="form.type === 'mongodb'" :label="$t('public_external_memory_name')" required prop="table">
           <ElInput v-model="form.table"></ElInput>
         </ElFormItem>
-        <ElFormItem :label="$t('daas_external_storage_list_sheweimoren')">
+        <ElFormItem :label="$t('packages_business_external_storage_list_sheweimoren')">
           <ElSwitch v-model="form.defaultStorage"></ElSwitch>
         </ElFormItem>
       </ElForm>
@@ -116,8 +118,8 @@
         </li>
       </ul>
     </Drawer>
-    <el-dialog :visible.sync="showUsingTaskDialog" title="提示">
-      <div>{{ $t('daas_external_storage_list_tishi', { val1: usingTasks.length }) }}</div>
+    <el-dialog :visible.sync="showUsingTaskDialog" :title="$t('public_message_title_prompt')">
+      <div>{{ $t('packages_business_external_storage_list_tishi', { val1: usingTasks.length }) }}</div>
       <el-table class="mt-4" height="250px" :data="usingTasks">
         <el-table-column min-width="240" :label="$t('public_task_name')" :show-overflow-tooltip="true">
           <template #default="{ row }">
@@ -152,7 +154,7 @@ export default {
   data() {
     var checkTable = (rule, value, callback) => {
       if (this.form.type === 'mongodb' && value === '') {
-        callback(new Error(i18n.t('daas_external_storage_list_qingshuruwaicun2')))
+        callback(new Error(i18n.t('packages_business_external_storage_list_qingshuruwaicun2')))
       } else {
         callback()
       }
@@ -168,8 +170,20 @@ export default {
       dialogVisible: false,
       form: {},
       rules: {
-        name: [{ required: true, message: i18n.t('daas_external_storage_list_qingshuruwaicun'), trigger: 'blur' }],
-        uri: [{ required: true, message: i18n.t('daas_external_storage_list_qingshurucunchu'), trigger: 'blur' }],
+        name: [
+          {
+            required: true,
+            message: i18n.t('packages_business_external_storage_list_qingshuruwaicun'),
+            trigger: 'blur'
+          }
+        ],
+        uri: [
+          {
+            required: true,
+            message: i18n.t('packages_business_external_storage_list_qingshurucunchu'),
+            trigger: 'blur'
+          }
+        ],
         table: [{ validator: checkTable, trigger: 'blur' }]
       },
       isShowDetails: false,
@@ -208,13 +222,13 @@ export default {
       }
       this.filterItems = [
         {
-          label: this.$t('connection_list_form_database_type'),
+          label: this.$t('public_connection_form_database_type'),
           key: 'type', //对象分类
           type: 'select-inner',
           items: typeOptions
         },
         {
-          placeholder: i18n.t('daas_data_discovery_previewdrawer_qingshurumingcheng'),
+          placeholder: i18n.t('public_input_placeholder_name'),
           key: 'keyword', //输入搜索名称
           type: 'input'
         }
@@ -314,7 +328,7 @@ export default {
     async remove(row) {
       //先去请求是否外存已被使用了
       this.usingTasks = await await externalStorageApi.usingTask(row.id)
-      const flag = await this.$confirm(i18n.t('daas_external_storage_list_querenshanchuwai'), '', {
+      const flag = await this.$confirm(i18n.t('packages_business_external_storage_list_querenshanchuwai'), '', {
         type: 'warning',
         showClose: false
       })
@@ -338,8 +352,12 @@ export default {
         },
         { label: this.$t('public_external_memory_name'), value: row.table, icon: 'table' },
         { label: this.$t('public_create_time'), value: row.createTimeFmt, icon: 'cacheTimeAtFmt' },
-        { label: this.$t('daas_external_storage_list_cunchulujing'), value: row.uri, icon: 'database' },
-        { label: this.$t('daas_external_storage_list_sheweimoren'), value: row.defaultStorage, icon: 'record' }
+        { label: this.$t('packages_business_external_storage_list_cunchulujing'), value: row.uri, icon: 'database' },
+        {
+          label: this.$t('packages_business_external_storage_list_sheweimoren'),
+          value: row.defaultStorage,
+          icon: 'record'
+        }
       ]
       this.isShowDetails = true
     },

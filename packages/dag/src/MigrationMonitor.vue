@@ -87,6 +87,7 @@
               :class="{
                 'options-active': nodeMenu.typeId === n.id
               }"
+              :dataflow="dataflow"
               :task-type="dataflow.type"
               :sync-type="dataflow.syncType"
               :sample="dagData ? dagData[n.id] : {}"
@@ -102,6 +103,7 @@
               @show-node-popover="showNodePopover"
               @open-detail="handleOpenDetail(n)"
               @open-shared-cache="handleOpenSharedCache"
+              @refresh-shared-cache="initShareCache"
             ></Node>
           </PaperScroller>
           <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
@@ -372,6 +374,7 @@ export default {
     this.resetState()
     this.$ws.off('editFlush', this.handleEditFlush)
     this.timer && clearInterval(this.timer)
+    this.$off('loop-task')
   },
 
   methods: {
@@ -427,12 +430,27 @@ export default {
         await this.$nextTick()
         await this.addNodes(dag)
         await this.$nextTick()
+        await this.initShareCache() // 共享缓存
+        this.bindLoopTaskEvent()
 
         // 延迟自动布局，等待ResizeObserver
         setTimeout(() => {
           this.handleAutoLayout()
         }, 10)
       }
+    },
+
+    bindLoopTaskEvent() {
+      this.$off('loop-task')
+      this.$on('loop-task', () => {
+        if (!this.sharedCacheMap || !Object.keys(this.sharedCacheMap).length) {
+          // 在重置后的任务监控页面启动,首次 initShareCache 获取不到数据
+          this.initShareCache()
+        } else {
+          const { usedShareCache = {} } = this.dataflow?.attrs || {}
+          this.setNodeShareCache(usedShareCache)
+        }
+      })
     },
 
     gotoViewer() {},
@@ -664,7 +682,8 @@ export default {
         this.$message.success(this.$t('public_message_operation_success'))
         this.isSaving = false
         this.isReset = false
-        this.loadDataflow(this.dataflow?.id)
+        // this.loadDataflow(this.dataflow?.id)
+        this.openDataflow(this.dataflow?.id)
         this.toggleConsole(false)
         this.handleBottomPanel(true)
       } catch (e) {

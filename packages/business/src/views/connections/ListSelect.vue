@@ -4,15 +4,15 @@
     v-bind="$attrs"
     :method="getData"
     :current-label="form.label"
-    filterable
     @change="handleChange"
   >
   </AsyncSelect>
 </template>
 
 <script>
+import { merge } from 'lodash'
 import { AsyncSelect } from '@tap/form'
-import { appApi } from '@tap/api'
+import { connectionsApi } from '@tap/api'
 
 export default {
   name: 'ListSelect',
@@ -21,6 +21,9 @@ export default {
 
   props: {
     value: {
+      type: [String, Number]
+    },
+    label: {
       type: [String, Number]
     },
     params: {
@@ -52,6 +55,11 @@ export default {
     }
   },
 
+  mounted() {
+    this.form.value = this.value
+    this.form.label = this.label
+  },
+
   methods: {
     handleChange(val, opt) {
       const { label } = opt
@@ -60,30 +68,29 @@ export default {
     },
 
     async getData(filter = {}) {
-      const { page, size } = filter
+      const { page = 1, size = 20 } = filter
       let params = {
-        where: {
-          item_type: 'app'
-        },
         order: 'createTime DESC',
         limit: size,
-        skip: (page - 1) * size
+        noSchema: 1,
+        skip: (page - 1) * size,
+        where: {}
       }
 
       const { label } = filter.where || {}
       if (label) {
         Object.assign(params.where, {
-          value: label
+          name: label
         })
       }
 
-      let res = await appApi.get({
-        filter: JSON.stringify(Object.assign(params, this.params))
+      let res = await connectionsApi.get({
+        filter: JSON.stringify(merge(params, this.params))
       })
 
       res.items = res.items.map(t => {
         return {
-          label: t.value,
+          label: t.name,
           value: t.id,
           data: t
         }

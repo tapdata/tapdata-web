@@ -38,6 +38,8 @@ export default {
     },
 
     handleClickName(task) {
+      if (!task?.id) return
+
       let routeName
 
       if (!['edit', 'wait_start'].includes(task.status)) {

@@ -857,7 +857,7 @@ $nodeH: 32px;
     padding-right: 12px;
     width: 100%;
     height: 100%;
-    border-radius: 4px;
+    border-radius: 6px;
     background-color: #fff;
 
     .drag-preview-icon {
@@ -874,7 +874,7 @@ $nodeH: 32px;
     left: 3px;
     width: 100%;
     height: $h;
-    border-radius: 4px;
+    border-radius: 6px;
     background-color: #fff;
   }
 

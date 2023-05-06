@@ -131,21 +131,6 @@ export default {
       const getResourceIns = this.$store.getters['dataflow/getResourceIns']
       const outputsMap = {}
       const inputsMap = {}
-      const { usedShareCache = {} } = this.dataflow?.attrs || {}
-      const sharedCacheRes = await sharedCacheApi.get({
-        filter: JSON.stringify({
-          limit: 1000,
-          where: {
-            name: {
-              $in: Object.keys(usedShareCache)
-            }
-          }
-        })
-      })
-      const sharedCacheMap = sharedCacheRes.items?.reduce(
-        (pre, { id, name, status }) => ({ ...pre, [name]: { id, name, status } }),
-        {}
-      )
 
       edges.forEach(({ source, target }) => {
         let _source = outputsMap[source]
@@ -183,17 +168,6 @@ export default {
           enumerable: false
         })
 
-        for (let key in usedShareCache) {
-          if (usedShareCache[key].includes(node.id)) {
-            const item = sharedCacheMap[key] || {}
-            sharedCache.push({
-              name: key,
-              id: item.id,
-              status: item.status
-            })
-          }
-        }
-        node.attrs.sharedCache = sharedCache
         // 需要隐藏的内容
         node.hiddenMap = {
           setting: this.loadNodeHiddenSetting(node),
@@ -207,6 +181,52 @@ export default {
       // 连线
       edges.forEach(({ source, target }) => {
         this.jsPlumbIns.connect({ uuids: [`${NODE_PREFIX}${source}_source`, `${NODE_PREFIX}${target}_target`] })
+      })
+    },
+
+    async initShareCache() {
+      const { usedShareCache = {} } = this.dataflow?.attrs || {}
+      if (Object.keys(usedShareCache).length) {
+        await this.loadSharedCache(usedShareCache)
+        this.setNodeShareCache(usedShareCache)
+      }
+    },
+
+    async loadSharedCache(usedShareCache) {
+      const sharedCacheRes = await sharedCacheApi.get({
+        filter: JSON.stringify({
+          limit: 1000,
+          where: {
+            name: {
+              $in: Object.keys(usedShareCache)
+            }
+          }
+        })
+      })
+      this.sharedCacheMap = sharedCacheRes.items?.reduce((pre, task) => {
+        const { id, name, status } = makeStatusAndDisabled(task)
+        pre[name] = { id, name, status }
+        return pre
+      }, {})
+    },
+
+    setNodeShareCache(usedShareCache) {
+      this.allNodes.forEach(node => {
+        const sharedCache = []
+
+        for (let key in usedShareCache) {
+          if (usedShareCache[key].includes(node.id)) {
+            const item = this.sharedCacheMap[key] || {}
+            item.id &&
+              sharedCache.push({
+                name: key,
+                id: item.id,
+                status: item.status
+              })
+          }
+        }
+
+        node.attrs.sharedCache = sharedCache
       })
     },
 
@@ -1987,6 +2007,7 @@ export default {
           if (data.status === 'edit') data.btnDisabled.start = false // 任务编辑中，在编辑页面可以启动
           Object.assign(this.dataflow.disabledData, data.btnDisabled)
 
+          this.$emit('loop-task')
           this.startLoopTask(id)
         }
       }, 5000)

@@ -1,6 +1,12 @@
 <template>
   <section class="share-list-wrap h-100">
-    <TablePage ref="table" row-key="id+indexName" class="share-list" :remoteMethod="getData">
+    <TablePage
+      ref="table"
+      row-key="id+indexName"
+      class="share-list"
+      :remoteMethod="getData"
+      @sort-change="handleSortTable"
+    >
       <template slot="search">
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </template>
@@ -134,7 +140,7 @@ export default {
       },
       taskBuried: {
         start: 'sharedMiningStart'
-      },
+      }
     }
   },
   mounted() {
@@ -204,6 +210,11 @@ export default {
             })
           }
         })
+    },
+
+    handleSortTable({ order, prop }) {
+      this.order = `${order ? prop : 'createTime'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
+      this.table.fetch(1)
     },
 
     handleSetting() {

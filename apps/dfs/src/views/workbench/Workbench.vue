@@ -24,7 +24,7 @@
       </ul>
     </div>
     <!--	{{$t('_workbench_workbench_tansuoshili')}}	-->
-    <div class="workbench-overview workbench-section">
+    <div v-show="$i18n.locale !== 'en'" class="workbench-overview workbench-section">
       <!-- <ElRow :gutter="40" class="section-header py-6">-->
       <!--  <ElCol :span="18" class="main-title">{{ $t('_workbench_workbench_tansuoshili') }}</ElCol>-->
       <!--  </ElRow>-->
@@ -72,10 +72,10 @@
     <div class="workbench-overview workbench-section">
       <ElRow :gutter="24" class="section-header py-4">
         <ElCol :span="18" class="main-title">{{ $t('workbench_overview') }}</ElCol>
-        <ElCol :span="6" class="aside-title">{{ $t('workbench_notice') }}</ElCol>
+        <ElCol v-if="$i18n.locale !== 'en'" :span="6" class="aside-title">{{ $t('workbench_notice') }}</ElCol>
       </ElRow>
       <ElRow :gutter="24" class="section-body">
-        <ElCol :span="18">
+        <ElCol :span="$i18n.locale !== 'en' ? 18 : 24">
           <ul class="agent-list__list flex">
             <li v-for="(item, index) in agentList" :key="index" class="agent-list__item" :ref="item.key">
               <div class="agent-list__name flex align-items-center mx-auto mb-3">
@@ -104,7 +104,7 @@
             </li>
           </ul>
         </ElCol>
-        <ElCol :span="6">
+        <ElCol v-if="$i18n.locale !== 'en'" :span="6">
           <div class="aside-main notice-list flex-grow-1 p-4">
             <ul class="notice-list__list h-100 overflow-y-auto">
               <li
@@ -420,6 +420,13 @@ export default {
     },
     loadNotices() {
       this.notices = [
+        {
+          id: 10,
+          type: '',
+          name: 'Tapdata Cloud 3.2.1 Release Notes',
+          link: 'https://mp.weixin.qq.com/s/sHROGfP0tG_ftHPRCT1UIA',
+          time: '2023-04-20 21:00'
+        },
         {
           id: 9,
           type: '',

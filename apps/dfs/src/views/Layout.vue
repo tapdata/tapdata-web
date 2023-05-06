@@ -42,10 +42,10 @@
           <span class="mr-4"><VIcon class="v-icon" size="17">open-in-new</VIcon></span>
           <span class="text-decoration-underline">{{ $t('dfs_agent_download_agentguidedialog_tiyan') + ' Demo' }}</span>
         </ElMenuItem>
-        <ElMenuItem key="goGuide" index="goGuide" class="flex align-center border-top">
-          <span class="mr-4"><VIcon class="v-icon" size="17">open-in-new</VIcon></span>
-          <span class="text-decoration-underline">{{ $t('dfs_views_layout_chanpinyindao') }}</span>
-        </ElMenuItem>
+        <!--        <ElMenuItem key="goGuide" index="goGuide" class="flex align-center border-top">-->
+        <!--          <span class="mr-4"><VIcon class="v-icon" size="17">open-in-new</VIcon></span>-->
+        <!--          <span class="text-decoration-underline">{{ $t('dfs_views_layout_chanpinyindao') }}</span>-->
+        <!--        </ElMenuItem>-->
       </ElMenu>
     </ElAside>
     <ElContainer direction="vertical" class="layout-main position-relative">

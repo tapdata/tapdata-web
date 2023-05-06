@@ -255,7 +255,7 @@ export default {
               case 'CDC':
                 Object.assign(el, cdcFinishOpt)
                 Object.assign(el, {
-                  dataDesc: `, ${i18n.t('public_milestone_time_cdc_consuming')} ${time}, ${begin} ~ - `
+                  dataDesc: `, ${i18n.t('public_milestone_time_cdc_consuming')} ${time}, ${begin}`
                 })
                 break
             }

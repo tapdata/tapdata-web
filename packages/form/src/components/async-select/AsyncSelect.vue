@@ -522,7 +522,7 @@ export default {
       await this.loadData(true)
     },
 
-    async handleQueryChange(val) {
+    handleQueryChange: debounce(async function (val) {
       if (this.previousQuery === val || this.isOnComposition) return
       if (
         this.previousQuery === null &&
@@ -552,10 +552,10 @@ export default {
       this.loadData()
       this.lastQuery = val
       this.broadcast('ElOptionGroup', 'queryChange')
-      if (this.defaultFirstOption && (this.filterable || this.remote) && this.total) {
+      if (this.defaultFirstOption && (this.filterable || this.remote) && (this.total || this.filteredOptionsCount)) {
         this.checkDefaultFirstOption()
       }
-    },
+    }, 200),
 
     async scrollToOption(option) {
       let target = Array.isArray(option) && option[0] ? option[0].$el : option.$el
@@ -624,7 +624,7 @@ export default {
 
     emitChange(val, option) {
       if (!valueEquals(this.value, val)) {
-        this.$emit('change', val, option)
+        this.$emit('change', val, this.items.find(t => t.value === val) || {})
         if (this.multiple) {
           const uniqArr = uniqBy([...this.selected, ...this.cachedOptions, ...this.options], 'value') || []
           const changeLabels = uniqArr.filter(t => val.includes(t.value)).map(t => t.currentLabel || t.label)

@@ -22,9 +22,71 @@
         <div
           class="product-type-card rounded-xl border flex flex-column flex-1 position-relative overflow-hidden clickable"
           :class="{
-            active: productType === 'selfHost'
+            active: platform === 'integration'
           }"
-          @click="productType = 'selfHost'"
+          @click="platform = 'integration'"
+        >
+          <div class="is-active position-absolute top-0 end-0">
+            <div class="is-active-triangle"></div>
+            <VIcon size="16" class="is-active-icon">check-bold</VIcon>
+          </div>
+          <div class="flex justify-content-center gap-5 p-6 align-items-start font-color-dark fs-8">
+            <el-image class="w-100 product-type-image" :src="require('@/assets/image/intergration.png')" />
+          </div>
+          <div class="px-6 mb-6">
+            <div class="product-type-card-title text-center font-color-dark fs-5 mb-2">企业数据集成平台</div>
+            <div class="fs-7 font-color-light mb-3">
+              企业数据集成平台,可以用来连接打通企业的各个数据系统,并在这些系统中进行实时的数据传输,转换和加工。
+            </div>
+            <div class="fs-7 font-color-light mb-3">
+              类似于Fivetran, Airbyte, Hevodata这些产品,但是支持更实时的数据体验和更低的成本,同时支持云上和线下部署。
+            </div>
+            <div class="text-center font-color-dark fs-5 mb-3">主要使用场景</div>
+            <div class="flex justify-content-center align-items-center flex-wrap">
+              <el-tag class="mr-4 mt-4" v-for="(item, index) in interTag" :key="index">{{ item.value }}</el-tag>
+            </div>
+          </div>
+        </div>
+        <div
+          class="product-type-card rounded-xl border flex flex-column flex-1 position-relative overflow-hidden clickable disabled"
+          :class="{
+            active: platform === 'realTime'
+          }"
+        >
+          <div class="is-active position-absolute top-0 end-0">
+            <div class="is-active-triangle"></div>
+            <VIcon size="16" class="is-active-icon">check-bold</VIcon>
+          </div>
+          <div class="flex justify-content-center gap-5 p-6 align-items-start font-color-dark fs-8">
+            <el-image class="w-100 product-type-image" :src="require('@/assets/image/real-time.png')" />
+          </div>
+          <div class="px-6 mb-4">
+            <div class="product-type-card-title text-center font-color-dark fs-5 mb-2">企业实时数据服务平台</div>
+            <div class="font-color-light fs-7 mb-3">
+              企业实时数据服务平台.通过将数据实时集成到中央化平台，经过简单治理后，
+              在中台里统一为下游数据业务场景提供实时的API数据服务或数据推送服务.
+            </div>
+            <div class="font-color-light fs-7 mb-3">
+              和IPaas
+              相比,最大的区别是使用了一个中央存储来对企业核心数据提供共享服务.具有对源库性能影响低,可扩展,可进行数据治理等优势.
+            </div>
+            <div class="product-type-card-title text-center font-color-dark fs-5 mb-2">主要使用场景</div>
+            <div class="flex justify-content-center align-items-center flex-column">
+              <div class="font-color-light fs-7 mb-3 text-center">除支持所有的数据集成平台的场景外，还支持：</div>
+              <div>
+                <el-tag class="mr-4" v-for="(item, index) in realTimeTag" :key="index">{{ item.value }}</el-tag>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-if="activeStep === 2" class="flex gap-6 px-5">
+        <div
+          class="product-type-card rounded-xl border flex flex-column flex-1 position-relative overflow-hidden clickable"
+          :class="{
+            active: agentDeploy === 'selfHost'
+          }"
+          @click="changeAgentDeploy('selfHost')"
         >
           <div class="is-active position-absolute top-0 end-0">
             <div class="is-active-triangle"></div>
@@ -60,10 +122,11 @@
           </div>
         </div>
         <div
-          class="product-type-card rounded-xl border flex flex-column flex-1 position-relative overflow-hidden clickable disabled"
+          class="product-type-card rounded-xl border flex flex-column flex-1 position-relative overflow-hidden clickable"
           :class="{
-            active: productType === 'fullManagement'
+            active: agentDeploy === 'fullManagement'
           }"
+          @click="changeAgentDeploy('fullManagement')"
         >
           <div class="is-active position-absolute top-0 end-0">
             <div class="is-active-triangle"></div>
@@ -100,8 +163,8 @@
         </div>
       </div>
 
-      <div v-if="activeStep === 2" class="px-1">
-        <ElForm v-if="productType !== 'aliyun'" label-position="top">
+      <div v-if="activeStep === 3" class="px-1">
+        <ElForm v-if="agentDeploy !== 'aliyun'" label-position="top">
           <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu')">
             <ElSelect v-model="specification" @change="changeSpec" class="w-50 rounded-4">
               <ElOption
@@ -116,6 +179,40 @@
               </ElOption>
             </ElSelect>
             <div class="mt-1 lh-base" v-html="$t('dfs_agent_specification_description', agentSizeCap)"></div>
+          </ElFormItem>
+          <ElFormItem label="请选择您希望部署的共有云及地区" v-if="agentDeploy === 'fullManagement'">
+            <div class="flex">
+              <span class="font-color-light inline-block form-label">云服务商</span>
+              <ElRadioGroup v-model="provider" @input="changeProvider" class="flex gap-4">
+                <ElRadio
+                  v-for="(item, index) in cloudProviderList"
+                  :key="index"
+                  :label="item.cloudProvider"
+                  border
+                  class="rounded-4 subscription-radio m-0 position-relative"
+                >
+                  <span class="inline-flex align-center">
+                    {{ item.cloudProviderName }}
+                  </span>
+                </ElRadio>
+              </ElRadioGroup>
+            </div>
+            <div class="flex mt-4">
+              <span class="font-color-light inline-block form-label">地区</span>
+              <ElRadioGroup v-model="region" class="flex gap-4">
+                <ElRadio
+                  v-for="(item, index) in cloudDetail"
+                  :key="index"
+                  :label="item.region"
+                  border
+                  class="rounded-4 subscription-radio m-0 position-relative"
+                >
+                  <span class="inline-flex align-center">
+                    {{ item.regionName }}
+                  </span>
+                </ElRadio>
+              </ElRadioGroup>
+            </div>
           </ElFormItem>
           <ElFormItem :label="$t('dfs_instance_instance_dingyuefangshi')">
             <ElRadioGroup v-model="currentPackage" @input="handleChange" class="flex gap-4">
@@ -233,7 +330,7 @@
         </section>
       </div>
 
-      <div v-if="activeStep === 3" class="px-1">
+      <div v-if="activeStep === 4" class="px-1">
         <div class="border rounded-4 p-4">
           <div class="fs-6 font-color-dark mb-4">
             {{ $t('dfs_agent_download_subscriptionmodeldialog_peizhizhaiyao') }}
@@ -255,6 +352,9 @@
                 {{ selected.label }}
               </span>
             </ElFormItem>
+            <ElFormItem label="云厂商|可用区:" v-if="agentDeploy === 'fullManagement'">
+              <span class="font-color-dark"> {{ provider }} | {{ region }} </span>
+            </ElFormItem>
             <ElFormItem :label="$t('dfs_instance_create_jieshouzhangdande')" prop="email" :rules="getEmailRules()">
               <ElInput v-model="form.email" :placeholder="getPlaceholder()" style="width: 300px"></ElInput>
             </ElFormItem>
@@ -266,12 +366,12 @@
       </div>
     </div>
     <div slot="footer" class="flex">
-      <el-link v-if="activeStep === 1" type="primary" @click="changeProductType">{{
+      <el-link v-if="activeStep === 2" type="primary" @click="changeAgentDeploy('aliyun')">{{
         $t('dfs_agent_download_subscriptionmodeldialog_zhijieshiyonga')
       }}</el-link>
 
       <el-link
-        v-if="activeStep === 2 && productType === 'aliyun' && !hiddenNewCode && codeData.length > 0"
+        v-if="activeStep === 2 && agentDeploy === 'aliyun' && !hiddenNewCode && codeData.length > 0"
         type="primary"
         @click="handleNewCode(true)"
         >{{ $t('dfs_agent_download_subscriptionmodeldialog_ninyouyijihuo') }}</el-link
@@ -280,17 +380,24 @@
 
       <el-button v-if="activeStep > 1" @click="prevStep">{{ $t('public_button_previous') }}</el-button>
 
-      <template v-if="productType !== 'aliyun'">
+      <template v-if="agentDeploy !== 'aliyun'">
         <el-button v-if="activeStep < steps.length" type="primary" @click="next('second')">{{
           $t('public_button_next')
         }}</el-button>
         <div v-else-if="activeStep === steps.length" class="ml-2">
-          <el-button type="primary" :loading="submitOnlineLoading" @click="submit()">{{
-            $t('dfs_agent_download_subscriptionmodeldialog_zaixianzhifu')
-          }}</el-button>
-          <el-button type="primary" :loading="submitLoading" @click="submit({}, 'offline')">{{
-            $t('dfs_agent_download_subscriptionmodeldialog_zhuanzhangzhifu')
-          }}</el-button>
+          <div v-if="selected.chargeProvider === 'FreeTier'">
+            <el-button type="primary" :loading="submitOnlineLoading" @click="submit()">{{
+              $t('public_button_confirm')
+            }}</el-button>
+          </div>
+          <div v-else>
+            <el-button type="primary" :loading="submitOnlineLoading" @click="submit()">{{
+              $t('dfs_agent_download_subscriptionmodeldialog_zaixianzhifu')
+            }}</el-button>
+            <el-button type="primary" :loading="submitLoading" @click="submit({}, 'offline')">{{
+              $t('dfs_agent_download_subscriptionmodeldialog_zhuanzhangzhifu')
+            }}</el-button>
+          </div>
         </div>
       </template>
       <template v-else>
@@ -332,17 +439,21 @@ export default {
       if (val) {
         this.checkAgentCount()
         this.activeStep = 1
-        this.productType = 'selfHost'
+        this.agentDeploy = 'selfHost'
       }
     }
   },
   data() {
     return {
       activeStep: 1,
-      productType: 'selfHost',
-      activeName: 'first',
+      agentDeploy: 'selfHost',
+      platform: 'integration',
       allPackages: '',
       packageItems: [],
+      cloudProviderList: [],
+      cloudDetail: [],
+      region: '',
+      provider: '',
       specificationItems: [],
       specification: '',
       email: '',
@@ -353,6 +464,37 @@ export default {
       specMap: {
         '1C2G': i18n.t('dfs_agent_download_subscriptionmodeldialog_extra')
       },
+      realTimeTag: [
+        {
+          value: 'API服务发布'
+        },
+        {
+          value: '工作量集成'
+        },
+        {
+          value: '数据ETL'
+        }
+      ],
+      interTag: [
+        {
+          value: '实时数据同步'
+        },
+        {
+          value: '数据ETL'
+        },
+        {
+          value: '数据上云/跨云同步'
+        },
+        {
+          value: '数据上云/跨云同步'
+        },
+        {
+          value: '数据库国产替代'
+        },
+        {
+          value: 'Kafka供数'
+        }
+      ],
       CURRENCY_MAP: CURRENCY_MAP,
       licenseCode: '',
       saveLoading: false,
@@ -404,7 +546,7 @@ export default {
 
   computed: {
     steps() {
-      if (this.productType === 'aliyun') {
+      if (this.agentDeploy === 'aliyun') {
         return [
           {
             title: this.$t('dfs_agent_download_subscriptionmodeldialog_xuanzebushulei')
@@ -416,6 +558,9 @@ export default {
       }
 
       return [
+        {
+          title: '选择产品模式'
+        },
         {
           title: this.$t('dfs_agent_download_subscriptionmodeldialog_xuanzebushulei')
         },
@@ -454,8 +599,8 @@ export default {
     },
     prevStep() {
       this.activeStep--
-      if (this.productType === 'aliyun') {
-        this.productType = 'selfHost'
+      if (this.agentDeploy === 'aliyun') {
+        this.agentDeploy = 'selfHost'
       }
     },
     next() {
@@ -463,12 +608,17 @@ export default {
       this.buried('productTypeNext')
     },
     //选择订阅模式
-    changeProductType() {
-      this.productType = 'aliyun'
-      this.activeName = 'second'
-      this.activeStep = 2
-      this.getAvailableCode()
-      this.buried('productTypeAliyunCode')
+    changeAgentDeploy(type) {
+      this.agentDeploy = type
+      if (type === 'aliyun') {
+        this.agentDeploy = 'aliyun'
+        this.activeStep = 3
+        this.getAvailableCode()
+        this.buried('productTypeAliyunCode')
+      } else if (type === 'fullManagement') {
+        this.getPrice()
+        this.getCloudProvider()
+      }
     },
     //切换规格
     changeSpec() {
@@ -478,6 +628,11 @@ export default {
       }
       this.handleChange(this.packageItems[0])
       this.buried('changeSpec')
+    },
+    //切换云厂商
+    changeProvider() {
+      this.cloudDetail = this.cloudProviderList.filter(it => it.cloudProvider === this.provider)?.[0].cloudDetail || []
+      this.region = this.cloudDetail?.[0]?.region
     },
     //切换订阅方式
     handleChange(item = {}) {
@@ -592,9 +747,18 @@ export default {
         tps: cpu * 2000
       }
     },
+    //查找云厂商
+    getCloudProvider() {
+      this.$axios.get('api/tcm/orders/queryCloudProvider').then(data => {
+        this.cloudProviderList = data?.items || []
+        //初始化云厂商
+        this.provider = this.cloudProviderList?.[0].cloudProvider
+        this.changeProvider()
+      })
+    },
     getPrice() {
       const params = {
-        productType: this.productType
+        productType: this.agentDeploy
       }
       this.$axios.get('api/tcm/paid/plan/getPaidPlan', { params }).then(data => {
         const { paidPrice = [] } = data?.[0] || {}
@@ -717,21 +881,31 @@ export default {
           id: ''
         }
       })
-      let params = {}
+      const agentUrl = window.App.$router.resolve({
+        name: 'Instance',
+        query: {
+          id: ''
+        }
+      })
+      let params = {
+        agentDeploy: this.agentDeploy,
+        platform: this.platform,
+        version: ''
+      }
 
-      if (this.productType === 'aliyun') {
-        params = {
+      if (this.agentDeploy === 'aliyun') {
+        params = Object.assign(params, {
           agentType: 'Local',
           chargeProvider: 'Aliyun',
           licenseId: row?.id
-        }
+        })
         this.buried('selectAgentAliyun')
       } else {
         const valid = await this.validateForm('confirmForm')
 
         if (!valid) return
 
-        params = {
+        params = Object.assign(params, {
           agentType: 'Local',
           chargeProvider,
           priceId,
@@ -741,6 +915,12 @@ export default {
           paymentType: paymentType, //增加支付方式
           email,
           type
+        })
+        if (this.agentDeploy === 'fullManagement') {
+          params.agentType = 'Cloud'
+          params.region = this.region
+          params.provider = this.provider
+          params.successUrl = location.origin + location.pathname + agentUrl.href
         }
       }
 
@@ -755,19 +935,29 @@ export default {
       this.$axios
         .post('api/tcm/orders', params)
         .then(data => {
-          if (chargeProvider === 'FreeTier' || this.productType === 'aliyun') {
+          if (
+            (this.agentDeploy === 'fullManagement' && chargeProvider === 'FreeTier') ||
+            this.agentDeploy === 'aliyun'
+          ) {
+            //免费实例（授权码）-半托管-直接部署页面
+            this.finish()
             let downloadUrl = window.App.$router.resolve({
               name: 'FastDownload',
               query: {
                 id: data?.agentId
               }
             })
-
             window.open(downloadUrl.href, '_blank')
+          } else if (chargeProvider === 'FreeTier' && this.agentDeploy === 'fullManagement') {
+            // 全托管- 免费实例 - 实例列表
+            this.finish()
+            window.open(agentUrl.href, '_blank')
           } else if (paymentType === 'online') {
+            //在线支付 打开付款页面
             this.finish()
             window.open(data?.paymentUrl, '_blank')
           } else {
+            //转账支付 打开支付详情弹窗
             this.close()
             this.showTransferDialogVisible = true
           }
@@ -872,6 +1062,9 @@ export default {
 }
 .aliyun-main {
   padding: 0 40px;
+}
+.form-label {
+  width: 90px;
 }
 .width50 {
   width: 50%;

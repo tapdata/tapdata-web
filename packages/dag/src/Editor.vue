@@ -102,7 +102,7 @@ import { titleChange } from '@tap/component/src/mixins/titleChange'
 import { showMessage } from '@tap/component/src/mixins/showMessage'
 import ConfigPanel from './components/migration/ConfigPanel'
 import { uuid } from '@tap/shared'
-import { taskApi } from '@tap/api'
+import { connectionsApi, taskApi } from '@tap/api'
 import { VEmpty } from '@tap/component'
 import { MoveNodeCommand } from './command'
 import dagre from 'dagre'
@@ -188,6 +188,7 @@ export default {
     await this.initPdkProperties()
     // 初始化所有节点类型
     await this.initNodeType()
+    this.autoAddNode()
     this.jsPlumbIns.ready(async () => {
       try {
         this.initCommand()
@@ -603,6 +604,36 @@ export default {
       } else {
         this.buried('taskStart', { result: false })
       }
+    },
+
+    autoAddNode() {
+      const { addNode, connectionId, tableName } = this.$route.query || {}
+      if (!addNode) return
+
+      this.jsPlumbIns.ready(async () => {
+        try {
+          const con = await connectionsApi.get(connectionId)
+          setTimeout(() => {
+            this.handleAddNodeToPos([-300, 300], {
+              name: tableName,
+              type: 'table',
+              databaseType: con.database_type,
+              connectionId,
+              tableName,
+              attrs: {
+                connectionName: con.name,
+                connectionType: con.connection_type,
+                accessNodeProcessId: '',
+                pdkType: 'pdk',
+                pdkHash: con.pdkHash,
+                capabilities: con.capabilities
+              }
+            })
+          }, 5000)
+        } catch (error) {
+          console.error(error) // eslint-disable-line
+        }
+      })
     }
   }
 }

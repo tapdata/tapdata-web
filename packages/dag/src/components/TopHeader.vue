@@ -113,35 +113,13 @@
           <VIcon size="16">list</VIcon>
         </button>
       </ElTooltip>
-      <!--设置-->
-      <ElTooltip transition="tooltip-fade-in" :content="$t('public_button_setting')">
-        <button @click="$emit('showSettings')" class="icon-btn" :class="{ active: activeType === 'settings' }">
-          <VIcon size="20">setting-outline</VIcon>
-        </button>
-      </ElTooltip>
     </div>
     <!--复制dag查看不显示-->
     <div class="flex align-center flex-grow-1">
       <div class="flex-grow-1"></div>
-      <ElButton v-if="stateIsReadonly" size="medium" class="ml-3 btn--text" @click="$emit('detail')">
-        <VIcon>monitoring</VIcon>
-        <!--运行监控-->
-        {{ $t('packages_dag_task_list_button_monitor') }}
+      <ElButton class="ml-3" size="medium" @click="$emit('showSettings')">
+        <VIcon class="mr-1">cog-o</VIcon>{{ $t('public_button_setting') }}
       </ElButton>
-
-      <ElButton
-        v-if="!(dataflow.disabledData && dataflow.disabledData.reset)"
-        :disabled="$disabledReadonlyUserBtn()"
-        key="reset"
-        class="ml-3"
-        :class="{ 'btn--text': isViewer }"
-        size="medium"
-        @click="$emit('reset')"
-      >
-        <VIcon v-if="isViewer">reset</VIcon>
-        {{ $t('public_button_reset') }}
-      </ElButton>
-
       <ElButton
         v-if="!stateIsReadonly"
         :loading="isSaving"
@@ -153,7 +131,26 @@
         <!--保存-->
         {{ $t('public_button_save') }}
       </ElButton>
-      <template v-else>
+
+      <ElButton
+        v-if="dataflow.disabledData && !dataflow.disabledData.reset"
+        :disabled="$disabledReadonlyUserBtn()"
+        key="reset"
+        class="ml-3"
+        :class="{ 'btn--text': isViewer }"
+        size="medium"
+        type="warning"
+        @click="$emit('reset')"
+      >
+        <VIcon v-if="isViewer">reset</VIcon>
+        {{ $t('public_button_reset') }}
+      </ElButton>
+      <template v-if="stateIsReadonly">
+        <ElButton v-if="stateIsReadonly" size="medium" class="ml-3 btn--text" @click="$emit('detail')">
+          <VIcon>monitoring</VIcon>
+          <!--运行监控-->
+          {{ $t('packages_dag_task_list_button_monitor') }}
+        </ElButton>
         <ElButton
           v-if="$route.name !== 'MigrateEditor'"
           key="edit"
@@ -162,9 +159,7 @@
           :disabled="(dataflow.disabledData && dataflow.disabledData.edit) || $disabledReadonlyUserBtn()"
           @click="$emit('edit')"
         >
-          <VIcon>edit</VIcon>
-          <!--编辑-->
-          {{ $t('public_button_edit') }}
+          <VIcon class="mr-1">edit-outline</VIcon>{{ $t('public_button_edit') }}
         </ElButton>
 
         <ElButton
@@ -193,7 +188,7 @@
 
       <ElButton
         :disabled="isSaving || (dataflow.disabledData && dataflow.disabledData.start) || transformLoading"
-        class="mx-3"
+        class="ml-3"
         size="medium"
         type="primary"
         @click="$emit('start')"
@@ -310,7 +305,7 @@ export default {
 <style scoped lang="scss">
 $sidebarW: 236px;
 $hoverBg: #eef3ff;
-$radius: 4px;
+$radius: 6px;
 $baseHeight: 26px;
 $sidebarBg: #fff;
 

@@ -343,7 +343,7 @@ export default {
   packages_business_components_alert_huifu: 'Restore',
   packages_business_shared_const_yiban: 'General',
   packages_business_shared_const_jinggao: 'Warning',
-  packages_business_shared_const_yanzhong: 'Serious',
+  packages_business_shared_const_yanzhong: 'Severe',
   packages_business_shared_const_jinji: 'Urgent',
   packages_business_external_storage: 'External Storage',
   packages_business_relation_details_chakanrenwu: 'View Tasks',
@@ -595,7 +595,7 @@ export default {
   packages_business_relation_details_wajuemingcheng: 'Mining Name',
   packages_business_relation_details_wajuexinxi: 'Mining information',
   packages_business_connections_databaseform_shujuyuanzhongmo:
-    'When the number of models in the data source is greater than 10,000, the model will be refreshed according to this parameter setting',
+    'When the number of models in the data source is less than 10,000, the model will be refreshed once an hour; when the number of models in the data source is greater than 10,000, the model will be refreshed at the specified time every day.',
   packages_business_connections_databaseform_moxingjiazaipin: 'Model load time',
   packages_business_task_list_lianjieming: 'Connection name: ',
   packages_business_task_list_dierbushanchu: '// The second step delete slot_name',
@@ -606,6 +606,7 @@ export default {
   packages_business_notify_system_notice: 'System Notification',
   packages_business_notify_alarm_title: 'Agent Alarm Setting',
   packages_business_setting_alarm_notification_notify_noticeInterval: 'Sending Interval',
+  packages_business_notify_notice_level: 'Notice Level',
   packages_business_setting_notification_alarm_notification_gaojingtongzhi: 'Alarm Notification',
   packages_business_setting_alarmnotification_gaojingzhibiao: 'Alarm Indicator',
   packages_business_setting_alarmnotification_dangjiediandeping:
@@ -849,7 +850,8 @@ export default {
   packages_business_table_status_error: 'Error',
   packages_business_table_status_draft: 'Draft',
   packages_business_table_status_normal: 'Normal',
-  packages_business_data_console_target_no_task: 'No tasks configured for this target',
+  packages_business_data_console_target_no_task: 'No tasks configured for this target.',
+  packages_business_data_console_target_no_api: 'No API configured for this application.',
   packages_business_data_console_target_connection_desc: 'Sync data to {val}',
   packages_business_view_more: 'View More',
   packages_business_view_collapse: 'Collapse',
@@ -1001,5 +1003,74 @@ export default {
   packages_business_task_list_meiyoufaxiannin:
     "I didn't find that you have recently reported task errors, if you have other questions, please consult our manual customer service",
   packages_business_api_application_list_xitongmorenchuang:
-    'Applications created by the system by default, cannot be edited or deleted.'
+    'Applications created by the system by default, cannot be edited or deleted.',
+  packages_business_create_connection_title_select_type: 'Choose Data Source Type',
+  // 外存管理
+  packages_business_external_storage_list_querenshanchuwai: 'Are you sure to delete the external storage?',
+  packages_business_external_storage_list_qingshurucunchu: 'Please enter the storage path',
+  packages_business_external_storage_list_qingshuruwaicun: 'Please enter the external storage name',
+  packages_business_external_storage_list_qingshuruwaicun2: 'Please enter the external storage table name',
+  packages_business_external_storage_list_sheweimoren: 'Set as default',
+  packages_business_external_storage_list_cunchulujing: 'Storage path',
+  packages_business_external_storage_list_chuangjianwaicun: 'Create External Storage',
+  packages_business_external_storage_list_bianjiwaicun: 'Edit External Storage',
+  packages_business_external_storage_list_tishi:
+    'This external storage has been called by {val1} tasks, please delete or modify the configuration and try again.',
+  // API
+  packages_business_api_publish: 'API Publish',
+  packages_business_api_application: 'API Application',
+  packages_business_api_application_md: `## API Application
+- You can easily create new applications to categorize APIs and achieve differentiated management, thereby improving business security and efficiency.
+- You can drag and drop database tables onto the application to quickly publish APIs.
+      `,
+  packages_business_qingshurucanshu: 'Please enter parameter name',
+  packages_business_paixu: 'Sort',
+  packages_business_meigefenyefan: 'Number of records returned per page',
+  packages_business_fenyebianhao: 'Pagination number',
+  packages_business_zidingyichaxun: 'Custom query',
+  packages_business_morenchaxun: 'Default query',
+  packages_business_qingxuanzeduixiang: 'Please select the object name',
+  packages_business_qingxuanzelianjie: 'Please Select connection type',
+  packages_business_qingshurufuwu: 'Please enter service name',
+  packages_business_quanxianfanwei: 'Authority Range',
+  packages_business_selectPermissions: 'Please select the scope of authority',
+  packages_business_shilidaima: 'Sample Code',
+  packages_business_shilidaima2: 'Sample Code',
+  packages_business_fanhuijieguo: 'Return Result',
+  packages_business_diaoyongfangshi: 'Call method',
+  packages_business_fuwufangwen: 'Service Access',
+  packages_business_shuchujieguo: 'Output Result',
+  packages_business_pailietiaojian: 'Order condition',
+  packages_business_shaixuantiaojian: 'Filter condition ',
+  packages_business_canshuzhi: 'parameter value',
+  packages_business_canshumingcheng: 'Parameter Name',
+  packages_business_shurucanshu: 'Input Parameter',
+  packages_business_jiekouleixing: 'Interface Type',
+  packages_business_fabujiedian: 'Publishing Node',
+  packages_business_caozuoleixing: 'Operation Type',
+  packages_business_zanwumiaoshu: 'no description yet',
+  packages_business_tiaoshi: 'Debug',
+  packages_business_peizhi: 'Configuration',
+  packages_business_chuangjianfuwu: 'Create API',
+  packages_business_fuwuxiangqing: 'Service Details',
+  packages_business_geshicuowu: 'Format error',
+  packages_business_validate: 'Only alphanumeric letters and underscores are allowed and must start with a letter.',
+  packages_business_aPI_path_Settings: 'API Path Settings',
+  packages_business_default_path: 'Default Path',
+  packages_business_custom_path: 'Custom Path',
+  packages_business_prefix: 'Prefix',
+  packages_business_base_path: 'Base Path',
+  packages_business_path: 'Path',
+  packages_business_confirm_tip: 'This will re-generate the API path, do you wish to continue?',
+  packages_business_create_connection_scenedialog_table:
+    'Tablestore is a distributed NoSQL data storage service with high reliability, high performance, flexibility and scalability, suitable for application scenarios such as real-time data query and analysis. ',
+  packages_business_create_connection_scenedialog_select:
+    'SelectDB Cloud is a fully managed real-time data warehouse service based on the Apache Doris kernel. It has the advantages of high reliability, high performance, ease of use and low cost, and is suitable for query and analysis requirements for processing massive data. ',
+  packages_business_create_connection_scenedialog_redis:
+    'Redis is a high-performance memory database that supports multiple data structures and persistence methods. It is scalable and reliable, and is suitable for application scenarios such as caching, session management, leaderboards, and message queues. ',
+  packages_business_create_connection_scenedialog_mongo:
+    'MongoDB is a non-relational database with flexibility, high performance, ease of use and scalability, suitable for application scenarios that need to process large amounts of unstructured data and require fast query and scalability. ',
+  packages_business_create_connection_scenedialog_bigQu:
+    'BigQuery is a managed data warehouse provided by Google Cloud. It is famous for its high speed, scalability and security. It can process PB-level data, integrate with multiple tools, and is suitable for various data analysis and mining scenarios. ',
+  packages_business_swimlane_tablepreview_chuangjianrenwu: 'Create task'
 }
