@@ -1,8 +1,9 @@
 <template>
-  <Drawer
+  <component
+    :is="tag"
     v-loading="loading"
     class="overflow-hidden"
-    style="width: 838px"
+    width="850px"
     :visible.sync="visible"
     @visible="$emit('visible', arguments[0])"
   >
@@ -79,6 +80,7 @@
         </ElFormItem>
 
         <ElFormItem
+          v-if="tag !== 'div'"
           class="flex-1 mt-4"
           size="small"
           :label="$t('packages_business_data_server_drawer_suoshuyingyong')"
@@ -450,7 +452,7 @@
         </template>
       </ElForm>
     </div>
-  </Drawer>
+  </component>
 </template>
 
 <script>
@@ -476,7 +478,11 @@ import ListSelect from '../api-application/ListSelect'
 export default {
   components: { Drawer, VCodeEditor, ListSelect },
   props: {
-    host: String
+    host: String,
+    tag: {
+      type: String,
+      default: 'Drawer'
+    }
   },
   data() {
     const validateParams = (rule, value, callback) => {
