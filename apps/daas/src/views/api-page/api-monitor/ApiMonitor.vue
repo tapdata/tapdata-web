@@ -266,8 +266,14 @@ export default {
   mounted() {
     this.initData()
   },
+  destroyed() {
+    clearTimeout(this.timer)
+    this.isDestroyed = true
+  },
   methods: {
     initData() {
+      if (this.isDestroyed) return
+
       Promise.all([
         this.getPreview(),
         this.getClientName(),
@@ -276,7 +282,7 @@ export default {
         this.getApiList()
       ]).finally(() => {
         this.silenceLoading = true
-        setTimeout(() => {
+        this.timer = setTimeout(() => {
           this.initData()
         }, 10000)
       })
