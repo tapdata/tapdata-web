@@ -8,10 +8,11 @@ import i18n from '@tap/i18n'
 import { FormItem, JsEditor, HighlightCode } from '@tap/form'
 import { VCodeEditor, VirtualSelect, VEmpty } from '@tap/component'
 import resize from '@tap/component/src/directives/resize'
-import { javascriptFunctionsApi, taskApi, monitoringLogsApi } from '@tap/api'
+import { javascriptFunctionsApi, taskApi, monitoringLogsApi, metadataInstancesApi } from '@tap/api'
 import Time from '@tap/shared/src/time'
 import { JsDeclare } from '../js-declare'
 import './style.scss'
+import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
 
 export const JsProcessor = observer(
   defineComponent({
@@ -80,6 +81,7 @@ export const JsProcessor = observer(
       let version
       let logList = ref([])
       let logLoading = ref(false)
+      const nodeId = form.values.id
 
       const queryLog = async () => {
         const logData = await monitoringLogsApi.query({
@@ -89,10 +91,10 @@ export const JsProcessor = observer(
           page: 1,
           pageSize: 50,
           start: queryStart,
-          nodeId: form.values.id,
+          nodeId,
           end: Time.now()
         })
-        logList.value = logData?.items.filter(item => !new RegExp(`^.*\\[${form.values.id}]`).test(item.message)) || []
+        logList.value = logData?.items.filter(item => !new RegExp(`^.*\\[${nodeId}]`).test(item.message)) || []
       }
 
       const handleQuery = async () => {
@@ -101,7 +103,7 @@ export const JsProcessor = observer(
           .getRunJsResult({
             version,
             taskId,
-            jsNodeId: form.values.id
+            jsNodeId: nodeId
           })
           .then(res => {
             // 版本号不一致
@@ -254,10 +256,79 @@ export const JsProcessor = observer(
         }
       }
 
+      function getPrefix(line, index) {
+        let prefix = ''
+        let i = index - 1
+        while (i >= 0 && /^[a-zA-Z0-9_]+$/.test(line.charAt(i))) {
+          prefix = line.charAt(i) + prefix
+          i--
+        }
+        return prefix
+      }
+
       let jsEditor
       const onEditorInit = editor => {
         jsEditor = editor
+        editor.completers.push({
+          // 获取补全提示列表
+          getCompletions: function (editor, session, pos, prefix, callback) {
+            // 判断当前行是否包含 '.'
+            const line = session.getLine(pos.row)
+            const index = pos.column - 1
+            if (index >= 0 && line.charAt(index) === '.') {
+              // 获取前缀
+              const prefix = getPrefix(line, index)
+              if (prefix === 'record') {
+                callback(null, nodeFields)
+              }
+            }
+          }
+        })
+        // 绑定 '.' 按键事件
+        editor.keyBinding.addKeyboardHandler({
+          handleKeyboard: function ({ editor }, hash, keyString, keyCode, event) {
+            if (keyString === '.' && keyCode !== undefined) {
+              setTimeout(() => {
+                editor.execCommand('startAutocomplete')
+              }, 10)
+            }
+          }
+        })
       }
+
+      let nodeFields = []
+      const loadFields = async () => {
+        let fields = []
+        if (!formRef.value.values.$inputs.length) return
+        if (form.values.type.includes('migrate')) {
+          let result = await metadataInstancesApi.nodeSchemaPage({
+            nodeId,
+            fields: ['original_name', 'fields', 'qualified_name'],
+            page: 1,
+            pageSize: 1
+          })
+          fields = result.items[0]?.fields || []
+        } else {
+          const data = await metadataInstancesApi.nodeSchema(nodeId)
+          fields = data?.[0]?.fields || []
+        }
+
+        nodeFields =
+          fields
+            .filter(item => !item.is_deleted)
+            .map(f => {
+              return {
+                value: f.field_name,
+                score: 1000,
+                meta: f.data_type
+              }
+            }) || []
+      }
+
+      // 加载模型字段
+      loadFields()
+      // 模型自动改变
+      useAfterTaskSaved(root, formRef.value.values.$inputs, loadFields)
 
       return () => {
         const editorProps = { ...attrs }

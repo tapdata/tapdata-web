@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import VCodeEditor from './base/VCodeEditor.vue'
+import VCodeEditor from './base/VCodeEditor'
 import { functionApi, sharedCacheApi } from '@tap/api'
 import { getCode } from '@tap/shared'
 
@@ -126,7 +126,9 @@ export default {
           }
         })
         const idx = editor.completers?.findIndex(item => item.id === 'function') || -1
+
         if (~idx) editor.completers.splice(idx, 1)
+
         tools.addCompleter({
           id: 'function',
           getCompletions: (editor, session, pos, prefix, callback) => {
