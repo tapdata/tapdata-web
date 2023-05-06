@@ -55,6 +55,7 @@
             <ElDropdownItem command="userCenter" :disabled="$disabledReadonlyUserBtn()">{{
               $t('the_header_Header_yongHuZhongXin')
             }}</ElDropdownItem>
+            <ElDropdownItem command="order"> 订阅中心 </ElDropdownItem>
             <ElDropdownItem command="home"> {{ $t('header_official_website') }} </ElDropdownItem>
             <ElDropdownItem command="signOut" :disabled="$disabledReadonlyUserBtn()">
               {{ $t('header_sign_out') }}
@@ -149,6 +150,11 @@ export default {
           // window.open(this.USER_CENTER || 'https://tapdata.authing.cn/u', '_blank')
           this.$router.push({
             name: 'userCenter'
+          })
+          break
+        case 'order':
+          this.$router.push({
+            name: 'order'
           })
           break
         case 'signOut':

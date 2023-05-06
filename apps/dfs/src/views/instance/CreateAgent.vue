@@ -39,10 +39,11 @@
             </div>
           </div>
           <div
-            class="product-type-card rounded-xl border flex flex-column position-relative overflow-hidden clickable disabled"
+            class="product-type-card rounded-xl border flex flex-column position-relative overflow-hidden clickable"
             :class="{
               active: platform === 'realTime'
             }"
+            @click="platform = 'realTime'"
           >
             <div class="is-active position-absolute top-0 end-0">
               <div class="is-active-triangle"></div>
@@ -251,6 +252,47 @@
                 >
               </ElRadioGroup>
             </ElFormItem>
+            <ElFormItem
+              :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxi')"
+              v-if="agentDeploy === 'fullManagement'"
+            >
+              <div class="flex">
+                <span class="font-color-light inline-block form-label">{{
+                  $t('dfs_agent_download_subscriptionmodeldialog_yunfuwushang')
+                }}</span>
+                <ElRadioGroup v-model="provider" @input="changeProvider" class="flex gap-4">
+                  <ElRadio
+                    v-for="(item, index) in cloudProviderList"
+                    :key="index"
+                    :label="item.cloudProvider"
+                    border
+                    class="rounded-4 subscription-radio m-0 position-relative"
+                  >
+                    <span class="inline-flex align-center">
+                      {{ item.cloudProviderName }}
+                    </span>
+                  </ElRadio>
+                </ElRadioGroup>
+              </div>
+              <div class="flex mt-4">
+                <span class="font-color-light inline-block form-label">{{
+                  $t('dfs_agent_download_subscriptionmodeldialog_diqu')
+                }}</span>
+                <ElRadioGroup v-model="region" class="flex gap-4">
+                  <ElRadio
+                    v-for="(item, index) in cloudDetail"
+                    :key="index"
+                    :label="item.region"
+                    border
+                    class="rounded-4 subscription-radio m-0 position-relative"
+                  >
+                    <span class="inline-flex align-center">
+                      {{ item.regionName }}
+                    </span>
+                  </ElRadio>
+                </ElRadioGroup>
+              </div>
+            </ElFormItem>
             <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu')">
               <ul class="flex flex-wrap">
                 <li
@@ -271,6 +313,7 @@
                     <span>{{ item.desc }}</span>
                   </div>
                   <div
+                    v-if="agentDeploy === 'selfHost'"
                     class="mt-1 lh-base font-color-sslight"
                     v-html="$t('dfs_agent_specification_description', updateAgentCap(item.cpu, item.memory))"
                   ></div>
@@ -323,8 +366,15 @@
             </ElFormItem>
           </ElForm>
         </div>
-        <div v-if="activeStep === 4" class="px-1">
-          <ElForm label-position="top">
+        <!--存储方案-->
+        <div v-if="activeStep === 4 && platform === 'realTime'" class="px-1">
+          <!--半托管用户手动填写存储连接地址-->
+          <ElForm v-if="agentDeploy === 'selfHost'" label-position="top">
+            <ElFormItem label="请配置您的存储资源：：">
+              <ElInput v-model="mongodbUrl"></ElInput>
+            </ElFormItem>
+          </ElForm>
+          <ElForm v-else label-position="top">
             <ElFormItem label="请选择您需要的存储资源规格：">
               <ElSelect v-model="specification" @change="changeSpec" class="w-50 rounded-4">
                 <ElOption>MongoDB Atlas Dedicated Cluster 8C 16G</ElOption>
@@ -333,50 +383,10 @@
             <ElFormItem label="请选择您需要的存储空间：">
               <el-slider class="w-50" v-model="specification" show-input> </el-slider>
             </ElFormItem>
-            <ElFormItem
-              :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxi')"
-              v-if="agentDeploy === 'fullManagement'"
-            >
-              <div class="flex">
-                <span class="font-color-light inline-block form-label">{{
-                  $t('dfs_agent_download_subscriptionmodeldialog_yunfuwushang')
-                }}</span>
-                <ElRadioGroup v-model="provider" @input="changeProvider" class="flex gap-4">
-                  <ElRadio
-                    v-for="(item, index) in cloudProviderList"
-                    :key="index"
-                    :label="item.cloudProvider"
-                    border
-                    class="rounded-4 subscription-radio m-0 position-relative"
-                  >
-                    <span class="inline-flex align-center">
-                      {{ item.cloudProviderName }}
-                    </span>
-                  </ElRadio>
-                </ElRadioGroup>
-              </div>
-              <div class="flex mt-4">
-                <span class="font-color-light inline-block form-label">{{
-                  $t('dfs_agent_download_subscriptionmodeldialog_diqu')
-                }}</span>
-                <ElRadioGroup v-model="region" class="flex gap-4">
-                  <ElRadio
-                    v-for="(item, index) in cloudDetail"
-                    :key="index"
-                    :label="item.region"
-                    border
-                    class="rounded-4 subscription-radio m-0 position-relative"
-                  >
-                    <span class="inline-flex align-center">
-                      {{ item.regionName }}
-                    </span>
-                  </ElRadio>
-                </ElRadioGroup>
-              </div>
-            </ElFormItem>
           </ElForm>
         </div>
-        <div v-if="activeStep === 5" class="px-1">
+        <!---确认提交订单-->
+        <div v-if="activeStep === 5 || (activeStep === 4 && platform === 'integration')" class="px-1">
           <div class="border rounded-4 p-4">
             <div class="fs-6 font-color-dark mb-4">
               {{ $t('dfs_agent_download_subscriptionmodeldialog_peizhizhaiyao') }}
@@ -450,6 +460,18 @@
     <div class="footer flex justify-content-center align-items-center">
       <!--非授权码-->
       <template v-if="agentDeploy !== 'aliyun'">
+        <div class="flex justify-content-center align-items-center mr-4" v-if="[3, 4].includes(activeStep)">
+          <div class="text-end px-3 py-1">
+            {{ $t('public_total') }}:
+            <span class="color-primary fs-5 ml-1">{{ formatPrice(currency) }}</span>
+          </div>
+          <div v-if="getDiscount(this.selected)">
+            <span class="price-detail-label text-end inline-block mr-2"
+              >{{ $t('dfs_agent_subscription_discount', { val: getDiscount(this.selected) }) }}:
+            </span>
+            <span class="discount-color fw-sub">-{{ formatPriceOff(currency) }}</span>
+          </div>
+        </div>
         <el-button v-if="activeStep > 1" @click="prevStep">{{ $t('public_button_previous') }}</el-button>
         <el-button v-if="activeStep < steps.length" type="primary" @click="next('second')">{{
           $t('public_button_next')
@@ -536,6 +558,7 @@ export default {
       form: {
         email: ''
       },
+      mongodbUrl: '',
       specMap: {
         '1C2G': i18n.t('dfs_agent_download_subscriptionmodeldialog_extra')
       },
@@ -642,7 +665,22 @@ export default {
           }
         ]
       }
-
+      if (this.platform === 'integration') {
+        return [
+          {
+            title: i18n.t('dfs_agent_download_subscriptionmodeldialog_xuanzechanpinmo')
+          },
+          {
+            title: this.$t('dfs_agent_download_subscriptionmodeldialog_xuanzebushulei')
+          },
+          {
+            title: this.$t('dfs_agent_download_subscriptionmodeldialog_peizhibushugui')
+          },
+          {
+            title: this.$t('dfs_agent_download_subscriptionmodeldialog_chakanbingqueren')
+          }
+        ]
+      }
       return [
         {
           title: i18n.t('dfs_agent_download_subscriptionmodeldialog_xuanzechanpinmo')

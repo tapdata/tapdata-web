@@ -238,6 +238,14 @@ const routes = [
         }
       },
       {
+        path: '/user/order',
+        name: 'order',
+        component: () => import(/* webpackChunkName: "instance" */ '../views/order/List.vue'),
+        meta: {
+          title: '订阅中心'
+        }
+      },
+      {
         path: '/verify',
         name: 'verify',
         redirect: 'verify/',
