@@ -262,18 +262,29 @@ export const JsProcessor = observer(
       return () => {
         const editorProps = { ...attrs }
         editorProps.options.readOnly = props.disabled
-
+        const tooltip = props.isStandard
+          ? i18n.t('packages_form_js_processor_index_tooltip1')
+          : i18n.t('packages_form_js_processor_index_tooltip2')
         const label = (
-          <div class="position-absolute flex align-center w-100">
-            <span class="formily-element-form-item-asterisk">*</span>
-            <span class="flex-1">{i18n.t('packages_form_js_processor_index_jiaoben')}</span>
-            <ElLink class="mr-3" onClick={toggleDoc} type="primary">
-              {i18n.t('packages_dag_api_docs')}
-            </ElLink>
-            <ElLink onClick={toggleFullscreen} class="js-editor-fullscreen" type="primary">
-              <VIcon class="mr-1">fangda</VIcon>
-              {i18n.t('packages_form_js_editor_fullscreen')}
-            </ElLink>
+          <div class="position-absolute flex justify-content-between w-100">
+            <div class="flex align-center">
+              <span class="formily-element-form-item-asterisk">*</span>
+              <span>{i18n.t('packages_form_js_processor_index_jiaoben')}</span>
+              <ElTooltip content={tooltip} placement="top" class="ml-2">
+                <VIcon size="14" class="color-primary">
+                  info
+                </VIcon>
+              </ElTooltip>
+            </div>
+            <div className="flex align-center">
+              <ElLink class="mr-3" onClick={toggleDoc} type="primary">
+                {i18n.t('packages_dag_api_docs')}
+              </ElLink>
+              <ElLink onClick={toggleFullscreen} class="js-editor-fullscreen" type="primary">
+                <VIcon class="mr-1">fangda</VIcon>
+                {i18n.t('packages_form_js_editor_fullscreen')}
+              </ElLink>
+            </div>
           </div>
         )
 

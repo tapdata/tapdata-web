@@ -127,6 +127,10 @@ export default {
   packages_form_js_processor_index_xuanzebiao: 'Select Form',
   packages_form_js_processor_index_moxingshengming: 'Model declaration',
   packages_form_js_processor_index_jiaoben: 'Script',
+  packages_form_js_processor_index_tooltip1:
+    'Standard JS nodes can only process and operate data records. If you want to use all system built-in functions and realize external calls (such as network, database, etc.), you can use enhanced JS nodes. ',
+  packages_form_js_processor_index_tooltip2:
+    'Enhanced JS nodes can use all built-in functions to implement external calls (such as network, database, etc.), but it is currently a Beta version, and performance problems may occur, please use it with caution. If only data records need to be processed and calculated, it is recommended to use standard JS nodes. ',
   packages_form_js_processor_index_qingqiuchaoshiqing: 'The request has timed out, please try again',
   packages_form_js_processor_index_rengzaipinmingjia: 'Please be patient, the page is still loading',
   packages_form_table_rename_index_qingkong: 'Clear',

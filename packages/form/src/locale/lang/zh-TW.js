@@ -118,6 +118,10 @@ export default {
   packages_form_js_processor_index_xuanzebiao: '選擇表',
   packages_form_js_processor_index_moxingshengming: '模型聲明',
   packages_form_js_processor_index_jiaoben: '腳本',
+  packages_form_js_processor_index_tooltip1:
+    '標準 JS 節點只能對數據記錄進行處理和運算，如需使用所有的系統內置函數，實現外部調用（如網絡、數據庫等），可使用增強 JS 節點。 ',
+  packages_form_js_processor_index_tooltip2:
+    '增強 JS 節點可使用所有的內置函數，實現外部調用（如網絡、數據庫等），但目前為Beta版本，可能會出現性能問題，請謹慎使用。如僅需對數據記錄進行處理和運算，推薦使用標準 JS 節點。 ',
   packages_form_js_processor_index_qingqiuchaoshiqing: '請求超時，請重試',
   packages_form_js_processor_index_rengzaipinmingjia: '仍在拼命加載中，請耐心等待',
   packages_form_table_rename_index_qingkong: '清空',
