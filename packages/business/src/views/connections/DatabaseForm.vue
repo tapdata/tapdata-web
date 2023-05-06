@@ -631,6 +631,9 @@ export default {
           colon: false
         },
         'x-component': 'Select',
+        'x-component-props': {
+          onChange: `{{ () => $self.setSelfErrors('') }}`
+        },
         'x-reactions': [
           '{{useAsyncDataSource(loadAccessNode, "dataSource", {value: $self.value})}}',
           // 根据下拉数据判断是否存在已选的agent
@@ -647,9 +650,12 @@ export default {
         ],
         // 校验下拉数据判断是否存在已选的agent
         'x-validator': `{{(value, rule, ctx)=> {
-            if (value && ctx.field.dataSource?.length) {
+            if (!value) {
+              return '${this.$t('packages_business_agent_select_placeholder')}'
+            } else if (value && ctx.field.dataSource?.length) {
               const current = ctx.field.dataSource.find(item => item.value === value)
               if (!current) {
+                $self.setSelfErrors('')
                 return '${this.$t('packages_business_agent_select_not_found')}'
               }
             }

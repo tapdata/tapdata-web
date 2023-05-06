@@ -354,6 +354,7 @@ export default {
   packages_business_relation_details_huancun: 'Cache',
   packages_business_relation_details_wajue: 'Mining',
   packages_business_relation_details_renwu: 'Tasks',
+  packages_business_agent_select_placeholder: 'Please select an agent',
   packages_business_agent_select_not_found: 'This agent does not exist. Select another agent',
   packages_business_components_connectiontypeselectorsort_wodeshujuyuan: 'My Data Source',
   packages_business_components_connectiontypeselectorsort_jiaoyouTap:
