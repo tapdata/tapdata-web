@@ -346,6 +346,7 @@ export default {
   packages_business_relation_details_huancun: '緩存',
   packages_business_relation_details_wajue: '挖掘',
   packages_business_relation_details_renwu: '任務',
+  packages_business_agent_select_placeholder: '請選擇agent',
   packages_business_agent_select_not_found: '該agent已不存在，請選擇其他agent',
   packages_business_components_connectiontypeselectorsort_wodeshujuyuan: '我的數據源',
   packages_business_components_connectiontypeselectorsort_jiaoyouTap:
