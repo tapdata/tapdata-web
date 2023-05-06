@@ -5,7 +5,7 @@
         <div
           v-for="(item, index) in cols"
           :key="index"
-          :class="['column-item', 'column-' + (item.prop || item.type), item.class]"
+          :class="['column-item', 'column-' + (item.prop || item.type), item.headerClass]"
           :style="{ width: getColWidth(item) }"
         >
           <div v-if="item.type === 'selection'" class="cell">
@@ -54,8 +54,8 @@
 
                   <template v-else-if="colItem.type === 'selection'">
                     <ElCheckbox
-                      :value="selections.includes(item[itemKey])"
-                      @change="handleCheckbox(arguments[0], item)"
+                      :value="selections.includes(item)"
+                      @change="toggleRowSelection(item, arguments[0])"
                     ></ElCheckbox>
                   </template>
                   <template v-else>{{ item[colItem.prop] }}</template>
@@ -175,24 +175,40 @@ export default {
       }
     },
 
-    handleCheckbox(val, row = {}) {
-      if (val) {
-        this.selections.push(row[this.itemKey])
-      } else {
-        const index = this.selections.findIndex(t => t === row[this.itemKey])
-        this.selections.splice(index, 1)
+    toggleRowSelection(row = {}, selected) {
+      const index = this.selections.findIndex(t => t === row)
+
+      index > -1 && this.selections.splice(index, 1)
+      if (selected) {
+        this.selections.push(row)
       }
 
       const selectionsLen = this.selections.length
       const dataLen = this.data.length
       this.isIndeterminate = !!selectionsLen && selectionsLen < dataLen
       this.checkAll = !!selectionsLen && selectionsLen === dataLen
+      this.$emit('selection-change', this.selections)
     },
 
     handleCheckAll(val) {
       this.checkAll = val
-      this.selections = val ? this.data.map(t => t[this.itemKey]) : []
+      this.selections = val ? this.list : []
       this.isIndeterminate = false
+      this.$emit('selection-change', this.selections)
+    },
+
+    // 选中所有
+    toggleAllSelection() {
+      this.handleCheckAll(true)
+    },
+
+    // 清空所有选中
+    clearSelection() {
+      this.handleCheckAll(false)
+    },
+
+    getCheckboxValue(item) {
+      return this.selections.includes(item)
     },
 
     getRowClass(row, rowIndex) {

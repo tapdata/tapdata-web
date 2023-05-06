@@ -283,9 +283,7 @@ export const FieldRenameProcessor = defineComponent({
         if (index > -1) {
           //联调右侧表格全选
           nextTick(() => {
-            tableList.value.forEach(row => {
-              refs.table?.toggleRowSelection(row, true)
-            })
+            refs.table?.toggleAllSelection()
           })
         }
         if (index === -1) {
@@ -676,6 +674,7 @@ export const FieldRenameProcessor = defineComponent({
               </div>
             </div>
             <VirtualList
+              ref="table"
               data={this.filterFieldList}
               columns={this.columns}
               item-key="sourceFieldName"
@@ -685,7 +684,9 @@ export const FieldRenameProcessor = defineComponent({
                 operation: this.renderOpNode
               }}
               row-class-name={this.tableRowClassName}
+              onSelection-change={this.doSelectionField}
               border
+              class="flex-fill h-0"
             ></VirtualList>
           </div>
         </div>
