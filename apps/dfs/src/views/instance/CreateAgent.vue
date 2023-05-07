@@ -298,7 +298,8 @@
                 <li
                   class="spec-li position-relative px-4 py-2 mt-4 mr-4"
                   :class="{
-                    active: specification === item.value
+                    active: specification === item.value,
+                    disabled: (agentCount > 0 || agentDeploy !== 'selfHost') && item.chargeProvider === 'FreeTier'
                   }"
                   v-for="(item, i) in specificationItems"
                   :key="i"
@@ -308,13 +309,13 @@
                     <div class="is-active-triangle"></div>
                     <VIcon size="16" class="is-active-icon">check-bold</VIcon>
                   </div>
-                  <div class="mt-1 lh-base fw-bold font-color-dark">
+                  <div class="spec-li-title mt-1 lh-base fw-bold font-color-dark">
                     <span>{{ item.name }}: </span>
                     <span>{{ item.desc }}</span>
                   </div>
                   <div
                     v-if="agentDeploy === 'selfHost'"
-                    class="mt-1 lh-base font-color-sslight"
+                    class="spec-li-title mt-1 lh-base font-color-sslight"
                     v-html="$t('dfs_agent_specification_description', updateAgentCap(item.cpu, item.memory))"
                   ></div>
                 </li>
@@ -388,7 +389,8 @@
             </ElFormItem>
             <ElFormItem label="请选择您需要的存储空间：">
               <div class="flex">
-                <el-slider class="w-50" v-model="memorySpace" show-input> </el-slider>
+                <el-slider class="w-50" :max="maxMemorySpace" :marks="marks" v-model="memorySpace" show-input>
+                </el-slider>
                 <span class="ml-2">GB</span>
               </div>
             </ElFormItem>
@@ -719,6 +721,16 @@ export default {
     },
     singleYearAmount() {
       return this.singleMonthAmount ? this.singleMonthAmount * 12 : this.singleMonthAmount
+    },
+    maxMemorySpace() {
+      return this.mdbPriceId === 'FreeTier' ? 5 : 100
+    },
+    marks() {
+      let res = {}
+      let min = 0
+      res[min] = min
+      res[this.maxMemorySpace] = this.maxMemorySpace
+      return this.mdbPriceId === 'FreeTier' ? { 0: '0', 5: '5' } : res
     }
   },
 
@@ -1061,9 +1073,7 @@ export default {
         if (row.agentType === 'Cloud') {
           params = Object.assign(params, {
             region: this.region,
-            provider: this.provider,
-            mdbPriceId: this.mdbPriceId,
-            memorySpace: this.memorySpace
+            provider: this.provider
           })
         }
         this.buried('selectAgentAliyun')
@@ -1088,6 +1098,8 @@ export default {
           params.agentType = 'Cloud'
           params.region = this.region
           params.provider = this.provider
+          params.mdbPriceId = this.mdbPriceId
+          params.memorySpace = this.memorySpace
           params.successUrl = location.origin + location.pathname + agentUrl.href
         }
       }
@@ -1377,6 +1389,9 @@ export default {
     background-color: #fafafa;
     border-width: 0 !important;
     cursor: not-allowed;
+    .spec-li-title {
+      color: #86909c !important;
+    }
   }
 }
 
