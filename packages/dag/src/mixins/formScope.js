@@ -751,12 +751,21 @@ export default {
               // 判断当前行是否包含 '.'
               const line = session.getLine(pos.row)
               const index = pos.column - 1
+              const recordCompletion = [
+                {
+                  value: 'record',
+                  score: 1000000,
+                  meta: 'local'
+                }
+              ]
               if (index >= 0 && line.charAt(index) === '.') {
                 // 获取前缀
                 const prefix = getPrefix(line, index)
                 if (prefix === 'record') {
                   callback(null, nodeFields)
                 }
+              } else {
+                callback(null, recordCompletion)
               }
             }
           })
