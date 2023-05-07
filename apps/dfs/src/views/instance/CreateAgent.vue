@@ -8,7 +8,7 @@
           </el-step>
         </el-steps>
       </div>
-      <div class="subscription-steps-content mt-4 pb-4">
+      <div class="subscription-steps-content mt-4">
         <div v-if="activeStep === 1" class="flex gap-6 px-5 justify-content-center align-items-center">
           <div
             class="product-type-card rounded-xl border flex flex-column position-relative overflow-hidden clickable"
@@ -370,18 +370,27 @@
         <div v-if="activeStep === 4 && platform === 'realTime'" class="px-1">
           <!--半托管用户手动填写存储连接地址-->
           <ElForm v-if="agentDeploy === 'selfHost'" label-position="top">
-            <ElFormItem label="请配置您的存储资源：：">
-              <ElInput v-model="mongodbUrl"></ElInput>
+            <ElFormItem label="请配置您的存储资源:">
+              <ElInput class="w-50 rounded-4" type="textarea" v-model="mongodbUrl"></ElInput>
+              <div class="font-color-sslight mt-4">
+                请填写您自己的MongoDB存储集群URI
+                <div>
+                  格式: mongodb://[username:password@]host1[:port1][....hostN[:portN]][/[defaultauthdb][?options]]
+                </div>
+              </div>
             </ElFormItem>
           </ElForm>
           <ElForm v-else label-position="top">
             <ElFormItem label="请选择您需要的存储资源规格：">
-              <ElSelect v-model="specification" @change="changeSpec" class="w-50 rounded-4">
-                <ElOption>MongoDB Atlas Dedicated Cluster 8C 16G</ElOption>
+              <ElSelect v-model="mdbPriceId" class="w-50 rounded-4">
+                <ElOption value="FreeTier" label="MongoDB Atlas Dedicated Cluster 8C 16G"></ElOption>
               </ElSelect>
             </ElFormItem>
             <ElFormItem label="请选择您需要的存储空间：">
-              <el-slider class="w-50" v-model="specification" show-input> </el-slider>
+              <div class="flex">
+                <el-slider class="w-50" v-model="memorySpace" show-input> </el-slider>
+                <span class="ml-2">GB</span>
+              </div>
             </ElFormItem>
           </ElForm>
         </div>
@@ -396,7 +405,7 @@
               :model="form"
               ref="confirmForm"
               :label-width="this.$i18n.locale === 'en' ? '200px' : '130px'"
-              label-position="right"
+              label-position="left"
             >
               <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_jisuanziyuan')">
                 <span class="font-color-dark" v-if="agentDeploy === 'aliyun'">
@@ -420,38 +429,35 @@
               <ElFormItem :label="$t('dfs_instance_create_jieshouzhangdande')" prop="email" :rules="getEmailRules()">
                 <ElInput v-model="form.email" :placeholder="getPlaceholder()" style="width: 300px"></ElInput>
               </ElFormItem>
-              <ElFormItem>
-                <div class="border rounded-4">
-                  <div class="border-bottom px-3 py-1">
-                    <div>
-                      <span class="price-detail-label text-end inline-block mr-2">{{
-                        $t('dfs_agent_download_subscriptionmodeldialog_jisuan')
-                      }}</span>
-                      <span class="font-color-dark">{{ formatPrice(currency, true) }}</span>
-                    </div>
-                    <div v-if="getDiscount(this.selected)">
-                      <span class="price-detail-label text-end inline-block mr-2"
-                        >{{ $t('dfs_agent_subscription_discount', { val: getDiscount(this.selected) }) }}:
-                      </span>
-                      <span class="discount-color fw-sub">-{{ formatPriceOff(currency) }}</span>
-                    </div>
-                  </div>
-                  <div class="text-end px-3 py-1">
-                    {{ $t('public_total') }}:
-                    <span class="color-primary fs-5 ml-1">{{ formatPrice(currency) }}</span>
-                    <span class="text-decoration-line-through font-color-slight ml-2">{{
-                      formatPrice(currency, true)
-                    }}</span>
-                  </div>
-                </div>
-              </ElFormItem>
             </ElForm>
+            <div class="border rounded-4 price-wrap">
+              <div class="px-3 py-2">
+                <div class="mb-2">
+                  <span class="price-detail-label inline-block mr-2">计算资源: </span>
+                  <span class="font-color-dark">{{ formatPrice(currency, true) }}</span>
+                </div>
+                <div class="mb-2">
+                  <span class="price-detail-label inline-block mr-2">存储资源: </span>
+                  <span class="font-color-dark">{{ formatPrice(currency, true) }}</span>
+                </div>
+                <div class="mb-2" v-if="getDiscount(this.selected)">
+                  <span class="price-detail-label inline-block mr-2"
+                    >{{ $t('dfs_agent_subscription_discount', { val: getDiscount(this.selected) }) }}:
+                  </span>
+                  <span class="discount-color fw-sub">-{{ formatPriceOff(currency) }}</span>
+                </div>
+              </div>
+              <div class="px-3 py-2">
+                {{ $t('public_total') }}:
+                <span class="color-primary fs-5 ml-1">{{ formatPrice(currency) }}</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
       <el-link
         class="aliyun-wrap flex justify-content-center align-items-center mt-6 mb-6"
-        v-if="activeStep === 2 && agentDeploy !== 'aliyun'"
+        v-if="activeStep === 1 && agentDeploy !== 'aliyun'"
         type="primary"
         @click="changeAgentDeploy('aliyun')"
         >{{ $t('dfs_agent_download_subscriptionmodeldialog_zhijieshiyonga') }}</el-link
@@ -460,7 +466,11 @@
     <div class="footer flex justify-content-center align-items-center">
       <!--非授权码-->
       <template v-if="agentDeploy !== 'aliyun'">
-        <div class="flex justify-content-center align-items-center mr-4" v-if="[3, 4].includes(activeStep)">
+        <!--顶部展示价格-->
+        <div
+          class="flex justify-content-center align-items-center mr-4"
+          v-if="[3].includes(activeStep) || (activeStep === 4 && platform === 'realTime')"
+        >
           <div class="text-end px-3 py-1">
             {{ $t('public_total') }}:
             <span class="color-primary fs-5 ml-1">{{ formatPrice(currency) }}</span>
@@ -559,6 +569,8 @@ export default {
         email: ''
       },
       mongodbUrl: '',
+      mdbPriceId: 'FreeTier',
+      memorySpace: 5,
       specMap: {
         '1C2G': i18n.t('dfs_agent_download_subscriptionmodeldialog_extra')
       },
@@ -725,19 +737,23 @@ export default {
       //授权码 特殊的第二步
       if (this.agentDeploy === 'aliyun' && this.activeStep === 1) {
         this.agentDeploy = 'selfHost'
-        this.activeStep++
       }
     },
     next() {
       this.activeStep++
       this.buried('productTypeNext')
+      //存储方案请求接口得到存储价格
+      if (this.activeStep === 4 && this.platform === 'realTime' && this.agentDeploy === 'selfHost') {
+        this.getMongoCluster()
+      }
     },
     //选择订阅模式
     changeAgentDeploy(type) {
-      this.agentDeploy = type
       this.getPrice()
       this.getCloudProvider()
+      this.agentDeploy = type
       if (type === 'aliyun') {
+        this.activeStep++
         this.getAvailableCode()
         this.buried('productTypeAliyunCode')
       }
@@ -844,6 +860,7 @@ export default {
         })
       )
     },
+    //检查Agent个数
     checkAgentCount() {
       let filter = { where: { 'orderInfo.chargeProvider': 'FreeTier' } }
       this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
@@ -883,6 +900,7 @@ export default {
         this.changeProvider()
       })
     },
+    //查询规格价格
     getPrice() {
       const params = {
         productType: this.agentDeploy
@@ -940,6 +958,7 @@ export default {
         console.log('specificationItems', this.specificationItems) // eslint-disable-line
       })
     },
+    //订购时长对应价格
     loadPackageItems() {
       const specification = this.specificationItems.find(t => t.value === this.specification)
       this.agentSizeCap = this.updateAgentCap(specification.cpu, specification.memory)
@@ -973,6 +992,16 @@ export default {
           }
         ]
       }
+    },
+
+    //获取存储价格
+    getMongoCluster() {
+      const params = {
+        productType: 'mongoCluster'
+      }
+      this.$axios.get('api/tcm/paid/plan/getPaidPlan', { params }).then(data => {
+        const { paidPrice = [] } = data?.[0] || {}
+      })
     },
     getEmailRules() {
       return [
@@ -1030,8 +1059,12 @@ export default {
           licenseId: row?.id
         })
         if (row.agentType === 'Cloud') {
-          params.region = this.region
-          params.provider = this.provider
+          params = Object.assign(params, {
+            region: this.region,
+            provider: this.provider,
+            mdbPriceId: this.mdbPriceId,
+            memorySpace: this.memorySpace
+          })
         }
         this.buried('selectAgentAliyun')
       } else {
@@ -1047,6 +1080,7 @@ export default {
           successUrl: location.origin + location.pathname + fastDownloadUrl.href,
           cancelUrl: location.href,
           paymentType: paymentType, //增加支付方式
+          mongodbUrl: this.mongodbUrl, //新增存储
           email,
           type
         })
@@ -1304,7 +1338,12 @@ export default {
 
   .price-detail-label {
     width: 80px;
+    color: #535f72;
   }
+}
+.price-wrap {
+  background: #fafafa;
+  border-radius: 4px;
 }
 .spec-li {
   width: 489px;
