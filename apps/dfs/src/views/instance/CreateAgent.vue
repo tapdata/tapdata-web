@@ -440,7 +440,7 @@
                 </div>
                 <div class="mb-2">
                   <span class="price-detail-label inline-block mr-2">存储资源: </span>
-                  <span class="font-color-dark">{{ formatPrice(currency, true) }}</span>
+                  <span class="font-color-dark"> 0 </span>
                 </div>
                 <div class="mb-2" v-if="getDiscount(this.selected)">
                   <span class="price-detail-label inline-block mr-2"
@@ -767,7 +767,7 @@ export default {
       this.activeStep++
       this.buried('productTypeNext')
       //存储方案请求接口得到存储价格
-      if (this.activeStep === 4 && this.platform === 'realTime' && this.agentDeploy === 'selfHost') {
+      if (this.activeStep === 4 && this.platform === 'realTime') {
         this.getMongoCluster()
       }
     },
