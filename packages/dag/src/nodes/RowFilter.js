@@ -49,11 +49,9 @@ export class RowFilter extends NodeType {
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'JsEditor',
-        'x-decorator-props': {
-          wrapperWidth: 800
-        },
         'x-component-props': {
-          options: { showPrintMargin: false, useWrapMode: true }
+          options: { showPrintMargin: false, useWrapMode: true },
+          onInit: '{{editor => addEditorFieldCompletion(editor, $values.id, $values.$inputs)}}'
         }
       },
       example: {
