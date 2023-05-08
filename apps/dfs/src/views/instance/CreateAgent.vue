@@ -11,7 +11,7 @@
       <div class="subscription-steps-content mt-4">
         <div v-if="activeStep === 1" class="flex gap-6 px-5 justify-content-center align-items-center">
           <div
-            class="product-type-card rounded-xl border flex flex-column position-relative overflow-hidden clickable"
+            class="platform-wrap product-type-card rounded-xl border flex flex-column position-relative overflow-hidden clickable"
             :class="{
               active: platform === 'integration'
             }"
@@ -39,7 +39,7 @@
             </div>
           </div>
           <div
-            class="product-type-card rounded-xl border flex flex-column position-relative overflow-hidden clickable"
+            class="platform-wrap product-type-card rounded-xl border flex flex-column position-relative overflow-hidden clickable"
             :class="{
               active: platform === 'realTime'
             }"
@@ -384,7 +384,7 @@
           <ElForm v-else label-position="top">
             <ElFormItem label="请选择您需要的存储资源规格：">
               <ElSelect v-model="mdbPriceId" class="w-50 rounded-4">
-                <ElOption value="FreeTier" label="MongoDB Atlas Dedicated Cluster 8C 16G"></ElOption>
+                <ElOption value="FreeTier" label="免费试用存储资源"></ElOption>
               </ElSelect>
             </ElFormItem>
             <ElFormItem label="请选择您需要的存储空间：">
@@ -578,13 +578,25 @@ export default {
       },
       realTimeTag: [
         {
-          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_apIfuwu')
+          value: 'API 快速发布'
         },
         {
-          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_gongzuoliangjicheng')
+          value: '实时数仓'
         },
         {
-          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_shujuEtl')
+          value: 'BI 看板供数'
+        },
+        {
+          value: '客户360'
+        },
+        {
+          value: '商品中心'
+        },
+        {
+          value: '库存中心'
+        },
+        {
+          value: '敏捷数据中台'
         }
       ],
       interTag: [
@@ -1277,6 +1289,9 @@ export default {
 }
 .form-label {
   width: 90px;
+}
+.platform-wrap {
+  height: 500px;
 }
 .subscript-table {
   ::v-deep {
