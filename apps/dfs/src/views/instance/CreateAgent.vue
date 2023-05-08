@@ -440,6 +440,15 @@
                   {{ selected.label }}
                 </span>
               </ElFormItem>
+              <ElFormItem v-if="platform === 'realTime' && agentDeploy === 'fullManagement'" label="存储规格">
+                <span class="font-color-dark">
+                  {{ currentMemorySpecName }}
+                </span>
+              </ElFormItem>
+              <ElFormItem v-if="platform === 'realTime' && agentDeploy === 'fullManagement'" label="存储空间">
+                <span class="font-color-dark"> {{ memorySpace }} GB </span>
+              </ElFormItem>
+
               <ElFormItem
                 :label="$t('dfs_instance_createagent_yunchangshangkeyong')"
                 v-if="agentDeploy !== 'selfHost' || currentAliyunAgentType === 'Cloud'"
@@ -456,9 +465,9 @@
                   <span class="price-detail-label inline-block mr-2">计算资源: </span>
                   <span class="font-color-dark">{{ specPrice(currency, true) }}</span>
                 </div>
-                <div class="mb-2">
+                <div class="mb-2" v-if="platform === 'realTime' && agentDeploy === 'fullManagement'">
                   <span class="price-detail-label inline-block mr-2">存储资源: </span>
-                  <span class="font-color-dark"> {{ mongodbSpecPrice }} </span>
+                  <span class="font-color-dark"> {{ mongodbSpecPrice || 0 }} </span>
                 </div>
                 <div class="mb-2" v-if="getDiscount(this.selected)">
                   <span class="price-detail-label inline-block mr-2"
@@ -594,6 +603,7 @@ export default {
       mongodbSpecPrice: '',
       memorySpace: 100,
       mdbPrices: 0,
+      currentMemorySpecName: '免费试用规格',
       memoryMap: [
         {
           key: 100,
@@ -808,6 +818,14 @@ export default {
     },
     //选择订阅模式
     changeAgentDeploy(type) {
+      //数据初始化
+      this.mdbPriceId = 'FreeTier'
+      this.mongodbSpecPrice = ''
+      this.selected = {}
+      this.currency = ''
+      this.currencyType = ''
+      this.mdbPrices = 0
+
       this.getPrice()
       this.getCloudProvider()
       this.agentDeploy = type
@@ -1097,9 +1115,14 @@ export default {
     },
     //选择存储规格
     changeMongodbMemory() {
-      if (this.mdbPriceId === 'FreeTier') return (this.mongodbSpecPrice = 0)
+      if (this.mdbPriceId === 'FreeTier') {
+        this.mongodbSpecPrice = 0
+        this.currentMemorySpecName = '免费试用规格'
+        return
+      }
       //根据价钱ID 得出价格
       let data = this.mongodbPaidPrice.filter(t => t.priceId === this.mdbPriceId)?.[0]
+      this.currentMemorySpecName = data.spec.name.toUpperCase()
       let price = this.mongodbPaidPrice.filter(
         t => t.spec.storageSize === this.memorySpace && data.spec.name === t.spec.name
       )
