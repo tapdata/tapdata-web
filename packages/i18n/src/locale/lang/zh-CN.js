@@ -92,6 +92,7 @@ export default {
   public_button_order: '订购',
   public_button_next: '下一步',
   public_button_previous: '上一步',
+  public_button_search: '搜索',
   // 消息
   public_message_title_prompt: '提示',
   public_message_delete_confirm: '是否删除',
