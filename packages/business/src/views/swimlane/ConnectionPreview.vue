@@ -60,7 +60,7 @@
         <el-row class="mb-2">
           <el-col :span="12"
             ><span class="table-dec-label inline-block">{{ $t('public_connection_form_database_name') }}：</span
-            ><span>{{ viewData.config.user || '-' }}</span></el-col
+            ><span>{{ databaseName || '-' }}</span></el-col
           >
           <el-col :span="12"
             ><span class="table-dec-label inline-block">{{ $t('public_connection_form_schema') }}:</span
@@ -162,9 +162,9 @@ export default {
   },
   computed: {
     databaseName() {
-      if (!this.viewData) return ''
+      if (!this.viewData) return
 
-      const config = this.viewData
+      const config = this.viewData.config
 
       if (config.uri && config.isUri !== false) {
         const regResult =
@@ -176,7 +176,7 @@ export default {
         }
       }
 
-      return config.database || config.sid || ''
+      return config.database || config.sid
     }
   },
   methods: {
