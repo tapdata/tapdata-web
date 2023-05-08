@@ -320,7 +320,7 @@ export default {
         <div
           class={className}
           onDblclick={() => {
-            data.isObject && this.$emit('preview', data)
+            data.isObject && this.$emit('preview', data, this.fdmConnection)
           }}
           onDrop={this.handleTreeNodeDrop}
         >
@@ -368,7 +368,7 @@ export default {
               <IconButton
                 sm
                 onClick={() => {
-                  this.$emit('preview', data)
+                  this.$emit('preview', data, this.fdmConnection)
                 }}
               >
                 view-details

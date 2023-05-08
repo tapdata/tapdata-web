@@ -160,6 +160,25 @@ export default {
       }
     }
   },
+  computed: {
+    databaseName() {
+      if (!this.viewData) return ''
+
+      const config = this.viewData
+
+      if (config.uri && config.isUri !== false) {
+        const regResult =
+          /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
+            config.uri
+          )
+        if (regResult && regResult.groups) {
+          config.database = regResult.groups.database
+        }
+      }
+
+      return config.database || config.sid || ''
+    }
+  },
   methods: {
     open(row) {
       this.visible = true

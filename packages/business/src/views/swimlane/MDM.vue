@@ -290,7 +290,7 @@ export default {
           class="custom-tree-node grabbable"
           on={{
             dblclick: () => {
-              data.isObject && this.$emit('preview', data)
+              data.isObject && this.$emit('preview', data, this.mdmConnection)
             },
             dragenter: ev => {
               ev.stopPropagation()
@@ -350,7 +350,7 @@ export default {
               <IconButton
                 sm
                 onClick={() => {
-                  this.$emit('preview', data)
+                  this.$emit('preview', data, this.mdmConnection)
                 }}
               >
                 view-details
