@@ -62,7 +62,7 @@
         @compositionend="handleComposition"
         v-model="query"
         @input="debouncedQueryChange"
-        v-if="filterable"
+        v-if="filterable && !innerLabel"
         :style="{ 'flex-grow': '1', width: inputLength / (inputWidth - 32) + '%', 'max-width': inputWidth - 42 + 'px' }"
         ref="input"
       />
@@ -105,7 +105,7 @@
         <i v-if="showClose" class="el-select__caret el-input__icon el-icon-circle-close" @click="handleClearClick" />
       </template>
     </ElInput>
-    <div
+    <ElContainer
       v-else
       ref="reference"
       :class="['inner-select', { 'is-focus': visible }, 'inline-flex align-items-center']"
@@ -113,6 +113,7 @@
       @mouseenter="inputHovering = true"
       @mouseleave="inputHovering = false"
     >
+      <input type="hidden" />
       <span class="inner-select__label">{{ innerLabel }}</span>
       <span
         :class="['inner-select__selected', { placeholder: !selectedLabel }]"
@@ -121,12 +122,41 @@
       >
       <VIcon v-if="showClose" size="10" class="icon-btn ml-1" @click.native="handleClearClick">close</VIcon>
       <VIcon v-else size="10" class="icon-btn ml-1">arrow-down-fill</VIcon>
-    </div>
+    </ElContainer>
     <div v-if="loading" class="el-select__loading">
       <i class="el-icon-loading"></i>
     </div>
     <transition name="el-zoom-in-top" @before-enter="handleMenuEnter" @after-leave="doDestroy">
       <ElSelectMenu ref="popper" :append-to-body="popperAppendToBody" v-show="visible && emptyText !== false">
+        <div class="py-1 px-2 border-bottom" @click.stop.prevent>
+          <VIcon class="color-disable">magnify</VIcon>
+          <input
+            type="text"
+            class="el-select__input"
+            :class="[selectSize ? `is-${selectSize}` : '']"
+            :disabled="selectDisabled"
+            :autocomplete="autoComplete || autocomplete"
+            :placeholder="$t('public_button_search')"
+            @focus="handleFocus"
+            @blur="softFocus = false"
+            @keyup="managePlaceholder"
+            @keydown="resetInputState"
+            @keydown.down.prevent="navigateOptions('next')"
+            @keydown.up.prevent="navigateOptions('prev')"
+            @keydown.enter.prevent="selectOption"
+            @keydown.esc.stop.prevent="visible = false"
+            @keydown.delete="deletePrevTag"
+            @keydown.tab="visible = false"
+            @compositionstart="handleComposition"
+            @compositionupdate="handleComposition"
+            @compositionend="handleComposition"
+            v-model="query"
+            @input="debouncedQueryChange"
+            v-if="filterable && innerLabel"
+            ref="input"
+            @click.stop.prevent
+          />
+        </div>
         <div
           class="el-select-dropdown__wrap el-scrollbar__wrap virtual-scroller-wrap"
           v-show="filteredItems.length > 0 && !loading"
@@ -370,11 +400,7 @@ export default {
       })
     },
     resetInputWidth() {
-      let $reference = this.$refs.reference
-      if (!this.innerLabel) {
-        $reference = $reference.$el
-      }
-      this.inputWidth = $reference.getBoundingClientRect().width
+      this.inputWidth = this.$refs.reference.$el?.getBoundingClientRect()?.width || 0
     },
     resetPage() {
       let pageObj = this.pageObj
@@ -484,7 +510,7 @@ export default {
           // 本地数据
           if (val) {
             this.filteredItems = this.list.filter(item => {
-              return item.label.indexOf(val) !== -1
+              return item.label.toLowerCase().indexOf(val.toLowerCase()) !== -1
             })
           } else {
             this.filteredItems = cloneDeep(this.list)
@@ -518,6 +544,10 @@ export default {
       }
       this.pageObj.page++
       this.getData()
+    },
+    blur() {
+      // this.visible = false;
+      this.$refs.reference.blur()
     }
   }
 }
@@ -574,5 +604,10 @@ export default {
 }
 .icon-btn {
   color: map-get($fontColor, slight);
+}
+.el-select__input {
+  &::placeholder {
+    color: map-get($color, disable);
+  }
 }
 </style>
