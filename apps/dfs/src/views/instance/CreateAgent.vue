@@ -604,20 +604,6 @@ export default {
       memorySpace: 100,
       mdbPrices: 0,
       currentMemorySpecName: '免费试用规格',
-      memoryMap: [
-        {
-          key: 100,
-          value: '100GB'
-        },
-        {
-          key: 500,
-          value: '500GB'
-        },
-        {
-          key: 1000,
-          value: '1000GB'
-        }
-      ],
       specMap: {
         '1C2G': i18n.t('dfs_agent_download_subscriptionmodeldialog_extra')
       },
@@ -719,6 +705,30 @@ export default {
   },
 
   computed: {
+    memoryMap() {
+      if (this.mdbPriceId === 'FreeTier') {
+        return [
+          {
+            key: 100,
+            value: '100GB'
+          }
+        ]
+      }
+      return [
+        {
+          key: 100,
+          value: '100GB'
+        },
+        {
+          key: 500,
+          value: '500GB'
+        },
+        {
+          key: 1000,
+          value: '1000GB'
+        }
+      ]
+    },
     steps() {
       if (this.agentDeploy === 'aliyun') {
         return [
@@ -1075,7 +1085,7 @@ export default {
       if (chargeProvider === 'FreeTier') {
         this.packageItems = [
           {
-            label: i18n.t('dfs_agent_download_subscriptionmodeldialog_yongjiu'),
+            label: this.platform === 'realTime' ? '15天' : i18n.t('dfs_agent_download_subscriptionmodeldialog_yongjiu'),
             price: 0,
             value: '0',
             chargeProvider: 'FreeTier',
@@ -1117,6 +1127,7 @@ export default {
     changeMongodbMemory() {
       if (this.mdbPriceId === 'FreeTier') {
         this.mongodbSpecPrice = 0
+        this.mdbPrices = 0
         this.currentMemorySpecName = '免费试用规格'
         return
       }
