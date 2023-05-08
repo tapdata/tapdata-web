@@ -666,6 +666,7 @@ export default {
           key: 'databaseType',
           type: 'select-inner',
           menuMinWidth: '250px',
+          filterable: true,
           items: async () => {
             let data = await databaseTypesApi.get()
             data = data || []

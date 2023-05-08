@@ -118,7 +118,7 @@
       <span
         :class="['inner-select__selected', { placeholder: !selectedLabel }]"
         :style="{ 'max-width': selectedWidth }"
-        >{{ selectedLabel || $t('public_select_placeholder') }}</span
+        >{{ selectedLabel || currentPlaceholder || $t('public_select_placeholder') }}</span
       >
       <VIcon v-if="showClose" size="10" class="icon-btn ml-1" @click.native="handleClearClick">close</VIcon>
       <VIcon v-else size="10" class="icon-btn ml-1">arrow-down-fill</VIcon>
@@ -128,15 +128,14 @@
     </div>
     <transition name="el-zoom-in-top" @before-enter="handleMenuEnter" @after-leave="doDestroy">
       <ElSelectMenu ref="popper" :append-to-body="popperAppendToBody" v-show="visible && emptyText !== false">
-        <div class="py-1 px-2 border-bottom" @click.stop.prevent>
-          <VIcon class="color-disable">magnify</VIcon>
-          <input
-            type="text"
-            class="el-select__input"
-            :class="[selectSize ? `is-${selectSize}` : '']"
+        <input v-if="!filterable" type="hidden" ref="input" />
+        <div v-if="filterable && innerLabel" class="py-1 px-2 border-bottom fs-7" @click.stop.prevent>
+          <ElInput
+            :class="['no-border', selectSize ? `is-${selectSize}` : '']"
             :disabled="selectDisabled"
             :autocomplete="autoComplete || autocomplete"
             :placeholder="$t('public_button_search')"
+            prefix-icon="el-icon-search"
             @focus="handleFocus"
             @blur="softFocus = false"
             @keyup="managePlaceholder"
@@ -151,11 +150,20 @@
             @compositionupdate="handleComposition"
             @compositionend="handleComposition"
             v-model="query"
-            @input="debouncedQueryChange"
-            v-if="filterable && innerLabel"
+            @input="handleQueryChange"
             ref="input"
+            clearable
             @click.stop.prevent
-          />
+          ></ElInput>
+        </div>
+        <div v-if="filterable && innerLabel" class="py-2 pl-4 border-bottom fs-7">
+          <span :class="[!!selectedCount ? 'font-color-light' : 'color-disable']"
+            >已选择<span class="mx-1">{{ selectedCount }}</span
+            >项</span
+          >
+          <span v-if="!!selectedCount" class="ml-2 color-primary cursor-pointer" @click.stop.prevent="handleClearClick"
+            >清除已选</span
+          >
         </div>
         <div
           class="el-select-dropdown__wrap el-scrollbar__wrap virtual-scroller-wrap"
@@ -331,6 +339,11 @@ export default {
     // 是否远程数据
     isRemote() {
       return !!this.url
+    },
+
+    // 获取已选中的数量
+    selectedCount() {
+      return this.multiple ? this.value.length : this.value ? 1 : 0
     }
     // comItems() {
     //   const { items } = this
@@ -343,7 +356,10 @@ export default {
 
   watch: {
     visible(val) {
-      val && this.initWidth()
+      if (val) {
+        this.initWidth()
+        this.handleClearQuery()
+      }
     },
     value() {
       this.getSelectLabel()
@@ -400,7 +416,7 @@ export default {
       })
     },
     resetInputWidth() {
-      this.inputWidth = this.$refs.reference.$el?.getBoundingClientRect()?.width || 0
+      this.inputWidth = this.$refs.reference?.$el?.getBoundingClientRect()?.width || 0
     },
     resetPage() {
       let pageObj = this.pageObj
@@ -481,7 +497,7 @@ export default {
       this.hoverIndex = -1
       if (this.multiple && this.filterable) {
         this.$nextTick(() => {
-          const length = this.$refs.input.value.length * 15 + 20
+          const length = (this.$refs.input?.value.length || 0) * 15 + 20
           this.inputLength = this.collapseTags ? Math.min(50, length) : length
           this.managePlaceholder()
           this.resetInputHeight()
@@ -547,7 +563,11 @@ export default {
     },
     blur() {
       // this.visible = false;
-      this.$refs.reference.blur()
+      this.$refs.reference?.blur()
+    },
+    handleClearQuery() {
+      this.query = ''
+      this.handleQueryChange('')
     }
   }
 }
