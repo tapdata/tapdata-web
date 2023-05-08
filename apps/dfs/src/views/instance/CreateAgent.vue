@@ -383,16 +383,34 @@
           </ElForm>
           <ElForm v-else label-position="top">
             <ElFormItem label="请选择您需要的存储资源规格：">
-              <ElSelect v-model="mdbPriceId" class="w-50 rounded-4">
-                <ElOption value="FreeTier" label="免费试用存储资源"></ElOption>
-              </ElSelect>
+              <ElRadioGroup v-model="mdbPriceId" @change="changeMongodbMemory" class="flex gap-4">
+                <ElRadio
+                  v-for="(item, index) in mongodbSpecItems"
+                  :key="index"
+                  :label="item.value"
+                  border
+                  class="rounded-4 subscription-radio m-0 position-relative"
+                >
+                  <span class="inline-flex align-center">
+                    {{ item.name }}
+                  </span>
+                </ElRadio>
+              </ElRadioGroup>
             </ElFormItem>
             <ElFormItem label="请选择您需要的存储空间：">
-              <div class="flex">
-                <el-slider class="w-50" :max="maxMemorySpace" :marks="marks" v-model="memorySpace" show-input>
-                </el-slider>
-                <span class="ml-2">GB</span>
-              </div>
+              <ElRadioGroup v-model="memorySpace" class="flex gap-4" @change="changeMongodbMemory">
+                <ElRadio
+                  v-for="(item, index) in memoryMap"
+                  :key="index"
+                  :label="item.key"
+                  border
+                  class="rounded-4 subscription-radio m-0 position-relative"
+                >
+                  <span class="inline-flex align-center">
+                    {{ item.value }}
+                  </span>
+                </ElRadio>
+              </ElRadioGroup>
             </ElFormItem>
           </ElForm>
         </div>
@@ -436,11 +454,11 @@
               <div class="px-3 py-2">
                 <div class="mb-2">
                   <span class="price-detail-label inline-block mr-2">计算资源: </span>
-                  <span class="font-color-dark">{{ formatPrice(currency, true) }}</span>
+                  <span class="font-color-dark">{{ specPrice(currency, true) }}</span>
                 </div>
                 <div class="mb-2">
                   <span class="price-detail-label inline-block mr-2">存储资源: </span>
-                  <span class="font-color-dark"> 0 </span>
+                  <span class="font-color-dark"> {{ mongodbSpecPrice }} </span>
                 </div>
                 <div class="mb-2" v-if="getDiscount(this.selected)">
                   <span class="price-detail-label inline-block mr-2"
@@ -570,9 +588,26 @@ export default {
       form: {
         email: ''
       },
+      mongodbSpecItems: [],
       mongodbUrl: '',
       mdbPriceId: 'FreeTier',
-      memorySpace: 5,
+      mongodbSpecPrice: '',
+      memorySpace: 100,
+      mdbPrices: 0,
+      memoryMap: [
+        {
+          key: 100,
+          value: '100GB'
+        },
+        {
+          key: 500,
+          value: '500GB'
+        },
+        {
+          key: 1000,
+          value: '1000GB'
+        }
+      ],
       specMap: {
         '1C2G': i18n.t('dfs_agent_download_subscriptionmodeldialog_extra')
       },
@@ -874,6 +909,19 @@ export default {
     formatPrice(item, isOriginalPrice) {
       if (!item || item?.chargeProvider === 'FreeTier') return 0
 
+      let amount = this.getAmount(item, isOriginalPrice) + this.mdbPrices
+      return (
+        CURRENCY_SYMBOL_MAP[item.currency] +
+        ' ' +
+        (amount / 100).toLocaleString('zh', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        })
+      )
+    },
+    specPrice(item, isOriginalPrice) {
+      if (!item || item?.chargeProvider === 'FreeTier') return 0
+
       let amount = this.getAmount(item, isOriginalPrice)
       return (
         CURRENCY_SYMBOL_MAP[item.currency] +
@@ -884,6 +932,7 @@ export default {
         })
       )
     },
+
     //检查Agent个数
     checkAgentCount() {
       let filter = { where: { 'orderInfo.chargeProvider': 'FreeTier' } }
@@ -1025,8 +1074,53 @@ export default {
       }
       this.$axios.get('api/tcm/paid/plan/getPaidPlan', { params }).then(data => {
         const { paidPrice = [] } = data?.[0] || {}
+        //根据订阅方式再过滤一层
+        let prices = paidPrice?.filter(
+          t => t.periodUnit === this.selected.periodUnit || t.chargeProvider === 'FreeTier'
+        )
+        this.mongodbPaidPrice = prices
+        // 规格
+        this.mongodbSpecItems = uniqueArr(
+          prices.map(t => {
+            const { cpu = 0, memory = 0 } = t.spec || {}
+            return {
+              value: t.chargeProvider === 'FreeTier' ? 'FreeTier' : t.priceId,
+              cpu,
+              memory,
+              name: t.chargeProvider === 'FreeTier' ? '免费试用规格' : `MongoDB ${cpu}C${memory}G`,
+              chargeProvider: t.chargeProvider
+            }
+          }),
+          'name'
+        )
       })
     },
+    //选择存储规格
+    changeMongodbMemory() {
+      if (this.mdbPriceId === 'FreeTier') return (this.mongodbSpecPrice = 0)
+      //根据价钱ID 得出价格
+      let data = this.mongodbPaidPrice.filter(t => t.priceId === this.mdbPriceId)?.[0]
+      let price = this.mongodbPaidPrice.filter(
+        t => t.spec.storageSize === this.memorySpace && data.spec.name === t.spec.name
+      )
+      this.mdbPrice(price?.[0].currencyOption.find(item => item.currency === this.currencyType)?.amount)
+    },
+    //存储价格
+    mdbPrice(price) {
+      this.mdbPrices = price
+      this.mongodbSpecPrice = this.formatAmount(price)
+    },
+    formatAmount(price) {
+      return (
+        CURRENCY_SYMBOL_MAP[this.currencyType] +
+        ' ' +
+        (price / 100).toLocaleString('zh', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        })
+      )
+    },
+
     getEmailRules() {
       return [
         {
