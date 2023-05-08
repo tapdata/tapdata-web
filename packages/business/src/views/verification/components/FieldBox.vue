@@ -260,35 +260,35 @@ export default {
         return
       }
 
-      const sourceFields = this.sourceFields.map(t => t.field_name)
-      const targetFields = this.targetFields.map(t => t.field_name)
-      let sourceList = cloneDeep(sourceFields)
-      let targetList = cloneDeep(targetFields).map(t => {
-        return {
-          name: t,
-          used: false
-        }
+      let sourceList = cloneDeep(this.sourceFields)
+      let targetList = cloneDeep(this.targetFields).map(t => {
+        t.used = false
+        return t
       })
 
+      // 遍历源字段，补充对应的target
       let list = sourceList.map((t, i) => {
-        let findTarget = targetList.find(tar => tar.name.toLowerCase() === t.toLowerCase())
+        let findTarget = targetList.find(
+          tar => tar.original_field_name.toLowerCase() === t.original_field_name.toLowerCase()
+        )
         let opt = {
-          source: t,
+          source: t.field_name,
           target: ''
         }
         if (findTarget) {
-          opt.target = findTarget.name
+          opt.target = findTarget.field_name
           findTarget.used = true
         }
         return opt
       })
 
+      // 未使用的目标字段，独立一行
       targetList
-        .filter(t => t.name && !t.used)
+        .filter(t => t.field_name && !t.used)
         .forEach(el => {
           list.push({
             source: '',
-            target: el.name
+            target: el.field_name
           })
         })
 
@@ -336,6 +336,7 @@ export default {
           return {
             id: t.id,
             field_name: t.fieldName,
+            original_field_name: t.fieldName,
             label: t.fieldName,
             value: t.fieldName,
             primary_key_position: t.primaryKeyPosition
@@ -358,6 +359,7 @@ export default {
           return {
             id: t.id,
             field_name: t.fieldName,
+            original_field_name: t.fieldName,
             label: t.fieldName,
             value: t.fieldName,
             primary_key_position: t.primaryKeyPosition
@@ -384,6 +386,7 @@ export default {
           return {
             id: t.id,
             field_name: t.field_name,
+            original_field_name: t.original_field_name,
             label: t.field_name,
             value: t.field_name,
             primary_key_position: t.primary_key_position
@@ -403,6 +406,7 @@ export default {
           return {
             id: t.id,
             field_name: t.field_name,
+            original_field_name: t.original_field_name,
             label: t.field_name,
             value: t.field_name,
             primary_key_position: t.primary_key_position
