@@ -649,6 +649,17 @@ export default {
       }
       this.$refs?.form?.clearValidate()
       this.formatData(formData || {})
+
+      // 若为新建时，则默认值为 ‘默认查询(defaultApi)’ 的值
+      this.form.pathAccessMethod = this.data?.pathAccessMethod || 'default'
+      this.getDatabaseTypes()
+      let { connectionId, tableName } = this.form
+      if (connectionId) {
+        this.getTableOptions(connectionId)
+      }
+      if (connectionId && tableName) {
+        this.getFields()
+      }
       if (!this.data.id) {
         this.edit()
       }
@@ -693,6 +704,7 @@ export default {
       const appLabel = appData.value
 
       let apiType = formData?.apiType || 'defaultApi'
+      let fields = formData.fields || []
       this.data = {
         status: status || 'generating', // generating,pending,active
         id,
@@ -708,19 +720,16 @@ export default {
         prefix,
         pathAccessMethod,
         method: path.method || 'GET',
-        fields: path.fields || [],
+        fields,
         params: path.params || this.getDefaultParams(apiType),
         where: path.where || [],
         sort: path.sort || [],
         path: path.path || '',
-        acl: path.acl,
+        acl: path.acl || ['admin'],
         appValue,
         appLabel
       }
-      this.form.description = this.data.description
-      this.form.appValue = this.data.appValue
-      this.form.appLabel = this.data.appLabel
-      this.form.acl = path.acl || ['admin']
+      this.form = cloneDeep(this.data)
       let host = this.host
       let _path = this.data.path
       let baseUrl = host + _path
@@ -770,19 +779,8 @@ export default {
     },
     // 切换到编辑状态
     edit() {
-      this.isEdit = true
-      this.form = cloneDeep(this.data)
       this.form.status = 'generating'
-      // 若为新建时，则默认值为 ‘默认查询(defaultApi)’ 的值
-      this.form.pathAccessMethod = this.data?.pathAccessMethod || 'default'
-      this.getDatabaseTypes()
-      let { connectionId, tableName } = this.form
-      if (connectionId) {
-        this.getTableOptions(connectionId)
-      }
-      if (connectionId && tableName) {
-        this.getFields()
-      }
+      this.isEdit = true
     },
     // 保存，新建和修改
     save(type) {
