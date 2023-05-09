@@ -105,7 +105,7 @@
         <i v-if="showClose" class="el-select__caret el-input__icon el-icon-circle-close" @click="handleClearClick" />
       </template>
     </ElInput>
-    <ElContainer
+    <div
       v-else
       ref="reference"
       :class="['inner-select', { 'is-focus': visible }, 'inline-flex align-items-center']"
@@ -122,7 +122,7 @@
       >
       <VIcon v-if="showClose" size="10" class="icon-btn ml-1" @click.native="handleClearClick">close</VIcon>
       <VIcon v-else size="10" class="icon-btn ml-1">arrow-down-fill</VIcon>
-    </ElContainer>
+    </div>
     <div v-if="loading" class="el-select__loading">
       <i class="el-icon-loading"></i>
     </div>
@@ -143,7 +143,7 @@
             @click.stop.prevent
           ></ElInput>
         </div>
-        <div v-if="filterable && innerLabel" class="py-2 pl-4 border-bottom fs-7">
+        <div v-if="multiple && filterable && innerLabel" class="py-2 pl-4 border-bottom fs-7">
           <span :class="[!!selectedCount ? 'font-color-light' : 'color-disable']">
             {{ $t('packages_component_src_selectlist_yixuanze') }}
             <span class="mx-1">{{ selectedCount }}</span>
