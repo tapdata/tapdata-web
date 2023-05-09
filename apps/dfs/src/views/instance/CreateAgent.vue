@@ -303,7 +303,12 @@
                   }"
                   v-for="(item, i) in specificationItems"
                   :key="i"
-                  @click="changeSpec(item.value)"
+                  @click="
+                    changeSpec(
+                      item.value,
+                      (agentCount > 0 || agentDeploy !== 'selfHost') && item.chargeProvider === 'FreeTier'
+                    )
+                  "
                 >
                   <div class="is-active position-absolute top-0 end-0">
                     <div class="is-active-triangle"></div>
@@ -601,7 +606,7 @@ export default {
       mongodbUrl: '',
       mdbPriceId: 'FreeTier',
       mongodbSpecPrice: '',
-      memorySpace: 100,
+      memorySpace: 5,
       mdbPrices: 0,
       currentMemorySpecName: '免费试用规格',
       specMap: {
@@ -709,8 +714,8 @@ export default {
       if (this.mdbPriceId === 'FreeTier') {
         return [
           {
-            key: 100,
-            value: '100GB'
+            key: 5,
+            value: '5GB'
           }
         ]
       }
@@ -846,7 +851,8 @@ export default {
       }
     },
     //切换规格
-    changeSpec(item) {
+    changeSpec(item, disabled) {
+      if (disabled) return
       this.specification = item
       this.loadPackageItems()
       if (!this.currencyType) {
@@ -1104,7 +1110,9 @@ export default {
         const { paidPrice = [] } = data?.[0] || {}
         //根据订阅方式再过滤一层
         let prices = paidPrice?.filter(
-          t => t.periodUnit === this.selected.periodUnit || t.chargeProvider === 'FreeTier'
+          t =>
+            (t.periodUnit === this.selected.periodUnit && t.type === this.selected.type) ||
+            t.chargeProvider === 'FreeTier'
         )
         this.mongodbPaidPrice = prices
         // 规格
@@ -1135,9 +1143,11 @@ export default {
       let data = this.mongodbPaidPrice.filter(t => t.priceId === this.mdbPriceId)?.[0]
       this.currentMemorySpecName = data.spec.name.toUpperCase()
       let price = this.mongodbPaidPrice.filter(
-        t => t.spec.storageSize === this.memorySpace && data.spec.name === t.spec.name
+        t =>
+          t.spec.storageSize === this.memorySpace && data.spec.cpu === t.spec.cpu && data.spec.memory === t.spec.memory
       )
-      this.mdbPrice(price?.[0].currencyOption.find(item => item.currency === this.currencyType)?.amount)
+      //需要改变mdbPriceId 因为存储空间改变了
+      this.mdbPrice(price?.[0].currencyOption?.find(item => item.currency === this.currencyType)?.amount || 0)
     },
     //存储价格
     mdbPrice(price) {
