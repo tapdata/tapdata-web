@@ -73,7 +73,7 @@
             class="custom-tree-node flex align-items-center"
             :class="{ grabbable: data.isObject, 'opacity-50': data.disabled }"
             slot-scope="{ node, data }"
-            @dblclick="$emit('preview', data)"
+            @dblclick="$emit('preview', data, node.parent.data)"
           >
             <VIcon
               v-if="node.data.loadFieldsStatus === 'loading'"
@@ -92,7 +92,9 @@
               {{ data.name }}
               <ElTag v-if="data.disabled" type="info" size="mini">{{ $t('public_status_invalid') }}</ElTag>
             </span>
-            <IconButton class="btn-menu" sm @click="$emit('preview', data)"> view-details </IconButton>
+            <IconButton class="btn-menu" sm @click="$emit('preview', data, node.parent.data)">
+              view-details
+            </IconButton>
           </span>
         </VirtualTree>
       </div>
@@ -233,7 +235,7 @@ export default {
         <div
           class={className}
           onDblclick={() => {
-            this.$emit('preview', data)
+            this.$emit('preview', data, node.parent.data)
           }}
         >
           {!data.isObject ? (
@@ -255,7 +257,7 @@ export default {
             class="btn-menu"
             sm
             onClick={() => {
-              this.$emit('preview', data)
+              this.$emit('preview', data, node.parent.data)
             }}
           >
             {' '}

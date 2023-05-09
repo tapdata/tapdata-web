@@ -16,6 +16,7 @@ export default {
   public_serial_number: '序号',
   public_query: '查询',
   public_aggregate: '聚合',
+  public_table: '表',
   public_table_name: '表名',
   public_total: '共计',
 

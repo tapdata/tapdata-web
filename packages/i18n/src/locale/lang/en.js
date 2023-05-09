@@ -16,6 +16,7 @@ export default {
   public_serial_number: 'Serial number',
   public_query: 'Query',
   public_aggregate: 'Aggregate',
+  public_table: 'Table',
   public_table_name: 'Table Name',
   public_total: 'Total',
   // state
