@@ -1311,6 +1311,8 @@ export default {
       } else {
         this.submitLoading = true
       }
+      console.log(params)
+      return
       this.$axios
         .post('api/tcm/orders', params)
         .then(data => {
