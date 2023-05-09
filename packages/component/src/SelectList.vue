@@ -136,33 +136,24 @@
             :autocomplete="autoComplete || autocomplete"
             :placeholder="$t('public_button_search')"
             prefix-icon="el-icon-search"
-            @focus="handleFocus"
-            @blur="softFocus = false"
-            @keyup="managePlaceholder"
-            @keydown="resetInputState"
-            @keydown.down.prevent="navigateOptions('next')"
-            @keydown.up.prevent="navigateOptions('prev')"
-            @keydown.enter.prevent="selectOption"
-            @keydown.esc.stop.prevent="visible = false"
-            @keydown.delete="deletePrevTag"
-            @keydown.tab="visible = false"
-            @compositionstart="handleComposition"
-            @compositionupdate="handleComposition"
-            @compositionend="handleComposition"
-            v-model="query"
-            @input="handleQueryChange"
+            v-model="keyword"
+            @input="handleSearch"
             ref="input"
             clearable
             @click.stop.prevent
           ></ElInput>
         </div>
         <div v-if="filterable && innerLabel" class="py-2 pl-4 border-bottom fs-7">
-          <span :class="[!!selectedCount ? 'font-color-light' : 'color-disable']"
-            >已选择<span class="mx-1">{{ selectedCount }}</span
-            >项</span
-          >
-          <span v-if="!!selectedCount" class="ml-2 color-primary cursor-pointer" @click.stop.prevent="handleClearClick"
-            >清除已选</span
+          <span :class="[!!selectedCount ? 'font-color-light' : 'color-disable']">
+            {{ $t('packages_component_src_selectlist_yixuanze') }}
+            <span class="mx-1">{{ selectedCount }}</span>
+            {{ $t('packages_component_src_selectlist_xiang') }}
+          </span>
+          <span
+            v-if="!!selectedCount"
+            class="ml-2 color-primary cursor-pointer"
+            @click.stop.prevent="handleClearClick"
+            >{{ $t('packages_component_src_selectlist_qingchuyixuan') }}</span
           >
         </div>
         <div
@@ -208,7 +199,7 @@
 </template>
 
 <script>
-import { cloneDeep, uniqBy } from 'lodash'
+import { cloneDeep, uniqBy, debounce } from 'lodash'
 import { Select } from 'element-ui'
 import i18n from '@tap/i18n'
 import { RecycleScroller } from 'vue-virtual-scroller'
@@ -302,7 +293,8 @@ export default {
         size: 50,
         page: 1,
         totalPage: 1
-      }
+      },
+      keyword: ''
     }
   },
 
@@ -313,16 +305,18 @@ export default {
       return `height: ${height}px`
     },
 
-    debounce() {
-      return this.filterDelay
-    },
-
     emptyText() {
       if (this.loading) {
         return this.loadingText || this.$t('packages_component_loading')
       } else {
-        if (this.remote && this.query === '' && this.options.length === 0) return false
-        if (this.filterable && this.query && this.options.length > 0 && this.filteredOptionsCount === 0) {
+        if (this.remote && ((this.innerLabel && this.keyword === '') || this.query === '') && this.options.length === 0)
+          return false
+        if (
+          this.filterable &&
+          ((this.innerLabel && this.keyword) || this.query) &&
+          this.options.length > 0 &&
+          this.filteredOptionsCount === 0
+        ) {
           return this.noMatchText || this.$t('packages_component_no_match')
         }
         if (this.filteredItems.length === 0) {
@@ -359,6 +353,7 @@ export default {
       if (val) {
         this.initWidth()
         this.handleClearQuery()
+        this.handleFocusSearch()
       }
     },
     value() {
@@ -481,7 +476,7 @@ export default {
         }
       })
     },
-    handleQueryChange(val) {
+    handleQueryChange: debounce(function (val) {
       if (this.previousQuery === val || this.isOnComposition) return
       if (
         this.previousQuery === null &&
@@ -538,7 +533,7 @@ export default {
       if (this.defaultFirstOption && (this.filterable || this.remote) && this.filteredOptionsCount) {
         this.checkDefaultFirstOption()
       }
-    },
+    }, 100),
 
     scrollToOption(option) {
       const $option = Array.isArray(option) ? option[0] : option
@@ -566,8 +561,17 @@ export default {
       this.$refs.reference?.blur()
     },
     handleClearQuery() {
+      this.keyword = ''
       this.query = ''
       this.handleQueryChange('')
+    },
+    handleFocusSearch() {
+      if (this.filterable && this.innerLabel) {
+        this.$refs.input?.focus()
+      }
+    },
+    handleSearch() {
+      this.handleQueryChange(this.keyword)
     }
   }
 }

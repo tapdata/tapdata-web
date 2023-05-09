@@ -676,11 +676,11 @@ export default {
               t1.name > t2.name ? 1 : t1.name === t2.name ? 0 : -1
             )
             //默认全部
-            let all = {
-              name: this.$t('public_select_option_all'),
-              type: ''
-            }
-            databaseTypeOptions.unshift(all)
+            // let all = {
+            //   name: this.$t('public_select_option_all'),
+            //   type: ''
+            // }
+            // databaseTypeOptions.unshift(all)
             return databaseTypeOptions.map(item => {
               return {
                 label: item.name,
