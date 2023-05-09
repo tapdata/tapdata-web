@@ -1561,6 +1561,7 @@ export default {
   dfs_instance_createagent_kehu: 'Customer 360',
   dfs_instance_createagent_bIkanbangong: 'BI kanban supply number',
   dfs_instance_createagent_shishishucang: 'real-time data warehouse',
+  dfs_instance_createagent_minjieshujuzhong: 'Agile Data Center',
   dfs_instance_createagent_apIkuaisu: 'API quick release',
   dfs_instance_createagent_cunchuziyuan: 'Storage resource: ',
   dfs_instance_createagent_jisuanziyuan: 'Computing resources: ',

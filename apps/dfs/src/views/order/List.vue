@@ -5,7 +5,7 @@
         <div class="list-operation-left flex justify-content-between">
           <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
           <ElButton type="primary" @click="handleCreateAgent" :disabled="$disabledReadonlyUserBtn()">
-            <span>{{$t('dfs_order_list_xinzengdingyue')}}</span>
+            <span>{{ $t('dfs_order_list_xinzengdingyue') }}</span>
           </ElButton>
         </div>
       </div>
@@ -179,7 +179,7 @@ export default {
         },
         {
           label: i18n.t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi'),
-          key: 'agentDeploy',
+          key: 'agentType',
           type: 'select-inner',
           items: [
             {
@@ -188,11 +188,11 @@ export default {
             },
             {
               label: this.$t('dfs_instance_utils_quantuoguan'),
-              value: 'fullManagement'
+              value: 'Cloud'
             },
             {
               label: this.$t('dfs_instance_utils_bantuoguan'),
-              value: 'selfHost'
+              value: 'Local'
             }
           ]
         }
@@ -200,15 +200,19 @@ export default {
     },
     remoteMethod({ page }) {
       let { current, size } = page
+      let { agentType, status } = this.searchParams
+      let where = {
+        status: {
+          $ne: 'invalid' //过滤 invild
+        }
+      }
+      agentType && (where.agentType = agentType)
+      status && (where.status = status)
       let filter = {
         limit: size,
         skip: size * (current - 1),
         sort: ['createAt desc'],
-        where: {
-          status: {
-            $ne: 'invalid' //过滤 invild
-          }
-        }
+        where: where
       }
       return this.$axios
         .get(`api/tcm/paid/plan/paidSubscribe?filter=${encodeURIComponent(JSON.stringify(filter))}`)
@@ -316,6 +320,14 @@ export default {
         name: 'createAgent'
       })
       this.buried('newAgentStripeDialog')
+    },
+    handleAgent(row = {}) {
+      this.$router.push({
+        name: 'Instance',
+        query: {
+          keyword: row.agentId
+        }
+      })
     }
   }
 }
