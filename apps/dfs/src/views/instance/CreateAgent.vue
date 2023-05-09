@@ -945,6 +945,8 @@ export default {
         this.currencyType = item.currency
         this.currency = item
       }
+      //更新存储资源价格
+      this.changeMongodbMemory()
     },
     changeCurrencyOption(item) {
       const options = item.currencyOption
