@@ -376,18 +376,14 @@
         <div v-if="activeStep === 4 && platform === 'realTime'" class="px-1">
           <!--半托管用户手动填写存储连接地址-->
           <ElForm v-if="agentDeploy === 'selfHost'" label-position="top">
-            <ElFormItem label="请配置您的存储资源:">
+            <ElFormItem :label="$t('dfs_instance_createagent_qingpeizhininde')">
               <ElInput class="w-50 rounded-4" type="textarea" v-model="mongodbUrl"></ElInput>
-              <div class="font-color-sslight mt-4">
-                请填写您自己的MongoDB存储集群URI
-                <div>
-                  格式: mongodb://[username:password@]host1[:port1][....hostN[:portN]][/[defaultauthdb][?options]]
-                </div>
+              <div class="font-color-sslight mt-4">{{$t('dfs_instance_createagent_qingtianxieninzi')}}<div>{{$t('dfs_instance_createagent_geshimon')}}</div>
               </div>
             </ElFormItem>
           </ElForm>
           <ElForm v-else label-position="top">
-            <ElFormItem label="请选择您需要的存储资源规格：">
+            <ElFormItem :label="$t('dfs_instance_createagent_qingxuanzeninxu2')">
               <ElRadioGroup v-model="mongodbSpec" @change="changeMongodbMemory" class="flex gap-4">
                 <ElRadio
                   v-for="(item, index) in mongodbSpecItems"
@@ -402,7 +398,7 @@
                 </ElRadio>
               </ElRadioGroup>
             </ElFormItem>
-            <ElFormItem label="请选择您需要的存储空间：">
+            <ElFormItem :label="$t('dfs_instance_createagent_qingxuanzeninxu')">
               <ElRadioGroup v-model="memorySpace" class="flex gap-4" @change="changeMongodbMemory">
                 <ElRadio
                   v-for="(item, index) in memoryMap"
@@ -445,12 +441,12 @@
                   {{ selected.label }}
                 </span>
               </ElFormItem>
-              <ElFormItem v-if="platform === 'realTime' && agentDeploy === 'fullManagement'" label="存储规格">
+              <ElFormItem v-if="platform === 'realTime' && agentDeploy === 'fullManagement'" :label="$t('dfs_instance_createagent_cunchuguige')">
                 <span class="font-color-dark">
                   {{ currentMemorySpecName }}
                 </span>
               </ElFormItem>
-              <ElFormItem v-if="platform === 'realTime' && agentDeploy === 'fullManagement'" label="存储空间">
+              <ElFormItem v-if="platform === 'realTime' && agentDeploy === 'fullManagement'" :label="$t('dfs_instance_createagent_cunchukongjian')">
                 <span class="font-color-dark"> {{ memorySpace }} GB </span>
               </ElFormItem>
 
@@ -467,11 +463,11 @@
             <div class="border rounded-4 price-wrap">
               <div class="px-3 py-2">
                 <div class="mb-2">
-                  <span class="price-detail-label inline-block mr-2">计算资源: </span>
+                  <span class="price-detail-label inline-block mr-2">{{$t('dfs_instance_createagent_jisuanziyuan')}}</span>
                   <span class="font-color-dark">{{ specPrice(currency, true) }}</span>
                 </div>
                 <div class="mb-2" v-if="platform === 'realTime' && agentDeploy === 'fullManagement'">
-                  <span class="price-detail-label inline-block mr-2">存储资源: </span>
+                  <span class="price-detail-label inline-block mr-2">{{$t('dfs_instance_createagent_cunchuziyuan')}}</span>
                   <span class="font-color-dark"> {{ mongodbSpecPrice || 0 }} </span>
                 </div>
                 <div class="mb-2" v-if="getDiscount(this.selected)">
@@ -609,31 +605,31 @@ export default {
       memorySpace: 5, //存储空间
       mdbPrices: 0, //存储价格 与计算资源计算
       mongodbSpec: '0-0', //存储规格
-      currentMemorySpecName: '免费试用规格',
+      currentMemorySpecName: i18n.t('dfs_instance_createagent_mianfeishiyonggui'),
       specMap: {
         '1C2G': i18n.t('dfs_agent_download_subscriptionmodeldialog_extra')
       },
       realTimeTag: [
         {
-          value: 'API 快速发布'
+          value: i18n.t('dfs_instance_createagent_apIkuaisu')
         },
         {
-          value: '实时数仓'
+          value: i18n.t('dfs_instance_createagent_shishishucang')
         },
         {
-          value: 'BI 看板供数'
+          value: i18n.t('dfs_instance_createagent_bIkanbangong')
         },
         {
-          value: '客户360'
+          value: i18n.t('dfs_instance_createagent_kehu')
         },
         {
-          value: '商品中心'
+          value: i18n.t('dfs_instance_createagent_shangpinzhongxin')
         },
         {
-          value: '库存中心'
+          value: i18n.t('dfs_instance_createagent_kucunzhongxin')
         },
         {
-          value: '敏捷数据中台'
+          value: i18n.t('dfs_instance_createagent_minjieshujuzhong')
         }
       ],
       interTag: [
@@ -779,7 +775,7 @@ export default {
           title: this.$t('dfs_agent_download_subscriptionmodeldialog_peizhibushugui')
         },
         {
-          title: '选择存储方案'
+          title: i18n.t('dfs_instance_createagent_xuanzecunchufang')
         },
         {
           title: this.$t('dfs_agent_download_subscriptionmodeldialog_chakanbingqueren')
@@ -1092,7 +1088,7 @@ export default {
       if (chargeProvider === 'FreeTier') {
         this.packageItems = [
           {
-            label: this.platform === 'realTime' ? '15天' : i18n.t('dfs_agent_download_subscriptionmodeldialog_yongjiu'),
+            label: this.platform === 'realTime' ? i18n.t('dfs_instance_createagent_tian') : i18n.t('dfs_agent_download_subscriptionmodeldialog_yongjiu'),
             price: 0,
             value: '0',
             chargeProvider: 'FreeTier',
@@ -1124,7 +1120,7 @@ export default {
               value: `${cpu}-${memory}`,
               cpu,
               memory,
-              name: t.chargeProvider === 'FreeTier' ? '免费试用规格' : `MongoDB ${cpu}C${memory}G`,
+              name: t.chargeProvider === 'FreeTier' ? i18n.t('dfs_instance_createagent_mianfeishiyonggui') : `MongoDB ${cpu}C${memory}G`,
               chargeProvider: t.chargeProvider
             }
           }),
@@ -1143,7 +1139,7 @@ export default {
         this.mongodbSpecPrice = 0
         this.mdbPrices = 0
         this.mdbPriceId = 'FreeTier'
-        this.currentMemorySpecName = '免费试用规格'
+        this.currentMemorySpecName = i18n.t('dfs_instance_createagent_mianfeishiyonggui')
         this.memorySpace = 5
         return
       } else {

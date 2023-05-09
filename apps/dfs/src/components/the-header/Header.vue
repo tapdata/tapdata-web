@@ -55,7 +55,7 @@
             <ElDropdownItem command="userCenter" :disabled="$disabledReadonlyUserBtn()">{{
               $t('the_header_Header_yongHuZhongXin')
             }}</ElDropdownItem>
-            <ElDropdownItem command="order"> 订阅中心 </ElDropdownItem>
+            <ElDropdownItem command="order">{{$t('dfs_the_header_header_dingyuezhongxin')}}</ElDropdownItem>
             <ElDropdownItem command="home"> {{ $t('header_official_website') }} </ElDropdownItem>
             <ElDropdownItem command="signOut" :disabled="$disabledReadonlyUserBtn()">
               {{ $t('header_sign_out') }}

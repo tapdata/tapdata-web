@@ -242,7 +242,7 @@ const routes = [
         name: 'order',
         component: () => import(/* webpackChunkName: "instance" */ '../views/order/List.vue'),
         meta: {
-          title: '订阅中心'
+          title: i18n.t('dfs_router_index_dingyuezhongxin')
         }
       },
       {

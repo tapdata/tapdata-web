@@ -5,7 +5,7 @@
         <div class="list-operation-left flex justify-content-between">
           <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
           <ElButton type="primary" @click="handleCreateAgent" :disabled="$disabledReadonlyUserBtn()">
-            <span>新增订阅</span>
+            <span>{{$t('dfs_order_list_xinzengdingyue')}}</span>
           </ElButton>
         </div>
       </div>
@@ -134,7 +134,7 @@ export default {
     getFilterItems() {
       this.filterItems = [
         {
-          label: '订阅状态',
+          label: i18n.t('dfs_order_list_dingyuezhuangtai'),
           key: 'status',
           type: 'select-inner',
           items: [
@@ -178,7 +178,7 @@ export default {
           selectedWidth: '200px'
         },
         {
-          label: '托管方式',
+          label: i18n.t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi'),
           key: 'agentDeploy',
           type: 'select-inner',
           items: [
