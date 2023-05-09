@@ -388,7 +388,7 @@
           </ElForm>
           <ElForm v-else label-position="top">
             <ElFormItem label="请选择您需要的存储资源规格：">
-              <ElRadioGroup v-model="mdbPriceId" @change="changeMongodbMemory" class="flex gap-4">
+              <ElRadioGroup v-model="mongodbSpec" @change="changeMongodbMemory" class="flex gap-4">
                 <ElRadio
                   v-for="(item, index) in mongodbSpecItems"
                   :key="index"
@@ -604,10 +604,11 @@ export default {
       },
       mongodbSpecItems: [],
       mongodbUrl: '',
-      mdbPriceId: 'FreeTier',
-      mongodbSpecPrice: '',
-      memorySpace: 5,
-      mdbPrices: 0,
+      mdbPriceId: 'FreeTier', //价格ID
+      mongodbSpecPrice: '', //格式化存储价格
+      memorySpace: 5, //存储空间
+      mdbPrices: 0, //存储价格 与计算资源计算
+      mongodbSpec: '0-0', //存储规格
       currentMemorySpecName: '免费试用规格',
       specMap: {
         '1C2G': i18n.t('dfs_agent_download_subscriptionmodeldialog_extra')
@@ -1120,7 +1121,7 @@ export default {
           prices.map(t => {
             const { cpu = 0, memory = 0 } = t.spec || {}
             return {
-              value: t.chargeProvider === 'FreeTier' ? 'FreeTier' : t.priceId,
+              value: `${cpu}-${memory}`,
               cpu,
               memory,
               name: t.chargeProvider === 'FreeTier' ? '免费试用规格' : `MongoDB ${cpu}C${memory}G`,
@@ -1128,25 +1129,35 @@ export default {
             }
           }),
           'name'
-        )
+        ).sort((a, b) => {
+          return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
+        })
       })
     },
     //选择存储规格
     changeMongodbMemory() {
-      if (this.mdbPriceId === 'FreeTier') {
+      let values = this.mongodbSpec.split('-')
+      let cpu = Number(values[0])
+      let memory = Number(values[1])
+      if (cpu === 0 && memory === 0) {
         this.mongodbSpecPrice = 0
         this.mdbPrices = 0
+        this.mdbPriceId = 'FreeTier'
         this.currentMemorySpecName = '免费试用规格'
+        this.memorySpace = 5
         return
+      } else {
+        if (this.memorySpace === 5) {
+          //非免费规格 需要初始化存储空间
+          this.memorySpace = 100
+        }
       }
-      //根据价钱ID 得出价格
-      let data = this.mongodbPaidPrice.filter(t => t.priceId === this.mdbPriceId)?.[0]
-      this.currentMemorySpecName = data.spec.name.toUpperCase()
+      this.currentMemorySpecName = `MongoDB ${cpu}C${memory}G`
       let price = this.mongodbPaidPrice.filter(
-        t =>
-          t.spec.storageSize === this.memorySpace && data.spec.cpu === t.spec.cpu && data.spec.memory === t.spec.memory
+        t => t.spec.storageSize === this.memorySpace && cpu === t.spec.cpu && memory === t.spec.memory
       )
       //需要改变mdbPriceId 因为存储空间改变了
+      this.mdbPriceId = price?.[0]?.priceId
       this.mdbPrice(price?.[0].currencyOption?.find(item => item.currency === this.currencyType)?.amount || 0)
     },
     //存储价格
