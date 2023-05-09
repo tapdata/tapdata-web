@@ -62,7 +62,7 @@
         @compositionend="handleComposition"
         v-model="query"
         @input="debouncedQueryChange"
-        v-if="filterable"
+        v-if="filterable && !innerLabel"
         :style="{ 'flex-grow': '1', width: inputLength / (inputWidth - 32) + '%', 'max-width': inputWidth - 42 + 'px' }"
         ref="input"
       />
@@ -105,7 +105,7 @@
         <i v-if="showClose" class="el-select__caret el-input__icon el-icon-circle-close" @click="handleClearClick" />
       </template>
     </ElInput>
-    <div
+    <ElContainer
       v-else
       ref="reference"
       :class="['inner-select', { 'is-focus': visible }, 'inline-flex align-items-center']"
@@ -113,20 +113,49 @@
       @mouseenter="inputHovering = true"
       @mouseleave="inputHovering = false"
     >
+      <input type="hidden" />
       <span class="inner-select__label">{{ innerLabel }}</span>
       <span
         :class="['inner-select__selected', { placeholder: !selectedLabel }]"
         :style="{ 'max-width': selectedWidth }"
-        >{{ selectedLabel || $t('public_select_placeholder') }}</span
+        >{{ selectedLabel || currentPlaceholder || $t('public_select_placeholder') }}</span
       >
       <VIcon v-if="showClose" size="10" class="icon-btn ml-1" @click.native="handleClearClick">close</VIcon>
       <VIcon v-else size="10" class="icon-btn ml-1">arrow-down-fill</VIcon>
-    </div>
+    </ElContainer>
     <div v-if="loading" class="el-select__loading">
       <i class="el-icon-loading"></i>
     </div>
     <transition name="el-zoom-in-top" @before-enter="handleMenuEnter" @after-leave="doDestroy">
       <ElSelectMenu ref="popper" :append-to-body="popperAppendToBody" v-show="visible && emptyText !== false">
+        <input v-if="!filterable" type="hidden" ref="input" />
+        <div v-if="filterable && innerLabel" class="py-1 px-2 border-bottom fs-7" @click.stop.prevent>
+          <ElInput
+            :class="['no-border', selectSize ? `is-${selectSize}` : '']"
+            :disabled="selectDisabled"
+            :autocomplete="autoComplete || autocomplete"
+            :placeholder="$t('public_button_search')"
+            prefix-icon="el-icon-search"
+            v-model="keyword"
+            @input="handleSearch"
+            ref="input"
+            clearable
+            @click.stop.prevent
+          ></ElInput>
+        </div>
+        <div v-if="filterable && innerLabel" class="py-2 pl-4 border-bottom fs-7">
+          <span :class="[!!selectedCount ? 'font-color-light' : 'color-disable']">
+            {{ $t('packages_component_src_selectlist_yixuanze') }}
+            <span class="mx-1">{{ selectedCount }}</span>
+            {{ $t('packages_component_src_selectlist_xiang') }}
+          </span>
+          <span
+            v-if="!!selectedCount"
+            class="ml-2 color-primary cursor-pointer"
+            @click.stop.prevent="handleClearClick"
+            >{{ $t('packages_component_src_selectlist_qingchuyixuan') }}</span
+          >
+        </div>
         <div
           class="el-select-dropdown__wrap el-scrollbar__wrap virtual-scroller-wrap"
           v-show="filteredItems.length > 0 && !loading"
@@ -170,7 +199,7 @@
 </template>
 
 <script>
-import { cloneDeep, uniqBy } from 'lodash'
+import { cloneDeep, uniqBy, debounce } from 'lodash'
 import { Select } from 'element-ui'
 import i18n from '@tap/i18n'
 import { RecycleScroller } from 'vue-virtual-scroller'
@@ -264,7 +293,8 @@ export default {
         size: 50,
         page: 1,
         totalPage: 1
-      }
+      },
+      keyword: ''
     }
   },
 
@@ -275,16 +305,18 @@ export default {
       return `height: ${height}px`
     },
 
-    debounce() {
-      return this.filterDelay
-    },
-
     emptyText() {
       if (this.loading) {
         return this.loadingText || this.$t('packages_component_loading')
       } else {
-        if (this.remote && this.query === '' && this.options.length === 0) return false
-        if (this.filterable && this.query && this.options.length > 0 && this.filteredOptionsCount === 0) {
+        if (this.remote && ((this.innerLabel && this.keyword === '') || this.query === '') && this.options.length === 0)
+          return false
+        if (
+          this.filterable &&
+          ((this.innerLabel && this.keyword) || this.query) &&
+          this.options.length > 0 &&
+          this.filteredOptionsCount === 0
+        ) {
           return this.noMatchText || this.$t('packages_component_no_match')
         }
         if (this.filteredItems.length === 0) {
@@ -301,6 +333,11 @@ export default {
     // 是否远程数据
     isRemote() {
       return !!this.url
+    },
+
+    // 获取已选中的数量
+    selectedCount() {
+      return this.multiple ? this.value.length : this.value ? 1 : 0
     }
     // comItems() {
     //   const { items } = this
@@ -313,7 +350,11 @@ export default {
 
   watch: {
     visible(val) {
-      val && this.initWidth()
+      if (val) {
+        this.initWidth()
+        this.handleClearQuery()
+        this.handleFocusSearch()
+      }
     },
     value() {
       this.getSelectLabel()
@@ -370,11 +411,7 @@ export default {
       })
     },
     resetInputWidth() {
-      let $reference = this.$refs.reference
-      if (!this.innerLabel) {
-        $reference = $reference.$el
-      }
-      this.inputWidth = $reference.getBoundingClientRect().width
+      this.inputWidth = this.$refs.reference?.$el?.getBoundingClientRect()?.width || 0
     },
     resetPage() {
       let pageObj = this.pageObj
@@ -439,7 +476,7 @@ export default {
         }
       })
     },
-    handleQueryChange(val) {
+    handleQueryChange: debounce(function (val) {
       if (this.previousQuery === val || this.isOnComposition) return
       if (
         this.previousQuery === null &&
@@ -455,7 +492,7 @@ export default {
       this.hoverIndex = -1
       if (this.multiple && this.filterable) {
         this.$nextTick(() => {
-          const length = this.$refs.input.value.length * 15 + 20
+          const length = (this.$refs.input?.value.length || 0) * 15 + 20
           this.inputLength = this.collapseTags ? Math.min(50, length) : length
           this.managePlaceholder()
           this.resetInputHeight()
@@ -484,7 +521,7 @@ export default {
           // 本地数据
           if (val) {
             this.filteredItems = this.list.filter(item => {
-              return item.label.indexOf(val) !== -1
+              return item.label.toLowerCase().indexOf(val.toLowerCase()) !== -1
             })
           } else {
             this.filteredItems = cloneDeep(this.list)
@@ -496,7 +533,7 @@ export default {
       if (this.defaultFirstOption && (this.filterable || this.remote) && this.filteredOptionsCount) {
         this.checkDefaultFirstOption()
       }
-    },
+    }, 100),
 
     scrollToOption(option) {
       const $option = Array.isArray(option) ? option[0] : option
@@ -518,6 +555,23 @@ export default {
       }
       this.pageObj.page++
       this.getData()
+    },
+    blur() {
+      // this.visible = false;
+      this.$refs.reference?.blur()
+    },
+    handleClearQuery() {
+      this.keyword = ''
+      this.query = ''
+      this.handleQueryChange('')
+    },
+    handleFocusSearch() {
+      if (this.filterable && this.innerLabel) {
+        this.$refs.input?.focus()
+      }
+    },
+    handleSearch() {
+      this.handleQueryChange(this.keyword)
     }
   }
 }
@@ -574,5 +628,10 @@ export default {
 }
 .icon-btn {
   color: map-get($fontColor, slight);
+}
+.el-select__input {
+  &::placeholder {
+    color: map-get($color, disable);
+  }
 }
 </style>

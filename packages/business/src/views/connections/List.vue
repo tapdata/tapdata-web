@@ -666,6 +666,7 @@ export default {
           key: 'databaseType',
           type: 'select-inner',
           menuMinWidth: '250px',
+          filterable: true,
           items: async () => {
             let data = await databaseTypesApi.get()
             data = data || []
@@ -675,11 +676,11 @@ export default {
               t1.name > t2.name ? 1 : t1.name === t2.name ? 0 : -1
             )
             //默认全部
-            let all = {
-              name: this.$t('public_select_option_all'),
-              type: ''
-            }
-            databaseTypeOptions.unshift(all)
+            // let all = {
+            //   name: this.$t('public_select_option_all'),
+            //   type: ''
+            // }
+            // databaseTypeOptions.unshift(all)
             return databaseTypeOptions.map(item => {
               return {
                 label: item.name,

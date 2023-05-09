@@ -233,6 +233,7 @@
           :task-id="form.flowId"
           :inspectMethod="form.inspectMethod"
           :data="form.tasks"
+          :edges="edges"
           :allStages="allStages"
           :isDB="isDbClone"
         ></ConditionBox>
@@ -331,6 +332,7 @@ export default {
           }
         ]
       },
+      edges: [],
       allStages: [],
       flowOptions: null,
       notSupport: {
@@ -452,6 +454,7 @@ export default {
               })
             )
           })
+          this.edges = edges
           this.allStages = stages
         })
         .finally(() => {

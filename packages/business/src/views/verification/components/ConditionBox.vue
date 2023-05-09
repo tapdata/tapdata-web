@@ -253,6 +253,10 @@ export default {
     allStages: {
       type: Array,
       default: () => []
+    },
+    edges: {
+      type: Array,
+      default: () => []
     }
   },
 
@@ -497,29 +501,51 @@ export default {
       }
       return [findNode.tableName]
     },
-    // 获取表的连线关系
+
+    /**
+     * @desc 获取连线信息
+     * @param1 value 节点id
+     * @param2 data 整个连线数据
+     * @param3 flag true连线下游、false连线上游
+     * */
+    getLinkData(value, data = [], flag = false) {
+      const f = data.find(t => t[flag ? 'source' : 'target'] === value)
+      return f ? this.getLinkData(f[!flag ? 'source' : 'target'], data, flag) : value
+    },
+
+    // 获取一条线上的源节点和目标节点
     getMatchNodeList() {
-      let result = []
-      this.flowStages
-        .filter(t => t.outputLanes.length > 0)
-        .forEach(el => {
-          const targetNode = this.flowStages.find(t => t.id === el.outputLanes[0])
-          if (targetNode) {
-            result.push({
-              source: el.id,
-              sourceName: el.name,
-              target: targetNode.id,
-              targetName: targetNode.name,
-              sourceConnectionId: el.connectionId,
-              sourceConnectionName: el.attrs?.connectionName,
-              targetConnectionId: targetNode.connectionId,
-              targetConnectionName: targetNode.attrs?.connectionName,
-              sourceDatabaseType: el.databaseType,
-              targetDatabaseType: targetNode.databaseType
-            })
+      const edgesList = cloneDeep(this.edges)
+      let result = uniqBy(
+        edgesList.map(t => {
+          const source = this.getLinkData(t.source, edgesList)
+          const target = this.getLinkData(t.target, edgesList, true)
+          const key = source + '_' + target
+          return {
+            source,
+            target,
+            key
           }
-        })
-      return result
+        }),
+        'key'
+      )
+
+      return result.map(re => {
+        const el = this.flowStages.find(t => t.id === re.source)
+        const targetNode = this.flowStages.find(t => t.id === re.target)
+        return {
+          source: el.id,
+          sourceName: el.name,
+          target: targetNode.id,
+          targetName: targetNode.name,
+          sourceConnectionId: el.connectionId,
+          sourceConnectionName: el.attrs?.connectionName,
+          targetConnectionId: targetNode.connectionId,
+          targetConnectionName: targetNode.attrs?.connectionName,
+          sourceDatabaseType: el.databaseType,
+          targetDatabaseType: targetNode.databaseType
+        }
+      })
     },
 
     editItem(item) {
