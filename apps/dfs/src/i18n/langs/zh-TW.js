@@ -1423,8 +1423,6 @@ export default {
   dfs_instance_createagent_cunchuguige: '存儲規格',
   dfs_instance_createagent_qingxuanzeninxu: '請選擇您需要的存儲空間：',
   dfs_instance_createagent_qingxuanzeninxu2: '請選擇您需要的存儲資源規格：',
-  dfs_instance_createagent_geshimon:
-    '格式: mongodb://[username:password@]host1[:port1][....hostN[:portN]][/[defaultauthdb][?options]]',
   dfs_instance_createagent_qingtianxieninzi: '請填寫您自己的MongoDB存儲集群URI',
   dfs_instance_createagent_qingpeizhininde: '請配置您的存儲資源:',
   dfs_order_list_dingyuezhuangtai: '訂閱狀態',

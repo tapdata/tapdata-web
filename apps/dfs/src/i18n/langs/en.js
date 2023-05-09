@@ -1569,8 +1569,6 @@ export default {
   dfs_instance_createagent_cunchuguige: 'Storage Specification',
   dfs_instance_createagent_qingxuanzeninxu: 'Please select the storage space you need:',
   dfs_instance_createagent_qingxuanzeninxu2: 'Please select the storage resource specification you need:',
-  dfs_instance_createagent_geshimon:
-    'Format: mongodb://[username:password@]host1[:port1][....hostN[:portN]][/[defaultauthdb][?options]]',
   dfs_instance_createagent_qingtianxieninzi: 'Please fill in your own MongoDB storage cluster URI',
   dfs_instance_createagent_qingpeizhininde: 'Please configure your storage resources:',
   dfs_order_list_dingyuezhuangtai: 'Subscription Status',

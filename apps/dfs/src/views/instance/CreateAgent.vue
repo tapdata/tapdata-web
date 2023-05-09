@@ -400,11 +400,11 @@
         <div v-if="activeStep === 4 && platform === 'realTime'" class="px-1">
           <!--半托管用户手动填写存储连接地址-->
           <ElForm v-if="agentDeploy === 'selfHost'" label-position="top">
-            <ElFormItem :label="$t('dfs_instance_createagent_qingpeizhininde')">
+            <ElFormItem :label="$t('dfs_instance_createagent_qingpeizhininde')" required>
               <ElInput class="w-50 rounded-4" type="textarea" v-model="mongodbUrl"></ElInput>
               <div class="font-color-sslight mt-4">
                 {{ $t('dfs_instance_createagent_qingtianxieninzi') }}
-                <div>{{ $t('dfs_instance_createagent_geshimon') }}</div>
+                <div>Example: mongodb://admin:password@127.0.0.1:27017/mydb?replicaSet=xxx&authSource=admin</div>
               </div>
             </ElFormItem>
           </ElForm>
@@ -856,7 +856,16 @@ export default {
         this.agentDeploy = 'selfHost'
       }
     },
-    next() {
+    async next() {
+      if (
+        this.activeStep === 4 &&
+        this.platform === 'realTime' &&
+        this.agentDeploy === 'selfHost' &&
+        this.mongodbUrl === ''
+      ) {
+        this.$message.error(i18n.t('dfs_instance_createagent_qingtianxieninzi'))
+        return
+      }
       this.activeStep++
       this.buried('productTypeNext')
       //存储方案请求接口得到存储价格
@@ -1226,6 +1235,7 @@ export default {
         }
       ]
     },
+
     getPlaceholder() {
       return this.selected.type === 'recurring'
         ? i18n.t('dfs_instance_create_yongyujieshoumei')
@@ -1311,8 +1321,6 @@ export default {
       } else {
         this.submitLoading = true
       }
-      console.log(params)
-      return
       this.$axios
         .post('api/tcm/orders', params)
         .then(data => {

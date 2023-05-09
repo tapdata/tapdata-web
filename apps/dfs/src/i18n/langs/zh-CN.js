@@ -1453,8 +1453,6 @@ export default {
   dfs_instance_createagent_cunchuguige: '存储规格',
   dfs_instance_createagent_qingxuanzeninxu: '请选择您需要的存储空间：',
   dfs_instance_createagent_qingxuanzeninxu2: '请选择您需要的存储资源规格：',
-  dfs_instance_createagent_geshimon:
-    '格式: mongodb://[username:password@]host1[:port1][....hostN[:portN]][/[defaultauthdb][?options]]',
   dfs_instance_createagent_qingtianxieninzi: '请填写您自己的MongoDB存储集群URI',
   dfs_instance_createagent_qingpeizhininde: '请配置您的存储资源:',
   dfs_order_list_dingyuezhuangtai: '订阅状态',
