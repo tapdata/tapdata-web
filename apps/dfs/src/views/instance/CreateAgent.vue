@@ -15,7 +15,7 @@
             :class="{
               active: platform === 'integration'
             }"
-            @click="platform = 'integration'"
+            @click="changePlatform('integration')"
           >
             <div class="is-active position-absolute top-0 end-0">
               <div class="is-active-triangle"></div>
@@ -43,7 +43,7 @@
             :class="{
               active: platform === 'realTime'
             }"
-            @click="platform = 'realTime'"
+            @click="changePlatform('realTime')"
           >
             <div class="is-active position-absolute top-0 end-0">
               <div class="is-active-triangle"></div>
@@ -872,6 +872,11 @@ export default {
       if (this.activeStep === 4 && this.platform === 'realTime') {
         this.getMongoCluster()
       }
+    },
+    //选择平台
+    changePlatform(type) {
+      this.platform = type
+      this.loadPackageItems()
     },
     //选择订阅模式
     changeAgentDeploy(type) {
