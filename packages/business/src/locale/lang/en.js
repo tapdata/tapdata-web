@@ -1072,5 +1072,7 @@ export default {
     'MongoDB is a non-relational database with flexibility, high performance, ease of use and scalability, suitable for application scenarios that need to process large amounts of unstructured data and require fast query and scalability. ',
   packages_business_create_connection_scenedialog_bigQu:
     'BigQuery is a managed data warehouse provided by Google Cloud. It is famous for its high speed, scalability and security. It can process PB-level data, integrate with multiple tools, and is suitable for various data analysis and mining scenarios. ',
-  packages_business_swimlane_tablepreview_chuangjianrenwu: 'Create task'
+  packages_business_swimlane_tablepreview_chuangjianrenwu: 'Create task',
+  packages_business_as_source: 'As Source',
+  packages_business_as_target: 'As Target'
 }

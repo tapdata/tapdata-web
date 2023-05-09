@@ -80,11 +80,17 @@
         </el-row>
       </section>
       <section class="table-info mt-4">
-        <header class="header flex justify-content-between mb-4">
-          <div class="table-info-name">{{ $t('packages_business_table_preview_connection_task') }}</div>
+        <header class="header flex align-center mb-4">
+          <div class="table-info-name">{{ $t('packages_business_tasks') }}</div>
+          <ElDivider class="mx-3" direction="vertical"></ElDivider>
+          <ElRadioGroup v-model="asTaskType" size="mini">
+            <ElRadioButton label="all">{{ $t('public_select_option_all') }}</ElRadioButton>
+            <ElRadioButton label="source">{{ $t('packages_business_as_source') }}</ElRadioButton>
+            <ElRadioButton label="target">{{ $t('packages_business_as_target') }}</ElRadioButton>
+          </ElRadioGroup>
           <!--<el-button type="primary" size="mini">新建</el-button>-->
         </header>
-        <el-table class="discovery-page-table" :data="taskData" :has-pagination="false">
+        <el-table class="discovery-page-table" :data="filterTask" :has-pagination="false">
           <el-table-column :label="$t('public_task_name')" prop="name" width="200px" show-overflow-tooltip>
             <template #default="{ row }">
               <span class="dataflow-name link-primary flex">
@@ -157,10 +163,23 @@ export default {
         initial_sync: this.$t('public_task_type_initial_sync'),
         cdc: this.$t('public_task_type_cdc'),
         'initial_sync+cdc': this.$t('public_task_type_initial_sync') + '+' + this.$t('public_task_type_cdc')
-      }
+      },
+      asTaskType: 'all'
     }
   },
   computed: {
+    filterTask() {
+      if (this.asTaskType === 'all') return this.taskData
+      if (this.asTaskType === 'source') return this.sourceTask
+      if (this.asTaskType === 'target') return this.targetTask
+      return this.taskData
+    },
+    sourceTask() {
+      return this.taskData.filter(task => task.sourceConnectionIds.includes(this.viewData.id))
+    },
+    targetTask() {
+      return this.taskData.filter(task => task.targetConnectionIds.includes(this.viewData.id))
+    },
     databaseName() {
       if (!this.viewData) return
 
@@ -190,6 +209,7 @@ export default {
       data['createTime'] = dayjs(row.createTime).format('YYYY-MM-DD HH:mm:ss')
       data['loadSchemaTime'] = dayjs(row.loadSchemaTime).format('YYYY-MM-DD HH:mm:ss')
       this.viewData = data
+      this.reset()
     },
     edit() {
       const { id, pdkHash } = this.viewData
@@ -218,8 +238,44 @@ export default {
         connectionId: this.viewData.id,
         tableName: null
       }
-      taskApi.getTaskByTableName(params).then(res => {
-        this.taskData = res
+      taskApi.getTaskByTableName(params).then(taskList => {
+        taskList.forEach(task => {
+          const { dag } = task
+          const sourceConnectionIds = []
+          const targetConnectionIds = []
+          if (dag.edges?.length && dag.nodes?.length) {
+            const outputsMap = {}
+            const inputsMap = {}
+
+            dag.edges.forEach(({ source, target }) => {
+              let _source = outputsMap[source]
+              let _target = inputsMap[target]
+
+              if (!_source) {
+                outputsMap[source] = [target]
+              } else {
+                _source.push(target)
+              }
+
+              if (!_target) {
+                inputsMap[target] = [source]
+              } else {
+                _target.push(source)
+              }
+            })
+
+            dag.nodes.forEach(node => {
+              if (!inputsMap[node.id] && outputsMap[node.id] && node.connectionId) {
+                sourceConnectionIds.push(node.connectionId)
+              } else if (inputsMap[node.id] && !outputsMap[node.id] && node.connectionId) {
+                targetConnectionIds.push(node.connectionId)
+              }
+            })
+          }
+          task.sourceConnectionIds = sourceConnectionIds
+          task.targetConnectionIds = targetConnectionIds
+        })
+        this.taskData = taskList
       })
     },
     formatTime(time) {
@@ -248,6 +304,9 @@ export default {
           id: row.id
         }
       })
+    },
+    reset() {
+      this.asTaskType = 'all'
     }
   }
 }

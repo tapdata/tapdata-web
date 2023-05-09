@@ -137,9 +137,9 @@
         <el-tab-pane :label="$t('packages_business_tasks')" name="tasks">
           <div class="flex align-center mb-4">
             <ElRadioGroup v-model="asTaskType" size="mini">
-              <ElRadioButton label="all">全部</ElRadioButton>
-              <ElRadioButton label="source">作为源</ElRadioButton>
-              <ElRadioButton label="target">作为目标</ElRadioButton>
+              <ElRadioButton label="all">{{ $t('public_select_option_all') }}</ElRadioButton>
+              <ElRadioButton label="source">{{ $t('packages_business_as_source') }}</ElRadioButton>
+              <ElRadioButton label="target">{{ $t('packages_business_as_target') }}</ElRadioButton>
             </ElRadioGroup>
             <ElDivider class="mx-3" direction="vertical"></ElDivider>
             <span class="color-primary cursor-pointer" @click="handleCreateTask">{{

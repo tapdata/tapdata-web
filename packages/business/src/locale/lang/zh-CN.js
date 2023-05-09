@@ -1030,5 +1030,7 @@ export default {
     'MongoDB是一种非关系型数据库，具有灵活性、高性能、易用性和可扩展性，适用于需要处理大量非结构化数据和需要快速查询和可扩展性的应用场景。',
   packages_business_create_connection_scenedialog_bigQu:
     'BigQuery是Google Cloud提供的托管式数据仓库，以高速、可扩展和安全著称，可以处理PB级数据，与多个工具集成，适用于各种数据分析和挖掘场景。',
-  packages_business_swimlane_tablepreview_chuangjianrenwu: '创建任务'
+  packages_business_swimlane_tablepreview_chuangjianrenwu: '创建任务',
+  packages_business_as_source: '作为源头',
+  packages_business_as_target: '作为目标'
 }
