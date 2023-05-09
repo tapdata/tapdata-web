@@ -60,22 +60,23 @@
         <el-row class="mb-2">
           <el-col :span="12"
             ><span class="table-dec-label inline-block">{{ $t('public_connection_form_database_name') }}：</span
-            ><span>{{ databaseName || '-' }}</span></el-col
+            ><span>{{ viewData.config.database || '-' }}</span></el-col
           >
           <el-col :span="12"
-            ><span class="table-dec-label inline-block">{{ $t('public_connection_form_schema') }}:</span
+            ><span class="table-dec-label inline-block">{{ $t('public_connection_form_schema') }}：</span
             ><span>{{ viewData.config.schema || '-' }}</span></el-col
           >
         </el-row>
         <el-row class="mb-2">
           <el-col :span="12"
             ><span class="table-dec-label inline-block"
-              >{{ $t('public_connection_form_other_connection_string') }}:</span
+              >{{ $t('public_connection_form_other_connection_string') }}：</span
             ><span>{{ viewData.config.additionalString || '-' }}</span></el-col
           >
           <el-col :span="12"
-            ><span class="table-dec-label inline-block">{{ $t('public_connection_form_time_zone_of_time_type') }}:</span
-            ><span>{{ viewData.config.database_datetype_without_timezone || '-' }}</span></el-col
+            ><span class="table-dec-label inline-block"
+              >{{ $t('public_connection_form_time_zone_of_time_type') }}：</span
+            ><span>{{ viewData.config.timezone || '-' }}</span></el-col
           >
         </el-row>
       </section>
@@ -199,15 +200,33 @@ export default {
     }
   },
   methods: {
-    open(row) {
+    open(connection) {
       this.visible = true
-      this.viewData = row
+      this.viewData = connection
       //组装数据
       this.getTasks()
       let data = cloneDeep(this.viewData)
-      data['last_updated'] = dayjs(row.last_updated).format('YYYY-MM-DD HH:mm:ss')
-      data['createTime'] = dayjs(row.createTime).format('YYYY-MM-DD HH:mm:ss')
-      data['loadSchemaTime'] = dayjs(row.loadSchemaTime).format('YYYY-MM-DD HH:mm:ss')
+      const { config } = data
+      config.username = config.user || config.username
+      config.additionalString = config.extParams || config.addtionalString
+
+      if (config.uri && config.isUri !== false) {
+        const regResult =
+          /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
+            config.uri
+          )
+        if (regResult && regResult.groups) {
+          const hostArr = regResult.groups.host.split(':')
+          config.host = hostArr[0]
+          config.port = hostArr[1]
+          config.database = regResult.groups.database
+          config.username = regResult.groups.username
+          config.additionalString = regResult.groups.query
+        }
+      }
+      data['last_updated'] = dayjs(connection.last_updated).format('YYYY-MM-DD HH:mm:ss')
+      data['createTime'] = dayjs(connection.createTime).format('YYYY-MM-DD HH:mm:ss')
+      data['loadSchemaTime'] = dayjs(connection.loadSchemaTime).format('YYYY-MM-DD HH:mm:ss')
       this.viewData = data
       this.reset()
     },
