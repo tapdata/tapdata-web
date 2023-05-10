@@ -31,7 +31,12 @@
               </el-button>
             </span>
           </el-tooltip>
-          <el-button class="flex-fill min-w-0" size="mini" @click="edit()" :disabled="$disabledReadonlyUserBtn()">
+          <el-button
+            class="flex-fill min-w-0"
+            size="mini"
+            @click="edit()"
+            :disabled="$disabledReadonlyUserBtn() || connection.agentType === 'Cloud'"
+          >
             {{ $t('public_button_edit') }}
           </el-button>
           <el-button class="flex-fill min-w-0" size="mini" @click="$emit('test', connection)">
@@ -307,17 +312,45 @@ export default {
     },
     edit() {
       const { connection = {} } = this
-      const { id, pdkHash } = connection
+      const { id, pdkHash, agentType, name } = connection
       let query = {
         pdkHash
       }
-      this.$router.push({
-        name: 'connectionsEdit',
-        params: {
-          id
-        },
-        query
-      })
+      if (agentType === 'Local') {
+        this.$confirm(
+          '当前连接' + name + '正在作为FDM和MDM的存储使用，修改会导致已有存储数据丢失，是否确认要继续修改',
+          '',
+          {
+            type: 'warning',
+            showClose: false
+          }
+        ).then(resFlag => {
+          if (!resFlag) {
+            return
+          }
+          let query = {
+            pdkHash
+          }
+          this.$router.push({
+            name: 'connectionsEdit',
+            params: {
+              id: id
+            },
+            query
+          })
+        })
+      } else {
+        let query = {
+          pdkHash
+        }
+        this.$router.push({
+          name: 'connectionsEdit',
+          params: {
+            id: id
+          },
+          query
+        })
+      }
     },
     async beforeTest() {
       this.checkAgent(() => {

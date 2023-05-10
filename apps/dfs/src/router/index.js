@@ -238,6 +238,14 @@ const routes = [
         }
       },
       {
+        path: '/user/order',
+        name: 'order',
+        component: () => import(/* webpackChunkName: "instance" */ '../views/order/List.vue'),
+        meta: {
+          title: i18n.t('dfs_router_index_dingyuezhongxin')
+        }
+      },
+      {
         path: '/verify',
         name: 'verify',
         redirect: 'verify/',
