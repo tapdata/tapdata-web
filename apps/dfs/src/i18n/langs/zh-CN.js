@@ -1410,7 +1410,7 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_yunchangshangkeyong: '云厂商|可用区:',
   dfs_agent_download_subscriptionmodeldialog_diqu: '地区',
   dfs_agent_download_subscriptionmodeldialog_yunfuwushang: '云服务商',
-  dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxi: '请选择您希望部署的共有云及地区',
+  dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxi: '请选择您希望部署的公有云及地区',
   dfs_agent_download_subscriptionmodeldialog_chuzhichisuoyou: '除支持所有的数据集成平台的场景外，还支持：',
   dfs_agent_download_subscriptionmodeldialog_zhuyaoshiyongchang: '主要使用场景',
   dfs_agent_download_subscriptionmodeldialog_heIPaa:
