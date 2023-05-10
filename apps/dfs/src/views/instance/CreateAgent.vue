@@ -534,7 +534,7 @@
       <template v-if="agentDeploy !== 'aliyun'">
         <!--顶部展示价格-->
         <div
-          class="flex justify-content-center align-items-center mr-4"
+          class="w-40 flex align-items-center ml-4"
           v-if="[3].includes(activeStep) || (activeStep === 4 && platform === 'realTime')"
         >
           <div class="text-end px-3 py-1">
@@ -548,23 +548,26 @@
             <span class="discount-color fw-sub">-{{ formatPriceOff(currency) }}</span>
           </div>
         </div>
-        <el-button v-if="activeStep > 1" @click="prevStep">{{ $t('public_button_previous') }}</el-button>
-        <el-button v-if="activeStep < steps.length" type="primary" @click="next('second')">{{
-          $t('public_button_next')
-        }}</el-button>
-        <div v-else-if="activeStep === steps.length" class="ml-2">
-          <div v-if="selected.chargeProvider === 'FreeTier'">
-            <el-button type="primary" :loading="submitOnlineLoading" @click="submit()">{{
-              $t('public_button_confirm')
-            }}</el-button>
-          </div>
-          <div v-else>
-            <el-button type="primary" :loading="submitOnlineLoading" @click="submit()">{{
-              $t('dfs_agent_download_subscriptionmodeldialog_zaixianzhifu')
-            }}</el-button>
-            <el-button type="primary" :loading="submitLoading" @click="submit({}, 'offline')">{{
-              $t('dfs_agent_download_subscriptionmodeldialog_zhuanzhangzhifu')
-            }}</el-button>
+        <div class="w-40 flex align-items-center ml-4" v-else></div>
+        <div class="btn-opreation flex w-60">
+          <el-button v-if="activeStep > 1" @click="prevStep">{{ $t('public_button_previous') }}</el-button>
+          <el-button v-if="activeStep < steps.length" type="primary" @click="next('second')">{{
+            $t('public_button_next')
+          }}</el-button>
+          <div v-else-if="activeStep === steps.length" class="ml-2">
+            <div v-if="selected.chargeProvider === 'FreeTier'">
+              <el-button type="primary" :loading="submitOnlineLoading" @click="submit()">{{
+                $t('public_button_confirm')
+              }}</el-button>
+            </div>
+            <div v-else>
+              <el-button type="primary" :loading="submitOnlineLoading" @click="submit()">{{
+                $t('dfs_agent_download_subscriptionmodeldialog_zaixianzhifu')
+              }}</el-button>
+              <el-button type="primary" :loading="submitLoading" @click="submit({}, 'offline')">{{
+                $t('dfs_agent_download_subscriptionmodeldialog_zhuanzhangzhifu')
+              }}</el-button>
+            </div>
           </div>
         </div>
       </template>
@@ -877,9 +880,29 @@ export default {
     changePlatform(type) {
       this.platform = type
       this.loadPackageItems()
+      //更新存储资源价格
+      this.changeMongodbMemory()
+      //数据初始化
+      this.mdbPriceId = 'FreeTier'
+      this.mongodbSpecPrice = ''
+      this.mdbPrices = 0
+      this.mongodbSpec = '0-0'
+      this.memorySpace = 5
     },
     //选择订阅模式
     changeAgentDeploy(type) {
+      this.cancelPrice() //数据初始化
+      this.agentDeploy = type
+      this.getPrice()
+      this.getCloudProvider()
+      if (type === 'aliyun') {
+        this.activeStep++
+        this.getAvailableCode()
+        this.buried('productTypeAliyunCode')
+      }
+    },
+    //价格初始化
+    cancelPrice() {
       //数据初始化
       this.mdbPriceId = 'FreeTier'
       this.mongodbSpecPrice = ''
@@ -887,15 +910,8 @@ export default {
       this.currency = ''
       this.currencyType = ''
       this.mdbPrices = 0
-
-      this.getPrice()
-      this.getCloudProvider()
-      this.agentDeploy = type
-      if (type === 'aliyun') {
-        this.activeStep++
-        this.getAvailableCode()
-        this.buried('productTypeAliyunCode')
-      }
+      this.mongodbSpec = '0-0'
+      this.memorySpace = 5
     },
     //切换规格
     changeSpec(item, disabled) {

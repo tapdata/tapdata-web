@@ -903,9 +903,29 @@ export default {
     changePlatform(type) {
       this.platform = type
       this.loadPackageItems()
+      //更新存储资源价格
+      this.changeMongodbMemory()
+      //数据初始化
+      this.mdbPriceId = 'FreeTier'
+      this.mongodbSpecPrice = ''
+      this.mdbPrices = 0
+      this.mongodbSpec = '0-0'
+      this.memorySpace = 5
     },
     //选择订阅模式
     changeAgentDeploy(type) {
+      this.cancelPrice() //数据初始化
+      this.agentDeploy = type
+      this.getPrice()
+      this.getCloudProvider()
+      if (type === 'aliyun') {
+        this.activeStep++
+        this.getAvailableCode()
+        this.buried('productTypeAliyunCode')
+      }
+    },
+    //价格初始化
+    cancelPrice() {
       //数据初始化
       this.mdbPriceId = 'FreeTier'
       this.mongodbSpecPrice = ''
@@ -913,15 +933,8 @@ export default {
       this.currency = ''
       this.currencyType = ''
       this.mdbPrices = 0
-
-      this.getPrice()
-      this.getCloudProvider()
-      this.agentDeploy = type
-      if (type === 'aliyun') {
-        this.activeStep++
-        this.getAvailableCode()
-        this.buried('productTypeAliyunCode')
-      }
+      this.mongodbSpec = '0-0'
+      this.memorySpace = 5
     },
     //切换规格
     changeSpec(item, disabled) {
