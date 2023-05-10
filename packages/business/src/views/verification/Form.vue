@@ -175,6 +175,41 @@
               </ElInput>
             </ElFormItem>
           </template>
+
+          <ElFormItem class="form-item" :label="$t('packages_business_verification_form_task_alarm') + ': '">
+            <div class="inline-block">
+              <div>
+                <ElCheckbox v-model="form.errorAlert.enable" @change="handleChangeErrorAlert">{{
+                  $t('packages_business_verification_form_task_alarm_when_error')
+                }}</ElCheckbox>
+              </div>
+              <div>
+                <ElCheckbox v-model="form.resultDiffAlarm.enable" @change="handleChangeResultDiffAlarm"
+                  >{{ $t('packages_business_verification_form_task_alarm_when_diff_result_over_count1') }}
+                  <ElInputNumber
+                    v-model="form.resultDiffAlarm.count"
+                    controls-position="right"
+                    :min="0"
+                    style="width: 100px"
+                    @click.prevent.stop
+                    @focus.prevent.stop
+                  ></ElInputNumber>
+                  {{ $t('packages_business_verification_form_task_alarm_when_diff_result_over_count2') }}</ElCheckbox
+                >
+              </div>
+            </div>
+            <div class="inline-block ml-8">
+              <ElCheckboxGroup v-model="form.errorAlert.values" @change="handleChangeAlarmItem">
+                <ElCheckbox label="SYSTEM">{{ $t('packages_business_verification_form_xitongtongzhi') }}</ElCheckbox>
+                <ElCheckbox label="EMAIL">{{ $t('packages_business_verification_form_youjiantongzhi') }}</ElCheckbox>
+              </ElCheckboxGroup>
+              <ElCheckboxGroup v-model="form.resultDiffAlarm.values" @change="handleChangeAlarmItem">
+                <ElCheckbox label="SYSTEM">{{ $t('packages_business_verification_form_xitongtongzhi') }}</ElCheckbox>
+                <ElCheckbox label="EMAIL">{{ $t('packages_business_verification_form_youjiantongzhi') }}</ElCheckbox>
+              </ElCheckboxGroup>
+            </div>
+          </ElFormItem>
+
           <ElFormItem
             class="form-item"
             :label="$t('packages_business_verification_form_label_error_save_count') + ': '"
@@ -301,7 +336,16 @@ export default {
         tasks: [],
         taskMode: 'pipeline',
         errorNotifys: ['SYSTEM', 'EMAIL'],
-        inconsistentNotifys: ['SYSTEM', 'EMAIL']
+        inconsistentNotifys: ['SYSTEM', 'EMAIL'],
+        errorAlert: {
+          enable: false,
+          values: []
+        },
+        resultDiffAlarm: {
+          enable: false,
+          count: 0,
+          values: []
+        }
       },
       rules: {
         flowId: [
@@ -577,6 +621,19 @@ export default {
       if (val !== 'pipeline') {
         this.form.flowId = ''
       }
+    },
+
+    handleChangeAlarmItem() {
+      this.form.errorAlert.enable = !!this.form.errorAlert.values.length
+      this.form.resultDiffAlarm.enable = !!this.form.resultDiffAlarm.values.length
+    },
+
+    handleChangeErrorAlert(val) {
+      this.form.errorAlert.values = val ? ['SYSTEM', 'EMAIL'] : []
+    },
+
+    handleChangeResultDiffAlarm(val) {
+      this.form.resultDiffAlarm.values = val ? ['SYSTEM', 'EMAIL'] : []
     }
   }
 }
