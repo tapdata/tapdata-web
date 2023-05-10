@@ -921,7 +921,13 @@ export default {
       if (!this.currencyType) {
         this.currencyType = this.packageItems[0]?.currency
       }
-      this.handleChange(this.packageItems[0])
+      let currentItem = this.packageItems[0]
+      if (this.selected?.type) {
+        currentItem = this.packageItems.find(
+          it => it.type === this.selected?.type && it.periodUnit === this.selected?.periodUnit //切换规格不改变原来的订阅方式
+        )
+      }
+      this.handleChange(currentItem)
       this.buried('changeSpec')
     },
     //切换云厂商
