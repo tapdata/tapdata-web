@@ -644,6 +644,7 @@ export default {
       memorySpace: 5, //存储空间
       mdbPrices: 0, //存储价格 与计算资源计算
       mongodbSpec: '0-0', //存储规格
+      paidPrice: [], //原始所有存储价格
       currentMemorySpecName: i18n.t('dfs_instance_createagent_mianfeishiyonggui'),
       specMap: {
         '1C2G': i18n.t('dfs_agent_download_subscriptionmodeldialog_extra')
@@ -956,6 +957,8 @@ export default {
         this.currencyOption = []
         this.currency = item
       }
+      //更新存储价格
+      this.changeMongodbMemory()
       this.buried('changeSubscriptionMethod')
     },
     //切换币种
@@ -1182,6 +1185,7 @@ export default {
       }
       this.$axios.get('api/tcm/paid/plan/getPaidPlan', { params }).then(data => {
         const { paidPrice = [] } = data?.[0] || {}
+        this.paidPrice = paidPrice
         //根据订阅方式再过滤一层
         let prices = paidPrice?.filter(
           t =>
@@ -1215,6 +1219,13 @@ export default {
       let values = this.mongodbSpec.split('-')
       let cpu = Number(values[0])
       let memory = Number(values[1])
+
+      //根据订阅方式再过滤一层
+      this.mongodbPaidPrice = this.paidPrice?.filter(
+        t =>
+          (t.periodUnit === this.selected.periodUnit && t.type === this.selected.type) ||
+          t.chargeProvider === 'FreeTier'
+      )
       if (cpu === 0 && memory === 0) {
         this.mongodbSpecPrice = 0
         this.mdbPrices = 0
