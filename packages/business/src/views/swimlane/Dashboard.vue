@@ -239,10 +239,9 @@ export default {
         .then(data => {
           let items = data?.items || []
           let treeData = this.formatCatalog(items)
-          treeData.forEach(item => {
+          treeData?.forEach(item => {
             this.$set(this.directoryMap, item.item_type[0], item)
           })
-          console.log('this.directoryMap', this.directoryMap) // eslint-disable-line
         })
         .finally(() => {
           this.loadingDirectory = false
