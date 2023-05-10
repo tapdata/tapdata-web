@@ -47,6 +47,11 @@ const removePending = config => {
 let skipErrorHandler = false
 const errorCallback = error => {
   let status = error?.response?.status
+  if (axios.isCancel(error)) {
+    // eslint-disable-next-line no-console
+    console.log('Request canceled', error.message)
+    return Promise.reject('Request canceled')
+  }
   // 从请求池清除掉错误请求
   if (error?.response?.config || error?.config) {
     removePending(error.config || error.response.config)

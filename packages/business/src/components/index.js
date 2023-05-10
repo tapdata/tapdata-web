@@ -25,3 +25,4 @@ export {
 }
 
 export * from './DatabaseIcon'
+export * from './create-connection'
