@@ -191,8 +191,7 @@
                     controls-position="right"
                     :min="0"
                     style="width: 100px"
-                    @click.prevent.stop
-                    @focus.prevent.stop
+                    @click.native.prevent.stop
                   ></ElInputNumber>
                   {{ $t('packages_business_verification_form_task_alarm_when_diff_result_over_count2') }}</ElCheckbox
                 >
