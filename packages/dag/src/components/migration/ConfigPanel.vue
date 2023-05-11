@@ -22,8 +22,14 @@
           @setSchema="handleSetSchema"
         />
       </ElTabPane>
-      <ElTabPane v-if="showSchemaPanel" :label="$t('packages_dag_migration_configpanel_moxing')" name="meta">
-        <MetaPane ref="metaPane" :is-show="currentTab === 'meta'" :form="form"></MetaPane>
+      <ElTabPane :label="$t('packages_dag_migration_configpanel_moxing')" name="meta">
+        <Component
+          v-if="syncType"
+          ref="metaPane"
+          :is="syncType === 'sync' ? 'MetaPane' : 'MigrateMetaPane'"
+          :is-show="currentTab === 'meta'"
+          :form="form"
+        ></Component>
       </ElTabPane>
       <ElTabPane v-if="isMonitor" :label="$t('packages_dag_migration_configpanel_gaojingshezhi')" name="alarm">
         <AlarmPanel
@@ -70,6 +76,7 @@ import NodeIcon from '../NodeIcon'
 import SettingPanel from './SettingPanel'
 import MetaPane from '../MetaPane'
 import AlarmPanel from './AlarmPanel'
+import MigrateMetaPane from './MigrateMetaPane'
 
 export default {
   name: 'ConfigPanel',
@@ -85,7 +92,8 @@ export default {
     includesType: {
       type: Array,
       default: () => ['node', 'settings']
-    }
+    },
+    syncType: String
   },
 
   data() {
@@ -98,7 +106,7 @@ export default {
     }
   },
 
-  components: { MetaPane, SettingPanel, NodeIcon, FormPanel, AlarmPanel },
+  components: { MetaPane, SettingPanel, NodeIcon, FormPanel, AlarmPanel, MigrateMetaPane },
 
   computed: {
     ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
@@ -153,8 +161,8 @@ export default {
       let watcher = this.$watch('editVersion', () => {
         watcher()
         const metaPane = this.$refs.metaPane
-        if (metaPane && this.currentTab === '1') {
-          metaPane.loadFields()
+        if (metaPane && this.currentTab === 'meta') {
+          metaPane[this.syncType === 'sync' ? 'loadFields' : 'loadData']()
         }
       })
     },

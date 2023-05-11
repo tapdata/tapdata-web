@@ -21,7 +21,7 @@
         </span>
       </template>
       <template slot="data_type" slot-scope="scope">
-        <div class="position-relative" :class="{ 'pl-4': !!getCanUseDataTypesTooltip(scope.row.matchedDataTypeLevel) }">
+        <div class="position-relative" :class="{ 'pl-5': !!getCanUseDataTypesTooltip(scope.row.matchedDataTypeLevel) }">
           <ElTooltip
             transition="tooltip-fade-in"
             :disabled="!scope.row.matchedDataTypeLevel"
@@ -109,7 +109,7 @@
 import { mapGetters } from 'vuex'
 import { cloneDeep } from 'lodash'
 
-import { VTable } from '@tap/component'
+import { VTable, VIcon } from '@tap/component'
 import i18n from '@tap/i18n'
 import { metadataInstancesApi } from '@tap/api'
 import { uuid } from '@tap/shared'
@@ -117,7 +117,7 @@ import { uuid } from '@tap/shared'
 export default {
   name: 'List',
 
-  components: { VTable },
+  components: { VTable, VIcon },
 
   props: {
     data: {

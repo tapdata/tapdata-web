@@ -82,7 +82,13 @@
         <ConsolePanel ref="console"></ConsolePanel>
       </section>
       <!--配置面板-->
-      <ConfigPanel ref="configPanel" :scope="scope" :settings="dataflow" show-schema-panel />
+      <ConfigPanel
+        ref="configPanel"
+        :scope="scope"
+        :settings="dataflow"
+        :sync-type="dataflow.syncType"
+        show-schema-panel
+      />
     </section>
   </section>
 </template>

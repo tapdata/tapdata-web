@@ -682,7 +682,7 @@ export default {
           const table = this.getTableByTask(taskInfo)
           const mapTask = this.mapTask(taskInfo)
 
-          if (table) this.getTableWebsite(to.id, table, mapTask)
+          if (to.showTableWebsite) this.getTableWebsite(to.id, table, mapTask)
 
           this.dialogConfig.visible = false
           this.creating = false
