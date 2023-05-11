@@ -153,7 +153,40 @@ import { Select } from 'element-ui'
 export default {
   name: 'Select',
 
-  extends: Select
+  extends: Select,
+
+  methods: {
+    handleOptionSelect(option, byClick) {
+      if (this.multiple) {
+        const value = (this.value || []).slice()
+        const optionIndex = this.getValueIndex(value, option.value)
+        if (optionIndex > -1) {
+          value.splice(optionIndex, 1)
+        } else if (this.multipleLimit <= 0 || value.length < this.multipleLimit) {
+          value.push(option.value)
+        }
+        this.$emit('input', value)
+        this.emitChange(value)
+        if (option.created) {
+          this.query = ''
+          this.handleQueryChange('')
+          this.inputLength = 20
+          this.$emit('create', value)
+        }
+        if (this.filterable) this.$refs.input.focus()
+      } else {
+        this.$emit('input', option.value)
+        this.emitChange(option.value)
+        this.visible = false
+      }
+      this.isSilentBlur = byClick
+      this.setSoftFocus()
+      if (this.visible) return
+      this.$nextTick(() => {
+        this.scrollToOption(option)
+      })
+    }
+  }
 }
 </script>
 
