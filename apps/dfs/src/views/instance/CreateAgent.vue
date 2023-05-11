@@ -39,11 +39,10 @@
             </div>
           </div>
           <div
-            class="platform-wrap product-type-card rounded-xl border flex flex-column position-relative clickable overflow-auto"
+            class="platform-wrap product-type-card rounded-xl border flex flex-column position-relative clickable overflow-auto disabled"
             :class="{
               active: platform === 'realTime'
             }"
-            @click="changePlatform('realTime')"
           >
             <div class="is-active position-absolute top-0 end-0">
               <div class="is-active-triangle"></div>
@@ -260,29 +259,29 @@
               :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxi')"
               v-if="agentDeploy === 'fullManagement'"
             >
-              <div class="flex">
-                <span
-                  class="font-color-light inline-block"
-                  :class="[
-                    { 'form-label': this.$i18n.locale === 'zh-CN' },
-                    { 'form-label-en': this.$i18n.locale === 'en' }
-                  ]"
-                  >{{ $t('dfs_agent_download_subscriptionmodeldialog_yunfuwushang') }}</span
-                >
-                <ElRadioGroup v-model="provider" @input="changeProvider" class="flex gap-4">
-                  <ElRadio
-                    v-for="(item, index) in cloudProviderList"
-                    :key="index"
-                    :label="item.cloudProvider"
-                    border
-                    class="rounded-4 subscription-radio m-0 position-relative"
-                  >
-                    <span class="inline-flex align-center">
-                      {{ item.cloudProviderName }}
-                    </span>
-                  </ElRadio>
-                </ElRadioGroup>
-              </div>
+              <!--              <div class="flex">-->
+              <!--                <span-->
+              <!--                  class="font-color-light inline-block"-->
+              <!--                  :class="[-->
+              <!--                    { 'form-label': this.$i18n.locale === 'zh-CN' },-->
+              <!--                    { 'form-label-en': this.$i18n.locale === 'en' }-->
+              <!--                  ]"-->
+              <!--                  >{{ $t('dfs_agent_download_subscriptionmodeldialog_yunfuwushang') }}</span-->
+              <!--                >-->
+              <!--                <ElRadioGroup v-model="provider" @input="changeProvider" class="flex gap-4">-->
+              <!--                  <ElRadio-->
+              <!--                    v-for="(item, index) in cloudProviderList"-->
+              <!--                    :key="index"-->
+              <!--                    :label="item.cloudProvider"-->
+              <!--                    border-->
+              <!--                    class="rounded-4 subscription-radio m-0 position-relative"-->
+              <!--                  >-->
+              <!--                    <span class="inline-flex align-center">-->
+              <!--                      {{ item.cloudProviderName }}-->
+              <!--                    </span>-->
+              <!--                  </ElRadio>-->
+              <!--                </ElRadioGroup>-->
+              <!--              </div>-->
               <div class="flex mt-4">
                 <span
                   class="font-color-light inline-block"
@@ -347,29 +346,29 @@
               <div class="mt-1 lh-base" v-html="$t('dfs_agent_specification_description', agentSizeCap)"></div>
             </ElFormItem>
             <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxi')">
-              <div class="flex">
-                <span
-                  class="font-color-light inline-block"
-                  :class="[
-                    { 'form-label': this.$i18n.locale === 'zh-CN' },
-                    { 'form-label-en': this.$i18n.locale === 'en' }
-                  ]"
-                  >{{ $t('dfs_agent_download_subscriptionmodeldialog_yunfuwushang') }}</span
-                >
-                <ElRadioGroup v-model="provider" @input="changeProvider" class="flex gap-4">
-                  <ElRadio
-                    v-for="(item, index) in cloudProviderList"
-                    :key="index"
-                    :label="item.cloudProvider"
-                    border
-                    class="rounded-4 subscription-radio m-0 position-relative"
-                  >
-                    <span class="inline-flex align-center">
-                      {{ item.cloudProviderName }}
-                    </span>
-                  </ElRadio>
-                </ElRadioGroup>
-              </div>
+              <!--              <div class="flex">-->
+              <!--                <span-->
+              <!--                  class="font-color-light inline-block"-->
+              <!--                  :class="[-->
+              <!--                    { 'form-label': this.$i18n.locale === 'zh-CN' },-->
+              <!--                    { 'form-label-en': this.$i18n.locale === 'en' }-->
+              <!--                  ]"-->
+              <!--                  >{{ $t('dfs_agent_download_subscriptionmodeldialog_yunfuwushang') }}</span-->
+              <!--                >-->
+              <!--                <ElRadioGroup v-model="provider" @input="changeProvider" class="flex gap-4">-->
+              <!--                  <ElRadio-->
+              <!--                    v-for="(item, index) in cloudProviderList"-->
+              <!--                    :key="index"-->
+              <!--                    :label="item.cloudProvider"-->
+              <!--                    border-->
+              <!--                    class="rounded-4 subscription-radio m-0 position-relative"-->
+              <!--                  >-->
+              <!--                    <span class="inline-flex align-center">-->
+              <!--                      {{ item.cloudProviderName }}-->
+              <!--                    </span>-->
+              <!--                  </ElRadio>-->
+              <!--                </ElRadioGroup>-->
+              <!--              </div>-->
               <div class="flex mt-4">
                 <span
                   class="font-color-light inline-block"
@@ -486,7 +485,7 @@
                 :label="$t('dfs_instance_createagent_yunchangshangkeyong')"
                 v-if="agentDeploy !== 'selfHost' || currentAliyunAgentType === 'Cloud'"
               >
-                <span class="font-color-dark"> {{ cloudProviderName }} | {{ regionName }} </span>
+                <span class="font-color-dark"> {{ regionName }} </span>
               </ElFormItem>
               <ElFormItem :label="$t('dfs_instance_create_jieshouzhangdande')" prop="email" :rules="getEmailRules()">
                 <ElInput v-model="form.email" :placeholder="getPlaceholder()" style="width: 300px"></ElInput>

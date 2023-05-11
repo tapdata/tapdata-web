@@ -1377,10 +1377,10 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_shishishujutong: '實時數據同步',
   dfs_agent_download_subscriptionmodeldialog_gongzuoliangjicheng: '工作量集成',
   dfs_agent_download_subscriptionmodeldialog_apIfuwu: 'API服務發布',
-  dfs_agent_download_subscriptionmodeldialog_yunchangshangkeyong: '雲廠商|可用區:',
+  dfs_agent_download_subscriptionmodeldialog_yunchangshangkeyong: '可用區:',
   dfs_agent_download_subscriptionmodeldialog_diqu: '地區',
   dfs_agent_download_subscriptionmodeldialog_yunfuwushang: '雲服務商',
-  dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxi: '請選擇您希望部署的公有云及地區',
+  dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxi: '請選擇您希望部署的地區',
   dfs_agent_download_subscriptionmodeldialog_chuzhichisuoyou: '除支持所有的數據集成平台的場景外，還支持：',
   dfs_agent_download_subscriptionmodeldialog_zhuyaoshiyongchang: '主要使用場景',
   dfs_agent_download_subscriptionmodeldialog_heIPaa:
@@ -1393,7 +1393,7 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_qiyeshujuji:
     '企業數據集成平台,可以用來連接打通企業的各個數據系統,並在這些系統中進行實時的數據傳輸,轉換和加工。 ',
   dfs_agent_download_subscriptionmodeldialog_qiyeshujuji2: '企業數據集成平台',
-  dfs_instance_createagent_yunchangshangkeyong: '雲廠商|可用區',
+  dfs_instance_createagent_yunchangshangkeyong: '可用區',
   dfs_instance_createagent_heIPaa:
     '和IPaas相比,最大的區別是使用了一個中央存儲來對企業核心數據提供共享服務.具有對源庫性能影響低,可擴展,可進行數據治理等優勢.',
   dfs_instance_createagent_qiyeshishishu:

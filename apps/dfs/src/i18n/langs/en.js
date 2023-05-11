@@ -1520,11 +1520,10 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_shishishujutong: 'Real-time data synchronization',
   dfs_agent_download_subscriptionmodeldialog_gongzuoliangjicheng: 'workload integration',
   dfs_agent_download_subscriptionmodeldialog_apIfuwu: 'API service publishing',
-  dfs_agent_download_subscriptionmodeldialog_yunchangshangkeyong: 'Cloud vendor|Availability zone:',
+  dfs_agent_download_subscriptionmodeldialog_yunchangshangkeyong: 'Availability zone:',
   dfs_agent_download_subscriptionmodeldialog_diqu: 'Region',
   dfs_agent_download_subscriptionmodeldialog_yunfuwushang: 'Cloud service provider',
-  dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxi:
-    'Please select the public cloud and region you want to deploy',
+  dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxi: 'Please select the region you want to deploy',
   dfs_agent_download_subscriptionmodeldialog_chuzhichisuoyou:
     'In addition to supporting all data integration platform scenarios, it also supports:',
   dfs_agent_download_subscriptionmodeldialog_zhuyaoshiyongchang: 'Main usage scenarios',
@@ -1538,7 +1537,7 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_qiyeshujuji:
     'Enterprise data integration platform can be used to connect various data systems of enterprises, and carry out real-time data transmission, transformation and processing in these systems. ',
   dfs_agent_download_subscriptionmodeldialog_qiyeshujuji2: 'Integration Platform as a Service',
-  dfs_instance_createagent_yunchangshangkeyong: 'Cloud Vendor | Availability Zone',
+  dfs_instance_createagent_yunchangshangkeyong: 'Availability Zone',
   dfs_instance_createagent_heIPaa:
     'Compared with IPaas, the biggest difference is that it uses a central storage to provide shared services for enterprise core data. It has the advantages of low impact on source database performance, scalability, and data governance.',
   dfs_instance_createagent_qiyeshishishu:
