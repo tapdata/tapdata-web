@@ -42,6 +42,8 @@
             @change="handleDefault(row)"
           ></ElSwitch>
           <ElDivider direction="vertical"></ElDivider>
+          <ElButton type="text" @click="handleEdit(row)">{{ $t('public_button_edit') }}</ElButton>
+          <ElDivider direction="vertical"></ElDivider>
           <ElButton type="text" :disabled="!row.canDelete" @click="remove(row)">{{
             $t('public_button_delete')
           }}</ElButton>
@@ -327,7 +329,7 @@ export default {
     },
     async remove(row) {
       //先去请求是否外存已被使用了
-      this.usingTasks = await await externalStorageApi.usingTask(row.id)
+      this.usingTasks = await externalStorageApi.usingTask(row.id)
       const flag = await this.$confirm(i18n.t('packages_business_external_storage_list_querenshanchuwai'), '', {
         type: 'warning',
         showClose: false
@@ -381,6 +383,24 @@ export default {
           }
         })
       }
+    },
+
+    // 编辑
+    handleEdit(row = {}) {
+      externalStorageApi.usingTask(row.id).then(data => {
+        if (!data) {
+          return this.openDialog(row)
+        }
+        this.$confirm(
+          '该外存正在被其它任务使用，修改外存配置会导致相关任务执行出现逻辑问题，请谨慎使用该功能。',
+          this.$t('public_button_edit'),
+          {
+            type: 'warning'
+          }
+        ).then(resFlag => {
+          resFlag && this.openDialog(row)
+        })
+      })
     }
   }
 }

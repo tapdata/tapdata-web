@@ -473,12 +473,15 @@ export default {
             placeholder: this.$t('packages_business_connection_form_shared_mining_tip')
           }
         }
+        // 该外存正在被其它任务使用，修改外存配置会导致相关任务执行出现逻辑问题，请谨慎使用该功能。
+        const checkConnectionTaskTotal = id ? (await connectionsApi.checkLogCollectorTask(id, 1)).total : 0
         // 共享挖掘设置
         let config = {
           shareCDCExternalStorageId: {
             title: this.$t('packages_business_external_storage'), //外存配置
             type: 'string',
             'x-decorator': 'FormItem',
+            description: checkConnectionTaskTotal ? '此时检测当前连接正在使用该外存.。' : null,
             'x-component': 'Select',
             'x-reactions': [
               {
