@@ -1024,5 +1024,10 @@ export default {
     'BigQuery是Google Cloud提供的託管式數據倉庫，以高速、可擴展和安全著稱，可以處理PB級數據，與多個工具集成，適用於各種數據分析和挖掘場景。 ',
   packages_business_swimlane_tablepreview_chuangjianrenwu: '創建任務',
   packages_business_as_source: '作為源頭',
-  packages_business_as_target: '作為目標'
+  packages_business_as_target: '作為目標',
+  packages_business_connections_databaseform_dangqianlianjiezheng:
+    '當前連接正在使用原外存，切換會導致數據丟失，請謹慎操作。 ',
+  packages_business_external_storage_list_gaiwaicunzhengzai:
+    '該外存正在被其它任務使用，修改外存配置會導致相關任務執行出現邏輯問題，請謹慎使用該功能。 ',
+  packages_business_swimlane_target_shouye: '首頁'
 }

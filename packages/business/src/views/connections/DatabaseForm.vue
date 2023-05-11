@@ -994,7 +994,7 @@ export default {
         shareCDCExternalStorageIdOnChange: (val, $self) => {
           $self.setDescription(
             this.checkLogCollectorTaskTotal && val !== this.model.shareCDCExternalStorageId
-              ? '当前连接正在使用原外存，切换会导致数据丢失，请谨慎操作。'
+              ? i18n.t('packages_business_connections_databaseform_dangqianlianjiezheng')
               : null
           )
         }

@@ -377,7 +377,7 @@ export default {
           return this.openDialog(row)
         }
         this.$confirm(
-          '该外存正在被其它任务使用，修改外存配置会导致相关任务执行出现逻辑问题，请谨慎使用该功能。',
+          i18n.t('packages_business_external_storage_list_gaiwaicunzhengzai'),
           this.$t('public_button_edit'),
           {
             type: 'warning'
