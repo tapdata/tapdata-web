@@ -171,7 +171,7 @@ export default {
           this.query = ''
           this.handleQueryChange('')
           this.inputLength = 20
-          this.$emit('create', value)
+          this.$emit('create', option.value)
         }
         if (this.filterable) this.$refs.input.focus()
       } else {
