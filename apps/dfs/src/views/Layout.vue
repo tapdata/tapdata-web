@@ -54,7 +54,11 @@
         <RouterView @agent_no_running="onAgentNoRunning"></RouterView>
       </ElMain>
     </ElContainer>
-    <ConnectionTypeDialog :dialogVisible.sync="dialogVisible" @databaseType="createConnection"></ConnectionTypeDialog>
+    <ConnectionTypeDialog
+      :visible.sync="dialogVisible"
+      selector-type="source_and_target"
+      @selected="createConnection"
+    ></ConnectionTypeDialog>
     <!--    <AgentGuideDialog :visible.sync="agentGuideDialog" @openAgentDownload="openAgentDownload"></AgentGuideDialog>-->
     <AgentDownloadModal :visible.sync="agentDownload.visible" :source="agentDownload.data"></AgentDownloadModal>
     <SubscriptionModelDialog :visible.sync="subscriptionModelVisible" :showClose="false"></SubscriptionModelDialog>
@@ -66,9 +70,8 @@
 <script>
 import TheHeader from '@/components/the-header'
 import { VIcon } from '@tap/component'
-import { PageHeader } from '@tap/business'
+import { PageHeader, SceneDialog as ConnectionTypeDialog } from '@tap/business'
 
-import ConnectionTypeDialog from '@/components/ConnectionTypeDialog'
 import AgentDownloadModal from '@/views/agent-download/AgentDownloadModal'
 // import AgentGuideDialog from '@/views/agent-download/AgentGuideDialog'
 import BindPhone from '@/views/user/components/BindPhone'

@@ -1,3 +1,4 @@
+import i18n from '@/i18n'
 import Parent from './Parent'
 import Layout from '../views/Layout.vue'
 import FastDownload from '@/views/agent-download/FastDownload.vue'
@@ -117,7 +118,7 @@ const routes = [
             name: 'createAgent',
             component: () => import(/* webpackChunkName: "instance-details" */ '../views/instance/CreateAgent'),
             meta: {
-              title: '配置实时数据平台'
+              title: i18n.t('dfs_agent_download_subscriptionmodeldialog_peizhishishishu')
             }
           },
           {
@@ -224,6 +225,14 @@ const routes = [
         component: UserCenter,
         meta: {
           title: 'tap_user_center'
+        }
+      },
+      {
+        path: '/user/order',
+        name: 'order',
+        component: () => import(/* webpackChunkName: "instance" */ '../views/order/List.vue'),
+        meta: {
+          title: i18n.t('dfs_router_index_dingyuezhongxin')
         }
       },
       {

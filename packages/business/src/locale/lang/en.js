@@ -354,8 +354,9 @@ export default {
   packages_business_relation_details_huancun: 'Cache',
   packages_business_relation_details_wajue: 'Mining',
   packages_business_relation_details_renwu: 'Tasks',
+  packages_business_agent_select_placeholder: 'Please select an agent',
   packages_business_agent_select_not_found: 'This agent does not exist. Select another agent',
-  packages_business_components_connectiontypeselectorsort_wodeshujuyuan: 'My data source',
+  packages_business_components_connectiontypeselectorsort_wodeshujuyuan: 'My Data Source',
   packages_business_components_connectiontypeselectorsort_jiaoyouTap:
     'Let Tapdata conduct a comprehensive quality test to ensure the stability and quality of the plugin',
   packages_business_components_connectiontypeselectorsort_zhuyizhelishi:
@@ -1072,5 +1073,5 @@ export default {
     'MongoDB is a non-relational database with flexibility, high performance, ease of use and scalability, suitable for application scenarios that need to process large amounts of unstructured data and require fast query and scalability. ',
   packages_business_create_connection_scenedialog_bigQu:
     'BigQuery is a managed data warehouse provided by Google Cloud. It is famous for its high speed, scalability and security. It can process PB-level data, integrate with multiple tools, and is suitable for various data analysis and mining scenarios. ',
-  packages_business_swimlane_tablepreview_chuangjianrenwu: 'Create task'
+  packages_business_swimlane_tablepreview_chuangjianrenwu: 'Create Task'
 }

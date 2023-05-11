@@ -198,6 +198,9 @@
         ref="table"
         class="mt-4"
       >
+        <template #agentType="{ row }">
+          <span>{{ agentTypeMap[row.agentType || 'local'] }}</span>
+        </template>
         <template #bindAgent="{ row }">
           <ElLink v-if="row.agentId" type="primary" @click="handleAgent(row)">{{
             $t('dfs_instance_selectlist_yibangding') + ' ' + $t('public_agent') + ' : ' + row.agentId
@@ -209,39 +212,6 @@
         </template>
       </VTable>
     </section>
-
-    <section>
-      <div class="mt-12 fs-6 fw-sub">{{ $t('dfs_user_center_fuwudingyuexin') }}</div>
-      <VTable
-        :columns="columns"
-        :remoteMethod="remoteMethod"
-        :page-options="{
-          layout: 'total, ->, prev, pager, next, sizes, jumper'
-        }"
-        ref="table"
-        class="mt-4"
-      >
-        <template #bindAgent="{ row }">
-          <ElLink v-if="row.agentId && row.status === 'pay'" type="primary" @click="handleAgent(row)">{{
-            row.agentId
-          }}</ElLink>
-          <span v-else>-</span>
-        </template>
-        <template #operation="{ row }">
-          <!--          <ElButton type="text" @click="handleRecord(row)">记录</ElButton>-->
-          <ElButton
-            v-if="['expire', 'pay', 'cancelSubscribe'].includes(row.status) && row.type === 'one_time'"
-            type="text"
-            @click="handleRenew(row)"
-            >{{ $t('public_button_renew') }}</ElButton
-          >
-          <ElButton v-if="['payFail', 'unPay'].includes(row.status)" type="text" @click="handlePay(row)">{{
-            $t('public_button_pay')
-          }}</ElButton>
-        </template>
-      </VTable>
-    </section>
-
     <ElDialog
       width="435px"
       append-to-body
@@ -544,8 +514,6 @@
         <span class="font-color-dark">{{ item.value }}</span>
       </div>
     </ElDialog>
-    <!--转账支付-->
-    <transferDialog :visible.sync="showTransferDialogVisible" :price="pricePay"></transferDialog>
   </div>
 </template>
 
@@ -554,23 +522,21 @@ import i18n from '@/i18n'
 
 import InlineInput from '@/components/InlineInput'
 import VerificationCode from '@/components/VerificationCode'
-import transferDialog from '../agent-download/transferDialog'
 import UploadFile from '@/components/UploadFile'
 import CryptoJS from 'crypto-js'
 import dayjs from 'dayjs'
 import { VTable } from '@tap/component'
-import { getSpec, getPaymentMethod } from '../instance/utils'
-import { ORDER_STATUS_MAP, CURRENCY_SYMBOL_MAP, NUMBER_MAP, TIME_MAP } from '@tap/business'
+import { AGENT_TYPE_MAP } from '../instance/utils'
+import { NUMBER_MAP } from '@tap/business'
 import { openUrl, urlToBase64 } from '@tap/shared'
 
 export default {
   name: 'Center',
   inject: ['buried'],
-  components: { InlineInput, VerificationCode, transferDialog, UploadFile, VTable },
+  components: { InlineInput, VerificationCode, UploadFile, VTable },
   data() {
     return {
-      showTransferDialogVisible: false,
-      pricePay: '',
+      agentTypeMap: AGENT_TYPE_MAP,
       userData: {
         username: '',
         nickname: '',
@@ -633,39 +599,6 @@ export default {
       accessKeyTooltip: false,
       secretKeyTooltip: false,
       disabledBindingPhone: window.__config__?.disabledBindingPhone,
-      columns: [
-        {
-          label: i18n.t('dfs_instance_selectlist_dingyueneirong'),
-          prop: 'content'
-        },
-        {
-          label: i18n.t('dfs_instance_selectlist_dingyuezhouqi'),
-          prop: 'periodLabel',
-          width: 320
-        },
-        {
-          label: i18n.t('dfs_user_center_dingyueshuliang'),
-          prop: 'quantity'
-        },
-        {
-          label: i18n.t('dfs_user_center_jine'),
-          prop: 'priceLabel'
-        },
-        {
-          label: i18n.t('dfs_instance_selectlist_bangdingshilizhuang'),
-          prop: 'agentId',
-          slotName: 'bindAgent'
-        },
-        {
-          label: i18n.t('task_monitor_status'),
-          prop: 'statusLabel'
-        },
-        {
-          label: i18n.t('public_operation'),
-          prop: 'extendArray',
-          slotName: 'operation'
-        }
-      ],
       codeColumns: [
         {
           label: i18n.t('dfs_instance_selectlist_shouquanma'),
@@ -675,6 +608,11 @@ export default {
           label: i18n.t('dfs_user_center_jihuoshijian2'),
           prop: 'activateTimeLabel',
           width: 320
+        },
+        {
+          label: i18n.t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi'),
+          prop: 'agentType',
+          slotName: 'agentType'
         },
         {
           label: i18n.t('dfs_user_center_guoqishijian2'),
@@ -1060,56 +998,6 @@ export default {
     handleCopySecretKey() {
       this.secretKeyTooltip = true
     },
-    remoteMethod({ page }) {
-      let { current, size } = page
-      let filter = {
-        limit: size,
-        skip: size * (current - 1),
-        sort: ['createAt desc'],
-        where: {
-          status: {
-            $ne: 'invalid' //过滤 invild
-          }
-        }
-      }
-      return this.$axios
-        .get(`api/tcm/paid/plan/paidSubscribe?filter=${encodeURIComponent(JSON.stringify(filter))}`)
-        .then(data => {
-          let items = data.items || []
-          return {
-            total: data.total,
-            data:
-              items.map(t => {
-                t.statusLabel = ORDER_STATUS_MAP[t.status]
-                const { spec, type, periodUnit, period } = t || {}
-                t.subscriptionMethodLabel = getPaymentMethod({
-                  type,
-                  periodUnit,
-                  period
-                })
-                t.content = `${t.subscriptionMethodLabel} ${getSpec(spec)} ${i18n.t('public_agent')}`
-                t.periodLabel =
-                  t.status === 'unPay'
-                    ? '-'
-                    : dayjs(t.periodStart).format('YYYY-MM-DD HH:mm:ss') +
-                      ' - ' +
-                      dayjs(t.periodEnd).format('YYYY-MM-DD HH:mm:ss')
-                t.priceSuffix = t.type === 'recurring' ? '/' + TIME_MAP[t.periodUnit] : ''
-                t.formatPrice =
-                  CURRENCY_SYMBOL_MAP[t.currency] +
-                  (t.price / 100).toLocaleString('zh', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                  })
-                t.priceLabel = t.formatPrice + t.priceSuffix
-                t.bindAgent = t.agentId
-                  ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
-                  : i18n.t('user_Center_weiBangDing')
-                return t
-              }) || []
-          }
-        })
-    },
     codeRemoteMethod() {
       return this.$axios.get('api/tcm/aliyun/market/license/list').then(data => {
         const items = data.items || []
@@ -1208,26 +1096,6 @@ export default {
             })
         }
       })
-    },
-    //支付
-    handlePay(row = {}) {
-      this.buried('payAgentStripe')
-      if (row.paymentType === 'offline') {
-        this.showTransferDialogVisible = true
-        this.pricePay = row.formatPrice
-      } else {
-        openUrl(row.payUrl)
-        this.$confirm(
-          i18n.t('dfs_user_center_ninjiangzhifur', { val1: row.content }),
-          i18n.t('dfs_user_center_zhifufuwu'),
-          {
-            type: 'warning',
-            confirmButtonText: i18n.t('dfs_instance_create_zhifuwancheng')
-          }
-        ).then(() => {
-          this.$refs.table?.fetch()
-        })
-      }
     },
     handleRenewal() {
       this.buried('goRenewalAliyunCode')

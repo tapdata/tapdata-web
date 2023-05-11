@@ -266,12 +266,16 @@ export default {
       if (!value) {
         callback(new Error(this.$t('packages_business_relation_list_qingshururenwu')))
       } else {
-        const isExist = await taskApi.checkName({
-          name: value
-        })
-        if (isExist) {
-          callback(new Error(this.$t('packages_dag_task_form_error_name_duplicate')))
-        } else {
+        try {
+          const isExist = await taskApi.checkName({
+            name: value
+          })
+          if (isExist) {
+            callback(new Error(this.$t('packages_dag_task_form_error_name_duplicate')))
+          } else {
+            callback()
+          }
+        } catch (e) {
           callback()
         }
       }
@@ -659,6 +663,7 @@ export default {
     showDialog() {
       this.dialogConfig.visible = true
       this.dialogConfig.taskName = ''
+      this.$refs.form?.clearValidate()
     },
 
     hideDialog() {

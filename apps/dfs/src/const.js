@@ -1,10 +1,15 @@
 import i18n from '@/i18n'
 
 export const INSTANCE_STATUS_MAP = {
-    Creating: { text: i18n.t('public_agent_status_to_be_deployed'), type: 'warning' },
+    Creating: { text: i18n.t('public_agent_status_to_be_deployed'), type: 'waiting' },
     Running: { text: i18n.t('public_status_running'), type: 'success' },
-    Stopping: { text: i18n.t('public_status_stopping'), type: 'danger' },
-    Stopped: { text: i18n.t('public_agent_status_offline'), type: 'disable' }
+    Stopping: { text: i18n.t('public_status_stopping') },
+    Stopped: { text: i18n.t('public_agent_status_offline'), type: 'disable' },
+    WaitingRestart: { text: i18n.t('public_status_to_be_restart'), type: 'waiting' },
+    Restarting: { text: i18n.t('public_status_restarting') },
+    Deploying: { text: i18n.t('public_status_deploying') },
+    Altering: { text: i18n.t('public_status_altering') },
+    Error: { text: i18n.t('public_status_error'), type: 'danger' }
   },
   TASK_STATUS_MAP = {
     running: { text: i18n.t('public_status_running'), icon: 'yunxingzhong', type: 'success' },

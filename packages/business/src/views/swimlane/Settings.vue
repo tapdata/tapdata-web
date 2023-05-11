@@ -327,13 +327,14 @@ export default {
     setData(data = {}, update = false) {
       this.mode = data.mode || this.modeItems[0]?.value
       this.liveDataPlatformId = data.id
-      if (this.mode === 'service' && update) {
-        const { options, connectionsList } = this
-        this.form.fdmStorageCluster = data.fdmStorageCluster || options[0]?.value
-        this.form.fdmStorageConnectionId = data.fdmStorageConnectionId || connectionsList[0]?.value
 
-        this.form.mdmStorageCluster = data.mdmStorageCluster || options[0]?.value
-        this.form.mdmStorageConnectionId = data.mdmStorageConnectionId || connectionsList[0]?.value
+      if (this.mode === 'service') {
+        const { options, connectionsList } = this
+        this.form.fdmStorageCluster = data.fdmStorageCluster || this.form.fdmStorageCluster || options[0]?.value
+        this.form.fdmStorageConnectionId =
+          data.fdmStorageConnectionId || this.form.fdmStorageConnectionId || connectionsList[0]?.value
+        this.form.mdmStorageCluster = this.form.fdmStorageCluster
+        this.form.mdmStorageConnectionId = this.form.fdmStorageConnectionId
       }
 
       update && this.$emit('update:mode', this.mode)

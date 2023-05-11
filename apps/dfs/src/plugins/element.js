@@ -66,7 +66,8 @@ import {
   SkeletonItem,
   Submenu,
   InfiniteScroll,
-  Empty
+  Empty,
+  Slider
 } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
@@ -180,3 +181,4 @@ Vue.use(Submenu)
 Vue.use(InfiniteScroll)
 Vue.use(Alert)
 Vue.use(Empty)
+Vue.use(Slider)
