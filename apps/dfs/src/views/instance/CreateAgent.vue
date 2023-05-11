@@ -291,7 +291,7 @@
                   ]"
                   >{{ $t('dfs_agent_download_subscriptionmodeldialog_diqu') }}</span
                 >
-                <ElRadioGroup v-model="region" class="flex gap-4">
+                <ElRadioGroup v-model="region" class="flex gap-4" @change="changeRegion">
                   <ElRadio
                     v-for="(item, index) in cloudDetail"
                     :key="index"
@@ -922,7 +922,7 @@ export default {
         this.currencyType = this.packageItems[0]?.currency
       }
       let currentItem = this.packageItems[0]
-      if (this.selected?.type) {
+      if (this.selected?.type && currentItem?.chargeProvider !== 'FreeTier') {
         currentItem = this.packageItems.find(
           it => it.type === this.selected?.type && it.periodUnit === this.selected?.periodUnit //切换规格不改变原来的订阅方式
         )
@@ -941,6 +941,9 @@ export default {
     changeRegion() {
       let region = this.cloudDetail.filter(it => it.region === this.region) || []
       this.regionName = region?.[0]?.regionName
+      //只展示可用区
+      this.provider = region?.[0]?.cloudProvider
+      this.cloudProviderName = region?.[0]?.cloudProviderName
     },
     //切换订阅方式
     handleChange(item = {}) {
@@ -1076,8 +1079,15 @@ export default {
       this.$axios.get('api/tcm/orders/queryCloudProvider').then(data => {
         this.cloudProviderList = data?.items || []
         //初始化云厂商
-        this.provider = this.cloudProviderList?.[0].cloudProvider
-        this.changeProvider()
+        //this.provider = this.cloudProviderList?.[0].cloudProvider
+        //this.changeProvider()
+
+        //合并可用区
+        let cloudProviderList = this.cloudProviderList.map(t => t.cloudDetail)
+        this.cloudDetail = cloudProviderList.reduce((a, b) => a.concat(b))
+        this.region = this.cloudDetail[0].region
+        this.provider = this.cloudDetail[0].provider
+        this.changeRegion()
       })
     },
     //查询规格价格

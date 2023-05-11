@@ -521,11 +521,9 @@ export default {
     },
     createAgent() {
       this.$router.push({
-        name: 'Instance',
-        query: {
-          create: true
-        }
+        name: 'createAgent'
       })
+      this.buried('newAgentStripeDialog')
     },
     async createTask() {
       this.checkAgent(() => {
