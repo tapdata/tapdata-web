@@ -180,7 +180,8 @@ export default {
       doc: '',
       pathUrl: '',
       showDebug: false,
-      heartbeatTaskId: ''
+      heartbeatTaskId: '',
+      checkLogCollectorTaskTotal: 0 // 当前连接是否有共享缓存任务使用
     }
   },
   computed: {
@@ -473,16 +474,20 @@ export default {
             placeholder: this.$t('packages_business_connection_form_shared_mining_tip')
           }
         }
-        // 该外存正在被其它任务使用，修改外存配置会导致相关任务执行出现逻辑问题，请谨慎使用该功能。
-        const checkConnectionTaskTotal = id ? (await connectionsApi.checkLogCollectorTask(id, 1)).total : 0
         // 共享挖掘设置
         let config = {
           shareCDCExternalStorageId: {
             title: this.$t('packages_business_external_storage'), //外存配置
             type: 'string',
             'x-decorator': 'FormItem',
-            description: checkConnectionTaskTotal ? '此时检测当前连接正在使用该外存.。' : null,
+            'x-decorator-props': {
+              className: 'shareCDCExternalStorageId'
+            },
+            description: '',
             'x-component': 'Select',
+            'x-component-props': {
+              onChange: `{{ val => shareCDCExternalStorageIdOnChange(val, $self) }}`
+            },
             'x-reactions': [
               {
                 dependencies: ['__TAPDATA.shareCdcEnable'],
@@ -813,6 +818,11 @@ export default {
       }
       if (id) {
         await this.getPdkData(id)
+        // 开启了共享缓存
+        const { shareCdcEnable, shareCDCExternalStorageId } = this.model
+        if (shareCdcEnable && shareCDCExternalStorageId) {
+          this.checkLogCollectorTaskTotal = id ? (await connectionsApi.checkLogCollectorTask(id, 1)).total : 0
+        }
         delete result.properties.START.properties.__TAPDATA.properties.name
       }
 
@@ -980,6 +990,13 @@ export default {
             }
           })
           submitForm(params?.target, data)
+        },
+        shareCDCExternalStorageIdOnChange: (val, $self) => {
+          $self.setDescription(
+            this.checkLogCollectorTaskTotal && val !== this.model.shareCDCExternalStorageId
+              ? '当前连接正在使用原外存，切换会导致数据丢失，请谨慎操作。'
+              : null
+          )
         }
       }
       this.schemaData = result
@@ -1208,6 +1225,11 @@ export default {
 
         ::v-deep {
           .formily-element-form-item {
+            &.shareCDCExternalStorageId {
+              .formily-element-form-item-extra {
+                color: map-get($color, danger);
+              }
+            }
             .el-input-number {
               width: 180px;
             }
