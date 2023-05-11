@@ -491,7 +491,7 @@
                 <ElInput v-model="form.email" :placeholder="getPlaceholder()" style="width: 300px"></ElInput>
               </ElFormItem>
             </ElForm>
-            <div class="border rounded-4 price-wrap">
+            <div class="border rounded-4 price-wrap" v-if="agentDeploy !== 'aliyun'">
               <div class="px-3 py-2">
                 <div class="mb-2">
                   <span class="price-detail-label inline-block mr-2">{{
