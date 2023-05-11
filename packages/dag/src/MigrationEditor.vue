@@ -79,7 +79,13 @@
       </section>
 
       <!--配置面板-->
-      <ConfigPanel ref="configPanel" :settings="dataflow" :scope="scope" @hide="onHideSidebar" />
+      <ConfigPanel
+        ref="configPanel"
+        :settings="dataflow"
+        :scope="scope"
+        :sync-type="dataflow.syncType"
+        @hide="onHideSidebar"
+      />
     </section>
   </section>
 </template>
