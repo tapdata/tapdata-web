@@ -532,6 +532,7 @@ export default {
     showDialog() {
       this.dialogConfig.visible = true
       this.dialogConfig.taskName = ''
+      this.$refs.form?.clearValidate()
     },
 
     hideDialog() {
