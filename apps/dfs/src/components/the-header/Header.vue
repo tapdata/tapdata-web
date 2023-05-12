@@ -6,6 +6,11 @@
         <img src="../../assets/image/logoFull.png" alt="" />
       </ElLink>
       <div class="dfs-header__button button-bar pr-4 fs-7">
+        <!--付费专业版-->
+        <div class="vip-btn mr-4 cursor-pointer" @click="openUpgrade">
+          <VIcon size="17">icon-vip</VIcon>
+          订阅专业版
+        </div>
         <div v-if="domain === 'demo.cloud.tapdata.net' && lang !== 'en'" class="marquee-container cursor-pointer">
           <div class="marquee-box">
             <span>{{ $t('dfs_data_dashboard_Marquee') }}</span>
@@ -55,7 +60,7 @@
             <ElDropdownItem command="userCenter" :disabled="$disabledReadonlyUserBtn()">{{
               $t('the_header_Header_yongHuZhongXin')
             }}</ElDropdownItem>
-            <ElDropdownItem command="order">{{$t('dfs_the_header_header_dingyuezhongxin')}}</ElDropdownItem>
+            <ElDropdownItem command="order">{{ $t('dfs_the_header_header_dingyuezhongxin') }}</ElDropdownItem>
             <ElDropdownItem command="home"> {{ $t('header_official_website') }} </ElDropdownItem>
             <ElDropdownItem command="signOut" :disabled="$disabledReadonlyUserBtn()">
               {{ $t('header_sign_out') }}
@@ -63,17 +68,19 @@
           </ElDropdownMenu>
         </ElDropdown>
       </div>
+      <!--付费-->
+      <UpgradeFee :visible.sync="openUpgradeFee"></UpgradeFee>
     </div>
   </ElHeader>
 </template>
 <script>
-import { VIcon } from '@tap/component'
+import { VIcon, UpgradeFee } from '@tap/component'
 import { langMenu, getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
 
 import NotificationPopover from '@/views/workbench/NotificationPopover'
 
 export default {
-  components: { VIcon, NotificationPopover },
+  components: { VIcon, NotificationPopover, UpgradeFee },
   data() {
     return {
       user: window.__USER_INFO__ || {},
@@ -83,7 +90,8 @@ export default {
       lang: '',
       languages: langMenu,
       domain: document.domain,
-      onlyEnglishLanguage: false
+      onlyEnglishLanguage: false,
+      openUpgradeFee: false
     }
   },
   created() {
@@ -201,6 +209,9 @@ export default {
     //处理跳转
     handleGo(item) {
       window.open(item.link, '_blank')
+    },
+    openUpgrade() {
+      this.openUpgradeFee = true
     }
   }
 }
@@ -388,6 +399,12 @@ export default {
   position: absolute;
   right: -100%;
   content: attr(text);
+}
+.vip-btn {
+  color: map-get($color, white);
+  padding: 4px 8px;
+  background: linear-gradient(93.39deg, #2c65ff 10.45%, #702cff 98.21%);
+  border-radius: 4px;
 }
 
 @keyframes move {
