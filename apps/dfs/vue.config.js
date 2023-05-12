@@ -56,7 +56,15 @@ let prodProxyConfig = {
     pathRewrite: {
       '^/': '/console/v3/'
     }
-  }
+  },
+  '/api/gw/': Object.assign(
+    {
+      pathRewrite: {
+        '^/': '/console/v3/'
+      }
+    },
+    proxy
+  )
 }
 let localTmProxy = {
   target: serveUrlMap.localTm,
@@ -88,6 +96,7 @@ module.exports = {
         : {
             '/private_ask/': proxy,
             '/api/tcm/': proxy,
+            '/api/gw/': proxy,
             '/tm/':
               SERVE_ENV === 'local'
                 ? localTmProxy
