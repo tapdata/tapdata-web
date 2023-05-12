@@ -1037,5 +1037,8 @@ export default {
     '当前连接正在使用原外存，切换会导致数据丢失，请谨慎操作。',
   packages_business_external_storage_list_gaiwaicunzhengzai:
     '该外存正在被其它任务使用，修改外存配置会导致相关任务执行出现逻辑问题，请谨慎使用该功能。',
-  packages_business_swimlane_target_shouye: '首页'
+  packages_business_swimlane_target_shouye: '首页',
+  packages_business_connections_databaseform_chakanwajueren: '查看挖掘任务',
+  packages_business_connections_databaseform_dangqianlianjiede:
+    '当前连接的挖掘任务正在使用原外存，切换会导致已挖掘数据丢失，请谨慎操作。'
 }

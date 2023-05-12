@@ -534,7 +534,7 @@ export default {
                 'x-decorator': 'FormItem',
                 'x-component': 'Text',
                 'x-component-props': {
-                  content: '当前连接的挖掘任务正在使用原外存，切换会导致已挖掘数据丢失，请谨慎操作。',
+                  content: i18n.t('packages_business_connections_databaseform_dangqianlianjiede'),
                   class: 'color-danger'
                 }
               },
@@ -547,7 +547,7 @@ export default {
                   class: 'text-decoration-underline',
                   onClick: '{{handleLogCollectorTaskDialog}}'
                 },
-                'x-content': '查看挖掘任务'
+                'x-content': i18n.t('packages_business_connections_databaseform_chakanwajueren')
               }
             }
           }
