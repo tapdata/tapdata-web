@@ -115,8 +115,7 @@
                   </li>
                   <li class="flex fs-7 font-color-sslight lh-base">
                     <VIcon size="16" class="mr-2">check-bold</VIcon
-                    ><span>{{ $t('dfs_agent_download_subscriptionmodeldialog_gengjiaanquanyong') }}</span
-                    >x
+                    ><span>{{ $t('dfs_agent_download_subscriptionmodeldialog_gengjiaanquanyong') }}</span>
                   </li>
                 </ul>
               </div>
