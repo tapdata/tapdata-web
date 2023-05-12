@@ -68,10 +68,7 @@ import i18n from '@tap/i18n'
 
 import { VIcon, VirtualTree } from '@tap/component'
 import { metadataDefinitionsApi, userGroupsApi, discoveryApi, connectionsApi, metadataInstancesApi } from '@tap/api'
-import Cookie from '@tap/shared/src/cookie'
-
-import { DatabaseIcon } from '../components'
-import { makeDragNodeImage } from '../shared/classification'
+import { makeDragNodeImage } from '@tap/business'
 export default {
   name: 'ClassificationTree',
 

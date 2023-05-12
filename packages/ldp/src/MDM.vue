@@ -182,9 +182,8 @@ import { debounce } from 'lodash'
 import { VirtualTree, IconButton } from '@tap/component'
 import { CancelToken, discoveryApi, ldpApi, metadataDefinitionsApi, userGroupsApi } from '@tap/api'
 import { uuid, generateId } from '@tap/shared'
-import { makeDragNodeImage, TASK_SETTINGS } from '../../shared'
+import { makeDragNodeImage, TASK_SETTINGS, DatabaseIcon } from '@tap/business'
 import commonMix from './mixins/common'
-import { DatabaseIcon } from '../../components'
 
 export default {
   name: 'MDM',

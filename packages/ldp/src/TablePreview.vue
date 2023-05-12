@@ -216,14 +216,13 @@
 
 <script>
 import { cloneDeep } from 'lodash'
+import dayjs from 'dayjs'
 
 import { Drawer, VTable, VEmpty } from '@tap/component'
 import { calcTimeUnit, calcUnit, isNum } from '@tap/shared'
 import { discoveryApi, proxyApi, taskApi, metadataInstancesApi, modulesApi } from '@tap/api'
-import i18n from '@/i18n'
-import dayjs from 'dayjs'
-import { TaskStatus, DatabaseIcon } from '../../components'
-import { TASK_TYPE_MAP } from '../../shared'
+import { TaskStatus, DatabaseIcon, TASK_TYPE_MAP } from '@tap/business'
+import i18n from '@tap/i18n'
 
 export default {
   name: 'TablePreview',

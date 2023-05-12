@@ -145,12 +145,11 @@
 </template>
 
 <script>
-import { Drawer } from '@tap/component'
-import { CONNECTION_STATUS_MAP, CONNECTION_TYPE_MAP } from '@tap/business/src/shared'
-import { SchemaProgress, TaskStatus } from '../../components'
-import dayjs from 'dayjs'
-import { taskApi } from '@tap/api'
 import { cloneDeep } from 'lodash'
+import dayjs from 'dayjs'
+import { Drawer } from '@tap/component'
+import { CONNECTION_STATUS_MAP, CONNECTION_TYPE_MAP, SchemaProgress, TaskStatus } from '@tap/business'
+import { taskApi } from '@tap/api'
 
 export default {
   name: 'ConnectionPreview',

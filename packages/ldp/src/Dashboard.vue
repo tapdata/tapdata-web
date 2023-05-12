@@ -62,8 +62,10 @@
 </template>
 
 <script>
-import CreateConnection from '../../components/create-connection/Dialog'
-import SceneDialog from '../../components/create-connection/SceneDialog'
+import { IconButton } from '@tap/component'
+import { SceneDialog, EventEmitter } from '@tap/business'
+import { connectionsApi, metadataDefinitionsApi } from '@tap/api'
+
 import SourceItem from './Source'
 import TargetItem from './Target'
 import FDMItem from './FDM'
@@ -71,10 +73,7 @@ import MDMItem from './MDM'
 import Settings from './Settings'
 import TablePreview from './TablePreview'
 import ConnectionPreview from './ConnectionPreview'
-import { EventEmitter } from '../../shared'
-import { IconButton } from '@tap/component'
-import { connectionsApi, metadataDefinitionsApi } from '@tap/api'
-import Catalogue from '../catalog/Catalogue'
+import Catalogue from './components/Catalogue'
 
 const TYPE2NAME = {
   target: 'TARGET&SERVICE'
@@ -84,7 +83,6 @@ export default {
   name: 'Dashboard',
 
   components: {
-    CreateConnection,
     SourceItem,
     TargetItem,
     FDMItem,

@@ -195,8 +195,7 @@ import {
 } from '@tap/api'
 import { VirtualTree, IconButton, VExpandXTransition } from '@tap/component'
 import { uuid, generateId } from '@tap/shared'
-import { makeDragNodeImage, TASK_SETTINGS } from '../../shared'
-import { DatabaseIcon } from '../../components'
+import { makeDragNodeImage, TASK_SETTINGS, DatabaseIcon } from '@tap/business'
 import commonMix from './mixins/common'
 
 export default {

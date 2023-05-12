@@ -9,14 +9,12 @@ import VerificationForm from './verification/Form'
 import VerificationDetails from './verification/Details'
 import VerificationHistory from './verification/History'
 import VerificationResult from './verification/Result'
-import SwimlaneDashboard from './swimlane/Dashboard'
 import AlarmSetting from './setting/AlarmSetting'
 import AlarmNotification from './setting/AlarmNotification'
 import CustomNodeList from './custom-node/List'
 import SharedMiningList from './shared-mining/List'
-import CatalogView from './catalog/Catalogue'
-import ObjectList from './catalog/ObjectList'
 import DataServerList from './data-server/List'
+import DataServerDrawer from './data-server/Drawer'
 import HeartbeatTableList from './heartbeat-table/List'
 import SharedCacheList from './shared-cache/List'
 import SharedCacheForm from './shared-cache/Form'
@@ -35,14 +33,12 @@ export {
   VerificationDetails,
   VerificationHistory,
   VerificationResult,
-  SwimlaneDashboard,
   AlarmSetting,
   AlarmNotification,
   CustomNodeList,
   SharedMiningList,
-  CatalogView,
-  ObjectList,
   DataServerList,
+  DataServerDrawer,
   HeartbeatTableList,
   SharedCacheList,
   SharedCacheForm,

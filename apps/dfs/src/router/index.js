@@ -45,9 +45,9 @@ const VerifyDetails = async () => {
   return VerifyDetails
 }
 
-const SwimlaneDashboard = async () => {
-  const { SwimlaneDashboard } = await import('@tap/business')
-  return SwimlaneDashboard
+const DataConsoleDashboard = async () => {
+  const { Dashboard } = await import('@tap/ldp')
+  return Dashboard
 }
 
 const CustomNodeList = async () => {
@@ -261,7 +261,7 @@ const routes = [
       {
         path: '/data-console',
         name: 'dataConsole',
-        component: SwimlaneDashboard,
+        component: DataConsoleDashboard,
         meta: {
           title: 'page_title_data_console',
           hideTitle: true,

@@ -107,11 +107,8 @@ import { debounce } from 'lodash'
 
 import { connectionsApi, metadataInstancesApi, ldpApi, CancelToken } from '@tap/api'
 import { VirtualTree, IconButton } from '@tap/component'
-import connectionPreview from './connectionPreview'
-import TablePreview from './TablePreview'
 import NodeIcon from '@tap/dag/src/components/NodeIcon'
-import StageButton from '@tap/business/src/components/StageButton'
-import { makeDragNodeImage } from '../../shared'
+import { makeDragNodeImage, StageButton, DatabaseIcon } from '@tap/business'
 import commonMix from './mixins/common'
 
 export default {
@@ -123,7 +120,7 @@ export default {
     fdmAndMdmId: Array
   },
 
-  components: { NodeIcon, VirtualTree, StageButton, IconButton },
+  components: { NodeIcon, VirtualTree, StageButton, IconButton, DatabaseIcon },
 
   mixins: [commonMix],
 
