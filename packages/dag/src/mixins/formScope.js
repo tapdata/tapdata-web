@@ -772,6 +772,48 @@ export default {
           // 绑定 '.' 按键事件
           editor.keyBinding.removeKeyboardHandler(editorKeyboard)
           editor.keyBinding.addKeyboardHandler(editorKeyboard)
+        },
+
+        validateUpdateConditionFields: async (value, rule, ctx) => {
+          const { field, form } = ctx
+          const $values = form.values
+          let options = field.dataSource
+          let nodeData = this.scope.findNodeById($values.id)
+          console.debug('validateUpdateConditionFields.ctx', ctx, $values.attrs.hasCreate) // eslint-disable-line
+          if (!$values.$inputs[0]) {
+            return
+          }
+
+          // 用户手动创建过
+          // if ($values.attrs.hasCreated ) {
+          if ($values.attrs.hasCreated === false) {
+            if (!options || !options.length) {
+              options = await this.scope.loadNodeFieldOptions($values.$inputs[0])
+            }
+
+            if (options && options.length) {
+              let isPrimaryKeyList = options.filter(item => item.isPrimaryKey)
+              let indicesUniqueList = options.filter(item => item.indicesUnique)
+              let defaultList = (isPrimaryKeyList.length ? isPrimaryKeyList : indicesUniqueList).map(item => item.value)
+
+              console.log('validateUpdateConditionFields.value', value, [...field.value], options) // eslint-disable-line
+
+              if (!value || !value.length) {
+                nodeData.updateConditionFields = defaultList
+                $values.updateConditionFields = nodeData.updateConditionFields
+              } else {
+                let fieldMap = options.reduce((obj, item) => ((obj[item.value] = true), obj), {})
+                let filterValue = value.filter(v => fieldMap[v])
+
+                if (value && value.length !== filterValue.length) {
+                  nodeData.updateConditionFields = filterValue.length ? filterValue : defaultList
+                  $values.updateConditionFields = nodeData.updateConditionFields
+                }
+              }
+            }
+          }
+
+          return !$values.updateConditionFields?.length ? '该字段是必填字段!' : ''
         }
       }
     }

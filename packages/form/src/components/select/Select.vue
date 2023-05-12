@@ -48,7 +48,7 @@
         :disabled="selectDisabled"
         :autocomplete="autoComplete || autocomplete"
         @focus="handleFocus"
-        @blur="handleBlur"
+        @blur="softFocus = false"
         @keyup="managePlaceholder"
         @keydown="resetInputState"
         @keydown.down.prevent="navigateOptions('next')"
@@ -165,14 +165,14 @@ export default {
         } else if (this.multipleLimit <= 0 || value.length < this.multipleLimit) {
           value.push(option.value)
         }
-        this.$emit('input', value)
-        this.emitChange(value)
         if (option.created) {
           this.query = ''
           this.handleQueryChange('')
           this.inputLength = 20
           this.$emit('create', option.value)
         }
+        this.$emit('input', value)
+        this.emitChange(value)
         if (this.filterable) this.$refs.input.focus()
       } else {
         this.$emit('input', option.value)
