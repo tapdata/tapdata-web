@@ -30,7 +30,7 @@ export class MergeTable extends NodeType {
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         'x-reactions': [
-          '{{useAsyncDataSourceByConfig({service: loadExternalStorage, withoutField: true})}}',
+          '{{useAsyncDataSourceByConfig({service: loadExternalStorage, withoutField: true}, $self.value)}}',
           {
             fulfill: {
               state: {

@@ -82,7 +82,8 @@
                     size="small"
                     class="ml-1 px-1 flex align-center clickable"
                     @click="handleOpenWebsite(connectionWebsiteMap[item.id])"
-                    ><VIcon class="mr-1" size="14">open-in-new</VIcon>首页</ElTag
+                    ><VIcon class="mr-1" size="14">open-in-new</VIcon
+                    >{{ $t('packages_business_swimlane_target_shouye') }}</ElTag
                   ></span
                 >
                 <IconButton class="ml-1" @click="$emit('preview', item)">view-details</IconButton>

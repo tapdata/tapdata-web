@@ -42,6 +42,8 @@
             @change="handleDefault(row)"
           ></ElSwitch>
           <ElDivider direction="vertical"></ElDivider>
+          <ElButton type="text" @click="handleEdit(row)">{{ $t('public_button_edit') }}</ElButton>
+          <ElDivider direction="vertical"></ElDivider>
           <ElButton type="text" :disabled="!row.canDelete" @click="remove(row)">{{
             $t('public_button_delete')
           }}</ElButton>
@@ -70,7 +72,7 @@
           <ElInput v-model="form.name"></ElInput>
         </ElFormItem>
         <ElFormItem required :label="$t('public_external_memory_type')">
-          <ElSelect v-model="form.type">
+          <ElSelect v-model="form.type" :disabled="form.id">
             <ElOption label="MongoDB" value="mongodb"></ElOption>
             <ElOption label="RocksDB" value="rocksdb"></ElOption>
           </ElSelect>
@@ -314,7 +316,7 @@ export default {
     },
     async remove(row) {
       //先去请求是否外存已被使用了
-      this.usingTasks = await await externalStorageApi.usingTask(row.id)
+      this.usingTasks = await externalStorageApi.usingTask(row.id)
       const flag = await this.$confirm(i18n.t('packages_business_external_storage_list_querenshanchuwai'), '', {
         type: 'warning',
         showClose: false
@@ -366,6 +368,24 @@ export default {
           }
         })
       }
+    },
+
+    // 编辑
+    handleEdit(row = {}) {
+      externalStorageApi.usingTask(row.id).then(data => {
+        if (!data) {
+          return this.openDialog(row)
+        }
+        this.$confirm(
+          i18n.t('packages_business_external_storage_list_gaiwaicunzhengzai'),
+          this.$t('public_button_edit'),
+          {
+            type: 'warning'
+          }
+        ).then(resFlag => {
+          resFlag && this.openDialog(row)
+        })
+      })
     }
   }
 }

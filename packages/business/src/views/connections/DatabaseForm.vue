@@ -113,6 +113,7 @@
       </span>
     </el-dialog>
     <ConnectionDebug :visible.sync="showDebug" :schema="schemaData" :pdkOptions="pdkOptions" :get-form="getForm" />
+    <UsedTaskDialog v-model="connectionLogCollectorTaskDialog" :data="connectionLogCollectorTaskData"></UsedTaskDialog>
   </div>
 </template>
 
@@ -131,10 +132,11 @@ import Test from './Test'
 import { getConnectionIcon } from './util'
 import { ConnectionDebug } from './ConnectionDebug'
 import SceneDialog from '../../components/create-connection/SceneDialog.vue'
+import UsedTaskDialog from './UsedTaskDialog'
 
 export default {
   name: 'DatabaseForm',
-  components: { SceneDialog, Test, VIcon, SchemaToForm, GitBook, ConnectionDebug },
+  components: { SceneDialog, Test, VIcon, SchemaToForm, GitBook, ConnectionDebug, UsedTaskDialog },
   inject: ['checkAgent', 'buried'],
   directives: {
     resize
@@ -180,7 +182,13 @@ export default {
       doc: '',
       pathUrl: '',
       showDebug: false,
-      heartbeatTaskId: ''
+      heartbeatTaskId: '',
+      connectionLogCollectorTaskDialog: false,
+      // 当前连接是否有共享缓存任务使用
+      connectionLogCollectorTaskData: {
+        items: [],
+        total: 0
+      }
     }
   },
   computed: {
@@ -480,6 +488,9 @@ export default {
             type: 'string',
             'x-decorator': 'FormItem',
             'x-component': 'Select',
+            'x-component-props': {
+              onChange: `{{ val => shareCDCExternalStorageIdOnChange(val, $form) }}`
+            },
             'x-reactions': [
               {
                 dependencies: ['__TAPDATA.shareCdcEnable'],
@@ -489,7 +500,7 @@ export default {
                   }
                 }
               },
-              '{{useAsyncDataSource(loadExternalStorage)}}',
+              '{{useAsyncDataSourceByConfig({service: loadExternalStorage, withoutField: true}, $self.value)}}',
               {
                 fulfill: {
                   state: {
@@ -498,6 +509,47 @@ export default {
                 }
               }
             ]
+          },
+          shareCDCExternalStorageIdTips: {
+            type: 'void',
+            title: ' ',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              colon: false,
+              className: 'mt-n6'
+            },
+            'x-component': 'Space',
+            'x-reactions': [
+              {
+                fulfill: {
+                  state: {
+                    display: 'hidden'
+                  }
+                }
+              }
+            ],
+            properties: {
+              tips: {
+                type: 'void',
+                'x-decorator': 'FormItem',
+                'x-component': 'Text',
+                'x-component-props': {
+                  content: i18n.t('packages_business_connections_databaseform_dangqianlianjiede'),
+                  class: 'color-danger'
+                }
+              },
+              Link: {
+                type: 'void',
+                'x-decorator': 'FormItem',
+                'x-component': 'Button',
+                'x-component-props': {
+                  type: 'text',
+                  class: 'text-decoration-underline',
+                  onClick: '{{handleLogCollectorTaskDialog}}'
+                },
+                'x-content': i18n.t('packages_business_connections_databaseform_chakanwajueren')
+              }
+            }
           }
         }
         END.properties.__TAPDATA.properties = Object.assign({}, END.properties.__TAPDATA.properties, config)
@@ -810,6 +862,11 @@ export default {
       }
       if (id) {
         await this.getPdkData(id)
+        // 开启了共享缓存
+        const { shareCdcEnable, shareCDCExternalStorageId } = this.model
+        if (shareCdcEnable && shareCDCExternalStorageId) {
+          this.connectionLogCollectorTaskData = await connectionsApi.checkLogCollectorTask(id, 100)
+        }
         delete result.properties.START.properties.__TAPDATA.properties.name
       }
 
@@ -941,9 +998,18 @@ export default {
             }
           })
         },
-        async loadExternalStorage() {
+        async loadExternalStorage(id) {
           try {
-            const { items = [] } = await externalStorageApi.list()
+            let filter = {
+              where: {}
+            }
+            if (id) {
+              const ext = await externalStorageApi.get(id)
+              filter.where.type = ext.type
+            }
+            const { items = [] } = await externalStorageApi.list({
+              filter: JSON.stringify(filter)
+            })
             return items.map(item => {
               return {
                 label: item.name,
@@ -977,6 +1043,17 @@ export default {
             }
           })
           submitForm(params?.target, data)
+        },
+        shareCDCExternalStorageIdOnChange: (val, $form) => {
+          $form.setFieldState('__TAPDATA.shareCDCExternalStorageIdTips', state => {
+            state.display =
+              this.connectionLogCollectorTaskData.total && val !== this.model.shareCDCExternalStorageId
+                ? 'visible'
+                : 'hidden'
+          })
+        },
+        handleLogCollectorTaskDialog: async () => {
+          this.connectionLogCollectorTaskDialog = true
         }
       }
       this.schemaData = result

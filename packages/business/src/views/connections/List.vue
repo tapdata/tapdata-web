@@ -164,25 +164,7 @@
       @selected="handleDatabaseType"
     ></SceneDialog>
     <Test ref="test" :visible.sync="dialogTestVisible" :formData="testData" @returnTestData="returnTestData"></Test>
-    <ElDialog :title="$t('public_message_title_prompt')" width="40%" :visible.sync="connectionTaskDialog">
-      <span>{{ $t('packages_business_connections_list_gailianjieyibei', { val1: connectionTaskListTotal }) }}</span>
-      <el-table class="mt-4" height="250px" :data="connectionTaskList">
-        <el-table-column min-width="240" :label="$t('public_task_name')" :show-overflow-tooltip="true">
-          <template #default="{ row }">
-            <span class="dataflow-name link-primary flex">
-              <ElLink
-                role="ellipsis"
-                type="primary"
-                class="justify-content-start ellipsis block"
-                :class="['name']"
-                @click.stop="goTaskList(row)"
-                >{{ row.name }}</ElLink
-              >
-            </span>
-          </template>
-        </el-table-column>
-      </el-table>
-    </ElDialog>
+    <UsedTaskDialog v-model="connectionTaskDialog" :data="connectionTaskData"></UsedTaskDialog>
   </section>
 </template>
 <script>
@@ -193,17 +175,26 @@ import { VIcon, FilterBar } from '@tap/component'
 import Cookie from '@tap/shared/src/cookie'
 
 import { TablePage, SchemaProgress } from '../../components'
-import DatabaseTypeDialog from './DatabaseTypeDialog'
 import Preview from './Preview'
 import Test from './Test'
 import { defaultModel, verify, getConnectionIcon } from './util'
 import { CONNECTION_STATUS_MAP, CONNECTION_TYPE_MAP } from '@tap/business/src/shared'
 import SceneDialog from '../../components/create-connection/SceneDialog.vue'
+import UsedTaskDialog from './UsedTaskDialog'
 
 let timeout = null
 
 export default {
-  components: { SceneDialog, TablePage, DatabaseTypeDialog, Preview, Test, VIcon, SchemaProgress, FilterBar },
+  components: {
+    SceneDialog,
+    TablePage,
+    Preview,
+    Test,
+    VIcon,
+    SchemaProgress,
+    FilterBar,
+    UsedTaskDialog
+  },
   inject: ['checkAgent', 'buried'],
   data() {
     return {
@@ -265,8 +256,10 @@ export default {
       },
       testData: null,
       dialogTestVisible: false, // 连接测试框
-      connectionTaskList: [],
-      connectionTaskListTotal: 0,
+      connectionTaskData: {
+        items: [],
+        total: 0
+      },
       connectionTaskDialog: false
     }
   },
@@ -503,7 +496,7 @@ export default {
           return
         }
         //检查该连接是否被已有任务使用
-        connectionsApi.checkConnectionTask(row.id).then(data => {
+        connectionsApi.checkConnectionTask(row.id).then((data = {}) => {
           if (data?.items?.length === 0) {
             connectionsApi.delete(row.id).then(data => {
               let jobs = data?.jobs || []
@@ -517,8 +510,10 @@ export default {
             })
           } else {
             //展示已使用的任务列表
-            this.connectionTaskList = data?.items || []
-            this.connectionTaskListTotal = data?.total || 0
+            this.connectionTaskData = {
+              items: data.items || [],
+              total: data.total || 0
+            }
             this.connectionTaskDialog = true
           }
         })
