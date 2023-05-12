@@ -220,11 +220,11 @@ export default {
         where: {}
       }
 
-      // const { externalStorageId } = this.form
-      // if (externalStorageId) {
-      //   const ext = await externalStorageApi.get(externalStorageId)
-      //   filter.where.type = ext.type
-      // }
+      const { externalStorageId } = this.form
+      if (externalStorageId) {
+        const ext = await externalStorageApi.get(externalStorageId)
+        filter.where.type = ext.type
+      }
       const data = await externalStorageApi
         .get({
           filter: JSON.stringify(filter)
