@@ -148,32 +148,28 @@
         :host="apiServerHost"
         @save="handleAddApi"
       ></CreateRestApi>
-      <ApiPreview ref="apiPreview" :host="apiServerHost"></ApiPreview>
+      <ApiPreview v-if="isDaas" ref="apiPreview" :host="apiServerHost"></ApiPreview>
     </div>
   </div>
 </template>
 
 <script>
-import draggable from 'vuedraggable'
+// import draggable from 'vuedraggable'
 import { defineComponent, ref } from '@vue/composition-api'
 
 import { apiServerApi, appApi, connectionsApi, modulesApi, proxyApi, taskApi } from '@tap/api'
 import { uuid, generateId } from '@tap/shared'
-import { getIcon } from '@tap/assets'
 import { VIcon, IconButton } from '@tap/component'
 import i18n from '@tap/i18n'
-
-import { DatabaseIcon } from '../../components'
-import { makeStatusAndDisabled } from '../../shared'
-import { TaskStatus } from '../../components'
+import {
+  DatabaseIcon,
+  TaskStatus,
+  DataServerDrawer as ApiPreview,
+  makeStatusAndDisabled,
+  TASK_SETTINGS
+} from '@tap/business'
 import CreateRestApi from './components/CreateRestApi'
-import ApiPreview from '../data-server/Drawer'
-import { TASK_SETTINGS } from '../../shared'
 import commonMix from './mixins/common'
-import { escapeRegExp } from 'lodash'
-import dayjs from 'dayjs'
-
-const restApiIcon = getIcon('rest api')
 
 const TaskList = defineComponent({
   props: ['list'],
@@ -283,7 +279,6 @@ export default {
 
     return {
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
-      restApiIcon,
       dragging: false,
       list: [],
       appList: [],
@@ -347,12 +342,17 @@ export default {
   methods: {
     async init() {
       const connectionList = await this.getData()
-      const appList = await this.getApiAppList()
-      Promise.all(appList.map(({ id }) => this.loadApiModule(id))).then(list => {
-        appList.forEach((app, i) => {
-          this.$set(app, 'modules', list[i])
+      let appList = []
+
+      if (this.isDaas) {
+        appList = await this.getApiAppList()
+        Promise.all(appList.map(({ id }) => this.loadApiModule(id))).then(list => {
+          appList.forEach((app, i) => {
+            this.$set(app, 'modules', list[i])
+          })
         })
-      })
+      }
+
       this.list = appList
         .concat(connectionList)
         .sort((obj1, obj2) => new Date(obj2.createTime) - new Date(obj1.createTime))
@@ -687,7 +687,7 @@ export default {
           const table = this.getTableByTask(taskInfo)
           const mapTask = this.mapTask(taskInfo)
 
-          if (table) this.getTableWebsite(to.id, table, mapTask)
+          if (to.showTableWebsite) this.getTableWebsite(to.id, table, mapTask)
 
           this.dialogConfig.visible = false
           this.creating = false

@@ -87,9 +87,6 @@
             resize="none"
           ></ElInput>
         </ElFormItem>
-        <ElFormItem v-if="form.type === 'mongodb'" :label="$t('public_external_memory_name')" required prop="table">
-          <ElInput v-model="form.table"></ElInput>
-        </ElFormItem>
         <ElFormItem :label="$t('packages_business_external_storage_list_sheweimoren')">
           <ElSwitch v-model="form.defaultStorage"></ElSwitch>
         </ElFormItem>
@@ -152,13 +149,6 @@ import { FilterBar, Drawer } from '@tap/component'
 export default {
   components: { TablePage, FilterBar, Drawer },
   data() {
-    var checkTable = (rule, value, callback) => {
-      if (this.form.type === 'mongodb' && value === '') {
-        callback(new Error(i18n.t('packages_business_external_storage_list_qingshuruwaicun2')))
-      } else {
-        callback()
-      }
-    }
     return {
       loading: false,
       filterItems: [],
@@ -183,8 +173,7 @@ export default {
             message: i18n.t('packages_business_external_storage_list_qingshurucunchu'),
             trigger: 'blur'
           }
-        ],
-        table: [{ validator: checkTable, trigger: 'blur' }]
+        ]
       },
       isShowDetails: false,
       details: '',
@@ -273,7 +262,6 @@ export default {
         : {
             name: '',
             type: 'mongodb',
-            table: '',
             uri: '',
             defaultStorage: false
           }
@@ -285,12 +273,11 @@ export default {
       this.$refs.form.validate(async valid => {
         if (valid) {
           this.loading = true
-          let { id, name, type, table, uri, defaultStorage } = this.form
+          let { id, name, type, uri, defaultStorage } = this.form
           let params = {
             id,
             name,
             type,
-            table,
             uri,
             defaultStorage
           }
@@ -344,13 +331,11 @@ export default {
     checkDetails(row) {
       this.details = row
       this.info = [
-        //{ label: this.$t('public_external_memory_name'), value: row.name, icon: 'createUser' },
         {
           label: this.$t('public_external_memory_type'),
           value: row.typeFmt,
           icon: 'name'
         },
-        { label: this.$t('public_external_memory_name'), value: row.table, icon: 'table' },
         { label: this.$t('public_create_time'), value: row.createTimeFmt, icon: 'cacheTimeAtFmt' },
         { label: this.$t('packages_business_external_storage_list_cunchulujing'), value: row.uri, icon: 'database' },
         {

@@ -143,7 +143,7 @@ export const FieldRename = connect(
                         )}
                       </span>
                       <span class={['tree-field-input-wrap', 'item', 'inline-block', 'e-label', 'ellipsis']}>
-                        {data.level === 1 ? (
+                        {data.level === 1 && !data.children?.length ? (
                           <div
                             staticClass="el-input el-input--small tree-field-input text__inner"
                             class={{

@@ -16,6 +16,7 @@ export default {
   public_serial_number: 'Serial number',
   public_query: 'Query',
   public_aggregate: 'Aggregate',
+  public_table: 'Table',
   public_table_name: 'Table Name',
   public_total: 'Total',
   public_database: 'Database',
@@ -97,6 +98,7 @@ export default {
   public_button_order: 'Order',
   public_button_next: 'Next',
   public_button_previous: 'Previous',
+  public_button_search: 'Search',
   // information
   public_message_title_prompt: 'Prompt',
   public_message_delete_confirm: 'Delete',

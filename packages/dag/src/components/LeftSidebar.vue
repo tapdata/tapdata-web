@@ -810,7 +810,8 @@ export default {
           accessNodeProcessId: connection.accessNodeProcessId,
           pdkType: connection.pdkType,
           pdkHash: connection.pdkHash,
-          capabilities: connection.capabilities || []
+          capabilities: connection.capabilities || [],
+          hasCreated: false
           /*capabilities: [
             ...(connection.capabilities || []),
             {

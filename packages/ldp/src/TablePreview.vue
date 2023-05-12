@@ -7,20 +7,25 @@
           statusMap[tableStatus]
         }}</span>
       </div>
-      <span class="mr-2"> <VIcon class="tree-item-icon" size="18">table</VIcon></span>
-      <span class="ml-8">
-        <span>{{ detailData.sourceType }}</span></span
-      >
-      <template v-if="swimType !== 'source'">
-        <span class="ml-8"
-          ><span class="table-dec-label">{{ $t('packages_business_last_data_change_time') }}：</span
-          ><span class="table-dec-txt">{{ lastDataChangeTime || '-' }}</span></span
+      <div class="flex align-center gap-8">
+        <span class="inline-flex align-center text-uppercase">
+          <VIcon class="mr-1" size="18">table</VIcon> {{ $t('public_table') }}</span
         >
-        <span class="ml-8"
-          ><span class="table-dec-label">{{ $t('packages_business_cdc_delay_time') }}：</span
-          ><span class="table-dec-txt">{{ cdcDelayTime || '-' }}</span></span
+        <span class="inline-flex align-center">
+          <VIcon class="mr-1" size="18">database</VIcon>
+          <span>{{ databaseName }}</span></span
         >
-      </template>
+        <template v-if="swimType !== 'source'">
+          <span
+            ><span class="table-dec-label">{{ $t('packages_business_last_data_change_time') }}：</span
+            ><span class="table-dec-txt">{{ lastDataChangeTime || '-' }}</span></span
+          >
+          <span
+            ><span class="table-dec-label">{{ $t('packages_business_cdc_delay_time') }}：</span
+            ><span class="table-dec-txt">{{ cdcDelayTime || '-' }}</span></span
+          >
+        </template>
+      </div>
     </header>
     <section class="mt-6">
       <el-tabs v-model="activeName" @tab-click="handleTab">
@@ -49,9 +54,14 @@
                 <div class="table-dec-label">{{ $t('packages_business_storage_size') }}</div>
                 <div class="table-dec-txt mt-4">{{ storageSize || '-' }}</div>
               </el-col>
-              <el-col :span="6">
+              <el-col :span="12">
                 <div class="table-dec-label">{{ $t('public_connection') }}</div>
-                <div class="table-dec-txt mt-4" v-if="detailData">{{ detailData.connectionName }}</div>
+                <div class="table-dec-txt mt-4 flex align-center text-break" v-if="detailData">
+                  <DatabaseIcon v-if="connection" class="mr-1 flex-shrink-0" :item="connection" :size="18" /><span
+                    class="min-w-0"
+                    >{{ detailData.connectionName }}</span
+                  >
+                </div>
               </el-col>
             </el-row>
           </section>
@@ -125,13 +135,18 @@
           </VTable>
         </el-tab-pane>
         <el-tab-pane :label="$t('packages_business_tasks')" name="tasks">
-          <div class="flex mb-4">
-            <span>{{ $t('packages_business_table_preview_task') }}</span>
-            <span class="color-primary cursor-pointer ml-2" @click="handleCreateTask">{{
+          <div class="flex align-center mb-4">
+            <ElRadioGroup v-model="asTaskType" size="mini">
+              <ElRadioButton label="all">{{ $t('public_select_option_all') }}</ElRadioButton>
+              <ElRadioButton label="source">{{ $t('packages_business_as_source') }}</ElRadioButton>
+              <ElRadioButton label="target">{{ $t('packages_business_as_target') }}</ElRadioButton>
+            </ElRadioGroup>
+            <ElDivider class="mx-3" direction="vertical"></ElDivider>
+            <span class="color-primary cursor-pointer" @click="handleCreateTask">{{
               $t('packages_business_swimlane_tablepreview_chuangjianrenwu')
             }}</span>
           </div>
-          <el-table class="discovery-page-table" :data="taskData" :has-pagination="false">
+          <el-table class="discovery-page-table" :data="filterTask" :has-pagination="false">
             <el-table-column :label="$t('public_task_name')" prop="name" width="200px" show-overflow-tooltip>
               <template #default="{ row }">
                 <span class="dataflow-name link-primary flex">
@@ -201,14 +216,13 @@
 
 <script>
 import { cloneDeep } from 'lodash'
+import dayjs from 'dayjs'
 
 import { Drawer, VTable, VEmpty } from '@tap/component'
 import { calcTimeUnit, calcUnit, isNum } from '@tap/shared'
 import { discoveryApi, proxyApi, taskApi, metadataInstancesApi, modulesApi } from '@tap/api'
-import i18n from '@/i18n'
-import dayjs from 'dayjs'
-import { TaskStatus } from '../../components'
-import { TASK_TYPE_MAP } from '../../shared'
+import { TaskStatus, DatabaseIcon, TASK_TYPE_MAP } from '@tap/business'
+import i18n from '@tap/i18n'
 
 export default {
   name: 'TablePreview',
@@ -218,7 +232,7 @@ export default {
       default: 'Drawer'
     }
   },
-  components: { Drawer, VTable, TaskStatus, VEmpty },
+  components: { Drawer, VTable, TaskStatus, VEmpty, DatabaseIcon },
   data() {
     return {
       visible: false,
@@ -358,7 +372,40 @@ export default {
         }
       ],
       selected: {},
-      swimType: '' // source/fdm/mdm/target
+      swimType: '', // source/fdm/mdm/target
+      asTaskType: 'all',
+      connection: null
+    }
+  },
+  computed: {
+    filterTask() {
+      if (this.asTaskType === 'all') return this.taskData
+      if (this.asTaskType === 'source') return this.sourceTask
+      if (this.asTaskType === 'target') return this.targetTask
+      return this.taskData
+    },
+    sourceTask() {
+      return this.taskData.filter(task => task.sourceConnectionIds.includes(this.connectionId))
+    },
+    targetTask() {
+      return this.taskData.filter(task => task.targetConnectionIds.includes(this.connectionId))
+    },
+    databaseName() {
+      if (!this.connection) return this.detailData.sourceType
+
+      const config = this.connection.config
+
+      if (config.uri && config.isUri !== false) {
+        const regResult =
+          /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
+            config.uri
+          )
+        if (regResult && regResult.groups) {
+          config.database = regResult.groups.database
+        }
+      }
+
+      return config.database || config.sid || this.detailData.sourceType
     }
   },
   methods: {
@@ -374,12 +421,14 @@ export default {
       this.cdcDelayTime = ''
       this.lastDataChangeTime = ''
     },
-    open(row) {
+    open(row, connection) {
+      this.reset()
       this.init()
       this.visible = true
       this.swimType = row.SWIM_TYPE
       this.connectionId = row.connectionId
       this.selected = cloneDeep(row)
+      this.connection = connection
       this.getTableStorage(row)
     },
     getTableStorage(row) {
@@ -405,8 +454,44 @@ export default {
         connectionId: this.connectionId,
         tableName: this.detailData.name
       }
-      taskApi.getTaskByTableName(params).then(res => {
-        this.taskData = res
+      taskApi.getTaskByTableName(params).then(taskList => {
+        taskList.forEach(task => {
+          const { dag } = task
+          const sourceConnectionIds = []
+          const targetConnectionIds = []
+          if (dag.edges?.length && dag.nodes?.length) {
+            const outputsMap = {}
+            const inputsMap = {}
+
+            dag.edges.forEach(({ source, target }) => {
+              let _source = outputsMap[source]
+              let _target = inputsMap[target]
+
+              if (!_source) {
+                outputsMap[source] = [target]
+              } else {
+                _source.push(target)
+              }
+
+              if (!_target) {
+                inputsMap[target] = [source]
+              } else {
+                _target.push(source)
+              }
+            })
+
+            dag.nodes.forEach(node => {
+              if (!inputsMap[node.id] && outputsMap[node.id] && node.connectionId) {
+                sourceConnectionIds.push(node.connectionId)
+              } else if (inputsMap[node.id] && !outputsMap[node.id] && node.connectionId) {
+                targetConnectionIds.push(node.connectionId)
+              }
+            })
+          }
+          task.sourceConnectionIds = sourceConnectionIds
+          task.targetConnectionIds = targetConnectionIds
+        })
+        this.taskData = taskList
       })
     },
     getSampleData() {
@@ -509,6 +594,11 @@ export default {
           id: row.id
         }
       })
+    },
+
+    reset() {
+      this.activeName = 'overView'
+      this.asTaskType = 'all'
     }
   }
 }

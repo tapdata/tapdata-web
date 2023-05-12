@@ -16,6 +16,7 @@ export default {
   public_serial_number: '序号',
   public_query: '查询',
   public_aggregate: '聚合',
+  public_table: '表',
   public_table_name: '表名',
   public_total: '共计',
   public_database: '数据库',
@@ -99,6 +100,7 @@ export default {
   public_button_order: '订购',
   public_button_next: '下一步',
   public_button_previous: '上一步',
+  public_button_search: '搜索',
   // 消息
   public_message_title_prompt: '提示',
   public_message_delete_confirm: '是否删除',

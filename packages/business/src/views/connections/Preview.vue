@@ -284,7 +284,7 @@ export default {
       }
       row.database_host = row.config.host
       row.database_port = row.config.port
-      row.database_name = row.config.database
+      row.database_name = row.config.database || row.config.sid
       row.database_owner = row.config.schema
       row.database_username = row.config.user || row.config.username
       row.addtionalString = row.config.extParams || row.config.addtionalString

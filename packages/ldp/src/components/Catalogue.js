@@ -1,14 +1,12 @@
 import { defineComponent, reactive, ref, watch, nextTick, onMounted } from '@vue/composition-api'
 import i18n from '@tap/i18n'
 import { VIcon, ProTable } from '@tap/component'
-import { makeDragNodeImage } from '../../index'
-import ClassificationTree from '../../components/ClassificationTree'
-import { DatabaseIcon } from '../../components'
-import TablePreview from '../swimlane/TablePreview'
-import ApiPreview from '../data-server/Drawer'
+import { DatabaseIcon, DataServerDrawer as ApiPreview, makeDragNodeImage } from '@tap/business'
+import TablePreview from '../TablePreview'
+import ClassificationTree from './ClassificationTree'
 import resize from '@tap/component/src/directives/resize'
-import './index.scss'
 import { apiServerApi, modulesApi } from '@tap/api'
+import './index.scss'
 
 const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
 

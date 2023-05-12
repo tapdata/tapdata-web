@@ -4,6 +4,7 @@ import langs from './locale'
 import VirtualTransfer from './base/virtual-transfer'
 import VirtualTransferPanel from './base/virtual-transfer/VirtualTransferPanel'
 import VirtualSelect from './base/virtual-select'
+import VirtualList from './base/virtual-list'
 import VTable from './base/v-table'
 import VCodeEditor from './base/VCodeEditor.vue'
 import VIcon from './base/VIcon.vue'
@@ -41,6 +42,7 @@ export {
   VirtualTransfer,
   VirtualTransferPanel,
   VirtualSelect,
+  VirtualList,
   VTable,
   VCollapse,
   Chart,

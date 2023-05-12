@@ -182,9 +182,8 @@ import { debounce } from 'lodash'
 import { VirtualTree, IconButton } from '@tap/component'
 import { CancelToken, discoveryApi, ldpApi, metadataDefinitionsApi, userGroupsApi } from '@tap/api'
 import { uuid, generateId } from '@tap/shared'
-import { makeDragNodeImage, TASK_SETTINGS } from '../../shared'
+import { makeDragNodeImage, TASK_SETTINGS, DatabaseIcon } from '@tap/business'
 import commonMix from './mixins/common'
-import { DatabaseIcon } from '../../components'
 
 export default {
   name: 'MDM',
@@ -290,7 +289,7 @@ export default {
           class="custom-tree-node grabbable"
           on={{
             dblclick: () => {
-              data.isObject && this.$emit('preview', data)
+              data.isObject && this.$emit('preview', data, this.mdmConnection)
             },
             dragenter: ev => {
               ev.stopPropagation()
@@ -350,7 +349,7 @@ export default {
               <IconButton
                 sm
                 onClick={() => {
-                  this.$emit('preview', data)
+                  this.$emit('preview', data, this.mdmConnection)
                 }}
               >
                 view-details

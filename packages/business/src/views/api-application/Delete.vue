@@ -24,7 +24,7 @@
     <span class="dialog-footer" slot="footer">
       <ElButton @click="handleClose" size="mini">{{ $t('public_button_cancel') }}</ElButton>
       <ElButton size="mini" type="primary" :loading="saveLoading" @click="handleSave">{{
-        $t('public_button_save')
+        $t('public_button_confirm')
       }}</ElButton>
     </span>
   </ElDialog>
