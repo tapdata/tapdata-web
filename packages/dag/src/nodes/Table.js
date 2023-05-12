@@ -280,7 +280,7 @@ export class Table extends NodeType {
         'x-component-props': {
           class: 'inset'
         },
-        'x-reactions': {
+        /*'x-reactions': {
           dependencies: ['$inputs', '$outputs'],
           fulfill: {
             state: {
@@ -288,7 +288,7 @@ export class Table extends NodeType {
                 '{{$hasPdkConfig($values.attrs.pdkHash) || $deps[0].length > 0 || $deps[1].length > 0 ? "visible":"hidden"}}'
             }
           }
-        },
+        },*/
         properties: {
           tab1: {
             type: 'void',
@@ -301,10 +301,10 @@ export class Table extends NodeType {
                 type: 'void',
                 'x-component': 'FormContent', // 为properties组件增加根节点，避免vue-frag报错
                 'x-reactions': {
-                  dependencies: ['$outputs'],
+                  dependencies: ['$outputs', '$inputs'],
                   fulfill: {
                     state: {
-                      display: '{{$deps[0].length > 0 ? "visible":"hidden"}}'
+                      display: '{{$deps[0].length || !$deps[1].length ? "visible":"hidden"}}'
                     }
                   }
                 },
