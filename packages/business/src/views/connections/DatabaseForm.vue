@@ -500,7 +500,7 @@ export default {
                   }
                 }
               },
-              '{{useAsyncDataSource(loadExternalStorage)}}',
+              '{{useAsyncDataSourceByConfig({service: loadExternalStorage, withoutField: true}, $self.value)}}',
               {
                 fulfill: {
                   state: {
@@ -998,9 +998,18 @@ export default {
             }
           })
         },
-        async loadExternalStorage() {
+        async loadExternalStorage(id) {
           try {
-            const { items = [] } = await externalStorageApi.list()
+            let filter = {
+              where: {}
+            }
+            if (id) {
+              const ext = await externalStorageApi.get(id)
+              filter.where.type = ext.type
+            }
+            const { items = [] } = await externalStorageApi.list({
+              filter: JSON.stringify(filter)
+            })
             return items.map(item => {
               return {
                 label: item.name,

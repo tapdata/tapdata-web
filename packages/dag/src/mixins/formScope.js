@@ -691,14 +691,24 @@ export default {
           addDeclaredCompleter(editor, tools, 'tapTable')
         },
 
-        async loadExternalStorage() {
+        async loadExternalStorage(id) {
           try {
-            const { items = [] } = await externalStorageApi.get()
+            let filter = {
+              where: {}
+            }
+            if (id) {
+              const ext = await externalStorageApi.get(id)
+              filter.where.type = ext.type
+            }
+            const { items = [] } = await externalStorageApi.get({
+              filter: JSON.stringify(filter)
+            })
             return items.map(item => {
               return {
                 label: item.name,
                 value: item.id,
-                isDefault: item.defaultStorage
+                isDefault: item.defaultStorage,
+                isBefore: item.id === id
               }
             })
           } catch (e) {

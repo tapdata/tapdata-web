@@ -28,7 +28,7 @@ export class Join extends NodeType {
                   let nodeIds = $self.value.filter(v => v !== $values.rightNodeId)
                   $values.leftNodeId = nodeIds[0] || ''
                 }
-                
+
                 if (($values.rightNodeId && !$self.value.includes($values.rightNodeId)) || !$values.rightNodeId) {
                   let nodeIds = $self.value.filter(v => v !== $values.leftNodeId)
                   $values.rightNodeId = nodeIds[0] || ''
@@ -156,7 +156,7 @@ export class Join extends NodeType {
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         'x-reactions': [
-          '{{useAsyncDataSourceByConfig({service: loadExternalStorage, withoutField: true})}}',
+          '{{useAsyncDataSourceByConfig({service: loadExternalStorage, withoutField: true}, $self.value)}}',
           {
             fulfill: {
               state: {
