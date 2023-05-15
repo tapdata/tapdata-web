@@ -2,11 +2,39 @@
   <section class="data-server-wrapper flex flex-column">
     <div v-if="showFilter" class="flex justify-content-between my-2">
       <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
-      <ElButton class="btn btn-create" type="primary" size="mini" @click.stop="showDrawer()">
-        <span>{{ $t('packages_business_data_server_drawer_chuangjianfuwu') }}</span>
-      </ElButton>
+      <div>
+        <ElButton
+          v-show="multipleSelection.length > 0"
+          :disabled="$disabledReadonlyUserBtn()"
+          v-readonlybtn="'SYNC_job_export'"
+          size="mini"
+          class="btn message-button-cancel"
+          @click="handleExport"
+        >
+          <span> {{ $t('public_button_export') }}</span>
+        </ElButton>
+        <ElButton
+          v-readonlybtn="'SYNC_job_import'"
+          size="mini"
+          class="btn"
+          :disabled="$disabledReadonlyUserBtn()"
+          @click="handleImport"
+        >
+          <span> {{ $t('packages_business_button_bulk_import') }}</span>
+        </ElButton>
+        <ElButton class="btn btn-create" type="primary" size="mini" @click.stop="showDrawer()">
+          <span>{{ $t('packages_business_data_server_drawer_chuangjianfuwu') }}</span>
+        </ElButton>
+      </div>
     </div>
-    <VTable :columns="cols" :remote-method="getData" ref="table" height="100%" class="flex-fill">
+    <VTable
+      :columns="cols"
+      :remote-method="getData"
+      ref="table"
+      height="100%"
+      class="flex-fill"
+      @selection-change="handleSelectionChange"
+    >
       <template #name="{ row }">
         <ElLink class="ellipsis" type="primary" style="display: block; line-height: 20px" @click.stop="showDrawer(row)">
           {{ row.name }}
@@ -41,19 +69,28 @@
       @save="table.fetch(1)"
       @visible="$emit('drawer-visible', arguments[0])"
     ></Drawer>
+    <!-- 导入 -->
+    <Upload type="Modules" :show-tag="false" ref="upload" @success="table.fetch()"></Upload>
   </section>
 </template>
 <script>
 import { escapeRegExp } from 'lodash'
 import i18n from '@/i18n'
 
-import { databaseTypesApi, modulesApi, metadataInstancesApi, apiServerApi, appApi } from '@tap/api'
+import {
+  databaseTypesApi,
+  modulesApi,
+  metadataInstancesApi,
+  apiServerApi,
+  appApi
+} from '@tap/api'
 import { FilterBar, VTable, VEmpty } from '@tap/component'
+import Upload from '@tap/business/src/components/UploadDialog'
 
 import Drawer from './Drawer'
 
 export default {
-  components: { FilterBar, Drawer, VTable, VEmpty },
+  components: { FilterBar, Drawer, VTable, VEmpty, Upload },
   props: {
     showFilter: {
       type: Boolean,
@@ -110,6 +147,9 @@ export default {
     cols() {
       if (this.columns.length) return this.columns
       return [
+        {
+          type: 'selection'
+        },
         {
           label: this.$t('packages_business_data_server_list_fuwumingcheng'),
           prop: 'name',
@@ -339,6 +379,13 @@ export default {
     },
     fetch() {
       this.table.fetch()
+    },
+    handleExport() {
+      const ids = this.multipleSelection.map(t => t.id)
+      modulesApi.export(ids)
+    },
+    handleImport() {
+      this.$refs.upload.show()
     }
   }
 }
