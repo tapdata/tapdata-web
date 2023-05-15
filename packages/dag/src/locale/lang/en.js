@@ -346,6 +346,9 @@ export default {
   packages_dag_nodes_database_zidingyi: 'Custom',
   packages_dag_nodes_database_xuanzebiao: 'Select Table',
   packages_dag_nodes_database_suoshuage: 'Belonging Agent',
+  packages_dag_nodes_database_increment_exactly_once_enable_title: 'Increment exactly once write',
+  packages_dag_nodes_database_increment_exactly_once_enable_tips:
+    'Incremental data is accurately written once by marking and checking in the target cache. You are advised to enable this function when the value of the association condition changes. After this function is enabled, the synchronization speed decreases. The target needs to have table creation and write permissions.',
   packages_dag_extends_nodetype_queshaobiyaode: 'Missing required type attribute!',
   packages_dag_nodes_javascript_moxingshengming: 'Model Declaration',
   packages_dag_nodes_javascript_jiaoben: 'Script',

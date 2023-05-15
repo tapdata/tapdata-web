@@ -331,6 +331,9 @@ export default {
   packages_dag_nodes_database_zidingyi: '自定義',
   packages_dag_nodes_database_xuanzebiao: '選擇表',
   packages_dag_nodes_database_suoshuage: '所屬agent',
+  packages_dag_nodes_database_increment_exactly_once_enable_title: '增量精确一次写入',
+  packages_dag_nodes_database_increment_exactly_once_enable_tips:
+    '使用在目标缓存标记并检查的方式，实现增量数据的精确一次写入。当关联条件的值会发生改变时，建议开启，开启后会导致一定的同步速度下降。目标需要拥有创建表和写入权限。',
   packages_dag_extends_nodetype_queshaobiyaode: '缺少必要的type屬性！ ',
   packages_dag_nodes_javascript_moxingshengming: '模型聲明',
   packages_dag_nodes_javascript_jiaoben: '腳本',

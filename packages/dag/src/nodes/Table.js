@@ -1341,6 +1341,27 @@ export class Table extends NodeType {
                     'x-component-props': {
                       findParentNodes: '{{findParentNodes}}'
                     }
+                  },
+                  incrementExactlyOnceEnable: {
+                    title: i18n.t('packages_dag_nodes_database_increment_exactly_once_enable_title'),
+                    type: 'boolean',
+                    default: false,
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Switch',
+                    'x-decorator-props': {
+                      className: 'item-control-horizontal',
+                      layout: 'horizontal',
+                      tooltip: i18n.t('packages_dag_nodes_database_increment_exactly_once_enable_tips')
+                    },
+                    'x-reactions': [
+                      {
+                        fulfill: {
+                          state: {
+                            display: `{{$values.attrs.capabilities.filter(item => ["transaction_begin_function", "transaction_commit_function", "transaction_rollback_function"].includes(item.id)).length === 3 ? 'visible' : 'hidden'}}`
+                          }
+                        }
+                      }
+                    ]
                   }
                 }
               },
