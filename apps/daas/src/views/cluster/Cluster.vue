@@ -33,6 +33,12 @@
                       @click="updateFn(item, item.management.status, 'management', 'update')"
                       >{{ $t(' cluster_update') }}
                     </ElButton>
+                    <VIcon class="mr-2 link-primary" v-readonlybtn="'Cluster_operation'" @click="downServeFn(item)"
+                      >download</VIcon
+                    >
+                    <VIcon class="mr-2 link-primary" v-readonlybtn="'Cluster_operation'" @click="downConnectorsFn(item)"
+                      >database</VIcon
+                    >
                     <VIcon class="mr-2 link-primary" v-readonlybtn="'Cluster_operation'" @click="addServeFn(item)"
                       >bg-add</VIcon
                     >
@@ -457,6 +463,14 @@ export default {
       this.currentData = item
       this.editItem = {}
       this.dialogForm = true
+    },
+    //下载
+    downServeFn(item) {
+      window.location = location.origin + location.pathname + 'api/proxy/supervisor?pid=' + item.process_id
+    },
+    //下载
+    downConnectorsFn(item) {
+      window.location = location.origin + location.pathname + 'api/proxy/memory/connectors?pid=' + item.process_id
     },
     // 启动
     startFn(item, status, server) {
