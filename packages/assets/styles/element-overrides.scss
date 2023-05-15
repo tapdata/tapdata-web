@@ -833,6 +833,25 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
   padding: 0 16px;
 }
 
+.el-tabs.tabs-fill {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  .el-tabs__header {
+
+  }
+  .el-tabs__content {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .el-tab-pane {
+    height: 100%;
+    //overflow: visible;
+    overflow: auto;
+  }
+}
+
 /* Collapse
 --------------------------*/
 .el-collapse-item {

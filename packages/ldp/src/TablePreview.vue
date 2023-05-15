@@ -1,5 +1,12 @@
 <template>
-  <component :is="tag" v-if="visible" class="sw-table-drawer" :visible.sync="visible" width="850px" v-loading="loading">
+  <component
+    :is="tag"
+    v-if="visible"
+    class="sw-table-drawer flex flex-column"
+    :visible.sync="visible"
+    width="850px"
+    v-loading="loading"
+  >
     <header v-if="detailData">
       <div class="mb-4">
         <span class="table-name inline-block">{{ detailData.name }}</span>
@@ -27,8 +34,8 @@
         </template>
       </div>
     </header>
-    <section class="mt-6">
-      <el-tabs v-model="activeName" @tab-click="handleTab">
+    <section class="mt-6 flex-1 min-h-0">
+      <el-tabs v-model="activeName" @tab-click="handleTab" class="h-100 tabs-fill">
         <el-tab-pane :label="$t('packages_business_overview')" name="overView">
           <section class="mt-2">
             <div class="mb-4">
@@ -208,7 +215,13 @@
             </template>
           </VTable>
         </el-tab-pane>-->
-        <!--        <el-tab-pane label="Lineage" name="lineage">APIs</el-tab-pane>-->
+        <el-tab-pane label="Lineage" name="lineage">
+          <TableLineage
+            :is-show="activeName === 'lineage'"
+            :connection-id="connectionId"
+            :table-name="selected.name"
+          ></TableLineage>
+        </el-tab-pane>
       </el-tabs>
     </section>
   </component>
@@ -223,6 +236,7 @@ import { calcTimeUnit, calcUnit, isNum } from '@tap/shared'
 import { discoveryApi, proxyApi, taskApi, metadataInstancesApi, modulesApi } from '@tap/api'
 import { TaskStatus, DatabaseIcon, TASK_TYPE_MAP } from '@tap/business'
 import i18n from '@tap/i18n'
+import TableLineage from './components/TableLineage'
 
 export default {
   name: 'TablePreview',
@@ -232,7 +246,7 @@ export default {
       default: 'Drawer'
     }
   },
-  components: { Drawer, VTable, TaskStatus, VEmpty, DatabaseIcon },
+  components: { Drawer, VTable, TaskStatus, VEmpty, DatabaseIcon, TableLineage },
   data() {
     return {
       visible: false,
