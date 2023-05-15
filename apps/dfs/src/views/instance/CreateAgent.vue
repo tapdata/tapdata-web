@@ -681,9 +681,6 @@ export default {
           value: i18n.t('dfs_agent_download_subscriptionmodeldialog_shujushangyunkua')
         },
         {
-          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_shujushangyunkua')
-        },
-        {
           value: i18n.t('dfs_agent_download_subscriptionmodeldialog_shujukuguochan')
         },
         {
