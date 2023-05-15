@@ -1,4 +1,5 @@
 import Http from './Http'
+import Cookie from '@tap/shared/src/cookie'
 
 export default class Modules extends Http {
   constructor() {
@@ -46,6 +47,11 @@ export default class Modules extends Http {
 
   apiList(params) {
     return this.axios.get(`${this.url}/apiList`, { params })
+  }
+
+  export(ids) {
+    const href = this.url + `/batch/load?id=${ids.join('&id=')}&access_token=${Cookie.get('access_token')}`
+    window.open(href)
   }
 }
 export { Modules }

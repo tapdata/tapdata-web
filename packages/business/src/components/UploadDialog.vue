@@ -16,7 +16,7 @@
           $t('packages_business_modules_dialog_skip_data')
         }}</el-radio>
       </ElFormItem>
-      <ElFormItem :label="$t('packages_business_modules_dialog_group') + ':'">
+      <ElFormItem v-show="showTag" :label="$t('packages_business_modules_dialog_group') + ':'">
         <ElSelect v-model="importForm.tag" multiple size="mini" class="w-75">
           <ElOption v-for="item in classifyList" :label="item.value" :value="item.id" :key="item.id"></ElOption>
         </ElSelect>
@@ -59,6 +59,10 @@ export default {
     type: {
       required: true,
       value: String
+    },
+    showTag: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -78,6 +82,8 @@ export default {
   created() {
     if (this.type === 'api') {
       this.downType = 'APIServer'
+    } else if (this.type === 'Modules') {
+      this.downType = 'Modules'
     } else if (this.type === 'Inspect') {
       this.downType = 'Inspect'
     } else {
@@ -99,24 +105,19 @@ export default {
         return
       }*/
       this.importForm.fileList = [file]
-      if (this.type === 'api') {
-        this.importForm.action =
-          window.location.origin +
-          window.location.pathname +
-          'api/MetadataInstances/upload?upsert=' +
-          this.importForm.upsert +
-          '&listtags=' +
-          encodeURIComponent(JSON.stringify(this.importForm.tag)) +
-          `&type=${this.downType}` +
-          `&access_token=${this.accessToken}`
-      } else {
-        this.importForm.action =
-          window.location.origin +
-          window.location.pathname +
-          `api/Task/batch/import?listtags=${encodeURIComponent(JSON.stringify(this.importForm.tag))}&access_token=` +
-          this.accessToken +
-          `&cover=${!!this.importForm.upsert}`
+      const originPath = window.location.origin + window.location.pathname
+      const upsert = `upsert=${this.importForm.upsert}`
+      const downType = `type=${this.downType}`
+      const listtags = `listtags=${encodeURIComponent(JSON.stringify(this.importForm.tag))}`
+      const accessToken = `access_token=${this.accessToken}`
+      const cover = `cover=${!!this.importForm.upsert}`
+      const map = {
+        api: originPath + `api/MetadataInstances/upload?${upsert}&${listtags}&${downType}&${accessToken}`,
+        Javascript_functions: originPath + `api/Javascript_functions/batch/import?${listtags}&${accessToken}&${cover}`,
+        Modules: originPath + `api/Modules/batch/import?${listtags}&${accessToken}&${cover}`
       }
+      this.importForm.action =
+        map[this.type] || originPath + `api/Task/batch/import?${listtags}&${accessToken}&${cover}`
     },
 
     // 获取分类
@@ -149,8 +150,9 @@ export default {
         this.$message.error(this.$t('packages_business_message_upload_msg'))
         return
       }
-      this.dialogVisible = false
+      // this.dialogVisible = false
       this.$refs.upload.submit()
+      this.handleClose()
     },
     //删除文件
     handleRemove(file, fileList) {
