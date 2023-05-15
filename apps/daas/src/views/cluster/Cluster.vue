@@ -126,7 +126,7 @@
                     </el-col>
                     <el-col :span="4">
                       <span :class="['status-' + item.engine.serviceStatus, 'status']">{{
-                        getStatus(item.engine.status)
+                        getStatus(item.engine.serviceStatus)
                       }}</span>
                     </el-col>
                     <el-col :span="8">
