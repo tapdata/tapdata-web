@@ -479,13 +479,13 @@ export default {
     //下载
     downServeFn(item) {
       proxyApi.supervisor(item.systemInfo?.process_id).then(data => {
-        downloadJson(data, 'supervisor')
+        downloadJson(JSON.stringify(data), `${item.systemInfo?.process_id}_supervisor_summary`)
       })
     },
     //下载
     downConnectorsFn(item) {
       proxyApi.connectors(item.systemInfo?.process_id).then(data => {
-        downloadJson(data, 'connectors')
+        downloadJson(JSON.stringify(data), `${item.systemInfo?.process_id}_connectors_memory`)
       })
     },
     // 启动
