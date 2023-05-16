@@ -42,6 +42,8 @@
           @click="open(agent.id, agent.status)"
           >{{ $t('dfs_instance_instance_rizhishangchuan') }}</ElButton
         >
+        <ElButton class="mt-4" size="mini" @click="downServeFn(agent.id)">线程资源下载</ElButton>
+        <ElButton class="mt-4" size="mini" @click="downConnectorsFn(agent.id)">数据源资源下载</ElButton>
       </div>
     </div>
     <!-- 日志上传   -->
@@ -126,8 +128,9 @@ import timeFunction from '@/mixins/timeFunction'
 import { AGENT_STATUS_MAP_EN } from '../../const'
 import i18n from '@/i18n'
 import { calcUnit } from '@tap/shared'
-import { measurementApi } from '@tap/api'
+import { measurementApi, proxyApi } from '@tap/api'
 import Time from '@tap/shared/src/time'
+import { downloadJson } from '@tap/shared'
 
 export default {
   name: 'Details',
@@ -355,6 +358,18 @@ export default {
         .finally(() => {
           this.loading = false
         })
+    },
+    //下载
+    downServeFn(id) {
+      proxyApi.supervisor(id).then(data => {
+        downloadJson(data, 'supervisor')
+      })
+    },
+    //下载
+    downConnectorsFn(id) {
+      proxyApi.connectors(id).then(data => {
+        downloadJson(data, 'connectors')
+      })
     },
 
     async loadMeasurementData(engineId) {
