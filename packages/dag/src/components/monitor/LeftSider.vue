@@ -18,7 +18,11 @@
       <div v-if="dataflow.type !== 'cdc'" class="info-box sync-info">
         <div class="flex justify-content-between mb-2">
           <span class="fw-sub fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_tongbuxinxi') }}</span>
-          <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_monitor_leftsider_liebiao')">
+          <ElTooltip
+            v-if="showToInitialList"
+            transition="tooltip-fade-in"
+            :content="$t('packages_dag_monitor_leftsider_liebiao')"
+          >
             <VIcon @click.stop="toInitialList">menu-left</VIcon>
           </ElTooltip>
         </div>
@@ -526,6 +530,10 @@ export default {
       if (!allNodes.length) return
       const fileType = ['CSV', 'EXCEL', 'JSON', 'XML']
       return allNodes.some(node => fileType.includes(node.databaseType))
+    },
+
+    showToInitialList() {
+      return !(this.dataflow.syncType === 'sync' && !this.dataflow.shareCache)
     }
   },
 
