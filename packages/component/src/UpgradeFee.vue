@@ -1,23 +1,20 @@
 <template>
   <el-dialog
-    title="需要更多的服务？"
+    title="订阅升级"
     :visible.sync="visible"
     :append-to-body="true"
     width="680px"
     custom-class="paid-upgrade-dialog"
     :before-close="handleClose"
   >
-    <span class="paid-upgrade-desc">您使用的是免费版本，目前任务数量已经达到上限，请升级您的服务计划。</span>
     <ul class="flex paid-upgrade-ul mt-4">
       <li class="paid-upgrade-left">
         <div style="height: 150px">
-          <div class="version mb-2">基础版 <span class="current">当前试用版</span></div>
-          <div class="paid-upgrade-mb16"><span class="free">免费</span><span class="desc">试用所有功能</span></div>
+          <div class="version mb-2">基础版</div>
+          <div class="paid-upgrade-mb16"><span class="free">免费</span></div>
+          <div class="currentList paid-upgrade-mb16">√ 最大任务数: 3</div>
+          <div class="currentList paid-upgrade-mb16">√ 已用任务数: 3</div>
         </div>
-        <div class="link paid-upgrade-mb16"></div>
-        <div class="currentList paid-upgrade-mb16">√ 最大任务数: 3</div>
-        <div class="currentList paid-upgrade-mb16">√ 已用任务数: 3</div>
-        <el-link type="primary">参与激励计划，奖励2个额外免费任务数</el-link>
       </li>
       <li class="paid-upgrade-right ml-6">
         <div style="height: 150px">
