@@ -606,6 +606,9 @@ export default {
   packages_business_setting_alarmnotification_renwumorengao: '任务默认告警规则设置',
   packages_business_setting_alarmnotification_morengaojinggui: '默认告警规则',
   packages_business_setting_alarmnotification_renwugaojingshe: '任务告警设置',
+  packages_business_setting_alarmnotification_dangjiaoyanrenwucuowu: '当校验任务遇到错误时',
+  packages_business_setting_alarmnotification_dangjiaoyanrenwushuliangcuowu: '当count校验结果的差异行数大于阈值时',
+  packages_business_setting_alarmnotification_dangjiaoyanrenwuzhicuowu: '当值校验结果的表数据差大于阈值时',
   //消息通知
   packages_business_notify_user_all_notice: '全部通知',
   packages_business_notify_unread_notice: '未读消息',

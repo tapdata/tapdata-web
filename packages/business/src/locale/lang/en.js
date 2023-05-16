@@ -636,6 +636,11 @@ export default {
   packages_business_setting_alarmnotification_dangrenwuuP: 'When the Agent service start',
   packages_business_setting_alarmnotification_msshigaojing: 'Alarm when s',
   packages_business_setting_alarmnotification_lianxu: 'Continuous',
+  packages_business_setting_alarmnotification_dangjiaoyanrenwucuowu: 'When the verification task encounters an error',
+  packages_business_setting_alarmnotification_dangjiaoyanrenwushuliangcuowu:
+    'When the number of different lines in the count verification result is greater than the threshold',
+  packages_business_setting_alarmnotification_dangjiaoyanrenwuzhicuowu:
+    'When the table data difference of the value verification result is greater than the threshold',
   packages_business_notify_user_all_notice: 'Notify All',
   packages_business_notify_unread_notice: 'Unread Message',
   packages_business_notify_mask_read: 'Mark this page as read',
