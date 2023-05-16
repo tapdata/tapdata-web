@@ -47,10 +47,11 @@
           </div>
         </div>
         <div
-          class="platform-wrap product-type-card rounded-xl border flex flex-column position-relative clickable overflow-auto disabled"
+          class="platform-wrap product-type-card rounded-xl border flex flex-column position-relative clickable overflow-auto"
           :class="{
             active: platform === 'realTime'
           }"
+          @click="changePlatform('realTime')"
         >
           <div class="is-active position-absolute top-0 end-0">
             <div class="is-active-triangle"></div>

@@ -39,10 +39,11 @@
             </div>
           </div>
           <div
-            class="platform-wrap product-type-card rounded-xl border flex flex-column position-relative clickable overflow-auto disabled"
+            class="platform-wrap product-type-card rounded-xl border flex flex-column position-relative clickable overflow-auto"
             :class="{
               active: platform === 'realTime'
             }"
+            @click="changePlatform('realTime')"
           >
             <div class="is-active position-absolute top-0 end-0">
               <div class="is-active-triangle"></div>
@@ -601,7 +602,8 @@
 </template>
 
 <script>
-import { isStr, isObj, uniqueArr } from '@tap/shared'
+import { uniqBy } from 'lodash'
+import { isStr, isObj } from '@tap/shared'
 import { VTable } from '@tap/component'
 import { getPaymentMethod, getSpec, AGENT_TYPE_MAP } from '../instance/utils'
 import { CURRENCY_SYMBOL_MAP, TIME_MAP, CURRENCY_MAP } from '@tap/business'
@@ -1094,7 +1096,7 @@ export default {
       this.$axios.get('api/tcm/paid/plan/getPaidPlan', { params }).then(data => {
         const { paidPrice = [] } = data?.[0] || {}
         // 规格
-        this.specificationItems = uniqueArr(
+        this.specificationItems = uniqBy(
           paidPrice.map(t => {
             const { cpu = 0, memory = 0 } = t.spec || {}
             let desc =
@@ -1199,7 +1201,7 @@ export default {
         )
         this.mongodbPaidPrice = prices
         // 规格
-        this.mongodbSpecItems = uniqueArr(
+        this.mongodbSpecItems = uniqBy(
           prices.map(t => {
             const { cpu = 0, memory = 0 } = t.spec || {}
             return {
