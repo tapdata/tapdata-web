@@ -410,9 +410,9 @@ export default {
               type: item.data_type
             }))
             .filter(item => !item.is_deleted)
-          if (filterField) {
-            result = result.filter(t => !!t[filterField])
-          }
+          // if (filterField) {
+          //   result = result.filter(t => !!t[filterField])
+          // }
           return result
         },
 
