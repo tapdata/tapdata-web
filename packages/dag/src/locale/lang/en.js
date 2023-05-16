@@ -349,6 +349,9 @@ export default {
   packages_dag_nodes_database_increment_exactly_once_enable_title: 'Increment exactly once write',
   packages_dag_nodes_database_increment_exactly_once_enable_tips:
     'Incremental data is accurately written once by marking and checking in the target cache. You are advised to enable this function when the value of the association condition changes. After this function is enabled, the synchronization speed decreases. The target needs to have table creation and write permissions.',
+  packages_dag_nodes_database_increment_exactly_once_enable_time_window_day_title: 'Time Window___Day(s)',
+  packages_dag_nodes_database_increment_exactly_once_enable_time_window_day_tips:
+    'The time for accurate write and cache data retention also represents the time window for accurate write. When the engine is running, it will trigger automatic clearing once a day. The longer the window time is set, the more storage space is occupied by the target database.',
   packages_dag_extends_nodetype_queshaobiyaode: 'Missing required type attribute!',
   packages_dag_nodes_javascript_moxingshengming: 'Model Declaration',
   packages_dag_nodes_javascript_jiaoben: 'Script',

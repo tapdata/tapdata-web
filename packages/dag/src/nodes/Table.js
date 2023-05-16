@@ -1342,16 +1342,44 @@ export class Table extends NodeType {
                       findParentNodes: '{{findParentNodes}}'
                     }
                   },
-                  incrementExactlyOnceEnable: {
-                    title: i18n.t('packages_dag_nodes_database_increment_exactly_once_enable_title'),
-                    type: 'boolean',
-                    default: false,
-                    'x-decorator': 'FormItem',
-                    'x-component': 'Switch',
-                    'x-decorator-props': {
-                      className: 'item-control-horizontal',
-                      layout: 'horizontal',
-                      tooltip: i18n.t('packages_dag_nodes_database_increment_exactly_once_enable_tips')
+                  incrementExactlyOnceObject: {
+                    type: 'void',
+                    'x-component': 'Space',
+                    properties: {
+                      incrementExactlyOnceEnable: {
+                        title: i18n.t('packages_dag_nodes_database_increment_exactly_once_enable_title'),
+                        type: 'boolean',
+                        default: false,
+                        'x-component': 'Switch',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          className: 'item-control-horizontal',
+                          layout: 'horizontal',
+                          tooltip: i18n.t('packages_dag_nodes_database_increment_exactly_once_enable_tips')
+                        }
+                      },
+                      incrementExactlyOnceEnableTimeWindowDay: {
+                        title: i18n.t(
+                          'packages_dag_nodes_database_increment_exactly_once_enable_time_window_day_title'
+                        ),
+                        type: 'number',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          className: 'item-control-horizontal ml-3',
+                          layout: 'horizontal',
+                          tooltip: i18n.t(
+                            'packages_dag_nodes_database_increment_exactly_once_enable_time_window_day_tips'
+                          )
+                        },
+                        'x-component': 'Select',
+                        'x-component-props': {
+                          style: {
+                            width: '100px'
+                          }
+                        },
+                        enum: [1, 3, 5, 7],
+                        default: 3
+                      }
                     },
                     'x-reactions': [
                       {

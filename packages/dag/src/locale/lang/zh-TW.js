@@ -334,6 +334,9 @@ export default {
   packages_dag_nodes_database_increment_exactly_once_enable_title: '增量精确一次写入',
   packages_dag_nodes_database_increment_exactly_once_enable_tips:
     '使用在目标缓存标记并检查的方式，实现增量数据的精确一次写入。当关联条件的值会发生改变时，建议开启，开启后会导致一定的同步速度下降。目标需要拥有创建表和写入权限。',
+  packages_dag_nodes_database_increment_exactly_once_enable_time_window_day_title: '時間窗口___天',
+  packages_dag_nodes_database_increment_exactly_once_enable_time_window_day_tips:
+    '精確一次寫入，緩存數據的保留時長，也代表了精確一次生效的時間窗口，引擎運行時，一天會觸發一次自動清理。同時窗口時間設置的越長，會更佔用目標數據庫的存儲空間。 ',
   packages_dag_extends_nodetype_queshaobiyaode: '缺少必要的type屬性！ ',
   packages_dag_nodes_javascript_moxingshengming: '模型聲明',
   packages_dag_nodes_javascript_jiaoben: '腳本',
