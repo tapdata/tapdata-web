@@ -338,9 +338,10 @@
 <script>
 import { FilterBar } from '@tap/component'
 import AddServe from './AddServe'
-import { workerApi, clusterApi } from '@tap/api'
+import { workerApi, clusterApi, proxyApi } from '@tap/api'
 import { STATUS_MAP } from './const'
 import Cookie from '@tap/shared/src/cookie'
+import { downloadBlob, downloadJson, openUrl } from '@tap/shared'
 
 export default {
   components: {
@@ -477,21 +478,15 @@ export default {
     },
     //下载
     downServeFn(item) {
-      window.location =
-        location.origin +
-        location.pathname +
-        'api/proxy/supervisor?pid=' +
-        item.systemInfo?.process_id +
-        `&access_token=${this.accessToken}`
+      proxyApi.supervisor(item.systemInfo?.process_id).then(data => {
+        downloadJson(data, 'supervisor')
+      })
     },
     //下载
     downConnectorsFn(item) {
-      window.location =
-        location.origin +
-        location.pathname +
-        'api/proxy/memory/connectors?pid=' +
-        item.systemInfo?.process_id +
-        `&access_token=${this.accessToken}`
+      proxyApi.connectors(item.systemInfo?.process_id).then(data => {
+        downloadJson(data, 'connectors')
+      })
     },
     // 启动
     startFn(item, status, server) {
