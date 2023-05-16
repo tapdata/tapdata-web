@@ -33,10 +33,18 @@
                       @click="updateFn(item, item.management.status, 'management', 'update')"
                       >{{ $t(' cluster_update') }}
                     </ElButton>
-                    <VIcon class="mr-2 link-primary" v-readonlybtn="'Cluster_operation'" @click="downServeFn(item)"
+                    <VIcon
+                      class="mr-2 link-primary"
+                      v-readonlybtn="'Cluster_operation'"
+                      :disabled="item.management.status !== 'running'"
+                      @click="downServeFn(item)"
                       >connectors</VIcon
                     >
-                    <VIcon class="mr-2 link-primary" v-readonlybtn="'Cluster_operation'" @click="downConnectorsFn(item)"
+                    <VIcon
+                      class="mr-2 link-primary"
+                      v-readonlybtn="'Cluster_operation'"
+                      :disabled="item.management.status !== 'running'"
+                      @click="downConnectorsFn(item)"
                       >supervisor</VIcon
                     >
                     <VIcon class="mr-2 link-primary" v-readonlybtn="'Cluster_operation'" @click="addServeFn(item)"
@@ -332,6 +340,7 @@ import { FilterBar } from '@tap/component'
 import AddServe from './AddServe'
 import { workerApi, clusterApi } from '@tap/api'
 import { STATUS_MAP } from './const'
+import Cookie from '@tap/shared/src/cookie'
 
 export default {
   components: {
@@ -366,6 +375,7 @@ export default {
       searchParams: {
         keyword: ''
       },
+      accessToken: '',
       filterItems: [
         {
           placeholder: this.$t('modules_name_placeholder'),
@@ -377,6 +387,7 @@ export default {
   },
   created() {
     this.getDataApi()
+    this.accessToken = Cookie.get('access_token')
   },
   watch: {
     '$route.query'() {
@@ -466,11 +477,21 @@ export default {
     },
     //下载
     downServeFn(item) {
-      window.location = location.origin + location.pathname + 'api/proxy/supervisor?pid=' + item.process_id
+      window.location =
+        location.origin +
+        location.pathname +
+        'api/proxy/supervisor?pid=' +
+        item.systemInfo?.process_id +
+        `&access_token=${this.accessToken}`
     },
     //下载
     downConnectorsFn(item) {
-      window.location = location.origin + location.pathname + 'api/proxy/memory/connectors?pid=' + item.process_id
+      window.location =
+        location.origin +
+        location.pathname +
+        'api/proxy/memory/connectors?pid=' +
+        item.systemInfo?.process_id +
+        `&access_token=${this.accessToken}`
     },
     // 启动
     startFn(item, status, server) {
