@@ -1,6 +1,6 @@
 <template>
   <div class="position-absolute table-node border rounded-lg bg-white" :style="nodeStyle">
-    <div class="px-3 py-2">
+    <div class="px-3 py-2" @click="mouseClick">
       <div class="ellipsis">{{ data.name }}</div>
       <div class="mt-1 flex align-center gap-1 font-color-light ellipsis">
         <NodeIcon :node="data" :size="14"></NodeIcon>
@@ -25,6 +25,7 @@ import i18n from '@tap/i18n'
 import { NODE_PREFIX } from '@tap/dag'
 import { Time } from '@tap/shared'
 import { OverflowTooltip, VIcon } from '@tap/component'
+import { mapGetters, mapMutations } from 'vuex'
 
 export default {
   name: 'TableNode',
@@ -46,6 +47,18 @@ export default {
   },
 
   computed: {
+    ...mapGetters('dataflow', [
+      'nodeById',
+      'isActionActive',
+      'isNodeActive',
+      'isNodeSelected',
+      'isMultiSelect',
+      'processorNodeTypes',
+      'hasNodeError',
+      'stateIsReadonly',
+      'activeType'
+    ]),
+
     nodeStyle() {
       const [left = 0, top = 0] = this.data.attrs?.position || []
       return {
@@ -62,6 +75,16 @@ export default {
   },
 
   methods: {
+    ...mapMutations('dataflow', [
+      'setActiveNode',
+      'addActiveAction',
+      'removeActiveAction',
+      'updateNodeProperties',
+      'resetSelectedNodes',
+      'setNodeError',
+      'clearNodeError'
+    ]),
+
     __init() {
       const { id, nodeId } = this
 
@@ -176,17 +199,31 @@ export default {
         this.$el,
         {
           ...sourceEndpoint,
-          // enabled: !this.stateIsReadonly,
-          dragOptions: {
-            beforeStart: ({ el }) => {
-              if (this.stateIsReadonly) return false
-            }
-          }
+          enabled: false
         },
         {
           uuid: id + '_source'
         }
       )
+    },
+
+    mouseClick(e) {
+      if (this.isActionActive('dragActive')) {
+        this.removeActiveAction('dragActive')
+      } else {
+        if (!this.ins) return
+        if (this.isCtrlKeyPressed(e) === false) {
+          // 如果不是多选模式则取消所有节点选中
+          this.$emit('deselectAllNodes')
+        }
+
+        if (this.isNodeSelected(this.nodeId)) {
+          this.$emit('deselectNode', this.nodeId)
+        } else {
+          // 选中节点并且active
+          this.$emit('nodeSelected', this.nodeId, true)
+        }
+      }
     }
   }
 }

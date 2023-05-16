@@ -8,6 +8,7 @@
         :node-id="node.id"
         :id="NODE_PREFIX + node.id"
         :js-plumb-ins="jsPlumbIns"
+        @drag-stop="onNodeDragStop"
       ></TableNode>
     </PaperScroller>
   </div>
@@ -49,7 +50,6 @@ export default {
   watch: {},
 
   mounted() {
-    this.setStateReadonly(true)
     this.unwatch = this.$watch(
       () => [this.connectionId, this.tableName, this.isShow],
       () => {
@@ -133,48 +133,6 @@ export default {
           info.connection.addClass('connection-selected')
           this.selectConnection(connection)
         })
-        info.connection.bind('mouseover', () => {
-          if (!this.stateIsReadonly) {
-            info.connection.showOverlay('removeConn')
-            info.connection.showOverlay('addNodeOnConn')
-          }
-        })
-        info.connection.bind('mouseout', () => {
-          if (
-            connectionIns.hasClass('connection-selected') /* ||
-            (this.nodeMenu.show && this.nodeMenu.reference === connectionIns.canvas)*/
-          )
-            return
-          connectionIns.hideOverlay('removeConn')
-          connectionIns.hideOverlay('addNodeOnConn')
-        })
-      })
-
-      jsPlumbIns.bind('beforeDrop', info => {
-        if (this.stateIsReadonly) return false
-        const { sourceId, targetId } = info
-
-        return this.checkCanBeConnected(this.getRealId(sourceId), this.getRealId(targetId), true)
-      })
-
-      jsPlumbIns.bind('beforeDrag', ({ sourceId }) => {
-        if (this.stateIsReadonly) return false
-        // 根据连接类型判断，节点是否仅支持作为目标
-        const node = this.nodeById(this.getRealId(sourceId))
-        return this.checkAsSource(node, true)
-      })
-
-      // 连线拖动时，可以被连的节点在画布上凸显
-      jsPlumbIns.bind('connectionDrag', info => {
-        if (this.stateIsReadonly) return false
-        const source = this.nodeById(this.getRealId(info.sourceId))
-        const canBeConnectedNodes = this.allNodes.filter(target => this.checkCanBeConnected(source.id, target.id))
-        this.setCanBeConnectedNodeIds(canBeConnectedNodes.map(n => n.id))
-      })
-
-      jsPlumbIns.bind('connectionDragStop', () => {
-        if (this.stateIsReadonly) return false
-        this.setCanBeConnectedNodeIds([])
       })
     },
 
@@ -187,10 +145,6 @@ export default {
           edges: [
             {
               source: '27f5add1-bbf0-48a8-8954-88c8dd69a14b',
-              target: '33e5e019-66fd-457e-b381-b09eeb48a189'
-            },
-            {
-              source: '33e5e019-66fd-457e-b381-b09eeb48a189',
               target: 'e28e41ef-13c3-4b58-a083-29e196b538a0'
             }
           ],
@@ -254,20 +208,6 @@ export default {
                 pdkType: 'pdk',
                 pdkHash: 'fa04a47253db3b86af1baf020d829fd7d9c012564b7d5d7388cd6a97cf51d40f'
               }
-            },
-            {
-              deleteAllFields: false,
-              operations: [],
-              processorThreadNum: 1,
-              type: 'field_add_del_processor',
-              catalog: 'processor',
-              isTransformed: false,
-              id: '33e5e019-66fd-457e-b381-b09eeb48a189',
-              name: '增删字段',
-              elementType: 'Node',
-              attrs: {
-                position: [196, 388.5]
-              }
             }
           ]
         }
@@ -276,9 +216,8 @@ export default {
       await this.$nextTick()
       await this.addNodes(dag)
       await this.$nextTick()
-      this.$refs.paperScroller.initVisibleArea()
-      this.$refs.paperScroller.autoResizePaper()
-      this.$refs.paperScroller.centerContent()
+
+      this.$refs.paperScroller.initVisibleArea(true)
       this.handleAutoLayout()
     },
 
@@ -327,10 +266,9 @@ export default {
 
       Vue.nextTick(() => {
         this.jsPlumbIns.setSuspendDrawing(false, true)
+        this.$refs.paperScroller.autoResizePaper()
+        this.$refs.paperScroller.centerContent()
       })
-
-      this.$refs.paperScroller.autoResizePaper()
-      this.$refs.paperScroller.centerContent()
     },
 
     async addNodes({ nodes, edges }) {
@@ -371,9 +309,7 @@ export default {
       })
 
       await this.$nextTick()
-      await this.$nextTick()
 
-      console.log('edges', edges) // eslint-disable-line
       // 连线
       edges.forEach(({ source, target }) => {
         this.jsPlumbIns.connect({ uuids: [`${NODE_PREFIX}${source}_source`, `${NODE_PREFIX}${target}_target`] })
@@ -383,6 +319,15 @@ export default {
     reset() {
       this.jsPlumbIns.reset()
       this.resetState()
+      this.setStateReadonly(true)
+    },
+
+    onNodeDragStop(isNotMove, oldProperties, newProperties) {
+      this.$refs.paperScroller.autoResizePaper()
+      !isNotMove &&
+        newProperties.forEach(prop => {
+          this.updateNodeProperties(prop)
+        })
     }
   }
 }
