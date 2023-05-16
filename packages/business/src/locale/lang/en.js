@@ -593,6 +593,8 @@ export default {
   packages_business_verification_form_task_alarm_when_diff_result_over_count1:
     'When the number of difference rows of the count verification result is greater than',
   packages_business_verification_form_task_alarm_when_diff_result_over_count2: 'start alarm',
+  packages_business_verification_form_task_alarm_when_result_table_over_count1:
+    'When the difference between the table data of the value verification result is greater than',
   packages_business_task_status_error_tip:
     "ask_list_error_tip: 'The task has been successfully deleted, but the information of the following PostgreSQL connections failed to be cleared, and you need to manually clear them in the following ways",
   packages_business_task_status_next_run_time: 'Next run time: {val}',

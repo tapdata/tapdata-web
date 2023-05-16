@@ -564,6 +564,7 @@ export default {
   packages_business_verification_form_task_alarm_when_error: '当校验任务出错时进行告警',
   packages_business_verification_form_task_alarm_when_diff_result_over_count1: '当count校验结果的差异行数大于',
   packages_business_verification_form_task_alarm_when_diff_result_over_count2: '时进行告警',
+  packages_business_verification_form_task_alarm_when_result_table_over_count1: '当值校验结果的表数据差大于',
   packages_business_task_status_error_tip:
     '任务删除成功，以下几个 PostgreSQL 连接的信息清除失败，需要您使用以下方式手动清除',
   packages_business_task_status_next_run_time: '下次运行时间：{val}',
