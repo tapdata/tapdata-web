@@ -243,7 +243,26 @@
               @click="handleRenew(scope.row)"
               >{{ $t('dfs_instance_instance_zhongqi') }}</ElButton
             >
+            <ElButton
+              size="mini"
+              type="text"
+              v-if="scope.row.agentType === 'Local'"
+              :loading="scope.row.btnLoading.delete"
+              :disabled="restartBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
+              @click="handleRestart(scope.row)"
+              >{{ $t('dfs_instance_instance_zhongqi') }}</ElButton
+            >
             <ElDivider direction="vertical"></ElDivider>
+            <ElButton
+              size="mini"
+              type="text"
+              v-if="scope.row.agentType === 'Local'"
+              :loading="scope.row.btnLoading.delete"
+              :disabled="restartBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
+              @click="handleStart(scope.row)"
+              >{{ $t('public_button_start') }}</ElButton
+            >
+            <ElDivider v-if="scope.row.agentType === 'Local'" direction="vertical"></ElDivider>
             <ElButton
               size="mini"
               type="text"
@@ -1046,6 +1065,7 @@ export default {
     showUpgradeErrorDialogFnc() {
       this.upgradeErrorDialog = true
     },
+    //自动升级
     autoUpgradeFnc() {
       this.closeDialog() // 关闭升级方式选择窗口
       //由于云版升级引擎导致原来任务执行的中断-前端 #132709
@@ -1061,7 +1081,8 @@ export default {
               downloadUrl,
               process_id: this.selectedRow?.tmInfo?.agentId,
               version: this.version,
-              token: token
+              token: token,
+              op: 'upgrade'
             })
             .then(() => {
               this.$message.success(this.$t('agent_auto_upgrade_tip_start'))
@@ -1219,6 +1240,10 @@ export default {
     renewBtnDisabled(row) {
       return !['Running', 'Error'].includes(row.status)
     },
+    //禁用半托管重启 -启动 公用
+    restartBtnDisabled(row) {
+      return row.tapdataAgentStatus === 'stop' //tapdataAgent 失活了
+    },
     showVersionFlag(row) {
       let { status, tmInfo } = row
       return !(status === 'Creating' && !tmInfo?.pingTime)
@@ -1319,6 +1344,30 @@ export default {
       this.$axios.post('api/tcm/agent/restart?agentId=' + row.id).then(() => {
         this.$message.success(this.$t('public_message_operation_success'))
       })
+    },
+    // 半托管重启
+    handleRestart(row) {
+      this.$axios
+        .post('tm/api/clusterStates/updataAgent', {
+          process_id: row?.tmInfo?.agentId,
+          operation: 'restart'
+        })
+        .then(() => {
+          this.$message.success(this.$t('public_message_operation_success'))
+          this.fetch()
+        })
+    },
+    // 半托管启动
+    handleStart(row) {
+      this.$axios
+        .post('tm/api/clusterStates/updataAgent', {
+          process_id: row?.tmInfo?.agentId,
+          operation: 'start'
+        })
+        .then(() => {
+          this.$message.success(this.$t('public_message_operation_success'))
+          this.fetch()
+        })
     },
     //退订详情费用
     getUnsubscribePrice(row = {}) {
