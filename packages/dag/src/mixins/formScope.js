@@ -376,12 +376,11 @@ export default {
         /**
          * 加载节点的字段选项列表
          * @param nodeId
-         * @param filterField 字段的值不为空
          * @returns {Promise<{}|*>}
          */
-        loadNodeFieldOptions: async (nodeId, filterField) => {
+        loadNodeFieldOptions: async nodeId => {
           const fields = await this.scope.loadNodeFieldsById(nodeId)
-          let result = fields
+          return fields
             .map(item => ({
               label: item.field_name,
               value: item.field_name,
@@ -390,10 +389,6 @@ export default {
               type: item.data_type
             }))
             .filter(item => !item.is_deleted)
-          if (filterField) {
-            result = result.filter(t => !!t[filterField])
-          }
-          return result
         },
 
         loadDateFieldOptions: async nodeId => {
