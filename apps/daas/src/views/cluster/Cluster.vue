@@ -34,10 +34,10 @@
                       >{{ $t(' cluster_update') }}
                     </ElButton>
                     <VIcon class="mr-2 link-primary" v-readonlybtn="'Cluster_operation'" @click="downServeFn(item)"
-                      >download</VIcon
+                      >connectors</VIcon
                     >
                     <VIcon class="mr-2 link-primary" v-readonlybtn="'Cluster_operation'" @click="downConnectorsFn(item)"
-                      >database</VIcon
+                      >supervisor</VIcon
                     >
                     <VIcon class="mr-2 link-primary" v-readonlybtn="'Cluster_operation'" @click="addServeFn(item)"
                       >bg-add</VIcon
