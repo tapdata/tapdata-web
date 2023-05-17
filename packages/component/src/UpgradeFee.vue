@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="订阅升级"
+    :title="$t('packages_component_src_upgradefee_dingyueshengji')"
     :visible.sync="visible"
     :append-to-body="true"
     width="680px"
@@ -8,55 +8,90 @@
     :before-close="handleClose"
   >
     <ul class="flex paid-upgrade-ul mt-4">
-      <li class="paid-upgrade-left">
-        <div style="height: 150px">
-          <div class="version mb-2">基础版</div>
-          <div class="desc">提供免费实例体验服务</div>
-          <div class="paid-upgrade-mb16"><span class="free">免费</span></div>
-          <div class="currentList paid-upgrade-mb16">
-            <VIcon size="16" class="mr-2 color-primary">check-bold</VIcon> 最大任务数:
-            <span class="color-primary">3个</span>
+      <li class="paid-upgrade-left flex flex-column">
+        <div class="px-4 py-4 flex-1">
+          <div class="version mb-2">{{ $t('packages_component_src_upgradefee_jichuban') }}</div>
+          <div class="desc">{{ $t('packages_component_src_upgradefee_tigongmianfeishi') }}</div>
+          <div class="paid-upgrade-l-height flex align-items-center">
+            <span class="free">{{ $t('packages_component_src_upgradefee_mianfei') }}</span>
           </div>
-          <div class="currentList paid-upgrade-mb16">
-            <VIcon size="16" class="mr-2 color-primary">check-bold</VIcon> 数据处理性能较低
+          <div class="currentList paid-upgrade-mb16 mt-2 flex">
+            <VIcon size="16" class="mr-2 color-primary">check-bold</VIcon
+            >{{ $t('packages_component_src_upgradefee_zuidarenwushu')
+            }}<span class="color-primary">{{ $t('packages_component_src_upgradefee_ge') }}</span>
           </div>
-          <div class="currentList paid-upgrade-mb16">
-            <VIcon size="16" class="mr-2 color-primary">check-bold</VIcon> 标准售后支持，响应时间长
+          <div class="currentList paid-upgrade-mb16 flex">
+            <VIcon size="16" class="mr-2 color-primary">check-bold</VIcon
+            ><span>{{ $t('packages_component_src_upgradefee_shujuchulixing2') }}</span>
           </div>
+          <div class="currentList paid-upgrade-mb16 flex">
+            <VIcon size="16" class="mr-2 color-primary">check-bold</VIcon
+            ><span>{{ $t('packages_component_src_upgradefee_biaozhunshouhouzhi') }}</span>
+          </div>
+        </div>
+        <div class="footer flex justify-content-between align-items-center px-4">
+          {{ $t('packages_component_src_upgradefee_dangqianbanben') }}
         </div>
       </li>
-      <li class="paid-upgrade-right ml-6">
-        <div style="height: 150px">
-          <div class="version mb-2">专业版 <span class="color-danger">限时优惠</span></div>
-          <div class="desc">提供专业化服务支持</div>
-          <el-image :src="getImg('subscription_img_zyb')" alt="" />
-          <div class="paid-upgrade-mb16"><span class="free">套餐付费</span></div>
-          <div class="currentList paid-upgrade-mb16">
-            <VIcon size="16" class="mr-2 color-primary">check-bold</VIcon> 任务数可根据购买规格提升至:
-            <span class="color-primary">数百个</span>
+      <li class="paid-upgrade-right ml-6 flex flex-column">
+        <div class="px-4 py-4 flex-1">
+          <div class="flex bg">
+            <div>
+              <div class="version mb-2">
+                {{ $t('packages_component_src_upgradefee_zhuanyeban')
+                }}<span class="discount inline-block fs-8">{{
+                  $t('packages_component_src_upgradefee_xianshiyouhui')
+                }}</span>
+              </div>
+              <div class="desc">{{ $t('packages_component_src_upgradefee_tigongzhuanyehua') }}</div>
+              <div
+                class="paid-upgrade-height flex align-items-center"
+                :class="[{ 'paid-upgrade-cn-height': this.$i18n.locale === 'zh-CN' }]"
+              >
+                <span class="free">{{ $t('packages_component_src_upgradefee_taocanfufei') }}</span>
+              </div>
+            </div>
           </div>
-          <div class="currentList paid-upgrade-mb16">
-            <VIcon size="16" class="mr-2 color-primary">check-bold</VIcon> 数据处理性能高
+          <div class="currentList paid-upgrade-mb16 mt-2 flex">
+            <VIcon size="16" class="mr-2 color-primary">check-bold</VIcon
+            ><span
+              >{{ $t('packages_component_src_upgradefee_renwushukegen')
+              }}<span class="color-primary">{{ $t('packages_component_src_upgradefee_shubaige') }}</span></span
+            >
           </div>
-          <div class="currentList paid-upgrade-mb16">
-            <VIcon size="16" class="mr-2 color-primary">check-bold</VIcon> 高级售后支持, 具有服务可靠性承诺
+          <div class="currentList paid-upgrade-mb16 flex">
+            <VIcon size="16" class="mr-2 color-primary">check-bold</VIcon
+            ><span>{{ $t('packages_component_src_upgradefee_shujuchulixing') }}</span>
+          </div>
+          <div class="currentList paid-upgrade-mb16 flex">
+            <VIcon size="16" class="mr-2 color-primary">check-bold</VIcon
+            ><span>{{ $t('packages_component_src_upgradefee_gaojishouhouzhi') }}</span>
           </div>
         </div>
-        <el-button class="float-end" type="primary" @click="goPaidUpgrade">升 级</el-button>
+        <div
+          class="footer bg-color-primary color-white flex justify-content-between align-items-center px-4 cursor-pointer"
+          @click="goPaidUpgrade"
+        >
+          {{ $t('packages_component_src_upgradefee_dingyuezhuanyeban') }}<VIcon size="17">right</VIcon>
+        </div>
       </li>
     </ul>
   </el-dialog>
 </template>
 
 <script>
+import { VIcon } from '@tap/component'
 export default {
   name: 'UpgradeFeeDialog',
+  components: { VIcon },
+
   props: ['visible'],
   methods: {
     goPaidUpgrade() {
       this.$router.push({
-        name: 'PaidUpgrade'
+        name: 'createAgent'
       })
+      this.handleClose()
     },
     handleClose() {
       this.$emit('update:visible', false)
@@ -79,7 +114,9 @@ export default {
     width: 304px;
     border: 1px solid map-get($borderColor, light);
     border-radius: 8px;
-    padding: 16px;
+  }
+  .paid-upgrade-right {
+    border: 1px solid map-get($color, primary);
   }
   .current {
     font-weight: 400;
@@ -111,6 +148,26 @@ export default {
     line-height: 17px;
     color: map-get($color, light);
   }
+  .discount {
+    color: #ff7d00;
+    background: rgba(255, 125, 0, 0.1);
+    border-radius: 4px;
+    padding: 2px 4px;
+  }
+  .bg {
+    background: url('../../assets/images/subscription_img_zyb.png');
+    background-repeat: no-repeat;
+    background-position: right;
+  }
+  .paid-upgrade-height {
+    height: 94px;
+  }
+  .paid-upgrade-cn-height {
+    height: 114px;
+  }
+  .paid-upgrade-l-height {
+    height: 120px;
+  }
   .content {
     font-weight: 500;
     font-size: 14px;
@@ -120,6 +177,12 @@ export default {
   .paid-upgrade-mb16 {
     margin-bottom: 16px;
   }
+  .paid-upgrade-mt32 {
+    margin-top: 32px;
+  }
+  .paid-upgrade-mb45 {
+    margin-bottom: 45px;
+  }
   .text {
     font-size: 12px;
   }
@@ -128,6 +191,12 @@ export default {
     font-size: 14px;
     line-height: 20px;
     color: map-get($color, dark);
+  }
+  .footer {
+    height: 40px;
+    background: #f5f7fa;
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
   }
 }
 ::v-deep {

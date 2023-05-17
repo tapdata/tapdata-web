@@ -35,5 +35,24 @@ export default {
   packages_component_src_inlineinput_zifuchangduxian: '字符長度限制{val1}-{val2}個字符',
   packages_component_src_selectlist_meiyougengduoshu: '沒有更多數據',
   packages_component_src_classification_chuangjianfenlei: '創建分類',
-  packages_component_src_discoveryclassification_morenmuluji: '默認目錄（技術）'
+  packages_component_src_discoveryclassification_morenmuluji: '默認目錄（技術）',
+
+  packages_component_src_upgradefee_dingyuezhuanyeban: '訂閱專業版 ',
+  packages_component_src_upgradefee_gaojishouhouzhi: ' 高級售後支持, 具有服務可靠性承諾',
+  packages_component_src_upgradefee_shujuchulixing: ' 數據處理性能高',
+  packages_component_src_upgradefee_shubaige: '數百個',
+  packages_component_src_upgradefee_renwushukegen: ' 任務數可根據購買規格提升至:',
+  packages_component_src_upgradefee_taocanfufei: '套餐付費',
+  packages_component_src_upgradefee_tigongzhuanyehua: '提供專業化服務支持',
+  packages_component_src_upgradefee_xianshiyouhui: '限時優惠',
+  packages_component_src_upgradefee_zhuanyeban: '專業版 ',
+  packages_component_src_upgradefee_dangqianbanben: '當前版本',
+  packages_component_src_upgradefee_biaozhunshouhouzhi: ' 標準售後支持，響應時間長',
+  packages_component_src_upgradefee_shujuchulixing2: ' 數據處理性能較低',
+  packages_component_src_upgradefee_ge: '3個',
+  packages_component_src_upgradefee_zuidarenwushu: ' 最大任務數:',
+  packages_component_src_upgradefee_mianfei: '免費',
+  packages_component_src_upgradefee_tigongmianfeishi: '提供免費實例體驗服務',
+  packages_component_src_upgradefee_jichuban: '基礎版',
+  packages_component_src_upgradefee_dingyueshengji: '訂閱升級'
 }

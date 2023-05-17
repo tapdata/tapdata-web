@@ -8,8 +8,7 @@
       <div class="dfs-header__button button-bar pr-4 fs-7">
         <!--付费专业版-->
         <div class="vip-btn mr-4 cursor-pointer" @click="openUpgrade">
-          <VIcon size="17">icon-vip</VIcon>
-          订阅专业版
+          <VIcon size="17">icon-vip</VIcon>{{ $t('packages_component_src_upgradefee_dingyuezhuanyeban') }}
         </div>
         <div v-if="domain === 'demo.cloud.tapdata.net' && lang !== 'en'" class="marquee-container cursor-pointer">
           <div class="marquee-box">

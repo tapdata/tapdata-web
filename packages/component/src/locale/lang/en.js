@@ -36,5 +36,24 @@ export default {
   packages_component_src_inlineinput_zifuchangduxian: 'Character length limit {val1}-{val2} characters',
   packages_component_src_selectlist_meiyougengduoshu: 'No more data',
   packages_component_src_classification_chuangjianfenlei: 'Create Classification',
-  packages_component_src_discoveryclassification_morenmuluji: 'Default Directory (Technology)'
+  packages_component_src_discoveryclassification_morenmuluji: 'Default Directory (Technology)',
+
+  packages_component_src_upgradefee_dingyuezhuanyeban: 'Subscribe to Professional Edition',
+  packages_component_src_upgradefee_gaojishouhouzhi: 'Advanced After-sales Support with Service Reliability Commitment',
+  packages_component_src_upgradefee_shujuchulixing: 'High Data Processing Performance',
+  packages_component_src_upgradefee_shubaige: 'Unlimited',
+  packages_component_src_upgradefee_renwushukegen: 'Task limit can be increased based on purchased specifications: ',
+  packages_component_src_upgradefee_taocanfufei: 'Package Fee',
+  packages_component_src_upgradefee_tigongzhuanyehua: 'Provide Specialized Service Support',
+  packages_component_src_upgradefee_xianshiyouhui: 'Limited-time Discount',
+  packages_component_src_upgradefee_zhuanyeban: 'Professional Edition',
+  packages_component_src_upgradefee_dangqianbanben: 'Current Version',
+  packages_component_src_upgradefee_biaozhunshouhouzhi: 'Standard After-sales Support, long response time',
+  packages_component_src_upgradefee_shujuchulixing2: 'Low Data Processing Performance',
+  packages_component_src_upgradefee_ge: '3',
+  packages_component_src_upgradefee_zuidarenwushu: 'Maximum number of tasks: ',
+  packages_component_src_upgradefee_mianfei: 'Free',
+  packages_component_src_upgradefee_tigongmianfeishi: 'Provide Free Instance Experience Service',
+  packages_component_src_upgradefee_jichuban: 'Basic Edition',
+  packages_component_src_upgradefee_dingyueshengji: 'Subscribe and Upgrade'
 }
