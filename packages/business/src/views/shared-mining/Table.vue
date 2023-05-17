@@ -22,7 +22,7 @@
           size="mini"
           class="ml-4"
           @click="handleStop"
-          >停止挖掘</ElButton
+          >{{ $t('public_button_stop_mining') }}</ElButton
         >
         <ElButton
           v-else
@@ -31,7 +31,7 @@
           size="mini"
           class="ml-4"
           @click="handleRecover"
-          >恢复挖掘</ElButton
+          >{{ $t('public_button_stop_recover') }}</ElButton
         >
       </div>
     </div>
@@ -53,16 +53,14 @@
 
     <ElDialog
       :visible.sync="visible"
-      title="停止挖掘提醒"
+      :title="$t('packages_business_shared_mining_table_tingzhiwajueti')"
       width="600px"
       :close-on-click-modal="false"
       :append-to-body="true"
     >
       <div class="flex mt-n6 pl-4">
         <VIcon size="18" class="color-warning">warning</VIcon>
-        <span class="ml-3 mr-12"
-          >您要停止挖掘的表正在被以下任务使用，停止挖掘后将会影响以下任务的正常同步，请确认是否要继续停止。</span
-        >
+        <span class="ml-3 mr-12">{{ $t('packages_business_shared_mining_table_ninyaotingzhiwa') }}</span>
       </div>
       <VTable :columns="taskColumns" :data="taskData"></VTable>
     </ElDialog>
@@ -109,11 +107,11 @@ export default {
       currentTab: '',
       tabItems: [
         {
-          label: '正在挖掘',
+          label: i18n.t('packages_business_shared_mining_table_zhengzaiwajue'),
           value: 'running'
         },
         {
-          label: '已停止挖掘',
+          label: i18n.t('packages_business_shared_mining_table_yitingzhiwajue'),
           value: 'stopped'
         }
       ],
@@ -166,11 +164,11 @@ export default {
       visible: false,
       taskColumns: [
         {
-          label: '任务名称',
+          label: i18n.t('public_task_name'),
           prop: 'taskName'
         },
         {
-          label: '任务状态',
+          label: i18n.t('public_task_status'),
           prop: 'taskStatus'
         }
       ],
@@ -225,7 +223,6 @@ export default {
     },
 
     handleStop() {
-      console.log('handleStop', this.multipleSelection.map(item => item.id))
       this.visible = true
     },
 

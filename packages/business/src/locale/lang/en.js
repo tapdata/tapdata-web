@@ -1094,5 +1094,10 @@ export default {
   packages_business_swimlane_target_shouye: 'Homepage',
   packages_business_connections_databaseform_chakanwajueren: 'View mining tasks',
   packages_business_connections_databaseform_dangqianlianjiede:
-    'The currently connected mining task is using the original external storage, switching will result in the loss of mined data, please operate with caution. '
+    'The currently connected mining task is using the original external storage, switching will result in the loss of mined data, please operate with caution. ',
+  packages_business_shared_mining_table_yitingzhiwajue: 'Mining has stopped',
+  packages_business_shared_mining_table_zhengzaiwajue: 'Digging',
+  packages_business_shared_mining_table_ninyaotingzhiwa:
+    'The table you want to stop mining is being used by the following tasks. Stopping mining will affect the normal synchronization of the following tasks. Please confirm whether to continue to stop. ',
+  packages_business_shared_mining_table_tingzhiwajueti: 'Stop mining reminder'
 }
