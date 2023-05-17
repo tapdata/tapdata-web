@@ -11,25 +11,37 @@
       <li class="paid-upgrade-left">
         <div style="height: 150px">
           <div class="version mb-2">基础版</div>
+          <div class="desc">提供免费实例体验服务</div>
           <div class="paid-upgrade-mb16"><span class="free">免费</span></div>
-          <div class="currentList paid-upgrade-mb16">√ 最大任务数: 3</div>
-          <div class="currentList paid-upgrade-mb16">√ 已用任务数: 3</div>
+          <div class="currentList paid-upgrade-mb16">
+            <VIcon size="16" class="mr-2 color-primary">check-bold</VIcon> 最大任务数:
+            <span class="color-primary">3个</span>
+          </div>
+          <div class="currentList paid-upgrade-mb16">
+            <VIcon size="16" class="mr-2 color-primary">check-bold</VIcon> 数据处理性能较低
+          </div>
+          <div class="currentList paid-upgrade-mb16">
+            <VIcon size="16" class="mr-2 color-primary">check-bold</VIcon> 标准售后支持，响应时间长
+          </div>
         </div>
       </li>
       <li class="paid-upgrade-right ml-6">
         <div style="height: 150px">
-          <div class="version mb-2">标准版</div>
-          <div class="desc paid-upgrade-mb16">收费详情（每年）</div>
-          <div class="content mb-2 flex justify-content-between">
-            <span>基础月费含5个任务</span> <span class="version">¥12000</span>
+          <div class="version mb-2">专业版 <span class="color-danger">限时优惠</span></div>
+          <div class="desc">提供专业化服务支持</div>
+          <el-image :src="getImg('subscription_img_zyb')" alt="" />
+          <div class="paid-upgrade-mb16"><span class="free">套餐付费</span></div>
+          <div class="currentList paid-upgrade-mb16">
+            <VIcon size="16" class="mr-2 color-primary">check-bold</VIcon> 任务数可根据购买规格提升至:
+            <span class="color-primary">数百个</span>
           </div>
-          <div class="content flex justify-content-between">
-            <span>每个额外的任务</span> <span class="version">¥300</span>
+          <div class="currentList paid-upgrade-mb16">
+            <VIcon size="16" class="mr-2 color-primary">check-bold</VIcon> 数据处理性能高
+          </div>
+          <div class="currentList paid-upgrade-mb16">
+            <VIcon size="16" class="mr-2 color-primary">check-bold</VIcon> 高级售后支持, 具有服务可靠性承诺
           </div>
         </div>
-        <div class="link paid-upgrade-mb16"></div>
-        <div class="currentList paid-upgrade-mb16">√ 任务数不限</div>
-        <div class="currentList paid-upgrade-mb16">√ 提供SLA支持</div>
         <el-button class="float-end" type="primary" @click="goPaidUpgrade">升 级</el-button>
       </li>
     </ul>
@@ -48,6 +60,9 @@ export default {
     },
     handleClose() {
       this.$emit('update:visible', false)
+    },
+    getImg(name) {
+      return require(`../../assets/images/${name}.png`)
     }
   }
 }
@@ -63,7 +78,7 @@ export default {
   .paid-upgrade-ul li {
     width: 304px;
     border: 1px solid map-get($borderColor, light);
-    border-radius: 4px;
+    border-radius: 8px;
     padding: 16px;
   }
   .current {
@@ -85,10 +100,10 @@ export default {
     border-bottom: 1px solid map-get($borderColor, light);
   }
   .free {
-    font-weight: 500;
-    font-size: 12px;
-    line-height: 17px;
-    color: map-get($color, dark);
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    color: map-get($color, primary);
   }
   .desc {
     font-weight: 400;
