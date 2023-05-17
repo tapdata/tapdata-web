@@ -258,7 +258,7 @@
               type="text"
               v-if="scope.row.agentType === 'Local'"
               :loading="scope.row.btnLoading.delete"
-              :disabled="restartBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
+              :disabled="startBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
               @click="handleStart(scope.row)"
               >{{ $t('public_button_start') }}</ElButton
             >
@@ -1221,7 +1221,7 @@ export default {
         row.agentType === 'Cloud' ||
         row.status !== 'Running' ||
         row.metric.runningTaskNum > 0 ||
-        row.tapdataAgentStatus === 'stop' //tapdataAgent 失活了
+        row.tapdataAgentStatus === 'stopped' //tapdataAgent 失活了
       )
     },
     // 禁用删除
@@ -1240,9 +1240,15 @@ export default {
     renewBtnDisabled(row) {
       return !['Running', 'Error'].includes(row.status)
     },
-    //禁用半托管重启 -启动 公用
+    //禁用半托管重启 -启动 agent离线，预期重启不能点击
     restartBtnDisabled(row) {
-      return row.tapdataAgentStatus === 'stop' //tapdataAgent 失活了
+      return row.status === 'Stopped' || this.selectedRow.tapdataAgentStatus === 'stopped' //tapdataAgent 失活了
+    },
+    //agent运行中，预期 启动 不能点击
+    startBtnDisabled(row) {
+      return (
+        row.status === 'Running' || row.tapdataAgentStatus === 'stopped' //tapdataAgent 失活了
+      )
     },
     showVersionFlag(row) {
       let { status, tmInfo } = row

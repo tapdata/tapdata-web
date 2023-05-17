@@ -65,7 +65,7 @@
             class="mb-4 mr-4"
             type="primary"
             :loading="loadingUpload"
-            :disabled="agent.status !== 'Running' || disabledUploadDialog || tapdataAgentStatus === 'stop'"
+            :disabled="agent.status !== 'Running' || disabledUploadDialog || tapdataAgentStatus === 'stopped'"
             @click="handleUpload(currentAgentId)"
             >{{ btnTxt }}</el-button
           >
