@@ -1456,5 +1456,7 @@ export default {
   dfs_instance_createagent_qingtianxieninzi: '请填写您自己的MongoDB存储集群URI',
   dfs_instance_createagent_qingpeizhininde: '请配置您的存储资源:',
   dfs_order_list_dingyuezhuangtai: '订阅状态',
-  dfs_order_list_xinzengdingyue: '新增订阅'
+  dfs_order_list_xinzengdingyue: '新增订阅',
+  dfs_instance_details_shujuyuanziyuan: '数据源资源下载',
+  dfs_instance_details_xianchengziyuanxia: '线程资源下载'
 }

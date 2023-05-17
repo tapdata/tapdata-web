@@ -42,8 +42,12 @@
           @click="open(agent.id, agent.status)"
           >{{ $t('dfs_instance_instance_rizhishangchuan') }}</ElButton
         >
-        <ElButton class="mt-4" size="mini" @click="downServeFn(agent)">线程资源下载</ElButton>
-        <ElButton class="mt-4" size="mini" @click="downConnectorsFn(agent)">数据源资源下载</ElButton>
+        <ElButton class="mt-4" size="mini" @click="downServeFn(agent)">{{
+          $t('dfs_instance_details_xianchengziyuanxia')
+        }}</ElButton>
+        <ElButton class="mt-4" size="mini" @click="downConnectorsFn(agent)">{{
+          $t('dfs_instance_details_shujuyuanziyuan')
+        }}</ElButton>
       </div>
     </div>
     <!-- 日志上传   -->

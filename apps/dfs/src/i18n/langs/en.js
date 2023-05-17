@@ -1571,5 +1571,8 @@ export default {
   dfs_instance_createagent_qingtianxieninzi: 'Please fill in your own MongoDB storage cluster URI',
   dfs_instance_createagent_qingpeizhininde: 'Please configure your storage resources:',
   dfs_order_list_dingyuezhuangtai: 'Subscription Status',
-  dfs_order_list_xinzengdingyue: 'Add Subscription'
+  dfs_order_list_xinzengdingyue: 'Add Subscription',
+
+  dfs_instance_details_shujuyuanziyuan: 'Data Source Resource Download',
+  dfs_instance_details_xianchengziyuanxia: 'Thread Resource Download'
 }

@@ -1426,5 +1426,8 @@ export default {
   dfs_instance_createagent_qingtianxieninzi: '請填寫您自己的MongoDB存儲集群URI',
   dfs_instance_createagent_qingpeizhininde: '請配置您的存儲資源:',
   dfs_order_list_dingyuezhuangtai: '訂閱狀態',
-  dfs_order_list_xinzengdingyue: '新增訂閱'
+  dfs_order_list_xinzengdingyue: '新增訂閱',
+
+  dfs_instance_details_shujuyuanziyuan: '資料源資源下載',
+  dfs_instance_details_xianchengziyuanxia: '執行緒資源下載'
 }
