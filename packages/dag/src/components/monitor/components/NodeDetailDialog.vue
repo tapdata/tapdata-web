@@ -374,7 +374,7 @@ export default {
 
     isSource() {
       const { type, $inputs } = this.node
-      return (type === 'database' || type === 'table') && !$inputs.length
+      return (type === 'database' || type === 'table' || type === 'logCollector') && !$inputs.length
     },
 
     isTarget() {
