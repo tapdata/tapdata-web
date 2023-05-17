@@ -1350,7 +1350,7 @@ export default {
       this.$axios
         .post('tm/api/clusterStates/updataAgent', {
           process_id: row?.tmInfo?.agentId,
-          operation: 'restart'
+          op: 'restart'
         })
         .then(() => {
           this.$message.success(this.$t('public_message_operation_success'))
@@ -1362,7 +1362,7 @@ export default {
       this.$axios
         .post('tm/api/clusterStates/updataAgent', {
           process_id: row?.tmInfo?.agentId,
-          operation: 'start'
+          op: 'start'
         })
         .then(() => {
           this.$message.success(this.$t('public_message_operation_success'))
