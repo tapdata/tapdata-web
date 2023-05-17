@@ -813,7 +813,7 @@ export default {
             }
           }
 
-          return !$values.updateConditionFields?.length ? '该字段是必填字段!' : ''
+          return !$values.updateConditionFields?.length ? i18n.t('packages_dag_mixins_formscope_gaiziduanshibi') : ''
         }
       }
     }

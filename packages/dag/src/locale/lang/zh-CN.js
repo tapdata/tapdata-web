@@ -592,5 +592,6 @@ export default {
   packages_dag_migration_settingpanel_renwutiaoguoshi: '跳过事件超过阈值时停止任务',
   packages_dag_migration_settingpanel_tiaoguoyichangshi: '跳过异常事件，任务继续运行',
   packages_dag_migration_settingpanel_dangdanbiaotongbu: '事件处理出现异常时',
-  packages_dag_migration_settingpanel_anzhaomorenzhong: '按照默认重试逻辑进行重试'
+  packages_dag_migration_settingpanel_anzhaomorenzhong: '按照默认重试逻辑进行重试',
+  packages_dag_mixins_formscope_gaiziduanshibi: '该字段是必填字段!'
 }
