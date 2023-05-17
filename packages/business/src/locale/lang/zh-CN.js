@@ -560,6 +560,11 @@ export default {
   packages_business_verification_form_jianyanrenwuyun: '检验任务运行出错警告',
   packages_business_verification_form_jiaoyangaojing: '校验告警',
   packages_business_verification_form_zanbuzhichi_doris: '暂不支持Doris。',
+  packages_business_verification_form_task_alarm: '校验任务告警',
+  packages_business_verification_form_task_alarm_when_error: '当校验任务出错时进行告警',
+  packages_business_verification_form_task_alarm_when_diff_result_over_count1: '当count校验结果的差异行数大于',
+  packages_business_verification_form_task_alarm_when_diff_result_over_count2: '时进行告警',
+  packages_business_verification_form_task_alarm_when_result_table_over_count1: '当值校验结果的表数据差大于',
   packages_business_task_status_error_tip:
     '任务删除成功，以下几个 PostgreSQL 连接的信息清除失败，需要您使用以下方式手动清除',
   packages_business_task_status_next_run_time: '下次运行时间：{val}',
@@ -601,6 +606,9 @@ export default {
   packages_business_setting_alarmnotification_renwumorengao: '任务默认告警规则设置',
   packages_business_setting_alarmnotification_morengaojinggui: '默认告警规则',
   packages_business_setting_alarmnotification_renwugaojingshe: '任务告警设置',
+  packages_business_setting_alarmnotification_dangjiaoyanrenwucuowu: '当校验任务遇到错误时',
+  packages_business_setting_alarmnotification_dangjiaoyanrenwushuliangcuowu: '当count校验结果的差异行数大于阈值时',
+  packages_business_setting_alarmnotification_dangjiaoyanrenwuzhicuowu: '当值校验结果的表数据差大于阈值时',
   //消息通知
   packages_business_notify_user_all_notice: '全部通知',
   packages_business_notify_unread_notice: '未读消息',
