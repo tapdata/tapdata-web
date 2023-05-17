@@ -801,11 +801,11 @@ export default {
               if (!value || !value.length) {
                 nodeData.updateConditionFields = defaultList
                 $values.updateConditionFields = nodeData.updateConditionFields
-              } else {
+              } else if (value) {
                 let fieldMap = options.reduce((obj, item) => ((obj[item.value] = true), obj), {})
                 let filterValue = value.filter(v => fieldMap[v])
 
-                if (value && value.length !== filterValue.length) {
+                if (value.length !== filterValue.length) {
                   nodeData.updateConditionFields = filterValue.length ? filterValue : defaultList
                   $values.updateConditionFields = nodeData.updateConditionFields
                 }
