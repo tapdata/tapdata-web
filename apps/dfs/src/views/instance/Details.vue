@@ -42,8 +42,8 @@
           @click="open(agent.id, agent.status)"
           >{{ $t('dfs_instance_instance_rizhishangchuan') }}</ElButton
         >
-        <ElButton class="mt-4" size="mini" @click="downServeFn(agent.id)">线程资源下载</ElButton>
-        <ElButton class="mt-4" size="mini" @click="downConnectorsFn(agent.id)">数据源资源下载</ElButton>
+        <ElButton class="mt-4" size="mini" @click="downServeFn(agent)">线程资源下载</ElButton>
+        <ElButton class="mt-4" size="mini" @click="downConnectorsFn(agent)">数据源资源下载</ElButton>
       </div>
     </div>
     <!-- 日志上传   -->
@@ -360,15 +360,17 @@ export default {
         })
     },
     //下载
-    downServeFn(id) {
+    downServeFn(agent) {
+      let id = agent?.tmInfo?.agentId
       proxyApi.supervisor(id).then(data => {
-        downloadJson(data, 'supervisor')
+        downloadJson(JSON.stringify(data), 'supervisor')
       })
     },
     //下载
-    downConnectorsFn(id) {
+    downConnectorsFn(agent) {
+      let id = agent?.tmInfo?.agentId
       proxyApi.connectors(id).then(data => {
-        downloadJson(data, 'connectors')
+        downloadJson(JSON.stringify(data), 'connectors')
       })
     },
 
