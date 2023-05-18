@@ -2,7 +2,7 @@
   <div class="flex flex-column">
     <span v-if="showTitle" class="fw-bold mb-4">{{ $t('packages_business_shared_mining_table_wajuebiaoxinxi') }}</span>
     <div class="mb-3">
-      <span>已合并的连接</span>
+      <span>{{ $t('packages_business_shared_mining_table_yihebingdelian') }}</span>
       <ElSelect v-model="selectedConnectionId" size="mini" class="ml-4" @change="fetch">
         <ElOption v-for="item in connectionsList" :label="item.name" :value="item.id" :key="item.id"></ElOption>
       </ElSelect>
@@ -77,8 +77,10 @@
         </template>
       </VTable>
       <div class="text-end mt-10">
-        <ElButton @click="visible = false">取消</ElButton>
-        <ElButton :loading="submitLoading" type="primary" @click="handleSubmitStop">确认</ElButton>
+        <ElButton @click="visible = false">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton :loading="submitLoading" type="primary" @click="handleSubmitStop">{{
+          $t('public_button_confirm')
+        }}</ElButton>
       </div>
     </ElDialog>
   </div>
