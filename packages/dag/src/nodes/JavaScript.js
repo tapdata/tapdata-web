@@ -29,6 +29,23 @@ export class JavaScript extends NodeType {
         'x-decorator': 'FormItem',
         'x-component': 'Input'
       },
+      jsType: {
+        type: 'string',
+        title: i18n.t('public_type'),
+        default: 0,
+        enum: [
+          {
+            label: '默认JS',
+            value: 0
+          },
+          {
+            label: '标准JS',
+            value: 1
+          }
+        ],
+        'x-decorator': 'FormItem',
+        'x-component': 'Radio.Group'
+      },
       script: {
         title: i18n.t('packages_dag_nodes_javascript_jiaoben'),
         type: 'string',
