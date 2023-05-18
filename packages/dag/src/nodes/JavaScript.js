@@ -35,11 +35,11 @@ export class JavaScript extends NodeType {
         default: 0,
         enum: [
           {
-            label: '默认JS',
+            label: i18n.t('packages_dag_default_js'),
             value: 0
           },
           {
-            label: '标准JS',
+            label: i18n.t('packages_dag_standardization_js'),
             value: 1
           }
         ],
