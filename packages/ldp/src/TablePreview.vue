@@ -7,8 +7,8 @@
     width="850px"
     v-loading="loading"
   >
-    <header v-if="detailData">
-      <div class="mb-4">
+    <header v-if="detailData" class="px-6 pt-3">
+      <div class="mb-2">
         <span class="table-name inline-block">{{ detailData.name }}</span>
         <span v-if="swimType !== 'source'" :class="['status', 'ml-4', 'status-' + tableStatus]">{{
           statusMap[tableStatus]
@@ -34,76 +34,79 @@
         </template>
       </div>
     </header>
-    <section class="mt-6 flex-1 min-h-0">
+    <section class="flex-1 min-h-0 mt-1">
       <el-tabs v-model="activeName" @tab-click="handleTab" class="h-100 tabs-fill">
         <el-tab-pane :label="$t('packages_business_overview')" name="overView">
-          <section class="mt-2">
-            <div class="mb-4">
-              <span class="table-dec-label mb-4">{{ $t('public_description') }}：</span
-              ><el-input
-                type="textarea"
-                row="4"
-                class="table-dec-txt mt-2"
-                v-model="detailData.description"
-                @blur="saveTableDesc"
-              ></el-input>
-            </div>
-            <el-row>
-              <el-col :span="4">
-                <div class="table-dec-label">{{ $t('packages_business_rows') }}</div>
-                <div class="table-dec-txt mt-4">{{ numOfRows || '-' }}</div>
-              </el-col>
-              <el-col :span="4">
-                <div class="table-dec-label">{{ $t('packages_business_columns') }}</div>
-                <div class="table-dec-txt mt-4">{{ tableFields.length }}</div>
-              </el-col>
-              <el-col :span="4">
-                <div class="table-dec-label">{{ $t('packages_business_storage_size') }}</div>
-                <div class="table-dec-txt mt-4">{{ storageSize || '-' }}</div>
-              </el-col>
-              <el-col :span="12">
-                <div class="table-dec-label">{{ $t('public_connection') }}</div>
-                <div class="table-dec-txt mt-4 flex align-center text-break" v-if="detailData">
-                  <DatabaseIcon v-if="connection" class="mr-1 flex-shrink-0" :item="connection" :size="18" /><span
-                    class="min-w-0"
-                    >{{ detailData.connectionName }}</span
+          <div class="p-4">
+            <section class="bg-white rounded-lg p-3">
+              <div class="mb-4">
+                <span class="table-dec-label mb-4">{{ $t('public_description') }}：</span
+                ><el-input
+                  type="textarea"
+                  row="4"
+                  class="table-dec-txt mt-2"
+                  v-model="detailData.description"
+                  @blur="saveTableDesc"
+                ></el-input>
+              </div>
+              <el-row>
+                <el-col :span="4">
+                  <div class="table-dec-label">{{ $t('packages_business_rows') }}</div>
+                  <div class="table-dec-txt mt-4">{{ numOfRows || '-' }}</div>
+                </el-col>
+                <el-col :span="4">
+                  <div class="table-dec-label">{{ $t('packages_business_columns') }}</div>
+                  <div class="table-dec-txt mt-4">{{ tableFields.length }}</div>
+                </el-col>
+                <el-col :span="4">
+                  <div class="table-dec-label">{{ $t('packages_business_storage_size') }}</div>
+                  <div class="table-dec-txt mt-4">{{ storageSize || '-' }}</div>
+                </el-col>
+                <el-col :span="12">
+                  <div class="table-dec-label">{{ $t('public_connection') }}</div>
+                  <div class="table-dec-txt mt-4 flex align-center text-break" v-if="detailData">
+                    <DatabaseIcon v-if="connection" class="mr-1 flex-shrink-0" :item="connection" :size="18" /><span
+                      class="min-w-0"
+                      >{{ detailData.connectionName }}</span
+                    >
+                  </div>
+                </el-col>
+              </el-row>
+            </section>
+            <section class="mt-4 bg-white rounded-lg p-3">
+              <el-tabs v-model="activeNameItems">
+                <el-tab-pane :label="$t('packages_business_columns_preview')" name="columnsPreview">
+                  <VTable
+                    class="discovery-page-table"
+                    :columns="columnsPreview"
+                    :data="tableFields"
+                    max-height="381px"
+                    :has-pagination="false"
                   >
-                </div>
-              </el-col>
-            </el-row>
-          </section>
-          <section class="mt-6">
-            <el-tabs v-model="activeNameItems">
-              <el-tab-pane :label="$t('packages_business_columns_preview')" name="columnsPreview">
-                <VTable
-                  class="discovery-page-table"
-                  :columns="columnsPreview"
-                  :data="tableFields"
-                  max-height="381px"
-                  :has-pagination="false"
+                    <div slot="empty">{{ $t('public_data_no_data') }}</div>
+                  </VTable>
+                </el-tab-pane>
+                <el-tab-pane :label="$t('packages_business_sample_data')" name="sampleData">
+                  <VEmpty v-if="!sampleHeader.length"></VEmpty>
+                  <el-table v-else :data="sampleData" v-loading="loadingSampleData" max-height="381px">
+                    <el-table-column type="index" label="#"></el-table-column>
+                    <el-table-column
+                      v-for="(item, index) in sampleHeader"
+                      :key="index"
+                      :prop="item"
+                      :label="item"
+                      min-width="200"
+                    >
+                      <template #header="{ column }">
+                        <span :title="column.label">{{ column.label }}</span>
+                      </template>
+                    </el-table-column>
+                  </el-table></el-tab-pane
                 >
-                  <div slot="empty">{{ $t('public_data_no_data') }}</div>
-                </VTable>
-              </el-tab-pane>
-              <el-tab-pane :label="$t('packages_business_sample_data')" name="sampleData">
-                <VEmpty v-if="!sampleHeader.length"></VEmpty>
-                <el-table v-else :data="sampleData" v-loading="loadingSampleData" max-height="381px">
-                  <el-table-column type="index" label="#"></el-table-column>
-                  <el-table-column
-                    v-for="(item, index) in sampleHeader"
-                    :key="index"
-                    :prop="item"
-                    :label="item"
-                    min-width="200"
-                  >
-                    <template #header="{ column }">
-                      <span :title="column.label">{{ column.label }}</span>
-                    </template>
-                  </el-table-column>
-                </el-table></el-tab-pane
-              >
-            </el-tabs>
-          </section>
+              </el-tabs>
+            </section>
+          </div>
+
           <!--          <section class="mt-6">-->
           <!--            <div class="change-history mb-4">Change History</div>-->
           <!--            <ul>-->
@@ -121,86 +124,97 @@
           <!--          </section>-->
         </el-tab-pane>
         <el-tab-pane :label="$t('public_connection_form_schema')" name="schema">
-          <VTable class="discovery-page-table" :columns="columns" :data="tableFields" :has-pagination="false">
-            <div slot="empty">{{ $t('public_data_no_data') }}</div>
-            <template #primaryKey="{ row }">
-              <VIcon v-if="row.primaryKey" class="font-color-light">check</VIcon>
-              <span v-else>-</span>
-            </template>
-            <template #foreignKey="{ row }">
-              <VIcon v-if="row.foreignKey" class="font-color-light">check</VIcon>
-              <span v-else>-</span>
-            </template>
-            <template #index="{ row }">
-              <VIcon v-if="row.index" class="font-color-light">check</VIcon>
-              <span v-else>-</span>
-            </template>
-            <template #notNull="{ row }">
-              <VIcon v-if="row.notNull" class="font-color-light">check</VIcon>
-              <span v-else>-</span>
-            </template>
-          </VTable>
+          <div class="p-4">
+            <VTable
+              class="discovery-page-table rounded-lg bg-white p-3"
+              :columns="columns"
+              :data="tableFields"
+              :has-pagination="false"
+            >
+              <div slot="empty">{{ $t('public_data_no_data') }}</div>
+              <template #primaryKey="{ row }">
+                <VIcon v-if="row.primaryKey" class="font-color-light">check</VIcon>
+                <span v-else>-</span>
+              </template>
+              <template #foreignKey="{ row }">
+                <VIcon v-if="row.foreignKey" class="font-color-light">check</VIcon>
+                <span v-else>-</span>
+              </template>
+              <template #index="{ row }">
+                <VIcon v-if="row.index" class="font-color-light">check</VIcon>
+                <span v-else>-</span>
+              </template>
+              <template #notNull="{ row }">
+                <VIcon v-if="row.notNull" class="font-color-light">check</VIcon>
+                <span v-else>-</span>
+              </template>
+            </VTable>
+          </div>
         </el-tab-pane>
         <el-tab-pane :label="$t('packages_business_tasks')" name="tasks">
-          <div class="flex align-center mb-4">
-            <ElRadioGroup v-model="asTaskType" size="mini">
-              <ElRadioButton label="all">{{ $t('public_select_option_all') }}</ElRadioButton>
-              <ElRadioButton label="source">{{ $t('packages_business_as_source') }}</ElRadioButton>
-              <ElRadioButton label="target">{{ $t('packages_business_as_target') }}</ElRadioButton>
-            </ElRadioGroup>
-            <ElDivider class="mx-3" direction="vertical"></ElDivider>
-            <span class="color-primary cursor-pointer" @click="handleCreateTask">{{
-              $t('packages_business_swimlane_tablepreview_chuangjianrenwu')
-            }}</span>
+          <div class="p-4">
+            <div class="rounded-lg bg-white p-3">
+              <div class="flex align-center mb-4">
+                <ElRadioGroup v-model="asTaskType" size="mini">
+                  <ElRadioButton label="all">{{ $t('public_select_option_all') }}</ElRadioButton>
+                  <ElRadioButton label="source">{{ $t('packages_business_as_source') }}</ElRadioButton>
+                  <ElRadioButton label="target">{{ $t('packages_business_as_target') }}</ElRadioButton>
+                </ElRadioGroup>
+                <ElDivider class="mx-3" direction="vertical"></ElDivider>
+                <span class="color-primary cursor-pointer" @click="handleCreateTask">{{
+                  $t('packages_business_swimlane_tablepreview_chuangjianrenwu')
+                }}</span>
+              </div>
+              <el-table class="discovery-page-table" :data="filterTask" :has-pagination="false">
+                <el-table-column :label="$t('public_task_name')" prop="name" width="200px" show-overflow-tooltip>
+                  <template #default="{ row }">
+                    <span class="dataflow-name link-primary flex">
+                      <ElLink
+                        role="ellipsis"
+                        type="primary"
+                        class="justify-content-start ellipsis block"
+                        :class="['name', { 'has-children': row.hasChildren }]"
+                        @click.stop="handleClickName(row)"
+                        >{{ row.name }}</ElLink
+                      >
+                    </span>
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('public_task_type')">
+                  <template #default="{ row }">
+                    <span>
+                      {{ getTaskType(row.type) }}
+                    </span>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="status" :label="$t('public_task_status')">
+                  <template #default="{ row }">
+                    <TaskStatus :task="row" />
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  sortable
+                  prop="currentEventTimestamp"
+                  :label="$t('public_task_cdc_time_point')"
+                  min-width="164"
+                >
+                  <template #default="{ row }">
+                    {{ formatTime(row.currentEventTimestamp) }}
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="lastStartDate"
+                  :label="$t('public_task_last_run_time')"
+                  min-width="164"
+                  sortable="custom"
+                >
+                  <template #default="{ row }">
+                    {{ formatTime(row.lastStartDate) }}
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
           </div>
-          <el-table class="discovery-page-table" :data="filterTask" :has-pagination="false">
-            <el-table-column :label="$t('public_task_name')" prop="name" width="200px" show-overflow-tooltip>
-              <template #default="{ row }">
-                <span class="dataflow-name link-primary flex">
-                  <ElLink
-                    role="ellipsis"
-                    type="primary"
-                    class="justify-content-start ellipsis block"
-                    :class="['name', { 'has-children': row.hasChildren }]"
-                    @click.stop="handleClickName(row)"
-                    >{{ row.name }}</ElLink
-                  >
-                </span>
-              </template>
-            </el-table-column>
-            <el-table-column :label="$t('public_task_type')">
-              <template #default="{ row }">
-                <span>
-                  {{ getTaskType(row.type) }}
-                </span>
-              </template>
-            </el-table-column>
-            <el-table-column prop="status" :label="$t('public_task_status')">
-              <template #default="{ row }">
-                <TaskStatus :task="row" />
-              </template>
-            </el-table-column>
-            <el-table-column
-              sortable
-              prop="currentEventTimestamp"
-              :label="$t('public_task_cdc_time_point')"
-              min-width="164"
-            >
-              <template #default="{ row }">
-                {{ formatTime(row.currentEventTimestamp) }}
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="lastStartDate"
-              :label="$t('public_task_last_run_time')"
-              min-width="164"
-              sortable="custom"
-            >
-              <template #default="{ row }">
-                {{ formatTime(row.lastStartDate) }}
-              </template>
-            </el-table-column>
-          </el-table>
         </el-tab-pane>
         <!--<el-tab-pane label="APIs" name="apis">
           <VTable
@@ -215,7 +229,7 @@
             </template>
           </VTable>
         </el-tab-pane>-->
-        <el-tab-pane label="Lineage" name="lineage">
+        <el-tab-pane :label="$t('packages_ldp_lineage')" name="lineage">
           <TableLineage
             :is-show="activeName === 'lineage'"
             :connection-id="connectionId"
@@ -620,8 +634,15 @@ export default {
 
 <style scoped lang="scss">
 .sw-table-drawer {
-  padding: 24px;
   ::v-deep {
+    .el-tabs__nav-wrap {
+      padding: 0 24px;
+    }
+
+    .el-tab-pane {
+      background-color: rgb(245, 248, 254);
+    }
+
     th .cell {
       white-space: nowrap;
     }
@@ -629,7 +650,7 @@ export default {
 
   .table-name {
     font-weight: 500;
-    font-size: 32px;
+    font-size: 20px;
     color: #1d2129;
   }
   .table-dec-label {

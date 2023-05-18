@@ -62,6 +62,7 @@ export default {
       () => {
         if (this.isShow) {
           this.reset()
+          this.$refs.paperScroller.initVisibleArea(true)
           this.initNodeView()
           this.loadLineage()
         }
@@ -223,8 +224,6 @@ export default {
       await this.$nextTick()
       await this.addNodes(dag)
       await this.$nextTick()
-
-      this.$refs.paperScroller.initVisibleArea(true)
       this.handleAutoLayout()
     },
 
