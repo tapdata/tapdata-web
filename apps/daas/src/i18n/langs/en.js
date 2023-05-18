@@ -637,6 +637,8 @@ export default {
   cluster_del_message: 'OK to delete the server',
   cluster_server_nickname: 'server name',
   cluster_command: 'command',
+  instance_details_shujuyuanziyuan: 'Data Source Resource Download',
+  instance_details_xianchengziyuanxia: 'Thread Resource Download',
   license_node_name: 'Node name',
   license_node_sid: 'node sid',
   license_status: 'License status',
