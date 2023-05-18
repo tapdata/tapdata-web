@@ -30,7 +30,7 @@ export class JavaScript extends NodeType {
         'x-component': 'Input'
       },
       jsType: {
-        type: 'string',
+        type: 'number',
         title: i18n.t('public_type'),
         default: 0,
         enum: [
