@@ -33,7 +33,7 @@
                       @click="updateFn(item, item.management.status, 'management', 'update')"
                       >{{ $t(' cluster_update') }}
                     </ElButton>
-                    <el-tooltip :content="$t('instance_details_xianchengziyuanxia')">
+                    <el-tooltip :content="$t('instance_details_xianchengziyuanxia')" placement="top">
                       <VIcon
                         class="mr-2 link-primary"
                         v-readonlybtn="'Cluster_operation'"
@@ -42,7 +42,7 @@
                         >connectors</VIcon
                       >
                     </el-tooltip>
-                    <el-tooltip :content="$t('instance_details_shujuyuanziyuan')">
+                    <el-tooltip :content="$t('instance_details_shujuyuanziyuan')" placement="top">
                       <VIcon
                         class="mr-2 link-primary"
                         v-readonlybtn="'Cluster_operation'"
