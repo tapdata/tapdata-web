@@ -1,5 +1,5 @@
 <template>
-  <div class="position-absolute table-node border rounded-lg bg-white" :style="nodeStyle">
+  <div class="position-absolute table-node border rounded-lg bg-white overflow-hidden" :style="nodeStyle">
     <div class="px-3 py-2" @click="mouseClick">
       <div class="ellipsis">{{ data.name }}</div>
       <div class="mt-1 flex align-center gap-1 font-color-light ellipsis">
@@ -7,6 +7,10 @@
         连接名称
       </div>
     </div>
+    <!--<div class="columns-wrap px-3 py-2">
+      <div>查看字段</div>
+      <div></div>
+    </div>-->
     <!--<BaseNode :node="data" class="node&#45;&#45;data">
       <template #text="{ text }">
         <div class="w-100">
@@ -295,6 +299,10 @@ export default {
         display: flex;
       }
     }
+  }
+
+  .columns-wrap {
+    background-color: #f5f8fe;
   }
 }
 </style>

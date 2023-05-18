@@ -1,5 +1,5 @@
 <template>
-  <div class="table-lineage h-100">
+  <div class="table-lineage h-100 position-relative">
     <PaperScroller ref="paperScroller">
       <TableNode
         v-for="node in allNodes"
@@ -11,6 +11,12 @@
         @drag-stop="onNodeDragStop"
       ></TableNode>
     </PaperScroller>
+
+    <div class="paper-toolbar position-absolute flex gap-2">
+      <IconButton @click="handleCenterContent" class="bg-white border">compress</IconButton>
+      <IconButton @click="handleZoomOut" class="bg-white border">remove-outline</IconButton>
+      <IconButton @click="handleZoomIn" class="bg-white border">add-outline</IconButton>
+    </div>
   </div>
 </template>
 
@@ -20,6 +26,7 @@ import dagre from 'dagre'
 
 import { config, PaperScroller, jsPlumb, NODE_PREFIX, NODE_WIDTH, NODE_HEIGHT } from '@tap/dag'
 import { lineageApi } from '@tap/api'
+import { IconButton } from '@tap/component'
 import TableNode from './TableNode'
 import { connectorActiveStyle } from '@tap/dag/src/style'
 import i18n from '@tap/i18n'
@@ -34,7 +41,7 @@ export default {
     isShow: Boolean
   },
 
-  components: { PaperScroller, TableNode },
+  components: { PaperScroller, TableNode, IconButton },
 
   data() {
     return {
@@ -328,9 +335,26 @@ export default {
         newProperties.forEach(prop => {
           this.updateNodeProperties(prop)
         })
+    },
+
+    handleCenterContent() {
+      this.$refs.paperScroller.centerContent()
+    },
+
+    handleZoomIn() {
+      this.$refs.paperScroller.zoomIn()
+    },
+
+    handleZoomOut() {
+      this.$refs.paperScroller.zoomOut()
     }
   }
 }
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.paper-toolbar {
+  right: 16px;
+  bottom: 16px;
+}
+</style>
