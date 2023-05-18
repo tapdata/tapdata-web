@@ -1242,12 +1242,12 @@ export default {
     },
     //禁用半托管重启 -启动 agent离线，预期重启不能点击
     restartBtnDisabled(row) {
-      return ['Stopping', 'Stopped'].includes(row.status) || row.tapdataAgentStatus === 'stopped' //tapdataAgent 失活了
+      return ['Creating', 'Stopping', 'Stopped'].includes(row.status) || row.tapdataAgentStatus === 'stopped' //tapdataAgent 失活了
     },
     //agent运行中，预期 启动 不能点击
     startBtnDisabled(row) {
       return (
-        ['Stopping', 'Running'].includes(row.status) || row.tapdataAgentStatus === 'stopped' //tapdataAgent 失活了
+        ['Creating', 'Stopping', 'Running'].includes(row.status) || row.tapdataAgentStatus === 'stopped' //tapdataAgent 失活了
       )
     },
     showVersionFlag(row) {
