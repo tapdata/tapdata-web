@@ -1,7 +1,7 @@
 <template>
   <ElDialog
     :title="$t('packages_dag_components_nodedetaildialog_jiedianxiangqing')"
-    width="900px"
+    width="1100px"
     :visible.sync="visible"
     :close-on-click-modal="false"
     :modal-append-to-body="false"

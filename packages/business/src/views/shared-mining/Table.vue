@@ -54,6 +54,7 @@
       :style="{
         height: height
       }"
+      hide-on-single-page
       @selection-change="handleSelectionChange"
     >
       <div slot="empty">{{ $t('public_data_no_data') }}</div>
@@ -70,9 +71,13 @@
         <VIcon size="18" class="color-warning">warning</VIcon>
         <span class="ml-3 mr-12">{{ $t('packages_business_shared_mining_table_ninyaotingzhiwa') }}</span>
       </div>
-      <VTable :columns="taskColumns" :data="taskData"></VTable>
-      <div class="text-end mt-4">
-        <ElButton>取消</ElButton>
+      <VTable :columns="taskColumns" :data="taskData" :has-pagination="false">
+        <template #status="{ row }">
+          <TaskStatus :task="row" />
+        </template>
+      </VTable>
+      <div class="text-end mt-10">
+        <ElButton @click="visible = false">取消</ElButton>
         <ElButton :loading="submitLoading" type="primary" @click="handleSubmitStop">确认</ElButton>
       </div>
     </ElDialog>
@@ -85,12 +90,13 @@ import i18n from '@tap/i18n'
 import { debounce } from 'lodash'
 
 import { VTable } from '@tap/component'
-import { shareCdcTableMetricsApi, logcollectorApi } from '@tap/api'
+import { logcollectorApi, taskApi } from '@tap/api'
+import { TaskStatus } from '../../components'
 
 export default {
   name: 'Table',
 
-  components: { VTable },
+  components: { VTable, TaskStatus },
 
   props: {
     taskId: {
@@ -177,11 +183,12 @@ export default {
       taskColumns: [
         {
           label: i18n.t('public_task_name'),
-          prop: 'taskName'
+          prop: 'name'
         },
         {
           label: i18n.t('public_task_status'),
-          prop: 'taskStatus'
+          prop: 'status',
+          slotName: 'status'
         }
       ],
       taskData: [],
@@ -241,7 +248,27 @@ export default {
     },
 
     handleStop() {
-      this.visible = true
+      const { taskId } = this
+      let tableNameMap = {}
+      this.multipleSelection.forEach(t => {
+        if (!tableNameMap[t.connectionId]) {
+          tableNameMap[t.connectionId] = []
+        }
+        tableNameMap[t.connectionId].push(t.name)
+      })
+      const filter = {
+        taskId,
+        type: 'task_by_collector_table',
+        tableNameMap
+      }
+      taskApi
+        .taskConsoleRelations(filter)
+        .then(data => {
+          this.taskData = data
+        })
+        .finally(() => {
+          this.visible = true
+        })
     },
 
     handleSubmitStop() {
