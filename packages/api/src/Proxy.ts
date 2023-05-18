@@ -20,5 +20,13 @@ export default class Proxy extends Http {
   call(params) {
     return this.axios.post(`${this.url}/call`, params)
   }
+
+  supervisor(pid) {
+    return this.axios.get(`${this.url}/supervisor?pid=${pid}`)
+  }
+
+  connectors(pid) {
+    return this.axios.get(`${this.url}/memory/connectors?pid=${pid}`)
+  }
 }
 export { Proxy }
