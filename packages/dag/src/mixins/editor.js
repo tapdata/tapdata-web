@@ -1255,7 +1255,17 @@ export default {
         let hasNoStreamReadFunction = false
         this.allNodes.forEach(node => {
           if (node.$outputs.length && !node.$inputs.length) {
-            if (!node.attrs.capabilities?.some(t => t.id === 'stream_read_function')) {
+            const capbilitiesMap = node.attrs.capabilities.reduce((map, item) => {
+              map[item.id] = true
+              return map
+            }, {})
+
+            if (
+              !(
+                capbilitiesMap['stream_read_function'] ||
+                (capbilitiesMap['query_by_advance_filter_function'] && capbilitiesMap['batch_read_function'])
+              )
+            ) {
               // 源不支持增量
               hasNoStreamReadFunction = true
               this.setNodeErrorMsg({
