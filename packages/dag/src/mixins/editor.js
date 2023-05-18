@@ -1263,6 +1263,8 @@ export default {
             if (
               !(
                 capbilitiesMap['stream_read_function'] ||
+                capbilitiesMap['raw_data_callback_filter_function'] ||
+                capbilitiesMap['raw_data_callback_filter_function_v2'] ||
                 (capbilitiesMap['query_by_advance_filter_function'] && capbilitiesMap['batch_read_function'])
               )
             ) {
