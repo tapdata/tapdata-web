@@ -48,7 +48,6 @@ export default {
   packages_component_src_upgradefee_zhuanyeban: '專業版 ',
   packages_component_src_upgradefee_dangqianbanben: '當前版本',
   packages_component_src_upgradefee_biaozhunshouhouzhi: ' 標準售後支持，響應時間長',
-  packages_component_src_upgradefee_shujuchulixing2: ' 數據處理性能較低',
   packages_component_src_upgradefee_ge: '3個',
   packages_component_src_upgradefee_zuidarenwushu: ' 最大任務數:',
   packages_component_src_upgradefee_mianfei: '免費',

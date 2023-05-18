@@ -22,10 +22,6 @@
           </div>
           <div class="currentList paid-upgrade-mb16 flex">
             <VIcon size="16" class="mr-2 color-primary">check-bold</VIcon
-            ><span>{{ $t('packages_component_src_upgradefee_shujuchulixing2') }}</span>
-          </div>
-          <div class="currentList paid-upgrade-mb16 flex">
-            <VIcon size="16" class="mr-2 color-primary">check-bold</VIcon
             ><span>{{ $t('packages_component_src_upgradefee_biaozhunshouhouzhi') }}</span>
           </div>
         </div>
@@ -33,13 +29,13 @@
           {{ $t('packages_component_src_upgradefee_dangqianbanben') }}
         </div>
       </li>
-      <li class="paid-upgrade-right ml-6 flex flex-column">
+      <li class="paid-upgrade-right ml-6 flex flex-column bg">
         <div class="px-4 py-4 flex-1">
-          <div class="flex bg">
+          <div class="flex">
             <div>
               <div class="version mb-2">
                 {{ $t('packages_component_src_upgradefee_zhuanyeban')
-                }}<span class="discount inline-block fs-8">{{
+                }}<span class="discount inline-block fs-8 fw-normal">{{
                   $t('packages_component_src_upgradefee_xianshiyouhui')
                 }}</span>
               </div>
@@ -54,10 +50,7 @@
           </div>
           <div class="currentList paid-upgrade-mb16 mt-2 flex">
             <VIcon size="16" class="mr-2 color-primary">check-bold</VIcon
-            ><span
-              >{{ $t('packages_component_src_upgradefee_renwushukegen')
-              }}<span class="color-primary">{{ $t('packages_component_src_upgradefee_shubaige') }}</span></span
-            >
+            ><span>{{ $t('packages_component_src_upgradefee_renwushukegen') }}</span>
           </div>
           <div class="currentList paid-upgrade-mb16 flex">
             <VIcon size="16" class="mr-2 color-primary">check-bold</VIcon
@@ -131,6 +124,7 @@ export default {
     font-weight: 600;
     font-size: 16px;
     line-height: 21px;
+    max-width: 252px;
     color: map-get($fontColor, dark);
   }
   .link {
@@ -146,6 +140,7 @@ export default {
     font-weight: 400;
     font-size: 12px;
     line-height: 17px;
+    max-width: 200px;
     color: map-get($color, light);
   }
   .discount {
@@ -158,9 +153,10 @@ export default {
     background: url('../../assets/images/subscription_img_zyb.png');
     background-repeat: no-repeat;
     background-position: right;
+    background-position-y: top;
   }
   .paid-upgrade-height {
-    height: 94px;
+    height: 78px;
   }
   .paid-upgrade-cn-height {
     height: 114px;

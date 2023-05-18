@@ -7,7 +7,7 @@
       </ElLink>
       <div class="dfs-header__button button-bar pr-4 fs-7">
         <!--付费专业版-->
-        <div class="vip-btn mr-4 cursor-pointer" @click="openUpgrade">
+        <div v-if="!isFeeUser" class="vip-btn mr-4 cursor-pointer" @click="openUpgrade">
           <VIcon size="17">icon-vip</VIcon>{{ $t('packages_component_src_upgradefee_dingyuezhuanyeban') }}
         </div>
         <div v-if="domain === 'demo.cloud.tapdata.net' && lang !== 'en'" class="marquee-container cursor-pointer">
@@ -90,7 +90,8 @@ export default {
       languages: langMenu,
       domain: document.domain,
       onlyEnglishLanguage: false,
-      openUpgradeFee: false
+      openUpgradeFee: false,
+      isFeeUser: true
     }
   },
   created() {
@@ -102,6 +103,7 @@ export default {
       this.lang = 'en'
       setCurrentLanguage(this.lang, this.$i18n)
     }
+    this.getAgentCount()
     //如果没有配置topBarLinks 给默认值
     if (!window.__config__?.topBarLinks) {
       this.topBarLinks = [
@@ -209,7 +211,13 @@ export default {
     handleGo(item) {
       window.open(item.link, '_blank')
     },
-    openUpgrade() {
+    //判断是否是付费用户
+    getAgentCount() {
+      this.$axios.get('api/tcm/agent/agentCount').then(data => {
+        this.isFeeUser = data?.subscriptionAgentCount > 0
+      })
+    },
+    get openUpgrade() {
       this.openUpgradeFee = true
     }
   }
