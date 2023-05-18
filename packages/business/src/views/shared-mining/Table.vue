@@ -1,6 +1,12 @@
 <template>
   <div class="flex flex-column">
     <span v-if="showTitle" class="fw-bold mb-4">{{ $t('packages_business_shared_mining_table_wajuebiaoxinxi') }}</span>
+    <div class="mb-3">
+      <span>已合并的连接</span>
+      <ElSelect v-model="selectedConnectionId" size="mini" class="ml-4" @change="fetch">
+        <ElOption v-for="item in connectionsList" :label="item.name" :value="item.id" :key="item.id"></ElOption>
+      </ElSelect>
+    </div>
     <div class="flex justify-content-between mb-4">
       <ElRadioGroup v-model="currentTab" size="mini" @change="handleChangeTab">
         <ElRadioButton v-for="item in tabItems" :label="item.value" :key="item.value">{{ item.label }}</ElRadioButton>
@@ -26,6 +32,7 @@
         >
         <ElButton
           v-else
+          :loading="recoverLoading"
           :disabled="!multipleSelection.length"
           type="primary"
           size="mini"
@@ -36,6 +43,7 @@
       </div>
     </div>
     <VTable
+      v-if="selectedConnectionId"
       :columns="columns"
       :remoteMethod="remoteMethod"
       :page-options="{
@@ -63,6 +71,10 @@
         <span class="ml-3 mr-12">{{ $t('packages_business_shared_mining_table_ninyaotingzhiwa') }}</span>
       </div>
       <VTable :columns="taskColumns" :data="taskData"></VTable>
+      <div class="text-end mt-4">
+        <ElButton>取消</ElButton>
+        <ElButton :loading="submitLoading" type="primary" @click="handleSubmitStop">确认</ElButton>
+      </div>
     </ElDialog>
   </div>
 </template>
@@ -73,7 +85,7 @@ import i18n from '@tap/i18n'
 import { debounce } from 'lodash'
 
 import { VTable } from '@tap/component'
-import { shareCdcTableMetricsApi } from '@tap/api'
+import { shareCdcTableMetricsApi, logcollectorApi } from '@tap/api'
 
 export default {
   name: 'Table',
@@ -121,7 +133,7 @@ export default {
         },
         {
           label: i18n.t('packages_business_shared_mining_table_biaoming'),
-          prop: 'tableName',
+          prop: 'name',
           minWidth: 120
         },
         {
@@ -136,25 +148,25 @@ export default {
         },
         {
           label: i18n.t('packages_business_shared_mining_table_jinriwajue'),
-          prop: 'count'
+          prop: 'todayCount'
         },
         {
           label: i18n.t('packages_business_shared_mining_table_jiaruwajueshi'),
-          prop: 'startCdcTime',
+          prop: 'joinTime',
           dataType: 'time',
           default: '-',
           width: 160
         },
         {
           label: i18n.t('packages_business_shared_mining_table_shoutiaorizhishi'),
-          prop: 'firstEventTime',
+          prop: 'firstLogTime',
           dataType: 'time',
           default: '-',
           width: 160
         },
         {
           label: i18n.t('packages_business_shared_mining_table_zuixinrizhishi'),
-          prop: 'currentEventTime',
+          prop: 'lastLogTime',
           dataType: 'time',
           default: '-',
           width: 160
@@ -172,7 +184,11 @@ export default {
           prop: 'taskStatus'
         }
       ],
-      taskData: []
+      taskData: [],
+      submitLoading: false,
+      recoverLoading: false,
+      selectedConnectionId: '',
+      connectionsList: []
     }
   },
   watch: {
@@ -183,22 +199,24 @@ export default {
     }
   },
 
-  created() {
+  async created() {
     this.currentTab = this.tabItems[0].value
+    this.connectionsList = await logcollectorApi.getConnectionIdsByTaskId(this.taskId)
+    this.selectedConnectionId = this.connectionsList[0]?.id
   },
 
   methods: {
     remoteMethod({ page }) {
       const { taskId, keyword } = this
       const { current, size } = page || { current: 1, size: 20 }
-      const filter = Object.assign({}, this.params, {
+      const filter = {
         taskId,
+        connectionId: this.selectedConnectionId,
         keyword,
         page: current,
         size: size
-      })
-      console.log('remoteMethod', filter)
-      return shareCdcTableMetricsApi.listTask(filter).then(data => {
+      }
+      return logcollectorApi[this.currentTab === 'running' ? 'tableInfos' : 'excludeTableInfos'](filter).then(data => {
         return {
           total: data.total,
           data: data.items || []
@@ -226,7 +244,48 @@ export default {
       this.visible = true
     },
 
-    handleRecover() {}
+    handleSubmitStop() {
+      this.submitLoading = true
+      logcollectorApi
+        .exclusionTables(
+          this.taskId,
+          this.multipleSelection.map(t => {
+            return {
+              connectionId: t.connectionId,
+              tableNames: [t.name]
+            }
+          })
+        )
+        .then(() => {
+          this.visible = false
+          this.$message.success(this.$t('public_message_operation_success'))
+          this.fetch()
+        })
+        .finally(() => {
+          this.submitLoading = false
+        })
+    },
+
+    handleRecover() {
+      this.recoverLoading = true
+      logcollectorApi
+        .addTables(
+          this.taskId,
+          this.multipleSelection.map(t => {
+            return {
+              connectionId: t.connectionId,
+              tableNames: [t.name]
+            }
+          })
+        )
+        .then(() => {
+          this.$message.success(this.$t('public_message_operation_success'))
+          this.fetch()
+        })
+        .finally(() => {
+          this.recoverLoading = false
+        })
+    }
   }
 }
 </script>

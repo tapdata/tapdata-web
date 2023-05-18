@@ -372,8 +372,13 @@ export default {
       return this.allNodes.find(t => this.selected === t.id) || {}
     },
 
+    nodeConnectionId() {
+      return this.node.connectionIds?.[0]
+    },
+
     isSource() {
       const { type, $inputs } = this.node
+      console.log('isSource', this.node)
       return (type === 'database' || type === 'table' || type === 'logCollector') && !$inputs.length
     },
 
