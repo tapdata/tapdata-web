@@ -73,11 +73,11 @@
                 </el-col>
               </el-row>
             </section>
-            <section class="mt-4 bg-white rounded-lg p-3">
+            <section class="mt-4 bg-white rounded-lg pt-1">
               <el-tabs v-model="activeNameItems">
                 <el-tab-pane :label="$t('packages_business_columns_preview')" name="columnsPreview">
                   <VTable
-                    class="discovery-page-table"
+                    class="discovery-page-table p-3"
                     :columns="columnsPreview"
                     :data="tableFields"
                     max-height="381px"
@@ -87,22 +87,24 @@
                   </VTable>
                 </el-tab-pane>
                 <el-tab-pane :label="$t('packages_business_sample_data')" name="sampleData">
-                  <VEmpty v-if="!sampleHeader.length"></VEmpty>
-                  <el-table v-else :data="sampleData" v-loading="loadingSampleData" max-height="381px">
-                    <el-table-column type="index" label="#"></el-table-column>
-                    <el-table-column
-                      v-for="(item, index) in sampleHeader"
-                      :key="index"
-                      :prop="item"
-                      :label="item"
-                      min-width="200"
-                    >
-                      <template #header="{ column }">
-                        <span :title="column.label">{{ column.label }}</span>
-                      </template>
-                    </el-table-column>
-                  </el-table></el-tab-pane
-                >
+                  <div class="p-3">
+                    <VEmpty v-if="!sampleHeader.length"></VEmpty>
+                    <el-table v-else :data="sampleData" v-loading="loadingSampleData" max-height="381px">
+                      <el-table-column type="index" label="#"></el-table-column>
+                      <el-table-column
+                        v-for="(item, index) in sampleHeader"
+                        :key="index"
+                        :prop="item"
+                        :label="item"
+                        min-width="200"
+                      >
+                        <template #header="{ column }">
+                          <span :title="column.label">{{ column.label }}</span>
+                        </template>
+                      </el-table-column>
+                    </el-table>
+                  </div>
+                </el-tab-pane>
               </el-tabs>
             </section>
           </div>
@@ -639,7 +641,7 @@ export default {
       padding: 0 24px;
     }
 
-    .el-tab-pane {
+    .tabs-fill > .el-tabs__content > .el-tab-pane {
       background-color: rgb(245, 248, 254);
     }
 
