@@ -1385,7 +1385,7 @@ export class Table extends NodeType {
                       {
                         fulfill: {
                           state: {
-                            display: `{{$values.attrs.capabilities.filter(item => ["transaction_begin_function", "transaction_commit_function", "transaction_rollback_function"].includes(item.id)).length === 3 ? 'visible' : 'hidden'}}`
+                            display: `{{findParentNodes($values.id).length < 2 && $values.attrs.capabilities.filter(item => ["transaction_begin_function", "transaction_commit_function", "transaction_rollback_function"].includes(item.id)).length === 3 ? 'visible' : 'hidden'}}`
                           }
                         }
                       }
