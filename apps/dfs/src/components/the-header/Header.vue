@@ -225,7 +225,7 @@ export default {
         this.isFeeUser = data?.subscriptionAgentCount > 0
       })
     },
-    get openUpgrade() {
+    openUpgrade() {
       this.openUpgradeFee = true
     }
   }
