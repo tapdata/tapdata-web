@@ -149,6 +149,17 @@ export default {
           this.nodeMenu.connectionCenterPos = [rect.x + rect.width / 2, rect.y + rect.height / 2]
           await this.showNodePopover('connection', connection, info.connection.canvas)
         })
+
+        /*info.connection.bind('mouseover', async () => {
+          const rect = info.connection.canvas.getBoundingClientRect()
+          this.nodeMenu.connectionCenterPos = [rect.x + rect.width / 2, rect.y + rect.height / 2]
+          await this.showNodePopover('connection', connection, info.connection.canvas)
+        })
+
+        info.connection.bind('mouseout', async () => {
+          console.log('mouseout') // eslint-disable-line
+          this.nodeMenu.show = false
+        })*/
       })
     },
 
@@ -257,13 +268,15 @@ export default {
       const newProperties = []
       const oldProperties = []
 
-      dg.setGraph({ nodesep: 60, ranksep: 120, marginx: 50, marginy: 50, rankdir: 'LR' })
+      dg.setGraph({ nodesep: 60, ranksep: 240, marginx: 50, marginy: 50, rankdir: 'LR' })
       dg.setDefaultEdgeLabel(function () {
         return {}
       })
 
       nodes.forEach(n => {
-        dg.setNode(NODE_PREFIX + n.id, { width: NODE_WIDTH, height: NODE_HEIGHT })
+        const { width = NODE_WIDTH, height = NODE_HEIGHT } =
+          document.getElementById(NODE_PREFIX + n.id)?.getBoundingClientRect() || {}
+        dg.setNode(NODE_PREFIX + n.id, { width, height })
         nodePositionMap[NODE_PREFIX + n.id] = n.attrs?.position || [0, 0]
       })
       this.jsPlumbIns.getAllConnections().forEach(edge => {
@@ -339,7 +352,31 @@ export default {
 
       // 连线
       edges.forEach(({ source, target }) => {
-        this.jsPlumbIns.connect({ uuids: [`${NODE_PREFIX}${source}_source`, `${NODE_PREFIX}${target}_target`] })
+        this.jsPlumbIns.connect({
+          uuids: [`${NODE_PREFIX}${source}_source`, `${NODE_PREFIX}${target}_target`],
+          overlays: [
+            [
+              'Label',
+              {
+                cssClass: 'table-lineage-connection-label px-1 el-tag el-tag--small el-tag--light rounded-4',
+                label: '任务名称',
+                events: {
+                  click: () => {
+                    this.$message.success('点击了任务名称')
+                  }
+                }
+                // labelStyle: {
+                //   font?: string
+                //   color?: string
+                //   fill?: string
+                //   borderStyle?: string
+                //   borderWidth?: number// integer
+                //   padding?: number //integer
+                // }
+              }
+            ]
+          ]
+        })
       })
     },
 
@@ -376,5 +413,12 @@ export default {
 .paper-toolbar {
   right: 16px;
   bottom: 16px;
+}
+.table-lineage {
+  ::v-deep {
+    .table-lineage-connection-label {
+      z-index: 1001;
+    }
+  }
 }
 </style>
