@@ -1,45 +1,82 @@
 <template>
   <section class="operation-logs-wrapper g-panel-container" v-if="$route.name === 'order'">
-    <div class="main">
-      <div class="list-operation">
-        <div class="list-operation-left flex justify-content-between">
-          <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
-          <ElButton type="primary" @click="handleCreateAgent" :disabled="$disabledReadonlyUserBtn()">
-            <span>{{ $t('dfs_order_list_xinzengdingyue') }}</span>
-          </ElButton>
-        </div>
-      </div>
-      <VTable
-        :columns="columns"
-        :remoteMethod="remoteMethod"
-        :page-options="{
-          layout: 'total, ->, prev, pager, next, sizes, jumper'
-        }"
-        ref="table"
-        class="mt-4"
-      >
-        <template #agentType="{ row }">
-          <span>{{ agentTypeMap[row.agentType || 'local'] }}</span>
-        </template>
-        <template #bindAgent="{ row }">
-          <ElLink v-if="row.agentId && row.status === 'pay'" type="primary" @click="handleAgent(row)">{{
-            row.agentId
-          }}</ElLink>
-          <span v-else>-</span>
-        </template>
-        <template #operation="{ row }">
-          <ElButton
-            v-if="['expire', 'pay', 'cancelSubscribe'].includes(row.status) && row.type === 'one_time'"
-            type="text"
-            @click="handleRenew(row)"
-            >{{ $t('public_button_renew') }}</ElButton
+    <el-tabs class="flex flex-column overflow-hidden" v-model="activeName" @tab-click="handleClick">
+      <el-tab-pane class="order-flex overflow-hidden h-100" label="我的订阅" name="first">
+        <div class="main">
+          <div class="list-operation">
+            <div class="list-operation-left flex justify-content-between">
+              <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
+              <ElButton type="primary" @click="handleCreateAgent" :disabled="$disabledReadonlyUserBtn()">
+                <span>{{ $t('dfs_order_list_xinzengdingyue') }}</span>
+              </ElButton>
+            </div>
+          </div>
+          <VTable
+            :columns="columns"
+            :remoteMethod="remoteMethod"
+            :page-options="{
+              layout: 'total, ->, prev, pager, next, sizes, jumper'
+            }"
+            ref="table"
+            class="mt-4"
           >
-          <ElButton v-if="['payFail', 'unPay'].includes(row.status)" type="text" @click="handlePay(row)">{{
-            $t('public_button_pay')
-          }}</ElButton>
-        </template>
-      </VTable>
-    </div>
+            <template #agentType="{ row }">
+              <span>{{ agentTypeMap[row.agentType || 'local'] }}</span>
+            </template>
+            <template #bindAgent="{ row }">
+              <ElLink v-if="row.agentId && row.status === 'pay'" type="primary" @click="handleAgent(row)">{{
+                row.agentId
+              }}</ElLink>
+              <span v-else>-</span>
+            </template>
+            <template #operation="{ row }">
+              <ElButton
+                v-if="['expire', 'pay', 'cancelSubscribe'].includes(row.status) && row.type === 'one_time'"
+                type="text"
+                @click="handleRenew(row)"
+                >{{ $t('public_button_renew') }}</ElButton
+              >
+              <ElButton v-if="['payFail', 'unPay'].includes(row.status)" type="text" @click="handlePay(row)">{{
+                $t('public_button_pay')
+              }}</ElButton>
+            </template>
+          </VTable>
+        </div>
+      </el-tab-pane>
+      <el-tab-pane class="order-flex flex-column overflow-hidden h-100" label="授权码" name="second">
+        <section class="flex flex-column overflow-hidden">
+          <div class="mt-2 flex justify-content-end">
+            <el-button class="mr-2" @click="goReceipt">{{ $t('dfs_user_center_kaifapiao') }}</el-button>
+            <el-button type="primary" @click="goLicense">{{
+              $t('dfs_aliyun_market_checklicnese_jihuoshouquanma')
+            }}</el-button>
+          </div>
+          <VTable
+            :columns="codeColumns"
+            :remoteMethod="codeRemoteMethod"
+            :page-options="{
+              layout: 'total, ->, prev, pager, next, sizes, jumper'
+            }"
+            ref="tableCode"
+            class="mt-4"
+          >
+            <template #agentType="{ row }">
+              <span>{{ agentTypeMap[row.agentType || 'local'] }}</span>
+            </template>
+            <template #bindAgent="{ row }">
+              <ElLink v-if="row.agentId" type="primary" @click="handleAgent(row)">{{
+                $t('dfs_instance_selectlist_yibangding') + ' ' + $t('public_agent') + ' : ' + row.agentId
+              }}</ElLink>
+              <span v-else>{{ $t('user_Center_weiBangDing') }}</span>
+            </template>
+            <template #operation="{ row }">
+              <ElButton type="text" @click="handleRenewal(row)">{{ $t('public_button_renewal') }}</ElButton>
+            </template>
+          </VTable>
+        </section>
+      </el-tab-pane>
+    </el-tabs>
+
     <!--转账支付-->
     <transferDialog :visible.sync="showTransferDialogVisible" :price="pricePay"></transferDialog>
   </section>
@@ -62,6 +99,7 @@ export default {
   inject: ['buried'],
   data() {
     return {
+      activeName: 'first',
       loading: true,
       showTransferDialogVisible: false,
       pricePay: '',
@@ -72,6 +110,39 @@ export default {
       },
       search: '',
       filterItems: [],
+      //授权码
+      codeColumns: [
+        {
+          label: i18n.t('dfs_instance_selectlist_shouquanma'),
+          prop: 'licenseCode'
+        },
+        {
+          label: i18n.t('dfs_user_center_jihuoshijian2'),
+          prop: 'activateTimeLabel',
+          width: 320
+        },
+        {
+          label: i18n.t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi'),
+          prop: 'agentType',
+          slotName: 'agentType'
+        },
+        {
+          label: i18n.t('dfs_user_center_guoqishijian2'),
+          prop: 'expiredTimeLabel',
+          width: 320
+        },
+        {
+          label: i18n.t('dfs_instance_selectlist_bangdingshilizhuang'),
+          prop: 'bindAgent',
+          slotName: 'bindAgent'
+        },
+        {
+          label: i18n.t('public_operation'),
+          prop: 'extendArray',
+          slotName: 'operation',
+          width: 100
+        }
+      ],
       columns: [
         {
           label: i18n.t('dfs_instance_selectlist_dingyueneirong'),
@@ -198,6 +269,7 @@ export default {
         }
       ]
     },
+    //我的订阅
     remoteMethod({ page }) {
       let { current, size } = page
       let { agentType, status } = this.searchParams
@@ -328,12 +400,48 @@ export default {
           keyword: row.agentId
         }
       })
+    },
+    codeRemoteMethod() {
+      return this.$axios.get('api/tcm/aliyun/market/license/list').then(data => {
+        const items = data.items || []
+        return {
+          total: data.total,
+          data:
+            items.map(t => {
+              let activateTime = new Date(t.activateTime.replace('Z', '+08:00')).toLocaleString()
+              let expiredTime = new Date(t.expiredTime.replace('Z', '+08:00')).toLocaleString()
+              t.activateTimeLabel = t.activateTime ? dayjs(activateTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+              t.expiredTimeLabel = t.expiredTime ? dayjs(expiredTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+              t.bindAgent = t.agentId
+                ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
+                : i18n.t('user_Center_weiBangDing')
+              return t
+            }) || []
+        }
+      })
+    },
+    goLicense() {
+      this.$router.push({
+        name: 'aliyunMarketLicense'
+      })
+    },
+    goReceipt() {
+      const href = 'https://market.console.aliyun.com/receipt/index.htm'
+      openUrl(href)
+    },
+    handleRenewal() {
+      this.buried('goRenewalAliyunCode')
+      const href = 'https://market.console.aliyun.com/imageconsole/index.htm'
+      openUrl(href)
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.order-flex {
+  display: flex;
+}
 .operation-logs-wrapper {
   display: flex;
   width: 100%;
