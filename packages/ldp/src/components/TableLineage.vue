@@ -12,11 +12,13 @@
       ></TableNode>
     </PaperScroller>
 
-    <div class="paper-toolbar position-absolute flex gap-2">
-      <IconButton @click="handleCenterContent" class="bg-white border">compress</IconButton>
-      <IconButton @click="handleZoomOut" class="bg-white border">remove-outline</IconButton>
-      <IconButton @click="handleZoomIn" class="bg-white border">add-outline</IconButton>
+    <div class="paper-toolbar position-absolute flex gap-1 bg-white p-1 rounded-lg shadow-sm">
+      <IconButton @click="handleCenterContent">compress</IconButton>
+      <IconButton @click="handleZoomOut">remove-outline</IconButton>
+      <IconButton @click="handleZoomIn">add-outline</IconButton>
     </div>
+
+    <LinePopover></LinePopover>
   </div>
 </template>
 
@@ -32,6 +34,7 @@ import { connectorActiveStyle } from '@tap/dag/src/style'
 import i18n from '@tap/i18n'
 import { AddConnectionCommand, MoveNodeCommand, RemoveConnectionCommand } from '@tap/dag/src/command'
 import Vue from 'vue'
+import LinePopover from './LinePopover'
 export default {
   name: 'TableLineage',
 
@@ -41,7 +44,7 @@ export default {
     isShow: Boolean
   },
 
-  components: { PaperScroller, TableNode, IconButton },
+  components: { PaperScroller, TableNode, IconButton, LinePopover },
 
   data() {
     return {
