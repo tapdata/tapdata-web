@@ -18,7 +18,7 @@
       <IconButton @click="handleZoomIn">add-outline</IconButton>
     </div>
 
-    <LinePopover></LinePopover>
+    <LinePopover :popover="nodeMenu"></LinePopover>
   </div>
 </template>
 
@@ -49,7 +49,15 @@ export default {
   data() {
     return {
       NODE_PREFIX,
-      jsPlumbIns: jsPlumb.getInstance(config)
+      jsPlumbIns: jsPlumb.getInstance(config),
+      nodeMenu: {
+        show: false,
+        type: '',
+        typeId: '',
+        reference: null,
+        data: null,
+        connectionData: {}
+      }
     }
   },
 
@@ -136,15 +144,25 @@ export default {
         const connection = { source, target }
         const connectionIns = info.connection
 
-        info.connection.bind('click', () => {
-          if (this.stateIsReadonly) return
-          this.handleDeselectAllConnections()
-          info.connection.showOverlay('removeConn')
-          info.connection.showOverlay('addNodeOnConn')
-          info.connection.addClass('connection-selected')
-          this.selectConnection(connection)
+        info.connection.bind('click', async () => {
+          const rect = info.connection.canvas.getBoundingClientRect()
+          this.nodeMenu.connectionCenterPos = [rect.x + rect.width / 2, rect.y + rect.height / 2]
+          await this.showNodePopover('connection', connection, info.connection.canvas)
         })
       })
+    },
+
+    async showNodePopover(type, data, el) {
+      type === 'node' && this.handleDeselectAllConnections()
+      this.nodeMenu.show = false
+      this.nodeMenu.reference = null
+      await this.$nextTick()
+      this.nodeMenu.reference = el
+      this.nodeMenu.type = type
+      this.nodeMenu.data = data
+      await this.$nextTick()
+      this.nodeMenu.show = true
+      this.nodeMenu.typeId = data.id
     },
 
     async loadLineage() {
