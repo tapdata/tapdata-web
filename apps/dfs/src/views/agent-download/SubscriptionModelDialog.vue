@@ -1223,7 +1223,7 @@ export default {
         )
         this.mongodbPaidPrice = prices
         // 规格
-        this.mongodbSpecItems = uniqueArr(
+        this.mongodbSpecItems = uniqBy(
           prices.map(t => {
             const { cpu = 0, memory = 0 } = t.spec || {}
             return {

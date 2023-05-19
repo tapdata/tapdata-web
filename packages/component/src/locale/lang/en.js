@@ -39,5 +39,22 @@ export default {
   packages_component_src_discoveryclassification_morenmuluji: 'Default Directory (Technology)',
   packages_component_src_selectlist_qingchuyixuan: 'Clear Selected',
   packages_component_src_selectlist_xiang: 'Item',
-  packages_component_src_selectlist_yixuanze: 'Selected'
+  packages_component_src_selectlist_yixuanze: 'Selected',
+
+  packages_component_src_upgradefee_dingyuezhuanyeban: 'Subscribe to Professional Plan',
+  packages_component_src_upgradefee_gaojishouhouzhi: 'Premium technical support with SLA',
+  packages_component_src_upgradefee_shujuchulixing: 'High throughput',
+  packages_component_src_upgradefee_renwushukegen: 'Unlimited tasks',
+  packages_component_src_upgradefee_taocanfufei: 'Pay per specification',
+  packages_component_src_upgradefee_tigongzhuanyehua: 'Provide professional service support',
+  packages_component_src_upgradefee_xianshiyouhui: 'Limited-time Discount',
+  packages_component_src_upgradefee_zhuanyeban: 'Professional Plan',
+  packages_component_src_upgradefee_dangqianbanben: 'Current Version',
+  packages_component_src_upgradefee_biaozhunshouhouzhi: 'Standard support',
+  packages_component_src_upgradefee_ge: '3',
+  packages_component_src_upgradefee_zuidarenwushu: 'Maximum number of tasks: ',
+  packages_component_src_upgradefee_mianfei: 'Free',
+  packages_component_src_upgradefee_tigongmianfeishi: 'Always free tier',
+  packages_component_src_upgradefee_jichuban: 'Basic Plan',
+  packages_component_src_upgradefee_dingyueshengji: 'Subscribe and Upgrade'
 }

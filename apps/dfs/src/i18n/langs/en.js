@@ -1511,7 +1511,7 @@ export default {
   dfs_agent_download_transferdialog_kaihumingcheng: 'Account Name: ',
   dfs_agent_download_transferdialog_zhuanzhangxinxi: 'Tansfer Information',
 
-  dfs_agent_download_subscriptionmodeldialog_xuanzechanpinmo: 'Select product model',
+  dfs_agent_download_subscriptionmodeldialog_xuanzechanpinmo: 'Select Product Type',
   dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi: 'Hosting Method',
   dfs_agent_download_subscriptionmodeldialog_kafka: 'Kafka for data',
   dfs_agent_download_subscriptionmodeldialog_shujukuguochan: 'Database domestic replacement',
@@ -1571,5 +1571,8 @@ export default {
   dfs_instance_createagent_qingtianxieninzi: 'Please fill in your own MongoDB storage cluster URI',
   dfs_instance_createagent_qingpeizhininde: 'Please configure your storage resources:',
   dfs_order_list_dingyuezhuangtai: 'Subscription Status',
-  dfs_order_list_xinzengdingyue: 'Add Subscription'
+  dfs_order_list_xinzengdingyue: 'Add Subscription',
+
+  dfs_instance_details_shujuyuanziyuan: 'Data Source Resource Download',
+  dfs_instance_details_xianchengziyuanxia: 'Thread Resource Download'
 }

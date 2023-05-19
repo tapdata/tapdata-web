@@ -9,6 +9,10 @@
         当前账号 {{ configMock.nickname }} 正在模拟用户 {{ configMock.mockUserId }} 请谨慎操作！！！
       </div>
       <div class="dfs-header__button button-bar pr-4 fs-7">
+        <!--付费专业版-->
+        <div v-if="!isFeeUser" class="vip-btn mr-4 cursor-pointer" @click="openUpgrade">
+          <VIcon size="17">icon-vip</VIcon>{{ $t('packages_component_src_upgradefee_dingyuezhuanyeban') }}
+        </div>
         <div v-if="domain === 'demo.cloud.tapdata.net' && lang !== 'en'" class="marquee-container cursor-pointer">
           <div class="marquee-box">
             <span>{{ $t('dfs_data_dashboard_Marquee') }}</span>
@@ -66,17 +70,19 @@
           </ElDropdownMenu>
         </ElDropdown>
       </div>
+      <!--付费-->
+      <UpgradeFee :visible.sync="openUpgradeFee"></UpgradeFee>
     </div>
   </ElHeader>
 </template>
 <script>
-import { VIcon } from '@tap/component'
+import { VIcon, UpgradeFee } from '@tap/component'
 import { langMenu, getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
 
 import NotificationPopover from '@/views/workbench/NotificationPopover'
 
 export default {
-  components: { VIcon, NotificationPopover },
+  components: { VIcon, NotificationPopover, UpgradeFee },
   data() {
     return {
       user: window.__USER_INFO__ || {},
@@ -88,7 +94,9 @@ export default {
       domain: document.domain,
       onlyEnglishLanguage: false,
       configMock: window.__configMock__,
-      mockUserId: null
+      mockUserId: null,
+      openUpgradeFee: false,
+      isFeeUser: true
     }
   },
   created() {
@@ -103,6 +111,7 @@ export default {
     if (window.__configMock__) {
       this.mockUserId = window.__configMock__?.mockUserId || false
     }
+    this.getAgentCount()
     //如果没有配置topBarLinks 给默认值
     if (!window.__config__?.topBarLinks) {
       this.topBarLinks = [
@@ -209,6 +218,15 @@ export default {
     //处理跳转
     handleGo(item) {
       window.open(item.link, '_blank')
+    },
+    //判断是否是付费用户
+    getAgentCount() {
+      this.$axios.get('api/tcm/agent/agentCount').then(data => {
+        this.isFeeUser = data?.subscriptionAgentCount > 0
+      })
+    },
+    openUpgrade() {
+      this.openUpgradeFee = true
     }
   }
 }
@@ -399,6 +417,12 @@ export default {
   position: absolute;
   right: -100%;
   content: attr(text);
+}
+.vip-btn {
+  color: map-get($color, white);
+  padding: 4px 8px;
+  background: linear-gradient(93.39deg, #2c65ff 10.45%, #702cff 98.21%);
+  border-radius: 4px;
 }
 
 @keyframes move {
