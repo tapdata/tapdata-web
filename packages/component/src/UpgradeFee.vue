@@ -17,8 +17,8 @@
           </div>
           <div class="currentList paid-upgrade-mb16 mt-2 flex">
             <VIcon size="16" class="mr-2 color-primary">check-bold</VIcon
-            >{{ $t('packages_component_src_upgradefee_zuidarenwushu')
-            }}<span class="color-primary">{{ $t('packages_component_src_upgradefee_ge') }}</span>
+            >{{ $t('packages_component_src_upgradefee_zuidarenwushu') }}
+            <span class="color-primary">&nbsp{{ $t('packages_component_src_upgradefee_ge') }}</span>
           </div>
           <div class="currentList paid-upgrade-mb16 flex">
             <VIcon size="16" class="mr-2 color-primary">check-bold</VIcon

@@ -45,7 +45,7 @@ export default {
   packages_component_src_upgradefee_gaojishouhouzhi: 'Premium technical support with SLA',
   packages_component_src_upgradefee_shujuchulixing: 'High throughput',
   packages_component_src_upgradefee_renwushukegen: 'Unlimited tasks',
-  packages_component_src_upgradefee_taocanfufei: 'Package Fee',
+  packages_component_src_upgradefee_taocanfufei: 'Pay per specification',
   packages_component_src_upgradefee_tigongzhuanyehua: 'Provide professional service support',
   packages_component_src_upgradefee_xianshiyouhui: 'Limited-time Discount',
   packages_component_src_upgradefee_zhuanyeban: 'Professional Plan',
