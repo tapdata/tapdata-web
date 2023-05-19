@@ -8,7 +8,7 @@
     :before-close="handleClose"
   >
     <ul class="flex paid-upgrade-ul mt-4">
-      <li class="paid-upgrade-left flex flex-column">
+      <li class="paid-upgrade-left flex flex-column disabled">
         <div class="px-4 py-4 flex-1">
           <div class="version mb-2">{{ $t('packages_component_src_upgradefee_jichuban') }}</div>
           <div class="desc">{{ $t('packages_component_src_upgradefee_tigongmianfeishi') }}</div>
@@ -29,8 +29,8 @@
           {{ $t('packages_component_src_upgradefee_dangqianbanben') }}
         </div>
       </li>
-      <li class="paid-upgrade-right ml-6 flex flex-column bg">
-        <div class="px-4 py-4 flex-1">
+      <li class="paid-upgrade-right ml-6 flex flex-column bg cursor-pointer" @click="goPaidUpgrade">
+        <div class="px-4 py-4 flex-1 paid-upgrade-right-border">
           <div class="flex">
             <div>
               <div class="version mb-2">
@@ -62,7 +62,7 @@
           </div>
         </div>
         <div
-          class="footer bg-color-primary color-white flex justify-content-between align-items-center px-4 cursor-pointer"
+          class="footer-right flex justify-content-between align-items-center px-4 cursor-pointer"
           @click="goPaidUpgrade"
         >
           {{ $t('packages_component_src_upgradefee_dingyuezhuanyeban') }}<VIcon size="17">right</VIcon>
@@ -105,11 +105,28 @@ export default {
   }
   .paid-upgrade-ul li {
     width: 304px;
-    border: 1px solid map-get($borderColor, light);
     border-radius: 8px;
   }
+  .paid-upgrade-left {
+    border: 1px solid map-get($borderColor, sslight);
+    &.disabled {
+      cursor: not-allowed;
+    }
+  }
   .paid-upgrade-right {
-    border: 1px solid map-get($color, primary);
+    &:hover {
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.09);
+    }
+    &:hover .paid-upgrade-right-border {
+      border: 1px solid map-get($color, primary);
+      border-bottom: none;
+    }
+  }
+  .paid-upgrade-right-border {
+    border: 1px solid map-get($borderColor, sslight);
+    border-bottom: none;
+    border-top-right-radius: 8px;
+    border-top-left-radius: 8px;
   }
   .current {
     font-weight: 400;
@@ -193,6 +210,18 @@ export default {
     background: #f5f7fa;
     border-bottom-right-radius: 8px;
     border-bottom-left-radius: 8px;
+  }
+  .footer-right {
+    height: 40px;
+    background: map-get($color, primary);
+    color: map-get($color, white);
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    &:hover {
+      background: #5684ff;
+      border-color: #5684ff;
+      color: #ffffff;
+    }
   }
 }
 ::v-deep {
