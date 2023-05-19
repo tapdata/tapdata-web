@@ -1,5 +1,5 @@
 <template>
-  <div class="df-node-wrap position-absolute" :class="wrapClass" :style="nodeStyle">
+  <div class="df-node-wrap position-absolute" :class="wrapClass" :style="nodeStyle" tabindex="1">
     <BaseNode :node="data" :class="nodeClass" @click="mouseClick">
       <template #text="{ text }">
         <OverflowTooltip
