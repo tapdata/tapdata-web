@@ -801,8 +801,6 @@ export default {
               let indicesUniqueList = options.filter(item => item.indicesUnique)
               let defaultList = (isPrimaryKeyList.length ? isPrimaryKeyList : indicesUniqueList).map(item => item.value)
 
-              console.log('validateUpdateConditionFields.value', value, [...field.value], options) // eslint-disable-line
-
               if (!value || !value.length) {
                 nodeData.updateConditionFields = defaultList
                 $values.updateConditionFields = nodeData.updateConditionFields
