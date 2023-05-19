@@ -11,7 +11,7 @@
           class="p-2"
           @input="handleSearchTable"
         ></ElInput>
-        <div v-loading="navLoading" class="nav-list flex-fill font-color-normal">
+        <div v-loading="navLoading" ref="navList" class="nav-list flex-fill font-color-normal">
           <ul v-if="navList.length">
             <li
               v-for="(item, index) in navList"
@@ -187,6 +187,8 @@ export default {
 
     isShow(v) {
       if (v) {
+        const { height } = this.$refs.navList.getBoundingClientRect()
+        this.page.size = Math.max(10, Math.ceil(height / 41))
         this.loadData()
       }
     }
@@ -344,7 +346,7 @@ export default {
       border-left-color: map-get($color, primary);
     }
     .task-form-text-box {
-      width: 140px;
+      //width: 140px;
       .target {
         height: 40px;
         line-height: 40px;

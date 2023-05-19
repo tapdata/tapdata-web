@@ -400,7 +400,7 @@ export default {
       border-left-color: map-get($color, primary);
     }
     .task-form-text-box {
-      width: 140px;
+      //width: 140px;
       .target {
         height: 40px;
         line-height: 40px;
