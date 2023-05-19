@@ -399,6 +399,7 @@ export default {
 <style lang="scss">
 .df-node-wrap {
   z-index: 5;
+  outline: none;
   &.can-be-connected {
     .node-anchor.input {
       display: flex;

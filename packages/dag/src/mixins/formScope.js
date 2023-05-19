@@ -750,7 +750,13 @@ export default {
                   meta: f.data_type
                 }
               }) || []
+
+          const idx = editor.completers?.findIndex(item => item.id === 'recordFields') || -1
+
+          if (~idx) editor.completers.splice(idx, 1)
+
           editor.completers.push({
+            id: 'recordFields',
             // 获取补全提示列表
             getCompletions: function (editor, session, pos, prefix, callback) {
               // 判断当前行是否包含 '.'
