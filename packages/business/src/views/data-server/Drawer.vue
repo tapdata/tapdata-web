@@ -721,7 +721,7 @@ export default {
         pathAccessMethod,
         method: path.method || 'GET',
         fields,
-        params: path.params || this.getDefaultParams(apiType),
+        params: path.params.filter(t => t.name !== 'sort') || this.getDefaultParams(apiType),
         where: path.where || [],
         sort: path.sort || [],
         path: path.path || '',
@@ -778,7 +778,7 @@ export default {
       if (apiType === 'defaultApi') {
         params.push(
           ...[
-            { name: 'sort', type: 'object', description: i18n.t('public_button_sort') },
+            // { name: 'sort', type: 'object', description: i18n.t('public_button_sort') },
             { name: 'filter', type: 'object', description: i18n.t('public_data_filter_condition') }
           ]
         )
