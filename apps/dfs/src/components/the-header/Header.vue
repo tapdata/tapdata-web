@@ -13,6 +13,12 @@
         <div v-if="!isFeeUser" class="vip-btn mr-4 cursor-pointer" @click="openUpgrade">
           <VIcon size="17">icon-vip</VIcon>{{ $t('packages_component_src_upgradefee_dingyuezhuanyeban') }}
         </div>
+        <!--我的工单-->
+        <div class="command-item mr-6" @click="goTicketSystem">
+          <VIcon size="17">workorder</VIcon>
+          <span class="cursor-pointer"> 我的工单</span>
+        </div>
+        <!---demo环境-->
         <div v-if="domain === 'demo.cloud.tapdata.net' && lang !== 'en'" class="marquee-container cursor-pointer">
           <div class="marquee-box">
             <span>{{ $t('dfs_data_dashboard_Marquee') }}</span>
@@ -218,6 +224,12 @@ export default {
     //处理跳转
     handleGo(item) {
       window.open(item.link, '_blank')
+    },
+    //
+    goTicketSystem() {
+      this.$router.push({
+        name: 'TicketSystem'
+      })
     },
     //判断是否是付费用户
     getAgentCount() {
