@@ -192,19 +192,16 @@ export const JsProcessor = observer(
         if (!fullscreen.value) toggleFullscreen()
 
         if (jsType === 1) {
-          let before, after, logs
+          let before, after, logs, result
           try {
-            const result = await taskApi.testRunJsRpc({ ...params, version, script: props.value })
-            before = result.before
-            after = result.after
-            logs = result.logs
+            result = await taskApi.testRunJsRpc({ ...params, version, script: props.value })
           } catch (e) {
             console.log(e) // eslint-disable-line
-            const result = e?.data || {}
-            before = result.before
-            after = result.after
-            logs = result.logs
+            result = e?.data
           }
+          before = result?.before
+          after = result?.after
+          logs = result?.logs
           inputRef.value = before ? JSON.stringify(before, null, 2) : ''
           outputRef.value = after ? JSON.stringify(after, null, 2) : ''
           logList.value = logs?.filter(item => !new RegExp(`^.*\\[${nodeId}]`).test(item.message)) || []
