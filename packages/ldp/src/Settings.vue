@@ -269,9 +269,10 @@ export default {
 
   computed: {
     disabled() {
+      console.log('disabled', this.setting, this.form) // eslint-disable-line
       return (
         this.setting &&
-        this.setting.fdmStorageCluster === this.form.fdmStorageCluster &&
+        // this.setting.fdmStorageCluster === this.form.fdmStorageCluster &&
         this.setting.fdmStorageConnectionId === this.form.fdmStorageConnectionId
       )
     },
