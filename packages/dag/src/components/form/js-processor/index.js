@@ -197,7 +197,7 @@ export const JsProcessor = observer(
             result = await taskApi.testRunJsRpc({ ...params, version, script: props.value })
           } catch (e) {
             console.log(e) // eslint-disable-line
-            result = e?.data
+            result = e?.data?.data
           }
           before = result?.before
           after = result?.after
