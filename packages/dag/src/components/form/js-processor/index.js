@@ -180,7 +180,7 @@ export const JsProcessor = observer(
       }
 
       const handleRun = async () => {
-        const { jsType } = params
+        const { jsType } = form.values
         resetQuery()
         running.value = true
         logLoading.value = true
