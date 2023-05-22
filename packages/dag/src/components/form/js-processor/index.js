@@ -179,8 +179,8 @@ export const JsProcessor = observer(
           .catch(resetQuery)
       }
 
-      const handleRun = () => {
-        const { jsType } = form.values
+      const handleRun = async () => {
+        const { jsType } = params
         resetQuery()
         running.value = true
         logLoading.value = true
@@ -191,26 +191,29 @@ export const JsProcessor = observer(
 
         if (!fullscreen.value) toggleFullscreen()
 
-        taskApi.testRunJs({ ...params, version, script: props.value }).then(
-          (res = {}) => {
-            if (jsType === 1) {
-              const { before, after, logs } = res
-              inputRef.value = before ? JSON.stringify(before, null, 2) : ''
-              outputRef.value = after ? JSON.stringify(after, null, 2) : ''
-              logList.value = logs?.filter(item => !new RegExp(`^.*\\[${nodeId}]`).test(item.message)) || []
-            } else {
+        if (jsType === 1) {
+          try {
+            const { before, after, logs } = await taskApi.testRunJsRpc({ ...params, version, script: props.value })
+            inputRef.value = before ? JSON.stringify(before, null, 2) : ''
+            outputRef.value = after ? JSON.stringify(after, null, 2) : ''
+            logList.value = logs?.filter(item => !new RegExp(`^.*\\[${nodeId}]`).test(item.message)) || []
+          } catch (e) {
+            console.log(e) // eslint-disable-line
+          }
+          resetQuery()
+        } else {
+          taskApi.testRunJs({ ...params, version, script: props.value }).then(
+            () => {
               queryStart = Time.now()
               handleAutoQuery()
-            }
-          },
-          async () => {
-            // 脚本执行出错
-            if (jsType !== 1) {
+            },
+            async () => {
+              // 脚本执行出错
               await queryLog()
+              resetQuery()
             }
-            resetQuery()
-          }
-        )
+          )
+        }
       }
 
       onUnmounted(() => {
