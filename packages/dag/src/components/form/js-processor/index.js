@@ -37,6 +37,7 @@ export const JsProcessor = observer(
       const params = reactive({
         taskId,
         jsNodeId: form.values.id,
+        jsType: form.values.jsType,
         tableName: '',
         rows: 1
       })
