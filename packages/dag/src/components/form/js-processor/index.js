@@ -84,6 +84,43 @@ export const JsProcessor = observer(
       let logLoading = ref(false)
       const nodeId = form.values.id
 
+      const queryLog = async () => {
+        const logData = await monitoringLogsApi.query({
+          taskId: root.$store.state.dataflow.taskInfo.testTaskId,
+          type: 'testRun',
+          order: 'asc',
+          page: 1,
+          pageSize: 50,
+          start: queryStart,
+          nodeId,
+          end: Time.now()
+        })
+        logList.value = logData?.items.filter(item => !new RegExp(`^.*\\[${nodeId}]`).test(item.message)) || []
+      }
+
+      const handleQuery = async () => {
+        let lastVersion = version
+        let isOver = await taskApi
+          .getRunJsResult({
+            version,
+            taskId,
+            jsNodeId: nodeId
+          })
+          .then(res => {
+            // 版本号不一致
+            if (lastVersion !== version) return true
+            inputRef.value = res.before ? JSON.stringify(res.before, null, 2) : ''
+            outputRef.value = res.after ? JSON.stringify(res.after, null, 2) : ''
+            return res.over
+          })
+
+        if (isOver) running.value = false
+
+        await queryLog()
+
+        return isOver
+      }
+
       const resetQuery = () => {
         queryTimes = 0
         running.value = false
@@ -94,7 +131,56 @@ export const JsProcessor = observer(
         clearTimeout(outTimer)
       }
 
-      const handleRun = async () => {
+      const handleAutoQuery = () => {
+        running.value = true
+        queryTimes++
+        clearTimeout(timer)
+        if (queryTimes > 5) {
+          runningText.value = i18n.t('packages_form_js_processor_index_rengzaipinmingjia')
+        }
+
+        if (queryTimes > 40) {
+          resetQuery()
+          root.$message.error(i18n.t('packages_form_js_processor_index_qingqiuchaoshiqing'))
+          return
+        }
+        handleQuery()
+          .then(isOver => {
+            if (!isOver) {
+              timer = setTimeout(() => {
+                handleAutoQuery()
+              }, 500)
+            } else {
+              // 两秒后再去拿一次日志
+              outTimer = setTimeout(() => {
+                logTimer = setInterval(async () => {
+                  await queryLog()
+                  // 不继续轮询了
+                  // if (logList.value.length) {
+                  resetQuery()
+                  // }
+                }, 1000)
+              }, 2000)
+
+              /*if (!logList.value.length) {
+                outTimer = setTimeout(() => {
+                  logTimer = setInterval(async () => {
+                    await queryLog()
+                    if (logList.value.length) {
+                      resetQuery()
+                    }
+                  }, 500)
+                }, 1000)
+              } else {
+                resetQuery()
+              }*/
+            }
+          })
+          .catch(resetQuery)
+      }
+
+      const handleRun = () => {
+        const { jsType } = form.values
         resetQuery()
         running.value = true
         logLoading.value = true
@@ -105,15 +191,26 @@ export const JsProcessor = observer(
 
         if (!fullscreen.value) toggleFullscreen()
 
-        try {
-          const { before, after, logs } = await taskApi.testRunJs({ ...params, version, script: props.value })
-          inputRef.value = before ? JSON.stringify(before, null, 2) : ''
-          outputRef.value = after ? JSON.stringify(after, null, 2) : ''
-          logList.value = logs?.filter(item => !new RegExp(`^.*\\[${nodeId}]`).test(item.message)) || []
-        } catch (e) {
-          console.error(e) // eslint-disable-line
-        }
-        resetQuery()
+        taskApi.testRunJs({ ...params, version, script: props.value }).then(
+          (res = {}) => {
+            if (jsType === 1) {
+              const { before, after, logs } = res
+              inputRef.value = before ? JSON.stringify(before, null, 2) : ''
+              outputRef.value = after ? JSON.stringify(after, null, 2) : ''
+              logList.value = logs?.filter(item => !new RegExp(`^.*\\[${nodeId}]`).test(item.message)) || []
+            } else {
+              queryStart = Time.now()
+              handleAutoQuery()
+            }
+          },
+          async () => {
+            // 脚本执行出错
+            if (jsType !== 1) {
+              await queryLog()
+            }
+            resetQuery()
+          }
+        )
       }
 
       onUnmounted(() => {
