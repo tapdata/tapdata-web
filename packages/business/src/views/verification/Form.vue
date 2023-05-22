@@ -335,8 +335,8 @@ export default {
       flowOptions: null,
       notSupport: {
         row_count: ['Clickhouse', 'Kafka'],
-        field: ['Doris', 'Kafka'],
-        jointField: ['Doris', 'Kafka']
+        field: ['Kafka'],
+        jointField: ['Kafka']
       },
       inspectMethodMap: {
         row_count: i18n.t('packages_business_verification_row_verify'),
