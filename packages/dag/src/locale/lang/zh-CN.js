@@ -34,7 +34,7 @@ export default {
   packages_dag_task_setting_sync_type: '同步类型',
   packages_dag_task_setting_initial_sync_cdc: '全量 + 增量',
   packages_dag_task_stetting_desc: '任务描述',
-  packages_dag_task_setting_plan_start_date: '计划开始时间',
+  packages_dag_task_setting_plan_start_date: '指定时间运行',
   packages_dag_task_setting_crontabExpressionFlag: '定期调度任务',
   packages_dag_task_setting_cron_expression: '请输入调度表达式',
   packages_dag_task_setting_cron_tip:

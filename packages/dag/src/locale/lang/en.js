@@ -35,7 +35,7 @@ export default {
   packages_dag_task_setting_sync_type: 'Sync Type',
   packages_dag_task_setting_initial_sync_cdc: 'Full + Incremental synchronization',
   packages_dag_task_stetting_desc: 'Task Description',
-  packages_dag_task_setting_plan_start_date: 'Plan start date',
+  packages_dag_task_setting_plan_start_date: 'Scheduled Run',
   packages_dag_task_setting_crontabExpressionFlag: 'Scheduled Tasks',
   packages_dag_task_setting_cron_expression: 'Please enter a scheduling expression',
   packages_dag_task_setting_cron_tip:

@@ -86,16 +86,6 @@ export default observer({
                   }
                 ]
               },
-              desc: {
-                title: this.$t('packages_dag_task_stetting_desc'), //任务描述
-                type: 'string',
-                'x-decorator': 'FormItem',
-                'x-component': 'Input.TextArea',
-                'x-component-props': {
-                  min: 1,
-                  max: 100
-                }
-              },
               collapse: {
                 type: 'void',
                 'x-decorator': 'FormItem',
@@ -492,85 +482,6 @@ export default observer({
                           fulfill: {
                             state: {
                               visible: '{{$values.syncType === "migrate"}}'
-                            }
-                          }
-                        }
-                      },
-                      increHysteresisSpace: {
-                        type: 'void',
-                        title: this.$t('packages_dag_task_setting_lag_time'),
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Space',
-                        properties: {
-                          increHysteresis: {
-                            type: 'boolean',
-                            'x-component': 'Switch'
-                          },
-                          hysteresisInterval: {
-                            type: 'number',
-                            'x-decorator': 'FormItem',
-                            'x-decorator-props': {
-                              feedbackLayout: 'none',
-                              addonAfter: i18n.t('public_time_s')
-                            },
-                            'x-component': 'InputNumber',
-                            'x-component-props': {
-                              min: 1
-                            },
-                            'x-reactions': {
-                              dependencies: ['.increHysteresis'],
-                              fulfill: {
-                                state: {
-                                  display: '{{$deps[0]?"visible":"hidden"}}'
-                                }
-                              }
-                            }
-                          }
-                        },
-                        'x-reactions': {
-                          dependencies: ['type'],
-                          fulfill: {
-                            state: {
-                              display: '{{$deps[0]!=="initial_sync" ? "visible" : "hidden"}}'
-                            }
-                          }
-                        }
-                      },
-                      increOperationModeSpace: {
-                        type: 'void',
-                        title: this.$t('packages_dag_task_setting_increOperationMode'),
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Space',
-                        properties: {
-                          increOperationMode: {
-                            type: 'boolean',
-                            'x-component': 'Select',
-                            enum: [
-                              { label: i18n.t('packages_dag_components_formpanel_piliang'), value: false },
-                              { label: i18n.t('packages_dag_components_formpanel_zhutiao'), value: true }
-                            ]
-                          },
-                          increaseReadSize: {
-                            type: 'number',
-                            'x-component': 'InputNumber',
-                            'x-component-props': {
-                              min: 1
-                            },
-                            'x-reactions': {
-                              dependencies: ['.increOperationMode'],
-                              fulfill: {
-                                state: {
-                                  display: '{{$deps[0]?"visible":"hidden"}}'
-                                }
-                              }
-                            }
-                          }
-                        },
-                        'x-reactions': {
-                          dependencies: ['type'],
-                          fulfill: {
-                            state: {
-                              display: '{{$deps[0]!=="initial_sync" ? "visible" : "hidden"}}'
                             }
                           }
                         }
