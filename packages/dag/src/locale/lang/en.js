@@ -174,7 +174,7 @@ export default {
   packages_dag_migration_settingpanel_dangrenwufuhe:
     'When data verification is enabled, the task will automatically perform full verification and incremental verification for the data replication consistency. The verification results can be viewed on the Task Monitoring page. Note the verification currently does not support following scenarios, when one of the following happens, this feature will have no effect:\n 1. There is a processing node in the pipeline\n 2. The source connection does not support verification\n 3. The target connection does not support verification',
   packages_dag_monitor_bottompanel_yunxingjilu: 'Running Record',
-  packages_dag_monitor_bottompanel_rizhi: 'Log',
+  packages_dag_monitor_bottompanel_rizhi: 'Task Progress',
   packages_dag_components_eventchart_qita: 'Other',
   packages_dag_components_eventchart_suoxuanzhouqilei: 'Selected cycle accumulation',
   packages_dag_components_eventchart_renwuyunxinglei: 'Task running cumulative',
