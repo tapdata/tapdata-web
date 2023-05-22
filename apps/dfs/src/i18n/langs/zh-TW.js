@@ -1411,7 +1411,7 @@ export default {
   dfs_instance_createagent_tian: '15天',
   dfs_instance_createagent_xuanzecunchufang: '選擇存儲方案',
   dfs_instance_createagent_minjieshujuzhong: '敏捷數據中台',
-  dfs_instance_createagent_kucunzhongxin: '庫存中心',
+  dfs_agent_download_subscriptionmodeldialog_redis_gongshu: 'Redis/ES 供数',
   dfs_instance_createagent_shangpinzhongxin: '商品中心',
   dfs_instance_createagent_kehu: '客戶360',
   dfs_instance_createagent_bIkanbangong: 'BI 看板供數',
