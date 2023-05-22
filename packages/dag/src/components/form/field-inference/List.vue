@@ -21,7 +21,10 @@
         </span>
       </template>
       <template slot="data_type" slot-scope="scope">
-        <div class="position-relative" :class="{ 'pl-5': !!getCanUseDataTypesTooltip(scope.row.matchedDataTypeLevel) }">
+        <div
+          class="position-relative"
+          :class="{ 'pl-5': !ignoreError && !!getCanUseDataTypesTooltip(scope.row.matchedDataTypeLevel) }"
+        >
           <ElTooltip
             v-if="!ignoreError"
             transition="tooltip-fade-in"

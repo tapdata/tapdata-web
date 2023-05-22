@@ -47,7 +47,7 @@
               <div class="task-form-text-box pl-4 inline-block">
                 <OverflowTooltip class="w-100 text-truncate target" :text="item.name" placement="right" />
               </div>
-              <ElTooltip
+              <!--<ElTooltip
                 v-if="item.matchedDataTypeLevel === 'error'"
                 placement="top"
                 transition="tooltip-fade-in"
@@ -55,7 +55,7 @@
                 class="mr-1"
               >
                 <VIcon size="16" class="color-warning">warning</VIcon>
-              </ElTooltip>
+              </ElTooltip>-->
             </li>
           </ul>
           <div v-else class="task-form-left__ul flex flex-column align-items-center">
@@ -129,6 +129,7 @@
           :show-columns="['index', 'field_name', 'data_type', 'operation']"
           :fieldChangeRules.sync="fieldChangeRules"
           :readonly="readonly"
+          ignore-error
           class="content__list flex-fill"
           @update-rules="handleUpdateRules"
         ></List>
