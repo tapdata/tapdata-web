@@ -6,6 +6,7 @@ import { connectionsApi, metadataInstancesApi, clusterApi, proxyApi, databaseTyp
 import { externalStorageApi } from '@tap/api'
 import { isPlainObj } from '@tap/shared'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
+import { FormTab } from '@tap/form'
 
 const editorKeyboard = {
   handleKeyboard: function ({ editor }, hash, keyString, keyCode, event) {
@@ -119,6 +120,8 @@ export default {
         $agentMap: {},
 
         $isDaas: process.env.VUE_APP_PLATFORM === 'DAAS', //区分云版、企业版
+
+        formTab: FormTab.createFormTab(),
 
         $hasPdkConfig: pdkHash => {
           return !!this.$store.state.dataflow.pdkPropertiesMap[pdkHash]

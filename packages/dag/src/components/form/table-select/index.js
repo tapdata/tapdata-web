@@ -5,7 +5,7 @@ import { watch, defineComponent } from '@vue/composition-api'
 
 export const TableSelect = observer(
   defineComponent({
-    props: ['reloadTime'],
+    props: ['reloadTime', 'connectionId'],
     setup(props, { attrs, listeners, root, refs }) {
       const fieldRef = useField()
 
@@ -17,8 +17,7 @@ export const TableSelect = observer(
       )
 
       return () => {
-        const connectionId = fieldRef.value.query('connectionId').value()
-        const params = { where: { 'source.id': connectionId, taskId: root.$store.state.dataflow.taskId } }
+        const params = { where: { 'source.id': props.connectionId, taskId: root.$store.state.dataflow.taskId } }
         return (
           <AsyncSelect
             ref="list"

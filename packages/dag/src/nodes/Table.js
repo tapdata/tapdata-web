@@ -49,252 +49,266 @@ export class Table extends NodeType {
           }
         }
       },
-      name: {
-        type: 'string',
-        title: i18n.t('public_node_name'),
-        required: true,
-        'x-decorator': 'FormItem',
-        'x-component': 'Input'
-      },
-
-      connectionIdWrap: {
+      tabs: {
         type: 'void',
-        title: i18n.t('packages_dag_nodes_table_shujuku'),
-        'x-decorator': 'FormItem',
-        'x-decorator-props': {
-          asterisk: true,
-          feedbackLayout: 'none'
-        },
-        'x-component': 'FormFlex',
+        'x-component': 'FormTab',
         'x-component-props': {
-          gap: 8,
-          align: 'start'
+          class: 'config-tabs',
+          formTab: '{{formTab}}'
         },
-        properties: {
-          connectionId: {
-            type: 'string',
-            required: true,
-            'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              style: {
-                flex: 1
-              }
-            },
-            'x-component': 'AsyncSelect',
-            'x-component-props': {
-              onSetSelected: '{{useHandleWithForm(handlerSyncDatabaseChange, $form)}}',
-              itemLabel: 'label',
-              itemValue: 'id',
-              itemQuery: 'name',
-              method: '{{loadDatabases}}',
-              params: `{{ {where: {database_type: $values.databaseType}} }}`
-            },
-            'x-reactions': [
-              {
-                target: 'tableName',
-                effects: ['onFieldValueChange'],
-                fulfill: {
-                  state: {
-                    value: ''
-                  }
-                }
-              }
-            ]
-          },
-
-          clipboardButton: {
-            type: 'void',
-            'x-component': 'ClipboardButton',
-            'x-component-props': {
-              tooltip: i18n.t('packages_dag_nodes_table_fuzhishujuku'),
-              finishTooltip: i18n.t('packages_dag_nodes_table_yifuzhi')
-            }
-          }
-        }
-      },
-
-      tableNameWrap: {
-        type: 'void',
-        title: i18n.t('packages_dag_dag_table'),
-        'x-decorator': 'StageButtonLabel',
-        'x-decorator-props': {
-          asterisk: true,
-          feedbackLayout: 'none',
-          connectionId: '{{$values.connectionId}}',
-          title: i18n.t('packages_dag_dag_table'),
-          target: 'tableNameWrap.tableName'
-        },
-        'x-component': 'FormFlex',
-        'x-component-props': {
-          gap: 8,
-          align: 'start'
-        },
-        'x-reactions': {
-          dependencies: ['databaseType'],
-          fulfill: {
-            state: {
-              display: '{{ !["CSV","EXCEL","JSON","XML"].includes($deps[0]) ? "visible":"hidden"}}'
-            }
-          }
-        },
-        properties: {
-          tableName: {
-            type: 'string',
-            required: true,
-            'x-validator': [
-              {
-                required: true,
-                message: i18n.t('packages_dag_nodes_table_qingxuanzebiao')
-              }
-            ],
-            'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              style: {
-                flex: 1
-              }
-            },
-            'x-component': 'TableSelect',
-            'x-component-props': {
-              method: '{{loadTable}}'
-            },
-            'x-reactions': [
-              {
-                target: 'name',
-                effects: ['onFieldInputValueChange'],
-                fulfill: {
-                  state: {
-                    value: '{{$self.value}}'
-                  }
-                }
-              },
-              {
-                target: 'updateConditionFields',
-                effects: ['onFieldValueChange'],
-                fulfill: {
-                  state: {
-                    value: null
-                  }
-                }
-              },
-              {
-                dependencies: ['$inputs'],
-                fulfill: {
-                  schema: {
-                    // title: '{{console.log("tableName", $deps[0]),$deps[0] ? "表(可输入创建新表)" : "表"}}',
-                    'x-component-props.allowCreate': '{{$deps[0].length>0}}'
-                    // 'x-decorator-props.feedbackText': '{{$deps[0] && "可输入创建新表"}}'
-                  }
-                }
-              }
-            ]
-          },
-          clipboardButton: {
-            type: 'void',
-            'x-component': 'ClipboardButton',
-            'x-component-props': {
-              tooltip: i18n.t('packages_dag_nodes_table_fuzhibiaoming'),
-              finishTooltip: i18n.t('packages_dag_nodes_table_yifuzhi')
-            },
-            'x-reactions': {
-              dependencies: ['tableName'],
-              fulfill: {
-                schema: {
-                  'x-component-props.content': '{{$deps[0]}}'
-                }
-              }
-            }
-          }
-        }
-      },
-
-      updateConditionFields: {
-        title: i18n.t('packages_dag_nodes_table_gengxintiaojianzi'),
-        type: 'array',
-        description: `{{ !$isDaas ? "${i18n.t('packages_dag_nodes_table_isDaa_ruguoyuanweimongodb')}" : ""}}`,
-        'x-decorator': 'FormItem',
-        'x-decorator-props': {
-          asterisk: true
-        },
-        'x-component': 'FieldSelect',
-        'x-component-props': {
-          allowCreate: true,
-          multiple: true,
-          filterable: true,
-          onCreate: `{{() => {
-            // 标记用户创建
-            $values.attrs.hasCreated = true
-          }}}`
-        },
-        'x-reactions': [
-          {
-            dependencies: ['$inputs'],
-            fulfill: {
-              state: {
-                visible: '{{$deps[0].length > 0}}'
-              }
-            }
-          },
-          `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true}, $values.$inputs[0])}}`,
-          {
-            effects: ['onFieldMount'],
-            fulfill: {
-              run: '$self.visible && $self.validate()'
-            }
-          }
-        ],
-        'x-validator': {
-          triggerType: 'onBlur',
-          validator: `{{validateUpdateConditionFields}}`
-        }
-      },
-
-      // 指定agent
-      'attrs.accessNodeProcessId': {
-        type: 'string',
-        title: i18n.t('packages_dag_nodes_database_suoshuage'),
-        'x-decorator': 'FormItem',
-        'x-component': 'PreviewText.Input',
-        'x-component-props': {
-          content:
-            '{{$agentMap[$self.value] ? `${$agentMap[$self.value].hostName}（${$agentMap[$self.value].ip}）` : "-"}}',
-          style: {
-            color: '#535F72'
-          }
-        },
-        'x-reactions': {
-          fulfill: {
-            state: {
-              display: '{{!$self.value ? "hidden":"visible"}}'
-            }
-          }
-        }
-      },
-
-      collapse: {
-        type: 'void',
-        'x-decorator': 'FormItem',
-        'x-decorator-props': {
-          class: 'mt-2 mx-n4'
-        },
-        'x-component': 'FormCollapse',
-        'x-component-props': {
-          class: 'inset'
-        },
-        /*'x-reactions': {
-          dependencies: ['$inputs', '$outputs'],
-          fulfill: {
-            state: {
-              display:
-                '{{$hasPdkConfig($values.attrs.pdkHash) || $deps[0].length > 0 || $deps[1].length > 0 ? "visible":"hidden"}}'
-            }
-          }
-        },*/
         properties: {
           tab1: {
             type: 'void',
-            'x-component': 'FormCollapse.Item',
+            'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              title: i18n.t('packages_dag_task_stetting_most_setting')
+              label: '基础设置'
+            },
+            properties: {
+              nameWrap: {
+                type: 'void',
+                'x-component': 'FormGrid',
+                'x-component-props': {
+                  minColumns: 2,
+                  maxColumns: 2,
+                  columnGap: 16
+                },
+                properties: {
+                  name: {
+                    type: 'string',
+                    title: i18n.t('public_node_name'),
+                    required: true,
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Input'
+                  },
+                  'attrs.connectionName': {
+                    type: 'string',
+                    title: i18n.t('public_connection_name'),
+                    'x-decorator': 'FormItem',
+                    'x-component': 'PreviewText.Input'
+                  }
+                  /*connectionIdWrap: {
+                    type: 'void',
+                    title: i18n.t('packages_dag_nodes_table_shujuku'),
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      asterisk: true,
+                      feedbackLayout: 'none'
+                    },
+                    'x-component': 'FormFlex',
+                    'x-component-props': {
+                      gap: 8,
+                      align: 'start'
+                    },
+                    properties: {
+                      connectionId: {
+                        type: 'string',
+                        required: true,
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          style: {
+                            flex: 1
+                          }
+                        },
+                        'x-read-pretty': true,
+                        'x-component': 'AsyncSelect',
+                        'x-component-props': {
+                          onSetSelected: '{{useHandleWithForm(handlerSyncDatabaseChange, $form)}}',
+                          itemLabel: 'label',
+                          itemValue: 'id',
+                          itemQuery: 'name',
+                          method: '{{loadDatabases}}',
+                          params: `{{ {where: {database_type: $values.databaseType}} }}`
+                        },
+                        'x-reactions': [
+                          {
+                            target: 'tableName',
+                            effects: ['onFieldValueChange'],
+                            fulfill: {
+                              state: {
+                                value: ''
+                              }
+                            }
+                          }
+                        ]
+                      },
+
+                      clipboardButton: {
+                        type: 'void',
+                        'x-component': 'ClipboardButton',
+                        'x-component-props': {
+                          tooltip: i18n.t('packages_dag_nodes_table_fuzhishujuku'),
+                          finishTooltip: i18n.t('packages_dag_nodes_table_yifuzhi')
+                        }
+                      }
+                    }
+                  }*/
+                }
+              },
+
+              tableNameWrap: {
+                type: 'void',
+                title: i18n.t('packages_dag_dag_table'),
+                'x-decorator': 'StageButtonLabel',
+                'x-decorator-props': {
+                  asterisk: true,
+                  feedbackLayout: 'none',
+                  connectionId: '{{$values.connectionId}}',
+                  title: i18n.t('packages_dag_dag_table'),
+                  target: 'tableNameWrap.tableName'
+                },
+                'x-component': 'FormFlex',
+                'x-component-props': {
+                  gap: 8,
+                  align: 'start'
+                },
+                'x-reactions': {
+                  dependencies: ['databaseType'],
+                  fulfill: {
+                    state: {
+                      display: '{{ !["CSV","EXCEL","JSON","XML"].includes($deps[0]) ? "visible":"hidden"}}'
+                    }
+                  }
+                },
+                properties: {
+                  tableName: {
+                    type: 'string',
+                    required: true,
+                    'x-validator': [
+                      {
+                        required: true,
+                        message: i18n.t('packages_dag_nodes_table_qingxuanzebiao')
+                      }
+                    ],
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      style: {
+                        flex: 1
+                      }
+                    },
+                    'x-component': 'TableSelect',
+                    'x-component-props': {
+                      method: '{{loadTable}}',
+                      connectionId: '{{$values.connectionId}}'
+                    },
+                    'x-reactions': [
+                      {
+                        target: 'name',
+                        effects: ['onFieldInputValueChange'],
+                        fulfill: {
+                          state: {
+                            value: '{{$self.value}}'
+                          }
+                        }
+                      },
+                      {
+                        target: 'updateConditionFields',
+                        effects: ['onFieldValueChange'],
+                        fulfill: {
+                          state: {
+                            value: null
+                          }
+                        }
+                      },
+                      {
+                        dependencies: ['$inputs'],
+                        fulfill: {
+                          schema: {
+                            // title: '{{console.log("tableName", $deps[0]),$deps[0] ? "表(可输入创建新表)" : "表"}}',
+                            'x-component-props.allowCreate': '{{$deps[0].length>0}}'
+                            // 'x-decorator-props.feedbackText': '{{$deps[0] && "可输入创建新表"}}'
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  clipboardButton: {
+                    type: 'void',
+                    'x-component': 'ClipboardButton',
+                    'x-component-props': {
+                      tooltip: i18n.t('packages_dag_nodes_table_fuzhibiaoming'),
+                      finishTooltip: i18n.t('packages_dag_nodes_table_yifuzhi')
+                    },
+                    'x-reactions': {
+                      dependencies: ['tableName'],
+                      fulfill: {
+                        schema: {
+                          'x-component-props.content': '{{$deps[0]}}'
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+
+              updateConditionFields: {
+                title: i18n.t('packages_dag_nodes_table_gengxintiaojianzi'),
+                type: 'array',
+                description: `{{ !$isDaas ? "${i18n.t('packages_dag_nodes_table_isDaa_ruguoyuanweimongodb')}" : ""}}`,
+                'x-decorator': 'FormItem',
+                'x-decorator-props': {
+                  asterisk: true
+                },
+                'x-component': 'FieldSelect',
+                'x-component-props': {
+                  allowCreate: true,
+                  multiple: true,
+                  filterable: true,
+                  onCreate: `{{() => {
+            // 标记用户创建
+            $values.attrs.hasCreated = true
+          }}}`
+                },
+                'x-reactions': [
+                  {
+                    dependencies: ['$inputs'],
+                    fulfill: {
+                      state: {
+                        visible: '{{$deps[0].length > 0}}'
+                      }
+                    }
+                  },
+                  `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true}, $values.$inputs[0])}}`,
+                  {
+                    effects: ['onFieldMount'],
+                    fulfill: {
+                      run: '$self.visible && $self.validate()'
+                    }
+                  }
+                ],
+                'x-validator': {
+                  triggerType: 'onBlur',
+                  validator: `{{validateUpdateConditionFields}}`
+                }
+              },
+
+              // 指定agent
+              'attrs.accessNodeProcessId': {
+                type: 'string',
+                title: i18n.t('packages_dag_nodes_database_suoshuage'),
+                'x-decorator': 'FormItem',
+                'x-component': 'PreviewText.Input',
+                'x-component-props': {
+                  content:
+                    '{{$agentMap[$self.value] ? `${$agentMap[$self.value].hostName}（${$agentMap[$self.value].ip}）` : "-"}}',
+                  style: {
+                    color: '#535F72'
+                  }
+                },
+                'x-reactions': {
+                  fulfill: {
+                    state: {
+                      display: '{{!$self.value ? "hidden":"visible"}}'
+                    }
+                  }
+                }
+              }
+            }
+          },
+          tab2: {
+            type: 'void',
+            'x-component': 'FormTab.TabPane',
+            'x-component-props': {
+              label: '高级设置'
             },
             properties: {
               sourceNodeConfig: {
@@ -1401,6 +1415,39 @@ export class Table extends NodeType {
           }
         }
       },
+
+      /*collapse: {
+        type: 'void',
+        'x-decorator': 'FormItem',
+        'x-decorator-props': {
+          class: 'mt-2 mx-n4'
+        },
+        'x-component': 'FormCollapse',
+        'x-component-props': {
+          class: 'inset'
+        },
+        /!*'x-reactions': {
+          dependencies: ['$inputs', '$outputs'],
+          fulfill: {
+            state: {
+              display:
+                '{{$hasPdkConfig($values.attrs.pdkHash) || $deps[0].length > 0 || $deps[1].length > 0 ? "visible":"hidden"}}'
+            }
+          }
+        },*!/
+        properties: {
+          tab1: {
+            type: 'void',
+            'x-component': 'FormCollapse.Item',
+            'x-component-props': {
+              title: i18n.t('packages_dag_task_stetting_most_setting')
+            },
+            properties: {
+
+            }
+          }
+        }
+      },*/
 
       // 切换连接，保存连接的类型
       'attrs.connectionType': {
