@@ -21,8 +21,12 @@
         </span>
       </template>
       <template slot="data_type" slot-scope="scope">
-        <div class="position-relative" :class="{ 'pl-5': !!getCanUseDataTypesTooltip(scope.row.matchedDataTypeLevel) }">
+        <div
+          class="position-relative"
+          :class="{ 'pl-5': !ignoreError && !!getCanUseDataTypesTooltip(scope.row.matchedDataTypeLevel) }"
+        >
           <ElTooltip
+            v-if="!ignoreError"
             transition="tooltip-fade-in"
             :disabled="scope.row.matchedDataTypeLevel !== 'error'"
             :content="getCanUseDataTypesTooltip(scope.row.matchedDataTypeLevel)"
@@ -152,7 +156,8 @@ export default {
     type: {
       type: String,
       default: 'target'
-    }
+    },
+    ignoreError: Boolean
   },
 
   data() {
@@ -416,7 +421,7 @@ export default {
     },
 
     tableRowClassName({ row }) {
-      return row.matchedDataTypeLevel === 'error' ? 'warning-row' : ''
+      return !this.ignoreError && row.matchedDataTypeLevel === 'error' ? 'warning-row' : ''
     },
 
     getCanUseDataTypesTooltip(matchedDataTypeLevel) {

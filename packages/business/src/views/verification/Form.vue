@@ -175,6 +175,69 @@
               </ElInput>
             </ElFormItem>
           </template>
+
+          <ElFormItem class="form-item" :label="$t('packages_business_verification_form_task_alarm') + ': '">
+            <div class="inline-block">
+              <div>
+                <ElCheckbox v-model="form.alarmSettings[0].open" @change="handleChangeAlarm(arguments[0], 0)">{{
+                  $t('packages_business_verification_form_task_alarm_when_error')
+                }}</ElCheckbox>
+              </div>
+              <div>
+                <ElCheckbox
+                  v-show="form.inspectMethod === 'row_count'"
+                  v-model="form.alarmSettings[1].open"
+                  @change="handleChangeAlarm(arguments[0], 1)"
+                  >{{ $t('packages_business_verification_form_task_alarm_when_diff_result_over_count1') }}
+                  <ElInputNumber
+                    v-model="form.alarmSettings[1].params.maxDifferentialRows"
+                    controls-position="right"
+                    :min="0"
+                    style="width: 100px"
+                    @click.native.prevent.stop
+                  ></ElInputNumber>
+                  {{ $t('packages_business_verification_form_task_alarm_when_diff_result_over_count2') }}</ElCheckbox
+                >
+                <ElCheckbox
+                  v-show="['field', 'jointField'].includes(form.inspectMethod)"
+                  v-model="form.alarmSettings[2].open"
+                  @change="handleChangeAlarm(arguments[0], 2)"
+                  >{{ $t('packages_business_verification_form_task_alarm_when_result_table_over_count1') }}
+                  <ElInputNumber
+                    v-model="form.alarmSettings[2].params.maxDifferentialValues"
+                    controls-position="right"
+                    :min="0"
+                    style="width: 100px"
+                    @click.native.prevent.stop
+                  ></ElInputNumber>
+                  {{ $t('packages_business_verification_form_task_alarm_when_diff_result_over_count2') }}</ElCheckbox
+                >
+              </div>
+            </div>
+            <div class="inline-block ml-8">
+              <ElCheckboxGroup v-model="form.alarmSettings[0].notify" @change="handleChangeAlarmItem">
+                <ElCheckbox label="SYSTEM">{{ $t('packages_business_verification_form_xitongtongzhi') }}</ElCheckbox>
+                <ElCheckbox label="EMAIL">{{ $t('packages_business_verification_form_youjiantongzhi') }}</ElCheckbox>
+              </ElCheckboxGroup>
+              <ElCheckboxGroup
+                v-show="form.inspectMethod === 'row_count'"
+                v-model="form.alarmSettings[1].notify"
+                @change="handleChangeAlarmItem"
+              >
+                <ElCheckbox label="SYSTEM">{{ $t('packages_business_verification_form_xitongtongzhi') }}</ElCheckbox>
+                <ElCheckbox label="EMAIL">{{ $t('packages_business_verification_form_youjiantongzhi') }}</ElCheckbox>
+              </ElCheckboxGroup>
+              <ElCheckboxGroup
+                v-show="['field', 'jointField'].includes(form.inspectMethod)"
+                v-model="form.alarmSettings[2].notify"
+                @change="handleChangeAlarmItem"
+              >
+                <ElCheckbox label="SYSTEM">{{ $t('packages_business_verification_form_xitongtongzhi') }}</ElCheckbox>
+                <ElCheckbox label="EMAIL">{{ $t('packages_business_verification_form_youjiantongzhi') }}</ElCheckbox>
+              </ElCheckboxGroup>
+            </div>
+          </ElFormItem>
+
           <ElFormItem
             class="form-item"
             :label="$t('packages_business_verification_form_label_error_save_count') + ': '"
@@ -301,7 +364,33 @@ export default {
         tasks: [],
         taskMode: 'pipeline',
         errorNotifys: ['SYSTEM', 'EMAIL'],
-        inconsistentNotifys: ['SYSTEM', 'EMAIL']
+        inconsistentNotifys: ['SYSTEM', 'EMAIL'],
+        alarmSettings: [
+          {
+            type: 'INSPECT',
+            key: 'INSPECT_TASK_ERROR',
+            notify: ['SYSTEM', 'EMAIL'],
+            open: true
+          },
+          {
+            type: 'INSPECT',
+            key: 'INSPECT_COUNT_ERROR',
+            notify: ['SYSTEM', 'EMAIL'],
+            open: true,
+            params: {
+              maxDifferentialRows: 0
+            }
+          },
+          {
+            type: 'INSPECT',
+            key: 'INSPECT_VALUE_ERROR',
+            notify: ['SYSTEM', 'EMAIL'],
+            open: true,
+            params: {
+              maxDifferentialValues: 0
+            }
+          }
+        ]
       },
       rules: {
         flowId: [
@@ -337,8 +426,8 @@ export default {
       flowOptions: null,
       notSupport: {
         row_count: ['Clickhouse', 'Kafka'],
-        field: ['Doris', 'Kafka'],
-        jointField: ['Doris', 'Kafka']
+        field: ['Kafka'],
+        jointField: ['Kafka']
       },
       inspectMethodMap: {
         row_count: i18n.t('packages_business_verification_row_verify'),
@@ -397,7 +486,7 @@ export default {
             }
           })
         })
-        .then(data => {
+        .then((data = {}) => {
           if (data) {
             data.tasks = data.tasks.map(t => {
               t.source = Object.assign({}, TABLE_PARAMS, t.source)
@@ -409,6 +498,16 @@ export default {
               data.timing = this.form.timing
             }
             data.taskMode = data.flowId ? 'pipeline' : 'random'
+            // 历史数据，默认不打开；新数据默认打开
+            const { alarmSettings = [] } = data
+            data.alarmSettings = this.form.alarmSettings.map(t => {
+              const f = alarmSettings.find(item => item.key === t.key)
+              if (f) return Object.assign(t, f)
+              t.notify = []
+              t.open = false
+              return t
+            })
+
             this.form = Object.assign({}, this.form, data)
             this.getFlowStages()
           }
@@ -531,6 +630,13 @@ export default {
             delete this.form.createTime
             delete this.form.last_updated
           }
+
+          const alarmSettingsKeys =
+            this.form.inspectMethod === 'row_count'
+              ? ['INSPECT_TASK_ERROR', 'INSPECT_COUNT_ERROR']
+              : ['INSPECT_TASK_ERROR', 'INSPECT_VALUE_ERROR']
+          const alarmSettings = this.form.alarmSettings.filter(t => alarmSettingsKeys.includes(t.key))
+
           inspectApi[this.form.id ? 'patch' : 'post'](
             Object.assign({}, this.form, {
               fullMatchKeep: this.form.keep,
@@ -561,7 +667,8 @@ export default {
                 agentType: 'private'
               },
               byFirstCheckId: '',
-              browserTimezoneOffset: new Date().getTimezoneOffset()
+              browserTimezoneOffset: new Date().getTimezoneOffset(),
+              alarmSettings
             })
           ).then(() => {
             this.$router.back()
@@ -577,6 +684,16 @@ export default {
       if (val !== 'pipeline') {
         this.form.flowId = ''
       }
+    },
+
+    handleChangeAlarmItem() {
+      this.form.alarmSettings[0].open = !!this.form.alarmSettings[0].notify.length
+      this.form.alarmSettings[1].open = !!this.form.alarmSettings[1].notify.length
+      this.form.alarmSettings[2].open = !!this.form.alarmSettings[2].notify.length
+    },
+
+    handleChangeAlarm(val, index = 0) {
+      this.form.alarmSettings[index].notify = val ? ['SYSTEM', 'EMAIL'] : []
     }
   }
 }

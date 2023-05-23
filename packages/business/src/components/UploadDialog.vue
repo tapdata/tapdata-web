@@ -95,6 +95,9 @@ export default {
   methods: {
     show() {
       this.dialogVisible = true
+      this.$nextTick(() => {
+        this.$refs.upload.clearFiles()
+      })
     },
 
     // 上传文件成功失败钩子
@@ -150,9 +153,8 @@ export default {
         this.$message.error(this.$t('packages_business_message_upload_msg'))
         return
       }
-      // this.dialogVisible = false
+      this.dialogVisible = false
       this.$refs.upload.submit()
-      this.handleClose()
     },
     //删除文件
     handleRemove(file, fileList) {

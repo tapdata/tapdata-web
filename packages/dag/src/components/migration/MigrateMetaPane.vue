@@ -11,7 +11,7 @@
           class="p-2"
           @input="handleSearchTable"
         ></ElInput>
-        <div v-loading="navLoading" class="nav-list flex-fill font-color-normal">
+        <div v-loading="navLoading" ref="navList" class="nav-list flex-fill font-color-normal">
           <ul v-if="navList.length">
             <li
               v-for="(item, index) in navList"
@@ -23,21 +23,10 @@
               <div class="task-form-text-box pl-4 inline-block">
                 <OverflowTooltip class="w-100 text-truncate target" :text="item.name" placement="right" />
               </div>
-              <ElTooltip
-                v-if="item.matchedDataTypeLevel === 'error'"
-                placement="top"
-                transition="tooltip-fade-in"
-                :content="$t('packages_dag_field_inference_main_gaibiaocunzaibu')"
-                class="mr-2"
-              >
-                <VIcon size="16" class="color-warning">warning</VIcon>
-              </ElTooltip>
             </li>
           </ul>
           <div v-else class="task-form-left__ul flex flex-column align-items-center">
             <VEmpty></VEmpty>
-            <!--<div class="table__empty_img" style="margin-top: 22%"><img style="" :src="noData" /></div>
-            <div class="noData">{{ $t('public_data_no_data') }}</div>-->
           </div>
         </div>
         <ElPagination
@@ -77,6 +66,7 @@
           :show-columns="['index', 'field_name', 'data_type', 'operation']"
           :fieldChangeRules.sync="fieldChangeRules"
           readonly
+          ignore-error
           class="content__list flex-fill"
           @update-rules="handleUpdateRules"
         ></List>
@@ -197,6 +187,8 @@ export default {
 
     isShow(v) {
       if (v) {
+        const { height } = this.$refs.navList.getBoundingClientRect()
+        this.page.size = Math.max(10, Math.ceil(height / 41))
         this.loadData()
       }
     }
@@ -354,7 +346,7 @@ export default {
       border-left-color: map-get($color, primary);
     }
     .task-form-text-box {
-      width: 140px;
+      //width: 140px;
       .target {
         height: 40px;
         line-height: 40px;

@@ -34,7 +34,7 @@ export default {
   packages_dag_task_setting_sync_type: '同步类型',
   packages_dag_task_setting_initial_sync_cdc: '全量 + 增量',
   packages_dag_task_stetting_desc: '任务描述',
-  packages_dag_task_setting_plan_start_date: '计划开始时间',
+  packages_dag_task_setting_plan_start_date: '指定时间运行',
   packages_dag_task_setting_crontabExpressionFlag: '定期调度任务',
   packages_dag_task_setting_cron_expression: '请输入调度表达式',
   packages_dag_task_setting_cron_tip:
@@ -163,7 +163,7 @@ export default {
   packages_dag_migration_settingpanel_dangrenwufuhe:
     '开启数据校验开关后，任务会自动对同步结果的一致性进行全量校验和增量校验，并会在运行监控页面将校验不一致的数据行数展示出来。需要注意，当任务符合以下情况时，即使开启校验开关任务也不会进行校验\n 1. 添加了中间处理节点\n 2. 源连接不支持校验\n 3. 目标连接不支持校验',
   packages_dag_monitor_bottompanel_yunxingjilu: '运行记录',
-  packages_dag_monitor_bottompanel_rizhi: '任务日志',
+  packages_dag_monitor_bottompanel_rizhi: '任务进度查看',
   packages_dag_components_eventchart_qita: '其他',
   packages_dag_components_eventchart_suoxuanzhouqilei: '所选周期累计',
   packages_dag_components_eventchart_renwuyunxinglei: '任务运行累计',
@@ -332,6 +332,12 @@ export default {
   packages_dag_nodes_database_zidingyi: '自定义',
   packages_dag_nodes_database_xuanzebiao: '选择表',
   packages_dag_nodes_database_suoshuage: '所属agent',
+  packages_dag_nodes_database_increment_exactly_once_enable_title: '增量精确一次写入',
+  packages_dag_nodes_database_increment_exactly_once_enable_tips:
+    '使用在目标缓存标记并检查的方式，实现增量数据的精确一次写入。当关联条件的值会发生改变时，建议开启，开启后会导致一定的同步速度下降。目标需要拥有创建表和写入权限。',
+  packages_dag_nodes_database_increment_exactly_once_enable_time_window_day_title: '时间窗口（天）',
+  packages_dag_nodes_database_increment_exactly_once_enable_time_window_day_tips:
+    '精确一次写入，缓存数据的保留时长，也代表了精确一次生效的时间窗口，引擎运行时，一天会触发一次自动清理。同时窗口时间设置的越长，会更占用目标数据库的存储空间。',
   packages_dag_extends_nodetype_queshaobiyaode: '缺少必要的type属性！',
   packages_dag_nodes_javascript_moxingshengming: '模型声明',
   packages_dag_nodes_javascript_jiaoben: '脚本',
@@ -592,5 +598,7 @@ export default {
   packages_dag_migration_settingpanel_renwutiaoguoshi: '跳过事件超过阈值时停止任务',
   packages_dag_migration_settingpanel_tiaoguoyichangshi: '跳过异常事件，任务继续运行',
   packages_dag_migration_settingpanel_dangdanbiaotongbu: '事件处理出现异常时',
-  packages_dag_migration_settingpanel_anzhaomorenzhong: '按照默认重试逻辑进行重试'
+  packages_dag_migration_settingpanel_anzhaomorenzhong: '按照默认重试逻辑进行重试',
+  packages_dag_default_js: '默认JS',
+  packages_dag_standardization_js: '标准化JS'
 }
