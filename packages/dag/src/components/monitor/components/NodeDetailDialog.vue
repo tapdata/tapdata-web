@@ -1,7 +1,7 @@
 <template>
   <ElDialog
     :title="$t('packages_dag_components_nodedetaildialog_jiedianxiangqing')"
-    width="900px"
+    width="1100px"
     :visible.sync="visible"
     :close-on-click-modal="false"
     :modal-append-to-body="false"
@@ -34,6 +34,16 @@
           <EventChart :samples="[eventDataAll, eventDataPeriod]"></EventChart>
         </div>
       </div>
+
+      <SharedMiningTable
+        v-if="isSource"
+        ref="sharedMiningTable"
+        :task-id="dataflow.id"
+        :params="{
+          nodeId: nodeId
+        }"
+        class="shared-mining-table mt-4"
+      ></SharedMiningTable>
     </div>
     <template v-else>
       <div class="flex justify-content-between">
@@ -181,6 +191,7 @@ import { measurementApi } from '@tap/api'
 import { calcTimeUnit } from '@tap/shared'
 import Time from '@tap/shared/src/time'
 import { TimeSelect } from '@tap/component'
+import SharedMiningTable from '@tap/business/src/views/shared-mining/Table'
 
 import EventChart from './EventChart'
 import LineChart from './LineChart'
@@ -191,7 +202,7 @@ import NodeIcon from '../../NodeIcon'
 export default {
   name: 'NodeDetailDialog',
 
-  components: { NodeIcon, EventChart, LineChart, TimeSelect, Frequency },
+  components: { NodeIcon, EventChart, LineChart, TimeSelect, Frequency, SharedMiningTable },
 
   props: {
     value: {
@@ -361,9 +372,14 @@ export default {
       return this.allNodes.find(t => this.selected === t.id) || {}
     },
 
+    nodeConnectionId() {
+      return this.node.connectionIds?.[0]
+    },
+
     isSource() {
       const { type, $inputs } = this.node
-      return (type === 'database' || type === 'table') && !$inputs.length
+      console.log('isSource', this.node)
+      return (type === 'database' || type === 'table' || type === 'logCollector') && !$inputs.length
     },
 
     isTarget() {

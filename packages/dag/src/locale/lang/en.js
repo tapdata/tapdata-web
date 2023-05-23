@@ -639,5 +639,6 @@ export default {
   packages_dag_migration_settingpanel_dangdanbiaotongbu: 'When the event processing is abnormal',
   packages_dag_migration_settingpanel_anzhaomorenzhong: 'Retry according to the default retry logic',
   packages_dag_default_js: 'Default JS',
-  packages_dag_standardization_js: 'Standardized JS'
+  packages_dag_standardization_js: 'Standardized JS',
+  packages_dag_mixins_formscope_gaizduanshibi: 'This field is required!'
 }
