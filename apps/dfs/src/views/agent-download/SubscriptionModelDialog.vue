@@ -790,6 +790,7 @@ export default {
         }
       ],
       currentPackage: '',
+      disabledAliyunCode: false,
       showTransferDialogVisible: false //转测信息弹窗
     }
   },
@@ -888,10 +889,15 @@ export default {
     this.checkAgentCount()
     this.form.email = window.__USER_INFO__.email
     const currencyType = window.__config__?.currencyType
+    const disabledAliyunCode = window.__config__?.disabledAliyunCode
 
     if (currencyType) {
       this.currencyType = currencyType
       this.defaultCurrencyType = currencyType
+    }
+    //控制是否打开授权码通道
+    if (disabledAliyunCode) {
+      this.disabledAliyunCode = disabledAliyunCode
     }
   },
   methods: {

@@ -536,7 +536,7 @@
       </div>
       <el-link
         class="aliyun-wrap flex justify-content-center align-items-center mt-6 mb-6"
-        v-if="activeStep === 1 && agentDeploy !== 'aliyun'"
+        v-if="disabledAliyunCode || (activeStep === 1 && agentDeploy !== 'aliyun')"
         type="primary"
         @click="changeAgentDeploy('aliyun')"
         >{{ $t('dfs_agent_download_subscriptionmodeldialog_zhijieshiyonga') }}</el-link
@@ -765,7 +765,8 @@ export default {
           width: 120
         }
       ],
-      currentPackage: ''
+      currentPackage: '',
+      disabledAliyunCode: 'false'
     }
   },
 
@@ -870,9 +871,14 @@ export default {
     this.checkAgentCount()
     this.form.email = window.__USER_INFO__.email
     const currencyType = window.__config__?.currencyType
+    const disabledAliyunCode = window.__config__?.disabledAliyunCode
 
     if (currencyType) {
       this.currencyType = currencyType
+    }
+    //控制是否打开授权码通道
+    if (disabledAliyunCode) {
+      this.disabledAliyunCode = disabledAliyunCode
     }
   },
   methods: {
