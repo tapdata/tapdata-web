@@ -5,7 +5,7 @@ export default class LineageAPI extends Http {
     super('/api/lineage')
   }
   findByTable(connectionId, table, type) {
-    return this.axios.get(`${this.url}/refreshGraphData?`, {
+    return this.axios.get(`${this.url}/table/findByTable`, {
       params: {
         connectionId,
         table,
