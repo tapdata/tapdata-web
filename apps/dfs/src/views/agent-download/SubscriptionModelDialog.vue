@@ -263,21 +263,21 @@
               </ElRadio>
             </ElRadioGroup>
           </ElFormItem>
-          <ElFormItem
-            :label="$t('dfs_agent_download_subscriptionmodeldialog_xuanzebizhong')"
-            v-if="currencyOption && currencyOption.length > 0"
-          >
-            <ElRadioGroup v-model="currencyType" @input="changeCurrency" class="flex gap-4">
-              <ElRadio
-                v-for="(item, index) in currencyOption"
-                :key="index"
-                :label="item.currency"
-                border
-                class="rounded-4 m-0"
-                >{{ CURRENCY_MAP[item.currency] }}</ElRadio
-              >
-            </ElRadioGroup>
-          </ElFormItem>
+          <!--          <ElFormItem-->
+          <!--            :label="$t('dfs_agent_download_subscriptionmodeldialog_xuanzebizhong')"-->
+          <!--            v-if="currencyOption && currencyOption.length > 0"-->
+          <!--          >-->
+          <!--            <ElRadioGroup v-model="currencyType" @input="changeCurrency" class="flex gap-4">-->
+          <!--              <ElRadio-->
+          <!--                v-for="(item, index) in currencyOption"-->
+          <!--                :key="index"-->
+          <!--                :label="item.currency"-->
+          <!--                border-->
+          <!--                class="rounded-4 m-0"-->
+          <!--                >{{ CURRENCY_MAP[item.currency] }}</ElRadio-->
+          <!--              >-->
+          <!--            </ElRadioGroup>-->
+          <!--          </ElFormItem>-->
           <ElFormItem
             :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxi')"
             v-if="agentDeploy === 'fullManagement'"
@@ -464,7 +464,7 @@
         </ElForm>
       </div>
       <!---确认提交订单-->
-      <div v-if="activeStep === 5 || (activeStep === 4 && platform === 'integration')" class="px-1">
+      <div v-if="activeStep === 5 || (activeStep === 4 && platform === 'integration')" class="px-1 w-100">
         <div class="border rounded-4 p-4">
           <div class="fs-6 font-color-dark mb-4">
             {{ $t('dfs_agent_download_subscriptionmodeldialog_peizhizhaiyao') }}
@@ -1151,7 +1151,7 @@ export default {
       const params = {
         productType: this.agentDeploy
       }
-      this.$axios.get('api/tcm/orders/price', { params }).then(data => {
+      this.$axios.get('api/tcm/orders/paid/price', { params }).then(data => {
         const { paidPrice = [] } = data?.[0] || {}
         // 规格
         this.specificationItems = uniqBy(
@@ -1246,9 +1246,11 @@ export default {
     //获取存储价格
     getMongoCluster() {
       const params = {
-        productType: 'mongoCluster'
+        productType: 'mongoCluster',
+        region: this.region,
+        cloudProvider: this.provider
       }
-      this.$axios.get('api/tcm/paid/plan/getPaidPlan', { params }).then(data => {
+      this.$axios.get('api/tcm/orders/paid/price', { params }).then(data => {
         const { paidPrice = [] } = data?.[0] || {}
         //根据订阅方式再过滤一层
         let prices = paidPrice?.filter(

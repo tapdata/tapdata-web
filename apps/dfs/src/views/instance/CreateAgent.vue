@@ -1688,7 +1688,7 @@ export default {
       const params = {
         productType: this.agentDeploy
       }
-      this.$axios.get('api/tcm/orders/price', { params }).then(data => {
+      this.$axios.get('api/tcm/orders/paid/price', { params }).then(data => {
         const { paidPrice = [] } = data?.[0] || {}
         // 规格
         this.specificationItems = uniqBy(
@@ -1787,7 +1787,7 @@ export default {
         region: this.region,
         cloudProvider: this.provider
       }
-      this.$axios.get('api/tcm/orders/price', { params }).then(data => {
+      this.$axios.get('api/tcm/orders/paid/price', { params }).then(data => {
         const { paidPrice = [] } = data?.[0] || {}
         this.paidPrice = paidPrice
         //根据订阅方式再过滤一层
