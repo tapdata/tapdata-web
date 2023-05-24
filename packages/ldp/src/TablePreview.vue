@@ -237,6 +237,7 @@
             :connection-id="connectionId"
             :table-name="selected.name"
             @click-task="handleClickName"
+            @node-dblclick="open"
           ></TableLineage>
         </el-tab-pane>
       </el-tabs>
@@ -452,8 +453,9 @@ export default {
       this.cdcDelayTime = ''
       this.lastDataChangeTime = ''
     },
-    open(row, connection) {
-      this.reset()
+    open(row, connection, notReset) {
+      console.log('open preview', row, connection) // eslint-disable-line
+      !notReset && this.reset()
       this.init()
       this.visible = true
       this.swimType = row.SWIM_TYPE

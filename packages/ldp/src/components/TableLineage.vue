@@ -8,6 +8,10 @@
         :node-id="node.id"
         :id="NODE_PREFIX + node.id"
         :js-plumb-ins="jsPlumbIns"
+        :class="{
+          active: node.table === tableName && node.connectionId === connectionId
+        }"
+        @dblclick.native="handleNodeDblClick(node)"
         @drag-stop="onNodeDragStop"
       ></TableNode>
     </PaperScroller>
@@ -194,87 +198,322 @@ export default {
         dag = {
           edges: [
             {
-              source: '27f5add1-bbf0-48a8-8954-88c8dd69a14b',
-              target: 'e28e41ef-13c3-4b58-a083-29e196b538a0',
+              name: 'mysql-mongo migrate',
               attrs: {
                 tasks: {
                   '646cbb0a8ac72931568beb58': {
                     id: '646cbb0a8ac72931568beb58',
                     name: 'mysql-mongo migrate',
                     taskNode: {
-                      type: 'database',
-                      catalog: 'data',
-                      isTransformed: false,
                       id: '03d98eb3-5b83-4009-8ce8-4dbed63c4bae',
                       name: 'S local mysql INSURANCE',
-                      elementType: 'Node'
-                    }
+                      type: 'database',
+                      catalog: 'data',
+                      taskNodePos: 'source',
+                      dataNode: true,
+                      transformed: false,
+                      logCollectorNode: false
+                    },
+                    syncType: 'migrate',
+                    status: 'stop'
                   }
                 }
-              }
+              },
+              source: '645ddfceaf6c2557f6a0a319_CAR_CLAIM',
+              target: '64589ddf1146c232392a7faf_CAR_CLAIM1'
+            },
+            {
+              name: 'CAR_CLAIM_MERGE',
+              attrs: {
+                tasks: {
+                  '646cbb418ac72931568bed0a': {
+                    id: '646cbb418ac72931568bed0a',
+                    name: 'CAR_CLAIM_MERGE',
+                    taskNode: {
+                      id: '610ac4c4-8af9-49c7-af05-bf611a94e3e0',
+                      name: 'CAR_POLICY1',
+                      type: 'table',
+                      catalog: 'data',
+                      taskNodePos: 'source',
+                      dataNode: true,
+                      transformed: false,
+                      logCollectorNode: false
+                    },
+                    syncType: 'sync',
+                    status: 'stop'
+                  }
+                }
+              },
+              source: '64589ddf1146c232392a7faf_CAR_POLICY1',
+              target: '64589ddf1146c232392a7faf_CAR_CLAIM_MERGE'
+            },
+            {
+              name: 'CAR_CLAIM_MERGE',
+              attrs: {
+                tasks: {
+                  '646cbb418ac72931568bed0a': {
+                    id: '646cbb418ac72931568bed0a',
+                    name: 'CAR_CLAIM_MERGE',
+                    taskNode: {
+                      id: 'fd99479c-9e1c-4f13-b211-94255f3daec0',
+                      name: 'CAR_CLAIM1',
+                      type: 'table',
+                      catalog: 'data',
+                      taskNodePos: 'source',
+                      dataNode: true,
+                      transformed: false,
+                      logCollectorNode: false
+                    },
+                    syncType: 'sync',
+                    status: 'stop'
+                  }
+                }
+              },
+              source: '64589ddf1146c232392a7faf_CAR_CLAIM1',
+              target: '64589ddf1146c232392a7faf_CAR_CLAIM_MERGE'
+            },
+            {
+              name: 'CAR_CLAIM_MERGE',
+              attrs: {
+                tasks: {
+                  '646cbb418ac72931568bed0a': {
+                    id: '646cbb418ac72931568bed0a',
+                    name: 'CAR_CLAIM_MERGE',
+                    taskNode: {
+                      id: 'e7751819-ccdf-4a3b-91db-737273324a2f',
+                      name: 'CUSTOMER1',
+                      type: 'table',
+                      catalog: 'data',
+                      taskNodePos: 'source',
+                      dataNode: true,
+                      transformed: false,
+                      logCollectorNode: false
+                    },
+                    syncType: 'sync',
+                    status: 'stop'
+                  }
+                }
+              },
+              source: '64589ddf1146c232392a7faf_CUSTOMER1',
+              target: '64589ddf1146c232392a7faf_CAR_CLAIM_MERGE'
+            },
+            {
+              name: 'mysql-mongo migrate',
+              attrs: {
+                tasks: {
+                  '646cbb0a8ac72931568beb58': {
+                    id: '646cbb0a8ac72931568beb58',
+                    name: 'mysql-mongo migrate',
+                    taskNode: {
+                      id: '03d98eb3-5b83-4009-8ce8-4dbed63c4bae',
+                      name: 'S local mysql INSURANCE',
+                      type: 'database',
+                      catalog: 'data',
+                      taskNodePos: 'source',
+                      dataNode: true,
+                      transformed: false,
+                      logCollectorNode: false
+                    },
+                    syncType: 'migrate',
+                    status: 'stop'
+                  }
+                }
+              },
+              source: '645ddfceaf6c2557f6a0a319_CAR_POLICY',
+              target: '64589ddf1146c232392a7faf_CAR_POLICY1'
             }
           ],
           nodes: [
             {
-              table: '3877_LILY_CLAIM',
-              connectionName: 'AUTO_MYSQL_OP',
-              isFilter: false,
-              increaseReadSize: 500,
-              maxTransactionDuration: 12,
-              existDataProcessMode: 'keepData',
-              xmlIncludeFile: false,
-              esFragmentNum: 3,
-              cdcPollingInterval: 0,
-              cdcPollingBatchSize: 0,
-              enableCustomCommand: false,
-              connectionId: '6448979341682d0fb19db48f',
-              databaseType: 'Mysql',
-              readBatchSize: 500,
-              writeStrategy: 'updateOrInsert',
-              type: 'table',
+              datasource: '64589ddf1146c232392a7faf',
+              table: 'CAR_CLAIM_MERGE',
+              modules: {
+                '646db91544b48902dfdbf99b': {
+                  datasource: '64589ddf1146c232392a7faf',
+                  table: 'CAR_CLAIM_MERGE',
+                  basePath: 't0fa103221e',
+                  status: 'active',
+                  appName: 'car claim merge app',
+                  id: '646db91544b48902dfdbf99b',
+                  attrKey: 'modules',
+                  name: 'car claim merge'
+                }
+              },
+              type: 'apiserverLineage',
               catalog: 'data',
               isTransformed: false,
-              id: '27f5add1-bbf0-48a8-8954-88c8dd69a14b',
-              name: '3877_LILY_CLAIM',
-              elementType: 'Node',
-              attrs: {
-                position: [-84, 388.5],
-                connectionType: 'source_and_target',
-                accessNodeProcessId: '',
-                pdkType: 'pdk',
-                pdkHash: 'a5af410b12afca476edf4a650c133ddf135bf76542a67787ed6f7f7d53ba712'
-              }
+              id: '645ddfceaf6c2557f6a0a319_CAR_POLICY',
+              elementType: 'Node'
             },
             {
-              table: 'AA_0208_test_30506',
-              connectionName: 'DB2_TESTDB',
-              isFilter: false,
-              increaseReadSize: 500,
-              maxTransactionDuration: 12,
-              existDataProcessMode: 'keepData',
-              xmlIncludeFile: false,
-              esFragmentNum: 3,
-              cdcPollingInterval: 0,
-              cdcPollingBatchSize: 0,
-              enableCustomCommand: false,
-              connectionId: '63d5f6136ac9b97f716611b2',
-              databaseType: 'DB2',
-              readBatchSize: 500,
-              writeStrategy: 'updateOrInsert',
-              type: 'table',
+              table: 'CAR_CLAIM_MERGE',
+              connectionId: '64589ddf1146c232392a7faf',
+              connectionName: 'T local mongo',
+              pdkHash: '4335aaa005ec1a74a4e2166bded2962e939ad50239f48b023b884f35b54129a5',
+              tasks: {
+                '646cbb418ac72931568bed0a': {
+                  id: '646cbb418ac72931568bed0a',
+                  name: 'CAR_CLAIM_MERGE',
+                  taskNode: {
+                    taskNodePos: 'target',
+                    type: 'table',
+                    catalog: 'data',
+                    isTransformed: false,
+                    id: '8b64a24e-b7f0-4b78-8dfb-0343b9e30e47',
+                    name: 'CAR_CLAIM_MERGE',
+                    elementType: 'Node'
+                  },
+                  syncType: 'sync',
+                  status: 'stop'
+                }
+              },
+              type: 'tableLineage',
               catalog: 'data',
               isTransformed: false,
-              id: 'e28e41ef-13c3-4b58-a083-29e196b538a0',
-              name: 'AA_0208_test_30506',
-              elementType: 'Node',
-              attrs: {
-                position: [351, 472.5],
-
-                connectionType: 'source_and_target',
-                accessNodeProcessId: '',
-                pdkType: 'pdk',
-                pdkHash: 'fa04a47253db3b86af1baf020d829fd7d9c012564b7d5d7388cd6a97cf51d40f'
-              }
+              id: '64589ddf1146c232392a7faf_CAR_CLAIM_MERGE',
+              elementType: 'Node'
+            },
+            {
+              table: 'CUSTOMER1',
+              connectionId: '64589ddf1146c232392a7faf',
+              connectionName: 'T local mongo',
+              pdkHash: '4335aaa005ec1a74a4e2166bded2962e939ad50239f48b023b884f35b54129a5',
+              tasks: {
+                '646cbb418ac72931568bed0a': {
+                  id: '646cbb418ac72931568bed0a',
+                  name: 'CAR_CLAIM_MERGE',
+                  taskNode: {
+                    taskNodePos: 'source',
+                    type: 'table',
+                    catalog: 'data',
+                    isTransformed: false,
+                    id: 'e7751819-ccdf-4a3b-91db-737273324a2f',
+                    name: 'CUSTOMER1',
+                    elementType: 'Node'
+                  },
+                  syncType: 'sync',
+                  status: 'stop'
+                }
+              },
+              type: 'tableLineage',
+              catalog: 'data',
+              isTransformed: false,
+              id: '64589ddf1146c232392a7faf_CUSTOMER1',
+              elementType: 'Node'
+            },
+            {
+              table: 'CAR_POLICY1',
+              connectionId: '64589ddf1146c232392a7faf',
+              connectionName: 'T local mongo',
+              pdkHash: '4335aaa005ec1a74a4e2166bded2962e939ad50239f48b023b884f35b54129a5',
+              tasks: {
+                '646cbb0a8ac72931568beb58': {
+                  id: '646cbb0a8ac72931568beb58',
+                  name: 'mysql-mongo migrate',
+                  taskNode: {
+                    taskNodePos: 'target',
+                    type: 'database',
+                    catalog: 'data',
+                    isTransformed: false,
+                    id: 'd2e0284d-1d7d-4418-b07c-a900bfdcd963',
+                    name: 'T local mongo',
+                    elementType: 'Node'
+                  },
+                  syncType: 'migrate',
+                  status: 'stop'
+                },
+                '646cbb418ac72931568bed0a': {
+                  id: '646cbb418ac72931568bed0a',
+                  name: 'CAR_CLAIM_MERGE',
+                  taskNode: {
+                    taskNodePos: 'source',
+                    type: 'table',
+                    catalog: 'data',
+                    isTransformed: false,
+                    id: '610ac4c4-8af9-49c7-af05-bf611a94e3e0',
+                    name: 'CAR_POLICY1',
+                    elementType: 'Node'
+                  },
+                  syncType: 'sync',
+                  status: 'stop'
+                }
+              },
+              type: 'tableLineage',
+              catalog: 'data',
+              isTransformed: false,
+              id: '64589ddf1146c232392a7faf_CAR_POLICY1',
+              elementType: 'Node'
+            },
+            {
+              table: this.tableName,
+              connectionId: this.connectionId,
+              connectionName: 'T local mongo',
+              pdkHash: '4335aaa005ec1a74a4e2166bded2962e939ad50239f48b023b884f35b54129a5',
+              tasks: {
+                '646cbb0a8ac72931568beb58': {
+                  id: '646cbb0a8ac72931568beb58',
+                  name: 'mysql-mongo migrate',
+                  taskNode: {
+                    taskNodePos: 'target',
+                    type: 'database',
+                    catalog: 'data',
+                    isTransformed: false,
+                    id: 'd2e0284d-1d7d-4418-b07c-a900bfdcd963',
+                    name: 'T local mongo',
+                    elementType: 'Node'
+                  },
+                  syncType: 'migrate',
+                  status: 'stop'
+                },
+                '646cbb418ac72931568bed0a': {
+                  id: '646cbb418ac72931568bed0a',
+                  name: 'CAR_CLAIM_MERGE',
+                  taskNode: {
+                    taskNodePos: 'source',
+                    type: 'table',
+                    catalog: 'data',
+                    isTransformed: false,
+                    id: 'fd99479c-9e1c-4f13-b211-94255f3daec0',
+                    name: 'CAR_CLAIM1',
+                    elementType: 'Node'
+                  },
+                  syncType: 'sync',
+                  status: 'stop'
+                }
+              },
+              type: 'tableLineage',
+              catalog: 'data',
+              isTransformed: false,
+              id: '64589ddf1146c232392a7faf_CAR_CLAIM1',
+              elementType: 'Node'
+            },
+            {
+              table: 'CAR_CLAIM',
+              connectionId: '645ddfceaf6c2557f6a0a319',
+              connectionName: 'S local mysql INSURANCE',
+              pdkHash: 'a5af410b12afca476edf4a650c133ddf135bf76542a67787ed6f7f7d53ba712',
+              tasks: {
+                '646cbb0a8ac72931568beb58': {
+                  id: '646cbb0a8ac72931568beb58',
+                  name: 'mysql-mongo migrate',
+                  taskNode: {
+                    taskNodePos: 'source',
+                    type: 'database',
+                    catalog: 'data',
+                    isTransformed: false,
+                    id: '03d98eb3-5b83-4009-8ce8-4dbed63c4bae',
+                    name: 'S local mysql INSURANCE',
+                    elementType: 'Node'
+                  },
+                  syncType: 'migrate',
+                  status: 'stop'
+                }
+              },
+              type: 'tableLineage',
+              catalog: 'data',
+              isTransformed: false,
+              id: '645ddfceaf6c2557f6a0a319_CAR_CLAIM',
+              elementType: 'Node'
             }
           ]
         }
@@ -372,6 +611,10 @@ export default {
         if (!node.attrs) node.attrs = defaultAttrs
         else if (!node.attrs.position) Object.assign(node.attrs, defaultAttrs)
 
+        if (node.type === 'apiserverLineage') {
+          node.module = Object.values(node.modules)[0]
+        }
+
         this.addNode(node)
       })
 
@@ -443,6 +686,24 @@ export default {
 
     handleZoomOut() {
       this.$refs.paperScroller.zoomOut()
+    },
+
+    handleNodeDblClick(node) {
+      if (node.type === 'apiserverLineage') return
+
+      console.log('handleNodeDblClick', node) // eslint-disable-line
+      const table = {
+        ...node,
+        LDP_TYPE: 'table',
+        isObject: true
+      }
+      const connection = {
+        id: node.connectionId,
+        name: node.connectionName,
+        pdkHash: node.pdkHash
+      }
+
+      this.$emit('node-dblclick', table, null, true)
     }
   }
 }

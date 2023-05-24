@@ -1,13 +1,24 @@
 <template>
   <div class="position-absolute table-node border rounded-lg bg-white overflow-hidden" :style="nodeStyle">
     <div class="px-3 py-2" @click="mouseClick">
-      <div class="ellipsis">{{ data.table }}</div>
-      <div class="mt-1 flex align-center gap-1 font-color-light ellipsis">
-        <NodeIcon class="flex-shrink-0" :node="data" :size="14"></NodeIcon>
-        <span class="ellipsis">
-          {{ data.connectionName }}
-        </span>
-      </div>
+      <template v-if="data.type === 'apiserverLineage'">
+        <div class="ellipsis">{{ data.module.name }}</div>
+        <div class="mt-1 flex align-center gap-1 font-color-light ellipsis">
+          <VIcon size="14">mini-app</VIcon>
+          <span class="ellipsis">
+            {{ data.module.appName }}
+          </span>
+        </div>
+      </template>
+      <template v-else>
+        <div class="ellipsis">{{ data.table }}</div>
+        <div class="mt-1 flex align-center gap-1 font-color-light ellipsis">
+          <NodeIcon class="flex-shrink-0" :node="data" :size="14"></NodeIcon>
+          <span class="ellipsis">
+            {{ data.connectionName }}
+          </span>
+        </div>
+      </template>
     </div>
     <!--<div class="columns-wrap px-3 py-2">
       <div>查看字段</div>
@@ -305,6 +316,11 @@ export default {
 
   .columns-wrap {
     background-color: #f5f8fe;
+  }
+
+  &.active {
+    border-color: #2c65ff !important;
+    box-shadow: 0 0 0 2px rgba(5, 145, 255, 0.1);
   }
 }
 </style>
