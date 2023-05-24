@@ -3,8 +3,10 @@
     <div class="px-3 py-2" @click="mouseClick">
       <div class="ellipsis">{{ data.table }}</div>
       <div class="mt-1 flex align-center gap-1 font-color-light ellipsis">
-        <NodeIcon :node="data" :size="14"></NodeIcon>
-        {{ data.connectionName }}
+        <NodeIcon class="flex-shrink-0" :node="data" :size="14"></NodeIcon>
+        <span class="ellipsis">
+          {{ data.connectionName }}
+        </span>
       </div>
     </div>
     <!--<div class="columns-wrap px-3 py-2">
