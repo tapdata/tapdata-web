@@ -33,6 +33,24 @@
                       @click="updateFn(item, item.management.status, 'management', 'update')"
                       >{{ $t(' cluster_update') }}
                     </ElButton>
+                    <el-tooltip :content="$t('instance_details_xianchengziyuanxia')" placement="top">
+                      <VIcon
+                        class="mr-2 link-primary"
+                        v-readonlybtn="'Cluster_operation'"
+                        :disabled="item.management.status !== 'running'"
+                        @click="downServeFn(item)"
+                        >connectors</VIcon
+                      >
+                    </el-tooltip>
+                    <el-tooltip :content="$t('instance_details_shujuyuanziyuan')" placement="top">
+                      <VIcon
+                        class="mr-2 link-primary"
+                        v-readonlybtn="'Cluster_operation'"
+                        :disabled="item.management.status !== 'running'"
+                        @click="downConnectorsFn(item)"
+                        >supervisor</VIcon
+                      >
+                    </el-tooltip>
                     <VIcon class="mr-2 link-primary" v-readonlybtn="'Cluster_operation'" @click="addServeFn(item)"
                       >bg-add</VIcon
                     >
@@ -324,8 +342,10 @@
 <script>
 import { FilterBar } from '@tap/component'
 import AddServe from './AddServe'
-import { workerApi, clusterApi } from '@tap/api'
+import { workerApi, clusterApi, proxyApi } from '@tap/api'
 import { STATUS_MAP } from './const'
+import Cookie from '@tap/shared/src/cookie'
+import { downloadBlob, downloadJson, openUrl } from '@tap/shared'
 
 export default {
   components: {
@@ -360,6 +380,7 @@ export default {
       searchParams: {
         keyword: ''
       },
+      accessToken: '',
       filterItems: [
         {
           placeholder: this.$t('modules_name_placeholder'),
@@ -371,6 +392,7 @@ export default {
   },
   created() {
     this.getDataApi()
+    this.accessToken = Cookie.get('access_token')
   },
   watch: {
     '$route.query'() {
@@ -457,6 +479,18 @@ export default {
       this.currentData = item
       this.editItem = {}
       this.dialogForm = true
+    },
+    //下载
+    downServeFn(item) {
+      proxyApi.supervisor(item.systemInfo?.process_id).then(data => {
+        downloadJson(JSON.stringify(data), `${item.systemInfo?.process_id}_supervisor_summary`)
+      })
+    },
+    //下载
+    downConnectorsFn(item) {
+      proxyApi.connectors(item.systemInfo?.process_id).then(data => {
+        downloadJson(JSON.stringify(data), `${item.systemInfo?.process_id}_connectors_memory`)
+      })
     },
     // 启动
     startFn(item, status, server) {

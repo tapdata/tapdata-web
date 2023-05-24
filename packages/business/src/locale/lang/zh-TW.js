@@ -561,6 +561,11 @@ export default {
   packages_business_verification_form_jianyanrenwuyun: '檢驗任務運行出錯警告',
   packages_business_verification_form_jiaoyangaojing: '校驗告警',
   packages_business_verification_form_zanbuzhichi_doris: '暫不支持Doris。 ',
+  packages_business_verification_form_task_alarm: '校驗任務告警',
+  packages_business_verification_form_task_alarm_when_error: '當校驗任務出錯時進行告警',
+  packages_business_verification_form_task_alarm_when_diff_result_over_count1: '當count校驗結果的差異行數大於',
+  packages_business_verification_form_task_alarm_when_diff_result_over_count2: '時進行告警',
+  packages_business_verification_form_task_alarm_when_result_table_over_count1: '當值校驗結果的表數據差大於',
   packages_business_task_status_error_tip:
     '任務刪除成功，以下幾個 PostgreSQL 連接的信息清除失敗，需要您使用以下方式手動清除',
   packages_business_task_status_next_run_time: '下次運行時間：{val}',
@@ -601,6 +606,9 @@ export default {
   packages_business_setting_alarmnotification_renwumorengao: '任務默認告警規則設置',
   packages_business_setting_alarmnotification_morengaojinggui: '默認告警規則',
   packages_business_setting_alarmnotification_renwugaojingshe: '任務告警設置',
+  packages_business_setting_alarmnotification_dangjiaoyanrenwucuowu: '當校驗任務遇到錯誤時',
+  packages_business_setting_alarmnotification_dangjiaoyanrenwushuliangcuowu: '當count校驗結果的差異行數大於閾值時',
+  packages_business_setting_alarmnotification_dangjiaoyanrenwuzhicuowu: '當值校驗結果的表數據差大於閾值時',
   //消息通知
   packages_business_notify_user_all_notice: '全部通知',
   packages_business_notify_unread_notice: '未讀消息',
@@ -1032,5 +1040,11 @@ export default {
   packages_business_swimlane_target_shouye: '首頁',
   packages_business_connections_databaseform_chakanwajueren: '查看挖掘任務',
   packages_business_connections_databaseform_dangqianlianjiede:
-    '當前連接的挖掘任務正在使用原外存，切換會導致已挖掘數據丟失，請謹慎操作。 '
+    '當前連接的挖掘任務正在使用原外存，切換會導致已挖掘數據丟失，請謹慎操作。 ',
+  packages_business_shared_mining_table_yitingzhiwajue: '已停止挖掘',
+  packages_business_shared_mining_table_zhengzaiwajue: '正在挖掘',
+  packages_business_shared_mining_table_ninyaotingzhiwa:
+    '您要停止挖掘的表正在被以下任務使用，停止挖掘後將會影響以下任務的正常同步，請確認是否要繼續停止。 ',
+  packages_business_shared_mining_table_tingzhiwajueti: '停止挖掘提醒',
+  packages_business_shared_mining_table_yihebingdelian: '已合并的連接'
 }

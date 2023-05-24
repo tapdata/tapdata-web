@@ -547,6 +547,8 @@ export default {
       this.addSelectedNode(node)
       const nodeElement = `node-${node.id}`
       this.jsPlumbIns.addToDragSelection(nodeElement)
+
+      document.getElementById(nodeElement).focus()
     },
 
     nodeDeselected(node) {
@@ -757,7 +759,9 @@ export default {
         this.$refs.paperScroller.toggleMiniView()
       })
       Mousetrap.bind(['backspace', 'del'], () => {
-        !this.stateIsReadonly && this.handleDelete()
+        if (!this.stateIsReadonly && document.getElementById('dfEditorContent').contains(document.activeElement)) {
+          this.handleDelete()
+        }
       })
       Mousetrap.bind(['option+command+l', 'ctrl+alt+l'], e => {
         e.preventDefault()
@@ -948,6 +952,7 @@ export default {
      */
     handleDelete() {
       const selectNodes = this.$store.getters['dataflow/getSelectedNodes']
+      console.log('delete.selectNodes', selectNodes) // eslint-disable-line
       this.command.exec(new RemoveNodeCommand(selectNodes))
       this.resetSelectedNodes()
       this.deleteSelectedConnections()
@@ -1255,7 +1260,19 @@ export default {
         let hasNoStreamReadFunction = false
         this.allNodes.forEach(node => {
           if (node.$outputs.length && !node.$inputs.length) {
-            if (!node.attrs.capabilities?.some(t => t.id === 'stream_read_function')) {
+            const capbilitiesMap = node.attrs.capabilities.reduce((map, item) => {
+              map[item.id] = true
+              return map
+            }, {})
+
+            if (
+              !(
+                capbilitiesMap['stream_read_function'] ||
+                capbilitiesMap['raw_data_callback_filter_function'] ||
+                capbilitiesMap['raw_data_callback_filter_function_v2'] ||
+                (capbilitiesMap['query_by_advance_filter_function'] && capbilitiesMap['batch_read_function'])
+              )
+            ) {
               // 源不支持增量
               hasNoStreamReadFunction = true
               this.setNodeErrorMsg({

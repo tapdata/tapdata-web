@@ -588,6 +588,13 @@ export default {
     'Warning: there was an error encountered during the validation task run.',
   packages_business_verification_form_jiaoyangaojing: 'Validation Warning',
   packages_business_verification_form_zanbuzhichi_doris: 'Doris is not supported yet.',
+  packages_business_verification_form_task_alarm: 'Verification task alarm',
+  packages_business_verification_form_task_alarm_when_error: 'Alarm when the verification task fails',
+  packages_business_verification_form_task_alarm_when_diff_result_over_count1:
+    'When the number of difference rows of the count verification result is greater than',
+  packages_business_verification_form_task_alarm_when_diff_result_over_count2: 'start alarm',
+  packages_business_verification_form_task_alarm_when_result_table_over_count1:
+    'When the difference between the table data of the value verification result is greater than',
   packages_business_task_status_error_tip:
     "ask_list_error_tip: 'The task has been successfully deleted, but the information of the following PostgreSQL connections failed to be cleared, and you need to manually clear them in the following ways",
   packages_business_task_status_next_run_time: 'Next run time: {val}',
@@ -629,6 +636,11 @@ export default {
   packages_business_setting_alarmnotification_dangrenwuuP: 'When the Agent service start',
   packages_business_setting_alarmnotification_msshigaojing: 'Alarm when s',
   packages_business_setting_alarmnotification_lianxu: 'Continuous',
+  packages_business_setting_alarmnotification_dangjiaoyanrenwucuowu: 'When the verification task encounters an error',
+  packages_business_setting_alarmnotification_dangjiaoyanrenwushuliangcuowu:
+    'When the number of different lines in the count verification result is greater than the threshold',
+  packages_business_setting_alarmnotification_dangjiaoyanrenwuzhicuowu:
+    'When the table data difference of the value verification result is greater than the threshold',
   packages_business_notify_user_all_notice: 'Notify All',
   packages_business_notify_unread_notice: 'Unread Message',
   packages_business_notify_mask_read: 'Mark this page as read',
@@ -1082,5 +1094,11 @@ export default {
   packages_business_swimlane_target_shouye: 'Homepage',
   packages_business_connections_databaseform_chakanwajueren: 'View mining tasks',
   packages_business_connections_databaseform_dangqianlianjiede:
-    'The currently connected mining task is using the original external storage, switching will result in the loss of mined data, please operate with caution. '
+    'The currently connected mining task is using the original external storage, switching will result in the loss of mined data, please operate with caution. ',
+  packages_business_shared_mining_table_yitingzhiwajue: 'Mining has stopped',
+  packages_business_shared_mining_table_zhengzaiwajue: 'Digging',
+  packages_business_shared_mining_table_ninyaotingzhiwa:
+    'The table you want to stop mining is being used by the following tasks. Stopping mining will affect the normal synchronization of the following tasks. Please confirm whether to continue to stop. ',
+  packages_business_shared_mining_table_tingzhiwajueti: 'Stop mining reminder',
+  packages_business_shared_mining_table_yihebingdelian: 'Merged Connections'
 }

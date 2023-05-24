@@ -396,12 +396,11 @@ export default {
         /**
          * 加载节点的字段选项列表
          * @param nodeId
-         * @param filterField 字段的值不为空
          * @returns {Promise<{}|*>}
          */
-        loadNodeFieldOptions: async (nodeId, filterField) => {
+        loadNodeFieldOptions: async nodeId => {
           const fields = await this.scope.loadNodeFieldsById(nodeId)
-          let result = fields
+          return fields
             .map(item => ({
               label: item.field_name,
               value: item.field_name,
@@ -410,10 +409,6 @@ export default {
               type: item.data_type
             }))
             .filter(item => !item.is_deleted)
-          if (filterField) {
-            result = result.filter(t => !!t[filterField])
-          }
-          return result
         },
 
         loadDateFieldOptions: async nodeId => {
@@ -755,7 +750,13 @@ export default {
                   meta: f.data_type
                 }
               }) || []
+
+          const idx = editor.completers?.findIndex(item => item.id === 'recordFields') || -1
+
+          if (~idx) editor.completers.splice(idx, 1)
+
           editor.completers.push({
+            id: 'recordFields',
             // 获取补全提示列表
             getCompletions: function (editor, session, pos, prefix, callback) {
               // 判断当前行是否包含 '.'
@@ -806,16 +807,14 @@ export default {
               let indicesUniqueList = options.filter(item => item.indicesUnique)
               let defaultList = (isPrimaryKeyList.length ? isPrimaryKeyList : indicesUniqueList).map(item => item.value)
 
-              console.log('validateUpdateConditionFields.value', value, [...field.value], options) // eslint-disable-line
-
               if (!value || !value.length) {
                 nodeData.updateConditionFields = defaultList
                 $values.updateConditionFields = nodeData.updateConditionFields
-              } else {
+              } else if (value) {
                 let fieldMap = options.reduce((obj, item) => ((obj[item.value] = true), obj), {})
                 let filterValue = value.filter(v => fieldMap[v])
 
-                if (value && value.length !== filterValue.length) {
+                if (value.length !== filterValue.length) {
                   nodeData.updateConditionFields = filterValue.length ? filterValue : defaultList
                   $values.updateConditionFields = nodeData.updateConditionFields
                 }
@@ -823,7 +822,7 @@ export default {
             }
           }
 
-          return !$values.updateConditionFields?.length ? '该字段是必填字段!' : ''
+          return !$values.updateConditionFields?.length ? i18n.t('packages_dag_mixins_formscope_gaiziduanshibi') : ''
         }
       }
     }

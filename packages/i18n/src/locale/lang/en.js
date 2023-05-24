@@ -93,6 +93,8 @@ export default {
   public_button_next: 'Next',
   public_button_previous: 'Previous',
   public_button_search: 'Search',
+  public_button_stop_mining: 'Stop Mining',
+  public_button_stop_recover: 'Resume Mining',
   // information
   public_message_title_prompt: 'Prompt',
   public_message_delete_confirm: 'Delete',

@@ -58,5 +58,22 @@ export default class Logcollector extends Http {
   relateTasks(params) {
     return this.axios.get(`${this.url}/relate_tasks`, { params })
   }
+  // 停止挖掘
+  exclusionTables(taskId, params) {
+    return this.axios.post(`${this.url}/exclusionTables/${taskId}`, params)
+  }
+  // 恢复挖掘
+  addTables(taskId, params) {
+    return this.axios.post(`${this.url}/addTables/${taskId}`, params)
+  }
+  tableInfos(params) {
+    return this.axios.get(`${this.url}/tableInfos`, { params })
+  }
+  excludeTableInfos(params) {
+    return this.axios.get(`${this.url}/excludeTableInfos`, { params })
+  }
+  getConnectionIdsByTaskId(taskId) {
+    return this.axios.get(`${this.url}/connectionIds/${taskId}`)
+  }
 }
 export { Logcollector }

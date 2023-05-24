@@ -1,19 +1,51 @@
 <template>
   <section class="shared-cache-list-wrap h-100">
-    <TablePage ref="table" row-key="id" :remoteMethod="getData" @sort-change="handleSortTable">
+    <TablePage
+      ref="table"
+      row-key="id"
+      :remoteMethod="getData"
+      @sort-change="handleSortTable"
+      @selection-change="handleSelectionChange"
+    >
       <template slot="search">
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </template>
       <div slot="operation">
+        <template>
+          <el-button
+            v-show="multipleSelection.length > 0 && isDaas"
+            :disabled="$disabledReadonlyUserBtn()"
+            v-readonlybtn="'SYNC_job_export'"
+            size="mini"
+            class="btn message-button-cancel"
+            @click="handleExport"
+          >
+            <span> {{ $t('public_button_export') }}</span>
+          </el-button>
+          <el-button
+            v-if="isDaas"
+            v-readonlybtn="'SYNC_job_import'"
+            size="mini"
+            class="btn"
+            :disabled="$disabledReadonlyUserBtn()"
+            @click="handleImport"
+          >
+            <span> {{ $t('packages_business_button_bulk_import') }}</span>
+          </el-button>
+        </template>
         <ElButton class="btn btn-create" type="primary" size="mini" @click="create">
           <span> {{ $t('packages_business_shared_cache_button_create') }}</span>
         </ElButton>
       </div>
-      <ElTableColumn
-        show-overflow-tooltip
-        prop="name"
-        :label="$t('packages_business_shared_cache_name')"
+      <el-table-column
+        reserve-selection
+        type="selection"
+        width="45"
+        align="center"
+        :selectable="row => !row.hasChildren"
       >
+      </el-table-column>
+      <ElTableColumn show-overflow-tooltip prop="name" :label="$t('packages_business_shared_cache_name')">
         <template #default="{ row }">
           <ElLink style="display: inline" type="primary" @click.stop="checkDetails(row)">{{ row.name }}</ElLink>
         </template>
@@ -119,6 +151,8 @@
     </TablePage>
     <Editor ref="editor" @success="table.fetch(1)"></Editor>
     <Details ref="details" width="380px"></Details>
+    <!-- 导入 -->
+    <Upload v-if="isDaas" type="dataflow" :show-tag="false" ref="upload" @success="table.fetch()"></Upload>
   </section>
 </template>
 
@@ -131,13 +165,15 @@ import { TablePage, TaskStatus, makeStatusAndDisabled } from '@tap/business'
 
 import Editor from './Editor'
 import Details from './Details'
+import Upload from '../../components/UploadDialog'
 
 let timeout = null
 export default {
   inject: ['buried'],
-  components: { TablePage, FilterBar, TaskStatus, Editor, Details },
+  components: { TablePage, FilterBar, TaskStatus, Editor, Details, Upload },
   data() {
     return {
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       searchParams: {
         name: '',
         connectionName: ''
@@ -157,7 +193,8 @@ export default {
       order: 'cacheTimeAt DESC',
       taskBuried: {
         start: 'sharedMiningStart'
-      }
+      },
+      multipleSelection: []
     }
   },
   computed: {
@@ -234,6 +271,10 @@ export default {
     handleSortTable({ order, prop }) {
       this.order = `${order ? prop : 'cacheTimeAt'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
+    },
+
+    handleSelectionChange(val) {
+      this.multipleSelection = val
     },
 
     start(ids) {
@@ -344,6 +385,15 @@ export default {
           this.table.fetch()
         })
       })
+    },
+
+    handleExport() {
+      const ids = this.multipleSelection.map(t => t.id)
+      taskApi.export(ids)
+    },
+
+    handleImport() {
+      this.$refs.upload.show()
     }
   }
 }

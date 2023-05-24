@@ -500,7 +500,7 @@ export default {
                   }
                 }
               },
-              '{{useAsyncDataSourceByConfig({service: loadExternalStorage, withoutField: true}, $self.value)}}',
+              '{{useAsyncDataSourceByConfig({service: loadExternalStorage, withoutField: true}, $values.id ? $self.value : null)}}',
               {
                 fulfill: {
                   state: {
@@ -1091,7 +1091,8 @@ export default {
             schemaUpdateHour,
             heartbeatEnable
           },
-          ...this.model?.config
+          ...this.model?.config,
+          id: this.model?.id
         })
         this.renameData.rename = this.model.name
       })

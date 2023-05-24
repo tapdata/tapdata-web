@@ -62,14 +62,14 @@ export class LogCollector extends NodeType {
           }
         },
         properties: {
-          SharedMiningTableInfo: {
-            type: 'void',
-            'x-decorator': 'FormItem',
-            'x-component': 'SharedMiningTableInfo',
-            'x-component-props': {
-              height: '400px'
-            }
-          },
+          // SharedMiningTableInfo: {
+          //   type: 'void',
+          //   'x-decorator': 'FormItem',
+          //   'x-component': 'SharedMiningTableInfo',
+          //   'x-component-props': {
+          //     height: '400px'
+          //   }
+          // },
 
           nodeConfig: {
             type: 'object'

@@ -34,7 +34,7 @@ export default {
   packages_dag_task_setting_sync_type: '同步類型',
   packages_dag_task_setting_initial_sync_cdc: '全量 + 增量同步',
   packages_dag_task_stetting_desc: '任務描述',
-  packages_dag_task_setting_plan_start_date: '计划开始时间',
+  packages_dag_task_setting_plan_start_date: '指定時間執行',
   packages_dag_task_setting_crontabExpressionFlag: '定期調度任務',
   packages_dag_task_setting_cron_expression: '請輸入調度表達式',
   packages_dag_task_setting_cron_tip:
@@ -163,7 +163,7 @@ export default {
   packages_dag_migration_settingpanel_dangrenwufuhe:
     '開啟數據校驗開關後，任務會自動對同步結果的一致性進行全量校驗和增量校驗，並會在運行監控頁面將校驗不一致的數據行數展示出來。需要注意，當任務符合以下情況時，即使開啟校驗開關任務也不會進行校驗\n 1. 添加了中間處理節點\n 2. 源連接不支持校驗\n 3. 目標連接不支持校驗',
   packages_dag_monitor_bottompanel_yunxingjilu: '運行記錄',
-  packages_dag_monitor_bottompanel_rizhi: '日誌',
+  packages_dag_monitor_bottompanel_rizhi: '任務進度查看',
   packages_dag_components_eventchart_qita: '其他',
   packages_dag_components_eventchart_suoxuanzhouqilei: '所選週期累計',
   packages_dag_components_eventchart_renwuyunxinglei: '任務運行累計',
@@ -331,6 +331,12 @@ export default {
   packages_dag_nodes_database_zidingyi: '自定義',
   packages_dag_nodes_database_xuanzebiao: '選擇表',
   packages_dag_nodes_database_suoshuage: '所屬agent',
+  packages_dag_nodes_database_increment_exactly_once_enable_title: '增量精确一次写入',
+  packages_dag_nodes_database_increment_exactly_once_enable_tips:
+    '使用在目标缓存标记并检查的方式，实现增量数据的精确一次写入。当关联条件的值会发生改变时，建议开启，开启后会导致一定的同步速度下降。目标需要拥有创建表和写入权限。',
+  packages_dag_nodes_database_increment_exactly_once_enable_time_window_day_title: '時間窗口（天）',
+  packages_dag_nodes_database_increment_exactly_once_enable_time_window_day_tips:
+    '精確一次寫入，緩存數據的保留時長，也代表了精確一次生效的時間窗口，引擎運行時，一天會觸發一次自動清理。同時窗口時間設置的越長，會更佔用目標數據庫的存儲空間。 ',
   packages_dag_extends_nodetype_queshaobiyaode: '缺少必要的type屬性！ ',
   packages_dag_nodes_javascript_moxingshengming: '模型聲明',
   packages_dag_nodes_javascript_jiaoben: '腳本',
@@ -587,5 +593,8 @@ export default {
   packages_dag_migration_settingpanel_renwutiaoguoshi: '跳過事件超過閾值時停止任務',
   packages_dag_migration_settingpanel_tiaoguoyichangshi: '跳過異常事件，任務繼續運行',
   packages_dag_migration_settingpanel_dangdanbiaotongbu: '事件處理出現異常時',
-  packages_dag_migration_settingpanel_anzhaomorenzhong: '按照默認重試邏輯進行重試'
+  packages_dag_migration_settingpanel_anzhaomorenzhong: '按照默認重試邏輯進行重試',
+  packages_dag_default_js: '默認JS',
+  packages_dag_standardization_js: '標準化JS',
+  packages_dag_mixins_formscope_gaiziduanshibi: '該字段是必填字段!'
 }
