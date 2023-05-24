@@ -96,8 +96,8 @@
         </template>
       </ElTableColumn>
       <ElTableColumn
-        prop="last_updated"
-        sortable="last_updated"
+        prop="loadSchemaTime"
+        sortable="loadSchemaTime"
         min-width="150"
         :label="$t('public_connection_table_structure_update_time')"
       >
