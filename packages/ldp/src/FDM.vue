@@ -438,6 +438,7 @@ export default {
     showTaskDialog() {
       this.taskDialogConfig.prefix = this.getSmartPrefix(this.taskDialogConfig.from.name)
       this.taskDialogConfig.visible = true
+      this.$refs.form?.clearValidate()
     },
 
     async taskDialogSubmit() {
@@ -717,6 +718,7 @@ export default {
     },
 
     getSmartPrefix(connectionName) {
+      connectionName = connectionName.replace(/[\u4E00-\u9FA5\s]+/g, '').replace(/^[-_]+/, '')
       let planA = connectionName.split('_').shift()
       let planB = connectionName.split('-').shift()
 
