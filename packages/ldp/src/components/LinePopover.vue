@@ -9,7 +9,14 @@
     v-on="$listeners"
   >
     <div class="popover-list p-1">
-      <div class="popover-list-item ellipsis px-3">我是任务名称</div>
+      <div
+        v-for="(task, i) in popover.tasks"
+        @click="handleClickTask(task)"
+        :key="i"
+        class="popover-list-item ellipsis px-3"
+      >
+        {{ task.name }}
+      </div>
     </div>
   </ElPopover>
 </template>
@@ -31,6 +38,11 @@ export default {
   methods: {
     handleClick(node) {
       this.$emit('click-node', node)
+    },
+
+    handleClickTask(task) {
+      this.$emit('click-task', task)
+      this.popover.show = false
     }
   }
 }
@@ -40,7 +52,6 @@ export default {
 .line-popover {
   .popover-list {
     &-item {
-      margin-bottom: 2px;
       min-width: 148px;
       font-size: 14px;
       line-height: 32px;

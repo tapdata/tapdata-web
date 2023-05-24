@@ -18,7 +18,7 @@
       <IconButton @click="handleZoomIn">add-outline</IconButton>
     </div>
 
-    <LinePopover :popover="nodeMenu"></LinePopover>
+    <LinePopover :popover="nodeMenu" @click-task="$emit('click-task', $event)"></LinePopover>
   </div>
 </template>
 
@@ -56,7 +56,8 @@ export default {
         typeId: '',
         reference: null,
         data: null,
-        connectionData: {}
+        connectionData: {},
+        tasks: []
       }
     }
   },
@@ -164,7 +165,10 @@ export default {
     },
 
     async showNodePopover(type, data, el) {
-      type === 'node' && this.handleDeselectAllConnections()
+      const connectionData = this.allEdges.find(edge => {
+        return edge.source === data.source && edge.target === data.target
+      })
+      this.nodeMenu.tasks = Object.values(connectionData.tasks)
       this.nodeMenu.show = false
       this.nodeMenu.reference = null
       await this.$nextTick()
@@ -179,18 +183,34 @@ export default {
     async loadLineage() {
       let dag
       try {
-        dag = await lineageApi.findByTable(this.connectionId, this.tableName)
+        const result = await lineageApi.findByTable(this.connectionId, this.tableName)
+        dag = result.dag || {}
       } catch (e) {
         dag = {
           edges: [
             {
               source: '27f5add1-bbf0-48a8-8954-88c8dd69a14b',
-              target: 'e28e41ef-13c3-4b58-a083-29e196b538a0'
+              target: 'e28e41ef-13c3-4b58-a083-29e196b538a0',
+              tasks: {
+                '646cbb0a8ac72931568beb58': {
+                  id: '646cbb0a8ac72931568beb58',
+                  name: 'mysql-mongo migrate',
+                  taskNode: {
+                    type: 'database',
+                    catalog: 'data',
+                    isTransformed: false,
+                    id: '03d98eb3-5b83-4009-8ce8-4dbed63c4bae',
+                    name: 'S local mysql INSURANCE',
+                    elementType: 'Node'
+                  }
+                }
+              }
             }
           ],
           nodes: [
             {
-              tableName: '3877_LILY_CLAIM',
+              table: '3877_LILY_CLAIM',
+              connectionName: 'AUTO_MYSQL_OP',
               isFilter: false,
               increaseReadSize: 500,
               maxTransactionDuration: 12,
@@ -212,7 +232,6 @@ export default {
               elementType: 'Node',
               attrs: {
                 position: [-84, 388.5],
-                connectionName: 'AUTO_MYSQL_OP',
                 connectionType: 'source_and_target',
                 accessNodeProcessId: '',
                 pdkType: 'pdk',
@@ -220,7 +239,8 @@ export default {
               }
             },
             {
-              tableName: 'AA_0208_test_30506',
+              table: 'AA_0208_test_30506',
+              connectionName: 'DB2_TESTDB',
               isFilter: false,
               increaseReadSize: 500,
               maxTransactionDuration: 12,
@@ -242,7 +262,7 @@ export default {
               elementType: 'Node',
               attrs: {
                 position: [351, 472.5],
-                connectionName: 'DB2_TESTDB',
+
                 connectionType: 'source_and_target',
                 accessNodeProcessId: '',
                 pdkType: 'pdk',
@@ -353,8 +373,8 @@ export default {
       // 连线
       edges.forEach(({ source, target }) => {
         this.jsPlumbIns.connect({
-          uuids: [`${NODE_PREFIX}${source}_source`, `${NODE_PREFIX}${target}_target`],
-          overlays: [
+          uuids: [`${NODE_PREFIX}${source}_source`, `${NODE_PREFIX}${target}_target`]
+          /*overlays: [
             [
               'Label',
               {
@@ -375,7 +395,7 @@ export default {
                 // }
               }
             ]
-          ]
+          ]*/
         })
       })
     },

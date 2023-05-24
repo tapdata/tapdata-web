@@ -8,7 +8,7 @@
     v-loading="loading"
   >
     <header v-if="detailData" class="px-6 pt-3">
-      <div class="mb-2">
+      <div class="mb-2 flex align-center">
         <span class="table-name inline-block">{{ detailData.name }}</span>
         <span v-if="swimType !== 'source'" :class="['status', 'ml-4', 'status-' + tableStatus]">{{
           statusMap[tableStatus]
@@ -35,7 +35,7 @@
       </div>
     </header>
     <section class="flex-1 min-h-0 mt-1">
-      <el-tabs v-model="activeName" @tab-click="handleTab" class="h-100 tabs-fill">
+      <el-tabs v-model="activeName" @tab-click="handleTab" class="h-100 table-preview-tabs tabs-fill">
         <el-tab-pane :label="$t('packages_business_overview')" name="overView">
           <div class="p-4">
             <section class="bg-white rounded-lg p-3">
@@ -73,8 +73,8 @@
                 </el-col>
               </el-row>
             </section>
-            <section class="mt-4 bg-white rounded-lg pt-1">
-              <el-tabs v-model="activeNameItems">
+            <section class="mt-4 bg-white rounded-lg pt-1 overflow-hidden">
+              <el-tabs v-model="activeNameItems" class="tabs-fill">
                 <el-tab-pane :label="$t('packages_business_columns_preview')" name="columnsPreview">
                   <VTable
                     class="discovery-page-table p-3"
@@ -236,6 +236,7 @@
             :is-show="activeName === 'lineage'"
             :connection-id="connectionId"
             :table-name="selected.name"
+            @click-task="handleClickName"
           ></TableLineage>
         </el-tab-pane>
       </el-tabs>
@@ -641,7 +642,7 @@ export default {
       padding: 0 24px;
     }
 
-    .tabs-fill > .el-tabs__content > .el-tab-pane {
+    .table-preview-tabs > .el-tabs__content > .el-tab-pane {
       background-color: rgb(245, 248, 254);
     }
 

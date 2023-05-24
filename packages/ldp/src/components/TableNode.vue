@@ -1,10 +1,10 @@
 <template>
   <div class="position-absolute table-node border rounded-lg bg-white overflow-hidden" :style="nodeStyle">
     <div class="px-3 py-2" @click="mouseClick">
-      <div class="ellipsis">{{ data.name }}</div>
+      <div class="ellipsis">{{ data.table }}</div>
       <div class="mt-1 flex align-center gap-1 font-color-light ellipsis">
         <NodeIcon :node="data" :size="14"></NodeIcon>
-        连接名称
+        {{ data.connectionName }}
       </div>
     </div>
     <!--<div class="columns-wrap px-3 py-2">
