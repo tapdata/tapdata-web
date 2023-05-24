@@ -1688,10 +1688,6 @@ export default {
       const params = {
         productType: this.agentDeploy
       }
-      if (this.agentDeploy === 'fullManagement') {
-        params.region = this.region
-        params.cloudProvider = this.provider
-      }
       this.$axios.get('api/tcm/orders/price', { params }).then(data => {
         const { paidPrice = [] } = data?.[0] || {}
         // 规格

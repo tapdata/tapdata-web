@@ -282,29 +282,29 @@
             :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxi')"
             v-if="agentDeploy === 'fullManagement'"
           >
-            <!--            <div class="flex">-->
-            <!--              <span-->
-            <!--                class="font-color-light inline-block"-->
-            <!--                :class="[-->
-            <!--                  { 'form-label': this.$i18n.locale === 'zh-CN' },-->
-            <!--                  { 'form-label-en': this.$i18n.locale === 'en' }-->
-            <!--                ]"-->
-            <!--                >{{ $t('dfs_agent_download_subscriptionmodeldialog_yunfuwushang') }}</span-->
-            <!--              >-->
-            <!--              <ElRadioGroup v-model="provider" @input="changeProvider" class="flex gap-4">-->
-            <!--                <ElRadio-->
-            <!--                  v-for="(item, index) in cloudProviderList"-->
-            <!--                  :key="index"-->
-            <!--                  :label="item.cloudProvider"-->
-            <!--                  border-->
-            <!--                  class="rounded-4 subscription-radio m-0 position-relative"-->
-            <!--                >-->
-            <!--                  <span class="inline-flex align-center">-->
-            <!--                    {{ item.cloudProviderName }}-->
-            <!--                  </span>-->
-            <!--                </ElRadio>-->
-            <!--              </ElRadioGroup>-->
-            <!--            </div>-->
+            <div class="flex">
+              <span
+                class="font-color-light inline-block"
+                :class="[
+                  { 'form-label': this.$i18n.locale === 'zh-CN' },
+                  { 'form-label-en': this.$i18n.locale === 'en' }
+                ]"
+                >{{ $t('dfs_agent_download_subscriptionmodeldialog_yunfuwushang') }}</span
+              >
+              <ElRadioGroup v-model="provider" @input="changeProvider" class="flex gap-4">
+                <ElRadio
+                  v-for="(item, index) in cloudProviderList"
+                  :key="index"
+                  :label="item.cloudProvider"
+                  border
+                  class="rounded-4 subscription-radio m-0 position-relative"
+                >
+                  <span class="inline-flex align-center">
+                    {{ item.cloudProviderName }}
+                  </span>
+                </ElRadio>
+              </ElRadioGroup>
+            </div>
             <div class="flex mt-4">
               <span
                 class="font-color-light inline-block"
@@ -935,6 +935,8 @@ export default {
       this.loadPackageItems()
       //更新存储资源价格
       this.changeMongodbMemory()
+      //云厂商
+      this.getCloudProvider()
       //数据初始化
       this.mdbPriceId = 'FreeTier'
       this.mongodbSpecPrice = ''
@@ -1099,7 +1101,7 @@ export default {
       let filter = { where: { 'orderInfo.chargeProvider': 'FreeTier' } }
       this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
         this.agentCount = data?.total
-        this.getPrice()
+        this.getCloudProvider()
       })
     },
     getImg(name) {
@@ -1128,17 +1130,20 @@ export default {
     //查找云厂商
     getCloudProvider() {
       this.$axios.get('api/tcm/orders/queryCloudProvider').then(data => {
-        this.cloudProviderList = data?.items || []
+        //数据模式（带存储）过滤只带存储的云厂商
+        if (this.platform === 'realTime') {
+          let original = data?.items || []
+          original.forEach(it => {
+            if (it.cloudDetail?.length > 0) {
+              it.cloudDetail = it.cloudDetail.filter(item => item.productList.includes('mongodb')) || []
+            }
+          })
+          this.cloudProviderList = original.filter(it => it.cloudDetail.length > 0)
+        } else this.cloudProviderList = data?.items || []
         //初始化云厂商
-        // this.provider = this.cloudProviderList?.[0].cloudProvider
-        // this.changeProvider()
-
-        //合并可用区
-        let cloudProviderList = this.cloudProviderList.map(t => t.cloudDetail)
-        this.cloudDetail = cloudProviderList.reduce((a, b) => a.concat(b))
-        this.region = this.cloudDetail[0].region
-        this.provider = this.cloudDetail[0].provider
-        this.changeRegion()
+        this.provider = this.cloudProviderList?.[0].cloudProvider
+        this.changeProvider()
+        this.getPrice()
       })
     },
     //查询规格价格
@@ -1146,7 +1151,7 @@ export default {
       const params = {
         productType: this.agentDeploy
       }
-      this.$axios.get('api/tcm/paid/plan/getPaidPlan', { params }).then(data => {
+      this.$axios.get('api/tcm/orders/price', { params }).then(data => {
         const { paidPrice = [] } = data?.[0] || {}
         // 规格
         this.specificationItems = uniqBy(
