@@ -721,7 +721,7 @@ export default {
         pathAccessMethod,
         method: path.method || 'GET',
         fields,
-        params: path.params.filter(t => t.name !== 'sort') || this.getDefaultParams(apiType),
+        params: path.params?.filter(t => t.name !== 'sort') || this.getDefaultParams(apiType),
         where: path.where || [],
         sort: path.sort || [],
         path: path.path || '',
