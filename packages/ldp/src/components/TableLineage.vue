@@ -718,7 +718,7 @@ export default {
 .table-lineage {
   ::v-deep {
     .table-lineage-connection-label {
-      max-width: 200px;
+      max-width: 180px;
       z-index: 1001;
     }
   }

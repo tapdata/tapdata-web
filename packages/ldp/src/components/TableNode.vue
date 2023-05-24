@@ -320,7 +320,9 @@ export default {
 
   &.active {
     border-color: #2c65ff !important;
-    box-shadow: 0 0 0 2px rgba(5, 145, 255, 0.1);
+    //box-shadow: 0 0 0 4px rgba(5, 145, 255, 0.1);
+    outline: 4px solid rgb(44 101 255 / 40%);
+    outline-offset: 1px;
   }
 }
 </style>
