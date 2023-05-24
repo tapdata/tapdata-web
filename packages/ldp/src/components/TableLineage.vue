@@ -694,6 +694,7 @@ export default {
       console.log('handleNodeDblClick', node) // eslint-disable-line
       const table = {
         ...node,
+        name: node.table,
         LDP_TYPE: 'table',
         isObject: true
       }
