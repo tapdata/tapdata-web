@@ -385,10 +385,10 @@ export default {
       return this.taskData
     },
     sourceTask() {
-      return this.taskData.filter(task => task.sourceConnectionIds.includes(this.connectionId))
+      return this.taskData.filter(task => task.isAsSource)
     },
     targetTask() {
-      return this.taskData.filter(task => task.targetConnectionIds.includes(this.connectionId))
+      return this.taskData.filter(task => !task.isAsSource)
     },
     databaseName() {
       if (!this.connection) return this.detailData.sourceType
@@ -457,8 +457,7 @@ export default {
       taskApi.getTaskByTableName(params).then(taskList => {
         taskList.forEach(task => {
           const { dag } = task
-          const sourceConnectionIds = []
-          const targetConnectionIds = []
+
           if (dag.edges?.length && dag.nodes?.length) {
             const outputsMap = {}
             const inputsMap = {}
@@ -480,16 +479,13 @@ export default {
               }
             })
 
-            dag.nodes.forEach(node => {
-              if (!inputsMap[node.id] && outputsMap[node.id] && node.connectionId) {
-                sourceConnectionIds.push(node.connectionId)
-              } else if (inputsMap[node.id] && !outputsMap[node.id] && node.connectionId) {
-                targetConnectionIds.push(node.connectionId)
+            task.isAsSource = dag.nodes.some(node => {
+              if (!inputsMap[node.id] && outputsMap[node.id] && node.connectionId === this.connectionId) {
+                if (node.type === 'database') return true
+                return node.tableName === params.tableName
               }
             })
           }
-          task.sourceConnectionIds = sourceConnectionIds
-          task.targetConnectionIds = targetConnectionIds
         })
         this.taskData = taskList
       })
