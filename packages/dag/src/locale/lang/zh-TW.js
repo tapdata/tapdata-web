@@ -596,5 +596,6 @@ export default {
   packages_dag_migration_settingpanel_anzhaomorenzhong: '按照默認重試邏輯進行重試',
   packages_dag_default_js: '默認JS',
   packages_dag_standardization_js: '標準化JS',
-  packages_dag_mixins_formscope_gaiziduanshibi: '該字段是必填字段!'
+  packages_dag_mixins_formscope_gaiziduanshibi: '該字段是必填字段!',
+  packages_dag_shared_mining_table_info_index_wajuebiaoxinxi: '挖掘表信息'
 }

@@ -24,7 +24,10 @@ export const SharedMiningTableInfo = observer(
         )
 
         return (
-          <FormItem.BaseItem label="挖掘表信息" attrs={attrs}>
+          <FormItem.BaseItem
+            label={root.$t('packages_dag_shared_mining_table_info_index_wajuebiaoxinxi')}
+            attrs={attrs}
+          >
             {con}
             {slots.default?.()}
           </FormItem.BaseItem>
