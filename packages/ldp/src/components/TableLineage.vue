@@ -13,6 +13,7 @@
     </PaperScroller>
 
     <div class="paper-toolbar position-absolute flex gap-1 bg-white p-1 rounded-lg shadow-sm">
+      <IconButton clickAndRotate @click="handleRefresh">refresh</IconButton>
       <IconButton @click="handleCenterContent">compress</IconButton>
       <IconButton @click="handleZoomOut">remove-outline</IconButton>
       <IconButton @click="handleZoomIn">add-outline</IconButton>
@@ -73,10 +74,7 @@ export default {
       () => [this.connectionId, this.tableName, this.isShow],
       () => {
         if (this.isShow) {
-          this.reset()
-          this.$refs.paperScroller.initVisibleArea(true)
-          this.initNodeView()
-          this.loadLineage()
+          this.initView()
         }
       }
     )
@@ -129,6 +127,13 @@ export default {
       'setPdkSchemaFreeMap'
     ]),
 
+    initView() {
+      this.reset()
+      this.$refs.paperScroller.initVisibleArea(true)
+      this.initNodeView()
+      this.loadLineage()
+    },
+
     getRealId(str) {
       return str.replace(new RegExp(`^${NODE_PREFIX}`), '')
     },
@@ -145,11 +150,11 @@ export default {
         const connection = { source, target }
         const connectionIns = info.connection
 
-        info.connection.bind('click', async () => {
+        /*info.connection.bind('click', async () => {
           const rect = info.connection.canvas.getBoundingClientRect()
           this.nodeMenu.connectionCenterPos = [rect.x + rect.width / 2, rect.y + rect.height / 2]
           await this.showNodePopover('connection', connection, info.connection.canvas)
-        })
+        })*/
 
         /*info.connection.bind('mouseover', async () => {
           const rect = info.connection.canvas.getBoundingClientRect()
@@ -373,18 +378,21 @@ export default {
       await this.$nextTick()
 
       // 连线
-      edges.forEach(({ source, target }) => {
-        this.jsPlumbIns.connect({
-          uuids: [`${NODE_PREFIX}${source}_source`, `${NODE_PREFIX}${target}_target`]
-          /*overlays: [
+      edges.forEach(({ source, target, attrs }) => {
+        const tasks = attrs.tasks ? Object.values(attrs.tasks) : []
+        let overlays
+
+        if (tasks.length) {
+          overlays = [
             [
               'Label',
               {
-                cssClass: 'table-lineage-connection-label px-1 el-tag el-tag--small el-tag--light rounded-4',
-                label: '任务名称',
+                cssClass:
+                  'table-lineage-connection-label clickable ellipsis px-1 el-tag el-tag--small el-tag--light rounded-4',
+                label: tasks[0].name,
                 events: {
                   click: () => {
-                    this.$message.success('点击了任务名称')
+                    this.$emit('click-task', tasks[0])
                   }
                 }
                 // labelStyle: {
@@ -397,7 +405,12 @@ export default {
                 // }
               }
             ]
-          ]*/
+          ]
+        }
+
+        this.jsPlumbIns.connect({
+          uuids: [`${NODE_PREFIX}${source}_source`, `${NODE_PREFIX}${target}_target`],
+          overlays
         })
       })
     },
@@ -414,6 +427,10 @@ export default {
         newProperties.forEach(prop => {
           this.updateNodeProperties(prop)
         })
+    },
+
+    handleRefresh() {
+      this.initView()
     },
 
     handleCenterContent() {
@@ -434,11 +451,12 @@ export default {
 <style scoped lang="scss">
 .paper-toolbar {
   right: 16px;
-  bottom: 16px;
+  top: 16px;
 }
 .table-lineage {
   ::v-deep {
     .table-lineage-connection-label {
+      max-width: 200px;
       z-index: 1001;
     }
   }
