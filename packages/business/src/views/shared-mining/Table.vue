@@ -250,6 +250,8 @@ export default {
     },
 
     handleStop() {
+      if (this.connectionsList.length <= 1)
+        return this.$message.error(i18n.t('packages_business_shared_mining_table_shengyuyigelian'))
       const { taskId } = this
       let tableNameMap = {}
       this.multipleSelection.forEach(t => {

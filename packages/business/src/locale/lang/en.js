@@ -1100,5 +1100,6 @@ export default {
   packages_business_shared_mining_table_ninyaotingzhiwa:
     'The table you want to stop mining is being used by the following tasks. Stopping mining will affect the normal synchronization of the following tasks. Please confirm whether to continue to stop. ',
   packages_business_shared_mining_table_tingzhiwajueti: 'Stop mining reminder',
-  packages_business_shared_mining_table_yihebingdelian: 'Merged Connections'
+  packages_business_shared_mining_table_yihebingdelian: 'Merged Connections',
+  packages_business_shared_mining_table_shengyuyigelian: 'There is one connection left, this operation cannot be performed'
 }

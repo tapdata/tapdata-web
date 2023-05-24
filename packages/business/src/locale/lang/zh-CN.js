@@ -1054,5 +1054,6 @@ export default {
   packages_business_shared_mining_table_ninyaotingzhiwa:
     '您要停止挖掘的表正在被以下任务使用，停止挖掘后将会影响以下任务的正常同步，请确认是否要继续停止。',
   packages_business_shared_mining_table_tingzhiwajueti: '停止挖掘提醒',
-  packages_business_shared_mining_table_yihebingdelian: '已合并的连接'
+  packages_business_shared_mining_table_yihebingdelian: '已合并的连接',
+  packages_business_shared_mining_table_shengyuyigelian: '剩余一个连接，无法进行该操作'
 }
