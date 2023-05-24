@@ -28,7 +28,7 @@
           <ElTooltip
             v-if="!ignoreError"
             transition="tooltip-fade-in"
-            :disabled="!scope.row.matchedDataTypeLevel"
+            :disabled="scope.row.matchedDataTypeLevel !== 'error'"
             :content="getCanUseDataTypesTooltip(scope.row.matchedDataTypeLevel)"
             class="type-warning position-absolute"
           >
@@ -429,8 +429,8 @@ export default {
         error:
           this.type === 'target'
             ? i18n.t('packages_dag_field_inference_list_gaiziduanshuju')
-            : i18n.t('packages_dag_field_inference_list_gaiziduanwufa'),
-        warning: i18n.t('packages_dag_field_inference_list_gaiziduanyingshe')
+            : i18n.t('packages_dag_field_inference_list_gaiziduanwufa')
+        // warning: i18n.t('packages_dag_field_inference_list_gaiziduanyingshe')
       }
       return map[matchedDataTypeLevel]
     },
