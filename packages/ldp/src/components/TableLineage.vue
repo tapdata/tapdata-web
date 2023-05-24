@@ -168,7 +168,7 @@ export default {
       const connectionData = this.allEdges.find(edge => {
         return edge.source === data.source && edge.target === data.target
       })
-      this.nodeMenu.tasks = Object.values(connectionData.tasks)
+      this.nodeMenu.tasks = Object.values(connectionData.attrs.tasks)
       this.nodeMenu.show = false
       this.nodeMenu.reference = null
       await this.$nextTick()
@@ -191,17 +191,19 @@ export default {
             {
               source: '27f5add1-bbf0-48a8-8954-88c8dd69a14b',
               target: 'e28e41ef-13c3-4b58-a083-29e196b538a0',
-              tasks: {
-                '646cbb0a8ac72931568beb58': {
-                  id: '646cbb0a8ac72931568beb58',
-                  name: 'mysql-mongo migrate',
-                  taskNode: {
-                    type: 'database',
-                    catalog: 'data',
-                    isTransformed: false,
-                    id: '03d98eb3-5b83-4009-8ce8-4dbed63c4bae',
-                    name: 'S local mysql INSURANCE',
-                    elementType: 'Node'
+              attrs: {
+                tasks: {
+                  '646cbb0a8ac72931568beb58': {
+                    id: '646cbb0a8ac72931568beb58',
+                    name: 'mysql-mongo migrate',
+                    taskNode: {
+                      type: 'database',
+                      catalog: 'data',
+                      isTransformed: false,
+                      id: '03d98eb3-5b83-4009-8ce8-4dbed63c4bae',
+                      name: 'S local mysql INSURANCE',
+                      elementType: 'Node'
+                    }
                   }
                 }
               }
