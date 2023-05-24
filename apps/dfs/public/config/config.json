@@ -28,6 +28,7 @@
   "disabledBindingPhone": true, //手机号绑定
   "disabledDataService": true, // 数据服务
   "showSwimLane": true,// 显示泳道
-  "currencyType": "cny" // 默认币种-人民币
+  "currencyType": "cny", // 默认币种-人民币
+  "disabledAliyunCode": true, //隐藏阿里云授权码
   "unsubscribeHelpDocumentation": "https://deploy-preview-75--tapdata.netlify.app/cloud/billing/refund/#%E9%80%80%E6%AC%BE%E8%AF%B4%E6%98%8E" // 退订文档
 }

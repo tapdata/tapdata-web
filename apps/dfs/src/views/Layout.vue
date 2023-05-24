@@ -121,12 +121,12 @@ export default {
           icon: 'task',
           beta: true
         },
-        {
-          name: 'customNodeList',
-          title: $t('page_title_custom_node'),
-          icon: 'custom',
-          beta: true
-        },
+        // {
+        //   name: 'customNodeList',
+        //   title: $t('page_title_custom_node'),
+        //   icon: 'custom',
+        //   beta: true
+        // },
         {
           name: 'OperationLog',
           title: $t('operation_log_manage'),

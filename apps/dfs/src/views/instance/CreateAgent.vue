@@ -28,13 +28,23 @@
               <div class="product-type-card-title text-center font-color-dark mb-2 lh-base">
                 {{ $t('dfs_agent_download_subscriptionmodeldialog_qiyeshujuji2') }}
               </div>
-              <div class="fs-7 font-color-sslight mb-3 lh-base">{{ $t('dfs_instance_createagent_qiyeshujuji') }}</div>
-              <div class="fs-7 font-color-sslight mb-3 lh-base">{{ $t('dfs_instance_createagent_leisiyuFi') }}</div>
+              <div
+                class="fs-7 font-color-sslight lh-base"
+                :class="[{ 'mb-3': this.$i18n.locale === 'en' }, { 'mb-8': this.$i18n.locale === 'zh-CN' }]"
+              >
+                {{ $t('dfs_instance_createagent_qiyeshujuji') }}
+              </div>
               <div class="text-center font-color-dark fs-6 mb-3 lh-base">
                 {{ $t('dfs_agent_download_subscriptionmodeldialog_zhuyaoshiyongchang') }}
               </div>
               <div class="flex justify-content-center align-items-center flex-wrap">
-                <el-tag class="mr-2 mt-2" v-for="(item, index) in interTag" :key="index">{{ item.value }}</el-tag>
+                <el-tag
+                  class="mr-2 mt-2 text-center"
+                  :class="[item.class]"
+                  v-for="(item, index) in interTag"
+                  :key="index"
+                  >{{ item.value }}</el-tag
+                >
               </div>
             </div>
           </div>
@@ -57,16 +67,21 @@
                 {{ $t('dfs_agent_download_subscriptionmodeldialog_qiyeshishishu2') }}
               </div>
               <div class="font-color-sslight fs-7 mb-3 lh-base">{{ $t('dfs_instance_createagent_qiyeshishishu') }}</div>
-              <div class="font-color-sslight fs-7 mb-3 lh-base">{{ $t('dfs_instance_createagent_heIPaa') }}</div>
               <div class="text-center font-color-dark fs-6 mb-2 lh-base">
                 {{ $t('dfs_agent_download_subscriptionmodeldialog_zhuyaoshiyongchang') }}
               </div>
               <div class="flex justify-content-center align-items-center flex-column">
-                <div class="font-color-sslight fs-7 text-center">
+                <div class="font-color-sslight fs-8 text-center">
                   {{ $t('dfs_agent_download_subscriptionmodeldialog_chuzhichisuoyou') }}
                 </div>
                 <div>
-                  <el-tag class="mr-2 mt-2" v-for="(item, index) in realTimeTag" :key="index">{{ item.value }}</el-tag>
+                  <el-tag
+                    class="mr-2 mt-2 text-center"
+                    :class="[item.class]"
+                    v-for="(item, index) in realTimeTag"
+                    :key="index"
+                    >{{ item.value }}</el-tag
+                  >
                 </div>
               </div>
             </div>
@@ -522,7 +537,7 @@
       </div>
       <el-link
         class="aliyun-wrap flex justify-content-center align-items-center mt-6 mb-6"
-        v-if="activeStep === 1 && agentDeploy !== 'aliyun'"
+        v-if="disabledAliyunCode || (activeStep === 1 && agentDeploy !== 'aliyun')"
         type="primary"
         @click="changeAgentDeploy('aliyun')"
         >{{ $t('dfs_agent_download_subscriptionmodeldialog_zhijieshiyonga') }}</el-link
@@ -651,42 +666,54 @@ export default {
       },
       realTimeTag: [
         {
-          value: i18n.t('dfs_instance_createagent_apIkuaisu')
+          value: i18n.t('dfs_instance_createagent_apIkuaisu'),
+          class: 'col-4'
         },
         {
-          value: i18n.t('dfs_instance_createagent_shishishucang')
+          value: i18n.t('dfs_instance_createagent_shishishucang'),
+          class: 'col-5'
         },
         {
-          value: i18n.t('dfs_instance_createagent_bIkanbangong')
+          value: i18n.t('dfs_instance_createagent_bIkanbangong'),
+          class: 'col-3'
         },
         {
-          value: i18n.t('dfs_instance_createagent_kehu')
+          value: i18n.t('dfs_instance_createagent_kehu'),
+          class: 'col-4'
         },
         {
-          value: i18n.t('dfs_instance_createagent_shangpinzhongxin')
+          value: i18n.t('dfs_instance_createagent_shangpinzhongxin'),
+          class: 'col-5'
         },
         {
-          value: i18n.t('dfs_instance_createagent_kucunzhongxin')
-        },
-        {
-          value: i18n.t('dfs_instance_createagent_minjieshujuzhong')
+          value: i18n.t('dfs_instance_createagent_minjieshujuzhong'),
+          class: 'col-3'
         }
       ],
       interTag: [
         {
-          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_shishishujutong')
+          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_shishishujutong'),
+          class: 'col-1'
         },
         {
-          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_shujuEtl')
+          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_shujushangyunkua'),
+          class: 'col-2'
         },
         {
-          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_shujushangyunkua')
+          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_shujuEtl'),
+          class: 'col-3'
         },
         {
-          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_shujukuguochan')
+          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_redis_gongshu'),
+          class: 'col-1'
         },
         {
-          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_kafka')
+          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_shujukuguochan'),
+          class: 'col-2'
+        },
+        {
+          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_kafka'),
+          class: 'col-3'
         }
       ],
       CURRENCY_MAP: CURRENCY_MAP,
@@ -739,7 +766,8 @@ export default {
           width: 120
         }
       ],
-      currentPackage: ''
+      currentPackage: '',
+      disabledAliyunCode: 'false'
     }
   },
 
@@ -844,9 +872,14 @@ export default {
     this.checkAgentCount()
     this.form.email = window.__USER_INFO__.email
     const currencyType = window.__config__?.currencyType
+    const disabledAliyunCode = window.__config__?.disabledAliyunCode
 
     if (currencyType) {
       this.currencyType = currencyType
+    }
+    //控制是否打开授权码通道
+    if (disabledAliyunCode) {
+      this.disabledAliyunCode = disabledAliyunCode
     }
   },
   methods: {
@@ -1538,7 +1571,7 @@ export default {
   width: 170px;
 }
 .platform-wrap {
-  height: 500px;
+  min-height: 300px;
 }
 .subscript-table {
   ::v-deep {
@@ -1656,9 +1689,24 @@ export default {
     }
   }
 }
-
+//控制tag长度
+.col-1 {
+  width: 134px;
+}
+.col-2 {
+  width: 113px;
+}
+.col-3 {
+  width: 108px;
+}
+.col-4 {
+  width: 152px;
+}
+.col-5 {
+  width: 90px;
+}
 .product-type-card {
-  width: 400px;
+  width: 430px;
   .product-type-card-title {
     font-size: $fontTitle;
     font-weight: 700;
@@ -1695,6 +1743,13 @@ export default {
 
     .product-type-card-title {
       color: #86909c !important;
+    }
+  }
+}
+.subscription-steps {
+  ::v-deep {
+    .el-step.is-simple .el-step__title {
+      font-size: 14px;
     }
   }
 }
