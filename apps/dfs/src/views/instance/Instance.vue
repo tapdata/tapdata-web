@@ -553,6 +553,9 @@
             ref="tableCode"
             class="mt-4"
           >
+            <template #status="{ row }">
+              <StatusTag type="tag" :status="row.status" default-status="Stopped" target="mdb"></StatusTag>
+            </template>
           </VTable>
         </section>
       </el-tab-pane>
@@ -688,27 +691,45 @@ export default {
       paidRenewDetail: [],
       unsubscribeHelpDocumentation: '',
       supportResPools: [], //可用资源列表
+      scopeMap: { Private: '独享实例', Share: '共享实例' },
       //存储资源
       specColumns: [
         {
+          label: '云厂商',
+          prop: 'providerName'
+        },
+        {
           label: '服务商',
-          prop: 'provider'
+          prop: 'serviceProvider'
         },
         {
           label: '地区',
-          prop: 'region'
-        },
-        {
-          label: '计算规格',
-          prop: 'customerId'
+          prop: 'regionName'
         },
         {
           label: '存储规格',
-          prop: 'status'
+          prop: 'specLabel'
+        },
+        {
+          label: '存储空间',
+          prop: 'storageSize'
+        },
+        {
+          label: '存储类型',
+          prop: 'scope'
+        },
+        {
+          label: '部署方式',
+          prop: 'deploymentType'
+        },
+        {
+          label: '状态',
+          prop: 'status',
+          slotName: 'status'
         },
         {
           label: '到期时间',
-          prop: 'status'
+          prop: 'expiredTimeLabel'
         }
       ]
     }
@@ -740,8 +761,8 @@ export default {
       return !!Object.values(this.searchParams).join('')
     },
     computed: {
-      tableCode() {
-        return this.$refs.tableCode
+      table() {
+        return this.$refs.table
       }
     }
   },
@@ -816,7 +837,16 @@ export default {
         const items = data.items || []
         return {
           total: data.total,
-          data: items
+          data: items.map(item => {
+            const { periodEnd } = item.subscribe || {}
+            item.expiredTimeLabel = periodEnd ? dayjs(periodEnd).format('YY-MM-DD  HH:mm:ss') : '-'
+            console.log(item.expiredTimeLabel, 'periodEnd111111111111111111')
+            item.scope = this.scopeMap[item.scope]
+            item.specLabel = getSpec(item.spec) || '-'
+            item.storageSize = item.spec?.storageSize ? item.spec?.storageSize + 'GB' : '-'
+            item.deploymentType = this.agentTypeMap[item.deploymentType]
+            return item
+          })
         }
       })
     },

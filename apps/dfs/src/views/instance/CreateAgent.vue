@@ -1466,6 +1466,11 @@ export default {
         this.$message.error(i18n.t('dfs_instance_createagent_qingtianxieninzi'))
         return
       }
+      //检测 mdbPriceId, 价格不能为空
+      if ((this.mdbPriceId === '' || !this.mdbPriceId) && this.activeStep === 4 && this.platform === 'realTime') {
+        this.$message.error('没有获取到价格，请您换一个规格或者')
+        return
+      }
       this.activeStep++
       this.buried('productTypeNext')
       //存储方案请求接口得到存储价格
@@ -1946,7 +1951,7 @@ export default {
     //是否有存储agent
     getMdbCount() {
       this.$axios.get('api/tcm/mdb/count').then(data => {
-        this.mdbCount = data > 0
+        this.mdbCount = false
       })
     },
     //提交订单

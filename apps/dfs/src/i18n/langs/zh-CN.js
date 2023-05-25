@@ -146,7 +146,7 @@ export default {
   tap_workbench: '工作台',
   tap_announcement_notice: '公告通知',
   tap_system_notification: '系统通知',
-  tap_agent_management: 'Agent管理',
+  tap_agent_management: '资源管理',
   tap_instance_details: 'Agent详情',
   tap_connection_management: '连接管理',
   tap_create_connection: '创建连接',
