@@ -538,12 +538,13 @@ export default {
 
     handleAutoLayout() {
       const nodes = this.allNodes
-      if (nodes.length < 2) return
+      if (nodes.length < 2) {
+        this.$refs.paperScroller.centerContent(false, 24)
+        return
+      }
 
       const nodePositionMap = {}
       const dg = new dagre.graphlib.Graph()
-      const newProperties = []
-      const oldProperties = []
 
       dg.setGraph({ nodesep: 60, ranksep: 260, marginx: 50, marginy: 50, rankdir: 'LR' })
       dg.setDefaultEdgeLabel(function () {
@@ -584,7 +585,7 @@ export default {
       Vue.nextTick(() => {
         this.jsPlumbIns.setSuspendDrawing(false, true)
         this.$refs.paperScroller.autoResizePaper()
-        this.$refs.paperScroller.centerContent()
+        this.$refs.paperScroller.centerContent(false, 24)
       })
     },
 
@@ -645,12 +646,12 @@ export default {
                   const size = tasks.length
                   const taskName = tasks[0].name
                   const div = document.createElement('div')
-                  div.classList.add('table-lineage-connection-label')
+                  div.classList.add('table-lineage-connection-label', 'flex')
                   div.innerHTML =
                     size > 1
                       ? `<div class="flex align-center compact-tag">
                     <span title="${taskName}" class="clickable ellipsis px-1 el-tag el-tag--small el-tag--light rounded-4">${taskName}</span>
-                    <span data-more="true" class="clickable ellipsis px-1 el-tag el-tag--small el-tag--light rounded-4">+ ${
+                    <span data-more="true" class="clickable ellipsis px-1 el-tag el-tag--small el-tag--light rounded-4 flex-shrink-0">+ ${
                       size - 1
                     }</span>
                     </div>`
@@ -697,7 +698,7 @@ export default {
     },
 
     handleCenterContent() {
-      this.$refs.paperScroller.centerContent()
+      this.$refs.paperScroller.centerContent(false, 24)
     },
 
     handleZoomIn() {
