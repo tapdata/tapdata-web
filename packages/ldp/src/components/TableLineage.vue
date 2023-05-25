@@ -545,7 +545,7 @@ export default {
       const newProperties = []
       const oldProperties = []
 
-      dg.setGraph({ nodesep: 60, ranksep: 240, marginx: 50, marginy: 50, rankdir: 'LR' })
+      dg.setGraph({ nodesep: 60, ranksep: 260, marginx: 50, marginy: 50, rankdir: 'LR' })
       dg.setDefaultEdgeLabel(function () {
         return {}
       })
