@@ -543,7 +543,7 @@
         </div>
       </el-tab-pane>
       <el-tab-pane class="order-flex flex-column overflow-hidden h-100" label="存储资源" name="second">
-        <section class="flex flex-column overflow-hidden">
+        <section class="flex flex-column overflow-hidden flex-1">
           <VTable
             :columns="specColumns"
             :remoteMethod="specRemoteMethod"
@@ -740,8 +740,8 @@ export default {
       return !!Object.values(this.searchParams).join('')
     },
     computed: {
-      table() {
-        return this.$refs.table
+      tableCode() {
+        return this.$refs.tableCode
       }
     }
   },
