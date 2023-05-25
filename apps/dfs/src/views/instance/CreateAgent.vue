@@ -1075,7 +1075,7 @@
       </div>
       <el-link
         class="aliyun-wrap flex justify-content-center align-items-center mt-6 mb-6"
-        v-if="!disabledAliyunCode && activeStep === 1 && agentDeploy !== 'aliyun'"
+        v-if="!disabledAliyunCode && activeStep === 1 && (agentDeploy !== 'aliyun' || mdbCount)"
         type="primary"
         @click="changeAgentDeploy('aliyun')"
         >{{ $t('dfs_agent_download_subscriptionmodeldialog_zhijieshiyonga') }}</el-link
@@ -1126,7 +1126,7 @@
       <!--授权码-->
       <template v-else>
         <el-link
-          v-if="activeStep === 2 && agentDeploy === 'aliyun' && !hiddenNewCode && codeData.length > 0"
+          v-if="activeStep === 1 && agentDeploy === 'aliyun' && !hiddenNewCode && codeData.length > 0"
           type="primary"
           class="mr-4"
           @click="handleNewCode(true)"
@@ -1134,11 +1134,11 @@
         >
         <el-button v-if="activeStep > 1" @click="prevStep">{{ $t('public_button_previous') }}</el-button>
         <!--第2步 半托管没有下一步 直接部署-->
-        <el-button v-if="activeStep < steps.length && activeStep !== 2" type="primary" @click="next('second')">{{
+        <el-button v-if="activeStep < steps.length && activeStep !== 1" type="primary" @click="next('second')">{{
           $t('public_button_next')
         }}</el-button>
         <!---第2步 新激活授权码 半托管-->
-        <el-button v-if="!hiddenNewCode && activeStep === 2" type="primary" :loading="saveLoading" @click="save()"
+        <el-button v-if="!hiddenNewCode && activeStep === 1" type="primary" :loading="saveLoading" @click="save()"
           >{{ $t('dfs_aliyun_market_license_jihuo') }}<span>&</span>{{ $t('public_button_next') }}</el-button
         >
         <!--最后一步-->
@@ -1305,7 +1305,7 @@ export default {
         }
       ],
       currentPackage: '',
-      disabledAliyunCode: 'false',
+      disabledAliyunCode: false,
       //是否有存储Agent
       mdbCount: false //默认没有存储
     }
@@ -1465,6 +1465,11 @@ export default {
       //存储方案请求接口得到存储价格
       if (this.activeStep === 4 && this.platform === 'realTime') {
         this.getMongoCluster()
+        this.getCloudMdbSource()
+      }
+      //授权码 特殊的第二步 有存储,不增加步数
+      if (this.activeStep === 2 && this.mdbCount) {
+        this.activeStep--
       }
     },
     //选择平台
@@ -1816,6 +1821,12 @@ export default {
         ).sort((a, b) => {
           return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
         })
+      })
+    },
+    //判断是否可选存储规格
+    getCloudMdbSource() {
+      this.$axios.get('api/tcm/orders/paid/getCloudMdbSource').then(data => {
+        console.log(data)
       })
     },
     //选择存储规格

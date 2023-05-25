@@ -110,7 +110,8 @@ const routes = [
         component: () => import(/* webpackChunkName: "instance" */ '../views/instance/Instance.vue'),
         meta: {
           title: 'tap_agent_management',
-          icon: 'agent'
+          icon: 'agent',
+          hideTitle: true
         },
         children: [
           {
