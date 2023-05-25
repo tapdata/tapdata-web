@@ -1307,7 +1307,9 @@ export default {
       currentPackage: '',
       disabledAliyunCode: false,
       //是否有存储Agent
-      mdbCount: false //默认没有存储
+      mdbCount: false, //默认没有存储
+      cloudMdbSource: [],
+      mdbZone: ''
     }
   },
 
@@ -1823,15 +1825,41 @@ export default {
     getCloudMdbSource() {
       //选择存储规格时，需要判断mdbSpec 是否有可用区
       this.$axios.get('api/tcm/orders/paid/getCloudMdbSource').then(data => {
-        console.log(data)
+        //过滤出当前可用区下的mdbRegionProvider
+        let original = data.filter(it => it.cloudProvider === this.provider)?.[0] || []
+        let mdbRegionProvider = original.mdbRegionProvider
+        let mdbZoneProvider = []
+        if (mdbRegionProvider.length > 0) {
+          mdbZoneProvider = mdbRegionProvider.filter(it => it.region === this.region)?.[0]?.mdbZoneProvider || []
+        }
+        this.cloudMdbSource = mdbZoneProvider
       })
+    },
+    //遍历查找mdbSpec
+    findCloud(spec) {
+      try {
+        this.cloudMdbSource.forEach(it => {
+          if (it.mdbProvider?.length > 0) {
+            it.mdbProvider.forEach(item => {
+              if (item.mdbSpec === spec) {
+                this.mdbZone = it.zone
+                throw new Error('stop')
+              }
+            })
+          }
+        })
+      } catch (e) {
+        if (e.message !== 'stop') {
+          throw e
+        }
+      }
     },
     //选择存储规格
     changeMongodbMemory() {
       let values = this.mongodbSpec.split('-')
       let cpu = Number(values[0])
       let memory = Number(values[1])
-
+      this.mdbZone = '' //初始化
       //根据订阅方式再过滤一层
       this.mongodbPaidPrice = this.paidPrice?.filter(
         t =>
@@ -1858,6 +1886,7 @@ export default {
       //需要改变mdbPriceId 因为存储空间改变了
       this.mdbPriceId = price?.[0]?.priceId
       this.mdbPrice(price?.[0].currencyOption?.find(item => item.currency === this.currencyType)?.amount || 0)
+      this.findCloud(price?.[0]?.mdbSpec)
     },
     //存储价格
     mdbPrice(price) {
@@ -1964,9 +1993,14 @@ export default {
           params.agentType = 'Cloud'
           params.region = this.region
           params.provider = this.provider
-          params.mdbPriceId = this.mdbPriceId
           params.memorySpace = this.memorySpace
           params.successUrl = location.origin + location.pathname + agentUrl.href
+        }
+        //带存储实例
+        if (this.platform === 'realTime') {
+          params.mdbPriceId = this.mdbPriceId
+          params.mdbRegion = this.region || ''
+          params.mdbZone = this.mdbZone || ''
         }
       }
 
