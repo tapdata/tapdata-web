@@ -216,6 +216,23 @@ export default {
                     },
                     syncType: 'migrate',
                     status: 'stop'
+                  },
+
+                  '646cbb0a8ac72931568beb58COPY': {
+                    id: '646cbb0a8ac72931568beb58',
+                    name: 'mysql-mongo migrate__COPY',
+                    taskNode: {
+                      id: '03d98eb3-5b83-4009-8ce8-4dbed63c4bae',
+                      name: 'S local mysql INSURANCE__COPY',
+                      type: 'database',
+                      catalog: 'data',
+                      taskNodePos: 'source',
+                      dataNode: true,
+                      transformed: false,
+                      logCollectorNode: false
+                    },
+                    syncType: 'migrate',
+                    status: 'stop'
                   }
                 }
               },
