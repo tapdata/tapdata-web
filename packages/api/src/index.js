@@ -168,6 +168,10 @@ const shareCdcTableMetricsApi = new ShareCdcTableMetrics()
 import App from './App'
 const appApi = new App()
 
+import Lineage from './Lineage'
+
+const lineageApi = new Lineage()
+
 export {
   connectionsApi,
   databaseTypesApi,
@@ -224,7 +228,8 @@ export {
   shareCdcTableMetricsApi,
   liveDataPlatformApi,
   ldpApi,
-  appApi
+  appApi,
+  lineageApi
 }
 export * from './ApiClient'
 
