@@ -712,10 +712,12 @@ export default {
 
     handleNodeDblClick(node) {
       if (node.type === 'apiserverLineage') return
+      if (!node.metadata.id) return
 
       console.log('handleNodeDblClick', node) // eslint-disable-line
       const table = {
         ...node,
+        id: node.metadata.id,
         name: node.table,
         LDP_TYPE: 'table',
         isObject: true
