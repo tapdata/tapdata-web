@@ -689,7 +689,7 @@
                   {{ $t('dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi') }}
                 </div>
               </div>
-              <div class="px-6 mb-6">
+              <div class="px-6 mb-6" :class="{ 'mb-11': this.$i18n.locale === 'en' }">
                 <div class="fs-6 text-center font-color-dark font-weight-light mb-2">
                   {{ $t('dfs_agent_download_subscriptionmodeldialog_shiyongquantuoguan') }}
                 </div>
@@ -1075,7 +1075,7 @@
       </div>
       <el-link
         class="aliyun-wrap flex justify-content-center align-items-center mt-6 mb-6"
-        v-if="!disabledAliyunCode && activeStep === 1 && (agentDeploy !== 'aliyun' || mdbCount)"
+        v-if="!disabledAliyunCode && activeStep === 1 && agentDeploy !== 'aliyun'"
         type="primary"
         @click="changeAgentDeploy('aliyun')"
         >{{ $t('dfs_agent_download_subscriptionmodeldialog_zhijieshiyonga') }}</el-link
@@ -1132,7 +1132,7 @@
           @click="handleNewCode(true)"
           >{{ $t('dfs_agent_download_subscriptionmodeldialog_ninyouyijihuo') }}</el-link
         >
-        <el-button v-if="activeStep > 1" @click="prevStep">{{ $t('public_button_previous') }}</el-button>
+        <el-button v-if="activeStep > 0" @click="prevStep">{{ $t('public_button_previous') }}</el-button>
         <!--第2步 半托管没有下一步 直接部署-->
         <el-button v-if="activeStep < steps.length && activeStep !== 1" type="primary" @click="next('second')">{{
           $t('public_button_next')
@@ -1447,6 +1447,10 @@ export default {
   methods: {
     prevStep() {
       this.activeStep--
+      //授权码 带存储 不加不减步数
+      if (this.agentDeploy === 'aliyun' && this.mdbCount) {
+        this.activeStep++
+      }
       //授权码 特殊的第二步
       if (this.agentDeploy === 'aliyun' && this.activeStep === 1) {
         this.agentDeploy = 'selfHost'
@@ -1469,6 +1473,10 @@ export default {
         this.getMongoCluster()
         this.getCloudMdbSource()
       }
+      //第一次选择授权码 返回托管模式选择 不切换类型，导致价格丢失
+      if ([1, 2].includes(this.activeStep) && this.agentDeploy !== 'aliyun') {
+        this.getPrice()
+      }
     },
     //选择平台
     changePlatform(type) {
@@ -1489,12 +1497,17 @@ export default {
     changeAgentDeploy(type) {
       this.cancelPrice() //数据初始化
       this.agentDeploy = type
-      this.getPrice()
       this.getCloudProvider()
       if (type === 'aliyun') {
         this.activeStep++
         this.getAvailableCode()
         this.buried('productTypeAliyunCode')
+      } else {
+        this.getPrice()
+      }
+      //有存储 不加步数
+      if (type === 'aliyun' && this.mdbCount) {
+        this.activeStep--
       }
     },
     //价格初始化
