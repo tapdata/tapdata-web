@@ -51,6 +51,7 @@ export default {
 <style scoped lang="scss">
 .line-popover {
   .popover-list {
+    max-width: 200px;
     &-item {
       min-width: 148px;
       font-size: 14px;

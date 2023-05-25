@@ -173,20 +173,14 @@ export default {
       })
     },
 
-    async showNodePopover(type, data, el) {
-      const connectionData = this.allEdges.find(edge => {
-        return edge.source === data.source && edge.target === data.target
-      })
-      this.nodeMenu.tasks = Object.values(connectionData.attrs.tasks)
+    async showNodePopover(el, tasks) {
+      this.nodeMenu.tasks = tasks
       this.nodeMenu.show = false
       this.nodeMenu.reference = null
       await this.$nextTick()
       this.nodeMenu.reference = el
-      this.nodeMenu.type = type
-      this.nodeMenu.data = data
       await this.$nextTick()
       this.nodeMenu.show = true
-      this.nodeMenu.typeId = data.id
     },
 
     async loadLineage() {
@@ -645,24 +639,35 @@ export default {
         if (tasks.length) {
           overlays = [
             [
-              'Label',
+              'Custom',
               {
-                cssClass:
-                  'table-lineage-connection-label clickable ellipsis px-1 el-tag el-tag--small el-tag--light rounded-4',
-                label: tasks[0].name,
+                create() {
+                  const size = tasks.length
+                  const div = document.createElement('div')
+                  div.title = tasks[0].name
+                  div.classList.add('table-lineage-connection-label')
+                  div.innerHTML =
+                    size > 1
+                      ? `<div class="flex align-center compact-tag">
+                    <span class="clickable ellipsis px-1 el-tag el-tag--small el-tag--light rounded-4">${
+                      tasks[0].name
+                    }</span>
+                    <span data-more="true" class="clickable ellipsis px-1 el-tag el-tag--small el-tag--light rounded-4">+ ${
+                      size - 1
+                    }</span>
+                    </div>`
+                      : `<span class="clickable ellipsis px-1 el-tag el-tag--small el-tag--light rounded-4">${tasks[0].name}</span>`
+                  return div
+                },
                 events: {
-                  click: () => {
+                  click: (overlay, ev) => {
+                    if (tasks.length > 1 && ev.target.dataset.more) {
+                      this.showNodePopover(ev.target, tasks.slice(1))
+                      return
+                    }
                     this.$emit('click-task', tasks[0])
                   }
                 }
-                // labelStyle: {
-                //   font?: string
-                //   color?: string
-                //   fill?: string
-                //   borderStyle?: string
-                //   borderWidth?: number// integer
-                //   padding?: number //integer
-                // }
               }
             ]
           ]
@@ -737,6 +742,17 @@ export default {
     .table-lineage-connection-label {
       max-width: 180px;
       z-index: 1001;
+      .compact-tag {
+        .el-tag:first-child {
+          border-top-right-radius: 0 !important;
+          border-bottom-right-radius: 0 !important;
+        }
+        .el-tag:last-child {
+          margin-left: -1px;
+          border-top-left-radius: 0 !important;
+          border-bottom-left-radius: 0 !important;
+        }
+      }
     }
   }
 }
