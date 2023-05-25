@@ -276,7 +276,12 @@
             min-width="100"
           >
             <template #default="{ row }">
-              <ElInput v-model="debugParams[row.name]" size="mini"></ElInput>
+              <ElInput
+                v-model="debugParams[row.name]"
+                :type="row.name === 'filter' ? 'textarea' : 'text'"
+                size="mini"
+                :placeholder="getPlaceholder(row.name)"
+              ></ElInput>
             </template>
           </ElTableColumn>
           <ElTableColumn v-if="isEdit && form.apiType === 'customerQuery'" align="center" width="60">
@@ -1086,7 +1091,7 @@ export default {
     },
     async debugData() {
       let http = axios.create()
-      let params = this.debugParams
+      let params = cloneDeep(this.debugParams)
       let method = this.debugMethod
       if (method === 'TOKEN') {
         this.debugResult = JSON.stringify(
@@ -1107,10 +1112,22 @@ export default {
             delete params[key]
           }
         }
+        if (params.filter) {
+          try {
+            params.filter = JSON.parse(params.filter)
+          } catch (error) {
+            this.$message.error('filter  ' + this.$t('packages_business_geshicuowu'))
+            params.filter = {}
+          }
+        }
+
         if (method === 'GET') {
           params = {
             params: params
           }
+        } else if (method === 'POST') {
+          Object.assign(params, params.filter)
+          delete params.filter
         }
         let result = await http[method.toLowerCase()](url, params).catch(error => {
           let result = error?.response?.data
@@ -1180,6 +1197,14 @@ export default {
             comment: ''
           })
         }) || []
+    },
+
+    getPlaceholder(val) {
+      let placeholder = ''
+      if (val === 'filter') {
+        placeholder = `{"where": {"id": 1}}`
+      }
+      return placeholder
     }
   }
 }
