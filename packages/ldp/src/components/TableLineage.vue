@@ -643,20 +643,18 @@ export default {
               {
                 create() {
                   const size = tasks.length
+                  const taskName = tasks[0].name
                   const div = document.createElement('div')
-                  div.title = tasks[0].name
                   div.classList.add('table-lineage-connection-label')
                   div.innerHTML =
                     size > 1
                       ? `<div class="flex align-center compact-tag">
-                    <span class="clickable ellipsis px-1 el-tag el-tag--small el-tag--light rounded-4">${
-                      tasks[0].name
-                    }</span>
+                    <span title="${taskName}" class="clickable ellipsis px-1 el-tag el-tag--small el-tag--light rounded-4">${taskName}</span>
                     <span data-more="true" class="clickable ellipsis px-1 el-tag el-tag--small el-tag--light rounded-4">+ ${
                       size - 1
                     }</span>
                     </div>`
-                      : `<span class="clickable ellipsis px-1 el-tag el-tag--small el-tag--light rounded-4">${tasks[0].name}</span>`
+                      : `<span title="${taskName}" class="clickable ellipsis px-1 el-tag el-tag--small el-tag--light rounded-4">${taskName}</span>`
                   return div
                 },
                 events: {
