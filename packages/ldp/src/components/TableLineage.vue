@@ -88,6 +88,8 @@ export default {
 
   destroyed() {
     this.unwatch?.()
+    this.jsPlumbIns?.destroy()
+    this.resetState()
   },
 
   methods: {
