@@ -1467,10 +1467,6 @@ export default {
         this.getMongoCluster()
         this.getCloudMdbSource()
       }
-      //授权码 特殊的第二步 有存储,不增加步数
-      if (this.activeStep === 2 && this.mdbCount) {
-        this.activeStep--
-      }
     },
     //选择平台
     changePlatform(type) {
@@ -1825,6 +1821,7 @@ export default {
     },
     //判断是否可选存储规格
     getCloudMdbSource() {
+      //选择存储规格时，需要判断mdbSpec 是否有可用区
       this.$axios.get('api/tcm/orders/paid/getCloudMdbSource').then(data => {
         console.log(data)
       })
