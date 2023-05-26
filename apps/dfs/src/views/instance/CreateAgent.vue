@@ -1951,7 +1951,7 @@ export default {
     //是否有存储agent
     getMdbCount() {
       this.$axios.get('api/tcm/mdb/count').then(data => {
-        this.mdbCount = false
+        this.mdbCount = data > 0
       })
     },
     //提交订单
