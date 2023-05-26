@@ -128,7 +128,7 @@ export default {
   tap_workbench: '工作臺',
   tap_announcement_notice: '公告通知',
   tap_system_notification: '系統通知',
-  tap_agent_management: 'Agent管理',
+  tap_agent_management: '资源管理',
   tap_instance_details: 'Agent詳情',
   tap_connection_management: '連接管理',
   tap_create_connection: '創建連接',
@@ -1429,5 +1429,16 @@ export default {
   dfs_order_list_xinzengdingyue: '新增訂閱',
 
   dfs_instance_details_shujuyuanziyuan: '資料源資源下載',
-  dfs_instance_details_xianchengziyuanxia: '執行緒資源下載'
+  dfs_instance_details_xianchengziyuanxia: '執行緒資源下載',
+
+  dfs_instance_createagent_meiyouhuoqudao: '沒有獲取到存儲價格，請檢查存儲價格數據',
+  dfs_instance_instance_bushufangshi: '部署方式',
+  dfs_instance_instance_cunchuleixing: '存儲類型',
+  dfs_instance_instance_fuwushang: '服務商',
+  dfs_instance_instance_yunchangshang: '雲廠商',
+  dfs_instance_instance_gongxiangshili: '共享實例',
+  dfs_instance_instance_duxiangshili: '獨享實例',
+  dfs_instance_instance_cunchuziyuan: '存儲資源',
+  dfs_instance_instance_agent2: 'Agent資源',
+  dfs_order_list_wodedingyue: '我的訂閱'
 }

@@ -129,7 +129,7 @@ export default {
   tap_workbench: 'Workbench',
   tap_announcement_notice: 'Announcement Notice',
   tap_system_notification: 'System Notification',
-  tap_agent_management: 'Agent Management',
+  tap_agent_management: 'Resource Management',
   tap_instance_details: 'Instance Details',
   tap_connection_management: 'Connections',
   tap_create_connection: 'Create Connection',
@@ -1574,5 +1574,16 @@ export default {
   dfs_order_list_xinzengdingyue: 'Add Subscription',
 
   dfs_instance_details_shujuyuanziyuan: 'Data Source Resource Download',
-  dfs_instance_details_xianchengziyuanxia: 'Thread Resource Download'
+  dfs_instance_details_xianchengziyuanxia: 'Thread Resource Download',
+
+  dfs_instance_createagent_meiyouhuoqudao: 'The storage price is not obtained, please check the storage price data',
+  dfs_instance_instance_busufangshi: 'Deployment Method',
+  dfs_instance_instance_cunchuleixing: 'Storage Type',
+  dfs_instance_instance_fuwushang: 'Service Provider',
+  dfs_instance_instance_yunchangshang: 'Cloud Vendor',
+  dfs_instance_instance_gongxiangshili: 'Shared Instance',
+  dfs_instance_instance_duxiangshili: 'Private Instance',
+  dfs_instance_instance_cunchuziyuan: 'Storage Resources',
+  dfs_instance_instance_agent2: 'Agent Resource',
+  dfs_order_list_wodingyue: 'My Subscriptions'
 }

@@ -1,7 +1,7 @@
 <template>
   <section class="instance-wrapper g-panel-container" v-loading="loading" v-if="$route.name === 'Instance'">
     <el-tabs class="flex flex-column overflow-hidden flex-1" v-model="activeName">
-      <el-tab-pane class="order-flex overflow-hidden h-100" label="Agent资源" name="first">
+      <el-tab-pane class="order-flex overflow-hidden h-100" :label="$t('dfs_instance_instance_agent2')" name="first">
         <div class="main">
           <div class="instance-operation">
             <div class="instance-operation-left">
@@ -542,7 +542,7 @@
           </ElDialog>
         </div>
       </el-tab-pane>
-      <el-tab-pane class="order-flex flex-column overflow-hidden h-100" label="存储资源" name="second">
+      <el-tab-pane class="order-flex flex-column overflow-hidden h-100" :label="$t('dfs_instance_instance_cunchuziyuan')" name="second">
         <section class="flex flex-column overflow-hidden flex-1">
           <VTable
             :columns="specColumns"
@@ -691,44 +691,44 @@ export default {
       paidRenewDetail: [],
       unsubscribeHelpDocumentation: '',
       supportResPools: [], //可用资源列表
-      scopeMap: { Private: '独享实例', Share: '共享实例' },
+      scopeMap: { Private: i18n.t('dfs_instance_instance_duxiangshili'), Share: i18n.t('dfs_instance_instance_gongxiangshili') },
       //存储资源
       specColumns: [
         {
-          label: '云厂商',
+          label: i18n.t('dfs_instance_instance_yunchangshang'),
           prop: 'providerName'
         },
         {
-          label: '服务商',
+          label: i18n.t('dfs_instance_instance_fuwushang'),
           prop: 'serviceProvider'
         },
         {
-          label: '地区',
+          label: i18n.t('dfs_agent_download_subscriptionmodeldialog_diqu'),
           prop: 'regionName'
         },
         {
-          label: '存储规格',
+          label: i18n.t('dfs_instance_createagent_cunchuguige'),
           prop: 'specLabel'
         },
         {
-          label: '存储空间',
+          label: i18n.t('dfs_instance_createagent_cunchukongjian'),
           prop: 'storageSize'
         },
         {
-          label: '存储类型',
+          label: i18n.t('dfs_instance_instance_cunchuleixing'),
           prop: 'scope'
         },
         {
-          label: '部署方式',
+          label: i18n.t('dfs_instance_instance_bushufangshi'),
           prop: 'deploymentType'
         },
         {
-          label: '状态',
+          label: i18n.t('agent_status'),
           prop: 'status',
           slotName: 'status'
         },
         {
-          label: '到期时间',
+          label: i18n.t('dfs_instance_instance_daoqishijian'),
           prop: 'expiredTimeLabel'
         }
       ]

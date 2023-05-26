@@ -1468,7 +1468,7 @@ export default {
       }
       //检测 mdbPriceId, 价格不能为空
       if ((this.mdbPriceId === '' || !this.mdbPriceId) && this.activeStep === 4 && this.platform === 'realTime') {
-        this.$message.error('没有获取到价格，请您换一个规格或者')
+        this.$message.error(i18n.t('dfs_instance_createagent_meiyouhuoqudao'))
         return
       }
       this.activeStep++

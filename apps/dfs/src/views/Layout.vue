@@ -218,7 +218,7 @@ export default {
     let subMenu = [
       {
         name: 'Instance',
-        title: this.$t('agent_manage'),
+        title: this.$t('tap_agent_management'),
         icon: 'agent'
       },
       {

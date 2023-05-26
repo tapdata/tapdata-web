@@ -1458,5 +1458,16 @@ export default {
   dfs_order_list_dingyuezhuangtai: '订阅状态',
   dfs_order_list_xinzengdingyue: '新增订阅',
   dfs_instance_details_shujuyuanziyuan: '数据源资源下载',
-  dfs_instance_details_xianchengziyuanxia: '线程资源下载'
+  dfs_instance_details_xianchengziyuanxia: '线程资源下载',
+
+  dfs_instance_createagent_meiyouhuoqudao: '没有获取到存储价格，请检查存储价格数据',
+  dfs_instance_instance_bushufangshi: '部署方式',
+  dfs_instance_instance_cunchuleixing: '存储类型',
+  dfs_instance_instance_fuwushang: '服务商',
+  dfs_instance_instance_yunchangshang: '云厂商',
+  dfs_instance_instance_gongxiangshili: '共享实例',
+  dfs_instance_instance_duxiangshili: '独享实例',
+  dfs_instance_instance_cunchuziyuan: '存储资源',
+  dfs_instance_instance_agent2: 'Agent资源',
+  dfs_order_list_wodedingyue: '我的订阅'
 }

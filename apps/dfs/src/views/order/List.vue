@@ -1,7 +1,7 @@
 <template>
   <section class="operation-logs-wrapper g-panel-container" v-if="$route.name === 'order'">
     <el-tabs class="flex flex-column overflow-hidden flex-1" v-model="activeName" @tab-click="handleClick">
-      <el-tab-pane class="order-flex overflow-hidden h-100" label="我的订阅" name="first">
+      <el-tab-pane class="order-flex overflow-hidden h-100" :label="$t('dfs_order_list_wodedingyue')" name="first">
         <div class="main">
           <div class="list-operation">
             <div class="list-operation-left flex justify-content-between">
@@ -43,7 +43,7 @@
           </VTable>
         </div>
       </el-tab-pane>
-      <el-tab-pane class="order-flex flex-column overflow-hidden h-100" label="授权码" name="second">
+      <el-tab-pane class="order-flex flex-column overflow-hidden h-100" :label="$t('dfs_instance_selectlist_shouquanma')" name="second">
         <section class="flex flex-column overflow-hidden flex-1">
           <div class="mt-2 flex justify-content-end">
             <el-button class="mr-2" @click="goReceipt">{{ $t('dfs_user_center_kaifapiao') }}</el-button>
