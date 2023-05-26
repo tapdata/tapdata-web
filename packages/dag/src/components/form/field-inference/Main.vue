@@ -44,7 +44,7 @@
               class="flex align-items-center justify-content-between"
               @click="handleSelect(index)"
             >
-              <div class="task-form-text-box pl-4 inline-block">
+              <div class="task-form-text-box pl-2 inline-block flex-1 min-w-0">
                 <OverflowTooltip class="w-100 text-truncate target" :text="item.name" placement="right" />
               </div>
               <!--<ElTooltip
