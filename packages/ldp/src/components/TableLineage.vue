@@ -648,7 +648,7 @@ export default {
                   const size = tasks.length
                   const taskName = tasks[0].name
                   const div = document.createElement('div')
-                  div.classList.add('table-lineage-connection-label', 'flex')
+                  div.classList.add('table-lineage-connection-label', 'flex', 'overflow-hidden')
                   div.innerHTML =
                     size > 1
                       ? `<div class="flex align-center compact-tag">
