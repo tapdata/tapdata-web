@@ -639,7 +639,8 @@ export default {
           accessNodeProcessId: db.accessNodeProcessId,
           pdkType: db.pdkType,
           pdkHash: db.pdkHash,
-          capabilities: db.capabilities || []
+          capabilities: db.capabilities || [],
+          hasCreated: false
         }
       }
     },
