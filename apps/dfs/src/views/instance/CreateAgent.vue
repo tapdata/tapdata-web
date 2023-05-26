@@ -2382,4 +2382,11 @@ export default {
     }
   }
 }
+.subscription-steps-wrap {
+  ::v-deep {
+    .el-steps--simple {
+      padding: 13px 0;
+    }
+  }
+}
 </style>
