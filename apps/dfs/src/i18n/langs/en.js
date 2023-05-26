@@ -1577,7 +1577,7 @@ export default {
   dfs_instance_details_xianchengziyuanxia: 'Thread Resource Download',
 
   dfs_instance_createagent_meiyouhuoqudao: 'The storage price is not obtained, please check the storage price data',
-  dfs_instance_instance_busufangshi: 'Deployment Method',
+  dfs_instance_instance_bushufangshi: 'Deployment Method',
   dfs_instance_instance_cunchuleixing: 'Storage Type',
   dfs_instance_instance_fuwushang: 'Service Provider',
   dfs_instance_instance_yunchangshang: 'Cloud Vendor',
