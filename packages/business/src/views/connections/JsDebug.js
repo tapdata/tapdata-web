@@ -35,6 +35,7 @@ export const JsDebug = observer(
 
       const fullscreen = ref(true)
       const running = ref(false)
+      const paramsLoading = ref(false)
       const runningText = ref('')
       const inputRef = ref('')
       const outputRef = ref('')
@@ -66,6 +67,7 @@ export const JsDebug = observer(
 
       const handleRun = async () => {
         const { pdkHash } = props.pdkOptions || {}
+        running.value = true
         proxyApi
           .command({
             pdkHash,
@@ -81,17 +83,24 @@ export const JsDebug = observer(
             outputRef.value = JSON.stringify(data.after, null, 2)
             logList.value = data.logs || []
           })
+          .finally(() => {
+            running.value = false
+          })
       }
 
       const handleGetParams = async () => {
+        paramsLoading.value = true
         proxyApi
           .call({
             className: 'TestRunOfHttpReceiverService',
             method: 'testData',
-            args: [props.connectionId]
+            args: [props.connectionId, params.rows]
           })
           .then(data => {
             inputRef.value = JSON.stringify(data, null, 2)
+          })
+          .finally(() => {
+            paramsLoading.value = false
           })
       }
 
@@ -117,7 +126,16 @@ export const JsDebug = observer(
                 ></ElInputNumber>
               </FormItem.BaseItem>
               <ElButton
+                class="ml-4"
                 disabled={props.disabled}
+                loading={paramsLoading.value}
+                onClick={handleGetParams}
+                type="primary"
+                size="small"
+              >
+                Get Params
+              </ElButton>
+              <ElButton
                 class="ml-4"
                 disabled={props.disabled}
                 loading={running.value}
@@ -126,17 +144,6 @@ export const JsDebug = observer(
                 size="small"
               >
                 {i18n.t('packages_form_js_processor_index_shiyunxing')}
-              </ElButton>
-              <ElButton
-                disabled={props.disabled}
-                class="ml-4"
-                disabled={props.disabled}
-                loading={running.value}
-                onClick={handleGetParams}
-                type="primary"
-                size="small"
-              >
-                获取数据
               </ElButton>
             </div>
           </div>
