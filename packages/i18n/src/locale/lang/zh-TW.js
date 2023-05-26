@@ -50,6 +50,12 @@ export default {
   public_status_restarting: '重啟中',
   public_status_deploying: '部署中',
   public_status_altering: '升级中',
+  public_status_creating: '创建中',
+  public_status_activated: '使用中',
+  public_status_init: '初始化',
+  public_status_waiting_delete: '等待删除',
+  public_status_deleting: '删除中',
+  public_status_deleted: '已删除',
   // 按鈕
   public_button_edit: '編輯',
   public_button_confirm: '確定',

@@ -50,6 +50,13 @@ export default {
   public_status_restarting: 'Restarting',
   public_status_deploying: 'Deploying',
   public_status_altering: 'Altering',
+  public_status_creating: 'Creating',
+  public_status_activated: 'Activated',
+  public_status_init: 'Init',
+  public_status_waiting_delete: 'Waiting Delete',
+  public_status_deleting: 'Deleting',
+  public_status_deleted: 'Deleted',
+
   // button
   public_button_edit: 'Edit',
   public_button_confirm: 'Ok',
