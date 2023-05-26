@@ -652,7 +652,7 @@ export default {
                   div.innerHTML =
                     size > 1
                       ? `<div class="flex align-center compact-tag">
-                    <span title="${taskName}" class="clickable ellipsis px-1 el-tag el-tag--small el-tag--light rounded-4">${taskName}</span>
+                    <span title="${taskName}" class="overflow-hidden clickable ellipsis px-1 el-tag el-tag--small el-tag--light rounded-4">${taskName}</span>
                     <span data-more="true" class="clickable ellipsis px-1 el-tag el-tag--small el-tag--light rounded-4 flex-shrink-0">+ ${
                       size - 1
                     }</span>
