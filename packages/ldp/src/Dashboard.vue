@@ -304,6 +304,7 @@ export default {
 
     hanldeCreateSingleTask(data = {}, swimType = '') {
       switch (swimType) {
+        case 'source':
         case 'mdm':
           this.openRoute({
             name: 'DataflowNew',
