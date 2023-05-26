@@ -139,6 +139,12 @@ export default {
       menus: [],
       sortMenus: [
         {
+          name: 'dataConsole',
+          title: this.$t('page_title_data_console'),
+          icon: 'process-platform',
+          beta: true
+        },
+        {
           name: 'Workbench',
           title: $t('workbench_manage'),
           icon: 'workbench'
@@ -188,15 +194,6 @@ export default {
     if (window.__config__?.disabledDataService) {
       //海外版隐藏数据服务
       this.sortMenus = this.sortMenus.filter(item => item.name !== 'dataServerList')
-    }
-    if (!window.__config__?.showSwimLane) {
-      let swimLane = {
-        name: 'dataConsole',
-        title: this.$t('page_title_data_console'),
-        icon: 'process-platform',
-        beta: true
-      }
-      this.sortMenus.unshift(swimLane)
     }
     this.loopLoadAgentCount()
     this.activeMenu = this.$route.path
