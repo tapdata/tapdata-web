@@ -30,7 +30,7 @@
               </div>
               <div
                 class="fs-7 font-color-sslight lh-base"
-                :class="[{ 'mb-3': this.$i18n.locale === 'en' }, { 'mb-8': this.$i18n.locale === 'zh-CN' }]"
+                :class="[{ 'mb-4': this.$i18n.locale === 'en' }, { 'mb-8': this.$i18n.locale === 'zh-CN' }]"
               >
                 {{ $t('dfs_instance_createagent_qiyeshujuji') }}
               </div>
@@ -2358,7 +2358,7 @@ export default {
   width: 90px;
 }
 .product-type-card {
-  width: 430px;
+  width: 435px;
   .product-type-card-title {
     font-size: $fontTitle;
     font-weight: 700;
