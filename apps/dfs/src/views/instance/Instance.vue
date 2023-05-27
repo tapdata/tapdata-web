@@ -1,6 +1,6 @@
 <template>
   <section class="instance-wrapper g-panel-container" v-loading="loading" v-if="$route.name === 'Instance'">
-    <el-tabs class="flex flex-column overflow-hidden flex-1" v-model="activeName">
+    <el-tabs class="flex flex-column overflow-hidden flex-1" v-model="activeName" @tab-click="changeTabs">
       <el-tab-pane class="order-flex overflow-hidden h-100" :label="$t('dfs_instance_instance_agent2')" name="first">
         <div class="main">
           <div class="instance-operation">
@@ -542,7 +542,11 @@
           </ElDialog>
         </div>
       </el-tab-pane>
-      <el-tab-pane class="order-flex flex-column overflow-hidden h-100" :label="$t('dfs_instance_instance_cunchuziyuan')" name="second">
+      <el-tab-pane
+        class="order-flex flex-column overflow-hidden h-100"
+        :label="$t('dfs_instance_instance_cunchuziyuan')"
+        name="second"
+      >
         <section class="flex flex-column overflow-hidden flex-1">
           <VTable
             :columns="specColumns"
@@ -691,7 +695,10 @@ export default {
       paidRenewDetail: [],
       unsubscribeHelpDocumentation: '',
       supportResPools: [], //可用资源列表
-      scopeMap: { Private: i18n.t('dfs_instance_instance_duxiangshili'), Share: i18n.t('dfs_instance_instance_gongxiangshili') },
+      scopeMap: {
+        Private: i18n.t('dfs_instance_instance_duxiangshili'),
+        Share: i18n.t('dfs_instance_instance_gongxiangshili')
+      },
       //存储资源
       specColumns: [
         {
@@ -760,10 +767,11 @@ export default {
     isSearching() {
       return !!Object.values(this.searchParams).join('')
     },
-    computed: {
-      table() {
-        return this.$refs.table
-      }
+    table() {
+      return this.$refs.table
+    },
+    tableCode() {
+      return this.$refs.tableCode
     }
   },
   watch: {
@@ -831,6 +839,11 @@ export default {
         })
       }
     },
+    changeTabs() {
+      if (this.activeName === 'second') {
+        this.tableCode.fetch()
+      }
+    },
     //存储资源
     specRemoteMethod() {
       return this.$axios.get('api/tcm/mdb').then(data => {
@@ -840,7 +853,6 @@ export default {
           data: items.map(item => {
             const { periodEnd } = item.subscribe || {}
             item.expiredTimeLabel = periodEnd ? dayjs(periodEnd).format('YY-MM-DD  HH:mm:ss') : '-'
-            console.log(item.expiredTimeLabel, 'periodEnd111111111111111111')
             item.scope = this.scopeMap[item.scope]
             item.specLabel = getSpec(item.spec) || '-'
             item.storageSize = item.spec?.storageSize ? item.spec?.storageSize + 'GB' : '-'
