@@ -318,7 +318,7 @@ export default {
       return (
         <div
           class={className}
-          onDblclick={() => {
+          onClick={() => {
             data.isObject && this.$emit('preview', data, this.fdmConnection)
           }}
           onDrop={this.handleTreeNodeDrop}
