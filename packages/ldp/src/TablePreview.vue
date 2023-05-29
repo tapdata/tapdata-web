@@ -1,8 +1,8 @@
 <template>
   <component :is="tag" v-if="visible" class="sw-table-drawer flex flex-column" :visible.sync="visible" width="850px">
-    <header v-if="detailData" class="px-6 pt-3">
+    <header class="px-6 pt-3">
       <div class="mb-2 flex align-center">
-        <span class="table-name inline-block">{{ detailData.name }}</span>
+        <span class="table-name inline-block">{{ selected.name }}</span>
         <span v-if="swimType !== 'source'" :class="['status', 'ml-4', 'status-' + tableStatus]">{{
           statusMap[tableStatus]
         }}</span>
@@ -645,6 +645,7 @@ export default {
   .table-name {
     font-weight: 500;
     font-size: 20px;
+    line-height: 26px;
     color: #1d2129;
   }
   .table-dec-label {

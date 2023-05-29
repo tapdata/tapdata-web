@@ -218,7 +218,7 @@ export default {
       const nodePositionMap = {}
       const dg = new dagre.graphlib.Graph()
 
-      dg.setGraph({ nodesep: 200, ranksep: 200, marginx: 0, marginy: 0, rankdir: 'LR' /*, ranker: 'tight-tree' */ })
+      dg.setGraph({ nodesep: 220, ranksep: 220, marginx: 0, marginy: 0, rankdir: 'LR' /*, ranker: 'tight-tree' */ })
       dg.setDefaultEdgeLabel(function () {
         return {}
       })
