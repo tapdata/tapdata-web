@@ -64,4 +64,17 @@
     font-size: 12px;
     border-radius: 4px 4px 0 0;
   }
+
+  .run-button {
+    position: absolute;
+    top: 1px;
+    right: 2px;
+    z-index: 10;
+  }
+
+  .left-editor-box {
+    .form-js-editor-wrap .code-before .hljs {
+      line-height: 36px;
+    }
+  }
 }

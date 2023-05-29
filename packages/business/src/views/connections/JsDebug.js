@@ -112,50 +112,6 @@ export const JsDebug = observer(
       )
 
       return () => {
-        const runTool = (
-          <div class="flex align-center">
-            <div class="flex-1 flex justify-content-between">
-              <FormItem.BaseItem
-                label={i18n.t('packages_form_js_processor_index_shujuhangshu')}
-                layout="horizontal"
-                feedbackLayout="none"
-              >
-                <ElInputNumber
-                  disabled={props.disabled}
-                  style="width: 100px;"
-                  value={params.rows}
-                  min={1}
-                  max={10}
-                  onInput={val => {
-                    params.rows = val
-                  }}
-                  controls-position="right"
-                ></ElInputNumber>
-              </FormItem.BaseItem>
-              <ElButton
-                class="ml-4"
-                disabled={props.disabled}
-                loading={paramsLoading.value}
-                onClick={handleGetParams}
-                type="primary"
-                size="small"
-              >
-                Get Params
-              </ElButton>
-              <ElButton
-                class="ml-4"
-                disabled={props.disabled}
-                loading={running.value}
-                onClick={handleRun}
-                type="primary"
-                size="small"
-              >
-                {i18n.t('packages_form_js_processor_index_shiyunxing')}
-              </ElButton>
-            </div>
-          </div>
-        )
-
         const jsonView = (
           <div class="flex json-view-wrap h-100" v-loading={running.value} element-loading-text={runningText.value}>
             <div class="json-view flex-1 mr-4 border rounded-2 overflow-hidden">
@@ -193,12 +149,8 @@ export const JsDebug = observer(
               }
             ]}
           >
-            <div class="flex border-bottom justify-content-between align-center px-4 py-2">
-              {fullscreen && runTool}
+            <div class="flex border-bottom justify-content-end align-center px-4 py-2">
               <div>
-                {/*<ElLink onClick={toggleFullscreen} class="js-editor-fullscreen" type="primary">*/}
-                {/*  <VIcon class="mr-1">suoxiao</VIcon> {i18n.t('packages_form_js_editor_exit_fullscreen')}*/}
-                {/*</ElLink>*/}
                 <VIcon
                   onClick={() => {
                     emit('update:visible', false)
@@ -212,7 +164,17 @@ export const JsDebug = observer(
             </div>
 
             <div class="flex flex-fill overflow-hidden">
-              <div class="flex-fill overflow-y-auto border-end">
+              <div class="flex-fill overflow-y-auto border-end position-relative left-editor-box">
+                <ElButton
+                  class="run-button"
+                  disabled={props.disabled}
+                  loading={running.value}
+                  onClick={handleRun}
+                  type="primary"
+                  size="small"
+                >
+                  {i18n.t('packages_form_js_processor_index_shiyunxing')}
+                </ElButton>
                 <Form layout="vertical" feedbackLayout="terse" class="form-wrap" form={form}>
                   <SchemaField schema={formSchema.value} />
                 </Form>
@@ -236,6 +198,31 @@ export const JsDebug = observer(
               >
                 <ElTabs onInput={() => onTabChange} class="w-100 flex flex-column">
                   <ElTabPane label={i18n.t('packages_dag_js_processor_index_duibi')}>
+                    <div class="ml-4 mb-2">
+                      <ElButton
+                        class="mr-3"
+                        disabled={props.disabled}
+                        loading={paramsLoading.value}
+                        onClick={handleGetParams}
+                        type="primary"
+                        size="small"
+                      >
+                        获取调试数据
+                      </ElButton>
+                      <span class="mr-3">{i18n.t('packages_form_js_processor_index_shujuhangshu')}</span>
+                      <ElInputNumber
+                        disabled={props.disabled}
+                        style="width: 100px;"
+                        value={params.rows}
+                        min={1}
+                        max={10}
+                        onInput={val => {
+                          params.rows = val
+                        }}
+                        controls-position="right"
+                      ></ElInputNumber>
+                      <span class="ml-3 font-color-sslight">使用HttpReceiver最新接收到的数据用于调试</span>
+                    </div>
                     {fullscreen.value && jsonView}
                   </ElTabPane>
                   <ElTabPane label={i18n.t('public_time_output')}>
