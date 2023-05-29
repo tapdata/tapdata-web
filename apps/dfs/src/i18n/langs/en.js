@@ -129,7 +129,7 @@ export default {
   tap_workbench: 'Workbench',
   tap_announcement_notice: 'Announcement Notice',
   tap_system_notification: 'System Notification',
-  tap_agent_management: 'Agent Management',
+  tap_agent_management: 'Resource Management',
   tap_instance_details: 'Instance Details',
   tap_connection_management: 'Connections',
   tap_create_connection: 'Create Connection',
@@ -1513,11 +1513,12 @@ export default {
 
   dfs_agent_download_subscriptionmodeldialog_xuanzechanpinmo: 'Select Product Type',
   dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi: 'Hosting Method',
-  dfs_agent_download_subscriptionmodeldialog_kafka: 'Kafka for data',
-  dfs_agent_download_subscriptionmodeldialog_shujukuguochan: 'Database domestic replacement',
-  dfs_agent_download_subscriptionmodeldialog_shujushangyunkua: 'Data upload to cloud/cross-cloud synchronization',
-  dfs_agent_download_subscriptionmodeldialog_shujuEtl: 'Data ETL',
-  dfs_agent_download_subscriptionmodeldialog_shishishujutong: 'Real-time data synchronization',
+  dfs_agent_download_subscriptionmodeldialog_kafka: 'CDC for Kafka',
+  dfs_agent_download_subscriptionmodeldialog_redis_gongshu: 'Warehouse Ingestion',
+  dfs_agent_download_subscriptionmodeldialog_shujukuguochan: 'ETL Pipeline',
+  dfs_agent_download_subscriptionmodeldialog_shujushangyunkua: 'SaaS Integration',
+  dfs_agent_download_subscriptionmodeldialog_shujuEtl: 'Cloud Migration',
+  dfs_agent_download_subscriptionmodeldialog_shishishujutong: 'Database Replication',
   dfs_agent_download_subscriptionmodeldialog_gongzuoliangjicheng: 'workload integration',
   dfs_agent_download_subscriptionmodeldialog_apIfuwu: 'API service publishing',
   dfs_agent_download_subscriptionmodeldialog_yunchangshangkeyong: 'Availability zone:',
@@ -1525,8 +1526,8 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_yunfuwushang: 'Cloud service provider',
   dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxi: 'Please select the region you want to deploy',
   dfs_agent_download_subscriptionmodeldialog_chuzhichisuoyou:
-    'In addition to supporting all data integration platform scenarios, it also supports:',
-  dfs_agent_download_subscriptionmodeldialog_zhuyaoshiyongchang: 'Main usage scenarios',
+    'Include all of the Integration Platform use cases, plus more:',
+  dfs_agent_download_subscriptionmodeldialog_zhuyaoshiyongchang: 'Main Use Cases',
   dfs_agent_download_subscriptionmodeldialog_heIPaa:
     'Compared with IPaas, the biggest difference is that it uses a central storage to provide shared services for enterprise core data. It has the advantages of low impact on source database performance, scalability, and data governance.',
   dfs_agent_download_subscriptionmodeldialog_qiyeshishishu:
@@ -1541,11 +1542,11 @@ export default {
   dfs_instance_createagent_heIPaa:
     'Compared with IPaas, the biggest difference is that it uses a central storage to provide shared services for enterprise core data. It has the advantages of low impact on source database performance, scalability, and data governance.',
   dfs_instance_createagent_qiyeshishishu:
-    'Enterprise real-time data service platform. By integrating data into the centralized platform in real time, after simple management, the central platform provides real-time API data services or data push services for downstream data business scenarios.',
+    'Enterprise real-time data service platform. By integrating data into the centralized platform in real time, the data platform can provide real-time API data services or data push services for downstream data application.',
   dfs_instance_createagent_leisiyuFi:
     'Similar to products such as Fivetran, Airbyte, and Hevodata, but supports more real-time data experience and lower costs, and supports both cloud and offline deployment. ',
   dfs_instance_createagent_qiyeshujuji:
-    'Enterprise data integration platform can be used to connect various data systems of enterprises, and carry out real-time data transmission, conversion and processing in these systems. ',
+    'Enterprise data integration platform can be used to connect various data systems of enterprises, and carry out real-time data transmission, conversion and processing in these systems.',
   dfs_instance_instance_zhongqi: 'Restart',
   dfs_instance_utils_quantuoguan: 'Full Management',
   dfs_instance_utils_bantuoguan: 'Semi Management',
@@ -1555,13 +1556,12 @@ export default {
   dfs_instance_createagent_tian: '15 days',
   dfs_instance_createagent_xuanzecunchufang: 'Choose a storage solution',
   dfs_instance_createagent_minjiehujuzhong: 'Agile data center',
-  dfs_instance_createagent_kucunzhongxin: 'Inventory Center',
-  dfs_instance_createagent_shangpinzhongxin: 'Commodity Center',
-  dfs_instance_createagent_kehu: 'Customer 360',
-  dfs_instance_createagent_bIkanbangong: 'BI dashboard data provisioning ',
-  dfs_instance_createagent_shishishucang: 'Real-time data warehouse',
-  dfs_instance_createagent_minjieshujuzhong: 'Agile Data Center',
-  dfs_instance_createagent_apIkuaisu: 'API quick release',
+  dfs_instance_createagent_shangpinzhongxin: 'Single View',
+  dfs_instance_createagent_kehu: 'Operational Analytics',
+  dfs_instance_createagent_bIkanbangong: 'Data Prep for BI',
+  dfs_instance_createagent_shishishucang: 'API Publish',
+  dfs_instance_createagent_minjieshujuzhong: 'Data Prep for Al',
+  dfs_instance_createagent_apIkuaisu: 'Customer Data Platform',
   dfs_instance_createagent_cunchuziyuan: 'Storage resource costs: ',
   dfs_instance_createagent_jisuanziyuan: 'Computing resources costs: ',
   dfs_instance_createagent_cunchukongjian: 'Storage Space',
@@ -1574,5 +1574,16 @@ export default {
   dfs_order_list_xinzengdingyue: 'Add Subscription',
 
   dfs_instance_details_shujuyuanziyuan: 'Data Source Resource Download',
-  dfs_instance_details_xianchengziyuanxia: 'Thread Resource Download'
+  dfs_instance_details_xianchengziyuanxia: 'Thread Resource Download',
+
+  dfs_instance_createagent_meiyouhuoqudao: 'The storage price is not obtained, please check the storage price data',
+  dfs_instance_instance_busufangshi: 'Deployment Method',
+  dfs_instance_instance_cunchuleixing: 'Storage Type',
+  dfs_instance_instance_fuwushang: 'Service Provider',
+  dfs_instance_instance_yunchangshang: 'Cloud Vendor',
+  dfs_instance_instance_gongxiangshili: 'Shared Instance',
+  dfs_instance_instance_duxiangshili: 'Private Instance',
+  dfs_instance_instance_cunchuziyuan: 'Storage Resources',
+  dfs_instance_instance_agent2: 'Agent Resource',
+  dfs_order_list_wodingyue: 'My Subscriptions'
 }

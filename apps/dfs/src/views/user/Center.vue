@@ -174,44 +174,6 @@
       </div>
     </div>
 
-    <section v-if="userData.enableLicense">
-      <div class="mt-12 fs-6 fw-sub">
-        {{ $t('dfs_user_center_shouquanmaxinxi') }}
-      </div>
-      <div class="mt-2">
-        <el-link
-          class="mr-4"
-          type="primary"
-          href="https://market.console.aliyun.com/receipt/index.htm"
-          target="_blank"
-          >{{ $t('dfs_user_center_kaifapiao') }}</el-link
-        >
-        <el-link type="primary" @click="goLicense">{{ $t('dfs_aliyun_market_checklicnese_jihuoshouquanma') }}</el-link>
-      </div>
-      <VTable
-        :columns="codeColumns"
-        :remoteMethod="codeRemoteMethod"
-        :page-options="{
-          layout: 'total, ->, prev, pager, next, sizes, jumper'
-        }"
-        hide-on-single-page
-        ref="table"
-        class="mt-4"
-      >
-        <template #agentType="{ row }">
-          <span>{{ agentTypeMap[row.agentType || 'local'] }}</span>
-        </template>
-        <template #bindAgent="{ row }">
-          <ElLink v-if="row.agentId" type="primary" @click="handleAgent(row)">{{
-            $t('dfs_instance_selectlist_yibangding') + ' ' + $t('public_agent') + ' : ' + row.agentId
-          }}</ElLink>
-          <span v-else>{{ $t('user_Center_weiBangDing') }}</span>
-        </template>
-        <template #operation="{ row }">
-          <ElButton type="text" @click="handleRenewal(row)">{{ $t('public_button_renewal') }}</ElButton>
-        </template>
-      </VTable>
-    </section>
     <ElDialog
       width="435px"
       append-to-body
@@ -998,25 +960,6 @@ export default {
     handleCopySecretKey() {
       this.secretKeyTooltip = true
     },
-    codeRemoteMethod() {
-      return this.$axios.get('api/tcm/aliyun/market/license/list').then(data => {
-        const items = data.items || []
-        return {
-          total: 0,
-          data:
-            items.map(t => {
-              let activateTime = new Date(t.activateTime.replace('Z', '+08:00')).toLocaleString()
-              let expiredTime = new Date(t.expiredTime.replace('Z', '+08:00')).toLocaleString()
-              t.activateTimeLabel = t.activateTime ? dayjs(activateTime).format('YYYY-MM-DD HH:mm:ss') : '-'
-              t.expiredTimeLabel = t.expiredTime ? dayjs(expiredTime).format('YYYY-MM-DD HH:mm:ss') : '-'
-              t.bindAgent = t.agentId
-                ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
-                : i18n.t('user_Center_weiBangDing')
-              return t
-            }) || []
-        }
-      })
-    },
     handleRecord(item = {}) {
       const { content, priceLabel, createAt, statusLabel, invoiceId } = item
       this.recordData.content = content
@@ -1050,11 +993,7 @@ export default {
         }
       })
     },
-    goLicense() {
-      this.$router.push({
-        name: 'aliyunMarketLicense'
-      })
-    },
+
     //续订
     handleRenew(row = {}) {
       const { period, periodUnit } = row
@@ -1096,11 +1035,6 @@ export default {
             })
         }
       })
-    },
-    handleRenewal() {
-      this.buried('goRenewalAliyunCode')
-      const href = 'https://market.console.aliyun.com/imageconsole/index.htm'
-      openUrl(href)
     }
   }
 }

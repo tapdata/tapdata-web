@@ -110,7 +110,8 @@ const routes = [
         component: () => import(/* webpackChunkName: "instance" */ '../views/instance/Instance.vue'),
         meta: {
           title: 'tap_agent_management',
-          icon: 'agent'
+          icon: 'agent',
+          hideTitle: true
         },
         children: [
           {
@@ -232,7 +233,8 @@ const routes = [
         name: 'order',
         component: () => import(/* webpackChunkName: "instance" */ '../views/order/List.vue'),
         meta: {
-          title: i18n.t('dfs_router_index_dingyuezhongxin')
+          title: i18n.t('dfs_router_index_dingyuezhongxin'),
+          hideTitle: true
         }
       },
       {

@@ -2,46 +2,89 @@
   <ElContainer :class="['layout-wrap', $i18n && $i18n.locale]">
     <TheHeader ref="theHeader" class="layout-header"></TheHeader>
     <ElAside class="left-aside" width="220px">
-      <ElMenu :default-active="activeMenu" @select="menuTrigger">
-        <template v-for="menu in menus">
-          <ElSubmenu v-if="menu.children" :key="menu.title" :index="menu.name">
-            <template slot="title">
-              <span class="mr-4" slot v-if="menu.icon"
+      <ElMenu class="layout-menu" :default-active="activeMenu" @select="menuTrigger">
+        <div class="flex-1">
+          <template v-for="menu in menus">
+            <ElSubmenu v-if="menu.children" :key="menu.title" :index="menu.name">
+              <template slot="title">
+                <span class="mr-4" slot v-if="menu.icon"
+                  ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
+                >
+                <span slot="title">{{ menu.title }}</span>
+              </template>
+              <template v-for="cMenu in menu.children">
+                <ElMenuItem :key="cMenu.title" :index="cMenu.path">
+                  <div class="submenu-item">{{ cMenu.title }}</div>
+                </ElMenuItem>
+              </template>
+            </ElSubmenu>
+            <ElMenuItem v-else :key="menu.title" :index="menu.path" class="flex align-center">
+              <span class="mr-4" v-if="menu.icon"
                 ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
               >
-              <span slot="title">{{ menu.title }}</span>
-            </template>
-            <template v-for="cMenu in menu.children">
-              <ElMenuItem :key="cMenu.title" :index="cMenu.path">
-                <div class="submenu-item">{{ cMenu.title }}</div>
-              </ElMenuItem>
-            </template>
-          </ElSubmenu>
-          <ElMenuItem v-else :key="menu.title" :index="menu.path" class="flex align-center">
-            <span class="mr-4" v-if="menu.icon"
-              ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
-            >
-            <span class="flex-fill">
-              {{ menu.title }}
-              <VIcon v-if="menu.beta" size="30" style="margin-bottom: 5px">beta</VIcon>
-            </span>
-            <template v-if="menu.name === 'Instance' && showAgentWarning">
-              <ElTooltip placement="top" popper-class="agent-tooltip__popper" :visible-arrow="false" effect="light">
-                <VIcon size="14" class="agent-warning-icon color-warning">warning </VIcon>
-                <template #content>
-                  <div class="font-color-dark">
-                    <VIcon size="14" class="mr-2 color-warning" style="vertical-align: -0.125em"> warning </VIcon
-                    >{{ $t('agent_tip_no_running') }}
-                  </div>
-                </template>
-              </ElTooltip>
-            </template>
+              <span class="flex-fill">
+                {{ menu.title }}
+                <VIcon v-if="menu.beta" size="30" style="margin-bottom: 5px">beta</VIcon>
+              </span>
+              <template v-if="menu.name === 'Instance' && showAgentWarning">
+                <ElTooltip placement="top" popper-class="agent-tooltip__popper" :visible-arrow="false" effect="light">
+                  <VIcon size="14" class="agent-warning-icon color-warning">warning </VIcon>
+                  <template #content>
+                    <div class="font-color-dark">
+                      <VIcon size="14" class="mr-2 color-warning" style="vertical-align: -0.125em"> warning </VIcon
+                      >{{ $t('agent_tip_no_running') }}
+                    </div>
+                  </template>
+                </ElTooltip>
+              </template>
+            </ElMenuItem>
+          </template>
+        </div>
+        <!--菜单栏分为两部分-->
+        <div class="border-top sub-menu">
+          <template v-for="menu in subMenu">
+            <ElSubmenu v-if="menu.children" :key="menu.title" :index="menu.name">
+              <template slot="title">
+                <span class="mr-4" slot v-if="menu.icon"
+                  ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
+                >
+                <span slot="title">{{ menu.title }}</span>
+              </template>
+              <template v-for="cMenu in menu.children">
+                <ElMenuItem :key="cMenu.title" :index="cMenu.path">
+                  <div class="submenu-item">{{ cMenu.title }}</div>
+                </ElMenuItem>
+              </template>
+            </ElSubmenu>
+            <ElMenuItem v-else :key="menu.title" :index="menu.path" class="flex align-center">
+              <span class="mr-4" v-if="menu.icon"
+                ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
+              >
+              <span class="flex-fill">
+                {{ menu.title }}
+                <VIcon v-if="menu.beta" size="30" style="margin-bottom: 5px">beta</VIcon>
+              </span>
+              <template v-if="menu.name === 'Instance' && showAgentWarning">
+                <ElTooltip placement="top" popper-class="agent-tooltip__popper" :visible-arrow="false" effect="light">
+                  <VIcon size="14" class="agent-warning-icon color-warning">warning </VIcon>
+                  <template #content>
+                    <div class="font-color-dark">
+                      <VIcon size="14" class="mr-2 color-warning" style="vertical-align: -0.125em"> warning </VIcon
+                      >{{ $t('agent_tip_no_running') }}
+                    </div>
+                  </template>
+                </ElTooltip>
+              </template>
+            </ElMenuItem>
+          </template>
+          <ElMenuItem v-if="!isDemoEnv" key="goDemo" index="goDemo" class="flex align-center">
+            <span class="mr-4"><VIcon class="v-icon" size="17">open-in-new</VIcon></span>
+            <span class="text-decoration-underline">{{
+              $t('dfs_agent_download_agentguidedialog_tiyan') + ' Demo'
+            }}</span>
           </ElMenuItem>
-        </template>
-        <ElMenuItem v-if="!isDemoEnv" key="goDemo" index="goDemo" class="flex align-center border-top">
-          <span class="mr-4"><VIcon class="v-icon" size="17">open-in-new</VIcon></span>
-          <span class="text-decoration-underline">{{ $t('dfs_agent_download_agentguidedialog_tiyan') + ' Demo' }}</span>
-        </ElMenuItem>
+        </div>
+
         <!--        <ElMenuItem key="goGuide" index="goGuide" class="flex align-center border-top">-->
         <!--          <span class="mr-4"><VIcon class="v-icon" size="17">open-in-new</VIcon></span>-->
         <!--          <span class="text-decoration-underline">{{ $t('dfs_views_layout_chanpinyindao') }}</span>-->
@@ -101,11 +144,6 @@ export default {
           icon: 'workbench'
         },
         {
-          name: 'Instance',
-          title: $t('agent_manage'),
-          icon: 'agent'
-        },
-        {
           name: 'connections',
           title: $t('connection_manage'),
           icon: 'connection'
@@ -120,19 +158,15 @@ export default {
           title: $t('task_manage_etl'),
           icon: 'task',
           beta: true
-        },
-        {
-          name: 'customNodeList',
-          title: $t('page_title_custom_node'),
-          icon: 'custom',
-          beta: true
-        },
-        {
-          name: 'OperationLog',
-          title: $t('operation_log_manage'),
-          icon: 'operation-log'
         }
+        // {
+        //   name: 'customNodeList',
+        //   title: $t('page_title_custom_node'),
+        //   icon: 'custom',
+        //   beta: true
+        // },
       ],
+      subMenu: [],
       dialogVisible: false,
       agentDownload: {
         visible: false,
@@ -162,7 +196,7 @@ export default {
         icon: 'process-platform',
         beta: true
       }
-      this.sortMenus.push(swimLane)
+      this.sortMenus.unshift(swimLane)
     }
     this.loopLoadAgentCount()
     this.activeMenu = this.$route.path
@@ -171,6 +205,29 @@ export default {
       return children.find(item => item.name === name)
     }
     this.menus = this.sortMenus.map(el => {
+      if (el.children?.length) {
+        el.children.forEach((cMenu, idx) => {
+          el.children[idx].path = findRoute(cMenu.name).path
+        })
+      } else {
+        let findOne = findRoute(el.name)
+        el.path = findOne.path
+      }
+      return el
+    })
+    let subMenu = [
+      {
+        name: 'Instance',
+        title: this.$t('tap_agent_management'),
+        icon: 'agent'
+      },
+      {
+        name: 'OperationLog',
+        title: this.$t('operation_log_manage'),
+        icon: 'operation-log'
+      }
+    ]
+    this.subMenu = subMenu.map(el => {
       if (el.children?.length) {
         el.children.forEach((cMenu, idx) => {
           el.children[idx].path = findRoute(cMenu.name).path
@@ -402,6 +459,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.layout-menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 90%;
+}
 .layout-wrap {
   height: 100%;
   padding-top: 52px;
