@@ -1089,8 +1089,6 @@ export default {
   packages_business_as_target: 'As Target',
   packages_business_connections_databaseform_dangqianlianjiezheng:
     'The current connection is using the original external storage, switching will result in data loss, please operate with caution. ',
-  packages_business_external_storage_list_gaiwaicunzhengzai:
-    'This external memory is being used by other tasks, modifying the external memory configuration will cause logical problems in the execution of related tasks, please use this function with caution. ',
   packages_business_swimlane_target_shouye: 'Homepage',
   packages_business_connections_databaseform_chakanwajueren: 'View mining tasks',
   packages_business_connections_databaseform_dangqianlianjiede:

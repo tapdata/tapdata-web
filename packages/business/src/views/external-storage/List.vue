@@ -372,20 +372,7 @@ export default {
 
     // 编辑
     handleEdit(row = {}) {
-      externalStorageApi.usingTask(row.id).then(data => {
-        if (!data) {
-          return this.openDialog(row)
-        }
-        this.$confirm(
-          i18n.t('packages_business_external_storage_list_gaiwaicunzhengzai'),
-          this.$t('public_button_edit'),
-          {
-            type: 'warning'
-          }
-        ).then(resFlag => {
-          resFlag && this.openDialog(row)
-        })
-      })
+      this.openDialog(row)
     }
   }
 }
