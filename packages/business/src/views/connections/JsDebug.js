@@ -1,11 +1,10 @@
 import { computed, defineComponent, ref, watch, reactive } from '@vue/composition-api'
-import { createForm, observer, Form, SchemaField, HighlightCode, FormItem, JsEditor } from '@tap/form'
+import { createForm, observer, Form, SchemaField, HighlightCode, FormItem } from '@tap/form'
 import i18n from '@tap/i18n'
 import resize from '@tap/component/src/directives/resize'
 import { VEmpty, VCodeEditor, VirtualSelect } from '@tap/component'
 import { proxyApi, taskApi } from '@tap/api'
 import './style.scss'
-import Time from '@tap/shared/src/time'
 
 // 自定义数据源调试
 export const JsDebug = observer(
@@ -54,7 +53,7 @@ export const JsDebug = observer(
       })
 
       const onTabChange = current => {
-        if (current == '1') {
+        if (current == '0') {
           refs.beforeJson.editor.resize(true)
           refs.afterJson.editor.resize(true)
 
@@ -102,6 +101,15 @@ export const JsDebug = observer(
             paramsLoading.value = false
           })
       }
+
+      watch(
+        () => props.visible,
+        show => {
+          if (show) {
+            handleGetParams()
+          }
+        }
+      )
 
       return () => {
         const runTool = (
@@ -226,7 +234,7 @@ export const JsDebug = observer(
                 class="flex border-start"
                 style="width: 55vw;"
               >
-                <ElTabs onInput={onTabChange} class="w-100 flex flex-column">
+                <ElTabs onInput={() => onTabChange} class="w-100 flex flex-column">
                   <ElTabPane label={i18n.t('packages_dag_js_processor_index_duibi')}>
                     {fullscreen.value && jsonView}
                   </ElTabPane>
