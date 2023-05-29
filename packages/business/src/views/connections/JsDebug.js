@@ -91,10 +91,9 @@ export const JsDebug = observer(
       const handleGetParams = async () => {
         paramsLoading.value = true
         proxyApi
-          .call({
-            className: 'TestRunOfHttpReceiverService',
-            method: 'testData',
-            args: [props.connectionId, params.rows]
+          .callHistory({
+            connectionId: 'source#' + props.connectionId,
+            dataSize: params.rows
           })
           .then(data => {
             inputRef.value = JSON.stringify(data, null, 2)
@@ -160,6 +159,7 @@ export const JsDebug = observer(
                 lang="json"
                 options={{ highlightActiveLine: false, highlightGutterLine: false }}
                 theme="chrome"
+                onInput={val => (inputRef.value = val)}
               ></VCodeEditor>
             </div>
             <div class="json-view flex-1 border rounded-2 overflow-hidden">
