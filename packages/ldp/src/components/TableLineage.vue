@@ -1,5 +1,9 @@
 <template>
-  <div class="table-lineage h-100 position-relative">
+  <div
+    class="table-lineage h-100 position-relative"
+    v-loading="loading"
+    :element-loading-text="`${$t('packages_business_loading')}...\n${$t('packages_ldp_lineage_loading_tips')}`"
+  >
     <PaperScroller ref="paperScroller">
       <TableNode
         v-for="node in allNodes"
@@ -63,7 +67,8 @@ export default {
         data: null,
         connectionData: {},
         tasks: []
-      }
+      },
+      loading: false
     }
   },
 
@@ -187,17 +192,19 @@ export default {
 
     async loadLineage() {
       let dag
+      this.loading = true
       try {
         const result = await lineageApi.findByTable(this.connectionId, this.tableName)
         dag = result.dag || {}
         this.setEdges(dag.edges)
-        await this.$nextTick()
+        // await this.$nextTick()
         await this.addNodes(dag)
         await this.$nextTick()
         this.handleAutoLayout()
       } catch (e) {
         console.log(e) // eslint-disable-line
       }
+      this.loading = false
     },
 
     handleAutoLayout() {
@@ -207,17 +214,20 @@ export default {
         return
       }
 
+      const scale = this.$refs.paperScroller.getPaperScale()
       const nodePositionMap = {}
       const dg = new dagre.graphlib.Graph()
 
-      dg.setGraph({ nodesep: 60, ranksep: 260, marginx: 50, marginy: 50, rankdir: 'LR' })
+      dg.setGraph({ nodesep: 200, ranksep: 200, marginx: 0, marginy: 0, rankdir: 'LR' /*, ranker: 'tight-tree' */ })
       dg.setDefaultEdgeLabel(function () {
         return {}
       })
 
       nodes.forEach(n => {
-        const { width = NODE_WIDTH, height = NODE_HEIGHT } =
+        let { width = NODE_WIDTH, height = NODE_HEIGHT } =
           document.getElementById(NODE_PREFIX + n.id)?.getBoundingClientRect() || {}
+        width /= scale
+        height /= scale
         dg.setNode(NODE_PREFIX + n.id, { width, height })
         nodePositionMap[NODE_PREFIX + n.id] = n.attrs?.position || [0, 0]
       })
@@ -313,7 +323,7 @@ export default {
                   div.classList.add('table-lineage-connection-label', 'flex', 'overflow-hidden')
                   div.innerHTML =
                     size > 1
-                      ? `<div class="flex align-center compact-tag">
+                      ? `<div class="flex align-center compact-tag overflow-hidden">
                     <span title="${taskName}" class="overflow-hidden clickable ellipsis px-1 el-tag el-tag--small el-tag--light rounded-4">${taskName}</span>
                     <span data-more="true" class="clickable ellipsis px-1 el-tag el-tag--small el-tag--light rounded-4 flex-shrink-0">+ ${
                       size - 1
@@ -418,6 +428,10 @@ export default {
           border-bottom-left-radius: 0 !important;
         }
       }
+    }
+
+    .el-loading-text {
+      white-space: pre-wrap;
     }
   }
 }

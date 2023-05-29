@@ -1,12 +1,5 @@
 <template>
-  <component
-    :is="tag"
-    v-if="visible"
-    class="sw-table-drawer flex flex-column"
-    :visible.sync="visible"
-    width="850px"
-    v-loading="loading"
-  >
+  <component :is="tag" v-if="visible" class="sw-table-drawer flex flex-column" :visible.sync="visible" width="850px">
     <header v-if="detailData" class="px-6 pt-3">
       <div class="mb-2 flex align-center">
         <span class="table-name inline-block">{{ detailData.name }}</span>
@@ -37,7 +30,7 @@
     <section class="flex-1 min-h-0 mt-1">
       <el-tabs v-model="activeName" @tab-click="handleTab" class="h-100 table-preview-tabs tabs-fill">
         <el-tab-pane :label="$t('packages_business_overview')" name="overView">
-          <div class="p-4">
+          <div class="p-4" v-loading="loading">
             <section class="bg-white rounded-lg p-3">
               <div class="mb-4">
                 <span class="table-dec-label mb-4">{{ $t('public_description') }}：</span
