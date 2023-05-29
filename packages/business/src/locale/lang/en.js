@@ -1103,5 +1103,7 @@ export default {
   packages_business_shared_mining_table_yihebingdelian: 'Merged Connections',
   packages_business_shared_mining_table_shengyuyigelian:
     'There is one connection left, this operation cannot be performed',
-  packages_business_logs_nodelog_yijianfuzhi: 'One key copy'
+  packages_business_logs_nodelog_yijianfuzhi: 'One key copy',
+  packages_business_connections_jsdebug_shiyongHtt: 'Use the latest data received by HttpReceiver for debugging',
+  packages_business_connections_jsdebug_huoqutiaoshishu: 'Get debug data'
 }

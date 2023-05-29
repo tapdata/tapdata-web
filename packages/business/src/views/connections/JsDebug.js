@@ -207,7 +207,7 @@ export const JsDebug = observer(
                         type="primary"
                         size="small"
                       >
-                        获取调试数据
+                        {i18n.t('packages_business_connections_jsdebug_huoqutiaoshishu')}
                       </ElButton>
                       <span class="mr-3">{i18n.t('packages_form_js_processor_index_shujuhangshu')}</span>
                       <ElInputNumber
@@ -221,7 +221,9 @@ export const JsDebug = observer(
                         }}
                         controls-position="right"
                       ></ElInputNumber>
-                      <span class="ml-3 font-color-sslight">使用HttpReceiver最新接收到的数据用于调试</span>
+                      <span class="ml-3 font-color-sslight">
+                        {i18n.t('packages_business_connections_jsdebug_shiyongHtt')}
+                      </span>
                     </div>
                     {fullscreen.value && jsonView}
                   </ElTabPane>
