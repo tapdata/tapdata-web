@@ -1102,6 +1102,6 @@ export default {
   packages_business_shared_mining_table_tingzhiwajueti: 'Stop mining reminder',
   packages_business_shared_mining_table_yihebingdelian: 'Merged Connections',
   packages_business_shared_mining_table_shengyuyigelian:
-    'There is one connection left, this operation cannot be performed',
+    'There is only one connection and one table left, which makes it impossible to perform this operation.',
   packages_business_logs_nodelog_yijianfuzhi: 'One key copy'
 }
