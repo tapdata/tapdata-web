@@ -316,28 +316,37 @@ export default {
             [
               'Custom',
               {
-                create() {
+                id: 'taskTag',
+                create: () => {
                   const size = tasks.length
                   const taskName = tasks[0].name
                   const div = document.createElement('div')
-                  div.classList.add('table-lineage-connection-label', 'flex', 'overflow-hidden')
-                  div.innerHTML =
-                    size > 1
-                      ? `<div class="flex align-center compact-tag overflow-hidden">
-                    <span title="${taskName}" class="overflow-hidden clickable ellipsis px-1 el-tag el-tag--small el-tag--light rounded-4">${taskName}</span>
-                    <span data-more="true" class="clickable ellipsis px-1 el-tag el-tag--small el-tag--light rounded-4 flex-shrink-0">+ ${
-                      size - 1
-                    }</span>
-                    </div>`
-                      : `<span title="${taskName}" class="clickable ellipsis px-1 el-tag el-tag--small el-tag--light rounded-4">${taskName}</span>`
+
+                  div.className = 'table-lineage-connection-label flex align-center overflow-hidden'
+                  div.innerHTML = `<span title="${taskName}" class="overflow-hidden clickable ellipsis px-1 el-tag el-tag--small el-tag--light rounded-4">${taskName}</span>`
+
+                  if (size > 1) {
+                    const handleClick = ev => {
+                      ev.stopPropagation()
+                      this.showNodePopover(ev.target, tasks.slice(1))
+                    }
+                    const dropdownSlot = document.createElement('span')
+                    dropdownSlot.className =
+                      'clickable ellipsis px-1 el-tag el-tag--small el-tag--light rounded-4 flex-shrink-0'
+                    dropdownSlot.innerHTML = `+${size - 1}<i tabindex="0" class="el-icon-arrow-down"></i>`
+                    dropdownSlot.addEventListener('click', handleClick)
+                    div.classList.add('compact-tag')
+                    div.appendChild(dropdownSlot)
+
+                    div.destroy = () => {
+                      dropdownSlot.removeEventListener('click', handleClick)
+                    }
+                  }
+
                   return div
                 },
                 events: {
-                  click: (overlay, ev) => {
-                    if (tasks.length > 1 && ev.target.dataset.more) {
-                      this.showNodePopover(ev.target, tasks.slice(1))
-                      return
-                    }
+                  click: () => {
                     this.$emit('click-task', tasks[0])
                   }
                 }
@@ -354,6 +363,15 @@ export default {
     },
 
     reset() {
+      // 解绑overlay事件
+      this.jsPlumbIns.getConnections().forEach(connection => {
+        const taskTag = connection.getOverlay('taskTag')
+
+        if (taskTag) {
+          const $el = taskTag.getElement()
+          $el.destroy?.()
+        }
+      })
       this.jsPlumbIns.reset()
       this.resetState()
       this.setStateReadonly(true)
@@ -417,7 +435,7 @@ export default {
     .table-lineage-connection-label {
       max-width: 180px;
       z-index: 1001;
-      .compact-tag {
+      &.compact-tag {
         .el-tag:first-child {
           border-top-right-radius: 0 !important;
           border-bottom-right-radius: 0 !important;
