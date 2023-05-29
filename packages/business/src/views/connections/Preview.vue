@@ -341,27 +341,10 @@ export default {
     },
     async reload(cb) {
       this.checkAgent(() => {
-        let config = {
-          title: this.$t('packages_business_connection_reloadTittle'),
-          Message: this.$t('packages_business_connection_reloadMsg'),
-          confirmButtonText: this.$t('packages_business_message_confirm'),
-          cancelButtonText: this.$t('packages_business_message_cancel'),
-          name: this.connection.name,
-          id: this.connection.id
-        }
-        this.$confirm(config.Message + config.name + '?', config.title, {
-          confirmButtonText: config.confirmButtonText,
-          cancelButtonText: config.cancelButtonText,
-          type: 'warning',
-          closeOnClickModal: false
-        }).then(resFlag => {
-          if (resFlag) {
-            this.showProgress = true
-            this.progress = 0
-            this.testSchema(cb)
-            this.$emit('reload-schema')
-          }
-        })
+        this.showProgress = true
+        this.progress = 0
+        this.testSchema(cb)
+        this.$emit('reload-schema')
       })
     },
     //请求测试
