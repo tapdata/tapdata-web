@@ -26,6 +26,10 @@ const proxy = {
   target: process.env.SERVER_URI || origin || serveUrlMap[SERVE_ENV],
   changeOrigin: true
 }
+const proxy1 = {
+  target: 'http://192.168.1.179:3344',
+  changeOrigin: true
+}
 
 //sass变量
 let varUrl = '~@tap/assets/styles/var.scss'
@@ -97,6 +101,7 @@ module.exports = {
             '/private_ask/': proxy,
             '/api/tcm/': proxy,
             '/api/gw/': proxy,
+            '/api/ticket': proxy1,
             '/tm/':
               SERVE_ENV === 'local'
                 ? localTmProxy

@@ -4,9 +4,19 @@
     class="shared-cache-details"
     :visible.sync="visible"
     v-bind="$attrs"
+    title="工单详情"
     @visible="handleVisible"
   >
-    <div v-if="details.id" class="shared-cache-details--header flex pb-3"></div>
+    <div v-if="details.id" class="shared-cache-details--header flex pb-3">
+      <ul>
+        <li>
+          <span> 回复内容: </span>
+          <span v-for="(item, index) in details.comments" :key="index">
+            <span v-html="item.content"> {{ item.content }}</span>
+          </span>
+        </li>
+      </ul>
+    </div>
   </Drawer>
 </template>
 
@@ -35,6 +45,9 @@ export default {
   methods: {
     getData(id) {
       this.visible = true
+      this.$axios.get(`api/ticket/${id}`).then(data => {
+        this.details = data
+      })
     },
     handleVisible() {
       this.visible = false

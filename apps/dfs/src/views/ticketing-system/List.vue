@@ -25,26 +25,33 @@
         </template>
         <template #operation="{ row }">
           <ElButton type="text" @click="handleDetails(row)">详情</ElButton>
-          <ElButton>关闭</ElButton>
+          <ElButton type="text" @click="close(row.id)">关闭</ElButton>
         </template>
       </VTable>
     </div>
-    <!--转账支付-->
+    <!--新建工单-->
     <ElDialog title="新建工单" :visible.sync="createDialog" width="620px">
       <span>
-        <el-form label-position="top">
-          <el-form-item label="选择数据源">
-            <el-select v-model="createForm.task" placeholder="请选择选择任务" class="w-100">
-              <el-option v-for="item in agentTypeMap" :key="item" :label="item">{{ item }}</el-option>
+        <el-form label-position="top" :model="createForm" :rules="rules" ref="createForm">
+          <el-form-item label="主题" prop="subject">
+            <el-input v-model="createForm.subject" placeholder="请输入主题" required></el-input>
+          </el-form-item>
+          <el-form-item label="选择数据源" prop="task">
+            <el-select v-model="createForm.jobId" placeholder="请选择选择任务" class="w-100" required>
+              <el-option v-for="item in taskList" :key="item.id" :label="item.name" :value="item.id">{{
+                item.name
+              }}</el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="选择任务">
-            <el-select v-model="createForm.task" placeholder="请选择选择任务" class="w-100">
-              <el-option v-for="item in agentTypeMap" :key="item" :label="item">{{ item }}</el-option>
+          <el-form-item label="选择任务" prop="connection">
+            <el-select v-model="createForm.connectionId" placeholder="请选择选择任务" class="w-100" required>
+              <el-option v-for="item in connectionList" :key="item.id" :label="item.name" :value="item.id">{{
+                item.name
+              }}</el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="问题">
-            <el-input v-model="createForm.problem" type="textarea" placeholder="请输入工单金额"></el-input>
+          <el-form-item label="问题" prop="subject">
+            <el-input v-model="createForm.description" type="textarea" placeholder="请描述您的问题" required></el-input>
           </el-form-item>
         </el-form>
       </span>
@@ -68,6 +75,8 @@ import { CURRENCY_SYMBOL_MAP, ORDER_STATUS_MAP, TIME_MAP } from '@tap/business'
 import { getPaymentMethod, getSpec, AGENT_TYPE_MAP } from '../instance/utils'
 import dayjs from 'dayjs'
 
+import { connectionsApi, taskApi } from '@tap/api'
+
 export default {
   components: { FilterBar, VTable, Details },
   inject: ['buried'],
@@ -84,39 +93,48 @@ export default {
       search: '',
       filterItems: [],
       createForm: {
-        problem: '',
-        task: '',
-        connection: ''
+        jobId: '',
+        connectionId: '',
+        subject: '',
+        description: ''
       },
       columns: [
         {
-          label: '问题',
-          prop: 'content'
+          label: '主题',
+          prop: 'subject'
         },
         {
-          label: '工单编号',
-          prop: 'periodLabel',
+          label: '问题',
+          prop: 'description',
           width: 320
         },
         {
           label: '工单编号',
-          prop: 'quantity'
+          prop: 'ticketNumber'
         },
         {
           label: '工单状态',
-          prop: 'quantity'
+          prop: 'status'
         },
         {
           label: '提交时间',
-          prop: 'agentType',
-          slotName: 'agentType'
+          prop: 'createdTime',
+          dataType: 'time'
         },
         {
           label: i18n.t('public_operation'),
-          prop: 'extendArray',
+          prop: 'operation',
           slotName: 'operation'
         }
-      ]
+      ],
+      rules: {
+        jobId: [{ required: true, message: '请选择选择任务', trigger: 'blur' }],
+        connectionId: [{ required: true, message: '选择数据源', trigger: 'change' }],
+        subject: [{ required: true, message: '请输入主题', trigger: 'change' }],
+        description: [{ required: true, message: '请描述您的问题', trigger: 'change' }]
+      },
+      taskList: [],
+      connectionList: []
     }
   },
   computed: {
@@ -126,6 +144,8 @@ export default {
   },
   created() {
     this.getFilterItems()
+    this.getTask()
+    this.getConnection()
   },
   watch: {
     $route(route) {
@@ -163,50 +183,113 @@ export default {
         sort: ['createAt desc'],
         where: where
       }
-      return this.$axios
-        .get(`api/tcm/paid/plan/paidSubscribe?filter=${encodeURIComponent(JSON.stringify(filter))}`)
-        .then(data => {
-          let items = data.items || []
-          return {
-            total: data.total,
-            data:
-              items.map(t => {
-                t.statusLabel = ORDER_STATUS_MAP[t.status]
-                const { spec, type, periodUnit, period } = t || {}
-                t.subscriptionMethodLabel = getPaymentMethod({
-                  type,
-                  periodUnit,
-                  period
+      let { userId } = window.__USER_INFO__
+      return this.$axios.get(`api/ticket?userId=${userId}&page=${current}&limit=${size}`).then(data => {
+        let items = data.items || []
+        return {
+          total: data.total,
+          data:
+            items.map(t => {
+              t.statusLabel = ORDER_STATUS_MAP[t.status]
+              const { spec, type, periodUnit, period } = t || {}
+              t.subscriptionMethodLabel = getPaymentMethod({
+                type,
+                periodUnit,
+                period
+              })
+              t.agentDeploy = this.agentTypeMap[t.agentDeploy || 'selfHost']
+              t.content = `${t.subscriptionMethodLabel} ${getSpec(spec)} ${i18n.t('public_agent')}`
+              t.periodLabel =
+                t.status === 'unPay'
+                  ? '-'
+                  : dayjs(t.periodStart).format('YYYY-MM-DD HH:mm:ss') +
+                    ' - ' +
+                    dayjs(t.periodEnd).format('YYYY-MM-DD HH:mm:ss')
+              t.priceSuffix = t.type === 'recurring' ? '/' + TIME_MAP[t.periodUnit] : ''
+              t.formatPrice =
+                CURRENCY_SYMBOL_MAP[t.currency] +
+                (t.price / 100).toLocaleString('zh', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
                 })
-                t.agentDeploy = this.agentTypeMap[t.agentDeploy || 'selfHost']
-                t.content = `${t.subscriptionMethodLabel} ${getSpec(spec)} ${i18n.t('public_agent')}`
-                t.periodLabel =
-                  t.status === 'unPay'
-                    ? '-'
-                    : dayjs(t.periodStart).format('YYYY-MM-DD HH:mm:ss') +
-                      ' - ' +
-                      dayjs(t.periodEnd).format('YYYY-MM-DD HH:mm:ss')
-                t.priceSuffix = t.type === 'recurring' ? '/' + TIME_MAP[t.periodUnit] : ''
-                t.formatPrice =
-                  CURRENCY_SYMBOL_MAP[t.currency] +
-                  (t.price / 100).toLocaleString('zh', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                  })
-                t.priceLabel = t.formatPrice + t.priceSuffix
-                t.bindAgent = t.agentId
-                  ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
-                  : i18n.t('user_Center_weiBangDing')
-                return t
-              }) || []
-          }
-        })
+              t.priceLabel = t.formatPrice + t.priceSuffix
+              t.bindAgent = t.agentId
+                ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
+                : i18n.t('user_Center_weiBangDing')
+              return t
+            }) || []
+        }
+      })
     },
     handleDetails(row) {
       this.$refs.details.getData(row.id)
     },
+    //获取任务列表
+    getTask() {
+      let fields = {
+        id: true,
+        name: true,
+        last_updated: true
+      }
+      let filter = {
+        order: 'last_updated DESC',
+        limit: 1000,
+        fields: fields,
+        skip: 0
+      }
+      taskApi
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(data => {
+          this.taskList = data?.items || []
+        })
+    },
+    //获取连接列表
+    getConnection() {
+      let filter = {
+        order: 'last_updated DESC',
+        limit: 1000,
+        noSchema: 1,
+        skip: 0
+      }
+      connectionsApi
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(data => {
+          this.connectionList = data?.items || []
+        })
+    },
+    //关闭工单
+    close(id) {
+      this.$axios.patch('api/ticket/' + id).then(() => {
+        this.$message.success('工单已关闭')
+        this.table.fetch(1)
+      })
+    },
     //提交工单
-    create() {}
+    create() {
+      this.$refs.createForm.validate(valid => {
+        if (valid) {
+          let { userId, phone, email } = window.__USER_INFO__
+          let taskName = this.taskList.find(task => task.id === this.createForm?.jobId)?.name
+          let connectionName = this.connectionList.find(conn => conn.id === this.createForm?.connectionId)?.name
+          let params = Object.assign(this.createForm, {
+            connectionName: connectionName,
+            jobName: taskName,
+            userId: userId,
+            phone: phone,
+            email: email
+          })
+          this.$axios.post('api/ticket', params).then(() => {
+            this.createDialog = false
+            this.table.fetch(1)
+            this.$message.success('操作成功')
+          })
+        }
+      })
+    }
   }
 }
 </script>
