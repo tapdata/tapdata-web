@@ -197,7 +197,8 @@ export default {
       submitLoading: false,
       recoverLoading: false,
       selectedConnectionId: '',
-      connectionsList: []
+      connectionsList: [],
+      listTotal: 0
     }
   },
   watch: {
@@ -226,8 +227,9 @@ export default {
         size: size
       }
       return logcollectorApi[this.currentTab === 'running' ? 'tableInfos' : 'excludeTableInfos'](filter).then(data => {
+        this.listTotal = data.total || 0
         return {
-          total: data.total,
+          total: this.listTotal,
           data: data.items || []
         }
       })
@@ -250,7 +252,7 @@ export default {
     },
 
     handleStop() {
-      if (this.connectionsList.length <= 1)
+      if (this.connectionsList.length <= 1 && this.listTotal <= 1)
         return this.$message.error(i18n.t('packages_business_shared_mining_table_shengyuyigelian'))
       const { taskId } = this
       let tableNameMap = {}

@@ -1047,6 +1047,6 @@ export default {
     '您要停止挖掘的表正在被以下任務使用，停止挖掘後將會影響以下任務的正常同步，請確認是否要繼續停止。 ',
   packages_business_shared_mining_table_tingzhiwajueti: '停止挖掘提醒',
   packages_business_shared_mining_table_yihebingdelian: '已合并的連接',
-  packages_business_shared_mining_table_shengyuyigelian: '剩餘一個連接，無法進行該操作',
+  packages_business_shared_mining_table_shengyuyigelian: '剩餘一個連接和一個表，無法進行該操作',
   packages_business_logs_nodelog_yijianfuzhi: '一鍵複製'
 }
