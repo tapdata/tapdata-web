@@ -168,15 +168,6 @@ export class Table extends NodeType {
                 }
               },
               {
-                target: 'updateConditionFields',
-                effects: ['onFieldValueChange'],
-                fulfill: {
-                  state: {
-                    value: null
-                  }
-                }
-              },
-              {
                 dependencies: ['$inputs'],
                 fulfill: {
                   schema: {
