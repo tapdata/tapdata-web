@@ -54,7 +54,12 @@ export class Table extends NodeType {
         title: i18n.t('public_node_name'),
         required: true,
         'x-decorator': 'FormItem',
-        'x-component': 'Input'
+        'x-component': 'Input',
+        'x-component-props': {
+          onChange: `{{() => {
+            $values.attrs.hasNameEdited = true
+          }}}`
+        }
       },
 
       connectionIdWrap: {
@@ -162,9 +167,7 @@ export class Table extends NodeType {
                 target: 'name',
                 effects: ['onFieldInputValueChange'],
                 fulfill: {
-                  state: {
-                    value: '{{$self.value}}'
-                  }
+                  run: `{{ $self.value && !$values.attrs.hasNameEdited && ($target.value = $self.value) }}`
                 }
               },
               {
