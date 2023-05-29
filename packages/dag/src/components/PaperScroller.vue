@@ -699,6 +699,10 @@ export default {
     getPaperCenterPos() {
       const pos = this.getScaleAbsolutePoint()
       return this.getMouseToPage(pos)
+    },
+
+    getPaperScale() {
+      return this.paperScale
     }
   }
 }
