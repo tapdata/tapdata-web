@@ -288,7 +288,7 @@ export default {
         <div
           class="custom-tree-node grabbable"
           on={{
-            dblclick: () => {
+            click: () => {
               data.isObject && this.$emit('preview', data, this.mdmConnection)
             },
             dragenter: ev => {
