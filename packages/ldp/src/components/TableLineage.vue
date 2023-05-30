@@ -419,7 +419,7 @@ export default {
         pdkHash: node.pdkHash
       }
 
-      this.$emit('node-dblclick', table, null, true)
+      this.$emit('node-dblclick', table)
     }
   }
 }

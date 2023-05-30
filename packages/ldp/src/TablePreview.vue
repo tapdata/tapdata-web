@@ -1,5 +1,12 @@
 <template>
-  <component :is="tag" v-if="visible" class="sw-table-drawer flex flex-column" :visible.sync="visible" width="850px">
+  <component
+    :is="tag"
+    v-if="visible"
+    class="sw-table-drawer flex flex-column"
+    :visible="visible"
+    @update:visible="handleUpdateVisible"
+    width="850px"
+  >
     <header class="px-6 pt-3">
       <div class="mb-2 flex align-center">
         <span class="table-name inline-block">{{ selected.name }}</span>
@@ -125,6 +132,7 @@
               :columns="columns"
               :data="tableFields"
               :has-pagination="false"
+              v-loading="loading"
             >
               <div slot="empty">{{ $t('public_data_no_data') }}</div>
               <template #primaryKey="{ row }">
@@ -160,7 +168,12 @@
                   $t('packages_business_swimlane_tablepreview_chuangjianrenwu')
                 }}</span>
               </div>
-              <el-table class="discovery-page-table" :data="filterTask" :has-pagination="false">
+              <el-table
+                v-loading="loading || taskLoading"
+                class="discovery-page-table"
+                :data="filterTask"
+                :has-pagination="false"
+              >
                 <el-table-column :label="$t('public_task_name')" prop="name" width="200px" show-overflow-tooltip>
                   <template #default="{ row }">
                     <span class="dataflow-name link-primary flex">
@@ -399,7 +412,8 @@ export default {
       selected: {},
       swimType: '', // source/fdm/mdm/target
       asTaskType: 'all',
-      connection: null
+      connection: null,
+      taskLoading: false
     }
   },
   computed: {
@@ -446,9 +460,11 @@ export default {
       this.cdcDelayTime = ''
       this.lastDataChangeTime = ''
     },
-    open(row, connection, notReset) {
-      console.log('open preview', row, connection) // eslint-disable-line
-      !notReset && this.reset()
+    open(row, connection) {
+      clearTimeout(this.visibleTimer)
+
+      if (!this.visible) this.reset()
+
       this.init()
       this.visible = true
       this.swimType = row.SWIM_TYPE
@@ -476,45 +492,51 @@ export default {
         })
     },
     getTasks() {
+      this.taskLoading = true
       let params = {
         connectionId: this.connectionId,
         tableName: this.detailData.name
       }
-      taskApi.getTaskByTableName(params).then(taskList => {
-        taskList.forEach(task => {
-          const { dag } = task
+      taskApi
+        .getTaskByTableName(params)
+        .then(taskList => {
+          taskList.forEach(task => {
+            const { dag } = task
 
-          if (dag.edges?.length && dag.nodes?.length) {
-            const outputsMap = {}
-            const inputsMap = {}
+            if (dag.edges?.length && dag.nodes?.length) {
+              const outputsMap = {}
+              const inputsMap = {}
 
-            dag.edges.forEach(({ source, target }) => {
-              let _source = outputsMap[source]
-              let _target = inputsMap[target]
+              dag.edges.forEach(({ source, target }) => {
+                let _source = outputsMap[source]
+                let _target = inputsMap[target]
 
-              if (!_source) {
-                outputsMap[source] = [target]
-              } else {
-                _source.push(target)
-              }
+                if (!_source) {
+                  outputsMap[source] = [target]
+                } else {
+                  _source.push(target)
+                }
 
-              if (!_target) {
-                inputsMap[target] = [source]
-              } else {
-                _target.push(source)
-              }
-            })
+                if (!_target) {
+                  inputsMap[target] = [source]
+                } else {
+                  _target.push(source)
+                }
+              })
 
-            task.isAsSource = dag.nodes.some(node => {
-              if (!inputsMap[node.id] && outputsMap[node.id] && node.connectionId === this.connectionId) {
-                if (node.type === 'database') return true
-                return node.tableName === params.tableName
-              }
-            })
-          }
+              task.isAsSource = dag.nodes.some(node => {
+                if (!inputsMap[node.id] && outputsMap[node.id] && node.connectionId === this.connectionId) {
+                  if (node.type === 'database') return true
+                  return node.tableName === params.tableName
+                }
+              })
+            }
+          })
+          this.taskData = taskList
         })
-        this.taskData = taskList
-      })
+        .finally(() => {
+          this.taskLoading = false
+        })
     },
     getSampleData() {
       let params = {
@@ -621,6 +643,14 @@ export default {
     reset() {
       this.activeName = 'overView'
       this.asTaskType = 'all'
+    },
+
+    handleUpdateVisible(val) {
+      if (!val) {
+        this.visibleTimer = setTimeout(() => {
+          this.visible = false
+        }, 30)
+      }
     }
   }
 }
