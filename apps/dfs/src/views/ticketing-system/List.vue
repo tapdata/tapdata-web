@@ -19,8 +19,8 @@
         class="mt-4"
       >
         <template #name="{ row }">
-          <span class="cursor-pointer ticket-name ellipsis inline-block" @click="handleDetails(row)">{{
-            row.name
+          <span class="cursor-pointer ticket-name ellipsis inline-block color-primary" @click="handleDetails(row)">{{
+            row.subject
           }}</span>
         </template>
         <template #operation="{ row }">
@@ -101,12 +101,12 @@ export default {
       columns: [
         {
           label: '主题',
-          prop: 'subject'
+          prop: 'subject',
+          slotName: 'name'
         },
         {
           label: '问题',
-          prop: 'description',
-          width: 320
+          prop: 'description'
         },
         {
           label: '工单编号',
@@ -124,7 +124,8 @@ export default {
         {
           label: i18n.t('public_operation'),
           prop: 'operation',
-          slotName: 'operation'
+          slotName: 'operation',
+          width: 100
         }
       ],
       rules: {

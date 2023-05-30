@@ -4,43 +4,46 @@
     class="shared-cache-details"
     :visible.sync="visible"
     v-bind="$attrs"
-    title="工单详情"
     @visible="handleVisible"
   >
-    <div v-if="details.id" class="shared-cache-details--header flex pb-3">
-      <ul>
+    <div v-if="details.id" class="shared-cache-details--header flex pb-3 flex-column">
+      <header class="border-bottom py-2">
+        <span class="font-color-dark inline-block fw-bold fs-6">工单详情</span>
+      </header>
+      <ul class="detail-ul flex flex-column flex-1">
         <li>
-          <span class="w-10 font-color-sslight"> 主题</span>
+          <span class="label font-color-sslight inline-block"> 主题:</span>
           <span class="font-color-dark fw-normal"> {{ details.subject }}</span>
         </li>
         <li>
-          <span class="w-10 font-color-sslight"> 数据源</span>
+          <span class="label font-color-sslight inline-block"> 数据源:</span>
           <span class="font-color-dark fw-normal"> {{ details.connectionName }}</span>
         </li>
         <li>
-          <span class="w-10 font-color-sslight"> 任务</span>
+          <span class="label font-color-sslight inline-block"> 任务:</span>
           <span class="font-color-dark fw-normal"> {{ details.jobName }}</span>
         </li>
         <li>
-          <span class="w-10 font-color-sslight"> 工单编号</span>
+          <span class="label font-color-sslight inline-block"> 工单编号:</span>
           <span class="font-color-dark fw-normal"> {{ details.ticketNumber }}</span>
         </li>
         <li>
-          <span class="w-10 font-color-sslight">工单状态</span>
+          <span class="label font-color-sslight inline-block">工单状态:</span>
           <span class="font-color-dark fw-normal"> {{ details.status }}</span>
         </li>
         <li>
-          <span class="w-10 font-color-sslight">提交时间</span>
+          <span class="label font-color-sslight inline-block">提交时间: </span>
           <span class="font-color-dark fw-normal"> {{ details.createdTime }}</span>
         </li>
-        <li>
-          <span class="w-10 font-color-sslight">问题</span>
-          <span class="font-color-dark fw-normal"> {{ details.description }}</span>
+        <li class="border-top">
+          <span class="label font-color-sslight inline-block">问题: </span>
+          <span class="font-color-slight fw-normal"> {{ details.description }}</span>
         </li>
         <li>
-          <span> 回复内容: </span>
-          <span v-for="(item, index) in details.comments" :key="index">
-            <span v-html="item.content"> {{ item.content }}</span>
+          <span v-if="details.comment === 0">暂无评论</span>
+          <span v-else v-for="(item, index) in details.comments" :key="index" class="flex mt-2">
+            <span class="label color-primary inline-block"> 回复内容: </span>
+            <span class="font-color-dark fw-normal" v-html="item.content"> {{ item.content }}</span>
           </span>
         </li>
       </ul>
@@ -86,13 +89,20 @@ export default {
 
 <style lang="scss" scoped>
 .shared-cache-details {
-  padding: 16px;
+  padding: 12px 16px 16px 16px;
 }
 .shared-cache-details--header {
-  border-bottom: 1px solid map-get($borderColor, light);
   .icon {
     font-size: 18px;
   }
+}
+.detail-ul {
+  li {
+    padding: 10px 0;
+  }
+}
+.label {
+  width: 80px;
 }
 .drawer-info__item {
   display: flex;
