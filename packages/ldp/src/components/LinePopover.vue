@@ -16,6 +16,7 @@
         class="popover-list-item ellipsis px-3"
       >
         {{ task.name }}
+        <TaskStatus class="popover-list-item-status" :task="task"></TaskStatus>
       </div>
     </div>
   </ElPopover>
@@ -23,6 +24,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { TaskStatus } from '@tap/business'
 
 export default {
   name: 'NodePopover',
@@ -33,6 +35,10 @@ export default {
 
   computed: {
     ...mapGetters('dataflow', ['processorNodeTypes'])
+  },
+
+  components: {
+    TaskStatus
   },
 
   methods: {
@@ -57,6 +63,10 @@ export default {
       line-height: 32px;
       border-radius: 6px;
       cursor: pointer;
+
+      &-status {
+        line-height: normal;
+      }
 
       &:hover {
         background-color: #edf1f9;
