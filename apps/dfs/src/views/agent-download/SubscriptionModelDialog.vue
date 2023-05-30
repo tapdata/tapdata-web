@@ -1259,6 +1259,7 @@ export default {
       }
       this.$axios.get('api/tcm/orders/paid/price', { params }).then(data => {
         const { paidPrice = [] } = data?.[0] || {}
+        this.paidPrice = paidPrice
         //根据订阅方式再过滤一层
         let prices = paidPrice?.filter(
           t =>
@@ -1278,7 +1279,8 @@ export default {
                 t.chargeProvider === 'FreeTier'
                   ? i18n.t('dfs_instance_createagent_mianfeishiyonggui')
                   : `MongoDB ${cpu}C${memory}G`,
-              chargeProvider: t.chargeProvider
+              chargeProvider: t.chargeProvider,
+              mdbSpec: t.mdbSpec
             }
           }),
           'name'
@@ -1288,24 +1290,45 @@ export default {
       })
     },
     //判断是否可选存储规格
-    getCloudMdbSource() {
+    async getCloudMdbSource() {
       //选择存储规格时，需要判断mdbSpec 是否有可用区
-      this.$axios.get('api/tcm/orders/paid/getCloudMdbSource').then(data => {
-        //过滤出当前可用区下的mdbRegionProvider
-        let original = data.filter(it => it.cloudProvider === this.provider)?.[0] || []
-        let mdbRegionProvider = original.mdbRegionProvider
+      if (this.provider !== 'AliCloud') return
+
+      try {
+        const data = await this.$axios.get('api/tcm/orders/paid/getCloudMdbSource')
+        let original = data.find(it => it.cloudProvider === this.provider)
+        let { mdbRegionProvider = [] } = original
+        this.spec2Zone = mdbRegionProvider.reduce((map, item) => {
+          return item.mdbZoneProvider.reduce((_map, it) => {
+            return it.mdbProvider.reduce((__map, specItem) => {
+              if (!__map[specItem.mdbSpec]) {
+                _map[specItem.mdbSpec] = it.zone
+              }
+              return __map
+            }, _map)
+          }, map)
+        }, {})
         let mdbZoneProvider = []
         if (mdbRegionProvider.length > 0) {
           mdbZoneProvider = mdbRegionProvider.filter(it => it.region === this.region)?.[0]?.mdbZoneProvider || []
         }
         this.cloudMdbSource = mdbZoneProvider
-      })
+      } catch (e) {
+        console.log(e) // eslint-disable-line
+      }
     },
     //选择存储规格
     changeMongodbMemory() {
       let values = this.mongodbSpec.split('-')
       let cpu = Number(values[0])
       let memory = Number(values[1])
+      this.mdbZone = '' //初始化
+      //根据订阅方式再过滤一层
+      this.mongodbPaidPrice = this.paidPrice?.filter(
+        t =>
+          (t.periodUnit === this.selected.periodUnit && t.type === this.selected.type) ||
+          t.chargeProvider === 'FreeTier'
+      )
       if (cpu === 0 && memory === 0) {
         this.mongodbSpecPrice = 0
         this.mdbPrices = 0
@@ -1320,32 +1343,14 @@ export default {
         }
       }
       this.currentMemorySpecName = `MongoDB ${cpu}C${memory}G`
-      let price = this.mongodbPaidPrice.filter(
+      let price = this.mongodbPaidPrice.find(
         t => t.spec.storageSize === this.memorySpace && cpu === t.spec.cpu && memory === t.spec.memory
       )
+      console.log('price', price) // eslint-disable-line
       //需要改变mdbPriceId 因为存储空间改变了
-      this.mdbPriceId = price?.[0]?.priceId
-      this.mdbPrice(price?.[0].currencyOption?.find(item => item.currency === this.currencyType)?.amount || 0)
-      this.findCloud(price?.[0]?.mdbSpec)
-    },
-    //遍历查找mdbSpec
-    findCloud(spec) {
-      try {
-        this.cloudMdbSource.forEach(it => {
-          if (it.mdbProvider?.length > 0) {
-            it.mdbProvider.forEach(item => {
-              if (item.mdbSpec === spec) {
-                this.mdbZone = it.zone
-                throw new Error('stop')
-              }
-            })
-          }
-        })
-      } catch (e) {
-        if (e.message !== 'stop') {
-          throw e
-        }
-      }
+      this.mdbPriceId = price?.priceId
+      this.mdbZone = this.spec2Zone[price?.mdbSpec]
+      this.mdbPrice(price?.currencyOption?.find(item => item.currency === this.currencyType)?.amount || 0)
     },
     //存储价格
     mdbPrice(price) {
@@ -1890,6 +1895,13 @@ export default {
 
     .product-type-card-title {
       color: #86909c !important;
+    }
+  }
+}
+.subscription-steps-wrap {
+  ::v-deep {
+    .el-steps--simple {
+      padding: 13px 0;
     }
   }
 }

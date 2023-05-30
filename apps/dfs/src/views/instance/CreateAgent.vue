@@ -1875,25 +1875,7 @@ export default {
         console.log(e) // eslint-disable-line
       }
     },
-    //遍历查找mdbSpec
-    findCloud(spec) {
-      try {
-        this.cloudMdbSource.forEach(it => {
-          if (it.mdbProvider?.length > 0) {
-            it.mdbProvider.forEach(item => {
-              if (item.mdbSpec === spec) {
-                this.mdbZone = it.zone
-                throw new Error('stop')
-              }
-            })
-          }
-        })
-      } catch (e) {
-        if (e.message !== 'stop') {
-          throw e
-        }
-      }
-    },
+
     //选择存储规格
     changeMongodbMemory() {
       let values = this.mongodbSpec.split('-')
