@@ -117,7 +117,9 @@
           <div>{{ $t('packages_business_mdm_create_task_dialog_desc_table_name') }}</div>
         </div>
         <ElFormItem :label="$t('public_table_name')">
-          <ElInput size="small" v-model="taskDialogConfig.newTableName"></ElInput>
+          <ElInput size="small" v-model="taskDialogConfig.newTableName">
+            <template slot="prepend">{{ tablePrefix }}</template>
+          </ElInput>
         </ElFormItem>
       </ElForm>
       <span slot="footer" class="dialog-footer">
@@ -230,7 +232,8 @@ export default {
       searchIng: false,
       search: '',
       enableSearch: false,
-      filterTreeData: []
+      filterTreeData: [],
+      tablePrefix: 'MDM_'
     }
   },
 
@@ -414,14 +417,14 @@ export default {
       } = this.dragState
       this.taskDialogConfig.from = object.parent.data
       this.taskDialogConfig.tableName = object.data.name
-      this.taskDialogConfig.newTableName = object.data.name
+      this.taskDialogConfig.newTableName = object.data.name.replace(/^FDM_/, '')
       this.taskDialogConfig.tagId = tagId
       this.taskDialogConfig.visible = true
     },
 
     async taskDialogSubmit(start, confirmTable) {
       const { tableName, from, newTableName, tagId } = this.taskDialogConfig
-      let task = this.makeTask(from, tableName, newTableName)
+      let task = this.makeTask(from, tableName, this.tablePrefix + newTableName)
       this.creating = true
       const h = this.$createElement
       try {
