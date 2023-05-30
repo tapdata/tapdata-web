@@ -319,7 +319,8 @@ export default {
         //海外版不强制绑定手机号
         return
       }
-      this.bindPhoneVisible = user?.registerSource === 'social:wechatmp-qrcode' && !user?.telephone
+      this.bindPhoneVisible =
+        ['basic:email', 'social:wechatmp-qrcode'].includes(user?.registerSource) && !user?.telephone
       return this.bindPhoneVisible
     },
     // 检查是否有安装过agent
