@@ -463,7 +463,7 @@ export default {
     open(row, connection) {
       clearTimeout(this.visibleTimer)
 
-      if (!this.visible) this.reset()
+      // if (!this.visible) this.reset()
 
       this.init()
       this.visible = true

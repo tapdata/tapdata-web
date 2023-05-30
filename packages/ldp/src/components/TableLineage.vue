@@ -76,12 +76,11 @@ export default {
   watch: {},
 
   mounted() {
+    this.initView()
     this.unwatch = this.$watch(
       () => [this.connectionId, this.tableName, this.isShow],
       () => {
-        if (this.isShow) {
-          this.initView()
-        }
+        this.initView()
       }
     )
     // this.initNodeView()
@@ -136,6 +135,8 @@ export default {
     ]),
 
     initView() {
+      if (!this.isShow) return
+
       this.reset()
       this.$refs.paperScroller.initVisibleArea(true)
       this.initNodeView()
