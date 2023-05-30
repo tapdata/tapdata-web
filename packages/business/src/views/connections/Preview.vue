@@ -155,7 +155,7 @@ export default {
             items: [
               {
                 label: this.$t('public_connection_button_load_schema'),
-                key: 'last_updated'
+                key: 'loadSchemaTime'
               }
             ]
           },
@@ -285,6 +285,7 @@ export default {
       row.addtionalString = row.config.extParams || row.config.addtionalString
       row.database_datetype_without_timezone = row.config.timezone
       row.sourceFrom = this.getSourceFrom(row)
+      row.loadSchemaTime = row.loadSchemaTime ? dayjs(row.loadSchemaTime).format('YYYY-MM-DD HH:mm:ss') : '-'
       if (row.config.uri && row.config.isUri !== false) {
         const regResult =
           /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(

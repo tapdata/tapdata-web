@@ -115,7 +115,10 @@
             placement="top"
           >
             <span>
-              <ElButton type="text" :disabled="isFileSource(scope.row)" @click="handleLoadSchema(scope.row)"
+              <ElButton
+                type="text"
+                :disabled="isFileSource(scope.row) || scope.row.disabledLoadSchema"
+                @click="handleLoadSchema(scope.row)"
                 >{{ $t('public_connection_button_load_schema') }}
               </ElButton>
             </span>
@@ -412,6 +415,7 @@ export default {
             item.loadSchemaTimeLabel = item.loadSchemaTime
               ? dayjs(item.loadSchemaTime).format('YY-MM-DD HH:mm:ss')
               : '-'
+            item.disabledLoadSchema = false
             return item
           })
 
@@ -699,7 +703,11 @@ export default {
         return
       }
       this.$refs.preview.setConnectionData(row)
+      row.disabledLoadSchema = true
       this.$refs.preview.reload?.(this.table.fetch(null, 0, true))
+      setTimeout(() => {
+        row.disabledLoadSchema = false
+      }, 3000)
     },
     isFileSource(row) {
       return ['CSV', 'EXCEL', 'JSON', 'XML'].includes(row?.database_type)
