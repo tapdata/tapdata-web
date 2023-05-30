@@ -34,15 +34,12 @@
 <script>
 import { mapGetters, mapMutations } from 'vuex'
 import dagre from 'dagre'
-
 import { config, PaperScroller, jsPlumb, NODE_PREFIX, NODE_WIDTH, NODE_HEIGHT } from '@tap/dag'
 import { lineageApi } from '@tap/api'
 import { IconButton } from '@tap/component'
-import TableNode from './TableNode'
+import { makeStatusAndDisabled } from '@tap/business'
 import { connectorActiveStyle } from '@tap/dag/src/style'
-import i18n from '@tap/i18n'
-import { AddConnectionCommand, MoveNodeCommand, RemoveConnectionCommand } from '@tap/dag/src/command'
-import Vue from 'vue'
+import TableNode from './TableNode'
 import LinePopover from './LinePopover'
 export default {
   name: 'TableLineage',
@@ -256,7 +253,7 @@ export default {
         }
       })
 
-      Vue.nextTick(() => {
+      this.$nextTick(() => {
         this.jsPlumbIns.setSuspendDrawing(false, true)
         this.$refs.paperScroller.autoResizePaper()
         this.$refs.paperScroller.centerContent(false, 24)
@@ -308,7 +305,7 @@ export default {
 
       // 连线
       edges.forEach(({ source, target, attrs }) => {
-        const tasks = attrs.tasks ? Object.values(attrs.tasks) : []
+        const tasks = attrs.tasks ? Object.values(attrs.tasks).map(makeStatusAndDisabled) : []
         let overlays
 
         if (tasks.length) {
@@ -322,7 +319,9 @@ export default {
                   const taskName = tasks[0].name
                   const div = document.createElement('div')
 
-                  div.className = 'table-lineage-connection-label flex align-center overflow-hidden'
+                  div.className =
+                    'table-lineage-connection-label flex align-center overflow-hidden rounded-4 task-status-' +
+                    tasks[0].status
                   div.innerHTML = `<span title="${taskName}" class="overflow-hidden clickable ellipsis px-1 el-tag el-tag--small el-tag--light rounded-4">${taskName}</span>`
 
                   if (size > 1) {
@@ -435,6 +434,11 @@ export default {
     .table-lineage-connection-label {
       max-width: 180px;
       z-index: 1001;
+      .el-tag {
+        background-color: inherit;
+        color: inherit;
+        border-color: currentColor;
+      }
       &.compact-tag {
         .el-tag:first-child {
           border-top-right-radius: 0 !important;
