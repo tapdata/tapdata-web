@@ -1100,7 +1100,7 @@ export default {
   packages_business_shared_mining_table_tingzhiwajueti: 'Stop mining reminder',
   packages_business_shared_mining_table_yihebingdelian: 'Merged Connections',
   packages_business_shared_mining_table_shengyuyigelian:
-    'There is only one connection and one table left, which makes it impossible to perform this operation.',
+    'There is only one connection and one table remaining; the operation cannot be performed.',
   packages_business_logs_nodelog_yijianfuzhi: 'One key copy',
   packages_business_connections_jsdebug_shiyongHtt: 'Use the latest data received by HttpReceiver for debugging',
   packages_business_connections_jsdebug_huoqutiaoshishu: 'Get debug data'
