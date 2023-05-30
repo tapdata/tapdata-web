@@ -23,6 +23,9 @@
             row.subject
           }}</span>
         </template>
+        <template #status="{ row }">
+          <StatusTag type="tag" :status="row.status" default-status="Stopped" target="ticket"></StatusTag>
+        </template>
         <template #operation="{ row }">
           <ElButton type="text" @click="handleDetails(row)">详情</ElButton>
           <ElButton type="text" @click="close(row.id)">关闭</ElButton>
@@ -74,11 +77,12 @@ import { isEmpty } from '@/util'
 import { CURRENCY_SYMBOL_MAP, ORDER_STATUS_MAP, TIME_MAP } from '@tap/business'
 import { getPaymentMethod, getSpec, AGENT_TYPE_MAP } from '../instance/utils'
 import dayjs from 'dayjs'
+import StatusTag from '../../components/StatusTag'
 
 import { connectionsApi, taskApi } from '@tap/api'
 
 export default {
-  components: { FilterBar, VTable, Details },
+  components: { FilterBar, VTable, Details, StatusTag },
   inject: ['buried'],
   data() {
     return {
@@ -114,7 +118,8 @@ export default {
         },
         {
           label: '工单状态',
-          prop: 'status'
+          prop: 'status',
+          slotName: 'status'
         },
         {
           label: '提交时间',

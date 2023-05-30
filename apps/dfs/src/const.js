@@ -19,6 +19,11 @@ export const INSTANCE_STATUS_MAP = {
     Deleting: { text: '删除中', type: 'waiting' },
     Deleted: { text: '已删除', type: 'disable' }
   },
+  TICKET_STATUS_MAP = {
+    Closed: { text: '关闭', type: 'success' },
+    'On Hold': { text: '挂起', type: 'disable' },
+    Open: { text: '打开' }
+  },
   TASK_STATUS_MAP = {
     running: { text: i18n.t('public_status_running'), icon: 'yunxingzhong', type: 'success' },
     paused: { text: i18n.t('public_status_wait_run'), icon: 'daiqidong', type: 'warning' },

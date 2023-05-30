@@ -29,7 +29,9 @@
         </li>
         <li>
           <span class="label font-color-sslight inline-block">工单状态:</span>
-          <span class="font-color-dark fw-normal"> {{ details.status }}</span>
+          <span class="font-color-dark fw-normal">
+            <StatusTag type="tag" :status="details.status" default-status="Stopped" target="ticket"></StatusTag
+          ></span>
         </li>
         <li>
           <span class="label font-color-sslight inline-block">提交时间: </span>
@@ -53,11 +55,13 @@
 
 <script>
 import { Drawer } from '@tap/component'
+import dayjs from 'dayjs'
+import StatusTag from '../../components/StatusTag'
 
 export default {
   name: 'Details',
 
-  components: { Drawer },
+  components: { Drawer, StatusTag },
 
   data() {
     return {
@@ -78,6 +82,10 @@ export default {
       this.visible = true
       this.$axios.get(`api/ticket/${id}`).then(data => {
         this.details = data
+        //格式化时间
+        this.details.createdTime = this.details.createdTime
+          ? dayjs(this.details.createdTime).format('YYYY-MM-DD HH:mm:ss')
+          : '-'
       })
     },
     handleVisible() {
