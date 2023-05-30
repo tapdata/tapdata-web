@@ -77,7 +77,7 @@
               </template>
             </ElMenuItem>
           </template>
-          <ElMenuItem v-if="!isDemoEnv" key="goDemo" index="goDemo" class="flex align-center">
+          <ElMenuItem v-if="!isDemoEnv && isDomesticStation" key="goDemo" index="goDemo" class="flex align-center">
             <span class="mr-4"><VIcon class="v-icon" size="17">open-in-new</VIcon></span>
             <span class="text-decoration-underline">{{
               $t('dfs_agent_download_agentguidedialog_tiyan') + ' Demo'
@@ -139,6 +139,12 @@ export default {
       menus: [],
       sortMenus: [
         {
+          name: 'dataConsole',
+          title: this.$t('page_title_data_console'),
+          icon: 'process-platform',
+          beta: true
+        },
+        {
           name: 'Workbench',
           title: $t('workbench_manage'),
           icon: 'workbench'
@@ -178,7 +184,8 @@ export default {
       subscriptionModelVisible: false,
       userInfo: '',
       // aliyunMaketVisible: false,
-      isDemoEnv: document.domain === 'demo.cloud.tapdata.net'
+      isDemoEnv: document.domain === 'demo.cloud.tapdata.net',
+      isDomesticStation: true
     }
   },
   created() {
@@ -189,15 +196,8 @@ export default {
       //海外版隐藏数据服务
       this.sortMenus = this.sortMenus.filter(item => item.name !== 'dataServerList')
     }
-    if (!window.__config__?.showSwimLane) {
-      let swimLane = {
-        name: 'dataConsole',
-        title: this.$t('page_title_data_console'),
-        icon: 'process-platform',
-        beta: true
-      }
-      this.sortMenus.unshift(swimLane)
-    }
+    //海外版隐藏数据服务
+    this.isDomesticStation = window.__config__?.station === 'domestic' || true //默认是国内站 国际站是 international
     this.loopLoadAgentCount()
     this.activeMenu = this.$route.path
     let children = this.$router.options.routes.find(r => r.path === '/')?.children || []

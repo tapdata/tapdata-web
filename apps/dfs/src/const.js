@@ -12,12 +12,12 @@ export const INSTANCE_STATUS_MAP = {
     Error: { text: i18n.t('public_status_error'), type: 'danger' }
   },
   MDB_STATUS_MAP = {
-    Init: { text: '初始化', type: 'waiting' },
-    Creating: { text: '创建中', type: 'waiting' },
-    Activated: { text: i18n.t('public_status_running'), type: 'success' },
-    WaitingDelete: { text: '等待删除', type: 'waiting' },
-    Deleting: { text: '删除中', type: 'waiting' },
-    Deleted: { text: '已删除', type: 'disable' }
+    Init: { text: i18n.t('public_status_init'), type: 'waiting' },
+    Creating: { text: i18n.t('public_status_creating'), type: 'waiting' },
+    Activated: { text: i18n.t('public_status_activated') },
+    WaitingDelete: { text: i18n.t('public_status_waiting_delete'), type: 'waiting' },
+    Deleting: { text: i18n.t('public_status_deleting'), type: 'waiting' },
+    Deleted: { text: i18n.t('public_status_deleted'), type: 'disable' }
   },
   TASK_STATUS_MAP = {
     running: { text: i18n.t('public_status_running'), icon: 'yunxingzhong', type: 'success' },
