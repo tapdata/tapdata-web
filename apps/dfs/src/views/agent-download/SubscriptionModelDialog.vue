@@ -332,7 +332,7 @@
           <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu')">
             <ul class="flex flex-wrap">
               <li
-                class="spec-li position-relative px-4 py-2 mt-4 mr-4"
+                class="spec-li position-relative px-4 py-2 mt-4 mr-4 cursor-pointer"
                 :class="{
                   active: specification === item.value,
                   disabled: (agentCount > 0 || agentDeploy !== 'selfHost') && item.chargeProvider === 'FreeTier'
@@ -792,7 +792,8 @@ export default {
       ],
       currentPackage: '',
       disabledAliyunCode: false,
-      showTransferDialogVisible: false //转测信息弹窗
+      showTransferDialogVisible: false, //转测信息弹窗
+      mdbZone: ''
     }
   },
 
@@ -927,6 +928,7 @@ export default {
       //存储方案请求接口得到存储价格
       if (this.activeStep === 4 && this.platform === 'realTime') {
         this.getMongoCluster()
+        this.getCloudMdbSource()
       }
     },
     //选择平台
@@ -1178,6 +1180,11 @@ export default {
         ).sort((a, b) => {
           return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
         })
+        //免费不能选; 不做禁用 直接过滤掉不显示
+        // disabled: (agentCount > 0 || agentDeploy !== 'selfHost') && item.chargeProvider === 'FreeTier'
+        if (this.agentCount > 0 || this.agentDeploy !== 'selfHost') {
+          this.specificationItems = this.specificationItems.filter(it => it.chargeProvider !== 'FreeTier')
+        }
         this.specification =
           this.agentCount > 0 || this.agentDeploy !== 'selfHost'
             ? this.specificationItems[1]?.value
@@ -1280,6 +1287,20 @@ export default {
         })
       })
     },
+    //判断是否可选存储规格
+    getCloudMdbSource() {
+      //选择存储规格时，需要判断mdbSpec 是否有可用区
+      this.$axios.get('api/tcm/orders/paid/getCloudMdbSource').then(data => {
+        //过滤出当前可用区下的mdbRegionProvider
+        let original = data.filter(it => it.cloudProvider === this.provider)?.[0] || []
+        let mdbRegionProvider = original.mdbRegionProvider
+        let mdbZoneProvider = []
+        if (mdbRegionProvider.length > 0) {
+          mdbZoneProvider = mdbRegionProvider.filter(it => it.region === this.region)?.[0]?.mdbZoneProvider || []
+        }
+        this.cloudMdbSource = mdbZoneProvider
+      })
+    },
     //选择存储规格
     changeMongodbMemory() {
       let values = this.mongodbSpec.split('-')
@@ -1305,6 +1326,26 @@ export default {
       //需要改变mdbPriceId 因为存储空间改变了
       this.mdbPriceId = price?.[0]?.priceId
       this.mdbPrice(price?.[0].currencyOption?.find(item => item.currency === this.currencyType)?.amount || 0)
+      this.findCloud(price?.[0]?.mdbSpec)
+    },
+    //遍历查找mdbSpec
+    findCloud(spec) {
+      try {
+        this.cloudMdbSource.forEach(it => {
+          if (it.mdbProvider?.length > 0) {
+            it.mdbProvider.forEach(item => {
+              if (item.mdbSpec === spec) {
+                this.mdbZone = it.zone
+                throw new Error('stop')
+              }
+            })
+          }
+        })
+      } catch (e) {
+        if (e.message !== 'stop') {
+          throw e
+        }
+      }
     },
     //存储价格
     mdbPrice(price) {
@@ -1409,6 +1450,12 @@ export default {
           params.mdbPriceId = this.mdbPriceId
           params.memorySpace = this.memorySpace
           params.successUrl = location.origin + location.pathname + agentUrl.href
+        }
+        //带存储实例
+        if (this.platform === 'realTime') {
+          params.mdbPriceId = this.mdbPriceId
+          params.mdbRegion = this.region || ''
+          params.mdbZone = this.mdbZone || ''
         }
       }
 

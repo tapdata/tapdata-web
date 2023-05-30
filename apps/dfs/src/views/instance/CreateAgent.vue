@@ -324,7 +324,7 @@
             <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu')">
               <ul class="flex flex-wrap">
                 <li
-                  class="spec-li position-relative px-4 py-2 mt-4 mr-4"
+                  class="spec-li position-relative px-4 py-2 mt-4 mr-4 cursor-pointer"
                   :class="{
                     active: specification === item.value,
                     disabled: (agentCount > 0 || agentDeploy !== 'selfHost') && item.chargeProvider === 'FreeTier'
@@ -862,7 +862,7 @@
             <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu')">
               <ul class="flex flex-wrap">
                 <li
-                  class="spec-li cursor-pointer position-relative px-4 py-2 mt-4 mr-4"
+                  class="spec-li cursor-pointer position-relative cursor-pointer px-4 py-2 mt-4 mr-4"
                   :class="{
                     active: specification === item.value,
                     disabled: (agentCount > 0 || agentDeploy !== 'selfHost') && item.chargeProvider === 'FreeTier'
@@ -1736,6 +1736,11 @@ export default {
         ).sort((a, b) => {
           return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
         })
+        //免费不能选; 不做禁用 直接过滤掉不显示
+        // disabled: (agentCount > 0 || agentDeploy !== 'selfHost') && item.chargeProvider === 'FreeTier'
+        if (this.agentCount > 0 || this.agentDeploy !== 'selfHost') {
+          this.specificationItems = this.specificationItems.filter(it => it.chargeProvider !== 'FreeTier')
+        }
         this.specification =
           this.agentCount > 0 || this.agentDeploy !== 'selfHost'
             ? this.specificationItems[1]?.value
