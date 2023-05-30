@@ -801,11 +801,11 @@ export default {
               if (!value || !value.length) {
                 nodeData.updateConditionFields = defaultList
                 $values.updateConditionFields = nodeData.updateConditionFields
-              } else {
+              } else if (value) {
                 let fieldMap = options.reduce((obj, item) => ((obj[item.value] = true), obj), {})
                 let filterValue = value.filter(v => fieldMap[v])
 
-                if (value && value.length !== filterValue.length) {
+                if (value.length !== filterValue.length) {
                   nodeData.updateConditionFields = filterValue.length ? filterValue : defaultList
                   $values.updateConditionFields = nodeData.updateConditionFields
                 }
@@ -813,7 +813,7 @@ export default {
             }
           }
 
-          return !$values.updateConditionFields?.length ? '该字段是必填字段!' : ''
+          return !$values.updateConditionFields?.length ? i18n.t('packages_dag_mixins_formscope_gaiziduanshibi') : ''
         }
       }
     }
