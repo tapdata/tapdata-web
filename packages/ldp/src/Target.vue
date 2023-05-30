@@ -28,7 +28,7 @@
         <div
           v-for="item in filterList"
           :key="item.id"
-          class="wrap__item rounded-lg mb-3"
+          class="wrap__item rounded-lg mb-3 position-relative overflow-hidden"
           @dragover="handleDragOver"
           @dragenter.stop="handleDragEnter"
           @dragleave.stop="handleDragLeave"
@@ -67,6 +67,14 @@
                   }}</span>
                 </div>
               </div>
+            </div>
+            <div
+              class="drop-mask position-absolute absolute-fill p-2 flex-column justify-content-center align-center gap-2"
+              :class="{ flex: nonSupportApi }"
+            >
+              <ElTooltip placement="top" :content="'目前支持的类型: ' + apiSupportTypes.join(',')">
+                <span> {{ `${$t('packages_dag_components_node_zanbuzhichi')} ${dragDatabaseType}` }}</span>
+              </ElTooltip>
             </div>
           </template>
           <template v-else>
@@ -307,7 +315,8 @@ export default {
         pending: this.$t('public_status_unpublished'),
         generating: this.$t('public_status_to_be_generated')
       },
-      connectionWebsiteMap: {}
+      connectionWebsiteMap: {},
+      apiSupportTypes: ['Mysql', 'SQL Server', 'Oracle', 'MongoDB', 'PostgreSQL', 'Tidb', 'Doris']
     }
   },
 
@@ -328,6 +337,22 @@ export default {
           !this.fdmAndMdmId?.includes(item.id) &&
           (item.name?.includes(this.search) || item.value?.includes(this.search))
       )
+    },
+
+    dragDatabaseType() {
+      if (!this.dragState.isDragging) return
+
+      const object = this.dragState.draggingObjects[0]
+
+      if (object?.data.type === 'table') {
+        return object.parent.data.database_type
+      }
+
+      return object?.data.database_type
+    },
+
+    nonSupportApi() {
+      return this.dragDatabaseType && !this.apiSupportTypes.includes(this.dragDatabaseType)
     }
   },
 
@@ -554,9 +579,10 @@ export default {
       const object = draggingObjects[0]
 
       if (!this.allowDrop) return
-
       if (item.LDP_TYPE === 'app') {
         if (object.data.type === 'table') {
+          if (!this.apiSupportTypes.includes(object.parent.data.database_type)) return
+
           this.apiDialog.from = object.parent.data
           this.apiDialog.tableName = object.data.name
           this.apiDialog.to = item
@@ -639,7 +665,8 @@ export default {
           accessNodeProcessId: db.accessNodeProcessId,
           pdkType: db.pdkType,
           pdkHash: db.pdkHash,
-          capabilities: db.capabilities || []
+          capabilities: db.capabilities || [],
+          hasCreated: false
         }
       }
     },

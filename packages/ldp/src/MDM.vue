@@ -288,7 +288,7 @@ export default {
         <div
           class="custom-tree-node grabbable"
           on={{
-            dblclick: () => {
+            click: () => {
               data.isObject && this.$emit('preview', data, this.mdmConnection)
             },
             dragenter: ev => {
@@ -521,7 +521,8 @@ export default {
           accessNodeProcessId: db.accessNodeProcessId,
           pdkType: db.pdkType,
           pdkHash: db.pdkHash,
-          capabilities: db.capabilities || []
+          capabilities: db.capabilities || [],
+          hasCreated: false
         }
       }
     },

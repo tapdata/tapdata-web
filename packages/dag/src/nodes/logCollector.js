@@ -67,7 +67,7 @@ export class LogCollector extends NodeType {
             'x-decorator': 'FormItem',
             'x-component': 'SharedMiningTableInfo',
             'x-component-props': {
-              height: '400px'
+              height: '280px'
             }
           },
 

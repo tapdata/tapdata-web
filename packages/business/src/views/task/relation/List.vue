@@ -322,7 +322,9 @@ export default {
     handleName({ id, syncType }) {
       const MAP = {
         migrate: 'MigrationMonitor',
-        sync: 'TaskMonitor'
+        sync: 'TaskMonitor',
+        logCollector: 'SharedMiningMonitor',
+        mem_cache: 'SharedCacheMonitor'
       }
       const routeUrl = this.$router.resolve({
         name: MAP[syncType],

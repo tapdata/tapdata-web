@@ -11,7 +11,7 @@
             ref="milestoneList"
           ></MilestoneList>
         </ElTabPane>
-        <ElTabPane :label="$t('packages_dag_monitor_bottompanel_rizhi')" name="log">
+        <ElTabPane :label="$t('public_task_log')" name="log">
           <NodeLog v-if="currentTab === 'log'" v-bind="$attrs" :currentTab="currentTab" ref="log"></NodeLog>
         </ElTabPane>
         <ElTabPane :label="$t('packages_dag_monitor_bottompanel_yunxingjilu')" name="record">

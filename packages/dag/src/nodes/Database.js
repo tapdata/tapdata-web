@@ -751,4 +751,14 @@ export class Database extends NodeType {
       }
     }
   }
+
+  allowTarget(target, source) {
+    // 不再支持既是源又是目标的节点
+    return !source.$inputs?.length && (target.type !== 'database' || !target.$outputs?.length)
+  }
+
+  allowSource(source, target) {
+    // 不再支持既是源又是目标的节点
+    return !target.$outputs?.length
+  }
 }

@@ -34,7 +34,7 @@ export default {
   packages_dag_task_setting_sync_type: '同步類型',
   packages_dag_task_setting_initial_sync_cdc: '全量 + 增量同步',
   packages_dag_task_stetting_desc: '任務描述',
-  packages_dag_task_setting_plan_start_date: '计划开始时间',
+  packages_dag_task_setting_plan_start_date: '指定時間執行',
   packages_dag_task_setting_crontabExpressionFlag: '定期調度任務',
   packages_dag_task_setting_cron_expression: '請輸入調度表達式',
   packages_dag_task_setting_cron_tip:
@@ -163,7 +163,7 @@ export default {
   packages_dag_migration_settingpanel_dangrenwufuhe:
     '開啟數據校驗開關後，任務會自動對同步結果的一致性進行全量校驗和增量校驗，並會在運行監控頁面將校驗不一致的數據行數展示出來。需要注意，當任務符合以下情況時，即使開啟校驗開關任務也不會進行校驗\n 1. 添加了中間處理節點\n 2. 源連接不支持校驗\n 3. 目標連接不支持校驗',
   packages_dag_monitor_bottompanel_yunxingjilu: '運行記錄',
-  packages_dag_monitor_bottompanel_rizhi: '日誌',
+  packages_dag_monitor_bottompanel_rizhi: '任務進度查看',
   packages_dag_components_eventchart_qita: '其他',
   packages_dag_components_eventchart_suoxuanzhouqilei: '所選週期累計',
   packages_dag_components_eventchart_renwuyunxinglei: '任務運行累計',
@@ -558,7 +558,7 @@ export default {
   packages_dag_validate_customsql_target_fail:
     '當啟用全量自定義查詢後，只有弱schema類型的數據源才能作為目標，例如：MongoDB、Kafka、ES',
   packages_dag_field_inference_list_gaiziduanshuju:
-    '该字段数据类型暂不支持，为避免由于该字段处理导致任务执行故障，请先将该字段屏蔽。',
+    '系统无法确定该字段的推演类型，请手动进行类型设置，否则任务执行时将忽略对该字段的处理。',
   packages_dag_monitor_leftsider_huancunkaishishi: '緩存開始時間',
   packages_dag_monitor_node_zhengzaishiyongdehuancun: '正在使用的緩存',
   packages_dag_nodes_database_fenpianyipidu: '分片壹批讀取上限',
@@ -595,5 +595,7 @@ export default {
   packages_dag_migration_settingpanel_dangdanbiaotongbu: '事件處理出現異常時',
   packages_dag_migration_settingpanel_anzhaomorenzhong: '按照默認重試邏輯進行重試',
   packages_dag_default_js: '默認JS',
-  packages_dag_standardization_js: '標準化JS'
+  packages_dag_standardization_js: '標準化JS',
+  packages_dag_mixins_formscope_gaiziduanshibi: '該字段是必填字段!',
+  packages_dag_shared_mining_table_info_index_wajuebiaoxinxi: '挖掘表信息'
 }

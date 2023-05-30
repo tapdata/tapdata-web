@@ -93,6 +93,8 @@ export default {
   public_button_next: 'Next',
   public_button_previous: 'Previous',
   public_button_search: 'Search',
+  public_button_stop_mining: 'Stop Mining',
+  public_button_stop_recover: 'Resume Mining',
   // information
   public_message_title_prompt: 'Prompt',
   public_message_delete_confirm: 'Delete',
@@ -216,6 +218,7 @@ export default {
   public_task_heartbeat_time: 'Task heartbeat time',
   public_task_mission_error: 'Task Error',
   public_task_reasons_for_error: 'Reasons for error',
+  public_task_log: 'Task Log',
   // node
   public_node_name: 'Node Name',
   public_node_type: 'Node Type',

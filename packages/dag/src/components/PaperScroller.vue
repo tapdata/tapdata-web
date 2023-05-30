@@ -203,6 +203,7 @@ export default {
     ]),
 
     observerHandler() {
+      console.log('observerHandler') // eslint-disable-line
       this.initVisibleArea()
     },
 
@@ -287,6 +288,7 @@ export default {
       }
       // 窗口保持最新的区域数据
       this.windowArea = area
+      console.log('windowArea', this.windowArea) // eslint-disable-line
     },
 
     // 画布居中
@@ -299,14 +301,14 @@ export default {
     },
 
     // 画布内容居中
-    centerContent(ifZoomToFit) {
+    centerContent(ifZoomToFit, paddingX = 0) {
       const allNodes = this.$store.getters['dataflow/allNodes']
       if (!allNodes.length) return
-      let { minX, minY, maxX, maxY } = getDataflowCorners(allNodes)
-      // 包含节点尺寸
-      maxX += NODE_WIDTH
-      maxY += NODE_HEIGHT
-      let contentW = maxX - minX
+      let { minX, minY, maxX, maxY } = getDataflowCorners(allNodes, this.paperScale)
+
+      minX -= paddingX
+
+      let contentW = maxX - minX + paddingX
       let contentH = maxY - minY
       let scale = Math.min(this.windowArea.width / contentW, this.windowArea.height / contentH)
 
@@ -354,12 +356,7 @@ export default {
       const { width, height } = this.options
       const allNodes = this.$store.getters['dataflow/allNodes']
       if (!allNodes.length) return
-      let { minX, minY, maxX, maxY } = getDataflowCorners(allNodes)
-
-      // 包含节点尺寸
-      maxX += NODE_WIDTH
-      maxY += NODE_HEIGHT
-
+      let { minX, minY, maxX, maxY } = getDataflowCorners(allNodes, this.paperScale)
       let w = 0
       let h = 0
       let forwardW = 0
@@ -702,6 +699,10 @@ export default {
     getPaperCenterPos() {
       const pos = this.getScaleAbsolutePoint()
       return this.getMouseToPage(pos)
+    },
+
+    getPaperScale() {
+      return this.paperScale
     }
   }
 }

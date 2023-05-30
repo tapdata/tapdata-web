@@ -8,6 +8,7 @@
       :fieldChangeRules.sync="fieldChangeRules"
       :type="isTarget ? 'target' : isSource ? 'source' : ''"
       hide-batch
+      :ignore-error="isSource"
       @update-rules="handleUpdateRules"
     ></List>
   </div>

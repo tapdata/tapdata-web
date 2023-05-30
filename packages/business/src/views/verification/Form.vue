@@ -87,7 +87,7 @@
             </div>
           </ElFormItem>-->
           <ElFormItem required class="form-item" :label="$t('packages_business_verification_type') + ': '">
-            <ElRadioGroup v-model="form.inspectMethod">
+            <ElRadioGroup v-model="form.inspectMethod" @change="handleChangeInspectMethod">
               <ElRadioButton label="row_count">{{ inspectMethodMap['row_count'] }}</ElRadioButton>
               <ElRadioButton label="field">{{ inspectMethodMap['field'] }}</ElRadioButton>
               <ElRadioButton label="jointField">{{ inspectMethodMap['jointField'] }}</ElRadioButton>
@@ -426,8 +426,8 @@ export default {
       flowOptions: null,
       notSupport: {
         row_count: ['Clickhouse', 'Kafka'],
-        field: ['Doris', 'Kafka'],
-        jointField: ['Doris', 'Kafka']
+        field: ['Kafka'],
+        jointField: ['Kafka']
       },
       inspectMethodMap: {
         row_count: i18n.t('packages_business_verification_row_verify'),
@@ -694,6 +694,13 @@ export default {
 
     handleChangeAlarm(val, index = 0) {
       this.form.alarmSettings[index].notify = val ? ['SYSTEM', 'EMAIL'] : []
+    },
+
+    handleChangeInspectMethod() {
+      this.handleChangeAlarm(true, 0)
+      this.handleChangeAlarm(true, 1)
+      this.handleChangeAlarm(true, 2)
+      this.handleChangeAlarmItem()
     }
   }
 }

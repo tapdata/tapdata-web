@@ -1035,10 +1035,16 @@ export default {
   packages_business_as_target: '作為目標',
   packages_business_connections_databaseform_dangqianlianjiezheng:
     '當前連接正在使用原外存，切換會導致數據丟失，請謹慎操作。 ',
-  packages_business_external_storage_list_gaiwaicunzhengzai:
-    '該外存正在被其它任務使用，修改外存配置會導致相關任務執行出現邏輯問題，請謹慎使用該功能。 ',
   packages_business_swimlane_target_shouye: '首頁',
   packages_business_connections_databaseform_chakanwajueren: '查看挖掘任務',
   packages_business_connections_databaseform_dangqianlianjiede:
-    '當前連接的挖掘任務正在使用原外存，切換會導致已挖掘數據丟失，請謹慎操作。 '
+    '當前連接的挖掘任務正在使用原外存，切換會導致已挖掘數據丟失，請謹慎操作。 ',
+  packages_business_shared_mining_table_yitingzhiwajue: '已停止挖掘',
+  packages_business_shared_mining_table_zhengzaiwajue: '正在挖掘',
+  packages_business_shared_mining_table_ninyaotingzhiwa:
+    '您要停止挖掘的表正在被以下任務使用，停止挖掘後將會影響以下任務的正常同步，請確認是否要繼續停止。 ',
+  packages_business_shared_mining_table_tingzhiwajueti: '停止挖掘提醒',
+  packages_business_shared_mining_table_yihebingdelian: '已合并的連接',
+  packages_business_shared_mining_table_shengyuyigelian: '剩餘一個連接和一個表，無法進行該操作',
+  packages_business_logs_nodelog_yijianfuzhi: '一鍵複製'
 }

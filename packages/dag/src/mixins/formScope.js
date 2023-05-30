@@ -750,7 +750,13 @@ export default {
                   meta: f.data_type
                 }
               }) || []
+
+          const idx = editor.completers?.findIndex(item => item.id === 'recordFields') || -1
+
+          if (~idx) editor.completers.splice(idx, 1)
+
           editor.completers.push({
+            id: 'recordFields',
             // 获取补全提示列表
             getCompletions: function (editor, session, pos, prefix, callback) {
               // 判断当前行是否包含 '.'
@@ -801,8 +807,6 @@ export default {
               let indicesUniqueList = options.filter(item => item.indicesUnique)
               let defaultList = (isPrimaryKeyList.length ? isPrimaryKeyList : indicesUniqueList).map(item => item.value)
 
-              console.log('validateUpdateConditionFields.value', value, [...field.value], options) // eslint-disable-line
-
               if (!value || !value.length) {
                 nodeData.updateConditionFields = defaultList
                 $values.updateConditionFields = nodeData.updateConditionFields
@@ -818,7 +822,7 @@ export default {
             }
           }
 
-          return !$values.updateConditionFields?.length ? '该字段是必填字段!' : ''
+          return !$values.updateConditionFields?.length ? i18n.t('packages_dag_mixins_formscope_gaiziduanshibi') : ''
         }
       }
     }

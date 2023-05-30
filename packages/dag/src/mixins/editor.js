@@ -547,6 +547,8 @@ export default {
       this.addSelectedNode(node)
       const nodeElement = `node-${node.id}`
       this.jsPlumbIns.addToDragSelection(nodeElement)
+
+      document.getElementById(nodeElement).focus()
     },
 
     nodeDeselected(node) {
@@ -757,7 +759,9 @@ export default {
         this.$refs.paperScroller.toggleMiniView()
       })
       Mousetrap.bind(['backspace', 'del'], () => {
-        !this.stateIsReadonly && this.handleDelete()
+        if (!this.stateIsReadonly && document.getElementById('dfEditorContent').contains(document.activeElement)) {
+          this.handleDelete()
+        }
       })
       Mousetrap.bind(['option+command+l', 'ctrl+alt+l'], e => {
         e.preventDefault()
@@ -948,6 +952,7 @@ export default {
      */
     handleDelete() {
       const selectNodes = this.$store.getters['dataflow/getSelectedNodes']
+      console.log('delete.selectNodes', selectNodes) // eslint-disable-line
       this.command.exec(new RemoveNodeCommand(selectNodes))
       this.resetSelectedNodes()
       this.deleteSelectedConnections()
@@ -2171,26 +2176,11 @@ export default {
     },
 
     beforeStartTask() {
-      const buriedCode = this.getIsDataflow() ? 'taskStart' : 'migrationStart'
-      const { warnNum, errorNum, over } = this.$refs.console?.getData() || {}
+      const { over } = this.$refs.console?.getData() || {}
       if (!over) {
         setTimeout(this.beforeStartTask, 800)
       } else {
-        if (warnNum || errorNum) {
-          this.$confirm(i18n.t('packages_dag_src_editor_renwubaocunjianceshi'), '', {
-            type: 'warning',
-            confirmButtonText: i18n.t('packages_dag_src_editor_jixuqidong'),
-            cancelButtonText: i18n.t('packages_dag_src_editor_shaohouqidong')
-          }).then(resFlag => {
-            if (resFlag) {
-              this.startTask()
-              return
-            }
-            this.buried(buriedCode, { result: false })
-          })
-        } else {
-          this.startTask()
-        }
+        this.startTask()
       }
     },
 

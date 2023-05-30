@@ -484,7 +484,11 @@ export default {
     },
     // 获取角色下拉值
     getDbOptions() {
-      roleApi.get({}).then(data => {
+      let filter = {
+        limit: 500,
+        skip: 0
+      }
+      roleApi.get({ filter: JSON.stringify(filter) }).then(data => {
         let items = data?.items || []
         this.roleList = items
         let options = []
