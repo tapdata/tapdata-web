@@ -1,24 +1,22 @@
 import { AsyncSelect } from '@tap/form'
-import { useField } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
-import { watch, defineComponent } from '@vue/composition-api'
+import { defineComponent, computed } from '@vue/composition-api'
 
 export const TableSelect = observer(
   defineComponent({
-    props: ['reloadTime'],
+    props: ['reloadTime', 'connectionId'],
     setup(props, { attrs, listeners, root, refs }) {
-      const fieldRef = useField()
-
-      watch(
-        () => props.reloadTime,
-        () => {
-          refs.list?.loadData()
+      const params = computed(() => {
+        return {
+          reloadTime: props.reloadTime,
+          where: {
+            'source.id': props.connectionId,
+            taskId: root.$store.state.dataflow.taskId
+          }
         }
-      )
+      })
 
       return () => {
-        const connectionId = fieldRef.value.query('connectionId').value()
-        const params = { where: { 'source.id': connectionId, taskId: root.$store.state.dataflow.taskId } }
         return (
           <AsyncSelect
             ref="list"
@@ -26,8 +24,8 @@ export const TableSelect = observer(
             on={listeners}
             itemType="string"
             itemQuery="original_name"
-            params={params}
-          />
+            params={params.value}
+          ></AsyncSelect>
         )
       }
     }

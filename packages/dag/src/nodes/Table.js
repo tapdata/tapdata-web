@@ -160,7 +160,8 @@ export class Table extends NodeType {
             },
             'x-component': 'TableSelect',
             'x-component-props': {
-              method: '{{loadTable}}'
+              method: '{{loadTable}}',
+              connectionId: '{{$values.connectionId}}'
             },
             'x-reactions': [
               {
