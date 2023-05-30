@@ -30,5 +30,6 @@
   "showSwimLane": true,// 显示泳道
   "currencyType": "cny", // 默认币种-人民币
   "disabledAliyunCode": true, //隐藏阿里云授权码
-  "unsubscribeHelpDocumentation": "https://deploy-preview-75--tapdata.netlify.app/cloud/billing/refund/#%E9%80%80%E6%AC%BE%E8%AF%B4%E6%98%8E" // 退订文档
+  "unsubscribeHelpDocumentation": "https://deploy-preview-75--tapdata.netlify.app/cloud/billing/refund/#%E9%80%80%E6%AC%BE%E8%AF%B4%E6%98%8E" // 退订文档,
+  "station": 'domestic'//标记国际站international /国内站 domestic
 }

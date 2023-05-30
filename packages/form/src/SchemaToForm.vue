@@ -15,7 +15,8 @@
 </template>
 
 <script>
-import { createForm } from '@formily/core'
+import { createForm, setValidateLanguage } from '@formily/core'
+import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
 
 import { SchemaField } from './shared'
 import { Form } from './components'
@@ -66,6 +67,7 @@ export default {
   },
   mounted() {
     this.init()
+    setValidateLanguage(getCurrentLanguage()) //设置国际化
   },
   methods: {
     init() {

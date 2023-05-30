@@ -332,7 +332,7 @@
           <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu')">
             <ul class="flex flex-wrap">
               <li
-                class="spec-li position-relative px-4 py-2 mt-4 mr-4"
+                class="spec-li position-relative px-4 py-2 mt-4 mr-4 cursor-pointer"
                 :class="{
                   active: specification === item.value,
                   disabled: (agentCount > 0 || agentDeploy !== 'selfHost') && item.chargeProvider === 'FreeTier'
@@ -792,7 +792,8 @@ export default {
       ],
       currentPackage: '',
       disabledAliyunCode: false,
-      showTransferDialogVisible: false //转测信息弹窗
+      showTransferDialogVisible: false, //转测信息弹窗
+      mdbZone: ''
     }
   },
 
@@ -927,6 +928,7 @@ export default {
       //存储方案请求接口得到存储价格
       if (this.activeStep === 4 && this.platform === 'realTime') {
         this.getMongoCluster()
+        this.getCloudMdbSource()
       }
     },
     //选择平台
@@ -1178,6 +1180,11 @@ export default {
         ).sort((a, b) => {
           return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
         })
+        //免费不能选; 不做禁用 直接过滤掉不显示
+        // disabled: (agentCount > 0 || agentDeploy !== 'selfHost') && item.chargeProvider === 'FreeTier'
+        if (this.agentCount > 0 || this.agentDeploy !== 'selfHost') {
+          this.specificationItems = this.specificationItems.filter(it => it.chargeProvider !== 'FreeTier')
+        }
         this.specification =
           this.agentCount > 0 || this.agentDeploy !== 'selfHost'
             ? this.specificationItems[1]?.value
@@ -1252,6 +1259,7 @@ export default {
       }
       this.$axios.get('api/tcm/orders/paid/price', { params }).then(data => {
         const { paidPrice = [] } = data?.[0] || {}
+        this.paidPrice = paidPrice
         //根据订阅方式再过滤一层
         let prices = paidPrice?.filter(
           t =>
@@ -1271,7 +1279,8 @@ export default {
                 t.chargeProvider === 'FreeTier'
                   ? i18n.t('dfs_instance_createagent_mianfeishiyonggui')
                   : `MongoDB ${cpu}C${memory}G`,
-              chargeProvider: t.chargeProvider
+              chargeProvider: t.chargeProvider,
+              mdbSpec: t.mdbSpec
             }
           }),
           'name'
@@ -1280,11 +1289,46 @@ export default {
         })
       })
     },
+    //判断是否可选存储规格
+    async getCloudMdbSource() {
+      //选择存储规格时，需要判断mdbSpec 是否有可用区
+      if (this.provider !== 'AliCloud') return
+
+      try {
+        const data = await this.$axios.get('api/tcm/orders/paid/getCloudMdbSource')
+        let original = data.find(it => it.cloudProvider === this.provider)
+        let { mdbRegionProvider = [] } = original
+        this.spec2Zone = mdbRegionProvider.reduce((map, item) => {
+          return item.mdbZoneProvider.reduce((_map, it) => {
+            return it.mdbProvider.reduce((__map, specItem) => {
+              if (!__map[specItem.mdbSpec]) {
+                _map[specItem.mdbSpec] = it.zone
+              }
+              return __map
+            }, _map)
+          }, map)
+        }, {})
+        let mdbZoneProvider = []
+        if (mdbRegionProvider.length > 0) {
+          mdbZoneProvider = mdbRegionProvider.filter(it => it.region === this.region)?.[0]?.mdbZoneProvider || []
+        }
+        this.cloudMdbSource = mdbZoneProvider
+      } catch (e) {
+        console.log(e) // eslint-disable-line
+      }
+    },
     //选择存储规格
     changeMongodbMemory() {
       let values = this.mongodbSpec.split('-')
       let cpu = Number(values[0])
       let memory = Number(values[1])
+      this.mdbZone = '' //初始化
+      //根据订阅方式再过滤一层
+      this.mongodbPaidPrice = this.paidPrice?.filter(
+        t =>
+          (t.periodUnit === this.selected.periodUnit && t.type === this.selected.type) ||
+          t.chargeProvider === 'FreeTier'
+      )
       if (cpu === 0 && memory === 0) {
         this.mongodbSpecPrice = 0
         this.mdbPrices = 0
@@ -1299,12 +1343,14 @@ export default {
         }
       }
       this.currentMemorySpecName = `MongoDB ${cpu}C${memory}G`
-      let price = this.mongodbPaidPrice.filter(
+      let price = this.mongodbPaidPrice.find(
         t => t.spec.storageSize === this.memorySpace && cpu === t.spec.cpu && memory === t.spec.memory
       )
+      console.log('price', price) // eslint-disable-line
       //需要改变mdbPriceId 因为存储空间改变了
-      this.mdbPriceId = price?.[0]?.priceId
-      this.mdbPrice(price?.[0].currencyOption?.find(item => item.currency === this.currencyType)?.amount || 0)
+      this.mdbPriceId = price?.priceId
+      this.mdbZone = this.spec2Zone[price?.mdbSpec]
+      this.mdbPrice(price?.currencyOption?.find(item => item.currency === this.currencyType)?.amount || 0)
     },
     //存储价格
     mdbPrice(price) {
@@ -1409,6 +1455,12 @@ export default {
           params.mdbPriceId = this.mdbPriceId
           params.memorySpace = this.memorySpace
           params.successUrl = location.origin + location.pathname + agentUrl.href
+        }
+        //带存储实例
+        if (this.platform === 'realTime') {
+          params.mdbPriceId = this.mdbPriceId
+          params.mdbRegion = this.region || ''
+          params.mdbZone = this.mdbZone || ''
         }
       }
 
@@ -1843,6 +1895,13 @@ export default {
 
     .product-type-card-title {
       color: #86909c !important;
+    }
+  }
+}
+.subscription-steps-wrap {
+  ::v-deep {
+    .el-steps--simple {
+      padding: 13px 0;
     }
   }
 }

@@ -30,7 +30,7 @@
               </div>
               <div
                 class="fs-7 font-color-sslight lh-base"
-                :class="[{ 'mb-3': this.$i18n.locale === 'en' }, { 'mb-8': this.$i18n.locale === 'zh-CN' }]"
+                :class="[{ 'mb-4': this.$i18n.locale === 'en' }, { 'mb-8': this.$i18n.locale === 'zh-CN' }]"
               >
                 {{ $t('dfs_instance_createagent_qiyeshujuji') }}
               </div>
@@ -324,7 +324,7 @@
             <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu')">
               <ul class="flex flex-wrap">
                 <li
-                  class="spec-li position-relative px-4 py-2 mt-4 mr-4"
+                  class="spec-li position-relative px-4 py-2 mt-4 mr-4 cursor-pointer"
                   :class="{
                     active: specification === item.value,
                     disabled: (agentCount > 0 || agentDeploy !== 'selfHost') && item.chargeProvider === 'FreeTier'
@@ -429,6 +429,7 @@
                   v-for="(item, index) in mongodbSpecItems"
                   :key="index"
                   :label="item.value"
+                  :disabled="checkSpecDisabled(item)"
                   border
                   class="rounded-4 subscription-radio m-0 position-relative"
                 >
@@ -862,7 +863,7 @@
             <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu')">
               <ul class="flex flex-wrap">
                 <li
-                  class="spec-li cursor-pointer position-relative px-4 py-2 mt-4 mr-4"
+                  class="spec-li cursor-pointer position-relative cursor-pointer px-4 py-2 mt-4 mr-4"
                   :class="{
                     active: specification === item.value,
                     disabled: (agentCount > 0 || agentDeploy !== 'selfHost') && item.chargeProvider === 'FreeTier'
@@ -1309,7 +1310,8 @@ export default {
       //是否有存储Agent
       mdbCount: false, //默认没有存储
       cloudMdbSource: [],
-      mdbZone: ''
+      mdbZone: '',
+      spec2Zone: null
     }
   },
 
@@ -1475,8 +1477,8 @@ export default {
       this.buried('productTypeNext')
       //存储方案请求接口得到存储价格
       if (this.activeStep === 4 && this.platform === 'realTime') {
+        await this.getCloudMdbSource()
         this.getMongoCluster()
-        this.getCloudMdbSource()
       }
       //第一次选择授权码 返回托管模式选择 不切换类型，导致价格丢失
       if ([1, 2].includes(this.activeStep) && this.agentDeploy !== 'aliyun') {
@@ -1736,6 +1738,11 @@ export default {
         ).sort((a, b) => {
           return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
         })
+        //免费不能选; 不做禁用 直接过滤掉不显示
+        // disabled: (agentCount > 0 || agentDeploy !== 'selfHost') && item.chargeProvider === 'FreeTier'
+        if (this.agentCount > 0 || this.agentDeploy !== 'selfHost') {
+          this.specificationItems = this.specificationItems.filter(it => it.chargeProvider !== 'FreeTier')
+        }
         this.specification =
           this.agentCount > 0 || this.agentDeploy !== 'selfHost'
             ? this.specificationItems[1]?.value
@@ -1830,7 +1837,8 @@ export default {
                 t.chargeProvider === 'FreeTier'
                   ? i18n.t('dfs_instance_createagent_mianfeishiyonggui')
                   : `MongoDB ${cpu}C${memory}G`,
-              chargeProvider: t.chargeProvider
+              chargeProvider: t.chargeProvider,
+              mdbSpec: t.mdbSpec
             }
           }),
           'name'
@@ -1840,38 +1848,34 @@ export default {
       })
     },
     //判断是否可选存储规格
-    getCloudMdbSource() {
+    async getCloudMdbSource() {
       //选择存储规格时，需要判断mdbSpec 是否有可用区
-      this.$axios.get('api/tcm/orders/paid/getCloudMdbSource').then(data => {
-        //过滤出当前可用区下的mdbRegionProvider
-        let original = data.filter(it => it.cloudProvider === this.provider)?.[0] || []
-        let mdbRegionProvider = original.mdbRegionProvider
+      if (this.provider !== 'AliCloud') return
+
+      try {
+        const data = await this.$axios.get('api/tcm/orders/paid/getCloudMdbSource')
+        let original = data.find(it => it.cloudProvider === this.provider)
+        let { mdbRegionProvider = [] } = original
+        this.spec2Zone = mdbRegionProvider.reduce((map, item) => {
+          return item.mdbZoneProvider.reduce((_map, it) => {
+            return it.mdbProvider.reduce((__map, specItem) => {
+              if (!__map[specItem.mdbSpec]) {
+                _map[specItem.mdbSpec] = it.zone
+              }
+              return __map
+            }, _map)
+          }, map)
+        }, {})
         let mdbZoneProvider = []
         if (mdbRegionProvider.length > 0) {
           mdbZoneProvider = mdbRegionProvider.filter(it => it.region === this.region)?.[0]?.mdbZoneProvider || []
         }
         this.cloudMdbSource = mdbZoneProvider
-      })
-    },
-    //遍历查找mdbSpec
-    findCloud(spec) {
-      try {
-        this.cloudMdbSource.forEach(it => {
-          if (it.mdbProvider?.length > 0) {
-            it.mdbProvider.forEach(item => {
-              if (item.mdbSpec === spec) {
-                this.mdbZone = it.zone
-                throw new Error('stop')
-              }
-            })
-          }
-        })
       } catch (e) {
-        if (e.message !== 'stop') {
-          throw e
-        }
+        console.log(e) // eslint-disable-line
       }
     },
+
     //选择存储规格
     changeMongodbMemory() {
       let values = this.mongodbSpec.split('-')
@@ -1898,13 +1902,15 @@ export default {
         }
       }
       this.currentMemorySpecName = `MongoDB ${cpu}C${memory}G`
-      let price = this.mongodbPaidPrice.filter(
+      let price = this.mongodbPaidPrice.find(
         t => t.spec.storageSize === this.memorySpace && cpu === t.spec.cpu && memory === t.spec.memory
       )
+      console.log('price', price) // eslint-disable-line
       //需要改变mdbPriceId 因为存储空间改变了
-      this.mdbPriceId = price?.[0]?.priceId
-      this.mdbPrice(price?.[0].currencyOption?.find(item => item.currency === this.currencyType)?.amount || 0)
-      this.findCloud(price?.[0]?.mdbSpec)
+      this.mdbPriceId = price?.priceId
+      this.mdbZone = this.spec2Zone[price?.mdbSpec]
+      this.mdbPrice(price?.currencyOption?.find(item => item.currency === this.currencyType)?.amount || 0)
+      // this.findCloud(price?.mdbSpec)
     },
     //存储价格
     mdbPrice(price) {
@@ -2167,6 +2173,10 @@ export default {
       } else if (item.periodUnit === 'year') {
         return locale === 'en' ? 10 : 9
       }
+    },
+    checkSpecDisabled({ mdbSpec }) {
+      if (this.provider !== 'AliCloud' || !mdbSpec) return false
+      return this.spec2Zone && !this.spec2Zone[mdbSpec]
     }
   }
 }
@@ -2335,7 +2345,7 @@ export default {
   width: 90px;
 }
 .product-type-card {
-  width: 430px;
+  width: 435px;
   .product-type-card-title {
     font-size: $fontTitle;
     font-weight: 700;
