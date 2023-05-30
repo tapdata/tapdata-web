@@ -95,6 +95,8 @@ import { VTable } from '@tap/component'
 import { logcollectorApi, taskApi } from '@tap/api'
 import { TaskStatus } from '../../components'
 
+let timeout = null
+
 export default {
   name: 'Table',
 
@@ -204,7 +206,7 @@ export default {
   watch: {
     params(oldval, newval) {
       if (newval?.nodeId !== oldval?.nodeId) {
-        this.remoteMethod() //node节点改变更新table数据
+        this.fetch() //node节点改变更新table数据
       }
     }
   },
@@ -213,6 +215,15 @@ export default {
     this.currentTab = this.tabItems[0].value
     this.connectionsList = await logcollectorApi.getConnectionIdsByTaskId(this.taskId)
     this.selectedConnectionId = this.connectionsList[0]?.id
+
+    //定时轮询
+    timeout = setInterval(() => {
+      this.fetch(null, 0, true)
+    }, 5000)
+  },
+
+  destroyed() {
+    this.clearTimer()
   },
 
   methods: {
@@ -236,7 +247,7 @@ export default {
     },
 
     fetch() {
-      this.$refs.table?.fetch?.(1)
+      this.$refs.table?.fetch?.(...arguments)
     },
 
     handleSearch: debounce(function () {
@@ -318,6 +329,10 @@ export default {
         .finally(() => {
           this.recoverLoading = false
         })
+    },
+
+    clearTimer() {
+      clearInterval(timeout)
     }
   }
 }
