@@ -10,6 +10,34 @@
     <div v-if="details.id" class="shared-cache-details--header flex pb-3">
       <ul>
         <li>
+          <span class="w-10 font-color-sslight"> 主题</span>
+          <span class="font-color-dark fw-normal"> {{ details.subject }}</span>
+        </li>
+        <li>
+          <span class="w-10 font-color-sslight"> 数据源</span>
+          <span class="font-color-dark fw-normal"> {{ details.connectionName }}</span>
+        </li>
+        <li>
+          <span class="w-10 font-color-sslight"> 任务</span>
+          <span class="font-color-dark fw-normal"> {{ details.jobName }}</span>
+        </li>
+        <li>
+          <span class="w-10 font-color-sslight"> 工单编号</span>
+          <span class="font-color-dark fw-normal"> {{ details.ticketNumber }}</span>
+        </li>
+        <li>
+          <span class="w-10 font-color-sslight">工单状态</span>
+          <span class="font-color-dark fw-normal"> {{ details.status }}</span>
+        </li>
+        <li>
+          <span class="w-10 font-color-sslight">提交时间</span>
+          <span class="font-color-dark fw-normal"> {{ details.createdTime }}</span>
+        </li>
+        <li>
+          <span class="w-10 font-color-sslight">问题</span>
+          <span class="font-color-dark fw-normal"> {{ details.description }}</span>
+        </li>
+        <li>
           <span> 回复内容: </span>
           <span v-for="(item, index) in details.comments" :key="index">
             <span v-html="item.content"> {{ item.content }}</span>
