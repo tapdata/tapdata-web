@@ -205,6 +205,7 @@ export default {
     // 清空所有选中
     clearSelection() {
       this.handleCheckAll(false)
+      this.$emit('clear-selection')
     },
 
     getCheckboxValue(item) {
