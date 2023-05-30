@@ -36,7 +36,6 @@
           :fdmAndMdmId="fdmAndMdmId"
           :mapCatalog="mapCatalog"
           @create-connection="handleAdd"
-          @create-target="handleCreateTarget"
           @node-drag-end="handleDragEnd"
           @show-settings="handleSettings"
           @load-directory="loadDirectory"
@@ -47,7 +46,7 @@
     <SceneDialog
       :visible.sync="showSceneDialog"
       :selector-type.sync="selectorType"
-      @success="handleSuccess($event, 'target')"
+      @success="handleSuccess"
       @saveAndMore="handleSuccess"
     ></SceneDialog>
     <Settings
@@ -184,13 +183,13 @@ export default {
       this.showSceneDialog = true
     },
 
-    handleCreateTarget(type) {
-      this.selectorType = type
-      this.showSceneDialog = true
-    },
-
-    handleSuccess(value, comRef) {
-      this.$refs[comRef]?.[0]?.addItem(value)
+    handleSuccess(connection) {
+      if (connection.connection_type === 'source_and_target') {
+        this.$refs.source[0].addItem(connection)
+        this.$refs.target[0].addItem(connection)
+      } else {
+        this.$refs[this.selectorType]?.[0]?.addItem(connection)
+      }
     },
 
     handleDragEnd() {

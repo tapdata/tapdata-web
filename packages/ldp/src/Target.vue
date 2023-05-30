@@ -382,7 +382,7 @@ export default {
     },
 
     handleAdd() {
-      this.$emit('create-target', 'target')
+      this.$emit('create-connection', 'target')
     },
 
     async getData() {
