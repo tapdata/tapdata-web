@@ -630,6 +630,7 @@ export default {
   methods: {
     // 打开并初始化抽屉
     open(formData) {
+      this.orginData = formData
       this.tab = 'form'
       this.visible = true
       this.isEdit = false
@@ -901,6 +902,7 @@ export default {
             name: connectionName
           }
           this.formatData(data || [])
+          Object.assign(this.orginData, data)
           this.$emit('save')
           this.isEdit = false
         }

@@ -316,7 +316,7 @@ export default {
         generating: this.$t('public_status_to_be_generated')
       },
       connectionWebsiteMap: {},
-      apiSupportTypes: ['Mysql', 'SQL Server', 'Oracle', 'Mongodb', 'PostgreSQL', 'Tidb', 'Doris']
+      apiSupportTypes: ['Mysql', 'SQL Server', 'Oracle', 'MongoDB', 'PostgreSQL', 'Tidb', 'Doris']
     }
   },
 
