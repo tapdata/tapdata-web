@@ -241,32 +241,12 @@
     ></BaseNode>
     <!-- E 节点拖拽元素 -->
 
-    <ElDialog
-      :title="$t('packages_dag_components_leftsidebar_xuanzeshujuyuan')"
-      width="848px"
+    <!--创建连接-->
+    <SceneDialog
       :visible.sync="connectionDialog"
-      :close-on-click-modal="false"
-      :append-to-body="true"
-      custom-class="connection-dialog"
-    >
-      <ConnectionTypeSelector
-        :types="database"
-        :commingTypes="comingAllowDatabase"
-        :otherTypes="otherType"
-        :large="true"
-        @select="createConnection"
-      ></ConnectionTypeSelector>
-      <!-- :automationType="automationType" -->
-    </ElDialog>
-    <!-- <ElDialog
-      title="创建连接"
-      width="60%"
-      :visible.sync="connectionFormDialog"
-      :close-on-click-modal="false"
-      :append-to-body="true"
-    >
-      <Form v-if="connectionFormDialog" :databaseTypeText="databaseType" @saveConnection="saveConnection"></Form>
-    </ElDialog> -->
+      selector-type="source_and_target"
+      @selected="handleDatabaseType"
+    ></SceneDialog>
 
     <CreateTable :dialog="dialogData" @handleTable="handleSaveTable"></CreateTable>
   </aside>
@@ -280,7 +260,7 @@ import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/re
 import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
 import { metadataInstancesApi, databaseTypesApi, CancelToken, connectionsApi } from '@tap/api'
 import { VIcon, VEmpty, OverflowTooltip } from '@tap/component'
-import { ConnectionTypeSelector } from '@tap/business'
+import { SceneDialog } from '@tap/business'
 import { getInitialValuesInBySchema } from '@tap/form'
 import mouseDrag from '@tap/component/src/directives/mousedrag'
 import resize from '@tap/component/src/directives/resize'
@@ -294,6 +274,7 @@ export default {
   name: 'LeftSidebar',
 
   components: {
+    SceneDialog,
     NodeIcon,
     CreateTable,
     VEmpty,
@@ -301,7 +282,6 @@ export default {
     BaseNode,
     VIcon,
     ConnectionType,
-    ConnectionTypeSelector,
     ElScrollbar: Select.components.ElScrollbar,
     StageButton
   },
@@ -418,17 +398,6 @@ export default {
     },
     getPdkData(data) {
       this.database.push(...data)
-    },
-    createConnection(item = {}) {
-      this.connectionDialog = false
-      const { pdkHash } = item
-      let query = {
-        pdkHash
-      }
-      this.$router.push({
-        name: 'connectionCreate',
-        query
-      })
     },
     async init() {
       this.tbLoading = true
@@ -821,6 +790,16 @@ export default {
           ]*/
         }
       }
+    },
+
+    handleDatabaseType(item) {
+      this.connectionDialog = false
+      const { pdkHash } = item
+      let query = { pdkHash }
+      this.$router.push({
+        name: 'connectionCreate',
+        query
+      })
     }
   }
 }
@@ -1035,14 +1014,6 @@ $hoverBg: #eef3ff;
       font-size: $fontBaseTitle;
       line-height: 1;
       white-space: nowrap;
-    }
-  }
-}
-
-::v-deep {
-  .connection-dialog {
-    .el-dialog__body {
-      padding: 0 20px 30px 20px;
     }
   }
 }

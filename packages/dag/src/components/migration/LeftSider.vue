@@ -157,23 +157,12 @@
     ></BaseNode>
     <!-- E 节点拖拽元素 -->
 
-    <ElDialog
-      :title="$t('packages_dag_components_leftsidebar_xuanzeshujuyuan')"
-      width="848px"
+    <!--创建连接-->
+    <SceneDialog
       :visible.sync="connectionDialog"
-      :close-on-click-modal="false"
-      :append-to-body="true"
-      custom-class="connection-dialog"
-    >
-      <ConnectionTypeSelector
-        :types="database"
-        :commingTypes="comingAllowDatabase"
-        :otherTypes="otherType"
-        :large="true"
-        @select="createConnection"
-      ></ConnectionTypeSelector>
-      <!-- :automationType="automationType" -->
-    </ElDialog>
+      selector-type="source_and_target"
+      @selected="handleDatabaseType"
+    ></SceneDialog>
   </aside>
 </template>
 
@@ -195,7 +184,7 @@ import '@tap/assets/icons/svg/field_mod_type.svg'
 import { mapGetters } from 'vuex'
 import mouseDrag from '@tap/component/src/directives/mousedrag'
 import { VIcon, VEmpty } from '@tap/component'
-import { ConnectionTypeSelector } from '@tap/business'
+import { ConnectionTypeSelector, SceneDialog } from '@tap/business'
 import { getInitialValuesInBySchema } from '@tap/form'
 import resize from '@tap/component/src/directives/resize'
 import BaseNode from '../BaseNode'
@@ -212,6 +201,7 @@ import { getIcon } from '@tap/assets/icons'
 export default {
   name: 'LeftSider',
   components: {
+    SceneDialog,
     NodeIcon,
     VEmpty,
     OverflowTooltip,
@@ -291,13 +281,6 @@ export default {
   },
 
   methods: {
-    toggleConnectionType(type) {
-      if (this.connectionType !== type) {
-        this.connectionType = type
-        this.loadDatabase()
-      }
-    },
-
     // 创建连接
     creat() {
       this.connectionDialog = !this.stateIsReadonly
@@ -311,16 +294,6 @@ export default {
     },
     getPdkData(data) {
       this.database.push(...data)
-    },
-    createConnection(item) {
-      this.connectionDialog = false
-      // this.connectionFormDialog = true
-      this.databaseType = item.type
-      const { pdkHash } = item
-      this.$router.push({
-        name: 'connectionCreate',
-        query: { pdkHash }
-      })
     },
     async init() {
       await this.loadDatabase()
@@ -574,6 +547,16 @@ export default {
         this.dbSearchTxt = ''
         this.loadDatabase()
       }
+    },
+
+    handleDatabaseType(item) {
+      this.connectionDialog = false
+      const { pdkHash } = item
+      let query = { pdkHash }
+      this.$router.push({
+        name: 'connectionCreate',
+        query
+      })
     }
   }
 }
@@ -851,14 +834,6 @@ $hoverBg: #eef3ff;
       font-size: $fontBaseTitle;
       line-height: 1;
       white-space: nowrap;
-    }
-  }
-}
-
-::v-deep {
-  .connection-dialog {
-    .el-dialog__body {
-      padding: 0 20px 30px 20px;
     }
   }
 }
