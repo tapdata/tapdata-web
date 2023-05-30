@@ -1054,5 +1054,7 @@ export default {
   packages_business_shared_mining_table_tingzhiwajueti: '停止挖掘提醒',
   packages_business_shared_mining_table_yihebingdelian: '已合并的连接',
   packages_business_shared_mining_table_shengyuyigelian: '剩余一个连接和一个表，无法进行该操作',
-  packages_business_logs_nodelog_yijianfuzhi: '一键复制'
+  packages_business_logs_nodelog_yijianfuzhi: '一键复制',
+  packages_business_connections_jsdebug_shiyongHtt: '使用HttpReceiver最新接收到的数据用于调试',
+  packages_business_connections_jsdebug_huoqutiaoshishu: '获取调试数据'
 }
