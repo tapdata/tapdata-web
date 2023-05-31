@@ -3,7 +3,7 @@
     <span v-if="showTitle" class="fw-bold mb-4">{{ $t('packages_business_shared_mining_table_wajuebiaoxinxi') }}</span>
     <div class="mb-3 flex">
       <span class="flex-shrink-0">{{ $t('packages_business_shared_mining_table_yihebingdelian') }}</span>
-      <ElSelect v-model="selectedConnectionId" size="mini" class="ml-4" @change="fetch">
+      <ElSelect v-model="selectedConnectionId" size="mini" class="ml-4" @change="() => fetch">
         <ElOption v-for="item in connectionsList" :label="item.name" :value="item.id" :key="item.id"></ElOption>
       </ElSelect>
     </div>
