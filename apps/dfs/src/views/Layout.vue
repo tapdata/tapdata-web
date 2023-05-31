@@ -320,7 +320,7 @@ export default {
         return
       }
       this.bindPhoneVisible =
-        ['basic:email', 'social:wechatmp-qrcode'].includes(user?.registerSource) && !user?.telephone
+        ['basic:email', 'basic:email-code', 'social:wechatmp-qrcode'].includes(user?.registerSource) && !user?.telephone
       return this.bindPhoneVisible
     },
     // 检查是否有安装过agent
