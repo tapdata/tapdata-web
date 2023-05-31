@@ -603,5 +603,5 @@ export default {
   packages_dag_standardization_js: '标准化JS',
   packages_dag_mixins_formscope_gaiziduanshibi: '该字段是必填字段!',
   packages_dag_shared_mining_table_info_index_wajuebiaoxinxi: '挖掘表信息',
-  packages_dag_table_not_exist: '表不存在,将自动创建'
+  packages_dag_table_not_exist: '表不存在，将自动创建'
 }
