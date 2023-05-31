@@ -134,7 +134,7 @@ export default observer({
                             'x-component-props': {
                               placeholder: i18n.t('public_select_placeholder')
                             },
-                            default: 'Disable',
+                            default: 'SkipByLimit',
                             enum: [
                               // {
                               //   label: i18n.t('packages_dag_migration_settingpanel_zhidingtiaoguoce'),

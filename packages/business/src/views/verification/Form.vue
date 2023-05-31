@@ -195,6 +195,12 @@
                     :min="0"
                     style="width: 100px"
                     @click.native.prevent.stop
+                    @blur="
+                      () => {
+                        form.alarmSettings[1].params.maxDifferentialRows =
+                          form.alarmSettings[1].params.maxDifferentialRows || 0
+                      }
+                    "
                   ></ElInputNumber>
                   {{ $t('packages_business_verification_form_task_alarm_when_diff_result_over_count2') }}</ElCheckbox
                 >
@@ -209,6 +215,12 @@
                     :min="0"
                     style="width: 100px"
                     @click.native.prevent.stop
+                    @blur="
+                      () => {
+                        form.alarmSettings[2].params.maxDifferentialValues =
+                          form.alarmSettings[2].params.maxDifferentialValues || 0
+                      }
+                    "
                   ></ElInputNumber>
                   {{ $t('packages_business_verification_form_task_alarm_when_diff_result_over_count2') }}</ElCheckbox
                 >

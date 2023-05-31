@@ -640,6 +640,10 @@ export default {
     getSharedCacheData(id) {
       sharedCacheApi.findOne(id).then(data => {
         externalStorageApi.get(data.externalStorageId).then((ext = {}) => {
+          if (!ext.name) {
+            this.infoList = []
+            return
+          }
           this.infoList = [
             // {
             //   label: i18n.t('packages_dag_monitor_leftsider_huancunkaishishi'),
