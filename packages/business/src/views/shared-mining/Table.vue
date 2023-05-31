@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-column">
     <span v-if="showTitle" class="fw-bold mb-4">{{ $t('packages_business_shared_mining_table_wajuebiaoxinxi') }}</span>
-    <div class="mb-3">
-      <span>{{ $t('packages_business_shared_mining_table_yihebingdelian') }}</span>
-      <ElSelect v-model="selectedConnectionId" size="mini" class="ml-4" @change="fetch">
+    <div class="mb-3 flex">
+      <span class="flex-shrink-0">{{ $t('packages_business_shared_mining_table_yihebingdelian') }}</span>
+      <ElSelect v-model="selectedConnectionId" size="mini" class="ml-4" @change="() => fetch">
         <ElOption v-for="item in connectionsList" :label="item.name" :value="item.id" :key="item.id"></ElOption>
       </ElSelect>
     </div>
@@ -94,6 +94,8 @@ import { debounce } from 'lodash'
 import { VTable } from '@tap/component'
 import { logcollectorApi, taskApi } from '@tap/api'
 import { TaskStatus } from '../../components'
+
+let timeout = null
 
 export default {
   name: 'Table',
@@ -197,13 +199,14 @@ export default {
       submitLoading: false,
       recoverLoading: false,
       selectedConnectionId: '',
-      connectionsList: []
+      connectionsList: [],
+      listTotal: 0
     }
   },
   watch: {
     params(oldval, newval) {
       if (newval?.nodeId !== oldval?.nodeId) {
-        this.remoteMethod() //node节点改变更新table数据
+        this.fetch() //node节点改变更新table数据
       }
     }
   },
@@ -212,6 +215,15 @@ export default {
     this.currentTab = this.tabItems[0].value
     this.connectionsList = await logcollectorApi.getConnectionIdsByTaskId(this.taskId)
     this.selectedConnectionId = this.connectionsList[0]?.id
+
+    //定时轮询
+    timeout = setInterval(() => {
+      this.fetch(null, 0, true)
+    }, 5000)
+  },
+
+  destroyed() {
+    this.clearTimer()
   },
 
   methods: {
@@ -226,15 +238,16 @@ export default {
         size: size
       }
       return logcollectorApi[this.currentTab === 'running' ? 'tableInfos' : 'excludeTableInfos'](filter).then(data => {
+        this.listTotal = data.total || 0
         return {
-          total: data.total,
+          total: this.listTotal,
           data: data.items || []
         }
       })
     },
 
     fetch() {
-      this.$refs.table?.fetch?.(1)
+      this.$refs.table?.fetch?.(...arguments)
     },
 
     handleSearch: debounce(function () {
@@ -250,6 +263,8 @@ export default {
     },
 
     handleStop() {
+      if (this.connectionsList.length <= 1 && this.listTotal <= 1)
+        return this.$message.error(i18n.t('packages_business_shared_mining_table_shengyuyigelian'))
       const { taskId } = this
       let tableNameMap = {}
       this.multipleSelection.forEach(t => {
@@ -314,6 +329,10 @@ export default {
         .finally(() => {
           this.recoverLoading = false
         })
+    },
+
+    clearTimer() {
+      clearInterval(timeout)
     }
   }
 }

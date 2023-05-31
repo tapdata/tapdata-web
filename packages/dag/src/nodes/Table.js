@@ -78,7 +78,12 @@ export class Table extends NodeType {
                     title: i18n.t('public_node_name'),
                     required: true,
                     'x-decorator': 'FormItem',
-                    'x-component': 'Input'
+                    'x-component': 'Input',
+                    'x-component-props': {
+                      onChange: `{{() => {
+                        $values.attrs.hasNameEdited = true
+                      }}}`
+                    }
                   },
                   'attrs.connectionName': {
                     type: 'string',
@@ -195,18 +200,7 @@ export class Table extends NodeType {
                         target: 'name',
                         effects: ['onFieldInputValueChange'],
                         fulfill: {
-                          state: {
-                            value: '{{$self.value}}'
-                          }
-                        }
-                      },
-                      {
-                        target: 'updateConditionFields',
-                        effects: ['onFieldValueChange'],
-                        fulfill: {
-                          state: {
-                            value: null
-                          }
+                          run: `{{ $self.value && !$values.attrs.hasNameEdited && ($target.value = $self.value) }}`
                         }
                       },
                       {
@@ -254,9 +248,9 @@ export class Table extends NodeType {
                   multiple: true,
                   filterable: true,
                   onCreate: `{{() => {
-            // 标记用户创建
-            $values.attrs.hasCreated = true
-          }}}`
+                    // 标记用户创建
+                    $values.attrs.hasCreated = true
+                  }}}`
                 },
                 'x-reactions': [
                   {

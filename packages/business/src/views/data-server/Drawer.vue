@@ -630,6 +630,7 @@ export default {
   methods: {
     // 打开并初始化抽屉
     open(formData) {
+      this.orginData = formData
       this.tab = 'form'
       this.visible = true
       this.isEdit = false
@@ -721,7 +722,7 @@ export default {
         pathAccessMethod,
         method: path.method || 'GET',
         fields,
-        params: path.params.filter(t => t.name !== 'sort') || this.getDefaultParams(apiType),
+        params: path.params?.filter(t => t.name !== 'sort') || this.getDefaultParams(apiType),
         where: path.where || [],
         sort: path.sort || [],
         path: path.path || '',
@@ -901,6 +902,7 @@ export default {
             name: connectionName
           }
           this.formatData(data || [])
+          Object.assign(this.orginData, data)
           this.$emit('save')
           this.isEdit = false
         }
@@ -939,7 +941,7 @@ export default {
       })
       this.databaseTypes =
         data
-          ?.filter(it => ['mysql', 'sqlserver', 'oracle', 'mongodb', 'pg', 'tidb', 'doris'].includes(it.pdkId))
+          ?.filter(it => ['mysql', 'sqlserver', 'oracle', 'mongodb', 'postgres', 'tidb', 'doris'].includes(it.pdkId))
           ?.map(it => it.name) || []
       // this.databaseTypes = data?.map(it => it.name) || []
       this.getConnectionOptions()

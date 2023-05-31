@@ -87,7 +87,7 @@
             </div>
           </ElFormItem>-->
           <ElFormItem required class="form-item" :label="$t('packages_business_verification_type') + ': '">
-            <ElRadioGroup v-model="form.inspectMethod">
+            <ElRadioGroup v-model="form.inspectMethod" @change="handleChangeInspectMethod">
               <ElRadioButton label="row_count">{{ inspectMethodMap['row_count'] }}</ElRadioButton>
               <ElRadioButton label="field">{{ inspectMethodMap['field'] }}</ElRadioButton>
               <ElRadioButton label="jointField">{{ inspectMethodMap['jointField'] }}</ElRadioButton>
@@ -195,6 +195,12 @@
                     :min="0"
                     style="width: 100px"
                     @click.native.prevent.stop
+                    @blur="
+                      () => {
+                        form.alarmSettings[1].params.maxDifferentialRows =
+                          form.alarmSettings[1].params.maxDifferentialRows || 0
+                      }
+                    "
                   ></ElInputNumber>
                   {{ $t('packages_business_verification_form_task_alarm_when_diff_result_over_count2') }}</ElCheckbox
                 >
@@ -209,6 +215,12 @@
                     :min="0"
                     style="width: 100px"
                     @click.native.prevent.stop
+                    @blur="
+                      () => {
+                        form.alarmSettings[2].params.maxDifferentialValues =
+                          form.alarmSettings[2].params.maxDifferentialValues || 0
+                      }
+                    "
                   ></ElInputNumber>
                   {{ $t('packages_business_verification_form_task_alarm_when_diff_result_over_count2') }}</ElCheckbox
                 >
@@ -694,6 +706,13 @@ export default {
 
     handleChangeAlarm(val, index = 0) {
       this.form.alarmSettings[index].notify = val ? ['SYSTEM', 'EMAIL'] : []
+    },
+
+    handleChangeInspectMethod() {
+      this.handleChangeAlarm(true, 0)
+      this.handleChangeAlarm(true, 1)
+      this.handleChangeAlarm(true, 2)
+      this.handleChangeAlarmItem()
     }
   }
 }

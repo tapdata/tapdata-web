@@ -34,16 +34,6 @@
           <EventChart :samples="[eventDataAll, eventDataPeriod]"></EventChart>
         </div>
       </div>
-
-      <SharedMiningTable
-        v-if="isSource"
-        ref="sharedMiningTable"
-        :task-id="dataflow.id"
-        :params="{
-          nodeId: nodeId
-        }"
-        class="shared-mining-table mt-4"
-      ></SharedMiningTable>
     </div>
     <template v-else>
       <div class="flex justify-content-between">

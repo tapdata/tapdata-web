@@ -35,6 +35,7 @@
           minWidth: 260,
           maxWidth: 400
         }"
+        ref="leftSidebar"
         @move-node="handleDragMoveNode"
         @drop-node="handleAddNodeByDrag"
         @add-table-as-node="handleAddTableAsNode"
@@ -188,18 +189,19 @@ export default {
     if (this.$route.name === 'DataflowViewer') {
       this.setStateReadonly(true)
     }
+    const query = { ...this.$route.query }
     // 设置schema的校验语言
     this.setValidateLanguage()
     // 收集pdk上节点的schema
     await this.initPdkProperties()
     // 初始化所有节点类型
     await this.initNodeType()
-    this.autoAddNode()
     this.jsPlumbIns.ready(async () => {
       try {
         this.initCommand()
         this.initNodeView()
         await this.initView(true)
+        this.autoAddNode(query)
         // this.initWS()
       } catch (error) {
         console.error(error) // eslint-disable-line
@@ -612,34 +614,17 @@ export default {
       }
     },
 
-    autoAddNode() {
-      const { addNode, connectionId, tableName } = this.$route.query || {}
+    async autoAddNode(query) {
+      const { addNode, connectionId, tableName } = query
+
       if (!addNode) return
 
-      this.jsPlumbIns.ready(async () => {
-        try {
-          const con = await connectionsApi.get(connectionId)
-          setTimeout(() => {
-            this.handleAddNodeToPos([-300, 300], {
-              name: tableName,
-              type: 'table',
-              databaseType: con.database_type,
-              connectionId,
-              tableName,
-              attrs: {
-                connectionName: con.name,
-                connectionType: con.connection_type,
-                accessNodeProcessId: '',
-                pdkType: 'pdk',
-                pdkHash: con.pdkHash,
-                capabilities: con.capabilities
-              }
-            })
-          }, 5000)
-        } catch (error) {
-          console.error(error) // eslint-disable-line
-        }
-      })
+      try {
+        const con = await connectionsApi.get(connectionId)
+        this.handleAddNodeToPos([-300, 300], this.$refs.leftSidebar.getNodeProps(con, tableName))
+      } catch (error) {
+        console.error(error) // eslint-disable-line
+      }
     }
   }
 }

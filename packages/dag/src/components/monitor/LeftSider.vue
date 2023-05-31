@@ -147,7 +147,7 @@
           v-for="(item, index) in infoList"
           :key="index"
           class="mb-2"
-          :class="[item.block ? 'block' : 'flex justify-content-between']"
+          :class="[item.block ? 'block' : 'flex justify-content-between', item.class]"
         >
           <div class="font-color-light">{{ item.label }}:</div>
           <div class="font-color-dark">{{ item.value || '-' }}</div>
@@ -596,6 +596,16 @@ export default {
     getCollectorData() {
       logcollectorApi.getDetail(this.dataflow.id).then(data => {
         const { externalStorage = {}, logTime, name } = data
+        let uriInfo = externalStorage.uri
+        if (externalStorage.type === 'mongodb') {
+          const regResult =
+            /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
+              externalStorage.uri
+            )
+          const { username, host, database, query } = regResult.groups
+          uriInfo = `mongodb://${username}:***@${host}/${database}${query ? '/' + query : ''}`
+        }
+
         this.infoList = [
           {
             label: this.$t('packages_business_relation_details_rizhiwajueshi'),
@@ -615,8 +625,9 @@ export default {
           },
           {
             label: this.$t('public_external_memory_info'),
-            value: externalStorage.uri,
-            block: true
+            value: uriInfo,
+            block: true,
+            class: 'text-break'
           }
         ]
       })
@@ -629,6 +640,10 @@ export default {
     getSharedCacheData(id) {
       sharedCacheApi.findOne(id).then(data => {
         externalStorageApi.get(data.externalStorageId).then((ext = {}) => {
+          if (!ext.name) {
+            this.infoList = []
+            return
+          }
           this.infoList = [
             // {
             //   label: i18n.t('packages_dag_monitor_leftsider_huancunkaishishi'),

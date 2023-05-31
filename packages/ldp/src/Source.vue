@@ -73,7 +73,7 @@
             class="custom-tree-node flex align-items-center"
             :class="{ grabbable: data.isObject, 'opacity-50': data.disabled }"
             slot-scope="{ node, data }"
-            @dblclick="$emit('preview', data, node.parent.data)"
+            @click="$emit('preview', data, node.parent.data)"
           >
             <VIcon
               v-if="node.data.loadFieldsStatus === 'loading'"
@@ -231,7 +231,7 @@ export default {
       return (
         <div
           class={className}
-          onDblclick={() => {
+          onClick={() => {
             this.$emit('preview', data, node.parent.data)
           }}
         >

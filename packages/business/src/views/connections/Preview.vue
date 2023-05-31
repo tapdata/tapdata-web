@@ -155,7 +155,7 @@ export default {
             items: [
               {
                 label: this.$t('public_connection_button_load_schema'),
-                key: 'last_updated'
+                key: 'loadSchemaTime'
               }
             ]
           },
@@ -285,6 +285,7 @@ export default {
       row.addtionalString = row.config.extParams || row.config.addtionalString
       row.database_datetype_without_timezone = row.config.timezone
       row.sourceFrom = this.getSourceFrom(row)
+      row.loadSchemaTime = row.loadSchemaTime ? dayjs(row.loadSchemaTime).format('YYYY-MM-DD HH:mm:ss') : '-'
       if (row.config.uri && row.config.isUri !== false) {
         const regResult =
           /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
@@ -341,27 +342,10 @@ export default {
     },
     async reload(cb) {
       this.checkAgent(() => {
-        let config = {
-          title: this.$t('packages_business_connection_reloadTittle'),
-          Message: this.$t('packages_business_connection_reloadMsg'),
-          confirmButtonText: this.$t('packages_business_message_confirm'),
-          cancelButtonText: this.$t('packages_business_message_cancel'),
-          name: this.connection.name,
-          id: this.connection.id
-        }
-        this.$confirm(config.Message + config.name + '?', config.title, {
-          confirmButtonText: config.confirmButtonText,
-          cancelButtonText: config.cancelButtonText,
-          type: 'warning',
-          closeOnClickModal: false
-        }).then(resFlag => {
-          if (resFlag) {
-            this.showProgress = true
-            this.progress = 0
-            this.testSchema(cb)
-            this.$emit('reload-schema')
-          }
-        })
+        this.showProgress = true
+        this.progress = 0
+        this.testSchema(cb)
+        this.$emit('reload-schema')
       })
     },
     //请求测试

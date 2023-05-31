@@ -28,5 +28,9 @@ export default class Proxy extends Http {
   connectors(pid) {
     return this.axios.get(`${this.url}/memory/connectors?pid=${pid}`)
   }
+
+  callHistory(params) {
+    return this.axios.get(`${this.url}/call/history`, { params })
+  }
 }
 export { Proxy }

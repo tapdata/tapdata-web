@@ -218,6 +218,7 @@ export default {
   public_task_heartbeat_time: 'Task heartbeat time',
   public_task_mission_error: 'Task Error',
   public_task_reasons_for_error: 'Reasons for error',
+  public_task_log: 'Task Log',
   // node
   public_node_name: 'Node Name',
   public_node_type: 'Node Type',

@@ -392,7 +392,6 @@ let menuSetting = [
   { name: 'dashboard', icon: 'gongzuotai', alias: 'page_title_dashboard' },
   {
     name: 'dataConsole',
-    label: 'Data Console(Preview)',
     icon: 'process-platform',
     code: 'v2_data-console',
     hidden: process.env.VUE_APP_ENABLE_LDP !== 'true'
