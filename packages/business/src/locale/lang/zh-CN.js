@@ -1053,7 +1053,7 @@ export default {
     '您要停止挖掘的表正在被以下任务使用，停止挖掘后将会影响以下任务的正常同步，请确认是否要继续停止。',
   packages_business_shared_mining_table_tingzhiwajueti: '停止挖掘提醒',
   packages_business_shared_mining_table_yihebingdelian: '已合并的连接',
-  packages_business_shared_mining_table_shengyuyigelian: '剩余一个连接和一张表，无法进行该操作',
+  packages_business_shared_mining_table_shengyuyigelian: '挖掘任务中至少要有一张表在挖掘，当前表为最后一张表，不能被停止挖掘。',
   packages_business_logs_nodelog_yijianfuzhi: '一键复制',
   packages_business_connections_jsdebug_shiyongHtt: '使用HttpReceiver最新接收到的数据用于调试',
   packages_business_connections_jsdebug_huoqutiaoshishu: '获取调试数据'
