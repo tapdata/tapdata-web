@@ -517,9 +517,10 @@ export default {
               },
               '{{useAsyncDataSourceByConfig({service: loadExternalStorage, withoutField: true}, $values.id ? $self.value : null)}}',
               {
+                dependencies: ['__TAPDATA.shareCdcEnable'],
                 fulfill: {
                   state: {
-                    value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}'
+                    value: `{{ $deps[0] ? $self.value || $self.dataSource?.find(item => item.isDefault)?.value : '' }}`
                   }
                 }
               }
