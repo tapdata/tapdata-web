@@ -90,6 +90,15 @@
             >
               {{ $t('public_button_reset') }}
             </ElLink>
+            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+            <ElLink
+              v-readonlybtn="'SYNC_job_edition'"
+              type="primary"
+              :disabled="row.btnDisabled.delete || $disabledReadonlyUserBtn()"
+              @click="handleDelete(row)"
+            >
+              {{ $t('public_button_delete') }}
+            </ElLink>
           </div>
         </template>
       </el-table-column>
@@ -168,16 +177,44 @@
     </el-dialog>
 
     <Editor ref="editor" @success="table.fetch(1)"></Editor>
+
+    <!-- 挖掘关联的任务 -->
+    <ElDialog
+      title="提示"
+      :close-on-click-modal="false"
+      :visible.sync="showUsingTaskDialog.visible"
+      custom-class="create-role"
+      width="600px"
+    >
+      <div>该挖掘任务已被 {{ showUsingTaskDialog.list.length }} 个任务调用，请删除任务后重试</div>
+      <VTable :columns="taskColumns" :data="showUsingTaskDialog.list" :has-pagination="false">
+        <template #name="{ row }">
+          <ElLink type="primary" @click="handleName(row)">{{ row.name }}</ElLink>
+        </template>
+      </VTable>
+      <div slot="footer" class="dialog-footer">
+        <ElButton
+          size="mini"
+          @click="
+            showUsingTaskDialog.list = []
+            showUsingTaskDialog.visible = false
+          "
+          >{{ $t('public_button_cancel') }}
+        </ElButton>
+      </div>
+    </ElDialog>
   </section>
 </template>
 
 <script>
 import dayjs from 'dayjs'
 import { logcollectorApi, taskApi, workerApi } from '@tap/api'
-import { FilterBar } from '@tap/component'
+import { FilterBar, VTable } from '@tap/component'
 import { TablePage, TaskStatus, makeStatusAndDisabled } from '@tap/business'
 
 import Editor from './Editor'
+import i18n from '@tap/i18n'
+import { openUrl } from '@tap/shared'
 
 let timeout = null
 export default {
@@ -186,7 +223,8 @@ export default {
     TablePage,
     FilterBar,
     TaskStatus,
-    Editor
+    Editor,
+    VTable
   },
   data() {
     return {
@@ -234,7 +272,18 @@ export default {
       },
       taskBuried: {
         start: 'sharedMiningStart'
-      }
+      },
+      showUsingTaskDialog: {
+        visible: false,
+        list: []
+      },
+      taskColumns: [
+        {
+          label: i18n.t('public_task_name'),
+          prop: 'name',
+          slotName: 'name'
+        }
+      ]
     }
   },
   mounted() {
@@ -463,6 +512,47 @@ export default {
           this.table.fetch()
         })
       })
+    },
+
+    async handleDelete(row) {
+      const filter = {
+        type: 'task_by_collector',
+        taskId: row.id
+      }
+      this.showUsingTaskDialog.list = await taskApi.taskConsoleRelations(filter)
+
+      this.$confirm(`删除任务<span class="color-primary">${row.name}</span>后，此任务将无法恢复`, '', {
+        type: 'warning',
+        dangerouslyUseHTMLString: true
+      }).then(flag => {
+        if (!flag) {
+          return
+        }
+        if (this.showUsingTaskDialog.list.length) {
+          this.showUsingTaskDialog.visible = true
+          return
+        }
+        taskApi.batchDelete([row.id]).then(data => {
+          this.$message.success(data?.message || this.$t('public_message_operation_success'))
+          this.table.fetch()
+        })
+      })
+    },
+
+    handleName({ syncType, name }) {
+      const MAP = {
+        migrate: 'migrateList',
+        sync: 'dataflowList',
+        logCollector: 'sharedMiningList',
+        mem_cache: 'sharedCacheList'
+      }
+      const routeUrl = this.$router.resolve({
+        name: MAP[syncType],
+        query: {
+          keyword: name
+        }
+      })
+      openUrl(routeUrl.href)
     }
   }
 }
