@@ -77,7 +77,11 @@
             <ElOption label="RocksDB" value="rocksdb"></ElOption>
           </ElSelect>
         </ElFormItem>
-        <ElFormItem :label="$t('packages_business_external_storage_list_cunchulujing')" prop="uri">
+        <ElFormItem
+          v-if="form.type !== 'memory'"
+          :label="$t('packages_business_external_storage_list_cunchulujing')"
+          prop="uri"
+        >
           <ElInput
             v-model="form.uri"
             :placeholder="
