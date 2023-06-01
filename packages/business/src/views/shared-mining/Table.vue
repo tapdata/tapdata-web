@@ -72,6 +72,9 @@
         <span class="ml-3 mr-12">{{ $t('packages_business_shared_mining_table_ninyaotingzhiwa') }}</span>
       </div>
       <VTable :columns="taskColumns" :data="taskData" :has-pagination="false">
+        <template #name="{ row }">
+          <ElLink type="primary" @click="handleName(row)">{{ row.name }}</ElLink>
+        </template>
         <template #status="{ row }">
           <TaskStatus :task="row" />
         </template>
@@ -94,6 +97,7 @@ import { debounce } from 'lodash'
 import { VTable } from '@tap/component'
 import { logcollectorApi, taskApi } from '@tap/api'
 import { TaskStatus } from '../../components'
+import { openUrl } from '@tap/shared'
 
 let timeout = null
 
@@ -187,7 +191,8 @@ export default {
       taskColumns: [
         {
           label: i18n.t('public_task_name'),
-          prop: 'name'
+          prop: 'name',
+          slotName: 'name'
         },
         {
           label: i18n.t('public_task_status'),
@@ -333,6 +338,22 @@ export default {
 
     clearTimer() {
       clearInterval(timeout)
+    },
+
+    handleName({ syncType, name }) {
+      const MAP = {
+        migrate: 'migrateList',
+        sync: 'dataflowList',
+        logCollector: 'sharedMiningList',
+        mem_cache: 'sharedCacheList'
+      }
+      const routeUrl = this.$router.resolve({
+        name: MAP[syncType],
+        query: {
+          keyword: name
+        }
+      })
+      openUrl(routeUrl.href)
     }
   }
 }
