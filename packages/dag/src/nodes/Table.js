@@ -295,6 +295,11 @@ export class Table extends NodeType {
                     }
                   }
                 }
+              },
+
+              schemaPreview: {
+                type: 'void',
+                'x-component': 'SchemaPreview'
               }
             }
           },
