@@ -180,13 +180,15 @@
 
     <!-- 挖掘关联的任务 -->
     <ElDialog
-      title="提示"
+      :title="$t('public_message_title_prompt')"
       :close-on-click-modal="false"
       :visible.sync="showUsingTaskDialog.visible"
       custom-class="create-role"
       width="600px"
     >
-      <div>该挖掘任务已被 {{ showUsingTaskDialog.list.length }} 个任务调用，请删除任务后重试</div>
+      <div>
+        {{ $t('packages_business_shared_mining_list_gaiwajuerenwu', { val: showUsingTaskDialog.list.length }) }}
+      </div>
       <VTable :columns="taskColumns" :data="showUsingTaskDialog.list" :has-pagination="false">
         <template #name="{ row }">
           <ElLink type="primary" @click="handleName(row)">{{ row.name }}</ElLink>
@@ -521,7 +523,7 @@ export default {
       }
       this.showUsingTaskDialog.list = await taskApi.taskConsoleRelations(filter)
 
-      this.$confirm(`删除任务<span class="color-primary">${row.name}</span>后，此任务将无法恢复`, '', {
+      this.$confirm(this.$t('packages_business_shared_mining_list_shanchurenwus', { val1: row.name }), '', {
         type: 'warning',
         dangerouslyUseHTMLString: true
       }).then(flag => {
