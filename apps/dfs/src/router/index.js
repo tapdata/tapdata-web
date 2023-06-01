@@ -51,6 +51,11 @@ const DataConsoleDashboard = async () => {
   return Dashboard
 }
 
+const NoticeList = async () => {
+  const { NoticeList } = await import('@tap/business')
+  return NoticeList
+}
+
 const CustomNodeList = async () => {
   const { CustomNodeList } = await import('@tap/business')
   return CustomNodeList
@@ -73,7 +78,7 @@ const routes = [
         meta: {
           title: 'tap_home'
         },
-        redirect: { name: 'Workbench' },
+        redirect: { name: 'dataConsole' },
         hidden: true
       },
       {
@@ -277,6 +282,15 @@ const routes = [
           title: 'page_title_data_console',
           hideTitle: true,
           icon: 'data-server'
+        }
+      },
+      {
+        path: '/notice',
+        name: 'noticeList',
+        component: NoticeList,
+        meta: {
+          title: '公告列表',
+          hideTitle: false
         }
       },
       /* ---------- 自定义节点  ----------*/

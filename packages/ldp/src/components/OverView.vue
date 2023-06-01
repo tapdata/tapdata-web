@@ -29,8 +29,11 @@
         </ul>
       </div>
       <div class="w-50 border-start pt-2">
-        <div class="aside-title px-4 mb-2 font-color-dark fw-light fs-6">{{ $t('workbench_notice') }}</div>
-        <div class="aside-main notice-list flex-grow-1 px-4 mr-4">
+        <div class="flex justify-content-between">
+          <div class="aside-title px-4 mb-2 font-color-dark fw-light fs-6">{{ $t('workbench_notice') }}</div>
+          <div class="cursor-pointer px-4 font-color-slight" @click="goNoticeList">更多</div>
+        </div>
+        <div class="aside-main notice-list flex-grow-1 px-4">
           <ul class="notice-list__list h-100 overflow-y-auto">
             <li
               v-for="(item, index) in notices.slice(0, 3)"
@@ -43,7 +46,7 @@
               <ElLink v-else class="notice-list__name flex-grow-1 ellipsis block pointer" @click="toNotice(item)">
                 {{ item.name }}
               </ElLink>
-              <div class="notice-list__time">
+              <div class="notice-list__time font-color-slight">
                 {{ fromNow(item.time) }}
               </div>
             </li>
@@ -217,6 +220,11 @@ export default {
           }
         ]
       }
+    },
+
+    //公告列表
+    goNoticeList() {
+      this.$router.push('notice')
     }
   }
 }
@@ -265,7 +273,6 @@ export default {
   background: #f7f8f9;
 }
 .notice-list__time {
-  color: map-get($fontColor, light);
   white-space: nowrap;
   //width: 80px;
   text-align: right;

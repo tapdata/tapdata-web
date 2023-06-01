@@ -1,7 +1,8 @@
 <template>
   <div class="swim-lane flex flex-column h-100">
     <div class="position-absolute" style="right: 55%">
-      <VIcon size="32" :class="{ icon: overViewVisible }" @click="toggleOverview(overViewVisible)">fold</VIcon>
+      <VIcon v-if="overViewVisible" size="32" @click="toggleOverview(overViewVisible)">fold-expend</VIcon>
+      <VIcon v-else size="32" @click="toggleOverview(overViewVisible)">fold-pack-up</VIcon>
     </div>
     <OverView :visible="overViewVisible"></OverView>
     <div class="page-header-title flex align-center">

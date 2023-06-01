@@ -144,11 +144,11 @@ export default {
           icon: 'process-platform',
           beta: true
         },
-        {
-          name: 'Workbench',
-          title: $t('workbench_manage'),
-          icon: 'workbench'
-        },
+        // {
+        //   name: 'Workbench',
+        //   title: $t('workbench_manage'),
+        //   icon: 'workbench'
+        // },
         {
           name: 'connections',
           title: $t('connection_manage'),
