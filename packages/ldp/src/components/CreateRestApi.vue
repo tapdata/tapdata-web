@@ -1010,16 +1010,16 @@ export default {
 
 <style lang="scss">
 .t-dialog.el-dialog {
+  position: absolute;
   display: flex;
   flex-direction: column;
-  margin: 0 !important;
-  position: absolute;
-  left: 50%;
-  top: 50%;
   max-height: calc(100% - 64px);
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto !important;
   overflow: hidden;
-  transform-style: preserve-3d;
-  transform: translate3d(-50%, -50%, 0);
   .el-dialog__header {
     padding: 24px !important;
   }
