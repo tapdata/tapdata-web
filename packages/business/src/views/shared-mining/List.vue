@@ -31,7 +31,7 @@
           <TaskStatus :task="row" />
         </template>
       </el-table-column>
-      <el-table-column width="220" fixed="right" :label="$t('public_operation')">
+      <el-table-column width="260" fixed="right" :label="$t('public_operation')">
         <template #default="{ row }">
           <div class="table-operations">
             <ElLink
