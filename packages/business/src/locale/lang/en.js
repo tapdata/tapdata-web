@@ -1092,7 +1092,7 @@ export default {
   packages_business_swimlane_target_shouye: 'Homepage',
   packages_business_connections_databaseform_chakanwajueren: 'View mining tasks',
   packages_business_connections_databaseform_dangqianlianjiede:
-    'The currently connected mining task is using the original external storage, switching will result in the loss of mined data, please operate with caution. ',
+    'The currently connected mining task is using this external storage, and modification is not allowed for now. If you need to modify it, please reset or delete the corresponding mining task first.',
   packages_business_shared_mining_table_yitingzhiwajue: 'Mining has stopped',
   packages_business_shared_mining_table_zhengzaiwajue: 'Digging',
   packages_business_shared_mining_table_ninyaotingzhiwa:

@@ -504,7 +504,8 @@ export default {
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             'x-component-props': {
-              onChange: `{{ val => shareCDCExternalStorageIdOnChange(val, $form) }}`
+              onChange: `{{ val => shareCDCExternalStorageIdOnChange(val, $form) }}`,
+              disabled: `{{ getShareCDCExternalStorageIdDisabled() }}`
             },
             'x-reactions': [
               {
@@ -539,7 +540,7 @@ export default {
               {
                 fulfill: {
                   state: {
-                    display: 'hidden'
+                    display: `{{ getShareCDCExternalStorageIdDisabled() ? "visible" : "hidden" }}`
                   }
                 }
               }
@@ -878,10 +879,10 @@ export default {
       }
       if (id) {
         await this.getPdkData(id)
-        // 开启了共享缓存
+        // 开启了共享挖掘
         const { shareCdcEnable, shareCDCExternalStorageId } = this.model
         if (shareCdcEnable && shareCDCExternalStorageId) {
-          this.connectionLogCollectorTaskData = await connectionsApi.checkLogCollectorTask(id, 100)
+          this.connectionLogCollectorTaskData = await connectionsApi.usingDigginTaskByConnectionId(id)
         }
         delete result.properties.START.properties.__TAPDATA.properties.name
       }
@@ -1067,6 +1068,9 @@ export default {
                 ? 'visible'
                 : 'hidden'
           })
+        },
+        getShareCDCExternalStorageIdDisabled: () => {
+          return !!this.connectionLogCollectorTaskData.total
         },
         handleLogCollectorTaskDialog: async () => {
           this.connectionLogCollectorTaskDialog = true

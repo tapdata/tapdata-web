@@ -1046,7 +1046,7 @@ export default {
   packages_business_swimlane_target_shouye: '首页',
   packages_business_connections_databaseform_chakanwajueren: '查看挖掘任务',
   packages_business_connections_databaseform_dangqianlianjiede:
-    '当前连接的挖掘任务正在使用原外存，切换会导致已挖掘数据丢失，请谨慎操作。',
+    '当前连接的挖掘任务正在使用该外存，暂不允许修改，如需修改请先重置或删除对应挖掘任务。',
   packages_business_shared_mining_table_yitingzhiwajue: '已停止挖掘',
   packages_business_shared_mining_table_zhengzaiwajue: '正在挖掘',
   packages_business_shared_mining_table_ninyaotingzhiwa:
