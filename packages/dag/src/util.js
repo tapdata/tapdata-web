@@ -75,9 +75,13 @@ export function getMatchedDataTypeLevel(
   fieldChangeRules = [],
   findPossibleDataTypes = {}
 ) {
-  const { data_type, field_name, dataTypeTemp } = field || {}
+  const { field_name } = field || {}
+  const tapType = JSON.parse(field.tapType || '{}')
+  if (tapType.type === 7) {
+    field.data_type = ''
+  }
   if (!findPossibleDataTypes[field_name]) return ''
-  return data_type !== dataTypeTemp || canUseDataTypes.length ? '' : 'error'
+  return tapType.type !== 7 || canUseDataTypes.length ? '' : 'error'
 }
 export function errorFiledType(field) {
   const { tapType } = field || {}
