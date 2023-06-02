@@ -533,6 +533,17 @@ export default {
       return result.map(re => {
         const el = this.flowStages.find(t => t.id === re.source)
         const targetNode = this.flowStages.find(t => t.id === re.target)
+        let updateConditionFieldMap = {}
+        let tableNames = []
+        let objectNames = []
+        if (targetNode.type === 'database') {
+          updateConditionFieldMap = targetNode.updateConditionFieldMap || {}
+          tableNames = el.tableNames
+          objectNames = targetNode.syncObjects?.[0]?.objectNames || []
+        } else if (targetNode.type === 'table') {
+          updateConditionFieldMap[targetNode.tableName] = targetNode.updateConditionFields || []
+        }
+
         return {
           source: el.id,
           sourceName: el.name,
@@ -543,7 +554,11 @@ export default {
           targetConnectionId: targetNode.connectionId,
           targetConnectionName: targetNode.attrs?.connectionName,
           sourceDatabaseType: el.databaseType,
-          targetDatabaseType: targetNode.databaseType
+          targetDatabaseType: targetNode.databaseType,
+          updateConditionFieldMap,
+          tableNames,
+          objectNames,
+          tableName: targetNode.tableName
         }
       })
     },
@@ -647,7 +662,8 @@ export default {
               sourceConnectionName,
               targetConnectionName,
               sourceDatabaseType,
-              targetDatabaseType
+              targetDatabaseType,
+              updateConditionFieldMap
             } = m
             const getAllTablesInNodeSource = this.getAllTablesInNode(source)
             const getAllTablesInNodeTarget = this.getAllTablesInNode(target)
@@ -656,6 +672,16 @@ export default {
               let findTargetTable = data.find(
                 t => t.source.id === targetConnectionId && t.original_name === getAllTablesInNodeTarget[geIndex]
               )
+              const updateList = cloneDeep(updateConditionFieldMap[findTargetTable.original_name] || [])
+              const targetSortColumn = updateList.length
+                ? updateList.join(',')
+                : this.getPrimaryKeyFieldStr(findTargetTable.fields)
+              const sourceSortColumn = updateList.length
+                ? findTargetTable.fields
+                    .filter(t => updateList.includes(t.field_name))
+                    .map(t => t.original_field_name)
+                    .join(',')
+                : this.getPrimaryKeyFieldStr(findTable.fields)
               let item = this.getItemOptions()
               item.source.nodeId = source
               item.source.nodeName = sourceName
@@ -664,7 +690,7 @@ export default {
               item.source.connectionName = `${sourceName} / ${sourceConnectionName}`
               item.source.table = findTable.original_name
               item.source.fields = findTable.fields
-              item.source.sortColumn = this.getPrimaryKeyFieldStr(findTable.fields)
+              item.source.sortColumn = sourceSortColumn
 
               item.target.nodeId = target
               item.target.nodeName = targetName
@@ -673,7 +699,7 @@ export default {
               item.target.connectionName = `${targetName} / ${targetConnectionName}`
               item.target.table = findTargetTable.original_name
               item.target.fields = findTargetTable.fields
-              item.target.sortColumn = this.getPrimaryKeyFieldStr(findTargetTable.fields)
+              item.target.sortColumn = targetSortColumn
               list.push(item)
             })
           })
@@ -744,6 +770,41 @@ export default {
       item.databaseType = val?.databaseType
     },
 
+    getReverseNodeInfo(data = {}) {
+      const {
+        source,
+        target,
+        sourceName,
+        targetName,
+        sourceConnectionId,
+        targetConnectionId,
+        sourceConnectionName,
+        targetConnectionName,
+        sourceDatabaseType,
+        targetDatabaseType,
+        updateConditionFieldMap,
+        tableNames,
+        objectNames,
+        tableName
+      } = data
+      return {
+        source: target,
+        target: source,
+        sourceName: targetName,
+        targetName: sourceName,
+        sourceConnectionId: targetConnectionId,
+        targetConnectionId: sourceConnectionId,
+        sourceConnectionName: targetConnectionName,
+        targetConnectionName: sourceConnectionName,
+        sourceDatabaseType: targetDatabaseType,
+        targetDatabaseType: sourceDatabaseType,
+        updateConditionFieldMap,
+        tableNames,
+        objectNames,
+        tableName
+      }
+    },
+
     handleChangeTable(val, item, index, type) {
       const fields = this.getFieldsByItem(item, type)
       item[type].fields = fields
@@ -752,39 +813,51 @@ export default {
       if (!this.taskId) {
         return
       }
+
+      // 获取连线信息
+      const matchNodeList = this.getMatchNodeList()
+      let matchNode = matchNodeList.find(t => [t.source, t.target].includes(item[type].nodeId))
+      if (!matchNode) {
+        return
+      }
+
+      if (matchNode.target === item[type].nodeId) {
+        matchNode = this.getReverseNodeInfo(matchNode)
+      }
+      const {
+        target,
+        targetName,
+        targetConnectionId,
+        targetConnectionName,
+        sourceDatabaseType,
+        targetDatabaseType,
+        updateConditionFieldMap,
+        tableNames,
+        objectNames,
+        tableName
+      } = matchNode
+
+      // 自动填充索引字段
+      let updateList = updateConditionFieldMap[val] || {}
+      item[type].sortColumn = updateList.length ? updateList.join(',') : this.getPrimaryKeyFieldStr(fields)
+
       if (type === 'target') {
+        item.target.databaseType = targetDatabaseType
         return
       }
       // 自动填充目标连接和表
-      const { isDB } = this
-      const sourceNode = this.flowStages.find(t => t.id === item.source.nodeId)
-      const targetNodeId = sourceNode?.outputLanes?.[0]
-      const targetNode = this.flowStages.find(t => t.id === targetNodeId)
-      item.source.databaseType = sourceNode.databaseType
-      if (!targetNode) return
+      item.source.databaseType = sourceDatabaseType
 
-      const nodeId = targetNode.id
-      const nodeName = targetNode.name
-      const connectionId = targetNode.connectionId
-      const connectionName = targetNode.attrs?.connectionName
-      item.target.databaseType = targetNode.databaseType
-      item.target.nodeId = nodeId
-      item.target.nodeName = nodeName
-      item.target.connectionId = `${nodeId}/${connectionId}`
-      item.target.connectionName = `${nodeName} / ${connectionName}`
-      if (isDB) {
-        const findSourceTableIndex = sourceNode.tableNames.findIndex(t => t === val)
-        const objectNames = targetNode.syncObjects?.[0]?.objectNames || []
-        item.target.table = objectNames[findSourceTableIndex]
-      } else {
-        item.target.table = targetNode.tableName
-      }
+      item.target.nodeId = target
+      item.target.nodeName = targetName
+      item.target.connectionId = `${target}/${targetConnectionId}`
+      item.target.connectionName = `${targetName} / ${targetConnectionName}`
+      item.target.table = tableName ? tableName : objectNames[tableNames.findIndex(t => t === val)]
 
       // 加载目标的字段
-      const targetTableName = item.target.table
       const params = {
-        nodeId,
-        tableFilter: targetTableName,
+        nodeId: target,
+        tableFilter: item.target.table,
         page: 1,
         pageSize: 1
       }
@@ -795,9 +868,11 @@ export default {
             return { id, field_name, primary_key_position }
           }) || []
         // 设置主键
-        item.target.sortColumn = this.getPrimaryKeyFieldStr(item.target.fields)
+        item.target.sortColumn = updateList.length
+          ? updateList.join(',')
+          : this.getPrimaryKeyFieldStr(item.target.fields)
 
-        const key = [nodeId || '', connectionId, targetTableName].join()
+        const key = [target || '', targetConnectionId, item.target.table].join()
         this.fieldsMap[key] = item.target.fields
       })
     },
@@ -875,7 +950,7 @@ export default {
         )
       }
       return sortField(data)
-        .filter(f => f.primary_key_position > 0)
+        .filter(f => !!f.primaryKey)
         .map(t => t.field_name)
         .join(',')
     },

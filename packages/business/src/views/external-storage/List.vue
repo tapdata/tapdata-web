@@ -72,7 +72,7 @@
           <ElInput v-model="form.name"></ElInput>
         </ElFormItem>
         <ElFormItem required :label="$t('public_external_memory_type')">
-          <ElSelect v-model="form.type" :disabled="form.id">
+          <ElSelect v-model="form.type" :disabled="!!form.id">
             <ElOption label="MongoDB" value="mongodb"></ElOption>
             <ElOption label="RocksDB" value="rocksdb"></ElOption>
           </ElSelect>
