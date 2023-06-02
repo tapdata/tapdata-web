@@ -1018,11 +1018,13 @@ export default {
         async loadExternalStorage(id) {
           try {
             let filter = {
-              where: {}
+              where: {},
+              limit: 1000,
+              skip: 0
             }
             if (id) {
               const ext = await externalStorageApi.get(id)
-              filter.where.type = ext.type
+              filter.where.type = ext?.type
             }
             const { items = [] } = await externalStorageApi.list({
               filter: JSON.stringify(filter)
@@ -1090,7 +1092,22 @@ export default {
       this.loadingFrom = false
     },
     async getPdkData(id) {
-      await connectionsApi.getNoSchema(id).then(data => {
+      await connectionsApi.getNoSchema(id).then(async data => {
+        // 检查外存是否存在，不存在则设置默认外存
+        const ext = await externalStorageApi.get(data.shareCDCExternalStorageId)
+        if (!ext) {
+          data.shareCDCExternalStorageId = ''
+          let filter = {
+            where: {
+              defaultStorage: true
+            }
+          }
+
+          const { items = [] } = await externalStorageApi.list({
+            filter: JSON.stringify(filter)
+          })
+          data.shareCDCExternalStorageId = items[0]?.id
+        }
         this.model = data
         let {
           name,
