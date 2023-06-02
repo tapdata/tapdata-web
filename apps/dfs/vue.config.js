@@ -5,7 +5,7 @@ const crypto = require('crypto')
 const serveUrlMap = {
   mock: 'http://localhost:3000',
   dev: 'http://backend:3030',
-  test: 'https://test3.cloud.tapdata.net:7443',
+  test: 'https://dev.cloud.tapdata.net:8443',
   local: 'https://v3.test.cloud.tapdata.net',
   localTm: 'http://127.0.0.1:3030'
 }
@@ -24,10 +24,6 @@ if (~argv.indexOf('--origin')) {
 }
 const proxy = {
   target: process.env.SERVER_URI || origin || serveUrlMap[SERVE_ENV],
-  changeOrigin: true
-}
-const proxy1 = {
-  target: 'http://192.168.1.179:3344',
   changeOrigin: true
 }
 
@@ -101,7 +97,6 @@ module.exports = {
             '/private_ask/': proxy,
             '/api/tcm/': proxy,
             '/api/gw/': proxy,
-            '/api/ticket': proxy1,
             '/tm/':
               SERVE_ENV === 'local'
                 ? localTmProxy
