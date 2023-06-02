@@ -1075,5 +1075,6 @@ export default {
     'BigQuery is a managed data warehouse provided by Google Cloud. It is famous for its high speed, scalability and security. It can process PB-level data, integrate with multiple tools, and is suitable for various data analysis and mining scenarios. ',
   packages_business_swimlane_tablepreview_chuangjianrenwu: 'Create Task',
   packages_business_as_source: 'As Source',
-  packages_business_as_target: 'As Target'
+  packages_business_as_target: 'As Target',
+  page_title_verification_create: 'New verification'
 }

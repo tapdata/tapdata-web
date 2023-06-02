@@ -164,6 +164,12 @@ export default {
           title: $t('task_manage_etl'),
           icon: 'task',
           beta: true
+        },
+        {
+          name: 'dataVerification',
+          title: $t('page_title_data_verify'),
+          icon: 'data-validation',
+          beta: true
         }
         // {
         //   name: 'customNodeList',
