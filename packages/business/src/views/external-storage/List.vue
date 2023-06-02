@@ -83,7 +83,7 @@
           prop="uri"
         >
           <ElInput
-            v-model="form.uri"
+            v-model.trim="form.uri"
             :placeholder="
               form.type === 'mongodb'
                 ? 'Example: mongodb://admin:password@127.0.0.1:27017/mydb?replicaSet=xxx&authSource=admin'
