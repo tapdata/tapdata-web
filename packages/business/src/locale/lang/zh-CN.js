@@ -341,7 +341,7 @@ export default {
   packages_business_relation_details_shiyonggaiguanlian: '使用该{val}的任务清单',
   packages_business_relation_list_jiaoyanrenwu: '校验任务',
   packages_business_relation_list_huancunrenwu: '缓存任务',
-  packages_business_relation_list_qingshururenwu: '请输入任务名称...',
+  packages_business_relation_list_qingshururenwu: '请输入任务名称',
   packages_business_relation_details_huancun: '缓存',
   packages_business_relation_details_wajue: '挖掘',
   packages_business_relation_details_renwu: '任务',
