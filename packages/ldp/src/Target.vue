@@ -123,14 +123,14 @@
                   : 'packages_business_target_create_task_dialog_desc_prefix_clone'
               )
             }}</span
-            ><span v-if="dialogConfig.from" class="inline-flex align-center px-1 font-color-dark fw-sub"
+            ><span v-if="dialogConfig.from" class="inline-flex align-center px-1 font-color-dark fw-sub align-top"
               ><DatabaseIcon :item="dialogConfig.from" :key="dialogConfig.from.database_type" :size="20" class="mr-1" />
               <span>{{ dialogConfig.from.name }}</span> </span
             ><span v-if="dialogConfig.tableName" class="font-color-dark fw-sub"
               >/<span class="px-1">{{ dialogConfig.tableName }}</span> </span
             ><span>
               {{ $t('packages_business_target_create_task_dialog_desc_to') }}
-              <span v-if="dialogConfig.to" class="inline-flex align-center px-1 font-color-dark fw-sub"
+              <span v-if="dialogConfig.to" class="inline-flex align-center px-1 font-color-dark fw-sub align-top"
                 ><DatabaseIcon :item="dialogConfig.to" :key="dialogConfig.to.database_type" :size="20" class="mr-1" />
                 <span>{{ dialogConfig.to.name }}</span>
               </span></span
@@ -686,7 +686,7 @@ export default {
 
     showDialog() {
       this.dialogConfig.visible = true
-      this.dialogConfig.taskName = ''
+      this.dialogConfig.taskName = i18n.t('packages_dag_mixins_editor_xinrenwu') + new Date().toLocaleTimeString()
     },
 
     hideDialog() {

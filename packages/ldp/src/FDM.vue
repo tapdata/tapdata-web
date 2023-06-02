@@ -104,7 +104,7 @@
       <ElForm ref="form" :model="taskDialogConfig" label-width="180px" @submit.prevent :rules="formRules">
         <div class="pipeline-desc p-4 mb-4 text-preline rounded-4">
           <span>{{ $t('packages_business_fdm_create_task_dialog_desc_prefix') }}</span
-          ><span v-if="taskDialogConfig.from" class="inline-flex align-center px-1 font-color-dark fw-sub"
+          ><span v-if="taskDialogConfig.from" class="inline-flex align-center px-1 font-color-dark fw-sub align-top"
             ><DatabaseIcon :item="taskDialogConfig.from" :key="taskDialogConfig.from.pdkHash" :size="20" class="mr-1" />
             <span>{{ taskDialogConfig.from.name }}</span> </span
           ><span v-if="taskDialogConfig.tableName" class="inline-flex font-color-dark fw-sub"
