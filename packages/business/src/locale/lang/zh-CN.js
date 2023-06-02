@@ -699,7 +699,7 @@ export default {
   packages_business_shared_cdc_setting_select_time_tip: '请选择日志保存时长',
   packages_business_shared_cdc_setting_message_edit_save: '保存成功，重启任务后生效',
   packages_business_shared_list_name: '挖掘名称',
-  packages_business_shared_list_time_excavation: '挖掘所处时间点',
+  packages_business_shared_list_time_excavation: '挖掘所处时间点(数据库时间)',
   packages_business_shared_list_setting: '挖掘设置',
   packages_business_shared_list_status: '状态',
   packages_business_shared_list_time: '挖掘延迟',
