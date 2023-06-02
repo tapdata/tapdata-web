@@ -38,7 +38,7 @@
             <li
               v-for="(item, index) in notices.slice(0, 3)"
               :key="index"
-              class="notice-list__item flex align-items-center mb-4 px-1 pointer"
+              class="notice-list__item flex align-items-center mb-2 px-1 pointer"
             >
               <div v-if="item.type" class="notice-list__type mr-4 p-1">
                 {{ item.type }}
@@ -59,11 +59,10 @@
 
 <script>
 import { Chart, VIcon } from '@tap/component'
-import timeFunction from '@/mixins/timeFunction'
+import { fromNow } from '@tap/shared'
 export default {
   name: 'OverView',
   components: { VIcon, Chart },
-  mixins: [timeFunction],
   props: ['visible'],
   data() {
     return {
@@ -131,6 +130,9 @@ export default {
     this.loadNotices()
   },
   methods: {
+    fromNow(date) {
+      return fromNow(date)
+    },
     loadAgent() {
       let agentList = this.agentList
       const loading = this.$loading({
@@ -235,7 +237,7 @@ export default {
   background: map-get($color, white);
 }
 .agent-list__item {
-  width: 185px;
+  width: 176px;
   border: 1px solid #e1e3e9;
   border-radius: 8px;
   margin-right: 24px;

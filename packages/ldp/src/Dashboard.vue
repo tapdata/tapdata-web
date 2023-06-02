@@ -1,10 +1,10 @@
 <template>
   <div class="swim-lane flex flex-column h-100">
-    <div class="position-absolute" style="right: 55%">
+    <div v-if="!isDaas" class="position-absolute" style="right: 55%">
       <VIcon v-if="overViewVisible" size="32" @click="toggleOverview(overViewVisible)">fold-expend</VIcon>
       <VIcon v-else size="32" @click="toggleOverview(overViewVisible)">fold-pack-up</VIcon>
     </div>
-    <OverView :visible="overViewVisible"></OverView>
+    <OverView v-if="!isDaas" :visible="overViewVisible"></OverView>
     <div class="page-header-title flex align-center">
       <span>{{ $t('page_title_data_console') }}</span>
       <ElTooltip
@@ -106,7 +106,8 @@ export default {
     return {
       keyword: '',
       visible: false,
-      overViewVisible: false,
+      overViewVisible: true,
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       showSceneDialog: false,
       settingsVisible: false,
       dragState: {

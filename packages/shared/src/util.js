@@ -1,5 +1,6 @@
 // TODO 整理下方通用工具方法 ------------------------------------------------------------------------------------------------------------------------
 import Cookie from './cookie'
+import dayjs from 'dayjs'
 
 export function setPermission(list) {
   let permissions = []
@@ -266,4 +267,8 @@ export const urlToBase64 = url => {
       reject(new Error('urlToBase64 error'))
     }
   })
+}
+
+export function fromNow(date, flag = false) {
+  return dayjs(date).fromNow(flag)
 }
