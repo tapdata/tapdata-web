@@ -37,7 +37,6 @@ export const JsProcessor = observer(
       const params = reactive({
         taskId,
         jsNodeId: form.values.id,
-        jsType: form.values.jsType,
         tableName: '',
         rows: 1
       })
@@ -194,7 +193,7 @@ export const JsProcessor = observer(
         if (jsType === 1) {
           let before, after, logs, result
           try {
-            result = await taskApi.testRunJsRpc({ ...params, version, script: props.value })
+            result = await taskApi.testRunJsRpc({ ...params, version, script: props.value, jsType })
           } catch (e) {
             console.log(e) // eslint-disable-line
             result = e?.data?.data
@@ -207,7 +206,7 @@ export const JsProcessor = observer(
           logList.value = logs?.filter(item => !new RegExp(`^.*\\[${nodeId}]`).test(item.message)) || []
           resetQuery()
         } else {
-          taskApi.testRunJs({ ...params, version, script: props.value }).then(
+          taskApi.testRunJs({ ...params, version, script: props.value, jsType }).then(
             () => {
               queryStart = Time.now()
               handleAutoQuery()
