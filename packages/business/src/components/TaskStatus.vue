@@ -158,6 +158,7 @@ export default {
   color: #008b58;
   background-color: #b4edd8;
 }
+.task-status-renew_failed,
 .task-status-error {
   color: #d44d4d;
   background-color: #ffecec;
@@ -174,6 +175,7 @@ export default {
   color: #c88500;
   background-color: #ffe4ae;
 }
+.task-status-renewing,
 .task-status-wait_start,
 .task-status-stopping {
   color: #c39700;
