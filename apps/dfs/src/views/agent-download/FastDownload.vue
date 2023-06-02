@@ -7,16 +7,17 @@
         {{ $t('agent_deploy_select_tip') }}
       </p>
       <div class="text-style mt-6">{{ $t('dfs_agent_download_agentdownloadmodal_yaoanzhuangAg') }}</div>
-      <div class="down-type">
-        <div
-          v-for="down in downType"
-          :key="down.value"
-          :class="{ active: downLoadType === down.value }"
-          @click="chooseDownLoadType(down.value)"
+      <ElRadioGroup v-model="downLoadType" @input="chooseDownLoadType" class="flex gap-4 mt-4 mb-4">
+        <ElRadio
+          v-for="(item, index) in downType"
+          :key="index"
+          :label="item.value"
+          border
+          class="rounded-4 subscription-radio m-0 position-relative"
         >
-          <span>{{ down.name }}</span>
-        </div>
-      </div>
+          <span>{{ item.name }}</span>
+        </ElRadio>
+      </ElRadioGroup>
       <template v-if="downLoadType === 'windows'">
         <el-collapse v-model="activeName">
           <el-collapse-item :title="$t('dfs_agent_download_fastdownload_shiyongpeizhiwen')" name="1">
@@ -69,9 +70,6 @@
               </li>
               <li class="mt-3">
                 {{ $t('agent_deploy_start_install_windows_fourth') }}
-              </li>
-              <li class="box title-text mt-2">
-                <span class="link-line">{{ windowsLink }}</span>
                 <ElTooltip
                   placement="top"
                   manual
@@ -79,17 +77,36 @@
                   popper-class="copy-tooltip"
                   :value="showTooltip"
                 >
-                  <span
+                  <el-button
                     class="operaKey"
+                    type="primary"
                     v-clipboard:copy="windowsLink"
                     v-clipboard:success="onCopy"
                     @mouseleave="showTooltip = false"
                     @click="handleCopy"
                   >
-                    <i class="click-style">{{ $t('public_button_copy') }}</i>
-                  </span>
+                    <VIcon class="mr-2">copy</VIcon>
+                    <i>{{ $t('public_button_copy') }}</i>
+                  </el-button>
                 </ElTooltip>
               </li>
+              <li class="box title-text mt-2" :class="{ 'overflow-hidden': showAllCode }">
+                <span class="link-line" :class="{ 'hidden-all-code': showAllCode }">{{ windowsLink }}</span>
+              </li>
+              <div
+                class="down-show-code text-center cursor-pointer color-primary bg-white mt-2 pb-2"
+                v-if="showAllCode"
+                @click="handleShowAllCode(false)"
+              >
+                <VIcon class="mr-2">arrow-down-fill</VIcon><span>显示完整命令</span>
+              </div>
+              <div
+                class="down-show-code text-center cursor-pointer bg-white mt-2 pb-2"
+                v-else
+                @click="handleShowAllCode(true)"
+              >
+                <VIcon class="mr-2 fast-icon">arrow-down-fill</VIcon>隐藏完整命令
+              </div>
               <li class="mt-3">
                 <span>{{ $t('agent_deploy_start_install_windows_fifth') }}</span>
               </li>
@@ -111,9 +128,8 @@
           <li>
             <div class="my-5 text-style">{{ $t('agent_deploy_start_install') }}</div>
           </li>
-          <li>{{ $t('agent_deploy_start_install_linux_first') }}</li>
-          <li class="box title-text my-2">
-            <span class="link-line">{{ linuxLink }}</span>
+          <li>
+            {{ $t('agent_deploy_start_install_linux_first') }}
             <ElTooltip
               placement="top"
               manual
@@ -121,17 +137,36 @@
               popper-class="copy-tooltip"
               :value="showTooltip"
             >
-              <span
+              <el-button
+                type="primary"
                 class="operaKey"
                 v-clipboard:copy="linuxLink"
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
                 @click="handleCopy"
               >
-                <i class="click-style">{{ $t('public_button_copy') }}</i>
-              </span>
+                <VIcon class="mr-2">copy</VIcon>
+                <i>{{ $t('public_button_copy') }}</i>
+              </el-button>
             </ElTooltip>
           </li>
+          <li class="li-show-code box title-text my-2" :class="{ 'overflow-hidden': showAllCode }">
+            <span class="link-line" :class="{ 'hidden-all-code': showAllCode }">{{ linuxLink }}</span>
+          </li>
+          <div
+            class="down-show-code text-center cursor-pointer color-primary bg-white mt-2 pb-2"
+            v-if="showAllCode"
+            @click="handleShowAllCode(false)"
+          >
+            <VIcon class="mr-2">arrow-down-fill</VIcon><span>显示完整命令</span>
+          </div>
+          <div
+            class="down-show-code text-center cursor-pointer bg-white mt-2 pb-2"
+            v-else
+            @click="handleShowAllCode(true)"
+          >
+            <VIcon class="mr-2 fast-icon">arrow-down-fill</VIcon>隐藏完整命令
+          </div>
           <li>
             <span>{{ $t('agent_deploy_start_install_linux_second') }}</span>
             <img class="mt-2 block" :src="getImg('downloadLinux')" alt="" />
@@ -157,9 +192,8 @@
           <li>
             <div class="my-5 text-style">{{ $t('agent_deploy_start_install') }}</div>
           </li>
-          <li>{{ $t('agent_deploy_start_install_docker_first') }}</li>
-          <li class="box title-text my-2">
-            <span class="link-line">{{ dockerLink }}</span>
+          <li>
+            {{ $t('agent_deploy_start_install_docker_first') }}
             <ElTooltip
               placement="top"
               manual
@@ -167,17 +201,36 @@
               popper-class="copy-tooltip"
               :value="showTooltip"
             >
-              <span
+              <el-button
+                type="primary"
                 class="operaKey"
                 v-clipboard:copy="dockerLink"
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
                 @click="handleCopy"
               >
-                <i class="click-style">{{ $t('public_button_copy') }}</i>
-              </span>
+                <VIcon class="mr-2">copy</VIcon>
+                <i>{{ $t('public_button_copy') }}</i>
+              </el-button>
             </ElTooltip>
           </li>
+          <li class="box title-text my-2" :class="{ 'overflow-hidden': showAllCode }">
+            <span class="link-line" :class="{ 'hidden-all-code': showAllCode }">{{ dockerLink }}</span>
+          </li>
+          <div
+            class="down-show-code text-center cursor-pointer color-primary bg-white mt-2 pb-2"
+            v-if="showAllCode"
+            @click="handleShowAllCode(false)"
+          >
+            <VIcon class="mr-2">arrow-down-fill</VIcon><span>显示完整命令</span>
+          </div>
+          <div
+            class="down-show-code text-center cursor-pointer bg-white mt-2 pb-2"
+            v-else
+            @click="handleShowAllCode(true)"
+          >
+            <VIcon class="mr-2 fast-icon">arrow-down-fill</VIcon>隐藏完整命令
+          </div>
           <li>
             <span>{{ $t('agent_deploy_start_install_docker_second') }}</span>
             <img class="mt-2 block" :src="getImg('downloadDocker')" alt="" />
@@ -236,28 +289,46 @@
             </ElTooltip>
           </li>
           <li>
-            <div class="my-2 text-style">{{ $t('dfs_agent_download_agentdownloadmodal_shilitok') }}</div>
-          </li>
-          <li class="box title-text my-2">
-            <span class="link-line">{{ token }}</span>
-            <ElTooltip
-              placement="top"
-              manual
-              :content="$t('agent_deploy_start_install_button_copied')"
-              popper-class="copy-tooltip"
-              :value="showTooltip"
-            >
-              <span
-                class="operaKey"
-                v-clipboard:copy="token"
-                v-clipboard:success="onCopy"
-                @mouseleave="showTooltip = false"
-                @click="handleCopy"
+            <div class="my-2 text-style">
+              {{ $t('dfs_agent_download_agentdownloadmodal_shilitok') }}
+              <ElTooltip
+                placement="top"
+                manual
+                :content="$t('agent_deploy_start_install_button_copied')"
+                popper-class="copy-tooltip"
+                :value="showTooltip"
               >
-                <i class="click-style">{{ $t('public_button_copy') }}</i>
-              </span>
-            </ElTooltip>
+                <el-button
+                  type="primary"
+                  class="operaKey"
+                  v-clipboard:copy="token"
+                  v-clipboard:success="onCopy"
+                  @mouseleave="showTooltip = false"
+                  @click="handleCopy"
+                >
+                  <VIcon class="mr-2">copy</VIcon>
+                  <i>{{ $t('public_button_copy') }}</i>
+                </el-button>
+              </ElTooltip>
+            </div>
           </li>
+          <li class="box title-text my-2" :class="{ 'overflow-hidden': showAllCode }">
+            <span class="link-line" :class="{ 'hidden-all-code': showAllCode }">{{ token }}</span>
+          </li>
+          <div
+            class="down-show-code text-center cursor-pointer color-primary bg-white mt-2 pb-2"
+            v-if="showAllCode"
+            @click="handleShowAllCode(false)"
+          >
+            <VIcon class="mr-2">arrow-down-fill</VIcon><span>显示完整命令</span>
+          </div>
+          <div
+            class="down-show-code text-center cursor-pointer bg-white mt-2 pb-2"
+            v-else
+            @click="handleShowAllCode(true)"
+          >
+            <VIcon class="mr-2 fast-icon">arrow-down-fill</VIcon>隐藏完整命令
+          </div>
           <li>{{ $t('dfs_agent_download_agentdownloadmodal_querenjisuanchao') }}</li>
           <li>
             <el-image :src="getImg('alicomputenest_instance')" alt="" />
@@ -303,7 +374,8 @@ export default {
       url: '',
       agentId: '',
       timer: null,
-      activeName: '1'
+      activeName: '1',
+      showAllCode: true
     }
   },
   created() {
@@ -383,6 +455,10 @@ export default {
     // 选择下载安装类型
     chooseDownLoadType(val) {
       this.downLoadType = val
+    },
+    //显示隐藏完整命令
+    handleShowAllCode(type) {
+      this.showAllCode = type
     },
     // 复制命令行
     onCopy() {
@@ -611,6 +687,25 @@ export default {
     border: 1px solid #dcdcdc;
     background-color: #fff;
     width: 220px;
+  }
+  .fast-icon {
+    -moz-transform: rotate(-180deg);
+    -webkit-transform: rotate(-180deg);
+  }
+  .hidden-all-code {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: inline-block;
+    width: 100%;
+  }
+  .li-show-code {
+    border: 1px solid #f3f3f3;
+    border-bottom: none;
+  }
+  .down-show-code {
+    border: 1px solid #f3f3f3;
+    border-top: none;
   }
   ::v-deep {
     .el-collapse-item__header {

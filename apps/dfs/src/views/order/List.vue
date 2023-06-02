@@ -1,6 +1,6 @@
 <template>
   <section class="operation-logs-wrapper g-panel-container" v-if="$route.name === 'order'">
-    <el-tabs class="flex flex-column overflow-hidden flex-1" v-model="activeName" @tab-click="handleClick">
+    <el-tabs class="flex flex-column overflow-hidden flex-1" v-model="activeName">
       <el-tab-pane class="order-flex overflow-hidden h-100" :label="$t('dfs_order_list_wodedingyue')" name="first">
         <div class="main">
           <div class="list-operation">
@@ -43,7 +43,11 @@
           </VTable>
         </div>
       </el-tab-pane>
-      <el-tab-pane class="order-flex flex-column overflow-hidden h-100" :label="$t('dfs_instance_selectlist_shouquanma')" name="second">
+      <el-tab-pane
+        class="order-flex flex-column overflow-hidden h-100"
+        :label="$t('dfs_instance_selectlist_shouquanma')"
+        name="second"
+      >
         <section class="flex flex-column overflow-hidden flex-1">
           <div class="mt-2 flex justify-content-end">
             <el-button class="mr-2" @click="goReceipt">{{ $t('dfs_user_center_kaifapiao') }}</el-button>
@@ -114,12 +118,12 @@ export default {
       codeColumns: [
         {
           label: i18n.t('dfs_instance_selectlist_shouquanma'),
-          prop: 'licenseCode'
+          prop: 'licenseCode',
+          width: 320
         },
         {
           label: i18n.t('dfs_user_center_jihuoshijian2'),
-          prop: 'activateTimeLabel',
-          width: 320
+          prop: 'activateTimeLabel'
         },
         {
           label: i18n.t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi'),
@@ -128,8 +132,7 @@ export default {
         },
         {
           label: i18n.t('dfs_user_center_guoqishijian2'),
-          prop: 'expiredTimeLabel',
-          width: 320
+          prop: 'expiredTimeLabel'
         },
         {
           label: i18n.t('dfs_instance_selectlist_bangdingshilizhuang'),
@@ -151,7 +154,7 @@ export default {
         {
           label: i18n.t('dfs_instance_selectlist_dingyuezhouqi'),
           prop: 'periodLabel',
-          width: 320
+          width: 220
         },
         {
           label: i18n.t('dfs_user_center_dingyueshuliang'),

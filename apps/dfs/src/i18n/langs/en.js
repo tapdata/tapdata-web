@@ -1552,7 +1552,7 @@ export default {
   dfs_instance_utils_bantuoguan: 'Semi Management',
   dfs_the_header_header_dingyuezhongxin: 'Subscription Center',
   dfs_router_index_dingyuezhongxin: 'Subscription Center',
-  dfs_instance_createagent_mianfeishiyonggui: 'Free trial specification',
+  dfs_instance_createagent_mianfeishiyonggui: '15 Day Free Trial',
   dfs_instance_createagent_tian: '15 days',
   dfs_instance_createagent_xuanzecunchufang: 'Choose a storage solution',
   dfs_instance_createagent_minjiehujuzhong: 'Agile data center',
@@ -1585,5 +1585,5 @@ export default {
   dfs_instance_instance_duxiangshili: 'Private Instance',
   dfs_instance_instance_cunchuziyuan: 'Storage Resources',
   dfs_instance_instance_agent2: 'Agent Resource',
-  dfs_order_list_wodingyue: 'My Subscriptions'
+  dfs_order_list_wodedingyue: 'My Subscriptions'
 }

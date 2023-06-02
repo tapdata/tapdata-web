@@ -1407,7 +1407,7 @@ export default {
   dfs_instance_utils_bantuoguan: '半託管',
   dfs_the_header_header_dingyuezhongxin: ' 訂閱中心 ',
   dfs_router_index_dingyuezhongxin: '訂閱中心',
-  dfs_instance_createagent_mianfeishiyonggui: '免費試用規格',
+  dfs_instance_createagent_mianfeishiyonggui: '免費試用15天',
   dfs_instance_createagent_tian: '15天',
   dfs_instance_createagent_xuanzecunchufang: '選擇存儲方案',
   dfs_instance_createagent_minjieshujuzhong: '敏捷數據中台',

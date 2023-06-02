@@ -183,7 +183,7 @@ export default {
         result: ''
       },
       filterItems: [],
-      loadingImg: window._TAPDATA_OPTIONS_.loadingImg,
+      loadingImg: require('@tap/assets/icons/loading.svg'),
       order: 'lastStartTime DESC',
       inspectMethod: {
         row_count: this.$t('packages_business_verification_rowVerify'),
@@ -445,6 +445,7 @@ export default {
 <style lang="scss" scoped>
 .data-verify-wrap {
   height: 100%;
+  padding: 0 24px 24px 24px;
   .btn-refresh {
     padding: 0;
     height: 32px;

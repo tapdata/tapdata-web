@@ -144,11 +144,11 @@ export default {
           icon: 'process-platform',
           beta: true
         },
-        {
-          name: 'Workbench',
-          title: $t('workbench_manage'),
-          icon: 'workbench'
-        },
+        // {
+        //   name: 'Workbench',
+        //   title: $t('workbench_manage'),
+        //   icon: 'workbench'
+        // },
         {
           name: 'connections',
           title: $t('connection_manage'),
@@ -163,6 +163,12 @@ export default {
           name: 'dataflow',
           title: $t('task_manage_etl'),
           icon: 'task',
+          beta: true
+        },
+        {
+          name: 'dataVerification',
+          title: $t('page_title_data_verify'),
+          icon: 'data-validation',
           beta: true
         }
         // {
@@ -319,7 +325,8 @@ export default {
         //海外版不强制绑定手机号
         return
       }
-      this.bindPhoneVisible = user?.registerSource === 'social:wechatmp-qrcode' && !user?.telephone
+      this.bindPhoneVisible =
+        ['basic:email', 'basic:email-code', 'social:wechatmp-qrcode'].includes(user?.registerSource) && !user?.telephone
       return this.bindPhoneVisible
     },
     // 检查是否有安装过agent
