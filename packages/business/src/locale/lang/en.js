@@ -1076,5 +1076,6 @@ export default {
   packages_business_swimlane_tablepreview_chuangjianrenwu: 'Create Task',
   packages_business_as_source: 'As Source',
   packages_business_as_target: 'As Target',
-  page_title_verification_create: 'New verification'
+  page_title_verification_create: 'New verification',
+  page_title_task_edit: 'Edit task'
 }
