@@ -135,7 +135,7 @@ export class Aggregate extends NodeType {
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         'x-reactions': [
-          '{{useAsyncDataSourceByConfig({service: loadExternalStorage, withoutField: true}, $self.value)}}',
+          '{{useAsyncDataSourceByConfig({service: loadExternalStorage, withoutField: true})}}',
           {
             fulfill: {
               state: {
