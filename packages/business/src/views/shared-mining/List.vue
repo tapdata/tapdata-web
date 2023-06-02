@@ -541,15 +541,16 @@ export default {
       })
     },
 
-    handleName({ syncType, name }) {
+    handleName({ syncType, name, type }) {
       const MAP = {
         migrate: 'migrateList',
         sync: 'dataflowList',
         logCollector: 'sharedMiningList',
-        mem_cache: 'sharedCacheList'
+        mem_cache: 'sharedCacheList',
+        connHeartbeat: 'HeartbeatTableList'
       }
       const routeUrl = this.$router.resolve({
-        name: MAP[syncType],
+        name: MAP[type] || MAP[syncType],
         query: {
           keyword: name
         }
