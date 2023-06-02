@@ -1077,5 +1077,11 @@ export default {
   packages_business_as_source: 'As Source',
   packages_business_as_target: 'As Target',
   page_title_verification_create: 'New verification',
-  page_title_task_edit: 'Edit task'
+  page_title_task_edit: 'Edit task',
+  page_title_task_details: 'Task details',
+  page_title_verification_history: 'Verification History',
+  page_title_data_difference_details: 'Difference Details',
+  page_title_data_verification_result: 'Verification Result',
+  page_title_diff_verification_history: 'Diff verification history',
+  page_title_diff_verification_details: 'Diff verification details'
 }
