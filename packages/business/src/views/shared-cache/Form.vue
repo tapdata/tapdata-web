@@ -10,7 +10,7 @@
     >
       <ElFormItem prop="name" :label="$t('packages_business_shared_cache_name') + ':'">
         <ElInput
-          v-model="form.name"
+          v-model.trim="form.name"
           class="form-input"
           :placeholder="$t('packages_business_shared_cache_placeholder_name')"
         ></ElInput>
@@ -223,7 +223,7 @@ export default {
       const { externalStorageId } = this.form
       if (externalStorageId) {
         const ext = await externalStorageApi.get(externalStorageId)
-        filter.where.type = ext.type
+        filter.where.type = ext?.type
       }
       const data = await externalStorageApi
         .get({
