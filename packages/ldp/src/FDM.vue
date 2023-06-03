@@ -360,7 +360,6 @@ export default {
                 </IconButton>
                 <ElDropdownMenu slot="dropdown">
                   <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
-                  <ElDropdownItem command="delete">{this.$t('public_button_delete')}</ElDropdownItem>
                 </ElDropdownMenu>
               </ElDropdown>
             ) : (
