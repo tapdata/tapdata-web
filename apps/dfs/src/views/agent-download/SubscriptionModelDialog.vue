@@ -1938,4 +1938,7 @@ export default {
     padding: 24px;
   }
 }
+.el-form-item__label {
+  font-weight: 500;
+}
 </style>

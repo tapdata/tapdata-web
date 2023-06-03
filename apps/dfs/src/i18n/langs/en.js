@@ -1444,7 +1444,7 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_keyongneicunjian:
     ' Available memory, the recommended number of tasks does not exceed ',
   dfs_agent_download_subscriptionmodeldialog_guigeshuomingci: 'Specification: This specification requires at least ',
-  dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu: 'Please select the product specification you need',
+  dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu: 'Please select the agent size',
   dfs_agent_download_subscriptionmodeldialog_zhijieshiyonga:
     'Directly use the authorization code of Alibaba Cloud market',
   dfs_agent_download_subscriptionmodeldialog_gengjiakekaoyou:

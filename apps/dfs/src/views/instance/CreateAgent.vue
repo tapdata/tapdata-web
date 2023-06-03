@@ -2409,4 +2409,7 @@ export default {
     }
   }
 }
+.el-form-item__label {
+  font-weight: 500;
+}
 </style>
