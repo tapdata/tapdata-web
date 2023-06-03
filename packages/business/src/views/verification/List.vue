@@ -106,8 +106,12 @@
         sortable="lastStartTime"
         min-width="160"
       ></el-table-column>
-      <el-table-column :label="$t('public_operation')" width="260">
+      <el-table-column :label="$t('public_operation')" width="360">
         <template slot-scope="scope">
+          <ElLink type="primary" :disabled="!scope.row.InspectResult" @click="toTableInfo(scope.row.id)">{{
+            $t('packages_business_verification_result_title')
+          }}</ElLink>
+          <ElDivider direction="vertical" v-readonlybtn="'verify_job_edition'"></ElDivider>
           <ElLink
             v-readonlybtn="'verify_job_edition'"
             type="primary"
@@ -118,11 +122,15 @@
             @click="startTask(scope.row.id)"
             >{{ $t('packages_business_verification_executeVerifyTip') }}</ElLink
           >
-          <ElDivider direction="vertical" v-readonlybtn="'verify_job_edition'"></ElDivider>
-          <ElLink type="primary" :disabled="!scope.row.InspectResult" @click="toTableInfo(scope.row.id)">{{
-            $t('public_button_details')
-          }}</ElLink>
           <ElDivider direction="vertical"></ElDivider>
+          <ElLink
+            v-readonlybtn="'verify_job_edition'"
+            type="primary"
+            :disabled="!scope.row.InspectResult"
+            @click="history(scope.row.id)"
+            >{{ $t('packages_business_verification_historyTip') }}</ElLink
+          >
+          <ElDivider direction="vertical" v-readonlybtn="'verify_job_edition'"></ElDivider>
           <ElLink
             v-readonlybtn="'verify_job_edition'"
             type="primary"
@@ -134,22 +142,13 @@
             >{{ $t('packages_business_verification_configurationTip') }}</ElLink
           >
           <ElDivider direction="vertical" v-readonlybtn="'verify_job_edition'"></ElDivider>
-          <ElDropdown v-show="moreAuthority" size="small" @command="handleCommand($event, scope.row)">
-            <ElLink type="primary" class="rotate-90">
-              <i class="el-icon-more"></i>
-            </ElLink>
-            <ElDropdownMenu class="dataflow-table-more-dropdown-menu" slot="dropdown">
-              <ElDropdownItem command="history" :disabled="!scope.row.InspectResult"
-                >{{ $t('packages_business_verification_historyTip') }}
-              </ElDropdownItem>
-              <ElDropdownItem
-                command="remove"
-                v-readonlybtn="'verify_job_delete'"
-                :disabled="$disabledByPermission('verify_job_delete_all_data', scope.row.user_id)"
-                >{{ $t('public_button_delete') }}</ElDropdownItem
-              >
-            </ElDropdownMenu>
-          </ElDropdown>
+          <ElLink
+            v-readonlybtn="'verify_job_edition'"
+            type="primary"
+            :disabled="$disabledByPermission('verify_job_delete_all_data', scope.row.user_id)"
+            @click="remove(scope.row.id, scope.row)"
+            >{{ $t('public_button_delete') }}</ElLink
+          >
         </template>
       </el-table-column>
     </TablePage>

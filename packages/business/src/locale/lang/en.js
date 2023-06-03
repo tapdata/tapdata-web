@@ -378,7 +378,7 @@ export default {
   packages_business_connections_list_wenjianleixingde:
     'At this time, the file type connection does not support schema loading.',
   // 数据校验
-  packages_business_verification_task_name: 'Verify task name',
+  packages_business_verification_task_name: 'Verify Task Name',
   packages_business_verification_type: 'Type',
   packages_business_verification_check_frequency: 'Frequency',
   packages_business_verification_single_repeating_verify: 'Single/Repeat Validation',
