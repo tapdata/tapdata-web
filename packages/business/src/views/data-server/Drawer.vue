@@ -705,7 +705,7 @@ export default {
       const appLabel = appData.value
 
       let apiType = formData?.apiType || 'defaultApi'
-      let fields = formData.paths[0]?.fields || []
+      let fields = formData.paths?.[0]?.fields || []
       this.data = {
         status: status || 'generating', // generating,pending,active
         id,
