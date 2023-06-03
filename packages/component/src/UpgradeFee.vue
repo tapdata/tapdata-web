@@ -143,7 +143,7 @@ export default {
   }
   .paid-upgrade-right {
     &:hover {
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.09);
+      //box-shadow: 0 1px 4px rgba(0, 0, 0, 0.09);
     }
   }
   .paid-upgrade-right-border {
@@ -271,8 +271,14 @@ export default {
 }
 .copilot-pricing-card-container:hover .copilot-pricing-card-bg-glow {
   opacity: 1;
-  transform: scale(1.25);
-  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3);
+  transform: scale(1.28);
+  transition-duration: 0.3s;
+}
+
+.copilot-pricing-card-container .copilot-pricing-card-bg-glow {
+  opacity: 1;
+  transform: scale(1);
+  transition-duration: 0.5s;
 }
 
 .copilot-pricing-card-bg-glow {
@@ -298,11 +304,11 @@ export default {
   position: absolute !important;
 }
 .copilot-pricing-card-glow-border1 {
-  padding: 1px;
+  padding: 1.5px;
   z-index: 2;
   border-radius: 8px;
-  background: -webkit-linear-gradient(135deg, #93f5ec, #a77bf3);
-  background: linear-gradient(135deg, #93f5ec, #a77bf3);
+  background: -webkit-linear-gradient(135deg, #A3E4D7, #a77bf3);
+  background: linear-gradient(135deg, #A3E4D7, #a77bf3);
 }
 ::v-deep {
   .el-dialog__body {
