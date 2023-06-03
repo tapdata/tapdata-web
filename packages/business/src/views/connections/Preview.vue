@@ -1,5 +1,5 @@
 <template>
-  <Drawer :visible.sync="visible">
+  <Drawer :visible.sync="visible" :width="'400px'">
     <div v-loading="loading" class="details-container">
       <div class="container-item border-item flex pb-5">
         <div class="pt-2">

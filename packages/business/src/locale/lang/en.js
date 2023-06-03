@@ -378,7 +378,7 @@ export default {
   packages_business_connections_list_wenjianleixingde:
     'At this time, the file type connection does not support schema loading.',
   // 数据校验
-  packages_business_verification_task_name: 'Verify task name',
+  packages_business_verification_task_name: 'Verify Task Name',
   packages_business_verification_type: 'Type',
   packages_business_verification_check_frequency: 'Frequency',
   packages_business_verification_single_repeating_verify: 'Single/Repeat Validation',
@@ -1075,5 +1075,13 @@ export default {
     'BigQuery is a managed data warehouse provided by Google Cloud. It is famous for its high speed, scalability and security. It can process PB-level data, integrate with multiple tools, and is suitable for various data analysis and mining scenarios. ',
   packages_business_swimlane_tablepreview_chuangjianrenwu: 'Create Task',
   packages_business_as_source: 'As Source',
-  packages_business_as_target: 'As Target'
+  packages_business_as_target: 'As Target',
+  page_title_verification_create: 'New verification',
+  page_title_task_edit: 'Edit task',
+  page_title_task_details: 'Task details',
+  page_title_verification_history: 'Verification History',
+  page_title_data_difference_details: 'Difference Details',
+  page_title_data_verification_result: 'Verification Result',
+  page_title_diff_verification_history: 'Diff verification history',
+  page_title_diff_verification_details: 'Diff verification details'
 }

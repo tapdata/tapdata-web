@@ -1,5 +1,10 @@
 <template>
   <div class="swim-lane flex flex-column h-100">
+    <div v-if="!isDaas" class="position-absolute" style="right: 55%">
+      <VIcon v-if="overViewVisible" size="32" @click="toggleOverview(overViewVisible)">fold-pack-up</VIcon>
+      <VIcon v-else size="32" @click="toggleOverview(overViewVisible)">fold-expend</VIcon>
+    </div>
+    <OverView v-if="!isDaas" :visible="overViewVisible"></OverView>
     <div class="page-header-title flex align-center">
       <span>{{ $t('page_title_data_console') }}</span>
       <ElTooltip
@@ -74,6 +79,7 @@ import Settings from './Settings'
 import TablePreview from './TablePreview'
 import ConnectionPreview from './ConnectionPreview'
 import Catalogue from './components/Catalogue'
+import OverView from './components/OverView'
 
 const TYPE2NAME = {
   target: 'TARGET&SERVICE'
@@ -92,13 +98,16 @@ export default {
     ConnectionPreview,
     IconButton,
     Catalogue,
-    SceneDialog
+    SceneDialog,
+    OverView
   },
 
   data() {
     return {
       keyword: '',
       visible: false,
+      overViewVisible: true,
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       showSceneDialog: false,
       settingsVisible: false,
       dragState: {
@@ -177,6 +186,10 @@ export default {
   methods: {
     toggleView(view) {
       this.currentView = view
+    },
+    //概览
+    toggleOverview(val) {
+      this.overViewVisible = !val
     },
 
     handleAdd(type) {
@@ -395,5 +408,9 @@ export default {
       }
     }
   }
+}
+.icon {
+  -moz-transform: rotate(-180deg);
+  -webkit-transform: rotate(-180deg);
 }
 </style>

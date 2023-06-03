@@ -46,7 +46,7 @@ export default {
   packages_component_src_upgradefee_shujuchulixing: 'Throughput: Higher',
   packages_component_src_upgradefee_desc_1: 'Everything included in Free Plan, Plus...',
   packages_component_src_upgradefee_renwushukegen: 'Max Concurrently Tasks: Unlimited',
-  packages_component_src_upgradefee_taocanfufei: 'Pay As You Go',
+  packages_component_src_upgradefee_taocanfufei: 'Pay As You Use',
   packages_component_src_upgradefee_tigongzhuanyehua: 'For business or production use',
   packages_component_src_upgradefee_xianshiyouhui: 'Limited-time Discount',
   packages_component_src_upgradefee_zhuanyeban: 'Professional Plan',

@@ -43,6 +43,21 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  padding: 0 24px 24px 24px;
+
+  .section-wrap-box {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -ms-flex: 1;
+    flex: 1;
+    padding: 20px;
+    border-radius: 4px;
+    background-color: #fff;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
 }
 .verify-result-header {
   display: flex;

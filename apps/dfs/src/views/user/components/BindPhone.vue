@@ -1,7 +1,7 @@
 <template>
   <!--  绑定手机号  -->
   <ElDialog
-    width="300px"
+    width="440px"
     append-to-body
     :title="$t('components_BindPhone_qingBangDingShouJi')"
     :close-on-click-modal="!!$props.closeOnClickModal"
@@ -23,7 +23,7 @@
         <VerificationCode
           :request-options="getCodeOptions(phoneForm.current, 'BIND_PHONE')"
           :disabled="!phoneForm.current"
-          :style="{ width: '120px', textAlign: 'center' }"
+          :style="{ width: '140px', textAlign: 'center' }"
           class="ml-6"
           type="text"
         ></VerificationCode>

@@ -1,6 +1,6 @@
 <template>
   <section class="verify-form-wrap section-wrap flex-fill" v-loading="loading">
-    <div class="section-wrap-box position-relative">
+    <div class="section-wrap-box position-relative p-5">
       <div class="verify-form-title">
         {{
           $route.params.id ? $t('packages_business_verification_edit') : $t('packages_business_verification_newVerify')
@@ -585,10 +585,17 @@ export default {
 <style lang="scss" scoped>
 .verify-form-wrap {
   height: 100%;
+  padding: 0 24px 24px 24px;
   overflow: hidden;
   .section-wrap-box {
-    height: 100%;
+    display: flex;
     flex-direction: column;
+    flex: 1;
+    padding: 20px;
+    border-radius: 4px;
+    background-color: #fff;
+    box-sizing: border-box;
+    height: 100%;
     overflow: auto;
   }
 }
