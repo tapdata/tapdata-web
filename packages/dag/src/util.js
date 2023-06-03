@@ -81,7 +81,7 @@ export function getMatchedDataTypeLevel(
     field.data_type = ''
   }
   if (!findPossibleDataTypes[field_name]) return ''
-  return tapType.type !== 7 || canUseDataTypes.length ? '' : 'error'
+  return tapType.type !== 7 && canUseDataTypes.length ? '' : 'error'
 }
 export function errorFiledType(field) {
   const { tapType } = field || {}
