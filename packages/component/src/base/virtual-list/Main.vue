@@ -192,7 +192,7 @@ export default {
 
     handleCheckAll(val) {
       this.checkAll = val
-      this.selections = val ? this.list : []
+      this.selections = val ? [...this.list] : []
       this.isIndeterminate = false
       this.$emit('selection-change', this.selections)
     },
