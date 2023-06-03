@@ -195,8 +195,13 @@ export default {
       this.loading = true
       await sharedCacheApi
         .findOne(id)
-        .then(data => {
+        .then(async data => {
           data = data || {}
+          let externalStorageId = data.externalStorageId
+          const externalStorage = await externalStorageApi.get(externalStorageId)
+          if (!externalStorage?.id) {
+            externalStorageId = ''
+          }
           this.form = {
             name: data.name,
             connectionId: data.connectionId,
@@ -206,7 +211,7 @@ export default {
             cacheKeys: data.cacheKeys,
             fields: data.fields?.join(',') || '',
             maxMemory: data.maxMemory,
-            externalStorageId: data.externalStorageId
+            externalStorageId
           }
           this.getTableOptions(data.connectionId)
           this.getTableSchema(data.tableName)

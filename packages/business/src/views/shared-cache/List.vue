@@ -85,7 +85,7 @@
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
               :disabled="row.btnDisabled.start"
-              @click="start([row.id])"
+              @click="start([row.id], row)"
             >
               {{ $t('public_button_start') }}
             </ElLink>
@@ -159,7 +159,7 @@
 <script>
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash'
-import { sharedCacheApi, taskApi } from '@tap/api'
+import { externalStorageApi, sharedCacheApi, taskApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage, TaskStatus, makeStatusAndDisabled } from '@tap/business'
 
@@ -278,7 +278,12 @@ export default {
       this.multipleSelection = val
     },
 
-    start(ids) {
+    async start(ids, row) {
+      const externalStorage = await externalStorageApi.get(row.externalStorageId)
+      if (!externalStorage?.id) {
+        this.$message.error('请先修改外存配置后，再启动。')
+        return
+      }
       this.buried(this.taskBuried.start)
       let filter = {
         where: {
