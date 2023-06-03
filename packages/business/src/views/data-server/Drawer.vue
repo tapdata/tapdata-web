@@ -705,7 +705,7 @@ export default {
       const appLabel = appData.value
 
       let apiType = formData?.apiType || 'defaultApi'
-      let fields = formData.fields || []
+      let fields = formData.paths[0]?.fields || []
       this.data = {
         status: status || 'generating', // generating,pending,active
         id,
@@ -790,6 +790,11 @@ export default {
     edit() {
       this.form.status = 'generating'
       this.isEdit = true
+      this.$nextTick(() => {
+        this.data.fields.forEach(f => {
+          this.$refs?.fieldTable.toggleRowSelection(this.allFields.find(it => it.id === f.id))
+        })
+      })
     },
     // 保存，新建和修改
     save(type) {
