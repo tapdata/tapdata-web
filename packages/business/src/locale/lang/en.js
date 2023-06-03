@@ -577,7 +577,7 @@ export default {
   packages_business_verification_form_shuchusuoyoubu: 'Output all inconsistent data',
   packages_business_verification_form_jieguoshuchu: 'Result Output',
   packages_business_verification_form_zhidingrenyibiao: 'Specify the validation task of any table',
-  packages_business_verification_form_weitedingdeP: 'Validation task created for a specific pipeline',
+  packages_business_verification_form_weitedingdeP: 'Validation task created for a specific task',
   packages_business_verification_form_jiaoyanrenwumo: 'Validation task mode',
   packages_business_task_status_agent_tooltip_time: 'It has been {time} since the previous status report was issued.',
   packages_business_task_status_agent_tooltip_agent: 'The Agent where the task is located is',

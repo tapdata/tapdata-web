@@ -20,7 +20,7 @@
             @sort-change="sortChange"
             @row-click="rowClick"
           >
-            <ElTableColumn min-width="140px" :label="$t('agent_name')">
+            <ElTableColumn min-width="200px" :label="$t('agent_name')">
               <template slot-scope="scope">
                 <div class="flex">
                   <div>
@@ -41,19 +41,19 @@
                 <span>{{ scope.row.specLabel }}</span>
               </template>
             </ElTableColumn>
-            <ElTableColumn width="80px" :label="$t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi')">
+            <ElTableColumn width="120px" :label="$t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi')">
               <template slot-scope="scope">
                 <span>{{ agentTypeMap[scope.row.agentType] }}</span>
               </template>
             </ElTableColumn>
-            <ElTableColumn width="90px" :label="$t('dfs_instance_instance_dingyuefangshi')">
+            <ElTableColumn width="130px" :label="$t('dfs_instance_instance_dingyuefangshi')">
               <template slot-scope="scope">
                 <span :class="{ 'color-success': scope.row.chargeProvider === 'FreeTier' }">{{
                   scope.row.subscriptionMethodLabel
                 }}</span>
               </template>
             </ElTableColumn>
-            <ElTableColumn width="185" :label="$t('dfs_instance_instance_daoqishijian')">
+            <ElTableColumn width="120" :label="$t('dfs_instance_instance_daoqishijian')">
               <template slot-scope="scope">
                 <div>
                   <ElTooltip
@@ -63,7 +63,7 @@
                     effect="light"
                   >
                     <div>
-                      <span>{{ scope.row.expiredTimeLabel }}</span>
+                      <span>{{ scope.row.expiredTimeLabel.split(' ')[0] }}</span>
                       <VIcon v-if="getExpiredTimeLevel(scope.row) === 'expired'" class="ml-2 color-info">error</VIcon>
                       <VIcon v-else-if="getExpiredTimeLevel(scope.row) === 'expiringSoon'" class="ml-2 color-warning"
                         >warning</VIcon
@@ -91,7 +91,7 @@
                 </div>
               </template>
             </ElTableColumn>
-            <ElTableColumn :label="$t('agent_status')" width="100">
+            <ElTableColumn :label="$t('agent_status')" width="110">
               <template slot-scope="scope">
                 <StatusTag
                   v-if="scope.row.agentType === 'Cloud' && scope.row.status === 'Creating'"
