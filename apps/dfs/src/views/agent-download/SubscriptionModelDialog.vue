@@ -332,7 +332,7 @@
           <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu')">
             <ul class="flex flex-wrap">
               <li
-                class="spec-li position-relative px-4 py-2 mt-4 mr-4 cursor-pointer"
+                class="spec spec-li position-relative px-4 py-2 mt-4 mr-4 cursor-pointer"
                 :class="{
                   active: specification === item.value,
                   disabled: (agentCount > 0 || agentDeploy !== 'selfHost') && item.chargeProvider === 'FreeTier'
@@ -571,6 +571,7 @@
           </div>
         </div>
         <el-button v-if="activeStep > 1" @click="prevStep">{{ $t('public_button_previous') }}</el-button>
+        <el-button v-if="activeStep == 1">{{ $t('public_button_previous') }}</el-button>
         <el-button v-if="activeStep < steps.length" type="primary" @click="next('second')">{{
           $t('public_button_next')
         }}</el-button>
@@ -1819,6 +1820,10 @@ export default {
   background: #fafafa;
   border-radius: 4px;
 }
+.spec-li:hover {
+  border: 1px solid map-get($color, primary);
+}
+
 .spec-li {
   width: 450px;
   border: 1px solid #dedede;
@@ -1856,6 +1861,7 @@ export default {
     }
   }
 }
+
 
 .product-type-card {
   width: 430px;
@@ -1897,6 +1903,9 @@ export default {
       color: #86909c !important;
     }
   }
+}
+.product-type-card:hover {
+  border: 1px solid map-get($color, primary) !important;
 }
 .subscription-steps-wrap {
   ::v-deep {
