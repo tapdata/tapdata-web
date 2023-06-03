@@ -54,6 +54,7 @@ export default {
   workbench_manage: '工作台',
   workbench_quick_start: '快速开始',
   workbench_notice: '公告通知',
+  more_workbench_notice: '更多通告',
   workbench_overview: '概览',
   workbench_guide: '新手入门',
   workbench_agent_desc:

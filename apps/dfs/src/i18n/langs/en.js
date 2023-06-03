@@ -39,6 +39,7 @@ export default {
   workbench_manage: 'Dashboard',
   workbench_quick_start: 'Quick Start',
   workbench_notice: 'Announcements',
+  more_workbench_notice: 'More',
   workbench_overview: 'Overview',
   workbench_guide: "Beginner's Guide",
   workbench_agent_desc:
