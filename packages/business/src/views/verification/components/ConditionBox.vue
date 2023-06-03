@@ -669,9 +669,10 @@ export default {
             const getAllTablesInNodeTarget = this.getAllTablesInNode(target)
             getAllTablesInNodeSource.forEach((ge, geIndex) => {
               let findTable = data.find(t => t.source.id === sourceConnectionId && t.original_name === ge)
-              let findTargetTable = data.find(
-                t => t.source.id === targetConnectionId && t.original_name === getAllTablesInNodeTarget[geIndex]
-              )
+              let findTargetTable =
+                data.find(
+                  t => t.source.id === targetConnectionId && t.original_name === getAllTablesInNodeTarget[geIndex]
+                ) || {}
               const updateList = cloneDeep(updateConditionFieldMap[findTargetTable.original_name] || [])
               const targetSortColumn = updateList.length
                 ? updateList.join(',')
