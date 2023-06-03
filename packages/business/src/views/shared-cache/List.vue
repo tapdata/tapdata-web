@@ -159,6 +159,8 @@
 <script>
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash'
+
+import i18n from '@tap/i18n'
 import { externalStorageApi, sharedCacheApi, taskApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage, TaskStatus, makeStatusAndDisabled } from '@tap/business'
@@ -281,7 +283,7 @@ export default {
     async start(ids, row) {
       const externalStorage = await externalStorageApi.get(row.externalStorageId)
       if (!externalStorage?.id) {
-        this.$message.error('请先修改外存配置后，再启动。')
+        this.$message.error(i18n.t('packages_business_shared_cache_list_qingxianxiugaiwai'))
         return
       }
       this.buried(this.taskBuried.start)

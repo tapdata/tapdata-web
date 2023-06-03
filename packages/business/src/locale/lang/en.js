@@ -1107,5 +1107,7 @@ export default {
   packages_business_shared_mining_list_shanchurenwus:
     'After deleting the task <span class="color-primary">{val1}</span>, this task will not be restored',
   packages_business_shared_mining_list_gaiwajuerenwu:
-    'The mining task has been called by {val} tasks, please delete the task and try again'
+    'The mining task has been called by {val} tasks, please delete the task and try again',
+  packages_business_shared_cache_list_qingxianxiugaiwai:
+    'The external storage does not exist, please modify the external storage configuration before starting.'
 }
