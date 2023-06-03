@@ -1026,5 +1026,6 @@ export default {
   packages_business_swimlane_tablepreview_chuangjianrenwu: '創建任務',
   packages_business_as_source: '作為源頭',
   packages_business_as_target: '作為目標',
-  page_title_verification_create: '新建校驗'
+  page_title_verification_create: '新建校驗',
+  page_title_verification_history: '校驗歷史'
 }

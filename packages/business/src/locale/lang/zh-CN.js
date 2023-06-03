@@ -1034,5 +1034,6 @@ export default {
   packages_business_swimlane_tablepreview_chuangjianrenwu: '创建任务',
   packages_business_as_source: '作为源头',
   packages_business_as_target: '作为目标',
-  page_title_verification_create: '新建校验'
+  page_title_verification_create: '新建校验',
+  page_title_verification_history: '校验历史'
 }
