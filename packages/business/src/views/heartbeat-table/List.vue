@@ -296,9 +296,9 @@ export default {
     },
 
     del(ids, item = {}, canNotList) {
-      let msgObj = this.getConfirmMessage('delete', ids.length > 1, item.name)
-      this.$confirm(msgObj.msg, '', {
-        type: 'warning'
+      this.$confirm(this.$t('packages_business_shared_mining_list_shanchurenwus', { val1: item.name }), '', {
+        type: 'warning',
+        dangerouslyUseHTMLString: true
       }).then(resFlag => {
         if (!resFlag) {
           return

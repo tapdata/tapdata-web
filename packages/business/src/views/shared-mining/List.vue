@@ -293,6 +293,7 @@ export default {
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
     }, 8000)
+    this.searchParams = Object.assign(this.searchParams, { taskName: this.$route.query?.keyword || '' })
   },
   computed: {
     table() {
