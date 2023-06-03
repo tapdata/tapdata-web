@@ -608,7 +608,15 @@ export default {
           const { username, host, database, query } = regResult.groups
           uriInfo = `mongodb://${username}:***@${host}/${database}${query ? '/' + query : ''}`
         }
-
+        if (!externalStorage.name) {
+          this.infoList = [
+            {
+              label: this.$t('packages_business_relation_details_rizhiwajueshi'),
+              value: this.formatTime(logTime)
+            }
+          ]
+          return
+        }
         this.infoList = [
           {
             label: this.$t('packages_business_relation_details_rizhiwajueshi'),
