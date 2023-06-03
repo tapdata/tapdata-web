@@ -3,7 +3,7 @@
     :title="$t('packages_component_src_upgradefee_dingyueshengji')"
     :visible.sync="visible"
     :append-to-body="true"
-    width="680px"
+    width="880px"
     custom-class="paid-upgrade-dialog"
     :before-close="handleClose"
   >
@@ -11,9 +11,15 @@
       <li class="paid-upgrade-left flex flex-column disabled">
         <div class="px-4 py-4 flex-1">
           <div class="version mb-2">{{ $t('packages_component_src_upgradefee_jichuban') }}</div>
+          <br/>
           <div class="desc">{{ $t('packages_component_src_upgradefee_tigongmianfeishi') }}</div>
           <div class="paid-upgrade-l-height flex align-items-center">
             <span class="free">{{ $t('packages_component_src_upgradefee_mianfei') }}</span>
+          </div>
+          <ElDivider></ElDivider>
+          <div class="currentList paid-upgrade-mb16 flex">
+            <VIcon size="16" class="mr-2 color-primary">check-bold</VIcon
+            ><span>{{ $t('packages_component_src_basic_component') }}</span>
           </div>
           <div class="currentList paid-upgrade-mb16 mt-2 flex">
             <VIcon size="16" class="mr-2 color-primary">check-bold</VIcon
@@ -34,19 +40,25 @@
           <div class="flex">
             <div>
               <div class="version mb-2">
-                {{ $t('packages_component_src_upgradefee_zhuanyeban')
-                }}<span class="discount inline-block fs-8 fw-normal">{{
+                {{ $t('packages_component_src_upgradefee_zhuanyeban') }}
+                <span class="discount inline-block fs-8 fw-normal">{{
                   $t('packages_component_src_upgradefee_xianshiyouhui')
                 }}</span>
               </div>
-              <div class="desc">{{ $t('packages_component_src_upgradefee_tigongzhuanyehua') }}</div>
+              <br/>
+              <div class="desc_professional">{{ $t('packages_component_src_upgradefee_tigongzhuanyehua') }}</div>
               <div
                 class="paid-upgrade-height flex align-items-center"
                 :class="[{ 'paid-upgrade-cn-height': this.$i18n.locale === 'zh-CN' }]"
               >
-                <span class="free">{{ $t('packages_component_src_upgradefee_taocanfufei') }}</span>
+                <span class="pay">{{ $t('packages_component_src_upgradefee_taocanfufei') }}</span>
               </div>
+              <ElDivider></ElDivider>
             </div>
+          </div>
+          <div class="currentList paid-upgrade-mb16 mt-2 flex">
+            <VIcon size="16" class="mr-2 color-primary mt-0 flex left-bold">check-bold</VIcon
+            ><span>{{ $t('packages_component_src_upgradefee_desc_1') }}</span>
           </div>
           <div class="currentList paid-upgrade-mb16 mt-2 flex">
             <VIcon size="16" class="mr-2 color-primary">check-bold</VIcon
@@ -65,7 +77,7 @@
           class="footer-right flex justify-content-between align-items-center px-4 cursor-pointer"
           @click="goPaidUpgrade"
         >
-          {{ $t('packages_component_src_upgradefee_dingyuezhuanyeban') }}<VIcon size="17">right</VIcon>
+          {{ $t('packages_component_src_upgradefee_dingyuezhuanyeban') }}<VIcon size="20">right</VIcon>
         </div>
       </li>
     </ul>
@@ -104,7 +116,7 @@ export default {
     color: map-get($fontColor, light);
   }
   .paid-upgrade-ul li {
-    width: 304px;
+    width: 420px;
     border-radius: 8px;
   }
   .paid-upgrade-left {
@@ -127,6 +139,8 @@ export default {
     border-bottom: none;
     border-top-right-radius: 8px;
     border-top-left-radius: 8px;
+    background: linear-gradient(135deg, var(--mktg-accent-primary) 0%, var(--mktg-accent-secondary) 100%);
+    padding: 1px;
   }
   .current {
     font-weight: 400;
@@ -151,20 +165,36 @@ export default {
     font-weight: 400;
     font-size: 16px;
     line-height: 24px;
-    color: map-get($color, primary);
+    color: gray;
+  }
+  .pay {
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    color: #ff7d00;
   }
   .desc {
     font-weight: 400;
-    font-size: 12px;
+    font-size: 14px;
     line-height: 17px;
-    max-width: 200px;
+    max-width: 300px;
     color: map-get($color, light);
   }
+  .desc_professional {
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 17px;
+    max-width: 300px;
+    color: #5684ff;
+  }
+
   .discount {
     color: #ff7d00;
     background: rgba(255, 125, 0, 0.1);
     border-radius: 4px;
-    padding: 2px 4px;
+    padding: 1px 5px;
+    margin-left: 10px;
+    position: fixed;
   }
   .bg {
     background: url('../../assets/images/subscription_img_zyb.png');
@@ -173,13 +203,16 @@ export default {
     background-position-y: top;
   }
   .paid-upgrade-height {
-    height: 78px;
+    height: 38px;
+    margin-top: 30px;
   }
   .paid-upgrade-cn-height {
-    height: 114px;
+    height: 38px;
+    margin-top: 30px;
   }
   .paid-upgrade-l-height {
-    height: 120px;
+    height: 38px;
+    margin-top: 30px;
   }
   .content {
     font-weight: 500;
@@ -198,6 +231,8 @@ export default {
   }
   .text {
     font-size: 12px;
+  }
+  .left-bold {
   }
   .currentList {
     font-weight: 400;
