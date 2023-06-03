@@ -200,7 +200,7 @@ export default {
   packages_dag_components_log_qingshururizhi: 'Please enter the log content...',
   packages_dag_components_nodedetaildialog_chulihaoshi: 'Processing Time',
   packages_dag_components_nodedetaildialog_xingnengzhibiao: 'Performance Metrics',
-  packages_dag_components_nodedetaildialog_zengliangshijiandian: 'Incremental time',
+  packages_dag_components_nodedetaildialog_zengliangshijiandian: 'Incremental Time',
   packages_dag_components_nodedetaildialog_xieyilianjiehao: 'The protocol connection takes time',
   packages_dag_components_nodedetaildialog_tcPlianjie: 'TCP connection time consuming',
   packages_dag_components_nodedetaildialog_lianjiezhuangtai: 'Connection Status',

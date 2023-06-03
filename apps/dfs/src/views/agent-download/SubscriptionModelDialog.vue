@@ -1908,6 +1908,12 @@ export default {
 </style>
 
 <style lang="scss">
+.justify-content-center {
+  line-height: 1.5 !important;
+}
+.text-center {
+  line-height: 1.5 !important;
+}
 .tap-dialog {
   .el-dialog__header {
     height: 64px;

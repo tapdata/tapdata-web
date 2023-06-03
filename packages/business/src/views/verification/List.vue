@@ -104,7 +104,7 @@
         :label="$t('packages_business_verification_verifyTime')"
         prop="lastStartTime"
         sortable="lastStartTime"
-        min-width="160"
+        min-width="180"
       ></el-table-column>
       <el-table-column :label="$t('public_operation')" width="360">
         <template slot-scope="scope">

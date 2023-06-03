@@ -491,7 +491,7 @@ export default {
   packages_business_verification_ChoosePKField: '请选索引或主键字段',
   packages_business_verification_indexField: '索引字段',
   packages_business_verification_BasicSettings: '基本设置',
-  packages_business_verification_verifyCondition: '校验条件',
+  packages_business_verification_verifyCondition: '校验表配置',
   packages_business_verification_clear: '清空',
   packages_business_verification_fastCountTip:
     '快速count仅对源表和目标表的行数进行count校验，速度极快，但是不会展示差异的具体字段内容。',
@@ -531,7 +531,7 @@ export default {
   packages_business_components_conditionbox_mubiaobiao: ' 目标表',
   packages_business_components_conditionbox_laiyuanbiao: '来源表',
   packages_business_components_conditionbox_daijiaoyanlianjie: '待校验连接',
-  packages_business_components_conditionbox_jianyantiaojian: '检验条件',
+  packages_business_components_conditionbox_jianyantiaojian: '校验表配置',
   packages_business_components_conditionbox_zhankaibianji: '展开编辑',
   packages_business_components_fieldbox_tianjiahang: '添加行',
   packages_business_components_fieldbox_ziduan: '字段',
