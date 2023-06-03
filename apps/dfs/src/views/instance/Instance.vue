@@ -135,54 +135,6 @@
             <!--            <span>{{ formatTime(scope.row.createAt) }}</span>-->
             <!--          </template>-->
             <!--        </ElTableColumn>-->
-            <ElTableColumn :label="$t('public_operation')" width="240">
-              <template slot-scope="scope">
-                <ElButton
-                  type="text"
-                  :disabled="deployBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
-                  @click="toDeploy(scope.row)"
-                  >{{ $t('public_agent_button_deploy') }}</ElButton
-                >
-                <ElDivider direction="vertical"></ElDivider>
-                <ElButton
-                  size="mini"
-                  type="text"
-                  :disabled="stopBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
-                  :loading="scope.row.btnLoading.stop"
-                  @click="handleStop(scope.row)"
-                  >{{ $t('public_button_stop') }}</ElButton
-                >
-                <ElDivider direction="vertical"></ElDivider>
-                <ElButton
-                  size="mini"
-                  type="text"
-                  v-if="scope.row.agentType === 'Cloud'"
-                  :loading="scope.row.btnLoading.delete"
-                  :disabled="renewBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
-                  @click="handleRenew(scope.row)"
-                  >{{ $t('dfs_instance_instance_zhongqi') }}</ElButton
-                >
-                <ElButton
-                  size="mini"
-                  type="text"
-                  v-if="scope.row.agentType === 'Local'"
-                  :loading="scope.row.btnLoading.delete"
-                  :disabled="restartBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
-                  @click="handleRestart(scope.row)"
-                  >{{ $t('dfs_instance_instance_zhongqi') }}</ElButton
-                >
-                <ElDivider direction="vertical"></ElDivider>
-                <ElButton
-                  size="mini"
-                  type="text"
-                  v-if="scope.row.agentType === 'Local'"
-                  :loading="scope.row.btnLoading.delete"
-                  :disabled="startBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
-                  @click="handleStart(scope.row)"
-                  >{{ $t('public_button_start') }}</ElButton
-                >
-              </template>
-            </ElTableColumn>
             <ElTableColumn width="130px" :label="$t('dfs_instance_instance_dingyuefangshi')">
               <template slot-scope="scope">
                 <span :class="{ 'color-success': scope.row.chargeProvider === 'FreeTier' }">{{
@@ -228,7 +180,7 @@
                 </div>
               </template>
             </ElTableColumn>
-            
+
             <ElTableColumn width="180px" :label="$t('agent_heartbeat')">
               <template slot-scope="scope">
                 <span>{{ handlePingTime(scope.row) }}</span>
@@ -268,6 +220,54 @@
                     >
                   </div>
                 </div>
+              </template>
+            </ElTableColumn>
+            <ElTableColumn :label="$t('public_operation')" width="240" fixed="right">
+              <template slot-scope="scope">
+                <ElButton
+                  type="text"
+                  :disabled="deployBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
+                  @click="toDeploy(scope.row)"
+                  >{{ $t('public_agent_button_deploy') }}</ElButton
+                >
+                <ElDivider direction="vertical"></ElDivider>
+                <ElButton
+                  size="mini"
+                  type="text"
+                  :disabled="stopBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
+                  :loading="scope.row.btnLoading.stop"
+                  @click="handleStop(scope.row)"
+                  >{{ $t('public_button_stop') }}</ElButton
+                >
+                <ElDivider direction="vertical"></ElDivider>
+                <ElButton
+                  size="mini"
+                  type="text"
+                  v-if="scope.row.agentType === 'Cloud'"
+                  :loading="scope.row.btnLoading.delete"
+                  :disabled="renewBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
+                  @click="handleRenew(scope.row)"
+                  >{{ $t('dfs_instance_instance_zhongqi') }}</ElButton
+                >
+                <ElButton
+                  size="mini"
+                  type="text"
+                  v-if="scope.row.agentType === 'Local'"
+                  :loading="scope.row.btnLoading.delete"
+                  :disabled="restartBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
+                  @click="handleRestart(scope.row)"
+                  >{{ $t('dfs_instance_instance_zhongqi') }}</ElButton
+                >
+                <ElDivider direction="vertical"></ElDivider>
+                <ElButton
+                  size="mini"
+                  type="text"
+                  v-if="scope.row.agentType === 'Local'"
+                  :loading="scope.row.btnLoading.delete"
+                  :disabled="startBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
+                  @click="handleStart(scope.row)"
+                  >{{ $t('public_button_start') }}</ElButton
+                >
               </template>
             </ElTableColumn>
 
@@ -773,6 +773,10 @@ export default {
         this.searchParams.status = query.status || ''
         this.fetch(queryStr === '{}' ? undefined : 1)
       }
+    },
+    //解决表格fixed错位
+    list() {
+      this.doLayout()
     }
   },
   created() {
@@ -799,6 +803,12 @@ export default {
     timer = null
   },
   methods: {
+    //解决表格fixed错位
+    doLayout() {
+      setTimeout(() => {
+        this.$refs.table.doLayout()
+      }, 200)
+    },
     relativeTime(time) {
       return time ? dayjs(time).fromNow() : '-'
     },
