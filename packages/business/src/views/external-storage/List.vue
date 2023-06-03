@@ -42,7 +42,9 @@
             @change="handleDefault(row)"
           ></ElSwitch>
           <ElDivider direction="vertical"></ElDivider>
-          <ElButton type="text" @click="handleEdit(row)">{{ $t('public_button_edit') }}</ElButton>
+          <ElButton type="text" :disabled="!row.canEdit" @click="handleEdit(row)">{{
+            $t('public_button_edit')
+          }}</ElButton>
           <ElDivider direction="vertical"></ElDivider>
           <ElButton type="text" :disabled="!row.canDelete" @click="remove(row)">{{
             $t('public_button_delete')
