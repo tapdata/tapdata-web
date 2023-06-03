@@ -72,7 +72,11 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('packages_business_verification_verifyStatus')" prop="status"></el-table-column>
+        <el-table-column :label="$t('packages_business_verification_verifyStatus')" prop="status">
+          <template slot-scope="scope">
+            <span>{{ statusMap[scope.row.status] }}</span>
+          </template>
+        </el-table-column>
         <el-table-column :label="$t('public_operation')" width="60px">
           <template slot-scope="scope">
             <ElLink type="primary" @click="rowClick(scope.row)">{{ $t('public_button_details') }}</ElLink>
@@ -116,6 +120,13 @@ export default {
         order: ''
       },
       selections: [],
+      statusMap: {
+        waiting: this.$t('packages_business_verification_waiting'),
+        scheduling: this.$t('packages_business_verification_scheduling'),
+        error: this.$t('packages_business_verification_error'),
+        done: this.$t('packages_business_verification_done'),
+        running: this.$t('packages_business_verification_running')
+      },
       inspectMethod: {
         row_count: this.$t('packages_business_verification_rowVerify'),
         field: this.$t('packages_business_verification_contentVerify'),
