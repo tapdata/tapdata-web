@@ -153,6 +153,7 @@ import { cloneDeep, escapeRegExp } from 'lodash'
 import { externalStorageApi } from '@tap/api'
 import { TablePage, EXTERNAL_STORAGE_TYPE_MAP } from '@tap/business'
 import { FilterBar, Drawer } from '@tap/component'
+import { openUrl } from '@tap/shared'
 
 export default {
   components: { TablePage, FilterBar, Drawer },
@@ -359,21 +360,24 @@ export default {
      * @param row
      */
     handleClickName(item) {
-      if (item?.syncType === 'migrate') {
-        this.$router.push({
-          name: 'migrateList',
-          query: {
-            keyword: item.name
-          }
-        })
-      } else {
-        this.$router.push({
-          name: 'dataflowList',
-          query: {
-            keyword: item.name
-          }
-        })
+      let { syncType, shareCache } = item
+      if (shareCache) {
+        syncType = 'mem_cache'
       }
+      const MAP = {
+        migrate: 'migrateList',
+        sync: 'dataflowList',
+        logCollector: 'sharedMiningList',
+        mem_cache: 'sharedCacheList',
+        connHeartbeat: 'HeartbeatTableList'
+      }
+      const routeUrl = this.$router.resolve({
+        name: MAP[syncType],
+        query: {
+          keyword: item.name
+        }
+      })
+      openUrl(routeUrl.href)
     },
 
     // 编辑
