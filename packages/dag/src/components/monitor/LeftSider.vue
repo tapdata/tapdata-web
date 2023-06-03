@@ -139,7 +139,10 @@
         </div>
       </div>
 
-      <div v-if="['SharedMiningMonitor', 'SharedCacheMonitor'].includes($route.name)" class="info-box">
+      <div
+        v-if="['SharedMiningMonitor', 'SharedCacheMonitor'].includes($route.name) && infoList.length > 0"
+        class="info-box"
+      >
         <div class="flex justify-content-between mb-2">
           <span class="fw-bold fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_jibenxinxi') }}</span>
         </div>
