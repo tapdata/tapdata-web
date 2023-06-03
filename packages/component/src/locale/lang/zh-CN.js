@@ -39,7 +39,7 @@ export default {
   packages_component_src_upgradefee_dingyuezhuanyeban: '订阅专业版',
   packages_component_src_upgradefee_gaojishouhouzhi: ' 高级售后支持，提供服务SLA',
   packages_component_src_upgradefee_shujuchulixing: ' 处理性能：高',
-  packages_component_src_upgradefee_desc_1: '包含免费版的全部能力, 加上...',
+  packages_component_src_upgradefee_desc_1: '包含基础版的全部能力, 加上...',
   packages_component_src_upgradefee_renwushukegen: '任务数量: 无限制',
   packages_component_src_upgradefee_taocanfufei: '按规格付费',
   packages_component_src_upgradefee_tigongzhuanyehua: '适合企业使用, 或者生产场景使用',
