@@ -5,7 +5,7 @@
         <div class="list-operation-left flex justify-content-between">
           <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
           <ElButton type="primary">
-            <span @click="createDialog = true">新建工单</span>
+            <span @click="createDialog = true">{{$t('dfs_ticketing_system_list_xinjiangongdan')}}</span>
           </ElButton>
         </div>
       </div>
@@ -27,40 +27,40 @@
           <StatusTag type="tag" :status="row.status" default-status="Stopped" target="ticket"></StatusTag>
         </template>
         <template #operation="{ row }">
-          <ElButton type="text" @click="handleDetails(row)">详情</ElButton>
-          <ElButton type="text" @click="close(row.id)">关闭</ElButton>
+          <ElButton type="text" @click="handleDetails(row)">{{$t('public_button_details')}}</ElButton>
+          <ElButton type="text" @click="close(row.id)">{{$t('public_button_close')}}</ElButton>
         </template>
       </VTable>
     </div>
-    <!--新建工单-->
-    <ElDialog title="新建工单" :visible.sync="createDialog" width="620px">
+    <!--{{$t('dfs_ticketing_system_list_xinjiangongdan')}}-->
+    <ElDialog :title="$t('dfs_ticketing_system_list_xinjiangongdan')" :visible.sync="createDialog" width="620px">
       <span>
         <el-form label-position="top" :model="createForm" :rules="rules" ref="createForm">
-          <el-form-item label="主题" prop="subject">
-            <el-input v-model="createForm.subject" placeholder="请输入主题" required></el-input>
+          <el-form-item :label="$t('dfs_ticketing_system_list_zhuti')" prop="subject">
+            <el-input v-model="createForm.subject" :placeholder="$t('dfs_ticketing_system_list_qingshuruzhuti')" required></el-input>
           </el-form-item>
-          <el-form-item label="选择数据源" prop="task">
-            <el-select v-model="createForm.jobId" placeholder="请选择选择任务" class="w-100" required>
+          <el-form-item :label="$t('dfs_ticketing_system_list_xuanzerenwu')" prop="task">
+            <el-select v-model="createForm.jobId" :placeholder="$t('dfs_ticketing_system_list_qingxuanzexuanze')" class="w-100" required>
               <el-option v-for="item in taskList" :key="item.id" :label="item.name" :value="item.id">{{
                 item.name
               }}</el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="选择任务" prop="connection">
-            <el-select v-model="createForm.connectionId" placeholder="请选择选择任务" class="w-100" required>
+          <el-form-item :label="$t('dfs_ticketing_system_list_xuanzeshujuyuan')" prop="connection">
+            <el-select v-model="createForm.connectionId" :placeholder="$t('dfs_ticketing_system_list_qingxuanzexuanze2')" class="w-100" required>
               <el-option v-for="item in connectionList" :key="item.id" :label="item.name" :value="item.id">{{
                 item.name
               }}</el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="问题" prop="subject">
-            <el-input v-model="createForm.description" type="textarea" placeholder="请描述您的问题" required></el-input>
+          <el-form-item :label="$t('dfs_ticketing_system_list_wenti')" prop="subject">
+            <el-input v-model="createForm.description" type="textarea" :placeholder="$t('dfs_ticketing_system_list_qingmiaoshuninde')" required></el-input>
           </el-form-item>
         </el-form>
       </span>
       <span slot="footer">
-        <el-button @click="createDialog = false">取消</el-button>
-        <el-button type="primary" @click="create">创建</el-button>
+        <el-button @click="createDialog = false">{{$t('public_button_cancel')}}</el-button>
+        <el-button type="primary" @click="create">{{$t('public_button_create')}}</el-button>
       </span>
     </ElDialog>
     <Details ref="details" width="380px"></Details>
@@ -104,25 +104,25 @@ export default {
       },
       columns: [
         {
-          label: '主题',
+          label: i18n.t('dfs_ticketing_system_list_zhuti'),
           prop: 'subject',
           slotName: 'name'
         },
         {
-          label: '问题',
+          label: i18n.t('dfs_ticketing_system_list_wenti'),
           prop: 'description'
         },
         {
-          label: '工单编号',
+          label: i18n.t('dfs_ticketing_system_list_gongdanbianhao'),
           prop: 'ticketNumber'
         },
         {
-          label: '工单状态',
+          label: i18n.t('dfs_ticketing_system_list_gongdanzhuangtai'),
           prop: 'status',
           slotName: 'status'
         },
         {
-          label: '提交时间',
+          label: i18n.t('dfs_ticketing_system_list_tijiaoshijian'),
           prop: 'createdTime',
           dataType: 'time'
         },
@@ -134,10 +134,10 @@ export default {
         }
       ],
       rules: {
-        jobId: [{ required: true, message: '请选择选择任务', trigger: 'blur' }],
-        connectionId: [{ required: true, message: '选择数据源', trigger: 'change' }],
-        subject: [{ required: true, message: '请输入主题', trigger: 'change' }],
-        description: [{ required: true, message: '请描述您的问题', trigger: 'change' }]
+        jobId: [{ required: true, message: i18n.t('dfs_ticketing_system_list_qingxuanzexuanze'), trigger: 'blur' }],
+        connectionId: [{ required: true, message: i18n.t('dfs_ticketing_system_list_xuanzeshujuyuan'), trigger: 'change' }],
+        subject: [{ required: true, message: i18n.t('dfs_ticketing_system_list_qingshuruzhuti'), trigger: 'change' }],
+        description: [{ required: true, message: i18n.t('dfs_ticketing_system_list_qingmiaoshuninde'), trigger: 'change' }]
       },
       taskList: [],
       connectionList: []
@@ -167,8 +167,8 @@ export default {
     getFilterItems() {
       this.filterItems = [
         {
-          placeholder: '输入工单名称',
-          label: '输入工单名称',
+          placeholder: i18n.t('dfs_ticketing_system_list_shurugongdanming'),
+          label: i18n.t('dfs_ticketing_system_list_shurugongdanming'),
           key: 'keyword',
           type: 'input'
         }
@@ -270,7 +270,7 @@ export default {
     //关闭工单
     close(id) {
       this.$axios.patch('api/ticket/' + id).then(() => {
-        this.$message.success('工单已关闭')
+        this.$message.success(i18n.t('dfs_ticketing_system_list_gongdanyiguanbi'))
         this.table.fetch(1)
       })
     },
@@ -291,7 +291,7 @@ export default {
           this.$axios.post('api/ticket', params).then(() => {
             this.createDialog = false
             this.table.fetch(1)
-            this.$message.success('操作成功')
+            this.$message.success(i18n.t('public_message_operation_success'))
           })
         }
       })

@@ -8,43 +8,43 @@
   >
     <div v-if="details.id" class="shared-cache-details--header flex pb-3 flex-column">
       <header class="border-bottom py-2">
-        <span class="font-color-dark inline-block fw-bold fs-6">工单详情</span>
+        <span class="font-color-dark inline-block fw-bold fs-6">{{$t('dfs_ticketing_system_details_gongdanxiangqing')}}</span>
       </header>
       <ul class="detail-ul flex flex-column flex-1">
         <li>
-          <span class="label font-color-sslight inline-block"> 主题:</span>
+          <span class="label font-color-sslight inline-block">{{$t('dfs_ticketing_system_details_zhuti')}}</span>
           <span class="font-color-dark fw-normal"> {{ details.subject }}</span>
         </li>
         <li>
-          <span class="label font-color-sslight inline-block"> 数据源:</span>
+          <span class="label font-color-sslight inline-block">{{$t('dfs_ticketing_system_details_shujuyuan')}}</span>
           <span class="font-color-dark fw-normal"> {{ details.connectionName }}</span>
         </li>
         <li>
-          <span class="label font-color-sslight inline-block"> 任务:</span>
+          <span class="label font-color-sslight inline-block">{{$t('dfs_ticketing_system_details_renwu')}}</span>
           <span class="font-color-dark fw-normal"> {{ details.jobName }}</span>
         </li>
         <li>
-          <span class="label font-color-sslight inline-block"> 工单编号:</span>
+          <span class="label font-color-sslight inline-block">{{$t('dfs_ticketing_system_details_gongdanbianhao')}}</span>
           <span class="font-color-dark fw-normal"> {{ details.ticketNumber }}</span>
         </li>
         <li>
-          <span class="label font-color-sslight inline-block">工单状态:</span>
+          <span class="label font-color-sslight inline-block">{{$t('dfs_ticketing_system_details_gongdanzhuangtai')}}</span>
           <span class="font-color-dark fw-normal">
             <StatusTag type="tag" :status="details.status" default-status="Stopped" target="ticket"></StatusTag
           ></span>
         </li>
         <li>
-          <span class="label font-color-sslight inline-block">提交时间: </span>
+          <span class="label font-color-sslight inline-block">{{$t('dfs_ticketing_system_details_tijiaoshijian')}}</span>
           <span class="font-color-dark fw-normal"> {{ details.createdTime }}</span>
         </li>
         <li class="border-top">
-          <span class="label font-color-sslight inline-block">问题: </span>
+          <span class="label font-color-sslight inline-block">{{$t('dfs_ticketing_system_details_wenti')}}</span>
           <span class="font-color-slight fw-normal"> {{ details.description }}</span>
         </li>
         <li>
-          <span v-if="details.comment === 0">暂无评论</span>
+          <span v-if="details.comment === 0">{{$t('dfs_ticketing_system_details_zanwupinglun')}}</span>
           <span v-else v-for="(item, index) in details.comments" :key="index" class="flex mt-2">
-            <span class="label color-primary inline-block"> 回复内容: </span>
+            <span class="label color-primary inline-block"> {{$t('dfs_ticketing_system_details_huifuneirong')}} </span>
             <span class="font-color-dark fw-normal" v-html="item.content"> {{ item.content }}</span>
           </span>
         </li>

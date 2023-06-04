@@ -16,7 +16,7 @@
         <!--我的工单-->
         <div class="command-item mr-6" @click="goTicketSystem">
           <VIcon size="17">workorder</VIcon>
-          <span class="cursor-pointer"> 我的工单</span>
+          <span class="cursor-pointer"> {{ $t('dfs_the_header_header_wodegongdan') }}</span>
         </div>
         <!---demo环境-->
         <div v-if="domain === 'demo.cloud.tapdata.net' && lang !== 'en'" class="marquee-container cursor-pointer">

@@ -299,7 +299,7 @@ const routes = [
         name: 'TicketSystem',
         component: () => import(/* webpackChunkName: "instance" */ '../views/ticketing-system/List.vue'),
         meta: {
-          title: '工单列表'
+          title: 'dfs_router_index_gongdanliebiao'
         }
       }
     ]
