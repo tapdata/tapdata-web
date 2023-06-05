@@ -237,7 +237,7 @@ export default {
       let keep = inspect?.limit?.keep || 0
       let totalFailed = inspect?.difference_number || 0
       if (keep < totalFailed) {
-        this.$message.warn(this.$t('packages_business_verification_message_out_of_limit'))
+        this.$message.warning(this.$t('packages_business_verification_message_out_of_limit'))
       }
       inspectApi
         .update(
