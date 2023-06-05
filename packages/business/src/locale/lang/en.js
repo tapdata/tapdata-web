@@ -1109,5 +1109,10 @@ export default {
   packages_business_shared_mining_list_gaiwajuerenwu:
     'The mining task has been called by {val} tasks, please delete the task and try again',
   packages_business_shared_cache_list_qingxianxiugaiwai:
-    'The external storage does not exist, please modify the external storage configuration before starting.'
+    'The external storage does not exist, please modify the external storage configuration before starting.',
+  packages_business_components_conditionbox_shifouquerenqing:
+    'Are you sure to clear the check condition that the index field is empty? ',
+  packages_business_components_conditionbox_suoyinziduanwei: 'The index field is empty',
+  packages_business_components_conditionbox_yijianqingchusuo:
+    'One key to clear the condition that the index field is empty'
 }

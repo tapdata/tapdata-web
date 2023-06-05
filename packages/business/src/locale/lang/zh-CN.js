@@ -1061,5 +1061,8 @@ export default {
   packages_business_shared_mining_list_shanchurenwus:
     '删除任务<span class="color-primary">{val1}</span>后，此任务将无法恢复',
   packages_business_shared_mining_list_gaiwajuerenwu: '该挖掘任务已被 {val} 个任务调用，请删除任务后重试',
-  packages_business_shared_cache_list_qingxianxiugaiwai: '外存不存在，请先修改外存配置后，再启动。'
+  packages_business_shared_cache_list_qingxianxiugaiwai: '外存不存在，请先修改外存配置后，再启动。',
+  packages_business_components_conditionbox_shifouquerenqing: '是否确认清除索引字段为空的校验条件？',
+  packages_business_components_conditionbox_suoyinziduanwei: '索引字段为空',
+  packages_business_components_conditionbox_yijianqingchusuo: '一键清除索引字段为空的条件'
 }
