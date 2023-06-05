@@ -15,7 +15,7 @@
           :disabled="!list.length"
           class="mr-4"
           @click="handleClearIndexEmpty"
-          >一键清除索引字段为空的条件</ElLink
+          >{{ $t('packages_business_components_conditionbox_yijianqingchusuo') }}</ElLink
         >
         <ElLink type="primary" :disabled="!list.length" @click="handleClear">{{
           $t('packages_business_verification_clear')
@@ -158,11 +158,11 @@
               <div v-else-if="inspectMethod !== 'row_count'" class="setting-item mt-4">
                 <label class="item-label">{{ $t('packages_business_verification_indexField') }}: </label>
                 <span :class="['item-value-text', { 'color-danger': !item.source.sortColumn }]">{{
-                  item.source.sortColumn || '索引字段为空'
+                  item.source.sortColumn || $t('packages_business_components_conditionbox_suoyinziduanwei')
                 }}</span>
                 <span class="item-icon"></span>
                 <span :class="['item-value-text', { 'color-danger': !item.target.sortColumn }]">{{
-                  item.target.sortColumn || '索引字段为空'
+                  item.target.sortColumn || $t('packages_business_components_conditionbox_suoyinziduanwei')
                 }}</span>
               </div>
               <div class="setting-item mt-4">
@@ -596,9 +596,13 @@ export default {
     },
 
     handleClearIndexEmpty() {
-      this.$confirm('是否确认清除索引字段为空的校验条件？', i18n.t('public_message_title_prompt'), {
-        type: 'warning'
-      }).then(res => {
+      this.$confirm(
+        i18n.t('packages_business_components_conditionbox_shifouquerenqing'),
+        i18n.t('public_message_title_prompt'),
+        {
+          type: 'warning'
+        }
+      ).then(res => {
         if (!res) {
           return
         }
