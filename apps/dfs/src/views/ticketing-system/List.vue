@@ -5,7 +5,7 @@
         <div class="list-operation-left flex justify-content-between">
           <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
           <ElButton type="primary">
-            <span @click="createDialog = true">{{$t('dfs_ticketing_system_list_xinjiangongdan')}}</span>
+            <span @click="createDialog = true">{{ $t('dfs_ticketing_system_list_xinjiangongdan') }}</span>
           </ElButton>
         </div>
       </div>
@@ -27,8 +27,8 @@
           <StatusTag type="tag" :status="row.status" default-status="Stopped" target="ticket"></StatusTag>
         </template>
         <template #operation="{ row }">
-          <ElButton type="text" @click="handleDetails(row)">{{$t('public_button_details')}}</ElButton>
-          <ElButton type="text" @click="close(row.id)">{{$t('public_button_close')}}</ElButton>
+          <ElButton type="text" @click="handleDetails(row)">{{ $t('public_button_details') }}</ElButton>
+          <ElButton type="text" @click="close(row.id)">{{ $t('public_button_close') }}</ElButton>
         </template>
       </VTable>
     </div>
@@ -37,30 +37,49 @@
       <span>
         <el-form label-position="top" :model="createForm" :rules="rules" ref="createForm">
           <el-form-item :label="$t('dfs_ticketing_system_list_zhuti')" prop="subject">
-            <el-input v-model="createForm.subject" :placeholder="$t('dfs_ticketing_system_list_qingshuruzhuti')" required></el-input>
+            <el-input
+              v-model="createForm.subject"
+              :placeholder="$t('dfs_ticketing_system_list_qingshuruzhuti')"
+              required
+            ></el-input>
           </el-form-item>
           <el-form-item :label="$t('dfs_ticketing_system_list_xuanzerenwu')" prop="task">
-            <el-select v-model="createForm.jobId" :placeholder="$t('dfs_ticketing_system_list_qingxuanzexuanze')" class="w-100" required>
+            <el-select
+              v-model="createForm.jobId"
+              :placeholder="$t('dfs_ticketing_system_list_qingxuanzexuanze')"
+              class="w-100"
+              required
+            >
               <el-option v-for="item in taskList" :key="item.id" :label="item.name" :value="item.id">{{
                 item.name
               }}</el-option>
             </el-select>
           </el-form-item>
           <el-form-item :label="$t('dfs_ticketing_system_list_xuanzeshujuyuan')" prop="connection">
-            <el-select v-model="createForm.connectionId" :placeholder="$t('dfs_ticketing_system_list_qingxuanzexuanze2')" class="w-100" required>
+            <el-select
+              v-model="createForm.connectionId"
+              :placeholder="$t('dfs_ticketing_system_list_qingxuanzexuanze2')"
+              class="w-100"
+              required
+            >
               <el-option v-for="item in connectionList" :key="item.id" :label="item.name" :value="item.id">{{
                 item.name
               }}</el-option>
             </el-select>
           </el-form-item>
           <el-form-item :label="$t('dfs_ticketing_system_list_wenti')" prop="subject">
-            <el-input v-model="createForm.description" type="textarea" :placeholder="$t('dfs_ticketing_system_list_qingmiaoshuninde')" required></el-input>
+            <el-input
+              v-model="createForm.description"
+              type="textarea"
+              :placeholder="$t('dfs_ticketing_system_list_qingmiaoshuninde')"
+              required
+            ></el-input>
           </el-form-item>
         </el-form>
       </span>
       <span slot="footer">
-        <el-button @click="createDialog = false">{{$t('public_button_cancel')}}</el-button>
-        <el-button type="primary" @click="create">{{$t('public_button_create')}}</el-button>
+        <el-button @click="createDialog = false">{{ $t('public_button_cancel') }}</el-button>
+        <el-button type="primary" @click="create">{{ $t('public_button_create') }}</el-button>
       </span>
     </ElDialog>
     <Details ref="details" width="380px"></Details>
@@ -110,7 +129,9 @@ export default {
         },
         {
           label: i18n.t('dfs_ticketing_system_list_wenti'),
-          prop: 'description'
+          prop: 'description',
+          width: '200px',
+          showOverflowTooltip: true
         },
         {
           label: i18n.t('dfs_ticketing_system_list_gongdanbianhao'),
@@ -135,9 +156,13 @@ export default {
       ],
       rules: {
         jobId: [{ required: true, message: i18n.t('dfs_ticketing_system_list_qingxuanzexuanze'), trigger: 'blur' }],
-        connectionId: [{ required: true, message: i18n.t('dfs_ticketing_system_list_xuanzeshujuyuan'), trigger: 'change' }],
+        connectionId: [
+          { required: true, message: i18n.t('dfs_ticketing_system_list_xuanzeshujuyuan'), trigger: 'change' }
+        ],
         subject: [{ required: true, message: i18n.t('dfs_ticketing_system_list_qingshuruzhuti'), trigger: 'change' }],
-        description: [{ required: true, message: i18n.t('dfs_ticketing_system_list_qingmiaoshuninde'), trigger: 'change' }]
+        description: [
+          { required: true, message: i18n.t('dfs_ticketing_system_list_qingmiaoshuninde'), trigger: 'change' }
+        ]
       },
       taskList: [],
       connectionList: []
@@ -183,12 +208,6 @@ export default {
         }
       }
       keyword && (where.name = keyword)
-      let filter = {
-        limit: size,
-        skip: size * (current - 1),
-        sort: ['createAt desc'],
-        where: where
-      }
       let { userId } = window.__USER_INFO__
       return this.$axios.get(`api/ticket?userId=${userId}&page=${current}&limit=${size}`).then(data => {
         let items = data.items || []

@@ -8,45 +8,63 @@
   >
     <div v-if="details.id" class="shared-cache-details--header flex pb-3 flex-column">
       <header class="border-bottom py-2">
-        <span class="font-color-dark inline-block fw-bold fs-6">{{$t('dfs_ticketing_system_details_gongdanxiangqing')}}</span>
+        <span class="font-color-dark inline-block fw-bold fs-6">{{
+          $t('dfs_ticketing_system_details_gongdanxiangqing')
+        }}</span>
       </header>
       <ul class="detail-ul flex flex-column flex-1">
         <li>
-          <span class="label font-color-sslight inline-block">{{$t('dfs_ticketing_system_details_zhuti')}}</span>
+          <span class="label font-color-sslight inline-block">{{ $t('dfs_ticketing_system_details_zhuti') }}</span>
           <span class="font-color-dark fw-normal"> {{ details.subject }}</span>
         </li>
         <li>
-          <span class="label font-color-sslight inline-block">{{$t('dfs_ticketing_system_details_shujuyuan')}}</span>
+          <span class="label font-color-sslight inline-block">{{ $t('dfs_ticketing_system_details_shujuyuan') }}</span>
           <span class="font-color-dark fw-normal"> {{ details.connectionName }}</span>
         </li>
         <li>
-          <span class="label font-color-sslight inline-block">{{$t('dfs_ticketing_system_details_renwu')}}</span>
+          <span class="label font-color-sslight inline-block">{{ $t('dfs_ticketing_system_details_renwu') }}</span>
           <span class="font-color-dark fw-normal"> {{ details.jobName }}</span>
         </li>
         <li>
-          <span class="label font-color-sslight inline-block">{{$t('dfs_ticketing_system_details_gongdanbianhao')}}</span>
+          <span class="label font-color-sslight inline-block">{{
+            $t('dfs_ticketing_system_details_gongdanbianhao')
+          }}</span>
           <span class="font-color-dark fw-normal"> {{ details.ticketNumber }}</span>
         </li>
         <li>
-          <span class="label font-color-sslight inline-block">{{$t('dfs_ticketing_system_details_gongdanzhuangtai')}}</span>
+          <span class="label font-color-sslight inline-block">{{
+            $t('dfs_ticketing_system_details_gongdanzhuangtai')
+          }}</span>
           <span class="font-color-dark fw-normal">
             <StatusTag type="tag" :status="details.status" default-status="Stopped" target="ticket"></StatusTag
           ></span>
         </li>
         <li>
-          <span class="label font-color-sslight inline-block">{{$t('dfs_ticketing_system_details_tijiaoshijian')}}</span>
+          <span class="label font-color-sslight inline-block">{{
+            $t('dfs_ticketing_system_details_tijiaoshijian')
+          }}</span>
           <span class="font-color-dark fw-normal"> {{ details.createdTime }}</span>
         </li>
         <li class="border-top">
-          <span class="label font-color-sslight inline-block">{{$t('dfs_ticketing_system_details_wenti')}}</span>
-          <span class="font-color-slight fw-normal"> {{ details.description }}</span>
+          <span class="label font-color-sslight inline-block mb-2">{{ $t('dfs_ticketing_system_details_wenti') }}</span>
+          <div class="font-color-dark fw-normal lh-base">{{ details.description }}</div>
         </li>
         <li>
-          <span v-if="details.comment === 0">{{$t('dfs_ticketing_system_details_zanwupinglun')}}</span>
-          <span v-else v-for="(item, index) in details.comments" :key="index" class="flex mt-2">
-            <span class="label color-primary inline-block"> {{$t('dfs_ticketing_system_details_huifuneirong')}} </span>
-            <span class="font-color-dark fw-normal" v-html="item.content"> {{ item.content }}</span>
+          <span class="label color-primary inline-block mb-2">
+            {{ $t('dfs_ticketing_system_details_huifuneirong') }}
           </span>
+          <span v-if="details.comment === 0">{{ $t('dfs_ticketing_system_details_zanwupinglun') }}</span>
+          <el-timeline v-else>
+            <el-timeline-item
+              v-for="(item, index) in details.comments"
+              :key="index"
+              :color="index === 0 ? '#2c65ff' : ''"
+              :type="index === 0 ? 'primary' : ''"
+              :timestamp="formatter(item.commentedTime)"
+            >
+              <span class="font-color-dark fw-normal lh-base" v-html="item.content"> {{ item.content }}</span>
+            </el-timeline-item>
+          </el-timeline>
         </li>
       </ul>
     </div>
@@ -87,6 +105,9 @@ export default {
           ? dayjs(this.details.createdTime).format('YYYY-MM-DD HH:mm:ss')
           : '-'
       })
+    },
+    formatter(time) {
+      return time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
     },
     handleVisible() {
       this.visible = false
