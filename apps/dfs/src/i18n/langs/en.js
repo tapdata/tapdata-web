@@ -1459,7 +1459,7 @@ export default {
     'Lower cost: make full use of existing hardware resources, and the price is significantly lower under the same specification',
   dfs_agent_download_subscriptionmodeldialog_shiyongbantuoguan: 'The benefits of using the Semi-Managed mode:',
   dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi2:
-    'In this mode, you need to provide and manage resources yourself',
+    'In this mode, you provide and manage resources yourself',
   dfs_agent_download_subscriptionmodeldialog_quantuoguanmoshi: 'Fully-Managed Mode',
   dfs_agent_download_subscriptionmodeldialog_bantuoguanmoshi: 'Semi-Managed Mode',
   dfs_instance_instance_quxiaodingyue: 'Unsubscribe',
