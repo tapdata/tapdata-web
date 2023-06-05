@@ -648,7 +648,7 @@ export default {
         appValue: '',
         appLabel: ''
       }
-      this.$refs?.form?.clearValidate()
+
       this.formatData(formData || {})
 
       // 若为新建时，则默认值为 ‘默认查询(defaultApi)’ 的值
@@ -663,6 +663,15 @@ export default {
       }
       if (!this.data.id) {
         this.edit()
+      }
+
+      const formVM = this.$refs.form
+
+      if (formVM) {
+        formVM.clearValidate()
+        this.$nextTick(() => {
+          formVM.$el.scrollTop = 0
+        })
       }
     },
     tabChanged() {
@@ -701,7 +710,7 @@ export default {
       // 若为新建时，则默认值为 ‘默认查询(defaultApi)’ 的值
 
       const appData = listtags?.[0] || {}
-      const appValue = appData.id
+      const appValue = appData.id || '' // 不改变appValue 的原始值，防止首次创建触发所属应用的必填校验
       const appLabel = appData.value
 
       let apiType = formData?.apiType || 'defaultApi'
@@ -907,7 +916,7 @@ export default {
             name: connectionName
           }
           this.formatData(data || [])
-          Object.assign(this.orginData, data)
+          this.orginData && Object.assign(this.orginData, data)
           this.$emit('save')
           this.isEdit = false
         }
