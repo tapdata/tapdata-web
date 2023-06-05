@@ -82,7 +82,7 @@
           <div class="mode-desc inline-block pt-4 cursor-pointer" @click="handleSelectMode('integration')">
             <ElImage :src="require('@tap/assets/images/swimlane/data-integration-mode.svg')"></ElImage>
             <ul class="mode-ul mt-4">
-              <li>• Database Replications</li>
+              <li>• Database Replication</li>
               <li>• Move data to cloud</li>
               <li>• ETL pipelines</li>
             </ul>

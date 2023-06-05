@@ -1027,5 +1027,11 @@ export default {
   packages_business_as_source: '作為源頭',
   packages_business_as_target: '作為目標',
   page_title_verification_create: '新建校驗',
-  page_title_verification_history: '校驗歷史'
+  page_title_task_edit: '編輯任務',
+  page_title_task_details: '任務詳情',
+  page_title_verification_history: '校驗歷史',
+  page_title_data_difference_details: '差異詳情',
+  page_title_data_verification_result: '校驗結果',
+  page_title_diff_verification_history: '差異校驗歷史',
+  page_title_diff_verification_details: '差異校驗詳情'
 }

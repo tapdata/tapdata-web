@@ -566,6 +566,7 @@
         <div class="w-40 flex align-items-center ml-4" v-else></div>
         <div class="btn-opreation flex w-60">
           <el-button v-if="activeStep > 1" @click="prevStep">{{ $t('public_button_previous') }}</el-button>
+          <el-button v-if="activeStep == 1">{{ $t('public_button_previous') }}</el-button>
           <el-button v-if="activeStep < steps.length" type="primary" @click="next('second')">{{
             $t('public_button_next')
           }}</el-button>
@@ -2291,6 +2292,9 @@ export default {
   background: #fafafa;
   border-radius: 4px;
 }
+.spec-li:hover {
+  border: 1px solid map-get($color, primary);
+}
 .spec-li {
   width: 495px;
   border: 1px solid #dedede;
@@ -2344,6 +2348,9 @@ export default {
 .col-5 {
   width: 90px;
 }
+.product-type-card:hover {
+  border: 1px solid map-get($color, primary);
+}
 .product-type-card {
   width: 435px;
   .product-type-card-title {
@@ -2385,6 +2392,9 @@ export default {
     }
   }
 }
+.product-type-card:hover {
+  border: 1px solid map-get($color, primary) !important;
+}
 .subscription-steps {
   ::v-deep {
     .el-step.is-simple .el-step__title {
@@ -2398,5 +2408,8 @@ export default {
       padding: 13px 0;
     }
   }
+}
+.el-form-item__label {
+  font-weight: 500;
 }
 </style>

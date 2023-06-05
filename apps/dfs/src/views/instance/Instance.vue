@@ -20,7 +20,7 @@
             @sort-change="sortChange"
             @row-click="rowClick"
           >
-            <ElTableColumn min-width="140px" :label="$t('agent_name')">
+            <ElTableColumn min-width="160px" :label="$t('agent_name')">
               <template slot-scope="scope">
                 <div class="flex">
                   <div>
@@ -41,57 +41,12 @@
                 <span>{{ scope.row.specLabel }}</span>
               </template>
             </ElTableColumn>
-            <ElTableColumn width="80px" :label="$t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi')">
+            <ElTableColumn width="120px" :label="$t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi')">
               <template slot-scope="scope">
                 <span>{{ agentTypeMap[scope.row.agentType] }}</span>
               </template>
             </ElTableColumn>
-            <ElTableColumn width="90px" :label="$t('dfs_instance_instance_dingyuefangshi')">
-              <template slot-scope="scope">
-                <span :class="{ 'color-success': scope.row.chargeProvider === 'FreeTier' }">{{
-                  scope.row.subscriptionMethodLabel
-                }}</span>
-              </template>
-            </ElTableColumn>
-            <ElTableColumn width="185" :label="$t('dfs_instance_instance_daoqishijian')">
-              <template slot-scope="scope">
-                <div>
-                  <ElTooltip
-                    :disabled="!getExpiredTimeLevel(scope.row)"
-                    placement="top"
-                    :visible-arrow="false"
-                    effect="light"
-                  >
-                    <div>
-                      <span>{{ scope.row.expiredTimeLabel }}</span>
-                      <VIcon v-if="getExpiredTimeLevel(scope.row) === 'expired'" class="ml-2 color-info">error</VIcon>
-                      <VIcon v-else-if="getExpiredTimeLevel(scope.row) === 'expiringSoon'" class="ml-2 color-warning"
-                        >warning</VIcon
-                      >
-                    </div>
-                    <template #content>
-                      <div v-if="getExpiredTimeLevel(scope.row) === 'expired'" class="font-color-dark">
-                        <p>{{ $t('dfs_instance_expired_time_tip1') }}</p>
-                        <div v-if="scope.row.agentType === 'Cloud'">
-                          <p>{{ $t('dfs_instance_expired_time_full_tip2') }}</p>
-                          <p>{{ $t('dfs_instance_expired_time_full_tip3') }}</p>
-                        </div>
-                        <div v-else>
-                          <p>{{ $t('dfs_instance_expired_time_tip2') }}</p>
-                          <p>{{ $t('dfs_instance_expired_time_tip3') }}</p>
-                          <p>{{ $t('dfs_instance_expired_time_tip4') }}</p>
-                        </div>
-                      </div>
-                      <span v-else-if="scope.row.paidType === 'recurring'">{{
-                        $t('dfs_instance_instance_xiacifufeishi')
-                      }}</span>
-                      <span v-else>{{ $t('dfs_user_center_jijiangguoqi') }}</span>
-                    </template>
-                  </ElTooltip>
-                </div>
-              </template>
-            </ElTableColumn>
-            <ElTableColumn :label="$t('agent_status')" width="100">
+            <ElTableColumn :label="$t('agent_status')" width="110">
               <template slot-scope="scope">
                 <StatusTag
                   v-if="scope.row.agentType === 'Cloud' && scope.row.status === 'Creating'"
@@ -115,47 +70,6 @@
                     </div>
                   </template>
                 </ElTooltip>
-              </template>
-            </ElTableColumn>
-            <ElTableColumn width="180px" :label="$t('agent_heartbeat')">
-              <template slot-scope="scope">
-                <span>{{ handlePingTime(scope.row) }}</span>
-              </template>
-            </ElTableColumn>
-            <ElTableColumn :label="$t('agent_task_number')" width="160">
-              <template slot-scope="scope">
-                <div>
-                  <div class="flex align-center">
-                    {{ $t('task_manage_migrate') }}：
-                    <ElLink
-                      type="primary"
-                      :disabled="
-                        (scope.row.metric && scope.row.metric.runningTask
-                          ? scope.row.metric.runningTask.migrate || 0
-                          : 0) < 1
-                      "
-                      @click="toDataFlow(scope.row.tmInfo.agentId)"
-                      >{{
-                        scope.row.metric && scope.row.metric.runningTask ? scope.row.metric.runningTask.migrate || 0 : 0
-                      }}</ElLink
-                    >
-                  </div>
-                  <div class="flex align-center">
-                    {{ $t('task_manage_etl') }}：
-                    <ElLink
-                      type="primary"
-                      :disabled="
-                        (scope.row.metric && scope.row.metric.runningTask
-                          ? scope.row.metric.runningTask.sync || 0
-                          : 0) < 1
-                      "
-                      @click="toDataFlow(scope.row.tmInfo.agentId, 'dataflowList')"
-                      >{{
-                        scope.row.metric && scope.row.metric.runningTask ? scope.row.metric.runningTask.sync || 0 : 0
-                      }}</ElLink
-                    >
-                  </div>
-                </div>
               </template>
             </ElTableColumn>
             <ElTableColumn :label="$t('public_version')" width="120">
@@ -221,7 +135,94 @@
             <!--            <span>{{ formatTime(scope.row.createAt) }}</span>-->
             <!--          </template>-->
             <!--        </ElTableColumn>-->
-            <ElTableColumn :label="$t('public_operation')" width="200">
+            <ElTableColumn width="130px" :label="$t('dfs_instance_instance_dingyuefangshi')">
+              <template slot-scope="scope">
+                <span :class="{ 'color-success': scope.row.chargeProvider === 'FreeTier' }">{{
+                  scope.row.subscriptionMethodLabel
+                }}</span>
+              </template>
+            </ElTableColumn>
+            <ElTableColumn width="120" :label="$t('dfs_instance_instance_daoqishijian')">
+              <template slot-scope="scope">
+                <div>
+                  <ElTooltip
+                    :disabled="!getExpiredTimeLevel(scope.row)"
+                    placement="top"
+                    :visible-arrow="false"
+                    effect="light"
+                  >
+                    <div>
+                      <span>{{ scope.row.expiredTimeLabel.split(' ')[0] }}</span>
+                      <VIcon v-if="getExpiredTimeLevel(scope.row) === 'expired'" class="ml-2 color-info">error</VIcon>
+                      <VIcon v-else-if="getExpiredTimeLevel(scope.row) === 'expiringSoon'" class="ml-2 color-warning"
+                        >warning</VIcon
+                      >
+                    </div>
+                    <template #content>
+                      <div v-if="getExpiredTimeLevel(scope.row) === 'expired'" class="font-color-dark">
+                        <p>{{ $t('dfs_instance_expired_time_tip1') }}</p>
+                        <div v-if="scope.row.agentType === 'Cloud'">
+                          <p>{{ $t('dfs_instance_expired_time_full_tip2') }}</p>
+                          <p>{{ $t('dfs_instance_expired_time_full_tip3') }}</p>
+                        </div>
+                        <div v-else>
+                          <p>{{ $t('dfs_instance_expired_time_tip2') }}</p>
+                          <p>{{ $t('dfs_instance_expired_time_tip3') }}</p>
+                          <p>{{ $t('dfs_instance_expired_time_tip4') }}</p>
+                        </div>
+                      </div>
+                      <span v-else-if="scope.row.paidType === 'recurring'">{{
+                        $t('dfs_instance_instance_xiacifufeishi')
+                      }}</span>
+                      <span v-else>{{ $t('dfs_user_center_jijiangguoqi') }}</span>
+                    </template>
+                  </ElTooltip>
+                </div>
+              </template>
+            </ElTableColumn>
+
+            <ElTableColumn width="180px" :label="$t('agent_heartbeat')">
+              <template slot-scope="scope">
+                <span>{{ handlePingTime(scope.row) }}</span>
+              </template>
+            </ElTableColumn>
+            <ElTableColumn :label="$t('agent_task_number')" width="180">
+              <template slot-scope="scope">
+                <div>
+                  <div class="flex align-center">
+                    {{ $t('task_manage_migrate') }}：
+                    <ElLink
+                      type="primary"
+                      :disabled="
+                        (scope.row.metric && scope.row.metric.runningTask
+                          ? scope.row.metric.runningTask.migrate || 0
+                          : 0) < 1
+                      "
+                      @click="toDataFlow(scope.row.tmInfo.agentId)"
+                      >{{
+                        scope.row.metric && scope.row.metric.runningTask ? scope.row.metric.runningTask.migrate || 0 : 0
+                      }}</ElLink
+                    >
+                  </div>
+                  <div class="flex align-center">
+                    {{ $t('task_manage_etl') }}：
+                    <ElLink
+                      type="primary"
+                      :disabled="
+                        (scope.row.metric && scope.row.metric.runningTask
+                          ? scope.row.metric.runningTask.sync || 0
+                          : 0) < 1
+                      "
+                      @click="toDataFlow(scope.row.tmInfo.agentId, 'dataflowList')"
+                      >{{
+                        scope.row.metric && scope.row.metric.runningTask ? scope.row.metric.runningTask.sync || 0 : 0
+                      }}</ElLink
+                    >
+                  </div>
+                </div>
+              </template>
+            </ElTableColumn>
+            <ElTableColumn :label="$t('public_operation')" width="240" fixed="right">
               <template slot-scope="scope">
                 <ElButton
                   type="text"
@@ -267,27 +268,9 @@
                   @click="handleStart(scope.row)"
                   >{{ $t('public_button_start') }}</ElButton
                 >
-                <ElDivider v-if="scope.row.agentType === 'Local'" direction="vertical"></ElDivider>
-                <ElButton
-                  size="mini"
-                  type="text"
-                  v-if="scope.row.orderInfo && scope.row.orderInfo.chargeProvider === 'Stripe'"
-                  :loading="scope.row.btnLoading.delete"
-                  :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
-                  @click="getUnsubscribePrice(scope.row)"
-                  >{{ $t('public_button_unsubscribe') }}</ElButton
-                >
-                <ElButton
-                  size="mini"
-                  type="text"
-                  v-else
-                  :loading="scope.row.btnLoading.delete"
-                  :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
-                  @click="handleUnsubscribe(scope.row)"
-                  >{{ $t('public_button_unsubscribe') }}</ElButton
-                >
               </template>
             </ElTableColumn>
+
             <div v-if="!isSearching" class="instance-table__empty" slot="empty">
               <VIcon size="120">no-data-color</VIcon>
               <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
@@ -790,6 +773,10 @@ export default {
         this.searchParams.status = query.status || ''
         this.fetch(queryStr === '{}' ? undefined : 1)
       }
+    },
+    //解决表格fixed错位
+    list() {
+      this.doLayout()
     }
   },
   created() {
@@ -816,6 +803,12 @@ export default {
     timer = null
   },
   methods: {
+    //解决表格fixed错位
+    doLayout() {
+      setTimeout(() => {
+        this.$refs.table.doLayout()
+      }, 200)
+    },
     relativeTime(time) {
       return time ? dayjs(time).fromNow() : '-'
     },

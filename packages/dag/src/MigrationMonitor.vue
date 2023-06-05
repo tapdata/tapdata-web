@@ -137,6 +137,7 @@
         :settings="dataflow"
         :scope="formScope"
         :show-schema-panel="dataflow.syncType === 'sync'"
+        :sync-type="dataflow.syncType"
         @hide="onHideSidebar"
       />
 

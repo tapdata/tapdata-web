@@ -13,11 +13,11 @@
           >
             <div>
               <VIcon size="14" class="icon">{{ item.icon }}</VIcon>
-              <span class="ml-1 fs-7">{{ item.name }}</span>
-              <div class="fs-4 font-color-dark fw-bold">{{ item.value }}</div>
+              <span class="ml-1 fs-7 item_name">{{ item.name }}</span>
+              <div class="fs-4 font-color-dark fw-bold item_number">{{ item.value }}</div>
             </div>
             <div
-              class="flex justify-content-between align-items-center px-1"
+              class="flex justify-content-between align-items-center px-1 item_circle"
               style="height: 54px"
               v-if="item.list.length > 0"
             >
@@ -31,8 +31,9 @@
       <div class="w-50 border-start pt-2">
         <div class="flex justify-content-between">
           <div class="aside-title px-4 mb-2 font-color-dark fw-light fs-6">{{ $t('workbench_notice') }}</div>
-          <div class="cursor-pointer px-4 font-color-slight" @click="goNoticeList">更多</div>
+          <div class="cursor-pointer px-4 font-color-title" @click="goNoticeList">{{ $t('more_workbench_notice') }}</div>
         </div>
+        <br/>
         <div class="aside-main notice-list flex-grow-1 px-4">
           <ul class="notice-list__list h-100 overflow-y-auto">
             <li
@@ -237,7 +238,7 @@ export default {
   background: map-get($color, white);
 }
 .agent-list__item {
-  width: 176px;
+  width: 220px;
   border: 1px solid #e1e3e9;
   border-radius: 8px;
   margin-right: 24px;
@@ -251,6 +252,9 @@ export default {
   .vicon {
     color: map-get($fontColor, dark);
   }
+}
+.font-color-title {
+  color: #2c65ff;
 }
 .agent-list__detail {
   width: 232px;
@@ -278,5 +282,18 @@ export default {
   white-space: nowrap;
   //width: 80px;
   text-align: right;
+}
+.notice-list__list {
+  line-height: 1.5;
+}
+.item_name {
+  padding: 5px;
+}
+.item_number {
+  margin-top: 10px;
+  margin-left: 5px;
+}
+.item_circle {
+  margin-right: 0px !important;
 }
 </style>

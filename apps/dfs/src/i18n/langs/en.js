@@ -39,6 +39,7 @@ export default {
   workbench_manage: 'Dashboard',
   workbench_quick_start: 'Quick Start',
   workbench_notice: 'Announcements',
+  more_workbench_notice: 'More',
   workbench_overview: 'Overview',
   workbench_guide: "Beginner's Guide",
   workbench_agent_desc:
@@ -143,7 +144,7 @@ export default {
   agent_key: 'Agent',
   agent_manage: 'Agent Management',
   agent_name: 'Agent Name',
-  agent_heartbeat: 'Agent heartbeat time',
+  agent_heartbeat: 'Ping Time',
   agent_id: 'Agent ID',
   agent_task_number: 'Number of tasks',
   agent_create_time: 'Create Time',
@@ -287,14 +288,14 @@ export default {
   agent_upgrade_step_docker_third:
     '3. If "Update finished." appears, it means the Agent has been successfully upgraded',
   agent_tip_no_running: 'No agent available, Check the Agent running status or create a new Agent',
-  connection_manage: 'Connections',
+  connection_manage: 'Connection',
   connection_form_creat_connection: 'Create connection',
   connection_form_mq_broker_url: 'MQ connection string',
   task_manage: 'Pipelines',
-  task_manage_etl: 'Data Pipelines',
-  task_manage_migrate: 'Data Replications',
-  task_manage_desc: 'Table to Table Data Pipelines & Transformations',
-  task_manage_migrate_desc: 'For Database to Database Replications',
+  task_manage_etl: 'Data Development',
+  task_manage_migrate: 'Data Replication',
+  task_manage_desc: 'Table to Table Data Sync And Transformations',
+  task_manage_migrate_desc: 'For Database to Database Replication',
   task_name: 'Task Name',
   task_status_running: 'Running',
   task_status_paused: 'Paused',
@@ -1339,9 +1340,9 @@ export default {
   dfs_instance_instance_shouquanmafuwu: 'Authorization code service',
   dfs_instance_instance_pclas:
     '<p class="flex align-content-center">Click to open <a class="color-primary text-decoration-underline" href="{val1}" target="_blank">Aliyun Market</a> Purchase an instance and obtain an authorization code</p>',
-  dfs_instance_instance_daoqishijian: 'Expiration Time',
-  dfs_instance_instance_dingyuefangshi: 'Subscription Period',
-  dfs_instance_instance_guige: 'Specification',
+  dfs_instance_instance_daoqishijian: 'Exp. Date',
+  dfs_instance_instance_dingyuefangshi: 'Subscr Method',
+  dfs_instance_instance_guige: 'Spec',
   dfs_instance_selectlist_yibangding: 'Already Bound',
   dfs_instance_selectlist_bangdingshilizhuang: 'Binding instance status',
   dfs_instance_selectlist_dingyuezhouqi: 'Subscription Cycle',
@@ -1362,8 +1363,8 @@ export default {
   dfs_instance_utils_baonian: 'Annually',
   dfs_instance_utils_lianxu: 'Continuous',
   dfs_instance_utils_baoyue: 'Monthly',
-  dfs_instance_utils_one_month_only: 'One Month Only',
-  dfs_instance_utils_one_year_only: 'One Year Only',
+  dfs_instance_utils_one_month_only: 'One Month',
+  dfs_instance_utils_one_year_only: 'One Year',
   dfs_instance_expired_time_tip1: 'Limit behavior after expiration:',
   dfs_instance_expired_time_tip2:
     '1. It is forbidden to schedule new tasks to run on the expired Agent after 1 day of expiration',
@@ -1426,7 +1427,7 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_yongjiu: 'Permanent',
   dfs_agent_download_subscriptionmodeldialog_mianfeishilizui: 'Free instance, up to 3 tasks are allowed',
   dfs_agent_download_subscriptionmodeldialog_ge: '',
-  dfs_agent_download_subscriptionmodeldialog_renwushujianyi: 'The recommended number of tasks is less than ',
+  dfs_agent_download_subscriptionmodeldialog_renwushujianyi: 'Recommended Concurrent Tasks: ',
   dfs_agent_download_subscriptionmodeldialog_extra: 'EXTRA SMALL: 1C 2G - FREE (only one can be created)',
   dfs_agent_download_subscriptionmodeldialog_dingyuefangshi: 'Subscription method:',
   dfs_agent_download_subscriptionmodeldialog_jisuanziyuan: 'Computing resources:',
@@ -1443,7 +1444,7 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_keyongneicunjian:
     ' Available memory, the recommended number of tasks does not exceed ',
   dfs_agent_download_subscriptionmodeldialog_guigeshuomingci: 'Specification: This specification requires at least ',
-  dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu: 'Please select the product specification you need',
+  dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu: 'Please select the agent size',
   dfs_agent_download_subscriptionmodeldialog_zhijieshiyonga:
     'Directly use the authorization code of Alibaba Cloud market',
   dfs_agent_download_subscriptionmodeldialog_gengjiakekaoyou:
@@ -1451,14 +1452,14 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_gengjiafangbianmian: 'More convenient: no deployment, one-click delivery',
   dfs_agent_download_subscriptionmodeldialog_shiyongquantuoguan: 'The benefits of using the Fully-Managed mode:',
   dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi:
-    'In this mode, Tapdata provides all computing and storage resources.',
+    'In this mode, Tapdata provides and manage all resources.',
   dfs_agent_download_subscriptionmodeldialog_gengjiaanquanyong:
     'More secure: user data will not pass through any external network including Tapdata',
   dfs_agent_download_subscriptionmodeldialog_chengbengengdichong:
     'Lower cost: make full use of existing hardware resources, and the price is significantly lower under the same specification',
   dfs_agent_download_subscriptionmodeldialog_shiyongbantuoguan: 'The benefits of using the Semi-Managed mode:',
   dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi2:
-    'In this mode, you need to provide your own computing resources and storage resources',
+    'In this mode, you need to provide and manage resources yourself',
   dfs_agent_download_subscriptionmodeldialog_quantuoguanmoshi: 'Fully-Managed Mode',
   dfs_agent_download_subscriptionmodeldialog_bantuoguanmoshi: 'Semi-Managed Mode',
   dfs_instance_instance_quxiaodingyue: 'Unsubscribe',
@@ -1474,7 +1475,7 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_cny: 'CNY',
   dfs_agent_download_subscriptionmodeldialog_hkd: 'HKD',
   dfs_agent_specification_description:
-    'This specification requires at least  <strong>{mem}</strong> available memory, the recommended number of tasks does not exceed <strong>{pipeline}</strong> ,the estimated performance of TPS synchronization is around <strong>{tps}</strong>.',
+    'Up to <strong>{pipeline}</strong> Tasks, TPS about <strong>{tps}</strong>, <strong>{mem}</strong> memory needed',
   dfs_instance_instance_qingshurutuiding: 'Please enter the reason for unsubscribing',
   dfs_instance_instance_tuidingjine: 'Unsubscribe Amount',
   dfs_instance_instance_yixiaohaojine: 'Amount Consumed',
@@ -1512,7 +1513,7 @@ export default {
   dfs_agent_download_transferdialog_zhuanzhangxinxi: 'Tansfer Information',
 
   dfs_agent_download_subscriptionmodeldialog_xuanzechanpinmo: 'Select Product Type',
-  dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi: 'Hosting Method',
+  dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi: 'Hosting Mode',
   dfs_agent_download_subscriptionmodeldialog_kafka: 'CDC for Kafka',
   dfs_agent_download_subscriptionmodeldialog_redis_gongshu: 'Warehouse Ingestion',
   dfs_agent_download_subscriptionmodeldialog_shujukuguochan: 'ETL Pipeline',
@@ -1548,10 +1549,10 @@ export default {
   dfs_instance_createagent_qiyeshujuji:
     'Enterprise data integration platform can be used to connect various data systems of enterprises, and carry out real-time data transmission, conversion and processing in these systems.',
   dfs_instance_instance_zhongqi: 'Restart',
-  dfs_instance_utils_quantuoguan: 'Full Management',
-  dfs_instance_utils_bantuoguan: 'Semi Management',
-  dfs_the_header_header_dingyuezhongxin: 'Subscription Center',
-  dfs_router_index_dingyuezhongxin: 'Subscription Center',
+  dfs_instance_utils_quantuoguan: 'Fully-Managed',
+  dfs_instance_utils_bantuoguan: 'Semi-Managed',
+  dfs_the_header_header_dingyuezhongxin: 'Subscr Center',
+  dfs_router_index_dingyuezhongxin: 'Subscr Center',
   dfs_instance_createagent_mianfeishiyonggui: '15 Day Free Trial',
   dfs_instance_createagent_tian: '15 days',
   dfs_instance_createagent_xuanzecunchufang: 'Choose a storage solution',
@@ -1583,7 +1584,7 @@ export default {
   dfs_instance_instance_yunchangshang: 'Cloud Vendor',
   dfs_instance_instance_gongxiangshili: 'Shared Instance',
   dfs_instance_instance_duxiangshili: 'Private Instance',
-  dfs_instance_instance_cunchuziyuan: 'Storage Resources',
+  dfs_instance_instance_cunchuziyuan: 'Storage Resource',
   dfs_instance_instance_agent2: 'Agent Resource',
   dfs_order_list_wodedingyue: 'My Subscriptions',
 

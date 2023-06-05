@@ -588,8 +588,14 @@ export default {
   padding: 0 24px 24px 24px;
   overflow: hidden;
   .section-wrap-box {
-    height: 100%;
+    display: flex;
     flex-direction: column;
+    flex: 1;
+    padding: 20px;
+    border-radius: 4px;
+    background-color: #fff;
+    box-sizing: border-box;
+    height: 100%;
     overflow: auto;
   }
 }
