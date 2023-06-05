@@ -823,6 +823,46 @@ export default {
           }
 
           return !$values.updateConditionFields?.length ? i18n.t('packages_dag_mixins_formscope_gaiziduanshibi') : ''
+        },
+
+        validateTableNames: (value, rule, ctx) => {
+          const { field, form } = ctx
+          const $values = form.values
+
+          if (!value.length) {
+            this.scope.clearNodeError($values.id)
+            return
+          }
+
+          const parents = this.scope.findParentNodes($values.id)
+
+          if (parents && parents.length && parents[0].tableNames.length) {
+            let tableNames = parents[0].tableNames
+            let countByName = {}
+            let duplicateTableNames = new Set()
+            let tableNameMap = value.reduce((obj, item) => {
+              obj[item.previousTableName] = item.currentTableName
+              if (item.currentTableName in countByName) {
+                countByName[item.currentTableName]++
+                duplicateTableNames.add(item.currentTableName)
+              } else {
+                countByName[item.currentTableName] = 1
+              }
+              return obj
+            }, {})
+            let currentTableNames = Object.values(tableNameMap)
+            // if (currentTableNames.length !== new Set(currentTableNames).size) return rule.message
+            tableNames.forEach(name => {
+              if (currentTableNames.includes(name) && !tableNameMap[name]) {
+                duplicateTableNames.add(name)
+              }
+            })
+            if (duplicateTableNames.size) {
+              return `${rule.message}: ${[...duplicateTableNames].join(', ')}`
+            }
+          }
+
+          this.scope.clearNodeError($values.id)
         }
       }
     }
