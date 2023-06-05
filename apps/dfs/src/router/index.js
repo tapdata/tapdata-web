@@ -426,6 +426,15 @@ const routes = [
         path: '/lang',
         name: 'lang',
         component: Lang
+      },
+      /* ---------- 工单系统  ----------*/
+      {
+        path: '/ticketSystem',
+        name: 'TicketSystem',
+        component: () => import(/* webpackChunkName: "instance" */ '../views/ticketing-system/List.vue'),
+        meta: {
+          title: 'dfs_router_index_gongdanliebiao'
+        }
       }
     ]
   },
