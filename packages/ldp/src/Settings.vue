@@ -328,7 +328,7 @@ export default {
     setData(data = {}, update = false) {
       this.mode = data.mode || this.modeItems[0]?.value
       this.liveDataPlatformId = data.id
-      if (this.mode === 'service' && update) {
+      if (this.mode === 'service') {
         const { options, connectionsList } = this
         this.form.fdmStorageCluster = data.fdmStorageCluster || options[0]?.value
         this.form.fdmStorageConnectionId = data.fdmStorageConnectionId || connectionsList[0]?.value
