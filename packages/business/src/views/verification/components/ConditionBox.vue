@@ -8,9 +8,19 @@
         }}</span>
         <span class="color-danger ml-6">{{ jointErrorMessage }}</span>
       </div>
-      <ElLink type="primary" :disabled="!list.length" @click="handleClear">{{
-        $t('packages_business_verification_clear')
-      }}</ElLink>
+      <div>
+        <ElLink
+          v-if="inspectMethod !== 'row_count' && list.some(t => !t.source.sortColumn || !t.target.sortColumn)"
+          type="primary"
+          :disabled="!list.length"
+          class="mr-4"
+          @click="handleClearIndexEmpty"
+          >一键清除索引字段为空的条件</ElLink
+        >
+        <ElLink type="primary" :disabled="!list.length" @click="handleClear">{{
+          $t('packages_business_verification_clear')
+        }}</ElLink>
+      </div>
     </div>
     <DynamicScroller
       :items="list"
@@ -145,6 +155,16 @@
                 :id="'field-box-' + index"
                 @change="handleChangeFieldBox(arguments[0], item)"
               ></FieldBox>
+              <div v-else-if="inspectMethod !== 'row_count'" class="setting-item mt-4">
+                <label class="item-label">{{ $t('packages_business_verification_indexField') }}: </label>
+                <span :class="['item-value-text', { 'color-danger': !item.source.sortColumn }]">{{
+                  item.source.sortColumn || '索引字段为空'
+                }}</span>
+                <span class="item-icon"></span>
+                <span :class="['item-value-text', { 'color-danger': !item.target.sortColumn }]">{{
+                  item.target.sortColumn || '索引字段为空'
+                }}</span>
+              </div>
               <div class="setting-item mt-4">
                 <ElCheckbox
                   v-if="editId === item.id"
@@ -484,24 +504,6 @@ export default {
       return { items: tableNames, total: tableNames.length }
     },
 
-    getAllTablesInNode(nodeId) {
-      const findNode = this.flowStages.find(t => t.id === nodeId)
-      if (!findNode) return []
-      if (this.isDB) {
-        let tableList = findNode.tableNames || []
-        if (findNode.inputLanes.length) {
-          const objectNames = findNode.syncObjects?.[0]?.objectNames
-          const { tablePrefix, tableSuffix, tableNameTransform } = findNode
-          tableList = objectNames.map(t => {
-            let name = (tablePrefix || '') + t + (tableSuffix || '')
-            return tableNameTransform ? name[tableNameTransform]() : name
-          })
-        }
-        return tableList
-      }
-      return [findNode.tableName]
-    },
-
     /**
      * @desc 获取连线信息
      * @param1 value 节点id
@@ -535,13 +537,15 @@ export default {
         const targetNode = this.flowStages.find(t => t.id === re.target)
         let updateConditionFieldMap = {}
         let tableNames = []
-        let objectNames = []
+        let tableNameRelation = {}
         if (targetNode.type === 'database') {
-          updateConditionFieldMap = targetNode.updateConditionFieldMap || {}
           tableNames = el.tableNames
-          objectNames = targetNode.syncObjects?.[0]?.objectNames || []
+          updateConditionFieldMap = targetNode.updateConditionFieldMap || {}
+          tableNameRelation = targetNode.syncObjects?.[0]?.tableNameRelation || []
         } else if (targetNode.type === 'table') {
+          tableNames = [targetNode.tableName]
           updateConditionFieldMap[targetNode.tableName] = targetNode.updateConditionFields || []
+          tableNameRelation[el.tableName] = targetNode.tableName
         }
 
         return {
@@ -557,8 +561,8 @@ export default {
           targetDatabaseType: targetNode.databaseType,
           updateConditionFieldMap,
           tableNames,
-          objectNames,
-          tableName: targetNode.tableName
+          tableName: targetNode.tableName,
+          tableNameRelation
         }
       })
     },
@@ -578,8 +582,8 @@ export default {
 
     handleClear() {
       this.$confirm(
-        i18n.t('packages_business_verification_clear'),
         i18n.t('packages_business_components_conditionbox_shifouqingkongsuo'),
+        i18n.t('public_message_title_prompt'),
         {
           type: 'warning'
         }
@@ -588,6 +592,17 @@ export default {
           return
         }
         this.clearList()
+      })
+    },
+
+    handleClearIndexEmpty() {
+      this.$confirm('是否确认清除索引字段为空的校验条件？', i18n.t('public_message_title_prompt'), {
+        type: 'warning'
+      }).then(res => {
+        if (!res) {
+          return
+        }
+        this.list = this.list.filter(t => t.source.sortColumn && t.target.sortColumn)
       })
     },
 
@@ -624,8 +639,7 @@ export default {
       matchNodeList.forEach(m => {
         connectionIds.push(m.sourceConnectionId)
         connectionIds.push(m.targetConnectionId)
-        tableNames.push(...this.getAllTablesInNode(m.source))
-        tableNames.push(...this.getAllTablesInNode(m.target))
+        tableNames.push(...m.tableNames)
       })
       if (!matchNodeList.length) {
         if (this.allStages.length > this.flowStages.length)
@@ -663,44 +677,56 @@ export default {
               targetConnectionName,
               sourceDatabaseType,
               targetDatabaseType,
-              updateConditionFieldMap
+              updateConditionFieldMap,
+              tableNameRelation
             } = m
-            const getAllTablesInNodeSource = this.getAllTablesInNode(source)
-            const getAllTablesInNodeTarget = this.getAllTablesInNode(target)
-            getAllTablesInNodeSource.forEach((ge, geIndex) => {
-              let findTable = data.find(t => t.source.id === sourceConnectionId && t.original_name === ge)
-              let findTargetTable =
-                data.find(
-                  t => t.source.id === targetConnectionId && t.original_name === getAllTablesInNodeTarget[geIndex]
-                ) || {}
-              const updateList = cloneDeep(updateConditionFieldMap[findTargetTable.original_name] || [])
-              const targetSortColumn = updateList.length
-                ? updateList.join(',')
-                : this.getPrimaryKeyFieldStr(findTargetTable.fields)
-              const sourceSortColumn = updateList.length
-                ? findTargetTable.fields
-                    .filter(t => updateList.includes(t.field_name))
-                    .map(t => t.original_field_name)
-                    .join(',')
-                : this.getPrimaryKeyFieldStr(findTable.fields)
+
+            const sourceTableList = Object.keys(tableNameRelation)
+            sourceTableList.forEach((ge, geIndex) => {
               let item = this.getItemOptions()
+              // 填充source
               item.source.nodeId = source
               item.source.nodeName = sourceName
               item.source.databaseType = sourceDatabaseType
               item.source.connectionId = `${source}/${sourceConnectionId}`
               item.source.connectionName = `${sourceName} / ${sourceConnectionName}`
-              item.source.table = findTable.original_name
-              item.source.fields = findTable.fields
-              item.source.sortColumn = sourceSortColumn
-
+              item.source.table = ge // findTable.original_name
+              // 填充target
               item.target.nodeId = target
               item.target.nodeName = targetName
               item.target.databaseType = targetDatabaseType
               item.target.connectionId = `${target}/${targetConnectionId}`
               item.target.connectionName = `${targetName} / ${targetConnectionName}`
-              item.target.table = findTargetTable.original_name
-              item.target.fields = findTargetTable.fields
-              item.target.sortColumn = targetSortColumn
+              item.target.table = tableNameRelation[ge] // findTargetTable.original_name
+
+              const updateList = cloneDeep(updateConditionFieldMap[tableNameRelation[ge]] || [])
+              let findTable = data.find(t => t.source.id === sourceConnectionId && t.original_name === ge)
+              let findTargetTable = data.find(
+                t => t.source.id === targetConnectionId && t.original_name === tableNameRelation[ge]
+              )
+
+              if (findTable) {
+                let sourceSortColumn = updateList.length
+                  ? updateList.join(',')
+                  : this.getPrimaryKeyFieldStr(findTable.fields)
+                if (updateList.length && findTargetTable?.fields) {
+                  sourceSortColumn = findTargetTable.fields
+                    .filter(t => updateList.includes(t.field_name))
+                    .map(t => t.original_field_name)
+                    .join(',')
+                }
+                item.source.fields = findTable.fields
+                item.source.sortColumn = sourceSortColumn
+              }
+
+              if (findTargetTable) {
+                const targetSortColumn = updateList.length
+                  ? updateList.join(',')
+                  : this.getPrimaryKeyFieldStr(findTargetTable.fields)
+                item.target.fields = findTargetTable.fields
+                item.target.sortColumn = targetSortColumn
+              }
+
               list.push(item)
             })
           })
@@ -785,7 +811,6 @@ export default {
         targetDatabaseType,
         updateConditionFieldMap,
         tableNames,
-        objectNames,
         tableName
       } = data
       return {
@@ -801,7 +826,6 @@ export default {
         targetDatabaseType: sourceDatabaseType,
         updateConditionFieldMap,
         tableNames,
-        objectNames,
         tableName
       }
     },
@@ -833,9 +857,8 @@ export default {
         sourceDatabaseType,
         targetDatabaseType,
         updateConditionFieldMap,
-        tableNames,
-        objectNames,
-        tableName
+        tableName,
+        tableNameRelation
       } = matchNode
 
       // 自动填充索引字段
@@ -853,7 +876,7 @@ export default {
       item.target.nodeName = targetName
       item.target.connectionId = `${target}/${targetConnectionId}`
       item.target.connectionName = `${targetName} / ${targetConnectionName}`
-      item.target.table = tableName ? tableName : objectNames[tableNames.findIndex(t => t === val)]
+      item.target.table = tableName ? tableName : tableNameRelation[val]
 
       // 加载目标的字段
       const params = {
@@ -937,7 +960,7 @@ export default {
       this.fieldsMap[key] = data
     },
 
-    getFieldsByItem(item, type) {
+    getFieldsByItem(item, type = 'source') {
       const { nodeId, connectionId, table } = item[type] || {}
       return this.fieldsMap[[nodeId || '', connectionId, table].filter(t => t).join()] || []
     },
@@ -981,7 +1004,7 @@ export default {
       ) {
         this.setEditId(tasks[index - 1]?.id)
         this.$nextTick(() => {
-          formDom.childNodes[index - 1].querySelector('input').focus()
+          formDom.childNodes[index - 1]?.querySelector('input')?.focus()
         })
         message = this.$t('packages_business_verification_message_error_joint_table_target_or_source_not_set', {
           val: index
@@ -1063,7 +1086,7 @@ export default {
       ) {
         this.setEditId(tasks[index - 1]?.id)
         this.$nextTick(() => {
-          formDom.childNodes[index - 1].querySelector('input').focus()
+          formDom.childNodes[index - 1]?.querySelector('input')?.focus()
         })
         message = this.$t('packages_business_verification_message_error_script_no_enter')
         this.jointErrorMessage = message
