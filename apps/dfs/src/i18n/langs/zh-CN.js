@@ -1343,13 +1343,13 @@ export default {
     '更加可靠: 由 Tapdata 提供资源使用的维护与监控, 运行更可靠',
   dfs_agent_download_subscriptionmodeldialog_gengjiafangbianmian: '更加方便: 免部署, 一键交付使用',
   dfs_agent_download_subscriptionmodeldialog_shiyongquantuoguan: '使用全托管模式的好处：',
-  dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi: '在这种模式下, Tapdata 提供所有的计算及存储资源.',
+  dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi: '在这种模式下, Tapdata 提供并管理服务所需要的所有资源.',
   dfs_agent_download_subscriptionmodeldialog_gengjiaanquanyong:
     '更加安全: 用户的数据不会经过包括 Tapdata 在内的任意外部网络',
   dfs_agent_download_subscriptionmodeldialog_chengbengengdichong:
     '成本更低: 充分利用已有硬件资源, 同样的规格下产品价格低很多',
   dfs_agent_download_subscriptionmodeldialog_shiyongbantuoguan: '使用半托管模式的好处：',
-  dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi2: '在这种模式下, 你需要自己提供自己计算资源与存储资源',
+  dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi2: '在这种模式下, 你需要自己提供服务运行所需要的资源与环境',
   dfs_agent_download_subscriptionmodeldialog_quantuoguanmoshi: '全托管模式',
   dfs_agent_download_subscriptionmodeldialog_bantuoguanmoshi: '半托管模式',
   dfs_instance_instance_quxiaodingyue: '取消订阅',

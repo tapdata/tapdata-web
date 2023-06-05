@@ -1452,14 +1452,14 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_gengjiafangbianmian: 'More convenient: no deployment, one-click delivery',
   dfs_agent_download_subscriptionmodeldialog_shiyongquantuoguan: 'The benefits of using the Fully-Managed mode:',
   dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi:
-    'In this mode, Tapdata provides all computing and storage resources.',
+    'In this mode, Tapdata provides and manage all resources.',
   dfs_agent_download_subscriptionmodeldialog_gengjiaanquanyong:
     'More secure: user data will not pass through any external network including Tapdata',
   dfs_agent_download_subscriptionmodeldialog_chengbengengdichong:
     'Lower cost: make full use of existing hardware resources, and the price is significantly lower under the same specification',
   dfs_agent_download_subscriptionmodeldialog_shiyongbantuoguan: 'The benefits of using the Semi-Managed mode:',
   dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi2:
-    'In this mode, you need to provide your own computing resources and storage resources',
+    'In this mode, you need to provide and manage resources yourself',
   dfs_agent_download_subscriptionmodeldialog_quantuoguanmoshi: 'Fully-Managed Mode',
   dfs_agent_download_subscriptionmodeldialog_bantuoguanmoshi: 'Semi-Managed Mode',
   dfs_instance_instance_quxiaodingyue: 'Unsubscribe',
