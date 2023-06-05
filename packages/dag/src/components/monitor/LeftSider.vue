@@ -1,6 +1,6 @@
 <template>
   <aside class="layout-sidebar --left border-end flex-column flex-shrink-0">
-    <div class="flex flex-column flex-1 min-h-0">
+    <div class="flex flex-column flex-1 min-h-0 overflow-y-auto">
       <div class="info-box flex justify-content-between align-items-center">
         <TimeSelect :range="$attrs.range" ref="timeSelect" class="mb-1" @change="changeTimeSelect"></TimeSelect>
         <ElDivider direction="vertical" class="mx-1"></ElDivider>
@@ -703,7 +703,7 @@ export default {
 
 .layout-sidebar.--left {
   z-index: unset; // 防止侧边栏出现的dialog被节点覆盖
-  overflow: hidden auto;
+  overflow: visible;
   will-change: width;
   $headerH: 34px;
 
@@ -749,10 +749,6 @@ export default {
 
     .el-scrollbar {
       height: 100%;
-    }
-
-    .resize-trigger {
-      background: 0 0 !important;
     }
   }
 }
