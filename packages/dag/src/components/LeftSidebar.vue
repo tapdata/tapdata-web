@@ -162,9 +162,14 @@
             wrap-class="tb-list"
             :wrap-style="scrollbarWrapStyle"
           >
-            <ElSkeleton v-show="tbLoading" class="position-absolute top-0 w-100 bg-white" :loading="tbLoading" animated>
+            <ElSkeleton
+              v-show="tbLoading"
+              class="skeleton-wrap position-sticky top-0 w-100 bg-white"
+              :loading="tbLoading"
+              animated
+            >
               <template #template>
-                <div v-for="i in 5" :key="i" class="flex p-4 align-center">
+                <div v-for="i in 10" :key="i" class="flex p-4 align-center">
                   <ElSkeletonItem variant="text"></ElSkeletonItem>
                 </div>
               </template>
@@ -818,7 +823,7 @@ $hoverBg: #eef3ff;
 }
 
 .layout-sidebar.--left {
-  overflow: hidden;
+  overflow: visible;
   $headerH: 34px;
 
   ::v-deep {
@@ -990,6 +995,10 @@ $hoverBg: #eef3ff;
 
     .el-scrollbar {
       height: 100%;
+    }
+
+    .skeleton-wrap {
+      z-index: 1;
     }
   }
 }

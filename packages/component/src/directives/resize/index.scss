@@ -1,33 +1,43 @@
 $borderColor: #d3d3d3;
 $selectedColor: #d3d3d3;
+$primary: map-get($color, primary);
 
 .resize-trigger {
-  background-color: #469cfd00;
-
+  background-color: transparent;
+  position: absolute;
   display: flex;
   justify-content: center;
   align-items: center;
   color: rgba(0, 0, 0, 0.3);
   z-index: 1990;
 
-  position: absolute;
+  &:before {
+    content: '';
+    position: absolute;
+    background-color: transparent;
+  }
 
   &.--left,
   &.--right {
     top: 0;
-    width: 2px;
+    width: 6px;
     height: 100%;
     cursor: col-resize;
+    transform: translateX(-50%);
+    &:before {
+      top: 0;
+      left: 2px;
+      width: 2px;
+      height: 100%;
+    }
   }
 
   &.--left {
     left: 0;
-    margin-right: -3px;
   }
 
   &.--right {
-    right: 0;
-    margin-left: -3px;
+    left: 100%;
   }
 
   &.--top,
@@ -36,20 +46,27 @@ $selectedColor: #d3d3d3;
     height: 6px;
     width: 100%;
     cursor: row-resize;
+    transform: translateY(-50%);
+    &:before {
+      left: 0;
+      top: 2px;
+      width: 100%;
+      height: 2px;
+    }
   }
 
   &.--top {
     top: 0;
-    margin-bottom: -3px;
   }
 
   &.--bottom {
-    bottom: 0;
-    margin-top: -3px;
+    top: 100%;
   }
 
   &.active,
   &:hover {
-    background-color: map-get($color, primary);
+    &:before {
+      background-color: $primary
+    }
   }
 }
