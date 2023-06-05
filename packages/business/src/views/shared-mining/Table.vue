@@ -267,8 +267,12 @@ export default {
     },
 
     handleStop() {
-      if (this.connectionsList.length <= 1 && (this.listTotal <= 1 || this.multipleSelection.length === this.listTotal))
-        return this.$message.error(i18n.t('packages_business_shared_mining_table_shengyuyigelian'))
+      const flag =
+        (this.selectedConnectionId &&
+          this.connectionsList.length <= 1 &&
+          (this.listTotal <= 1 || this.multipleSelection.length === this.listTotal)) ||
+        (!this.selectedConnectionId && this.multipleSelection.length === this.listTotal)
+      if (flag) return this.$message.error(i18n.t('packages_business_shared_mining_table_shengyuyigelian'))
       const { taskId } = this
       let tableNameMap = {}
       this.multipleSelection.forEach(t => {
