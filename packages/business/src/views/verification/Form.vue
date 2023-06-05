@@ -683,7 +683,11 @@ export default {
               alarmSettings
             })
           ).then(() => {
-            this.$router.back()
+            // this.$router.back()
+            this.$message.success(this.$t('public_message_save_ok'))
+            this.$router.push({
+              name: 'dataVerificationList'
+            })
           })
           // .catch(err => {
           //   this.$message.error(message)
