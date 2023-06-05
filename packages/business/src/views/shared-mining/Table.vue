@@ -46,7 +46,7 @@
       :columns="columns"
       :remoteMethod="remoteMethod"
       :page-options="{
-        layout: 'total, ->, prev, pager, next, sizes, jumper'
+        layout: 'total, prev, pager, next, jumper'
       }"
       ref="table"
       height="100%"
