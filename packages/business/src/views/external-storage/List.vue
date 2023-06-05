@@ -323,13 +323,13 @@ export default {
     },
     async remove(row) {
       //先去请求是否外存已被使用了
-      this.usingTasks = await externalStorageApi.usingTask(row.id)
+      this.usingTasks = (await externalStorageApi.usingTask(row.id)) || []
       const flag = await this.$confirm(i18n.t('packages_business_external_storage_list_querenshanchuwai'), '', {
         type: 'warning',
         showClose: false
       })
       if (flag) {
-        if (this.usingTasks) {
+        if (this.usingTasks?.length) {
           this.showUsingTaskDialog = true
         } else {
           await externalStorageApi.delete(row.id)
