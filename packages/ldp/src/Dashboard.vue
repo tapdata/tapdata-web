@@ -18,7 +18,7 @@
     </div>
     <div class="list flex flex-fill overflow-hidden">
       <div v-if="currentView === 'catalog'" class="px-5 pb-5 w-100 border-top">
-        <Catalogue></Catalogue>
+        <Catalogue @create-single-task="hanldeCreateSingleTask"></Catalogue>
       </div>
       <template v-else>
         <component

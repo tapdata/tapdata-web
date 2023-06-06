@@ -709,7 +709,8 @@ export default {
             isLeaf: true,
             isObject: true,
             connectionId: item.sourceConId,
-            LDP_TYPE: 'table'
+            LDP_TYPE: 'table',
+            SWIM_TYPE: node.item_type?.[0]
           })
         )
       })

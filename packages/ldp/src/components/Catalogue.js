@@ -19,7 +19,7 @@ export default defineComponent({
   directives: {
     resize
   },
-  setup(props, { refs, root }) {
+  setup(props, { refs, root, listeners }) {
     const list = ref([])
     const objectList = ref([])
     const catalogList = ref([])
@@ -248,6 +248,7 @@ export default defineComponent({
                       tag="div"
                       ref="preview"
                       class="border rounded-4 sw-table-drawer h-100 overflow-y-auto"
+                      on={{ ...listeners }}
                     ></TablePreview>
                   )}
                 </div>
