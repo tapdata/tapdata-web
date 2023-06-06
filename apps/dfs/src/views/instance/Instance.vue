@@ -222,7 +222,7 @@
                 </div>
               </template>
             </ElTableColumn>
-            <ElTableColumn :label="$t('public_operation')" width="240" fixed="right">
+            <ElTableColumn :label="$t('public_operation')" width="240">
               <template slot-scope="scope">
                 <ElButton
                   type="text"
@@ -773,10 +773,6 @@ export default {
         this.searchParams.status = query.status || ''
         this.fetch(queryStr === '{}' ? undefined : 1)
       }
-    },
-    //解决表格fixed错位
-    list() {
-      this.doLayout()
     }
   },
   created() {
@@ -803,12 +799,6 @@ export default {
     timer = null
   },
   methods: {
-    //解决表格fixed错位
-    doLayout() {
-      setTimeout(() => {
-        this.$refs.table.doLayout()
-      }, 200)
-    },
     relativeTime(time) {
       return time ? dayjs(time).fromNow() : '-'
     },
