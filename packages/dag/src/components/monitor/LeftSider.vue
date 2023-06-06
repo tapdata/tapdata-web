@@ -1,6 +1,6 @@
 <template>
   <aside class="layout-sidebar --left border-end flex-column flex-shrink-0">
-    <div class="flex flex-column flex-1 min-h-0">
+    <div class="flex flex-column flex-1 min-h-0 overflow-y-auto">
       <div class="info-box flex justify-content-between align-items-center">
         <TimeSelect :range="$attrs.range" ref="timeSelect" class="mb-1" @change="changeTimeSelect"></TimeSelect>
         <ElDivider direction="vertical" class="mx-1"></ElDivider>
@@ -18,7 +18,11 @@
       <div v-if="dataflow.type !== 'cdc'" class="info-box sync-info">
         <div class="flex justify-content-between mb-2">
           <span class="fw-sub fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_tongbuxinxi') }}</span>
-          <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_monitor_leftsider_liebiao')">
+          <ElTooltip
+            v-if="showToInitialList"
+            transition="tooltip-fade-in"
+            :content="$t('packages_dag_monitor_leftsider_liebiao')"
+          >
             <VIcon @click.stop="toInitialList">menu-left</VIcon>
           </ElTooltip>
         </div>
@@ -135,7 +139,10 @@
         </div>
       </div>
 
-      <div v-if="['SharedMiningMonitor', 'SharedCacheMonitor'].includes($route.name)" class="info-box">
+      <div
+        v-if="['SharedMiningMonitor', 'SharedCacheMonitor'].includes($route.name) && infoList.length > 0"
+        class="info-box"
+      >
         <div class="flex justify-content-between mb-2">
           <span class="fw-bold fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_jibenxinxi') }}</span>
         </div>
@@ -143,7 +150,7 @@
           v-for="(item, index) in infoList"
           :key="index"
           class="mb-2"
-          :class="[item.block ? 'block' : 'flex justify-content-between']"
+          :class="[item.block ? 'block' : 'flex justify-content-between', item.class]"
         >
           <div class="font-color-light">{{ item.label }}:</div>
           <div class="font-color-dark">{{ item.value || '-' }}</div>
@@ -514,6 +521,10 @@ export default {
 
     hideTotalData() {
       return ['shareCache'].includes(this.dataflow?.syncType)
+    },
+
+    showToInitialList() {
+      return !(this.dataflow.syncType === 'sync' && !this.dataflow.shareCache)
     }
   },
 
@@ -588,6 +599,24 @@ export default {
     getCollectorData() {
       logcollectorApi.getDetail(this.dataflow.id).then(data => {
         const { externalStorage = {}, logTime, name } = data
+        let uriInfo = externalStorage.uri
+        if (externalStorage.type === 'mongodb') {
+          const regResult =
+            /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
+              externalStorage.uri
+            )
+          const { username, host, database, query } = regResult.groups
+          uriInfo = `mongodb://${username}:***@${host}/${database}${query ? '/' + query : ''}`
+        }
+        if (!externalStorage.name) {
+          this.infoList = [
+            {
+              label: this.$t('packages_business_relation_details_rizhiwajueshi'),
+              value: this.formatTime(logTime)
+            }
+          ]
+          return
+        }
         this.infoList = [
           {
             label: this.$t('packages_business_relation_details_rizhiwajueshi'),
@@ -607,8 +636,9 @@ export default {
           },
           {
             label: this.$t('public_external_memory_info'),
-            value: externalStorage.uri,
-            block: true
+            value: uriInfo,
+            block: true,
+            class: 'text-break'
           }
         ]
       })
@@ -621,6 +651,10 @@ export default {
     getSharedCacheData(id) {
       sharedCacheApi.findOne(id).then(data => {
         externalStorageApi.get(data.externalStorageId).then((ext = {}) => {
+          if (!ext.name) {
+            this.infoList = []
+            return
+          }
           this.infoList = [
             // {
             //   label: i18n.t('packages_dag_monitor_leftsider_huancunkaishishi'),
@@ -669,7 +703,7 @@ export default {
 
 .layout-sidebar.--left {
   z-index: unset; // 防止侧边栏出现的dialog被节点覆盖
-  overflow: hidden auto;
+  overflow: visible;
   will-change: width;
   $headerH: 34px;
 
@@ -715,10 +749,6 @@ export default {
 
     .el-scrollbar {
       height: 100%;
-    }
-
-    .resize-trigger {
-      background: 0 0 !important;
     }
   }
 }

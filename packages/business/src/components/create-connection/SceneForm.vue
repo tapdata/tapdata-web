@@ -171,14 +171,18 @@ export default {
     this.id = this.params.id || ''
     this.getPdkDoc()
     await this.getPdkForm()
-    this.$router.push({
-      query: {
-        ...this.$route.query,
-        type: undefined,
-        pdkHash: undefined,
-        connectionConfig: undefined
-      }
-    })
+
+    if (this.$route.query.connectionConfig) {
+      // 清空路由参数
+      this.$router.push({
+        query: {
+          ...this.$route.query,
+          type: undefined,
+          pdkHash: undefined,
+          connectionConfig: undefined
+        }
+      })
+    }
   },
 
   beforeRouteEnter(to, from, next) {

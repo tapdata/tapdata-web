@@ -10,22 +10,25 @@ export const SharedMiningTableInfo = observer(
     props: ['value', 'height'],
     setup(props, { emit, root, attrs, refs, slots }) {
       const { taskId, activeNodeId } = root.$store.state?.dataflow || {}
-      console.log('props', props, attrs)
-      const formRef = useForm()
 
       return () => {
-        const label = (
+        const con = (
           <SharedMiningTable
             task-id={taskId}
             params={{
               nodeId: activeNodeId
             }}
             height={props.height}
+            show-title={false}
           ></SharedMiningTable>
         )
 
         return (
-          <FormItem.BaseItem label={label} attrs={attrs}>
+          <FormItem.BaseItem
+            label={root.$t('packages_dag_shared_mining_table_info_index_wajuebiaoxinxi')}
+            attrs={attrs}
+          >
+            {con}
             {slots.default?.()}
           </FormItem.BaseItem>
         )

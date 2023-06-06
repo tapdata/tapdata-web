@@ -36,5 +36,8 @@ export default {
   packages_component_src_inlineinput_zifuchangduxian: 'Character length limit {val1}-{val2} characters',
   packages_component_src_selectlist_meiyougengduoshu: 'No more data',
   packages_component_src_classification_chuangjianfenlei: 'Create Classification',
-  packages_component_src_discoveryclassification_morenmuluji: 'Default Directory (Technology)'
+  packages_component_src_discoveryclassification_morenmuluji: 'Default Directory (Technology)',
+  packages_component_src_selectlist_qingchuyixuan: 'Clear Selected',
+  packages_component_src_selectlist_xiang: 'Item',
+  packages_component_src_selectlist_yixuanze: 'Selected'
 }

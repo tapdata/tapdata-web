@@ -9,6 +9,7 @@ import componentLangs from '@tap/component/src/locale'
 import dagLangs from '@tap/dag/src/locale'
 import formLangs from '@tap/form/src/locale'
 import businessLangs from '@tap/business/src/locale'
+import ldpLangs from '@tap/ldp/src/locale'
 // apps语言文件
 import en from './langs/en'
 import zhCN from './langs/zh-CN'
@@ -31,6 +32,7 @@ i18n.merge(dagLangs)
 i18n.merge(formLangs)
 i18n.merge(componentLangs)
 i18n.merge(businessLangs)
+i18n.merge(ldpLangs)
 // apps语言文件，最后覆盖
 i18n.merge(localLangs)
 export default i18n

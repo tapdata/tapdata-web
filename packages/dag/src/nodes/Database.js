@@ -91,10 +91,10 @@ export class Database extends NodeType {
       sourceConfig: {
         type: 'void',
         'x-reactions': {
-          dependencies: ['$outputs'],
+          dependencies: ['$outputs', '$inputs'],
           fulfill: {
             state: {
-              display: '{{$deps[0].length > 0 ? "visible":"hidden"}}'
+              display: '{{$deps[0].length || !$deps[1].length ? "visible":"hidden"}}'
             }
           }
         },
@@ -750,5 +750,15 @@ export class Database extends NodeType {
         'x-display': 'hidden'
       }
     }
+  }
+
+  allowTarget(target, source) {
+    // 不再支持既是源又是目标的节点
+    return !source.$inputs?.length && (target.type !== 'database' || !target.$outputs?.length)
+  }
+
+  allowSource(source, target) {
+    // 不再支持既是源又是目标的节点
+    return !target.$outputs?.length
   }
 }

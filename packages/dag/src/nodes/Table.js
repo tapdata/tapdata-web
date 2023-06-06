@@ -20,7 +20,17 @@ export class Table extends NodeType {
     properties: {
       $inputs: {
         type: 'array',
-        'x-display': 'hidden'
+        'x-display': 'hidden',
+        'x-reactions': {
+          target: 'updateConditionFields',
+          effects: ['onFieldValueChange'],
+          fulfill: {
+            run: `setTimeout(() => {
+              console.log("updateConditionFields.$inputs")
+              $target && $target.visible && $target.validate()
+            }, 0)`
+          }
+        }
       },
       $outputs: {
         type: 'array',
@@ -44,7 +54,12 @@ export class Table extends NodeType {
         title: i18n.t('public_node_name'),
         required: true,
         'x-decorator': 'FormItem',
-        'x-component': 'Input'
+        'x-component': 'Input',
+        'x-component-props': {
+          onChange: `{{() => {
+            $values.attrs.hasNameEdited = true
+          }}}`
+        }
       },
 
       connectionIdWrap: {
@@ -145,25 +160,15 @@ export class Table extends NodeType {
             },
             'x-component': 'TableSelect',
             'x-component-props': {
-              method: '{{loadTable}}'
+              method: '{{loadTable}}',
+              connectionId: '{{$values.connectionId}}'
             },
             'x-reactions': [
               {
                 target: 'name',
                 effects: ['onFieldInputValueChange'],
                 fulfill: {
-                  state: {
-                    value: '{{$self.value}}'
-                  }
-                }
-              },
-              {
-                target: 'updateConditionFields',
-                effects: ['onFieldValueChange'],
-                fulfill: {
-                  state: {
-                    value: null
-                  }
+                  run: `{{ $self.value && !$values.attrs.hasNameEdited && ($target.value = $self.value) }}`
                 }
               },
               {
@@ -207,9 +212,13 @@ export class Table extends NodeType {
         },
         'x-component': 'FieldSelect',
         'x-component-props': {
-          // allowCreate: true,
+          allowCreate: true,
           multiple: true,
-          filterable: true
+          filterable: true,
+          onCreate: `{{() => {
+            // 标记用户创建
+            $values.attrs.hasCreated = true
+          }}}`
         },
         'x-reactions': [
           {
@@ -224,45 +233,13 @@ export class Table extends NodeType {
           {
             effects: ['onFieldMount'],
             fulfill: {
-              run: '$self.visible && $self.validate(); console.log("updateConditionFields", $self)'
+              run: '$self.visible && $self.validate()'
             }
           }
         ],
         'x-validator': {
-          validator: `{{async (value, rule, ctx) => {
-                        let field = ctx.field
-                        let form = field.form
-                        let options = field.dataSource
-                        let nodeData = findNodeById($values.id)
-                        console.debug('[DEBUG]: validate updateConditionFields', $self.visible, $self.display, $values.name)
-                        
-                        if (!$values.$inputs[0]) return
-
-                        if (!options || !options.length) {
-                          options = await loadNodeFieldOptions($values.$inputs[0])
-                        }
-
-                        if (options && options.length) {
-                          let isPrimaryKeyList = options.filter(item => item.isPrimaryKey)
-                          let indicesUniqueList = options.filter(item => item.indicesUnique)
-                          let defaultList = (isPrimaryKeyList.length ? isPrimaryKeyList : indicesUniqueList).map(item => item.value)
-
-                          if (!value || !value.length) {
-                            nodeData.updateConditionFields = defaultList
-                            $values.updateConditionFields = nodeData.updateConditionFields
-                          } else {
-                            let fieldMap = options.reduce((obj, item) => (obj[item.value]=true,obj), {})
-                            let filterValue = value.filter(v => fieldMap[v])
-
-                            if (value && value.length !== filterValue.length) {
-                              nodeData.updateConditionFields = filterValue.length ? filterValue : defaultList
-                              $values.updateConditionFields = nodeData.updateConditionFields
-                            }
-                          }
-                        }
-                        
-                        if (!$values.updateConditionFields?.length) return '该字段是必填字段!'
-                      }}}`
+          triggerType: 'onBlur',
+          validator: `{{validateUpdateConditionFields}}`
         }
       },
 
@@ -298,7 +275,7 @@ export class Table extends NodeType {
         'x-component-props': {
           class: 'inset'
         },
-        'x-reactions': {
+        /*'x-reactions': {
           dependencies: ['$inputs', '$outputs'],
           fulfill: {
             state: {
@@ -306,7 +283,7 @@ export class Table extends NodeType {
                 '{{$hasPdkConfig($values.attrs.pdkHash) || $deps[0].length > 0 || $deps[1].length > 0 ? "visible":"hidden"}}'
             }
           }
-        },
+        },*/
         properties: {
           tab1: {
             type: 'void',
@@ -319,10 +296,10 @@ export class Table extends NodeType {
                 type: 'void',
                 'x-component': 'FormContent', // 为properties组件增加根节点，避免vue-frag报错
                 'x-reactions': {
-                  dependencies: ['$outputs'],
+                  dependencies: ['$outputs', '$inputs'],
                   fulfill: {
                     state: {
-                      display: '{{$deps[0].length > 0 ? "visible":"hidden"}}'
+                      display: '{{$deps[0].length || !$deps[1].length ? "visible":"hidden"}}'
                     }
                   }
                 },
@@ -1359,6 +1336,55 @@ export class Table extends NodeType {
                     'x-component-props': {
                       findParentNodes: '{{findParentNodes}}'
                     }
+                  },
+                  incrementExactlyOnceObject: {
+                    type: 'void',
+                    'x-component': 'Space',
+                    properties: {
+                      incrementExactlyOnceEnable: {
+                        title: i18n.t('packages_dag_nodes_database_increment_exactly_once_enable_title'),
+                        type: 'boolean',
+                        default: false,
+                        'x-component': 'Switch',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          className: 'item-control-horizontal',
+                          layout: 'horizontal',
+                          tooltip: i18n.t('packages_dag_nodes_database_increment_exactly_once_enable_tips')
+                        }
+                      },
+                      incrementExactlyOnceEnableTimeWindowDay: {
+                        title: i18n.t(
+                          'packages_dag_nodes_database_increment_exactly_once_enable_time_window_day_title'
+                        ),
+                        type: 'number',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          className: 'item-control-horizontal ml-3',
+                          layout: 'horizontal',
+                          tooltip: i18n.t(
+                            'packages_dag_nodes_database_increment_exactly_once_enable_time_window_day_tips'
+                          )
+                        },
+                        'x-component': 'Select',
+                        'x-component-props': {
+                          style: {
+                            width: '100px'
+                          }
+                        },
+                        enum: [1, 3, 5, 7],
+                        default: 3
+                      }
+                    },
+                    'x-reactions': [
+                      {
+                        fulfill: {
+                          state: {
+                            display: `{{findParentNodes($values.id).length < 2 && $values.attrs.capabilities.filter(item => ["transaction_begin_function", "transaction_commit_function", "transaction_rollback_function"].includes(item.id)).length === 3 ? 'visible' : 'hidden'}}`
+                          }
+                        }
+                      }
+                    ]
                   }
                 }
               },

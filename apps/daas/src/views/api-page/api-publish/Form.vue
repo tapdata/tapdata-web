@@ -443,7 +443,11 @@ export default {
     },
     // 获取角色权限
     getRoles() {
-      roleApi.get({}).then(data => {
+      let filter = {
+        limit: 500,
+        skip: 0
+      }
+      roleApi.get({ filter: JSON.stringify(filter) }).then(data => {
         this.roles = data?.items || []
         this.roles.push({
           name: this.$t('module_form_public_api'),

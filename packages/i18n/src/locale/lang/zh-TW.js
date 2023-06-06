@@ -16,6 +16,7 @@ export default {
   public_serial_number: '序號',
   public_query: '查詢',
   public_aggregate: '聚合',
+  public_table: '表',
   public_table_name: '表名',
   public_total: '共计',
   public_database: '數據庫',
@@ -97,6 +98,9 @@ export default {
   public_button_order: '訂購',
   public_button_next: '下一步',
   public_button_previous: '上一步',
+  public_button_search: '搜索',
+  public_button_stop_mining: '停止挖掘',
+  public_button_stop_recover: '恢復挖掘',
   // 消息
   public_message_title_prompt: '提示',
   public_message_delete_confirm: '是否刪除',
@@ -220,6 +224,7 @@ export default {
   public_task_heartbeat_time: '任務心跳時間',
   public_task_mission_error: '任務出錯',
   public_task_reasons_for_error: '錯誤原因',
+  public_task_log: '任務日誌',
   // 任節點
   public_node_name: '節點名稱',
   public_node_type: '節點類型',

@@ -56,6 +56,9 @@ export default class Connections extends Http {
   heartbeatTask(connectionId) {
     return this.axios.get(`${this.url}/${connectionId}/heartbeat-task`)
   }
+  usingDigginTaskByConnectionId(connectionId) {
+    return this.axios.get(`${this.url}/${connectionId}/usingDigginTaskByConnectionId`)
+  }
 }
 
 export { Connections }

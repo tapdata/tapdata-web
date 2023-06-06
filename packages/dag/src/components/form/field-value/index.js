@@ -1,5 +1,5 @@
 import i18n from '@tap/i18n'
-import { connect, mapProps, useForm } from '@tap/form'
+import { connect, JsEditor, mapProps, useForm } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent } from '@vue/composition-api'
 import { VIcon } from '@tap/component'
@@ -166,13 +166,17 @@ export const FieldValue = connect(
             >
               <ElForm>
                 <ElFormItem>
-                  <ElInput
-                    placeholder={i18n.t('packages_form_editor_cell_processor_field_form_expression')}
-                    v-model={this.scriptDialog.script}
-                    size="mini"
-                  >
-                    <template slot="prepend">var result = </template>
-                  </ElInput>
+                  <JsEditor
+                    ref="jsEditor"
+                    value={this.scriptDialog.script}
+                    onChange={val => (this.scriptDialog.script = val)}
+                    onInit={editor => {
+                      this.$emit('editor-init', editor)
+                    }}
+                    height={80}
+                    showFullscreen={false}
+                    before="var result = "
+                  />
                 </ElFormItem>
               </ElForm>
               <div class="example">

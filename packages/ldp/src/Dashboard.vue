@@ -36,7 +36,6 @@
           :fdmAndMdmId="fdmAndMdmId"
           :mapCatalog="mapCatalog"
           @create-connection="handleAdd"
-          @create-target="handleCreateTarget"
           @node-drag-end="handleDragEnd"
           @show-settings="handleSettings"
           @load-directory="loadDirectory"
@@ -47,7 +46,7 @@
     <SceneDialog
       :visible.sync="showSceneDialog"
       :selector-type.sync="selectorType"
-      @success="handleSuccess($event, 'target')"
+      @success="handleSuccess"
       @saveAndMore="handleSuccess"
     ></SceneDialog>
     <Settings
@@ -62,8 +61,10 @@
 </template>
 
 <script>
-import CreateConnection from '../../components/create-connection/Dialog'
-import SceneDialog from '../../components/create-connection/SceneDialog'
+import { IconButton } from '@tap/component'
+import { SceneDialog, EventEmitter } from '@tap/business'
+import { connectionsApi, metadataDefinitionsApi } from '@tap/api'
+
 import SourceItem from './Source'
 import TargetItem from './Target'
 import FDMItem from './FDM'
@@ -71,10 +72,7 @@ import MDMItem from './MDM'
 import Settings from './Settings'
 import TablePreview from './TablePreview'
 import ConnectionPreview from './ConnectionPreview'
-import { EventEmitter } from '../../shared'
-import { IconButton } from '@tap/component'
-import { connectionsApi, metadataDefinitionsApi } from '@tap/api'
-import Catalogue from '../catalog/Catalogue'
+import Catalogue from './components/Catalogue'
 
 const TYPE2NAME = {
   target: 'TARGET&SERVICE'
@@ -84,7 +82,6 @@ export default {
   name: 'Dashboard',
 
   components: {
-    CreateConnection,
     SourceItem,
     TargetItem,
     FDMItem,
@@ -186,13 +183,13 @@ export default {
       this.showSceneDialog = true
     },
 
-    handleCreateTarget(type) {
-      this.selectorType = type
-      this.showSceneDialog = true
-    },
-
-    handleSuccess(value, comRef) {
-      this.$refs[comRef]?.[0]?.addItem(value)
+    handleSuccess(connection) {
+      if (connection.connection_type === 'source_and_target') {
+        this.$refs.source[0].addItem(connection)
+        this.$refs.target[0].addItem(connection)
+      } else {
+        this.$refs[this.selectorType]?.[0]?.addItem(connection)
+      }
     },
 
     handleDragEnd() {
@@ -292,10 +289,10 @@ export default {
       }
     },
 
-    handlePreview(data) {
+    handlePreview(data, connection) {
       switch (data.LDP_TYPE) {
         case 'table':
-          this.$refs.tablePreview.open(data)
+          this.$refs.tablePreview.open(data, connection)
           break
         case 'connection':
           this.$refs.connectionView.open(data)
@@ -305,6 +302,7 @@ export default {
 
     hanldeCreateSingleTask(data = {}, swimType = '') {
       switch (swimType) {
+        case 'source':
         case 'mdm':
           this.openRoute({
             name: 'DataflowNew',

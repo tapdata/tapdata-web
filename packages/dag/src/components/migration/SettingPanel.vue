@@ -86,16 +86,6 @@ export default observer({
                   }
                 ]
               },
-              desc: {
-                title: this.$t('packages_dag_task_stetting_desc'), //任务描述
-                type: 'string',
-                'x-decorator': 'FormItem',
-                'x-component': 'Input.TextArea',
-                'x-component-props': {
-                  min: 1,
-                  max: 100
-                }
-              },
               collapse: {
                 type: 'void',
                 'x-decorator': 'FormItem',
@@ -108,129 +98,129 @@ export default observer({
                       title: this.$t('packages_dag_task_stetting_most_setting')
                     },
                     properties: {
-                      // skipErrorEvent: {
-                      //   type: 'object',
-                      //   'x-component': 'FormContent',
-                      //   properties: {
-                      //     errorMode: {
-                      //       type: 'string',
-                      //       title: i18n.t('packages_dag_migration_settingpanel_dangdanbiaotongbu'),
-                      //       'x-decorator': 'FormItem',
-                      //       'x-component': 'Select',
-                      //       'x-component-props': {
-                      //         placeholder: i18n.t('public_select_placeholder')
-                      //       },
-                      //       default: 'Disable',
-                      //       enum: [
-                      //         // {
-                      //         //   label: '直接跳过异常的表，任务继续运行 ',
-                      //         //   value: 'SkipTable'
-                      //         // },
-                      //         {
-                      //           label: i18n.t('packages_dag_migration_settingpanel_anzhaomorenzhong'),
-                      //           value: 'Disable'
-                      //         },
-                      //         {
-                      //           label: i18n.t('packages_dag_migration_settingpanel_tiaoguoyichangshi'),
-                      //           value: 'SkipData'
-                      //         }
-                      //       ]
-                      //     },
-                      //     limitMode: {
-                      //       type: 'string',
-                      //       title: i18n.t('packages_dag_migration_settingpanel_renwutiaoguoshi'),
-                      //       'x-decorator': 'FormItem',
-                      //       'x-component': 'Select',
-                      //       'x-component-props': {
-                      //         placeholder: i18n.t('public_select_placeholder')
-                      //       },
-                      //       default: 'Disable',
-                      //       enum: [
-                      //         // {
-                      //         //   label: i18n.t('packages_dag_migration_settingpanel_zhidingtiaoguoce'),
-                      //         //   value: 'Disable'
-                      //         // },
-                      //         {
-                      //           label: i18n.t('packages_dag_migration_settingpanel_dangtiaoguoshijian2'),
-                      //           value: 'SkipByRate'
-                      //         },
-                      //         {
-                      //           label: i18n.t('packages_dag_migration_settingpanel_dangtiaoguoshijian'),
-                      //           value: 'SkipByLimit'
-                      //         }
-                      //       ],
-                      //       'x-reactions': {
-                      //         dependencies: ['.errorMode'],
-                      //         fulfill: {
-                      //           state: {
-                      //             display: '{{$deps[0] === "SkipData" ? "visible" : "hidden"}}'
-                      //           }
-                      //         }
-                      //       }
-                      //     },
-                      //     limitVoid: {
-                      //       type: 'void',
-                      //       'x-decorator': 'FormItem',
-                      //       'x-component': 'Space',
-                      //       properties: {
-                      //         limit: {
-                      //           type: 'number',
-                      //           'x-decorator': 'FormItem',
-                      //           'x-decorator-props': {
-                      //             feedbackLayout: 'none',
-                      //             addonAfter: i18n.t('packages_dag_migration_settingpanel_shirenwubaocuo')
-                      //           },
-                      //           'x-component': 'InputNumber',
-                      //           default: 1,
-                      //           'x-component-props': {
-                      //             precision: 0,
-                      //             min: 1
-                      //           }
-                      //         }
-                      //       },
-                      //       'x-reactions': {
-                      //         dependencies: ['.errorMode', '.limitMode'],
-                      //         fulfill: {
-                      //           state: {
-                      //             display:
-                      //               '{{$deps[0] === "SkipData" && $deps[1] === "SkipByLimit" ? "visible" : "hidden"}}'
-                      //           }
-                      //         }
-                      //       }
-                      //     },
-                      //     rateVoid: {
-                      //       type: 'void',
-                      //       'x-decorator': 'FormItem',
-                      //       'x-component': 'Space',
-                      //       properties: {
-                      //         rate: {
-                      //           type: 'number',
-                      //           'x-decorator': 'FormItem',
-                      //           'x-decorator-props': {
-                      //             feedbackLayout: 'none',
-                      //             addonAfter: '% ' + i18n.t('packages_dag_migration_settingpanel_shirenwubaocuo')
-                      //           },
-                      //           'x-component': 'InputNumber',
-                      //           default: 1,
-                      //           'x-component-props': {
-                      //             precision: 0,
-                      //             min: 1,
-                      //             max: 100
-                      //           }
-                      //         }
-                      //       },
-                      //       'x-reactions': {
-                      //         dependencies: ['.errorMode', '.limitMode'],
-                      //         fulfill: {
-                      //           state: {
-                      //             display:
-                      //               '{{$deps[0] === "SkipData" && $deps[1] === "SkipByRate" ? "visible" : "hidden"}}'
-                      //           }
-                      //         }
-                      //       }
-                      //     }
-                      //   }
-                      // },
+                      skipErrorEvent: {
+                        type: 'object',
+                        'x-component': 'FormContent',
+                        properties: {
+                          errorMode: {
+                            type: 'string',
+                            title: i18n.t('packages_dag_migration_settingpanel_dangdanbiaotongbu'),
+                            'x-decorator': 'FormItem',
+                            'x-component': 'Select',
+                            'x-component-props': {
+                              placeholder: i18n.t('public_select_placeholder')
+                            },
+                            default: 'Disable',
+                            enum: [
+                              // {
+                              //   label: '直接跳过异常的表，任务继续运行 ',
+                              //   value: 'SkipTable'
+                              // },
+                              {
+                                label: i18n.t('packages_dag_migration_settingpanel_anzhaomorenzhong'),
+                                value: 'Disable'
+                              },
+                              {
+                                label: i18n.t('packages_dag_migration_settingpanel_tiaoguoyichangshi'),
+                                value: 'SkipData'
+                              }
+                            ]
+                          },
+                          limitMode: {
+                            type: 'string',
+                            title: i18n.t('packages_dag_migration_settingpanel_renwutiaoguoshi'),
+                            'x-decorator': 'FormItem',
+                            'x-component': 'Select',
+                            'x-component-props': {
+                              placeholder: i18n.t('public_select_placeholder')
+                            },
+                            default: 'SkipByLimit',
+                            enum: [
+                              // {
+                              //   label: i18n.t('packages_dag_migration_settingpanel_zhidingtiaoguoce'),
+                              //   value: 'Disable'
+                              // },
+                              {
+                                label: i18n.t('packages_dag_migration_settingpanel_dangtiaoguoshijian2'),
+                                value: 'SkipByRate'
+                              },
+                              {
+                                label: i18n.t('packages_dag_migration_settingpanel_dangtiaoguoshijian'),
+                                value: 'SkipByLimit'
+                              }
+                            ],
+                            'x-reactions': {
+                              dependencies: ['.errorMode'],
+                              fulfill: {
+                                state: {
+                                  display: '{{$deps[0] === "SkipData" ? "visible" : "hidden"}}'
+                                }
+                              }
+                            }
+                          },
+                          limitVoid: {
+                            type: 'void',
+                            'x-decorator': 'FormItem',
+                            'x-component': 'Space',
+                            properties: {
+                              limit: {
+                                type: 'number',
+                                'x-decorator': 'FormItem',
+                                'x-decorator-props': {
+                                  feedbackLayout: 'none',
+                                  addonAfter: i18n.t('packages_dag_migration_settingpanel_shirenwubaocuo')
+                                },
+                                'x-component': 'InputNumber',
+                                default: 1,
+                                'x-component-props': {
+                                  precision: 0,
+                                  min: 1
+                                }
+                              }
+                            },
+                            'x-reactions': {
+                              dependencies: ['.errorMode', '.limitMode'],
+                              fulfill: {
+                                state: {
+                                  display:
+                                    '{{$deps[0] === "SkipData" && $deps[1] === "SkipByLimit" ? "visible" : "hidden"}}'
+                                }
+                              }
+                            }
+                          },
+                          rateVoid: {
+                            type: 'void',
+                            'x-decorator': 'FormItem',
+                            'x-component': 'Space',
+                            properties: {
+                              rate: {
+                                type: 'number',
+                                'x-decorator': 'FormItem',
+                                'x-decorator-props': {
+                                  feedbackLayout: 'none',
+                                  addonAfter: '% ' + i18n.t('packages_dag_migration_settingpanel_shirenwubaocuo')
+                                },
+                                'x-component': 'InputNumber',
+                                default: 1,
+                                'x-component-props': {
+                                  precision: 0,
+                                  min: 1,
+                                  max: 100
+                                }
+                              }
+                            },
+                            'x-reactions': {
+                              dependencies: ['.errorMode', '.limitMode'],
+                              fulfill: {
+                                state: {
+                                  display:
+                                    '{{$deps[0] === "SkipData" && $deps[1] === "SkipByRate" ? "visible" : "hidden"}}'
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
                       planStartDateFlag: {
                         title: this.$t('packages_dag_task_setting_plan_start_date'), //计划时间
                         type: 'boolean',
@@ -492,85 +482,6 @@ export default observer({
                           fulfill: {
                             state: {
                               visible: '{{$values.syncType === "migrate"}}'
-                            }
-                          }
-                        }
-                      },
-                      increHysteresisSpace: {
-                        type: 'void',
-                        title: this.$t('packages_dag_task_setting_lag_time'),
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Space',
-                        properties: {
-                          increHysteresis: {
-                            type: 'boolean',
-                            'x-component': 'Switch'
-                          },
-                          hysteresisInterval: {
-                            type: 'number',
-                            'x-decorator': 'FormItem',
-                            'x-decorator-props': {
-                              feedbackLayout: 'none',
-                              addonAfter: i18n.t('public_time_s')
-                            },
-                            'x-component': 'InputNumber',
-                            'x-component-props': {
-                              min: 1
-                            },
-                            'x-reactions': {
-                              dependencies: ['.increHysteresis'],
-                              fulfill: {
-                                state: {
-                                  display: '{{$deps[0]?"visible":"hidden"}}'
-                                }
-                              }
-                            }
-                          }
-                        },
-                        'x-reactions': {
-                          dependencies: ['type'],
-                          fulfill: {
-                            state: {
-                              display: '{{$deps[0]!=="initial_sync" ? "visible" : "hidden"}}'
-                            }
-                          }
-                        }
-                      },
-                      increOperationModeSpace: {
-                        type: 'void',
-                        title: this.$t('packages_dag_task_setting_increOperationMode'),
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Space',
-                        properties: {
-                          increOperationMode: {
-                            type: 'boolean',
-                            'x-component': 'Select',
-                            enum: [
-                              { label: i18n.t('packages_dag_components_formpanel_piliang'), value: false },
-                              { label: i18n.t('packages_dag_components_formpanel_zhutiao'), value: true }
-                            ]
-                          },
-                          increaseReadSize: {
-                            type: 'number',
-                            'x-component': 'InputNumber',
-                            'x-component-props': {
-                              min: 1
-                            },
-                            'x-reactions': {
-                              dependencies: ['.increOperationMode'],
-                              fulfill: {
-                                state: {
-                                  display: '{{$deps[0]?"visible":"hidden"}}'
-                                }
-                              }
-                            }
-                          }
-                        },
-                        'x-reactions': {
-                          dependencies: ['type'],
-                          fulfill: {
-                            state: {
-                              display: '{{$deps[0]!=="initial_sync" ? "visible" : "hidden"}}'
                             }
                           }
                         }

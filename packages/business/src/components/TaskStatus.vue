@@ -1,6 +1,6 @@
 <template>
   <div class="inline-flex align-center">
-    <span v-if="show" class="status-block" :class="['status-' + task.status]">
+    <span v-if="show" class="task-status-block" :class="['task-status-' + task.status]">
       {{ $t(STATUS_MAP[task.status].i18n) }}
     </span>
     <ElTooltip v-if="showCronTip" placement="top">
@@ -139,8 +139,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.status-block {
+<style lang="scss">
+.task-status-block {
   display: inline-block;
   min-width: 60px;
   padding: 3px 10px;
@@ -150,32 +150,34 @@ export default {
   box-sizing: border-box;
   word-break: keep-all;
 }
-.status-running {
+.task-status-running {
   color: #178061;
   background-color: #c4f3cb;
 }
-.status-complete {
+.task-status-complete {
   color: #008b58;
   background-color: #b4edd8;
 }
-.status-error {
+.task-status-renew_failed,
+.task-status-error {
   color: #d44d4d;
   background-color: #ffecec;
 }
-.status-edit {
+.task-status-edit {
   color: #0083c7;
   background-color: #d1eefd;
 }
-.status-starting {
+.task-status-starting {
   color: #2c65ff;
   background-color: #ddebff;
 }
-.status-stop {
+.task-status-stop {
   color: #c88500;
   background-color: #ffe4ae;
 }
-.status-wait_start,
-.status-stopping {
+.task-status-renewing,
+.task-status-wait_start,
+.task-status-stopping {
   color: #c39700;
   background-color: #fdf1c8;
 }

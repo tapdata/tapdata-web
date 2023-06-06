@@ -87,19 +87,9 @@ const SharedMiningList = async () => {
   return SharedMiningList
 }
 
-const SwimlaneDashboard = async () => {
-  const { SwimlaneDashboard } = await import('@tap/business')
-  return SwimlaneDashboard
-}
-
-const CatalogView = async () => {
-  const { CatalogView } = await import('@tap/business')
-  return CatalogView
-}
-
-const ObjectList = async () => {
-  const { ObjectList } = await import('@tap/business')
-  return ObjectList
+const DataConsoleDashboard = async () => {
+  const { Dashboard } = await import('@tap/ldp')
+  return Dashboard
 }
 
 const DataServerList = async () => {
@@ -994,7 +984,7 @@ export default [
       {
         path: '/data-console',
         name: 'dataConsole',
-        component: SwimlaneDashboard,
+        component: DataConsoleDashboard,
         meta: {
           title: 'page_title_data_console',
           hideTitle: true,

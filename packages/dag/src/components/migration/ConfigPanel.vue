@@ -22,8 +22,14 @@
           @setSchema="handleSetSchema"
         />
       </ElTabPane>
-      <ElTabPane v-if="showSchemaPanel" :label="$t('packages_dag_migration_configpanel_moxing')" name="meta">
-        <MetaPane ref="metaPane" :is-show="currentTab === 'meta'" :form="form"></MetaPane>
+      <ElTabPane :label="$t('packages_dag_migration_configpanel_moxing')" name="meta">
+        <Component
+          v-if="syncType"
+          ref="metaPane"
+          :is="syncType === 'sync' ? 'MetaPane' : 'MigrateMetaPane'"
+          :is-show="currentTab === 'meta'"
+          :form="form"
+        ></Component>
       </ElTabPane>
       <ElTabPane v-if="isMonitor" :label="$t('packages_dag_migration_configpanel_gaojingshezhi')" name="alarm">
         <AlarmPanel
@@ -40,18 +46,22 @@
       <div class="panel-header flex align-center px-4 border-bottom">
         <div class="title-input-wrap flex align-center flex-shrink-0 h-100 fw-sub">
           <ElTabs v-if="isMonitor" ref="tabs" v-model="titleCurrentTab" class="setting-tabs">
-            <ElTabPane :label="$t('packages_dag_task_stetting_basic_setting')"></ElTabPane>
-            <ElTabPane :label="$t('packages_dag_migration_configpanel_gaojingshezhi')"></ElTabPane>
+            <ElTabPane name="alarm" :label="$t('packages_dag_migration_configpanel_gaojingshezhi')">
+              <div></div>
+            </ElTabPane>
+            <ElTabPane name="settings" :label="$t('packages_dag_task_stetting_basic_setting')">
+              <div></div>
+            </ElTabPane>
           </ElTabs>
           <span v-else>{{ $t('packages_dag_task_stetting_basic_setting') }}</span>
         </div>
 
         <VIcon class="close-icon" size="16" @click="handleClosePanel">close</VIcon>
       </div>
-      <div v-if="titleCurrentTab === '0'" class="panel-content flex-1">
+      <div v-if="titleCurrentTab === 'settings'" class="panel-content flex-1">
         <SettingPanel ref="setting" v-bind="$attrs" v-on="$listeners" v-show="activeType === 'settings'" />
       </div>
-      <div v-else-if="titleCurrentTab === '1'" class="panel-content flex-1">
+      <div v-else-if="titleCurrentTab === 'alarm'" class="panel-content flex-1">
         <AlarmPanel v-if="activeType === 'settings'" v-bind="$attrs" v-on="$listeners" key="taskAlarm" />
       </div>
     </div>
@@ -70,6 +80,7 @@ import NodeIcon from '../NodeIcon'
 import SettingPanel from './SettingPanel'
 import MetaPane from '../MetaPane'
 import AlarmPanel from './AlarmPanel'
+import MigrateMetaPane from './MigrateMetaPane'
 
 export default {
   name: 'ConfigPanel',
@@ -85,20 +96,21 @@ export default {
     includesType: {
       type: Array,
       default: () => ['node', 'settings']
-    }
+    },
+    syncType: String
   },
 
   data() {
     return {
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       currentTab: 'settings',
-      titleCurrentTab: '0',
+      titleCurrentTab: 'settings',
       name: this.activeNode?.name,
       form: null
     }
   },
 
-  components: { MetaPane, SettingPanel, NodeIcon, FormPanel, AlarmPanel },
+  components: { MetaPane, SettingPanel, NodeIcon, FormPanel, AlarmPanel, MigrateMetaPane },
 
   computed: {
     ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
@@ -117,6 +129,10 @@ export default {
     'activeNode.name'(v) {
       this.name = v
     }
+  },
+
+  mounted() {
+    this.titleCurrentTab = this.isMonitor ? 'alarm' : 'settings'
   },
 
   methods: {
@@ -153,8 +169,8 @@ export default {
       let watcher = this.$watch('editVersion', () => {
         watcher()
         const metaPane = this.$refs.metaPane
-        if (metaPane && this.currentTab === '1') {
-          metaPane.loadFields()
+        if (metaPane && this.currentTab === 'meta') {
+          metaPane[this.syncType === 'sync' ? 'loadFields' : 'loadData']()
         }
       })
     },
@@ -319,10 +335,6 @@ $headerHeight: 40px;
           height: 100%;
         }
       }
-    }
-
-    .resize-trigger {
-      background: 0 0 !important;
     }
 
     .setting-tabs.el-tabs {

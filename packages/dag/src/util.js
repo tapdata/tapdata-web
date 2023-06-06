@@ -66,8 +66,7 @@ export function getSchema(schema, values, pdkPropertiesMap) {
 }
 
 export function getCanUseDataTypes(data = [], val = '') {
-  const index = data.findIndex(t => t === val)
-  return index > -1 ? data.slice(index) : []
+  return data
 }
 
 export function getMatchedDataTypeLevel(
@@ -76,17 +75,13 @@ export function getMatchedDataTypeLevel(
   fieldChangeRules = [],
   findPossibleDataTypes = {}
 ) {
-  const { data_type, changeRuleId, field_name } = field || {}
+  const { field_name } = field || {}
+  const tapType = JSON.parse(field.tapType || '{}')
+  if (tapType.type === 7) {
+    field.data_type = ''
+  }
   if (!findPossibleDataTypes[field_name]) return ''
-  const { selectDataType } = fieldChangeRules.find(t => t.id === changeRuleId)?.result?.selectDataType || {}
-  return selectDataType ||
-    (!selectDataType &&
-      canUseDataTypes.length &&
-      canUseDataTypes.findIndex(c => c === data_type) === canUseDataTypes.length - 1)
-    ? ''
-    : !canUseDataTypes.includes(selectDataType || data_type)
-    ? 'error'
-    : 'warning'
+  return tapType.type !== 7 && canUseDataTypes.length ? '' : 'error'
 }
 export function errorFiledType(field) {
   const { tapType } = field || {}

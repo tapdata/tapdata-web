@@ -8,10 +8,11 @@ import i18n from '@tap/i18n'
 import { FormItem, JsEditor, HighlightCode } from '@tap/form'
 import { VCodeEditor, VirtualSelect, VEmpty } from '@tap/component'
 import resize from '@tap/component/src/directives/resize'
-import { javascriptFunctionsApi, taskApi, monitoringLogsApi } from '@tap/api'
+import { javascriptFunctionsApi, taskApi, monitoringLogsApi, metadataInstancesApi } from '@tap/api'
 import Time from '@tap/shared/src/time'
 import { JsDeclare } from '../js-declare'
 import './style.scss'
+import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
 
 export const JsProcessor = observer(
   defineComponent({
@@ -80,6 +81,7 @@ export const JsProcessor = observer(
       let version
       let logList = ref([])
       let logLoading = ref(false)
+      const nodeId = form.values.id
 
       const queryLog = async () => {
         const logData = await monitoringLogsApi.query({
@@ -89,10 +91,10 @@ export const JsProcessor = observer(
           page: 1,
           pageSize: 50,
           start: queryStart,
-          nodeId: form.values.id,
+          nodeId,
           end: Time.now()
         })
-        logList.value = logData?.items.filter(item => !new RegExp(`^.*\\[${form.values.id}]`).test(item.message)) || []
+        logList.value = logData?.items.filter(item => !new RegExp(`^.*\\[${nodeId}]`).test(item.message)) || []
       }
 
       const handleQuery = async () => {
@@ -101,7 +103,7 @@ export const JsProcessor = observer(
           .getRunJsResult({
             version,
             taskId,
-            jsNodeId: form.values.id
+            jsNodeId: nodeId
           })
           .then(res => {
             // 版本号不一致
@@ -176,7 +178,8 @@ export const JsProcessor = observer(
           .catch(resetQuery)
       }
 
-      const handleRun = () => {
+      const handleRun = async () => {
+        const { jsType } = form.values
         resetQuery()
         running.value = true
         logLoading.value = true
@@ -184,18 +187,37 @@ export const JsProcessor = observer(
         clearTimeout(timer)
         version = Time.now()
         queryStart = Time.now()
+
         if (!fullscreen.value) toggleFullscreen()
-        taskApi.testRunJs({ ...params, version, script: props.value }).then(
-          () => {
-            queryStart = Time.now()
-            handleAutoQuery()
-          },
-          async () => {
-            // 脚本执行出错
-            await queryLog()
-            resetQuery()
+
+        if (jsType === 1) {
+          let before, after, logs, result
+          try {
+            result = await taskApi.testRunJsRpc({ ...params, version, script: props.value, jsType })
+          } catch (e) {
+            console.log(e) // eslint-disable-line
+            result = e?.data?.data
           }
-        )
+          before = result?.before
+          after = result?.after
+          logs = result?.logs
+          inputRef.value = before ? JSON.stringify(before, null, 2) : ''
+          outputRef.value = after ? JSON.stringify(after, null, 2) : ''
+          logList.value = logs?.filter(item => !new RegExp(`^.*\\[${nodeId}]`).test(item.message)) || []
+          resetQuery()
+        } else {
+          taskApi.testRunJs({ ...params, version, script: props.value, jsType }).then(
+            () => {
+              queryStart = Time.now()
+              handleAutoQuery()
+            },
+            async () => {
+              // 脚本执行出错
+              await queryLog()
+              resetQuery()
+            }
+          )
+        }
       }
 
       onUnmounted(() => {
@@ -254,26 +276,111 @@ export const JsProcessor = observer(
         }
       }
 
+      function getPrefix(line, index) {
+        let prefix = ''
+        let i = index - 1
+        while (i >= 0 && /^[a-zA-Z0-9_]+$/.test(line.charAt(i))) {
+          prefix = line.charAt(i) + prefix
+          i--
+        }
+        return prefix
+      }
+
       let jsEditor
       const onEditorInit = editor => {
         jsEditor = editor
+        const idx = editor.completers?.findIndex(item => item.id === 'recordFields') || -1
+
+        if (~idx) editor.completers.splice(idx, 1)
+
+        editor.completers.push({
+          id: 'recordFields',
+          // 获取补全提示列表
+          getCompletions: function (editor, session, pos, prefix, callback) {
+            // 判断当前行是否包含 '.'
+            const line = session.getLine(pos.row)
+            const index = pos.column - 1
+            if (index >= 0 && line.charAt(index) === '.') {
+              // 获取前缀
+              const prefix = getPrefix(line, index)
+              if (prefix === 'record') {
+                callback(null, nodeFields)
+              }
+            }
+          }
+        })
+        // 绑定 '.' 按键事件
+        editor.keyBinding.addKeyboardHandler({
+          handleKeyboard: function ({ editor }, hash, keyString, keyCode, event) {
+            if (keyString === '.' && keyCode !== undefined) {
+              setTimeout(() => {
+                editor.execCommand('startAutocomplete')
+              }, 10)
+            }
+          }
+        })
       }
+
+      let nodeFields = []
+      const loadFields = async () => {
+        let fields = []
+        if (!formRef.value.values.$inputs.length) return
+        if (form.values.type.includes('migrate')) {
+          let result = await metadataInstancesApi.nodeSchemaPage({
+            nodeId,
+            fields: ['original_name', 'fields', 'qualified_name'],
+            page: 1,
+            pageSize: 1
+          })
+          fields = result.items[0]?.fields || []
+        } else {
+          const data = await metadataInstancesApi.nodeSchema(nodeId)
+          fields = data?.[0]?.fields || []
+        }
+
+        nodeFields =
+          fields
+            .filter(item => !item.is_deleted)
+            .map(f => {
+              return {
+                value: f.field_name,
+                score: 1000,
+                meta: f.data_type
+              }
+            }) || []
+      }
+
+      // 加载模型字段
+      loadFields()
+      // 模型自动改变
+      useAfterTaskSaved(root, formRef.value.values.$inputs, loadFields)
 
       return () => {
         const editorProps = { ...attrs }
         editorProps.options.readOnly = props.disabled
-
+        const tooltip = props.isStandard
+          ? i18n.t('packages_form_js_processor_index_tooltip1')
+          : i18n.t('packages_form_js_processor_index_tooltip2')
         const label = (
-          <div class="position-absolute flex align-center w-100">
-            <span class="formily-element-form-item-asterisk">*</span>
-            <span class="flex-1">{i18n.t('packages_form_js_processor_index_jiaoben')}</span>
-            <ElLink class="mr-3" onClick={toggleDoc} type="primary">
-              {i18n.t('packages_dag_api_docs')}
-            </ElLink>
-            <ElLink onClick={toggleFullscreen} class="js-editor-fullscreen" type="primary">
-              <VIcon class="mr-1">fangda</VIcon>
-              {i18n.t('packages_form_js_editor_fullscreen')}
-            </ElLink>
+          <div class="position-absolute flex justify-content-between w-100">
+            <div class="flex align-center">
+              <span class="formily-element-form-item-asterisk">*</span>
+              <span>{i18n.t('packages_form_js_processor_index_jiaoben')}</span>
+              <ElTooltip content={tooltip} placement="top" class="ml-2">
+                <VIcon size="14" class="color-primary">
+                  info
+                </VIcon>
+              </ElTooltip>
+            </div>
+            <div className="flex align-center">
+              <ElLink class="mr-3" onClick={toggleDoc} type="primary">
+                {i18n.t('packages_dag_api_docs')}
+              </ElLink>
+              <ElLink onClick={toggleFullscreen} class="js-editor-fullscreen" type="primary">
+                <VIcon class="mr-1">fangda</VIcon>
+                {i18n.t('packages_form_js_editor_fullscreen')}
+              </ElLink>
+            </div>
           </div>
         )
 

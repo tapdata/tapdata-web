@@ -562,6 +562,11 @@ export default {
   packages_business_verification_form_jianyanrenwuyun: '檢驗任務運行出錯警告',
   packages_business_verification_form_jiaoyangaojing: '校驗告警',
   packages_business_verification_form_zanbuzhichi_doris: '暫不支持Doris。 ',
+  packages_business_verification_form_task_alarm: '校驗任務告警',
+  packages_business_verification_form_task_alarm_when_error: '當校驗任務出錯時進行告警',
+  packages_business_verification_form_task_alarm_when_diff_result_over_count1: '當count校驗結果的差異行數大於',
+  packages_business_verification_form_task_alarm_when_diff_result_over_count2: '時進行告警',
+  packages_business_verification_form_task_alarm_when_result_table_over_count1: '當值校驗結果的表數據差大於',
   packages_business_task_status_error_tip:
     '任務刪除成功，以下幾個 PostgreSQL 連接的信息清除失敗，需要您使用以下方式手動清除',
   packages_business_task_status_next_run_time: '下次運行時間：{val}',
@@ -602,6 +607,9 @@ export default {
   packages_business_setting_alarmnotification_renwumorengao: '任務默認告警規則設置',
   packages_business_setting_alarmnotification_morengaojinggui: '默認告警規則',
   packages_business_setting_alarmnotification_renwugaojingshe: '任務告警設置',
+  packages_business_setting_alarmnotification_dangjiaoyanrenwucuowu: '當校驗任務遇到錯誤時',
+  packages_business_setting_alarmnotification_dangjiaoyanrenwushuliangcuowu: '當count校驗結果的差異行數大於閾值時',
+  packages_business_setting_alarmnotification_dangjiaoyanrenwuzhicuowu: '當值校驗結果的表數據差大於閾值時',
   //消息通知
   packages_business_notify_user_all_notice: '全部通知',
   packages_business_notify_unread_notice: '未讀消息',
@@ -690,7 +698,7 @@ export default {
   packages_business_shared_cdc_setting_select_time_tip: '請選擇日誌保存時長',
   packages_business_shared_cdc_setting_message_edit_save: '保存成功，重啟任務後生效',
   packages_business_shared_list_name: '挖掘名稱',
-  packages_business_shared_list_time_excavation: '挖掘所處時間點',
+  packages_business_shared_list_time_excavation: '挖掘所處時間點(數據庫時間)',
   packages_business_shared_list_time: '挖掘延遲',
   packages_business_shared_list_setting: '挖掘設置',
   packages_business_shared_list_status: '狀態',
@@ -1023,5 +1031,30 @@ export default {
     'MongoDB是一種非關係型數據庫，具有靈活性、高性能、易用性和可擴展性，適用於需要處理大量非結構化數據和需要快速查詢和可擴展性的應用場景。 ',
   packages_business_create_connection_scenedialog_bigQu:
     'BigQuery是Google Cloud提供的託管式數據倉庫，以高速、可擴展和安全著稱，可以處理PB級數據，與多個工具集成，適用於各種數據分析和挖掘場景。 ',
-  packages_business_swimlane_tablepreview_chuangjianrenwu: '創建任務'
+  packages_business_swimlane_tablepreview_chuangjianrenwu: '創建任務',
+  packages_business_as_source: '作為源頭',
+  packages_business_as_target: '作為目標',
+  packages_business_connections_databaseform_dangqianlianjiezheng:
+    '當前連接正在使用原外存，切換會導致數據丟失，請謹慎操作。 ',
+  packages_business_swimlane_target_shouye: '首頁',
+  packages_business_connections_databaseform_chakanwajueren: '查看挖掘任務',
+  packages_business_connections_databaseform_dangqianlianjiede:
+    '當前連接的挖掘任務正在使用該外存，暫不允許修改，如需修改請先重置或刪除對應挖掘任務。 ',
+  packages_business_shared_mining_table_yitingzhiwajue: '已停止挖掘',
+  packages_business_shared_mining_table_zhengzaiwajue: '正在挖掘',
+  packages_business_shared_mining_table_ninyaotingzhiwa:
+    '您要停止挖掘的表正在被以下任務使用，停止挖掘後將會影響以下任務的正常同步，請確認是否要繼續停止。 ',
+  packages_business_shared_mining_table_tingzhiwajueti: '停止挖掘提醒',
+  packages_business_shared_mining_table_yihebingdelian: '已合并的連接',
+  packages_business_shared_mining_table_shengyuyigelian: '挖掘任務中至少要有一張表在挖掘，不能全部停止。',
+  packages_business_logs_nodelog_yijianfuzhi: '一鍵複製',
+  packages_business_connections_jsdebug_shiyongHtt: '使用HttpReceiver最新接收到的數據用於調試',
+  packages_business_connections_jsdebug_huoqutiaoshishu: '獲取調試數據',
+  packages_business_shared_mining_list_shanchurenwus:
+    '刪除任務<span class="color-primary">{val1}</span>後，此任務將無法恢復',
+  packages_business_shared_mining_list_gaiwajuerenwu: '該挖掘任務已被 {val} 個任務調用，請刪除任務後重試',
+  packages_business_shared_cache_list_qingxianxiugaiwai: '外存不存在，請先修改外存配置後，再啟動。',
+  packages_business_components_conditionbox_shifouquerenqing: '是否確認清除索引字段為空的校驗條件？ ',
+  packages_business_components_conditionbox_suoyinziduanwei: '索引字段為空',
+  packages_business_components_conditionbox_yijianqingchusuo: '一鍵清除索引字段為空的條件'
 }

@@ -35,5 +35,8 @@ export default {
   packages_component_src_inlineinput_zifuchangduxian: '字符長度限制{val1}-{val2}個字符',
   packages_component_src_selectlist_meiyougengduoshu: '沒有更多數據',
   packages_component_src_classification_chuangjianfenlei: '創建分類',
-  packages_component_src_discoveryclassification_morenmuluji: '默認目錄（技術）'
+  packages_component_src_discoveryclassification_morenmuluji: '默認目錄（技術）',
+  packages_component_src_selectlist_qingchuyixuan: '清除已選',
+  packages_component_src_selectlist_xiang: '項',
+  packages_component_src_selectlist_yixuanze: '已選擇'
 }

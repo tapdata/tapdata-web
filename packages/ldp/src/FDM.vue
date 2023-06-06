@@ -104,8 +104,8 @@
       <ElForm ref="form" :model="taskDialogConfig" label-width="180px" @submit.prevent :rules="formRules">
         <div class="pipeline-desc p-4 mb-4 text-preline rounded-4">
           <span>{{ $t('packages_business_fdm_create_task_dialog_desc_prefix') }}</span
-          ><span v-if="taskDialogConfig.from" class="inline-flex align-center px-1 font-color-dark fw-sub"
-            ><DatabaseIcon :item="taskDialogConfig.from" :key="taskDialogConfig.from.pdkType" :size="20" class="mr-1" />
+          ><span v-if="taskDialogConfig.from" class="inline-flex align-center px-1 font-color-dark fw-sub align-top"
+            ><DatabaseIcon :item="taskDialogConfig.from" :key="taskDialogConfig.from.pdkHash" :size="20" class="mr-1" />
             <span>{{ taskDialogConfig.from.name }}</span> </span
           ><span v-if="taskDialogConfig.tableName" class="inline-flex font-color-dark fw-sub"
             >/<span class="px-1">{{ taskDialogConfig.tableName }}</span> </span
@@ -195,8 +195,7 @@ import {
 } from '@tap/api'
 import { VirtualTree, IconButton, VExpandXTransition } from '@tap/component'
 import { uuid, generateId } from '@tap/shared'
-import { makeDragNodeImage, TASK_SETTINGS } from '../../shared'
-import { DatabaseIcon } from '../../components'
+import { makeDragNodeImage, TASK_SETTINGS, DatabaseIcon } from '@tap/business'
 import commonMix from './mixins/common'
 
 export default {
@@ -319,8 +318,8 @@ export default {
       return (
         <div
           class={className}
-          onDblclick={() => {
-            data.isObject && this.$emit('preview', data)
+          onClick={() => {
+            data.isObject && this.$emit('preview', data, this.fdmConnection)
           }}
           onDrop={this.handleTreeNodeDrop}
         >
@@ -361,14 +360,13 @@ export default {
                 </IconButton>
                 <ElDropdownMenu slot="dropdown">
                   <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
-                  <ElDropdownItem command="delete">{this.$t('public_button_delete')}</ElDropdownItem>
                 </ElDropdownMenu>
               </ElDropdown>
             ) : (
               <IconButton
                 sm
                 onClick={() => {
-                  this.$emit('preview', data)
+                  this.$emit('preview', data, this.fdmConnection)
                 }}
               >
                 view-details
@@ -439,6 +437,7 @@ export default {
     showTaskDialog() {
       this.taskDialogConfig.prefix = this.getSmartPrefix(this.taskDialogConfig.from.name)
       this.taskDialogConfig.visible = true
+      this.$refs.form?.clearValidate()
     },
 
     async taskDialogSubmit() {
@@ -718,6 +717,7 @@ export default {
     },
 
     getSmartPrefix(connectionName) {
+      connectionName = connectionName.replace(/[\u4E00-\u9FA5\s]+/g, '').replace(/^[-_]+/, '')
       let planA = connectionName.split('_').shift()
       let planB = connectionName.split('-').shift()
 

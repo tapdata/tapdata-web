@@ -576,7 +576,7 @@ export default {
         }
         .task-form-text-box {
           margin-left: 10px;
-          width: 140px;
+          //width: 140px;
           .target {
             font-size: 12px;
             font-weight: 400;

@@ -630,6 +630,7 @@ export default {
   methods: {
     // 打开并初始化抽屉
     open(formData) {
+      this.orginData = formData
       this.tab = 'form'
       this.visible = true
       this.isEdit = false
@@ -647,10 +648,30 @@ export default {
         appValue: '',
         appLabel: ''
       }
-      this.$refs?.form?.clearValidate()
+
       this.formatData(formData || {})
+
+      // 若为新建时，则默认值为 ‘默认查询(defaultApi)’ 的值
+      this.form.pathAccessMethod = this.data?.pathAccessMethod || 'default'
+      this.getDatabaseTypes()
+      let { connectionId, tableName } = this.form
+      if (connectionId) {
+        this.getTableOptions(connectionId)
+      }
+      if (connectionId && tableName) {
+        this.getFields()
+      }
       if (!this.data.id) {
         this.edit()
+      }
+
+      const formVM = this.$refs.form
+
+      if (formVM) {
+        formVM.clearValidate()
+        this.$nextTick(() => {
+          formVM.$el.scrollTop = 0
+        })
       }
     },
     tabChanged() {
@@ -689,10 +710,11 @@ export default {
       // 若为新建时，则默认值为 ‘默认查询(defaultApi)’ 的值
 
       const appData = listtags?.[0] || {}
-      const appValue = appData.id
+      const appValue = appData.id || '' // 不改变appValue 的原始值，防止首次创建触发所属应用的必填校验
       const appLabel = appData.value
 
       let apiType = formData?.apiType || 'defaultApi'
+      let fields = formData.paths?.[0]?.fields || []
       this.data = {
         status: status || 'generating', // generating,pending,active
         id,
@@ -708,19 +730,16 @@ export default {
         prefix,
         pathAccessMethod,
         method: path.method || 'GET',
-        fields: path.fields || [],
-        params: path.params || this.getDefaultParams(apiType),
+        fields,
+        params: path.params?.filter(t => t.name !== 'sort') || this.getDefaultParams(apiType),
         where: path.where || [],
         sort: path.sort || [],
         path: path.path || '',
-        acl: path.acl,
+        acl: path.acl || ['admin'],
         appValue,
         appLabel
       }
-      this.form.description = this.data.description
-      this.form.appValue = this.data.appValue
-      this.form.appLabel = this.data.appLabel
-      this.form.acl = path.acl || ['admin']
+      this.form = cloneDeep(this.data)
       let host = this.host
       let _path = this.data.path
       let baseUrl = host + _path
@@ -737,9 +756,17 @@ export default {
     },
     // 获取角色
     getRoles() {
-      roleApi.get({}).then(data => {
-        this.roles = data?.items || []
-      })
+      let filter = {
+        limit: 500,
+        skip: 0
+      }
+      roleApi
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(data => {
+          this.roles = data?.items || []
+        })
     },
     getDefaultParams(apiType) {
       let params = [
@@ -761,7 +788,7 @@ export default {
       if (apiType === 'defaultApi') {
         params.push(
           ...[
-            { name: 'sort', type: 'object', description: i18n.t('public_button_sort') },
+            // { name: 'sort', type: 'object', description: i18n.t('public_button_sort') },
             { name: 'filter', type: 'object', description: i18n.t('public_data_filter_condition') }
           ]
         )
@@ -770,19 +797,13 @@ export default {
     },
     // 切换到编辑状态
     edit() {
-      this.isEdit = true
-      this.form = cloneDeep(this.data)
       this.form.status = 'generating'
-      // 若为新建时，则默认值为 ‘默认查询(defaultApi)’ 的值
-      this.form.pathAccessMethod = this.data?.pathAccessMethod || 'default'
-      this.getDatabaseTypes()
-      let { connectionId, tableName } = this.form
-      if (connectionId) {
-        this.getTableOptions(connectionId)
-      }
-      if (connectionId && tableName) {
-        this.getFields()
-      }
+      this.isEdit = true
+      this.$nextTick(() => {
+        this.data.fields.forEach(f => {
+          this.$refs?.fieldTable.toggleRowSelection(this.allFields.find(it => it.id === f.id))
+        })
+      })
     },
     // 保存，新建和修改
     save(type) {
@@ -895,6 +916,7 @@ export default {
             name: connectionName
           }
           this.formatData(data || [])
+          this.orginData && Object.assign(this.orginData, data)
           this.$emit('save')
           this.isEdit = false
         }
@@ -915,7 +937,7 @@ export default {
       }
     },
     generateHttp() {
-      this.form = cloneDeep(this.data)
+      // this.form = cloneDeep(this.data)
       let basePath = uid(11, 'a')
       this.form.basePath = basePath
       this.form.path = `/api/${basePath}`
@@ -933,7 +955,7 @@ export default {
       })
       this.databaseTypes =
         data
-          ?.filter(it => ['mysql', 'sqlserver', 'oracle', 'mongodb', 'pg', 'tidb'].includes(it.pdkId))
+          ?.filter(it => ['mysql', 'sqlserver', 'oracle', 'mongodb', 'postgres', 'tidb', 'doris'].includes(it.pdkId))
           ?.map(it => it.name) || []
       // this.databaseTypes = data?.map(it => it.name) || []
       this.getConnectionOptions()

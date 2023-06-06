@@ -35,7 +35,7 @@ export default {
   packages_dag_task_setting_sync_type: 'Sync Type',
   packages_dag_task_setting_initial_sync_cdc: 'Full + Incremental synchronization',
   packages_dag_task_stetting_desc: 'Task Description',
-  packages_dag_task_setting_plan_start_date: 'Plan start date',
+  packages_dag_task_setting_plan_start_date: 'Scheduled Run',
   packages_dag_task_setting_crontabExpressionFlag: 'Scheduled Tasks',
   packages_dag_task_setting_cron_expression: 'Please enter a scheduling expression',
   packages_dag_task_setting_cron_tip:
@@ -174,7 +174,7 @@ export default {
   packages_dag_migration_settingpanel_dangrenwufuhe:
     'When data verification is enabled, the task will automatically perform full verification and incremental verification for the data replication consistency. The verification results can be viewed on the Task Monitoring page. Note the verification currently does not support following scenarios, when one of the following happens, this feature will have no effect:\n 1. There is a processing node in the pipeline\n 2. The source connection does not support verification\n 3. The target connection does not support verification',
   packages_dag_monitor_bottompanel_yunxingjilu: 'Running Record',
-  packages_dag_monitor_bottompanel_rizhi: 'Log',
+  packages_dag_monitor_bottompanel_rizhi: 'Task Progress',
   packages_dag_components_eventchart_qita: 'Other',
   packages_dag_components_eventchart_suoxuanzhouqilei: 'Selected cycle accumulation',
   packages_dag_components_eventchart_renwuyunxinglei: 'Task running cumulative',
@@ -346,6 +346,12 @@ export default {
   packages_dag_nodes_database_zidingyi: 'Custom',
   packages_dag_nodes_database_xuanzebiao: 'Select Table',
   packages_dag_nodes_database_suoshuage: 'Belonging Agent',
+  packages_dag_nodes_database_increment_exactly_once_enable_title: 'Increment Exactly Once Write',
+  packages_dag_nodes_database_increment_exactly_once_enable_tips:
+    'Incremental data is accurately written once by marking and checking in the target cache. You are advised to enable this function when the value of the association condition changes. After this function is enabled, the synchronization speed decreases. The target needs to have table creation and write permissions.',
+  packages_dag_nodes_database_increment_exactly_once_enable_time_window_day_title: 'Time Window (Day)',
+  packages_dag_nodes_database_increment_exactly_once_enable_time_window_day_tips:
+    'The time for accurate write and cache data retention also represents the time window for accurate write. When the engine is running, it will trigger automatic clearing once a day. The longer the window time is set, the more storage space is occupied by the target database.',
   packages_dag_extends_nodetype_queshaobiyaode: 'Missing required type attribute!',
   packages_dag_nodes_javascript_moxingshengming: 'Model Declaration',
   packages_dag_nodes_javascript_jiaoben: 'Script',
@@ -591,7 +597,7 @@ export default {
   packages_dag_validate_customsql_target_fail:
     'Once full custom query is enabled, only weak schema type data sources can be used as targets, such as Mongo, Kafka, and ES.',
   packages_dag_field_inference_list_gaiziduanshuju:
-    'The data type of this field is not supported at the moment. In order to avoid task execution failure due to the processing of this field, please mask this field first. ',
+    'The system cannot determine the deduction type of this field, please set the type manually, otherwise the processing of this field will be ignored during task execution.',
   packages_dag_monitor_leftsider_huancunkaishishi: 'Cache start time',
   packages_dag_monitor_node_zhengzaishiyongdehuancun: 'Cache in use',
   packages_dag_nodes_database_fenpianyipidu: 'Sharding batch read limit',
@@ -631,5 +637,10 @@ export default {
   packages_dag_migration_settingpanel_renwutiaoguoshi: 'Stop task when skip event exceeds threshold',
   packages_dag_migration_settingpanel_tiaoguoyichangshi: 'Skip abnormal events, the task continues to run',
   packages_dag_migration_settingpanel_dangdanbiaotongbu: 'When the event processing is abnormal',
-  packages_dag_migration_settingpanel_anzhaomorenzhong: 'Retry according to the default retry logic'
+  packages_dag_migration_settingpanel_anzhaomorenzhong: 'Retry according to the default retry logic',
+  packages_dag_default_js: 'Default JS',
+  packages_dag_standardization_js: 'Standardized JS',
+  packages_dag_mixins_formscope_gaizduanshibi: 'This field is required!',
+  packages_dag_shared_mining_table_info_index_wajuebiaoxinxi: 'Mining table information',
+  packages_dag_table_not_exist: 'Table not exist, will be automatically created'
 }

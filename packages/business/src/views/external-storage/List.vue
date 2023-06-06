@@ -42,6 +42,10 @@
             @change="handleDefault(row)"
           ></ElSwitch>
           <ElDivider direction="vertical"></ElDivider>
+          <ElButton type="text" :disabled="!row.canEdit" @click="handleEdit(row)">{{
+            $t('public_button_edit')
+          }}</ElButton>
+          <ElDivider direction="vertical"></ElDivider>
           <ElButton type="text" :disabled="!row.canDelete" @click="remove(row)">{{
             $t('public_button_delete')
           }}</ElButton>
@@ -70,14 +74,18 @@
           <ElInput v-model="form.name"></ElInput>
         </ElFormItem>
         <ElFormItem required :label="$t('public_external_memory_type')">
-          <ElSelect v-model="form.type">
+          <ElSelect v-model="form.type" :disabled="!!form.id">
             <ElOption label="MongoDB" value="mongodb"></ElOption>
             <ElOption label="RocksDB" value="rocksdb"></ElOption>
           </ElSelect>
         </ElFormItem>
-        <ElFormItem :label="$t('packages_business_external_storage_list_cunchulujing')" prop="uri">
+        <ElFormItem
+          v-if="form.type !== 'memory'"
+          :label="$t('packages_business_external_storage_list_cunchulujing')"
+          prop="uri"
+        >
           <ElInput
-            v-model="form.uri"
+            v-model.trim="form.uri"
             :placeholder="
               form.type === 'mongodb'
                 ? 'Example: mongodb://admin:password@127.0.0.1:27017/mydb?replicaSet=xxx&authSource=admin'
@@ -86,9 +94,6 @@
             type="textarea"
             resize="none"
           ></ElInput>
-        </ElFormItem>
-        <ElFormItem v-if="form.type === 'mongodb'" :label="$t('public_external_memory_name')" required prop="table">
-          <ElInput v-model="form.table"></ElInput>
         </ElFormItem>
         <ElFormItem :label="$t('packages_business_external_storage_list_sheweimoren')">
           <ElSwitch v-model="form.defaultStorage"></ElSwitch>
@@ -148,17 +153,11 @@ import { cloneDeep, escapeRegExp } from 'lodash'
 import { externalStorageApi } from '@tap/api'
 import { TablePage, EXTERNAL_STORAGE_TYPE_MAP } from '@tap/business'
 import { FilterBar, Drawer } from '@tap/component'
+import { openUrl } from '@tap/shared'
 
 export default {
   components: { TablePage, FilterBar, Drawer },
   data() {
-    var checkTable = (rule, value, callback) => {
-      if (this.form.type === 'mongodb' && value === '') {
-        callback(new Error(i18n.t('packages_business_external_storage_list_qingshuruwaicun2')))
-      } else {
-        callback()
-      }
-    }
     return {
       loading: false,
       filterItems: [],
@@ -183,8 +182,7 @@ export default {
             message: i18n.t('packages_business_external_storage_list_qingshurucunchu'),
             trigger: 'blur'
           }
-        ],
-        table: [{ validator: checkTable, trigger: 'blur' }]
+        ]
       },
       isShowDetails: false,
       details: '',
@@ -273,7 +271,6 @@ export default {
         : {
             name: '',
             type: 'mongodb',
-            table: '',
             uri: '',
             defaultStorage: false
           }
@@ -285,12 +282,11 @@ export default {
       this.$refs.form.validate(async valid => {
         if (valid) {
           this.loading = true
-          let { id, name, type, table, uri, defaultStorage } = this.form
+          let { id, name, type, uri, defaultStorage } = this.form
           let params = {
             id,
             name,
             type,
-            table,
             uri,
             defaultStorage
           }
@@ -327,13 +323,13 @@ export default {
     },
     async remove(row) {
       //先去请求是否外存已被使用了
-      this.usingTasks = await await externalStorageApi.usingTask(row.id)
+      this.usingTasks = (await externalStorageApi.usingTask(row.id)) || []
       const flag = await this.$confirm(i18n.t('packages_business_external_storage_list_querenshanchuwai'), '', {
         type: 'warning',
         showClose: false
       })
       if (flag) {
-        if (this.usingTasks) {
+        if (this.usingTasks?.length) {
           this.showUsingTaskDialog = true
         } else {
           await externalStorageApi.delete(row.id)
@@ -344,13 +340,11 @@ export default {
     checkDetails(row) {
       this.details = row
       this.info = [
-        //{ label: this.$t('public_external_memory_name'), value: row.name, icon: 'createUser' },
         {
           label: this.$t('public_external_memory_type'),
           value: row.typeFmt,
           icon: 'name'
         },
-        { label: this.$t('public_external_memory_name'), value: row.table, icon: 'table' },
         { label: this.$t('public_create_time'), value: row.createTimeFmt, icon: 'cacheTimeAtFmt' },
         { label: this.$t('packages_business_external_storage_list_cunchulujing'), value: row.uri, icon: 'database' },
         {
@@ -366,21 +360,29 @@ export default {
      * @param row
      */
     handleClickName(item) {
-      if (item?.syncType === 'migrate') {
-        this.$router.push({
-          name: 'migrateList',
-          query: {
-            keyword: item.name
-          }
-        })
-      } else {
-        this.$router.push({
-          name: 'dataflowList',
-          query: {
-            keyword: item.name
-          }
-        })
+      let { syncType, shareCache } = item
+      if (shareCache) {
+        syncType = 'mem_cache'
       }
+      const MAP = {
+        migrate: 'migrateList',
+        sync: 'dataflowList',
+        logCollector: 'sharedMiningList',
+        mem_cache: 'sharedCacheList',
+        connHeartbeat: 'HeartbeatTableList'
+      }
+      const routeUrl = this.$router.resolve({
+        name: MAP[syncType],
+        query: {
+          keyword: item.name
+        }
+      })
+      openUrl(routeUrl.href)
+    },
+
+    // 编辑
+    handleEdit(row = {}) {
+      this.openDialog(row)
     }
   }
 }

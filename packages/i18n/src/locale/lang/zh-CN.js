@@ -16,6 +16,7 @@ export default {
   public_serial_number: '序号',
   public_query: '查询',
   public_aggregate: '聚合',
+  public_table: '表',
   public_table_name: '表名',
   public_total: '共计',
   public_database: '数据库',
@@ -99,6 +100,9 @@ export default {
   public_button_order: '订购',
   public_button_next: '下一步',
   public_button_previous: '上一步',
+  public_button_search: '搜索',
+  public_button_stop_mining: '停止挖掘',
+  public_button_stop_recover: '恢复挖掘',
   // 消息
   public_message_title_prompt: '提示',
   public_message_delete_confirm: '是否删除',
@@ -222,6 +226,7 @@ export default {
   public_task_heartbeat_time: '任务心跳时间',
   public_task_mission_error: '任务出错',
   public_task_reasons_for_error: '错误原因',
+  public_task_log: '任务日志',
   // 节点
   public_node_name: '节点名称',
   public_node_type: '节点类型',

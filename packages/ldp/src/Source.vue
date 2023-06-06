@@ -73,7 +73,7 @@
             class="custom-tree-node flex align-items-center"
             :class="{ grabbable: data.isObject, 'opacity-50': data.disabled }"
             slot-scope="{ node, data }"
-            @dblclick="$emit('preview', data)"
+            @click="$emit('preview', data, node.parent.data)"
           >
             <VIcon
               v-if="node.data.loadFieldsStatus === 'loading'"
@@ -92,7 +92,9 @@
               {{ data.name }}
               <ElTag v-if="data.disabled" type="info" size="mini">{{ $t('public_status_invalid') }}</ElTag>
             </span>
-            <IconButton class="btn-menu" sm @click="$emit('preview', data)"> view-details </IconButton>
+            <IconButton class="btn-menu" sm @click="$emit('preview', data, node.parent.data)">
+              view-details
+            </IconButton>
           </span>
         </VirtualTree>
       </div>
@@ -105,11 +107,8 @@ import { debounce } from 'lodash'
 
 import { connectionsApi, metadataInstancesApi, ldpApi, CancelToken } from '@tap/api'
 import { VirtualTree, IconButton } from '@tap/component'
-import connectionPreview from './connectionPreview'
-import TablePreview from './TablePreview'
 import NodeIcon from '@tap/dag/src/components/NodeIcon'
-import StageButton from '@tap/business/src/components/StageButton'
-import { makeDragNodeImage } from '../../shared'
+import { makeDragNodeImage, StageButton, DatabaseIcon } from '@tap/business'
 import commonMix from './mixins/common'
 
 export default {
@@ -121,7 +120,7 @@ export default {
     fdmAndMdmId: Array
   },
 
-  components: { NodeIcon, VirtualTree, StageButton, IconButton },
+  components: { NodeIcon, VirtualTree, StageButton, IconButton, DatabaseIcon },
 
   mixins: [commonMix],
 
@@ -232,8 +231,8 @@ export default {
       return (
         <div
           class={className}
-          onDblclick={() => {
-            this.$emit('preview', data)
+          onClick={() => {
+            this.$emit('preview', data, node.parent.data)
           }}
         >
           {!data.isObject ? (
@@ -255,7 +254,7 @@ export default {
             class="btn-menu"
             sm
             onClick={() => {
-              this.$emit('preview', data)
+              this.$emit('preview', data, node.parent.data)
             }}
           >
             {' '}

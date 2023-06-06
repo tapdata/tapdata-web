@@ -121,6 +121,7 @@ export default {
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
     }, 8000)
+    this.searchParams = Object.assign(this.searchParams, this.$route.query)
   },
   computed: {
     table() {
@@ -295,9 +296,9 @@ export default {
     },
 
     del(ids, item = {}, canNotList) {
-      let msgObj = this.getConfirmMessage('delete', ids.length > 1, item.name)
-      this.$confirm(msgObj.msg, '', {
-        type: 'warning'
+      this.$confirm(this.$t('packages_business_shared_mining_list_shanchurenwus', { val1: item.name }), '', {
+        type: 'warning',
+        dangerouslyUseHTMLString: true
       }).then(resFlag => {
         if (!resFlag) {
           return

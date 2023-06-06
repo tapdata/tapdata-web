@@ -7,6 +7,26 @@ import { externalStorageApi } from '@tap/api'
 import { isPlainObj } from '@tap/shared'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 
+const editorKeyboard = {
+  handleKeyboard: function ({ editor }, hash, keyString, keyCode, event) {
+    if (keyString === '.' && keyCode !== undefined) {
+      setTimeout(() => {
+        editor.execCommand('startAutocomplete')
+      }, 10)
+    }
+  }
+}
+
+const getPrefix = (line, index) => {
+  let prefix = ''
+  let i = index - 1
+  while (i >= 0 && /^[a-zA-Z0-9_]+$/.test(line.charAt(i))) {
+    prefix = line.charAt(i) + prefix
+    i--
+  }
+  return prefix
+}
+
 export default {
   data() {
     function addDeclaredCompleter(editor, tools, params1) {
@@ -376,12 +396,11 @@ export default {
         /**
          * 加载节点的字段选项列表
          * @param nodeId
-         * @param filterField 字段的值不为空
          * @returns {Promise<{}|*>}
          */
-        loadNodeFieldOptions: async (nodeId, filterField) => {
+        loadNodeFieldOptions: async nodeId => {
           const fields = await this.scope.loadNodeFieldsById(nodeId)
-          let result = fields
+          return fields
             .map(item => ({
               label: item.field_name,
               value: item.field_name,
@@ -390,10 +409,6 @@ export default {
               type: item.data_type
             }))
             .filter(item => !item.is_deleted)
-          if (filterField) {
-            result = result.filter(t => !!t[filterField])
-          }
-          return result
         },
 
         loadDateFieldOptions: async nodeId => {
@@ -671,14 +686,24 @@ export default {
           addDeclaredCompleter(editor, tools, 'tapTable')
         },
 
-        async loadExternalStorage() {
+        async loadExternalStorage(id) {
           try {
-            const { items = [] } = await externalStorageApi.get()
+            let filter = {
+              where: {}
+            }
+            if (id) {
+              const ext = await externalStorageApi.get(id)
+              filter.where.type = ext.type
+            }
+            const { items = [] } = await externalStorageApi.get({
+              filter: JSON.stringify(filter)
+            })
             return items.map(item => {
               return {
                 label: item.name,
                 value: item.id,
-                isDefault: item.defaultStorage
+                isDefault: item.defaultStorage,
+                isBefore: item.id === id
               }
             })
           } catch (e) {
@@ -698,6 +723,146 @@ export default {
             field.setValue((isPrimaryKeyList.length ? isPrimaryKeyList : indicesUniqueList).map(item => item.value))
             field.validate()
           }
+        },
+
+        async addEditorFieldCompletion(editor, nodeId, $inputs, isMigrate) {
+          let nodeFields = []
+          if (!$inputs.length) return
+          if (isMigrate) {
+            let result = await metadataInstancesApi.nodeSchemaPage({
+              nodeId,
+              fields: ['original_name', 'fields', 'qualified_name'],
+              page: 1,
+              pageSize: 1
+            })
+            nodeFields = result.items[0]?.fields || []
+          } else {
+            const data = await metadataInstancesApi.nodeSchema(nodeId)
+            nodeFields = data?.[0]?.fields || []
+          }
+          nodeFields =
+            nodeFields
+              .filter(item => !item.is_deleted)
+              .map(f => {
+                return {
+                  value: f.field_name,
+                  score: 1000,
+                  meta: f.data_type
+                }
+              }) || []
+
+          const idx = editor.completers?.findIndex(item => item.id === 'recordFields') || -1
+
+          if (~idx) editor.completers.splice(idx, 1)
+
+          editor.completers.push({
+            id: 'recordFields',
+            // 获取补全提示列表
+            getCompletions: function (editor, session, pos, prefix, callback) {
+              // 判断当前行是否包含 '.'
+              const line = session.getLine(pos.row)
+              const index = pos.column - 1
+              const recordCompletion = [
+                {
+                  value: 'record',
+                  score: 1000000,
+                  meta: 'local'
+                }
+              ]
+              if (index >= 0 && line.charAt(index) === '.') {
+                // 获取前缀
+                const prefix = getPrefix(line, index)
+                if (prefix === 'record') {
+                  callback(null, nodeFields)
+                }
+              } else {
+                callback(null, recordCompletion)
+              }
+            }
+          })
+          // 绑定 '.' 按键事件
+          editor.keyBinding.removeKeyboardHandler(editorKeyboard)
+          editor.keyBinding.addKeyboardHandler(editorKeyboard)
+        },
+
+        validateUpdateConditionFields: async (value, rule, ctx) => {
+          const { field, form } = ctx
+          const $values = form.values
+          let options = field.dataSource
+          let nodeData = this.scope.findNodeById($values.id)
+          console.debug('validateUpdateConditionFields.ctx', ctx, $values.attrs.hasCreate) // eslint-disable-line
+          if (!$values.$inputs[0]) {
+            return
+          }
+
+          // 用户手动创建过
+          // if ($values.attrs.hasCreated ) {
+          if ($values.attrs.hasCreated === false) {
+            if (!options || !options.length) {
+              options = await this.scope.loadNodeFieldOptions($values.$inputs[0])
+            }
+
+            if (options && options.length) {
+              let isPrimaryKeyList = options.filter(item => item.isPrimaryKey)
+              let indicesUniqueList = options.filter(item => item.indicesUnique)
+              let defaultList = (isPrimaryKeyList.length ? isPrimaryKeyList : indicesUniqueList).map(item => item.value)
+
+              if (!value || !value.length) {
+                nodeData.updateConditionFields = defaultList
+                $values.updateConditionFields = nodeData.updateConditionFields
+              } else if (value) {
+                let fieldMap = options.reduce((obj, item) => ((obj[item.value] = true), obj), {})
+                let filterValue = value.filter(v => fieldMap[v])
+
+                if (value.length !== filterValue.length) {
+                  nodeData.updateConditionFields = filterValue.length ? filterValue : defaultList
+                  $values.updateConditionFields = nodeData.updateConditionFields
+                }
+              }
+            }
+          }
+
+          return !$values.updateConditionFields?.length ? i18n.t('packages_dag_mixins_formscope_gaiziduanshibi') : ''
+        },
+
+        validateTableNames: (value, rule, ctx) => {
+          const { field, form } = ctx
+          const $values = form.values
+
+          if (!value.length) {
+            this.scope.clearNodeError($values.id)
+            return
+          }
+
+          const parents = this.scope.findParentNodes($values.id)
+
+          if (parents && parents.length && parents[0].tableNames.length) {
+            let tableNames = parents[0].tableNames
+            let countByName = {}
+            let duplicateTableNames = new Set()
+            let tableNameMap = value.reduce((obj, item) => {
+              obj[item.previousTableName] = item.currentTableName
+              if (item.currentTableName in countByName) {
+                countByName[item.currentTableName]++
+                duplicateTableNames.add(item.currentTableName)
+              } else {
+                countByName[item.currentTableName] = 1
+              }
+              return obj
+            }, {})
+            let currentTableNames = Object.values(tableNameMap)
+            // if (currentTableNames.length !== new Set(currentTableNames).size) return rule.message
+            tableNames.forEach(name => {
+              if (currentTableNames.includes(name) && !tableNameMap[name]) {
+                duplicateTableNames.add(name)
+              }
+            })
+            if (duplicateTableNames.size) {
+              return `${rule.message}: ${[...duplicateTableNames].join(', ')}`
+            }
+          }
+
+          this.scope.clearNodeError($values.id)
         }
       }
     }

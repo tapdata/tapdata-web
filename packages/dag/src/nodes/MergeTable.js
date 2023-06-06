@@ -105,8 +105,8 @@ export class MergeTable extends NodeType {
                           fulfill: {
                             run: `{{
                                   const arr = $self.value.split('.')
-                                  if (arr.length > 2) {
-                                    $self.value = arr.slice(0,2).join('.')
+                                  if (arr.length > 3) {
+                                    $self.value = arr.slice(0,3).join('.')
                                     $self.description = '${i18n.t(
                                       'packages_dag_nodes_mergetable_const_zuiduozhichiliangceng'
                                     )}'

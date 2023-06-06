@@ -1,11 +1,32 @@
-import { debounce } from 'lodash'
+import { debounce, cloneDeep } from 'lodash'
 import i18n from '@tap/i18n'
 import { defineComponent, ref, reactive, nextTick, watch, computed } from '@vue/composition-api'
 import { metadataInstancesApi, taskApi } from '@tap/api'
 import { FormItem } from '@tap/form'
 import { useForm } from '@tap/form'
 import './style.scss'
-import { VIcon, EmptyItem, OverflowTooltip } from '@tap/component'
+import { VIcon, EmptyItem, OverflowTooltip, VirtualList } from '@tap/component'
+
+const InnerInput = {
+  name: 'InnerInput',
+  props: ['value', 'readOnly'],
+  data() {
+    return {
+      val: null
+    }
+  },
+  watch: {
+    value(val) {
+      this.val = val
+    }
+  },
+  created() {
+    this.val = this.value
+  },
+  render() {
+    return <input class="px-1" readOnly={this.readOnly} value={this.val} onChange={ev => this.$emit('change', ev)} />
+  }
+}
 
 export const FieldRenameProcessor = defineComponent({
   props: ['value', 'nodeId', 'disabled'],
@@ -98,6 +119,38 @@ export const FieldRenameProcessor = defineComponent({
         tableList.value = config.target
       }
     }
+
+    const columns = [
+      {
+        type: 'selection'
+      },
+      {
+        label: i18n.t('public_serial_number'),
+        type: 'index',
+        align: 'center'
+      },
+      {
+        label: i18n.t('packages_form_dag_dialog_field_mapping_field'),
+        showOverflowTooltip: true,
+        prop: 'sourceFieldName',
+        slot: 'sourceFieldName',
+        width: 140
+      },
+      {
+        label: i18n.t('packages_form_field_processor_index_xinziduanming'),
+        showOverflowTooltip: true,
+        prop: 'targetFieldName',
+        slot: 'targetFieldName',
+        class: 'p-0 pt-1',
+        width: 140
+      },
+      {
+        label: i18n.t('public_operation'),
+        prop: 'operation',
+        // width: 60,
+        slot: 'operation'
+      }
+    ]
 
     const filterFieldList = computed(() => {
       const search = config.searchField.trim().toLowerCase()
@@ -223,9 +276,7 @@ export const FieldRenameProcessor = defineComponent({
         if (index > -1) {
           //联调右侧表格全选
           nextTick(() => {
-            tableList.value.forEach(row => {
-              refs.table?.toggleRowSelection(row, true)
-            })
+            refs.table?.toggleAllSelection()
           })
         }
         if (index === -1) {
@@ -245,6 +296,12 @@ export const FieldRenameProcessor = defineComponent({
     const doSelectionField = value => {
       config.checkedFields = value
     }
+
+    // 清空选中字段
+    const doClearSelection = () => {
+      config.checkedFields = []
+    }
+
     const doVisible = (target, val) => {
       config[target] = val
     }
@@ -273,7 +330,7 @@ export const FieldRenameProcessor = defineComponent({
             qualifiedName: t?.sourceQualifiedName,
             originTableName: t?.sourceObjectName,
             previousTableName: t?.sinkObjectName,
-            operation: config.operation,
+            operation: cloneDeep(config.operation),
             fields: []
           }
         })
@@ -371,9 +428,9 @@ export const FieldRenameProcessor = defineComponent({
             }
           ]}
         >
-          <input
+          <InnerInput
             readOnly={props.disabled}
-            class="rename-table-item-input px-2"
+            class="rename-table-item-input px-1"
             value={row.targetFieldName}
             onChange={event => {
               const val = event.target.value?.trim()
@@ -384,11 +441,11 @@ export const FieldRenameProcessor = defineComponent({
                 event.target.value = row.targetFieldName
               }
             }}
-          />
+          ></InnerInput>
         </div>
       ) : (
-        <div class="cursor-pointer">
-          <span class="col-new-field-name inline-block ellipsis align-middle  mr-4 ">{row.targetFieldName}</span>
+        <div class="cursor-pointer pt-1 pl-1">
+          <span class="col-new-field-name inline-block ellipsis align-middle">{row.targetFieldName}</span>
         </div>
       )
     }
@@ -421,7 +478,8 @@ export const FieldRenameProcessor = defineComponent({
         doUpdateField(field, 'del', false)
       })
       updateDeletedNum(config.selectTableRow)
-      refs.table?.clearSelection()
+      // refs.table?.clearSelection()
+      doCheckAllChange(false)
     }
 
     const batchShow = () => {
@@ -431,7 +489,8 @@ export const FieldRenameProcessor = defineComponent({
         doUpdateField(field, 'del', true)
       })
       updateDeletedNum(config.selectTableRow)
-      refs.table?.clearSelection()
+      // refs.table?.clearSelection()
+      doCheckAllChange(false)
     }
 
     watch(
@@ -448,6 +507,7 @@ export const FieldRenameProcessor = defineComponent({
     return {
       list,
       tableList,
+      columns,
       filterFieldList,
       config,
       loadData,
@@ -456,6 +516,7 @@ export const FieldRenameProcessor = defineComponent({
       doCheckAllChange,
       doCheckedTablesChange,
       doSelectionField,
+      doClearSelection,
       tableRowClassName,
       renderNode,
       renderSourceNode,
@@ -557,7 +618,7 @@ export const FieldRenameProcessor = defineComponent({
             </ElPagination>
           </div>
           <div class="main">
-            <div class="flex ml-2 text-start justify-content-between" style="margin-bottom: 8px">
+            <div class="flex ml-2 text-start justify-content-between" style="margin-bottom: 8px;margin-right: -1px;">
               <div class="flex field-search-input-wrap">
                 <ElInput
                   size="mini"
@@ -614,53 +675,22 @@ export const FieldRenameProcessor = defineComponent({
                 </ElButton>
               </div>
             </div>
-            <ElTable
-              class="field-mapping-table border-start-0 border-end-0 border-bottom-0"
-              border
-              height="100%"
-              ref={'table'}
+            <VirtualList
+              ref="table"
               data={this.filterFieldList}
-              v-loading={this.config.loadingTable}
+              columns={this.columns}
+              item-key="sourceFieldName"
+              scopedSlots={{
+                sourceFieldName: this.renderSourceNode,
+                targetFieldName: this.renderNode,
+                operation: this.renderOpNode
+              }}
               row-class-name={this.tableRowClassName}
-              onSelection-change={this.doSelectionField}
-            >
-              <ElTableColumn type="selection" width="32" class-name="ck-cell-wrap"></ElTableColumn>
-              <ElTableColumn
-                align="center"
-                type="index"
-                width="55"
-                label={i18n.t('packages_form_field_mapping_list_xuhao')}
-              ></ElTableColumn>
-              <ElTableColumn
-                show-overflow-tooltip
-                label={i18n.t('packages_form_dag_dialog_field_mapping_field')}
-                prop="sourceFieldName"
-                scopedSlots={{
-                  default: this.renderSourceNode
-                }}
-              ></ElTableColumn>
-              <ElTableColumn
-                class-name="p-0"
-                show-overflow-tooltip
-                label={i18n.t('packages_form_field_processor_index_xinziduanming')}
-                prop="targetFieldName"
-                scopedSlots={{
-                  default: this.renderNode
-                }}
-              ></ElTableColumn>
-              <ElTableColumn
-                align="center"
-                label={i18n.t('public_operation')}
-                prop="isShow"
-                width={'60px'}
-                scopedSlots={{
-                  default: this.renderOpNode
-                }}
-              ></ElTableColumn>
-              <div class="field-mapping-table__empty" slot="empty">
-                <EmptyItem></EmptyItem>
-              </div>
-            </ElTable>
+              on-selection-change={this.doSelectionField}
+              on-clear-selection={this.doClearSelection}
+              border
+              class="flex-fill h-0"
+            ></VirtualList>
           </div>
         </div>
         <ElDialog
