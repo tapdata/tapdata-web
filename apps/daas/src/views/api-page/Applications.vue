@@ -294,7 +294,11 @@ export default {
     },
     // 获取角色
     getRoles() {
-      roleApi.get({}).then(data => {
+      let filter = {
+        limit: 500,
+        skip: 0
+      }
+      roleApi.get({ filter: JSON.stringify(filter) }).then(data => {
         this.roles = data?.items || []
       })
     },

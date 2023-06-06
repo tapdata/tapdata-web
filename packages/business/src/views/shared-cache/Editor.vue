@@ -37,7 +37,7 @@ export default {
   methods: {
     init() {
       this.$nextTick(() => {
-        this.$refs.form.init()
+        this.$refs.form?.init()
       })
     },
 

@@ -31,7 +31,7 @@
           <TaskStatus :task="row" />
         </template>
       </el-table-column>
-      <el-table-column width="220" fixed="right" :label="$t('public_operation')">
+      <el-table-column width="260" fixed="right" :label="$t('public_operation')">
         <template #default="{ row }">
           <div class="table-operations">
             <ElLink
@@ -89,6 +89,15 @@
               @click="handleReset(row)"
             >
               {{ $t('public_button_reset') }}
+            </ElLink>
+            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+            <ElLink
+              v-readonlybtn="'SYNC_job_edition'"
+              type="primary"
+              :disabled="row.btnDisabled.delete || $disabledReadonlyUserBtn()"
+              @click="handleDelete(row)"
+            >
+              {{ $t('public_button_delete') }}
             </ElLink>
           </div>
         </template>
@@ -168,16 +177,46 @@
     </el-dialog>
 
     <Editor ref="editor" @success="table.fetch(1)"></Editor>
+
+    <!-- 挖掘关联的任务 -->
+    <ElDialog
+      :title="$t('public_message_title_prompt')"
+      :close-on-click-modal="false"
+      :visible.sync="showUsingTaskDialog.visible"
+      custom-class="create-role"
+      width="600px"
+    >
+      <div>
+        {{ $t('packages_business_shared_mining_list_gaiwajuerenwu', { val: showUsingTaskDialog.list.length }) }}
+      </div>
+      <VTable :columns="taskColumns" :data="showUsingTaskDialog.list" :has-pagination="false">
+        <template #name="{ row }">
+          <ElLink type="primary" @click="handleName(row)">{{ row.name }}</ElLink>
+        </template>
+      </VTable>
+      <div slot="footer" class="dialog-footer">
+        <ElButton
+          size="mini"
+          @click="
+            showUsingTaskDialog.list = []
+            showUsingTaskDialog.visible = false
+          "
+          >{{ $t('public_button_cancel') }}
+        </ElButton>
+      </div>
+    </ElDialog>
   </section>
 </template>
 
 <script>
 import dayjs from 'dayjs'
 import { logcollectorApi, taskApi, workerApi } from '@tap/api'
-import { FilterBar } from '@tap/component'
+import { FilterBar, VTable } from '@tap/component'
 import { TablePage, TaskStatus, makeStatusAndDisabled } from '@tap/business'
 
 import Editor from './Editor'
+import i18n from '@tap/i18n'
+import { openUrl } from '@tap/shared'
 
 let timeout = null
 export default {
@@ -186,7 +225,8 @@ export default {
     TablePage,
     FilterBar,
     TaskStatus,
-    Editor
+    Editor,
+    VTable
   },
   data() {
     return {
@@ -234,7 +274,18 @@ export default {
       },
       taskBuried: {
         start: 'sharedMiningStart'
-      }
+      },
+      showUsingTaskDialog: {
+        visible: false,
+        list: []
+      },
+      taskColumns: [
+        {
+          label: i18n.t('public_task_name'),
+          prop: 'name',
+          slotName: 'name'
+        }
+      ]
     }
   },
   mounted() {
@@ -242,6 +293,7 @@ export default {
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
     }, 8000)
+    this.searchParams = Object.assign(this.searchParams, { taskName: this.$route.query?.keyword || '' })
   },
   computed: {
     table() {
@@ -463,6 +515,48 @@ export default {
           this.table.fetch()
         })
       })
+    },
+
+    async handleDelete(row) {
+      const filter = {
+        type: 'task_by_collector',
+        taskId: row.id
+      }
+      this.showUsingTaskDialog.list = await taskApi.taskConsoleRelations(filter)
+
+      this.$confirm(this.$t('packages_business_shared_mining_list_shanchurenwus', { val1: row.name }), '', {
+        type: 'warning',
+        dangerouslyUseHTMLString: true
+      }).then(flag => {
+        if (!flag) {
+          return
+        }
+        if (this.showUsingTaskDialog.list.length) {
+          this.showUsingTaskDialog.visible = true
+          return
+        }
+        taskApi.batchDelete([row.id]).then(data => {
+          this.$message.success(data?.message || this.$t('public_message_operation_success'))
+          this.table.fetch()
+        })
+      })
+    },
+
+    handleName({ syncType, name, type }) {
+      const MAP = {
+        migrate: 'migrateList',
+        sync: 'dataflowList',
+        logCollector: 'sharedMiningList',
+        mem_cache: 'sharedCacheList',
+        connHeartbeat: 'HeartbeatTableList'
+      }
+      const routeUrl = this.$router.resolve({
+        name: MAP[type] || MAP[syncType],
+        query: {
+          keyword: name
+        }
+      })
+      openUrl(routeUrl.href)
     }
   }
 }

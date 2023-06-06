@@ -324,11 +324,11 @@
           >
         </div>
         <ul v-if="form.path" class="data-server-path">
-          <li v-for="(url, method) in urls" :key="method" class="data-server-path__item">
-            <div class="data-server-path__method" :class="'method--' + method">
-              {{ method }}
+          <li v-for="item in urlList" :key="item.method" class="data-server-path__item">
+            <div class="data-server-path__method" :class="'method--' + item.method">
+              {{ item.method }}
             </div>
-            <div class="data-server-path__value line-height">{{ url }}</div>
+            <div class="data-server-path__value line-height">{{ item.url }}</div>
           </li>
         </ul>
       </template>
@@ -495,6 +495,25 @@ export default {
       }
       this.form.path = '/api/' + arr.join('/')
       return '/api/' + arr.join('/')
+    },
+
+    urlList() {
+      let baseUrl = this.host + this.customizePath
+
+      return [
+        {
+          method: 'POST',
+          url: `${baseUrl}/find`
+        },
+        {
+          method: 'GET',
+          url: `${baseUrl}`
+        },
+        {
+          method: 'TOKEN',
+          url: `${location.origin + location.pathname}oauth/token`
+        }
+      ]
     }
   },
   watch: {
@@ -594,7 +613,11 @@ export default {
     },
     // 获取角色
     getRoles() {
-      roleApi.get({}).then(data => {
+      let filter = {
+        limit: 500,
+        skip: 0
+      }
+      roleApi.get({ filter: JSON.stringify(filter) }).then(data => {
         this.roles = data?.items || []
       })
     },
@@ -987,16 +1010,16 @@ export default {
 
 <style lang="scss">
 .t-dialog.el-dialog {
+  position: absolute;
   display: flex;
   flex-direction: column;
-  margin: 0 !important;
-  position: absolute;
-  left: 50%;
-  top: 50%;
   max-height: calc(100% - 64px);
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto !important;
   overflow: hidden;
-  transform-style: preserve-3d;
-  transform: translate3d(-50%, -50%, 0);
   .el-dialog__header {
     padding: 24px !important;
   }

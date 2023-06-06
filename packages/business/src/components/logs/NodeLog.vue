@@ -189,8 +189,23 @@
         class="text-prewrap mt-n4 mb-6 ml-4 font-color-light"
       ></div>
 
-      <div v-if="codeDialog.data.errorStack" class="fw-bold fs-6 mb-2 ml-4 font-color-dark">
-        {{ $t('packages_business_logs_nodelog_cuowuduizhan') }}
+      <div v-if="codeDialog.data.errorStack" class="mb-2 ml-4 flex justify-content-between">
+        <span class="fw-bold font-color-dark fs-6">{{ $t('packages_business_logs_nodelog_cuowuduizhan') }}</span>
+        <ElTooltip
+          placement="top"
+          manual
+          :content="$t('dialog_tip_copied')"
+          popper-class="copy-tooltip"
+          :value="showTooltip"
+        >
+          <span
+            v-clipboard:copy="codeDialog.data.errorStack"
+            v-clipboard:success="onCopy"
+            @mouseleave="showTooltip = false"
+          >
+            <ElButton type="primary" size="mini">{{ $t('packages_business_logs_nodelog_yijianfuzhi') }}</ElButton>
+          </span>
+        </ElTooltip>
       </div>
       <div
         v-if="codeDialog.data.errorStack"
@@ -225,7 +240,7 @@ import { debounce, cloneDeep, uniqBy } from 'lodash'
 
 import { downloadBlob, openUrl } from '@tap/shared'
 import Time from '@tap/shared/src/time'
-import { VIcon, TimeSelect, VCollapse } from '@tap/component'
+import { VIcon, TimeSelect } from '@tap/component'
 import VEmpty from '@tap/component/src/base/v-empty/VEmpty.vue'
 import { monitoringLogsApi, taskApi, proxyApi } from '@tap/api'
 import NodeIcon from '@tap/dag/src/components/NodeIcon'
@@ -233,7 +248,7 @@ import NodeIcon from '@tap/dag/src/components/NodeIcon'
 export default {
   name: 'NodeLog',
 
-  components: { NodeIcon, VIcon, TimeSelect, DynamicScroller, DynamicScrollerItem, VEmpty, VCollapse },
+  components: { NodeIcon, VIcon, TimeSelect, DynamicScroller, DynamicScrollerItem, VEmpty },
 
   props: {
     dataflow: {
@@ -356,7 +371,8 @@ export default {
       switchData: {
         timestamp: false
       },
-      fullscreen: false
+      fullscreen: false,
+      showTooltip: false
     }
   },
 
@@ -847,6 +863,10 @@ export default {
     handleLog(item) {
       if (!item.hideContent) return
       item.expand = !item.expand
+    },
+
+    onCopy() {
+      this.showTooltip = true
     }
   }
 }
@@ -972,6 +992,11 @@ export default {
   &.has-describe {
     height: 280px;
   }
+}
+
+.clipboard-button {
+  right: 18px;
+  top: 30px;
 }
 </style>
 

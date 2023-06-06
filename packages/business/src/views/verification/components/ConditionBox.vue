@@ -8,9 +8,19 @@
         }}</span>
         <span class="color-danger ml-6">{{ jointErrorMessage }}</span>
       </div>
-      <ElLink type="primary" :disabled="!list.length" @click="handleClear">{{
-        $t('packages_business_verification_clear')
-      }}</ElLink>
+      <div>
+        <ElLink
+          v-if="inspectMethod !== 'row_count' && list.some(t => !t.source.sortColumn || !t.target.sortColumn)"
+          type="primary"
+          :disabled="!list.length"
+          class="mr-4"
+          @click="handleClearIndexEmpty"
+          >{{ $t('packages_business_components_conditionbox_yijianqingchusuo') }}</ElLink
+        >
+        <ElLink type="primary" :disabled="!list.length" @click="handleClear">{{
+          $t('packages_business_verification_clear')
+        }}</ElLink>
+      </div>
     </div>
     <DynamicScroller
       :items="list"
@@ -145,6 +155,16 @@
                 :id="'field-box-' + index"
                 @change="handleChangeFieldBox(arguments[0], item)"
               ></FieldBox>
+              <div v-else-if="inspectMethod !== 'row_count'" class="setting-item mt-4">
+                <label class="item-label">{{ $t('packages_business_verification_indexField') }}: </label>
+                <span :class="['item-value-text', { 'color-danger': !item.source.sortColumn }]">{{
+                  item.source.sortColumn || $t('packages_business_components_conditionbox_suoyinziduanwei')
+                }}</span>
+                <span class="item-icon"></span>
+                <span :class="['item-value-text', { 'color-danger': !item.target.sortColumn }]">{{
+                  item.target.sortColumn || $t('packages_business_components_conditionbox_suoyinziduanwei')
+                }}</span>
+              </div>
               <div class="setting-item mt-4">
                 <ElCheckbox
                   v-if="editId === item.id"
@@ -484,24 +504,6 @@ export default {
       return { items: tableNames, total: tableNames.length }
     },
 
-    getAllTablesInNode(nodeId) {
-      const findNode = this.flowStages.find(t => t.id === nodeId)
-      if (!findNode) return []
-      if (this.isDB) {
-        let tableList = findNode.tableNames || []
-        if (findNode.inputLanes.length) {
-          const objectNames = findNode.syncObjects?.[0]?.objectNames
-          const { tablePrefix, tableSuffix, tableNameTransform } = findNode
-          tableList = objectNames.map(t => {
-            let name = (tablePrefix || '') + t + (tableSuffix || '')
-            return tableNameTransform ? name[tableNameTransform]() : name
-          })
-        }
-        return tableList
-      }
-      return [findNode.tableName]
-    },
-
     /**
      * @desc 获取连线信息
      * @param1 value 节点id
@@ -533,6 +535,19 @@ export default {
       return result.map(re => {
         const el = this.flowStages.find(t => t.id === re.source)
         const targetNode = this.flowStages.find(t => t.id === re.target)
+        let updateConditionFieldMap = {}
+        let tableNames = []
+        let tableNameRelation = {}
+        if (targetNode.type === 'database') {
+          tableNames = el.tableNames
+          updateConditionFieldMap = targetNode.updateConditionFieldMap || {}
+          tableNameRelation = targetNode.syncObjects?.[0]?.tableNameRelation || []
+        } else if (targetNode.type === 'table') {
+          tableNames = [targetNode.tableName]
+          updateConditionFieldMap[targetNode.tableName] = targetNode.updateConditionFields || []
+          tableNameRelation[el.tableName] = targetNode.tableName
+        }
+
         return {
           source: el.id,
           sourceName: el.name,
@@ -543,7 +558,11 @@ export default {
           targetConnectionId: targetNode.connectionId,
           targetConnectionName: targetNode.attrs?.connectionName,
           sourceDatabaseType: el.databaseType,
-          targetDatabaseType: targetNode.databaseType
+          targetDatabaseType: targetNode.databaseType,
+          updateConditionFieldMap,
+          tableNames,
+          tableName: targetNode.tableName,
+          tableNameRelation
         }
       })
     },
@@ -563,8 +582,8 @@ export default {
 
     handleClear() {
       this.$confirm(
-        i18n.t('packages_business_verification_clear'),
         i18n.t('packages_business_components_conditionbox_shifouqingkongsuo'),
+        i18n.t('public_message_title_prompt'),
         {
           type: 'warning'
         }
@@ -573,6 +592,21 @@ export default {
           return
         }
         this.clearList()
+      })
+    },
+
+    handleClearIndexEmpty() {
+      this.$confirm(
+        i18n.t('packages_business_components_conditionbox_shifouquerenqing'),
+        i18n.t('public_message_title_prompt'),
+        {
+          type: 'warning'
+        }
+      ).then(res => {
+        if (!res) {
+          return
+        }
+        this.list = this.list.filter(t => t.source.sortColumn && t.target.sortColumn)
       })
     },
 
@@ -609,8 +643,7 @@ export default {
       matchNodeList.forEach(m => {
         connectionIds.push(m.sourceConnectionId)
         connectionIds.push(m.targetConnectionId)
-        tableNames.push(...this.getAllTablesInNode(m.source))
-        tableNames.push(...this.getAllTablesInNode(m.target))
+        tableNames.push(...m.tableNames)
       })
       if (!matchNodeList.length) {
         if (this.allStages.length > this.flowStages.length)
@@ -647,33 +680,57 @@ export default {
               sourceConnectionName,
               targetConnectionName,
               sourceDatabaseType,
-              targetDatabaseType
+              targetDatabaseType,
+              updateConditionFieldMap,
+              tableNameRelation
             } = m
-            const getAllTablesInNodeSource = this.getAllTablesInNode(source)
-            const getAllTablesInNodeTarget = this.getAllTablesInNode(target)
-            getAllTablesInNodeSource.forEach((ge, geIndex) => {
-              let findTable = data.find(t => t.source.id === sourceConnectionId && t.original_name === ge)
-              let findTargetTable = data.find(
-                t => t.source.id === targetConnectionId && t.original_name === getAllTablesInNodeTarget[geIndex]
-              )
+
+            const sourceTableList = Object.keys(tableNameRelation)
+            sourceTableList.forEach((ge, geIndex) => {
               let item = this.getItemOptions()
+              // 填充source
               item.source.nodeId = source
               item.source.nodeName = sourceName
               item.source.databaseType = sourceDatabaseType
               item.source.connectionId = `${source}/${sourceConnectionId}`
               item.source.connectionName = `${sourceName} / ${sourceConnectionName}`
-              item.source.table = findTable.original_name
-              item.source.fields = findTable.fields
-              item.source.sortColumn = this.getPrimaryKeyFieldStr(findTable.fields)
-
+              item.source.table = ge // findTable.original_name
+              // 填充target
               item.target.nodeId = target
               item.target.nodeName = targetName
               item.target.databaseType = targetDatabaseType
               item.target.connectionId = `${target}/${targetConnectionId}`
               item.target.connectionName = `${targetName} / ${targetConnectionName}`
-              item.target.table = findTargetTable.original_name
-              item.target.fields = findTargetTable.fields
-              item.target.sortColumn = this.getPrimaryKeyFieldStr(findTargetTable.fields)
+              item.target.table = tableNameRelation[ge] // findTargetTable.original_name
+
+              const updateList = cloneDeep(updateConditionFieldMap[tableNameRelation[ge]] || [])
+              let findTable = data.find(t => t.source.id === sourceConnectionId && t.original_name === ge)
+              let findTargetTable = data.find(
+                t => t.source.id === targetConnectionId && t.original_name === tableNameRelation[ge]
+              )
+
+              if (findTable) {
+                let sourceSortColumn = updateList.length
+                  ? updateList.join(',')
+                  : this.getPrimaryKeyFieldStr(findTable.fields)
+                if (updateList.length && findTargetTable?.fields) {
+                  sourceSortColumn = findTargetTable.fields
+                    .filter(t => updateList.includes(t.field_name))
+                    .map(t => t.original_field_name)
+                    .join(',')
+                }
+                item.source.fields = findTable.fields
+                item.source.sortColumn = sourceSortColumn
+              }
+
+              if (findTargetTable) {
+                const targetSortColumn = updateList.length
+                  ? updateList.join(',')
+                  : this.getPrimaryKeyFieldStr(findTargetTable.fields)
+                item.target.fields = findTargetTable.fields
+                item.target.sortColumn = targetSortColumn
+              }
+
               list.push(item)
             })
           })
@@ -744,6 +801,39 @@ export default {
       item.databaseType = val?.databaseType
     },
 
+    getReverseNodeInfo(data = {}) {
+      const {
+        source,
+        target,
+        sourceName,
+        targetName,
+        sourceConnectionId,
+        targetConnectionId,
+        sourceConnectionName,
+        targetConnectionName,
+        sourceDatabaseType,
+        targetDatabaseType,
+        updateConditionFieldMap,
+        tableNames,
+        tableName
+      } = data
+      return {
+        source: target,
+        target: source,
+        sourceName: targetName,
+        targetName: sourceName,
+        sourceConnectionId: targetConnectionId,
+        targetConnectionId: sourceConnectionId,
+        sourceConnectionName: targetConnectionName,
+        targetConnectionName: sourceConnectionName,
+        sourceDatabaseType: targetDatabaseType,
+        targetDatabaseType: sourceDatabaseType,
+        updateConditionFieldMap,
+        tableNames,
+        tableName
+      }
+    },
+
     handleChangeTable(val, item, index, type) {
       const fields = this.getFieldsByItem(item, type)
       item[type].fields = fields
@@ -752,39 +842,50 @@ export default {
       if (!this.taskId) {
         return
       }
+
+      // 获取连线信息
+      const matchNodeList = this.getMatchNodeList()
+      let matchNode = matchNodeList.find(t => [t.source, t.target].includes(item[type].nodeId))
+      if (!matchNode) {
+        return
+      }
+
+      if (matchNode.target === item[type].nodeId) {
+        matchNode = this.getReverseNodeInfo(matchNode)
+      }
+      const {
+        target,
+        targetName,
+        targetConnectionId,
+        targetConnectionName,
+        sourceDatabaseType,
+        targetDatabaseType,
+        updateConditionFieldMap,
+        tableName,
+        tableNameRelation
+      } = matchNode
+
+      // 自动填充索引字段
+      let updateList = updateConditionFieldMap[val] || {}
+      item[type].sortColumn = updateList.length ? updateList.join(',') : this.getPrimaryKeyFieldStr(fields)
+
       if (type === 'target') {
+        item.target.databaseType = targetDatabaseType
         return
       }
       // 自动填充目标连接和表
-      const { isDB } = this
-      const sourceNode = this.flowStages.find(t => t.id === item.source.nodeId)
-      const targetNodeId = sourceNode?.outputLanes?.[0]
-      const targetNode = this.flowStages.find(t => t.id === targetNodeId)
-      item.source.databaseType = sourceNode.databaseType
-      if (!targetNode) return
+      item.source.databaseType = sourceDatabaseType
 
-      const nodeId = targetNode.id
-      const nodeName = targetNode.name
-      const connectionId = targetNode.connectionId
-      const connectionName = targetNode.attrs?.connectionName
-      item.target.databaseType = targetNode.databaseType
-      item.target.nodeId = nodeId
-      item.target.nodeName = nodeName
-      item.target.connectionId = `${nodeId}/${connectionId}`
-      item.target.connectionName = `${nodeName} / ${connectionName}`
-      if (isDB) {
-        const findSourceTableIndex = sourceNode.tableNames.findIndex(t => t === val)
-        const objectNames = targetNode.syncObjects?.[0]?.objectNames || []
-        item.target.table = objectNames[findSourceTableIndex]
-      } else {
-        item.target.table = targetNode.tableName
-      }
+      item.target.nodeId = target
+      item.target.nodeName = targetName
+      item.target.connectionId = `${target}/${targetConnectionId}`
+      item.target.connectionName = `${targetName} / ${targetConnectionName}`
+      item.target.table = tableName ? tableName : tableNameRelation[val]
 
       // 加载目标的字段
-      const targetTableName = item.target.table
       const params = {
-        nodeId,
-        tableFilter: targetTableName,
+        nodeId: target,
+        tableFilter: item.target.table,
         page: 1,
         pageSize: 1
       }
@@ -795,9 +896,11 @@ export default {
             return { id, field_name, primary_key_position }
           }) || []
         // 设置主键
-        item.target.sortColumn = this.getPrimaryKeyFieldStr(item.target.fields)
+        item.target.sortColumn = updateList.length
+          ? updateList.join(',')
+          : this.getPrimaryKeyFieldStr(item.target.fields)
 
-        const key = [nodeId || '', connectionId, targetTableName].join()
+        const key = [target || '', targetConnectionId, item.target.table].join()
         this.fieldsMap[key] = item.target.fields
       })
     },
@@ -861,7 +964,7 @@ export default {
       this.fieldsMap[key] = data
     },
 
-    getFieldsByItem(item, type) {
+    getFieldsByItem(item, type = 'source') {
       const { nodeId, connectionId, table } = item[type] || {}
       return this.fieldsMap[[nodeId || '', connectionId, table].filter(t => t).join()] || []
     },
@@ -875,7 +978,7 @@ export default {
         )
       }
       return sortField(data)
-        .filter(f => f.primary_key_position > 0)
+        .filter(f => !!f.primaryKey)
         .map(t => t.field_name)
         .join(',')
     },
@@ -905,7 +1008,7 @@ export default {
       ) {
         this.setEditId(tasks[index - 1]?.id)
         this.$nextTick(() => {
-          formDom.childNodes[index - 1].querySelector('input').focus()
+          formDom.childNodes[index - 1]?.querySelector('input')?.focus()
         })
         message = this.$t('packages_business_verification_message_error_joint_table_target_or_source_not_set', {
           val: index
@@ -987,7 +1090,7 @@ export default {
       ) {
         this.setEditId(tasks[index - 1]?.id)
         this.$nextTick(() => {
-          formDom.childNodes[index - 1].querySelector('input').focus()
+          formDom.childNodes[index - 1]?.querySelector('input')?.focus()
         })
         message = this.$t('packages_business_verification_message_error_script_no_enter')
         this.jointErrorMessage = message

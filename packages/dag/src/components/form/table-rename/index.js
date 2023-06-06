@@ -9,6 +9,10 @@ import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
 import List from './List.vue'
 import './style.scss'
 
+// 源节点改变，表编辑按照批量配置重新应用，重新应用的场景如下：
+// 1. 记录源节点id，表编辑节点渲染时进行判断，如果源节点和上次记录的不同，重新应用批量规则
+// 2. 用户停留在表编辑节点时，监听源节点ID变化，重新应用批量规则
+
 export const TableRename = observer(
   defineComponent({
     props: ['findParentNodes', 'value', 'listStyle', 'disabled'],
@@ -46,7 +50,7 @@ export const TableRename = observer(
 
       let prevMap = {}
 
-      const makeTable = () => {
+      const makeTable = (...args) => {
         if (form.values.$inputs?.length) {
           const { taskId } = root.$store.state.dataflow
           loading.value = true
@@ -84,6 +88,18 @@ export const TableRename = observer(
                 parents[0].migrateTableSelectType === 'expression'
               ) {
                 parents[0].tableNames = tableDataRef.value.slice()
+              }
+
+              // 将源节点的ID保存在attrs中，用于后续的校验
+              const { sourceId } = form.values.attrs || {}
+              const inputId = parents[0]?.id
+
+              // 检查源节点是否发生变化，如果发生有效变化（新的源节点选了表），重新应用批量规则
+              if (sourceId && sourceId !== inputId && items.length) {
+                form.values.attrs.sourceId = inputId
+                doModify()
+              } else if (!sourceId && inputId) {
+                form.values.attrs.sourceId = inputId
               }
             })
             .finally(() => {
@@ -168,6 +184,7 @@ export const TableRename = observer(
         const arr = []
         let _countByName = {}
         Object.entries(nameMap).forEach(([previousTableName, currentTableName]) => {
+          // tableNames 里面源表名不存在的会被清掉
           const originTableName = prevMap[previousTableName]
           if (originTableName) {
             arr.push({

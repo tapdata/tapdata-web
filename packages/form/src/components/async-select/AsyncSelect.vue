@@ -95,11 +95,12 @@
       @mouseenter.native="inputHovering = true"
       @mouseleave.native="inputHovering = false"
     >
-      <template slot="prefix" v-if="$slots.prefix">
-        <slot name="prefix" />
+      <template slot="prefix" v-if="$scopedSlots.prefix">
+        <slot v-if="!visible" name="prefix" />
       </template>
       <template slot="suffix">
-        <slot name="prefix">
+        <span class="inline-flex align-center">
+          <slot v-if="!visible" name="suffix"></slot>
           <span v-if="showLoading" class="el-select__loading">
             <svg
               viewBox="0 0 1024 1024"
@@ -122,7 +123,7 @@
               @click="handleClearClick"
             ></i>
           </template>
-        </slot>
+        </span>
       </template>
     </ElInput>
     <transition name="el-zoom-in-top" @before-enter="handleMenuEnter" @after-leave="doDestroy">
@@ -136,7 +137,10 @@
           v-show="options.length > 0 && !showLoading"
         >
           <div v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled">
-            <ElOption :value="query" created v-if="showNewOption" />
+            <ElOption :value="query" created v-if="showNewOption">
+              <slot name="created-option" :value="query"></slot>
+            </ElOption>
+
             <template v-if="itemType === 'string'">
               <ElOption v-for="item in items" :key="item" :value="item" />
             </template>

@@ -192,7 +192,7 @@ export default {
 
     handleCheckAll(val) {
       this.checkAll = val
-      this.selections = val ? this.list : []
+      this.selections = val ? [...this.list] : []
       this.isIndeterminate = false
       this.$emit('selection-change', this.selections)
     },
@@ -205,6 +205,7 @@ export default {
     // 清空所有选中
     clearSelection() {
       this.handleCheckAll(false)
+      this.$emit('clear-selection')
     },
 
     getCheckboxValue(item) {
