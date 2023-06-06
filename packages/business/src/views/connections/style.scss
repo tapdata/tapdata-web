@@ -19,3 +19,62 @@
     }
   }
 }
+
+.connection-js-debug {
+  &-editor {
+    &.fullscreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100vh !important;
+      z-index: 10;
+      background: #fff;
+    }
+  }
+  .form-wrap {
+    height: 100%;
+    form {
+      height: 100%;
+    }
+    .formily-element-form-item,
+    .formily-element-form-item-control,
+    .formily-element-form-item-control-content,
+    .formily-element-form-item-control-content-component {
+      height: 100%;
+    }
+    .form-js-editor-wrap {
+      height: 100% !important;
+    }
+  }
+
+  .el-tabs__content {
+    flex: 1;
+    .el-tab-pane {
+      height: 100%;
+    }
+  }
+
+  .json-view-header {
+    padding: 0 8px;
+    background: #ebebeb;
+    line-height: 24px;
+    font-size: 12px;
+    border-radius: 4px 4px 0 0;
+  }
+
+  .run-button {
+    position: absolute;
+    top: 1px;
+    right: 2px;
+    z-index: 10;
+  }
+
+  .left-editor-box {
+    .form-js-editor-wrap .code-before .hljs {
+      line-height: 36px;
+    }
+  }
+}

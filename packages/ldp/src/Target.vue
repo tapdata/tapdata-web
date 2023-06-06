@@ -28,7 +28,7 @@
         <div
           v-for="item in filterList"
           :key="item.id"
-          class="wrap__item rounded-lg mb-3"
+          class="wrap__item rounded-lg mb-3 position-relative overflow-hidden"
           @dragover="handleDragOver"
           @dragenter.stop="handleDragEnter"
           @dragleave.stop="handleDragLeave"
@@ -68,6 +68,14 @@
                 </div>
               </div>
             </div>
+            <div
+              class="drop-mask position-absolute absolute-fill p-2 flex-column justify-content-center align-center gap-2"
+              :class="{ flex: nonSupportApi }"
+            >
+              <ElTooltip placement="top" :content="'目前支持的类型: ' + apiSupportTypes.join(',')">
+                <span> {{ `${$t('packages_dag_components_node_zanbuzhichi')} ${dragDatabaseType}` }}</span>
+              </ElTooltip>
+            </div>
           </template>
           <template v-else>
             <div class="item__header p-3">
@@ -82,7 +90,8 @@
                     size="small"
                     class="ml-1 px-1 flex align-center clickable"
                     @click="handleOpenWebsite(connectionWebsiteMap[item.id])"
-                    ><VIcon class="mr-1" size="14">open-in-new</VIcon>首页</ElTag
+                    ><VIcon class="mr-1" size="14">open-in-new</VIcon
+                    >{{ $t('packages_business_swimlane_target_shouye') }}</ElTag
                   ></span
                 >
                 <IconButton class="ml-1" @click="$emit('preview', item)">view-details</IconButton>
@@ -114,14 +123,14 @@
                   : 'packages_business_target_create_task_dialog_desc_prefix_clone'
               )
             }}</span
-            ><span v-if="dialogConfig.from" class="inline-flex align-center px-1 font-color-dark fw-sub"
+            ><span v-if="dialogConfig.from" class="inline-flex align-center px-1 font-color-dark fw-sub align-top"
               ><DatabaseIcon :item="dialogConfig.from" :key="dialogConfig.from.database_type" :size="20" class="mr-1" />
               <span>{{ dialogConfig.from.name }}</span> </span
             ><span v-if="dialogConfig.tableName" class="font-color-dark fw-sub"
               >/<span class="px-1">{{ dialogConfig.tableName }}</span> </span
             ><span>
               {{ $t('packages_business_target_create_task_dialog_desc_to') }}
-              <span v-if="dialogConfig.to" class="inline-flex align-center px-1 font-color-dark fw-sub"
+              <span v-if="dialogConfig.to" class="inline-flex align-center px-1 font-color-dark fw-sub align-top"
                 ><DatabaseIcon :item="dialogConfig.to" :key="dialogConfig.to.database_type" :size="20" class="mr-1" />
                 <span>{{ dialogConfig.to.name }}</span>
               </span></span
@@ -310,7 +319,8 @@ export default {
         pending: this.$t('public_status_unpublished'),
         generating: this.$t('public_status_to_be_generated')
       },
-      connectionWebsiteMap: {}
+      connectionWebsiteMap: {},
+      apiSupportTypes: ['Mysql', 'SQL Server', 'Oracle', 'MongoDB', 'PostgreSQL', 'Tidb', 'Doris']
     }
   },
 
@@ -331,6 +341,22 @@ export default {
           !this.fdmAndMdmId?.includes(item.id) &&
           (item.name?.includes(this.search) || item.value?.includes(this.search))
       )
+    },
+
+    dragDatabaseType() {
+      if (!this.dragState.isDragging) return
+
+      const object = this.dragState.draggingObjects[0]
+
+      if (object?.data.type === 'table') {
+        return object.parent.data.database_type
+      }
+
+      return object?.data.database_type
+    },
+
+    nonSupportApi() {
+      return this.dragDatabaseType && !this.apiSupportTypes.includes(this.dragDatabaseType)
     }
   },
 
@@ -360,7 +386,7 @@ export default {
     },
 
     handleAdd() {
-      this.$emit('create-target', 'target')
+      this.$emit('create-connection', 'target')
     },
 
     async getData() {
@@ -557,9 +583,10 @@ export default {
       const object = draggingObjects[0]
 
       if (!this.allowDrop) return
-
       if (item.LDP_TYPE === 'app') {
         if (object.data.type === 'table') {
+          if (!this.apiSupportTypes.includes(object.parent.data.database_type)) return
+
           this.apiDialog.from = object.parent.data
           this.apiDialog.tableName = object.data.name
           this.apiDialog.to = item
@@ -642,7 +669,8 @@ export default {
           accessNodeProcessId: db.accessNodeProcessId,
           pdkType: db.pdkType,
           pdkHash: db.pdkHash,
-          capabilities: db.capabilities || []
+          capabilities: db.capabilities || [],
+          hasCreated: false
         }
       }
     },
@@ -662,7 +690,7 @@ export default {
 
     showDialog() {
       this.dialogConfig.visible = true
-      this.dialogConfig.taskName = ''
+      this.dialogConfig.taskName = i18n.t('packages_dag_mixins_editor_xinrenwu') + new Date().toLocaleTimeString()
       this.$refs.form?.clearValidate()
     },
 

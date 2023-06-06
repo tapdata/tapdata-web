@@ -44,10 +44,10 @@
               class="flex align-items-center justify-content-between"
               @click="handleSelect(index)"
             >
-              <div class="task-form-text-box pl-4 inline-block">
+              <div class="task-form-text-box pl-2 inline-block flex-1 min-w-0">
                 <OverflowTooltip class="w-100 text-truncate target" :text="item.name" placement="right" />
               </div>
-              <ElTooltip
+              <!--<ElTooltip
                 v-if="item.matchedDataTypeLevel === 'error'"
                 placement="top"
                 transition="tooltip-fade-in"
@@ -55,7 +55,7 @@
                 class="mr-1"
               >
                 <VIcon size="16" class="color-warning">warning</VIcon>
-              </ElTooltip>
+              </ElTooltip>-->
             </li>
           </ul>
           <div v-else class="task-form-left__ul flex flex-column align-items-center">
@@ -129,6 +129,7 @@
           :show-columns="['index', 'field_name', 'data_type', 'operation']"
           :fieldChangeRules.sync="fieldChangeRules"
           :readonly="readonly"
+          ignore-error
           class="content__list flex-fill"
           @update-rules="handleUpdateRules"
         ></List>
@@ -400,7 +401,7 @@ export default {
       border-left-color: map-get($color, primary);
     }
     .task-form-text-box {
-      width: 140px;
+      //width: 140px;
       .target {
         height: 40px;
         line-height: 40px;

@@ -128,6 +128,10 @@ export default class Task extends Http {
     return this.axios.post('/api/task/migrate-js/test-run', params)
   }
 
+  testRunJsRpc(params) {
+    return this.axios.post('/api/task/migrate-js/test-run-rpc', params)
+  }
+
   getRunJsResult(params) {
     return this.axios.get('/api/task/migrate-js/get-result', { params })
   }

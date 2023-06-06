@@ -42,6 +42,10 @@
             @change="handleDefault(row)"
           ></ElSwitch>
           <ElDivider direction="vertical"></ElDivider>
+          <ElButton type="text" :disabled="!row.canEdit" @click="handleEdit(row)">{{
+            $t('public_button_edit')
+          }}</ElButton>
+          <ElDivider direction="vertical"></ElDivider>
           <ElButton type="text" :disabled="!row.canDelete" @click="remove(row)">{{
             $t('public_button_delete')
           }}</ElButton>
@@ -70,14 +74,18 @@
           <ElInput v-model="form.name"></ElInput>
         </ElFormItem>
         <ElFormItem required :label="$t('public_external_memory_type')">
-          <ElSelect v-model="form.type">
+          <ElSelect v-model="form.type" :disabled="!!form.id">
             <ElOption label="MongoDB" value="mongodb"></ElOption>
             <ElOption label="RocksDB" value="rocksdb"></ElOption>
           </ElSelect>
         </ElFormItem>
-        <ElFormItem :label="$t('packages_business_external_storage_list_cunchulujing')" prop="uri">
+        <ElFormItem
+          v-if="form.type !== 'memory'"
+          :label="$t('packages_business_external_storage_list_cunchulujing')"
+          prop="uri"
+        >
           <ElInput
-            v-model="form.uri"
+            v-model.trim="form.uri"
             :placeholder="
               form.type === 'mongodb'
                 ? 'Example: mongodb://admin:password@127.0.0.1:27017/mydb?replicaSet=xxx&authSource=admin'
@@ -145,6 +153,7 @@ import { cloneDeep, escapeRegExp } from 'lodash'
 import { externalStorageApi } from '@tap/api'
 import { TablePage, EXTERNAL_STORAGE_TYPE_MAP } from '@tap/business'
 import { FilterBar, Drawer } from '@tap/component'
+import { openUrl } from '@tap/shared'
 
 export default {
   components: { TablePage, FilterBar, Drawer },
@@ -314,13 +323,13 @@ export default {
     },
     async remove(row) {
       //先去请求是否外存已被使用了
-      this.usingTasks = await await externalStorageApi.usingTask(row.id)
+      this.usingTasks = (await externalStorageApi.usingTask(row.id)) || []
       const flag = await this.$confirm(i18n.t('packages_business_external_storage_list_querenshanchuwai'), '', {
         type: 'warning',
         showClose: false
       })
       if (flag) {
-        if (this.usingTasks) {
+        if (this.usingTasks?.length) {
           this.showUsingTaskDialog = true
         } else {
           await externalStorageApi.delete(row.id)
@@ -351,21 +360,29 @@ export default {
      * @param row
      */
     handleClickName(item) {
-      if (item?.syncType === 'migrate') {
-        this.$router.push({
-          name: 'migrateList',
-          query: {
-            keyword: item.name
-          }
-        })
-      } else {
-        this.$router.push({
-          name: 'dataflowList',
-          query: {
-            keyword: item.name
-          }
-        })
+      let { syncType, shareCache } = item
+      if (shareCache) {
+        syncType = 'mem_cache'
       }
+      const MAP = {
+        migrate: 'migrateList',
+        sync: 'dataflowList',
+        logCollector: 'sharedMiningList',
+        mem_cache: 'sharedCacheList',
+        connHeartbeat: 'HeartbeatTableList'
+      }
+      const routeUrl = this.$router.resolve({
+        name: MAP[syncType],
+        query: {
+          keyword: item.name
+        }
+      })
+      openUrl(routeUrl.href)
+    },
+
+    // 编辑
+    handleEdit(row = {}) {
+      this.openDialog(row)
     }
   }
 }

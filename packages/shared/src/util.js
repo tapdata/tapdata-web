@@ -219,6 +219,16 @@ export function downloadJson(data, name = '') {
   openUrl(window.URL.createObjectURL(blob), '_blank', fileName)
 }
 
+// 下载Json
+export function downloadJson(data, name = '') {
+  if (!data) {
+    return
+  }
+  const fileName = name
+  const blob = new Blob([data], { type: 'application/JSON' })
+  openUrl(window.URL.createObjectURL(blob), '_blank', fileName)
+}
+
 export const getConnectionTypeImg = function (type) {
   try {
     return require(`./assets/icons/node/${type}.svg`)

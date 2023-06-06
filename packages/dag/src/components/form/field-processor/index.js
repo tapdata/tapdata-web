@@ -1,4 +1,4 @@
-import { debounce } from 'lodash'
+import { debounce, cloneDeep } from 'lodash'
 import i18n from '@tap/i18n'
 import { defineComponent, ref, reactive, nextTick, watch, computed } from '@vue/composition-api'
 import { metadataInstancesApi, taskApi } from '@tap/api'
@@ -24,14 +24,7 @@ const InnerInput = {
     this.val = this.value
   },
   render() {
-    return (
-      <input
-        class="px-1"
-        readOnly={this.readOnly}
-        value={this.val}
-        onChange={ev => this.$emit('change', ev)}
-      />
-    )
+    return <input class="px-1" readOnly={this.readOnly} value={this.val} onChange={ev => this.$emit('change', ev)} />
   }
 }
 
@@ -303,6 +296,12 @@ export const FieldRenameProcessor = defineComponent({
     const doSelectionField = value => {
       config.checkedFields = value
     }
+
+    // 清空选中字段
+    const doClearSelection = () => {
+      config.checkedFields = []
+    }
+
     const doVisible = (target, val) => {
       config[target] = val
     }
@@ -331,7 +330,7 @@ export const FieldRenameProcessor = defineComponent({
             qualifiedName: t?.sourceQualifiedName,
             originTableName: t?.sourceObjectName,
             previousTableName: t?.sinkObjectName,
-            operation: config.operation,
+            operation: cloneDeep(config.operation),
             fields: []
           }
         })
@@ -479,7 +478,8 @@ export const FieldRenameProcessor = defineComponent({
         doUpdateField(field, 'del', false)
       })
       updateDeletedNum(config.selectTableRow)
-      refs.table?.clearSelection()
+      // refs.table?.clearSelection()
+      doCheckAllChange(false)
     }
 
     const batchShow = () => {
@@ -489,7 +489,8 @@ export const FieldRenameProcessor = defineComponent({
         doUpdateField(field, 'del', true)
       })
       updateDeletedNum(config.selectTableRow)
-      refs.table?.clearSelection()
+      // refs.table?.clearSelection()
+      doCheckAllChange(false)
     }
 
     watch(
@@ -515,6 +516,7 @@ export const FieldRenameProcessor = defineComponent({
       doCheckAllChange,
       doCheckedTablesChange,
       doSelectionField,
+      doClearSelection,
       tableRowClassName,
       renderNode,
       renderSourceNode,
@@ -684,7 +686,8 @@ export const FieldRenameProcessor = defineComponent({
                 operation: this.renderOpNode
               }}
               row-class-name={this.tableRowClassName}
-              onSelection-change={this.doSelectionField}
+              on-selection-change={this.doSelectionField}
+              on-clear-selection={this.doClearSelection}
               border
               class="flex-fill h-0"
             ></VirtualList>

@@ -1,3 +1,5 @@
+import { NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH } from './constants'
+
 export const getLeftmostTopNode = nodes => {
   return nodes.reduce((leftmostTop, node) => {
     if (node.position[0] > leftmostTop.position[0] || node.position[1] > leftmostTop.position[1]) {
@@ -8,20 +10,28 @@ export const getLeftmostTopNode = nodes => {
   })
 }
 
-export const getDataflowCorners = nodes => {
-  const [left, top] = nodes[0].attrs.position
+export const getDataflowCorners = (nodes, scale) => {
   return nodes.reduce(
     (accu, node) => {
-      const [left, top] = node.attrs.position
+      const { width = NODE_WIDTH, height = NODE_HEIGHT } =
+        document.getElementById(NODE_PREFIX + node.id)?.getBoundingClientRect() || {}
+      let [left, top] = node.attrs.position
+
       if (left < accu.minX) {
         accu.minX = left
       }
+
       if (top < accu.minY) {
         accu.minY = top
       }
+
+      left += width / scale
+      top += height / scale
+
       if (left > accu.maxX) {
         accu.maxX = left
       }
+
       if (top > accu.maxY) {
         accu.maxY = top
       }
@@ -29,10 +39,10 @@ export const getDataflowCorners = nodes => {
       return accu
     },
     {
-      minX: left,
-      minY: top,
-      maxX: left,
-      maxY: top
+      minX: Infinity,
+      minY: Infinity,
+      maxX: -Infinity,
+      maxY: -Infinity
     }
   )
 }

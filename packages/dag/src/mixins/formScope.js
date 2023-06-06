@@ -396,12 +396,11 @@ export default {
         /**
          * 加载节点的字段选项列表
          * @param nodeId
-         * @param filterField 字段的值不为空
          * @returns {Promise<{}|*>}
          */
-        loadNodeFieldOptions: async (nodeId, filterField) => {
+        loadNodeFieldOptions: async nodeId => {
           const fields = await this.scope.loadNodeFieldsById(nodeId)
-          let result = fields
+          return fields
             .map(item => ({
               label: item.field_name,
               value: item.field_name,
@@ -410,10 +409,6 @@ export default {
               type: item.data_type
             }))
             .filter(item => !item.is_deleted)
-          if (filterField) {
-            result = result.filter(t => !!t[filterField])
-          }
-          return result
         },
 
         loadDateFieldOptions: async nodeId => {
@@ -691,14 +686,24 @@ export default {
           addDeclaredCompleter(editor, tools, 'tapTable')
         },
 
-        async loadExternalStorage() {
+        async loadExternalStorage(id) {
           try {
-            const { items = [] } = await externalStorageApi.get()
+            let filter = {
+              where: {}
+            }
+            if (id) {
+              const ext = await externalStorageApi.get(id)
+              filter.where.type = ext.type
+            }
+            const { items = [] } = await externalStorageApi.get({
+              filter: JSON.stringify(filter)
+            })
             return items.map(item => {
               return {
                 label: item.name,
                 value: item.id,
-                isDefault: item.defaultStorage
+                isDefault: item.defaultStorage,
+                isBefore: item.id === id
               }
             })
           } catch (e) {
@@ -745,7 +750,13 @@ export default {
                   meta: f.data_type
                 }
               }) || []
+
+          const idx = editor.completers?.findIndex(item => item.id === 'recordFields') || -1
+
+          if (~idx) editor.completers.splice(idx, 1)
+
           editor.completers.push({
+            id: 'recordFields',
             // 获取补全提示列表
             getCompletions: function (editor, session, pos, prefix, callback) {
               // 判断当前行是否包含 '.'
@@ -796,8 +807,6 @@ export default {
               let indicesUniqueList = options.filter(item => item.indicesUnique)
               let defaultList = (isPrimaryKeyList.length ? isPrimaryKeyList : indicesUniqueList).map(item => item.value)
 
-              console.log('validateUpdateConditionFields.value', value, [...field.value], options) // eslint-disable-line
-
               if (!value || !value.length) {
                 nodeData.updateConditionFields = defaultList
                 $values.updateConditionFields = nodeData.updateConditionFields
@@ -814,6 +823,46 @@ export default {
           }
 
           return !$values.updateConditionFields?.length ? i18n.t('packages_dag_mixins_formscope_gaiziduanshibi') : ''
+        },
+
+        validateTableNames: (value, rule, ctx) => {
+          const { field, form } = ctx
+          const $values = form.values
+
+          if (!value.length) {
+            this.scope.clearNodeError($values.id)
+            return
+          }
+
+          const parents = this.scope.findParentNodes($values.id)
+
+          if (parents && parents.length && parents[0].tableNames.length) {
+            let tableNames = parents[0].tableNames
+            let countByName = {}
+            let duplicateTableNames = new Set()
+            let tableNameMap = value.reduce((obj, item) => {
+              obj[item.previousTableName] = item.currentTableName
+              if (item.currentTableName in countByName) {
+                countByName[item.currentTableName]++
+                duplicateTableNames.add(item.currentTableName)
+              } else {
+                countByName[item.currentTableName] = 1
+              }
+              return obj
+            }, {})
+            let currentTableNames = Object.values(tableNameMap)
+            // if (currentTableNames.length !== new Set(currentTableNames).size) return rule.message
+            tableNames.forEach(name => {
+              if (currentTableNames.includes(name) && !tableNameMap[name]) {
+                duplicateTableNames.add(name)
+              }
+            })
+            if (duplicateTableNames.size) {
+              return `${rule.message}: ${[...duplicateTableNames].join(', ')}`
+            }
+          }
+
+          this.scope.clearNodeError($values.id)
         }
       }
     }

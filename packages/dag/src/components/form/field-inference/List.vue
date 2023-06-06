@@ -21,10 +21,14 @@
         </span>
       </template>
       <template slot="data_type" slot-scope="scope">
-        <div class="position-relative" :class="{ 'pl-5': !!getCanUseDataTypesTooltip(scope.row.matchedDataTypeLevel) }">
+        <div
+          class="position-relative"
+          :class="{ 'pl-5': !ignoreError && !!getCanUseDataTypesTooltip(scope.row.matchedDataTypeLevel) }"
+        >
           <ElTooltip
+            v-if="!ignoreError"
             transition="tooltip-fade-in"
-            :disabled="!scope.row.matchedDataTypeLevel"
+            :disabled="scope.row.matchedDataTypeLevel !== 'error'"
             :content="getCanUseDataTypesTooltip(scope.row.matchedDataTypeLevel)"
             class="type-warning position-absolute"
           >
@@ -152,7 +156,8 @@ export default {
     type: {
       type: String,
       default: 'target'
-    }
+    },
+    ignoreError: Boolean
   },
 
   data() {
@@ -416,7 +421,7 @@ export default {
     },
 
     tableRowClassName({ row }) {
-      return row.matchedDataTypeLevel === 'error' ? 'warning-row' : ''
+      return !this.ignoreError && row.matchedDataTypeLevel === 'error' ? 'warning-row' : ''
     },
 
     getCanUseDataTypesTooltip(matchedDataTypeLevel) {
@@ -424,8 +429,8 @@ export default {
         error:
           this.type === 'target'
             ? i18n.t('packages_dag_field_inference_list_gaiziduanshuju')
-            : i18n.t('packages_dag_field_inference_list_gaiziduanwufa'),
-        warning: i18n.t('packages_dag_field_inference_list_gaiziduanyingshe')
+            : i18n.t('packages_dag_field_inference_list_gaiziduanwufa')
+        // warning: i18n.t('packages_dag_field_inference_list_gaiziduanyingshe')
       }
       return map[matchedDataTypeLevel]
     },

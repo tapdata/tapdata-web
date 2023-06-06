@@ -69,7 +69,7 @@
           <div class="footer-btn">
             <el-button @click="goBack()">{{ $t('public_button_back') }}</el-button>
             <el-button class="test" @click="startTest()">{{ $t('public_connection_button_test') }}</el-button>
-            <el-button v-if="pdkOptions.pdkId === 'custom'" class="test" @click="handleDebug">{{
+            <el-button v-if="['custom'].includes(pdkOptions.pdkId)" class="test" @click="handleDebug">{{
               $t('packages_business_connections_databaseform_jiaobentiaoshi')
             }}</el-button>
             <el-button type="primary" :loading="submitBtnLoading" @click="submit">
@@ -113,6 +113,14 @@
       </span>
     </el-dialog>
     <ConnectionDebug :visible.sync="showDebug" :schema="schemaData" :pdkOptions="pdkOptions" :get-form="getForm" />
+    <JsDebug
+      :visible.sync="showJsDebug"
+      :schema="jsDebugSchemaData"
+      :pdkOptions="pdkOptions"
+      :get-form="getForm"
+      :connection-id="connectionId"
+    />
+    <UsedTaskDialog v-model="connectionLogCollectorTaskDialog" :data="connectionLogCollectorTaskData"></UsedTaskDialog>
   </div>
 </template>
 
@@ -130,11 +138,13 @@ import resize from '@tap/component/src/directives/resize'
 import Test from './Test'
 import { getConnectionIcon } from './util'
 import { ConnectionDebug } from './ConnectionDebug'
+import { JsDebug } from './JsDebug'
 import SceneDialog from '../../components/create-connection/SceneDialog.vue'
+import UsedTaskDialog from './UsedTaskDialog'
 
 export default {
   name: 'DatabaseForm',
-  components: { SceneDialog, Test, VIcon, SchemaToForm, GitBook, ConnectionDebug },
+  components: { SceneDialog, Test, VIcon, SchemaToForm, GitBook, ConnectionDebug, UsedTaskDialog, JsDebug },
   inject: ['checkAgent', 'buried'],
   directives: {
     resize
@@ -175,17 +185,30 @@ export default {
       },
       pdkOptions: {},
       schemaData: null,
+      jsDebugSchemaData: null,
+      jsDebugParamsMethod: null,
+      jsDebugDataMethod: null,
       schemaScope: null,
       pdkFormModel: {},
       doc: '',
       pathUrl: '',
       showDebug: false,
-      heartbeatTaskId: ''
+      showJsDebug: false,
+      heartbeatTaskId: '',
+      connectionLogCollectorTaskDialog: false,
+      // 当前连接是否有共享缓存任务使用
+      connectionLogCollectorTaskData: {
+        items: [],
+        total: 0
+      }
     }
   },
   computed: {
     schemaFormInstance() {
       return this.$refs.schemaToForm.getForm?.()
+    },
+    connectionId() {
+      return this.model?.id || this.commandCallbackFunctionId
     }
   },
   created() {
@@ -480,6 +503,10 @@ export default {
             type: 'string',
             'x-decorator': 'FormItem',
             'x-component': 'Select',
+            'x-component-props': {
+              onChange: `{{ val => shareCDCExternalStorageIdOnChange(val, $form) }}`,
+              disabled: `{{ getShareCDCExternalStorageIdDisabled() }}`
+            },
             'x-reactions': [
               {
                 dependencies: ['__TAPDATA.shareCdcEnable'],
@@ -489,15 +516,57 @@ export default {
                   }
                 }
               },
-              '{{useAsyncDataSource(loadExternalStorage)}}',
+              '{{useAsyncDataSourceByConfig({service: loadExternalStorage, withoutField: true}, $values.id ? $self.value : null)}}',
               {
+                dependencies: ['__TAPDATA.shareCdcEnable'],
                 fulfill: {
                   state: {
-                    value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}'
+                    value: `{{ $deps[0] ? $self.value || $self.dataSource?.find(item => item.isDefault)?.value : '' }}`
                   }
                 }
               }
             ]
+          },
+          shareCDCExternalStorageIdTips: {
+            type: 'void',
+            title: ' ',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              colon: false,
+              className: 'mt-n6'
+            },
+            'x-component': 'Space',
+            'x-reactions': [
+              {
+                fulfill: {
+                  state: {
+                    display: `{{ getShareCDCExternalStorageIdDisabled() ? "visible" : "hidden" }}`
+                  }
+                }
+              }
+            ],
+            properties: {
+              tips: {
+                type: 'void',
+                'x-decorator': 'FormItem',
+                'x-component': 'Text',
+                'x-component-props': {
+                  content: i18n.t('packages_business_connections_databaseform_dangqianlianjiede'),
+                  class: 'color-danger'
+                }
+              },
+              Link: {
+                type: 'void',
+                'x-decorator': 'FormItem',
+                'x-component': 'Button',
+                'x-component-props': {
+                  type: 'text',
+                  class: 'text-decoration-underline',
+                  onClick: '{{handleLogCollectorTaskDialog}}'
+                },
+                'x-content': i18n.t('packages_business_connections_databaseform_chakanwajueren')
+              }
+            }
           }
         }
         END.properties.__TAPDATA.properties = Object.assign({}, END.properties.__TAPDATA.properties, config)
@@ -817,6 +886,11 @@ export default {
       }
       if (id) {
         await this.getPdkData(id)
+        // 开启了共享挖掘
+        const { shareCdcEnable, shareCDCExternalStorageId } = this.model
+        if (shareCdcEnable && shareCDCExternalStorageId) {
+          this.connectionLogCollectorTaskData = await connectionsApi.usingDigginTaskByConnectionId(id)
+        }
         delete result.properties.START.properties.__TAPDATA.properties.name
       }
 
@@ -951,9 +1025,20 @@ export default {
             }
           })
         },
-        async loadExternalStorage() {
+        async loadExternalStorage(id) {
           try {
-            const { items = [] } = await externalStorageApi.list()
+            let filter = {
+              where: {},
+              limit: 1000,
+              skip: 0
+            }
+            if (id) {
+              const ext = await externalStorageApi.get(id)
+              filter.where.type = ext?.type
+            }
+            const { items = [] } = await externalStorageApi.list({
+              filter: JSON.stringify(filter)
+            })
             return items.map(item => {
               return {
                 label: item.name,
@@ -987,13 +1072,52 @@ export default {
             }
           })
           submitForm(params?.target, data)
+        },
+        shareCDCExternalStorageIdOnChange: (val, $form) => {
+          $form.setFieldState('__TAPDATA.shareCDCExternalStorageIdTips', state => {
+            state.display =
+              this.connectionLogCollectorTaskData.total && val !== this.model.shareCDCExternalStorageId
+                ? 'visible'
+                : 'hidden'
+          })
+        },
+        getShareCDCExternalStorageIdDisabled: () => {
+          return !!this.connectionLogCollectorTaskData.total
+        },
+        handleLogCollectorTaskDialog: async () => {
+          this.connectionLogCollectorTaskDialog = true
+        },
+        handleJsDebug: (path = []) => {
+          const properties = this.schemaData?.properties || {}
+          let fieldObj = {}
+          path.forEach(p => {
+            const { key, data } = this.getOptionByPath(properties, p)
+            fieldObj[key] = data
+          })
+          this.jsDebugSchemaData = fieldObj
+          this.showJsDebug = true
         }
       }
       this.schemaData = result
       this.loadingFrom = false
     },
     async getPdkData(id) {
-      await connectionsApi.getNoSchema(id).then(data => {
+      await connectionsApi.getNoSchema(id).then(async data => {
+        // 检查外存是否存在，不存在则设置默认外存
+        const ext = await externalStorageApi.get(data.shareCDCExternalStorageId)
+        if (!ext) {
+          data.shareCDCExternalStorageId = ''
+          let filter = {
+            where: {
+              defaultStorage: true
+            }
+          }
+
+          const { items = [] } = await externalStorageApi.list({
+            filter: JSON.stringify(filter)
+          })
+          data.shareCDCExternalStorageId = items[0]?.id
+        }
         this.model = data
         let {
           name,
@@ -1024,7 +1148,8 @@ export default {
             schemaUpdateHour,
             heartbeatEnable
           },
-          ...this.model?.config
+          ...this.model?.config,
+          id: this.model?.id
         })
         this.renameData.rename = this.model.name
       })
@@ -1079,6 +1204,20 @@ export default {
           ...__TAPDATA_CONFIG,
           ...trace
         })
+      }
+    },
+
+    getOptionByPath(obj = {}, path) {
+      const arr = path.split('.')
+      const key = arr.shift()
+      const data = obj[key] || {}
+      if (arr.length) {
+        return this.getOptionByPath(data.properties, arr.join('.'))
+      }
+      delete data.title
+      return {
+        key,
+        data
       }
     }
   }

@@ -14,3 +14,5 @@ let Time = {
 }
 
 export default Time
+
+export { Time }

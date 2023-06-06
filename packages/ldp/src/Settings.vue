@@ -271,7 +271,7 @@ export default {
     disabled() {
       return (
         this.setting &&
-        this.setting.fdmStorageCluster === this.form.fdmStorageCluster &&
+        // this.setting.fdmStorageCluster === this.form.fdmStorageCluster &&
         this.setting.fdmStorageConnectionId === this.form.fdmStorageConnectionId
       )
     },

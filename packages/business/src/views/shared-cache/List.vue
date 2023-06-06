@@ -1,19 +1,51 @@
 <template>
   <section class="shared-cache-list-wrap h-100">
-    <TablePage ref="table" row-key="id" :remoteMethod="getData" @sort-change="handleSortTable">
+    <TablePage
+      ref="table"
+      row-key="id"
+      :remoteMethod="getData"
+      @sort-change="handleSortTable"
+      @selection-change="handleSelectionChange"
+    >
       <template slot="search">
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </template>
       <div slot="operation">
+        <template>
+          <el-button
+            v-show="multipleSelection.length > 0 && isDaas"
+            :disabled="$disabledReadonlyUserBtn()"
+            v-readonlybtn="'SYNC_job_export'"
+            size="mini"
+            class="btn message-button-cancel"
+            @click="handleExport"
+          >
+            <span> {{ $t('public_button_export') }}</span>
+          </el-button>
+          <el-button
+            v-if="isDaas"
+            v-readonlybtn="'SYNC_job_import'"
+            size="mini"
+            class="btn"
+            :disabled="$disabledReadonlyUserBtn()"
+            @click="handleImport"
+          >
+            <span> {{ $t('packages_business_button_bulk_import') }}</span>
+          </el-button>
+        </template>
         <ElButton class="btn btn-create" type="primary" size="mini" @click="create">
           <span> {{ $t('packages_business_shared_cache_button_create') }}</span>
         </ElButton>
       </div>
-      <ElTableColumn
-        show-overflow-tooltip
-        prop="name"
-        :label="$t('packages_business_shared_cache_name')"
+      <el-table-column
+        reserve-selection
+        type="selection"
+        width="45"
+        align="center"
+        :selectable="row => !row.hasChildren"
       >
+      </el-table-column>
+      <ElTableColumn show-overflow-tooltip prop="name" :label="$t('packages_business_shared_cache_name')">
         <template #default="{ row }">
           <ElLink style="display: inline" type="primary" @click.stop="checkDetails(row)">{{ row.name }}</ElLink>
         </template>
@@ -53,7 +85,7 @@
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
               :disabled="row.btnDisabled.start"
-              @click="start([row.id])"
+              @click="start([row.id], row)"
             >
               {{ $t('public_button_start') }}
             </ElLink>
@@ -119,25 +151,31 @@
     </TablePage>
     <Editor ref="editor" @success="table.fetch(1)"></Editor>
     <Details ref="details" width="380px"></Details>
+    <!-- 导入 -->
+    <Upload v-if="isDaas" type="dataflow" :show-tag="false" ref="upload" @success="table.fetch()"></Upload>
   </section>
 </template>
 
 <script>
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash'
-import { sharedCacheApi, taskApi } from '@tap/api'
+
+import i18n from '@tap/i18n'
+import { externalStorageApi, sharedCacheApi, taskApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage, TaskStatus, makeStatusAndDisabled } from '@tap/business'
 
 import Editor from './Editor'
 import Details from './Details'
+import Upload from '../../components/UploadDialog'
 
 let timeout = null
 export default {
   inject: ['buried'],
-  components: { TablePage, FilterBar, TaskStatus, Editor, Details },
+  components: { TablePage, FilterBar, TaskStatus, Editor, Details, Upload },
   data() {
     return {
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       searchParams: {
         name: '',
         connectionName: ''
@@ -157,7 +195,8 @@ export default {
       order: 'cacheTimeAt DESC',
       taskBuried: {
         start: 'sharedMiningStart'
-      }
+      },
+      multipleSelection: []
     }
   },
   computed: {
@@ -175,6 +214,7 @@ export default {
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
     }, 8000)
+    this.searchParams = Object.assign(this.searchParams, { name: this.$route.query?.keyword || '' })
   },
   destroyed() {
     clearInterval(timeout)
@@ -236,7 +276,16 @@ export default {
       this.table.fetch(1)
     },
 
-    start(ids) {
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+    },
+
+    async start(ids, row) {
+      const externalStorage = await externalStorageApi.get(row.externalStorageId)
+      if (!externalStorage?.id) {
+        this.$message.error(i18n.t('packages_business_shared_cache_list_qingxianxiugaiwai'))
+        return
+      }
       this.buried(this.taskBuried.start)
       let filter = {
         where: {
@@ -344,6 +393,15 @@ export default {
           this.table.fetch()
         })
       })
+    },
+
+    handleExport() {
+      const ids = this.multipleSelection.map(t => t.id)
+      taskApi.export(ids)
+    },
+
+    handleImport() {
+      this.$refs.upload.show()
     }
   }
 }

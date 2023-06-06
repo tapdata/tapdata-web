@@ -25,3 +25,9 @@
     gap: 8px;
   }
 }
+
+.formily-element-form-item.danger-description {
+  .formily-element-form-item-extra {
+    color: map-get($color, danger);
+  }
+}

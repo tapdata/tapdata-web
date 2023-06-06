@@ -19,7 +19,7 @@
           @click="handleExport"
         >
           <i class="iconfont icon-daoru back-btn-icon"></i>
-          <span> {{ $t('public_button_bulk_export') }}</span>
+          <span> {{ $t('public_button_export') }}</span>
         </ElButton>
         <ElButton
           v-readonlybtn="'datasource_creation'"

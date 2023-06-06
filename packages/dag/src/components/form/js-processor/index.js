@@ -178,7 +178,8 @@ export const JsProcessor = observer(
           .catch(resetQuery)
       }
 
-      const handleRun = () => {
+      const handleRun = async () => {
+        const { jsType } = form.values
         resetQuery()
         running.value = true
         logLoading.value = true
@@ -186,18 +187,37 @@ export const JsProcessor = observer(
         clearTimeout(timer)
         version = Time.now()
         queryStart = Time.now()
+
         if (!fullscreen.value) toggleFullscreen()
-        taskApi.testRunJs({ ...params, version, script: props.value }).then(
-          () => {
-            queryStart = Time.now()
-            handleAutoQuery()
-          },
-          async () => {
-            // 脚本执行出错
-            await queryLog()
-            resetQuery()
+
+        if (jsType === 1) {
+          let before, after, logs, result
+          try {
+            result = await taskApi.testRunJsRpc({ ...params, version, script: props.value, jsType })
+          } catch (e) {
+            console.log(e) // eslint-disable-line
+            result = e?.data?.data
           }
-        )
+          before = result?.before
+          after = result?.after
+          logs = result?.logs
+          inputRef.value = before ? JSON.stringify(before, null, 2) : ''
+          outputRef.value = after ? JSON.stringify(after, null, 2) : ''
+          logList.value = logs?.filter(item => !new RegExp(`^.*\\[${nodeId}]`).test(item.message)) || []
+          resetQuery()
+        } else {
+          taskApi.testRunJs({ ...params, version, script: props.value, jsType }).then(
+            () => {
+              queryStart = Time.now()
+              handleAutoQuery()
+            },
+            async () => {
+              // 脚本执行出错
+              await queryLog()
+              resetQuery()
+            }
+          )
+        }
       }
 
       onUnmounted(() => {
@@ -269,7 +289,12 @@ export const JsProcessor = observer(
       let jsEditor
       const onEditorInit = editor => {
         jsEditor = editor
+        const idx = editor.completers?.findIndex(item => item.id === 'recordFields') || -1
+
+        if (~idx) editor.completers.splice(idx, 1)
+
         editor.completers.push({
+          id: 'recordFields',
           // 获取补全提示列表
           getCompletions: function (editor, session, pos, prefix, callback) {
             // 判断当前行是否包含 '.'

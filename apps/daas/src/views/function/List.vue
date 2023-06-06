@@ -1,6 +1,13 @@
 <template>
   <section class="function-list-wrapper h-100">
-    <TablePage ref="table" class="h-100" :remoteMethod="getData" @sort-change="handleSortTable">
+    <TablePage
+      ref="table"
+      class="h-100"
+      row-key="id"
+      :remoteMethod="getData"
+      @sort-change="handleSortTable"
+      @selection-change="handleSelectionChange"
+    >
       <ul class="search-bar" slot="search">
         <li class="item">
           <ElRadioGroup v-model="searchParams.type" size="small" @input="table.fetch(1)">
@@ -18,6 +25,7 @@
       </ul>
       <div slot="operation">
         <ElButton
+          v-if="searchParams.type !== 'custom'"
           class="ml-4 btn-create"
           size="mini"
           @click="
@@ -28,6 +36,27 @@
         >
           <span>{{ $t('function_button_import_jar') }}</span>
         </ElButton>
+        <template v-else>
+          <el-button
+            v-show="multipleSelection.length > 0"
+            :disabled="$disabledReadonlyUserBtn()"
+            v-readonlybtn="'SYNC_job_export'"
+            size="mini"
+            class="btn message-button-cancel"
+            @click="handleExport"
+          >
+            <span> {{ $t('public_button_export') }}</span>
+          </el-button>
+          <el-button
+            v-readonlybtn="'SYNC_job_import'"
+            size="mini"
+            class="btn"
+            :disabled="$disabledReadonlyUserBtn()"
+            @click="handleImport"
+          >
+            <span> {{ $t('packages_business_button_bulk_import') }}</span>
+          </el-button>
+        </template>
         <ElButton
           class="btn-create"
           type="primary"
@@ -41,6 +70,14 @@
           <span>{{ $t('public_button_create') }}</span>
         </ElButton>
       </div>
+      <el-table-column
+        reserve-selection
+        type="selection"
+        width="45"
+        align="center"
+        :selectable="row => !row.hasChildren"
+      >
+      </el-table-column>
       <ElTableColumn :label="$t('function_name_label')" prop="function_name" min-width="300"> </ElTableColumn>
       <ElTableColumn :label="$t('function_type_label')" prop="typeFmt" width="160"> </ElTableColumn>
       <ElTableColumn :label="$t('public_description')" prop="describe" min-width="300"> </ElTableColumn>
@@ -67,6 +104,8 @@
         </template>
       </ElTableColumn>
     </TablePage>
+    <!-- 导入 -->
+    <Upload type="Javascript_functions" :show-tag="false" ref="upload" @success="table.fetch(1)"></Upload>
   </section>
 </template>
 
@@ -74,9 +113,10 @@
 import dayjs from 'dayjs'
 import { javascriptFunctionsApi } from '@tap/api'
 import { TablePage } from '@tap/business'
+import Upload from '@tap/business/src/components/UploadDialog'
 
 export default {
-  components: { TablePage },
+  components: { TablePage, Upload },
   data() {
     return {
       searchParams: {
@@ -87,7 +127,8 @@ export default {
         jar: this.$t('function_type_option_jar'),
         system: this.$t('function_type_option_system')
       },
-      order: 'last_updated DESC'
+      order: 'last_updated DESC',
+      multipleSelection: []
     }
   },
   computed: {
@@ -154,6 +195,16 @@ export default {
     handleSortTable({ order, prop }) {
       this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+    },
+    handleExport() {
+      const ids = this.multipleSelection.map(t => t.id)
+      javascriptFunctionsApi.export(ids)
+    },
+    handleImport() {
+      this.$refs.upload.show()
     }
   }
 }
