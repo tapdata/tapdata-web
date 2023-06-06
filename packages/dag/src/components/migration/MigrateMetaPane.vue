@@ -66,7 +66,7 @@
           :show-columns="['index', 'field_name', 'data_type', 'operation']"
           :fieldChangeRules.sync="fieldChangeRules"
           readonly
-          :ignore-error="isSource"
+          :ignore-error="!isTarget"
           class="content__list flex-fill"
           @update-rules="handleUpdateRules"
         ></List>
@@ -159,9 +159,9 @@ export default {
       return !(hasPrimaryKey || hasUnionIndex || hasUpdateField)
     },
 
-    isSource() {
-      const { type, $inputs } = this.activeNode || {}
-      return (type === 'database' || type === 'table') && !$inputs.length
+    isTarget() {
+      const { type, $outputs } = this.activeNode || {}
+      return (type === 'database' || type === 'table') && !$outputs.length
     }
   },
 
