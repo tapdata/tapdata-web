@@ -209,15 +209,6 @@ export function downloadBlob(res, name = '') {
   const blob = new Blob([data], { type: headers['content-type'] })
   openUrl(window.URL.createObjectURL(blob), '_blank', fileName)
 }
-// 下载Json
-export function downloadJson(data, name = '') {
-  if (!data) {
-    return
-  }
-  const fileName = name
-  const blob = new Blob([data], { type: 'application/JSON' })
-  openUrl(window.URL.createObjectURL(blob), '_blank', fileName)
-}
 
 // 下载Json
 export function downloadJson(data, name = '') {
