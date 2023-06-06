@@ -525,7 +525,7 @@
                   <span class="price-detail-label inline-block mr-2"
                     >{{ $t('dfs_agent_subscription_discount', { val: getDiscount(this.selected) }) }}:
                   </span>
-                  <span class="discount-color fw-sub">-{{ formatPriceOff(currency) }}</span>
+                  <span class="color-warning fw-sub">-{{ formatPriceOff(currency) }}</span>
                 </div>
               </div>
               <div class="px-3 py-2">
@@ -560,7 +560,7 @@
             <span class="price-detail-label text-end inline-block mr-2"
               >{{ $t('dfs_agent_subscription_discount', { val: getDiscount(this.selected) }) }}:
             </span>
-            <span class="discount-color fw-sub">-{{ formatPriceOff(currency) }}</span>
+            <span class="color-warning fw-sub">-{{ formatPriceOff(currency) }}</span>
           </div>
         </div>
         <div class="w-40 flex align-items-center ml-4" v-else></div>
@@ -1059,7 +1059,7 @@
                   <span class="price-detail-label inline-block mr-2"
                     >{{ $t('dfs_agent_subscription_discount', { val: getDiscount(this.selected) }) }}:
                   </span>
-                  <span class="discount-color fw-sub">-{{ formatPriceOff(currency) }}</span>
+                  <span class="color-warning fw-sub">-{{ formatPriceOff(currency) }}</span>
                 </div>
               </div>
               <div class="px-3 py-2">
@@ -1094,7 +1094,7 @@
             <span class="price-detail-label text-end inline-block mr-2"
               >{{ $t('dfs_agent_subscription_discount', { val: getDiscount(this.selected) }) }}:
             </span>
-            <span class="discount-color fw-sub">-{{ formatPriceOff(currency) }}</span>
+            <span class="color-warning fw-sub">-{{ formatPriceOff(currency) }}</span>
           </div>
         </div>
         <div class="w-40 flex align-items-center ml-4" v-else></div>
@@ -2255,10 +2255,6 @@ export default {
       padding: 0 12px;
       line-height: 30px;
     }
-  }
-
-  .discount-color {
-    color: #ff7d00;
   }
 
   .discount-tag {

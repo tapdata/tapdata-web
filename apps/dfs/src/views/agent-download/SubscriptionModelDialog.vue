@@ -126,11 +126,11 @@
               <div class="flex justify-content-center">
                 <ul>
                   <li class="flex fs-7 font-color-sslight lh-base mb-1">
-                    <VIcon size="16" class="mr-2">check-bold</VIcon>
+                    <VIcon size="16" class="mt-1 mr-2">check-bold</VIcon>
                     <span>{{ $t('dfs_agent_download_subscriptionmodeldialog_chengbengengdichong') }}</span>
                   </li>
                   <li class="flex fs-7 font-color-sslight lh-base">
-                    <VIcon size="16" class="mr-2">check-bold</VIcon
+                    <VIcon size="16" class="mt-1 mr-2">check-bold</VIcon
                     ><span>{{ $t('dfs_agent_download_subscriptionmodeldialog_gengjiaanquanyong') }}</span>
                   </li>
                 </ul>
@@ -166,14 +166,14 @@
               <div class="flex justify-content-center">
                 <ul>
                   <li class="flex fs-7 font-color-sslight mb-1">
-                    <VIcon size="16" class="mr-2">check-bold</VIcon
+                    <VIcon size="16" class="mt-1 mr-2">check-bold</VIcon
                     ><span>{{ $t('dfs_agent_download_subscriptionmodeldialog_gengjiafangbianmian') }}</span>
                   </li>
                   <li
                     class="flex fs-7 font-color-sslight"
                     :class="[{ 'mb-6': this.$i18n.locale === 'zh-CN' }, { 'mb-3': this.$i18n.locale === 'en' }]"
                   >
-                    <VIcon size="16" class="mr-2">check-bold</VIcon
+                    <VIcon size="16" class="mt-1 mr-2">check-bold</VIcon
                     ><span>{{ $t('dfs_agent_download_subscriptionmodeldialog_gengjiakekaoyou') }}</span>
                   </li>
                 </ul>
@@ -1917,12 +1917,6 @@ export default {
 </style>
 
 <style lang="scss">
-.justify-content-center {
-  line-height: 1.5 !important;
-}
-.text-center {
-  line-height: 1.5 !important;
-}
 .tap-dialog {
   .el-dialog__header {
     height: 64px;
