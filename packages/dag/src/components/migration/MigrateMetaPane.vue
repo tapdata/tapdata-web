@@ -66,7 +66,7 @@
           :show-columns="['index', 'field_name', 'data_type', 'operation']"
           :fieldChangeRules.sync="fieldChangeRules"
           readonly
-          ignore-error
+          :ignore-error="isSource"
           class="content__list flex-fill"
           @update-rules="handleUpdateRules"
         ></List>
@@ -157,6 +157,11 @@ export default {
     isErrorSelect() {
       const { hasPrimaryKey, hasUnionIndex, hasUpdateField } = this.selected || {}
       return !(hasPrimaryKey || hasUnionIndex || hasUpdateField)
+    },
+
+    isSource() {
+      const { type, $inputs } = this.activeNode || {}
+      return (type === 'database' || type === 'table') && !$inputs.length
     }
   },
 
