@@ -327,24 +327,24 @@
                   class="spec-li position-relative px-4 py-2 mt-4 mr-4 cursor-pointer"
                   :class="{
                     active: specification === item.value,
-                    disabled: (agentCount > 0 || agentDeploy !== 'selfHost') && item.chargeProvider === 'FreeTier'
+                    disabled: agentCount > 0 && item.chargeProvider === 'FreeTier'
                   }"
                   v-for="(item, i) in specificationItems"
                   :key="i"
-                  @click="
-                    changeSpec(
-                      item.value,
-                      (agentCount > 0 || agentDeploy !== 'selfHost') && item.chargeProvider === 'FreeTier'
-                    )
-                  "
+                  @click="changeSpec(item.value, agentCount > 0 && item.chargeProvider === 'FreeTier')"
                 >
                   <div class="is-active position-absolute top-0 end-0">
                     <div class="is-active-triangle"></div>
                     <VIcon size="16" class="is-active-icon">check-bold</VIcon>
                   </div>
-                  <div class="spec-li-title mt-1 lh-base fw-bold font-color-dark">
-                    <span>{{ item.name }}: </span>
-                    <span>{{ item.desc }}</span>
+                  <div class="spec-li-title lh-base fw-bold font-color-dark">
+                    <span class="align-middle">{{ item.name }}: {{ item.desc }}</span>
+                    <ElTag
+                      v-if="item.chargeProvider === 'FreeTier'"
+                      size="small"
+                      class="bg-color-warning text-white border-0 ml-2"
+                      >免费体验</ElTag
+                    >
                   </div>
                   <div
                     v-if="agentDeploy === 'selfHost'"
@@ -867,16 +867,11 @@
                   class="spec-li cursor-pointer position-relative cursor-pointer px-4 py-2 mt-4 mr-4"
                   :class="{
                     active: specification === item.value,
-                    disabled: (agentCount > 0 || agentDeploy !== 'selfHost') && item.chargeProvider === 'FreeTier'
+                    disabled: agentCount > 0 && item.chargeProvider === 'FreeTier'
                   }"
                   v-for="(item, i) in specificationItems"
                   :key="i"
-                  @click="
-                    changeSpec(
-                      item.value,
-                      (agentCount > 0 || agentDeploy !== 'selfHost') && item.chargeProvider === 'FreeTier'
-                    )
-                  "
+                  @click="changeSpec(item.value, agentCount > 0 && item.chargeProvider === 'FreeTier')"
                 >
                   <div class="is-active position-absolute top-0 end-0">
                     <div class="is-active-triangle"></div>
@@ -1739,15 +1734,12 @@ export default {
         ).sort((a, b) => {
           return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
         })
-        //免费不能选; 不做禁用 直接过滤掉不显示
+        /*//免费不能选; 不做禁用 直接过滤掉不显示
         // disabled: (agentCount > 0 || agentDeploy !== 'selfHost') && item.chargeProvider === 'FreeTier'
         if (this.agentCount > 0 || this.agentDeploy !== 'selfHost') {
           this.specificationItems = this.specificationItems.filter(it => it.chargeProvider !== 'FreeTier')
-        }
-        this.specification =
-          this.agentCount > 0 || this.agentDeploy !== 'selfHost'
-            ? this.specificationItems[1]?.value
-            : this.specificationItems[0]?.value
+        }*/
+        this.specification = this.agentCount > 0 ? this.specificationItems[1]?.value : this.specificationItems[0]?.value
         // 价格套餐
         this.allPackages = paidPrice.map(t => {
           return Object.assign(t, {
