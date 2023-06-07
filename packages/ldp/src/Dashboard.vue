@@ -57,6 +57,7 @@
     <Settings
       :mode.sync="mode"
       :visible.sync="settingsVisible"
+      :fdmConnection="fdmConnection"
       @success="handleSettingsSuccess"
       @init="handleSettingsInit"
     ></Settings>

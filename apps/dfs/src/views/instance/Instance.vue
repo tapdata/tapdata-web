@@ -793,6 +793,10 @@ export default {
       }
     }, 10000)
     this.getLatestVersion()
+
+    if (this.$route.query.active === 'storage') {
+      this.activeName = 'second'
+    }
   },
   beforeDestroy() {
     clearInterval(timer)

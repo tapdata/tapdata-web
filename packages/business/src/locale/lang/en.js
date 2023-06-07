@@ -950,6 +950,7 @@ export default {
     'Specify the database connection that will be used for additional data layer storage',
   packages_business_mongodb_atlas_cluster: 'MongoDB Atlas Cluster',
   packages_business_mongodb_self_hosted_cluster: 'Self Hosted MongoDB Cluster',
+  packages_business_mongodb_full_management_cluster: 'Fully Managed MongoDB Cluster',
   packages_business_data_console_setting_saved_tooltip: 'The Settings cannot be modified after being saved.',
   // 共享緩存
   packages_business_shared_cache_create: 'Create Cache',

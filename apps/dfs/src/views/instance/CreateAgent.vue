@@ -47,7 +47,7 @@
                   ]"
                   >{{ $t('dfs_agent_download_subscriptionmodeldialog_yunfuwushang') }}</span
                 >
-                <ElRadioGroup v-model="provider" @input="changeProvider" class="flex gap-4">
+                <ElRadioGroup v-model="provider" @input="changeProviderInStorage" class="flex gap-4">
                   <ElRadio
                     v-for="(item, index) in cloudProviderList"
                     :key="index"
@@ -1677,7 +1677,7 @@ export default {
     }
 
     //获取是否有存储实例
-    this.getMdbCount()
+    // this.getMdbCount()
   },
   methods: {
     prevStep() {
@@ -1778,6 +1778,12 @@ export default {
       }
       this.handleChange(currentItem)
       this.buried('changeSpec')
+    },
+    async changeProviderInStorage() {
+      this.changeProvider()
+      await this.getMongoCluster()
+      this.mongodbSpec = this.mongodbSpecItems[0]?.value || ''
+      this.changeMongodbMemory()
     },
     //切换云厂商
     changeProvider() {
@@ -2050,7 +2056,7 @@ export default {
         region: this.region,
         cloudProvider: this.provider
       }
-      this.$axios.get('api/tcm/orders/paid/price', { params }).then(data => {
+      return this.$axios.get('api/tcm/orders/paid/price', { params }).then(data => {
         const { paidPrice = [] } = data?.[0] || {}
         this.paidPrice = paidPrice
         //根据订阅方式再过滤一层
@@ -2262,7 +2268,18 @@ export default {
           params.mdbZone = this.mdbZone || ''
         }
 
-        params.onlyMdb = this.orderStorage
+        if (this.orderStorage) {
+          params.onlyMdb = true
+          params.successUrl =
+            location.origin +
+            location.pathname +
+            this.$router.resolve({
+              name: 'Instance',
+              query: {
+                active: 'storage'
+              }
+            }).href
+        }
       }
 
       this.buried('newAgentStripe', '', {
@@ -2276,8 +2293,15 @@ export default {
       this.$axios
         .post('api/tcm/orders', params)
         .then(data => {
-          //免费实例（授权码）-半托管-直接部署页面
-          if (data.chargeProvider === 'FreeTier' && this.agentDeploy === 'fullManagement') {
+          if (params.mdbPriceId === 'FreeTier' && params.onlyMdb) {
+            this.finish()
+            this.$router.push({
+              name: 'Instance',
+              query: {
+                active: 'storage'
+              }
+            })
+          } else if (data.chargeProvider === 'FreeTier' && this.agentDeploy === 'fullManagement') {
             this.finish()
             this.$router.push(agentUrl)
           } else if (

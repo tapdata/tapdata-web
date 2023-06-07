@@ -129,9 +129,20 @@
           </ElFormItem>
 
           <ElFormItem prop="fdmStorageConnectionId">
-            <ElSelect v-model="form.fdmStorageConnectionId" :disabled="disabled" class="w-100">
+            <ElSelect
+              v-if="form.fdmStorageCluster === 'self'"
+              v-model="form.fdmStorageConnectionId"
+              :disabled="disabled"
+              class="w-100"
+            >
               <ElOption v-for="op in connectionsList" :label="op.label" :value="op.value" :key="op.value"></ElOption>
             </ElSelect>
+            <template v-else>
+              <span v-if="setting.fdmStorageConnectionId && fdmConnection">{{ fdmConnection.name }}</span>
+              <ElButton v-else-if="!setting.fdmStorageConnectionId" type="primary" @click="handleOrderStorage">{{
+                $t('packages_ldp_order_fully_managed_storage')
+              }}</ElButton>
+            </template>
           </ElFormItem>
 
           <!--<div class="flex align-items-center">
@@ -225,7 +236,8 @@ export default {
     visible: {
       required: true,
       value: Boolean
-    }
+    },
+    fdmConnection: Object
   },
 
   data() {
@@ -248,6 +260,10 @@ export default {
           label: this.$t('packages_business_mongodb_self_hosted_cluster'),
           value: 'self',
           tag: 'Add a New Connection'
+        },
+        {
+          label: this.$t('packages_business_mongodb_full_management_cluster'),
+          value: 'full-management'
         }
       ],
       form: {
@@ -394,6 +410,15 @@ export default {
 
     cancel() {
       this.handleClose()
+    },
+
+    handleOrderStorage() {
+      this.$router.push({
+        name: 'createAgent',
+        query: {
+          order: 'storage'
+        }
+      })
     }
   }
 }

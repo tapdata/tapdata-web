@@ -905,6 +905,7 @@ export default {
   packages_business_data_console_fdm_mdm_storage_tooltip: '请指定用于额外数据层存储的数据库连接',
   packages_business_mongodb_atlas_cluster: 'MongoDB Atlas 集群',
   packages_business_mongodb_self_hosted_cluster: '自托管 MongoDB 集群',
+  packages_business_mongodb_full_management_cluster: '全托管 MongoDB 集群',
   packages_business_data_console_setting_saved_tooltip: '存储中心保存后, 暂不支持修改, 请谨慎设置',
   // 共享缓存
   packages_business_shared_cache_create: '创建缓存',
