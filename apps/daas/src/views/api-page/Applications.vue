@@ -59,9 +59,9 @@
         min-width="140"
       >
       </el-table-column>
-      <el-table-column :label="$t('application_header_scopes')" prop="scopes" min-width="160" max-width="300">
+      <el-table-column :label="$t('application_header_scopes')" prop="scopeNames" min-width="160" max-width="300">
         <template slot-scope="scope">
-          <span v-for="item in scope.row.scopes" :key="item" class="table-span">{{ item }}</span>
+          <span v-for="item in scope.row.scopeNames" :key="item" class="table-span">{{ item }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('public_operation')" min-width="120" fixed="right">
@@ -109,7 +109,7 @@
         </ElFormItem>
         <ElFormItem :label="$t('application_header_scopes')" required prop="scopes">
           <ElSelect v-model="createForm.scopes" multiple size="mini">
-            <ElOption v-for="item in roles" :label="item.name" :value="item.name" :key="item.id"></ElOption>
+            <ElOption v-for="item in roles" :label="item.name" :value="item.id" :key="item.id"></ElOption>
           </ElSelect>
         </ElFormItem>
         <ElFormItem :label="$t('application_header_redirect_uri')" required prop="redirectUrisStr">
