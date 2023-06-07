@@ -1114,5 +1114,10 @@ export default {
     'Are you sure to clear the check condition that the index field is empty? ',
   packages_business_components_conditionbox_suoyinziduanwei: 'The index field is empty',
   packages_business_components_conditionbox_yijianqingchusuo:
-    'One key to clear the condition that the index field is empty'
+    'One key to clear the condition that the index field is empty',
+  packages_business_external_storage_list_yanzhengfuwuduan: 'Verify server certificate',
+  packages_business_external_storage_list_siyaomima: 'Private key password',
+  packages_business_external_storage_list_kehuduansiyao: 'Client private key',
+  packages_business_external_storage_list_zhengshubanfaji: 'Certificate Authority',
+  packages_business_external_storage_list_shiyongTls: 'Connect using TLS/SSL'
 }

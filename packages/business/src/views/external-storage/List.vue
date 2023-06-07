@@ -95,6 +95,15 @@
             resize="none"
           ></ElInput>
         </ElFormItem>
+
+        <SchemaToForm
+          v-if="form.type === 'mongodb'"
+          ref="schemaToForm"
+          :schema="schemaData"
+          :colon="true"
+          :label-width="schemaLabelWidth"
+        ></SchemaToForm>
+
         <ElFormItem :label="$t('packages_business_external_storage_list_sheweimoren')">
           <ElSwitch v-model="form.defaultStorage"></ElSwitch>
         </ElFormItem>
@@ -154,9 +163,10 @@ import { externalStorageApi } from '@tap/api'
 import { TablePage, EXTERNAL_STORAGE_TYPE_MAP } from '@tap/business'
 import { FilterBar, Drawer } from '@tap/component'
 import { openUrl } from '@tap/shared'
+import { SchemaToForm } from '@tap/form'
 
 export default {
-  components: { TablePage, FilterBar, Drawer },
+  components: { TablePage, FilterBar, Drawer, SchemaToForm },
   data() {
     return {
       loading: false,
@@ -188,8 +198,10 @@ export default {
       details: '',
       info: [],
       labelWidth: '120px',
+      schemaLabelWidth: 120,
       showUsingTaskDialog: false,
-      usingTasks: []
+      usingTasks: [],
+      schemaData: null
     }
   },
   computed: {
@@ -207,6 +219,76 @@ export default {
     this.getFilterItems()
     const { locale } = this.$i18n
     this.labelWidth = locale === 'en' ? '220px' : '120px'
+    this.schemaLabelWidth = locale === 'en' ? 220 : 120
+    this.schemaData = {
+      type: 'object',
+      properties: {
+        ssl: {
+          default: false,
+          'x-decorator': 'FormItem',
+          'x-component': 'Switch',
+          'x-reactions': [
+            {
+              fulfill: {
+                state: {
+                  visible: '{{$self.value===true}}'
+                }
+              },
+              target: '*(sslKey,sslPass,sslValidate)'
+            }
+          ],
+          'x-component-props': {
+            optionType: 'button'
+          },
+          type: 'boolean',
+          title: i18n.t('packages_business_external_storage_list_shiyongTls'),
+          'x-index': 80
+        },
+        sslCA: {
+          'x-decorator': 'FormItem',
+          'x-component': 'TextFileReader',
+          type: 'string',
+          title: i18n.t('packages_business_external_storage_list_zhengshubanfaji'),
+          'x-index': 120,
+          fileNameField: 'sslCAFile',
+          required: true
+        },
+        sslKey: {
+          'x-decorator': 'FormItem',
+          'x-component': 'TextFileReader',
+          type: 'string',
+          title: i18n.t('packages_business_external_storage_list_kehuduansiyao'),
+          'x-index': 90,
+          fileNameField: 'sslKeyFile',
+          required: true
+        },
+        sslPass: {
+          'x-decorator': 'FormItem',
+          'x-component': 'Password',
+          type: 'string',
+          title: i18n.t('packages_business_external_storage_list_siyaomima'),
+          'x-index': 100
+        },
+        sslValidate: {
+          'x-decorator': 'FormItem',
+          'x-component': 'Switch',
+          show: false,
+          'x-reactions': [
+            {
+              fulfill: {
+                state: {
+                  visible: '{{$self.value===true}}'
+                }
+              },
+              target: 'sslCA'
+            }
+          ],
+          type: 'boolean',
+          title: i18n.t('packages_business_external_storage_list_yanzhengfuwuduan'),
+          'x-index': 110
+        }
+      }
+    }
   },
   methods: {
     getFilterItems() {
@@ -281,37 +363,45 @@ export default {
     submit() {
       this.$refs.form.validate(async valid => {
         if (valid) {
-          this.loading = true
-          let { id, name, type, uri, defaultStorage } = this.form
-          let params = {
-            id,
-            name,
-            type,
-            uri,
-            defaultStorage
-          }
-          const catchFunc = () => {
-            this.loading = false
-          }
-          if (id) {
-            await externalStorageApi
-              .updateById(id, params)
-              .then(() => {
-                this.table.fetch()
-                this.dialogVisible = false
-                this.loading = false
-              })
-              .catch(catchFunc)
-          } else {
-            await externalStorageApi
-              .post(params)
-              .then(() => {
-                this.table.fetch()
-                this.dialogVisible = false
-                this.loading = false
-              })
-              .catch(catchFunc)
-          }
+          const schemaFormInstance = this.$refs.schemaToForm.getForm?.()
+          schemaFormInstance?.validate().then(async () => {
+            let formValues = this.$refs.schemaToForm?.getFormValues?.()
+
+            this.loading = true
+            let { id, name, type, uri, defaultStorage } = this.form
+            let params = Object.assign(
+              {
+                id,
+                name,
+                type,
+                uri,
+                defaultStorage
+              },
+              formValues
+            )
+            const catchFunc = () => {
+              this.loading = false
+            }
+            if (id) {
+              await externalStorageApi
+                .updateById(id, params)
+                .then(() => {
+                  this.table.fetch()
+                  this.dialogVisible = false
+                  this.loading = false
+                })
+                .catch(catchFunc)
+            } else {
+              await externalStorageApi
+                .post(params)
+                .then(() => {
+                  this.table.fetch()
+                  this.dialogVisible = false
+                  this.loading = false
+                })
+                .catch(catchFunc)
+            }
+          })
         }
       })
     },
@@ -442,6 +532,13 @@ export default {
     .value {
       font-size: $fontBaseTitle;
       color: map-get($fontColor, dark);
+    }
+  }
+}
+.scheme-to-form {
+  ::v-deep {
+    .formily-element-form-item {
+      margin-bottom: 18px;
     }
   }
 }
