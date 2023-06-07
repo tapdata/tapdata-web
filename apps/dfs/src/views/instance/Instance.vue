@@ -763,11 +763,20 @@ export default {
         let oldQuery = { ...oldRoute.query, detailId: undefined }
         let query = { ...route.query, detailId: undefined }
         let params = { ...route.params }
+
+        if (query.active === 'storage') {
+          this.activeName = 'second'
+          this.$nextTick(() => {
+            this.tableCode?.fetch()
+          })
+        }
+
         if (params?.showTransferDialogVisible) {
           this.showTransferDialogVisible = params?.showTransferDialogVisible
           this.price = params?.price
           return
         }
+
         let queryStr = JSON.stringify(query)
         if (JSON.stringify(oldQuery) === queryStr) return
         this.searchParams.status = query.status || ''
@@ -793,10 +802,6 @@ export default {
       }
     }, 10000)
     this.getLatestVersion()
-
-    if (this.$route.query.active === 'storage') {
-      this.activeName = 'second'
-    }
   },
   beforeDestroy() {
     clearInterval(timer)
