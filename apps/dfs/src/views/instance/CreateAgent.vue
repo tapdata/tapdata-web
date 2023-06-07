@@ -537,7 +537,7 @@
             <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu')">
               <ul class="flex flex-wrap">
                 <li
-                  class="spec-li position-relative px-4 py-2 mt-4 mr-4 cursor-pointer"
+                  class="spec-li position-relative px-4 py-2 mt-4 mr-4 cursor-pointer rounded-4"
                   :class="{
                     active: specification === item.value,
                     disabled: agentCount > 0 && item.chargeProvider === 'FreeTier'
@@ -1077,7 +1077,7 @@
             <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu')">
               <ul class="flex flex-wrap">
                 <li
-                  class="spec-li cursor-pointer position-relative cursor-pointer px-4 py-2 mt-4 mr-4"
+                  class="spec-li cursor-pointer position-relative cursor-pointer px-4 py-2 mt-4 mr-4 rounded-4"
                   :class="{
                     active: specification === item.value,
                     disabled: agentCount > 0 && item.chargeProvider === 'FreeTier'
@@ -1657,6 +1657,7 @@ export default {
 
     if (currencyType) {
       this.currencyType = currencyType
+      this.defaultCurrencyType = currencyType
     }
 
     //控制是否打开授权码通道
@@ -1974,11 +1975,13 @@ export default {
         if (this.agentCount > 0 || this.agentDeploy !== 'selfHost') {
           this.specificationItems = this.specificationItems.filter(it => it.chargeProvider !== 'FreeTier')
         }*/
+        // 已体验过免费
+        if (this.agentCount > 0) {
+          this.specificationItems = this.specificationItems.filter(it => it.chargeProvider !== 'FreeTier')
+        }
         // 如果是单独订购存储，默认调过免费实例，避免后续step受免费实例影响
         this.specification =
-          this.agentCount > 0 || this.orderStorage
-            ? this.specificationItems[1]?.value
-            : this.specificationItems[0]?.value
+          !this.agentCount && this.orderStorage ? this.specificationItems[1]?.value : this.specificationItems[0]?.value
         // 价格套餐
         this.allPackages = paidPrice.map(t => {
           return Object.assign(t, {
