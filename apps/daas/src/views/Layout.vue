@@ -393,8 +393,7 @@ let menuSetting = [
   {
     name: 'dataConsole',
     icon: 'process-platform',
-    code: 'v2_data-console',
-    hidden: process.env.VUE_APP_ENABLE_LDP !== 'true'
+    code: 'v2_data-console'
   },
   { name: 'connectionsList', icon: 'agent', code: 'v2_datasource_menu', parent: 'connections' },
   {
@@ -418,7 +417,6 @@ let menuSetting = [
     label: 'page_title_data_discovery',
     icon: 'dataDiscovery_navbar',
     code: 'v2_data_discovery',
-    hidden: process.env.VUE_APP_ENABLE_LDP === 'true',
     children: [
       { name: 'objectList', code: 'v2_data_object', parent: 'object' },
       { name: 'catalogueList', code: 'v2_data_catalogue', parent: 'catalogue' }
