@@ -239,14 +239,14 @@ export default {
             optionType: 'button'
           },
           type: 'boolean',
-          title: '使用 TLS/SSL 连接',
+          title: i18n.t('packages_business_external_storage_list_shiyongTls'),
           'x-index': 80
         },
         sslCA: {
           'x-decorator': 'FormItem',
           'x-component': 'TextFileReader',
           type: 'string',
-          title: '证书颁发机构',
+          title: i18n.t('packages_business_external_storage_list_zhengshubanfaji'),
           'x-index': 120,
           fileNameField: 'sslCAFile',
           required: true
@@ -255,7 +255,7 @@ export default {
           'x-decorator': 'FormItem',
           'x-component': 'TextFileReader',
           type: 'string',
-          title: '客户端私钥',
+          title: i18n.t('packages_business_external_storage_list_kehuduansiyao'),
           'x-index': 90,
           fileNameField: 'sslKeyFile',
           required: true
@@ -264,7 +264,7 @@ export default {
           'x-decorator': 'FormItem',
           'x-component': 'Password',
           type: 'string',
-          title: '私钥密码',
+          title: i18n.t('packages_business_external_storage_list_siyaomima'),
           'x-index': 100
         },
         sslValidate: {
@@ -282,7 +282,7 @@ export default {
             }
           ],
           type: 'boolean',
-          title: '验证服务端证书',
+          title: i18n.t('packages_business_external_storage_list_yanzhengfuwuduan'),
           'x-index': 110
         }
       }

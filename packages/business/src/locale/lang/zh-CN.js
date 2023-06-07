@@ -1063,5 +1063,10 @@ export default {
   packages_business_shared_cache_list_qingxianxiugaiwai: '外存不存在，请先修改外存配置后，再启动。',
   packages_business_components_conditionbox_shifouquerenqing: '是否确认清除索引字段为空的校验条件？',
   packages_business_components_conditionbox_suoyinziduanwei: '索引字段为空',
-  packages_business_components_conditionbox_yijianqingchusuo: '一键清除索引字段为空的条件'
+  packages_business_components_conditionbox_yijianqingchusuo: '一键清除索引字段为空的条件',
+  packages_business_external_storage_list_yanzhengfuwuduan: '验证服务端证书',
+  packages_business_external_storage_list_siyaomima: '私钥密码',
+  packages_business_external_storage_list_kehuduansiyao: '客户端私钥',
+  packages_business_external_storage_list_zhengshubanfaji: '证书颁发机构',
+  packages_business_external_storage_list_shiyongTls: '使用 TLS/SSL 连接'
 }
