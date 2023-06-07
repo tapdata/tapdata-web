@@ -101,7 +101,7 @@
           ref="schemaToForm"
           :schema="schemaData"
           :colon="true"
-          label-width="140"
+          :label-width="schemaLabelWidth"
         ></SchemaToForm>
 
         <ElFormItem :label="$t('packages_business_external_storage_list_sheweimoren')">
@@ -198,6 +198,7 @@ export default {
       details: '',
       info: [],
       labelWidth: '120px',
+      schemaLabelWidth: 120,
       showUsingTaskDialog: false,
       usingTasks: [],
       schemaData: null
@@ -218,6 +219,7 @@ export default {
     this.getFilterItems()
     const { locale } = this.$i18n
     this.labelWidth = locale === 'en' ? '220px' : '120px'
+    this.schemaLabelWidth = locale === 'en' ? 220 : 120
     this.schemaData = {
       type: 'object',
       properties: {
