@@ -417,6 +417,7 @@ let menuSetting = [
     label: 'page_title_data_discovery',
     icon: 'dataDiscovery_navbar',
     code: 'v2_data_discovery',
+    hidden: true, // 放开了数据面板，隐藏数据发现
     children: [
       { name: 'objectList', code: 'v2_data_object', parent: 'object' },
       { name: 'catalogueList', code: 'v2_data_catalogue', parent: 'catalogue' }
