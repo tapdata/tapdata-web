@@ -165,7 +165,7 @@ export const FieldModType = connect(
                         <ElButton
                           type="text"
                           class="ml-5"
-                          disabled={!this.isConvertDataType(data.id) || this.disabled}
+                          disabled={!this.isConvertDataType(data.field) || this.disabled}
                           onClick={() => this.handleReset(node, data)}
                         >
                           <VIcon size="12">revoke</VIcon>
@@ -180,8 +180,8 @@ export const FieldModType = connect(
         )
       },
       methods: {
-        isConvertDataType(id) {
-          let ops = this.operations.filter(v => v.id === id && v.op === 'CONVERT')
+        isConvertDataType(field) {
+          let ops = this.operations.filter(v => v.field === field && v.op === 'CONVERT')
           return ops && ops.length > 0
         },
         getNativeData(id) {
@@ -208,7 +208,7 @@ export const FieldModType = connect(
           if (this.operations?.length > 0 && fields?.length > 0) {
             for (let i = 0; i < this.operations.length; i++) {
               if (this.operations[i]?.op === 'CONVERT') {
-                let targetIndex = fields.findIndex(n => n.id === this.operations[i].id)
+                let targetIndex = fields.findIndex(n => n.field === this.operations[i].field)
                 if (targetIndex === -1) {
                   continue
                 }
@@ -225,7 +225,7 @@ export const FieldModType = connect(
           console.log('fieldProcessor.handleDataType', node, data) //eslint-disable-line
           let nativeData = this.getNativeData(data.id)
           let ops = this.operations.filter(
-            v => (v.id === data.id || data?.oldIdList.findIndex(t => t === v.id) > -1) && v.op === 'CONVERT'
+            v => v.field === data.field /*|| data?.oldIdList.findIndex(t => t === v.id) > -1*/ && v.op === 'CONVERT'
           )
           let op
           if (ops.length === 0) {
@@ -259,7 +259,7 @@ export const FieldModType = connect(
               fn(childNode, childNode.data)
             }
             for (let i = 0; i < self.operations.length; i++) {
-              if (self.operations[i].id === data.id) {
+              if (self.operations[i].field === data.field) {
                 let ops = self.operations[i]
                 if (ops.op === 'CONVERT') {
                   if (nativeData) node.data.data_type = nativeData.type
