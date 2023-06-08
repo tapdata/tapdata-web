@@ -47,8 +47,6 @@ export const FieldRename = connect(
         }
       },
       render() {
-        // eslint-disable-next-line no-console
-        console.log('🚗 FieldProcessor', this.loading, this.options)
         let fields = this.options || []
         fields = fields.filter(item => !item.is_deleted)
         fields = convertSchemaToTreeData(fields) || [] //将模型转换成tree
@@ -196,8 +194,8 @@ export const FieldRename = connect(
                           type="text"
                           class="ml-5"
                           disabled={
-                            (this.fieldsNameTransforms === '' && !this.isRename(data.id)) ||
-                            this.isReset(data.id) ||
+                            (this.fieldsNameTransforms === '' && !this.isRename(data.field)) ||
+                            this.isReset(data.field) ||
                             this.disabled ||
                             this.transformLoading
                           }
@@ -215,16 +213,16 @@ export const FieldRename = connect(
         )
       },
       methods: {
-        isRename(id) {
-          let ops = this.operations.filter(v => v.id === id && v.op === 'RENAME')
+        isRename(field) {
+          let ops = this.operations.filter(v => v.field === field && v.op === 'RENAME')
           return ops && ops.length > 0
         },
-        isReset(id) {
-          let ops = this.operations.filter(v => v.id === id && v.op === 'RENAME' && v.reset)
+        isReset(field) {
+          let ops = this.operations.filter(v => v.field === field && v.op === 'RENAME' && v.reset)
           return ops && ops.length > 0
         },
-        firstReset(id) {
-          let ops = this.operations.filter(v => v.id === id && v.op === 'RENAME' && v.firstReset)
+        firstReset(field) {
+          let ops = this.operations.filter(v => v.field === field && v.op === 'RENAME' && v.firstReset)
           return ops && ops.length > 0
         },
         checkOps(fields) {
@@ -232,11 +230,15 @@ export const FieldRename = connect(
           if (this.operations?.length > 0 && fields?.length > 0) {
             for (let i = 0; i < this.operations.length; i++) {
               let item = this.operations[i]
+
               if (!item) return fields
-              let targetIndex = fields.findIndex(n => n.id === item.id)
+
+              let targetIndex = fields.findIndex(n => n.schema_field_name === item.field)
+
               if (targetIndex === -1) {
                 continue
               }
+
               if (item.op === 'RENAME') {
                 const name = fields[targetIndex].field_name
                 let newName = name.split('.')
@@ -277,7 +279,7 @@ export const FieldRename = connect(
             nativeData,
             this.operations
           )
-          let ops = this.operations.filter(v => v.id === data.id && v.op === 'RENAME')
+          let ops = this.operations.filter(v => v.field === data.field && v.op === 'RENAME')
           let op
           if (ops.length === 0) {
             op = Object.assign(JSON.parse(JSON.stringify(this.RENAME_OPS_TPL)), {
@@ -343,7 +345,7 @@ export const FieldRename = connect(
           return field
         },
         handleReset(node, data) {
-          if (this.fieldsNameTransforms !== '' && !this.firstReset(data.id)) {
+          if (this.fieldsNameTransforms !== '' && !this.firstReset(data.field)) {
             //所有字段批量修改过，撤回既是保持原来字段名 且第一次重置
             this.handleRename(node, data, true)
             return
