@@ -28,7 +28,9 @@
         </template>
         <template #operation="{ row }">
           <ElButton type="text" @click="handleDetails(row)">{{ $t('public_button_details') }}</ElButton>
-          <ElButton type="text" @click="close(row.id)">{{ $t('public_button_close') }}</ElButton>
+          <ElButton type="text" @click="close(row.id)" :disabled="row.status === 'Closed'">{{
+            $t('public_button_close')
+          }}</ElButton>
         </template>
       </VTable>
     </div>
@@ -151,7 +153,7 @@ export default {
           label: i18n.t('public_operation'),
           prop: 'operation',
           slotName: 'operation',
-          width: 100
+          width: 140
         }
       ],
       rules: {
