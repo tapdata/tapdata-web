@@ -917,7 +917,9 @@ export default {
             item.periodLabel =
               dayjs(periodStart).format('YY-MM-DD HH:mm:ss') + ' - ' + dayjs(periodEnd).format('YY-MM-DD HH:mm:ss')
             item.content = `${item.subscriptionMethodLabel} ${item.specLabel} ${i18n.t('public_agent')}`
-            if (chargeProvider === 'Aliyun') {
+            if (item.publicAgent) {
+              item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YY-MM-DD HH:mm:ss') : '-'
+            } else if (chargeProvider === 'Aliyun') {
               item.expiredTime = license.expiredTime
               let time = new Date(item.expiredTime.replace('Z', '+08:00')).toLocaleString()
               item.expiredTimeLabel = item.expiredTime ? dayjs(time).format('YY-MM-DD HH:mm:ss') : '-'
