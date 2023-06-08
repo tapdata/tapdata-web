@@ -268,6 +268,17 @@
                   @click="handleStart(scope.row)"
                   >{{ $t('public_button_start') }}</ElButton
                 >
+                <ElDivider direction="vertical"></ElDivider>
+                <!--需要考虑老实例/免费实例 无订单信息的-->
+                <ElButton
+                  size="mini"
+                  type="text"
+                  v-if="!scope.row.orderInfo || scope.row.orderInfo.chargeProvider !== 'Stripe'"
+                  :loading="scope.row.btnLoading.delete"
+                  :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
+                  @click="handleUnsubscribe(scope.row)"
+                  >{{ $t('public_button_unsubscribe') }}</ElButton
+                >
               </template>
             </ElTableColumn>
 
@@ -438,91 +449,6 @@
           <transferDialog :price="price" :visible.sync="showTransferDialogVisible"></transferDialog>
           <!-- 新的创建实例 -->
           <SubscriptionModelDialog :visible.sync="subscriptionModelVisible"></SubscriptionModelDialog>
-          <ElDialog :visible.sync="showUnsubscribeDetailVisible" :title="$t('dfs_instance_instance_tuidingshili')">
-            <section>
-              <ul class="subscription-ul">
-                <li class="mt-2">
-                  {{ $t('dfs_instance_instance_tuidingjineji') }}
-                  <el-link
-                    style="vertical-align: top"
-                    :href="unsubscribeHelpDocumentation"
-                    type="primary"
-                    target="_blank"
-                    >{{ $t('dfs_instance_instance_tuifeiguize') }}</el-link
-                  >
-                </li>
-                <li class="mt-2">{{ $t('dfs_instance_instance_tuidingzhituihuan') }}</li>
-                <li class="mt-2">{{ $t('dfs_instance_instance_qingzixihedui') }}</li>
-              </ul>
-              <div class="mt-4 fs-6 font-color-dark">{{ $t('dfs_instance_instance_tuidingshili') }}</div>
-              <VTable
-                ref="table"
-                row-key="id"
-                :columns="columns"
-                :data="paidDetailList"
-                height="100%"
-                :has-pagination="false"
-                class="mt-4 mb-4"
-              >
-                <template #actualAmount="{ row }">
-                  <span class="font-color-dark fw-normal">{{ row.actualAmount }}</span>
-                </template>
-                <template #spentAmount="{ row }">
-                  <span class="color-danger fw-normal"> -{{ row.spentAmount }}</span>
-                </template>
-                <template #refundAmount="{ row }">
-                  <span class="color-primary fw-normal">{{ row.refundAmount }}</span>
-                </template>
-              </VTable>
-              <el-form label-position="top" :model="form" :rules="rules" ref="ruleForm">
-                <el-form-item :label="$t('dfs_instance_instance_tuidingyuanyin')" required>
-                  <el-radio-group v-model="form.refundReason">
-                    <el-radio class="mt-2" label="configurationOptionError">{{
-                      $t('dfs_instance_instance_peizhixuanxiangcuo')
-                    }}</el-radio>
-                    <el-radio class="mt-2" label="unableDeployProperly">{{
-                      $t('dfs_instance_instance_wufazhengchangbu')
-                    }}</el-radio>
-                    <el-radio class="mt-2" label="notconsistentWithExpectations">{{
-                      $t('dfs_instance_instance_xingnenghuozhegong')
-                    }}</el-radio>
-                    <el-radio class="mt-2" label="unsubscribeAfterBusinessTesting">{{
-                      $t('dfs_instance_instance_yewuceshiwan')
-                    }}</el-radio>
-                    <el-radio class="mt-2" label="other">{{ $t('dfs_instance_instance_qita') }}</el-radio>
-                  </el-radio-group>
-                </el-form-item>
-                <el-form-item v-if="form.refundReason === 'other'" prop="refundDescribe">
-                  <el-input
-                    v-model="form.refundDescribe"
-                    type="textarea"
-                    :placeholder="$t('dfs_instance_instance_qingshurutuiding')"
-                    show-word-limit
-                  >
-                  </el-input>
-                </el-form-item>
-                <el-form-item :label="$t('dfs_instance_instance_tuikuanqudao')">
-                  <el-input v-model="form.refundChannel" disabled show-word-limit style="width: 200px"> </el-input>
-                </el-form-item>
-              </el-form>
-            </section>
-            <span slot="footer" class="dialog-footer">
-              <span class="mr-4"
-                ><span class="fs-6 font-color-dark font-weight-light">{{
-                  $t('dfs_instance_instance_ketuidingjine')
-                }}</span
-                ><span class="color-primary fs-4"> {{ refundAmount }}</span></span
-              >
-              <el-button @click="showUnsubscribeDetailVisible = false">{{ $t('public_button_cancel') }}</el-button>
-              <el-button
-                :disabled="!form.refundReason"
-                type="primary"
-                :loading="loadingCancelSubmit"
-                @click="cancelSubmit"
-                >{{ $t('public_button_unsubscribe') }}</el-button
-              >
-            </span>
-          </ElDialog>
         </div>
       </el-tab-pane>
       <el-tab-pane
@@ -1511,37 +1437,6 @@ export default {
       )
     },
 
-    //退订
-    cancelSubmit() {
-      this.$refs.ruleForm.validate(valid => {
-        if (valid) {
-          this.loadingCancelSubmit = true
-          const { paidType, id } = this.currentRow
-          const { refundReason, refundDescribe } = this.form
-          let param = {
-            instanceId: id,
-            refundReason,
-            refundDescribe
-          }
-          this.$axios
-            .post('api/tcm/orders/cancel', param)
-            .then(() => {
-              this.fetch()
-              this.buried('unsubscribeAgentStripe', '', {
-                result: true,
-                type: paidType
-              })
-              this.$message.success(this.$t('public_message_operation_success'))
-              this.showUnsubscribeDetailVisible = false
-              this.loadingCancelSubmit = false
-            })
-            .finally(() => {
-              this.showUnsubscribeDetailVisible = false
-              this.loadingCancelSubmit = false
-            })
-        }
-      })
-    },
     //退订
     handleUnsubscribe(row = {}) {
       this.$confirm(
