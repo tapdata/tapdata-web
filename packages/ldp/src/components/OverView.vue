@@ -3,7 +3,7 @@
   <div class="workbench-overview workbench-section" v-show="visible">
     <div class="section-header flex justify-content-between border-bottom">
       <div class="px-4 pt-2">
-        <div class="main-title font-color-dark fw-light fs-6 mb-2">{{ $t('workbench_overview') }}</div>
+        <div class="main-title font-color-dark fw-normal fs-6 mb-2">{{ $t('workbench_overview') }}</div>
         <ul class="flex justify-content-around mb-2">
           <li
             v-for="(item, index) in agentList"
@@ -30,10 +30,14 @@
       </div>
       <div class="w-50 border-start pt-2">
         <div class="flex justify-content-between">
-          <div class="aside-title px-4 mb-2 font-color-dark fw-light fs-6">{{ $t('workbench_notice') }}</div>
-          <div class="cursor-pointer px-4 font-color-title" @click="goNoticeList">{{ $t('more_workbench_notice') }}</div>
+          <div class="aside-title px-4 mb-2 font-color-dark fw-normal fs-6">
+            {{ $t('workbench_notice') }}
+          </div>
+          <div class="more-btn cursor-pointer px-4 font-color-slight" @click="goNoticeList">
+            {{ $t('more_workbench_notice') }}<VIcon size="14" class="icon ml-1">arrow-right</VIcon>
+          </div>
         </div>
-        <br/>
+        <br />
         <div class="aside-main notice-list flex-grow-1 px-4">
           <ul class="notice-list__list h-100 overflow-y-auto">
             <li
@@ -61,6 +65,7 @@
 <script>
 import { Chart, VIcon } from '@tap/component'
 import { fromNow } from '@tap/shared'
+import { taskApi, connectionsApi } from '@tap/api'
 export default {
   name: 'OverView',
   components: { VIcon, Chart },
@@ -128,6 +133,8 @@ export default {
   },
   created() {
     this.loadAgent() // agent
+    this.getConnectionStats() // 链接
+    this.getTaskStats() // 任务
     this.loadNotices()
   },
   methods: {
@@ -149,6 +156,39 @@ export default {
         .finally(() => {
           loading.close()
         })
+    },
+    // 获取任务数据
+    async getTaskStats() {
+      const taskLoading = this.$loading({
+        target: this.$refs.task?.[0]
+      })
+      const data = await taskApi.getStats().finally(() => {
+        taskLoading.close()
+      })
+      let agentList = this.agentList
+      const stats = data.taskTypeStats
+      if (stats) {
+        agentList[2].value = stats.total
+        agentList[2].list[0].value = stats.initial_sync || 0
+        agentList[2].list[1].value = stats.cdc || 0
+        agentList[2].list[2].value = stats['initial_sync+cdc'] || 0
+      }
+    },
+    // 获取连接数据
+    async getConnectionStats() {
+      const connectionLoading = this.$loading({
+        target: this.$refs.connection?.[0]
+      })
+      const data = await connectionsApi.getStats().finally(() => {
+        connectionLoading.close()
+      })
+      let agentList = this.agentList
+      const stats = data || {}
+      if (stats) {
+        agentList[1].value = stats.total
+        agentList[1].list[0].value = stats.ready || 0
+        agentList[1].list[1].value = stats.invalid || 0
+      }
     },
     loadNotices() {
       this.notices = [
@@ -228,6 +268,21 @@ export default {
     //公告列表
     goNoticeList() {
       this.$router.push('notice')
+    },
+    toNotice(item) {
+      if (item?.id === 1) {
+        //当前页弹窗
+        this.showUpgrade = true
+      } else if (item?.link) {
+        window.open(item.link)
+      } else {
+        this.$router.push({
+          name: 'WorkbenchNotice',
+          query: {
+            id: item?.id
+          }
+        })
+      }
     }
   }
 }
@@ -295,5 +350,10 @@ export default {
 }
 .item_circle {
   margin-right: 0px !important;
+}
+.more-btn {
+  &:hover {
+    color: map-get($color, primary);
+  }
 }
 </style>

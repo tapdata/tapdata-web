@@ -516,7 +516,7 @@ export default {
         return
       }
       this.currentRow = row
-      this.$axios.get('api/tcm/orders/calculateRefundAmount?agentId=' + row.agentId).then(res => {
+      this.$axios.get('api/tcm/orders/calculateRefundAmount?subscribeId=' + row.id).then(res => {
         let { currency, agentName, spec, actualAmount, periodStart, periodEnd, refundAmount, spentAmount } = res
         //格式化价
         actualAmount = this.formatPrice(currency, actualAmount)
@@ -542,10 +542,11 @@ export default {
       this.$refs.ruleForm.validate(valid => {
         if (valid) {
           this.loadingCancelSubmit = true
-          const { paidType, agentId } = this.currentRow
+          const { paidType, agentId, id } = this.currentRow
           const { refundReason, refundDescribe } = this.form
           let param = {
             instanceId: agentId,
+            subscribeId: id,
             refundReason,
             refundDescribe
           }

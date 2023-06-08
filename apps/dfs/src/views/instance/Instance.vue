@@ -24,7 +24,9 @@
               <template slot-scope="scope">
                 <div class="flex">
                   <div>
+                    <span v-if="scope.row.publicAgent">{{ scope.row.name }}</span>
                     <InlineInput
+                      v-else
                       :class="['inline-input', 'color-primary', { 'cursor-pointer': scope.row.agentType !== 'Cloud' }]"
                       :value="scope.row.name"
                       :icon-config="{ class: 'color-primary', size: '12' }"
@@ -225,13 +227,29 @@
             <ElTableColumn :label="$t('public_operation')" width="240">
               <template slot-scope="scope">
                 <ElButton
+                  v-if="scope.row.agentType !== 'Cloud'"
                   type="text"
                   :disabled="deployBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
                   @click="toDeploy(scope.row)"
                   >{{ $t('public_agent_button_deploy') }}</ElButton
                 >
-                <ElDivider direction="vertical"></ElDivider>
+                <ElDivider v-if="scope.row.agentType !== 'Cloud'" direction="vertical"></ElDivider>
                 <ElButton
+                  size="mini"
+                  type="text"
+                  v-if="scope.row.agentType === 'Local' && !['Running'].includes(scope.row.status)"
+                  :loading="scope.row.btnLoading.delete"
+                  :disabled="startBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
+                  @click="handleStart(scope.row)"
+                  >{{ $t('public_button_start') }}</ElButton
+                >
+                <ElDivider
+                  v-if="scope.row.agentType === 'Local' && !['Running'].includes(scope.row.status)"
+                  direction="vertical"
+                ></ElDivider>
+                <!--全托管没有部署停止按钮，离线状态不能停止-->
+                <ElButton
+                  v-if="scope.row.agentType !== 'Cloud' && !['Stopped', 'Stopping'].includes(scope.row.status)"
                   size="mini"
                   type="text"
                   :disabled="stopBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
@@ -239,11 +257,14 @@
                   @click="handleStop(scope.row)"
                   >{{ $t('public_button_stop') }}</ElButton
                 >
-                <ElDivider direction="vertical"></ElDivider>
+                <ElDivider
+                  v-if="scope.row.agentType !== 'Cloud' && !['Stopped', 'Stopping'].includes(scope.row.status)"
+                  direction="vertical"
+                ></ElDivider>
                 <ElButton
                   size="mini"
                   type="text"
-                  v-if="scope.row.agentType === 'Cloud'"
+                  v-if="scope.row.agentType === 'Cloud' && !scope.row.publicAgent"
                   :loading="scope.row.btnLoading.delete"
                   :disabled="renewBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
                   @click="handleRenew(scope.row)"
@@ -257,16 +278,6 @@
                   :disabled="restartBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
                   @click="handleRestart(scope.row)"
                   >{{ $t('dfs_instance_instance_zhongqi') }}</ElButton
-                >
-                <ElDivider direction="vertical"></ElDivider>
-                <ElButton
-                  size="mini"
-                  type="text"
-                  v-if="scope.row.agentType === 'Local'"
-                  :loading="scope.row.btnLoading.delete"
-                  :disabled="startBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
-                  @click="handleStart(scope.row)"
-                  >{{ $t('public_button_start') }}</ElButton
                 >
                 <ElDivider direction="vertical"></ElDivider>
                 <!--需要考虑老实例/免费实例 无订单信息的-->
