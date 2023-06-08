@@ -97,6 +97,7 @@ export default {
       &-label {
         label {
           color: map-get($fontColor, light);
+          text-transform: capitalize;
         }
       }
       .el-input-number {

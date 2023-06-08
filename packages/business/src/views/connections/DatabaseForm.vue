@@ -1264,6 +1264,7 @@ export default {
           width: 160px;
           font-size: $fontBaseTitle;
           color: map-get($fontColor, light);
+          text-transform: capitalize;
         }
         .content-box {
           display: flex;
