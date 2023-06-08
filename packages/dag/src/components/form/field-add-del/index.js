@@ -166,7 +166,7 @@ export const FieldAddDel = connect(
                       slot-scope="{ node, data }"
                     >
                       <span class={['inline-block', 'flex-1', 'text-truncate']}>
-                        {this.isCreate(data.id) ? (
+                        {this.isCreate(data.field) ? (
                           <span
                             class={[
                               (data.is_deleted || this.isRemove(data.id)) && !this.isRest(data.id)
@@ -244,24 +244,24 @@ export const FieldAddDel = connect(
         )
       },
       methods: {
-        isRemove(id) {
-          let ops = this.operations.filter(v => v.id === id && v.op === 'REMOVE' && v.operand)
+        isRemove(field) {
+          let ops = this.operations.filter(v => v.field === field && v.op === 'REMOVE' && v.operand)
           return ops && ops.length > 0
         },
-        isRest(id) {
+        isRest(field) {
           //撤回删除
-          let ops = this.operations.filter(v => v.id === id && v.op === 'REMOVE' && !v.operand)
+          let ops = this.operations.filter(v => v.field === field && v.op === 'REMOVE' && !v.operand)
           return ops && ops.length > 0
         },
-        isCreate(id) {
-          let ops = this.operations.filter(v => v.id === id && v.op === 'CREATE')
+        isCreate(field) {
+          let ops = this.operations.filter(v => v.field === field && v.op === 'CREATE')
           return ops && ops.length > 0
         },
         checkOps(fields) {
           console.log('checkOps', this.operations?.length) // eslint-disable-line
           if (this.operations?.length > 0) {
             for (let i = 0; i < this.operations.length; i++) {
-              let index = fields.findIndex(t => t.id === this.operations[i]?.id)
+              let index = fields.findIndex(t => t.field === this.operations[i]?.field)
               if (this.operations[i]?.op === 'CREATE' && index === -1) {
                 let newField = {
                   id: this.operations[i].id,
@@ -276,7 +276,8 @@ export const FieldAddDel = connect(
                   dataType: 2,
                   is_nullable: true,
                   columnSize: 0,
-                  autoincrement: false
+                  autoincrement: false,
+                  field: this.operations[i].field
                 }
                 fields.unshift(newField)
               }
@@ -329,7 +330,7 @@ export const FieldAddDel = connect(
             data.field_name = nativeData.field_name
             return
           }
-          let createOps = this.operations.filter(v => v.id === data.id && v.op === 'CREATE')
+          let createOps = this.operations.filter(v => v.field === data.field && v.op === 'CREATE')
           if (createOps && createOps.length > 0) {
             let op = createOps[0]
             op.field = data.field_name
@@ -343,9 +344,9 @@ export const FieldAddDel = connect(
             return
           }
           console.log('fieldProcessor.handleReset', node, data) //eslint-disable-line
-          let parentId = node.parent.data.id
+          let parentId = node.parent.data.field
           const operations = [...this.operations]
-          let indexId = operations.filter(v => v.op === 'REMOVE' && v.id === parentId)
+          let indexId = operations.filter(v => v.op === 'REMOVE' && v.field === field)
           if (parentId && indexId.length !== 0) {
             return
           }
@@ -356,7 +357,7 @@ export const FieldAddDel = connect(
               fn(childNode, childNode.data)
             }
             for (let i = 0; i < operations.length; i++) {
-              if (operations[i].id === data.id) {
+              if (operations[i].field === data.field) {
                 let ops = operations[i]
                 if (ops.op === 'REMOVE') {
                   operations.splice(i, 1)
@@ -437,7 +438,7 @@ export const FieldAddDel = connect(
         handleDelete(node, data) {
           console.log('fieldProcessor.handleDelete', node, data) // eslint-disable-line
           const operations = [...this.operations]
-          let createOpsIndex = this.operations.findIndex(v => v.id === data.id && v.op === 'CREATE')
+          let createOpsIndex = this.operations.findIndex(v => v.field === data.field && v.op === 'CREATE')
           if (createOpsIndex >= 0) {
             let fieldName = this.operations[createOpsIndex].field_name + '.'
             operations.splice(createOpsIndex, 1)
@@ -455,7 +456,7 @@ export const FieldAddDel = connect(
             let originalField = this.getNativeData(data.id)
             let self = this
             let fn = function (field) {
-              let ops = operations.filter(v => v.op === 'REMOVE' && v.id === field.id)
+              let ops = operations.filter(v => v.op === 'REMOVE' && v.field === field.field)
               let op = Object.assign(JSON.parse(JSON.stringify(self.REMOVE_OPS_TPL)), {
                 id: field.id,
                 field: field.schema_field_name || field.field_name,
@@ -468,7 +469,7 @@ export const FieldAddDel = connect(
                 field_name: field.field_name
               })
               if (ops.length !== 0) {
-                let index = operations.findIndex(v => v.op === 'REMOVE' && v.id === field.id)
+                let index = operations.findIndex(v => v.op === 'REMOVE' && v.field === field.field)
                 if (index > -1) {
                   operations.splice(index, 1)
                 }
