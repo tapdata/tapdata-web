@@ -138,7 +138,11 @@
               <ElOption v-for="op in connectionsList" :label="op.label" :value="op.value" :key="op.value"></ElOption>
             </ElSelect>
             <template v-else>
-              <span v-if="setting.fdmStorageConnectionId && fdmConnection">{{ fdmConnection.name }}</span>
+              <span
+                class="preview-text inline-block rounded-2"
+                v-if="setting.fdmStorageConnectionId && fdmConnection"
+                >{{ fdmConnection.name }}</span
+              >
               <ElButton v-else-if="!setting.fdmStorageConnectionId" type="primary" @click="handleOrderStorage">{{
                 $t('packages_ldp_order_fully_managed_storage')
               }}</ElButton>
@@ -487,5 +491,12 @@ export default {
 }
 .el-divider--horizontal {
   margin: 5px 5px !important;
+}
+
+.preview-text {
+  padding: 0 15px;
+  line-height: 32px;
+  color: #333c4a;
+  border: 1px solid hsla(0, 0%, 86.7%, 0.4);
 }
 </style>
