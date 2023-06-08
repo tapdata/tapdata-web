@@ -306,15 +306,16 @@ export default {
       this.$refs.createForm.validate(valid => {
         if (valid) {
           this.submitLoading = true
-          let { userId, phone, email } = window.__USER_INFO__
+          let { userId, email, telephone, nickname } = window.__USER_INFO__
           let taskName = this.taskList.find(task => task.id === this.createForm?.jobId)?.name
           let connectionName = this.connectionList.find(conn => conn.id === this.createForm?.connectionId)?.name
           let params = Object.assign(this.createForm, {
             connectionName: connectionName,
             jobName: taskName,
             userId: userId,
-            phone: phone,
-            email: email
+            phone: telephone,
+            email: email,
+            nickname: nickname
           })
           this.$axios.post('api/ticket', params).then(() => {
             this.closeDialog()
