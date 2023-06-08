@@ -97,6 +97,9 @@ export default {
     },
     formData: {
       value: Object
+    },
+    testType: {
+      value: String
     }
   },
   data() {
@@ -232,6 +235,9 @@ export default {
       let msg = {
         type: 'testConnection',
         data: connection
+      }
+      if (this.testType) {
+        msg.type = this.testType
       }
       msg.data['updateSchema'] = false //默认值
       msg.data['editTest'] = false //默认值

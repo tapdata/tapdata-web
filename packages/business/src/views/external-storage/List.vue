@@ -32,7 +32,7 @@
         :label="$t('public_create_time')"
         prop="createTimeFmt"
       ></ElTableColumn>
-      <ElTableColumn width="220" :label="$t('public_operation')">
+      <ElTableColumn width="320" :label="$t('public_operation')">
         <template #default="{ row }">
           <span class="mr-2">{{ $t('packages_business_external_storage_list_sheweimoren') }}</span>
           <ElSwitch
@@ -41,6 +41,10 @@
             :disabled="row.defaultStorage"
             @change="handleDefault(row)"
           ></ElSwitch>
+          <ElDivider direction="vertical"></ElDivider>
+          <ElButton :disabled="row.type !== 'mongodb'" type="text" @click="handleTest(row)"
+            >{{ $t('public_connection_button_test') }}
+          </ElButton>
           <ElDivider direction="vertical"></ElDivider>
           <ElButton type="text" :disabled="!row.canEdit" @click="handleEdit(row)">{{
             $t('public_button_edit')
@@ -109,6 +113,9 @@
         </ElFormItem>
       </ElForm>
       <span slot="footer" class="dialog-footer">
+        <ElButton :disabled="form.type !== 'mongodb'" @click="handleEditorTest()"
+          >{{ $t('public_connection_button_test') }}
+        </ElButton>
         <ElButton size="mini" @click="dialogVisible = false">{{ $t('public_button_cancel') }}</ElButton>
         <ElButton type="primary" size="mini" @click="submit">{{ $t('public_button_confirm') }}</ElButton>
       </span>
@@ -151,6 +158,14 @@
         </el-table-column>
       </el-table>
     </el-dialog>
+
+    <Test
+      ref="test"
+      :visible.sync="dialogTestVisible"
+      :formData="model"
+      test-type="testExternalStorage"
+      @returnTestData="returnTestData"
+    ></Test>
   </section>
 </template>
 <script>
@@ -159,14 +174,16 @@ import i18n from '@/i18n'
 import dayjs from 'dayjs'
 import { cloneDeep, escapeRegExp } from 'lodash'
 
-import { externalStorageApi } from '@tap/api'
+import { databaseTypesApi, externalStorageApi } from '@tap/api'
 import { TablePage, EXTERNAL_STORAGE_TYPE_MAP } from '@tap/business'
 import { FilterBar, Drawer } from '@tap/component'
 import { openUrl } from '@tap/shared'
 import { SchemaToForm } from '@tap/form'
+import Test from '@tap/business/src/views/connections/Test'
 
 export default {
-  components: { TablePage, FilterBar, Drawer, SchemaToForm },
+  components: { TablePage, FilterBar, Drawer, SchemaToForm, Test },
+  inject: ['checkAgent'],
   data() {
     return {
       loading: false,
@@ -201,7 +218,9 @@ export default {
       schemaLabelWidth: 120,
       showUsingTaskDialog: false,
       usingTasks: [],
-      schemaData: null
+      schemaData: null,
+      dialogTestVisible: false,
+      model: {}
     }
   },
   computed: {
@@ -473,7 +492,49 @@ export default {
     // 编辑
     handleEdit(row = {}) {
       this.openDialog(row)
-    }
+    },
+
+    handleTest(row = {}) {
+      this.startTest(row)
+    },
+
+    handleEditorTest() {
+      this.$refs.form.validate(async valid => {
+        if (valid) {
+          const schemaFormInstance = this.$refs.schemaToForm.getForm?.()
+          schemaFormInstance?.validate().then(async () => {
+            let formValues = this.$refs.schemaToForm?.getFormValues?.()
+
+            this.loading = true
+            let { id, name, type, uri, defaultStorage } = this.form
+            let params = Object.assign(
+              {
+                id,
+                name,
+                type,
+                uri,
+                defaultStorage
+              },
+              formValues
+            )
+
+            this.startTest(params)
+          })
+        }
+      })
+    },
+
+    startTest(data = {}) {
+      this.checkAgent(() => {
+        Object.assign(this.model, data)
+        this.dialogTestVisible = true
+        this.$refs.test.start(false)
+      }).catch(() => {
+        this.buried('connectionTestAgentFail')
+      })
+    },
+
+    returnTestData(data) {}
   }
 }
 </script>
