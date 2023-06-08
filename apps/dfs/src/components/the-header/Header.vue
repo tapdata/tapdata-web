@@ -5,9 +5,6 @@
       <ElLink class="logo" @click="command('workbench')">
         <img src="../../assets/image/logoFull.png" alt="" />
       </ElLink>
-      <div v-if="configMock">
-        当前账号 {{ configMock.nickname }} 正在模拟用户 {{ configMock.mockUserId }} 请谨慎操作！！！
-      </div>
       <div class="dfs-header__button button-bar pr-4 fs-7">
         <!--付费专业版-->
         <div class="vip-btn mr-4 cursor-pointer" @click="openUpgrade">
@@ -99,8 +96,6 @@ export default {
       languages: langMenu,
       domain: document.domain,
       onlyEnglishLanguage: false,
-      configMock: window.__configMock__,
-      mockUserId: null,
       openUpgradeFee: false,
       isFeeUser: true
     }
@@ -113,9 +108,6 @@ export default {
       //默认只有英文则当前浏览器语言设置为英文
       this.lang = 'en'
       setCurrentLanguage(this.lang, this.$i18n)
-    }
-    if (window.__configMock__) {
-      this.mockUserId = window.__configMock__?.mockUserId || false
     }
     this.getAgentCount()
     //如果没有配置topBarLinks 给默认值
