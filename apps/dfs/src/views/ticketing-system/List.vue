@@ -35,12 +35,17 @@
       </VTable>
     </div>
     <!--{{$t('dfs_ticketing_system_list_xinjiangongdan')}}-->
-    <ElDialog :title="$t('dfs_ticketing_system_list_xinjiangongdan')" :visible.sync="createDialog" width="620px">
+    <ElDialog
+      :before-close="closeDialog"
+      :title="$t('dfs_ticketing_system_list_xinjiangongdan')"
+      :visible.sync="createDialog"
+      width="620px"
+    >
       <span>
         <el-form label-position="top" :model="createForm" :rules="rules" ref="createForm">
           <el-form-item :label="$t('dfs_ticketing_system_list_zhuti')" prop="subject">
             <el-input
-              v-model="createForm.subject"
+              v-model.trim="createForm.subject"
               :placeholder="$t('dfs_ticketing_system_list_qingshuruzhuti')"
               required
             ></el-input>
@@ -71,7 +76,7 @@
           </el-form-item>
           <el-form-item :label="$t('dfs_ticketing_system_list_wenti')" prop="subject">
             <el-input
-              v-model="createForm.description"
+              v-model.trim="createForm.description"
               type="textarea"
               :placeholder="$t('dfs_ticketing_system_list_qingmiaoshuninde')"
               required
@@ -80,7 +85,7 @@
         </el-form>
       </span>
       <span slot="footer">
-        <el-button @click="createDialog = false">{{ $t('public_button_cancel') }}</el-button>
+        <el-button @click="closeDialog()">{{ $t('public_button_cancel') }}</el-button>
         <el-button type="primary" :loading="submitLoading" @click="create">{{ $t('public_button_create') }}</el-button>
       </span>
     </ElDialog>
@@ -312,13 +317,19 @@ export default {
             email: email
           })
           this.$axios.post('api/ticket', params).then(() => {
-            this.createDialog = false
+            this.closeDialog()
             this.submitLoading = false
             this.table.fetch(1)
             this.$message.success(i18n.t('public_message_operation_success'))
           })
         }
       })
+    },
+    //关闭弹窗
+    closeDialog() {
+      this.createForm = {}
+      this.$refs?.createForm?.resetFields()
+      this.createDialog = false
     }
   }
 }
