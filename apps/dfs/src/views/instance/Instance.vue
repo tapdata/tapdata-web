@@ -764,12 +764,7 @@ export default {
         let query = { ...route.query, detailId: undefined }
         let params = { ...route.params }
 
-        if (query.active === 'storage') {
-          this.activeName = 'second'
-          this.$nextTick(() => {
-            this.tableCode?.fetch()
-          })
-        }
+        this.checkActive(query)
 
         if (params?.showTransferDialogVisible) {
           this.showTransferDialogVisible = params?.showTransferDialogVisible
@@ -802,6 +797,8 @@ export default {
       }
     }, 10000)
     this.getLatestVersion()
+
+    this.checkActive(this.$route.query)
   },
   beforeDestroy() {
     clearInterval(timer)
@@ -1606,6 +1603,14 @@ export default {
             })
           })
       })
+    },
+    checkActive(query) {
+      if (query.active === 'storage') {
+        this.activeName = 'second'
+        this.$nextTick(() => {
+          this.tableCode?.fetch()
+        })
+      }
     }
   }
 }
