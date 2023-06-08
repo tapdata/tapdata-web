@@ -39,7 +39,7 @@ export default {
   workbench_manage: '工作臺',
   workbench_quick_start: '快速開始',
   workbench_notice: '公告通知',
-  more_workbench_notice: '更多通告',
+  more_workbench_notice: '更多',
   workbench_overview: '概覽',
   workbench_guide: '新手入門',
   workbench_agent_desc:

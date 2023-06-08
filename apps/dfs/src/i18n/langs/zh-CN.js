@@ -54,7 +54,7 @@ export default {
   workbench_manage: '工作台',
   workbench_quick_start: '快速开始',
   workbench_notice: '公告通知',
-  more_workbench_notice: '更多通告',
+  more_workbench_notice: '更多',
   workbench_overview: '概览',
   workbench_guide: '新手入门',
   workbench_agent_desc:
@@ -1349,7 +1349,8 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_chengbengengdichong:
     '成本更低: 充分利用已有硬件资源, 同样的规格下产品价格低很多',
   dfs_agent_download_subscriptionmodeldialog_shiyongbantuoguan: '使用半托管模式的好处：',
-  dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi2: '在这种模式下, 你需要自己提供服务运行所需要的资源与环境',
+  dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi2:
+    '在这种模式下, 你需要自己提供服务运行所需要的资源与环境',
   dfs_agent_download_subscriptionmodeldialog_quantuoguanmoshi: '全托管模式',
   dfs_agent_download_subscriptionmodeldialog_bantuoguanmoshi: '半托管模式',
   dfs_instance_instance_quxiaodingyue: '取消订阅',
