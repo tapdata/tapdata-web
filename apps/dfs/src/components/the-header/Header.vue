@@ -96,6 +96,8 @@ export default {
       languages: langMenu,
       domain: document.domain,
       onlyEnglishLanguage: false,
+      configMock: window.__configMock__,
+      mockUserId: null,
       openUpgradeFee: false,
       isFeeUser: true
     }
@@ -108,6 +110,9 @@ export default {
       //默认只有英文则当前浏览器语言设置为英文
       this.lang = 'en'
       setCurrentLanguage(this.lang, this.$i18n)
+    }
+    if (window.__configMock__) {
+      this.mockUserId = window.__configMock__?.mockUserId || false
     }
     this.getAgentCount()
     //如果没有配置topBarLinks 给默认值

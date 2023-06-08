@@ -81,7 +81,7 @@
       </span>
       <span slot="footer">
         <el-button @click="createDialog = false">{{ $t('public_button_cancel') }}</el-button>
-        <el-button type="primary" @click="create">{{ $t('public_button_create') }}</el-button>
+        <el-button type="primary" :loading="submitLoading" @click="create">{{ $t('public_button_create') }}</el-button>
       </span>
     </ElDialog>
     <Details ref="details" width="380px"></Details>
@@ -167,7 +167,8 @@ export default {
         ]
       },
       taskList: [],
-      connectionList: []
+      connectionList: [],
+      submitLoading: false
     }
   },
   computed: {
@@ -299,6 +300,7 @@ export default {
     create() {
       this.$refs.createForm.validate(valid => {
         if (valid) {
+          this.submitLoading = true
           let { userId, phone, email } = window.__USER_INFO__
           let taskName = this.taskList.find(task => task.id === this.createForm?.jobId)?.name
           let connectionName = this.connectionList.find(conn => conn.id === this.createForm?.connectionId)?.name
@@ -311,6 +313,7 @@ export default {
           })
           this.$axios.post('api/ticket', params).then(() => {
             this.createDialog = false
+            this.submitLoading = false
             this.table.fetch(1)
             this.$message.success(i18n.t('public_message_operation_success'))
           })
