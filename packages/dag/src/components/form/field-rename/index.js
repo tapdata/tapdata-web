@@ -279,7 +279,7 @@ export const FieldRename = connect(
             nativeData,
             this.operations
           )
-          let ops = this.operations.filter(v => v.field === data.field && v.op === 'RENAME')
+          let ops = this.operations.filter(v => v.field === data.schema_field_name && v.op === 'RENAME')
           let op
           if (ops.length === 0) {
             op = Object.assign(JSON.parse(JSON.stringify(this.RENAME_OPS_TPL)), {
@@ -300,7 +300,7 @@ export const FieldRename = connect(
             op = ops[0]
             if (data.field_name === nativeData.original_field_name) {
               //再次改名跟原来名字一样 删除当前operation 记录
-              let index = this.operations.findIndex(v => v.id === data.id && v.op === 'RENAME')
+              let index = this.operations.findIndex(v => v.field === data.schema_field_name && v.op === 'RENAME')
               this.operations.splice(index, 1)
             } else {
               op.operand = data.field_name
@@ -360,7 +360,7 @@ export const FieldRename = connect(
               fn(childNode, childNode.data)
             }
             for (let i = 0; i < self.operations.length; i++) {
-              if (self.operations[i].id === data.id) {
+              if (self.operations[i].field === data.schema_field_name) {
                 let ops = self.operations[i]
                 if (ops.op === 'RENAME') {
                   let existsName = self.handleExistsName(node, data)
