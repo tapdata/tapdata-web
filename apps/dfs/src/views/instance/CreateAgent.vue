@@ -1677,7 +1677,7 @@ export default {
     }
 
     //获取是否有存储实例
-    // this.getMdbCount()
+    this.getMdbCount()
   },
   methods: {
     prevStep() {

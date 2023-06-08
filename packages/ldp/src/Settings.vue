@@ -293,7 +293,10 @@ export default {
       )
     },
     disabledBtn() {
-      return this.disabled && this.mode === 'service' && this.mode === this.setting?.mode
+      return (
+        (this.disabled && this.mode === 'service' && this.mode === this.setting?.mode) ||
+        (this.mode === 'service' && this.form.fdmStorageCluster === 'full-management')
+      )
     }
   },
 
