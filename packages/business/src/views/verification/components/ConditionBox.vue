@@ -37,31 +37,17 @@
           :data-index="index"
           :size-dependencies="[item.id, item.source, item.target]"
         >
-          <div
-            class="joint-table-item"
-            :class="['joint-table-item', { active: editId === item.id }]"
-            :key="item.id + index"
-          >
+          <div class="joint-table-item" :class="['joint-table-item']" :key="item.id + index">
             <div class="joint-table-setting overflow-hidden">
               <div class="flex justify-content-between">
-                <ElTooltip
-                  placement="top-start"
-                  :content="$t('packages_business_components_conditionbox_zhankaibianji')"
-                >
-                  <div
-                    class="cond-item__title flex align-items-center cursor-pointer flex-fill"
-                    @click="editItem(item)"
-                  >
-                    <span class="font-color-main fs-7">{{
-                      $t('packages_business_components_conditionbox_jianyantiaojian')
-                    }}</span>
-                    <span class="ml-1">{{ index + 1 }}</span>
-                    <VIcon size="14" class="ml-1 color-primary">edit-outline</VIcon>
-                  </div>
-                </ElTooltip>
+                <div class="cond-item__title flex align-items-center">
+                  <span class="font-color-main fs-7">{{
+                    $t('packages_business_components_conditionbox_jianyantiaojian')
+                  }}</span>
+                  <span class="ml-1">{{ index + 1 }}</span>
+                </div>
                 <div class="flex align-items-center">
                   <ElButton type="text" @click.stop="removeItem(index)">{{ $t('public_button_delete') }}</ElButton>
-                  <VIcon size="16" class="arrow-icon ml-1">arrow-right</VIcon>
                 </div>
               </div>
               <div class="setting-item mt-4" :key="'connection' + item.id">
@@ -69,11 +55,11 @@
                   >{{ $t('packages_business_components_conditionbox_daijiaoyanlianjie') }}:</label
                 >
                 <AsyncSelect
-                  v-if="editId === item.id"
                   v-model="item.source.connectionId"
                   :method="getConnectionsListMethod"
                   :currentLabel="item.source.connectionName"
                   itemQuery="name"
+                  lazy
                   filterable
                   class="item-select"
                   :key="'sourceConnectionId' + item.id"
@@ -81,18 +67,15 @@
                   @change="handleChangeConnection(arguments[0], item.source)"
                 >
                 </AsyncSelect>
-                <span v-else :class="['item-value-text', { 'color-disable': !item.source.connectionId }]">{{
-                  item.source.connectionName || $t('public_select_placeholder')
-                }}</span>
                 <span class="item-icon fs-6">
                   <i class="el-icon-arrow-right"></i>
                 </span>
                 <AsyncSelect
-                  v-if="editId === item.id"
                   v-model="item.target.connectionId"
                   :method="getConnectionsListMethod"
                   :currentLabel="item.target.connectionName"
                   itemQuery="name"
+                  lazy
                   filterable
                   class="item-select"
                   :key="'targetConnectionId' + item.id"
@@ -100,14 +83,10 @@
                   @change="handleChangeConnection(arguments[0], item.target)"
                 >
                 </AsyncSelect>
-                <span v-else :class="['item-value-text', { 'color-disable': !item.target.connectionId }]">{{
-                  item.target.connectionName || $t('public_select_placeholder')
-                }}</span>
               </div>
               <div class="setting-item mt-4" :key="'table' + item.id">
                 <label class="item-label">{{ $t('packages_business_components_conditionbox_laiyuanbiao') }}:</label>
                 <AsyncSelect
-                  v-if="editId === item.id"
                   v-model="item.source.table"
                   :method="getTableListMethod"
                   :params="{
@@ -116,18 +95,15 @@
                   }"
                   itemQuery="name"
                   itemType="string"
+                  lazy
                   filterable
                   class="item-select"
                   :key="'sourceTable' + item.id"
                   @change="handleChangeTable(arguments[0], item, index, 'source')"
                 >
                 </AsyncSelect>
-                <span v-else :class="['item-value-text', { 'color-disable': !item.source.table }]">{{
-                  item.source.table || $t('public_select_placeholder')
-                }}</span>
                 <span class="item-icon">{{ $t('packages_business_components_conditionbox_mubiaobiao') }}:</span>
                 <AsyncSelect
-                  v-if="editId === item.id"
                   v-model="item.target.table"
                   :method="getTableListMethod"
                   :params="{
@@ -136,38 +112,51 @@
                   }"
                   itemQuery="name"
                   itemType="string"
+                  lazy
                   filterable
                   class="item-select"
                   :key="'targetTable' + item.id"
                   @change="handleChangeTable(arguments[0], item, index, 'target')"
                 >
                 </AsyncSelect>
-                <span v-else :class="['item-value-text', { 'color-disable': !item.target.table }]">{{
-                  item.target.table || $t('public_select_placeholder')
-                }}</span>
               </div>
-              <FieldBox
-                v-if="inspectMethod !== 'row_count' && editId === item.id"
-                :is-edit="editId === item.id"
-                :item="item"
-                :index="index"
-                :dynamicSchemaMap="dynamicSchemaMap"
-                :id="'field-box-' + index"
-                @change="handleChangeFieldBox(arguments[0], item)"
-              ></FieldBox>
-              <div v-else-if="inspectMethod !== 'row_count'" class="setting-item mt-4">
+              <div v-if="inspectMethod !== 'row_count'" class="setting-item mt-4">
                 <label class="item-label">{{ $t('packages_business_verification_indexField') }}: </label>
-                <span :class="['item-value-text', { 'color-danger': !item.source.sortColumn }]">{{
-                  item.source.sortColumn || $t('packages_business_components_conditionbox_suoyinziduanwei')
-                }}</span>
+                <MultiSelection
+                  v-model="item.source.sortColumn"
+                  class="item-select"
+                  :class="{ 'empty-data': !item.source.sortColumn }"
+                  :options="item.source.fields"
+                  :id="'item-source-' + index"
+                ></MultiSelection>
                 <span class="item-icon"></span>
-                <span :class="['item-value-text', { 'color-danger': !item.target.sortColumn }]">{{
-                  item.target.sortColumn || $t('packages_business_components_conditionbox_suoyinziduanwei')
-                }}</span>
+                <MultiSelection
+                  v-model="item.target.sortColumn"
+                  class="item-select"
+                  :class="{ 'empty-data': !item.target.sortColumn }"
+                  :options="item.target.fields"
+                ></MultiSelection>
+              </div>
+              <div v-if="inspectMethod !== 'row_count'" class="setting-item align-items-center mt-4">
+                <label class="item-label">{{ $t('packages_business_components_fieldbox_daijiaoyanmoxing') }}:</label>
+                <ElRadioGroup
+                  v-model="item.modeType"
+                  :disabled="getModeTypeDisabled(item)"
+                  @change="handleChangeModeType(arguments[0], item, index)"
+                >
+                  <ElRadio label="all">{{ $t('packages_business_components_fieldbox_quanziduan') }}</ElRadio>
+                  <ElRadio label="custom">{{ $t('packages_business_connections_databaseform_zidingyi') }}</ElRadio>
+                </ElRadioGroup>
+                <ElLink
+                  v-if="item.modeType === 'custom'"
+                  type="primary"
+                  class="ml-4"
+                  @click="handleCustomFields(item, index)"
+                  >查看自定义字段({{ item.source.columns ? item.source.columns.length : 0 }})</ElLink
+                >
               </div>
               <div class="setting-item mt-4">
                 <ElCheckbox
-                  v-if="editId === item.id"
                   v-model="item.showAdvancedVerification"
                   v-show="inspectMethod === 'field'"
                   @input="handleChangeAdvanced(item)"
@@ -235,6 +224,7 @@
         <ElButton type="primary" size="mini" @click="submitScript">{{ $t('public_button_confirm') }}</ElButton>
       </span>
     </ElDialog>
+    <FieldDialog ref="fieldDialog" @save="handleChangeFields"></FieldDialog>
   </div>
 </template>
 
@@ -250,8 +240,9 @@ import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 import { GitBook, VCodeEditor } from '@tap/component'
 import resize from '@tap/component/src/directives/resize'
 
-import FieldBox from './FieldBox'
 import { TABLE_PARAMS, META_INSTANCE_FIELDS, DATA_NODE_TYPES } from './const'
+import MultiSelection from '../MultiSelection'
+import FieldDialog from './FieldDialog'
 
 export default {
   name: 'ConditionBox',
@@ -260,7 +251,15 @@ export default {
     resize
   },
 
-  components: { AsyncSelect, FieldBox, DynamicScroller, DynamicScrollerItem, VCodeEditor, GitBook },
+  components: {
+    AsyncSelect,
+    DynamicScroller,
+    DynamicScrollerItem,
+    VCodeEditor,
+    GitBook,
+    MultiSelection,
+    FieldDialog
+  },
 
   props: {
     taskId: String,
@@ -283,7 +282,6 @@ export default {
   data() {
     return {
       list: [],
-      editId: '',
       jointErrorMessage: '',
       fieldsMap: {},
       autoAddTableLoading: false,
@@ -565,19 +563,6 @@ export default {
           tableNameRelation
         }
       })
-    },
-
-    editItem(item) {
-      if (this.editId === item.id) {
-        this.setEditId('')
-        return
-      }
-      this.jointErrorMessage = ''
-      this.setEditId(item.id)
-    },
-
-    setEditId(id) {
-      this.editId = id
     },
 
     handleClear() {
@@ -1006,7 +991,6 @@ export default {
           return !c.source.table || !c.target.table
         })
       ) {
-        this.setEditId(tasks[index - 1]?.id)
         this.$nextTick(() => {
           formDom.childNodes[index - 1]?.querySelector('input')?.focus()
         })
@@ -1025,7 +1009,6 @@ export default {
           return !c.source.sortColumn || !c.target.sortColumn
         })
       ) {
-        this.setEditId(tasks[index - 1]?.id)
         this.$nextTick(() => {
           // document.getElementById('data-verification-form').childNodes[index - 1].querySelector('input').focus()
           let item = document.getElementById('item-source-' + (index - 1))
@@ -1044,7 +1027,6 @@ export default {
           return c.source.sortColumn.split(',').length !== c.target.sortColumn.split(',').length
         })
       ) {
-        this.setEditId(tasks[index - 1]?.id)
         this.$nextTick(() => {
           let item = document.getElementById('item-source-' + (index - 1))
           item.querySelector('input').focus()
@@ -1062,7 +1044,6 @@ export default {
           return c.source.columns?.some(t => !t) || c.target.columns?.some(t => !t)
         })
       ) {
-        this.setEditId(tasks[index - 1]?.id)
         this.$nextTick(() => {
           let item = document.getElementById('list-table__content' + (index - 1))
           const emptyDom = item.querySelector('.el-select.empty-data')
@@ -1088,7 +1069,6 @@ export default {
           return c.showAdvancedVerification && !c.webScript
         })
       ) {
-        this.setEditId(tasks[index - 1]?.id)
         this.$nextTick(() => {
           formDom.childNodes[index - 1]?.querySelector('input')?.focus()
         })
@@ -1178,6 +1158,28 @@ function validate(sourceRow){
 \`\`\`
 `
       }
+    },
+
+    getModeTypeDisabled(item) {
+      return !(item.source.connectionId && item.source.table && item.target.connectionId && item.target.table)
+    },
+
+    handleCustomFields(item, index) {
+      this.$refs.fieldDialog.open(item, index, this.dynamicSchemaMap)
+    },
+
+    handleChangeModeType(val, item, index) {
+      if (val !== 'custom') {
+        item.source.columns = null
+        item.target.columns = null
+        return
+      }
+      this.handleCustomFields(item, index)
+    },
+
+    handleChangeFields(data = [], index) {
+      this.list[index].source.columns = data.map(t => t.source)
+      this.list[index].target.columns = data.map(t => t.target)
     }
   }
 }
@@ -1209,12 +1211,6 @@ function validate(sourceRow){
     padding: 16px 24px;
     display: flex;
     border-bottom: 1px solid map-get($borderColor, light);
-    //cursor: pointer;
-    &.active {
-      .arrow-icon {
-        transform: rotate(90deg);
-      }
-    }
   }
   .joint-table-setting {
     flex: 1;
@@ -1295,10 +1291,13 @@ function validate(sourceRow){
   height: 280px;
 }
 
-.arrow-icon {
-  margin-top: 2px;
-  transition: 0.2s;
-  color: #4e5969;
-  transform: rotate(-90deg);
+.empty-data {
+  ::v-deep {
+    .el-select {
+      .el-input__inner {
+        border-color: #d44d4d;
+      }
+    }
+  }
 }
 </style>
