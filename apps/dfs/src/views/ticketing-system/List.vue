@@ -117,8 +117,7 @@ export default {
       pricePay: '',
       agentTypeMap: AGENT_TYPE_MAP,
       searchParams: {
-        agentDeploy: '',
-        status: ''
+        keyword: ''
       },
       search: '',
       filterItems: [],
@@ -190,8 +189,8 @@ export default {
     $route(route) {
       if (route.name === 'TicketSystem') {
         let query = route.query
-        this.searchParams = Object.assign(this.searchParams, query)
-        let pageNum = isEmpty(query) ? undefined : 1
+        this.searchParams.keyword = query.keyword || ''
+        let pageNum = query === '{}' ? undefined : 1
         this.table.fetch(pageNum)
       }
     }
@@ -210,14 +209,12 @@ export default {
     remoteMethod({ page }) {
       let { current, size } = page
       let { keyword } = this.searchParams
-      let where = {
-        status: {
-          $ne: 'invalid' //过滤 invild
-        }
-      }
-      keyword && (where.name = keyword)
       let { userId } = window.__USER_INFO__
-      return this.$axios.get(`api/ticket?userId=${userId}&page=${current}&limit=${size}`).then(data => {
+      let url = `api/ticket?userId=${userId}&page=${current}&limit=${size}`
+      if (keyword) {
+        url = `api/ticket?userId=${userId}&page=${current}&limit=${size}&subject=${keyword}`
+      }
+      return this.$axios.get(url).then(data => {
         let items = data.items || []
         return {
           total: data.total,
