@@ -127,6 +127,26 @@ export default {
         return
       }
 
+      if (!item.target.nodeId) {
+        this.loading = true
+        this.sourceFields = await this.getFields(item.source.table, item.source.connectionId)
+        this.targetFields = await this.getFields(item.target.table, item.target.connectionId)
+
+        let list = this.sourceFields.map((el, i) => {
+          const findTarget = this.targetFields.find(t => t.value === el.value) || {}
+          findTarget.used = true
+          return {
+            source: el.value,
+            target: findTarget.value || ''
+          }
+        })
+
+        list.push(...this.targetFields.filter(t => !t.used).map(t => ({ source: '', target: t.value })))
+        this.list = list
+        this.loading = false
+        return
+      }
+
       // 加载目标的字段
       const params = {
         nodeId: item.target.nodeId,
@@ -255,6 +275,30 @@ export default {
       }
       this.$emit('save', cloneDeep(this.list), this.index)
       this.handleClose()
+    },
+
+    async getFields(table, connectionId) {
+      const targetMetadataInstances = await metadataInstancesApi.tapTables({
+        filter: JSON.stringify({
+          where: {
+            meta_type: 'table',
+            sourceType: 'SOURCE',
+            original_name: table,
+            'source._id': connectionId
+          },
+          limit: 1
+        })
+      })
+
+      return Object.values(targetMetadataInstances.items[0]?.nameFieldMap || {}).map(t => {
+        return {
+          id: t.id,
+          label: t.fieldName,
+          value: t.fieldName,
+          field_name: t.fieldName,
+          primary_key_position: t.primaryKey
+        }
+      })
     }
   }
 }

@@ -827,6 +827,12 @@ export default {
       const fields = this.getFieldsByItem(item, type)
       item[type].fields = fields
       item[type].sortColumn = this.getPrimaryKeyFieldStr(fields)
+
+      if (item.modeType === 'custom') {
+        item.source.columns = []
+        item.target.columns = []
+      }
+
       // 绑定任务，则自动填充目标信息
       if (!this.taskId) {
         return
@@ -1214,7 +1220,7 @@ function validate(sourceRow){
               label: t.fieldName,
               value: t.fieldName,
               field_name: t.fieldName,
-              primary_key_position: t.primaryKeyPosition
+              primary_key_position: t.primaryKey
             }
           })
         })
