@@ -230,12 +230,12 @@ export default {
       if (!firstCheckId) {
         return this.$message.error(this.$t('packages_business_verification_message_old_data_not_support'))
       }
-      let inspect = this.inspect
-      let keep = inspect?.limit?.keep || 0
-      let totalFailed = inspect?.difference_number || 0
-      if (keep < totalFailed) {
-        return this.$message.error(this.$t('packages_business_verification_message_out_of_limit'))
-      }
+      // let inspect = this.inspect
+      // let keep = inspect?.limit?.keep || 0
+      // let totalFailed = inspect?.difference_number || 0
+      // if (keep < totalFailed) {
+      //   return this.$message.error(this.$t('packages_business_verification_message_out_of_limit'))
+      // }
       inspectApi
         .update(
           {

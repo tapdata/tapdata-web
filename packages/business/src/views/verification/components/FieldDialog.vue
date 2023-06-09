@@ -8,7 +8,7 @@
     custom-class="connection-dialog ldp-conection-dialog flex flex-column"
     @close="handleClose"
   >
-    <div>
+    <div v-if="visible">
       <div class="mb-4">
         <ElInput
           class="search-input"
@@ -47,11 +47,9 @@
                     :item-size="30"
                     :items="sourceFields"
                     :class="['flex-fill', { 'empty-data': !fItem.source }]"
-                    :allow-create="sourceDynamicSchema(fItem)"
+                    :allow-create="sourceDynamicSchema"
                     :placeholder="
-                      sourceDynamicSchema(fItem)
-                        ? $t('packages_business_select_placeholder')
-                        : $t('public_select_placeholder')
+                      sourceDynamicSchema ? $t('packages_business_select_placeholder') : $t('public_select_placeholder')
                     "
                     filterable
                     class="flex-fill"
@@ -61,11 +59,9 @@
                     :item-size="34"
                     :items="targetFields"
                     :class="['flex-fill ml-5', { 'empty-data': !fItem.target }]"
-                    :allow-create="targetDynamicSchema(fItem)"
+                    :allow-create="targetDynamicSchema"
                     :placeholder="
-                      targetDynamicSchema(fItem)
-                        ? $t('packages_business_select_placeholder')
-                        : $t('public_select_placeholder')
+                      targetDynamicSchema ? $t('packages_business_select_placeholder') : $t('public_select_placeholder')
                     "
                     filterable
                   />
@@ -108,6 +104,8 @@ export default {
       keyword: '',
       sourceFields: [],
       targetFields: [],
+      sourceDynamicSchema: false,
+      targetDynamicSchema: false,
       dynamicSchemaMap: {}
     }
   },
@@ -149,8 +147,10 @@ export default {
           item.source?.fields?.map(t => {
             return {
               id: t.id,
+              key: t.id,
               label: t.original_field_name,
               value: t.original_field_name,
+              field_name: t.original_field_name,
               primary_key_position: t.primaryKeyPosition
             }
           })
@@ -160,8 +160,10 @@ export default {
           item.target?.fields.map(t => {
             return {
               id: t.id,
+              key: t.id,
               label: t.original_field_name,
               value: t.original_field_name,
+              field_name: t.original_field_name,
               primary_key_position: t.primaryKeyPosition
             }
           })
@@ -210,7 +212,9 @@ export default {
 
     open(item = {}, index, dynamicSchemaMap = {}) {
       this.index = index
-      this.dynamicSchemaMap = dynamicSchemaMap
+      const { source, target } = dynamicSchemaMap
+      this.sourceDynamicSchema = source
+      this.targetDynamicSchema = target
       this.loadList(item)
       this.visible = true
     },
@@ -238,14 +242,6 @@ export default {
           t.id = t.source + t.target
           return t
         })
-    },
-
-    sourceDynamicSchema(item) {
-      return this.dynamicSchemaMap[item.source.connectionId]
-    },
-
-    targetDynamicSchema(item) {
-      return this.dynamicSchemaMap[item.target.connectionId]
     },
 
     handleClose() {

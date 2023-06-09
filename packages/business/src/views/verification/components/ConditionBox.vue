@@ -128,6 +128,7 @@
                   :class="{ 'empty-data': !item.source.sortColumn }"
                   :options="item.source.fields"
                   :id="'item-source-' + index"
+                  @focus="handleFocus(item.source)"
                 ></MultiSelection>
                 <span class="item-icon"></span>
                 <MultiSelection
@@ -135,6 +136,7 @@
                   class="item-select"
                   :class="{ 'empty-data': !item.target.sortColumn }"
                   :options="item.target.fields"
+                  @focus="handleFocus(item.target)"
                 ></MultiSelection>
               </div>
               <div v-if="inspectMethod !== 'row_count'" class="setting-item align-items-center mt-4">
@@ -1167,7 +1169,10 @@ function validate(sourceRow){
     },
 
     handleCustomFields(item, index) {
-      this.$refs.fieldDialog.open(item, index, this.dynamicSchemaMap)
+      this.$refs.fieldDialog.open(item, index, {
+        source: this.dynamicSchemaMap[item.source.connectionId],
+        target: this.dynamicSchemaMap[item.target.connectionId]
+      })
     },
 
     handleChangeModeType(val, item, index) {
@@ -1182,6 +1187,37 @@ function validate(sourceRow){
     handleChangeFields(data = [], index) {
       this.list[index].source.columns = data.map(t => t.source)
       this.list[index].target.columns = data.map(t => t.target)
+    },
+
+    handleFocus(opt = {}) {
+      if (opt.fields?.length) {
+        return
+      }
+      const connectionId = opt.connectionId?.split('/')?.[1]
+      const params = {
+        where: {
+          meta_type: 'table',
+          sourceType: 'SOURCE',
+          original_name: opt.table,
+          'source._id': connectionId
+        },
+        limit: 1
+      }
+      metadataInstancesApi
+        .tapTables({
+          filter: JSON.stringify(params)
+        })
+        .then((data = {}) => {
+          opt.fields = Object.values(data.items[0]?.nameFieldMap || {}).map(t => {
+            return {
+              id: t.id,
+              label: t.fieldName,
+              value: t.fieldName,
+              field_name: t.fieldName,
+              primary_key_position: t.primaryKeyPosition
+            }
+          })
+        })
     }
   }
 }

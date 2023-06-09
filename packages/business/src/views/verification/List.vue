@@ -142,6 +142,9 @@
               <ElDropdownItem command="history" :disabled="!scope.row.InspectResult"
                 >{{ $t('packages_business_verification_historyTip') }}
               </ElDropdownItem>
+              <ElDropdownItem command="stop" :disabled="!scope.row.InspectResult"
+                >{{ $t('public_button_stop') }}
+              </ElDropdownItem>
               <ElDropdownItem
                 command="remove"
                 v-readonlybtn="'verify_job_delete'"
@@ -443,7 +446,8 @@ export default {
         return i18n.t('packages_business_verification_list_biaobufenziduan')
       }
       return this.inspectMethod[row.inspectMethod]
-    }
+    },
+    stop(id, row) {}
   }
 }
 </script>
