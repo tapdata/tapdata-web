@@ -211,8 +211,8 @@ export const FieldRename = connect(
                           type="text"
                           class="ml-5"
                           disabled={
-                            (this.fieldsNameTransforms === '' && !this.isRename(data.field)) ||
-                            this.isReset(data.field) ||
+                            (this.fieldsNameTransforms === '' && !this.isRename(data.previousFieldName)) ||
+                            this.isReset(data.previousFieldName) ||
                             this.disabled ||
                             this.transformLoading
                           }
@@ -250,7 +250,7 @@ export const FieldRename = connect(
 
               if (!item) return fields
 
-              let targetIndex = fields.findIndex(n => n.schema_field_name === item.field)
+              let targetIndex = fields.findIndex(n => n.previousFieldName === item.field)
 
               if (targetIndex === -1) {
                 continue
@@ -296,12 +296,12 @@ export const FieldRename = connect(
             nativeData,
             this.operations
           )
-          let ops = this.operations.filter(v => v.field === data.schema_field_name && v.op === 'RENAME')
+          let ops = this.operations.filter(v => v.field === data.previousFieldName && v.op === 'RENAME')
           let op
           if (ops.length === 0) {
             op = Object.assign(JSON.parse(JSON.stringify(this.RENAME_OPS_TPL)), {
               id: data.id,
-              field: data.schema_field_name || data.field_name,
+              field: data.previousFieldName,
               operand: first ? nativeData.previousFieldName : data.field_name,
               table_name: data.table_name,
               type: data.type,
@@ -362,7 +362,7 @@ export const FieldRename = connect(
           return field
         },
         handleReset(node, data) {
-          if (this.fieldsNameTransforms !== '' && !this.firstReset(data.field)) {
+          if (this.fieldsNameTransforms !== '' && !this.firstReset(data.previousFieldName)) {
             //所有字段批量修改过，撤回既是保持原来字段名 且第一次重置
             this.handleRename(node, data, true)
             return
@@ -377,7 +377,7 @@ export const FieldRename = connect(
               fn(childNode, childNode.data)
             }
             for (let i = 0; i < self.operations.length; i++) {
-              if (self.operations[i].field === data.schema_field_name) {
+              if (self.operations[i].field === data.previousFieldName) {
                 let ops = self.operations[i]
                 if (ops.op === 'RENAME') {
                   let existsName = self.handleExistsName(node, data)
