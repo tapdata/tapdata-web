@@ -169,7 +169,8 @@ export const FieldAddDel = connect(
                         {this.isCreate(data.field) ? (
                           <span
                             class={[
-                              (data.is_deleted || this.isRemove(data.id)) && !this.isRest(data.id)
+                              (data.is_deleted || this.isRemove(data.previousFieldName)) &&
+                              !this.isRest(data.previousFieldName)
                                 ? 'active__delete'
                                 : ''
                             ]}
@@ -181,7 +182,7 @@ export const FieldAddDel = connect(
                                   'tree-field-input',
                                   'text__inner',
                                   {
-                                    'tree-field-input-primary': this.isCreate(data.id)
+                                    'tree-field-input-primary': this.isCreate(data.previousFieldName)
                                   }
                                 ]}
                                 v-model={data.field_name}
@@ -261,7 +262,7 @@ export const FieldAddDel = connect(
           console.log('checkOps', this.operations?.length) // eslint-disable-line
           if (this.operations?.length > 0) {
             for (let i = 0; i < this.operations.length; i++) {
-              let index = fields.findIndex(t => t.field === this.operations[i]?.field)
+              let index = fields.findIndex(t => t.previousFieldName === this.operations[i]?.field)
               if (this.operations[i]?.op === 'CREATE' && index === -1) {
                 let newField = {
                   id: this.operations[i].id,
@@ -277,7 +278,7 @@ export const FieldAddDel = connect(
                   is_nullable: true,
                   columnSize: 0,
                   autoincrement: false,
-                  field: this.operations[i].field
+                  previousFieldName: this.operations[i].field
                 }
                 fields.unshift(newField)
               }
@@ -417,6 +418,7 @@ export const FieldAddDel = connect(
             primary_key_position: 0,
             tableName: this.fields[0]?.tableName || '',
             field_name: 'newFieldName',
+            previousFieldName: 'newFieldName',
             level: 1
           }
           this.$refs.tree.insertAfter(newNodeData, node)
