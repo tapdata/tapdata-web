@@ -580,7 +580,7 @@ export default {
         }
         this.$axios.post('api/tcm/orders/cancel', param).then(() => {
           this.$message.success(this.$t('public_message_operation_success'))
-          this.fetch()
+          this.table.fetch(1)
         })
         return
       }
@@ -590,7 +590,6 @@ export default {
         //格式化价
         periodStart = periodStart ? dayjs(periodStart).format('YYYY-MM-DD HH:mm:ss') : ''
         periodEnd = periodEnd ? dayjs(periodEnd).format('YYYY-MM-DD HH:mm:ss') : '-'
-        this.showUnsubscribeDetailVisible = true
         //组装数据
         let agentList = refundAmounts.find(it => it.productType === 'Engine')
         //存储退订费用
@@ -621,6 +620,9 @@ export default {
           this.memoryList = [memoryList]
         } else this.memoryList = []
         this.refundAmount = this.formatPrice(currency, prices)
+        this.$message.success(this.$t('public_message_operation_success'))
+        this.table.fetch(1)
+        this.showUnsubscribeDetailVisible = true
       })
     },
     formatPrice(currency, price) {
