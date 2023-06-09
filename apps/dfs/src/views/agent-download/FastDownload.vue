@@ -98,14 +98,14 @@
                 v-if="showAllCode"
                 @click="handleShowAllCode(false)"
               >
-                <VIcon class="mr-2">arrow-down-fill</VIcon><span>显示完整命令</span>
+                <VIcon class="mr-2">arrow-down-fill</VIcon><span>{{$t('dfs_agent_download_fastdownload_xianshiwanzhengming')}}</span>
               </div>
               <div
                 class="down-show-code text-center cursor-pointer bg-white mt-2 pb-2"
                 v-else
                 @click="handleShowAllCode(true)"
               >
-                <VIcon class="mr-2 fast-icon">arrow-down-fill</VIcon>隐藏完整命令
+                <VIcon class="mr-2 fast-icon">arrow-down-fill</VIcon>{{$t('dfs_agent_download_fastdownload_yincangwanzhengming')}}
               </div>
               <li class="mt-3">
                 <span>{{ $t('agent_deploy_start_install_windows_fifth') }}</span>
@@ -158,14 +158,14 @@
             v-if="showAllCode"
             @click="handleShowAllCode(false)"
           >
-            <VIcon class="mr-2">arrow-down-fill</VIcon><span>显示完整命令</span>
+            <VIcon class="mr-2">arrow-down-fill</VIcon><span>{{$t('dfs_agent_download_fastdownload_xianshiwanzhengming')}}</span>
           </div>
           <div
             class="down-show-code text-center cursor-pointer bg-white mt-2 pb-2"
             v-else
             @click="handleShowAllCode(true)"
           >
-            <VIcon class="mr-2 fast-icon">arrow-down-fill</VIcon>隐藏完整命令
+            <VIcon class="mr-2 fast-icon">arrow-down-fill</VIcon>{{$t('dfs_agent_download_fastdownload_yincangwanzhengming')}}
           </div>
           <li>
             <span>{{ $t('agent_deploy_start_install_linux_second') }}</span>
@@ -222,14 +222,14 @@
             v-if="showAllCode"
             @click="handleShowAllCode(false)"
           >
-            <VIcon class="mr-2">arrow-down-fill</VIcon><span>显示完整命令</span>
+            <VIcon class="mr-2">arrow-down-fill</VIcon><span>{{$t('dfs_agent_download_fastdownload_xianshiwanzhengming')}}</span>
           </div>
           <div
             class="down-show-code text-center cursor-pointer bg-white mt-2 pb-2"
             v-else
             @click="handleShowAllCode(true)"
           >
-            <VIcon class="mr-2 fast-icon">arrow-down-fill</VIcon>隐藏完整命令
+            <VIcon class="mr-2 fast-icon">arrow-down-fill</VIcon>{{$t('dfs_agent_download_fastdownload_yincangwanzhengming')}}
           </div>
           <li>
             <span>{{ $t('agent_deploy_start_install_docker_second') }}</span>
@@ -320,14 +320,14 @@
             v-if="showAllCode"
             @click="handleShowAllCode(false)"
           >
-            <VIcon class="mr-2">arrow-down-fill</VIcon><span>显示完整命令</span>
+            <VIcon class="mr-2">arrow-down-fill</VIcon><span>{{$t('dfs_agent_download_fastdownload_xianshiwanzhengming')}}</span>
           </div>
           <div
             class="down-show-code text-center cursor-pointer bg-white mt-2 pb-2"
             v-else
             @click="handleShowAllCode(true)"
           >
-            <VIcon class="mr-2 fast-icon">arrow-down-fill</VIcon>隐藏完整命令
+            <VIcon class="mr-2 fast-icon">arrow-down-fill</VIcon>{{$t('dfs_agent_download_fastdownload_yincangwanzhengming')}}
           </div>
           <li>{{ $t('dfs_agent_download_agentdownloadmodal_querenjisuanchao') }}</li>
           <li>

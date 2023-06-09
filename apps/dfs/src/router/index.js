@@ -115,17 +115,7 @@ const routes = [
           title: 'tap_workbench',
           icon: 'workbench',
           hideTitle: true
-        },
-        children: [
-          {
-            path: 'notice',
-            name: 'WorkbenchNotice',
-            component: () => import('../views/workbench/Notice.vue'),
-            meta: {
-              title: 'tap_announcement_notice'
-            }
-          }
-        ]
+        }
       },
       {
         path: '/systemNotice',
@@ -409,9 +399,19 @@ const routes = [
         name: 'noticeList',
         component: NoticeList,
         meta: {
-          title: '公告列表',
+          title: i18n.t('dfs_router_index_gonggaoliebiao'),
           hideTitle: false
-        }
+        },
+        children: [
+          {
+            path: 'notice',
+            name: 'WorkbenchNotice',
+            component: () => import('../views/workbench/Notice.vue'),
+            meta: {
+              title: 'tap_announcement_notice'
+            }
+          }
+        ]
       },
       /* ---------- 自定义节点  ----------*/
       {

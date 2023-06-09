@@ -17,6 +17,8 @@ export default {
   button_bind: '綁定',
   button_unbind: '解綁',
   button_retry: '重試',
+  button_open: '打开',
+  button_hold: '挂起',
   message_network_unconnected: '網絡連接異常',
   message_network_connected: '網絡已恢復',
   link_back_to_list: '返回列表',
@@ -1468,5 +1470,9 @@ export default {
   dfs_ticketing_system_list_zhuti: '主題',
   dfs_ticketing_system_list_qingxuanzexuanze2: '請選擇選擇數據源',
   dfs_ticketing_system_list_xuanzerenwu: '選擇任務',
-  dfs_ticketing_system_list_xinjiangongdan: '新建工單'
+  dfs_ticketing_system_list_xinjiangongdan: '新建工單',
+  dfs_router_index_gonggaoliebiao: '公告列表',
+  dfs_agent_download_fastdownload_yincangwanzhengming: '隱藏完整命令',
+  dfs_agent_download_fastdownload_xianshiwanzhengming: '顯示完整命令',
+  dfs_instance_createagent_mianfeitiyan: '免費體驗'
 }

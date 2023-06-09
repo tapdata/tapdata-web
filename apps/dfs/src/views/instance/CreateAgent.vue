@@ -556,7 +556,7 @@
                       v-if="item.chargeProvider === 'FreeTier'"
                       size="small"
                       class="bg-color-warning text-white border-0 ml-2"
-                      >免费体验</ElTag
+                      >{{$t('dfs_instance_createagent_mianfeitiyan')}}</ElTag
                     >
                   </div>
                   <div

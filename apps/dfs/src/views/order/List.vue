@@ -111,54 +111,56 @@
           <li class="mt-2">{{ $t('dfs_instance_instance_qingzixihedui') }}</li>
         </ul>
         <div class="mt-4 fs-6 font-color-dark">{{ $t('dfs_instance_instance_tuidingshili') }}</div>
-        <VTable
-          ref="table"
-          row-key="id"
-          :columns="paidDetailColumns"
-          :data="agentList"
-          height="100%"
-          :has-pagination="false"
-          class="mt-4 mb-4"
-        >
-          <template #expiredTime="{ row }">
-            <div>{{ row.periodStart }}</div>
-            <div>{{ row.periodEnd }}</div>
-          </template>
-          <template #actualAmount="{ row }">
-            <span class="font-color-dark fw-normal">{{ row.actualAmount }}</span>
-          </template>
-          <template #spentAmount="{ row }">
-            <span class="color-danger fw-normal"> -{{ row.spentAmount }}</span>
-          </template>
-          <template #refundAmount="{ row }">
-            <span class="color-primary fw-normal">{{ row.refundAmount }}</span>
-          </template>
-        </VTable>
-        <VTable
-          v-if="memoryList.length > 0"
-          ref="table"
-          row-key="id"
-          :columns="memoryColumns"
-          :data="memoryList"
-          height="100%"
-          :has-pagination="false"
-          class="mt-4 mb-4"
-        >
-          <template #expiredTime="{ row }">
-            <div>{{ row.periodStart }}</div>
-            <div>{{ row.periodEnd }}</div>
-          </template>
-          <template #actualAmount="{ row }">
-            <span class="font-color-dark fw-normal">{{ row.actualAmount }}</span>
-          </template>
-          <template #spentAmount="{ row }">
-            <span class="color-danger fw-normal"> -{{ row.spentAmount }}</span>
-          </template>
-          <template #refundAmount="{ row }">
-            <span class="color-primary fw-normal">{{ row.refundAmount }}</span>
-          </template>
-        </VTable>
-
+        <div v-if="agentList.length > 0">
+          <VTable
+            ref="table"
+            row-key="id"
+            :columns="paidDetailColumns"
+            :data="agentList"
+            height="100%"
+            :has-pagination="false"
+            class="mt-4 mb-4"
+          >
+            <template #expiredTime="{ row }">
+              <div>{{ row.periodStart }}</div>
+              <div>{{ row.periodEnd }}</div>
+            </template>
+            <template #actualAmount="{ row }">
+              <span class="font-color-dark fw-normal">{{ row.actualAmount }}</span>
+            </template>
+            <template #spentAmount="{ row }">
+              <span class="color-danger fw-normal"> -{{ row.spentAmount }}</span>
+            </template>
+            <template #refundAmount="{ row }">
+              <span class="color-primary fw-normal">{{ row.refundAmount }}</span>
+            </template>
+          </VTable>
+        </div>
+        <div v-if="memoryList.length > 0">
+          <VTable
+            ref="table"
+            row-key="id"
+            :columns="memoryColumns"
+            :data="memoryList"
+            height="100%"
+            :has-pagination="false"
+            class="mt-4 mb-4"
+          >
+            <template #expiredTime="{ row }">
+              <div>{{ row.periodStart }}</div>
+              <div>{{ row.periodEnd }}</div>
+            </template>
+            <template #actualAmount="{ row }">
+              <span class="font-color-dark fw-normal">{{ row.actualAmount }}</span>
+            </template>
+            <template #spentAmount="{ row }">
+              <span class="color-danger fw-normal"> -{{ row.spentAmount }}</span>
+            </template>
+            <template #refundAmount="{ row }">
+              <span class="color-primary fw-normal">{{ row.refundAmount }}</span>
+            </template>
+          </VTable>
+        </div>
         <el-form label-position="top" :model="form" :rules="rules" ref="ruleForm">
           <el-form-item :label="$t('dfs_instance_instance_tuidingyuanyin')" required>
             <el-radio-group v-model="form.refundReason">
@@ -574,7 +576,7 @@ export default {
     getUnsubscribePrice(row = {}) {
       if (row?.refund) {
         let param = {
-          instanceId: row.id
+          instanceId: row.agentId
         }
         this.$axios.post('api/tcm/orders/cancel', param).then(() => {
           this.$message.success(this.$t('public_message_operation_success'))
@@ -584,7 +586,7 @@ export default {
       }
       this.currentRow = row
       this.$axios.get('api/tcm/orders/calculateRefundAmount?subscribeId=' + row.id).then(res => {
-        let { currency, periodStart, periodEnd, refundAmount, refundAmounts = [] } = res
+        let { currency, periodStart, periodEnd, refundAmounts = [] } = res
         //格式化价
         periodStart = periodStart ? dayjs(periodStart).format('YYYY-MM-DD HH:mm:ss') : ''
         periodEnd = periodEnd ? dayjs(periodEnd).format('YYYY-MM-DD HH:mm:ss') : '-'
@@ -593,9 +595,10 @@ export default {
         let agentList = refundAmounts.find(it => it.productType === 'Engine')
         //存储退订费用
         let memoryList = refundAmounts.find(it => it.productType === 'MongoDB')
-        this.refundAmount = this.formatPrice(currency, memoryList.refundAmount + agentList.refundAmount)
+        let prices = 0
         if (agentList) {
           //格式化价
+          prices = agentList.refundAmount
           agentList.actualAmount = this.formatPrice(currency, agentList.actualAmount)
           agentList.spentAmount = this.formatPrice(currency, agentList.spentAmount)
           agentList.refundAmount = this.formatPrice(currency, agentList.refundAmount)
@@ -607,6 +610,7 @@ export default {
         } else this.agentList = []
         if (memoryList) {
           //格式化价
+          prices = prices + memoryList.refundAmount
           memoryList.actualAmount = this.formatPrice(currency, memoryList.actualAmount)
           memoryList.spentAmount = this.formatPrice(currency, memoryList.spentAmount)
           memoryList.refundAmount = this.formatPrice(currency, memoryList.refundAmount)
@@ -616,6 +620,7 @@ export default {
           memoryList.storageSize = memoryList?.resource?.spec?.storageSize + 'GB' || 0
           this.memoryList = [memoryList]
         } else this.memoryList = []
+        this.refundAmount = this.formatPrice(currency, prices)
       })
     },
     formatPrice(currency, price) {

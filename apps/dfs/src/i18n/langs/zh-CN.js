@@ -21,6 +21,8 @@ export default {
   button_bind: '绑定',
   button_unbind: '解绑',
   button_retry: '重试',
+  button_open: '打开',
+  button_hold: '挂起',
   message_network_unconnected: '网络连接异常',
   message_network_connected: '网络已恢复',
   // 链接
@@ -1498,5 +1500,9 @@ export default {
   dfs_ticketing_system_list_zhuti: '主题',
   dfs_ticketing_system_list_qingxuanzexuanze2: '请选择选择数据源',
   dfs_ticketing_system_list_xuanzerenwu: '选择任务',
-  dfs_ticketing_system_list_xinjiangongdan: '新建工单'
+  dfs_ticketing_system_list_xinjiangongdan: '新建工单',
+  dfs_router_index_gonggaoliebiao: '公告列表',
+  dfs_agent_download_fastdownload_yincangwanzhengming: '隐藏完整命令',
+  dfs_agent_download_fastdownload_xianshiwanzhengming: '显示完整命令',
+  dfs_instance_createagent_mianfeitiyan: '免费体验'
 }

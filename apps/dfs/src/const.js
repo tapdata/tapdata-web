@@ -30,9 +30,9 @@ export const INSTANCE_STATUS_MAP = {
     cancelSubscribe: { text: i18n.t('packages_business_shared_const_yiquxiao'), type: 'disable' }
   },
   TICKET_STATUS_MAP = {
-    Closed: { text: '关闭', type: 'success' },
-    'On Hold': { text: '挂起', type: 'disable' },
-    Open: { text: '打开' }
+    Closed: { text: i18n.t('button_close'), type: 'success' },
+    'On Hold': { text: i18n.t('button_hold'), type: 'disable' },
+    Open: { text: i18n.t('button_open') }
   },
   TASK_STATUS_MAP = {
     running: { text: i18n.t('public_status_running'), icon: 'yunxingzhong', type: 'success' },

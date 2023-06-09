@@ -17,6 +17,8 @@ export default {
   button_bind: 'Binding',
   button_unbind: 'Unbind',
   button_retry: 'Retry',
+  button_open: 'Open',
+  button_hold: 'On Hold',
   message_network_unconnected: 'Network not connected',
   message_network_connected: 'Network is restored',
   link_back_to_list: 'Back to list',
@@ -1613,5 +1615,10 @@ export default {
   dfs_ticketing_system_list_zhuti: 'Theme',
   dfs_ticketing_system_list_qingxuanzexuanze2: 'Please select the data source',
   dfs_ticketing_system_list_xuanzerenwu: 'Select task',
-  dfs_ticketing_system_list_xinjiangongdan: 'Create Ticket'
+  dfs_ticketing_system_list_xinjiangongdan: 'Create Ticket',
+
+  dfs_router_index_gonggaoliebiao: 'Announcement List',
+  dfs_agent_download_fastdownload_yincangwanzhengming: 'Hide command',
+  dfs_agent_download_fastdownload_xianshiwanzhengming: 'Show command',
+  dfs_instance_createagent_mianfeitiyan: 'Free Trial'
 }
