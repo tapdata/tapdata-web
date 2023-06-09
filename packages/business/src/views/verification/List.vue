@@ -37,7 +37,7 @@
           <div class="ellipsis">{{ scope.row.name }}</div>
           <div class="font-color-slight">
             <span
-              >{{ inspectMethod[scope.row.inspectMethod] }} (
+              >{{ getInspectName(scope.row) }} (
               {{
                 scope.row.mode === 'manual'
                   ? $t('packages_business_verification_singleVerify')
@@ -437,6 +437,12 @@ export default {
         customClass: 'verify-list-error-msg',
         width: '600px'
       })
+    },
+    getInspectName(row = {}) {
+      if (row.tasks?.some(t => !!t.source.columns || !!t.target.columns)) {
+        return i18n.t('packages_business_verification_list_biaobufenziduan')
+      }
+      return this.inspectMethod[row.inspectMethod]
     }
   }
 }

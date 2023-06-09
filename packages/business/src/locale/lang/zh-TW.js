@@ -1056,5 +1056,14 @@ export default {
   packages_business_shared_cache_list_qingxianxiugaiwai: '外存不存在，請先修改外存配置後，再啟動。',
   packages_business_components_conditionbox_shifouquerenqing: '是否確認清除索引字段為空的校驗條件？ ',
   packages_business_components_conditionbox_suoyinziduanwei: '索引字段為空',
-  packages_business_components_conditionbox_yijianqingchusuo: '一鍵清除索引字段為空的條件'
+  packages_business_components_conditionbox_yijianqingchusuo: '一鍵清除索引字段為空的條件',
+  packages_business_connections_list_dangqianlianjiex:
+    '當前連接 xxx 正在作為FDM和MDM的存儲使用，刪除會導致已有存儲數據丟失，是否確認要繼續刪除。 ',
+  packages_business_connections_list_zhengzaizuoweiF:
+    '正在作為FDM和MDM的存儲使用，修改會導致已有存儲數據丟失，是否確認要繼續修改',
+  packages_business_connections_list_dangqianlianjie: '當前連接',
+  packages_business_components_conditionbox_chakanzidingyi: '查看自定義字段',
+  packages_business_components_fielddialog_ziduanbuyunxu: '字段不允許為空',
+  packages_business_components_fielddialog_zidingyiziduan: '自定義字段',
+  packages_business_verification_list_biaobufenziduan: '表部分字段校驗'
 }

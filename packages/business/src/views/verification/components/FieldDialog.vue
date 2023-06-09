@@ -1,6 +1,6 @@
 <template>
   <ElDialog
-    title="自定义字段"
+    :title="$t('packages_business_components_fielddialog_zidingyiziduan')"
     :visible="visible"
     :append-to-body="true"
     width="1200px"
@@ -254,7 +254,7 @@ export default {
 
     handleSave() {
       if (this.list.some(t => !t.source || !t.target)) {
-        this.$message.error('字段不允许为空')
+        this.$message.error(i18n.t('packages_business_components_fielddialog_ziduanbuyunxu'))
         return
       }
       this.$emit('save', cloneDeep(this.list), this.index)

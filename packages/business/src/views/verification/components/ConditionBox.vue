@@ -152,7 +152,9 @@
                   type="primary"
                   class="ml-4"
                   @click="handleCustomFields(item, index)"
-                  >查看自定义字段({{ item.source.columns ? item.source.columns.length : 0 }})</ElLink
+                >
+                  {{ $t('packages_business_components_conditionbox_chakanzidingyi') }}
+                  ({{ item.source.columns ? item.source.columns.length : 0 }})</ElLink
                 >
               </div>
               <div class="setting-item mt-4">
