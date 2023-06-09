@@ -1,19 +1,36 @@
 import i18n from '@tap/i18n'
 import { connect, mapProps, useForm } from '@tap/form'
+import { taskApi } from '@tap/api'
 import { observer } from '@formily/reactive-vue'
-import { defineComponent } from '@vue/composition-api'
+import { defineComponent, ref } from '@vue/composition-api'
 import { VIcon } from '@tap/component'
 import { convertSchemaToTreeData } from './util'
 import './index.scss'
+import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
 
 export const FieldRename = connect(
   observer(
     defineComponent({
-      props: ['loading', 'options', 'disabled'],
-      setup() {
+      props: ['loading', 'disabled', 'getFields'],
+      setup(props, { root }) {
         const formRef = useForm()
         const form = formRef.value
+        const options = ref([])
+
+        const loadFields = async () => {
+          const { values } = form
+
+          if (!values.$inputs[0].length) return
+
+          options.value = await props.getFields(values.id)
+        }
+
+        useAfterTaskSaved(root, formRef.value.values.$inputs, loadFields)
+
+        loadFields()
+
         return {
+          options,
           databaseType: form.values.databaseType,
           operations: form.values.operations,
           form
@@ -131,7 +148,7 @@ export const FieldRename = connect(
                       slot-scope="{ node, data }"
                     >
                       <span class="flex-1 text__inner inline-block ellipsis">
-                        {data.original_field_name}
+                        {data.previousFieldName}
                         {data.primary_key_position > 0 ? (
                           <VIcon size="12" class="text-warning ml-1">
                             key
@@ -145,7 +162,7 @@ export const FieldRename = connect(
                           <div
                             staticClass="el-input el-input--small tree-field-input text__inner"
                             class={{
-                              'tree-field-input-primary': data.field_name !== data.original_field_name,
+                              'tree-field-input-primary': data.field_name !== data.previousFieldName,
                               'is-disabled': this.disabled || this.transformLoading
                             }}
                           >
@@ -285,7 +302,7 @@ export const FieldRename = connect(
             op = Object.assign(JSON.parse(JSON.stringify(this.RENAME_OPS_TPL)), {
               id: data.id,
               field: data.schema_field_name || data.field_name,
-              operand: first ? nativeData.original_field_name : data.field_name,
+              operand: first ? nativeData.previousFieldName : data.field_name,
               table_name: data.table_name,
               type: data.type,
               primary_key_position: data.primary_key_position,
@@ -298,7 +315,7 @@ export const FieldRename = connect(
             this.operations.push(op)
           } else {
             op = ops[0]
-            if (data.field_name === nativeData.original_field_name) {
+            if (data.field_name === nativeData.previousFieldName) {
               //再次改名跟原来名字一样 删除当前operation 记录
               let index = this.operations.findIndex(v => v.field === data.schema_field_name && v.op === 'RENAME')
               this.operations.splice(index, 1)
@@ -367,7 +384,7 @@ export const FieldRename = connect(
                   if (existsName) {
                     return
                   }
-                  if (nativeData) node.data.field_name = nativeData.original_field_name
+                  if (nativeData) node.data.field_name = nativeData.previousFieldName
                   self.operations.splice(i, 1)
                   i--
                   continue
