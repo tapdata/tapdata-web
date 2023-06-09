@@ -407,13 +407,9 @@ export const FieldRename = connect(
           return fieldName
         },
         handleAllToUpperCase() {
-          //清掉所有operations
-          this.operations.splice(0)
           this.form.setValuesIn('fieldsNameTransform', 'toUpperCase')
         },
         handleAllToLowerCase() {
-          //清掉所有operations
-          this.operations.splice(0)
           this.form.setValuesIn('fieldsNameTransform', 'toLowerCase')
         },
         handleAllReset() {

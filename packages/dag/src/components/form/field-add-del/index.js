@@ -185,8 +185,8 @@ export const FieldAddDel = connect(
                                     'tree-field-input-primary': this.isCreate(data.previousFieldName)
                                   }
                                 ]}
-                                v-model={data.previousFieldName}
-                                onChange={() => this.handleRename(node, data)}
+                                v-model={data.field_name}
+                                onChange={val => this.handleRename(node, data)}
                                 onBlur={() => this.closeInput(node.data)}
                                 onKeydown={() => this.handleKeyDown()}
                               />
@@ -332,16 +332,19 @@ export const FieldAddDel = connect(
         },
         handleRename(node, data) {
           // FIXME: 重命名
-          let nativeData = this.getNativeData(data.id) //查找初始schema
-          let existsName = this.handleExistsName(data.previousFieldName)
+          let existsName = this.handleExistsName(data.field_name)
+
           if (existsName) {
-            data.previousFieldName = nativeData.previousFieldName
+            data.field_name = data.previousFieldName
             return
           }
+
           let createOps = this.operations.filter(v => v.field === data.previousFieldName && v.op === 'CREATE')
+
           if (createOps && createOps.length > 0) {
             let op = createOps[0]
-            op.field = data.previousFieldName
+            op.field = data.field_name
+            data.previousFieldName = data.field_name
           }
           this.$emit('change', this.operations)
         },
@@ -433,7 +436,7 @@ export const FieldAddDel = connect(
           // 改名前查找同级中是否重名，若有则return且还原改动并提示
           name = name || 'newFieldName'
           let exist = false
-          let parentNode = this.fields.filter(v => name === v.previousFieldName)
+          let parentNode = this.fields.filter(v => name === v.field_name)
           if (
             (parentNode && parentNode.length >= 1 && name === 'newFieldName') ||
             (parentNode && parentNode.length > 1 && name !== 'newFieldName')
