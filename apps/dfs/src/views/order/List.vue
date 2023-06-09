@@ -248,11 +248,13 @@ export default {
       memoryColumns: [
         {
           label: i18n.t('dfs_instance_createagent_cunchuguige'),
-          prop: 'spec'
+          prop: 'spec',
+          minWidth: 120
         },
         {
           label: i18n.t('dfs_instance_createagent_cunchukongjian'),
-          prop: 'storageSize'
+          prop: 'storageSize',
+          width: 120
         },
         {
           label: i18n.t('dfs_instance_selectlist_dingyuezhouqi'),
@@ -283,7 +285,8 @@ export default {
         },
         {
           label: this.$t('dfs_instance_instance_guige'),
-          prop: 'spec'
+          prop: 'spec',
+          width: 120
         },
         {
           label: i18n.t('dfs_instance_selectlist_dingyuezhouqi'),
@@ -583,13 +586,14 @@ export default {
       this.$axios.get('api/tcm/orders/calculateRefundAmount?subscribeId=' + row.id).then(res => {
         let { currency, periodStart, periodEnd, refundAmount, refundAmounts = [] } = res
         //格式化价
-        refundAmount = this.formatPrice(currency, refundAmount)
         periodStart = periodStart ? dayjs(periodStart).format('YYYY-MM-DD HH:mm:ss') : ''
         periodEnd = periodEnd ? dayjs(periodEnd).format('YYYY-MM-DD HH:mm:ss') : '-'
-        this.refundAmount = refundAmount
         this.showUnsubscribeDetailVisible = true
         //组装数据
         let agentList = refundAmounts.find(it => it.productType === 'Engine')
+        //存储退订费用
+        let memoryList = refundAmounts.find(it => it.productType === 'MongoDB')
+        this.refundAmount = this.formatPrice(currency, memoryList.refundAmount + agentList.refundAmount)
         if (agentList) {
           //格式化价
           agentList.actualAmount = this.formatPrice(currency, agentList.actualAmount)
@@ -601,8 +605,6 @@ export default {
           agentList.spec = agentList?.resource?.spec?.name
           this.agentList = [agentList]
         } else this.agentList = []
-        //存储退订费用
-        let memoryList = refundAmounts.find(it => it.productType === 'MongoDB')
         if (memoryList) {
           //格式化价
           memoryList.actualAmount = this.formatPrice(currency, memoryList.actualAmount)
