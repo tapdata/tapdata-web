@@ -194,6 +194,7 @@ export default {
         keyword: ''
       },
       dialogVisible: false,
+      dialogForm: {},
       form: {},
       rules: {
         name: [
@@ -367,6 +368,7 @@ export default {
     },
     openDialog(row) {
       this.dialogVisible = true
+      this.dialogForm = row || {}
       this.form = row
         ? cloneDeep(row)
         : {
@@ -495,7 +497,7 @@ export default {
     },
 
     handleTest(row = {}) {
-      this.startTest(row)
+      this.startTest({ id: row.id })
     },
 
     handleEditorTest() {
@@ -517,8 +519,14 @@ export default {
               },
               formValues
             )
+            let result = { id }
+            for (let key in params) {
+              if (params[key] !== this.dialogForm[key]) {
+                result[key] = params[key]
+              }
+            }
 
-            this.startTest(params)
+            this.startTest(result)
           })
         }
       })
