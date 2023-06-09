@@ -198,7 +198,8 @@ export const FieldAddDel = connect(
                           //不是新建字段
                           <span
                             class={[
-                              (data.is_deleted || this.isRemove(data.id)) && !this.isRest(data.id)
+                              (data.is_deleted || this.isRemove(data.previousFieldName)) &&
+                              !this.isRest(data.previousFieldName)
                                 ? 'active__delete'
                                 : ''
                             ]}
@@ -219,7 +220,9 @@ export const FieldAddDel = connect(
                           type="text"
                           class="ml-5"
                           disabled={
-                            ((this.isRemove(data.id) || data.is_deleted) && !this.isRest(data.id)) || this.disabled
+                            ((this.isRemove(data.previousFieldName) || data.is_deleted) &&
+                              !this.isRest(data.previousFieldName)) ||
+                            this.disabled
                           }
                           onClick={() => this.handleDelete(node, data)}
                         >
@@ -229,7 +232,9 @@ export const FieldAddDel = connect(
                           type="text"
                           class="ml-5"
                           disabled={
-                            (!this.isRemove(data.id) && !data.is_deleted) || this.isRest(data.id) || this.disabled
+                            (!this.isRemove(data.previousFieldName) && !data.is_deleted) ||
+                            this.isRest(data.previousFieldName) ||
+                            this.disabled
                           }
                           onClick={() => this.handleReset(node, data)}
                         >
