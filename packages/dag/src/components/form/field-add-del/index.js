@@ -185,13 +185,13 @@ export const FieldAddDel = connect(
                                     'tree-field-input-primary': this.isCreate(data.previousFieldName)
                                   }
                                 ]}
-                                v-model={data.field_name}
+                                v-model={data.previousFieldName}
                                 onChange={() => this.handleRename(node, data)}
                                 onBlur={() => this.closeInput(node.data)}
                                 onKeydown={() => this.handleKeyDown()}
                               />
                             ) : (
-                              <span class="text__inner">{data.field_name}</span>
+                              <span class="text__inner">{data.previousFieldName}</span>
                             )}
                           </span>
                         ) : (
@@ -203,7 +203,7 @@ export const FieldAddDel = connect(
                                 : ''
                             ]}
                           >
-                            {data.field_name}
+                            {data.previousFieldName}
                             {data.primary_key_position > 0 ? (
                               <VIcon size="12" class="text-warning ml-1">
                                 key
@@ -259,6 +259,7 @@ export const FieldAddDel = connect(
           return ops && ops.length > 0
         },
         checkOps(fields) {
+          // FIXME: 后续需要优化
           console.log('checkOps', this.operations?.length) // eslint-disable-line
           if (this.operations?.length > 0) {
             for (let i = 0; i < this.operations.length; i++) {
@@ -325,16 +326,17 @@ export const FieldAddDel = connect(
           }
         },
         handleRename(node, data) {
+          // FIXME: 重命名
           let nativeData = this.getNativeData(data.id) //查找初始schema
-          let existsName = this.handleExistsName(data.field_name)
+          let existsName = this.handleExistsName(data.previousFieldName)
           if (existsName) {
-            data.field_name = nativeData.field_name
+            data.previousFieldName = nativeData.previousFieldName
             return
           }
-          let createOps = this.operations.filter(v => v.field === data.field && v.op === 'CREATE')
+          let createOps = this.operations.filter(v => v.field === data.previousFieldName && v.op === 'CREATE')
           if (createOps && createOps.length > 0) {
             let op = createOps[0]
-            op.field = data.field_name
+            op.field = data.previousFieldName
           }
           this.$emit('change', this.operations)
         },
@@ -345,9 +347,9 @@ export const FieldAddDel = connect(
             return
           }
           console.log('fieldProcessor.handleReset', node, data) //eslint-disable-line
-          let parentId = node.parent.data.field
+          let parentId = node.parent.data.previousFieldName
           const operations = [...this.operations]
-          let indexId = operations.filter(v => v.op === 'REMOVE' && v.field === field)
+          let indexId = operations.filter(v => v.op === 'REMOVE' && v.field === data.previousFieldName)
           if (parentId && indexId.length !== 0) {
             return
           }
@@ -358,7 +360,7 @@ export const FieldAddDel = connect(
               fn(childNode, childNode.data)
             }
             for (let i = 0; i < operations.length; i++) {
-              if (operations[i].field === data.field) {
+              if (operations[i].field === data.previousFieldName) {
                 let ops = operations[i]
                 if (ops.op === 'REMOVE') {
                   operations.splice(i, 1)
@@ -379,7 +381,7 @@ export const FieldAddDel = connect(
           this.$emit('change', this.operations)
         },
         getParentFieldName(node) {
-          let fieldName = node.data && node.data.field_name ? node.data.field_name : ''
+          let fieldName = node.data && node.data.previousFieldName ? node.data.previousFieldName : ''
           if (node.level > 1 && node.parent && node.parent.data) {
             let parentFieldName = this.getParentFieldName(node.parent)
             if (parentFieldName) fieldName = parentFieldName + '.' + fieldName
@@ -417,7 +419,6 @@ export const FieldAddDel = connect(
             type: 'String',
             primary_key_position: 0,
             tableName: this.fields[0]?.tableName || '',
-            field_name: 'newFieldName',
             previousFieldName: 'newFieldName',
             level: 1
           }
@@ -427,7 +428,7 @@ export const FieldAddDel = connect(
           // 改名前查找同级中是否重名，若有则return且还原改动并提示
           name = name || 'newFieldName'
           let exist = false
-          let parentNode = this.fields.filter(v => name === v.field_name)
+          let parentNode = this.fields.filter(v => name === v.previousFieldName)
           if (
             (parentNode && parentNode.length >= 1 && name === 'newFieldName') ||
             (parentNode && parentNode.length > 1 && name !== 'newFieldName')
@@ -440,14 +441,14 @@ export const FieldAddDel = connect(
         handleDelete(node, data) {
           console.log('fieldProcessor.handleDelete', node, data) // eslint-disable-line
           const operations = [...this.operations]
-          let createOpsIndex = this.operations.findIndex(v => v.field === data.field && v.op === 'CREATE')
+          let createOpsIndex = this.operations.findIndex(v => v.field === data.previousFieldName && v.op === 'CREATE')
           if (createOpsIndex >= 0) {
-            let fieldName = this.operations[createOpsIndex].field_name + '.'
+            let fieldName = this.operations[createOpsIndex].field + '.'
             operations.splice(createOpsIndex, 1)
 
             for (let i = 0; i < this.operations.length; i++) {
               let op = this.operations[i]
-              let opFieldName = op.field || op.field_name
+              let opFieldName = op.field
               if (opFieldName.indexOf(fieldName) === 0 && opFieldName.length === fieldName.length) {
                 operations.splice(i, 1)
                 i--
@@ -461,17 +462,16 @@ export const FieldAddDel = connect(
               let ops = operations.filter(v => v.op === 'REMOVE' && v.field === field.field)
               let op = Object.assign(JSON.parse(JSON.stringify(self.REMOVE_OPS_TPL)), {
                 id: field.id,
-                field: field.schema_field_name || field.field_name,
+                field: field.previousFieldName,
                 operand: !self.deleteAllFieldsData,
                 table_name: field.table_name,
                 type: field.data_type,
                 primary_key_position: field.primary_key_position,
                 color: field.color,
-                label: field.field_name,
-                field_name: field.field_name
+                label: field.field_name
               })
               if (ops.length !== 0) {
-                let index = operations.findIndex(v => v.op === 'REMOVE' && v.field === field.field)
+                let index = operations.findIndex(v => v.op === 'REMOVE' && v.field === field.previousFieldName)
                 if (index > -1) {
                   operations.splice(index, 1)
                 }
