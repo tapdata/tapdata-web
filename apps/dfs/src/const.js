@@ -19,6 +19,16 @@ export const INSTANCE_STATUS_MAP = {
     Deleting: { text: i18n.t('public_status_deleting'), type: 'waiting' },
     Deleted: { text: i18n.t('public_status_deleted'), type: 'disable' }
   },
+  ORDER_STATUS_MAP = {
+    unPay: { text: i18n.t('packages_business_shared_const_weizhifu'), type: 'waiting' },
+    pay: { text: i18n.t('packages_business_shared_const_yizhifu'), type: 'success' },
+    payFail: { text: i18n.t('packages_business_shared_const_zhifushibai'), type: 'warning' },
+    refund: { text: i18n.t('packages_business_shared_const_yituikuan'), type: 'disable' },
+    refundFail: { text: i18n.t('packages_business_shared_const_tuikuanshibai'), type: 'warning' },
+    refunding: { text: i18n.t('packages_business_shared_const_tuikuanzhong') },
+    expire: { text: i18n.t('packages_business_shared_const_shixiao'), type: 'disable' },
+    cancelSubscribe: { text: i18n.t('packages_business_shared_const_yiquxiao'), type: 'disable' }
+  },
   TICKET_STATUS_MAP = {
     Closed: { text: '关闭', type: 'success' },
     'On Hold': { text: '挂起', type: 'disable' },

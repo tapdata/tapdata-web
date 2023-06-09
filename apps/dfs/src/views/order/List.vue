@@ -23,6 +23,13 @@
             <template #agentType="{ row }">
               <span>{{ agentTypeMap[row.agentType || 'local'] }}</span>
             </template>
+            <template #statusLabel="{ row }">
+              <StatusTag type="tag" :status="row.status" default-status="Stopped" target="order"></StatusTag>
+            </template>
+            <template #periodLabel="{ row }">
+              <div>{{ row.periodStart }}</div>
+              <div>{{ row.periodEnd }}</div>
+            </template>
             <template #bindAgent="{ row }">
               <ElLink v-if="row.agentId && row.status === 'pay'" type="primary" @click="handleAgent(row)">{{
                 row.agentId
@@ -175,9 +182,10 @@ import { isEmpty } from '@/util'
 import { CURRENCY_SYMBOL_MAP, NUMBER_MAP, ORDER_STATUS_MAP, TIME_MAP } from '@tap/business'
 import { getPaymentMethod, getSpec, AGENT_TYPE_MAP } from '../instance/utils'
 import dayjs from 'dayjs'
+import StatusTag from '../../components/StatusTag.vue'
 
 export default {
-  components: { FilterBar, VTable, transferDialog },
+  components: { StatusTag, FilterBar, VTable, transferDialog },
   inject: ['buried'],
   data() {
     return {
@@ -281,8 +289,8 @@ export default {
         },
         {
           label: i18n.t('dfs_instance_selectlist_dingyuezhouqi'),
-          prop: 'periodLabel',
-          width: 220
+          slotName: 'periodLabel',
+          width: 180
         },
         {
           label: i18n.t('dfs_user_center_dingyueshuliang'),
@@ -304,7 +312,7 @@ export default {
         },
         {
           label: i18n.t('task_monitor_status'),
-          prop: 'statusLabel'
+          slotName: 'statusLabel'
         },
         {
           label: i18n.t('public_operation'),
@@ -439,12 +447,8 @@ export default {
                 })
                 t.agentDeploy = this.agentTypeMap[t.agentDeploy || 'selfHost']
                 t.content = `${t.subscriptionMethodLabel} ${getSpec(spec)} ${i18n.t('public_agent')}`
-                t.periodLabel =
-                  t.status === 'unPay'
-                    ? '-'
-                    : dayjs(t.periodStart).format('YYYY-MM-DD HH:mm:ss') +
-                      ' - ' +
-                      dayjs(t.periodEnd).format('YYYY-MM-DD HH:mm:ss')
+                t.periodStart = t.status === 'unPay' ? dayjs(t.periodStart).format('YYYY-MM-DD HH:mm:ss') : ''
+                t.periodEnd = t.status === 'unPay' ? dayjs(t.periodEnd).format('YYYY-MM-DD HH:mm:ss') : '-'
                 t.priceSuffix = t.type === 'recurring' ? '/' + TIME_MAP[t.periodUnit] : ''
                 t.formatPrice =
                   CURRENCY_SYMBOL_MAP[t.currency] +
@@ -542,10 +546,9 @@ export default {
       this.$refs.ruleForm.validate(valid => {
         if (valid) {
           this.loadingCancelSubmit = true
-          const { paidType, agentId, id } = this.currentRow
+          const { paidType, id } = this.currentRow
           const { refundReason, refundDescribe } = this.form
           let param = {
-            instanceId: agentId,
             subscribeId: id,
             refundReason,
             refundDescribe
