@@ -151,6 +151,13 @@ class WSClient extends EventEmitter {
           } else {
             this.emit(message.type, message)
           }
+        } else if (message.code === 'fail') {
+          console.debug('fail', message) // eslint-disable-line
+          if (message.message === 'UserId is blank') {
+            console.debug(i18n.t('packages_business_shared_ws_client_acces'), event) // eslint-disable-line
+            this.emit('401')
+            this.connect()
+          }
         } else {
           this.emit(message.type, message)
         }
