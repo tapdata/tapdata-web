@@ -93,7 +93,12 @@
 
     <!--转账支付-->
     <transferDialog :visible.sync="showTransferDialogVisible" :price="pricePay"></transferDialog>
-    <ElDialog :visible.sync="showUnsubscribeDetailVisible" :title="$t('dfs_instance_instance_tuidingshili')">
+    <ElDialog
+      v-if="showUnsubscribeDetailVisible"
+      :visible.sync="showUnsubscribeDetailVisible"
+      :title="$t('dfs_instance_instance_tuidingshili')"
+      width="60%"
+    >
       <section>
         <ul class="subscription-ul">
           <li class="mt-2">
@@ -110,11 +115,15 @@
           ref="table"
           row-key="id"
           :columns="paidDetailColumns"
-          :data="paidDetailList"
+          :data="agentList"
           height="100%"
           :has-pagination="false"
           class="mt-4 mb-4"
         >
+          <template #expiredTime="{ row }">
+            <div>{{ row.periodStart }}</div>
+            <div>{{ row.periodEnd }}</div>
+          </template>
           <template #actualAmount="{ row }">
             <span class="font-color-dark fw-normal">{{ row.actualAmount }}</span>
           </template>
@@ -125,6 +134,31 @@
             <span class="color-primary fw-normal">{{ row.refundAmount }}</span>
           </template>
         </VTable>
+        <VTable
+          v-if="memoryList.length > 0"
+          ref="table"
+          row-key="id"
+          :columns="memoryColumns"
+          :data="memoryList"
+          height="100%"
+          :has-pagination="false"
+          class="mt-4 mb-4"
+        >
+          <template #expiredTime="{ row }">
+            <div>{{ row.periodStart }}</div>
+            <div>{{ row.periodEnd }}</div>
+          </template>
+          <template #actualAmount="{ row }">
+            <span class="font-color-dark fw-normal">{{ row.actualAmount }}</span>
+          </template>
+          <template #spentAmount="{ row }">
+            <span class="color-danger fw-normal"> -{{ row.spentAmount }}</span>
+          </template>
+          <template #refundAmount="{ row }">
+            <span class="color-primary fw-normal">{{ row.refundAmount }}</span>
+          </template>
+        </VTable>
+
         <el-form label-position="top" :model="form" :rules="rules" ref="ruleForm">
           <el-form-item :label="$t('dfs_instance_instance_tuidingyuanyin')" required>
             <el-radio-group v-model="form.refundReason">
@@ -195,7 +229,6 @@ export default {
       showUnsubscribeDetailVisible: false, //退订详情
       unsubscribeHelpDocumentation: '', //退订跳转地址
       currentRow: '',
-      paidDetailList: [],
       refundAmount: '',
       showTransferDialogVisible: false,
       pricePay: '',
@@ -212,6 +245,36 @@ export default {
       rules: {
         refundDescribe: [{ required: true, message: i18n.t('dfs_instance_instance_qingshurutuiding'), trigger: 'blur' }]
       },
+      memoryColumns: [
+        {
+          label: i18n.t('dfs_instance_createagent_cunchuguige'),
+          prop: 'spec'
+        },
+        {
+          label: i18n.t('dfs_instance_createagent_cunchukongjian'),
+          prop: 'storageSize'
+        },
+        {
+          label: i18n.t('dfs_instance_selectlist_dingyuezhouqi'),
+          slotName: 'expiredTime',
+          width: 180
+        },
+        {
+          label: i18n.t('dfs_instance_instance_shifujine'),
+          prop: 'actualAmount',
+          slotName: 'actualAmount'
+        },
+        {
+          label: i18n.t('dfs_instance_instance_yixiaohaojine'),
+          prop: 'spentAmount',
+          slotName: 'spentAmount'
+        },
+        {
+          label: i18n.t('dfs_instance_instance_tuidingjine'),
+          prop: 'refundAmount',
+          slotName: 'refundAmount'
+        }
+      ],
       paidDetailColumns: [
         {
           label: this.$t('agent_name'),
@@ -223,14 +286,9 @@ export default {
           prop: 'spec'
         },
         {
-          label: this.$t('start_time'),
-          prop: 'periodStart',
-          dataType: 'time'
-        },
-        {
-          label: this.$t('end_time'),
-          prop: 'periodEnd',
-          dataType: 'time'
+          label: i18n.t('dfs_instance_selectlist_dingyuezhouqi'),
+          slotName: 'expiredTime',
+          width: 180
         },
         {
           label: i18n.t('dfs_instance_instance_shifujine'),
@@ -319,7 +377,9 @@ export default {
           prop: 'extendArray',
           slotName: 'operation'
         }
-      ]
+      ],
+      agentList: [],
+      memoryList: []
     }
   },
   computed: {
@@ -447,8 +507,8 @@ export default {
                 })
                 t.agentDeploy = this.agentTypeMap[t.agentDeploy || 'selfHost']
                 t.content = `${t.subscriptionMethodLabel} ${getSpec(spec)} ${i18n.t('public_agent')}`
-                t.periodStart = t.status === 'unPay' ? dayjs(t.periodStart).format('YYYY-MM-DD HH:mm:ss') : ''
-                t.periodEnd = t.status === 'unPay' ? dayjs(t.periodEnd).format('YYYY-MM-DD HH:mm:ss') : '-'
+                t.periodStart = t.status !== 'unPay' ? dayjs(t.periodStart).format('YYYY-MM-DD HH:mm:ss') : ''
+                t.periodEnd = t.status !== 'unPay' ? dayjs(t.periodEnd).format('YYYY-MM-DD HH:mm:ss') : '-'
                 t.priceSuffix = t.type === 'recurring' ? '/' + TIME_MAP[t.periodUnit] : ''
                 t.formatPrice =
                   CURRENCY_SYMBOL_MAP[t.currency] +
@@ -521,15 +581,39 @@ export default {
       }
       this.currentRow = row
       this.$axios.get('api/tcm/orders/calculateRefundAmount?subscribeId=' + row.id).then(res => {
-        let { currency, agentName, spec, actualAmount, periodStart, periodEnd, refundAmount, spentAmount } = res
+        let { currency, periodStart, periodEnd, refundAmount, refundAmounts = [] } = res
         //格式化价
-        actualAmount = this.formatPrice(currency, actualAmount)
-        spentAmount = this.formatPrice(currency, spentAmount)
         refundAmount = this.formatPrice(currency, refundAmount)
-        spec = spec.name
+        periodStart = periodStart ? dayjs(periodStart).format('YYYY-MM-DD HH:mm:ss') : ''
+        periodEnd = periodEnd ? dayjs(periodEnd).format('YYYY-MM-DD HH:mm:ss') : '-'
         this.refundAmount = refundAmount
-        this.paidDetailList = [{ agentName, spec, actualAmount, periodStart, periodEnd, refundAmount, spentAmount }]
         this.showUnsubscribeDetailVisible = true
+        //组装数据
+        let agentList = refundAmounts.find(it => it.productType === 'Engine')
+        if (agentList) {
+          //格式化价
+          agentList.actualAmount = this.formatPrice(currency, agentList.actualAmount)
+          agentList.spentAmount = this.formatPrice(currency, agentList.spentAmount)
+          agentList.refundAmount = this.formatPrice(currency, agentList.refundAmount)
+          agentList.agentName = agentList?.resource?.name
+          agentList.periodStart = periodStart
+          agentList.periodEnd = periodEnd
+          agentList.spec = agentList?.resource?.spec?.name
+          this.agentList = [agentList]
+        } else this.agentList = []
+        //存储退订费用
+        let memoryList = refundAmounts.find(it => it.productType === 'MongoDB')
+        if (memoryList) {
+          //格式化价
+          memoryList.actualAmount = this.formatPrice(currency, memoryList.actualAmount)
+          memoryList.spentAmount = this.formatPrice(currency, memoryList.spentAmount)
+          memoryList.refundAmount = this.formatPrice(currency, memoryList.refundAmount)
+          memoryList.periodStart = periodStart
+          memoryList.periodEnd = periodEnd
+          memoryList.spec = memoryList?.resource?.spec?.name || ''
+          memoryList.storageSize = memoryList?.resource?.spec?.storageSize + 'GB' || 0
+          this.memoryList = [memoryList]
+        } else this.memoryList = []
       })
     },
     formatPrice(currency, price) {
