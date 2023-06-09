@@ -119,7 +119,15 @@ export default {
         }
         return item
       })
-      return list
+      return list.sort((a, b) => {
+        if (a.status === 'done') {
+          return 1
+        } else if (b.status === 'done') {
+          return -1
+        } else {
+          return 0
+        }
+      })
     }
   },
   methods: {

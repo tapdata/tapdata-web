@@ -45,16 +45,16 @@
           <VIcon class="ml-2 color-info" size="12" @click="errorMsg = ''">close</VIcon>
         </span>
       </div>
+      <!--        v-loading="['running', 'scheduling'].includes(inspect.status)"-->
       <div
         class="result-table mt-4"
         v-if="inspect"
-        v-loading="['running', 'scheduling'].includes(inspect.status)"
         :element-loading-text="$t('packages_business_verification_checking')"
       >
-        <template v-if="!['running', 'scheduling'].includes(inspect.status)">
-          <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
-          <ResultView v-if="type !== 'row_count'" ref="resultView" :remoteMethod="getResultData"></ResultView>
-        </template>
+        <!--        <template v-if="!['running', 'scheduling'].includes(inspect.status)">-->
+        <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
+        <ResultView v-if="type !== 'row_count'" ref="resultView" :remoteMethod="getResultData"></ResultView>
+        <!--        </template>-->
       </div>
     </div>
   </section>
@@ -128,13 +128,15 @@ export default {
     this.getData()
     setInterval(() => {
       if (['running', 'scheduling'].includes(this.inspect?.status)) {
-        this.getData()
+        this.getData(false)
       }
     }, 10000)
   },
   methods: {
-    getData() {
-      this.loading = true
+    getData(showLoading = true) {
+      if (showLoading) {
+        this.loading = true
+      }
       inspectApi
         .get({
           filter: JSON.stringify({
@@ -163,11 +165,16 @@ export default {
                 let stats = result.stats
                 if (stats.length) {
                   this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
-                  this.taskId = stats[0].taskId
+                  if (!this.taskId) {
+                    this.taskId = stats[0].taskId
+                  }
                   this.$nextTick(() => {
                     this.$refs.resultView?.fetch(1)
-                    if (this.type !== 'row_count') {
+                    if (this.type !== 'row_count' && showLoading) {
                       this.$refs.singleTable?.setCurrentRow(stats[0])
+                    }
+                    if (this.taskId) {
+                      this.$refs.singleTable?.setCurrentRow(stats.find(t => t.taskId === this.taskId))
                     }
                   })
                 }

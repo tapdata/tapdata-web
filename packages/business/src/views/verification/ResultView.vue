@@ -427,12 +427,12 @@ export default {
   },
   computed: {
     filterResultList() {
-      return this.resultList.filter(t => !!t.details)
+      return this.resultList?.filter(t => !!t.details) || []
     }
   },
   methods: {
     fetch(current) {
-      this.loading = true
+      // this.loading = true
       this.remoteMethod({ current, size: this.page.size })
         .then(({ statsInfo = {}, resultList, total, showAdvancedVerification }) => {
           if (statsInfo?.result === 'failed') {
