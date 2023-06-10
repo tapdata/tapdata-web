@@ -603,5 +603,9 @@ export default {
   packages_dag_standardization_js: '标准化JS',
   packages_dag_mixins_formscope_gaiziduanshibi: '该字段是必填字段!',
   packages_dag_shared_mining_table_info_index_wajuebiaoxinxi: '挖掘表信息',
-  packages_dag_table_not_exist: '表不存在，将自动创建'
+  packages_dag_table_not_exist: '表不存在，将自动创建',
+  packages_dag_field_inference_list_anxishutiaozheng: '按系数调整',
+  packages_dag_field_inference_list_zidingyitiaozheng: '自定义调整',
+  packages_dag_field_inference_list_anzhaoxishu: '按系数调整字段长度',
+  packages_dag_field_inference_list_anzhaoxishu_tip: '按系数调整是指将原推演出的长度乘以设置的系数作为调整后的字段长度'
 }

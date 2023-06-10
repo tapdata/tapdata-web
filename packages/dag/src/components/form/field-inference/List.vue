@@ -67,10 +67,29 @@
       width="35%"
     >
       <ElForm ref="dataTypeForm" label-width="140px" label-position="left" :model="currentData" @submit.native.prevent>
+        <ElRadioGroup v-model="modeType" class="mb-3">
+          <ElRadio label="custom">{{ $t('packages_dag_field_inference_list_zidingyitiaozheng') }}</ElRadio>
+          <ElRadio label="coefficient">{{ $t('packages_dag_field_inference_list_anxishutiaozheng') }}</ElRadio>
+        </ElRadioGroup>
         <ElFormItem :label="$t('packages_form_field_inference_list_tuiyanchudelei')">
           <span>{{ currentData.dataType }}</span>
         </ElFormItem>
+        <ElFormItem v-if="modeType === 'coefficient'" :label="$t('packages_dag_field_inference_list_anzhaoxishu')">
+          <div class="flex align-items-center">
+            <span>{{ getDataTypeName(currentData.dataType) }}</span>
+            <span>(</span>
+            <ElInputNumber
+              v-model="currentData.coefficient"
+              controls-position="right"
+              :min="1"
+              :max="10"
+              class="coefficient-input mx-2"
+            ></ElInputNumber>
+            <span>* n )</span>
+          </div>
+        </ElFormItem>
         <ElFormItem
+          v-else
           :label="$t('packages_form_field_inference_list_yaotiaozhengweide')"
           prop="newDataType"
           :error="currentData.errorMessage"
@@ -85,6 +104,10 @@
             @select="handleAutocomplete"
           ></ElAutocomplete>
         </ElFormItem>
+        <div v-if="modeType === 'coefficient'" class="flex align-items-center mt-n3 mb-3">
+          <VIcon class="color-primary mr-3">info</VIcon>
+          <span>{{ $t('packages_dag_field_inference_list_anzhaoxishu_tip') }}</span>
+        </div>
         <div v-if="!hideBatch">
           <ElCheckbox v-model="currentData.useToAll">{{
             $t('packages_form_field_inference_list_duidangqiantuiyan')
@@ -213,10 +236,12 @@ export default {
         useToAll: false,
         errorMessage: '',
         source: {},
-        canUseDataTypes: []
+        canUseDataTypes: [],
+        coefficient: 1
       },
       editBtnLoading: false,
-      rules: []
+      rules: [],
+      modeType: 'custom'
     }
   },
 
@@ -445,6 +470,10 @@ export default {
 
     handleAutocomplete(item) {
       this.currentData.selectDataType = item.value
+    },
+
+    getDataTypeName(val = '') {
+      return val.replace(/\(\w+\)/, '')
     }
   }
 }
@@ -468,5 +497,9 @@ export default {
 .type-warning {
   top: 3px;
   left: 0;
+}
+
+.coefficient-input {
+  width: 100px;
 }
 </style>
