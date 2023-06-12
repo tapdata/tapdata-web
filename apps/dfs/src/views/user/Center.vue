@@ -6,13 +6,17 @@
       <div>
         <ElRow :gutter="40" class="section-header mb-6">
           <ElCol :span="12" class="user-item">
-            <div class="user-item__label font-color-light">{{ $t('user_name') }}{{ $t('symbol_colon') }}</div>
+            <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
+              {{ $t('user_name') }}{{ $t('symbol_colon') }}
+            </div>
             <div class="user-item__value">{{ userData.username }}</div>
           </ElCol>
         </ElRow>
         <ElRow :gutter="40" class="section-header mb-6">
           <ElCol :span="12" class="user-item">
-            <div class="user-item__label font-color-light">{{ $t('user_Center_yongHuNiCheng') }}</div>
+            <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
+              {{ $t('user_Center_yongHuNiCheng') }}
+            </div>
             <InlineInput
               class="inline-input fs-8"
               :value="userData.nickname"
@@ -23,7 +27,7 @@
             ></InlineInput>
           </ElCol>
           <ElCol :span="12" class="user-item">
-            <div class="user-item__label font-color-light">
+            <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
               {{ $t('public_connection_form_password') }}{{ $t('symbol_colon') }}
             </div>
             <div class="user-item__value">******</div>
@@ -32,7 +36,9 @@
         </ElRow>
         <ElRow :gutter="40" class="section-header mb-6">
           <ElCol :span="12" class="user-item">
-            <div class="user-item__label font-color-light">{{ $t('user_phone_number') }}</div>
+            <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
+              {{ $t('user_phone_number') }}
+            </div>
             <div class="user-item__value">{{ userData.telephone || $t('user_Center_weiBangDing') }}</div>
             <ElLink v-if="userData.telephone" type="primary" @click="editPhone">{{
               $t('public_button_revise')
@@ -45,7 +51,9 @@
             >
           </ElCol>
           <ElCol :span="12" class="user-item">
-            <div class="user-item__label font-color-light">{{ $t('user_avatar') }}</div>
+            <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
+              {{ $t('user_avatar') }}
+            </div>
             <div class="user-item__value position-relative">
               <img
                 v-if="userData.avatar"
@@ -66,7 +74,9 @@
           <!--            <ElLink v-else type="primary" @click="dialogObj.bindWx = true">{{ $t('public_button_bind') }}</ElLink>-->
           <!--          </ElCol>-->
           <ElCol :span="12" class="user-item">
-            <div class="user-item__label font-color-light">{{ $t('user_Center_youXiang') }}</div>
+            <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
+              {{ $t('user_Center_youXiang') }}
+            </div>
             <div class="user-item__value">{{ userData.email || $t('user_Center_weiBangDing') }}</div>
             <ElLink v-if="userData.email" type="primary" @click="editEmail">{{ $t('public_button_revise') }}</ElLink>
             <ElLink v-else type="primary" @click="dialogObj.bindEmail = true">{{ $t('public_button_bind') }}</ElLink>
@@ -80,14 +90,24 @@
       <div>
         <ElRow :gutter="40" class="section-header mb-2">
           <ElCol :span="12" class="enterprise-item">
-            <div class="enterprise-item__label font-color-light">{{ $t('user_Center_gongSiMingCheng') }}</div>
+            <div
+              class="enterprise-item__label font-color-light"
+              :class="{ 'user-item__label_en': $i18n.locale === 'en' }"
+            >
+              {{ $t('user_Center_gongSiMingCheng') }}
+            </div>
             <div v-if="!isEdit" class="enterprise-item__value">
               {{ enData.companyName || $t('user_Center_weiTianXie') }}
             </div>
             <ElInput v-else v-model="enForm.companyName" class="enterprise-item__value"></ElInput>
           </ElCol>
           <ElCol :span="12" class="enterprise-item">
-            <div class="enterprise-item__label font-color-light">{{ $t('user_Center_gongSiGuanWang') }}</div>
+            <div
+              class="enterprise-item__label font-color-light"
+              :class="{ 'user-item__label_en': $i18n.locale === 'en' }"
+            >
+              {{ $t('user_Center_gongSiGuanWang') }}
+            </div>
             <div v-if="!isEdit" class="enterprise-item__value">
               {{ enData.website || $t('user_Center_weiTianXie') }}
             </div>
@@ -96,14 +116,24 @@
         </ElRow>
         <ElRow :gutter="40" class="section-header mb-2">
           <ElCol :span="12" class="enterprise-item">
-            <div class="enterprise-item__label font-color-light">{{ $t('user_Center_suoShuHangYe') }}</div>
+            <div
+              class="enterprise-item__label font-color-light"
+              :class="{ 'user-item__label_en': $i18n.locale === 'en' }"
+            >
+              {{ $t('user_Center_suoShuHangYe') }}
+            </div>
             <div v-if="!isEdit" class="enterprise-item__value">
               {{ enData.industry || $t('user_Center_weiTianXie') }}
             </div>
             <ElInput v-else v-model="enForm.industry" class="enterprise-item__value"></ElInput>
           </ElCol>
           <ElCol :span="12" class="enterprise-item">
-            <div class="enterprise-item__label font-color-light">{{ $t('user_Center_suoShuChengShi') }}</div>
+            <div
+              class="enterprise-item__label font-color-light"
+              :class="{ 'user-item__label_en': $i18n.locale === 'en' }"
+            >
+              {{ $t('user_Center_suoShuChengShi') }}
+            </div>
             <div v-if="!isEdit" class="enterprise-item__value">{{ enData.city || $t('user_Center_weiTianXie') }}</div>
             <ElInput v-else v-model="enForm.city" class="enterprise-item__value"></ElInput>
           </ElCol>
@@ -127,7 +157,12 @@
       <div>
         <ElRow :gutter="40" class="section-header mb-2">
           <ElCol :span="12" class="enterprise-item">
-            <div class="enterprise-item__label font-color-light">Access Key：</div>
+            <div
+              class="enterprise-item__label font-color-light"
+              :class="{ 'user-item__label_en': $i18n.locale === 'en' }"
+            >
+              Access Key：
+            </div>
             <div>
               {{ keyForm.accessKey }}
             </div>
@@ -149,7 +184,12 @@
             </ElTooltip>
           </ElCol>
           <ElCol :span="12" class="enterprise-item">
-            <div class="enterprise-item__label font-color-light">Secret Key：</div>
+            <div
+              class="enterprise-item__label font-color-light"
+              :class="{ 'user-item__label_en': $i18n.locale === 'en' }"
+            >
+              Secret Key：
+            </div>
             <div>
               {{ keyForm.secretKey }}
             </div>
@@ -205,14 +245,21 @@
       :close-on-click-modal="false"
       :visible.sync="dialogObj.password"
     >
-      <ElForm :model="passwordForm" label-width="120px" @submit.native.prevent>
+      <ElForm :model="passwordForm" label-width="120px" @submit.native.prevent label-position="top">
         <ElFormItem prop="current" :label="$t('user_Center_dangQianShouJi')">
           <ElInput
             v-model="passwordForm.telephone"
             :placeholder="$t('user_Center_qingShuRuDangQian')"
             maxlength="50"
             disabled
-          ></ElInput>
+          >
+            <el-select v-model="passwordForm.countryCode" slot="prepend" style="width: 90px">
+              <el-option v-for="item in countryCode" :label="'+ ' + item.dial_code" :value="item.dial_code">
+                <span style="float: left">{{ '+ ' + item.dial_code }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span></el-option
+              >
+            </el-select>
+          </ElInput>
         </ElFormItem>
         <ElFormItem prop="newPassword" :label="$t('user_Center_shouJiYanZhengMa')" class="inline-form-item">
           <ElInput
@@ -223,7 +270,7 @@
           <VerificationCode
             :request-options="getCodeOptions(passwordForm.telephone, 'RESET_PASSWORD')"
             :disabled="!passwordForm.telephone"
-            :style="{ width: '120px', textAlign: 'center' }"
+            :style="{ width: '180px', textAlign: 'center' }"
             class="ml-6"
             type="text"
           ></VerificationCode>
@@ -265,11 +312,14 @@
     >
       <ElForm :model="phoneForm" label-width="120px" @submit.native.prevent>
         <ElFormItem prop="current" :label="$t('user_Center_dangQianShouJi')">
-          <ElInput
-            v-model="phoneForm.current"
-            :placeholder="$t('user_Center_qingShuRuDangQian')"
-            maxlength="50"
-          ></ElInput>
+          <ElInput v-model="phoneForm.current" :placeholder="$t('user_Center_qingShuRuDangQian')" maxlength="50">
+            <el-select v-model="phoneForm.countryCode" slot="prepend" style="width: 90px">
+              <el-option v-for="item in countryCode" :label="'+ ' + item.dial_code" :value="item.dial_code">
+                <span style="float: left">{{ '+ ' + item.dial_code }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span></el-option
+              >
+            </el-select>
+          </ElInput>
         </ElFormItem>
         <ElFormItem prop="newPassword" :label="$t('user_Center_yanZhengMa')" class="inline-form-item">
           <ElInput
@@ -296,20 +346,27 @@
     </ElDialog>
     <!--  {{$t('operation_log_List_xiuGaiShouJiHao')}}  -->
     <ElDialog
-      width="435px"
+      :width="$i18n.locale === 'en' ? '600px' : '500px'"
       append-to-body
       :title="$t('operation_log_List_xiuGaiShouJiHao')"
       :close-on-click-modal="false"
       :visible.sync="dialogObj.editPhone"
     >
-      <ElForm :model="phoneForm" label-width="120px" @submit.native.prevent>
+      <ElForm :model="phoneForm" label-width="120px" @submit.native.prevent label-position="top">
         <ElFormItem prop="current" :label="$t('user_Center_dangQianShouJi')">
           <ElInput
             v-model="phoneForm.current"
             :placeholder="$t('user_Center_qingShuRuDangQian')"
             maxlength="50"
             disabled
-          ></ElInput>
+          >
+            <el-select v-model="phoneForm.countryCode" slot="prepend" style="width: 90px">
+              <el-option v-for="item in countryCode" :label="'+ ' + item.dial_code" :value="item.dial_code">
+                <span style="float: left">{{ '+ ' + item.dial_code }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span></el-option
+              >
+            </el-select>
+          </ElInput>
         </ElFormItem>
         <ElFormItem prop="newPassword" :label="$t('user_Center_jiuShouJiYanZheng')" class="inline-form-item">
           <ElInput
@@ -320,30 +377,30 @@
           <VerificationCode
             :request-options="getCodeOptions(phoneForm.current, 'CHANGE_PHONE')"
             :disabled="!phoneForm.current"
-            :style="{ width: '120px', textAlign: 'center' }"
+            :style="{ width: '180px', textAlign: 'center' }"
             class="ml-6"
-            type="text"
+            type="primary"
           ></VerificationCode>
         </ElFormItem>
         <ElFormItem prop="newAgainPassword" :label="$t('user_Center_xinShouJi')">
-          <ElInput
-            v-model="phoneForm.newPhone"
-            :placeholder="$t('user_Center_qingShuRuXinShou2')"
-            maxlength="50"
-          ></ElInput>
+          <ElInput v-model="phoneForm.newPhone" :placeholder="$t('user_Center_qingShuRuXinShou2')" maxlength="50">
+            <el-select v-model="phoneForm.countryCode" slot="prepend" style="width: 90px">
+              <el-option v-for="item in countryCode" :label="'+ ' + item.dial_code" :value="item.dial_code">
+                <span style="float: left">{{ '+ ' + item.dial_code }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span></el-option
+              >
+            </el-select>
+          </ElInput>
         </ElFormItem>
         <ElFormItem prop="newAgainPassword" :label="$t('user_Center_xinShouJiYanZheng')">
-          <ElInput
-            v-model="phoneForm.newCode"
-            :placeholder="$t('user_Center_qingShuRuXinShou')"
-            maxlength="50"
-          ></ElInput>
+          <ElInput v-model="phoneForm.newCode" :placeholder="$t('user_Center_qingShuRuXinShou')" maxlength="50">
+          </ElInput>
           <VerificationCode
             :request-options="getCodeOptions(phoneForm.newPhone, 'BIND_PHONE')"
             :disabled="!phoneForm.current"
-            :style="{ width: '120px', textAlign: 'center' }"
+            :style="{ width: '180px', textAlign: 'center' }"
             class="ml-6"
-            type="text"
+            type="primary"
           ></VerificationCode>
         </ElFormItem>
       </ElForm>
@@ -525,6 +582,7 @@ export default {
       passwordForm: {
         telephone: '',
         code: '',
+        countryCode: '86',
         newPassword: '',
         newAgainPassword: ''
       },
@@ -532,7 +590,8 @@ export default {
         current: '',
         oldCode: '',
         newPhone: '',
-        newCode: ''
+        newCode: '',
+        countryCode: '86'
       },
       emailForm: {
         email: '',
@@ -616,11 +675,13 @@ export default {
             value: '2023030419203919321'
           }
         ]
-      }
+      },
+      countryCode: []
     }
   },
   mounted() {
     this.init()
+    this.getCountryCode()
   },
   methods: {
     init() {
@@ -644,6 +705,12 @@ export default {
           item.expiredTime = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD HH:mm:ss') : ''
           return item
         }) || []
+    },
+    getCountryCode() {
+      this.$axios.get('config/countryCode.json').then(res => {
+        let countryCode = res.data
+        this.countryCode = countryCode?.countryCode
+      })
     },
     getEnterprise() {
       this.$axios.get('tm/api/Customer').then(data => {
@@ -675,6 +742,8 @@ export default {
       for (let key in passwordForm) {
         if (key === 'telephone') {
           this.passwordForm.telephone = userData.telephone
+        } else if (key === 'countryCode') {
+          this.passwordForm.countryCode = userData?.phoneCountryCode || '86'
         } else {
           this.passwordForm[key] = ''
         }
@@ -685,6 +754,8 @@ export default {
       for (let key in phoneForm) {
         if (key === 'current') {
           this.phoneForm.current = userData.telephone
+        } else if (key === 'countryCode') {
+          this.phoneForm.countryCode = userData?.phoneCountryCode || '86'
         } else {
           this.phoneForm[key] = ''
         }
@@ -757,6 +828,7 @@ export default {
       }
       if (type === 'sms') {
         params.phone = val
+        params.countryCode = this.phoneForm.countryCode
       } else {
         params.email = val
       }
@@ -791,6 +863,7 @@ export default {
       this.$axios
         .patch('api/tcm/user/password', {
           phoneCode: passwordForm.code,
+          countryCode: passwordForm.countryCode ? passwordForm.countryCode.replace('-', '') : '86',
           password: CryptoJS.RC4.encrypt(passwordForm.newPassword, 'XWFSxfs8wFcs').toString()
         })
         .then(() => {
@@ -810,7 +883,8 @@ export default {
       this.$axios
         .post('api/tcm/user/phone', {
           phone: phoneForm.current,
-          code: phoneForm.oldCode
+          code: phoneForm.oldCode,
+          countryCode: phoneForm.countryCode ? phoneForm.countryCode.replace('-', '') : '86'
         })
         .then(() => {
           this.userData.telephone = phoneForm.current
@@ -848,7 +922,8 @@ export default {
         .patch('api/tcm/user/phone', {
           oldPhoneCode: phoneForm.oldCode,
           phone: phoneForm.newPhone,
-          phoneCode: phoneForm.newCode
+          phoneCode: phoneForm.newCode,
+          countryCode: phoneForm.countryCode ? phoneForm.countryCode.replace('-', '') : '86'
         })
         .then(() => {
           this.userData.telephone = phoneForm.newPhone
@@ -1048,6 +1123,9 @@ export default {
 .user-item__label {
   width: 80px;
 }
+.user-item__label_en {
+  width: 180px !important;
+}
 .user-item__value {
   width: 180px;
 }
@@ -1059,6 +1137,7 @@ export default {
 .enterprise-item__label {
   width: 100px;
 }
+
 .expried {
   padding: 2px 4px;
   color: map-get($color, warning);
