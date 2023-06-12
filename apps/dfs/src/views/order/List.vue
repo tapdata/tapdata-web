@@ -46,9 +46,9 @@
               <ElButton v-if="['payFail', 'unPay'].includes(row.status)" type="text" @click="handlePay(row)">{{
                 $t('public_button_pay')
               }}</ElButton>
-              <ElButton v-if="row.status === 'pay'" type="text" @click="getUnsubscribePrice(row)">{{
-                $t('public_button_unsubscribe')
-              }}</ElButton>
+              <!--              <ElButton v-if="row.status === 'pay'" type="text" @click="getUnsubscribePrice(row)">{{-->
+              <!--                $t('public_button_unsubscribe')-->
+              <!--              }}</ElButton>-->
             </template>
           </VTable>
         </div>
