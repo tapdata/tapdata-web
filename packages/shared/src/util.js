@@ -268,3 +268,15 @@ export const urlToBase64 = url => {
     }
   })
 }
+
+// 驼峰命名转蛇形命名
+// 处理逻辑：将源字段名中非首字母的大写字母前增加下划线_进行连接，并将所有字母转换为小写
+export function camelToSnake(camelStr) {
+  return camelStr.replace(/[A-Z]/g, match => '_' + match.toLowerCase()).toLowerCase()
+}
+
+// 驼峰命名转蛇形命名
+// 处理逻辑：将源字段名中非首字母的大写字母前增加下划线_进行连接，并将所有字母转换为小写
+export function snakeToCamel(snakeStr) {
+  return snakeStr.replace(/_[a-z]/g, match => match.charAt(1).toUpperCase())
+}
