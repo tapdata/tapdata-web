@@ -850,7 +850,11 @@ export default {
             const { periodStart, periodEnd } = paidSubscribeDto
             item.chargeProvider = chargeProvider
             item.specLabel = getSpec(item.spec) || '-'
-            item.subscriptionMethodLabel = getPaymentMethod(paidSubscribeDto, chargeProvider) || '-'
+            if (item.publicAgent) {
+              item.subscriptionMethodLabel = 'Public Agent'
+            } else {
+              item.subscriptionMethodLabel = getPaymentMethod(paidSubscribeDto, chargeProvider) || '-'
+            }
             item.periodLabel =
               dayjs(periodStart).format('YY-MM-DD HH:mm:ss') + ' - ' + dayjs(periodEnd).format('YY-MM-DD HH:mm:ss')
             item.content = `${item.subscriptionMethodLabel} ${item.specLabel} ${i18n.t('public_agent')}`

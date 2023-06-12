@@ -2313,7 +2313,9 @@ export default {
             })
           } else if (data.chargeProvider === 'FreeTier' && this.agentDeploy === 'fullManagement') {
             this.finish()
-            this.$router.push(agentUrl)
+            this.$router.push({
+              name: 'Instance'
+            })
           } else if (
             data.chargeProvider === 'FreeTier' ||
             (data.chargeProvider === 'Aliyun' && row.agentType === 'Local')
