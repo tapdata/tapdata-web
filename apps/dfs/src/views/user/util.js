@@ -5,6 +5,7 @@ export function getCodeOptions(val, scene, type = 'sms') {
   }
   if (type === 'sms') {
     params.phone = val
+    params.countryCode = window.__USER_INFO__?.phoneCountryCode || '86'
   } else {
     params.email = val
   }
