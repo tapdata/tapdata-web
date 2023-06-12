@@ -1761,7 +1761,6 @@ export default {
       this.mongodbSpecPrice = ''
       this.selected = {}
       this.currency = ''
-      this.currencyType = ''
       this.mdbPrices = 0
       this.mongodbSpec = '0-0'
       this.memorySpace = 5
@@ -1826,17 +1825,17 @@ export default {
       this.buried('changeSubscriptionMethod')
     },
     //切换币种
-    changeCurrency(item) {
-      if (isStr(item)) {
-        this.currencyType = item
-        this.currency = this.currencyOption.find(it => it.currency === item)
-      } else {
-        this.currencyType = item.currency
-        this.currency = item
-      }
-      //更新存储资源价格
-      this.changeMongodbMemory()
-    },
+    // changeCurrency(item) {
+    //   if (isStr(item)) {
+    //     this.currencyType = item
+    //     this.currency = this.currencyOption.find(it => it.currency === item)
+    //   } else {
+    //     this.currencyType = item.currency
+    //     this.currency = item
+    //   }
+    //   //更新存储资源价格
+    //   this.changeMongodbMemory()
+    // },
     changeCurrencyOption(item) {
       const options = item.currencyOption
       const { defaultCurrencyType } = this
