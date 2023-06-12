@@ -1120,5 +1120,14 @@ export default {
   packages_business_external_storage_list_siyaomima: 'Private key password',
   packages_business_external_storage_list_kehuduansiyao: 'Client private key',
   packages_business_external_storage_list_zhengshubanfaji: 'Certificate Authority',
-  packages_business_external_storage_list_shiyongTls: 'Connect using TLS/SSL'
+  packages_business_external_storage_list_shiyongTls: 'Connect using TLS/SSL',
+  packages_business_connections_list_dangqianlianjiex:
+    'The current connection xxx is being used as FDM and MDM storage, deletion will result in the loss of existing storage data, whether to confirm to continue deletion. ',
+  packages_business_connections_list_zhengzaizuoweiF:
+    'It is being used as FDM and MDM storage, the modification will cause the loss of existing stored data, are you sure you want to continue the modification',
+  packages_business_connections_list_dangqianlianjie: 'Current Connections',
+  packages_business_components_conditionbox_chakanzidingyi: 'View custom fields',
+  packages_business_components_fielddialog_ziduanbuyunxu: 'The field is not allowed to be empty',
+  packages_business_components_fielddialog_zidingyiziduan: 'Custom Field',
+  packages_business_verification_list_biaobufenziduan: 'Verification of some fields in the table'
 }

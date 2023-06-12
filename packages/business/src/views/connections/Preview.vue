@@ -326,7 +326,9 @@ export default {
       }
       if (agentType === 'Local') {
         this.$confirm(
-          '当前连接' + name + '正在作为FDM和MDM的存储使用，修改会导致已有存储数据丢失，是否确认要继续修改',
+          i18n.t('packages_business_connections_list_dangqianlianjie') +
+            name +
+            i18n.t('packages_business_connections_list_zhengzaizuoweiF'),
           '',
           {
             type: 'warning',
