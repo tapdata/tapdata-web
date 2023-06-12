@@ -503,7 +503,7 @@ export default {
 
     // 任务事件统计（条）-任务累计
     eventDataAll() {
-      const data = this.quota.samples?.totalData?.[0]
+      const data = this.quota.samples?.barChartData?.[0]
       return this.getInputOutput(data)
     },
 
