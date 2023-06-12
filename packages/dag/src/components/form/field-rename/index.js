@@ -1,19 +1,36 @@
 import i18n from '@tap/i18n'
 import { connect, mapProps, useForm } from '@tap/form'
+import { taskApi } from '@tap/api'
 import { observer } from '@formily/reactive-vue'
-import { defineComponent } from '@vue/composition-api'
+import { defineComponent, ref } from '@vue/composition-api'
 import { VIcon } from '@tap/component'
 import { convertSchemaToTreeData } from './util'
 import './index.scss'
+import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
 
 export const FieldRename = connect(
   observer(
     defineComponent({
-      props: ['loading', 'options', 'disabled'],
-      setup() {
+      props: ['loading', 'disabled', 'getFields'],
+      setup(props, { root }) {
         const formRef = useForm()
         const form = formRef.value
+        const options = ref([])
+
+        const loadFields = async () => {
+          const { values } = form
+
+          if (!values.$inputs[0].length) return
+
+          options.value = await props.getFields(values.id)
+        }
+
+        useAfterTaskSaved(root, formRef.value.values.$inputs, loadFields)
+
+        loadFields()
+
         return {
+          options,
           databaseType: form.values.databaseType,
           operations: form.values.operations,
           form
@@ -47,8 +64,6 @@ export const FieldRename = connect(
         }
       },
       render() {
-        // eslint-disable-next-line no-console
-        console.log('🚗 FieldProcessor', this.loading, this.options)
         let fields = this.options || []
         fields = fields.filter(item => !item.is_deleted)
         fields = convertSchemaToTreeData(fields) || [] //将模型转换成tree
@@ -133,7 +148,7 @@ export const FieldRename = connect(
                       slot-scope="{ node, data }"
                     >
                       <span class="flex-1 text__inner inline-block ellipsis">
-                        {data.original_field_name}
+                        {data.previousFieldName}
                         {data.primary_key_position > 0 ? (
                           <VIcon size="12" class="text-warning ml-1">
                             key
@@ -147,7 +162,7 @@ export const FieldRename = connect(
                           <div
                             staticClass="el-input el-input--small tree-field-input text__inner"
                             class={{
-                              'tree-field-input-primary': data.field_name !== data.original_field_name,
+                              'tree-field-input-primary': data.field_name !== data.previousFieldName,
                               'is-disabled': this.disabled || this.transformLoading
                             }}
                           >
@@ -196,8 +211,8 @@ export const FieldRename = connect(
                           type="text"
                           class="ml-5"
                           disabled={
-                            (this.fieldsNameTransforms === '' && !this.isRename(data.id)) ||
-                            this.isReset(data.id) ||
+                            (this.fieldsNameTransforms === '' && !this.isRename(data.previousFieldName)) ||
+                            this.isReset(data.previousFieldName) ||
                             this.disabled ||
                             this.transformLoading
                           }
@@ -215,16 +230,16 @@ export const FieldRename = connect(
         )
       },
       methods: {
-        isRename(id) {
-          let ops = this.operations.filter(v => v.id === id && v.op === 'RENAME')
+        isRename(field) {
+          let ops = this.operations.filter(v => v.field === field && v.op === 'RENAME')
           return ops && ops.length > 0
         },
-        isReset(id) {
-          let ops = this.operations.filter(v => v.id === id && v.op === 'RENAME' && v.reset)
+        isReset(field) {
+          let ops = this.operations.filter(v => v.field === field && v.op === 'RENAME' && v.reset)
           return ops && ops.length > 0
         },
-        firstReset(id) {
-          let ops = this.operations.filter(v => v.id === id && v.op === 'RENAME' && v.firstReset)
+        firstReset(field) {
+          let ops = this.operations.filter(v => v.field === field && v.op === 'RENAME' && v.firstReset)
           return ops && ops.length > 0
         },
         checkOps(fields) {
@@ -232,11 +247,15 @@ export const FieldRename = connect(
           if (this.operations?.length > 0 && fields?.length > 0) {
             for (let i = 0; i < this.operations.length; i++) {
               let item = this.operations[i]
+
               if (!item) return fields
-              let targetIndex = fields.findIndex(n => n.id === item.id)
+
+              let targetIndex = fields.findIndex(n => n.previousFieldName === item.field)
+
               if (targetIndex === -1) {
                 continue
               }
+
               if (item.op === 'RENAME') {
                 const name = fields[targetIndex].field_name
                 let newName = name.split('.')
@@ -277,13 +296,13 @@ export const FieldRename = connect(
             nativeData,
             this.operations
           )
-          let ops = this.operations.filter(v => v.id === data.id && v.op === 'RENAME')
+          let ops = this.operations.filter(v => v.field === data.previousFieldName && v.op === 'RENAME')
           let op
           if (ops.length === 0) {
             op = Object.assign(JSON.parse(JSON.stringify(this.RENAME_OPS_TPL)), {
               id: data.id,
-              field: data.schema_field_name || data.field_name,
-              operand: first ? nativeData.original_field_name : data.field_name,
+              field: data.previousFieldName,
+              operand: first ? nativeData.previousFieldName : data.field_name,
               table_name: data.table_name,
               type: data.type,
               primary_key_position: data.primary_key_position,
@@ -296,9 +315,9 @@ export const FieldRename = connect(
             this.operations.push(op)
           } else {
             op = ops[0]
-            if (data.field_name === nativeData.original_field_name) {
+            if (data.field_name === nativeData.previousFieldName) {
               //再次改名跟原来名字一样 删除当前operation 记录
-              let index = this.operations.findIndex(v => v.id === data.id && v.op === 'RENAME')
+              let index = this.operations.findIndex(v => v.field === data.schema_field_name && v.op === 'RENAME')
               this.operations.splice(index, 1)
             } else {
               op.operand = data.field_name
@@ -343,7 +362,7 @@ export const FieldRename = connect(
           return field
         },
         handleReset(node, data) {
-          if (this.fieldsNameTransforms !== '' && !this.firstReset(data.id)) {
+          if (this.fieldsNameTransforms !== '' && !this.firstReset(data.previousFieldName)) {
             //所有字段批量修改过，撤回既是保持原来字段名 且第一次重置
             this.handleRename(node, data, true)
             return
@@ -358,14 +377,14 @@ export const FieldRename = connect(
               fn(childNode, childNode.data)
             }
             for (let i = 0; i < self.operations.length; i++) {
-              if (self.operations[i].id === data.id) {
+              if (self.operations[i].field === data.previousFieldName) {
                 let ops = self.operations[i]
                 if (ops.op === 'RENAME') {
                   let existsName = self.handleExistsName(node, data)
                   if (existsName) {
                     return
                   }
-                  if (nativeData) node.data.field_name = nativeData.original_field_name
+                  if (nativeData) node.data.field_name = nativeData.previousFieldName
                   self.operations.splice(i, 1)
                   i--
                   continue
@@ -388,13 +407,9 @@ export const FieldRename = connect(
           return fieldName
         },
         handleAllToUpperCase() {
-          //清掉所有operations
-          this.operations.splice(0)
           this.form.setValuesIn('fieldsNameTransform', 'toUpperCase')
         },
         handleAllToLowerCase() {
-          //清掉所有operations
-          this.operations.splice(0)
           this.form.setValuesIn('fieldsNameTransform', 'toLowerCase')
         },
         handleAllReset() {

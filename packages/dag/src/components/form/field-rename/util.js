@@ -17,7 +17,7 @@ export const convertSchemaToTreeData = function (Schema) {
             ),
           label: jsonPathForFieldName[jsonPathForFieldName.length - 1],
           field_name: jsonPathForFieldName[jsonPathForFieldName.length - 1],
-          type: field.originalDataType || field.data_type,
+          type: field.previousDataType,
           data_type: field.data_type,
           primary_key_position: field.primary_key_position,
           table_name: field.table_name || 'table',
@@ -25,7 +25,10 @@ export const convertSchemaToTreeData = function (Schema) {
           original_field_name: field.original_field_name || field.field_name,
           is_deleted: field.is_deleted,
           comment: field.comment,
-          oldIdList: field.oldIdList || []
+          oldIdList: field.oldIdList || [],
+          field: field.previousFieldName,
+          previousFieldName: field.previousFieldName,
+          previousDataType: field.previousDataType
         }
         let path = 'children.' + jsonPathForFieldName.join('.children.')
         let partField = get(root, path)

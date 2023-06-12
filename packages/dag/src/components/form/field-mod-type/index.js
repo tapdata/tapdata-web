@@ -165,7 +165,7 @@ export const FieldModType = connect(
                         <ElButton
                           type="text"
                           class="ml-5"
-                          disabled={!this.isConvertDataType(data.id) || this.disabled}
+                          disabled={!this.isConvertDataType(data.previousFieldName) || this.disabled}
                           onClick={() => this.handleReset(node, data)}
                         >
                           <VIcon size="12">revoke</VIcon>
@@ -180,8 +180,8 @@ export const FieldModType = connect(
         )
       },
       methods: {
-        isConvertDataType(id) {
-          let ops = this.operations.filter(v => v.id === id && v.op === 'CONVERT')
+        isConvertDataType(field) {
+          let ops = this.operations.filter(v => v.field === field && v.op === 'CONVERT')
           return ops && ops.length > 0
         },
         getNativeData(id) {
@@ -208,7 +208,7 @@ export const FieldModType = connect(
           if (this.operations?.length > 0 && fields?.length > 0) {
             for (let i = 0; i < this.operations.length; i++) {
               if (this.operations[i]?.op === 'CONVERT') {
-                let targetIndex = fields.findIndex(n => n.id === this.operations[i].id)
+                let targetIndex = fields.findIndex(n => n.field === this.operations[i].field)
                 if (targetIndex === -1) {
                   continue
                 }
@@ -225,15 +225,17 @@ export const FieldModType = connect(
           console.log('fieldProcessor.handleDataType', node, data) //eslint-disable-line
           let nativeData = this.getNativeData(data.id)
           let ops = this.operations.filter(
-            v => (v.id === data.id || data?.oldIdList.findIndex(t => t === v.id) > -1) && v.op === 'CONVERT'
+            v =>
+              v.field === data.previousFieldName /*|| data?.oldIdList.findIndex(t => t === v.id) > -1*/ &&
+              v.op === 'CONVERT'
           )
           let op
           if (ops.length === 0) {
             op = Object.assign(JSON.parse(JSON.stringify(this.CONVERT_OPS_TPL)), {
               id: data.id,
-              field: data.schema_field_name || data.field_name,
+              field: data.previousFieldName,
               operand: data.data_type,
-              originalDataType: nativeData.originalDataType,
+              originalDataType: data.previousDataType,
               table_name: data.table_name,
               type: data.type,
               primary_key_position: data.primary_key_position,
@@ -246,7 +248,7 @@ export const FieldModType = connect(
             op = ops[0]
             op.data_type = data.data_type
             op.operand = data.data_type
-            op.originalDataType = nativeData.originalDataType
+            op.originalDataType = data.previousDataType
           }
         },
         handleReset(node, data) {
@@ -259,10 +261,10 @@ export const FieldModType = connect(
               fn(childNode, childNode.data)
             }
             for (let i = 0; i < self.operations.length; i++) {
-              if (self.operations[i].id === data.id) {
+              if (self.operations[i].field === data.field) {
                 let ops = self.operations[i]
                 if (ops.op === 'CONVERT') {
-                  if (nativeData) node.data.data_type = nativeData.type
+                  if (nativeData) node.data.data_type = data.previousDataType
                   self.operations.splice(i, 1)
                   i--
                   continue

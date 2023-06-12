@@ -117,7 +117,7 @@ export const FieldValue = connect(
                       slot-scope="{ node, data }"
                     >
                       <span class="field-name inline-block ellipsis">
-                        {data.field_name}
+                        {data.previousFieldName}
                         {data.primary_key_position > 0 ? (
                           <VIcon size="12" class="text-warning ml-1">
                             key
@@ -241,7 +241,7 @@ export const FieldValue = connect(
           return fields
         },
         getParentFieldName(node) {
-          let fieldName = node.data && node.data.field_name ? node.data.field_name : ''
+          let fieldName = node.data && node.data.previousFieldName ? node.data.previousFieldName : ''
           if (node.level > 1 && node.parent && node.parent.data) {
             let parentFieldName = this.getParentFieldName(node.parent)
             if (parentFieldName) fieldName = parentFieldName + '.' + fieldName
@@ -275,7 +275,6 @@ export const FieldValue = connect(
               primary_key_position: data.primary_key_position,
               color: data.color,
               label: data.field_name,
-              field_name: data.schema_field_name || data.field_name,
               tableName,
               id
             })
