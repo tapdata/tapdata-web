@@ -253,7 +253,7 @@
             maxlength="50"
             disabled
           >
-            <el-select v-model="passwordForm.countryCode" slot="prepend" style="width: 90px">
+            <el-select v-model="passwordForm.countryCode" slot="prepend" style="width: 110px" filterable>
               <el-option v-for="item in countryCode" :label="'+ ' + item.dial_code" :value="item.dial_code">
                 <span style="float: left">{{ '+ ' + item.dial_code }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span></el-option
@@ -313,7 +313,7 @@
       <ElForm :model="phoneForm" label-width="120px" @submit.native.prevent>
         <ElFormItem prop="current" :label="$t('user_Center_dangQianShouJi')">
           <ElInput v-model="phoneForm.current" :placeholder="$t('user_Center_qingShuRuDangQian')" maxlength="50">
-            <el-select v-model="phoneForm.countryCode" slot="prepend" style="width: 90px">
+            <el-select v-model="phoneForm.countryCode" slot="prepend" style="width: 110px" filterable>
               <el-option v-for="item in countryCode" :label="'+ ' + item.dial_code" :value="item.dial_code">
                 <span style="float: left">{{ '+ ' + item.dial_code }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span></el-option
@@ -360,7 +360,7 @@
             maxlength="50"
             disabled
           >
-            <el-select v-model="phoneForm.countryCode" slot="prepend" style="width: 90px">
+            <el-select v-model="phoneForm.countryCode" slot="prepend" style="width: 110px" filterable>
               <el-option v-for="item in countryCode" :label="'+ ' + item.dial_code" :value="item.dial_code">
                 <span style="float: left">{{ '+ ' + item.dial_code }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span></el-option
@@ -384,7 +384,7 @@
         </ElFormItem>
         <ElFormItem prop="newAgainPassword" :label="$t('user_Center_xinShouJi')">
           <ElInput v-model="phoneForm.newPhone" :placeholder="$t('user_Center_qingShuRuXinShou2')" maxlength="50">
-            <el-select v-model="phoneForm.countryCode" slot="prepend" style="width: 90px">
+            <el-select v-model="phoneForm.countryCode" slot="prepend" style="width: 110px" filterable>
               <el-option v-for="item in countryCode" :label="'+ ' + item.dial_code" :value="item.dial_code">
                 <span style="float: left">{{ '+ ' + item.dial_code }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span></el-option
