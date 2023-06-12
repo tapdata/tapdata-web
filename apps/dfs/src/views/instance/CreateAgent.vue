@@ -556,7 +556,7 @@
                       v-if="item.chargeProvider === 'FreeTier'"
                       size="small"
                       class="bg-color-warning text-white border-0 ml-2"
-                      >{{$t('dfs_instance_createagent_mianfeitiyan')}}</ElTag
+                      >{{ $t('dfs_instance_createagent_mianfeitiyan') }}</ElTag
                     >
                   </div>
                   <div
@@ -1711,7 +1711,11 @@ export default {
       //存储方案请求接口得到存储价格
       if (this.activeStep === 4 && this.platform === 'realTime') {
         await this.getCloudMdbSource()
-        this.getMongoCluster()
+        await this.getMongoCluster()
+        if (this.provider === 'GCP') {
+          this.mongodbSpec = this.mongodbSpecItems[0]?.value || ''
+        }
+        this.changeMongodbMemory()
       }
       //第一次选择授权码 返回托管模式选择 不切换类型，导致价格丢失
       if ([1, 2].includes(this.activeStep) && this.agentDeploy !== 'aliyun') {
@@ -1792,6 +1796,12 @@ export default {
       this.cloudDetail = cloudProvider?.[0].cloudDetail || []
       this.region = this.cloudDetail?.[0]?.region
       this.changeRegion()
+      //数据初始化
+      this.mdbPriceId = 'FreeTier'
+      this.mongodbSpecPrice = ''
+      this.mdbPrices = 0
+      this.mongodbSpec = '0-0'
+      this.memorySpace = 5
     },
     changeRegion() {
       let region = this.cloudDetail.filter(it => it.region === this.region) || []
@@ -2149,9 +2159,9 @@ export default {
       console.log('price', price) // eslint-disable-line
       //需要改变mdbPriceId 因为存储空间改变了
       this.mdbPriceId = price?.priceId
-      this.mdbZone = this.spec2Zone[price?.mdbSpec]
       this.mdbPrice(price?.currencyOption?.find(item => item.currency === this.currencyType)?.amount || 0)
-      // this.findCloud(price?.mdbSpec)
+      if (this.provider !== 'AliCloud') return
+      this.mdbZone = this.spec2Zone[price?.mdbSpec]
     },
     //存储价格
     mdbPrice(price) {
