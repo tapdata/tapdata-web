@@ -81,6 +81,7 @@
                 $t('public_button_check')
               }}</ElLink>
             </div>
+            <div v-else-if="scope.row.status === 'waiting'" class="data-verify__status">-</div>
             <div v-else-if="scope.row.status !== 'done'" class="data-verify__status">
               <img style="width: 26px; vertical-align: middle" :src="loadingImg" />
               <span>{{ statusMap[scope.row.status] }}</span>
