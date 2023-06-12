@@ -109,6 +109,15 @@
       <el-table-column :label="$t('public_operation')" width="260">
         <template slot-scope="scope">
           <ElLink
+            v-if="scope.row.status === 'running'"
+            v-readonlybtn="'verify_job_edition'"
+            type="primary"
+            :disabled="$disabledByPermission('verify_job_edition_all_data', scope.row.user_id)"
+            @click="stop(scope.row.id)"
+            >{{ $t('public_button_stop') }}</ElLink
+          >
+          <ElLink
+            v-else
             v-readonlybtn="'verify_job_edition'"
             type="primary"
             :disabled="
@@ -141,9 +150,6 @@
             <ElDropdownMenu class="dataflow-table-more-dropdown-menu" slot="dropdown">
               <ElDropdownItem command="history" :disabled="!scope.row.InspectResult"
                 >{{ $t('packages_business_verification_historyTip') }}
-              </ElDropdownItem>
-              <ElDropdownItem command="stop" :disabled="!scope.row.InspectResult"
-                >{{ $t('public_button_stop') }}
               </ElDropdownItem>
               <ElDropdownItem
                 command="remove"
@@ -447,7 +453,19 @@ export default {
       }
       return this.inspectMethod[row.inspectMethod]
     },
-    stop(id, row) {}
+    stop(id = '') {
+      inspectApi
+        .update(
+          {
+            id: id
+          },
+          { status: 'stopping' }
+        )
+        .then(() => {
+          this.$message.success(this.$t('public_message_operation_success'))
+          this.table.fetch()
+        })
+    }
   }
 }
 </script>
