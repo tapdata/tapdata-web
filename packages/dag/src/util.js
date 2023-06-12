@@ -1,3 +1,4 @@
+import { isEmpty } from 'lodash'
 import { getConnectionIcon } from '@tap/business'
 import { getIcon } from '@tap/assets/icons'
 
@@ -75,6 +76,7 @@ export function getMatchedDataTypeLevel(
   fieldChangeRules = [],
   findPossibleDataTypes = {}
 ) {
+  if (isEmpty(findPossibleDataTypes)) return ''
   const tapType = JSON.parse(field.tapType || '{}')
   if (tapType.type === 7) {
     field.data_type = ''
