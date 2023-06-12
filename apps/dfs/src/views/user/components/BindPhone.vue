@@ -13,7 +13,7 @@
     <ElForm :model="phoneForm" label-position="top" :label-width="showLabel ? '120px' : null" @submit.native.prevent>
       <ElFormItem prop="current" :label="showLabel ? $t('user_Center_dangQianShouJi') : ''">
         <ElInput v-model="phoneForm.current" :placeholder="$t('components_BindPhone_qingShuRuShouJi')" maxlength="50">
-          <el-select v-model="phoneForm.countryCode" slot="prepend" style="width: 90px">
+          <el-select v-model="phoneForm.countryCode" slot="prepend" style="width: 110px" filterable>
             <el-option v-for="item in countryCode" :label="'+ ' + item.dial_code" :value="item.dial_code">
               <span style="float: left">{{ '+ ' + item.dial_code }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span></el-option

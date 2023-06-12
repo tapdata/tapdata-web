@@ -55,6 +55,7 @@
               v-model="createForm.jobId"
               :placeholder="$t('dfs_ticketing_system_list_qingxuanzexuanze')"
               class="w-100"
+              popper-class="ticket-select"
               required
             >
               <el-option v-for="item in taskList" :key="item.id" :label="item.name" :value="item.id">{{
@@ -67,6 +68,7 @@
               v-model="createForm.connectionId"
               :placeholder="$t('dfs_ticketing_system_list_qingxuanzexuanze2')"
               class="w-100"
+              popper-class="ticket-select"
               required
             >
               <el-option v-for="item in connectionList" :key="item.id" :label="item.name" :value="item.id">{{
@@ -366,6 +368,11 @@ export default {
     &:hover {
       color: map-get($color, primary);
     }
+  }
+}
+.ticket-select {
+  .el-select-dropdown__item {
+    width: 568px;
   }
 }
 </style>
