@@ -109,7 +109,7 @@ export default {
   packages_form_field_processor_index_camel_to_snake: 'CamelCase To SnakeName',
   packages_form_field_processor_index_other_commonly_used_conversions: 'Other commonly used conversions',
   packages_form_field_processor_index_daxiaoxie: 'Table name case',
-  packages_form_field_processor_filed_name_daxiaoxie: 'Filed name case',
+  packages_form_field_processor_filed_name_daxiaoxie: 'Field name processing',
   packages_form_field_processor_index_houzhui: 'Suffix',
   packages_form_field_processor_index_qianzhui: 'Prefix',
   packages_form_field_processor_index_piliangcaozuo: 'Batch Operation',
