@@ -47,6 +47,7 @@ export const FieldRename = observer(
       const searchFiledName = ref('')
       // 删除所有无效的操作
       const removeAllInvalidOperations = () => {
+        invalidOperations.value.splice(0)
         fieldModel.setValue(
           fieldModel.value.filter(op => {
             return fieldMap[op.field]
@@ -54,7 +55,8 @@ export const FieldRename = observer(
         )
       }
       // 删除单个无效的操作
-      const removeInvalidOperation = field => {
+      const removeInvalidOperation = (field, i) => {
+        invalidOperations.value.splice(i, 1)
         fieldModel.value.findIndex((op, index) => {
           if (op.field === field) {
             fieldModel.value.splice(index, 1)
@@ -268,7 +270,7 @@ export const FieldRename = observer(
                     </VIcon>
                   </span>
                 </div>
-                {invalidOperations.value.map(data => {
+                {invalidOperations.value.map((data, index) => {
                   return (
                     <div class="flex align-center">
                       <span class="flex-1 ellipsis pl-6 font-color-light">{data.field}</span>
@@ -276,7 +278,7 @@ export const FieldRename = observer(
                         <span class="text__inner">{data.operand}</span>
                       </span>
                       <span class="field-ops mr-4">
-                        <ElButton type="text" class="ml-5" onClick={() => removeInvalidOperation(data.field)}>
+                        <ElButton type="text" class="ml-5" onClick={() => removeInvalidOperation(data.field, index)}>
                           <VIcon size="16">delete</VIcon>
                         </ElButton>
                       </span>
