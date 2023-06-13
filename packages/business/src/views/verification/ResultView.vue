@@ -73,75 +73,48 @@
             </ElRow>
           </div>
           <div v-if="filterResultList.length" class="table__body flex-fill">
-            <ElRow
+            <div
               v-for="(item, index) in filterResultList"
               :key="index"
               class="table__row"
-              :class="['border-bottom', { 'py-2 px-4': item.details }]"
+              :class="['position-relative border-bottom', { 'py-2 px-4': item.details }]"
             >
-              <ElCol :span="12" class="row__col">
-                <div
-                  v-for="(sItem, sIndex) in getDetailsUniqueList(item.details)"
-                  :key="sIndex + 'source'"
-                  class="disable-color py-1"
-                >
+              <!--              <span-->
+              <!--                class="index-span position-absolute start-0 top-0 inline-flex justify-content-center align-items-center rounded-circle bg-color-primary color-white"-->
+              <!--                >{{ index + 1 }}</span-->
+              <!--              >-->
+              <div
+                v-for="(sItem, sIndex) in getDetailsUniqueList(item.details)"
+                :key="sIndex + 'source'"
+                class="flex disable-color py-1"
+              >
+                <div class="w-50">
                   <span class="row__label">{{ sItem.source.key + ':' }}</span>
                   <span class="row__value ml-4" :class="{ 'color-danger': sItem.red }">{{ sItem.source.value }}</span>
                 </div>
-                <div v-for="(sItem, sIndex) in getDetailsList(item.details)" :key="sIndex" class="py-1">
+                <div class="w-50">
+                  <span class="row__label">{{ sItem.target.key + ':' }}</span>
+                  <span class="row__value ml-4" :class="{ 'color-danger': sItem.red }">{{ sItem.target.value }}</span>
+                </div>
+              </div>
+
+              <div v-for="(sItem, sIndex) in getDetailsList(item.details)" :key="sIndex" class="flex py-1">
+                <div class="w-50">
                   <span class="row__label">{{ sItem.source.key }}:</span>
                   <span class="row__value ml-4 font-color-dark" :class="{ 'color-danger': sItem.red }">{{
                     sItem.source.value
                   }}</span>
                 </div>
-              </ElCol>
-              <ElCol :span="12" class="row__col">
-                <div
-                  v-for="(sItem, sIndex) in getDetailsUniqueList(item.details)"
-                  :key="sIndex + 'target'"
-                  class="disable-color py-1"
-                >
-                  <span class="row__label">{{ sItem.target.key + ':' }}</span>
-                  <span class="row__value ml-4" :class="{ 'color-danger': sItem.red }">{{ sItem.target.value }}</span>
-                </div>
-                <div v-for="(sItem, sIndex) in getDetailsList(item.details)" :key="sIndex" class="py-1">
+                <div class="w-50">
                   <span class="row__label">{{ sItem.target.key }}:</span>
                   <span class="row__value ml-4 font-color-dark" :class="{ 'color-danger': sItem.red }">{{
                     sItem.target.value
                   }}</span>
                 </div>
-              </ElCol>
-            </ElRow>
+              </div>
+            </div>
           </div>
         </div>
-        <!--        <div class="inspect-result-box" v-if="!showAdvancedVerification">-->
-        <!--          <div v-for="item in resultList" :key="item.id" class="inspect-details">-->
-        <!--            <ul class="father-table">-->
-        <!--              <li>{{ $t('packages_business_verification_inconsistentType') }}</li>-->
-        <!--              <li>{{ $t('packages_business_verification_sourceFieldName') }}</li>-->
-        <!--              <li>{{ $t('packages_business_verification_Value') }}</li>-->
-        <!--              <li>{{ $t('packages_business_verification_targetFieldName') }}</li>-->
-        <!--              <li>{{ $t('packages_business_verification_Value') }}</li>-->
-        <!--            </ul>-->
-        <!--            <ul class="sub-table" v-for="detail in item.details" :key="detail.id">-->
-        <!--              <li>-->
-        <!--                {{-->
-        <!--                  detail.type === 'uniqueField'-->
-        <!--                    ? $t('packages_business_verification_uniqueField')-->
-        <!--                    : $t('packages_business_verification_otherField')-->
-        <!--                }}-->
-        <!--              </li>-->
-        <!--              <li>{{ detail.source.key }}</li>-->
-        <!--              <li :class="{ red: detail.red }">-->
-        <!--                {{ detail.source.value }}-->
-        <!--              </li>-->
-        <!--              <li>{{ detail.target.key }}</li>-->
-        <!--              <li :class="{ red: detail.red }">-->
-        <!--                {{ detail.target.value }}-->
-        <!--              </li>-->
-        <!--            </ul>-->
-        <!--          </div>-->
-        <!--        </div>-->
         <div class="inspect-ad-box" v-if="showAdvancedVerification">
           <div class="title-box">
             <div>{{ $t('packages_business_verification_result_title') }}</div>
@@ -379,14 +352,18 @@ $margin: 10px;
   height: 0;
   overflow-y: auto;
 }
+.table__row {
+  > div:nth-child(2n) {
+    background: #fafafa;
+  }
+}
 .row__label {
   display: inline-block;
   width: 150px;
 }
-.row__col {
-  > :nth-child(2n) {
-    background: #fafafa;
-  }
+.index-span {
+  width: 20px;
+  height: 20px;
 }
 </style>
 <style lang="scss">
