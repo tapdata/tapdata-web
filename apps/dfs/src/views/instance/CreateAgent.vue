@@ -87,19 +87,28 @@
             </ElFormItem>
             <!--请选择您需要的存储资源规格-->
             <ElFormItem :label="$t('dfs_instance_createagent_qingxuanzeninxu2')">
-              <ElRadioGroup v-model="mongodbSpec" @change="changeMongodbMemory" class="flex gap-4">
-                <ElRadio
-                  v-for="(item, index) in mongodbSpecItems"
-                  :key="index"
-                  :label="item.value"
-                  border
-                  class="rounded-4 subscription-radio m-0 position-relative"
-                >
-                  <span class="inline-flex align-center">
-                    {{ item.name }}
-                  </span>
-                </ElRadio>
-              </ElRadioGroup>
+              <el-skeleton :loading="loadingCloudMdbSource || loadingMongoCluster" animated>
+                <template slot="template">
+                  <div class="flex gap-4">
+                    <el-skeleton-item v-for="i in 4" :key="i" class="rounded-4" variant="button" />
+                  </div>
+                </template>
+                <template>
+                  <ElRadioGroup v-model="mongodbSpec" @change="changeMongodbMemory" class="flex gap-4">
+                    <ElRadio
+                      v-for="(item, index) in mongodbSpecItems"
+                      :key="index"
+                      :label="item.value"
+                      border
+                      class="rounded-4 subscription-radio m-0 position-relative"
+                    >
+                      <span class="inline-flex align-center">
+                        {{ item.name }}
+                      </span>
+                    </ElRadio>
+                  </ElRadioGroup>
+                </template>
+              </el-skeleton>
             </ElFormItem>
             <!--请选择您需要的存储空间-->
             <ElFormItem :label="$t('dfs_instance_createagent_qingxuanzeninxu')">
@@ -641,20 +650,29 @@
           </ElForm>
           <ElForm v-else label-position="top">
             <ElFormItem :label="$t('dfs_instance_createagent_qingxuanzeninxu2')">
-              <ElRadioGroup v-model="mongodbSpec" @change="changeMongodbMemory" class="flex gap-4">
-                <ElRadio
-                  v-for="(item, index) in mongodbSpecItems"
-                  :key="index"
-                  :label="item.value"
-                  :disabled="checkSpecDisabled(item)"
-                  border
-                  class="rounded-4 subscription-radio m-0 position-relative"
-                >
-                  <span class="inline-flex align-center">
-                    {{ item.name }}
-                  </span>
-                </ElRadio>
-              </ElRadioGroup>
+              <el-skeleton :loading="loadingCloudMdbSource || loadingMongoCluster" animated>
+                <template slot="template">
+                  <div class="flex gap-4">
+                    <el-skeleton-item v-for="i in 4" :key="i" class="rounded-4" variant="button" />
+                  </div>
+                </template>
+                <template>
+                  <ElRadioGroup v-model="mongodbSpec" @change="changeMongodbMemory" class="flex gap-4">
+                    <ElRadio
+                      v-for="(item, index) in mongodbSpecItems"
+                      :key="index"
+                      :label="item.value"
+                      :disabled="checkSpecDisabled(item)"
+                      border
+                      class="rounded-4 subscription-radio m-0 position-relative"
+                    >
+                      <span class="inline-flex align-center">
+                        {{ item.name }}
+                      </span>
+                    </ElRadio>
+                  </ElRadioGroup>
+                </template>
+              </el-skeleton>
             </ElFormItem>
             <ElFormItem :label="$t('dfs_instance_createagent_qingxuanzeninxu')">
               <ElRadioGroup v-model="memorySpace" class="flex gap-4" @change="changeMongodbMemory">
@@ -1180,19 +1198,28 @@
           </ElForm>
           <ElForm v-else label-position="top">
             <ElFormItem :label="$t('dfs_instance_createagent_qingxuanzeninxu2')">
-              <ElRadioGroup v-model="mongodbSpec" @change="changeMongodbMemory" class="flex gap-4">
-                <ElRadio
-                  v-for="(item, index) in mongodbSpecItems"
-                  :key="index"
-                  :label="item.value"
-                  border
-                  class="rounded-4 subscription-radio m-0 position-relative"
-                >
-                  <span class="inline-flex align-center">
-                    {{ item.name }}
-                  </span>
-                </ElRadio>
-              </ElRadioGroup>
+              <el-skeleton :loading="true" animated>
+                <template slot="template">
+                  <el-skeleton-item variant="button" />
+                  <el-skeleton-item variant="button" />
+                  <el-skeleton-item variant="button" />
+                </template>
+                <template>
+                  <ElRadioGroup v-model="mongodbSpec" @change="changeMongodbMemory" class="flex gap-4">
+                    <ElRadio
+                      v-for="(item, index) in mongodbSpecItems"
+                      :key="index"
+                      :label="item.value"
+                      border
+                      class="rounded-4 subscription-radio m-0 position-relative"
+                    >
+                      <span class="inline-flex align-center">
+                        {{ item.name }}
+                      </span>
+                    </ElRadio>
+                  </ElRadioGroup>
+                </template>
+              </el-skeleton>
             </ElFormItem>
             <ElFormItem :label="$t('dfs_instance_createagent_qingxuanzeninxu')">
               <ElRadioGroup v-model="memorySpace" class="flex gap-4" @change="changeMongodbMemory">
@@ -1531,11 +1558,12 @@ export default {
       disabledAliyunCode: false,
       //是否有存储Agent
       mdbCount: false, //默认没有存储
-      cloudMdbSource: [],
       mdbZone: '',
       spec2Zone: null,
       orderStorage: false,
-      isDomesticStation: true
+      isDomesticStation: true,
+      loadingCloudMdbSource: false,
+      loadingMongoCluster: false
     }
   },
 
@@ -1690,11 +1718,11 @@ export default {
       await this.getCloudMdbSource()
       this.getMongoCluster()
     } else {
+      //获取是否有存储实例
+      await this.getMdbCount()
+      this.getCloudMdbSource()
       this.checkAgentCount()
     }
-
-    //获取是否有存储实例
-    this.getMdbCount()
   },
   methods: {
     prevStep() {
@@ -1727,7 +1755,7 @@ export default {
       this.buried('productTypeNext')
       //存储方案请求接口得到存储价格
       if (this.activeStep === 4 && this.platform === 'realTime') {
-        await this.getCloudMdbSource()
+        // await this.getCloudMdbSource()
         await this.getMongoCluster()
         if (this.provider === 'GCP') {
           this.mongodbSpec = this.mongodbSpecItems[0]?.value || ''
@@ -2082,46 +2110,61 @@ export default {
         region: this.region,
         cloudProvider: this.provider
       }
-      return this.$axios.get('api/tcm/orders/paid/price', { params }).then(data => {
-        const { paidPrice = [] } = data?.[0] || {}
-        this.paidPrice = paidPrice
-        //根据订阅方式再过滤一层
-        let prices = paidPrice?.filter(
-          t =>
-            (t.periodUnit === this.selected.periodUnit && t.type === this.selected.type) ||
-            t.chargeProvider === 'FreeTier'
-        )
-        this.mongodbPaidPrice = prices
-        // 规格
-        this.mongodbSpecItems = uniqBy(
-          prices.map(t => {
-            const { cpu = 0, memory = 0 } = t.spec || {}
-            return {
-              value: `${cpu}-${memory}`,
-              cpu,
-              memory,
-              name:
-                t.chargeProvider === 'FreeTier'
-                  ? i18n.t('dfs_instance_createagent_mianfeishiyonggui')
-                  : `MongoDB ${cpu}C${memory}G`,
-              chargeProvider: t.chargeProvider,
-              mdbSpec: t.mdbSpec
-            }
-          }),
-          'name'
-        ).sort((a, b) => {
-          return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
+      this.loadingMongoCluster = true
+      return this.$axios
+        .get('api/tcm/orders/paid/price', { params })
+        .then(data => {
+          const { paidPrice = [] } = data?.[0] || {}
+          this.paidPrice = paidPrice
+          //根据订阅方式再过滤一层
+          let prices = paidPrice?.filter(
+            t =>
+              (t.periodUnit === this.selected.periodUnit && t.type === this.selected.type) ||
+              t.chargeProvider === 'FreeTier'
+          )
+          this.mongodbPaidPrice = prices
+          // 规格
+          let items = uniqBy(
+            prices.map(t => {
+              const { cpu = 0, memory = 0 } = t.spec || {}
+              return {
+                value: `${cpu}-${memory}`,
+                cpu,
+                memory,
+                name:
+                  t.chargeProvider === 'FreeTier'
+                    ? i18n.t('dfs_instance_createagent_mianfeishiyonggui')
+                    : `MongoDB ${cpu}C${memory}G`,
+                chargeProvider: t.chargeProvider,
+                mdbSpec: t.mdbSpec
+              }
+            }),
+            'name'
+          ).sort((a, b) => {
+            return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
+          })
+
+          const { spec2Zone } = this
+          // 过滤不支持的
+          if (this.provider === 'AliCloud') {
+            items = items.filter(({ mdbSpec }) => {
+              return !mdbSpec || !spec2Zone || spec2Zone[mdbSpec]
+            })
+          }
+
+          this.mongodbSpecItems = items
         })
-      })
+        .finally(() => {
+          this.loadingMongoCluster = false
+        })
     },
     //判断是否可选存储规格
-    async getCloudMdbSource() {
+    async getCloudMdbSource(provider = 'AliCloud') {
+      this.loadingCloudMdbSource = true
       //选择存储规格时，需要判断mdbSpec 是否有可用区
-      if (this.provider !== 'AliCloud') return
-
       try {
         const data = await this.$axios.get('api/tcm/orders/paid/getCloudMdbSource')
-        let original = data.find(it => it.cloudProvider === this.provider)
+        let original = data.find(it => it.cloudProvider === provider)
         let { mdbRegionProvider = [] } = original
         this.spec2Zone = mdbRegionProvider.reduce((map, item) => {
           return item.mdbZoneProvider.reduce((_map, it) => {
@@ -2133,14 +2176,10 @@ export default {
             }, _map)
           }, map)
         }, {})
-        let mdbZoneProvider = []
-        if (mdbRegionProvider.length > 0) {
-          mdbZoneProvider = mdbRegionProvider.filter(it => it.region === this.region)?.[0]?.mdbZoneProvider || []
-        }
-        this.cloudMdbSource = mdbZoneProvider
       } catch (e) {
         console.log(e) // eslint-disable-line
       }
+      this.loadingCloudMdbSource = false
     },
 
     //选择存储规格
@@ -2556,6 +2595,11 @@ export default {
     .subscription-radio.el-radio {
       padding: 0 12px;
       line-height: 30px;
+    }
+
+    .el-skeleton__button {
+      height: 32px;
+      width: 120px;
     }
   }
 
