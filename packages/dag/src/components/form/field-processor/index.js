@@ -36,6 +36,11 @@ export const FieldRenameProcessor = defineComponent({
     const form = formRef.value
     const list = ref([])
     const tableList = ref([])
+    let fieldsOperation = form.values.fieldsOperation || {
+      prefix: '',
+      suffix: '',
+      capitalized: ''
+    }
 
     const config = reactive({
       visible: false,
@@ -54,10 +59,7 @@ export const FieldRenameProcessor = defineComponent({
       operationVisible: false,
       newFieldName: '',
       operation: {
-        prefix: '',
-        suffix: '',
-        capitalized: '',
-        capitalizedOther: ''
+        ...fieldsOperation
       },
       page: {
         size: 10,
@@ -326,41 +328,9 @@ export const FieldRenameProcessor = defineComponent({
     }
     //批量操作
     const doOperationSave = () => {
-      let map = mapping(fieldsMapping)
-      if (config.checkedTables?.length > 0) {
-        //表级别
-        config.checkedTables.forEach(t => {
-          map[t?.sourceQualifiedName] = {
-            qualifiedName: t?.sourceQualifiedName,
-            originTableName: t?.sourceObjectName,
-            previousTableName: t?.sinkObjectName,
-            operation: cloneDeep(config.operation),
-            fields: []
-          }
-        })
-        fieldsMapping = toList(map)
-        emit('change', fieldsMapping)
-        setTimeout(() => {
-          loadData(true)
-        }, 2000)
-      }
-      if (config.checkedFields?.length > 0) {
-        //字段级别
-        config.checkedFields.forEach(t => {
-          let newField = config.operation.prefix + t?.sourceFieldName + config.operation.suffix
-          if (config.operation.capitalized) {
-            newField = newField[config.operation.capitalized]()
-          } else if (config.operation.capitalizedOther) {
-            const map = {
-              camelToSnake: camelToSnake,
-              snakeToCamel: snakeToCamel
-            }
-            newField = map[config.operation.capitalizedOther](newField) // snakeToCamel
-          }
-          updateFieldViews(t?.sourceFieldName, newField)
-          doUpdateField(t, 'rename', newField)
-        })
-      }
+      fieldsOperation = cloneDeep(config.operation)
+      form.setValuesIn('fieldsOperation', fieldsOperation)
+
       nextTick(() => {
         refs.table?.clearSelection()
         config.checkedTables = []
@@ -541,58 +511,87 @@ export const FieldRenameProcessor = defineComponent({
     }
   },
   render() {
+    const label = (
+      <div class="inline-flex align-center position-absolute w-100">
+        <span class="mr-2 flex-1">{i18n.t('packages_form_table_rename_rule_config')}</span>
+        <ElLink disabled={this.disabled} onClick={this.doOperationRest} size="mini" type="primary">
+          <div class="flex align-center px-1">
+            <VIcon class="mr-1">reset</VIcon>
+            {i18n.t('public_button_reset')}
+          </div>
+        </ElLink>
+      </div>
+    )
+
     return (
       <div class="processor-field-mapping flex flex-column" v-loading={this.config.transformLoading}>
-        <div class="task-form-body" style={this.listStyle}>
-          <div class="task-form-left flex flex-column">
-            <div class="flex mb-2 ml-2 mr-2">
-              <div class="flex">
-                <ElInput
-                  size="mini"
-                  placeholder={i18n.t('packages_form_field_mapping_list_qingshurubiaoming')}
-                  prefix-icon="el-icon-search"
-                  clearable
-                  v-model={this.config.searchTable}
-                  onInput={this.doSearchTables}
-                ></ElInput>
-              </div>
+        <FormItem.BaseItem class="mb-4" label={label}>
+          <div class="border border-form px-4 pb-2 rounded-4">
+            <div class="flex gap-4">
+              <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_daxiaoxie')}>
+                <ElSelect
+                  v-model={this.config.transferCase}
+                  disabled={this.disabled}
+                  onChange={this.doModify}
+                  class="w-auto"
+                >
+                  <ElOption value="" label={i18n.t('packages_form_field_processor_index_bubian')} />
+                  <ElOption value="toUpperCase" label={i18n.t('packages_form_field_processor_index_daxie')} />
+                  <ElOption value="toLowerCase" label={i18n.t('packages_form_field_processor_index_xiaoxie')} />
+                </ElSelect>
+              </FormItem.BaseItem>
+              <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_qianzhui')}>
+                <ElInput v-model={this.config.prefix} disabled={this.disabled} clearable onInput={this.doModify} />
+              </FormItem.BaseItem>
+              <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_houzhui')}>
+                <ElInput v-model={this.config.suffix} disabled={this.disabled} clearable onInput={this.doModify} />
+              </FormItem.BaseItem>
+            </div>
+          </div>
+        </FormItem.BaseItem>
+
+        <div class="task-form-body rounded-4" style={this.listStyle}>
+          <div class="task-form-left pt-0 border-0 flex flex-column">
+            <div class="flex p-2">
+              <ElInput
+                size="mini"
+                placeholder={i18n.t('packages_form_field_mapping_list_qingshurubiaoming')}
+                prefix-icon="el-icon-search"
+                clearable
+                v-model={this.config.searchTable}
+                onInput={this.doSearchTables}
+              ></ElInput>
             </div>
             <div class="bg-main flex justify-content-between line-height processor-ml-10 table-checkbox-wrap">
               <span>
-                <el-checkbox v-model={this.config.checkAll} onChange={this.doCheckAllChange}></el-checkbox>
                 <span class="table-name ml-2">{i18n.t('packages_form_field_mapping_list_biaoming')}</span>
               </span>
             </div>
             <div class="task-form-left__ul flex flex-column" v-loading={this.config.loadingNav}>
               {this.list.length > 0 ? (
                 <ul>
-                  <el-checkbox-group v-model={this.config.checkedTables} onChange={this.doCheckedTablesChange}>
-                    {this.list.map((item, index) => (
-                      <li
-                        key={index}
-                        class={[this.config.position === index ? 'active' : '']}
-                        onClick={() => this.updateView(index)}
-                      >
-                        <el-checkbox nativeOnClick={event => event.stopPropagation()} label={item}>
-                          <br />
-                        </el-checkbox>
-                        <div class="task-form-text-box">
-                          <OverflowTooltip
-                            class="w-100 text-truncate target"
-                            text={item.sinkObjectName}
-                            placement="right"
-                            open-delay={400}
-                          />
-                          <div class="select" onClick={() => this.updateView(index)}>
-                            <span>
-                              <span>{i18n.t('packages_form_dag_dialog_field_mapping_selected')}</span>
-                              {item.sourceFieldCount - item.userDeletedNum} /{item.sourceFieldCount}
-                            </span>
-                          </div>
+                  {this.list.map((item, index) => (
+                    <li
+                      key={index}
+                      class={[this.config.position === index ? 'active' : '']}
+                      onClick={() => this.updateView(index)}
+                    >
+                      <div class="task-form-text-box">
+                        <OverflowTooltip
+                          class="w-100 text-truncate target"
+                          text={item.sinkObjectName}
+                          placement="right"
+                          open-delay={400}
+                        />
+                        <div class="select" onClick={() => this.updateView(index)}>
+                          <span>
+                            <span>{i18n.t('packages_form_dag_dialog_field_mapping_selected')}</span>
+                            {item.sourceFieldCount - item.userDeletedNum} /{item.sourceFieldCount}
+                          </span>
                         </div>
-                      </li>
-                    ))}
-                  </el-checkbox-group>
+                      </div>
+                    </li>
+                  ))}
                 </ul>
               ) : (
                 <div class="task-form-left__ul flex flex-column align-items-center">
@@ -627,8 +626,8 @@ export const FieldRenameProcessor = defineComponent({
               </div>
             </ElPagination>
           </div>
-          <div class="main">
-            <div class="flex ml-2 text-start justify-content-between" style="margin-bottom: 8px;margin-right: -1px;">
+          <div class="main pt-0">
+            <div class="flex p-2 justify-content-between fields-toolbar">
               <div class="flex field-search-input-wrap">
                 <ElInput
                   size="mini"
@@ -639,49 +638,28 @@ export const FieldRenameProcessor = defineComponent({
                   onInput={this.doSearchField}
                 ></ElInput>
               </div>
-              <div class="item ml-2">
+              <div class="item px-2">
                 <ElButton
+                  key="batchRemove"
                   type="text"
                   class="btn-operation"
+                  onClick={this.batchRemove}
                   disabled={
                     (this.config.checkedTables.length === 0 && this.config.checkedFields.length === 0) || this.disabled
                   }
-                  onClick={() => this.doVisible('visible', true)}
                 >
-                  {i18n.t('public_button_bulk_operation')}
+                  {i18n.t('packages_form_field_processor_index_pingbi')}
                 </ElButton>
-
-                {this.config.checkedFields.length > 0 &&
-                  (this.showBatchRemove ? (
-                    <ElButton
-                      key="batchRemove"
-                      type="text"
-                      class="btn-operation"
-                      onClick={this.batchRemove}
-                      disabled={
-                        (this.config.checkedTables.length === 0 && this.config.checkedFields.length === 0) ||
-                        this.disabled
-                      }
-                    >
-                      {i18n.t('packages_form_field_processor_index_pingbi')}
-                    </ElButton>
-                  ) : (
-                    <ElButton
-                      key="batchShow"
-                      type="text"
-                      class="btn-operation"
-                      onClick={this.batchShow}
-                      disabled={
-                        (this.config.checkedTables.length === 0 && this.config.checkedFields.length === 0) ||
-                        this.disabled
-                      }
-                    >
-                      {i18n.t('packages_form_field_processor_index_huifu')}
-                    </ElButton>
-                  ))}
-
-                <ElButton type="text" class="btn-rest mr-2" disabled={this.disabled} onClick={this.doOperationRest}>
-                  {i18n.t('public_button_reset')}
+                <ElButton
+                  key="batchShow"
+                  type="text"
+                  class="btn-operation"
+                  onClick={this.batchShow}
+                  disabled={
+                    (this.config.checkedTables.length === 0 && this.config.checkedFields.length === 0) || this.disabled
+                  }
+                >
+                  {i18n.t('packages_form_field_processor_index_huifu')}
                 </ElButton>
               </div>
             </div>
