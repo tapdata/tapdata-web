@@ -204,9 +204,13 @@
             <el-button type="primary" :loading="submitOnlineLoading" @click="submit()">{{
               $t('dfs_agent_download_subscriptionmodeldialog_zaixianzhifu')
             }}</el-button>
-            <el-button type="primary" :loading="submitLoading" @click="submit({}, 'offline')">{{
-              $t('dfs_agent_download_subscriptionmodeldialog_zhuanzhangzhifu')
-            }}</el-button>
+            <el-button
+              type="primary"
+              v-if="isDomesticStation"
+              :loading="submitLoading"
+              @click="submit({}, 'offline')"
+              >{{ $t('dfs_agent_download_subscriptionmodeldialog_zhuanzhangzhifu') }}</el-button
+            >
           </div>
         </div>
       </div>
@@ -793,9 +797,13 @@
               <el-button type="primary" :loading="submitOnlineLoading" @click="submit()">{{
                 $t('dfs_agent_download_subscriptionmodeldialog_zaixianzhifu')
               }}</el-button>
-              <el-button type="primary" :loading="submitLoading" @click="submit({}, 'offline')">{{
-                $t('dfs_agent_download_subscriptionmodeldialog_zhuanzhangzhifu')
-              }}</el-button>
+              <el-button
+                type="primary"
+                v-if="isDomesticStation"
+                :loading="submitLoading"
+                @click="submit({}, 'offline')"
+                >{{ $t('dfs_agent_download_subscriptionmodeldialog_zhuanzhangzhifu') }}</el-button
+              >
             </div>
           </div>
         </div>
@@ -1326,9 +1334,14 @@
               <el-button type="primary" :loading="submitOnlineLoading" @click="submit()">{{
                 $t('dfs_agent_download_subscriptionmodeldialog_zaixianzhifu')
               }}</el-button>
-              <el-button type="primary" :loading="submitLoading" @click="submit({}, 'offline')">{{
-                $t('dfs_agent_download_subscriptionmodeldialog_zhuanzhangzhifu')
-              }}</el-button>
+              <!--国内才有转账支付-->
+              <el-button
+                type="primary"
+                v-if="isDomesticStation"
+                :loading="submitLoading"
+                @click="submit({}, 'offline')"
+                >{{ $t('dfs_agent_download_subscriptionmodeldialog_zhuanzhangzhifu') }}</el-button
+              >
             </div>
           </div>
         </div>
@@ -1521,7 +1534,8 @@ export default {
       cloudMdbSource: [],
       mdbZone: '',
       spec2Zone: null,
-      orderStorage: false
+      orderStorage: false,
+      isDomesticStation: true
     }
   },
 
@@ -1663,6 +1677,9 @@ export default {
     //控制是否打开授权码通道
     if (disabledAliyunCode) {
       this.disabledAliyunCode = disabledAliyunCode
+    }
+    if (window.__config__?.station) {
+      this.isDomesticStation = window.__config__?.station === 'domestic' //默认是国内站 国际站是 international
     }
 
     if (this.$route.query.order === 'storage') {

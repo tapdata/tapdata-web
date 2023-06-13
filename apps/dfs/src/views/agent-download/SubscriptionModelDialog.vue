@@ -585,9 +585,13 @@
             <el-button type="primary" :loading="submitOnlineLoading" @click="submit()">{{
               $t('dfs_agent_download_subscriptionmodeldialog_zaixianzhifu')
             }}</el-button>
-            <el-button type="primary" :loading="submitLoading" @click="submit({}, 'offline')">{{
-              $t('dfs_agent_download_subscriptionmodeldialog_zhuanzhangzhifu')
-            }}</el-button>
+            <el-button
+              type="primary"
+              v-if="isDomesticStation"
+              :loading="submitLoading"
+              @click="submit({}, 'offline')"
+              >{{ $t('dfs_agent_download_subscriptionmodeldialog_zhuanzhangzhifu') }}</el-button
+            >
           </div>
         </div>
       </template>
@@ -794,7 +798,8 @@ export default {
       currentPackage: '',
       disabledAliyunCode: false,
       showTransferDialogVisible: false, //转测信息弹窗
-      mdbZone: ''
+      mdbZone: '',
+      isDomesticStation: true
     }
   },
 
@@ -902,6 +907,9 @@ export default {
     if (disabledAliyunCode) {
       this.disabledAliyunCode = disabledAliyunCode
     }
+    if (window.__config__?.station) {
+      this.isDomesticStation = window.__config__?.station === 'domestic' //默认是国内站 国际站是 international
+    }
   },
   methods: {
     close() {
@@ -966,7 +974,6 @@ export default {
       this.mongodbSpecPrice = ''
       this.selected = {}
       this.currency = ''
-      this.currencyType = ''
       this.mdbPrices = 0
       this.mongodbSpec = '0-0'
       this.memorySpace = 5
@@ -1861,7 +1868,6 @@ export default {
     }
   }
 }
-
 
 .product-type-card {
   width: 430px;
