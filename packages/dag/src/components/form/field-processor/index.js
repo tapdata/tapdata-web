@@ -6,6 +6,7 @@ import { FormItem } from '@tap/form'
 import { useForm } from '@tap/form'
 import './style.scss'
 import { VIcon, EmptyItem, OverflowTooltip, VirtualList } from '@tap/component'
+import { camelToSnake, snakeToCamel } from '@tap/shared'
 
 const InnerInput = {
   name: 'InnerInput',
@@ -55,7 +56,8 @@ export const FieldRenameProcessor = defineComponent({
       operation: {
         prefix: '',
         suffix: '',
-        capitalized: ''
+        capitalized: '',
+        capitalizedOther: ''
       },
       page: {
         size: 10,
@@ -168,7 +170,8 @@ export const FieldRenameProcessor = defineComponent({
     const restOp = {
       prefix: '',
       suffix: '',
-      capitalized: ''
+      capitalized: '',
+      capitalizedOther: ''
     }
     //转成mapping table级别
     const mapping = data => {
@@ -226,7 +229,8 @@ export const FieldRenameProcessor = defineComponent({
           operation: {
             prefix: '',
             suffix: '',
-            capitalized: ''
+            capitalized: '',
+            capitalizedOther: ''
           },
           fields: []
         }
@@ -346,6 +350,12 @@ export const FieldRenameProcessor = defineComponent({
           let newField = config.operation.prefix + t?.sourceFieldName + config.operation.suffix
           if (config.operation.capitalized) {
             newField = newField[config.operation.capitalized]()
+          } else if (config.operation.capitalizedOther) {
+            const map = {
+              camelToSnake: camelToSnake,
+              snakeToCamel: snakeToCamel
+            }
+            newField = map[config.operation.capitalizedOther](newField) // snakeToCamel
           }
           updateFieldViews(t?.sourceFieldName, newField)
           doUpdateField(t, 'rename', newField)
@@ -731,6 +741,14 @@ export const FieldRenameProcessor = defineComponent({
                 <ElOption value="" label={i18n.t('packages_form_field_processor_index_bubian')} />
                 <ElOption value="toUpperCase" label={i18n.t('packages_form_field_processor_index_daxie')} />
                 <ElOption value="toLowerCase" label={i18n.t('packages_form_field_processor_index_xiaoxie')} />
+              </ElSelect>
+            </FormItem.BaseItem>
+
+            <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_other_commonly_used_conversions')}>
+              <ElSelect v-model={this.config.operation.capitalizedOther} clearable>
+                <ElOption value="" label={i18n.t('packages_form_field_processor_index_bubian')} />
+                <ElOption value="snakeToCamel" label={i18n.t('packages_form_field_processor_index_snake_to_camel')} />
+                <ElOption value="camelToSnake" label={i18n.t('packages_form_field_processor_index_camel_to_snake')} />
               </ElSelect>
             </FormItem.BaseItem>
           </div>

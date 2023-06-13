@@ -1069,5 +1069,14 @@ export default {
   packages_business_external_storage_list_siyaomima: '私钥密码',
   packages_business_external_storage_list_kehuduansiyao: '客户端私钥',
   packages_business_external_storage_list_zhengshubanfaji: '证书颁发机构',
-  packages_business_external_storage_list_shiyongTls: '使用 TLS/SSL 连接'
+  packages_business_external_storage_list_shiyongTls: '使用 TLS/SSL 连接',
+  packages_business_connections_list_dangqianlianjiex:
+    '当前连接 xxx 正在作为FDM和MDM的存储使用，删除会导致已有存储数据丢失，是否确认要继续删除。',
+  packages_business_connections_list_zhengzaizuoweiF:
+    '正在作为FDM和MDM的存储使用，修改会导致已有存储数据丢失，是否确认要继续修改',
+  packages_business_connections_list_dangqianlianjie: '当前连接',
+  packages_business_components_conditionbox_chakanzidingyi: '查看自定义字段',
+  packages_business_components_fielddialog_ziduanbuyunxu: '字段不允许为空',
+  packages_business_components_fielddialog_zidingyiziduan: '自定义字段',
+  packages_business_verification_list_biaobufenziduan: '表部分字段校验'
 }

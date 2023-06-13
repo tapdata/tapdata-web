@@ -315,7 +315,10 @@
       </div>
       <div class="mt-8">
         <ElButton size="mini" @click="goBack()">{{ $t('public_button_back') }}</ElButton>
-        <ElButton type="primary" size="mini" @click="save">{{ $t('public_button_save') }}</ElButton>
+        <ElButton type="primary" size="mini" @click="save">{{
+          $t('public_button_save') + ' & ' + $t('public_button_execute')
+        }}</ElButton>
+        <ElButton type="primary" size="mini" @click="save(true)">{{ $t('public_button_save') }}</ElButton>
       </div>
     </div>
   </section>
@@ -597,7 +600,7 @@ export default {
         this.$router.back()
       })
     },
-    save() {
+    save(saveOnly = false) {
       this.$refs.baseForm.validate(valid => {
         if (valid) {
           let tasks = this.$refs.conditionBox.getList()
@@ -652,7 +655,7 @@ export default {
           inspectApi[this.form.id ? 'patch' : 'post'](
             Object.assign({}, this.form, {
               fullMatchKeep: this.form.keep,
-              status: this.form.mode === 'manual' ? 'scheduling' : 'waiting',
+              status: saveOnly ? 'waiting' : this.form.mode === 'manual' ? 'scheduling' : 'waiting',
               ping_time: 0,
               tasks: tasks.map(
                 ({ taskId, source, target, fullMatch, showAdvancedVerification, script, webScript, jsEngineName }) => {
