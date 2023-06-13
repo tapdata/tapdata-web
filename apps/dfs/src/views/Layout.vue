@@ -203,7 +203,9 @@ export default {
       this.sortMenus = this.sortMenus.filter(item => item.name !== 'dataServerList')
     }
     //海外版隐藏数据服务
-    this.isDomesticStation = window.__config__?.station === 'domestic' || true //默认是国内站 国际站是 international
+    if (window.__config__?.station) {
+      this.isDomesticStation = window.__config__?.station === 'domestic' //默认是国内站 国际站是 international
+    }
     this.loopLoadAgentCount()
     this.activeMenu = this.$route.path
     let children = this.$router.options.routes.find(r => r.path === '/')?.children || []

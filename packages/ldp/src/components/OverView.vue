@@ -33,13 +33,13 @@
           <div class="aside-title px-4 mb-2 font-color-dark fw-normal fs-6">
             {{ $t('workbench_notice') }}
           </div>
-          <div class="more-btn cursor-pointer px-4 font-color-slight" @click="goNoticeList">
+          <div v-if="notices.length > 0" class="more-btn cursor-pointer px-4 font-color-slight" @click="goNoticeList">
             {{ $t('more_workbench_notice') }}<VIcon size="14" class="icon ml-1">arrow-right</VIcon>
           </div>
         </div>
         <br />
         <div class="aside-main notice-list flex-grow-1 px-4">
-          <ul class="notice-list__list h-100 overflow-y-auto">
+          <ul class="notice-list__list h-100 overflow-y-auto" v-if="notices.length > 0">
             <li
               v-for="(item, index) in notices.slice(0, 3)"
               :key="index"
@@ -55,6 +55,10 @@
                 {{ fromNow(item.time) }}
               </div>
             </li>
+          </ul>
+          <ul v-else class="flex flex-column justify-content-center align-center">
+            <el-image class="product-type-image" :src="require('@/assets/image/empty-img-simple.svg')" />
+            <div>{{ $t('data_no_data') }}</div>
           </ul>
         </div>
       </div>
@@ -72,6 +76,7 @@ export default {
   props: ['visible'],
   data() {
     return {
+      isDomesticStation: true,
       agentList: [
         {
           name: 'Agent',
@@ -191,6 +196,11 @@ export default {
       }
     },
     loadNotices() {
+      if (window.__config__?.station) {
+        this.isDomesticStation = window.__config__?.station === 'domestic' //默认是国内站 国际站是 international
+        this.notices = []
+        return
+      }
       this.notices = [
         {
           id: 11,
