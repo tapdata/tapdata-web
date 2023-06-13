@@ -28,7 +28,12 @@ export class FieldProcessor extends NodeType {
         'x-component': 'Input'
       },
       fieldsOperation: {
-        type: 'object'
+        type: 'object',
+        default: {
+          prefix: '',
+          suffix: '',
+          capitalized: ''
+        }
       },
       fieldsMapping: {
         type: 'array',
