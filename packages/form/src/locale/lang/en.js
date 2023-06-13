@@ -152,7 +152,7 @@ export default {
   packages_form_field_inference_dialog_cunzaicuowuge: 'There is a formatting error',
   packages_form_field_inference_dialog_cankaogeshiv: 'Reference format: varchar(32)',
   packages_form_field_inference_dialog_xiugaihoudelei: 'Modified Type',
-  packages_form_field_inference_dialog_mubiaomorentui: 'Target default inference type',
+  packages_form_field_inference_dialog_mubiaomorentui: 'Type of deduction',
   packages_form_field_inference_list_caozuochenggong: 'Operation Succeeded',
   packages_form_field_inference_list_geshicuowu: 'Please check the length and precision of the field',
   packages_form_field_inference_list_ziduanzhushi: 'Field Notes',

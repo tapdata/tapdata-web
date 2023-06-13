@@ -247,7 +247,21 @@ export default {
   methods: {
     async loadData(resetSelect = false) {
       this.navLoading = true
-      this.fieldChangeRules = this.form.getValuesIn('fieldChangeRules') || []
+      // TODO 获取原字段类型
+      let rules = this.form.getValuesIn('fieldChangeRules') || []
+      if (rules.length) {
+        let allTableFields = []
+        this.navList.forEach(el => {
+          allTableFields.push(...el.fields.filter(t => !!t.changeRuleId))
+        })
+        rules.forEach(el => {
+          const f = allTableFields.find(t => t.changeRuleId === el.id)
+          if (f && el.accept !== f.dataTypeTemp) {
+            el.accept = f.dataTypeTemp
+          }
+        })
+      }
+      this.fieldChangeRules = rules
       this.$refs.list.setRules(this.fieldChangeRules)
       this.updateConditionFieldMap = cloneDeep(this.form.getValuesIn('updateConditionFieldMap') || {})
       const { size, current } = this.page

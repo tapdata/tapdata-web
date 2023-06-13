@@ -143,7 +143,7 @@ export default {
   packages_form_field_inference_dialog_cunzaicuowuge: '存在錯誤格式',
   packages_form_field_inference_dialog_cankaogeshiv: '參考格式: varchar(32)',
   packages_form_field_inference_dialog_xiugaihoudelei: '修改後的類型',
-  packages_form_field_inference_dialog_mubiaomorentui: '目標默認推演類型',
+  packages_form_field_inference_dialog_mubiaomorentui: '推演出的類型',
   packages_form_field_inference_list_caozuochenggong: '操作成功',
   packages_form_field_inference_list_geshicuowu: '請檢查字段的長度和精度',
   packages_form_field_inference_list_ziduanzhushi: '字段註釋',
