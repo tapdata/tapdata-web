@@ -348,6 +348,10 @@ export default {
         let ruleAccept = f?.accept
         if (f) {
           f.multiple = coefficient
+          f.result = { dataType: `${this.originType}(${coefficient}n)` }
+          const index = this.rules.findIndex(t => t.id === ruleId)
+          this.rules.splice(index, 1)
+          this.rules.push(f)
         } else {
           const op = {
             id: uuid(),
@@ -412,6 +416,9 @@ export default {
               f.result = { dataType: newDataType, tapType, selectDataType }
               ruleAccept = newDataType
             }
+            const index = this.rules.findIndex(t => t.id === ruleId)
+            this.rules.splice(index, 1)
+            this.rules.push(f)
           } else {
             const op = {
               id: uuid(),
