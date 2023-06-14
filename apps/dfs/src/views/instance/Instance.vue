@@ -290,7 +290,6 @@
                   @click="handleUnsubscribe(scope.row)"
                   >{{ $t('public_button_unsubscribe') }}</ElButton
                 >
-                <ElDivider v-if="scope.row.publicAgent" direction="vertical"></ElDivider>
                 <!--删除公共引擎-->
                 <ElButton size="mini" type="text" v-if="scope.row.publicAgent" @click="handleDelete(scope.row)">{{
                   $t('public_button_delete')
