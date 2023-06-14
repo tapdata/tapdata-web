@@ -791,6 +791,9 @@
             {{ $t('public_total') }}:
             <span class="color-primary fs-5 ml-1">{{ formatPrice(currency) }}</span>
           </div>
+          <span class="font-color-dark mr-2">
+            {{ selected.label }}
+          </span>
           <div v-if="getDiscount(this.selected)">
             <span class="price-detail-label text-end inline-block mr-2"
               >{{ $t('dfs_agent_subscription_discount', { val: getDiscount(this.selected) }) }}:
