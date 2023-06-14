@@ -190,7 +190,16 @@
                 class="tb-item flex align-center px-2 user-select-none rounded-2"
                 :class="{ grabbable: !stateIsReadonly }"
               >
-                <OverflowTooltip :text="tb.name" placement="right" :open-delay="400"></OverflowTooltip>
+                <OverflowTooltip
+                  :text="tb.name"
+                  placement="right"
+                  :open-delay="400"
+                >
+                  <span>
+                    <span>{{ tb.name }}</span>
+                    <span v-if="tb.comment">{{ `(${tb.comment})` }}</span>
+                  </span>
+                </OverflowTooltip>
               </div>
               <VEmpty v-if="!tbList.length" />
               <div v-if="tbLoadingMore" class="text-center text-black-50 fs-8 p-2">
@@ -579,7 +588,8 @@ export default {
 
       const tables = data.items.map(tb => ({
         id: tb.id,
-        name: tb.original_name
+        name: tb.original_name, //  + 'fdsajlkfjdsalkjflksaljfdsanlkf'
+        comment: tb.comment
       }))
 
       this.tbTotal = data.total

@@ -46,7 +46,12 @@
           <RecycleScroller class="selector-panel__scroller" :item-size="36" :buffer="50" :items="filteredData">
             <template #default="{ item }">
               <ElCheckbox class="selector-panel__item" :label="item" :key="item">
-                <OverflowTooltip :text="item" placement="right" :enterable="false"></OverflowTooltip>
+                <OverflowTooltip :text="item" placement="right" :enterable="false">
+                  <span>
+                    <span>{{ item }}</span>
+                    <span v-if="getTableInfo(item).tableComment">{{ `(${getTableInfo(item).tableComment})` }}</span>
+                  </span>
+                </OverflowTooltip>
               </ElCheckbox>
             </template>
           </RecycleScroller>
@@ -394,7 +399,8 @@ export default {
       errorTables: {},
       isOpenClipMode: false,
       clipboardValue: '',
-      isFocus: false
+      isFocus: false,
+      tableMap: {}
     }
   },
   computed: {
@@ -568,9 +574,19 @@ export default {
     // 获取所有表
     getTables() {
       this.loading = true
+      const { connectionId } = this
       metadataInstancesApi
-        .getSourceTables(this.connectionId)
-        .then((tables = []) => {
+        .listTable({ connectionId, sourceType: 'SOURCE' })
+        .then((data = []) => {
+          let tables = data.map(it => it.tableName)
+          let map = {}
+          data.forEach((el = {}) => {
+            const { tableName, tableComment } = el
+            if (tableComment) {
+              map[tableName] = { tableComment }
+            }
+          })
+          this.tableMap = map
           tables.sort((t1, t2) => (t1 > t2 ? 1 : t1 === t2 ? 0 : -1))
           this.table.tables = Object.freeze(tables)
         })
@@ -663,6 +679,10 @@ export default {
       this.selected.isCheckAll =
         this.filterSelectedData.length > 0 &&
         this.filterSelectedData.every(item => this.selected.checked.indexOf(item) > -1)
+    },
+
+    getTableInfo(table) {
+      return this.tableMap[table] || {}
     }
   }
 }

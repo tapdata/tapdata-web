@@ -138,7 +138,9 @@
             </template>
             <template #default="{ item, index, active }">
               <slot :item="item" :index="index" :active="active">
-                <ElOption :key="item.value" :label="item.label" :value="item.value" />
+                <ElOption :key="item.value" :value="item.value">
+                  <slot name="option" :item="item">{{ item.label }}</slot>
+                </ElOption>
               </slot>
             </template>
             <template #after>

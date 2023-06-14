@@ -84,6 +84,12 @@
                     :has-pagination="false"
                   >
                     <div slot="empty">{{ $t('public_data_no_data') }}</div>
+                    <template slot="businessDesc" slot-scope="scope">
+                      <ElInput
+                        v-model="scope.row.businessDesc"
+                        @input="handleChangeBusinessDesc(arguments[0], scope.row.id)"
+                      ></ElInput>
+                    </template>
                   </VTable>
                 </el-tab-pane>
                 <el-tab-pane :label="$t('packages_business_sample_data')" name="sampleData">
@@ -252,7 +258,7 @@
 </template>
 
 <script>
-import { cloneDeep } from 'lodash'
+import { cloneDeep, debounce } from 'lodash'
 import dayjs from 'dayjs'
 
 import { Drawer, VTable, VEmpty } from '@tap/component'
@@ -292,8 +298,13 @@ export default {
           prop: 'dataType'
         },
         {
+          label: i18n.t('packages_form_field_inference_list_ziduanzhushi'),
+          prop: 'comment'
+        },
+        {
           label: i18n.t('datadiscovery_previewdrawer_yewumiaoshu'),
-          prop: 'businessDesc'
+          prop: 'businessDesc',
+          slotName: 'businessDesc'
         }
       ],
       columns: [
@@ -651,7 +662,18 @@ export default {
           this.visible = false
         }, 30)
       }
-    }
+    },
+
+    handleChangeBusinessDesc: debounce(function (val, id) {
+      metadataInstancesApi
+        .updateTableFieldDesc(this.selected.id, {
+          id,
+          businessDesc: val
+        })
+        .catch(() => {
+          this.$message.error(this.$t('public_message_save_fail'))
+        })
+    }, 300)
   }
 }
 </script>
