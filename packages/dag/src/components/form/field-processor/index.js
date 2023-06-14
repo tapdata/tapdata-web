@@ -1,5 +1,5 @@
 import { debounce, cloneDeep } from 'lodash'
-import { defineComponent, ref, reactive, nextTick, watch, computed } from '@vue/composition-api'
+import { defineComponent, ref, reactive, onMounted, watch, computed } from '@vue/composition-api'
 import { observer } from '@formily/reactive-vue'
 import i18n from '@tap/i18n'
 import { metadataInstancesApi, taskApi } from '@tap/api'
@@ -29,34 +29,38 @@ const InnerInput = {
   }
 }
 
-/*const FormInput = defineComponent({
+// onChange 懒触发前后缀的变化， 备选方案
+const FormInput = defineComponent({
   props: ['value', 'disabled'],
-  data() {
-    return {
-      val: this.value
-    }
-  },
-  watch: {
-    value(val) {
-      this.val = val
-    }
-  },
-  render() {
-    return (
+  setup(props, { emit }) {
+    const input = ref('')
+
+    watch(
+      () => props.value,
+      val => {
+        input.value = val
+      }
+    )
+
+    onMounted(() => {
+      input.value = props.value
+    })
+
+    return () => (
       <ElInput
-        value={this.val}
+        value={input.value}
         onInput={val => {
-          this.val = val
+          input.value = val
         }}
-        disabled={this.disabled}
+        disabled={props.disabled}
         clearable
         onChange={val => {
-          this.$emit('change', val)
+          emit('change', val)
         }}
       />
     )
   }
-})*/
+})
 
 export const FieldRenameProcessor = observer(
   defineComponent({
