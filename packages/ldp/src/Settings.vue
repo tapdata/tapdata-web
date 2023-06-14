@@ -331,7 +331,9 @@ export default {
           connection_type: {
             in: ['source_and_target']
           },
-          database_type: 'MongoDB'
+          database_type: {
+            in: ['MongoDB', 'MongoDB Atlas']
+          }
         }
       }
       connectionsApi
