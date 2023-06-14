@@ -70,6 +70,7 @@
 import { IconButton } from '@tap/component'
 import { SceneDialog, EventEmitter } from '@tap/business'
 import { connectionsApi, metadataDefinitionsApi } from '@tap/api'
+import { mapMutations, mapState, mapGetters } from 'vuex'
 
 import SourceItem from './Source'
 import TargetItem from './Target'
@@ -129,6 +130,8 @@ export default {
   },
 
   computed: {
+    ...mapState('overView', ['panelFlag', 'userId']),
+    ...mapGetters('overView', ['stateFlag', 'stateUserId']),
     laneOptions() {
       const result = [
         {
@@ -181,15 +184,24 @@ export default {
 
   created() {
     this.loadDirectory()
+    //是否 默认打开
+    if (window.__USER_INFO__?.id === this.userId) {
+      this.overViewVisible = this.panelFlag
+    }
   },
 
   methods: {
+    ...mapMutations('overView', ['setPanelFlag']),
     toggleView(view) {
       this.currentView = view
     },
     //概览
     toggleOverview(val) {
       this.overViewVisible = !val
+      this.setPanelFlag({
+        panelFlag: this.overViewVisible,
+        userId: window.__USER_INFO__?.id
+      })
     },
 
     handleAdd(type) {
