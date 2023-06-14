@@ -290,6 +290,11 @@
                   @click="handleUnsubscribe(scope.row)"
                   >{{ $t('public_button_unsubscribe') }}</ElButton
                 >
+                <ElDivider v-if="scope.row.publicAgent" direction="vertical"></ElDivider>
+                <!--删除公共引擎-->
+                <ElButton size="mini" type="text" v-if="scope.row.publicAgent" @click="handleDelete(scope.row)">{{
+                  $t('public_button_delete')
+                }}</ElButton>
               </template>
             </ElTableColumn>
 
@@ -1488,6 +1493,22 @@ export default {
               type: paidType
             })
           })
+      })
+    },
+    //删除公共引擎
+    handleDelete(row) {
+      this.$confirm(
+        i18n.t('dfs_user_center_ninjiangtuidingr', { val1: row.content }),
+        i18n.t('dfs_user_center_tuidingfuwu'),
+        {
+          type: 'warning'
+        }
+      ).then(res => {
+        if (!res) return
+        this.$axios.post('api/Workers/share/delete').then(() => {
+          this.fetch()
+          this.$message.success(this.$t('public_message_operation_success'))
+        })
       })
     },
     //取消订阅
