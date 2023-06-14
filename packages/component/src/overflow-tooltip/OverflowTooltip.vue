@@ -25,24 +25,26 @@ export default {
   },
 
   render() {
-    const { text } = this
+    const { text, $slots } = this
+    const elm = $slots.default?.[0]?.elm
+    const defaultText = elm?.innerText || text
     return this.overflow ? (
       <el-tooltip
-        content={text}
+        content={defaultText}
         {...{
           props: this.$attrs
         }}
       >
         <div ref="container" class="overflow-tip">
           <span ref="text" class="overflow-tip-text">
-            {text}
+            {$slots.default ? $slots.default : text}
           </span>
         </div>
       </el-tooltip>
     ) : (
       <div ref="container" class="overflow-tip">
         <span ref="text" class="overflow-tip-text">
-          {text}
+          {$slots.default ? $slots.default : text}
         </span>
       </div>
     )

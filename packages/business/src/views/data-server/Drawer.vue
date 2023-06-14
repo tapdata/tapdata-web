@@ -151,7 +151,10 @@
                 :loading="!tableOptions"
                 @change="tableChanged"
               >
-                <ElOption v-for="item in tableOptions" :key="item" :value="item" :label="item"></ElOption>
+                <ElOption v-for="item in tableOptions" :key="item.tableName" :value="item.tableName">
+                  <span>{{ item.tableName }}</span>
+                  <span v-if="item.tableComment" class="color-disable">{{ `(${item.tableComment})` }}</span>
+                </ElOption>
               </ElSelect>
               <div v-else class="text">{{ data.tableName }}</div>
             </ElFormItem>
@@ -988,7 +991,7 @@ export default {
     // 获取可选表，依赖连接id
     async getTableOptions(id) {
       this.tableOptions = null
-      const data = await metadataInstancesApi.getTables(id).catch(() => {
+      const data = await metadataInstancesApi.listTable({ connectionId: id, sourceType: 'SOURCE' }).catch(() => {
         this.tableOptions = []
       })
       this.tableOptions = data || []

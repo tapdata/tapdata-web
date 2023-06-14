@@ -149,5 +149,11 @@ export default class MetadataInstances extends Http {
   dataTypeCheckMultiple(params) {
     return this.axios.post(this.url + '/dataType/checkMultiple', params)
   }
+  listTable(params) {
+    return this.axios.get(this.url + '/listTable', { params })
+  }
+  updateTableFieldDesc(id, params) {
+    return this.axios.post(this.url + `/updateTableFieldDesc/${id}`, params)
+  }
 }
 export { MetadataInstances }

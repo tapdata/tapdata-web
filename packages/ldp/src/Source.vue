@@ -90,6 +90,7 @@
             <VIcon v-else class="tree-item-icon mr-2" size="18">table</VIcon>
             <span class="table-label" :title="data.name">
               {{ data.name }}
+              <span v-if="data.comment" class="color-disable">{{ `(${data.comment})` }}</span>
               <ElTag v-if="data.disabled" type="info" size="mini">{{ $t('public_status_invalid') }}</ElTag>
             </span>
             <IconButton class="btn-menu" sm @click="$emit('preview', data, node.parent.data)">
@@ -320,6 +321,7 @@ export default {
         return {
           id: t.tableId,
           name: t.tableName,
+          comment: t.tableComment,
           connectionId: id,
           isLeaf: true,
           isObject: true,
@@ -334,6 +336,7 @@ export default {
             {
               id: '',
               name: '',
+              comment: '',
               isLeaf: true,
               isEmpty: true
             }

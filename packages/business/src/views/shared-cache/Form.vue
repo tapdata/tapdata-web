@@ -40,7 +40,12 @@
           :loading="tableOptionsLoading"
           :placeholder="$t('packages_business_shared_cache_placeholder_table')"
           @input="tableInputHandler"
-        />
+        >
+          <template #option="{ item }">
+            <span>{{ item.label }}</span>
+            <span v-if="item.comment" class="color-disable">{{ `(${item.comment})` }}</span>
+          </template>
+        </VirtualSelect>
       </ElFormItem>
       <ElFormItem prop="cacheKeys" :label="$t('packages_business_shared_cache_keys') + ':'">
         <template slot="label">
@@ -252,13 +257,17 @@ export default {
     getTableOptions(connectionId) {
       this.tableOptionsLoading = true
       metadataInstancesApi
-        .getTables(connectionId)
+        .listTable({ connectionId, sourceType: 'SOURCE' })
         .then(data => {
           let options = []
           let list = data || []
           list.forEach(opt => {
             if (opt) {
-              options.push({ label: opt, value: opt })
+              options.push({
+                label: opt.tableName,
+                value: opt.tableName,
+                comment: opt.tableComment
+              })
             }
           })
           this.tableOptions = options
