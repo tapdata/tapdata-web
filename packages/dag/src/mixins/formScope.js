@@ -512,6 +512,26 @@ export default {
             return []
           }
         },
+
+        /**
+         * 根据节点id，查询字段类型列表
+         * 返回的是数组包对象
+         * @param nodeId
+         * @returns {Promise<*|*[]>}
+         */
+        loadNodeFieldTypesById: async nodeId => {
+          if (!nodeId) return []
+          try {
+            await this.afterTaskSaved()
+            const data = await metadataInstancesApi.nodeFilterTypeList({ nodeId })
+            return data
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error('nodeSchema', e)
+            return []
+          }
+        },
+
         //传参获取远程数据
         getCommandAndSetValue: async ($form, others) => {
           const getState = $form.getState()

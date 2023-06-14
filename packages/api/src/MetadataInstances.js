@@ -155,5 +155,8 @@ export default class MetadataInstances extends Http {
   updateTableFieldDesc(id, params) {
     return this.axios.post(this.url + `/updateTableFieldDesc/${id}`, params)
   }
+  nodeFilterTypeList(params) {
+    return this.axios.get(this.url + `/node/filterTypeList`, { params })
+  }
 }
 export { MetadataInstances }
