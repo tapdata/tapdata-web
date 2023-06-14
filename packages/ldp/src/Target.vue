@@ -29,9 +29,10 @@
           v-for="item in filterList"
           :key="item.id"
           class="wrap__item rounded-lg mb-3 position-relative overflow-hidden"
+          :class="{ 'opacity-50': item.disabled }"
           @dragover="handleDragOver"
-          @dragenter.stop="handleDragEnter"
-          @dragleave.stop="handleDragLeave"
+          @dragenter.stop="handleDragEnter($event, item)"
+          @dragleave.stop="handleDragLeave($event, item)"
           @drop.stop="handleDrop($event, item)"
         >
           <template v-if="item.LDP_TYPE === 'app'">
@@ -85,6 +86,9 @@
                   class="font-color-normal fw-sub fs-6 lh-base flex-1 ml-2 flex align-center overflow-hidden"
                   :title="item.name"
                   ><span class="ellipsis">{{ item.name }}</span>
+                  <ElTag v-if="item.disabled" class="ml-1" type="info" size="small">{{
+                    $t('public_status_invalid')
+                  }}</ElTag>
                   <ElTag
                     v-if="item.showConnectorWebsite && connectionWebsiteMap[item.id]"
                     size="small"
@@ -92,8 +96,8 @@
                     @click="handleOpenWebsite(connectionWebsiteMap[item.id])"
                     ><VIcon class="mr-1" size="14">open-in-new</VIcon
                     >{{ $t('packages_business_swimlane_target_shouye') }}</ElTag
-                  ></span
-                >
+                  >
+                </span>
                 <IconButton class="ml-1" @click="$emit('preview', item)">view-details</IconButton>
                 <!--                <IconButton
                   v-if="item.showConnectorWebsite && connectionWebsiteMap[item.id]"
@@ -552,15 +556,17 @@ export default {
       ev.dataTransfer.dropEffect = 'copy'
     },
 
-    handleDragEnter(ev) {
+    handleDragEnter(ev, item) {
       ev.preventDefault()
-      if (this.dragging || !this.allowDrop) return
+
+      if (this.dragging || !this.allowDrop || item.disabled) return
+
       const dropNode = this.findParentByClassName(ev.currentTarget, 'wrap__item')
       dropNode.classList.add('is-drop-inner')
     },
 
-    handleDragLeave(ev) {
-      if (this.dragging || !this.allowDrop) return
+    handleDragLeave(ev, item) {
+      if (this.dragging || !this.allowDrop || item.disabled) return
 
       if (!ev.currentTarget.contains(ev.relatedTarget)) {
         this.removeDropEffect(ev)
@@ -576,7 +582,7 @@ export default {
       ev.preventDefault()
       this.removeDropEffect(ev)
 
-      if (this.dragging) return
+      if (this.dragging || item.disabled) return
 
       const { draggingObjects } = this.dragState
       if (!draggingObjects.length) return
@@ -765,6 +771,7 @@ export default {
     },
 
     mapConnection(item) {
+      item.disabled = item.status !== 'ready'
       item.LDP_TYPE = 'connection'
       item.showConnectorWebsite = item?.capabilities.some(c => c.id === 'connector_website_function')
       item.showTableWebsite = item?.capabilities.some(c => c.id === 'connector_website_function')
