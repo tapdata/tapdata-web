@@ -588,7 +588,7 @@ export default {
 
       const tables = data.items.map(tb => ({
         id: tb.id,
-        name: tb.original_name, //  + 'fdsajlkfjdsalkjflksaljfdsanlkf'
+        name: tb.original_name,
         comment: tb.comment
       }))
 

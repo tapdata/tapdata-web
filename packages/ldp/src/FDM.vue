@@ -345,6 +345,7 @@ export default {
           <span class="table-label" title={data.name}>
             {data.name}
           </span>
+          {data.comment && <span class="color-disable">{`(${data.comment})`}</span>}
           <div class="btn-menu">
             {!data.isObject ? (
               <ElDropdown
