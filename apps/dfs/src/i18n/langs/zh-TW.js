@@ -178,6 +178,8 @@ export default {
   agent_button_delete_confirm_msg: '當前Agent上有任務正在運行，請先停止任務後再删除。',
   agent_button_delete_success: 'Agent删除成功',
   agent_button_delete_fail: 'Agent删除失敗',
+  agent_button_delete_mdb_confirm_title: '刪除後該存儲資源將無法再繼續使用，是否確認刪除？ ',
+
   agent_auto_upgrade_tip_running_task: '檢測到您有任務正在運行，請先停止該agent下所有任務再進行陞級操作！',
   agent_auto_upgrade_tip_start: '開始陞級',
   agent_auto_upgrade_tip_upgrading: '自動升級中',

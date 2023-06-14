@@ -216,6 +216,8 @@ export default {
   agent_list_empty_desc1: '快来',
   agent_list_empty_desc2: '开始实时数据同步吧~',
   agent_error_check: '当前无可用Agent，请去Agent管理页面新建Agent或启动已有的Agent并保证连通性',
+  agent_button_delete_mdb_confirm_title: '删除后该存储资源将无法再继续使用，是否确认删除？',
+
   // Agent部署
   agent_deploy_title: '准备 Tapdata Cloud 计算环境',
   agent_deploy_select_tip:

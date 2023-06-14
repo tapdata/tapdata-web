@@ -487,6 +487,11 @@
             <template #status="{ row }">
               <StatusTag type="tag" :status="row.status" default-status="Stopped" target="mdb"></StatusTag>
             </template>
+            <template #operation="{ row }">
+              <ElButton size="mini" type="text" @click="handleDeleteMdb(row)">{{
+                $t('public_button_delete')
+              }}</ElButton>
+            </template>
             <div class="instance-table__empty" slot="empty">
               <VIcon size="120">no-data-color</VIcon>
               <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
@@ -670,6 +675,10 @@ export default {
         {
           label: i18n.t('dfs_instance_instance_daoqishijian'),
           prop: 'expiredTimeLabel'
+        },
+        {
+          label: i18n.t('list_operation'),
+          slotName: 'operation'
         }
       ]
     }
@@ -1509,6 +1518,22 @@ export default {
         if (!res) return
         this.$axios.post('tm/api/Workers/share/delete').then(() => {
           this.fetch()
+          this.$message.success(this.$t('public_message_operation_success'))
+        })
+      })
+    },
+    //删除存储
+    handleDeleteMdb(row) {
+      this.$confirm(i18n.t('agent_button_delete_mdb_confirm_title'), i18n.t('button_delete'), {
+        type: 'warning'
+      }).then(res => {
+        if (!res) return
+        let url = 'api/tcm/mdb/share/' + row.id
+        if (row.scope === 'Private') {
+          url = 'api/tcm/mdb/private/' + row.id
+        }
+        this.$axios.post(url).then(() => {
+          this.tableCode?.fetch()
           this.$message.success(this.$t('public_message_operation_success'))
         })
       })
