@@ -279,7 +279,10 @@
                   @click="handleRestart(scope.row)"
                   >{{ $t('dfs_instance_instance_zhongqi') }}</ElButton
                 >
-                <ElDivider direction="vertical"></ElDivider>
+                <ElDivider
+                  v-if="!scope.row.orderInfo || scope.row.orderInfo.chargeProvider !== 'Stripe'"
+                  direction="vertical"
+                ></ElDivider>
                 <!--需要考虑老实例/免费实例 无订单信息的-->
                 <ElButton
                   size="mini"
