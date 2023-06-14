@@ -32,6 +32,12 @@
             $t('public_button_close')
           }}</ElButton>
         </template>
+        <div class="instance-table__empty" slot="empty">
+          <VIcon size="120">no-data-color</VIcon>
+          <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
+            <span>{{ $t('data_no_data') }}</span>
+          </div>
+        </div>
       </VTable>
     </div>
     <!--{{$t('dfs_ticketing_system_list_xinjiangongdan')}}-->
