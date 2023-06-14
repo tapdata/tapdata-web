@@ -40,7 +40,11 @@
           <div class="p-4" v-loading="loading">
             <section class="bg-white rounded-lg p-3 border border-gray-200">
               <div class="mb-4">
-                <span class="table-dec-label mb-4">{{ $t('public_description') }}：</span
+                <span class="table-dec-label mb-4">{{ $t('packages_ldp_table_comment') }}：</span>
+                <span class="font-color-sslight">{{ detailData.comment || '-' }}</span>
+              </div>
+              <div class="mb-4">
+                <span class="table-dec-label mb-4">{{ $t('datadiscovery_previewdrawer_yewumiaoshu') }}：</span
                 ><el-input
                   type="textarea"
                   row="4"
