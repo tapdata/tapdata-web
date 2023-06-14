@@ -202,6 +202,10 @@ export default {
       //海外版隐藏数据服务
       this.sortMenus = this.sortMenus.filter(item => item.name !== 'dataServerList')
     }
+    if (window.__config__?.disabledDataVerify) {
+      //生产环境隐藏数据校验
+      this.sortMenus = this.sortMenus.filter(item => item.name !== 'dataVerification')
+    }
     //海外版隐藏数据服务
     if (window.__config__?.station) {
       this.isDomesticStation = window.__config__?.station === 'domestic' //默认是国内站 国际站是 international
