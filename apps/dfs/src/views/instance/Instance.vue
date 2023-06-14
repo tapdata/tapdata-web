@@ -1532,7 +1532,7 @@ export default {
         if (row.scope === 'Private') {
           url = 'api/tcm/mdb/private/' + row.id
         }
-        this.$axios.post(url).then(() => {
+        this.$axios.delete(url).then(() => {
           this.tableCode?.fetch()
           this.$message.success(this.$t('public_message_operation_success'))
         })
