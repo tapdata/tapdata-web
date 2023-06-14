@@ -12357,3 +12357,8 @@
 .icon-color-normal {
   color: map-get($iconFillColor, normal) !important;
 }
+
+// TODO: 将来使用Tailwind CSS 或者 Windi CSS 替换
+.border-gray-200 {
+  border-color: rgb(243, 243, 243) !important;
+}

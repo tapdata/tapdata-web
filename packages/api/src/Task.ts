@@ -177,8 +177,8 @@ export default class Task extends Http {
     return this.axios.get(`${this.url}/targetNode/connectionIds`, { params })
   }
   //根据表名获取任务
-  getTaskByTableName(params) {
-    return this.axios.get(`${this.url}/stats/task`, { params })
+  getTaskByTableName(params, config) {
+    return this.axios.get(`${this.url}/stats/task`, { params, ...config })
   }
 }
 export { Task }

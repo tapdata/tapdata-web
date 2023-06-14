@@ -217,7 +217,7 @@ export default {
   public_task_type_initial_sync_and_cdc: 'Initial Sync + CDC',
   public_task_status: 'Task Status',
   public_task_last_run_time: 'Last run time',
-  public_task_cdc_time_point: 'Incremental time point',
+  public_task_cdc_time_point: 'Incremental time',
   public_task_full_start_time: 'Full start time',
   public_task_full_completion_time: 'Full completion time',
   public_task_full_sync_progress: 'Full sync progress',
