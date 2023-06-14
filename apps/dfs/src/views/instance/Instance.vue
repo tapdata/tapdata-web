@@ -480,6 +480,12 @@
             <template #status="{ row }">
               <StatusTag type="tag" :status="row.status" default-status="Stopped" target="mdb"></StatusTag>
             </template>
+            <div class="instance-table__empty" slot="empty">
+              <VIcon size="120">no-data-color</VIcon>
+              <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
+                <span>{{ $t('data_no_data') }}</span>
+              </div>
+            </div>
           </VTable>
         </section>
       </el-tab-pane>
