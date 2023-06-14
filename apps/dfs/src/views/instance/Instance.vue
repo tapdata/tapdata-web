@@ -1507,7 +1507,7 @@ export default {
         }
       ).then(res => {
         if (!res) return
-        this.$axios.post('api/Workers/share/delete').then(() => {
+        this.$axios.post('tm/api/Workers/share/delete').then(() => {
           this.fetch()
           this.$message.success(this.$t('public_message_operation_success'))
         })
