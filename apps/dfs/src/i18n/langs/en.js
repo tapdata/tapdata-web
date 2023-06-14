@@ -217,6 +217,9 @@ export default {
     '3. Please strictly follow the installation steps below to deploy, do not double-click the installation package directly. ',
   agent_deploy_before_prepare_windows_four:
     '4. If the installation path includes Chinese or special characters, the installation may fail.',
+  agent_button_delete_mdb_confirm_title:
+    'After deletion, the storage resource will no longer be used. Are you sure to delete?',
+
   agent_deploy_start_install: 'Start Installation',
   agent_deploy_start_install_button_copy: 'Copy',
   agent_deploy_start_install_button_copied: 'Copied',
