@@ -49,7 +49,9 @@
                 <OverflowTooltip :text="item" placement="right" :enterable="false">
                   <span>
                     <span>{{ item }}</span>
-                    <span v-if="getTableInfo(item).tableComment">{{ `(${getTableInfo(item).tableComment})` }}</span>
+                    <span v-if="getTableInfo(item).tableComment" class="font-color-sslight">{{
+                      `(${getTableInfo(item).tableComment})`
+                    }}</span>
                   </span>
                 </OverflowTooltip>
               </ElCheckbox>

@@ -43,7 +43,7 @@
         >
           <template #option="{ item }">
             <span>{{ item.label }}</span>
-            <span v-if="item.comment" class="color-disable">{{ `(${item.comment})` }}</span>
+            <span v-if="item.comment" class="font-color-sslight">{{ `(${item.comment})` }}</span>
           </template>
         </VirtualSelect>
       </ElFormItem>

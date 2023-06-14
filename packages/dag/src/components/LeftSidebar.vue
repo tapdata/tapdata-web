@@ -197,7 +197,7 @@
                 >
                   <span>
                     <span>{{ tb.name }}</span>
-                    <span v-if="tb.comment">{{ `(${tb.comment})` }}</span>
+                    <span v-if="tb.comment" class="font-color-sslight">{{ `(${tb.comment})` }}</span>
                   </span>
                 </OverflowTooltip>
               </div>

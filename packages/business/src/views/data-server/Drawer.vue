@@ -153,7 +153,7 @@
               >
                 <ElOption v-for="item in tableOptions" :key="item.tableName" :value="item.tableName">
                   <span>{{ item.tableName }}</span>
-                  <span v-if="item.tableComment" class="color-disable">{{ `(${item.tableComment})` }}</span>
+                  <span v-if="item.tableComment" class="font-color-sslight">{{ `(${item.tableComment})` }}</span>
                 </ElOption>
               </ElSelect>
               <div v-else class="text">{{ data.tableName }}</div>
