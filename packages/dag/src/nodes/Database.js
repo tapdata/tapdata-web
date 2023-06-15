@@ -174,14 +174,14 @@ export class Database extends NodeType {
 
           noPrimaryKeyTableSelectType: {
             type: 'array',
-            title: '表显示',
+            title: i18n.t('packages_dag_nodes_database_biaoxianshi'),
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             default: 'All',
             enum: [
-              { label: '全部', value: 'All' },
-              { label: '仅有主键表', value: 'HasKeys' },
-              { label: '仅无主键表', value: 'NoKeys' }
+              { label: i18n.t('public_select_option_all'), value: 'All' },
+              { label: i18n.t('packages_dag_nodes_database_jinyouzhujianbiao'), value: 'HasKeys' },
+              { label: i18n.t('packages_dag_nodes_database_jinwuzhujianbiao'), value: 'NoKeys' }
             ]
           },
 

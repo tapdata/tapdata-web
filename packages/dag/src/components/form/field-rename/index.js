@@ -247,7 +247,7 @@ export const FieldRename = observer(
                     <VIcon size={16} class="color-warning mr-1">
                       info
                     </VIcon>
-                    以下操作已匹配不到源字段
+                    {i18n.t('packages_dag_field_rename_index_yixiacaozuoyi')}
                   </span>
                 }
                 class="invalid-operations-wrap my-2 border rounded-4 overflow-hidden bg-subtle"
