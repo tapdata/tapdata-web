@@ -257,7 +257,7 @@ export default {
     getTableOptions(connectionId) {
       this.tableOptionsLoading = true
       metadataInstancesApi
-        .listTable({ connectionId, sourceType: 'SOURCE' })
+        .getTablesValue({ connectionId })
         .then(data => {
           let options = []
           let list = data || []
