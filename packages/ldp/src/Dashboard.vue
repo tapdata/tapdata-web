@@ -394,6 +394,13 @@ export default {
         list-style-type: circle;
       }
     }
+
+    .table-status-dot {
+      left: -16px;
+      width: 8px;
+      height: 8px;
+      background-color: #d9d9d9;
+    }
   }
 }
 </style>

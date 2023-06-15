@@ -369,6 +369,11 @@ export default {
     this.isDaas && this.getApiServerHost()
   },
 
+  destroyed() {
+    this.destroyed = true
+    clearTimeout(this.loadTaskTimer)
+  },
+
   methods: {
     async init() {
       const connectionList = await this.getData()
@@ -383,10 +388,12 @@ export default {
         })
       }
 
+      this.connectionIds = connectionList.map(item => item.id)
       this.list = appList
         .concat(connectionList)
         .sort((obj1, obj2) => new Date(obj2.createTime) - new Date(obj1.createTime))
-      this.loadTask(connectionList)
+      await this.loadTask(connectionList)
+      this.autoLoadTaskById()
     },
 
     handleAdd() {
@@ -440,6 +447,25 @@ export default {
           }
         })
       }
+    },
+
+    autoLoadTaskById() {
+      clearTimeout(this.loadTaskTimer)
+
+      if (this.destroyed) return
+
+      this.loadTaskTimer = setTimeout(async () => {
+        const data = await taskApi.getTaskByConnection({
+          connectionIds: this.connectionIds.join(','),
+          position: 'target'
+        })
+
+        Object.keys(data).forEach(key => {
+          this.$set(this.connectionTaskMap, key, data[key].reverse().map(this.mapTask))
+        })
+
+        this.autoLoadTaskById()
+      }, 5000)
     },
 
     getTableByTask(task) {
@@ -790,6 +816,7 @@ export default {
 
     addItem(item) {
       if (item.LDP_TYPE !== 'app') {
+        this.connectionIds.push(item.id)
         this.mapConnection(item)
         this.loadTask([item])
       }
