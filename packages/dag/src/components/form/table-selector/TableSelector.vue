@@ -578,7 +578,7 @@ export default {
       this.loading = true
       const { connectionId } = this
       metadataInstancesApi
-        .listTable({ connectionId, sourceType: 'SOURCE' })
+        .getTablesValue({ connectionId })
         .then((data = []) => {
           let tables = data.map(it => it.tableName)
           let map = {}

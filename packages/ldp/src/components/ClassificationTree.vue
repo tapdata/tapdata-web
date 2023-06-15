@@ -746,7 +746,7 @@ export default {
     },
 
     async getTableList(id) {
-      const res = await metadataInstancesApi.getSourceTablesValues(id)
+      const res = await metadataInstancesApi.getTablesValue({ connectionId: id })
       return res.map(t => {
         return {
           id: t.tableId,
