@@ -80,6 +80,7 @@ export default {
               isObject: true,
               connectionId: item.sourceConId,
               LDP_TYPE: 'table',
+              parent_id: node.id,
               isVirtual: item.status === 'noRunning'
             })
           )

@@ -803,7 +803,7 @@ $nodeH: 32px;
     display: flex;
     align-items: center;
     font-size: 14px;
-    padding-right: 8px;
+    padding-right: 4px;
     overflow: hidden;
     text-overflow: ellipsis;
     line-height: $nodeH;
