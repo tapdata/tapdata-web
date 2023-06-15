@@ -17,6 +17,7 @@ export const TableListCard = observer(
       const loading = ref(false)
       const list = ref([])
       const total = ref(0)
+      const tableMap = ref({})
 
       const loadData = () => {
         loading.value = true
@@ -24,7 +25,15 @@ export const TableListCard = observer(
         metadataInstancesApi
           .pageTables(params)
           .then(data => {
-            list.value = data?.items || []
+            let map = {}
+            let items = data?.items || []
+            items.forEach(t => {
+              if (t.tableComment) {
+                map[t.tableName] = t
+              }
+            })
+            tableMap.value = map
+            list.value = items.map(t => t.tableName) || []
             total.value = data?.total || 0
           })
           .finally(() => (loading.value = false))
@@ -50,7 +59,14 @@ export const TableListCard = observer(
                     key={name}
                     placement="right"
                     open-delay={400}
-                  />
+                  >
+                    <span>
+                      <span>{name}</span>
+                      {tableMap.value[name]?.tableComment && (
+                        <span class="font-color-sslight">{`(${tableMap.value[name].tableComment})`}</span>
+                      )}
+                    </span>
+                  </OverflowTooltip>
                 )
               }}
             />
