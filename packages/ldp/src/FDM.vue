@@ -46,7 +46,6 @@
             class="ldp-tree h-100"
             ref="tree"
             node-key="id"
-            highlight-current
             :data="filterTreeData"
             draggable
             default-expand-all
@@ -302,7 +301,7 @@ export default {
 
     renderContent(h, { node, data }) {
       let icon
-      let className = ['custom-tree-node']
+      let className = ['custom-tree-node', 'overflow-visible', 'position-relative', 'min-width-0']
 
       if (data.isObject) {
         className.push('grabbable')
@@ -315,6 +314,7 @@ export default {
         node.isLeaf = false
         icon = 'folder-o'
       }
+
       data.SWIM_TYPE = 'fdm'
       console.log('renderContent', data, node) // eslint-disable-line
 
@@ -326,56 +326,66 @@ export default {
           }}
           onDrop={this.handleTreeNodeDrop}
         >
-          {!data.isObject && (
-            <VExpandXTransition>
-              {data.showProgress && (
-                <el-progress
-                  class="mr-2"
-                  color="#2c65ff"
-                  width={16}
-                  stroke-width={2}
-                  type="circle"
-                  percentage={50}
-                  show-text={false}
-                ></el-progress>
-              )}
-            </VExpandXTransition>
-          )}
-          <div class="tree-item-icon flex align-center mr-2">{icon && <VIcon size="18">{icon}</VIcon>}</div>
-          <span class="table-label" title={data.name}>
-            {data.name}
-          </span>
-          {data.comment && <span class="font-color-sslight">{`(${data.comment})`}</span>}
-          <div class="btn-menu">
-            {!data.isObject ? (
-              <ElDropdown
-                class="inline-flex"
-                placement="bottom"
-                trigger="click"
-                onCommand={command => this.handleMoreCommand(command, data)}
-              >
-                <IconButton
-                  onClick={ev => {
-                    ev.stopPropagation()
-                  }}
-                  sm
-                >
-                  more
-                </IconButton>
-                <ElDropdownMenu slot="dropdown">
-                  <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
-                </ElDropdownMenu>
-              </ElDropdown>
-            ) : (
-              <IconButton
-                sm
-                onClick={() => {
-                  this.$emit('preview', data, this.fdmConnection)
-                }}
-              >
-                view-details
-              </IconButton>
+          {data.isObject && data.isVirtual && <div class="table-status-dot rounded-circle position-absolute"></div>}
+          <div
+            class={[
+              'w-0 flex-1 overflow-hidden flex align-center',
+              {
+                'opacity-50': data.isObject && data.isVirtual
+              }
+            ]}
+          >
+            {!data.isObject && (
+              <VExpandXTransition>
+                {data.showProgress && (
+                  <el-progress
+                    class="mr-2"
+                    color="#2c65ff"
+                    width={16}
+                    stroke-width={2}
+                    type="circle"
+                    percentage={50}
+                    show-text={false}
+                  ></el-progress>
+                )}
+              </VExpandXTransition>
             )}
+            <div class="tree-item-icon flex align-center mr-2">{icon && <VIcon size="18">{icon}</VIcon>}</div>
+            <span class="table-label" title={data.name}>
+              {data.name}
+            </span>
+            {data.comment && <span class="font-color-sslight">{`(${data.comment})`}</span>}
+            <div class="btn-menu">
+              {!data.isObject ? (
+                <ElDropdown
+                  class="inline-flex"
+                  placement="bottom"
+                  trigger="click"
+                  onCommand={command => this.handleMoreCommand(command, data)}
+                >
+                  <IconButton
+                    onClick={ev => {
+                      ev.stopPropagation()
+                    }}
+                    sm
+                  >
+                    more
+                  </IconButton>
+                  <ElDropdownMenu slot="dropdown">
+                    <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
+                  </ElDropdownMenu>
+                </ElDropdown>
+              ) : (
+                <IconButton
+                  sm
+                  onClick={() => {
+                    this.$emit('preview', data, this.fdmConnection)
+                  }}
+                >
+                  view-details
+                </IconButton>
+              )}
+            </div>
           </div>
         </div>
       )
@@ -654,8 +664,7 @@ export default {
         item.connectionId = item.sourceConId
         return item
       })
-
-      this.$refs.tree.updateKeyChildren(data.id, objects)
+      data.children = objects
     },
 
     handeNodeCollapse(data) {

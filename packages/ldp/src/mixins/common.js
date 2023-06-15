@@ -79,7 +79,8 @@ export default {
               isLeaf: true,
               isObject: true,
               connectionId: item.sourceConId,
-              LDP_TYPE: 'table'
+              LDP_TYPE: 'table',
+              isVirtual: item.status === 'noRunning'
             })
           )
         })
