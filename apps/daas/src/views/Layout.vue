@@ -411,7 +411,7 @@ let menuSetting = [
     name: 'advancedFeatures',
     label: 'page_title_advanced_features',
     icon: 'huowuchuanshu',
-    code: 'v2_data_pipeline', // 高级功能的code需要维护，暂时先用dataPipeline的code
+    code: 'v2_advanced_features',
     children: [
       { name: 'sharedCacheList', code: 'v2_shared_cache', parent: 'sharedCache' }, // PDK暂时不支持共享缓存，暂时屏蔽
       { name: 'functionList', code: 'v2_function_management', parent: 'function' },
