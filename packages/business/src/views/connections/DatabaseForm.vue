@@ -132,7 +132,7 @@ import i18n from '@tap/i18n'
 import { clusterApi, connectionsApi, databaseTypesApi, pdkApi, externalStorageApi, proxyApi } from '@tap/api'
 import { VIcon, GitBook } from '@tap/component'
 import { SchemaToForm } from '@tap/form'
-import { checkConnectionName, submitForm } from '@tap/shared'
+import { checkConnectionName, submitForm, uuid } from '@tap/shared'
 import resize from '@tap/component/src/directives/resize'
 
 import Test from './Test'
@@ -1086,6 +1086,36 @@ export default {
           })
           this.jsDebugSchemaData = fieldObj
           this.showJsDebug = true
+        },
+        handleGetGenerateRefreshToken: ($index, $record, items, others) => {
+          if (items.filter((t, i) => i !== $index).some(t => t.supplierKey === $record.supplierKey)) {
+            return this.$message.error(this.$t('packages_form_message_exists_name'))
+          }
+          const params = Object.assign(
+            {
+              supplierKey: $record.supplierKey,
+              randomId: $record.randomId,
+              subscribeId: `source#${this.model?.id || this.commandCallbackFunctionId}`,
+              service: 'engine'
+            },
+            others
+          )
+          proxyApi.generateRefreshToken(params).then((data = {}) => {
+            const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+            const p = location.origin + location.pathname
+            let str = `${p}${isDaas ? '' : 'tm/'}${data.path}/${data.token}`
+            if (/^\/\w+/.test(data.token)) {
+              str = `${p.replace(/\/$/, '')}${data.token}`
+            }
+            $record.refreshURL = str
+          })
+        },
+        getUid: () => {
+          return uuid()
+        },
+        getHost: async () => {
+          const data = await proxyApi.host()
+          return data?.host
         }
       }
       this.schemaData = result
