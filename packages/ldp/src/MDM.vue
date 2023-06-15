@@ -328,7 +328,12 @@ export default {
           class="custom-tree-node grabbable"
           on={{
             click: () => {
-              data.isObject && this.$emit('preview', data, this.mdmConnection)
+              data.isObject &&
+                this.$emit('preview', data, this.mdmConnection, {
+                  onDelete: tagId => {
+                    this.setNodeExpand(tagId)
+                  }
+                })
             },
             dragenter: ev => {
               ev.stopPropagation()

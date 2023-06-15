@@ -289,10 +289,10 @@ export default {
       }
     },
 
-    handlePreview(data, connection) {
+    handlePreview(data, connection, callback) {
       switch (data.LDP_TYPE) {
         case 'table':
-          this.$refs.tablePreview.open(data, connection)
+          this.$refs.tablePreview.open(data, connection, callback)
           break
         case 'connection':
           this.$refs.connectionView.open(data)
