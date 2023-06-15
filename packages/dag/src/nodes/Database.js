@@ -172,6 +172,19 @@ export class Database extends NodeType {
             ]
           },
 
+          noPrimaryKeyTableSelectType: {
+            type: 'array',
+            title: '表显示',
+            'x-decorator': 'FormItem',
+            'x-component': 'Select',
+            default: 'All',
+            enum: [
+              { label: '全部', value: 'All' },
+              { label: '仅有主键表', value: 'HasKeys' },
+              { label: '仅无主键表', value: 'NoKeys' }
+            ]
+          },
+
           tableNames: {
             type: 'array',
             default: [],
@@ -184,7 +197,8 @@ export class Database extends NodeType {
                 minHeight: 0,
                 maxHeight: 'calc((100vh - 120px) * 0.618)'
               },
-              hideReload: true
+              hideReload: true,
+              filterType: `{{ $values.noPrimaryKeyTableSelectType }}`
             },
             'x-reactions': {
               dependencies: ['migrateTableSelectType'],
@@ -227,7 +241,8 @@ export class Database extends NodeType {
               rows: 1,
               title: i18n.t('packages_dag_nodes_database_pipeidaodebiao'),
               connectionId: '{{$values.connectionId}}',
-              params: '{{ {regex: $values.tableExpression,limit:0} }}'
+              params: '{{ {regex: $values.tableExpression,limit:0} }}',
+              filterType: `{{ $values.noPrimaryKeyTableSelectType }}`
             },
             'x-reactions': {
               dependencies: ['migrateTableSelectType'],

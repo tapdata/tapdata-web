@@ -8,15 +8,17 @@ import { metadataInstancesApi } from '@tap/api'
 import { OverflowTooltip } from '@tap/component'
 import { observer } from '@formily/reactive-vue'
 
+import { getPrimaryKeyTablesByType } from '../../../util'
 import './style.scss'
 
 export const TableListCard = observer(
   defineComponent({
-    props: ['connectionId', 'value', 'title', 'params', 'reloadTime'],
+    props: ['connectionId', 'value', 'title', 'params', 'reloadTime', 'filterType'],
     setup(props, { emit }) {
       const loading = ref(false)
       const list = ref([])
       const total = ref(0)
+      const tableMap = ref({})
 
       const loadData = () => {
         loading.value = true
@@ -24,7 +26,17 @@ export const TableListCard = observer(
         metadataInstancesApi
           .pageTables(params)
           .then(data => {
-            list.value = data?.items || []
+            let map = {}
+            let items = data?.items || []
+            items.forEach(t => {
+              if (t.tableComment || t.primaryKeyCounts) {
+                map[t.tableName] = t
+              }
+            })
+            tableMap.value = map
+            list.value = Object.freeze(
+              getPrimaryKeyTablesByType(items.map(t => t.tableName) || [], props.filterType, tableMap.value)
+            )
             total.value = data?.total || 0
           })
           .finally(() => (loading.value = false))
@@ -32,6 +44,13 @@ export const TableListCard = observer(
       loadData()
 
       watch(() => [props.params, props.reloadTime], debounce(loadData, 300))
+      watch(
+        () => props.filterType,
+        () => {
+          list.value = Object.freeze(getPrimaryKeyTablesByType(list.value, props.filterType, tableMap.value))
+        }
+      )
+
       return () => {
         let listDom
         if (total.value) {
@@ -50,7 +69,19 @@ export const TableListCard = observer(
                     key={name}
                     placement="right"
                     open-delay={400}
-                  />
+                  >
+                    <span>
+                      <span>{name}</span>
+                      {tableMap.value[name]?.tableComment && (
+                        <span class="font-color-sslight">{`(${tableMap.value[name].tableComment})`}</span>
+                      )}
+                      {tableMap.value[name]?.primaryKeyCounts && (
+                        <VIcon size="12" class="text-warning ml-1">
+                          key
+                        </VIcon>
+                      )}
+                    </span>
+                  </OverflowTooltip>
                 )
               }}
             />
@@ -71,7 +102,7 @@ export const TableListCard = observer(
           <ElCard class="table-list-card" shadow="never">
             <div slot="header" class="clearfix">
               <span>{props.title || i18n.t('packages_form_field_mapping_list_biaoming')}</span>
-              {!loading.value && <span class="font-color-light float-end">{total.value}</span>}
+              {!loading.value && <span class="font-color-light float-end">{list.value.length}</span>}
             </div>
             {listDom}
           </ElCard>
