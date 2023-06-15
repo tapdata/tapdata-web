@@ -47,7 +47,6 @@
             class="ldp-tree h-100"
             ref="tree"
             node-key="id"
-            highlight-current
             :data="filterTreeData"
             draggable
             default-expand-all
@@ -68,7 +67,6 @@
             class="ldp-tree h-100"
             ref="tree"
             node-key="id"
-            highlight-current
             :data="treeData"
             draggable
             height="100%"

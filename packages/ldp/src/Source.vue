@@ -32,7 +32,6 @@
           class="ldp-tree h-100"
           ref="tree"
           node-key="id"
-          highlight-current
           :props="props"
           draggable
           height="100%"
@@ -53,7 +52,6 @@
           class="ldp-tree h-100"
           ref="tree"
           node-key="id"
-          highlight-current
           :props="props"
           draggable
           lazy

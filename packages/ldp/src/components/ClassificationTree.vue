@@ -789,9 +789,9 @@ $nodeH: 32px;
       border-radius: 6px;
     }
 
-    &.is-current > .el-tree-node__content {
-      background-color: #eef3ff;
-    }
+    //&.is-current > .el-tree-node__content {
+    //  background-color: #eef3ff;
+    //}
 
     &.is-drop-inner > .el-tree-node__content {
       background-color: #d0deff;
