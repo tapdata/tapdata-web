@@ -32,7 +32,12 @@ export default class LDP extends Http {
   }
 
   batchStart(tagId, taskIds) {
-    return this.axios.post(`${this.url}/fdm/batch/start`)
+    return this.axios.post(`${this.url}/fdm/batch/start`, {
+      params: {
+        tagId,
+        taskIds
+      }
+    })
   }
 }
 export { LDP }

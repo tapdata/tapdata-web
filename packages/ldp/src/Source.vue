@@ -93,9 +93,6 @@
               <span v-if="data.comment" class="font-color-sslight">{{ `(${data.comment})` }}</span>
               <ElTag v-if="data.disabled" type="info" size="mini">{{ $t('public_status_invalid') }}</ElTag>
             </span>
-            <IconButton class="btn-menu" sm @click="$emit('preview', data, node.parent.data)">
-              view-details
-            </IconButton>
           </span>
         </VirtualTree>
       </div>

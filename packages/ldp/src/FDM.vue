@@ -349,8 +349,44 @@ export default {
         icon = 'folder-o'
       }
 
+      let actions = []
+
+      if (!data.isObject) {
+        if (data.children.some(child => child.isVirtual)) {
+          actions.push(
+            <IconButton
+              sm
+              onClick={() => {
+                this.startTagTask(data)
+              }}
+            >
+              play-circle
+            </IconButton>
+          )
+        }
+        actions.push(
+          <ElDropdown
+            class="inline-flex"
+            placement="bottom"
+            trigger="click"
+            onCommand={command => this.handleMoreCommand(command, data)}
+          >
+            <IconButton
+              onClick={ev => {
+                ev.stopPropagation()
+              }}
+              sm
+            >
+              more
+            </IconButton>
+            <ElDropdownMenu slot="dropdown">
+              <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
+            </ElDropdownMenu>
+          </ElDropdown>
+        )
+      }
+
       data.SWIM_TYPE = 'fdm'
-      console.log('renderContent', data, node) // eslint-disable-line
 
       return (
         <div
@@ -389,47 +425,7 @@ export default {
               {data.name}
             </span>
             {data.comment && <span class="font-color-sslight">{`(${data.comment})`}</span>}
-            <div class="btn-menu">
-              {!data.isObject ? (
-                [
-                  <IconButton
-                    sm
-                    onClick={() => {
-                      this.startTagTask(data)
-                    }}
-                  >
-                    play-circle
-                  </IconButton>,
-                  <ElDropdown
-                    class="inline-flex"
-                    placement="bottom"
-                    trigger="click"
-                    onCommand={command => this.handleMoreCommand(command, data)}
-                  >
-                    <IconButton
-                      onClick={ev => {
-                        ev.stopPropagation()
-                      }}
-                      sm
-                    >
-                      more
-                    </IconButton>
-                    <ElDropdownMenu slot="dropdown">
-                      <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
-                    </ElDropdownMenu>
-                  </ElDropdown>
-                ]
-              ) : (
-                <IconButton
-                  sm
-                  onClick={() => {
-                    this.$emit('preview', data, this.fdmConnection)
-                  }}
-                >
-                  view-details
-                </IconButton>
-              )}
-            </div>
+            <div class="btn-menu">{actions}</div>
           </div>
         </div>
       )
