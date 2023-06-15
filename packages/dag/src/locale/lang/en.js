@@ -647,5 +647,9 @@ export default {
   packages_dag_field_inference_list_zidingyitiaozheng: 'Custom Adjustments',
   packages_dag_field_inference_list_anzhaoxishu: 'Adjust field length by coefficient',
   packages_dag_field_inference_list_anzhaoxishu_tip:
-    'Adjustment by coefficient refers to multiplying the original deduced length by the set coefficient as the adjusted field length'
+    'Adjustment by coefficient refers to multiplying the original deduced length by the set coefficient as the adjusted field length',
+  packages_dag_field_rename_index_yixiacaozuoyi: 'The following operations cannot match the source field',
+  packages_dag_nodes_database_jinwuzhujianbiao: 'No primary key table only',
+  packages_dag_nodes_database_jinyouzhujianbiao: 'Only the primary key table',
+  packages_dag_nodes_database_biaoxianshi: 'Table Display'
 }
