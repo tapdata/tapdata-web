@@ -20,11 +20,11 @@
         <span v-else>{{ $t('packages_business_dataForm_test_error') }}</span>
       </div>
       <div v-else>
-        <div class="test-status" v-if="['invalid', 'ERROR'].includes(status)">
-          <VIcon :style="{ color: colorMap[status] }">error</VIcon>
+        <div class="test-status flex align-items-center" v-if="['invalid', 'ERROR'].includes(status)">
+          <VIcon :style="{ color: colorMap[status] }" size="16">error</VIcon>
           <span class="test-title">{{ $t('packages_business_dataForm_test_testResultFail') }}</span>
         </div>
-        <div class="test-status" v-if="['ready'].includes(status)">
+        <div class="test-status flex align-items-center" v-if="['ready'].includes(status)">
           <i class="el-icon-success" :style="{ color: colorMap[status] }"></i>
           <span class="test-title">{{ $t('packages_business_dataForm_test_testResultSuccess') }}</span>
         </div>
@@ -97,6 +97,9 @@ export default {
     },
     formData: {
       value: Object
+    },
+    testType: {
+      value: String
     }
   },
   data() {
@@ -232,6 +235,9 @@ export default {
       let msg = {
         type: 'testConnection',
         data: connection
+      }
+      if (this.testType) {
+        msg.type = this.testType
       }
       msg.data['updateSchema'] = false //默认值
       msg.data['editTest'] = false //默认值
