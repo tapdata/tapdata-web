@@ -41,7 +41,7 @@ export default class LDP extends Http {
   }
 
   deleteTable(tableName) {
-    return this.axios.delete(`${this.url}/mdm/table/{tableName}`)
+    return this.axios.delete(`${this.url}/mdm/table/${tableName}`)
   }
 }
 export { LDP }
