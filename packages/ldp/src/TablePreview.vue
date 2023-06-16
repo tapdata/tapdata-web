@@ -886,7 +886,7 @@ export default {
         if (!resFlag) {
           return
         }
-        ldpApi.deleteTable(this.selected.name).then(() => {
+        ldpApi.deleteTable(this.selected.id).then(() => {
           this.visible = false
           this.callback?.onDelete?.(this.selected.parent_id)
         })
