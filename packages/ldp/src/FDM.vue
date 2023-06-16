@@ -46,7 +46,6 @@
             class="ldp-tree h-100"
             ref="tree"
             node-key="id"
-            highlight-current
             :data="filterTreeData"
             draggable
             default-expand-all
@@ -66,7 +65,6 @@
             class="ldp-tree h-100"
             ref="tree"
             node-key="id"
-            highlight-current
             :data="treeData"
             draggable
             height="100%"
@@ -134,7 +132,13 @@
         <ElButton :loading="creating" size="mini" @click="taskDialogSubmit(false)">{{
           $t('packages_business_save_only')
         }}</ElButton>
-        <ElButton :loading="creating" size="mini" type="primary" @click="taskDialogSubmit(true)">
+        <ElButton
+          :loading="creating || checkCanStartIng"
+          :disabled="!taskDialogConfig.canStart"
+          size="mini"
+          type="primary"
+          @click="taskDialogSubmit(true)"
+        >
           {{ $t('public_button_confirm') }}
         </ElButton>
       </span>
@@ -186,16 +190,8 @@
 <script>
 import i18n from '@tap/i18n'
 
-import { merge, debounce } from 'lodash'
-import {
-  CancelToken,
-  connectionsApi,
-  discoveryApi,
-  ldpApi,
-  metadataDefinitionsApi,
-  taskApi,
-  userGroupsApi
-} from '@tap/api'
+import { merge, debounce, cloneDeep } from 'lodash'
+import { connectionsApi, ldpApi, metadataDefinitionsApi } from '@tap/api'
 import { VirtualTree, IconButton, VExpandXTransition } from '@tap/component'
 import { uuid, generateId } from '@tap/shared'
 import { makeDragNodeImage, TASK_SETTINGS, DatabaseIcon } from '@tap/business'
@@ -238,7 +234,8 @@ export default {
         to: null,
         visible: false,
         prefix: '',
-        tableName: null
+        tableName: null,
+        canStart: false
       },
       creating: false,
       expandedKeys: [],
@@ -258,7 +255,8 @@ export default {
         itemType: 'resource',
         desc: '',
         visible: false
-      }
+      },
+      checkCanStartIng: false
     }
   },
 
@@ -281,17 +279,52 @@ export default {
     }
   },
 
+  watch: {
+    loadingDirectory(v) {
+      if (!v) {
+        this.loadTask()
+      }
+    }
+  },
+
   created() {
     this.debouncedSearch = debounce(this.searchObject, 300)
   },
 
-  mounted() {},
+  mounted() {
+    if (!this.loadingDirectory) {
+      this.$nextTick(() => {
+        this.loadTask()
+      })
+    }
+    this.autoUpdateObjects()
+  },
 
   beforeDestroy() {
     this.eventDriver.off('source-drag-end')
+    clearInterval(this.autoUpdateObjectsTimer)
   },
 
   methods: {
+    autoUpdateObjects() {
+      this.autoUpdateObjectsTimer = setInterval(() => {
+        console.log('autoUpdateObjects', this.expandedKeys) // eslint-disable-line
+        this.expandedKeys.forEach(id => {
+          this.updateObject(id)
+        })
+      }, 5000)
+    },
+
+    async updateObject(id) {
+      const node = this.$refs.tree.getNode(id)
+
+      if (node) {
+        node.loadTime = Date.now()
+        let objects = await this.loadObjects(node.data)
+        this.$refs.tree.updateKeyChildren(id, objects)
+      }
+    },
+
     openRoute(route, newTab = true) {
       if (newTab) {
         window.open(this.$router.resolve(route).href)
@@ -302,7 +335,7 @@ export default {
 
     renderContent(h, { node, data }) {
       let icon
-      let className = ['custom-tree-node']
+      let className = ['custom-tree-node', 'overflow-visible', 'position-relative', 'min-width-0']
 
       if (data.isObject) {
         className.push('grabbable')
@@ -315,8 +348,45 @@ export default {
         node.isLeaf = false
         icon = 'folder-o'
       }
+
+      let actions = []
+
+      if (!data.isObject) {
+        if (data.children.some(child => child.isVirtual)) {
+          actions.push(
+            <IconButton
+              sm
+              onClick={() => {
+                this.startTagTask(data)
+              }}
+            >
+              play-circle
+            </IconButton>
+          )
+        }
+        actions.push(
+          <ElDropdown
+            class="inline-flex"
+            placement="bottom"
+            trigger="click"
+            onCommand={command => this.handleMoreCommand(command, data)}
+          >
+            <IconButton
+              onClick={ev => {
+                ev.stopPropagation()
+              }}
+              sm
+            >
+              more
+            </IconButton>
+            <ElDropdownMenu slot="dropdown">
+              <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
+            </ElDropdownMenu>
+          </ElDropdown>
+        )
+      }
+
       data.SWIM_TYPE = 'fdm'
-      console.log('renderContent', data, node) // eslint-disable-line
 
       return (
         <div
@@ -326,56 +396,36 @@ export default {
           }}
           onDrop={this.handleTreeNodeDrop}
         >
-          {!data.isObject && (
-            <VExpandXTransition>
-              {data.showProgress && (
-                <el-progress
-                  class="mr-2"
-                  color="#2c65ff"
-                  width={16}
-                  stroke-width={2}
-                  type="circle"
-                  percentage={50}
-                  show-text={false}
-                ></el-progress>
-              )}
-            </VExpandXTransition>
-          )}
-          <div class="tree-item-icon flex align-center mr-2">{icon && <VIcon size="18">{icon}</VIcon>}</div>
-          <span class="table-label" title={data.name}>
-            {data.name}
-          </span>
-          {data.comment && <span class="font-color-sslight">{`(${data.comment})`}</span>}
-          <div class="btn-menu">
-            {!data.isObject ? (
-              <ElDropdown
-                class="inline-flex"
-                placement="bottom"
-                trigger="click"
-                onCommand={command => this.handleMoreCommand(command, data)}
-              >
-                <IconButton
-                  onClick={ev => {
-                    ev.stopPropagation()
-                  }}
-                  sm
-                >
-                  more
-                </IconButton>
-                <ElDropdownMenu slot="dropdown">
-                  <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
-                </ElDropdownMenu>
-              </ElDropdown>
-            ) : (
-              <IconButton
-                sm
-                onClick={() => {
-                  this.$emit('preview', data, this.fdmConnection)
-                }}
-              >
-                view-details
-              </IconButton>
+          {data.isObject && data.isVirtual && <div class="table-status-dot rounded-circle position-absolute"></div>}
+          <div
+            class={[
+              'w-0 flex-1 overflow-hidden flex align-center',
+              {
+                'opacity-50': data.isObject && data.isVirtual
+              }
+            ]}
+          >
+            {!data.isObject && (
+              <VExpandXTransition>
+                {data.showProgress && (
+                  <el-progress
+                    class="mr-2"
+                    color="#2c65ff"
+                    width={16}
+                    stroke-width={2}
+                    type="circle"
+                    percentage={50}
+                    show-text={false}
+                  ></el-progress>
+                )}
+              </VExpandXTransition>
             )}
+            <div class="tree-item-icon flex align-center mr-2">{icon && <VIcon size="18">{icon}</VIcon>}</div>
+            <span class="table-label" title={data.name}>
+              {data.name}
+            </span>
+            {data.comment && <span class="font-color-sslight">{`(${data.comment})`}</span>}
+            <div class="btn-menu">{actions}</div>
           </div>
         </div>
       )
@@ -442,6 +492,23 @@ export default {
       this.taskDialogConfig.prefix = this.getSmartPrefix(this.taskDialogConfig.from.name)
       this.taskDialogConfig.visible = true
       this.$refs.form?.clearValidate()
+
+      this.checkCanStart()
+    },
+
+    async checkCanStart() {
+      this.taskDialogConfig.canStart = false
+      this.checkCanStartIng = true
+      const tag = this.treeData.find(item => item.linkId === this.taskDialogConfig.from.id)
+
+      if (tag) {
+        this.taskDialogConfig.canStart = await ldpApi.checkCanStartByTag(tag.id)
+        // TODO: 这里不能点击保存，可以加个消息提示，或者常驻的 alert， 解释下原因
+      } else {
+        this.taskDialogConfig.canStart = true
+      }
+
+      this.checkCanStartIng = false
     },
 
     async taskDialogSubmit(start) {
@@ -499,11 +566,25 @@ export default {
           }
         })
       })
+
+      /*items.forEach(item => {
+        item = this.mapCatalog(item)
+        const children = this.treeMap[item.id]?.children
+        if (children.length) {
+          this.$refs.tree.remove()
+          item.children = children
+        }
+        return item
+      })*/
+
       this.directory.children = items.map(item => {
         item = this.mapCatalog(item)
-        if (this.treeMap[item.id]?.children.length) {
-          item.children = this.treeMap[item.id]?.children
+        const children = this.treeMap[item.id]?.children
+
+        if (children.length) {
+          item.children = cloneDeep(children)
         }
+
         return item
       })
       await this.$nextTick()
@@ -648,13 +729,7 @@ export default {
       node.loading = true
       let objects = await this.loadObjects(data)
       node.loading = false
-      objects = objects.map(item => {
-        item.parent_id = data.id
-        item.isObject = true
-        item.connectionId = item.sourceConId
-        return item
-      })
-
+      // data.children = objects
       this.$refs.tree.updateKeyChildren(data.id, objects)
     },
 
@@ -824,6 +899,17 @@ export default {
       } catch (err) {
         this.$message.error(err.message)
       }
+    },
+
+    async loadTask() {
+      if (!this.treeData.length) return
+
+      const map = await ldpApi.getTaskByTag(this.treeData.map(item => item.id).join(','))
+    },
+
+    async startTagTask(tag) {
+      await ldpApi.batchStart(tag.id)
+      this.$message.success(this.$t('public_message_operation_success'))
     }
   }
 }

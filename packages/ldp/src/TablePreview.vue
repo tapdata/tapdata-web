@@ -32,6 +32,10 @@
             ><span class="table-dec-txt">{{ cdcDelayTime || '-' }}</span></span
           >
         </template>
+        <div class="flex-grow-1"></div>
+        <ElButton size="mini" type="danger" plain @click="handleDelete"
+          ><VIcon class="mr-1">delete</VIcon>{{ $t('public_button_delete') }}</ElButton
+        >
       </div>
     </header>
     <section class="flex-1 min-h-0 mt-1">
@@ -262,6 +266,15 @@
                         {{ $t('public_button_stop') }}
                       </ElLink>
                     </template>
+                    <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+                    <ElLink
+                      v-readonlybtn="'SYNC_job_edition'"
+                      type="danger"
+                      :disabled="row.btnDisabled.delete || $disabledReadonlyUserBtn()"
+                      @click="deleteTask([row.id], row)"
+                    >
+                      {{ $t('public_button_delete') }}
+                    </ElLink>
                   </template>
                 </el-table-column>
               </el-table>
@@ -301,7 +314,16 @@ import dayjs from 'dayjs'
 
 import { Drawer, VTable, VEmpty } from '@tap/component'
 import { calcTimeUnit, calcUnit, isNum } from '@tap/shared'
-import { discoveryApi, proxyApi, taskApi, metadataInstancesApi, modulesApi, workerApi, CancelToken } from '@tap/api'
+import {
+  discoveryApi,
+  proxyApi,
+  taskApi,
+  ldpApi,
+  metadataInstancesApi,
+  modulesApi,
+  workerApi,
+  CancelToken
+} from '@tap/api'
 import { TaskStatus, DatabaseIcon, TASK_TYPE_MAP, makeStatusAndDisabled } from '@tap/business'
 import i18n from '@tap/i18n'
 import TableLineage from './components/TableLineage'
@@ -540,7 +562,7 @@ export default {
       this.cdcDelayTime = ''
       this.lastDataChangeTime = ''
     },
-    open(row, connection) {
+    open(row, connection, callback = {}) {
       clearTimeout(this.visibleTimer)
       clearTimeout(this.loadTaskTimer)
       this.cancelSource?.cancel()
@@ -553,6 +575,7 @@ export default {
       this.connectionId = row.connectionId
       this.selected = cloneDeep(row)
       this.connection = connection
+      this.callback = callback
       this.getTableStorage(row)
     },
     getTableStorage(row) {
@@ -750,7 +773,7 @@ export default {
       })
     },
 
-    async forceStopTask(ids) {
+    async forceStopTask(ids, item = {}) {
       let data = await workerApi.taskUsedAgent(ids)
       let msgObj = this.getConfirmMessage('force_stop', ids.length > 1, item.name)
       if (data?.status === 'offline' && !this.isDaas) {
@@ -758,14 +781,15 @@ export default {
       }
       this.$confirm(msgObj.msg, '', {
         type: 'warning',
-        showClose: false
+        showClose: false,
+        zIndex: 999999
       }).then(resFlag => {
         if (!resFlag) {
           return
         }
         taskApi.forceStop(ids).then(data => {
+          this.getTasks(true)
           this.$message.success(data?.message || this.$t('public_message_operation_success'), false)
-          this.table.fetch()
         })
       })
     },
@@ -775,16 +799,65 @@ export default {
       let message = msgObj.msg
       this.$confirm(message, '', {
         type: 'warning',
-        showClose: false
+        showClose: false,
+        zIndex: 999999
       }).then(resFlag => {
         if (!resFlag) {
           return
         }
         taskApi.batchStop(ids).then(data => {
-          this.table.fetch()
-          this.responseHandler(data, this.$t('public_message_operation_success'), canNotList)
+          this.getTasks(true)
+          this.$message.success(data?.message || this.$t('public_message_operation_success'), false)
         })
       })
+    },
+
+    deleteTask(ids, item = {}, canNotList) {
+      let msgObj = this.getConfirmMessage('delete', ids.length > 1, item.name)
+      this.$confirm(msgObj.msg, '', {
+        type: 'warning',
+        zIndex: 999999
+      }).then(resFlag => {
+        if (!resFlag) {
+          return
+        }
+        taskApi.batchDelete(ids).then(data => {
+          this.getTasks(true)
+          this.$message.success(data?.message || this.$t('public_message_operation_success'), false)
+        })
+      })
+    },
+
+    getConfirmMessage(operateStr, isBulk, name) {
+      let title = operateStr + '_confirm_title',
+        message = operateStr + '_confirm_message'
+      if (isBulk) {
+        title = 'bulk_' + title
+        message = 'bulk_' + message
+      }
+      const h = this.$createElement
+      let strArr = this.$t('packages_business_dataFlow_' + message).split('xxx')
+      let msg = h(
+        'p',
+        {
+          style: 'width: calc(100% - 28px);word-break: break-all;'
+        },
+        [
+          strArr[0],
+          h(
+            'span',
+            {
+              class: 'color-primary'
+            },
+            name
+          ),
+          strArr[1]
+        ]
+      )
+      return {
+        msg,
+        title: this.$t('packages_business_dataFlow_' + title)
+      }
     },
 
     handleChangeBusinessDesc: debounce(function (val, id) {
@@ -796,7 +869,29 @@ export default {
         .catch(() => {
           this.$message.error(this.$t('public_message_save_fail'))
         })
-    }, 300)
+    }, 300),
+
+    handleDelete() {
+      if (this.taskData.length) {
+        this.activeName = 'tasks'
+        this.$message.warning(`检测到有任务正在使用 ${this.selected.name}，请删除所有相关任务后重试`)
+        return
+      }
+
+      this.$confirm('该表将会从数据库里删除，操作后不可恢复', '确认删除？', {
+        type: 'warning',
+        showClose: false,
+        zIndex: 999999
+      }).then(resFlag => {
+        if (!resFlag) {
+          return
+        }
+        ldpApi.deleteTable(this.selected.id).then(() => {
+          this.visible = false
+          this.callback?.onDelete?.(this.selected.parent_id)
+        })
+      })
+    }
   }
 }
 </script>

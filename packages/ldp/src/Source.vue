@@ -32,7 +32,6 @@
           class="ldp-tree h-100"
           ref="tree"
           node-key="id"
-          highlight-current
           :props="props"
           draggable
           height="100%"
@@ -53,7 +52,6 @@
           class="ldp-tree h-100"
           ref="tree"
           node-key="id"
-          highlight-current
           :props="props"
           draggable
           lazy
@@ -93,9 +91,6 @@
               <span v-if="data.comment" class="font-color-sslight">{{ `(${data.comment})` }}</span>
               <ElTag v-if="data.disabled" type="info" size="mini">{{ $t('public_status_invalid') }}</ElTag>
             </span>
-            <IconButton class="btn-menu" sm @click="$emit('preview', data, node.parent.data)">
-              view-details
-            </IconButton>
           </span>
         </VirtualTree>
       </div>
@@ -316,7 +311,7 @@ export default {
     },
 
     async getTableList(id) {
-      const res = await metadataInstancesApi.getSourceTablesValues(id)
+      const res = await metadataInstancesApi.getTablesValue({ connectionId: id })
       const data = res.map(t => {
         return {
           id: t.tableId,

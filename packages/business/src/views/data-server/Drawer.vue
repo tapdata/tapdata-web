@@ -991,7 +991,7 @@ export default {
     // 获取可选表，依赖连接id
     async getTableOptions(id) {
       this.tableOptions = null
-      const data = await metadataInstancesApi.listTable({ connectionId: id, sourceType: 'SOURCE' }).catch(() => {
+      const data = await metadataInstancesApi.getTablesValue({ connectionId: id }).catch(() => {
         this.tableOptions = []
       })
       this.tableOptions = data || []

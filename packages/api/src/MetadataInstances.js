@@ -81,16 +81,12 @@ export default class MetadataInstances extends Http {
     return this.axios.get(this.url + '/tables?connectionId=' + connectionId)
   }
 
-  getTablesValue(connectionId) {
-    return this.axios.get(this.url + '/tablesValue?connectionId=' + connectionId)
+  getTablesValue(params) {
+    return this.axios.get(this.url + '/tablesValue', { params })
   }
 
   getSourceTables(connectionId) {
     return this.axios.get(this.url + '/tables?connectionId=' + connectionId + '&sourceType=SOURCE')
-  }
-
-  getSourceTablesValues(connectionId) {
-    return this.axios.get(this.url + '/tablesValue?connectionId=' + connectionId + '&sourceType=SOURCE')
   }
 
   /**
@@ -148,9 +144,6 @@ export default class MetadataInstances extends Http {
   }
   dataTypeCheckMultiple(params) {
     return this.axios.post(this.url + '/dataType/checkMultiple', params)
-  }
-  listTable(params) {
-    return this.axios.get(this.url + '/listTable', { params })
   }
   updateTableFieldDesc(id, params) {
     return this.axios.post(this.url + `/updateTableFieldDesc/${id}`, params)

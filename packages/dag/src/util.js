@@ -88,3 +88,22 @@ export function errorFiledType(field) {
   let type = JSON.parse(tapType).type
   return type === 7 ? 'error' : ''
 }
+
+/**
+ * @description 根据主键类型过滤表
+ * @param {Array} data 表数据
+ * @param {String} filterType 过滤类型
+ * @param {Object} map 表数据映射
+ * @returns {Array} 符合条件的表
+ * */
+export function getPrimaryKeyTablesByType(data = [], filterType = 'All', map = {}) {
+  if (filterType === 'All') {
+    return data
+  }
+  const result = data.map(t => {
+    return Object.assign({}, { tableName: t, tableComment: '', primaryKeyCounts: 0 }, map[t])
+  })
+  const list =
+    filterType === 'HasKeys' ? result.filter(t => !!t.primaryKeyCounts) : result.filter(t => !t.primaryKeyCounts)
+  return list.map(t => t.tableName)
+}

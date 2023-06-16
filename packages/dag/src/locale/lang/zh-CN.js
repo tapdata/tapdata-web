@@ -607,5 +607,9 @@ export default {
   packages_dag_field_inference_list_anxishutiaozheng: '按系数调整',
   packages_dag_field_inference_list_zidingyitiaozheng: '自定义调整',
   packages_dag_field_inference_list_anzhaoxishu: '按系数调整字段长度',
-  packages_dag_field_inference_list_anzhaoxishu_tip: '按系数调整是指将原推演出的长度乘以设置的系数作为调整后的字段长度'
+  packages_dag_field_inference_list_anzhaoxishu_tip: '按系数调整是指将原推演出的长度乘以设置的系数作为调整后的字段长度',
+  packages_dag_field_rename_index_yixiacaozuoyi: '以下操作已匹配不到源字段',
+  packages_dag_nodes_database_jinwuzhujianbiao: '仅无主键表',
+  packages_dag_nodes_database_jinyouzhujianbiao: '仅有主键表',
+  packages_dag_nodes_database_biaoxianshi: '表显示'
 }

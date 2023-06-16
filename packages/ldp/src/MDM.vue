@@ -47,7 +47,6 @@
             class="ldp-tree h-100"
             ref="tree"
             node-key="id"
-            highlight-current
             :data="filterTreeData"
             draggable
             default-expand-all
@@ -68,7 +67,6 @@
             class="ldp-tree h-100"
             ref="tree"
             node-key="id"
-            highlight-current
             :data="treeData"
             draggable
             height="100%"
@@ -279,6 +277,42 @@ export default {
   methods: {
     renderContent(h, { node, data }) {
       let icon
+      let actions
+      data.SWIM_TYPE = 'mdm'
+
+      if (!data.isObject) {
+        actions = [
+          <IconButton
+            sm
+            onClick={ev => {
+              ev.stopPropagation()
+              this.showDialog(data, 'add')
+            }}
+          >
+            add
+          </IconButton>,
+          <ElDropdown
+            class="inline-flex"
+            placement="bottom"
+            trigger="click"
+            onCommand={command => this.handleMoreCommand(command, data)}
+          >
+            <IconButton
+              onClick={ev => {
+                ev.stopPropagation()
+              }}
+              sm
+            >
+              more
+            </IconButton>
+            <ElDropdownMenu slot="dropdown">
+              <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
+              <ElDropdownItem command="delete">{this.$t('public_button_delete')}</ElDropdownItem>
+            </ElDropdownMenu>
+          </ElDropdown>
+        ]
+      }
+
       if (data.LDP_TYPE === 'table') {
         node.isLeaf = true
         icon = 'table'
@@ -286,13 +320,18 @@ export default {
         node.isLeaf = false
         icon = 'folder-o'
       }
-      data.SWIM_TYPE = 'mdm'
+
       return (
         <div
           class="custom-tree-node grabbable"
           on={{
             click: () => {
-              data.isObject && this.$emit('preview', data, this.mdmConnection)
+              data.isObject &&
+                this.$emit('preview', data, this.mdmConnection, {
+                  onDelete: tagId => {
+                    this.setNodeExpand(tagId)
+                  }
+                })
             },
             dragenter: ev => {
               ev.stopPropagation()
@@ -317,49 +356,7 @@ export default {
             {data.name}
           </span>
           {data.comment && <span class="font-color-sslight">{`(${data.comment})`}</span>}
-          <div class="btn-menu">
-            {!data.isObject ? (
-              [
-                <IconButton
-                  sm
-                  onClick={ev => {
-                    ev.stopPropagation()
-                    this.showDialog(data, 'add')
-                  }}
-                >
-                  add
-                </IconButton>,
-                <ElDropdown
-                  class="inline-flex"
-                  placement="bottom"
-                  trigger="click"
-                  onCommand={command => this.handleMoreCommand(command, data)}
-                >
-                  <IconButton
-                    onClick={ev => {
-                      ev.stopPropagation()
-                    }}
-                    sm
-                  >
-                    more
-                  </IconButton>
-                  <ElDropdownMenu slot="dropdown">
-                    <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
-                    <ElDropdownItem command="delete">{this.$t('public_button_delete')}</ElDropdownItem>
-                  </ElDropdownMenu>
-                </ElDropdown>
-              ]
-            ) : (
-              <IconButton
-                sm
-                onClick={() => {
-                  this.$emit('preview', data, this.mdmConnection)
-                }}
-              >
-                view-details
-              </IconButton>
-            )}
-          </div>
+          <div class="btn-menu">{actions}</div>
         </div>
       )
     },
