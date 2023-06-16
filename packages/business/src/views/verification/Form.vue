@@ -655,7 +655,7 @@ export default {
           inspectApi[this.form.id ? 'patch' : 'post'](
             Object.assign({}, this.form, {
               fullMatchKeep: this.form.keep,
-              status: saveOnly ? 'waiting' : this.form.mode === 'manual' ? 'scheduling' : 'waiting',
+              status: saveOnly ? 'waiting' : 'scheduling',
               ping_time: 0,
               tasks: tasks.map(
                 ({ taskId, source, target, fullMatch, showAdvancedVerification, script, webScript, jsEngineName }) => {
