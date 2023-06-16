@@ -32,5 +32,13 @@ export default class Proxy extends Http {
   callHistory(params) {
     return this.axios.get(`${this.url}/call/history`, { params })
   }
+
+  generateRefreshToken(params) {
+    return this.axios.post(`${this.url}/generate/refresh-token`, params)
+  }
+
+  host() {
+    return this.axios.get(`${this.url}/host`)
+  }
 }
 export { Proxy }
