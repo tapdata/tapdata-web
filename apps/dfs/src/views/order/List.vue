@@ -11,46 +11,47 @@
               </ElButton>
             </div>
           </div>
-          <VTable
-            :columns="columns"
-            :remoteMethod="remoteMethod"
-            :page-options="{
-              layout: 'total, ->, prev, pager, next, sizes, jumper'
-            }"
-            ref="table"
-            class="mt-4"
-          >
-            <template #agentType="{ row }">
-              <span>{{ agentTypeMap[row.agentType || 'local'] }}</span>
-            </template>
-            <template #statusLabel="{ row }">
-              <StatusTag type="tag" :status="row.status" default-status="Stopped" target="order"></StatusTag>
-            </template>
-            <template #periodLabel="{ row }">
-              <div>{{ row.periodStart }}</div>
-              <div>{{ row.periodEnd }}</div>
-            </template>
-            <template #bindAgent="{ row }">
-              <ElLink v-if="row.agentId && row.status === 'pay'" type="primary" @click="handleAgent(row)">{{
-                row.agentId
-              }}</ElLink>
-              <span v-else>-</span>
-            </template>
-            <template #operation="{ row }">
-              <ElButton
-                v-if="['expire', 'pay', 'cancelSubscribe'].includes(row.status) && row.type === 'one_time'"
-                type="text"
-                @click="handleRenew(row)"
-                >{{ $t('public_button_renew') }}</ElButton
-              >
-              <ElButton v-if="['payFail', 'unPay'].includes(row.status)" type="text" @click="handlePay(row)">{{
-                $t('public_button_pay')
-              }}</ElButton>
-              <!--              <ElButton v-if="row.status === 'pay'" type="text" @click="getUnsubscribePrice(row)">{{-->
-              <!--                $t('public_button_unsubscribe')-->
-              <!--              }}</ElButton>-->
-            </template>
-          </VTable>
+          <ul class="mt-4">
+            <li class="sub-li" v-for="item in subscribeList" :key="item.id">
+              <div class="sub-li-header flex justify-content-between">
+                <div>
+                  <span class="color-primary fw-sub mr-2">订阅编号: {{ item.id }}</span>
+                  <span class="font-color-dark fw-sub mr-2">总金额: {{ item.subscribeItems[0].amount }}</span>
+                  <span class="font-color-dark fw-sub mr-2"
+                    >订阅周期: {{ formatterTime(item.startAt) }} ~ {{ formatterTime(item.endedAt) }}</span
+                  >
+                </div>
+                <div>一键订阅</div>
+              </div>
+              <div>
+                <VTable :columns="columns" :data="item.subscribeItems" ref="table" class="mt-4" :has-pagination="false">
+                  <template #agentType="{ row }">
+                    <span>{{ agentTypeMap[row.agentType || 'local'] }}</span>
+                  </template>
+                  <template #price="{ row }">
+                    <div>{{ formatterPrice(item.currency, row.amount) }}</div>
+                  </template>
+                  <template #statusLabel="{ row }">
+                    <StatusTag type="tag" :status="row.status" default-status="Stopped" target="order"></StatusTag>
+                  </template>
+                  <template #operation="{ row }">
+                    <ElButton
+                      v-if="['expire', 'pay', 'cancelSubscribe'].includes(row.status) && row.type === 'one_time'"
+                      type="text"
+                      @click="handleRenew(row)"
+                      >{{ $t('public_button_renew') }}</ElButton
+                    >
+                    <ElButton v-if="['payFail', 'unPay'].includes(row.status)" type="text" @click="handlePay(row)">{{
+                      $t('public_button_pay')
+                    }}</ElButton>
+                    <ElButton v-if="row.status === 'pay'" type="text" @click="getUnsubscribePrice(row)">{{
+                      $t('public_button_unsubscribe')
+                    }}</ElButton>
+                  </template>
+                </VTable>
+              </div>
+            </li>
+          </ul>
         </div>
       </el-tab-pane>
       <el-tab-pane
@@ -347,31 +348,27 @@ export default {
       ],
       columns: [
         {
-          label: i18n.t('dfs_instance_selectlist_dingyueneirong'),
-          prop: 'content'
+          label: '订阅类型',
+          prop: 'productType'
         },
         {
-          label: i18n.t('dfs_instance_selectlist_dingyuezhouqi'),
+          label: '订阅规格',
           slotName: 'periodLabel',
           width: 180
         },
         {
-          label: i18n.t('dfs_user_center_dingyueshuliang'),
+          label: '存储',
           prop: 'quantity'
+        },
+        {
+          label: i18n.t('dfs_user_center_jine'),
+          prop: 'price',
+          slotName: 'price'
         },
         {
           label: i18n.t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi'),
           prop: 'agentType',
           slotName: 'agentType'
-        },
-        {
-          label: i18n.t('dfs_user_center_jine'),
-          prop: 'priceLabel'
-        },
-        {
-          label: i18n.t('dfs_instance_selectlist_bangdingshilizhuang'),
-          prop: 'agentId',
-          slotName: 'bindAgent'
         },
         {
           label: i18n.t('task_monitor_status'),
@@ -384,7 +381,13 @@ export default {
         }
       ],
       agentList: [],
-      memoryList: []
+      memoryList: [],
+      //订阅列表
+      subscribeList: [],
+      page: {
+        current: 1,
+        size: 10
+      }
     }
   },
   computed: {
@@ -399,6 +402,7 @@ export default {
     } else {
       this.refundAmount = 'https://docs.tapdata.net/cloud/billing/refund'
     }
+    this.remoteMethod()
   },
   watch: {
     $route(route) {
@@ -406,7 +410,7 @@ export default {
         let query = route.query
         this.searchParams = Object.assign(this.searchParams, query)
         let pageNum = isEmpty(query) ? undefined : 1
-        this.table.fetch(pageNum)
+        this.remoteMethod(pageNum)
       }
     }
   },
@@ -479,8 +483,8 @@ export default {
       ]
     },
     //我的订阅
-    remoteMethod({ page }) {
-      let { current, size } = page
+    remoteMethod() {
+      let { current, size } = this.page
       let { agentType, status } = this.searchParams
       let where = {
         status: {
@@ -495,40 +499,24 @@ export default {
         sort: ['createAt desc'],
         where: where
       }
+
       return this.$axios
         .get(`api/tcm/paid/plan/paidSubscribe?filter=${encodeURIComponent(JSON.stringify(filter))}`)
         .then(data => {
-          let items = data.items || []
-          return {
-            total: data.total,
-            data:
-              items.map(t => {
-                t.statusLabel = ORDER_STATUS_MAP[t.status]
-                const { spec, type, periodUnit, period } = t || {}
-                t.subscriptionMethodLabel = getPaymentMethod({
-                  type,
-                  periodUnit,
-                  period
-                })
-                t.agentDeploy = this.agentTypeMap[t.agentDeploy || 'selfHost']
-                t.content = `${t.subscriptionMethodLabel} ${getSpec(spec)} ${i18n.t('public_agent')}`
-                t.periodStart = t.status !== 'unPay' ? dayjs(t.periodStart).format('YYYY-MM-DD HH:mm:ss') : ''
-                t.periodEnd = t.status !== 'unPay' ? dayjs(t.periodEnd).format('YYYY-MM-DD HH:mm:ss') : '-'
-                t.priceSuffix = t.type === 'recurring' ? '/' + TIME_MAP[t.periodUnit] : ''
-                t.formatPrice =
-                  CURRENCY_SYMBOL_MAP[t.currency] +
-                  (t.price / 100).toLocaleString('zh', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                  })
-                t.priceLabel = t.formatPrice + t.priceSuffix
-                t.bindAgent = t.agentId
-                  ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
-                  : i18n.t('user_Center_weiBangDing')
-                return t
-              }) || []
-          }
+          this.subscribeList = data.items || []
         })
+    },
+    formatterTime(time) {
+      return time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
+    },
+    formatterPrice(currency, price) {
+      return (
+        CURRENCY_SYMBOL_MAP[currency] +
+        (price / 100).toLocaleString('zh', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        })
+      )
     },
     //续订
     handleRenew(row = {}) {
@@ -768,6 +756,14 @@ export default {
     overflow: auto;
     border-bottom: none;
   }
+}
+.sub-li {
+  border: 1px solid #ebeef5;
+  border-bottom: none;
+}
+.sub-li-header {
+  padding: 10px;
+  border-bottom: 1px solid #ebeef5;
 }
 ::v-deep {
   .el-dropdown-menu__item.dropdown-item--disabled {
