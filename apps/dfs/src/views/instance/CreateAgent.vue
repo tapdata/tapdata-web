@@ -2271,9 +2271,18 @@ export default {
     },
     //提交订单
     async submit(row = {}, paymentType = 'online') {
-      const { type, priceId, currency, chargeProvider } = this.selected
+      const { type, priceId, currency, periodUnit } = this.selected
       const { email } = this.form
 
+      if (this.agentDeploy !== 'aliyun') {
+        const valid = await this.validateForm('confirmForm')
+        if (!valid) return
+      }
+      if (paymentType === 'online') {
+        this.submitOnlineLoading = true
+      } else {
+        this.submitLoading = true
+      }
       const fastDownloadUrl = window.App.$router.resolve({
         name: 'FastDownload',
         query: {
@@ -2286,78 +2295,71 @@ export default {
           id: ''
         }
       })
+      //组装参数
       let params = {
-        agentDeploy: this.agentDeploy,
+        subscribeType: type, // 订阅类型：one_time-一次订阅，recurring-连续订阅
         platform: this.platform,
-        version: ''
+        quantity: '',
+        paymentMethod: this.agentDeploy === 'aliyun' ? 'AliyunMarketCode' : 'Stripe',
+        successUrl: location.origin + location.pathname + fastDownloadUrl.href,
+        cancelUrl: location.href,
+        email,
+        periodUnit,
+        currency,
+        subscribeItems: []
       }
-
-      if (this.agentDeploy === 'aliyun') {
-        params = Object.assign(params, {
-          agentType: row.agentType,
-          chargeProvider: 'Aliyun',
-          licenseId: row?.id
-        })
-        if (row.agentType === 'Cloud') {
-          params = Object.assign(params, {
-            region: this.region,
-            provider: this.provider
-          })
-        }
+      let base = {
+        productId: '', // 产品ID
+        priceId, // 价格ID，关联定价表
+        quantity: 1, // 订阅数量，例如一次性订购2个实例时，这里填写2
+        productType: 'Engine', // 产品类型：Engine,MongoDB,APIServer
+        resourceId: '', // 资源ID，agent 或者 cluster id
+        agentType: this.agentDeploy === 'fullManagement' ? 'Cloud' : 'Local', // 半托管-Local，全托管-Cloud
+        version: '', // 实例版本
+        name: '', // 实例名称
+        memorySpace: this.memorySpace,
+        provider: this.provider || '', // 云厂商，全托管必填
+        region: this.region || '', // 地域，全托管必填
+        zone: this.mdbZone || '' // 可用区，按需填写（阿里云存储需要根据资源余量选择出可用区）
+      }
+      //存储必传参数
+      let memory = {
+        mongodbUrl: this.mongodbUrl, // 订购半托管存储时需要填写
+        mdbPriceId: this.mdbPriceId,
+        mdbRegion: this.region || '',
+        mdbZone: this.mdbZone || '',
+        productType: 'MongoDB' // 产品类型：Engine,MongoDB,APIServer
+      }
+      //单独订购存储
+      if (this.orderStorage) {
+        params.onlyMdb = true
+        params.successUrl =
+          location.origin +
+          location.pathname +
+          this.$router.resolve({
+            name: 'Instance',
+            query: {
+              active: 'storage'
+            }
+          }).href
+        params.subscribeItems = [Object.assign(base, memory)]
+      } else if (this.platform === 'realTime') {
+        //实例 + 存储
+        params.subscribeItems.push(base)
+        params.subscribeItems.push(Object.assign({}, base, memory))
+      } else if (this.agentDeploy === 'aliyun') {
+        //单独实例订购
+        params.agentType = row.agentType
+        params.licenseId = row?.id
+        params.subscribeItems.push(base)
         this.buried('selectAgentAliyun')
       } else {
-        const valid = await this.validateForm('confirmForm')
-
-        if (!valid) return
-
-        params = Object.assign(params, {
-          agentType: 'Local',
-          chargeProvider,
-          priceId,
-          currency: this.currencyType || currency,
-          successUrl: location.origin + location.pathname + fastDownloadUrl.href,
-          cancelUrl: location.href,
-          paymentType: paymentType, //增加支付方式
-          mongodbUrl: this.mongodbUrl, //新增存储
-          email,
-          type
-        })
-        if (this.agentDeploy === 'fullManagement') {
-          params.agentType = 'Cloud'
-          params.region = this.region
-          params.provider = this.provider
-          params.memorySpace = this.memorySpace
-          params.successUrl = location.origin + location.pathname + agentUrl.href
-        }
-        //带存储实例
-        if (this.platform === 'realTime') {
-          params.mdbPriceId = this.mdbPriceId
-          params.mdbRegion = this.region || ''
-          params.mdbZone = this.mdbZone || ''
-        }
-
-        if (this.orderStorage) {
-          params.onlyMdb = true
-          params.successUrl =
-            location.origin +
-            location.pathname +
-            this.$router.resolve({
-              name: 'Instance',
-              query: {
-                active: 'storage'
-              }
-            }).href
-        }
+        //单独实例订购
+        params.subscribeItems.push(base)
       }
-
       this.buried('newAgentStripe', '', {
         type
       })
-      if (paymentType === 'online') {
-        this.submitOnlineLoading = true
-      } else {
-        this.submitLoading = true
-      }
       this.$axios
         .post('api/tcm/orders', params)
         .then(data => {
