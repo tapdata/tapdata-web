@@ -228,7 +228,7 @@ export default {
         },
         {
           name: '类型过滤',
-          type: 'field_mod_type_filter_processor'
+          type: 'migrate_field_mod_type_filter_processor'
         }
       ])
       this.addResourceIns(allResourceIns)
