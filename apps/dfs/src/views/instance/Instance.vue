@@ -478,6 +478,11 @@
         name="second"
       >
         <section class="flex flex-column overflow-hidden flex-1">
+          <div class="instance-operation-right text-end">
+            <ElButton type="primary" @click="handleCreateIps">
+              <span>新增白名单</span>
+            </ElButton>
+          </div>
           <VTable
             :columns="specColumns"
             :remoteMethod="specRemoteMethod"
@@ -503,6 +508,18 @@
             </div>
           </VTable>
         </section>
+        <!-- 新建白名单 -->
+        <el-dialog :visible.sync="showCreateIps" title="添加白名单">
+          <el-form>
+            <el-form-item label="ip地址">
+              <el-input v-model="ipAddress"></el-input>
+            </el-form-item>
+          </el-form>
+          <span slot="footer">
+            <el-button>取消</el-button>
+            <el-button type="primary">添加</el-button>
+          </span>
+        </el-dialog>
       </el-tab-pane>
     </el-tabs>
   </section>
@@ -683,7 +700,10 @@ export default {
           label: i18n.t('list_operation'),
           slotName: 'operation'
         }
-      ]
+      ],
+      //创建白名单
+      showCreateIps: false,
+      ipAddress: ''
     }
   },
   computed: {
@@ -1233,6 +1253,10 @@ export default {
           })
         })
         .catch(() => {})
+    },
+    handleCreateIps() {
+      //新增白名单
+      this.showCreateIps = true
     },
     handleCreateAgent() {
       //this.subscriptionModelVisible = true
