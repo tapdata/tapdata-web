@@ -36,6 +36,9 @@
                     ></InlineInput>
                   </div>
                 </div>
+                <div>
+                  <span v-if="scope.row.ips">{{ scope.row.ips }}</span>
+                </div>
               </template>
             </ElTableColumn>
             <ElTableColumn width="80px" :label="$t('dfs_instance_instance_guige')">
@@ -908,6 +911,7 @@ export default {
               stop: false,
               delete: false
             }
+            item.ips = item.metric?.systemInfo?.ips?.[0]
             return item
           })
           this.page.total = data.total
