@@ -501,7 +501,7 @@ export default {
       }
 
       return this.$axios
-        .get(`api/tcm/paid/plan/paidSubscribe?filter=${encodeURIComponent(JSON.stringify(filter))}`)
+        .get(`api/tcm/paid/plan/paidSubscribeV2?filter=${encodeURIComponent(JSON.stringify(filter))}`)
         .then(data => {
           this.subscribeList = data.items || []
         })
