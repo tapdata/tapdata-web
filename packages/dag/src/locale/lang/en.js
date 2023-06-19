@@ -336,6 +336,7 @@ export default {
   packages_dag_nodes_database_qingchumubiaoduan: 'Clear the original table structure and data on the target side',
   packages_dag_nodes_database_chongfuchulice: 'Duplicate processing strategy',
   packages_dag_nodes_database_tuiyanjieguo: 'Deduction Results',
+  packages_dag_nodes_database_guolvjieguo: 'Filter Results',
   packages_dag_nodes_database_dangqianjiedianzhi: 'The current node has the capability to process DDL events',
   packages_dag_nodes_database_ddLshijian: 'DDL event collection',
   packages_dag_nodes_database_kaiqihourenwu:
@@ -651,5 +652,6 @@ export default {
   packages_dag_field_rename_index_yixiacaozuoyi: 'The following operations cannot match the source field',
   packages_dag_nodes_database_jinwuzhujianbiao: 'No primary key table only',
   packages_dag_nodes_database_jinyouzhujianbiao: 'Only the primary key table',
-  packages_dag_nodes_database_biaoxianshi: 'Table Display'
+  packages_dag_nodes_database_biaoxianshi: 'Table Display',
+  packages_dag_nodes_database_xuanzeyaoguolvdiaode: 'Select the field type to filter out'
 }

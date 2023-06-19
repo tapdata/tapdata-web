@@ -28,7 +28,7 @@ export class FieldModTypeFilter extends NodeType {
       },
       filterTypes: {
         type: 'array',
-        title: '选择要过滤掉的字段类型',
+        title: i18n.t('packages_dag_nodes_database_xuanzeyaoguolvdiaode'),
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         'x-component-props': {
@@ -36,6 +36,15 @@ export class FieldModTypeFilter extends NodeType {
         },
         'x-reactions':
           '{{useAsyncDataSourceByConfig({service: loadNodeFieldTypesById, withoutField: true}, $self.value.length ? $values.id : $values.$inputs[0])}}'
+      },
+      fieldList: {
+        type: 'void',
+        title: i18n.t('packages_dag_nodes_database_guolvjieguo'),
+        'x-decorator': 'FormItem',
+        'x-component': 'fieldList',
+        'x-component-props': {
+          nodeId: '{{$values.id}}'
+        }
       }
     }
   }

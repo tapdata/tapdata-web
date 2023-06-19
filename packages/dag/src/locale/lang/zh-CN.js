@@ -322,6 +322,7 @@ export default {
   packages_dag_nodes_database_qingchumubiaoduan: '清除目标端原有表结构及数据',
   packages_dag_nodes_database_chongfuchulice: '重复处理策略',
   packages_dag_nodes_database_tuiyanjieguo: '推演结果',
+  packages_dag_nodes_database_guolvjieguo: '过滤结果',
   packages_dag_nodes_database_dangqianjiedianzhi: '当前节点支持处理的DDL事件',
   packages_dag_nodes_database_ddLshijian: 'DDL事件应用',
   packages_dag_nodes_database_kaiqihourenwu: '开启后任务将会自动采集选中的源端DDL事件',
@@ -611,5 +612,6 @@ export default {
   packages_dag_field_rename_index_yixiacaozuoyi: '以下操作已匹配不到源字段',
   packages_dag_nodes_database_jinwuzhujianbiao: '仅无主键表',
   packages_dag_nodes_database_jinyouzhujianbiao: '仅有主键表',
-  packages_dag_nodes_database_biaoxianshi: '表显示'
+  packages_dag_nodes_database_biaoxianshi: '表显示',
+  packages_dag_nodes_database_xuanzeyaoguolvdiaode: '选择要过滤掉的字段类型'
 }
