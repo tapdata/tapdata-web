@@ -2361,7 +2361,7 @@ export default {
         type
       })
       this.$axios
-        .post('api/tcm/orders', params)
+        .post('api/tcm/orders/subscribeV2', params)
         .then(data => {
           if (params.mdbPriceId === 'FreeTier' && params.onlyMdb) {
             this.finish()
