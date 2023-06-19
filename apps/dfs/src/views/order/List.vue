@@ -5,23 +5,31 @@
         <div class="main">
           <div class="list-operation">
             <div class="list-operation-left flex justify-content-between">
-              <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
+              <FilterBar v-model="searchParams" :items="filterItems" @fetch="remoteMethod"> </FilterBar>
               <ElButton type="primary" @click="handleCreateAgent" :disabled="$disabledReadonlyUserBtn()">
                 <span>{{ $t('dfs_order_list_xinzengdingyue') }}</span>
               </ElButton>
             </div>
           </div>
-          <ul class="mt-4">
-            <li class="sub-li" v-for="item in subscribeList" :key="item.id">
+          <ul class="mt-4 overflow-auto">
+            <li class="sub-li mb-4" v-for="item in subscribeList" :key="item.id">
               <div class="sub-li-header flex justify-content-between">
                 <div>
                   <span class="color-primary fw-sub mr-2">订阅编号: {{ item.id }}</span>
-                  <span class="font-color-dark fw-sub mr-2">总金额: {{ item.subscribeItems[0].amount }}</span>
                   <span class="font-color-dark fw-sub mr-2"
-                    >订阅周期: {{ formatterTime(item.startAt) }} ~ {{ formatterTime(item.endedAt) }}</span
+                    >总金额: {{ formatterPrice(item.currency, item.totalAmount) || 0 }}</span
+                  >
+                  <span class="font-color-dark fw-sub mr-2"
+                    >订阅周期: {{ formatterTime(item.startAt) }} ~ {{ formatterTime(item.endAt) }}</span
                   >
                 </div>
-                <div>一键订阅</div>
+                <div
+                  v-if="item.subscribeItems && item.subscribeItems.length > 1"
+                  class="color-warning cursor-pointer"
+                  @click="allUnsubscribe(item)"
+                >
+                  一键订阅
+                </div>
               </div>
               <div>
                 <VTable :columns="columns" :data="item.subscribeItems" ref="table" class="mt-4" :has-pagination="false">
@@ -31,22 +39,28 @@
                   <template #price="{ row }">
                     <div>{{ formatterPrice(item.currency, row.amount) }}</div>
                   </template>
-                  <template #statusLabel="{ row }">
-                    <StatusTag type="tag" :status="row.status" default-status="Stopped" target="order"></StatusTag>
+                  <template #statusLabel>
+                    <StatusTag type="tag" :status="item.status" default-status="Stopped" target="order"></StatusTag>
                   </template>
                   <template #operation="{ row }">
                     <ElButton
-                      v-if="['expire', 'pay', 'cancelSubscribe'].includes(row.status) && row.type === 'one_time'"
+                      v-if="['past_due', 'active'].includes(item.status) && item.subscribeType === 'one_time'"
                       type="text"
-                      @click="handleRenew(row)"
+                      @click="handleRenew(item)"
                       >{{ $t('public_button_renew') }}</ElButton
                     >
-                    <ElButton v-if="['payFail', 'unPay'].includes(row.status)" type="text" @click="handlePay(row)">{{
-                      $t('public_button_pay')
-                    }}</ElButton>
-                    <ElButton v-if="row.status === 'pay'" type="text" @click="getUnsubscribePrice(row)">{{
-                      $t('public_button_unsubscribe')
-                    }}</ElButton>
+                    <!--                    <ElButton-->
+                    <!--                      v-if="['past_due', 'active'].includes(item.status) && item.subscribeType === 'one_time'"-->
+                    <!--                      type="text"-->
+                    <!--                      @click="handlePay(row)"-->
+                    <!--                      >续订</ElButton-->
+                    <!--                    >-->
+                    <ElButton
+                      v-if="['active', 'past_due'].includes(item.status)"
+                      type="text"
+                      @click="getUnsubscribePrice(item, row.productType)"
+                      >{{ $t('public_button_unsubscribe') }}</ElButton
+                    >
                   </template>
                 </VTable>
               </div>
@@ -353,12 +367,17 @@ export default {
         },
         {
           label: '订阅规格',
-          slotName: 'periodLabel',
+          prop: 'specLabel',
+          width: 180
+        },
+        {
+          label: '订阅方式',
+          prop: 'subscriptionMethodLabel',
           width: 180
         },
         {
           label: '存储',
-          prop: 'quantity'
+          prop: 'storageSize'
         },
         {
           label: i18n.t('dfs_user_center_jine'),
@@ -503,7 +522,24 @@ export default {
       return this.$axios
         .get(`api/tcm/paid/plan/paidSubscribeV2?filter=${encodeURIComponent(JSON.stringify(filter))}`)
         .then(data => {
-          this.subscribeList = data.items || []
+          let items = data.items || []
+          this.subscribeList = items.map(item => {
+            item.subscriptionMethodLabel =
+              getPaymentMethod(
+                { periodUnit: item.periodUnit, type: item.subscribeType },
+                item.paymentMethod || 'Stripe'
+              ) || '-'
+            if (item.subscribeItems && item.subscribeItems.length > 0) {
+              item.subscribeItems = item.subscribeItems.map(it => {
+                it.specLabel = getSpec(it.spec) || '-'
+                it.storageSize = it.spec?.storageSize ? it.spec?.storageSize + 'GB' : '-'
+                it.subscriptionMethodLabel = item.subscriptionMethodLabel
+                return it
+              })
+            }
+            return item
+          })
+          console.log(this.subscribeList)
         })
     },
     formatterTime(time) {
@@ -545,7 +581,7 @@ export default {
           }
           this.buried('renewAgentStripe')
           this.$axios
-            .post('api/tcm/orders/renew', params)
+            .post('api/tcm/orders/renewv2', params)
             .then(data => {
               openUrl(data.paymentUrl)
               this.buried('renewAgentStripe', '', {
@@ -561,7 +597,7 @@ export default {
       })
     },
     //退订 //退订详情费用
-    getUnsubscribePrice(row = {}) {
+    getUnsubscribePrice(row = {}, type) {
       if (row?.refund) {
         let param = {
           instanceId: row.agentId
@@ -572,8 +608,14 @@ export default {
         })
         return
       }
+      let url = 'api/tcm/orders/calculateRefundAmountV2?subscribeId=' + row.id
+      if (type === 'all') {
+        url = 'api/tcm/orders/calculateRefundAmountV2?subscribeId=' + row.subscribeId + '&resourceId=' + row.resourceId
+      } else if (type === 'MongoDB') {
+        url = 'api/tcm/orders/calculateRefundAmountV2?resourceId=' + row.resourceId
+      }
       this.currentRow = row
-      this.$axios.get('api/tcm/orders/calculateRefundAmount?subscribeId=' + row.id).then(res => {
+      this.$axios.get(url).then(res => {
         let { currency, periodStart, periodEnd, refundAmounts = [] } = res
         //格式化价
         periodStart = periodStart ? dayjs(periodStart).format('YYYY-MM-DD HH:mm:ss') : ''
@@ -612,6 +654,9 @@ export default {
         this.table.fetch(1)
         this.showUnsubscribeDetailVisible = true
       })
+    },
+    allUnsubscribe(row) {
+      this.getUnsubscribePrice(row, 'all')
     },
     formatPrice(currency, price) {
       return (
@@ -759,7 +804,7 @@ export default {
 }
 .sub-li {
   border: 1px solid #ebeef5;
-  border-bottom: none;
+  //border-bottom: none;
 }
 .sub-li-header {
   padding: 10px;
