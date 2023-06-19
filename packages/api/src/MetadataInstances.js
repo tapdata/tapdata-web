@@ -151,5 +151,9 @@ export default class MetadataInstances extends Http {
   nodeFilterTypeList(params) {
     return this.axios.get(this.url + `/node/filterTypeList`, { params })
   }
+  // 获取表最新的字段列表
+  multiTransform(params) {
+    return this.axios.post(this.url + `/multi/transform`, params)
+  }
 }
 export { MetadataInstances }
