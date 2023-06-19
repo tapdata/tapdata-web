@@ -2363,48 +2363,6 @@ export default {
       this.$axios
         .post('api/tcm/orders/subscribeV2', params)
         .then(data => {
-          if (params.mdbPriceId === 'FreeTier' && params.onlyMdb) {
-            this.finish()
-            this.$router.push({
-              name: 'Instance',
-              query: {
-                active: 'storage'
-              }
-            })
-          } else if (data.chargeProvider === 'FreeTier' && this.agentDeploy === 'fullManagement') {
-            this.finish()
-            this.$router.push({
-              name: 'Instance'
-            })
-          } else if (
-            data.chargeProvider === 'FreeTier' ||
-            (data.chargeProvider === 'Aliyun' && row.agentType === 'Local')
-          ) {
-            this.finish()
-            let downloadUrl = window.App.$router.resolve({
-              name: 'FastDownload',
-              query: {
-                id: data?.agentId
-              }
-            })
-            window.open(downloadUrl.href, '_self')
-          } else if (data.chargeProvider === 'Aliyun' && row.agentType === 'Cloud') {
-            //授权码 全托管-打开Agent管理页面
-            window.open(agentUrl.href, '_self')
-          } else if (paymentType === 'online') {
-            //在线支付 打开付款页面
-            this.finish()
-            window.open(data?.paymentUrl, '_self')
-          } else {
-            //转账支付 打开支付详情弹窗
-            this.$router.push({
-              name: 'Instance',
-              params: {
-                showTransferDialogVisible: true,
-                price: this.formatPrice(this.currency)
-              }
-            })
-          }
           this.buried('newAgentStripe', '', {
             type,
             result: true
@@ -2413,6 +2371,50 @@ export default {
             this.submitOnlineLoading = false
           } else {
             this.submitLoading = false
+          }
+          if (data.status === 'incomplete') {
+            //订单需要付款
+            if (paymentType === 'online') {
+              //在线支付 打开付款页面
+              this.finish()
+              window.open(data?.payUrl, '_self')
+            } else {
+              //转账支付 打开支付详情弹窗
+              this.$router.push({
+                name: 'Instance',
+                params: {
+                  showTransferDialogVisible: true,
+                  price: this.formatPrice(this.currency)
+                }
+              })
+            }
+          } else {
+            //订单不需要付款，只需对应跳转不同页面
+            if (params.onlyMdb) {
+              //单独存储
+              this.finish()
+              this.$router.push({
+                name: 'Instance',
+                query: {
+                  active: 'storage'
+                }
+              })
+            } else if (this.agentDeploy === 'Aliyun' && row.agentType === 'Local') {
+              //半托管-授权码-部署页面
+              this.finish()
+              let downloadUrl = window.App.$router.resolve({
+                name: 'FastDownload',
+                query: {
+                  id: data?.agentId
+                }
+              })
+              window.open(downloadUrl.href, '_self')
+            } else {
+              this.finish()
+              this.$router.push({
+                name: 'Instance'
+              })
+            }
           }
         })
         .catch(() => {
