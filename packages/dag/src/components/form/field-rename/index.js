@@ -45,6 +45,9 @@ export const FieldRename = observer(
         return root.$store.state.dataflow.transformLoading
       })
       const searchFiledName = ref('')
+      const capitalized = ref('') // 字段名处理
+      capitalized.value = form.values.fieldsNameTransform || ''
+
       // 删除所有无效的操作
       const removeAllInvalidOperations = () => {
         invalidOperations.value.splice(0)
@@ -206,11 +209,9 @@ export const FieldRename = observer(
         }
         return fieldName
       }
-      const handleAllToUpperCase = () => {
-        form.setValuesIn('fieldsNameTransform', 'toUpperCase')
-      }
-      const handleAllToLowerCase = () => {
-        form.setValuesIn('fieldsNameTransform', 'toLowerCase')
+      const changeCapitalized = val => {
+        capitalized.value = val
+        form.setValuesIn('fieldsNameTransform', val)
       }
       const handleAllReset = () => {
         //清掉所有operations 撤回不变
@@ -287,6 +288,22 @@ export const FieldRename = observer(
                 })}
               </FormItem.BaseItem>
             )}
+            <FormItem.BaseItem label={i18n.t('packages_form_field_processor_filed_name_daxiaoxie')}>
+              <ElSelect
+                value={capitalized.value}
+                disabled={props.disabled || transformLoading.value}
+                onChange={val => {
+                  changeCapitalized(val)
+                }}
+                class="w-auto"
+              >
+                <ElOption value="" label={i18n.t('packages_form_field_processor_index_bubian')} />
+                <ElOption value="toUpperCase" label={i18n.t('packages_form_field_processor_index_daxie')} />
+                <ElOption value="toLowerCase" label={i18n.t('packages_form_field_processor_index_xiaoxie')} />
+                <ElOption value="toCamelCase" label={i18n.t('packages_form_field_processor_index_snake_to_camel')} />
+                <ElOption value="toSnakeCase" label={i18n.t('packages_form_field_processor_index_camel_to_snake')} />
+              </ElSelect>
+            </FormItem.BaseItem>
 
             <ElInput
               class="my-2"
@@ -308,22 +325,6 @@ export const FieldRename = observer(
                   {i18n.t('packages_form_field_rename_index_mubiaoziduanming')}
                 </span>
                 <span class="field-ops  inline-block mr-4">
-                  <VIcon
-                    class={[props.disabled || transformLoading.value ? 'disable__btn' : 'clickable', 'ml-5']}
-                    size="12"
-                    disabled={props.disabled || transformLoading.value}
-                    onClick={() => handleAllToUpperCase()}
-                  >
-                    toUpperCase
-                  </VIcon>
-                  <VIcon
-                    class={[props.disabled || transformLoading.value ? 'disable__btn' : 'clickable', 'ml-5']}
-                    size="12"
-                    disabled={props.disabled || transformLoading.value}
-                    onClick={() => handleAllToLowerCase()}
-                  >
-                    toLowerCase
-                  </VIcon>
                   <VIcon
                     class={[props.disabled || transformLoading.value ? 'disable__btn' : 'clickable', 'ml-5']}
                     size="12"
