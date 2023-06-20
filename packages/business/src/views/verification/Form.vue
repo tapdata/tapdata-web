@@ -315,7 +315,7 @@
       </div>
       <div class="mt-8">
         <ElButton size="mini" @click="goBack()">{{ $t('public_button_back') }}</ElButton>
-        <ElButton type="primary" size="mini" @click="save">{{
+        <ElButton type="primary" size="mini" @click="save()">{{
           $t('public_button_save') + ' & ' + $t('public_button_execute')
         }}</ElButton>
         <ElButton type="primary" size="mini" @click="save(true)">{{ $t('public_button_save') }}</ElButton>
