@@ -1573,7 +1573,7 @@ export default {
 
   computed: {
     memoryMap() {
-      if (this.mdbPriceId === 'FreeTier') {
+      if (this.mdbPrices === 0) {
         return [
           {
             key: 5,
@@ -2073,7 +2073,6 @@ export default {
       const specification = this.specificationItems.find(t => t.value === this.specification)
       this.agentSizeCap = this.updateAgentCap(specification.cpu, specification.memory)
       const specificationLabel = this.specificationItems.find(t => t.value === this.specification)?.name
-      const chargeProvider = this.specificationItems.find(t => t.value === this.specification)?.chargeProvider
       this.currentSpecName = specificationLabel
       this.packageItems = this.allPackages
         .filter(t => this.specification === t.specification)
@@ -2091,20 +2090,6 @@ export default {
           const bOrder = b.order
           return aType + aOrder - (bType + bOrder)
         })
-      if (chargeProvider === 'FreeTier') {
-        this.packageItems = [
-          {
-            label:
-              this.platform === 'realTime'
-                ? i18n.t('dfs_instance_createagent_tian')
-                : i18n.t('dfs_agent_download_subscriptionmodeldialog_yongjiu'),
-            price: 0,
-            value: '0',
-            chargeProvider: 'FreeTier',
-            currencyOption: []
-          }
-        ]
-      }
     },
 
     //获取存储价格
@@ -2201,7 +2186,7 @@ export default {
       if (cpu === 0 && memory === 0) {
         this.mongodbSpecPrice = CURRENCY_SYMBOL_MAP[this.currencyType] + 0
         this.mdbPrices = 0
-        this.mdbPriceId = 'FreeTier'
+        this.mdbPriceId = this.mongodbPaidPrice?.[0]?.priceId
         this.currentMemorySpecName = i18n.t('dfs_instance_createagent_mianfeishiyonggui')
         this.memorySpace = 5
         return
