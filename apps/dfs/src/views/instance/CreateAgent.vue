@@ -2290,13 +2290,22 @@ export default {
           id: ''
         }
       })
+      const agentUrl = window.App.$router.resolve({
+        name: 'Instance',
+        query: {
+          id: ''
+        }
+      })
       //组装参数
       let params = {
         subscribeType: type, // 订阅类型：one_time-一次订阅，recurring-连续订阅
         platform: this.platform,
         quantity: '',
         paymentMethod: this.agentDeploy === 'aliyun' ? 'AliyunMarketCode' : 'Stripe',
-        successUrl: location.origin + location.pathname + fastDownloadUrl.href,
+        successUrl:
+          this.agentDeploy === 'fullManagement'
+            ? location.origin + location.pathname + agentUrl.href
+            : location.origin + location.pathname + fastDownloadUrl.href,
         cancelUrl: location.href,
         email,
         periodUnit,
