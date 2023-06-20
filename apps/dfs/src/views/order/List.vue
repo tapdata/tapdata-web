@@ -22,13 +22,22 @@
                   <span class="font-color-dark fw-sub mr-2"
                     >订阅周期: {{ formatterTime(item.startAt) }} ~ {{ formatterTime(item.endAt) }}</span
                   >
+                  <span class="font-color-dark fw-sub mr-2"
+                    >订阅状态:
+                    <StatusTag type="tag" :status="item.status" default-status="Stopped" target="order"></StatusTag
+                  ></span>
                 </div>
-                <div
-                  v-if="item.subscribeItems && item.subscribeItems.length > 1"
-                  class="color-warning cursor-pointer"
-                  @click="allUnsubscribe(item)"
-                >
-                  一键订阅
+                <div>
+                  <ElButton v-if="['incomplete'].includes(item.status)" type="text" @click="handlePay(item)"
+                    >支付</ElButton
+                  >
+                  <div
+                    v-if="item.subscribeItems && item.subscribeItems.length > 1"
+                    class="color-warning cursor-pointer"
+                    @click="allUnsubscribe(item)"
+                  >
+                    一键订阅
+                  </div>
                 </div>
               </div>
               <div>
@@ -39,8 +48,8 @@
                   <template #price="{ row }">
                     <div>{{ formatterPrice(item.currency, row.amount) }}</div>
                   </template>
-                  <template #statusLabel>
-                    <StatusTag type="tag" :status="item.status" default-status="Stopped" target="order"></StatusTag>
+                  <template #statusLabel="{ row }">
+                    <StatusTag type="tag" :status="row.status" default-status="Stopped" target="order"></StatusTag>
                   </template>
                   <template #operation="{ row }">
                     <ElButton
@@ -49,12 +58,6 @@
                       @click="handleRenew(item)"
                       >{{ $t('public_button_renew') }}</ElButton
                     >
-                    <!--                    <ElButton-->
-                    <!--                      v-if="['past_due', 'active'].includes(item.status) && item.subscribeType === 'one_time'"-->
-                    <!--                      type="text"-->
-                    <!--                      @click="handlePay(row)"-->
-                    <!--                      >续订</ElButton-->
-                    <!--                    >-->
                     <ElButton
                       v-if="['active', 'past_due'].includes(item.status)"
                       type="text"
@@ -544,6 +547,7 @@ export default {
               it.specLabel = getSpec(it.spec) || '-'
               it.storageSize = it.spec?.storageSize ? it.spec?.storageSize + 'GB' : '-'
               it.subscriptionMethodLabel = item.subscriptionMethodLabel
+              it.status = item.resource?.status || ''
               return it
             })
           }
