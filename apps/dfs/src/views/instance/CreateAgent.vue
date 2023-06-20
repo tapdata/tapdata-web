@@ -1419,6 +1419,7 @@ import { dayjs } from '@tap/business/src/shared/dayjs'
 export default {
   name: 'CreatAgent',
   inject: ['buried'],
+  props: ['type'],
   components: { VTable },
   data() {
     return {
@@ -2289,12 +2290,6 @@ export default {
           id: ''
         }
       })
-      const agentUrl = window.App.$router.resolve({
-        name: 'Instance',
-        query: {
-          id: ''
-        }
-      })
       //组装参数
       let params = {
         subscribeType: type, // 订阅类型：one_time-一次订阅，recurring-连续订阅
@@ -2380,6 +2375,9 @@ export default {
               window.open(data?.payUrl, '_self')
             } else {
               //转账支付 打开支付详情弹窗
+              if (this.type === 'newDialog') {
+                this.$emit('closeVisible', false)
+              }
               this.$router.push({
                 name: 'Instance',
                 params: {
