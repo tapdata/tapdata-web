@@ -49,21 +49,30 @@
                     <div>{{ formatterPrice(item.currency, row.amount) }}</div>
                   </template>
                   <template #statusLabel="{ row }">
-                    <StatusTag type="tag" :status="row.status" default-status="Stopped" target="order"></StatusTag>
+                    <StatusTag
+                      type="tag"
+                      :status="row.status"
+                      default-status="Stopped"
+                      :target="row.productType === 'Engine' ? 'instance' : 'mdb'"
+                    ></StatusTag>
                   </template>
                   <template #operation="{ row }">
-                    <ElButton
-                      v-if="['past_due', 'active'].includes(item.status) && item.subscribeType === 'one_time'"
-                      type="text"
-                      @click="handleRenew(item)"
-                      >{{ $t('public_button_renew') }}</ElButton
-                    >
-                    <ElButton
-                      v-if="['active', 'past_due'].includes(item.status)"
-                      type="text"
-                      @click="getUnsubscribePrice(item, row.productType)"
-                      >{{ $t('public_button_unsubscribe') }}</ElButton
-                    >
+                    <!--                    <ElButton-->
+                    <!--                      v-if="['past_due', 'active'].includes(item.status) && item.subscribeType === 'one_time'"-->
+                    <!--                      type="text"-->
+                    <!--                      @click="handleRenew(item)"-->
+                    <!--                      >{{ $t('public_button_renew') }}</ElButton-->
+                    <!--                    >-->
+                    <!--                    <ElButton-->
+                    <!--                      v-if="['active', 'past_due'].includes(item.status)"-->
+                    <!--                      type="text"-->
+                    <!--                      @click="getUnsubscribePrice(item, row.productType)"-->
+                    <!--                      >{{ $t('public_button_unsubscribe') }}</ElButton-->
+                    <!--                    >-->
+                    <ElButton type="text" @click="openRenew(row, item)">{{ $t('public_button_renew') }}</ElButton>
+                    <ElButton type="text" @click="getUnsubscribePrice(item, row.productType)">{{
+                      $t('public_button_unsubscribe')
+                    }}</ElButton>
                   </template>
                 </VTable>
               </div>
@@ -233,6 +242,47 @@
         }}</el-button>
       </span>
     </ElDialog>
+    <!--续订-->
+    <ElDialog :visible.sync="showRenewDetailVisible" :title="$t('dfs_instance_instance_tuidingshili')" width="60%">
+      <section>
+        <div class="mt-4 fs-6 font-color-dark">{{ $t('dfs_instance_instance_tuidingshili') }}</div>
+        <div v-if="renewList.length > 0">
+          <VTable
+            ref="table"
+            row-key="id"
+            :columns="renewColumns"
+            :data="renewList"
+            height="100%"
+            :has-pagination="false"
+            class="mt-4 mb-4"
+          >
+          </VTable>
+        </div>
+        <el-form label-position="top" ref="ruleForm">
+          <el-form-item label="续订时长">
+            <el-input-number v-model="quantity" :min="1" controls-position="right"></el-input-number>
+            <span class="ml-2">{{ currentRenewRow.periodUnit === 'month' ? '月' : '年' }}</span>
+            <div>续订后到期时间：</div>
+          </el-form-item>
+        </el-form>
+      </section>
+      <span slot="footer" class="dialog-footer">
+        <span class="mr-4"
+          ><span class="fs-6 font-color-dark font-weight-light">续订金额</span
+          ><span class="color-primary fs-4">
+            {{ formatterPrice(currentRenewRow.currency, currentPrice * quantity) }}</span
+          ></span
+        >
+        <el-button @click="showRenewDetailVisible = false">{{ $t('public_button_cancel') }}</el-button>
+        <el-button
+          :disabled="!currentPrice * quantity"
+          type="primary"
+          :loading="loadingRenewSubmit"
+          @click="handleRenew"
+          >续订</el-button
+        >
+      </span>
+    </ElDialog>
   </section>
   <RouterView v-else></RouterView>
 </template>
@@ -244,7 +294,7 @@ import { openUrl } from '@tap/shared'
 
 import i18n from '@/i18n'
 import { isEmpty } from '@/util'
-import { CURRENCY_SYMBOL_MAP, NUMBER_MAP, ORDER_STATUS_MAP, TIME_MAP } from '@tap/business'
+import { CURRENCY_SYMBOL_MAP } from '@tap/business'
 import { getPaymentMethod, getSpec, AGENT_TYPE_MAP } from '../instance/utils'
 import dayjs from 'dayjs'
 import StatusTag from '../../components/StatusTag.vue'
@@ -413,6 +463,23 @@ export default {
           slotName: 'operation'
         }
       ],
+      renewColumns: [
+        {
+          label: '资源ID',
+          prop: 'resourceId'
+        },
+        {
+          label: '订阅规格',
+          prop: 'specLabel',
+          width: 180
+        },
+        {
+          label: '到期时间',
+          prop: 'endAt',
+          width: 180,
+          dataType: 'time'
+        }
+      ],
       agentList: [],
       memoryList: [],
       //订阅列表
@@ -420,7 +487,13 @@ export default {
       page: {
         current: 1,
         size: 10
-      }
+      },
+      quantity: 1,
+      showRenewDetailVisible: false,
+      renewList: [],
+      currentRenewRow: '',
+      loadingRenewSubmit: false,
+      currentPrice: 0
     }
   },
   computed: {
@@ -568,46 +641,44 @@ export default {
       )
     },
     //续订
-    handleRenew(row = {}) {
-      const { period, periodUnit } = row
-      const label =
-        NUMBER_MAP[period] +
-        (i18n?.locale === 'en' ? ' ' : '') +
-        (periodUnit === 'year' ? i18n.t('public_time_year') : i18n.t('dfs_instance_utils_geyue'))
-      this.$confirm(
-        i18n.t('dfs_user_center_ninjiangxudingr', {
-          val1: row.content,
-          val2: label
-        }),
-        i18n.t('dfs_user_center_xudingfuwu'),
-        {
-          type: 'warning',
-          dangerouslyUseHTMLString: true
-        }
-      ).then(res => {
-        if (res) {
-          const { agentId } = row
-          const params = {
-            agentId,
-            successUrl: location.href,
-            cancelUrl: location.href
-          }
-          this.buried('renewAgentStripe')
-          this.$axios
-            .post('api/tcm/orders/renewv2', params)
-            .then(data => {
-              openUrl(data.paymentUrl)
-              this.buried('renewAgentStripe', '', {
-                result: true
-              })
-            })
-            .catch(() => {
-              this.buried('renewAgentStripe', '', {
-                result: false
-              })
-            })
-        }
+    openRenew(row, item) {
+      row.endAt = row?.resource?.endAt
+      this.renewList = [row]
+      this.showRenewDetailVisible = true
+      this.currentRenewRow = item
+      this.$axios.get('/api/tcm/orders/paid/price/' + row.priceId).then(data => {
+        this.currentPrice = data.price
       })
+    },
+    handleRenew() {
+      let { id } = this.currentRenewRow
+      const params = {
+        subscribeId: id,
+        quantity: this.quantity,
+        successUrl: location.href,
+        cancelUrl: location.href
+      }
+      this.loadingRenewSubmit = true
+      this.buried('renewAgentStripe')
+      this.$axios
+        .post('api/tcm/orders/renewv2', params)
+        .then(data => {
+          this.showRenewDetailVisible = false
+          this.loadingRenewSubmit = false
+          openUrl(data.paymentUrl)
+          this.buried('renewAgentStripe', '', {
+            result: true
+          })
+        })
+        .catch(() => {
+          this.buried('renewAgentStripe', '', {
+            result: false
+          })
+        })
+        .finally(() => {
+          this.showRenewDetailVisible = false
+          this.loadingRenewSubmit = false
+        })
     },
     //退订 //退订详情费用
     getUnsubscribePrice(row = {}, type) {
