@@ -24,7 +24,7 @@
       <ElFormItem prop="newPassword" :label="showLabel ? $t('user_Center_yanZhengMa') : ''" class="inline-form-item">
         <ElInput v-model="phoneForm.oldCode" :placeholder="$t('user_Center_qingShuRuShouJi')" maxlength="50"></ElInput>
         <VerificationCode
-          :request-options="getCodeOptions(phoneForm.current, 'BIND_PHONE')"
+          :request-options="getCodeOptions(phoneForm, 'BIND_PHONE')"
           :disabled="!phoneForm.current"
           :style="{ width: '180px', textAlign: 'center' }"
           class="ml-6"
