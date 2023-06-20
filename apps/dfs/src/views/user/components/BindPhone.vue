@@ -94,7 +94,7 @@ export default {
         .post('api/tcm/user/phone', {
           phone: phoneForm.current,
           code: phoneForm.oldCode,
-          countryCode: passwordForm.countryCode ? passwordForm.countryCode.replace('-', '') : '86'
+          countryCode: phoneForm.countryCode ? phoneForm.countryCode.replace('-', '') : '86'
         })
         .then(() => {
           this.$message.success(i18n.t('user_Center_bangDingShouJiCheng'))
