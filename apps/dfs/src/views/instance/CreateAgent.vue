@@ -2329,9 +2329,7 @@ export default {
       //存储必传参数
       let memory = {
         mongodbUrl: this.mongodbUrl, // 订购半托管存储时需要填写
-        mdbPriceId: this.mdbPriceId,
-        mdbRegion: this.region || '',
-        mdbZone: this.mdbZone || '',
+        priceId: this.mdbPriceId,
         productType: 'MongoDB' // 产品类型：Engine,MongoDB,APIServer
       }
       //单独订购存储
