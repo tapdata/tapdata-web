@@ -173,7 +173,7 @@ export class Database extends NodeType {
           },
 
           noPrimaryKeyTableSelectType: {
-            type: 'array',
+            type: 'string',
             title: i18n.t('packages_dag_nodes_database_biaoxianshi'),
             'x-decorator': 'FormItem',
             'x-component': 'Select',
