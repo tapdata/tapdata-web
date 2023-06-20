@@ -11,7 +11,7 @@
               </ElButton>
             </div>
           </div>
-          <ul class="mt-4 overflow-auto">
+          <ul class="mt-4 overflow-auto flex-1">
             <li class="sub-li mb-4" v-for="item in subscribeList" :key="item.id">
               <div class="sub-li-header flex justify-content-between">
                 <div>
@@ -66,6 +66,17 @@
               </div>
             </li>
           </ul>
+          <el-pagination
+            background
+            class="pagination mt-3"
+            :current-page.sync="page.current"
+            :page-sizes="[10, 20, 50, 100]"
+            :page-size.sync="page.size"
+            layout="total, sizes, ->, prev, pager, next, jumper"
+            :total="page.total"
+            @current-change="remoteMethod"
+          >
+          </el-pagination>
         </div>
       </el-tab-pane>
       <el-tab-pane
@@ -519,28 +530,26 @@ export default {
         where: where
       }
 
-      return this.$axios
-        .get(`api/tcm/paid/plan/paidSubscribeV2?filter=${encodeURIComponent(JSON.stringify(filter))}`)
-        .then(data => {
-          let items = data.items || []
-          this.subscribeList = items.map(item => {
-            item.subscriptionMethodLabel =
-              getPaymentMethod(
-                { periodUnit: item.periodUnit, type: item.subscribeType },
-                item.paymentMethod || 'Stripe'
-              ) || '-'
-            if (item.subscribeItems && item.subscribeItems.length > 0) {
-              item.subscribeItems = item.subscribeItems.map(it => {
-                it.specLabel = getSpec(it.spec) || '-'
-                it.storageSize = it.spec?.storageSize ? it.spec?.storageSize + 'GB' : '-'
-                it.subscriptionMethodLabel = item.subscriptionMethodLabel
-                return it
-              })
-            }
-            return item
-          })
-          console.log(this.subscribeList)
+      return this.$axios.get(`api/tcm/subscribe?filter=${encodeURIComponent(JSON.stringify(filter))}`).then(data => {
+        let items = data.items || []
+        this.page.total = data.total
+        this.subscribeList = items.map(item => {
+          item.subscriptionMethodLabel =
+            getPaymentMethod(
+              { periodUnit: item.periodUnit, type: item.subscribeType },
+              item.paymentMethod || 'Stripe'
+            ) || '-'
+          if (item.subscribeItems && item.subscribeItems.length > 0) {
+            item.subscribeItems = item.subscribeItems.map(it => {
+              it.specLabel = getSpec(it.spec) || '-'
+              it.storageSize = it.spec?.storageSize ? it.spec?.storageSize + 'GB' : '-'
+              it.subscriptionMethodLabel = item.subscriptionMethodLabel
+              return it
+            })
+          }
+          return item
         })
+      })
     },
     formatterTime(time) {
       return time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
