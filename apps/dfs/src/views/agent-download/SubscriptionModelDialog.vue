@@ -21,11 +21,6 @@ import CreateAgent from '../instance/CreateAgent.vue'
 
 export default {
   name: 'subscriptionModelDialog',
-  computed: {
-    dialog() {
-      return dialog
-    }
-  },
   inject: ['buried'],
   components: { CreateAgent },
   props: {
