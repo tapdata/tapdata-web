@@ -1409,7 +1409,7 @@
 
 <script>
 import { uniqBy } from 'lodash'
-import { isStr, isObj } from '@tap/shared'
+import { isObj } from '@tap/shared'
 import { VTable } from '@tap/component'
 import { getPaymentMethod, getSpec, AGENT_TYPE_MAP } from '../instance/utils'
 import { CURRENCY_SYMBOL_MAP, TIME_MAP, CURRENCY_MAP } from '@tap/business'
@@ -2034,11 +2034,6 @@ export default {
         ).sort((a, b) => {
           return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
         })
-        /*//免费不能选; 不做禁用 直接过滤掉不显示
-        // disabled: (agentCount > 0 || agentDeploy !== 'selfHost') && item.chargeProvider === 'FreeTier'
-        if (this.agentCount > 0 || this.agentDeploy !== 'selfHost') {
-          this.specificationItems = this.specificationItems.filter(it => it.chargeProvider !== 'FreeTier')
-        }*/
         // 已体验过免费
         if (this.agentCount > 0) {
           this.specificationItems = this.specificationItems.filter(it => it.chargeProvider !== 'FreeTier')
@@ -2055,7 +2050,7 @@ export default {
             priceSuffix: t.type === 'recurring' ? TIME_MAP[t.periodUnit] : '',
             desc: '',
             specification: getSpec(t.spec),
-            currencyOption: t.currencyOption
+            currencyOption: t.currencyOption || []
           })
         })
         this.loadPackageItems()
@@ -2294,7 +2289,7 @@ export default {
         cancelUrl: location.href,
         email,
         periodUnit,
-        currency,
+        currency: this.currencyType || currency,
         subscribeItems: []
       }
       let base = {
