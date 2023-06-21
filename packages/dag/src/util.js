@@ -71,12 +71,12 @@ export function getCanUseDataTypes(data = [], val = '') {
 }
 
 export function getMatchedDataTypeLevel(
-  field,
+  field = {},
   canUseDataTypes = [],
   fieldChangeRules = [],
   findPossibleDataTypes = {}
 ) {
-  if (isEmpty(findPossibleDataTypes)) return ''
+  if (isEmpty(findPossibleDataTypes) || !findPossibleDataTypes[field.field_name]) return ''
   const tapType = JSON.parse(field.tapType || '{}')
   if (tapType.type === 7) {
     field.data_type = ''
