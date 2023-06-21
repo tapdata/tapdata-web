@@ -28,17 +28,25 @@
                   ></span>
                 </div>
                 <div class="flex justify-content-center align-items-center">
-                  <ElButton class="mr-2" type="text" @click="openRenew(item)">{{ $t('public_button_renew') }}</ElButton>
+                  <ElButton
+                    :disabled="['canceled'].includes(item.status)"
+                    class="mr-2"
+                    type="text"
+                    @click="openRenew(item)"
+                    >{{ $t('public_button_renew') }}</ElButton
+                  >
                   <ElButton v-if="['incomplete'].includes(item.status)" type="text" @click="handlePay(item)"
                     >支付</ElButton
                   >
-                  <div
+                  <ElButton
+                    type="text"
+                    :disabled="['canceled'].includes(item.status)"
                     v-if="item.subscribeItems && item.subscribeItems.length > 1"
                     class="color-warning cursor-pointer"
                     @click="allUnsubscribe(item)"
                   >
                     一键退订
-                  </div>
+                  </ElButton>
                 </div>
               </div>
               <div>
@@ -70,9 +78,12 @@
                     <!--                      @click="getUnsubscribePrice(item, row.productType)"-->
                     <!--                      >{{ $t('public_button_unsubscribe') }}</ElButton-->
                     <!--                    >-->
-                    <ElButton type="text" @click="getUnsubscribePrice(item, row.productType)">{{
-                      $t('public_button_unsubscribe')
-                    }}</ElButton>
+                    <ElButton
+                      :disabled="['canceled'].includes(item.status)"
+                      type="text"
+                      @click="getUnsubscribePrice(item, row.productType)"
+                      >{{ $t('public_button_unsubscribe') }}</ElButton
+                    >
                   </template>
                 </VTable>
               </div>
