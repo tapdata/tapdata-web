@@ -661,7 +661,7 @@ export default {
         },
         {
           label: i18n.t('dfs_instance_instance_cunchuleixing'),
-          prop: 'scope'
+          prop: 'scopeLabel'
         },
         {
           label: i18n.t('dfs_instance_instance_bushufangshi'),
@@ -801,7 +801,7 @@ export default {
           data: items.map(item => {
             const { periodEnd } = item.subscribe || {}
             item.expiredTimeLabel = periodEnd ? dayjs(periodEnd).format('YY-MM-DD  HH:mm:ss') : '-'
-            item.scope = this.scopeMap[item.scope]
+            item.scopeLabel = this.scopeMap[item.scope]
             item.specLabel = getSpec(item.spec) || '-'
             item.storageSize = item.spec?.storageSize ? item.spec?.storageSize + 'GB' : '-'
             item.deploymentType = this.agentTypeMap[item.deploymentType]

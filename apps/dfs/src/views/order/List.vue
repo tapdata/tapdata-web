@@ -149,7 +149,7 @@
           <li class="mt-2">{{ $t('dfs_instance_instance_qingzixihedui') }}</li>
         </ul>
         <div class="mt-4 fs-6 font-color-dark">{{ $t('dfs_instance_instance_tuidingshili') }}</div>
-        <div v-if="agentList.length > 0">
+        <div>
           <VTable
             ref="table"
             row-key="id"
@@ -256,6 +256,9 @@
             :has-pagination="false"
             class="mt-4 mb-4"
           >
+            <template #endAt>
+              <span>{{ formatterTime(currentRenewRow.endAt) }}</span>
+            </template>
           </VTable>
         </div>
         <el-form label-position="top" ref="ruleForm">
@@ -477,7 +480,7 @@ export default {
           label: '到期时间',
           prop: 'endAt',
           width: 180,
-          dataType: 'time'
+          slotName: 'endAt'
         }
       ],
       agentList: [],
@@ -647,6 +650,7 @@ export default {
       this.currentRenewRow = item
       this.$axios.get('/api/tcm/orders/paid/price/' + item?.subscribeItems[0].priceId).then(data => {
         this.currentPrice = data.price
+        this.currentRenewRow.currency = data.currency
       })
     },
     handleRenew() {
@@ -664,7 +668,7 @@ export default {
         .then(data => {
           this.showRenewDetailVisible = false
           this.loadingRenewSubmit = false
-          openUrl(data.paymentUrl)
+          openUrl(data.payUrl)
           this.buried('renewAgentStripe', '', {
             result: true
           })
@@ -691,11 +695,38 @@ export default {
         })
         return
       }
-      let url = `api/tcm/subscribe/${row.subscribeId}/refund`
+      let url = `api/tcm/subscribe/${row.id}/refund`
       this.currentRow = row
-      this.$axios.get(url).then(res => {
-        console.log(res)
+      this.$axios.get(url).then(data => {
+        if (data) {
+          let agentList = data.filter(it => it.productType === 'Engine')
+          let memoryList = data.filter(it => it.productType === 'MongoDB')
+          if (type === 'all') {
+            //计算价格
+            let price = data[0].refundAmount + data[1].refundAmount
+            this.refundAmount = this.formatPrice(data[0].currency, price)
+            this.memoryList = this.formatItems(memoryList)
+            this.agentList = this.formatItems(agentList)
+          } else if (type === 'MongoDB') {
+            this.refundAmount = this.formatPrice(memoryList[0].currency, memoryList[0].refundAmount)
+            this.memoryList = this.formatItems(memoryList)
+          } else {
+            this.refundAmount = this.formatPrice(agentList[0].currency, agentList[0].refundAmount)
+            this.agentList = this.formatItems(agentList)
+          }
+        }
         this.showUnsubscribeDetailVisible = true
+      })
+    },
+    formatItems(data) {
+      return data.map(item => {
+        item.actualAmount = this.formatPrice(item.currency, item.actualAmount)
+        item.spentAmount = this.formatPrice(item.currency, item.spentAmount)
+        item.refundAmount = this.formatPrice(item.currency, item.refundAmount)
+        item.periodStart = this.formatterTime(item.startAt)
+        item.periodEnd = this.formatterTime(item.endAt)
+        item.spec = item?.spec?.name
+        return item
       })
     },
     allUnsubscribe(row) {
@@ -715,15 +746,16 @@ export default {
       this.$refs.ruleForm.validate(valid => {
         if (valid) {
           this.loadingCancelSubmit = true
-          const { paidType, id } = this.currentRow
+          const { paidType, id, resource } = this.currentRow
           const { refundReason, refundDescribe } = this.form
           let param = {
             subscribeId: id,
             refundReason,
+            resourceId: resource?.id,
             refundDescribe
           }
           this.$axios
-            .post('api/tcm/orders/cancel', param)
+            .post('api/tcm/subscribe/cancel', param)
             .then(() => {
               this.fetch()
               this.buried('unsubscribeAgentStripe', '', {
