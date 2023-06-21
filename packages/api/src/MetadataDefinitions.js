@@ -6,8 +6,8 @@ export default class MetadataDefinitions extends Http {
   changeById(params) {
     return this.axios.patch(`${this.url}/${params.id}`, params)
   }
-  childAccount() {
-    return this.axios.get(`${this.url}/and/child_account`)
+  childAccount(params) {
+    return this.axios.get(`${this.url}/and/child_account`, { params })
   }
 }
 export { MetadataDefinitions }
