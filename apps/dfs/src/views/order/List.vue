@@ -27,7 +27,8 @@
                     <StatusTag type="tag" :status="item.status" default-status="Stopped" target="order"></StatusTag
                   ></span>
                 </div>
-                <div>
+                <div class="flex justify-content-center align-items-center">
+                  <ElButton class="mr-2" type="text" @click="openRenew(item)">{{ $t('public_button_renew') }}</ElButton>
                   <ElButton v-if="['incomplete'].includes(item.status)" type="text" @click="handlePay(item)"
                     >支付</ElButton
                   >
@@ -36,7 +37,7 @@
                     class="color-warning cursor-pointer"
                     @click="allUnsubscribe(item)"
                   >
-                    一键订阅
+                    一键退订
                   </div>
                 </div>
               </div>
@@ -69,7 +70,6 @@
                     <!--                      @click="getUnsubscribePrice(item, row.productType)"-->
                     <!--                      >{{ $t('public_button_unsubscribe') }}</ElButton-->
                     <!--                    >-->
-                    <ElButton type="text" @click="openRenew(row, item)">{{ $t('public_button_renew') }}</ElButton>
                     <ElButton type="text" @click="getUnsubscribePrice(item, row.productType)">{{
                       $t('public_button_unsubscribe')
                     }}</ElButton>
@@ -641,12 +641,11 @@ export default {
       )
     },
     //续订
-    openRenew(row, item) {
-      row.endAt = row?.resource?.endAt
-      this.renewList = [row]
+    openRenew(item) {
+      this.renewList = item?.subscribeItems
       this.showRenewDetailVisible = true
       this.currentRenewRow = item
-      this.$axios.get('/api/tcm/orders/paid/price/' + row.priceId).then(data => {
+      this.$axios.get('/api/tcm/orders/paid/price/' + item?.subscribeItems[0].priceId).then(data => {
         this.currentPrice = data.price
       })
     },
@@ -661,7 +660,7 @@ export default {
       this.loadingRenewSubmit = true
       this.buried('renewAgentStripe')
       this.$axios
-        .post('api/tcm/orders/renewv2', params)
+        .post('api/tcm/subscribe/renew', params)
         .then(data => {
           this.showRenewDetailVisible = false
           this.loadingRenewSubmit = false
@@ -686,56 +685,16 @@ export default {
         let param = {
           instanceId: row.agentId
         }
-        this.$axios.post('api/tcm/orders/cancel', param).then(() => {
+        this.$axios.post('api/tcm/subscribe/{subscribeId}/refund', param).then(() => {
           this.$message.success(this.$t('public_message_operation_success'))
           this.table.fetch(1)
         })
         return
       }
-      let url = 'api/tcm/orders/calculateRefundAmountV2?subscribeId=' + row.id
-      if (type === 'all') {
-        url = 'api/tcm/orders/calculateRefundAmountV2?subscribeId=' + row.subscribeId + '&resourceId=' + row.resourceId
-      } else if (type === 'MongoDB') {
-        url = 'api/tcm/orders/calculateRefundAmountV2?resourceId=' + row.resourceId
-      }
+      let url = `api/tcm/subscribe/${row.subscribeId}/refund`
       this.currentRow = row
       this.$axios.get(url).then(res => {
-        let { currency, periodStart, periodEnd, refundAmounts = [] } = res
-        //格式化价
-        periodStart = periodStart ? dayjs(periodStart).format('YYYY-MM-DD HH:mm:ss') : ''
-        periodEnd = periodEnd ? dayjs(periodEnd).format('YYYY-MM-DD HH:mm:ss') : '-'
-        //组装数据
-        let agentList = refundAmounts.find(it => it.productType === 'Engine')
-        //存储退订费用
-        let memoryList = refundAmounts.find(it => it.productType === 'MongoDB')
-        let prices = 0
-        if (agentList) {
-          //格式化价
-          prices = agentList.refundAmount
-          agentList.actualAmount = this.formatPrice(currency, agentList.actualAmount)
-          agentList.spentAmount = this.formatPrice(currency, agentList.spentAmount)
-          agentList.refundAmount = this.formatPrice(currency, agentList.refundAmount)
-          agentList.agentName = agentList?.resource?.name
-          agentList.periodStart = periodStart
-          agentList.periodEnd = periodEnd
-          agentList.spec = agentList?.resource?.spec?.name
-          this.agentList = [agentList]
-        } else this.agentList = []
-        if (memoryList) {
-          //格式化价
-          prices = prices + memoryList.refundAmount
-          memoryList.actualAmount = this.formatPrice(currency, memoryList.actualAmount)
-          memoryList.spentAmount = this.formatPrice(currency, memoryList.spentAmount)
-          memoryList.refundAmount = this.formatPrice(currency, memoryList.refundAmount)
-          memoryList.periodStart = periodStart
-          memoryList.periodEnd = periodEnd
-          memoryList.spec = memoryList?.resource?.spec?.name || ''
-          memoryList.storageSize = memoryList?.resource?.spec?.storageSize + 'GB' || 0
-          this.memoryList = [memoryList]
-        } else this.memoryList = []
-        this.refundAmount = this.formatPrice(currency, prices)
-        this.$message.success(this.$t('public_message_operation_success'))
-        this.table.fetch(1)
+        console.log(res)
         this.showUnsubscribeDetailVisible = true
       })
     },
