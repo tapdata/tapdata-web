@@ -659,9 +659,17 @@ export default {
       this.renewList = item?.subscribeItems
       this.showRenewDetailVisible = true
       this.currentRenewRow = item
-      this.$axios.get('/api/tcm/orders/paid/price/' + item?.subscribeItems[0].priceId).then(data => {
-        this.currentPrice = data.price
-        this.currentRenewRow.currency = data.currency
+      let url = 'api/tcm/orders/paid/prices?prices=' + item?.subscribeItems[0].priceId
+      if (item?.subscribeItems?.length > 1) {
+        url =
+          'api/tcm/orders/paid/prices?prices=' + item?.subscribeItems[0].priceId + ',' + item?.subscribeItems[1].priceId
+      }
+      this.$axios.get(url).then(data => {
+        this.currentRenewRow.currency = data?.[0].currency
+        this.currentPrice = data?.[0].price || 0
+        if (data?.length > 1) {
+          this.currentPrice = data[0].price + data[1].price
+        }
       })
     },
     handleRenew() {
