@@ -478,11 +478,6 @@
         name="second"
       >
         <section class="flex flex-column overflow-hidden flex-1">
-          <div class="instance-operation-right text-end">
-            <ElButton type="primary" @click="handleCreateIps">
-              <span>新增白名单</span>
-            </ElButton>
-          </div>
           <VTable
             :columns="specColumns"
             :remoteMethod="specRemoteMethod"
@@ -495,10 +490,16 @@
             <template #status="{ row }">
               <StatusTag type="tag" :status="row.status" default-status="Stopped" target="mdb"></StatusTag>
             </template>
+            <template #whiteList="{ row }">
+              <span v-if="row.scope === 'Private'">{{ row.whiteList }}</span>
+            </template>
             <template #operation="{ row }">
               <ElButton size="mini" type="text" @click="handleDeleteMdb(row)">{{
                 $t('public_button_delete')
               }}</ElButton>
+              <ElButton v-if="row.scope === 'Private'" size="mini" type="text" @click="handleCreateIps(row)"
+                >添加白名单</ElButton
+              >
             </template>
             <div class="instance-table__empty" slot="empty">
               <VIcon size="120">no-data-color</VIcon>
@@ -512,12 +513,12 @@
         <el-dialog :visible.sync="showCreateIps" title="添加白名单">
           <el-form>
             <el-form-item label="ip地址">
-              <el-input v-model="ipAddress"></el-input>
+              <el-input :required="true" v-model="ipAddress" placeholder="183.34.1.4,183.34.1.5"></el-input>
             </el-form-item>
           </el-form>
           <span slot="footer">
-            <el-button>取消</el-button>
-            <el-button type="primary">添加</el-button>
+            <el-button @click="showCreateIps = false">取消</el-button>
+            <el-button @click="addIps" type="primary">添加 </el-button>
           </span>
         </el-dialog>
       </el-tab-pane>
@@ -681,7 +682,7 @@ export default {
         },
         {
           label: i18n.t('dfs_instance_instance_cunchuleixing'),
-          prop: 'scope'
+          prop: 'scopeLable'
         },
         {
           label: i18n.t('dfs_instance_instance_bushufangshi'),
@@ -697,13 +698,19 @@ export default {
           prop: 'expiredTimeLabel'
         },
         {
+          label: '白名单IP',
+          slotName: 'whiteList'
+        },
+        {
           label: i18n.t('list_operation'),
-          slotName: 'operation'
+          slotName: 'operation',
+          width: '150'
         }
       ],
       //创建白名单
       showCreateIps: false,
-      ipAddress: ''
+      ipAddress: '',
+      currentMdbId: ''
     }
   },
   computed: {
@@ -824,7 +831,7 @@ export default {
           data: items.map(item => {
             const { periodEnd } = item.subscribe || {}
             item.expiredTimeLabel = periodEnd ? dayjs(periodEnd).format('YY-MM-DD  HH:mm:ss') : '-'
-            item.scope = this.scopeMap[item.scope]
+            item.scopeLable = this.scopeMap[item.scope]
             item.specLabel = getSpec(item.spec) || '-'
             item.storageSize = item.spec?.storageSize ? item.spec?.storageSize + 'GB' : '-'
             item.deploymentType = this.agentTypeMap[item.deploymentType]
@@ -1254,8 +1261,10 @@ export default {
         })
         .catch(() => {})
     },
-    handleCreateIps() {
+    handleCreateIps(row) {
       //新增白名单
+      this.currentMdbId = row.id
+      this.ipAddress = row.whiteList || ''
       this.showCreateIps = true
     },
     handleCreateAgent() {
@@ -1264,6 +1273,25 @@ export default {
         name: 'createAgent'
       })
       this.buried('newAgentStripeDialog')
+    },
+    addIps() {
+      if (!this.ipAddress) {
+        this.$message.error('请填写IP地址，多个地址可以用，分割')
+        return
+      }
+      let params = {
+        mdbId: this.currentMdbId,
+        whiteList: this.ipAddress
+      }
+      this.$axios
+        .post('api/tcm/mdb/update/whitelist', { params })
+        .then(() => {
+          this.showCreateIps = false
+          this.tableCode.fetch()
+        })
+        .finally(() => {
+          this.showCreateIps = false
+        })
     },
     // 创建Agent
     async createAgent() {
