@@ -354,8 +354,9 @@ export default {
   packages_business_relation_details_huancun: 'Cache',
   packages_business_relation_details_wajue: 'Mining',
   packages_business_relation_details_renwu: 'Tasks',
+  packages_business_agent_select_placeholder: 'Please select an agent',
   packages_business_agent_select_not_found: 'This agent does not exist. Select another agent',
-  packages_business_components_connectiontypeselectorsort_wodeshujuyuan: 'My data source',
+  packages_business_components_connectiontypeselectorsort_wodeshujuyuan: 'My Data Source',
   packages_business_components_connectiontypeselectorsort_jiaoyouTap:
     'Let Tapdata conduct a comprehensive quality test to ensure the stability and quality of the plugin',
   packages_business_components_connectiontypeselectorsort_zhuyizhelishi:
@@ -735,7 +736,7 @@ export default {
   packages_business_shared_cdc_setting_message_edit_save:
     'Save successfully, it will take effect after restarting the task',
   packages_business_shared_list_name: 'Mining name',
-  packages_business_shared_list_time_excavation: 'Excavation time point',
+  packages_business_shared_list_time_excavation: 'Excavation time point(Database Time)',
   packages_business_shared_list_setting: 'Mining settings',
   packages_business_shared_list_status: 'Status',
   packages_business_shared_list_time: 'Mining Delay',
@@ -1084,7 +1085,7 @@ export default {
     'MongoDB is a non-relational database with flexibility, high performance, ease of use and scalability, suitable for application scenarios that need to process large amounts of unstructured data and require fast query and scalability. ',
   packages_business_create_connection_scenedialog_bigQu:
     'BigQuery is a managed data warehouse provided by Google Cloud. It is famous for its high speed, scalability and security. It can process PB-level data, integrate with multiple tools, and is suitable for various data analysis and mining scenarios. ',
-  packages_business_swimlane_tablepreview_chuangjianrenwu: 'Create task',
+  packages_business_swimlane_tablepreview_chuangjianrenwu: 'Create Task',
   packages_business_as_source: 'As Source',
   packages_business_as_target: 'As Target',
   packages_business_connections_databaseform_dangqianlianjiezheng:
@@ -1092,7 +1093,7 @@ export default {
   packages_business_swimlane_target_shouye: 'Homepage',
   packages_business_connections_databaseform_chakanwajueren: 'View mining tasks',
   packages_business_connections_databaseform_dangqianlianjiede:
-    'The currently connected mining task is using the original external storage, switching will result in the loss of mined data, please operate with caution. ',
+    'The currently connected mining task is using this external storage, and modification is not allowed for now. If you need to modify it, please reset or delete the corresponding mining task first.',
   packages_business_shared_mining_table_yitingzhiwajue: 'Mining has stopped',
   packages_business_shared_mining_table_zhengzaiwajue: 'Digging',
   packages_business_shared_mining_table_ninyaotingzhiwa:
@@ -1100,8 +1101,33 @@ export default {
   packages_business_shared_mining_table_tingzhiwajueti: 'Stop mining reminder',
   packages_business_shared_mining_table_yihebingdelian: 'Merged Connections',
   packages_business_shared_mining_table_shengyuyigelian:
-    'There is only one connection and one table remaining; the operation cannot be performed.',
+    'In the mining task, at least one table must be mining, and all tables cannot be stopped.',
   packages_business_logs_nodelog_yijianfuzhi: 'One key copy',
   packages_business_connections_jsdebug_shiyongHtt: 'Use the latest data received by HttpReceiver for debugging',
-  packages_business_connections_jsdebug_huoqutiaoshishu: 'Get debug data'
+  packages_business_connections_jsdebug_huoqutiaoshishu: 'Get debug data',
+  packages_business_shared_mining_list_shanchurenwus:
+    'After deleting the task <span class="color-primary">{val1}</span>, this task will not be restored',
+  packages_business_shared_mining_list_gaiwajuerenwu:
+    'The mining task has been called by {val} tasks, please delete the task and try again',
+  packages_business_shared_cache_list_qingxianxiugaiwai:
+    'The external storage does not exist, please modify the external storage configuration before starting.',
+  packages_business_components_conditionbox_shifouquerenqing:
+    'Are you sure to clear the check condition that the index field is empty? ',
+  packages_business_components_conditionbox_suoyinziduanwei: 'The index field is empty',
+  packages_business_components_conditionbox_yijianqingchusuo:
+    'One key to clear the condition that the index field is empty',
+  packages_business_external_storage_list_yanzhengfuwuduan: 'Verify server certificate',
+  packages_business_external_storage_list_siyaomima: 'Private key password',
+  packages_business_external_storage_list_kehuduansiyao: 'Client private key',
+  packages_business_external_storage_list_zhengshubanfaji: 'Certificate Authority',
+  packages_business_external_storage_list_shiyongTls: 'Connect using TLS/SSL',
+  packages_business_connections_list_dangqianlianjiex:
+    'The current connection xxx is being used as FDM and MDM storage, deletion will result in the loss of existing storage data, whether to confirm to continue deletion. ',
+  packages_business_connections_list_zhengzaizuoweiF:
+    'It is being used as FDM and MDM storage, the modification will cause the loss of existing stored data, are you sure you want to continue the modification',
+  packages_business_connections_list_dangqianlianjie: 'Current Connections',
+  packages_business_components_conditionbox_chakanzidingyi: 'View custom fields',
+  packages_business_components_fielddialog_ziduanbuyunxu: 'The field is not allowed to be empty',
+  packages_business_components_fielddialog_zidingyiziduan: 'Custom Field',
+  packages_business_verification_list_biaobufenziduan: 'Verification of some fields in the table'
 }

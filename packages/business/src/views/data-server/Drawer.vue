@@ -151,7 +151,10 @@
                 :loading="!tableOptions"
                 @change="tableChanged"
               >
-                <ElOption v-for="item in tableOptions" :key="item" :value="item" :label="item"></ElOption>
+                <ElOption v-for="item in tableOptions" :key="item.tableName" :value="item.tableName">
+                  <span>{{ item.tableName }}</span>
+                  <span v-if="item.tableComment" class="font-color-sslight">{{ `(${item.tableComment})` }}</span>
+                </ElOption>
               </ElSelect>
               <div v-else class="text">{{ data.tableName }}</div>
             </ElFormItem>
@@ -648,7 +651,7 @@ export default {
         appValue: '',
         appLabel: ''
       }
-      this.$refs?.form?.clearValidate()
+
       this.formatData(formData || {})
 
       // 若为新建时，则默认值为 ‘默认查询(defaultApi)’ 的值
@@ -663,6 +666,15 @@ export default {
       }
       if (!this.data.id) {
         this.edit()
+      }
+
+      const formVM = this.$refs.form
+
+      if (formVM) {
+        formVM.clearValidate()
+        this.$nextTick(() => {
+          formVM.$el.scrollTop = 0
+        })
       }
     },
     tabChanged() {
@@ -701,11 +713,11 @@ export default {
       // 若为新建时，则默认值为 ‘默认查询(defaultApi)’ 的值
 
       const appData = listtags?.[0] || {}
-      const appValue = appData.id
+      const appValue = appData.id || '' // 不改变appValue 的原始值，防止首次创建触发所属应用的必填校验
       const appLabel = appData.value
 
       let apiType = formData?.apiType || 'defaultApi'
-      let fields = formData.fields || []
+      let fields = formData.paths?.[0]?.fields || []
       this.data = {
         status: status || 'generating', // generating,pending,active
         id,
@@ -790,6 +802,11 @@ export default {
     edit() {
       this.form.status = 'generating'
       this.isEdit = true
+      this.$nextTick(() => {
+        this.data.fields.forEach(f => {
+          this.$refs?.fieldTable.toggleRowSelection(this.allFields.find(it => it.id === f.id))
+        })
+      })
     },
     // 保存，新建和修改
     save(type) {
@@ -902,7 +919,7 @@ export default {
             name: connectionName
           }
           this.formatData(data || [])
-          Object.assign(this.orginData, data)
+          this.orginData && Object.assign(this.orginData, data)
           this.$emit('save')
           this.isEdit = false
         }
@@ -923,7 +940,7 @@ export default {
       }
     },
     generateHttp() {
-      this.form = cloneDeep(this.data)
+      // this.form = cloneDeep(this.data)
       let basePath = uid(11, 'a')
       this.form.basePath = basePath
       this.form.path = `/api/${basePath}`
@@ -974,7 +991,7 @@ export default {
     // 获取可选表，依赖连接id
     async getTableOptions(id) {
       this.tableOptions = null
-      const data = await metadataInstancesApi.getTables(id).catch(() => {
+      const data = await metadataInstancesApi.getTablesValue({ connectionId: id }).catch(() => {
         this.tableOptions = []
       })
       this.tableOptions = data || []

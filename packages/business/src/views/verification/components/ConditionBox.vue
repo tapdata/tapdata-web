@@ -8,9 +8,19 @@
         }}</span>
         <span class="color-danger ml-6">{{ jointErrorMessage }}</span>
       </div>
-      <ElLink type="primary" :disabled="!list.length" @click="handleClear">{{
-        $t('packages_business_verification_clear')
-      }}</ElLink>
+      <div>
+        <ElLink
+          v-if="inspectMethod !== 'row_count' && list.some(t => !t.source.sortColumn || !t.target.sortColumn)"
+          type="primary"
+          :disabled="!list.length"
+          class="mr-4"
+          @click="handleClearIndexEmpty"
+          >{{ $t('packages_business_components_conditionbox_yijianqingchusuo') }}</ElLink
+        >
+        <ElLink type="primary" :disabled="!list.length" @click="handleClear">{{
+          $t('packages_business_verification_clear')
+        }}</ElLink>
+      </div>
     </div>
     <DynamicScroller
       :items="list"
@@ -27,31 +37,17 @@
           :data-index="index"
           :size-dependencies="[item.id, item.source, item.target]"
         >
-          <div
-            class="joint-table-item"
-            :class="['joint-table-item', { active: editId === item.id }]"
-            :key="item.id + index"
-          >
+          <div class="joint-table-item" :class="['joint-table-item']" :key="item.id + index">
             <div class="joint-table-setting overflow-hidden">
               <div class="flex justify-content-between">
-                <ElTooltip
-                  placement="top-start"
-                  :content="$t('packages_business_components_conditionbox_zhankaibianji')"
-                >
-                  <div
-                    class="cond-item__title flex align-items-center cursor-pointer flex-fill"
-                    @click="editItem(item)"
-                  >
-                    <span class="font-color-main fs-7">{{
-                      $t('packages_business_components_conditionbox_jianyantiaojian')
-                    }}</span>
-                    <span class="ml-1">{{ index + 1 }}</span>
-                    <VIcon size="14" class="ml-1 color-primary">edit-outline</VIcon>
-                  </div>
-                </ElTooltip>
+                <div class="cond-item__title flex align-items-center">
+                  <span class="font-color-main fs-7">{{
+                    $t('packages_business_components_conditionbox_jianyantiaojian')
+                  }}</span>
+                  <span class="ml-1">{{ index + 1 }}</span>
+                </div>
                 <div class="flex align-items-center">
                   <ElButton type="text" @click.stop="removeItem(index)">{{ $t('public_button_delete') }}</ElButton>
-                  <VIcon size="16" class="arrow-icon ml-1">arrow-right</VIcon>
                 </div>
               </div>
               <div class="setting-item mt-4" :key="'connection' + item.id">
@@ -59,11 +55,11 @@
                   >{{ $t('packages_business_components_conditionbox_daijiaoyanlianjie') }}:</label
                 >
                 <AsyncSelect
-                  v-if="editId === item.id"
                   v-model="item.source.connectionId"
                   :method="getConnectionsListMethod"
                   :currentLabel="item.source.connectionName"
                   itemQuery="name"
+                  lazy
                   filterable
                   class="item-select"
                   :key="'sourceConnectionId' + item.id"
@@ -71,18 +67,15 @@
                   @change="handleChangeConnection(arguments[0], item.source)"
                 >
                 </AsyncSelect>
-                <span v-else :class="['item-value-text', { 'color-disable': !item.source.connectionId }]">{{
-                  item.source.connectionName || $t('public_select_placeholder')
-                }}</span>
                 <span class="item-icon fs-6">
                   <i class="el-icon-arrow-right"></i>
                 </span>
                 <AsyncSelect
-                  v-if="editId === item.id"
                   v-model="item.target.connectionId"
                   :method="getConnectionsListMethod"
                   :currentLabel="item.target.connectionName"
                   itemQuery="name"
+                  lazy
                   filterable
                   class="item-select"
                   :key="'targetConnectionId' + item.id"
@@ -90,14 +83,10 @@
                   @change="handleChangeConnection(arguments[0], item.target)"
                 >
                 </AsyncSelect>
-                <span v-else :class="['item-value-text', { 'color-disable': !item.target.connectionId }]">{{
-                  item.target.connectionName || $t('public_select_placeholder')
-                }}</span>
               </div>
               <div class="setting-item mt-4" :key="'table' + item.id">
                 <label class="item-label">{{ $t('packages_business_components_conditionbox_laiyuanbiao') }}:</label>
                 <AsyncSelect
-                  v-if="editId === item.id"
                   v-model="item.source.table"
                   :method="getTableListMethod"
                   :params="{
@@ -106,18 +95,15 @@
                   }"
                   itemQuery="name"
                   itemType="string"
+                  lazy
                   filterable
                   class="item-select"
                   :key="'sourceTable' + item.id"
                   @change="handleChangeTable(arguments[0], item, index, 'source')"
                 >
                 </AsyncSelect>
-                <span v-else :class="['item-value-text', { 'color-disable': !item.source.table }]">{{
-                  item.source.table || $t('public_select_placeholder')
-                }}</span>
                 <span class="item-icon">{{ $t('packages_business_components_conditionbox_mubiaobiao') }}:</span>
                 <AsyncSelect
-                  v-if="editId === item.id"
                   v-model="item.target.table"
                   :method="getTableListMethod"
                   :params="{
@@ -126,28 +112,55 @@
                   }"
                   itemQuery="name"
                   itemType="string"
+                  lazy
                   filterable
                   class="item-select"
                   :key="'targetTable' + item.id"
                   @change="handleChangeTable(arguments[0], item, index, 'target')"
                 >
                 </AsyncSelect>
-                <span v-else :class="['item-value-text', { 'color-disable': !item.target.table }]">{{
-                  item.target.table || $t('public_select_placeholder')
-                }}</span>
               </div>
-              <FieldBox
-                v-if="inspectMethod !== 'row_count' && editId === item.id"
-                :is-edit="editId === item.id"
-                :item="item"
-                :index="index"
-                :dynamicSchemaMap="dynamicSchemaMap"
-                :id="'field-box-' + index"
-                @change="handleChangeFieldBox(arguments[0], item)"
-              ></FieldBox>
+              <div v-if="inspectMethod !== 'row_count'" class="setting-item mt-4">
+                <label class="item-label">{{ $t('packages_business_verification_indexField') }}: </label>
+                <MultiSelection
+                  v-model="item.source.sortColumn"
+                  class="item-select"
+                  :class="{ 'empty-data': !item.source.sortColumn }"
+                  :options="item.source.fields"
+                  :id="'item-source-' + index"
+                  @focus="handleFocus(item.source)"
+                ></MultiSelection>
+                <span class="item-icon"></span>
+                <MultiSelection
+                  v-model="item.target.sortColumn"
+                  class="item-select"
+                  :class="{ 'empty-data': !item.target.sortColumn }"
+                  :options="item.target.fields"
+                  @focus="handleFocus(item.target)"
+                ></MultiSelection>
+              </div>
+              <div v-if="inspectMethod !== 'row_count'" class="setting-item align-items-center mt-4">
+                <label class="item-label">{{ $t('packages_business_components_fieldbox_daijiaoyanmoxing') }}:</label>
+                <ElRadioGroup
+                  v-model="item.modeType"
+                  :disabled="getModeTypeDisabled(item)"
+                  @change="handleChangeModeType(arguments[0], item, index)"
+                >
+                  <ElRadio label="all">{{ $t('packages_business_components_fieldbox_quanziduan') }}</ElRadio>
+                  <ElRadio label="custom">{{ $t('packages_business_connections_databaseform_zidingyi') }}</ElRadio>
+                </ElRadioGroup>
+                <ElLink
+                  v-if="item.modeType === 'custom'"
+                  type="primary"
+                  class="ml-4"
+                  @click="handleCustomFields(item, index)"
+                >
+                  {{ $t('packages_business_components_conditionbox_chakanzidingyi') }}
+                  ({{ item.source.columns ? item.source.columns.length : 0 }})</ElLink
+                >
+              </div>
               <div class="setting-item mt-4">
                 <ElCheckbox
-                  v-if="editId === item.id"
                   v-model="item.showAdvancedVerification"
                   v-show="inspectMethod === 'field'"
                   @input="handleChangeAdvanced(item)"
@@ -215,6 +228,7 @@
         <ElButton type="primary" size="mini" @click="submitScript">{{ $t('public_button_confirm') }}</ElButton>
       </span>
     </ElDialog>
+    <FieldDialog ref="fieldDialog" @save="handleChangeFields"></FieldDialog>
   </div>
 </template>
 
@@ -230,8 +244,9 @@ import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 import { GitBook, VCodeEditor } from '@tap/component'
 import resize from '@tap/component/src/directives/resize'
 
-import FieldBox from './FieldBox'
 import { TABLE_PARAMS, META_INSTANCE_FIELDS, DATA_NODE_TYPES } from './const'
+import MultiSelection from '../MultiSelection'
+import FieldDialog from './FieldDialog'
 
 export default {
   name: 'ConditionBox',
@@ -240,7 +255,15 @@ export default {
     resize
   },
 
-  components: { AsyncSelect, FieldBox, DynamicScroller, DynamicScrollerItem, VCodeEditor, GitBook },
+  components: {
+    AsyncSelect,
+    DynamicScroller,
+    DynamicScrollerItem,
+    VCodeEditor,
+    GitBook,
+    MultiSelection,
+    FieldDialog
+  },
 
   props: {
     taskId: String,
@@ -263,7 +286,6 @@ export default {
   data() {
     return {
       list: [],
-      editId: '',
       jointErrorMessage: '',
       fieldsMap: {},
       autoAddTableLoading: false,
@@ -484,24 +506,6 @@ export default {
       return { items: tableNames, total: tableNames.length }
     },
 
-    getAllTablesInNode(nodeId) {
-      const findNode = this.flowStages.find(t => t.id === nodeId)
-      if (!findNode) return []
-      if (this.isDB) {
-        let tableList = findNode.tableNames || []
-        if (findNode.inputLanes.length) {
-          const objectNames = findNode.syncObjects?.[0]?.objectNames
-          const { tablePrefix, tableSuffix, tableNameTransform } = findNode
-          tableList = objectNames.map(t => {
-            let name = (tablePrefix || '') + t + (tableSuffix || '')
-            return tableNameTransform ? name[tableNameTransform]() : name
-          })
-        }
-        return tableList
-      }
-      return [findNode.tableName]
-    },
-
     /**
      * @desc 获取连线信息
      * @param1 value 节点id
@@ -533,6 +537,19 @@ export default {
       return result.map(re => {
         const el = this.flowStages.find(t => t.id === re.source)
         const targetNode = this.flowStages.find(t => t.id === re.target)
+        let updateConditionFieldMap = {}
+        let tableNames = []
+        let tableNameRelation = {}
+        if (targetNode.type === 'database') {
+          tableNames = el.tableNames
+          updateConditionFieldMap = targetNode.updateConditionFieldMap || {}
+          tableNameRelation = targetNode.syncObjects?.[0]?.tableNameRelation || []
+        } else if (targetNode.type === 'table') {
+          tableNames = [targetNode.tableName]
+          updateConditionFieldMap[targetNode.tableName] = targetNode.updateConditionFields || []
+          tableNameRelation[el.tableName] = targetNode.tableName
+        }
+
         return {
           source: el.id,
           sourceName: el.name,
@@ -543,28 +560,19 @@ export default {
           targetConnectionId: targetNode.connectionId,
           targetConnectionName: targetNode.attrs?.connectionName,
           sourceDatabaseType: el.databaseType,
-          targetDatabaseType: targetNode.databaseType
+          targetDatabaseType: targetNode.databaseType,
+          updateConditionFieldMap,
+          tableNames,
+          tableName: targetNode.tableName,
+          tableNameRelation
         }
       })
     },
 
-    editItem(item) {
-      if (this.editId === item.id) {
-        this.setEditId('')
-        return
-      }
-      this.jointErrorMessage = ''
-      this.setEditId(item.id)
-    },
-
-    setEditId(id) {
-      this.editId = id
-    },
-
     handleClear() {
       this.$confirm(
-        i18n.t('packages_business_verification_clear'),
         i18n.t('packages_business_components_conditionbox_shifouqingkongsuo'),
+        i18n.t('public_message_title_prompt'),
         {
           type: 'warning'
         }
@@ -573,6 +581,21 @@ export default {
           return
         }
         this.clearList()
+      })
+    },
+
+    handleClearIndexEmpty() {
+      this.$confirm(
+        i18n.t('packages_business_components_conditionbox_shifouquerenqing'),
+        i18n.t('public_message_title_prompt'),
+        {
+          type: 'warning'
+        }
+      ).then(res => {
+        if (!res) {
+          return
+        }
+        this.list = this.list.filter(t => t.source.sortColumn && t.target.sortColumn)
       })
     },
 
@@ -609,8 +632,7 @@ export default {
       matchNodeList.forEach(m => {
         connectionIds.push(m.sourceConnectionId)
         connectionIds.push(m.targetConnectionId)
-        tableNames.push(...this.getAllTablesInNode(m.source))
-        tableNames.push(...this.getAllTablesInNode(m.target))
+        tableNames.push(...m.tableNames)
       })
       if (!matchNodeList.length) {
         if (this.allStages.length > this.flowStages.length)
@@ -647,33 +669,57 @@ export default {
               sourceConnectionName,
               targetConnectionName,
               sourceDatabaseType,
-              targetDatabaseType
+              targetDatabaseType,
+              updateConditionFieldMap,
+              tableNameRelation
             } = m
-            const getAllTablesInNodeSource = this.getAllTablesInNode(source)
-            const getAllTablesInNodeTarget = this.getAllTablesInNode(target)
-            getAllTablesInNodeSource.forEach((ge, geIndex) => {
-              let findTable = data.find(t => t.source.id === sourceConnectionId && t.original_name === ge)
-              let findTargetTable = data.find(
-                t => t.source.id === targetConnectionId && t.original_name === getAllTablesInNodeTarget[geIndex]
-              )
+
+            const sourceTableList = Object.keys(tableNameRelation)
+            sourceTableList.forEach((ge, geIndex) => {
               let item = this.getItemOptions()
+              // 填充source
               item.source.nodeId = source
               item.source.nodeName = sourceName
               item.source.databaseType = sourceDatabaseType
               item.source.connectionId = `${source}/${sourceConnectionId}`
               item.source.connectionName = `${sourceName} / ${sourceConnectionName}`
-              item.source.table = findTable.original_name
-              item.source.fields = findTable.fields
-              item.source.sortColumn = this.getPrimaryKeyFieldStr(findTable.fields)
-
+              item.source.table = ge // findTable.original_name
+              // 填充target
               item.target.nodeId = target
               item.target.nodeName = targetName
               item.target.databaseType = targetDatabaseType
               item.target.connectionId = `${target}/${targetConnectionId}`
               item.target.connectionName = `${targetName} / ${targetConnectionName}`
-              item.target.table = findTargetTable.original_name
-              item.target.fields = findTargetTable.fields
-              item.target.sortColumn = this.getPrimaryKeyFieldStr(findTargetTable.fields)
+              item.target.table = tableNameRelation[ge] // findTargetTable.original_name
+
+              const updateList = cloneDeep(updateConditionFieldMap[tableNameRelation[ge]] || [])
+              let findTable = data.find(t => t.source.id === sourceConnectionId && t.original_name === ge)
+              let findTargetTable = data.find(
+                t => t.source.id === targetConnectionId && t.original_name === tableNameRelation[ge]
+              )
+
+              if (findTable) {
+                let sourceSortColumn = updateList.length
+                  ? updateList.join(',')
+                  : this.getPrimaryKeyFieldStr(findTable.fields)
+                if (updateList.length && findTargetTable?.fields) {
+                  sourceSortColumn = findTargetTable.fields
+                    .filter(t => updateList.includes(t.field_name))
+                    .map(t => t.original_field_name)
+                    .join(',')
+                }
+                item.source.fields = findTable.fields
+                item.source.sortColumn = sourceSortColumn
+              }
+
+              if (findTargetTable) {
+                const targetSortColumn = updateList.length
+                  ? updateList.join(',')
+                  : this.getPrimaryKeyFieldStr(findTargetTable.fields)
+                item.target.fields = findTargetTable.fields
+                item.target.sortColumn = targetSortColumn
+              }
+
               list.push(item)
             })
           })
@@ -744,47 +790,97 @@ export default {
       item.databaseType = val?.databaseType
     },
 
+    getReverseNodeInfo(data = {}) {
+      const {
+        source,
+        target,
+        sourceName,
+        targetName,
+        sourceConnectionId,
+        targetConnectionId,
+        sourceConnectionName,
+        targetConnectionName,
+        sourceDatabaseType,
+        targetDatabaseType,
+        updateConditionFieldMap,
+        tableNames,
+        tableName
+      } = data
+      return {
+        source: target,
+        target: source,
+        sourceName: targetName,
+        targetName: sourceName,
+        sourceConnectionId: targetConnectionId,
+        targetConnectionId: sourceConnectionId,
+        sourceConnectionName: targetConnectionName,
+        targetConnectionName: sourceConnectionName,
+        sourceDatabaseType: targetDatabaseType,
+        targetDatabaseType: sourceDatabaseType,
+        updateConditionFieldMap,
+        tableNames,
+        tableName
+      }
+    },
+
     handleChangeTable(val, item, index, type) {
       const fields = this.getFieldsByItem(item, type)
       item[type].fields = fields
       item[type].sortColumn = this.getPrimaryKeyFieldStr(fields)
+
+      if (item.modeType === 'custom') {
+        item.source.columns = []
+        item.target.columns = []
+      }
+
       // 绑定任务，则自动填充目标信息
       if (!this.taskId) {
         return
       }
+
+      // 获取连线信息
+      const matchNodeList = this.getMatchNodeList()
+      let matchNode = matchNodeList.find(t => [t.source, t.target].includes(item[type].nodeId))
+      if (!matchNode) {
+        return
+      }
+
+      if (matchNode.target === item[type].nodeId) {
+        matchNode = this.getReverseNodeInfo(matchNode)
+      }
+      const {
+        target,
+        targetName,
+        targetConnectionId,
+        targetConnectionName,
+        sourceDatabaseType,
+        targetDatabaseType,
+        updateConditionFieldMap,
+        tableName,
+        tableNameRelation
+      } = matchNode
+
+      // 自动填充索引字段
+      let updateList = updateConditionFieldMap[val] || {}
+      item[type].sortColumn = updateList.length ? updateList.join(',') : this.getPrimaryKeyFieldStr(fields)
+
       if (type === 'target') {
+        item.target.databaseType = targetDatabaseType
         return
       }
       // 自动填充目标连接和表
-      const { isDB } = this
-      const sourceNode = this.flowStages.find(t => t.id === item.source.nodeId)
-      const targetNodeId = sourceNode?.outputLanes?.[0]
-      const targetNode = this.flowStages.find(t => t.id === targetNodeId)
-      item.source.databaseType = sourceNode.databaseType
-      if (!targetNode) return
+      item.source.databaseType = sourceDatabaseType
 
-      const nodeId = targetNode.id
-      const nodeName = targetNode.name
-      const connectionId = targetNode.connectionId
-      const connectionName = targetNode.attrs?.connectionName
-      item.target.databaseType = targetNode.databaseType
-      item.target.nodeId = nodeId
-      item.target.nodeName = nodeName
-      item.target.connectionId = `${nodeId}/${connectionId}`
-      item.target.connectionName = `${nodeName} / ${connectionName}`
-      if (isDB) {
-        const findSourceTableIndex = sourceNode.tableNames.findIndex(t => t === val)
-        const objectNames = targetNode.syncObjects?.[0]?.objectNames || []
-        item.target.table = objectNames[findSourceTableIndex]
-      } else {
-        item.target.table = targetNode.tableName
-      }
+      item.target.nodeId = target
+      item.target.nodeName = targetName
+      item.target.connectionId = `${target}/${targetConnectionId}`
+      item.target.connectionName = `${targetName} / ${targetConnectionName}`
+      item.target.table = tableName ? tableName : tableNameRelation[val]
 
       // 加载目标的字段
-      const targetTableName = item.target.table
       const params = {
-        nodeId,
-        tableFilter: targetTableName,
+        nodeId: target,
+        tableFilter: item.target.table,
         page: 1,
         pageSize: 1
       }
@@ -795,9 +891,11 @@ export default {
             return { id, field_name, primary_key_position }
           }) || []
         // 设置主键
-        item.target.sortColumn = this.getPrimaryKeyFieldStr(item.target.fields)
+        item.target.sortColumn = updateList.length
+          ? updateList.join(',')
+          : this.getPrimaryKeyFieldStr(item.target.fields)
 
-        const key = [nodeId || '', connectionId, targetTableName].join()
+        const key = [target || '', targetConnectionId, item.target.table].join()
         this.fieldsMap[key] = item.target.fields
       })
     },
@@ -861,7 +959,7 @@ export default {
       this.fieldsMap[key] = data
     },
 
-    getFieldsByItem(item, type) {
+    getFieldsByItem(item, type = 'source') {
       const { nodeId, connectionId, table } = item[type] || {}
       return this.fieldsMap[[nodeId || '', connectionId, table].filter(t => t).join()] || []
     },
@@ -875,7 +973,7 @@ export default {
         )
       }
       return sortField(data)
-        .filter(f => f.primary_key_position > 0)
+        .filter(f => !!f.primaryKey)
         .map(t => t.field_name)
         .join(',')
     },
@@ -903,9 +1001,8 @@ export default {
           return !c.source.table || !c.target.table
         })
       ) {
-        this.setEditId(tasks[index - 1]?.id)
         this.$nextTick(() => {
-          formDom.childNodes[index - 1].querySelector('input').focus()
+          formDom.childNodes[index - 1]?.querySelector('input')?.focus()
         })
         message = this.$t('packages_business_verification_message_error_joint_table_target_or_source_not_set', {
           val: index
@@ -922,7 +1019,6 @@ export default {
           return !c.source.sortColumn || !c.target.sortColumn
         })
       ) {
-        this.setEditId(tasks[index - 1]?.id)
         this.$nextTick(() => {
           // document.getElementById('data-verification-form').childNodes[index - 1].querySelector('input').focus()
           let item = document.getElementById('item-source-' + (index - 1))
@@ -941,7 +1037,6 @@ export default {
           return c.source.sortColumn.split(',').length !== c.target.sortColumn.split(',').length
         })
       ) {
-        this.setEditId(tasks[index - 1]?.id)
         this.$nextTick(() => {
           let item = document.getElementById('item-source-' + (index - 1))
           item.querySelector('input').focus()
@@ -959,7 +1054,6 @@ export default {
           return c.source.columns?.some(t => !t) || c.target.columns?.some(t => !t)
         })
       ) {
-        this.setEditId(tasks[index - 1]?.id)
         this.$nextTick(() => {
           let item = document.getElementById('list-table__content' + (index - 1))
           const emptyDom = item.querySelector('.el-select.empty-data')
@@ -985,9 +1079,8 @@ export default {
           return c.showAdvancedVerification && !c.webScript
         })
       ) {
-        this.setEditId(tasks[index - 1]?.id)
         this.$nextTick(() => {
-          formDom.childNodes[index - 1].querySelector('input').focus()
+          formDom.childNodes[index - 1]?.querySelector('input')?.focus()
         })
         message = this.$t('packages_business_verification_message_error_script_no_enter')
         this.jointErrorMessage = message
@@ -1075,6 +1168,62 @@ function validate(sourceRow){
 \`\`\`
 `
       }
+    },
+
+    getModeTypeDisabled(item) {
+      return !(item.source.connectionId && item.source.table && item.target.connectionId && item.target.table)
+    },
+
+    handleCustomFields(item, index) {
+      this.$refs.fieldDialog.open(item, index, {
+        source: this.dynamicSchemaMap[item.source.connectionId],
+        target: this.dynamicSchemaMap[item.target.connectionId]
+      })
+    },
+
+    handleChangeModeType(val, item, index) {
+      if (val !== 'custom') {
+        item.source.columns = null
+        item.target.columns = null
+        return
+      }
+      this.handleCustomFields(item, index)
+    },
+
+    handleChangeFields(data = [], index) {
+      this.list[index].source.columns = data.map(t => t.source)
+      this.list[index].target.columns = data.map(t => t.target)
+    },
+
+    handleFocus(opt = {}) {
+      if (opt.fields?.length) {
+        return
+      }
+      const connectionId = opt.connectionId?.split('/')?.[1]
+      const params = {
+        where: {
+          meta_type: 'table',
+          sourceType: 'SOURCE',
+          original_name: opt.table,
+          'source._id': connectionId
+        },
+        limit: 1
+      }
+      metadataInstancesApi
+        .tapTables({
+          filter: JSON.stringify(params)
+        })
+        .then((data = {}) => {
+          opt.fields = Object.values(data.items[0]?.nameFieldMap || {}).map(t => {
+            return {
+              id: t.id,
+              label: t.fieldName,
+              value: t.fieldName,
+              field_name: t.fieldName,
+              primary_key_position: t.primaryKey
+            }
+          })
+        })
     }
   }
 }
@@ -1106,12 +1255,6 @@ function validate(sourceRow){
     padding: 16px 24px;
     display: flex;
     border-bottom: 1px solid map-get($borderColor, light);
-    //cursor: pointer;
-    &.active {
-      .arrow-icon {
-        transform: rotate(90deg);
-      }
-    }
   }
   .joint-table-setting {
     flex: 1;
@@ -1192,10 +1335,13 @@ function validate(sourceRow){
   height: 280px;
 }
 
-.arrow-icon {
-  margin-top: 2px;
-  transition: 0.2s;
-  color: #4e5969;
-  transform: rotate(-90deg);
+.empty-data {
+  ::v-deep {
+    .el-select {
+      .el-input__inner {
+        border-color: #d44d4d;
+      }
+    }
+  }
 }
 </style>

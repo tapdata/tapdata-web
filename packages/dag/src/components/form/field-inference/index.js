@@ -2,7 +2,6 @@ import Main from './Main'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent } from '@vue/composition-api'
 import { useForm } from '@tap/form'
-import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
 import SchemaFieldList from './List.vue'
 
 export const fieldInference = observer(
@@ -10,10 +9,6 @@ export const fieldInference = observer(
     setup(props, { attrs, listeners, refs, root }) {
       const formRef = useForm()
       const form = formRef.value
-
-      useAfterTaskSaved(root, formRef.value.values.$inputs, () => {
-        refs.fieldMapping?.loadData(true)
-      })
 
       return () => {
         return <Main ref="fieldMapping" form={form} attrs={attrs} on={listeners} />

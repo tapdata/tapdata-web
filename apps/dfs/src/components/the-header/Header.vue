@@ -21,7 +21,13 @@
         </div>
 
         <NotificationPopover class="command-item mr-2 flex align-items-center"></NotificationPopover>
-        <ElDropdown class="mr-2" placement="bottom" @command="changeLanguage" v-if="!onlyEnglishLanguage">
+        <ElDropdown
+          class="mr-2"
+          placement="bottom"
+          :show-timeout="0"
+          @command="changeLanguage"
+          v-if="!onlyEnglishLanguage"
+        >
           <span class="cursor-pointer command-item icon-btn">
             <VIcon size="20">{{ 'language-' + lang }}</VIcon>
           </span>
@@ -31,7 +37,7 @@
             </ElDropdownItem>
           </ElDropdownMenu>
         </ElDropdown>
-        <ElDropdown class="command-item menu-user" placement="bottom" @command="command">
+        <ElDropdown class="command-item menu-user" placement="bottom" :show-timeout="0" @command="command">
           <div class="username flex align-items-center">
             <img
               v-if="user.avatar"
@@ -49,6 +55,7 @@
             <ElDropdownItem command="userCenter" :disabled="$disabledReadonlyUserBtn()">{{
               $t('the_header_Header_yongHuZhongXin')
             }}</ElDropdownItem>
+            <ElDropdownItem command="order">{{$t('dfs_the_header_header_dingyuezhongxin')}}</ElDropdownItem>
             <ElDropdownItem command="home"> {{ $t('header_official_website') }} </ElDropdownItem>
             <ElDropdownItem command="signOut" :disabled="$disabledReadonlyUserBtn()">
               {{ $t('header_sign_out') }}
@@ -143,6 +150,11 @@ export default {
           // window.open(this.USER_CENTER || 'https://tapdata.authing.cn/u', '_blank')
           this.$router.push({
             name: 'userCenter'
+          })
+          break
+        case 'order':
+          this.$router.push({
+            name: 'order'
           })
           break
         case 'signOut':

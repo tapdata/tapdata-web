@@ -10,7 +10,7 @@
     >
       <ElFormItem prop="name" :label="$t('packages_business_shared_cache_name') + ':'">
         <ElInput
-          v-model="form.name"
+          v-model.trim="form.name"
           class="form-input"
           :placeholder="$t('packages_business_shared_cache_placeholder_name')"
         ></ElInput>
@@ -40,7 +40,12 @@
           :loading="tableOptionsLoading"
           :placeholder="$t('packages_business_shared_cache_placeholder_table')"
           @input="tableInputHandler"
-        />
+        >
+          <template #option="{ item }">
+            <span>{{ item.label }}</span>
+            <span v-if="item.comment" class="font-color-sslight">{{ `(${item.comment})` }}</span>
+          </template>
+        </VirtualSelect>
       </ElFormItem>
       <ElFormItem prop="cacheKeys" :label="$t('packages_business_shared_cache_keys') + ':'">
         <template slot="label">
@@ -195,8 +200,13 @@ export default {
       this.loading = true
       await sharedCacheApi
         .findOne(id)
-        .then(data => {
+        .then(async data => {
           data = data || {}
+          let externalStorageId = data.externalStorageId
+          const externalStorage = await externalStorageApi.get(externalStorageId)
+          if (!externalStorage?.id) {
+            externalStorageId = ''
+          }
           this.form = {
             name: data.name,
             connectionId: data.connectionId,
@@ -206,7 +216,7 @@ export default {
             cacheKeys: data.cacheKeys,
             fields: data.fields?.join(',') || '',
             maxMemory: data.maxMemory,
-            externalStorageId: data.externalStorageId
+            externalStorageId
           }
           this.getTableOptions(data.connectionId)
           this.getTableSchema(data.tableName)
@@ -223,7 +233,7 @@ export default {
       const { externalStorageId } = this.form
       if (externalStorageId) {
         const ext = await externalStorageApi.get(externalStorageId)
-        filter.where.type = ext.type
+        filter.where.type = ext?.type
       }
       const data = await externalStorageApi
         .get({
@@ -247,13 +257,17 @@ export default {
     getTableOptions(connectionId) {
       this.tableOptionsLoading = true
       metadataInstancesApi
-        .getTables(connectionId)
+        .getTablesValue({ connectionId })
         .then(data => {
           let options = []
           let list = data || []
           list.forEach(opt => {
             if (opt) {
-              options.push({ label: opt, value: opt })
+              options.push({
+                label: opt.tableName,
+                value: opt.tableName,
+                comment: opt.tableComment
+              })
             }
           })
           this.tableOptions = options

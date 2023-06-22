@@ -32,15 +32,23 @@
             ><span class="table-dec-txt">{{ cdcDelayTime || '-' }}</span></span
           >
         </template>
+        <div class="flex-grow-1"></div>
+        <ElButton size="mini" type="danger" plain @click="handleDelete"
+          ><VIcon class="mr-1">delete</VIcon>{{ $t('public_button_delete') }}</ElButton
+        >
       </div>
     </header>
     <section class="flex-1 min-h-0 mt-1">
-      <el-tabs v-model="activeName" @tab-click="handleTab" class="h-100 table-preview-tabs tabs-fill">
+      <el-tabs v-model="activeName" class="h-100 table-preview-tabs tabs-fill">
         <el-tab-pane :label="$t('packages_business_overview')" name="overView">
           <div class="p-4" v-loading="loading">
-            <section class="bg-white rounded-lg p-3">
+            <section class="bg-white rounded-lg p-3 border border-gray-200">
               <div class="mb-4">
-                <span class="table-dec-label mb-4">{{ $t('public_description') }}：</span
+                <span class="table-dec-label mb-4">{{ $t('packages_ldp_table_comment') }}：</span>
+                <span class="font-color-sslight">{{ detailData.comment || '-' }}</span>
+              </div>
+              <div class="mb-4">
+                <span class="table-dec-label mb-4">{{ $t('datadiscovery_previewdrawer_yewumiaoshu') }}：</span
                 ><el-input
                   type="textarea"
                   row="4"
@@ -73,21 +81,27 @@
                 </el-col>
               </el-row>
             </section>
-            <section class="mt-4 bg-white rounded-lg pt-1 overflow-hidden">
-              <el-tabs v-model="activeNameItems" class="tabs-fill">
+            <section class="mt-4 bg-white rounded-lg overflow-hidden border border-gray-200">
+              <el-tabs v-model="activeNameItems" class="tabs-fill tabs-as-card">
                 <el-tab-pane :label="$t('packages_business_columns_preview')" name="columnsPreview">
                   <VTable
-                    class="discovery-page-table p-3"
+                    class="discovery-page-table"
                     :columns="columnsPreview"
                     :data="tableFields"
                     max-height="381px"
                     :has-pagination="false"
                   >
                     <div slot="empty">{{ $t('public_data_no_data') }}</div>
+                    <template slot="businessDesc" slot-scope="scope">
+                      <ElInput
+                        v-model="scope.row.businessDesc"
+                        @input="handleChangeBusinessDesc(arguments[0], scope.row.id)"
+                      ></ElInput>
+                    </template>
                   </VTable>
                 </el-tab-pane>
                 <el-tab-pane :label="$t('packages_business_sample_data')" name="sampleData">
-                  <div class="p-3">
+                  <div class="">
                     <VEmpty v-if="!sampleHeader.length"></VEmpty>
                     <el-table v-else :data="sampleData" v-loading="loadingSampleData" max-height="381px">
                       <el-table-column type="index" label="#"></el-table-column>
@@ -128,7 +142,7 @@
         <el-tab-pane :label="$t('public_connection_form_schema')" name="schema">
           <div class="p-4">
             <VTable
-              class="discovery-page-table rounded-lg bg-white p-3"
+              class="discovery-page-table rounded-lg bg-white border border-gray-200"
               :columns="columns"
               :data="tableFields"
               :has-pagination="false"
@@ -156,8 +170,8 @@
         </el-tab-pane>
         <el-tab-pane :label="$t('packages_business_tasks')" name="tasks">
           <div class="p-4">
-            <div class="rounded-lg bg-white p-3">
-              <div class="flex align-center mb-4">
+            <div class="rounded-lg bg-white border border-gray-200 overflow-hidden">
+              <div class="flex align-center p-3">
                 <ElRadioGroup v-model="asTaskType" size="mini">
                   <ElRadioButton label="all">{{ $t('public_select_option_all') }}</ElRadioButton>
                   <ElRadioButton label="source">{{ $t('packages_business_as_source') }}</ElRadioButton>
@@ -168,6 +182,7 @@
                   $t('packages_business_swimlane_tablepreview_chuangjianrenwu')
                 }}</span>
               </div>
+              <ElDivider class="my-0"></ElDivider>
               <el-table
                 v-loading="loading || taskLoading"
                 class="discovery-page-table"
@@ -188,14 +203,14 @@
                     </span>
                   </template>
                 </el-table-column>
-                <el-table-column :label="$t('public_task_type')">
+                <el-table-column :label="$t('public_task_type')" :width="colWidth.status">
                   <template #default="{ row }">
                     <span>
                       {{ getTaskType(row.type) }}
                     </span>
                   </template>
                 </el-table-column>
-                <el-table-column prop="status" :label="$t('public_task_status')">
+                <el-table-column prop="status" :label="$t('public_task_status')" :width="colWidth.status">
                   <template #default="{ row }">
                     <TaskStatus :task="row" />
                   </template>
@@ -218,6 +233,48 @@
                 >
                   <template #default="{ row }">
                     {{ formatTime(row.lastStartDate) }}
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('public_operation')" width="100" fixed="right" align="center">
+                  <template #default="{ row }">
+                    <ElLink
+                      v-if="row.btnDisabled.stop && row.btnDisabled.forceStop"
+                      v-readonlybtn="'SYNC_job_operation'"
+                      type="primary"
+                      :disabled="row.btnDisabled.start || $disabledReadonlyUserBtn()"
+                      @click="startTask([row.id])"
+                    >
+                      {{ $t('public_button_start') }}
+                    </ElLink>
+                    <template v-else>
+                      <ElLink
+                        v-if="row.status === 'stopping'"
+                        v-readonlybtn="'SYNC_job_operation'"
+                        type="primary"
+                        :disabled="row.btnDisabled.forceStop || $disabledReadonlyUserBtn()"
+                        @click="forceStopTask([row.id], row)"
+                      >
+                        {{ $t('public_button_force_stop') }}
+                      </ElLink>
+                      <ElLink
+                        v-else
+                        v-readonlybtn="'SYNC_job_operation'"
+                        type="primary"
+                        :disabled="row.btnDisabled.stop || $disabledReadonlyUserBtn()"
+                        @click="stopTask([row.id], row)"
+                      >
+                        {{ $t('public_button_stop') }}
+                      </ElLink>
+                    </template>
+                    <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+                    <ElLink
+                      v-readonlybtn="'SYNC_job_edition'"
+                      type="danger"
+                      :disabled="row.btnDisabled.delete || $disabledReadonlyUserBtn()"
+                      @click="deleteTask([row.id], row)"
+                    >
+                      {{ $t('public_button_delete') }}
+                    </ElLink>
                   </template>
                 </el-table-column>
               </el-table>
@@ -252,13 +309,22 @@
 </template>
 
 <script>
-import { cloneDeep } from 'lodash'
+import { cloneDeep, debounce } from 'lodash'
 import dayjs from 'dayjs'
 
 import { Drawer, VTable, VEmpty } from '@tap/component'
 import { calcTimeUnit, calcUnit, isNum } from '@tap/shared'
-import { discoveryApi, proxyApi, taskApi, metadataInstancesApi, modulesApi } from '@tap/api'
-import { TaskStatus, DatabaseIcon, TASK_TYPE_MAP } from '@tap/business'
+import {
+  discoveryApi,
+  proxyApi,
+  taskApi,
+  ldpApi,
+  metadataInstancesApi,
+  modulesApi,
+  workerApi,
+  CancelToken
+} from '@tap/api'
+import { TaskStatus, DatabaseIcon, TASK_TYPE_MAP, makeStatusAndDisabled } from '@tap/business'
 import i18n from '@tap/i18n'
 import TableLineage from './components/TableLineage'
 
@@ -292,8 +358,13 @@ export default {
           prop: 'dataType'
         },
         {
+          label: i18n.t('packages_form_field_inference_list_ziduanzhushi'),
+          prop: 'comment'
+        },
+        {
           label: i18n.t('datadiscovery_previewdrawer_yewumiaoshu'),
-          prop: 'businessDesc'
+          prop: 'businessDesc',
+          slotName: 'businessDesc'
         }
       ],
       columns: [
@@ -416,6 +487,7 @@ export default {
       taskLoading: false
     }
   },
+
   computed: {
     filterTask() {
       if (this.asTaskType === 'all') return this.taskData
@@ -445,8 +517,38 @@ export default {
       }
 
       return config.database || config.sid || this.detailData.sourceType
+    },
+    colWidth() {
+      const { locale } = this.$i18n
+      return locale === 'en'
+        ? {
+            taskType: 130,
+            status: 145,
+            operation: 340
+          }
+        : {
+            taskType: 80,
+            status: 110,
+            operation: 280
+          }
     }
   },
+
+  watch: {
+    visible(v) {
+      if (v) {
+        this.cancelSource?.cancel()
+        clearTimeout(this.loadTaskTimer)
+      }
+    }
+  },
+
+  beforeDestroy() {
+    this.destroyed = true
+    this.cancelSource?.cancel()
+    clearTimeout(this.loadTaskTimer)
+  },
+
   methods: {
     init() {
       this.detailData = {}
@@ -460,8 +562,10 @@ export default {
       this.cdcDelayTime = ''
       this.lastDataChangeTime = ''
     },
-    open(row, connection) {
+    open(row, connection, callback = {}) {
       clearTimeout(this.visibleTimer)
+      clearTimeout(this.loadTaskTimer)
+      this.cancelSource?.cancel()
 
       // if (!this.visible) this.reset()
 
@@ -471,6 +575,7 @@ export default {
       this.connectionId = row.connectionId
       this.selected = cloneDeep(row)
       this.connection = connection
+      this.callback = callback
       this.getTableStorage(row)
     },
     getTableStorage(row) {
@@ -484,24 +589,38 @@ export default {
             : '-'
           this.tableFields = res?.fields || []
           this.getSampleData()
-          this.getTasks()
+          this.loadTask()
           this.getTaskStatus()
         })
         .finally(() => {
           this.loading = false
         })
     },
-    getTasks() {
-      this.taskLoading = true
+    async loadTask(silenceLoading) {
+      if (this.destroyed || !this.visible) return
+
+      await this.getTasks(silenceLoading)
+      this.loadTaskTimer = setTimeout(() => {
+        this.loadTask(true)
+      }, 5000)
+    },
+    getTasks(silenceLoading) {
+      this.taskLoading = !silenceLoading
       let params = {
         connectionId: this.connectionId,
         tableName: this.detailData.name
       }
-      taskApi
-        .getTaskByTableName(params)
+      this.cancelSource?.cancel()
+      this.cancelSource = CancelToken.source()
+      return taskApi
+        .getTaskByTableName(params, {
+          cancelToken: this.cancelSource.token
+        })
         .then(taskList => {
           taskList.forEach(task => {
             const { dag } = task
+
+            makeStatusAndDisabled(task)
 
             if (dag.edges?.length && dag.nodes?.length) {
               const outputsMap = {}
@@ -584,12 +703,6 @@ export default {
           : '-'
       })
     },
-    handleTab(item) {
-      switch (item.name) {
-        case 'apis':
-          break
-      }
-    },
     getApisData() {
       const { connectionId, name } = this.selected || {}
 
@@ -651,6 +764,133 @@ export default {
           this.visible = false
         }, 30)
       }
+    },
+
+    startTask(ids) {
+      taskApi.batchStart(ids).then(() => {
+        this.getTasks(true)
+        this.$message.success(this.$t('public_message_operation_success'))
+      })
+    },
+
+    async forceStopTask(ids, item = {}) {
+      let data = await workerApi.taskUsedAgent(ids)
+      let msgObj = this.getConfirmMessage('force_stop', ids.length > 1, item.name)
+      if (data?.status === 'offline' && !this.isDaas) {
+        msgObj = this.getConfirmMessage('agent_force_stop', ids.length > 1, item.name)
+      }
+      this.$confirm(msgObj.msg, '', {
+        type: 'warning',
+        showClose: false,
+        zIndex: 999999
+      }).then(resFlag => {
+        if (!resFlag) {
+          return
+        }
+        taskApi.forceStop(ids).then(data => {
+          this.getTasks(true)
+          this.$message.success(data?.message || this.$t('public_message_operation_success'), false)
+        })
+      })
+    },
+
+    stopTask(ids) {
+      let msgObj = this.getConfirmMessage('stop', ids.length > 1, item.name)
+      let message = msgObj.msg
+      this.$confirm(message, '', {
+        type: 'warning',
+        showClose: false,
+        zIndex: 999999
+      }).then(resFlag => {
+        if (!resFlag) {
+          return
+        }
+        taskApi.batchStop(ids).then(data => {
+          this.getTasks(true)
+          this.$message.success(data?.message || this.$t('public_message_operation_success'), false)
+        })
+      })
+    },
+
+    deleteTask(ids, item = {}, canNotList) {
+      let msgObj = this.getConfirmMessage('delete', ids.length > 1, item.name)
+      this.$confirm(msgObj.msg, '', {
+        type: 'warning',
+        zIndex: 999999
+      }).then(resFlag => {
+        if (!resFlag) {
+          return
+        }
+        taskApi.batchDelete(ids).then(data => {
+          this.getTasks(true)
+          this.$message.success(data?.message || this.$t('public_message_operation_success'), false)
+        })
+      })
+    },
+
+    getConfirmMessage(operateStr, isBulk, name) {
+      let title = operateStr + '_confirm_title',
+        message = operateStr + '_confirm_message'
+      if (isBulk) {
+        title = 'bulk_' + title
+        message = 'bulk_' + message
+      }
+      const h = this.$createElement
+      let strArr = this.$t('packages_business_dataFlow_' + message).split('xxx')
+      let msg = h(
+        'p',
+        {
+          style: 'width: calc(100% - 28px);word-break: break-all;'
+        },
+        [
+          strArr[0],
+          h(
+            'span',
+            {
+              class: 'color-primary'
+            },
+            name
+          ),
+          strArr[1]
+        ]
+      )
+      return {
+        msg,
+        title: this.$t('packages_business_dataFlow_' + title)
+      }
+    },
+
+    handleChangeBusinessDesc: debounce(function (val, id) {
+      metadataInstancesApi
+        .updateTableFieldDesc(this.selected.id, {
+          id,
+          businessDesc: val
+        })
+        .catch(() => {
+          this.$message.error(this.$t('public_message_save_fail'))
+        })
+    }, 300),
+
+    handleDelete() {
+      if (this.taskData.length) {
+        this.activeName = 'tasks'
+        this.$message.warning(`检测到有任务正在使用 ${this.selected.name}，请删除所有相关任务后重试`)
+        return
+      }
+
+      this.$confirm('该表将会从数据库里删除，操作后不可恢复', '确认删除？', {
+        type: 'warning',
+        showClose: false,
+        zIndex: 999999
+      }).then(resFlag => {
+        if (!resFlag) {
+          return
+        }
+        ldpApi.deleteTable(this.selected.id).then(() => {
+          this.visible = false
+          this.callback?.onDelete?.(this.selected.parent_id)
+        })
+      })
     }
   }
 }
@@ -661,6 +901,13 @@ export default {
   ::v-deep {
     .el-tabs__nav-wrap {
       padding: 0 24px;
+    }
+
+    .tabs-as-card {
+      .el-tabs__item {
+        height: 44px;
+        line-height: 44px;
+      }
     }
 
     .table-preview-tabs > .el-tabs__content > .el-tab-pane {

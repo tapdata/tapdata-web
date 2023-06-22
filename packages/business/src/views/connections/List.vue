@@ -128,7 +128,9 @@
             v-readonlybtn="'datasource_edition'"
             type="text"
             :disabled="
-              $disabledByPermission('datasource_edition_all_data', scope.row.user_id) || $disabledReadonlyUserBtn()
+              $disabledByPermission('datasource_edition_all_data', scope.row.user_id) ||
+              $disabledReadonlyUserBtn() ||
+              scope.row.agentType === 'Cloud'
             "
             @click="edit(scope.row.id, scope.row)"
             >{{ $t('public_button_edit') }}
@@ -138,7 +140,7 @@
             v-readonlybtn="'datasource_creation'"
             type="text"
             :loading="scope.row.copyLoading"
-            :disabled="$disabledReadonlyUserBtn()"
+            :disabled="$disabledReadonlyUserBtn() || scope.row.agentType === 'Cloud'"
             @click="copy(scope.row)"
             >{{ $t('public_button_copy') }}
           </ElButton>
@@ -147,7 +149,9 @@
             v-readonlybtn="'datasource_delete'"
             type="text"
             :disabled="
-              $disabledByPermission('datasource_delete_all_data', scope.row.user_id) || $disabledReadonlyUserBtn()
+              $disabledByPermission('datasource_delete_all_data', scope.row.user_id) ||
+              $disabledReadonlyUserBtn() ||
+              scope.row.agentType === 'Cloud'
             "
             @click="remove(scope.row)"
             >{{ $t('public_button_delete') }}
@@ -171,6 +175,8 @@
   </section>
 </template>
 <script>
+import i18n from '@tap/i18n'
+
 import dayjs from 'dayjs'
 
 import { connectionsApi, databaseTypesApi } from '@tap/api'
@@ -442,17 +448,45 @@ export default {
       this.$refs.preview.open(row)
     },
     edit(id, item) {
-      const { pdkHash } = item
-      let query = {
-        pdkHash
+      if (item.agentType === 'Local') {
+        this.$confirm(
+          i18n.t('packages_business_connections_list_dangqianlianjie') +
+            item.name +
+            i18n.t('packages_business_connections_list_zhengzaizuoweiF'),
+          '',
+          {
+            type: 'warning',
+            showClose: false
+          }
+        ).then(resFlag => {
+          if (!resFlag) {
+            return
+          }
+          const { pdkHash } = item
+          let query = {
+            pdkHash
+          }
+          this.$router.push({
+            name: 'connectionsEdit',
+            params: {
+              id: id
+            },
+            query
+          })
+        })
+      } else {
+        const { pdkHash } = item
+        let query = {
+          pdkHash
+        }
+        this.$router.push({
+          name: 'connectionsEdit',
+          params: {
+            id: id
+          },
+          query
+        })
       }
-      this.$router.push({
-        name: 'connectionsEdit',
-        params: {
-          id: id
-        },
-        query
-      })
     },
     copy(data) {
       let headersName = { 'lconname-name': data.name }
@@ -481,6 +515,10 @@ export default {
     remove(row) {
       const h = this.$createElement
       let strArr = this.$t('packages_business_connection_deteleDatabaseMsg').split('xxx')
+      if (row.agentType === 'Local') {
+        let str = i18n.t('packages_business_connections_list_dangqianlianjiex')
+        strArr = str.split('xxx')
+      }
       let msg = h('p', null, [
         strArr[0],
         h(

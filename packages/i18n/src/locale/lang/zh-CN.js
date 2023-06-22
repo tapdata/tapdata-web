@@ -19,6 +19,8 @@ export default {
   public_table: '表',
   public_table_name: '表名',
   public_total: '共计',
+  public_database: '数据库',
+  public_file: '文件',
 
   // 状态
   public_status_ready: '有效',
@@ -45,6 +47,11 @@ export default {
   public_status_published: '已发布',
   public_status_unpublished: '未发布',
   public_status_to_be_generated: '待生成',
+  public_status_to_be_restart: '等待重启',
+  public_status_restarting: '重启中',
+  public_status_deploying: '部署中',
+  public_status_altering: '升级中',
+
   // 按钮
   public_button_edit: '编辑',
   public_button_confirm: '确定',
@@ -96,6 +103,7 @@ export default {
   public_button_search: '搜索',
   public_button_stop_mining: '停止挖掘',
   public_button_stop_recover: '恢复挖掘',
+  public_button_execute: '执行',
   // 消息
   public_message_title_prompt: '提示',
   public_message_delete_confirm: '是否删除',

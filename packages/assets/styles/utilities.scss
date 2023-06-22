@@ -570,13 +570,24 @@
   border-width: 5px !important;
 }
 
+.w-0 {
+  width: 0 !important;
+}
+
 .w-25 {
   width: 25% !important;
+}
+.w-40 {
+  width: 40% !important;
 }
 
 .w-50 {
   width: 50% !important;
 }
+.w-60 {
+  width: 60% !important;
+}
+
 
 .w-75 {
   width: 75% !important;
@@ -12349,4 +12360,9 @@
 // icon
 .icon-color-normal {
   color: map-get($iconFillColor, normal) !important;
+}
+
+// TODO: 将来使用Tailwind CSS 或者 Windi CSS 替换
+.border-gray-200 {
+  border-color: rgb(243, 243, 243) !important;
 }

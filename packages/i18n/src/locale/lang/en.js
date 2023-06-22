@@ -19,6 +19,8 @@ export default {
   public_table: 'Table',
   public_table_name: 'Table Name',
   public_total: 'Total',
+  public_database: 'Database',
+  public_file: 'File',
   // state
   public_status_ready: 'Valid',
   public_status_invalid: 'Invalid',
@@ -44,6 +46,10 @@ export default {
   public_status_published: 'Published',
   public_status_unpublished: 'Unpublished',
   public_status_to_be_generated: 'Generating',
+  public_status_to_be_restart: 'Wait for restart',
+  public_status_restarting: 'Restarting',
+  public_status_deploying: 'Deploying',
+  public_status_altering: 'Altering',
   // button
   public_button_edit: 'Edit',
   public_button_confirm: 'Ok',
@@ -95,6 +101,7 @@ export default {
   public_button_search: 'Search',
   public_button_stop_mining: 'Stop Mining',
   public_button_stop_recover: 'Resume Mining',
+  public_button_execute: 'Execute',
   // information
   public_message_title_prompt: 'Prompt',
   public_message_delete_confirm: 'Delete',
@@ -210,7 +217,7 @@ export default {
   public_task_type_initial_sync_and_cdc: 'Initial Sync + CDC',
   public_task_status: 'Task Status',
   public_task_last_run_time: 'Last run time',
-  public_task_cdc_time_point: 'Incremental time point',
+  public_task_cdc_time_point: 'Incremental time',
   public_task_full_start_time: 'Full start time',
   public_task_full_completion_time: 'Full completion time',
   public_task_full_sync_progress: 'Full sync progress',

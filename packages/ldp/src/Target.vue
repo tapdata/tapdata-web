@@ -29,9 +29,10 @@
           v-for="item in filterList"
           :key="item.id"
           class="wrap__item rounded-lg mb-3 position-relative overflow-hidden"
+          :class="{ 'opacity-50': item.disabled }"
           @dragover="handleDragOver"
-          @dragenter.stop="handleDragEnter"
-          @dragleave.stop="handleDragLeave"
+          @dragenter.stop="handleDragEnter($event, item)"
+          @dragleave.stop="handleDragLeave($event, item)"
           @drop.stop="handleDrop($event, item)"
         >
           <template v-if="item.LDP_TYPE === 'app'">
@@ -85,6 +86,9 @@
                   class="font-color-normal fw-sub fs-6 lh-base flex-1 ml-2 flex align-center overflow-hidden"
                   :title="item.name"
                   ><span class="ellipsis">{{ item.name }}</span>
+                  <ElTag v-if="item.disabled" class="ml-1" type="info" size="small">{{
+                    $t('public_status_invalid')
+                  }}</ElTag>
                   <ElTag
                     v-if="item.showConnectorWebsite && connectionWebsiteMap[item.id]"
                     size="small"
@@ -92,8 +96,8 @@
                     @click="handleOpenWebsite(connectionWebsiteMap[item.id])"
                     ><VIcon class="mr-1" size="14">open-in-new</VIcon
                     >{{ $t('packages_business_swimlane_target_shouye') }}</ElTag
-                  ></span
-                >
+                  >
+                </span>
                 <IconButton class="ml-1" @click="$emit('preview', item)">view-details</IconButton>
                 <!--                <IconButton
                   v-if="item.showConnectorWebsite && connectionWebsiteMap[item.id]"
@@ -123,14 +127,14 @@
                   : 'packages_business_target_create_task_dialog_desc_prefix_clone'
               )
             }}</span
-            ><span v-if="dialogConfig.from" class="inline-flex align-center px-1 font-color-dark fw-sub"
+            ><span v-if="dialogConfig.from" class="inline-flex align-center px-1 font-color-dark fw-sub align-top"
               ><DatabaseIcon :item="dialogConfig.from" :key="dialogConfig.from.database_type" :size="20" class="mr-1" />
               <span>{{ dialogConfig.from.name }}</span> </span
             ><span v-if="dialogConfig.tableName" class="font-color-dark fw-sub"
               >/<span class="px-1">{{ dialogConfig.tableName }}</span> </span
             ><span>
               {{ $t('packages_business_target_create_task_dialog_desc_to') }}
-              <span v-if="dialogConfig.to" class="inline-flex align-center px-1 font-color-dark fw-sub"
+              <span v-if="dialogConfig.to" class="inline-flex align-center px-1 font-color-dark fw-sub align-top"
                 ><DatabaseIcon :item="dialogConfig.to" :key="dialogConfig.to.database_type" :size="20" class="mr-1" />
                 <span>{{ dialogConfig.to.name }}</span>
               </span></span
@@ -271,12 +275,16 @@ export default {
       if (!value) {
         callback(new Error(this.$t('packages_business_relation_list_qingshururenwu')))
       } else {
-        const isExist = await taskApi.checkName({
-          name: value
-        })
-        if (isExist) {
-          callback(new Error(this.$t('packages_dag_task_form_error_name_duplicate')))
-        } else {
+        try {
+          const isExist = await taskApi.checkName({
+            name: value
+          })
+          if (isExist) {
+            callback(new Error(this.$t('packages_dag_task_form_error_name_duplicate')))
+          } else {
+            callback()
+          }
+        } catch (e) {
           callback()
         }
       }
@@ -361,6 +369,11 @@ export default {
     this.isDaas && this.getApiServerHost()
   },
 
+  destroyed() {
+    this.destroyed = true
+    clearTimeout(this.loadTaskTimer)
+  },
+
   methods: {
     async init() {
       const connectionList = await this.getData()
@@ -375,10 +388,12 @@ export default {
         })
       }
 
+      this.connectionIds = connectionList.map(item => item.id)
       this.list = appList
         .concat(connectionList)
         .sort((obj1, obj2) => new Date(obj2.createTime) - new Date(obj1.createTime))
-      this.loadTask(connectionList)
+      await this.loadTask(connectionList)
+      this.autoLoadTaskById()
     },
 
     handleAdd() {
@@ -432,6 +447,25 @@ export default {
           }
         })
       }
+    },
+
+    autoLoadTaskById() {
+      clearTimeout(this.loadTaskTimer)
+
+      if (this.destroyed) return
+
+      this.loadTaskTimer = setTimeout(async () => {
+        const data = await taskApi.getTaskByConnection({
+          connectionIds: this.connectionIds.join(','),
+          position: 'target'
+        })
+
+        Object.keys(data).forEach(key => {
+          this.$set(this.connectionTaskMap, key, data[key].reverse().map(this.mapTask))
+        })
+
+        this.autoLoadTaskById()
+      }, 5000)
     },
 
     getTableByTask(task) {
@@ -548,15 +582,17 @@ export default {
       ev.dataTransfer.dropEffect = 'copy'
     },
 
-    handleDragEnter(ev) {
+    handleDragEnter(ev, item) {
       ev.preventDefault()
-      if (this.dragging || !this.allowDrop) return
+
+      if (this.dragging || !this.allowDrop || item.disabled) return
+
       const dropNode = this.findParentByClassName(ev.currentTarget, 'wrap__item')
       dropNode.classList.add('is-drop-inner')
     },
 
-    handleDragLeave(ev) {
-      if (this.dragging || !this.allowDrop) return
+    handleDragLeave(ev, item) {
+      if (this.dragging || !this.allowDrop || item.disabled) return
 
       if (!ev.currentTarget.contains(ev.relatedTarget)) {
         this.removeDropEffect(ev)
@@ -572,7 +608,7 @@ export default {
       ev.preventDefault()
       this.removeDropEffect(ev)
 
-      if (this.dragging) return
+      if (this.dragging || item.disabled) return
 
       const { draggingObjects } = this.dragState
       if (!draggingObjects.length) return
@@ -686,7 +722,8 @@ export default {
 
     showDialog() {
       this.dialogConfig.visible = true
-      this.dialogConfig.taskName = ''
+      this.dialogConfig.taskName = i18n.t('packages_dag_mixins_editor_xinrenwu') + new Date().toLocaleTimeString()
+      this.$refs.form?.clearValidate()
     },
 
     hideDialog() {
@@ -760,6 +797,7 @@ export default {
     },
 
     mapConnection(item) {
+      item.disabled = item.status !== 'ready'
       item.LDP_TYPE = 'connection'
       item.showConnectorWebsite = item?.capabilities.some(c => c.id === 'connector_website_function')
       item.showTableWebsite = item?.capabilities.some(c => c.id === 'connector_website_function')
@@ -778,6 +816,7 @@ export default {
 
     addItem(item) {
       if (item.LDP_TYPE !== 'app') {
+        this.connectionIds.push(item.id)
         this.mapConnection(item)
         this.loadTask([item])
       }

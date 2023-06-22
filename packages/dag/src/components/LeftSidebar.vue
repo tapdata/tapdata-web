@@ -162,9 +162,14 @@
             wrap-class="tb-list"
             :wrap-style="scrollbarWrapStyle"
           >
-            <ElSkeleton v-show="tbLoading" class="position-absolute top-0 w-100 bg-white" :loading="tbLoading" animated>
+            <ElSkeleton
+              v-show="tbLoading"
+              class="skeleton-wrap position-sticky top-0 w-100 bg-white"
+              :loading="tbLoading"
+              animated
+            >
               <template #template>
-                <div v-for="i in 5" :key="i" class="flex p-4 align-center">
+                <div v-for="i in 10" :key="i" class="flex p-4 align-center">
                   <ElSkeletonItem variant="text"></ElSkeletonItem>
                 </div>
               </template>
@@ -185,7 +190,16 @@
                 class="tb-item flex align-center px-2 user-select-none rounded-2"
                 :class="{ grabbable: !stateIsReadonly }"
               >
-                <OverflowTooltip :text="tb.name" placement="right" :open-delay="400"></OverflowTooltip>
+                <OverflowTooltip
+                  :text="tb.name"
+                  placement="right"
+                  :open-delay="400"
+                >
+                  <span>
+                    <span>{{ tb.name }}</span>
+                    <span v-if="tb.comment" class="font-color-sslight">{{ `(${tb.comment})` }}</span>
+                  </span>
+                </OverflowTooltip>
               </div>
               <VEmpty v-if="!tbList.length" />
               <div v-if="tbLoadingMore" class="text-center text-black-50 fs-8 p-2">
@@ -574,7 +588,8 @@ export default {
 
       const tables = data.items.map(tb => ({
         id: tb.id,
-        name: tb.original_name
+        name: tb.original_name,
+        comment: tb.comment
       }))
 
       this.tbTotal = data.total
@@ -818,7 +833,7 @@ $hoverBg: #eef3ff;
 }
 
 .layout-sidebar.--left {
-  overflow: hidden;
+  overflow: visible;
   $headerH: 34px;
 
   ::v-deep {
@@ -990,6 +1005,10 @@ $hoverBg: #eef3ff;
 
     .el-scrollbar {
       height: 100%;
+    }
+
+    .skeleton-wrap {
+      z-index: 1;
     }
   }
 }

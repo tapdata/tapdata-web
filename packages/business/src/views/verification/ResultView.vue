@@ -52,32 +52,67 @@
         <span>{{ statsInfo.errorMsg }}</span>
       </div>
       <template v-if="statsInfo.result !== 'passed'">
-        <div class="inspect-result-box" v-if="!showAdvancedVerification">
-          <div v-for="item in resultList" :key="item.id" class="inspect-details">
-            <ul class="father-table">
-              <li>{{ $t('packages_business_verification_inconsistentType') }}</li>
-              <li>{{ $t('packages_business_verification_sourceFieldName') }}</li>
-              <li>{{ $t('packages_business_verification_Value') }}</li>
-              <li>{{ $t('packages_business_verification_targetFieldName') }}</li>
-              <li>{{ $t('packages_business_verification_Value') }}</li>
-            </ul>
-            <ul class="sub-table" v-for="detail in item.details" :key="detail.id">
-              <li>
-                {{
-                  detail.type === 'uniqueField'
-                    ? $t('packages_business_verification_uniqueField')
-                    : $t('packages_business_verification_otherField')
-                }}
-              </li>
-              <li>{{ detail.source.key }}</li>
-              <li :class="{ red: detail.red }">
-                {{ detail.source.value }}
-              </li>
-              <li>{{ detail.target.key }}</li>
-              <li :class="{ red: detail.red }">
-                {{ detail.target.value }}
-              </li>
-            </ul>
+        <div class="flex justify-content-between pt-4 px-4">
+          <ElRadioGroup v-model="showType">
+            <ElRadio label="diff">{{ $t('packages_business_verification_details_jinxianshichayi') }}</ElRadio>
+            <ElRadio label="all">{{ $t('packages_business_verification_details_xianshiwanzhengzi') }}</ElRadio>
+          </ElRadioGroup>
+        </div>
+        <div v-if="!showAdvancedVerification" class="flex-fill flex flex-column">
+          <div class="table__header">
+            <ElRow
+              class="table__header flex align-items-center p-4 font-color-normal fw-bold border-bottom"
+              style="height: 54px; background: #fafafa; border-radius: 4px 4px 0 0"
+            >
+              <ElCol :span="12">
+                <span>{{ $t('packages_business_verification_details_yuanbiaoziduanzhi') }}</span>
+              </ElCol>
+              <ElCol :span="12">
+                <span>{{ $t('packages_business_verification_details_mubiaobiaoziduan') }}</span>
+              </ElCol>
+            </ElRow>
+          </div>
+          <div v-if="filterResultList.length" class="table__body flex-fill">
+            <div
+              v-for="(item, index) in filterResultList"
+              :key="index"
+              class="table__row"
+              :class="['position-relative border-bottom', { 'py-2 px-4': item.details }]"
+            >
+              <!--              <span-->
+              <!--                class="index-span position-absolute start-0 top-0 inline-flex justify-content-center align-items-center rounded-circle bg-color-primary color-white"-->
+              <!--                >{{ index + 1 }}</span-->
+              <!--              >-->
+              <div
+                v-for="(sItem, sIndex) in getDetailsUniqueList(item.details)"
+                :key="sIndex + 'source'"
+                class="flex disable-color py-1"
+              >
+                <div class="w-50">
+                  <span class="row__label">{{ sItem.source.key + ':' }}</span>
+                  <span class="row__value ml-4" :class="{ 'color-danger': sItem.red }">{{ sItem.source.value }}</span>
+                </div>
+                <div class="w-50">
+                  <span class="row__label">{{ sItem.target.key + ':' }}</span>
+                  <span class="row__value ml-4" :class="{ 'color-danger': sItem.red }">{{ sItem.target.value }}</span>
+                </div>
+              </div>
+
+              <div v-for="(sItem, sIndex) in getDetailsList(item.details)" :key="sIndex" class="flex py-1">
+                <div class="w-50">
+                  <span class="row__label">{{ sItem.source.key }}:</span>
+                  <span class="row__value ml-4 font-color-dark" :class="{ 'color-danger': sItem.red }">{{
+                    sItem.source.value
+                  }}</span>
+                </div>
+                <div class="w-50">
+                  <span class="row__label">{{ sItem.target.key }}:</span>
+                  <span class="row__value ml-4 font-color-dark" :class="{ 'color-danger': sItem.red }">{{
+                    sItem.target.value
+                  }}</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="inspect-ad-box" v-if="showAdvancedVerification">
@@ -310,6 +345,26 @@ $margin: 10px;
     background: #6dc5e8;
   }
 }
+.disable-color {
+  color: #86909c;
+}
+.table__body {
+  height: 0;
+  overflow-y: auto;
+}
+.table__row {
+  > div:nth-child(2n) {
+    background: #fafafa;
+  }
+}
+.row__label {
+  display: inline-block;
+  width: 150px;
+}
+.index-span {
+  width: 20px;
+  height: 20px;
+}
 </style>
 <style lang="scss">
 .result-view-pagination {
@@ -343,12 +398,18 @@ export default {
       },
       showAdvancedVerification: false,
       statsInfo: {},
-      resultList: []
+      resultList: [],
+      showType: 'diff'
+    }
+  },
+  computed: {
+    filterResultList() {
+      return this.resultList?.filter(t => !!t.details) || []
     }
   },
   methods: {
     fetch(current) {
-      this.loading = true
+      // this.loading = true
       this.remoteMethod({ current, size: this.page.size })
         .then(({ statsInfo = {}, resultList, total, showAdvancedVerification }) => {
           if (statsInfo?.result === 'failed') {
@@ -379,6 +440,15 @@ export default {
         .finally(() => {
           this.loading = false
         })
+    },
+
+    getDetailsUniqueList(data = []) {
+      return data.filter(t => t.type === 'uniqueField')
+    },
+
+    getDetailsList(data = []) {
+      if (this.showType === 'all') return data
+      return data.filter(t => !!t.red)
     }
   }
 }

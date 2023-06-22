@@ -132,7 +132,7 @@ import i18n from '@tap/i18n'
 import { clusterApi, connectionsApi, databaseTypesApi, pdkApi, externalStorageApi, proxyApi } from '@tap/api'
 import { VIcon, GitBook } from '@tap/component'
 import { SchemaToForm } from '@tap/form'
-import { checkConnectionName, submitForm } from '@tap/shared'
+import { checkConnectionName, submitForm, uuid } from '@tap/shared'
 import resize from '@tap/component/src/directives/resize'
 
 import Test from './Test'
@@ -504,7 +504,8 @@ export default {
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             'x-component-props': {
-              onChange: `{{ val => shareCDCExternalStorageIdOnChange(val, $form) }}`
+              onChange: `{{ val => shareCDCExternalStorageIdOnChange(val, $form) }}`,
+              disabled: `{{ getShareCDCExternalStorageIdDisabled() }}`
             },
             'x-reactions': [
               {
@@ -517,9 +518,10 @@ export default {
               },
               '{{useAsyncDataSourceByConfig({service: loadExternalStorage, withoutField: true}, $values.id ? $self.value : null)}}',
               {
+                dependencies: ['__TAPDATA.shareCdcEnable'],
                 fulfill: {
                   state: {
-                    value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}'
+                    value: `{{ $deps[0] ? $self.value || $self.dataSource?.find(item => item.isDefault)?.value : '' }}`
                   }
                 }
               }
@@ -538,7 +540,7 @@ export default {
               {
                 fulfill: {
                   state: {
-                    display: 'hidden'
+                    display: `{{ getShareCDCExternalStorageIdDisabled() ? "visible" : "hidden" }}`
                   }
                 }
               }
@@ -683,7 +685,8 @@ export default {
             effects: ['onFieldInputValueChange'],
             fulfill: {
               state: {
-                value: '{{$target.value || $target.dataSource[0].value}}'
+                value:
+                  '{{$target.value || ($target.dataSource && $target.dataSource[0] ? $target.dataSource[0].value : null)}}'
               }
             }
           }
@@ -697,8 +700,11 @@ export default {
           colon: false
         },
         'x-component': 'Select',
+        'x-component-props': {
+          onChange: `{{ () => $self.setSelfErrors('') }}`
+        },
         'x-reactions': [
-          '{{useAsyncDataSource(loadAccessNode)}}',
+          '{{useAsyncDataSource(loadAccessNode, "dataSource", {value: $self.value})}}',
           // 根据下拉数据判断是否存在已选的agent
           {
             fulfill: {
@@ -713,9 +719,12 @@ export default {
         ],
         // 校验下拉数据判断是否存在已选的agent
         'x-validator': `{{(value, rule, ctx)=> {
-            if (value && ctx.field.dataSource?.length) {
+            if (!value) {
+              return '${this.$t('packages_business_agent_select_placeholder')}'
+            } else if (value && ctx.field.dataSource?.length) {
               const current = ctx.field.dataSource.find(item => item.value === value)
               if (!current) {
+                $self.setSelfErrors('')
                 return '${this.$t('packages_business_agent_select_not_found')}'
               }
             }
@@ -877,10 +886,10 @@ export default {
       }
       if (id) {
         await this.getPdkData(id)
-        // 开启了共享缓存
+        // 开启了共享挖掘
         const { shareCdcEnable, shareCDCExternalStorageId } = this.model
         if (shareCdcEnable && shareCDCExternalStorageId) {
-          this.connectionLogCollectorTaskData = await connectionsApi.checkLogCollectorTask(id, 100)
+          this.connectionLogCollectorTaskData = await connectionsApi.usingDigginTaskByConnectionId(id)
         }
         delete result.properties.START.properties.__TAPDATA.properties.name
       }
@@ -918,19 +927,21 @@ export default {
             )
           }
         },
-        loadAccessNode: async () => {
+        loadAccessNode: async (fieldName, others = {}) => {
           const data = await clusterApi.findAccessNodeInfo()
 
           return (
-            data?.map(item => {
-              return {
-                value: item.processId,
-                label: `${item.hostName}（${
-                  item.status === 'running' ? i18n.t('public_status_running') : i18n.t('public_agent_status_offline')
-                }）`,
-                disabled: item.status !== 'running'
-              }
-            }) || []
+            data
+              ?.filter(t => t.status === 'running' || t.processId === others.value)
+              ?.map(item => {
+                return {
+                  value: item.processId,
+                  label: `${item.hostName}（${
+                    item.status === 'running' ? i18n.t('public_status_running') : i18n.t('public_agent_status_offline')
+                  }）`,
+                  disabled: item.status !== 'running'
+                }
+              }) || []
           )
         },
         loadCommandList: async (filter, val) => {
@@ -1002,6 +1013,7 @@ export default {
             connectionConfig: isEmpty(formValues) ? this.model?.config || {} : getValues,
             ...others,
             subscribeIds,
+            subscribeIds,
             type: 'connection'
           }
           proxyApi.command(params).then(data => {
@@ -1016,11 +1028,13 @@ export default {
         async loadExternalStorage(id) {
           try {
             let filter = {
-              where: {}
+              where: {},
+              limit: 1000,
+              skip: 0
             }
             if (id) {
               const ext = await externalStorageApi.get(id)
-              filter.where.type = ext.type
+              filter.where.type = ext?.type
             }
             const { items = [] } = await externalStorageApi.list({
               filter: JSON.stringify(filter)
@@ -1067,6 +1081,9 @@ export default {
                 : 'hidden'
           })
         },
+        getShareCDCExternalStorageIdDisabled: () => {
+          return !!this.connectionLogCollectorTaskData.total
+        },
         handleLogCollectorTaskDialog: async () => {
           this.connectionLogCollectorTaskDialog = true
         },
@@ -1079,13 +1096,58 @@ export default {
           })
           this.jsDebugSchemaData = fieldObj
           this.showJsDebug = true
+        },
+        handleGetGenerateRefreshToken: ($index, $record, items, others) => {
+          if (items.filter((t, i) => i !== $index).some(t => t.supplierKey === $record.supplierKey)) {
+            return this.$message.error(this.$t('packages_form_message_exists_name'))
+          }
+          const params = Object.assign(
+            {
+              supplierKey: $record.supplierKey,
+              randomId: $record.randomId,
+              subscribeId: `source#${this.model?.id || this.commandCallbackFunctionId}`,
+              service: 'engine'
+            },
+            others
+          )
+          proxyApi.generateRefreshToken(params).then((data = {}) => {
+            const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+            const p = location.origin + location.pathname
+            let str = `${p}${isDaas ? '' : 'tm/'}${data.path}/${data.token}`
+            if (/^\/\w+/.test(data.token)) {
+              str = `${p.replace(/\/$/, '')}${data.token}`
+            }
+            $record.refreshURL = str
+          })
+        },
+        getUid: () => {
+          return uuid()
+        },
+        getHost: async () => {
+          const data = await proxyApi.host()
+          return data?.host
         }
       }
       this.schemaData = result
       this.loadingFrom = false
     },
     async getPdkData(id) {
-      await connectionsApi.getNoSchema(id).then(data => {
+      await connectionsApi.getNoSchema(id).then(async data => {
+        // 检查外存是否存在，不存在则设置默认外存
+        const ext = await externalStorageApi.get(data.shareCDCExternalStorageId)
+        if (!ext) {
+          data.shareCDCExternalStorageId = ''
+          let filter = {
+            where: {
+              defaultStorage: true
+            }
+          }
+
+          const { items = [] } = await externalStorageApi.list({
+            filter: JSON.stringify(filter)
+          })
+          data.shareCDCExternalStorageId = items[0]?.id
+        }
         this.model = data
         let {
           name,

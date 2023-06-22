@@ -574,7 +574,7 @@ $hoverBg: #eef3ff;
 }
 
 .layout-sidebar.--left {
-  overflow: hidden;
+  overflow: visible;
   will-change: width;
   $headerH: 34px;
 

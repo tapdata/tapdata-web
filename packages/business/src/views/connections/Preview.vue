@@ -31,7 +31,12 @@
               </el-button>
             </span>
           </el-tooltip>
-          <el-button class="flex-fill min-w-0" size="mini" @click="edit()" :disabled="$disabledReadonlyUserBtn()">
+          <el-button
+            class="flex-fill min-w-0"
+            size="mini"
+            @click="edit()"
+            :disabled="$disabledReadonlyUserBtn() || connection.agentType === 'Cloud'"
+          >
             {{ $t('public_button_edit') }}
           </el-button>
           <el-button class="flex-fill min-w-0" size="mini" @click="$emit('test', connection)">
@@ -154,7 +159,7 @@ export default {
             icon: 'time',
             items: [
               {
-                label: this.$t('public_connection_button_load_schema'),
+                label: this.$t('public_connection_table_structure_update_time'),
                 key: 'loadSchemaTime'
               }
             ]
@@ -315,17 +320,47 @@ export default {
     },
     edit() {
       const { connection = {} } = this
-      const { id, pdkHash } = connection
+      const { id, pdkHash, agentType, name } = connection
       let query = {
         pdkHash
       }
-      this.$router.push({
-        name: 'connectionsEdit',
-        params: {
-          id
-        },
-        query
-      })
+      if (agentType === 'Local') {
+        this.$confirm(
+          i18n.t('packages_business_connections_list_dangqianlianjie') +
+            name +
+            i18n.t('packages_business_connections_list_zhengzaizuoweiF'),
+          '',
+          {
+            type: 'warning',
+            showClose: false
+          }
+        ).then(resFlag => {
+          if (!resFlag) {
+            return
+          }
+          let query = {
+            pdkHash
+          }
+          this.$router.push({
+            name: 'connectionsEdit',
+            params: {
+              id: id
+            },
+            query
+          })
+        })
+      } else {
+        let query = {
+          pdkHash
+        }
+        this.$router.push({
+          name: 'connectionsEdit',
+          params: {
+            id: id
+          },
+          query
+        })
+      }
     },
     async beforeTest() {
       this.checkAgent(() => {

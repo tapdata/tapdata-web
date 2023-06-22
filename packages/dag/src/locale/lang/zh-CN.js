@@ -322,6 +322,7 @@ export default {
   packages_dag_nodes_database_qingchumubiaoduan: '清除目标端原有表结构及数据',
   packages_dag_nodes_database_chongfuchulice: '重复处理策略',
   packages_dag_nodes_database_tuiyanjieguo: '推演结果',
+  packages_dag_nodes_database_guolvjieguo: '过滤结果',
   packages_dag_nodes_database_dangqianjiedianzhi: '当前节点支持处理的DDL事件',
   packages_dag_nodes_database_ddLshijian: 'DDL事件应用',
   packages_dag_nodes_database_kaiqihourenwu: '开启后任务将会自动采集选中的源端DDL事件',
@@ -603,5 +604,14 @@ export default {
   packages_dag_standardization_js: '标准化JS',
   packages_dag_mixins_formscope_gaiziduanshibi: '该字段是必填字段!',
   packages_dag_shared_mining_table_info_index_wajuebiaoxinxi: '挖掘表信息',
-  packages_dag_table_not_exist: '表不存在，将自动创建'
+  packages_dag_table_not_exist: '表不存在，将自动创建',
+  packages_dag_field_inference_list_anxishutiaozheng: '按系数调整',
+  packages_dag_field_inference_list_zidingyitiaozheng: '自定义调整',
+  packages_dag_field_inference_list_anzhaoxishu: '按系数调整字段长度',
+  packages_dag_field_inference_list_anzhaoxishu_tip: '按系数调整是指将原推演出的长度乘以设置的系数作为调整后的字段长度',
+  packages_dag_field_rename_index_yixiacaozuoyi: '以下操作已匹配不到源字段',
+  packages_dag_nodes_database_jinwuzhujianbiao: '仅无主键表',
+  packages_dag_nodes_database_jinyouzhujianbiao: '仅有主键表',
+  packages_dag_nodes_database_biaoxianshi: '表显示',
+  packages_dag_nodes_database_xuanzeyaoguolvdiaode: '选择要过滤掉的字段类型'
 }

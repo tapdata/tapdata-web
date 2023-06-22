@@ -27,6 +27,14 @@ export class FieldProcessor extends NodeType {
         'x-decorator': 'FormItem',
         'x-component': 'Input'
       },
+      fieldsOperation: {
+        type: 'object',
+        default: {
+          prefix: '',
+          suffix: '',
+          capitalized: ''
+        }
+      },
       fieldsMapping: {
         type: 'array',
         title: '',

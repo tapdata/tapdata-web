@@ -259,6 +259,10 @@ export default {
         {
           name: i18n.t('packages_dag_date_processor'),
           type: 'date_processor'
+        },
+        {
+          name: '类型过滤',
+          type: 'field_mod_type_filter_processor'
         }
       ]
       //仅企业版有的节点

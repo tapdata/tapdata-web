@@ -1033,7 +1033,7 @@ export default {
     '*Note: by default, startup occupies 3 / 5 of the system configuration memory. If 3 / 5 of the system memory exceeds 8g, it only occupies 8g at most.',
   workbench_Workbench_tAPDA12: 'Tapdata cloud version 2.1.5 has been released.',
   page_title_run_monitor: 'Run Monitoring',
-  page_title_data_verify: 'Data Validation',
+  page_title_data_verify: 'Validations',
   page_title_data_difference_details: 'Difference Details',
   notify_abnormally_stopped: 'Stopped Unexpectedly',
   header_upgrade: 'Access old version',
@@ -1364,9 +1364,17 @@ export default {
   dfs_instance_utils_baoyue: 'Monthly',
   dfs_instance_utils_one_month_only: 'One Month Only',
   dfs_instance_utils_one_year_only: 'One Year Only',
-  dfs_instance_expired_time_tip1: 'Restricted behaviors after expiration:',
-  dfs_instance_expired_time_tip2: '1. Prohibition of scheduling new tasks to run on expired instances.',
-  dfs_instance_expired_time_tip3: '2. Continued unrestricted operation of old tasks.',
+  dfs_instance_expired_time_tip1: 'Limit behavior after expiration:',
+  dfs_instance_expired_time_tip2:
+    '1. It is forbidden to schedule new tasks to run on the expired Agent after 1 day of expiration',
+  dfs_instance_expired_time_tip3:
+    '2. The old task can continue to run, but when the task is restarted, it will not be rescheduled to run on the expired Agent',
+  dfs_instance_expired_time_tip4:
+    '3. When the instance is prohibited from being scheduled due to expiration, the instance can be resumed by renewal to continue scheduling running tasks',
+  dfs_instance_expired_time_full_tip2:
+    '1. After 1 day expires, the Agent will be automatically stopped (the tasks running on the Agent will also be stopped)',
+  dfs_instance_expired_time_full_tip3:
+    '2. When the instance is stopped due to expiration, the instance can be resumed by renewal to continue running tasks',
   dfs_user_center_zhifufuwu: 'Payment Service',
   dfs_user_center_ninjiangzhifur:
     'You will pay for the "{val1}" service, and you will enjoy the service after payment. Are you sure whether to continue? ',
@@ -1451,7 +1459,7 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_shiyongbantuoguan: 'The benefits of using the Semi-Managed mode:',
   dfs_agent_download_subscriptionmodeldialog_zaizhezhongmoshi2:
     'In this mode, you need to provide your own computing resources and storage resources',
-  dfs_agent_download_subscriptionmodeldialog_quantuoguanmoshi: 'Fully-Managed Mode (Coming Soon)',
+  dfs_agent_download_subscriptionmodeldialog_quantuoguanmoshi: 'Fully-Managed Mode',
   dfs_agent_download_subscriptionmodeldialog_bantuoguanmoshi: 'Semi-Managed Mode',
   dfs_instance_instance_quxiaodingyue: 'Unsubscribe',
   dfs_views_layout_chanpinyindao: 'Product Guide',
@@ -1501,5 +1509,67 @@ export default {
   dfs_agent_download_transferdialog_kaihuyinhang: 'Account Bank: ',
   dfs_agent_download_transferdialog_shenzhentaiboshu: 'Shenzhen Titanium Platinum Data Co., Ltd',
   dfs_agent_download_transferdialog_kaihumingcheng: 'Account Name: ',
-  dfs_agent_download_transferdialog_zhuanzhangxinxi: 'Tansfer Information'
+  dfs_agent_download_transferdialog_zhuanzhangxinxi: 'Tansfer Information',
+
+  dfs_agent_download_subscriptionmodeldialog_xuanzechanpinmo: 'Select product model',
+  dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi: 'Hosting Method',
+  dfs_agent_download_subscriptionmodeldialog_kafka: 'Kafka for data',
+  dfs_agent_download_subscriptionmodeldialog_shujukuguochan: 'Database domestic replacement',
+  dfs_agent_download_subscriptionmodeldialog_shujushangyunkua: 'Data upload to cloud/cross-cloud synchronization',
+  dfs_agent_download_subscriptionmodeldialog_shujuEtl: 'Data ETL',
+  dfs_agent_download_subscriptionmodeldialog_shishishujutong: 'Real-time data synchronization',
+  dfs_agent_download_subscriptionmodeldialog_gongzuoliangjicheng: 'workload integration',
+  dfs_agent_download_subscriptionmodeldialog_apIfuwu: 'API service publishing',
+  dfs_agent_download_subscriptionmodeldialog_yunchangshangkeyong: 'Availability zone:',
+  dfs_agent_download_subscriptionmodeldialog_diqu: 'Region',
+  dfs_agent_download_subscriptionmodeldialog_yunfuwushang: 'Cloud service provider',
+  dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxi: 'Please select the region you want to deploy',
+  dfs_agent_download_subscriptionmodeldialog_chuzhichisuoyou:
+    'In addition to supporting all data integration platform scenarios, it also supports:',
+  dfs_agent_download_subscriptionmodeldialog_zhuyaoshiyongchang: 'Main usage scenarios',
+  dfs_agent_download_subscriptionmodeldialog_heIPaa:
+    'Compared with IPaas, the biggest difference is that it uses a central storage to provide shared services for enterprise core data. It has the advantages of low impact on source database performance, scalability, and data governance.',
+  dfs_agent_download_subscriptionmodeldialog_qiyeshishishu:
+    'Enterprise real-time data service platform. By integrating data into the centralized platform in real time, after simple management, the central platform provides real-time API data services or data push services for downstream data business scenarios.',
+  dfs_agent_download_subscriptionmodeldialog_qiyeshishishu2: 'Real Time Data as a Service',
+  dfs_agent_download_subscriptionmodeldialog_leisiyuFi:
+    'Similar to products such as Fivetran, Airbyte, and Hevodata, but supports more real-time data experience and lower costs, and supports both cloud and offline deployment. ',
+  dfs_agent_download_subscriptionmodeldialog_qiyeshujuji:
+    'Enterprise data integration platform can be used to connect various data systems of enterprises, and carry out real-time data transmission, transformation and processing in these systems. ',
+  dfs_agent_download_subscriptionmodeldialog_qiyeshujuji2: 'Integration Platform as a Service',
+  dfs_instance_createagent_yunchangshangkeyong: 'Availability Zone',
+  dfs_instance_createagent_heIPaa:
+    'Compared with IPaas, the biggest difference is that it uses a central storage to provide shared services for enterprise core data. It has the advantages of low impact on source database performance, scalability, and data governance.',
+  dfs_instance_createagent_qiyeshishishu:
+    'Enterprise real-time data service platform. By integrating data into the centralized platform in real time, after simple management, the central platform provides real-time API data services or data push services for downstream data business scenarios.',
+  dfs_instance_createagent_leisiyuFi:
+    'Similar to products such as Fivetran, Airbyte, and Hevodata, but supports more real-time data experience and lower costs, and supports both cloud and offline deployment. ',
+  dfs_instance_createagent_qiyeshujuji:
+    'Enterprise data integration platform can be used to connect various data systems of enterprises, and carry out real-time data transmission, conversion and processing in these systems. ',
+  dfs_instance_instance_zhongqi: 'Restart',
+  dfs_instance_utils_quantuoguan: 'Full Management',
+  dfs_instance_utils_bantuoguan: 'Semi Management',
+  dfs_the_header_header_dingyuezhongxin: 'Subscription Center',
+  dfs_router_index_dingyuezhongxin: 'Subscription Center',
+  dfs_instance_createagent_mianfeishiyonggui: 'Free trial specification',
+  dfs_instance_createagent_tian: '15 days',
+  dfs_instance_createagent_xuanzecunchufang: 'Choose a storage solution',
+  dfs_instance_createagent_minjiehujuzhong: 'Agile data center',
+  dfs_instance_createagent_kucunzhongxin: 'Inventory Center',
+  dfs_instance_createagent_shangpinzhongxin: 'Commodity Center',
+  dfs_instance_createagent_kehu: 'Customer 360',
+  dfs_instance_createagent_bIkanbangong: 'BI kanban supply number',
+  dfs_instance_createagent_shishishucang: 'real-time data warehouse',
+  dfs_instance_createagent_minjieshujuzhong: 'Agile Data Center',
+  dfs_instance_createagent_apIkuaisu: 'API quick release',
+  dfs_instance_createagent_cunchuziyuan: 'Storage resource: ',
+  dfs_instance_createagent_jisuanziyuan: 'Computing resources: ',
+  dfs_instance_createagent_cunchukongjian: 'Storage Space',
+  dfs_instance_createagent_cunchuguige: 'Storage Specification',
+  dfs_instance_createagent_qingxuanzeninxu: 'Please select the storage space you need:',
+  dfs_instance_createagent_qingxuanzeninxu2: 'Please select the storage resource specification you need:',
+  dfs_instance_createagent_qingtianxieninzi: 'Please fill in your own MongoDB storage cluster URI',
+  dfs_instance_createagent_qingpeizhininde: 'Please configure your storage resources:',
+  dfs_order_list_dingyuezhuangtai: 'Subscription Status',
+  dfs_order_list_xinzengdingyue: 'Add Subscription'
 }

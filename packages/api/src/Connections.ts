@@ -42,9 +42,6 @@ export default class Connections extends Http {
   checkConnectionTask(id: string) {
     return this.axios.get(`${this.url}/task/` + id + '/10')
   }
-  checkLogCollectorTask(id: string, limit: number) {
-    return this.axios.get(`${this.url}/logCollectorTask/${id}/${limit}`)
-  }
 
   getStats() {
     return this.axios.get(this.url + '/stats')
@@ -58,6 +55,9 @@ export default class Connections extends Http {
   }
   heartbeatTask(connectionId) {
     return this.axios.get(`${this.url}/${connectionId}/heartbeat-task`)
+  }
+  usingDigginTaskByConnectionId(connectionId) {
+    return this.axios.get(`${this.url}/${connectionId}/usingDigginTaskByConnectionId`)
   }
 }
 

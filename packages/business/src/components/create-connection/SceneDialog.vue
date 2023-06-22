@@ -158,7 +158,9 @@ export default {
     selectorType: String
   },
   data() {
+    const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
     return {
+      isDaas,
       search: '',
       formParams: {
         name: '',
@@ -184,7 +186,8 @@ export default {
         },
         {
           key: 'api',
-          name: i18n.t('packages_business_api_publish') /*,
+          name: i18n.t('packages_business_api_publish'),
+          hidden: !isDaas /*,
           types: ['RESTful API', 'GraphQL']*/
         },
         {
@@ -239,7 +242,7 @@ export default {
           name: i18n.t('public_select_option_all')
         },
         {
-          name: 'Databases',
+          name: i18n.t('public_database'),
           key: 'Database'
         },
         {
@@ -247,11 +250,11 @@ export default {
           key: 'SaaS'
         },
         {
-          name: 'File',
+          name: i18n.t('public_file'),
           key: 'File'
         },
         {
-          name: 'My Connectors',
+          name: i18n.t('packages_business_components_connectiontypeselectorsort_wodeshujuyuan'),
           key: 'Custom'
         }
       ],
@@ -292,10 +295,8 @@ export default {
       return this.database.filter(db => db.tags?.includes(this.currentScene))
     },
     options() {
-      if (this.selectorType === 'target') {
-        return this.sceneList
-      }
-      return this.tagList
+      let list = this.selectorType === 'target' ? this.sceneList : this.tagList
+      return list.filter(item => !item.hidden)
     },
     title() {
       if (this.selectorType === 'target') {
@@ -400,9 +401,7 @@ export default {
         this.selectorType !== 'source_and_target'
           ? res?.filter(t => t.connectionType.includes(this.selectorType) && !!t.pdkHash) || []
           : res
-      this.database = data.sort((o1, o2) => {
-        return o1.name.localeCompare(o2.name)
-      })
+      this.database = data
       this.loading = false
     },
 

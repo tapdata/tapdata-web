@@ -341,10 +341,11 @@ export default {
   packages_business_relation_details_shiyonggaiguanlian: '使用该{val}的任务清单',
   packages_business_relation_list_jiaoyanrenwu: '校验任务',
   packages_business_relation_list_huancunrenwu: '缓存任务',
-  packages_business_relation_list_qingshururenwu: '请输入任务名称...',
+  packages_business_relation_list_qingshururenwu: '请输入任务名称',
   packages_business_relation_details_huancun: '缓存',
   packages_business_relation_details_wajue: '挖掘',
   packages_business_relation_details_renwu: '任务',
+  packages_business_agent_select_placeholder: '请选择agent',
   packages_business_agent_select_not_found: '该agent已不存在，请选择其他agent',
   packages_business_components_connectiontypeselectorsort_wodeshujuyuan: '我的数据源',
   packages_business_components_connectiontypeselectorsort_jiaoyouTap:
@@ -699,7 +700,7 @@ export default {
   packages_business_shared_cdc_setting_select_time_tip: '请选择日志保存时长',
   packages_business_shared_cdc_setting_message_edit_save: '保存成功，重启任务后生效',
   packages_business_shared_list_name: '挖掘名称',
-  packages_business_shared_list_time_excavation: '挖掘所处时间点',
+  packages_business_shared_list_time_excavation: '挖掘所处时间点(数据库时间)',
   packages_business_shared_list_setting: '挖掘设置',
   packages_business_shared_list_status: '状态',
   packages_business_shared_list_time: '挖掘延迟',
@@ -1046,15 +1047,36 @@ export default {
   packages_business_swimlane_target_shouye: '首页',
   packages_business_connections_databaseform_chakanwajueren: '查看挖掘任务',
   packages_business_connections_databaseform_dangqianlianjiede:
-    '当前连接的挖掘任务正在使用原外存，切换会导致已挖掘数据丢失，请谨慎操作。',
+    '当前连接的挖掘任务正在使用该外存，暂不允许修改，如需修改请先重置或删除对应挖掘任务。',
   packages_business_shared_mining_table_yitingzhiwajue: '已停止挖掘',
   packages_business_shared_mining_table_zhengzaiwajue: '正在挖掘',
   packages_business_shared_mining_table_ninyaotingzhiwa:
     '您要停止挖掘的表正在被以下任务使用，停止挖掘后将会影响以下任务的正常同步，请确认是否要继续停止。',
   packages_business_shared_mining_table_tingzhiwajueti: '停止挖掘提醒',
   packages_business_shared_mining_table_yihebingdelian: '已合并的连接',
-  packages_business_shared_mining_table_shengyuyigelian: '剩余一个连接和一张表，无法进行该操作',
+  packages_business_shared_mining_table_shengyuyigelian: '挖掘任务中至少要有一张表在挖掘，不能全部停止。',
   packages_business_logs_nodelog_yijianfuzhi: '一键复制',
   packages_business_connections_jsdebug_shiyongHtt: '使用HttpReceiver最新接收到的数据用于调试',
-  packages_business_connections_jsdebug_huoqutiaoshishu: '获取调试数据'
+  packages_business_connections_jsdebug_huoqutiaoshishu: '获取调试数据',
+  packages_business_shared_mining_list_shanchurenwus:
+    '删除任务<span class="color-primary">{val1}</span>后，此任务将无法恢复',
+  packages_business_shared_mining_list_gaiwajuerenwu: '该挖掘任务已被 {val} 个任务调用，请删除任务后重试',
+  packages_business_shared_cache_list_qingxianxiugaiwai: '外存不存在，请先修改外存配置后，再启动。',
+  packages_business_components_conditionbox_shifouquerenqing: '是否确认清除索引字段为空的校验条件？',
+  packages_business_components_conditionbox_suoyinziduanwei: '索引字段为空',
+  packages_business_components_conditionbox_yijianqingchusuo: '一键清除索引字段为空的条件',
+  packages_business_external_storage_list_yanzhengfuwuduan: '验证服务端证书',
+  packages_business_external_storage_list_siyaomima: '私钥密码',
+  packages_business_external_storage_list_kehuduansiyao: '客户端私钥',
+  packages_business_external_storage_list_zhengshubanfaji: '证书颁发机构',
+  packages_business_external_storage_list_shiyongTls: '使用 TLS/SSL 连接',
+  packages_business_connections_list_dangqianlianjiex:
+    '当前连接 xxx 正在作为FDM和MDM的存储使用，删除会导致已有存储数据丢失，是否确认要继续删除。',
+  packages_business_connections_list_zhengzaizuoweiF:
+    '正在作为FDM和MDM的存储使用，修改会导致已有存储数据丢失，是否确认要继续修改',
+  packages_business_connections_list_dangqianlianjie: '当前连接',
+  packages_business_components_conditionbox_chakanzidingyi: '查看自定义字段',
+  packages_business_components_fielddialog_ziduanbuyunxu: '字段不允许为空',
+  packages_business_components_fielddialog_zidingyiziduan: '自定义字段',
+  packages_business_verification_list_biaobufenziduan: '表部分字段校验'
 }

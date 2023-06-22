@@ -367,10 +367,6 @@ $headerHeight: 40px;
       }
     }
 
-    .resize-trigger {
-      background: 0 0 !important;
-    }
-
     .setting-tabs.el-tabs {
       height: 100%;
       > .el-tabs__header {

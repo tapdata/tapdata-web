@@ -3,7 +3,7 @@
     <span v-if="showTitle" class="fw-bold mb-4">{{ $t('packages_business_shared_mining_table_wajuebiaoxinxi') }}</span>
     <div class="mb-3 flex">
       <span class="flex-shrink-0">{{ $t('packages_business_shared_mining_table_yihebingdelian') }}</span>
-      <ElSelect v-model="selectedConnectionId" size="mini" class="ml-4" @change="() => fetch">
+      <ElSelect v-model="selectedConnectionId" size="mini" class="ml-4" clearable @change="() => fetch()">
         <ElOption v-for="item in connectionsList" :label="item.name" :value="item.id" :key="item.id"></ElOption>
       </ElSelect>
     </div>
@@ -43,11 +43,10 @@
       </div>
     </div>
     <VTable
-      v-if="selectedConnectionId"
       :columns="columns"
       :remoteMethod="remoteMethod"
       :page-options="{
-        layout: 'total, ->, prev, pager, next, sizes, jumper'
+        layout: 'total, prev, pager, next, jumper'
       }"
       ref="table"
       height="100%"
@@ -72,6 +71,9 @@
         <span class="ml-3 mr-12">{{ $t('packages_business_shared_mining_table_ninyaotingzhiwa') }}</span>
       </div>
       <VTable :columns="taskColumns" :data="taskData" :has-pagination="false">
+        <template #name="{ row }">
+          <ElLink type="primary" @click="handleName(row)">{{ row.name }}</ElLink>
+        </template>
         <template #status="{ row }">
           <TaskStatus :task="row" />
         </template>
@@ -94,6 +96,7 @@ import { debounce } from 'lodash'
 import { VTable } from '@tap/component'
 import { logcollectorApi, taskApi } from '@tap/api'
 import { TaskStatus } from '../../components'
+import { openUrl } from '@tap/shared'
 
 let timeout = null
 
@@ -187,7 +190,8 @@ export default {
       taskColumns: [
         {
           label: i18n.t('public_task_name'),
-          prop: 'name'
+          prop: 'name',
+          slotName: 'name'
         },
         {
           label: i18n.t('public_task_status'),
@@ -214,7 +218,7 @@ export default {
   async created() {
     this.currentTab = this.tabItems[0].value
     this.connectionsList = await logcollectorApi.getConnectionIdsByTaskId(this.taskId)
-    this.selectedConnectionId = this.connectionsList[0]?.id
+    // this.selectedConnectionId = this.connectionsList[0]?.id
 
     //定时轮询
     timeout = setInterval(() => {
@@ -263,8 +267,12 @@ export default {
     },
 
     handleStop() {
-      if (this.connectionsList.length <= 1 && this.listTotal <= 1)
-        return this.$message.error(i18n.t('packages_business_shared_mining_table_shengyuyigelian'))
+      const flag =
+        (this.selectedConnectionId &&
+          this.connectionsList.length <= 1 &&
+          (this.listTotal <= 1 || this.multipleSelection.length === this.listTotal)) ||
+        (!this.selectedConnectionId && this.multipleSelection.length === this.listTotal)
+      if (flag) return this.$message.error(i18n.t('packages_business_shared_mining_table_shengyuyigelian'))
       const { taskId } = this
       let tableNameMap = {}
       this.multipleSelection.forEach(t => {
@@ -333,6 +341,22 @@ export default {
 
     clearTimer() {
       clearInterval(timeout)
+    },
+
+    handleName({ syncType, name }) {
+      const MAP = {
+        migrate: 'migrateList',
+        sync: 'dataflowList',
+        logCollector: 'sharedMiningList',
+        mem_cache: 'sharedCacheList'
+      }
+      const routeUrl = this.$router.resolve({
+        name: MAP[syncType],
+        query: {
+          keyword: name
+        }
+      })
+      openUrl(routeUrl.href)
     }
   }
 }

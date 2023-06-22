@@ -1,6 +1,6 @@
 <template>
   <aside class="layout-sidebar --left border-end flex-column flex-shrink-0">
-    <div class="flex flex-column flex-1 min-h-0">
+    <div class="flex flex-column flex-1 min-h-0 overflow-y-auto">
       <div class="info-box flex justify-content-between align-items-center">
         <TimeSelect :range="$attrs.range" ref="timeSelect" class="mb-1" @change="changeTimeSelect"></TimeSelect>
         <ElDivider direction="vertical" class="mx-1"></ElDivider>
@@ -139,7 +139,10 @@
         </div>
       </div>
 
-      <div v-if="['SharedMiningMonitor', 'SharedCacheMonitor'].includes($route.name)" class="info-box">
+      <div
+        v-if="['SharedMiningMonitor', 'SharedCacheMonitor'].includes($route.name) && infoList.length > 0"
+        class="info-box"
+      >
         <div class="flex justify-content-between mb-2">
           <span class="fw-bold fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_jibenxinxi') }}</span>
         </div>
@@ -500,7 +503,7 @@ export default {
 
     // 任务事件统计（条）-任务累计
     eventDataAll() {
-      const data = this.quota.samples?.totalData?.[0]
+      const data = this.quota.samples?.barChartData?.[0]
       return this.getInputOutput(data)
     },
 
@@ -605,7 +608,15 @@ export default {
           const { username, host, database, query } = regResult.groups
           uriInfo = `mongodb://${username}:***@${host}/${database}${query ? '/' + query : ''}`
         }
-
+        if (!externalStorage.name) {
+          this.infoList = [
+            {
+              label: this.$t('packages_business_relation_details_rizhiwajueshi'),
+              value: this.formatTime(logTime)
+            }
+          ]
+          return
+        }
         this.infoList = [
           {
             label: this.$t('packages_business_relation_details_rizhiwajueshi'),
@@ -692,7 +703,7 @@ export default {
 
 .layout-sidebar.--left {
   z-index: unset; // 防止侧边栏出现的dialog被节点覆盖
-  overflow: hidden auto;
+  overflow: visible;
   will-change: width;
   $headerH: 34px;
 
@@ -738,10 +749,6 @@ export default {
 
     .el-scrollbar {
       height: 100%;
-    }
-
-    .resize-trigger {
-      background: 0 0 !important;
     }
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="field-inference" v-loading="transformLoading">
+  <div class="field-inference">
     <div class="field-inference__header flex justify-content-end">
       <div v-if="batchRuleCounts" class="flex align-items-center cursor-pointer color-primary" @click="visible = true">
         <VIcon>info</VIcon>
@@ -80,7 +80,7 @@
           </div>
         </ElPagination>
       </div>
-      <div class="field-inference__content flex-fill flex flex-column">
+      <div v-loading="fieldsLoading" class="field-inference__content flex-fill flex flex-column">
         <div class="px-2">
           <span>{{ $t('packages_dag_nodes_table_gengxintiaojianzi') }}</span>
           <ElTooltip
@@ -153,6 +153,7 @@ import { debounce, cloneDeep } from 'lodash'
 import noData from '@tap/assets/images/noData.png'
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
 import { getCanUseDataTypes, getMatchedDataTypeLevel } from '@tap/dag/src/util'
+import { metadataInstancesApi } from '@tap/api'
 
 import mixins from './mixins'
 import List from './List'
@@ -173,6 +174,7 @@ export default {
   data() {
     return {
       navLoading: false,
+      fieldsLoading: false,
       position: 0,
       selected: {},
       navList: [],
@@ -213,7 +215,6 @@ export default {
   },
 
   computed: {
-    ...mapState('dataflow', ['transformLoading']),
     ...mapGetters('dataflow', ['stateIsReadonly']),
 
     batchRuleCounts() {
@@ -247,7 +248,22 @@ export default {
   methods: {
     async loadData(resetSelect = false) {
       this.navLoading = true
-      this.fieldChangeRules = this.form.getValuesIn('fieldChangeRules') || []
+      this.fieldsLoading = true
+      // TODO 获取原字段类型
+      let rules = this.form.getValuesIn('fieldChangeRules') || []
+      if (rules.length) {
+        let allTableFields = []
+        this.navList.forEach(el => {
+          allTableFields.push(...el.fields.filter(t => !!t.changeRuleId))
+        })
+        rules.forEach(el => {
+          const f = allTableFields.find(t => t.changeRuleId === el.id)
+          if (f && el.accept !== f.dataTypeTemp) {
+            el.accept = f.dataTypeTemp
+          }
+        })
+      }
+      this.fieldChangeRules = rules
       this.$refs.list.setRules(this.fieldChangeRules)
       this.updateConditionFieldMap = cloneDeep(this.form.getValuesIn('updateConditionFieldMap') || {})
       const { size, current } = this.page
@@ -301,15 +317,18 @@ export default {
       this.loadData()
     },
 
-    filterFields() {
+    async filterFields() {
+      this.fieldsLoading = true
       let item = this.navList[this.position]
       let fields = item?.fields
       const findPossibleDataTypes = item?.findPossibleDataTypes || {}
       if (this.searchField) {
         fields = item.fields.filter(t => t.field_name.toLowerCase().includes(this.searchField?.toLowerCase()))
       }
+      fields = await this.getCurrentTableFields(item, this.fieldChangeRules)
       this.selected = Object.assign({}, item, { fields, findPossibleDataTypes })
       this.updateList = this.updateConditionFieldMap[this.selected.name] || []
+      this.fieldsLoading = false
     },
 
     handleSelect(index = 0) {
@@ -361,9 +380,33 @@ export default {
       this.form.setValuesIn('updateConditionFieldMap', cloneDeep(this.updateConditionFieldMap))
     },
 
-    handleUpdateRules(val = []) {
+    async handleUpdateRules(val = []) {
       this.fieldChangeRules = val
       this.handleUpdate()
+      this.updateSelectedAllFields(await this.getCurrentTableFields(this.selected, val))
+    },
+
+    updateSelectedAllFields(fields = []) {
+      this.selected.fields.forEach(t => {
+        const f = fields.find(el => el.field_name === t.field_name)
+        if (f) {
+          t.data_type = f.data_type
+        }
+      })
+    },
+
+    async getCurrentTableFields(item = {}, rules = []) {
+      const { qualified_name, nodeId, source = {}, fields = [] } = item
+      const { database_type } = source
+      const params = {
+        rules: rules.filter(t => t.namespace.length === 1 || t.namespace.includes(qualified_name)),
+        qualifiedName: qualified_name,
+        nodeId,
+        databaseType: database_type,
+        fields
+      }
+      const data = (await metadataInstancesApi.multiTransform(params)) || { fields: [] }
+      return data.fields.length ? data.fields : fields
     }
   }
 }

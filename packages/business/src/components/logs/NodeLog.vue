@@ -212,25 +212,22 @@
         v-html="codeDialog.data.errorStack"
         class="error-stack-wrap text-prewrap mb-6 ml-4 font-color-light border overflow-y-auto bg-color-normal p-4"
       ></div>
-      <div
-        v-if="codeDialog.data.errorStack"
-        v-html="codeDialog.data.errorStack"
-        class="error-stack-wrap text-prewrap mb-6 ml-4 font-color-light border overflow-y-auto bg-color-normal p-4"
-      ></div>
-      <div
-        v-if="codeDialog.data.seeAlso && codeDialog.data.seeAlso.length"
-        class="fw-bold fs-6 mb-3 ml-4 font-color-dark"
-      >
-        See Also
-      </div>
-      <p
-        v-for="(item, index) in codeDialog.data.seeAlso"
-        :key="index"
-        class="flex align-items-center mb-2 ml-4 font-color-normal"
-      >
-        <span>{{ index + 1 }}.</span>
-        <ElLink type="primary" class="text-decoration-underline" @click="handleLink(item)">{{ item }}</ElLink>
-      </p>
+      <template v-if="!isIKAS">
+        <div
+          v-if="codeDialog.data.seeAlso && codeDialog.data.seeAlso.length"
+          class="fw-bold fs-6 mb-3 ml-4 font-color-dark"
+        >
+          See Also
+        </div>
+        <p
+          v-for="(item, index) in codeDialog.data.seeAlso"
+          :key="index"
+          class="flex align-items-center mb-2 ml-4 font-color-normal"
+        >
+          <span>{{ index + 1 }}.</span>
+          <ElLink type="primary" class="text-decoration-underline" @click="handleLink(item)">{{ item }}</ElLink>
+        </p>
+      </template>
     </ElDialog>
   </div>
 </template>
@@ -377,7 +374,8 @@ export default {
         timestamp: false
       },
       fullscreen: false,
-      showTooltip: false
+      showTooltip: false,
+      isIKAS: process.env.VUE_APP_PAGE_TITLE === 'IKAS'
     }
   },
 

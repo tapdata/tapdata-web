@@ -85,7 +85,7 @@
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
               :disabled="row.btnDisabled.start"
-              @click="start([row.id])"
+              @click="start([row.id], row)"
             >
               {{ $t('public_button_start') }}
             </ElLink>
@@ -159,7 +159,9 @@
 <script>
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash'
-import { sharedCacheApi, taskApi } from '@tap/api'
+
+import i18n from '@tap/i18n'
+import { externalStorageApi, sharedCacheApi, taskApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage, TaskStatus, makeStatusAndDisabled } from '@tap/business'
 
@@ -212,6 +214,7 @@ export default {
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
     }, 8000)
+    this.searchParams = Object.assign(this.searchParams, { name: this.$route.query?.keyword || '' })
   },
   destroyed() {
     clearInterval(timeout)
@@ -277,7 +280,12 @@ export default {
       this.multipleSelection = val
     },
 
-    start(ids) {
+    async start(ids, row) {
+      const externalStorage = await externalStorageApi.get(row.externalStorageId)
+      if (!externalStorage?.id) {
+        this.$message.error(i18n.t('packages_business_shared_cache_list_qingxianxiugaiwai'))
+        return
+      }
       this.buried(this.taskBuried.start)
       let filter = {
         where: {

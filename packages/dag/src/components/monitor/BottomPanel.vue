@@ -180,11 +180,10 @@ $headerHeight: 40px;
 
 .bottom-panel {
   position: relative;
-  z-index: 9;
   height: 328px;
   //min-height: 328px;
   //height: 100%;
-  overflow: auto;
+  overflow: visible;
   background-color: #fff;
   //transition: height 0.24s;
   will-change: width;
@@ -279,10 +278,6 @@ $headerHeight: 40px;
           height: 100%;
         }
       }
-    }
-
-    .resize-trigger {
-      background: 0 0 !important;
     }
   }
 }

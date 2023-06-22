@@ -46,7 +46,15 @@
           <RecycleScroller class="selector-panel__scroller" :item-size="36" :buffer="50" :items="filteredData">
             <template #default="{ item }">
               <ElCheckbox class="selector-panel__item" :label="item" :key="item">
-                <OverflowTooltip :text="item" placement="right" :enterable="false"></OverflowTooltip>
+                <OverflowTooltip :text="item" placement="right" :enterable="false">
+                  <span>
+                    <span>{{ item }}</span>
+                    <span v-if="getTableInfo(item).tableComment" class="font-color-sslight">{{
+                      `(${getTableInfo(item).tableComment})`
+                    }}</span>
+                    <VIcon v-if="!!getTableInfo(item).primaryKeyCounts" size="12" class="text-warning ml-1">key</VIcon>
+                  </span>
+                </OverflowTooltip>
               </ElCheckbox>
             </template>
           </RecycleScroller>
@@ -135,6 +143,10 @@
                 >
                   <div :class="{ 'color-danger': errorTables[item] }">
                     <slot name="right-item" :row="item">{{ item }}</slot>
+                    <span v-if="getTableInfo(item).tableComment" class="font-color-sslight">{{
+                      `(${getTableInfo(item).tableComment})`
+                    }}</span>
+                    <VIcon v-if="!!getTableInfo(item).primaryKeyCounts" size="12" class="text-warning ml-1">key</VIcon>
                   </div>
                 </ElTooltip>
               </ElCheckbox>
@@ -360,6 +372,8 @@ import OverflowTooltip from '@tap/component/src/overflow-tooltip'
 import VIcon from '@tap/component/src/base/VIcon'
 import ConnectionTest from '@tap/business/src/views/connections/Test'
 
+import { getPrimaryKeyTablesByType } from '../../../util'
+
 export default {
   components: { RecycleScroller, OverflowTooltip, ConnectionTest, VIcon },
   props: {
@@ -370,7 +384,8 @@ export default {
     value: Array,
     disabled: Boolean,
     hideReload: Boolean,
-    reloadTime: [String, Number]
+    reloadTime: [String, Number],
+    filterType: String
   },
   data() {
     return {
@@ -394,7 +409,8 @@ export default {
       errorTables: {},
       isOpenClipMode: false,
       clipboardValue: '',
-      isFocus: false
+      isFocus: false,
+      tableMap: {}
     }
   },
   computed: {
@@ -402,7 +418,11 @@ export default {
       let { searchKeyword, tables } = this.table
       try {
         let reg = new RegExp(searchKeyword, 'i')
-        return tables.filter(item => reg.test(item))
+        return getPrimaryKeyTablesByType(
+          tables.filter(item => reg.test(item)),
+          this.filterType,
+          this.tableMap
+        )
       } catch (error) {
         return []
       }
@@ -421,7 +441,7 @@ export default {
         }
         return 0
       })
-      return filterTables
+      return getPrimaryKeyTablesByType(filterTables, this.filterType, this.tableMap)
     },
     clipboardTables() {
       //支持换行符 /n
@@ -466,6 +486,9 @@ export default {
     },
     reloadTime() {
       this.getProgress()
+    },
+    filterType() {
+      this.handleFilterType()
     }
   },
   created() {
@@ -568,9 +591,20 @@ export default {
     // 获取所有表
     getTables() {
       this.loading = true
+      const { connectionId } = this
       metadataInstancesApi
-        .getSourceTables(this.connectionId)
-        .then((tables = []) => {
+        .pageTables({ connectionId, limit: 0 })
+        .then((res = {}) => {
+          let data = res.items || []
+          let tables = data.map(it => it.tableName)
+          let map = {}
+          data.forEach((el = {}) => {
+            const { tableName, tableComment, primaryKeyCounts = 0 } = el
+            if (tableComment || primaryKeyCounts) {
+              map[tableName] = { tableComment, primaryKeyCounts }
+            }
+          })
+          this.tableMap = map
           tables.sort((t1, t2) => (t1 > t2 ? 1 : t1 === t2 ? 0 : -1))
           this.table.tables = Object.freeze(tables)
         })
@@ -663,6 +697,27 @@ export default {
       this.selected.isCheckAll =
         this.filterSelectedData.length > 0 &&
         this.filterSelectedData.every(item => this.selected.checked.indexOf(item) > -1)
+    },
+
+    getTableInfo(table) {
+      return this.tableMap[table] || {}
+    },
+
+    handleFilterType() {
+      this.table.checked = []
+      this.selected.checked = []
+      if (this.filterType === 'All') return
+
+      // 待复制表
+      this.table.isCheckAll = false
+
+      // 已选择表
+      this.selected.tables = Object.freeze(
+        getPrimaryKeyTablesByType(this.selected.tables, this.filterType, this.tableMap)
+      )
+      this.selected.isCheckAll = false
+      this.$emit('input', this.selected.tables)
+      this.$emit('change', this.selected.tables)
     }
   }
 }

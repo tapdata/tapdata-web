@@ -1,5 +1,14 @@
 import i18n from '@tap/i18n'
 
+export const INSTANCE_STATUS_MAP = {
+  Creating: { text: i18n.t('public_agent_status_to_be_deployed'), type: 'warning' },
+  Running: { text: i18n.t('public_status_running'), type: 'success' },
+  Stopping: { text: i18n.t('public_status_stopping'), type: 'danger' },
+  Stopped: { text: i18n.t('public_agent_status_offline'), type: 'disable' },
+  WaitingRestart: { text: i18n.t('public_status_to_be_restart'), type: 'disable' },
+  Restarting: { text: i18n.t('public_status_restarting'), type: 'disable' },
+  Deploying: { text: i18n.t('public_status_deploying'), type: 'disable' }
+}
 export const CONNECTION_STATUS_MAP = {
   ready: { text: i18n.t('public_status_ready'), type: 'success' },
   invalid: { text: i18n.t('public_status_invalid'), type: 'danger' },

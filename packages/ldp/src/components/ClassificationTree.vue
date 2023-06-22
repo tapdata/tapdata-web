@@ -709,7 +709,8 @@ export default {
             isLeaf: true,
             isObject: true,
             connectionId: item.sourceConId,
-            LDP_TYPE: 'table'
+            LDP_TYPE: 'table',
+            SWIM_TYPE: node.item_type?.[0]
           })
         )
       })
@@ -745,7 +746,7 @@ export default {
     },
 
     async getTableList(id) {
-      const res = await metadataInstancesApi.getSourceTablesValues(id)
+      const res = await metadataInstancesApi.getTablesValue({ connectionId: id })
       return res.map(t => {
         return {
           id: t.tableId,
@@ -788,9 +789,9 @@ $nodeH: 32px;
       border-radius: 6px;
     }
 
-    &.is-current > .el-tree-node__content {
-      background-color: #eef3ff;
-    }
+    //&.is-current > .el-tree-node__content {
+    //  background-color: #eef3ff;
+    //}
 
     &.is-drop-inner > .el-tree-node__content {
       background-color: #d0deff;
@@ -802,7 +803,7 @@ $nodeH: 32px;
     display: flex;
     align-items: center;
     font-size: 14px;
-    padding-right: 8px;
+    padding-right: 4px;
     overflow: hidden;
     text-overflow: ellipsis;
     line-height: $nodeH;

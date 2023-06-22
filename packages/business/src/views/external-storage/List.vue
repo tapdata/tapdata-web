@@ -20,6 +20,15 @@
         :label="$t('public_external_memory_type')"
         prop="typeFmt"
       ></ElTableColumn>
+      <ElTableColumn show-overflow-tooltip min-width="150" :label="$t('public_status')" prop="typeFmt">
+        <template #default="{ row }">
+          <div>
+            <span :class="['status-connection-' + row.status, 'status-block']">
+              {{ getStatus(row.status) }}
+            </span>
+          </div>
+        </template>
+      </ElTableColumn>
       <ElTableColumn
         show-overflow-tooltip
         min-width="300"
@@ -32,7 +41,7 @@
         :label="$t('public_create_time')"
         prop="createTimeFmt"
       ></ElTableColumn>
-      <ElTableColumn width="220" :label="$t('public_operation')">
+      <ElTableColumn width="320" :label="$t('public_operation')">
         <template #default="{ row }">
           <span class="mr-2">{{ $t('packages_business_external_storage_list_sheweimoren') }}</span>
           <ElSwitch
@@ -42,7 +51,13 @@
             @change="handleDefault(row)"
           ></ElSwitch>
           <ElDivider direction="vertical"></ElDivider>
-          <ElButton type="text" @click="handleEdit(row)">{{ $t('public_button_edit') }}</ElButton>
+          <ElButton :disabled="row.type !== 'mongodb'" type="text" @click="handleTest(row)"
+            >{{ $t('public_connection_button_test') }}
+          </ElButton>
+          <ElDivider direction="vertical"></ElDivider>
+          <ElButton type="text" :disabled="!row.canEdit" @click="handleEdit(row)">{{
+            $t('public_button_edit')
+          }}</ElButton>
           <ElDivider direction="vertical"></ElDivider>
           <ElButton type="text" :disabled="!row.canDelete" @click="remove(row)">{{
             $t('public_button_delete')
@@ -72,14 +87,18 @@
           <ElInput v-model="form.name"></ElInput>
         </ElFormItem>
         <ElFormItem required :label="$t('public_external_memory_type')">
-          <ElSelect v-model="form.type" :disabled="form.id">
+          <ElSelect v-model="form.type" :disabled="!!form.id">
             <ElOption label="MongoDB" value="mongodb"></ElOption>
             <ElOption label="RocksDB" value="rocksdb"></ElOption>
           </ElSelect>
         </ElFormItem>
-        <ElFormItem :label="$t('packages_business_external_storage_list_cunchulujing')" prop="uri">
+        <ElFormItem
+          v-if="form.type !== 'memory'"
+          :label="$t('packages_business_external_storage_list_cunchulujing')"
+          prop="uri"
+        >
           <ElInput
-            v-model="form.uri"
+            v-model.trim="form.uri"
             :placeholder="
               form.type === 'mongodb'
                 ? 'Example: mongodb://admin:password@127.0.0.1:27017/mydb?replicaSet=xxx&authSource=admin'
@@ -89,11 +108,23 @@
             resize="none"
           ></ElInput>
         </ElFormItem>
+
+        <SchemaToForm
+          v-if="form.type === 'mongodb'"
+          ref="schemaToForm"
+          :schema="schemaData"
+          :colon="true"
+          :label-width="schemaLabelWidth"
+        ></SchemaToForm>
+
         <ElFormItem :label="$t('packages_business_external_storage_list_sheweimoren')">
           <ElSwitch v-model="form.defaultStorage"></ElSwitch>
         </ElFormItem>
       </ElForm>
       <span slot="footer" class="dialog-footer">
+        <ElButton :disabled="form.type !== 'mongodb'" @click="handleEditorTest()"
+          >{{ $t('public_connection_button_test') }}
+        </ElButton>
         <ElButton size="mini" @click="dialogVisible = false">{{ $t('public_button_cancel') }}</ElButton>
         <ElButton type="primary" size="mini" @click="submit">{{ $t('public_button_confirm') }}</ElButton>
       </span>
@@ -136,6 +167,14 @@
         </el-table-column>
       </el-table>
     </el-dialog>
+
+    <Test
+      ref="test"
+      :visible.sync="dialogTestVisible"
+      :formData="model"
+      test-type="testExternalStorage"
+      @returnTestData="returnTestData"
+    ></Test>
   </section>
 </template>
 <script>
@@ -144,12 +183,17 @@ import i18n from '@/i18n'
 import dayjs from 'dayjs'
 import { cloneDeep, escapeRegExp } from 'lodash'
 
-import { externalStorageApi } from '@tap/api'
+import { databaseTypesApi, externalStorageApi } from '@tap/api'
 import { TablePage, EXTERNAL_STORAGE_TYPE_MAP } from '@tap/business'
+import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 import { FilterBar, Drawer } from '@tap/component'
+import { openUrl } from '@tap/shared'
+import { SchemaToForm } from '@tap/form'
+import Test from '@tap/business/src/views/connections/Test'
 
 export default {
-  components: { TablePage, FilterBar, Drawer },
+  components: { TablePage, FilterBar, Drawer, SchemaToForm, Test },
+  inject: ['checkAgent'],
   data() {
     return {
       loading: false,
@@ -160,6 +204,7 @@ export default {
         keyword: ''
       },
       dialogVisible: false,
+      dialogForm: {},
       form: {},
       rules: {
         name: [
@@ -181,8 +226,12 @@ export default {
       details: '',
       info: [],
       labelWidth: '120px',
+      schemaLabelWidth: 120,
       showUsingTaskDialog: false,
-      usingTasks: []
+      usingTasks: [],
+      schemaData: null,
+      dialogTestVisible: false,
+      model: {}
     }
   },
   computed: {
@@ -200,6 +249,76 @@ export default {
     this.getFilterItems()
     const { locale } = this.$i18n
     this.labelWidth = locale === 'en' ? '220px' : '120px'
+    this.schemaLabelWidth = locale === 'en' ? 220 : 120
+    this.schemaData = {
+      type: 'object',
+      properties: {
+        ssl: {
+          default: false,
+          'x-decorator': 'FormItem',
+          'x-component': 'Switch',
+          'x-reactions': [
+            {
+              fulfill: {
+                state: {
+                  visible: '{{$self.value===true}}'
+                }
+              },
+              target: '*(sslKey,sslPass,sslValidate)'
+            }
+          ],
+          'x-component-props': {
+            optionType: 'button'
+          },
+          type: 'boolean',
+          title: i18n.t('packages_business_external_storage_list_shiyongTls'),
+          'x-index': 80
+        },
+        sslCA: {
+          'x-decorator': 'FormItem',
+          'x-component': 'TextFileReader',
+          type: 'string',
+          title: i18n.t('packages_business_external_storage_list_zhengshubanfaji'),
+          'x-index': 120,
+          fileNameField: 'sslCAFile',
+          required: true
+        },
+        sslKey: {
+          'x-decorator': 'FormItem',
+          'x-component': 'TextFileReader',
+          type: 'string',
+          title: i18n.t('packages_business_external_storage_list_kehuduansiyao'),
+          'x-index': 90,
+          fileNameField: 'sslKeyFile',
+          required: true
+        },
+        sslPass: {
+          'x-decorator': 'FormItem',
+          'x-component': 'Password',
+          type: 'string',
+          title: i18n.t('packages_business_external_storage_list_siyaomima'),
+          'x-index': 100
+        },
+        sslValidate: {
+          'x-decorator': 'FormItem',
+          'x-component': 'Switch',
+          show: false,
+          'x-reactions': [
+            {
+              fulfill: {
+                state: {
+                  visible: '{{$self.value===true}}'
+                }
+              },
+              target: 'sslCA'
+            }
+          ],
+          type: 'boolean',
+          title: i18n.t('packages_business_external_storage_list_yanzhengfuwuduan'),
+          'x-index': 110
+        }
+      }
+    }
   },
   methods: {
     getFilterItems() {
@@ -249,6 +368,7 @@ export default {
           let list = (data?.items || []).map(item => {
             item.typeFmt = EXTERNAL_STORAGE_TYPE_MAP[item.type] || '-'
             item.createTimeFmt = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') || '-'
+            item.status = item.status || 'ready'
             return item
           })
           return {
@@ -259,6 +379,7 @@ export default {
     },
     openDialog(row) {
       this.dialogVisible = true
+      this.dialogForm = row || {}
       this.form = row
         ? cloneDeep(row)
         : {
@@ -274,37 +395,45 @@ export default {
     submit() {
       this.$refs.form.validate(async valid => {
         if (valid) {
-          this.loading = true
-          let { id, name, type, uri, defaultStorage } = this.form
-          let params = {
-            id,
-            name,
-            type,
-            uri,
-            defaultStorage
-          }
-          const catchFunc = () => {
-            this.loading = false
-          }
-          if (id) {
-            await externalStorageApi
-              .updateById(id, params)
-              .then(() => {
-                this.table.fetch()
-                this.dialogVisible = false
-                this.loading = false
-              })
-              .catch(catchFunc)
-          } else {
-            await externalStorageApi
-              .post(params)
-              .then(() => {
-                this.table.fetch()
-                this.dialogVisible = false
-                this.loading = false
-              })
-              .catch(catchFunc)
-          }
+          const schemaFormInstance = this.$refs.schemaToForm.getForm?.()
+          schemaFormInstance?.validate().then(async () => {
+            let formValues = this.$refs.schemaToForm?.getFormValues?.()
+
+            this.loading = true
+            let { id, name, type, uri, defaultStorage } = this.form
+            let params = Object.assign(
+              {
+                id,
+                name,
+                type,
+                uri,
+                defaultStorage
+              },
+              formValues
+            )
+            const catchFunc = () => {
+              this.loading = false
+            }
+            if (id) {
+              await externalStorageApi
+                .updateById(id, params)
+                .then(() => {
+                  this.table.fetch()
+                  this.dialogVisible = false
+                  this.loading = false
+                })
+                .catch(catchFunc)
+            } else {
+              await externalStorageApi
+                .post(params)
+                .then(() => {
+                  this.table.fetch()
+                  this.dialogVisible = false
+                  this.loading = false
+                })
+                .catch(catchFunc)
+            }
+          })
         }
       })
     },
@@ -316,13 +445,13 @@ export default {
     },
     async remove(row) {
       //先去请求是否外存已被使用了
-      this.usingTasks = await externalStorageApi.usingTask(row.id)
+      this.usingTasks = (await externalStorageApi.usingTask(row.id)) || []
       const flag = await this.$confirm(i18n.t('packages_business_external_storage_list_querenshanchuwai'), '', {
         type: 'warning',
         showClose: false
       })
       if (flag) {
-        if (this.usingTasks) {
+        if (this.usingTasks?.length) {
           this.showUsingTaskDialog = true
         } else {
           await externalStorageApi.delete(row.id)
@@ -353,26 +482,81 @@ export default {
      * @param row
      */
     handleClickName(item) {
-      if (item?.syncType === 'migrate') {
-        this.$router.push({
-          name: 'migrateList',
-          query: {
-            keyword: item.name
-          }
-        })
-      } else {
-        this.$router.push({
-          name: 'dataflowList',
-          query: {
-            keyword: item.name
-          }
-        })
+      let { syncType, shareCache } = item
+      if (shareCache) {
+        syncType = 'mem_cache'
       }
+      const MAP = {
+        migrate: 'migrateList',
+        sync: 'dataflowList',
+        logCollector: 'sharedMiningList',
+        mem_cache: 'sharedCacheList',
+        connHeartbeat: 'HeartbeatTableList'
+      }
+      const routeUrl = this.$router.resolve({
+        name: MAP[syncType],
+        query: {
+          keyword: item.name
+        }
+      })
+      openUrl(routeUrl.href)
     },
 
     // 编辑
     handleEdit(row = {}) {
       this.openDialog(row)
+    },
+
+    handleTest(row = {}) {
+      this.startTest({ id: row.id })
+    },
+
+    handleEditorTest() {
+      this.$refs.form.validate(async valid => {
+        if (valid) {
+          const schemaFormInstance = this.$refs.schemaToForm.getForm?.()
+          schemaFormInstance?.validate().then(async () => {
+            let formValues = this.$refs.schemaToForm?.getFormValues?.()
+
+            this.loading = true
+            let { id, name, type, uri, defaultStorage } = this.form
+            let params = Object.assign(
+              {
+                id,
+                name,
+                type,
+                uri,
+                defaultStorage
+              },
+              formValues
+            )
+            let result = { id }
+            for (let key in params) {
+              if (params[key] !== this.dialogForm[key]) {
+                result[key] = params[key]
+              }
+            }
+
+            this.startTest(result)
+          })
+        }
+      })
+    },
+
+    startTest(data = {}) {
+      this.checkAgent(() => {
+        Object.assign(this.model, data)
+        this.dialogTestVisible = true
+        this.$refs.test.start(false)
+      }).catch(() => {
+        this.buried('connectionTestAgentFail')
+      })
+    },
+
+    returnTestData(data) {},
+
+    getStatus(status) {
+      return CONNECTION_STATUS_MAP[status || 'ready']?.text || ''
     }
   }
 }
@@ -432,6 +616,13 @@ export default {
     .value {
       font-size: $fontBaseTitle;
       color: map-get($fontColor, dark);
+    }
+  }
+}
+.scheme-to-form {
+  ::v-deep {
+    .formily-element-form-item {
+      margin-bottom: 18px;
     }
   }
 }

@@ -30,3 +30,11 @@ export function getPaymentMethod(item = {}, chargeProvider = '') {
   if (periodUnit === 'year') return i18n.t('dfs_instance_utils_one_year_only')
   return i18n.t('dfs_instance_utils_one_month_only')
 }
+export const AGENT_TYPE_MAP = {
+  local: i18n.t('dfs_instance_utils_bantuoguan'),
+  cloud: i18n.t('dfs_instance_utils_quantuoguan'),
+  selfHost: i18n.t('dfs_instance_utils_bantuoguan'),
+  fullManagement: i18n.t('dfs_instance_utils_quantuoguan'),
+  Local: i18n.t('dfs_instance_utils_bantuoguan'),
+  Cloud: i18n.t('dfs_instance_utils_quantuoguan')
+}
