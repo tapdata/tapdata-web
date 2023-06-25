@@ -25,7 +25,7 @@
           </template>
         </ElInput>
       </div>
-      <div class="flex-fill min-h-0" v-loading="loading || searchIng">
+      <div v-if="!showParentLineage" class="flex-fill min-h-0" v-loading="loading || searchIng">
         <VirtualTree
           key="searchTree"
           v-if="showSearch"
@@ -45,6 +45,7 @@
           @node-drag-start="handleDragStart"
           @node-drag-end="handleDragEnd"
           @node-expand="handleNodeExpand"
+          @handle-scroll="handleScroll"
         />
         <VirtualTree
           key="tree"
@@ -66,9 +67,10 @@
           :allow-drop="() => false"
           @node-drag-start="handleDragStart"
           @node-drag-end="handleDragEnd"
+          @handle-scroll="handleScroll"
         >
           <span
-            class="custom-tree-node flex align-items-center"
+            class="custom-tree-node flex align-items-center position-relative"
             :class="{ grabbable: data.isObject, 'opacity-50': data.disabled }"
             slot-scope="{ node, data }"
             @click="$emit('preview', data, node.parent.data)"
@@ -86,12 +88,35 @@
               <StageButton :connection-id="getConnectionId(node)"> </StageButton>
             </div>
             <VIcon v-else class="tree-item-icon mr-2" size="18">table</VIcon>
-            <span class="table-label" :title="data.name">
+            <span :ref="`connection_${data.id}`" class="table-label" :title="data.name">
               {{ data.name }}
               <span v-if="data.comment" class="font-color-sslight">{{ `(${data.comment})` }}</span>
               <ElTag v-if="data.disabled" type="info" size="mini">{{ $t('public_status_invalid') }}</ElTag>
             </span>
           </span>
+        </VirtualTree>
+      </div>
+      <div v-else class="flex-fill min-h-0" v-loading="loading || searchIng">
+        <VirtualTree
+          key="searchTree"
+          class="ldp-tree lineage-tree h-100"
+          ref="tree"
+          node-key="id"
+          :props="props"
+          draggable
+          height="100%"
+          wrapper-class-name="p-2"
+          :default-expanded-keys="searchExpandedKeys"
+          :data="filterTreeData"
+          :render-content="renderContent"
+          :expand-on-click-node="false"
+          :allow-drag="node => node.data.isObject"
+          :allow-drop="() => false"
+          @node-drag-start="handleDragStart"
+          @node-drag-end="handleDragEnd"
+          @node-expand="handleNodeExpand"
+          @handle-scroll="handleScroll"
+        >
         </VirtualTree>
       </div>
     </div>
@@ -113,7 +138,8 @@ export default {
   props: {
     dragState: Object,
     eventDriver: Object,
-    fdmAndMdmId: Array
+    fdmAndMdmId: Array,
+    showParentLineage: Boolean
   },
 
   components: { NodeIcon, VirtualTree, StageButton, IconButton, DatabaseIcon },
@@ -216,6 +242,7 @@ export default {
 
       if (data.isObject) {
         className.push('grabbable')
+        className.push('table-node')
       }
 
       if (data.disabled) {
@@ -238,7 +265,12 @@ export default {
               table
             </VIcon>
           )}
-          <span class="table-label" title={data.name}>
+          <span
+            id={data.isObject ? `ldp_source_table_${data.connectionId}_${data.name}` : `connection_${data.id}`}
+            class="table-label"
+            class={data.isObject && 'haha'}
+            title={data.name}
+          >
             {data.name}
           </span>
           {data.disabled && (
@@ -419,6 +451,43 @@ export default {
           id: val[1]
         })
       })
+    },
+
+    handleFindTreeDom(val = {}) {
+      const el = document.getElementById(`ldp_source_table_${val.connectionId}_${val.table}`)
+      return el?.parentNode
+    },
+
+    handleScroll: debounce(function () {
+      this.$emit('handle-connection')
+    }, 200),
+
+    async searchByKeywordList(val = []) {
+      let searchExpandedKeys = []
+      this.filterTreeData = val.map(t => {
+        searchExpandedKeys.push(t.connectionId)
+        return {
+          LDP_TYPE: 'connection',
+          id: t.connectionId,
+          name: t.connectionName,
+          status: 'ready',
+          isLeaf: false,
+          level: 0,
+          disabled: false,
+          children: [
+            {
+              id: t.tableId,
+              name: t.table,
+              connectionId: t.connectionId,
+              isLeaf: true,
+              isObject: true,
+              type: 'table',
+              LDP_TYPE: 'table'
+            }
+          ]
+        }
+      })
+      this.searchExpandedKeys = searchExpandedKeys
     }
   }
 }
@@ -435,6 +504,14 @@ export default {
   }
   &:hover .btn-menu {
     display: block;
+  }
+}
+
+.lineage-tree {
+  ::v-deep {
+    .table-node {
+      background-color: #f2f3f5;
+    }
   }
 }
 </style>

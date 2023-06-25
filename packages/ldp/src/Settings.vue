@@ -339,6 +339,7 @@ export default {
       }
 
       update && this.$emit('update:mode', this.mode)
+      update && this.$emit('update:fdmStorageConnectionId', this.form.fdmStorageConnectionId)
     },
 
     handleOpen() {

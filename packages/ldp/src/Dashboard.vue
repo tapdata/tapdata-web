@@ -13,10 +13,12 @@
       <ElTooltip placement="top" v-else :content="$t('packages_business_switch_data_console_view')" key="console">
         <IconButton class="ml-3" @click="toggleView('swimlane')" md>swimlane</IconButton>
       </ElTooltip>
-      <div class="flex-grow-1"></div>
+      <div class="flex-grow-1 text-center">
+        <span v-if="showParentLineage" class="color-warning cursor-pointer">退出溯源(Esc)</span>
+      </div>
       <IconButton class="ml-3" @click="handleSettings" md>cog-o</IconButton>
     </div>
-    <div class="list flex flex-fill overflow-hidden">
+    <div class="list flex flex-fill overflow-hidden position-relative">
       <div v-if="currentView === 'catalog'" class="px-5 pb-5 w-100 border-top">
         <Catalogue @create-single-task="hanldeCreateSingleTask"></Catalogue>
       </div>
@@ -35,11 +37,14 @@
           :loadingDirectory="loadingDirectory"
           :fdmAndMdmId="fdmAndMdmId"
           :mapCatalog="mapCatalog"
+          :showParentLineage="showParentLineage"
           @create-connection="handleAdd"
           @node-drag-end="handleDragEnd"
           @show-settings="handleSettings"
           @load-directory="loadDirectory"
           @preview="handlePreview"
+          @find-parent="handleFindParent"
+          @handle-connection="handleConnection"
         ></component>
       </template>
     </div>
@@ -63,7 +68,7 @@
 <script>
 import { IconButton } from '@tap/component'
 import { SceneDialog, EventEmitter } from '@tap/business'
-import { connectionsApi, metadataDefinitionsApi } from '@tap/api'
+import { connectionsApi, lineageApi, metadataDefinitionsApi, ldpApi } from '@tap/api'
 
 import SourceItem from './Source'
 import TargetItem from './Target'
@@ -73,6 +78,8 @@ import Settings from './Settings'
 import TablePreview from './TablePreview'
 import ConnectionPreview from './ConnectionPreview'
 import Catalogue from './components/Catalogue'
+
+import { jsPlumb } from '@tap/dag'
 
 const TYPE2NAME = {
   target: 'TARGET&SERVICE'
@@ -114,7 +121,15 @@ export default {
       mdmConnection: null,
       loadingDirectory: true,
       eventDriver: new EventEmitter(),
-      currentView: 'swimlane'
+      currentView: 'swimlane',
+      parentNodeDom: null,
+      preLinkNodes: [],
+      nextLinkNodes: [],
+      connectionLines: [],
+      jsPlumbIns: jsPlumb.getInstance(),
+      showParentLineage: false,
+      nodes: [],
+      edgsLinks: []
     }
   },
 
@@ -171,6 +186,20 @@ export default {
 
   created() {
     this.loadDirectory()
+  },
+
+  mounted() {
+    this.$nextTick(() => {
+      this.jsPlumbIns.connect({
+        source: this.$refs.source[0].$el,
+        target: this.$refs.source[0].$el,
+        endpoint: 'Dot',
+        connector: ['Bezier'],
+        anchor: ['Left', 'Right'],
+        endpointStyle: { fill: 'white', radius: 0 }
+      })
+      this.jsPlumbIns.reset()
+    })
   },
 
   methods: {
@@ -334,6 +363,138 @@ export default {
       } else {
         this.$router.push(route)
       }
+    },
+
+    handleFindParent(parentNode, tableInfo = {}, ldpType = 'mdm') {
+      lineageApi.findByTable(tableInfo.connectionId, tableInfo.name).then(data => {
+        const { edges, nodes } = data.dag || {}
+        this.nodes = nodes
+        const otherLdpType = ldpType === 'mdm' ? 'fdm' : 'mdm'
+        let edgsLinks = edges.map(t => {
+          let sourceNode = nodes.find(el => el.id === t.source)
+          let targetNode = nodes.find(el => el.id === t.target)
+          sourceNode.dom = null
+          targetNode.dom = null
+          sourceNode.ldpType =
+            sourceNode.type === 'apiserverLineage'
+              ? 'target'
+              : this.settings.fdmStorageConnectionId === sourceNode.connectionId
+              ? otherLdpType
+              : 'source'
+          targetNode.ldpType =
+            targetNode.type === 'apiserverLineage'
+              ? 'target'
+              : this.settings.fdmStorageConnectionId === targetNode.connectionId
+              ? otherLdpType
+              : 'source'
+          // 记录事件触发的dom和ldpType
+          if (sourceNode.table === tableInfo.name) {
+            sourceNode.ldpType = ldpType
+            sourceNode.dom = parentNode
+          } else if (targetNode.table === tableInfo.name) {
+            targetNode.ldpType = ldpType
+            targetNode.dom = parentNode
+          }
+          return Object.assign(t, {
+            sourceNode,
+            targetNode
+          })
+        })
+        this.edgsLinks = edgsLinks
+
+        this.handleConnection()
+      })
+    },
+
+    clearConnectionLine() {
+      this.jsPlumbIns.deleteEveryConnection()
+    },
+
+    async handleConnection() {
+      let connectionLines = []
+
+      // 获取dom的方法
+      const map = {
+        source: this.$refs.source[0].handleFindTreeDom,
+        target: this.$refs.target[0].handleFindTaskDom,
+        mdm: function () {},
+        fdm: this.$refs.fdm[0].handleFindTreeDom
+      }
+
+      // 需要过滤的数据
+      let keywordOptions = {
+        source: [],
+        target: [],
+        fdm: [],
+        mdm: []
+      }
+      this.nodes.forEach(el => {
+        if (el.ldpType === 'target') {
+          if (el.type === 'apiserverLineage') {
+            const { table, modules = {} } = el || {}
+            const { appName, name } = Object.values(modules)[0] || {}
+            keywordOptions[el.ldpType].push({
+              table,
+              appName,
+              serverName: name
+            })
+          }
+        } else {
+          const { connectionId, connectionName, table, metadata = {} } = el || {}
+          keywordOptions[el.ldpType].push({
+            connectionId,
+            connectionName,
+            table,
+            tableId: metadata.id
+          })
+        }
+      })
+
+      // 过滤source列表
+      if (keywordOptions) {
+        // this.$refs.source[0].searchByKeywordList(sourceKeyword)
+        // this.$refs.fdm[0].searchByKeywordList(sourceKeyword)
+        this.$refs.source[0].searchByKeywordList(keywordOptions.source)
+        this.$refs.fdm[0].searchByKeywordList(keywordOptions.fdm)
+      }
+
+      this.showParentLineage = true
+
+      this.$nextTick(() => {
+        this.edgsLinks.forEach(el => {
+          const { sourceNode, targetNode } = el || {}
+          let sDom = sourceNode.dom
+          let tDom = targetNode.dom
+          if (!sDom) {
+            sDom = map[sourceNode.ldpType](sourceNode)
+          }
+          if (!tDom) {
+            tDom = map[targetNode.ldpType](targetNode)
+          }
+          connectionLines.push([sDom, tDom])
+        })
+
+        this.connectionLines = connectionLines
+
+        this.jsPlumbIns.reset()
+        this.connectionLines.forEach((el = []) => {
+          const [source, target] = el
+          this.jsPlumbIns.connect({
+            source, // 源节点
+            target, // 目标节点
+            endpoint: 'Dot', // 端点的样式，可以设置Dot、Rectangle、image、Blank
+            connector: ['Straight'], // 连接线 Bezier(贝塞尔曲线) Straight(直线) Flowchart(垂直或水平线组成的连接) StateMachine
+            anchor: ['Left', 'Right'], // 锚点位置
+            endpointStyle: { fill: 'rgba(255, 255, 255, 0)', radius: 2 },
+            paintStyle: {
+              strokeWidth: 2,
+              stroke: '#FF7D00',
+              dashstyle: '2 4'
+            },
+            overlays: [['Arrow', { width: 10, length: 10, location: 1, id: 'arrow', foldback: 0.8, fill: '#FF7D00' }]]
+          })
+        })
+      })
     }
   }
 }

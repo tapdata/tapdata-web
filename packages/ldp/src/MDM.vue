@@ -355,6 +355,14 @@ export default {
           <span class="table-label" title={data.name}>
             {data.name}
           </span>
+          <span
+            onClick={ev => {
+              ev.stopPropagation()
+              this.handleFindLineage(ev, data)
+            }}
+          >
+            溯源
+          </span>
           {data.comment && <span class="font-color-sslight">{`(${data.comment})`}</span>}
           <div class="btn-menu">{actions}</div>
         </div>
@@ -777,6 +785,11 @@ export default {
           this.setNodeExpand(data.parent_id, true)
         })
       })
+    },
+
+    handleFindLineage(event, data) {
+      const parentNode = event.target?.parentElement
+      this.$emit('find-parent', parentNode, data)
     }
   }
 }

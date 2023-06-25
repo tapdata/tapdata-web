@@ -23,10 +23,11 @@
         </ElInput>
       </div>
 
-      <div class="flex-fill min-h-0 overflow-auto p-2">
+      <div class="flex-fill min-h-0 overflow-auto p-2 position-relative" @scroll="handleScroll">
         <!--<draggable v-model="filterList" @start="dragging = true" @end="dragging = false">-->
         <div
           v-for="item in filterList"
+          :ref="`wrap__item${item.id}`"
           :key="item.id"
           class="wrap__item rounded-lg mb-3 position-relative overflow-hidden"
           :class="{ 'opacity-50': item.disabled }"
@@ -49,7 +50,7 @@
                 <div class="task-list-content">
                   <template v-if="item.modules && item.modules.length">
                     <div v-for="(m, i) in item.modules" :key="i" class="task-list-item flex align-center">
-                      <div class="p-1 ellipsis flex-1 align-center">
+                      <div :ref="`ldp_target_api_${m.id}`" class="p-1 ellipsis flex-1 align-center position-relative">
                         <a
                           class="el-link el-link--primary w-100 justify-content-start"
                           :title="m.name"
@@ -109,7 +110,13 @@
                 {{ $t('packages_business_data_console_target_connection_desc', { val: item.database_type }) }}
               </div>
             </div>
-            <TaskList :list="connectionTaskMap[item.id] || []" @edit-in-dag="handleClickName"></TaskList>
+            <TaskList
+              ref="taskList"
+              :item-id="item.id"
+              :list="connectionTaskMap[item.id] || []"
+              @edit-in-dag="handleClickName"
+              @find-parent="handleFindParent"
+            ></TaskList>
           </template>
         </div>
         <!--</draggable>-->
@@ -168,6 +175,7 @@
 
 <script>
 // import draggable from 'vuedraggable'
+import { debounce } from 'lodash'
 import { defineComponent, ref } from '@vue/composition-api'
 
 import { apiServerApi, appApi, connectionsApi, modulesApi, proxyApi, taskApi } from '@tap/api'
@@ -855,7 +863,18 @@ export default {
 
     handleOpenWebsite(url) {
       window.open(url)
-    }
+    },
+
+    handleFindTaskDom(val = {}) {
+      const modules = Object.values(val.modules) || []
+      const app = modules?.[0] || {}
+      const el = this.$refs[`ldp_target_api_${app.id}`]?.[0]
+      return el?.parentNode
+    },
+
+    handleScroll: debounce(function () {
+      this.$emit('handle-connection')
+    }, 200)
   }
 }
 </script>
