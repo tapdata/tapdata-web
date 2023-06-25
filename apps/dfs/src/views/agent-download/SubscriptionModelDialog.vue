@@ -344,9 +344,15 @@
                   <div class="is-active-triangle"></div>
                   <VIcon size="16" class="is-active-icon">check-bold</VIcon>
                 </div>
-                <div class="spec-li-title mt-1 lh-base fw-bold font-color-dark">
+                <div class="spec-li-title mt-1 lh-base fw-bold font-color-dark flex align-items-center">
                   <span>{{ item.name }}: </span>
                   <span>{{ item.desc }}</span>
+                  <ElTag
+                    v-if="item.chargeProvider === 'FreeTier'"
+                    size="small"
+                    class="bg-color-warning text-white border-0 ml-2"
+                    >{{ $t('dfs_instance_createagent_mianfeitiyan') }}</ElTag
+                  >
                 </div>
                 <div
                   v-if="agentDeploy === 'selfHost'"
@@ -1075,7 +1081,7 @@ export default {
     },
     //格式化价格
     formatPrice(item, isOriginalPrice) {
-      if (!item || item?.chargeProvider === 'FreeTier') return 0
+      if (!item || item?.chargeProvider === 'FreeTier') return '0'
 
       let amount = this.getAmount(item, isOriginalPrice) + this.mdbPrices
       return (
@@ -1188,10 +1194,7 @@ export default {
         if (this.agentCount > 0) {
           this.specificationItems = this.specificationItems.filter(it => it.chargeProvider !== 'FreeTier')
         }
-        this.specification =
-          this.agentCount > 0 || this.agentDeploy !== 'selfHost'
-            ? this.specificationItems[1]?.value
-            : this.specificationItems[0]?.value
+        this.specification = this.specificationItems[0]?.value
         // 价格套餐
         this.allPackages = paidPrice.map(t => {
           return Object.assign(t, {
@@ -1478,7 +1481,15 @@ export default {
       this.$axios
         .post('api/tcm/orders', params)
         .then(data => {
-          if (data.chargeProvider === 'FreeTier' || (data.chargeProvider === 'Aliyun' && row.agentType === 'Local')) {
+          if (data.chargeProvider === 'FreeTier' && this.agentDeploy === 'fullManagement') {
+            this.finish()
+            this.$router.push({
+              name: 'Instance'
+            })
+          } else if (
+            data.chargeProvider === 'FreeTier' ||
+            (data.chargeProvider === 'Aliyun' && row.agentType === 'Local')
+          ) {
             //免费实例（授权码）-半托管-直接部署页面
             this.finish()
             let downloadUrl = window.App.$router.resolve({
