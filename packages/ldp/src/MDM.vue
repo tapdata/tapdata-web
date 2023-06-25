@@ -60,6 +60,7 @@
             @node-drag-end="handleDragEnd"
             @node-drop="handleSelfDrop"
             @node-expand="handleNodeExpand"
+            @handle-scroll="handleScroll"
           ></VirtualTree>
         </div>
         <template v-else>
@@ -81,6 +82,7 @@
             @node-drag-end="handleDragEnd"
             @node-drop="handleSelfDrop"
             @node-expand="handleNodeExpand"
+            @handle-scroll="handleScroll"
           ></VirtualTree>
           <div
             v-if="!treeData.length"
@@ -790,7 +792,11 @@ export default {
     handleFindLineage(event, data) {
       const parentNode = event.target?.parentElement
       this.$emit('find-parent', parentNode, data)
-    }
+    },
+
+    handleScroll: debounce(function () {
+      this.$emit('handle-connection')
+    }, 200)
   }
 }
 </script>
