@@ -334,17 +334,11 @@
               <li
                 class="spec spec-li position-relative px-4 py-2 mt-4 mr-4 cursor-pointer"
                 :class="{
-                  active: specification === item.value,
-                  disabled: (agentCount > 0 || agentDeploy !== 'selfHost') && item.chargeProvider === 'FreeTier'
+                  active: specification === item.value
                 }"
                 v-for="(item, i) in specificationItems"
                 :key="i"
-                @click="
-                  changeSpec(
-                    item.value,
-                    (agentCount > 0 || agentDeploy !== 'selfHost') && item.chargeProvider === 'FreeTier'
-                  )
-                "
+                @click="changeSpec(item.value)"
               >
                 <div class="is-active position-absolute top-0 end-0">
                   <div class="is-active-triangle"></div>
