@@ -1190,7 +1190,8 @@ export default {
         })
         //免费不能选; 不做禁用 直接过滤掉不显示
         // disabled: (agentCount > 0 || agentDeploy !== 'selfHost') && item.chargeProvider === 'FreeTier'
-        if (this.agentCount > 0 || this.agentDeploy !== 'selfHost') {
+        // 已有免费的agent，则过滤掉FreeTier
+        if (this.agentCount > 0) {
           this.specificationItems = this.specificationItems.filter(it => it.chargeProvider !== 'FreeTier')
         }
         this.specification =
