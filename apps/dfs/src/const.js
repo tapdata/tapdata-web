@@ -11,6 +11,29 @@ export const INSTANCE_STATUS_MAP = {
     Altering: { text: i18n.t('public_status_altering') },
     Error: { text: i18n.t('public_status_error'), type: 'danger' }
   },
+  MDB_STATUS_MAP = {
+    Init: { text: i18n.t('public_status_init'), type: 'waiting' },
+    Creating: { text: i18n.t('public_status_creating'), type: 'waiting' },
+    Activated: { text: i18n.t('public_status_activated') },
+    WaitingDelete: { text: i18n.t('public_status_waiting_delete'), type: 'waiting' },
+    Deleting: { text: i18n.t('public_status_deleting'), type: 'waiting' },
+    Deleted: { text: i18n.t('public_status_deleted'), type: 'disable' }
+  },
+  ORDER_STATUS_MAP = {
+    unPay: { text: i18n.t('packages_business_shared_const_weizhifu'), type: 'waiting' },
+    pay: { text: i18n.t('packages_business_shared_const_yizhifu'), type: 'success' },
+    payFail: { text: i18n.t('packages_business_shared_const_zhifushibai'), type: 'warning' },
+    refund: { text: i18n.t('packages_business_shared_const_yituikuan'), type: 'disable' },
+    refundFail: { text: i18n.t('packages_business_shared_const_tuikuanshibai'), type: 'warning' },
+    refunding: { text: i18n.t('packages_business_shared_const_tuikuanzhong') },
+    expire: { text: i18n.t('packages_business_shared_const_shixiao'), type: 'disable' },
+    cancelSubscribe: { text: i18n.t('packages_business_shared_const_yiquxiao'), type: 'disable' }
+  },
+  TICKET_STATUS_MAP = {
+    Closed: { text: i18n.t('button_close'), type: 'success' },
+    'On Hold': { text: i18n.t('button_hold'), type: 'disable' },
+    Open: { text: i18n.t('button_open') }
+  },
   TASK_STATUS_MAP = {
     running: { text: i18n.t('public_status_running'), icon: 'yunxingzhong', type: 'success' },
     paused: { text: i18n.t('public_status_wait_run'), icon: 'daiqidong', type: 'warning' },

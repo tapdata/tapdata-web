@@ -1,7 +1,7 @@
 <template>
   <!--  绑定手机号  -->
   <ElDialog
-    width="300px"
+    width="500px"
     append-to-body
     :title="$t('components_BindPhone_qingBangDingShouJi')"
     :close-on-click-modal="!!$props.closeOnClickModal"
@@ -10,20 +10,23 @@
     :visible.sync="dialogVisible"
     custom-class="bind-phone-dialog"
   >
-    <ElForm :model="phoneForm" :label-width="showLabel ? '120px' : null" @submit.native.prevent>
+    <ElForm :model="phoneForm" label-position="top" :label-width="showLabel ? '120px' : null" @submit.native.prevent>
       <ElFormItem prop="current" :label="showLabel ? $t('user_Center_dangQianShouJi') : ''">
-        <ElInput
-          v-model="phoneForm.current"
-          :placeholder="$t('components_BindPhone_qingShuRuShouJi')"
-          maxlength="50"
-        ></ElInput>
+        <ElInput v-model="phoneForm.current" :placeholder="$t('components_BindPhone_qingShuRuShouJi')" maxlength="50">
+          <el-select v-model="phoneForm.countryCode" slot="prepend" style="width: 110px" filterable>
+            <el-option v-for="item in countryCode" :label="'+ ' + item.dial_code" :value="item.dial_code">
+              <span style="float: left">{{ '+ ' + item.dial_code }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span></el-option
+            >
+          </el-select>
+        </ElInput>
       </ElFormItem>
       <ElFormItem prop="newPassword" :label="showLabel ? $t('user_Center_yanZhengMa') : ''" class="inline-form-item">
         <ElInput v-model="phoneForm.oldCode" :placeholder="$t('user_Center_qingShuRuShouJi')" maxlength="50"></ElInput>
         <VerificationCode
-          :request-options="getCodeOptions(phoneForm.current, 'BIND_PHONE')"
+          :request-options="getCodeOptions(phoneForm, 'BIND_PHONE')"
           :disabled="!phoneForm.current"
-          :style="{ width: '120px', textAlign: 'center' }"
+          :style="{ width: '180px', textAlign: 'center' }"
           class="ml-6"
           type="text"
         ></VerificationCode>
@@ -68,14 +71,20 @@ export default {
   },
   data() {
     return {
+      countryCode: [],
       dialogVisible: false,
       phoneForm: {
         current: '',
         oldCode: '',
         newPhone: '',
-        newCode: ''
+        newCode: '',
+        countryCode: '86'
       }
     }
+  },
+  mounted() {
+    this.phoneForm.countryCode = window.__USER_INFO__?.phoneCountryCode || '86'
+    this.getCountryCode()
   },
   methods: {
     getCodeOptions,
@@ -84,7 +93,8 @@ export default {
       this.$axios
         .post('api/tcm/user/phone', {
           phone: phoneForm.current,
-          code: phoneForm.oldCode
+          code: phoneForm.oldCode,
+          countryCode: phoneForm.countryCode ? phoneForm.countryCode.replace('-', '') : '86'
         })
         .then(() => {
           this.$message.success(i18n.t('user_Center_bangDingShouJiCheng'))
@@ -97,6 +107,12 @@ export default {
         .finally(() => {
           resetLoading?.()
         })
+    },
+    getCountryCode() {
+      this.$axios.get('config/countryCode.json').then(res => {
+        let countryCode = res.data
+        this.countryCode = countryCode?.countryCode
+      })
     }
   }
 }

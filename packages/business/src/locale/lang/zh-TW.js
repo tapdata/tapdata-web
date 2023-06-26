@@ -901,6 +901,7 @@ export default {
   packages_business_data_console_fdm_mdm_storage_tooltip: '請指定用於額外數據層存儲的數據庫連接',
   packages_business_mongodb_atlas_cluster: 'MongoDB Atlas 集群',
   packages_business_mongodb_self_hosted_cluster: '自托管 MongoDB 集群',
+  packages_business_mongodb_full_management_cluster: '全托管 MongoDB 集群',
   packages_business_data_console_setting_saved_tooltip: '保存後暫不支持修改',
   // 共享緩存
   packages_business_shared_cache_create: '創建緩存',
@@ -1061,5 +1062,13 @@ export default {
   packages_business_external_storage_list_siyaomima: '私鑰密碼',
   packages_business_external_storage_list_kehuduansiyao: '客戶端私鑰',
   packages_business_external_storage_list_zhengshubanfaji: '證書頒發機構',
-  packages_business_external_storage_list_shiyongTls: '使用 TLS/SSL 連接'
+  packages_business_external_storage_list_shiyongTls: '使用 TLS/SSL 連接',
+  page_title_verification_create: '新建校驗',
+  page_title_task_edit: '編輯任務',
+  page_title_task_details: '任務詳情',
+  page_title_verification_history: '校驗歷史',
+  page_title_data_difference_details: '差異詳情',
+  page_title_data_verification_result: '校驗結果',
+  page_title_diff_verification_history: '差異校驗歷史',
+  page_title_diff_verification_details: '差異校驗詳情'
 }

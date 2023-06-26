@@ -45,7 +45,7 @@
         </ElButton>
       </div>
       <ElTableColumn v-if="isDaas" type="selection" width="45" :reserve-selection="true"></ElTableColumn>
-      <ElTableColumn show-overflow-tooltip prop="name" min-width="290" :label="$t('public_connection_name')">
+      <ElTableColumn show-overflow-tooltip prop="name" min-width="250" :label="$t('public_connection_name')">
         <template #default="{ row }">
           <span class="connection-name flex">
             <img class="connection-img mr-2" :src="getConnectionIcon(row.pdkHash)" alt="" />
@@ -78,7 +78,7 @@
           </div>
         </template>
       </ElTableColumn>
-      <ElTableColumn width="100" prop="connection_type" min-width="135" :label="$t('public_connection_type')">
+      <ElTableColumn width="125" prop="connection_type" min-width="135" :label="$t('public_connection_type')">
         <template slot-scope="scope">
           {{ getType(scope.row.connection_type) }}
         </template>
@@ -98,7 +98,7 @@
       <ElTableColumn
         prop="loadSchemaTime"
         sortable="loadSchemaTime"
-        min-width="150"
+        min-width="180"
         :label="$t('public_connection_table_structure_update_time')"
       >
         <template slot-scope="scope">

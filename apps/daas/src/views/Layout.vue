@@ -126,7 +126,14 @@
                   'connectionsList',
                   'users',
                   'customNodeList',
-                  'dataConsole'
+                  'dataConsole',
+                  'dataVerificationList',
+                  'dataVerificationCreate',
+                  'dataVerificationEdit',
+                  'dataVerifyDetails',
+                  'dataVerifyHistory',
+                  'VerifyDiffDetails',
+                  'dataVerifyResult'
                 ].includes($route.name)
               },
               {
@@ -139,7 +146,14 @@
                   'connectionsList',
                   'users',
                   'customNodeList',
-                  'dataConsole'
+                  'dataConsole',
+                  'dataVerificationList',
+                  'dataVerificationCreate',
+                  'dataVerificationEdit',
+                  'dataVerifyDetails',
+                  'dataVerifyHistory',
+                  'VerifyDiffDetails',
+                  'dataVerifyResult'
                 ].includes($route.name)
               }
             ]"

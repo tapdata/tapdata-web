@@ -24,6 +24,7 @@ import Drawer from './Drawer.vue'
 import InlineInput from './InlineInput.vue'
 import DarkSelect from './DarkSelect'
 import TimeSelect from './TimeSelect'
+import UpgradeFee from './UpgradeFee'
 
 // business
 import Chart from './chart'
@@ -58,7 +59,8 @@ export {
   InlineInput,
   OverflowTooltip,
   DarkSelect,
-  TimeSelect
+  TimeSelect,
+  UpgradeFee
 }
 
 export * from './base'

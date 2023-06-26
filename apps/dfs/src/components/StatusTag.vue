@@ -25,7 +25,10 @@ import {
   INSTANCE_STATUS_MAP,
   TASK_STATUS_MAP,
   MILESTONE_STATUS_MAP,
-  CONNECTION_STATUS_MAP_EN
+  CONNECTION_STATUS_MAP_EN,
+  MDB_STATUS_MAP,
+  TICKET_STATUS_MAP,
+  ORDER_STATUS_MAP
 } from '../const'
 export default {
   name: 'StatusTag',
@@ -62,10 +65,13 @@ export default {
         this.statusMap ||
         {
           instance: INSTANCE_STATUS_MAP,
+          mdb: MDB_STATUS_MAP,
           task: TASK_STATUS_MAP,
           connection: CONNECTION_STATUS_MAP,
           milestone: MILESTONE_STATUS_MAP,
-          connection_en: CONNECTION_STATUS_MAP_EN
+          connection_en: CONNECTION_STATUS_MAP_EN,
+          ticket: TICKET_STATUS_MAP,
+          order: ORDER_STATUS_MAP
         }[this.target]
       )
     },

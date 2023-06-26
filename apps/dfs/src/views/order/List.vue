@@ -1,47 +1,209 @@
 <template>
   <section class="operation-logs-wrapper g-panel-container" v-if="$route.name === 'order'">
-    <div class="main">
-      <div class="list-operation">
-        <div class="list-operation-left flex justify-content-between">
-          <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
-          <ElButton type="primary" @click="handleCreateAgent" :disabled="$disabledReadonlyUserBtn()">
-            <span>{{ $t('dfs_order_list_xinzengdingyue') }}</span>
-          </ElButton>
-        </div>
-      </div>
-      <VTable
-        :columns="columns"
-        :remoteMethod="remoteMethod"
-        :page-options="{
-          layout: 'total, ->, prev, pager, next, sizes, jumper'
-        }"
-        ref="table"
-        class="mt-4"
-      >
-        <template #agentType="{ row }">
-          <span>{{ agentTypeMap[row.agentType || 'local'] }}</span>
-        </template>
-        <template #bindAgent="{ row }">
-          <ElLink v-if="row.agentId && row.status === 'pay'" type="primary" @click="handleAgent(row)">{{
-            row.agentId
-          }}</ElLink>
-          <span v-else>-</span>
-        </template>
-        <template #operation="{ row }">
-          <ElButton
-            v-if="['expire', 'pay', 'cancelSubscribe'].includes(row.status) && row.type === 'one_time'"
-            type="text"
-            @click="handleRenew(row)"
-            >{{ $t('public_button_renew') }}</ElButton
+    <el-tabs class="flex flex-column overflow-hidden flex-1" v-model="activeName">
+      <el-tab-pane class="order-flex overflow-hidden h-100" :label="$t('dfs_order_list_wodedingyue')" name="first">
+        <div class="main">
+          <div class="list-operation">
+            <div class="list-operation-left flex justify-content-between">
+              <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
+              <ElButton type="primary" @click="handleCreateAgent" :disabled="$disabledReadonlyUserBtn()">
+                <span>{{ $t('dfs_order_list_xinzengdingyue') }}</span>
+              </ElButton>
+            </div>
+          </div>
+          <VTable
+            :columns="columns"
+            :remoteMethod="remoteMethod"
+            :page-options="{
+              layout: 'total, ->, prev, pager, next, sizes, jumper'
+            }"
+            ref="table"
+            class="mt-4"
           >
-          <ElButton v-if="['payFail', 'unPay'].includes(row.status)" type="text" @click="handlePay(row)">{{
-            $t('public_button_pay')
-          }}</ElButton>
-        </template>
-      </VTable>
-    </div>
+            <template #agentType="{ row }">
+              <span>{{ agentTypeMap[row.agentType || 'local'] }}</span>
+            </template>
+            <template #statusLabel="{ row }">
+              <StatusTag type="tag" :status="row.status" default-status="Stopped" target="order"></StatusTag>
+            </template>
+            <template #periodLabel="{ row }">
+              <div>{{ row.periodStart }}</div>
+              <div>{{ row.periodEnd }}</div>
+            </template>
+            <template #bindAgent="{ row }">
+              <ElLink v-if="row.agentId && row.status === 'pay'" type="primary" @click="handleAgent(row)">{{
+                row.agentId
+              }}</ElLink>
+              <span v-else>-</span>
+            </template>
+            <template #operation="{ row }">
+              <ElButton
+                v-if="['expire', 'pay', 'cancelSubscribe'].includes(row.status) && row.type === 'one_time'"
+                type="text"
+                @click="handleRenew(row)"
+                >{{ $t('public_button_renew') }}</ElButton
+              >
+              <ElButton v-if="['payFail', 'unPay'].includes(row.status)" type="text" @click="handlePay(row)">{{
+                $t('public_button_pay')
+              }}</ElButton>
+              <!--              <ElButton v-if="row.status === 'pay'" type="text" @click="getUnsubscribePrice(row)">{{-->
+              <!--                $t('public_button_unsubscribe')-->
+              <!--              }}</ElButton>-->
+            </template>
+          </VTable>
+        </div>
+      </el-tab-pane>
+      <el-tab-pane
+        class="order-flex flex-column overflow-hidden h-100"
+        :label="$t('dfs_instance_selectlist_shouquanma')"
+        name="second"
+      >
+        <section class="flex flex-column overflow-hidden flex-1">
+          <div class="mt-2 flex justify-content-end">
+            <el-button class="mr-2" @click="goReceipt">{{ $t('dfs_user_center_kaifapiao') }}</el-button>
+            <el-button type="primary" @click="goLicense">{{
+              $t('dfs_aliyun_market_checklicnese_jihuoshouquanma')
+            }}</el-button>
+          </div>
+          <VTable
+            :columns="codeColumns"
+            :remoteMethod="codeRemoteMethod"
+            :page-options="{
+              layout: 'total, ->, prev, pager, next, sizes, jumper'
+            }"
+            ref="tableCode"
+            class="mt-4"
+          >
+            <template #agentType="{ row }">
+              <span>{{ agentTypeMap[row.agentType || 'local'] }}</span>
+            </template>
+            <template #bindAgent="{ row }">
+              <ElLink v-if="row.agentId" type="primary" @click="handleAgent(row)">{{
+                $t('dfs_instance_selectlist_yibangding') + ' ' + $t('public_agent') + ' : ' + row.agentId
+              }}</ElLink>
+              <span v-else>{{ $t('user_Center_weiBangDing') }}</span>
+            </template>
+            <template #operation="{ row }">
+              <ElButton type="text" @click="handleRenewal(row)">{{ $t('public_button_renewal') }}</ElButton>
+            </template>
+          </VTable>
+        </section>
+      </el-tab-pane>
+    </el-tabs>
+
     <!--转账支付-->
     <transferDialog :visible.sync="showTransferDialogVisible" :price="pricePay"></transferDialog>
+    <ElDialog
+      v-if="showUnsubscribeDetailVisible"
+      :visible.sync="showUnsubscribeDetailVisible"
+      :title="$t('dfs_instance_instance_tuidingshili')"
+      width="60%"
+    >
+      <section>
+        <ul class="subscription-ul">
+          <li class="mt-2">
+            {{ $t('dfs_instance_instance_tuidingjineji') }}
+            <el-link style="vertical-align: top" :href="unsubscribeHelpDocumentation" type="primary" target="_blank">{{
+              $t('dfs_instance_instance_tuifeiguize')
+            }}</el-link>
+          </li>
+          <li class="mt-2">{{ $t('dfs_instance_instance_tuidingzhituihuan') }}</li>
+          <li class="mt-2">{{ $t('dfs_instance_instance_qingzixihedui') }}</li>
+        </ul>
+        <div class="mt-4 fs-6 font-color-dark">{{ $t('dfs_instance_instance_tuidingshili') }}</div>
+        <div v-if="agentList.length > 0">
+          <VTable
+            ref="table"
+            row-key="id"
+            :columns="paidDetailColumns"
+            :data="agentList"
+            height="100%"
+            :has-pagination="false"
+            class="mt-4 mb-4"
+          >
+            <template #expiredTime="{ row }">
+              <div>{{ row.periodStart }}</div>
+              <div>{{ row.periodEnd }}</div>
+            </template>
+            <template #actualAmount="{ row }">
+              <span class="font-color-dark fw-normal">{{ row.actualAmount }}</span>
+            </template>
+            <template #spentAmount="{ row }">
+              <span class="color-danger fw-normal"> -{{ row.spentAmount }}</span>
+            </template>
+            <template #refundAmount="{ row }">
+              <span class="color-primary fw-normal">{{ row.refundAmount }}</span>
+            </template>
+          </VTable>
+        </div>
+        <div v-if="memoryList.length > 0">
+          <VTable
+            ref="table"
+            row-key="id"
+            :columns="memoryColumns"
+            :data="memoryList"
+            height="100%"
+            :has-pagination="false"
+            class="mt-4 mb-4"
+          >
+            <template #expiredTime="{ row }">
+              <div>{{ row.periodStart }}</div>
+              <div>{{ row.periodEnd }}</div>
+            </template>
+            <template #actualAmount="{ row }">
+              <span class="font-color-dark fw-normal">{{ row.actualAmount }}</span>
+            </template>
+            <template #spentAmount="{ row }">
+              <span class="color-danger fw-normal"> -{{ row.spentAmount }}</span>
+            </template>
+            <template #refundAmount="{ row }">
+              <span class="color-primary fw-normal">{{ row.refundAmount }}</span>
+            </template>
+          </VTable>
+        </div>
+        <el-form label-position="top" :model="form" :rules="rules" ref="ruleForm">
+          <el-form-item :label="$t('dfs_instance_instance_tuidingyuanyin')" required>
+            <el-radio-group v-model="form.refundReason">
+              <el-radio class="mt-2" label="configurationOptionError">{{
+                $t('dfs_instance_instance_peizhixuanxiangcuo')
+              }}</el-radio>
+              <el-radio class="mt-2" label="unableDeployProperly">{{
+                $t('dfs_instance_instance_wufazhengchangbu')
+              }}</el-radio>
+              <el-radio class="mt-2" label="notconsistentWithExpectations">{{
+                $t('dfs_instance_instance_xingnenghuozhegong')
+              }}</el-radio>
+              <el-radio class="mt-2" label="unsubscribeAfterBusinessTesting">{{
+                $t('dfs_instance_instance_yewuceshiwan')
+              }}</el-radio>
+              <el-radio class="mt-2" label="other">{{ $t('dfs_instance_instance_qita') }}</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item v-if="form.refundReason === 'other'" prop="refundDescribe">
+            <el-input
+              v-model="form.refundDescribe"
+              type="textarea"
+              :placeholder="$t('dfs_instance_instance_qingshurutuiding')"
+              show-word-limit
+            >
+            </el-input>
+          </el-form-item>
+          <el-form-item :label="$t('dfs_instance_instance_tuikuanqudao')">
+            <el-input v-model="form.refundChannel" disabled show-word-limit style="width: 200px"> </el-input>
+          </el-form-item>
+        </el-form>
+      </section>
+      <span slot="footer" class="dialog-footer">
+        <span class="mr-4"
+          ><span class="fs-6 font-color-dark font-weight-light">{{ $t('dfs_instance_instance_ketuidingjine') }}</span
+          ><span class="color-primary fs-4"> {{ refundAmount }}</span></span
+        >
+        <el-button @click="showUnsubscribeDetailVisible = false">{{ $t('public_button_cancel') }}</el-button>
+        <el-button :disabled="!form.refundReason" type="primary" :loading="loadingCancelSubmit" @click="cancelSubmit">{{
+          $t('public_button_unsubscribe')
+        }}</el-button>
+      </span>
+    </ElDialog>
   </section>
   <RouterView v-else></RouterView>
 </template>
@@ -56,13 +218,20 @@ import { isEmpty } from '@/util'
 import { CURRENCY_SYMBOL_MAP, NUMBER_MAP, ORDER_STATUS_MAP, TIME_MAP } from '@tap/business'
 import { getPaymentMethod, getSpec, AGENT_TYPE_MAP } from '../instance/utils'
 import dayjs from 'dayjs'
+import StatusTag from '../../components/StatusTag.vue'
 
 export default {
-  components: { FilterBar, VTable, transferDialog },
+  components: { StatusTag, FilterBar, VTable, transferDialog },
   inject: ['buried'],
   data() {
     return {
+      activeName: 'first',
       loading: true,
+      loadingCancelSubmit: false,
+      showUnsubscribeDetailVisible: false, //退订详情
+      unsubscribeHelpDocumentation: '', //退订跳转地址
+      currentRow: '',
+      refundAmount: '',
       showTransferDialogVisible: false,
       pricePay: '',
       agentTypeMap: AGENT_TYPE_MAP,
@@ -70,8 +239,112 @@ export default {
         agentDeploy: '',
         status: ''
       },
+      form: {
+        refundReason: '',
+        refundDescribe: '',
+        refundChannel: i18n.t('dfs_instance_instance_yuanlutuihui')
+      },
+      rules: {
+        refundDescribe: [{ required: true, message: i18n.t('dfs_instance_instance_qingshurutuiding'), trigger: 'blur' }]
+      },
+      memoryColumns: [
+        {
+          label: i18n.t('dfs_instance_createagent_cunchuguige'),
+          prop: 'spec',
+          minWidth: 120
+        },
+        {
+          label: i18n.t('dfs_instance_createagent_cunchukongjian'),
+          prop: 'storageSize',
+          width: 120
+        },
+        {
+          label: i18n.t('dfs_instance_selectlist_dingyuezhouqi'),
+          slotName: 'expiredTime',
+          width: 180
+        },
+        {
+          label: i18n.t('dfs_instance_instance_shifujine'),
+          prop: 'actualAmount',
+          slotName: 'actualAmount'
+        },
+        {
+          label: i18n.t('dfs_instance_instance_yixiaohaojine'),
+          prop: 'spentAmount',
+          slotName: 'spentAmount'
+        },
+        {
+          label: i18n.t('dfs_instance_instance_tuidingjine'),
+          prop: 'refundAmount',
+          slotName: 'refundAmount'
+        }
+      ],
+      paidDetailColumns: [
+        {
+          label: this.$t('agent_name'),
+          prop: 'agentName',
+          minWidth: 120
+        },
+        {
+          label: this.$t('dfs_instance_instance_guige'),
+          prop: 'spec',
+          width: 120
+        },
+        {
+          label: i18n.t('dfs_instance_selectlist_dingyuezhouqi'),
+          slotName: 'expiredTime',
+          width: 180
+        },
+        {
+          label: i18n.t('dfs_instance_instance_shifujine'),
+          prop: 'actualAmount',
+          slotName: 'actualAmount'
+        },
+        {
+          label: i18n.t('dfs_instance_instance_yixiaohaojine'),
+          prop: 'spentAmount',
+          slotName: 'spentAmount'
+        },
+        {
+          label: i18n.t('dfs_instance_instance_tuidingjine'),
+          prop: 'refundAmount',
+          slotName: 'refundAmount'
+        }
+      ],
       search: '',
       filterItems: [],
+      //授权码
+      codeColumns: [
+        {
+          label: i18n.t('dfs_instance_selectlist_shouquanma'),
+          prop: 'licenseCode',
+          width: 320
+        },
+        {
+          label: i18n.t('dfs_user_center_jihuoshijian2'),
+          prop: 'activateTimeLabel'
+        },
+        {
+          label: i18n.t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi'),
+          prop: 'agentType',
+          slotName: 'agentType'
+        },
+        {
+          label: i18n.t('dfs_user_center_guoqishijian2'),
+          prop: 'expiredTimeLabel'
+        },
+        {
+          label: i18n.t('dfs_instance_selectlist_bangdingshilizhuang'),
+          prop: 'bindAgent',
+          slotName: 'bindAgent'
+        },
+        {
+          label: i18n.t('public_operation'),
+          prop: 'extendArray',
+          slotName: 'operation',
+          width: 100
+        }
+      ],
       columns: [
         {
           label: i18n.t('dfs_instance_selectlist_dingyueneirong'),
@@ -79,8 +352,8 @@ export default {
         },
         {
           label: i18n.t('dfs_instance_selectlist_dingyuezhouqi'),
-          prop: 'periodLabel',
-          width: 320
+          slotName: 'periodLabel',
+          width: 180
         },
         {
           label: i18n.t('dfs_user_center_dingyueshuliang'),
@@ -102,14 +375,16 @@ export default {
         },
         {
           label: i18n.t('task_monitor_status'),
-          prop: 'statusLabel'
+          slotName: 'statusLabel'
         },
         {
           label: i18n.t('public_operation'),
           prop: 'extendArray',
           slotName: 'operation'
         }
-      ]
+      ],
+      agentList: [],
+      memoryList: []
     }
   },
   computed: {
@@ -119,6 +394,11 @@ export default {
   },
   created() {
     this.getFilterItems()
+    if (window.__config__?.station === 'international') {
+      this.refundAmount = 'https://docs.tapdata.io/cloud/billing/refund'
+    } else {
+      this.refundAmount = 'https://docs.tapdata.net/cloud/billing/refund'
+    }
   },
   watch: {
     $route(route) {
@@ -198,6 +478,7 @@ export default {
         }
       ]
     },
+    //我的订阅
     remoteMethod({ page }) {
       let { current, size } = page
       let { agentType, status } = this.searchParams
@@ -231,12 +512,8 @@ export default {
                 })
                 t.agentDeploy = this.agentTypeMap[t.agentDeploy || 'selfHost']
                 t.content = `${t.subscriptionMethodLabel} ${getSpec(spec)} ${i18n.t('public_agent')}`
-                t.periodLabel =
-                  t.status === 'unPay'
-                    ? '-'
-                    : dayjs(t.periodStart).format('YYYY-MM-DD HH:mm:ss') +
-                      ' - ' +
-                      dayjs(t.periodEnd).format('YYYY-MM-DD HH:mm:ss')
+                t.periodStart = t.status !== 'unPay' ? dayjs(t.periodStart).format('YYYY-MM-DD HH:mm:ss') : ''
+                t.periodEnd = t.status !== 'unPay' ? dayjs(t.periodEnd).format('YYYY-MM-DD HH:mm:ss') : '-'
                 t.priceSuffix = t.type === 'recurring' ? '/' + TIME_MAP[t.periodUnit] : ''
                 t.formatPrice =
                   CURRENCY_SYMBOL_MAP[t.currency] +
@@ -295,6 +572,99 @@ export default {
         }
       })
     },
+    //退订 //退订详情费用
+    getUnsubscribePrice(row = {}) {
+      if (row?.refund) {
+        let param = {
+          instanceId: row.agentId
+        }
+        this.$axios.post('api/tcm/orders/cancel', param).then(() => {
+          this.$message.success(this.$t('public_message_operation_success'))
+          this.table.fetch(1)
+        })
+        return
+      }
+      this.currentRow = row
+      this.$axios.get('api/tcm/orders/calculateRefundAmount?subscribeId=' + row.id).then(res => {
+        let { currency, periodStart, periodEnd, refundAmounts = [] } = res
+        //格式化价
+        periodStart = periodStart ? dayjs(periodStart).format('YYYY-MM-DD HH:mm:ss') : ''
+        periodEnd = periodEnd ? dayjs(periodEnd).format('YYYY-MM-DD HH:mm:ss') : '-'
+        //组装数据
+        let agentList = refundAmounts.find(it => it.productType === 'Engine')
+        //存储退订费用
+        let memoryList = refundAmounts.find(it => it.productType === 'MongoDB')
+        let prices = 0
+        if (agentList) {
+          //格式化价
+          prices = agentList.refundAmount
+          agentList.actualAmount = this.formatPrice(currency, agentList.actualAmount)
+          agentList.spentAmount = this.formatPrice(currency, agentList.spentAmount)
+          agentList.refundAmount = this.formatPrice(currency, agentList.refundAmount)
+          agentList.agentName = agentList?.resource?.name
+          agentList.periodStart = periodStart
+          agentList.periodEnd = periodEnd
+          agentList.spec = agentList?.resource?.spec?.name
+          this.agentList = [agentList]
+        } else this.agentList = []
+        if (memoryList) {
+          //格式化价
+          prices = prices + memoryList.refundAmount
+          memoryList.actualAmount = this.formatPrice(currency, memoryList.actualAmount)
+          memoryList.spentAmount = this.formatPrice(currency, memoryList.spentAmount)
+          memoryList.refundAmount = this.formatPrice(currency, memoryList.refundAmount)
+          memoryList.periodStart = periodStart
+          memoryList.periodEnd = periodEnd
+          memoryList.spec = memoryList?.resource?.spec?.name || ''
+          memoryList.storageSize = memoryList?.resource?.spec?.storageSize + 'GB' || 0
+          this.memoryList = [memoryList]
+        } else this.memoryList = []
+        this.refundAmount = this.formatPrice(currency, prices)
+        this.$message.success(this.$t('public_message_operation_success'))
+        this.table.fetch(1)
+        this.showUnsubscribeDetailVisible = true
+      })
+    },
+    formatPrice(currency, price) {
+      return (
+        CURRENCY_SYMBOL_MAP[currency] +
+        (price / 100).toLocaleString('zh', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        })
+      )
+    },
+    //退订
+    cancelSubmit() {
+      this.$refs.ruleForm.validate(valid => {
+        if (valid) {
+          this.loadingCancelSubmit = true
+          const { paidType, id } = this.currentRow
+          const { refundReason, refundDescribe } = this.form
+          let param = {
+            subscribeId: id,
+            refundReason,
+            refundDescribe
+          }
+          this.$axios
+            .post('api/tcm/orders/cancel', param)
+            .then(() => {
+              this.fetch()
+              this.buried('unsubscribeAgentStripe', '', {
+                result: true,
+                type: paidType
+              })
+              this.$message.success(this.$t('public_message_operation_success'))
+              this.showUnsubscribeDetailVisible = false
+              this.loadingCancelSubmit = false
+            })
+            .finally(() => {
+              this.showUnsubscribeDetailVisible = false
+              this.loadingCancelSubmit = false
+            })
+        }
+      })
+    },
     //支付
     handlePay(row = {}) {
       this.buried('payAgentStripe')
@@ -328,12 +698,48 @@ export default {
           keyword: row.agentId
         }
       })
+    },
+    codeRemoteMethod() {
+      return this.$axios.get('api/tcm/aliyun/market/license/list').then(data => {
+        const items = data.items || []
+        return {
+          total: data.total,
+          data:
+            items.map(t => {
+              let activateTime = new Date(t.activateTime.replace('Z', '+08:00')).toLocaleString()
+              let expiredTime = new Date(t.expiredTime.replace('Z', '+08:00')).toLocaleString()
+              t.activateTimeLabel = t.activateTime ? dayjs(activateTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+              t.expiredTimeLabel = t.expiredTime ? dayjs(expiredTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+              t.bindAgent = t.agentId
+                ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
+                : i18n.t('user_Center_weiBangDing')
+              return t
+            }) || []
+        }
+      })
+    },
+    goLicense() {
+      this.$router.push({
+        name: 'aliyunMarketLicense'
+      })
+    },
+    goReceipt() {
+      const href = 'https://market.console.aliyun.com/receipt/index.htm'
+      openUrl(href)
+    },
+    handleRenewal() {
+      this.buried('goRenewalAliyunCode')
+      const href = 'https://market.console.aliyun.com/imageconsole/index.htm'
+      openUrl(href)
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.order-flex {
+  display: flex;
+}
 .operation-logs-wrapper {
   display: flex;
   width: 100%;
@@ -371,6 +777,11 @@ export default {
       background: unset;
       color: map-get($color, disable);
     }
+  }
+  .el-tabs__content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
   }
 }
 </style>

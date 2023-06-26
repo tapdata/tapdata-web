@@ -1,5 +1,10 @@
 <template>
   <div class="swim-lane flex flex-column h-100">
+    <div v-if="!isDaas" class="position-absolute" style="right: 55%">
+      <VIcon v-if="overViewVisible" size="32" @click="toggleOverview(overViewVisible)">fold-pack-up</VIcon>
+      <VIcon v-else size="32" @click="toggleOverview(overViewVisible)">fold-expend</VIcon>
+    </div>
+    <OverView v-if="!isDaas" :visible="overViewVisible"></OverView>
     <div class="page-header-title flex align-center">
       <span>{{ $t('page_title_data_console') }}</span>
       <ElTooltip
@@ -52,6 +57,7 @@
     <Settings
       :mode.sync="mode"
       :visible.sync="settingsVisible"
+      :fdmConnection="fdmConnection"
       @success="handleSettingsSuccess"
       @init="handleSettingsInit"
     ></Settings>
@@ -64,6 +70,7 @@
 import { IconButton } from '@tap/component'
 import { SceneDialog, EventEmitter } from '@tap/business'
 import { connectionsApi, metadataDefinitionsApi } from '@tap/api'
+import { mapMutations, mapState, mapGetters } from 'vuex'
 
 import SourceItem from './Source'
 import TargetItem from './Target'
@@ -73,6 +80,7 @@ import Settings from './Settings'
 import TablePreview from './TablePreview'
 import ConnectionPreview from './ConnectionPreview'
 import Catalogue from './components/Catalogue'
+import OverView from './components/OverView'
 
 const TYPE2NAME = {
   target: 'TARGET&SERVICE'
@@ -91,13 +99,16 @@ export default {
     ConnectionPreview,
     IconButton,
     Catalogue,
-    SceneDialog
+    SceneDialog,
+    OverView
   },
 
   data() {
     return {
       keyword: '',
       visible: false,
+      overViewVisible: true,
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       showSceneDialog: false,
       settingsVisible: false,
       dragState: {
@@ -119,6 +130,8 @@ export default {
   },
 
   computed: {
+    ...mapState('overView', ['panelFlag', 'userId']),
+    ...mapGetters('overView', ['stateFlag', 'stateUserId']),
     laneOptions() {
       const result = [
         {
@@ -171,11 +184,24 @@ export default {
 
   created() {
     this.loadDirectory()
+    //是否 默认打开
+    if (window.__USER_INFO__?.id === this.userId) {
+      this.overViewVisible = this.panelFlag
+    }
   },
 
   methods: {
+    ...mapMutations('overView', ['setPanelFlag']),
     toggleView(view) {
       this.currentView = view
+    },
+    //概览
+    toggleOverview(val) {
+      this.overViewVisible = !val
+      this.setPanelFlag({
+        panelFlag: this.overViewVisible,
+        userId: window.__USER_INFO__?.id
+      })
     },
 
     handleAdd(type) {
@@ -395,5 +421,9 @@ export default {
       }
     }
   }
+}
+.icon {
+  -moz-transform: rotate(-180deg);
+  -webkit-transform: rotate(-180deg);
 }
 </style>

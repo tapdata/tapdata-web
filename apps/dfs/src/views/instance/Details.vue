@@ -42,6 +42,14 @@
           @click="open(agent.id, agent.status)"
           >{{ $t('dfs_instance_instance_rizhishangchuan') }}</ElButton
         >
+        <ElButton class="mt-4" size="mini" @click="downServeFn(agent)">{{
+          $t('dfs_instance_details_xianchengziyuanxia')
+        }}</ElButton>
+        <div>
+          <ElButton class="mt-4" size="mini" @click="downConnectorsFn(agent)">{{
+            $t('dfs_instance_details_shujuyuanziyuan')
+          }}</ElButton>
+        </div>
       </div>
     </div>
     <!-- 日志上传   -->
@@ -63,7 +71,7 @@
             class="mb-4 mr-4"
             type="primary"
             :loading="loadingUpload"
-            :disabled="agent.status !== 'Running' || disabledUploadDialog || tapdataAgentStatus === 'stop'"
+            :disabled="agent.status !== 'Running' || disabledUploadDialog || tapdataAgentStatus === 'stopped'"
             @click="handleUpload(currentAgentId)"
             >{{ btnTxt }}</el-button
           >
@@ -126,8 +134,9 @@ import timeFunction from '@/mixins/timeFunction'
 import { AGENT_STATUS_MAP_EN } from '../../const'
 import i18n from '@/i18n'
 import { calcUnit } from '@tap/shared'
-import { measurementApi } from '@tap/api'
+import { measurementApi, proxyApi } from '@tap/api'
 import Time from '@tap/shared/src/time'
+import { downloadJson } from '@tap/shared'
 
 export default {
   name: 'Details',
@@ -355,6 +364,20 @@ export default {
         .finally(() => {
           this.loading = false
         })
+    },
+    //下载
+    downServeFn(agent) {
+      let id = agent?.tmInfo?.agentId
+      proxyApi.supervisor(id).then(data => {
+        downloadJson(JSON.stringify(data), 'supervisor')
+      })
+    },
+    //下载
+    downConnectorsFn(agent) {
+      let id = agent?.tmInfo?.agentId
+      proxyApi.connectors(id).then(data => {
+        downloadJson(JSON.stringify(data), 'connectors')
+      })
     },
 
     async loadMeasurementData(engineId) {

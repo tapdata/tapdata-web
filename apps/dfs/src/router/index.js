@@ -51,6 +51,11 @@ const DataConsoleDashboard = async () => {
   return Dashboard
 }
 
+const NoticeList = async () => {
+  const { NoticeList } = await import('@tap/business')
+  return NoticeList
+}
+
 const CustomNodeList = async () => {
   const { CustomNodeList } = await import('@tap/business')
   return CustomNodeList
@@ -59,6 +64,32 @@ const CustomNodeList = async () => {
 const NodeEditor = async () => {
   const { Editor } = await import(/* webpackChunkName: "node-design" */ '@tap/node-design')
   return Editor
+}
+
+// 数据校验
+const VerificationList = async () => {
+  const { VerificationList } = await import('@tap/business')
+  return VerificationList
+}
+
+const VerificationDetails = async () => {
+  const { VerificationDetails } = await import('@tap/business')
+  return VerificationDetails
+}
+
+const VerificationForm = async () => {
+  const { VerificationForm } = await import('@tap/business')
+  return VerificationForm
+}
+
+const VerificationHistory = async () => {
+  const { VerificationHistory } = await import('@tap/business')
+  return VerificationHistory
+}
+
+const VerificationResult = async () => {
+  const { VerificationResult } = await import('@tap/business')
+  return VerificationResult
 }
 
 const routes = [
@@ -73,7 +104,7 @@ const routes = [
         meta: {
           title: 'tap_home'
         },
-        redirect: { name: 'Workbench' },
+        redirect: { name: 'dataConsole' },
         hidden: true
       },
       {
@@ -84,17 +115,7 @@ const routes = [
           title: 'tap_workbench',
           icon: 'workbench',
           hideTitle: true
-        },
-        children: [
-          {
-            path: 'notice',
-            name: 'WorkbenchNotice',
-            component: () => import('../views/workbench/Notice.vue'),
-            meta: {
-              title: 'tap_announcement_notice'
-            }
-          }
-        ]
+        }
       },
       {
         path: '/systemNotice',
@@ -110,7 +131,8 @@ const routes = [
         component: () => import(/* webpackChunkName: "instance" */ '../views/instance/Instance.vue'),
         meta: {
           title: 'tap_agent_management',
-          icon: 'agent'
+          icon: 'agent',
+          hideTitle: true
         },
         children: [
           {
@@ -210,6 +232,100 @@ const routes = [
           }
         ]
       },
+      /* ---------- 数据校验  ----------*/
+      {
+        path: '/dataVerification',
+        name: 'dataVerification',
+        component: Parent,
+        redirect: 'dataVerification/',
+        meta: {
+          title: 'page_title_data_verify'
+        },
+        children: [
+          {
+            path: '',
+            name: 'dataVerificationList',
+            component: VerificationList,
+            meta: {
+              title: 'page_title_data_verify',
+              code: 'v2_data_check'
+            }
+          },
+          {
+            path: 'create',
+            name: 'dataVerificationCreate',
+            component: VerificationForm,
+            meta: {
+              title: 'page_title_verification_create',
+              code: 'v2_data_check_create'
+            }
+          },
+          {
+            path: ':id/edit',
+            name: 'dataVerificationEdit',
+            component: VerificationForm,
+            meta: {
+              title: 'page_title_task_edit',
+              code: 'v2_data_check_edit'
+            }
+          },
+          {
+            path: ':id/details',
+            name: 'dataVerifyDetails',
+            component: VerificationDetails,
+            meta: {
+              title: 'page_title_task_details',
+              code: 'v2_data_check_details'
+            }
+          },
+          {
+            path: ':id/history',
+            name: 'dataVerifyHistory',
+            component: VerificationHistory,
+            meta: {
+              title: 'page_title_verification_history',
+              code: 'v2_data_check_history'
+            }
+          },
+          {
+            path: '/dataVerifyResult/:id/history',
+            name: 'VerifyDiffHistory',
+            component: VerificationHistory,
+            meta: {
+              title: 'page_title_diff_verification_history',
+              code: 'v2_data_check_result_history'
+            }
+          },
+          {
+            path: '/dataVerifyResult/:id/details',
+            name: 'VerifyDiffDetails',
+            component: VerificationResult,
+            meta: {
+              title: 'page_title_diff_verification_details',
+              code: 'v2_data_check_result_details'
+            }
+          },
+          {
+            path: '/dataVerifyResult/:id',
+            name: 'dataVerifyResult',
+            component: VerificationResult,
+            meta: {
+              title: 'page_title_data_verification_result',
+              code: 'v2_data_check_result'
+            }
+          }
+          // {
+          //   path: ':id/verifyDetails',
+          //   name: 'VerifyDetails',
+          //   component: VerificationDetails,
+          //   meta: {
+          //     title: 'page_title_data_verify_details',
+          //     code: 'Data_verify',
+          //     isNotAside: true
+          //   }
+          // }
+        ]
+      },
       {
         path: '/operationLog',
         name: 'OperationLog',
@@ -232,7 +348,8 @@ const routes = [
         name: 'order',
         component: () => import(/* webpackChunkName: "instance" */ '../views/order/List.vue'),
         meta: {
-          title: i18n.t('dfs_router_index_dingyuezhongxin')
+          title: i18n.t('dfs_router_index_dingyuezhongxin'),
+          hideTitle: true
         }
       },
       {
@@ -277,6 +394,25 @@ const routes = [
           icon: 'data-server'
         }
       },
+      {
+        path: '/notice',
+        name: 'noticeList',
+        component: NoticeList,
+        meta: {
+          title: i18n.t('dfs_router_index_gonggaoliebiao'),
+          hideTitle: false
+        },
+        children: [
+          {
+            path: 'notice',
+            name: 'WorkbenchNotice',
+            component: () => import('../views/workbench/Notice.vue'),
+            meta: {
+              title: 'tap_announcement_notice'
+            }
+          }
+        ]
+      },
       /* ---------- 自定义节点  ----------*/
       {
         path: '/custom-node',
@@ -290,6 +426,15 @@ const routes = [
         path: '/lang',
         name: 'lang',
         component: Lang
+      },
+      /* ---------- 工单系统  ----------*/
+      {
+        path: '/ticketSystem',
+        name: 'TicketSystem',
+        component: () => import(/* webpackChunkName: "instance" */ '../views/ticketing-system/List.vue'),
+        meta: {
+          title: 'dfs_router_index_gongdanliebiao'
+        }
       }
     ]
   },

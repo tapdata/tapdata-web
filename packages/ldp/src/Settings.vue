@@ -82,7 +82,7 @@
           <div class="mode-desc inline-block pt-4 cursor-pointer" @click="handleSelectMode('integration')">
             <ElImage :src="require('@tap/assets/images/swimlane/data-integration-mode.svg')"></ElImage>
             <ul class="mode-ul mt-4">
-              <li>• Database Replications</li>
+              <li>• Database Replication</li>
               <li>• Move data to cloud</li>
               <li>• ETL pipelines</li>
             </ul>
@@ -129,9 +129,25 @@
           </ElFormItem>
 
           <ElFormItem prop="fdmStorageConnectionId">
-            <ElSelect v-model="form.fdmStorageConnectionId" :disabled="disabled" class="w-100">
+            <ElSelect
+              v-if="form.fdmStorageCluster === 'self'"
+              v-model="form.fdmStorageConnectionId"
+              :disabled="disabled"
+              class="w-100"
+            >
               <ElOption v-for="op in connectionsList" :label="op.label" :value="op.value" :key="op.value"></ElOption>
             </ElSelect>
+            <template v-else>
+              <ElButton
+                v-if="setting.fdmStorageCluster !== form.fdmStorageCluster"
+                type="primary"
+                @click="handleOrderStorage"
+                >{{ $t('packages_ldp_order_fully_managed_storage') }}</ElButton
+              >
+              <span class="preview-text inline-block rounded-2" v-else-if="fdmConnection">{{
+                fdmConnection.name
+              }}</span>
+            </template>
           </ElFormItem>
 
           <!--<div class="flex align-items-center">
@@ -225,7 +241,8 @@ export default {
     visible: {
       required: true,
       value: Boolean
-    }
+    },
+    fdmConnection: Object
   },
 
   data() {
@@ -248,6 +265,10 @@ export default {
           label: this.$t('packages_business_mongodb_self_hosted_cluster'),
           value: 'self',
           tag: 'Add a New Connection'
+        },
+        {
+          label: this.$t('packages_business_mongodb_full_management_cluster'),
+          value: 'full-management'
         }
       ],
       form: {
@@ -277,7 +298,10 @@ export default {
       )
     },
     disabledBtn() {
-      return this.disabled && this.mode === 'service' && this.mode === this.setting?.mode
+      return (
+        (this.disabled && this.mode === 'service' && this.mode === this.setting?.mode) ||
+        (this.mode === 'service' && this.form.fdmStorageCluster === 'full-management')
+      )
     }
   },
 
@@ -307,7 +331,9 @@ export default {
           connection_type: {
             in: ['source_and_target']
           },
-          database_type: 'MongoDB'
+          database_type: {
+            in: ['MongoDB', 'MongoDB Atlas']
+          }
         }
       }
       connectionsApi
@@ -394,6 +420,15 @@ export default {
 
     cancel() {
       this.handleClose()
+    },
+
+    handleOrderStorage() {
+      this.$router.push({
+        name: 'createAgent',
+        query: {
+          order: 'storage'
+        }
+      })
     }
   }
 }
@@ -459,5 +494,12 @@ export default {
 }
 .el-divider--horizontal {
   margin: 5px 5px !important;
+}
+
+.preview-text {
+  padding: 0 15px;
+  line-height: 32px;
+  color: #333c4a;
+  border: 1px solid hsla(0, 0%, 86.7%, 0.4);
 }
 </style>

@@ -491,7 +491,7 @@ export default {
   packages_business_verification_ChoosePKField: '请选索引或主键字段',
   packages_business_verification_indexField: '索引字段',
   packages_business_verification_BasicSettings: '基本设置',
-  packages_business_verification_verifyCondition: '校验条件',
+  packages_business_verification_verifyCondition: '校验表配置',
   packages_business_verification_clear: '清空',
   packages_business_verification_fastCountTip:
     '快速count仅对源表和目标表的行数进行count校验，速度极快，但是不会展示差异的具体字段内容。',
@@ -531,7 +531,7 @@ export default {
   packages_business_components_conditionbox_mubiaobiao: ' 目标表',
   packages_business_components_conditionbox_laiyuanbiao: '来源表',
   packages_business_components_conditionbox_daijiaoyanlianjie: '待校验连接',
-  packages_business_components_conditionbox_jianyantiaojian: '检验条件',
+  packages_business_components_conditionbox_jianyantiaojian: '校验表配置',
   packages_business_components_conditionbox_zhankaibianji: '展开编辑',
   packages_business_components_fieldbox_tianjiahang: '添加行',
   packages_business_components_fieldbox_ziduan: '字段',
@@ -549,8 +549,8 @@ export default {
   packages_business_verification_form_zhishuchulaiyuan: '只输出来源表不一致的数据',
   packages_business_verification_form_shuchusuoyoubu: '输出所有不一致的数据',
   packages_business_verification_form_jieguoshuchu: '结果输出',
-  packages_business_verification_form_zhidingrenyibiao: '指定任意表的校验任务',
-  packages_business_verification_form_weitedingdeP: '为特定的PIPELINE创建的校验任务',
+  packages_business_verification_form_zhidingrenyibiao: '指定任意表进行数据校验',
+  packages_business_verification_form_weitedingdeP: '按照任务进行数据校验',
   packages_business_verification_form_jiaoyanrenwumo: '校验任务模式',
   packages_business_task_status_agent_tooltip_time: '距上次状态上报时间已经{time}',
   packages_business_task_status_agent_tooltip_agent: '任务所在的引擎为',
@@ -905,6 +905,7 @@ export default {
   packages_business_data_console_fdm_mdm_storage_tooltip: '请指定用于额外数据层存储的数据库连接',
   packages_business_mongodb_atlas_cluster: 'MongoDB Atlas 集群',
   packages_business_mongodb_self_hosted_cluster: '自托管 MongoDB 集群',
+  packages_business_mongodb_full_management_cluster: '全托管 MongoDB 集群',
   packages_business_data_console_setting_saved_tooltip: '存储中心保存后, 暂不支持修改, 请谨慎设置',
   // 共享缓存
   packages_business_shared_cache_create: '创建缓存',
@@ -1069,5 +1070,13 @@ export default {
   packages_business_external_storage_list_siyaomima: '私钥密码',
   packages_business_external_storage_list_kehuduansiyao: '客户端私钥',
   packages_business_external_storage_list_zhengshubanfaji: '证书颁发机构',
-  packages_business_external_storage_list_shiyongTls: '使用 TLS/SSL 连接'
+  packages_business_external_storage_list_shiyongTls: '使用 TLS/SSL 连接',
+  page_title_verification_create: '新建校验',
+  page_title_task_edit: '编辑任务',
+  page_title_task_details: '任务详情',
+  page_title_verification_history: '校验历史',
+  page_title_data_difference_details: '差异详情',
+  page_title_data_verification_result: '校验结果',
+  page_title_diff_verification_history: '差异校验历史',
+  page_title_diff_verification_details: '差异校验详情'
 }

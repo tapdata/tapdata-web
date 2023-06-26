@@ -200,7 +200,7 @@ export default {
   packages_dag_components_log_qingshururizhi: 'Please enter the log content...',
   packages_dag_components_nodedetaildialog_chulihaoshi: 'Processing Time',
   packages_dag_components_nodedetaildialog_xingnengzhibiao: 'Performance Metrics',
-  packages_dag_components_nodedetaildialog_zengliangshijiandian: 'Incremental time point',
+  packages_dag_components_nodedetaildialog_zengliangshijiandian: 'Incremental Time',
   packages_dag_components_nodedetaildialog_xieyilianjiehao: 'The protocol connection takes time',
   packages_dag_components_nodedetaildialog_tcPlianjie: 'TCP connection time consuming',
   packages_dag_components_nodedetaildialog_lianjiezhuangtai: 'Connection Status',
@@ -408,7 +408,7 @@ export default {
   packages_dag_components_nodedetaildialog_xieruhaoshi: 'Writing Time',
   packages_dag_components_nodedetaildialog_zengliangduquyan: 'Incremental read latency',
   packages_dag_components_nodedetaildialog_pingjunduquhao: 'Average read time',
-  packages_dag_components_nodedetaildialog_zengliangshijiandian2: 'Incremental time point:',
+  packages_dag_components_nodedetaildialog_zengliangshijiandian2: 'Incremental time:',
   packages_dag_components_nodedetaildialog_dangqianbiaotongbu: 'Current table synchronization progress',
   packages_dag_components_nodedetaildialog_quanliangkaishishi: 'Full start time:',
   packages_dag_components_timeselect_renwuzuijinyi: 'From the last task activation until now',
@@ -638,9 +638,9 @@ export default {
   packages_dag_migration_settingpanel_tiaoguoyichangshi: 'Skip abnormal events, the task continues to run',
   packages_dag_migration_settingpanel_dangdanbiaotongbu: 'When the event processing is abnormal',
   packages_dag_migration_settingpanel_anzhaomorenzhong: 'Retry according to the default retry logic',
+  packages_dag_mixins_formscope_gaizduanshibi: 'This field is required!',
   packages_dag_default_js: 'Default JS',
   packages_dag_standardization_js: 'Standardized JS',
-  packages_dag_mixins_formscope_gaizduanshibi: 'This field is required!',
   packages_dag_shared_mining_table_info_index_wajuebiaoxinxi: 'Mining table information',
   packages_dag_table_not_exist: 'Table not exist, will be automatically created'
 }

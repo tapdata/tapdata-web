@@ -67,7 +67,9 @@ import {
   Submenu,
   InfiniteScroll,
   Empty,
-  Slider
+  Slider,
+  Timeline,
+  TimelineItem
 } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
@@ -182,3 +184,5 @@ Vue.use(InfiniteScroll)
 Vue.use(Alert)
 Vue.use(Empty)
 Vue.use(Slider)
+Vue.use(Timeline)
+Vue.use(TimelineItem)

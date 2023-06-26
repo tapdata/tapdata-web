@@ -5,7 +5,7 @@
     :close-on-press-escape="false"
     :show-close="showClose"
     :title="$t('dfs_agent_download_subscriptionmodeldialog_peizhishishishu')"
-    width="1000px"
+    width="1200px"
     :before-close="close"
     custom-class="tap-dialog"
   >
@@ -16,7 +16,7 @@
         </el-step>
       </el-steps>
     </div>
-    <div class="subscription-steps-content mt-4">
+    <div class="subscription-steps-content flex justify-content-center align-items-center mt-4">
       <div v-if="activeStep === 1" class="flex gap-6 px-5 justify-content-center align-items-center">
         <div
           class="platform-wrap product-type-card rounded-xl border flex flex-column position-relative clickable overflow-auto"
@@ -32,25 +32,36 @@
           <div class="flex justify-content-center gap-5 p-6 align-items-start font-color-dark fs-8">
             <el-image class="w-100 product-type-image" :src="require('@/assets/image/intergration.png')" />
           </div>
-          <div class="px-6 mb-6">
+          <div class="px-6 mb-4">
             <div class="product-type-card-title text-center font-color-dark mb-2 lh-base">
               {{ $t('dfs_agent_download_subscriptionmodeldialog_qiyeshujuji2') }}
             </div>
-            <div class="fs-7 font-color-sslight mb-3 lh-base">{{ $t('dfs_instance_createagent_qiyeshujuji') }}</div>
-            <div class="fs-7 font-color-sslight mb-3 lh-base">{{ $t('dfs_instance_createagent_leisiyuFi') }}</div>
+            <div
+              class="fs-7 font-color-sslight lh-base"
+              :class="[{ 'mb-3': this.$i18n.locale === 'en' }, { 'mb-8': this.$i18n.locale === 'zh-CN' }]"
+            >
+              {{ $t('dfs_instance_createagent_qiyeshujuji') }}
+            </div>
             <div class="text-center font-color-dark fs-6 mb-3 lh-base">
               {{ $t('dfs_agent_download_subscriptionmodeldialog_zhuyaoshiyongchang') }}
             </div>
             <div class="flex justify-content-center align-items-center flex-wrap">
-              <el-tag class="mr-2 mt-2" v-for="(item, index) in interTag" :key="index">{{ item.value }}</el-tag>
+              <el-tag
+                class="mr-2 mt-2 text-center"
+                :class="[item.class]"
+                v-for="(item, index) in interTag"
+                :key="index"
+                >{{ item.value }}</el-tag
+              >
             </div>
           </div>
         </div>
         <div
-          class="platform-wrap product-type-card rounded-xl border flex flex-column position-relative clickable overflow-auto disabled"
+          class="platform-wrap product-type-card rounded-xl border flex flex-column position-relative clickable overflow-auto"
           :class="{
             active: platform === 'realTime'
           }"
+          @click="changePlatform('realTime')"
         >
           <div class="is-active position-absolute top-0 end-0">
             <div class="is-active-triangle"></div>
@@ -64,16 +75,21 @@
               {{ $t('dfs_agent_download_subscriptionmodeldialog_qiyeshishishu2') }}
             </div>
             <div class="font-color-sslight fs-7 mb-3 lh-base">{{ $t('dfs_instance_createagent_qiyeshishishu') }}</div>
-            <div class="font-color-sslight fs-7 mb-3 lh-base">{{ $t('dfs_instance_createagent_heIPaa') }}</div>
             <div class="text-center font-color-dark fs-6 mb-2 lh-base">
               {{ $t('dfs_agent_download_subscriptionmodeldialog_zhuyaoshiyongchang') }}
             </div>
             <div class="flex justify-content-center align-items-center flex-column">
-              <div class="font-color-sslight fs-7 text-center">
+              <div class="font-color-sslight fs-8 text-center">
                 {{ $t('dfs_agent_download_subscriptionmodeldialog_chuzhichisuoyou') }}
               </div>
               <div>
-                <el-tag class="mr-2 mt-2" v-for="(item, index) in realTimeTag" :key="index">{{ item.value }}</el-tag>
+                <el-tag
+                  class="mr-2 mt-2 text-center"
+                  :class="[item.class]"
+                  v-for="(item, index) in realTimeTag"
+                  :key="index"
+                  >{{ item.value }}</el-tag
+                >
               </div>
             </div>
           </div>
@@ -107,16 +123,15 @@
               <div class="fs-6 text-center font-color-dark font-weight-light mb-2">
                 {{ $t('dfs_agent_download_subscriptionmodeldialog_shiyongbantuoguan') }}
               </div>
-              <div class="flex justify-content-center">
+              <div class="flex justify-content-center lh-base">
                 <ul>
-                  <li class="flex fs-7 font-color-sslight lh-base mb-1">
-                    <VIcon size="16" class="mr-2">check-bold</VIcon>
+                  <li class="flex fs-7 font-color-sslight mb-1">
+                    <VIcon size="16" class="mt-1 mr-2">check-bold</VIcon>
                     <span>{{ $t('dfs_agent_download_subscriptionmodeldialog_chengbengengdichong') }}</span>
                   </li>
-                  <li class="flex fs-7 font-color-sslight lh-base">
-                    <VIcon size="16" class="mr-2">check-bold</VIcon
-                    ><span>{{ $t('dfs_agent_download_subscriptionmodeldialog_gengjiaanquanyong') }}</span
-                    >x
+                  <li class="flex fs-7 font-color-sslight">
+                    <VIcon size="16" class="mt-1 mr-2">check-bold</VIcon
+                    ><span>{{ $t('dfs_agent_download_subscriptionmodeldialog_gengjiaanquanyong') }}</span>
                   </li>
                 </ul>
               </div>
@@ -148,17 +163,17 @@
               <div class="fs-6 text-center font-color-dark font-weight-light mb-2">
                 {{ $t('dfs_agent_download_subscriptionmodeldialog_shiyongquantuoguan') }}
               </div>
-              <div class="flex justify-content-center">
+              <div class="flex justify-content-center lh-base">
                 <ul>
                   <li class="flex fs-7 font-color-sslight mb-1">
-                    <VIcon size="16" class="mr-2">check-bold</VIcon
+                    <VIcon size="16" class="mt-1 mr-2">check-bold</VIcon
                     ><span>{{ $t('dfs_agent_download_subscriptionmodeldialog_gengjiafangbianmian') }}</span>
                   </li>
                   <li
                     class="flex fs-7 font-color-sslight"
                     :class="[{ 'mb-6': this.$i18n.locale === 'zh-CN' }, { 'mb-3': this.$i18n.locale === 'en' }]"
                   >
-                    <VIcon size="16" class="mr-2">check-bold</VIcon
+                    <VIcon size="16" class="mt-1 mr-2">check-bold</VIcon
                     ><span>{{ $t('dfs_agent_download_subscriptionmodeldialog_gengjiakekaoyou') }}</span>
                   </li>
                 </ul>
@@ -248,48 +263,48 @@
               </ElRadio>
             </ElRadioGroup>
           </ElFormItem>
-          <ElFormItem
-            :label="$t('dfs_agent_download_subscriptionmodeldialog_xuanzebizhong')"
-            v-if="currencyOption && currencyOption.length > 0"
-          >
-            <ElRadioGroup v-model="currencyType" @input="changeCurrency" class="flex gap-4">
-              <ElRadio
-                v-for="(item, index) in currencyOption"
-                :key="index"
-                :label="item.currency"
-                border
-                class="rounded-4 m-0"
-                >{{ CURRENCY_MAP[item.currency] }}</ElRadio
-              >
-            </ElRadioGroup>
-          </ElFormItem>
+          <!--          <ElFormItem-->
+          <!--            :label="$t('dfs_agent_download_subscriptionmodeldialog_xuanzebizhong')"-->
+          <!--            v-if="currencyOption && currencyOption.length > 0"-->
+          <!--          >-->
+          <!--            <ElRadioGroup v-model="currencyType" @input="changeCurrency" class="flex gap-4">-->
+          <!--              <ElRadio-->
+          <!--                v-for="(item, index) in currencyOption"-->
+          <!--                :key="index"-->
+          <!--                :label="item.currency"-->
+          <!--                border-->
+          <!--                class="rounded-4 m-0"-->
+          <!--                >{{ CURRENCY_MAP[item.currency] }}</ElRadio-->
+          <!--              >-->
+          <!--            </ElRadioGroup>-->
+          <!--          </ElFormItem>-->
           <ElFormItem
             :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxi')"
             v-if="agentDeploy === 'fullManagement'"
           >
-            <!--            <div class="flex">-->
-            <!--              <span-->
-            <!--                class="font-color-light inline-block"-->
-            <!--                :class="[-->
-            <!--                  { 'form-label': this.$i18n.locale === 'zh-CN' },-->
-            <!--                  { 'form-label-en': this.$i18n.locale === 'en' }-->
-            <!--                ]"-->
-            <!--                >{{ $t('dfs_agent_download_subscriptionmodeldialog_yunfuwushang') }}</span-->
-            <!--              >-->
-            <!--              <ElRadioGroup v-model="provider" @input="changeProvider" class="flex gap-4">-->
-            <!--                <ElRadio-->
-            <!--                  v-for="(item, index) in cloudProviderList"-->
-            <!--                  :key="index"-->
-            <!--                  :label="item.cloudProvider"-->
-            <!--                  border-->
-            <!--                  class="rounded-4 subscription-radio m-0 position-relative"-->
-            <!--                >-->
-            <!--                  <span class="inline-flex align-center">-->
-            <!--                    {{ item.cloudProviderName }}-->
-            <!--                  </span>-->
-            <!--                </ElRadio>-->
-            <!--              </ElRadioGroup>-->
-            <!--            </div>-->
+            <div class="flex">
+              <span
+                class="font-color-light inline-block"
+                :class="[
+                  { 'form-label': this.$i18n.locale === 'zh-CN' },
+                  { 'form-label-en': this.$i18n.locale === 'en' }
+                ]"
+                >{{ $t('dfs_agent_download_subscriptionmodeldialog_yunfuwushang') }}</span
+              >
+              <ElRadioGroup v-model="provider" @input="changeProvider" class="flex gap-4">
+                <ElRadio
+                  v-for="(item, index) in cloudProviderList"
+                  :key="index"
+                  :label="item.cloudProvider"
+                  border
+                  class="rounded-4 subscription-radio m-0 position-relative"
+                >
+                  <span class="inline-flex align-center">
+                    {{ item.cloudProviderName }}
+                  </span>
+                </ElRadio>
+              </ElRadioGroup>
+            </div>
             <div class="flex mt-4">
               <span
                 class="font-color-light inline-block"
@@ -299,7 +314,7 @@
                 ]"
                 >{{ $t('dfs_agent_download_subscriptionmodeldialog_diqu') }}</span
               >
-              <ElRadioGroup v-model="region" class="flex gap-4">
+              <ElRadioGroup v-model="region" class="flex gap-4" @change="changeRegion">
                 <ElRadio
                   v-for="(item, index) in cloudDetail"
                   :key="index"
@@ -317,27 +332,27 @@
           <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu')">
             <ul class="flex flex-wrap">
               <li
-                class="spec-li position-relative px-4 py-2 mt-4 mr-4"
+                class="spec spec-li position-relative px-4 py-2 mt-4 mr-4 cursor-pointer"
                 :class="{
-                  active: specification === item.value,
-                  disabled: (agentCount > 0 || agentDeploy !== 'selfHost') && item.chargeProvider === 'FreeTier'
+                  active: specification === item.value
                 }"
                 v-for="(item, i) in specificationItems"
                 :key="i"
-                @click="
-                  changeSpec(
-                    item.value,
-                    (agentCount > 0 || agentDeploy !== 'selfHost') && item.chargeProvider === 'FreeTier'
-                  )
-                "
+                @click="changeSpec(item.value)"
               >
                 <div class="is-active position-absolute top-0 end-0">
                   <div class="is-active-triangle"></div>
                   <VIcon size="16" class="is-active-icon">check-bold</VIcon>
                 </div>
-                <div class="spec-li-title mt-1 lh-base fw-bold font-color-dark">
+                <div class="spec-li-title mt-1 lh-base fw-bold font-color-dark flex align-items-center">
                   <span>{{ item.name }}: </span>
                   <span>{{ item.desc }}</span>
+                  <ElTag
+                    v-if="item.chargeProvider === 'FreeTier'"
+                    size="small"
+                    class="bg-color-warning text-white border-0 ml-2"
+                    >{{ $t('dfs_instance_createagent_mianfeitiyan') }}</ElTag
+                  >
                 </div>
                 <div
                   v-if="agentDeploy === 'selfHost'"
@@ -449,7 +464,7 @@
         </ElForm>
       </div>
       <!---确认提交订单-->
-      <div v-if="activeStep === 5 || (activeStep === 4 && platform === 'integration')" class="px-1">
+      <div v-if="activeStep === 5 || (activeStep === 4 && platform === 'integration')" class="px-1 w-100">
         <div class="border rounded-4 p-4">
           <div class="fs-6 font-color-dark mb-4">
             {{ $t('dfs_agent_download_subscriptionmodeldialog_peizhizhaiyao') }}
@@ -499,7 +514,7 @@
               <ElInput v-model="form.email" :placeholder="getPlaceholder()" style="width: 300px"></ElInput>
             </ElFormItem>
           </ElForm>
-          <div class="border rounded-4 price-wrap">
+          <div class="border rounded-4 price-wrap" v-if="agentDeploy !== 'aliyun'">
             <div class="px-3 py-2">
               <div class="mb-2">
                 <span class="price-detail-label inline-block mr-2">{{
@@ -556,6 +571,7 @@
           </div>
         </div>
         <el-button v-if="activeStep > 1" @click="prevStep">{{ $t('public_button_previous') }}</el-button>
+        <el-button v-if="activeStep == 1">{{ $t('public_button_previous') }}</el-button>
         <el-button v-if="activeStep < steps.length" type="primary" @click="next('second')">{{
           $t('public_button_next')
         }}</el-button>
@@ -569,9 +585,13 @@
             <el-button type="primary" :loading="submitOnlineLoading" @click="submit()">{{
               $t('dfs_agent_download_subscriptionmodeldialog_zaixianzhifu')
             }}</el-button>
-            <el-button type="primary" :loading="submitLoading" @click="submit({}, 'offline')">{{
-              $t('dfs_agent_download_subscriptionmodeldialog_zhuanzhangzhifu')
-            }}</el-button>
+            <el-button
+              type="primary"
+              v-if="isDomesticStation"
+              :loading="submitLoading"
+              @click="submit({}, 'offline')"
+              >{{ $t('dfs_agent_download_subscriptionmodeldialog_zhuanzhangzhifu') }}</el-button
+            >
           </div>
         </div>
       </template>
@@ -675,45 +695,54 @@ export default {
       },
       realTimeTag: [
         {
-          value: i18n.t('dfs_instance_createagent_apIkuaisu')
+          value: i18n.t('dfs_instance_createagent_apIkuaisu'),
+          class: 'col-4'
         },
         {
-          value: i18n.t('dfs_instance_createagent_shishishucang')
+          value: i18n.t('dfs_instance_createagent_shishishucang'),
+          class: 'col-5'
         },
         {
-          value: i18n.t('dfs_instance_createagent_bIkanbangong')
+          value: i18n.t('dfs_instance_createagent_bIkanbangong'),
+          class: 'col-3'
         },
         {
-          value: i18n.t('dfs_instance_createagent_kehu')
+          value: i18n.t('dfs_instance_createagent_kehu'),
+          class: 'col-4'
         },
         {
-          value: i18n.t('dfs_instance_createagent_shangpinzhongxin')
+          value: i18n.t('dfs_instance_createagent_shangpinzhongxin'),
+          class: 'col-5'
         },
         {
-          value: i18n.t('dfs_instance_createagent_kucunzhongxin')
-        },
-        {
-          value: i18n.t('dfs_instance_createagent_minjieshujuzhong')
+          value: i18n.t('dfs_instance_createagent_minjieshujuzhong'),
+          class: 'col-3'
         }
       ],
       interTag: [
         {
-          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_shishishujutong')
+          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_shishishujutong'),
+          class: 'col-1'
         },
         {
-          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_shujuEtl')
+          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_shujushangyunkua'),
+          class: 'col-2'
         },
         {
-          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_shujushangyunkua')
+          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_shujuEtl'),
+          class: 'col-3'
         },
         {
-          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_shujushangyunkua')
+          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_redis_gongshu'),
+          class: 'col-1'
         },
         {
-          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_shujukuguochan')
+          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_shujukuguochan'),
+          class: 'col-2'
         },
         {
-          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_kafka')
+          value: i18n.t('dfs_agent_download_subscriptionmodeldialog_kafka'),
+          class: 'col-3'
         }
       ],
       CURRENCY_MAP: CURRENCY_MAP,
@@ -767,7 +796,10 @@ export default {
         }
       ],
       currentPackage: '',
-      showTransferDialogVisible: false //转测信息弹窗
+      disabledAliyunCode: false,
+      showTransferDialogVisible: false, //转测信息弹窗
+      mdbZone: '',
+      isDomesticStation: true
     }
   },
 
@@ -865,10 +897,18 @@ export default {
     this.checkAgentCount()
     this.form.email = window.__USER_INFO__.email
     const currencyType = window.__config__?.currencyType
+    const disabledAliyunCode = window.__config__?.disabledAliyunCode
 
     if (currencyType) {
       this.currencyType = currencyType
       this.defaultCurrencyType = currencyType
+    }
+    //控制是否打开授权码通道
+    if (disabledAliyunCode) {
+      this.disabledAliyunCode = disabledAliyunCode
+    }
+    if (window.__config__?.station) {
+      this.isDomesticStation = window.__config__?.station === 'domestic' //默认是国内站 国际站是 international
     }
   },
   methods: {
@@ -897,6 +937,7 @@ export default {
       //存储方案请求接口得到存储价格
       if (this.activeStep === 4 && this.platform === 'realTime') {
         this.getMongoCluster()
+        this.getCloudMdbSource()
       }
     },
     //选择平台
@@ -905,6 +946,8 @@ export default {
       this.loadPackageItems()
       //更新存储资源价格
       this.changeMongodbMemory()
+      //云厂商
+      this.getCloudProvider()
       //数据初始化
       this.mdbPriceId = 'FreeTier'
       this.mongodbSpecPrice = ''
@@ -931,7 +974,6 @@ export default {
       this.mongodbSpecPrice = ''
       this.selected = {}
       this.currency = ''
-      this.currencyType = ''
       this.mdbPrices = 0
       this.mongodbSpec = '0-0'
       this.memorySpace = 5
@@ -944,7 +986,13 @@ export default {
       if (!this.currencyType) {
         this.currencyType = this.packageItems[0]?.currency
       }
-      this.handleChange(this.packageItems[0])
+      let currentItem = this.packageItems[0]
+      if (this.selected?.type && currentItem?.chargeProvider !== 'FreeTier') {
+        currentItem = this.packageItems.find(
+          it => it.type === this.selected?.type && it.periodUnit === this.selected?.periodUnit //切换规格不改变原来的订阅方式
+        )
+      }
+      this.handleChange(currentItem)
       this.buried('changeSpec')
     },
     //切换云厂商
@@ -958,6 +1006,10 @@ export default {
     changeRegion() {
       let region = this.cloudDetail.filter(it => it.region === this.region) || []
       this.regionName = region?.[0]?.regionName
+
+      //只展示可用区
+      this.provider = region?.[0]?.cloudProvider
+      this.cloudProviderName = region?.[0]?.cloudProviderName
     },
     //切换订阅方式
     handleChange(item = {}) {
@@ -1029,7 +1081,7 @@ export default {
     },
     //格式化价格
     formatPrice(item, isOriginalPrice) {
-      if (!item || item?.chargeProvider === 'FreeTier') return 0
+      if (!item || item?.chargeProvider === 'FreeTier') return '0'
 
       let amount = this.getAmount(item, isOriginalPrice) + this.mdbPrices
       return (
@@ -1059,7 +1111,7 @@ export default {
       let filter = { where: { 'orderInfo.chargeProvider': 'FreeTier' } }
       this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
         this.agentCount = data?.total
-        this.getPrice()
+        this.getCloudProvider()
       })
     },
     getImg(name) {
@@ -1088,10 +1140,20 @@ export default {
     //查找云厂商
     getCloudProvider() {
       this.$axios.get('api/tcm/orders/queryCloudProvider').then(data => {
-        this.cloudProviderList = data?.items || []
+        //数据模式（带存储）过滤只带存储的云厂商
+        if (this.platform === 'realTime') {
+          let original = data?.items || []
+          original.forEach(it => {
+            if (it.cloudDetail?.length > 0) {
+              it.cloudDetail = it.cloudDetail.filter(item => item.productList.includes('mongodb')) || []
+            }
+          })
+          this.cloudProviderList = original.filter(it => it.cloudDetail.length > 0)
+        } else this.cloudProviderList = data?.items || []
         //初始化云厂商
         this.provider = this.cloudProviderList?.[0].cloudProvider
         this.changeProvider()
+        this.getPrice()
       })
     },
     //查询规格价格
@@ -1099,7 +1161,7 @@ export default {
       const params = {
         productType: this.agentDeploy
       }
-      this.$axios.get('api/tcm/paid/plan/getPaidPlan', { params }).then(data => {
+      this.$axios.get('api/tcm/orders/paid/price', { params }).then(data => {
         const { paidPrice = [] } = data?.[0] || {}
         // 规格
         this.specificationItems = uniqBy(
@@ -1126,10 +1188,13 @@ export default {
         ).sort((a, b) => {
           return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
         })
-        this.specification =
-          this.agentCount > 0 || this.agentDeploy !== 'selfHost'
-            ? this.specificationItems[1]?.value
-            : this.specificationItems[0]?.value
+        //免费不能选; 不做禁用 直接过滤掉不显示
+        // disabled: (agentCount > 0 || agentDeploy !== 'selfHost') && item.chargeProvider === 'FreeTier'
+        // 已有免费的agent，则过滤掉FreeTier
+        if (this.agentCount > 0) {
+          this.specificationItems = this.specificationItems.filter(it => it.chargeProvider !== 'FreeTier')
+        }
+        this.specification = this.specificationItems[0]?.value
         // 价格套餐
         this.allPackages = paidPrice.map(t => {
           return Object.assign(t, {
@@ -1194,10 +1259,13 @@ export default {
     //获取存储价格
     getMongoCluster() {
       const params = {
-        productType: 'mongoCluster'
+        productType: 'mongoCluster',
+        region: this.region,
+        cloudProvider: this.provider
       }
-      this.$axios.get('api/tcm/paid/plan/getPaidPlan', { params }).then(data => {
+      this.$axios.get('api/tcm/orders/paid/price', { params }).then(data => {
         const { paidPrice = [] } = data?.[0] || {}
+        this.paidPrice = paidPrice
         //根据订阅方式再过滤一层
         let prices = paidPrice?.filter(
           t =>
@@ -1206,7 +1274,7 @@ export default {
         )
         this.mongodbPaidPrice = prices
         // 规格
-        this.mongodbSpecItems = uniqueArr(
+        this.mongodbSpecItems = uniqBy(
           prices.map(t => {
             const { cpu = 0, memory = 0 } = t.spec || {}
             return {
@@ -1217,7 +1285,8 @@ export default {
                 t.chargeProvider === 'FreeTier'
                   ? i18n.t('dfs_instance_createagent_mianfeishiyonggui')
                   : `MongoDB ${cpu}C${memory}G`,
-              chargeProvider: t.chargeProvider
+              chargeProvider: t.chargeProvider,
+              mdbSpec: t.mdbSpec
             }
           }),
           'name'
@@ -1226,11 +1295,46 @@ export default {
         })
       })
     },
+    //判断是否可选存储规格
+    async getCloudMdbSource() {
+      //选择存储规格时，需要判断mdbSpec 是否有可用区
+      if (this.provider !== 'AliCloud') return
+
+      try {
+        const data = await this.$axios.get('api/tcm/orders/paid/getCloudMdbSource')
+        let original = data.find(it => it.cloudProvider === this.provider)
+        let { mdbRegionProvider = [] } = original
+        this.spec2Zone = mdbRegionProvider.reduce((map, item) => {
+          return item.mdbZoneProvider.reduce((_map, it) => {
+            return it.mdbProvider.reduce((__map, specItem) => {
+              if (!__map[specItem.mdbSpec]) {
+                _map[specItem.mdbSpec] = it.zone
+              }
+              return __map
+            }, _map)
+          }, map)
+        }, {})
+        let mdbZoneProvider = []
+        if (mdbRegionProvider.length > 0) {
+          mdbZoneProvider = mdbRegionProvider.filter(it => it.region === this.region)?.[0]?.mdbZoneProvider || []
+        }
+        this.cloudMdbSource = mdbZoneProvider
+      } catch (e) {
+        console.log(e) // eslint-disable-line
+      }
+    },
     //选择存储规格
     changeMongodbMemory() {
       let values = this.mongodbSpec.split('-')
       let cpu = Number(values[0])
       let memory = Number(values[1])
+      this.mdbZone = '' //初始化
+      //根据订阅方式再过滤一层
+      this.mongodbPaidPrice = this.paidPrice?.filter(
+        t =>
+          (t.periodUnit === this.selected.periodUnit && t.type === this.selected.type) ||
+          t.chargeProvider === 'FreeTier'
+      )
       if (cpu === 0 && memory === 0) {
         this.mongodbSpecPrice = 0
         this.mdbPrices = 0
@@ -1245,12 +1349,14 @@ export default {
         }
       }
       this.currentMemorySpecName = `MongoDB ${cpu}C${memory}G`
-      let price = this.mongodbPaidPrice.filter(
+      let price = this.mongodbPaidPrice.find(
         t => t.spec.storageSize === this.memorySpace && cpu === t.spec.cpu && memory === t.spec.memory
       )
+      console.log('price', price) // eslint-disable-line
       //需要改变mdbPriceId 因为存储空间改变了
-      this.mdbPriceId = price?.[0]?.priceId
-      this.mdbPrice(price?.[0].currencyOption?.find(item => item.currency === this.currencyType)?.amount || 0)
+      this.mdbPriceId = price?.priceId
+      this.mdbZone = this.spec2Zone[price?.mdbSpec]
+      this.mdbPrice(price?.currencyOption?.find(item => item.currency === this.currencyType)?.amount || 0)
     },
     //存储价格
     mdbPrice(price) {
@@ -1356,6 +1462,12 @@ export default {
           params.memorySpace = this.memorySpace
           params.successUrl = location.origin + location.pathname + agentUrl.href
         }
+        //带存储实例
+        if (this.platform === 'realTime') {
+          params.mdbPriceId = this.mdbPriceId
+          params.mdbRegion = this.region || ''
+          params.mdbZone = this.mdbZone || ''
+        }
       }
 
       this.buried('newAgentStripe', '', {
@@ -1369,7 +1481,15 @@ export default {
       this.$axios
         .post('api/tcm/orders', params)
         .then(data => {
-          if (data.chargeProvider === 'FreeTier' || (data.chargeProvider === 'Aliyun' && row.agentType === 'Local')) {
+          if (data.chargeProvider === 'FreeTier' && this.agentDeploy === 'fullManagement') {
+            this.finish()
+            this.$router.push({
+              name: 'Instance'
+            })
+          } else if (
+            data.chargeProvider === 'FreeTier' ||
+            (data.chargeProvider === 'Aliyun' && row.agentType === 'Local')
+          ) {
             //免费实例（授权码）-半托管-直接部署页面
             this.finish()
             let downloadUrl = window.App.$router.resolve({
@@ -1577,6 +1697,22 @@ export default {
     border-color: map-get($color, primary);
   }
 }
+//控制tag长度
+.col-1 {
+  width: 134px;
+}
+.col-2 {
+  width: 113px;
+}
+.col-3 {
+  width: 108px;
+}
+.col-4 {
+  width: 152px;
+}
+.col-5 {
+  width: 90px;
+}
 .label {
   width: 268px;
 }
@@ -1621,6 +1757,7 @@ export default {
     .el-step {
       &.is-simple:not(:last-of-type) .el-step__title {
         max-width: unset;
+        font-size: 14px;
       }
 
       .el-step__icon {
@@ -1670,9 +1807,6 @@ export default {
   .form-label-en {
     width: 170px;
   }
-  .platform-wrap {
-    height: 500px;
-  }
   .discount-tag {
     padding: 0 6px;
     color: #ff7d00;
@@ -1699,6 +1833,10 @@ export default {
   background: #fafafa;
   border-radius: 4px;
 }
+.spec-li:hover {
+  border: 1px solid map-get($color, primary);
+}
+
 .spec-li {
   width: 450px;
   border: 1px solid #dedede;
@@ -1738,7 +1876,7 @@ export default {
 }
 
 .product-type-card {
-  width: 400px;
+  width: 430px;
   .product-type-card-title {
     font-size: $fontTitle;
     font-weight: 700;
@@ -1778,6 +1916,16 @@ export default {
     }
   }
 }
+.product-type-card:hover {
+  border: 1px solid map-get($color, primary) !important;
+}
+.subscription-steps-wrap {
+  ::v-deep {
+    .el-steps--simple {
+      padding: 13px 0;
+    }
+  }
+}
 </style>
 
 <style lang="scss">
@@ -1795,5 +1943,8 @@ export default {
   .el-dialog__footer {
     padding: 24px;
   }
+}
+.el-form-item__label {
+  font-weight: 500;
 }
 </style>

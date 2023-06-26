@@ -66,7 +66,17 @@
   flex-direction: column;
   overflow: hidden;
   .section-wrap-box {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -ms-flex: 1;
+    flex: 1;
     padding: 20px;
+    border-radius: 4px;
+    background-color: #fff;
+    box-sizing: border-box;
+    overflow: hidden;
   }
 }
 .verify-details-header {
@@ -227,7 +237,7 @@ export default {
       let keep = inspect?.limit?.keep || 0
       let totalFailed = inspect?.difference_number || 0
       if (keep < totalFailed) {
-        return this.$message.error(this.$t('packages_business_verification_message_out_of_limit'))
+        this.$message.warning(this.$t('packages_business_verification_message_out_of_limit'))
       }
       inspectApi
         .update(

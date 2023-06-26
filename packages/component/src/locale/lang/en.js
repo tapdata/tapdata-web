@@ -39,5 +39,24 @@ export default {
   packages_component_src_discoveryclassification_morenmuluji: 'Default Directory (Technology)',
   packages_component_src_selectlist_qingchuyixuan: 'Clear Selected',
   packages_component_src_selectlist_xiang: 'Item',
-  packages_component_src_selectlist_yixuanze: 'Selected'
+  packages_component_src_selectlist_yixuanze: 'Selected',
+
+  packages_component_src_upgradefee_dingyuezhuanyeban: 'Subscribe to Professional Plan',
+  packages_component_src_upgradefee_gaojishouhouzhi: 'Technical Support:  Premium With SLA',
+  packages_component_src_upgradefee_shujuchulixing: 'Throughput: Higher',
+  packages_component_src_upgradefee_desc_1: 'Everything included in Free Plan, Plus...',
+  packages_component_src_upgradefee_renwushukegen: 'Max Concurrently Tasks: Unlimited',
+  packages_component_src_upgradefee_taocanfufei: 'Pay-As-You-Go',
+  packages_component_src_upgradefee_tigongzhuanyehua: 'For business and production use',
+  packages_component_src_upgradefee_xianshiyouhui: 'Limited-time Discount',
+  packages_component_src_upgradefee_zhuanyeban: 'Professional Plan',
+  packages_component_src_upgradefee_dangqianbanben: 'Current Plan',
+  packages_component_src_upgradefee_biaozhunshouhouzhi: 'Technical Support: Standard',
+  packages_component_src_upgradefee_ge: '3',
+  packages_component_src_upgradefee_zuidarenwushu: 'Max Concurrently Tasks: ',
+  packages_component_src_basic_component: 'Basic Data Replica and Development Features',
+  packages_component_src_upgradefee_mianfei: 'Free',
+  packages_component_src_upgradefee_tigongmianfeishi: 'For personal use or testing purposes',
+  packages_component_src_upgradefee_jichuban: 'Basic Plan',
+  packages_component_src_upgradefee_dingyueshengji: 'Subscribe Professional Plan'
 }
