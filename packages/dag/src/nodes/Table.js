@@ -61,7 +61,7 @@ export class Table extends NodeType {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              label: '基础设置'
+              label: i18n.t('public_basic_settings')
             },
             properties: {
               nameWrap: {
@@ -159,7 +159,7 @@ export class Table extends NodeType {
                   feedbackLayout: 'none',
                   connectionId: '{{$values.connectionId}}',
                   title: i18n.t('packages_dag_dag_table'),
-                  target: 'tableNameWrap.tableName'
+                  target: 'tableName'
                 },
                 'x-component': 'FormFlex',
                 'x-component-props': {
@@ -307,7 +307,7 @@ export class Table extends NodeType {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              label: '高级设置'
+              label: i18n.t('public_advanced_settings')
             },
             properties: {
               sourceNodeConfig: {

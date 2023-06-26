@@ -21,6 +21,9 @@ export default {
   public_total: '共计',
   public_database: '数据库',
   public_file: '文件',
+  public_schema: '模型',
+  public_basic_settings: '基础设置',
+  public_advanced_settings: '高级设置',
 
   // 状态
   public_status_ready: '有效',

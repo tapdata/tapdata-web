@@ -1,8 +1,16 @@
 .schema-preview {
-.schema-card {
-  &-header {
-    background-color: rgb(248, 250, 252);
-    border-top: 8px solid rgb(132, 204, 22);
+  .schema-card {
+    min-width: 240px;
+    &-header {
+      background-color: rgb(248, 250, 252);
+      //border-top: 8px solid rgb(132, 204, 22);
+      border-top: 6px solid map-get($color, primary);
+    }
+
+    .field-icon {
+      left: -18px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
   }
-}
 }

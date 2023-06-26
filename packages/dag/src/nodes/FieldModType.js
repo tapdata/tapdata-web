@@ -19,20 +19,43 @@ export class FieldModType extends NodeType {
         type: 'array',
         display: 'none'
       },
-      name: {
-        type: 'string',
-        title: i18n.t('public_node_name'),
-        required: true,
-        'x-decorator': 'FormItem',
-        'x-component': 'Input'
-      },
-      operations: {
-        type: 'array',
-        title: '',
-        'x-decorator': 'FormItem',
-        'x-component': 'FieldModType',
-        'x-reactions':
-          '{{useAsyncDataSourceByConfig({service: loadNodeFieldsById, withoutField: true}, $self.value.length ? $values.id : $values.$inputs[0])}}'
+      tabs: {
+        type: 'void',
+        'x-component': 'FormTab',
+        'x-component-props': {
+          class: 'config-tabs',
+          formTab: '{{formTab}}'
+        },
+        properties: {
+          tab1: {
+            type: 'void',
+            'x-component': 'FormTab.TabPane',
+            'x-component-props': {
+              label: i18n.t('public_basic_settings')
+            },
+            properties: {
+              name: {
+                type: 'string',
+                title: i18n.t('public_node_name'),
+                required: true,
+                'x-decorator': 'FormItem',
+                'x-component': 'Input'
+              },
+              operations: {
+                type: 'array',
+                title: '',
+                'x-decorator': 'FormItem',
+                'x-component': 'FieldModType',
+                'x-reactions':
+                  '{{useAsyncDataSourceByConfig({service: loadNodeFieldsById, withoutField: true}, $self.value.length ? $values.id : $values.$inputs[0])}}'
+              },
+              schemaPreview: {
+                type: 'void',
+                'x-component': 'SchemaPreview'
+              }
+            }
+          }
+        }
       }
     }
   }

@@ -22,12 +22,8 @@ export const useAfterTaskSaved = (root, obs, callback) => {
     )
   })
 
-  onBeforeUnmount(() => {
-    dispose()
-  })
-
   // 模型生成状态变化
-  watch(
+  const unWatch = watch(
     () => root.$store.state.dataflow.transformLoading,
     v => {
       if (!v) {
@@ -36,6 +32,11 @@ export const useAfterTaskSaved = (root, obs, callback) => {
       }
     }
   )
+
+  onBeforeUnmount(() => {
+    dispose()
+    unWatch()
+  })
 }
 
 export const useSchemaEffect = (root, tracker, callback) => {
@@ -52,12 +53,8 @@ export const useSchemaEffect = (root, tracker, callback) => {
     )
   })
 
-  onBeforeUnmount(() => {
-    dispose()
-  })
-
   // 模型生成状态变化
-  watch(
+  const unWatch = watch(
     () => root.$store.state.dataflow.transformLoading,
     v => {
       if (!v) {
@@ -66,4 +63,9 @@ export const useSchemaEffect = (root, tracker, callback) => {
       }
     }
   )
+
+  onBeforeUnmount(() => {
+    dispose()
+    unWatch()
+  })
 }

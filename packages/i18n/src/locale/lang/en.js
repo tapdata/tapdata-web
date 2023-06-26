@@ -21,6 +21,9 @@ export default {
   public_total: 'Total',
   public_database: 'Database',
   public_file: 'File',
+  public_schema: 'Schema',
+  public_basic_settings: 'Basic Settings',
+  public_advanced_settings: 'Advanced Settings',
   // state
   public_status_ready: 'Valid',
   public_status_invalid: 'Invalid',
