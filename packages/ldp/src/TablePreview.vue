@@ -874,15 +874,19 @@ export default {
     handleDelete() {
       if (this.taskData.length) {
         this.activeName = 'tasks'
-        this.$message.warning(`检测到有任务正在使用 ${this.selected.name}，请删除所有相关任务后重试`)
+        this.$message.warning(i18n.t('packages_ldp_src_tablepreview_jiancedaoyouren', { val1: this.selected.name }))
         return
       }
 
-      this.$confirm('该表将会从数据库里删除，操作后不可恢复', '确认删除？', {
-        type: 'warning',
-        showClose: false,
-        zIndex: 999999
-      }).then(resFlag => {
+      this.$confirm(
+        i18n.t('packages_ldp_src_tablepreview_gaibiaojianghuicong'),
+        i18n.t('packages_ldp_src_tablepreview_querenshanchu'),
+        {
+          type: 'warning',
+          showClose: false,
+          zIndex: 999999
+        }
+      ).then(resFlag => {
         if (!resFlag) {
           return
         }

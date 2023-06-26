@@ -18,7 +18,7 @@
           v-if="showParentLineage"
           class="parent-lineage-quit color-linfo cursor-pointer rounded-2 px-4 py-2"
           @click="handleQuit"
-          >按Esc退出溯源场景</span
+          >{{ $t('packages_ldp_src_dashboard_anEsctui') }}</span
         >
       </div>
       <IconButton class="ml-3" @click="handleSettings" md>cog-o</IconButton>
