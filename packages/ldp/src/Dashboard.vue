@@ -382,8 +382,8 @@ export default {
         this.nodes = nodes
         const otherLdpType = ldpType === 'mdm' ? 'fdm' : 'mdm'
         let edgsLinks = edges.map(t => {
-          let sourceNode = nodes.find(el => el.id === t.source)
-          let targetNode = nodes.find(el => el.id === t.target)
+          let sourceNode = this.nodes.find(el => el.id === t.source)
+          let targetNode = this.nodes.find(el => el.id === t.target)
           sourceNode.dom = null
           targetNode.dom = null
           sourceNode.ldpType =
@@ -445,7 +445,8 @@ export default {
             keywordOptions[el.ldpType].push({
               table,
               appName,
-              serverName: name
+              serverName: name,
+              type: el.type
             })
           }
         } else {
@@ -462,9 +463,8 @@ export default {
 
       // 过滤source列表
       if (keywordOptions) {
-        // this.$refs.source[0].searchByKeywordList(sourceKeyword)
-        // this.$refs.fdm[0].searchByKeywordList(sourceKeyword)
         this.$refs.source[0].searchByKeywordList(keywordOptions.source)
+        this.$refs.target[0].searchByKeywordList(keywordOptions.target)
         this.$refs.fdm[0].searchByKeywordList(keywordOptions.fdm)
       }
 
@@ -500,9 +500,7 @@ export default {
               dashstyle: '2 4',
               gap: 20
             },
-            overlays: [
-              ['Arrow', { width: 10, length: 10, location: 1, id: 'arrow', foldback: 1, fill: '#2C65FF' }]
-            ]
+            overlays: [['Arrow', { width: 10, length: 10, location: 1, id: 'arrow', foldback: 1, fill: '#2C65FF' }]]
           })
         })
       })

@@ -175,7 +175,7 @@
 
 <script>
 // import draggable from 'vuedraggable'
-import { debounce } from 'lodash'
+import { debounce, cloneDeep } from 'lodash'
 import { defineComponent, ref } from '@vue/composition-api'
 
 import { apiServerApi, appApi, connectionsApi, modulesApi, proxyApi, taskApi } from '@tap/api'
@@ -270,7 +270,8 @@ export default {
 
   props: {
     dragState: Object,
-    fdmAndMdmId: Array
+    fdmAndMdmId: Array,
+    showParentLineage: Boolean
   },
 
   components: { ApiPreview, CreateRestApi, DatabaseIcon, TaskList, IconButton, VIcon },
@@ -332,7 +333,8 @@ export default {
         generating: this.$t('public_status_to_be_generated')
       },
       connectionWebsiteMap: {},
-      apiSupportTypes: ['Mysql', 'SQL Server', 'Oracle', 'MongoDB', 'PostgreSQL', 'Tidb', 'Doris']
+      apiSupportTypes: ['Mysql', 'SQL Server', 'Oracle', 'MongoDB', 'PostgreSQL', 'Tidb', 'Doris'],
+      searchKeywordList: []
     }
   },
 
@@ -346,6 +348,25 @@ export default {
     },
 
     filterList() {
+      if (this.showParentLineage) {
+        let result = []
+        this.searchKeywordList.forEach(item => {
+          if (item.type === 'apiserverLineage') {
+            // item的数据结构：appName,serverName,table,type
+            const appList = cloneDeep(this.list.filter(item => item.LDP_TYPE === 'app'))
+            const findApp = appList.find(t => t.value === item.appName)
+            const findServer = findApp?.modules?.find(t => t.name === item.serverName)
+            if (!findServer) return
+            const findOne = result.find(t => t.value === item.appName)
+            if (findOne) {
+              findOne.modules.push(findServer)
+            } else {
+              result.push(Object.assign({}, findApp, { modules: [findServer] }))
+            }
+          }
+        })
+        return result
+      }
       if (!this.search) return this.list.filter(item => !this.fdmAndMdmId.includes(item.id))
 
       return this.list.filter(
@@ -874,7 +895,11 @@ export default {
 
     handleScroll: debounce(function () {
       this.$emit('handle-connection')
-    }, 200)
+    }, 200),
+
+    searchByKeywordList(val = []) {
+      this.searchKeywordList = val
+    }
   }
 }
 </script>
