@@ -487,14 +487,18 @@ export default {
     totalDataPercentage() {
       if (this.initialData.snapshotDoneAt) return 100
       const { tableTotal, snapshotTableTotal } = this.totalData
-      return snapshotTableTotal && tableTotal ? (snapshotTableTotal / tableTotal) * 100 : 0
+      if (!snapshotTableTotal || !tableTotal) return 0
+      if (snapshotTableTotal > tableTotal) return 100
+      return (snapshotTableTotal / tableTotal) * 100
     },
 
     currentTotalDataPercentage() {
       const { currentSnapshotTableInsertRowTotal, currentSnapshotTableRowTotal } = this.totalData
-      return currentSnapshotTableRowTotal
-        ? (currentSnapshotTableInsertRowTotal / currentSnapshotTableRowTotal) * 100
-        : 0
+      if (!currentSnapshotTableRowTotal) return 0
+      if (currentSnapshotTableInsertRowTotal > currentSnapshotTableRowTotal) {
+        return 100
+      }
+      return (currentSnapshotTableInsertRowTotal / currentSnapshotTableRowTotal) * 100
     },
 
     initialList() {
