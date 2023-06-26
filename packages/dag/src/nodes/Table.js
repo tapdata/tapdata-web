@@ -485,7 +485,7 @@ export class Table extends NodeType {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
-                      title: 'DDL 同步配置'
+                      title: 'DDL同步配置'
                     },
                     properties: {
                       enableDDL: {
@@ -1242,7 +1242,7 @@ export class Table extends NodeType {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
-                      title: '数据写入模式'
+                      title: '数据写入配置'
                     },
                     properties: {
                       writeStrategyObject: {
