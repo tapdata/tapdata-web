@@ -12,7 +12,7 @@
           ></ElCheckbox>
           <span class="ml-3">{{ $t('packages_form_component_table_selector_candidate_label') }}</span>
           <span v-if="table.tables.length" class="font-color-light ml-2"
-            >({{ table.checked.length }}/{{ table.tables.length }})</span
+            >({{ table.checked.length }}/{{ filteredData.length }})</span
           >
         </div>
         <span v-if="showProgress" class="ml-2 color-primary">
