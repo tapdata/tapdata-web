@@ -92,7 +92,7 @@
       <div v-else class="flex-1 min-h-0 position-relative">
         <div class="search-view position-absolute top-0 left-0 w-100 h-100 bg-white">
           <VirtualTree
-            class="ldp-tree lineage-tree h-100"
+            class="ldp-tree h-100"
             ref="tree"
             node-key="id"
             :data="filterTreeData"
@@ -361,7 +361,6 @@ export default {
 
       if (data.isObject) {
         className.push('grabbable')
-        className.push('table-node')
       }
 
       if (data.LDP_TYPE === 'table') {
@@ -443,16 +442,21 @@ export default {
                 )}
               </VExpandXTransition>
             )}
-            <div class="tree-item-icon flex align-center mr-2">{icon && <VIcon size="18">{icon}</VIcon>}</div>
             <span
               id={data.isObject ? `fdm_table_${data.connectionId}_${data.name}` : `connection_${data.id}`}
-              class="table-label"
-              title={data.name}
+              class="inline-flex align-items-center overflow-hidden"
             >
-              {data.name}
+              {icon && (
+                <VIcon size="18" class="tree-item-icon mr-2">
+                  {icon}
+                </VIcon>
+              )}
+              <span class="table-label" title={data.name}>
+                {data.name}
+              </span>
             </span>
             {data.comment && <span class="font-color-sslight">{`(${data.comment})`}</span>}
-            <div class="btn-menu">{actions}</div>
+            {!data.isObject && <div class="btn-menu">{actions}</div>}
           </div>
         </div>
       )
@@ -939,9 +943,9 @@ export default {
       this.$message.success(this.$t('public_message_operation_success'))
     },
 
-    handleFindTreeDom(val = {}) {
+    handleFindTreeDom(val = {}, getParent = false) {
       const el = document.getElementById(`fdm_table_${val.connectionId}_${val.table}`) // this.$refs[`table_${val.connectionId}_${val.table}`]
-      return el?.parentNode
+      return getParent ? el?.parentNode : el
     },
 
     async searchByKeywordList(val = []) {
@@ -1001,14 +1005,6 @@ export default {
 
   input {
     width: auto;
-  }
-}
-
-.lineage-tree {
-  ::v-deep {
-    .table-node {
-      background-color: #f2f3f5;
-    }
   }
 }
 </style>

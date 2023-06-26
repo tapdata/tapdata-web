@@ -14,7 +14,12 @@
         <IconButton class="ml-3" @click="toggleView('swimlane')" md>swimlane</IconButton>
       </ElTooltip>
       <div class="flex-grow-1 text-center">
-        <span v-if="showParentLineage" class="color-warning cursor-pointer">退出溯源(Esc)</span>
+        <span
+          v-if="showParentLineage"
+          class="parent-lineage-quit color-linfo cursor-pointer rounded-2 px-4 py-2"
+          @click="handleQuit"
+          >按Esc退出溯源场景</span
+        >
       </div>
       <IconButton class="ml-3" @click="handleSettings" md>cog-o</IconButton>
     </div>
@@ -199,7 +204,13 @@ export default {
         endpointStyle: { fill: 'white', radius: 0 }
       })
       this.jsPlumbIns.reset()
+
+      window.addEventListener('keydown', this.handleListenerEsc)
     })
+  },
+
+  beforeDestroy() {
+    window.removeEventListener('keyword', this.handleListenerEsc)
   },
 
   methods: {
@@ -402,15 +413,13 @@ export default {
         })
         this.edgsLinks = edgsLinks
 
+        this.showParentLineage = true
         this.handleConnection()
       })
     },
 
-    clearConnectionLine() {
-      this.jsPlumbIns.deleteEveryConnection()
-    },
-
     async handleConnection() {
+      if (!this.showParentLineage) return
       let connectionLines = []
 
       // 获取dom的方法
@@ -440,10 +449,11 @@ export default {
             })
           }
         } else {
-          const { connectionId, connectionName, table, metadata = {} } = el || {}
+          const { connectionId, connectionName, pdkHash, table, metadata = {} } = el || {}
           keywordOptions[el.ldpType].push({
             connectionId,
             connectionName,
+            pdkHash,
             table,
             tableId: metadata.id
           })
@@ -457,8 +467,6 @@ export default {
         this.$refs.source[0].searchByKeywordList(keywordOptions.source)
         this.$refs.fdm[0].searchByKeywordList(keywordOptions.fdm)
       }
-
-      this.showParentLineage = true
 
       this.$nextTick(() => {
         this.edgsLinks.forEach(el => {
@@ -483,18 +491,32 @@ export default {
             source, // 源节点
             target, // 目标节点
             endpoint: 'Dot', // 端点的样式，可以设置Dot、Rectangle、image、Blank
-            connector: ['Straight'], // 连接线 Bezier(贝塞尔曲线) Straight(直线) Flowchart(垂直或水平线组成的连接) StateMachine
+            connector: ['Bezier', { gap: 20 }], // 连接线 Bezier(贝塞尔曲线) Straight(直线) Flowchart(垂直或水平线组成的连接) StateMachine
             anchor: ['Left', 'Right'], // 锚点位置
             endpointStyle: { fill: 'rgba(255, 255, 255, 0)', radius: 2 },
             paintStyle: {
               strokeWidth: 2,
-              stroke: '#FF7D00',
-              dashstyle: '2 4'
+              stroke: '#2C65FF',
+              dashstyle: '2 4',
+              gap: 20
             },
-            overlays: [['Arrow', { width: 10, length: 10, location: 1, id: 'arrow', foldback: 0.8, fill: '#FF7D00' }]]
+            overlays: [
+              ['Arrow', { width: 10, length: 10, location: 1, id: 'arrow', foldback: 1, fill: '#2C65FF' }]
+            ]
           })
         })
       })
+    },
+
+    handleQuit() {
+      this.showParentLineage = false
+      this.jsPlumbIns.reset()
+    },
+
+    handleListenerEsc(e) {
+      if (e.keyCode === 27 && this.showParentLineage) {
+        this.handleQuit()
+      }
     }
   }
 }
@@ -563,5 +585,9 @@ export default {
       background-color: #d9d9d9;
     }
   }
+}
+
+.parent-lineage-quit {
+  background-color: #333c4a;
 }
 </style>

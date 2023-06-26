@@ -88,7 +88,7 @@
               <StageButton :connection-id="getConnectionId(node)"> </StageButton>
             </div>
             <VIcon v-else class="tree-item-icon mr-2" size="18">table</VIcon>
-            <span :ref="`connection_${data.id}`" class="table-label" :title="data.name">
+            <span class="table-label" :title="data.name">
               {{ data.name }}
               <span v-if="data.comment" class="font-color-sslight">{{ `(${data.comment})` }}</span>
               <ElTag v-if="data.disabled" type="info" size="mini">{{ $t('public_status_invalid') }}</ElTag>
@@ -99,7 +99,7 @@
       <div v-else class="flex-fill min-h-0" v-loading="loading || searchIng">
         <VirtualTree
           key="searchTree"
-          class="ldp-tree lineage-tree h-100"
+          class="ldp-tree h-100"
           ref="tree"
           node-key="id"
           :props="props"
@@ -242,7 +242,6 @@ export default {
 
       if (data.isObject) {
         className.push('grabbable')
-        className.push('table-node')
       }
 
       if (data.disabled) {
@@ -258,36 +257,36 @@ export default {
             this.$emit('preview', data, node.parent.data)
           }}
         >
-          {!data.isObject ? (
-            <NodeIcon node={data} size={18} class="tree-item-icon mr-2" />
-          ) : (
-            <VIcon class="tree-item-icon mr-2" size="18">
-              table
-            </VIcon>
-          )}
-          <span
+          <div
             id={data.isObject ? `ldp_source_table_${data.connectionId}_${data.name}` : `connection_${data.id}`}
-            class="table-label"
-            class={data.isObject && 'haha'}
-            title={data.name}
+            class="inline-flex align-items-center overflow-hidden"
           >
-            {data.name}
-          </span>
-          {data.disabled && (
-            <ElTag type="info" size="mini">
-              {this.$t('public_status_invalid')}
-            </ElTag>
-          )}
-          <IconButton
-            class="btn-menu"
-            sm
-            onClick={() => {
-              this.$emit('preview', data, node.parent.data)
-            }}
-          >
-            {' '}
-            view-details{' '}
-          </IconButton>
+            {!data.isObject ? (
+              <NodeIcon node={data} size={18} class="tree-item-icon mr-2" />
+            ) : (
+              <VIcon class="tree-item-icon mr-2" size="18">
+                table
+              </VIcon>
+            )}
+            <span class="table-label" title={data.name}>
+              {data.name}
+            </span>
+            {data.disabled && (
+              <ElTag type="info" size="mini">
+                {this.$t('public_status_invalid')}
+              </ElTag>
+            )}
+            <IconButton
+              class="btn-menu"
+              sm
+              onClick={() => {
+                this.$emit('preview', data, node.parent.data)
+              }}
+            >
+              {' '}
+              view-details{' '}
+            </IconButton>
+          </div>
         </div>
       )
     },
@@ -455,7 +454,7 @@ export default {
 
     handleFindTreeDom(val = {}) {
       const el = document.getElementById(`ldp_source_table_${val.connectionId}_${val.table}`)
-      return el?.parentNode
+      return el
     },
 
     handleScroll: debounce(function () {
@@ -470,6 +469,7 @@ export default {
           LDP_TYPE: 'connection',
           id: t.connectionId,
           name: t.connectionName,
+          pdkHash: t.pdkHash,
           status: 'ready',
           isLeaf: false,
           level: 0,
@@ -504,14 +504,6 @@ export default {
   }
   &:hover .btn-menu {
     display: block;
-  }
-}
-
-.lineage-tree {
-  ::v-deep {
-    .table-node {
-      background-color: #f2f3f5;
-    }
   }
 }
 </style>
