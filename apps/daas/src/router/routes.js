@@ -566,7 +566,7 @@ export default [
         path: '/heartbeat-table',
         name: 'heartbeatTable',
         component: Parent,
-        redirect: 'heartbeatTable/',
+        redirect: 'heartbeat-table/',
         meta: {
           title: 'page_title_heartbeat_table'
         },
