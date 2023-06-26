@@ -1,3 +1,4 @@
+import { get, set, merge } from 'lodash'
 import { defineComponent, ref } from '@vue/composition-api'
 import i18n from '@tap/i18n'
 import { useForm } from '@tap/form'
@@ -30,7 +31,7 @@ export const SchemaPreview = defineComponent({
         label: i18n.t('packages_form_field_mapping_list_xuhao'),
         type: 'index',
         prop: 'index',
-        width: '60px'
+        minWidth: '40px'
       },
       {
         label: i18n.t('packages_form_field_add_del_index_ziduanmingcheng'),
@@ -47,7 +48,8 @@ export const SchemaPreview = defineComponent({
       {
         label: i18n.t('packages_form_field_inference_list_feikong'),
         prop: 'is_nullable',
-        slotName: 'is_nullable'
+        slotName: 'is_nullable',
+        width: '60px'
       },
       {
         label: i18n.t('packages_form_field_inference_list_ziduanzhushi'),
@@ -67,6 +69,39 @@ export const SchemaPreview = defineComponent({
       false: i18n.t('packages_dag_meta_table_false')
     }
 
+    let columnsMap = {}
+    const createTree = data => {
+      const root = { children: [] }
+
+      for (const item of data) {
+        const { field_name } = item
+        let parent = root
+        const fields = field_name.split('.')
+        item.dataType = item.data_type.replace(/\(.+\)/, '')
+        item.indicesUnique = !!columnsMap[field_name]
+
+        for (let i = 0; i < fields.length; i++) {
+          const field = fields[i]
+          let child = parent.children.find(c => c.field_name === field)
+
+          if (!child) {
+            child = { field_name: field, children: [] }
+            parent.children.push(child)
+          }
+
+          parent = child
+
+          if (i === fields.length - 1) {
+            Object.assign(parent, item, {
+              field_name: field
+            })
+          }
+        }
+      }
+
+      return root.children
+    }
+
     const loadSchema = async () => {
       loading.value = true
       const params = {
@@ -79,17 +114,12 @@ export const SchemaPreview = defineComponent({
         items: [{ fields = [], indices = [] } = {}]
       } = await metadataInstancesApi.nodeSchemaPage(params)
 
-      const columnsMap = indices.reduce((map, item) => {
+      columnsMap = indices.reduce((map, item) => {
         item.columns.forEach(({ columnName }) => (map[columnName] = true))
         return map
       }, {})
 
-      treeData.value = fields.map(f => {
-        f.dataType = f.data_type.replace(/\(.+\)/, '')
-        f.indicesUnique = !!columnsMap[f.field_name]
-        return f
-      })
-
+      treeData.value = createTree(fields)
       loading.value = false
     }
 
@@ -162,20 +192,24 @@ export const SchemaPreview = defineComponent({
                   }
                 ]}
               >
-                <ElTree data={treeData.value} render-content={renderContent}></ElTree>
+                <ElTree indent={8} data={treeData.value} render-content={renderContent}></ElTree>
               </div>
             </div>
           ) : (
             <VTable
+              row-key="id"
               columns={columns}
               data={treeData.value}
               has-pagination={false}
+              tree-props={{ children: 'children', hasChildren: 'hasChildren' }}
               ref="table"
+              default-expand-all
               class="border rounded-lg"
+              indent={8}
               scopedSlots={{
                 field_name: scope => (
-                  <span class="flex align-center">
-                    <span class="ellipsis">{scope.row.field_name}</span>
+                  <span>
+                    <span>{scope.row.field_name}</span>
                     {scope.row.primary_key_position > 0 && (
                       <VIcon size="12" class="text-warning ml-1">
                         key
