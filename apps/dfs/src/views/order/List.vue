@@ -58,7 +58,7 @@
                 </div>
               </div>
               <div>
-                <VTable :columns="columns" :data="item.subscribeItems" ref="table" class="mt-4" :has-pagination="false">
+                <VTable :columns="columns" :data="item.subscribeItems" ref="table" :has-pagination="false">
                   <template #agentType="{ row }">
                     <span>{{ agentTypeMap[row.agentType || 'local'] }}</span>
                   </template>
