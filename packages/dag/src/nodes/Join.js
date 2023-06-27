@@ -39,32 +39,48 @@ export class Join extends NodeType {
           }
         ]
       },
-      name: {
-        type: 'string',
-        title: i18n.t('public_node_name'),
-        required: true,
-        'x-decorator': 'FormItem',
-        'x-component': 'Input'
-      },
-      leftNodeId: {
-        type: 'string',
-        display: 'none'
-      },
-      rightNodeId: {
-        type: 'string',
-        display: 'none'
-      },
 
-      joinType: {
-        title: i18n.t('public_connection_type'),
-        type: 'string',
-        required: true,
-        default: 'left',
-        enum: [
-          {
-            label: i18n.t('packages_dag_nodes_join_zuolianjie'),
-            value: 'left'
-          } /*,
+      tabs: {
+        type: 'void',
+        'x-component': 'FormTab',
+        'x-component-props': {
+          class: 'config-tabs',
+          formTab: '{{formTab}}'
+        },
+        properties: {
+          tab1: {
+            type: 'void',
+            'x-component': 'FormTab.TabPane',
+            'x-component-props': {
+              label: i18n.t('public_basic_settings')
+            },
+            properties: {
+              name: {
+                type: 'string',
+                title: i18n.t('public_node_name'),
+                required: true,
+                'x-decorator': 'FormItem',
+                'x-component': 'Input'
+              },
+              leftNodeId: {
+                type: 'string',
+                display: 'none'
+              },
+              rightNodeId: {
+                type: 'string',
+                display: 'none'
+              },
+
+              joinType: {
+                title: i18n.t('public_connection_type'),
+                type: 'string',
+                required: true,
+                default: 'left',
+                enum: [
+                  {
+                    label: i18n.t('packages_dag_nodes_join_zuolianjie'),
+                    value: 'left'
+                  } /*,
                   {
                     label: '右连接',
                     value: 'right'
@@ -77,94 +93,103 @@ export class Join extends NodeType {
                     label: '全连接',
                     value: 'full'
                   }*/
-        ],
-        'x-decorator': 'FormItem',
-        'x-component': 'Select'
-      },
+                ],
+                'x-decorator': 'FormItem',
+                'x-component': 'Select'
+              },
 
-      joinExpressions: {
-        title: i18n.t('packages_dag_nodes_join_lianjieziduanshe'),
-        type: 'array',
-        required: true,
-        default: [{ left: '', right: '', expression: '=' }],
-        items: {
-          type: 'object',
-          properties: {
-            left: {
-              title: i18n.t('packages_dag_nodes_join_zuoce'),
-              type: 'string',
-              required: true,
-              'x-decorator': 'FormItem',
-              'x-decorator-props': {
-                labelStyle: {
-                  display: 'none'
-                }
+              joinExpressions: {
+                title: i18n.t('packages_dag_nodes_join_lianjieziduanshe'),
+                type: 'array',
+                required: true,
+                default: [{ left: '', right: '', expression: '=' }],
+                items: {
+                  type: 'object',
+                  properties: {
+                    left: {
+                      title: i18n.t('packages_dag_nodes_join_zuoce'),
+                      type: 'string',
+                      required: true,
+                      'x-decorator': 'FormItem',
+                      'x-decorator-props': {
+                        labelStyle: {
+                          display: 'none'
+                        }
+                      },
+                      'x-component': 'FieldSelect',
+                      'x-component-props': {
+                        filterable: true
+                      }
+                    },
+                    right: {
+                      title: i18n.t('packages_dag_nodes_join_youce'),
+                      type: 'string',
+                      required: true,
+                      'x-decorator': 'FormItem',
+                      'x-decorator-props': {
+                        labelStyle: {
+                          display: 'none'
+                        }
+                      },
+                      'x-component': 'FieldSelect',
+                      'x-component-props': {
+                        filterable: true
+                      }
+                    }
+                  }
+                },
+                'x-decorator': 'FormItem',
+                'x-decorator-props': {
+                  layout: 'vertical'
+                },
+                'x-component': 'JoinExpression',
+                'x-component-props': {
+                  findNodeById: '{{findNodeById}}',
+                  loadNodeFieldNamesById: '{{loadNodeFieldOptions}}'
+                },
+                'x-reactions': [
+                  {
+                    dependencies: ['leftNodeId'],
+                    fulfill: {
+                      schema: {
+                        'x-component-props.leftNodeId': '{{$deps[0]}}'
+                      }
+                    }
+                  },
+                  {
+                    dependencies: ['rightNodeId'],
+                    fulfill: {
+                      schema: {
+                        'x-component-props.rightNodeId': '{{$deps[0]}}'
+                      }
+                    }
+                  }
+                ]
               },
-              'x-component': 'FieldSelect',
-              'x-component-props': {
-                filterable: true
-              }
-            },
-            right: {
-              title: i18n.t('packages_dag_nodes_join_youce'),
-              type: 'string',
-              required: true,
-              'x-decorator': 'FormItem',
-              'x-decorator-props': {
-                labelStyle: {
-                  display: 'none'
-                }
+              externalStorageId: {
+                title: i18n.t('packages_dag_nodes_aggregate_waicunpeizhi'), //外存配置
+                type: 'string',
+                'x-decorator': 'FormItem',
+                'x-component': 'Select',
+                'x-reactions': [
+                  '{{useAsyncDataSourceByConfig({service: loadExternalStorage, withoutField: true})}}',
+                  {
+                    fulfill: {
+                      state: {
+                        value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}'
+                      }
+                    }
+                  }
+                ]
               },
-              'x-component': 'FieldSelect',
-              'x-component-props': {
-                filterable: true
+
+              schemaPreview: {
+                type: 'void',
+                'x-component': 'SchemaPreview'
               }
             }
           }
-        },
-        'x-decorator': 'FormItem',
-        'x-decorator-props': {
-          layout: 'vertical'
-        },
-        'x-component': 'JoinExpression',
-        'x-component-props': {
-          findNodeById: '{{findNodeById}}',
-          loadNodeFieldNamesById: '{{loadNodeFieldOptions}}'
-        },
-        'x-reactions': [
-          {
-            dependencies: ['leftNodeId'],
-            fulfill: {
-              schema: {
-                'x-component-props.leftNodeId': '{{$deps[0]}}'
-              }
-            }
-          },
-          {
-            dependencies: ['rightNodeId'],
-            fulfill: {
-              schema: {
-                'x-component-props.rightNodeId': '{{$deps[0]}}'
-              }
-            }
-          }
-        ]
-      },
-      externalStorageId: {
-        title: i18n.t('packages_dag_nodes_aggregate_waicunpeizhi'), //外存配置
-        type: 'string',
-        'x-decorator': 'FormItem',
-        'x-component': 'Select',
-        'x-reactions': [
-          '{{useAsyncDataSourceByConfig({service: loadExternalStorage, withoutField: true})}}',
-          {
-            fulfill: {
-              state: {
-                value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}'
-              }
-            }
-          }
-        ]
+        }
       }
     }
   }

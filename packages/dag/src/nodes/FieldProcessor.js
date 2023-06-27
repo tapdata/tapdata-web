@@ -20,48 +20,66 @@ export class FieldProcessor extends NodeType {
         type: 'array',
         display: 'none'
       },
-      name: {
-        type: 'string',
-        title: i18n.t('public_node_name'),
-        required: true,
-        'x-decorator': 'FormItem',
-        'x-component': 'Input'
-      },
-      fieldsOperation: {
-        type: 'object',
-        default: {
-          prefix: '',
-          suffix: '',
-          capitalized: ''
-        }
-      },
-      fieldsMapping: {
-        type: 'array',
-        title: '',
-        'x-decorator': 'FormItem',
-        'x-component': 'FieldRenameProcessor',
+      tabs: {
+        type: 'void',
+        'x-component': 'FormTab',
         'x-component-props': {
-          nodeId: '{{$values.id}}'
+          class: 'config-tabs',
+          formTab: '{{formTab}}'
+        },
+        properties: {
+          tab1: {
+            type: 'void',
+            'x-component': 'FormTab.TabPane',
+            'x-component-props': {
+              label: i18n.t('public_basic_settings')
+            },
+            properties: {
+              name: {
+                type: 'string',
+                title: i18n.t('public_node_name'),
+                required: true,
+                'x-decorator': 'FormItem',
+                'x-component': 'Input'
+              },
+              fieldsOperation: {
+                type: 'object',
+                default: {
+                  prefix: '',
+                  suffix: '',
+                  capitalized: ''
+                }
+              },
+              fieldsMapping: {
+                type: 'array',
+                title: '',
+                'x-decorator': 'FormItem',
+                'x-component': 'FieldRenameProcessor',
+                'x-component-props': {
+                  nodeId: '{{$values.id}}'
+                }
+              }
+            }
+          },
+          tab2: {
+            type: 'void',
+            'x-component': 'FormTab.TabPane',
+            'x-component-props': {
+              label: '数据模型'
+            },
+            properties: {
+              schemaPanel: {
+                type: 'void',
+                'x-component': 'SchemaPanel',
+                'x-component-props': {
+                  class: 'mx-n4 my-n1',
+                  formTab: '{{formTab}}'
+                }
+              }
+            }
+          }
         }
       }
-      // loadSchemaButton: {
-      //   type: 'void',
-      //   title: '',
-      //   'x-decorator': 'FormItem',
-      //   'x-component': 'Button',
-      //   'x-content': '加載模型',
-      //   'x-component-props': {
-      //     onClick:
-      //       '{{useAsyncDataSourceByConfig({service: getCommandAndSetValue, withoutField: true}, $form, {nodeId:$values.id})}}'
-      //   }
-      // },
-      // loadSchemaTree: {
-      //   type: 'void',
-      //   title: '',
-      //   required: true,
-      //   'x-decorator': 'FormItem',
-      //   'x-component': 'loadSchemaTree'
-      // }
     }
   }
 }

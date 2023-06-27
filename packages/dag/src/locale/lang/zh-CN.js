@@ -321,7 +321,7 @@ export default {
   packages_dag_nodes_database_baochimubiaoduan: '保持目标端原有表结构和数据',
   packages_dag_nodes_database_qingchumubiaoduan: '清除目标端原有表结构及数据',
   packages_dag_nodes_database_chongfuchulice: '重复处理策略',
-  packages_dag_nodes_database_tuiyanjieguo: '推演结果',
+  packages_dag_nodes_database_tuiyanjieguo: '目标表结构',
   packages_dag_nodes_database_guolvjieguo: '过滤结果',
   packages_dag_nodes_database_dangqianjiedianzhi: '当前节点支持处理的DDL事件',
   packages_dag_nodes_database_ddLshijian: 'DDL事件应用',

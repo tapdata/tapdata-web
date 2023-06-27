@@ -20,30 +20,56 @@ export class StandardJs extends NodeType {
         type: 'array',
         'x-display': 'hidden'
       },
-      name: {
-        type: 'string',
-        title: i18n.t('public_node_name'),
-        required: true,
-        'x-decorator': 'FormItem',
-        'x-component': 'Input'
-      },
-      script: {
-        title: i18n.t('packages_dag_nodes_javascript_jiaoben'),
-        type: 'string',
-        required: true,
-        default: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}',
-        'x-component': 'JsProcessor',
+      tab1: {
+        type: 'void',
+        'x-component': 'FormTab.TabPane',
         'x-component-props': {
-          isStandard: true,
-          height: 500,
-          options: { showPrintMargin: false, wrap: false },
-          includeBeforeAndAfter: true,
-          before: 'function process(record){',
-          beforeRegexp: '^[^]*function\\s+process\\s*\\(record\\)\\{',
-          afterRegexp: '}[^}]*$',
-          after: '}',
-          param: 'tapTable',
-          handleAddCompleter: '{{addDeclaredCompleterForSync}}'
+          label: i18n.t('public_basic_settings')
+        },
+        properties: {
+          name: {
+            type: 'string',
+            title: i18n.t('public_node_name'),
+            required: true,
+            'x-decorator': 'FormItem',
+            'x-component': 'Input'
+          },
+          script: {
+            title: i18n.t('packages_dag_nodes_javascript_jiaoben'),
+            type: 'string',
+            required: true,
+            default: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}',
+            'x-component': 'JsProcessor',
+            'x-component-props': {
+              isStandard: true,
+              height: 500,
+              options: { showPrintMargin: false, wrap: false },
+              includeBeforeAndAfter: true,
+              before: 'function process(record){',
+              beforeRegexp: '^[^]*function\\s+process\\s*\\(record\\)\\{',
+              afterRegexp: '}[^}]*$',
+              after: '}',
+              param: 'tapTable',
+              handleAddCompleter: '{{addDeclaredCompleterForSync}}'
+            }
+          }
+        }
+      },
+      tab2: {
+        type: 'void',
+        'x-component': 'FormTab.TabPane',
+        'x-component-props': {
+          label: '数据模型'
+        },
+        properties: {
+          schemaPanel: {
+            type: 'void',
+            'x-component': 'SchemaPanel',
+            'x-component-props': {
+              class: 'mx-n4 my-n1',
+              formTab: '{{formTab}}'
+            }
+          }
         }
       }
     }
