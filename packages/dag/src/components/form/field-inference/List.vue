@@ -481,6 +481,7 @@ export default {
         const index = this.rules.findIndex(t => t.id === f.id)
         this.rules.splice(index, 1)
       }
+      row.data_type = row.dataTypeTemp
       this.handleUpdate()
     },
 
@@ -505,11 +506,11 @@ export default {
     },
 
     getRevokeDisabled(row) {
-      return !row.source?.scope
+      return !this.fieldChangeRules.find(t => t.id === row.changeRuleId)?.scope
     },
 
     getFieldScope(row = {}) {
-      return row.source?.scope
+      return this.fieldChangeRules.find(t => t.id === row.changeRuleId)?.scope
     },
 
     getRevokeColorClass(row = {}) {
