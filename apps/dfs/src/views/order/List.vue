@@ -244,7 +244,6 @@
     <!--续订-->
     <ElDialog :visible.sync="showRenewDetailVisible" :title="$t('dfs_user_center_xudingfuwu')" width="60%">
       <section>
-        <div class="mt-4 fs-6 font-color-dark">{{ $t('dfs_instance_instance_tuidingshili') }}</div>
         <div v-if="renewList.length > 0">
           <VTable
             ref="table"
@@ -471,13 +470,8 @@ export default {
       ],
       renewColumns: [
         {
-          label: '资源ID',
-          prop: 'resourceId'
-        },
-        {
-          label: '订阅规格',
-          prop: 'specLabel',
-          width: 180
+          label: '订阅编号',
+          prop: 'id'
         },
         {
           label: '到期时间',
@@ -657,7 +651,44 @@ export default {
 
     //续订
     openRenew(item) {
-      this.renewList = item?.subscribeItems
+      //组装续订列表
+      let renew = {
+        id: item.id,
+        endAt: item.endAt
+      }
+      this.renewColumns = [
+        {
+          label: '订阅编号',
+          prop: 'id'
+        }
+      ]
+      let agent = item?.subscribeItems.find(it => it.productType === 'Engine')?.spec
+      let specLabel = getSpec(agent)
+      let mdb = item?.subscribeItems.find(it => it.productType === 'MongoDB')?.spec
+      let specMdbLabel = getSpec(mdb)
+      if (specLabel) {
+        this.renewColumns.push({
+          label: '实例规格',
+          prop: 'specLabel',
+          width: 180
+        })
+        renew.specLabel = specLabel
+      }
+      if (specMdbLabel) {
+        this.renewColumns.push({
+          label: '存储规格',
+          prop: 'specMdbLabel',
+          width: 180
+        })
+        renew.specMdbLabel = specMdbLabel
+      }
+      this.renewColumns.push({
+        label: '到期时间',
+        prop: 'endAt',
+        width: 180,
+        slotName: 'endAt'
+      })
+      this.renewList = [renew]
       this.showRenewDetailVisible = true
       this.currentRenewRow = item
       let url = 'api/tcm/orders/paid/prices?prices=' + item?.subscribeItems[0].priceId
