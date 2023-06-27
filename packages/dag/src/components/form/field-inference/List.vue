@@ -36,9 +36,9 @@
               >warning</VIcon
             >
           </ElTooltip>
-          <span v-if="readonly">{{ scope.row.data_type }}</span>
+          <span v-if="readonly">{{ getDataType(scope.row) }}</span>
           <div v-else class="cursor-pointer inline-block" @click="openEditDataTypeVisible(scope.row)">
-            <span>{{ scope.row.data_type }}</span>
+            <span>{{ getDataType(scope.row) }}</span>
             <VIcon class="ml-2">arrow-down</VIcon>
           </div>
         </div>
@@ -308,10 +308,10 @@ export default {
     async openEditDataTypeVisible(row) {
       const { source = {}, canUseDataTypes = [] } = row || {}
       this.currentData.changeRuleId = row.changeRuleId
-      this.currentData.dataType = row.data_type
+      this.currentData.dataType = this.getDataType(row)
       this.currentData.dataTypeTemp = row.dataTypeTemp
       this.currentData.fieldName = row.field_name
-      this.currentData.newDataType = row.data_type
+      this.currentData.newDataType = this.currentData.dataType
       this.currentData.useToAll = false
       this.currentData.errorMessage = ''
       this.currentData.source = source
@@ -481,6 +481,7 @@ export default {
         const index = this.rules.findIndex(t => t.id === f.id)
         this.rules.splice(index, 1)
       }
+      row.data_type = row.dataTypeTemp
       this.handleUpdate()
     },
 
@@ -505,11 +506,11 @@ export default {
     },
 
     getRevokeDisabled(row) {
-      return !row.source?.scope
+      return !this.fieldChangeRules.find(t => t.id === row.changeRuleId)?.scope
     },
 
     getFieldScope(row = {}) {
-      return row.source?.scope
+      return this.fieldChangeRules.find(t => t.id === row.changeRuleId)?.scope
     },
 
     getRevokeColorClass(row = {}) {
@@ -545,6 +546,11 @@ export default {
 
     handleAutocomplete(item) {
       this.currentData.selectDataType = item.value
+    },
+
+    getDataType(row = {}) {
+      if (!this.fieldChangeRules.length) return row.dataTypeTemp
+      return row.data_type
     }
   }
 }
