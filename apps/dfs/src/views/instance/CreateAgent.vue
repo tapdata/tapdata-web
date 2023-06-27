@@ -1409,7 +1409,7 @@
 
 <script>
 import { uniqBy } from 'lodash'
-import { isStr, isObj } from '@tap/shared'
+import { isObj } from '@tap/shared'
 import { VTable } from '@tap/component'
 import { getPaymentMethod, getSpec, AGENT_TYPE_MAP } from '../instance/utils'
 import { CURRENCY_SYMBOL_MAP, TIME_MAP, CURRENCY_MAP } from '@tap/business'
@@ -1419,6 +1419,7 @@ import { dayjs } from '@tap/business/src/shared/dayjs'
 export default {
   name: 'CreatAgent',
   inject: ['buried'],
+  props: ['type'],
   components: { VTable },
   data() {
     return {
@@ -1572,7 +1573,7 @@ export default {
 
   computed: {
     memoryMap() {
-      if (this.mdbPriceId === 'FreeTier') {
+      if (this.mdbPrices === 0) {
         return [
           {
             key: 5,
@@ -2033,11 +2034,6 @@ export default {
         ).sort((a, b) => {
           return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
         })
-        /*//免费不能选; 不做禁用 直接过滤掉不显示
-        // disabled: (agentCount > 0 || agentDeploy !== 'selfHost') && item.chargeProvider === 'FreeTier'
-        if (this.agentCount > 0 || this.agentDeploy !== 'selfHost') {
-          this.specificationItems = this.specificationItems.filter(it => it.chargeProvider !== 'FreeTier')
-        }*/
         // 已体验过免费
         if (this.agentCount > 0) {
           this.specificationItems = this.specificationItems.filter(it => it.chargeProvider !== 'FreeTier')
@@ -2054,7 +2050,7 @@ export default {
             priceSuffix: t.type === 'recurring' ? TIME_MAP[t.periodUnit] : '',
             desc: '',
             specification: getSpec(t.spec),
-            currencyOption: t.currencyOption
+            currencyOption: t.currencyOption || []
           })
         })
         this.loadPackageItems()
@@ -2072,7 +2068,6 @@ export default {
       const specification = this.specificationItems.find(t => t.value === this.specification)
       this.agentSizeCap = this.updateAgentCap(specification.cpu, specification.memory)
       const specificationLabel = this.specificationItems.find(t => t.value === this.specification)?.name
-      const chargeProvider = this.specificationItems.find(t => t.value === this.specification)?.chargeProvider
       this.currentSpecName = specificationLabel
       this.packageItems = this.allPackages
         .filter(t => this.specification === t.specification)
@@ -2090,20 +2085,6 @@ export default {
           const bOrder = b.order
           return aType + aOrder - (bType + bOrder)
         })
-      if (chargeProvider === 'FreeTier') {
-        this.packageItems = [
-          {
-            label:
-              this.platform === 'realTime'
-                ? i18n.t('dfs_instance_createagent_tian')
-                : i18n.t('dfs_agent_download_subscriptionmodeldialog_yongjiu'),
-            price: 0,
-            value: '0',
-            chargeProvider: 'FreeTier',
-            currencyOption: []
-          }
-        ]
-      }
     },
 
     //获取存储价格
@@ -2200,7 +2181,7 @@ export default {
       if (cpu === 0 && memory === 0) {
         this.mongodbSpecPrice = CURRENCY_SYMBOL_MAP[this.currencyType] + 0
         this.mdbPrices = 0
-        this.mdbPriceId = 'FreeTier'
+        this.mdbPriceId = this.mongodbPaidPrice?.[0]?.priceId
         this.currentMemorySpecName = i18n.t('dfs_instance_createagent_mianfeishiyonggui')
         this.memorySpace = 5
         return
@@ -2271,9 +2252,18 @@ export default {
     },
     //提交订单
     async submit(row = {}, paymentType = 'online') {
-      const { type, priceId, currency, chargeProvider } = this.selected
+      const { type, priceId, currency, periodUnit } = this.selected
       const { email } = this.form
 
+      if (this.agentDeploy !== 'aliyun') {
+        const valid = await this.validateForm('confirmForm')
+        if (!valid) return
+      }
+      if (paymentType === 'online') {
+        this.submitOnlineLoading = true
+      } else {
+        this.submitLoading = true
+      }
       const fastDownloadUrl = window.App.$router.resolve({
         name: 'FastDownload',
         query: {
@@ -2286,123 +2276,75 @@ export default {
           id: ''
         }
       })
+      //组装参数
       let params = {
-        agentDeploy: this.agentDeploy,
+        subscribeType: type, // 订阅类型：one_time-一次订阅，recurring-连续订阅
         platform: this.platform,
-        version: ''
+        quantity: '',
+        paymentMethod: this.agentDeploy === 'aliyun' ? 'AliyunMarketCode' : 'Stripe',
+        successUrl:
+          this.agentDeploy === 'fullManagement'
+            ? location.origin + location.pathname + agentUrl.href
+            : location.origin + location.pathname + fastDownloadUrl.href,
+        cancelUrl: location.href,
+        email,
+        periodUnit,
+        currency: this.currencyType || currency,
+        subscribeItems: []
       }
-
-      if (this.agentDeploy === 'aliyun') {
-        params = Object.assign(params, {
-          agentType: row.agentType,
-          chargeProvider: 'Aliyun',
-          licenseId: row?.id
-        })
-        if (row.agentType === 'Cloud') {
-          params = Object.assign(params, {
-            region: this.region,
-            provider: this.provider
-          })
-        }
+      let base = {
+        productId: '', // 产品ID
+        priceId, // 价格ID，关联定价表
+        quantity: 1, // 订阅数量，例如一次性订购2个实例时，这里填写2
+        productType: 'Engine', // 产品类型：Engine,MongoDB,APIServer
+        resourceId: '', // 资源ID，agent 或者 cluster id
+        agentType: this.agentDeploy === 'fullManagement' ? 'Cloud' : 'Local', // 半托管-Local，全托管-Cloud
+        version: '', // 实例版本
+        name: '', // 实例名称
+        memorySpace: this.memorySpace,
+        provider: this.provider || '', // 云厂商，全托管必填
+        region: this.region || '', // 地域，全托管必填
+        zone: this.mdbZone || '' // 可用区，按需填写（阿里云存储需要根据资源余量选择出可用区）
+      }
+      //存储必传参数
+      let memory = {
+        mongodbUrl: this.mongodbUrl, // 订购半托管存储时需要填写
+        priceId: this.mdbPriceId,
+        productType: 'MongoDB' // 产品类型：Engine,MongoDB,APIServer
+      }
+      //单独订购存储
+      if (this.orderStorage) {
+        params.onlyMdb = true
+        params.successUrl =
+          location.origin +
+          location.pathname +
+          this.$router.resolve({
+            name: 'Instance',
+            query: {
+              active: 'storage'
+            }
+          }).href
+        params.subscribeItems = [Object.assign(base, memory)]
+      } else if (this.platform === 'realTime') {
+        //实例 + 存储
+        params.subscribeItems.push(base)
+        params.subscribeItems.push(Object.assign({}, base, memory))
+      } else if (this.agentDeploy === 'aliyun') {
+        //单独实例订购
+        params.agentType = row.agentType
+        params.licenseId = row?.id
+        params.subscribeItems.push(base)
         this.buried('selectAgentAliyun')
       } else {
-        const valid = await this.validateForm('confirmForm')
-
-        if (!valid) return
-
-        params = Object.assign(params, {
-          agentType: 'Local',
-          chargeProvider,
-          priceId,
-          currency: this.currencyType || currency,
-          successUrl: location.origin + location.pathname + fastDownloadUrl.href,
-          cancelUrl: location.href,
-          paymentType: paymentType, //增加支付方式
-          mongodbUrl: this.mongodbUrl, //新增存储
-          email,
-          type
-        })
-        if (this.agentDeploy === 'fullManagement') {
-          params.agentType = 'Cloud'
-          params.region = this.region
-          params.provider = this.provider
-          params.memorySpace = this.memorySpace
-          params.successUrl = location.origin + location.pathname + agentUrl.href
-        }
-        //带存储实例
-        if (this.platform === 'realTime') {
-          params.mdbPriceId = this.mdbPriceId
-          params.mdbRegion = this.region || ''
-          params.mdbZone = this.mdbZone || ''
-        }
-
-        if (this.orderStorage) {
-          params.onlyMdb = true
-          params.successUrl =
-            location.origin +
-            location.pathname +
-            this.$router.resolve({
-              name: 'Instance',
-              query: {
-                active: 'storage'
-              }
-            }).href
-        }
+        //单独实例订购
+        params.subscribeItems.push(base)
       }
-
       this.buried('newAgentStripe', '', {
         type
       })
-      if (paymentType === 'online') {
-        this.submitOnlineLoading = true
-      } else {
-        this.submitLoading = true
-      }
       this.$axios
-        .post('api/tcm/orders', params)
+        .post('api/tcm/orders/subscribeV2', params)
         .then(data => {
-          if (params.mdbPriceId === 'FreeTier' && params.onlyMdb) {
-            this.finish()
-            this.$router.push({
-              name: 'Instance',
-              query: {
-                active: 'storage'
-              }
-            })
-          } else if (data.chargeProvider === 'FreeTier' && this.agentDeploy === 'fullManagement') {
-            this.finish()
-            this.$router.push({
-              name: 'Instance'
-            })
-          } else if (
-            data.chargeProvider === 'FreeTier' ||
-            (data.chargeProvider === 'Aliyun' && row.agentType === 'Local')
-          ) {
-            this.finish()
-            let downloadUrl = window.App.$router.resolve({
-              name: 'FastDownload',
-              query: {
-                id: data?.agentId
-              }
-            })
-            window.open(downloadUrl.href, '_self')
-          } else if (data.chargeProvider === 'Aliyun' && row.agentType === 'Cloud') {
-            //授权码 全托管-打开Agent管理页面
-            window.open(agentUrl.href, '_self')
-          } else if (paymentType === 'online') {
-            //在线支付 打开付款页面
-            this.finish()
-            window.open(data?.paymentUrl, '_self')
-          } else {
-            //转账支付 打开支付详情弹窗
-            this.$router.push({
-              name: 'Instance',
-              params: {
-                showTransferDialogVisible: true,
-                price: this.formatPrice(this.currency)
-              }
-            })
-          }
           this.buried('newAgentStripe', '', {
             type,
             result: true
@@ -2411,6 +2353,53 @@ export default {
             this.submitOnlineLoading = false
           } else {
             this.submitLoading = false
+          }
+          if (data.status === 'incomplete') {
+            //订单需要付款
+            if (paymentType === 'online') {
+              //在线支付 打开付款页面
+              this.finish()
+              window.open(data?.payUrl, '_self')
+            } else {
+              //转账支付 打开支付详情弹窗
+              if (this.type === 'newDialog') {
+                this.$emit('closeVisible', false)
+              }
+              this.$router.push({
+                name: 'Instance',
+                params: {
+                  showTransferDialogVisible: true,
+                  price: this.formatPrice(this.currency)
+                }
+              })
+            }
+          } else {
+            //订单不需要付款，只需对应跳转不同页面
+            if (params.onlyMdb) {
+              //单独存储
+              this.finish()
+              this.$router.push({
+                name: 'Instance',
+                query: {
+                  active: 'storage'
+                }
+              })
+            } else if (this.agentDeploy === 'Aliyun' && row.agentType === 'Local') {
+              //半托管-授权码-部署页面
+              this.finish()
+              let downloadUrl = window.App.$router.resolve({
+                name: 'FastDownload',
+                query: {
+                  id: data?.agentId
+                }
+              })
+              window.open(downloadUrl.href, '_self')
+            } else {
+              this.finish()
+              this.$router.push({
+                name: 'Instance'
+              })
+            }
           }
         })
         .catch(() => {

@@ -82,7 +82,7 @@
               }}</el-option>
             </el-select>
           </el-form-item>
-          <el-form-item :label="$t('dfs_ticketing_system_list_wenti')" prop="subject">
+          <el-form-item :label="$t('dfs_ticketing_system_list_wenti')" prop="description">
             <el-input
               v-model.trim="createForm.description"
               type="textarea"
@@ -169,10 +169,6 @@ export default {
         }
       ],
       rules: {
-        jobId: [{ required: true, message: i18n.t('dfs_ticketing_system_list_qingxuanzexuanze'), trigger: 'blur' }],
-        connectionId: [
-          { required: true, message: i18n.t('dfs_ticketing_system_list_xuanzeshujuyuan'), trigger: 'change' }
-        ],
         subject: [{ required: true, message: i18n.t('dfs_ticketing_system_list_qingshuruzhuti'), trigger: 'change' }],
         description: [
           { required: true, message: i18n.t('dfs_ticketing_system_list_qingmiaoshuninde'), trigger: 'change' }

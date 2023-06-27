@@ -137,7 +137,7 @@ export default {
         },
         {
           text: 'header_manual', //使用手册
-          link: 'https://docs.tapdata.io/cloud/what-is-tapdata-cloud',
+          link: 'https://docs.tapdata.net/cloud/what-is-tapdata-cloud',
           icon: 'send',
           type: 'handbook'
         }
@@ -196,7 +196,7 @@ export default {
           window.open('https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_readme', '_blank')
           break
         case 'handbook':
-          window.open('https://docs.tapdata.io/cloud/what-is-tapdata-cloud', '_blank')
+          window.open('https://docs.tapdata.net/cloud/what-is-tapdata-cloud', '_blank')
           break
         case 'support':
           window.open('https://desk.zoho.com.cn/portal/tapdata/zh/community/topic/welcome-to-community', '_blank')
