@@ -1,6 +1,6 @@
 <template>
   <div class="swim-lane flex flex-column h-100">
-    <div class="page-header-title flex align-center">
+    <div class="page-header-title flex align-center position-relative">
       <span>{{ $t('page_title_data_console') }}</span>
       <ElTooltip
         placement="top"
@@ -13,14 +13,12 @@
       <ElTooltip placement="top" v-else :content="$t('packages_business_switch_data_console_view')" key="console">
         <IconButton class="ml-3" @click="toggleView('swimlane')" md>swimlane</IconButton>
       </ElTooltip>
-      <div class="flex-grow-1 text-center">
-        <span
-          v-if="showParentLineage"
-          class="parent-lineage-quit color-linfo cursor-pointer rounded-2 px-4 py-2"
-          @click="handleQuit"
-          >{{ $t('packages_ldp_src_dashboard_anEsctui') }}</span
-        >
-      </div>
+      <span
+        v-if="showParentLineage"
+        class="parent-lineage-quit color-linfo cursor-pointer rounded-2 px-4 py-2 position-absolute top-50 start-50 translate-middle"
+        @click="handleQuit"
+        >{{ $t('packages_ldp_src_dashboard_anEsctui') }}</span
+      >
       <IconButton class="ml-3" @click="handleSettings" md>cog-o</IconButton>
     </div>
     <div class="list flex flex-fill overflow-hidden position-relative">
