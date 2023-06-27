@@ -623,7 +623,7 @@ const mutations = {
     })
 
     // 如果是删除当前激活的节点
-    if (nodeIds.includes(state.activeNodeId) && state.activeType === 'node') {
+    if (nodeIds.includes(state.activeNodeId) && state.activeType !== 'settings') {
       state.activeType = null
       state.activeNodeId = null
     }

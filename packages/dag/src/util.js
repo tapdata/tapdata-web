@@ -37,20 +37,7 @@ const takeFieldValue = (schema, fieldName) => {
 }
 
 export function getSchema(schema, values, pdkPropertiesMap) {
-  let newSchema
-  if (schema.schema && schema.form) {
-    // 临时判断从自定义节点过来的schema
-    // 表单数据存储到form对象
-    newSchema = {
-      type: 'object',
-      properties: {
-        form: JSON.parse(JSON.stringify(schema.schema))
-      }
-    }
-  } else {
-    newSchema = JSON.parse(JSON.stringify(schema))
-  }
-
+  let newSchema = JSON.parse(JSON.stringify(schema))
   const blacklist = ['CSV', 'EXCEL', 'JSON', 'XML']
 
   if (values.attrs.pdkHash && (values.type != 'database' || !blacklist.includes(values.databaseType))) {

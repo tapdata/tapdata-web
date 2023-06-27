@@ -20,25 +20,61 @@ export class TableProcessor extends NodeType {
         type: 'array',
         display: 'none'
       },
-      name: {
-        type: 'string',
-        title: i18n.t('public_node_name'),
-        required: true,
-        'x-decorator': 'FormItem',
-        'x-component': 'Input'
-      },
-      tableNames: {
-        type: 'array',
-        'x-component': 'TableRename',
+      tabs: {
+        type: 'void',
+        'x-component': 'FormTab',
         'x-component-props': {
-          findParentNodes: '{{findParentNodes}}',
-          listStyle: {
-            maxHeight: 'calc((100vh - 120px) * 0.618)'
-          }
+          class: 'config-tabs',
+          formTab: '{{formTab}}'
         },
-        'x-validator': {
-          validator: `{{validateTableNames}}`,
-          message: i18n.t('packages_dag_nodes_tableprocessor_biaomingchongfu')
+        properties: {
+          tab1: {
+            type: 'void',
+            'x-component': 'FormTab.TabPane',
+            'x-component-props': {
+              label: i18n.t('public_basic_settings')
+            },
+            properties: {
+              name: {
+                type: 'string',
+                title: i18n.t('public_node_name'),
+                required: true,
+                'x-decorator': 'FormItem',
+                'x-component': 'Input'
+              },
+              tableNames: {
+                type: 'array',
+                'x-component': 'TableRename',
+                'x-component-props': {
+                  findParentNodes: '{{findParentNodes}}',
+                  listStyle: {
+                    maxHeight: 'calc((100vh - 120px) * 0.618)'
+                  }
+                },
+                'x-validator': {
+                  validator: `{{validateTableNames}}`,
+                  message: i18n.t('packages_dag_nodes_tableprocessor_biaomingchongfu')
+                }
+              }
+            }
+          },
+          tab2: {
+            type: 'void',
+            'x-component': 'FormTab.TabPane',
+            'x-component-props': {
+              label: '数据模型'
+            },
+            properties: {
+              schemaPanel: {
+                type: 'void',
+                'x-component': 'SchemaPanel',
+                'x-component-props': {
+                  class: 'mx-n4 my-n1',
+                  formTab: '{{formTab}}'
+                }
+              }
+            }
+          }
         }
       }
     }
