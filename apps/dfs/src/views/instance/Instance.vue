@@ -36,6 +36,9 @@
                     ></InlineInput>
                   </div>
                 </div>
+                <div>
+                  <span v-if="scope.row.ips">{{ scope.row.ips }}</span>
+                </div>
               </template>
             </ElTableColumn>
             <ElTableColumn width="80px" :label="$t('dfs_instance_instance_guige')">
@@ -487,10 +490,16 @@
             <template #status="{ row }">
               <StatusTag type="tag" :status="row.status" default-status="Stopped" target="mdb"></StatusTag>
             </template>
+            <template #whiteList="{ row }">
+              <span v-if="row.scope === 'Private'">{{ row.whiteList }}</span>
+            </template>
             <template #operation="{ row }">
               <ElButton size="mini" type="text" @click="handleDeleteMdb(row)">{{
                 $t('public_button_delete')
               }}</ElButton>
+              <ElButton v-if="row.scope === 'Private'" size="mini" type="text" @click="handleCreateIps(row)"
+                >添加白名单</ElButton
+              >
             </template>
             <div class="instance-table__empty" slot="empty">
               <VIcon size="120">no-data-color</VIcon>
@@ -500,6 +509,18 @@
             </div>
           </VTable>
         </section>
+        <!-- 新建白名单 -->
+        <el-dialog :visible.sync="showCreateIps" title="添加白名单">
+          <el-form>
+            <el-form-item label="ip地址">
+              <el-input :required="true" v-model="ipAddress" placeholder="183.34.1.4,183.34.1.5"></el-input>
+            </el-form-item>
+          </el-form>
+          <span slot="footer">
+            <el-button @click="showCreateIps = false">取消</el-button>
+            <el-button @click="addIps" type="primary">添加 </el-button>
+          </span>
+        </el-dialog>
       </el-tab-pane>
     </el-tabs>
   </section>
@@ -677,10 +698,19 @@ export default {
           prop: 'expiredTimeLabel'
         },
         {
+          label: '白名单IP',
+          slotName: 'whiteList'
+        },
+        {
           label: i18n.t('list_operation'),
-          slotName: 'operation'
+          slotName: 'operation',
+          width: '150'
         }
-      ]
+      ],
+      //创建白名单
+      showCreateIps: false,
+      ipAddress: '',
+      currentMdbId: ''
     }
   },
   computed: {
@@ -908,6 +938,7 @@ export default {
               stop: false,
               delete: false
             }
+            item.ips = item.metric?.systemInfo?.ips?.[0]
             return item
           })
           this.page.total = data.total
@@ -1230,12 +1261,37 @@ export default {
         })
         .catch(() => {})
     },
+    handleCreateIps(row) {
+      //新增白名单
+      this.currentMdbId = row.id
+      this.ipAddress = row.whiteList || ''
+      this.showCreateIps = true
+    },
     handleCreateAgent() {
       //this.subscriptionModelVisible = true
       this.$router.push({
         name: 'createAgent'
       })
       this.buried('newAgentStripeDialog')
+    },
+    addIps() {
+      if (!this.ipAddress) {
+        this.$message.error('请填写IP地址，多个地址可以用，分割')
+        return
+      }
+      let params = {
+        mdbId: this.currentMdbId,
+        whiteList: this.ipAddress
+      }
+      this.$axios
+        .post('api/tcm/mdb/update/whitelist', { params })
+        .then(() => {
+          this.showCreateIps = false
+          this.tableCode.fetch()
+        })
+        .finally(() => {
+          this.showCreateIps = false
+        })
     },
     // 创建Agent
     async createAgent() {
