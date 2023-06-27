@@ -29,7 +29,7 @@
                 </div>
                 <div class="flex justify-content-center align-items-center">
                   <ElButton
-                    :disabled="['canceled'].includes(item.status)"
+                    :disabled="['canceled', 'past_due'].includes(item.status)"
                     class="mr-2"
                     type="text"
                     @click="openRenew(item)"
@@ -160,7 +160,7 @@
           <li class="mt-2">{{ $t('dfs_instance_instance_qingzixihedui') }}</li>
         </ul>
         <div class="mt-4 fs-6 font-color-dark">{{ $t('dfs_instance_instance_tuidingshili') }}</div>
-        <div>
+        <div v-if="agentList.length > 0">
           <VTable
             ref="table"
             row-key="id"
@@ -254,7 +254,7 @@
       </span>
     </ElDialog>
     <!--续订-->
-    <ElDialog :visible.sync="showRenewDetailVisible" :title="$t('dfs_instance_instance_tuidingshili')" width="60%">
+    <ElDialog :visible.sync="showRenewDetailVisible" :title="$t('dfs_user_center_xudingfuwu')" width="60%">
       <section>
         <div class="mt-4 fs-6 font-color-dark">{{ $t('dfs_instance_instance_tuidingshili') }}</div>
         <div v-if="renewList.length > 0">
@@ -274,9 +274,13 @@
         </div>
         <el-form label-position="top" ref="ruleForm">
           <el-form-item label="续订时长">
-            <el-input-number v-model="quantity" :min="1" controls-position="right"></el-input-number>
+            <el-input-number disabled v-model="quantity" :min="1"></el-input-number>
             <span class="ml-2">{{ currentRenewRow.periodUnit === 'month' ? '月' : '年' }}</span>
-            <div>续订后到期时间：</div>
+            <div class="mt-2">
+              续订后到期时间：<span class="color-warning">{{
+                formatterRenewTime(currentRenewRow.periodUnit, currentRenewRow.endAt)
+              }}</span>
+            </div>
           </el-form-item>
         </el-form>
       </section>
@@ -289,7 +293,7 @@
         >
         <el-button @click="showRenewDetailVisible = false">{{ $t('public_button_cancel') }}</el-button>
         <el-button
-          :disabled="!currentPrice * quantity"
+          :disabled="currentPrice * quantity < 0"
           type="primary"
           :loading="loadingRenewSubmit"
           @click="handleRenew"
@@ -654,6 +658,15 @@ export default {
         })
       )
     },
+    formatterRenewTime(periodUnit, time) {
+      let date = new Date(time) //直接用 new Date(时间戳) 格式转化获得当前时间
+      let expiredTime = date.setMonth(date.getMonth() + this.quantity)
+      if (periodUnit === 'year') {
+        expiredTime = date.setFullYear(date.getFullYear() + this.quantity)
+      }
+      return dayjs(expiredTime).format('YYYY-MM-DD')
+    },
+
     //续订
     openRenew(item) {
       this.renewList = item?.subscribeItems
@@ -665,10 +678,15 @@ export default {
           'api/tcm/orders/paid/prices?prices=' + item?.subscribeItems[0].priceId + ',' + item?.subscribeItems[1].priceId
       }
       this.$axios.get(url).then(data => {
-        this.currentRenewRow.currency = data?.[0].currency
-        this.currentPrice = data?.[0].price || 0
+        this.currentRenewRow.currency = item?.currency
+        //根据当前币种过滤出价格
+        if (data?.[0]) {
+          this.currentPrice = data?.[0].currencyOption.find(it => it.currency === item?.currency).amount || 0
+        }
         if (data?.length > 1) {
-          this.currentPrice = data[0].price + data[1].price
+          this.currentPrice =
+            data?.[0].currencyOption.find(it => it.currency === item?.currency).amount +
+            data?.[1].currencyOption.find(it => it.currency === item?.currency).amount
         }
       })
     },
@@ -716,6 +734,8 @@ export default {
       }
       let url = `api/tcm/subscribe/${row.id}/refund`
       this.currentRow = row
+      this.memoryList = []
+      this.agentList = []
       this.$axios.get(url).then(data => {
         if (data) {
           let agentList = data.filter(it => it.productType === 'Engine')
@@ -744,7 +764,9 @@ export default {
         item.refundAmount = this.formatPrice(item.currency, item.refundAmount)
         item.periodStart = this.formatterTime(item.startAt)
         item.periodEnd = this.formatterTime(item.endAt)
-        item.spec = item?.spec?.name
+        item.spec = item?.resource?.spec?.name
+        item.agentName = item?.resource?.name
+        item.storageSize = item?.resource?.spec?.storageSize + 'GB' || 0
         return item
       })
     },
