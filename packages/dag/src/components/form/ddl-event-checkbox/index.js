@@ -104,7 +104,8 @@ export const DdlEventList = observer(
 
       onMounted(() => {
         if (!parentEnable.value) {
-          fieldRef.value.setDisplay('hidden')
+          // fieldRef.value.setDisplay('hidden')
+          fieldRef.value.parent.setDisplay('hidden')
         }
       })
 

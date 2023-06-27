@@ -534,6 +534,13 @@ export class Table extends NodeType {
                     'x-component-props': {
                       title: '增量模式配置'
                     },
+                    'x-reactions': {
+                      fulfill: {
+                        state: {
+                          visible: `{{$settings.type !== "initial_sync" && $values.attrs.capabilities.some(item => item.id === 'query_by_advance_filter_function')}}`
+                        }
+                      }
+                    },
                     properties: {
                       cdcMode: {
                         title: i18n.t('packages_dag_nodes_table_zengliangtongbufang'),
@@ -679,6 +686,7 @@ export class Table extends NodeType {
                           }
                         ]
                       },
+
                       customCommand: {
                         type: 'object',
                         properties: {
@@ -823,66 +831,6 @@ export class Table extends NodeType {
                         ]
                       },
 
-                      /*limitWrap: {
-                        type: 'void',
-                        title: '行数限制',
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Space',
-                        'x-component-props': {
-                          size: 'middle'
-                        },
-                        properties: {
-                          limitType: {
-                            type: 'string',
-                            default: 'all',
-                            enum: [
-                              {
-                                label: '全部行数',
-                                value: 'all'
-                              },
-                              {
-                                label: '自定义',
-                                value: 'custom'
-                              }
-                            ],
-                            'x-component': 'Select',
-                            'x-reactions': [
-                              {
-                                target: 'limit',
-                                effects: ['onFieldInit'],
-                                fulfill: {
-                                  run: `if ($target.value) {
-                                    $target.visible = true
-                                    $self.value = 'custom'
-                                  } else {
-                                    $target.visible = false
-                                    $self.value = 'all'
-                                  }`
-                                }
-                              },
-                              {
-                                target: 'limit',
-                                effects: ['onFieldInputValueChange'],
-                                fulfill: {
-                                  state: {
-                                    visible: `{{$self.value === 'custom'}}`,
-                                    value: null
-                                  }
-                                }
-                              }
-                            ]
-                          },
-                          limit: {
-                            type: 'number',
-                            required: true,
-                            'x-component': 'InputNumber',
-                            'x-component-props': {
-                              min: 1
-                            }
-                          }
-                        }
-                      },*/
-
                       nodeSchema: {
                         type: 'array',
                         'x-display': 'hidden',
@@ -903,15 +851,6 @@ export class Table extends NodeType {
                               state: {
                                 value:
                                   '{{$values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") && ($settings.type !== "cdc") ? $values.readPartitionOptions.enable:false}}'
-                              }
-                            }
-                          },
-                          {
-                            target: '*(readPartitionOptions)',
-                            fulfill: {
-                              state: {
-                                display:
-                                  '{{$values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") && ($settings.type !== "cdc") ? "visible":"hidden"}}'
                               }
                             }
                           }
@@ -1029,6 +968,13 @@ export class Table extends NodeType {
                     'x-component-props': {
                       title: '驱动读取配置'
                     },
+                    'x-reactions': {
+                      fulfill: {
+                        state: {
+                          display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
+                        }
+                      }
+                    },
                     properties: {
                       readBatchSize: {
                         title: i18n.t('packages_dag_nodes_database_piliangduqutiao'), //增量批次读取条数
@@ -1042,14 +988,7 @@ export class Table extends NodeType {
                           min: 1,
                           max: 100000
                         },
-                        default: 100,
-                        'x-reactions': {
-                          fulfill: {
-                            state: {
-                              display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
-                            }
-                          }
-                        }
+                        default: 100
                       }
                     }
                   },
@@ -1057,7 +996,15 @@ export class Table extends NodeType {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
-                      title: '全量断点续传配置'
+                      title: '断点续传配置'
+                    },
+                    'x-reactions': {
+                      fulfill: {
+                        state: {
+                          display:
+                            '{{$values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") && ($settings.type !== "cdc") ? "visible":"hidden"}}'
+                        }
+                      }
                     },
                     properties: {
                       readPartitionOptions: {
@@ -1219,6 +1166,14 @@ export class Table extends NodeType {
                     'x-component-props': {
                       title: '数据源专属配置'
                     },
+                    'x-reactions': {
+                      fulfill: {
+                        state: {
+                          // display: '{{$hasPdkConfig($values.attrs.pdkHash) ? "visible":"hidden"}}',
+                          visible: '{{$hasPdkConfig($values.attrs.pdkHash)}}'
+                        }
+                      }
+                    },
                     properties: {
                       nodeConfig: {
                         type: 'object'
@@ -1244,6 +1199,22 @@ export class Table extends NodeType {
                 },
                 properties: {
                   tab1: {
+                    type: 'void',
+                    'x-component': 'FormCollapse.Item',
+                    'x-component-props': {
+                      title: i18n.t('packages_dag_nodes_database_ddLshijian')
+                    },
+                    properties: {
+                      ddlEvents: {
+                        type: 'void',
+                        'x-component': 'DdlEventList',
+                        'x-component-props': {
+                          findParentNodes: '{{findParentNodes}}'
+                        }
+                      }
+                    }
+                  },
+                  tab2: {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
@@ -1425,11 +1396,19 @@ export class Table extends NodeType {
                       }
                     }
                   },
-                  tab2: {
+                  tab3: {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
                       title: '数据源专属配置'
+                    },
+                    'x-reactions': {
+                      fulfill: {
+                        state: {
+                          // display: '{{$hasPdkConfig($values.attrs.pdkHash) ? "visible":"hidden"}}',
+                          visible: '{{$hasPdkConfig($values.attrs.pdkHash)}}'
+                        }
+                      }
                     },
                     properties: {
                       nodeConfig: {
