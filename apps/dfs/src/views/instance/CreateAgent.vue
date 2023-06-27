@@ -569,7 +569,11 @@
                       v-if="item.chargeProvider === 'FreeTier'"
                       size="small"
                       class="bg-color-warning text-white border-0 ml-2"
-                      >{{ $t('dfs_instance_createagent_mianfeitiyan') }}</ElTag
+                      >{{
+                        agentDeploy === 'selfHost'
+                          ? $t('dfs_instance_instance_mianfei')
+                          : $t('dfs_instance_createagent_mianfeitiyan')
+                      }}</ElTag
                     >
                   </div>
                   <div

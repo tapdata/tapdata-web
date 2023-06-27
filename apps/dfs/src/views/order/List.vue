@@ -753,6 +753,7 @@ export default {
       }
       let url = `api/tcm/subscribe/${row.id}/refund`
       this.currentRow = row
+      this.currentRow['type'] = type //是否是单个退订
       this.memoryList = []
       this.agentList = []
       this.$axios.get(url).then(data => {
@@ -806,12 +807,19 @@ export default {
       this.$refs.ruleForm.validate(valid => {
         if (valid) {
           this.loadingCancelSubmit = true
-          const { paidType, id, resource } = this.currentRow
+          const { paidType, id, type, subscribeItems } = this.currentRow
           const { refundReason, refundDescribe } = this.form
+          //单个退订需要传resourceId
+          let resourceId = ''
+          if (type === 'Engine') {
+            resourceId = subscribeItems.find(it => it.productType === 'Engine')?.resource?.id
+          } else if (type === 'MongoDB') {
+            resourceId = subscribeItems.find(it => it.productType === 'MongoDB')?.resource?.id
+          }
           let param = {
             subscribeId: id,
             refundReason,
-            resourceId: resource?.id,
+            resourceId: resourceId,
             refundDescribe
           }
           this.$axios
