@@ -15,15 +15,18 @@
             <li class="sub-li mb-4" v-for="item in subscribeList" :key="item.id">
               <div class="sub-li-header flex justify-content-between">
                 <div>
-                  <span class="color-primary fw-sub mr-2">订阅编号: {{ item.id }}</span>
+                  <span class="font-color-dark fw-sub mr-2">订阅编号: {{ item.id }}</span>
+                  <el-divider direction="vertical"></el-divider>
                   <span class="font-color-dark fw-sub mr-2"
-                    >总金额: {{ formatterPrice(item.currency, item.totalAmount) || 0 }}</span
+                    ><span class="font-color-slight">总金额:</span>
+                    {{ formatterPrice(item.currency, item.totalAmount) || 0 }}</span
                   >
-                  <span class="font-color-dark fw-sub mr-2"
-                    >订阅周期: {{ formatterTime(item.startAt) }} ~ {{ formatterTime(item.endAt) }}</span
+                  <el-divider direction="vertical"></el-divider>
+                  <span class="font-color-light fw-sub mr-2"
+                    ><span>订阅周期: </span> {{ formatterTime(item.startAt) }} ~ {{ formatterTime(item.endAt) }}</span
                   >
-                  <span class="font-color-dark fw-sub mr-2"
-                    >订阅状态:
+                  <el-divider direction="vertical"></el-divider>
+                  <span class="font-color-dark fw-sub mr-2">
                     <StatusTag type="tag" :status="item.status" default-status="Stopped" target="order"></StatusTag
                   ></span>
                 </div>
@@ -35,14 +38,19 @@
                     @click="openRenew(item)"
                     >{{ $t('public_button_renew') }}</ElButton
                   >
+                  <el-divider direction="vertical"></el-divider>
                   <ElButton v-if="['incomplete'].includes(item.status)" type="text" @click="handlePay(item)"
                     >支付</ElButton
                   >
+                  <el-divider direction="vertical"></el-divider>
                   <ElButton
                     type="text"
-                    :disabled="!['active'].includes(item.status)"
-                    v-if="item.subscribeItems && item.subscribeItems.length > 1"
-                    class="color-warning cursor-pointer"
+                    v-if="
+                      item.subscribeItems &&
+                      item.subscribeItems.length > 1 &&
+                      ['active', 'past_due'].includes(item.status)
+                    "
+                    class="color-subscribe"
                     @click="allUnsubscribe(item)"
                   >
                     一键退订
@@ -949,9 +957,13 @@ export default {
   border: 1px solid #ebeef5;
   //border-bottom: none;
 }
+.color-subscribe {
+  color: map-get($color, warning);
+}
 .sub-li-header {
   padding: 10px;
   border-bottom: 1px solid #ebeef5;
+  background: #f7f8fa;
 }
 ::v-deep {
   .el-dropdown-menu__item.dropdown-item--disabled {
