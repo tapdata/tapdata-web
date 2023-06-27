@@ -1279,9 +1279,14 @@ export default {
         this.$message.error('请填写IP地址，多个地址可以用，分割')
         return
       }
-      if (!/^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)$/.test(this.ipAddress)) {
-        this.$message.error('请输入合法IP')
-        return
+      let ips = this.ipAddress.split(',')
+      if (ips.length > 0) {
+        for (let i = 0; i < ips.length; i++) {
+          if (!/^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)$/.test(ips[i])) {
+            this.$message.error(ips[i] + '不合法IP')
+            return
+          }
+        }
       }
       let params = {
         mdbId: this.currentMdbId,
