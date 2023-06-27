@@ -324,8 +324,30 @@ export default {
         databaseType: this.activeNode.databaseType,
         dataType: this.currentData.dataType
       })
-      this.originType = dataTypeCheckMultiple?.result ? dataTypeCheckMultiple?.originType : ''
-      this.modeType = 'custom'
+
+      let modeType = 'custom'
+      if (dataTypeCheckMultiple?.result) {
+        this.originType = dataTypeCheckMultiple.originType
+        this.fieldChangeRules.forEach((item = {}) => {
+          const { namespace = [] } = item
+          if (item.type === 'MutiDataType' && item.accept === this.originType) {
+            this.currentData.coefficient = item.multiple
+            modeType = 'coefficient'
+          } else {
+            const flag =
+              namespace[0] === this.data.nodeId &&
+              (namespace.length === 1 ||
+                (namespace[1] === this.data.qualified_name && namespace[2] === this.currentData.fieldName))
+            if (flag) {
+              modeType = 'custom'
+            }
+          }
+        })
+      } else {
+        this.originType = ''
+      }
+
+      this.modeType = modeType
       this.editDataTypeVisible = true
     },
 
@@ -348,6 +370,7 @@ export default {
         let ruleAccept = f?.accept
         if (f) {
           f.multiple = coefficient
+          f.accept = this.originType
           f.result = { dataType: `${this.originType}(${coefficient}n)` }
           const index = this.rules.findIndex(t => t.id === ruleId)
           this.rules.splice(index, 1)
@@ -358,8 +381,7 @@ export default {
             scope: 'Node',
             namespace: [nodeId],
             type: 'MutiDataType',
-            // accept: this.originType,
-            accept: dataTypeTemp,
+            accept: this.originType,
             multiple: coefficient,
             result: { dataType: `${this.originType}(${coefficient}n)` }
           }

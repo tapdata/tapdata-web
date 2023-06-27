@@ -60,6 +60,7 @@
             @node-drag-end="handleDragEnd"
             @node-drop="handleSelfDrop"
             @node-expand="handleNodeExpand"
+            @handle-scroll="handleScroll"
           ></VirtualTree>
         </div>
         <template v-else>
@@ -81,6 +82,7 @@
             @node-drag-end="handleDragEnd"
             @node-drop="handleSelfDrop"
             @node-expand="handleNodeExpand"
+            @handle-scroll="handleScroll"
           ></VirtualTree>
           <div
             v-if="!treeData.length"
@@ -323,7 +325,7 @@ export default {
 
       return (
         <div
-          class="custom-tree-node grabbable"
+          class="custom-tree-node grabbable flex justify-content-between"
           on={{
             click: () => {
               data.isObject &&
@@ -351,12 +353,40 @@ export default {
             }
           }}
         >
-          <div class="tree-item-icon flex align-center mr-2">{icon && <VIcon size="18">{icon}</VIcon>}</div>
-          <span class="table-label" title={data.name}>
-            {data.name}
-          </span>
-          {data.comment && <span class="font-color-sslight">{`(${data.comment})`}</span>}
-          <div class="btn-menu">{actions}</div>
+          <div class="flex align-center flex-fill mr-2">
+            <div class="flex-fill w-0 inline-flex align-items-center">
+              <span
+                id={data.isObject ? `ldp_mdm_table_${data.id}_${data.name}` : ''}
+                class="inline-flex align-items-center overflow-hidden"
+              >
+                {icon && (
+                  <VIcon size="18" class="tree-item-icon mr-2">
+                    {icon}
+                  </VIcon>
+                )}
+                <span title={data.name} class="table-label">
+                  {data.name}
+                </span>
+              </span>
+            </div>
+          </div>
+          <div>
+            {data.comment && <span class="font-color-sslight">{`(${data.comment})`}</span>}
+            {data.isObject ? (
+              <VIcon
+                size="18"
+                class="lineage-icon"
+                onClick={ev => {
+                  ev.stopPropagation()
+                  this.handleFindLineage(data)
+                }}
+              >
+                suyuan
+              </VIcon>
+            ) : (
+              <div class="btn-menu">{actions}</div>
+            )}
+          </div>
         </div>
       )
     },
@@ -777,7 +807,33 @@ export default {
           this.setNodeExpand(data.parent_id, true)
         })
       })
-    }
+    },
+
+    handleFindLineage(data) {
+      const el = document.getElementById(`ldp_mdm_table_${data.id}_${data.name}`)
+      this.$emit('find-parent', el, data)
+    },
+
+    handleScroll: debounce(function () {
+      this.$emit('handle-connection')
+    }, 200)
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.ldp-tree {
+  ::v-deep {
+    .el-tree-node__content {
+      .lineage-icon {
+        color: map-get($color, info);
+      }
+      &:hover {
+        .lineage-icon {
+          color: map-get($color, primary);
+        }
+      }
+    }
+  }
+}
+</style>

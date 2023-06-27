@@ -119,6 +119,11 @@ export default {
       filterTree(root)
       this.searchIng = false
       this.filterTreeData = root.children
+    },
+
+    handleFindParent(event) {
+      const parentNode = event.target?.parentElement
+      this.$emit('find-parent', parentNode)
     }
   }
 }

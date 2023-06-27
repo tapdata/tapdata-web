@@ -88,24 +88,24 @@
                 :key="sIndex + 'source'"
                 class="flex disable-color py-1"
               >
-                <div class="w-50">
+                <div class="w-50 flex align-center">
                   <span class="row__label">{{ sItem.source.key + ':' }}</span>
                   <span class="row__value ml-4" :class="{ 'color-danger': sItem.red }">{{ sItem.source.value }}</span>
                 </div>
-                <div class="w-50">
+                <div class="w-50 flex align-center">
                   <span class="row__label">{{ sItem.target.key + ':' }}</span>
                   <span class="row__value ml-4" :class="{ 'color-danger': sItem.red }">{{ sItem.target.value }}</span>
                 </div>
               </div>
 
               <div v-for="(sItem, sIndex) in getDetailsList(item.details)" :key="sIndex" class="flex py-1">
-                <div class="w-50">
+                <div class="w-50 flex align-center">
                   <span class="row__label">{{ sItem.source.key }}:</span>
                   <span class="row__value ml-4 font-color-dark" :class="{ 'color-danger': sItem.red }">{{
                     sItem.source.value
                   }}</span>
                 </div>
-                <div class="w-50">
+                <div class="w-50 flex align-center">
                   <span class="row__label">{{ sItem.target.key }}:</span>
                   <span class="row__value ml-4 font-color-dark" :class="{ 'color-danger': sItem.red }">{{
                     sItem.target.value
@@ -359,7 +359,8 @@ $margin: 10px;
 }
 .row__label {
   display: inline-block;
-  width: 150px;
+  width: 160px;
+  word-break: break-all;
 }
 .index-span {
   width: 20px;

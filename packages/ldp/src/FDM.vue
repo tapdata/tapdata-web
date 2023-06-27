@@ -36,7 +36,7 @@
         </ElInput>
       </div>
 
-      <div class="flex-1 min-h-0 position-relative">
+      <div v-if="!showParentLineage" class="flex-1 min-h-0 position-relative">
         <div
           v-if="showSearch"
           class="search-view position-absolute top-0 left-0 w-100 h-100 bg-white"
@@ -88,6 +88,27 @@
             <span class="text-center lh-base" v-html="$t('packages_business_fdm_empty_text')"></span>
           </div>
         </template>
+      </div>
+      <div v-else class="flex-1 min-h-0 position-relative">
+        <div class="search-view position-absolute top-0 left-0 w-100 h-100 bg-white">
+          <VirtualTree
+            class="ldp-tree h-100"
+            ref="tree"
+            node-key="id"
+            :data="filterTreeData"
+            draggable
+            default-expand-all
+            height="100%"
+            wrapper-class-name="p-2"
+            :render-content="renderContent"
+            :render-after-expand="false"
+            :expand-on-click-node="false"
+            :allow-drop="() => false"
+            :allow-drag="checkAllowDrag"
+            @node-drag-start="handleDragStart"
+            @node-drag-end="handleDragEnd"
+          ></VirtualTree>
+        </div>
       </div>
 
       <div
@@ -206,7 +227,8 @@ export default {
     fdmConnection: Object,
     directory: Object,
     eventDriver: Object,
-    mapCatalog: Function
+    mapCatalog: Function,
+    showParentLineage: Boolean
   },
 
   components: { VirtualTree, IconButton, DatabaseIcon, VExpandXTransition },
@@ -420,12 +442,21 @@ export default {
                 )}
               </VExpandXTransition>
             )}
-            <div class="tree-item-icon flex align-center mr-2">{icon && <VIcon size="18">{icon}</VIcon>}</div>
-            <span class="table-label" title={data.name}>
-              {data.name}
+            <span
+              id={data.isObject ? `fdm_table_${data.connectionId}_${data.name}` : `connection_${data.id}`}
+              class="inline-flex align-items-center overflow-hidden"
+            >
+              {icon && (
+                <VIcon size="18" class="tree-item-icon mr-2">
+                  {icon}
+                </VIcon>
+              )}
+              <span class="table-label" title={data.name}>
+                {data.name}
+              </span>
             </span>
             {data.comment && <span class="font-color-sslight">{`(${data.comment})`}</span>}
-            <div class="btn-menu">{actions}</div>
+            {!data.isObject && <div class="btn-menu">{actions}</div>}
           </div>
         </div>
       )
@@ -910,12 +941,45 @@ export default {
     async startTagTask(tag) {
       await ldpApi.batchStart(tag.id)
       this.$message.success(this.$t('public_message_operation_success'))
+    },
+
+    handleFindTreeDom(val = {}, getParent = false) {
+      const el = document.getElementById(`fdm_table_${val.connectionId}_${val.table}`) // this.$refs[`table_${val.connectionId}_${val.table}`]
+      return getParent ? el?.parentNode : el
+    },
+
+    async searchByKeywordList(val = []) {
+      let searchExpandedKeys = []
+      this.filterTreeData = val.map(t => {
+        searchExpandedKeys.push(t.connectionId)
+        return {
+          LDP_TYPE: 'connection',
+          id: t.connectionId,
+          name: t.connectionName,
+          status: 'ready',
+          isLeaf: false,
+          level: 0,
+          disabled: false,
+          children: [
+            {
+              id: t.tableId,
+              name: t.table,
+              connectionId: t.connectionId,
+              isLeaf: true,
+              isObject: true,
+              type: 'table',
+              LDP_TYPE: 'table'
+            }
+          ]
+        }
+      })
+      this.searchExpandedKeys = searchExpandedKeys
     }
   }
 }
 </script>
 
-<style lang="scss" scope>
+<style lang="scss" scoped>
 .pipeline-desc {
   background-color: #f8f8fa;
   border-left: 4px solid map-get($color, primary);

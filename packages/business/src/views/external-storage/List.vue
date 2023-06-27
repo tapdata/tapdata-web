@@ -20,15 +20,15 @@
         :label="$t('public_external_memory_type')"
         prop="typeFmt"
       ></ElTableColumn>
-      <ElTableColumn show-overflow-tooltip min-width="150" :label="$t('public_status')" prop="typeFmt">
-        <template #default="{ row }">
-          <div>
-            <span :class="['status-connection-' + row.status, 'status-block']">
-              {{ getStatus(row.status) }}
-            </span>
-          </div>
-        </template>
-      </ElTableColumn>
+<!--      <ElTableColumn show-overflow-tooltip min-width="150" :label="$t('public_status')" prop="typeFmt">-->
+<!--        <template #default="{ row }">-->
+<!--          <div>-->
+<!--            <span :class="['status-connection-' + row.status, 'status-block']">-->
+<!--              {{ getStatus(row.status) }}-->
+<!--            </span>-->
+<!--          </div>-->
+<!--        </template>-->
+<!--      </ElTableColumn>-->
       <ElTableColumn
         show-overflow-tooltip
         min-width="300"
@@ -368,7 +368,7 @@ export default {
           let list = (data?.items || []).map(item => {
             item.typeFmt = EXTERNAL_STORAGE_TYPE_MAP[item.type] || '-'
             item.createTimeFmt = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') || '-'
-            item.status = item.status || 'ready'
+            // item.status = item.status || 'ready'
             return item
           })
           return {
