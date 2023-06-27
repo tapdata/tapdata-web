@@ -122,6 +122,9 @@
             ></TaskList>
           </template>
         </div>
+        <div v-if="!filterList.length" class="el-tree__empty-block">
+          <span class="el-tree__empty-text">{{ $t('public_data_no_data') }}</span>
+        </div>
         <!--</draggable>-->
       </div>
 

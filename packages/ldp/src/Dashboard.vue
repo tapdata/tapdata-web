@@ -451,13 +451,19 @@ export default {
           }
         } else {
           const { connectionId, connectionName, pdkHash, table, metadata = {} } = el || {}
-          keywordOptions[el.ldpType].push({
-            connectionId,
-            connectionName,
-            pdkHash,
-            table,
-            tableId: metadata.id
-          })
+          // ldpType为source，且是连线目标节点的ldpType也为source，则过滤不展示
+          const flag =
+            el.ldpType === 'source' &&
+            this.edgsLinks.some(t => t.sourceNode?.id === el.id && t.targetNode?.ldpType === 'source')
+          if (!flag) {
+            keywordOptions[el.ldpType]?.push({
+              connectionId,
+              connectionName,
+              pdkHash,
+              table,
+              tableId: metadata.id
+            })
+          }
         }
       })
 
@@ -471,15 +477,12 @@ export default {
       this.$nextTick(() => {
         this.edgsLinks.forEach(el => {
           const { sourceNode, targetNode } = el || {}
-          let sDom = sourceNode.dom
-          let tDom = targetNode.dom
-          if (!sDom) {
-            sDom = map[sourceNode.ldpType](sourceNode)
+          const sDom = sourceNode.dom || map[sourceNode.ldpType](sourceNode)
+          const tDom = targetNode.dom || map[targetNode.ldpType](targetNode)
+          // 过滤掉source节点连线到source节点的情况
+          if (targetNode.ldpType !== 'source') {
+            connectionLines.push([sDom, tDom])
           }
-          if (!tDom) {
-            tDom = map[targetNode.ldpType](targetNode)
-          }
-          connectionLines.push([sDom, tDom])
         })
 
         this.connectionLines = connectionLines
