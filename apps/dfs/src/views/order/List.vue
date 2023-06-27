@@ -626,7 +626,7 @@ export default {
               it.specLabel = getSpec(it.spec) || '-'
               it.storageSize = it.spec?.storageSize ? it.spec?.storageSize + 'GB' : '-'
               it.subscriptionMethodLabel = item.subscriptionMethodLabel
-              it.status = item.resource?.status || ''
+              it.status = it.resource?.status || ''
               return it
             })
           }
