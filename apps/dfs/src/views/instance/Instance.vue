@@ -1284,7 +1284,7 @@ export default {
         whiteList: this.ipAddress
       }
       this.$axios
-        .post('api/tcm/mdb/update/whitelist', { params })
+        .post('api/tcm/mdb/update/whitelist', params)
         .then(() => {
           this.showCreateIps = false
           this.tableCode.fetch()
