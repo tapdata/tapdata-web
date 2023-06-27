@@ -494,9 +494,9 @@
               <span v-if="row.scope === 'Private'">{{ row.whiteList }}</span>
             </template>
             <template #operation="{ row }">
-              <ElButton size="mini" type="text" @click="handleDeleteMdb(row)">{{
-                $t('public_button_delete')
-              }}</ElButton>
+              <!--              <ElButton size="mini" type="text" @click="handleDeleteMdb(row)">{{-->
+              <!--                $t('public_button_delete')-->
+              <!--              }}</ElButton>-->
               <ElButton v-if="row.scope === 'Private'" size="mini" type="text" @click="handleCreateIps(row)"
                 >添加白名单</ElButton
               >

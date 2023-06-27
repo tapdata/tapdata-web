@@ -9,7 +9,8 @@ export const INSTANCE_STATUS_MAP = {
     Restarting: { text: i18n.t('public_status_restarting') },
     Deploying: { text: i18n.t('public_status_deploying') },
     Altering: { text: i18n.t('public_status_altering') },
-    Error: { text: i18n.t('public_status_error'), type: 'danger' }
+    Error: { text: i18n.t('public_status_error'), type: 'danger' },
+    Deleted: { text: i18n.t('public_status_deleted'), type: 'disable' }
   },
   MDB_STATUS_MAP = {
     Init: { text: i18n.t('public_status_init'), type: 'waiting' },

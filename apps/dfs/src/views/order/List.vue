@@ -75,7 +75,7 @@
                   </template>
                   <template #operation="{ row }">
                     <ElButton
-                      :disabled="!['active', 'past_due'].includes(item.status)"
+                      :disabled="disableUnsubscribe(row)"
                       type="text"
                       @click="getUnsubscribePrice(item, row.productType)"
                       >{{ $t('public_button_unsubscribe') }}</ElButton
@@ -746,6 +746,22 @@ export default {
           this.showRenewDetailVisible = false
           this.loadingRenewSubmit = false
         })
+    },
+    //是否可退订
+    disableUnsubscribe(row) {
+      if (row.productType === 'Engine') {
+        if (row.agentType === 'Cloud') {
+          return !['Running', 'Stopped', 'Error'].includes(row.status)
+        } else {
+          return !['Running', 'Creating', 'Stopped', 'Error'].includes(row.status)
+        }
+      } else {
+        if (row?.resource?.scope === 'Private') {
+          return !['Activated'].includes(row.status)
+        } else {
+          return !['Assigned'].includes(row.status)
+        }
+      }
     },
     //退订 //退订详情费用
     getUnsubscribePrice(row = {}, type) {
