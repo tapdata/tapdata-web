@@ -104,11 +104,7 @@
       </ElTooltip>
       <VDivider class="mx-3" vertical inset></VDivider>
       <!--信息输出-->
-      <ElTooltip
-        transition="tooltip-fade-in"
-        :content="$t('packages_dag_monitor_bottompanel_rizhi')"
-        v-if="$route.name === 'MigrateEditor'"
-      >
+      <ElTooltip transition="tooltip-fade-in" :content="$t('public_task_log')">
         <button @click="toggleConsole()" class="icon-btn" :class="{ active: showConsole }">
           <VIcon size="16">list</VIcon>
         </button>

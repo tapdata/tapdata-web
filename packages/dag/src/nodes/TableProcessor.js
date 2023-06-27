@@ -57,6 +57,23 @@ export class TableProcessor extends NodeType {
                 }
               }
             }
+          },
+          tab2: {
+            type: 'void',
+            'x-component': 'FormTab.TabPane',
+            'x-component-props': {
+              label: '数据模型'
+            },
+            properties: {
+              schemaPanel: {
+                type: 'void',
+                'x-component': 'SchemaPanel',
+                'x-component-props': {
+                  class: 'mx-n4 my-n1',
+                  formTab: '{{formTab}}'
+                }
+              }
+            }
           }
         }
       }
