@@ -1232,6 +1232,9 @@ export class Table extends NodeType {
               targetCollapse: {
                 type: 'void',
                 'x-component': 'FormCollapse',
+                'x-component-props': {
+                  class: 'advanced-collapse'
+                },
                 'x-reactions': {
                   dependencies: ['$inputs'],
                   fulfill: {
