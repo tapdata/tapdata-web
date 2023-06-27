@@ -51,6 +51,7 @@ export class Table extends NodeType {
       },
       tabs: {
         type: 'void',
+        'x-decorator': 'FormItem',
         'x-component': 'FormTab',
         'x-component-props': {
           class: 'config-tabs',
@@ -1331,18 +1332,6 @@ export class Table extends NodeType {
                               effect: 'light'
                             }
                           }
-                        }
-                      },
-                      ddlEvents: {
-                        type: 'void',
-                        title: i18n.t('packages_dag_nodes_database_ddLshijian'),
-                        'x-decorator': 'FormItem',
-                        'x-decorator-props': {
-                          feedbackLayout: 'none'
-                        },
-                        'x-component': 'DdlEventList',
-                        'x-component-props': {
-                          findParentNodes: '{{findParentNodes}}'
                         }
                       },
                       incrementExactlyOnceObject: {

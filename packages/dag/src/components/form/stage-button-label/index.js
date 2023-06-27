@@ -4,6 +4,8 @@ import { observer } from '@formily/reactive-vue'
 import StageButton from '@tap/business/src/components/StageButton'
 import { FormItem, useForm } from '@tap/form'
 
+import './style.scss'
+
 export const StageButtonLabel = observer(
   defineComponent({
     props: ['value', 'disabled', 'connectionId', 'title', 'target'],
@@ -21,7 +23,7 @@ export const StageButtonLabel = observer(
 
       return () => {
         const label = (
-          <div class="inline-flex align-center">
+          <div class="inline-flex align-center stage-button-label">
             <span class="mr-2">{props.title}</span>
             <StageButton
               connection-id={props.connectionId}
@@ -33,7 +35,7 @@ export const StageButtonLabel = observer(
         )
 
         return (
-          <FormItem.BaseItem class="js-editor-form-item" label={label} attrs={attrs}>
+          <FormItem.BaseItem label={label} attrs={attrs}>
             {slots.default?.()}
           </FormItem.BaseItem>
         )
