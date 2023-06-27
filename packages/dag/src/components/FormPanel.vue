@@ -79,6 +79,10 @@ export default {
 
     async activeNodeId(n, o) {
       const formSchema = this.$store.getters['dataflow/formSchema'] || {}
+
+      // 重置TAB
+      this.scope?.formTab?.setActiveKey('tab1')
+
       if (!this.ins) {
         // 节点不存在，比如删掉了，清除表单
         this.schema = null

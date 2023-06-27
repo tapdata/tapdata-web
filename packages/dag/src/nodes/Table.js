@@ -472,6 +472,9 @@ export class Table extends NodeType {
               sourceCollapse: {
                 type: 'void',
                 'x-component': 'FormCollapse',
+                'x-component-props': {
+                  class: 'advanced-collapse'
+                },
                 'x-reactions': {
                   dependencies: ['$outputs', '$inputs'],
                   fulfill: {
