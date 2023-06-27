@@ -258,8 +258,8 @@ export default {
       const { keyword } = this
       return this.list
         .filter(t => (t.source + t.target).toLowerCase().includes(keyword.toLowerCase()))
-        .map(t => {
-          t.id = t.source + t.target
+        .map((t, i) => {
+          t.id = `${t.source}_${t.target}_${i}`
           return t
         })
     },
