@@ -19,7 +19,7 @@
         @click="handleQuit"
         >{{ $t('packages_ldp_src_dashboard_anEsctui') }}</span
       >
-      <IconButton class="ml-3" @click="handleSettings" md>cog-o</IconButton>
+      <IconButton class="ml-auto" @click="handleSettings" md>cog-o</IconButton>
     </div>
     <div class="list flex flex-fill overflow-hidden position-relative">
       <div v-if="currentView === 'catalog'" class="px-5 pb-5 w-100 border-top">
