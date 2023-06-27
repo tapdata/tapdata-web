@@ -29,7 +29,7 @@
                 </div>
                 <div class="flex justify-content-center align-items-center">
                   <ElButton
-                    :disabled="['canceled', 'past_due'].includes(item.status)"
+                    :disabled="!['active'].includes(item.status)"
                     class="mr-2"
                     type="text"
                     @click="openRenew(item)"
@@ -40,7 +40,7 @@
                   >
                   <ElButton
                     type="text"
-                    :disabled="['canceled'].includes(item.status)"
+                    :disabled="!['active'].includes(item.status)"
                     v-if="item.subscribeItems && item.subscribeItems.length > 1"
                     class="color-warning cursor-pointer"
                     @click="allUnsubscribe(item)"
@@ -66,20 +66,8 @@
                     ></StatusTag>
                   </template>
                   <template #operation="{ row }">
-                    <!--                    <ElButton-->
-                    <!--                      v-if="['past_due', 'active'].includes(item.status) && item.subscribeType === 'one_time'"-->
-                    <!--                      type="text"-->
-                    <!--                      @click="handleRenew(item)"-->
-                    <!--                      >{{ $t('public_button_renew') }}</ElButton-->
-                    <!--                    >-->
-                    <!--                    <ElButton-->
-                    <!--                      v-if="['active', 'past_due'].includes(item.status)"-->
-                    <!--                      type="text"-->
-                    <!--                      @click="getUnsubscribePrice(item, row.productType)"-->
-                    <!--                      >{{ $t('public_button_unsubscribe') }}</ElButton-->
-                    <!--                    >-->
                     <ElButton
-                      :disabled="['canceled'].includes(item.status)"
+                      :disabled="!['active', 'past_due'].includes(item.status)"
                       type="text"
                       @click="getUnsubscribePrice(item, row.productType)"
                       >{{ $t('public_button_unsubscribe') }}</ElButton
