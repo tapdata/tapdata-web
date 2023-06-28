@@ -33,7 +33,7 @@
           >
         </template>
         <div class="flex-grow-1"></div>
-        <ElButton size="mini" type="danger" plain @click="handleDelete"
+        <ElButton v-if="swimType === 'mdm'" size="mini" type="danger" plain @click="handleDelete"
           ><VIcon class="mr-1">delete</VIcon>{{ $t('public_button_delete') }}</ElButton
         >
       </div>
