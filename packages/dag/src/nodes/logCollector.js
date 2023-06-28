@@ -43,36 +43,55 @@ export class LogCollector extends NodeType {
         'x-display': 'hidden'
       },
 
-      name: {
-        type: 'string',
-        title: i18n.t('public_node_name'),
-        required: true,
-        'x-decorator': 'FormItem',
-        'x-component': 'Input'
-      },
-
-      sourceConfig: {
+      tabs: {
         type: 'void',
-        'x-reactions': {
-          dependencies: ['$outputs'],
-          fulfill: {
-            state: {
-              display: '{{$deps[0].length > 0 ? "visible":"hidden"}}'
-            }
-          }
+        'x-component': 'FormTab',
+        'x-component-props': {
+          class: 'config-tabs',
+          formTab: '{{formTab}}'
         },
         properties: {
-          SharedMiningTableInfo: {
+          tab1: {
             type: 'void',
-            'x-decorator': 'FormItem',
-            'x-component': 'SharedMiningTableInfo',
+            'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              height: '280px'
-            }
-          },
+              label: i18n.t('public_basic_settings')
+            },
+            properties: {
+              name: {
+                type: 'string',
+                title: i18n.t('public_node_name'),
+                required: true,
+                'x-decorator': 'FormItem',
+                'x-component': 'Input'
+              },
 
-          nodeConfig: {
-            type: 'object'
+              sourceConfig: {
+                type: 'void',
+                'x-reactions': {
+                  dependencies: ['$outputs'],
+                  fulfill: {
+                    state: {
+                      display: '{{$deps[0].length > 0 ? "visible":"hidden"}}'
+                    }
+                  }
+                },
+                properties: {
+                  SharedMiningTableInfo: {
+                    type: 'void',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'SharedMiningTableInfo',
+                    'x-component-props': {
+                      height: '280px'
+                    }
+                  },
+
+                  nodeConfig: {
+                    type: 'object'
+                  }
+                }
+              }
+            }
           }
         }
       },
