@@ -350,25 +350,7 @@ export default {
       sampleData: [],
       sampleHeader: [],
       loadingSampleData: false,
-      columnsPreview: [
-        {
-          label: i18n.t('public_name'),
-          prop: 'name'
-        },
-        {
-          label: i18n.t('public_type'),
-          prop: 'dataType'
-        },
-        {
-          label: i18n.t('packages_form_field_inference_list_ziduanzhushi'),
-          prop: 'comment'
-        },
-        {
-          label: i18n.t('datadiscovery_previewdrawer_yewumiaoshu'),
-          prop: 'businessDesc',
-          slotName: 'businessDesc'
-        }
-      ],
+      columnsPreview: [],
       columns: [
         {
           label: i18n.t('public_name'),
@@ -564,6 +546,30 @@ export default {
       this.cdcDelayTime = ''
       this.lastDataChangeTime = ''
     },
+    getPreviewColumns(sourceType) {
+      let result = [
+        {
+          label: i18n.t('public_name'),
+          prop: 'name'
+        },
+        {
+          label: i18n.t('public_type'),
+          prop: 'dataType'
+        }
+      ]
+      if (sourceType !== 'MongoDB') {
+        result.push({
+          label: i18n.t('packages_form_field_inference_list_ziduanzhushi'),
+          prop: 'comment'
+        })
+      }
+      result.push({
+        label: i18n.t('datadiscovery_previewdrawer_yewumiaoshu'),
+        prop: 'businessDesc',
+        slotName: 'businessDesc'
+      })
+      this.columnsPreview = result
+    },
     open(row, connection, callback = {}) {
       clearTimeout(this.visibleTimer)
       clearTimeout(this.loadTaskTimer)
@@ -572,6 +578,7 @@ export default {
       // if (!this.visible) this.reset()
 
       this.init()
+      this.getPreviewColumns(row.sourceType)
       this.visible = true
       this.swimType = row.SWIM_TYPE
       this.connectionId = row.connectionId
