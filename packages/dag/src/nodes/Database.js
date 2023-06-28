@@ -600,7 +600,7 @@ export class Database extends NodeType {
                           },
                           existDataProcessMode: {
                             type: 'string',
-                            title: i18n.t('packages_dag_nodes_table_yiyoushujuchu'),
+                            title: i18n.t('packages_dag_nodes_database_chongfuchulice'),
                             default: 'keepData',
                             enum: [
                               {

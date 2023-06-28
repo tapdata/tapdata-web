@@ -320,7 +320,7 @@ export default {
   packages_dag_nodes_database_shujuxieruce: '數據寫入策略',
   packages_dag_nodes_database_baochimubiaoduan: '保持目標端原有表結構，清除數據',
   packages_dag_nodes_database_qingchumubiaoduan: '清除目標端原有表結構及數據',
-  packages_dag_nodes_database_chongfuchulice: '重複處理策略',
+  packages_dag_nodes_database_chongfuchulice: '如果目標表存在',
   packages_dag_nodes_database_tuiyanjieguo: '推演結果',
   packages_dag_nodes_database_guolvjieguo: '過濾結果',
   packages_dag_nodes_database_dangqianjiedianzhi: '當前節點支持處理的DDL事件',
@@ -607,6 +607,6 @@ export default {
   packages_dag_field_rename_index_yixiacaozuoyi: '以下操作已匹配不到源字段',
   packages_dag_nodes_database_jinwuzhujianbiao: '僅無主鍵表',
   packages_dag_nodes_database_jinyouzhujianbiao: '僅有主鍵表',
-  packages_dag_nodes_database_biaoxianshi: '表顯示',
+  packages_dag_nodes_database_biaoxianshi: '可選擇的表範圍',
   packages_dag_nodes_database_xuanzeyaoguolvdiaode: '選擇要過濾掉的字段類型'
 }
