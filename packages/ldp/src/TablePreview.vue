@@ -617,7 +617,9 @@ export default {
           cancelToken: this.cancelSource.token
         })
         .then(taskList => {
-          taskList.forEach(task => {
+          this.taskData = taskList.filter(task => {
+            if (['deleting', 'delete_failed'].includes(task.status) || task.is_deleted) return false
+
             const { dag } = task
 
             makeStatusAndDisabled(task)
@@ -650,8 +652,9 @@ export default {
                 }
               })
             }
+
+            return true
           })
-          this.taskData = taskList
         })
         .finally(() => {
           this.taskLoading = false
