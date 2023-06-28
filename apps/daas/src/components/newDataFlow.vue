@@ -90,21 +90,22 @@
         </ElCol>
       </ElRow>
     </div>
-    <DatabaseTypeDialog
-      :dialogVisible="dialogDatabaseTypeVisible"
-      @dialogVisible="handleDialogDatabaseTypeVisible"
-      @databaseType="handleDatabaseType"
-    ></DatabaseTypeDialog>
+    <!--创建连接-->
+    <SceneDialog
+      :visible.sync="dialogDatabaseTypeVisible"
+      selector-type="source_and_target"
+      @selected="handleDatabaseType"
+    ></SceneDialog>
   </ElDialog>
 </template>
 
 <script>
-import DatabaseTypeDialog from '@tap/business/src/views/connections/DatabaseTypeDialog'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
+import { SceneDialog } from '@tap/business'
 
 export default {
   name: 'newDataFlow',
-  components: { DatabaseTypeDialog },
+  components: { SceneDialog },
 
   props: {
     dialogVisible: {
