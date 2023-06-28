@@ -898,17 +898,17 @@ export default {
           this.list = list.map(item => {
             // item.status = item.status === 'Running' ? 'Running' : item.status === 'Stopping' ? 'Stopping' : 'Offline'
             item.deployDisable = item.tmInfo.pingTime || false
-            const { paidSubscribeDto = {}, license = {}, chargeProvider } = item.orderInfo || {}
-            const { periodStart, periodEnd } = paidSubscribeDto
+            const { subscribeDto = {}, license = {}, chargeProvider } = item.orderInfo || {}
+            const { startAt, endAt } = subscribeDto
             item.chargeProvider = chargeProvider
             item.specLabel = getSpec(item.spec) || '-'
             if (item.publicAgent) {
               item.subscriptionMethodLabel = 'Public Agent'
             } else {
-              item.subscriptionMethodLabel = getPaymentMethod(paidSubscribeDto, chargeProvider) || '-'
+              item.subscriptionMethodLabel = getPaymentMethod(subscribeDto, chargeProvider) || '-'
             }
             item.periodLabel =
-              dayjs(periodStart).format('YY-MM-DD HH:mm:ss') + ' - ' + dayjs(periodEnd).format('YY-MM-DD HH:mm:ss')
+              dayjs(startAt).format('YY-MM-DD HH:mm:ss') + ' - ' + dayjs(endAt).format('YY-MM-DD HH:mm:ss')
             item.content = `${item.subscriptionMethodLabel} ${item.specLabel} ${i18n.t('public_agent')}`
             if (item.publicAgent) {
               item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YY-MM-DD HH:mm:ss') : '-'
@@ -917,7 +917,7 @@ export default {
               let time = new Date(item.expiredTime.replace('Z', '+08:00')).toLocaleString()
               item.expiredTimeLabel = item.expiredTime ? dayjs(time).format('YY-MM-DD HH:mm:ss') : '-'
             } else if (chargeProvider === 'Stripe') {
-              item.expiredTime = periodEnd
+              item.expiredTime = endAt
               item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YY-MM-DD  HH:mm:ss') : '-'
             } else {
               item.expiredTime = ''
@@ -928,7 +928,7 @@ export default {
             // item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD') : '-'
 
             item.paidType =
-              chargeProvider === 'Aliyun' ? license.type : chargeProvider === 'Stripe' ? paidSubscribeDto.type : ''
+              chargeProvider === 'Aliyun' ? license.type : chargeProvider === 'Stripe' ? subscribeDto.type : ''
             item.deployDisable = item.tmInfo.pingTime || false
             if (!item.tmInfo) {
               item.tmInfo = {}
