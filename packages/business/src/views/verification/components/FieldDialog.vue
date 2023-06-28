@@ -156,38 +156,43 @@ export default {
       }
       this.loading = true
       const nodeSchemaPage = await metadataInstancesApi.nodeSchemaPage(params)
+      const sourceNodeSchemaPage = await metadataInstancesApi.nodeSchemaPage({
+        nodeId: item.source.nodeId,
+        tableFilter: item.source.table,
+        page: 1,
+        pageSize: 1
+      })
       let fieldMap = {}
       const nodeSchemaPageFields = nodeSchemaPage.items?.[0]?.fields || []
       nodeSchemaPageFields.forEach(t => {
         fieldMap[t.original_field_name] = t.field_name
       })
 
-      this.sourceFields =
-        cloneDeep(
-          item.source?.fields?.map(t => {
-            return {
-              id: t.id,
-              key: t.id,
-              label: t.original_field_name,
-              value: t.original_field_name,
-              field_name: t.original_field_name,
-              primary_key_position: t.primaryKeyPosition
-            }
-          })
-        ) || []
-      this.targetFields =
-        cloneDeep(
-          item.target?.fields.map(t => {
-            return {
-              id: t.id,
-              key: t.id,
-              label: t.original_field_name,
-              value: t.original_field_name,
-              field_name: t.original_field_name,
-              primary_key_position: t.primaryKeyPosition
-            }
-          })
-        ) || []
+      this.sourceFields = cloneDeep(
+        (sourceNodeSchemaPage.items?.[0]?.fields || []).map(t => {
+          return {
+            id: t.id,
+            key: t.id,
+            label: t.original_field_name,
+            value: t.original_field_name,
+            field_name: t.original_field_name,
+            primary_key_position: t.primary_key_position
+          }
+        })
+      )
+
+      this.targetFields = cloneDeep(
+        nodeSchemaPageFields.map(t => {
+          return {
+            id: t.id,
+            key: t.id,
+            label: t.field_name,
+            value: t.field_name,
+            field_name: t.field_name,
+            primary_key_position: t.primary_key_position
+          }
+        })
+      )
 
       let sourceList = this.sourceFields
       let targetList = this.targetFields.map(t => {

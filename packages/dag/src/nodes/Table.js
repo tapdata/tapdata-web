@@ -304,7 +304,7 @@ export class Table extends NodeType {
                     }
                   },
                   existDataProcessMode: {
-                    title: i18n.t('packages_dag_nodes_table_yiyoushujuchu'),
+                    title: i18n.t('packages_dag_nodes_database_chongfuchulice'),
                     type: 'string',
                     default: 'keepData',
                     enum: [
