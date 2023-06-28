@@ -583,6 +583,23 @@ export default {
       height: 8px;
       background-color: #d9d9d9;
     }
+
+    .inline-flex-input {
+      .el-input-group__prepend {
+        flex-shrink: 0;
+      }
+      .el-input-group__append,
+      .el-input-group__prepend {
+        width: auto;
+        line-height: 30px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      input {
+        width: auto;
+      }
+    }
   }
 }
 
