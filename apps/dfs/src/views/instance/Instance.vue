@@ -1387,6 +1387,7 @@ export default {
     },
     showUpgradeIcon(row) {
       let { version } = this
+      if (row?.publicAgent) return false
       if (row.agentType === 'Cloud') {
         //全托管升级必须在支持升级可用资源区
         let available =
