@@ -2400,6 +2400,9 @@ export default {
               window.open(downloadUrl.href, '_self')
             } else {
               this.finish()
+              if (this.type === 'newDialog') {
+                this.$emit('closeVisible', false)
+              }
               this.$router.push({
                 name: 'Instance'
               })
