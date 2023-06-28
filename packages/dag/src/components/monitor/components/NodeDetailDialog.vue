@@ -230,13 +230,15 @@ export default {
 
     nodeItems() {
       return (
-        this.allNodes.map(t => {
-          return {
-            node: t,
-            label: t.name,
-            value: t.id
-          }
-        }) || []
+        this.allNodes
+          .filter(t => !['mem_cache'].includes(t.type))
+          .map(t => {
+            return {
+              node: t,
+              label: t.name,
+              value: t.id
+            }
+          }) || []
       )
     },
 
