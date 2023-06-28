@@ -678,9 +678,9 @@ export default {
       }
     },
     tabChanged() {
-      this.isEdit = false
       let debugParams = null
       if (this.tab === 'debug') {
+        this.isEdit = false
         debugParams = {}
         this.data.params.forEach(p => {
           debugParams[p.name] = p.defaultvalue || ''
