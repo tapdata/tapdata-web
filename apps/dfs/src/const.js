@@ -16,6 +16,7 @@ export const INSTANCE_STATUS_MAP = {
     Init: { text: i18n.t('public_status_init'), type: 'waiting' },
     Creating: { text: i18n.t('public_status_creating'), type: 'waiting' },
     Activated: { text: i18n.t('public_status_activated') },
+    Assigned: { text: i18n.t('public_status_activated') },
     WaitingDelete: { text: i18n.t('public_status_waiting_delete'), type: 'waiting' },
     Deleting: { text: i18n.t('public_status_deleting'), type: 'waiting' },
     Deleted: { text: i18n.t('public_status_deleted'), type: 'disable' }

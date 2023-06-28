@@ -32,6 +32,7 @@
                 </div>
                 <div class="flex justify-content-center align-items-center">
                   <ElButton
+                    v-if="item.totalAmount !== 0"
                     :disabled="!['active'].includes(item.status)"
                     class="mr-2"
                     type="text"
@@ -640,6 +641,9 @@ export default {
       return time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
     },
     formatterPrice(currency, price) {
+      if (price === 0) {
+        return 0
+      }
       return (
         CURRENCY_SYMBOL_MAP[currency] +
         (price / 100).toLocaleString('zh', {
