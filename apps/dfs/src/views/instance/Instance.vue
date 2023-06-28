@@ -899,13 +899,20 @@ export default {
             // item.status = item.status === 'Running' ? 'Running' : item.status === 'Stopping' ? 'Stopping' : 'Offline'
             item.deployDisable = item.tmInfo.pingTime || false
             const { subscribeDto = {}, license = {}, chargeProvider } = item.orderInfo || {}
-            const { startAt, endAt } = subscribeDto
+            const { startAt, endAt, periodUnit, subscribeType, paymentMethod } = subscribeDto
             item.chargeProvider = chargeProvider
             item.specLabel = getSpec(item.spec) || '-'
             if (item.publicAgent) {
               item.subscriptionMethodLabel = 'Public Agent'
+            } else if (chargeProvider === 'Stripe') {
+              item.subscriptionMethodLabel =
+                getPaymentMethod(
+                  { periodUnit: periodUnit, type: subscribeType },
+                  paymentMethod || 'Stripe',
+                  chargeProvider
+                ) || '-'
             } else {
-              item.subscriptionMethodLabel = getPaymentMethod(subscribeDto, chargeProvider) || '-'
+              item.subscriptionMethodLabel = '-'
             }
             item.periodLabel =
               dayjs(startAt).format('YY-MM-DD HH:mm:ss') + ' - ' + dayjs(endAt).format('YY-MM-DD HH:mm:ss')

@@ -18,7 +18,7 @@
                   <span class="font-color-dark fw-sub mr-2">订阅编号: {{ item.id }}</span>
                   <el-divider direction="vertical"></el-divider>
                   <span class="font-color-dark fw-sub mr-2"
-                    ><span class="font-color-slight">总金额:</span>
+                    ><span class="font-color-light">总金额:</span>
                     {{ formatterPrice(item.currency, item.totalAmount) || 0 }}</span
                   >
                   <el-divider direction="vertical"></el-divider>
@@ -32,7 +32,7 @@
                 </div>
                 <div class="flex justify-content-center align-items-center">
                   <ElButton
-                    v-if="item.totalAmount !== 0"
+                    v-if="item.totalAmount !== 0 && item.subscribeType !== 'recurring'"
                     :disabled="!['active'].includes(item.status)"
                     class="mr-2"
                     type="text"
@@ -803,6 +803,8 @@ export default {
           }
         }
         this.showUnsubscribeDetailVisible = true
+        //刷新页面
+        this.remoteMethod()
       })
     },
     formatItems(data) {
