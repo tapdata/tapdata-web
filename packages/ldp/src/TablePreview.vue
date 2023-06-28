@@ -33,7 +33,7 @@
           >
         </template>
         <div class="flex-grow-1"></div>
-        <ElButton size="mini" type="danger" plain @click="handleDelete"
+        <ElButton v-if="swimType === 'mdm'" size="mini" type="danger" plain @click="handleDelete"
           ><VIcon class="mr-1">delete</VIcon>{{ $t('public_button_delete') }}</ElButton
         >
       </div>
@@ -248,6 +248,7 @@
                     </ElLink>
                     <template v-else>
                       <ElLink
+                        key="forceStop"
                         v-if="row.status === 'stopping'"
                         v-readonlybtn="'SYNC_job_operation'"
                         type="primary"
@@ -257,6 +258,7 @@
                         {{ $t('public_button_force_stop') }}
                       </ElLink>
                       <ElLink
+                        key="stop"
                         v-else
                         v-readonlybtn="'SYNC_job_operation'"
                         type="primary"
@@ -617,7 +619,9 @@ export default {
           cancelToken: this.cancelSource.token
         })
         .then(taskList => {
-          taskList.forEach(task => {
+          this.taskData = taskList.filter(task => {
+            if (['deleting', 'delete_failed'].includes(task.status) || task.is_deleted) return false
+
             const { dag } = task
 
             makeStatusAndDisabled(task)
@@ -650,8 +654,9 @@ export default {
                 }
               })
             }
+
+            return true
           })
-          this.taskData = taskList
         })
         .finally(() => {
           this.taskLoading = false
@@ -794,7 +799,7 @@ export default {
       })
     },
 
-    stopTask(ids) {
+    stopTask(ids, item) {
       let msgObj = this.getConfirmMessage('stop', ids.length > 1, item.name)
       let message = msgObj.msg
       this.$confirm(message, '', {

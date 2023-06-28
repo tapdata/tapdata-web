@@ -172,7 +172,7 @@ export const SchemaPreview = defineComponent({
         <div class="flex justify-content-center">
           {isTreeView.value ? (
             <div class="schema-card rounded-lg inline-block overflow-hidden shadow-sm">
-              <div class="schema-card-header border-bottom px-3 py-2 fs-7 text-center">
+              <div class="schema-card-header border-bottom px-3 py-2 fs-7 lh-base text-center">
                 {form.values.tableName || form.values.name}
               </div>
               <div

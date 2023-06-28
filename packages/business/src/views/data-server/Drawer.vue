@@ -279,7 +279,14 @@
             min-width="100"
           >
             <template #default="{ row }">
-              <ElInput v-model="debugParams[row.name]" size="mini"></ElInput>
+              <ElInputNumber
+                v-if="row.type === 'number'"
+                v-model="debugParams[row.name]"
+                :precision="0"
+                :step="1"
+                :min="0"
+              />
+              <ElInput v-else v-model="debugParams[row.name]" size="mini"></ElInput>
             </template>
           </ElTableColumn>
           <ElTableColumn v-if="isEdit && form.apiType === 'customerQuery'" align="center" width="60">
@@ -678,9 +685,9 @@ export default {
       }
     },
     tabChanged() {
-      this.isEdit = false
       let debugParams = null
       if (this.tab === 'debug') {
+        this.isEdit = false
         debugParams = {}
         this.data.params.forEach(p => {
           debugParams[p.name] = p.defaultvalue || ''
