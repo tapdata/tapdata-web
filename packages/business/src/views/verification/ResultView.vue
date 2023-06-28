@@ -79,34 +79,19 @@
               class="table__row"
               :class="['position-relative border-bottom', { 'py-2 px-4': item.details }]"
             >
-              <!--              <span-->
-              <!--                class="index-span position-absolute start-0 top-0 inline-flex justify-content-center align-items-center rounded-circle bg-color-primary color-white"-->
-              <!--                >{{ index + 1 }}</span-->
-              <!--              >-->
-              <div
-                v-for="(sItem, sIndex) in getDetailsUniqueList(item.details)"
-                :key="sIndex + 'source'"
-                class="flex disable-color py-1"
-              >
-                <div class="w-50 flex align-center">
-                  <span class="row__label fw-bolder">{{ sItem.source.key + ':' }}</span>
-                  <span class="row__value ml-4" :class="{ 'color-danger': sItem.red }">{{ sItem.source.value }}</span>
-                </div>
-                <div class="w-50 flex align-center">
-                  <span class="row__label fw-bolder">{{ sItem.target.key + ':' }}</span>
-                  <span class="row__value ml-4" :class="{ 'color-danger': sItem.red }">{{ sItem.target.value }}</span>
-                </div>
-              </div>
-
               <div v-for="(sItem, sIndex) in getDetailsList(item.details)" :key="sIndex" class="flex py-1">
                 <div class="w-50 flex align-center">
-                  <span class="row__label">{{ sItem.source.key }}:</span>
+                  <span :class="['row__label', item.type === 'uniqueField' ? 'fw-bolder' : 'disable-color']"
+                    >{{ sItem.source.key }}:</span
+                  >
                   <span class="row__value ml-4 font-color-dark" :class="{ 'color-danger': sItem.red }">{{
                     sItem.source.value
                   }}</span>
                 </div>
                 <div class="w-50 flex align-center">
-                  <span class="row__label">{{ sItem.target.key }}:</span>
+                  <span :class="['row__label', item.type === 'uniqueField' ? 'fw-bolder' : 'disable-color']"
+                    >{{ sItem.target.key }}:</span
+                  >
                   <span class="row__value ml-4 font-color-dark" :class="{ 'color-danger': sItem.red }">{{
                     sItem.target.value
                   }}</span>
@@ -441,10 +426,6 @@ export default {
         .finally(() => {
           this.loading = false
         })
-    },
-
-    getDetailsUniqueList(data = []) {
-      return data.filter(t => t.type === 'uniqueField')
     },
 
     getDetailsList(data = []) {
