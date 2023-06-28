@@ -20,15 +20,15 @@
         :label="$t('public_external_memory_type')"
         prop="typeFmt"
       ></ElTableColumn>
-<!--      <ElTableColumn show-overflow-tooltip min-width="150" :label="$t('public_status')" prop="typeFmt">-->
-<!--        <template #default="{ row }">-->
-<!--          <div>-->
-<!--            <span :class="['status-connection-' + row.status, 'status-block']">-->
-<!--              {{ getStatus(row.status) }}-->
-<!--            </span>-->
-<!--          </div>-->
-<!--        </template>-->
-<!--      </ElTableColumn>-->
+      <!--      <ElTableColumn show-overflow-tooltip min-width="150" :label="$t('public_status')" prop="typeFmt">-->
+      <!--        <template #default="{ row }">-->
+      <!--          <div>-->
+      <!--            <span :class="['status-connection-' + row.status, 'status-block']">-->
+      <!--              {{ getStatus(row.status) }}-->
+      <!--            </span>-->
+      <!--          </div>-->
+      <!--        </template>-->
+      <!--      </ElTableColumn>-->
       <ElTableColumn
         show-overflow-tooltip
         min-width="300"
@@ -395,8 +395,7 @@ export default {
     submit() {
       this.$refs.form.validate(async valid => {
         if (valid) {
-          const schemaFormInstance = this.$refs.schemaToForm.getForm?.()
-          schemaFormInstance?.validate().then(async () => {
+          const main = async () => {
             let formValues = this.$refs.schemaToForm?.getFormValues?.()
 
             this.loading = true
@@ -433,7 +432,15 @@ export default {
                 })
                 .catch(catchFunc)
             }
-          })
+          }
+          if (this.$refs.schemaToForm) {
+            const schemaFormInstance = this.$refs.schemaToForm?.getForm?.()
+            schemaFormInstance?.validate().then(async () => {
+              main()
+            })
+          } else {
+            main()
+          }
         }
       })
     },
