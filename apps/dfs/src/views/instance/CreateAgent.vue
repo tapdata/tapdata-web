@@ -775,13 +775,13 @@
           </div>
         </div>
       </div>
-      <el-link
-        class="aliyun-wrap flex justify-content-center align-items-center mt-6 mb-6"
-        v-if="!disabledAliyunCode && activeStep === 1 && agentDeploy !== 'aliyun'"
-        type="primary"
-        @click="changeAgentDeploy('aliyun')"
-        >{{ $t('dfs_agent_download_subscriptionmodeldialog_zhijieshiyonga') }}</el-link
-      >
+      <!--      <el-link-->
+      <!--        class="aliyun-wrap flex justify-content-center align-items-center mt-6 mb-6"-->
+      <!--        v-if="!disabledAliyunCode && activeStep === 1 && agentDeploy !== 'aliyun'"-->
+      <!--        type="primary"-->
+      <!--        @click="changeAgentDeploy('aliyun')"-->
+      <!--        >{{ $t('dfs_agent_download_subscriptionmodeldialog_zhijieshiyonga') }}</el-link-->
+      <!--      >-->
     </div>
     <div class="footer flex justify-content-center align-items-center">
       <!--非授权码-->
@@ -1325,13 +1325,13 @@
           </div>
         </div>
       </div>
-      <el-link
-        class="aliyun-wrap flex justify-content-center align-items-center mt-6 mb-6"
-        v-if="!disabledAliyunCode && activeStep === 1 && agentDeploy !== 'aliyun'"
-        type="primary"
-        @click="changeAgentDeploy('aliyun')"
-        >{{ $t('dfs_agent_download_subscriptionmodeldialog_zhijieshiyonga') }}</el-link
-      >
+      <!--      <el-link-->
+      <!--        class="aliyun-wrap flex justify-content-center align-items-center mt-6 mb-6"-->
+      <!--        v-if="!disabledAliyunCode && activeStep === 1 && agentDeploy !== 'aliyun'"-->
+      <!--        type="primary"-->
+      <!--        @click="changeAgentDeploy('aliyun')"-->
+      <!--        >{{ $t('dfs_agent_download_subscriptionmodeldialog_zhijieshiyonga') }}</el-link-->
+      <!--      >-->
     </div>
     <div class="footer flex justify-content-center align-items-center">
       <!--非授权码-->
@@ -1893,7 +1893,7 @@ export default {
       const options = item.currencyOption
       const { defaultCurrencyType } = this
       // 设置了默认币种, 币种选项默认的排到第一位
-      if (options.length && defaultCurrencyType && options[0] !== defaultCurrencyType) {
+      if (options?.length && defaultCurrencyType && options[0] !== defaultCurrencyType) {
         options.sort((a, b) => {
           let aVal = a.currency === defaultCurrencyType ? 0 : 1
           let bVal = b.currency === defaultCurrencyType ? 0 : 1

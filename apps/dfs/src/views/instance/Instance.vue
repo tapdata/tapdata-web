@@ -1280,9 +1280,11 @@ export default {
         return
       }
       let ips = this.ipAddress.split(',')
+      const ipRegex = /^((?:\d{1,3}\.){3}\d{1,3}(?:\/\d{1,2})?|(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}(?:\/\d{1,3})?)$/
+
       if (ips.length > 0) {
         for (let i = 0; i < ips.length; i++) {
-          if (!/^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)$/.test(ips[i])) {
+          if (!ipRegex.test(ips[i])) {
             this.$message.error(ips[i] + '不合法IP')
             return
           }
