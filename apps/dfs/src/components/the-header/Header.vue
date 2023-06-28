@@ -149,7 +149,7 @@ export default {
       // let downloadUrl = '';
       switch (command) {
         case 'workbench':
-          this.$router.push({ name: 'Workbench' })
+          this.$router.push({ name: 'dataConsole' })
           break
         case 'help':
           window.open('https://docs.tapdata.io/', '_blank')
