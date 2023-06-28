@@ -455,6 +455,7 @@ export default {
         currentEventTimestamp: true,
         crontabExpressionFlag: true,
         crontabExpression: true,
+        crontabScheduleMsg: true,
         lastStartDate: true
       }
       let where = {

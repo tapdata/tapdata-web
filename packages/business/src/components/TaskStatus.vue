@@ -4,9 +4,9 @@
       {{ $t(STATUS_MAP[task.status].i18n) }}
     </span>
     <ElTooltip v-if="showCronTip" placement="top">
-      <VIcon size="16" class="ml-2" :color="task.crontabSchduleMsg ? '#F3961A' : '#008b58'">task-process</VIcon>
+      <VIcon size="16" class="ml-2" :color="task.crontabScheduleMsg ? '#F3961A' : '#008b58'">task-process</VIcon>
       <template #content>
-        {{ task.crontabSchduleMsg || getNextStartTime() }}
+        {{ task.crontabScheduleMsg || getNextStartTime() }}
       </template>
     </ElTooltip>
     <template v-if="agentMap">
