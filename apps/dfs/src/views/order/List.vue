@@ -106,9 +106,9 @@
         <section class="flex flex-column overflow-hidden flex-1">
           <div class="mt-2 flex justify-content-end">
             <el-button class="mr-2" @click="goReceipt">{{ $t('dfs_user_center_kaifapiao') }}</el-button>
-            <el-button type="primary" @click="goLicense">{{
-              $t('dfs_aliyun_market_checklicnese_jihuoshouquanma')
-            }}</el-button>
+            <!--            <el-button type="primary" @click="goLicense">{{-->
+            <!--              $t('dfs_aliyun_market_checklicnese_jihuoshouquanma')-->
+            <!--            }}</el-button>-->
           </div>
           <VTable
             :columns="codeColumns"
