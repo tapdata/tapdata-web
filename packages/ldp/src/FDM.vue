@@ -456,7 +456,7 @@ export default {
               </span>
             </span>
             {data.comment && <span class="font-color-sslight">{`(${data.comment})`}</span>}
-            {!data.isObject && <div class="btn-menu">{actions}</div>}
+            {!data.isObject && <div class="btn-menu ml-auto">{actions}</div>}
           </div>
         </div>
       )
