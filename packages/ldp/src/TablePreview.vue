@@ -248,6 +248,7 @@
                     </ElLink>
                     <template v-else>
                       <ElLink
+                        key="forceStop"
                         v-if="row.status === 'stopping'"
                         v-readonlybtn="'SYNC_job_operation'"
                         type="primary"
@@ -257,6 +258,7 @@
                         {{ $t('public_button_force_stop') }}
                       </ElLink>
                       <ElLink
+                        key="stop"
                         v-else
                         v-readonlybtn="'SYNC_job_operation'"
                         type="primary"
@@ -797,7 +799,7 @@ export default {
       })
     },
 
-    stopTask(ids) {
+    stopTask(ids, item) {
       let msgObj = this.getConfirmMessage('stop', ids.length > 1, item.name)
       let message = msgObj.msg
       this.$confirm(message, '', {
