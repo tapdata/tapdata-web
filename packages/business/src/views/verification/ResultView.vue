@@ -89,11 +89,11 @@
                 class="flex disable-color py-1"
               >
                 <div class="w-50 flex align-center">
-                  <span class="row__label">{{ sItem.source.key + ':' }}</span>
+                  <span class="row__label fw-bolder">{{ sItem.source.key + ':' }}</span>
                   <span class="row__value ml-4" :class="{ 'color-danger': sItem.red }">{{ sItem.source.value }}</span>
                 </div>
                 <div class="w-50 flex align-center">
-                  <span class="row__label">{{ sItem.target.key + ':' }}</span>
+                  <span class="row__label fw-bolder">{{ sItem.target.key + ':' }}</span>
                   <span class="row__value ml-4" :class="{ 'color-danger': sItem.red }">{{ sItem.target.value }}</span>
                 </div>
               </div>
