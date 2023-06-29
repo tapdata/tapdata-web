@@ -81,7 +81,7 @@
             >
               <div v-for="(sItem, sIndex) in getDetailsList(item.details)" :key="sIndex" class="flex py-1">
                 <div class="w-50 flex align-center">
-                  <span :class="['row__label', item.type === 'uniqueField' ? 'fw-bolder' : 'disable-color']"
+                  <span :class="['row__label', sItem.source.isSortColumn ? 'fw-bolder' : 'disable-color']"
                     >{{ sItem.source.key }}:</span
                   >
                   <span class="row__value ml-4 font-color-dark" :class="{ 'color-danger': sItem.red }">{{
@@ -89,7 +89,7 @@
                   }}</span>
                 </div>
                 <div class="w-50 flex align-center">
-                  <span :class="['row__label', item.type === 'uniqueField' ? 'fw-bolder' : 'disable-color']"
+                  <span :class="['row__label', sItem.target.isSortColumn ? 'fw-bolder' : 'disable-color']"
                     >{{ sItem.target.key }}:</span
                   >
                   <span class="row__value ml-4 font-color-dark" :class="{ 'color-danger': sItem.red }">{{
@@ -385,7 +385,9 @@ export default {
       showAdvancedVerification: false,
       statsInfo: {},
       resultList: [],
-      showType: 'diff'
+      showType: 'diff',
+      sourceSortColumn: [], // 源索引字段
+      targetSortColumn: [] // 目标索引字段
     }
   },
   computed: {
@@ -397,7 +399,7 @@ export default {
     fetch(current) {
       // this.loading = true
       this.remoteMethod({ current, size: this.page.size })
-        .then(({ statsInfo = {}, resultList, total, showAdvancedVerification }) => {
+        .then(({ statsInfo = {}, resultList, total, showAdvancedVerification, sourceSortColumn, targetSortColumn }) => {
           if (statsInfo?.result === 'failed') {
             let countResultText = ''
             let contentResultText = ''
@@ -422,6 +424,8 @@ export default {
           this.resultList = resultList
           this.page.total = total
           this.showAdvancedVerification = showAdvancedVerification
+          this.sourceSortColumn = sourceSortColumn
+          this.targetSortColumn = targetSortColumn
         })
         .finally(() => {
           this.loading = false
@@ -429,6 +433,14 @@ export default {
     },
 
     getDetailsList(data = []) {
+      data.forEach(el => {
+        if (this.sourceSortColumn.includes(el.source.key)) {
+          el.source.isSortColumn = true
+        }
+        if (this.targetSortColumn.includes(el.target.key)) {
+          el.target.isSortColumn = true
+        }
+      })
       if (this.showType === 'all') return data
       return data.filter(t => !!t.red)
     }
