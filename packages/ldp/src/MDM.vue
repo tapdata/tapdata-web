@@ -374,16 +374,18 @@ export default {
           <div>
             {data.comment && <span class="font-color-sslight">{`(${data.comment})`}</span>}
             {data.isObject ? (
-              <VIcon
-                size="18"
-                class="lineage-icon"
-                onClick={ev => {
-                  ev.stopPropagation()
-                  this.handleFindLineage(data)
-                }}
-              >
-                suyuan
-              </VIcon>
+              <ElTooltip content={i18n.t('packages_ldp_view_lineage')} placement="top">
+                <VIcon
+                  size="18"
+                  class="lineage-icon"
+                  onClick={ev => {
+                    ev.stopPropagation()
+                    this.handleFindLineage(data)
+                  }}
+                >
+                  suyuan
+                </VIcon>
+              </ElTooltip>
             ) : (
               <div class="btn-menu">{actions}</div>
             )}
