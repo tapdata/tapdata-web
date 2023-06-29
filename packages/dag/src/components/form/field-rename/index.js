@@ -32,7 +32,8 @@ export const FieldRename = observer(
           return
         }
 
-        options.value = await props.getFields(form?.values.id)
+        let fields = await props.getFields(form?.values.id)
+        options.value = fields.filter(item => !item.is_deleted)
         fieldMap = options.value.reduce((map, field) => {
           map[field.previousFieldName] = true
           return map

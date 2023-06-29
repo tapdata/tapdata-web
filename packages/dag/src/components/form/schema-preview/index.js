@@ -25,6 +25,8 @@ export const SchemaPreview = defineComponent({
       const root = { children: [] }
 
       for (const item of data) {
+        if (item.is_deleted) continue
+
         const { field_name } = item
         let parent = root
         const fields = field_name.split('.')
