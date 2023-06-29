@@ -58,12 +58,29 @@ export class Database extends NodeType {
               label: i18n.t('public_basic_settings')
             },
             properties: {
-              name: {
-                type: 'string',
-                title: i18n.t('public_node_name'),
-                required: true,
-                'x-decorator': 'FormItem',
-                'x-component': 'Input'
+              nameWrap: {
+                type: 'void',
+                'x-component': 'FormGrid',
+                'x-component-props': {
+                  minColumns: 2,
+                  maxColumns: 2,
+                  columnGap: 16
+                },
+                properties: {
+                  name: {
+                    type: 'string',
+                    title: i18n.t('public_node_name'),
+                    required: true,
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Input'
+                  },
+                  'attrs.connectionName': {
+                    type: 'string',
+                    title: i18n.t('public_connection_name'),
+                    'x-decorator': 'FormItem',
+                    'x-component': 'PreviewText.Input'
+                  }
+                }
               },
 
               layout: {
@@ -77,12 +94,6 @@ export class Database extends NodeType {
                   feedbackLayout: 'none'
                 },
                 properties: {
-                  'attrs.connectionName': {
-                    type: 'string',
-                    title: i18n.t('public_connection_name'),
-                    'x-decorator': 'FormItem',
-                    'x-component': 'PreviewText.Input'
-                  },
                   'attrs.accessNodeProcessId': {
                     type: 'string',
                     title: i18n.t('packages_dag_nodes_database_suoshuage'),
