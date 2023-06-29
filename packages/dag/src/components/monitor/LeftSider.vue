@@ -464,7 +464,7 @@ export default {
     },
 
     totalData() {
-      const {
+      let {
         tableTotal = 0,
         snapshotTableTotal = 0,
         currentSnapshotTableInsertRowTotal = 0,
@@ -473,6 +473,10 @@ export default {
         outputQpsMax = 0,
         outputQpsAvg = 0
       } = this.quota.samples?.totalData?.[0] || {}
+      // 如果分子大于分母，将分母的值调整成跟分子一样
+      if (currentSnapshotTableInsertRowTotal > currentSnapshotTableRowTotal) {
+        currentSnapshotTableRowTotal = currentSnapshotTableInsertRowTotal
+      }
       return {
         tableTotal,
         snapshotTableTotal,
