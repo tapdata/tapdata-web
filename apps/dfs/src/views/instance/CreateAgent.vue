@@ -807,7 +807,7 @@
         </div>
         <div class="w-40 flex align-items-center ml-4" v-else></div>
         <div class="btn-opreation flex w-60">
-          <el-button v-if="activeStep > 1" @click="prevStep">{{ $t('public_button_previous') }}</el-button>
+          <el-button v-if="activeStep > 1" class="mr-2" @click="prevStep">{{ $t('public_button_previous') }}</el-button>
           <el-button
             v-if="activeStep < steps.length"
             :style="{ 'margin-left': activeStep === 1 ? '80px' : 0 }"
@@ -1737,6 +1737,14 @@ export default {
   },
   methods: {
     prevStep() {
+      //存储点击上一步需要清掉存储规格以及价格
+      if (this.platform === 'realTime') {
+        this.mdbPriceId = 'FreeTier'
+        this.mongodbSpecPrice = ''
+        this.mdbPrices = 0
+        this.mongodbSpec = '0-0'
+        this.memorySpace = 5
+      }
       this.activeStep--
       //授权码 带存储 不加不减步数
       if (this.agentDeploy === 'aliyun' && this.mdbCount) {
