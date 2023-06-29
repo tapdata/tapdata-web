@@ -272,9 +272,6 @@ export class Table extends NodeType {
                   updateConditionFields: {
                     title: i18n.t('packages_dag_nodes_table_gengxintiaojianzi'),
                     type: 'array',
-                    description: `{{ !$isDaas ? "${i18n.t(
-                      'packages_dag_nodes_table_isDaa_ruguoyuanweimongodb'
-                    )}" : ""}}`,
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       asterisk: true
@@ -295,6 +292,14 @@ export class Table extends NodeType {
                         effects: ['onFieldMount', 'onFieldValueChange'],
                         fulfill: {
                           run: '$self.visible && $self.validate()'
+                        }
+                      },
+                      {
+                        effects: ['onFieldInit'],
+                        fulfill: {
+                          run: `let parents = findParentNodes(($values.id));$self.description = parents.some(node => node.databaseType==='MongoDB') ? '${i18n.t(
+                            'packages_dag_nodes_table_isDaa_ruguoyuanweimongodb'
+                          )}':''`
                         }
                       }
                     ],

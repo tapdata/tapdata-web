@@ -518,7 +518,7 @@ export default {
   packages_dag_nodes_database_value_zanbuzhiciddl: '暂不支持DDL事件采集',
   packages_dag_nodes_mergetable_const_zuiduozhichiliangceng: '最多支持两层嵌套',
   packages_dag_nodes_mergetable_zhucongpeizhi: '主从配置',
-  packages_dag_nodes_table_isDaa_ruguoyuanweimongodb: '如果源为MongoDB时，需要同步删除事件，请确保关联 _id',
+  packages_dag_nodes_table_isDaa_ruguoyuanweimongodb: '源为MongoDB时，需要同步删除事件，请确保关联 _id',
   packages_dag_nodes_table_tianjia: '添加',
   packages_dag_nodes_table_zidingyitiaojian: '自定义条件',
   packages_dag_nodes_table_guolushezhi: '过滤设置',

@@ -514,7 +514,7 @@ export default {
   packages_dag_nodes_database_value_zanbuzhiciddl: '暫不支持DDL事件採集',
   packages_dag_nodes_mergetable_const_zuiduozhichiliangceng: '最多支持兩層嵌套',
   packages_dag_nodes_mergetable_zhucongpeizhi: '主從配置',
-  packages_dag_nodes_table_isDaa_ruguoyuanweimongodb: '如果源為MongoDB時，需要同步刪除事件，請確保關聯 _id',
+  packages_dag_nodes_table_isDaa_ruguoyuanweimongodb: '源為MongoDB時，需要同步刪除事件，請確保關聯 _id',
   packages_dag_nodes_table_tianjia: '添加',
   packages_dag_nodes_table_zidingyitiaojian: '自定義條件',
   packages_dag_nodes_table_guolushezhi: '過濾設置',
