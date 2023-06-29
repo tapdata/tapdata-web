@@ -95,62 +95,6 @@ export class Table extends NodeType {
                     'x-decorator': 'FormItem',
                     'x-component': 'PreviewText.Input'
                   }
-                  /*connectionIdWrap: {
-                    type: 'void',
-                    title: i18n.t('packages_dag_nodes_table_shujuku'),
-                    'x-decorator': 'FormItem',
-                    'x-decorator-props': {
-                      asterisk: true,
-                      feedbackLayout: 'none'
-                    },
-                    'x-component': 'FormFlex',
-                    'x-component-props': {
-                      gap: 8,
-                      align: 'start'
-                    },
-                    properties: {
-                      connectionId: {
-                        type: 'string',
-                        required: true,
-                        'x-decorator': 'FormItem',
-                        'x-decorator-props': {
-                          style: {
-                            flex: 1
-                          }
-                        },
-                        'x-read-pretty': true,
-                        'x-component': 'AsyncSelect',
-                        'x-component-props': {
-                          onSetSelected: '{{useHandleWithForm(handlerSyncDatabaseChange, $form)}}',
-                          itemLabel: 'label',
-                          itemValue: 'id',
-                          itemQuery: 'name',
-                          method: '{{loadDatabases}}',
-                          params: `{{ {where: {database_type: $values.databaseType}} }}`
-                        },
-                        'x-reactions': [
-                          {
-                            target: 'tableName',
-                            effects: ['onFieldValueChange'],
-                            fulfill: {
-                              state: {
-                                value: ''
-                              }
-                            }
-                          }
-                        ]
-                      },
-
-                      clipboardButton: {
-                        type: 'void',
-                        'x-component': 'ClipboardButton',
-                        'x-component-props': {
-                          tooltip: i18n.t('packages_dag_nodes_table_fuzhishujuku'),
-                          finishTooltip: i18n.t('packages_dag_nodes_table_yifuzhi')
-                        }
-                      }
-                    }
-                  }*/
                 }
               },
 
@@ -484,10 +428,11 @@ export class Table extends NodeType {
                   class: 'advanced-collapse'
                 },
                 'x-reactions': {
-                  dependencies: ['$outputs', '$inputs'],
+                  dependencies: ['$inputs'],
                   fulfill: {
                     state: {
-                      display: '{{$deps[0].length || !$deps[1].length ? "visible":"hidden"}}'
+                      display:
+                        '{{(!$deps[0].length && $values.attrs.connectionType.includes("source")) ? "visible":"hidden"}}'
                     }
                   }
                 },
@@ -1204,7 +1149,8 @@ export class Table extends NodeType {
                   dependencies: ['$inputs'],
                   fulfill: {
                     state: {
-                      display: '{{$deps[0].length > 0 ? "visible":"hidden"}}'
+                      display:
+                        '{{$deps[0].length > 0 || $values.attrs.connectionType === "target" ? "visible":"hidden"}}'
                     }
                   }
                 },

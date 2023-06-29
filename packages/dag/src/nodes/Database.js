@@ -58,12 +58,29 @@ export class Database extends NodeType {
               label: i18n.t('public_basic_settings')
             },
             properties: {
-              name: {
-                type: 'string',
-                title: i18n.t('public_node_name'),
-                required: true,
-                'x-decorator': 'FormItem',
-                'x-component': 'Input'
+              nameWrap: {
+                type: 'void',
+                'x-component': 'FormGrid',
+                'x-component-props': {
+                  minColumns: 2,
+                  maxColumns: 2,
+                  columnGap: 16
+                },
+                properties: {
+                  name: {
+                    type: 'string',
+                    title: i18n.t('public_node_name'),
+                    required: true,
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Input'
+                  },
+                  'attrs.connectionName': {
+                    type: 'string',
+                    title: i18n.t('public_connection_name'),
+                    'x-decorator': 'FormItem',
+                    'x-component': 'PreviewText.Input'
+                  }
+                }
               },
 
               layout: {
@@ -77,12 +94,6 @@ export class Database extends NodeType {
                   feedbackLayout: 'none'
                 },
                 properties: {
-                  'attrs.connectionName': {
-                    type: 'string',
-                    title: i18n.t('public_connection_name'),
-                    'x-decorator': 'FormItem',
-                    'x-component': 'PreviewText.Input'
-                  },
                   'attrs.accessNodeProcessId': {
                     type: 'string',
                     title: i18n.t('packages_dag_nodes_database_suoshuage'),
@@ -106,10 +117,11 @@ export class Database extends NodeType {
               sourceConfig: {
                 type: 'void',
                 'x-reactions': {
-                  dependencies: ['$outputs', '$inputs'],
+                  dependencies: ['$inputs'],
                   fulfill: {
                     state: {
-                      display: '{{$deps[0].length || !$deps[1].length ? "visible":"hidden"}}'
+                      display:
+                        '{{(!$deps[0].length && $values.attrs.connectionType.includes("source")) ? "visible":"hidden"}}'
                     }
                   }
                 },
@@ -455,7 +467,8 @@ export class Database extends NodeType {
                   dependencies: ['$inputs'],
                   fulfill: {
                     state: {
-                      display: '{{$deps[0].length > 0 ? "visible":"hidden"}}'
+                      display:
+                        '{{$deps[0].length > 0 || $values.attrs.connectionType === "target" ? "visible":"hidden"}}'
                     }
                   }
                 },
