@@ -33,7 +33,7 @@
               <img src="../assets/images/new/Console_icon_new_data_development.svg" alt="" />
             </div>
             <div class="pl-4">
-              <div class="fs-7 pb-4 font-color-dark fw-sub">{{ $t('new_data_development') }}</div>
+              <div class="fs-7 pb-4 font-color-dark fw-sub">{{ $t('page_title_data_develop') }}</div>
               <div class="fs-8 desc">{{ $t('new_data_development_desc') }}</div>
             </div>
             <div>
@@ -60,7 +60,7 @@
             <div class="fs-7 pb-4 font-color-dark">
               <div class="flex align-items-center flex-row">
                 <img src="../assets/images/new/Console_icon_data_source.svg" alt="" />
-                <span class="pl-2 fw-sub">{{ $t('new_create_connection') }}</span>
+                <span class="pl-2 fw-sub">{{ $t('page_title_connections_create') }}</span>
               </div>
             </div>
             <div class="fs-8 desc" :style="{ minHeight: lang === 'en' ? '120px' : '70px' }">
@@ -80,7 +80,7 @@
             <div class="fs-7 pb-4 font-color-dark">
               <div class="flex align-items-center flex-row">
                 <img src="../assets/images/new/Console_icon_api-fill.svg" alt="" />
-                <span class="pl-2 fw-sub">{{ $t('new_create_api') }}</span>
+                <span class="pl-2 fw-sub">{{ $t('packages_business_data_server_drawer_chuangjianfuwu') }}</span>
               </div>
             </div>
             <div class="fs-8 desc" :style="{ minHeight: lang === 'en' ? '120px' : '70px' }">
