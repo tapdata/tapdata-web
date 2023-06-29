@@ -261,14 +261,13 @@ export const FieldRename = observer(
                     {i18n.t('packages_form_field_rename_index_mubiaoziduanming')}
                   </span>
                   <span class="field-ops inline-block mr-4">
-                    <VIcon
-                      class={[props.disabled || transformLoading.value ? 'disable__btn' : 'clickable', 'ml-5']}
-                      size="16"
+                    <ElButton
                       disabled={props.disabled || transformLoading.value}
+                      type="text"
                       onClick={() => removeAllInvalidOperations()}
                     >
-                      delete
-                    </VIcon>
+                      <VIcon size="16">delete</VIcon>
+                    </ElButton>
                   </span>
                 </div>
                 {invalidOperations.value.map((data, index) => {
@@ -279,7 +278,12 @@ export const FieldRename = observer(
                         <span class="text__inner">{data.operand}</span>
                       </span>
                       <span class="field-ops mr-4">
-                        <ElButton type="text" class="ml-5" onClick={() => removeInvalidOperation(data.field, index)}>
+                        <ElButton
+                          disabled={props.disabled || transformLoading.value}
+                          type="text"
+                          class="ml-5"
+                          onClick={() => removeInvalidOperation(data.field, index)}
+                        >
                           <VIcon size="16">delete</VIcon>
                         </ElButton>
                       </span>

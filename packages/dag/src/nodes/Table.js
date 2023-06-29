@@ -272,9 +272,6 @@ export class Table extends NodeType {
                   updateConditionFields: {
                     title: i18n.t('packages_dag_nodes_table_gengxintiaojianzi'),
                     type: 'array',
-                    description: `{{ !$isDaas ? "${i18n.t(
-                      'packages_dag_nodes_table_isDaa_ruguoyuanweimongodb'
-                    )}" : ""}}`,
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       asterisk: true
@@ -292,9 +289,17 @@ export class Table extends NodeType {
                     'x-reactions': [
                       `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true}, $values.$inputs[0])}}`,
                       {
-                        effects: ['onFieldMount'],
+                        effects: ['onFieldMount', 'onFieldValueChange'],
                         fulfill: {
                           run: '$self.visible && $self.validate()'
+                        }
+                      },
+                      {
+                        effects: ['onFieldInit'],
+                        fulfill: {
+                          run: `let parents = findParentNodes(($values.id));$self.description = parents.some(node => node.databaseType==='MongoDB') ? '${i18n.t(
+                            'packages_dag_nodes_table_isDaa_ruguoyuanweimongodb'
+                          )}':''`
                         }
                       }
                     ],
@@ -1210,6 +1215,7 @@ export class Table extends NodeType {
                         type: 'void',
                         'x-component': 'DdlEventList',
                         'x-component-props': {
+                          hideParent: true,
                           findParentNodes: '{{findParentNodes}}'
                         }
                       }
@@ -1408,43 +1414,201 @@ export class Table extends NodeType {
                 }
               }
             }
+          },
+          tab3: {
+            type: 'void',
+            'x-component': 'FormTab.TabPane',
+            'x-component-props': {
+              label: i18n.t('packages_dag_migration_configpanel_gaojingshezhi')
+            },
+            // 'x-hidden': '{{!$isMonitor}}',
+            properties: {
+              alarmSettings: {
+                type: 'array',
+                default: [
+                  {
+                    type: 'DATANODE',
+                    sort: 4,
+                    open: true,
+                    key: 'DATANODE_AVERAGE_HANDLE_CONSUME',
+                    notify: ['SYSTEM', 'EMAIL'],
+                    interval: 300,
+                    unit: 'SECOND'
+                  }
+                ]
+              },
+              alarmRules: {
+                type: 'array',
+                default: [
+                  {
+                    key: 'DATANODE_AVERAGE_HANDLE_CONSUME',
+                    point: 12,
+                    equalsFlag: 1,
+                    ms: 5000
+                  }
+                ]
+              },
+              'alarmSettings.0.open': {
+                title: i18n.t('packages_business_setting_alarmnotification_dangshujuyuanjie'),
+                type: 'boolean',
+                required: true,
+                'x-editable': true,
+                'x-decorator': 'FormItem',
+                'x-component': 'Switch',
+                'x-component-props': {
+                  onChange: `{{val=>(val && !$values.alarmRules[0].notify.length && ($values.alarmRules[0].notify=["SYSTEM"]))}}`
+                },
+                'x-reactions': {
+                  target: 'alarmRules.0.*',
+                  fulfill: {
+                    state: {
+                      disabled: `{{!$self.value}}`
+                    }
+                  }
+                }
+              },
+              'alarmRules.0.notify': {
+                type: 'array',
+                'x-editable': true,
+                'x-decorator': 'FormItem',
+                'x-component': 'Checkbox.Group',
+                'x-component-props': {
+                  onChange: `{{val=>(!val.length && ($values.alarmSettings[0].open=false))}}`
+                },
+                default: ['SYSTEM', 'EMAIL'],
+                'x-reactions': ['{{useAsyncOptions(loadAlarmChannels)}}']
+              },
+              space: {
+                type: 'void',
+                'x-component': 'Space',
+                properties: {
+                  'alarmRules.0.point': {
+                    type: 'number',
+                    'x-reactions': [
+                      {
+                        dependencies: ['._point'],
+                        fulfill: {
+                          state: {
+                            value: `{{Math.ceil($deps[0] * 12) < 1 ? 1 : Math.ceil($deps[0] * 12)}}`
+                          }
+                        }
+                      },
+                      {
+                        target: 'alarmRules.0._point',
+                        effects: ['onFieldInit'],
+                        fulfill: {
+                          state: {
+                            value: `{{Math.ceil($self.value / 12) < 1 ? 1 : Math.ceil($self.value / 12)}}`
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  'alarmRules.0._point': {
+                    title: i18n.t('packages_dag_migration_alarmpanel_lianxu'),
+                    type: 'number',
+                    'x-editable': true,
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      layout: 'horizontal'
+                    },
+                    'x-component': 'InputNumber',
+                    'x-component-props': {
+                      min: 1,
+                      precision: 0,
+                      style: {
+                        width: '100px'
+                      }
+                    }
+                  },
+                  'alarmRules.0.equalsFlag': {
+                    title: i18n.t('public_time_m'),
+                    type: 'number',
+                    default: 1,
+                    'x-editable': true,
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      layout: 'horizontal'
+                    },
+                    'x-component': 'Select',
+                    'x-component-props': {
+                      style: {
+                        width: '70px'
+                      }
+                    },
+                    enum: [
+                      {
+                        label: '<=',
+                        value: -1
+                      },
+                      {
+                        label: '>=',
+                        value: 1
+                      }
+                    ],
+                    'x-reactions': {
+                      dependencies: ['.open'],
+                      fulfill: {
+                        state: {
+                          disabled: `{{!$deps[0]}}`
+                        }
+                      }
+                    }
+                  },
+                  'alarmRules.0.ms': {
+                    type: 'number',
+                    'x-reactions': [
+                      {
+                        dependencies: ['._ms'],
+                        fulfill: {
+                          state: {
+                            value: `{{Math.ceil($deps[0] * 1000) < 1 ? 1 : Math.ceil($deps[0] * 1000)}}`
+                          }
+                        }
+                      },
+                      {
+                        target: 'alarmRules.0._ms',
+                        effects: ['onFieldInit'],
+                        fulfill: {
+                          state: {
+                            value: `{{Math.ceil($self.value / 1000) < 1 ? 1 : Math.ceil($self.value / 1000)}}`
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  'alarmRules.0._ms': {
+                    title: '',
+                    type: 'number',
+                    'x-editable': true,
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      layout: 'horizontal'
+                    },
+                    'x-component': 'InputNumber',
+                    'x-component-props': {
+                      min: 1,
+                      precision: 0,
+                      style: {
+                        width: '100px'
+                      }
+                    }
+                  },
+                  unit: {
+                    title: 's',
+                    type: 'void',
+                    default: 0,
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      layout: 'horizontal'
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       },
-
-      /*collapse: {
-        type: 'void',
-        'x-decorator': 'FormItem',
-        'x-decorator-props': {
-          class: 'mt-2 mx-n4'
-        },
-        'x-component': 'FormCollapse',
-        'x-component-props': {
-          class: 'inset'
-        },
-        /!*'x-reactions': {
-          dependencies: ['$inputs', '$outputs'],
-          fulfill: {
-            state: {
-              display:
-                '{{$hasPdkConfig($values.attrs.pdkHash) || $deps[0].length > 0 || $deps[1].length > 0 ? "visible":"hidden"}}'
-            }
-          }
-        },*!/
-        properties: {
-          tab1: {
-            type: 'void',
-            'x-component': 'FormCollapse.Item',
-            'x-component-props': {
-              title: i18n.t('packages_dag_task_stetting_most_setting')
-            },
-            properties: {
-
-            }
-          }
-        }
-      },*/
-
       // 切换连接，保存连接的类型
       'attrs.connectionType': {
         type: 'string',

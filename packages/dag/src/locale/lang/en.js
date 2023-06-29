@@ -551,7 +551,7 @@ export default {
   packages_dag_nodes_mergetable_const_zuiduozhichiliangceng: 'Up to two levels of nesting are supported',
   packages_dag_nodes_mergetable_zhucongpeizhi: 'Master-slave Configuration',
   packages_dag_nodes_table_isDaa_ruguoyuanweimongodb:
-    'If the source is MongoDB, you need to delete events synchronously, please make sure to associate _id',
+    'When using MongoDB as the source, ensure synchronized deletion events for the associated _id field.',
   packages_dag_nodes_table_tianjia: 'Add',
   packages_dag_nodes_table_zidingyitiaojian: 'Custom Conditions',
   packages_dag_nodes_table_guolushezhi: 'Filter Settings',

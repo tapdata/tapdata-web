@@ -2,7 +2,7 @@ import i18n from '@tap/i18n'
 import { action } from '@formily/reactive'
 import { mapGetters, mapState } from 'vuex'
 import { merge, isEqual } from 'lodash'
-import { connectionsApi, metadataInstancesApi, clusterApi, proxyApi, databaseTypesApi } from '@tap/api'
+import { connectionsApi, metadataInstancesApi, clusterApi, proxyApi, databaseTypesApi, alarmApi } from '@tap/api'
 import { externalStorageApi } from '@tap/api'
 import { isPlainObj } from '@tap/shared'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
@@ -111,6 +111,8 @@ export default {
       })
     }
 
+    const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+
     return {
       scope: {
         $index: null, // 数组索引，防止使用该值，在表单校验(validateBySchema)时出错
@@ -119,7 +121,9 @@ export default {
 
         $agentMap: {},
 
-        $isDaas: process.env.VUE_APP_PLATFORM === 'DAAS', //区分云版、企业版
+        $isDaas: isDaas, //区分云版、企业版
+
+        $isMonitor: ['MigrationMonitor', 'TaskMonitor'].includes(this.$route.name),
 
         formTab: FormTab.createFormTab(),
 
@@ -207,6 +211,18 @@ export default {
                 if (fieldName === 'value') {
                   field.setValue(data)
                 } else field[fieldName] = data
+                field.loading = false
+              })
+            )
+          }
+        },
+
+        useAsyncOptions: (service, ...serviceParams) => {
+          return field => {
+            field.loading = true
+            service(...serviceParams).then(
+              action.bound(data => {
+                field.dataSource = data
                 field.loading = false
               })
             )
@@ -886,6 +902,37 @@ export default {
           }
 
           this.scope.clearNodeError($values.id)
+        },
+
+        async loadAlarmChannels() {
+          const channels = await alarmApi.channels()
+          const MAP = {
+            system: { label: i18n.t('packages_dag_migration_alarmpanel_xitongtongzhi'), value: 'SYSTEM' },
+            email: { label: i18n.t('packages_dag_migration_alarmpanel_youjiantongzhi'), value: 'EMAIL' }
+          }
+          const options = []
+
+          if (!isDaas) {
+            let isOpenid = window.__USER_INFO__?.openid
+            Object.assign(MAP, {
+              wechat: {
+                label: i18n.t('packages_business_notify_webchat_notification'),
+                value: 'WECHAT',
+                disabled: !isOpenid
+              },
+              sms: { label: i18n.t('packages_business_notify_sms_notification'), value: 'SMS' }
+            })
+          }
+
+          for (const channel of channels) {
+            const option = MAP[channel.type]
+
+            if (!option) continue
+
+            options.push(option)
+          }
+
+          return options
         }
       }
     }

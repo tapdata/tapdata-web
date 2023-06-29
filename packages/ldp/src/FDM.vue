@@ -160,7 +160,7 @@
           type="primary"
           @click="taskDialogSubmit(true)"
         >
-          {{ $t('public_button_confirm') }}
+          {{ $t('packages_business_save_and_run_now') }}
         </ElButton>
       </span>
     </ElDialog>
