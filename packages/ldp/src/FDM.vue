@@ -571,8 +571,6 @@ export default {
               this.$t('packages_business_task_created_success')
             )
           })
-          await this.loadFDMDirectory()
-          this.setNodeExpand()
         } catch (error) {
           console.log(error) // eslint-disable-line
           let msg
@@ -584,6 +582,10 @@ export default {
 
           this.$message.error(msg || error?.data?.message || this.$t('public_message_save_fail'))
         }
+
+        await this.loadFDMDirectory()
+        this.setNodeExpand()
+
         this.creating = false
       })
     },
@@ -612,7 +614,7 @@ export default {
         item = this.mapCatalog(item)
         const children = this.treeMap[item.id]?.children
 
-        if (children.length) {
+        if (children?.length) {
           item.children = cloneDeep(children)
         }
 
