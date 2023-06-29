@@ -57,7 +57,7 @@ export class StandardJs extends NodeType {
                   beforeRegexp: '^[^]*function\\s+process\\s*\\(record\\)\\{',
                   afterRegexp: '}[^}]*$',
                   after: '}',
-                  param: 'tapTable',
+                  param: 'schemaApplyResultList',
                   handleAddCompleter: '{{addDeclaredCompleterForSync}}'
                 }
               }
