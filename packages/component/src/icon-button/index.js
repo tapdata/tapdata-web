@@ -10,12 +10,14 @@ export const IconButton = defineComponent({
     md: Boolean,
     lg: Boolean,
     xl: Boolean,
-    clickAndRotate: Boolean
+    clickAndRotate: Boolean,
+    disabled: Boolean
   },
   setup(props, { attrs, listeners, slots }) {
     return () => {
       return (
         <button
+          disabled={props.disabled}
           staticClass="t-button t-button--icon"
           class={{
             't-button--icon-xs': props.xs,

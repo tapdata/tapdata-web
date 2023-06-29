@@ -29,9 +29,24 @@
     line-height: 0;
     border-radius: 6px;
 
-    &:hover, &.active {
-      background: rgba(31,35,41,0.1);
-      border-color: rgba(0,0,0,0);
+    &:hover,
+    &.active {
+      background: rgba(31, 35, 41, 0.1);
+      border-color: rgba(0, 0, 0, 0);
+    }
+
+    &:disabled,
+    &:disabled:active,
+    &:disabled:hover,
+    &:disabled[aria-expanded],
+    &[disabled],
+    &[disabled]:active,
+    &[disabled]:hover,
+    &[disabled][aria-expanded] {
+      color: rgb(187, 191, 196);
+      background: rgba(0, 0, 0, 0);
+      border-color: rgba(0, 0, 0, 0);
+      cursor: not-allowed;
     }
 
     &-xs {
