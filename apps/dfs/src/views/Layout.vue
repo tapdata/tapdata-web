@@ -236,7 +236,7 @@ export default {
       {
         name: 'order',
         title: this.$t('dfs_the_header_header_dingyuezhongxin'),
-        icon: 'connect_journal'
+        icon: 'icon_subscription'
       },
       {
         name: 'OperationLog',

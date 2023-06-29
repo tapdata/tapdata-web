@@ -296,10 +296,20 @@
                   @click="handleUnsubscribe(scope.row)"
                   >{{ $t('public_button_unsubscribe') }}</ElButton
                 >
-                <!--删除公共引擎-->
-                <ElButton size="mini" type="text" v-if="scope.row.publicAgent" @click="handleDelete(scope.row)">{{
-                  $t('public_button_delete')
-                }}</ElButton>
+                <ElButton
+                  v-else
+                  size="mini"
+                  type="text"
+                  :loading="scope.row.btnLoading.delete"
+                  :disabled="disableUnsubscribe(scope.row) || $disabledReadonlyUserBtn()"
+                  @click="openUnsubscribe(scope.row)"
+                >
+                  <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></ElButton
+                >
+                <!--                &lt;!&ndash;删除公共引擎&ndash;&gt;-->
+                <!--                <ElButton size="mini" type="text" v-if="scope.row.publicAgent" @click="handleDelete(scope.row)">{{-->
+                <!--                  $t('public_button_delete')-->
+                <!--                }}</ElButton>-->
               </template>
             </ElTableColumn>
 
@@ -442,7 +452,7 @@
                 type="primary"
                 :loading="selectedRow.btnLoading.delete"
                 :disabled="delBtnDisabled(selectedRow) || $disabledReadonlyUserBtn()"
-                @click="getUnsubscribePrice(selectedRow)"
+                @click="openUnsubscribe(selectedRow)"
               >
                 <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></VButton
               >
@@ -523,23 +533,31 @@
         </el-dialog>
       </el-tab-pane>
     </el-tabs>
+    <!--退订-->
+    <Unsubscribe
+      ref="UnsubscribeDetailDialog"
+      :visible.sync="showUnsubscribeDetailVisible"
+      @closeVisible="fetch"
+    ></Unsubscribe>
   </section>
   <RouterView v-else></RouterView>
 </template>
 
 <script>
 import i18n from '@/i18n'
-import InlineInput from '../../components/InlineInput'
-import StatusTag from '../../components/StatusTag'
-import { INSTANCE_STATUS_MAP } from '../../const'
-import Details from './Details'
-import timeFunction from '@/mixins/timeFunction'
 import { VIcon, FilterBar, VTable } from '@tap/component'
 import { CURRENCY_SYMBOL_MAP, dayjs } from '@tap/business'
+import timeFunction from '@/mixins/timeFunction'
 import Time from '@tap/shared/src/time'
-import { getSpec, getPaymentMethod, AGENT_TYPE_MAP } from './utils'
 import SubscriptionModelDialog from '@/views/agent-download/SubscriptionModelDialog'
 import transferDialog from '@/views/agent-download/transferDialog'
+
+import StatusTag from '../../components/StatusTag'
+import InlineInput from '../../components/InlineInput'
+import Unsubscribe from '../../components/Unsubscribe.vue'
+import { INSTANCE_STATUS_MAP } from '../../const'
+import Details from './Details'
+import { getSpec, getPaymentMethod, AGENT_TYPE_MAP } from './utils'
 
 const CreateDialog = () => import(/* webpackChunkName: "CreateInstanceDialog" */ './Create')
 const SelectListDialog = () => import(/* webpackChunkName: "SelectListInstanceDialog" */ './SelectList')
@@ -557,7 +575,8 @@ export default {
     CreateDialog,
     SelectListDialog,
     transferDialog,
-    SubscriptionModelDialog
+    SubscriptionModelDialog,
+    Unsubscribe
   },
   inject: ['buried'],
   mixins: [timeFunction],
@@ -1374,6 +1393,22 @@ export default {
       }
       return flag
     },
+    //退订实例禁用
+    disableUnsubscribe(row) {
+      if (row.agentType === 'Cloud') {
+        return !['Running', 'Stopped', 'Error'].includes(row.status)
+      } else {
+        return !['Running', 'Creating', 'Stopped', 'Error'].includes(row.status)
+      }
+    },
+    //退订存储禁用
+    disableMdbUnsubscribe(row) {
+      if (row?.resource?.scope === 'Private') {
+        return !['Activated'].includes(row.status)
+      } else {
+        return !['Assigned'].includes(row.status)
+      }
+    },
     // 重启
     renewBtnDisabled(row) {
       return !['Running', 'Error'].includes(row.status)
@@ -1514,30 +1549,17 @@ export default {
           this.fetch()
         })
     },
-    //退订详情费用
-    getUnsubscribePrice(row = {}) {
-      if (row?.refund) {
-        let param = {
-          instanceId: row.id
-        }
-        this.$axios.post('api/tcm/orders/cancel', param).then(() => {
-          this.$message.success(this.$t('public_message_operation_success'))
-          this.fetch()
-        })
-        return
+    //退订详情
+    openUnsubscribe(row) {
+      let { orderInfo = {} } = row
+      let { subscriptionId = {}, subscribeDto = {} } = orderInfo
+      let sub = {
+        id: subscriptionId,
+        paidType: subscribeDto?.paymentMethod,
+        type: 'Engine',
+        subscribeItems: subscribeDto?.subscribeItems
       }
-      this.currentRow = row
-      this.$axios.get('api/tcm/orders/calculateRefundAmount?agentId=' + row.id).then(res => {
-        let { currency, agentName, spec, actualAmount, periodStart, periodEnd, refundAmount, spentAmount } = res
-        //格式化价
-        actualAmount = this.formatPrice(currency, actualAmount)
-        spentAmount = this.formatPrice(currency, spentAmount)
-        refundAmount = this.formatPrice(currency, refundAmount)
-        spec = spec.name
-        this.refundAmount = refundAmount
-        this.paidDetailList = [{ agentName, spec, actualAmount, periodStart, periodEnd, refundAmount, spentAmount }]
-        this.showUnsubscribeDetailVisible = true
-      })
+      this.$refs?.UnsubscribeDetailDialog.getUnsubscribePrice(sub, 'Engine')
     },
     formatPrice(currency, price) {
       return (
@@ -1548,7 +1570,6 @@ export default {
         })
       )
     },
-
     //退订
     handleUnsubscribe(row = {}) {
       this.$confirm(
@@ -1611,38 +1632,6 @@ export default {
           this.tableCode?.fetch()
           this.$message.success(this.$t('public_message_operation_success'))
         })
-      })
-    },
-    //取消订阅
-    cancelPaidSubscribe(row = {}) {
-      this.$confirm(
-        i18n.t('dfs_user_center_ninjiangtuidingr', { val1: row.content }),
-        i18n.t('dfs_user_center_quxiaodingyuefu'),
-        {
-          type: 'warning'
-        }
-      ).then(res => {
-        if (!res) return
-        const { paidType } = row
-        this.buried('unsubscribeAgentStripe', '', {
-          type: paidType
-        })
-        this.$axios
-          .post('api/tcm/orders/cancelPaidSubscribe', { instanceId: row.id })
-          .then(() => {
-            this.fetch()
-            this.buried('unsubscribeAgentStripe', '', {
-              result: true,
-              type: paidType
-            })
-            this.$message.success(this.$t('public_message_operation_success'))
-          })
-          .catch(() => {
-            this.buried('unsubscribeAgentStripe', '', {
-              result: false,
-              type: paidType
-            })
-          })
       })
     },
     checkActive(query) {
