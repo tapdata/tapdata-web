@@ -32,8 +32,9 @@
                 </div>
                 <div class="flex justify-content-center align-items-center">
                   <ElButton
-                    v-if="item.totalAmount !== 0 && item.subscribeType !== 'recurring'"
-                    :disabled="!['active'].includes(item.status)"
+                    :disabled="
+                      !['active'].includes(item.status) || item.totalAmount !== 0 || item.subscribeType !== 'recurring'
+                    "
                     class="mr-2"
                     type="text"
                     @click="openRenew(item)"
@@ -140,58 +141,9 @@
     <!--转账支付-->
     <transferDialog :visible.sync="showTransferDialogVisible" :price="pricePay"></transferDialog>
     <!--退订-->
-    <Unsubscribe
-      ref="UnsubscribeDetailDialog"
-      :visible.sync="showUnsubscribeDetailVisible"
-      @closeVisible="remoteMethod"
-    ></Unsubscribe>
+    <Unsubscribe ref="UnsubscribeDetailDialog" @closeVisible="remoteMethod"></Unsubscribe>
     <!--续订-->
-    <ElDialog :visible.sync="showRenewDetailVisible" :title="$t('dfs_user_center_xudingfuwu')" width="60%">
-      <section>
-        <div v-if="renewList.length > 0">
-          <VTable
-            ref="table"
-            row-key="id"
-            :columns="renewColumns"
-            :data="renewList"
-            height="100%"
-            :has-pagination="false"
-            class="mt-4 mb-4"
-          >
-            <template #endAt>
-              <span>{{ formatterTime(currentRenewRow.endAt) }}</span>
-            </template>
-          </VTable>
-        </div>
-        <el-form label-position="top" ref="ruleForm">
-          <el-form-item label="续订时长">
-            <el-input-number disabled v-model="quantity" :min="1"></el-input-number>
-            <span class="ml-2">{{ currentRenewRow.periodUnit === 'month' ? '月' : '年' }}</span>
-            <div class="mt-2">
-              续订后到期时间：<span class="color-warning">{{
-                formatterRenewTime(currentRenewRow.periodUnit, currentRenewRow.endAt)
-              }}</span>
-            </div>
-          </el-form-item>
-        </el-form>
-      </section>
-      <span slot="footer" class="dialog-footer">
-        <span class="mr-4"
-          ><span class="fs-6 font-color-dark font-weight-light">续订金额</span
-          ><span class="color-primary fs-4">
-            {{ formatterPrice(currentRenewRow.currency, currentPrice * quantity) }}</span
-          ></span
-        >
-        <el-button @click="showRenewDetailVisible = false">{{ $t('public_button_cancel') }}</el-button>
-        <el-button
-          :disabled="currentPrice * quantity < 0"
-          type="primary"
-          :loading="loadingRenewSubmit"
-          @click="handleRenew"
-          >续订</el-button
-        >
-      </span>
-    </ElDialog>
+    <Renew ref="RenewDetailDialog" @closeVisible="remoteMethod"></Renew>
   </section>
   <RouterView v-else></RouterView>
 </template>
@@ -208,9 +160,10 @@ import { getPaymentMethod, getSpec, AGENT_TYPE_MAP } from '../instance/utils'
 import dayjs from 'dayjs'
 import StatusTag from '../../components/StatusTag.vue'
 import Unsubscribe from '../../components/Unsubscribe.vue'
+import Renew from '../../components/Renew.vue'
 
 export default {
-  components: { Unsubscribe, StatusTag, FilterBar, VTable, transferDialog },
+  components: { Unsubscribe, StatusTag, FilterBar, VTable, transferDialog, Renew },
   inject: ['buried'],
   data() {
     return {
@@ -301,28 +254,12 @@ export default {
           slotName: 'operation'
         }
       ],
-      renewColumns: [
-        {
-          label: '订阅编号',
-          prop: 'id'
-        },
-        {
-          label: '到期时间',
-          prop: 'endAt',
-          width: 180,
-          slotName: 'endAt'
-        }
-      ],
       //订阅列表
       subscribeList: [],
       page: {
         current: 1,
         size: 10
       },
-      quantity: 1,
-      showRenewDetailVisible: false,
-      renewList: [],
-      currentRenewRow: '',
       loadingRenewSubmit: false,
       currentPrice: 0
     }
@@ -474,105 +411,6 @@ export default {
         })
       )
     },
-    formatterRenewTime(periodUnit, time) {
-      let date = new Date(time) //直接用 new Date(时间戳) 格式转化获得当前时间
-      let expiredTime = date.setMonth(date.getMonth() + this.quantity)
-      if (periodUnit === 'year') {
-        expiredTime = date.setFullYear(date.getFullYear() + this.quantity)
-      }
-      return dayjs(expiredTime).format('YYYY-MM-DD')
-    },
-
-    //续订
-    openRenew(item) {
-      //组装续订列表
-      let renew = {
-        id: item.id,
-        endAt: item.endAt
-      }
-      this.renewColumns = [
-        {
-          label: '订阅编号',
-          prop: 'id'
-        }
-      ]
-      let agent = item?.subscribeItems.find(it => it.productType === 'Engine')?.spec
-      let specLabel = getSpec(agent)
-      let mdb = item?.subscribeItems.find(it => it.productType === 'MongoDB')?.spec
-      let specMdbLabel = getSpec(mdb)
-      if (specLabel) {
-        this.renewColumns.push({
-          label: '实例规格',
-          prop: 'specLabel',
-          width: 180
-        })
-        renew.specLabel = specLabel
-      }
-      if (specMdbLabel) {
-        this.renewColumns.push({
-          label: '存储规格',
-          prop: 'specMdbLabel',
-          width: 180
-        })
-        renew.specMdbLabel = specMdbLabel
-      }
-      this.renewColumns.push({
-        label: '到期时间',
-        prop: 'endAt',
-        width: 180,
-        slotName: 'endAt'
-      })
-      this.renewList = [renew]
-      this.showRenewDetailVisible = true
-      this.currentRenewRow = item
-      let url = 'api/tcm/orders/paid/prices?prices=' + item?.subscribeItems[0].priceId
-      if (item?.subscribeItems?.length > 1) {
-        url =
-          'api/tcm/orders/paid/prices?prices=' + item?.subscribeItems[0].priceId + ',' + item?.subscribeItems[1].priceId
-      }
-      this.$axios.get(url).then(data => {
-        this.currentRenewRow.currency = item?.currency
-        //根据当前币种过滤出价格
-        if (data?.[0]) {
-          this.currentPrice = data?.[0].currencyOption.find(it => it.currency === item?.currency).amount || 0
-        }
-        if (data?.length > 1) {
-          this.currentPrice =
-            data?.[0].currencyOption.find(it => it.currency === item?.currency).amount +
-            data?.[1].currencyOption.find(it => it.currency === item?.currency).amount
-        }
-      })
-    },
-    handleRenew() {
-      let { id } = this.currentRenewRow
-      const params = {
-        subscribeId: id,
-        quantity: this.quantity,
-        successUrl: location.href,
-        cancelUrl: location.href
-      }
-      this.loadingRenewSubmit = true
-      this.buried('renewAgentStripe')
-      this.$axios
-        .post('api/tcm/subscribe/renew', params)
-        .then(data => {
-          this.showRenewDetailVisible = false
-          this.loadingRenewSubmit = false
-          openUrl(data.payUrl)
-          this.buried('renewAgentStripe', '', {
-            result: true
-          })
-        })
-        .catch(() => {
-          this.buried('renewAgentStripe', '', {
-            result: false
-          })
-        })
-        .finally(() => {
-          this.showRenewDetailVisible = false
-          this.loadingRenewSubmit = false
-        })
-    },
     //是否可退订
     disableUnsubscribe(row) {
       if (row.productType === 'Engine') {
@@ -592,6 +430,10 @@ export default {
     //退订详情
     openUnsubscribe(row, type) {
       this.$refs?.UnsubscribeDetailDialog.getUnsubscribePrice(row, type)
+    },
+    //续订
+    openRenew(row) {
+      this.$refs?.RenewDetailDialog.openRenew(row)
     },
     formatPrice(currency, price) {
       if (price === 0) return 0

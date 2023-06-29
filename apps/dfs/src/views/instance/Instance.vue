@@ -306,6 +306,9 @@
                 >
                   <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></ElButton
                 >
+                <ElButton class="mr-2" type="text" :disabled="disableRenew(scope.row)" @click="openRenew(scope.row)">{{
+                  $t('public_button_renew')
+                }}</ElButton>
                 <!--                &lt;!&ndash;删除公共引擎&ndash;&gt;-->
                 <!--                <ElButton size="mini" type="text" v-if="scope.row.publicAgent" @click="handleDelete(scope.row)">{{-->
                 <!--                  $t('public_button_delete')-->
@@ -504,12 +507,12 @@
               <span v-if="row.scope === 'Private'">{{ row.whiteList }}</span>
             </template>
             <template #operation="{ row }">
-              <!--              <ElButton size="mini" type="text" @click="handleDeleteMdb(row)">{{-->
-              <!--                $t('public_button_delete')-->
-              <!--              }}</ElButton>-->
               <ElButton v-if="row.scope === 'Private'" size="mini" type="text" @click="handleCreateIps(row)"
                 >添加白名单</ElButton
               >
+              <ElButton class="mr-2" type="text" :disabled="disableRenew(row)" @click="openRenew(row)">{{
+                $t('public_button_renew')
+              }}</ElButton>
             </template>
             <div class="instance-table__empty" slot="empty">
               <VIcon size="120">no-data-color</VIcon>
@@ -534,11 +537,9 @@
       </el-tab-pane>
     </el-tabs>
     <!--退订-->
-    <Unsubscribe
-      ref="UnsubscribeDetailDialog"
-      :visible.sync="showUnsubscribeDetailVisible"
-      @closeVisible="fetch"
-    ></Unsubscribe>
+    <Unsubscribe ref="UnsubscribeDetailDialog" @closeVisible="fetch"></Unsubscribe>
+    <!--续订-->
+    <Renew ref="RenewDetailDialog" @closeVisible="tableCode.fetch()"></Renew>
   </section>
   <RouterView v-else></RouterView>
 </template>
@@ -558,6 +559,7 @@ import Unsubscribe from '../../components/Unsubscribe.vue'
 import { INSTANCE_STATUS_MAP } from '../../const'
 import Details from './Details'
 import { getSpec, getPaymentMethod, AGENT_TYPE_MAP } from './utils'
+import Renew from '../../components/Renew.vue'
 
 const CreateDialog = () => import(/* webpackChunkName: "CreateInstanceDialog" */ './Create')
 const SelectListDialog = () => import(/* webpackChunkName: "SelectListInstanceDialog" */ './SelectList')
@@ -566,6 +568,7 @@ let timer = null
 
 export default {
   components: {
+    Renew,
     InlineInput,
     StatusTag,
     VIcon,
@@ -1401,6 +1404,13 @@ export default {
         return !['Running', 'Creating', 'Stopped', 'Error'].includes(row.status)
       }
     },
+    //续订实例禁用
+    disableRenew(row) {
+      let { orderInfo = {} } = row
+      let { subscribeDto = {} } = orderInfo
+      let { subscribeType, totalAmount, status } = subscribeDto
+      return !['active'].includes(status) || totalAmount === 0 || subscribeType === 'recurring' || row?.publicAgent
+    },
     //退订存储禁用
     disableMdbUnsubscribe(row) {
       if (row?.resource?.scope === 'Private') {
@@ -1559,7 +1569,7 @@ export default {
         type: 'Engine',
         subscribeItems: subscribeDto?.subscribeItems
       }
-      this.$refs?.UnsubscribeDetailDialog.getUnsubscribePrice(sub, 'Engine')
+      this.$refs?.UnsubscribeDetailDialog?.getUnsubscribePrice(sub, 'Engine')
     },
     formatPrice(currency, price) {
       return (
@@ -1569,6 +1579,19 @@ export default {
           maximumFractionDigits: 2
         })
       )
+    },
+    //续订
+    openRenew(row) {
+      let { orderInfo = {} } = row
+      let { subscriptionId = {}, subscribeDto = {} } = orderInfo
+      let sub = {
+        id: subscriptionId,
+        paidType: subscribeDto?.paymentMethod,
+        endAt: subscribeDto?.endAt,
+        subscribeItems: subscribeDto?.subscribeItems,
+        currency: subscribeDto?.currency
+      }
+      this.$refs?.RenewDetailDialog?.openRenew(sub)
     },
     //退订
     handleUnsubscribe(row = {}) {
