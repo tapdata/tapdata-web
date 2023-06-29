@@ -68,7 +68,7 @@ export const DdlEventCheckbox = observer(
 
 export const DdlEventList = observer(
   defineComponent({
-    props: ['value', 'findParentNode', 'findParentNodes'],
+    props: ['value', 'findParentNode', 'findParentNodes', 'hideParent'],
     setup(props) {
       const formRef = useForm()
       const fieldRef = useField()
@@ -104,8 +104,7 @@ export const DdlEventList = observer(
 
       onMounted(() => {
         if (!parentEnable.value) {
-          // fieldRef.value.setDisplay('hidden')
-          fieldRef.value.parent.setDisplay('hidden')
+          props.hideParent ? fieldRef.value.parent.setDisplay('hidden') : fieldRef.value.setDisplay('hidden')
         }
       })
 

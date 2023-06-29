@@ -1215,6 +1215,7 @@ export class Table extends NodeType {
                         type: 'void',
                         'x-component': 'DdlEventList',
                         'x-component-props': {
+                          hideParent: true,
                           findParentNodes: '{{findParentNodes}}'
                         }
                       }
