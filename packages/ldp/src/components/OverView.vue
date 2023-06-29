@@ -57,7 +57,7 @@
             </li>
           </ul>
           <ul v-else class="flex flex-column justify-content-center align-center">
-            <el-image class="product-type-image" :src="require('@/assets/image/empty-img-simple.svg')" />
+            <el-image class="product-type-image" :src="require('@tap/assets/images/empty-img-simple.svg')" />
             <div>{{ $t('data_no_data') }}</div>
           </ul>
         </div>
@@ -70,6 +70,7 @@
 import { Chart, VIcon } from '@tap/component'
 import { fromNow } from '@tap/shared'
 import { taskApi, connectionsApi } from '@tap/api'
+
 export default {
   name: 'OverView',
   components: { VIcon, Chart },

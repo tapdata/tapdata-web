@@ -339,7 +339,7 @@ export const FieldAddDel = connect(
         handleReset(node, data) {
           if (this.deleteAllFieldsData) {
             //所有字段被删除，撤回既是不删除字段
-            this.handleDelete(node, data)
+            this.handleDelete(node, data, true)
             return
           }
           console.log('fieldProcessor.handleReset', node, data) //eslint-disable-line
@@ -434,7 +434,7 @@ export const FieldAddDel = connect(
           }
           return exist
         },
-        handleDelete(node, data) {
+        handleDelete(node, data, isReset = false) {
           console.log('fieldProcessor.handleDelete', node, data) // eslint-disable-line
           const operations = [...this.operations]
           let createOpsIndex = this.operations.findIndex(v => v.id === data.id && v.op === 'CREATE')
@@ -472,7 +472,7 @@ export const FieldAddDel = connect(
                 if (index > -1) {
                   operations.splice(index, 1)
                 }
-                op.operand = true
+                op.operand = isReset ? false : true
               }
               operations.push(op)
               if (field.children) {
