@@ -234,6 +234,11 @@ export default {
         icon: 'agent'
       },
       {
+        name: 'order',
+        title: this.$t('dfs_the_header_header_dingyuezhongxin'),
+        icon: 'connect_journal'
+      },
+      {
         name: 'OperationLog',
         title: this.$t('operation_log_manage'),
         icon: 'operation-log'
