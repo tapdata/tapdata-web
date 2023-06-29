@@ -328,21 +328,26 @@ export default {
       let modeType = 'custom'
       if (dataTypeCheckMultiple?.result) {
         this.originType = dataTypeCheckMultiple.originType
-        this.fieldChangeRules.forEach((item = {}) => {
-          const { namespace = [] } = item
-          if (item.type === 'MutiDataType' && item.accept === this.originType) {
-            this.currentData.coefficient = item.multiple
-            modeType = 'coefficient'
-          } else {
-            const flag =
-              namespace[0] === this.data.nodeId &&
-              (namespace.length === 1 ||
-                (namespace[1] === this.data.qualified_name && namespace[2] === this.currentData.fieldName))
-            if (flag) {
-              modeType = 'custom'
-            }
-          }
-        })
+        const rule = this.findInRulesById(this.currentData.changeRuleId)
+        if (rule?.scope !== 'Field') {
+          this.fieldChangeRules
+            .filter(t => t.type !== 'Field')
+            .forEach((item = {}) => {
+              const { namespace = [] } = item
+              if (item.type === 'MutiDataType' && item.accept === this.originType) {
+                this.currentData.coefficient = item.multiple
+                modeType = 'coefficient'
+              } else {
+                const flag =
+                  namespace[0] === this.data.nodeId &&
+                  (namespace.length === 1 ||
+                    (namespace[1] === this.data.qualified_name && namespace[2] === this.currentData.fieldName))
+                if (flag) {
+                  modeType = 'custom'
+                }
+              }
+            })
+        }
       } else {
         this.originType = ''
       }
@@ -368,7 +373,7 @@ export default {
         const f = this.findInRulesById(changeRuleId)
         let ruleId = f?.id
         let ruleAccept = f?.accept
-        if (f) {
+        if (f?.type === 'MutiDataType') {
           f.multiple = coefficient
           f.accept = this.originType
           f.result = { dataType: `${this.originType}(${coefficient}n)`, dataTypeTemp }
@@ -376,6 +381,10 @@ export default {
           this.rules.splice(index, 1)
           this.rules.push(f)
         } else {
+          const index = this.rules.findIndex(t => t.accept === this.originType && t.type === 'MutiDataType')
+          if (index > -1) {
+            this.rules.splice(index, 1)
+          }
           const op = {
             id: uuid(),
             scope: 'Node',
@@ -391,11 +400,6 @@ export default {
         }
 
         this.handleUpdate()
-        this.data.fields.find(t => {
-          if (t.dataTypeTemp === ruleAccept) {
-            t.changeRuleId = ruleId
-          }
-        })
         this.$message.success(i18n.t('public_message_operation_success'))
         this.editDataTypeVisible = false
         return
@@ -415,7 +419,6 @@ export default {
           }
           const f = this.findInRulesById(changeRuleId)
           let ruleId = f?.id
-          let ruleAccept = f?.accept
           if (f?.scope === 'Field') {
             if (useToAll) {
               let batchRule = this.findNodeRuleByType(f.accept)
@@ -425,18 +428,15 @@ export default {
                 // 修改批量规则
                 batchRule.result = { dataType: newDataType, tapType, selectDataType }
                 ruleId = batchRule.id
-                ruleAccept = newDataType
               } else {
                 // 修改规则为批量规则 scope、namespace
                 f.scope = 'Node'
                 f.namespace = [nodeId]
                 f.result = { dataType: newDataType, tapType, selectDataType }
-                ruleAccept = newDataType
               }
             } else {
               // 修改字段规则
               f.result = { dataType: newDataType, tapType, selectDataType }
-              ruleAccept = newDataType
             }
             const index = this.rules.findIndex(t => t.id === ruleId)
             this.rules.splice(index, 1)
@@ -451,15 +451,9 @@ export default {
               result: { dataType: newDataType, tapType, selectDataType }
             }
             ruleId = op.id
-            ruleAccept = dataTypeTemp
             this.rules.push(op)
           }
           this.handleUpdate()
-          this.data.fields.find(t => {
-            if ((useToAll && t.dataTypeTemp === ruleAccept) || t.field_name === fieldName) {
-              t.changeRuleId = ruleId
-            }
-          })
           this.editBtnLoading = false
           this.$message.success(i18n.t('public_message_operation_success'))
           this.editDataTypeVisible = false
