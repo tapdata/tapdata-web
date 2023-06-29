@@ -324,11 +324,11 @@ $headerHeight: 40px;
         .form-wrap {
           min-height: 0;
 
-          form > div > div.formily-element-form-item {
+          .config-tabs-decorator {
             height: 100%;
             > .formily-element-form-item-control {
               height: 100%;
-              .formily-element-form-item-control-content {
+              > .formily-element-form-item-control-content {
                 height: 100%;
               }
             }

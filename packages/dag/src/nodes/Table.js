@@ -52,6 +52,9 @@ export class Table extends NodeType {
       tabs: {
         type: 'void',
         'x-decorator': 'FormItem',
+        'x-decorator-props': {
+          class: 'config-tabs-decorator'
+        },
         'x-component': 'FormTab',
         'x-component-props': {
           class: 'config-tabs',
@@ -659,6 +662,7 @@ export class Table extends NodeType {
                         type: 'boolean',
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
+                          className: 'item-control-horizontal',
                           layout: 'horizontal',
                           tooltip: ''
                         },
@@ -811,6 +815,7 @@ export class Table extends NodeType {
                         default: false,
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
+                          className: 'item-control-horizontal',
                           layout: 'horizontal'
                         },
                         'x-component': 'Switch',
