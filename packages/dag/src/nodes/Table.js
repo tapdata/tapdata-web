@@ -428,10 +428,11 @@ export class Table extends NodeType {
                   class: 'advanced-collapse'
                 },
                 'x-reactions': {
-                  dependencies: ['$outputs', '$inputs'],
+                  dependencies: ['$inputs'],
                   fulfill: {
                     state: {
-                      display: '{{$deps[0].length || !$deps[1].length ? "visible":"hidden"}}'
+                      display:
+                        '{{(!$deps[0].length && $values.attrs.connectionType.includes("source")) ? "visible":"hidden"}}'
                     }
                   }
                 },
@@ -1148,7 +1149,8 @@ export class Table extends NodeType {
                   dependencies: ['$inputs'],
                   fulfill: {
                     state: {
-                      display: '{{$deps[0].length > 0 ? "visible":"hidden"}}'
+                      display:
+                        '{{$deps[0].length > 0 || $values.attrs.connectionType === "target" ? "visible":"hidden"}}'
                     }
                   }
                 },
