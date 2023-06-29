@@ -331,7 +331,8 @@ export default {
               data.isObject &&
                 this.$emit('preview', data, this.mdmConnection, {
                   onDelete: tagId => {
-                    this.setNodeExpand(tagId)
+                    // this.setNodeExpand(tagId)
+                    this.$refs.tree.remove(data.id)
                   }
                 })
             },
@@ -567,10 +568,11 @@ export default {
       if (!forceLoadTable && node.loadTime && Date.now() - node.loadTime < 10000) return
 
       node.loadTime = Date.now()
-
+      node.loading = true
       let objects = await this.loadObjects(data)
+      node.loading = false
 
-      console.log('handleNodeExpand', objects, data, node) // eslint-disable-line
+      this.$refs.tree.updateKeyChildren(data.id, objects)
       const childrenMap = data.children ? data.children.reduce((map, item) => ((map[item.id] = true), map), {}) : {}
       objects.forEach(item => {
         if (childrenMap[item.id]) return
