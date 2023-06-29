@@ -391,6 +391,7 @@ export default {
         const f = fields.find(el => el.field_name === t.field_name)
         if (f) {
           t.data_type = f.data_type
+          t.changeRuleId = f.changeRuleId
         }
       })
     },

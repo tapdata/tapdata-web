@@ -371,7 +371,7 @@ export default {
         if (f) {
           f.multiple = coefficient
           f.accept = this.originType
-          f.result = { dataType: `${this.originType}(${coefficient}n)` }
+          f.result = { dataType: `${this.originType}(${coefficient}n)`, dataTypeTemp }
           const index = this.rules.findIndex(t => t.id === ruleId)
           this.rules.splice(index, 1)
           this.rules.push(f)
@@ -383,7 +383,7 @@ export default {
             type: 'MutiDataType',
             accept: this.originType,
             multiple: coefficient,
-            result: { dataType: `${this.originType}(${coefficient}n)` }
+            result: { dataType: `${this.originType}(${coefficient}n)`, dataTypeTemp }
           }
           ruleId = op.id
           ruleAccept = op.accept
