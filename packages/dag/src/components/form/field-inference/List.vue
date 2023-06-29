@@ -195,7 +195,7 @@ export default {
           label: i18n.t('packages_form_field_mapping_list_xuhao'),
           type: 'index',
           prop: 'index',
-          width: '60px'
+          minWidth: '40px'
         },
         {
           label: i18n.t('packages_form_field_add_del_index_ziduanmingcheng'),
@@ -213,7 +213,8 @@ export default {
         {
           label: i18n.t('packages_form_field_inference_list_feikong'),
           prop: 'is_nullable',
-          slotName: 'is_nullable'
+          slotName: 'is_nullable',
+          width: '60px'
         },
         {
           label: i18n.t('packages_form_field_inference_list_ziduanzhushi'),

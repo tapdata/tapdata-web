@@ -1,11 +1,14 @@
 import { get, set, merge } from 'lodash'
-import { defineComponent, ref } from '@vue/composition-api'
+import { defineComponent, ref, computed } from '@vue/composition-api'
 import i18n from '@tap/i18n'
 import { useForm } from '@tap/form'
 import { VTable, IconButton } from '@tap/component'
 import { metadataInstancesApi } from '@tap/api'
 import { useSchemaEffect } from '../../../hooks/useAfterTaskSaved'
+import { getMatchedDataTypeLevel, errorFiledType } from '../../../util'
+import FieldList from '../field-inference/List'
 import './style.scss'
+import DataTypeDialog from './DataTypeDialog'
 
 // public static final byte TYPE_DATETIME = 1;
 // public static final byte TYPE_ARRAY = 2;
@@ -20,7 +23,8 @@ import './style.scss'
 // public static final byte TYPE_DATE = 11;
 
 export const SchemaPreview = defineComponent({
-  setup(props, { root }) {
+  props: ['ignoreError', 'disabled'],
+  setup(props, { root, refs }) {
     const formRef = useForm()
     const form = formRef.value
     const treeData = ref([])
@@ -43,6 +47,7 @@ export const SchemaPreview = defineComponent({
       {
         label: i18n.t('packages_form_dag_dialog_field_mapping_type'),
         prop: 'data_type',
+        slotName: 'data_type',
         'min-width': '126px'
       },
       {
@@ -54,21 +59,23 @@ export const SchemaPreview = defineComponent({
       {
         label: i18n.t('packages_form_field_inference_list_ziduanzhushi'),
         prop: 'comment'
-      } /*,
+      },
       {
         label: i18n.t('public_operation'),
         prop: 'operation',
         slotName: 'operation',
         headerSlot: 'operationHeader',
         width: '60px'
-      }*/
+      }
     ]
-
     const nullableMap = {
       true: i18n.t('packages_dag_meta_table_true'),
       false: i18n.t('packages_dag_meta_table_false')
     }
-
+    const isTarget = form.values.type === 'table' && !!form.values.$inputs.length
+    const isSource = form.values.type === 'table' && !form.values.$inputs.length
+    const readonly = ref(props.disabled || !isTarget)
+    let fieldChangeRules = form.values.fieldChangeRules || []
     let columnsMap = {}
     const createTree = data => {
       const root = { children: [] }
@@ -102,6 +109,7 @@ export const SchemaPreview = defineComponent({
       return root.children
     }
 
+    const schemaData = ref({})
     const loadSchema = async () => {
       loading.value = true
       const params = {
@@ -111,16 +119,41 @@ export const SchemaPreview = defineComponent({
         pageSize: 20
       }
       const {
-        items: [{ fields = [], indices = [] } = {}]
+        // items: [{ fields = [], indices = [] } = {}]
+        items: [schema = {}]
       } = await metadataInstancesApi.nodeSchemaPage(params)
+      const { fields = [], indices = [] } = schema
 
+      schemaData.value = mapSchema(schema)
       columnsMap = indices.reduce((map, item) => {
         item.columns.forEach(({ columnName }) => (map[columnName] = true))
         return map
       }, {})
-
       treeData.value = createTree(fields)
       loading.value = false
+    }
+
+    const mapSchema = schema => {
+      const { fields = [], findPossibleDataTypes = {} } = schema
+      //如果findPossibleDataTypes = {}，不做类型校验
+      if (isTarget) {
+        fields.forEach(el => {
+          el.canUseDataTypes = []
+          el.matchedDataTypeLevel = getMatchedDataTypeLevel(
+            el,
+            el.canUseDataTypes,
+            fieldChangeRules,
+            findPossibleDataTypes
+          )
+        })
+      } else {
+        // 源节点 JSON.parse('{\"type\":7}').type==7
+        fields.forEach(el => {
+          el.canUseDataTypes = []
+          el.matchedDataTypeLevel = errorFiledType(el)
+        })
+      }
+      return schema
     }
 
     const renderContent = (h, { node, data, store }) => {
@@ -154,6 +187,89 @@ export const SchemaPreview = defineComponent({
     useSchemaEffect(root, () => [formRef.value.values.tableName], loadSchema)
 
     loadSchema()
+
+    const openDialog = row => {
+      refs.dialog.open(row)
+    }
+
+    const getDataType = (row = {}) => {
+      if (!fieldChangeRules.length) return row.dataTypeTemp
+      return row.data_type
+    }
+
+    const getCanUseDataTypesTooltip = matchedDataTypeLevel => {
+      const map = {
+        error: isTarget
+          ? i18n.t('packages_dag_field_inference_list_gaiziduanshuju')
+          : i18n.t('packages_dag_field_inference_list_gaiziduanwufa')
+        // warning: i18n.t('packages_dag_field_inference_list_gaiziduanyingshe')
+      }
+      return map[matchedDataTypeLevel]
+    }
+
+    const canRevokeRules = computed(() => {
+      const { qualified_name } = schemaData.value
+      return fieldChangeRules.filter(t => t.scope === 'Field' && t.namespace?.[1] === qualified_name) || []
+    })
+
+    const handleUpdate = rules => {
+      form.setValuesIn('fieldChangeRules', rules)
+      fieldChangeRules = rules
+    }
+
+    const revokeAll = () => {
+      if (!canRevokeRules.length) {
+        return
+      }
+      root
+        .$confirm(i18n.t('packages_form_field_inference_list_ninquerenyaohui'), '', {
+          type: 'warning',
+          closeOnClickModal: false
+        })
+        .then(resFlag => {
+          if (resFlag) {
+            const { qualified_name } = schemaData.value
+            handleUpdate(fieldChangeRules.filter(t => !(t.scope === 'Field' && t.namespace?.[1] === qualified_name)))
+            root.$message.success(i18n.t('public_message_operation_success'))
+          }
+        })
+    }
+
+    const getFieldScope = (row = {}) => {
+      return fieldChangeRules.find(t => t.id === row.changeRuleId)?.scope
+    }
+
+    const getRevokeColorClass = (row = {}) => {
+      const map = {
+        Node: 'color-warning',
+        Field: 'color-primary'
+      }
+      return map[getFieldScope(row)] || 'color-disable'
+    }
+
+    const getRevokeDisabled = row => {
+      return !fieldChangeRules.find(t => t.id === row.changeRuleId)?.scope
+    }
+
+    const findInRulesById = id => {
+      return fieldChangeRules.find(t => t.id === id)
+    }
+
+    const revoke = row => {
+      if (getRevokeDisabled(row)) return
+      const f = findInRulesById(row.changeRuleId)
+      if (!f) return
+      if (f.scope === 'Node') {
+        return
+      }
+      if (f.scope === 'Field') {
+        row.data_type = f.accept
+        const index = fieldChangeRules.findIndex(t => t.id === f.id)
+        fieldChangeRules.splice(index, 1)
+      }
+      row.data_type = row.dataTypeTemp
+      this.handleUpdate()
+    }
 
     return () => (
       <div class="schema-preview pb-6">
@@ -196,7 +312,20 @@ export const SchemaPreview = defineComponent({
               </div>
             </div>
           ) : (
-            <VTable
+            <FieldList
+              ref="table"
+              class="w-100 border rounded-lg overflow-hidden"
+              data={schemaData.value}
+              readonly={readonly.value}
+              fieldChangeRules={fieldChangeRules}
+              type={isTarget ? 'target' : isSource ? 'source' : ''}
+              hide-batch
+              ignore-error={!isTarget}
+              on={{
+                'update-rules': handleUpdate
+              }}
+            ></FieldList>
+            /*<VTable
               row-key="id"
               columns={columns}
               data={treeData.value}
@@ -217,11 +346,61 @@ export const SchemaPreview = defineComponent({
                     )}
                   </span>
                 ),
-                is_nullable: scope => nullableMap[!scope.row.is_nullable]
+                data_type: scope => (
+                  <div
+                    staticClass="position-relative"
+                    class="{ 'pl-5': !ignoreError && !!getCanUseDataTypesTooltip(scope.row.matchedDataTypeLevel) }"
+                  >
+                    {props.ignoreError && (
+                      <ElTooltip
+                        transition="tooltip-fade-in"
+                        disabled={scope.row.matchedDataTypeLevel !== 'error'}
+                        content={getCanUseDataTypesTooltip(scope.row.matchedDataTypeLevel)}
+                        class="type-warning position-absolute"
+                      >
+                        <VIcon size="16" class="color-warning" class={{ 'opacity-0': !scope.row.matchedDataTypeLevel }}>
+                          warning
+                        </VIcon>
+                      </ElTooltip>
+                    )}
+                    {readonly.value ? (
+                      <span>{getDataType(scope.row)}</span>
+                    ) : (
+                      <div class="cursor-pointer inline-block" onClick={() => openDialog(scope.row)}>
+                        <span>{getDataType(scope.row)}</span>
+                        <VIcon class="ml-2">arrow-down</VIcon>
+                      </div>
+                    )}
+                  </div>
+                ),
+                is_nullable: scope => nullableMap[!scope.row.is_nullable],
+                operationHeader: scope => (
+                  <VIcon class={canRevokeRules.length ? 'color-primary' : 'color-disable'} onClick={revokeAll}>
+                    revoke
+                  </VIcon>
+                ),
+                operation: (
+                  <ElTooltip
+                    disabled={getFieldScope(scope.row) !== 'Node'}
+                    content={i18n.t('packages_form_field_inference_main_gepiliangxiugai')}
+                    placement="top"
+                  >
+                    <VIcon class={getRevokeColorClass(scope.row)} onClick="revoke(scope.row)">
+                      revoke
+                    </VIcon>
+                  </ElTooltip>
+                )
               }}
-            ></VTable>
+            ></VTable>*/
           )}
         </div>
+        {/*<DataTypeDialog
+          ref="dialog"
+          data={schemaData.value}
+          getDataType={getDataType}
+          activeNode={form.values}
+          fieldChangeRules={fieldChangeRules}
+        ></DataTypeDialog>*/}
       </div>
     )
   }
