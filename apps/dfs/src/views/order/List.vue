@@ -2,7 +2,7 @@
   <section class="operation-logs-wrapper g-panel-container" v-if="$route.name === 'order'">
     <el-tabs class="flex flex-column overflow-hidden flex-1" v-model="activeName">
       <el-tab-pane class="order-flex overflow-hidden h-100" :label="$t('dfs_order_list_wodedingyue')" name="first">
-        <div class="main">
+        <div class="main" v-loading="loadingSubscribe">
           <div class="list-operation">
             <div class="list-operation-left flex justify-content-between">
               <FilterBar v-model="searchParams" :items="filterItems" @fetch="remoteMethod"> </FilterBar>
@@ -170,6 +170,7 @@ export default {
       activeName: 'first',
       loading: true,
       loadingCancelSubmit: false,
+      loadingSubscribe: false,
       showUnsubscribeDetailVisible: false, //退订详情
       unsubscribeHelpDocumentation: '', //退订跳转地址
       currentRow: '',
@@ -179,6 +180,7 @@ export default {
       agentTypeMap: AGENT_TYPE_MAP,
       searchParams: {
         agentDeploy: '',
+        productType: '',
         status: ''
       },
       search: '',
@@ -283,8 +285,7 @@ export default {
       if (route.name === 'order') {
         let query = route.query
         this.searchParams = Object.assign(this.searchParams, query)
-        let pageNum = isEmpty(query) ? undefined : 1
-        this.remoteMethod(pageNum)
+        this.remoteMethod()
       }
     }
   },
@@ -302,11 +303,11 @@ export default {
             },
             {
               label: this.$t('packages_business_shared_const_weizhifu'),
-              value: 'unPay'
+              value: 'incomplete'
             },
             {
               label: this.$t('packages_business_shared_const_yizhifu'),
-              value: 'pay'
+              value: 'active'
             },
             {
               label: this.$t('packages_business_shared_const_zhifushibai'),
@@ -318,7 +319,7 @@ export default {
             },
             {
               label: this.$t('packages_business_shared_const_tuikuanshibai'),
-              value: 'refundFail'
+              value: 'past_due'
             },
             {
               label: this.$t('packages_business_shared_const_tuikuanzhong'),
@@ -326,11 +327,11 @@ export default {
             },
             {
               label: this.$t('packages_business_shared_const_shixiao'),
-              value: 'expire'
+              value: 'incomplete_expired'
             },
             {
               label: this.$t('packages_business_shared_const_yiquxiao'),
-              value: 'cancelSubscribe'
+              value: 'canceled'
             }
           ],
           selectedWidth: '200px'
@@ -353,19 +354,39 @@ export default {
               value: 'Local'
             }
           ]
+        },
+        {
+          label: '订阅类型',
+          key: 'productType',
+          type: 'select-inner',
+          items: [
+            {
+              label: this.$t('public_select_option_all'),
+              value: ''
+            },
+            {
+              label: 'Engine',
+              value: 'Engine'
+            },
+            {
+              label: 'MongoDB',
+              value: 'MongoDB'
+            }
+          ]
         }
       ]
     },
     //我的订阅
     remoteMethod() {
       let { current, size } = this.page
-      let { agentType, status } = this.searchParams
+      let { agentType, status, productType } = this.searchParams
       let where = {
         status: {
           $ne: 'invalid' //过滤 invild
         }
       }
-      agentType && (where.agentType = agentType)
+      agentType && (where['subscribeItems.agentType'] = agentType)
+      productType && (where['subscribeItems.productType'] = productType)
       status && (where.status = status)
       let filter = {
         limit: size,
@@ -373,8 +394,10 @@ export default {
         sort: ['createAt desc'],
         where: where
       }
+      this.loadingSubscribe = true
 
       return this.$axios.get(`api/tcm/subscribe?filter=${encodeURIComponent(JSON.stringify(filter))}`).then(data => {
+        this.loadingSubscribe = false
         let items = data.items || []
         this.page.total = data.total
         this.subscribeList = items.map(item => {
