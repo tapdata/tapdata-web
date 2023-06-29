@@ -43,7 +43,7 @@ export default {
   packages_business_connection_form_change: '更换',
   packages_business_connection_form_rename: '改名',
   packages_business_connection_form_database_owner_tip: '逗号分割的表达式列表，使用 * 代表任意长度任意字符',
-  packages_business_connection_form_source_and_target_tip: '此数据连接在Tapdata 中能同时作为源和目标使用',
+  packages_business_connection_form_source_and_target_tip: `此数据连接在 ${process.env.VUE_APP_PAGE_TITLE} 中能同时作为源和目标使用`,
   packages_business_connection_form_source_tip: '此数据连接在Tapdata 中只能作为源使用，不能作用为目标',
   packages_business_connection_form_target_tip: '此数据连接在Tapdata 中只能作为目标使用，不能作用为源',
   packages_business_connection_form_shared_mining: '共享挖掘',

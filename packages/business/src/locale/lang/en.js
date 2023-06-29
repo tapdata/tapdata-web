@@ -44,8 +44,7 @@ export default {
   packages_business_connection_form_rename: 'Rename',
   packages_business_connection_form_database_owner_tip:
     'Comma-separated list of expressions, use * to represent any character of any length',
-  packages_business_connection_form_source_and_target_tip:
-    'This data connection can be used as source and target at the same time in Tapdata',
+  packages_business_connection_form_source_and_target_tip: `This data connection can be used as source and target at the same time in ${process.env.VUE_APP_PAGE_TITLE}`,
   packages_business_connection_form_source_tip:
     'Please note that this data connection is only suitable for use as a source in Tapdata, and cannot be used as a target.',
   packages_business_connection_form_target_tip:
