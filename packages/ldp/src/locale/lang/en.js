@@ -1,5 +1,6 @@
 export default {
   packages_ldp_lineage: 'Lineage',
+  packages_ldp_view_lineage: 'View Lineage',
   packages_ldp_lineage_loading_tips: 'Double-click the node to drill down.',
   packages_ldp_table_comment: 'Table Comment',
   packages_ldp_src_dashboard_anEsctui: 'Press Esc to exit the traceability scene',
