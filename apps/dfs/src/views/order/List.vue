@@ -803,8 +803,6 @@ export default {
           }
         }
         this.showUnsubscribeDetailVisible = true
-        //刷新页面
-        this.remoteMethod()
       })
     },
     formatItems(data) {
@@ -863,6 +861,8 @@ export default {
               this.$message.success(this.$t('public_message_operation_success'))
               this.showUnsubscribeDetailVisible = false
               this.loadingCancelSubmit = false
+              //刷新页面
+              this.remoteMethod()
             })
             .finally(() => {
               this.showUnsubscribeDetailVisible = false
