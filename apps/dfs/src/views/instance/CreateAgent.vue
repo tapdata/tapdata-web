@@ -2353,11 +2353,6 @@ export default {
             type,
             result: true
           })
-          if (paymentType === 'online') {
-            this.submitOnlineLoading = false
-          } else {
-            this.submitLoading = false
-          }
           if (data.status === 'incomplete') {
             //订单需要付款
             if (paymentType === 'online') {
@@ -2407,6 +2402,11 @@ export default {
                 name: 'Instance'
               })
             }
+          }
+          if (paymentType === 'online') {
+            this.submitOnlineLoading = false
+          } else {
+            this.submitLoading = false
           }
         })
         .catch(() => {
