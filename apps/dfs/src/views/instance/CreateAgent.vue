@@ -808,10 +808,13 @@
         <div class="w-40 flex align-items-center ml-4" v-else></div>
         <div class="btn-opreation flex w-60">
           <el-button v-if="activeStep > 1" @click="prevStep">{{ $t('public_button_previous') }}</el-button>
-          <el-button v-if="activeStep == 1">{{ $t('public_button_previous') }}</el-button>
-          <el-button v-if="activeStep < steps.length" type="primary" @click="next('second')">{{
-            $t('public_button_next')
-          }}</el-button>
+          <el-button
+            v-if="activeStep < steps.length"
+            :style="{ 'margin-left': activeStep === 1 ? '80px' : 0 }"
+            type="primary"
+            @click="next('second')"
+            >{{ $t('public_button_next') }}</el-button
+          >
           <div v-else-if="activeStep === steps.length" class="ml-2">
             <div v-if="selected.chargeProvider === 'FreeTier'">
               <el-button type="primary" :loading="submitOnlineLoading" @click="submit()">{{
