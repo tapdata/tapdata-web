@@ -1027,7 +1027,7 @@ export default {
             id: it.id,
             field_name: it.field_name,
             originalDataType: it.data_type,
-            comment: ''
+            comment: it.comment
           })
         }) || []
       if (!this.form.id) {
