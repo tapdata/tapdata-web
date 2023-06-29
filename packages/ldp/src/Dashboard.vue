@@ -1,5 +1,5 @@
 <template>
-  <div class="swim-lane flex flex-column h-100">
+  <div class="swim-lane flex flex-column h-100" @click.stop.prevent="handleQuit">
     <div class="page-header-title flex align-center position-relative">
       <span>{{ $t('page_title_data_console') }}</span>
       <ElTooltip
