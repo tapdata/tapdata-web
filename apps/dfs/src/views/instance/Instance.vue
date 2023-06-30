@@ -513,7 +513,7 @@
             </template>
             <template #operation="{ row }">
               <ElButton
-                v-if="row.scope === 'Private' && row.scope !== 'deploymentType'"
+                v-if="row.scope === 'Private' && row.deploymentType !== 'Local'"
                 size="mini"
                 type="text"
                 @click="handleCreateIps(row)"
@@ -717,7 +717,7 @@ export default {
         },
         {
           label: i18n.t('dfs_instance_instance_bushufangshi'),
-          prop: 'deploymentType'
+          prop: 'deploymentTypeLabel'
         },
         {
           label: i18n.t('agent_status'),
@@ -864,8 +864,11 @@ export default {
             item.expiredTimeLabel = periodEnd ? dayjs(periodEnd).format('YY-MM-DD  HH:mm:ss') : '-'
             item.scopeLabel = this.scopeMap[item.scope]
             item.specLabel = getSpec(item.spec) || '-'
+            item.providerName = item.providerName || '-'
+            item.regionName = item.regionName || '-'
+            item.serviceProvider = item.serviceProvider || '-'
             item.storageSize = item.spec?.storageSize ? item.spec?.storageSize + 'GB' : '-'
-            item.deploymentType = this.agentTypeMap[item.deploymentType]
+            item.deploymentTypeLabel = this.agentTypeMap[item.deploymentType]
             return item
           })
         }
