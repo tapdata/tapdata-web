@@ -77,7 +77,7 @@
                   </template>
                   <template #operation="{ row }">
                     <ElButton
-                      :disabled="disableUnsubscribe(row)"
+                      :disabled="disableUnsubscribe(row) || ['incomplete'].includes(item.status)"
                       type="text"
                       @click="openUnsubscribe(item, row.productType)"
                       >{{ $t('public_button_unsubscribe') }}</ElButton
@@ -438,7 +438,7 @@ export default {
     disableUnsubscribe(row) {
       if (row.productType === 'Engine') {
         if (row.agentType === 'Cloud') {
-          return !['Running', 'Stopped', 'Error'].includes(row.status)
+          return !['Running', 'Approving', 'Stopped', 'Error'].includes(row.status)
         } else {
           return !['Running', 'Creating', 'Stopped', 'Error'].includes(row.status)
         }

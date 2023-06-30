@@ -928,7 +928,7 @@ export default {
           let list = data.items || []
           this.list = list.map(item => {
             // item.status = item.status === 'Running' ? 'Running' : item.status === 'Stopping' ? 'Stopping' : 'Offline'
-            item.deployDisable = item.tmInfo.pingTime || false
+            item.deployDisable = item?.tmInfo?.pingTime || false
             const { subscribeDto = {}, license = {}, chargeProvider } = item.orderInfo || {}
             const { startAt, endAt, periodUnit, subscribeType, paymentMethod } = subscribeDto
             item.chargeProvider = chargeProvider
