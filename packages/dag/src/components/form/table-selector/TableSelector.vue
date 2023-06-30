@@ -46,13 +46,19 @@
           <RecycleScroller class="selector-panel__scroller" :item-size="36" :buffer="50" :items="filteredData">
             <template #default="{ item }">
               <ElCheckbox class="selector-panel__item" :label="item" :key="item">
-                <OverflowTooltip :text="item" placement="right" :enterable="false">
+                <OverflowTooltip
+                  :text="item + (getTableInfo(item).tableComment ? `(${getTableInfo(item).tableComment})` : '')"
+                  placement="right"
+                  :enterable="false"
+                >
                   <span>
+                    <VIcon v-if="!!getTableInfo(item).primaryKeyCounts" size="12" class="text-warning mr-1 mt-n1"
+                      >key</VIcon
+                    >
                     <span>{{ item }}</span>
                     <span v-if="getTableInfo(item).tableComment" class="font-color-sslight">{{
                       `(${getTableInfo(item).tableComment})`
                     }}</span>
-                    <VIcon v-if="!!getTableInfo(item).primaryKeyCounts" size="12" class="text-warning ml-1">key</VIcon>
                   </span>
                 </OverflowTooltip>
               </ElCheckbox>
@@ -142,11 +148,13 @@
                   :content="errorTables[item]"
                 >
                   <div :class="{ 'color-danger': errorTables[item] }">
+                    <VIcon v-if="!!getTableInfo(item).primaryKeyCounts" size="12" class="text-warning mr-1 mt-n1"
+                      >key</VIcon
+                    >
                     <slot name="right-item" :row="item">{{ item }}</slot>
                     <span v-if="getTableInfo(item).tableComment" class="font-color-sslight">{{
                       `(${getTableInfo(item).tableComment})`
                     }}</span>
-                    <VIcon v-if="!!getTableInfo(item).primaryKeyCounts" size="12" class="text-warning ml-1">key</VIcon>
                   </div>
                 </ElTooltip>
               </ElCheckbox>
