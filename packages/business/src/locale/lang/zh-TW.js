@@ -482,7 +482,7 @@ export default {
   packages_business_verification_edit: '編輯校驗',
   packages_business_verification_clickVerified: '點下方按鈕添加校驗表',
   packages_business_verification_ChoosePKField: '請選索引或主鍵字段',
-  packages_business_verification_indexField: '索引字段',
+  packages_business_verification_indexField: '關聯字段',
   packages_business_verification_BasicSettings: '基本設置',
   packages_business_verification_verifyCondition: '校驗條件',
   packages_business_verification_advanceVerify: '高级校验',
@@ -495,9 +495,9 @@ export default {
   packages_business_verification_fastCountTip:
     '快速count僅對源表和目標表的行數進行count校驗，速度極快，但是不會展示差異的具體字段內容。',
   packages_business_verification_contentVerifyTip:
-    '全表字段值校驗會對源表和目標表的全部字段進行逐行校驗，能查出所有字段的差異，但是速度慢。',
+    '表全字段值校驗會對源表和目標表的全部字段進行逐行校驗，能查出所有字段的差異，但是速度慢。',
   packages_business_verification_jointFieldTip:
-    '關聯鍵校驗只對源表和目標表的關聯字段的值進行比對校驗，速度快於全表字段值校驗模式。',
+    '關聯字段值校驗只對源表和目標表的關聯字段的值進行比對校驗，速度快於全表字段值校驗模式。',
   packages_business_verification_waiting: '待校驗',
   packages_business_verification_scheduling: '校驗啟動中',
   packages_business_verification_error: '校驗失敗',

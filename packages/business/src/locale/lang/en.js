@@ -505,7 +505,7 @@ export default {
   packages_business_verification_edit: 'Edit',
   packages_business_verification_clickVerified: 'Click the bottons below to add tables to be verified',
   packages_business_verification_ChoosePKField: 'Choose index /PK field',
-  packages_business_verification_indexField: 'Index Field',
+  packages_business_verification_indexField: 'Associated Fields',
   packages_business_verification_BasicSettings: 'Basic Settings',
   packages_business_verification_verifyCondition: 'Verify Conditions',
   packages_business_verification_clear: 'Clear',
