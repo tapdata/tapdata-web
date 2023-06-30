@@ -215,7 +215,7 @@ import { merge, debounce, cloneDeep } from 'lodash'
 import { connectionsApi, ldpApi, metadataDefinitionsApi } from '@tap/api'
 import { VirtualTree, IconButton, VExpandXTransition } from '@tap/component'
 import { uuid, generateId } from '@tap/shared'
-import { makeDragNodeImage, TASK_SETTINGS, DatabaseIcon } from '@tap/business'
+import { makeDragNodeImage, TASK_SETTINGS, DatabaseIcon, makeStatusAndDisabled } from '@tap/business'
 import commonMix from './mixins/common'
 
 export default {
@@ -278,7 +278,8 @@ export default {
         desc: '',
         visible: false
       },
-      checkCanStartIng: false
+      checkCanStartIng: false,
+      startedTags: []
     }
   },
 
@@ -334,6 +335,7 @@ export default {
         this.expandedKeys.forEach(id => {
           this.updateObject(id)
         })
+        this.loadTask()
       }, 5000)
     },
 
@@ -378,8 +380,9 @@ export default {
           actions.push(
             <IconButton
               sm
+              disabled={node.loading}
               onClick={() => {
-                this.startTagTask(data)
+                this.startTagTask(data, node)
               }}
             >
               play-circle
@@ -753,10 +756,10 @@ export default {
       }
     },
 
-    async handleNodeExpand(data, node) {
+    async handleNodeExpand(data, node, forceLoad) {
       this.setExpand(data.id, true)
       // 十秒内加载过资源，不再继续加载
-      if (node.loadTime && Date.now() - node.loadTime < 10000) return
+      if (!forceLoad && node.loadTime && Date.now() - node.loadTime < 10000) return
 
       node.loadTime = Date.now()
       node.loading = true
@@ -938,9 +941,39 @@ export default {
       if (!this.treeData.length) return
 
       const map = await ldpApi.getTaskByTag(this.treeData.map(item => item.id).join(','))
+      const newMap = {}
+      for (let tagId in map) {
+        let [task] = map[tagId]
+        if (task) {
+          task = makeStatusAndDisabled(task)
+          newMap[tagId] = {
+            status: task.status,
+            disabledData: task.disabledData
+          }
+        }
+      }
+      this.tag2Task = newMap
+      this.checkStartedTag()
     },
 
-    async startTagTask(tag) {
+    checkStartedTag() {
+      this.startedTags = this.startedTags.filter(tagId => {
+        const task = this.tag2Task[tagId]
+        const node = this.$refs.tree.getNode(tagId)
+        if (node && task && ['running', 'complete', 'stop', 'error'].includes(task.status)) {
+          this.handleNodeExpand(node.data, node, true)
+          return false
+        }
+        return true
+      })
+    },
+
+    async startTagTask(tag, node) {
+      if (!this.startedTags.includes(tag.id)) this.startedTags.push(tag.id)
+
+      node.loading = true
+      node.expanded = false
+      this.setExpand(tag.id, false)
       await ldpApi.batchStart(tag.id)
       this.$message.success(this.$t('public_message_operation_success'))
     },
