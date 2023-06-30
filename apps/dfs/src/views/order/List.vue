@@ -44,19 +44,19 @@
                   <ElButton v-if="['incomplete'].includes(item.status)" type="text" @click="handlePay(item)"
                     >支付</ElButton
                   >
-                  <el-divider direction="vertical"></el-divider>
-                  <ElButton
-                    type="text"
-                    v-if="
-                      item.subscribeItems &&
-                      item.subscribeItems.length > 1 &&
-                      ['active', 'past_due'].includes(item.status)
-                    "
-                    class="color-subscribe"
-                    @click="openUnsubscribe(item, 'all')"
-                  >
-                    一键退订
-                  </ElButton>
+                  <!--                  <el-divider direction="vertical"></el-divider>-->
+                  <!--                  <ElButton-->
+                  <!--                    type="text"-->
+                  <!--                    v-if="-->
+                  <!--                      item.subscribeItems &&-->
+                  <!--                      item.subscribeItems.length > 1 &&-->
+                  <!--                      ['active', 'past_due'].includes(item.status)-->
+                  <!--                    "-->
+                  <!--                    class="color-subscribe"-->
+                  <!--                    @click="openUnsubscribe(item, 'all')"-->
+                  <!--                  >-->
+                  <!--                    一键退订-->
+                  <!--                  </ElButton>-->
                 </div>
               </div>
               <div>
@@ -249,12 +249,12 @@ export default {
         {
           label: i18n.t('task_monitor_status'),
           slotName: 'statusLabel'
-        },
-        {
-          label: i18n.t('public_operation'),
-          prop: 'extendArray',
-          slotName: 'operation'
         }
+        // {
+        //   label: i18n.t('public_operation'),
+        //   prop: 'extendArray',
+        //   slotName: 'operation'
+        // }
       ],
       //订阅列表
       subscribeList: [],
