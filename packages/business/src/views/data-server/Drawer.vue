@@ -178,8 +178,8 @@
           <template v-else="isEdit">
             <div class="flex-1 mt-4" size="small">
               <el-radio-group v-model="form.pathAccessMethod" :disabled="!isEdit">
-                <el-radio label="default">{{ $t('packages_business_data_server_drawer_default_path') }}</el-radio>
                 <el-radio label="customize">{{ $t('packages_business_data_server_drawer_custom_path') }}</el-radio>
+                <el-radio label="default">{{ $t('packages_business_data_server_drawer_default_path') }}</el-radio>
               </el-radio-group>
             </div>
             <ElFormItem
@@ -516,7 +516,7 @@ export default {
       visible: false,
       data: {},
       form: {
-        pathAccessMethod: 'default',
+        pathAccessMethod: 'customize',
         apiVersion: 'v1',
         prefix: '',
         basePath: '',
@@ -648,7 +648,7 @@ export default {
       this.allFields = []
       this.workerStatus = ''
       this.form = {
-        pathAccessMethod: 'default',
+        pathAccessMethod: 'customize',
         apiVersion: 'v1',
         prefix: '',
         basePath: '',
@@ -660,7 +660,7 @@ export default {
       this.formatData(formData || {})
 
       // 若为新建时，则默认值为 ‘默认查询(defaultApi)’ 的值
-      this.form.pathAccessMethod = this.data?.pathAccessMethod || 'default'
+      this.form.pathAccessMethod = this.data?.pathAccessMethod || 'customize'
       this.getDatabaseTypes()
       let { connectionId, tableName } = this.form
       if (connectionId) {

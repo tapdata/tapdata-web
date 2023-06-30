@@ -45,10 +45,8 @@ export default {
   packages_business_connection_form_database_owner_tip:
     'Comma-separated list of expressions, use * to represent any character of any length',
   packages_business_connection_form_source_and_target_tip: `This data connection can be used as source and target at the same time in ${process.env.VUE_APP_PAGE_TITLE}`,
-  packages_business_connection_form_source_tip:
-    'Please note that this data connection is only suitable for use as a source in Tapdata, and cannot be used as a target.',
-  packages_business_connection_form_target_tip:
-    'Please note that this data connection is only suitable for use as a target in Tapdata, and cannot be used as a source.',
+  packages_business_connection_form_source_tip: `Please note that this data connection is only suitable for use as a source in ${process.env.VUE_APP_PAGE_TITLE}, and cannot be used as a target.`,
+  packages_business_connection_form_target_tip: `Please note that this data connection is only suitable for use as a target in ${process.env.VUE_APP_PAGE_TITLE}, and cannot be used as a source.`,
   packages_business_connection_form_shared_mining: 'CDC Log Caching',
   packages_business_connection_form_shared_mining_tip:
     'Through CDC log caching, incremental logs can be efficiently mined without the need to repeatedly initiate the log collection process for multiple incremental tasks. This approach significantly reduces the consumption and waste of source library resources.',
