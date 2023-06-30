@@ -517,7 +517,7 @@
                 size="mini"
                 type="text"
                 @click="handleCreateIps(row)"
-                >添加白名单</ElButton
+                >{{$t('dfs_instance_instance_tianjiabaimingdan')}}</ElButton
               >
               <ElButton class="mr-2" type="text" :disabled="disableRenew(row)" @click="openRenew(row)">{{
                 $t('public_button_renew')
@@ -532,15 +532,15 @@
           </VTable>
         </section>
         <!-- 新建白名单 -->
-        <el-dialog :visible.sync="showCreateIps" title="添加白名单">
+        <el-dialog :visible.sync="showCreateIps" :title="$t('dfs_instance_instance_tianjiabaimingdan')">
           <el-form>
-            <el-form-item label="ip地址">
+            <el-form-item :label="$t('dfs_instance_instance_ipdizhi')">
               <el-input :required="true" v-model="ipAddress" placeholder="183.34.1.4,183.34.1.5"></el-input>
             </el-form-item>
           </el-form>
           <span slot="footer">
-            <el-button @click="showCreateIps = false">取消</el-button>
-            <el-button @click="addIps" type="primary">添加 </el-button>
+            <el-button @click="showCreateIps = false">{{$t('public_button_cancel')}}</el-button>
+            <el-button @click="addIps" type="primary">{{$t('field_mapping_field_mapping_dialog_tianJia')}}</el-button>
           </span>
         </el-dialog>
       </el-tab-pane>
@@ -729,7 +729,7 @@ export default {
           prop: 'expiredTimeLabel'
         },
         {
-          label: '白名单IP',
+          label: i18n.t('dfs_instance_instance_baimingdanIp'),
           slotName: 'whiteList'
         },
         {
@@ -937,7 +937,7 @@ export default {
             item.chargeProvider = chargeProvider
             item.specLabel = getSpec(item.spec) || '-'
             if (item.publicAgent) {
-              item.subscriptionMethodLabel = '共用实例'
+              item.subscriptionMethodLabel = i18n.t('dfs_instance_instance_gongyongshili')
             } else if (chargeProvider === 'Stripe') {
               item.subscriptionMethodLabel =
                 getPaymentMethod(
@@ -1324,7 +1324,7 @@ export default {
       if (ips.length > 0 && this.ipAddress && this.ipAddress !== '') {
         for (let i = 0; i < ips.length; i++) {
           if (!ipRegex.test(ips[i])) {
-            this.$message.error(ips[i] + '不合法IP')
+            this.$message.error(ips[i] + i18n.t('dfs_instance_instance_buhefaIp'))
             return
           }
         }

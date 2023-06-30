@@ -15,10 +15,12 @@
             <li class="sub-li mb-4" v-for="item in subscribeList" :key="item.id">
               <div class="sub-li-header flex justify-content-between">
                 <div>
-                  <span class="font-color-dark fw-sub mr-2">订阅编号: {{ item.id }}</span>
+                  <span class="font-color-dark fw-sub mr-2"
+                    >{{ $t('dfs_components_renew_dingyuebianhao') }}{{ item.id }}</span
+                  >
                   <el-divider direction="vertical"></el-divider>
                   <span class="font-color-dark fw-sub mr-2"
-                    ><span class="font-color-light">总金额:</span>
+                    ><span class="font-color-light">{{ $t('dfs_order_list_zongjine') }}</span>
                     {{ formatterPrice(item.currency, item.totalAmount) || 0 }}</span
                   >
                   <el-divider direction="vertical"></el-divider>
@@ -42,9 +44,9 @@
                     >{{ $t('public_button_renew') }}</ElButton
                   >
                   <el-divider direction="vertical"></el-divider>
-                  <ElButton v-if="['incomplete'].includes(item.status)" type="text" @click="handlePay(item)"
-                    >支付</ElButton
-                  >
+                  <ElButton v-if="['incomplete'].includes(item.status)" type="text" @click="handlePay(item)">{{
+                    $t('public_button_pay')
+                  }}</ElButton>
                   <!--                  <el-divider direction="vertical"></el-divider>-->
                   <!--                  <ElButton-->
                   <!--                    type="text"-->
@@ -139,7 +141,7 @@
       </el-tab-pane>
     </el-tabs>
 
-    <!--转账支付-->
+    <!--转账{{$t('public_button_pay')}}-->
     <transferDialog :visible.sync="showTransferDialogVisible" :price="pricePay"></transferDialog>
     <!--退订-->
     <Unsubscribe ref="UnsubscribeDetailDialog" @closeVisible="remoteMethod"></Unsubscribe>
@@ -220,7 +222,7 @@ export default {
       ],
       columns: [
         {
-          label: '订阅类型',
+          label: i18n.t('dfs_order_list_dingyueleixing'),
           prop: 'productType'
         },
         {
@@ -357,7 +359,7 @@ export default {
           ]
         },
         {
-          label: '订阅类型',
+          label: i18n.t('dfs_order_list_dingyueleixing'),
           key: 'productType',
           type: 'select-inner',
           items: [

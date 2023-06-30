@@ -1618,9 +1618,22 @@ export default {
   dfs_ticketing_system_list_qingxuanzexuanze2: 'Please select the data source',
   dfs_ticketing_system_list_xuanzerenwu: 'Select a task if your ticket is about a specific pipeline task',
   dfs_ticketing_system_list_xinjiangongdan: 'Create Ticket',
-
   dfs_router_index_gonggaoliebiao: 'Announcement List',
   dfs_agent_download_fastdownload_yincangwanzhengming: 'Hide command',
   dfs_agent_download_fastdownload_xianshiwanzhengming: 'Show command',
-  dfs_instance_createagent_mianfeitiyan: 'Free Trial'
+  dfs_instance_createagent_mianfeitiyan: 'Free Trial',
+
+  dfs_components_renew_shiliguige: 'Instance Specification',
+  dfs_components_renew_dingyuebianhao: 'Subscription Number',
+  dfs_components_renew_xudingjine: 'Renewal Amount',
+  dfs_components_renew_xudinghoudaoqi: 'Expiration time after renewal:',
+  dfs_components_renew_xudingshichang: 'Renewal Duration',
+  dfs_instance_instance_buhefaIp: 'Invalid IP',
+  dfs_instance_instance_gongyongshili: 'Public Agent',
+  dfs_instance_instance_baimingdanIp: 'Whitelist IP',
+  dfs_instance_instance_ipdizhi: 'IP Address',
+  dfs_instance_instance_tianjiabaimingdan: 'Add whiteList',
+  dfs_order_list_dingyueleixing: 'Subscription Type',
+  public_button_pay: 'Pay',
+  dfs_order_list_zongjine: 'Total Amount'
 }

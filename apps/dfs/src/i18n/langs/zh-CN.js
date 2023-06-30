@@ -1506,5 +1506,18 @@ export default {
   dfs_router_index_gonggaoliebiao: '公告列表',
   dfs_agent_download_fastdownload_yincangwanzhengming: '隐藏完整命令',
   dfs_agent_download_fastdownload_xianshiwanzhengming: '显示完整命令',
-  dfs_instance_createagent_mianfeitiyan: '免费体验'
+  dfs_instance_createagent_mianfeitiyan: '免费体验',
+  dfs_components_renew_shiliguige: '实例规格',
+  dfs_components_renew_dingyuebianhao: '订阅编号',
+  dfs_components_renew_xudingjine: '续订金额',
+  dfs_components_renew_xudinghoudaoqi: '续订后到期时间：',
+  dfs_components_renew_xudingshichang: '续订时长',
+  dfs_instance_instance_buhefaIp: '无效IP',
+  dfs_instance_instance_gongyongshili: '共用实例',
+  dfs_instance_instance_baimingdanIp: '白名单IP',
+  dfs_instance_instance_ipdizhi: 'ip地址',
+  dfs_instance_instance_tianjiabaimingdan: '添加白名单',
+  dfs_order_list_dingyueleixing: '订阅类型',
+  public_button_pay: '支付',
+  dfs_order_list_zongjine: '总金额'
 }
