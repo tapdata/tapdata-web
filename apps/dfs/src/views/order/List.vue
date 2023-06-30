@@ -33,7 +33,7 @@
                 <div class="flex justify-content-center align-items-center">
                   <ElButton
                     :disabled="
-                      !['active'].includes(item.status) || item.totalAmount !== 0 || item.subscribeType !== 'recurring'
+                      !['active'].includes(item.status) || item.totalAmount === 0 || item.subscribeType === 'recurring'
                     "
                     class="mr-2"
                     type="text"
