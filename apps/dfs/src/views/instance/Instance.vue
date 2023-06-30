@@ -517,7 +517,7 @@
                 size="mini"
                 type="text"
                 @click="handleCreateIps(row)"
-                >{{$t('dfs_instance_instance_tianjiabaimingdan')}}</ElButton
+                >{{ $t('dfs_instance_instance_tianjiabaimingdan') }}</ElButton
               >
               <ElButton class="mr-2" type="text" :disabled="disableRenew(row)" @click="openRenew(row)">{{
                 $t('public_button_renew')
@@ -539,8 +539,8 @@
             </el-form-item>
           </el-form>
           <span slot="footer">
-            <el-button @click="showCreateIps = false">{{$t('public_button_cancel')}}</el-button>
-            <el-button @click="addIps" type="primary">{{$t('field_mapping_field_mapping_dialog_tianJia')}}</el-button>
+            <el-button @click="showCreateIps = false">{{ $t('public_button_cancel') }}</el-button>
+            <el-button @click="addIps" type="primary">{{ $t('field_mapping_field_mapping_dialog_tianJia') }}</el-button>
           </span>
         </el-dialog>
       </el-tab-pane>
@@ -972,7 +972,7 @@ export default {
 
             item.paidType =
               chargeProvider === 'Aliyun' ? license.type : chargeProvider === 'Stripe' ? subscribeDto.type : ''
-            item.deployDisable = item.tmInfo.pingTime || false
+            item.deployDisable = item?.tmInfo?.pingTime || false
             if (!item.tmInfo) {
               item.tmInfo = {}
             }
