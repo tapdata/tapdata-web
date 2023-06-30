@@ -52,7 +52,7 @@
         <span>{{ statsInfo.errorMsg }}</span>
       </div>
       <template v-if="statsInfo.result !== 'passed'">
-        <div class="flex justify-content-between pt-4 px-4">
+        <div v-if="inspectMethod !== 'jointField'" class="flex justify-content-between pt-4 px-4">
           <ElRadioGroup v-model="showType">
             <ElRadio label="diff">{{ $t('packages_business_verification_details_jinxianshichayi') }}</ElRadio>
             <ElRadio label="all">{{ $t('packages_business_verification_details_xianshiwanzhengzi') }}</ElRadio>
@@ -81,7 +81,8 @@
             >
               <div v-for="(sItem, sIndex) in getDetailsList(item.details)" :key="sIndex" class="flex py-1">
                 <div class="w-50 flex align-center">
-                  <span :class="['row__label', sItem.source.isSortColumn ? 'fw-bolder' : 'disable-color']"
+                  <span
+                    :class="['row__label', sItem.source.isSortColumn ? 'font-color-light fw-bolder' : 'disable-color']"
                     >{{ sItem.source.key }}:</span
                   >
                   <span class="row__value ml-4 font-color-dark" :class="{ 'color-danger': sItem.red }">{{
@@ -89,7 +90,8 @@
                   }}</span>
                 </div>
                 <div class="w-50 flex align-center">
-                  <span :class="['row__label', sItem.target.isSortColumn ? 'fw-bolder' : 'disable-color']"
+                  <span
+                    :class="['row__label', sItem.target.isSortColumn ? 'font-color-light fw-bolder' : 'disable-color']"
                     >{{ sItem.target.key }}:</span
                   >
                   <span class="row__value ml-4 font-color-dark" :class="{ 'color-danger': sItem.red }">{{
@@ -387,7 +389,8 @@ export default {
       resultList: [],
       showType: 'diff',
       sourceSortColumn: [], // 源索引字段
-      targetSortColumn: [] // 目标索引字段
+      targetSortColumn: [], // 目标索引字段
+      inspectMethod: ''
     }
   },
   computed: {
@@ -399,34 +402,45 @@ export default {
     fetch(current) {
       // this.loading = true
       this.remoteMethod({ current, size: this.page.size })
-        .then(({ statsInfo = {}, resultList, total, showAdvancedVerification, sourceSortColumn, targetSortColumn }) => {
-          if (statsInfo?.result === 'failed') {
-            let countResultText = ''
-            let contentResultText = ''
-            let diffCount = statsInfo.target_total - statsInfo.source_total
-            let diffCountNum = Math.abs(diffCount)
-            if (diffCount > 0) {
-              countResultText = this.$t('packages_business_verification_result_count_more', [diffCountNum])
-            }
-            if (diffCount < 0) {
-              countResultText = this.$t('packages_business_verification_result_count_less', [diffCountNum])
-            }
-            if (this.type !== 'row_count') {
-              let diffContentNum = statsInfo.source_only + statsInfo.target_only + statsInfo.row_failed
-              if (diffContentNum !== 0) {
-                contentResultText = this.$t('packages_business_verification_result_content_diff', [diffContentNum])
+        .then(
+          ({
+            statsInfo = {},
+            resultList,
+            total,
+            showAdvancedVerification,
+            sourceSortColumn,
+            targetSortColumn,
+            inspectMethod
+          }) => {
+            if (statsInfo?.result === 'failed') {
+              let countResultText = ''
+              let contentResultText = ''
+              let diffCount = statsInfo.target_total - statsInfo.source_total
+              let diffCountNum = Math.abs(diffCount)
+              if (diffCount > 0) {
+                countResultText = this.$t('packages_business_verification_result_count_more', [diffCountNum])
               }
+              if (diffCount < 0) {
+                countResultText = this.$t('packages_business_verification_result_count_less', [diffCountNum])
+              }
+              if (this.type !== 'row_count') {
+                let diffContentNum = statsInfo.source_only + statsInfo.target_only + statsInfo.row_failed
+                if (diffContentNum !== 0) {
+                  contentResultText = this.$t('packages_business_verification_result_content_diff', [diffContentNum])
+                }
+              }
+              statsInfo.countResultText = countResultText
+              statsInfo.contentResultText = contentResultText
             }
-            statsInfo.countResultText = countResultText
-            statsInfo.contentResultText = contentResultText
+            this.statsInfo = statsInfo
+            this.resultList = resultList
+            this.page.total = total
+            this.showAdvancedVerification = showAdvancedVerification
+            this.sourceSortColumn = sourceSortColumn
+            this.targetSortColumn = targetSortColumn
+            this.inspectMethod = inspectMethod
           }
-          this.statsInfo = statsInfo
-          this.resultList = resultList
-          this.page.total = total
-          this.showAdvancedVerification = showAdvancedVerification
-          this.sourceSortColumn = sourceSortColumn
-          this.targetSortColumn = targetSortColumn
-        })
+        )
         .finally(() => {
           this.loading = false
         })

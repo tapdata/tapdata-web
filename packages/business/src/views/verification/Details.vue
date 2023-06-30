@@ -192,6 +192,7 @@ export default {
         let showAdvancedVerification = task.showAdvancedVerification
         const sourceSortColumn = task.source?.sortColumn?.split(',')
         const targetSortColumn = task.target?.sortColumn?.split(',')
+        const inspectMethod = this.inspect.inspectMethod
         let statsInfo = this.tableData.find(item => item.taskId === this.taskId)
         let where = {
           taskId,
@@ -223,7 +224,8 @@ export default {
               statsInfo, // 结果信息
               resultList, // 结果详情
               sourceSortColumn, // 源索引字段
-              targetSortColumn // 目标索引字段
+              targetSortColumn, // 目标索引字段
+              inspectMethod
             }
           })
       }
