@@ -165,48 +165,60 @@
           <div class="mt-4 fs-7 data-server-panel__title">
             {{ $t('packages_business_data_server_drawer_aPI_path_Settings') }}
           </div>
-          <div class="flex-1 mt-4" size="small">
-            <el-radio-group v-model="form.pathAccessMethod" :disabled="!isEdit">
-              <el-radio label="default">{{ $t('packages_business_data_server_drawer_default_path') }}</el-radio>
-              <el-radio label="customize">{{ $t('packages_business_data_server_drawer_custom_path') }}</el-radio>
-            </el-radio-group>
-          </div>
-          <ElFormItem
-            class="flex-1 mt-4"
-            size="small"
-            :label="$t('public_version')"
-            prop="apiVersion"
-            :rules="rules.apiVersion"
-            v-if="form.pathAccessMethod === 'customize'"
-          >
-            <ElInput v-model="form.apiVersion" :disabled="!isEdit"></ElInput>
-          </ElFormItem>
-          <ElFormItem
-            class="flex-1 mt-4"
-            size="small"
-            :label="$t('packages_business_data_server_drawer_prefix')"
-            prop="prefix"
-            v-if="form.pathAccessMethod === 'customize'"
-          >
-            <ElInput v-model="form.prefix" :disabled="!isEdit"></ElInput>
-          </ElFormItem>
-          <ElFormItem
-            class="flex-1 mt-4"
-            size="small"
-            :label="$t('packages_business_data_server_drawer_base_path')"
-            prop="basePath"
-            v-if="form.pathAccessMethod === 'customize'"
-          >
-            <ElInput v-model="form.basePath" :disabled="!isEdit"></ElInput>
-          </ElFormItem>
-          <ElFormItem
-            class="flex-1 mt-4"
-            size="small"
-            :label="$t('packages_business_data_server_drawer_path')"
-            v-if="form.pathAccessMethod === 'customize'"
-          >
-            <ElInput v-model="customizePath" :disabled="true"></ElInput>
-          </ElFormItem>
+
+          <ul v-if="data.path && !isEdit" class="data-server-path">
+            <li v-for="(url, method) in urls" :key="method" class="data-server-path__item">
+              <div class="data-server-path__method" :class="'method--' + method">
+                {{ method }}
+              </div>
+              <div class="data-server-path__value line-height">{{ url }}</div>
+            </li>
+          </ul>
+
+          <template v-else="isEdit">
+            <div class="flex-1 mt-4" size="small">
+              <el-radio-group v-model="form.pathAccessMethod" :disabled="!isEdit">
+                <el-radio label="default">{{ $t('packages_business_data_server_drawer_default_path') }}</el-radio>
+                <el-radio label="customize">{{ $t('packages_business_data_server_drawer_custom_path') }}</el-radio>
+              </el-radio-group>
+            </div>
+            <ElFormItem
+              class="flex-1 mt-4"
+              size="small"
+              :label="$t('public_version')"
+              prop="apiVersion"
+              :rules="rules.apiVersion"
+              v-if="form.pathAccessMethod === 'customize'"
+            >
+              <ElInput v-model="form.apiVersion" :disabled="!isEdit"></ElInput>
+            </ElFormItem>
+            <ElFormItem
+              class="flex-1 mt-4"
+              size="small"
+              :label="$t('packages_business_data_server_drawer_prefix')"
+              prop="prefix"
+              v-if="form.pathAccessMethod === 'customize'"
+            >
+              <ElInput v-model="form.prefix" :disabled="!isEdit"></ElInput>
+            </ElFormItem>
+            <ElFormItem
+              class="flex-1 mt-4"
+              size="small"
+              :label="$t('packages_business_data_server_drawer_base_path')"
+              prop="basePath"
+              v-if="form.pathAccessMethod === 'customize'"
+            >
+              <ElInput v-model="form.basePath" :disabled="!isEdit"></ElInput>
+            </ElFormItem>
+            <ElFormItem
+              class="flex-1 mt-4"
+              size="small"
+              :label="$t('packages_business_data_server_drawer_path')"
+              v-if="form.pathAccessMethod === 'customize'"
+            >
+              <ElInput v-model="customizePath" :disabled="true"></ElInput>
+            </ElFormItem>
+          </template>
         </section>
 
         <!-- 輸入参数 -->
@@ -394,27 +406,6 @@
             <ElTableColumn :label="$t('public_description')" prop="comment" min-width="50"></ElTableColumn>
           </ElTable>
         </template>
-        <!--服务访问 -->
-        <template v-if="tab === 'form'">
-          <div class="data-server-panel__title">
-            <span>{{ $t('packages_business_data_server_drawer_fuwufangwen') }}</span>
-            <ElButton
-              v-if="this.data.id && form.pathAccessMethod === 'default' && data.status !== 'active'"
-              type="primary"
-              size="mini"
-              @click="generate"
-              >{{ $t('public_button_generate') }}</ElButton
-            >
-          </div>
-          <ul v-if="data.path" class="data-server-path">
-            <li v-for="(url, method) in urls" :key="method" class="data-server-path__item">
-              <div class="data-server-path__method" :class="'method--' + method">
-                {{ method }}
-              </div>
-              <div class="data-server-path__value line-height">{{ url }}</div>
-            </li>
-          </ul>
-        </template>
 
         <!-- {{$t('packages_business_data_server_drawer_diaoyongfangshi')}} -->
         <template v-if="tab === 'debug'">
@@ -560,7 +551,14 @@ export default {
           }
         ],
         param: [{ required: true, validator: validateParams, trigger: ['blur', 'change'] }],
-        basePath: [{ required: true, validator: validateBasePath, trigger: ['blur', 'change'] }],
+        basePath: [
+          {
+            required: true,
+            message: i18n.t('public_input_placeholder') + i18n.t('packages_business_data_server_drawer_base_path'),
+            trigger: ['blur', 'change']
+          },
+          { validator: validateBasePath, trigger: ['blur', 'change'] }
+        ],
         prefix: [{ required: false, validator: validatePrefix, trigger: ['blur', 'change'] }],
         apiVersion: [{ required: true, validator: validateBasePath, trigger: ['blur', 'change'] }],
         appValue: [
@@ -807,7 +805,8 @@ export default {
     },
     // 切换到编辑状态
     edit() {
-      this.form.status = 'generating'
+      this.form.status = 'pending'
+      this.form.basePath = uid(11, 'a')
       this.isEdit = true
       this.$nextTick(() => {
         this.data.fields.forEach(f => {

@@ -126,47 +126,6 @@ export class Database extends NodeType {
                   }
                 },
                 properties: {
-                  enableDDL: {
-                    title: i18n.t('packages_dag_nodes_table_ddLshijian'),
-                    type: 'boolean',
-                    'x-decorator': 'FormItem',
-                    'x-decorator-props': {
-                      // addonAfter: '开启后任务将会自动采集选中的源端DDL事件',
-                      tooltip: i18n.t('packages_dag_nodes_database_kaiqihourenwu'),
-                      feedbackLayout: 'none'
-                      // wrapperStyle: {
-                      //   width: 'auto'
-                      // }
-                    },
-                    'x-component': 'Switch',
-                    'x-reactions': [
-                      {
-                        target: 'disabledEvents',
-                        fulfill: {
-                          state: {
-                            display: '{{$self.value ? "visible" :"hidden"}}'
-                          }
-                        }
-                      },
-                      {
-                        when: `{{!$values.attrs.capabilities.filter(item => item.type === 10).length}}`,
-                        fulfill: {
-                          state: {
-                            disabled: true,
-                            description: `{{$values.databaseType + '${i18n.t(
-                              'packages_dag_nodes_database_value_zanbuzhiciddl'
-                            )}'}}`
-                          }
-                        }
-                      }
-                    ]
-                  },
-
-                  disabledEvents: {
-                    type: 'array',
-                    'x-component': 'DdlEventCheckbox'
-                  },
-
                   migrateTableSelectType: {
                     title: i18n.t('packages_dag_nodes_database_xuanzebiao'),
                     type: 'string',
@@ -279,184 +238,6 @@ export class Database extends NodeType {
                         }
                       }
                     }
-                  },
-
-                  readBatchSize: {
-                    title: i18n.t('packages_dag_nodes_database_piliangduqutiao'), //增量批次读取条数
-                    type: 'string',
-                    'x-decorator': 'FormItem',
-                    'x-component': 'InputNumber',
-                    'x-decorator-props': {
-                      tooltip: i18n.t('packages_dag_nodes_database_quanliangmeipici')
-                    },
-                    'x-component-props': {
-                      min: 1,
-                      max: 100000
-                    },
-                    default: 100,
-                    'x-reactions': {
-                      fulfill: {
-                        state: {
-                          display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
-                        }
-                      }
-                    }
-                  },
-
-                  readPartitionOptions: {
-                    type: 'object',
-                    'x-decorator': 'FormItem',
-                    properties: {
-                      enable: {
-                        type: 'boolean',
-                        default: false,
-                        'x-decorator': 'IconLabel',
-                        'x-decorator-props': {
-                          title: i18n.t('packages_dag_nodes_database_quanliangduandianxu'),
-                          iconSize: 30,
-                          tooltip: i18n.t('packages_dag_nodes_database_quanliangduandianshi')
-                        },
-                        'x-component': 'Switch',
-                        'x-reactions': {
-                          fulfill: {
-                            state: {
-                              display:
-                                '{{$values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") ? "visible" :"hidden"}}'
-                            }
-                          }
-                        }
-                      },
-                      splitType: {
-                        title: i18n.t('packages_dag_nodes_database_fenpianfangshi'),
-                        type: 'number',
-                        default: 10,
-                        enum: [
-                          {
-                            label: i18n.t('packages_dag_nodes_database_jiyumin'),
-                            value: 10
-                          },
-                          {
-                            label: i18n.t('packages_dag_nodes_database_jiyucou'),
-                            value: 1
-                          }
-                        ],
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Select',
-                        'x-reactions': {
-                          dependencies: ['.enable'],
-                          fulfill: {
-                            run: `{{ $values.splitTyp !== 10 && $values.attrs.capabilities.some(t => t.id === 'count_by_partition_filter_function') && $self.setValue(1) }}`,
-                            state: {
-                              display: '{{$deps[0] ? "visible" :"hidden"}}'
-                            },
-                            schema: {
-                              'x-component-props.options': `{{options=[$self.dataSource[0]],$values.attrs.capabilities.some(item => item.id ==='count_by_partition_filter_function') && options.push($self.dataSource[1]),options}}`
-                            }
-                          }
-                        }
-                      },
-                      maxRecordInPartition: {
-                        title: i18n.t('packages_dag_nodes_database_fenpiandaxiao'),
-                        type: 'number',
-                        default: 200000,
-                        'x-decorator': 'FormItem',
-                        'x-component': 'InputNumber',
-                        'x-component-props': {
-                          min: 0
-                        },
-                        'x-reactions': {
-                          dependencies: ['.enable', '.splitType'],
-                          fulfill: {
-                            state: {
-                              display: '{{$deps[0] && $deps[1] === 1 ? "visible" :"hidden"}}'
-                            }
-                          }
-                        }
-                      },
-                      minMaxSplitPieces: {
-                        title: i18n.t('packages_dag_nodes_database_fenpianshuliang'),
-                        type: 'number',
-                        default: 100,
-                        'x-decorator': 'FormItem',
-                        'x-component': 'InputNumber',
-                        'x-component-props': {
-                          min: 0
-                        },
-                        'x-reactions': {
-                          dependencies: ['.enable', '.splitType'],
-                          fulfill: {
-                            state: {
-                              display: '{{$deps[0] && $deps[1] === 10 ? "visible" :"hidden"}}'
-                            }
-                          }
-                        }
-                      },
-                      partitionThreadCount: {
-                        title: i18n.t('packages_dag_nodes_database_fenpianbingfaxian'),
-                        type: 'number',
-                        default: 8,
-                        'x-decorator': 'FormItem',
-                        'x-component': 'InputNumber',
-                        'x-component-props': {
-                          min: 0
-                        },
-                        'x-reactions': {
-                          dependencies: ['.enable'],
-                          fulfill: {
-                            state: {
-                              display: '{{$deps[0] ? "visible" :"hidden"}}'
-                            }
-                          }
-                        }
-                      },
-                      partitionBatchCount: {
-                        title: i18n.t('packages_dag_nodes_database_fenpianyipidu'),
-                        type: 'number',
-                        default: 3000,
-                        'x-decorator': 'FormItem',
-                        'x-component': 'InputNumber',
-                        'x-component-props': {
-                          min: 0
-                        },
-                        'x-reactions': {
-                          dependencies: ['.enable'],
-                          fulfill: {
-                            state: {
-                              display: '{{$deps[0] ? "visible" :"hidden"}}'
-                            }
-                          }
-                        }
-                      },
-                      hasKVStorage: {
-                        type: 'boolean',
-                        title: i18n.t('packages_dag_nodes_database_fenpianpilianghezengliang'),
-                        default: true,
-                        'x-component': 'Switch',
-                        'x-decorator': 'FormItem',
-                        'x-decorator-props': {
-                          tooltip: i18n.t('packages_dag_nodes_database_guanbicigongnenghoufenpian')
-                        },
-                        'x-reactions': {
-                          dependencies: ['.enable'],
-                          fulfill: {
-                            state: {
-                              display: '{{$deps[0] ? "visible" :"hidden"}}'
-                            }
-                          }
-                        }
-                      }
-                    },
-                    'x-reactions': {
-                      fulfill: {
-                        state: {
-                          display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
-                        }
-                      }
-                    }
-                  },
-
-                  nodeConfig: {
-                    type: 'object'
                   }
                 }
               },
@@ -484,306 +265,513 @@ export class Database extends NodeType {
                       }
                     }
                   },
-                  collapse: {
-                    type: 'void',
-                    'x-decorator': 'FormItem',
-                    'x-decorator-props': {
-                      class: 'mt-2 mx-n4'
-                    },
-                    'x-component': 'FormCollapse',
-                    'x-component-props': {
-                      class: 'inset'
-                    },
-                    properties: {
-                      tab1: {
-                        type: 'void',
-                        'x-component': 'FormCollapse.Item',
-                        'x-component-props': {
-                          title: i18n.t('packages_dag_task_stetting_most_setting')
-                        },
-                        properties: {
-                          initialConcurrentSpace: {
-                            title: i18n.t('packages_dag_nodes_database_quanliangduoxiancheng'),
-                            'x-decorator': 'FormItem',
-                            'x-decorator-props': {
-                              layout: 'horizontal'
-                            },
-                            type: 'void',
-                            'x-component': 'Space',
-                            'x-component-props': {
-                              size: 'middle'
-                            },
-                            properties: {
-                              initialConcurrent: {
-                                type: 'boolean',
-                                default: true,
-                                'x-component': 'Switch',
-                                'x-reactions': {
-                                  target: '.initialConcurrentWriteNum',
-                                  fulfill: {
-                                    state: {
-                                      visible: '{{!!$self.value}}'
-                                    }
-                                  }
-                                }
-                              },
-                              initialConcurrentWriteNum: {
-                                type: 'number',
-                                default: 8,
-                                'x-component': 'InputNumber',
-                                'x-component-props': {
-                                  min: 0
-                                }
-                              }
-                            }
-                          },
-                          cdcConcurrentSpace: {
-                            type: 'void',
-                            title: i18n.t('packages_dag_nodes_database_zengliangduoxiancheng'),
-                            'x-decorator': 'FormItem',
-                            'x-decorator-props': {
-                              layout: 'horizontal'
-                            },
-                            'x-component': 'Space',
-                            'x-component-props': {
-                              size: 'middle'
-                            },
-                            properties: {
-                              cdcConcurrent: {
-                                type: 'boolean',
-                                'x-component': 'Switch',
-                                'x-reactions': {
-                                  target: '.cdcConcurrentWriteNum',
-                                  fulfill: {
-                                    state: {
-                                      visible: '{{!!$self.value}}'
-                                    }
-                                  }
-                                }
-                              },
-                              cdcConcurrentWriteNum: {
-                                type: 'number',
-                                default: 4,
-                                'x-component': 'InputNumber',
-                                'x-component-props': {
-                                  min: 0
-                                }
-                              }
-                            }
-                          },
-                          writeBachSpace: {
-                            type: 'void',
-                            'x-component': 'Space',
-                            'x-component-props': {
-                              size: 'middle'
-                            },
-                            'x-reactions': {
-                              fulfill: {
-                                state: {
-                                  display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
-                                }
-                              }
-                            },
-                            properties: {
-                              writeBatchSize: {
-                                title: i18n.t('packages_dag_nodes_database_piliangxierutiao'), //增量批次读取条数
-                                type: 'string',
-                                'x-decorator': 'FormItem',
-                                'x-component': 'InputNumber',
-                                'x-decorator-props': {
-                                  tooltip: i18n.t('packages_dag_nodes_database_quanliangmeipici2')
-                                },
-                                'x-component-props': {
-                                  min: 1,
-                                  max: 10000000
-                                },
-                                default: 1000
-                              },
-                              writeBatchWaitMs: {
-                                title: i18n.t('packages_dag_nodes_database_xierumeipizui'), //增量批次读取条数
-                                type: 'string',
-                                'x-decorator': 'FormItem',
-                                'x-component': 'InputNumber',
-                                'x-component-props': {
-                                  min: 1
-                                },
-                                default: 500
-                              }
-                            }
-                          },
-                          existDataProcessMode: {
-                            type: 'string',
-                            title: i18n.t('packages_dag_nodes_database_chongfuchulice'),
-                            default: 'keepData',
-                            enum: [
-                              {
-                                label: i18n.t('packages_dag_nodes_database_baochimubiaoduan'),
-                                value: 'keepData'
-                              },
-                              {
-                                label: i18n.t('packages_dag_nodes_database_qingchumubiaoduan'),
-                                value: 'dropTable',
-                                disabled: true
-                              },
-                              {
-                                label: i18n.t('packages_dag_nodes_targetdatabase_baochimubiaoduan'),
-                                value: 'removeData'
-                              }
-                            ],
-                            'x-decorator': 'FormItem',
-                            'x-component': 'Select',
-                            'x-reactions': {
-                              fulfill: {
-                                run: '{{$self.dataSource[1].disabled = $self.dataSource[2].disabled = $settings.type === "cdc"}}',
-                                state: {
-                                  description: `{{$settings.type === "cdc" ? '${i18n.t(
-                                    'packages_dag_nodes_database_setting_cdc_changjing_desc'
-                                  )}':''}}`
-                                },
-                                schema: {
-                                  // ⚠️👇表达式依赖enum的顺序
-                                  'x-component-props.options': `{{options=[$self.dataSource[0]],$values.attrs.capabilities.find(item => item.id ==='drop_table_function') && options.push($self.dataSource[1]),$values.attrs.capabilities.find(item => item.id ==='clear_table_function') && options.push($self.dataSource[2]),options}}`
-                                }
-                              }
-                            }
-                          },
-                          writeStrategyObject: {
-                            // title: '数据写入模式',
-                            type: 'void',
-                            'x-component-props': {
-                              layout: 'horizontal',
-                              colon: false,
-                              feedbackLayout: 'none'
-                            },
-                            properties: {
-                              writeStrategy: {
-                                title: i18n.t('packages_dag_nodes_mergetable_shujuxierumo'),
-                                type: 'string',
-                                default: 'updateOrInsert',
-                                'x-component': 'Radio.Group',
-                                'x-decorator': 'FormItem',
-                                'x-decorator-props': {
-                                  tooltip: i18n.t('packages_dag_nodes_database_tongjizhuijiaxie2')
-                                },
-                                enum: [
-                                  {
-                                    label: i18n.t('packages_dag_nodes_database_anshijianleixing'),
-                                    value: 'updateOrInsert'
-                                  },
-                                  {
-                                    label: i18n.t('packages_dag_nodes_database_tongjizhuijiaxie'),
-                                    value: 'appendWrite'
-                                  }
-                                ]
-                              }
-                            }
-                          },
-                          dmlPolicy: {
-                            title: i18n.t('packages_dag_nodes_database_shujuxieruce'),
-                            type: 'object',
-                            'x-decorator': 'FormItem',
-                            'x-decorator-props': {
-                              feedbackLayout: 'none'
-                            },
-                            'x-component': 'FormLayout',
-                            'x-component-props': {
-                              layout: 'horizontal',
-                              colon: false,
-                              feedbackLayout: 'none'
-                            },
-                            properties: {
-                              insertPolicy: {
-                                type: 'string',
-                                'x-component': 'Select',
-                                'x-decorator': 'FormItem',
-                                'x-decorator-props': {
-                                  className: 'font-color-dark mb-2',
-                                  wrapperWidth: 300,
-                                  addonBefore: i18n.t('packages_dag_nodes_database_charushijian')
-                                },
-                                default: 'update_on_exists',
-                                enum: [
-                                  {
-                                    label: i18n.t('packages_dag_nodes_targetdatabase_mubiaocunzaishi'),
-                                    value: 'update_on_exists'
-                                  },
-                                  {
-                                    label: i18n.t('packages_dag_nodes_database_mubiaocunzaishi'),
-                                    value: 'ignore_on_exists'
-                                  }
-                                ]
-                              },
-                              updatePolicy: {
-                                type: 'string',
-                                'x-component': 'Select',
-                                'x-decorator': 'FormItem',
-                                'x-decorator-props': {
-                                  className: 'font-color-dark mb-2',
-                                  wrapperWidth: 300,
-                                  addonBefore: i18n.t('packages_dag_nodes_database_gengxinshijian')
-                                },
-                                default: 'ignore_on_nonexists',
-                                enum: [
-                                  {
-                                    label: i18n.t('packages_dag_nodes_database_bucunzaishidiu'),
-                                    value: 'ignore_on_nonexists'
-                                  },
-                                  {
-                                    label: i18n.t('packages_dag_nodes_database_bucunzaishicha'),
-                                    value: 'insert_on_nonexists'
-                                  }
-                                ]
-                              },
-                              deletePolicy: {
-                                type: 'void',
-                                'x-decorator': 'FormItem',
-                                'x-decorator-props': {
-                                  className: 'font-color-dark',
-                                  wrapperWidth: 300,
-                                  addonBefore: i18n.t('packages_dag_nodes_database_shanchushijian')
-                                },
-                                'x-component': 'Tag',
-                                'x-content': i18n.t('packages_dag_nodes_database_bucunzaishidiu'),
-                                'x-component-props': {
-                                  type: 'info',
-                                  effect: 'light'
-                                }
-                              }
-                            },
-                            'x-reactions': {
-                              dependencies: ['writeStrategy'],
-                              fulfill: {
-                                state: {
-                                  display: '{{$deps[0] === "appendWrite" ? "hidden":"visible"}}'
-                                }
-                              }
-                            }
-                          },
-                          ddlEvents: {
-                            type: 'void',
-                            title: i18n.t('packages_dag_nodes_database_ddLshijian'),
-                            'x-decorator': 'FormItem',
-                            'x-decorator-props': {
-                              tooltip: i18n.t('packages_dag_nodes_database_dangqianjiedianzhi'),
-                              feedbackLayout: 'none'
-                            },
-                            'x-component': 'DdlEventList',
-                            'x-component-props': {
-                              findParentNodes: '{{findParentNodes}}'
-                            }
-                          },
-                          nodeConfig: {
-                            type: 'object'
-                          }
-                        }
-                      }
-                    }
-                  },
 
                   'attrs.capabilities': {
                     type: 'array',
                     'x-display': 'hidden',
                     'x-reactions': '{{useDmlPolicy}}'
+                  }
+                }
+              }
+            }
+          },
+          advancedTab: {
+            type: 'void',
+            'x-component': 'FormTab.TabPane',
+            'x-component-props': {
+              label: i18n.t('public_advanced_settings')
+            },
+            properties: {
+              sourceCollapse: {
+                type: 'void',
+                'x-component': 'FormCollapse',
+                'x-component-props': {
+                  class: 'advanced-collapse'
+                },
+                'x-reactions': {
+                  dependencies: ['$inputs'],
+                  fulfill: {
+                    state: {
+                      display:
+                        '{{(!$deps[0].length && $values.attrs.connectionType.includes("source")) ? "visible":"hidden"}}'
+                    }
+                  }
+                },
+                properties: {
+                  tab1: {
+                    type: 'void',
+                    'x-component': 'FormCollapse.Item',
+                    'x-component-props': {
+                      title: 'DDL同步配置'
+                    },
+                    properties: {
+                      enableDDL: {
+                        title: i18n.t('packages_dag_nodes_table_ddLshijian'),
+                        type: 'boolean',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          // addonAfter: '开启后任务将会自动采集选中的源端DDL事件',
+                          tooltip: i18n.t('packages_dag_nodes_database_kaiqihourenwu'),
+                          feedbackLayout: 'none'
+                          // wrapperStyle: {
+                          //   width: 'auto'
+                          // }
+                        },
+                        'x-component': 'Switch',
+                        'x-reactions': [
+                          {
+                            target: 'disabledEvents',
+                            fulfill: {
+                              state: {
+                                display: '{{$self.value ? "visible" :"hidden"}}'
+                              }
+                            }
+                          },
+                          {
+                            when: `{{!$values.attrs.capabilities.filter(item => item.type === 10).length}}`,
+                            fulfill: {
+                              state: {
+                                disabled: true,
+                                description: `{{$values.databaseType + '${i18n.t(
+                                  'packages_dag_nodes_database_value_zanbuzhiciddl'
+                                )}'}}`
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      disabledEvents: {
+                        type: 'array',
+                        'x-component': 'DdlEventCheckbox'
+                      }
+                    }
+                  },
+                  tab2: {
+                    type: 'void',
+                    'x-component': 'FormCollapse.Item',
+                    'x-component-props': {
+                      title: '驱动读取配置'
+                    },
+                    'x-reactions': {
+                      fulfill: {
+                        state: {
+                          display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
+                        }
+                      }
+                    },
+                    properties: {
+                      readBatchSize: {
+                        title: i18n.t('packages_dag_nodes_database_piliangduqutiao'), //增量批次读取条数
+                        type: 'string',
+                        'x-decorator': 'FormItem',
+                        'x-component': 'InputNumber',
+                        'x-decorator-props': {
+                          tooltip: i18n.t('packages_dag_nodes_database_quanliangmeipici')
+                        },
+                        'x-component-props': {
+                          min: 1,
+                          max: 100000
+                        },
+                        default: 100,
+                        'x-reactions': {
+                          fulfill: {
+                            state: {
+                              display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  tab3: {
+                    type: 'void',
+                    'x-component': 'FormCollapse.Item',
+                    'x-component-props': {
+                      title: '断点续传配置'
+                    },
+                    'x-reactions': {
+                      fulfill: {
+                        state: {
+                          display:
+                            '{{$values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") && ($settings.type !== "cdc") ? "visible":"hidden"}}'
+                        }
+                      }
+                    },
+                    properties: {
+                      readPartitionOptions: {
+                        type: 'object',
+                        'x-decorator': 'FormItem',
+                        properties: {
+                          enable: {
+                            type: 'boolean',
+                            default: false,
+                            'x-decorator': 'IconLabel',
+                            'x-decorator-props': {
+                              title: i18n.t('packages_dag_nodes_database_quanliangduandianxu'),
+                              iconSize: 30,
+                              tooltip: i18n.t('packages_dag_nodes_database_quanliangduandianshi')
+                            },
+                            'x-component': 'Switch',
+                            'x-reactions': {
+                              fulfill: {
+                                state: {
+                                  display:
+                                    '{{$values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") ? "visible" :"hidden"}}'
+                                }
+                              }
+                            }
+                          },
+                          splitType: {
+                            title: i18n.t('packages_dag_nodes_database_fenpianfangshi'),
+                            type: 'number',
+                            default: 10,
+                            enum: [
+                              {
+                                label: i18n.t('packages_dag_nodes_database_jiyumin'),
+                                value: 10
+                              },
+                              {
+                                label: i18n.t('packages_dag_nodes_database_jiyucou'),
+                                value: 1
+                              }
+                            ],
+                            'x-decorator': 'FormItem',
+                            'x-component': 'Select',
+                            'x-reactions': {
+                              dependencies: ['.enable'],
+                              fulfill: {
+                                run: `{{ $values.splitTyp !== 10 && $values.attrs.capabilities.some(t => t.id === 'count_by_partition_filter_function') && $self.setValue(1) }}`,
+                                state: {
+                                  display: '{{$deps[0] ? "visible" :"hidden"}}'
+                                },
+                                schema: {
+                                  'x-component-props.options': `{{options=[$self.dataSource[0]],$values.attrs.capabilities.some(item => item.id ==='count_by_partition_filter_function') && options.push($self.dataSource[1]),options}}`
+                                }
+                              }
+                            }
+                          },
+                          maxRecordInPartition: {
+                            title: i18n.t('packages_dag_nodes_database_fenpiandaxiao'),
+                            type: 'number',
+                            default: 200000,
+                            'x-decorator': 'FormItem',
+                            'x-component': 'InputNumber',
+                            'x-component-props': {
+                              min: 0
+                            },
+                            'x-reactions': {
+                              dependencies: ['.enable', '.splitType'],
+                              fulfill: {
+                                state: {
+                                  display: '{{$deps[0] && $deps[1] === 1 ? "visible" :"hidden"}}'
+                                }
+                              }
+                            }
+                          },
+                          minMaxSplitPieces: {
+                            title: i18n.t('packages_dag_nodes_database_fenpianshuliang'),
+                            type: 'number',
+                            default: 100,
+                            'x-decorator': 'FormItem',
+                            'x-component': 'InputNumber',
+                            'x-component-props': {
+                              min: 0
+                            },
+                            'x-reactions': {
+                              dependencies: ['.enable', '.splitType'],
+                              fulfill: {
+                                state: {
+                                  display: '{{$deps[0] && $deps[1] === 10 ? "visible" :"hidden"}}'
+                                }
+                              }
+                            }
+                          },
+                          partitionThreadCount: {
+                            title: i18n.t('packages_dag_nodes_database_fenpianbingfaxian'),
+                            type: 'number',
+                            default: 8,
+                            'x-decorator': 'FormItem',
+                            'x-component': 'InputNumber',
+                            'x-component-props': {
+                              min: 0
+                            },
+                            'x-reactions': {
+                              dependencies: ['.enable'],
+                              fulfill: {
+                                state: {
+                                  display: '{{$deps[0] ? "visible" :"hidden"}}'
+                                }
+                              }
+                            }
+                          },
+                          partitionBatchCount: {
+                            title: i18n.t('packages_dag_nodes_database_fenpianyipidu'),
+                            type: 'number',
+                            default: 3000,
+                            'x-decorator': 'FormItem',
+                            'x-component': 'InputNumber',
+                            'x-component-props': {
+                              min: 0
+                            },
+                            'x-reactions': {
+                              dependencies: ['.enable'],
+                              fulfill: {
+                                state: {
+                                  display: '{{$deps[0] ? "visible" :"hidden"}}'
+                                }
+                              }
+                            }
+                          },
+                          hasKVStorage: {
+                            type: 'boolean',
+                            title: i18n.t('packages_dag_nodes_database_fenpianpilianghezengliang'),
+                            default: true,
+                            'x-component': 'Switch',
+                            'x-decorator': 'FormItem',
+                            'x-decorator-props': {
+                              tooltip: i18n.t('packages_dag_nodes_database_guanbicigongnenghoufenpian')
+                            },
+                            'x-reactions': {
+                              dependencies: ['.enable'],
+                              fulfill: {
+                                state: {
+                                  display: '{{$deps[0] ? "visible" :"hidden"}}'
+                                }
+                              }
+                            }
+                          }
+                        },
+                        'x-reactions': {
+                          fulfill: {
+                            state: {
+                              display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  tab6: {
+                    type: 'void',
+                    'x-component': 'FormCollapse.Item',
+                    'x-component-props': {
+                      title: '数据源专属配置'
+                    },
+                    'x-reactions': {
+                      fulfill: {
+                        state: {
+                          // display: '{{$hasPdkConfig($values.attrs.pdkHash) ? "visible":"hidden"}}',
+                          visible: '{{$hasPdkConfig($values.attrs.pdkHash)}}'
+                        }
+                      }
+                    },
+                    properties: {
+                      nodeConfig: {
+                        type: 'object'
+                      }
+                    }
+                  }
+                }
+              },
+              targetCollapse: {
+                type: 'void',
+                'x-component': 'FormCollapse',
+                'x-component-props': {
+                  class: 'advanced-collapse'
+                },
+                'x-reactions': {
+                  dependencies: ['$inputs'],
+                  fulfill: {
+                    state: {
+                      display:
+                        '{{$deps[0].length > 0 || $values.attrs.connectionType === "target" ? "visible":"hidden"}}'
+                    }
+                  }
+                },
+                properties: {
+                  tab1: {
+                    type: 'void',
+                    'x-component': 'FormCollapse.Item',
+                    'x-component-props': {
+                      title: i18n.t('packages_dag_nodes_database_ddLshijian')
+                    },
+                    properties: {
+                      ddlEvents: {
+                        type: 'void',
+                        // title: i18n.t('packages_dag_nodes_database_ddLshijian'),
+                        // 'x-decorator': 'FormItem',
+                        // 'x-decorator-props': {
+                        //   tooltip: i18n.t('packages_dag_nodes_database_dangqianjiedianzhi'),
+                        //   feedbackLayout: 'none'
+                        // },
+                        'x-component': 'DdlEventList',
+                        'x-component-props': {
+                          hideParent: true,
+                          findParentNodes: '{{findParentNodes}}'
+                        }
+                      }
+                    }
+                  },
+                  tab2: {
+                    type: 'void',
+                    'x-component': 'FormCollapse.Item',
+                    'x-component-props': {
+                      title: '数据写入配置'
+                    },
+                    properties: {
+                      writeStrategyObject: {
+                        // title: '数据写入模式',
+                        type: 'void',
+                        'x-component-props': {
+                          layout: 'horizontal',
+                          colon: false,
+                          feedbackLayout: 'none'
+                        },
+                        properties: {
+                          writeStrategy: {
+                            title: i18n.t('packages_dag_nodes_mergetable_shujuxierumo'),
+                            type: 'string',
+                            default: 'updateOrInsert',
+                            'x-component': 'Radio.Group',
+                            'x-decorator': 'FormItem',
+                            'x-decorator-props': {
+                              tooltip: i18n.t('packages_dag_nodes_database_tongjizhuijiaxie2')
+                            },
+                            enum: [
+                              {
+                                label: i18n.t('packages_dag_nodes_database_anshijianleixing'),
+                                value: 'updateOrInsert'
+                              },
+                              {
+                                label: i18n.t('packages_dag_nodes_database_tongjizhuijiaxie'),
+                                value: 'appendWrite'
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      dmlPolicy: {
+                        title: i18n.t('packages_dag_nodes_database_shujuxieruce'),
+                        type: 'object',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          feedbackLayout: 'none'
+                        },
+                        'x-component': 'FormLayout',
+                        'x-component-props': {
+                          layout: 'horizontal',
+                          colon: false,
+                          feedbackLayout: 'none'
+                        },
+                        properties: {
+                          insertPolicy: {
+                            type: 'string',
+                            'x-component': 'Select',
+                            'x-decorator': 'FormItem',
+                            'x-decorator-props': {
+                              className: 'font-color-dark mb-2',
+                              wrapperWidth: 300,
+                              addonBefore: i18n.t('packages_dag_nodes_database_charushijian')
+                            },
+                            default: 'update_on_exists',
+                            enum: [
+                              {
+                                label: i18n.t('packages_dag_nodes_targetdatabase_mubiaocunzaishi'),
+                                value: 'update_on_exists'
+                              },
+                              {
+                                label: i18n.t('packages_dag_nodes_database_mubiaocunzaishi'),
+                                value: 'ignore_on_exists'
+                              }
+                            ]
+                          },
+                          updatePolicy: {
+                            type: 'string',
+                            'x-component': 'Select',
+                            'x-decorator': 'FormItem',
+                            'x-decorator-props': {
+                              className: 'font-color-dark mb-2',
+                              wrapperWidth: 300,
+                              addonBefore: i18n.t('packages_dag_nodes_database_gengxinshijian')
+                            },
+                            default: 'ignore_on_nonexists',
+                            enum: [
+                              {
+                                label: i18n.t('packages_dag_nodes_database_bucunzaishidiu'),
+                                value: 'ignore_on_nonexists'
+                              },
+                              {
+                                label: i18n.t('packages_dag_nodes_database_bucunzaishicha'),
+                                value: 'insert_on_nonexists'
+                              }
+                            ]
+                          },
+                          deletePolicy: {
+                            type: 'void',
+                            'x-decorator': 'FormItem',
+                            'x-decorator-props': {
+                              className: 'font-color-dark',
+                              wrapperWidth: 300,
+                              addonBefore: i18n.t('packages_dag_nodes_database_shanchushijian')
+                            },
+                            'x-component': 'Tag',
+                            'x-content': i18n.t('packages_dag_nodes_database_bucunzaishidiu'),
+                            'x-component-props': {
+                              type: 'info',
+                              effect: 'light'
+                            }
+                          }
+                        },
+                        'x-reactions': {
+                          dependencies: ['writeStrategy'],
+                          fulfill: {
+                            state: {
+                              display: '{{$deps[0] === "appendWrite" ? "hidden":"visible"}}'
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  tab3: {
+                    type: 'void',
+                    'x-component': 'FormCollapse.Item',
+                    'x-component-props': {
+                      title: '数据源专属配置'
+                    },
+                    'x-reactions': {
+                      fulfill: {
+                        state: {
+                          // display: '{{$hasPdkConfig($values.attrs.pdkHash) ? "visible":"hidden"}}',
+                          visible: '{{$hasPdkConfig($values.attrs.pdkHash)}}'
+                        }
+                      }
+                    },
+                    properties: {
+                      nodeConfig: {
+                        type: 'object'
+                      }
+                    }
+                  },
+                  tab4: {
+                    type: 'void',
+                    'x-component': 'FormCollapse.Item',
+                    'x-component-props': {
+                      title: '数据源专属配置'
+                    },
+                    'x-reactions': {
+                      fulfill: {
+                        state: {
+                          // display: '{{$hasPdkConfig($values.attrs.pdkHash) ? "visible":"hidden"}}',
+                          visible: '{{$hasPdkConfig($values.attrs.pdkHash)}}'
+                        }
+                      }
+                    },
+                    properties: {
+                      nodeConfig: {
+                        type: 'object'
+                      }
+                    }
                   }
                 }
               }
