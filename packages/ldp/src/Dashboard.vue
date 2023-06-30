@@ -35,6 +35,8 @@
           :settings="settings"
           :directory="directoryMap[item.type]"
           :fdmConnection="fdmConnection"
+          :fdmNotExist="fdmNotExist"
+          :mdmNotExist="mdmNotExist"
           :mdmConnection="mdmConnection"
           :event-driver="eventDriver"
           :loadingDirectory="loadingDirectory"
@@ -122,7 +124,9 @@ export default {
       settings: null,
       directoryMap: {},
       fdmConnection: null,
+      fdmNotExist: false,
       mdmConnection: null,
+      mdmNotExist: false,
       loadingDirectory: true,
       eventDriver: new EventEmitter(),
       currentView: 'swimlane'
@@ -165,13 +169,13 @@ export default {
 
   watch: {
     async 'settings.mdmStorageConnectionId'(v) {
-      console.log('settings.mdmStorageConnectionId', v) // eslint-disable-line
       this.mdmConnection = await connectionsApi.get(v)
+      this.mdmNotExist = !this.mdmConnection
     },
 
     async 'settings.fdmStorageConnectionId'(v) {
-      console.log('settings.fdmStorageConnectionId', v) // eslint-disable-line
       this.fdmConnection = await connectionsApi.get(v)
+      this.fdmNotExist = !this.fdmConnection
     },
 
     currentView(type) {

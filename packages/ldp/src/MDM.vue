@@ -3,8 +3,8 @@
     <div class="list__title flex align-center px-4">
       <span class="fs-6">{{ $t('packages_business_data_console_mdm') }}</span>
       <div class="flex-grow-1"></div>
-      <IconButton @click="showDialog(directory, 'add')">folder-plus</IconButton>
-      <IconButton :class="{ active: enableSearch }" @click="toggleEnableSearch">search-outline</IconButton>
+      <IconButton :disabled="mdmNotExist" @click="showDialog(directory, 'add')">folder-plus</IconButton>
+      <IconButton :disabled="mdmNotExist" :class="{ active: enableSearch }" @click="toggleEnableSearch">search-outline</IconButton>
       <!--<ElDropdown trigger="click" @command="handleCommand">
         <IconButton class="ml-3">more</IconButton>
         <ElDropdownMenu slot="dropdown">
@@ -98,6 +98,12 @@
         :class="{ flex: allowDrop && !isDragSelf }"
       >
         Clone To MDM
+      </div>
+      <div
+        v-if="mdmNotExist"
+        class="drop-mask pe-auto flex justify-center align-center absolute-fill font-color-dark fs-6"
+      >
+        {{$t('packages_ldp_connection_expired')}}
       </div>
     </div>
 
@@ -195,6 +201,7 @@ export default {
     settings: Object,
     dragState: Object,
     mdmConnection: Object,
+    mdmNotExist: Boolean,
     eventDriver: Object,
     loadingDirectory: Boolean,
     mapCatalog: {
@@ -244,6 +251,7 @@ export default {
 
     allowDrop() {
       return (
+        !this.mdmNotExist &&
         this.dragState.isDragging &&
         ['SOURCE', 'FDM'].includes(this.dragState.from) &&
         this.dragState.draggingObjects[0]?.data.LDP_TYPE === 'table'
