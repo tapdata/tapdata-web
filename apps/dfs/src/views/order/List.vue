@@ -33,7 +33,7 @@
                 <div class="flex justify-content-center align-items-center">
                   <ElButton
                     :disabled="
-                      !['active'].includes(item.status) || item.totalAmount !== 0 || item.subscribeType !== 'recurring'
+                      !['active'].includes(item.status) || item.totalAmount === 0 || item.subscribeType === 'recurring'
                     "
                     class="mr-2"
                     type="text"
@@ -44,19 +44,19 @@
                   <ElButton v-if="['incomplete'].includes(item.status)" type="text" @click="handlePay(item)"
                     >支付</ElButton
                   >
-                  <el-divider direction="vertical"></el-divider>
-                  <ElButton
-                    type="text"
-                    v-if="
-                      item.subscribeItems &&
-                      item.subscribeItems.length > 1 &&
-                      ['active', 'past_due'].includes(item.status)
-                    "
-                    class="color-subscribe"
-                    @click="openUnsubscribe(item, 'all')"
-                  >
-                    一键退订
-                  </ElButton>
+                  <!--                  <el-divider direction="vertical"></el-divider>-->
+                  <!--                  <ElButton-->
+                  <!--                    type="text"-->
+                  <!--                    v-if="-->
+                  <!--                      item.subscribeItems &&-->
+                  <!--                      item.subscribeItems.length > 1 &&-->
+                  <!--                      ['active', 'past_due'].includes(item.status)-->
+                  <!--                    "-->
+                  <!--                    class="color-subscribe"-->
+                  <!--                    @click="openUnsubscribe(item, 'all')"-->
+                  <!--                  >-->
+                  <!--                    一键退订-->
+                  <!--                  </ElButton>-->
                 </div>
               </div>
               <div>
@@ -77,7 +77,7 @@
                   </template>
                   <template #operation="{ row }">
                     <ElButton
-                      :disabled="disableUnsubscribe(row)"
+                      :disabled="disableUnsubscribe(row) || ['incomplete'].includes(item.status)"
                       type="text"
                       @click="openUnsubscribe(item, row.productType)"
                       >{{ $t('public_button_unsubscribe') }}</ElButton
@@ -249,12 +249,12 @@ export default {
         {
           label: i18n.t('task_monitor_status'),
           slotName: 'statusLabel'
-        },
-        {
-          label: i18n.t('public_operation'),
-          prop: 'extendArray',
-          slotName: 'operation'
         }
+        // {
+        //   label: i18n.t('public_operation'),
+        //   prop: 'extendArray',
+        //   slotName: 'operation'
+        // }
       ],
       //订阅列表
       subscribeList: [],
@@ -438,7 +438,7 @@ export default {
     disableUnsubscribe(row) {
       if (row.productType === 'Engine') {
         if (row.agentType === 'Cloud') {
-          return !['Running', 'Stopped', 'Error'].includes(row.status)
+          return !['Running', 'Approving', 'Stopped', 'Error'].includes(row.status)
         } else {
           return !['Running', 'Creating', 'Stopped', 'Error'].includes(row.status)
         }

@@ -296,19 +296,24 @@
                   @click="handleUnsubscribe(scope.row)"
                   >{{ $t('public_button_unsubscribe') }}</ElButton
                 >
+                <!--                <ElButton-->
+                <!--                  v-else-->
+                <!--                  size="mini"-->
+                <!--                  type="text"-->
+                <!--                  :loading="scope.row.btnLoading.delete"-->
+                <!--                  :disabled="disableUnsubscribe(scope.row) || $disabledReadonlyUserBtn()"-->
+                <!--                  @click="openUnsubscribe(scope.row)"-->
+                <!--                >-->
+                <!--                  <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></ElButton-->
+                <!--                >-->
                 <ElButton
-                  v-else
-                  size="mini"
+                  v-if="scope.row.orderInfo || scope.row.orderInfo.chargeProvider === 'Stripe'"
+                  class="mr-2"
                   type="text"
-                  :loading="scope.row.btnLoading.delete"
-                  :disabled="disableUnsubscribe(scope.row) || $disabledReadonlyUserBtn()"
-                  @click="openUnsubscribe(scope.row)"
+                  :disabled="disableRenew(scope.row)"
+                  @click="openRenew(scope.row)"
+                  >{{ $t('public_button_renew') }}</ElButton
                 >
-                  <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></ElButton
-                >
-                <ElButton class="mr-2" type="text" :disabled="disableRenew(scope.row)" @click="openRenew(scope.row)">{{
-                  $t('public_button_renew')
-                }}</ElButton>
                 <!--                &lt;!&ndash;删除公共引擎&ndash;&gt;-->
                 <!--                <ElButton size="mini" type="text" v-if="scope.row.publicAgent" @click="handleDelete(scope.row)">{{-->
                 <!--                  $t('public_button_delete')-->
@@ -450,17 +455,17 @@
                 <VIcon size="12">stop</VIcon>
                 <span class="ml-1">{{ $t('public_button_stop') }}</span>
               </VButton>
+              <!--              <VButton-->
+              <!--                v-if="selectedRow.orderInfo && selectedRow.orderInfo.chargeProvider === 'Stripe'"-->
+              <!--                type="primary"-->
+              <!--                :loading="selectedRow.btnLoading.delete"-->
+              <!--                :disabled="delBtnDisabled(selectedRow) || $disabledReadonlyUserBtn()"-->
+              <!--                @click="openUnsubscribe(selectedRow)"-->
+              <!--              >-->
+              <!--                <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></VButton-->
+              <!--              >-->
               <VButton
-                v-if="selectedRow.orderInfo && selectedRow.orderInfo.chargeProvider === 'Stripe'"
-                type="primary"
-                :loading="selectedRow.btnLoading.delete"
-                :disabled="delBtnDisabled(selectedRow) || $disabledReadonlyUserBtn()"
-                @click="openUnsubscribe(selectedRow)"
-              >
-                <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></VButton
-              >
-              <VButton
-                v-else
+                v-if="!selectedRow.orderInfo"
                 type="primary"
                 :loading="selectedRow.btnLoading.delete"
                 :disabled="delBtnDisabled(selectedRow) || $disabledReadonlyUserBtn()"
@@ -923,7 +928,7 @@ export default {
           let list = data.items || []
           this.list = list.map(item => {
             // item.status = item.status === 'Running' ? 'Running' : item.status === 'Stopping' ? 'Stopping' : 'Offline'
-            item.deployDisable = item.tmInfo.pingTime || false
+            item.deployDisable = item?.tmInfo?.pingTime || false
             const { subscribeDto = {}, license = {}, chargeProvider } = item.orderInfo || {}
             const { startAt, endAt, periodUnit, subscribeType, paymentMethod } = subscribeDto
             item.chargeProvider = chargeProvider
@@ -1589,7 +1594,8 @@ export default {
         paidType: subscribeDto?.paymentMethod,
         endAt: subscribeDto?.endAt,
         subscribeItems: subscribeDto?.subscribeItems,
-        currency: subscribeDto?.currency
+        currency: subscribeDto?.currency,
+        periodUnit: subscribeDto?.periodUnit
       }
       this.$refs?.RenewDetailDialog?.openRenew(sub)
     },
