@@ -489,16 +489,16 @@ export default {
   packages_business_verification_success: '恭喜~~~~校验结果源表与目标表内容完全一致，没有错误记录',
   packages_business_verification_clickVerified: '点下方按钮添加校验表',
   packages_business_verification_ChoosePKField: '请选索引或主键字段',
-  packages_business_verification_indexField: '索引字段',
+  packages_business_verification_indexField: '关联字段',
   packages_business_verification_BasicSettings: '基本设置',
   packages_business_verification_verifyCondition: '校验条件',
   packages_business_verification_clear: '清空',
   packages_business_verification_fastCountTip:
     '快速count仅对源表和目标表的行数进行count校验，速度极快，但是不会展示差异的具体字段内容。',
   packages_business_verification_contentVerifyTip:
-    '全表字段值校验会对源表和目标表的全部字段进行逐行校验，能查出所有字段的差异，但是速度慢。',
+    '表全字段值校验会对源表和目标表的全部字段进行逐行校验，能查出所有字段的差异，但是速度慢。',
   packages_business_verification_jointFieldTip:
-    '关联键校验只对源表和目标表的关联字段的值进行比对校验，速度快于全表字段值校验模式。',
+    '关联字段值校验只对源表和目标表的关联字段的值进行比对校验，速度快于全表字段值校验模式。',
   packages_business_verification_waiting: '待校验',
   packages_business_verification_scheduling: '校验启动中',
   packages_business_verification_error: '校验失败',

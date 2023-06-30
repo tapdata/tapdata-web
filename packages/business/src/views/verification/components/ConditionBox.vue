@@ -139,7 +139,7 @@
                   @focus="handleFocus(item.target)"
                 ></MultiSelection>
               </div>
-              <div v-if="inspectMethod !== 'row_count'" class="setting-item align-items-center mt-4">
+              <div v-if="inspectMethod === 'field'" class="setting-item align-items-center mt-4">
                 <label class="item-label">{{ $t('packages_business_components_fieldbox_daijiaoyanmoxing') }}:</label>
                 <ElRadioGroup
                   v-model="item.modeType"

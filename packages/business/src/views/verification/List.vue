@@ -194,7 +194,7 @@ export default {
       },
       filterItems: [],
       loadingImg: window._TAPDATA_OPTIONS_.loadingImg,
-      order: 'lastStartTime DESC',
+      order: 'last_updated DESC',
       inspectMethod: {
         row_count: this.$t('packages_business_verification_rowVerify'),
         field: this.$t('packages_business_verification_contentVerify'),
@@ -268,7 +268,7 @@ export default {
     },
     //筛选条件
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'lastStartTime'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
+      this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
     },
     getData({ page }) {
