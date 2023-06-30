@@ -140,8 +140,8 @@ export const TableSelect = observer(
             attrs={attrs}
             on={listeners}
             onCreate={handleCreated}
-            itemType="string"
-            itemQuery="original_name"
+            itemType={attrs.itemType || 'string'}
+            itemQuery={attrs.itemQuery || 'original_name'}
             params={params.value}
             scopedSlots={scopedSlots}
           ></AsyncSelect>

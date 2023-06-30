@@ -337,7 +337,12 @@ export default {
             }
           }
           const data = await metadataInstancesApi.get({ filter: JSON.stringify(filter) }, config)
-          data.items = data.items.map(item => item.original_name)
+          data.items = data.items.map(item => {
+            return {
+              label: item.original_name + (item.comment ? `(${item.comment})` : ''),
+              value: item.original_name
+            }
+          })
           const table = filter.where.original_name?.like
           if (table && !data.items.includes(table)) {
             const res = await metadataInstancesApi.checkTableExist({

@@ -141,7 +141,9 @@ export class Table extends NodeType {
                     'x-component': 'TableSelect',
                     'x-component-props': {
                       method: '{{loadTable}}',
-                      connectionId: '{{$values.connectionId}}'
+                      connectionId: '{{$values.connectionId}}',
+                      itemType: 'object',
+                      itemQuery: 'value'
                     },
                     'x-reactions': [
                       {
