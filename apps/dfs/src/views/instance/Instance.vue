@@ -507,7 +507,11 @@
               <span v-if="row.scope === 'Private'">{{ row.whiteList }}</span>
             </template>
             <template #operation="{ row }">
-              <ElButton v-if="row.scope === 'Private'" size="mini" type="text" @click="handleCreateIps(row)"
+              <ElButton
+                v-if="row.scope === 'Private' && row.scope !== 'deploymentType'"
+                size="mini"
+                type="text"
+                @click="handleCreateIps(row)"
                 >添加白名单</ElButton
               >
               <ElButton class="mr-2" type="text" :disabled="disableRenew(row)" @click="openRenew(row)">{{
@@ -1304,14 +1308,10 @@ export default {
       this.buried('newAgentStripeDialog')
     },
     addIps() {
-      if (!this.ipAddress) {
-        this.$message.error('请填写IP地址，多个地址可以用，分割')
-        return
-      }
       let ips = this.ipAddress.split(',')
       const ipRegex = /^((?:\d{1,3}\.){3}\d{1,3}(?:\/\d{1,2})?|(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}(?:\/\d{1,3})?)$/
 
-      if (ips.length > 0) {
+      if (ips.length > 0 && this.ipAddress && this.ipAddress !== '') {
         for (let i = 0; i < ips.length; i++) {
           if (!ipRegex.test(ips[i])) {
             this.$message.error(ips[i] + '不合法IP')
