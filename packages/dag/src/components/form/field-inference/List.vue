@@ -284,6 +284,15 @@ export default {
     }
   },
 
+  watch: {
+    fieldChangeRules: {
+      deep: true,
+      handler(val = []) {
+        this.setRules(val)
+      }
+    }
+  },
+
   mounted() {
     this.setRules(this.fieldChangeRules)
   },
@@ -544,7 +553,7 @@ export default {
     },
 
     getDataType(row = {}) {
-      if (!this.fieldChangeRules.length) return row.dataTypeTemp
+      if (!this.rules.length || !this.rules.find(t => t.id === row.changeRuleId)) return row.dataTypeTemp
       return row.data_type
     }
   }
