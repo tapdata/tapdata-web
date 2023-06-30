@@ -406,27 +406,6 @@
             <ElTableColumn :label="$t('public_description')" prop="comment" min-width="50"></ElTableColumn>
           </ElTable>
         </template>
-        <!--服务访问 -->
-        <template v-if="tab === 'form'">
-          <div class="data-server-panel__title">
-            <span>{{ $t('packages_business_data_server_drawer_fuwufangwen') }}</span>
-            <ElButton
-              v-if="this.data.id && form.pathAccessMethod === 'default' && data.status !== 'active'"
-              type="primary"
-              size="mini"
-              @click="generate"
-              >{{ $t('public_button_generate') }}</ElButton
-            >
-          </div>
-          <ul v-if="data.path" class="data-server-path">
-            <li v-for="(url, method) in urls" :key="method" class="data-server-path__item">
-              <div class="data-server-path__method" :class="'method--' + method">
-                {{ method }}
-              </div>
-              <div class="data-server-path__value line-height">{{ url }}</div>
-            </li>
-          </ul>
-        </template>
 
         <!-- {{$t('packages_business_data_server_drawer_diaoyongfangshi')}} -->
         <template v-if="tab === 'debug'">
