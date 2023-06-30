@@ -2414,21 +2414,17 @@ export default {
               })
             }
           }
-          if (paymentType === 'online') {
-            this.submitOnlineLoading = false
-          } else {
-            this.submitLoading = false
-          }
         })
         .catch(() => {
           this.buried('newAgentStripe', '', {
             type,
             result: false
           })
-        })
-        .finally(() => {
-          this.submitLoading = false
-          this.submitOnlineLoading = false
+          if (paymentType === 'online') {
+            this.submitOnlineLoading = false
+          } else {
+            this.submitLoading = false
+          }
         })
     },
     finish() {
