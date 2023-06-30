@@ -160,7 +160,7 @@
               >Don't have the connection you want? You can add a connection in Connection Management.
             </span>
           </div>-->
-          <div class="flex align-items-center">
+          <div v-if="isDaas" class="flex align-items-center">
             <VIcon class="mr-2" size="14">info</VIcon>
             <span class="font-color-sslight">{{ $t('packages_business_data_console_setting_saved_tooltip') }}</span>
           </div>
@@ -247,6 +247,7 @@ export default {
 
   data() {
     return {
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       mode: '',
       connectionsList: [],
       modeItems: [
@@ -291,6 +292,7 @@ export default {
   computed: {
     disabled() {
       return (
+        this.isDaas &&
         this.setting &&
         this.setting.fdmStorageConnectionId &&
         // this.setting.fdmStorageCluster === this.form.fdmStorageCluster &&
@@ -299,8 +301,9 @@ export default {
     },
     disabledBtn() {
       return (
-        (this.disabled && this.mode === 'service' && this.mode === this.setting?.mode) ||
-        (this.mode === 'service' && this.form.fdmStorageCluster === 'full-management')
+        this.isDaas &&
+        ((this.disabled && this.mode === 'service' && this.mode === this.setting?.mode) ||
+          (this.mode === 'service' && this.form.fdmStorageCluster === 'full-management'))
       )
     }
   },
@@ -315,7 +318,7 @@ export default {
       const data = await this.getData()
       this.setting = data
       this.setData(data, true)
-      this.$emit('init', this.form)
+      this.$emit('init', data)
     },
 
     async getData() {
