@@ -481,21 +481,6 @@
                 </ElRadio>
               </ElRadioGroup>
             </ElFormItem>
-            <!--            <ElFormItem-->
-            <!--              :label="$t('dfs_agent_download_subscriptionmodeldialog_xuanzebizhong')"-->
-            <!--              v-if="currencyOption && currencyOption.length > 0"-->
-            <!--            >-->
-            <!--              <ElRadioGroup v-model="currencyType" @input="changeCurrency" class="flex gap-4">-->
-            <!--                <ElRadio-->
-            <!--                  v-for="(item, index) in currencyOption"-->
-            <!--                  :key="index"-->
-            <!--                  :label="item.currency"-->
-            <!--                  border-->
-            <!--                  class="rounded-4 m-0"-->
-            <!--                  >{{ CURRENCY_MAP[item.currency] }}</ElRadio-->
-            <!--                >-->
-            <!--              </ElRadioGroup>-->
-            <!--            </ElFormItem>-->
             <ElFormItem
               :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxi')"
               v-if="agentDeploy === 'fullManagement'"
@@ -1044,21 +1029,6 @@
                 </ElRadio>
               </ElRadioGroup>
             </ElFormItem>
-            <!--            <ElFormItem-->
-            <!--              :label="$t('dfs_agent_download_subscriptionmodeldialog_xuanzebizhong')"-->
-            <!--              v-if="currencyOption && currencyOption.length > 0"-->
-            <!--            >-->
-            <!--              <ElRadioGroup v-model="currencyType" @input="changeCurrency" class="flex gap-4">-->
-            <!--                <ElRadio-->
-            <!--                  v-for="(item, index) in currencyOption"-->
-            <!--                  :key="index"-->
-            <!--                  :label="item.currency"-->
-            <!--                  border-->
-            <!--                  class="rounded-4 m-0"-->
-            <!--                  >{{ CURRENCY_MAP[item.currency] }}</ElRadio-->
-            <!--                >-->
-            <!--              </ElRadioGroup>-->
-            <!--            </ElFormItem>-->
             <ElFormItem
               :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxi')"
               v-if="agentDeploy === 'fullManagement'"
@@ -1127,8 +1097,17 @@
                     <VIcon size="16" class="is-active-icon">check-bold</VIcon>
                   </div>
                   <div class="spec-li-title mt-1 lh-base fw-bold font-color-dark">
-                    <span>{{ item.name }}: </span>
-                    <span>{{ item.desc }}</span>
+                    <span class="align-middle">{{ item.name }}: {{ item.desc }}</span>
+                    <ElTag
+                      v-if="item.chargeProvider === 'FreeTier'"
+                      size="small"
+                      class="bg-color-warning text-white border-0 ml-2"
+                      >{{
+                        agentDeploy === 'selfHost'
+                          ? $t('dfs_instance_instance_mianfei')
+                          : $t('dfs_instance_createagent_mianfeitiyan')
+                      }}</ElTag
+                    >
                   </div>
                   <div
                     v-if="agentDeploy === 'selfHost'"
@@ -1838,7 +1817,7 @@ export default {
         this.currencyType = this.packageItems[0]?.currency
       }
       let currentItem = this.packageItems[0]
-      if (this.selected?.type && currentItem?.chargeProvider !== 'FreeTier') {
+      if (this.selected?.type && currentItem?.chargeProvider !== 'FreeTier' && this.selected?.type !== 'FreeTier') {
         currentItem = this.packageItems.find(
           it => it.type === this.selected?.type && it.periodUnit === this.selected?.periodUnit //切换规格不改变原来的订阅方式
         )
@@ -2090,7 +2069,13 @@ export default {
           return Object.assign(t, {
             desc: i18n.t('dfs_instance_create_bencidinggouzhi', {
               val1: specificationLabel
-            })
+            }),
+            label:
+              specification?.chargeProvider !== 'FreeTier'
+                ? t.label
+                : this.agentDeploy !== 'selfHost'
+                ? '免费体验15天'
+                : '连续包月'
           })
         })
         .sort((a, b) => {
