@@ -2074,8 +2074,8 @@ export default {
               specification?.chargeProvider !== 'FreeTier'
                 ? t.label
                 : this.agentDeploy !== 'selfHost'
-                ? '免费体验15天'
-                : '连续包月'
+                ? i18n.t('dfs_instance_createagent_mianfeishiyonggui')
+                : i18n.t('dfs_instance_utils_baoyue')
           })
         })
         .sort((a, b) => {

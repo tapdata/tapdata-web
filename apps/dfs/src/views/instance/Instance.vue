@@ -937,7 +937,7 @@ export default {
             item.chargeProvider = chargeProvider
             item.specLabel = getSpec(item.spec) || '-'
             if (item.publicAgent) {
-              item.subscriptionMethodLabel = 'Public Agent'
+              item.subscriptionMethodLabel = '共用实例'
             } else if (chargeProvider === 'Stripe') {
               item.subscriptionMethodLabel =
                 getPaymentMethod(
@@ -945,6 +945,8 @@ export default {
                   paymentMethod || 'Stripe',
                   chargeProvider
                 ) || '-'
+            } else if (chargeProvider === 'FreeTier') {
+              item.subscriptionMethodLabel = i18n.t('dfs_instance_instance_mianfei')
             } else {
               item.subscriptionMethodLabel = '-'
             }

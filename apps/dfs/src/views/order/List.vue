@@ -23,7 +23,8 @@
                   >
                   <el-divider direction="vertical"></el-divider>
                   <span class="font-color-light fw-sub mr-2"
-                    ><span>订阅周期: </span> {{ formatterTime(item.startAt) }} ~ {{ formatterTime(item.endAt) }}</span
+                    ><span>{{ $t('dfs_instance_selectlist_dingyuezhouqi') }}: </span>
+                    {{ formatterTime(item.startAt) }} ~ {{ formatterTime(item.endAt) }}</span
                   >
                   <el-divider direction="vertical"></el-divider>
                   <span class="font-color-dark fw-sub mr-2">
@@ -223,17 +224,17 @@ export default {
           prop: 'productType'
         },
         {
-          label: '订阅规格',
+          label: i18n.t('dfs_instance_instance_guige'),
           prop: 'specLabel',
           width: 180
         },
         {
-          label: '订阅方式',
+          label: i18n.t('dfs_instance_instance_dingyuefangshi'),
           prop: 'subscriptionMethodLabel',
           width: 180
         },
         {
-          label: '存储',
+          label: i18n.t('dfs_instance_createagent_cunchukongjian'),
           prop: 'storageSize'
         },
         {
