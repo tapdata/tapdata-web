@@ -138,15 +138,12 @@
               <ElOption v-for="op in connectionsList" :label="op.label" :value="op.value" :key="op.value"></ElOption>
             </ElSelect>
             <template v-else>
-              <ElButton
-                v-if="setting.fdmStorageCluster !== form.fdmStorageCluster"
-                type="primary"
-                @click="handleOrderStorage"
-                >{{ $t('packages_ldp_order_fully_managed_storage') }}</ElButton
-              >
-              <span class="preview-text inline-block rounded-2" v-else-if="fdmConnection">{{
-                fdmConnection.name
-              }}</span>
+              <div class="flex align-center gap-4">
+                <span class="preview-text inline-block rounded-2" v-if="fdmConnection">{{ fdmConnection.name }}</span>
+                <ElButton type="primary" @click="handleOrderStorage">{{
+                  $t('packages_ldp_order_fully_managed_storage')
+                }}</ElButton>
+              </div>
             </template>
           </ElFormItem>
 
