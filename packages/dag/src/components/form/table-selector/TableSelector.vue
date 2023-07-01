@@ -8,6 +8,7 @@
             v-if="table.tables.length"
             v-model="table.isCheckAll"
             @input="checkAll($event, 'table')"
+            :disabled="disabled"
             :indeterminate="isIndeterminate"
           ></ElCheckbox>
           <span class="ml-3">{{ $t('packages_form_component_table_selector_candidate_label') }}</span>
@@ -40,6 +41,7 @@
         <ElCheckboxGroup
           v-model="table.checked"
           v-show="filteredData.length"
+          :disabled="disabled"
           class="selector-panel__list"
           @input="checkedChange('table')"
         >
@@ -106,6 +108,7 @@
           <ElCheckbox
             v-if="selected.tables.length && !isOpenClipMode"
             v-model="selected.isCheckAll"
+            :disabled="disabled"
             :indeterminate="selectedIsIndeterminate"
             @input="checkAll($event, 'selected')"
           ></ElCheckbox>
@@ -135,6 +138,7 @@
           v-model="selected.checked"
           v-show="filterSelectedData.length && !isOpenClipMode"
           class="selector-panel__list"
+          :disabled="disabled"
           @input="checkedChange('selected')"
         >
           <RecycleScroller class="selector-panel__scroller" :item-size="36" :buffer="50" :items="filterSelectedData">
