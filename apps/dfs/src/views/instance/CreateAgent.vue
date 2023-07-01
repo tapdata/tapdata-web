@@ -1563,6 +1563,7 @@ export default {
       disabledAliyunCode: false,
       //是否有存储Agent
       mdbCount: false, //默认没有存储
+      mdbFreeCount: 0, //免费存储个数
       mdbZone: '',
       spec2Zone: null,
       orderStorage: false,
@@ -1714,6 +1715,8 @@ export default {
     if (window.__config__?.station) {
       this.isDomesticStation = window.__config__?.station === 'domestic' //默认是国内站 国际站是 international
     }
+    //获取是否有存储实例
+    await this.getMdbCount()
 
     if (this.$route.query.order === 'storage') {
       this.orderStorage = true
@@ -1723,8 +1726,6 @@ export default {
       await this.getCloudMdbSource()
       this.getMongoCluster()
     } else {
-      //获取是否有存储实例
-      await this.getMdbCount()
       this.getCloudMdbSource()
       this.checkAgentCount()
     }
@@ -1964,8 +1965,7 @@ export default {
 
     //检查Agent个数
     async checkAgentCount() {
-      let { freeTierAgentCount } = window.__agentCount__
-      this.agentCount = freeTierAgentCount
+      this.agentCount = window.__agentCount__?.freeTierAgentCount || 0
       await this.getCloudProvider()
     },
     getImg(name) {
@@ -2141,6 +2141,13 @@ export default {
           ).sort((a, b) => {
             return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
           })
+          // 已体验过免费
+          if (this.mdbFreeCount > 0) {
+            items = items.filter(it => it.chargeProvider !== 'FreeTier')
+            //默认值取第一个
+            this.mongodbSpec = items[0]?.value
+            this.memorySpace = 100
+          }
 
           const { spec2Zone } = this
           // 过滤不支持的
@@ -2151,6 +2158,7 @@ export default {
           }
 
           this.mongodbSpecItems = items
+          this.changeMongodbMemory()
         })
         .finally(() => {
           this.loadingMongoCluster = false
@@ -2260,8 +2268,9 @@ export default {
     },
     //是否有存储agent
     getMdbCount() {
-      this.$axios.get('api/tcm/mdb/count').then(data => {
-        this.mdbCount = data > 0
+      this.$axios.get('api/tcm/mdb/stats').then(data => {
+        this.mdbCount = data?.totalCount > 0
+        this.mdbFreeCount = data?.freeCount
       })
     },
     //提交订单
