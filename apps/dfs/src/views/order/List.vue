@@ -75,6 +75,14 @@
                   </template>
                   <template #statusLabel="{ row }">
                     <StatusTag
+                      v-if="row.agentType === 'Cloud' && row.status === 'Creating'"
+                      type="tag"
+                      status="Deploying"
+                      default-status="Stopped"
+                      target="instance"
+                    ></StatusTag>
+                    <StatusTag
+                      v-else
                       type="tag"
                       :status="row.status"
                       default-status="Stopped"
