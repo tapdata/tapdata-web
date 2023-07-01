@@ -64,6 +64,9 @@
               </div>
               <div>
                 <VTable :columns="columns" :data="item.subscribeItems" ref="table" :has-pagination="false">
+                  <template #subscriptionMethodLabel="{ row }">
+                    <span :class="{ 'color-success': row.amount === 0 }">{{ row.subscriptionMethodLabel }}</span>
+                  </template>
                   <template #agentType="{ row }">
                     <span>{{ agentTypeMap[row.agentType || 'local'] }}</span>
                   </template>
@@ -232,7 +235,7 @@ export default {
         },
         {
           label: i18n.t('dfs_instance_instance_dingyuefangshi'),
-          prop: 'subscriptionMethodLabel',
+          slotName: 'subscriptionMethodLabel',
           width: 180
         },
         {
@@ -404,11 +407,16 @@ export default {
         let items = data.items || []
         this.page.total = data.total
         this.subscribeList = items.map(item => {
-          item.subscriptionMethodLabel =
-            getPaymentMethod(
-              { periodUnit: item.periodUnit, type: item.subscribeType },
-              item.paymentMethod || 'Stripe'
-            ) || '-'
+          if (item.totalAmount !== 0) {
+            item.subscriptionMethodLabel =
+              getPaymentMethod(
+                { periodUnit: item.periodUnit, type: item.subscribeType },
+                item.paymentMethod || 'Stripe'
+              ) || '-'
+          } else {
+            item.subscriptionMethodLabel = i18n.t('dfs_instance_instance_mianfei')
+          }
+
           if (item.subscribeItems && item.subscribeItems.length > 0) {
             item.subscribeItems = item.subscribeItems.map(it => {
               it.specLabel = getSpec(it.spec) || '-'
