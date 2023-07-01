@@ -274,11 +274,12 @@ export default {
       return this.search || this.searchIng
     },
     allowDrop() {
-      return
-      !this.fdmNotExist &&
+      return (
+        !this.fdmNotExist &&
         this.dragState.isDragging &&
         this.dragState.from === 'SOURCE' &&
         this.dragState.draggingObjects[0]?.data.LDP_TYPE === 'table'
+      )
     },
     treeData() {
       return this.directory?.children || []
