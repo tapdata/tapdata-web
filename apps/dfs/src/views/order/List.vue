@@ -299,6 +299,7 @@ export default {
       if (route.name === 'order') {
         let query = route.query
         this.searchParams = Object.assign(this.searchParams, query)
+        this.page.current = 1
         this.remoteMethod()
       }
     }
