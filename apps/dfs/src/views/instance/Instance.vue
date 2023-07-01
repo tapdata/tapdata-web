@@ -873,8 +873,10 @@ export default {
         return {
           total: data.total,
           data: items.map(item => {
-            const { periodEnd } = item.subscribe || {}
-            item.expiredTimeLabel = periodEnd ? dayjs(periodEnd).format('YY-MM-DD  HH:mm:ss') : '-'
+            const { subscribeDto = {} } = item.orderInfo
+            const { endAt } = subscribeDto || {}
+
+            item.expiredTimeLabel = endAt ? dayjs(endAt).format('YY-MM-DD  HH:mm:ss') : '-'
             item.scopeLabel = this.scopeMap[item.scope]
             item.specLabel = getSpec(item.spec) || '-'
             item.providerName = item.providerName || '-'
