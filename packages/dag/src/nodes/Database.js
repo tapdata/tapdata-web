@@ -752,26 +752,6 @@ export class Database extends NodeType {
                         type: 'object'
                       }
                     }
-                  },
-                  tab4: {
-                    type: 'void',
-                    'x-component': 'FormCollapse.Item',
-                    'x-component-props': {
-                      title: '数据源专属配置'
-                    },
-                    'x-reactions': {
-                      fulfill: {
-                        state: {
-                          // display: '{{$hasPdkConfig($values.attrs.pdkHash) ? "visible":"hidden"}}',
-                          visible: '{{$hasPdkConfig($values.attrs.pdkHash)}}'
-                        }
-                      }
-                    },
-                    properties: {
-                      nodeConfig: {
-                        type: 'object'
-                      }
-                    }
                   }
                 }
               }
