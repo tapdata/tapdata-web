@@ -147,6 +147,11 @@
                   {{ selected.label }}
                 </span>
               </ElFormItem>
+              <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi') + ':'">
+                <span class="font-color-dark">
+                  {{ agentTypeMap[agentDeploy || 'local'] }}
+                </span>
+              </ElFormItem>
               <ElFormItem
                 v-if="platform === 'realTime' && agentDeploy === 'fullManagement'"
                 :label="$t('dfs_instance_createagent_cunchuguige')"
@@ -701,6 +706,11 @@
                   {{ specMap[currentSpecName] || currentSpecName }}
                 </span>
               </ElFormItem>
+              <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi') + ':'">
+                <span class="font-color-dark">
+                  {{ agentTypeMap[agentDeploy || 'local'] }}
+                </span>
+              </ElFormItem>
               <ElFormItem v-if="agentDeploy !== 'aliyun'" :label="$t('dfs_instance_instance_dingyuefangshi') + ':'">
                 <span class="font-color-dark">
                   {{ selected.label }}
@@ -1246,6 +1256,11 @@
                 </span>
                 <span class="font-color-dark" v-else>
                   {{ specMap[currentSpecName] || currentSpecName }}
+                </span>
+              </ElFormItem>
+              <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi') + ':'">
+                <span class="font-color-dark">
+                  {{ agentTypeMap[agentDeploy || 'local'] }}
                 </span>
               </ElFormItem>
               <ElFormItem v-if="agentDeploy !== 'aliyun'" :label="$t('dfs_instance_instance_dingyuefangshi') + ':'">
