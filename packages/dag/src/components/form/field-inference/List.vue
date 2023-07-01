@@ -465,6 +465,15 @@ export default {
             this.rules.push(op)
           }
           this.handleUpdate()
+          this.data.fields.forEach(t => {
+            if (
+              (useToAll && t.data_type === t.dataTypeTemp && t.dataTypeTemp === dataTypeTemp) ||
+              t.field_name === fieldName
+            ) {
+              t.data_type = newDataType
+              t.changeRuleId = ruleId
+            }
+          })
           this.editBtnLoading = false
           this.$message.success(i18n.t('public_message_operation_success'))
           this.editDataTypeVisible = false
