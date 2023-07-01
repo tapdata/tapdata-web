@@ -265,7 +265,151 @@ export class Database extends NodeType {
                       }
                     }
                   },
-
+                  existDataProcessMode: {
+                    type: 'string',
+                    title: i18n.t('packages_dag_nodes_database_chongfuchulice'),
+                    default: 'keepData',
+                    enum: [
+                      {
+                        label: i18n.t('packages_dag_nodes_database_baochimubiaoduan'),
+                        value: 'keepData'
+                      },
+                      {
+                        label: i18n.t('packages_dag_nodes_database_qingchumubiaoduan'),
+                        value: 'dropTable',
+                        disabled: true
+                      },
+                      {
+                        label: i18n.t('packages_dag_nodes_targetdatabase_baochimubiaoduan'),
+                        value: 'removeData'
+                      }
+                    ],
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Select',
+                    'x-reactions': {
+                      fulfill: {
+                        run: '{{$self.dataSource[1].disabled = $self.dataSource[2].disabled = $settings.type === "cdc"}}',
+                        state: {
+                          description: `{{$settings.type === "cdc" ? '${i18n.t(
+                            'packages_dag_nodes_database_setting_cdc_changjing_desc'
+                          )}':''}}`
+                        },
+                        schema: {
+                          // ⚠️👇表达式依赖enum的顺序
+                          'x-component-props.options': `{{options=[$self.dataSource[0]],$values.attrs.capabilities.find(item => item.id ==='drop_table_function') && options.push($self.dataSource[1]),$values.attrs.capabilities.find(item => item.id ==='clear_table_function') && options.push($self.dataSource[2]),options}}`
+                        }
+                      }
+                    }
+                  },
+                  initialConcurrentSpace: {
+                    title: i18n.t('packages_dag_nodes_database_quanliangduoxiancheng'),
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      layout: 'horizontal'
+                    },
+                    type: 'void',
+                    'x-component': 'Space',
+                    'x-component-props': {
+                      size: 'middle'
+                    },
+                    properties: {
+                      initialConcurrent: {
+                        type: 'boolean',
+                        default: true,
+                        'x-component': 'Switch',
+                        'x-reactions': {
+                          target: '.initialConcurrentWriteNum',
+                          fulfill: {
+                            state: {
+                              visible: '{{!!$self.value}}'
+                            }
+                          }
+                        }
+                      },
+                      initialConcurrentWriteNum: {
+                        type: 'number',
+                        default: 8,
+                        'x-component': 'InputNumber',
+                        'x-component-props': {
+                          min: 0
+                        }
+                      }
+                    }
+                  },
+                  cdcConcurrentSpace: {
+                    type: 'void',
+                    title: i18n.t('packages_dag_nodes_database_zengliangduoxiancheng'),
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      layout: 'horizontal'
+                    },
+                    'x-component': 'Space',
+                    'x-component-props': {
+                      size: 'middle'
+                    },
+                    properties: {
+                      cdcConcurrent: {
+                        type: 'boolean',
+                        'x-component': 'Switch',
+                        'x-reactions': {
+                          target: '.cdcConcurrentWriteNum',
+                          fulfill: {
+                            state: {
+                              visible: '{{!!$self.value}}'
+                            }
+                          }
+                        }
+                      },
+                      cdcConcurrentWriteNum: {
+                        type: 'number',
+                        default: 4,
+                        'x-component': 'InputNumber',
+                        'x-component-props': {
+                          min: 0
+                        }
+                      }
+                    }
+                  },
+                  writeBachSpace: {
+                    type: 'void',
+                    'x-component': 'Space',
+                    'x-component-props': {
+                      size: 'middle'
+                    },
+                    'x-reactions': {
+                      fulfill: {
+                        state: {
+                          display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
+                        }
+                      }
+                    },
+                    properties: {
+                      writeBatchSize: {
+                        title: i18n.t('packages_dag_nodes_database_piliangxierutiao'), //增量批次读取条数
+                        type: 'string',
+                        'x-decorator': 'FormItem',
+                        'x-component': 'InputNumber',
+                        'x-decorator-props': {
+                          tooltip: i18n.t('packages_dag_nodes_database_quanliangmeipici2')
+                        },
+                        'x-component-props': {
+                          min: 1,
+                          max: 10000000
+                        },
+                        default: 1000
+                      },
+                      writeBatchWaitMs: {
+                        title: i18n.t('packages_dag_nodes_database_xierumeipizui'), //增量批次读取条数
+                        type: 'string',
+                        'x-decorator': 'FormItem',
+                        'x-component': 'InputNumber',
+                        'x-component-props': {
+                          min: 1
+                        },
+                        default: 500
+                      }
+                    }
+                  },
                   'attrs.capabilities': {
                     type: 'array',
                     'x-display': 'hidden',
