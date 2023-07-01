@@ -293,6 +293,16 @@ export default {
       this.table.fetch(null, 0, true)
     }, 10000)
     this.getFilterItems()
+
+    // TODO 百度推广索引
+    console.log('baidu-cookie')
+    Cookie.set('ken_bd_vid', 'kennen')
+    Cookie.set('ken_bd_vid', 'kennen', {
+      domain: 'cloud.tapdata.net'
+    })
+    Cookie.set('ken_bd_vid', 'kennen', {
+      domain: 'tapdata.net'
+    })
   },
   mounted() {
     const { step, action, keyword } = this.$route.query || {}
