@@ -256,7 +256,8 @@ export default {
       }
       return {
         tooltip: {
-          trigger: 'item'
+          trigger: 'item',
+          position: ['80%', '80%']
         },
         series: [
           {
