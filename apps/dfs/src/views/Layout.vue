@@ -429,6 +429,7 @@ export default {
         .get('api/tcm/agent/agentCount')
         .then(data => {
           this.showAgentWarning = data.agentTotalCount && !data.agentRunningCount
+          window.__agentCount__ = data
         })
         .finally(() => {
           this.loopLoadAgentCountTimer = setTimeout(() => {

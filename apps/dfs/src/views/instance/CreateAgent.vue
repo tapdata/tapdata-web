@@ -1949,9 +1949,8 @@ export default {
 
     //检查Agent个数
     async checkAgentCount() {
-      let filter = { where: { 'orderInfo.chargeProvider': 'FreeTier' } }
-      const data = await this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter)))
-      this.agentCount = data?.total
+      let { freeTierAgentCount } = window.__agentCount__
+      this.agentCount = freeTierAgentCount
       await this.getCloudProvider()
     },
     getImg(name) {
