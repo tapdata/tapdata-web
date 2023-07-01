@@ -185,7 +185,7 @@ export const SchemaPreview = defineComponent({
               readonly={readonly.value}
               fieldChangeRules={fieldChangeRules}
               type={isTarget ? 'target' : isSource ? 'source' : ''}
-              hide-batch
+              single-table
               ignore-error={!isTarget}
               on={{
                 'update-rules': handleUpdate
