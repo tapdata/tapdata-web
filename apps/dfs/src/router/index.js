@@ -110,12 +110,8 @@ const routes = [
       {
         path: '/workbench',
         name: 'Workbench',
-        component: () => import('../views/workbench/Workbench.vue'),
-        meta: {
-          title: 'tap_workbench',
-          icon: 'workbench',
-          hideTitle: true
-        }
+        redirect: { name: 'dataConsole' },
+        hidden: true
       },
       {
         path: '/systemNotice',
