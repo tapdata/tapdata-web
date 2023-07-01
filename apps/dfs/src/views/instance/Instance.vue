@@ -314,10 +314,17 @@
                   @click="openRenew(scope.row)"
                   >{{ $t('public_button_renew') }}</ElButton
                 >
-                <!--                &lt;!&ndash;删除公共引擎&ndash;&gt;-->
-                <!--                <ElButton size="mini" type="text" v-if="scope.row.publicAgent" @click="handleDelete(scope.row)">{{-->
-                <!--                  $t('public_button_delete')-->
-                <!--                }}</ElButton>-->
+                <!--68-2 免费实例可以删除-->
+                <ElButton
+                  v-if="scope.row.publicAgent"
+                  size="mini"
+                  type="text"
+                  :loading="scope.row.btnLoading.delete"
+                  :disabled="disableUnsubscribe(scope.row) || $disabledReadonlyUserBtn()"
+                  @click="openUnsubscribe(scope.row)"
+                >
+                  <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></ElButton
+                >
               </template>
             </ElTableColumn>
 
@@ -522,6 +529,10 @@
               <ElButton class="mr-2" type="text" :disabled="disableRenew(row)" @click="openRenew(row)">{{
                 $t('public_button_renew')
               }}</ElButton>
+              <!--68-2 免费实例可以删除-->
+              <ElButton v-if="row.scope === 'Share'" size="mini" type="text" @click="openMdbUnsubscribe(row)">
+                <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></ElButton
+              >
             </template>
             <div class="instance-table__empty" slot="empty">
               <VIcon size="120">no-data-color</VIcon>
@@ -546,7 +557,7 @@
       </el-tab-pane>
     </el-tabs>
     <!--退订-->
-    <Unsubscribe ref="UnsubscribeDetailDialog" @closeVisible="fetch"></Unsubscribe>
+    <Unsubscribe ref="UnsubscribeDetailDialog" @closeVisible="closeVisible"></Unsubscribe>
     <!--续订-->
     <Renew ref="RenewDetailDialog" @closeVisible="tableCode.fetch()"></Renew>
   </section>
@@ -825,8 +836,10 @@ export default {
     timer = null
   },
   methods: {
-    relativeTime(time) {
-      return time ? dayjs(time).fromNow() : '-'
+    //关闭退订弹窗
+    closeVisible() {
+      this.fetch()
+      this?.tableCode?.fetch()
     },
     init() {
       let query = this.$route.query
@@ -1580,6 +1593,18 @@ export default {
         subscribeItems: subscribeDto?.subscribeItems
       }
       this.$refs?.UnsubscribeDetailDialog?.getUnsubscribePrice(sub, 'Engine')
+    },
+    //退订存储详情
+    openMdbUnsubscribe(row) {
+      let { orderInfo = {} } = row
+      let { subscriptionId = {}, subscribeDto = {} } = orderInfo
+      let sub = {
+        id: subscriptionId,
+        paidType: subscribeDto?.paymentMethod,
+        type: 'MongoDB',
+        subscribeItems: subscribeDto?.subscribeItems
+      }
+      this.$refs?.UnsubscribeDetailDialog?.getUnsubscribePrice(sub, 'MongoDB')
     },
     formatPrice(currency, price) {
       return (

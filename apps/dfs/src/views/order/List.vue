@@ -430,7 +430,8 @@ export default {
             item.subscribeItems = item.subscribeItems.map(it => {
               it.specLabel = getSpec(it.spec) || '-'
               it.storageSize = it.spec?.storageSize ? it.spec?.storageSize + 'GB' : '-'
-              it.subscriptionMethodLabel = item.subscriptionMethodLabel
+              it.subscriptionMethodLabel =
+                it.amount === 0 ? i18n.t('dfs_instance_instance_mianfei') : item.subscriptionMethodLabel
               it.status = it.resource?.status || ''
               return it
             })
