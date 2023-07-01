@@ -330,7 +330,10 @@ export default {
             },
             order: ['original_name ASC']
           })
-          if (!filter.where.original_name) {
+          if (filter.where?.value) {
+            filter.where.original_name = filter.where?.value
+            delete filter.where.value
+          } else {
             filter.where.original_name = {
               // regexp: '^[^\\s]+$'
               neq: ''
