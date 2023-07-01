@@ -6,7 +6,7 @@
       :has-pagination="false"
       ref="table"
       height="100%"
-      :key="!!canRevokeRules.length + ''"
+      :key="revokeTableDisabled + ''"
       :row-class-name="tableRowClassName"
     >
       <template slot="field_name" slot-scope="scope">
@@ -47,7 +47,7 @@
         {{ nullableMap[!scope.row.is_nullable] }}
       </template>
       <template slot="operationHeader">
-        <VIcon :class="canRevokeRules.length ? 'color-primary' : 'color-disable'" @click="revokeAll()">revoke</VIcon>
+        <VIcon :class="!revokeTableDisabled ? 'color-primary' : 'color-disable'" @click="revokeAll()">revoke</VIcon>
       </template>
       <template slot="operation" slot-scope="scope">
         <ElTooltip
@@ -90,7 +90,7 @@
               @select="handleAutocomplete"
             ></ElAutocomplete>
           </ElFormItem>
-          <div v-if="!hideBatch">
+          <div v-if="!singleTable">
             <ElCheckbox v-model="currentData.useToAll">{{
               $t('packages_form_field_inference_list_duidangqiantuiyan')
             }}</ElCheckbox>
@@ -177,7 +177,7 @@ export default {
       type: Array,
       default: () => []
     },
-    hideBatch: {
+    singleTable: {
       type: Boolean,
       default: false
     },
@@ -278,9 +278,19 @@ export default {
       return this.showDelete ? list : list.filter(t => !t.is_deleted)
     },
 
-    canRevokeRules() {
+    revokeTableDisabled() {
       const { qualified_name } = this.data
-      return this.rules.filter(t => t.scope === 'Field' && t.namespace?.[1] === qualified_name) || []
+      if (this.singleTable) return !this.rules.length
+      return this.rules.every(t => t.namespace?.[1] !== qualified_name)
+    }
+  },
+
+  watch: {
+    fieldChangeRules: {
+      deep: true,
+      handler(val = []) {
+        this.setRules(val)
+      }
     }
   },
 
@@ -455,6 +465,15 @@ export default {
             this.rules.push(op)
           }
           this.handleUpdate()
+          this.data.fields.forEach(t => {
+            if (
+              (useToAll && t.data_type === t.dataTypeTemp && t.dataTypeTemp === dataTypeTemp) ||
+              t.field_name === fieldName
+            ) {
+              t.data_type = newDataType
+              t.changeRuleId = ruleId
+            }
+          })
           this.editBtnLoading = false
           this.$message.success(i18n.t('public_message_operation_success'))
           this.editDataTypeVisible = false
@@ -481,7 +500,7 @@ export default {
     },
 
     revokeAll() {
-      if (!this.canRevokeRules.length) {
+      if (this.revokeTableDisabled) {
         return
       }
       this.$confirm(i18n.t('packages_form_field_inference_list_ninquerenyaohui'), '', {
@@ -490,7 +509,13 @@ export default {
       }).then(resFlag => {
         if (resFlag) {
           const { qualified_name } = this.data
-          this.handleUpdate(this.rules.filter(t => !(t.scope === 'Field' && t.namespace?.[1] === qualified_name)))
+          if (this.singleTable) {
+            this.rules = [] // 清空数据
+            this.handleUpdate()
+          } else {
+            this.rules = this.rules.filter(t => t.namespace?.[1] !== qualified_name) // 清空当前表的数据
+            this.handleUpdate()
+          }
           this.$message.success(i18n.t('public_message_operation_success'))
         }
       })
@@ -544,7 +569,7 @@ export default {
     },
 
     getDataType(row = {}) {
-      if (!this.fieldChangeRules.length) return row.dataTypeTemp
+      if (!this.rules.length || !this.rules.find(t => t.id === row.changeRuleId)) return row.dataTypeTemp
       return row.data_type
     }
   }
