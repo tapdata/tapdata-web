@@ -1448,6 +1448,7 @@ export default {
   dfs_order_list_wodedingyue: '我的訂閱',
 
   dfs_the_header_header_wodegongdan: ' 我的工單',
+  dfs_the_header_header_prize_questionnaire: ' 有獎問卷',
   dfs_router_index_gongdanliebiao: '工單列表',
   dfs_ticketing_system_details_huifuneirong: '回复內容:',
   dfs_ticketing_system_details_zanwupinglun: '暫無評論',
@@ -1476,5 +1477,18 @@ export default {
   dfs_router_index_gonggaoliebiao: '公告列表',
   dfs_agent_download_fastdownload_yincangwanzhengming: '隱藏完整命令',
   dfs_agent_download_fastdownload_xianshiwanzhengming: '顯示完整命令',
-  dfs_instance_createagent_mianfeitiyan: '免費體驗'
+  dfs_instance_createagent_mianfeitiyan: '免費體驗',
+  dfs_components_renew_shiliguige: '實例規格',
+  dfs_components_renew_dingyuebianhao: '訂閱編號',
+  dfs_components_renew_xudingjine: '續訂金額',
+  dfs_components_renew_xudinghoudaoqi: '續訂後到期時間：',
+  dfs_components_renew_xudingshichang: '續訂時長',
+  dfs_instance_instance_buhefaIp: '不合法IP',
+  dfs_instance_instance_gongyongshili: '共用實例',
+  dfs_instance_instance_baimingdanIp: '白名單IP',
+  dfs_instance_instance_ipdizhi: 'ip地址',
+  dfs_instance_instance_tianjiabaimingdan: '添加白名單',
+  dfs_order_list_dingyueleixing: '訂閱類型',
+  public_button_pay: '支付',
+  dfs_order_list_zongjine: '總金額'
 }

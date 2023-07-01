@@ -17,11 +17,10 @@
         </VTable>
       </div>
       <el-form label-position="top" ref="ruleForm">
-        <el-form-item label="续订时长">
+        <el-form-item :label="$t('dfs_components_renew_xudingshichang')">
           <el-input-number disabled v-model="quantity" :min="1"></el-input-number>
-          <span class="ml-2">{{ currentRenewRow.periodUnit === 'month' ? '月' : '年' }}</span>
-          <div class="mt-2">
-            续订后到期时间：<span class="color-warning">{{
+          <span class="ml-2">{{ currentRenewRow.periodUnit === 'month' ? $t('public_time_month') : $t('public_time_year') }}</span>
+          <div class="mt-2">{{$t('dfs_components_renew_xudinghoudaoqi')}}<span class="color-warning">{{
               formatterRenewTime(currentRenewRow.periodUnit, currentRenewRow.endAt)
             }}</span>
           </div>
@@ -30,7 +29,7 @@
     </section>
     <span slot="footer" class="dialog-footer">
       <span class="mr-4"
-        ><span class="fs-6 font-color-dark font-weight-light">续订金额</span
+        ><span class="fs-6 font-color-dark font-weight-light">{{$t('dfs_components_renew_xudingjine')}}</span
         ><span class="color-primary fs-4">
           {{ formatterPrice(currentRenewRow.currency, currentPrice * quantity) }}</span
         ></span
@@ -41,12 +40,14 @@
         type="primary"
         :loading="loadingRenewSubmit"
         @click="handleRenew"
-        >续订</el-button
+        >{{$t('public_button_renew')}}</el-button
       >
     </span>
   </ElDialog>
 </template>
 <script>
+import i18n from '@/i18n'
+
 import { VTable } from '@tap/component'
 import { getSpec } from '../views/instance/utils'
 import { openUrl } from '@tap/shared'
@@ -68,11 +69,11 @@ export default {
       currentPrice: 0,
       renewColumns: [
         {
-          label: '订阅编号',
+          label: i18n.t('dfs_components_renew_dingyuebianhao'),
           prop: 'id'
         },
         {
-          label: '到期时间',
+          label: i18n.t('dfs_instance_instance_daoqishijian'),
           prop: 'endAt',
           width: 180,
           slotName: 'endAt'
@@ -90,7 +91,7 @@ export default {
       }
       this.renewColumns = [
         {
-          label: '订阅编号',
+          label: i18n.t('dfs_components_renew_dingyuebianhao'),
           prop: 'id'
         }
       ]
@@ -100,7 +101,7 @@ export default {
       let specMdbLabel = getSpec(mdb)
       if (specLabel) {
         this.renewColumns.push({
-          label: '实例规格',
+          label: i18n.t('dfs_components_renew_shiliguige'),
           prop: 'specLabel',
           width: 180
         })
@@ -108,14 +109,14 @@ export default {
       }
       if (specMdbLabel) {
         this.renewColumns.push({
-          label: '存储规格',
+          label: i18n.t('dfs_instance_createagent_cunchuguige'),
           prop: 'specMdbLabel',
           width: 180
         })
         renew.specMdbLabel = specMdbLabel
       }
       this.renewColumns.push({
-        label: '到期时间',
+        label: i18n.t('dfs_instance_instance_daoqishijian'),
         prop: 'endAt',
         width: 180,
         slotName: 'endAt'

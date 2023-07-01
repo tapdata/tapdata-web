@@ -15,15 +15,18 @@
             <li class="sub-li mb-4" v-for="item in subscribeList" :key="item.id">
               <div class="sub-li-header flex justify-content-between">
                 <div>
-                  <span class="font-color-dark fw-sub mr-2">订阅编号: {{ item.id }}</span>
+                  <span class="font-color-dark fw-sub mr-2"
+                    >{{ $t('dfs_components_renew_dingyuebianhao') }}{{ item.id }}</span
+                  >
                   <el-divider direction="vertical"></el-divider>
                   <span class="font-color-dark fw-sub mr-2"
-                    ><span class="font-color-light">总金额:</span>
+                    ><span class="font-color-light">{{ $t('dfs_order_list_zongjine') }}</span>
                     {{ formatterPrice(item.currency, item.totalAmount) || 0 }}</span
                   >
                   <el-divider direction="vertical"></el-divider>
                   <span class="font-color-light fw-sub mr-2"
-                    ><span>订阅周期: </span> {{ formatterTime(item.startAt) }} ~ {{ formatterTime(item.endAt) }}</span
+                    ><span>{{ $t('dfs_instance_selectlist_dingyuezhouqi') }}: </span>
+                    {{ formatterTime(item.startAt) }} ~ {{ formatterTime(item.endAt) }}</span
                   >
                   <el-divider direction="vertical"></el-divider>
                   <span class="font-color-dark fw-sub mr-2">
@@ -41,9 +44,9 @@
                     >{{ $t('public_button_renew') }}</ElButton
                   >
                   <el-divider direction="vertical"></el-divider>
-                  <ElButton v-if="['incomplete'].includes(item.status)" type="text" @click="handlePay(item)"
-                    >支付</ElButton
-                  >
+                  <ElButton v-if="['incomplete'].includes(item.status)" type="text" @click="handlePay(item)">{{
+                    $t('public_button_pay')
+                  }}</ElButton>
                   <!--                  <el-divider direction="vertical"></el-divider>-->
                   <!--                  <ElButton-->
                   <!--                    type="text"-->
@@ -61,6 +64,9 @@
               </div>
               <div>
                 <VTable :columns="columns" :data="item.subscribeItems" ref="table" :has-pagination="false">
+                  <template #subscriptionMethodLabel="{ row }">
+                    <span :class="{ 'color-success': row.amount === 0 }">{{ row.subscriptionMethodLabel }}</span>
+                  </template>
                   <template #agentType="{ row }">
                     <span>{{ agentTypeMap[row.agentType || 'local'] }}</span>
                   </template>
@@ -69,6 +75,14 @@
                   </template>
                   <template #statusLabel="{ row }">
                     <StatusTag
+                      v-if="row.agentType === 'Cloud' && row.status === 'Creating'"
+                      type="tag"
+                      status="Deploying"
+                      default-status="Stopped"
+                      target="instance"
+                    ></StatusTag>
+                    <StatusTag
+                      v-else
                       type="tag"
                       :status="row.status"
                       default-status="Stopped"
@@ -138,7 +152,7 @@
       </el-tab-pane>
     </el-tabs>
 
-    <!--转账支付-->
+    <!--转账{{$t('public_button_pay')}}-->
     <transferDialog :visible.sync="showTransferDialogVisible" :price="pricePay"></transferDialog>
     <!--退订-->
     <Unsubscribe ref="UnsubscribeDetailDialog" @closeVisible="remoteMethod"></Unsubscribe>
@@ -219,21 +233,21 @@ export default {
       ],
       columns: [
         {
-          label: '订阅类型',
+          label: i18n.t('dfs_order_list_dingyueleixing'),
           prop: 'productType'
         },
         {
-          label: '订阅规格',
+          label: i18n.t('dfs_instance_instance_guige'),
           prop: 'specLabel',
           width: 180
         },
         {
-          label: '订阅方式',
-          prop: 'subscriptionMethodLabel',
+          label: i18n.t('dfs_instance_instance_dingyuefangshi'),
+          slotName: 'subscriptionMethodLabel',
           width: 180
         },
         {
-          label: '存储',
+          label: i18n.t('dfs_instance_createagent_cunchukongjian'),
           prop: 'storageSize'
         },
         {
@@ -285,6 +299,7 @@ export default {
       if (route.name === 'order') {
         let query = route.query
         this.searchParams = Object.assign(this.searchParams, query)
+        this.page.current = 1
         this.remoteMethod()
       }
     }
@@ -356,7 +371,7 @@ export default {
           ]
         },
         {
-          label: '订阅类型',
+          label: i18n.t('dfs_order_list_dingyueleixing'),
           key: 'productType',
           type: 'select-inner',
           items: [
@@ -401,16 +416,22 @@ export default {
         let items = data.items || []
         this.page.total = data.total
         this.subscribeList = items.map(item => {
-          item.subscriptionMethodLabel =
-            getPaymentMethod(
-              { periodUnit: item.periodUnit, type: item.subscribeType },
-              item.paymentMethod || 'Stripe'
-            ) || '-'
+          if (item.totalAmount !== 0) {
+            item.subscriptionMethodLabel =
+              getPaymentMethod(
+                { periodUnit: item.periodUnit, type: item.subscribeType },
+                item.paymentMethod || 'Stripe'
+              ) || '-'
+          } else {
+            item.subscriptionMethodLabel = i18n.t('dfs_instance_instance_mianfei')
+          }
+
           if (item.subscribeItems && item.subscribeItems.length > 0) {
             item.subscribeItems = item.subscribeItems.map(it => {
               it.specLabel = getSpec(it.spec) || '-'
               it.storageSize = it.spec?.storageSize ? it.spec?.storageSize + 'GB' : '-'
-              it.subscriptionMethodLabel = item.subscriptionMethodLabel
+              it.subscriptionMethodLabel =
+                it.amount === 0 ? i18n.t('dfs_instance_instance_mianfei') : item.subscriptionMethodLabel
               it.status = it.resource?.status || ''
               return it
             })

@@ -314,10 +314,17 @@
                   @click="openRenew(scope.row)"
                   >{{ $t('public_button_renew') }}</ElButton
                 >
-                <!--                &lt;!&ndash;删除公共引擎&ndash;&gt;-->
-                <!--                <ElButton size="mini" type="text" v-if="scope.row.publicAgent" @click="handleDelete(scope.row)">{{-->
-                <!--                  $t('public_button_delete')-->
-                <!--                }}</ElButton>-->
+                <!--68-2 免费实例可以删除-->
+                <ElButton
+                  v-if="scope.row.publicAgent"
+                  size="mini"
+                  type="text"
+                  :loading="scope.row.btnLoading.delete"
+                  :disabled="disableUnsubscribe(scope.row) || $disabledReadonlyUserBtn()"
+                  @click="openUnsubscribe(scope.row)"
+                >
+                  <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></ElButton
+                >
               </template>
             </ElTableColumn>
 
@@ -513,15 +520,19 @@
             </template>
             <template #operation="{ row }">
               <ElButton
-                v-if="row.scope === 'Private' && row.scope !== 'deploymentType'"
+                v-if="row.scope === 'Private' && row.deploymentType !== 'Local'"
                 size="mini"
                 type="text"
                 @click="handleCreateIps(row)"
-                >添加白名单</ElButton
+                >{{ $t('dfs_instance_instance_tianjiabaimingdan') }}</ElButton
               >
               <ElButton class="mr-2" type="text" :disabled="disableRenew(row)" @click="openRenew(row)">{{
                 $t('public_button_renew')
               }}</ElButton>
+              <!--68-2 免费实例可以删除-->
+              <ElButton v-if="row.scope === 'Share'" size="mini" type="text" @click="openMdbUnsubscribe(row)">
+                <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></ElButton
+              >
             </template>
             <div class="instance-table__empty" slot="empty">
               <VIcon size="120">no-data-color</VIcon>
@@ -532,21 +543,21 @@
           </VTable>
         </section>
         <!-- 新建白名单 -->
-        <el-dialog :visible.sync="showCreateIps" title="添加白名单">
+        <el-dialog :visible.sync="showCreateIps" :title="$t('dfs_instance_instance_tianjiabaimingdan')">
           <el-form>
-            <el-form-item label="ip地址">
+            <el-form-item :label="$t('dfs_instance_instance_ipdizhi')">
               <el-input :required="true" v-model="ipAddress" placeholder="183.34.1.4,183.34.1.5"></el-input>
             </el-form-item>
           </el-form>
           <span slot="footer">
-            <el-button @click="showCreateIps = false">取消</el-button>
-            <el-button @click="addIps" type="primary">添加 </el-button>
+            <el-button @click="showCreateIps = false">{{ $t('public_button_cancel') }}</el-button>
+            <el-button @click="addIps" type="primary">{{ $t('field_mapping_field_mapping_dialog_tianJia') }}</el-button>
           </span>
         </el-dialog>
       </el-tab-pane>
     </el-tabs>
     <!--退订-->
-    <Unsubscribe ref="UnsubscribeDetailDialog" @closeVisible="fetch"></Unsubscribe>
+    <Unsubscribe ref="UnsubscribeDetailDialog" @closeVisible="closeVisible"></Unsubscribe>
     <!--续订-->
     <Renew ref="RenewDetailDialog" @closeVisible="tableCode.fetch()"></Renew>
   </section>
@@ -717,7 +728,7 @@ export default {
         },
         {
           label: i18n.t('dfs_instance_instance_bushufangshi'),
-          prop: 'deploymentType'
+          prop: 'deploymentTypeLabel'
         },
         {
           label: i18n.t('agent_status'),
@@ -729,7 +740,7 @@ export default {
           prop: 'expiredTimeLabel'
         },
         {
-          label: '白名单IP',
+          label: i18n.t('dfs_instance_instance_baimingdanIp'),
           slotName: 'whiteList'
         },
         {
@@ -825,8 +836,10 @@ export default {
     timer = null
   },
   methods: {
-    relativeTime(time) {
-      return time ? dayjs(time).fromNow() : '-'
+    //关闭退订弹窗
+    closeVisible() {
+      this.fetch()
+      this?.tableCode?.fetch()
     },
     init() {
       let query = this.$route.query
@@ -864,8 +877,11 @@ export default {
             item.expiredTimeLabel = periodEnd ? dayjs(periodEnd).format('YY-MM-DD  HH:mm:ss') : '-'
             item.scopeLabel = this.scopeMap[item.scope]
             item.specLabel = getSpec(item.spec) || '-'
+            item.providerName = item.providerName || '-'
+            item.regionName = item.regionName || '-'
+            item.serviceProvider = item.serviceProvider || '-'
             item.storageSize = item.spec?.storageSize ? item.spec?.storageSize + 'GB' : '-'
-            item.deploymentType = this.agentTypeMap[item.deploymentType]
+            item.deploymentTypeLabel = this.agentTypeMap[item.deploymentType]
             return item
           })
         }
@@ -934,7 +950,7 @@ export default {
             item.chargeProvider = chargeProvider
             item.specLabel = getSpec(item.spec) || '-'
             if (item.publicAgent) {
-              item.subscriptionMethodLabel = 'Public Agent'
+              item.subscriptionMethodLabel = i18n.t('dfs_instance_instance_gongyongshili')
             } else if (chargeProvider === 'Stripe') {
               item.subscriptionMethodLabel =
                 getPaymentMethod(
@@ -942,6 +958,8 @@ export default {
                   paymentMethod || 'Stripe',
                   chargeProvider
                 ) || '-'
+            } else if (chargeProvider === 'FreeTier') {
+              item.subscriptionMethodLabel = i18n.t('dfs_instance_instance_mianfei')
             } else {
               item.subscriptionMethodLabel = '-'
             }
@@ -967,7 +985,7 @@ export default {
 
             item.paidType =
               chargeProvider === 'Aliyun' ? license.type : chargeProvider === 'Stripe' ? subscribeDto.type : ''
-            item.deployDisable = item.tmInfo.pingTime || false
+            item.deployDisable = item?.tmInfo?.pingTime || false
             if (!item.tmInfo) {
               item.tmInfo = {}
             }
@@ -1319,7 +1337,7 @@ export default {
       if (ips.length > 0 && this.ipAddress && this.ipAddress !== '') {
         for (let i = 0; i < ips.length; i++) {
           if (!ipRegex.test(ips[i])) {
-            this.$message.error(ips[i] + '不合法IP')
+            this.$message.error(ips[i] + i18n.t('dfs_instance_instance_buhefaIp'))
             return
           }
         }
@@ -1575,6 +1593,18 @@ export default {
         subscribeItems: subscribeDto?.subscribeItems
       }
       this.$refs?.UnsubscribeDetailDialog?.getUnsubscribePrice(sub, 'Engine')
+    },
+    //退订存储详情
+    openMdbUnsubscribe(row) {
+      let { orderInfo = {} } = row
+      let { subscriptionId = {}, subscribeDto = {} } = orderInfo
+      let sub = {
+        id: subscriptionId,
+        paidType: subscribeDto?.paymentMethod,
+        type: 'MongoDB',
+        subscribeItems: subscribeDto?.subscribeItems
+      }
+      this.$refs?.UnsubscribeDetailDialog?.getUnsubscribePrice(sub, 'MongoDB')
     },
     formatPrice(currency, price) {
       return (
