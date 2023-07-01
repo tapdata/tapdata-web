@@ -10,6 +10,11 @@
         <div class="vip-btn mr-4 cursor-pointer" @click="openUpgrade">
           <VIcon size="17">icon-vip</VIcon>&nbsp;{{ $t('packages_component_src_upgradefee_dingyuezhuanyeban') }}
         </div>
+        <!--有奖问卷-->
+        <div v-if="showQuestionnaire" class="command-item mr-6 position-relative" @click="goQuestionnaire">
+          <span class="cursor-pointer"> {{ $t('dfs_the_header_header_prize_questionnaire') }} </span>
+          <VIcon class="position-absolute discount-hot-icon">hot-o</VIcon>
+        </div>
         <!--我的工单-->
         <div class="command-item mr-6" @click="goTicketSystem">
           <VIcon size="17">workorder</VIcon>
@@ -81,6 +86,7 @@
 <script>
 import { VIcon, UpgradeFee } from '@tap/component'
 import { langMenu, getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
+import { daysdifference, extractTimeFromObjectId } from '../../util'
 
 import NotificationPopover from '@/views/workbench/NotificationPopover'
 
@@ -99,7 +105,10 @@ export default {
       configMock: window.__configMock__,
       mockUserId: null,
       openUpgradeFee: false,
-      isFeeUser: true
+      isFeeUser: true,
+      //用户注册时间
+      registrationTime: '',
+      showQuestionnaire: false
     }
   },
   created() {
@@ -118,17 +127,6 @@ export default {
     //如果没有配置topBarLinks 给默认值
     if (!window.__config__?.topBarLinks) {
       this.topBarLinks = [
-        // {
-        //   text: 'dfs_data_server_apply_for_version', //线下部署
-        //   link: 'https://tapdata.net/tapdata-on-prem/demo.html',
-        //   type: 'op'
-        // },
-        // {
-        //   text: 'header_upgrade', //旧版本访问
-        //   link: 'https://cloud.tapdata.net/console/#/workbench/',
-        //   icon: 'navigation_general',
-        //   type: 'v2'
-        // },
         {
           text: 'header_technical_support', //技术支持
           link: 'https://desk.zoho.com.cn/portal/tapdata/zh/community/topic/welcome-to-community',
@@ -142,6 +140,12 @@ export default {
           type: 'handbook'
         }
       ]
+    }
+    //获取用户注册时间
+    if (this.user?.id) {
+      this.registrationTime = extractTimeFromObjectId(this.user?.id)
+      //是否是最近7天注册的新用户
+      this.showQuestionnaire = daysdifference(this.registrationTime) < 7
     }
   },
   methods: {
@@ -236,6 +240,9 @@ export default {
     },
     openUpgrade() {
       this.openUpgradeFee = true
+    },
+    goQuestionnaire() {
+      window.open('https://tapdata.feishu.cn/share/base/form/shrcnImdl8BDtEOxki50Up9OJTg', '_blank')
     }
   }
 }
@@ -243,6 +250,12 @@ export default {
 <style lang="scss" scoped>
 .isMockUser {
   background: red !important;
+}
+.discount-hot-icon {
+  color: #ff7d00;
+  right: -12px;
+  top: -12px;
+  font-size: 24px;
 }
 .dfs-header {
   position: absolute;

@@ -1448,6 +1448,7 @@ export default {
   dfs_order_list_wodedingyue: '我的訂閱',
 
   dfs_the_header_header_wodegongdan: ' 我的工單',
+  dfs_the_header_header_prize_questionnaire: ' 有獎問卷',
   dfs_router_index_gongdanliebiao: '工單列表',
   dfs_ticketing_system_details_huifuneirong: '回复內容:',
   dfs_ticketing_system_details_zanwupinglun: '暫無評論',

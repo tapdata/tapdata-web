@@ -1593,6 +1593,7 @@ export default {
   dfs_order_list_wodedingyue: 'My Subscriptions',
 
   dfs_the_header_header_wodegongdan: 'My Ticket',
+  dfs_the_header_header_prize_questionnaire: ' Prize Questionnaire',
   dfs_router_index_gongdanliebiao: 'Ticket List',
   dfs_ticketing_system_details_huifuneirong: 'Reply content:',
   dfs_ticketing_system_details_zanwupinglun: 'No comments yet',

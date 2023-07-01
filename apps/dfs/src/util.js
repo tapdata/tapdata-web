@@ -113,3 +113,25 @@ export const formatMs = (msTime = 0, type = 'time') => {
   }
   return result
 }
+
+export const extractTimeFromObjectId = objectId => {
+  // 将 ObjectId 转换为 24 位的十六进制字符串
+  const hexString = objectId.toString()
+
+  // 提取时间戳部分，前 8 个字符为时间戳
+  const timestampHex = hexString.substring(0, 8)
+
+  // 将时间戳转换为整数（十进制）
+  const timestampInt = parseInt(timestampHex, 16)
+
+  // 根据时间戳创建 Date 对象
+  return new Date(timestampInt * 1000) // 乘以 1000 转换为毫秒
+}
+
+export const daysdifference = time => {
+  let currentDate = new Date().getTime()
+  let endTime = new Date(time).getTime()
+  let dateTime = 1000 * 60 * 60 * 24 //每一天的毫秒数
+  let minusDays = Math.floor((endTime - currentDate) / dateTime) //计算出两个日期的天数差
+  return Math.abs(minusDays) //取绝对值
+}
