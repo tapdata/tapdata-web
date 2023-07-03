@@ -653,13 +653,5 @@ export default {
   packages_dag_nodes_database_jinwuzhujianbiao: 'No primary key table only',
   packages_dag_nodes_database_jinyouzhujianbiao: 'Only the primary key table',
   packages_dag_nodes_database_biaoxianshi: 'Selectable table range',
-  packages_dag_nodes_database_xuanzeyaoguolvdiaode: 'Select the field type to filter out',
-  packages_dag_data_schema: 'Data Schema',
-  packages_dag_config_ddl: 'DDL Synchronization',
-  packages_dag_config_data_read: 'Data Read',
-  packages_dag_config_breakpoint_resume: 'Resume from Breakpoint',
-  packages_dag_config_datasource: 'Data Source',
-  packages_dag_config_data_write: 'Data Write',
-  packages_dag_config_incremental_mode: 'Incremental Mode',
-  packages_dag_config_data_filter: 'Data Filter'
+  packages_dag_nodes_database_xuanzeyaoguolvdiaode: 'Select the field type to filter out'
 }

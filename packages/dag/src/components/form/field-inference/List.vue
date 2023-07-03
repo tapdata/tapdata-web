@@ -112,6 +112,7 @@
                 controls-position="right"
                 :min="0.1"
                 class="coefficient-input mx-2"
+                @blur="currentData.coefficient = 1"
               ></ElInputNumber>
               <span>* n )</span>
             </div>
@@ -373,8 +374,16 @@ export default {
 
     submitEdit() {
       const { qualified_name, nodeId } = this.data
-      const { changeRuleId, fieldName, dataType, dataTypeTemp, newDataType, useToAll, selectDataType, coefficient } =
-        this.currentData
+      const {
+        changeRuleId,
+        fieldName,
+        dataType,
+        dataTypeTemp,
+        newDataType,
+        useToAll,
+        selectDataType,
+        coefficient = 1
+      } = this.currentData
       const params = {
         databaseType: this.activeNode.databaseType,
         dataTypes: [newDataType]

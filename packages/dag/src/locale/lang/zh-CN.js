@@ -613,13 +613,5 @@ export default {
   packages_dag_nodes_database_jinwuzhujianbiao: '仅无主键表',
   packages_dag_nodes_database_jinyouzhujianbiao: '仅有主键表',
   packages_dag_nodes_database_biaoxianshi: '可选择的表范围',
-  packages_dag_nodes_database_xuanzeyaoguolvdiaode: '选择要过滤掉的字段类型',
-  packages_dag_data_schema: '数据模型',
-  packages_dag_config_ddl: 'DDL同步配置',
-  packages_dag_config_data_read: '数据读取配置',
-  packages_dag_config_breakpoint_resume: '断点续传配置',
-  packages_dag_config_datasource: '数据源专属配置',
-  packages_dag_config_data_write: '数据写入配置',
-  packages_dag_config_incremental_mode: '增量模式配置',
-  packages_dag_config_data_filter: '数据过滤配置'
+  packages_dag_nodes_database_xuanzeyaoguolvdiaode: '选择要过滤掉的字段类型'
 }
