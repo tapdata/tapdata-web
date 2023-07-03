@@ -473,7 +473,6 @@ export class Database extends NodeType {
                     properties: {
                       initialConcurrent: {
                         type: 'boolean',
-                        default: true,
                         'x-component': 'Switch',
                         'x-reactions': {
                           target: '.initialConcurrentWriteNum',
@@ -554,7 +553,7 @@ export class Database extends NodeType {
                           min: 1,
                           max: 10000000
                         },
-                        default: 1000
+                        default: 100
                       },
                       writeBatchWaitMs: {
                         title: i18n.t('packages_dag_nodes_database_xierumeipizui'), //增量批次读取条数
