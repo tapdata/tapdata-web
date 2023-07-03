@@ -662,6 +662,7 @@ export default {
         this.getFields()
       }
       if (!this.data.id) {
+        this.form.basePath = uid(11, 'a')
         this.edit()
       }
 
