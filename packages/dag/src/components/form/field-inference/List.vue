@@ -112,6 +112,7 @@
                 controls-position="right"
                 :min="0.1"
                 class="coefficient-input mx-2"
+                @blur="currentData.coefficient = 1"
               ></ElInputNumber>
               <span>* n )</span>
             </div>
