@@ -52,7 +52,7 @@
   }
 }
 
-.formily-element-space-horizontal {
+/*.formily-element-space-horizontal {
   .formily-element-form-item-layout-horizontal > .formily-element-form-item-label {
     * {
       line-height: 32px;
@@ -60,5 +60,8 @@
     .formily-element-form-item-label-content {
       min-height: 32px;
     }
+    > .formily-element-form-item-label-tooltip {
+      height: 32px !important;
+    }
   }
-}
+}*/
