@@ -443,7 +443,7 @@ export class Table extends NodeType {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
-                      title: 'DDL同步配置'
+                      title: i18n.t('packages_dag_config_ddl')
                     },
                     properties: {
                       enableDDL: {
@@ -470,7 +470,7 @@ export class Table extends NodeType {
                             fulfill: {
                               state: {
                                 disabled: true,
-                                description: `{{$values.databaseType + '${i18n.t(
+                                description: `{{$values.databaseType + ' ${i18n.t(
                                   'packages_dag_nodes_database_value_zanbuzhiciddl'
                                 )}'}}`
                               }
@@ -488,7 +488,7 @@ export class Table extends NodeType {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
-                      title: '增量模式配置'
+                      title: i18n.t('packages_dag_config_incremental_mode')
                     },
                     'x-reactions': {
                       fulfill: {
@@ -601,7 +601,7 @@ export class Table extends NodeType {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
-                      title: '数据过滤配置'
+                      title: i18n.t('packages_dag_config_data_filter')
                     },
                     properties: {
                       enableCustomCommand: {
@@ -924,7 +924,7 @@ export class Table extends NodeType {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
-                      title: '驱动读取配置'
+                      title: i18n.t('packages_dag_config_data_read')
                     },
                     'x-reactions': {
                       fulfill: {
@@ -954,7 +954,7 @@ export class Table extends NodeType {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
-                      title: '断点续传配置'
+                      title: i18n.t('packages_dag_config_breakpoint_resume')
                     },
                     'x-reactions': {
                       fulfill: {
@@ -1122,7 +1122,7 @@ export class Table extends NodeType {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
-                      title: '数据源专属配置'
+                      title: i18n.t('packages_dag_config_datasource')
                     },
                     'x-reactions': {
                       fulfill: {
@@ -1178,7 +1178,7 @@ export class Table extends NodeType {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
-                      title: '数据写入配置'
+                      title: i18n.t('packages_dag_config_data_write')
                     },
                     properties: {
                       writeStrategyObject: {
@@ -1348,7 +1348,7 @@ export class Table extends NodeType {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
-                      title: '数据源专属配置'
+                      title: i18n.t('packages_dag_config_datasource')
                     },
                     'x-reactions': {
                       fulfill: {
@@ -1404,7 +1404,7 @@ export class Table extends NodeType {
               'alarmSettings.0.open': {
                 title: i18n.t('packages_business_setting_alarmnotification_dangshujuyuanjie'),
                 type: 'boolean',
-                required: true,
+                default: true,
                 'x-editable': true,
                 'x-decorator': 'FormItem',
                 'x-component': 'Switch',
