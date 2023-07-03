@@ -677,8 +677,8 @@ export default {
       const formVM = this.$refs.form
 
       if (formVM) {
-        formVM.clearValidate()
         this.$nextTick(() => {
+          formVM.clearValidate()
           formVM.$el.scrollTop = 0
         })
       }
