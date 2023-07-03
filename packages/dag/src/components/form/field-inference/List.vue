@@ -90,7 +90,7 @@
               @select="handleAutocomplete"
             ></ElAutocomplete>
           </ElFormItem>
-          <div v-if="!singleTable">
+          <div>
             <ElCheckbox v-model="currentData.useToAll">{{
               $t('packages_form_field_inference_list_duidangqiantuiyan')
             }}</ElCheckbox>
