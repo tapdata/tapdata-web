@@ -569,7 +569,9 @@ export default {
     },
 
     getDataType(row = {}) {
-      if (!this.rules.length || !this.rules.find(t => t.id === row.changeRuleId)) return row.dataTypeTemp
+      // 这里不清楚为要返回 dataTypeTemp，不过 dataTypeTemp 可能为空，所以加上 || row.data_type
+      if (!this.rules.length || !this.rules.find(t => t.id === row.changeRuleId))
+        return row.dataTypeTemp || row.data_type
       return row.data_type
     }
   }
