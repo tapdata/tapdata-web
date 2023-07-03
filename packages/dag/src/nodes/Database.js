@@ -445,7 +445,7 @@ export class Database extends NodeType {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
-                      title: 'DDL同步配置'
+                      title: i18n.t('packages_dag_config_ddl')
                     },
                     properties: {
                       enableDDL: {
@@ -493,7 +493,7 @@ export class Database extends NodeType {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
-                      title: '驱动读取配置'
+                      title: i18n.t('packages_dag_config_data_read')
                     },
                     'x-reactions': {
                       fulfill: {
@@ -530,7 +530,7 @@ export class Database extends NodeType {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
-                      title: '断点续传配置'
+                      title: i18n.t('packages_dag_config_breakpoint_resume')
                     },
                     'x-reactions': {
                       fulfill: {
@@ -698,7 +698,7 @@ export class Database extends NodeType {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
-                      title: '数据源专属配置'
+                      title: i18n.t('packages_dag_config_datasource')
                     },
                     'x-reactions': {
                       fulfill: {
@@ -759,7 +759,7 @@ export class Database extends NodeType {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
-                      title: '数据写入配置'
+                      title: i18n.t('packages_dag_config_data_write')
                     },
                     properties: {
                       writeStrategyObject: {
@@ -880,7 +880,7 @@ export class Database extends NodeType {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
-                      title: '数据源专属配置'
+                      title: i18n.t('packages_dag_config_datasource')
                     },
                     'x-reactions': {
                       fulfill: {
@@ -904,7 +904,7 @@ export class Database extends NodeType {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              label: '数据模型'
+              label: i18n.t('packages_dag_data_schema')
             },
             properties: {
               schemaPanel: {
@@ -953,6 +953,7 @@ export class Database extends NodeType {
               'alarmSettings.0.open': {
                 title: i18n.t('packages_business_setting_alarmnotification_dangshujuyuanjie'),
                 type: 'boolean',
+                default: true,
                 'x-editable': true,
                 'x-decorator': 'FormItem',
                 'x-component': 'Switch',

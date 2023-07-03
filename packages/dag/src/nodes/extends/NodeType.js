@@ -79,7 +79,7 @@ export class NodeType {
             'alarmSettings.0.open': {
               title: i18n.t('packages_business_setting_alarmnotification_dangjiediandeping'),
               type: 'boolean',
-              required: true,
+              default: true,
               'x-editable': true,
               'x-decorator': 'FormItem',
               'x-component': 'Switch',
