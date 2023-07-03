@@ -4,7 +4,7 @@ import { useForm } from '@tap/form'
 import { IconButton } from '@tap/component'
 import { metadataInstancesApi } from '@tap/api'
 import { useSchemaEffect } from '../../../hooks/useAfterTaskSaved'
-import { getMatchedDataTypeLevel, errorFiledType } from '../../../util'
+import { getCanUseDataTypes, getMatchedDataTypeLevel, errorFiledType } from '../../../util'
 import FieldList from '../field-inference/List'
 import './style.scss'
 
@@ -18,7 +18,7 @@ export const SchemaPreview = defineComponent({
     const isTreeView = ref(true)
     const isTarget = form.values.type === 'table' && !!form.values.$inputs.length
     const isSource = form.values.type === 'table' && !form.values.$inputs.length
-    const readonly = ref(props.disabled || !isTarget)
+    const readonly = ref(props.disabled || root.$store.state.dataflow?.stateIsReadonly || !isTarget)
     let fieldChangeRules = form.values.fieldChangeRules || []
     let columnsMap = {}
     const createTree = data => {
@@ -84,7 +84,8 @@ export const SchemaPreview = defineComponent({
       //如果findPossibleDataTypes = {}，不做类型校验
       if (isTarget) {
         fields.forEach(el => {
-          el.canUseDataTypes = []
+          const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[el.field_name] || {}
+          el.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
           el.matchedDataTypeLevel = getMatchedDataTypeLevel(
             el,
             el.canUseDataTypes,
@@ -95,7 +96,8 @@ export const SchemaPreview = defineComponent({
       } else {
         // 源节点 JSON.parse('{\"type\":7}').type==7
         fields.forEach(el => {
-          el.canUseDataTypes = []
+          const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[el.field_name] || {}
+          el.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
           el.matchedDataTypeLevel = errorFiledType(el)
         })
       }
