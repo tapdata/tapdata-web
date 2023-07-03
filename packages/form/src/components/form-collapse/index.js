@@ -71,7 +71,7 @@ const FormCollapse = observer(
     props: {
       formCollapse: { type: Object },
       activeKey: {
-        type: [String, Number]
+        type: [String, Number, Array]
       }
     },
     setup(props, { attrs, emit }) {
