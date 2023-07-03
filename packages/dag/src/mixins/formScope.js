@@ -347,7 +347,7 @@ export default {
             }
           })
           const table = filter.where.original_name?.like
-          if (table && !data.items.includes(table)) {
+          if (table && !data.items.some(t => t.value.includes(table))) {
             const res = await metadataInstancesApi.checkTableExist({
               connectionId: filter.where['source.id'],
               tableName: table
