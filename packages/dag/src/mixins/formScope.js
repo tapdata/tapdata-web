@@ -353,7 +353,10 @@ export default {
               tableName: table
             })
             if (res?.exist) {
-              data.items.unshift(table)
+              data.items.unshift({
+                label: table,
+                value: table
+              })
             }
           }
           return data
