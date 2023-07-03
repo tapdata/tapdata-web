@@ -670,6 +670,7 @@ export default {
         this.getFields()
       }
       if (!this.data.id) {
+        this.form.basePath = uid(11, 'a')
         this.edit()
       }
 
@@ -806,7 +807,6 @@ export default {
     // 切换到编辑状态
     edit() {
       this.form.status = 'pending'
-      this.form.basePath = uid(11, 'a')
       this.isEdit = true
       this.$nextTick(() => {
         this.data.fields.forEach(f => {
