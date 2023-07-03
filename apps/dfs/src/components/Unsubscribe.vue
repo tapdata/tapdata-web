@@ -281,9 +281,9 @@ export default {
           //单个退订需要传resourceId
           let resourceId = ''
           if (type === 'Engine') {
-            resourceId = subscribeItems.find(it => it.productType === 'Engine')?.resource?.id
+            resourceId = subscribeItems.find(it => it.productType === 'Engine')?.resourceId
           } else if (type === 'MongoDB') {
-            resourceId = subscribeItems.find(it => it.productType === 'MongoDB')?.resource?.id
+            resourceId = subscribeItems.find(it => it.productType === 'MongoDB')?.resourceId
           }
           let param = {
             subscribeId: id,
