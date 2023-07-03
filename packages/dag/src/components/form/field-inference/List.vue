@@ -374,7 +374,7 @@ export default {
 
     submitEdit() {
       const { qualified_name, nodeId } = this.data
-      const { changeRuleId, fieldName, dataType, dataTypeTemp, newDataType, useToAll, selectDataType, coefficient } =
+      const { changeRuleId, fieldName, dataType, dataTypeTemp, newDataType, useToAll, selectDataType, coefficient = 1 } =
         this.currentData
       const params = {
         databaseType: this.activeNode.databaseType,
