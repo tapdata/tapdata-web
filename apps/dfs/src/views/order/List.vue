@@ -16,11 +16,11 @@
               <div class="sub-li-header flex justify-content-between">
                 <div>
                   <span class="font-color-dark fw-sub mr-2"
-                    >{{ $t('dfs_components_renew_dingyuebianhao') }}{{ item.id }}</span
+                    >{{ $t('dfs_components_renew_dingyuebianhao') }}: {{ item.id }}</span
                   >
                   <el-divider direction="vertical"></el-divider>
                   <span class="font-color-dark fw-sub mr-2"
-                    ><span class="font-color-light">{{ $t('dfs_order_list_zongjine') }}</span>
+                    ><span class="font-color-light">{{ $t('dfs_order_list_zongjine') }}: </span>
                     {{ formatterPrice(item.currency, item.totalAmount) || 0 }}</span
                   >
                   <el-divider direction="vertical"></el-divider>
