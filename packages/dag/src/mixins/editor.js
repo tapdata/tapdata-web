@@ -150,7 +150,12 @@ export default {
       })
 
       nodes.forEach(node => {
-        let sharedCache = []
+        const { alarmRules = [] } = node
+
+        // alarmRules.forEach(rule => {
+        //   rule._point = Math.ceil(rule.point / 12) < 1 ? 1 : Math.ceil(rule.point / 12)
+        //   rule._ms = Math.ceil(rule.ms / 1000) < 1 ? 1 : Math.ceil(rule.ms / 1000)
+        // })
 
         node.$inputs = inputsMap[node.id] || []
         node.$outputs = outputsMap[node.id] || []

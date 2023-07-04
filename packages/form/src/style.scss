@@ -31,3 +31,37 @@
     color: map-get($color, danger);
   }
 }
+
+.formily-element-form-collapse.advanced-collapse {
+  padding-bottom: 16px;
+  border-top: 0;
+  border-bottom: 0;
+
+  .el-collapse-item {
+    .el-collapse-item__header {
+      font-size: 14px;
+    }
+    .el-collapse-item__wrap {
+      padding: 8px 12px;
+      border: 1px solid #ebeef5;
+      border-radius: 8px;
+    }
+    .el-collapse-item__content {
+      padding-bottom: 0;
+    }
+  }
+}
+
+/*.formily-element-space-horizontal {
+  .formily-element-form-item-layout-horizontal > .formily-element-form-item-label {
+    * {
+      line-height: 32px;
+    }
+    .formily-element-form-item-label-content {
+      min-height: 32px;
+    }
+    > .formily-element-form-item-label-tooltip {
+      height: 32px !important;
+    }
+  }
+}*/

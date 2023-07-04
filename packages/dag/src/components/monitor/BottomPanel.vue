@@ -140,10 +140,7 @@ export default {
       this.currentTab = tab
       this.$nextTick(() => {
         if (tab === 'log') {
-          data.nodeId &&
-            this.getLogRef()?.changeItem({
-              value: data.nodeId
-            })
+          data.nodeId && this.getLogRef()?.changeItem(data.nodeId)
           const t = new Date(data.start).getTime()
           const len = 10 * 1000
           let start = t - len

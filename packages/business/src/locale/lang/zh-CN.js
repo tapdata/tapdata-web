@@ -43,7 +43,7 @@ export default {
   packages_business_connection_form_change: '更换',
   packages_business_connection_form_rename: '改名',
   packages_business_connection_form_database_owner_tip: '逗号分割的表达式列表，使用 * 代表任意长度任意字符',
-  packages_business_connection_form_source_and_target_tip: '此数据连接在Tapdata 中能同时作为源和目标使用',
+  packages_business_connection_form_source_and_target_tip: `此数据连接在 ${process.env.VUE_APP_PAGE_TITLE} 中能同时作为源和目标使用`,
   packages_business_connection_form_source_tip: '此数据连接在Tapdata 中只能作为源使用，不能作用为目标',
   packages_business_connection_form_target_tip: '此数据连接在Tapdata 中只能作为目标使用，不能作用为源',
   packages_business_connection_form_shared_mining: '共享挖掘',
@@ -489,16 +489,16 @@ export default {
   packages_business_verification_success: '恭喜~~~~校验结果源表与目标表内容完全一致，没有错误记录',
   packages_business_verification_clickVerified: '点下方按钮添加校验表',
   packages_business_verification_ChoosePKField: '请选索引或主键字段',
-  packages_business_verification_indexField: '索引字段',
+  packages_business_verification_indexField: '关联字段',
   packages_business_verification_BasicSettings: '基本设置',
   packages_business_verification_verifyCondition: '校验表配置',
   packages_business_verification_clear: '清空',
   packages_business_verification_fastCountTip:
     '快速count仅对源表和目标表的行数进行count校验，速度极快，但是不会展示差异的具体字段内容。',
   packages_business_verification_contentVerifyTip:
-    '全表字段值校验会对源表和目标表的全部字段进行逐行校验，能查出所有字段的差异，但是速度慢。',
+    '表全字段值校验会对源表和目标表的全部字段进行逐行校验，能查出所有字段的差异，但是速度慢。',
   packages_business_verification_jointFieldTip:
-    '关联键校验只对源表和目标表的关联字段的值进行比对校验，速度快于全表字段值校验模式。',
+    '关联字段值校验只对源表和目标表的关联字段的值进行比对校验，速度快于全表字段值校验模式。',
   packages_business_verification_waiting: '待校验',
   packages_business_verification_scheduling: '校验启动中',
   packages_business_verification_error: '校验失败',
@@ -1078,5 +1078,14 @@ export default {
   page_title_data_difference_details: '差异详情',
   page_title_data_verification_result: '校验结果',
   page_title_diff_verification_history: '差异校验历史',
-  page_title_diff_verification_details: '差异校验详情'
+  page_title_diff_verification_details: '差异校验详情',
+  packages_business_connections_list_dangqianlianjiex:
+    '当前连接 xxx 正在作为FDM和MDM的存储使用，删除会导致已有存储数据丢失，是否确认要继续删除。',
+  packages_business_connections_list_zhengzaizuoweiF:
+    '正在作为FDM和MDM的存储使用，修改会导致已有存储数据丢失，是否确认要继续修改',
+  packages_business_connections_list_dangqianlianjie: '当前连接',
+  packages_business_components_conditionbox_chakanzidingyi: '查看自定义字段',
+  packages_business_components_fielddialog_ziduanbuyunxu: '字段不允许为空',
+  packages_business_components_fielddialog_zidingyiziduan: '自定义字段',
+  packages_business_verification_list_biaobufenziduan: '表部分字段校验'
 }

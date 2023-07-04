@@ -19,23 +19,46 @@ export class FieldCalc extends NodeType {
         type: 'array',
         display: 'none'
       },
-      name: {
-        type: 'string',
-        title: i18n.t('public_node_name'),
-        required: true,
-        'x-decorator': 'FormItem',
-        'x-component': 'Input'
-      },
-      scripts: {
-        type: 'array',
-        title: '',
-        'x-decorator': 'FormItem',
-        'x-component': 'FieldValue',
+      tabs: {
+        type: 'void',
+        'x-component': 'FormTab',
         'x-component-props': {
-          '@editor-init': '{{editor => addEditorFieldCompletion(editor, $values.id, $values.$inputs)}}'
+          class: 'config-tabs',
+          formTab: '{{formTab}}'
         },
-        'x-reactions':
-          '{{useAsyncDataSourceByConfig({service: loadNodeFieldsById, withoutField: true}, $self.value.length ? $values.id : $values.$inputs[0])}}'
+        properties: {
+          tab1: {
+            type: 'void',
+            'x-component': 'FormTab.TabPane',
+            'x-component-props': {
+              label: i18n.t('public_basic_settings')
+            },
+            properties: {
+              name: {
+                type: 'string',
+                title: i18n.t('public_node_name'),
+                required: true,
+                'x-decorator': 'FormItem',
+                'x-component': 'Input'
+              },
+              scripts: {
+                type: 'array',
+                title: '',
+                'x-decorator': 'FormItem',
+                'x-component': 'FieldValue',
+                'x-component-props': {
+                  '@editor-init': '{{editor => addEditorFieldCompletion(editor, $values.id, $values.$inputs)}}'
+                },
+                'x-reactions':
+                  '{{useAsyncDataSourceByConfig({service: loadNodeFieldsById, withoutField: true}, $self.value.length ? $values.id : $values.$inputs[0])}}'
+              },
+              schemaPreview: {
+                type: 'void',
+                'x-component': 'SchemaPreview'
+              }
+            }
+          }
+        }
       }
     }
   }

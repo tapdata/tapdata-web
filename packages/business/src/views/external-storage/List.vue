@@ -20,6 +20,15 @@
         :label="$t('public_external_memory_type')"
         prop="typeFmt"
       ></ElTableColumn>
+      <!--      <ElTableColumn show-overflow-tooltip min-width="150" :label="$t('public_status')" prop="typeFmt">-->
+      <!--        <template #default="{ row }">-->
+      <!--          <div>-->
+      <!--            <span :class="['status-connection-' + row.status, 'status-block']">-->
+      <!--              {{ getStatus(row.status) }}-->
+      <!--            </span>-->
+      <!--          </div>-->
+      <!--        </template>-->
+      <!--      </ElTableColumn>-->
       <ElTableColumn
         show-overflow-tooltip
         min-width="300"
@@ -176,6 +185,7 @@ import { cloneDeep, escapeRegExp } from 'lodash'
 
 import { databaseTypesApi, externalStorageApi } from '@tap/api'
 import { TablePage, EXTERNAL_STORAGE_TYPE_MAP } from '@tap/business'
+import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 import { FilterBar, Drawer } from '@tap/component'
 import { openUrl } from '@tap/shared'
 import { SchemaToForm } from '@tap/form'
@@ -358,6 +368,7 @@ export default {
           let list = (data?.items || []).map(item => {
             item.typeFmt = EXTERNAL_STORAGE_TYPE_MAP[item.type] || '-'
             item.createTimeFmt = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') || '-'
+            // item.status = item.status || 'ready'
             return item
           })
           return {
@@ -384,8 +395,7 @@ export default {
     submit() {
       this.$refs.form.validate(async valid => {
         if (valid) {
-          const schemaFormInstance = this.$refs.schemaToForm.getForm?.()
-          schemaFormInstance?.validate().then(async () => {
+          const main = async () => {
             let formValues = this.$refs.schemaToForm?.getFormValues?.()
 
             this.loading = true
@@ -422,7 +432,15 @@ export default {
                 })
                 .catch(catchFunc)
             }
-          })
+          }
+          if (this.$refs.schemaToForm) {
+            const schemaFormInstance = this.$refs.schemaToForm?.getForm?.()
+            schemaFormInstance?.validate().then(async () => {
+              main()
+            })
+          } else {
+            main()
+          }
         }
       })
     },
@@ -542,7 +560,11 @@ export default {
       })
     },
 
-    returnTestData(data) {}
+    returnTestData(data) {},
+
+    getStatus(status) {
+      return CONNECTION_STATUS_MAP[status || 'ready']?.text || ''
+    }
   }
 }
 </script>

@@ -21,6 +21,9 @@ export default {
   public_total: '共计',
   public_database: '數據庫',
   public_file: '文件',
+  public_schema: '模型',
+  public_basic_settings: '基礎設置',
+  public_advanced_settings: '高級設置',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '無效',
@@ -107,6 +110,7 @@ export default {
   public_button_search: '搜索',
   public_button_stop_mining: '停止挖掘',
   public_button_stop_recover: '恢復挖掘',
+  public_button_execute: '執行',
   // 消息
   public_message_title_prompt: '提示',
   public_message_delete_confirm: '是否刪除',

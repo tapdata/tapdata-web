@@ -79,7 +79,9 @@ export default {
               isLeaf: true,
               isObject: true,
               connectionId: item.sourceConId,
-              LDP_TYPE: 'table'
+              LDP_TYPE: 'table',
+              parent_id: node.id,
+              isVirtual: item.status === 'noRunning'
             })
           )
         })
@@ -117,6 +119,11 @@ export default {
       filterTree(root)
       this.searchIng = false
       this.filterTreeData = root.children
+    },
+
+    handleFindParent(event) {
+      const parentNode = event.target?.parentElement
+      this.$emit('find-parent', parentNode)
     }
   }
 }

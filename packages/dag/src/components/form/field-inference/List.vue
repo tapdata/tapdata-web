@@ -6,7 +6,7 @@
       :has-pagination="false"
       ref="table"
       height="100%"
-      :key="!!canRevokeRules.length + ''"
+      :key="revokeTableDisabled + ''"
       :row-class-name="tableRowClassName"
     >
       <template slot="field_name" slot-scope="scope">
@@ -36,9 +36,9 @@
               >warning</VIcon
             >
           </ElTooltip>
-          <span v-if="readonly">{{ scope.row.data_type }}</span>
+          <span v-if="readonly">{{ getDataType(scope.row) }}</span>
           <div v-else class="cursor-pointer inline-block" @click="openEditDataTypeVisible(scope.row)">
-            <span>{{ scope.row.data_type }}</span>
+            <span>{{ getDataType(scope.row) }}</span>
             <VIcon class="ml-2">arrow-down</VIcon>
           </div>
         </div>
@@ -47,7 +47,7 @@
         {{ nullableMap[!scope.row.is_nullable] }}
       </template>
       <template slot="operationHeader">
-        <VIcon :class="canRevokeRules.length ? 'color-primary' : 'color-disable'" @click="revokeAll()">revoke</VIcon>
+        <VIcon :class="!revokeTableDisabled ? 'color-primary' : 'color-disable'" @click="revokeAll()">revoke</VIcon>
       </template>
       <template slot="operation" slot-scope="scope">
         <ElTooltip
@@ -67,32 +67,61 @@
       width="35%"
     >
       <ElForm ref="dataTypeForm" label-width="140px" label-position="left" :model="currentData" @submit.native.prevent>
-        <ElFormItem :label="$t('packages_form_field_inference_list_tuiyanchudelei')">
-          <span>{{ currentData.dataType }}</span>
-        </ElFormItem>
-        <ElFormItem
-          :label="$t('packages_form_field_inference_list_yaotiaozhengweide')"
-          prop="newDataType"
-          :error="currentData.errorMessage"
-          inline-message
-          required
-        >
-          <ElAutocomplete
-            class="inline-input"
-            v-model="currentData.newDataType"
-            :fetch-suggestions="querySearch"
-            :placeholder="$t('public_input_placeholder')"
-            @select="handleAutocomplete"
-          ></ElAutocomplete>
-        </ElFormItem>
-        <div v-if="!hideBatch">
-          <ElCheckbox v-model="currentData.useToAll">{{
-            $t('packages_form_field_inference_list_duidangqiantuiyan')
-          }}</ElCheckbox>
-          <div v-show="currentData.useToAll" class="mt-2 color-danger fs-8">
-            {{ $t('packages_form_field_inference_list_piliangyingyonghui') }}
+        <ElRadioGroup v-if="!!originType" v-model="modeType" class="mb-3">
+          <ElRadio label="custom">{{ $t('packages_dag_field_inference_list_zidingyitiaozheng') }}</ElRadio>
+          <ElRadio label="coefficient">{{ $t('packages_dag_field_inference_list_anxishutiaozheng') }}</ElRadio>
+        </ElRadioGroup>
+        <template v-if="modeType === 'custom'">
+          <ElFormItem :label="$t('packages_form_field_inference_list_tuiyanchudelei')">
+            <span>{{ currentData.dataTypeTemp }}</span>
+          </ElFormItem>
+          <ElFormItem
+            :label="$t('packages_form_field_inference_list_yaotiaozhengweide')"
+            prop="newDataType"
+            :error="currentData.errorMessage"
+            inline-message
+            required
+          >
+            <ElAutocomplete
+              class="inline-input"
+              v-model="currentData.newDataType"
+              :fetch-suggestions="querySearch"
+              :placeholder="$t('public_input_placeholder')"
+              @select="handleAutocomplete"
+            ></ElAutocomplete>
+          </ElFormItem>
+          <div>
+            <ElCheckbox v-model="currentData.useToAll">{{
+              $t('packages_form_field_inference_list_duidangqiantuiyan')
+            }}</ElCheckbox>
+            <div v-show="currentData.useToAll" class="mt-2 color-danger fs-8">
+              {{ $t('packages_form_field_inference_list_piliangyingyonghui') }}
+            </div>
           </div>
-        </div>
+        </template>
+        <template v-else>
+          <ElFormItem :label="$t('packages_form_field_inference_list_tuiyanchudelei')">
+            <span>{{ originType + ' (n)' }}</span>
+          </ElFormItem>
+          <ElFormItem :label="$t('packages_dag_field_inference_list_anzhaoxishu')">
+            <div class="flex align-items-center">
+              <span>{{ originType }}</span>
+              <span>(</span>
+              <ElInputNumber
+                v-model="currentData.coefficient"
+                controls-position="right"
+                :min="0.1"
+                class="coefficient-input mx-2"
+                @blur="currentData.coefficient = 1"
+              ></ElInputNumber>
+              <span>* n )</span>
+            </div>
+          </ElFormItem>
+          <div class="flex align-items-center mt-n3 mb-3">
+            <VIcon class="color-primary mr-3">info</VIcon>
+            <span>{{ $t('packages_dag_field_inference_list_anzhaoxishu_tip') }}</span>
+          </div>
+        </template>
       </ElForm>
       <span slot="footer" class="dialog-footer">
         <ElButton size="mini" @click="editDataTypeVisible = false">{{ $t('public_button_cancel') }}</ElButton>
@@ -149,7 +178,7 @@ export default {
       type: Array,
       default: () => []
     },
-    hideBatch: {
+    singleTable: {
       type: Boolean,
       default: false
     },
@@ -167,7 +196,7 @@ export default {
           label: i18n.t('packages_form_field_mapping_list_xuhao'),
           type: 'index',
           prop: 'index',
-          width: '60px'
+          minWidth: '40px'
         },
         {
           label: i18n.t('packages_form_field_add_del_index_ziduanmingcheng'),
@@ -185,7 +214,8 @@ export default {
         {
           label: i18n.t('packages_form_field_inference_list_feikong'),
           prop: 'is_nullable',
-          slotName: 'is_nullable'
+          slotName: 'is_nullable',
+          width: '60px'
         },
         {
           label: i18n.t('packages_form_field_inference_list_ziduanzhushi'),
@@ -207,16 +237,20 @@ export default {
       currentData: {
         changeRuleId: '',
         fieldName: '',
+        dataTypeTemp: '',
         dataType: '',
         newDataType: '',
         selectDataType: '',
         useToAll: false,
         errorMessage: '',
         source: {},
-        canUseDataTypes: []
+        canUseDataTypes: [],
+        coefficient: 1
       },
       editBtnLoading: false,
-      rules: []
+      rules: [],
+      modeType: 'custom',
+      originType: ''
     }
   },
 
@@ -241,18 +275,23 @@ export default {
 
     tableList() {
       const { fields } = this.data
-      let list = (fields || []).map(t => {
-        t.source = this.findInRulesById(t.changeRuleId) || {}
-        t.accept = t.source?.accept || t.accept
-        t.data_type = t.source?.result?.dataType || t.data_type
-        return t
-      })
+      let list = fields || []
       return this.showDelete ? list : list.filter(t => !t.is_deleted)
     },
 
-    canRevokeRules() {
+    revokeTableDisabled() {
       const { qualified_name } = this.data
-      return this.rules.filter(t => t.scope === 'Field' && t.namespace?.[1] === qualified_name) || []
+      if (this.singleTable) return !this.rules.length
+      return this.rules.every(t => t.namespace?.[1] !== qualified_name)
+    }
+  },
+
+  watch: {
+    fieldChangeRules: {
+      deep: true,
+      handler(val = []) {
+        this.setRules(val)
+      }
     }
   },
 
@@ -278,18 +317,54 @@ export default {
       this.rules.splice(index, 1)
     },
 
-    openEditDataTypeVisible(row) {
+    async openEditDataTypeVisible(row) {
       const { source = {}, canUseDataTypes = [] } = row || {}
       this.currentData.changeRuleId = row.changeRuleId
-      this.currentData.dataType = source?.accept || row.data_type
+      this.currentData.dataType = this.getDataType(row)
+      this.currentData.dataTypeTemp = row.dataTypeTemp
       this.currentData.fieldName = row.field_name
-      this.currentData.newDataType = row.data_type
+      this.currentData.newDataType = this.currentData.dataType
       this.currentData.useToAll = false
       this.currentData.errorMessage = ''
       this.currentData.source = source
       this.currentData.canUseDataTypes = canUseDataTypes
       const findRule = this.rules.find(t => t.id === this.currentData.changeRuleId)
       this.currentData.selectDataType = findRule?.result?.selectDataType || ''
+      this.currentData.coefficient = findRule?.multiple || 1
+
+      const dataTypeCheckMultiple = await metadataInstancesApi.dataTypeCheckMultiple({
+        databaseType: this.activeNode.databaseType,
+        dataType: this.currentData.dataType
+      })
+
+      let modeType = 'custom'
+      if (dataTypeCheckMultiple?.result) {
+        this.originType = dataTypeCheckMultiple.originType
+        const rule = this.findInRulesById(this.currentData.changeRuleId)
+        if (rule?.scope !== 'Field') {
+          this.fieldChangeRules
+            .filter(t => t.type !== 'Field')
+            .forEach((item = {}) => {
+              const { namespace = [] } = item
+              if (item.type === 'MutiDataType' && item.accept === this.originType) {
+                this.currentData.coefficient = item.multiple
+                modeType = 'coefficient'
+              } else {
+                const flag =
+                  namespace[0] === this.data.nodeId &&
+                  (namespace.length === 1 ||
+                    (namespace[1] === this.data.qualified_name && namespace[2] === this.currentData.fieldName))
+                if (flag) {
+                  modeType = 'custom'
+                }
+              }
+            })
+        }
+      } else {
+        this.originType = ''
+      }
+
+      this.modeType = modeType
       this.editDataTypeVisible = true
     },
 
@@ -299,11 +374,57 @@ export default {
 
     submitEdit() {
       const { qualified_name, nodeId } = this.data
-      const { changeRuleId, fieldName, dataType, newDataType, useToAll, selectDataType } = this.currentData
+      const {
+        changeRuleId,
+        fieldName,
+        dataType,
+        dataTypeTemp,
+        newDataType,
+        useToAll,
+        selectDataType,
+        coefficient = 1
+      } = this.currentData
       const params = {
         databaseType: this.activeNode.databaseType,
         dataTypes: [newDataType]
       }
+
+      if (this.modeType === 'coefficient') {
+        const f = this.findInRulesById(changeRuleId)
+        let ruleId = f?.id
+        let ruleAccept = f?.accept
+        if (f?.type === 'MutiDataType') {
+          f.multiple = coefficient
+          f.accept = this.originType
+          f.result = { dataType: `${this.originType}(${coefficient}n)`, dataTypeTemp }
+          const index = this.rules.findIndex(t => t.id === ruleId)
+          this.rules.splice(index, 1)
+          this.rules.push(f)
+        } else {
+          const index = this.rules.findIndex(t => t.accept === this.originType && t.type === 'MutiDataType')
+          if (index > -1) {
+            this.rules.splice(index, 1)
+          }
+          const op = {
+            id: uuid(),
+            scope: 'Node',
+            namespace: [nodeId],
+            type: 'MutiDataType',
+            accept: this.originType,
+            multiple: coefficient,
+            result: { dataType: `${this.originType}(${coefficient}n)`, dataTypeTemp }
+          }
+          ruleId = op.id
+          ruleAccept = op.accept
+          this.rules.push(op)
+        }
+
+        this.handleUpdate()
+        this.$message.success(i18n.t('public_message_operation_success'))
+        this.editDataTypeVisible = false
+        return
+      }
+
       this.editBtnLoading = true
       this.currentData.errorMessage = ''
       metadataInstancesApi
@@ -318,7 +439,6 @@ export default {
           }
           const f = this.findInRulesById(changeRuleId)
           let ruleId = f?.id
-          let ruleAccept = f?.accept
           if (f?.scope === 'Field') {
             if (useToAll) {
               let batchRule = this.findNodeRuleByType(f.accept)
@@ -328,35 +448,38 @@ export default {
                 // 修改批量规则
                 batchRule.result = { dataType: newDataType, tapType, selectDataType }
                 ruleId = batchRule.id
-                ruleAccept = newDataType
               } else {
                 // 修改规则为批量规则 scope、namespace
                 f.scope = 'Node'
                 f.namespace = [nodeId]
                 f.result = { dataType: newDataType, tapType, selectDataType }
-                ruleAccept = newDataType
               }
             } else {
               // 修改字段规则
               f.result = { dataType: newDataType, tapType, selectDataType }
-              ruleAccept = newDataType
             }
+            const index = this.rules.findIndex(t => t.id === ruleId)
+            this.rules.splice(index, 1)
+            this.rules.push(f)
           } else {
             const op = {
               id: uuid(),
               scope: useToAll ? 'Node' : 'Field',
               namespace: useToAll ? [nodeId] : [nodeId, qualified_name, fieldName],
               type: 'DataType',
-              accept: dataType,
+              accept: dataTypeTemp,
               result: { dataType: newDataType, tapType, selectDataType }
             }
             ruleId = op.id
-            ruleAccept = dataType
             this.rules.push(op)
           }
           this.handleUpdate()
-          this.data.fields.find(t => {
-            if ((useToAll && t.data_type === ruleAccept) || t.field_name === fieldName) {
+          this.data.fields.forEach(t => {
+            if (
+              (useToAll && t.data_type === t.dataTypeTemp && t.dataTypeTemp === dataTypeTemp) ||
+              t.field_name === fieldName
+            ) {
+              t.data_type = newDataType
               t.changeRuleId = ruleId
             }
           })
@@ -381,11 +504,12 @@ export default {
         const index = this.rules.findIndex(t => t.id === f.id)
         this.rules.splice(index, 1)
       }
+      row.data_type = row.dataTypeTemp
       this.handleUpdate()
     },
 
     revokeAll() {
-      if (!this.canRevokeRules.length) {
+      if (this.revokeTableDisabled) {
         return
       }
       this.$confirm(i18n.t('packages_form_field_inference_list_ninquerenyaohui'), '', {
@@ -394,7 +518,13 @@ export default {
       }).then(resFlag => {
         if (resFlag) {
           const { qualified_name } = this.data
-          this.handleUpdate(this.rules.filter(t => !(t.scope === 'Field' && t.namespace?.[1] === qualified_name)))
+          if (this.singleTable) {
+            this.rules = [] // 清空数据
+            this.handleUpdate()
+          } else {
+            this.rules = this.rules.filter(t => t.namespace?.[1] !== qualified_name) // 清空当前表的数据
+            this.handleUpdate()
+          }
           this.$message.success(i18n.t('public_message_operation_success'))
         }
       })
@@ -405,11 +535,11 @@ export default {
     },
 
     getRevokeDisabled(row) {
-      return !row.source?.scope
+      return !this.fieldChangeRules.find(t => t.id === row.changeRuleId)?.scope
     },
 
     getFieldScope(row = {}) {
-      return row.source?.scope
+      return this.fieldChangeRules.find(t => t.id === row.changeRuleId)?.scope
     },
 
     getRevokeColorClass(row = {}) {
@@ -445,6 +575,13 @@ export default {
 
     handleAutocomplete(item) {
       this.currentData.selectDataType = item.value
+    },
+
+    getDataType(row = {}) {
+      // 这里不清楚为要返回 dataTypeTemp，不过 dataTypeTemp 可能为空，所以加上 || row.data_type
+      if (!this.rules.length || !this.rules.find(t => t.id === row.changeRuleId))
+        return row.dataTypeTemp || row.data_type
+      return row.data_type
     }
   }
 }
@@ -468,5 +605,9 @@ export default {
 .type-warning {
   top: 3px;
   left: 0;
+}
+
+.coefficient-input {
+  width: 100px;
 }
 </style>

@@ -418,12 +418,20 @@ let menuSetting = [
     children: [
       { name: 'migrateList', code: 'v2_data_replication', parent: 'migrate' },
       { name: 'dataflowList', code: 'v2_data_flow', parent: 'dataflow' },
-      { name: 'dataVerificationList', code: 'v2_data_check', parent: 'dataVerification' },
-      { name: 'sharedMiningList', code: 'v2_log_collector', parent: 'sharedMining' },
-      { name: 'HeartbeatTableList', code: '', parent: 'heartbeatTable' },
+      { name: 'dataVerificationList', code: 'v2_data_check', parent: 'dataVerification' }
+    ]
+  },
+  {
+    name: 'advancedFeatures',
+    label: 'page_title_advanced_features',
+    icon: 'huowuchuanshu',
+    code: 'v2_advanced_features',
+    children: [
+      { name: 'sharedCacheList', code: 'v2_shared_cache', parent: 'sharedCache' }, // PDK暂时不支持共享缓存，暂时屏蔽
       { name: 'functionList', code: 'v2_function_management', parent: 'function' },
       { name: 'customNodeList', code: 'v2_custom_node', parent: 'customNode' },
-      { name: 'sharedCacheList', code: 'v2_shared_cache', parent: 'sharedCache' } // PDK暂时不支持共享缓存，暂时屏蔽
+      { name: 'sharedMiningList', code: 'v2_log_collector', parent: 'sharedMining' },
+      { name: 'HeartbeatTableList', code: '', parent: 'heartbeatTable' }
     ]
   },
   {
@@ -433,8 +441,8 @@ let menuSetting = [
     code: 'v2_data_discovery',
     hidden: true, // 放开了数据面板，隐藏数据发现
     children: [
-      { name: 'objectList', code: 'v2_data_object', parent: 'object' },
       { name: 'catalogueList', code: 'v2_data_catalogue', parent: 'catalogue' }
+      // { name: 'objectList', code: 'v2_data_object', parent: 'object' },
     ]
   },
   {
@@ -445,10 +453,10 @@ let menuSetting = [
     children: [
       { name: 'apiApplication', code: 'v2_api-application', parent: 'apiApplication' },
       { name: 'dataServer', code: 'v2_data-server-list', parent: 'dataServer' },
-      { name: 'apiClient', code: 'v2_api-client', parent: 'apiClient' },
-      { name: 'apiServer', code: 'v2_api-servers', parent: 'apiServer' },
       { name: 'dataServerAuditList', code: 'v2_data_server_audit', parent: 'dataServerAudit' },
-      { name: 'apiMonitor', code: 'v2_api_monitor', parent: 'apiMonitor' }
+      { name: 'apiMonitor', code: 'v2_api_monitor', parent: 'apiMonitor' },
+      { name: 'apiClient', code: 'v2_api-client', parent: 'apiClient' },
+      { name: 'apiServer', code: 'v2_api-servers', parent: 'apiServer' }
     ]
   },
   {
@@ -457,10 +465,10 @@ let menuSetting = [
     icon: 'system_navbar',
     code: 'v2_system-management',
     children: [
-      { name: 'clusterManagement', code: 'v2_cluster-management_menu' },
-      { name: 'externalStorage', code: 'v2_external-storage_menu' },
+      { name: 'roleList', code: 'v2_role_management', parent: 'roleList' },
       { name: 'users', code: 'v2_user_management_menu', parent: 'users' },
-      { name: 'roleList', code: 'v2_role_management', parent: 'roleList' }
+      { name: 'clusterManagement', code: 'v2_cluster-management_menu' },
+      { name: 'externalStorage', code: 'v2_external-storage_menu' }
     ]
   }
 ]

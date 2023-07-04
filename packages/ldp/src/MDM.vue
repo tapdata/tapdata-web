@@ -47,7 +47,6 @@
             class="ldp-tree h-100"
             ref="tree"
             node-key="id"
-            highlight-current
             :data="filterTreeData"
             draggable
             default-expand-all
@@ -61,6 +60,7 @@
             @node-drag-end="handleDragEnd"
             @node-drop="handleSelfDrop"
             @node-expand="handleNodeExpand"
+            @handle-scroll="handleScroll"
           ></VirtualTree>
         </div>
         <template v-else>
@@ -68,7 +68,6 @@
             class="ldp-tree h-100"
             ref="tree"
             node-key="id"
-            highlight-current
             :data="treeData"
             draggable
             height="100%"
@@ -83,6 +82,7 @@
             @node-drag-end="handleDragEnd"
             @node-drop="handleSelfDrop"
             @node-expand="handleNodeExpand"
+            @handle-scroll="handleScroll"
           ></VirtualTree>
           <div
             v-if="!treeData.length"
@@ -287,6 +287,42 @@ export default {
   methods: {
     renderContent(h, { node, data }) {
       let icon
+      let actions
+      data.SWIM_TYPE = 'mdm'
+
+      if (!data.isObject) {
+        actions = [
+          <IconButton
+            sm
+            onClick={ev => {
+              ev.stopPropagation()
+              this.showDialog(data, 'add')
+            }}
+          >
+            add
+          </IconButton>,
+          <ElDropdown
+            class="inline-flex"
+            placement="bottom"
+            trigger="click"
+            onCommand={command => this.handleMoreCommand(command, data)}
+          >
+            <IconButton
+              onClick={ev => {
+                ev.stopPropagation()
+              }}
+              sm
+            >
+              more
+            </IconButton>
+            <ElDropdownMenu slot="dropdown">
+              <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
+              <ElDropdownItem command="delete">{this.$t('public_button_delete')}</ElDropdownItem>
+            </ElDropdownMenu>
+          </ElDropdown>
+        ]
+      }
+
       if (data.LDP_TYPE === 'table') {
         node.isLeaf = true
         icon = 'table'
@@ -294,13 +330,19 @@ export default {
         node.isLeaf = false
         icon = 'folder-o'
       }
-      data.SWIM_TYPE = 'mdm'
+
       return (
         <div
-          class="custom-tree-node grabbable"
+          class="custom-tree-node grabbable flex justify-content-between"
           on={{
             click: () => {
-              data.isObject && this.$emit('preview', data, this.mdmConnection)
+              data.isObject &&
+                this.$emit('preview', data, this.mdmConnection, {
+                  onDelete: tagId => {
+                    // this.setNodeExpand(tagId)
+                    this.$refs.tree.remove(data.id)
+                  }
+                })
             },
             dragenter: ev => {
               ev.stopPropagation()
@@ -320,51 +362,40 @@ export default {
             }
           }}
         >
-          <div class="tree-item-icon flex align-center mr-2">{icon && <VIcon size="18">{icon}</VIcon>}</div>
-          <span class="table-label" title={data.name}>
-            {data.name}
-          </span>
-          <div class="btn-menu">
-            {!data.isObject ? (
-              [
-                <IconButton
-                  sm
+          <div class="flex align-center flex-fill mr-2">
+            <div class="flex-fill w-0 inline-flex align-items-center">
+              <span
+                id={data.isObject ? `ldp_mdm_table_${data.id}_${data.name}` : ''}
+                class="inline-flex align-items-center overflow-hidden"
+              >
+                {icon && (
+                  <VIcon size="18" class="tree-item-icon mr-2">
+                    {icon}
+                  </VIcon>
+                )}
+                <span title={data.name} class="table-label">
+                  {data.name}
+                </span>
+              </span>
+            </div>
+          </div>
+          <div>
+            {data.comment && <span class="font-color-sslight">{`(${data.comment})`}</span>}
+            {data.isObject ? (
+              <ElTooltip content={i18n.t('packages_ldp_view_lineage')} placement="top">
+                <VIcon
+                  size="18"
+                  class="lineage-icon"
                   onClick={ev => {
                     ev.stopPropagation()
-                    this.showDialog(data, 'add')
+                    this.handleFindLineage(data)
                   }}
                 >
-                  add
-                </IconButton>,
-                <ElDropdown
-                  class="inline-flex"
-                  placement="bottom"
-                  trigger="click"
-                  onCommand={command => this.handleMoreCommand(command, data)}
-                >
-                  <IconButton
-                    onClick={ev => {
-                      ev.stopPropagation()
-                    }}
-                    sm
-                  >
-                    more
-                  </IconButton>
-                  <ElDropdownMenu slot="dropdown">
-                    <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
-                    <ElDropdownItem command="delete">{this.$t('public_button_delete')}</ElDropdownItem>
-                  </ElDropdownMenu>
-                </ElDropdown>
-              ]
+                  suyuan
+                </VIcon>
+              </ElTooltip>
             ) : (
-              <IconButton
-                sm
-                onClick={() => {
-                  this.$emit('preview', data, this.mdmConnection)
-                }}
-              >
-                view-details
-              </IconButton>
+              <div class="btn-menu">{actions}</div>
             )}
           </div>
         </div>
@@ -547,10 +578,11 @@ export default {
       if (!forceLoadTable && node.loadTime && Date.now() - node.loadTime < 10000) return
 
       node.loadTime = Date.now()
-
+      node.loading = true
       let objects = await this.loadObjects(data)
+      node.loading = false
 
-      console.log('handleNodeExpand', objects, data, node) // eslint-disable-line
+      this.$refs.tree.updateKeyChildren(data.id, objects)
       const childrenMap = data.children ? data.children.reduce((map, item) => ((map[item.id] = true), map), {}) : {}
       objects.forEach(item => {
         if (childrenMap[item.id]) return
@@ -787,7 +819,33 @@ export default {
           this.setNodeExpand(data.parent_id, true)
         })
       })
-    }
+    },
+
+    handleFindLineage(data) {
+      const el = document.getElementById(`ldp_mdm_table_${data.id}_${data.name}`)
+      this.$emit('find-parent', el, data)
+    },
+
+    handleScroll: debounce(function () {
+      this.$emit('handle-connection')
+    }, 200)
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.ldp-tree {
+  ::v-deep {
+    .el-tree-node__content {
+      .lineage-icon {
+        color: map-get($color, info);
+      }
+      &:hover {
+        .lineage-icon {
+          color: map-get($color, primary);
+        }
+      }
+    }
+  }
+}
+</style>

@@ -37,20 +37,7 @@ const takeFieldValue = (schema, fieldName) => {
 }
 
 export function getSchema(schema, values, pdkPropertiesMap) {
-  let newSchema
-  if (schema.schema && schema.form) {
-    // 临时判断从自定义节点过来的schema
-    // 表单数据存储到form对象
-    newSchema = {
-      type: 'object',
-      properties: {
-        form: JSON.parse(JSON.stringify(schema.schema))
-      }
-    }
-  } else {
-    newSchema = JSON.parse(JSON.stringify(schema))
-  }
-
+  let newSchema = JSON.parse(JSON.stringify(schema))
   const blacklist = ['CSV', 'EXCEL', 'JSON', 'XML']
 
   if (values.attrs.pdkHash && (values.type != 'database' || !blacklist.includes(values.databaseType))) {
@@ -71,12 +58,12 @@ export function getCanUseDataTypes(data = [], val = '') {
 }
 
 export function getMatchedDataTypeLevel(
-  field,
+  field = {},
   canUseDataTypes = [],
   fieldChangeRules = [],
   findPossibleDataTypes = {}
 ) {
-  if (isEmpty(findPossibleDataTypes)) return ''
+  if (isEmpty(findPossibleDataTypes) || !findPossibleDataTypes[field.field_name]) return ''
   const tapType = JSON.parse(field.tapType || '{}')
   if (tapType.type === 7) {
     field.data_type = ''
@@ -87,4 +74,23 @@ export function errorFiledType(field) {
   const { tapType } = field || {}
   let type = JSON.parse(tapType).type
   return type === 7 ? 'error' : ''
+}
+
+/**
+ * @description 根据主键类型过滤表
+ * @param {Array} data 表数据
+ * @param {String} filterType 过滤类型
+ * @param {Object} map 表数据映射
+ * @returns {Array} 符合条件的表
+ * */
+export function getPrimaryKeyTablesByType(data = [], filterType = 'All', map = {}) {
+  if (filterType === 'All') {
+    return data
+  }
+  const result = data.map(t => {
+    return Object.assign({}, { tableName: t, tableComment: '', primaryKeyCounts: 0 }, map[t])
+  })
+  const list =
+    filterType === 'HasKeys' ? result.filter(t => !!t.primaryKeyCounts) : result.filter(t => !t.primaryKeyCounts)
+  return list.map(t => t.tableName)
 }

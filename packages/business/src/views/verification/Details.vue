@@ -45,16 +45,16 @@
           <VIcon class="ml-2 color-info" size="12" @click="errorMsg = ''">close</VIcon>
         </span>
       </div>
+      <!--        v-loading="['running', 'scheduling'].includes(inspect.status)"-->
       <div
         class="result-table mt-4"
         v-if="inspect"
-        v-loading="['running', 'scheduling'].includes(inspect.status)"
         :element-loading-text="$t('packages_business_verification_checking')"
       >
-        <template v-if="!['running', 'scheduling'].includes(inspect.status)">
-          <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
-          <ResultView v-if="type !== 'row_count'" ref="resultView" :remoteMethod="getResultData"></ResultView>
-        </template>
+        <!--        <template v-if="!['running', 'scheduling'].includes(inspect.status)">-->
+        <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
+        <ResultView v-if="type !== 'row_count'" ref="resultView" :remoteMethod="getResultData"></ResultView>
+        <!--        </template>-->
       </div>
     </div>
   </section>
@@ -138,13 +138,15 @@ export default {
     this.getData()
     setInterval(() => {
       if (['running', 'scheduling'].includes(this.inspect?.status)) {
-        this.getData()
+        this.getData(false)
       }
     }, 10000)
   },
   methods: {
-    getData() {
-      this.loading = true
+    getData(showLoading = true) {
+      if (showLoading) {
+        this.loading = true
+      }
       inspectApi
         .get({
           filter: JSON.stringify({
@@ -173,11 +175,16 @@ export default {
                 let stats = result.stats
                 if (stats.length) {
                   this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
-                  this.taskId = stats[0].taskId
+                  if (!this.taskId) {
+                    this.taskId = stats[0].taskId
+                  }
                   this.$nextTick(() => {
                     this.$refs.resultView?.fetch(1)
-                    if (this.type !== 'row_count') {
+                    if (this.type !== 'row_count' && showLoading) {
                       this.$refs.singleTable?.setCurrentRow(stats[0])
+                    }
+                    if (this.taskId) {
+                      this.$refs.singleTable?.setCurrentRow(stats.find(t => t.taskId === this.taskId))
                     }
                   })
                 }
@@ -193,6 +200,9 @@ export default {
       let task = this.inspect.tasks?.find(item => item.taskId === taskId)
       if (task) {
         let showAdvancedVerification = task.showAdvancedVerification
+        const sourceSortColumn = task.source?.sortColumn?.split(',')
+        const targetSortColumn = task.target?.sortColumn?.split(',')
+        const inspectMethod = this.inspect.inspectMethod
         let statsInfo = this.tableData.find(item => item.taskId === this.taskId)
         let where = {
           taskId,
@@ -222,7 +232,10 @@ export default {
               showAdvancedVerification, // 是否高级校验
               total: data.total, // 总条数
               statsInfo, // 结果信息
-              resultList // 结果详情
+              resultList, // 结果详情
+              sourceSortColumn, // 源索引字段
+              targetSortColumn, // 目标索引字段
+              inspectMethod
             }
           })
       }
@@ -233,12 +246,12 @@ export default {
       if (!firstCheckId) {
         return this.$message.error(this.$t('packages_business_verification_message_old_data_not_support'))
       }
-      let inspect = this.inspect
-      let keep = inspect?.limit?.keep || 0
-      let totalFailed = inspect?.difference_number || 0
-      if (keep < totalFailed) {
-        this.$message.warning(this.$t('packages_business_verification_message_out_of_limit'))
-      }
+      // let inspect = this.inspect
+      // let keep = inspect?.limit?.keep || 0
+      // let totalFailed = inspect?.difference_number || 0
+      // if (keep < totalFailed) {
+      //   this.$message.warning(this.$t('packages_business_verification_message_out_of_limit'))
+      // }
       inspectApi
         .update(
           {

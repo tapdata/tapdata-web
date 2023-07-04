@@ -280,7 +280,7 @@ export default {
           })
       } else {
         metadataDefinitionsApi
-          .get({
+          .childAccount({
             filter: JSON.stringify(filter)
           })
           .then(data => {
@@ -314,7 +314,7 @@ export default {
             cb && cb(treeData)
           })
       } else {
-        metadataDefinitionsApi.get().then(data => {
+        metadataDefinitionsApi.childAccount().then(data => {
           cb && cb(data?.items || [])
         })
       }

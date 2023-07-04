@@ -37,7 +37,7 @@
           <div class="ellipsis">{{ scope.row.name }}</div>
           <div class="font-color-slight">
             <span
-              >{{ inspectMethod[scope.row.inspectMethod] }} (
+              >{{ getInspectName(scope.row) }} (
               {{
                 scope.row.mode === 'manual'
                   ? $t('packages_business_verification_singleVerify')
@@ -81,6 +81,7 @@
                 $t('public_button_check')
               }}</ElLink>
             </div>
+            <div v-else-if="scope.row.status === 'waiting'" class="data-verify__status">-</div>
             <div v-else-if="scope.row.status !== 'done'" class="data-verify__status">
               <img style="width: 26px; vertical-align: middle" :src="loadingImg" />
               <span>{{ statusMap[scope.row.status] }}</span>
@@ -113,6 +114,15 @@
           }}</ElLink>
           <ElDivider direction="vertical" v-readonlybtn="'verify_job_edition'"></ElDivider>
           <ElLink
+            v-if="scope.row.status === 'running'"
+            v-readonlybtn="'verify_job_edition'"
+            type="primary"
+            :disabled="$disabledByPermission('verify_job_edition_all_data', scope.row.user_id)"
+            @click="stop(scope.row.id)"
+            >{{ $t('public_button_stop') }}</ElLink
+          >
+          <ElLink
+            v-else
             v-readonlybtn="'verify_job_edition'"
             type="primary"
             :disabled="
@@ -141,7 +151,7 @@
             @click="goEdit(scope.row.id, scope.row.flowId)"
             >{{ $t('packages_business_verification_configurationTip') }}</ElLink
           >
-          <ElDivider direction="vertical" v-readonlybtn="'verify_job_edition'"></ElDivider>
+          <ElDivider direction="vertical"></ElDivider>
           <ElLink
             v-readonlybtn="'verify_job_edition'"
             type="primary"
@@ -183,7 +193,7 @@ export default {
       },
       filterItems: [],
       loadingImg: require('@tap/assets/icons/loading.svg'),
-      order: 'lastStartTime DESC',
+      order: 'last_updated DESC',
       inspectMethod: {
         row_count: this.$t('packages_business_verification_rowVerify'),
         field: this.$t('packages_business_verification_contentVerify'),
@@ -257,7 +267,7 @@ export default {
     },
     //筛选条件
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'lastStartTime'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
+      this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
     },
     getData({ page }) {
@@ -436,6 +446,25 @@ export default {
         customClass: 'verify-list-error-msg',
         width: '600px'
       })
+    },
+    getInspectName(row = {}) {
+      if (row.tasks?.some(t => !!t.source.columns || !!t.target.columns)) {
+        return i18n.t('packages_business_verification_list_biaobufenziduan')
+      }
+      return this.inspectMethod[row.inspectMethod]
+    },
+    stop(id = '') {
+      inspectApi
+        .update(
+          {
+            id: id
+          },
+          { status: 'stopping' }
+        )
+        .then(() => {
+          this.$message.success(this.$t('public_message_operation_success'))
+          this.table.fetch()
+        })
     }
   }
 }

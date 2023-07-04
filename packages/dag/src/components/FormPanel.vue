@@ -4,14 +4,15 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-import { createForm, onFormInputChange, onFormValuesChange, onFieldReact, isVoidField } from '@formily/core'
+import { createForm, onFormInputChange, onFormValuesChange, onFieldValueChange } from '@formily/core'
 import { Path } from '@formily/path'
 
-import i18n from '@tap/i18n'
+import { taskApi } from '@tap/api'
 import { validateBySchema } from '@tap/form/src/shared/validate'
 
 import FormRender from './FormRender'
 import { getSchema } from '../util'
+import { debounce } from 'lodash'
 
 const mapEnum = dataSource => (item, index) => {
   const label = dataSource[index] || dataSource[item.value] || item.label
@@ -79,12 +80,16 @@ export default {
 
     async activeNodeId(n, o) {
       const formSchema = this.$store.getters['dataflow/formSchema'] || {}
+
+      // 重置TAB
+      this.scope?.formTab?.setActiveKey('tab1')
+
       if (!this.ins) {
         // 节点不存在，比如删掉了，清除表单
         this.schema = null
         return
       }
-      await this.setSchema(this.ins.formSchema || formSchema.node)
+      await this.setSchema(this.ins.getSchema() || formSchema.node)
 
       // 如果节点存在错误状态，走一遍校验，可以让用户看到错误信息
       // 脏代码。节点错误原先是布尔值，又增加字符串类型
@@ -141,6 +146,10 @@ export default {
         })
       )
     }
+  },
+
+  created() {
+    this.lazySaveNodeAlarmConfig = debounce(this.saveNodeAlarmConfig, 100)
   },
 
   beforeDestroy() {
@@ -243,51 +252,12 @@ export default {
         console.log('🚄onFormInputChange', JSON.parse(JSON.stringify(form.values)))
         this.updateNodeProps(form)
       })
-      onFieldReact('*', field => {
-        const path = field.path.toString().replace(/\.[\d+]/g, '')
-        const takeMessage = prop => {
-          const token = `${path}${prop ? `.${prop}` : ''}`
-          return this.getMessage(token, this.ins.locales)
-        }
-        const title = takeMessage('title') || takeMessage()
-        const description = takeMessage('description')
-        const tooltip = takeMessage('tooltip')
-        const dataSource = takeMessage('dataSource')
-        const placeholder = takeMessage('placeholder')
 
-        if (title) {
-          field.title = title
-        }
-        if (description) {
-          field.description = description
-        }
-        if (tooltip) {
-          field.decorator[1] = field.decorator[1] || []
-          field.decorator[1].tooltip = tooltip
-        }
-        if (placeholder) {
-          field.component[1] = field.component[1] || []
-          field.component[1].placeholder = placeholder
-        }
-        if (dataSource?.length && !isVoidField(field)) {
-          if (field.dataSource?.length) {
-            field.dataSource = field.dataSource.map(mapEnum(dataSource))
-          } else {
-            field.dataSource = dataSource.slice()
-          }
-        }
-        /*if (!isVoidField(field)) {
-          if (dataSource?.length && !isVoidField(field)) {
-            if (field.dataSource?.length) {
-              field.dataSource = field.dataSource.map(mapEnum(dataSource))
-            } else {
-              field.dataSource = dataSource.slice()
-            }
-          } else {
-            field.dataSource = field.dataSource?.filter?.(Boolean)
-          }
-        }*/
-      })
+      if (this.scope.$isMonitor) {
+        onFieldValueChange('*(alarmSettings.0.*,alarmRules.0.*)', (field, form) => {
+          this.lazySaveNodeAlarmConfig()
+        })
+      }
     },
 
     confirmNodeHasError() {
@@ -296,6 +266,18 @@ export default {
       if (res && typeof res === 'boolean' && !this.form.errors.length) {
         this.clearNodeError(this.activeNodeId)
       }
+    },
+
+    saveNodeAlarmConfig() {
+      this.updateNodeProperties({
+        id: this.form.values.id,
+        properties: JSON.parse(JSON.stringify(this.form.values))
+      })
+
+      taskApi.patch({
+        id: this.$store.state.dataflow.taskId,
+        dag: this.$store.state.dataflow.dag
+      })
     }
   }
 }

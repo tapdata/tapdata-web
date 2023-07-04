@@ -1109,6 +1109,7 @@ export default {
     },
 
     handleOpenDetail(node) {
+      if (['mem_cache'].includes(node.type)) return
       this.nodeDetailDialogId = node.id
       // 设置弹窗的周期
       this.$refs.nodeDetailDialog.quotaTime = this.quotaTime
