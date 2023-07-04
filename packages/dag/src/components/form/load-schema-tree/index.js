@@ -179,13 +179,13 @@ export const loadSchemaTree = observer(
         return (
           <div>
             <div class="mb-2">
-              <el-button className="mb-2" loading={loading.value} onClick={handleLoadSchema}>
+              <el-button type="primary" plain loading={loading.value} onClick={handleLoadSchema}>
                 {title}
               </el-button>
               {loadStatusDom()}
               {formValuesChangeDom()}
             </div>
-            <el-tree
+            {/*<el-tree
               loading={loading.value}
               ref="tree"
               data={fieldList.value}
@@ -209,7 +209,7 @@ export const loadSchemaTree = observer(
                   </span>
                 )
               }}
-            ></el-tree>
+            ></el-tree>*/}
           </div>
         )
       }

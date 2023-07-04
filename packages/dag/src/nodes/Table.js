@@ -410,6 +410,42 @@ export class Table extends NodeType {
                 }
               },
 
+              fileNodeConfig: {
+                type: 'void',
+                'x-reactions': {
+                  dependencies: ['databaseType'],
+                  fulfill: {
+                    state: {
+                      display: '{{ ["CSV","EXCEL","JSON","XML"].includes($deps[0]) ? "visible":"hidden"}}'
+                    }
+                  }
+                },
+                properties: {
+                  nodeConfig: {
+                    type: 'object'
+                  },
+
+                  loadSchemaTree: {
+                    type: 'void',
+                    title: '',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'loadSchemaTree',
+                    'x-component-props': {
+                      tableNameField: 'tableName'
+                    },
+                    'x-reactions': {
+                      dependencies: ['$inputs'],
+                      fulfill: {
+                        state: {
+                          display:
+                            '{{(!$deps[0].length && $values.attrs.connectionType.includes("source")) ? "visible":"hidden"}}'
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+
               schemaPreview: {
                 type: 'void',
                 'x-component': 'SchemaPreview'
@@ -1127,8 +1163,8 @@ export class Table extends NodeType {
                     'x-reactions': {
                       fulfill: {
                         state: {
-                          // display: '{{$hasPdkConfig($values.attrs.pdkHash) ? "visible":"hidden"}}',
-                          visible: '{{$hasPdkConfig($values.attrs.pdkHash)}}'
+                          visible:
+                            '{{!["CSV","EXCEL","JSON","XML"].includes($values.databaseType) && $hasPdkConfig($values.attrs.pdkHash)}}'
                         }
                       }
                     },
@@ -1353,8 +1389,8 @@ export class Table extends NodeType {
                     'x-reactions': {
                       fulfill: {
                         state: {
-                          // display: '{{$hasPdkConfig($values.attrs.pdkHash) ? "visible":"hidden"}}',
-                          visible: '{{$hasPdkConfig($values.attrs.pdkHash)}}'
+                          visible:
+                            '{{!["CSV","EXCEL","JSON","XML"].includes($values.databaseType) && $hasPdkConfig($values.attrs.pdkHash)}}'
                         }
                       }
                     },
@@ -1578,25 +1614,6 @@ export class Table extends NodeType {
         type: 'array',
         'x-display': 'hidden',
         'x-reactions': '{{useDmlPolicy}}'
-      },
-
-      loadSchemaTree: {
-        type: 'void',
-        title: '',
-        'x-decorator': 'FormItem',
-        'x-component': 'loadSchemaTree',
-        'x-component-props': {
-          tableNameField: 'tableName'
-        },
-        'x-reactions': {
-          dependencies: ['databaseType', '$outputs'],
-          fulfill: {
-            state: {
-              display:
-                '{{ ($deps[1].length > 0 && ["CSV","EXCEL","JSON","XML"].includes($deps[0])) ? "visible":"hidden"}}'
-            }
-          }
-        }
       }
     }
   }
