@@ -169,7 +169,6 @@ import App from './App'
 const appApi = new App()
 
 import Lineage from './Lineage'
-
 const lineageApi = new Lineage()
 
 export {
