@@ -86,6 +86,7 @@ import NotificationPopover from '@/views/workbench/NotificationPopover'
 import Cookie from '@tap/shared/src/cookie'
 
 export default {
+  inject: ['buried'],
   components: { VIcon, NotificationPopover, UpgradeFee },
   data() {
     return {
@@ -258,13 +259,14 @@ export default {
         const conversionTypes = [
           {
             logidUrl: logidUrlCloud,
-            newType: 49
+            newType: 25
           }
         ]
         this.$axios
           .post('api/tcm/track/send_convert_data', conversionTypes)
           .then(data => {
             if (data) {
+              this.buried('registerSuccess')
               Cookie.set('logidUrlUsed', 1)
               Cookie.remove('logidUrlCloud')
             }
