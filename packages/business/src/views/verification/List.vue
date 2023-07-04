@@ -93,7 +93,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('packages_business_verification_verifyStatus')" min-width="120" prop="status">
+      <el-table-column :label="$t('packages_business_verification_verifyStatus')" min-width="110" prop="status">
         <template slot-scope="scope">
           <span>{{ statusMap[scope.row.status] }}</span>
           <span v-if="scope.row.InspectResult && scope.row.status === 'running'">
@@ -105,9 +105,9 @@
         :label="$t('packages_business_verification_verifyTime')"
         prop="lastStartTime"
         sortable="lastStartTime"
-        min-width="180"
+        min-width="170"
       ></el-table-column>
-      <el-table-column :label="$t('public_operation')" width="360">
+      <el-table-column :label="$t('public_operation')" width="260">
         <template slot-scope="scope">
           <ElLink type="primary" :disabled="!scope.row.InspectResult" @click="toTableInfo(scope.row.id)"
             >{{ $t('packages_business_verification_result_title') }}
