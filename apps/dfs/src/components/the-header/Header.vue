@@ -3,7 +3,7 @@
   <ElHeader class="dfs-header" :class="{ isMockUser: mockUserId }">
     <div class="dfs-header__body">
       <ElLink class="logo" @click="command('workbench')">
-        <img src="../../assets/image/logoFull.png" alt="" />
+        <img src="../../assets/image/logo.svg" alt="" />
       </ElLink>
       <div class="dfs-header__button button-bar pr-4 fs-7">
         <!--付费专业版-->
@@ -264,7 +264,7 @@ export default {
   width: 100%;
   height: 52px !important;
   padding: 0 7px;
-  background: rgba(54, 54, 54, 1);
+  background: map-get($color, submenu);
   box-sizing: border-box;
   .current {
     font-weight: 400;
@@ -281,7 +281,7 @@ export default {
     display: block;
     width: 177px;
     height: 30px;
-    margin-left: 12px;
+    margin-left: -12px;
     img {
       display: block;
       height: 100%;
@@ -295,13 +295,13 @@ export default {
     .command-item {
       padding: 4px 8px;
       cursor: pointer;
-      color: map-get($color, white);
+      color: map-get($fontColor, light);
       &:hover {
-        color: #fff;
-        background-color: rgba(255, 255, 255, 0.2);
+        color: map-get($color, primary);
+        background-color: map-get($color, white);
         border-radius: 4px;
         &.icon {
-          color: #fff;
+          color: map-get($color, primary);
         }
       }
     }

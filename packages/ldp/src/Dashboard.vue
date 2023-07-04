@@ -4,8 +4,8 @@
       <VIcon v-if="overViewVisible" size="32" @click="toggleOverview(overViewVisible)">fold-pack-up</VIcon>
       <VIcon v-else size="32" @click="toggleOverview(overViewVisible)">fold-expend</VIcon>
     </div>
-    <OverView v-if="!isDaas" :visible="overViewVisible"></OverView>
-    <div class="page-header-title flex align-center">
+    <OverView class="bg-white rounded-lg mb-2" v-if="!isDaas" :visible="overViewVisible"></OverView>
+    <div class="page-header-title bg-white box-card flex align-center">
       <span>{{ $t('page_title_data_console') }}</span>
       <ElTooltip
         placement="top"
@@ -21,7 +21,7 @@
       <div class="flex-grow-1"></div>
       <IconButton class="ml-3" @click="handleSettings" md>cog-o</IconButton>
     </div>
-    <div class="list flex flex-fill overflow-hidden">
+    <div class="list flex flex-fill overflow-hidden bg-white">
       <div v-if="currentView === 'catalog'" class="px-5 pb-5 w-100 border-top">
         <Catalogue @create-single-task="hanldeCreateSingleTask"></Catalogue>
       </div>
@@ -370,14 +370,24 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.box-card {
+  border-top-right-radius: 8px;
+  border-top-left-radius: 8px;
+}
 .list {
   ::v-deep {
     .list__title {
       height: 48px;
       min-height: 48px;
-      border-top: 1px solid #e1e3e9;
-      border-bottom: 1px solid #e1e3e9;
       background: #f3f7fa;
+    }
+    .list__title__source {
+      color: map-get($color, primary);
+      background: #e8f3ff;
+    }
+    .list__title__target {
+      color: #009a29;
+      background: #e8ffea;
     }
     .list__item {
       border-left: 1px solid #e1e3e9;

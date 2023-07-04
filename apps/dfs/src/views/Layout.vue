@@ -41,7 +41,7 @@
           </template>
         </div>
         <!--菜单栏分为两部分-->
-        <div class="border-top sub-menu">
+        <div class="border-top sub-menu pt-3">
           <template v-for="menu in subMenu">
             <ElSubmenu v-if="menu.children" :key="menu.title" :index="menu.name">
               <template slot="title">
@@ -92,8 +92,8 @@
       </ElMenu>
     </ElAside>
     <ElContainer direction="vertical" class="layout-main position-relative">
-      <PageHeader class="border-bottom"></PageHeader>
-      <ElMain class="main">
+      <PageHeader class="bg-white rounded-lg mb-2"></PageHeader>
+      <ElMain class="main rounded-lg">
         <RouterView @agent_no_running="onAgentNoRunning"></RouterView>
       </ElMain>
     </ElContainer>
@@ -141,8 +141,7 @@ export default {
         {
           name: 'dataConsole',
           title: this.$t('page_title_data_console'),
-          icon: 'process-platform',
-          beta: true
+          icon: 'process-platform'
         },
         // {
         //   name: 'Workbench',
@@ -162,14 +161,12 @@ export default {
         {
           name: 'dataflow',
           title: $t('task_manage_etl'),
-          icon: 'task',
-          beta: true
+          icon: 'task'
         },
         {
           name: 'dataVerification',
           title: $t('page_title_data_verify'),
-          icon: 'data-validation',
-          beta: true
+          icon: 'data-validation'
         }
         // {
         //   name: 'customNodeList',
@@ -484,24 +481,35 @@ export default {
   justify-content: space-between;
   height: 90%;
 }
+.layout-main {
+  padding: 0 16px 16px 16px;
+}
 .layout-wrap {
   height: 100%;
   padding-top: 52px;
   word-wrap: break-word;
   word-break: break-word;
+  background: map-get($color, submenu);
   .left-aside {
-    border-right: 1px map-get($borderColor, aside) solid;
-    background: map-get($bgColor, disable);
+    // border-right: 1px map-get($borderColor, aside) solid;
+    background: map-get($color, submenu);
+    .el-menu {
+      background-color: map-get($color, submenu);
+    }
     .el-menu-item {
       height: 50px;
       line-height: 50px;
       ::v-deep .v-icon {
         color: map-get($iconFillColor, normal);
       }
-      &.is-active {
-        background-color: #eaf0ff;
+      &.is-active,
+      &:hover {
+        background-color: map-get($color, white);
+        color: map-get($color, primary);
+        border-radius: 8px;
       }
-      &.is-active {
+      &.is-active,
+      &:hover {
         ::v-deep .v-icon {
           color: map-get($color, primary);
         }

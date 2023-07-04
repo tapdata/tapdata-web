@@ -1,6 +1,6 @@
 <template>
   <div class="system-notification" v-loading="loading">
-    <div class="notification-head pt-8 pb-4 px-6">
+    <div v-if="isDaas" class="notification-head pt-8 pb-4 px-6">
       <div class="title font-color-dark fs-7">
         {{ $t('packages_business_setting_notification_alarm_notification_gaojingtongzhi') }}
       </div>
@@ -92,6 +92,7 @@ export default {
   components: { SelectList, AlarmSetting },
   data() {
     return {
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       filterItems: [],
       activeName: 'first',
       listData: [],
