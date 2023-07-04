@@ -302,13 +302,6 @@ export class Table extends NodeType {
                     'x-component-props': {
                       size: 'middle'
                     },
-                    'x-reactions': {
-                      fulfill: {
-                        state: {
-                          display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
-                        }
-                      }
-                    },
                     properties: {
                       writeBatchSize: {
                         title: i18n.t('packages_dag_nodes_database_piliangxierutiao'),
@@ -961,13 +954,6 @@ export class Table extends NodeType {
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
                       title: i18n.t('packages_dag_config_data_read')
-                    },
-                    'x-reactions': {
-                      fulfill: {
-                        state: {
-                          display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
-                        }
-                      }
                     },
                     properties: {
                       readBatchSize: {
