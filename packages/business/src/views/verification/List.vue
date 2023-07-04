@@ -8,7 +8,7 @@
       @sort-change="handleSortTable"
     >
       <div class="search-bar" slot="search">
-        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
+        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"></FilterBar>
       </div>
       <div slot="operation">
         <ElButton
@@ -77,9 +77,9 @@
             <div v-else-if="scope.row.status === 'error'" class="data-verify__status">
               <i class="data-verify__icon el-icon-error"></i>
               <span>{{ $t('public_status_error') }}</span>
-              <ElLink type="primary" class="ml-2" @click="handleError(scope.row)">{{
-                $t('public_button_check')
-              }}</ElLink>
+              <ElLink type="primary" class="ml-2" @click="handleError(scope.row)"
+                >{{ $t('public_button_check') }}
+              </ElLink>
             </div>
             <div v-else-if="scope.row.status === 'waiting'" class="data-verify__status">-</div>
             <div v-else-if="scope.row.status !== 'done'" class="data-verify__status">
@@ -109,9 +109,9 @@
       ></el-table-column>
       <el-table-column :label="$t('public_operation')" width="360">
         <template slot-scope="scope">
-          <ElLink type="primary" :disabled="!scope.row.InspectResult" @click="toTableInfo(scope.row.id)">{{
-            $t('packages_business_verification_result_title')
-          }}</ElLink>
+          <ElLink type="primary" :disabled="!scope.row.InspectResult" @click="toTableInfo(scope.row.id)"
+            >{{ $t('packages_business_verification_result_title') }}
+          </ElLink>
           <ElDivider direction="vertical" v-readonlybtn="'verify_job_edition'"></ElDivider>
           <ElLink
             v-if="scope.row.status === 'running'"
@@ -119,8 +119,8 @@
             type="primary"
             :disabled="$disabledByPermission('verify_job_edition_all_data', scope.row.user_id)"
             @click="stop(scope.row.id)"
-            >{{ $t('public_button_stop') }}</ElLink
-          >
+            >{{ $t('public_button_stop') }}
+          </ElLink>
           <ElLink
             v-else
             v-readonlybtn="'verify_job_edition'"
@@ -130,16 +130,16 @@
               ['running', 'scheduling'].includes(scope.row.status)
             "
             @click="startTask(scope.row.id)"
-            >{{ $t('packages_business_verification_executeVerifyTip') }}</ElLink
-          >
+            >{{ $t('packages_business_verification_executeVerifyTip') }}
+          </ElLink>
           <ElDivider direction="vertical"></ElDivider>
           <ElLink
             v-readonlybtn="'verify_job_edition'"
             type="primary"
             :disabled="!scope.row.InspectResult"
             @click="history(scope.row.id)"
-            >{{ $t('packages_business_verification_historyTip') }}</ElLink
-          >
+            >{{ $t('packages_business_verification_historyTip') }}
+          </ElLink>
           <ElDivider direction="vertical" v-readonlybtn="'verify_job_edition'"></ElDivider>
           <ElLink
             v-readonlybtn="'verify_job_edition'"
@@ -149,16 +149,16 @@
               ['running', 'scheduling'].includes(scope.row.status)
             "
             @click="goEdit(scope.row.id, scope.row.flowId)"
-            >{{ $t('packages_business_verification_configurationTip') }}</ElLink
-          >
+            >{{ $t('packages_business_verification_configurationTip') }}
+          </ElLink>
           <ElDivider direction="vertical"></ElDivider>
           <ElLink
             v-readonlybtn="'verify_job_edition'"
             type="primary"
             :disabled="$disabledByPermission('verify_job_delete_all_data', scope.row.user_id)"
             @click="remove(scope.row.id, scope.row)"
-            >{{ $t('public_button_delete') }}</ElLink
-          >
+            >{{ $t('public_button_delete') }}
+          </ElLink>
         </template>
       </el-table-column>
     </TablePage>
@@ -474,6 +474,7 @@ export default {
 .data-verify-wrap {
   height: 100%;
   padding: 0 24px 24px 24px;
+
   .btn-refresh {
     padding: 0;
     height: 32px;
@@ -481,27 +482,34 @@ export default {
     width: 32px;
     font-size: 16px;
   }
+
   .search-bar {
     display: flex;
+
     .item {
       margin-right: 10px;
     }
   }
+
   .btn + .btn {
     margin-left: 10px;
   }
+
   .btn {
     i.iconfont {
       font-size: 12px;
     }
+
     &.btn-dropdowm {
       margin-left: 5px;
     }
   }
+
   .data-verify__status {
     display: flex;
     align-items: center;
   }
+
   .data-verify__icon {
     margin-left: -5px;
     width: 26px;
@@ -525,6 +533,7 @@ export default {
   .el-table--border td {
     border-right: 0;
   }
+
   // .el-table--border th {
   //   border-right: 1px solid #dcdfe6;
   // }
