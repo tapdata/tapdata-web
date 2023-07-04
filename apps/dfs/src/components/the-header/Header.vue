@@ -254,18 +254,20 @@ export default {
         this.$axios.patch('api/tcm/user', {
           bd_vid
         })
-        trackApi
-          .sendConvertData({
-            conversionTypes: [
-              {
-                logidUrl: logidUrlCloud,
-                newType: 49
-              }
-            ]
-          })
-          .then(() => {
-            Cookie.set('logidUrlUsed', 1)
-            Cookie.remove('logidUrlCloud')
+
+        const conversionTypes = [
+          {
+            logidUrl: logidUrlCloud,
+            newType: 49
+          }
+        ]
+        this.$axios
+          .post('api/tcm/track/send_convert_data', conversionTypes)
+          .then(data => {
+            if (data) {
+              Cookie.set('logidUrlUsed', 1)
+              Cookie.remove('logidUrlCloud')
+            }
           })
           .catch(e => {
             console.log('ocpc.baidu.com', e)

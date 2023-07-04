@@ -171,9 +171,6 @@ const appApi = new App()
 import Lineage from './Lineage'
 const lineageApi = new Lineage()
 
-import Track from './Track'
-const trackApi = new Track()
-
 export {
   connectionsApi,
   databaseTypesApi,
@@ -231,8 +228,7 @@ export {
   liveDataPlatformApi,
   ldpApi,
   appApi,
-  lineageApi,
-  trackApi
+  lineageApi
 }
 export * from './ApiClient'
 
