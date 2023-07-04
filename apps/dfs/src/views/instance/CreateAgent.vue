@@ -1,5 +1,5 @@
 <template>
-  <section v-if="orderStorage" class="subscription-steps-wrap flex flex-column flex-1 overflow-hidden">
+  <section v-if="orderStorage" class="subscription-steps-wrap bg-white flex flex-column flex-1 overflow-hidden">
     <div class="main flex-1 overflow-auto" :class="{ 'main-en': this.$i18n.locale === 'en' }">
       <div>
         <el-steps class="subscription-steps bg-transparent mx-auto" :active="activeStep" simple>
@@ -230,7 +230,7 @@
       </div>
     </div>
   </section>
-  <section v-else-if="!mdbCount" class="subscription-steps-wrap flex flex-column flex-1 overflow-hidden">
+  <section v-else-if="!mdbCount" class="subscription-steps-wrap bg-white flex flex-column flex-1 overflow-hidden">
     <div class="main flex-1 overflow-auto" :class="{ 'main-en': this.$i18n.locale === 'en' }">
       <div>
         <el-steps class="subscription-steps bg-transparent mx-auto" :active="activeStep" simple>
@@ -861,7 +861,7 @@
     </div>
   </section>
   <!--有存储- 只订购流程 考虑到即将单独存储-->
-  <section v-else class="subscription-steps-wrap flex flex-column flex-1 overflow-hidden">
+  <section v-else class="subscription-steps-wrap bg-white flex flex-column flex-1 overflow-hidden">
     <div class="main flex-1 overflow-auto" :class="{ 'main-en': this.$i18n.locale === 'en' }">
       <div>
         <el-steps class="subscription-steps bg-transparent mx-auto" :active="activeStep" simple>
