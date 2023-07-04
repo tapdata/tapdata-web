@@ -81,7 +81,7 @@
 <script>
 import { VIcon, UpgradeFee } from '@tap/component'
 import { langMenu, getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
-
+import { trackApi } from '@tap/api'
 import NotificationPopover from '@/views/workbench/NotificationPopover'
 import Cookie from '@tap/shared/src/cookie'
 
@@ -254,9 +254,8 @@ export default {
         this.$axios.patch('api/tcm/user', {
           bd_vid
         })
-        this.$axios
-          .post('https://ocpc.baidu.com/ocpcapi/api/uploadConvertData', {
-            token: 'q6ucPuRmCTbvC8jlTW4E0ejDzAIdvGCP@rix31qkoUGHwI6wiMeU0j8H4mvp5OEuU',
+        trackApi
+          .sendConvertData({
             conversionTypes: [
               {
                 logidUrl: logidUrlCloud,
@@ -266,7 +265,7 @@ export default {
           })
           .then(() => {
             Cookie.set('logidUrlUsed', 1)
-            Cookie.remove('cloud_logidUrl')
+            Cookie.remove('logidUrlCloud')
           })
           .catch(e => {
             console.log('ocpc.baidu.com', e)
