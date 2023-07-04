@@ -83,6 +83,7 @@ import { VIcon, UpgradeFee } from '@tap/component'
 import { langMenu, getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
 
 import NotificationPopover from '@/views/workbench/NotificationPopover'
+import Cookie from '@tap/shared/src/cookie'
 
 export default {
   components: { VIcon, NotificationPopover, UpgradeFee },
@@ -143,6 +144,7 @@ export default {
         }
       ]
     }
+    this.setBaiduIndex() // 百度推广索引
   },
   methods: {
     command(command) {
@@ -236,6 +238,40 @@ export default {
     },
     openUpgrade() {
       this.openUpgradeFee = true
+    },
+    setBaiduIndex() {
+      // 上报百度索引
+      const logidUrlUsed = Cookie.get('logidUrlUsed')
+      if (logidUrlUsed) return
+      const logidUrlCloud = Cookie.get('logidUrlCloud')
+      if (logidUrlCloud) {
+        const bd_vid = logidUrlCloud
+          .split(/[?&]/)
+          .find(t => t.match(/^bd_vid=/))
+          ?.replace(/^bd_vid=/, '')
+        console.log('bd_vid', bd_vid)
+        // bd_vid存到user信息中
+        this.$axios.patch('api/tcm/user', {
+          bd_vid
+        })
+        this.$axios
+          .post('https://ocpc.baidu.com/ocpcapi/api/uploadConvertData', {
+            token: 'q6ucPuRmCTbvC8jlTW4E0ejDzAIdvGCP@rix31qkoUGHwI6wiMeU0j8H4mvp5OEuU',
+            conversionTypes: [
+              {
+                logidUrl: logidUrlCloud,
+                newType: 49
+              }
+            ]
+          })
+          .then(() => {
+            Cookie.set('logidUrlUsed', 1)
+            Cookie.remove('cloud_logidUrl')
+          })
+          .catch(e => {
+            console.log('ocpc.baidu.com', e)
+          })
+      }
     }
   }
 }
