@@ -4,7 +4,6 @@ export default {
   packages_ldp_order_fully_managed_storage: '订购全托管存储',
   packages_ldp_connection_expired: '存储已失效，请重新设置',
   packages_ldp_view_lineage: '查看血缘',
-  packages_ldp_lineage_loading_tips: '双击节点可以下钻',
   packages_ldp_table_comment: '表注释',
   packages_ldp_src_dashboard_anEsctui: '按Esc退出溯源场景',
   packages_ldp_src_tablepreview_querenshanchu: '确认删除？',
