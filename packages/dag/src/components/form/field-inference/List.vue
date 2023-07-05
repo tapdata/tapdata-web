@@ -418,6 +418,16 @@ export default {
           this.rules.push(op)
         }
 
+        // 刷新字段
+        this.data.fields.forEach(t => {
+          const fieldOriginType = t.data_type?.split('(')[0]
+          if (fieldOriginType === this.originType) {
+            t.data_type = t.dataTypeTemp.replace(/(\w+\()(\w+)([,)][\w\W]*)/, function (val, sub1, sub2, sub3) {
+              return `${sub1}${sub2 * coefficient}${sub3}`
+            })
+            t.changeRuleId = ruleId
+          }
+        })
         this.handleUpdate()
         this.$message.success(i18n.t('public_message_operation_success'))
         this.editDataTypeVisible = false
@@ -472,7 +482,7 @@ export default {
             ruleId = op.id
             this.rules.push(op)
           }
-          this.handleUpdate()
+
           this.data.fields.forEach(t => {
             if (
               (useToAll && t.data_type === t.dataTypeTemp && t.dataTypeTemp === dataTypeTemp) ||
@@ -482,6 +492,7 @@ export default {
               t.changeRuleId = ruleId
             }
           })
+          this.handleUpdate()
           this.editBtnLoading = false
           this.$message.success(i18n.t('public_message_operation_success'))
           this.editDataTypeVisible = false
