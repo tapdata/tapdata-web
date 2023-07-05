@@ -128,7 +128,7 @@ export const PythonEditor = connect(
             class="form-js-editor py-0 flex-1 min-h-0"
             theme={this.theme}
             value={this.code}
-            lang="javascript"
+            lang="python"
             onFocus={this.onFocus}
             onBlur={this.onBlur}
             onInitOptions={this.onInit}
@@ -147,7 +147,7 @@ export const PythonEditor = connect(
           }}
           theme={this.theme}
           value={this.code}
-          lang="javascript"
+          lang="python"
           height={this.height}
           onBlur={this.onBlur}
           onInit={this.onInit}
