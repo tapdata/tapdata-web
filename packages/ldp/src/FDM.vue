@@ -156,6 +156,38 @@
             </template>
           </ElInput>
         </ElFormItem>
+
+        <ElFormItem :label="$t('packages_dag_task_setting_sync_type')" prop="task.type">
+          <ElRadioGroup v-model="taskDialogConfig.task.type">
+            <ElTooltip :disabled="!taskDialogConfig.notSupportedCDC" content="当前源数据不支持增量">
+              <ElRadio label="initial_sync+cdc" :disabled="taskDialogConfig.notSupportedCDC">
+                {{ $t('packages_dag_task_setting_initial_sync_cdc') }}
+              </ElRadio>
+            </ElTooltip>
+
+            <ElRadio label="initial_sync">
+              {{ $t('public_task_type_initial_sync') }}
+            </ElRadio>
+          </ElRadioGroup>
+        </ElFormItem>
+        <div class="flex align-center gap-3" v-if="taskDialogConfig.task.type === 'initial_sync'">
+          <ElFormItem :label="$t('packages_dag_task_setting_crontabExpressionFlag')" prop="task.crontabExpressionType">
+            <ElSelect
+              v-model="taskDialogConfig.task.crontabExpressionType"
+              @change="handleChangeCronType"
+              class="flex-1"
+            >
+              <ElOption v-for="(opt, i) in cronOptions" :key="i" v-bind="opt"></ElOption>
+            </ElSelect>
+          </ElFormItem>
+          <ElFormItem
+            v-if="taskDialogConfig.task.crontabExpressionType === 'custom'"
+            prop="task.crontabExpression"
+            label-width="0"
+          >
+            <ElInput v-model="taskDialogConfig.task.crontabExpression"></ElInput>
+          </ElFormItem>
+        </div>
       </ElForm>
       <span slot="footer" class="dialog-footer">
         <ElButton size="mini" @click="taskDialogConfig.visible = false">{{ $t('public_button_cancel') }}</ElButton>
@@ -224,6 +256,7 @@ import { merge, debounce, cloneDeep } from 'lodash'
 import { connectionsApi, ldpApi, metadataDefinitionsApi } from '@tap/api'
 import { VirtualTree, IconButton, VExpandXTransition } from '@tap/component'
 import { uuid, generateId } from '@tap/shared'
+import { validateCron } from '@tap/form'
 import { makeDragNodeImage, TASK_SETTINGS, DatabaseIcon, makeStatusAndDisabled } from '@tap/business'
 import commonMix from './mixins/common'
 
@@ -257,22 +290,74 @@ export default {
       }
     }
 
+    const validateCrontabExpression = (rule, value, callback) => {
+      value = value.trim()
+      if (!value) {
+        callback(new Error(this.$t('public_form_not_empty')))
+      } else if (!validateCron(value)) {
+        callback(this.$t('packages_dag_migration_settingpanel_cronbiao'))
+      } else {
+        callback()
+      }
+    }
+
+    // 2、每10分钟运行1次
+    // 3、每1小时运行一次
+    // 4、每天运行一次
+    // 5、自定义cron表达式
+
+    const cronOptions = [
+      {
+        label: '仅运行一次',
+        value: 'once'
+      },
+      {
+        label: '每10分钟运行一次',
+        value: '0 */10 * * * ?'
+      },
+      {
+        label: '每1小时运行一次',
+        value: '0 0 * * * ?'
+      },
+      {
+        label: '每天运行一次',
+        value: '0 0 0 * * ?'
+      },
+      {
+        label: '自定义cron表达式',
+        value: 'custom'
+      }
+    ]
+
     return {
+      cronOptions,
       fixedPrefix: 'FDM_',
       maxPrefixLength: 10,
       keyword: '',
+      taskType: '',
       taskDialogConfig: {
         from: null,
         to: null,
         visible: false,
         prefix: '',
         tableName: null,
-        canStart: false
+        canStart: false,
+        notSupportedCDC: false,
+        task: {
+          type: 'initial_sync+cdc',
+          crontabExpressionFlag: false,
+          crontabExpression: '',
+          crontabExpressionType: 'once'
+        }
       },
       creating: false,
       expandedKeys: [],
       formRules: {
-        prefix: [{ validator: validatePrefix, trigger: 'blur' }]
+        prefix: [{ validator: validatePrefix, trigger: 'blur' }],
+        'task.crontabExpression': [
+          { required: true, message: this.$t('public_form_not_empty'), trigger: ['blur', 'change'] },
+          { validator: validateCrontabExpression, trigger: ['blur', 'change'] }
+        ]
       },
       searchIng: false,
       search: '',
@@ -536,7 +621,29 @@ export default {
     showTaskDialog() {
       this.taskDialogConfig.prefix = this.getSmartPrefix(this.taskDialogConfig.from.name)
       this.taskDialogConfig.visible = true
-      this.$refs.form?.clearValidate()
+      this.$refs.form?.resetFields()
+      this.taskDialogConfig.task.crontabExpressionFlag = false
+      this.taskDialogConfig.task.crontabExpression = ''
+
+      const capbilitiesMap = this.taskDialogConfig.from.capabilities.reduce((map, item) => {
+        map[item.id] = true
+        return map
+      }, {})
+
+      if (
+        !(
+          capbilitiesMap['stream_read_function'] ||
+          capbilitiesMap['raw_data_callback_filter_function'] ||
+          capbilitiesMap['raw_data_callback_filter_function_v2'] ||
+          (capbilitiesMap['query_by_advance_filter_function'] && capbilitiesMap['batch_read_function'])
+        )
+      ) {
+        this.taskDialogConfig.notSupportedCDC = true
+        this.taskDialogConfig.task.type = 'initial_sync'
+      } else {
+        this.taskDialogConfig.notSupportedCDC = false
+      }
+      // this.$refs.form?.clearValidate()
 
       this.checkCanStart()
     },
@@ -560,8 +667,8 @@ export default {
       this.$refs.form.validate(async valid => {
         if (!valid) return
 
-        const { tableName, from } = this.taskDialogConfig
-        let task = this.makeMigrateTask(from, tableName)
+        const { tableName, from, task: settings } = this.taskDialogConfig
+        let task = Object.assign(this.makeMigrateTask(from, tableName), settings)
 
         this.creating = true
         try {
@@ -1020,12 +1127,26 @@ export default {
         }
       })
       this.searchExpandedKeys = searchExpandedKeys
+    },
+
+    handleChangeCronType(val) {
+      if (val === 'once') {
+        this.taskDialogConfig.task.crontabExpressionFlag = false
+      } else {
+        this.taskDialogConfig.task.crontabExpressionFlag = true
+        if (val !== 'custom') {
+          this.taskDialogConfig.task.crontabExpression = val
+        }
+      }
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.form-item-inner {
+  height: 32px;
+}
 .pipeline-desc {
   background-color: #f8f8fa;
   border-left: 4px solid map-get($color, primary);
