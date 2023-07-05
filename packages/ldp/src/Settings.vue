@@ -291,7 +291,7 @@ export default {
       return (
         this.isDaas &&
         this.setting &&
-        this.setting.fdmStorageConnectionId &&
+        !!this.setting.fdmStorageConnectionId &&
         // this.setting.fdmStorageCluster === this.form.fdmStorageCluster &&
         this.setting.fdmStorageConnectionId === this.form.fdmStorageConnectionId
       )
@@ -365,6 +365,7 @@ export default {
       }
 
       update && this.$emit('update:mode', this.mode)
+      update && this.$emit('update:fdmStorageConnectionId', this.form.fdmStorageConnectionId)
     },
 
     handleOpen() {

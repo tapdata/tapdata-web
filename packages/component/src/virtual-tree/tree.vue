@@ -22,6 +22,7 @@
         renderContent,
         onNodeExpand: handleNodeExpand
       }"
+      @scroll.native="handleScroll"
     />
     <el-tree-node
       v-else
@@ -85,6 +86,10 @@ export default {
         }
         return conn
       }, [])
+    },
+
+    handleScroll() {
+      this.$emit('handle-scroll')
     }
   }
 }
@@ -98,6 +103,9 @@ export default {
     height: 24px;
     line-height: 24px;
     text-align: center;
+  }
+  .el-tree-node__content {
+    position: relative;
   }
 }
 </style>

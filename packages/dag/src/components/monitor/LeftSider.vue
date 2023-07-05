@@ -464,7 +464,7 @@ export default {
     },
 
     totalData() {
-      const {
+      let {
         tableTotal = 0,
         snapshotTableTotal = 0,
         currentSnapshotTableInsertRowTotal = 0,
@@ -473,6 +473,10 @@ export default {
         outputQpsMax = 0,
         outputQpsAvg = 0
       } = this.quota.samples?.totalData?.[0] || {}
+      // 如果分子大于分母，将分母的值调整成跟分子一样
+      if (currentSnapshotTableInsertRowTotal > currentSnapshotTableRowTotal) {
+        currentSnapshotTableRowTotal = currentSnapshotTableInsertRowTotal
+      }
       return {
         tableTotal,
         snapshotTableTotal,
@@ -487,14 +491,18 @@ export default {
     totalDataPercentage() {
       if (this.initialData.snapshotDoneAt) return 100
       const { tableTotal, snapshotTableTotal } = this.totalData
-      return snapshotTableTotal && tableTotal ? (snapshotTableTotal / tableTotal) * 100 : 0
+      if (!snapshotTableTotal || !tableTotal) return 0
+      if (snapshotTableTotal > tableTotal) return 100
+      return (snapshotTableTotal / tableTotal) * 100
     },
 
     currentTotalDataPercentage() {
       const { currentSnapshotTableInsertRowTotal, currentSnapshotTableRowTotal } = this.totalData
-      return currentSnapshotTableRowTotal
-        ? (currentSnapshotTableInsertRowTotal / currentSnapshotTableRowTotal) * 100
-        : 0
+      if (!currentSnapshotTableRowTotal) return 0
+      if (currentSnapshotTableInsertRowTotal > currentSnapshotTableRowTotal) {
+        return 100
+      }
+      return (currentSnapshotTableInsertRowTotal / currentSnapshotTableRowTotal) * 100
     },
 
     initialList() {

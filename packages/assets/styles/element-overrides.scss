@@ -42,8 +42,8 @@ $--border-color-lighter: #ebeef5 !default;
 $--border-color-extra-light: #f2f6fc !default;
 $--border-color-hover: $--color-text-placeholder !default;
 $--border-base: $--border-width-base $--border-style-base $--border-color-base !default;
-$--border-radius-base: 4px !default;
-$--border-radius-small: 2px !default;
+$--border-radius-base: 6px !default;
+$--border-radius-small: 6px !default;
 $--border-radius-circle: 100% !default;
 $--border-color-background: map-get($bgColor, main) !default; // #f2f3f5
 
@@ -125,7 +125,7 @@ $--checkbox-color: $--color-text-regular !default;
 $--checkbox-font-color: $--color-text-primary !default;
 $--checkbox-input-height: 14px !default;
 $--checkbox-input-width: 14px !default;
-$--checkbox-input-border-radius: $--border-radius-small !default;
+$--checkbox-input-border-radius: 4px !default;
 $--checkbox-input-fill: $--color-white !default;
 $--checkbox-input-border: $--border-base !default;
 $--checkbox-input-border-color: $--border-color-base !default;
@@ -165,6 +165,10 @@ $--checkbox-button-font-size: $--font-size-base !default;
 $--checkbox-button-checked-fill: $--color-primary !default;
 $--checkbox-button-checked-color: $--color-white !default;
 $--checkbox-button-checked-border-color: $--color-primary !default;
+
+.el-checkbox__inner {
+  border-radius: 4px !important;
+}
 
 /* Radio
 -------------------------- */
@@ -269,7 +273,7 @@ $--alert-icon-large-size: 28px !default;
 /* Message Box
 -------------------------- */
 $--msgbox-width: 420px !default;
-$--msgbox-border-radius: 4px !default;
+$--msgbox-border-radius:$--border-radius-base !default;
 $--msgbox-font-size: $--font-size-large !default;
 $--msgbox-content-font-size: $--font-size-base !default;
 $--msgbox-content-color: $--color-text-regular !default;
@@ -422,12 +426,12 @@ $--button-medium-padding-vertical: 8px !default;
 $--button-medium-padding-horizontal: 15px !default;
 
 $--button-small-font-size: $--font-size-base !default;
-$--button-small-border-radius: #{$--border-radius-base - 1} !default;
+$--button-small-border-radius: #{$--border-radius-base} !default;
 $--button-small-padding-vertical: 9px !default;
 $--button-small-padding-horizontal: 15px !default;
 
 $--button-mini-font-size: $--font-size-base !default;
-$--button-mini-border-radius: #{$--border-radius-base - 1} !default;
+$--button-mini-border-radius: #{$--border-radius-base} !default;
 $--button-mini-padding-vertical: 7px !default;
 $--button-mini-padding-horizontal: 15px !default;
 
@@ -590,7 +594,7 @@ $--badge-size: 18px !default;
 /* Card
 --------------------------*/
 $--card-border-color: $--border-color-lighter !default;
-$--card-border-radius: 4px !default;
+$--card-border-radius: 8px !default;
 $--card-padding: 20px !default;
 
 /* Slider
@@ -863,7 +867,7 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
 /* Dialog
 --------------------------*/
 .el-dialog {
-  border-radius: 4px;
+  border-radius: 8px;
   .el-dialog__title {
     font-size: 16px;
     font-weight: 500;

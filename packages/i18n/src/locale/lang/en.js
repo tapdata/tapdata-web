@@ -21,6 +21,9 @@ export default {
   public_total: 'Total',
   public_database: 'Database',
   public_file: 'File',
+  public_schema: 'Schema',
+  public_basic_settings: 'Basic Settings',
+  public_advanced_settings: 'Advanced Settings',
   // state
   public_status_ready: 'Valid',
   public_status_invalid: 'Invalid',
@@ -108,6 +111,7 @@ export default {
   public_button_search: 'Search',
   public_button_stop_mining: 'Stop Mining',
   public_button_stop_recover: 'Resume Mining',
+  public_button_execute: 'Execute',
   // information
   public_message_title_prompt: 'Prompt',
   public_message_delete_confirm: 'Delete',

@@ -5,7 +5,23 @@
     :class="{ flex: showPanel, 'show-settings': activeType === 'settings' }"
   >
     <NodeIcon v-if="activeNode" v-show="activeType === 'node'" class="config-node-icon" :node="activeNode" />
-    <ElTabs ref="tabs" v-model="currentTab" class="config-tabs" v-show="activeType === 'node'">
+    <FormPanel
+      class="config-form-panel"
+      v-show="activeType !== 'settings'"
+      v-on="$listeners"
+      v-bind="$attrs"
+      ref="formPanel"
+      :formProps="{
+        colon: false,
+        shallow: false,
+        layout: 'vertical',
+        feedbackLayout: 'terse'
+      }"
+      @update:InputsOrOutputs="handleLoadMeta"
+      @setSchema="handleSetSchema"
+    />
+
+    <!--<ElTabs ref="tabs" v-model="currentTab" class="config-tabs" v-show="activeType === 'node'">
       <ElTabPane :label="$t('packages_dag_migration_configpanel_peizhi')" name="settings">
         <FormPanel
           v-show="activeType !== 'settings'"
@@ -40,7 +56,7 @@
           key="nodeAlarm"
         />
       </ElTabPane>
-    </ElTabs>
+    </ElTabs>-->
 
     <div class="flex-column h-100" :class="activeType === 'settings' ? 'flex' : 'none'">
       <div class="panel-header flex align-center px-4 border-bottom">
@@ -295,9 +311,31 @@ $headerHeight: 40px;
   .config-node-icon {
     position: absolute;
     left: 16px;
-    top: 10px;
+    top: 8px;
     width: 20px;
     height: 20px;
+  }
+
+  .config-form-panel {
+    ::v-deep {
+      .attr-panel-body {
+        padding: 0 !important;
+
+        .form-wrap {
+          min-height: 0;
+
+          .config-tabs-decorator {
+            height: 100%;
+            > .formily-element-form-item-control {
+              height: 100%;
+              > .formily-element-form-item-control-content {
+                height: 100%;
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   ::v-deep {
@@ -331,6 +369,8 @@ $headerHeight: 40px;
 
       > .el-tabs__content {
         height: calc(100% - 36px);
+        padding: 4px 16px;
+        overflow: auto;
         .el-tab-pane {
           height: 100%;
         }

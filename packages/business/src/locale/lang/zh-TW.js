@@ -43,7 +43,7 @@ export default {
   packages_business_connection_form_change: '更換',
   packages_business_connection_form_rename: '改名',
   packages_business_connection_form_database_owner_tip: '逗號分割的表達式列表，使用 * 代表任意長度任意字符',
-  packages_business_connection_form_source_and_target_tip: '此數據連接在Tapdata 中能同時作為源和目標使用',
+  packages_business_connection_form_source_and_target_tip: `此數據連接在 ${process.env.VUE_APP_PAGE_TITLE} 中能同時作為源和目標使用`,
   packages_business_connection_form_source_tip: '此數據連接在Tapdata 中只能作為源使用，不能作用為目標',
   packages_business_connection_form_target_tip: '此數據連接在Tapdata 中只能作為目標使用，不能作用為源',
   packages_business_connection_form_shared_mining: '共享挖掘',
@@ -482,7 +482,7 @@ export default {
   packages_business_verification_edit: '編輯校驗',
   packages_business_verification_clickVerified: '點下方按鈕添加校驗表',
   packages_business_verification_ChoosePKField: '請選索引或主鍵字段',
-  packages_business_verification_indexField: '索引字段',
+  packages_business_verification_indexField: '關聯字段',
   packages_business_verification_BasicSettings: '基本設置',
   packages_business_verification_verifyCondition: '校驗條件',
   packages_business_verification_advanceVerify: '高级校验',
@@ -495,9 +495,9 @@ export default {
   packages_business_verification_fastCountTip:
     '快速count僅對源表和目標表的行數進行count校驗，速度極快，但是不會展示差異的具體字段內容。',
   packages_business_verification_contentVerifyTip:
-    '全表字段值校驗會對源表和目標表的全部字段進行逐行校驗，能查出所有字段的差異，但是速度慢。',
+    '表全字段值校驗會對源表和目標表的全部字段進行逐行校驗，能查出所有字段的差異，但是速度慢。',
   packages_business_verification_jointFieldTip:
-    '關聯鍵校驗只對源表和目標表的關聯字段的值進行比對校驗，速度快於全表字段值校驗模式。',
+    '關聯字段值校驗只對源表和目標表的關聯字段的值進行比對校驗，速度快於全表字段值校驗模式。',
   packages_business_verification_waiting: '待校驗',
   packages_business_verification_scheduling: '校驗啟動中',
   packages_business_verification_error: '校驗失敗',
@@ -1070,5 +1070,14 @@ export default {
   page_title_data_difference_details: '差異詳情',
   page_title_data_verification_result: '校驗結果',
   page_title_diff_verification_history: '差異校驗歷史',
-  page_title_diff_verification_details: '差異校驗詳情'
+  page_title_diff_verification_details: '差異校驗詳情',
+  packages_business_connections_list_dangqianlianjiex:
+    '當前連接 xxx 正在作為FDM和MDM的存儲使用，刪除會導致已有存儲數據丟失，是否確認要繼續刪除。 ',
+  packages_business_connections_list_zhengzaizuoweiF:
+    '正在作為FDM和MDM的存儲使用，修改會導致已有存儲數據丟失，是否確認要繼續修改',
+  packages_business_connections_list_dangqianlianjie: '當前連接',
+  packages_business_components_conditionbox_chakanzidingyi: '查看自定義字段',
+  packages_business_components_fielddialog_ziduanbuyunxu: '字段不允許為空',
+  packages_business_components_fielddialog_zidingyiziduan: '自定義字段',
+  packages_business_verification_list_biaobufenziduan: '表部分字段校驗'
 }

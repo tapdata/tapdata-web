@@ -25,14 +25,13 @@
           </template>
         </ElInput>
       </div>
-      <div class="flex-fill min-h-0" v-loading="loading || searchIng">
+      <div v-if="!showParentLineage" class="flex-fill min-h-0" v-loading="loading || searchIng">
         <VirtualTree
           key="searchTree"
           v-if="showSearch"
           class="ldp-tree h-100"
           ref="tree"
           node-key="id"
-          highlight-current
           :props="props"
           draggable
           height="100%"
@@ -46,6 +45,7 @@
           @node-drag-start="handleDragStart"
           @node-drag-end="handleDragEnd"
           @node-expand="handleNodeExpand"
+          @handle-scroll="handleScroll"
         />
         <VirtualTree
           key="tree"
@@ -53,7 +53,6 @@
           class="ldp-tree h-100"
           ref="tree"
           node-key="id"
-          highlight-current
           :props="props"
           draggable
           lazy
@@ -68,9 +67,10 @@
           :allow-drop="() => false"
           @node-drag-start="handleDragStart"
           @node-drag-end="handleDragEnd"
+          @handle-scroll="handleScroll"
         >
           <span
-            class="custom-tree-node flex align-items-center"
+            class="custom-tree-node flex align-items-center position-relative"
             :class="{ grabbable: data.isObject, 'opacity-50': data.disabled }"
             slot-scope="{ node, data }"
             @click="$emit('preview', data, node.parent.data)"
@@ -90,12 +90,33 @@
             <VIcon v-else class="tree-item-icon mr-2" size="18">table</VIcon>
             <span class="table-label" :title="data.name">
               {{ data.name }}
+              <span v-if="data.comment" class="font-color-sslight">{{ `(${data.comment})` }}</span>
               <ElTag v-if="data.disabled" type="info" size="mini">{{ $t('public_status_invalid') }}</ElTag>
             </span>
-            <IconButton class="btn-menu" sm @click="$emit('preview', data, node.parent.data)">
-              view-details
-            </IconButton>
           </span>
+        </VirtualTree>
+      </div>
+      <div v-else class="flex-fill min-h-0" v-loading="loading || searchIng">
+        <VirtualTree
+          key="searchTree"
+          class="ldp-tree h-100"
+          ref="tree"
+          node-key="id"
+          :props="props"
+          draggable
+          height="100%"
+          wrapper-class-name="p-2"
+          :default-expanded-keys="searchExpandedKeys"
+          :data="filterTreeData"
+          :render-content="renderContent"
+          :expand-on-click-node="false"
+          :allow-drag="node => node.data.isObject"
+          :allow-drop="() => false"
+          @node-drag-start="handleDragStart"
+          @node-drag-end="handleDragEnd"
+          @node-expand="handleNodeExpand"
+          @handle-scroll="handleScroll"
+        >
         </VirtualTree>
       </div>
     </div>
@@ -117,7 +138,8 @@ export default {
   props: {
     dragState: Object,
     eventDriver: Object,
-    fdmAndMdmId: Array
+    fdmAndMdmId: Array,
+    showParentLineage: Boolean
   },
 
   components: { NodeIcon, VirtualTree, StageButton, IconButton, DatabaseIcon },
@@ -235,31 +257,36 @@ export default {
             this.$emit('preview', data, node.parent.data)
           }}
         >
-          {!data.isObject ? (
-            <NodeIcon node={data} size={18} class="tree-item-icon mr-2" />
-          ) : (
-            <VIcon class="tree-item-icon mr-2" size="18">
-              table
-            </VIcon>
-          )}
-          <span class="table-label" title={data.name}>
-            {data.name}
-          </span>
-          {data.disabled && (
-            <ElTag type="info" size="mini">
-              {this.$t('public_status_invalid')}
-            </ElTag>
-          )}
-          <IconButton
-            class="btn-menu"
-            sm
-            onClick={() => {
-              this.$emit('preview', data, node.parent.data)
-            }}
+          <div
+            id={data.isObject ? `ldp_source_table_${data.connectionId}_${data.name}` : `connection_${data.id}`}
+            class="inline-flex align-items-center overflow-hidden"
           >
-            {' '}
-            view-details{' '}
-          </IconButton>
+            {!data.isObject ? (
+              <NodeIcon node={data} size={18} class="tree-item-icon mr-2" />
+            ) : (
+              <VIcon class="tree-item-icon mr-2" size="18">
+                table
+              </VIcon>
+            )}
+            <span class="table-label" title={data.name}>
+              {data.name}
+            </span>
+            {data.disabled && (
+              <ElTag type="info" size="mini">
+                {this.$t('public_status_invalid')}
+              </ElTag>
+            )}
+            <IconButton
+              class="btn-menu"
+              sm
+              onClick={() => {
+                this.$emit('preview', data, node.parent.data)
+              }}
+            >
+              {' '}
+              view-details{' '}
+            </IconButton>
+          </div>
         </div>
       )
     },
@@ -315,11 +342,12 @@ export default {
     },
 
     async getTableList(id) {
-      const res = await metadataInstancesApi.getSourceTablesValues(id)
+      const res = await metadataInstancesApi.getTablesValue({ connectionId: id })
       const data = res.map(t => {
         return {
           id: t.tableId,
           name: t.tableName,
+          comment: t.tableComment,
           connectionId: id,
           isLeaf: true,
           isObject: true,
@@ -334,6 +362,7 @@ export default {
             {
               id: '',
               name: '',
+              comment: '',
               isLeaf: true,
               isEmpty: true
             }
@@ -421,6 +450,44 @@ export default {
           id: val[1]
         })
       })
+    },
+
+    handleFindTreeDom(val = {}) {
+      const el = document.getElementById(`ldp_source_table_${val.connectionId}_${val.table}`)
+      return el
+    },
+
+    handleScroll: debounce(function () {
+      this.$emit('handle-connection')
+    }, 200),
+
+    async searchByKeywordList(val = []) {
+      let searchExpandedKeys = []
+      this.filterTreeData = val.map(t => {
+        searchExpandedKeys.push(t.connectionId)
+        return {
+          LDP_TYPE: 'connection',
+          id: t.connectionId,
+          name: t.connectionName,
+          pdkHash: t.pdkHash,
+          status: 'ready',
+          isLeaf: false,
+          level: 0,
+          disabled: false,
+          children: [
+            {
+              id: t.tableId,
+              name: t.table,
+              connectionId: t.connectionId,
+              isLeaf: true,
+              isObject: true,
+              type: 'table',
+              LDP_TYPE: 'table'
+            }
+          ]
+        }
+      })
+      this.searchExpandedKeys = searchExpandedKeys
     }
   }
 }

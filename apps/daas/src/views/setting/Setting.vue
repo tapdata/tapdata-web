@@ -147,7 +147,8 @@
               {{ SMTP['Email_Receivers'] }}
             </p>
             <p>
-              {{ $t('setting_email_template_subject') }} : {{ SMTP['Send_Email_Title_Prefix'] }} Tapdata Notification:
+              {{ $t('setting_email_template_subject') }} : {{ SMTP['Send_Email_Title_Prefix'] }}
+              {{ title }} Notification:
               <span v-show="activeTab <= 4">Job {{ emailTabs[activeTab].status }}</span>
               <span v-show="activeTab > 4">DDL Warn, please perform DDL operation manually.</span>
             </p>
@@ -175,7 +176,7 @@
                 DDL sql: <span style="color: #f56c6c">xxx</span>
               </span>
             </p>
-            <p class="paragraph">This mail was sent by Tapdata.</p>
+            <p class="paragraph">This mail was sent by {{ title }}.</p>
           </div>
         </el-col>
       </el-row>
@@ -202,6 +203,7 @@ export default {
   components: { VIcon },
   data() {
     return {
+      title: process.env.VUE_APP_PAGE_TITLE,
       liceseItems: [],
       emailTemplateDialog: false,
       formData: {

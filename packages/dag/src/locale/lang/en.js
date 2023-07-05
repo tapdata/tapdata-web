@@ -334,8 +334,9 @@ export default {
   packages_dag_nodes_database_baochimubiaoduan:
     'To maintain the original table structure on the target side, please clear the data.',
   packages_dag_nodes_database_qingchumubiaoduan: 'Clear the original table structure and data on the target side',
-  packages_dag_nodes_database_chongfuchulice: 'Duplicate processing strategy',
+  packages_dag_nodes_database_chongfuchulice: 'If the target table exists',
   packages_dag_nodes_database_tuiyanjieguo: 'Deduction Results',
+  packages_dag_nodes_database_guolvjieguo: 'Filter Results',
   packages_dag_nodes_database_dangqianjiedianzhi: 'The current node has the capability to process DDL events',
   packages_dag_nodes_database_ddLshijian: 'DDL event collection',
   packages_dag_nodes_database_kaiqihourenwu:
@@ -550,7 +551,7 @@ export default {
   packages_dag_nodes_mergetable_const_zuiduozhichiliangceng: 'Up to two levels of nesting are supported',
   packages_dag_nodes_mergetable_zhucongpeizhi: 'Master-slave Configuration',
   packages_dag_nodes_table_isDaa_ruguoyuanweimongodb:
-    'If the source is MongoDB, you need to delete events synchronously, please make sure to associate _id',
+    'When using MongoDB as the source, ensure synchronized deletion events for the associated _id field.',
   packages_dag_nodes_table_tianjia: 'Add',
   packages_dag_nodes_table_zidingyitiaojian: 'Custom Conditions',
   packages_dag_nodes_table_guolushezhi: 'Filter Settings',
@@ -642,5 +643,23 @@ export default {
   packages_dag_default_js: 'Default JS',
   packages_dag_standardization_js: 'Standardized JS',
   packages_dag_shared_mining_table_info_index_wajuebiaoxinxi: 'Mining table information',
-  packages_dag_table_not_exist: 'Table not exist, will be automatically created'
+  packages_dag_table_not_exist: 'Table not exist, will be automatically created',
+  packages_dag_field_inference_list_anxishutiaozheng: 'Adjust by coefficient',
+  packages_dag_field_inference_list_zidingyitiaozheng: 'Custom Adjustments',
+  packages_dag_field_inference_list_anzhaoxishu: 'Adjust field length by coefficient',
+  packages_dag_field_inference_list_anzhaoxishu_tip:
+    'Adjustment by coefficient refers to multiplying the original deduced length by the set coefficient as the adjusted field length',
+  packages_dag_field_rename_index_yixiacaozuoyi: 'The following operations cannot match the source field',
+  packages_dag_nodes_database_jinwuzhujianbiao: 'No primary key table only',
+  packages_dag_nodes_database_jinyouzhujianbiao: 'Only the primary key table',
+  packages_dag_nodes_database_biaoxianshi: 'Selectable table range',
+  packages_dag_nodes_database_xuanzeyaoguolvdiaode: 'Select the field type to filter out',
+  packages_dag_data_schema: 'Data Schema',
+  packages_dag_config_ddl: 'DDL Synchronization',
+  packages_dag_config_data_read: 'Data Read',
+  packages_dag_config_breakpoint_resume: 'Resume from Breakpoint',
+  packages_dag_config_datasource: 'Data Source',
+  packages_dag_config_data_write: 'Data Write',
+  packages_dag_config_incremental_mode: 'Incremental Mode',
+  packages_dag_config_data_filter: 'Data Filter'
 }

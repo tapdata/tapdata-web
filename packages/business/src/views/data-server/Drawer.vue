@@ -151,7 +151,10 @@
                 :loading="!tableOptions"
                 @change="tableChanged"
               >
-                <ElOption v-for="item in tableOptions" :key="item" :value="item" :label="item"></ElOption>
+                <ElOption v-for="item in tableOptions" :key="item.tableName" :value="item.tableName">
+                  <span>{{ item.tableName }}</span>
+                  <span v-if="item.tableComment" class="font-color-sslight">{{ `(${item.tableComment})` }}</span>
+                </ElOption>
               </ElSelect>
               <div v-else class="text">{{ data.tableName }}</div>
             </ElFormItem>
@@ -162,48 +165,60 @@
           <div class="mt-4 fs-7 data-server-panel__title">
             {{ $t('packages_business_data_server_drawer_aPI_path_Settings') }}
           </div>
-          <div class="flex-1 mt-4" size="small">
-            <el-radio-group v-model="form.pathAccessMethod" :disabled="!isEdit">
-              <el-radio label="default">{{ $t('packages_business_data_server_drawer_default_path') }}</el-radio>
-              <el-radio label="customize">{{ $t('packages_business_data_server_drawer_custom_path') }}</el-radio>
-            </el-radio-group>
-          </div>
-          <ElFormItem
-            class="flex-1 mt-4"
-            size="small"
-            :label="$t('public_version')"
-            prop="apiVersion"
-            :rules="rules.apiVersion"
-            v-if="form.pathAccessMethod === 'customize'"
-          >
-            <ElInput v-model="form.apiVersion" :disabled="!isEdit"></ElInput>
-          </ElFormItem>
-          <ElFormItem
-            class="flex-1 mt-4"
-            size="small"
-            :label="$t('packages_business_data_server_drawer_prefix')"
-            prop="prefix"
-            v-if="form.pathAccessMethod === 'customize'"
-          >
-            <ElInput v-model="form.prefix" :disabled="!isEdit"></ElInput>
-          </ElFormItem>
-          <ElFormItem
-            class="flex-1 mt-4"
-            size="small"
-            :label="$t('packages_business_data_server_drawer_base_path')"
-            prop="basePath"
-            v-if="form.pathAccessMethod === 'customize'"
-          >
-            <ElInput v-model="form.basePath" :disabled="!isEdit"></ElInput>
-          </ElFormItem>
-          <ElFormItem
-            class="flex-1 mt-4"
-            size="small"
-            :label="$t('packages_business_data_server_drawer_path')"
-            v-if="form.pathAccessMethod === 'customize'"
-          >
-            <ElInput v-model="customizePath" :disabled="true"></ElInput>
-          </ElFormItem>
+
+          <ul v-if="data.path && !isEdit" class="data-server-path">
+            <li v-for="(url, method) in urls" :key="method" class="data-server-path__item">
+              <div class="data-server-path__method" :class="'method--' + method">
+                {{ method }}
+              </div>
+              <div class="data-server-path__value line-height">{{ url }}</div>
+            </li>
+          </ul>
+
+          <template v-else="isEdit">
+            <div class="flex-1 mt-4" size="small">
+              <el-radio-group v-model="form.pathAccessMethod" :disabled="!isEdit">
+                <el-radio label="customize">{{ $t('packages_business_data_server_drawer_custom_path') }}</el-radio>
+                <el-radio label="default">{{ $t('packages_business_data_server_drawer_default_path') }}</el-radio>
+              </el-radio-group>
+            </div>
+            <ElFormItem
+              class="flex-1 mt-4"
+              size="small"
+              :label="$t('public_version')"
+              prop="apiVersion"
+              :rules="rules.apiVersion"
+              v-if="form.pathAccessMethod === 'customize'"
+            >
+              <ElInput v-model="form.apiVersion" :disabled="!isEdit"></ElInput>
+            </ElFormItem>
+            <ElFormItem
+              class="flex-1 mt-4"
+              size="small"
+              :label="$t('packages_business_data_server_drawer_prefix')"
+              prop="prefix"
+              v-if="form.pathAccessMethod === 'customize'"
+            >
+              <ElInput v-model="form.prefix" :disabled="!isEdit"></ElInput>
+            </ElFormItem>
+            <ElFormItem
+              class="flex-1 mt-4"
+              size="small"
+              :label="$t('packages_business_data_server_drawer_base_path')"
+              prop="basePath"
+              v-if="form.pathAccessMethod === 'customize'"
+            >
+              <ElInput v-model="form.basePath" :disabled="!isEdit"></ElInput>
+            </ElFormItem>
+            <ElFormItem
+              class="flex-1 mt-4"
+              size="small"
+              :label="$t('packages_business_data_server_drawer_path')"
+              v-if="form.pathAccessMethod === 'customize'"
+            >
+              <ElInput v-model="customizePath" :disabled="true"></ElInput>
+            </ElFormItem>
+          </template>
         </section>
 
         <!-- 輸入参数 -->
@@ -276,7 +291,14 @@
             min-width="100"
           >
             <template #default="{ row }">
-              <ElInput v-model="debugParams[row.name]" size="mini"></ElInput>
+              <ElInputNumber
+                v-if="row.type === 'number'"
+                v-model="debugParams[row.name]"
+                :precision="0"
+                :step="1"
+                :min="0"
+              />
+              <ElInput v-else v-model="debugParams[row.name]" size="mini"></ElInput>
             </template>
           </ElTableColumn>
           <ElTableColumn v-if="isEdit && form.apiType === 'customerQuery'" align="center" width="60">
@@ -383,27 +405,6 @@
             <ElTableColumn :label="$t('public_type')" prop="originalDataType" min-width="120"></ElTableColumn>
             <ElTableColumn :label="$t('public_description')" prop="comment" min-width="50"></ElTableColumn>
           </ElTable>
-        </template>
-        <!--服务访问 -->
-        <template v-if="tab === 'form'">
-          <div class="data-server-panel__title">
-            <span>{{ $t('packages_business_data_server_drawer_fuwufangwen') }}</span>
-            <ElButton
-              v-if="this.data.id && form.pathAccessMethod === 'default' && data.status !== 'active'"
-              type="primary"
-              size="mini"
-              @click="generate"
-              >{{ $t('public_button_generate') }}</ElButton
-            >
-          </div>
-          <ul v-if="data.path" class="data-server-path">
-            <li v-for="(url, method) in urls" :key="method" class="data-server-path__item">
-              <div class="data-server-path__method" :class="'method--' + method">
-                {{ method }}
-              </div>
-              <div class="data-server-path__value line-height">{{ url }}</div>
-            </li>
-          </ul>
         </template>
 
         <!-- {{$t('packages_business_data_server_drawer_diaoyongfangshi')}} -->
@@ -515,7 +516,7 @@ export default {
       visible: false,
       data: {},
       form: {
-        pathAccessMethod: 'default',
+        pathAccessMethod: 'customize',
         apiVersion: 'v1',
         prefix: '',
         basePath: '',
@@ -550,7 +551,14 @@ export default {
           }
         ],
         param: [{ required: true, validator: validateParams, trigger: ['blur', 'change'] }],
-        basePath: [{ required: true, validator: validateBasePath, trigger: ['blur', 'change'] }],
+        basePath: [
+          {
+            required: true,
+            message: i18n.t('public_input_placeholder') + i18n.t('packages_business_data_server_drawer_base_path'),
+            trigger: ['blur', 'change']
+          },
+          { validator: validateBasePath, trigger: ['blur', 'change'] }
+        ],
         prefix: [{ required: false, validator: validatePrefix, trigger: ['blur', 'change'] }],
         apiVersion: [{ required: true, validator: validateBasePath, trigger: ['blur', 'change'] }],
         appValue: [
@@ -640,7 +648,7 @@ export default {
       this.allFields = []
       this.workerStatus = ''
       this.form = {
-        pathAccessMethod: 'default',
+        pathAccessMethod: 'customize',
         apiVersion: 'v1',
         prefix: '',
         basePath: '',
@@ -652,7 +660,7 @@ export default {
       this.formatData(formData || {})
 
       // 若为新建时，则默认值为 ‘默认查询(defaultApi)’ 的值
-      this.form.pathAccessMethod = this.data?.pathAccessMethod || 'default'
+      this.form.pathAccessMethod = this.data?.pathAccessMethod || 'customize'
       this.getDatabaseTypes()
       let { connectionId, tableName } = this.form
       if (connectionId) {
@@ -662,22 +670,23 @@ export default {
         this.getFields()
       }
       if (!this.data.id) {
+        this.form.basePath = uid(11, 'a')
         this.edit()
       }
 
       const formVM = this.$refs.form
 
       if (formVM) {
-        formVM.clearValidate()
         this.$nextTick(() => {
+          formVM.clearValidate()
           formVM.$el.scrollTop = 0
         })
       }
     },
     tabChanged() {
-      this.isEdit = false
       let debugParams = null
       if (this.tab === 'debug') {
+        this.isEdit = false
         debugParams = {}
         this.data.params.forEach(p => {
           debugParams[p.name] = p.defaultvalue || ''
@@ -797,7 +806,7 @@ export default {
     },
     // 切换到编辑状态
     edit() {
-      this.form.status = 'generating'
+      this.form.status = 'pending'
       this.isEdit = true
       this.$nextTick(() => {
         this.data.fields.forEach(f => {
@@ -988,7 +997,7 @@ export default {
     // 获取可选表，依赖连接id
     async getTableOptions(id) {
       this.tableOptions = null
-      const data = await metadataInstancesApi.getTables(id).catch(() => {
+      const data = await metadataInstancesApi.getTablesValue({ connectionId: id }).catch(() => {
         this.tableOptions = []
       })
       this.tableOptions = data || []
@@ -1017,7 +1026,7 @@ export default {
             id: it.id,
             field_name: it.field_name,
             originalDataType: it.data_type,
-            comment: ''
+            comment: it.comment
           })
         }) || []
       if (!this.form.id) {

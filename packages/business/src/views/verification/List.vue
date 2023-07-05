@@ -8,7 +8,7 @@
       @sort-change="handleSortTable"
     >
       <div class="search-bar" slot="search">
-        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
+        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"></FilterBar>
       </div>
       <div slot="operation">
         <ElButton
@@ -37,7 +37,7 @@
           <div class="ellipsis">{{ scope.row.name }}</div>
           <div class="font-color-slight">
             <span
-              >{{ inspectMethod[scope.row.inspectMethod] }} (
+              >{{ getInspectName(scope.row) }} (
               {{
                 scope.row.mode === 'manual'
                   ? $t('packages_business_verification_singleVerify')
@@ -77,10 +77,11 @@
             <div v-else-if="scope.row.status === 'error'" class="data-verify__status">
               <i class="data-verify__icon el-icon-error"></i>
               <span>{{ $t('public_status_error') }}</span>
-              <ElLink type="primary" class="ml-2" @click="handleError(scope.row)">{{
-                $t('public_button_check')
-              }}</ElLink>
+              <ElLink type="primary" class="ml-2" @click="handleError(scope.row)"
+                >{{ $t('public_button_check') }}
+              </ElLink>
             </div>
+            <div v-else-if="scope.row.status === 'waiting'" class="data-verify__status">-</div>
             <div v-else-if="scope.row.status !== 'done'" class="data-verify__status">
               <img style="width: 26px; vertical-align: middle" :src="loadingImg" />
               <span>{{ statusMap[scope.row.status] }}</span>
@@ -92,7 +93,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('packages_business_verification_verifyStatus')" min-width="120" prop="status">
+      <el-table-column :label="$t('packages_business_verification_verifyStatus')" min-width="110" prop="status">
         <template slot-scope="scope">
           <span>{{ statusMap[scope.row.status] }}</span>
           <span v-if="scope.row.InspectResult && scope.row.status === 'running'">
@@ -104,15 +105,24 @@
         :label="$t('packages_business_verification_verifyTime')"
         prop="lastStartTime"
         sortable="lastStartTime"
-        min-width="180"
+        min-width="170"
       ></el-table-column>
-      <el-table-column :label="$t('public_operation')" width="360">
+      <el-table-column :label="$t('public_operation')" width="260">
         <template slot-scope="scope">
-          <ElLink type="primary" :disabled="!scope.row.InspectResult" @click="toTableInfo(scope.row.id)">{{
-            $t('packages_business_verification_result_title')
-          }}</ElLink>
+          <ElLink type="primary" :disabled="!scope.row.InspectResult" @click="toTableInfo(scope.row.id)"
+            >{{ $t('packages_business_verification_result_title') }}
+          </ElLink>
           <ElDivider direction="vertical" v-readonlybtn="'verify_job_edition'"></ElDivider>
           <ElLink
+            v-if="scope.row.status === 'running'"
+            v-readonlybtn="'verify_job_edition'"
+            type="primary"
+            :disabled="$disabledByPermission('verify_job_edition_all_data', scope.row.user_id)"
+            @click="stop(scope.row.id)"
+            >{{ $t('public_button_stop') }}
+          </ElLink>
+          <ElLink
+            v-else
             v-readonlybtn="'verify_job_edition'"
             type="primary"
             :disabled="
@@ -120,16 +130,16 @@
               ['running', 'scheduling'].includes(scope.row.status)
             "
             @click="startTask(scope.row.id)"
-            >{{ $t('packages_business_verification_executeVerifyTip') }}</ElLink
-          >
+            >{{ $t('packages_business_verification_executeVerifyTip') }}
+          </ElLink>
           <ElDivider direction="vertical"></ElDivider>
           <ElLink
             v-readonlybtn="'verify_job_edition'"
             type="primary"
             :disabled="!scope.row.InspectResult"
             @click="history(scope.row.id)"
-            >{{ $t('packages_business_verification_historyTip') }}</ElLink
-          >
+            >{{ $t('packages_business_verification_historyTip') }}
+          </ElLink>
           <ElDivider direction="vertical" v-readonlybtn="'verify_job_edition'"></ElDivider>
           <ElLink
             v-readonlybtn="'verify_job_edition'"
@@ -139,16 +149,16 @@
               ['running', 'scheduling'].includes(scope.row.status)
             "
             @click="goEdit(scope.row.id, scope.row.flowId)"
-            >{{ $t('packages_business_verification_configurationTip') }}</ElLink
-          >
-          <ElDivider direction="vertical" v-readonlybtn="'verify_job_edition'"></ElDivider>
+            >{{ $t('packages_business_verification_configurationTip') }}
+          </ElLink>
+          <ElDivider direction="vertical"></ElDivider>
           <ElLink
             v-readonlybtn="'verify_job_edition'"
             type="primary"
             :disabled="$disabledByPermission('verify_job_delete_all_data', scope.row.user_id)"
             @click="remove(scope.row.id, scope.row)"
-            >{{ $t('public_button_delete') }}</ElLink
-          >
+            >{{ $t('public_button_delete') }}
+          </ElLink>
         </template>
       </el-table-column>
     </TablePage>
@@ -183,7 +193,7 @@ export default {
       },
       filterItems: [],
       loadingImg: require('@tap/assets/icons/loading.svg'),
-      order: 'lastStartTime DESC',
+      order: 'last_updated DESC',
       inspectMethod: {
         row_count: this.$t('packages_business_verification_rowVerify'),
         field: this.$t('packages_business_verification_contentVerify'),
@@ -257,7 +267,7 @@ export default {
     },
     //筛选条件
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'lastStartTime'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
+      this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
     },
     getData({ page }) {
@@ -436,6 +446,25 @@ export default {
         customClass: 'verify-list-error-msg',
         width: '600px'
       })
+    },
+    getInspectName(row = {}) {
+      if (row.tasks?.some(t => !!t.source.columns || !!t.target.columns)) {
+        return i18n.t('packages_business_verification_list_biaobufenziduan')
+      }
+      return this.inspectMethod[row.inspectMethod]
+    },
+    stop(id = '') {
+      inspectApi
+        .update(
+          {
+            id: id
+          },
+          { status: 'stopping' }
+        )
+        .then(() => {
+          this.$message.success(this.$t('public_message_operation_success'))
+          this.table.fetch()
+        })
     }
   }
 }
@@ -445,6 +474,7 @@ export default {
 .data-verify-wrap {
   height: 100%;
   padding: 0 24px 24px 24px;
+
   .btn-refresh {
     padding: 0;
     height: 32px;
@@ -452,27 +482,34 @@ export default {
     width: 32px;
     font-size: 16px;
   }
+
   .search-bar {
     display: flex;
+
     .item {
       margin-right: 10px;
     }
   }
+
   .btn + .btn {
     margin-left: 10px;
   }
+
   .btn {
     i.iconfont {
       font-size: 12px;
     }
+
     &.btn-dropdowm {
       margin-left: 5px;
     }
   }
+
   .data-verify__status {
     display: flex;
     align-items: center;
   }
+
   .data-verify__icon {
     margin-left: -5px;
     width: 26px;
@@ -496,6 +533,7 @@ export default {
   .el-table--border td {
     border-right: 0;
   }
+
   // .el-table--border th {
   //   border-right: 1px solid #dcdfe6;
   // }

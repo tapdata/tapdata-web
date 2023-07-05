@@ -22,5 +22,24 @@ export default class LDP extends Http {
       params: { tags }
     })
   }
+
+  checkCanStartByTag(tagId) {
+    return this.axios.get(`${this.url}/check/fdm/status`, {
+      params: {
+        tagId
+      }
+    })
+  }
+
+  batchStart(tagId, taskIds) {
+    return this.axios.post(`${this.url}/fdm/batch/start`, {
+      tagId,
+      taskIds
+    })
+  }
+
+  deleteTable(tableId) {
+    return this.axios.delete(`${this.url}/mdm/table/${tableId}`)
+  }
 }
 export { LDP }

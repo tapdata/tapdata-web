@@ -23,15 +23,17 @@
         </ElInput>
       </div>
 
-      <div class="flex-fill min-h-0 overflow-auto p-2">
+      <div class="flex-fill min-h-0 overflow-auto p-2 position-relative" @scroll="handleScroll">
         <!--<draggable v-model="filterList" @start="dragging = true" @end="dragging = false">-->
         <div
           v-for="item in filterList"
+          :ref="`wrap__item${item.id}`"
           :key="item.id"
           class="wrap__item rounded-lg mb-3 position-relative overflow-hidden"
+          :class="{ 'opacity-50': item.disabled }"
           @dragover="handleDragOver"
-          @dragenter.stop="handleDragEnter"
-          @dragleave.stop="handleDragLeave"
+          @dragenter.stop="handleDragEnter($event, item)"
+          @dragleave.stop="handleDragLeave($event, item)"
           @drop.stop="handleDrop($event, item)"
         >
           <template v-if="item.LDP_TYPE === 'app'">
@@ -48,7 +50,7 @@
                 <div class="task-list-content">
                   <template v-if="item.modules && item.modules.length">
                     <div v-for="(m, i) in item.modules" :key="i" class="task-list-item flex align-center">
-                      <div class="p-1 ellipsis flex-1 align-center">
+                      <div :ref="`ldp_target_api_${m.id}`" class="p-1 ellipsis flex-1 align-center position-relative">
                         <a
                           class="el-link el-link--primary w-100 justify-content-start"
                           :title="m.name"
@@ -72,7 +74,10 @@
               class="drop-mask position-absolute absolute-fill p-2 flex-column justify-content-center align-center gap-2"
               :class="{ flex: nonSupportApi }"
             >
-              <ElTooltip placement="top" :content="'目前支持的类型: ' + apiSupportTypes.join(',')">
+              <ElTooltip
+                placement="top"
+                :content="$t('packages_ldp_src_target_muqianzhichide') + ':' + apiSupportTypes.join(',')"
+              >
                 <span> {{ `${$t('packages_dag_components_node_zanbuzhichi')} ${dragDatabaseType}` }}</span>
               </ElTooltip>
             </div>
@@ -85,6 +90,9 @@
                   class="font-color-normal fw-sub fs-6 lh-base flex-1 ml-2 flex align-center overflow-hidden"
                   :title="item.name"
                   ><span class="ellipsis">{{ item.name }}</span>
+                  <ElTag v-if="item.disabled" class="ml-1" type="info" size="small">{{
+                    $t('public_status_invalid')
+                  }}</ElTag>
                   <ElTag
                     v-if="item.showConnectorWebsite && connectionWebsiteMap[item.id]"
                     size="small"
@@ -92,8 +100,8 @@
                     @click="handleOpenWebsite(connectionWebsiteMap[item.id])"
                     ><VIcon class="mr-1" size="14">open-in-new</VIcon
                     >{{ $t('packages_business_swimlane_target_shouye') }}</ElTag
-                  ></span
-                >
+                  >
+                </span>
                 <IconButton class="ml-1" @click="$emit('preview', item)">view-details</IconButton>
                 <!--                <IconButton
                   v-if="item.showConnectorWebsite && connectionWebsiteMap[item.id]"
@@ -105,8 +113,17 @@
                 {{ $t('packages_business_data_console_target_connection_desc', { val: item.database_type }) }}
               </div>
             </div>
-            <TaskList :list="connectionTaskMap[item.id] || []" @edit-in-dag="handleClickName"></TaskList>
+            <TaskList
+              ref="taskList"
+              :item-id="item.id"
+              :list="connectionTaskMap[item.id] || []"
+              @edit-in-dag="handleClickName"
+              @find-parent="handleFindParent"
+            ></TaskList>
           </template>
+        </div>
+        <div v-if="!filterList.length" class="el-tree__empty-block">
+          <span class="el-tree__empty-text">{{ $t('public_data_no_data') }}</span>
         </div>
         <!--</draggable>-->
       </div>
@@ -164,6 +181,7 @@
 
 <script>
 // import draggable from 'vuedraggable'
+import { debounce, cloneDeep } from 'lodash'
 import { defineComponent, ref } from '@vue/composition-api'
 
 import { apiServerApi, appApi, connectionsApi, modulesApi, proxyApi, taskApi } from '@tap/api'
@@ -258,7 +276,8 @@ export default {
 
   props: {
     dragState: Object,
-    fdmAndMdmId: Array
+    fdmAndMdmId: Array,
+    showParentLineage: Boolean
   },
 
   components: { ApiPreview, CreateRestApi, DatabaseIcon, TaskList, IconButton, VIcon },
@@ -320,7 +339,8 @@ export default {
         generating: this.$t('public_status_to_be_generated')
       },
       connectionWebsiteMap: {},
-      apiSupportTypes: ['Mysql', 'SQL Server', 'Oracle', 'MongoDB', 'PostgreSQL', 'Tidb', 'Doris']
+      apiSupportTypes: ['Mysql', 'SQL Server', 'Oracle', 'MongoDB', 'PostgreSQL', 'Tidb', 'Doris'],
+      searchKeywordList: []
     }
   },
 
@@ -334,6 +354,25 @@ export default {
     },
 
     filterList() {
+      if (this.showParentLineage) {
+        let result = []
+        this.searchKeywordList.forEach(item => {
+          if (item.type === 'apiserverLineage') {
+            // item的数据结构：appName,serverName,table,type
+            const appList = cloneDeep(this.list.filter(item => item.LDP_TYPE === 'app'))
+            const findApp = appList.find(t => t.value === item.appName)
+            const findServer = findApp?.modules?.find(t => t.name === item.serverName)
+            if (!findServer) return
+            const findOne = result.find(t => t.value === item.appName)
+            if (findOne) {
+              findOne.modules.push(findServer)
+            } else {
+              result.push(Object.assign({}, findApp, { modules: [findServer] }))
+            }
+          }
+        })
+        return result
+      }
       if (!this.search) return this.list.filter(item => !this.fdmAndMdmId.includes(item.id))
 
       return this.list.filter(
@@ -365,6 +404,11 @@ export default {
     this.isDaas && this.getApiServerHost()
   },
 
+  destroyed() {
+    this.destroyed = true
+    clearTimeout(this.loadTaskTimer)
+  },
+
   methods: {
     async init() {
       const connectionList = await this.getData()
@@ -379,10 +423,12 @@ export default {
         })
       }
 
+      this.connectionIds = connectionList.map(item => item.id)
       this.list = appList
         .concat(connectionList)
         .sort((obj1, obj2) => new Date(obj2.createTime) - new Date(obj1.createTime))
-      this.loadTask(connectionList)
+      await this.loadTask(connectionList)
+      this.autoLoadTaskById()
     },
 
     handleAdd() {
@@ -436,6 +482,25 @@ export default {
           }
         })
       }
+    },
+
+    autoLoadTaskById() {
+      clearTimeout(this.loadTaskTimer)
+
+      if (this.destroyed) return
+
+      this.loadTaskTimer = setTimeout(async () => {
+        const data = await taskApi.getTaskByConnection({
+          connectionIds: this.connectionIds.join(','),
+          position: 'target'
+        })
+
+        Object.keys(data).forEach(key => {
+          this.$set(this.connectionTaskMap, key, data[key].reverse().map(this.mapTask))
+        })
+
+        this.autoLoadTaskById()
+      }, 5000)
     },
 
     getTableByTask(task) {
@@ -552,15 +617,17 @@ export default {
       ev.dataTransfer.dropEffect = 'copy'
     },
 
-    handleDragEnter(ev) {
+    handleDragEnter(ev, item) {
       ev.preventDefault()
-      if (this.dragging || !this.allowDrop) return
+
+      if (this.dragging || !this.allowDrop || item.disabled) return
+
       const dropNode = this.findParentByClassName(ev.currentTarget, 'wrap__item')
       dropNode.classList.add('is-drop-inner')
     },
 
-    handleDragLeave(ev) {
-      if (this.dragging || !this.allowDrop) return
+    handleDragLeave(ev, item) {
+      if (this.dragging || !this.allowDrop || item.disabled) return
 
       if (!ev.currentTarget.contains(ev.relatedTarget)) {
         this.removeDropEffect(ev)
@@ -576,7 +643,7 @@ export default {
       ev.preventDefault()
       this.removeDropEffect(ev)
 
-      if (this.dragging) return
+      if (this.dragging || item.disabled) return
 
       const { draggingObjects } = this.dragState
       if (!draggingObjects.length) return
@@ -765,6 +832,7 @@ export default {
     },
 
     mapConnection(item) {
+      item.disabled = item.status !== 'ready'
       item.LDP_TYPE = 'connection'
       item.showConnectorWebsite = item?.capabilities.some(c => c.id === 'connector_website_function')
       item.showTableWebsite = item?.capabilities.some(c => c.id === 'connector_website_function')
@@ -783,6 +851,7 @@ export default {
 
     addItem(item) {
       if (item.LDP_TYPE !== 'app') {
+        this.connectionIds.push(item.id)
         this.mapConnection(item)
         this.loadTask([item])
       }
@@ -821,6 +890,21 @@ export default {
 
     handleOpenWebsite(url) {
       window.open(url)
+    },
+
+    handleFindTaskDom(val = {}) {
+      const modules = Object.values(val.modules) || []
+      const app = modules?.[0] || {}
+      const el = this.$refs[`ldp_target_api_${app.id}`]?.[0]
+      return el?.parentNode
+    },
+
+    handleScroll: debounce(function () {
+      this.$emit('handle-connection')
+    }, 200),
+
+    searchByKeywordList(val = []) {
+      this.searchKeywordList = val
     }
   }
 }

@@ -81,16 +81,12 @@ export default class MetadataInstances extends Http {
     return this.axios.get(this.url + '/tables?connectionId=' + connectionId)
   }
 
-  getTablesValue(connectionId) {
-    return this.axios.get(this.url + '/tablesValue?connectionId=' + connectionId)
+  getTablesValue(params) {
+    return this.axios.get(this.url + '/tablesValue', { params })
   }
 
   getSourceTables(connectionId) {
     return this.axios.get(this.url + '/tables?connectionId=' + connectionId + '&sourceType=SOURCE')
-  }
-
-  getSourceTablesValues(connectionId) {
-    return this.axios.get(this.url + '/tablesValue?connectionId=' + connectionId + '&sourceType=SOURCE')
   }
 
   /**
@@ -145,6 +141,19 @@ export default class MetadataInstances extends Http {
   //更新表描述
   updateTableDesc(params) {
     return this.axios.post(this.url + '/updateTableDesc', params)
+  }
+  dataTypeCheckMultiple(params) {
+    return this.axios.post(this.url + '/dataType/checkMultiple', params)
+  }
+  updateTableFieldDesc(id, params) {
+    return this.axios.post(this.url + `/updateTableFieldDesc/${id}`, params)
+  }
+  nodeFilterTypeList(params) {
+    return this.axios.get(this.url + `/node/filterTypeList`, { params })
+  }
+  // 获取表最新的字段列表
+  multiTransform(params) {
+    return this.axios.post(this.url + `/multi/transform`, params)
   }
 }
 export { MetadataInstances }

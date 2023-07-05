@@ -68,10 +68,11 @@ let pageSort = [
   { children: [{ name: 'v2_datasource_menu' }] },
   {
     name: 'v2_data_pipeline',
+    children: [{ name: 'v2_data_replication' }, { name: 'v2_data_flow' }, { name: 'v2_data_check' }]
+  },
+  {
+    name: 'v2_advanced_features',
     children: [
-      { name: 'v2_data_replication' },
-      { name: 'v2_data_flow' },
-      { name: 'v2_data_check' },
       { name: 'v2_log_collector' },
       { name: 'v2_function_management' },
       { name: 'v2_custom_node' },

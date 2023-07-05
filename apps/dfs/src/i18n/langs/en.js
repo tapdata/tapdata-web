@@ -1039,7 +1039,7 @@ export default {
     '*Note: by default, startup occupies 3 / 5 of the system configuration memory. If 3 / 5 of the system memory exceeds 8g, it only occupies 8g at most.',
   workbench_Workbench_tAPDA12: 'Tapdata cloud version 2.1.5 has been released.',
   page_title_run_monitor: 'Run Monitoring',
-  page_title_data_verify: 'Data Validation',
+  page_title_data_verify: 'Validations',
   page_title_data_difference_details: 'Difference Details',
   notify_abnormally_stopped: 'Stopped Unexpectedly',
   header_upgrade: 'Access old version',

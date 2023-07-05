@@ -175,6 +175,8 @@
   </section>
 </template>
 <script>
+import i18n from '@tap/i18n'
+
 import dayjs from 'dayjs'
 
 import { connectionsApi, databaseTypesApi } from '@tap/api'
@@ -458,7 +460,9 @@ export default {
     edit(id, item) {
       if (item.agentType === 'Local') {
         this.$confirm(
-          '当前连接' + item.name + '正在作为FDM和MDM的存储使用，修改会导致已有存储数据丢失，是否确认要继续修改',
+          i18n.t('packages_business_connections_list_dangqianlianjie') +
+            item.name +
+            i18n.t('packages_business_connections_list_zhengzaizuoweiF'),
           '',
           {
             type: 'warning',
@@ -522,7 +526,7 @@ export default {
       const h = this.$createElement
       let strArr = this.$t('packages_business_connection_deteleDatabaseMsg').split('xxx')
       if (row.agentType === 'Local') {
-        let str = '当前连接 xxx 正在作为FDM和MDM的存储使用，删除会导致已有存储数据丢失，是否确认要继续删除。'
+        let str = i18n.t('packages_business_connections_list_dangqianlianjiex')
         strArr = str.split('xxx')
       }
       let msg = h('p', null, [

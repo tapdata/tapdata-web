@@ -44,12 +44,9 @@ export default {
   packages_business_connection_form_rename: 'Rename',
   packages_business_connection_form_database_owner_tip:
     'Comma-separated list of expressions, use * to represent any character of any length',
-  packages_business_connection_form_source_and_target_tip:
-    'This data connection can be used as source and target at the same time in Tapdata',
-  packages_business_connection_form_source_tip:
-    'Please note that this data connection is only suitable for use as a source in Tapdata, and cannot be used as a target.',
-  packages_business_connection_form_target_tip:
-    'Please note that this data connection is only suitable for use as a target in Tapdata, and cannot be used as a source.',
+  packages_business_connection_form_source_and_target_tip: `This data connection can be used as source and target at the same time in ${process.env.VUE_APP_PAGE_TITLE}`,
+  packages_business_connection_form_source_tip: `Please note that this data connection is only suitable for use as a source in ${process.env.VUE_APP_PAGE_TITLE}, and cannot be used as a target.`,
+  packages_business_connection_form_target_tip: `Please note that this data connection is only suitable for use as a target in ${process.env.VUE_APP_PAGE_TITLE}, and cannot be used as a source.`,
   packages_business_connection_form_shared_mining: 'CDC Log Caching',
   packages_business_connection_form_shared_mining_tip:
     'Through CDC log caching, incremental logs can be efficiently mined without the need to repeatedly initiate the log collection process for multiple incremental tasks. This approach significantly reduces the consumption and waste of source library resources.',
@@ -506,7 +503,7 @@ export default {
   packages_business_verification_edit: 'Edit',
   packages_business_verification_clickVerified: 'Click the bottons below to add tables to be verified',
   packages_business_verification_ChoosePKField: 'Choose index /PK field',
-  packages_business_verification_indexField: 'Index Field',
+  packages_business_verification_indexField: 'Associated Fields',
   packages_business_verification_BasicSettings: 'Basic Settings',
   packages_business_verification_verifyCondition: 'Verify Conditions',
   packages_business_verification_clear: 'Clear',
@@ -1129,5 +1126,14 @@ export default {
   packages_business_external_storage_list_siyaomima: 'Private key password',
   packages_business_external_storage_list_kehuduansiyao: 'Client private key',
   packages_business_external_storage_list_zhengshubanfaji: 'Certificate Authority',
-  packages_business_external_storage_list_shiyongTls: 'Connect using TLS/SSL'
+  packages_business_external_storage_list_shiyongTls: 'Connect using TLS/SSL',
+  packages_business_connections_list_dangqianlianjiex:
+    'The current connection xxx is being used as FDM and MDM storage, deletion will result in the loss of existing storage data, whether to confirm to continue deletion. ',
+  packages_business_connections_list_zhengzaizuoweiF:
+    'It is being used as FDM and MDM storage, the modification will cause the loss of existing stored data, are you sure you want to continue the modification',
+  packages_business_connections_list_dangqianlianjie: 'Current Connections',
+  packages_business_components_conditionbox_chakanzidingyi: 'View custom fields',
+  packages_business_components_fielddialog_ziduanbuyunxu: 'The field is not allowed to be empty',
+  packages_business_components_fielddialog_zidingyiziduan: 'Custom Field',
+  packages_business_verification_list_biaobufenziduan: 'Verification of some fields in the table'
 }

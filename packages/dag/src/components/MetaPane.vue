@@ -7,7 +7,7 @@
       :readonly="stateIsReadonly || !isTarget"
       :fieldChangeRules.sync="fieldChangeRules"
       :type="isTarget ? 'target' : isSource ? 'source' : ''"
-      hide-batch
+      single-table
       :ignore-error="!isTarget"
       @update-rules="handleUpdateRules"
     ></List>
