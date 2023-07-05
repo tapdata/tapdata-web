@@ -751,7 +751,10 @@ export default {
         !this.stateIsReadonly && this.copyNodes()
       })
       Mousetrap.bind('mod+v', () => {
-        !this.stateIsReadonly && this.pasteNodes(this.command)
+        if (!this.stateIsReadonly) {
+          this.pasteNodes(this.command)
+          this.handleCenterContent()
+        }
       })
       Mousetrap.bind('mod+z', e => {
         e.preventDefault()
