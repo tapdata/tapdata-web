@@ -321,7 +321,7 @@ export default {
   &.active {
     border-color: #2c65ff !important;
     //box-shadow: 0 0 0 4px rgba(5, 145, 255, 0.1);
-    box-shadow: 0 0 0 4px rgb(44 101 255 / 40%);
+    box-shadow: 0 0 0 4px rgba(44, 101, 255, 0.4), 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
   }
 }
 </style>

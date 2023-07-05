@@ -702,9 +702,9 @@ export class Database extends NodeType {
                     },
                     'x-reactions': {
                       fulfill: {
-                        state: {
-                          // display: '{{$hasPdkConfig($values.attrs.pdkHash) ? "visible":"hidden"}}',
-                          visible: '{{$hasPdkConfig($values.attrs.pdkHash)}}'
+                        schema: {
+                          'x-component-props.className':
+                            '{{$hasPdkConfig($values.attrs.pdkHash) && $self.query("nodeConfig.*").map(field => field.visible).includes(true) ? "":"none"}}'
                         }
                       }
                     },

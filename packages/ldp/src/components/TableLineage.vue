@@ -1,12 +1,16 @@
 <template>
   <div
     class="table-lineage h-100 position-relative"
+    :class="{
+      fullscreen: isFullscreen
+    }"
     v-loading="loading"
     :element-loading-text="`${$t('packages_business_loading')}...\n${$t('packages_ldp_lineage_loading_tips')}`"
   >
     <PaperScroller ref="paperScroller">
       <TableNode
         v-for="node in allNodes"
+        class="shadow-sm"
         :data="node"
         :key="node.id"
         :node-id="node.id"
@@ -22,9 +26,36 @@
 
     <div class="paper-toolbar position-absolute flex gap-1 bg-white p-1 rounded-lg shadow-sm">
       <IconButton clickAndRotate @click="handleRefresh">refresh</IconButton>
-      <IconButton @click="handleCenterContent">compress</IconButton>
-      <IconButton @click="handleZoomOut">remove-outline</IconButton>
-      <IconButton @click="handleZoomIn">add-outline</IconButton>
+      <ElTooltip
+        transition="tooltip-fade-in"
+        :open-delay="50"
+        :content="$t('packages_dag_button_center_content') + '(Shift + 1)'"
+      >
+        <IconButton @click="handleCenterContent">compress</IconButton>
+      </ElTooltip>
+      <ElTooltip
+        transition="tooltip-fade-in"
+        :open-delay="50"
+        :content="$t('packages_dag_button_zoom_out') + `(${commandCode} -)`"
+      >
+        <IconButton @click="handleZoomOut">remove-outline</IconButton>
+      </ElTooltip>
+      <ElTooltip
+        transition="tooltip-fade-in"
+        :open-delay="50"
+        :content="$t('packages_dag_button_zoom_in') + `(${commandCode} +)`"
+      >
+        <IconButton @click="handleZoomIn">add-outline</IconButton>
+      </ElTooltip>
+      <ElTooltip
+        transition="tooltip-fade-in"
+        ref="fullscreenTooltip"
+        :open-delay="50"
+        :disabled="fullscreenDisabled"
+        :content="fullscreenTip"
+      >
+        <IconButton @click="toggleFullscreen">{{ isFullscreen ? 'suoxiao' : 'fangda' }}</IconButton>
+      </ElTooltip>
     </div>
 
     <LinePopover :popover="nodeMenu" @click-task="$emit('click-task', $event)"></LinePopover>
@@ -35,8 +66,8 @@
 import { mapGetters, mapMutations } from 'vuex'
 import dagre from 'dagre'
 import { config, PaperScroller, jsPlumb, NODE_PREFIX, NODE_WIDTH, NODE_HEIGHT } from '@tap/dag'
-import { lineageApi } from '@tap/api'
-import { IconButton } from '@tap/component'
+import { CancelToken, lineageApi } from '@tap/api'
+import { IconButton, VIcon } from '@tap/component'
 import { makeStatusAndDisabled } from '@tap/business'
 import { connectorActiveStyle } from '@tap/dag/src/style'
 import TableNode from './TableNode'
@@ -50,10 +81,13 @@ export default {
     isShow: Boolean
   },
 
-  components: { PaperScroller, TableNode, IconButton, LinePopover },
+  components: { VIcon, PaperScroller, TableNode, IconButton, LinePopover },
 
   data() {
+    const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
     return {
+      commandCode: isMacOs ? '⌘' : 'Ctrl',
+      optionCode: isMacOs ? 'Option' : 'Alt',
       NODE_PREFIX,
       jsPlumbIns: jsPlumb.getInstance(config),
       nodeMenu: {
@@ -65,7 +99,10 @@ export default {
         connectionData: {},
         tasks: []
       },
-      loading: false
+      loading: false,
+      isFullscreen: false,
+      fullscreenDisabled: false,
+      fullscreenTip: this.$t('packages_form_js_editor_fullscreen')
     }
   },
 
@@ -91,6 +128,7 @@ export default {
     this.unwatch?.()
     this.jsPlumbIns?.destroy()
     this.resetState()
+    this.cancelSource?.cancel()
   },
 
   methods: {
@@ -191,8 +229,12 @@ export default {
     async loadLineage() {
       let dag
       this.loading = true
+      this.cancelSource?.cancel()
+      this.cancelSource = CancelToken.source()
       try {
-        const result = await lineageApi.findByTable(this.connectionId, this.tableName)
+        const result = await lineageApi.findByTable(this.connectionId, this.tableName, {
+          cancelToken: this.cancelSource.token
+        })
         dag = result.dag || {}
         this.setEdges(dag.edges)
         // await this.$nextTick()
@@ -420,6 +462,23 @@ export default {
       }
 
       this.$emit('node-dblclick', table)
+    },
+
+    toggleFullscreen() {
+      this.fullscreenDisabled = true
+      this.isFullscreen = !this.isFullscreen
+      // 加速关闭 tooltip
+      this.$refs.fullscreenTooltip.setExpectedState(false)
+      this.$refs.fullscreenTooltip.handleClosePopper()
+      setTimeout(() => {
+        this.handleCenterContent()
+        this.$nextTick(() => {
+          this.fullscreenDisabled = false
+          this.fullscreenTip = this.$t(
+            this.isFullscreen ? 'packages_form_js_editor_exit_fullscreen' : 'packages_form_js_editor_fullscreen'
+          )
+        })
+      }, 15)
     }
   }
 }
@@ -431,6 +490,15 @@ export default {
   top: 16px;
 }
 .table-lineage {
+  &.fullscreen {
+    position: fixed !important;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+  }
+
   ::v-deep {
     .table-lineage-connection-label {
       max-width: 180px;
