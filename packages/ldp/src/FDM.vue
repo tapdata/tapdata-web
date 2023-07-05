@@ -954,7 +954,7 @@ export default {
       const map = await ldpApi.getTaskByTag(this.treeData.map(item => item.id).join(','))
       const newMap = {}
       for (let tagId in map) {
-        let [task] = map[tagId]
+        let [task] = map[tagId].filter(task => !['deleting', 'delete_failed'].includes(task.status) && !task.is_deleted)
         if (task) {
           task = makeStatusAndDisabled(task)
           newMap[tagId] = {
