@@ -1151,6 +1151,10 @@ export class Table extends NodeType {
                         state: {
                           visible:
                             '{{!["CSV","EXCEL","JSON","XML"].includes($values.databaseType) && $hasPdkConfig($values.attrs.pdkHash)}}'
+                        },
+                        schema: {
+                          'x-component-props.className':
+                            '{{$self.query("nodeConfig.*").map(field => field.visible).includes(true) ? "":"none"}}'
                         }
                       }
                     },
@@ -1377,6 +1381,10 @@ export class Table extends NodeType {
                         state: {
                           visible:
                             '{{!["CSV","EXCEL","JSON","XML"].includes($values.databaseType) && $hasPdkConfig($values.attrs.pdkHash)}}'
+                        },
+                        schema: {
+                          'x-component-props.className':
+                            '{{$self.query("nodeConfig.*").map(field => field.visible).includes(true) ? "":"none"}}'
                         }
                       }
                     },
