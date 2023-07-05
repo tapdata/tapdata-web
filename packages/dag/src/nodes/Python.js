@@ -49,7 +49,7 @@ export class JavaScript extends NodeType {
                 title: i18n.t('packages_dag_nodes_javascript_jiaoben'),
                 type: 'string',
                 required: true,
-                default: `import json, random, time, datetime, uuid, types\nimport urllib, urllib2\nimport math, hashlib, base64\ndef process(record, context):\t// Enter you code at here\n\treturn record;`,
+                default: `import json, random, time, datetime, uuid, types\nimport urllib, urllib2\nimport math, hashlib, base64\ndef process(record, context):\n\t# Enter you code at here\n\treturn record;`,
                 'x-component': 'PythonProcessor',
                 'x-component-props': {
                   height: 500,
