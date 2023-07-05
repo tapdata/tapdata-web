@@ -662,10 +662,8 @@ export class Table extends NodeType {
                           {
                             dependencies: ['isFilter', 'readPartitionOptions.enable'],
                             fulfill: {
-                              schema: {
-                                'x-component-props.disabled': '{{!!$deps[0] || !!$deps[1]}}'
-                              },
                               state: {
+                                disabled: `{{!!$deps[0] || !!$deps[1] ? true : $self.disabled}}`,
                                 description: `{{!!$deps[1] ? '${i18n.t('packages_dag_nodes_table_depskai2')}':''}}`
                               }
                             }
@@ -799,10 +797,8 @@ export class Table extends NodeType {
                           {
                             dependencies: ['enableCustomCommand', 'readPartitionOptions.enable'],
                             fulfill: {
-                              schema: {
-                                'x-component-props.disabled': '{{!!$deps[0] || !!$deps[1] }}'
-                              },
                               state: {
+                                disabled: `{{!!$deps[0] || !!$deps[1] ? true : $self.disabled}}`,
                                 description: `{{!!$deps[1] ? '${i18n.t('packages_dag_nodes_table_depskai')}':''}}`
                               }
                             }

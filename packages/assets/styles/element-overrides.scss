@@ -485,6 +485,10 @@ $--switch-width: 40px !default;
 $--switch-height: 20px !default;
 $--switch-button-size: 16px !default;
 
+.el-switch.is-disabled {
+  opacity: 0.5 !important;
+}
+
 /* Dialog
 -------------------------- */
 // $--dialog-background-color: $--color-primary-light-4 !default;
