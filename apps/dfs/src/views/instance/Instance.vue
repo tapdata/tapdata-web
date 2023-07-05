@@ -18,7 +18,7 @@
               <div class="flex justify-content-around w-100 border-bottom py-4 px-4" v-if="agentData(item)">
                 <div>
                   <el-progress
-                    width="68"
+                    :width="68"
                     type="circle"
                     :percentage="agentData(item).cpuUsage"
                     :color="customColors"
@@ -27,7 +27,7 @@
                 </div>
                 <div>
                   <el-progress
-                    width="68"
+                    :width="68"
                     type="circle"
                     :percentage="agentData(item).memoryRate"
                     :color="customColors"
@@ -36,7 +36,7 @@
                 </div>
                 <div>
                   <el-progress
-                    width="68"
+                    :width="68"
                     type="circle"
                     :percentage="agentData(item).gcRate"
                     :color="customColors"
@@ -45,7 +45,7 @@
                 </div>
                 <div>
                   <el-progress
-                    width="68"
+                    :width="68"
                     type="circle"
                     :percentage="item.pingTimes"
                     :format="formatPingTimePercantage"
@@ -426,44 +426,45 @@
         name="second"
       >
         <section class="flex flex-column overflow-hidden flex-1">
-          <VTable
-            :columns="specColumns"
-            :remoteMethod="specRemoteMethod"
-            :page-options="{
-              layout: 'total, ->, prev, pager, next, sizes, jumper'
-            }"
-            ref="tableCode"
-            class="mt-4"
-          >
-            <template #status="{ row }">
-              <StatusTag type="tag" :status="row.status" default-status="Stopped" target="mdb"></StatusTag>
-            </template>
-            <template #whiteList="{ row }">
-              <span v-if="row.scope === 'Private'">{{ row.whiteList }}</span>
-            </template>
-            <template #operation="{ row }">
-              <ElButton
-                v-if="row.scope === 'Private' && row.deploymentType !== 'Local'"
-                size="mini"
-                type="text"
-                @click="handleCreateIps(row)"
-                >{{ $t('dfs_instance_instance_tianjiabaimingdan') }}</ElButton
-              >
-              <ElButton class="mr-2" type="text" :disabled="disableRenew(row)" @click="openRenew(row)">{{
-                $t('public_button_renew')
-              }}</ElButton>
-              <!--68-2 免费实例可以删除-->
-              <ElButton v-if="row.scope === 'Share'" size="mini" type="text" @click="openMdbUnsubscribe(row)">
-                <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></ElButton
-              >
-            </template>
-            <div class="instance-table__empty" slot="empty">
-              <VIcon size="120">no-data-color</VIcon>
-              <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
-                <span>{{ $t('data_no_data') }}</span>
+          <ul class="mdb-ul flex flex-wrap mt-4">
+            <li class="mdb-item flex" v-for="item in mdbData" :key="item.id">
+              <div class="flex justify-content-around align-items-center w-25 border-right py-4 px-4">
+                <el-progress :width="68" type="circle" :percentage="0" :color="customColors"></el-progress>
+                <div>
+                  <div>
+                    总空间：<span>{{ item.spec.storageSize }}</span>
+                  </div>
+                  <div>已空间：<span>0</span></div>
+                </div>
               </div>
-            </div>
-          </VTable>
+              <div class="agent-item__content border-left flex flex-wrap py-4 px-4">
+                <div class="flex align-items-center mb-2 w-50" v-for="col in specColumns">
+                  <span class="font-color-light mr-2">{{ col.label }}: </span>
+                  <!--状态-->
+                  <span v-if="col.prop === 'status'" class="font-color-dark">
+                    <StatusTag type="tag" :status="item.status" default-status="Stopped" target="mdb"></StatusTag>
+                  </span>
+                  <span v-else>{{ item[col.prop] }}</span>
+                </div>
+              </div>
+              <div class="w-25 flex justify-content-end align-items-start mt-2 py-4 px-4">
+                <ElButton
+                  v-if="item.scope === 'Private' && item.deploymentType !== 'Local'"
+                  size="mini"
+                  type="text"
+                  @click="handleCreateIps(item)"
+                  >{{ $t('dfs_instance_instance_tianjiabaimingdan') }}</ElButton
+                >
+                <ElButton class="mr-2" type="text" :disabled="disableRenew(item)" @click="openRenew(item)">{{
+                  $t('public_button_renew')
+                }}</ElButton>
+                <!--68-2 免费实例可以删除-->
+                <ElButton v-if="item.scope === 'Share'" size="mini" type="text" @click="openMdbUnsubscribe(item)">
+                  <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></ElButton
+                >
+              </div>
+            </li>
+          </ul>
         </section>
         <!-- 新建白名单 -->
         <el-dialog :visible.sync="showCreateIps" :title="$t('dfs_instance_instance_tianjiabaimingdan')">
@@ -482,14 +483,14 @@
     <!--退订-->
     <Unsubscribe ref="UnsubscribeDetailDialog" @closeVisible="closeVisible"></Unsubscribe>
     <!--续订-->
-    <Renew ref="RenewDetailDialog" @closeVisible="tableCode.fetch()"></Renew>
+    <Renew ref="RenewDetailDialog" @closeVisible="specRemoteMethod"></Renew>
   </section>
   <RouterView v-else></RouterView>
 </template>
 
 <script>
 import i18n from '@/i18n'
-import { VIcon, FilterBar, VTable } from '@tap/component'
+import { VIcon, FilterBar } from '@tap/component'
 import { CURRENCY_SYMBOL_MAP, dayjs } from '@tap/business'
 import timeFunction from '@/mixins/timeFunction'
 import Time from '@tap/shared/src/time'
@@ -518,7 +519,6 @@ export default {
     VIcon,
     Details,
     FilterBar,
-    VTable,
     CreateDialog,
     SelectListDialog,
     transferDialog,
@@ -662,6 +662,7 @@ export default {
         Private: i18n.t('dfs_instance_instance_duxiangshili'),
         Share: i18n.t('dfs_instance_instance_gongxiangshili')
       },
+      mdbData: [],
       //存储资源
       specColumns: [
         {
@@ -669,28 +670,32 @@ export default {
           prop: 'providerName'
         },
         {
+          label: i18n.t('dfs_instance_instance_cunchuleixing'),
+          prop: 'scopeLabel'
+        },
+        {
           label: i18n.t('dfs_instance_instance_fuwushang'),
           prop: 'serviceProvider'
+        },
+        {
+          label: i18n.t('dfs_instance_instance_bushufangshi'),
+          prop: 'deploymentTypeLabel'
         },
         {
           label: i18n.t('dfs_agent_download_subscriptionmodeldialog_diqu'),
           prop: 'regionName'
         },
         {
+          label: i18n.t('dfs_instance_instance_baimingdanIp'),
+          slotName: 'whiteList'
+        },
+        {
           label: i18n.t('dfs_instance_createagent_cunchuguige'),
           prop: 'specLabel'
         },
         {
-          label: i18n.t('dfs_instance_createagent_cunchukongjian'),
-          prop: 'storageSize'
-        },
-        {
-          label: i18n.t('dfs_instance_instance_cunchuleixing'),
-          prop: 'scopeLabel'
-        },
-        {
-          label: i18n.t('dfs_instance_instance_bushufangshi'),
-          prop: 'deploymentTypeLabel'
+          label: i18n.t('dfs_instance_instance_daoqishijian'),
+          prop: 'expiredTimeLabel'
         },
         {
           label: i18n.t('agent_status'),
@@ -698,17 +703,8 @@ export default {
           slotName: 'status'
         },
         {
-          label: i18n.t('dfs_instance_instance_daoqishijian'),
-          prop: 'expiredTimeLabel'
-        },
-        {
-          label: i18n.t('dfs_instance_instance_baimingdanIp'),
-          slotName: 'whiteList'
-        },
-        {
-          label: i18n.t('list_operation'),
-          slotName: 'operation',
-          width: '150'
+          label: i18n.t('dfs_instance_createagent_cunchukongjian'),
+          prop: 'storageSize'
         }
       ],
       //创建白名单
@@ -825,30 +821,27 @@ export default {
     },
     changeTabs() {
       if (this.activeName === 'second') {
-        this.tableCode.fetch()
+        this.specRemoteMethod()
       }
     },
     //存储资源
     specRemoteMethod() {
-      return this.$axios.get('api/tcm/mdb').then(data => {
+      this.$axios.get('api/tcm/mdb').then(data => {
         const items = data.items || []
-        return {
-          total: data.total,
-          data: items.map(item => {
-            const { subscribeDto = {} } = item.orderInfo
-            const { endAt } = subscribeDto || {}
+        this.mdbData = items.map(item => {
+          const { subscribeDto = {} } = item.orderInfo
+          const { endAt } = subscribeDto || {}
 
-            item.expiredTimeLabel = endAt ? dayjs(endAt).format('YY-MM-DD  HH:mm:ss') : '-'
-            item.scopeLabel = this.scopeMap[item.scope]
-            item.specLabel = getSpec(item.spec) || '-'
-            item.providerName = item.providerName || '-'
-            item.regionName = item.regionName || '-'
-            item.serviceProvider = item.serviceProvider || '-'
-            item.storageSize = item.spec?.storageSize ? item.spec?.storageSize + 'GB' : '-'
-            item.deploymentTypeLabel = this.agentTypeMap[item.deploymentType]
-            return item
-          })
-        }
+          item.expiredTimeLabel = endAt ? dayjs(endAt).format('YY-MM-DD  HH:mm:ss') : '-'
+          item.scopeLabel = this.scopeMap[item.scope]
+          item.specLabel = getSpec(item.spec) || '-'
+          item.providerName = item.providerName || '-'
+          item.regionName = item.regionName || '-'
+          item.serviceProvider = item.serviceProvider || '-'
+          item.storageSize = item.spec?.storageSize ? item.spec?.storageSize + 'GB' : '-'
+          item.deploymentTypeLabel = this.agentTypeMap[item.deploymentType]
+          return item
+        })
       })
     },
     getFilterItems() {
@@ -1019,19 +1012,22 @@ export default {
     agentData(row) {
       //指標計算
       const { cpuUsage = 0, gcRate = 0, memoryRate = 0 } = row.cpuUsage
+      let cpu =
+        typeof cpuUsage === 'number'
+          ? (cpuUsage * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+          : 0
+      let memory =
+        typeof memoryRate === 'number'
+          ? (memoryRate * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+          : 0
+      let gc =
+        typeof gcRate === 'number'
+          ? (gcRate * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+          : 0
       return {
-        cpuUsage:
-          typeof cpuUsage === 'number'
-            ? (cpuUsage * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-            : 0,
-        memoryRate:
-          typeof memoryRate === 'number'
-            ? (memoryRate * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-            : 0,
-        gcRate:
-          typeof gcRate === 'number'
-            ? (gcRate * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-            : 0
+        cpuUsage: cpu === '0.00' ? 0 : Number(cpu),
+        memoryRate: memory === '0.00' ? 0 : Number(memory),
+        gcRate: gc === '0.00' ? 0 : Number(gc)
       }
     },
     handlePingTime(row) {
@@ -1374,7 +1370,7 @@ export default {
         .post('api/tcm/mdb/update/whitelist', params)
         .then(() => {
           this.showCreateIps = false
-          this.tableCode.fetch()
+          this.specRemoteMethod()
         })
         .finally(() => {
           this.showCreateIps = false
@@ -1741,6 +1737,18 @@ export default {
 }
 .agent-item {
   width: 48%;
+  border-radius: 8px;
+  border: 1px solid var(--unnamed, #e5e6eb);
+  background: #fff;
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.06);
+}
+.mdb-ul {
+  gap: 16px;
+  overflow: auto;
+}
+.mdb-item {
+  width: 99%;
+  min-height: 205px;
   border-radius: 8px;
   border: 1px solid var(--unnamed, #e5e6eb);
   background: #fff;
