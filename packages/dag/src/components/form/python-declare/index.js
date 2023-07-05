@@ -13,8 +13,8 @@ export const PythonDeclare = defineComponent({
     disabled: Boolean
   },
   setup(props, { attrs, emit }) {
-    const before = `function declare(${props.param}) {`
-    const after = `  return ${props.param}\n}`
+    const before = `def declare(${props.param}):`
+    const after = `  return ${props.param}\n`
     const dialogVisible = ref(false)
     const codeExample = i18n.t('packages_dag_js_declare_index_zengjiayigezi', {
       val1: props.param,
