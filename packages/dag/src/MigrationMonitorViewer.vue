@@ -848,11 +848,6 @@ $sidebarBg: #fff;
   &.layout-has-sider {
     flex-direction: row;
   }
-  ::v-deep {
-    .border-bottom {
-      border-bottom: 1px solid #f2f2f2 !important;
-    }
-  }
 }
 
 .layout-content {
