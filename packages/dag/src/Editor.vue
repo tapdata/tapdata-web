@@ -233,6 +233,11 @@ export default {
           beta: true
         },
         {
+          name: 'python',
+          type: 'python_processor',
+          beta: true
+        },
+        {
           name: 'Row Filter',
           type: 'row_filter_processor'
         },
