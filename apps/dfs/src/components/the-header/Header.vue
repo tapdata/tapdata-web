@@ -146,8 +146,8 @@ export default {
     //获取用户注册时间
     if (this.user?.id) {
       this.registrationTime = extractTimeFromObjectId(this.user?.id)
-      //是否是最近7天注册的新用户
-      this.showQuestionnaire = daysdifference(this.registrationTime) < 7
+      //注册时间7天大于的用户
+      this.showQuestionnaire = daysdifference(this.registrationTime) > 7
     }
     this.setBaiduIndex() // 百度推广索引
   },
