@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="13px" height="12px" viewBox="0 0 13 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>Py</title>
-    <g id="70迭代" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" font-family="Helvetica-Light, Helvetica" font-size="12" font-weight="300">
-        <text id="Py" fill="#2C65FF">
-            <tspan x="0" y="9">Py</tspan>
-        </text>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>编组</title>
+    <g id="70迭代" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="编组">
+            <rect id="矩形" x="0" y="0" width="24" height="24"></rect>
+            <text id="Py" font-family="Helvetica-Light, Helvetica" font-size="16" font-weight="300" fill="#2C65FF">
+                <tspan x="3" y="18">Py</tspan>
+            </text>
+        </g>
     </g>
 </svg>

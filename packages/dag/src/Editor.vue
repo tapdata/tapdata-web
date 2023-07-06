@@ -233,7 +233,7 @@ export default {
           beta: true
         },
         {
-          name: 'python',
+          name: 'Python',
           type: 'python_processor'
         },
         {
