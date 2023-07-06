@@ -49,7 +49,7 @@ export class JavaScript extends NodeType {
                 title: i18n.t('packages_dag_nodes_javascript_jiaoben'),
                 type: 'string',
                 required: true,
-                default: `import json, random, time, datetime, uuid, types\nimport urllib, urllib2\nimport math, hashlib, base64\ndef process(record, context):"""
+                default: `import json, random, time, datetime, uuid, types\nimport urllib, urllib2\nimport math, hashlib, base64, yaml, requests\ndef process(record, context):"""
 Detailed context description can be found in the API documentation
 context = {
   "event": {},  #Data source event type, table name, and other information
@@ -64,7 +64,7 @@ context = {
                   height: 500,
                   options: { showPrintMargin: false, wrap: false },
                   includeBeforeAndAfter: true,
-                  before: `import json, random, time, datetime, uuid, types\nimport urllib, urllib2\nimport math, hashlib, base64\ndef process(record, context):`,
+                  before: `import json, random, time, datetime, uuid, types\nimport urllib, urllib2\nimport math, hashlib, base64, yaml, requests\ndef process(record, context):`,
                   beforeRegexp: '^[^]*def\\s+process\\s*\\(record\\,\\s+context\\)\\:',
                   param: 'tapTable',
                   handleAddCompleter: '{{addDeclaredCompleterForSync}}'
