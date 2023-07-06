@@ -234,8 +234,7 @@ export default {
         },
         {
           name: 'python',
-          type: 'python_processor',
-          beta: true
+          type: 'python_processor'
         },
         {
           name: 'Row Filter',

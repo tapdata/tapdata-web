@@ -16,7 +16,7 @@ export const PythonDeclare = defineComponent({
     const before = `def declare(${props.param}):`
     const after = `  return ${props.param}\n`
     const dialogVisible = ref(false)
-    const codeExample = i18n.t('packages_dag_js_declare_index_zengjiayigezi', {
+    const codeExample = i18n.t('packages_dag_python_declare_index_zengjiayigezi', {
       val1: props.param,
       val2: props.param,
       val3: props.param,
@@ -67,7 +67,7 @@ export const PythonDeclare = defineComponent({
                     code="type TapType = 'TapNumber' | 'TapString' | 'TapBoolean' | 'TapBinary' | 'TapDate' | 'TapDateTime' | 'TapTime' | 'TapYear' | 'TapRaw' | 'TapArray' | 'TapMap'"
                   ></HighlightCode>
                   <div class="fs-6 my-4">{i18n.t('packages_dag_js_declare_index_shilidaima')}</div>
-                  <HighlightCode class="m-0" code={codeExample}></HighlightCode>
+                  <HighlightCode class="m-0" language="python" code={codeExample}></HighlightCode>
                 </div>
                 <span slot="footer" class="dialog-footer">
                   <el-button type="primary" onClick={() => (dialogVisible.value = false)}>

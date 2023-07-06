@@ -16,7 +16,7 @@ import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
 
 export const PythonProcessor = observer(
   defineComponent({
-    props: ['value', 'disabled', 'isStandard'],
+    props: ['value', 'disabled'],
     directives: {
       resize
     },
@@ -233,12 +233,7 @@ export const PythonProcessor = observer(
           filter: JSON.stringify({
             limit: 1000,
             where: {
-              type: 'system',
-              category: props.isStandard
-                ? 'standard'
-                : {
-                    $in: ['enhanced', 'standard']
-                  }
+              type: 'system'
             }
           })
         })
@@ -344,9 +339,7 @@ export const PythonProcessor = observer(
       return () => {
         const editorProps = { ...attrs }
         editorProps.options.readOnly = props.disabled
-        const tooltip = props.isStandard
-          ? i18n.t('packages_form_js_processor_index_tooltip1')
-          : i18n.t('packages_form_js_processor_index_tooltip2')
+        const tooltip = ''
         const label = (
           <div class="position-absolute flex justify-content-between w-100">
             <div class="flex align-center">

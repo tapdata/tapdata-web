@@ -7,7 +7,7 @@ export class JavaScript extends NodeType {
     super()
   }
 
-  type = 'migrate_python_processor'
+  type = 'python_processor'
 
   beta = true
 
