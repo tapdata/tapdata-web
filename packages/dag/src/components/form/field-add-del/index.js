@@ -41,7 +41,7 @@ export const FieldAddDel = connect(
           databaseType: form.values.databaseType,
           operations: form.values.operations || [],
           deleteAllFields: form.values.deleteAllFields || false,
-          form
+          form: formRef
         }
       },
 
@@ -245,12 +245,14 @@ export const FieldAddDel = connect(
       },
       methods: {
         isRemove(id) {
-          let ops = this.operations.filter(v => v.id === id && v.op === 'REMOVE' && v.operand)
+          const operandEnum = ['true', true]
+          let ops = this.operations.filter(v => v.id === id && v.op === 'REMOVE' && operandEnum.includes(v.operand))
           return ops && ops.length > 0
         },
         isRest(id) {
           //撤回删除
-          let ops = this.operations.filter(v => v.id === id && v.op === 'REMOVE' && !v.operand)
+          const operandEnum = ['false', false]
+          let ops = this.operations.filter(v => v.id === id && v.op === 'REMOVE' && operandEnum.includes(v.operand))
           return ops && ops.length > 0
         },
         isCreate(id) {
