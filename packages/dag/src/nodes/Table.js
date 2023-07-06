@@ -496,14 +496,7 @@ export class Table extends NodeType {
                       min: 1,
                       max: 100000
                     },
-                    default: 100,
-                    'x-reactions': {
-                      fulfill: {
-                        state: {
-                          display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
-                        }
-                      }
-                    }
+                    default: 100
                   },
                   enableDDL: {
                     title: i18n.t('packages_dag_nodes_table_ddLshijian'),
@@ -1105,13 +1098,6 @@ export class Table extends NodeType {
                     'x-component': 'Space',
                     'x-component-props': {
                       size: 'middle'
-                    },
-                    'x-reactions': {
-                      fulfill: {
-                        state: {
-                          display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
-                        }
-                      }
                     },
                     properties: {
                       writeBatchSize: {
