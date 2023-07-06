@@ -135,3 +135,16 @@ export const daysdifference = time => {
   let minusDays = Math.floor((endTime - currentDate) / dateTime) //计算出两个日期的天数差
   return Math.abs(minusDays) //取绝对值
 }
+
+export const secondDifference = (time, type) => {
+  let currentDate = new Date().getTime()
+  let endTime = new Date(time).getTime()
+  let dateTime = 1 //每秒的毫秒数
+  if (type === 'second') {
+    dateTime = 1000
+  } else {
+    dateTime = 1000 * 60
+  }
+  let second = Math.floor((endTime - currentDate) / dateTime) //计算出两个日期的天数差
+  return Math.abs(second) //取绝对值
+}
