@@ -404,17 +404,6 @@ export default {
   border-radius: 4px;
   background-color: #fff;
   box-sizing: border-box;
-  ::v-deep {
-    .border-top {
-      border-top: 1px solid #f2f2f2 !important;
-    }
-    .border-bottom {
-      border-bottom: 1px solid #f2f2f2 !important;
-    }
-    .border-start {
-      border-left: 1px solid #f2f2f2 !important;
-    }
-  }
   .icon {
     color: map-get($color, danger);
     font-size: 16px;

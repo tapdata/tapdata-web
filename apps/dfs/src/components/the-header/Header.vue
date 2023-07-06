@@ -89,8 +89,10 @@ import { langMenu, getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/
 import { daysdifference, extractTimeFromObjectId } from '../../util'
 
 import NotificationPopover from '@/views/workbench/NotificationPopover'
+import Cookie from '@tap/shared/src/cookie'
 
 export default {
+  inject: ['buried'],
   components: { VIcon, NotificationPopover, UpgradeFee },
   data() {
     return {
@@ -147,6 +149,7 @@ export default {
       //是否是最近7天注册的新用户
       this.showQuestionnaire = daysdifference(this.registrationTime) < 7
     }
+    this.setBaiduIndex() // 百度推广索引
   },
   methods: {
     command(command) {
@@ -243,6 +246,42 @@ export default {
     },
     goQuestionnaire() {
       window.open('https://tapdata.feishu.cn/share/base/form/shrcnImdl8BDtEOxki50Up9OJTg', '_blank')
+    },
+    setBaiduIndex() {
+      // 上报百度索引
+      const logidUrlUsed = Cookie.get('logidUrlUsed')
+      if (logidUrlUsed) return
+      const logidUrlCloud = Cookie.get('logidUrlCloud')
+      if (logidUrlCloud) {
+        const bd_vid = logidUrlCloud
+          .split(/[?&]/)
+          .find(t => t.match(/^bd_vid=/))
+          ?.replace(/^bd_vid=/, '')
+        console.log('bd_vid', bd_vid)
+        // bd_vid存到user信息中
+        this.$axios.patch('api/tcm/user', {
+          bd_vid
+        })
+
+        const conversionTypes = [
+          {
+            logidUrl: logidUrlCloud,
+            newType: 25
+          }
+        ]
+        this.$axios
+          .post('api/tcm/track/send_convert_data', conversionTypes)
+          .then(data => {
+            if (data) {
+              this.buried('registerSuccess')
+              Cookie.set('logidUrlUsed', 1)
+              Cookie.remove('logidUrlCloud')
+            }
+          })
+          .catch(e => {
+            console.log('ocpc.baidu.com', e)
+          })
+      }
     }
   }
 }

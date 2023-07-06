@@ -596,7 +596,15 @@ export default {
 
     openRoute(route, newTab = true) {
       if (newTab) {
-        window.open(this.$router.resolve(route).href)
+        // 这里预期是任务已经打开了，不要重复开新标签页
+        // 并且已开的页面要reload，因为hash路由#号的原因，没办法自动reload，所以记录个字段判断
+        let win = window.open(this.$router.resolve(route).href, route.params.id)
+
+        if (win?.openTime) {
+          win.location.reload()
+        }
+
+        win.openTime = Date.now()
       } else {
         this.$router.push(route)
       }

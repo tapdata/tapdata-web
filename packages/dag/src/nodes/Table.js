@@ -302,13 +302,6 @@ export class Table extends NodeType {
                     'x-component-props': {
                       size: 'middle'
                     },
-                    'x-reactions': {
-                      fulfill: {
-                        state: {
-                          display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
-                        }
-                      }
-                    },
                     properties: {
                       writeBatchSize: {
                         title: i18n.t('packages_dag_nodes_database_piliangxierutiao'),
@@ -403,6 +396,42 @@ export class Table extends NodeType {
                         'x-component': 'InputNumber',
                         'x-component-props': {
                           min: 0
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+
+              fileNodeConfig: {
+                type: 'void',
+                'x-reactions': {
+                  dependencies: ['databaseType'],
+                  fulfill: {
+                    state: {
+                      display: '{{ ["CSV","EXCEL","JSON","XML"].includes($deps[0]) ? "visible":"hidden"}}'
+                    }
+                  }
+                },
+                properties: {
+                  nodeConfig: {
+                    type: 'object'
+                  },
+
+                  loadSchemaTree: {
+                    type: 'void',
+                    title: '',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'loadSchemaTree',
+                    'x-component-props': {
+                      tableNameField: 'tableName'
+                    },
+                    'x-reactions': {
+                      dependencies: ['$inputs'],
+                      fulfill: {
+                        state: {
+                          display:
+                            '{{(!$deps[0].length && $values.attrs.connectionType.includes("source")) ? "visible":"hidden"}}'
                         }
                       }
                     }
@@ -633,10 +662,8 @@ export class Table extends NodeType {
                           {
                             dependencies: ['isFilter', 'readPartitionOptions.enable'],
                             fulfill: {
-                              schema: {
-                                'x-component-props.disabled': '{{!!$deps[0] || !!$deps[1]}}'
-                              },
                               state: {
+                                disabled: `{{!!$deps[0] || !!$deps[1] ? true : $self.disabled}}`,
                                 description: `{{!!$deps[1] ? '${i18n.t('packages_dag_nodes_table_depskai2')}':''}}`
                               }
                             }
@@ -770,10 +797,8 @@ export class Table extends NodeType {
                           {
                             dependencies: ['enableCustomCommand', 'readPartitionOptions.enable'],
                             fulfill: {
-                              schema: {
-                                'x-component-props.disabled': '{{!!$deps[0] || !!$deps[1] }}'
-                              },
                               state: {
+                                disabled: `{{!!$deps[0] || !!$deps[1] ? true : $self.disabled}}`,
                                 description: `{{!!$deps[1] ? '${i18n.t('packages_dag_nodes_table_depskai')}':''}}`
                               }
                             }
@@ -925,13 +950,6 @@ export class Table extends NodeType {
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
                       title: i18n.t('packages_dag_config_data_read')
-                    },
-                    'x-reactions': {
-                      fulfill: {
-                        state: {
-                          display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
-                        }
-                      }
                     },
                     properties: {
                       readBatchSize: {
@@ -1127,8 +1145,12 @@ export class Table extends NodeType {
                     'x-reactions': {
                       fulfill: {
                         state: {
-                          // display: '{{$hasPdkConfig($values.attrs.pdkHash) ? "visible":"hidden"}}',
-                          visible: '{{$hasPdkConfig($values.attrs.pdkHash)}}'
+                          visible:
+                            '{{!["CSV","EXCEL","JSON","XML"].includes($values.databaseType) && $hasPdkConfig($values.attrs.pdkHash)}}'
+                        },
+                        schema: {
+                          'x-component-props.className':
+                            '{{$self.query("nodeConfig.*").map(field => field.visible).includes(true) ? "":"none"}}'
                         }
                       }
                     },
@@ -1353,8 +1375,12 @@ export class Table extends NodeType {
                     'x-reactions': {
                       fulfill: {
                         state: {
-                          // display: '{{$hasPdkConfig($values.attrs.pdkHash) ? "visible":"hidden"}}',
-                          visible: '{{$hasPdkConfig($values.attrs.pdkHash)}}'
+                          visible:
+                            '{{!["CSV","EXCEL","JSON","XML"].includes($values.databaseType) && $hasPdkConfig($values.attrs.pdkHash)}}'
+                        },
+                        schema: {
+                          'x-component-props.className':
+                            '{{$self.query("nodeConfig.*").map(field => field.visible).includes(true) ? "":"none"}}'
                         }
                       }
                     },
@@ -1578,25 +1604,6 @@ export class Table extends NodeType {
         type: 'array',
         'x-display': 'hidden',
         'x-reactions': '{{useDmlPolicy}}'
-      },
-
-      loadSchemaTree: {
-        type: 'void',
-        title: '',
-        'x-decorator': 'FormItem',
-        'x-component': 'loadSchemaTree',
-        'x-component-props': {
-          tableNameField: 'tableName'
-        },
-        'x-reactions': {
-          dependencies: ['databaseType', '$outputs'],
-          fulfill: {
-            state: {
-              display:
-                '{{ ($deps[1].length > 0 && ["CSV","EXCEL","JSON","XML"].includes($deps[0])) ? "visible":"hidden"}}'
-            }
-          }
-        }
       }
     }
   }

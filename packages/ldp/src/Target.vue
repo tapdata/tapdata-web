@@ -467,7 +467,14 @@ export default {
       })
 
       Object.keys(data).forEach(key => {
-        this.$set(this.connectionTaskMap, key, data[key].reverse().map(this.mapTask))
+        this.$set(
+          this.connectionTaskMap,
+          key,
+          data[key]
+            .filter(task => !['deleting', 'delete_failed'].includes(task.status) && !task.is_deleted)
+            .reverse()
+            .map(this.mapTask)
+        )
       })
 
       if (spec.length) {
