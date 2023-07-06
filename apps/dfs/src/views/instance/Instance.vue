@@ -428,13 +428,18 @@
         <section class="flex flex-column overflow-hidden flex-1">
           <ul class="mdb-ul flex flex-wrap mt-4">
             <li class="mdb-item flex" v-for="item in mdbData" :key="item.id">
-              <div class="flex justify-content-around align-items-center w-25 border-right py-4 px-4">
+              <div class="flex justify-content-around align-items-center border-right w-40 py-4 px-4">
                 <el-progress :width="68" type="circle" :percentage="0" :color="customColors"></el-progress>
                 <div>
                   <div>
-                    总空间：<span>{{ item.spec.storageSize }}</span>
+                    总空间：<span>{{ item.spec.storageSize }} GB</span>
                   </div>
-                  <div>已空间：<span>0</span></div>
+                  <div>
+                    已用空间：<span>{{ item.dataSizeLabel }} GB</span>
+                  </div>
+                  <div>
+                    剩余空间：<span>{{ item.dataSizeLast }} GB</span>
+                  </div>
                 </div>
               </div>
               <div class="agent-item__content border-left flex flex-wrap py-4 px-4">
@@ -838,8 +843,12 @@ export default {
           item.providerName = item.providerName || '-'
           item.regionName = item.regionName || '-'
           item.serviceProvider = item.serviceProvider || '-'
-          item.storageSize = item.spec?.storageSize ? item.spec?.storageSize + 'GB' : '-'
+          item.storageSize = item.spec?.storageSize ? item.spec?.storageSize : '-'
           item.deploymentTypeLabel = this.agentTypeMap[item.deploymentType]
+          let num = Number(item?.dataSize) || 0
+          let size = (num / (1024 * 1024 * 1024)).toFixed(2)
+          item.dataSizeLast = item.storageSize - size
+          item.dataSizeLabel = size
           return item
         })
       })
