@@ -90,11 +90,19 @@
                     ></StatusTag>
                   </template>
                   <template #operation="{ row }">
+                    <!--                    <ElButton-->
+                    <!--                      :disabled="disableUnsubscribe(row) || ['incomplete'].includes(item.status)"-->
+                    <!--                      type="text"-->
+                    <!--                      @click="openUnsubscribe(item, row.productType)"-->
+                    <!--                      >{{ $t('public_button_unsubscribe') }}</ElButton-->
+                    <!--                    >-->
                     <ElButton
-                      :disabled="disableUnsubscribe(row) || ['incomplete'].includes(item.status)"
+                      v-if="
+                        !disableUnsubscribe(row) && ['active'].includes(item.status) && row.productType === 'Engine'
+                      "
                       type="text"
-                      @click="openUnsubscribe(item, row.productType)"
-                      >{{ $t('public_button_unsubscribe') }}</ElButton
+                      @click="openChangeSubscribe(item)"
+                      >变更</ElButton
                     >
                   </template>
                 </VTable>
@@ -158,26 +166,28 @@
     <Unsubscribe ref="UnsubscribeDetailDialog" @closeVisible="remoteMethod"></Unsubscribe>
     <!--续订-->
     <Renew ref="RenewDetailDialog" @closeVisible="remoteMethod"></Renew>
+    <!--变更-->
+    <Change ref="ChangeSubscribeDetailDialog" @closeVisible="remoteMethod"></Change>
   </section>
   <RouterView v-else></RouterView>
 </template>
 
 <script>
-import { FilterBar, VTable } from '@tap/component'
-import transferDialog from '../agent-download/transferDialog'
-import { openUrl } from '@tap/shared'
-
 import i18n from '@/i18n'
-import { isEmpty } from '@/util'
+import { FilterBar, VTable } from '@tap/component'
 import { CURRENCY_SYMBOL_MAP } from '@tap/business'
-import { getPaymentMethod, getSpec, AGENT_TYPE_MAP } from '../instance/utils'
+import { openUrl } from '@tap/shared'
 import dayjs from 'dayjs'
+
+import { getPaymentMethod, getSpec, AGENT_TYPE_MAP } from '../instance/utils'
+import transferDialog from '../agent-download/transferDialog'
 import StatusTag from '../../components/StatusTag.vue'
 import Unsubscribe from '../../components/Unsubscribe.vue'
 import Renew from '../../components/Renew.vue'
+import Change from './Change.vue'
 
 export default {
-  components: { Unsubscribe, StatusTag, FilterBar, VTable, transferDialog, Renew },
+  components: { Unsubscribe, StatusTag, FilterBar, VTable, transferDialog, Renew, Change },
   inject: ['buried'],
   data() {
     return {
@@ -263,12 +273,12 @@ export default {
         {
           label: i18n.t('task_monitor_status'),
           slotName: 'statusLabel'
+        },
+        {
+          label: i18n.t('public_operation'),
+          prop: 'extendArray',
+          slotName: 'operation'
         }
-        // {
-        //   label: i18n.t('public_operation'),
-        //   prop: 'extendArray',
-        //   slotName: 'operation'
-        // }
       ],
       //订阅列表
       subscribeList: [],
@@ -474,6 +484,10 @@ export default {
     //退订详情
     openUnsubscribe(row, type) {
       this.$refs?.UnsubscribeDetailDialog.getUnsubscribePrice(row, type)
+    },
+    //变更
+    openChangeSubscribe(row) {
+      this.$refs?.ChangeSubscribeDetailDialog.openChange(row)
     },
     //续订
     openRenew(row) {
