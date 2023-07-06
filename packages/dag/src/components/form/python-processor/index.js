@@ -286,6 +286,17 @@ export const PythonProcessor = observer(
               const prefix = getPrefix(line, index)
               if (prefix === 'record') {
                 callback(null, nodeFields)
+              } else if (prefix === 'context') {
+                callback(
+                  null,
+                  ['event', 'before', 'info', 'global'].map(t => {
+                    return {
+                      value: t,
+                      score: 1000,
+                      meta: 'system'
+                    }
+                  })
+                )
               }
             }
           }
