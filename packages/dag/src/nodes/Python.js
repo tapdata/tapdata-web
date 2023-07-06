@@ -58,7 +58,7 @@ context = {
   "global": {}  #A state storage container on the node dimension within the task cycle
 }
 """
-# Enter you code at here\n\treturn record;`,
+# Enter you code at here\nreturn record;`,
                 'x-component': 'PythonProcessor',
                 'x-component-props': {
                   height: 500,
