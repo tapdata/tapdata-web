@@ -104,7 +104,7 @@
     ></ConnectionTypeDialog>
     <!--    <AgentGuideDialog :visible.sync="agentGuideDialog" @openAgentDownload="openAgentDownload"></AgentGuideDialog>-->
     <AgentDownloadModal :visible.sync="agentDownload.visible" :source="agentDownload.data"></AgentDownloadModal>
-    <SubscriptionModelDialog :visible.sync="subscriptionModelVisible" :showClose="false"></SubscriptionModelDialog>
+    <AgentGuide :visible.sync="subscriptionModelVisible" :showClose="false"></AgentGuide>
     <BindPhone :visible.sync="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>
     <!--    <CheckLicense :visible.sync="aliyunMaketVisible" :user="userInfo"></CheckLicense>-->
   </ElContainer>
@@ -119,7 +119,7 @@ import AgentDownloadModal from '@/views/agent-download/AgentDownloadModal'
 // import AgentGuideDialog from '@/views/agent-download/AgentGuideDialog'
 import BindPhone from '@/views/user/components/BindPhone'
 import Cookie from '@tap/shared/src/cookie'
-import SubscriptionModelDialog from '@/views/agent-download/SubscriptionModelDialog'
+import AgentGuide from '@/components/guide/index'
 
 export default {
   inject: ['checkAgent', 'buried'],
@@ -129,7 +129,7 @@ export default {
     ConnectionTypeDialog,
     AgentDownloadModal,
     BindPhone,
-    SubscriptionModelDialog,
+    AgentGuide,
     PageHeader
   },
   data() {
@@ -339,6 +339,7 @@ export default {
     },
     // 检查是否有安装过agent
     checkAgentInstall() {
+      this.subscriptionModelVisible = true
       this.$axios.get('api/tcm/agent').then(data => {
         if (data?.total === 0) {
           this.subscriptionModelVisible = true
