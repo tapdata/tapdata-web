@@ -169,7 +169,7 @@
                 <ElButton
                   size="mini"
                   v-if="item.agentType === 'Local' && !['Running'].includes(item.status)"
-                  :loading="scope.row.btnLoading.delete"
+                  :loading="item.btnLoading.delete"
                   :disabled="startBtnDisabled(item) || $disabledReadonlyUserBtn()"
                   @click="handleStart(item)"
                   >{{ $t('public_button_start') }}</ElButton
@@ -179,7 +179,7 @@
                   v-if="item.agentType !== 'Cloud' && !['Stopped', 'Stopping'].includes(item.status)"
                   size="mini"
                   :disabled="stopBtnDisabled(item) || $disabledReadonlyUserBtn()"
-                  :loading="scope.row.btnLoading.stop"
+                  :loading="item.btnLoading.stop"
                   @click="handleStop(item)"
                   >{{ $t('public_button_stop') }}</ElButton
                 >
@@ -196,7 +196,7 @@
                   v-if="item.agentType === 'Local'"
                   :loading="item.btnLoading.delete"
                   :disabled="restartBtnDisabled(item) || $disabledReadonlyUserBtn()"
-                  @click="handleRestart(scope.row)"
+                  @click="handleRestart(item)"
                   >{{ $t('dfs_instance_instance_zhongqi') }}</ElButton
                 >
                 <!--需要考虑老实例/免费实例 无订单信息的-->
@@ -1019,8 +1019,11 @@ export default {
     },
     ////指標計算
     agentData(row) {
+      if (!row?.cpuUsage) {
+        return { cpuUsage: 0, memoryRate: 0, gcRate: 0 }
+      }
       //指標計算
-      const { cpuUsage = 0, gcRate = 0, memoryRate = 0 } = row.cpuUsage
+      const { cpuUsage = 0, gcRate = 0, memoryRate = 0 } = row?.cpuUsage
       let cpu =
         typeof cpuUsage === 'number'
           ? (cpuUsage * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
