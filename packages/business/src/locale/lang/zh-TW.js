@@ -1079,5 +1079,7 @@ export default {
   packages_business_components_conditionbox_chakanzidingyi: '查看自定義字段',
   packages_business_components_fielddialog_ziduanbuyunxu: '字段不允許為空',
   packages_business_components_fielddialog_zidingyiziduan: '自定義字段',
-  packages_business_verification_list_biaobufenziduan: '表部分字段校驗'
+  packages_business_verification_list_biaobufenziduan: '表部分字段校驗',
+  packages_business_components_conditionbox_laiyuanbiaoshuju: '來源表數據過濾',
+  packages_business_components_conditionbox_mubiaobiaoshuju: '目標表數據過濾'
 }

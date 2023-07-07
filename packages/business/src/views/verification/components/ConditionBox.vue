@@ -1292,7 +1292,7 @@ function validate(sourceRow){
                 properties: {
                   isFilter: {
                     type: 'boolean',
-                    title: '来源表数据过滤',
+                    title: i18n.t('packages_business_components_conditionbox_laiyuanbiaoshuju'),
                     'x-decorator': 'FormItem',
                     'x-component': 'Switch',
                     default: false
@@ -1412,7 +1412,7 @@ function validate(sourceRow){
                 properties: {
                   isFilter: {
                     type: 'boolean',
-                    title: '来源表数据过滤',
+                    title: i18n.t('packages_business_components_conditionbox_mubiaobiaoshuju'),
                     'x-decorator': 'FormItem',
                     'x-component': 'Switch',
                     default: false
