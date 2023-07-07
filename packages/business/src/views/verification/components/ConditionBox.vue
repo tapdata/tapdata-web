@@ -120,6 +120,17 @@
                 >
                 </AsyncSelect>
               </div>
+              <div class="setting-item mt-4" :key="'SchemaToForm' + item.id">
+                <SchemaToForm
+                  :value.sync="item"
+                  :schema="getSchemaData(item)"
+                  :scope="schemaScope"
+                  :colon="true"
+                  :key="`SchemaToForm_source_${index}_${item.schemaKey}`"
+                  class="w-100"
+                  label-width="120"
+                />
+              </div>
               <div v-if="inspectMethod !== 'row_count'" class="setting-item mt-4">
                 <label class="item-label">{{ $t('packages_business_verification_indexField') }}: </label>
                 <MultiSelection
@@ -237,7 +248,7 @@ import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { merge, cloneDeep, uniqBy } from 'lodash'
 
 import i18n from '@tap/i18n'
-import { AsyncSelect } from '@tap/form'
+import { AsyncSelect, SchemaToForm } from '@tap/form'
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
 import { uuid } from '@tap/shared'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
@@ -262,7 +273,8 @@ export default {
     VCodeEditor,
     GitBook,
     MultiSelection,
-    FieldDialog
+    FieldDialog,
+    SchemaToForm
   },
 
   props: {
@@ -294,7 +306,9 @@ export default {
       formIndex: '',
       webScript: '',
       jsEngineName: 'graal.js',
-      doc: ''
+      doc: '',
+      schemaData: null,
+      schemaScope: null
     }
   },
 
@@ -412,8 +426,16 @@ export default {
           this.setFieldsByItem(
             [nodeId, connectionId, el.name],
             Object.values(el.nameFieldMap || {}).map(t => {
-              const { id, fieldName, primaryKeyPosition } = t
-              return { id, field_name: fieldName, primary_key_position: primaryKeyPosition }
+              const { id, fieldName, primaryKeyPosition, fieldType, data_type, primaryKey, unique } = t
+              return {
+                id,
+                field_name: fieldName,
+                primary_key_position: primaryKeyPosition,
+                fieldType,
+                data_type,
+                primaryKey,
+                unique
+              }
             })
           )
         })
@@ -484,8 +506,8 @@ export default {
         this.setFieldsByItem(
           [nodeId, connectionId, el.name],
           el.fields.map(t => {
-            const { id, field_name, primary_key_position } = t
-            return { id, field_name, primary_key_position }
+            const { id, field_name, primary_key_position, data_type, primaryKey, unique } = t
+            return { id, field_name, primary_key_position, data_type, primaryKey, unique }
           })
         )
       })
@@ -1220,10 +1242,296 @@ function validate(sourceRow){
               label: t.fieldName,
               value: t.fieldName,
               field_name: t.fieldName,
-              primary_key_position: t.primaryKey
+              primary_key_position: t.primaryKey,
+              data_type: t.dataType,
+              primaryKey: t.primaryKey,
+              unique: t.unique
             }
           })
         })
+    },
+
+    // 获取jsonschema
+    getSchemaData(item = {}) {
+      this.handleFocus(item.source)
+      this.handleFocus(item.target)
+      const sourceOptions = item.source.fields.map(t => {
+        return {
+          unique: t.unique,
+          primaryKey: t.primaryKey,
+          label: t.field_name,
+          type: t.data_type,
+          value: t.field_name
+        }
+      })
+
+      const targetOptions = item.target.fields.map(t => {
+        return {
+          unique: t.unique,
+          primaryKey: t.primaryKey,
+          label: t.field_name,
+          type: t.data_type,
+          value: t.field_name
+        }
+      })
+      let schema = {
+        type: 'object',
+        properties: {
+          nameWrap: {
+            type: 'void',
+            'x-component': 'FormGrid',
+            'x-component-props': {
+              minColumns: 2,
+              maxColumns: 2,
+              columnGap: 16
+            },
+            properties: {
+              source: {
+                type: 'object',
+                'x-component': 'FormGrid.GridColumn',
+                properties: {
+                  isFilter: {
+                    type: 'boolean',
+                    title: '来源表数据过滤',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Switch',
+                    default: false
+                  },
+                  conditions: {
+                    type: 'array',
+                    title: ' ',
+                    default: [{ key: '', value: '', operator: 5 }],
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      colon: false
+                    },
+                    'x-component': 'ArrayItems',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        space: {
+                          type: 'void',
+                          'x-component': 'Space',
+                          properties: {
+                            key: {
+                              type: 'string',
+                              required: 'true',
+                              'x-decorator': 'FormItem',
+                              'x-component': 'Select',
+                              'x-component-props': {
+                                filterable: true
+                              },
+                              enum: sourceOptions
+                            },
+                            operator: {
+                              type: 'number',
+                              required: 'true',
+                              enum: [
+                                {
+                                  label: '>',
+                                  value: 1
+                                },
+                                {
+                                  label: '>=',
+                                  value: 2
+                                },
+                                {
+                                  label: '<',
+                                  value: 3
+                                },
+                                {
+                                  label: '<=',
+                                  value: 4
+                                },
+                                {
+                                  label: '=',
+                                  value: 5
+                                }
+                              ],
+                              'x-decorator': 'FormItem',
+                              'x-decorator-props': {
+                                wrapperWidth: 100
+                              },
+                              'x-component': 'Select'
+                            },
+                            value: {
+                              type: 'string',
+                              required: 'true',
+                              'x-decorator': 'FormItem',
+                              'x-component': 'Input',
+                              'x-component-props': {
+                                type: 'datetime',
+                                align: 'right',
+                                format: 'yyyy-MM-dd HH:mm:ss'
+                              },
+                              'x-reactions': {
+                                dependencies: ['.key', '.key#dataSource'],
+                                fulfill: {
+                                  schema: {
+                                    'x-component': `{{field=$deps[1] && $deps[1].find(item=>item.value===$deps[0]),field&&/timestamp|date|DATE_TIME|datetime|OBJECT_ID/i.test(field.type)?"DatePicker":"Input"}}`
+                                  }
+                                }
+                              }
+                            },
+                            remove: {
+                              type: 'void',
+                              'x-decorator': 'FormItem',
+                              'x-component': 'ArrayItems.Remove',
+                              'x-component-props': {
+                                disabled: '{{$values.source.conditions.length<2}}'
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    properties: {
+                      add: {
+                        type: 'void',
+                        title: i18n.t('packages_dag_nodes_table_tianjia'),
+                        'x-component': 'ArrayItems.Addition',
+                        'x-component-props': {
+                          defaultValue: { key: '', value: '', operator: 5 }
+                        }
+                      }
+                    },
+                    'x-reactions': {
+                      dependencies: ['.isFilter'],
+                      fulfill: {
+                        state: {
+                          visible: '{{!!$deps[0]}}'
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              target: {
+                type: 'object',
+                'x-component': 'FormGrid.GridColumn',
+                properties: {
+                  isFilter: {
+                    type: 'boolean',
+                    title: '来源表数据过滤',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Switch',
+                    default: false
+                  },
+                  conditions: {
+                    type: 'array',
+                    title: ' ',
+                    default: [{ key: '', value: '', operator: 5 }],
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      colon: false
+                    },
+                    'x-component': 'ArrayItems',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        space: {
+                          type: 'void',
+                          'x-component': 'Space',
+                          properties: {
+                            key: {
+                              type: 'string',
+                              required: 'true',
+                              'x-decorator': 'FormItem',
+                              'x-component': 'Select',
+                              'x-component-props': {
+                                filterable: true
+                              },
+                              enum: sourceOptions
+                            },
+                            operator: {
+                              type: 'number',
+                              required: 'true',
+                              enum: [
+                                {
+                                  label: '>',
+                                  value: 1
+                                },
+                                {
+                                  label: '>=',
+                                  value: 2
+                                },
+                                {
+                                  label: '<',
+                                  value: 3
+                                },
+                                {
+                                  label: '<=',
+                                  value: 4
+                                },
+                                {
+                                  label: '=',
+                                  value: 5
+                                }
+                              ],
+                              'x-decorator': 'FormItem',
+                              'x-decorator-props': {
+                                wrapperWidth: 100
+                              },
+                              'x-component': 'Select'
+                            },
+                            value: {
+                              type: 'string',
+                              required: 'true',
+                              'x-decorator': 'FormItem',
+                              'x-component': 'Input',
+                              'x-component-props': {
+                                type: 'datetime',
+                                align: 'right',
+                                format: 'yyyy-MM-dd HH:mm:ss'
+                              },
+                              'x-reactions': {
+                                dependencies: ['.key', '.key#dataSource'],
+                                fulfill: {
+                                  schema: {
+                                    'x-component': `{{field=$deps[1] && $deps[1].find(item=>item.value===$deps[0]),field&&/timestamp|date|DATE_TIME|datetime|OBJECT_ID/i.test(field.type)?"DatePicker":"Input"}}`
+                                  }
+                                }
+                              }
+                            },
+                            remove: {
+                              type: 'void',
+                              'x-decorator': 'FormItem',
+                              'x-component': 'ArrayItems.Remove',
+                              'x-component-props': {
+                                disabled: '{{$values.target.conditions.length<2}}'
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    properties: {
+                      add: {
+                        type: 'void',
+                        title: i18n.t('packages_dag_nodes_table_tianjia'),
+                        'x-component': 'ArrayItems.Addition',
+                        'x-component-props': {
+                          defaultValue: { key: '', value: '', operator: 5 }
+                        }
+                      }
+                    },
+                    'x-reactions': {
+                      dependencies: ['.isFilter'],
+                      fulfill: {
+                        state: {
+                          visible: '{{!!$deps[0]}}'
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      item.schemaKey = `${item.source.connectionId}${item.target.connectionId}_${sourceOptions.length}${targetOptions.length}`
+      return schema
     }
   }
 }
@@ -1269,14 +1577,14 @@ function validate(sourceRow){
       line-height: 1;
     }
     .item-label {
-      width: 80px;
+      width: 120px;
       line-height: 32px;
       text-align: left;
       color: map-get($fontColor, light);
     }
     .item-icon {
       margin: 0 10px;
-      width: 80px;
+      width: 120px;
       line-height: 32px;
       color: map-get($fontColor, light);
       text-align: center;
@@ -1341,6 +1649,15 @@ function validate(sourceRow){
       .el-input__inner {
         border-color: #d44d4d;
       }
+    }
+  }
+}
+
+.scheme-to-form {
+  ::v-deep {
+    .formily-element-form-item-layout-horizontal .formily-element-form-item-control-content-component > .el-switch {
+      height: 32px;
+      line-height: 32px;
     }
   }
 }
