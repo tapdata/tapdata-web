@@ -1340,7 +1340,7 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_cny: '人民幣',
   dfs_agent_download_subscriptionmodeldialog_hkd: '港幣',
   dfs_agent_specification_description:
-    '此規格需要至少 <strong>{mem}</strong> 可用內存, 建議的任務數不超過 <strong>{pipeline}</strong> 個, 預估 同步的性能在 <strong>{tps}</strong> TPS 左右',
+    '此規格需要至少 <strong>{mem}</strong> 可用內存,  預估 同步的性能在 <strong>{tps}</strong> TPS 左右',
   dfs_instance_instance_qingshurutuiding: '請輸入退訂原因',
   dfs_instance_instance_tuidingjine: '退訂金額',
   dfs_instance_instance_yixiaohaojine: '已消耗金額',

@@ -1,9 +1,11 @@
 <template>
   <section>
-    <div>4、您需要自行安装一个计算引擎到您的网络环境中, 选择一种合适的方式吧。</div>
+    <div class="fs-6 font-color-dark fw-sub mb-4 mt-4">
+      4、您需要自行安装一个计算引擎到您的网络环境中, 选择一种合适的方式吧。
+    </div>
     <el-form label-position="top" ref="ruleForm">
       <ElFormItem :label="$t('dfs_instance_instance_dingyuefangshi')">
-        <ElRadioGroup v-model="currentPackage" @input="handleChange" class="flex gap-4">
+        <ElRadioGroup v-model="currentPackage" @input="handleChange" class="flex flex-wrap gap-4">
           <ElRadio
             v-for="(item, index) in packageItems"
             :key="index"
@@ -28,10 +30,55 @@
           </ElRadio>
         </ElRadioGroup>
       </ElFormItem>
+      <ElFormItem
+        :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxi')"
+        v-if="platform === 'fullManagement'"
+      >
+        <div class="flex">
+          <span
+            class="font-color-light inline-block"
+            :class="[{ 'form-label': this.$i18n.locale === 'zh-CN' }, { 'form-label-en': this.$i18n.locale === 'en' }]"
+            >{{ $t('dfs_agent_download_subscriptionmodeldialog_yunfuwushang') }}</span
+          >
+          <ElRadioGroup v-model="provider" @input="changeProvider" class="flex gap-4">
+            <ElRadio
+              v-for="(item, index) in cloudProviderList"
+              :key="index"
+              :label="item.cloudProvider"
+              border
+              class="rounded-4 subscription-radio m-0 position-relative"
+            >
+              <span class="inline-flex align-center">
+                {{ item.cloudProviderName }}
+              </span>
+            </ElRadio>
+          </ElRadioGroup>
+        </div>
+        <div class="flex mt-4">
+          <span
+            class="font-color-light inline-block"
+            :class="[{ 'form-label': this.$i18n.locale === 'zh-CN' }, { 'form-label-en': this.$i18n.locale === 'en' }]"
+            >{{ $t('dfs_agent_download_subscriptionmodeldialog_diqu') }}</span
+          >
+          <ElRadioGroup v-model="region" class="flex gap-4" @change="changeRegion">
+            <ElRadio
+              v-for="(item, index) in cloudDetail"
+              :key="index"
+              :label="item.region"
+              border
+              class="rounded-4 subscription-radio m-0 position-relative"
+            >
+              <span class="inline-flex align-center">
+                {{ item.regionName }}
+              </span>
+            </ElRadio>
+          </ElRadioGroup>
+        </div>
+      </ElFormItem>
       <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu')">
         <ul class="flex flex-wrap">
           <li
-            class="spec-li cursor-pointer position-relative cursor-pointer px-4 py-2 mt-4 mr-4 rounded-4"
+            class="spec-li cursor-pointer position-relative cursor-pointer px-4 py-2 mb-4 mr-4 rounded-4"
             :class="{
               active: specification === item.value,
               disabled: agentCount > 0 && item.chargeProvider === 'FreeTier'
@@ -51,14 +98,14 @@
                 size="small"
                 class="bg-color-warning text-white border-0 ml-2"
                 >{{
-                  agentDeploy === 'selfHost'
+                  platform === 'selfHost'
                     ? $t('dfs_instance_instance_mianfei')
                     : $t('dfs_instance_createagent_mianfeitiyan')
                 }}</ElTag
               >
             </div>
             <div
-              v-if="agentDeploy === 'selfHost'"
+              v-if="platform === 'selfHost'"
               class="spec-li-title mt-1 lh-base font-color-sslight"
               v-html="$t('dfs_agent_specification_description', updateAgentCap(item.cpu, item.memory))"
             ></div>
@@ -66,6 +113,21 @@
         </ul>
       </ElFormItem>
     </el-form>
+    <div class="spec-price flex align-items-end align-items-center ml-4">
+      <div class="text-end px-3 py-1">
+        {{ $t('public_total') }}:
+        <span class="color-primary fs-5 ml-1">{{ formatPrice(currency) }}</span>
+      </div>
+      <span class="font-color-dark mr-2" v-if="selected">
+        {{ selected.label }}
+      </span>
+      <div v-if="getDiscount(selected)">
+        <span class="price-detail-label text-end inline-block mr-2"
+          >{{ $t('dfs_agent_subscription_discount', { val: getDiscount(selected) }) }}:
+        </span>
+        <span class="color-warning fw-sub">-{{ formatPriceOff(currency) }}</span>
+      </div>
+    </div>
   </section>
 </template>
 <script>
@@ -87,6 +149,7 @@ export default {
       currentRow: '',
       specification: '',
       currency: '',
+      selected: {},
       paidDetailColumns: [
         {
           label: i18n.t('dfs_components_renew_dingyuebianhao'),
@@ -108,10 +171,17 @@ export default {
           width: 180
         }
       ],
+      agentCount: false,
       currentPackage: '',
       specificationItems: [],
       packageItems: [],
-      agent: ''
+      currencyType: '',
+      agent: '',
+      provider: '',
+      region: '',
+      cloudDetail: [],
+      cloudProviderName: '',
+      cloudProviderList: []
     }
   },
   computed: {
@@ -127,8 +197,20 @@ export default {
   },
   mounted() {
     this.getPrice()
+    this.checkAgentCount()
+    const currencyType = window.__config__?.currencyType
+
+    if (currencyType) {
+      this.currencyType = currencyType
+      this.defaultCurrencyType = currencyType
+    }
   },
   methods: {
+    //检查Agent个数
+    async checkAgentCount() {
+      this.agentCount = window.__agentCount__?.freeTierAgentCount || 0
+      await this.getCloudProvider()
+    },
     //查询规格价格
     getPrice() {
       const params = {
@@ -136,16 +218,6 @@ export default {
       }
       this.$axios.get('api/tcm/orders/paid/price', { params }).then(data => {
         let { paidPrice = [] } = data?.[0] || {}
-        //当前priceID 找打productID
-        let productId = paidPrice.find(it => it.priceId === this.agent?.priceId)?.productId
-        paidPrice = paidPrice.filter(
-          it =>
-            it.productId === productId &&
-            it.priceId > this.agent?.priceId &&
-            it.chargeProvider !== 'FreeTier' &&
-            this.currentRow?.subscribeType === it.type &&
-            this.currentRow?.periodUnit === it.periodUnit
-        )
         // 规格
         this.specificationItems = uniqBy(
           paidPrice.map(t => {
@@ -171,6 +243,8 @@ export default {
         ).sort((a, b) => {
           return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
         })
+        //新人引导只取前四个规格
+        this.specificationItems = this.specificationItems.splice(0, 4)
         // 如果是单独订购存储，默认调过免费实例，避免后续step受免费实例影响
         this.specification =
           !this.agentCount && this.orderStorage ? this.specificationItems[1]?.value : this.specificationItems[0]?.value
@@ -263,9 +337,19 @@ export default {
         this.currencyOption = []
         this.currency = item
       }
-      //更新存储价格
-      this.changeMongodbMemory()
       this.buried('changeSubscriptionMethod')
+    },
+    //切换云厂商
+    changeProvider() {
+      let cloudProvider = this.cloudProviderList.filter(it => it.cloudProvider === this.provider) || []
+      this.cloudProviderName = cloudProvider?.[0]?.cloudProviderName
+      this.cloudDetail = cloudProvider?.[0].cloudDetail || []
+      this.region = this.cloudDetail?.[0]?.region
+      this.changeRegion()
+    },
+    changeRegion() {
+      let region = this.cloudDetail.filter(it => it.region === this.region) || []
+      this.regionName = region?.[0]?.regionName
     },
     updateAgentCap(cpu, memory) {
       return {
@@ -291,12 +375,31 @@ export default {
         })
       )
     },
+    //查找云厂商
+    getCloudProvider() {
+      return this.$axios.get('api/tcm/orders/queryCloudProvider').then(data => {
+        //数据模式（带存储）过滤只带存储的云厂商
+        if (this.platform === 'realTime') {
+          let original = data?.items || []
+          original.forEach(it => {
+            if (it.cloudDetail?.length > 0) {
+              it.cloudDetail = it.cloudDetail.filter(item => item.productList.includes('mongodb')) || []
+            }
+          })
+          this.cloudProviderList = original.filter(it => it.cloudDetail.length > 0)
+        } else this.cloudProviderList = data?.items || []
+        //初始化云厂商
+        this.provider = this.cloudProviderList?.[0].cloudProvider
+        this.changeProvider()
+        this.getPrice()
+      })
+    },
     getAmount(item, isOriginalPrice) {
-      const current = this.currentRow
+      const current = this.selected
       let amount = item?.amount
 
       // 基于单月算原价
-      if (isOriginalPrice && (current.subscribeType === 'recurring' || current.periodUnit === 'year')) {
+      if (isOriginalPrice && (current.type === 'recurring' || current.periodUnit === 'year')) {
         if (current.periodUnit === 'month') {
           amount = this.singleMonthAmount
         } else if (current.periodUnit === 'year') {
@@ -305,6 +408,28 @@ export default {
       }
 
       return amount
+    },
+    getDiscount() {
+      let item = this.selected
+      const { locale } = this.$i18n
+      if (item.type === 'recurring' && item.periodUnit === 'month') {
+        return locale === 'en' ? 5 : 95
+      } else if (item.periodUnit === 'year') {
+        return locale === 'en' ? 10 : 9
+      }
+    },
+    formatPriceOff() {
+      let item = this.currency
+      if (!item || item?.chargeProvider === 'FreeTier') return CURRENCY_SYMBOL_MAP[item.currency] + 0
+
+      const amount = this.getAmount(item, true) - this.getAmount(item)
+      return (
+        CURRENCY_SYMBOL_MAP[item.currency] +
+        (amount / 100).toLocaleString('zh', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        })
+      )
     },
     changeCurrencyOption(item) {
       const options = item.currencyOption
@@ -366,4 +491,72 @@ export default {
 }
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.spec-price {
+  position: absolute;
+  bottom: 18px;
+  right: 135px;
+}
+.form-label {
+  width: 90px;
+}
+.form-label-en {
+  width: 170px;
+}
+.discount-tag {
+  padding: 0 6px;
+  color: #ff7d00;
+  background: rgba(255, 125, 0, 0.1);
+}
+.discount-hot-icon {
+  color: #ff7d00;
+  right: -12px;
+  top: -12px;
+  font-size: 24px;
+  background: #fff;
+}
+.subscription-radio.el-radio {
+  padding: 0 12px;
+  line-height: 30px;
+}
+.spec-li:hover {
+  border: 1px solid map-get($color, primary);
+}
+.spec-li {
+  width: 495px;
+  border: 1px solid #dedede;
+  border-radius: 4px;
+  .is-active {
+    display: none;
+  }
+  &.active {
+    $primary: map-get($color, primary);
+    border-color: $primary !important;
+    .is-active {
+      display: block;
+      &-triangle {
+        width: 0;
+        height: 0;
+        border-top: 18px solid $primary;
+        border-left: 18px solid transparent;
+        border-bottom: 18px solid transparent;
+        border-right: 18px solid $primary;
+      }
+      &-icon {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        color: #fff;
+      }
+    }
+  }
+  &.disabled {
+    background-color: #fafafa;
+    border-width: 0 !important;
+    cursor: not-allowed;
+    .spec-li-title {
+      color: #86909c !important;
+    }
+  }
+}
+</style>

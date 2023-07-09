@@ -26,7 +26,7 @@ export default {
           <div class="is-active-triangle"></div>
           <VIcon size="16" class="is-active-icon">check-bold</VIcon>
         </div>
-        <div class="flex justify-content-around align-items-center py-4">
+        <div class="flex justify-content-around align-items-center px-4 py-4">
           <div>
             <div class="fs-6 fw-bold">不可以</div>
             <div class="font-color-light">我的数据库均为云数据库, 且可以暴露到公共网络</div>
@@ -45,7 +45,7 @@ export default {
           <div class="is-active-triangle"></div>
           <VIcon size="16" class="is-active-icon">check-bold</VIcon>
         </div>
-        <div class="flex justify-content-around align-items-center py-4">
+        <div class="flex justify-content-around align-items-center px-4 py-4">
           <div class="mr-4">
             <div class="fs-6 fw-bold mb-2">可以</div>
             <div class="font-color-light">我的数据库均为云数据库, 且可以暴露到公共网络</div>

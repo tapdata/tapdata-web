@@ -1,5 +1,5 @@
 <template>
-  <ElDialog class="guide-dialog" :visible.sync="visible" width="1000px" :show-close="false">
+  <ElDialog class="guide-dialog" :visible.sync="visible" width="1000px" :top="'5vh'" :show-close="false">
     <div class="guide-wrap flex justify-content-center">
       <div class="nav-wrap px-6 py-6">
         <div class="guide-header font-color-dark fw-bold fs-5 mb-4 mt-4">欢迎使用Tapdata Cloud 服务</div>
@@ -12,32 +12,40 @@
           </el-step>
         </el-steps>
       </div>
-      <div class="guide-main flex-1 align-items-center ml-8 mt-4 mr-8">
-        <template v-if="[1].includes(activeStep)">
-          <!--绑定手机号-->
-          <Account ref="bindPhone" @next="next"></Account>
-        </template>
-        <template v-if="[2].includes(activeStep)">
-          <!--使用场景-->
-          <Scenes ref="scenes" :scenes="scenes" @handleScenes="handleScenes"></Scenes>
-        </template>
-        <template v-if="[3].includes(activeStep)">
-          <!--部署方式-->
-          <DeploymentMethod
-            ref="deploymentMethod"
-            :platform="platform"
-            @changePlatform="changePlatform"
-          ></DeploymentMethod>
-        </template>
-        <template v-if="[4].includes(activeStep)">
-          <!--选择实例规格-->
-          <Spec ref="spec" :platform="platform" @changePlatform="changePlatform"></Spec>
-        </template>
+      <div class="guide-main flex-1 flex flex-column overflow-hidden ml-8 mt-4 mr-8">
+        <div class="main flex-1">
+          <template v-if="[1].includes(activeStep)">
+            <!--绑定手机号-->
+            <Account ref="bindPhone" @next="next"></Account>
+          </template>
+          <template v-if="[2].includes(activeStep)">
+            <!--使用场景-->
+            <Scenes ref="scenes" :scenes="scenes" @handleScenes="handleScenes"></Scenes>
+          </template>
+          <template v-if="[3].includes(activeStep)">
+            <!--部署方式-->
+            <DeploymentMethod
+              ref="deploymentMethod"
+              :platform="platform"
+              @changePlatform="changePlatform"
+            ></DeploymentMethod>
+          </template>
+          <template v-if="[4].includes(activeStep)">
+            <!--选择实例规格-->
+            <Spec ref="spec" :platform="platform" @changePlatform="changePlatform"></Spec>
+          </template>
+        </div>
+        <div
+          class="guide-footer flex mb-5"
+          :class="[activeStep === 1 ? 'justify-content-end' : 'justify-content-between']"
+        >
+          <VButton v-if="activeStep > 1" @click="previous()">{{ $t('public_button_previous') }}</VButton>
+          <VButton type="primary" auto-loading @click="submitConfirm(arguments[0])">{{
+            $t('public_button_next')
+          }}</VButton>
+        </div>
       </div>
     </div>
-    <span slot="footer" class="dialog-footer">
-      <VButton type="primary" auto-loading @click="submitConfirm(arguments[0])">{{ $t('public_button_next') }}</VButton>
-    </span>
   </ElDialog>
 </template>
 <script>
@@ -80,6 +88,9 @@ export default {
     next() {
       this.activeStep++
     },
+    previous() {
+      this.activeStep--
+    },
     //确认提交
     submitConfirm(res) {
       switch (this.activeStep) {
@@ -103,6 +114,10 @@ export default {
     },
     changePlatform(val) {
       this.platform = val
+    },
+    //选择规格
+    formatPrice() {
+      this.$refs?.spec?.formatPrice()
     }
   }
 }
@@ -111,7 +126,7 @@ export default {
 <style scoped lang="scss">
 .nav-wrap {
   width: 348px;
-  height: 640px;
+  height: 716px;
   gap: 20px;
   flex-shrink: 0;
   background: linear-gradient(146deg, rgba(44, 116, 255, 0.07) 0%, rgba(44, 101, 255, 0.01) 100%);
@@ -119,8 +134,14 @@ export default {
 .guide-steps {
   height: 200px;
 }
+.guide-main {
+  height: 716px;
+}
 .guide-desc {
   margin-bottom: 60px;
+}
+.guide-footer {
+  height: 30px;
 }
 .guide-dialog {
   ::v-deep {
