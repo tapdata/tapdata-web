@@ -13,7 +13,7 @@ export default {
     <div class="flex justify-content-center align-items-center">
       <VIcon size="450px" style="width: 450px; height: 235px">guide-top-header</VIcon>
     </div>
-    <header>3、请问您的源和目标数据库, 可以从互联网上直接访问吗?。</header>
+    <div class="fs-6 font-color-dark fw-sub mb-4 mt-4">3、请问您的源和目标数据库, 可以从互联网上直接访问吗?。</div>
     <ul class="deployMethod-ul mt-4">
       <li
         :class="{

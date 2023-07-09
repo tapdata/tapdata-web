@@ -5,7 +5,7 @@ export default {
 </script>
 <template>
   <section>
-    <div>5、请尽快完成支付，如遇问题可 咨询客服</div>
+    <div class="fs-6 font-color-dark fw-sub mb-4 mt-4">5、请尽快完成支付，如遇问题可 咨询客服</div>
     <VIcon>guide-loading</VIcon>
     <div>等待支付</div>
     <div>请尽快完成支付，对公转账后一天内, 我们将会为您开通服务</div>

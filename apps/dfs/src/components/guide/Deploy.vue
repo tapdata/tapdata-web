@@ -35,7 +35,7 @@ export default {
 
 <template>
   <div class="account">
-    <header>6、准备Tapdata Cloud 计算引擎环境部署，如遇问题可 咨询客服</header>
+    <div class="fs-6 font-color-dark fw-sub mb-4 mt-4">6、准备Tapdata Cloud 计算引擎环境部署，如遇问题可 咨询客服</div>
     <div>要安装Agent,请先在下方选择您的服务器类型：</div>
     <ElRadioGroup v-model="downLoadType" class="flex gap-4 mt-4 mb-4">
       <ElRadio

@@ -61,7 +61,9 @@ export default {
     <div class="flex justify-content-center align-items-center">
       <VIcon size="450px" style="width: 450px; height: 235px">guide-top-header</VIcon>
     </div>
-    <header>1、为了账号安全和数据任务状态能快速通知到您，请您绑定手机号。</header>
+    <div class="fs-6 font-color-dark fw-sub mb-4 mt-4">
+      1、为了账号安全和数据任务状态能快速通知到您，请您绑定手机号。
+    </div>
     <ElForm class="mt-4" :model="phoneForm" label-position="top" :label-width="'120px'" @submit.native.prevent>
       <ElFormItem prop="current" :label="$t('user_Center_dangQianShouJi')">
         <ElInput v-model="phoneForm.current" :placeholder="$t('components_BindPhone_qingShuRuShouJi')" maxlength="50">
