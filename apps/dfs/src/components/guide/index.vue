@@ -34,6 +34,14 @@
             <!--选择实例规格-->
             <Spec ref="spec" :platform="platform" @changePlatform="changePlatform"></Spec>
           </template>
+          <template v-if="[5].includes(activeStep)">
+            <!--费用清单-->
+            <Details ref="details" :orderId="orderId"></Details>
+          </template>
+          <template v-if="[6].includes(activeStep)">
+            <!--部署实例-->
+            <Deploy :agentId="agentId"></Deploy>
+          </template>
         </div>
         <div
           class="guide-footer flex mb-5"
@@ -53,6 +61,9 @@ import Account from './Account.vue'
 import DeploymentMethod from './DeploymentMethod.vue'
 import Scenes from './Scenes.vue'
 import Spec from './Spec.vue'
+import Deploy from './Deploy.vue'
+import Details from './Details.vue'
+import Pay from './Pay.vue'
 
 export default {
   name: 'guide',
@@ -61,7 +72,10 @@ export default {
     Account,
     Scenes,
     DeploymentMethod,
-    Spec
+    Spec,
+    Deploy,
+    Pay,
+    Details
   },
   data() {
     return {
@@ -81,7 +95,9 @@ export default {
         }
       ],
       scenes: ['12'], //使用场景
-      platform: 'selfHost'
+      platform: 'selfHost',
+      agentId: '64aa97004be8ea3b8e02e39a',
+      orderId: ''
     }
   },
   methods: {
