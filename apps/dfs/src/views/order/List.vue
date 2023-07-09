@@ -158,6 +158,12 @@
           </VTable>
         </section>
       </el-tab-pane>
+      <el-tab-pane class="order-flex overflow-hidden h-100" label="变更记录" name="three">
+        <div class="main">
+          <VTable ref="table" row-key="id" :columns="changeColumns" :data="changeList" height="100%" class="mt-4 mb-4">
+          </VTable>
+        </div>
+      </el-tab-pane>
     </el-tabs>
 
     <!--转账{{$t('public_button_pay')}}-->
@@ -287,7 +293,39 @@ export default {
         size: 10
       },
       loadingRenewSubmit: false,
-      currentPrice: 0
+      currentPrice: 0,
+      //变更记录
+      changeList: [],
+      changeColumns: [
+        {
+          label: '订阅编号',
+          prop: 'productType'
+        },
+        {
+          label: i18n.t('dfs_instance_instance_guige'),
+          prop: 'specLabel',
+          width: 180
+        },
+        {
+          label: '变更申请时间',
+          slotName: 'subscriptionMethodLabel',
+          width: 180
+        },
+        {
+          label: i18n.t('task_monitor_status'),
+          slotName: 'statusLabel'
+        },
+        {
+          label: i18n.t('dfs_user_center_jine'),
+          prop: 'price',
+          slotName: 'price'
+        },
+        {
+          label: i18n.t('public_operation'),
+          prop: 'extendArray',
+          slotName: 'operation'
+        }
+      ]
     }
   },
   computed: {
