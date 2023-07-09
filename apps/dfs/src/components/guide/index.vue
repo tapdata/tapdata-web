@@ -12,23 +12,48 @@
           </el-step>
         </el-steps>
       </div>
-      <div class="guide-main flex-1 align-items-center ml-8 mt-4">
+      <div class="guide-main flex-1 align-items-center ml-8 mt-4 mr-8">
         <template v-if="[1].includes(activeStep)">
           <!--绑定手机号-->
-          <Account></Account>
+          <Account ref="bindPhone" @next="next"></Account>
+        </template>
+        <template v-if="[2].includes(activeStep)">
+          <!--使用场景-->
+          <Scenes ref="scenes" :scenes="scenes" @handleScenes="handleScenes"></Scenes>
+        </template>
+        <template v-if="[3].includes(activeStep)">
+          <!--部署方式-->
+          <DeploymentMethod
+            ref="deploymentMethod"
+            :platform="platform"
+            @changePlatform="changePlatform"
+          ></DeploymentMethod>
+        </template>
+        <template v-if="[4].includes(activeStep)">
+          <!--选择实例规格-->
+          <Spec ref="spec" :platform="platform" @changePlatform="changePlatform"></Spec>
         </template>
       </div>
     </div>
+    <span slot="footer" class="dialog-footer">
+      <VButton type="primary" auto-loading @click="submitConfirm(arguments[0])">{{ $t('public_button_next') }}</VButton>
+    </span>
   </ElDialog>
 </template>
 <script>
 import Account from './Account.vue'
+import DeploymentMethod from './DeploymentMethod.vue'
+import Scenes from './Scenes.vue'
+import Spec from './Spec.vue'
 
 export default {
   name: 'guide',
   props: ['visible'],
   components: {
-    Account
+    Account,
+    Scenes,
+    DeploymentMethod,
+    Spec
   },
   data() {
     return {
@@ -46,10 +71,40 @@ export default {
         {
           title: '选择计算引擎'
         }
-      ]
+      ],
+      scenes: ['12'], //使用场景
+      platform: 'selfHost'
     }
   },
-  methods: {}
+  methods: {
+    next() {
+      this.activeStep++
+    },
+    //确认提交
+    submitConfirm(res) {
+      switch (this.activeStep) {
+        case 1:
+          this.bindPhoneConfirm(res)
+          break
+        case 2:
+        case 3:
+          res?.() //结束loading
+          this.next(res)
+          break
+      }
+    },
+    //绑定手机号
+    bindPhoneConfirm(res) {
+      this.$refs?.bindPhone?.bindPhoneConfirm(res)
+    },
+    //选择使用场景
+    handleScenes(val) {
+      this.scenes = val
+    },
+    changePlatform(val) {
+      this.platform = val
+    }
+  }
 }
 </script>
 
