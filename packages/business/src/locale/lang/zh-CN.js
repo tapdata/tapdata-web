@@ -414,6 +414,8 @@ export default {
   packages_business_verification_message_error_joint_table_not_set: '请添加校验条件',
   packages_business_verification_message_error_joint_table_target_or_source_not_set:
     '校验条件{val}中源表或目标表未选择',
+  packages_business_verification_message_error_joint_table_target_or_source_filter_not_set:
+    '校验条件{val}中源表或目标表数据过滤未选择',
   packages_business_verification_message_error_joint_table_field_not_match:
     '校验条件{val}中源表与目标表的索引字段个数不相等',
   packages_business_verification_message_error_script_no_enter: '开启高级校验后，JS校验逻辑不能为空',
@@ -1087,5 +1089,7 @@ export default {
   packages_business_components_conditionbox_chakanzidingyi: '查看自定义字段',
   packages_business_components_fielddialog_ziduanbuyunxu: '字段不允许为空',
   packages_business_components_fielddialog_zidingyiziduan: '自定义字段',
-  packages_business_verification_list_biaobufenziduan: '表部分字段校验'
+  packages_business_verification_list_biaobufenziduan: '表部分字段校验',
+  packages_business_components_conditionbox_laiyuanbiaoshuju: '来源表数据过滤',
+  packages_business_components_conditionbox_mubiaobiaoshuju: '目标表数据过滤'
 }
