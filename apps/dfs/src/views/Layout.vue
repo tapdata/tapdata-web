@@ -18,7 +18,7 @@
                 </ElMenuItem>
               </template>
             </ElSubmenu>
-            <ElMenuItem v-else :key="menu.title" :index="menu.path" class="flex align-center">
+            <ElMenuItem v-else :key="menu.title" :index="menu.path" class="flex align-center" :id="`menu-${menu.name}`">
               <span class="mr-4" v-if="menu.icon"
                 ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
               >
@@ -56,7 +56,7 @@
                 </ElMenuItem>
               </template>
             </ElSubmenu>
-            <ElMenuItem v-else :key="menu.title" :index="menu.path" class="flex align-center">
+            <ElMenuItem v-else :key="menu.title" :index="menu.path" class="flex align-center" :id="`menu-${menu.name}`">
               <span class="mr-4" v-if="menu.icon"
                 ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
               >
@@ -120,6 +120,7 @@ import AgentDownloadModal from '@/views/agent-download/AgentDownloadModal'
 import BindPhone from '@/views/user/components/BindPhone'
 import Cookie from '@tap/shared/src/cookie'
 import SubscriptionModelDialog from '@/views/agent-download/SubscriptionModelDialog'
+import tour from '@/mixins/tour'
 
 export default {
   inject: ['checkAgent', 'buried'],
@@ -132,6 +133,7 @@ export default {
     SubscriptionModelDialog,
     PageHeader
   },
+  mixins: [tour],
   data() {
     const $t = this.$t.bind(this)
     return {
@@ -574,5 +576,14 @@ export default {
   .el-menu-item.is-active .agent-warning-icon {
     display: none;
   }
+}
+</style>
+
+<style>
+.zsiqfanim,
+.zsiqfanim *,
+.siqanim,
+.siqanim * {
+  pointer-events: all;
 }
 </style>

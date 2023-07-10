@@ -225,6 +225,7 @@ importers:
       dagre: ^0.8.5
       dayjs: ^1.11.2
       default-passive-events: ^2.0.0
+      driver.js: ^1.0.4
       echarts: ^5.0.2
       element-ui: 2.15.7
       eslint: ^6.7.2
@@ -280,6 +281,7 @@ importers:
       dagre: 0.8.5
       dayjs: 1.11.7
       default-passive-events: 2.0.0
+      driver.js: 1.0.4
       echarts: 5.4.2
       element-ui: 2.15.7_vue@2.6.14
       github-markdown-css: 4.0.0
@@ -2827,7 +2829,7 @@ packages:
     dependencies:
       '@babel/core': 7.22.1
       '@vue/babel-preset-app': 4.5.19_core-js@3.30.2+vue@2.6.14
-      '@vue/cli-service': 4.5.19_uksaqpj2nsdk26ix3umetljna4
+      '@vue/cli-service': 4.5.19_sbs6or2oam5i4s4vmfp4rzwdnq
       '@vue/cli-shared-utils': 4.5.19
       babel-loader: 8.3.0_qc4fs4menflmwnb5qs25dohbpi
       cache-loader: 4.1.0_webpack@4.46.0
@@ -2905,7 +2907,7 @@ packages:
     peerDependencies:
       '@vue/cli-service': ^3.0.0 || ^4.0.0-0
     dependencies:
-      '@vue/cli-service': 4.5.19_uksaqpj2nsdk26ix3umetljna4
+      '@vue/cli-service': 4.5.19_sbs6or2oam5i4s4vmfp4rzwdnq
       '@vue/cli-shared-utils': 4.5.19
     dev: true
 
@@ -2914,7 +2916,7 @@ packages:
     peerDependencies:
       '@vue/cli-service': ^3.0.0 || ^4.0.0-0
     dependencies:
-      '@vue/cli-service': 4.5.19_uksaqpj2nsdk26ix3umetljna4
+      '@vue/cli-service': 4.5.19_kgyjn4tstgpo3cxl4ealtf4uya
     dev: true
 
   /@vue/cli-service/4.5.19_kgyjn4tstgpo3cxl4ealtf4uya:
@@ -6330,6 +6332,10 @@ packages:
     resolution: {integrity: sha512-IrPdXQsk2BbzvCBGBOTmmSH5SodmqZNt4ERAZDmW4CT+tL8VtvinqywuANaFu4bOMWki16nqf0e4oC0QIaDr/g==}
     engines: {node: '>=10'}
     dev: true
+
+  /driver.js/1.0.4:
+    resolution: {integrity: sha512-BYEDYSTsHOXRwXcwE75xFH1cK1sBikS0275QrdGWKc1oN99lGUeW/O3+rP24PJ+snycsnlpjOQ85t0QZ1R+zrA==}
+    dev: false
 
   /duplexer/0.1.2:
     resolution: {integrity: sha512-jtD6YG370ZCIi/9GTaJKQxWTZD045+4R4hTk/x1UyoqadyJ9x9CgSi1RlVDQF8U2sxLLSnFkCaMihqljHIWgMg==}
