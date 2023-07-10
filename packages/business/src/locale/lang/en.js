@@ -423,6 +423,8 @@ export default {
   packages_business_verification_message_error_joint_table_not_set: 'Please add validation conditions',
   packages_business_verification_message_error_joint_table_target_or_source_not_set:
     'The source table or the target table is not selected in the validation condition {val}',
+  packages_business_verification_message_error_joint_table_target_or_source_filter_not_set:
+    'The source table or target table data filter is not selected in the verification condition {val}',
   packages_business_verification_message_error_joint_table_field_not_match:
     'The number of index fields in the source table and the target table for validation condition {val} is not equal.',
   packages_business_verification_message_error_script_no_enter:

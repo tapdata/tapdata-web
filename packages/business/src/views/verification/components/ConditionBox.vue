@@ -122,6 +122,7 @@
               </div>
               <div class="setting-item mt-4" :key="'SchemaToForm' + item.id">
                 <SchemaToForm
+                  :ref="`schemaToForm_${item.id}`"
                   :value.sync="item"
                   :schema="getSchemaData(item)"
                   :scope="schemaScope"
@@ -1011,11 +1012,27 @@ export default {
       item.target.columns = data.map(t => t.target)
     },
 
-    validate() {
+    async validate() {
       let tasks = this.getList()
       let index = 0
       let message = ''
       const formDom = document.getElementById('data-verification-form')
+      // 判断过滤设置是否填写完整
+      let schemaToFormFlag = false
+      for (let i = 0; i < tasks.length; i++) {
+        await this.$refs[`schemaToForm_${tasks[i].id}`].validate().catch(() => {
+          index = i + 1
+          schemaToFormFlag = true
+        })
+      }
+      if (schemaToFormFlag) {
+        message = this.$t('packages_business_verification_message_error_joint_table_target_or_source_filter_not_set', {
+          val: index
+        })
+        this.jointErrorMessage = message
+        return message
+      }
+
       // 判断表名称是否为空
       if (
         tasks.some((c, i) => {

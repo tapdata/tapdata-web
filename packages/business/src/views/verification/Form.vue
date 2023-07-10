@@ -601,7 +601,7 @@ export default {
       })
     },
     save(saveOnly = false) {
-      this.$refs.baseForm.validate(valid => {
+      this.$refs.baseForm.validate(async valid => {
         if (valid) {
           let tasks = this.$refs.conditionBox.getList()
           // 检查校验类型是否支持
@@ -627,7 +627,7 @@ export default {
           if (!tasks.length) {
             return this.$message.error(this.$t('packages_business_verification_tasksVerifyCondition'))
           }
-          const validateMsg = this.$refs.conditionBox.validate()
+          const validateMsg = await this.$refs.conditionBox.validate()
           if (validateMsg) {
             return this.$message.error(validateMsg)
           }

@@ -62,6 +62,11 @@ export default {
       objData: null
     }
   },
+  computed: {
+    validate() {
+      return this.form.validate
+    }
+  },
   watch: {
     schema: {
       deep: true,
