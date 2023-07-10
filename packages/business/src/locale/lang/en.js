@@ -578,6 +578,7 @@ export default {
   packages_business_verification_form_jiaoyanrenwumo: 'Validation task mode',
   packages_business_task_status_agent_tooltip_time: 'It has been {time} since the previous status report was issued.',
   packages_business_task_status_agent_tooltip_agent: 'The Agent where the task is located is',
+  packages_business_task_status_retrying_tooltip: 'The task is retrying',
   packages_business_select_placeholder: 'Please add or select',
   packages_business_verification_form_youjiantongzhi: 'Mail Notification',
   packages_business_verification_form_xitongtongzhi: 'System Notification',

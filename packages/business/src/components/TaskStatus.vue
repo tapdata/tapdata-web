@@ -9,6 +9,7 @@
         {{ task.crontabScheduleMsg || getNextStartTime() }}
       </template>
     </ElTooltip>
+    <!--心跳超时-->
     <template v-if="agentMap">
       <ElTooltip
         v-if="pingTime"
@@ -33,7 +34,7 @@
         </template>
       </ElTooltip>
     </template>
-
+    <!--错误解读-->
     <template v-if="errorCause && task.status === 'error'">
       <VIcon @click="showErrorCause = true" size="16" class="ml-2 color-danger">question-circle</VIcon>
       <ElDialog append-to-body :title="$t('public_task_reasons_for_error')" :visible.sync="showErrorCause">
@@ -41,6 +42,24 @@
           {{ errorCause }}
         </div>
       </ElDialog>
+    </template>
+    <!--重试状态-->
+    <template v-if="showRetrying">
+      <ElTooltip
+        key="retrying"
+        placement="top"
+        popper-class="agent-tooltip__popper"
+        :visible-arrow="false"
+        effect="light"
+      >
+        <VIcon size="16" class="ml-2 color-warning">warning</VIcon>
+        <template #content>
+          <div class="flex flex-wrap align-center font-color-dark">
+            <VIcon size="16" class="mr-2 color-warning"> warning </VIcon>
+            {{ $t('packages_business_task_status_retrying_tooltip') }}
+          </div>
+        </template>
+      </ElTooltip>
     </template>
   </div>
 </template>
@@ -103,6 +122,11 @@ export default {
         console.log('Error: ' + err.message)
       }
       return false
+    },
+
+    showRetrying() {
+      const { funcationRetryStatus, taskRetryStatus } = this.task
+      return funcationRetryStatus === 'Retrying' || taskRetryStatus === 'Retrying'
     }
   },
 
