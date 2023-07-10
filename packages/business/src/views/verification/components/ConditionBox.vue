@@ -246,7 +246,7 @@
 
 <script>
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
-import { merge, cloneDeep, uniqBy } from 'lodash'
+import { merge, cloneDeep, uniqBy, isEmpty, isEqual } from 'lodash'
 
 import i18n from '@tap/i18n'
 import { AsyncSelect, SchemaToForm } from '@tap/form'
@@ -1044,7 +1044,7 @@ export default {
         })
       ) {
         this.$nextTick(() => {
-          formDom.childNodes[index - 1]?.querySelector('input')?.focus()
+          formDom.childNodes[index - 1]?.querySelector?.('input')?.focus()
         })
         message = this.$t('packages_business_verification_message_error_joint_table_target_or_source_not_set', {
           val: index
@@ -1122,7 +1122,7 @@ export default {
         })
       ) {
         this.$nextTick(() => {
-          formDom.childNodes[index - 1]?.querySelector('input')?.focus()
+          formDom.childNodes[index - 1]?.querySelector?.('input')?.focus()
         })
         message = this.$t('packages_business_verification_message_error_script_no_enter')
         this.jointErrorMessage = message
@@ -1256,6 +1256,9 @@ function validate(sourceRow){
           filter: JSON.stringify(params)
         })
         .then((data = {}) => {
+          if (isEmpty(data.items[0]?.nameFieldMap)) {
+            return
+          }
           opt.fields = Object.values(data.items[0]?.nameFieldMap || {}).map(t => {
             return {
               id: t.id,
@@ -1567,8 +1570,11 @@ function validate(sourceRow){
           }
         }
       }
-      item.schemaKey = `${item.source.connectionId}${item.target.connectionId}_${sourceOptions.length}${targetOptions.length}`
-      return schema
+      if (!isEqual(item.schema, schema)) {
+        item.schemaKey = `${item.source.connectionId}${item.target.connectionId}_${sourceOptions.length}${targetOptions.length}`
+        item.schema = schema
+      }
+      return item.schema
     },
 
     getCapabilities(connectionIds = []) {
