@@ -161,67 +161,63 @@
               <div class="w-100 flex justify-content-end mt-2 py-4 px-4">
                 <ElButton
                   size="mini"
-                  v-if="item.agentType !== 'Cloud'"
-                  :disabled="deployBtnDisabled(item) || $disabledReadonlyUserBtn()"
+                  v-if="item.agentType !== 'Cloud' && !deployBtnDisabled(item)"
                   @click="toDeploy(item)"
                   >{{ $t('public_agent_button_deploy') }}</ElButton
                 >
                 <ElButton
                   size="mini"
-                  v-if="item.agentType === 'Local' && !['Running'].includes(item.status)"
+                  v-if="item.agentType === 'Local' && !['Running'].includes(item.status) && !startBtnDisabled(item)"
                   :loading="item.btnLoading.delete"
-                  :disabled="startBtnDisabled(item) || $disabledReadonlyUserBtn()"
                   @click="handleStart(item)"
                   >{{ $t('public_button_start') }}</ElButton
                 >
                 <!--全托管没有部署停止按钮，离线状态不能停止-->
                 <ElButton
-                  v-if="item.agentType !== 'Cloud' && !['Stopped', 'Stopping'].includes(item.status)"
+                  v-if="
+                    item.agentType !== 'Cloud' &&
+                    !['Stopped', 'Stopping'].includes(item.status) &&
+                    !stopBtnDisabled(item)
+                  "
                   size="mini"
-                  :disabled="stopBtnDisabled(item) || $disabledReadonlyUserBtn()"
                   :loading="item.btnLoading.stop"
                   @click="handleStop(item)"
                   >{{ $t('public_button_stop') }}</ElButton
                 >
                 <ElButton
                   size="mini"
-                  v-if="item.agentType === 'Cloud' && !item.publicAgent"
+                  v-if="item.agentType === 'Cloud' && !item.publicAgent && !renewBtnDisabled(item)"
                   :loading="item.btnLoading.delete"
-                  :disabled="renewBtnDisabled(item) || $disabledReadonlyUserBtn()"
                   @click="handleRenew(item)"
                   >{{ $t('dfs_instance_instance_zhongqi') }}</ElButton
                 >
                 <ElButton
                   size="mini"
                   v-if="item.agentType === 'Local'"
-                  :loading="item.btnLoading.delete"
-                  :disabled="restartBtnDisabled(item) || $disabledReadonlyUserBtn()"
+                  :loading="item.btnLoading.delete && !(restartBtnDisabled(item) || $disabledReadonlyUserBtn())"
                   @click="handleRestart(item)"
                   >{{ $t('dfs_instance_instance_zhongqi') }}</ElButton
                 >
                 <!--需要考虑老实例/免费实例 无订单信息的-->
                 <ElButton
                   size="mini"
-                  v-if="!item.orderInfo || item.orderInfo.chargeProvider !== 'Stripe'"
+                  v-if="(!item.orderInfo || item.orderInfo.chargeProvider !== 'Stripe') && !delBtnDisabled(item)"
                   :loading="item.btnLoading.delete"
-                  :disabled="delBtnDisabled(item) || $disabledReadonlyUserBtn()"
                   @click="handleUnsubscribe(item)"
                   >{{ $t('public_button_unsubscribe') }}</ElButton
                 >
                 <ElButton
-                  v-if="item.orderInfo || item.orderInfo.chargeProvider === 'Stripe'"
+                  v-if="(item.orderInfo || item.orderInfo.chargeProvider === 'Stripe') && !disableRenew(item)"
                   class="mr-2"
                   size="mini"
-                  :disabled="disableRenew(item)"
                   @click="openRenew(item)"
                   >{{ $t('public_button_renew') }}</ElButton
                 >
                 <!--68-2 免费实例可以删除-->
                 <ElButton
-                  v-if="item.publicAgent"
+                  v-if="item.publicAgent && !disableUnsubscribe(item)"
                   size="mini"
                   :loading="item.btnLoading.delete"
-                  :disabled="disableUnsubscribe(item) || $disabledReadonlyUserBtn()"
                   @click="openUnsubscribe(item)"
                 >
                   <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></ElButton
@@ -273,8 +269,8 @@
                     :content="getTooltipContent(item)"
                     key="done"
                   >
-                    <VIcon size="20" class="cursor-pointer block" @click="showUpgradeDialogFnc(item)"
-                      >upgrade-color</VIcon
+                    <el-button size="mini" class="cursor-pointer block" @click="showUpgradeDialogFnc(item)"
+                      >升级</el-button
                     >
                   </ElTooltip>
                 </template>
