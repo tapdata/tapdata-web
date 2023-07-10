@@ -1740,7 +1740,7 @@ export default {
 // agent列表
 .agent-ul {
   gap: 16px;
-  height: 100%;
+  //height: 100%;
   overflow: auto;
 }
 .agent-item {
