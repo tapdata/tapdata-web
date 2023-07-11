@@ -503,12 +503,17 @@ export default {
         })
         .then((data = {}) => {
           if (data) {
+            let allConnectionIds = []
             data.tasks = data.tasks.map(t => {
               t.source = Object.assign({}, TABLE_PARAMS, t.source)
               t.target = Object.assign({}, TABLE_PARAMS, t.target)
               t.id = t.taskId
+              allConnectionIds.push(t.source.connectionId)
+              allConnectionIds.push(t.target.connectionId)
               return t
             })
+            // 加载数据源的Capabilities
+            this.$refs.conditionBox.getCapabilities(allConnectionIds)
             if (!data.timing) {
               data.timing = this.form.timing
             }
