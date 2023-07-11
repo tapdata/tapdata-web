@@ -513,6 +513,10 @@ export default {
               t.target = Object.assign({}, TABLE_PARAMS, t.target)
               t.source.capabilities = capabilitiesMap[t.source.connectionId]
               t.target.capabilities = capabilitiesMap[t.target.connectionId]
+              if (t.source.nodeId) {
+                t.source.currentLabel = `${t.source.nodeName} / ${t.source.connectionName}`
+                t.target.currentLabel = `${t.target.nodeName} / ${t.target.connectionName}`
+              }
               t.id = t.taskId
               return t
             })

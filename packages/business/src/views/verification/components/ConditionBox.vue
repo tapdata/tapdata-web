@@ -57,6 +57,7 @@
                 <AsyncSelect
                   v-model="item.source.connectionId"
                   :method="getConnectionsListMethod"
+                  :currentLabel="item.source.currentLabel"
                   itemQuery="name"
                   lazy
                   filterable
@@ -72,6 +73,7 @@
                 <AsyncSelect
                   v-model="item.target.connectionId"
                   :method="getConnectionsListMethod"
+                  :currentLabel="item.target.currentLabel"
                   itemQuery="name"
                   lazy
                   filterable
@@ -1169,6 +1171,7 @@ export default {
     },
 
     async handleChangeConnection(val, item, opt = {}) {
+      item.currentLabel = ''
       item.table = '' // 重选连接，清空表
       item.sortColumn = '' // 重选连接，清空表
       item.databaseType = opt.databaseType
