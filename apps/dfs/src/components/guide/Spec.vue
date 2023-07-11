@@ -445,47 +445,52 @@ export default {
       this.currencyOption = options
     },
     //退订
-    cancelSubmit() {
-      let { id, paymentMethod } = this.currentRow
-      let { resourceId } = this.agent
-      let { priceId } = this.selected
-      let param = {
-        subscribeId: id, // 原订阅ID
-        paymentMethod: paymentMethod, // 支付方式
-        successUrl: location.href, // 支付成功跳转地址
-        cancelUrl: location.href, // 支付失败跳转地址
-        subscribeItems: [
-          {
-            // 跟新增订阅一样
-            resourceId: resourceId, // 要变更的产品id，为空时表示新增订阅产品
-            priceId: priceId, // 变更后的价格方案
-            productType: 'Engine' // 产品类型：Engine,MongoDB
-          }
-        ]
+    submit() {
+      const { type, priceId, currency, periodUnit } = this.selected
+      const fastDownloadUrl = window.App.$router.resolve({
+        name: 'FastDownload',
+        query: {
+          id: ''
+        }
+      })
+      const agentUrl = window.App.$router.resolve({
+        name: 'Instance',
+        query: {
+          id: ''
+        }
+      })
+      let params = {
+        price: this.formatPrice(this.currency),
+        priceOff: this.formatPriceOff(this.currency),
+        subscribeType: type, // 订阅类型：one_time-一次订阅，recurring-连续订阅
+        platform: this.platform,
+        quantity: '',
+        paymentMethod: this.agentDeploy === 'aliyun' ? 'AliyunMarketCode' : 'Stripe',
+        successUrl:
+          this.agentDeploy === 'fullManagement'
+            ? location.origin + location.pathname + agentUrl.href
+            : location.origin + location.pathname + fastDownloadUrl.href,
+        cancelUrl: location.href,
+        periodUnit,
+        currency: this.currencyType || currency,
+        subscribeItems: []
       }
-      this.$axios
-        .post('api/tcm/subscribe/change', param)
-        .then(data => {
-          this.buried('unsubscribeAgentStripe', '', {
-            result: true,
-            type: ''
-          })
-          this.$message.success(this.$t('public_message_operation_success'))
-          this.visible = false
-          this.loadingCancelSubmit = false
-          //刷新页面
-          this.$emit('closeVisible')
-          openUrl(data.payUrl)
-          this.buried('renewAgentStripe', '', {
-            result: true
-          })
-          //刷新页面
-          this.$emit('closeVisible')
-        })
-        .finally(() => {
-          this.showUnsubscribeDetailVisible = false
-          this.loadingCancelSubmit = false
-        })
+      let base = {
+        productId: '', // 产品ID
+        priceId, // 价格ID，关联定价表
+        quantity: 1, // 订阅数量，例如一次性订购2个实例时，这里填写2
+        productType: 'Engine', // 产品类型：Engine,MongoDB,APIServer
+        resourceId: '', // 资源ID，agent 或者 cluster id
+        agentType: this.agentDeploy === 'fullManagement' ? 'Cloud' : 'Local', // 半托管-Local，全托管-Cloud
+        version: '', // 实例版本
+        name: '', // 实例名称
+        memorySpace: this.memorySpace,
+        provider: this.provider || '', // 云厂商，全托管必填
+        region: this.region || '', // 地域，全托管必填
+        zone: this.mdbZone || '' // 可用区，按需填写（阿里云存储需要根据资源余量选择出可用区）
+      }
+      params.subscribeItems.push(base)
+      return params
     }
   }
 }

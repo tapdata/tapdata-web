@@ -1,10 +1,11 @@
 <script>
 import { VTable } from '@tap/component'
 import i18n from '@/i18n'
+import { getPaymentMethod, getSpec } from '../../views/instance/utils'
 export default {
   name: 'Pay',
   components: { VTable },
-  props: ['isCard'],
+  props: ['isCard', 'orderInfo'],
   data() {
     return {
       order: [],
@@ -33,6 +34,7 @@ export default {
         }
       ],
       payType: 'Stripe',
+      subscribeItems: [],
       types: [
         {
           label: '在线支付',
@@ -43,6 +45,10 @@ export default {
   },
   mounted() {
     this.form.email = window.__USER_INFO__.email
+    //格式化items
+    let subscribeItems = this.orderInfo?.subscribeItems
+    console.log(subscribeItems)
+    this.subscribeItems = subscribeItems
   },
   methods: {
     getEmailRules() {
@@ -63,6 +69,9 @@ export default {
           resolve(valid)
         })
       })
+    },
+    getEmail() {
+      return this.form.email
     }
   }
 }
@@ -71,7 +80,7 @@ export default {
   <section>
     <div class="mb-4" :class="{ card: isCard, 'mt-6 ': !isCard }">
       <div class="font-color-dark fw-sub fs-5 mb-4">所选配置</div>
-      <VTable :columns="columns" :data="order" ref="table" :has-pagination="false"></VTable>
+      <VTable :columns="columns" :data="subscribeItems" ref="table" :has-pagination="false"></VTable>
     </div>
     <div :class="{ card: isCard }">
       <p class="mt-4 mb-2">{{ $t('dfs_instance_create_jieshouzhangdande') }}</p>
@@ -96,11 +105,13 @@ export default {
       </ElRadioGroup>
     </div>
     <ul class="mt-4" :class="{ card: isCard }">
-      <li><span class="mr-4">95折</span>：<span> -￥67</span></li>
+      <li v-if="orderInfo.priceOff">
+        <span class="mr-4">95折</span>：<span class="ml-2"> -{{ orderInfo.priceOff }}</span>
+      </li>
       <li>
-        <span class="fw-sub font-color-dark mt-2 mr-4">实付金额</span>:<span class="color-primary fw-sub fs-5"
-          >¥ 8,640.00</span
-        >
+        <span class="fw-sub font-color-dark mt-2 mr-4">实付金额</span>:<span class="color-primary fw-sub fs-5 ml-2">{{
+          orderInfo.price
+        }}</span>
       </li>
     </ul>
   </section>

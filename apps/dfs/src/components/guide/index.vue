@@ -16,13 +16,17 @@
         <div class="main flex-1">
           <template v-if="[1].includes(activeStep)">
             <!--绑定手机号-->
-            <Account ref="bindPhone" @next="next"></Account>
+            <Account v-if="bindPhoneVisible" ref="bindPhone" @next="next"></Account>
           </template>
-          <template v-if="[2].includes(activeStep)">
+          <template
+            v-if="([2].includes(activeStep) && bindPhoneVisible) || ([1].includes(activeStep) && !bindPhoneVisible)"
+          >
             <!--使用场景-->
             <Scenes ref="scenes" :scenes="scenes" @handleScenes="handleScenes"></Scenes>
           </template>
-          <template v-if="[3].includes(activeStep)">
+          <template
+            v-if="([3].includes(activeStep) && bindPhoneVisible) || ([2].includes(activeStep) && !bindPhoneVisible)"
+          >
             <!--部署方式-->
             <DeploymentMethod
               ref="deploymentMethod"
@@ -30,15 +34,21 @@
               @changePlatform="changePlatform"
             ></DeploymentMethod>
           </template>
-          <template v-if="[4].includes(activeStep)">
+          <template
+            v-if="([4].includes(activeStep) && bindPhoneVisible) || ([3].includes(activeStep) && !bindPhoneVisible)"
+          >
             <!--选择实例规格-->
             <Spec ref="spec" :platform="platform" @changePlatform="changePlatform"></Spec>
           </template>
-          <template v-if="[5].includes(activeStep)">
+          <template
+            v-if="([5].includes(activeStep) && bindPhoneVisible) || ([4].includes(activeStep) && !bindPhoneVisible)"
+          >
             <!--费用清单-->
-            <Details ref="details" :orderId="orderId"></Details>
+            <Details ref="details" :orderInfo="orderInfo"></Details>
           </template>
-          <template v-if="[6].includes(activeStep)">
+          <template
+            v-if="([6].includes(activeStep) && bindPhoneVisible) || ([5].includes(activeStep) && !bindPhoneVisible)"
+          >
             <!--部署实例-->
             <Deploy :agentId="agentId"></Deploy>
           </template>
@@ -48,9 +58,14 @@
           :class="[activeStep === 1 ? 'justify-content-end' : 'justify-content-between']"
         >
           <VButton v-if="activeStep > 1" @click="previous()">{{ $t('public_button_previous') }}</VButton>
-          <VButton type="primary" auto-loading @click="submitConfirm(arguments[0])">{{
-            $t('public_button_next')
-          }}</VButton>
+          <VButton
+            type="primary"
+            @click="submitConfirm()"
+            v-if="this.activeStep === this.steps.length"
+            :loading="submitLoading"
+            >{{ $t('public_button_next') }}</VButton
+          >
+          <VButton type="primary" @click="submitConfirm()" v-else>{{ $t('public_button_next') }}</VButton>
         </div>
       </div>
     </div>
@@ -80,10 +95,34 @@ export default {
   data() {
     return {
       activeStep: 1,
-      steps: [
-        {
-          title: '账号安全绑定'
-        },
+      scenes: ['12'], //使用场景
+      platform: 'selfHost',
+      agentId: '64aa97004be8ea3b8e02e39a',
+      orderId: '',
+      orderInfo: '',
+      bindPhoneVisible: false,
+      submitLoading: false
+    }
+  },
+  computed: {
+    steps() {
+      if (!this.bindPhoneVisible) {
+        return [
+          {
+            title: '账号安全绑定'
+          },
+          {
+            title: '选择使用场景'
+          },
+          {
+            title: '数据库环境'
+          },
+          {
+            title: '选择计算引擎'
+          }
+        ]
+      }
+      return [
         {
           title: '选择使用场景'
         },
@@ -93,11 +132,7 @@ export default {
         {
           title: '选择计算引擎'
         }
-      ],
-      scenes: ['12'], //使用场景
-      platform: 'selfHost',
-      agentId: '64aa97004be8ea3b8e02e39a',
-      orderId: ''
+      ]
     }
   },
   methods: {
@@ -108,21 +143,30 @@ export default {
       this.activeStep--
     },
     //确认提交
-    submitConfirm(res) {
+    submitConfirm() {
+      if (this.activeStep === this.steps?.length) {
+        //最后一步提交支付
+        this.submitOrder()
+        return
+      }
+      this.next()
       switch (this.activeStep) {
         case 1:
-          this.bindPhoneConfirm(res)
+          this.bindPhoneConfirm()
           break
         case 2:
         case 3:
-          res?.() //结束loading
-          this.next(res)
+          break
+        case 4:
+          if (!this.bindPhoneVisible) {
+            this.getOrderInfo()
+          }
           break
       }
     },
     //绑定手机号
-    bindPhoneConfirm(res) {
-      this.$refs?.bindPhone?.bindPhoneConfirm(res)
+    bindPhoneConfirm() {
+      this.$refs?.bindPhone?.bindPhoneConfirm()
     },
     //选择使用场景
     handleScenes(val) {
@@ -131,9 +175,62 @@ export default {
     changePlatform(val) {
       this.platform = val
     },
-    //选择规格
-    formatPrice() {
-      this.$refs?.spec?.formatPrice()
+    //检查是否有手机号
+    checkWechatPhone() {
+      let user = window.__USER_INFO__
+      if (window.__config__?.disabledBindingPhone) {
+        //海外版不强制绑定手机号
+        return
+      }
+      this.bindPhoneVisible =
+        ['basic:email', 'basic:email-code', 'social:wechatmp-qrcode'].includes(user?.registerSource) && !user?.telephone
+      return this.bindPhoneVisible
+    },
+    getOrderInfo() {
+      this.orderInfo = this.$refs?.spec?.submit()
+    },
+    submitOrder() {
+      this.orderInfo.email = this.$refs.details?.getEmail()
+      this.$axios
+        .post('api/tcm/orders/subscribeV2', this.orderInfo)
+        .then(data => {
+          if (data.status === 'incomplete') {
+            //订单需要付款
+            //在线支付 打开付款页面
+            window.open(data?.payUrl, '_self')
+          } else {
+            //订单不需要付款，只需对应跳转不同页面
+            if (this.platform === 'selfHost') {
+              //半托管-部署页面
+              this.steps = [
+                {
+                  title: '选择使用场景'
+                },
+                {
+                  title: '数据库环境'
+                },
+                {
+                  title: '选择计算引擎'
+                },
+                {
+                  title: '部署页面'
+                }
+              ]
+              this.activeStep = this.steps.length
+            } else {
+              this.finish()
+              if (this.type === 'newDialog') {
+                this.$emit('closeVisible', false)
+              }
+              this.$router.push({
+                name: 'Instance'
+              })
+            }
+          }
+        })
+        .catch(() => {
+          this.submitLoading = false
+        })
     }
   }
 }
