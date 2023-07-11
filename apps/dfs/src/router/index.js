@@ -460,6 +460,14 @@ const routes = [
     }
   },
   {
+    path: '/pay',
+    name: 'pay',
+    component: () => import(/* webpackChunkName: "instance" */ '../views/order/pay.vue'),
+    meta: {
+      title: '支付清单'
+    }
+  },
+  {
     path: '/upgradeVersion',
     name: 'UpgradeVersion',
     component: UpgradeVersion,

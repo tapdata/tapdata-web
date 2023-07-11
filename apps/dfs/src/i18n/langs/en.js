@@ -1479,8 +1479,7 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_usd: 'USD',
   dfs_agent_download_subscriptionmodeldialog_cny: 'CNY',
   dfs_agent_download_subscriptionmodeldialog_hkd: 'HKD',
-  dfs_agent_specification_description:
-    'Up to <strong>{pipeline}</strong> Tasks, TPS about <strong>{tps}</strong>, <strong>{mem}</strong> memory needed',
+  dfs_agent_specification_description: 'Up to <strong>{pipeline}</strong><strong>{mem}</strong> memory needed',
   dfs_instance_instance_qingshurutuiding: 'Please enter the reason for unsubscribing',
   dfs_instance_instance_tuidingjine: 'Unsubscribe Amount',
   dfs_instance_instance_yixiaohaojine: 'Amount Consumed',
