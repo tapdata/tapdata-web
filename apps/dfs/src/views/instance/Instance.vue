@@ -425,8 +425,8 @@
           <ul class="mdb-ul flex flex-wrap mt-4" v-if="mdbData.length > 0">
             <li class="mdb-item flex" v-for="item in mdbData" :key="item.id">
               <div class="flex justify-content-around align-items-center border-right w-40 py-4 px-4">
-                <el-progress :width="68" type="circle" :percentage="0" :color="customColors"></el-progress>
-                <div>
+                <el-progress :width="68" type="circle" :percentage="percentage" :color="customColors"></el-progress>
+                <div class="ml-4">
                   <div>
                     {{ $t('dfs_order_list_total_space') }} ：<span>{{ item.spec.storageSize }} GB</span>
                   </div>
@@ -666,6 +666,7 @@ export default {
       },
       mdbData: [],
       //存储资源
+      percentage: 0,
       specColumns: [
         {
           label: i18n.t('dfs_instance_instance_yunchangshang'),
@@ -843,8 +844,9 @@ export default {
           item.storageSize = item.spec?.storageSize ? item.spec?.storageSize : '-'
           item.deploymentTypeLabel = this.agentTypeMap[item.deploymentType]
           let num = Number(item?.dataSize) || 0
-          let size = (num / (1024 * 1024 * 1024)).toFixed(2)
-          item.dataSizeLast = item.storageSize - size
+          let size = (num / (1024 * 1024)).toFixed(2)
+          this.percentage = (size / item.storageSize).toFixed(1) * 100
+          item.dataSizeLast = (item.storageSize - size).toFixed(2)
           item.dataSizeLabel = size
           return item
         })
