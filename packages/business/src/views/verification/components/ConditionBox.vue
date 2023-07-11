@@ -57,13 +57,14 @@
                 <AsyncSelect
                   v-model="item.source.connectionId"
                   :method="getConnectionsListMethod"
+                  :currentLabel="item.source.connectionName"
                   itemQuery="name"
                   lazy
                   filterable
                   class="item-select"
                   :key="'sourceConnectionId' + item.id"
                   :onSetSelected="useHandle(handleSetSelectedConnection, item.source)"
-                  @change="handleChangeConnection(arguments[0], item.source)"
+                  @change="handleChangeConnection(arguments[0], item.source, arguments[1])"
                 >
                 </AsyncSelect>
                 <span class="item-icon fs-6">
@@ -72,13 +73,14 @@
                 <AsyncSelect
                   v-model="item.target.connectionId"
                   :method="getConnectionsListMethod"
+                  :currentLabel="item.target.connectionName"
                   itemQuery="name"
                   lazy
                   filterable
                   class="item-select"
                   :key="'targetConnectionId' + item.id"
                   :onSetSelected="useHandle(handleSetSelectedConnection, item.target)"
-                  @change="handleChangeConnection(arguments[0], item.target)"
+                  @change="handleChangeConnection(arguments[0], item.target, arguments[1])"
                 >
                 </AsyncSelect>
               </div>
@@ -825,15 +827,17 @@ export default {
           const nodeName = t.name
           const connectionId = t.connectionId
           const connectionName = t.attrs?.connectionName
+          const databaseType = t.databaseType
           const findDynamicSchema = t.attrs?.capabilities.find(t => t.id === 'dynamic_schema')
           if (findDynamicSchema) {
             this.dynamicSchemaMap[t.connectionId] = true
           }
           return {
-            attrs: { nodeId, nodeName, connectionId, connectionName },
+            attrs: { nodeId, nodeName, connectionId, connectionName, databaseType },
             name: `${nodeName} / ${connectionName}`,
             value: `${nodeId}/${connectionId}`,
-            label: `${nodeName} / ${connectionName}`
+            label: `${nodeName} / ${connectionName}`,
+            databaseType: databaseType
           }
         }),
         'value'
@@ -1022,7 +1026,8 @@ export default {
         connectionIds.push(m.targetConnectionId)
         tableNames.push(...m.tableNames)
       })
-      await this.getCapabilities(connectionIds)
+      // 加载数据源的Capabilities
+      const capabilitiesMap = await this.getCapabilities(connectionIds)
       if (!matchNodeList.length) {
         if (this.allStages.length > this.flowStages.length)
           return this.$message.error(i18n.t('packages_business_components_conditionbox_cunzaichulijiedian_wufazidong'))
@@ -1073,6 +1078,7 @@ export default {
               item.source.connectionId = `${source}/${sourceConnectionId}`
               item.source.connectionName = `${sourceName} / ${sourceConnectionName}`
               item.source.table = ge // findTable.original_name
+              item.source.capabilities = capabilitiesMap[sourceConnectionId]
               // 填充target
               item.target.nodeId = target
               item.target.nodeName = targetName
@@ -1080,6 +1086,7 @@ export default {
               item.target.connectionId = `${target}/${targetConnectionId}`
               item.target.connectionName = `${targetName} / ${targetConnectionName}`
               item.target.table = tableNameRelation[ge] // findTargetTable.original_name
+              item.target.capabilities = capabilitiesMap[targetConnectionId]
 
               const updateList = cloneDeep(updateConditionFieldMap[tableNameRelation[ge]] || [])
               let findTable = data.find(t => t.source.id === sourceConnectionId && t.original_name === ge)
@@ -1157,28 +1164,26 @@ export default {
       return list
     },
 
-    async handleChangeConnection(val, item) {
+    async handleChangeConnection(val, item, opt = {}) {
       item.table = '' // 重选连接，清空表
       item.sortColumn = '' // 重选连接，清空表
       item.capabilities = await this.getConnectionCapabilities(val)
-
+      item.databaseType = opt.databaseType
       if (!this.taskId) {
         return
       }
-      const result = val.split('/')
-      if (result.length === 1) {
-        return
-      }
-      const findNodeId = result[0]
-      item.nodeId = findNodeId
+      const { nodeId, nodeName, connectionName } = opt.attrs || {}
+      item.nodeId = nodeId
+      item.nodeName = nodeName
+      item.connectionName = connectionName
     },
 
     handleSetSelectedConnection(item, val) {
-      item.connectionName = val?.currentLabel || val?.name
-      if (this.taskId) {
-        item.nodeName = item.connectionName?.split(' / ')?.[0]
-      }
-      item.databaseType = val?.databaseType
+      // item.connectionName = val?.currentLabel || val?.name
+      // if (this.taskId) {
+      //   item.nodeName = item.connectionName?.split(' / ')?.[0]
+      // }
+      // item.databaseType = val?.databaseType
     },
 
     getReverseNodeInfo(data = {}) {
