@@ -4,7 +4,10 @@ import { VIcon } from '@tap/component'
 export default {
   name: 'Account',
   props: ['platform'],
-  components: { VIcon }
+  components: { VIcon },
+  mounted() {
+    this.$emit('changePlatform', 'selfHost')
+  }
 }
 </script>
 

@@ -106,11 +106,8 @@ export default {
   },
   computed: {
     steps() {
-      if (!this.bindPhoneVisible) {
+      if (!this.bindPhoneVisible && this.platform === 'selfHost') {
         return [
-          {
-            title: '账号安全绑定'
-          },
           {
             title: '选择使用场景'
           },
@@ -119,10 +116,37 @@ export default {
           },
           {
             title: '选择计算引擎'
+          },
+          {
+            title: '配置信息'
+          },
+          {
+            title: '部署'
           }
         ]
       }
+
+      if (!this.bindPhoneVisible && this.platform === 'fullManagement') {
+        return [
+          {
+            title: '选择使用场景'
+          },
+          {
+            title: '数据库环境'
+          },
+          {
+            title: '选择计算引擎'
+          },
+          {
+            title: '配置信息'
+          }
+        ]
+      }
+
       return [
+        {
+          title: '账号安全绑定'
+        },
         {
           title: '选择使用场景'
         },
@@ -144,7 +168,10 @@ export default {
     },
     //确认提交
     submitConfirm() {
-      if (this.activeStep === this.steps?.length) {
+      if (
+        (this.activeStep === this.steps?.length && this.platform === 'fullManagement') ||
+        (this.activeStep === this.steps?.length - 1 && this.platform === 'selfHost')
+      ) {
         //最后一步提交支付
         this.submitOrder()
         return
