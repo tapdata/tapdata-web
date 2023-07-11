@@ -57,7 +57,6 @@
                 <AsyncSelect
                   v-model="item.source.connectionId"
                   :method="getConnectionsListMethod"
-                  :currentLabel="item.source.connectionName"
                   itemQuery="name"
                   lazy
                   filterable
@@ -73,7 +72,6 @@
                 <AsyncSelect
                   v-model="item.target.connectionId"
                   :method="getConnectionsListMethod"
-                  :currentLabel="item.target.connectionName"
                   itemQuery="name"
                   lazy
                   filterable
@@ -124,10 +122,9 @@
                 <SchemaToForm
                   :ref="`schemaToForm_${item.id}`"
                   :value.sync="item"
-                  :schema="getSchemaData(item)"
+                  :schema="formSchema"
                   :scope="schemaScope"
                   :colon="true"
-                  :key="`SchemaToForm_source_${index}_${item.schemaKey}`"
                   class="w-100"
                   label-width="120"
                 />
@@ -246,7 +243,8 @@
 
 <script>
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
-import { merge, cloneDeep, uniqBy, isEmpty, isEqual } from 'lodash'
+import { merge, cloneDeep, uniqBy, isEmpty } from 'lodash'
+import { action } from '@formily/reactive'
 
 import i18n from '@tap/i18n'
 import { AsyncSelect, SchemaToForm } from '@tap/form'
@@ -310,7 +308,373 @@ export default {
       jsEngineName: 'graal.js',
       doc: '',
       schemaData: null,
-      schemaScope: null
+      schemaScope: {
+        $supportFilterFunction:
+          this.inspectMethod === 'row_count'
+            ? 'count_by_partition_filter_function'
+            : 'query_by_advance_filter_function',
+        useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
+          return field => {
+            field.loading = true
+            service({ field }, ...serviceParams).then(
+              action.bound(data => {
+                if (fieldName === 'value') {
+                  field.setValue(data)
+                } else field[fieldName] = data
+                field.loading = false
+              })
+            )
+          }
+        },
+        async loadTableFieldList(obj, item) {
+          try {
+            if (!item.connectionId || !item.table) return []
+            let fields = item.fields
+            if (!fields?.length) {
+              const params = {
+                where: {
+                  meta_type: 'table',
+                  sourceType: 'SOURCE',
+                  original_name: item.table,
+                  'source._id': item.connectionId
+                },
+                limit: 1
+              }
+              const data = await metadataInstancesApi.tapTables({
+                filter: JSON.stringify(params)
+              })
+              fields = Object.values(data.items[0]?.nameFieldMap || {})
+              if (fields.length) {
+                item.fields = fields
+              }
+            }
+            return fields.map(t => {
+              return {
+                id: t.id,
+                label: t.fieldName,
+                value: t.fieldName || t.field_name,
+                field_name: t.fieldName || t.field_name,
+                primary_key_position: t.primaryKey,
+                data_type: t.dataType || t.data_type,
+                primaryKey: t.primaryKey,
+                unique: t.unique
+              }
+            })
+          } catch (e) {
+            return []
+          }
+        }
+      },
+      formSchema: {
+        type: 'object',
+        properties: {
+          nameWrap: {
+            type: 'void',
+            'x-component': 'FormGrid',
+            'x-component-props': {
+              minColumns: 2,
+              maxColumns: 2,
+              columnGap: 16
+            },
+            properties: {
+              source: {
+                type: 'object',
+                'x-component': 'FormGrid.GridColumn',
+                properties: {
+                  nodeSchema: {
+                    type: 'array',
+                    'x-display': 'hidden',
+                    'x-reactions': [
+                      `{{useAsyncDataSource(loadTableFieldList, 'value', $values.source)}}`,
+                      {
+                        target: 'source.conditions.*.key',
+                        fulfill: {
+                          state: {
+                            loading: '{{$self.loading}}',
+                            dataSource: '{{$self.value}}'
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  isFilter: {
+                    type: 'boolean',
+                    title: i18n.t('packages_business_components_conditionbox_laiyuanbiaoshuju'),
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Switch',
+                    default: false,
+                    'x-reactions': [
+                      {
+                        fulfill: {
+                          state: {
+                            visible: `{{$values.source.capabilities && $values.source.capabilities.some(item => item.id === $supportFilterFunction)}}`
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  conditions: {
+                    type: 'array',
+                    title: ' ',
+                    default: [{ key: '', value: '', operator: 5 }],
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      colon: false
+                    },
+                    'x-component': 'ArrayItems',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        space: {
+                          type: 'void',
+                          'x-component': 'Space',
+                          properties: {
+                            key: {
+                              type: 'string',
+                              required: 'true',
+                              'x-decorator': 'FormItem',
+                              'x-component': 'Select',
+                              'x-component-props': {
+                                filterable: true
+                              },
+                              enum: []
+                            },
+                            operator: {
+                              type: 'number',
+                              required: 'true',
+                              enum: [
+                                {
+                                  label: '>',
+                                  value: 1
+                                },
+                                {
+                                  label: '>=',
+                                  value: 2
+                                },
+                                {
+                                  label: '<',
+                                  value: 3
+                                },
+                                {
+                                  label: '<=',
+                                  value: 4
+                                },
+                                {
+                                  label: '=',
+                                  value: 5
+                                }
+                              ],
+                              'x-decorator': 'FormItem',
+                              'x-decorator-props': {
+                                wrapperWidth: 100
+                              },
+                              'x-component': 'Select'
+                            },
+                            value: {
+                              type: 'string',
+                              required: 'true',
+                              'x-decorator': 'FormItem',
+                              'x-component': 'Input',
+                              'x-component-props': {
+                                type: 'datetime',
+                                align: 'right',
+                                format: 'yyyy-MM-dd HH:mm:ss'
+                              },
+                              'x-reactions': {
+                                dependencies: ['.key', '.key#dataSource'],
+                                fulfill: {
+                                  schema: {
+                                    'x-component': `{{field=$deps[1] && $deps[1].find(item=>item.value===$deps[0]),field&&/timestamp|date|DATE_TIME|datetime|OBJECT_ID/i.test(field.type)?"DatePicker":"Input"}}`
+                                  }
+                                }
+                              }
+                            },
+                            remove: {
+                              type: 'void',
+                              'x-decorator': 'FormItem',
+                              'x-component': 'ArrayItems.Remove',
+                              'x-component-props': {
+                                disabled: '{{$values.source.conditions.length<2}}'
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    properties: {
+                      add: {
+                        type: 'void',
+                        title: i18n.t('packages_dag_nodes_table_tianjia'),
+                        'x-component': 'ArrayItems.Addition',
+                        'x-component-props': {
+                          defaultValue: { key: '', value: '', operator: 5 }
+                        }
+                      }
+                    },
+                    'x-reactions': [
+                      {
+                        dependencies: ['.isFilter'],
+                        fulfill: {
+                          state: {
+                            visible: '{{!!$deps[0]}}'
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              target: {
+                type: 'object',
+                'x-component': 'FormGrid.GridColumn',
+                properties: {
+                  nodeSchema: {
+                    type: 'array',
+                    'x-display': 'hidden',
+                    'x-reactions': [
+                      `{{useAsyncDataSource(loadTableFieldList, 'value', $values.target)}}`,
+                      {
+                        target: 'target.conditions.*.key',
+                        fulfill: {
+                          state: {
+                            loading: '{{$self.loading}}',
+                            dataSource: '{{$self.value}}'
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  isFilter: {
+                    type: 'boolean',
+                    title: i18n.t('packages_business_components_conditionbox_mubiaobiaoshuju'),
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Switch',
+                    default: false,
+                    'x-reactions': [
+                      {
+                        fulfill: {
+                          state: {
+                            visible: `{{$values.target.capabilities && $values.target.capabilities.some(item => item.id === $supportFilterFunction)}}`
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  conditions: {
+                    type: 'array',
+                    title: ' ',
+                    default: [{ key: '', value: '', operator: 5 }],
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      colon: false
+                    },
+                    'x-component': 'ArrayItems',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        space: {
+                          type: 'void',
+                          'x-component': 'Space',
+                          properties: {
+                            key: {
+                              type: 'string',
+                              required: 'true',
+                              'x-decorator': 'FormItem',
+                              'x-component': 'Select',
+                              'x-component-props': {
+                                filterable: true
+                              },
+                              enum: []
+                            },
+                            operator: {
+                              type: 'number',
+                              required: 'true',
+                              enum: [
+                                {
+                                  label: '>',
+                                  value: 1
+                                },
+                                {
+                                  label: '>=',
+                                  value: 2
+                                },
+                                {
+                                  label: '<',
+                                  value: 3
+                                },
+                                {
+                                  label: '<=',
+                                  value: 4
+                                },
+                                {
+                                  label: '=',
+                                  value: 5
+                                }
+                              ],
+                              'x-decorator': 'FormItem',
+                              'x-decorator-props': {
+                                wrapperWidth: 100
+                              },
+                              'x-component': 'Select'
+                            },
+                            value: {
+                              type: 'string',
+                              required: 'true',
+                              'x-decorator': 'FormItem',
+                              'x-component': 'Input',
+                              'x-component-props': {
+                                type: 'datetime',
+                                align: 'right',
+                                format: 'yyyy-MM-dd HH:mm:ss'
+                              },
+                              'x-reactions': {
+                                dependencies: ['.key', '.key#dataSource'],
+                                fulfill: {
+                                  schema: {
+                                    'x-component': `{{field=$deps[1] && $deps[1].find(item=>item.value===$deps[0]),field&&/timestamp|date|DATE_TIME|datetime|OBJECT_ID/i.test(field.type)?"DatePicker":"Input"}}`
+                                  }
+                                }
+                              }
+                            },
+                            remove: {
+                              type: 'void',
+                              'x-decorator': 'FormItem',
+                              'x-component': 'ArrayItems.Remove',
+                              'x-component-props': {
+                                disabled: '{{$values.target.conditions.length<2}}'
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    properties: {
+                      add: {
+                        type: 'void',
+                        title: i18n.t('packages_dag_nodes_table_tianjia'),
+                        'x-component': 'ArrayItems.Addition',
+                        'x-component-props': {
+                          defaultValue: { key: '', value: '', operator: 5 }
+                        }
+                      }
+                    },
+                    'x-reactions': [
+                      {
+                        dependencies: ['.isFilter'],
+                        fulfill: {
+                          state: {
+                            visible: '{{!!$deps[0]}}'
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
 
@@ -793,10 +1157,11 @@ export default {
       return list
     },
 
-    handleChangeConnection(val, item) {
+    async handleChangeConnection(val, item) {
       item.table = '' // 重选连接，清空表
       item.sortColumn = '' // 重选连接，清空表
-      this.getCapabilities([val])
+      item.capabilities = await this.getConnectionCapabilities(val)
+
       if (!this.taskId) {
         return
       }
@@ -1274,316 +1639,26 @@ function validate(sourceRow){
         })
     },
 
-    // 获取jsonschema
-    getSchemaData(item = {}) {
-      this.handleFocus(item.source)
-      this.handleFocus(item.target)
-      const sourceOptions = item.source.fields.map(t => {
-        return {
-          unique: t.unique,
-          primaryKey: t.primaryKey,
-          label: t.field_name,
-          type: t.data_type,
-          value: t.field_name
-        }
-      })
-
-      const targetOptions = item.target.fields.map(t => {
-        return {
-          unique: t.unique,
-          primaryKey: t.primaryKey,
-          label: t.field_name,
-          type: t.data_type,
-          value: t.field_name
-        }
-      })
-
-      let sourcePro = {}
-
-      let targetPro = {}
-      const findFunction =
-        this.inspectMethod === 'row_count' ? 'count_by_partition_filter_function' : 'query_by_advance_filter_function'
-      const sourceConnectionId = this.taskId ? item.source.connectionId?.split('/')?.[1] : item.source.connectionId
-      const targetConnectionId = this.taskId ? item.target.connectionId?.split('/')?.[1] : item.target.connectionId
-
-      if (this.capabilitiesMap[sourceConnectionId]?.some(t => t.id === findFunction)) {
-        sourcePro = {
-          isFilter: {
-            type: 'boolean',
-            title: i18n.t('packages_business_components_conditionbox_laiyuanbiaoshuju'),
-            'x-decorator': 'FormItem',
-            'x-component': 'Switch',
-            default: false
-          },
-          conditions: {
-            type: 'array',
-            title: ' ',
-            default: [{ key: '', value: '', operator: 5 }],
-            'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              colon: false
-            },
-            'x-component': 'ArrayItems',
-            items: {
-              type: 'object',
-              properties: {
-                space: {
-                  type: 'void',
-                  'x-component': 'Space',
-                  properties: {
-                    key: {
-                      type: 'string',
-                      required: 'true',
-                      'x-decorator': 'FormItem',
-                      'x-component': 'Select',
-                      'x-component-props': {
-                        filterable: true
-                      },
-                      enum: sourceOptions
-                    },
-                    operator: {
-                      type: 'number',
-                      required: 'true',
-                      enum: [
-                        {
-                          label: '>',
-                          value: 1
-                        },
-                        {
-                          label: '>=',
-                          value: 2
-                        },
-                        {
-                          label: '<',
-                          value: 3
-                        },
-                        {
-                          label: '<=',
-                          value: 4
-                        },
-                        {
-                          label: '=',
-                          value: 5
-                        }
-                      ],
-                      'x-decorator': 'FormItem',
-                      'x-decorator-props': {
-                        wrapperWidth: 100
-                      },
-                      'x-component': 'Select'
-                    },
-                    value: {
-                      type: 'string',
-                      required: 'true',
-                      'x-decorator': 'FormItem',
-                      'x-component': 'Input',
-                      'x-component-props': {
-                        type: 'datetime',
-                        align: 'right',
-                        format: 'yyyy-MM-dd HH:mm:ss'
-                      },
-                      'x-reactions': {
-                        dependencies: ['.key', '.key#dataSource'],
-                        fulfill: {
-                          schema: {
-                            'x-component': `{{field=$deps[1] && $deps[1].find(item=>item.value===$deps[0]),field&&/timestamp|date|DATE_TIME|datetime|OBJECT_ID/i.test(field.type)?"DatePicker":"Input"}}`
-                          }
-                        }
-                      }
-                    },
-                    remove: {
-                      type: 'void',
-                      'x-decorator': 'FormItem',
-                      'x-component': 'ArrayItems.Remove',
-                      'x-component-props': {
-                        disabled: '{{$values.source.conditions.length<2}}'
-                      }
-                    }
-                  }
-                }
-              }
-            },
-            properties: {
-              add: {
-                type: 'void',
-                title: i18n.t('packages_dag_nodes_table_tianjia'),
-                'x-component': 'ArrayItems.Addition',
-                'x-component-props': {
-                  defaultValue: { key: '', value: '', operator: 5 }
-                }
-              }
-            },
-            'x-reactions': {
-              dependencies: ['.isFilter'],
-              fulfill: {
-                state: {
-                  visible: '{{!!$deps[0]}}'
-                }
-              }
-            }
+    async getCapabilities(connectionIds = []) {
+      if (!connectionIds.length) return
+      const data = await Promise.all(
+        connectionIds.map(async id => {
+          return {
+            id,
+            capabilities: await this.getConnectionCapabilities(id)
           }
-        }
-      }
+        })
+      )
 
-      if (this.capabilitiesMap[targetConnectionId]?.some(t => t.id === findFunction)) {
-        targetPro = {
-          isFilter: {
-            type: 'boolean',
-            title: i18n.t('packages_business_components_conditionbox_mubiaobiaoshuju'),
-            'x-decorator': 'FormItem',
-            'x-component': 'Switch',
-            default: false
-          },
-          conditions: {
-            type: 'array',
-            title: ' ',
-            default: [{ key: '', value: '', operator: 5 }],
-            'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              colon: false
-            },
-            'x-component': 'ArrayItems',
-            items: {
-              type: 'object',
-              properties: {
-                space: {
-                  type: 'void',
-                  'x-component': 'Space',
-                  properties: {
-                    key: {
-                      type: 'string',
-                      required: 'true',
-                      'x-decorator': 'FormItem',
-                      'x-component': 'Select',
-                      'x-component-props': {
-                        filterable: true
-                      },
-                      enum: sourceOptions
-                    },
-                    operator: {
-                      type: 'number',
-                      required: 'true',
-                      enum: [
-                        {
-                          label: '>',
-                          value: 1
-                        },
-                        {
-                          label: '>=',
-                          value: 2
-                        },
-                        {
-                          label: '<',
-                          value: 3
-                        },
-                        {
-                          label: '<=',
-                          value: 4
-                        },
-                        {
-                          label: '=',
-                          value: 5
-                        }
-                      ],
-                      'x-decorator': 'FormItem',
-                      'x-decorator-props': {
-                        wrapperWidth: 100
-                      },
-                      'x-component': 'Select'
-                    },
-                    value: {
-                      type: 'string',
-                      required: 'true',
-                      'x-decorator': 'FormItem',
-                      'x-component': 'Input',
-                      'x-component-props': {
-                        type: 'datetime',
-                        align: 'right',
-                        format: 'yyyy-MM-dd HH:mm:ss'
-                      },
-                      'x-reactions': {
-                        dependencies: ['.key', '.key#dataSource'],
-                        fulfill: {
-                          schema: {
-                            'x-component': `{{field=$deps[1] && $deps[1].find(item=>item.value===$deps[0]),field&&/timestamp|date|DATE_TIME|datetime|OBJECT_ID/i.test(field.type)?"DatePicker":"Input"}}`
-                          }
-                        }
-                      }
-                    },
-                    remove: {
-                      type: 'void',
-                      'x-decorator': 'FormItem',
-                      'x-component': 'ArrayItems.Remove',
-                      'x-component-props': {
-                        disabled: '{{$values.target.conditions.length<2}}'
-                      }
-                    }
-                  }
-                }
-              }
-            },
-            properties: {
-              add: {
-                type: 'void',
-                title: i18n.t('packages_dag_nodes_table_tianjia'),
-                'x-component': 'ArrayItems.Addition',
-                'x-component-props': {
-                  defaultValue: { key: '', value: '', operator: 5 }
-                }
-              }
-            },
-            'x-reactions': {
-              dependencies: ['.isFilter'],
-              fulfill: {
-                state: {
-                  visible: '{{!!$deps[0]}}'
-                }
-              }
-            }
-          }
-        }
-      }
-
-      let schema = {
-        type: 'object',
-        properties: {
-          nameWrap: {
-            type: 'void',
-            'x-component': 'FormGrid',
-            'x-component-props': {
-              minColumns: 2,
-              maxColumns: 2,
-              columnGap: 16
-            },
-            properties: {
-              source: {
-                type: 'object',
-                'x-component': 'FormGrid.GridColumn',
-                properties: sourcePro
-              },
-              target: {
-                type: 'object',
-                'x-component': 'FormGrid.GridColumn',
-                properties: targetPro
-              }
-            }
-          }
-        }
-      }
-      if (!isEqual(item.schema, schema)) {
-        item.schemaKey = `${item.source.connectionId}${item.target.connectionId}_${sourceOptions.length}${targetOptions.length}`
-        item.schema = schema
-      }
-      return item.schema
+      return data.reduce((cur, pre) => {
+        cur[pre.id] = pre.capabilities
+        return cur
+      }, {})
     },
 
-    getCapabilities(connectionIds = []) {
-      connectionIds.forEach(id => {
-        !this.capabilitiesMap[id] &&
-          connectionsApi.get(id).then(data => {
-            this.capabilitiesMap[id] = data.capabilities
-          })
-      })
+    async getConnectionCapabilities(id) {
+      const data = await connectionsApi.get(id)
+      return data?.capabilities || []
     }
   }
 }

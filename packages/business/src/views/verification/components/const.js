@@ -8,7 +8,8 @@ export const TABLE_PARAMS = {
   fields: [],
   columns: null,
   isFilter: false,
-  conditions: []
+  conditions: [],
+  capabilities: []
 }
 
 export const META_INSTANCE_FIELDS = {
