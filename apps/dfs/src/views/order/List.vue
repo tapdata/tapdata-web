@@ -47,6 +47,10 @@
                   <ElButton v-if="['incomplete'].includes(item.status)" type="text" @click="handlePay(item)">{{
                     $t('public_button_pay')
                   }}</ElButton>
+                  <ElButton v-if="['active'].includes(item.status)" type="text" @click="goOpenChange(item)"
+                    >变更记录</ElButton
+                  >
+
                   <!--                  <el-divider direction="vertical"></el-divider>-->
                   <!--                  <ElButton-->
                   <!--                    type="text"-->
@@ -157,12 +161,6 @@
             </template>
           </VTable>
         </section>
-      </el-tab-pane>
-      <el-tab-pane class="order-flex overflow-hidden h-100" label="变更记录" name="three">
-        <div class="main">
-          <VTable ref="table" row-key="id" :columns="changeColumns" :data="changeList" height="100%" class="mt-4 mb-4">
-          </VTable>
-        </div>
       </el-tab-pane>
     </el-tabs>
 
@@ -293,39 +291,7 @@ export default {
         size: 10
       },
       loadingRenewSubmit: false,
-      currentPrice: 0,
-      //变更记录
-      changeList: [],
-      changeColumns: [
-        {
-          label: '订阅编号',
-          prop: 'productType'
-        },
-        {
-          label: i18n.t('dfs_instance_instance_guige'),
-          prop: 'specLabel',
-          width: 180
-        },
-        {
-          label: '变更申请时间',
-          slotName: 'subscriptionMethodLabel',
-          width: 180
-        },
-        {
-          label: i18n.t('task_monitor_status'),
-          slotName: 'statusLabel'
-        },
-        {
-          label: i18n.t('dfs_user_center_jine'),
-          prop: 'price',
-          slotName: 'price'
-        },
-        {
-          label: i18n.t('public_operation'),
-          prop: 'extendArray',
-          slotName: 'operation'
-        }
-      ]
+      currentPrice: 0
     }
   },
   computed: {
@@ -527,6 +493,15 @@ export default {
     openChangeSubscribe(row) {
       this.$refs?.ChangeSubscribeDetailDialog.openChange(row)
     },
+    //查看变更记录
+    goOpenChange(item) {
+      this.$router.push({
+        name: 'changeList',
+        query: {
+          id: item.id
+        }
+      })
+    },
     //续订
     openRenew(row) {
       this.$refs?.RenewDetailDialog.openRenew(row)
@@ -607,6 +582,10 @@ export default {
       this.buried('goRenewalAliyunCode')
       const href = 'https://market.console.aliyun.com/imageconsole/index.htm'
       openUrl(href)
+    },
+    //变更记录
+    getChangeList() {
+      this.$axios.get(`api/tcm/subscribe/{subscribeId}/change`).then(data => {})
     }
   }
 }

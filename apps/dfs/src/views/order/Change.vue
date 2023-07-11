@@ -38,7 +38,7 @@
         ><span class="color-primary fs-4"> {{ formatPrice(currency) }}</span></span
       >
       <el-button @click="visible = false">{{ $t('public_button_cancel') }}</el-button>
-      <el-button type="primary" :loading="loadingCancelSubmit" @click="cancelSubmit">变更</el-button>
+      <el-button type="primary" :loading="loadingCancelSubmit" @click="cancelSubmit">提交申请</el-button>
     </span>
   </ElDialog>
 </template>
@@ -331,9 +331,9 @@ export default {
           this.loadingCancelSubmit = false
           //刷新页面
           this.$emit('closeVisible')
-          openUrl(data.payUrl)
-          this.buried('renewAgentStripe', '', {
-            result: true
+          this.$router.push({
+            name: 'pay',
+            id: data?.id
           })
           //刷新页面
           this.$emit('closeVisible')

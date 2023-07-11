@@ -339,7 +339,7 @@ export default {
     },
     // 检查是否有安装过agent
     checkAgentInstall() {
-      this.subscriptionModelVisible = true
+      //this.subscriptionModelVisible = true
       this.$axios.get('api/tcm/agent').then(data => {
         if (data?.total === 0) {
           this.subscriptionModelVisible = true

@@ -46,9 +46,7 @@ export default {
   mounted() {
     this.form.email = window.__USER_INFO__.email
     //格式化items
-    let subscribeItems = this.orderInfo?.subscribeItems
-    console.log(subscribeItems)
-    this.subscribeItems = subscribeItems
+    this.subscribeItems = this.orderInfo?.subscribeItems || []
   },
   methods: {
     getEmailRules() {
@@ -104,11 +102,11 @@ export default {
         </ElRadio>
       </ElRadioGroup>
     </div>
-    <ul class="mt-4" :class="{ card: isCard }">
+    <ul class="mt-4" :class="{ card: isCard }" v-if="orderInfo">
       <li v-if="orderInfo.priceOff">
         <span class="mr-4">95折</span>：<span class="ml-2"> -{{ orderInfo.priceOff }}</span>
       </li>
-      <li>
+      <li v-if="orderInfo.price">
         <span class="fw-sub font-color-dark mt-2 mr-4">实付金额</span>:<span class="color-primary fw-sub fs-5 ml-2">{{
           orderInfo.price
         }}</span>
