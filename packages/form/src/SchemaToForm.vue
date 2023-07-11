@@ -52,13 +52,15 @@ export default {
     }
   },
   data() {
-    let values = this.value
-
     return {
-      form: createForm({
-        values,
-        effects: this.useEffects
-      }),
+      form: createForm(
+        this.value
+          ? {
+              values: this.value,
+              effects: this.useEffects
+            }
+          : {}
+      ),
       objData: null
     }
   },
