@@ -98,8 +98,8 @@ export default {
               this.getUnReadNum()
             }
             if (data) {
-              data.levelLabel = ALARM_LEVEL_MAP[data.level].text
-              data.levelType = ALARM_LEVEL_MAP[data.level].type
+              data.levelLabel = ALARM_LEVEL_MAP[data.level]?.text
+              data.levelType = ALARM_LEVEL_MAP[data.level]?.type
               this.listData = uniqBy([data, ...this.listData])
             }
           }, 800)

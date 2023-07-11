@@ -121,6 +121,7 @@ import BindPhone from '@/views/user/components/BindPhone'
 import Cookie from '@tap/shared/src/cookie'
 import SubscriptionModelDialog from '@/views/agent-download/SubscriptionModelDialog'
 import tour from '@/mixins/tour'
+import TaskAlarmTour from '@/components/TaskAlarmTour'
 
 export default {
   inject: ['checkAgent', 'buried'],
@@ -131,7 +132,8 @@ export default {
     AgentDownloadModal,
     BindPhone,
     SubscriptionModelDialog,
-    PageHeader
+    PageHeader,
+    TaskAlarmTour
   },
   mixins: [tour],
   data() {
@@ -186,6 +188,7 @@ export default {
       bindPhoneVisible: false,
       agentGuideDialog: false,
       showAgentWarning: false,
+      agentRunningCount: 0,
       subscriptionModelVisible: false,
       userInfo: '',
       // aliyunMaketVisible: false,
@@ -209,7 +212,7 @@ export default {
     if (window.__config__?.station) {
       this.isDomesticStation = window.__config__?.station === 'domestic' //默认是国内站 国际站是 international
     }
-    this.loopLoadAgentCount()
+    // this.loopLoadAgentCount()
     this.activeMenu = this.$route.path
     let children = this.$router.options.routes.find(r => r.path === '/')?.children || []
     const findRoute = name => {
@@ -423,19 +426,6 @@ export default {
       this.showAgentWarning = flag
     },
 
-    loopLoadAgentCount() {
-      this.$axios
-        .get('api/tcm/agent/agentCount')
-        .then(data => {
-          this.showAgentWarning = data.agentTotalCount && !data.agentRunningCount
-          window.__agentCount__ = data
-        })
-        .finally(() => {
-          this.loopLoadAgentCountTimer = setTimeout(() => {
-            this.loopLoadAgentCount()
-          }, 10000)
-        })
-    },
     //检查云市场用户授权码是否过期
     checkLicense(user) {
       //未激活

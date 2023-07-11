@@ -11,6 +11,17 @@ const store = new Vuex.Store({
     dataflow,
     classification,
     overView
+  },
+
+  state: {
+    migrateTaskRunningCount: 0,
+    instanceLoading: false
+  },
+
+  mutations: {
+    setInstanceLoading(state, loading) {
+      state.instanceLoading = loading
+    }
   }
 })
 

@@ -3,23 +3,45 @@ import 'driver.js/dist/driver.css'
 import { connectionsApi, taskApi } from '@tap/api'
 
 export default {
-  mounted() {
+  data() {
+    return {
+      showAlarmTour: false
+    }
+  },
+  created() {
+    this.loopLoadAgentCount()
+  },
+
+  beforeRouteUpdate(to, from, next) {
+    next()
     this.$nextTick(() => {
+      this.beTouring = false
       this.initTour()
     })
   },
 
-  beforeRouteUpdate(to, from, next) {
-    const whiteList = ['connectionCreate']
-
-    if (!whiteList.includes(to.name) && !this.driverObj) {
-      this.initDriver()
-    }
-
-    next()
-  },
-
   methods: {
+    loopLoadAgentCount() {
+      return this.$axios
+        .get('api/tcm/agent/agentCount')
+        .then(data => {
+          this.showAgentWarning = data.agentTotalCount && !data.agentRunningCount
+          this.agentRunningCount = data.agentRunningCount
+          window.__agentCount__ = data
+
+          this.initTour()
+        })
+        .finally(() => {
+          this.loopLoadAgentCountTimer = setTimeout(() => {
+            this.loopLoadAgentCount()
+          }, 10000)
+        })
+    },
+
+    checkAgentCount() {
+      return this.showAgentWarning
+    },
+
     async getCount($in) {
       const { count } = await connectionsApi.count({
         where: JSON.stringify({
@@ -58,6 +80,17 @@ export default {
       return !count
     },
 
+    async getTaskRunningCount() {
+      const { count } = await taskApi.count({
+        where: JSON.stringify({
+          syncType: 'migrate',
+          is_deleted: false,
+          status: 'running'
+        })
+      })
+      return count
+    },
+
     getMenuStep(options) {
       return {
         type: options.type,
@@ -79,12 +112,15 @@ export default {
     },
 
     getButtonStep(options) {
+      let unwatch
       return {
         type: options.type,
         route: options.route,
         element: options.element,
         elementClick: (...args) => {
           //创建按钮点击后，隐藏引导
+          unwatch && unwatch()
+          this.beTouring = true
           this.driverObj.destroy()
           this.driverObj = null
         },
@@ -98,7 +134,7 @@ export default {
           description: options.description,
           showButtons: [],
           onPopoverRender: (popover, { state }) => {
-            const unwatch = this.$watch('$route', to => {
+            unwatch = this.$watch('$route', to => {
               if (to.name !== options.route) {
                 this.driverObj.movePrevious()
               }
@@ -111,10 +147,6 @@ export default {
 
     async getSteps() {
       const _steps = [
-        // {
-        //   key: 'instance',
-        //   handle: () => true
-        // },
         {
           key: 'sourceConnection',
           handle: this.checkSourceCount
@@ -130,14 +162,6 @@ export default {
       ]
       const steps = []
       const stepMap = {
-        instance: [
-          {
-            type: 'menu',
-            route: 'Instance',
-            element: '#menu-Instance',
-            description: '请先启动您的 Agent 计算引擎'
-          }
-        ],
         sourceConnection: [
           {
             type: 'menu',
@@ -149,7 +173,7 @@ export default {
             type: 'button',
             route: 'connections',
             element: '#connection-list-create',
-            description: '点击此处创建您的源库/目标库'
+            description: '点击此处创建您的源数据库'
           }
         ],
         targetConnection: [
@@ -197,41 +221,125 @@ export default {
     },
 
     async initDriver() {
+      this.loadingStep = true
       const steps = await this.getSteps()
-      this.withoutTrour = false
+      this.loadingStep = false
 
       if (!steps.length) {
-        this.withoutTrour = true
-        return
+        // 满足所有步骤完成的条件
+        localStorage.allStepsComplete = Date.now()
+        // await this.initAlarmTour()
+      } else {
+        this.driverObj = driver({
+          allowClose: false,
+          // onDestroyed: () => {
+          //   this.startingTour = false
+          // },
+          steps
+        })
+        this.driverObj.drive(steps[0].type === 'menu' && this.$route.name === steps[0].route ? 1 : 0)
       }
+    },
+
+    async initAlarmTour() {
+      if (this.$route.name !== 'migrateList' || localStorage.showAlarmTour) return
+      const runningCount = await this.getTaskRunningCount()
+
+      if (runningCount > 0) {
+        this.showAlarmTour = true
+        localStorage.showAlarmTour = Date.now()
+      }
+    },
+
+    async initAgentTour() {
+      const { items: agentData } = await this.$axios.get(
+        'api/tcm/agent?filter=' +
+          encodeURIComponent(
+            JSON.stringify({
+              where: {
+                status: { $in: ['Error', 'Stopped'] }
+              }
+            })
+          )
+      )
+      const agent = agentData.find(agent => {
+        // if (agent.tapdataAgentStatus !== 'stopped' && (agent.agentType !== 'Cloud' || !agent.publicAgent)) {
+        if (agent.agentType !== 'Cloud' || !agent.publicAgent) {
+          return true
+        }
+      })
+
+      if (!agent) return
+
+      const element = `#agent-${agent.id} [name="${agent.agentType === 'Cloud' ? 'restart' : 'start'}"]`
+      let unwatch
+      const steps = [
+        {
+          type: 'menu',
+          route: 'Instance',
+          element: '#menu-Instance',
+          onDeselected: (element, step, options) => {
+            unwatch()
+          },
+          popover: {
+            description: '请先启动您的 Agent 计算引擎',
+            showButtons: [],
+            onPopoverRender: (popover, { state }) => {
+              // agent列表加载成功后开始显示引导
+              unwatch = this.$watch('$store.state.instanceLoading', loading => {
+                if (!loading && this.$route.name === 'Instance') {
+                  this.driverObj.moveNext()
+                  unwatch()
+                }
+              })
+            }
+          }
+        },
+        this.getButtonStep({
+          type: 'button',
+          route: 'Instance',
+          element,
+          description: '请先启动您的 Agent 计算引擎'
+        })
+      ]
+
+      console.log('initAgentTour', steps) // eslint-disable-line
 
       this.driverObj = driver({
         allowClose: false,
-        //   onHighlightStarted?: (element?: Element, step: DriveStep, options: { config: Config; state: State }) => void;;
-        // onHighlighted?: (element?: Element, step: DriveStep, options: { config: Config; state: State }) => void;;
-        // onDeselected?: (element?: Element, step: DriveStep, options: { config: Config; state: State }) => void;;
-        /*onHighlightStarted: (element, step, options) => {
-          console.log('onHighlightStarted', element, step, options) // eslint-disable-line
-          if (step.elementClick) {
-            element.addEventListener('click', step.elementClick)
-          }
-        },
-        onHighlighted: (element, step) => {
-          console.log('onHighlighted', element) // eslint-disable-line
-          // if (step.elementClick) {
-          //   element.removeEventListener('click', step.elementClick)
-          // }
-        },
-        onDestroyStarted: element => {
-          console.log('onDestroyStarted', element) // eslint-disable-line
-        },*/
-        steps
+        steps,
+        onDestroyed: () => {
+          this.beTouring = false
+          this.enterAgentTour = true
+        }
       })
       this.driverObj.drive(steps[0].type === 'menu' && this.$route.name === steps[0].route ? 1 : 0)
     },
 
-    initTour() {
-      this.initDriver()
+    async initTour() {
+      const whiteList = ['connectionCreate']
+
+      if (
+        whiteList.includes(this.$route.name) ||
+        this.driverObj ||
+        this.showAlarmTour ||
+        this.loadingStep ||
+        this.beTouring
+      ) {
+        return
+      }
+      if (this.agentRunningCount) {
+        // 有可用的agent
+        // await this.initDriver()
+        if (localStorage.allStepsComplete) {
+          await this.initAlarmTour()
+        } else {
+          await this.initDriver()
+        }
+      } else if (this.showAgentWarning && !this.enterAgentTour) {
+        // 存在异常的agent
+        await this.initAgentTour()
+      }
     }
   }
 }
