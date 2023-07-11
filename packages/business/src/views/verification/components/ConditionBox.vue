@@ -742,12 +742,18 @@ export default {
           if (findDynamicSchema) {
             this.dynamicSchemaMap[item.id] = true
           }
+          const connectionId = item.id
+          const connectionName = item.name
+          const databaseType = item.database_type
           return {
-            id: item.id,
-            name: item.name,
-            label: `${item.name} ${item.status ? `(${CONNECTION_STATUS_MAP[item.status]?.text || item.status})` : ''}`,
-            value: item.id,
-            databaseType: item.database_type
+            id: connectionId,
+            name: connectionName,
+            label: `${connectionName} ${
+              item.status ? `(${CONNECTION_STATUS_MAP[item.status]?.text || item.status})` : ''
+            }`,
+            value: connectionId,
+            databaseType: databaseType,
+            attrs: { connectionId, connectionName, databaseType }
           }
         })
 
@@ -1167,15 +1173,16 @@ export default {
     async handleChangeConnection(val, item, opt = {}) {
       item.table = '' // 重选连接，清空表
       item.sortColumn = '' // 重选连接，清空表
-      item.capabilities = await this.getConnectionCapabilities(val)
       item.databaseType = opt.databaseType
+      item.capabilities = await this.getConnectionCapabilities(opt.attrs?.connectionId)
       if (!this.taskId) {
+        item.connectionName = opt.attrs?.connectionName
         return
       }
       const { nodeId, nodeName, connectionName } = opt.attrs || {}
       item.nodeId = nodeId
       item.nodeName = nodeName
-      item.connectionName = connectionName
+      item.connectionName = `${nodeName} / ${connectionName}`
     },
 
     handleSetSelectedConnection(item, val) {
@@ -1253,7 +1260,7 @@ export default {
         targetDatabaseType,
         updateConditionFieldMap,
         tableName,
-        tableNameRelation
+        tableNameRelation = {}
       } = matchNode
 
       // 自动填充索引字段
