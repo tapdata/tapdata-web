@@ -1476,6 +1476,9 @@ export default {
   dfs_instance_instance_cunchuziyuan: '存储资源',
   dfs_instance_instance_agent2: 'Agent资源',
   dfs_order_list_wodedingyue: '我的订阅',
+  dfs_order_list_total_space: '总空间',
+  dfs_order_list_used_space: '总空间',
+  dfs_order_list_remaining_space: '剩余空间',
 
   dfs_the_header_header_wodegongdan: ' 我的工单',
   dfs_the_header_header_prize_questionnaire: ' 有奖问卷',

@@ -422,19 +422,19 @@
         name="second"
       >
         <section class="flex flex-column overflow-hidden flex-1">
-          <ul class="mdb-ul flex flex-wrap mt-4">
+          <ul class="mdb-ul flex flex-wrap mt-4" v-if="mdbData.length > 0">
             <li class="mdb-item flex" v-for="item in mdbData" :key="item.id">
               <div class="flex justify-content-around align-items-center border-right w-40 py-4 px-4">
                 <el-progress :width="68" type="circle" :percentage="0" :color="customColors"></el-progress>
                 <div>
                   <div>
-                    总空间：<span>{{ item.spec.storageSize }} GB</span>
+                    {{ $t('dfs_order_list_total_space') }} ：<span>{{ item.spec.storageSize }} GB</span>
                   </div>
                   <div>
-                    已用空间：<span>{{ item.dataSizeLabel }} GB</span>
+                    {{ $t('dfs_order_list_used_space') }} ：<span>{{ item.dataSizeLabel }} GB</span>
                   </div>
                   <div>
-                    剩余空间：<span>{{ item.dataSizeLast }} GB</span>
+                    {{ $t('dfs_order_list_remaining_space') }} ：<span>{{ item.dataSizeLast }} GB</span>
                   </div>
                 </div>
               </div>
@@ -466,6 +466,7 @@
               </div>
             </li>
           </ul>
+          <ul v-else></ul>
         </section>
         <!-- 新建白名单 -->
         <el-dialog :visible.sync="showCreateIps" :title="$t('dfs_instance_instance_tianjiabaimingdan')">
