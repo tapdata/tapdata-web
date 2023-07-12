@@ -29,52 +29,64 @@
       </div>
       <div class="guide-main flex-1 flex flex-column overflow-hidden ml-8 mt-4 mr-8">
         <div class="main flex-1">
-          <template v-if="[1].includes(activeStep)">
-            <!--绑定手机号-->
-            <Account v-if="bindPhoneVisible" ref="bindPhone" @next="next"></Account>
-          </template>
-          <template
-            v-if="([2].includes(activeStep) && bindPhoneVisible) || ([1].includes(activeStep) && !bindPhoneVisible)"
-          >
-            <!--使用场景-->
-            <Scenes ref="scenes" :scenes="scenes" @handleScenes="handleScenes"></Scenes>
-          </template>
-          <template
-            v-if="([3].includes(activeStep) && bindPhoneVisible) || ([2].includes(activeStep) && !bindPhoneVisible)"
-          >
-            <!--部署方式-->
-            <DeploymentMethod
-              ref="deploymentMethod"
-              :platform="platform"
-              @changePlatform="changePlatform"
-            ></DeploymentMethod>
-          </template>
-          <template
-            v-if="([4].includes(activeStep) && bindPhoneVisible) || ([3].includes(activeStep) && !bindPhoneVisible)"
-          >
-            <!--选择实例规格-->
-            <Spec ref="spec" :platform="platform" @changePlatform="changePlatform"></Spec>
-          </template>
-          <template
-            v-if="
-              (([5].includes(activeStep) && bindPhoneVisible) || ([4].includes(activeStep) && !bindPhoneVisible)) &&
-              !isUnDepaly
-            "
-          >
-            <!--费用清单-->
-            <pay v-if="subscribeStatus === 'incomplete'" refs="pay" :subscribes="subscribes" @refresh="refresh"></pay>
-            <Details v-else ref="details" :orderInfo="orderInfo" :email="email"></Details>
-          </template>
-          <template
-            v-if="
-              ([6].includes(activeStep) && bindPhoneVisible) ||
-              ([5].includes(activeStep) && !bindPhoneVisible) ||
-              isUnDepaly
-            "
-          >
-            <!--部署实例-->
-            <Deploy :agentId="agentId"></Deploy>
-          </template>
+          <section v-if="bindPhoneVisible">
+            <template v-if="[1].includes(activeStep)">
+              <!--绑定手机号-->
+              <Account ref="bindPhone" @next="next"></Account>
+            </template>
+            <template v-if="[2].includes(activeStep)">
+              <!--使用场景-->
+              <Scenes ref="scenes" :scenes="scenes" @handleScenes="handleScenes"></Scenes>
+            </template>
+            <template v-if="[3].includes(activeStep)">
+              <!--部署方式-->
+              <DeploymentMethod
+                ref="deploymentMethod"
+                :platform="platform"
+                @changePlatform="changePlatform"
+              ></DeploymentMethod>
+            </template>
+            <template v-if="[4].includes(activeStep)">
+              <!--选择实例规格-->
+              <Spec ref="spec" :platform="platform" @changePlatform="changePlatform"></Spec>
+            </template>
+            <template v-if="[5].includes(activeStep)">
+              <!--费用清单-->
+              <pay v-if="subscribeStatus === 'incomplete'" refs="pay" :subscribes="subscribes" @refresh="refresh"></pay>
+              <Details v-else ref="details" :orderInfo="orderInfo" :email="email"></Details>
+            </template>
+            <template v-if="[6].includes(activeStep)">
+              <!--部署实例-->
+              <Deploy :agentId="agentId"></Deploy>
+            </template>
+          </section>
+          <section v-else>
+            <template v-if="[1].includes(activeStep)">
+              <!--使用场景-->
+              <Scenes ref="scenes" :scenes="scenes" @handleScenes="handleScenes"></Scenes>
+            </template>
+            <template v-if="[2].includes(activeStep)">
+              <!--部署方式-->
+              <DeploymentMethod
+                ref="deploymentMethod"
+                :platform="platform"
+                @changePlatform="changePlatform"
+              ></DeploymentMethod>
+            </template>
+            <template v-if="[3].includes(activeStep)">
+              <!--选择实例规格-->
+              <Spec ref="spec" :platform="platform" @changePlatform="changePlatform"></Spec>
+            </template>
+            <template v-if="[4].includes(activeStep)">
+              <!--费用清单-->
+              <pay v-if="subscribeStatus === 'incomplete'" refs="pay" :subscribes="subscribes" @refresh="refresh"></pay>
+              <Details v-else ref="details" :orderInfo="orderInfo" :email="email"></Details>
+            </template>
+            <template v-if="[5].includes(activeStep)">
+              <!--部署实例-->
+              <Deploy :agentId="agentId"></Deploy>
+            </template>
+          </section>
         </div>
         <div
           v-if="subscribeStatus !== 'incomplete' && !isUnDepaly"
@@ -87,6 +99,14 @@
             @click="submitConfirm()"
             v-if="this.activeStep === this.steps.length"
             :loading="submitLoading"
+            >{{ $t('public_button_next') }}</VButton
+          >
+          <!--绑定手机号单独一个提交按钮 -->
+          <VButton
+            type="primary"
+            auto-loading
+            @click="submitConfirm(arguments[0])"
+            v-if="this.activeStep === 1 && bindPhoneVisible"
             >{{ $t('public_button_next') }}</VButton
           >
           <VButton type="primary" @click="submitConfirm()" v-else>{{ $t('public_button_next') }}</VButton>
@@ -142,7 +162,8 @@ export default {
       this.activeStep = val
     },
     agent(val) {
-      this.agentId = val
+      this.agentId = val?.id
+      this.isUnDepaly = val?.isUnDepaly
     },
     subscribes(val) {
       this.subscribeId = val?.id
@@ -188,29 +209,6 @@ export default {
         ]
       }
 
-      // if (this.bindPhoneVisible && this.platform === 'selfHost') {
-      //   return [
-      //     {
-      //       title: '账号安全绑定'
-      //     },
-      //     {
-      //       title: '选择使用场景'
-      //     },
-      //     {
-      //       title: '数据库环境'
-      //     },
-      //     {
-      //       title: '选择计算引擎'
-      //     },
-      //     {
-      //       title: '支付结算'
-      //     },
-      //     {
-      //       title: '计算引擎部署'
-      //     }
-      //   ]
-      // }
-
       return [
         {
           title: '账号安全绑定'
@@ -252,7 +250,7 @@ export default {
       this.activeStep--
     },
     //确认提交
-    submitConfirm() {
+    submitConfirm(res) {
       if (
         (this.activeStep === this.steps?.length && (this.platform === 'fullManagement' || this.bindPhoneVisible)) ||
         (this.activeStep === this.steps?.length - 1 && this.platform === 'selfHost' && !this.bindPhoneVisible)
@@ -261,11 +259,13 @@ export default {
         this.submitOrder()
         return
       }
+      if (this.bindPhoneVisible) {
+        this.bindPhoneConfirm(res)
+        return
+      }
       this.next()
       switch (this.activeStep) {
         case 1:
-          this.bindPhoneConfirm()
-          break
         case 2:
         case 3:
           break
@@ -282,8 +282,8 @@ export default {
       }
     },
     //绑定手机号
-    bindPhoneConfirm() {
-      this.$refs?.bindPhone?.bindPhoneConfirm()
+    bindPhoneConfirm(res) {
+      this.$refs?.bindPhone?.bindPhoneConfirm(res)
     },
     //选择使用场景
     handleScenes(val) {
@@ -318,7 +318,11 @@ export default {
         this.subscribeStatus = item?.[0]?.status
         if (this.subscribeStatus === 'active' && item?.[0]?.platform === 'selfHost') {
           //部署页面
-          this.activeStep = 5
+          if (this.bindPhoneVisible) {
+            this.activeStep = 6
+          } else {
+            this.activeStep = 5
+          }
         } else if (this.subscribeStatus === 'active' && item?.[0]?.platform === 'fullManagement') {
           this.$emit('update:visible', false)
         }
@@ -330,18 +334,24 @@ export default {
         .post('api/tcm/orders/subscribeV2', this.orderInfo)
         .then(data => {
           this.subscribe = data?.subscribe
-          this.agentId = data?.agentId
           this.close()
           if (data.status === 'incomplete') {
             //订单需要付款
             //在线支付 打开付款页面
             window.open(data?.payUrl, '_self')
           } else {
-            //订单不需要付款，只需对应跳转不同页面
-            this.$emit('update:visible', false)
-            this.$router.push({
-              name: 'Instance'
-            })
+            //免费半托管 - 新人引导 - 弹窗
+            if (this.platform === 'selfHost') {
+              this.agentId = data?.subscribeItems?.[0].resourceId
+              this.isUnDepaly = true
+              this.next()
+            } else {
+              //订单不需要付款，只需对应跳转不同页面
+              this.$emit('update:visible', false)
+              this.$router.push({
+                name: 'Instance'
+              })
+            }
           }
         })
         .catch(() => {

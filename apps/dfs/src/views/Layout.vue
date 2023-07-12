@@ -107,9 +107,8 @@
     <AgentGuide
       :visible.sync="subscriptionModelVisible"
       :step="step"
-      :agent="agentId"
+      :agent="agent"
       :subscribes="subscribes"
-      :isUnDepaly="isUnDepaly"
       :showClose="false"
     ></AgentGuide>
     <!--    <BindPhone :visible.sync="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>-->
@@ -203,8 +202,7 @@ export default {
       isDomesticStation: true,
       //新人引导
       step: 1,
-      agentId: '',
-      isUnDepaly: false,
+      agent: '',
       subscribes: {}
     }
   },
@@ -356,6 +354,7 @@ export default {
     },
     // 检查是否有安装过agent
     async checkAgentInstall() {
+      this.checkWechatPhone()
       let subscribe = await this.$axios.get(`api/tcm/subscribe`)
       this.$axios.get('api/tcm/agent').then(data => {
         //检查是否有待部署状态
@@ -367,22 +366,37 @@ export default {
         }
         let subItems = subscribe?.items || []
         let isUnDepaly = items.find(i => i.status === 'Creating' && i.agentType === 'Local')
-        if (isUnDepaly) {
-          this.step = 5
-          this.agentId = isUnDepaly?.id
-          this.isUnDepaly = true
-        }
+        //订阅0 Agent 0  完全新人引导
+        //订阅不为0 查找是否有待部署状态
+        //Agent不为0 查找是否有待部署状态
+        //优先未支付判定
+        //未支付
         let isUnPay = subItems.find(i => i.status === 'incomplete')
         if (isUnPay) {
           this.step = 4
           this.subscribes = isUnPay
+          //是否有未支付的订阅
+          if (isUnPay) {
+            this.subscriptionModelVisible = true
+          }
+          return
         }
-
-        //订阅0 Agent 0  完全新人引导
-        //订阅不为0 查找是否有待部署状态
-        //Agent不为0 查找是否有待部署状态
+        //未部署
+        if (isUnDepaly) {
+          this.step = 5
+          this.agent = {
+            id: isUnDepaly?.id,
+            isUnDepaly: true
+          }
+          this.isUnDepaly = true
+          //是否有未支付的订阅
+          if (isUnDepaly) {
+            this.subscriptionModelVisible = true
+            return
+          }
+        }
         //是否有未支付的订阅
-        if ((data?.total === 0 && subscribe?.total === 0) || isUnDepaly || isUnPay) {
+        if (data?.total === 0 && subscribe?.total === 0) {
           this.subscriptionModelVisible = true
         }
       })
