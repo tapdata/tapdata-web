@@ -16,7 +16,10 @@ export default {
     next()
     this.$nextTick(() => {
       this.beTouring = false
-      this.initTour()
+      const whiteList = ['connectionCreate']
+      if (!whiteList.includes(to.name)) {
+        this.initTour()
+      }
     })
   },
 
@@ -264,7 +267,7 @@ export default {
       )
       const agent = agentData.find(agent => {
         if (agent.tapdataAgentStatus !== 'stopped' && (agent.agentType !== 'Cloud' || !agent.publicAgent)) {
-        // if (agent.agentType !== 'Cloud' || !agent.publicAgent) {
+          // if (agent.agentType !== 'Cloud' || !agent.publicAgent) {
           return true
         }
       })
