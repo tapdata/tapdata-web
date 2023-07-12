@@ -1083,5 +1083,6 @@ export default {
   packages_business_components_fielddialog_zidingyiziduan: '自定義字段',
   packages_business_verification_list_biaobufenziduan: '表部分字段校驗',
   packages_business_components_conditionbox_laiyuanbiaoshuju: '來源表數據過濾',
-  packages_business_components_conditionbox_mubiaobiaoshuju: '目標表數據過濾'
+  packages_business_components_conditionbox_mubiaobiaoshuju: '目標表數據過濾',
+  packages_business_data_server_list_apIwendang: 'API文檔導出'
 }

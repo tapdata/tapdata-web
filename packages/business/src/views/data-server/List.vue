@@ -22,6 +22,15 @@
         >
           <span> {{ $t('packages_business_button_bulk_import') }}</span>
         </ElButton>
+        <ElButton
+          v-readonlybtn="'SYNC_job_export'"
+          size="mini"
+          class="btn"
+          :disabled="$disabledReadonlyUserBtn() || !multipleSelection.length"
+          @click="handleExportApiDoc"
+        >
+          <span>{{ $t('packages_business_data_server_list_apIwendang') }}</span>
+        </ElButton>
         <ElButton class="btn btn-create" type="primary" size="mini" @click.stop="showDrawer()">
           <span>{{ $t('packages_business_data_server_drawer_chuangjianfuwu') }}</span>
         </ElButton>
@@ -77,13 +86,7 @@
 import { escapeRegExp } from 'lodash'
 import i18n from '@/i18n'
 
-import {
-  databaseTypesApi,
-  modulesApi,
-  metadataInstancesApi,
-  apiServerApi,
-  appApi
-} from '@tap/api'
+import { databaseTypesApi, modulesApi, metadataInstancesApi, apiServerApi, appApi } from '@tap/api'
 import { FilterBar, VTable, VEmpty } from '@tap/component'
 import Upload from '@tap/business/src/components/UploadDialog'
 
@@ -386,6 +389,10 @@ export default {
     },
     handleImport() {
       this.$refs.upload.show()
+    },
+    handleExportApiDoc() {
+      const ids = this.multipleSelection.filter(t => t.status === 'active').map(t => t.id)
+      modulesApi.apiExport(ids, this.apiServerHost)
     }
   }
 }
