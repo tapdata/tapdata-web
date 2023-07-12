@@ -128,10 +128,13 @@ export default {
           this.driverObj = null
         },
         onHighlightStarted: (element, step, options) => {
-          element.addEventListener('click', step.elementClick)
+          element?.addEventListener('click', step.elementClick)
+          if (!element) {
+            step.elementClick()
+          }
         },
         onDeselected: (element, step, options) => {
-          element.removeEventListener('click', step.elementClick)
+          element?.removeEventListener('click', step.elementClick)
         },
         popover: {
           description: options.description,
@@ -323,6 +326,7 @@ export default {
       const whiteList = ['connectionCreate']
 
       if (
+        this.subscriptionModelVisible ||
         whiteList.includes(this.$route.name) ||
         this.driverObj ||
         this.showAlarmTour ||
