@@ -23,6 +23,11 @@ export default {
     })
   },
 
+  destroyed() {
+    this.driverObj.destroy()
+    this.driverObj = null
+  },
+
   methods: {
     loopLoadAgentCount() {
       return this.$axios
@@ -100,6 +105,7 @@ export default {
         route: options.route,
         element: options.element,
         popover: {
+          progressText: options.progressText,
           description: options.description,
           showButtons: [],
           onPopoverRender: (popover, { state }) => {
@@ -128,12 +134,16 @@ export default {
           this.driverObj = null
         },
         onHighlightStarted: (element, step, options) => {
-          element.addEventListener('click', step.elementClick)
+          element?.addEventListener('click', step.elementClick)
+          if (!element) {
+            step.elementClick()
+          }
         },
         onDeselected: (element, step, options) => {
-          element.removeEventListener('click', step.elementClick)
+          element?.removeEventListener('click', step.elementClick)
         },
         popover: {
+          progressText: options.progressText,
           description: options.description,
           showButtons: [],
           onPopoverRender: (popover, { state }) => {
@@ -170,7 +180,8 @@ export default {
             type: 'menu',
             route: 'connections',
             element: '#menu-connections',
-            description: '请创建您的源数据库'
+            description: '请创建您的源数据库',
+            progressText: '1/6'
           },
           {
             type: 'button',
@@ -198,13 +209,15 @@ export default {
             type: 'menu',
             route: 'migrateList',
             element: '#menu-migrate',
-            description: '请创建您的第一个复制任务'
+            description: '请创建您的第一个复制任务',
+            progressText: '5/6'
           },
           {
             type: 'button',
             route: 'migrateList',
             element: '#task-list-create',
-            description: '点击此处创建您的第一个复制任务'
+            description: '点击此处创建您的第一个复制任务',
+            progressText: '6/6'
           }
         ]
       }
@@ -235,6 +248,7 @@ export default {
       } else {
         this.driverObj = driver({
           allowClose: false,
+          showProgress: true,
           // onDestroyed: () => {
           //   this.startingTour = false
           // },
@@ -309,7 +323,7 @@ export default {
       console.log('initAgentTour', steps) // eslint-disable-line
 
       this.driverObj = driver({
-        allowClose: false,
+        // allowClose: false,
         steps,
         onDestroyed: () => {
           this.beTouring = false
@@ -323,6 +337,7 @@ export default {
       const whiteList = ['connectionCreate']
 
       if (
+        this.subscriptionModelVisible ||
         whiteList.includes(this.$route.name) ||
         this.driverObj ||
         this.showAlarmTour ||

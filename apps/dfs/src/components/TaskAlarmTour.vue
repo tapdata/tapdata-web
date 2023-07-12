@@ -2,7 +2,15 @@
   <ElDialog :visible.sync="visible" width="480px" :close-on-click-modal="false">
     <span slot="title" class="fs-6 fw-sub font-color-dark"> 设置告警通知，实时监控任务状态 </span>
 
-    <div class="flex gap-4">
+    <el-alert
+      v-if="noEmail"
+      class="alert-primary text-primary mb-4"
+      type="info"
+      title="检测到您未绑定邮箱，请先绑定邮箱用于接收任务告警通知"
+      show-icon
+      :closable="false"
+    />
+    <div class="flex gap-4 justify-content-between">
       <div class="rounded-4 bg-secondary-100 px-4 py-2 flex align-center gap-2">
         <VIcon size="24" class="text-primary">email</VIcon>
         <span>邮件通知</span>
@@ -19,7 +27,8 @@
 
     <div slot="footer">
       <el-button @click="visible = false">{{ $t('public_button_cancel') }}</el-button>
-      <el-button type="primary" @click="gotoSettings">去设置</el-button>
+      <el-button v-if="noEmail" type="primary" @click="gotoBindEmail">绑定邮箱</el-button>
+      <el-button v-else type="primary" @click="gotoSettings">去设置</el-button>
     </div>
   </ElDialog>
 </template>
@@ -36,6 +45,12 @@ export default {
   data() {
     return {
       visible: this.value
+    }
+  },
+
+  computed: {
+    noEmail() {
+      return !this.$store.state.user.email
     }
   },
 
@@ -62,11 +77,9 @@ export default {
         driverObj.highlight({
           element: '#alarm-settings',
           onHighlightStarted: (element, step, options) => {
-            console.log('onHighlightStarted') // eslint-disable-line
             element.addEventListener('click', destroy)
           },
           onDeselected: (element, step, options) => {
-            console.log('onDeselected') // eslint-disable-line
             element.removeEventListener('click', destroy)
           },
           popover: {
@@ -79,9 +92,23 @@ export default {
           unwatch()
         })
       })
+    },
+
+    gotoBindEmail() {
+      this.visible = false
+      this.$router.push({
+        name: 'userCenter',
+        query: {
+          bind: 'email'
+        }
+      })
     }
   }
 }
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.alert-primary {
+  background: #e8f3ff;
+}
+</style>
