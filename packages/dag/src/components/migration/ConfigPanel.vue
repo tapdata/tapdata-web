@@ -21,7 +21,9 @@
       @setSchema="handleSetSchema"
     />
     <SettingPanel
+      v-if="settings.id"
       class="config-form-panel"
+      :settings="settings"
       v-show="activeType === 'settings'"
       v-on="$listeners"
       v-bind="$attrs"
@@ -53,6 +55,7 @@ export default {
   },
 
   props: {
+    settings: Object,
     onlySetting: Boolean,
     showSchemaPanel: Boolean,
     includesType: {

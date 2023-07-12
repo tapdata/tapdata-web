@@ -1,5 +1,5 @@
 <template>
-  <FormRender :form="form" :schema="schema" :scope="formScope" />
+  <FormRender class="setting-panel" :form="form" :schema="schema" :scope="formScope" />
 </template>
 
 <script>
@@ -763,16 +763,7 @@ export default observer({
                             dependencies: ['._point'],
                             fulfill: {
                               state: {
-                                value: `{{Math.ceil($deps[0] * 12) < 1 ? 1 : Math.ceil($deps[0] * 12)}}`
-                              }
-                            }
-                          },
-                          {
-                            target: 'alarmRules.0._point',
-                            effects: ['onFieldInit'],
-                            fulfill: {
-                              state: {
-                                value: `{{Math.ceil($self.value / 12) < 1 ? 1 : Math.ceil($self.value / 12)}}`
+                                value: `{{!isNaN($deps[0]) ? Math.ceil($deps[0] * 12) < 1 ? 1 : Math.ceil($deps[0] * 12): $self.value}}`
                               }
                             }
                           }
@@ -793,7 +784,17 @@ export default observer({
                           style: {
                             width: '100px'
                           }
-                        }
+                        },
+                        'x-reactions': [
+                          {
+                            dependencies: ['.point'],
+                            fulfill: {
+                              state: {
+                                value: `{{isNaN($self.value) ? Math.ceil($deps[0] / 12) < 1 ? 1 : Math.ceil($deps[0] / 12) : $self.value}}`
+                              }
+                            }
+                          }
+                        ]
                       },
                       'alarmRules.0.equalsFlag': {
                         title: i18n.t('public_time_m'),
@@ -836,16 +837,7 @@ export default observer({
                             dependencies: ['._ms'],
                             fulfill: {
                               state: {
-                                value: `{{Math.ceil($deps[0] * 1000) < 1 ? 1 : Math.ceil($deps[0] * 1000)}}`
-                              }
-                            }
-                          },
-                          {
-                            target: 'alarmRules.0._ms',
-                            effects: ['onFieldInit'],
-                            fulfill: {
-                              state: {
-                                value: `{{Math.ceil($self.value / 1000) < 1 ? 1 : Math.ceil($self.value / 1000)}}`
+                                value: `{{!isNaN($deps[0]) ? Math.ceil($deps[0] * 1000) < 1 ? 1 : Math.ceil($deps[0] * 1000) : $self.value}}`
                               }
                             }
                           }
@@ -866,7 +858,17 @@ export default observer({
                           style: {
                             width: '100px'
                           }
-                        }
+                        },
+                        'x-reactions': [
+                          {
+                            dependencies: ['.ms'],
+                            fulfill: {
+                              state: {
+                                value: `{{isNaN($self.value) ? Math.ceil($deps[0] / 1000) < 1 ? 1 : Math.ceil($deps[0] / 1000) : $self.value}}`
+                              }
+                            }
+                          }
+                        ]
                       },
                       unit: {
                         title: 's',
@@ -888,8 +890,7 @@ export default observer({
 
       form: createForm({
         disabled: this.stateIsReadonly,
-        values,
-        effects: this.useEffects
+        values
       })
     }
   },
@@ -915,17 +916,23 @@ export default observer({
     this.lazySaveAlarmConfig = debounce(this.saveAlarmConfig, 100)
   },
 
+  mounted() {
+    this.$nextTick(() => {
+      this.stateIsReadonly && this.form.setEffects(this.useEffects)
+    })
+  },
+
   methods: {
     // 绑定表单事件
     useEffects() {
-      onFieldValueChange('alarmSettings.0.open', (field, form) => {
-        console.log('onFieldValueChange')
-        this.lazySaveAlarmConfig()
+      onFieldValueChange('*(alarmSettings.*.*,alarmRules.*.*)', (field, form) => {
+        if (this.stateIsReadonly) {
+          this.lazySaveAlarmConfig()
+        }
       })
     },
 
     saveAlarmConfig() {
-      console.log('saveAlarmConfig', JSON.parse(JSON.stringify(this.form.values)))
       if (!this.form.values?.id || !this.form.values?.name) {
         return
       }
@@ -938,6 +945,13 @@ export default observer({
 })
 </script>
 <style lang="scss" scoped>
+.setting-panel {
+  ::v-deep {
+    .config-tabs.el-tabs > .el-tabs__header .el-tabs__nav-wrap {
+      padding-left: 16px !important;
+    }
+  }
+}
 .attr-panel {
   ::v-deep {
     .attr-panel-body {

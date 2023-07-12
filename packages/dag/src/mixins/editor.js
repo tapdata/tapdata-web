@@ -709,7 +709,7 @@ export default {
         return Promise.resolve()
       }
 
-      this.dataflow.id = id
+      // this.dataflow.id = id
 
       if (!first) {
         this.resetWorkspace()
