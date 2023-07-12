@@ -293,7 +293,7 @@ export default {
             label:
               specification?.chargeProvider !== 'FreeTier'
                 ? t.label
-                : this.agentDeploy !== 'selfHost'
+                : this.platform !== 'selfHost'
                 ? i18n.t('dfs_instance_createagent_mianfeishiyonggui')
                 : i18n.t('dfs_instance_utils_baoyue')
           })
@@ -447,12 +447,6 @@ export default {
     //退订
     submit() {
       const { type, priceId, currency, periodUnit } = this.selected
-      const fastDownloadUrl = window.App.$router.resolve({
-        name: 'FastDownload',
-        query: {
-          id: ''
-        }
-      })
       const agentUrl = window.App.$router.resolve({
         name: 'Instance',
         query: {
@@ -465,12 +459,9 @@ export default {
         subscribeType: type, // 订阅类型：one_time-一次订阅，recurring-连续订阅
         platform: this.platform,
         quantity: '',
-        paymentMethod: this.agentDeploy === 'aliyun' ? 'AliyunMarketCode' : 'Stripe',
-        successUrl:
-          this.agentDeploy === 'fullManagement'
-            ? location.origin + location.pathname + agentUrl.href
-            : location.origin + location.pathname + fastDownloadUrl.href,
-        cancelUrl: location.href,
+        paymentMethod: this.platform === 'aliyun' ? 'AliyunMarketCode' : 'Stripe',
+        successUrl: location.origin + location.pathname + agentUrl.href,
+        cancelUrl: location.origin + location.pathname + agentUrl.href,
         periodUnit,
         currency: this.currencyType || currency,
         subscribeItems: []
@@ -481,7 +472,7 @@ export default {
         quantity: 1, // 订阅数量，例如一次性订购2个实例时，这里填写2
         productType: 'Engine', // 产品类型：Engine,MongoDB,APIServer
         resourceId: '', // 资源ID，agent 或者 cluster id
-        agentType: this.agentDeploy === 'fullManagement' ? 'Cloud' : 'Local', // 半托管-Local，全托管-Cloud
+        agentType: this.platform === 'fullManagement' ? 'Cloud' : 'Local', // 半托管-Local，全托管-Cloud
         version: '', // 实例版本
         name: '', // 实例名称
         memorySpace: this.memorySpace,

@@ -1,5 +1,15 @@
 <template>
-  <ElDialog class="guide-dialog" :visible.sync="visible" width="1000px" :top="'5vh'" :show-close="false">
+  <ElDialog
+    class="guide-dialog"
+    :visible.sync="visible"
+    width="1000px"
+    :top="'5vh'"
+    :show-close="false"
+    :destroy-on-close="true"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+    :before-close="close"
+  >
     <div class="guide-wrap flex justify-content-center">
       <div class="nav-wrap px-6 py-6">
         <div class="guide-header font-color-dark fw-bold fs-5 mb-4 mt-4">欢迎使用Tapdata Cloud 服务</div>
@@ -44,7 +54,8 @@
             v-if="([5].includes(activeStep) && bindPhoneVisible) || ([4].includes(activeStep) && !bindPhoneVisible)"
           >
             <!--费用清单-->
-            <Details ref="details" :orderInfo="orderInfo"></Details>
+            <pay v-if="subscribeStatus === 'incomplete'" refs="pay" :subscribes="subscribes" @refresh="refresh"></pay>
+            <Details v-else ref="details" :orderInfo="orderInfo"></Details>
           </template>
           <template
             v-if="([6].includes(activeStep) && bindPhoneVisible) || ([5].includes(activeStep) && !bindPhoneVisible)"
@@ -54,6 +65,7 @@
           </template>
         </div>
         <div
+          v-if="subscribeStatus !== 'incomplete'"
           class="guide-footer flex mb-5"
           :class="[activeStep === 1 ? 'justify-content-end' : 'justify-content-between']"
         >
@@ -82,26 +94,44 @@ import Pay from './Pay.vue'
 
 export default {
   name: 'guide',
-  props: ['visible'],
+  props: ['visible', 'agent', 'subscribes', 'step'],
   components: {
     Account,
     Scenes,
     DeploymentMethod,
     Spec,
     Deploy,
-    Pay,
-    Details
+    Details,
+    Pay
   },
   data() {
     return {
-      activeStep: 1,
-      scenes: ['12'], //使用场景
+      activeStep: this.step ? this.step : 1,
+      scenes: ['Real-time synchronization of cross-cloud data'], //使用场景
       platform: 'selfHost',
       agentId: '64aa97004be8ea3b8e02e39a',
       orderId: '',
       orderInfo: '',
       bindPhoneVisible: false,
-      submitLoading: false
+      submitLoading: false,
+      subscribeId: '',
+      subscribeStatus: ''
+    }
+  },
+  mounted() {
+    //初始化第一步
+    this.close()
+  },
+  watch: {
+    step(val) {
+      this.activeStep = val
+    },
+    agent(val) {
+      this.agentId = val
+    },
+    subscribes(val) {
+      this.subscribeId = val?.id
+      this.subscribeStatus = val?.status
     }
   },
   computed: {
@@ -118,10 +148,10 @@ export default {
             title: '选择计算引擎'
           },
           {
-            title: '配置信息'
+            title: '支付结算'
           },
           {
-            title: '部署'
+            title: '计算引擎部署'
           }
         ]
       }
@@ -138,7 +168,7 @@ export default {
             title: '选择计算引擎'
           },
           {
-            title: '配置信息'
+            title: '支付结算'
           }
         ]
       }
@@ -159,9 +189,23 @@ export default {
       ]
     }
   },
+  beforeDestroy() {
+    this.close()
+  },
   methods: {
+    close() {
+      let params = {
+        installStep: this.activeStep,
+        demand: this.scenes,
+        selectAgentType: this.platform,
+        subscribe: this.subscribe,
+        agentId: this.agentId
+      }
+      this.$axios.patch('api/tcm/user', { params })
+    },
     next() {
       this.activeStep++
+      this.close()
     },
     previous() {
       this.activeStep--
@@ -216,43 +260,41 @@ export default {
     getOrderInfo() {
       this.orderInfo = this.$refs?.spec?.submit()
     },
+    //刷新支付状态
+    refresh() {
+      let filter = {
+        where: {
+          id: this.subscribes?.id
+        }
+      }
+      this.$axios.get(`api/tcm/subscribe?filter=${encodeURIComponent(JSON.stringify(filter))}`).then(data => {
+        let item = data.items || []
+        this.subscribeStatus = item?.[0]?.status
+        if (this.subscribeStatus === 'active' && item?.[0]?.platform === 'selfHost') {
+          //部署页面
+          this.activeStep = 5
+        } else if (this.subscribeStatus === 'active' && item?.[0]?.platform === 'fullManagement') {
+          this.$emit('update:visible', false)
+        }
+      })
+    },
     submitOrder() {
       this.orderInfo.email = this.$refs.details?.getEmail()
       this.$axios
         .post('api/tcm/orders/subscribeV2', this.orderInfo)
         .then(data => {
+          this.subscribe = data?.subscribe
+          this.agentId = data?.agentId
+          this.close()
           if (data.status === 'incomplete') {
             //订单需要付款
             //在线支付 打开付款页面
             window.open(data?.payUrl, '_self')
           } else {
             //订单不需要付款，只需对应跳转不同页面
-            if (this.platform === 'selfHost') {
-              //半托管-部署页面
-              this.steps = [
-                {
-                  title: '选择使用场景'
-                },
-                {
-                  title: '数据库环境'
-                },
-                {
-                  title: '选择计算引擎'
-                },
-                {
-                  title: '部署页面'
-                }
-              ]
-              this.activeStep = this.steps.length
-            } else {
-              this.finish()
-              if (this.type === 'newDialog') {
-                this.$emit('closeVisible', false)
-              }
-              this.$router.push({
-                name: 'Instance'
-              })
-            }
+            this.$router.push({
+              name: 'Instance'
+            })
           }
         })
         .catch(() => {
