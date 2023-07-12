@@ -257,10 +257,16 @@ export default {
           .split(/[?&]/)
           .find(t => t.match(/^bd_vid=/))
           ?.replace(/^bd_vid=/, '')
-        console.log('bd_vid', bd_vid)
+
+        const tp_vid = logidUrlCloud
+          .split(/[?&]/)
+          .find(t => t.match(/^tp_vid=/))
+          ?.replace(/^tp_vid=/, '')
+
         // bd_vid存到user信息中
         this.$axios.patch('api/tcm/user', {
-          bd_vid
+          bdVid: bd_vid,
+          tpVid: tp_vid
         })
 
         const conversionTypes = [
