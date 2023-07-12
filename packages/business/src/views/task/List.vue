@@ -456,7 +456,9 @@ export default {
         crontabExpressionFlag: true,
         crontabExpression: true,
         crontabScheduleMsg: true,
-        lastStartDate: true
+        lastStartDate: true,
+        shareCdcStop: true,
+        shareCdcStopMessage: true
       }
       let where = {
         syncType
