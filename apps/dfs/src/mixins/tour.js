@@ -16,7 +16,10 @@ export default {
     next()
     this.$nextTick(() => {
       this.beTouring = false
-      this.initTour()
+      const whiteList = ['connectionCreate']
+      if (!whiteList.includes(to.name)) {
+        this.initTour()
+      }
     })
   },
 
@@ -125,10 +128,13 @@ export default {
           this.driverObj = null
         },
         onHighlightStarted: (element, step, options) => {
-          element.addEventListener('click', step.elementClick)
+          element?.addEventListener('click', step.elementClick)
+          if (!element) {
+            step.elementClick()
+          }
         },
         onDeselected: (element, step, options) => {
-          element.removeEventListener('click', step.elementClick)
+          element?.removeEventListener('click', step.elementClick)
         },
         popover: {
           description: options.description,
@@ -263,8 +269,8 @@ export default {
           )
       )
       const agent = agentData.find(agent => {
-        // if (agent.tapdataAgentStatus !== 'stopped' && (agent.agentType !== 'Cloud' || !agent.publicAgent)) {
-        if (agent.agentType !== 'Cloud' || !agent.publicAgent) {
+        if (agent.tapdataAgentStatus !== 'stopped' && (agent.agentType !== 'Cloud' || !agent.publicAgent)) {
+          // if (agent.agentType !== 'Cloud' || !agent.publicAgent) {
           return true
         }
       })
@@ -320,6 +326,7 @@ export default {
       const whiteList = ['connectionCreate']
 
       if (
+        this.subscriptionModelVisible ||
         whiteList.includes(this.$route.name) ||
         this.driverObj ||
         this.showAlarmTour ||

@@ -201,8 +201,8 @@
                 <ElButton
                   name="restart"
                   size="mini"
-                  v-if="item.agentType === 'Local'"
-                  :loading="item.btnLoading.delete && !(restartBtnDisabled(item) || $disabledReadonlyUserBtn())"
+                  v-if="item.agentType === 'Local' && !restartBtnDisabled(item)"
+                  :loading="item.btnLoading.delete"
                   @click="handleRestart(item)"
                   >{{ $t('dfs_instance_instance_zhongqi') }}</ElButton
                 >

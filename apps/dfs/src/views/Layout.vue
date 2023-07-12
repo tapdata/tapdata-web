@@ -104,8 +104,14 @@
     ></ConnectionTypeDialog>
     <!--    <AgentGuideDialog :visible.sync="agentGuideDialog" @openAgentDownload="openAgentDownload"></AgentGuideDialog>-->
     <AgentDownloadModal :visible.sync="agentDownload.visible" :source="agentDownload.data"></AgentDownloadModal>
-    <SubscriptionModelDialog :visible.sync="subscriptionModelVisible" :showClose="false"></SubscriptionModelDialog>
-    <BindPhone :visible.sync="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>
+    <AgentGuide
+      :visible.sync="subscriptionModelVisible"
+      :step="step"
+      :agent="agentId"
+      :subscribes="subscribes"
+      :showClose="false"
+    ></AgentGuide>
+    <!--    <BindPhone :visible.sync="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>-->
     <!--    <CheckLicense :visible.sync="aliyunMaketVisible" :user="userInfo"></CheckLicense>-->
   </ElContainer>
 </template>
@@ -119,7 +125,7 @@ import AgentDownloadModal from '@/views/agent-download/AgentDownloadModal'
 // import AgentGuideDialog from '@/views/agent-download/AgentGuideDialog'
 import BindPhone from '@/views/user/components/BindPhone'
 import Cookie from '@tap/shared/src/cookie'
-import SubscriptionModelDialog from '@/views/agent-download/SubscriptionModelDialog'
+import AgentGuide from '@/components/guide/index'
 import tour from '@/mixins/tour'
 import TaskAlarmTour from '@/components/TaskAlarmTour'
 
@@ -131,7 +137,7 @@ export default {
     ConnectionTypeDialog,
     AgentDownloadModal,
     BindPhone,
-    SubscriptionModelDialog,
+    AgentGuide,
     PageHeader,
     TaskAlarmTour
   },
@@ -193,7 +199,11 @@ export default {
       userInfo: '',
       // aliyunMaketVisible: false,
       isDemoEnv: document.domain === 'demo.cloud.tapdata.net',
-      isDomesticStation: true
+      isDomesticStation: true,
+      //新人引导
+      step: 1,
+      agentId: '',
+      subscribes: {}
     }
   },
   created() {
@@ -326,9 +336,9 @@ export default {
       this.$router.back()
     },
     checkDialogState() {
-      if (this.checkWechatPhone()) {
-        return
-      }
+      // if (this.checkWechatPhone()) {
+      //   return
+      // }
       this.checkAgentInstall()
     },
     // 检查微信用户，是否绑定手机号
@@ -343,9 +353,28 @@ export default {
       return this.bindPhoneVisible
     },
     // 检查是否有安装过agent
-    checkAgentInstall() {
+    async checkAgentInstall() {
+      let subscribe = await this.$axios.get(`api/tcm/subscribe`)
       this.$axios.get('api/tcm/agent').then(data => {
-        if (data?.total === 0) {
+        //检查是否有待部署状态
+        let items = data?.items || []
+        let subItems = subscribe?.items || []
+        let isUnDepaly = items.find(i => i.status === 'Creating' && i.agentType === 'Local')
+        if (isUnDepaly) {
+          this.step = 5
+          this.agentId = isUnDepaly?.id
+        }
+        let isUnPay = subItems.find(i => i.status === 'incomplete')
+        if (isUnPay) {
+          this.step = 4
+          this.subscribes = isUnPay
+        }
+
+        //订阅0 Agent 0  完全新人引导
+        //订阅不为0 查找是否有待部署状态
+        //Agent不为0 查找是否有待部署状态
+        //是否有未支付的订阅
+        if ((data?.total === 0 && subscribe?.total === 0) || isUnDepaly || isUnPay) {
           this.subscriptionModelVisible = true
         }
       })
