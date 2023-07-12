@@ -26,7 +26,7 @@
           v-readonlybtn="'SYNC_job_export'"
           size="mini"
           class="btn"
-          :disabled="$disabledReadonlyUserBtn() || !multipleSelection.length"
+          :disabled="$disabledReadonlyUserBtn() || !multipleSelectionActive.length"
           @click="handleExportApiDoc"
         >
           <span>{{ $t('packages_business_data_server_list_apIwendang') }}</span>
@@ -192,6 +192,10 @@ export default {
           slotName: 'operation'
         }
       ]
+    },
+    // 选中的已发布数据
+    multipleSelectionActive() {
+      return this.multipleSelection.filter(t => t.status === 'active')
     }
   },
   watch: {
@@ -391,7 +395,7 @@ export default {
       this.$refs.upload.show()
     },
     handleExportApiDoc() {
-      const ids = this.multipleSelection.filter(t => t.status === 'active').map(t => t.id)
+      const ids = this.multipleSelectionActive.map(t => t.id)
       modulesApi.apiExport(ids, this.apiServerHost)
     }
   }
