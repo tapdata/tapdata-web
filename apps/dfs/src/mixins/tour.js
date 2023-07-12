@@ -8,6 +8,13 @@ export default {
       showAlarmTour: false
     }
   },
+
+  computed: {
+    userId() {
+      return this.$store.state.user.id
+    }
+  },
+
   created() {
     this.loopLoadAgentCount()
   },
@@ -239,6 +246,18 @@ export default {
       return steps
     },
 
+    setComplete() {
+      localStorage[`allStepsComplete-${this.userId}`] = Date.now()
+    },
+
+    hasComplete() {
+      return !!localStorage[`allStepsComplete-${this.userId}`]
+    },
+
+    hasCompleteAlarm() {
+      return !!localStorage[`completeAlarm-${this.userId}`]
+    },
+
     async initDriver() {
       this.loadingStep = true
       const steps = await this.getSteps()
@@ -246,7 +265,7 @@ export default {
 
       if (!steps.length) {
         // 满足所有步骤完成的条件
-        localStorage.allStepsComplete = Date.now()
+        this.setComplete()
         // await this.initAlarmTour()
       } else {
         this.driverObj = driver({
@@ -262,7 +281,7 @@ export default {
     },
 
     async initAlarmTour() {
-      if (this.$route.name !== 'migrateList' || localStorage.showAlarmTour) return
+      if (this.$route.name !== 'migrateList' || this.hasCompleteAlarm()) return
       const runningCount = await this.getTaskRunningCount()
 
       if (runningCount > 0) {
@@ -351,7 +370,7 @@ export default {
       if (this.agentRunningCount) {
         // 有可用的agent
         // await this.initDriver()
-        if (localStorage.allStepsComplete) {
+        if (this.hasComplete()) {
           await this.initAlarmTour()
         } else {
           await this.initDriver()

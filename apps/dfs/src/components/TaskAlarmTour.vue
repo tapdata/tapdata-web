@@ -26,7 +26,7 @@
     </div>
 
     <div slot="footer">
-      <el-button @click="visible = false">{{ $t('public_button_cancel') }}</el-button>
+      <el-button @click="cancel">{{ $t('public_button_cancel') }}</el-button>
       <el-button v-if="noEmail" type="primary" @click="gotoBindEmail">绑定邮箱</el-button>
       <el-button v-else type="primary" @click="gotoSettings">去设置</el-button>
     </div>
@@ -49,6 +49,9 @@ export default {
   },
 
   computed: {
+    userId() {
+      return this.$store.state.user.id
+    },
     noEmail() {
       return !this.$store.state.user.email
     }
@@ -65,10 +68,14 @@ export default {
   },
 
   methods: {
+    cancel() {
+      localStorage[`completeAlarm-${this.userId}`] = Date.now()
+      this.visible = false
+    },
     gotoSettings() {
       const name = 'SystemNotice'
       this.visible = false
-      localStorage.showAlarmTour = Date.now()
+      localStorage[`completeAlarm-${this.userId}`] = Date.now()
       this.$router.push({ name }).then(() => {
         let driverObj = driver()
         const destroy = () => {
