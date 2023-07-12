@@ -187,7 +187,8 @@ export default {
             type: 'button',
             route: 'connections',
             element: '#connection-list-create',
-            description: '点击此处创建您的源数据库'
+            description: '点击此处创建您的源数据库',
+            progressText: '2/6'
           }
         ],
         targetConnection: [
@@ -195,13 +196,15 @@ export default {
             type: 'menu',
             route: 'connections',
             element: '#menu-connections',
-            description: '请创建您的目标数据库'
+            description: '请创建您的目标数据库',
+            progressText: '3/6'
           },
           {
             type: 'button',
             route: 'connections',
             element: '#connection-list-create',
-            description: '点击此处创建您的目标数据库'
+            description: '点击此处创建您的目标数据库',
+            progressText: '4/6'
           }
         ],
         task: [
@@ -264,7 +267,6 @@ export default {
 
       if (runningCount > 0) {
         this.showAlarmTour = true
-        localStorage.showAlarmTour = Date.now()
       }
     },
 

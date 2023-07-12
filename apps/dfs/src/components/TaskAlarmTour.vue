@@ -68,6 +68,7 @@ export default {
     gotoSettings() {
       const name = 'SystemNotice'
       this.visible = false
+      localStorage.showAlarmTour = Date.now()
       this.$router.push({ name }).then(() => {
         let driverObj = driver()
         const destroy = () => {
