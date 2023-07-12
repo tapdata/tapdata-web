@@ -263,8 +263,8 @@ export default {
           )
       )
       const agent = agentData.find(agent => {
-        // if (agent.tapdataAgentStatus !== 'stopped' && (agent.agentType !== 'Cloud' || !agent.publicAgent)) {
-        if (agent.agentType !== 'Cloud' || !agent.publicAgent) {
+        if (agent.tapdataAgentStatus !== 'stopped' && (agent.agentType !== 'Cloud' || !agent.publicAgent)) {
+        // if (agent.agentType !== 'Cloud' || !agent.publicAgent) {
           return true
         }
       })
