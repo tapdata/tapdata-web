@@ -109,6 +109,7 @@
       :step="step"
       :agent="agentId"
       :subscribes="subscribes"
+      :isUnDepaly="isUnDepaly"
       :showClose="false"
     ></AgentGuide>
     <!--    <BindPhone :visible.sync="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>-->
@@ -203,6 +204,7 @@ export default {
       //新人引导
       step: 1,
       agentId: '',
+      isUnDepaly: false,
       subscribes: {}
     }
   },
@@ -358,11 +360,17 @@ export default {
       this.$axios.get('api/tcm/agent').then(data => {
         //检查是否有待部署状态
         let items = data?.items || []
+        //是否有运行中的实例
+        let isRunning = items.find(i => i.status === 'Running')
+        if (isRunning) {
+          return
+        }
         let subItems = subscribe?.items || []
         let isUnDepaly = items.find(i => i.status === 'Creating' && i.agentType === 'Local')
         if (isUnDepaly) {
           this.step = 5
           this.agentId = isUnDepaly?.id
+          this.isUnDepaly = true
         }
         let isUnPay = subItems.find(i => i.status === 'incomplete')
         if (isUnPay) {

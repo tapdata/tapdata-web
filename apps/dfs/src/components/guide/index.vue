@@ -16,7 +16,12 @@
         <div class="guide-desc font-color-dark">
           Tapdata Cloud 专业的数据集成与服务平台, 在开始使用之前, 我们需要完成以下使用引导。
         </div>
-        <el-steps class="guide-steps bg-transparent mx-auto" :active="activeStep" direction="vertical">
+        <el-steps
+          class="guide-steps bg-transparent mx-auto"
+          :active="activeStep"
+          style="height: 300px"
+          direction="vertical"
+        >
           <el-step v-for="(step, i) in steps" :key="i" :title="step.title">
             <span slot="icon">{{ i + 1 }}</span>
           </el-step>
@@ -51,21 +56,28 @@
             <Spec ref="spec" :platform="platform" @changePlatform="changePlatform"></Spec>
           </template>
           <template
-            v-if="([5].includes(activeStep) && bindPhoneVisible) || ([4].includes(activeStep) && !bindPhoneVisible)"
+            v-if="
+              (([5].includes(activeStep) && bindPhoneVisible) || ([4].includes(activeStep) && !bindPhoneVisible)) &&
+              !isUnDepaly
+            "
           >
             <!--费用清单-->
             <pay v-if="subscribeStatus === 'incomplete'" refs="pay" :subscribes="subscribes" @refresh="refresh"></pay>
-            <Details v-else ref="details" :orderInfo="orderInfo"></Details>
+            <Details v-else ref="details" :orderInfo="orderInfo" :email="email"></Details>
           </template>
           <template
-            v-if="([6].includes(activeStep) && bindPhoneVisible) || ([5].includes(activeStep) && !bindPhoneVisible)"
+            v-if="
+              ([6].includes(activeStep) && bindPhoneVisible) ||
+              ([5].includes(activeStep) && !bindPhoneVisible) ||
+              isUnDepaly
+            "
           >
             <!--部署实例-->
             <Deploy :agentId="agentId"></Deploy>
           </template>
         </div>
         <div
-          v-if="subscribeStatus !== 'incomplete'"
+          v-if="subscribeStatus !== 'incomplete' && !isUnDepaly"
           class="guide-footer flex mb-5"
           :class="[activeStep === 1 ? 'justify-content-end' : 'justify-content-between']"
         >
@@ -94,7 +106,7 @@ import Pay from './Pay.vue'
 
 export default {
   name: 'guide',
-  props: ['visible', 'agent', 'subscribes', 'step'],
+  props: ['visible', 'agent', 'subscribes', 'step', 'isUnDepaly'],
   components: {
     Account,
     Scenes,
@@ -115,11 +127,14 @@ export default {
       bindPhoneVisible: false,
       submitLoading: false,
       subscribeId: '',
-      subscribeStatus: ''
+      subscribeStatus: '',
+      email: ''
     }
   },
   mounted() {
     //初始化第一步
+    this.email = window.__USER_INFO__.email
+    this.checkWechatPhone()
     this.close()
   },
   watch: {
@@ -173,6 +188,29 @@ export default {
         ]
       }
 
+      // if (this.bindPhoneVisible && this.platform === 'selfHost') {
+      //   return [
+      //     {
+      //       title: '账号安全绑定'
+      //     },
+      //     {
+      //       title: '选择使用场景'
+      //     },
+      //     {
+      //       title: '数据库环境'
+      //     },
+      //     {
+      //       title: '选择计算引擎'
+      //     },
+      //     {
+      //       title: '支付结算'
+      //     },
+      //     {
+      //       title: '计算引擎部署'
+      //     }
+      //   ]
+      // }
+
       return [
         {
           title: '账号安全绑定'
@@ -185,6 +223,9 @@ export default {
         },
         {
           title: '选择计算引擎'
+        },
+        {
+          title: '支付结算'
         }
       ]
     }
@@ -213,8 +254,8 @@ export default {
     //确认提交
     submitConfirm() {
       if (
-        (this.activeStep === this.steps?.length && this.platform === 'fullManagement') ||
-        (this.activeStep === this.steps?.length - 1 && this.platform === 'selfHost')
+        (this.activeStep === this.steps?.length && (this.platform === 'fullManagement' || this.bindPhoneVisible)) ||
+        (this.activeStep === this.steps?.length - 1 && this.platform === 'selfHost' && !this.bindPhoneVisible)
       ) {
         //最后一步提交支付
         this.submitOrder()
@@ -230,6 +271,11 @@ export default {
           break
         case 4:
           if (!this.bindPhoneVisible) {
+            this.getOrderInfo()
+          }
+          break
+        case 5:
+          if (this.bindPhoneVisible) {
             this.getOrderInfo()
           }
           break
@@ -279,7 +325,7 @@ export default {
       })
     },
     submitOrder() {
-      this.orderInfo.email = this.$refs.details?.getEmail()
+      this.orderInfo.email = this.email
       this.$axios
         .post('api/tcm/orders/subscribeV2', this.orderInfo)
         .then(data => {
@@ -292,6 +338,7 @@ export default {
             window.open(data?.payUrl, '_self')
           } else {
             //订单不需要付款，只需对应跳转不同页面
+            this.$emit('update:visible', false)
             this.$router.push({
               name: 'Instance'
             })

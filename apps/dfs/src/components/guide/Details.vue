@@ -5,13 +5,10 @@ import { getPaymentMethod, getSpec } from '../../views/instance/utils'
 export default {
   name: 'Pay',
   components: { VTable },
-  props: ['isCard', 'orderInfo'],
+  props: ['isCard', 'orderInfo', 'email'],
   data() {
     return {
       order: [],
-      form: {
-        email: ''
-      },
       columns: [
         {
           label: i18n.t('dfs_order_list_dingyueleixing'),
@@ -44,11 +41,8 @@ export default {
     }
   },
   mounted() {
-    this.form.email = window.__USER_INFO__.email
     //格式化items
-    let subscribeItems = this.orderInfo?.subscribeItems
-    console.log(subscribeItems)
-    this.subscribeItems = subscribeItems
+    this.subscribeItems = this.orderInfo?.subscribeItems
   },
   methods: {
     getEmailRules() {
@@ -69,9 +63,6 @@ export default {
           resolve(valid)
         })
       })
-    },
-    getEmail() {
-      return this.form.email
     }
   }
 }
@@ -84,9 +75,9 @@ export default {
     </div>
     <div :class="{ card: isCard }">
       <p class="mt-4 mb-2">{{ $t('dfs_instance_create_jieshouzhangdande') }}</p>
-      <ElForm :model="form" ref="from">
+      <ElForm ref="from">
         <ElFormItem prop="email" :rules="getEmailRules()">
-          <ElInput v-model="form.email" :placeholder="$t('dfs_instance_create_yongyujieshoumei')"></ElInput>
+          <ElInput v-model="email" :placeholder="$t('dfs_instance_create_yongyujieshoumei')"></ElInput>
         </ElFormItem>
       </ElForm>
     </div>
@@ -104,7 +95,7 @@ export default {
         </ElRadio>
       </ElRadioGroup>
     </div>
-    <ul class="mt-4" :class="{ card: isCard }">
+    <ul class="mt-4" :class="{ card: isCard }" v-if="orderInfo">
       <li v-if="orderInfo.priceOff">
         <span class="mr-4">95折</span>：<span class="ml-2"> -{{ orderInfo.priceOff }}</span>
       </li>
