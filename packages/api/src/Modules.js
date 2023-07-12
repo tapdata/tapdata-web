@@ -55,7 +55,7 @@ export default class Modules extends Http {
   }
 
   apiExport(ids, ip) {
-    const href = this.url + `/batch/load?id=${ids.join('&id=')}&access_token=${Cookie.get('access_token')}&ip=${ip}`
+    const href = this.url + `/api/load?id=${ids.join('&id=')}&access_token=${Cookie.get('access_token')}&ip=${ip}`
     window.open(href)
   }
 }
