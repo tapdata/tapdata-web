@@ -33,6 +33,14 @@
         </template>
       </ElTooltip>
     </template>
+    <template v-if="task.shareCdcStop">
+      <ElTooltip placement="top" popper-class="agent-tooltip__popper" :visible-arrow="false" effect="light">
+        <VIcon size="16" class="ml-2 color-warning">warning</VIcon>
+        <template #content>
+          <div class="font-color-dark">{{ task.shareCdcStopMessage }}</div>
+        </template>
+      </ElTooltip>
+    </template>
 
     <template v-if="errorCause && task.status === 'error'">
       <VIcon @click="showErrorCause = true" size="16" class="ml-2 color-danger">question-circle</VIcon>

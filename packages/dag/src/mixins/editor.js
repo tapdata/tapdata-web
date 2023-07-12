@@ -650,6 +650,8 @@ export default {
       this.$set(this.dataflow, 'startTime', data.startTime)
       this.$set(this.dataflow, 'lastStartDate', data.lastStartDate)
       this.$set(this.dataflow, 'pingTime', data.pingTime)
+      this.$set(this.dataflow, 'shareCdcStop', data.shareCdcStop)
+      this.$set(this.dataflow, 'shareCdcStopMessage', data.shareCdcStopMessage)
       // 前端不关心的属性
       this.dataflow.attrs = data.attrs
 
@@ -2029,6 +2031,8 @@ export default {
           this.dataflow.lastStartDate = data.lastStartDate
           this.dataflow.startTime = data.startTime
           this.dataflow.pingTime = data.pingTime
+          this.dataflow.shareCdcStop = data.shareCdcStop
+          this.dataflow.shareCdcStopMessage = data.shareCdcStopMessage
           if (data.status === 'edit') data.btnDisabled.start = false // 任务编辑中，在编辑页面可以启动
           Object.assign(this.dataflow.disabledData, data.btnDisabled)
 
