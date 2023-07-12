@@ -899,7 +899,7 @@ export default observer({
                     }
                   },
                   'alarmSettings.4.open': {
-                    title: '定期调度任务异常告警',
+                    title: i18n.t('packages_dag_migration_settingpanel_dingqidiaoduren'),
                     type: 'boolean',
                     default: true,
                     'x-editable': true,
@@ -920,7 +920,7 @@ export default observer({
                       {
                         fulfill: {
                           state: {
-                            display: `{{$values.type === 'initial_sync' && $values.crontabExpressionFlag}}`
+                            visible: `{{$values.type === 'initial_sync' && $values.crontabExpressionFlag}}`
                           }
                         }
                       }
@@ -940,7 +940,7 @@ export default observer({
                       {
                         fulfill: {
                           state: {
-                            display: `{{$values.type === 'initial_sync' && $values.crontabExpressionFlag}}`
+                            visible: `{{$values.type === 'initial_sync' && $values.crontabExpressionFlag}}`
                           }
                         }
                       }
@@ -991,7 +991,7 @@ export default observer({
                         ]
                       },
                       unit: {
-                        title: '分钟，任务未自动调度运行时进行告警',
+                        title: i18n.t('packages_dag_migration_settingpanel_fenzhongrenwuwei'),
                         type: 'void',
                         default: 0,
                         'x-decorator': 'FormItem',
@@ -1004,7 +1004,7 @@ export default observer({
                       {
                         fulfill: {
                           state: {
-                            display: `{{$values.type === 'initial_sync' && $values.crontabExpressionFlag}}`
+                            visible: `{{$values.type === 'initial_sync' && $values.crontabExpressionFlag}}`
                           }
                         }
                       }

@@ -623,5 +623,8 @@ export default {
   packages_dag_config_datasource: '数据源专属配置',
   packages_dag_config_data_write: '数据写入配置',
   packages_dag_config_incremental_mode: '增量模式配置',
-  packages_dag_config_data_filter: '数据过滤配置'
+  packages_dag_config_data_filter: '数据过滤配置',
+  packages_dag_migration_settingpanel_fenzhongrenwuwei: '分钟，任务未自动调度运行时进行告警',
+  packages_dag_migration_settingpanel_dingqidiaoduren: '定期调度任务异常告警',
+  packages_dag_src_editor_leixingguolu: '类型过滤'
 }

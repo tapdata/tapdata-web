@@ -663,5 +663,9 @@ export default {
   packages_dag_config_datasource: 'Data Source',
   packages_dag_config_data_write: 'Data Write',
   packages_dag_config_incremental_mode: 'Incremental Mode',
-  packages_dag_config_data_filter: 'Data Filter'
+  packages_dag_config_data_filter: 'Data Filter',
+  packages_dag_migration_settingpanel_fenzhongrenwuwei:
+    'Minutes, when the task is not automatically scheduled to run, an alarm will be issued',
+  packages_dag_migration_settingpanel_dingqidiaoduren: 'Regularly scheduled task abnormal alarm',
+  packages_dag_src_editor_leixingguolu: 'Type Filter'
 }

@@ -610,5 +610,8 @@ export default {
   packages_dag_nodes_database_jinwuzhujianbiao: '僅無主鍵表',
   packages_dag_nodes_database_jinyouzhujianbiao: '僅有主鍵表',
   packages_dag_nodes_database_biaoxianshi: '可選擇的表範圍',
-  packages_dag_nodes_database_xuanzeyaoguolvdiaode: '選擇要過濾掉的字段類型'
+  packages_dag_nodes_database_xuanzeyaoguolvdiaode: '選擇要過濾掉的字段類型',
+  packages_dag_migration_settingpanel_fenzhongrenwuwei: '分鐘，任務未自動調度運行時進行告警',
+  packages_dag_migration_settingpanel_dingqidiaoduren: '定期調度任務異常告警',
+  packages_dag_src_editor_leixingguolu: '類型過濾'
 }
