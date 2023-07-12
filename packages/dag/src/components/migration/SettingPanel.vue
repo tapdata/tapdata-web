@@ -701,7 +701,7 @@ export default observer({
                     'x-reactions': ['{{useAsyncOptions(loadAlarmChannels)}}']
                   },
                   'alarmSettings.2.open': {
-                    title: i18n.t('packages_dag_migration_alarmpanel_renwuquanliangwan'),
+                    title: i18n.t('packages_dag_migration_alarmpanel_renwuzengliangkai'),
                     type: 'boolean',
                     default: true,
                     'x-editable': true,
@@ -723,7 +723,7 @@ export default observer({
                     'x-reactions': ['{{useAsyncOptions(loadAlarmChannels)}}']
                   },
                   'alarmSettings.3.open': {
-                    title: i18n.t('packages_dag_migration_alarmpanel_renwuquanliangwan'),
+                    title: i18n.t('packages_dag_migration_alarmpanel_renwuzengliangyan'),
                     type: 'boolean',
                     default: true,
                     'x-editable': true,
@@ -918,7 +918,7 @@ export default observer({
 
   mounted() {
     this.$nextTick(() => {
-      this.stateIsReadonly && this.form.setEffects(this.useEffects)
+      !this.stateIsReadonly && this.form.setEffects(this.useEffects)
     })
   },
 
@@ -926,7 +926,7 @@ export default observer({
     // 绑定表单事件
     useEffects() {
       onFieldValueChange('*(alarmSettings.*.*,alarmRules.*.*)', (field, form) => {
-        if (this.stateIsReadonly) {
+        if (!this.stateIsReadonly) {
           this.lazySaveAlarmConfig()
         }
       })
