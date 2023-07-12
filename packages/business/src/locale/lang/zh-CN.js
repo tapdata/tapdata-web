@@ -602,6 +602,7 @@ export default {
   packages_business_setting_alarmnotification_dangrenwuyudao: '当任务遇到错误时',
   packages_business_setting_alarmnotification_dangrenwustop: 'Agent服务停止时',
   packages_business_setting_alarmnotification_dangrenwuuP: 'Agent服务启动时',
+  packages_business_setting_alarmnotification_dangdingqidiaodu: '当定期调度任务调度时间超过阈值时',
   packages_business_setting_alarmnotification_msshigaojing: 's 时告警',
   packages_business_setting_alarmnotification_lianxu: '连续',
   packages_business_setting_alarmnotification_cichugaojinggui:

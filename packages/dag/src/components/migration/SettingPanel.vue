@@ -640,6 +640,15 @@ export default observer({
                         notify: ['SYSTEM', 'EMAIL'],
                         interval: 300,
                         unit: 'SECOND'
+                      },
+                      {
+                        type: 'TASK',
+                        open: true,
+                        key: 'TASK_REGULAR_SCHEDULING',
+                        sort: 7,
+                        notify: ['SYSTEM'],
+                        interval: 300,
+                        unit: 'SECOND'
                       }
                     ]
                   },
@@ -652,6 +661,14 @@ export default observer({
                         equalsFlag: 1,
                         ms: 60000,
                         _point: 5,
+                        _ms: 60
+                      },
+                      {
+                        key: 'TASK_REGULAR_SCHEDULING',
+                        point: 120,
+                        equalsFlag: 1,
+                        ms: 60000,
+                        _point: 10,
                         _ms: 60
                       }
                     ]
@@ -880,6 +897,118 @@ export default observer({
                         }
                       }
                     }
+                  },
+                  'alarmSettings.4.open': {
+                    title: '定期调度任务异常告警',
+                    type: 'boolean',
+                    default: true,
+                    'x-editable': true,
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Switch',
+                    'x-component-props': {
+                      onChange: `{{val=>(val && !$values.alarmSettings[4].notify.length && ($values.alarmSettings[4].notify=["SYSTEM"]))}}`
+                    },
+                    'x-reactions': [
+                      {
+                        target: 'alarmRules.0.*',
+                        fulfill: {
+                          state: {
+                            disabled: `{{!$self.value}}`
+                          }
+                        }
+                      },
+                      {
+                        fulfill: {
+                          state: {
+                            display: `{{$values.type === 'initial_sync' && $values.crontabExpressionFlag}}`
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  'alarmSettings.4.notify': {
+                    type: 'array',
+                    'x-editable': true,
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Checkbox.Group',
+                    'x-component-props': {
+                      onChange: `{{val=>(!val.length && ($values.alarmSettings[4].open=false))}}`
+                    },
+                    default: ['SYSTEM', 'EMAIL'],
+                    'x-reactions': [
+                      '{{useAsyncOptions(loadAlarmChannels)}}',
+                      {
+                        fulfill: {
+                          state: {
+                            display: `{{$values.type === 'initial_sync' && $values.crontabExpressionFlag}}`
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  space1: {
+                    type: 'void',
+                    'x-component': 'Space',
+                    properties: {
+                      'alarmRules.1.point': {
+                        type: 'number',
+                        'x-reactions': [
+                          {
+                            dependencies: ['._point'],
+                            fulfill: {
+                              state: {
+                                value: `{{!isNaN($deps[0]) ? Math.ceil($deps[0] * 12) < 1 ? 1 : Math.ceil($deps[0] * 12): $self.value}}`
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      'alarmRules.1._point': {
+                        title: i18n.t('packages_dag_migration_alarmpanel_lianxu'),
+                        type: 'number',
+                        'x-editable': true,
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          layout: 'horizontal'
+                        },
+                        'x-component': 'InputNumber',
+                        'x-component-props': {
+                          min: 1,
+                          precision: 0,
+                          style: {
+                            width: '100px'
+                          }
+                        },
+                        'x-reactions': [
+                          {
+                            dependencies: ['.point'],
+                            fulfill: {
+                              state: {
+                                value: `{{isNaN($self.value) ? Math.ceil($deps[0] / 12) < 1 ? 1 : Math.ceil($deps[0] / 12) : $self.value}}`
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      unit: {
+                        title: '分钟，任务未自动调度运行时进行告警',
+                        type: 'void',
+                        default: 0,
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          layout: 'horizontal'
+                        }
+                      }
+                    },
+                    'x-reactions': [
+                      {
+                        fulfill: {
+                          state: {
+                            display: `{{$values.type === 'initial_sync' && $values.crontabExpressionFlag}}`
+                          }
+                        }
+                      }
+                    ]
                   }
                 }
               }
