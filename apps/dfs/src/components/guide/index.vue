@@ -259,7 +259,7 @@ export default {
         this.submitOrder()
         return
       }
-      if (this.bindPhoneVisible) {
+      if (this.bindPhoneVisible && this.activeStep === 1) {
         this.bindPhoneConfirm(res)
         return
       }
