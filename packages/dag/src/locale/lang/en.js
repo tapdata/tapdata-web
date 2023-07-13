@@ -663,5 +663,7 @@ export default {
   packages_dag_config_datasource: 'Data Source',
   packages_dag_config_data_write: 'Data Write',
   packages_dag_config_incremental_mode: 'Incremental Mode',
-  packages_dag_config_data_filter: 'Data Filter'
+  packages_dag_config_data_filter: 'Data Filter',
+  packages_dag_src_editor_leixingguolu: 'Type Filter',
+  packages_dag_src_editor_date_processor_field_list: 'Fields affected by operations'
 }
