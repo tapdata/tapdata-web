@@ -1083,6 +1083,7 @@ export default {
               item.source.databaseType = sourceDatabaseType
               item.source.connectionId = `${source}/${sourceConnectionId}`
               item.source.connectionName = `${sourceName} / ${sourceConnectionName}`
+              item.source.currentLabel = `${sourceName} / ${sourceConnectionName}`
               item.source.table = ge // findTable.original_name
               item.source.capabilities = capabilitiesMap[sourceConnectionId]
               // 填充target
@@ -1091,6 +1092,7 @@ export default {
               item.target.databaseType = targetDatabaseType
               item.target.connectionId = `${target}/${targetConnectionId}`
               item.target.connectionName = `${targetName} / ${targetConnectionName}`
+              item.target.currentLabel = `${targetName} / ${targetConnectionName}`
               item.target.table = tableNameRelation[ge] // findTargetTable.original_name
               item.target.capabilities = capabilitiesMap[targetConnectionId]
 
