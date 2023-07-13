@@ -333,7 +333,9 @@ export default {
           this.$emit('closeVisible')
           this.$router.push({
             name: 'pay',
-            id: data?.id
+            query: {
+              id: data?.id
+            }
           })
           //刷新页面
           this.$emit('closeVisible')
