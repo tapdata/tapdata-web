@@ -232,10 +232,10 @@ export default {
           type: 'js_processor',
           beta: true
         },
-        {
-          name: 'Python',
-          type: 'python_processor'
-        },
+        // {
+        //   name: 'Python',
+        //   type: 'python_processor'
+        // },
         {
           name: 'Row Filter',
           type: 'row_filter_processor'
