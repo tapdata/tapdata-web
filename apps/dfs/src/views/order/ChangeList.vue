@@ -34,6 +34,10 @@ export default {
         {
           label: i18n.t('dfs_user_center_jine'),
           prop: 'priceLabel'
+        },
+        {
+          label: i18n.t('public_operation'),
+          slotName: 'operation'
         }
       ]
     }
@@ -48,7 +52,7 @@ export default {
         this.changeList = (data?.items || []).map(it => {
           it.specLabel = getSpec(it.subscribeItems[0].spec) || '-'
           it.createTime = dayjs(it.createAt).format('YYYY-MM-DD HH:mm:ss')
-          it.priceLabel = this.formatterPrice('cny', it.subscribeItems[0].amount)
+          it.priceLabel = this.formatterPrice(it.subscribe.currency, it.subscribeItems[0].amount)
           return it
         })
       })
@@ -65,6 +69,15 @@ export default {
           maximumFractionDigits: 2
         })
       )
+    },
+
+    openPay(row) {
+      this.$router.push({
+        name: 'pay',
+        query: {
+          id: row.id
+        }
+      })
     }
   }
 }
@@ -82,6 +95,9 @@ export default {
     >
       <template #statusLabel="{ row }">
         <StatusTag type="tag" :status="row.status" default-status="Stopped" target="order"></StatusTag>
+      </template>
+      <template #operation="{ row }">
+        <ElButton :disabled="row.status !== 'incomplete'" type="text" @click="openPay(row)">支付</ElButton>
       </template>
       <div class="mt-8" slot="empty">
         <VIcon size="120">no-data-color</VIcon>
