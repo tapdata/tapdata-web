@@ -196,6 +196,11 @@ export default {
     subscribes(val) {
       this.subscribeId = val?.id
       this.subscribeStatus = val?.status
+    },
+    isUnDeploy(val) {
+      if (val) {
+        this.getSessionStorage()
+      }
     }
   },
   beforeDestroy() {
@@ -252,7 +257,7 @@ export default {
             title: '账号安全绑定'
           },
           {
-            key: 'Account',
+            key: 'Scenes',
             title: '确定使用场景'
           },
           {
@@ -299,13 +304,16 @@ export default {
       } else if (step.key === 'Pay') {
         //当前是支付页面-提交支付
         this.submitOrder()
+        return
       } else {
         this.getOrderInfo()
       }
       if (this.bindPhoneVisible && this.activeStep === 1) {
-        res?.()
-        this.next()
-        //this.bindPhoneConfirm(res)
+        this.bindPhoneConfirm(res)
+        return
+      }
+      if (step.key === 'Scenes' && (!this.scenes || this.scenes?.length === 0)) {
+        this.$message.error('请选择您想通过本产品完成您的什么需求呢？')
         return
       }
       this.next()
@@ -368,11 +376,7 @@ export default {
       this.bindPhoneVisible =
         ['basic:email', 'basic:email-code', 'social:wechatmp-qrcode'].includes(user?.registerSource) && !user?.telephone
       this.bindPhoneVisible = true
-      let guide = JSON.parse(sessionStorage.getItem('guide'))
-      if (guide?.userId === this.userId) {
-        this.activeStep = guide?.activeStep + 1 || 1
-        this.steps = guide?.steps
-      }
+      this.getSessionStorage()
       if (this.steps?.length === 0) {
         this.getSteps()
       }
@@ -380,6 +384,14 @@ export default {
     },
     getOrderInfo() {
       this.orderInfo = this.$refs?.spec?.submit()
+    },
+    //获取存储部署
+    getSessionStorage() {
+      let guide = JSON.parse(sessionStorage.getItem('guide'))
+      if (guide?.userId === this.userId) {
+        this.activeStep = this.isUnDeploy ? guide?.activeStep + 1 : guide?.activeStep || 1
+        this.steps = guide?.steps
+      }
     },
     //刷新支付状态
     refresh() {
@@ -420,8 +432,8 @@ export default {
             if (this.platform === 'selfHost') {
               this.agentId = data?.subscribeItems?.[0].resourceId
               this.$emit('changeIsUnDeploy', true)
+              this.next()
               this.$nextTick(() => {
-                this.next()
                 this.checkAgentStatus()
               })
             } else {

@@ -385,8 +385,7 @@ export default {
         //未部署
         if (isUnDeploy) {
           this.agent = {
-            id: isUnDeploy?.id,
-            isUnDeploy: true
+            id: isUnDeploy?.id
           }
           this.isUnDeploy = true
           //是否有未支付的订阅
