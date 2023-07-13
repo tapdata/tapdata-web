@@ -128,16 +128,19 @@ export default {
       }
       this.$axios.get('api/tcm/orders/paid/price', { params }).then(data => {
         let { paidPrice = [] } = data?.[0] || {}
-        //当前priceID 找打productID
-        let productId = paidPrice.find(it => it.priceId === this.agent?.priceId)?.productId
-        paidPrice = paidPrice.filter(
-          it =>
-            it.productId === productId &&
-            it.priceId > this.agent?.priceId &&
-            it.chargeProvider !== 'FreeTier' &&
-            this.currentRow?.subscribeType === it.type &&
-            this.currentRow?.periodUnit === it.periodUnit
-        )
+        const { spec: currentSpec, amount } = this.agent
+
+        paidPrice = !amount
+          ? paidPrice.filter(item => item.chargeProvider !== 'FreeTier')
+          : paidPrice.filter(item => {
+              const { cpu, memory } = item.spec
+              return (
+                (cpu > currentSpec.cpu || (cpu === currentSpec.cpu && memory > currentSpec.memory)) &&
+                this.currentRow?.subscribeType === item.type &&
+                this.currentRow?.periodUnit === item.periodUnit
+              )
+            })
+
         // 规格
         this.specificationItems = uniqBy(
           paidPrice.map(t => {
