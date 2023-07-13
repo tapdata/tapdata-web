@@ -346,11 +346,8 @@ export default {
                 filter: JSON.stringify(params)
               })
               fields = Object.values(data.items[0]?.nameFieldMap || {})
-              if (fields.length) {
-                item.fields = fields
-              }
             }
-            return fields.map(t => {
+            const result = fields.map(t => {
               return {
                 id: t.id,
                 label: t.fieldName,
@@ -362,6 +359,10 @@ export default {
                 unique: t.unique
               }
             })
+            if (result.length) {
+              item.fields = result
+            }
+            return result
           } catch (e) {
             return []
           }
