@@ -75,7 +75,11 @@ export default {
 
     async checkTargetCount() {
       const count = await this.getCount(['target', 'source_and_target'])
-      return !count
+
+      if (!count) return true
+
+      const total = await this.getCount(['source', 'target', 'source_and_target'])
+      return total < 2
     },
 
     /**
