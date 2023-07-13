@@ -1,11 +1,11 @@
 <template>
-  <div class="px-2 py-3 overflow-y-auto">
+  <div class="p-2 overflow-y-auto">
     <div
       class="node-list-item px-2 mb-1 flex align-center font-color-dark item__whole"
       :class="{ active: activeNodeId === '' }"
       @click="changeItem()"
     >
-      <VIcon size="18" class="mr-2">device</VIcon>{{ label }}
+      <VIcon size="16" class="mr-2">device</VIcon>{{ label }}
     </div>
     <div
       v-for="node in items"
@@ -56,12 +56,18 @@ export default {
 
   data() {
     return {
-      activeNodeId: '',
+      activeNodeId: this.value,
       typeMap: {
         source: i18n.t('packages_business_nodes_list_laiyuan'),
         target: i18n.t('public_connection_type_target'),
         processor: i18n.t('public_node_processor')
       }
+    }
+  },
+
+  watch: {
+    value(v) {
+      this.activeNodeId = v
     }
   },
 
@@ -104,9 +110,12 @@ export default {
   border-radius: 6px;
   cursor: pointer;
 
-  &:hover,
+  &:hover {
+    background-color: #f2f3f5;
+  }
+
   &.active {
-    background-color: rgba(229, 236, 255, 0.3);
+    background-color: #d0deff;
   }
 }
 </style>
