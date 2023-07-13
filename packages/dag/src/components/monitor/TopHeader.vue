@@ -245,8 +245,8 @@ export default {
     },
 
     hideSetting() {
-      // 挖掘、心跳任务、共享缓存，不显示设置
-      return ['logCollector', 'connHeartbeat', 'shareCache'].includes(this.dataflow.syncType)
+      // 心跳任务、共享缓存，不显示设置
+      return ['connHeartbeat', 'shareCache'].includes(this.dataflow.syncType)
     },
 
     hideEdit() {
