@@ -322,6 +322,7 @@ export default {
           }
         ]
       }
+      this.loadingCancelSubmit = true
       this.$axios
         .post('api/tcm/subscribe/change', param)
         .then(data => {

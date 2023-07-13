@@ -1,9 +1,13 @@
 <script>
 import { VTable } from '@tap/component'
 import i18n from '@/i18n'
+import { getSpec } from '../instance/utils'
+import dayjs from 'dayjs'
+import StatusTag from '../../components/StatusTag.vue'
+import { CURRENCY_SYMBOL_MAP } from '@tap/business'
 export default {
   name: 'ChangeList',
-  components: { VTable },
+  components: { StatusTag, VTable },
   data() {
     return {
       //变更记录
@@ -11,7 +15,7 @@ export default {
       changeColumns: [
         {
           label: '订阅编号',
-          prop: 'productType'
+          prop: 'subscribeId'
         },
         {
           label: i18n.t('dfs_instance_instance_guige'),
@@ -20,7 +24,7 @@ export default {
         },
         {
           label: '变更申请时间',
-          slotName: 'time',
+          prop: 'createTime',
           width: 180
         },
         {
@@ -29,13 +33,7 @@ export default {
         },
         {
           label: i18n.t('dfs_user_center_jine'),
-          prop: 'price',
-          slotName: 'price'
-        },
-        {
-          label: i18n.t('public_operation'),
-          prop: 'extendArray',
-          slotName: 'operation'
+          prop: 'priceLabel'
         }
       ]
     }
@@ -47,8 +45,26 @@ export default {
   methods: {
     getChangeList(id) {
       this.$axios.get('api/tcm/subscribe/' + id + '/change').then(data => {
-        this.changeList = data?.items || []
+        this.changeList = (data?.items || []).map(it => {
+          it.specLabel = getSpec(it.subscribeItems[0].spec) || '-'
+          it.createTime = dayjs(it.createAt).format('YYYY-MM-DD HH:mm:ss')
+          it.priceLabel = this.formatterPrice('cny', it.subscribeItems[0].amount)
+          return it
+        })
       })
+    },
+
+    formatterPrice(currency, price) {
+      if (price === 0) {
+        return 0
+      }
+      return (
+        CURRENCY_SYMBOL_MAP[currency] +
+        (price / 100).toLocaleString('zh', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        })
+      )
     }
   }
 }
@@ -64,6 +80,9 @@ export default {
       :has-pagination="false"
       class="mt-4 mb-4 ml-4"
     >
+      <template #statusLabel="{ row }">
+        <StatusTag type="tag" :status="row.status" default-status="Stopped" target="order"></StatusTag>
+      </template>
       <div class="mt-8" slot="empty">
         <VIcon size="120">no-data-color</VIcon>
         <div class="flex justify-content-center align-items-center lh-sm fs-7 font-color-sub">
