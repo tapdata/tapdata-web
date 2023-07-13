@@ -288,7 +288,7 @@ export default {
       if (this.$route.name !== 'migrateList' || this.hasCompleteAlarm()) return
       const runningCount = await this.getTaskRunningCount()
 
-      if (runningCount > 0) {
+      if (runningCount > 0 && this.$route.name === 'migrateList') {
         this.showAlarmTour = true
       }
     },
