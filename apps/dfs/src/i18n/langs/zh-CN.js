@@ -1325,7 +1325,7 @@ export default {
   dfs_agent_download_fastdownload_he: '和',
   dfs_agent_download_fastdownload_shiyongpeizhiwen: '方法一: 使用配置文件部署启动Agent',
   dfs_agent_download_subscriptionmodeldialog_yongjiu: '永久',
-  dfs_agent_download_subscriptionmodeldialog_mianfeishilizui: '免费实例, 最多允许创建 3 个任务',
+  dfs_agent_download_subscriptionmodeldialog_mianfeishilizui: '免费实例: 任务数 3 => 2',
   dfs_agent_download_subscriptionmodeldialog_ge: ' 个',
   dfs_agent_download_subscriptionmodeldialog_renwushujianyi: '任务数建议小于 ',
   dfs_agent_download_subscriptionmodeldialog_extra: 'EXTRA SMALL: 1C 2G - FREE(只能创建一个)',
@@ -1524,6 +1524,5 @@ export default {
   dfs_order_list_dingyueleixing: '订阅类型',
   public_button_pay: '支付',
   dfs_order_list_zongjine: '总金额',
-  dfs_alarm_setting_tour_title: '设置告警通知，实时监控任务状态',
   dfs_alarm_setting_tour_title: '设置告警通知，实时监控任务状态'
 }

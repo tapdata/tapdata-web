@@ -19,7 +19,12 @@ export default {
         { name: 'Linux (64 bit)', value: 'linux' },
         { name: 'Docker', value: 'docker' },
         { name: 'Windows (64 bit)', value: 'windows' }
-      ]
+      ],
+      textMap: {
+        linux: '请复制下方命令, 在目录中执行, 执行后, 等待平台检测引擎启动',
+        docker: '完成 docker 服务安装后, 请复制下方命令执行, 执行后, 等待平台检测引擎启动',
+        windows: ' 请复制下方命令并在部署环境执行，其包含镜像的下载及运行，计算引擎 的下载、自动部署及启动'
+      }
     }
   },
   mounted() {
@@ -52,9 +57,14 @@ export default {
       }
       this.buried(MAP[this.downLoadType])
     },
-    //显示隐藏完整命令
-    handleShowAllCode(type) {
-      this.showAllCode = type
+    // windows下载
+    handleDownLoad() {
+      window.location = `${this.downloadUrl}tapdata.exe`
+      this.buried('downloadTapdataExe')
+    },
+    //windows 下载
+    handleDownLoadApplication() {
+      window.location = location.origin + location.pathname + 'api/tcm/agent/' + this.$route.query?.id + '/config'
     }
   }
 }
@@ -63,7 +73,7 @@ export default {
 <template>
   <div class="account">
     <div class="fs-6 font-color-dark fw-sub mb-4 mt-4">准备Tapdata Cloud 计算引擎环境部署，如遇问题可 咨询客服</div>
-    <div class="fw-sub font-color-dark mt-4">要安装Agent,请先在下方选择您的服务器类型：</div>
+    <div class="fw-sub font-color-dark mt-4">要安装计算引擎,请先在下方选择您的服务器类型：</div>
     <ElRadioGroup v-model="downLoadType" class="flex gap-4 mt-4 mb-4">
       <ElRadio
         v-for="(item, index) in downType"
@@ -75,46 +85,48 @@ export default {
         <span>{{ item.name }}</span>
       </ElRadio>
     </ElRadioGroup>
-    <div class="fw-sub font-color-dark mt-4">开始安装</div>
-    <div class="font-color-light fw-normal mt-2 mb-2">
-      请复制下方命令并在部署环境执行，其包含镜像的下载及运行，Tapdata Agent 的下载、自动部署及启动
+    <div class="fw-sub font-color-dark mt-4">{{ $t('agent_deploy_start_install') }}</div>
+    <div v-if="downLoadType === 'windows'">
+      <ul class="pt-5 ul-style">
+        <li class="flex">
+          {{ $t('agent_deploy_start_install_windows_first') }}
+          <ElLink class="mt-1 mr-1" type="primary" @click="handleDownLoad">{{
+            $t('agent_deploy_start_install_windows_first_download')
+          }}</ElLink>
+          {{ $t('dfs_agent_download_fastdownload_he')
+          }}<ElLink type="primary" @click="handleDownLoadApplication">application.yml </ElLink>
+        </li>
+        <li class="mt-3">{{ $t('dfs_agent_download_fastdownload_jiangwenjianta') }}</li>
+        <li class="mt-3">{{ $t('dfs_agent_download_fastdownload_shuangjizhixingt') }}</li>
+      </ul>
     </div>
-    <div class="my-2 text-style">
-      <ElTooltip
-        placement="top"
-        manual
-        :content="$t('agent_deploy_start_install_button_copied')"
-        popper-class="copy-tooltip"
-        :value="showTooltip"
-      >
-        <el-button
-          type="primary"
-          class="operaKey"
-          v-clipboard:copy="links[downLoadType]"
-          v-clipboard:success="onCopy"
-          @mouseleave="showTooltip = false"
-          @click="handleCopy"
+    <section v-else>
+      <div class="font-color-light fw-normal mt-4 mb-2">{{ textMap[downLoadType] }}</div>
+      <div class="my-2 mt-4 text-style">
+        <ElTooltip
+          placement="top"
+          manual
+          :content="$t('agent_deploy_start_install_button_copied')"
+          popper-class="copy-tooltip"
+          :value="showTooltip"
         >
-          <VIcon class="mr-2">copy</VIcon>
-          <i>{{ $t('public_button_copy') }}</i>
-        </el-button>
-      </ElTooltip>
-    </div>
-    <div class="box title-text my-2" :class="{ 'overflow-hidden': showAllCode }">
-      <span class="link-line" :class="{ 'hidden-all-code': showAllCode }">{{ links[downLoadType] }}</span>
-    </div>
-    <div
-      class="down-show-code text-center cursor-pointer color-primary bg-white mt-2 pb-2"
-      v-if="showAllCode"
-      @click="handleShowAllCode(false)"
-    >
-      <VIcon class="mr-2">arrow-down-fill</VIcon
-      ><span>{{ $t('dfs_agent_download_fastdownload_xianshiwanzhengming') }}</span>
-    </div>
-    <div class="down-show-code text-center cursor-pointer bg-white mt-2 pb-2" v-else @click="handleShowAllCode(true)">
-      <VIcon class="mr-2 fast-icon">arrow-down-fill</VIcon
-      >{{ $t('dfs_agent_download_fastdownload_yincangwanzhengming') }}
-    </div>
+          <el-button
+            type="primary"
+            class="operaKey"
+            v-clipboard:copy="links[downLoadType]"
+            v-clipboard:success="onCopy"
+            @mouseleave="showTooltip = false"
+            @click="handleCopy"
+          >
+            <VIcon class="mr-2">copy</VIcon>
+            <i>{{ $t('public_button_copy') }}</i>
+          </el-button>
+        </ElTooltip>
+      </div>
+      <div class="box title-text my-2 mt-4" :class="{ 'overflow-hidden': showAllCode }">
+        <span class="link-line" :class="{ 'hidden-all-code': showAllCode }">{{ links[downLoadType] }}</span>
+      </div>
+    </section>
   </div>
 </template>
 

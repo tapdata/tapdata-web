@@ -260,7 +260,9 @@ export default {
         return
       }
       if (this.bindPhoneVisible && this.activeStep === 1) {
-        this.bindPhoneConfirm(res)
+        res?.()
+        this.next()
+        //this.bindPhoneConfirm(res)
         return
       }
       this.next()

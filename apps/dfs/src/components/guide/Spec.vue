@@ -88,7 +88,9 @@
               <VIcon size="16" class="is-active-icon">check-bold</VIcon>
             </div>
             <div class="spec-li-title mt-1 lh-base fw-bold font-color-dark">
-              <span class="align-middle">{{ item.name }}: {{ item.desc }}</span>
+              <span class="align-middle"
+                ><span v-if="item.chargeProvider !== 'FreeTier'">{{ item.name }}:</span> {{ item.desc }}</span
+              >
               <ElTag
                 v-if="item.chargeProvider === 'FreeTier'"
                 size="small"
@@ -98,6 +100,10 @@
                     ? $t('dfs_instance_instance_mianfei')
                     : $t('dfs_instance_createagent_mianfeitiyan')
                 }}</ElTag
+              >
+              <ElTag v-else size="small" class="vip-btn bg-white border-0 ml-2 align-items-center"
+                ><VIcon size="17" class="mr-1 mb-1">icon-vip</VIcon
+                >{{ $t('packages_component_src_upgradefee_dingyuezhuanyeban') }}</ElTag
               >
             </div>
             <div
@@ -222,7 +228,7 @@ export default {
               i18n.t('dfs_agent_download_subscriptionmodeldialog_renwushujianyi') +
               this.getSuggestPipelineNumber(cpu, memory) +
               i18n.t('dfs_agent_download_subscriptionmodeldialog_ge')
-            if (t.chargeProvider == 'FreeTier') {
+            if (t.chargeProvider === 'FreeTier') {
               desc = i18n.t('dfs_agent_download_subscriptionmodeldialog_mianfeishilizui')
             }
             return {
@@ -239,11 +245,13 @@ export default {
         ).sort((a, b) => {
           return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
         })
+        if (this.agentCount > 0) {
+          this.specificationItems = this.specificationItems.filter(it => it.chargeProvider !== 'FreeTier')
+        }
         //新人引导只取前四个规格
         this.specificationItems = this.specificationItems.splice(0, 4)
-        // 如果是单独订购存储，默认调过免费实例，避免后续step受免费实例影响
-        this.specification =
-          this.agentCount === 0 ? this.specificationItems[0]?.value : this.specificationItems[1]?.value
+
+        this.specification = this.specificationItems[0]?.value
         // 价格套餐
         this.allPackages = paidPrice.map(t => {
           return Object.assign(t, {
@@ -513,6 +521,11 @@ export default {
   top: -12px;
   font-size: 24px;
   background: #fff;
+}
+.vip-btn {
+  color: map-get($color, primary);
+  border-radius: 4px;
+  border: 1px solid map-get($color, primary) !important;
 }
 .subscription-radio.el-radio {
   padding: 0 12px;
