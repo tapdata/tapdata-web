@@ -440,7 +440,7 @@ export default {
     },
     //退订
     submit() {
-      const { type, priceId, currency, periodUnit } = this.selected
+      const { type, priceId, currency, periodUnit, label, specification } = this.selected
       const agentUrl = window.App.$router.resolve({
         name: 'Instance',
         query: {
@@ -450,7 +450,10 @@ export default {
       let params = {
         price: this.formatPrice(this.currency),
         priceOff: this.formatPriceOff(this.currency),
+        priceDiscount: this.getDiscount(this.selected),
+        originalPrice: this.formatPrice(this.currency, true),
         subscribeType: type, // 订阅类型：one_time-一次订阅，recurring-连续订阅
+        subscriptionMethodLabel: label || '',
         platform: this.platform,
         quantity: '',
         paymentMethod: this.platform === 'aliyun' ? 'AliyunMarketCode' : 'Stripe',
@@ -469,6 +472,7 @@ export default {
         agentType: this.platform === 'fullManagement' ? 'Cloud' : 'Local', // 半托管-Local，全托管-Cloud
         version: '', // 实例版本
         name: '', // 实例名称
+        specLabel: specification,
         memorySpace: this.memorySpace,
         provider: this.provider || '', // 云厂商，全托管必填
         region: this.region || '', // 地域，全托管必填

@@ -9,6 +9,7 @@ export default {
   data() {
     return {
       order: [],
+      priceOff: 0,
       columns: [
         {
           label: i18n.t('dfs_order_list_dingyueleixing'),
@@ -21,13 +22,12 @@ export default {
         },
         {
           label: i18n.t('dfs_instance_instance_dingyuefangshi'),
-          slotName: 'subscriptionMethodLabel',
+          prop: 'subscriptionMethodLabel',
           width: 180
         },
         {
           label: i18n.t('dfs_user_center_jine'),
-          prop: 'price',
-          slotName: 'price'
+          prop: 'price'
         }
       ],
       payType: 'Stripe',
@@ -41,8 +41,17 @@ export default {
     }
   },
   mounted() {
-    //格式化items
-    this.subscribeItems = this.orderInfo?.subscribeItems
+    this.$nextTick(() => {
+      //格式化items
+      let subscribeItems = this.orderInfo?.subscribeItems || []
+      const { subscriptionMethodLabel, originalPrice, priceOff } = this.orderInfo
+      this.subscribeItems = subscribeItems.map(it => {
+        it.subscriptionMethodLabel = subscriptionMethodLabel
+        it.price = originalPrice
+        return it
+      })
+      this.priceOff = priceOff === 0 ? 0 : '-' + priceOff
+    })
   },
   methods: {
     getEmailRules() {
@@ -97,7 +106,10 @@ export default {
     </div>
     <ul class="mt-4" :class="{ card: isCard }" v-if="orderInfo">
       <li v-if="orderInfo.priceOff">
-        <span class="mr-4">95折</span>：<span class="ml-2"> -{{ orderInfo.priceOff }}</span>
+        <span class="price-detail-label text-end inline-block mr-2"
+          >{{ $t('dfs_agent_subscription_discount', { val: orderInfo.priceDiscount }) }}:
+        </span>
+        <span class="ml-2"> {{ priceOff }}</span>
       </li>
       <li>
         <span class="fw-sub font-color-dark mt-2 mr-4">实付金额</span>:<span class="color-primary fw-sub fs-5 ml-2">{{
