@@ -14,7 +14,12 @@
             </div>
           </div>
           <ul class="agent-ul flex flex-wrap mt-4">
-            <li class="agent-item flex flex-column align-items-start" v-for="item in list" :key="item.id">
+            <li
+              class="agent-item flex flex-column align-items-start"
+              v-for="item in list"
+              :key="item.id"
+              :id="`agent-${item.id}`"
+            >
               <div class="flex justify-content-around w-100 border-bottom py-4 px-4" v-if="agentData(item)">
                 <div>
                   <el-progress
@@ -166,6 +171,7 @@
                   >{{ $t('public_agent_button_deploy') }}</ElButton
                 >
                 <ElButton
+                  name="start"
                   size="mini"
                   v-if="item.agentType === 'Local' && !['Running'].includes(item.status) && !startBtnDisabled(item)"
                   :loading="item.btnLoading.delete"
@@ -185,6 +191,7 @@
                   >{{ $t('public_button_stop') }}</ElButton
                 >
                 <ElButton
+                  name="restart"
                   size="mini"
                   v-if="item.agentType === 'Cloud' && !item.publicAgent && !renewBtnDisabled(item)"
                   :loading="item.btnLoading.delete"
@@ -192,9 +199,10 @@
                   >{{ $t('dfs_instance_instance_zhongqi') }}</ElButton
                 >
                 <ElButton
+                  name="restart"
                   size="mini"
-                  v-if="item.agentType === 'Local'"
-                  :loading="item.btnLoading.delete && !(restartBtnDisabled(item) || $disabledReadonlyUserBtn())"
+                  v-if="item.agentType === 'Local' && !restartBtnDisabled(item)"
+                  :loading="item.btnLoading.delete"
                   @click="handleRestart(item)"
                   >{{ $t('dfs_instance_instance_zhongqi') }}</ElButton
                 >
@@ -422,19 +430,19 @@
         name="second"
       >
         <section class="flex flex-column overflow-hidden flex-1">
-          <ul class="mdb-ul flex flex-wrap mt-4">
+          <ul class="mdb-ul flex flex-wrap mt-4" v-if="mdbData.length > 0">
             <li class="mdb-item flex" v-for="item in mdbData" :key="item.id">
               <div class="flex justify-content-around align-items-center border-right w-40 py-4 px-4">
-                <el-progress :width="68" type="circle" :percentage="0" :color="customColors"></el-progress>
-                <div>
+                <el-progress :width="68" type="circle" :percentage="percentage" :color="customColors"></el-progress>
+                <div class="ml-4">
                   <div>
-                    总空间：<span>{{ item.spec.storageSize }} GB</span>
+                    {{ $t('dfs_order_list_total_space') }} ：<span>{{ item.spec.storageSize }} GB</span>
                   </div>
                   <div>
-                    已用空间：<span>{{ item.dataSizeLabel }} GB</span>
+                    {{ $t('dfs_order_list_used_space') }} ：<span>{{ item.dataSizeLabel }} GB</span>
                   </div>
                   <div>
-                    剩余空间：<span>{{ item.dataSizeLast }} GB</span>
+                    {{ $t('dfs_order_list_remaining_space') }} ：<span>{{ item.dataSizeLast }} GB</span>
                   </div>
                 </div>
               </div>
@@ -466,6 +474,7 @@
               </div>
             </li>
           </ul>
+          <ul v-else></ul>
         </section>
         <!-- 新建白名单 -->
         <el-dialog :visible.sync="showCreateIps" :title="$t('dfs_instance_instance_tianjiabaimingdan')">
@@ -665,6 +674,7 @@ export default {
       },
       mdbData: [],
       //存储资源
+      percentage: 0,
       specColumns: [
         {
           label: i18n.t('dfs_instance_instance_yunchangshang'),
@@ -842,8 +852,9 @@ export default {
           item.storageSize = item.spec?.storageSize ? item.spec?.storageSize : '-'
           item.deploymentTypeLabel = this.agentTypeMap[item.deploymentType]
           let num = Number(item?.dataSize) || 0
-          let size = (num / (1024 * 1024 * 1024)).toFixed(2)
-          item.dataSizeLast = item.storageSize - size
+          let size = (num / (1024 * 1024)).toFixed(2)
+          this.percentage = (size / item.storageSize).toFixed(1) * 100
+          item.dataSizeLast = (item.storageSize - size).toFixed(2)
           item.dataSizeLabel = size
           return item
         })
@@ -879,6 +890,7 @@ export default {
     fetch(pageNum, hideLoading) {
       if (!hideLoading) {
         this.loading = true
+        this.$store.commit('setInstanceLoading', true)
       }
       let current = pageNum || this.page.current
       let { keyword, status } = this.searchParams
@@ -996,6 +1008,7 @@ export default {
         .finally(() => {
           if (!hideLoading) {
             this.loading = false
+            this.$store.commit('setInstanceLoading', false)
           }
         })
     },
@@ -1925,6 +1938,9 @@ export default {
 }
 </style>
 <style lang="scss">
+:not(body):has(> .agent-item .driver-active-element) {
+  overflow: hidden !important;
+}
 .el-message-box {
   &.delete-agent {
     .el-message-box__title {

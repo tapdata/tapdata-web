@@ -18,7 +18,7 @@
                 </ElMenuItem>
               </template>
             </ElSubmenu>
-            <ElMenuItem v-else :key="menu.title" :index="menu.path" class="flex align-center">
+            <ElMenuItem v-else :key="menu.title" :index="menu.path" class="flex align-center" :id="`menu-${menu.name}`">
               <span class="mr-4" v-if="menu.icon"
                 ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
               >
@@ -56,7 +56,7 @@
                 </ElMenuItem>
               </template>
             </ElSubmenu>
-            <ElMenuItem v-else :key="menu.title" :index="menu.path" class="flex align-center">
+            <ElMenuItem v-else :key="menu.title" :index="menu.path" class="flex align-center" :id="`menu-${menu.name}`">
               <span class="mr-4" v-if="menu.icon"
                 ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
               >
@@ -104,9 +104,16 @@
     ></ConnectionTypeDialog>
     <!--    <AgentGuideDialog :visible.sync="agentGuideDialog" @openAgentDownload="openAgentDownload"></AgentGuideDialog>-->
     <AgentDownloadModal :visible.sync="agentDownload.visible" :source="agentDownload.data"></AgentDownloadModal>
-    <AgentGuide :visible.sync="subscriptionModelVisible" :showClose="false"></AgentGuide>
-    <BindPhone :visible.sync="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>
+    <AgentGuide
+      :visible.sync="subscriptionModelVisible"
+      :step="step"
+      :agent="agent"
+      :subscribes="subscribes"
+      :showClose="false"
+    ></AgentGuide>
+    <!--    <BindPhone :visible.sync="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>-->
     <!--    <CheckLicense :visible.sync="aliyunMaketVisible" :user="userInfo"></CheckLicense>-->
+    <TaskAlarmTour v-model="showAlarmTour"></TaskAlarmTour>
   </ElContainer>
 </template>
 
@@ -120,6 +127,8 @@ import AgentDownloadModal from '@/views/agent-download/AgentDownloadModal'
 import BindPhone from '@/views/user/components/BindPhone'
 import Cookie from '@tap/shared/src/cookie'
 import AgentGuide from '@/components/guide/index'
+import tour from '@/mixins/tour'
+import TaskAlarmTour from '@/components/TaskAlarmTour'
 
 export default {
   inject: ['checkAgent', 'buried'],
@@ -130,8 +139,10 @@ export default {
     AgentDownloadModal,
     BindPhone,
     AgentGuide,
-    PageHeader
+    PageHeader,
+    TaskAlarmTour
   },
+  mixins: [tour],
   data() {
     const $t = this.$t.bind(this)
     return {
@@ -184,11 +195,16 @@ export default {
       bindPhoneVisible: false,
       agentGuideDialog: false,
       showAgentWarning: false,
+      agentRunningCount: 0,
       subscriptionModelVisible: false,
       userInfo: '',
       // aliyunMaketVisible: false,
       isDemoEnv: document.domain === 'demo.cloud.tapdata.net',
-      isDomesticStation: true
+      isDomesticStation: true,
+      //新人引导
+      step: 1,
+      agent: '',
+      subscribes: {}
     }
   },
   created() {
@@ -207,7 +223,7 @@ export default {
     if (window.__config__?.station) {
       this.isDomesticStation = window.__config__?.station === 'domestic' //默认是国内站 国际站是 international
     }
-    this.loopLoadAgentCount()
+    // this.loopLoadAgentCount()
     this.activeMenu = this.$route.path
     let children = this.$router.options.routes.find(r => r.path === '/')?.children || []
     const findRoute = name => {
@@ -321,9 +337,9 @@ export default {
       this.$router.back()
     },
     checkDialogState() {
-      if (this.checkWechatPhone()) {
-        return
-      }
+      // if (this.checkWechatPhone()) {
+      //   return
+      // }
       this.checkAgentInstall()
     },
     // 检查微信用户，是否绑定手机号
@@ -338,10 +354,50 @@ export default {
       return this.bindPhoneVisible
     },
     // 检查是否有安装过agent
-    checkAgentInstall() {
-      //this.subscriptionModelVisible = true
+    async checkAgentInstall() {
+      //this.checkWechatPhone()
+      let subscribe = await this.$axios.get(`api/tcm/subscribe`)
       this.$axios.get('api/tcm/agent').then(data => {
-        if (data?.total === 0) {
+        //检查是否有待部署状态
+        let items = data?.items || []
+        //是否有运行中的实例
+        let isRunning = items.find(i => i.status === 'Running')
+        if (isRunning) {
+          return
+        }
+        let subItems = subscribe?.items || []
+        let isUnDepaly = items.find(i => i.status === 'Creating' && i.agentType === 'Local')
+        //订阅0 Agent 0  完全新人引导
+        //订阅不为0 查找是否有待部署状态
+        //Agent不为0 查找是否有待部署状态
+        //优先未支付判定
+        //未支付
+        let isUnPay = subItems.find(i => i.status === 'incomplete')
+        if (isUnPay) {
+          this.step = 4
+          this.subscribes = isUnPay
+          //是否有未支付的订阅
+          if (isUnPay) {
+            this.subscriptionModelVisible = true
+          }
+          return
+        }
+        //未部署
+        if (isUnDepaly) {
+          this.step = 5
+          this.agent = {
+            id: isUnDepaly?.id,
+            isUnDepaly: true
+          }
+          this.isUnDepaly = true
+          //是否有未支付的订阅
+          if (isUnDepaly) {
+            this.subscriptionModelVisible = true
+            return
+          }
+        }
+        //是否有未支付的订阅
+        if (data?.total === 0 && subscribe?.total === 0) {
           this.subscriptionModelVisible = true
         }
       })
@@ -422,19 +478,6 @@ export default {
       this.showAgentWarning = flag
     },
 
-    loopLoadAgentCount() {
-      this.$axios
-        .get('api/tcm/agent/agentCount')
-        .then(data => {
-          this.showAgentWarning = data.agentTotalCount && !data.agentRunningCount
-          window.__agentCount__ = data
-        })
-        .finally(() => {
-          this.loopLoadAgentCountTimer = setTimeout(() => {
-            this.loopLoadAgentCount()
-          }, 10000)
-        })
-    },
     //检查云市场用户授权码是否过期
     checkLicense(user) {
       //未激活
@@ -575,5 +618,14 @@ export default {
   .el-menu-item.is-active .agent-warning-icon {
     display: none;
   }
+}
+</style>
+
+<style>
+.zsiqfanim,
+.zsiqfanim *,
+.siqanim,
+.siqanim * {
+  pointer-events: all;
 }
 </style>

@@ -35,15 +35,14 @@ export default {
         })
         .then(() => {
           this.$message.success(i18n.t('user_Center_bangDingShouJiCheng'))
-          this.$emit('success', phoneForm.current)
+          this.$emit('next')
           this.dialogVisible = false
         })
-        .catch(e => {
-          this.$emit('error', phoneForm.current, e)
+        .catch(() => {
+          this.$emit('error')
         })
         .finally(() => {
           resetLoading?.()
-          this.$emit('next')
         })
     },
     getCountryCode() {

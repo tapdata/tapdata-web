@@ -83,6 +83,9 @@ export default ({ routes }) => {
       path = loc.pathname.substring(0, loc.pathname.lastIndexOf('/') + 1)
     }
     wsUrl = wsUrl + loc.host + path + `tm/ws/agent?${queryString}`
+
+    store.commit('setUser', window.__USER_INFO__)
+
     window.App = new Vue({
       router,
       store,

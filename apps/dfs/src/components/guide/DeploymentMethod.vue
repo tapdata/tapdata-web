@@ -4,7 +4,10 @@ import { VIcon } from '@tap/component'
 export default {
   name: 'Account',
   props: ['platform'],
-  components: { VIcon }
+  components: { VIcon },
+  mounted() {
+    this.$emit('changePlatform', 'selfHost')
+  }
 }
 </script>
 
@@ -29,7 +32,7 @@ export default {
         <div class="flex justify-content-around align-items-center px-4 py-4">
           <div>
             <div class="fs-6 fw-bold">不可以</div>
-            <div class="font-color-light">我的数据库均为云数据库, 且可以暴露到公共网络</div>
+            <div class="font-color-light">我的数据库在局域网内, 或者出于安全考虑, 无法暴露在公共网络中</div>
           </div>
           <el-image class="deployMethod-image" :src="require('@/assets/image/self_host_managed.png')" />
         </div>

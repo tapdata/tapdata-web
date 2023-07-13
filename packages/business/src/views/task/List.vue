@@ -98,6 +98,7 @@
           class="btn btn-create"
           type="primary"
           size="mini"
+          id="task-list-create"
           :disabled="$disabledReadonlyUserBtn()"
           :loading="createBtnLoading"
           @click="create"

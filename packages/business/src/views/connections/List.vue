@@ -34,6 +34,7 @@
           <span> {{ $t('public_button_bulk_tag') }}</span>
         </ElButton>
         <ElButton
+          id="connection-list-create"
           v-readonlybtn="'datasource_creation'"
           class="btn btn-create"
           type="primary"

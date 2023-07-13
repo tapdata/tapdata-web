@@ -1,6 +1,6 @@
 <template>
   <div class="swim-lane flex flex-column h-100" @click.stop.prevent="handleQuit">
-    <div v-if="!isDaas" class="position-absolute" style="right: 55%">
+    <div v-if="!isDaas" class="position-absolute" style="right: 55%; z-index: 5">
       <VIcon v-if="overViewVisible" size="32" @click="toggleOverview(overViewVisible)">fold-pack-up</VIcon>
       <VIcon v-else size="32" @click="toggleOverview(overViewVisible)">fold-expend</VIcon>
     </div>

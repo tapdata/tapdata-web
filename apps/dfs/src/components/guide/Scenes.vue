@@ -10,27 +10,27 @@ export default {
       list: [
         {
           label: '跨云数据实时同步',
-          value: '12'
+          value: 'Real-time synchronization of cross-cloud data'
         },
         {
           label: '数据入仓，加速查询',
-          value: '23'
+          value: 'Data warehousing to speed up query'
         },
         {
           label: '本地数据上云',
-          value: '34'
+          value: 'Local data to the cloud'
         },
         {
           label: '异构数据库同步',
-          value: '45'
+          value: 'Heterogeneous database synchronization'
         },
         {
           label: '其他场景',
-          value: '56'
+          value: 'other scenes'
         },
         {
           label: '没有特定的需求',
-          value: '67'
+          value: 'no specific needs'
         }
       ]
     }
@@ -43,9 +43,7 @@ export default {
     <div class="flex justify-content-center align-items-center">
       <VIcon size="450px" style="width: 450px; height: 235px">guide-top-header</VIcon>
     </div>
-    <div class="fs-6 font-color-dark fw-sub mb-4 mt-4">
-      2、为了账号安全和数据任务状态能快速通知到您，请您绑定手机号。
-    </div>
+    <div class="fs-6 font-color-dark fw-sub mb-4 mt-4">2、您想通过本产品完成您的什么需求呢？。</div>
     <el-checkbox-group
       class="scenes-wrap flex flex-column mt-4"
       v-model="scenes"

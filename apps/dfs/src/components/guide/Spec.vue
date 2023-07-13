@@ -4,6 +4,7 @@
       4、您需要自行安装一个计算引擎到您的网络环境中, 选择一种合适的方式吧。
     </div>
     <el-form label-position="top" ref="ruleForm">
+      <!--订阅方式-->
       <ElFormItem :label="$t('dfs_instance_instance_dingyuefangshi')">
         <ElRadioGroup v-model="currentPackage" @input="handleChange" class="flex flex-wrap gap-4">
           <ElRadio
@@ -15,17 +16,12 @@
           >
             <span class="inline-flex align-center">
               {{ item.label }}
-              <ElTag
-                v-if="item.type === 'recurring' || item.periodUnit === 'year'"
-                class="discount-tag fw-sub rounded-4 border-0 ml-2"
-                >{{ $t('dfs_agent_subscription_discount', { val: getDiscount(item) }) }}</ElTag
-              >
-
-              <VIcon
-                v-if="item.type === 'recurring' && item.periodUnit === 'year'"
-                class="position-absolute discount-hot-icon"
-                >hot-o</VIcon
-              >
+              <template v-if="item.type === 'recurring' || item.periodUnit === 'year'">
+                <ElTag class="discount-tag fw-sub rounded-4 border-0 ml-2">{{
+                  $t('dfs_agent_subscription_discount', { val: getDiscount(item) })
+                }}</ElTag>
+                <VIcon class="position-absolute discount-hot-icon">hot-o</VIcon>
+              </template>
             </span>
           </ElRadio>
         </ElRadioGroup>
@@ -246,8 +242,7 @@ export default {
         //新人引导只取前四个规格
         this.specificationItems = this.specificationItems.splice(0, 4)
         // 如果是单独订购存储，默认调过免费实例，避免后续step受免费实例影响
-        this.specification =
-          !this.agentCount && this.orderStorage ? this.specificationItems[1]?.value : this.specificationItems[0]?.value
+        this.specification = !this.agentCount ? this.specificationItems[1]?.value : this.specificationItems[0]?.value
         // 价格套餐
         this.allPackages = paidPrice.map(t => {
           return Object.assign(t, {
@@ -293,7 +288,7 @@ export default {
             label:
               specification?.chargeProvider !== 'FreeTier'
                 ? t.label
-                : this.agentDeploy !== 'selfHost'
+                : this.platform !== 'selfHost'
                 ? i18n.t('dfs_instance_createagent_mianfeishiyonggui')
                 : i18n.t('dfs_instance_utils_baoyue')
           })
@@ -315,7 +310,7 @@ export default {
         this.currencyType = this.packageItems[0]?.currency
       }
       let currentItem = this.packageItems[0]
-      if (this.selected?.type && currentItem?.chargeProvider !== 'FreeTier' && this.selected?.type !== 'FreeTier') {
+      if (this.selected?.price && currentItem?.chargeProvider !== 'FreeTier' && this.selected?.type !== 'FreeTier') {
         currentItem = this.packageItems.find(
           it => it.type === this.selected?.type && it.periodUnit === this.selected?.periodUnit //切换规格不改变原来的订阅方式
         )
@@ -409,8 +404,7 @@ export default {
 
       return amount
     },
-    getDiscount() {
-      let item = this.selected
+    getDiscount(item) {
       const { locale } = this.$i18n
       if (item.type === 'recurring' && item.periodUnit === 'month') {
         return locale === 'en' ? 5 : 95
@@ -446,13 +440,7 @@ export default {
     },
     //退订
     submit() {
-      const { type, priceId, currency, periodUnit } = this.selected
-      const fastDownloadUrl = window.App.$router.resolve({
-        name: 'FastDownload',
-        query: {
-          id: ''
-        }
-      })
+      const { type, priceId, currency, periodUnit, label, specification } = this.selected
       const agentUrl = window.App.$router.resolve({
         name: 'Instance',
         query: {
@@ -462,15 +450,15 @@ export default {
       let params = {
         price: this.formatPrice(this.currency),
         priceOff: this.formatPriceOff(this.currency),
+        priceDiscount: this.getDiscount(this.selected),
+        originalPrice: this.formatPrice(this.currency, true),
         subscribeType: type, // 订阅类型：one_time-一次订阅，recurring-连续订阅
+        subscriptionMethodLabel: label || '',
         platform: this.platform,
         quantity: '',
-        paymentMethod: this.agentDeploy === 'aliyun' ? 'AliyunMarketCode' : 'Stripe',
-        successUrl:
-          this.agentDeploy === 'fullManagement'
-            ? location.origin + location.pathname + agentUrl.href
-            : location.origin + location.pathname + fastDownloadUrl.href,
-        cancelUrl: location.href,
+        paymentMethod: this.platform === 'aliyun' ? 'AliyunMarketCode' : 'Stripe',
+        successUrl: location.origin + location.pathname + agentUrl.href,
+        cancelUrl: location.origin + location.pathname + agentUrl.href,
         periodUnit,
         currency: this.currencyType || currency,
         subscribeItems: []
@@ -481,9 +469,10 @@ export default {
         quantity: 1, // 订阅数量，例如一次性订购2个实例时，这里填写2
         productType: 'Engine', // 产品类型：Engine,MongoDB,APIServer
         resourceId: '', // 资源ID，agent 或者 cluster id
-        agentType: this.agentDeploy === 'fullManagement' ? 'Cloud' : 'Local', // 半托管-Local，全托管-Cloud
+        agentType: this.platform === 'fullManagement' ? 'Cloud' : 'Local', // 半托管-Local，全托管-Cloud
         version: '', // 实例版本
         name: '', // 实例名称
+        specLabel: specification,
         memorySpace: this.memorySpace,
         provider: this.provider || '', // 云厂商，全托管必填
         region: this.region || '', // 地域，全托管必填
