@@ -1,7 +1,7 @@
 <template>
   <section>
     <div class="fs-6 font-color-dark fw-sub mb-4 mt-4">
-      4、您需要自行安装一个计算引擎到您的网络环境中, 选择一种合适的方式吧。
+      您需要自行安装一个计算引擎到您的网络环境中, 选择一种合适的方式吧。
     </div>
     <el-form label-position="top" ref="ruleForm">
       <!--订阅方式-->
@@ -242,7 +242,8 @@ export default {
         //新人引导只取前四个规格
         this.specificationItems = this.specificationItems.splice(0, 4)
         // 如果是单独订购存储，默认调过免费实例，避免后续step受免费实例影响
-        this.specification = !this.agentCount ? this.specificationItems[1]?.value : this.specificationItems[0]?.value
+        this.specification =
+          this.agentCount === 0 ? this.specificationItems[0]?.value : this.specificationItems[1]?.value
         // 价格套餐
         this.allPackages = paidPrice.map(t => {
           return Object.assign(t, {
@@ -300,6 +301,10 @@ export default {
           const bOrder = b.order
           return aType + aOrder - (bType + bOrder)
         })
+      //不显示订购一年
+      if (specification?.chargeProvider !== 'FreeTier') {
+        this.packageItems = this.packageItems.filter(it => !(it.type === 'one_time' && it.periodUnit === 'year'))
+      }
     },
     //切换规格
     changeSpec(item, disabled) {

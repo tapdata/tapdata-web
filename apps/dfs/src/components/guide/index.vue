@@ -12,9 +12,9 @@
   >
     <div class="guide-wrap flex justify-content-center">
       <div class="nav-wrap px-6 py-6">
-        <div class="guide-header font-color-dark fw-bold fs-5 mb-4 mt-4">欢迎使用Tapdata Cloud 服务</div>
+        <div class="guide-header font-color-dark fw-bold fs-5 mb-4 mt-4">欢迎使用 Tapdata Cloud 数据服务</div>
         <div class="guide-desc font-color-dark">
-          Tapdata Cloud 专业的数据集成与服务平台, 在开始使用之前, 我们需要完成以下使用引导。
+          Tapdata Cloud 是专业的数据集成与服务平台, 为了让您更流畅地使用产品, 请跟随我们的引导, 开始一步步操作吧
         </div>
         <el-steps
           class="guide-steps bg-transparent mx-auto"
@@ -139,7 +139,7 @@ export default {
   data() {
     return {
       activeStep: this.step ? this.step : 1,
-      scenes: ['Real-time synchronization of cross-cloud data'], //使用场景
+      scenes: [], //使用场景
       platform: 'selfHost',
       agentId: '64aa97004be8ea3b8e02e39a',
       orderId: '',
@@ -175,19 +175,19 @@ export default {
       if (!this.bindPhoneVisible && this.platform === 'selfHost') {
         return [
           {
-            title: '选择使用场景'
+            title: '确定使用场景'
           },
           {
-            title: '数据库环境'
+            title: '设置数据库网络环境'
           },
           {
-            title: '选择计算引擎'
+            title: '选择计算引擎规格'
           },
           {
-            title: '支付结算'
+            title: '支付'
           },
           {
-            title: '计算引擎部署'
+            title: '部署计算引擎'
           }
         ]
       }
@@ -195,16 +195,16 @@ export default {
       if (!this.bindPhoneVisible && this.platform === 'fullManagement') {
         return [
           {
-            title: '选择使用场景'
+            title: '确定使用场景'
           },
           {
-            title: '数据库环境'
+            title: '设置数据库网络环境'
           },
           {
-            title: '选择计算引擎'
+            title: '选择计算引擎规格'
           },
           {
-            title: '支付结算'
+            title: '支付'
           }
         ]
       }
@@ -214,16 +214,16 @@ export default {
           title: '账号安全绑定'
         },
         {
-          title: '选择使用场景'
+          title: '确定使用场景'
         },
         {
-          title: '数据库环境'
+          title: '设置数据库网络环境'
         },
         {
-          title: '选择计算引擎'
+          title: '选择计算引擎规格'
         },
         {
-          title: '支付结算'
+          title: '支付'
         }
       ]
     }
@@ -260,7 +260,9 @@ export default {
         return
       }
       if (this.bindPhoneVisible && this.activeStep === 1) {
-        this.bindPhoneConfirm(res)
+        res?.()
+        this.next()
+        //this.bindPhoneConfirm(res)
         return
       }
       this.next()
