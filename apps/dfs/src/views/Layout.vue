@@ -109,7 +109,8 @@
       :step="step"
       :agent="agent"
       :subscribes="subscribes"
-      :showClose="false"
+      :isUnDeploy="isUnDeploy"
+      @changeIsUnDeploy="changeIsUnDeploy"
     ></AgentGuide>
     <!--    <BindPhone :visible.sync="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>-->
     <!--    <CheckLicense :visible.sync="aliyunMaketVisible" :user="userInfo"></CheckLicense>-->
@@ -203,7 +204,8 @@ export default {
       isDomesticStation: true,
       //新人引导
       step: 1,
-      agent: '',
+      agent: {},
+      isUnDeploy: false,
       subscribes: {}
     }
   },
@@ -355,7 +357,6 @@ export default {
     },
     // 检查是否有安装过agent
     async checkAgentInstall() {
-      this.checkWechatPhone()
       let subscribe = await this.$axios.get(`api/tcm/subscribe`)
       this.$axios.get('api/tcm/agent').then(data => {
         //检查是否有待部署状态
@@ -366,7 +367,7 @@ export default {
           return
         }
         let subItems = subscribe?.items || []
-        let isUnDepaly = items.find(i => i.status === 'Creating' && i.agentType === 'Local')
+        let isUnDeploy = items.find(i => i.status === 'Creating' && i.agentType === 'Local')
         //订阅0 Agent 0  完全新人引导
         //订阅不为0 查找是否有待部署状态
         //Agent不为0 查找是否有待部署状态
@@ -374,7 +375,6 @@ export default {
         //未支付
         let isUnPay = subItems.find(i => i.status === 'incomplete')
         if (isUnPay) {
-          this.step = 4
           this.subscribes = isUnPay
           //是否有未支付的订阅
           if (isUnPay) {
@@ -383,15 +383,14 @@ export default {
           return
         }
         //未部署
-        if (isUnDepaly) {
-          this.step = 5
+        if (isUnDeploy) {
           this.agent = {
-            id: isUnDepaly?.id,
-            isUnDepaly: true
+            id: isUnDeploy?.id,
+            isUnDeploy: true
           }
-          this.isUnDepaly = true
+          this.isUnDeploy = true
           //是否有未支付的订阅
-          if (isUnDepaly) {
+          if (isUnDeploy) {
             this.subscriptionModelVisible = true
             return
           }
@@ -401,6 +400,10 @@ export default {
           this.subscriptionModelVisible = true
         }
       })
+    },
+    //
+    changeIsUnDeploy(val) {
+      this.isUnDeploy = val
     },
     bindPhoneSuccess(val) {
       if (val) {

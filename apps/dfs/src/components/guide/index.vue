@@ -48,12 +48,23 @@
             </template>
             <template v-if="[4].includes(activeStep)">
               <!--选择实例规格-->
-              <Spec ref="spec" :platform="platform" @changePlatform="changePlatform"></Spec>
+              <Spec ref="spec" :platform="platform" @changeSpec="changeSpec"></Spec>
             </template>
             <template v-if="[5].includes(activeStep)">
-              <!--费用清单-->
-              <pay v-if="subscribeStatus === 'incomplete'" refs="pay" :subscribes="subscribes" @refresh="refresh"></pay>
-              <Details v-else ref="details" :orderInfo="orderInfo" :email="email"></Details>
+              <template v-if="isUnDeploy">
+                <!--部署实例-->
+                <Deploy :agentId="agentId"></Deploy>
+              </template>
+              <template v-else>
+                <!--费用清单-->
+                <pay
+                  v-if="subscribeStatus === 'incomplete'"
+                  refs="pay"
+                  :subscribes="subscribes"
+                  @refresh="refresh"
+                ></pay>
+                <Details v-else ref="details" :orderInfo="orderInfo" :email="email"></Details>
+              </template>
             </template>
             <template v-if="[6].includes(activeStep)">
               <!--部署实例-->
@@ -77,19 +88,26 @@
               <!--选择实例规格-->
               <Spec ref="spec" :platform="platform" @changePlatform="changePlatform"></Spec>
             </template>
-            <template v-if="[4].includes(activeStep)">
+            <template v-if="[4].includes(activeStep) && !isUnDeploy">
               <!--费用清单-->
               <pay v-if="subscribeStatus === 'incomplete'" refs="pay" :subscribes="subscribes" @refresh="refresh"></pay>
               <Details v-else ref="details" :orderInfo="orderInfo" :email="email"></Details>
             </template>
-            <template v-if="[5].includes(activeStep)">
+            <template v-if="[5].includes(activeStep) && isUnDeploy">
               <!--部署实例-->
               <Deploy :agentId="agentId"></Deploy>
             </template>
           </section>
+          <div v-if="isUnDeploy && agentStatus === 'Creating'" class="mt-8">
+            <div class="box-card mt-4 flex flex-column justify-content-center align-items-center">
+              <VIcon class="mt-4 mb-4" size="100">guide-loading</VIcon>
+              <div class="fs-5 font-color-dark mb-2">等待部署</div>
+              <div class="font-color-light">正在检测引擎部署状态，检测完成之后自动进入任务引导页面。</div>
+            </div>
+          </div>
         </div>
         <div
-          v-if="subscribeStatus !== 'incomplete' && !isUnDepaly"
+          v-if="subscribeStatus !== 'incomplete' && !isUnDeploy"
           class="guide-footer flex mb-5"
           :class="[activeStep === 1 ? 'justify-content-end' : 'justify-content-between']"
         >
@@ -126,7 +144,7 @@ import Pay from './Pay.vue'
 
 export default {
   name: 'guide',
-  props: ['visible', 'agent', 'subscribes', 'step', 'isUnDepaly'],
+  props: ['visible', 'agent', 'subscribes', 'step', 'isUnDeploy'],
   components: {
     Account,
     Scenes,
@@ -138,98 +156,51 @@ export default {
   },
   data() {
     return {
+      timer: null,
       activeStep: this.step ? this.step : 1,
       scenes: [], //使用场景
       platform: 'selfHost',
-      agentId: '64aa97004be8ea3b8e02e39a',
+      agentId: '',
       orderId: '',
       orderInfo: '',
       bindPhoneVisible: false,
       submitLoading: false,
       subscribeId: '',
       subscribeStatus: '',
-      email: ''
+      email: '',
+      steps: [],
+      agentStatus: '',
+      //是否有支付页面
+      isPay: false
     }
   },
   mounted() {
     //初始化第一步
     this.email = window.__USER_INFO__.email
     this.checkWechatPhone()
-    this.close()
+  },
+  computed: {
+    userId() {
+      return this.$store.state.user.id
+    }
   },
   watch: {
     step(val) {
       this.activeStep = val
+      this.getSteps()
     },
     agent(val) {
       this.agentId = val?.id
-      this.isUnDepaly = val?.isUnDepaly
+      this.checkAgentStatus()
     },
     subscribes(val) {
       this.subscribeId = val?.id
       this.subscribeStatus = val?.status
     }
   },
-  computed: {
-    steps() {
-      if (!this.bindPhoneVisible && this.platform === 'selfHost') {
-        return [
-          {
-            title: '确定使用场景'
-          },
-          {
-            title: '设置数据库网络环境'
-          },
-          {
-            title: '选择计算引擎规格'
-          },
-          {
-            title: '支付'
-          },
-          {
-            title: '部署计算引擎'
-          }
-        ]
-      }
-
-      if (!this.bindPhoneVisible && this.platform === 'fullManagement') {
-        return [
-          {
-            title: '确定使用场景'
-          },
-          {
-            title: '设置数据库网络环境'
-          },
-          {
-            title: '选择计算引擎规格'
-          },
-          {
-            title: '支付'
-          }
-        ]
-      }
-
-      return [
-        {
-          title: '账号安全绑定'
-        },
-        {
-          title: '确定使用场景'
-        },
-        {
-          title: '设置数据库网络环境'
-        },
-        {
-          title: '选择计算引擎规格'
-        },
-        {
-          title: '支付'
-        }
-      ]
-    }
-  },
   beforeDestroy() {
     this.close()
+    clearTimeout(this.timer)
   },
   methods: {
     close() {
@@ -247,17 +218,89 @@ export default {
       this.close()
     },
     previous() {
+      let step = this.steps[this.activeStep - 1]
+      //去掉支付
+      if (step.key === 'Spec') {
+        let index = this.steps.findIndex(it => it.key === 'Pay')
+        if (index > -1) {
+          this.steps.splice(index, 1)
+        }
+      }
       this.activeStep--
+    },
+    //步骤控制
+    getSteps() {
+      if (!this.bindPhoneVisible) {
+        this.steps = [
+          {
+            key: 'Scenes',
+            title: '确定使用场景'
+          },
+          {
+            key: 'DeploymentMethod',
+            title: '设置数据库网络环境'
+          },
+          {
+            key: 'Spec',
+            title: '选择计算引擎规格'
+          }
+        ]
+      } else {
+        this.steps = [
+          {
+            key: 'Account',
+            title: '账号安全绑定'
+          },
+          {
+            key: 'Account',
+            title: '确定使用场景'
+          },
+          {
+            key: 'DeploymentMethod',
+            title: '设置数据库网络环境'
+          },
+          {
+            key: 'Spec',
+            title: '选择计算引擎规格'
+          }
+        ]
+      }
+    },
+    //检查Agent状态
+    checkAgentStatus() {
+      if (this.agentId) {
+        this.$axios.get('api/tcm/agent').then(data => {
+          let items = data?.items || []
+          this.agentStatus = items.find(i => i.id === this.agentId)?.status
+          if (this.agentStatus === 'Creating') {
+            clearTimeout(this.timer)
+            this.timer = setTimeout(() => {
+              this.checkAgentStatus()
+            }, 10000)
+          } else {
+            clearTimeout(this.timer)
+            this.$emit('update:visible', false)
+            this.$router.push({
+              name: 'migrate'
+            })
+          }
+        })
+      }
     },
     //确认提交
     submitConfirm(res) {
-      if (
-        (this.activeStep === this.steps?.length && (this.platform === 'fullManagement' || this.bindPhoneVisible)) ||
-        (this.activeStep === this.steps?.length - 1 && this.platform === 'selfHost' && !this.bindPhoneVisible)
-      ) {
-        //最后一步提交支付
+      let step = this.steps[this.activeStep - 1]
+      let isPay = this.steps.find(it => it.key === 'Pay')
+      if (step.key === 'Spec' && !isPay) {
+        //没有支付页-直接付款
+        this.getOrderInfo()
         this.submitOrder()
         return
+      } else if (step.key === 'Pay') {
+        //当前是支付页面-提交支付
+        this.submitOrder()
+      } else {
+        this.getOrderInfo()
       }
       if (this.bindPhoneVisible && this.activeStep === 1) {
         res?.()
@@ -266,22 +309,6 @@ export default {
         return
       }
       this.next()
-      switch (this.activeStep) {
-        case 1:
-        case 2:
-        case 3:
-          break
-        case 4:
-          if (!this.bindPhoneVisible) {
-            this.getOrderInfo()
-          }
-          break
-        case 5:
-          if (this.bindPhoneVisible) {
-            this.getOrderInfo()
-          }
-          break
-      }
     },
     //绑定手机号
     bindPhoneConfirm(res) {
@@ -293,6 +320,43 @@ export default {
     },
     changePlatform(val) {
       this.platform = val
+      let index = this.steps.findIndex(it => it.key === 'Deploy')
+      if (val === 'selfHost' && index === -1) {
+        this.steps.push({
+          key: 'Deploy',
+          title: '部署计算引擎'
+        })
+      } else if (val !== 'selfHost') {
+        //移除
+        if (index > -1) {
+          this.steps.splice(index, 1)
+        }
+      }
+    },
+    //切换实例
+    changeSpec(item) {
+      let index = this.steps.findIndex(it => it.key === 'Pay')
+      let len = this.steps?.length - 1
+      this.isDepaly = false
+      if (item?.price !== 0) {
+        if (this.platform !== 'selfHost' && index === -1) {
+          this.steps.push({
+            key: 'Pay',
+            title: '支付'
+          })
+        } else if (this.platform === 'selfHost' && index === -1) {
+          this.steps.splice(len, 0, {
+            key: 'Pay',
+            title: '支付'
+          })
+        }
+      } else {
+        //移除
+        if (index > -1) {
+          this.steps.splice(index, 1)
+        }
+        this.isDepaly = true
+      }
     },
     //检查是否有手机号
     checkWechatPhone() {
@@ -303,6 +367,15 @@ export default {
       }
       this.bindPhoneVisible =
         ['basic:email', 'basic:email-code', 'social:wechatmp-qrcode'].includes(user?.registerSource) && !user?.telephone
+      this.bindPhoneVisible = true
+      let guide = JSON.parse(sessionStorage.getItem('guide'))
+      if (guide?.userId === this.userId) {
+        this.activeStep = guide?.activeStep + 1 || 1
+        this.steps = guide?.steps
+      }
+      if (this.steps?.length === 0) {
+        this.getSteps()
+      }
       return this.bindPhoneVisible
     },
     getOrderInfo() {
@@ -337,15 +410,20 @@ export default {
         .then(data => {
           this.subscribe = data?.subscribe
           this.close()
+          this.$store.commit('setGuide', { activeStep: this.activeStep, steps: this.steps, userId: this.userId })
           if (data.status === 'incomplete') {
             //订单需要付款
             //在线支付 打开付款页面
             window.open(data?.payUrl, '_self')
           } else {
-            //免费半托管 - 新人引导 - 弹窗
+            //免费半托管 - 新人引导部署页面
             if (this.platform === 'selfHost') {
               this.agentId = data?.subscribeItems?.[0].resourceId
-              this.next()
+              this.$emit('changeIsUnDeploy', true)
+              this.$nextTick(() => {
+                this.next()
+                this.checkAgentStatus()
+              })
             } else {
               //订单不需要付款，只需对应跳转不同页面
               this.$emit('update:visible', false)
@@ -370,6 +448,16 @@ export default {
   gap: 20px;
   flex-shrink: 0;
   background: linear-gradient(146deg, rgba(44, 116, 255, 0.07) 0%, rgba(44, 101, 255, 0.01) 100%);
+}
+.box-card {
+  display: flex;
+  padding: 24px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  border-radius: 4px;
+  background: var(--color-blur-gary-light-9, #f4f5f7);
 }
 .guide-steps {
   height: 200px;

@@ -329,7 +329,7 @@ export default {
         )
       }
       this.handleChange(currentItem)
-      this.buried('changeSpec')
+      this.$emit('changeSpec', currentItem)
     },
     //切换订阅方式
     handleChange(item = {}) {
