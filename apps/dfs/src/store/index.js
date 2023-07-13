@@ -17,6 +17,7 @@ const store = new Vuex.Store({
     migrateTaskRunningCount: 0,
     instanceLoading: false,
     user: {
+      id: '',
       username: '',
       nickname: '',
       avatar: '',
