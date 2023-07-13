@@ -623,5 +623,7 @@ export default {
   packages_dag_config_datasource: '数据源专属配置',
   packages_dag_config_data_write: '数据写入配置',
   packages_dag_config_incremental_mode: '增量模式配置',
-  packages_dag_config_data_filter: '数据过滤配置'
+  packages_dag_config_data_filter: '数据过滤配置',
+  packages_dag_src_editor_leixingguolu: '类型过滤',
+  packages_dag_src_editor_date_processor_field_list: '受运算影响的字段'
 }

@@ -610,5 +610,7 @@ export default {
   packages_dag_nodes_database_jinwuzhujianbiao: '僅無主鍵表',
   packages_dag_nodes_database_jinyouzhujianbiao: '僅有主鍵表',
   packages_dag_nodes_database_biaoxianshi: '可選擇的表範圍',
-  packages_dag_nodes_database_xuanzeyaoguolvdiaode: '選擇要過濾掉的字段類型'
+  packages_dag_nodes_database_xuanzeyaoguolvdiaode: '選擇要過濾掉的字段類型',
+  packages_dag_src_editor_leixingguolu: '類型過濾',
+  packages_dag_src_editor_date_processor_field_list: '受運算影響的字段'
 }

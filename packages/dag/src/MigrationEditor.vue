@@ -227,7 +227,7 @@ export default {
           type: 'migrate_date_processor'
         },
         {
-          name: '类型过滤',
+          name: i18n.t('packages_dag_src_editor_leixingguolu'),
           type: 'migrate_field_mod_type_filter_processor'
         }
       ])
