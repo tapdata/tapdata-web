@@ -910,7 +910,7 @@ export default observer({
                     },
                     'x-reactions': [
                       {
-                        target: 'alarmRules.0.*',
+                        target: 'alarmRules.1.*',
                         fulfill: {
                           state: {
                             disabled: `{{!$self.value}}`
