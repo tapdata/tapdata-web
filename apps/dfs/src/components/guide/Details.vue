@@ -105,7 +105,7 @@ export default {
       </ElRadioGroup>
     </div>
     <ul class="mt-4" :class="{ card: isCard }" v-if="orderInfo">
-      <li v-if="orderInfo.priceOff">
+      <li v-if="orderInfo.priceOff && orderInfo.price !== 0">
         <span class="price-detail-label text-end inline-block mr-2"
           >{{ $t('dfs_agent_subscription_discount', { val: orderInfo.priceDiscount }) }}:
         </span>

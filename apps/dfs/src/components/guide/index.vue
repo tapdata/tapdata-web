@@ -106,7 +106,7 @@
             type="primary"
             auto-loading
             @click="submitConfirm(arguments[0])"
-            v-if="this.activeStep === 1 && bindPhoneVisible"
+            v-else-if="this.activeStep === 1 && bindPhoneVisible"
             >{{ $t('public_button_next') }}</VButton
           >
           <VButton type="primary" @click="submitConfirm()" v-else>{{ $t('public_button_next') }}</VButton>
@@ -343,7 +343,6 @@ export default {
             //免费半托管 - 新人引导 - 弹窗
             if (this.platform === 'selfHost') {
               this.agentId = data?.subscribeItems?.[0].resourceId
-              this.isUnDepaly = true
               this.next()
             } else {
               //订单不需要付款，只需对应跳转不同页面
