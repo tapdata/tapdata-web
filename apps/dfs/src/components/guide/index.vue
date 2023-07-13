@@ -86,14 +86,25 @@
             </template>
             <template v-if="[3].includes(activeStep)">
               <!--选择实例规格-->
-              <Spec ref="spec" :platform="platform" @changePlatform="changePlatform"></Spec>
+              <Spec ref="spec" :platform="platform" @changeSpec="changeSpec"></Spec>
             </template>
-            <template v-if="[4].includes(activeStep) && !isUnDeploy">
-              <!--费用清单-->
-              <pay v-if="subscribeStatus === 'incomplete'" refs="pay" :subscribes="subscribes" @refresh="refresh"></pay>
-              <Details v-else ref="details" :orderInfo="orderInfo" :email="email"></Details>
+            <template v-if="[4].includes(activeStep)">
+              <template v-if="isUnDeploy">
+                <!--部署实例-->
+                <Deploy :agentId="agentId"></Deploy>
+              </template>
+              <template v-else>
+                <!--费用清单-->
+                <pay
+                  v-if="subscribeStatus === 'incomplete'"
+                  refs="pay"
+                  :subscribes="subscribes"
+                  @refresh="refresh"
+                ></pay>
+                <Details v-else ref="details" :orderInfo="orderInfo" :email="email"></Details>
+              </template>
             </template>
-            <template v-if="[5].includes(activeStep) && isUnDeploy">
+            <template v-if="[5].includes(activeStep)">
               <!--部署实例-->
               <Deploy :agentId="agentId"></Deploy>
             </template>
@@ -375,7 +386,7 @@ export default {
       }
       this.bindPhoneVisible =
         ['basic:email', 'basic:email-code', 'social:wechatmp-qrcode'].includes(user?.registerSource) && !user?.telephone
-      this.bindPhoneVisible = true
+      this.bindPhoneVisible = false
       this.getSessionStorage()
       if (this.steps?.length === 0) {
         this.getSteps()
