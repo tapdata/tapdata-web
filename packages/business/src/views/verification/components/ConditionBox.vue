@@ -486,7 +486,7 @@ export default {
                                 dependencies: ['.key', '.key#dataSource'],
                                 fulfill: {
                                   schema: {
-                                    'x-component': `{{field=$deps[1] && $deps[1].find(item=>item.value===$deps[0]),field&&/timestamp|date|DATE_TIME|datetime|OBJECT_ID/i.test(field.type)?"DatePicker":"Input"}}`
+                                    'x-component': `{{field=$deps[1] && $deps[1].find(item=>item.value===$deps[0]),field&&/timestamp|date|DATE_TIME|datetime/i.test(field.data_type)?"DatePicker":"Input"}}`
                                   }
                                 }
                               }
@@ -633,7 +633,7 @@ export default {
                                 dependencies: ['.key', '.key#dataSource'],
                                 fulfill: {
                                   schema: {
-                                    'x-component': `{{field=$deps[1] && $deps[1].find(item=>item.value===$deps[0]),field&&/timestamp|date|DATE_TIME|datetime|OBJECT_ID/i.test(field.type)?"DatePicker":"Input"}}`
+                                    'x-component': `{{field=$deps[1] && $deps[1].find(item=>item.value===$deps[0]),field&&/timestamp|date|DATE_TIME|datetime/i.test(field.data_type)?"DatePicker":"Input"}}`
                                   }
                                 }
                               }
@@ -841,7 +841,7 @@ export default {
           return {
             attrs: { nodeId, nodeName, connectionId, connectionName, databaseType },
             name: `${nodeName} / ${connectionName}`,
-            value: `${nodeId}/${connectionId}`,
+            value: connectionId,
             label: `${nodeName} / ${connectionName}`,
             databaseType: databaseType
           }
@@ -1081,8 +1081,8 @@ export default {
               item.source.nodeId = source
               item.source.nodeName = sourceName
               item.source.databaseType = sourceDatabaseType
-              item.source.connectionId = `${source}/${sourceConnectionId}`
-              item.source.connectionName = `${sourceName} / ${sourceConnectionName}`
+              item.source.connectionId = sourceConnectionId
+              item.source.connectionName = sourceConnectionName
               item.source.currentLabel = `${sourceName} / ${sourceConnectionName}`
               item.source.table = ge // findTable.original_name
               item.source.capabilities = capabilitiesMap[sourceConnectionId]
@@ -1090,8 +1090,8 @@ export default {
               item.target.nodeId = target
               item.target.nodeName = targetName
               item.target.databaseType = targetDatabaseType
-              item.target.connectionId = `${target}/${targetConnectionId}`
-              item.target.connectionName = `${targetName} / ${targetConnectionName}`
+              item.target.connectionId = targetConnectionId
+              item.target.connectionName = targetConnectionName
               item.target.currentLabel = `${targetName} / ${targetConnectionName}`
               item.target.table = tableNameRelation[ge] // findTargetTable.original_name
               item.target.capabilities = capabilitiesMap[targetConnectionId]
@@ -1145,12 +1145,6 @@ export default {
       let data = cloneDeep(this.data)
       data.forEach(el => {
         el.modeType = el.source.columns ? 'custom' : 'all'
-        if (this.taskId) {
-          el.source.connectionId = `${el.source.nodeId}/${el.source.connectionId}`
-          el.source.connectionName = `${el.source.nodeName} / ${el.source.connectionName}`
-          el.target.connectionId = `${el.target.nodeId}/${el.target.connectionId}`
-          el.target.connectionName = `${el.target.nodeName} / ${el.target.connectionName}`
-        }
       })
       this.list = data
     },
@@ -1163,10 +1157,6 @@ export default {
             el.source.columns = null
             el.target.columns = null
           }
-          el.source.connectionId = el.source.connectionId?.split('/')?.[1]
-          el.source.connectionName = el.source.connectionName?.split(' / ')?.[1]
-          el.target.connectionId = el.target.connectionId?.split('/')?.[1]
-          el.target.connectionName = el.target.connectionName?.split(' / ')?.[1]
         })
       }
       return list
@@ -1185,7 +1175,7 @@ export default {
       const { nodeId, nodeName, connectionName } = opt.attrs || {}
       item.nodeId = nodeId
       item.nodeName = nodeName
-      item.connectionName = `${nodeName} / ${connectionName}`
+      item.connectionName = connectionName
     },
 
     handleSetSelectedConnection(item, val) {
@@ -1279,8 +1269,8 @@ export default {
 
       item.target.nodeId = target
       item.target.nodeName = targetName
-      item.target.connectionId = `${target}/${targetConnectionId}`
-      item.target.connectionName = `${targetName} / ${targetConnectionName}`
+      item.target.connectionId = targetConnectionId
+      item.target.connectionName = targetConnectionName
       item.target.table = tableName ? tableName : tableNameRelation[val]
 
       // 加载目标的字段
@@ -1621,7 +1611,7 @@ function validate(sourceRow){
       if (opt.fields?.length) {
         return
       }
-      const connectionId = opt.connectionId?.split('/')?.[1]
+      const connectionId = opt.connectionId
       const params = {
         where: {
           meta_type: 'table',
