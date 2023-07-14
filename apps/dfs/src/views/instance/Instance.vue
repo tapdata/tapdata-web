@@ -559,7 +559,7 @@ export default {
           value: 'specLabel'
         },
         {
-          label: this.$t('dfs_instance_instance_guige'),
+          label: this.$t('dfs_instance_instance_subscribe_time'),
           value: 'periodStartTime'
         },
         {
