@@ -387,7 +387,6 @@ export default {
       }
       this.bindPhoneVisible =
         ['basic:email', 'basic:email-code', 'social:wechatmp-qrcode'].includes(user?.registerSource) && !user?.telephone
-      this.bindPhoneVisible = false
       this.getSessionStorage()
       if (this.steps?.length === 0) {
         this.getSteps()
