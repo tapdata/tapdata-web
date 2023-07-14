@@ -125,8 +125,8 @@ export default {
     },
 
     showRetrying() {
-      const { funcationRetryStatus, taskRetryStatus } = this.task
-      return funcationRetryStatus === 'Retrying' || taskRetryStatus === 'Retrying'
+      const { functionRetryStatus, taskRetryStatus } = this.task
+      return functionRetryStatus === 'Retrying' || taskRetryStatus === 'Retrying'
     }
   },
 

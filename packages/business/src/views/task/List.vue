@@ -458,7 +458,7 @@ export default {
         crontabExpression: true,
         crontabScheduleMsg: true,
         lastStartDate: true,
-        funcationRetryStatus: true,
+        functionRetryStatus: true,
         taskRetryStatus: true
       }
       let where = {

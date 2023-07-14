@@ -1,26 +1,12 @@
 <template>
   <div class="log-container flex justify-content-between" :class="{ fullscreen: fullscreen }">
-    <div v-show="!hideFilter" class="filter-items border-end">
-      <div class="px-2 py-3">
-        <div
-          class="node-list-item px-2 mb-1 flex align-center font-color-dark"
-          :class="{ active: activeNodeId === 'all' }"
-          @click="changeItem()"
-        >
-          <VIcon size="20" class="mr-1">folder</VIcon>{{ $t('packages_dag_migration_consolepanel_quanburizhi') }}
-        </div>
-        <div
-          v-for="node in items"
-          :key="node.id"
-          class="node-list-item px-2 mb-1 flex align-center font-color-dark"
-          :class="{ active: activeNodeId === node.id }"
-          @click="changeItem(node.id)"
-        >
-          <NodeIcon :node="node" :size="18" />
-          <div class="flex-1 ml-1 text-truncate">{{ node.name }}</div>
-        </div>
-      </div>
-    </div>
+    <NodeList
+      v-show="!hideFilter"
+      v-model="activeNodeId"
+      :label="$t('packages_dag_migration_consolepanel_quanburizhi')"
+      class="node-list border-end"
+      @change="changeItem"
+    ></NodeList>
     <div class="main flex-fill flex flex-column px-4 py-3">
       <div class="flex mb-2 align-items-center justify-content-between">
         <div class="flex align-items-center">
@@ -130,9 +116,9 @@
                 </div>
                 <div v-if="item.expand" class="log-detail bg-color-normal p-3">
                   <p v-if="item.message" class="mb-2 fw-bold font-color-dark">message:</p>
-                  <div v-if="item.message" v-html="item.message" class="mb-4"></div>
+                  <div v-if="item.message" v-html="item.message" class="mb-4 text-break"></div>
                   <p v-if="item.errorStack" class="mb-2 fw-bold font-color-dark">errorStack:</p>
-                  <div v-if="item.errorStack" v-html="item.errorStack"></div>
+                  <div v-if="item.errorStack" v-html="item.errorStack" class="text-break"></div>
                 </div>
               </div>
             </DynamicScrollerItem>
@@ -245,12 +231,13 @@ import Time from '@tap/shared/src/time'
 import { VIcon, TimeSelect } from '@tap/component'
 import VEmpty from '@tap/component/src/base/v-empty/VEmpty.vue'
 import { monitoringLogsApi, taskApi, proxyApi } from '@tap/api'
-import NodeIcon from '@tap/dag/src/components/NodeIcon'
+
+import NodeList from '../nodes/List'
 
 export default {
   name: 'NodeLog',
 
-  components: { NodeIcon, VIcon, TimeSelect, DynamicScroller, DynamicScrollerItem, VEmpty },
+  components: { VIcon, TimeSelect, DynamicScroller, DynamicScrollerItem, VEmpty, NodeList },
 
   props: {
     dataflow: {
@@ -273,12 +260,13 @@ export default {
     logTotals: {
       type: Array,
       default: () => []
-    }
+    },
+    nodeId: String
   },
 
   data() {
     return {
-      activeNodeId: 'all',
+      activeNodeId: this.nodeId,
       keyword: '',
       checkList: [],
       checkItems: [
@@ -429,15 +417,17 @@ export default {
   },
 
   watch: {
-    'dataflow.status'(v) {
-      if (v === 'edit') return
-      this.init()
+    dataflow: {
+      deep: true,
+      handler(v1, v2) {
+        if (v1.status === 'edit') return
+        if (v1.taskRecordId + v1.startTime !== v2.taskRecordId + v2.startTime) {
+          this.init()
+        }
+      }
     },
-    'dataflow.taskRecordId'() {
-      this.init()
-    },
-    'dataflow.startTime'() {
-      this.init()
+    nodeId(v) {
+      this.activeNodeId = v
     }
   },
 
@@ -517,11 +507,8 @@ export default {
       this.loadNew()
     },
 
-    changeItem(itemId = 'all') {
-      if (this.activeNodeId === itemId) {
-        return
-      }
-      this.activeNodeId = itemId
+    changeItem(val) {
+      this.$emit('update:nodeId', val)
       this.init()
     },
 
@@ -656,7 +643,7 @@ export default {
         order: 'desc',
         taskId,
         taskRecordId,
-        nodeId: this.activeNodeId === 'all' ? null : this.activeNodeId,
+        nodeId: this.activeNodeId === '' ? null : this.activeNodeId,
         search: this.keyword,
         levels: this.checkList
       }
@@ -679,7 +666,7 @@ export default {
         order: 'asc',
         taskId,
         taskRecordId,
-        nodeId: this.activeNodeId === 'all' ? null : this.activeNodeId,
+        nodeId: this.activeNodeId === '' ? null : this.activeNodeId,
         search: this.keyword,
         levels: this.checkList
       }
@@ -907,6 +894,19 @@ export default {
 .white-space-pre {
   white-space: pre-wrap;
   word-break: break-all;
+}
+.node-list {
+  width: 224px;
+  ::v-deep {
+    .error-icon {
+      display: none;
+    }
+    .error-node {
+      .error-icon {
+        display: inline-flex;
+      }
+    }
+  }
 }
 
 .log-list {

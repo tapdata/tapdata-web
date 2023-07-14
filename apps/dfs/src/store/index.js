@@ -26,6 +26,11 @@ const store = new Vuex.Store({
       email: '',
       enableLicense: false,
       licenseCodes: []
+    },
+    guide: {
+      activeStep: '',
+      steps: [],
+      userId: ''
     }
   },
 
@@ -41,6 +46,12 @@ const store = new Vuex.Store({
 
     setUserEmail(state, email) {
       state.user.email = email
+    },
+
+    setGuide(state, guide = {}) {
+      Object.assign(state.guide, guide)
+      console.log('state.guide', state.guide) // eslint-disable-line
+      sessionStorage.setItem('guide', JSON.stringify(state.guide))
     }
   }
 })
