@@ -335,7 +335,7 @@ export default {
   packages_business_verification_details_jiaoyan: 'Verify',
   packages_business_verification_details_qingshurubiaoming: 'Please enter the table name...',
   packages_business_shared_const_gaojingzhong: 'Alarming',
-  packages_business_shared_const_yihuifu: 'Restored',
+  packages_business_shared_const_yihuifu: 'Recovered',
   packages_business_components_alert_yiguanbi: 'Closed',
   packages_business_components_alert_huifu: 'Recovery',
   packages_business_shared_const_yiban: 'Normal',
