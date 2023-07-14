@@ -698,7 +698,7 @@ export default {
         },
         {
           label: i18n.t('dfs_instance_instance_baimingdanIp'),
-          slotName: 'whiteList'
+          prop: 'whiteList'
         },
         {
           label: i18n.t('dfs_instance_createagent_cunchuguige'),
@@ -1738,7 +1738,7 @@ export default {
       if (query.active === 'storage') {
         this.activeName = 'second'
         this.$nextTick(() => {
-          this.tableCode?.fetch()
+          this.specRemoteMethod()
         })
       }
     }

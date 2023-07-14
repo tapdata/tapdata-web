@@ -357,9 +357,6 @@ export default {
     },
     // 检查是否有安装过agent
     async checkAgentInstall() {
-      this.subscriptionModelVisible = false
-      return
-
       let subscribe = await this.$axios.get(`api/tcm/subscribe`)
       this.$axios.get('api/tcm/agent').then(data => {
         //检查是否有待部署状态
