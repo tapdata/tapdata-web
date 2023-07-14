@@ -1493,5 +1493,6 @@ export default {
   dfs_instance_instance_tianjiabaimingdan: '添加白名單',
   dfs_order_list_dingyueleixing: '訂閱類型',
   public_button_pay: '支付',
-  dfs_order_list_zongjine: '總金額'
+  dfs_order_list_zongjine: '總金額',
+  dfs_instance_instance_subscribe_time: '訂閱時間'
 }

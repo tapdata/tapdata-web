@@ -1524,5 +1524,6 @@ export default {
   dfs_order_list_dingyueleixing: '订阅类型',
   public_button_pay: '支付',
   dfs_order_list_zongjine: '总金额',
-  dfs_alarm_setting_tour_title: '设置告警通知，实时监控任务状态'
+  dfs_alarm_setting_tour_title: '设置告警通知，实时监控任务状态',
+  dfs_instance_instance_subscribe_time: '订阅时间'
 }

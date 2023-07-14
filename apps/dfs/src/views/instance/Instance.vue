@@ -559,7 +559,7 @@ export default {
           value: 'specLabel'
         },
         {
-          label: this.$t('dfs_instance_instance_guige'),
+          label: this.$t('dfs_instance_instance_subscribe_time'),
           value: 'periodStartTime'
         },
         {
@@ -597,7 +597,7 @@ export default {
       ],
       page: {
         current: 0,
-        size: 10,
+        size: 1000,
         total: 0
       },
       order: 'createAt desc',
@@ -853,7 +853,7 @@ export default {
           item.deploymentTypeLabel = this.agentTypeMap[item.deploymentType]
           let num = Number(item?.dataSize) || 0
           let size = (num / (1024 * 1024)).toFixed(2)
-          this.percentage = (size / item.storageSize).toFixed(1) * 100
+          this.percentage = Math.round((size / item.storageSize).toFixed(1) * 100)
           item.dataSizeLast = (item.storageSize - size).toFixed(2)
           item.dataSizeLabel = size
           return item

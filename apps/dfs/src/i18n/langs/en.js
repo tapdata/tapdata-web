@@ -1638,5 +1638,6 @@ export default {
   dfs_instance_instance_tianjiabaimingdan: 'Add whiteList',
   dfs_order_list_dingyueleixing: 'Subscription Type',
   public_button_pay: 'Pay',
-  dfs_order_list_zongjine: 'Total Amount'
+  dfs_order_list_zongjine: 'Total Amount',
+  dfs_instance_instance_subscribe_time: 'Subscribe Time'
 }

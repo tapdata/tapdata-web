@@ -116,9 +116,9 @@
                 </div>
                 <div v-if="item.expand" class="log-detail bg-color-normal p-3">
                   <p v-if="item.message" class="mb-2 fw-bold font-color-dark">message:</p>
-                  <div v-if="item.message" v-html="item.message" class="mb-4"></div>
+                  <div v-if="item.message" v-html="item.message" class="mb-4 text-break"></div>
                   <p v-if="item.errorStack" class="mb-2 fw-bold font-color-dark">errorStack:</p>
-                  <div v-if="item.errorStack" v-html="item.errorStack"></div>
+                  <div v-if="item.errorStack" v-html="item.errorStack" class="text-break"></div>
                 </div>
               </div>
             </DynamicScrollerItem>
@@ -417,20 +417,17 @@ export default {
   },
 
   watch: {
-    'dataflow.status'(v) {
-      if (v === 'edit') return
-      this.init()
-    },
-    'dataflow.taskRecordId'() {
-      this.init()
-    },
-    'dataflow.startTime'() {
-      this.init()
-    },
-    watch: {
-      nodeId(v) {
-        this.activeNodeId = v
+    dataflow: {
+      deep: true,
+      handler(v1, v2) {
+        if (v1.status === 'edit') return
+        if (v1.taskRecordId + v1.startTime !== v2.taskRecordId + v2.startTime) {
+          this.init()
+        }
       }
+    },
+    nodeId(v) {
+      this.activeNodeId = v
     }
   },
 
