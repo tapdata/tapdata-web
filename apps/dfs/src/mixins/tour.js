@@ -31,7 +31,7 @@ export default {
   },
 
   destroyed() {
-    this.driverObj.destroy()
+    this.driverObj?.destroy()
     this.driverObj = null
   },
 

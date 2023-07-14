@@ -143,11 +143,14 @@ export default {
       this.$axios
         .post('api/tcm/subscribe/payment', this.orderInfo)
         .then(data => {
-          if (data.status === 'incomplete') {
+          if (data?.payUrl) {
             window.open(data?.payUrl, '_self')
           } else {
             this.$router.push({
-              name: 'order'
+              name: 'changeList',
+              query: {
+                id: data.subscribeId
+              }
             })
           }
         })
@@ -171,8 +174,11 @@ export default {
       if (!id) return
       const alter = await this.$axios.get(`api/tcm/subscribe/alter/${id}`)
       const { subscribe } = alter
-      const orderRoute = this.$router.resolve({
-        name: 'order'
+      const route = this.$router.resolve({
+        name: 'changeList',
+        query: {
+          id: alter.subscribeId
+        }
       })
       const price = this.formatterPrice(subscribe.currency, alter.subscribeItems[0].amount)
       const orderInfo = {
@@ -183,8 +189,8 @@ export default {
             { periodUnit: subscribe.periodUnit, type: subscribe.subscribeType },
             subscribe.paymentMethod || 'Stripe'
           ) || '-',
-        successUrl: location.origin + location.pathname + orderRoute.href,
-        cancelUrl: location.origin + location.pathname + orderRoute.href,
+        successUrl: location.origin + location.pathname + route.href,
+        cancelUrl: location.origin + location.pathname + route.href,
         subscribeAlterId: alter.id,
         subscribeType: subscribe.subscribeType,
         subscribeItems: alter.subscribeItems.map(it => {
@@ -193,7 +199,7 @@ export default {
         }),
         paymentMethod: subscribe.paymentMethod,
         periodUnit: subscribe.periodUnit,
-        currency: subscribe.currency
+        currency: subscribe.currency || window.__config__?.currencyType
       }
 
       this.orderInfo = orderInfo

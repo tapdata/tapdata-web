@@ -18,6 +18,28 @@
         ></VTable>
       </div>
       <el-form label-position="top" ref="ruleForm">
+        <!--订阅方式-->
+        <ElFormItem :label="$t('dfs_instance_instance_dingyuefangshi')" v-if="currentRow.subscribeType === 'FreeTier'">
+          <ElRadioGroup v-model="currentPackage" @input="handleChange" class="flex flex-wrap gap-4">
+            <ElRadio
+              v-for="(item, index) in packageItems"
+              :key="index"
+              :label="item.value"
+              border
+              class="rounded-4 subscription-radio m-0 position-relative"
+            >
+              <span class="inline-flex align-center">
+                {{ item.label }}
+                <template v-if="item.type === 'recurring' || item.periodUnit === 'year'">
+                  <ElTag class="discount-tag fw-sub rounded-4 border-0 ml-2">{{
+                    $t('dfs_agent_subscription_discount', { val: getDiscount(item) })
+                  }}</ElTag>
+                  <VIcon class="position-absolute discount-hot-icon">hot-o</VIcon>
+                </template>
+              </span>
+            </ElRadio>
+          </ElRadioGroup>
+        </ElFormItem>
         <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu')">
           <ElSelect v-model="specification" @change="changeSpec" class="w-50 rounded-4">
             <ElOption v-for="(item, i) in specificationItems" :key="i" :label="item.name" :value="item.value">
@@ -49,7 +71,7 @@ import { CURRENCY_SYMBOL_MAP, TIME_MAP } from '@tap/business'
 import dayjs from 'dayjs'
 import { uniqBy } from 'lodash'
 import { getPaymentMethod, getSpec } from '../instance/utils'
-import { openUrl } from '@tap/shared'
+import { isObj, openUrl } from '@tap/shared'
 
 export default {
   name: 'ChangeSubscribe',
@@ -87,7 +109,8 @@ export default {
       agentList: [],
       specificationItems: [],
       packageItems: [],
-      agent: ''
+      agent: '',
+      currentPackage: ''
     }
   },
   computed: {
@@ -236,6 +259,7 @@ export default {
         this.currencyType = this.packageItems[0]?.currency
       }
       let currentItem = this.packageItems[0]
+      this.currentPackage = currentItem?.value
       if (this.selected?.type && currentItem?.chargeProvider !== 'FreeTier' && this.selected?.type !== 'FreeTier') {
         currentItem = this.packageItems.find(
           it => it.type === this.selected?.type && it.periodUnit === this.selected?.periodUnit //切换规格不改变原来的订阅方式
@@ -305,11 +329,28 @@ export default {
     },
     //退订
     cancelSubmit() {
-      let { id, paymentMethod } = this.currentRow
+      let { id, paymentMethod, currency, subscribeType, periodUnit } = this.currentRow
       let { resourceId } = this.agent
-      let { priceId } = this.selected
+      const {
+        type,
+        priceId,
+        currency: selectCurrency,
+        periodUnit: selectPeriodUnit,
+        label,
+        specification
+      } = this.selected
+
+      if (subscribeType === 'FreeTier') {
+        subscribeType = type
+        periodUnit = selectPeriodUnit
+        currency = window.__config__?.currencyType || selectCurrency
+      }
+
       let param = {
         subscribeId: id, // 原订阅ID
+        subscribeType,
+        periodUnit,
+        currency,
         paymentMethod: paymentMethod, // 支付方式
         successUrl: location.href, // 支付成功跳转地址
         cancelUrl: location.href, // 支付失败跳转地址
@@ -348,9 +389,51 @@ export default {
           this.showUnsubscribeDetailVisible = false
           this.loadingCancelSubmit = false
         })
+    },
+
+    getDiscount(item) {
+      const { locale } = this.$i18n
+      if (item.type === 'recurring' && item.periodUnit === 'month') {
+        return locale === 'en' ? 5 : 95
+      } else if (item.periodUnit === 'year') {
+        return locale === 'en' ? 10 : 9
+      }
+    },
+
+    //切换订阅方式
+    handleChange(item = {}) {
+      if (!isObj(item)) {
+        item = this.packageItems.find(it => it.value === item)
+      }
+      this.currentPackage = item.value
+      this.selected = item
+      if (item?.chargeProvider !== 'FreeTier') {
+        this.changeCurrencyOption(item)
+        this.currency = this.currencyOption.find(it => it.currency === this.currencyType) || {}
+      } else {
+        this.currencyOption = []
+        this.currency = item
+      }
     }
   }
 }
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.discount-tag {
+  padding: 0 6px;
+  color: #ff7d00;
+  background: rgba(255, 125, 0, 0.1);
+}
+.discount-hot-icon {
+  color: #ff7d00;
+  right: -12px;
+  top: -12px;
+  font-size: 24px;
+  background: #fff;
+}
+.subscription-radio.el-radio {
+  padding: 0 12px;
+  line-height: 30px;
+}
+</style>

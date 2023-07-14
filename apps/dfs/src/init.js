@@ -198,10 +198,17 @@ export default ({ routes }) => {
       // }
       // window.__configMock__ = data
     })
-  window.axios.get('config/config.json').then(res => {
-    window.__config__ = res.data
-    getData()
-  })
+  window.axios
+    .get('config/config.json', {
+      responseType: 'json',
+      headers: {
+        Accept: 'application/json'
+      }
+    })
+    .then(res => {
+      window.__config__ = res.data
+      getData()
+    })
 }
 
 startTimeOnSite()

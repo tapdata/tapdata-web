@@ -14,8 +14,9 @@ export default {
       changeList: [],
       changeColumns: [
         {
-          label: '订阅编号',
-          prop: 'subscribeId'
+          label: '变更编号',
+          prop: 'id',
+          width: 220
         },
         {
           label: i18n.t('dfs_instance_instance_guige'),
