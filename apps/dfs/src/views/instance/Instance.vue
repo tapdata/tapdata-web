@@ -597,7 +597,7 @@ export default {
       ],
       page: {
         current: 0,
-        size: 10,
+        size: 1000,
         total: 0
       },
       order: 'createAt desc',
