@@ -88,6 +88,7 @@
               <!--选择实例规格-->
               <Spec ref="spec" :platform="platform" @changeSpec="changeSpec"></Spec>
             </template>
+
             <template v-if="[4].includes(activeStep)">
               <template v-if="isUnDeploy">
                 <!--部署实例-->
@@ -386,7 +387,6 @@ export default {
       }
       this.bindPhoneVisible =
         ['basic:email', 'basic:email-code', 'social:wechatmp-qrcode'].includes(user?.registerSource) && !user?.telephone
-      this.bindPhoneVisible = false
       this.getSessionStorage()
       if (this.steps?.length === 0) {
         this.getSteps()
