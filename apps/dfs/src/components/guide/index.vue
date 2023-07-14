@@ -3,7 +3,7 @@
     class="guide-dialog"
     :visible.sync="visible"
     width="1000px"
-    :top="'5vh'"
+    :top="'10vh'"
     :show-close="false"
     :destroy-on-close="true"
     :close-on-click-modal="false"
@@ -11,7 +11,7 @@
     :before-close="close"
   >
     <div class="guide-wrap flex justify-content-center">
-      <div class="nav-wrap px-6 py-6">
+      <div class="nav-wrap px-8 py-8">
         <div class="guide-header font-color-dark fw-bold fs-5 mb-4 mt-4">欢迎使用 Tapdata Cloud 数据服务</div>
         <div class="guide-desc font-color-dark">
           Tapdata Cloud 是专业的数据集成与服务平台, 为了让您更流畅地使用产品, 请跟随我们的引导, 开始一步步操作吧
@@ -387,6 +387,7 @@ export default {
       }
       this.bindPhoneVisible =
         ['basic:email', 'basic:email-code', 'social:wechatmp-qrcode'].includes(user?.registerSource) && !user?.telephone
+      this.bindPhoneVisible = false
       this.getSessionStorage()
       if (this.steps?.length === 0) {
         this.getSteps()
@@ -467,10 +468,10 @@ export default {
 <style scoped lang="scss">
 .nav-wrap {
   width: 348px;
-  height: 716px;
+  height: 640px;
   gap: 20px;
   flex-shrink: 0;
-  background: linear-gradient(146deg, rgba(44, 116, 255, 0.07) 0%, rgba(44, 101, 255, 0.01) 100%);
+  background: url('../../assets/image/guide-bg.png');
 }
 .box-card {
   display: flex;
@@ -486,7 +487,7 @@ export default {
   height: 200px;
 }
 .guide-main {
-  height: 716px;
+  height: 640px;
 }
 .guide-desc {
   margin-bottom: 60px;

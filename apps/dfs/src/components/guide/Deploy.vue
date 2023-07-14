@@ -72,7 +72,15 @@ export default {
 
 <template>
   <div class="account">
-    <div class="fs-6 font-color-dark fw-sub mb-4 mt-4">准备Tapdata Cloud 计算引擎环境部署，如遇问题可 咨询客服</div>
+    <div class="fs-6 font-color-dark fw-sub mb-4 mt-4">
+      <span> 准备Tapdata Cloud 计算引擎环境部署，如遇问题可</span>
+      <el-link
+        type="primary"
+        class="fs-6 align-top ml-2"
+        href="https://salesiq.zoho.com.cn/signaturesupport.ls?widgetcode=39c2c81d902fdf4fbcc9b55f1268168c6d58fe89b1de70d9adcb5c4c13d6ff4d604d73c57c92b8946ff9b4782f00d83f"
+        >咨询客服</el-link
+      >
+    </div>
     <div class="fw-sub font-color-dark mt-4">要安装计算引擎,请先在下方选择您的服务器类型：</div>
     <ElRadioGroup v-model="downLoadType" class="flex gap-4 mt-4 mb-4">
       <ElRadio

@@ -92,7 +92,7 @@ export default {
   }
 }
 .deployMethod-image {
-  width: 190px;
+  width: 200px;
   height: 77px;
 }
 </style>

@@ -905,7 +905,7 @@ export default {
       }
       let filter = {
         where,
-        size: this.page.size,
+        size: 100,
         page: current,
         sort: [this.order]
       }
