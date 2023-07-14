@@ -853,7 +853,7 @@ export default {
           item.deploymentTypeLabel = this.agentTypeMap[item.deploymentType]
           let num = Number(item?.dataSize) || 0
           let size = (num / (1024 * 1024)).toFixed(2)
-          this.percentage = (size / item.storageSize).toFixed(1) * 100
+          this.percentage = Math.round((size / item.storageSize).toFixed(1) * 100)
           item.dataSizeLast = (item.storageSize - size).toFixed(2)
           item.dataSizeLabel = size
           return item
