@@ -447,8 +447,8 @@
                 </div>
               </div>
               <div class="agent-item__content border-left flex flex-wrap py-4 px-4">
-                <div class="flex align-items-center mb-2 w-50" v-for="col in specColumns">
-                  <span class="font-color-light mr-2">{{ col.label }}: </span>
+                <div class="flex align-items-center mb-2 w-50" v-for="(col, i) in specColumns" :key="i">
+                  <span class="font-color-light mr-2">{{ col.label }}:</span>
                   <!--状态-->
                   <span v-if="col.prop === 'status'" class="font-color-dark">
                     <StatusTag type="tag" :status="item.status" default-status="Stopped" target="mdb"></StatusTag>
@@ -1378,7 +1378,7 @@ export default {
       if (ips.length > 0 && this.ipAddress && this.ipAddress !== '') {
         for (let i = 0; i < ips.length; i++) {
           if (!ipRegex.test(ips[i])) {
-            this.$message.error(ips[i] + i18n.t('dfs_instance_instance_buhefaIp'))
+            this.$message.error(i18n.t('dfs_instance_instance_buhefaIp'))
             return
           }
         }
