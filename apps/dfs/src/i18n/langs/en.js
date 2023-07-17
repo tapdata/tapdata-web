@@ -1679,8 +1679,8 @@ export default {
   dfs_mixins_tour_dianjicichuhuang3: 'Click here to create your source database',
   dfs_mixins_tour_qingchuangjianninde3: 'Please create your source database',
   dfs_router_index_zhifuqingdan: 'Payment list',
-  dfs_instance_instance_perce: '{val1} seconds ago',
-  dfs_instance_instance_perce_minute: '{val1} minutes ago',
+  dfs_instance_instance_perce: '{val1} Second Ago',
+  dfs_instance_instance_perce_minute: '{val1} Minute Ago',
   dfs_instance_instance_shengji: 'Upgrade',
   dfs_instance_instance_xintiaobinlu: 'Heartbeat Frequency',
   dfs_components_taskalarmtour_deployment_qingwen:

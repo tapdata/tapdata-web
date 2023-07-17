@@ -859,7 +859,7 @@ export default {
           let num = Number(item?.dataSize) || 0
           // 字节转G
           let size = Math.min(item.storageSize, num / 1073741824).toFixed(2)
-          this.percentage = Math.round((size / item.storageSize).toFixed(1) * 100)
+          item.percentage = Math.round((size / item.storageSize).toFixed(1) * 100)
           item.dataSizeLast = (item.storageSize - size).toFixed(2)
           item.dataSizeLabel = size
           return item
@@ -972,24 +972,11 @@ export default {
             item.versionLabel = item?.spec?.version || 0
             //托管方式
             item.agentTypeLabel = this.agentTypeMap[item.agentType]
-            //心跳頻率 = 當前时间- 心跳时间
+            item.second = secondDifference(item?.tmInfo?.pingTime, 'second')
+            //心跳頻率 = 當前时间- 心跳时间 单位秒
+            let max = 30 * 60
             let second = secondDifference(item?.tmInfo?.pingTime, 'second')
-            if (second < 60) {
-              item.pingTimes = second
-            } else if (second > 60) {
-              let m = secondDifference(item?.tmInfo?.pingTime) //分钟级别
-              if (m > 1 && m < 5) {
-                item.pingTimes = 75
-              } else if (m > 5 && m < 10) {
-                item.pingTimes = 80
-              } else if (m > 10 && m < 20) {
-                item.pingTimes = 85
-              } else if (m > 20 && m < 30) {
-                item.pingTimes = 95
-              } else if (m > 30) {
-                item.pingTimes = 100
-              }
-            }
+            item.pingTimes = Math.round((second / max).toFixed(2) * 100)
 
             item.paidType =
               chargeProvider === 'Aliyun' ? license.type : chargeProvider === 'Stripe' ? subscribeDto.type : ''
@@ -1020,18 +1007,8 @@ export default {
         })
     },
     //自定义百分比文案
-    formatPingTimePercantage(percentage) {
-      let txt = i18n.t('dfs_instance_instance_perce', { val1: percentage })
-      if (percentage > 60 && percentage < 70) {
-        txt = i18n.t('dfs_instance_instance_perce', { val1: 5 })
-      } else if (percentage > 70 && percentage < 80) {
-        txt = i18n.t('dfs_instance_instance_perce', { val1: 10 })
-      } else if (percentage > 80 && percentage < 95) {
-        txt = i18n.t('dfs_instance_instance_perce', { val1: 20 })
-      } else if (percentage > 95) {
-        txt = txt = i18n.t('dfs_instance_instance_perce', { val1: 30 })
-      }
-      return txt
+    formatPingTimePercantage(second) {
+      return i18n.t('dfs_instance_instance_perce_minute', { val1: second })
     },
     ////指標計算
     agentData(row) {
