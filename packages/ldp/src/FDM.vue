@@ -279,58 +279,7 @@ export default {
   mixins: [commonMix],
 
   data() {
-    const validatePrefix = (rule, value, callback) => {
-      value = value.trim()
-      if (!value) {
-        callback(new Error(this.$t('public_form_not_empty')))
-      } else if (!/\w+/.test(value)) {
-        callback(new Error(this.$t('packages_business_data_server_drawer_geshicuowu')))
-      } else {
-        callback()
-      }
-    }
-
-    const validateCrontabExpression = (rule, value, callback) => {
-      value = value.trim()
-      if (!value) {
-        callback(new Error(this.$t('public_form_not_empty')))
-      } else if (!validateCron(value)) {
-        callback(this.$t('packages_dag_migration_settingpanel_cronbiao'))
-      } else {
-        callback()
-      }
-    }
-
-    // 2、每10分钟运行1次
-    // 3、每1小时运行一次
-    // 4、每天运行一次
-    // 5、自定义cron表达式
-
-    const cronOptions = [
-      {
-        label: '仅运行一次',
-        value: 'once'
-      },
-      {
-        label: '每10分钟运行一次',
-        value: '0 */10 * * * ?'
-      },
-      {
-        label: '每1小时运行一次',
-        value: '0 0 * * * ?'
-      },
-      {
-        label: '每天运行一次',
-        value: '0 0 0 * * ?'
-      },
-      {
-        label: '自定义cron表达式',
-        value: 'custom'
-      }
-    ]
-
     return {
-      cronOptions,
       fixedPrefix: 'FDM_',
       maxPrefixLength: 10,
       keyword: '',
@@ -352,13 +301,6 @@ export default {
       },
       creating: false,
       expandedKeys: [],
-      formRules: {
-        prefix: [{ validator: validatePrefix, trigger: 'blur' }],
-        'task.crontabExpression': [
-          { required: true, message: this.$t('public_form_not_empty'), trigger: ['blur', 'change'] },
-          { validator: validateCrontabExpression, trigger: ['blur', 'change'] }
-        ]
-      },
       searchIng: false,
       search: '',
       enableSearch: false,

@@ -128,35 +128,79 @@
         <!--</draggable>-->
       </div>
 
-      <ElDialog :visible.sync="dialogConfig.visible" width="600" :close-on-click-modal="false">
-        <span slot="title" class="font-color-dark fs-6 fw-sub">{{ dialogConfig.title }}</span>
-        <ElForm ref="form" :model="dialogConfig" label-width="180px" @submit.prevent :rules="formRules">
-          <!--          <div class="pipeline-desc p-4 mb-4 text-preline rounded-4">{{ dialogConfig.desc }}</div>-->
+      <ElDialog :visible.sync="taskDialogConfig.visible" width="600" :close-on-click-modal="false">
+        <span slot="title" class="font-color-dark fs-6 fw-sub">{{ taskDialogConfig.title }}</span>
+        <ElForm ref="form" :model="taskDialogConfig" label-width="180px" @submit.prevent :rules="formRules">
+          <!--          <div class="pipeline-desc p-4 mb-4 text-preline rounded-4">{{ taskDialogConfig.desc }}</div>-->
           <div class="pipeline-desc p-4 mb-4 text-preline rounded-4">
             <span>{{
               $t(
-                dialogConfig.tableName
+                taskDialogConfig.tableName
                   ? 'packages_business_target_create_task_dialog_desc_prefix_sync'
                   : 'packages_business_target_create_task_dialog_desc_prefix_clone'
               )
             }}</span
-            ><span v-if="dialogConfig.from" class="inline-flex align-center px-1 font-color-dark fw-sub align-top"
-              ><DatabaseIcon :item="dialogConfig.from" :key="dialogConfig.from.database_type" :size="20" class="mr-1" />
-              <span>{{ dialogConfig.from.name }}</span> </span
-            ><span v-if="dialogConfig.tableName" class="font-color-dark fw-sub"
-              >/<span class="px-1">{{ dialogConfig.tableName }}</span> </span
+            ><span v-if="taskDialogConfig.from" class="inline-flex align-center px-1 font-color-dark fw-sub align-top"
+              ><DatabaseIcon
+                :item="taskDialogConfig.from"
+                :key="taskDialogConfig.from.database_type"
+                :size="20"
+                class="mr-1"
+              />
+              <span>{{ taskDialogConfig.from.name }}</span> </span
+            ><span v-if="taskDialogConfig.tableName" class="font-color-dark fw-sub"
+              >/<span class="px-1">{{ taskDialogConfig.tableName }}</span> </span
             ><span>
               {{ $t('packages_business_target_create_task_dialog_desc_to') }}
-              <span v-if="dialogConfig.to" class="inline-flex align-center px-1 font-color-dark fw-sub align-top"
-                ><DatabaseIcon :item="dialogConfig.to" :key="dialogConfig.to.database_type" :size="20" class="mr-1" />
-                <span>{{ dialogConfig.to.name }}</span>
+              <span v-if="taskDialogConfig.to" class="inline-flex align-center px-1 font-color-dark fw-sub align-top"
+                ><DatabaseIcon
+                  :item="taskDialogConfig.to"
+                  :key="taskDialogConfig.to.database_type"
+                  :size="20"
+                  class="mr-1"
+                />
+                <span>{{ taskDialogConfig.to.name }}</span>
               </span></span
             >
             <div>{{ $t('packages_business_target_create_task_dialog_desc_suffix') }}</div>
           </div>
           <ElFormItem prop="taskName" :label="$t('public_task_name')">
-            <ElInput size="small" v-model="dialogConfig.taskName" maxlength="50" show-word-limit></ElInput>
+            <ElInput size="small" v-model="taskDialogConfig.taskName" maxlength="50" show-word-limit></ElInput>
           </ElFormItem>
+          <ElFormItem :label="$t('packages_dag_task_setting_sync_type')" prop="task.type">
+            <ElRadioGroup v-model="taskDialogConfig.task.type">
+              <ElTooltip :disabled="!taskDialogConfig.notSupportedCDC" content="当前源数据不支持增量">
+                <ElRadio label="initial_sync+cdc" :disabled="taskDialogConfig.notSupportedCDC">
+                  {{ $t('packages_dag_task_setting_initial_sync_cdc') }}
+                </ElRadio>
+              </ElTooltip>
+
+              <ElRadio label="initial_sync">
+                {{ $t('public_task_type_initial_sync') }}
+              </ElRadio>
+            </ElRadioGroup>
+          </ElFormItem>
+          <div class="flex align-center gap-3" v-if="taskDialogConfig.task.type === 'initial_sync'">
+            <ElFormItem
+              :label="$t('packages_dag_task_setting_crontabExpressionFlag')"
+              prop="task.crontabExpressionType"
+            >
+              <ElSelect
+                v-model="taskDialogConfig.task.crontabExpressionType"
+                @change="handleChangeCronType"
+                class="flex-1"
+              >
+                <ElOption v-for="(opt, i) in cronOptions" :key="i" v-bind="opt"></ElOption>
+              </ElSelect>
+            </ElFormItem>
+            <ElFormItem
+              v-if="taskDialogConfig.task.crontabExpressionType === 'custom'"
+              prop="task.crontabExpression"
+              label-width="0"
+            >
+              <ElInput v-model="taskDialogConfig.task.crontabExpression"></ElInput>
+            </ElFormItem>
+          </div>
         </ElForm>
         <span slot="footer" class="dialog-footer">
           <ElButton size="mini" @click="hideDialog">{{ $t('public_button_cancel') }}</ElButton>
@@ -285,49 +329,31 @@ export default {
   mixins: [commonMix],
 
   data() {
-    const validateTaskName = async (rule, value, callback) => {
-      value = value.trim()
-      if (!value) {
-        callback(new Error(this.$t('packages_business_relation_list_qingshururenwu')))
-      } else {
-        try {
-          const isExist = await taskApi.checkName({
-            name: value
-          })
-          if (isExist) {
-            callback(new Error(this.$t('packages_dag_task_form_error_name_duplicate')))
-          } else {
-            callback()
-          }
-        } catch (e) {
-          callback()
-        }
-      }
-    }
-
     return {
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       dragging: false,
       list: [],
       appList: [],
-      dialogConfig: {
+      taskDialogConfig: {
         title: '',
         desc: '',
         taskName: '',
         syncType: '',
         visible: false,
         from: null,
-        to: null
+        to: null,
+        task: {
+          type: 'initial_sync+cdc',
+          crontabExpressionFlag: false,
+          crontabExpression: '',
+          crontabExpressionType: 'once'
+        }
       },
       connectionTaskMap: {},
       apiDialog: {
         visible: false
       },
       apiServerHost: '',
-      formRules: {
-        taskName: [{ validator: validateTaskName, trigger: 'blur' }]
-      },
-
       searchIng: false,
       search: '',
       enableSearch: false,
@@ -669,19 +695,19 @@ export default {
         this.showApiDialog()
       } else {
         if (object.data.type === 'connection') {
-          this.dialogConfig.from = object.data
-          this.dialogConfig.tableName = null
-          this.dialogConfig.to = item
-          this.dialogConfig.title = this.$t('packages_business_create_clone_task')
-          this.dialogConfig.syncType = 'migrate'
-          this.dialogConfig.desc = `Tapdata will create a pipeline task to sync [ ${object.data.name} ] to [ ${item.name} ],  please click button below to continue. You can also change the pipeline name`
+          this.taskDialogConfig.from = object.data
+          this.taskDialogConfig.tableName = null
+          this.taskDialogConfig.to = item
+          this.taskDialogConfig.title = this.$t('packages_business_create_clone_task')
+          this.taskDialogConfig.syncType = 'migrate'
+          this.taskDialogConfig.desc = `Tapdata will create a pipeline task to sync [ ${object.data.name} ] to [ ${item.name} ],  please click button below to continue. You can also change the pipeline name`
         } else if (object.data.type === 'table') {
-          this.dialogConfig.from = object.parent.data
-          this.dialogConfig.tableName = object.data.name
-          this.dialogConfig.to = item
-          this.dialogConfig.title = this.$t('packages_business_create_sync_task')
-          this.dialogConfig.syncType = 'sync'
-          this.dialogConfig.desc = `Tapdata will create a pipeline task to sync [ ${object.data.name} ] from [ ${object.parent.data.name} ] to [ ${item.name} ],  please click button below to continue. You can also change the pipeline name`
+          this.taskDialogConfig.from = object.parent.data
+          this.taskDialogConfig.tableName = object.data.name
+          this.taskDialogConfig.to = item
+          this.taskDialogConfig.title = this.$t('packages_business_create_sync_task')
+          this.taskDialogConfig.syncType = 'sync'
+          this.taskDialogConfig.desc = `Tapdata will create a pipeline task to sync [ ${object.data.name} ] from [ ${object.parent.data.name} ] to [ ${item.name} ],  please click button below to continue. You can also change the pipeline name`
         }
 
         this.showDialog()
@@ -703,7 +729,7 @@ export default {
       return {
         ...TASK_SETTINGS,
         syncType: 'migrate',
-        name: this.dialogConfig.taskName,
+        name: this.taskDialogConfig.taskName,
         dag: {
           edges: [{ source: source.id, target: target.id }],
           nodes: [source, target]
@@ -754,7 +780,7 @@ export default {
       let target = this.getTableNode(to, tableName)
       return {
         ...TASK_SETTINGS,
-        name: this.dialogConfig.taskName,
+        name: this.taskDialogConfig.taskName,
         dag: {
           edges: [{ source: source.id, target: target.id }],
           nodes: [source, target]
@@ -763,19 +789,21 @@ export default {
     },
 
     showDialog() {
-      this.dialogConfig.visible = true
-      this.dialogConfig.taskName = i18n.t('packages_dag_mixins_editor_xinrenwu') + new Date().toLocaleTimeString()
-      this.$refs.form?.clearValidate()
+      this.taskDialogConfig.visible = true
+      this.taskDialogConfig.taskName = i18n.t('packages_dag_mixins_editor_xinrenwu') + new Date().toLocaleTimeString()
+      this.$refs.form?.resetFields()
+      this.taskDialogConfig.task.crontabExpressionFlag = false
+      this.taskDialogConfig.task.crontabExpression = ''
     },
 
     hideDialog() {
-      this.dialogConfig.visible = false
+      this.taskDialogConfig.visible = false
     },
 
     async dialogSubmit(ifStart) {
       this.$refs.form.validate(async valid => {
         if (valid) {
-          const { syncType, from, to, tableName } = this.dialogConfig
+          const { syncType, from, to, tableName, task: settings } = this.taskDialogConfig
           let task
           this.creating = true
 
@@ -785,13 +813,14 @@ export default {
             task = this.makeMigrateTask(from, to)
           }
 
+          Object.assign(task, settings)
           let taskInfo = await taskApi[ifStart ? 'saveAndStart' : 'post'](task)
           const table = this.getTableByTask(taskInfo)
           const mapTask = this.mapTask(taskInfo)
 
           if (to.showTableWebsite) this.getTableWebsite(to.id, table, mapTask)
 
-          this.dialogConfig.visible = false
+          this.taskDialogConfig.visible = false
           this.creating = false
 
           if (this.connectionTaskMap[to.id]) {
