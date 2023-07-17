@@ -3,7 +3,7 @@
     class="guide-dialog"
     :visible.sync="visible"
     width="1000px"
-    :top="'5vh'"
+    :top="'10vh'"
     :show-close="false"
     :destroy-on-close="true"
     :close-on-click-modal="false"
@@ -11,11 +11,11 @@
     :before-close="close"
   >
     <div class="guide-wrap flex justify-content-center">
-      <div class="nav-wrap px-6 py-6">
-        <div class="guide-header font-color-dark fw-bold fs-5 mb-4 mt-4">欢迎使用 Tapdata Cloud 数据服务</div>
-        <div class="guide-desc font-color-dark">
-          Tapdata Cloud 是专业的数据集成与服务平台, 为了让您更流畅地使用产品, 请跟随我们的引导, 开始一步步操作吧
+      <div class="nav-wrap px-8 py-8">
+        <div class="guide-header font-color-dark fw-bold fs-5 mb-4 mt-4">
+          {{ $t('dfs_guide_index_huanyingshiyongT') }}
         </div>
+        <div class="guide-desc font-color-dark">{{ $t('dfs_guide_index_tapda') }}</div>
         <el-steps
           class="guide-steps bg-transparent mx-auto"
           :active="activeStep"
@@ -113,8 +113,8 @@
           <div v-if="isUnDeploy && agentStatus === 'Creating'" class="mt-8">
             <div class="box-card mt-4 flex flex-column justify-content-center align-items-center">
               <VIcon class="mt-4 mb-4" size="100">guide-loading</VIcon>
-              <div class="fs-5 font-color-dark mb-2">等待部署</div>
-              <div class="font-color-light">正在检测引擎部署状态，检测完成之后自动进入任务引导页面。</div>
+              <div class="fs-5 font-color-dark mb-2">{{ $t('dfs_guide_index_dengdaibushu') }}</div>
+              <div class="font-color-light">{{ $t('dfs_guide_index_zhengzaijianceyin') }}</div>
             </div>
           </div>
         </div>
@@ -146,6 +146,8 @@
   </ElDialog>
 </template>
 <script>
+import i18n from '@/i18n'
+
 import Account from './Account.vue'
 import DeploymentMethod from './DeploymentMethod.vue'
 import Scenes from './Scenes.vue'
@@ -251,34 +253,34 @@ export default {
         this.steps = [
           {
             key: 'Scenes',
-            title: '确定使用场景'
+            title: i18n.t('dfs_guide_index_quedingshiyongchang')
           },
           {
             key: 'DeploymentMethod',
-            title: '设置数据库网络环境'
+            title: i18n.t('dfs_guide_index_shezhishujuku')
           },
           {
             key: 'Spec',
-            title: '选择计算引擎规格'
+            title: i18n.t('dfs_guide_index_xuanzejisuanyin')
           }
         ]
       } else {
         this.steps = [
           {
             key: 'Account',
-            title: '账号安全绑定'
+            title: i18n.t('dfs_guide_index_zhanghaoanquanbang')
           },
           {
             key: 'Scenes',
-            title: '确定使用场景'
+            title: i18n.t('dfs_guide_index_quedingshiyongchang')
           },
           {
             key: 'DeploymentMethod',
-            title: '设置数据库网络环境'
+            title: i18n.t('dfs_guide_index_shezhishujuku')
           },
           {
             key: 'Spec',
-            title: '选择计算引擎规格'
+            title: i18n.t('dfs_guide_index_xuanzejisuanyin')
           }
         ]
       }
@@ -325,7 +327,7 @@ export default {
         return
       }
       if (step.key === 'Scenes' && (!this.scenes || this.scenes?.length === 0)) {
-        this.$message.error('请选择您想通过本产品完成您的什么需求呢？')
+        this.$message.error(i18n.t('dfs_guide_index_qingxuanzeninxiang'))
         return
       }
       this.next()
@@ -344,7 +346,7 @@ export default {
       if (val === 'selfHost' && index === -1) {
         this.steps.push({
           key: 'Deploy',
-          title: '部署计算引擎'
+          title: i18n.t('dfs_guide_index_bushujisuanyin')
         })
       } else if (val !== 'selfHost') {
         //移除
@@ -362,12 +364,12 @@ export default {
         if (this.platform !== 'selfHost' && index === -1) {
           this.steps.push({
             key: 'Pay',
-            title: '支付'
+            title: i18n.t('public_button_pay')
           })
         } else if (this.platform === 'selfHost' && index === -1) {
           this.steps.splice(len, 0, {
             key: 'Pay',
-            title: '支付'
+            title: i18n.t('public_button_pay')
           })
         }
       } else {
@@ -467,10 +469,10 @@ export default {
 <style scoped lang="scss">
 .nav-wrap {
   width: 348px;
-  height: 716px;
+  height: 640px;
   gap: 20px;
   flex-shrink: 0;
-  background: linear-gradient(146deg, rgba(44, 116, 255, 0.07) 0%, rgba(44, 101, 255, 0.01) 100%);
+  background: url('../../assets/image/guide-bg.png');
 }
 .box-card {
   display: flex;
@@ -486,7 +488,7 @@ export default {
   height: 200px;
 }
 .guide-main {
-  height: 716px;
+  height: 640px;
 }
 .guide-desc {
   margin-bottom: 60px;
@@ -499,6 +501,14 @@ export default {
     .el-dialog__body,
     .el-dialog__header {
       padding: 0;
+    }
+    .el-step__title.is-process {
+      color: #c9cdd4;
+      font-weight: normal;
+    }
+    .el-step__head.is-process {
+      color: #c9cdd4;
+      border-color: #c9cdd4;
     }
   }
 }

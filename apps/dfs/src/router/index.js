@@ -475,7 +475,7 @@ const routes = [
     name: 'pay',
     component: () => import(/* webpackChunkName: "instance" */ '../views/order/pay.vue'),
     meta: {
-      title: '支付清单'
+      title: i18n.t('dfs_router_index_zhifuqingdan')
     }
   },
   {

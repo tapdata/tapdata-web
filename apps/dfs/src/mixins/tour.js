@@ -1,3 +1,4 @@
+import i18n from '@/i18n'
 import { driver } from 'driver.js'
 import 'driver.js/dist/driver.css'
 import { connectionsApi, taskApi } from '@tap/api'
@@ -160,7 +161,7 @@ export default {
           onPopoverRender: (popover, { state }) => {
             unwatch = this.$watch('$route', to => {
               if (to.name !== options.route) {
-                this.driverObj.movePrevious()
+                this.driverObj?.movePrevious()
               }
               unwatch()
             })
@@ -191,14 +192,14 @@ export default {
             type: 'menu',
             route: 'connections',
             element: '#menu-connections',
-            description: '请创建您的源数据库',
+            description: i18n.t('dfs_mixins_tour_qingchuangjianninde3'),
             progressText: '1/6'
           },
           {
             type: 'button',
             route: 'connections',
             element: '#connection-list-create',
-            description: '点击此处创建您的源数据库',
+            description: i18n.t('dfs_mixins_tour_dianjicichuchuang3'),
             progressText: '2/6'
           }
         ],
@@ -207,14 +208,14 @@ export default {
             type: 'menu',
             route: 'connections',
             element: '#menu-connections',
-            description: '请创建您的目标数据库',
+            description: i18n.t('dfs_mixins_tour_qingchuangjianninde2'),
             progressText: '3/6'
           },
           {
             type: 'button',
             route: 'connections',
             element: '#connection-list-create',
-            description: '点击此处创建您的目标数据库',
+            description: i18n.t('dfs_mixins_tour_dianjicichuchuang2'),
             progressText: '4/6'
           }
         ],
@@ -223,14 +224,14 @@ export default {
             type: 'menu',
             route: 'migrateList',
             element: '#menu-migrate',
-            description: '请创建您的第一个复制任务',
+            description: i18n.t('dfs_mixins_tour_qingchuangjianninde'),
             progressText: '5/6'
           },
           {
             type: 'button',
             route: 'migrateList',
             element: '#task-list-create',
-            description: '点击此处创建您的第一个复制任务',
+            description: i18n.t('dfs_mixins_tour_dianjicichuchuang'),
             progressText: '6/6'
           }
         ]
@@ -314,43 +315,39 @@ export default {
       if (!agent) return
 
       const element = `#agent-${agent.id} [name="${agent.agentType === 'Cloud' ? 'restart' : 'start'}"]`
-      let unwatch
+      let unwatch = this.$watch('$store.state.instanceLoading', loading => {
+        if (!loading && this.$route.name === 'Instance' && this.driverObj?.getActiveIndex() < 1) {
+          this.driverObj.moveNext()
+        }
+
+        if (!loading && !document.querySelector(element)) {
+          this.driverObj?.destroy()
+          this.driverObj = null
+          unwatch()
+        }
+      })
       const steps = [
         {
           type: 'menu',
           route: 'Instance',
           element: '#menu-Instance',
-          onDeselected: (element, step, options) => {
-            unwatch()
-          },
           popover: {
-            description: '请先启动您的 Agent 计算引擎',
-            showButtons: [],
-            onPopoverRender: (popover, { state }) => {
-              // agent列表加载成功后开始显示引导
-              unwatch = this.$watch('$store.state.instanceLoading', loading => {
-                if (!loading && this.$route.name === 'Instance') {
-                  this.driverObj.moveNext()
-                  unwatch()
-                }
-              })
-            }
+            description: i18n.t('dfs_mixins_tour_qingxianqidongnin'),
+            showButtons: []
           }
         },
         this.getButtonStep({
           type: 'button',
           route: 'Instance',
           element,
-          description: '请先启动您的 Agent 计算引擎'
+          description: i18n.t('dfs_mixins_tour_qingxianqidongnin')
         })
       ]
 
-      console.log('initAgentTour', steps) // eslint-disable-line
-
       this.driverObj = driver({
-        // allowClose: false,
         steps,
         onDestroyed: () => {
+          unwatch()
           this.beTouring = false
           this.enterAgentTour = true
         }

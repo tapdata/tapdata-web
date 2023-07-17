@@ -16,7 +16,7 @@ export default {
     <div class="flex justify-content-center align-items-center">
       <VIcon size="450px" style="width: 450px; height: 235px">guide-top-header</VIcon>
     </div>
-    <div class="fs-6 font-color-dark fw-sub mb-4 mt-4">请问您的源和目标数据库, 可以从互联网上直接访问吗?</div>
+    <div class="fs-6 font-color-dark fw-sub mb-4 mt-4">{{ $t('dfs_components_taskalarmtour_deployment_qingwen') }}</div>
     <ul class="deployMethod-ul mt-4">
       <li
         :class="{
@@ -31,8 +31,10 @@ export default {
         </div>
         <div class="flex justify-content-around align-items-center px-4 py-4">
           <div>
-            <div class="fs-6 fw-bold mb-2">不可以 (需要您部署计算引擎)</div>
-            <div class="font-color-light">我的数据库在局域网内, 或者出于安全考虑, 无法暴露在公共网络中</div>
+            <div class="fs-6 fw-bold mb-2 font-color-dark">
+              {{ $t('dfs_components_taskalarmtour_deployment_bukeyi') }}
+            </div>
+            <div class="font-color-light">{{ $t('dfs_components_taskalarmtour_deployment_wodeshujuku') }}</div>
           </div>
           <el-image class="deployMethod-image" :src="require('@/assets/image/self_host_managed.png')" />
         </div>
@@ -50,8 +52,10 @@ export default {
         </div>
         <div class="flex justify-content-around align-items-center px-4 py-4">
           <div class="mr-4">
-            <div class="fs-6 fw-bold mb-2">可以 (平台维护计算引擎)</div>
-            <div class="font-color-light">我的数据库均为云数据库, 且可以暴露到公共网络</div>
+            <div class="fs-6 fw-bold mb-2 font-color-dark">
+              {{ $t('dfs_components_taskalarmtour_deployment_keyi') }}
+            </div>
+            <div class="font-color-light">{{ $t('dfs_components_taskalarmtour_deployment_yunshujuku') }}</div>
           </div>
           <el-image class="deployMethod-image" :src="require('@/assets/image/fully_managed.png')" />
         </div>
@@ -92,7 +96,7 @@ export default {
   }
 }
 .deployMethod-image {
-  width: 190px;
+  width: 200px;
   height: 77px;
 }
 </style>

@@ -1,5 +1,6 @@
 <script>
 import { VIcon } from '@tap/component'
+import i18n from '@/i18n'
 
 export default {
   name: 'Account',
@@ -9,27 +10,27 @@ export default {
     return {
       list: [
         {
-          label: '跨云数据实时同步',
+          label: i18n.t('dfs_guide_scenes_kuayunshujushi'),
           value: 'Real-time synchronization of cross-cloud data'
         },
         {
-          label: '数据入仓，加速查询',
+          label: i18n.t('dfs_guide_scenes_shujurucangjia'),
           value: 'Data warehousing to speed up query'
         },
         {
-          label: '本地数据上云',
+          label: i18n.t('dfs_guide_scenes_bendishujushang'),
           value: 'Local data to the cloud'
         },
         {
-          label: '异构数据库同步',
+          label: i18n.t('dfs_guide_scenes_yigoushujuku'),
           value: 'Heterogeneous database synchronization'
         },
         {
-          label: '其他场景',
+          label: i18n.t('dfs_guide_scenes_qitachangjing'),
           value: 'other scenes'
         },
         {
-          label: '没有特定的需求',
+          label: i18n.t('dfs_guide_scenes_meiyoutedingde'),
           value: 'no specific needs'
         }
       ]
@@ -43,7 +44,7 @@ export default {
     <div class="flex justify-content-center align-items-center">
       <VIcon size="450px" style="width: 450px; height: 235px">guide-top-header</VIcon>
     </div>
-    <div class="fs-6 font-color-dark fw-sub mb-4 mt-4">想通过本产品完成您的什么需求呢？</div>
+    <div class="fs-6 font-color-dark fw-sub mb-4 mt-4">{{ $t('dfs_guide_index_qingxuanzeninxiang') }}</div>
     <el-checkbox-group
       class="scenes-wrap flex flex-column mt-4"
       v-model="scenes"

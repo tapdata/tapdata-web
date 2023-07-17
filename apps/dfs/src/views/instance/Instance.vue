@@ -56,7 +56,7 @@
                     :format="formatPingTimePercantage"
                     :color="customColors"
                   ></el-progress>
-                  <div class="font-color-light">心跳頻率</div>
+                  <div class="font-color-light">{{ $t('dfs_instance_instance_xintiaobinlu') }}</div>
                 </div>
               </div>
               <div class="flex justify-content-between w-100 pt-4 px-4">
@@ -230,7 +230,7 @@
                 >
                   <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></ElButton
                 >
-                <!--升级按钮-->
+                <!--{{$t('dfs_instance_instance_shengji')}}按钮-->
                 <template v-if="showUpgradeIcon(item)">
                   <ElTooltip
                     v-if="upgradingFlag(item)"
@@ -277,9 +277,9 @@
                     :content="getTooltipContent(item)"
                     key="done"
                   >
-                    <el-button size="mini" class="cursor-pointer block" @click="showUpgradeDialogFnc(item)"
-                      >升级</el-button
-                    >
+                    <el-button size="mini" class="cursor-pointer block" @click="showUpgradeDialogFnc(item)">{{
+                      $t('dfs_instance_instance_shengji')
+                    }}</el-button>
                   </ElTooltip>
                 </template>
               </div>
@@ -340,7 +340,7 @@
             </div>
             <div v-if="disabledAutoUpgradeBtn" class="mt-1 fs-8 text-break">({{ $t('agent_tip_auto_upgrade') }})</div>
           </ElDialog>
-          <!--   升级失败   -->
+          <!--   {{$t('dfs_instance_instance_shengji')}}失败   -->
           <ElDialog :visible.sync="upgradeErrorDialog" width="450px" top="30vh" center>
             <div class="dialog-content text-center">{{ $t('agent_dialog_upgrade_fail') }}</div>
             <div class="dialog-btn flex justify-content-evenly mt-6">
@@ -447,8 +447,8 @@
                 </div>
               </div>
               <div class="agent-item__content border-left flex flex-wrap py-4 px-4">
-                <div class="flex align-items-center mb-2 w-50" v-for="col in specColumns">
-                  <span class="font-color-light mr-2">{{ col.label }}: </span>
+                <div class="flex align-items-center mb-2 w-50" v-for="(col, i) in specColumns" :key="i">
+                  <span class="font-color-light mr-2">{{ col.label }}:</span>
                   <!--状态-->
                   <span v-if="col.prop === 'status'" class="font-color-dark">
                     <StatusTag type="tag" :status="item.status" default-status="Stopped" target="mdb"></StatusTag>
@@ -559,7 +559,7 @@ export default {
           value: 'specLabel'
         },
         {
-          label: this.$t('dfs_instance_instance_guige'),
+          label: this.$t('dfs_instance_instance_subscribe_time'),
           value: 'periodStartTime'
         },
         {
@@ -597,7 +597,7 @@ export default {
       ],
       page: {
         current: 0,
-        size: 10,
+        size: 1000,
         total: 0
       },
       order: 'createAt desc',
@@ -698,7 +698,7 @@ export default {
         },
         {
           label: i18n.t('dfs_instance_instance_baimingdanIp'),
-          slotName: 'whiteList'
+          prop: 'whiteList'
         },
         {
           label: i18n.t('dfs_instance_createagent_cunchuguige'),
@@ -853,7 +853,7 @@ export default {
           item.deploymentTypeLabel = this.agentTypeMap[item.deploymentType]
           let num = Number(item?.dataSize) || 0
           let size = (num / (1024 * 1024)).toFixed(2)
-          this.percentage = (size / item.storageSize).toFixed(1) * 100
+          this.percentage = Math.round((size / item.storageSize).toFixed(1) * 100)
           item.dataSizeLast = (item.storageSize - size).toFixed(2)
           item.dataSizeLabel = size
           return item
@@ -890,8 +890,9 @@ export default {
     fetch(pageNum, hideLoading) {
       if (!hideLoading) {
         this.loading = true
-        this.$store.commit('setInstanceLoading', true)
       }
+
+      this.$store.commit('setInstanceLoading', true)
       let current = pageNum || this.page.current
       let { keyword, status } = this.searchParams
       let where = {}
@@ -905,7 +906,7 @@ export default {
       }
       let filter = {
         where,
-        size: this.page.size,
+        size: 100,
         page: current,
         sort: [this.order]
       }
@@ -1008,21 +1009,21 @@ export default {
         .finally(() => {
           if (!hideLoading) {
             this.loading = false
-            this.$store.commit('setInstanceLoading', false)
           }
+          this.$store.commit('setInstanceLoading', false)
         })
     },
     //自定义百分比文案
     formatPingTimePercantage(percentage) {
-      let txt = `${percentage} 秒前`
+      let txt = i18n.t('dfs_instance_instance_perce', { val1: percentage })
       if (percentage > 60 && percentage < 70) {
-        txt = `5分钟前`
+        txt = i18n.t('dfs_instance_instance_perce', { val1: 5 })
       } else if (percentage > 70 && percentage < 80) {
-        txt = `10分钟前`
+        txt = i18n.t('dfs_instance_instance_perce', { val1: 10 })
       } else if (percentage > 80 && percentage < 95) {
-        txt = `20分钟前`
+        txt = i18n.t('dfs_instance_instance_perce', { val1: 20 })
       } else if (percentage > 95) {
-        txt = txt = `30分钟前`
+        txt = txt = i18n.t('dfs_instance_instance_perce', { val1: 30 })
       }
       return txt
     },
@@ -1378,7 +1379,7 @@ export default {
       if (ips.length > 0 && this.ipAddress && this.ipAddress !== '') {
         for (let i = 0; i < ips.length; i++) {
           if (!ipRegex.test(ips[i])) {
-            this.$message.error(ips[i] + i18n.t('dfs_instance_instance_buhefaIp'))
+            this.$message.error(i18n.t('dfs_instance_instance_buhefaIp'))
             return
           }
         }
@@ -1738,7 +1739,7 @@ export default {
       if (query.active === 'storage') {
         this.activeName = 'second'
         this.$nextTick(() => {
-          this.tableCode?.fetch()
+          this.specRemoteMethod()
         })
       }
     }

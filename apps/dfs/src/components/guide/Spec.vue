@@ -1,8 +1,6 @@
 <template>
   <section>
-    <div class="fs-6 font-color-dark fw-sub mb-4 mt-4">
-      您需要自行安装一个计算引擎到您的网络环境中, 选择一种合适的方式吧。
-    </div>
+    <div class="fs-6 font-color-dark fw-sub mb-4 mt-4">{{ $t('dfs_guide_spec_ninxuyaozixing') }}</div>
     <el-form label-position="top" ref="ruleForm">
       <!--订阅方式-->
       <ElFormItem :label="$t('dfs_instance_instance_dingyuefangshi')">
@@ -15,7 +13,7 @@
             class="rounded-4 subscription-radio m-0 position-relative"
           >
             <span class="inline-flex align-center">
-              {{ item.label }}
+              <span>{{ item.label }}</span>
               <template v-if="item.type === 'recurring' || item.periodUnit === 'year'">
                 <ElTag class="discount-tag fw-sub rounded-4 border-0 ml-2">{{
                   $t('dfs_agent_subscription_discount', { val: getDiscount(item) })
@@ -287,6 +285,7 @@ export default {
       this.agentSizeCap = this.updateAgentCap(specification.cpu, specification.memory)
       const specificationLabel = this.specificationItems.find(t => t.value === this.specification)?.name
       this.currentSpecName = specificationLabel
+      console.log(specification)
       this.packageItems = this.allPackages
         .filter(t => this.specification === t.specification)
         .map(t => {
@@ -299,7 +298,7 @@ export default {
                 ? t.label
                 : this.platform !== 'selfHost'
                 ? i18n.t('dfs_instance_createagent_mianfeishiyonggui')
-                : i18n.t('dfs_instance_utils_baoyue')
+                : i18n.t('dfs_agent_download_subscriptionmodeldialog_yongjiu')
           })
         })
         .sort((a, b) => {
@@ -535,7 +534,7 @@ export default {
   border: 1px solid map-get($color, primary);
 }
 .spec-li {
-  width: 495px;
+  width: 573px;
   border: 1px solid #dedede;
   border-radius: 4px;
   .is-active {

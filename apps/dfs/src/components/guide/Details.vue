@@ -1,7 +1,6 @@
 <script>
 import { VTable } from '@tap/component'
 import i18n from '@/i18n'
-import { getPaymentMethod, getSpec } from '../../views/instance/utils'
 export default {
   name: 'Pay',
   components: { VTable },
@@ -34,7 +33,7 @@ export default {
       subscribeItems: [],
       types: [
         {
-          label: '在线支付',
+          label: i18n.t('dfs_agent_download_subscriptionmodeldialog_zaixianzhifu'),
           value: 'Stripe'
         }
       ]
