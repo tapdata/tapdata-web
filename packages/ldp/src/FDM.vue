@@ -596,6 +596,10 @@ export default {
       const tag = this.treeData.find(item => item.linkId === this.taskDialogConfig.from.id)
 
       if (tag) {
+        const task = this.tag2Task[tag.id]
+        this.taskDialogConfig.task.type = task.type
+        this.taskDialogConfig.task.crontabExpressionFlag = task.crontabExpressionFlag
+        this.taskDialogConfig.task.crontabExpression = task.crontabExpression
         this.taskDialogConfig.canStart = await ldpApi.checkCanStartByTag(tag.id)
         // TODO: 这里不能点击保存，可以加个消息提示，或者常驻的 alert， 解释下原因
       } else {
@@ -1003,10 +1007,17 @@ export default {
       const map = await ldpApi.getTaskByTag(this.treeData.map(item => item.id).join(','))
       const newMap = {}
       for (let tagId in map) {
-        let [task] = map[tagId].filter(task => !['deleting', 'delete_failed'].includes(task.status) && !task.is_deleted)
+        let task = map[tagId].find(
+          task => !['deleting', 'delete_failed'].includes(task.status) && !task.is_deleted && task.fdmMain
+        )
         if (task) {
           task = makeStatusAndDisabled(task)
           newMap[tagId] = {
+            id: task.id,
+            name: task.name,
+            type: task.type,
+            crontabExpressionFlag: task.crontabExpressionFlag,
+            crontabExpression: task.crontabExpression,
             status: task.status,
             disabledData: task.disabledData
           }
