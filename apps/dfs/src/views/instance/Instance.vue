@@ -890,8 +890,9 @@ export default {
     fetch(pageNum, hideLoading) {
       if (!hideLoading) {
         this.loading = true
-        this.$store.commit('setInstanceLoading', true)
       }
+
+      this.$store.commit('setInstanceLoading', true)
       let current = pageNum || this.page.current
       let { keyword, status } = this.searchParams
       let where = {}
@@ -1008,8 +1009,8 @@ export default {
         .finally(() => {
           if (!hideLoading) {
             this.loading = false
-            this.$store.commit('setInstanceLoading', false)
           }
+          this.$store.commit('setInstanceLoading', false)
         })
     },
     //自定义百分比文案

@@ -161,7 +161,7 @@ export default {
           onPopoverRender: (popover, { state }) => {
             unwatch = this.$watch('$route', to => {
               if (to.name !== options.route) {
-                this.driverObj.movePrevious()
+                this.driverObj?.movePrevious()
               }
               unwatch()
             })
@@ -315,27 +315,25 @@ export default {
       if (!agent) return
 
       const element = `#agent-${agent.id} [name="${agent.agentType === 'Cloud' ? 'restart' : 'start'}"]`
-      let unwatch
+      let unwatch = this.$watch('$store.state.instanceLoading', loading => {
+        if (!loading && this.$route.name === 'Instance' && this.driverObj?.getActiveIndex() < 1) {
+          this.driverObj.moveNext()
+        }
+
+        if (!loading && !document.querySelector(element)) {
+          this.driverObj?.destroy()
+          this.driverObj = null
+          unwatch()
+        }
+      })
       const steps = [
         {
           type: 'menu',
           route: 'Instance',
           element: '#menu-Instance',
-          onDeselected: (element, step, options) => {
-            unwatch()
-          },
           popover: {
             description: i18n.t('dfs_mixins_tour_qingxianqidongnin'),
-            showButtons: [],
-            onPopoverRender: (popover, { state }) => {
-              // agent列表加载成功后开始显示引导
-              unwatch = this.$watch('$store.state.instanceLoading', loading => {
-                if (!loading && this.$route.name === 'Instance') {
-                  this.driverObj.moveNext()
-                  unwatch()
-                }
-              })
-            }
+            showButtons: []
           }
         },
         this.getButtonStep({
@@ -346,12 +344,10 @@ export default {
         })
       ]
 
-      console.log('initAgentTour', steps) // eslint-disable-line
-
       this.driverObj = driver({
-        // allowClose: false,
         steps,
         onDestroyed: () => {
+          unwatch()
           this.beTouring = false
           this.enterAgentTour = true
         }
