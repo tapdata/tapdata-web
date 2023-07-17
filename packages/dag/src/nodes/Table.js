@@ -238,9 +238,15 @@ export class Table extends NodeType {
                     'x-reactions': [
                       `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true}, $values.$inputs[0])}}`,
                       {
-                        effects: ['onFieldMount', 'onFieldValueChange'],
+                        effects: ['onFieldMount'],
                         fulfill: {
                           run: '$self.visible && $self.validate()'
+                        }
+                      },
+                      {
+                        effects: ['onFieldInputValueChange'],
+                        fulfill: {
+                          run: '$self.value && $self.value.length && $form.clearErrors("updateConditionFields")'
                         }
                       },
                       {
