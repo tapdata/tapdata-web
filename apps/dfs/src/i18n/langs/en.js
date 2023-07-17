@@ -1694,5 +1694,7 @@ export default {
   dfs_components_taskalarmtour_deployment_zhunbei:
     'Prepare for the deployment of the Tapdata Cloud computing engine environment, if you encounter problems, you can',
   dfs_components_taskalarmtour_deployment_zixun: 'Consult customer service',
-  dfs_components_taskalarmtour_deployment_anpai: 'To install Compute Engine, please select your server type below:'
+  dfs_components_taskalarmtour_deployment_anpai: 'To install Compute Engine, please select your server type below:',
+  dfs_components_taskalarmtour_account_zhuanghao:
+    'In order to quickly notify you of account security and data task status, please bind your mobile phone number. '
 }

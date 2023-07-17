@@ -1570,5 +1570,5 @@ export default {
   dfs_components_taskalarmtour_deployment_yunshujuku: '我的数据库均为云数据库, 且可以暴露到公共网络',
   dfs_components_taskalarmtour_deployment_zhunbei: '准备Tapdata Cloud 计算引擎环境部署，如遇问题可',
   dfs_components_taskalarmtour_deployment_zixun: '咨询客服',
-  dfs_components_taskalarmtour_deployment_anpai: '要安装计算引擎,请先在下方选择您的服务器类型 : '
+  dfs_components_taskalarmtour_account_zhuanghao: '为了账号安全和数据任务状态能快速通知到您，请您绑定手机号。'
 }

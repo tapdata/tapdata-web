@@ -31,7 +31,9 @@ export default {
         </div>
         <div class="flex justify-content-around align-items-center px-4 py-4">
           <div>
-            <div class="fs-6 fw-bold mb-2">{{ $t('dfs_components_taskalarmtour_deployment_bukeyi') }}</div>
+            <div class="fs-6 fw-bold mb-2 font-color-dark">
+              {{ $t('dfs_components_taskalarmtour_deployment_bukeyi') }}
+            </div>
             <div class="font-color-light">{{ $t('dfs_components_taskalarmtour_deployment_wodeshujuku') }}</div>
           </div>
           <el-image class="deployMethod-image" :src="require('@/assets/image/self_host_managed.png')" />
@@ -50,7 +52,9 @@ export default {
         </div>
         <div class="flex justify-content-around align-items-center px-4 py-4">
           <div class="mr-4">
-            <div class="fs-6 fw-bold mb-2">{{ $t('dfs_components_taskalarmtour_deployment_keyi') }}</div>
+            <div class="fs-6 fw-bold mb-2 font-color-dark">
+              {{ $t('dfs_components_taskalarmtour_deployment_keyi') }}
+            </div>
             <div class="font-color-light">{{ $t('dfs_components_taskalarmtour_deployment_yunshujuku') }}</div>
           </div>
           <el-image class="deployMethod-image" :src="require('@/assets/image/fully_managed.png')" />

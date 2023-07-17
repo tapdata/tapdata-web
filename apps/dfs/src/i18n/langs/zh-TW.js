@@ -1540,5 +1540,6 @@ export default {
   dfs_components_taskalarmtour_deployment_yunshujuku: '我的數據庫均為雲數據庫, 且可以暴露到公共網絡',
   dfs_components_taskalarmtour_deployment_zhunbei: '準備Tapdata Cloud 計算引擎環境部署，如遇問題可',
   dfs_components_taskalarmtour_deployment_zixun: '諮詢客服',
-  dfs_components_taskalarmtour_deployment_anpai: '要安裝計算引擎,請先在下方選擇您的服務器類型 : '
+  dfs_components_taskalarmtour_deployment_anpai: '要安裝計算引擎,請先在下方選擇您的服務器類型 : ',
+  dfs_components_taskalarmtour_account_zhuanghao: '為了賬號安全和數據任務狀態能快速通知到您，請您綁定手機號。 '
 }

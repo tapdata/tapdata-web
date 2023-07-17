@@ -502,6 +502,14 @@ export default {
     .el-dialog__header {
       padding: 0;
     }
+    .el-step__title.is-process {
+      color: #c9cdd4;
+      font-weight: normal;
+    }
+    .el-step__head.is-process {
+      color: #c9cdd4;
+      border-color: #c9cdd4;
+    }
   }
 }
 </style>
