@@ -854,11 +854,12 @@ export default {
           item.providerName = item.providerName || '-'
           item.regionName = item.regionName || '-'
           item.serviceProvider = item.serviceProvider || '-'
-          item.storageSize = item.spec?.storageSize ? item.spec?.storageSize : '-'
+          item.storageSize = item.spec?.storageSize || '-'
           item.deploymentTypeLabel = this.agentTypeMap[item.deploymentType]
           let num = Number(item?.dataSize) || 0
-          let size = (num / (1024 * 1024)).toFixed(2)
-          item.percentage = size > item.storageSize ? 100 : Math.round((size / item.storageSize).toFixed(1) * 100)
+          // 字节转G
+          let size = Math.min(item.storageSize, num / 1073741824).toFixed(2)
+          this.percentage = Math.round((size / item.storageSize).toFixed(1) * 100)
           item.dataSizeLast = (item.storageSize - size).toFixed(2)
           item.dataSizeLabel = size
           return item

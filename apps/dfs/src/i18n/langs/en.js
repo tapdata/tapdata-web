@@ -1591,8 +1591,8 @@ export default {
   dfs_instance_instance_agent2: 'Agent Resource',
   dfs_order_list_wodedingyue: 'My Subscriptions',
   dfs_order_list_total_space: 'Total Space',
-  dfs_order_list_used_space: 'Used Space',
-  dfs_order_list_remaining_space: 'Remaining Space',
+  dfs_order_list_used_space: 'Used',
+  dfs_order_list_remaining_space: 'Remaining',
 
   dfs_the_header_header_wodegongdan: 'My Ticket',
   dfs_the_header_header_prize_questionnaire: ' Prize Questionnaire',

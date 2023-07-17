@@ -1447,8 +1447,8 @@ export default {
   dfs_instance_instance_agent2: 'Agent資源',
   dfs_order_list_wodedingyue: '我的訂閱',
   dfs_order_list_total_space: '總空間',
-  dfs_order_list_used_space: '已用空間',
-  dfs_order_list_remaining_space: '剩餘空間',
+  dfs_order_list_used_space: '已用',
+  dfs_order_list_remaining_space: '剩餘',
 
   dfs_the_header_header_wodegongdan: ' 我的工單',
   dfs_the_header_header_prize_questionnaire: ' 有獎問卷',
