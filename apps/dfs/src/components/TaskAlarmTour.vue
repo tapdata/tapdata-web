@@ -1,39 +1,41 @@
 <template>
   <ElDialog :visible.sync="visible" width="480px" :close-on-click-modal="false">
-    <span slot="title" class="fs-6 fw-sub font-color-dark"> 设置告警通知，实时监控任务状态 </span>
+    <span slot="title" class="fs-6 fw-sub font-color-dark">{{$t('dfs_alarm_setting_tour_title')}}</span>
 
     <el-alert
       v-if="noEmail"
       class="alert-primary text-primary mb-4"
       type="info"
-      title="检测到您未绑定邮箱，请先绑定邮箱用于接收任务告警通知"
+      :title="$t('dfs_components_taskalarmtour_jiancedaoninwei')"
       show-icon
       :closable="false"
     />
     <div class="flex gap-4 justify-content-between">
       <div class="rounded-4 bg-secondary-100 px-4 py-2 flex align-center gap-2">
         <VIcon size="24" class="text-primary">email</VIcon>
-        <span>邮件通知</span>
+        <span>{{$t('notify_email_notification')}}</span>
       </div>
       <div class="rounded-4 bg-secondary-100 px-4 py-2 flex align-center gap-2">
         <VIcon size="24" class="text-primary">sms</VIcon>
-        <span>短信通知</span>
+        <span>{{$t('notify_sms_notification')}}</span>
       </div>
       <div class="rounded-4 bg-secondary-100 px-4 py-2 flex align-center gap-2">
         <VIcon size="24">wechat</VIcon>
-        <span>微信通知</span>
+        <span>{{$t('notify_webchat_notification')}}</span>
       </div>
     </div>
 
     <div slot="footer">
       <el-button @click="cancel">{{ $t('public_button_cancel') }}</el-button>
-      <el-button v-if="noEmail" type="primary" @click="gotoBindEmail">绑定邮箱</el-button>
-      <el-button v-else type="primary" @click="gotoSettings">去设置</el-button>
+      <el-button v-if="noEmail" type="primary" @click="gotoBindEmail">{{$t('operation_log_List_bangDingYouXiang')}}</el-button>
+      <el-button v-else type="primary" @click="gotoSettings">{{$t('dfs_components_taskalarmtour_qushezhi')}}</el-button>
     </div>
   </ElDialog>
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 import { driver } from 'driver.js'
 
 export default {
@@ -91,7 +93,7 @@ export default {
             element.removeEventListener('click', destroy)
           },
           popover: {
-            description: '点击此处设置任务告警'
+            description: i18n.t('dfs_components_taskalarmtour_dianjicichushe')
           }
         })
 

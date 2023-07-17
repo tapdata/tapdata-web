@@ -1,4 +1,5 @@
 <script>
+import i18n from '@/i18n'
 import { VIcon } from '@tap/component'
 
 export default {
@@ -21,9 +22,9 @@ export default {
         { name: 'Windows (64 bit)', value: 'windows' }
       ],
       textMap: {
-        linux: '请复制下方命令, 在目录中执行, 执行后, 等待平台检测引擎启动',
-        docker: '完成 docker 服务安装后, 请复制下方命令执行, 执行后, 等待平台检测引擎启动',
-        windows: ' 请复制下方命令并在部署环境执行，其包含镜像的下载及运行，计算引擎 的下载、自动部署及启动'
+        linux: i18n.t('dfs_guide_deploy_qingfuzhixiafang2'),
+        docker: i18n.t('dfs_guide_deploy_wanchengdoc'),
+        windows: i18n.t('dfs_guide_deploy_qingfuzhixiafang')
       }
     }
   },
@@ -73,15 +74,15 @@ export default {
 <template>
   <div class="account">
     <div class="fs-6 font-color-dark fw-sub mb-4 mt-4">
-      <span> 准备Tapdata Cloud 计算引擎环境部署，如遇问题可</span>
+      <span> {{ $t('dfs_components_taskalarmtour_deployment_zhunbei') }}</span>
       <el-link
         type="primary"
         class="fs-6 align-top ml-2"
         href="https://salesiq.zoho.com.cn/signaturesupport.ls?widgetcode=39c2c81d902fdf4fbcc9b55f1268168c6d58fe89b1de70d9adcb5c4c13d6ff4d604d73c57c92b8946ff9b4782f00d83f"
-        >咨询客服</el-link
+        >{{ $t('dfs_components_taskalarmtour_deployment_zixun') }}</el-link
       >
     </div>
-    <div class="fw-sub font-color-dark mt-4">要安装计算引擎,请先在下方选择您的服务器类型：</div>
+    <div class="fw-sub font-color-dark mt-4">{{ $t('dfs_components_taskalarmtour_deployment_anpai') }}</div>
     <ElRadioGroup v-model="downLoadType" class="flex gap-4 mt-4 mb-4">
       <ElRadio
         v-for="(item, index) in downType"

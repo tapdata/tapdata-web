@@ -12,10 +12,10 @@
   >
     <div class="guide-wrap flex justify-content-center">
       <div class="nav-wrap px-8 py-8">
-        <div class="guide-header font-color-dark fw-bold fs-5 mb-4 mt-4">欢迎使用 Tapdata Cloud 数据服务</div>
-        <div class="guide-desc font-color-dark">
-          Tapdata Cloud 是专业的数据集成与服务平台, 为了让您更流畅地使用产品, 请跟随我们的引导, 开始一步步操作吧
+        <div class="guide-header font-color-dark fw-bold fs-5 mb-4 mt-4">
+          {{ $t('dfs_guide_index_huanyingshiyongT') }}
         </div>
+        <div class="guide-desc font-color-dark">{{ $t('dfs_guide_index_tapda') }}</div>
         <el-steps
           class="guide-steps bg-transparent mx-auto"
           :active="activeStep"
@@ -113,8 +113,8 @@
           <div v-if="isUnDeploy && agentStatus === 'Creating'" class="mt-8">
             <div class="box-card mt-4 flex flex-column justify-content-center align-items-center">
               <VIcon class="mt-4 mb-4" size="100">guide-loading</VIcon>
-              <div class="fs-5 font-color-dark mb-2">等待部署</div>
-              <div class="font-color-light">正在检测引擎部署状态，检测完成之后自动进入任务引导页面。</div>
+              <div class="fs-5 font-color-dark mb-2">{{ $t('dfs_guide_index_dengdaibushu') }}</div>
+              <div class="font-color-light">{{ $t('dfs_guide_index_zhengzaijianceyin') }}</div>
             </div>
           </div>
         </div>
@@ -146,6 +146,8 @@
   </ElDialog>
 </template>
 <script>
+import i18n from '@/i18n'
+
 import Account from './Account.vue'
 import DeploymentMethod from './DeploymentMethod.vue'
 import Scenes from './Scenes.vue'
@@ -251,34 +253,34 @@ export default {
         this.steps = [
           {
             key: 'Scenes',
-            title: '确定使用场景'
+            title: i18n.t('dfs_guide_index_quedingshiyongchang')
           },
           {
             key: 'DeploymentMethod',
-            title: '设置数据库网络环境'
+            title: i18n.t('dfs_guide_index_shezhishujuku')
           },
           {
             key: 'Spec',
-            title: '选择计算引擎规格'
+            title: i18n.t('dfs_guide_index_xuanzejisuanyin')
           }
         ]
       } else {
         this.steps = [
           {
             key: 'Account',
-            title: '账号安全绑定'
+            title: i18n.t('dfs_guide_index_zhanghaoanquanbang')
           },
           {
             key: 'Scenes',
-            title: '确定使用场景'
+            title: i18n.t('dfs_guide_index_quedingshiyongchang')
           },
           {
             key: 'DeploymentMethod',
-            title: '设置数据库网络环境'
+            title: i18n.t('dfs_guide_index_shezhishujuku')
           },
           {
             key: 'Spec',
-            title: '选择计算引擎规格'
+            title: i18n.t('dfs_guide_index_xuanzejisuanyin')
           }
         ]
       }
@@ -325,7 +327,7 @@ export default {
         return
       }
       if (step.key === 'Scenes' && (!this.scenes || this.scenes?.length === 0)) {
-        this.$message.error('请选择您想通过本产品完成您的什么需求呢？')
+        this.$message.error(i18n.t('dfs_guide_index_qingxuanzeninxiang'))
         return
       }
       this.next()
@@ -344,7 +346,7 @@ export default {
       if (val === 'selfHost' && index === -1) {
         this.steps.push({
           key: 'Deploy',
-          title: '部署计算引擎'
+          title: i18n.t('dfs_guide_index_bushujisuanyin')
         })
       } else if (val !== 'selfHost') {
         //移除
@@ -362,12 +364,12 @@ export default {
         if (this.platform !== 'selfHost' && index === -1) {
           this.steps.push({
             key: 'Pay',
-            title: '支付'
+            title: i18n.t('public_button_pay')
           })
         } else if (this.platform === 'selfHost' && index === -1) {
           this.steps.splice(len, 0, {
             key: 'Pay',
-            title: '支付'
+            title: i18n.t('public_button_pay')
           })
         }
       } else {

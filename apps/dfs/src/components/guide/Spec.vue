@@ -1,8 +1,6 @@
 <template>
   <section>
-    <div class="fs-6 font-color-dark fw-sub mb-4 mt-4">
-      您需要自行安装一个计算引擎到您的网络环境中, 选择一种合适的方式吧。
-    </div>
+    <div class="fs-6 font-color-dark fw-sub mb-4 mt-4">{{ $t('dfs_guide_spec_ninxuyaozixing') }}</div>
     <el-form label-position="top" ref="ruleForm">
       <!--订阅方式-->
       <ElFormItem :label="$t('dfs_instance_instance_dingyuefangshi')">
@@ -536,7 +534,7 @@ export default {
   border: 1px solid map-get($color, primary);
 }
 .spec-li {
-  width: 495px;
+  width: 573px;
   border: 1px solid #dedede;
   border-radius: 4px;
   .is-active {

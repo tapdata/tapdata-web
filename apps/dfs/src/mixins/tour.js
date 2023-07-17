@@ -1,3 +1,4 @@
+import i18n from '@/i18n'
 import { driver } from 'driver.js'
 import 'driver.js/dist/driver.css'
 import { connectionsApi, taskApi } from '@tap/api'
@@ -191,14 +192,14 @@ export default {
             type: 'menu',
             route: 'connections',
             element: '#menu-connections',
-            description: '请创建您的源数据库',
+            description: i18n.t('dfs_mixins_tour_qingchuangjianninde3'),
             progressText: '1/6'
           },
           {
             type: 'button',
             route: 'connections',
             element: '#connection-list-create',
-            description: '点击此处创建您的源数据库',
+            description: i18n.t('dfs_mixins_tour_dianjicichuchuang3'),
             progressText: '2/6'
           }
         ],
@@ -207,14 +208,14 @@ export default {
             type: 'menu',
             route: 'connections',
             element: '#menu-connections',
-            description: '请创建您的目标数据库',
+            description: i18n.t('dfs_mixins_tour_qingchuangjianninde2'),
             progressText: '3/6'
           },
           {
             type: 'button',
             route: 'connections',
             element: '#connection-list-create',
-            description: '点击此处创建您的目标数据库',
+            description: i18n.t('dfs_mixins_tour_dianjicichuchuang2'),
             progressText: '4/6'
           }
         ],
@@ -223,14 +224,14 @@ export default {
             type: 'menu',
             route: 'migrateList',
             element: '#menu-migrate',
-            description: '请创建您的第一个复制任务',
+            description: i18n.t('dfs_mixins_tour_qingchuangjianninde'),
             progressText: '5/6'
           },
           {
             type: 'button',
             route: 'migrateList',
             element: '#task-list-create',
-            description: '点击此处创建您的第一个复制任务',
+            description: i18n.t('dfs_mixins_tour_dianjicichuchuang'),
             progressText: '6/6'
           }
         ]
@@ -324,7 +325,7 @@ export default {
             unwatch()
           },
           popover: {
-            description: '请先启动您的 Agent 计算引擎',
+            description: i18n.t('dfs_mixins_tour_qingxianqidongnin'),
             showButtons: [],
             onPopoverRender: (popover, { state }) => {
               // agent列表加载成功后开始显示引导
@@ -341,7 +342,7 @@ export default {
           type: 'button',
           route: 'Instance',
           element,
-          description: '请先启动您的 Agent 计算引擎'
+          description: i18n.t('dfs_mixins_tour_qingxianqidongnin')
         })
       ]
 

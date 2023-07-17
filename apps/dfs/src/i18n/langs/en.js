@@ -629,7 +629,7 @@ export default {
   operation_log_List_caoZuoMiaoShu: 'Pedagogical Operation',
   operation_log_List_yongHuMingCheng: 'User Name',
   user_Center_shangChuanTouXiang: 'Upload Avatar',
-  user_Center_dangQianShouJi: 'Current phone:',
+  user_Center_dangQianShouJi: 'Current Phone:',
   user_Center_qingShuRuDangQian: 'Please enter the current mobile phone',
   user_Center_shouJiYanZhengMa: 'Mobile phone verification code:',
   user_Center_qingShuRuShouJi: 'Please enter the mobile phone verification code',
@@ -1639,5 +1639,60 @@ export default {
   dfs_order_list_dingyueleixing: 'Subscription Type',
   public_button_pay: 'Pay',
   dfs_order_list_zongjine: 'Total Amount',
-  dfs_instance_instance_subscribe_time: 'Subscribe Time'
+
+  dfs_instance_instance_subscribe_time: 'Subscribe Time',
+  dfs_guide_deploy_qingfuzhixiafang:
+    'Please copy the command below and execute it in the deployment environment, which includes downloading and running the image, downloading, automatically deploying and starting the computing engine',
+  dfs_guide_deploy_wanchengdoc:
+    'After completing the installation of the docker service, please copy the command below and execute it. After execution, wait for the platform detection engine to start',
+  dfs_guide_deploy_qingfuzhixiafang2:
+    'Please copy the command below and execute it in the directory. After execution, wait for the platform detection engine to start',
+  dfs_guide_index_bushujisuanyin: 'Deployment calculation engine',
+  dfs_guide_index_qingxuanzeninxiang: 'Please select what needs you want to fulfill through this product? ',
+  dfs_guide_index_xuanzejisuanyin: 'Select calculation engine specification',
+  dfs_guide_index_shezhishujuku: 'Set database network environment',
+  dfs_guide_index_quedingshiyongchang: 'Determine the usage scenario',
+  dfs_guide_index_zhanghaoanquanbang: 'Account Security Binding',
+  dfs_guide_index_zhengzaijianceyin:
+    'The engine deployment status is being detected, and the task guide page will be entered automatically after the detection is completed. ',
+  dfs_guide_index_dengdaibushu: 'Waiting for deployment',
+  dfs_guide_index_tapda:
+    'Tapdata Cloud is a professional data integration and service platform, in order to allow you to use the product more smoothly, please follow our guidance and start to operate step by step',
+  dfs_guide_index_huanyingshiyongT: 'Welcome to Tapdata Cloud data service',
+  dfs_guide_scenes_meiyoutedingde: 'No specific requirements',
+  dfs_guide_scenes_qitachangjing: 'Other Scenes',
+  dfs_guide_scenes_yigoushujuku: 'Heterogeneous database synchronization',
+  dfs_guide_scenes_bendishujushang: 'Local data to the cloud',
+  dfs_guide_scenes_shujurucangjia: 'Data storage, speed up query',
+  dfs_guide_scenes_kuayunshujushi: 'Real-time synchronization of cross-cloud data',
+  dfs_guide_spec_ninxuyaozixing:
+    'You need to install a computing engine to your network environment, choose a suitable method. ',
+  dfs_components_taskalarmtour_dianjicichushe: 'Click here to set task alarm',
+  dfs_components_taskalarmtour_qushezhi: 'Settings',
+  dfs_components_taskalarmtour_jiancedaoninwei:
+    'It has been detected that you have not bound your mailbox, please bind your mailbox first to receive task alarm notifications',
+  dfs_mixins_tour_qingxianqidongnin: 'Please start your Agent calculation engine first',
+  dfs_mixins_tour_dianjicichuchuang: 'Click here to create your first replication task',
+  dfs_mixins_tour_qingchuangjianninde: 'Please create your first replication task',
+  dfs_mixins_tour_dianjicichuhuang2: 'Click here to create your target database',
+  dfs_mixins_tour_qingchuangjianninde2: 'Please create your target database',
+  dfs_mixins_tour_dianjicichuhuang3: 'Click here to create your source database',
+  dfs_mixins_tour_qingchuangjianninde3: 'Please create your source database',
+  dfs_router_index_zhifuqingdan: 'Payment list',
+  dfs_instance_instance_perce: '{val1} seconds ago',
+  dfs_instance_instance_perce_minute: '{val1} minutes ago',
+  dfs_instance_instance_shengji: 'Upgrade',
+  dfs_instance_instance_xintiaobinlu: 'Heartbeat Frequency',
+  dfs_components_taskalarmtour_deployment_qingwen:
+    'Can your source and target databases be directly accessed from the Internet?',
+  dfs_components_taskalarmtour_deployment_bukeyi: 'No ( You need to deploy the computing engine )',
+  dfs_components_taskalarmtour_deployment_wodeshujuku:
+    'My database is in the local area network, or for security reasons, it cannot be exposed to the public network',
+  dfs_components_taskalarmtour_deployment_keyi: 'Yes ( Platform maintenance computing engine )',
+  dfs_components_taskalarmtour_deployment_yunshujuku:
+    'My databases are all cloud databases, and can be exposed to the public network',
+  dfs_components_taskalarmtour_deployment_zhunbei:
+    'Prepare for the deployment of the Tapdata Cloud computing engine environment, if you encounter problems, you can',
+  dfs_components_taskalarmtour_deployment_zixun: 'Consult customer service',
+  dfs_components_taskalarmtour_deployment_anpai: 'To install Compute Engine, please select your server type below:'
 }

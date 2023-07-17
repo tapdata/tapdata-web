@@ -56,7 +56,7 @@
                     :format="formatPingTimePercantage"
                     :color="customColors"
                   ></el-progress>
-                  <div class="font-color-light">心跳頻率</div>
+                  <div class="font-color-light">{{ $t('dfs_instance_instance_xintiaobinlu') }}</div>
                 </div>
               </div>
               <div class="flex justify-content-between w-100 pt-4 px-4">
@@ -230,7 +230,7 @@
                 >
                   <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></ElButton
                 >
-                <!--升级按钮-->
+                <!--{{$t('dfs_instance_instance_shengji')}}按钮-->
                 <template v-if="showUpgradeIcon(item)">
                   <ElTooltip
                     v-if="upgradingFlag(item)"
@@ -277,9 +277,9 @@
                     :content="getTooltipContent(item)"
                     key="done"
                   >
-                    <el-button size="mini" class="cursor-pointer block" @click="showUpgradeDialogFnc(item)"
-                      >升级</el-button
-                    >
+                    <el-button size="mini" class="cursor-pointer block" @click="showUpgradeDialogFnc(item)">{{
+                      $t('dfs_instance_instance_shengji')
+                    }}</el-button>
                   </ElTooltip>
                 </template>
               </div>
@@ -340,7 +340,7 @@
             </div>
             <div v-if="disabledAutoUpgradeBtn" class="mt-1 fs-8 text-break">({{ $t('agent_tip_auto_upgrade') }})</div>
           </ElDialog>
-          <!--   升级失败   -->
+          <!--   {{$t('dfs_instance_instance_shengji')}}失败   -->
           <ElDialog :visible.sync="upgradeErrorDialog" width="450px" top="30vh" center>
             <div class="dialog-content text-center">{{ $t('agent_dialog_upgrade_fail') }}</div>
             <div class="dialog-btn flex justify-content-evenly mt-6">
@@ -1014,15 +1014,15 @@ export default {
     },
     //自定义百分比文案
     formatPingTimePercantage(percentage) {
-      let txt = `${percentage} 秒前`
+      let txt = i18n.t('dfs_instance_instance_perce', { val1: percentage })
       if (percentage > 60 && percentage < 70) {
-        txt = `5分钟前`
+        txt = i18n.t('dfs_instance_instance_perce', { val1: 5 })
       } else if (percentage > 70 && percentage < 80) {
-        txt = `10分钟前`
+        txt = i18n.t('dfs_instance_instance_perce', { val1: 10 })
       } else if (percentage > 80 && percentage < 95) {
-        txt = `20分钟前`
+        txt = i18n.t('dfs_instance_instance_perce', { val1: 20 })
       } else if (percentage > 95) {
-        txt = txt = `30分钟前`
+        txt = txt = i18n.t('dfs_instance_instance_perce', { val1: 30 })
       }
       return txt
     },
