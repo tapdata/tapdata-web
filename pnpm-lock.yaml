@@ -391,6 +391,8 @@ importers:
 
   packages/dag:
     specifiers:
+      '@figmania/anim': ^2.3.12
+      '@figmania/webcomponent': ^2.3.12
       '@formily/core': 2.2.13
       '@formily/element': 2.2.13
       '@formily/path': 2.2.13
@@ -410,6 +412,8 @@ importers:
       vue-virtual-scroller: ^1.1.2
       vuex: ^3.6.2
     dependencies:
+      '@figmania/anim': 2.3.12
+      '@figmania/webcomponent': 2.3.12
       '@formily/core': 2.2.13
       '@formily/element': 2.2.13
       '@formily/path': 2.2.13
@@ -1928,6 +1932,23 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /@figmania/anim/2.3.12:
+    resolution: {integrity: sha512-3DzeyJyhwfMAAtPGPyUvC+yOQ/6Nf/krno/+7TM71BMvFu+GcVlvTTqmd8wmoObIEr3C/DkkKMeFceRnw4+lRA==}
+    dependencies:
+      camelcase: 6.3.0
+      decamelize: 4.0.0
+      gsap: 3.12.2
+    dev: false
+
+  /@figmania/webcomponent/2.3.12:
+    resolution: {integrity: sha512-1v2JNZo6s47dDfAjw9IK359T2PuXVwHQad6r1XNRDETNV3Izb0uflIMlQW1BimPCzJf9Zy9MU/1nBvqK2G9eEA==}
+    dependencies:
+      '@figmania/anim': 2.3.12
+      camelcase: 6.3.0
+      decamelize: 4.0.0
+      gsap: 3.12.2
+    dev: false
 
   /@formily/core/2.2.13:
     resolution: {integrity: sha512-LuiZOFekevebRk7NWyETzz90BWF+xZ2vXMQgFBf99qTGb9u2lmd7sde+4BgIoxbc91uoVtJKP2ERJLpnxdbx+Q==}
@@ -4744,7 +4765,6 @@ packages:
   /camelcase/6.3.0:
     resolution: {integrity: sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==}
     engines: {node: '>=10'}
-    dev: true
 
   /caniuse-api/3.0.0:
     resolution: {integrity: sha512-bsTwuIg/BZZK/vreVTYYbSWoe2F+71P7K5QGEX+pT250DZbfU1MQ5prOKpPR+LL6uWKK3KMwMCAS74QB3Um1uw==}
@@ -6021,6 +6041,11 @@ packages:
     resolution: {integrity: sha512-z2S+W9X73hAUUki+N+9Za2lBlun89zigOyGrsax+KUQ6wKW4ZoWpEYBkGhQjwAjjDCkWxhY0VKEhk8wzY7F5cA==}
     engines: {node: '>=0.10.0'}
     dev: true
+
+  /decamelize/4.0.0:
+    resolution: {integrity: sha512-9iE1PgSik9HeIIw2JO94IidnE3eBoQrFJ3w7sFuzSX4DpmZ3v5sZpUiV5Swcf6mQEF+Y0ru8Neo+p+nyh2J+hQ==}
+    engines: {node: '>=10'}
+    dev: false
 
   /decode-uri-component/0.2.2:
     resolution: {integrity: sha512-FqUYQ+8o158GyGTrMFJms9qh3CqTKvAqgqsTnkLI8sKu0028orqBhxNMFkFen0zGyg6epACD32pjVk58ngIErQ==}
@@ -7868,6 +7893,10 @@ packages:
     resolution: {integrity: sha512-jcLLfkpoVGmH7/InMC/1hIvOPSUh38oJtGhvrOFGzioE1DZ+0YW16RgmOJhHiuWTvGiJQ9Z1Ik43JvkRPRvE+A==}
     dependencies:
       lodash: 4.17.21
+    dev: false
+
+  /gsap/3.12.2:
+    resolution: {integrity: sha512-EkYnpG8qHgYBFAwsgsGEqvT1WUidX0tt/ijepx7z8EUJHElykg91RvW1XbkT59T0gZzzszOpjQv7SE41XuIXyQ==}
     dev: false
 
   /gzip-size/5.1.1:
