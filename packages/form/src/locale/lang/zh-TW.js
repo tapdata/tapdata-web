@@ -74,6 +74,7 @@ export default {
   packages_form_ddl_event_checkbox_index_xiugaiziduanming: '修改字段名',
   packages_form_example_file_index_tiaojianfenzu: '條件分組',
   packages_form_example_file_index_zhengzebiaodashi: '正則表達式',
+  packages_form_example_file_index_timestamp: '按timestamp類型過濾',
   packages_form_example_file_index_huo: '或',
   packages_form_example_file_index_qie: '且',
   packages_form_example_file_index_fei: '非',

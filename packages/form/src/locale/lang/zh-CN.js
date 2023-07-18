@@ -83,6 +83,7 @@ export default {
   packages_form_example_file_index_zhichidefuhao: '支持的符号',
   packages_form_example_file_index_shaixuanchusuiyi: '筛选出50岁以上的男性或者收入一万以下的30岁以上的人',
   packages_form_example_file_index_biaodashishili: '表达式示例',
+  packages_form_example_file_index_timestamp: '按timestamp类型过滤',
   packages_form_field_add_del_index_ziduanmingcheng: '字段名称',
   packages_form_field_mapping_dialog_queding: '确 定',
   packages_form_field_mapping_dialog_quxiao: '取 消',
