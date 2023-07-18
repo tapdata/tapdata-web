@@ -228,7 +228,8 @@ export default {
         demand: this.scenes,
         selectAgentType: this.platform,
         subscribe: this.subscribe,
-        agentId: this.agentId
+        agentId: this.agentId,
+        steps: this.steps
       }
       this.$axios.patch('api/tcm/user', { params })
     },
@@ -385,10 +386,12 @@ export default {
       let user = window.__USER_INFO__
       if (window.__config__?.disabledBindingPhone) {
         //海外版不强制绑定手机号
-        return
+        this.bindPhoneVisible = false
+      } else {
+        this.bindPhoneVisible =
+          ['basic:email', 'basic:email-code', 'social:wechatmp-qrcode'].includes(user?.registerSource) &&
+          !user?.telephone
       }
-      this.bindPhoneVisible =
-        ['basic:email', 'basic:email-code', 'social:wechatmp-qrcode'].includes(user?.registerSource) && !user?.telephone
       this.getSessionStorage()
       if (this.steps?.length === 0) {
         this.getSteps()

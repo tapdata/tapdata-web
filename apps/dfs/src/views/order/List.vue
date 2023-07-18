@@ -97,12 +97,6 @@
                       >{{ $t('public_button_unsubscribe') }}</ElButton
                     >
                   </template>
-                  <div class="mt-8" slot="empty">
-                    <VIcon size="120">no-data-color</VIcon>
-                    <div class="flex justify-content-center align-items-center lh-sm fs-7 font-color-sub">
-                      <span>{{ $t('public_data_no_data') }}</span>
-                    </div>
-                  </div>
                 </VTable>
               </div>
             </li>
@@ -153,12 +147,6 @@
             <template #operation="{ row }">
               <ElButton type="text" @click="handleRenewal(row)">{{ $t('public_button_renewal') }}</ElButton>
             </template>
-            <div class="mt-8" slot="empty">
-              <VIcon size="120">no-data-color</VIcon>
-              <div class="flex justify-content-center align-items-center lh-sm fs-7 font-color-sub">
-                <span>{{ $t('public_data_no_data') }}</span>
-              </div>
-            </div>
           </VTable>
         </section>
       </el-tab-pane>
