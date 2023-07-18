@@ -225,6 +225,7 @@ importers:
       dagre: ^0.8.5
       dayjs: ^1.11.2
       default-passive-events: ^2.0.0
+      driver.js: ^1.0.4
       echarts: ^5.0.2
       element-ui: 2.15.7
       eslint: ^6.7.2
@@ -280,6 +281,7 @@ importers:
       dagre: 0.8.5
       dayjs: 1.11.7
       default-passive-events: 2.0.0
+      driver.js: 1.0.5
       echarts: 5.4.2
       element-ui: 2.15.7_vue@2.6.14
       github-markdown-css: 4.0.0
@@ -487,7 +489,6 @@ importers:
       '@tap/business': workspace:^1.0.0
       '@tap/component': workspace:^1.0.0
       '@tap/dag': workspace:^1.0.0
-      '@tap/form': workspace:^1.0.0
       '@tap/i18n': workspace:^1.0.0
       '@tap/shared': workspace:^1.0.0
       dagre: ^0.8.5
@@ -497,7 +498,6 @@ importers:
       '@tap/business': link:../business
       '@tap/component': link:../component
       '@tap/dag': link:../dag
-      '@tap/form': link:../form
       '@tap/i18n': link:../i18n
       '@tap/shared': link:../shared
       dagre: 0.8.5
@@ -2708,6 +2708,7 @@ packages:
   /@vue/babel-preset-app/4.5.19_vue@2.6.14:
     resolution: {integrity: sha512-VCNRiAt2P/bLo09rYt3DLe6xXUMlhJwrvU18Ddd/lYJgC7s8+wvhgYs+MTx4OiAXdu58drGwSBO9SPx7C6J82Q==}
     peerDependencies:
+      core-js: ^3
       vue: ^2 || ^3.0.0-0
     peerDependenciesMeta:
       core-js:
@@ -2836,6 +2837,7 @@ packages:
       thread-loader: 2.1.3_webpack@4.46.0
       webpack: 4.46.0
     transitivePeerDependencies:
+      - core-js
       - supports-color
       - vue
       - webpack-cli
@@ -2927,7 +2929,7 @@ packages:
     peerDependencies:
       '@vue/cli-service': ^3.0.0 || ^4.0.0-0
     dependencies:
-      '@vue/cli-service': 4.5.19_kgyjn4tstgpo3cxl4ealtf4uya
+      '@vue/cli-service': 4.5.19_uksaqpj2nsdk26ix3umetljna4
       '@vue/cli-shared-utils': 4.5.19
     dev: true
 
@@ -2936,7 +2938,7 @@ packages:
     peerDependencies:
       '@vue/cli-service': ^3.0.0 || ^4.0.0-0
     dependencies:
-      '@vue/cli-service': 4.5.19_kgyjn4tstgpo3cxl4ealtf4uya
+      '@vue/cli-service': 4.5.19_uksaqpj2nsdk26ix3umetljna4
     dev: true
 
   /@vue/cli-service/4.5.19_kgyjn4tstgpo3cxl4ealtf4uya:
@@ -6356,6 +6358,10 @@ packages:
     resolution: {integrity: sha512-IrPdXQsk2BbzvCBGBOTmmSH5SodmqZNt4ERAZDmW4CT+tL8VtvinqywuANaFu4bOMWki16nqf0e4oC0QIaDr/g==}
     engines: {node: '>=10'}
     dev: true
+
+  /driver.js/1.0.5:
+    resolution: {integrity: sha512-yLue+o82AeEnKrG77n1LZBygsc2T/F0txMxhXj2vA8E0VtzObpWqN+VMOp1uQsVFh582eA+1x07lM5o6IKtX3g==}
+    dev: false
 
   /duplexer/0.1.2:
     resolution: {integrity: sha512-jtD6YG370ZCIi/9GTaJKQxWTZD045+4R4hTk/x1UyoqadyJ9x9CgSi1RlVDQF8U2sxLLSnFkCaMihqljHIWgMg==}
