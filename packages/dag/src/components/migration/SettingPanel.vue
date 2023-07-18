@@ -650,9 +650,7 @@ export default observer({
                         key: 'TASK_INCREMENT_DELAY',
                         point: 60,
                         equalsFlag: 1,
-                        ms: 60000,
-                        _point: 5,
-                        _ms: 60
+                        ms: 60000
                       }
                     ]
                   },
@@ -890,6 +888,7 @@ export default observer({
 
       form: createForm({
         disabled: this.stateIsReadonly,
+        effects: this.useEffects,
         values
       })
     }
@@ -916,19 +915,11 @@ export default observer({
     this.lazySaveAlarmConfig = debounce(this.saveAlarmConfig, 100)
   },
 
-  mounted() {
-    this.$nextTick(() => {
-      !this.stateIsReadonly && this.form.setEffects(this.useEffects)
-    })
-  },
-
   methods: {
     // 绑定表单事件
     useEffects() {
       onFieldValueChange('*(alarmSettings.*.*,alarmRules.*.*)', (field, form) => {
-        if (!this.stateIsReadonly) {
-          this.lazySaveAlarmConfig()
-        }
+        if (this.stateIsReadonly) this.lazySaveAlarmConfig()
       })
     },
 
