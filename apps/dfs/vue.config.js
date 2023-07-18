@@ -112,7 +112,8 @@ module.exports = {
   transpileDependencies: [
     // 按需添加需要babel处理的模块
     /[/\\]node_modules[/\\](.+?)?element-ui(.*)[/\\]packages[/\\]table[/\\]src/,
-    /[/\\]node_modules[/\\](.+?)?element-ui(.*)[/\\]packages[/\\]tooltip[/\\]src/
+    /[/\\]node_modules[/\\](.+?)?element-ui(.*)[/\\]packages[/\\]tooltip[/\\]src/,
+    /[/\\]node_modules[/\\](.+?)?@figmania\/webcomponent(.*)[/\\]/
   ],
   configureWebpack: config => {
     config.resolve.extensions = ['.js', 'jsx', '.vue', '.json', '.ts', '.tsx']
