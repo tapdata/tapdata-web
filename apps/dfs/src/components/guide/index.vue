@@ -231,7 +231,7 @@ export default {
         agentId: this.agentId,
         steps: this.steps
       }
-      this.$axios.patch('api/tcm/user', { params })
+      this.$axios.patch('api/tcm/user', params)
     },
     next() {
       this.activeStep++
@@ -403,10 +403,13 @@ export default {
     },
     //获取存储部署
     getSessionStorage() {
-      let guide = JSON.parse(sessionStorage.getItem('guide'))
-      if (guide?.userId === this.userId) {
-        this.activeStep = this.isUnDeploy ? guide?.activeStep + 1 : guide?.activeStep || 1
-        this.steps = guide?.steps
+      let user = window.__USER_INFO__
+      if (user?.steps) {
+        this.activeStep = user?.installStep
+        this.steps = user?.steps
+        this.scenes = user?.demand
+        this.platform = user?.selectAgentType
+        this.agentId = user?.agentId
       }
     },
     //刷新支付状态

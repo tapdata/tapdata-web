@@ -368,7 +368,7 @@ export default {
         }
 
         //是否有支付成功的订阅
-        let isPay = subItems.find(i => i.status === 'active')
+        let isPay = subItems.find(i => i.status === 'active' && i.totalAmount !== 0)
         if (isPay) {
           return
         }
