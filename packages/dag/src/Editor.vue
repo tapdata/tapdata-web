@@ -72,8 +72,8 @@
           <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
             <VEmpty large />
           </div>
+          <PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>
           <TransformLoading :show="transformLoading" />
-
           <NodePopover
             :popover="nodeMenu"
             @click-node="handleClickNodePopover"
@@ -119,6 +119,7 @@ import NodePopover from './components/NodePopover'
 import TransformLoading from './components/TransformLoading'
 import editor from './mixins/editor'
 import ConsolePanel from './components/migration/ConsolePanel'
+import PaperEmpty from './components/PaperEmpty'
 
 export default {
   name: 'Editor',
@@ -134,7 +135,8 @@ export default {
     DFNode,
     LeftSidebar,
     TransformLoading,
-    ConsolePanel
+    ConsolePanel,
+    PaperEmpty
   },
 
   inject: ['buried'],
