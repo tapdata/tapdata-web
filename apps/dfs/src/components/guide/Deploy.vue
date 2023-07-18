@@ -97,13 +97,13 @@ export default {
     <div class="fw-sub font-color-dark mt-4">{{ $t('agent_deploy_start_install') }}</div>
     <div v-if="downLoadType === 'windows'">
       <ul class="pt-5 ul-style">
-        <li class="flex">
+        <li class="flex justify-content-start align-items-center">
           {{ $t('agent_deploy_start_install_windows_first') }}
-          <ElLink class="mt-1 mr-1" type="primary" @click="handleDownLoad">{{
+          <ElLink class="mt-2 mr-2" type="primary" @click="handleDownLoad">{{
             $t('agent_deploy_start_install_windows_first_download')
           }}</ElLink>
           {{ $t('dfs_agent_download_fastdownload_he')
-          }}<ElLink type="primary" @click="handleDownLoadApplication">application.yml </ElLink>
+          }}<ElLink class="mt-2 mr-2" type="primary" @click="handleDownLoadApplication">application.yml </ElLink>
         </li>
         <li class="mt-3">{{ $t('dfs_agent_download_fastdownload_jiangwenjianta') }}</li>
         <li class="mt-3">{{ $t('dfs_agent_download_fastdownload_shuangjizhixingt') }}</li>

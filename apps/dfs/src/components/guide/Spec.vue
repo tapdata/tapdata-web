@@ -70,7 +70,7 @@
         </div>
       </ElFormItem>
       <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu')">
-        <ul class="flex flex-wrap">
+        <ul class="flex flex-wrap overflow-auto" :class="{ maxHeight: platform === 'fullManagement' }">
           <li
             class="spec-li cursor-pointer position-relative cursor-pointer px-4 py-2 mb-4 mr-4 rounded-4"
             :class="{
@@ -530,11 +530,14 @@ export default {
   padding: 0 12px;
   line-height: 30px;
 }
+.maxHeight {
+  max-height: 220px;
+}
 .spec-li:hover {
   border: 1px solid map-get($color, primary);
 }
 .spec-li {
-  width: 573px;
+  width: 580px;
   border: 1px solid #dedede;
   border-radius: 4px;
   .is-active {
