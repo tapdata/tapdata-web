@@ -650,8 +650,8 @@ export default {
       this.$set(this.dataflow, 'startTime', data.startTime)
       this.$set(this.dataflow, 'lastStartDate', data.lastStartDate)
       this.$set(this.dataflow, 'pingTime', data.pingTime)
-      this.$set(this.dataflow, 'shareCdcStop', data.shareCdcStop)
-      this.$set(this.dataflow, 'shareCdcStopMessage', data.shareCdcStopMessage)
+      // this.$set(this.dataflow, 'shareCdcStop', data.shareCdcStop)
+      // this.$set(this.dataflow, 'shareCdcStopMessage', data.shareCdcStopMessage)
       // 前端不关心的属性
       this.dataflow.attrs = data.attrs
 
