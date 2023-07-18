@@ -69,10 +69,10 @@
               @show-node-popover="showNodePopover"
             ></DFNode>
           </PaperScroller>
-          <PaperEmpty v-if="!allNodes.length"></PaperEmpty>
           <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
             <VEmpty large />
           </div>
+          <PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>
           <TransformLoading :show="transformLoading" />
           <NodePopover
             :popover="nodeMenu"
