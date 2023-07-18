@@ -359,14 +359,20 @@ export default {
     async checkAgentInstall() {
       let subscribe = await this.$axios.get(`api/tcm/subscribe`)
       this.$axios.get('api/tcm/agent').then(data => {
-        //检查是否有待部署状态
         let items = data?.items || []
+        let subItems = subscribe?.items || []
         //是否有运行中的实例
         let isRunning = items.find(i => i.status === 'Running')
         if (isRunning) {
           return
         }
-        let subItems = subscribe?.items || []
+
+        //是否有支付成功的订阅
+        let isPay = subItems.find(i => i.status === 'active')
+        if (isPay) {
+          return
+        }
+        //检查是否有待部署状态
         let isUnDeploy = items.find(i => i.status === 'Creating' && i.agentType === 'Local')
         //订阅0 Agent 0  完全新人引导
         //订阅不为0 查找是否有待部署状态
