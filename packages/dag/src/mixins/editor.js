@@ -1630,6 +1630,7 @@ export default {
         const source = this.getRealId(connection.sourceId)
         const target = this.getRealId(connection.targetId)
         this.addNodeOnConn(item, newPosition, source, target)
+        this.jsPlumbIns.select().removeClass('connection-highlight')
       } else {
         this.handleAddNodeToPos(newPosition, item)
       }
