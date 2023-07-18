@@ -1717,6 +1717,8 @@ export default {
       const b = this.createNode(position, nodeType)
       const c = this.nodeById(target)
 
+      // 表和数据库节点不允许即使源又是目标的情况
+      if ('table' === nodeType.type || 'database' === nodeType.type) return
       if (!this.checkAsTarget(b, true)) return
       if (!this.checkAsSource(b, true)) return
       if (!this.checkTargetMaxInputs(b, true)) return
