@@ -67,7 +67,7 @@
           <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
             <VEmpty large />
           </div>
-          <!--<PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>-->
+          <PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>
           <TransformLoading :show="transformLoading" />
           <NodePopover
             :popover="nodeMenu"
@@ -114,6 +114,7 @@ import NodePopover from './components/NodePopover'
 import TransformLoading from './components/TransformLoading'
 import { VExpandXTransition, VEmpty } from '@tap/component'
 import ConsolePanel from './components/migration/ConsolePanel'
+import PaperEmpty from './components/PaperEmpty.vue'
 
 export default {
   name: 'MigrationEditor',
@@ -125,6 +126,7 @@ export default {
   mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   components: {
+    PaperEmpty,
     ConsolePanel,
     VExpandXTransition,
     NodePopover,
