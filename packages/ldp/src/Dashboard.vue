@@ -230,6 +230,8 @@ export default {
 
   beforeDestroy() {
     window.removeEventListener('keyword', this.handleListenerEsc)
+    // 销毁画布实例
+    this.jsPlumbIns?.destroy()
   },
 
   methods: {
