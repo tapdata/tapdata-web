@@ -36,7 +36,7 @@ export default {
   packages_component_src_selectlist_meiyougengduoshu: '没有更多数据',
   packages_component_src_classification_chuangjianfenlei: '创建分类',
 
-  packages_component_src_upgradefee_dingyuezhuanyeban: '订阅专业版',
+  packages_component_src_upgradefee_dingyuezhuanyeban: '专业版',
   packages_component_src_upgradefee_gaojishouhouzhi: ' 高级售后支持，提供服务SLA',
   packages_component_src_upgradefee_shujuchulixing: ' 处理性能：高',
   packages_component_src_upgradefee_desc_1: '包含基础版的全部能力, 加上...',
@@ -53,7 +53,7 @@ export default {
   packages_component_src_upgradefee_mianfei: '免费',
   packages_component_src_upgradefee_tigongmianfeishi: '适合个人使用, 或者测试场景使用',
   packages_component_src_upgradefee_jichuban: '基础版',
-  packages_component_src_upgradefee_dingyueshengji: '订阅专业版',
+  packages_component_src_upgradefee_dingyueshengji: '专业版',
   packages_component_src_selectlist_qingchuyixuan: '清除已选',
   packages_component_src_selectlist_xiang: '项',
   packages_component_src_selectlist_yixuanze: '已选择'
