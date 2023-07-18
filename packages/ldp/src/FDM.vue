@@ -369,7 +369,7 @@ export default {
   methods: {
     autoUpdateObjects() {
       this.autoUpdateObjectsTimer = setInterval(() => {
-        console.log('autoUpdateObjects', this.expandedKeys) // eslint-disable-line
+        if (this.showSearch) return
         this.expandedKeys.forEach(id => {
           this.updateObject(id)
         })

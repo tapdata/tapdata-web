@@ -1630,6 +1630,7 @@ export default {
         const source = this.getRealId(connection.sourceId)
         const target = this.getRealId(connection.targetId)
         this.addNodeOnConn(item, newPosition, source, target)
+        this.jsPlumbIns.select().removeClass('connection-highlight')
       } else {
         this.handleAddNodeToPos(newPosition, item)
       }
@@ -1717,6 +1718,8 @@ export default {
       const b = this.createNode(position, nodeType)
       const c = this.nodeById(target)
 
+      // 表和数据库节点不允许即使源又是目标的情况
+      if ('table' === nodeType.type || 'database' === nodeType.type) return
       if (!this.checkAsTarget(b, true)) return
       if (!this.checkAsSource(b, true)) return
       if (!this.checkTargetMaxInputs(b, true)) return
