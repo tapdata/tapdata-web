@@ -61,10 +61,17 @@ export default {
       <VIcon size="450px" style="width: 450px; height: 235px">guide-top-header</VIcon>
     </div>
     <div class="fs-6 font-color-dark fw-sub mb-4 mt-4">{{ $t('dfs_components_taskalarmtour_account_zhuanghao') }}</div>
-    <ElForm class="mt-4" :model="phoneForm" label-position="top" :label-width="'120px'" @submit.native.prevent>
+    <ElForm
+      class="mt-4"
+      :model="phoneForm"
+      label-position="top"
+      :label-width="'120px'"
+      @submit.native.prevent
+      size="default"
+    >
       <ElFormItem prop="current" :label="$t('user_Center_dangQianShouJi')">
         <ElInput v-model="phoneForm.current" :placeholder="$t('components_BindPhone_qingShuRuShouJi')" maxlength="50">
-          <el-select v-model="phoneForm.countryCode" slot="prepend" style="width: 110px" filterable>
+          <el-select v-model="phoneForm.countryCode" slot="prepend" filterable style="width: 100px;">
             <el-option v-for="item in countryCode" :label="'+ ' + item.dial_code" :value="item.dial_code">
               <span style="float: left">{{ '+ ' + item.dial_code }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span></el-option
@@ -75,9 +82,9 @@ export default {
       <ElFormItem prop="newPassword" :label="$t('user_Center_yanZhengMa')" class="inline-form-item">
         <ElInput v-model="phoneForm.oldCode" :placeholder="$t('user_Center_qingShuRuShouJi')" maxlength="50"></ElInput>
         <VerificationCode
+          size="default"
           :request-options="getCodeOptions(phoneForm, 'BIND_PHONE')"
           :disabled="!phoneForm.current"
-          :style="{ width: '180px', textAlign: 'center' }"
           type="primary"
           class="ml-6"
         ></VerificationCode>
@@ -98,10 +105,6 @@ export default {
     .inline-input-body {
       justify-content: space-between;
     }
-  }
-  .el-input--small .el-input__inner {
-    height: 40px;
-    line-height: 40px;
   }
 }
 </style>
