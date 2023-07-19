@@ -1327,7 +1327,7 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_yongjiu: '永久',
   dfs_agent_download_subscriptionmodeldialog_mianfeishilizui: '免费实例: 任务数建议最多 2',
   dfs_agent_download_subscriptionmodeldialog_ge: ' 个',
-  dfs_agent_download_subscriptionmodeldialog_renwushujianyi: '任务数建议最多 ',
+  dfs_agent_download_subscriptionmodeldialog_renwushujianyi: '任务数最多 {val} 个',
   dfs_agent_download_subscriptionmodeldialog_extra: 'EXTRA SMALL: 1C 2G - FREE(只能创建一个)',
   dfs_agent_download_subscriptionmodeldialog_dingyuefangshi: '订阅方式:',
   dfs_agent_download_subscriptionmodeldialog_jisuanziyuan: '实例规格:',
@@ -1370,7 +1370,7 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_cny: '人民币',
   dfs_agent_download_subscriptionmodeldialog_hkd: '港币',
   dfs_agent_specification_description:
-    '此规格需要至少 <strong>{mem}</strong> 可用内存,预计 同步的性能在 <strong>{tps}</strong> TPS 左右',
+    '规格需要: <strong>{mem}</strong> 内存, 同步性能: <strong>{tps}TPS</strong> 左右',
   dfs_instance_instance_qingshurutuiding: '请输入退订原因',
   dfs_instance_instance_tuidingjine: '退订金额',
   dfs_instance_instance_yixiaohaojine: '已消耗金额',

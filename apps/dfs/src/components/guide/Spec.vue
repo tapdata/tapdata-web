@@ -222,10 +222,9 @@ export default {
         this.specificationItems = uniqBy(
           paidPrice.map(t => {
             const { cpu = 0, memory = 0 } = t.spec || {}
-            let desc =
-              i18n.t('dfs_agent_download_subscriptionmodeldialog_renwushujianyi') +
-              this.getSuggestPipelineNumber(cpu, memory) +
-              i18n.t('dfs_agent_download_subscriptionmodeldialog_ge')
+            let desc = i18n.t('dfs_agent_download_subscriptionmodeldialog_renwushujianyi', {
+              val: this.getSuggestPipelineNumber(cpu, memory)
+            })
             if (t.chargeProvider === 'FreeTier') {
               desc = i18n.t('dfs_agent_download_subscriptionmodeldialog_mianfeishilizui')
             }

@@ -1298,7 +1298,7 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_yongjiu: '永久',
   dfs_agent_download_subscriptionmodeldialog_mianfeishilizui: '免費實例, 最多允許創建 3 個任務',
   dfs_agent_download_subscriptionmodeldialog_ge: ' 個',
-  dfs_agent_download_subscriptionmodeldialog_renwushujianyi: '任務數建議小於 ',
+  dfs_agent_download_subscriptionmodeldialog_renwushujianyi: '任務數小於 {val} 個',
   dfs_agent_download_subscriptionmodeldialog_extra: 'EXTRA SMALL: 1C 2G - FREE(只能創建一個)',
   dfs_agent_download_subscriptionmodeldialog_dingyuefangshi: '訂閱方式：',
   dfs_agent_download_subscriptionmodeldialog_jisuanziyuan: '計算資源：',
@@ -1340,7 +1340,7 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_cny: '人民幣',
   dfs_agent_download_subscriptionmodeldialog_hkd: '港幣',
   dfs_agent_specification_description:
-    '此規格需要至少 <strong>{mem}</strong> 可用內存,  預估 同步的性能在 <strong>{tps}</strong> TPS 左右',
+    '規格需要: <strong>{mem}</strong> 內存, 同步性能: <strong>{tps}TPS</strong> 左右',
   dfs_instance_instance_qingshurutuiding: '請輸入退訂原因',
   dfs_instance_instance_tuidingjine: '退訂金額',
   dfs_instance_instance_yixiaohaojine: '已消耗金額',
