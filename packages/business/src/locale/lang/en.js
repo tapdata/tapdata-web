@@ -1110,7 +1110,7 @@ export default {
   packages_business_shared_mining_table_yihebingdelian: 'Merged Connections',
   packages_business_shared_mining_table_shengyuyigelian:
     'In the mining task, at least one table must be mining, and all tables cannot be stopped.',
-  packages_business_logs_nodelog_yijianfuzhi: 'One key copy',
+  packages_business_logs_nodelog_yijianfuzhi: 'Copy',
   packages_business_connections_jsdebug_shiyongHtt: 'Use the latest data received by HttpReceiver for debugging',
   packages_business_connections_jsdebug_huoqutiaoshishu: 'Get debug data',
   packages_business_shared_mining_list_shanchurenwus:
