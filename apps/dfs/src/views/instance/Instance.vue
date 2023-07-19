@@ -20,7 +20,7 @@
               :key="item.id"
               :id="`agent-${item.id}`"
             >
-              <div class="flex justify-content-around w-100 border-bottom py-4 px-4" v-if="agentData(item)">
+              <div class="flex justify-content-around w-100 border-bottom py-4 px-4 text-center" v-if="agentData(item)">
                 <div>
                   <el-progress
                     :width="68"
@@ -49,13 +49,19 @@
                   <div class="font-color-light text-center">GC</div>
                 </div>
                 <div>
-                  <el-progress
-                    :width="68"
-                    type="circle"
-                    :percentage="item.pingTimes"
-                    :format="formatPingTimePercantage"
-                    :color="customColors"
-                  ></el-progress>
+                  <div class="position-relative">
+                    <el-progress
+                      :width="68"
+                      type="circle"
+                      :percentage="item.pingTimePercent"
+                      :color="customColors"
+                      :show-text="false"
+                    ></el-progress>
+                    <div class="absolute-fill flex align-center justify-content-center fs-8 font-color-light">
+                      <div style="width: 68px">{{ item.pingTimes }}</div>
+                    </div>
+                  </div>
+
                   <div class="font-color-light">{{ $t('dfs_instance_instance_xintiaobinlu') }}</div>
                 </div>
               </div>
@@ -975,8 +981,16 @@ export default {
             item.second = secondDifference(item?.tmInfo?.pingTime, 'second')
             //心跳頻率 = 當前时间- 心跳时间 单位秒
             let max = 30 * 60
-            let second = secondDifference(item?.tmInfo?.pingTime, 'second')
-            item.pingTimes = Math.round((second / max).toFixed(2) * 100)
+            let pingTimes = item?.tmInfo?.pingTime
+            if (pingTimes) {
+              let second = secondDifference(item?.tmInfo?.pingTime, 'second')
+              item.pingTimePercent = Math.round((second / max).toFixed(2) * 100)
+              // item.pingTimes = dayjs(Time.now()).to(dayjs(pingTimes))
+              item.pingTimes = dayjs(pingTimes).from(Time.now(), true)
+            } else {
+              item.pingTimePercent = 0
+              item.pingTimes = '-'
+            }
 
             item.paidType =
               chargeProvider === 'Aliyun' ? license.type : chargeProvider === 'Stripe' ? subscribeDto.type : ''
