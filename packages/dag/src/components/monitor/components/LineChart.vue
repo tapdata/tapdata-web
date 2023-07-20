@@ -85,8 +85,8 @@ export default {
       extend: null,
       end: 100,
       max: 0,
-      min: null,
-      minNotZero: null
+      min: 0,
+      minNotZero: 0
     }
   },
 
@@ -112,6 +112,10 @@ export default {
 
   methods: {
     init() {
+      this.max = 0
+      this.min = 0
+      this.minNotZero = 0
+
       const { x, value, name, markLine } = this.data
       const { limit } = this
       let series = []
