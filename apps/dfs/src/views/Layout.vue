@@ -130,6 +130,7 @@ import Cookie from '@tap/shared/src/cookie'
 import AgentGuide from '@/components/guide/index'
 import tour from '@/mixins/tour'
 import TaskAlarmTour from '@/components/TaskAlarmTour'
+import Mousetrap from 'mousetrap'
 
 export default {
   inject: ['checkAgent', 'buried'],
@@ -285,6 +286,11 @@ export default {
     let isCurrentUser = Cookie.get('deployLaterUser') === user?.userId
     if (Cookie.get('deployLater') == 1 && isCurrentUser) return
     this.checkDialogState()
+
+    // 🎉🥚
+    Mousetrap.bind('up up down down left right left right', () => {
+      this.subscriptionModelVisible = true
+    })
   },
   beforeDestroy() {
     clearTimeout(this.loopLoadAgentCountTimer)
