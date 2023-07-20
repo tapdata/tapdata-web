@@ -59,7 +59,8 @@ export default {
       const map = {
         migrate: 'migrateList',
         sync: 'dataflowList',
-        logCollector: 'sharedMiningList'
+        logCollector: 'sharedMiningList',
+        mem_cache: 'sharedCacheList'
       }
       let routeUrl = this.$router.resolve({
         name: map[item.syncType],
