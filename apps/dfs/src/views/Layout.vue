@@ -456,7 +456,6 @@ export default {
 
         $zoho.salesiq.onload = function () {
           let siqiframe = document.getElementById('siqiframe')
-          console.log('siqiframe', siqiframe) // eslint-disable-line
 
           if (siqiframe) {
             let style = document.createElement('style')
@@ -465,18 +464,6 @@ export default {
             siqiframe.contentWindow.document.getElementsByTagName('head').item(0).appendChild(style)
           }
         }
-
-        /*$zoho.salesiq.floatbutton.click(function () {
-          let siqiframe = document.getElementById('siqiframe')
-          console.log('siqiframe', siqiframe) // eslint-disable-line
-
-          if (siqiframe) {
-            let style = document.createElement('style')
-            style.type = 'text/css'
-            style.innerHTML = `.botactions em { white-space: nowrap; }`
-            siqiframe.contentWindow.document.getElementsByTagName('head').item(0).appendChild(style)
-          }
-        })*/
       }
     },
 
