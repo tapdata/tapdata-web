@@ -78,7 +78,7 @@ export default {
 <template>
   <section>
     <div class="mb-4" :class="{ card: isCard, 'mt-6 ': !isCard }">
-      <div class="font-color-dark fw-sub fs-5 mb-4">所选配置</div>
+      <div class="font-color-dark fw-sub fs-5 mb-4">{{ $t('dfs_instance_create_spec_summary') }}</div>
       <VTable :columns="columns" :data="subscribeItems" ref="table" :has-pagination="false"></VTable>
     </div>
     <div :class="{ card: isCard }">

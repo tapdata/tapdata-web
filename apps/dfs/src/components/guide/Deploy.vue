@@ -99,11 +99,11 @@ export default {
       <ul class="pt-5 ul-style">
         <li class="flex justify-content-start align-items-center">
           {{ $t('agent_deploy_start_install_windows_first') }}
-          <ElLink class="mt-2 mr-2" type="primary" @click="handleDownLoad">{{
+          <ElLink class="mx-2" type="primary" @click="handleDownLoad">{{
             $t('agent_deploy_start_install_windows_first_download')
           }}</ElLink>
           {{ $t('dfs_agent_download_fastdownload_he')
-          }}<ElLink class="mt-2 mr-2" type="primary" @click="handleDownLoadApplication">application.yml </ElLink>
+          }}<ElLink class="mx-2" type="primary" @click="handleDownLoadApplication">application.yml </ElLink>
         </li>
         <li class="mt-3">{{ $t('dfs_agent_download_fastdownload_jiangwenjianta') }}</li>
         <li class="mt-3">{{ $t('dfs_agent_download_fastdownload_shuangjizhixingt') }}</li>
@@ -132,10 +132,15 @@ export default {
           </el-button>
         </ElTooltip>
       </div>
-      <div class="box title-text my-2 mt-4" :class="{ 'overflow-hidden': showAllCode }">
+      <div class="box rounded-4 title-text my-2 mt-4" :class="{ 'overflow-hidden': showAllCode }">
         <span class="link-line" :class="{ 'hidden-all-code': showAllCode }">{{ links[downLoadType] }}</span>
       </div>
     </section>
+    <div class="box-card rounded-lg mt-4 flex flex-column justify-content-center align-items-center">
+      <VIcon class="mt-4 mb-4" size="100">guide-loading</VIcon>
+      <div class="fs-5 font-color-dark mb-2">{{ $t('dfs_guide_index_dengdaibushu') }}</div>
+      <div class="font-color-light">{{ $t('dfs_guide_index_zhengzaijianceyin') }}</div>
+    </div>
   </div>
 </template>
 
@@ -165,5 +170,15 @@ export default {
 .box {
   padding: 10px 20px;
   background: var(--unnamed, #333c4a);
+}
+.box-card {
+  display: flex;
+  padding: 24px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  border-radius: 4px;
+  background: var(--color-blur-gary-light-9, #f4f5f7);
 }
 </style>

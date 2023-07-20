@@ -1,7 +1,7 @@
 <template>
-  <section>
+  <section class="flex flex-column h-100">
     <div class="fs-6 font-color-dark fw-sub mb-4 mt-4">{{ $t('dfs_guide_spec_ninxuyaozixing') }}</div>
-    <el-form label-position="top" ref="ruleForm">
+    <el-form class="flex flex-column flex-1 overflow-hidden" label-position="top" ref="ruleForm">
       <!--订阅方式-->
       <ElFormItem :label="$t('dfs_instance_instance_dingyuefangshi')">
         <ElRadioGroup v-model="currentPackage" @input="handleChange" class="flex flex-wrap gap-4">
@@ -69,10 +69,13 @@
           </ElRadioGroup>
         </div>
       </ElFormItem>
-      <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu')">
-        <ul class="flex flex-wrap overflow-auto" :class="{ maxHeight: platform === 'fullManagement' }">
+      <ElFormItem
+        class="flex flex-column flex-1 form-item-flex overflow-hidden mb-0"
+        :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu')"
+      >
+        <ul class="flex flex-wrap overflow-auto gap-4 pr-2">
           <li
-            class="spec-li cursor-pointer position-relative cursor-pointer px-4 py-2 mb-4 mr-4 rounded-4"
+            class="spec-li cursor-pointer position-relative cursor-pointer px-4 py-2 rounded-4 overflow-hidden"
             :class="{
               active: specification === item.value,
               disabled: agentCount > 0 && item.chargeProvider === 'FreeTier'
@@ -85,7 +88,7 @@
               <div class="is-active-triangle"></div>
               <VIcon size="16" class="is-active-icon">check-bold</VIcon>
             </div>
-            <div class="spec-li-title mt-1 lh-base fw-bold font-color-dark">
+            <div class="spec-li-title lh-base fw-bold font-color-dark">
               <span class="align-middle"
                 ><span v-if="item.chargeProvider !== 'FreeTier'">{{ item.name }}:</span> {{ item.desc }}</span
               >
@@ -569,6 +572,13 @@ export default {
     cursor: not-allowed;
     .spec-li-title {
       color: #86909c !important;
+    }
+  }
+}
+.form-item-flex {
+  ::v-deep {
+    .el-form-item__content {
+      display: contents;
     }
   }
 }

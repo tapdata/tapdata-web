@@ -11,11 +11,13 @@
     :before-close="close"
   >
     <div class="guide-wrap flex justify-content-center">
-      <div class="nav-wrap px-8 py-8">
+      <div class="nav-wrap p-10">
         <div class="guide-header font-color-dark fw-bold fs-5 mb-4 mt-4">
           {{ $t('dfs_guide_index_huanyingshiyongT') }}
         </div>
-        <div class="guide-desc font-color-dark">{{ $t('dfs_guide_index_tapda') }}</div>
+        <div class="guide-desc font-color-dark mb-10">
+          {{ $t('dfs_guide_index_tapda') }}
+        </div>
         <el-steps
           class="guide-steps bg-transparent mx-auto"
           :active="activeStep"
@@ -28,118 +30,59 @@
         </el-steps>
       </div>
       <div class="guide-main flex-1 flex flex-column overflow-hidden ml-8 mt-4 mr-8">
-        <div class="main flex-1">
-          <section v-if="bindPhoneVisible">
-            <template v-if="[1].includes(activeStep)">
-              <!--绑定手机号-->
-              <Account ref="bindPhone" @next="next"></Account>
-            </template>
-            <template v-if="[2].includes(activeStep)">
-              <!--使用场景-->
-              <Scenes ref="scenes" :scenes="scenes" @handleScenes="handleScenes"></Scenes>
-            </template>
-            <template v-if="[3].includes(activeStep)">
-              <!--部署方式-->
-              <DeploymentMethod
-                ref="deploymentMethod"
-                :platform="platform"
-                @changePlatform="changePlatform"
-              ></DeploymentMethod>
-            </template>
-            <template v-if="[4].includes(activeStep)">
-              <!--选择实例规格-->
-              <Spec ref="spec" :platform="platform" @changeSpec="changeSpec"></Spec>
-            </template>
-            <template v-if="[5].includes(activeStep)">
-              <template v-if="isUnDeploy">
-                <!--部署实例-->
-                <Deploy :agentId="agentId"></Deploy>
-              </template>
-              <template v-else>
-                <!--费用清单-->
-                <pay
-                  v-if="subscribeStatus === 'incomplete'"
-                  refs="pay"
-                  :subscribes="subscribes"
-                  @refresh="refresh"
-                ></pay>
-                <Details v-else ref="details" :orderInfo="orderInfo" :email="email"></Details>
-              </template>
-            </template>
-            <template v-if="[6].includes(activeStep)">
-              <!--部署实例-->
-              <Deploy :agentId="agentId"></Deploy>
-            </template>
-          </section>
-          <section v-else>
-            <template v-if="[1].includes(activeStep)">
-              <!--使用场景-->
-              <Scenes ref="scenes" :scenes="scenes" @handleScenes="handleScenes"></Scenes>
-            </template>
-            <template v-if="[2].includes(activeStep)">
-              <!--部署方式-->
-              <DeploymentMethod
-                ref="deploymentMethod"
-                :platform="platform"
-                @changePlatform="changePlatform"
-              ></DeploymentMethod>
-            </template>
-            <template v-if="[3].includes(activeStep)">
-              <!--选择实例规格-->
-              <Spec ref="spec" :platform="platform" @changeSpec="changeSpec"></Spec>
-            </template>
-
-            <template v-if="[4].includes(activeStep)">
-              <template v-if="isUnDeploy">
-                <!--部署实例-->
-                <Deploy :agentId="agentId"></Deploy>
-              </template>
-              <template v-else>
-                <!--费用清单-->
-                <pay
-                  v-if="subscribeStatus === 'incomplete'"
-                  refs="pay"
-                  :subscribes="subscribes"
-                  @refresh="refresh"
-                ></pay>
-                <Details v-else ref="details" :orderInfo="orderInfo" :email="email"></Details>
-              </template>
-            </template>
-            <template v-if="[5].includes(activeStep)">
-              <!--部署实例-->
-              <Deploy :agentId="agentId"></Deploy>
-            </template>
-          </section>
-          <div v-if="isUnDeploy && agentStatus === 'Creating'" class="mt-8">
-            <div class="box-card mt-4 flex flex-column justify-content-center align-items-center">
-              <VIcon class="mt-4 mb-4" size="100">guide-loading</VIcon>
-              <div class="fs-5 font-color-dark mb-2">{{ $t('dfs_guide_index_dengdaibushu') }}</div>
-              <div class="font-color-light">{{ $t('dfs_guide_index_zhengzaijianceyin') }}</div>
-            </div>
-          </div>
-        </div>
+        <StepGroups :active="activeKey" class="main flex-1 overflow-hidden">
+          <StepItem name="Account">
+            <!--绑定手机号-->
+            <Account ref="bindPhone" @next="next"></Account>
+          </StepItem>
+          <StepItem name="Scenes">
+            <!--使用场景-->
+            <Scenes ref="scenes" :scenes="scenes" @handleScenes="handleScenes"></Scenes>
+          </StepItem>
+          <StepItem name="DeploymentMethod">
+            <!--部署方式-->
+            <DeploymentMethod
+              ref="deploymentMethod"
+              :platform="platform"
+              @changePlatform="changePlatform"
+            ></DeploymentMethod>
+          </StepItem>
+          <StepItem name="Spec">
+            <!--选择实例规格-->
+            <Spec ref="spec" :platform="platform" @changeSpec="changeSpec"></Spec>
+          </StepItem>
+          <StepItem name="Deploy">
+            <!--部署实例-->
+            <Deploy :agentId="agentId"></Deploy>
+          </StepItem>
+          <StepItem name="Pay">
+            <!--费用清单-->
+            <pay v-if="subscribeStatus === 'incomplete'" refs="pay" :subscribes="subscribes" @refresh="refresh"></pay>
+            <Details v-else ref="details" :orderInfo="orderInfo" :email="email"></Details>
+          </StepItem>
+        </StepGroups>
         <div
           v-if="subscribeStatus !== 'incomplete' && !isUnDeploy"
-          class="guide-footer flex mb-5"
+          class="guide-footer flex my-4"
           :class="[activeStep === 1 ? 'justify-content-end' : 'justify-content-between']"
         >
-          <VButton v-if="activeStep > 1" @click="previous()">{{ $t('public_button_previous') }}</VButton>
-          <VButton
+          <ElButton v-if="activeStep > 1" @click="previous()">{{ $t('public_button_previous') }}</ElButton>
+          <ElButton
             type="primary"
             @click="submitConfirm()"
             v-if="this.activeStep === this.steps.length"
             :loading="submitLoading"
-            >{{ $t('public_button_next') }}</VButton
+            >{{ $t('public_button_next') }}</ElButton
           >
           <!--绑定手机号单独一个提交按钮 -->
-          <VButton
+          <ElButton
             type="primary"
             auto-loading
             @click="submitConfirm(arguments[0])"
             v-else-if="this.activeStep === 1 && bindPhoneVisible"
-            >{{ $t('public_button_next') }}</VButton
+            >{{ $t('public_button_next') }}</ElButton
           >
-          <VButton type="primary" @click="submitConfirm()" v-else>{{ $t('public_button_next') }}</VButton>
+          <ElButton type="primary" @click="submitConfirm()" v-else>{{ $t('public_button_next') }}</ElButton>
         </div>
       </div>
     </div>
@@ -166,7 +109,23 @@ export default {
     Spec,
     Deploy,
     Details,
-    Pay
+    Pay,
+    StepGroups: {
+      props: {
+        active: String
+      },
+      render() {
+        return <div>{this.$slots.default}</div>
+      }
+    },
+    StepItem: {
+      props: {
+        name: String
+      },
+      render() {
+        return this.$parent.active === this.name && this.$slots.default
+      }
+    }
   },
   data() {
     return {
@@ -196,6 +155,10 @@ export default {
   computed: {
     userId() {
       return this.$store.state.user.id
+    },
+
+    activeKey() {
+      return this.steps[this.activeStep - 1]?.key
     }
   },
   watch: {
@@ -339,6 +302,7 @@ export default {
     },
     //选择使用场景
     handleScenes(val) {
+      console.log('handleScenes', val) // eslint-disable-line
       this.scenes = val
     },
     changePlatform(val) {
@@ -362,16 +326,14 @@ export default {
       let len = this.steps?.length - 1
       this.isDepaly = false
       if (item?.price !== 0) {
+        const payStep = {
+          key: 'Pay',
+          title: i18n.t('public_payment')
+        }
         if (this.platform !== 'selfHost' && index === -1) {
-          this.steps.push({
-            key: 'Pay',
-            title: i18n.t('public_button_pay')
-          })
+          this.steps.push(payStep)
         } else if (this.platform === 'selfHost' && index === -1) {
-          this.steps.splice(len, 0, {
-            key: 'Pay',
-            title: i18n.t('public_button_pay')
-          })
+          this.steps.splice(len, 0, payStep)
         }
       } else {
         //移除
@@ -407,7 +369,7 @@ export default {
       if (user?.steps) {
         this.activeStep = user?.installStep
         this.steps = user?.steps
-        this.scenes = user?.demand
+        this.scenes = user?.demand || []
         this.platform = user?.selectAgentType
         this.agentId = user?.agentId
       }
@@ -494,13 +456,13 @@ export default {
   height: 200px;
 }
 .guide-main {
-  height: 640px;
+  height: 680px;
 }
 .guide-desc {
   margin-bottom: 60px;
 }
 .guide-footer {
-  height: 30px;
+  //height: 30px;
 }
 .guide-dialog {
   ::v-deep {
