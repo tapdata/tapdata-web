@@ -1,4 +1,3 @@
-
 export default {
   packages_dag_dialog_tableValidateTip:
     'The new table name is restricted to English alphabets, underscores, dots, and hyphens, and must begin with an English letter, and does not allow system to start',
@@ -519,6 +518,8 @@ export default {
   packages_dag_js_declare_index_xianshishengminglai: 'Explicit declarations to define and modify models',
   packages_dag_js_declare_index_zengjiayigezi:
     "// Add a field, do not operate if the field already exists\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n// Remove an existing field\nTapModelDeclare.removeField({val2}, 'fieldName')\n//Update an existing field\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n//Update the field, if it does not exist, add it\nTapModelDeclare.upsertField({ val4}, 'fieldName', 'TapString')\n// Set the field as the primary key\nTapModelDeclare.setPk({val5}, 'fieldName')\n// Cancel the primary key\nTapModelDeclare.unSetPk({val6}, 'fieldName' )\n// Add index\nTapModelDeclare.addIndex({val7}, 'indexName', [{'fieldName':'fieldName1', 'order': 'asc'}])\n// Remove index\nTapModelDeclare. removeIndex({val8}, 'indexName')\n",
+  packages_dag_python_declare_index_zengjiayigezi:
+    "# Add a field, do not operate if the field already exists\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n# Remove an existing field\nTapModelDeclare.removeField({val2}, 'fieldName')\n//Update an existing field\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n//Update the field, if it does not exist, add it\nTapModelDeclare.upsertField({ val4}, 'fieldName', 'TapString')\n# Set the field as the primary key\nTapModelDeclare.setPk({val5}, 'fieldName')\n# Cancel the primary key\nTapModelDeclare.unSetPk({val6}, 'fieldName' )\n# Add index\nTapModelDeclare.addIndex({val7}, 'indexName', [{'fieldName':'fieldName1', 'order': 'asc'}])\n# Remove index\nTapModelDeclare. removeIndex({val8}, 'indexName')\n",
   packages_dag_js_processor_index_duibi: 'Comparison',
   packages_dag_js_processor_index_yongfa: 'Usage:',
   packages_dag_js_processor_index_zuoyong: 'Function:',
@@ -666,5 +667,8 @@ export default {
   packages_dag_field_add_del_index_zhidi: 'To Bottom',
   packages_dag_field_add_del_index_xiayi: 'Move down',
   packages_dag_field_add_del_index_shangyi: 'Move Up',
-  packages_dag_field_add_del_index_zhiding: 'To Top'
+  packages_dag_field_add_del_index_zhiding: 'To Top',
+  packages_dag_dynamicAdjustMemoryUsage_title: 'Dynamic Adjustment Memory Usage',
+  packages_dag_dynamicAdjustMemoryUsage_tip:
+    'In the full synchronization phase, when the synchronized data occupies a large amount of memory, the system automatically reduces the memory queue usage to prevent memory overflow. However, this operation will slow down the synchronization speed. You are advised to enable this function when the machine resources are low to ensure the stable running of synchronization tasks. When the machine resources are sufficient, it is recommended to shut down.'
 }
