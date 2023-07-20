@@ -133,6 +133,7 @@
               :data="qpsData"
               :color="['#26CF6C', '#2C65FF']"
               :time-format="timeFormat"
+              auto-scale
               ref="qpsLineChart"
             ></LineChart>
           </div>
@@ -270,10 +271,35 @@ export default {
       }
       const { qps, inputQps = [], outputQps = [] } = data
       const { time = [] } = this.quota
+
+      // 计算距离增量时间点，最近的时间点
+      const snapshotDoneAt = this.quota.samples?.totalData?.[0]?.snapshotDoneAt // time[50] + ''
+      let markLineTime = 0
+      time.forEach(el => {
+        if (Math.abs(el - snapshotDoneAt) < 2000 && Math.abs(el - snapshotDoneAt) < Math.abs(el - markLineTime)) {
+          markLineTime = el
+        }
+      })
+
       return {
         x: time,
         name: [i18n.t('public_time_input'), i18n.t('public_time_output')],
-        value: [qps || inputQps, qps || outputQps]
+        value: [qps || inputQps, qps || outputQps],
+        markLine: [
+          {
+            data: [
+              {
+                xAxis: markLineTime + '',
+                lineStyle: {
+                  color: '#ddd'
+                },
+                label: {
+                  show: false
+                }
+              }
+            ]
+          }
+        ]
       }
     },
 
