@@ -129,7 +129,7 @@ export default {
       }
       let options = this.getOptions()
       options.series = series
-      const seriesNoData = series.every(t => !t.data.length)
+      const seriesNoData = series.every(t => !t.data.filter(d => !!d).length)
       if (seriesNoData) {
         options.yAxis.max = 1
         options.yAxis.min = 0
