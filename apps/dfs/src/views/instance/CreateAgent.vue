@@ -1829,6 +1829,7 @@ export default {
       if (disabled) return
       this.specification = item
       this.loadPackageItems()
+      this.handleChange(this.packageItems[0]) // 更新订阅方式
       if (!this.currencyType) {
         this.currencyType = this.packageItems[0]?.currency
       }
