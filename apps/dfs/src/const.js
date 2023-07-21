@@ -2,6 +2,7 @@ import i18n from '@/i18n'
 
 export const INSTANCE_STATUS_MAP = {
     Creating: { text: i18n.t('public_agent_status_to_be_deployed'), type: 'waiting' },
+    Starting: { text: i18n.t('public_status_starting'), type: 'waiting' },
     Running: { text: i18n.t('public_status_running'), type: 'success' },
     Stopping: { text: i18n.t('public_status_stopping') },
     Stopped: { text: i18n.t('public_agent_status_offline'), type: 'disable' },

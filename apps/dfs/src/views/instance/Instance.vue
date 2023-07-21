@@ -85,7 +85,12 @@
                     status="Deploying"
                     default-status="Stopped"
                   ></StatusTag>
-                  <StatusTag v-else type="tag" :status="item.status" default-status="Stopped"></StatusTag>
+                  <StatusTag
+                    v-else
+                    type="tag"
+                    :status="item.engineStatus === 'starting' ? 'Starting' : item.status"
+                    default-status="Stopped"
+                  ></StatusTag>
                   <ElTooltip v-if="item.status == 'Stopped'" placement="top">
                     <VIcon size="14" class="ml-2 color-primary">question-circle</VIcon>
                     <template #content>
@@ -1487,12 +1492,18 @@ export default {
     },
     //禁用半托管重启 -启动 agent离线，预期重启不能点击
     restartBtnDisabled(row) {
-      return ['Creating', 'Stopping', 'Stopped'].includes(row.status) || row.tapdataAgentStatus === 'stopped' //tapdataAgent 失活了
+      return (
+        ['Creating', 'Stopping', 'Stopped'].includes(row.status) ||
+        row.tapdataAgentStatus === 'stopped' ||
+        ['starting'].includes(row.engineStatus)
+      ) //tapdataAgent 失活了
     },
     //agent运行中，预期 启动 不能点击
     startBtnDisabled(row) {
       return (
-        ['Creating', 'Stopping', 'Running'].includes(row.status) || row.tapdataAgentStatus === 'stopped' //tapdataAgent 失活了
+        ['Creating', 'Stopping', 'Running'].includes(row.status) ||
+        row.tapdataAgentStatus === 'stopped' ||
+        ['starting'].includes(row.engineStatus) //tapdataAgent 失活了
       )
     },
     showVersionFlag(row) {
