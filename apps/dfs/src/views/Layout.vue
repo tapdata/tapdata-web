@@ -139,7 +139,6 @@ export default {
     VIcon,
     ConnectionTypeDialog,
     AgentDownloadModal,
-    BindPhone,
     AgentGuide,
     PageHeader,
     TaskAlarmTour
@@ -289,7 +288,7 @@ export default {
 
     // 🎉🥚
     Mousetrap.bind('up up down down left right left right', () => {
-      this.subscriptionModelVisible = true
+      this.subscriptionModelVisible = !this.subscriptionModelVisible
     })
   },
   beforeDestroy() {
