@@ -268,7 +268,7 @@ export default observer({
                           dependencies: ['type'],
                           fulfill: {
                             state: {
-                              display: '{{$deps[0] === "initial_sync" ? "visible" : "hidden"}}'
+                              display: '{{$deps[0] !== "cdc" ? "visible" : "hidden"}}'
                             }
                           }
                         }
