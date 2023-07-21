@@ -6,14 +6,12 @@ export default {
   components: { VTable },
   props: ['isCard', 'orderInfo', 'email'],
   data() {
+    const isDomesticStation = window.__config__?.station === 'domestic' //默认是国内站 国际站是 international
     return {
+      isDomesticStation,
       order: [],
       priceOff: 0,
       columns: [
-        {
-          label: i18n.t('dfs_order_list_dingyueleixing'),
-          prop: 'productType'
-        },
         {
           label: i18n.t('dfs_instance_instance_guige'),
           prop: 'specLabel',
@@ -89,8 +87,9 @@ export default {
         </ElFormItem>
       </ElForm>
     </div>
-    <div class="mt-4" :class="{ card: isCard }">
-      <div>选择支付方式</div>
+    <!--国内显示选择支付方式-->
+    <div v-if="isDomesticStation" class="mt-4" :class="{ card: isCard }">
+      <div>{{ $t('dfs_instance_choose_payment_method') }}</div>
       <ElRadioGroup v-model="payType" class="flex gap-4 mt-4 mb-4">
         <ElRadio
           v-for="(item, index) in types"
@@ -111,9 +110,8 @@ export default {
         <span class="ml-2"> {{ priceOff }}</span>
       </li>
       <li>
-        <span class="fw-sub font-color-dark mt-2 mr-4">实付金额</span>:<span class="color-primary fw-sub fs-5 ml-2">{{
-          orderInfo.price
-        }}</span>
+        <span class="fw-sub font-color-dark mt-2 mr-4">{{ $t('dfs_instance_instance_shifujine') }}</span
+        >:<span class="color-primary fw-sub fs-5 ml-2">{{ orderInfo.price }}</span>
       </li>
     </ul>
   </section>

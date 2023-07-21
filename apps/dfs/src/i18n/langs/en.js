@@ -1704,5 +1704,6 @@ export default {
   dfs_guide_scenes_6: 'Moving data into cloud or between clouds',
   dfs_guide_scenes_7: 'Build a centralized data store',
   dfs_guide_scenes_8: 'Just exploring, don’t have specific project yet',
-  dfs_instance_create_spec_summary: 'Summary'
+  dfs_instance_create_spec_summary: 'Summary',
+  dfs_instance_choose_payment_method: 'Choose Payment Method'
 }

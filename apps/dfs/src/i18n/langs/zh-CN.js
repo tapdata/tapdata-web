@@ -1580,5 +1580,6 @@ export default {
   dfs_guide_scenes_6: '数据迁移到云端或在云间数据同步',
   dfs_guide_scenes_7: '构建数据中台',
   dfs_guide_scenes_8: '我没有具体场景，仅仅是了解下产品',
-  dfs_instance_create_spec_summary: '所选配置'
+  dfs_instance_create_spec_summary: '所选配置',
+  dfs_instance_choose_payment_method: '选择支付方式'
 }

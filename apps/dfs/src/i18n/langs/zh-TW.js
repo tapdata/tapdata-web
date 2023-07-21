@@ -1551,5 +1551,6 @@ export default {
   dfs_guide_scenes_6: '數據迁移到雲端或在雲間數據同步',
   dfs_guide_scenes_7: '構建數據中樞',
   dfs_guide_scenes_8: '我沒有具體場景，僅僅是了解下產品',
-  dfs_instance_create_spec_summary: '所選配置'
+  dfs_instance_create_spec_summary: '所選配置',
+  dfs_instance_choose_payment_method: '選擇支付方式'
 }
