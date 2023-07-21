@@ -44,7 +44,7 @@ export default {
           this.showAgentWarning = data.agentTotalCount && !data.agentRunningCount
           this.agentRunningCount = data.agentRunningCount
           window.__agentCount__ = data
-
+          this.$store.commit('setAgentCount', data)
           this.initTour()
         })
         .finally(() => {

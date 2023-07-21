@@ -1695,6 +1695,9 @@ export default {
       res[min] = min
       res[this.maxMemorySpace] = this.maxMemorySpace
       return this.mdbPriceId === 'FreeTier' ? { 0: '0', 5: '5' } : res
+    },
+    freeAgentCount() {
+      return this.$store.state.agentCount.freeTierAgentCount
     }
   },
 
@@ -1966,7 +1969,6 @@ export default {
 
     //检查Agent个数
     async checkAgentCount() {
-      this.agentCount = window.__agentCount__?.freeTierAgentCount || 0
       await this.getCloudProvider()
     },
     getImg(name) {
@@ -2043,12 +2045,12 @@ export default {
           return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
         })
         // 已体验过免费
-        if (this.agentCount > 0) {
+        if (this.freeAgentCount > 0) {
           this.specificationItems = this.specificationItems.filter(it => it.chargeProvider !== 'FreeTier')
         }
         // 如果是单独订购存储，默认调过免费实例，避免后续step受免费实例影响
         this.specification =
-          !this.agentCount && this.orderStorage ? this.specificationItems[1]?.value : this.specificationItems[0]?.value
+          !this.freeAgentCount && this.orderStorage ? this.specificationItems[1]?.value : this.specificationItems[0]?.value
         // 价格套餐
         this.allPackages = paidPrice.map(t => {
           return Object.assign(t, {

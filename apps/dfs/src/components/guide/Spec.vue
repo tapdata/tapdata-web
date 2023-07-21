@@ -196,6 +196,9 @@ export default {
     },
     singleYearAmount() {
       return this.singleMonthAmount ? this.singleMonthAmount * 12 : this.singleMonthAmount
+    },
+    freeAgentCount() {
+      return this.$store.state.agentCount.freeTierAgentCount
     }
   },
   mounted() {
@@ -211,7 +214,6 @@ export default {
   methods: {
     //检查Agent个数
     async checkAgentCount() {
-      this.agentCount = window.__agentCount__?.freeTierAgentCount || 0
       await this.getCloudProvider()
     },
     //查询规格价格
@@ -245,7 +247,7 @@ export default {
         ).sort((a, b) => {
           return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
         })
-        if (this.agentCount > 0) {
+        if (this.freeAgentCount > 0) {
           this.specificationItems = this.specificationItems.filter(it => it.chargeProvider !== 'FreeTier')
         }
         //新人引导只取前四个规格
@@ -300,7 +302,7 @@ export default {
                 ? t.label
                 : this.platform !== 'selfHost'
                 ? i18n.t('dfs_instance_createagent_mianfeishiyonggui')
-                : i18n.t('dfs_agent_download_subscriptionmodeldialog_yongjiu')
+                : i18n.t('dfs_instance_utils_baoyue')
           })
         })
         .sort((a, b) => {
