@@ -497,7 +497,7 @@ export default {
       this.updateSelectedAllChecked()
     },
     reloadTime() {
-      this.getProgress()
+      this.getProgress(true)
     },
     filterType() {
       this.handleFilterType()
@@ -663,7 +663,7 @@ export default {
       })
     },
     // 获取加载进度
-    getProgress() {
+    getProgress(check = false) {
       connectionsApi
         .getNoSchema(this.connectionId)
         .then(res => {
@@ -675,20 +675,24 @@ export default {
               this.showProgress = false
               this.progress = 0 //加载完成
               const { taskId, activeNodeId } = this.$store.state?.dataflow || {}
-              metadataInstancesApi
-                .logicSchema(taskId, {
-                  nodeId: activeNodeId
-                })
-                .then(() => {
-                  this.getTables() //更新schema
-                })
+              if (!check && taskId && activeNodeId) {
+                metadataInstancesApi
+                  .logicSchema(taskId, {
+                    nodeId: activeNodeId
+                  })
+                  .then(() => {
+                    this.getTables() //更新schema
+                  })
+              } else {
+                this.getTables() //更新schema
+              }
             }, 1000)
           } else {
             let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100
             this.progress = progress ? progress : 0
             setTimeout(() => {
               if (this?.$refs?.test) {
-                this.getProgress()
+                this.getProgress(true)
               }
             }, 1000)
           }
