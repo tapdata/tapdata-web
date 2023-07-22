@@ -1581,5 +1581,11 @@ export default {
   dfs_guide_scenes_7: '构建数据中台',
   dfs_guide_scenes_8: '我没有具体场景，仅仅是了解下产品',
   dfs_instance_create_spec_summary: '所选配置',
-  dfs_instance_choose_payment_method: '选择支付方式'
+  dfs_instance_choose_payment_method: '选择支付方式',
+  dfs_instance_pay_wait_title: '请尽快完成支付，如遇问题可 咨询客服',
+  dfs_instance_pay_wait_subtitle: '等待支付',
+  dfs_instance_pay_wait_continue: '继续支付',
+  dfs_instance_pay_wait_step_title: '进度展示',
+  dfs_instance_pay_wait_submit: '提交支付',
+  dfs_instance_pay_wait: '等待支付'
 }

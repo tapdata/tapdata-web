@@ -1705,5 +1705,11 @@ export default {
   dfs_guide_scenes_7: 'Build a centralized data store',
   dfs_guide_scenes_8: 'Just exploring, don’t have specific project yet',
   dfs_instance_create_spec_summary: 'Summary',
-  dfs_instance_choose_payment_method: 'Choose Payment Method'
+  dfs_instance_choose_payment_method: 'Choose Payment Method',
+  dfs_instance_pay_wait_title: 'Complete Payment Now - Contact Customer Service for Assistance',
+  dfs_instance_pay_wait_subtitle: 'Payment Pending',
+  dfs_instance_pay_wait_continue: 'Continue Payment',
+  dfs_instance_pay_wait_step_title: 'Progress Display',
+  dfs_instance_pay_wait_submit: 'Submit Payment',
+  dfs_instance_pay_wait: 'Payment Pending'
 }
