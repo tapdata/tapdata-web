@@ -1640,7 +1640,7 @@ export default {
   dfs_order_list_dingyueleixing: 'Subscription Type',
   public_button_pay: 'Pay',
   dfs_order_list_zongjine: 'Total Amount',
-
+  dfs_alarm_setting_tour_title: 'Real-time Task Monitoring with Alerts',
   dfs_instance_instance_subscribe_time: 'Subscribe Time',
   dfs_guide_deploy_qingfuzhixiafang:
     'Please copy the command below and execute it in the deployment environment, which includes downloading and running the image, downloading, automatically deploying and starting the computing engine',
@@ -1673,9 +1673,9 @@ export default {
   dfs_mixins_tour_qingxianqidongnin: 'Please start your Agent calculation engine first',
   dfs_mixins_tour_dianjicichuchuang: 'Click here to create your first replication task',
   dfs_mixins_tour_qingchuangjianninde: 'Please create your first replication task',
-  dfs_mixins_tour_dianjicichuhuang2: 'Click here to create your target database',
+  dfs_mixins_tour_dianjicichuchuang2: 'Click here to create your target database',
   dfs_mixins_tour_qingchuangjianninde2: 'Please create your target database',
-  dfs_mixins_tour_dianjicichuhuang3: 'Click here to create your source database',
+  dfs_mixins_tour_dianjicichuchuang3: 'Click here to create your source database',
   dfs_mixins_tour_qingchuangjianninde3: 'Please create your source database',
   dfs_router_index_zhifuqingdan: 'Payment list',
   dfs_instance_instance_perce: '{val1} Second Ago',
