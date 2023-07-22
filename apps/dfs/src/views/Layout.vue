@@ -360,55 +360,7 @@ export default {
         ['basic:email', 'basic:email-code', 'social:wechatmp-qrcode'].includes(user?.registerSource) && !user?.telephone
       return this.bindPhoneVisible
     },
-    // 检查是否有安装过agent
-    async checkAgentInstall() {
-      let subscribe = await this.$axios.get(`api/tcm/subscribe`)
-      this.$axios.get('api/tcm/agent').then(data => {
-        const user = this.$store.state.user
-        const haveGuide = user.installStep !== undefined // 进入过引导
-        let items = data?.items || []
-        let subItems = subscribe?.items || []
-        //是否有运行中的实例
-        let isRunning = items.find(i => i.status === 'Running')
-        if (isRunning) {
-          return
-        }
 
-        //是否有支付成功的订阅
-        if (subItems.find(i => i.status === 'active' && i.totalAmount !== 0)) return
-
-        //订阅0 Agent 0  完全新人引导
-        //订阅不为0 查找是否有待部署状态
-        //Agent不为0 查找是否有待部署状态
-        //优先未支付判定
-        //未支付
-        let isUnPay = subItems.find(i => i.status === 'incomplete')
-
-        if (isUnPay && haveGuide) {
-          this.subscribes = isUnPay
-          this.subscriptionModelVisible = true
-          //是否有未支付的订阅
-          return
-        }
-
-        //检查是否有待部署状态
-        let isUnDeploy = items.find(i => i.status === 'Creating' && i.agentType === 'Local')
-        //未部署
-        if (isUnDeploy && haveGuide) {
-          this.agent = {
-            id: isUnDeploy.id
-          }
-          this.isUnDeploy = true
-          this.subscriptionModelVisible = true
-          return
-        }
-
-        //是否有未支付的订阅
-        if (!data?.total && !subscribe?.total) {
-          this.subscriptionModelVisible = true
-        }
-      })
-    },
     //
     changeIsUnDeploy(val) {
       this.isUnDeploy = val

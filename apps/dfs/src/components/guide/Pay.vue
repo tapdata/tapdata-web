@@ -12,7 +12,7 @@ export default {
 <template>
   <section class="flex flex-column justify-content-center align-items-center">
     <div class="fs-6 font-color-dark fw-sub mb-4 mt-4">请尽快完成支付，如遇问题可 咨询客服</div>
-    <VIcon class="mt-4 mb-4" size="100">guide-loading</VIcon>
+    <div class="dot-pulse mt-2 mb-6"></div>
     <div>等待支付</div>
     <div class="mt-4 mb-4">
       <el-button size="mini" @click="$emit('refresh')">刷新</el-button>

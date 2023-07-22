@@ -124,7 +124,7 @@ export default {
             class="operaKey"
             v-clipboard:copy="links[downLoadType]"
             v-clipboard:success="onCopy"
-            @mouseleave="showTooltip = false"
+            @mouseleave.native="showTooltip = false"
             @click="handleCopy"
           >
             <VIcon class="mr-2">copy</VIcon>
@@ -137,7 +137,7 @@ export default {
       </div>
     </section>
     <div class="box-card rounded-lg mt-4 flex flex-column justify-content-center align-items-center">
-      <VIcon class="mt-4 mb-4" size="100">guide-loading</VIcon>
+      <div class="dot-pulse mt-2 mb-6"></div>
       <div class="fs-5 font-color-dark mb-2">{{ $t('dfs_guide_index_dengdaibushu') }}</div>
       <div class="font-color-light">{{ $t('dfs_guide_index_zhengzaijianceyin') }}</div>
     </div>

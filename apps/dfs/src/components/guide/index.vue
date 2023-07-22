@@ -63,11 +63,14 @@
         </StepGroups>
         <div
           v-if="subscribeStatus !== 'incomplete' && !isUnDeploy"
-          class="guide-footer flex my-4"
+          class="guide-footer flex my-5"
           :class="[activeStep === 1 ? 'justify-content-end' : 'justify-content-between']"
         >
-          <ElButton v-if="activeStep > 1" @click="previous()">{{ $t('public_button_previous') }}</ElButton>
+          <ElButton size="default" v-if="activeStep > 1" @click="previous()">{{
+            $t('public_button_previous')
+          }}</ElButton>
           <ElButton
+            size="default"
             type="primary"
             @click="submitConfirm()"
             v-if="this.activeStep === this.steps.length"
@@ -76,13 +79,16 @@
           >
           <!--绑定手机号单独一个提交按钮 -->
           <ElButton
+            size="default"
             type="primary"
             auto-loading
             @click="submitConfirm(arguments[0])"
             v-else-if="this.activeStep === 1 && bindPhoneVisible"
             >{{ $t('public_button_next') }}</ElButton
           >
-          <ElButton type="primary" @click="submitConfirm()" v-else>{{ $t('public_button_next') }}</ElButton>
+          <ElButton size="default" type="primary" @click="submitConfirm()" v-else>{{
+            $t('public_button_next')
+          }}</ElButton>
         </div>
       </div>
     </div>
@@ -149,7 +155,6 @@ export default {
   },
   mounted() {
     //初始化第一步
-    this.email = window.__USER_INFO__.email
     this.checkWechatPhone()
   },
   computed: {
@@ -162,6 +167,11 @@ export default {
     }
   },
   watch: {
+    visible(v) {
+      if (v) {
+        this.getSessionStorage()
+      }
+    },
     step(val) {
       this.activeStep = val
       this.getSteps()
@@ -192,9 +202,11 @@ export default {
         selectAgentType: this.platform,
         subscribe: this.subscribe,
         agentId: this.agentId,
-        steps: this.steps
+        steps: this.steps,
+        subscribeId: this.subscribeId
       }
-      this.$axios.patch('api/tcm/user', params)
+      // this.$axios.patch('api/tcm/user', params)
+      this.$axios.post('api/tcm/user_guide', params)
     },
     next() {
       this.activeStep++
@@ -354,7 +366,7 @@ export default {
           ['basic:email', 'basic:email-code', 'social:wechatmp-qrcode'].includes(user?.registerSource) &&
           !user?.telephone
       }
-      this.getSessionStorage()
+      // this.getSessionStorage()
       if (this.steps?.length === 0) {
         this.getSteps()
       }
@@ -365,13 +377,26 @@ export default {
     },
     //获取存储部署
     getSessionStorage() {
-      let user = window.__USER_INFO__
-      if (user?.steps) {
-        this.activeStep = user?.installStep
-        this.steps = user?.steps
-        this.scenes = user?.demand || []
-        this.platform = user?.selectAgentType
-        this.agentId = user?.agentId
+      const { guide } = this.$store.state
+      // this.getSteps()
+      if (guide.steps?.length) {
+        this.steps = guide.steps
+
+        this.platform = guide.selectAgentType
+        this.subscribeId = guide.subscribeId
+        this.activeStep = guide.installStep
+        this.scenes = guide.demand || []
+        this.agentId = guide.agentId
+
+        const step = guide.steps[guide.installStep - 1]
+
+        if (step) {
+          let { key } = step
+          if (key === 'Pay' && !guide.subscribeId) {
+            // 走到支付，但是没有发起退款
+            this.activeStep--
+          }
+        }
       }
     },
     //刷新支付状态
@@ -397,11 +422,12 @@ export default {
       })
     },
     submitOrder() {
-      this.orderInfo.email = this.email
       this.$axios
         .post('api/tcm/orders/subscribeV2', this.orderInfo)
         .then(data => {
+          this.agentId = data?.subscribeItems?.[0].resourceId
           this.subscribe = data?.subscribe
+          this.subscribeId = data?.subscribe
           this.close()
           this.$store.commit('setGuide', { activeStep: this.activeStep, steps: this.steps, userId: this.userId })
           if (data.status === 'incomplete') {
@@ -411,7 +437,6 @@ export default {
           } else {
             //免费半托管 - 新人引导部署页面
             if (this.platform === 'selfHost') {
-              this.agentId = data?.subscribeItems?.[0].resourceId
               this.$emit('changeIsUnDeploy', true)
               this.next()
               this.$nextTick(() => {

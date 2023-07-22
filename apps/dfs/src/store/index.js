@@ -29,8 +29,16 @@ const store = new Vuex.Store({
     },
     guide: {
       activeStep: '',
-      steps: [],
-      userId: ''
+      userId: '',
+      bdVid: '',
+      tpVid: '',
+      installStep: 1,
+      demand: [],
+      selectAgentType: '',
+      spec: '',
+      subscribeId: '',
+      agentId: '',
+      steps: []
     },
     agentCount: {
       agentTotalCount: 0,
@@ -61,7 +69,6 @@ const store = new Vuex.Store({
 
     setGuide(state, guide = {}) {
       Object.assign(state.guide, guide)
-      console.log('state.guide', state.guide) // eslint-disable-line
       sessionStorage.setItem('guide', JSON.stringify(state.guide))
     },
 

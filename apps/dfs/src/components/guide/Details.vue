@@ -34,7 +34,27 @@ export default {
           label: i18n.t('dfs_agent_download_subscriptionmodeldialog_zaixianzhifu'),
           value: 'Stripe'
         }
-      ]
+      ],
+
+      formRules: {
+        email: [
+          {
+            validator: (rule, value, callback) => {
+              let { email } = this.orderInfo
+              email = email.trim()
+              if (!email) {
+                callback(new Error(i18n.t('dfs_instance_create_qingshuruninde')))
+                return
+              }
+              if (!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)) {
+                callback(new Error(i18n.t('dfs_instance_create_qingshuruzhengque')))
+                return
+              }
+              callback()
+            }
+          }
+        ]
+      }
     }
   },
   mounted() {
@@ -51,18 +71,6 @@ export default {
     })
   },
   methods: {
-    getEmailRules() {
-      return [
-        {
-          required: true,
-          message: i18n.t('dfs_instance_create_qingshuruninde')
-        },
-        {
-          type: 'email',
-          message: i18n.t('dfs_instance_create_qingshuruzhengque')
-        }
-      ]
-    },
     validateForm(ref) {
       return new Promise(resolve => {
         this.$refs[ref].validate(valid => {
@@ -81,9 +89,9 @@ export default {
     </div>
     <div :class="{ card: isCard }">
       <p class="mt-4 mb-2">{{ $t('dfs_instance_create_jieshouzhangdande') }}</p>
-      <ElForm ref="from">
-        <ElFormItem prop="email" :rules="getEmailRules()">
-          <ElInput v-model="email" :placeholder="$t('dfs_instance_create_yongyujieshoumei')"></ElInput>
+      <ElForm ref="from" :mode="orderInfo" :rules="formRules">
+        <ElFormItem prop="email">
+          <ElInput v-model="orderInfo.email" :placeholder="$t('dfs_instance_create_yongyujieshoumei')"></ElInput>
         </ElFormItem>
       </ElForm>
     </div>

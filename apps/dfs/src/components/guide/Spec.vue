@@ -454,7 +454,7 @@ export default {
       }
       this.currencyOption = options
     },
-    //退订
+
     submit() {
       const { type, priceId, currency, periodUnit, label, specification } = this.selected
       const agentUrl = window.App.$router.resolve({
@@ -477,7 +477,8 @@ export default {
         cancelUrl: location.origin + location.pathname + agentUrl.href,
         periodUnit,
         currency: this.currencyType || currency,
-        subscribeItems: []
+        subscribeItems: [],
+        email: this.$store.state.user.email
       }
       let base = {
         productId: '', // 产品ID
