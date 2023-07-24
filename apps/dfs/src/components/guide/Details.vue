@@ -117,7 +117,7 @@ export default {
         </span>
         <span class="ml-2"> {{ priceOff }}</span>
       </li>
-      <li>
+      <li v-if="orderInfo.price">
         <span class="fw-sub font-color-dark mt-2 mr-4">{{ $t('dfs_instance_instance_shifujine') }}</span
         >:<span class="color-primary fw-sub fs-5 ml-2">{{ orderInfo.price }}</span>
       </li>
