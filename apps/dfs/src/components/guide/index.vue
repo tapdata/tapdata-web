@@ -191,7 +191,7 @@ export default {
     }
   },
   beforeDestroy() {
-    this.close()
+    // this.close()
     clearTimeout(this.timer)
   },
   methods: {
