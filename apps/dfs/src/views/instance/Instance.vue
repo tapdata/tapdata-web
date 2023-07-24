@@ -218,9 +218,18 @@
                   >{{ $t('dfs_instance_instance_zhongqi') }}</ElButton
                 >
                 <!--需要考虑老实例/免费实例 无订单信息的-->
+                <!--68-2 免费实例可以删除-->
+                <ElButton
+                  v-if="item.publicAgent && !disableUnsubscribe(item)"
+                  size="mini"
+                  :loading="item.btnLoading.delete"
+                  @click="openUnsubscribe(item)"
+                >
+                  <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></ElButton
+                >
                 <ElButton
                   size="mini"
-                  v-if="(!item.orderInfo || item.orderInfo.chargeProvider !== 'Stripe') && !delBtnDisabled(item)"
+                  v-else-if="(!item.orderInfo || item.orderInfo.chargeProvider !== 'Stripe') && !delBtnDisabled(item)"
                   :loading="item.btnLoading.delete"
                   @click="handleUnsubscribe(item)"
                   >{{ $t('public_button_unsubscribe') }}</ElButton
@@ -232,15 +241,7 @@
                   @click="openRenew(item)"
                   >{{ $t('public_button_renew') }}</ElButton
                 >
-                <!--68-2 免费实例可以删除-->
-                <ElButton
-                  v-if="item.publicAgent && !disableUnsubscribe(item)"
-                  size="mini"
-                  :loading="item.btnLoading.delete"
-                  @click="openUnsubscribe(item)"
-                >
-                  <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></ElButton
-                >
+
                 <!--{{$t('dfs_instance_instance_shengji')}}按钮-->
                 <template v-if="showUpgradeIcon(item)">
                   <ElTooltip
@@ -531,6 +532,7 @@ import Details from './Details'
 import { getSpec, getPaymentMethod, AGENT_TYPE_MAP } from './utils'
 import Renew from '../../components/Renew.vue'
 import { secondDifference } from '../../util'
+import updateLocale from 'dayjs/plugin/updateLocale'
 
 const CreateDialog = () => import(/* webpackChunkName: "CreateInstanceDialog" */ './Create')
 const SelectListDialog = () => import(/* webpackChunkName: "SelectListInstanceDialog" */ './SelectList')
@@ -940,7 +942,9 @@ export default {
             const { startAt, endAt, periodUnit, subscribeType, paymentMethod } = subscribeDto
             item.chargeProvider = chargeProvider
             item.specLabel = getSpec(item.spec) || '-'
-            if (item.publicAgent) {
+            if (chargeProvider === 'FreeTier') {
+              item.subscriptionMethodLabel = i18n.t('dfs_instance_instance_mianfei')
+            } else if (item.publicAgent) {
               item.subscriptionMethodLabel = i18n.t('dfs_instance_instance_gongyongshili')
             } else if (chargeProvider === 'Stripe') {
               item.subscriptionMethodLabel =
@@ -949,8 +953,6 @@ export default {
                   paymentMethod || 'Stripe',
                   chargeProvider
                 ) || '-'
-            } else if (chargeProvider === 'FreeTier') {
-              item.subscriptionMethodLabel = i18n.t('dfs_instance_instance_mianfei')
             } else {
               item.subscriptionMethodLabel = '-'
             }
@@ -985,13 +987,15 @@ export default {
             item.agentTypeLabel = this.agentTypeMap[item.agentType]
             item.second = secondDifference(item?.tmInfo?.pingTime, 'second')
             //心跳頻率 = 當前时间- 心跳时间 单位秒
-            let max = 30 * 60
+            let max = 10 * 60
             let pingTimes = item?.tmInfo?.pingTime
             if (pingTimes) {
               let second = secondDifference(item?.tmInfo?.pingTime, 'second')
-              item.pingTimePercent = Math.round((second / max).toFixed(2) * 100)
-              // item.pingTimes = dayjs(Time.now()).to(dayjs(pingTimes))
-              item.pingTimes = dayjs(pingTimes).from(Time.now(), true)
+              item.pingTimePercent = Math.min(100, Math.round((second / max).toFixed(2) * 100))
+              const date1 = dayjs(pingTimes)
+              const date2 = dayjs(Time.now())
+              const diff = date2.diff(date1, 'second')
+              item.pingTimes = diff < 60 ? diff + 's' : date1.from(date2, true)
             } else {
               item.pingTimePercent = 0
               item.pingTimes = '-'

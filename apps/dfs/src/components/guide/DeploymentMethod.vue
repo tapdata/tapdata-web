@@ -22,13 +22,9 @@ export default {
         :class="{
           active: platform === 'selfHost'
         }"
-        class="flex flex-column position-relative cursor-pointer mb-4"
+        class="flex flex-column position-relative cursor-pointer mb-4 overflow-hidden"
         @click="$emit('changePlatform', 'selfHost')"
       >
-        <div class="is-active position-absolute top-0 end-0">
-          <div class="is-active-triangle"></div>
-          <VIcon size="16" class="is-active-icon">check-bold</VIcon>
-        </div>
         <div class="flex justify-content-around align-items-center px-4 py-4">
           <div>
             <div class="fs-6 fw-bold mb-2 font-color-dark">
@@ -38,18 +34,18 @@ export default {
           </div>
           <el-image class="deployMethod-image" :src="require('@/assets/image/self_host_managed.png')" />
         </div>
+        <div class="is-active position-absolute top-0 end-0">
+          <div class="is-active-triangle"></div>
+          <VIcon size="16" class="is-active-icon">check-bold</VIcon>
+        </div>
       </li>
       <li
         :class="{
           active: platform === 'fullManagement'
         }"
-        class="flex flex-column position-relative cursor-pointer"
+        class="flex flex-column position-relative cursor-pointer overflow-hidden"
         @click="$emit('changePlatform', 'fullManagement')"
       >
-        <div class="is-active position-absolute top-0 end-0">
-          <div class="is-active-triangle"></div>
-          <VIcon size="16" class="is-active-icon">check-bold</VIcon>
-        </div>
         <div class="flex justify-content-around align-items-center px-4 py-4">
           <div class="mr-4">
             <div class="fs-6 fw-bold mb-2 font-color-dark">
@@ -58,6 +54,10 @@ export default {
             <div class="font-color-light">{{ $t('dfs_components_taskalarmtour_deployment_yunshujuku') }}</div>
           </div>
           <el-image class="deployMethod-image" :src="require('@/assets/image/fully_managed.png')" />
+        </div>
+        <div class="is-active position-absolute top-0 end-0">
+          <div class="is-active-triangle"></div>
+          <VIcon size="16" class="is-active-icon">check-bold</VIcon>
         </div>
       </li>
     </ul>

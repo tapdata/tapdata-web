@@ -1541,5 +1541,22 @@ export default {
   dfs_components_taskalarmtour_deployment_zhunbei: '準備Tapdata Cloud 計算引擎環境部署，如遇問題可',
   dfs_components_taskalarmtour_deployment_zixun: '諮詢客服',
   dfs_components_taskalarmtour_deployment_anpai: '要安裝計算引擎,請先在下方選擇您的服務器類型 : ',
-  dfs_components_taskalarmtour_account_zhuanghao: '為了賬號安全和數據任務狀態能快速通知到您，請您綁定手機號。 '
+  dfs_components_taskalarmtour_account_zhuanghao: '為了賬號安全和數據任務狀態能快速通知到您，請您綁定手機號。 ',
+  public_payment: '支付',
+  dfs_guide_scenes_1: '將數據同步至MongoDB或MongoDB Atlas',
+  dfs_guide_scenes_2: '數據即時同步，如Oracle、MySQL或其他數據庫之間',
+  dfs_guide_scenes_3: '數據庫或者SaaS數據同步到數據倉庫',
+  dfs_guide_scenes_4: '數據即時采集到 Kafka 佇列',
+  dfs_guide_scenes_5: '查詢加速，將數據同步到Redis，Elastic Search等',
+  dfs_guide_scenes_6: '數據迁移到雲端或在雲間數據同步',
+  dfs_guide_scenes_7: '構建數據中樞',
+  dfs_guide_scenes_8: '我沒有具體場景，僅僅是了解下產品',
+  dfs_instance_create_spec_summary: '所選配置',
+  dfs_instance_choose_payment_method: '選擇支付方式',
+  dfs_instance_pay_wait_title: '請尽快完成支付，如遇問題可 咨询客服',
+  dfs_instance_pay_wait_subtitle: '等待支付',
+  dfs_instance_pay_wait_continue: '繼續支付',
+  dfs_instance_pay_wait_step_title: '進度展示',
+  dfs_instance_pay_wait_submit: '提交支付',
+  dfs_instance_pay_wait: '等待支付'
 }

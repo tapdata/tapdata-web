@@ -13,15 +13,15 @@
     <div class="flex gap-4 justify-content-between">
       <div class="rounded-4 bg-secondary-100 px-4 py-2 flex align-center gap-2">
         <VIcon size="24" class="text-primary">email</VIcon>
-        <span>{{$t('notify_email_notification')}}</span>
+        <span>{{$t('notify_email_notification').replace(' Notification', '')}}</span>
       </div>
       <div class="rounded-4 bg-secondary-100 px-4 py-2 flex align-center gap-2">
         <VIcon size="24" class="text-primary">sms</VIcon>
-        <span>{{$t('notify_sms_notification')}}</span>
+        <span>{{$t('notify_sms_notification').replace(' Notification', '')}}</span>
       </div>
       <div class="rounded-4 bg-secondary-100 px-4 py-2 flex align-center gap-2">
         <VIcon size="24">wechat</VIcon>
-        <span>{{$t('notify_webchat_notification')}}</span>
+        <span>{{$t('notify_webchat_notification').replace(' Notification', '')}}</span>
       </div>
     </div>
 

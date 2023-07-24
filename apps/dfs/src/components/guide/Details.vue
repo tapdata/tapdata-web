@@ -6,14 +6,12 @@ export default {
   components: { VTable },
   props: ['isCard', 'orderInfo', 'email'],
   data() {
+    const isDomesticStation = window.__config__?.station === 'domestic' //默认是国内站 国际站是 international
     return {
+      isDomesticStation,
       order: [],
       priceOff: 0,
       columns: [
-        {
-          label: i18n.t('dfs_order_list_dingyueleixing'),
-          prop: 'productType'
-        },
         {
           label: i18n.t('dfs_instance_instance_guige'),
           prop: 'specLabel',
@@ -36,7 +34,27 @@ export default {
           label: i18n.t('dfs_agent_download_subscriptionmodeldialog_zaixianzhifu'),
           value: 'Stripe'
         }
-      ]
+      ],
+
+      formRules: {
+        email: [
+          {
+            validator: (rule, value, callback) => {
+              let { email } = this.orderInfo
+              email = email.trim()
+              if (!email) {
+                callback(new Error(i18n.t('dfs_instance_create_qingshuruninde')))
+                return
+              }
+              if (!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)) {
+                callback(new Error(i18n.t('dfs_instance_create_qingshuruzhengque')))
+                return
+              }
+              callback()
+            }
+          }
+        ]
+      }
     }
   },
   mounted() {
@@ -53,18 +71,6 @@ export default {
     })
   },
   methods: {
-    getEmailRules() {
-      return [
-        {
-          required: true,
-          message: i18n.t('dfs_instance_create_qingshuruninde')
-        },
-        {
-          type: 'email',
-          message: i18n.t('dfs_instance_create_qingshuruzhengque')
-        }
-      ]
-    },
     validateForm(ref) {
       return new Promise(resolve => {
         this.$refs[ref].validate(valid => {
@@ -78,19 +84,20 @@ export default {
 <template>
   <section>
     <div class="mb-4" :class="{ card: isCard, 'mt-6 ': !isCard }">
-      <div class="font-color-dark fw-sub fs-5 mb-4">所选配置</div>
+      <div class="font-color-dark fw-sub fs-5 mb-4">{{ $t('dfs_instance_create_spec_summary') }}</div>
       <VTable :columns="columns" :data="subscribeItems" ref="table" :has-pagination="false"></VTable>
     </div>
     <div :class="{ card: isCard }">
       <p class="mt-4 mb-2">{{ $t('dfs_instance_create_jieshouzhangdande') }}</p>
-      <ElForm ref="from">
-        <ElFormItem prop="email" :rules="getEmailRules()">
-          <ElInput v-model="email" :placeholder="$t('dfs_instance_create_yongyujieshoumei')"></ElInput>
+      <ElForm ref="from" :mode="orderInfo" :rules="formRules">
+        <ElFormItem prop="email">
+          <ElInput v-model="orderInfo.email" :placeholder="$t('dfs_instance_create_yongyujieshoumei')"></ElInput>
         </ElFormItem>
       </ElForm>
     </div>
-    <div class="mt-4" :class="{ card: isCard }">
-      <div>选择支付方式</div>
+    <!--国内显示选择支付方式-->
+    <div v-if="isDomesticStation" class="mt-4" :class="{ card: isCard }">
+      <div>{{ $t('dfs_instance_choose_payment_method') }}</div>
       <ElRadioGroup v-model="payType" class="flex gap-4 mt-4 mb-4">
         <ElRadio
           v-for="(item, index) in types"
@@ -111,9 +118,8 @@ export default {
         <span class="ml-2"> {{ priceOff }}</span>
       </li>
       <li>
-        <span class="fw-sub font-color-dark mt-2 mr-4">实付金额</span>:<span class="color-primary fw-sub fs-5 ml-2">{{
-          orderInfo.price
-        }}</span>
+        <span class="fw-sub font-color-dark mt-2 mr-4">{{ $t('dfs_instance_instance_shifujine') }}</span
+        >:<span class="color-primary fw-sub fs-5 ml-2">{{ orderInfo.price }}</span>
       </li>
     </ul>
   </section>

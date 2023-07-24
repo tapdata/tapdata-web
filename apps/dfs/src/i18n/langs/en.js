@@ -1434,7 +1434,7 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_ge: '',
   dfs_agent_download_subscriptionmodeldialog_renwushujianyi: 'Maximum of {val} tasks',
   dfs_agent_download_subscriptionmodeldialog_extra: 'EXTRA SMALL: 1C 2G - FREE (only one can be created)',
-  dfs_agent_download_subscriptionmodeldialog_dingyuefangshi: 'Subscription method:',
+  dfs_agent_download_subscriptionmodeldialog_dingyuefangshi: 'Subscription Period:',
   dfs_agent_download_subscriptionmodeldialog_jisuanziyuan: 'Computing resources:',
   dfs_agent_zhuanzhang_price: 'Payment Price',
   dfs_agent_download_subscriptionmodeldialog_ninyouyijihuo:
@@ -1449,7 +1449,7 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_keyongneicunjian:
     ' Available memory, the recommended number of tasks does not exceed ',
   dfs_agent_download_subscriptionmodeldialog_guigeshuomingci: 'Specification: This specification requires at least ',
-  dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu: 'Please select the agent size',
+  dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu: 'Please select the instance size',
   dfs_agent_download_subscriptionmodeldialog_zhijieshiyonga:
     'Directly use the authorization code of Alibaba Cloud market',
   dfs_agent_download_subscriptionmodeldialog_gengjiakekaoyou:
@@ -1555,8 +1555,8 @@ export default {
   dfs_instance_instance_zhongqi: 'Restart',
   dfs_instance_utils_quantuoguan: 'Fully-Managed',
   dfs_instance_utils_bantuoguan: 'Semi-Managed',
-  dfs_the_header_header_dingyuezhongxin: 'Subscribe Center',
-  dfs_router_index_dingyuezhongxin: 'Subscribe Center',
+  dfs_the_header_header_dingyuezhongxin: 'Subscriptions',
+  dfs_router_index_dingyuezhongxin: 'Subscriptions',
   dfs_instance_createagent_mianfeishiyonggui: '15 Day Free Trial',
   dfs_instance_createagent_tian: '15 days',
   dfs_instance_createagent_xuanzecunchufang: 'Choose a storage solution',
@@ -1640,7 +1640,7 @@ export default {
   dfs_order_list_dingyueleixing: 'Subscription Type',
   public_button_pay: 'Pay',
   dfs_order_list_zongjine: 'Total Amount',
-
+  dfs_alarm_setting_tour_title: 'Real-time Task Monitoring with Alerts',
   dfs_instance_instance_subscribe_time: 'Subscribe Time',
   dfs_guide_deploy_qingfuzhixiafang:
     'Please copy the command below and execute it in the deployment environment, which includes downloading and running the image, downloading, automatically deploying and starting the computing engine',
@@ -1648,26 +1648,24 @@ export default {
     'After completing the installation of the docker service, please copy the command below and execute it. After execution, wait for the platform detection engine to start',
   dfs_guide_deploy_qingfuzhixiafang2:
     'Please copy the command below and execute it in the directory. After execution, wait for the platform detection engine to start',
-  dfs_guide_index_bushujisuanyin: 'Deployment calculation engine',
-  dfs_guide_index_qingxuanzeninxiang: 'Please select what needs you want to fulfill through this product? ',
-  dfs_guide_index_xuanzejisuanyin: 'Select calculation engine specification',
-  dfs_guide_index_shezhishujuku: 'Set database network environment',
-  dfs_guide_index_quedingshiyongchang: 'Determine the usage scenario',
+  dfs_guide_index_bushujisuanyin: 'Install agent',
+  dfs_guide_index_qingxuanzeninxiang: 'What would you like to do with Tapdata? Choose all applicable options.',
+  dfs_guide_index_xuanzejisuanyin: 'Choose deployment size',
+  dfs_guide_index_shezhishujuku: 'Choose deployment mode',
+  dfs_guide_index_quedingshiyongchang: 'Tell us your use case(s)',
   dfs_guide_index_zhanghaoanquanbang: 'Account Security Binding',
   dfs_guide_index_zhengzaijianceyin:
     'The engine deployment status is being detected, and the task guide page will be entered automatically after the detection is completed. ',
   dfs_guide_index_dengdaibushu: 'Waiting for deployment',
-  dfs_guide_index_tapda:
-    'Tapdata Cloud is a professional data integration and service platform, in order to allow you to use the product more smoothly, please follow our guidance and start to operate step by step',
-  dfs_guide_index_huanyingshiyongT: 'Welcome to Tapdata Cloud data service',
-  dfs_guide_scenes_meiyoutedingde: 'No specific requirements',
-  dfs_guide_scenes_qitachangjing: 'Other Scenes',
-  dfs_guide_scenes_yigoushujuku: 'Heterogeneous database synchronization',
-  dfs_guide_scenes_bendishujushang: 'Local data to the cloud',
-  dfs_guide_scenes_shujurucangjia: 'Data storage, speed up query',
-  dfs_guide_scenes_kuayunshujushi: 'Real-time synchronization of cross-cloud data',
-  dfs_guide_spec_ninxuyaozixing:
-    'You need to install a computing engine to your network environment, choose a suitable method. ',
+  dfs_guide_index_tapda: 'Please follow these simple steps to get started. ',
+  dfs_guide_index_huanyingshiyongT: 'Welcome to Tapdata Cloud',
+  dfs_guide_scenes_meiyoutedingde: 'Just exploring, don’t have specific project yet',
+  dfs_guide_scenes_qitachangjing: 'Query acceleration, sync data to Redis, Elastic Search',
+  dfs_guide_scenes_yigoushujuku: 'Capture database events and send to Kafka',
+  dfs_guide_scenes_bendishujushang: 'Sync data from database or SaaS into warehouses',
+  dfs_guide_scenes_shujurucangjia: 'Database replication between Oracle, MySQL and many other databases',
+  dfs_guide_scenes_kuayunshujushi: 'Moving data into or out of MongoDB or MongoDB Atlas',
+  dfs_guide_spec_ninxuyaozixing: 'Please select the instance size and subscription period',
   dfs_components_taskalarmtour_dianjicichushe: 'Click here to set task alarm',
   dfs_components_taskalarmtour_qushezhi: 'Settings',
   dfs_components_taskalarmtour_jiancedaoninwei:
@@ -1675,9 +1673,9 @@ export default {
   dfs_mixins_tour_qingxianqidongnin: 'Please start your Agent calculation engine first',
   dfs_mixins_tour_dianjicichuchuang: 'Click here to create your first replication task',
   dfs_mixins_tour_qingchuangjianninde: 'Please create your first replication task',
-  dfs_mixins_tour_dianjicichuhuang2: 'Click here to create your target database',
+  dfs_mixins_tour_dianjicichuchuang2: 'Click here to create your target database',
   dfs_mixins_tour_qingchuangjianninde2: 'Please create your target database',
-  dfs_mixins_tour_dianjicichuhuang3: 'Click here to create your source database',
+  dfs_mixins_tour_dianjicichuchuang3: 'Click here to create your source database',
   dfs_mixins_tour_qingchuangjianninde3: 'Please create your source database',
   dfs_router_index_zhifuqingdan: 'Payment list',
   dfs_instance_instance_perce: '{val1} Second Ago',
@@ -1686,16 +1684,32 @@ export default {
   dfs_instance_instance_xintiaobinlu: 'Heartbeat Frequency',
   dfs_components_taskalarmtour_deployment_qingwen:
     'Can your source and target databases be directly accessed from the Internet?',
-  dfs_components_taskalarmtour_deployment_bukeyi: 'No ( You need to deploy the computing engine )',
+  dfs_components_taskalarmtour_deployment_bukeyi: 'No - Self-Hosted Mode',
   dfs_components_taskalarmtour_deployment_wodeshujuku:
-    'My database is in the local area network, or for security reasons, it cannot be exposed to the public network',
-  dfs_components_taskalarmtour_deployment_keyi: 'Yes ( Platform maintenance computing engine )',
+    'Your databases are in the restricted network, for security reason data cannot be transferred out of your network.',
+  dfs_components_taskalarmtour_deployment_keyi: 'Yes - Fully Managed Mode',
   dfs_components_taskalarmtour_deployment_yunshujuku:
-    'My databases are all cloud databases, and can be exposed to the public network',
-  dfs_components_taskalarmtour_deployment_zhunbei:
-    'Prepare for the deployment of the Tapdata Cloud computing engine environment, if you encounter problems, you can',
+    'You can use our managed instance to sync the data between your source and targets if they are accessible by our instances in our cloud. ',
+  dfs_components_taskalarmtour_deployment_zhunbei: 'Follow the steps to install Tapdata Agent on your server',
   dfs_components_taskalarmtour_deployment_zixun: 'Consult customer service',
   dfs_components_taskalarmtour_deployment_anpai: 'To install Compute Engine, please select your server type below:',
   dfs_components_taskalarmtour_account_zhuanghao:
-    'In order to quickly notify you of account security and data task status, please bind your mobile phone number. '
+    'In order to quickly notify you of account security and data task status, please bind your mobile phone number. ',
+  public_payment: 'Payment',
+  dfs_guide_scenes_1: 'Moving data into or out of MongoDB or MongoDB Atlas',
+  dfs_guide_scenes_2: 'Database replication between Oracle, MySQL and many other databases',
+  dfs_guide_scenes_3: 'Sync data from database or SaaS into warehouses',
+  dfs_guide_scenes_4: 'Capture database events and send to Kafka',
+  dfs_guide_scenes_5: 'Query acceleration, sync data to Redis, Elastic Search',
+  dfs_guide_scenes_6: 'Moving data into cloud or between clouds',
+  dfs_guide_scenes_7: 'Build a centralized data store',
+  dfs_guide_scenes_8: 'Just exploring, don’t have specific project yet',
+  dfs_instance_create_spec_summary: 'Summary',
+  dfs_instance_choose_payment_method: 'Choose Payment Method',
+  dfs_instance_pay_wait_title: 'Complete Payment Now - Contact Customer Service for Assistance',
+  dfs_instance_pay_wait_subtitle: 'Payment Pending',
+  dfs_instance_pay_wait_continue: 'Continue Payment',
+  dfs_instance_pay_wait_step_title: 'Progress Display',
+  dfs_instance_pay_wait_submit: 'Submit Payment',
+  dfs_instance_pay_wait: 'Payment Pending'
 }
