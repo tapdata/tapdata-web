@@ -1,3 +1,5 @@
+import { cloneDeep } from 'lodash'
+
 import i18n from '@tap/i18n'
 import { connect, mapProps, useForm } from '@tap/form'
 import { metadataInstancesApi } from '@tap/api'
@@ -78,6 +80,7 @@ export const FieldAddDel = connect(
         let fields = JSON.parse(JSON.stringify(this.options || []))
         //读取op 配置
         fields = convertSchemaToTreeData(fields) || [] //将模型转换成tree
+        fields = fields.sort((a, b) => a.columnPosition - b.columnPosition)
         //fields = this.checkOps(fields)
         this.originalFields = JSON.parse(JSON.stringify(fields))
         fields = this.checkOps(fields) || []
@@ -149,6 +152,10 @@ export const FieldAddDel = connect(
                 height="calc(100vh - 240px)"
                 data={fields}
                 node-key="id"
+                draggable
+                allow-drag={this.checkAllowDrag}
+                allow-drop={this.checkAllowDrop}
+                vOn:node-drop={this.handleDrop}
                 default-expand-all={true}
                 expand-on-click-node={false}
                 class="field-processor-tree"
@@ -165,6 +172,20 @@ export const FieldAddDel = connect(
                       ]}
                       slot-scope="{ node, data }"
                     >
+                      {node.level === 1 && (
+                        <el-dropdown placement="top-start">
+                          <span class="el-dropdown-link">
+                            <VIcon>sanheng</VIcon>
+                          </span>
+                          <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item click={() => this.handleMove('top', node)}>置顶</el-dropdown-item>
+                            <el-dropdown-item click={() => this.handleMove('prev', node)}>上移</el-dropdown-item>
+                            <el-dropdown-item click={() => this.handleMove('next', node)}>下移</el-dropdown-item>
+                            <el-dropdown-item click={() => this.handleMove('bottom', node)}>置底</el-dropdown-item>
+                          </el-dropdown-menu>
+                        </el-dropdown>
+                      )}
+
                       <span class={['inline-block', 'flex-1', 'text-truncate']}>
                         {this.isCreate(data.field) ? (
                           <span
@@ -507,6 +528,29 @@ export const FieldAddDel = connect(
           this.operations = []
           this.$emit('change', this.operations)
           this.form.setValuesIn('deleteAllFields', false)
+        },
+        checkAllowDrag(node) {
+          return node.level === 1
+        },
+        checkAllowDrop(draggingNode, dropNode, type) {
+          return dropNode.level === 1 && type !== 'inner'
+        },
+        handleMove(type = 'prev', node) {
+          console.log('handleMove', type, node, this.fields)
+        },
+        handleDrop(draggingNode, dropNode, dropType, ev) {
+          console.log('handleDrop-this.form', draggingNode, dropNode, dropType, ev, this.form.values)
+          let params = {
+            fieldsAfter: cloneDeep(this.fields).map((t, i) => {
+              t.columnPosition = i + 1
+              return t
+            })
+          }
+
+          metadataInstancesApi.patchId(this.form.values?.id, params).then(() => {
+            this.$message.success(this.$t('public_message_save_ok'))
+            this.$emit('change', this.operations)
+          })
         }
         // handleCheckAllChange() {
         //   if (this.checkAll) {
