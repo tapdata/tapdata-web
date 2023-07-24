@@ -92,7 +92,7 @@
       </ElMenu>
     </ElAside>
     <ElContainer direction="vertical" class="layout-main position-relative">
-      <PageHeader class="bg-white rounded-lg mb-2"></PageHeader>
+      <PageHeader class="bg-white rounded-lg mb-4"></PageHeader>
       <ElMain class="main rounded-lg">
         <RouterView @agent_no_running="onAgentNoRunning"></RouterView>
       </ElMain>
