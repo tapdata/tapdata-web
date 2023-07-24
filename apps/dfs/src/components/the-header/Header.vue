@@ -10,6 +10,11 @@
         <div class="vip-btn mr-4 cursor-pointer" @click="openUpgrade">
           <VIcon size="17">icon-vip</VIcon>&nbsp;{{ $t('packages_component_src_upgradefee_dingyuezhuanyeban') }}
         </div>
+        <!--加入slack-->
+        <div class="command-item mr-6 position-relative inline-flex align-items-center" @click="goSlack">
+          <ElImage class="slack-logo" :src="require('@/assets/image/slack.svg')" />
+          <span class="cursor-pointer ml-1">{{ $t('dfs_the_header_header_jiaruSla') }}</span>
+        </div>
         <!--有奖问卷-->
         <div v-if="showQuestionnaire" class="command-item mr-6 position-relative" @click="goQuestionnaire">
           <span class="cursor-pointer"> {{ $t('dfs_the_header_header_prize_questionnaire') }} </span>
@@ -293,6 +298,12 @@ export default {
             })
         }
       }
+    },
+    goSlack() {
+      window.open(
+        'https://join.slack.com/share/enQtNTYxNjI0NDQ5ODM4Ni1kMWQ0ZTMzYzYxZDg3YTk4NTQ0MmViZWRiNDhmODQwYTBjOTZiMDc4ZjgxMDM5YzBjNDZiYjIwZjJlOWQzNzBl',
+        '_blank'
+      )
     }
   }
 }
@@ -495,6 +506,9 @@ export default {
   padding: 4px 8px;
   background: linear-gradient(93.39deg, #2c65ff 10.45%, #702cff 98.21%);
   border-radius: 4px;
+}
+.slack-logo {
+  height: 14px;
 }
 
 @keyframes move {

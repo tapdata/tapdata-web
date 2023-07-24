@@ -1587,5 +1587,6 @@ export default {
   dfs_instance_pay_wait_continue: '继续支付',
   dfs_instance_pay_wait_step_title: '进度展示',
   dfs_instance_pay_wait_submit: '提交支付',
-  dfs_instance_pay_wait: '等待支付'
+  dfs_instance_pay_wait: '等待支付',
+  dfs_the_header_header_jiaruSla: '加入Slack'
 }
