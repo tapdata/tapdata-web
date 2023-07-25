@@ -621,5 +621,9 @@ export default {
   packages_dag_config_datasource: '数据源专属配置',
   packages_dag_config_data_write: '数据写入配置',
   packages_dag_config_incremental_mode: '增量模式配置',
-  packages_dag_config_data_filter: '数据过滤配置'
+  packages_dag_config_data_filter: '数据过滤配置',
+  packages_dag_field_add_del_index_zhidi: '置底',
+  packages_dag_field_add_del_index_xiayi: '下移',
+  packages_dag_field_add_del_index_shangyi: '上移',
+  packages_dag_field_add_del_index_zhiding: '置顶'
 }

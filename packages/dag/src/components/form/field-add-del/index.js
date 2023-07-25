@@ -183,10 +183,18 @@ export const FieldAddDel = connect(
                             <VIcon class="color-primary mt-n1 mr-2">drag</VIcon>
                           </span>
                           <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item command="top">置顶</el-dropdown-item>
-                            <el-dropdown-item command="prev">上移</el-dropdown-item>
-                            <el-dropdown-item command="next">下移</el-dropdown-item>
-                            <el-dropdown-item command="bottom">置底</el-dropdown-item>
+                            <el-dropdown-item command="top">
+                              {i18n.t('packages_dag_field_add_del_index_zhiding')}
+                            </el-dropdown-item>
+                            <el-dropdown-item command="prev">
+                              {i18n.t('packages_dag_field_add_del_index_shangyi')}
+                            </el-dropdown-item>
+                            <el-dropdown-item command="next">
+                              {i18n.t('packages_dag_field_add_del_index_xiayi')}
+                            </el-dropdown-item>
+                            <el-dropdown-item command="bottom">
+                              {i18n.t('packages_dag_field_add_del_index_zhidi')}
+                            </el-dropdown-item>
                           </el-dropdown-menu>
                         </el-dropdown>
                       )}

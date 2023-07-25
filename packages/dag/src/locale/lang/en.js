@@ -661,5 +661,9 @@ export default {
   packages_dag_config_datasource: 'Data Source',
   packages_dag_config_data_write: 'Data Write',
   packages_dag_config_incremental_mode: 'Incremental Mode',
-  packages_dag_config_data_filter: 'Data Filter'
+  packages_dag_config_data_filter: 'Data Filter',
+  packages_dag_field_add_del_index_zhidi: 'To Bottom',
+  packages_dag_field_add_del_index_xiayi: 'Move down',
+  packages_dag_field_add_del_index_shangyi: 'Move Up',
+  packages_dag_field_add_del_index_zhiding: 'To Top'
 }
