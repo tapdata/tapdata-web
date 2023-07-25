@@ -8,7 +8,7 @@
     :destroy-on-close="true"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
-    :before-close="close"
+    :before-close="postGuide"
   >
     <div class="guide-wrap flex justify-content-center">
       <div class="nav-wrap p-10">
@@ -53,7 +53,7 @@
           </StepItem>
           <StepItem name="Deploy">
             <!--部署实例-->
-            <Deploy :agentId="agentId"></Deploy>
+            <Deploy :agentId="agentId" @behavior="handleBehavior"></Deploy>
           </StepItem>
           <StepItem name="Pay">
             <!--费用清单-->
@@ -150,7 +150,9 @@ export default {
       steps: [],
       agentStatus: '',
       //是否有支付页面
-      isPay: false
+      isPay: false,
+      behavior: [],
+      behaviorAt: null
     }
   },
   mounted() {
@@ -169,7 +171,7 @@ export default {
   watch: {
     visible(v) {
       if (v) {
-        this.getSessionStorage()
+        this.initGuide()
       }
     },
     step(val) {
@@ -186,29 +188,32 @@ export default {
     }
     // isUnDeploy(val) {
     //   if (val) {
-    //     this.getSessionStorage()
+    //     this.initGuide()
     //   }
     // }
   },
   beforeDestroy() {
-    // this.close()
+    // this.postGuide()
     clearTimeout(this.timer)
   },
   methods: {
-    close() {
+    postGuide() {
       let params = {
         installStep: this.activeStep,
         demand: this.scenes,
         selectAgentType: this.platform,
         agentId: this.agentId,
         steps: this.steps,
-        subscribeId: this.subscribeId
+        subscribeId: this.subscribeId,
+        spec: JSON.stringify(this.orderInfo),
+        behavior: JSON.stringify(this.behavior),
+        behaviorAt: this.behaviorAt
       }
       this.$axios.post('api/tcm/user_guide', params)
     },
     next() {
       this.activeStep++
-      this.close()
+      this.postGuide()
     },
     previous() {
       let step = this.steps[this.activeStep - 1]
@@ -284,17 +289,17 @@ export default {
     submitConfirm(res) {
       let step = this.steps[this.activeStep - 1]
       let isPay = this.steps.find(it => it.key === 'Pay')
-      if (step.key === 'Spec' && !isPay) {
-        //没有支付页-直接付款
+      if (step.key === 'Spec') {
         this.getOrderInfo()
-        this.submitOrder()
-        return
+        //没有支付页-直接付款
+        if (!isPay) {
+          this.submitOrder()
+          return
+        }
       } else if (step.key === 'Pay') {
         //当前是支付页面-提交支付
         this.submitOrder()
         return
-      } else {
-        this.getOrderInfo()
       }
       if (this.bindPhoneVisible && this.activeStep === 1) {
         this.bindPhoneConfirm(res)
@@ -364,7 +369,7 @@ export default {
           ['basic:email', 'basic:email-code', 'social:wechatmp-qrcode'].includes(user?.registerSource) &&
           !user?.telephone
       }
-      // this.getSessionStorage()
+      // this.initGuide()
       if (this.steps?.length === 0) {
         this.getSteps()
       }
@@ -374,7 +379,7 @@ export default {
       this.orderInfo = this.$refs?.spec?.submit()
     },
     //获取存储部署
-    getSessionStorage() {
+    initGuide() {
       const { guide } = this.$store.state
       // this.getSteps()
       if (guide.steps?.length) {
@@ -385,6 +390,12 @@ export default {
         this.activeStep = guide.installStep
         this.scenes = guide.demand || []
         this.agentId = guide.agentId
+        try {
+          this.behavior = guide.behavior ? JSON.parse(guide.behavior) : []
+          this.behaviorAt = guide.behaviorAt
+        } catch (e) {
+          this.behavior = []
+        }
 
         const step = guide.steps[guide.installStep - 1]
 
@@ -393,10 +404,10 @@ export default {
           if (key === 'Pay' && !guide.subscribeId) {
             // 走到支付，但是没有提交订阅
             guide.installStep = --this.activeStep
-            this.close()
+            this.postGuide()
           } else if (this.isUnDeploy && key !== 'Deploy') {
             guide.installStep = this.activeStep = guide.steps.findIndex(step => step.key === 'Deploy') + 1
-            this.close()
+            this.postGuide()
           }
         }
       }
@@ -430,11 +441,10 @@ export default {
           this.agentId = data?.subscribeItems?.[0].resourceId
           this.subscribe = data?.subscribe
           this.subscribeId = data?.subscribe
-          // this.close()
           if (data.status === 'incomplete') {
             //订单需要付款
             //在线支付 打开付款页面
-            this.close()
+            this.postGuide()
             window.open(data?.payUrl, '_self')
           } else {
             //免费半托管 - 新人引导部署页面
@@ -445,7 +455,7 @@ export default {
                 this.checkAgentStatus()
               })
             } else {
-              this.close()
+              this.postGuide()
               //订单不需要付款，只需对应跳转不同页面
               this.$emit('update:visible', false)
               this.$router.push({
@@ -464,6 +474,12 @@ export default {
         .catch(() => {
           this.submitLoading = false
         })
+    },
+
+    handleBehavior(behavior) {
+      this.behavior.push(behavior)
+      this.behaviorAt = Date.now()
+      this.postGuide()
     }
   }
 }

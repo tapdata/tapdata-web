@@ -48,6 +48,7 @@ export default {
     },
     onCopy() {
       this.showTooltip = true
+      this.$emit('behavior', `copy_${this.downLoadType}`)
     },
     handleCopy() {
       const MAP = {
@@ -62,10 +63,12 @@ export default {
     handleDownLoad() {
       window.location = `${this.downloadUrl}tapdata.exe`
       this.buried('downloadTapdataExe')
+      this.$emit('behavior', `download_agent`)
     },
     //windows 下载
     handleDownLoadApplication() {
       window.location = location.origin + location.pathname + 'api/tcm/agent/' + this.agentId + '/config'
+      this.$emit('behavior', `download_yml`)
     }
   }
 }
