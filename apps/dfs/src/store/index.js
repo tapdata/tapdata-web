@@ -38,7 +38,9 @@ const store = new Vuex.Store({
       spec: '',
       subscribeId: '',
       agentId: '',
-      steps: []
+      steps: [],
+      behavior: '',
+      behaviorAt: null
     },
     agentCount: {
       agentTotalCount: 0,
