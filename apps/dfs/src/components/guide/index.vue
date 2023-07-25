@@ -183,12 +183,12 @@ export default {
     subscribes(val) {
       this.subscribeId = val?.id
       this.subscribeStatus = val?.status
-    },
-    isUnDeploy(val) {
-      if (val) {
-        this.getSessionStorage()
-      }
     }
+    // isUnDeploy(val) {
+    //   if (val) {
+    //     this.getSessionStorage()
+    //   }
+    // }
   },
   beforeDestroy() {
     // this.close()
@@ -428,11 +428,11 @@ export default {
           this.agentId = data?.subscribeItems?.[0].resourceId
           this.subscribe = data?.subscribe
           this.subscribeId = data?.subscribe
-          this.close()
-          this.$store.commit('setGuide', { activeStep: this.activeStep, steps: this.steps, userId: this.userId })
+          // this.close()
           if (data.status === 'incomplete') {
             //订单需要付款
             //在线支付 打开付款页面
+            this.close()
             window.open(data?.payUrl, '_self')
           } else {
             //免费半托管 - 新人引导部署页面
@@ -443,6 +443,7 @@ export default {
                 this.checkAgentStatus()
               })
             } else {
+              this.close()
               //订单不需要付款，只需对应跳转不同页面
               this.$emit('update:visible', false)
               this.$router.push({
@@ -450,6 +451,13 @@ export default {
               })
             }
           }
+
+          this.$store.commit('setGuide', {
+            installStep: this.activeStep,
+            steps: this.steps,
+            subscribeId: this.subscribeId,
+            agentId: this.agentId
+          })
         })
         .catch(() => {
           this.submitLoading = false
