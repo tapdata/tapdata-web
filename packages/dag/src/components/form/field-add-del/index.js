@@ -20,12 +20,14 @@ export const FieldAddDel = connect(
         const form = formRef.value
         const options = ref([])
         const loading = ref(false)
+        const metaId = ref('')
 
         const loadSchema = async () => {
           loading.value = true
           try {
             const data = await metadataInstancesApi.nodeSchema(formRef.value.values.id)
             options.value = data?.[0]?.fields || []
+            metaId.value = data?.[0].id
           } catch (e) {
             options.value = []
           }
@@ -39,6 +41,7 @@ export const FieldAddDel = connect(
         return {
           loading,
           options,
+          metaId,
           loadSchema,
           databaseType: form.values.databaseType,
           operations: form.values.operations || [],
@@ -556,7 +559,7 @@ export const FieldAddDel = connect(
             })
           }
 
-          metadataInstancesApi.patchId(this.form.values?.id, params).then(() => {
+          metadataInstancesApi.patchId(this.metaId, params).then(() => {
             this.$message.success(this.$t('public_message_save_ok'))
             this.$emit('change', this.operations)
           })
