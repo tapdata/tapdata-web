@@ -95,8 +95,6 @@ export default {
             let isUnDeploy = items.find(i => i.status === 'Creating' && i.agentType === 'Local' && i.id === agentId)
             //未部署
             if (isUnDeploy) {
-              guide.installStep = guide.steps.findIndex(step => step.key === 'Deploy') + 1
-              // if (step.key === 'Pay')
               this.agent = {
                 id: isUnDeploy.id
               }
