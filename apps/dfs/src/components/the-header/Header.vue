@@ -149,7 +149,6 @@ export default {
       //注册时间7天大于的用户
       this.showQuestionnaire = daysdifference(this.registrationTime) > 7
     }
-    this.setBaiduIndex() // 百度推广索引
   },
   methods: {
     command(command) {
@@ -246,53 +245,6 @@ export default {
     },
     goQuestionnaire() {
       window.open('https://tapdata.feishu.cn/share/base/form/shrcnImdl8BDtEOxki50Up9OJTg', '_blank')
-    },
-    setBaiduIndex() {
-      // 上报百度索引
-      const logidUrlCloud = Cookie.get('logidUrlCloud')
-      if (logidUrlCloud) {
-        const bd_vid = logidUrlCloud
-          .split(/[?&]/)
-          .find(t => t.match(/^bd_vid=/))
-          ?.replace(/^bd_vid=/, '')
-
-        const tp_vid = logidUrlCloud
-          .split(/[?&]/)
-          .find(t => t.match(/^tp_vid=/))
-          ?.replace(/^tp_vid=/, '')
-
-        // tp_vid存到user信息中
-        if (tp_vid && !this.user.tpVid) {
-          this.$axios.patch('api/tcm/user', {
-            tpVid: tp_vid
-          })
-        }
-
-        // bd_vid存到user信息中
-        if (bd_vid && !this.user.bdVid) {
-          this.$axios.patch('api/tcm/user', {
-            bdVid: bd_vid
-          })
-
-          const conversionTypes = [
-            {
-              logidUrl: logidUrlCloud,
-              newType: 25
-            }
-          ]
-          this.$axios
-            .post('api/tcm/track/send_convert_data', conversionTypes)
-            .then(data => {
-              if (data) {
-                this.buried('registerSuccess')
-                Cookie.remove('logidUrlCloud')
-              }
-            })
-            .catch(e => {
-              console.log('ocpc.baidu.com', e)
-            })
-        }
-      }
     }
   }
 }
