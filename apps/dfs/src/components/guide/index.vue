@@ -200,12 +200,10 @@ export default {
         installStep: this.activeStep,
         demand: this.scenes,
         selectAgentType: this.platform,
-        subscribe: this.subscribe,
         agentId: this.agentId,
         steps: this.steps,
         subscribeId: this.subscribeId
       }
-      // this.$axios.patch('api/tcm/user', params)
       this.$axios.post('api/tcm/user_guide', params)
     },
     next() {
@@ -393,8 +391,12 @@ export default {
         if (step) {
           let { key } = step
           if (key === 'Pay' && !guide.subscribeId) {
-            // 走到支付，但是没有发起退款
-            this.activeStep--
+            // 走到支付，但是没有提交订阅
+            guide.installStep = --this.activeStep
+            this.close()
+          } else if (this.isUnDeploy && key !== 'Deploy') {
+            guide.installStep = this.activeStep = guide.steps.findIndex(step => step.key === 'Deploy') + 1
+            this.close()
           }
         }
       }

@@ -6,7 +6,12 @@ import { connectionsApi, taskApi } from '@tap/api'
 export default {
   data() {
     return {
-      showAlarmTour: false
+      showAlarmTour: false,
+      //新人引导
+      step: 1,
+      agent: {},
+      isUnDeploy: false,
+      subscribes: {}
     }
   },
 
@@ -455,6 +460,10 @@ export default {
         // 存在异常的agent
         await this.initAgentTour()
       }
+    },
+
+    changeIsUnDeploy(val) {
+      this.isUnDeploy = val
     }
   }
 }

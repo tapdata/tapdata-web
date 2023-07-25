@@ -201,12 +201,7 @@ export default {
       userInfo: '',
       // aliyunMaketVisible: false,
       isDemoEnv: document.domain === 'demo.cloud.tapdata.net',
-      isDomesticStation: true,
-      //新人引导
-      step: 1,
-      agent: {},
-      isUnDeploy: false,
-      subscribes: {}
+      isDomesticStation: true
     }
   },
   created() {
@@ -361,10 +356,6 @@ export default {
       return this.bindPhoneVisible
     },
 
-    //
-    changeIsUnDeploy(val) {
-      this.isUnDeploy = val
-    },
     bindPhoneSuccess(val) {
       if (val) {
         if (window.__USER_INFO__) {
