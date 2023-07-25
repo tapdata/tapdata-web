@@ -155,7 +155,7 @@ export const FieldAddDel = connect(
                 draggable
                 allow-drag={this.checkAllowDrag}
                 allow-drop={this.checkAllowDrop}
-                vOn:node-drop={this.handleDrop}
+                vOn:node-drop={this.handleSaveDrop}
                 default-expand-all={true}
                 expand-on-click-node={false}
                 class="field-processor-tree"
@@ -173,15 +173,20 @@ export const FieldAddDel = connect(
                       slot-scope="{ node, data }"
                     >
                       {node.level === 1 && (
-                        <el-dropdown placement="top-start">
+                        <el-dropdown
+                          placement="top-start"
+                          on={{
+                            command: val => this.handleCommand(val, node)
+                          }}
+                        >
                           <span class="el-dropdown-link">
-                            <VIcon>sanheng</VIcon>
+                            <VIcon class="color-primary mt-n1 mr-2">drag</VIcon>
                           </span>
                           <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item click={() => this.handleMove('top', node)}>置顶</el-dropdown-item>
-                            <el-dropdown-item click={() => this.handleMove('prev', node)}>上移</el-dropdown-item>
-                            <el-dropdown-item click={() => this.handleMove('next', node)}>下移</el-dropdown-item>
-                            <el-dropdown-item click={() => this.handleMove('bottom', node)}>置底</el-dropdown-item>
+                            <el-dropdown-item command="top">置顶</el-dropdown-item>
+                            <el-dropdown-item command="prev">上移</el-dropdown-item>
+                            <el-dropdown-item command="next">下移</el-dropdown-item>
+                            <el-dropdown-item command="bottom">置底</el-dropdown-item>
                           </el-dropdown-menu>
                         </el-dropdown>
                       )}
@@ -535,11 +540,7 @@ export const FieldAddDel = connect(
         checkAllowDrop(draggingNode, dropNode, type) {
           return dropNode.level === 1 && type !== 'inner'
         },
-        handleMove(type = 'prev', node) {
-          console.log('handleMove', type, node, this.fields)
-        },
-        handleDrop(draggingNode, dropNode, dropType, ev) {
-          console.log('handleDrop-this.form', draggingNode, dropNode, dropType, ev, this.form.values)
+        handleSaveDrop() {
           let params = {
             fieldsAfter: cloneDeep(this.fields).map((t, i) => {
               t.columnPosition = i + 1
@@ -551,6 +552,28 @@ export const FieldAddDel = connect(
             this.$message.success(this.$t('public_message_save_ok'))
             this.$emit('change', this.operations)
           })
+        },
+        handleCommand(val, node) {
+          const index = this.fields.findIndex(t => t.field_name === node.data.field_name)
+          this.$refs.tree.remove(node)
+          if (val === 'top') {
+            const getNode = this.$refs.tree.getNode(this.fields[0]?.id)
+            this.$refs.tree.insertBefore(node.data, getNode)
+          } else if (val === 'bottom') {
+            const getNode = this.$refs.tree.getNode(this.fields.slice(-1)?.[0].id)
+            this.$refs.tree.insertAfter(node.data, getNode)
+          } else if (val === 'prev') {
+            const getNode = this.$refs.tree.getNode(this.fields[index - 1]?.id)
+            this.$refs.tree.insertBefore(node.data, getNode)
+          } else {
+            const getNode = this.$refs.tree.getNode(this.fields[index + 1]?.id)
+            this.$refs.tree.insertAfter(node.data, getNode)
+          }
+          // this.fields.forEach((el, i) => {
+          //   el.columnPosition = i + 1
+          // })
+
+          this.handleSaveDrop()
         }
         // handleCheckAllChange() {
         //   if (this.checkAll) {
