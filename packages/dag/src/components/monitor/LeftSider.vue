@@ -415,7 +415,8 @@ export default {
       let inputQps = data.inputQps?.map(t => Math.abs(t || 0.1))
       const outputQps = data.outputQps?.map(t => Math.abs(t || 100))
       // 计算距离增量时间点，最近的时间点
-      const snapshotDoneAt = this.quota.samples?.totalData?.[0]?.snapshotDoneAt // time[50] + ''
+      const milestone = this.dataflow.attrs?.milestone || {}
+      const snapshotDoneAt = milestone.SNAPSHOT?.end
       let markLineTime = 0
       time.forEach(el => {
         if (Math.abs(el - snapshotDoneAt) < 2000 && Math.abs(el - snapshotDoneAt) < Math.abs(el - markLineTime)) {
