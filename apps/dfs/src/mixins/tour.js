@@ -2,11 +2,17 @@ import i18n from '@/i18n'
 import { driver } from 'driver.js'
 import 'driver.js/dist/driver.css'
 import { connectionsApi, taskApi } from '@tap/api'
+import Cookie from '@tap/shared/src/cookie'
 
 export default {
   data() {
     return {
-      showAlarmTour: false
+      showAlarmTour: false,
+      //新人引导
+      step: 1,
+      agent: {},
+      isUnDeploy: false,
+      subscribes: {}
     }
   },
 
@@ -16,8 +22,11 @@ export default {
     }
   },
 
-  created() {
+  async created() {
+    await this.loadGuide()
+    await this.checkGuide()
     this.loopLoadAgentCount()
+    this.setBaiduIndex() // 百度推广索引
   },
 
   beforeRouteUpdate(to, from, next) {
@@ -38,9 +47,8 @@ export default {
 
   methods: {
     // 检查是否有安装过agent
-    async checkAgentInstall() {
+    async checkGuide() {
       this.guideLoading = true
-      await this.loadGuide()
       let subscribe = await this.$axios.get(`api/tcm/subscribe`)
       this.$axios
         .get('api/tcm/agent')
@@ -90,8 +98,6 @@ export default {
             let isUnDeploy = items.find(i => i.status === 'Creating' && i.agentType === 'Local' && i.id === agentId)
             //未部署
             if (isUnDeploy) {
-              guide.installStep = guide.steps.findIndex(step => step.key === 'Deploy') + 1
-              // if (step.key === 'Pay')
               this.agent = {
                 id: isUnDeploy.id
               }
@@ -454,6 +460,57 @@ export default {
       } else if (this.showAgentWarning && !this.enterAgentTour) {
         // 存在异常的agent
         await this.initAgentTour()
+      }
+    },
+
+    changeIsUnDeploy(val) {
+      this.isUnDeploy = val
+    },
+
+    setBaiduIndex() {
+      // 上报百度索引
+      const logidUrlCloud = Cookie.get('logidUrlCloud')
+      const { guide } = this.$store.state
+      if (logidUrlCloud) {
+        const bd_vid = logidUrlCloud
+          .split(/[?&]/)
+          .find(t => t.match(/^bd_vid=/))
+          ?.replace(/^bd_vid=/, '')
+
+        const tp_vid = logidUrlCloud
+          .split(/[?&]/)
+          .find(t => t.match(/^tp_vid=/))
+          ?.replace(/^tp_vid=/, '')
+        let params = {}
+
+        if (tp_vid && !guide.tpVid) {
+          guide.tpVid = params.tpVid = tp_vid
+        }
+
+        if (bd_vid && !guide.bdVid) {
+          guide.bdVid = params.bdVid = bd_vid
+          const conversionTypes = [
+            {
+              logidUrl: logidUrlCloud,
+              newType: 25
+            }
+          ]
+          this.$axios
+            .post('api/tcm/track/send_convert_data', conversionTypes)
+            .then(data => {
+              if (data) {
+                this.buried('registerSuccess')
+                Cookie.remove('logidUrlCloud')
+              }
+            })
+            .catch(e => {
+              console.log('ocpc.baidu.com', e)
+            })
+        }
+
+        if (Object.keys(params).length) {
+          this.$axios.post('api/tcm/user_guide', params)
+        }
       }
     }
   }

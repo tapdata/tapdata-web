@@ -201,12 +201,7 @@ export default {
       userInfo: '',
       // aliyunMaketVisible: false,
       isDemoEnv: document.domain === 'demo.cloud.tapdata.net',
-      isDomesticStation: true,
-      //新人引导
-      step: 1,
-      agent: {},
-      isUnDeploy: false,
-      subscribes: {}
+      isDomesticStation: true
     }
   },
   created() {
@@ -284,7 +279,6 @@ export default {
     // }
     let isCurrentUser = Cookie.get('deployLaterUser') === user?.userId
     if (Cookie.get('deployLater') == 1 && isCurrentUser) return
-    this.checkDialogState()
 
     // 🎉🥚
     Mousetrap.bind('up up down down left right left right', () => {
@@ -343,12 +337,6 @@ export default {
     back() {
       this.$router.back()
     },
-    checkDialogState() {
-      // if (this.checkWechatPhone()) {
-      //   return
-      // }
-      this.checkAgentInstall()
-    },
     // 检查微信用户，是否绑定手机号
     checkWechatPhone() {
       let user = window.__USER_INFO__
@@ -359,19 +347,6 @@ export default {
       this.bindPhoneVisible =
         ['basic:email', 'basic:email-code', 'social:wechatmp-qrcode'].includes(user?.registerSource) && !user?.telephone
       return this.bindPhoneVisible
-    },
-
-    //
-    changeIsUnDeploy(val) {
-      this.isUnDeploy = val
-    },
-    bindPhoneSuccess(val) {
-      if (val) {
-        if (window.__USER_INFO__) {
-          window.__USER_INFO__.telephone = val
-        }
-        this.checkDialogState()
-      }
     },
     hideCustomTip() {
       setTimeout(() => {

@@ -27,7 +27,8 @@ export const convertSchemaToTreeData = function (Schema) {
           oldIdList: field.oldIdList || [],
           field: previousFieldName.split('.').pop(),
           previousFieldName,
-          previousDataType: field.previousDataType
+          previousDataType: field.previousDataType,
+          columnPosition: field.columnPosition
         }
         let path = 'children.' + jsonPathForFieldName.join('.children.')
         let partField = get(root, path)
