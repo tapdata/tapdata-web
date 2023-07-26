@@ -12,7 +12,7 @@
             </div>
           </div>
           <ul class="mt-4 overflow-auto flex-1">
-            <li class="sub-li mb-4" v-for="item in subscribeList" :key="item.id">
+            <li class="sub-li mb-4 rounded-lg overflow-hidden" v-for="item in subscribeList" :key="item.id">
               <div class="sub-li-header flex justify-content-between">
                 <div>
                   <span class="font-color-dark fw-sub mr-2"

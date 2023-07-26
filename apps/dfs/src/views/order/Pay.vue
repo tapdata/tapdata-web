@@ -398,6 +398,13 @@ export default {
         padding-bottom: 8px;
       }
     }
+
+    .label-grid {
+      display: grid;
+      grid-template-columns: auto 1fr; /* 两列 */
+      grid-gap: 8px;
+      grid-column-gap: 4px;
+    }
   }
 }
 .pay-wrap {
@@ -427,12 +434,5 @@ export default {
       vertical-align: top;
     }
   }
-}
-
-.label-grid {
-  display: grid;
-  grid-template-columns: auto 1fr; /* 两列 */
-  grid-gap: 8px;
-  grid-column-gap: 4px;
 }
 </style>
