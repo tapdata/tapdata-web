@@ -349,6 +349,15 @@ const routes = [
         },
         children: [
           {
+            path: 'pay/:id',
+            name: 'pay',
+            component: () => import(/* webpackChunkName: "instance" */ '../views/order/Pay'),
+            meta: {
+              hideTitle: true,
+              title: i18n.t('dfs_router_index_zhifuqingdan')
+            }
+          },
+          {
             path: '/user/order/changeList',
             name: 'changeList',
             component: () => import(/* webpackChunkName: "instance" */ '../views/order/ChangeList.vue'),
@@ -470,14 +479,14 @@ const routes = [
       title: 'tap_agent_download_now'
     }
   },
-  {
-    path: '/pay',
-    name: 'pay',
-    component: () => import(/* webpackChunkName: "instance" */ '../views/order/pay.vue'),
-    meta: {
-      title: i18n.t('dfs_router_index_zhifuqingdan')
-    }
-  },
+  // {
+  //   path: '/pay',
+  //   name: 'pay',
+  //   component: () => import(/* webpackChunkName: "instance" */ '../views/order/Pay'),
+  //   meta: {
+  //     title: i18n.t('dfs_router_index_zhifuqingdan')
+  //   }
+  // },
   {
     path: '/upgradeVersion',
     name: 'UpgradeVersion',

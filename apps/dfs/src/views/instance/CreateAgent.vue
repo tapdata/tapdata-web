@@ -2,7 +2,7 @@
   <section class="flex flex-column flex-1 overflow-hidden create-agent-container gap-4">
     <div class="flex flex-column bg-white rounded-lg overflow-hidden px-6">
       <div class="py-4 fs-6 fw-sub lh-base">
-        <div class="create-agent-title position-relative pl-3">Agent information</div>
+        <div class="create-agent-title position-relative pl-3">{{ $t('dfs_agent_information') }}</div>
       </div>
       <ElForm label-position="top" class="flex-1 overflow-x-hidden overflow-y-auto">
         <ElFormItem>
@@ -508,7 +508,7 @@ export default {
         subscriptionMethodLabel: label || '',
         platform: this.platform,
         quantity: '',
-        paymentMethod: this.platform === 'aliyun' ? 'AliyunMarketCode' : 'Stripe',
+        paymentMethod: 'Stripe',
         successUrl: location.origin + location.pathname + agentUrl.href,
         cancelUrl: location.origin + location.pathname + agentUrl.href,
         periodUnit,
@@ -543,67 +543,19 @@ export default {
             type,
             result: true
           })
-          if (data.status === 'incomplete') {
-            //订单需要付款
-            if (paymentType === 'online') {
-              //在线支付 打开付款页面
-              this.finish()
-              window.open(data?.payUrl, '_self')
-            } else {
-              //转账支付 打开支付详情弹窗
-              if (this.type === 'newDialog') {
-                this.$emit('closeVisible', false)
-              }
-              this.$router.push({
-                name: 'Instance',
-                params: {
-                  showTransferDialogVisible: true,
-                  price: this.formatPrice(this.currency)
-                }
-              })
+
+          this.$router.push({
+            name: 'pay',
+            params: {
+              id: data.subscribe
             }
-          } else {
-            //订单不需要付款，只需对应跳转不同页面
-            if (params.onlyMdb) {
-              //单独存储
-              this.finish()
-              this.$router.push({
-                name: 'Instance',
-                query: {
-                  active: 'storage'
-                }
-              })
-            } else if (this.agentDeploy === 'Aliyun' && row.agentType === 'Local') {
-              //半托管-授权码-部署页面
-              this.finish()
-              let downloadUrl = window.App.$router.resolve({
-                name: 'FastDownload',
-                query: {
-                  id: data?.agentId
-                }
-              })
-              window.open(downloadUrl.href, '_self')
-            } else {
-              this.finish()
-              if (this.type === 'newDialog') {
-                this.$emit('closeVisible', false)
-              }
-              this.$router.push({
-                name: 'Instance'
-              })
-            }
-          }
+          })
         })
         .catch(() => {
           this.buried('newAgentStripe', '', {
             type,
             result: false
           })
-          if (paymentType === 'online') {
-            this.submitOnlineLoading = false
-          } else {
-            this.submitLoading = false
-          }
         })
     }
   }
@@ -685,7 +637,7 @@ export default {
         margin-bottom: 16px;
       }
       .el-form-item__label {
-        line-height: 24px;
+        line-height: 22px;
         padding-bottom: 8px;
       }
     }

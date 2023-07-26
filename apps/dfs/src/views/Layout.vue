@@ -225,8 +225,6 @@ export default {
     if (window.__config__?.station) {
       this.isDomesticStation = window.__config__?.station === 'domestic' //默认是国内站 国际站是 international
     }
-    // this.loopLoadAgentCount()
-    this.activeMenu = this.$route.path
     let children = this.$router.options.routes.find(r => r.path === '/')?.children || []
     const findRoute = name => {
       return children.find(item => item.name === name)
@@ -273,6 +271,8 @@ export default {
     this.$root.$on('select-connection-type', this.selectConnectionType)
     this.$root.$on('show-guide', this.showGuide)
     this.$root.$on('get-user', this.getUser)
+
+    this.setActiveMenu()
   },
   mounted() {
     //获取cookie 是否用户有操作过 稍后部署 且缓存是当前用户 不在弹窗
@@ -295,8 +295,8 @@ export default {
     clearTimeout(this.loopLoadAgentCountTimer)
   },
   watch: {
-    $route(route) {
-      this.activeMenu = route.path
+    $route() {
+      this.setActiveMenu()
     }
   },
   methods: {
@@ -463,6 +463,11 @@ export default {
       this.$router.push({
         name: 'productDemo'
       })
+    },
+
+    setActiveMenu() {
+      let activeRoute = this.$route.matched.find(item => !!item.path)
+      this.activeMenu = activeRoute.path
     }
   }
 }

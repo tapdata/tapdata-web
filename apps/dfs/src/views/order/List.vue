@@ -519,7 +519,13 @@ export default {
     //支付
     handlePay(row = {}) {
       this.buried('payAgentStripe')
-      if (row.paymentType === 'offline') {
+      this.$router.push({
+        name: 'pay',
+        params: {
+          id: row.id
+        }
+      })
+      /*if (row.paymentType === 'offline') {
         this.showTransferDialogVisible = true
         this.pricePay = row.formatPrice
       } else {
@@ -534,7 +540,7 @@ export default {
         ).then(() => {
           this.$refs.table?.fetch()
         })
-      }
+      }*/
     },
     handleCreateAgent() {
       this.$router.push({

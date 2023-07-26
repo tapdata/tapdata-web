@@ -1712,5 +1712,6 @@ export default {
   dfs_instance_pay_wait_step_title: 'Progress Display',
   dfs_instance_pay_wait_submit: 'Submit Payment',
   dfs_instance_pay_wait: 'Payment Pending',
-  dfs_the_header_header_jiaruSla: 'Join Slack'
+  dfs_the_header_header_jiaruSla: 'Join Slack',
+  dfs_agent_information: 'Agent Information'
 }

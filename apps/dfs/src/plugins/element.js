@@ -69,8 +69,9 @@ import {
   Empty,
   Slider,
   Timeline,
-  TimelineItem
+  TimelineItem,
 } from 'element-ui'
+import CollapseTransition from 'element-ui/lib/transitions/collapse-transition'
 import 'element-ui/lib/theme-chalk/index.css'
 
 const showMessage = Symbol('showMessage')
@@ -186,3 +187,4 @@ Vue.use(Empty)
 Vue.use(Slider)
 Vue.use(Timeline)
 Vue.use(TimelineItem)
+Vue.component(CollapseTransition.name, CollapseTransition)

@@ -1396,14 +1396,14 @@ export default {
   dfs_agent_download_transferdialog_zaiwanchengzhuanzhang:
     '在完成转账后一天内, 我们将会为您开通服务, 您也可以通过下方客服联系我们马上开通服务',
   dfs_agent_download_transferdialog_reopen_tips:
-    '如您关闭此页面, 可通过右上角, 用户名 -> 用户中心, 在下方 服务订阅信息 处重新进行支付, 如有任何问题, 欢迎通过邮件 team@tapdata.io 与我们联系',
+    '如您关闭此页面, 可通过左侧菜单栏 > 订阅中心, 在【订阅中心】处继续进行支付, 如有任何问题, 欢迎通过在线客服与我们联系',
   dfs_agent_download_transferdialog_caozuoshuoming: '操作说明',
-  dfs_agent_download_transferdialog_huikuanzhanghao: '汇款账号：',
+  dfs_agent_download_transferdialog_huikuanzhanghao: '专属汇款账号：',
   dfs_agent_download_transferdialog_zhongguominshengyin: '中国民生银行深圳蛇口支行',
   dfs_agent_download_transferdialog_kaihuyinhang: '开户银行：',
   dfs_agent_download_transferdialog_shenzhentaiboshu: '深圳钛铂数据有限公司 ',
   dfs_agent_download_transferdialog_kaihumingcheng: '开户名称：',
-  dfs_agent_download_transferdialog_zhuanzhangxinxi: '公司账户信息',
+  dfs_agent_download_transferdialog_zhuanzhangxinxi: '汇款账号信息',
   dfs_agent_download_subscriptionmodeldialog_xuanzechanpinmo: '选择产品模式',
   dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi: '托管方式',
   dfs_agent_download_subscriptionmodeldialog_kafka: 'Kafka供数',
@@ -1588,5 +1588,6 @@ export default {
   dfs_instance_pay_wait_step_title: '进度展示',
   dfs_instance_pay_wait_submit: '提交支付',
   dfs_instance_pay_wait: '等待支付',
-  dfs_the_header_header_jiaruSla: '加入Slack'
+  dfs_the_header_header_jiaruSla: '加入Slack',
+  dfs_agent_information: '引擎信息'
 }
