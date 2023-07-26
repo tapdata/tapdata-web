@@ -140,6 +140,7 @@ export default {
   data() {
     return {
       subscribeId: '',
+      subscribeAlterId: '',
       isCard: true,
       order: [],
       price: 0,
@@ -201,14 +202,24 @@ export default {
       agentTypeMap: AGENT_TYPE_MAP,
       payForm: {
         email: this.$store.state.user.email,
-        paymentMethod: 'Stripe'
+        paymentMethod: 'Stripe',
+        successUrl: '',
+        cancelUrl: ''
       }
     }
   },
 
   async created() {
-    this.subscribeId = this.$route.params.id
-    this.loadSubscribe()
+    const routeName = this.$route.name
+    if (this.$route.name === 'pay') {
+      this.targetField = 'subscribeId'
+      this.subscribeId = this.$route.params.id
+      await this.loadSubscribe()
+    } else if (routeName === 'payForChange') {
+      this.targetField = 'subscribeAlterId'
+      this.subscribeAlterId = this.$route.params.id
+      await this.loadAlter()
+    }
     this.loadBankAccount()
     // await this.loadOrderInfo(this.$route.query.id)
 
@@ -238,18 +249,16 @@ export default {
           })
         )}`
       )
-
+      const currency = subscribe.currency || window.__config__?.currencyType
       this.subscribe = subscribe
 
-      this.price = this.formatterPrice(subscribe.currency, subscribe.totalAmount)
+      this.price = this.formatterPrice(currency, subscribe.totalAmount)
       this.subscriptionMethodLabel =
         getPaymentMethod({ periodUnit: subscribe.periodUnit, type: subscribe.subscribeType }) || '-'
 
       let subscribeItems = subscribe.subscribeItems || []
-      const { subscriptionMethodLabel, originalPrice, priceOff } = this.orderInfo
       this.subscribeItems = subscribeItems.map(it => {
-        it.subscriptionMethodLabel = subscriptionMethodLabel
-        it.price = this.formatterPrice(subscribe.currency, it.amount)
+        it.price = this.formatterPrice(currency, it.amount)
         it.agentTypeLabel = this.agentTypeMap[it.agentType]
         it.specLabel = getSpec(it.spec) || '-'
         return it
@@ -257,6 +266,52 @@ export default {
 
       // const subscribe = await this.$axios.get(`api/tcm/subscribe/${this.subscribeId}`)
       console.log('subscribe', subscribe) // eslint-disable-line
+
+      const fastDownloadUrl = this.$router.resolve({
+        name: 'FastDownload',
+        query: {
+          id: subscribeItems[0].resourceId
+        }
+      })
+      const agentUrl = window.App.$router.resolve({
+        name: 'Instance',
+        query: {
+          id: subscribeItems[0].resourceId
+        }
+      })
+
+      this.payForm.successUrl =
+        subscribe.platform === 'fullManagement'
+          ? location.origin + location.pathname + agentUrl.href
+          : location.origin + location.pathname + fastDownloadUrl.href
+      this.payForm.cancelUrl = location.href
+    },
+
+    async loadAlter() {
+      const alter = await this.$axios.get(`api/tcm/subscribe/alter/${this.subscribeAlterId}`)
+      const { subscribe, subscribeId } = alter
+      const currency = subscribe.currency || window.__config__?.currencyType
+
+      this.price = this.formatterPrice(currency, alter.subscribeItems[0].amount)
+      this.subscriptionMethodLabel =
+        getPaymentMethod({ periodUnit: subscribe.periodUnit, type: subscribe.subscribeType }) || '-'
+      this.subscribeItems = alter.subscribeItems.map(it => {
+        it.price = this.price
+        it.agentTypeLabel = this.agentTypeMap[it.agentType]
+        it.specLabel = getSpec(it.spec) || '-'
+        return it
+      })
+
+      this.payForm.successUrl =
+        location.origin +
+        location.pathname +
+        this.$router.resolve({
+          name: 'changeList',
+          query: {
+            id: subscribeId
+          }
+        }).href
+      this.payForm.cancelUrl = location.href
     },
 
     validateForm(ref) {
@@ -266,32 +321,17 @@ export default {
         })
       })
     },
+
     async handlePay() {
       const valid = await this.validateForm('form')
 
       if (!valid) return
 
       this.submitLoading = true
-      await this.postPayment()
-      window.open(this.subscribe.payUrl, '_self')
-      /*this.$axios
-        .post('api/tcm/subscribe/payment', this.orderInfo)
-        .then(data => {
-          if (data?.payUrl) {
-            window.open(data?.payUrl, '_self')
-          } else {
-            this.$router.push({
-              name: 'changeList',
-              query: {
-                id: data.subscribeId
-              }
-            })
-          }
-        })
-        .catch(() => {
-          this.submitLoading = false
-        })*/
+      const { paymentUrl } = await this.postPayment()
+      window.open(paymentUrl, '_self')
     },
+
     formatterPrice(currency, price) {
       if (price === 0) {
         return 0
@@ -303,40 +343,6 @@ export default {
           maximumFractionDigits: 2
         })
       )
-    },
-    async loadOrderInfo(id) {
-      if (!id) return
-      const alter = await this.$axios.get(`api/tcm/subscribe/alter/${id}`)
-      const { subscribe } = alter
-      const route = this.$router.resolve({
-        name: 'changeList',
-        query: {
-          id: alter.subscribeId
-        }
-      })
-      const price = this.formatterPrice(subscribe.currency, alter.subscribeItems[0].amount)
-      const orderInfo = {
-        price,
-        originalPrice: price,
-        subscriptionMethodLabel:
-          getPaymentMethod(
-            { periodUnit: subscribe.periodUnit, type: subscribe.subscribeType },
-            subscribe.paymentMethod || 'Stripe'
-          ) || '-',
-        successUrl: location.origin + location.pathname + route.href,
-        cancelUrl: location.origin + location.pathname + route.href,
-        subscribeAlterId: alter.id,
-        subscribeType: subscribe.subscribeType,
-        subscribeItems: alter.subscribeItems.map(it => {
-          it.specLabel = getSpec(it.spec) || '-'
-          return it
-        }),
-        paymentMethod: subscribe.paymentMethod,
-        periodUnit: subscribe.periodUnit,
-        currency: subscribe.currency || window.__config__?.currencyType
-      }
-
-      this.orderInfo = orderInfo
     },
 
     async loadBankAccount(onlyLoad) {
@@ -374,11 +380,9 @@ export default {
     },
 
     async postPayment() {
-      await this.$axios.post('api/tcm/subscribe/payment', {
+      return await this.$axios.post('api/tcm/subscribe/payment', {
         ...this.payForm,
-        subscribeId: this.subscribeId // 订阅ID，新增和续订订阅时必填
-        // successUrl: '', // 支付成功URL
-        // cancelUrl: '', // 取消支付URL
+        [this.targetField]: this[this.targetField]
       })
     }
   }

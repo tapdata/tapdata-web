@@ -358,6 +358,15 @@ const routes = [
             }
           },
           {
+            path: 'change/pay/:id',
+            name: 'payForChange',
+            component: () => import(/* webpackChunkName: "instance" */ '../views/order/Pay'),
+            meta: {
+              hideTitle: true,
+              title: i18n.t('dfs_router_index_zhifuqingdan')
+            }
+          },
+          {
             path: '/user/order/changeList',
             name: 'changeList',
             component: () => import(/* webpackChunkName: "instance" */ '../views/order/ChangeList.vue'),
