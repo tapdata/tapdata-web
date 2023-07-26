@@ -549,14 +549,16 @@ export const FieldAddDel = connect(
           return dropNode.level === 1 && type !== 'inner'
         },
         handleSaveDrop() {
+          this.fields.forEach((el, i) => {
+            el.columnPosition = i + 1
+          })
+
           const fieldsAfter = cloneDeep(this.fields).map((t, i) => {
-            t.columnPosition = i + 1
             return {
-              columnPosition: i + 1,
+              columnPosition: t.columnPosition,
               field_name: t.field_name
             }
           })
-
           this.form.setValuesIn('fieldsAfter', fieldsAfter)
         },
         handleCommand(val, node) {
@@ -572,7 +574,7 @@ export const FieldAddDel = connect(
             const getNode = this.$refs.tree.getNode(this.fields[index - 1]?.id)
             this.$refs.tree.insertBefore(node.data, getNode)
           } else {
-            const getNode = this.$refs.tree.getNode(this.fields[index + 1]?.id)
+            const getNode = this.$refs.tree.getNode(this.fields[index]?.id)
             this.$refs.tree.insertAfter(node.data, getNode)
           }
 
