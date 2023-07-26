@@ -549,17 +549,15 @@ export const FieldAddDel = connect(
           return dropNode.level === 1 && type !== 'inner'
         },
         handleSaveDrop() {
-          let params = {
-            fieldsAfter: cloneDeep(this.fields).map((t, i) => {
-              t.columnPosition = i + 1
-              return t
-            })
-          }
-
-          metadataInstancesApi.patchId(this.form.values?.id, params).then(() => {
-            this.$message.success(this.$t('public_message_save_ok'))
-            this.$emit('change', this.operations)
+          const fieldsAfter = cloneDeep(this.fields).map((t, i) => {
+            t.columnPosition = i + 1
+            return {
+              columnPosition: i + 1,
+              field_name: t.field_name
+            }
           })
+
+          this.form.setValuesIn('fieldsAfter', fieldsAfter)
         },
         handleCommand(val, node) {
           const index = this.fields.findIndex(t => t.field_name === node.data.field_name)
@@ -577,9 +575,6 @@ export const FieldAddDel = connect(
             const getNode = this.$refs.tree.getNode(this.fields[index + 1]?.id)
             this.$refs.tree.insertAfter(node.data, getNode)
           }
-          // this.fields.forEach((el, i) => {
-          //   el.columnPosition = i + 1
-          // })
 
           this.handleSaveDrop()
         }
