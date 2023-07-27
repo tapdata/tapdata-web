@@ -277,8 +277,6 @@ export default {
         if (this.freeAgentCount > 0) {
           this.specificationItems = this.specificationItems.filter(it => it.chargeProvider !== 'FreeTier')
         }
-        //新人引导只取前四个规格
-        this.specificationItems = this.specificationItems.splice(0, 4)
 
         this.specification = this.specificationItems[0]?.value
         // 价格套餐
@@ -370,9 +368,8 @@ export default {
       this.agentSizeCap = this.updateAgentCap(specification.cpu, specification.memory)
       const specificationLabel = this.specificationItems.find(t => t.value === this.specification)?.name
       this.currentSpecName = specificationLabel
-      console.log(specification)
       this.packageItems = this.allPackages
-        .filter(t => this.specification === t.specification)
+        .filter(it => this.specification === it.specification && !(it.type === 'one_time' && it.periodUnit === 'year'))
         .map(t => {
           return Object.assign(t, {
             desc: i18n.t('dfs_instance_create_bencidinggouzhi', {
@@ -393,10 +390,6 @@ export default {
           const bOrder = b.order
           return aType + aOrder - (bType + bOrder)
         })
-      //不显示订购一年
-      if (specification?.chargeProvider !== 'FreeTier') {
-        this.packageItems = this.packageItems.filter(it => !(it.type === 'one_time' && it.periodUnit === 'year'))
-      }
     },
 
     updateAgentCap(cpu, memory) {
