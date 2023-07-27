@@ -1350,7 +1350,7 @@ export default {
   dfs_instance_instance_guige: 'Spec',
   dfs_instance_selectlist_yibangding: 'Already Bound',
   dfs_instance_selectlist_bangdingshilizhuang: 'Binding instance status',
-  dfs_instance_selectlist_dingyuezhouqi: 'Subscription Cycle',
+  dfs_instance_selectlist_dingyuezhouqi: 'Subscription Period',
   dfs_instance_selectlist_dingyueneirong: 'Subscription Content',
   dfs_instance_selectlist_keyixuanzeyi:
     'You can choose existing unused subscriptions to create instances, you can create new instances and choose more specifications',

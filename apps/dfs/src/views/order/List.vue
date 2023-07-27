@@ -455,7 +455,7 @@ export default {
       })
     },
     formatterTime(time) {
-      return time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
+      return time ? dayjs(time).format('YYYY-MM-DD') : '-'
     },
     formatterPrice(currency, price) {
       if (price === 0) {
