@@ -295,7 +295,7 @@ export default {
   connection_form_mq_broker_url: 'MQ连接串',
   // 任务
   task_manage: '任务管理',
-  task_manage_etl: '数据开发',
+  task_manage_etl: '数据转换',
   task_manage_desc: '表到表数据复制和迁移',
   task_manage_migrate_desc: '数据库到数据库的复制',
   task_manage_migrate: '数据复制',

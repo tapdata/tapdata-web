@@ -297,7 +297,7 @@ export default {
   connection_form_creat_connection: 'Create connection',
   connection_form_mq_broker_url: 'MQ connection string',
   task_manage: 'Task',
-  task_manage_etl: 'Data Development',
+  task_manage_etl: 'Data Transformation',
   task_manage_migrate: 'Data Replication',
   task_manage_desc: 'Table to Table Data Sync And Transformation',
   task_manage_migrate_desc: 'For Database to Database Replication',

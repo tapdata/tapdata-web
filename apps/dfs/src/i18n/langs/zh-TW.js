@@ -273,7 +273,7 @@ export default {
   task_manage: '任務管理',
   task_manage_desc: '表到表数据复制和迁移',
   task_manage_migrate_desc: '数据库到数据库的复制',
-  task_manage_etl: '數據開發',
+  task_manage_etl: '數據轉換',
   task_manage_migrate: '數據複製',
   task_name: '任務名稱',
   task_status_running: '運行中',
