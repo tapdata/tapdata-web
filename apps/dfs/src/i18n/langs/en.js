@@ -910,7 +910,7 @@ export default {
     'User-oriented, attention to detail - this time, we have optimized our SMS notification strategy and connection creation process.',
   workbench_Notice_ziZhuKaiGuanDuan: 'Self-service toggle for SMS notification permissions.',
   workbench_Notice_aGENT:
-    "Agent offline prompt, Agent operation notification, task abnormal alarm - don't want to be frequently disturbed by non-essential SMS reminders?'t want to be frequently disturbed by unnecessary SMS reminders?",
+    "Agent offline prompt, Agent operation notification, task abnormal alert - don't want to be frequently disturbed by non-essential SMS reminders?'t want to be frequently disturbed by unnecessary SMS reminders?",
   workbench_Notice_xinBanBenDeDuan:
     'The SMS notification strategy for the new version has been optimized, and new user SMS notifications will be turned off by default (the settings for old users remain unchanged). Users can choose to turn on or keep the notifications off according to their actual needs in the notification settings.',
   workbench_Notice_gengKuaiDingWeiLian: 'Faster connection type identification.',
@@ -1105,7 +1105,7 @@ export default {
     '· Added the function of dynamically adding new tables, which supports synchronizing new tables in the database to the target',
   dfs_workbench_workbench_shujutongbuneng: 'Enhanced data synchronization capability',
   dfs_workbench_workbench_renwugaojingneng:
-    '· Task alarm capability, when an abnormal alarm occurs in a task, it is directly reflected on the task operation monitoring page, combined with the task DAG, all problems are intuitively visible',
+    '· Task alert capability, when an abnormal alert occurs in a task, it is directly reflected on the task operation monitoring page, combined with the task DAG, all problems are intuitively visible',
   dfs_workbench_workbench_renwurizhike:
     '· Mission log observability capability, output key mission information through standardized mission logs, and quickly locate problems when they occur',
   dfs_workbench_workbench_renwuzhibiaoke:
@@ -1666,10 +1666,10 @@ export default {
   dfs_guide_scenes_shujurucangjia: 'Database replication between Oracle, MySQL and many other databases',
   dfs_guide_scenes_kuayunshujushi: 'Moving data into or out of MongoDB or MongoDB Atlas',
   dfs_guide_spec_ninxuyaozixing: 'Please select the instance size and subscription period',
-  dfs_components_taskalarmtour_dianjicichushe: 'Click here to set task alarm',
+  dfs_components_taskalarmtour_dianjicichushe: 'Click here to set task alert',
   dfs_components_taskalarmtour_qushezhi: 'Settings',
   dfs_components_taskalarmtour_jiancedaoninwei:
-    'It has been detected that you have not bound your mailbox, please bind your mailbox first to receive task alarm notifications',
+    'It has been detected that you have not bound your mailbox, please bind your mailbox first to receive task alert notifications',
   dfs_mixins_tour_qingxianqidongnin: 'Please start your Agent calculation engine first',
   dfs_mixins_tour_dianjicichuchuang: 'Click here to create your first replication task',
   dfs_mixins_tour_qingchuangjianninde: 'Please create your first replication task',
