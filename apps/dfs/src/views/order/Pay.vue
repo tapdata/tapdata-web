@@ -3,7 +3,6 @@
     <div class="bg-white rounded-lg p-4">
       <div class="flex align-center">
         <IconButton @click="$router.push({ name: 'order' })">left</IconButton>
-        <!--        <VIcon size="18">left</VIcon>-->
         <span class="fs-5 ml-2">待支付</span>
       </div>
     </div>
@@ -45,7 +44,7 @@
           @input="handleChangePayMethod"
         >
           <ElRadio
-            v-for="(item, index) in types"
+            v-for="(item, index) in payMethods"
             :key="index"
             :label="item.value"
             border
@@ -138,7 +137,31 @@ export default {
   },
 
   data() {
+    let isDomesticStation = true
+
+    if (window.__config__?.station) {
+      isDomesticStation = window.__config__?.station === 'domestic' //默认是国内站 国际站是 international
+    }
+
+    const payMethods = [
+      {
+        icon: 'pay-stripe',
+        label: '在线支付',
+        value: 'Stripe'
+      }
+    ]
+
+    if (isDomesticStation) {
+      payMethods.push({
+        icon: 'pay-cmbc',
+        label: '对公汇款',
+        value: 'CMBC'
+      })
+    }
+
     return {
+      isDomesticStation,
+      payMethods,
       subscribeId: '',
       subscribeAlterId: '',
       isCard: true,
@@ -168,18 +191,6 @@ export default {
       ],
       paymentMethod: 'Stripe',
       subscribeItems: [],
-      types: [
-        {
-          icon: 'pay-stripe',
-          label: '在线支付',
-          value: 'Stripe'
-        },
-        {
-          icon: 'pay-cmbc',
-          label: '对公汇款',
-          value: 'CMBC'
-        }
-      ],
       orderInfo: {},
       emailRules: [
         {
