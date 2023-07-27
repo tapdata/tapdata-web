@@ -58,7 +58,7 @@
         </ElRadioGroup>
 
         <el-collapse-transition>
-          <div v-if="payForm.paymentMethod === 'CMBC'">
+          <div v-if="payForm.paymentMethod === 'Balance'">
             <div class="bg-subtle rounded-lg p-4 mb-4">
               <!--汇款账号信息-->
               <div class="font-color-dark fw-sub text-label mb-2">
@@ -155,7 +155,7 @@ export default {
       payMethods.push({
         icon: 'pay-cmbc',
         label: '对公汇款',
-        value: 'CMBC'
+        value: 'Balance'
       })
     }
 
@@ -189,7 +189,6 @@ export default {
           prop: 'price'
         }
       ],
-      paymentMethod: 'Stripe',
       subscribeItems: [],
       orderInfo: {},
       emailRules: [
@@ -262,7 +261,6 @@ export default {
       )
       const currency = subscribe.currency || window.__config__?.currencyType
       this.subscribe = subscribe
-
       this.price = this.formatterPrice(currency, subscribe.totalAmount)
       this.subscriptionMethodLabel =
         getPaymentMethod({ periodUnit: subscribe.periodUnit, type: subscribe.subscribeType }) || '-'
@@ -362,7 +360,7 @@ export default {
       this.accountLoading = false
       Object.assign(this.accountInfo, info)
 
-      if (this.payForm.paymentMethod === 'CMBC' && !this.accountInfo.accountNo) {
+      if (this.payForm.paymentMethod === 'Balance' && !this.accountInfo.accountNo) {
         await this.createAccount()
       }
     },
@@ -385,7 +383,7 @@ export default {
     },
 
     handleChangePayMethod(method) {
-      if (method === 'CMBC') this.createAccount()
+      if (method === 'Balance') this.createAccount()
 
       this.postPayment()
     },
