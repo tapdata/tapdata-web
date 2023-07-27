@@ -215,35 +215,21 @@ export default {
         paymentMethod: 'Stripe',
         successUrl: '',
         cancelUrl: ''
-      }
+      },
+      paymentParams: {}
     }
   },
 
   async created() {
     const routeName = this.$route.name
     if (this.$route.name === 'pay') {
-      this.targetField = 'subscribeId'
-      this.subscribeId = this.$route.params.id
+      this.paymentParams.subscribeId = this.subscribeId = this.$route.params.id
       await this.loadSubscribe()
     } else if (routeName === 'payForChange') {
-      this.targetField = 'subscribeAlterId'
-      this.subscribeAlterId = this.$route.params.id
+      this.paymentParams.subscribeAlterId = this.subscribeAlterId = this.$route.params.id
       await this.loadAlter()
     }
-    this.loadBankAccount()
-    // await this.loadOrderInfo(this.$route.query.id)
-
-    // this.$nextTick(() => {
-    //   //格式化items
-    //   let subscribeItems = this.orderInfo?.subscribeItems || []
-    //   const { subscriptionMethodLabel, originalPrice, priceOff } = this.orderInfo
-    //   this.subscribeItems = subscribeItems.map(it => {
-    //     it.subscriptionMethodLabel = subscriptionMethodLabel
-    //     it.price = originalPrice
-    //     return it
-    //   })
-    //   this.priceOff = priceOff === 0 ? 0 : '-' + priceOff
-    // })
+    await this.loadBankAccount()
   },
 
   methods: {
@@ -391,7 +377,7 @@ export default {
     async postPayment() {
       return await this.$axios.post('api/tcm/subscribe/payment', {
         ...this.payForm,
-        [this.targetField]: this[this.targetField]
+        ...this.paymentParams
       })
     }
   }
