@@ -375,13 +375,6 @@ export class Database extends NodeType {
                     'x-component-props': {
                       size: 'middle'
                     },
-                    'x-reactions': {
-                      fulfill: {
-                        state: {
-                          display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
-                        }
-                      }
-                    },
                     properties: {
                       writeBatchSize: {
                         title: i18n.t('packages_dag_nodes_database_piliangxierutiao'), //增量批次读取条数
