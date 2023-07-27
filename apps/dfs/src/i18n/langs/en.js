@@ -78,7 +78,7 @@ export default {
   header_no_notice: 'No notice yet',
   header_setting: 'Settings',
   header_view_notifications: 'View all notifications',
-  notify_setting: 'Notify Settings',
+  notify_setting: 'Notification Settings',
   notify_agent_notification: 'Agent Notification',
   notify_sms_notification: 'SMS Notification',
   notify_email_notification: 'Email Notification',
