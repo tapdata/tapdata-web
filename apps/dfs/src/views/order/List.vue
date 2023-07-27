@@ -26,7 +26,8 @@
                   <el-divider direction="vertical"></el-divider>
                   <span class="font-color-light fw-sub mr-2"
                     ><span>{{ $t('dfs_instance_selectlist_dingyuezhouqi') }}: </span>
-                    {{ formatterTime(item.startAt) }} ~ {{ formatterTime(item.endAt) }}</span
+                    {{ formatterTime(item.startAt, 'YYYY-MM-DD') }} ~
+                    {{ formatterTime(item.endAt, 'YYYY-MM-DD') }}</span
                   >
                   <el-divider direction="vertical"></el-divider>
                   <span class="font-color-dark fw-sub mr-2">
@@ -454,8 +455,8 @@ export default {
         })
       })
     },
-    formatterTime(time) {
-      return time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
+    formatterTime(time, template = 'YYYY-MM-DD HH:mm:ss') {
+      return time ? dayjs(time).format(template) : '-'
     },
     formatterPrice(currency, price) {
       if (price === 0) {
