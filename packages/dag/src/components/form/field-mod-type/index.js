@@ -176,7 +176,16 @@ export const FieldModType = observer(
                     class="tree-node flex flex-1 justify-content-center align-items flex-row"
                     slot-scope="{ node, data }"
                   >
-                    <span class="flex-1 inline-block ellipsis">{data.field_name}</span>
+                    <span class="flex-1 inline-block ellipsis">
+                      {data.field_name}
+                      {data.primary_key_position > 0 ? (
+                        <VIcon size="12" class="text-warning ml-1">
+                          key
+                        </VIcon>
+                      ) : (
+                        ''
+                      )}
+                    </span>
                     <span class="flex-1 inline-block">{data.type}</span>
                     <ElSelect
                       v-model={data.data_type}
