@@ -531,6 +531,16 @@ export default observer({
                                   }
                                 }
                               },
+                              dynamicAdjustMemoryUsage: {
+                                title: this.$t('packages_dag_dynamicAdjustMemoryUsage_title'),
+                                type: 'boolean',
+                                default: !isDaas,
+                                'x-decorator': 'FormItem',
+                                'x-decorator-props': {
+                                  tooltip: i18n.t('packages_dag_dynamicAdjustMemoryUsage_tip')
+                                },
+                                'x-component': 'Switch'
+                              },
                               isAutoInspect: {
                                 title: this.$t('packages_dag_task_list_verify'),
                                 type: 'boolean',
