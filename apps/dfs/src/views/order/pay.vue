@@ -143,8 +143,9 @@ export default {
       this.$axios
         .post('api/tcm/subscribe/payment', this.orderInfo)
         .then(data => {
-          if (data?.payUrl) {
-            window.open(data?.payUrl, '_self')
+          const payUrl = data?.payUrl || data.paymentUrl
+          if (payUrl) {
+            window.open(payUrl, '_self')
           } else {
             this.$router.push({
               name: 'changeList',
@@ -182,6 +183,7 @@ export default {
       })
       const price = this.formatterPrice(subscribe.currency, alter.subscribeItems[0].amount)
       const orderInfo = {
+        email: this.$store.state.user.email,
         price,
         originalPrice: price,
         subscriptionMethodLabel:
