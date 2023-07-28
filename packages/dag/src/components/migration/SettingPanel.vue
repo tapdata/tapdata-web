@@ -340,7 +340,7 @@ export default observer({
                                   dependencies: ['type'],
                                   fulfill: {
                                     state: {
-                                      display: '{{$deps[0] === "initial_sync" ? "visible" : "hidden"}}'
+                                      display: '{{$deps[0] !== "cdc" ? "visible" : "hidden"}}'
                                     }
                                   }
                                 }
@@ -362,7 +362,7 @@ export default observer({
                                   dependencies: ['type', 'crontabExpressionFlag'],
                                   fulfill: {
                                     state: {
-                                      display: '{{$deps[0] === "initial_sync" && $deps[1] ? "visible" : "hidden"}}'
+                                      display: '{{$deps[0] !== "cdc" ? "visible" : "hidden"}}'
                                     }
                                   }
                                 }
