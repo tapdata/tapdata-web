@@ -362,7 +362,7 @@ export default observer({
                                   dependencies: ['type', 'crontabExpressionFlag'],
                                   fulfill: {
                                     state: {
-                                      display: '{{$deps[0] !== "cdc" ? "visible" : "hidden"}}'
+                                      display: '{{$deps[0] !== "cdc" && $deps[1] ? "visible" : "hidden"}}'
                                     }
                                   }
                                 }
