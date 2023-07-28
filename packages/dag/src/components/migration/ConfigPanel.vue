@@ -20,67 +20,15 @@
       @update:InputsOrOutputs="handleLoadMeta"
       @setSchema="handleSetSchema"
     />
-
-    <!--<ElTabs ref="tabs" v-model="currentTab" class="config-tabs" v-show="activeType === 'node'">
-      <ElTabPane :label="$t('packages_dag_migration_configpanel_peizhi')" name="settings">
-        <FormPanel
-          v-show="activeType !== 'settings'"
-          v-on="$listeners"
-          v-bind="$attrs"
-          ref="formPanel"
-          :formProps="{
-            colon: false,
-            shallow: false,
-            layout: 'vertical',
-            feedbackLayout: 'terse'
-          }"
-          @update:InputsOrOutputs="handleLoadMeta"
-          @setSchema="handleSetSchema"
-        />
-      </ElTabPane>
-      <ElTabPane :label="$t('packages_dag_migration_configpanel_moxing')" name="meta">
-        <Component
-          v-if="syncType"
-          ref="metaPane"
-          :is="syncType === 'sync' ? 'MetaPane' : 'MigrateMetaPane'"
-          :is-show="currentTab === 'meta'"
-          :form="form"
-        ></Component>
-      </ElTabPane>
-      <ElTabPane v-if="isMonitor" :label="$t('packages_dag_migration_configpanel_gaojingshezhi')" name="alarm">
-        <AlarmPanel
-          v-if="currentTab === 'alarm' && activeType === 'node'"
-          v-bind="$attrs"
-          v-on="$listeners"
-          :isNode="true"
-          key="nodeAlarm"
-        />
-      </ElTabPane>
-    </ElTabs>-->
-
-    <div class="flex-column h-100" :class="activeType === 'settings' ? 'flex' : 'none'">
-      <div class="panel-header flex align-center px-4 border-bottom">
-        <div class="title-input-wrap flex align-center flex-shrink-0 h-100 fw-sub">
-          <ElTabs v-if="isMonitor" ref="tabs" v-model="titleCurrentTab" class="setting-tabs">
-            <ElTabPane name="alarm" :label="$t('packages_dag_migration_configpanel_gaojingshezhi')">
-              <div></div>
-            </ElTabPane>
-            <ElTabPane name="settings" :label="$t('packages_dag_task_stetting_basic_setting')">
-              <div></div>
-            </ElTabPane>
-          </ElTabs>
-          <span v-else>{{ $t('packages_dag_task_stetting_basic_setting') }}</span>
-        </div>
-
-        <VIcon class="close-icon" size="16" @click="handleClosePanel">close</VIcon>
-      </div>
-      <div v-if="titleCurrentTab === 'settings'" class="panel-content flex-1">
-        <SettingPanel ref="setting" v-bind="$attrs" v-on="$listeners" v-show="activeType === 'settings'" />
-      </div>
-      <div v-else-if="titleCurrentTab === 'alarm'" class="panel-content flex-1">
-        <AlarmPanel v-if="activeType === 'settings'" v-bind="$attrs" v-on="$listeners" key="taskAlarm" />
-      </div>
-    </div>
+    <SettingPanel
+      v-if="settings.id"
+      class="config-form-panel"
+      :settings="settings"
+      v-show="activeType === 'settings'"
+      v-on="$listeners"
+      v-bind="$attrs"
+      ref="setting"
+    ></SettingPanel>
   </section>
 </template>
 
@@ -107,6 +55,7 @@ export default {
   },
 
   props: {
+    settings: Object,
     onlySetting: Boolean,
     showSchemaPanel: Boolean,
     includesType: {
