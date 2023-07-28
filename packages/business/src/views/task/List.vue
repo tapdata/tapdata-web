@@ -478,8 +478,6 @@ export default {
           where.status = {
             $in: status.split(',')
           }
-        } else if (status === 'running') {
-          where.or = [{ status: { $eq: 'running' } }, { crontabExpressionFlag: { $eq: true } }]
         } else {
           where.status = status
         }
