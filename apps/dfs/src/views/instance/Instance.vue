@@ -115,9 +115,7 @@
                   <span v-if="col.value === 'runningTaskMigrate'" class="font-color-dark">
                     <ElLink
                       type="primary"
-                      :disabled="
-                        (item.metric && item.metric.runningTask ? item.metric.runningTask.migrate || 0 : 0) < 1
-                      "
+                      :disabled="!item.tmInfo.agentId || !item[col.value]"
                       @click="toDataFlow(item.tmInfo.agentId)"
                       >{{ item[col.value] }}</ElLink
                     >
@@ -125,7 +123,7 @@
                   <span v-else-if="col.value === 'runningTaskSync'" class="font-color-dark">
                     <ElLink
                       type="primary"
-                      :disabled="(item.metric && item.metric.runningTask ? item.metric.runningTask.Sync || 0 : 0) < 1"
+                      :disabled="!item.tmInfo.agentId || !item[col.value]"
                       @click="toDataFlow(item.tmInfo.agentId, 'dataflowList')"
                       >{{ item[col.value] }}</ElLink
                     >
