@@ -100,7 +100,10 @@ export default {
   inject: ['buried'],
   components: { VIcon, NotificationPopover, UpgradeFee },
   data() {
+    const isDomesticStation = window.__config__?.station === 'domestic'
+
     return {
+      isDomesticStation,
       user: window.__USER_INFO__ || {},
       USER_CENTER: window.__config__.USER_CENTER,
       topBarLinks: window.__config__?.topBarLinks,
@@ -151,8 +154,8 @@ export default {
     //获取用户注册时间
     if (this.user?.id) {
       this.registrationTime = extractTimeFromObjectId(this.user?.id)
-      //注册时间7天大于的用户
-      this.showQuestionnaire = daysdifference(this.registrationTime) > 7
+      // 国内站 && 注册时间7天大于的用户
+      this.showQuestionnaire = this.isDomesticStation && daysdifference(this.registrationTime) > 7
     }
   },
   methods: {
