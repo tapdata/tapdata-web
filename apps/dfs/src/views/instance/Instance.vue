@@ -859,28 +859,30 @@ export default {
     specRemoteMethod() {
       this.$axios.get('api/tcm/mdb').then(data => {
         const items = data.items || []
-        this.mdbData = items.map(item => {
-          const { subscribeDto = {} } = item.orderInfo
-          const { endAt } = subscribeDto || {}
+        this.mdbData = items
+          .filter(t => !(t.deploymentType == 'Local' && t.scope === 'Private'))
+          .map(item => {
+            const { subscribeDto = {} } = item.orderInfo
+            const { endAt } = subscribeDto || {}
 
-          item.expiredTimeLabel = endAt ? dayjs(endAt).format('YY-MM-DD  HH:mm:ss') : '-'
-          item.scopeLabel = this.scopeMap[item.scope]
-          item.specLabel = getSpec(item.spec) || '-'
-          item.providerName = item.providerName || '-'
-          item.regionName = item.regionName || '-'
-          item.serviceProvider = item.serviceProvider || '-'
-          item.storageSize = item.spec?.storageSize || '-'
-          item.deploymentTypeLabel = this.agentTypeMap[item.deploymentType]
-          let num = Number(item?.dataSize) || 0
-          // 字节转G
-          if (item.spec?.storageSize) {
-            let size = Math.min(item.storageSize, num / 1073741824).toFixed(2)
-            item.percentage = Math.round((size / item.storageSize).toFixed(1) * 100)
-            item.dataSizeLast = (item.storageSize - size).toFixed(2)
-            item.dataSizeLabel = size
-          }
-          return item
-        })
+            item.expiredTimeLabel = endAt ? dayjs(endAt).format('YY-MM-DD  HH:mm:ss') : '-'
+            item.scopeLabel = this.scopeMap[item.scope]
+            item.specLabel = getSpec(item.spec) || '-'
+            item.providerName = item.providerName || '-'
+            item.regionName = item.regionName || '-'
+            item.serviceProvider = item.serviceProvider || '-'
+            item.storageSize = item.spec?.storageSize || '-'
+            item.deploymentTypeLabel = this.agentTypeMap[item.deploymentType]
+            let num = Number(item?.dataSize) || 0
+            // 字节转G
+            if (item.spec?.storageSize) {
+              let size = Math.min(item.storageSize, num / 1073741824).toFixed(2)
+              item.percentage = Math.round((size / item.storageSize).toFixed(1) * 100)
+              item.dataSizeLast = (item.storageSize - size).toFixed(2)
+              item.dataSizeLabel = size
+            }
+            return item
+          })
       })
     },
     getFilterItems() {
