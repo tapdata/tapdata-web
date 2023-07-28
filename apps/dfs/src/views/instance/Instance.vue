@@ -453,13 +453,15 @@
                 ></el-progress>
                 <div class="ml-4">
                   <div>
-                    {{ $t('dfs_order_list_total_space') }} ：<span>{{ item.spec.storageSize }} GB</span>
+                    {{ $t('dfs_order_list_total_space') }} ：<span
+                      >{{ (item.spec && item.spec.storageSize) || '-' }} GB</span
+                    >
                   </div>
                   <div>
-                    {{ $t('dfs_order_list_used_space') }} ：<span>{{ item.dataSizeLabel }} GB</span>
+                    {{ $t('dfs_order_list_used_space') }} ：<span>{{ item.dataSizeLabel || '-' }} GB</span>
                   </div>
                   <div>
-                    {{ $t('dfs_order_list_remaining_space') }} ：<span>{{ item.dataSizeLast }} GB</span>
+                    {{ $t('dfs_order_list_remaining_space') }} ：<span>{{ item.dataSizeLast || '-' }} GB</span>
                   </div>
                 </div>
               </div>
@@ -871,10 +873,12 @@ export default {
           item.deploymentTypeLabel = this.agentTypeMap[item.deploymentType]
           let num = Number(item?.dataSize) || 0
           // 字节转G
-          let size = Math.min(item.storageSize, num / 1073741824).toFixed(2)
-          item.percentage = Math.round((size / item.storageSize).toFixed(1) * 100)
-          item.dataSizeLast = (item.storageSize - size).toFixed(2)
-          item.dataSizeLabel = size
+          if (item.spec?.storageSize) {
+            let size = Math.min(item.storageSize, num / 1073741824).toFixed(2)
+            item.percentage = Math.round((size / item.storageSize).toFixed(1) * 100)
+            item.dataSizeLast = (item.storageSize - size).toFixed(2)
+            item.dataSizeLabel = size
+          }
           return item
         })
       })
