@@ -94,12 +94,12 @@
                     ></StatusTag>
                   </template>
                   <template #operation="{ row }">
-                    <!--                    <ElButton-->
-                    <!--                      :disabled="disableUnsubscribe(row) || ['incomplete'].includes(item.status)"-->
-                    <!--                      type="text"-->
-                    <!--                      @click="openUnsubscribe(item, row.productType)"-->
-                    <!--                      >{{ $t('public_button_unsubscribe') }}</ElButton-->
-                    <!--                    >-->
+                    <ElButton
+                      :disabled="disableUnsubscribe(row) || ['incomplete'].includes(item.status)"
+                      type="text"
+                      @click="openUnsubscribe(item, row.productType)"
+                      >{{ $t('public_button_unsubscribe') }}</ElButton
+                    >
                     <ElButton
                       v-if="
                         !disableUnsubscribe(row) && ['active'].includes(item.status) && row.productType === 'Engine'
