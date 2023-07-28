@@ -10,7 +10,7 @@
       />
       <el-form label-position="top" ref="ruleForm">
         <ElFormItem v-if="agentList.length > 0">
-          <div slot="label" class="font-color-dark">{{ $t('dfs_change_instance_change_object') }}</div>
+          <div slot="label" class="font-color-dark">{{ $t('dfs_change_instance_object') }}</div>
           <div class="border rounded-lg overflow-hidden">
             <VTable
               ref="table"
