@@ -207,6 +207,7 @@ export default {
           : paidPrice.filter(item => {
               const { cpu, memory } = item.spec
               return (
+                item.chargeProvider !== 'FreeTier' &&
                 (cpu > currentSpec.cpu || (cpu === currentSpec.cpu && memory > currentSpec.memory)) &&
                 this.currentRow?.subscribeType === item.type &&
                 this.currentRow?.periodUnit === item.periodUnit

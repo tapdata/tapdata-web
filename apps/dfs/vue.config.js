@@ -94,6 +94,7 @@ module.exports = {
       SERVE_ENV === 'PROD'
         ? prodProxyConfig
         : {
+            '/config/': proxy,
             '/private_ask/': proxy,
             '/api/tcm/': proxy,
             '/api/gw/': proxy,
