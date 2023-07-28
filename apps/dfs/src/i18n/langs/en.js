@@ -1712,5 +1712,12 @@ export default {
   dfs_instance_pay_wait_step_title: 'Progress Display',
   dfs_instance_pay_wait_submit: 'Submit Payment',
   dfs_instance_pay_wait: 'Payment Pending',
-  dfs_the_header_header_jiaruSla: 'Join Slack'
+  dfs_the_header_header_jiaruSla: 'Join Slack',
+  dfs_change_instance_title: 'Change Instance Size',
+  dfs_change_instance_tip:
+    'Spec changes support only upgrading from smaller to larger specifications. To downgrade from a larger spec to a smaller one, please unsubscribe and re-subscribe.',
+  dfs_change_instance_object: '变更对象',
+  dfs_change_instance_price: 'Price',
+  dfs_change_instance_submit: 'Submit',
+  dfs_select_server_type: 'Please select your server type'
 }

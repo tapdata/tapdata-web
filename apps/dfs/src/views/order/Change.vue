@@ -1,16 +1,16 @@
 <template>
-  <ElDialog v-if="visible" :visible.sync="visible" title="变更实例规格" width="60%">
+  <ElDialog v-if="visible" :visible.sync="visible" :title="$t('dfs_change_instance_title')" width="60%">
     <section class="change-container mt-n4">
       <el-alert
         class="alert-primary mb-4 text-primary"
         type="info"
-        title="规格变更仅支持由小规格向大规格变更，如需将大规格变更为小规格，请先退订后再重新订购。"
+        :title="$t('dfs_change_instance_tip')"
         show-icon
         :closable="false"
       />
       <el-form label-position="top" ref="ruleForm">
         <ElFormItem v-if="agentList.length > 0">
-          <div slot="label" class="font-color-dark">变更对象</div>
+          <div slot="label" class="font-color-dark">{{ $t('dfs_change_instance_change_object') }}</div>
           <div class="border rounded-lg overflow-hidden">
             <VTable
               ref="table"
@@ -100,11 +100,13 @@
     </section>
     <span slot="footer" class="dialog-footer">
       <span class="mr-4"
-        ><span class="fs-6 font-color-dark font-weight-light">变更金额：</span
+        ><span class="fs-6 font-color-dark font-weight-light">{{ $t('dfs_change_instance_price') }}：</span
         ><span class="color-primary fs-4"> {{ formatPrice(currency) }}</span></span
       >
       <el-button @click="visible = false">{{ $t('public_button_cancel') }}</el-button>
-      <el-button type="primary" :loading="loadingCancelSubmit" @click="submit">提交变更</el-button>
+      <el-button type="primary" :loading="loadingCancelSubmit" @click="submit">{{
+        $t('dfs_change_instance_submit')
+      }}</el-button>
     </span>
   </ElDialog>
 </template>

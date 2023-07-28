@@ -85,7 +85,7 @@ export default {
         >{{ $t('dfs_components_taskalarmtour_deployment_zixun') }}</el-link
       >
     </div>
-    <div class="fw-sub font-color-dark mt-4">{{ $t('dfs_components_taskalarmtour_deployment_anpai') }}</div>
+    <div class="fw-sub font-color-dark mt-4">{{ $t('dfs_select_server_type') }}</div>
     <ElRadioGroup v-model="downLoadType" class="flex gap-4 mt-4 mb-4">
       <ElRadio
         v-for="(item, index) in downType"
