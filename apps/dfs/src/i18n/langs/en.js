@@ -1496,9 +1496,9 @@ export default {
   dfs_instance_instance_tuidingyuanyin: 'Reason for unsubscribing',
   dfs_instance_instance_tuidingshili: 'Unsubscribe Instance',
   dfs_instance_instance_qingzixihedui:
-    '3. Please carefully check the unsubscribed instance information, and confirm the unsubscribed rules and unsubscribed amount. Once the instance is unsubscribed, it cannot be restored. ',
+    '2. Please carefully check the unsubscribed instance information, and confirm the unsubscribed rules and unsubscribed amount. Once the instance is unsubscribed, it cannot be restored. ',
   dfs_instance_instance_tuidingzhituihuan:
-    '2. Only the actual paid amount will be refunded when unsubscribing, and the used coupons will not be refunded. ',
+    '1. Only the actual paid amount will be refunded when unsubscribing, and the used coupons will not be refunded. ',
   dfs_instance_instance_tuidingjineji: '1. Please check the calculation formula of unsubscribe amount',
   dfs_instance_instance_tuifeiguize: 'Description of refund rules',
   dfs_agent_subscription_discount: '{val}% off',
@@ -1712,5 +1712,12 @@ export default {
   dfs_instance_pay_wait_step_title: 'Progress Display',
   dfs_instance_pay_wait_submit: 'Submit Payment',
   dfs_instance_pay_wait: 'Payment Pending',
-  dfs_the_header_header_jiaruSla: 'Join Slack'
+  dfs_the_header_header_jiaruSla: 'Join Slack',
+  dfs_change_instance_title: 'Change Instance Size',
+  dfs_change_instance_tip:
+    'Spec changes support only upgrading from smaller to larger specifications. To downgrade from a larger spec to a smaller one, please unsubscribe and re-subscribe.',
+  dfs_change_instance_object: '变更对象',
+  dfs_change_instance_price: 'Price',
+  dfs_change_instance_submit: 'Submit',
+  dfs_select_server_type: 'Please select your server type'
 }

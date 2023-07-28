@@ -1355,8 +1355,8 @@ export default {
   dfs_instance_instance_peizhixuanxiangcuo: '配置選項錯誤',
   dfs_instance_instance_tuidingyuanyin: '退訂原因',
   dfs_instance_instance_tuidingshili: '退訂實例',
-  dfs_instance_instance_qingzixihedui: '3.請仔細核對退訂實例的信息，並確認退訂規則和退訂金額，實例一經退訂無法恢復。 ',
-  dfs_instance_instance_tuidingzhituihuan: '2.退訂只退還實付金額的部分，已使用優惠卷不退還。 ',
+  dfs_instance_instance_qingzixihedui: '2. 請仔細核對退訂實例的信息，並確認退訂規則和退訂金額，實例一經退訂無法恢復。 ',
+  dfs_instance_instance_tuidingzhituihuan: '1. 退訂只退還實付金額的部分，已使用優惠卷不退還。 ',
   dfs_instance_instance_tuidingjineji: '1.退訂金額計算公式請查看',
   dfs_instance_instance_tuifeiguize: '退費規則說明',
   dfs_agent_subscription_discount: '{val}折',
@@ -1559,5 +1559,11 @@ export default {
   dfs_instance_pay_wait_step_title: '進度展示',
   dfs_instance_pay_wait_submit: '提交支付',
   dfs_instance_pay_wait: '等待支付',
-  dfs_the_header_header_jiaruSla: '加入Slack'
+  dfs_the_header_header_jiaruSla: '加入Slack',
+  dfs_change_instance_title: '變更實例規格',
+  dfs_change_instance_tip: '規格變更僅支持由小規格向大規格變更，如需將大規格變更為小規格，請先退訂後再重新訂購。',
+  dfs_change_instance_object: '變更對象',
+  dfs_change_instance_price: '變更金額',
+  dfs_change_instance_submit: '提交變更',
+  dfs_select_server_type: '請選擇您的伺服器類型'
 }

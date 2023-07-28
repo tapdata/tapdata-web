@@ -1385,8 +1385,8 @@ export default {
   dfs_instance_instance_peizhixuanxiangcuo: '配置选项错误',
   dfs_instance_instance_tuidingyuanyin: '退订原因',
   dfs_instance_instance_tuidingshili: '退订实例',
-  dfs_instance_instance_qingzixihedui: '3.请仔细核对退订实例的信息，并确认退订规则和退订金额，实例一经退订无法恢复。',
-  dfs_instance_instance_tuidingzhituihuan: '2.退订只退还实付金额的部分，已使用优惠卷不退还。',
+  dfs_instance_instance_qingzixihedui: '2. 请仔细核对退订实例的信息，并确认退订规则和退订金额，实例一经退订无法恢复。',
+  dfs_instance_instance_tuidingzhituihuan: '1. 退订只退还实付金额的部分，已使用优惠卷不退还。',
   dfs_instance_instance_tuidingjineji: '1.退订金额计算公式请查看',
   dfs_instance_instance_tuifeiguize: '退费规则说明',
   dfs_agent_subscription_discount: '{val}折',
@@ -1588,5 +1588,11 @@ export default {
   dfs_instance_pay_wait_step_title: '进度展示',
   dfs_instance_pay_wait_submit: '提交支付',
   dfs_instance_pay_wait: '等待支付',
-  dfs_the_header_header_jiaruSla: '加入Slack'
+  dfs_the_header_header_jiaruSla: '加入Slack',
+  dfs_change_instance_title: '变更实例规格',
+  dfs_change_instance_tip: '规格变更仅支持由小规格向大规格变更，如需将大规格变更为小规格，请先退订后再重新订购。',
+  dfs_change_instance_object: '变更对象',
+  dfs_change_instance_price: '变更金额',
+  dfs_change_instance_submit: '提交变更',
+  dfs_select_server_type: '请选择您的服务器类型'
 }
