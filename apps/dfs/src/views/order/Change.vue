@@ -1,25 +1,69 @@
 <template>
   <ElDialog v-if="visible" :visible.sync="visible" title="变更实例规格" width="60%">
-    <section>
-      <ul class="subscription-ul">
-        <li class="mt-2">1.规格变更仅支持由小规格向大规格变更</li>
-        <li class="mt-2">2.如需将大规格变更为小规格，请先退订后再重新订购。</li>
-      </ul>
-      <div class="mt-4 fs-6 font-color-dark">变更对象</div>
-      <div v-if="agentList.length > 0">
-        <VTable
-          ref="table"
-          row-key="id"
-          :columns="paidDetailColumns"
-          :data="agentList"
-          height="100%"
-          :has-pagination="false"
-          class="mt-4 mb-4"
-        ></VTable>
-      </div>
+    <section class="change-container mt-n4">
+      <el-alert
+        class="alert-primary mb-4 text-primary"
+        type="info"
+        title="规格变更仅支持由小规格向大规格变更，如需将大规格变更为小规格，请先退订后再重新订购。"
+        show-icon
+        :closable="false"
+      />
       <el-form label-position="top" ref="ruleForm">
+        <ElFormItem v-if="agentList.length > 0">
+          <div slot="label" class="font-color-dark">变更对象</div>
+          <div class="border rounded-lg overflow-hidden">
+            <VTable
+              ref="table"
+              row-key="id"
+              :columns="paidDetailColumns"
+              :data="agentList"
+              :has-pagination="false"
+            ></VTable>
+          </div>
+        </ElFormItem>
+        <!--选择规格-->
+        <ElFormItem>
+          <div slot="label" class="font-color-dark">
+            {{ $t('dfs_guide_index_xuanzejisuanyin') }}
+          </div>
+          <el-row type="flex" class="flex-wrap lh-base" :gutter="16" style="row-gap: 16px">
+            <el-col :span="12" v-for="(item, i) in specificationItems" :key="i">
+              <div
+                class="position-relative px-4 py-2 cursor-pointer active-group rounded-lg overflow-hidden border"
+                :class="{
+                  active: specification === item.value
+                }"
+                @click="changeSpec(item.value)"
+              >
+                <div class="is-active position-absolute top-0 end-0">
+                  <div class="is-active-triangle"></div>
+                  <VIcon size="16" class="is-active-icon">check-bold</VIcon>
+                </div>
+                <div class="spec-li-title lh-base fw-bold font-color-dark">
+                  <span class="align-middle">{{ item.name }}: {{ item.desc }}</span>
+                  <ElTag
+                    v-if="item.chargeProvider === 'FreeTier'"
+                    size="small"
+                    class="bg-color-warning text-white border-0 ml-2"
+                    >{{
+                      platform === 'selfHost'
+                        ? $t('dfs_instance_instance_mianfei')
+                        : $t('dfs_instance_createagent_mianfeitiyan')
+                    }}</ElTag
+                  >
+                </div>
+                <div
+                  v-if="platform === 'selfHost'"
+                  class="spec-li-title mt-1 lh-base font-color-sslight"
+                  v-html="$t('dfs_agent_specification_description', updateAgentCap(item.cpu, item.memory))"
+                ></div>
+              </div>
+            </el-col>
+          </el-row>
+        </ElFormItem>
         <!--订阅方式-->
-        <ElFormItem :label="$t('dfs_instance_instance_dingyuefangshi')" v-if="currentRow.subscribeType === 'FreeTier'">
+        <ElFormItem v-if="isFree">
+          <div slot="label" class="font-color-dark">{{ $t('dfs_instance_instance_dingyuefangshi') }}</div>
           <ElRadioGroup v-model="currentPackage" @input="handleChange" class="flex flex-wrap gap-4">
             <ElRadio
               v-for="(item, index) in packageItems"
@@ -40,7 +84,7 @@
             </ElRadio>
           </ElRadioGroup>
         </ElFormItem>
-        <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu')">
+        <!--        <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu')">
           <ElSelect v-model="specification" @change="changeSpec" class="w-50 rounded-4">
             <ElOption v-for="(item, i) in specificationItems" :key="i" :label="item.name" :value="item.value">
               <span>{{ item.name }}: </span>
@@ -51,7 +95,7 @@
               ></div>
             </ElOption>
           </ElSelect>
-        </ElFormItem>
+        </ElFormItem>-->
       </el-form>
     </section>
     <span slot="footer" class="dialog-footer">
@@ -60,7 +104,7 @@
         ><span class="color-primary fs-4"> {{ formatPrice(currency) }}</span></span
       >
       <el-button @click="visible = false">{{ $t('public_button_cancel') }}</el-button>
-      <el-button type="primary" :loading="loadingCancelSubmit" @click="cancelSubmit">提交申请</el-button>
+      <el-button type="primary" :loading="loadingCancelSubmit" @click="submit">提交变更</el-button>
     </span>
   </ElDialog>
 </template>
@@ -110,10 +154,14 @@ export default {
       specificationItems: [],
       packageItems: [],
       agent: '',
-      currentPackage: ''
+      currentPackage: '',
+      platform: ''
     }
   },
   computed: {
+    isFree() {
+      return !this.currentRow.totalAmount || this.currentRow.subscribeType === 'FreeTier'
+    },
     singleMonth() {
       return this.packageItems.find(item => item.type === 'one_time' && item.periodUnit === 'month')
     },
@@ -142,6 +190,7 @@ export default {
       this.currentRow = item
       this.agent = agent
       this.currencyType = item.currency
+      this.platform = item.platform
       this.getPrice(agent, agent?.agentType)
     },
     //查询规格价格
@@ -168,10 +217,9 @@ export default {
         this.specificationItems = uniqBy(
           paidPrice.map(t => {
             const { cpu = 0, memory = 0 } = t.spec || {}
-            let desc =
-              i18n.t('dfs_agent_download_subscriptionmodeldialog_renwushujianyi') +
-              this.getSuggestPipelineNumber(cpu, memory) +
-              i18n.t('dfs_agent_download_subscriptionmodeldialog_ge')
+            let desc = i18n.t('dfs_agent_download_subscriptionmodeldialog_renwushujianyi', {
+              val: this.getSuggestPipelineNumber(cpu, memory)
+            })
             if (t.chargeProvider == 'FreeTier') {
               desc = i18n.t('dfs_agent_download_subscriptionmodeldialog_mianfeishilizui')
             }
@@ -228,7 +276,7 @@ export default {
       const specificationLabel = this.specificationItems.find(t => t.value === this.specification)?.name
       this.currentSpecName = specificationLabel
       this.packageItems = this.allPackages
-        .filter(t => this.specification === t.specification)
+        .filter(it => this.specification === it.specification && !(it.type === 'one_time' && it.periodUnit === 'year'))
         .map(t => {
           return Object.assign(t, {
             desc: i18n.t('dfs_instance_create_bencidinggouzhi', {
@@ -327,8 +375,8 @@ export default {
       }
       this.currencyOption = options
     },
-    //退订
-    cancelSubmit() {
+
+    submit() {
       let { id, paymentMethod, currency, subscribeType, periodUnit } = this.currentRow
       let { resourceId } = this.agent
       const {
@@ -340,7 +388,7 @@ export default {
         specification
       } = this.selected
 
-      if (subscribeType === 'FreeTier') {
+      if (this.isFree) {
         subscribeType = type
         periodUnit = selectPeriodUnit
         currency = window.__config__?.currencyType || selectCurrency
@@ -374,7 +422,6 @@ export default {
           this.$message.success(this.$t('public_message_operation_success'))
           this.visible = false
           this.loadingCancelSubmit = false
-          //刷新页面
           this.$emit('closeVisible')
           this.$router.push({
             name: 'pay',
@@ -435,5 +482,52 @@ export default {
 .subscription-radio.el-radio {
   padding: 0 12px;
   line-height: 30px;
+}
+
+.active-group {
+  .is-active {
+    display: none;
+  }
+  &.active {
+    $primary: map-get($color, primary);
+    border-color: $primary !important;
+    box-shadow: 0 2px 16px rgba(44, 101, 255, 0.2);
+    .is-active {
+      display: block;
+      &-triangle {
+        width: 0;
+        height: 0;
+        border-top: 18px solid $primary;
+        border-left: 18px solid transparent;
+        border-bottom: 18px solid transparent;
+        border-right: 18px solid $primary;
+      }
+      &-icon {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        color: #fff;
+      }
+    }
+  }
+}
+
+.alert-primary {
+  background: #e8f3ff;
+}
+
+.change-container {
+  ::v-deep {
+    .el-form-item {
+      margin-bottom: 20px;
+      &:last-child {
+        margin-bottom: 16px;
+      }
+      .el-form-item__label {
+        line-height: 22px;
+        padding-bottom: 8px;
+      }
+    }
+  }
 }
 </style>
