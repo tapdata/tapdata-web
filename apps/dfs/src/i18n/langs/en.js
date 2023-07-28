@@ -1496,9 +1496,9 @@ export default {
   dfs_instance_instance_tuidingyuanyin: 'Reason for unsubscribing',
   dfs_instance_instance_tuidingshili: 'Unsubscribe Instance',
   dfs_instance_instance_qingzixihedui:
-    '3. Please carefully check the unsubscribed instance information, and confirm the unsubscribed rules and unsubscribed amount. Once the instance is unsubscribed, it cannot be restored. ',
+    '2. Please carefully check the unsubscribed instance information, and confirm the unsubscribed rules and unsubscribed amount. Once the instance is unsubscribed, it cannot be restored. ',
   dfs_instance_instance_tuidingzhituihuan:
-    '2. Only the actual paid amount will be refunded when unsubscribing, and the used coupons will not be refunded. ',
+    '1. Only the actual paid amount will be refunded when unsubscribing, and the used coupons will not be refunded. ',
   dfs_instance_instance_tuidingjineji: '1. Please check the calculation formula of unsubscribe amount',
   dfs_instance_instance_tuifeiguize: 'Description of refund rules',
   dfs_agent_subscription_discount: '{val}% off',
