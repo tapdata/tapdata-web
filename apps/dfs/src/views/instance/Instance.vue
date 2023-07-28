@@ -126,7 +126,7 @@
                     <ElLink
                       type="primary"
                       :disabled="(item.metric && item.metric.runningTask ? item.metric.runningTask.Sync || 0 : 0) < 1"
-                      @click="toDataFlow(item.tmInfo.agentId)"
+                      @click="toDataFlow(item.tmInfo.agentId, 'dataflowList')"
                       >{{ item[col.value] }}</ElLink
                     >
                   </span>
