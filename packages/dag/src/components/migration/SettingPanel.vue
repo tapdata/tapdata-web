@@ -633,7 +633,7 @@ export default observer({
                     default: [
                       {
                         type: 'TASK',
-                        open: true,
+                        open: isDaas,
                         key: 'TASK_STATUS_ERROR',
                         sort: 1,
                         notify: ['SYSTEM', 'EMAIL'],
@@ -642,7 +642,7 @@ export default observer({
                       },
                       {
                         type: 'TASK',
-                        open: true,
+                        open: isDaas,
                         key: 'TASK_FULL_COMPLETE',
                         sort: 3,
                         notify: ['SYSTEM'],
@@ -651,7 +651,7 @@ export default observer({
                       },
                       {
                         type: 'TASK',
-                        open: true,
+                        open: isDaas,
                         key: 'TASK_INCREMENT_START',
                         sort: 4,
                         notify: ['SYSTEM', 'EMAIL'],
@@ -660,7 +660,7 @@ export default observer({
                       },
                       {
                         type: 'TASK',
-                        open: true,
+                        open: isDaas,
                         key: 'TASK_INCREMENT_DELAY',
                         sort: 6,
                         notify: ['SYSTEM', 'EMAIL'],
