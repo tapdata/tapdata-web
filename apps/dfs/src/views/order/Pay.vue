@@ -278,7 +278,14 @@ export default {
       this.payForm.successUrl =
         subscribe.platform === 'fullManagement'
           ? location.origin + location.pathname + agentUrl.href
-          : location.origin + location.pathname + fastDownloadUrl.href
+          : location.origin +
+            location.pathname +
+            this.$router.resolve({
+              name: 'installAgent',
+              params: {
+                id: subscribeItems[0].resourceId
+              }
+            }).href
       this.payForm.cancelUrl = location.href
     },
 

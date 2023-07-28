@@ -149,6 +149,15 @@ const routes = [
             meta: {
               title: 'tap_instance_details'
             }
+          },
+          {
+            path: 'install/:id',
+            name: 'installAgent',
+            component: () => import(/* webpackChunkName: "instance-details" */ '../views/instance/Install'),
+            meta: {
+              title: '部署计算引擎',
+              hideTitle: true
+            }
           }
         ]
       },

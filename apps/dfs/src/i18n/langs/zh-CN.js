@@ -233,7 +233,7 @@ export default {
   agent_deploy_start_install: '开始安装',
   agent_deploy_start_install_button_copy: '复制',
   agent_deploy_start_install_button_copied: '已复制',
-  agent_deploy_start_install_windows_first: '1.点击',
+  agent_deploy_start_install_windows_first: '1. 点击',
   agent_deploy_start_install_windows_first_download: '下载Tapdata Agent',
   agent_deploy_start_install_windows_second: '2.将tapdata.exe放入您要安装的目录，安装路径不能有中文和特殊字符。',
   agent_deploy_start_install_windows_third: '3.双击执行tapdata.exe开始安装。',
@@ -1589,5 +1589,8 @@ export default {
   dfs_instance_pay_wait_submit: '提交支付',
   dfs_instance_pay_wait: '等待支付',
   dfs_the_header_header_jiaruSla: '加入Slack',
-  dfs_agent_information: '引擎信息'
+  dfs_agent_information: '引擎信息',
+  dfs_agent_download_type: '请选择您的服务器类型',
+  dfs_agent_deploy_success: '部署完成',
+  dfs_agent_deploy_success_subtitle: '引擎部署完成，5秒后自动返回资源管理页面'
 }
