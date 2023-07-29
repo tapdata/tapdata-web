@@ -1563,7 +1563,7 @@ export default {
   dfs_change_instance_title: '變更實例規格',
   dfs_change_instance_tip: '規格變更僅支持由小規格向大規格變更，如需將大規格變更為小規格，請先退訂後再重新訂購。',
   dfs_change_instance_object: '變更對象',
-  dfs_change_instance_price: '變更金額',
+  dfs_change_instance_price: '訂閱價格',
   dfs_change_instance_submit: '提交變更',
   dfs_select_server_type: '請選擇您的伺服器類型'
 }

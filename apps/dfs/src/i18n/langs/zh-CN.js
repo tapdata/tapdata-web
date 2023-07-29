@@ -1592,7 +1592,7 @@ export default {
   dfs_change_instance_title: '变更实例规格',
   dfs_change_instance_tip: '规格变更仅支持由小规格向大规格变更，如需将大规格变更为小规格，请先退订后再重新订购。',
   dfs_change_instance_object: '变更对象',
-  dfs_change_instance_price: '变更金额',
+  dfs_change_instance_price: '订阅价格',
   dfs_change_instance_submit: '提交变更',
   dfs_select_server_type: '请选择您的服务器类型'
 }

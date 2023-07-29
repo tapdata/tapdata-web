@@ -1716,7 +1716,7 @@ export default {
   dfs_change_instance_title: 'Change Instance Size',
   dfs_change_instance_tip:
     'Spec changes support only upgrading from smaller to larger specifications. To downgrade from a larger spec to a smaller one, please unsubscribe and re-subscribe.',
-  dfs_change_instance_object: '变更对象',
+  dfs_change_instance_object: 'Instance Object',
   dfs_change_instance_price: 'Price',
   dfs_change_instance_submit: 'Submit',
   dfs_select_server_type: 'Please select your server type'
