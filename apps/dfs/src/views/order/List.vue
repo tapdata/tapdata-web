@@ -104,6 +104,7 @@
                       v-if="
                         !disableUnsubscribe(row) && ['active'].includes(item.status) && row.productType === 'Engine'
                       "
+                      :disabled="!row.amount && row.agentType === 'Cloud'"
                       type="text"
                       @click="openChangeSubscribe(item)"
                       >变更</ElButton
