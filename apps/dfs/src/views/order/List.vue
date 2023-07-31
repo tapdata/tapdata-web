@@ -47,9 +47,9 @@
                   <ElButton v-if="['incomplete'].includes(item.status)" type="text" @click="handlePay(item)">{{
                     $t('public_button_pay')
                   }}</ElButton>
-                  <ElButton v-if="['active'].includes(item.status)" type="text" @click="goOpenChange(item)"
-                    >变更记录</ElButton
-                  >
+                  <ElButton v-if="['active'].includes(item.status)" type="text" @click="goOpenChange(item)">{{
+                    $t('dfs_change_instance_list')
+                  }}</ElButton>
 
                   <!--                  <el-divider direction="vertical"></el-divider>-->
                   <!--                  <ElButton-->
@@ -107,7 +107,7 @@
                       :disabled="!row.amount && row.agentType === 'Cloud'"
                       type="text"
                       @click="openChangeSubscribe(item)"
-                      >变更</ElButton
+                      >{{ $t('dfs_change_instance_btn') }}</ElButton
                     >
                   </template>
                 </VTable>

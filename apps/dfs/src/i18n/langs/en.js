@@ -1719,5 +1719,7 @@ export default {
   dfs_change_instance_object: 'Instance Object',
   dfs_change_instance_price: 'Price',
   dfs_change_instance_submit: 'Submit',
-  dfs_select_server_type: 'Please select your server type'
+  dfs_select_server_type: 'Please select your server type',
+  dfs_change_instance_btn: 'Change',
+  dfs_change_instance_list: 'Change List'
 }

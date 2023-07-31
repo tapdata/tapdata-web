@@ -1594,5 +1594,7 @@ export default {
   dfs_change_instance_object: '变更对象',
   dfs_change_instance_price: '订阅价格',
   dfs_change_instance_submit: '提交变更',
-  dfs_select_server_type: '请选择您的服务器类型'
+  dfs_select_server_type: '请选择您的服务器类型',
+  dfs_change_instance_btn: '变更',
+  dfs_change_instance_list: '变更记录'
 }
