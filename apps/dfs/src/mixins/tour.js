@@ -227,9 +227,6 @@ export default {
         },
         onHighlightStarted: (element, step, options) => {
           element?.addEventListener('click', step.elementClick)
-          if (!element) {
-            step.elementClick()
-          }
         },
         onDeselected: (element, step, options) => {
           element?.removeEventListener('click', step.elementClick)
@@ -396,8 +393,14 @@ export default {
 
       const element = `#agent-${agent.id} [name="${agent.agentType === 'Cloud' ? 'restart' : 'start'}"]`
       let unwatch = this.$watch('$store.state.instanceLoading', loading => {
-        if (!loading && this.$route.name === 'Instance' && this.driverObj?.getActiveIndex() < 1) {
-          this.driverObj.moveNext()
+        if (
+          !loading &&
+          this.$route.name === 'Instance' &&
+          this.driverObj &&
+          !this.driverObj.getActiveIndex() &&
+          document.querySelector(element)
+        ) {
+          this.driverObj.drive(1)
         }
 
         if (!loading && !document.querySelector(element)) {
@@ -432,7 +435,17 @@ export default {
           this.enterAgentTour = true
         }
       })
-      this.driverObj.drive(steps[0].type === 'menu' && this.$route.name === steps[0].route ? 1 : 0)
+
+      let stepIndex = 0
+
+      if (steps[0].type === 'menu' && this.$route.name === steps[0].route) {
+        stepIndex = 1
+        if (!document.querySelector(element)) {
+          return
+        }
+      }
+
+      this.driverObj.drive(stepIndex)
     },
 
     async initTour() {
