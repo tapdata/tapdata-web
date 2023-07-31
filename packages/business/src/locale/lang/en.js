@@ -334,7 +334,7 @@ export default {
   packages_business_verification_details_jiaoyanzhong: 'Verifying',
   packages_business_verification_details_jiaoyan: 'Verify',
   packages_business_verification_details_qingshurubiaoming: 'Please enter the table name...',
-  packages_business_shared_const_gaojingzhong: 'Alarming',
+  packages_business_shared_const_gaojingzhong: 'Alerting',
   packages_business_shared_const_yihuifu: 'Recovered',
   packages_business_components_alert_yiguanbi: 'Closed',
   packages_business_components_alert_huifu: 'Recovery',
@@ -587,11 +587,11 @@ export default {
     'Warning: there was an error encountered during the validation task run.',
   packages_business_verification_form_jiaoyangaojing: 'Validation Warning',
   packages_business_verification_form_zanbuzhichi_doris: 'Doris is not supported yet.',
-  packages_business_verification_form_task_alarm: 'Verification task alarm',
-  packages_business_verification_form_task_alarm_when_error: 'Alarm when the verification task fails',
+  packages_business_verification_form_task_alarm: 'Verification task alert',
+  packages_business_verification_form_task_alarm_when_error: 'Alert when the verification task fails',
   packages_business_verification_form_task_alarm_when_diff_result_over_count1:
     'When the number of difference rows of the count verification result is greater than',
-  packages_business_verification_form_task_alarm_when_diff_result_over_count2: 'start alarm',
+  packages_business_verification_form_task_alarm_when_diff_result_over_count2: 'start alert',
   packages_business_verification_form_task_alarm_when_result_table_over_count1:
     'When the difference between the table data of the value verification result is greater than',
   packages_business_task_status_error_tip:
@@ -610,11 +610,11 @@ export default {
   packages_business_notify_email_notification: 'Email Notification',
   packages_business_notify_webchat_notification: 'WeChat Notification',
   packages_business_notify_system_notice: 'System Notification',
-  packages_business_notify_alarm_title: 'Agent Alarm Setting',
+  packages_business_notify_alarm_title: 'Agent Alert Setting',
   packages_business_setting_alarm_notification_notify_noticeInterval: 'Sending Interval',
   packages_business_notify_notice_level: 'Notice Level',
-  packages_business_setting_notification_alarm_notification_gaojingtongzhi: 'Alarm Notification',
-  packages_business_setting_alarmnotification_gaojingzhibiao: 'Alarm Indicator',
+  packages_business_setting_notification_alarm_notification_gaojingtongzhi: 'Alert Notification',
+  packages_business_setting_alarmnotification_gaojingzhibiao: 'Alert Indicator',
   packages_business_setting_alarmnotification_dangjiediandeping:
     'When the average processing time of the node exceeds the threshold',
   packages_business_setting_alarmnotification_dangshujuyuanjie:
@@ -633,7 +633,7 @@ export default {
   packages_business_setting_alarmnotification_dangrenwuyudao: 'When the task encounters an error',
   packages_business_setting_alarmnotification_dangrenwustop: 'When the Agent service stops',
   packages_business_setting_alarmnotification_dangrenwuuP: 'When the Agent service start',
-  packages_business_setting_alarmnotification_msshigaojing: 'Alarm when s',
+  packages_business_setting_alarmnotification_msshigaojing: 'Alert when s',
   packages_business_setting_alarmnotification_lianxu: 'Continuous',
   packages_business_setting_alarmnotification_dangjiaoyanrenwucuowu: 'When the verification task encounters an error',
   packages_business_setting_alarmnotification_dangjiaoyanrenwushuliangcuowu:
@@ -646,10 +646,10 @@ export default {
   packages_business_notify_mask_read_all: 'Mark All Read',
   packages_business_notify_no_notice: 'No notice yet',
   packages_business_setting_alarmnotification_cichugaojinggui:
-    'The alarm rule setting here is the system global alarm rule setting, and the priority of the alarm rule setting on the task running monitoring page is higher than the system global setting',
-  packages_business_setting_alarmnotification_renwumorengao: 'Task default alarm rule setting',
-  packages_business_setting_alarmnotification_morengaojinggui: 'Default Alarm Rule',
-  packages_business_setting_alarmnotification_renwugaojingshe: 'Task Alarm Setting',
+    'The alert rule setting here is the system global alert rule setting, and the priority of the alert rule setting on the task running monitoring page is higher than the system global setting',
+  packages_business_setting_alarmnotification_renwumorengao: 'Task default alert rule setting',
+  packages_business_setting_alarmnotification_morengaojinggui: 'Default Alert Rule',
+  packages_business_setting_alarmnotification_renwugaojingshe: 'Task Alert Setting',
   packages_business_notify_no_webchat_notification:
     'Your account is not currently linked to WeChat. To receive notification information through WeChat, please log out and log back in, then scan the code to complete the binding process via WeChat',
   packages_business_connections_databaseform_bujiazai: 'Not Loaded',

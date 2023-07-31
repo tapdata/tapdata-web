@@ -295,7 +295,7 @@ export default {
   connection_form_mq_broker_url: 'MQ连接串',
   // 任务
   task_manage: '任务管理',
-  task_manage_etl: '数据开发',
+  task_manage_etl: '数据转换',
   task_manage_desc: '表到表数据复制和迁移',
   task_manage_migrate_desc: '数据库到数据库的复制',
   task_manage_migrate: '数据复制',
@@ -1385,8 +1385,8 @@ export default {
   dfs_instance_instance_peizhixuanxiangcuo: '配置选项错误',
   dfs_instance_instance_tuidingyuanyin: '退订原因',
   dfs_instance_instance_tuidingshili: '退订实例',
-  dfs_instance_instance_qingzixihedui: '3.请仔细核对退订实例的信息，并确认退订规则和退订金额，实例一经退订无法恢复。',
-  dfs_instance_instance_tuidingzhituihuan: '2.退订只退还实付金额的部分，已使用优惠卷不退还。',
+  dfs_instance_instance_qingzixihedui: '2. 请仔细核对退订实例的信息，并确认退订规则和退订金额，实例一经退订无法恢复。',
+  dfs_instance_instance_tuidingzhituihuan: '1. 退订只退还实付金额的部分，已使用优惠卷不退还。',
   dfs_instance_instance_tuidingjineji: '1.退订金额计算公式请查看',
   dfs_instance_instance_tuifeiguize: '退费规则说明',
   dfs_agent_subscription_discount: '{val}折',
@@ -1592,5 +1592,11 @@ export default {
   dfs_agent_information: '引擎信息',
   dfs_agent_download_type: '请选择您的服务器类型',
   dfs_agent_deploy_success: '部署完成',
-  dfs_agent_deploy_success_subtitle: '引擎部署完成，5秒后自动返回资源管理页面'
+  dfs_agent_deploy_success_subtitle: '引擎部署完成，5秒后自动返回资源管理页面',
+  dfs_change_instance_title: '变更实例规格',
+  dfs_change_instance_tip: '规格变更仅支持由小规格向大规格变更，如需将大规格变更为小规格，请先退订后再重新订购。',
+  dfs_change_instance_object: '变更对象',
+  dfs_change_instance_price: '订阅价格',
+  dfs_change_instance_submit: '提交变更',
+  dfs_select_server_type: '请选择您的服务器类型'
 }

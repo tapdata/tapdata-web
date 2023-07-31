@@ -95,16 +95,17 @@
                     ></StatusTag>
                   </template>
                   <template #operation="{ row }">
-                    <!--                    <ElButton-->
-                    <!--                      :disabled="disableUnsubscribe(row) || ['incomplete'].includes(item.status)"-->
-                    <!--                      type="text"-->
-                    <!--                      @click="openUnsubscribe(item, row.productType)"-->
-                    <!--                      >{{ $t('public_button_unsubscribe') }}</ElButton-->
-                    <!--                    >-->
+                    <ElButton
+                      :disabled="disableUnsubscribe(row) || ['incomplete'].includes(item.status)"
+                      type="text"
+                      @click="openUnsubscribe(item, row.productType)"
+                      >{{ $t('public_button_unsubscribe') }}</ElButton
+                    >
                     <ElButton
                       v-if="
                         !disableUnsubscribe(row) && ['active'].includes(item.status) && row.productType === 'Engine'
                       "
+                      :disabled="!row.amount && row.agentType === 'Cloud'"
                       type="text"
                       @click="openChangeSubscribe(item)"
                       >变更</ElButton
@@ -455,7 +456,7 @@ export default {
         })
       })
     },
-    formatterTime(time, template = 'YYYY-MM-DD HH:mm:ss') {
+    formatterTime(time, template = 'YYYY-MM-DD') {
       return time ? dayjs(time).format(template) : '-'
     },
     formatterPrice(currency, price) {

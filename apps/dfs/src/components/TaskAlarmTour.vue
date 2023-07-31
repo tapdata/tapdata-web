@@ -1,6 +1,6 @@
 <template>
-  <ElDialog :visible.sync="visible" width="480px" :close-on-click-modal="false">
-    <span slot="title" class="fs-6 fw-sub font-color-dark">{{$t('dfs_alarm_setting_tour_title')}}</span>
+  <ElDialog :visible.sync="visible" width="480px" :close-on-click-modal="false" @close="cancel">
+    <span slot="title" class="fs-6 fw-sub font-color-dark">{{ $t('dfs_alarm_setting_tour_title') }}</span>
 
     <el-alert
       v-if="noEmail"
@@ -13,22 +13,26 @@
     <div class="flex gap-4 justify-content-between">
       <div class="rounded-4 bg-secondary-100 px-4 py-2 flex align-center gap-2">
         <VIcon size="24" class="text-primary">email</VIcon>
-        <span>{{$t('notify_email_notification').replace(' Notification', '')}}</span>
+        <span>{{ $t('notify_email_notification').replace(' Notification', '') }}</span>
       </div>
       <div class="rounded-4 bg-secondary-100 px-4 py-2 flex align-center gap-2">
         <VIcon size="24" class="text-primary">sms</VIcon>
-        <span>{{$t('notify_sms_notification').replace(' Notification', '')}}</span>
+        <span>{{ $t('notify_sms_notification').replace(' Notification', '') }}</span>
       </div>
       <div class="rounded-4 bg-secondary-100 px-4 py-2 flex align-center gap-2">
         <VIcon size="24">wechat</VIcon>
-        <span>{{$t('notify_webchat_notification').replace(' Notification', '')}}</span>
+        <span>{{ $t('notify_webchat_notification').replace(' Notification', '') }}</span>
       </div>
     </div>
 
     <div slot="footer">
       <el-button @click="cancel">{{ $t('public_button_cancel') }}</el-button>
-      <el-button v-if="noEmail" type="primary" @click="gotoBindEmail">{{$t('operation_log_List_bangDingYouXiang')}}</el-button>
-      <el-button v-else type="primary" @click="gotoSettings">{{$t('dfs_components_taskalarmtour_qushezhi')}}</el-button>
+      <el-button v-if="noEmail" type="primary" @click="gotoBindEmail">{{
+        $t('operation_log_List_bangDingYouXiang')
+      }}</el-button>
+      <el-button v-else type="primary" @click="gotoSettings">{{
+        $t('dfs_components_taskalarmtour_qushezhi')
+      }}</el-button>
     </div>
   </ElDialog>
 </template>

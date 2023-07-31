@@ -115,9 +115,7 @@
                   <span v-if="col.value === 'runningTaskMigrate'" class="font-color-dark">
                     <ElLink
                       type="primary"
-                      :disabled="
-                        (item.metric && item.metric.runningTask ? item.metric.runningTask.migrate || 0 : 0) < 1
-                      "
+                      :disabled="!item.tmInfo.agentId || !item[col.value]"
                       @click="toDataFlow(item.tmInfo.agentId)"
                       >{{ item[col.value] }}</ElLink
                     >
@@ -125,8 +123,8 @@
                   <span v-else-if="col.value === 'runningTaskSync'" class="font-color-dark">
                     <ElLink
                       type="primary"
-                      :disabled="(item.metric && item.metric.runningTask ? item.metric.runningTask.Sync || 0 : 0) < 1"
-                      @click="toDataFlow(item.tmInfo.agentId)"
+                      :disabled="!item.tmInfo.agentId || !item[col.value]"
+                      @click="toDataFlow(item.tmInfo.agentId, 'dataflowList')"
                       >{{ item[col.value] }}</ElLink
                     >
                   </span>
@@ -453,13 +451,15 @@
                 ></el-progress>
                 <div class="ml-4">
                   <div>
-                    {{ $t('dfs_order_list_total_space') }} ：<span>{{ item.spec.storageSize }} GB</span>
+                    {{ $t('dfs_order_list_total_space') }} ：<span
+                      >{{ (item.spec && item.spec.storageSize) || '-' }} GB</span
+                    >
                   </div>
                   <div>
-                    {{ $t('dfs_order_list_used_space') }} ：<span>{{ item.dataSizeLabel }} GB</span>
+                    {{ $t('dfs_order_list_used_space') }} ：<span>{{ item.dataSizeLabel || '-' }} GB</span>
                   </div>
                   <div>
-                    {{ $t('dfs_order_list_remaining_space') }} ：<span>{{ item.dataSizeLast }} GB</span>
+                    {{ $t('dfs_order_list_remaining_space') }} ：<span>{{ item.dataSizeLast || '-' }} GB</span>
                   </div>
                 </div>
               </div>
@@ -857,26 +857,30 @@ export default {
     specRemoteMethod() {
       this.$axios.get('api/tcm/mdb').then(data => {
         const items = data.items || []
-        this.mdbData = items.map(item => {
-          const { subscribeDto = {} } = item.orderInfo
-          const { endAt } = subscribeDto || {}
+        this.mdbData = items
+          .filter(t => !(t.deploymentType == 'Local' && t.scope === 'Private'))
+          .map(item => {
+            const { subscribeDto = {} } = item.orderInfo
+            const { endAt } = subscribeDto || {}
 
-          item.expiredTimeLabel = endAt ? dayjs(endAt).format('YY-MM-DD  HH:mm:ss') : '-'
-          item.scopeLabel = this.scopeMap[item.scope]
-          item.specLabel = getSpec(item.spec) || '-'
-          item.providerName = item.providerName || '-'
-          item.regionName = item.regionName || '-'
-          item.serviceProvider = item.serviceProvider || '-'
-          item.storageSize = item.spec?.storageSize || '-'
-          item.deploymentTypeLabel = this.agentTypeMap[item.deploymentType]
-          let num = Number(item?.dataSize) || 0
-          // 字节转G
-          let size = Math.min(item.storageSize, num / 1073741824).toFixed(2)
-          item.percentage = Math.round((size / item.storageSize).toFixed(1) * 100)
-          item.dataSizeLast = (item.storageSize - size).toFixed(2)
-          item.dataSizeLabel = size
-          return item
-        })
+            item.expiredTimeLabel = endAt ? dayjs(endAt).format('YY-MM-DD  HH:mm:ss') : '-'
+            item.scopeLabel = this.scopeMap[item.scope]
+            item.specLabel = getSpec(item.spec) || '-'
+            item.providerName = item.providerName || '-'
+            item.regionName = item.regionName || '-'
+            item.serviceProvider = item.serviceProvider || '-'
+            item.storageSize = item.spec?.storageSize || '-'
+            item.deploymentTypeLabel = this.agentTypeMap[item.deploymentType]
+            let num = Number(item?.dataSize) || 0
+            // 字节转G
+            if (item.spec?.storageSize) {
+              let size = Math.min(item.storageSize, num / 1073741824).toFixed(2)
+              item.percentage = Math.round((size / item.storageSize).toFixed(1) * 100)
+              item.dataSizeLast = (item.storageSize - size).toFixed(2)
+              item.dataSizeLabel = size
+            }
+            return item
+          })
       })
     },
     getFilterItems() {

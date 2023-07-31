@@ -281,11 +281,14 @@ export default {
         }
       })
 
-      return {
+      let opt = {
         x: time,
         name: [i18n.t('public_time_input'), i18n.t('public_time_output')],
-        value: [qps || inputQps, qps || outputQps],
-        markLine: [
+        value: [qps || inputQps, qps || outputQps]
+      }
+
+      if (this.dataflow.type === 'initial_sync+cdc') {
+        opt.markLine = [
           {
             data: [
               {
@@ -301,6 +304,8 @@ export default {
           }
         ]
       }
+
+      return opt
     },
 
     delayLineTitle() {

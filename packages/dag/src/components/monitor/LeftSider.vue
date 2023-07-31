@@ -424,11 +424,15 @@ export default {
         }
       })
 
-      return {
+      let opt = {
         x: time,
         name: [i18n.t('public_time_input'), i18n.t('public_time_output')],
         value: [inputQps, outputQps],
-        markLine: [
+        zoomValue: 10
+      }
+
+      if (this.dataflow.type === 'initial_sync+cdc') {
+        opt.markLine = [
           {
             symbol: 'none',
             data: [
@@ -443,9 +447,10 @@ export default {
               }
             ]
           }
-        ],
-        zoomValue: 10
+        ]
       }
+
+      return opt
     },
 
     // 处理耗时

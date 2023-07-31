@@ -78,7 +78,7 @@ export default {
   header_no_notice: 'No notice yet',
   header_setting: 'Settings',
   header_view_notifications: 'View all notifications',
-  notify_setting: 'Notify Settings',
+  notify_setting: 'Notification Settings',
   notify_agent_notification: 'Agent Notification',
   notify_sms_notification: 'SMS Notification',
   notify_email_notification: 'Email Notification',
@@ -297,7 +297,7 @@ export default {
   connection_form_creat_connection: 'Create connection',
   connection_form_mq_broker_url: 'MQ connection string',
   task_manage: 'Task',
-  task_manage_etl: 'Data Development',
+  task_manage_etl: 'Data Transformation',
   task_manage_migrate: 'Data Replication',
   task_manage_desc: 'Table to Table Data Sync And Transformation',
   task_manage_migrate_desc: 'For Database to Database Replication',
@@ -910,7 +910,7 @@ export default {
     'User-oriented, attention to detail - this time, we have optimized our SMS notification strategy and connection creation process.',
   workbench_Notice_ziZhuKaiGuanDuan: 'Self-service toggle for SMS notification permissions.',
   workbench_Notice_aGENT:
-    "Agent offline prompt, Agent operation notification, task abnormal alarm - don't want to be frequently disturbed by non-essential SMS reminders?'t want to be frequently disturbed by unnecessary SMS reminders?",
+    "Agent offline prompt, Agent operation notification, task abnormal alert - don't want to be frequently disturbed by non-essential SMS reminders?'t want to be frequently disturbed by unnecessary SMS reminders?",
   workbench_Notice_xinBanBenDeDuan:
     'The SMS notification strategy for the new version has been optimized, and new user SMS notifications will be turned off by default (the settings for old users remain unchanged). Users can choose to turn on or keep the notifications off according to their actual needs in the notification settings.',
   workbench_Notice_gengKuaiDingWeiLian: 'Faster connection type identification.',
@@ -1105,7 +1105,7 @@ export default {
     '· Added the function of dynamically adding new tables, which supports synchronizing new tables in the database to the target',
   dfs_workbench_workbench_shujutongbuneng: 'Enhanced data synchronization capability',
   dfs_workbench_workbench_renwugaojingneng:
-    '· Task alarm capability, when an abnormal alarm occurs in a task, it is directly reflected on the task operation monitoring page, combined with the task DAG, all problems are intuitively visible',
+    '· Task alert capability, when an abnormal alert occurs in a task, it is directly reflected on the task operation monitoring page, combined with the task DAG, all problems are intuitively visible',
   dfs_workbench_workbench_renwurizhike:
     '· Mission log observability capability, output key mission information through standardized mission logs, and quickly locate problems when they occur',
   dfs_workbench_workbench_renwuzhibiaoke:
@@ -1496,9 +1496,9 @@ export default {
   dfs_instance_instance_tuidingyuanyin: 'Reason for unsubscribing',
   dfs_instance_instance_tuidingshili: 'Unsubscribe Instance',
   dfs_instance_instance_qingzixihedui:
-    '3. Please carefully check the unsubscribed instance information, and confirm the unsubscribed rules and unsubscribed amount. Once the instance is unsubscribed, it cannot be restored. ',
+    '2. Please carefully check the unsubscribed instance information, and confirm the unsubscribed rules and unsubscribed amount. Once the instance is unsubscribed, it cannot be restored. ',
   dfs_instance_instance_tuidingzhituihuan:
-    '2. Only the actual paid amount will be refunded when unsubscribing, and the used coupons will not be refunded. ',
+    '1. Only the actual paid amount will be refunded when unsubscribing, and the used coupons will not be refunded. ',
   dfs_instance_instance_tuidingjineji: '1. Please check the calculation formula of unsubscribe amount',
   dfs_instance_instance_tuifeiguize: 'Description of refund rules',
   dfs_agent_subscription_discount: '{val}% off',
@@ -1666,10 +1666,10 @@ export default {
   dfs_guide_scenes_shujurucangjia: 'Database replication between Oracle, MySQL and many other databases',
   dfs_guide_scenes_kuayunshujushi: 'Moving data into or out of MongoDB or MongoDB Atlas',
   dfs_guide_spec_ninxuyaozixing: 'Please select the instance size and subscription period',
-  dfs_components_taskalarmtour_dianjicichushe: 'Click here to set task alarm',
+  dfs_components_taskalarmtour_dianjicichushe: 'Click here to set task alert',
   dfs_components_taskalarmtour_qushezhi: 'Settings',
   dfs_components_taskalarmtour_jiancedaoninwei:
-    'It has been detected that you have not bound your mailbox, please bind your mailbox first to receive task alarm notifications',
+    'It has been detected that you have not bound your mailbox, please bind your mailbox first to receive task alert notifications',
   dfs_mixins_tour_qingxianqidongnin: 'Please start your Agent calculation engine first',
   dfs_mixins_tour_dianjicichuchuang: 'Click here to create your first replication task',
   dfs_mixins_tour_qingchuangjianninde: 'Please create your first replication task',
@@ -1714,5 +1714,12 @@ export default {
   dfs_instance_pay_wait: 'Payment Pending',
   dfs_the_header_header_jiaruSla: 'Join Slack',
   dfs_agent_information: 'Agent Information',
-  dfs_agent_download_type: 'Please select your server type'
+  dfs_agent_download_type: 'Please select your server type',
+  dfs_change_instance_title: 'Change Instance Size',
+  dfs_change_instance_tip:
+    'Spec changes support only upgrading from smaller to larger specifications. To downgrade from a larger spec to a smaller one, please unsubscribe and re-subscribe.',
+  dfs_change_instance_object: 'Instance Object',
+  dfs_change_instance_price: 'Price',
+  dfs_change_instance_submit: 'Submit',
+  dfs_select_server_type: 'Please select your server type'
 }

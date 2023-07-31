@@ -492,6 +492,8 @@ export default {
   packages_dag_js_declare_index_xianshishengminglai: '显式声明来定义和修改模型',
   packages_dag_js_declare_index_zengjiayigezi:
     "// 增加一个字段，如果字段已存在则不操作\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n// 移除一个已存在字段\nTapModelDeclare.removeField({val2}, 'fieldName')\n// 更新一个已存在的字段\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n// 更新字段，如果不存在则新增\nTapModelDeclare.upsertField({val4}, 'fieldName', 'TapString')\n// 设置字段为主键\nTapModelDeclare.setPk({val5}, 'fieldName')\n// 取消主键\nTapModelDeclare.unSetPk({val6}, 'fieldName')\n// 增加索引\nTapModelDeclare.addIndex({val7}, 'indexName', [{'fieldName':'fieldName1', 'order': 'asc'}])\n// 移除索引\nTapModelDeclare.removeIndex({val8}, 'indexName')\n",
+  packages_dag_python_declare_index_zengjiayigezi:
+    "# 增加一个字段，如果字段已存在则不操作\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n# 移除一个已存在字段\nTapModelDeclare.removeField({val2}, 'fieldName')\n# 更新一个已存在的字段\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n# 更新字段，如果不存在则新增\nTapModelDeclare.upsertField({val4}, 'fieldName', 'TapString')\n# 设置字段为主键\nTapModelDeclare.setPk({val5}, 'fieldName')\n# 取消主键\nTapModelDeclare.unSetPk({val6}, 'fieldName')\n# 增加索引\nTapModelDeclare.addIndex({val7}, 'indexName', [{'fieldName':'fieldName1', 'order': 'asc'}])\n# 移除索引\nTapModelDeclare.removeIndex({val8}, 'indexName')\n",
   packages_dag_js_processor_index_duibi: '对比',
   packages_dag_js_processor_index_yongfa: '用法：',
   packages_dag_js_processor_index_zuoyong: '作用：',
@@ -625,5 +627,8 @@ export default {
   packages_dag_field_add_del_index_zhidi: '置底',
   packages_dag_field_add_del_index_xiayi: '下移',
   packages_dag_field_add_del_index_shangyi: '上移',
-  packages_dag_field_add_del_index_zhiding: '置顶'
+  packages_dag_field_add_del_index_zhiding: '置顶',
+  packages_dag_dynamicAdjustMemoryUsage_title: '动态调整内存使用',
+  packages_dag_dynamicAdjustMemoryUsage_tip:
+    '全量同步阶段，当识别到同步的数据占用内存较大时，自动按照比例降低内存队列的使用，以防止出现内存溢出的错误，但次操作会造成同步速度的下降。当确认机器资源较小时，建议开启，可以有效的保障同步任务的稳定运行。当机器资源充足时，建议关闭。'
 }
