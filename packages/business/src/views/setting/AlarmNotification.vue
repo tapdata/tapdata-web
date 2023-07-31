@@ -1,6 +1,6 @@
 <template>
   <div class="system-notification" v-loading="loading">
-    <div class="notification-head pt-8 pb-4 px-6">
+    <div v-if="isDaas" class="notification-head pt-8 pb-4 px-6">
       <div class="title font-color-dark fs-7">
         {{ $t('packages_business_setting_notification_alarm_notification_gaojingtongzhi') }}
       </div>
@@ -12,7 +12,7 @@
           $t('packages_business_notify_mask_read')
         }}</ElButton>
         <ElButton size="mini" @click="handleAllRead()">{{ $t('packages_business_notify_mask_read_all') }}</ElButton>
-        <ElButton size="mini" v-readonlybtn="'home_notice_settings'" @click="handleSetting">
+        <ElButton id="alarm-settings" size="mini" v-readonlybtn="'home_notice_settings'" @click="handleSetting">
           {{ $t('notify_setting') }}
         </ElButton>
       </div>
@@ -92,6 +92,7 @@ export default {
   components: { SelectList, AlarmSetting },
   data() {
     return {
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       filterItems: [],
       activeName: 'first',
       listData: [],
@@ -378,7 +379,7 @@ $unreadColor: #ee5353;
       overflow: initial;
       .operation {
         position: absolute;
-        top: -55px;
+        top: -52px;
         right: 24px;
       }
     }

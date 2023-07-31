@@ -556,6 +556,7 @@ export default {
   packages_business_verification_form_jiaoyanrenwumo: '校验任务模式',
   packages_business_task_status_agent_tooltip_time: '距上次状态上报时间已经{time}',
   packages_business_task_status_agent_tooltip_agent: '任务所在的引擎为',
+  packages_business_task_status_retrying_tooltip: '任务正在重试中',
   packages_business_select_placeholder: '请添加或选择',
   packages_business_verification_form_youjiantongzhi: '邮件通知',
   packages_business_verification_form_xitongtongzhi: '系统通知',

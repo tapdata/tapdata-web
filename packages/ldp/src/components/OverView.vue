@@ -1,7 +1,7 @@
 <template>
   <!--	概览	-->
   <div class="workbench-overview workbench-section" v-show="visible">
-    <div class="section-header flex justify-content-between border-bottom">
+    <div class="section-header flex justify-content-between">
       <div class="px-4 pt-2">
         <div class="main-title font-color-dark fw-normal fs-6 mb-2">{{ $t('workbench_overview') }}</div>
         <ul class="flex justify-content-around mb-2">

@@ -1,3 +1,5 @@
+import { cloneDeep } from 'lodash'
+
 import i18n from '@tap/i18n'
 import { connect, mapProps, useForm } from '@tap/form'
 import { metadataInstancesApi } from '@tap/api'
@@ -78,6 +80,7 @@ export const FieldAddDel = connect(
         let fields = JSON.parse(JSON.stringify(this.options || []))
         //读取op 配置
         fields = convertSchemaToTreeData(fields) || [] //将模型转换成tree
+        fields = fields.sort((a, b) => a.columnPosition - b.columnPosition)
         //fields = this.checkOps(fields)
         this.originalFields = JSON.parse(JSON.stringify(fields))
         fields = this.checkOps(fields) || []
@@ -143,6 +146,10 @@ export const FieldAddDel = connect(
                   height="calc(100vh - 240px)"
                   data={fields}
                   node-key="id"
+                  draggable
+                  allow-drag={this.checkAllowDrag}
+                  allow-drop={this.checkAllowDrop}
+                  vOn:node-drop={this.handleSaveDrop}
                   default-expand-all={true}
                   expand-on-click-node={false}
                   class="field-processor-tree"
@@ -159,6 +166,33 @@ export const FieldAddDel = connect(
                         ]}
                         slot-scope="{ node, data }"
                       >
+                        {node.level === 1 && (
+                          <el-dropdown
+                            placement="top-start"
+                            on={{
+                              command: val => this.handleCommand(val, node)
+                            }}
+                          >
+                            <span class="el-dropdown-link">
+                              <VIcon class="color-primary mt-n1 mr-2">drag</VIcon>
+                            </span>
+                            <el-dropdown-menu slot="dropdown">
+                              <el-dropdown-item command="top">
+                                {i18n.t('packages_dag_field_add_del_index_zhiding')}
+                              </el-dropdown-item>
+                              <el-dropdown-item command="prev">
+                                {i18n.t('packages_dag_field_add_del_index_shangyi')}
+                              </el-dropdown-item>
+                              <el-dropdown-item command="next">
+                                {i18n.t('packages_dag_field_add_del_index_xiayi')}
+                              </el-dropdown-item>
+                              <el-dropdown-item command="bottom">
+                                {i18n.t('packages_dag_field_add_del_index_zhidi')}
+                              </el-dropdown-item>
+                            </el-dropdown-menu>
+                          </el-dropdown>
+                        )}
+
                         <span class={['inline-block', 'flex-1', 'text-truncate']}>
                           {this.isCreate(data.field) ? (
                             <span
@@ -502,6 +536,44 @@ export const FieldAddDel = connect(
           this.operations = []
           this.$emit('change', this.operations)
           this.form.setValuesIn('deleteAllFields', false)
+        },
+        checkAllowDrag(node) {
+          return node.level === 1
+        },
+        checkAllowDrop(draggingNode, dropNode, type) {
+          return dropNode.level === 1 && type !== 'inner'
+        },
+        handleSaveDrop() {
+          this.fields.forEach((el, i) => {
+            el.columnPosition = i + 1
+          })
+
+          const fieldsAfter = cloneDeep(this.fields).map((t, i) => {
+            return {
+              columnPosition: t.columnPosition,
+              field_name: t.field_name
+            }
+          })
+          this.form.setValuesIn('fieldsAfter', fieldsAfter)
+        },
+        handleCommand(val, node) {
+          const index = this.fields.findIndex(t => t.field_name === node.data.field_name)
+          this.$refs.tree.remove(node)
+          if (val === 'top') {
+            const getNode = this.$refs.tree.getNode(this.fields[0]?.id)
+            this.$refs.tree.insertBefore(node.data, getNode)
+          } else if (val === 'bottom') {
+            const getNode = this.$refs.tree.getNode(this.fields.slice(-1)?.[0].id)
+            this.$refs.tree.insertAfter(node.data, getNode)
+          } else if (val === 'prev') {
+            const getNode = this.$refs.tree.getNode(this.fields[index - 1]?.id)
+            this.$refs.tree.insertBefore(node.data, getNode)
+          } else {
+            const getNode = this.$refs.tree.getNode(this.fields[index]?.id)
+            this.$refs.tree.insertAfter(node.data, getNode)
+          }
+
+          this.handleSaveDrop()
         }
         // handleCheckAllChange() {
         //   if (this.checkAll) {

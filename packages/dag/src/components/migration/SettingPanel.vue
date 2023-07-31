@@ -27,13 +27,29 @@ export default observer({
   data() {
     const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
     let values = this.settings
+    const { id } = values
     let repeatNameMessage = this.$t('packages_dag_task_form_error_name_duplicate')
+    const handleCheckName = debounce(function (resolve, value) {
+      taskApi
+        .checkName({
+          name: value,
+          id
+        })
+        .then(data => {
+          resolve(data)
+        })
+    }, 500)
     return {
       isDaas: isDaas,
       formScope: {
         getPickerOptionsBeforeTime,
         $isDaas: isDaas, //区分云版、企业版
         formTab: FormTab.createFormTab(),
+        checkName: value => {
+          return new Promise(resolve => {
+            handleCheckName(resolve, value)
+          })
+        },
         useAsyncOptions: (service, ...serviceParams) => {
           return field => {
             field.loading = true
@@ -105,7 +121,7 @@ export default observer({
                       name: {
                         title: this.$t('public_task_name'), //任务名称
                         type: 'string',
-                        required: 'true',
+                        required: true,
                         'x-decorator': 'FormItem',
                         'x-component': 'Input',
                         'x-validator': `{{(value) => {
@@ -293,7 +309,7 @@ export default observer({
                               planStartDate: {
                                 type: 'string',
                                 'x-decorator': 'FormItem',
-                                required: 'true',
+                                required: true,
                                 'x-component': 'DatePicker',
                                 'x-component-props': {
                                   type: 'datetime',
@@ -324,14 +340,14 @@ export default observer({
                                   dependencies: ['type'],
                                   fulfill: {
                                     state: {
-                                      display: '{{$deps[0] === "initial_sync" ? "visible" : "hidden"}}'
+                                      display: '{{$deps[0] !== "cdc" ? "visible" : "hidden"}}'
                                     }
                                   }
                                 }
                               },
                               crontabExpression: {
                                 type: 'string',
-                                required: 'true',
+                                required: true,
                                 'x-validator': {
                                   cron: true,
                                   message: i18n.t('packages_dag_migration_settingpanel_cronbiao')
@@ -346,7 +362,7 @@ export default observer({
                                   dependencies: ['type', 'crontabExpressionFlag'],
                                   fulfill: {
                                     state: {
-                                      display: '{{$deps[0] === "initial_sync" && $deps[1] ? "visible" : "hidden"}}'
+                                      display: '{{$deps[0] !== "cdc" && $deps[1] ? "visible" : "hidden"}}'
                                     }
                                   }
                                 }
@@ -443,7 +459,7 @@ export default observer({
                                     },
                                     dateTime: {
                                       type: 'string',
-                                      required: 'true',
+                                      required: true,
                                       'x-decorator': 'FormItem',
                                       'x-component': 'DatePicker',
                                       'x-component-props': {
@@ -617,7 +633,7 @@ export default observer({
                     default: [
                       {
                         type: 'TASK',
-                        open: true,
+                        open: isDaas,
                         key: 'TASK_STATUS_ERROR',
                         sort: 1,
                         notify: ['SYSTEM', 'EMAIL'],
@@ -626,7 +642,7 @@ export default observer({
                       },
                       {
                         type: 'TASK',
-                        open: true,
+                        open: isDaas,
                         key: 'TASK_FULL_COMPLETE',
                         sort: 3,
                         notify: ['SYSTEM'],
@@ -635,7 +651,7 @@ export default observer({
                       },
                       {
                         type: 'TASK',
-                        open: true,
+                        open: isDaas,
                         key: 'TASK_INCREMENT_START',
                         sort: 4,
                         notify: ['SYSTEM', 'EMAIL'],
@@ -644,7 +660,7 @@ export default observer({
                       },
                       {
                         type: 'TASK',
-                        open: true,
+                        open: isDaas,
                         key: 'TASK_INCREMENT_DELAY',
                         sort: 6,
                         notify: ['SYSTEM', 'EMAIL'],

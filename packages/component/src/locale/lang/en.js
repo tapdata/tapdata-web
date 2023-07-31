@@ -41,7 +41,7 @@ export default {
   packages_component_src_selectlist_xiang: 'Item',
   packages_component_src_selectlist_yixuanze: 'Selected',
 
-  packages_component_src_upgradefee_dingyuezhuanyeban: 'Subscribe to Professional Plan',
+  packages_component_src_upgradefee_dingyuezhuanyeban: 'Professional Plan',
   packages_component_src_upgradefee_gaojishouhouzhi: 'Technical Support:  Premium With SLA',
   packages_component_src_upgradefee_shujuchulixing: 'Throughput: Higher',
   packages_component_src_upgradefee_desc_1: 'Everything included in Free Plan, Plus...',
@@ -58,5 +58,5 @@ export default {
   packages_component_src_upgradefee_mianfei: 'Free',
   packages_component_src_upgradefee_tigongmianfeishi: 'For personal use or testing purposes',
   packages_component_src_upgradefee_jichuban: 'Basic Plan',
-  packages_component_src_upgradefee_dingyueshengji: 'Subscribe Professional Plan'
+  packages_component_src_upgradefee_dingyueshengji: 'Professional Plan'
 }

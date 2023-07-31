@@ -83,6 +83,9 @@ export default ({ routes }) => {
       path = loc.pathname.substring(0, loc.pathname.lastIndexOf('/') + 1)
     }
     wsUrl = wsUrl + loc.host + path + `tm/ws/agent?${queryString}`
+
+    store.commit('setUser', window.__USER_INFO__)
+
     window.App = new Vue({
       router,
       store,
@@ -195,10 +198,17 @@ export default ({ routes }) => {
       // }
       // window.__configMock__ = data
     })
-  window.axios.get('config/config.json').then(res => {
-    window.__config__ = res.data
-    getData()
-  })
+  window.axios
+    .get('config/config.json', {
+      responseType: 'json',
+      headers: {
+        Accept: 'application/json'
+      }
+    })
+    .then(res => {
+      window.__config__ = res.data
+      getData()
+    })
 }
 
 startTimeOnSite()

@@ -3,12 +3,17 @@
   <ElHeader class="dfs-header" :class="{ isMockUser: mockUserId }">
     <div class="dfs-header__body">
       <ElLink class="logo" @click="command('workbench')">
-        <img src="../../assets/image/logoFull.png" alt="" />
+        <img src="../../assets/image/logo.svg" alt="" />
       </ElLink>
       <div class="dfs-header__button button-bar pr-4 fs-7">
         <!--付费专业版-->
         <div class="vip-btn mr-4 cursor-pointer" @click="openUpgrade">
           <VIcon size="17">icon-vip</VIcon>&nbsp;{{ $t('packages_component_src_upgradefee_dingyuezhuanyeban') }}
+        </div>
+        <!--加入slack-->
+        <div class="command-item mr-6 position-relative inline-flex align-items-center" @click="goSlack">
+          <ElImage class="slack-logo" :src="require('@/assets/image/slack.svg')" />
+          <span class="cursor-pointer ml-1">{{ $t('dfs_the_header_header_jiaruSla') }}</span>
         </div>
         <!--有奖问卷-->
         <div v-if="showQuestionnaire" class="command-item mr-6 position-relative" @click="goQuestionnaire">
@@ -95,7 +100,10 @@ export default {
   inject: ['buried'],
   components: { VIcon, NotificationPopover, UpgradeFee },
   data() {
+    const isDomesticStation = window.__config__?.station === 'domestic'
+
     return {
+      isDomesticStation,
       user: window.__USER_INFO__ || {},
       USER_CENTER: window.__config__.USER_CENTER,
       topBarLinks: window.__config__?.topBarLinks,
@@ -146,10 +154,9 @@ export default {
     //获取用户注册时间
     if (this.user?.id) {
       this.registrationTime = extractTimeFromObjectId(this.user?.id)
-      //是否是最近7天注册的新用户
-      this.showQuestionnaire = daysdifference(this.registrationTime) < 7
+      // 国内站 && 注册时间7天大于的用户
+      this.showQuestionnaire = this.isDomesticStation && daysdifference(this.registrationTime) > 7
     }
-    this.setBaiduIndex() // 百度推广索引
   },
   methods: {
     command(command) {
@@ -247,41 +254,11 @@ export default {
     goQuestionnaire() {
       window.open('https://tapdata.feishu.cn/share/base/form/shrcnImdl8BDtEOxki50Up9OJTg', '_blank')
     },
-    setBaiduIndex() {
-      // 上报百度索引
-      const logidUrlUsed = Cookie.get('logidUrlUsed')
-      if (logidUrlUsed) return
-      const logidUrlCloud = Cookie.get('logidUrlCloud')
-      if (logidUrlCloud) {
-        const bd_vid = logidUrlCloud
-          .split(/[?&]/)
-          .find(t => t.match(/^bd_vid=/))
-          ?.replace(/^bd_vid=/, '')
-        console.log('bd_vid', bd_vid)
-        // bd_vid存到user信息中
-        this.$axios.patch('api/tcm/user', {
-          bd_vid
-        })
-
-        const conversionTypes = [
-          {
-            logidUrl: logidUrlCloud,
-            newType: 25
-          }
-        ]
-        this.$axios
-          .post('api/tcm/track/send_convert_data', conversionTypes)
-          .then(data => {
-            if (data) {
-              this.buried('registerSuccess')
-              Cookie.set('logidUrlUsed', 1)
-              Cookie.remove('logidUrlCloud')
-            }
-          })
-          .catch(e => {
-            console.log('ocpc.baidu.com', e)
-          })
-      }
+    goSlack() {
+      window.open(
+        'https://join.slack.com/share/enQtNTYxNjI0NDQ5ODM4Ni1kMWQ0ZTMzYzYxZDg3YTk4NTQ0MmViZWRiNDhmODQwYTBjOTZiMDc4ZjgxMDM5YzBjNDZiYjIwZjJlOWQzNzBl',
+        '_blank'
+      )
     }
   }
 }
@@ -303,7 +280,7 @@ export default {
   width: 100%;
   height: 52px !important;
   padding: 0 7px;
-  background: rgba(54, 54, 54, 1);
+  background: map-get($color, submenu);
   box-sizing: border-box;
   .current {
     font-weight: 400;
@@ -320,7 +297,7 @@ export default {
     display: block;
     width: 177px;
     height: 30px;
-    margin-left: 12px;
+    margin-left: -12px;
     img {
       display: block;
       height: 100%;
@@ -334,13 +311,13 @@ export default {
     .command-item {
       padding: 4px 8px;
       cursor: pointer;
-      color: map-get($color, white);
+      color: map-get($fontColor, light);
       &:hover {
-        color: #fff;
-        background-color: rgba(255, 255, 255, 0.2);
+        color: map-get($color, primary);
+        background-color: map-get($color, white);
         border-radius: 4px;
         &.icon {
-          color: #fff;
+          color: map-get($color, primary);
         }
       }
     }
@@ -484,6 +461,9 @@ export default {
   padding: 4px 8px;
   background: linear-gradient(93.39deg, #2c65ff 10.45%, #702cff 98.21%);
   border-radius: 4px;
+}
+.slack-logo {
+  height: 14px;
 }
 
 @keyframes move {

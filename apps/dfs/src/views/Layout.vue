@@ -18,7 +18,7 @@
                 </ElMenuItem>
               </template>
             </ElSubmenu>
-            <ElMenuItem v-else :key="menu.title" :index="menu.path" class="flex align-center">
+            <ElMenuItem v-else :key="menu.title" :index="menu.path" class="flex align-center" :id="`menu-${menu.name}`">
               <span class="mr-4" v-if="menu.icon"
                 ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
               >
@@ -41,7 +41,7 @@
           </template>
         </div>
         <!--菜单栏分为两部分-->
-        <div class="border-top sub-menu">
+        <div class="border-top sub-menu pt-3">
           <template v-for="menu in subMenu">
             <ElSubmenu v-if="menu.children" :key="menu.title" :index="menu.name">
               <template slot="title">
@@ -56,7 +56,7 @@
                 </ElMenuItem>
               </template>
             </ElSubmenu>
-            <ElMenuItem v-else :key="menu.title" :index="menu.path" class="flex align-center">
+            <ElMenuItem v-else :key="menu.title" :index="menu.path" class="flex align-center" :id="`menu-${menu.name}`">
               <span class="mr-4" v-if="menu.icon"
                 ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
               >
@@ -92,8 +92,8 @@
       </ElMenu>
     </ElAside>
     <ElContainer direction="vertical" class="layout-main position-relative">
-      <PageHeader class="border-bottom"></PageHeader>
-      <ElMain class="main">
+      <PageHeader class="bg-white rounded-lg mb-2"></PageHeader>
+      <ElMain class="main rounded-lg">
         <RouterView @agent_no_running="onAgentNoRunning"></RouterView>
       </ElMain>
     </ElContainer>
@@ -104,9 +104,17 @@
     ></ConnectionTypeDialog>
     <!--    <AgentGuideDialog :visible.sync="agentGuideDialog" @openAgentDownload="openAgentDownload"></AgentGuideDialog>-->
     <AgentDownloadModal :visible.sync="agentDownload.visible" :source="agentDownload.data"></AgentDownloadModal>
-    <SubscriptionModelDialog :visible.sync="subscriptionModelVisible" :showClose="false"></SubscriptionModelDialog>
-    <BindPhone :visible.sync="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>
+    <AgentGuide
+      :visible.sync="subscriptionModelVisible"
+      :step="step"
+      :agent="agent"
+      :subscribes="subscribes"
+      :isUnDeploy="isUnDeploy"
+      @changeIsUnDeploy="changeIsUnDeploy"
+    ></AgentGuide>
+    <!--    <BindPhone :visible.sync="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>-->
     <!--    <CheckLicense :visible.sync="aliyunMaketVisible" :user="userInfo"></CheckLicense>-->
+    <TaskAlarmTour v-model="showAlarmTour"></TaskAlarmTour>
   </ElContainer>
 </template>
 
@@ -119,7 +127,10 @@ import AgentDownloadModal from '@/views/agent-download/AgentDownloadModal'
 // import AgentGuideDialog from '@/views/agent-download/AgentGuideDialog'
 import BindPhone from '@/views/user/components/BindPhone'
 import Cookie from '@tap/shared/src/cookie'
-import SubscriptionModelDialog from '@/views/agent-download/SubscriptionModelDialog'
+import AgentGuide from '@/components/guide/index'
+import tour from '@/mixins/tour'
+import TaskAlarmTour from '@/components/TaskAlarmTour'
+import Mousetrap from 'mousetrap'
 
 export default {
   inject: ['checkAgent', 'buried'],
@@ -128,10 +139,11 @@ export default {
     VIcon,
     ConnectionTypeDialog,
     AgentDownloadModal,
-    BindPhone,
-    SubscriptionModelDialog,
-    PageHeader
+    AgentGuide,
+    PageHeader,
+    TaskAlarmTour
   },
+  mixins: [tour],
   data() {
     const $t = this.$t.bind(this)
     return {
@@ -141,8 +153,7 @@ export default {
         {
           name: 'dataConsole',
           title: this.$t('page_title_data_console'),
-          icon: 'process-platform',
-          beta: true
+          icon: 'process-platform'
         },
         // {
         //   name: 'Workbench',
@@ -162,14 +173,12 @@ export default {
         {
           name: 'dataflow',
           title: $t('task_manage_etl'),
-          icon: 'task',
-          beta: true
+          icon: 'task'
         },
         {
           name: 'dataVerification',
           title: $t('page_title_data_verify'),
-          icon: 'data-validation',
-          beta: true
+          icon: 'data-validation'
         }
         // {
         //   name: 'customNodeList',
@@ -187,6 +196,7 @@ export default {
       bindPhoneVisible: false,
       agentGuideDialog: false,
       showAgentWarning: false,
+      agentRunningCount: 0,
       subscriptionModelVisible: false,
       userInfo: '',
       // aliyunMaketVisible: false,
@@ -210,7 +220,7 @@ export default {
     if (window.__config__?.station) {
       this.isDomesticStation = window.__config__?.station === 'domestic' //默认是国内站 国际站是 international
     }
-    this.loopLoadAgentCount()
+    // this.loopLoadAgentCount()
     this.activeMenu = this.$route.path
     let children = this.$router.options.routes.find(r => r.path === '/')?.children || []
     const findRoute = name => {
@@ -269,7 +279,11 @@ export default {
     // }
     let isCurrentUser = Cookie.get('deployLaterUser') === user?.userId
     if (Cookie.get('deployLater') == 1 && isCurrentUser) return
-    this.checkDialogState()
+
+    // 🎉🥚
+    Mousetrap.bind('up up down down left right left right', () => {
+      this.subscriptionModelVisible = !this.subscriptionModelVisible
+    })
   },
   beforeDestroy() {
     clearTimeout(this.loopLoadAgentCountTimer)
@@ -323,12 +337,6 @@ export default {
     back() {
       this.$router.back()
     },
-    checkDialogState() {
-      if (this.checkWechatPhone()) {
-        return
-      }
-      this.checkAgentInstall()
-    },
     // 检查微信用户，是否绑定手机号
     checkWechatPhone() {
       let user = window.__USER_INFO__
@@ -339,22 +347,6 @@ export default {
       this.bindPhoneVisible =
         ['basic:email', 'basic:email-code', 'social:wechatmp-qrcode'].includes(user?.registerSource) && !user?.telephone
       return this.bindPhoneVisible
-    },
-    // 检查是否有安装过agent
-    checkAgentInstall() {
-      this.$axios.get('api/tcm/agent').then(data => {
-        if (data?.total === 0) {
-          this.subscriptionModelVisible = true
-        }
-      })
-    },
-    bindPhoneSuccess(val) {
-      if (val) {
-        if (window.__USER_INFO__) {
-          window.__USER_INFO__.telephone = val
-        }
-        this.checkDialogState()
-      }
     },
     hideCustomTip() {
       setTimeout(() => {
@@ -396,7 +388,6 @@ export default {
 
         $zoho.salesiq.onload = function () {
           let siqiframe = document.getElementById('siqiframe')
-          console.log('siqiframe', siqiframe) // eslint-disable-line
 
           if (siqiframe) {
             let style = document.createElement('style')
@@ -405,18 +396,6 @@ export default {
             siqiframe.contentWindow.document.getElementsByTagName('head').item(0).appendChild(style)
           }
         }
-
-        /*$zoho.salesiq.floatbutton.click(function () {
-          let siqiframe = document.getElementById('siqiframe')
-          console.log('siqiframe', siqiframe) // eslint-disable-line
-
-          if (siqiframe) {
-            let style = document.createElement('style')
-            style.type = 'text/css'
-            style.innerHTML = `.botactions em { white-space: nowrap; }`
-            siqiframe.contentWindow.document.getElementsByTagName('head').item(0).appendChild(style)
-          }
-        })*/
       }
     },
 
@@ -424,19 +403,6 @@ export default {
       this.showAgentWarning = flag
     },
 
-    loopLoadAgentCount() {
-      this.$axios
-        .get('api/tcm/agent/agentCount')
-        .then(data => {
-          this.showAgentWarning = data.agentTotalCount && !data.agentRunningCount
-          window.__agentCount__ = data
-        })
-        .finally(() => {
-          this.loopLoadAgentCountTimer = setTimeout(() => {
-            this.loopLoadAgentCount()
-          }, 10000)
-        })
-    },
     //检查云市场用户授权码是否过期
     checkLicense(user) {
       //未激活
@@ -484,24 +450,35 @@ export default {
   justify-content: space-between;
   height: 90%;
 }
+.layout-main {
+  padding: 0 16px 16px 16px;
+}
 .layout-wrap {
   height: 100%;
   padding-top: 52px;
   word-wrap: break-word;
   word-break: break-word;
+  background: map-get($color, submenu);
   .left-aside {
-    border-right: 1px map-get($borderColor, aside) solid;
-    background: map-get($bgColor, disable);
+    // border-right: 1px map-get($borderColor, aside) solid;
+    background: map-get($color, submenu);
+    .el-menu {
+      background-color: map-get($color, submenu);
+    }
     .el-menu-item {
       height: 50px;
       line-height: 50px;
       ::v-deep .v-icon {
         color: map-get($iconFillColor, normal);
       }
-      &.is-active {
-        background-color: #eaf0ff;
+      &.is-active,
+      &:hover {
+        background-color: map-get($color, white);
+        color: map-get($color, primary);
+        border-radius: 8px;
       }
-      &.is-active {
+      &.is-active,
+      &:hover {
         ::v-deep .v-icon {
           color: map-get($color, primary);
         }
@@ -566,5 +543,14 @@ export default {
   .el-menu-item.is-active .agent-warning-icon {
     display: none;
   }
+}
+</style>
+
+<style>
+.zsiqfanim,
+.zsiqfanim *,
+.siqanim,
+.siqanim * {
+  pointer-events: all;
 }
 </style>

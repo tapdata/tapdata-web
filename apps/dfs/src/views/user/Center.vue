@@ -682,6 +682,10 @@ export default {
   mounted() {
     this.init()
     this.getCountryCode()
+
+    if (this.$route.query.bind === 'email' && !this.userData.email) {
+      this.dialogObj.bindEmail = true
+    }
   },
   methods: {
     init() {
@@ -959,6 +963,7 @@ export default {
           code: emailForm.code
         })
         .then(() => {
+          this.$store.commit('setUserEmail', emailForm.email)
           this.userData.email = emailForm.email
           this.resetEmailForm()
           this.$message.success(i18n.t('user_Center_bangDingYouXiangCheng'))

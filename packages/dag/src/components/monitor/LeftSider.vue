@@ -181,6 +181,7 @@
             :data="qpsData"
             :color="['#26CF6C', '#2C65FF']"
             :time-format="timeFormat"
+            auto-scale
             class="line-chart"
           ></LineChart>
         </div>
@@ -402,15 +403,54 @@ export default {
         return {
           x: [],
           name: [],
-          value: [[], []]
+          value: [[], []],
+          markLine: [
+            {
+              data: []
+            }
+          ]
         }
       }
       const { time = [] } = this.quota
-      return {
+      let inputQps = data.inputQps?.map(t => Math.abs(t || 0.1))
+      const outputQps = data.outputQps?.map(t => Math.abs(t || 100))
+      // 计算距离增量时间点，最近的时间点
+      const milestone = this.dataflow.attrs?.milestone || {}
+      const snapshotDoneAt = milestone.SNAPSHOT?.end
+      let markLineTime = 0
+      time.forEach(el => {
+        if (Math.abs(el - snapshotDoneAt) < 2000 && Math.abs(el - snapshotDoneAt) < Math.abs(el - markLineTime)) {
+          markLineTime = el
+        }
+      })
+
+      let opt = {
         x: time,
         name: [i18n.t('public_time_input'), i18n.t('public_time_output')],
-        value: [data.inputQps, data.outputQps]
+        value: [inputQps, outputQps],
+        zoomValue: 10
       }
+
+      if (this.dataflow.type === 'initial_sync+cdc') {
+        opt.markLine = [
+          {
+            symbol: 'none',
+            data: [
+              {
+                xAxis: markLineTime + '',
+                lineStyle: {
+                  color: '#000'
+                },
+                label: {
+                  show: false
+                }
+              }
+            ]
+          }
+        ]
+      }
+
+      return opt
     },
 
     // 处理耗时

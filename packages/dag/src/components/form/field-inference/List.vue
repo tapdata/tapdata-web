@@ -275,7 +275,7 @@ export default {
 
     tableList() {
       const { fields } = this.data
-      let list = fields || []
+      let list = (fields || []).sort((a, b) => a.columnPosition - b.columnPosition)
       return this.showDelete ? list : list.filter(t => !t.is_deleted)
     },
 

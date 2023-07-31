@@ -27,7 +27,7 @@
       v-show="activeType === 'settings'"
       v-on="$listeners"
       v-bind="$attrs"
-      ref="settingFormPanel"
+      ref="setting"
     ></SettingPanel>
   </section>
 </template>

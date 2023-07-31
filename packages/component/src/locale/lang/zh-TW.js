@@ -37,7 +37,7 @@ export default {
   packages_component_src_classification_chuangjianfenlei: '創建分類',
   packages_component_src_discoveryclassification_morenmuluji: '默認目錄（技術）',
 
-  packages_component_src_upgradefee_dingyuezhuanyeban: '訂閱專業版',
+  packages_component_src_upgradefee_dingyuezhuanyeban: '專業版',
   packages_component_src_upgradefee_gaojishouhouzhi: ' 高級售後支持，提供服務SLA',
   packages_component_src_upgradefee_shujuchulixing: ' 處理性能：高',
   packages_component_src_upgradefee_desc_1: '包含免費版的全部能力，加上...',

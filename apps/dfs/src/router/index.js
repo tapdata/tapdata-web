@@ -346,7 +346,18 @@ const routes = [
         meta: {
           title: i18n.t('dfs_router_index_dingyuezhongxin'),
           hideTitle: true
-        }
+        },
+        children: [
+          {
+            path: '/user/order/changeList',
+            name: 'changeList',
+            component: () => import(/* webpackChunkName: "instance" */ '../views/order/ChangeList.vue'),
+            meta: {
+              title: '变更记录',
+              code: ''
+            }
+          }
+        ]
       },
       {
         path: '/verify',
@@ -457,6 +468,14 @@ const routes = [
     component: FastDownload,
     meta: {
       title: 'tap_agent_download_now'
+    }
+  },
+  {
+    path: '/pay',
+    name: 'pay',
+    component: () => import(/* webpackChunkName: "instance" */ '../views/order/pay.vue'),
+    meta: {
+      title: i18n.t('dfs_router_index_zhifuqingdan')
     }
   },
   {

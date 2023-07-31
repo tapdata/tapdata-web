@@ -1,5 +1,5 @@
 <template>
-  <section v-if="orderStorage" class="subscription-steps-wrap flex flex-column flex-1 overflow-hidden">
+  <section v-if="orderStorage" class="subscription-steps-wrap bg-white flex flex-column flex-1 overflow-hidden">
     <div class="main flex-1 overflow-auto" :class="{ 'main-en': this.$i18n.locale === 'en' }">
       <div>
         <el-steps class="subscription-steps bg-transparent mx-auto" :active="activeStep" simple>
@@ -230,7 +230,7 @@
       </div>
     </div>
   </section>
-  <section v-else-if="!mdbCount" class="subscription-steps-wrap flex flex-column flex-1 overflow-hidden">
+  <section v-else-if="!mdbCount" class="subscription-steps-wrap bg-white flex flex-column flex-1 overflow-hidden">
     <div class="main flex-1 overflow-auto" :class="{ 'main-en': this.$i18n.locale === 'en' }">
       <div>
         <el-steps class="subscription-steps bg-transparent mx-auto" :active="activeStep" simple>
@@ -861,7 +861,7 @@
     </div>
   </section>
   <!--有存储- 只订购流程 考虑到即将单独存储-->
-  <section v-else class="subscription-steps-wrap flex flex-column flex-1 overflow-hidden">
+  <section v-else class="subscription-steps-wrap bg-white flex flex-column flex-1 overflow-hidden">
     <div class="main flex-1 overflow-auto" :class="{ 'main-en': this.$i18n.locale === 'en' }">
       <div>
         <el-steps class="subscription-steps bg-transparent mx-auto" :active="activeStep" simple>
@@ -1695,6 +1695,9 @@ export default {
       res[min] = min
       res[this.maxMemorySpace] = this.maxMemorySpace
       return this.mdbPriceId === 'FreeTier' ? { 0: '0', 5: '5' } : res
+    },
+    freeAgentCount() {
+      return this.$store.state.agentCount.freeTierAgentCount
     }
   },
 
@@ -1829,6 +1832,7 @@ export default {
       if (disabled) return
       this.specification = item
       this.loadPackageItems()
+      this.handleChange(this.packageItems[0]) // 更新订阅方式
       if (!this.currencyType) {
         this.currencyType = this.packageItems[0]?.currency
       }
@@ -1965,7 +1969,6 @@ export default {
 
     //检查Agent个数
     async checkAgentCount() {
-      this.agentCount = window.__agentCount__?.freeTierAgentCount || 0
       await this.getCloudProvider()
     },
     getImg(name) {
@@ -2021,10 +2024,9 @@ export default {
         this.specificationItems = uniqBy(
           paidPrice.map(t => {
             const { cpu = 0, memory = 0 } = t.spec || {}
-            let desc =
-              i18n.t('dfs_agent_download_subscriptionmodeldialog_renwushujianyi') +
-              this.getSuggestPipelineNumber(cpu, memory) +
-              i18n.t('dfs_agent_download_subscriptionmodeldialog_ge')
+            let desc = i18n.t('dfs_agent_download_subscriptionmodeldialog_renwushujianyi', {
+              val: this.getSuggestPipelineNumber(cpu, memory)
+            })
             if (t.chargeProvider == 'FreeTier') {
               desc = i18n.t('dfs_agent_download_subscriptionmodeldialog_mianfeishilizui')
             }
@@ -2043,12 +2045,12 @@ export default {
           return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
         })
         // 已体验过免费
-        if (this.agentCount > 0) {
+        if (this.freeAgentCount > 0) {
           this.specificationItems = this.specificationItems.filter(it => it.chargeProvider !== 'FreeTier')
         }
         // 如果是单独订购存储，默认调过免费实例，避免后续step受免费实例影响
         this.specification =
-          !this.agentCount && this.orderStorage ? this.specificationItems[1]?.value : this.specificationItems[0]?.value
+          !this.freeAgentCount && this.orderStorage ? this.specificationItems[1]?.value : this.specificationItems[0]?.value
         // 价格套餐
         this.allPackages = paidPrice.map(t => {
           return Object.assign(t, {

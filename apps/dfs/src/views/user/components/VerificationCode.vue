@@ -1,6 +1,7 @@
 <template>
   <div class="verification-code">
     <ElButton
+      v-bind="$attrs"
       :type="type"
       :loading="loading"
       :disabled="disabled || btnDisabled"
