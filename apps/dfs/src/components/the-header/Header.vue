@@ -11,7 +11,11 @@
           <VIcon size="17">icon-vip</VIcon>&nbsp;{{ $t('packages_component_src_upgradefee_dingyuezhuanyeban') }}
         </div>
         <!--加入slack-->
-        <div class="command-item mr-6 position-relative inline-flex align-items-center" @click="goSlack">
+        <div
+          v-if="!isDomesticStation"
+          class="command-item mr-6 position-relative inline-flex align-items-center"
+          @click="goSlack"
+        >
           <ElImage class="slack-logo" :src="require('@/assets/image/slack.svg')" />
           <span class="cursor-pointer ml-1">{{ $t('dfs_the_header_header_jiaruSla') }}</span>
         </div>
