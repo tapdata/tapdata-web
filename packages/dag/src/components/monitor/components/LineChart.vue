@@ -93,7 +93,7 @@ export default {
   computed: {
     canScale() {
       const { max, minNotZero } = this
-      return Math.ceil(max / minNotZero / 100) > 1
+      return this.autoScale && Math.ceil(max / minNotZero / 100) > 1
     }
   },
 
