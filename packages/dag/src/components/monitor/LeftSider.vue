@@ -412,8 +412,8 @@ export default {
         }
       }
       const { time = [] } = this.quota
-      let inputQps = data.inputQps?.map(t => Math.abs(t || 0.1))
-      const outputQps = data.outputQps?.map(t => Math.abs(t || 100))
+      let inputQps = data.inputQps?.map(t => Math.abs(t))
+      const outputQps = data.outputQps?.map(t => Math.abs(t))
       // 计算距离增量时间点，最近的时间点
       const milestone = this.dataflow.attrs?.milestone || {}
       const snapshotDoneAt = milestone.SNAPSHOT?.end
