@@ -101,22 +101,36 @@
                   </VTable>
                 </el-tab-pane>
                 <el-tab-pane :label="$t('packages_business_sample_data')" name="sampleData">
-                  <div class="">
+                  <div class="position-relative">
                     <VEmpty v-if="!sampleHeader.length"></VEmpty>
-                    <el-table v-else :data="sampleData" v-loading="loadingSampleData" max-height="381px">
-                      <el-table-column type="index" label="#"></el-table-column>
-                      <el-table-column
-                        v-for="(item, index) in sampleHeader"
-                        :key="index"
-                        :prop="item"
-                        :label="item"
-                        min-width="200"
+                    <template v-else>
+                      <IconButton @click="toggleSampleData" class="position-absolute toggle-sample-btn"
+                        >table-grid</IconButton
                       >
-                        <template #header="{ column }">
-                          <span :title="column.label">{{ column.label }}</span>
-                        </template>
-                      </el-table-column>
-                    </el-table>
+                      <VCodeEditor
+                        v-if="!isTableView"
+                        class="py-0"
+                        :height="360"
+                        :value="sampleDataJson"
+                        lang="json"
+                        :options="{ readOnly: true, highlightActiveLine: false, highlightGutterLine: false }"
+                        theme="chrome"
+                      ></VCodeEditor>
+                      <el-table v-else :data="sampleData" v-loading="loadingSampleData" max-height="381px">
+                        <el-table-column type="index" label="#"></el-table-column>
+                        <el-table-column
+                          v-for="(item, index) in sampleHeader"
+                          :key="index"
+                          :prop="item"
+                          :label="item"
+                          min-width="200"
+                        >
+                          <template #header="{ column }">
+                            <span :title="column.label">{{ column.label }}</span>
+                          </template>
+                        </el-table-column>
+                      </el-table>
+                    </template>
                   </div>
                 </el-tab-pane>
               </el-tabs>
@@ -314,7 +328,7 @@
 import { cloneDeep, debounce } from 'lodash'
 import dayjs from 'dayjs'
 
-import { Drawer, VTable, VEmpty } from '@tap/component'
+import { Drawer, VTable, VEmpty, VCodeEditor, IconButton } from '@tap/component'
 import { calcTimeUnit, calcUnit, isNum } from '@tap/shared'
 import {
   discoveryApi,
@@ -338,7 +352,7 @@ export default {
       default: 'Drawer'
     }
   },
-  components: { Drawer, VTable, TaskStatus, VEmpty, DatabaseIcon, TableLineage },
+  components: { Drawer, VTable, TaskStatus, VEmpty, DatabaseIcon, TableLineage, VCodeEditor, IconButton },
   data() {
     return {
       visible: false,
@@ -468,7 +482,8 @@ export default {
       swimType: '', // source/fdm/mdm/target
       asTaskType: 'all',
       connection: null,
-      taskLoading: false
+      taskLoading: false,
+      isTableView: false
     }
   },
 
@@ -515,6 +530,10 @@ export default {
             status: 110,
             operation: 280
           }
+    },
+
+    sampleDataJson() {
+      return JSON.stringify(this.sampleData.slice(0, 10), null, 2)
     }
   },
 
@@ -907,6 +926,10 @@ export default {
           this.callback?.onDelete?.(this.selected.parent_id)
         })
       })
+    },
+
+    toggleSampleData() {
+      this.isTableView = !this.isTableView
     }
   }
 }
@@ -974,6 +997,12 @@ export default {
   .status-error {
     color: #d44d4d;
     background-color: #ffecec;
+  }
+
+  .toggle-sample-btn {
+    top: 6px;
+    right: 16px;
+    z-index: 10;
   }
 }
 </style>
