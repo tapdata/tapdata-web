@@ -64,6 +64,24 @@ export class MergeTable extends NodeType {
                 'x-component': 'Input'
               },
 
+              mergeMode: {
+                type: 'string',
+                title: i18n.t('packages_dag_mergeMode'),
+                default: 'main_table_first',
+                enum: [
+                  {
+                    label: i18n.t('packages_dag_main_table_first'),
+                    value: 'main_table_first'
+                  },
+                  {
+                    label: i18n.t('packages_dag_sub_table_first'),
+                    value: 'sub_table_first'
+                  }
+                ],
+                'x-decorator': 'FormItem',
+                'x-component': 'Radio.Group'
+              },
+
               mergeProperties: {
                 title: i18n.t('packages_dag_nodes_mergetable_zhucongpeizhi'),
                 type: 'array',
