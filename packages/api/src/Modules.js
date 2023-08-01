@@ -54,8 +54,10 @@ export default class Modules extends Http {
     window.open(href)
   }
 
-  apiExport(ids, ip) {
-    const href = this.url + `/api/export?id=${ids.join('&id=')}&access_token=${Cookie.get('access_token')}&ip=${ip}`
+  apiExport(ids, ip, token) {
+    const href =
+      this.url +
+      `/api/export?id=${ids.join('&id=')}&access_token=${Cookie.get('access_token')}&ip=${ip}&api_token=${token}`
     window.open(href)
   }
 }
