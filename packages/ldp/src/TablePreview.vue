@@ -104,9 +104,9 @@
                   <div class="position-relative">
                     <VEmpty v-if="!sampleHeader.length"></VEmpty>
                     <template v-else>
-                      <IconButton @click="toggleSampleData" class="position-absolute toggle-sample-btn"
-                        >table-grid</IconButton
-                      >
+                      <IconButton @click="toggleSampleData" class="position-absolute toggle-sample-btn shadow-sm">{{
+                        !isTableView ? 'table-grid' : 'code-json'
+                      }}</IconButton>
                       <VCodeEditor
                         v-if="!isTableView"
                         class="py-0"
@@ -116,7 +116,7 @@
                         :options="{ readOnly: true, highlightActiveLine: false, highlightGutterLine: false }"
                         theme="chrome"
                       ></VCodeEditor>
-                      <el-table v-else :data="sampleData" v-loading="loadingSampleData" max-height="381px">
+                      <el-table v-else :data="sampleData" v-loading="loadingSampleData" max-height="360px">
                         <el-table-column type="index" label="#"></el-table-column>
                         <el-table-column
                           v-for="(item, index) in sampleHeader"
@@ -1003,6 +1003,10 @@ export default {
     top: 6px;
     right: 16px;
     z-index: 10;
+    background-color: #fff;
+    &:hover {
+      background-color: rgb(239, 240, 241);
+    }
   }
 }
 </style>
