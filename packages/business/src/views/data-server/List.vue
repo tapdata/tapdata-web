@@ -395,8 +395,10 @@ export default {
       this.$refs.upload.show()
     },
     handleExportApiDoc() {
-      const ids = this.multipleSelectionActive.map(t => t.id)
-      modulesApi.apiExport(ids, this.apiServerHost)
+      this.$refs.drawer.getAPIServerToken(token => {
+        const ids = this.multipleSelectionActive.map(t => t.id)
+        modulesApi.apiExport(ids, this.apiServerHost, token)
+      })
     }
   }
 }
