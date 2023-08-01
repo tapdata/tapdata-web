@@ -116,7 +116,7 @@ export default {
       this.min = 0
       this.minNotZero = 0
 
-      const { x, value, name, markLine } = this.data
+      const { x, value, name, markLine, yAxisMax } = this.data
       const { limit } = this
       let series = []
 
@@ -133,6 +133,10 @@ export default {
       if (seriesNoData) {
         options.yAxis.max = 1
         options.yAxis.min = 0
+      }
+
+      if (yAxisMax) {
+        options.yAxis.max = yAxisMax
       }
 
       if (x.length) {

@@ -478,9 +478,14 @@ export default {
           value: []
         }
       }
+
+      const open = this.dataflow.alarmSettings.find(t => t.key === 'TASK_INCREMENT_DELAY')?.open
+      const delay = open ? this.dataflow.alarmRules.find(t => t.key === 'TASK_INCREMENT_DELAY')?.ms || 0 : 60 * 1000
+      const max = Math.max(...data.timeCostAvg)
       return {
         x: time,
-        value: data.replicateLag
+        value: data.replicateLag,
+        yAxisMax: Math.max(delay, max)
       }
     },
 
