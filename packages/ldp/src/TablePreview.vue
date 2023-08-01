@@ -101,7 +101,7 @@
                   </VTable>
                 </el-tab-pane>
                 <el-tab-pane :label="$t('packages_business_sample_data')" name="sampleData">
-                  <div class="position-relative">
+                  <div class="position-relative" v-loading="loadingSampleData">
                     <VEmpty v-if="!sampleHeader.length"></VEmpty>
                     <template v-else>
                       <IconButton @click="toggleSampleData" class="position-absolute toggle-sample-btn shadow-sm">{{
@@ -116,7 +116,7 @@
                         :options="{ readOnly: true, highlightActiveLine: false, highlightGutterLine: false }"
                         theme="chrome"
                       ></VCodeEditor>
-                      <el-table v-else :data="sampleData" v-loading="loadingSampleData" max-height="360px">
+                      <el-table v-else :data="sampleData" max-height="360px">
                         <el-table-column type="index" label="#"></el-table-column>
                         <el-table-column
                           v-for="(item, index) in sampleHeader"
