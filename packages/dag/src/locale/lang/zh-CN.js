@@ -520,6 +520,7 @@ export default {
   packages_dag_nodes_database_value_zanbuzhiciddl: '暂不支持DDL事件采集',
   packages_dag_nodes_mergetable_const_zuiduozhichiliangceng: '最多支持两层嵌套',
   packages_dag_nodes_mergetable_zhucongpeizhi: '主从配置',
+
   packages_dag_nodes_table_isDaa_ruguoyuanweimongodb: '源为MongoDB时，需要同步删除事件，请确保关联 _id',
   packages_dag_nodes_table_tianjia: '添加',
   packages_dag_nodes_table_zidingyitiaojian: '自定义条件',
@@ -632,5 +633,8 @@ export default {
   packages_dag_src_editor_date_processor_field_list: '受运算影响的字段',
   packages_dag_dynamicAdjustMemoryUsage_title: '动态调整内存使用',
   packages_dag_dynamicAdjustMemoryUsage_tip:
-    '全量同步阶段，当识别到同步的数据占用内存较大时，自动按照比例降低内存队列的使用，以防止出现内存溢出的错误，但次操作会造成同步速度的下降。当确认机器资源较小时，建议开启，可以有效的保障同步任务的稳定运行。当机器资源充足时，建议关闭。'
+    '全量同步阶段，当识别到同步的数据占用内存较大时，自动按照比例降低内存队列的使用，以防止出现内存溢出的错误，但次操作会造成同步速度的下降。当确认机器资源较小时，建议开启，可以有效的保障同步任务的稳定运行。当机器资源充足时，建议关闭。',
+  packages_dag_mergeMode: '合并模式',
+  packages_dag_main_table_first: '全量主表优先',
+  packages_dag_sub_table_first: '全量子表优先'
 }
