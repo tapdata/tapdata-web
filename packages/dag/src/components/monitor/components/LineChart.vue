@@ -97,7 +97,7 @@ export default {
 
   methods: {
     init() {
-      const { x, value, name } = this.data
+      const { x, value, name, yAxisMax } = this.data
       const { limit } = this
       let options = this.getOptions()
       let series = []
@@ -112,6 +112,11 @@ export default {
       const seriesNoData = series.every(t => !t.data.length)
       options.yAxis.max = seriesNoData ? 1 : null
       options.yAxis.min = seriesNoData ? 0 : null
+
+      if (yAxisMax) {
+        options.yAxis.max = yAxisMax
+      }
+
       if (x.length) {
         options.xAxis.data = x
       } else {
