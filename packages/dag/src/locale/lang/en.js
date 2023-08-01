@@ -642,5 +642,8 @@ export default {
   packages_dag_standardization_js: 'Standardized JS',
   packages_dag_mixins_formscope_gaizduanshibi: 'This field is required!',
   packages_dag_shared_mining_table_info_index_wajuebiaoxinxi: 'Mining table information',
-  packages_dag_table_not_exist: 'Table not exist, will be automatically created'
+  packages_dag_table_not_exist: 'Table not exist, will be automatically created',
+  packages_dag_mergeMode: 'Merge Mode',
+  packages_dag_main_table_first: 'Snapshot read primary table priority',
+  packages_dag_sub_table_first: 'Snaphost read child table priority'
 }
