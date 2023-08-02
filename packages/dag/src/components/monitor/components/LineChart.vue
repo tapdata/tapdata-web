@@ -8,7 +8,7 @@
 <script>
 import i18n from '@tap/i18n'
 
-import { debounce } from 'lodash'
+import { debounce, isNumber } from 'lodash'
 import dayjs from 'dayjs'
 import { Chart } from '@tap/component'
 import { calcUnit, calcTimeUnit } from '@tap/shared'
@@ -131,12 +131,10 @@ export default {
       options.series = series
       const seriesNoData = series.every(t => !t.data.filter(d => !!d).length)
       if (seriesNoData) {
-        options.yAxis.max = 1
+        options.yAxis.max = isNumber(yAxisMax) ? yAxisMax : 1
         options.yAxis.min = 0
-      }
-
-      if (yAxisMax) {
-        options.yAxis.max = yAxisMax
+      } else {
+        options.yAxis.max = isNumber(yAxisMax) ? yAxisMax : null
       }
 
       if (x.length) {
