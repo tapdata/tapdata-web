@@ -31,6 +31,7 @@
           v-if="showSearch"
           class="ldp-tree h-100"
           ref="tree"
+          :indent="0"
           node-key="id"
           :props="props"
           draggable
@@ -52,6 +53,7 @@
           v-else
           class="ldp-tree h-100"
           ref="tree"
+          :indent="0"
           node-key="id"
           :props="props"
           draggable

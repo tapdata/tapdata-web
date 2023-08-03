@@ -28,7 +28,7 @@ const TaskList = async () => {
 }
 
 const MigrateList = async () => {
-  const { MigrateList } = await import('@tap/business')
+  const { MigrateList } = await import('@tap/task')
   return MigrateList
 }
 
@@ -200,7 +200,8 @@ const routes = [
             meta: {
               title: 'task_manage_migrate',
               desc: 'task_manage_migrate_desc',
-              code: 'v2_data_replication'
+              code: 'v2_data_replication',
+              hideTitle: true
             }
           }
         ]
