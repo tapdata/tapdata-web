@@ -24,6 +24,7 @@ export default {
   public_schema: '模型',
   public_basic_settings: '基礎設置',
   public_advanced_settings: '高級設置',
+  public_recommend: '推薦',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '無效',

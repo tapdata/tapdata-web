@@ -24,6 +24,7 @@ export default {
   public_schema: 'Schema',
   public_basic_settings: 'Basic Settings',
   public_advanced_settings: 'Advanced Settings',
+  public_recommend: 'Recommend',
   // state
   public_status_ready: 'Valid',
   public_status_invalid: 'Invalid',

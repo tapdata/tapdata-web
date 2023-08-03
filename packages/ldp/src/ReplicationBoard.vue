@@ -41,7 +41,7 @@ import { connectionsApi, lineageApi, metadataDefinitionsApi, ldpApi } from '@tap
 import { mapMutations, mapState, mapGetters } from 'vuex'
 
 import SourceItem from './Source'
-import TargetItem from './Target'
+import TargetItem from './TargetPanel'
 import FDMItem from './FDM'
 import MDMItem from './MDM'
 import Settings from './Settings'
