@@ -150,18 +150,19 @@ export default {
     }
     this.getInstance()
   },
-  destroyed() {
-    this.timer = null
+  beforeDestroy() {
+    this.isDestroyed = true
     clearTimeout(this.timer)
   },
   methods: {
     //获取当前实例状态
     getInstance() {
-      this.timer = null
       clearTimeout(this.timer)
+
+      if (this.isDestroyed) return
+
       this.$axios.get('api/tcm/agent/' + this.agentId).then(data => {
         if (data?.status !== 'Creating') {
-          this.timer = null
           clearTimeout(this.timer)
           this.open(data?.status)
         } else {
