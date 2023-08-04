@@ -234,7 +234,7 @@
 
 <script>
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
-import { merge, cloneDeep, uniqBy } from 'lodash'
+import { merge, cloneDeep, uniqBy, debounce } from 'lodash'
 
 import i18n from '@tap/i18n'
 import { AsyncSelect } from '@tap/form'
@@ -317,7 +317,16 @@ export default {
       handler() {
         this.loadList()
       }
-    }
+    },
+
+    list: {
+      deep: true,
+      handler() {
+        console.log('watch-list')
+        // debounce(this.validate, 200)
+        this.debounceValidate()
+      }
+    },
   },
 
   created() {
@@ -617,10 +626,10 @@ export default {
     },
 
     addItem() {
-      const validateMsg = this.validate()
-      if (validateMsg) {
-        return this.$message.error(validateMsg)
-      }
+      // const validateMsg = this.validate()
+      // if (validateMsg) {
+      //   return this.$message.error(validateMsg)
+      // }
       this.list.push(this.getItemOptions())
     },
 
@@ -651,6 +660,7 @@ export default {
         }
       }
       this.autoAddTableLoading = true
+      this.updateAutoAddTableLoading()
       metadataInstancesApi
         .findInspect({
           where,
@@ -698,6 +708,9 @@ export default {
                 t => t.source.id === targetConnectionId && t.original_name === tableNameRelation[ge]
               )
 
+              console.log('findTable', findTable)
+              console.log('findTargetTable', findTargetTable)
+
               if (findTable) {
                 let sourceSortColumn = updateList.length
                   ? updateList.join(',')
@@ -720,16 +733,39 @@ export default {
                 item.target.sortColumn = targetSortColumn
               }
 
+              // 补全sortColumn
+              if (!item.source.sortColumn) {
+                item.source.sortColumn = item.target.sortColumn
+              }
+
+              if (!item.target.sortColumn) {
+                item.target.sortColumn = item.source.sortColumn
+              }
+
               list.push(item)
             })
           })
+          console.log('list', list)
+          // 字段没有填充的
+          // const hasFieldList = list.filter(t => t.source.sortColumn && t.target.sortColumn)
+          // console.log('hasFieldList', hasFieldList)
+
           if (!list.length) {
             return this.$message.error(i18n.t('packages_business_components_conditionbox_suoxuanrenwuque'))
           }
+
+          // if (this.inspectMethod !== 'row_count') {
+          //   list = list.filter(t => t.source.sortColumn && t.target.sortColumn)
+          // }
+
           this.list = list
+
+          // 显示提示
+          this.validate()
         })
         .finally(() => {
           this.autoAddTableLoading = false
+          this.updateAutoAddTableLoading()
         })
     },
 
@@ -989,105 +1025,202 @@ export default {
       item.target.columns = data.map(t => t.target)
     },
 
+    debounceValidate: debounce(function() {
+      this.validate()
+    }, 200),
+
     validate() {
+      console.log('validate')
       let tasks = this.getList()
       let index = 0
       let message = ''
-      const formDom = document.getElementById('data-verification-form')
-      // 判断表名称是否为空
-      if (
-        tasks.some((c, i) => {
-          index = i + 1
-          return !c.source.table || !c.target.table
-        })
-      ) {
-        this.$nextTick(() => {
-          formDom.childNodes[index - 1]?.querySelector('input')?.focus()
-        })
-        message = this.$t('packages_business_verification_message_error_joint_table_target_or_source_not_set', {
-          val: index
-        })
-        this.jointErrorMessage = message
-        return message
-      }
-      // 判断表字段校验时，索引字段是否为空
-      index = 0
-      if (
-        ['field', 'jointField'].includes(this.inspectMethod) &&
-        tasks.some((c, i) => {
-          index = i + 1
-          return !c.source.sortColumn || !c.target.sortColumn
-        })
-      ) {
-        this.$nextTick(() => {
-          // document.getElementById('data-verification-form').childNodes[index - 1].querySelector('input').focus()
-          let item = document.getElementById('item-source-' + (index - 1))
-          item.querySelector('input').focus()
-        })
-        message = this.$t('packages_business_verification_lackIndex', { val: index })
-        this.jointErrorMessage = message
-        return message
-      }
-      // 判断表字段校验时，索引字段是否个数一致
-      index = 0
-      if (
-        ['field', 'jointField'].includes(this.inspectMethod) &&
-        tasks.some((c, i) => {
-          index = i + 1
-          return c.source.sortColumn.split(',').length !== c.target.sortColumn.split(',').length
-        })
-      ) {
-        this.$nextTick(() => {
-          let item = document.getElementById('item-source-' + (index - 1))
-          item.querySelector('input').focus()
-        })
-        message = this.$t('packages_business_verification_message_error_joint_table_field_not_match', { val: index })
-        this.jointErrorMessage = message
-        return message
-      }
-      // 判断字段模型是否存在空
-      index = 0
-      if (
-        ['field', 'jointField'].includes(this.inspectMethod) &&
-        tasks.some((c, i) => {
-          index = i + 1
-          return c.source.columns?.some(t => !t) || c.target.columns?.some(t => !t)
-        })
-      ) {
-        this.$nextTick(() => {
-          let item = document.getElementById('list-table__content' + (index - 1))
-          const emptyDom = item.querySelector('.el-select.empty-data')
-          const offsetTop = emptyDom?.offsetTop || 0
-          if (offsetTop) {
-            const height = emptyDom?.offsetHeight || 0
-            item.scrollTo({
-              top: offsetTop - height
-            })
-          }
-        })
-        message = this.$t('packages_business_verification_form_diinde', { val1: index })
-        this.jointErrorMessage = message
+      // const formDom = document.getElementById('data-verification-form')
+
+      // 检查是否选择表
+      const haveTableArr = tasks.filter(c => c.source.table && c.target.table)
+      const noTableArr = tasks.filter(c => !c.source.table || !c.target.table)
+
+      if (!haveTableArr.length) {
+        message = `源表和目标表不能为空，请打开配置，并手动选择`
+        // this.jointErrorMessage = message
+        this.updateErrorMsg(message, 'error')
         return message
       }
 
-      // 开启高级校验后，JS校验逻辑不能为空
-      index = 0
-      if (
-        this.inspectMethod === 'field' &&
-        tasks.some((c, i) => {
-          index = i + 1
-          return c.showAdvancedVerification && !c.webScript
-        })
-      ) {
-        this.$nextTick(() => {
-          formDom.childNodes[index - 1]?.querySelector('input')?.focus()
-        })
-        message = this.$t('packages_business_verification_message_error_script_no_enter')
-        this.jointErrorMessage = message
-        return message
+      if (noTableArr.length) {
+        message = `有${noTableArr.length}个校验条件，缺少来源表或目标表，保存时将忽略`
+        // this.jointErrorMessage = message
+        this.updateErrorMsg(message, 'warn')
+        return
       }
-      this.jointErrorMessage = ''
+
+      // 检查
+      const SHOW_COUNT = 20
+      if (['field', 'jointField'].includes(this.inspectMethod)) {
+        // 索引字段为空
+        const haveIndexFieldArr = tasks.filter(c => c.source.sortColumn && c.target.sortColumn)
+        const noIndexFieldArr = tasks.filter(c => !c.source.sortColumn || !c.target.sortColumn)
+
+        if (!haveIndexFieldArr.length) {
+          message = `关联校验条件不能为空，请打开配置，并手动选择`
+          // this.jointErrorMessage = message
+          this.updateErrorMsg(message, 'error')
+          return message
+        }
+
+        if (noIndexFieldArr.length) {
+          message = `以下表找不到索引字段，保存校验时将自动跳过：\n`
+          noIndexFieldArr.forEach((el, elIndex) => {
+            if (elIndex <= SHOW_COUNT) {
+              message += `${el.source.table} `
+              message += `${el.target.table} `
+            }
+          })
+          if (noIndexFieldArr.length > SHOW_COUNT) {
+            message += `...${noIndexFieldArr.length - SHOW_COUNT}`
+          }
+          // this.jointErrorMessage = message
+          this.updateErrorMsg(message, warn)
+          return
+        }
+
+        // 判断表字段校验时，索引字段是否个数一致
+        const countNotArr = tasks.filter(
+          c => c.source.sortColumn.split(',').length !== c.target.sortColumn.split(',').length
+        )
+        if (countNotArr.length) {
+          //校验条件{val}中源表与目标表的索引字段个数不相等
+          // this.$nextTick(() => {
+          //   let item = document.getElementById('item-source-' + (index - 1))
+          //   item.querySelector('input').focus()
+          // })
+          message = `以下源表与目标表的索引字段个数不相等，保存校验时将自动跳过：\n`
+          countNotArr.forEach((el, elIndex) => {
+            if (elIndex <= SHOW_COUNT) {
+              message += `${el.source.table} `
+              message += `${el.target.table} `
+            }
+          })
+          if (countNotArr.length > SHOW_COUNT) {
+            message += `...${countNotArr.length - SHOW_COUNT}`
+          }
+          // this.jointErrorMessage = message
+          this.updateErrorMsg(message, 'warn')
+          return
+        }
+
+        // 开启高级校验后，JS校验逻辑不能为空
+        if (
+          this.inspectMethod === 'field' &&
+          tasks.some((c, i) => {
+            index = i + 1
+            return c.showAdvancedVerification && !c.webScript
+          })
+        ) {
+          message = this.$t('packages_business_verification_message_error_script_no_enter')
+          // this.jointErrorMessage = message
+          this.updateErrorMsg(message, 'error')
+          return message
+        }
+      }
+
+      this.updateErrorMsg('')
       return
+
+      // 判断表名称是否为空
+      // if (
+      //   tasks.some((c, i) => {
+      //     index = i + 1
+      //     return !c.source.table || !c.target.table
+      //   })
+      // ) {
+      //   // this.$nextTick(() => {
+      //   //   formDom.childNodes[index - 1]?.querySelector('input')?.focus()
+      //   // })
+      //   message = this.$t('packages_business_verification_message_error_joint_table_target_or_source_not_set', {
+      //     val: index
+      //   })
+      //   this.jointErrorMessage = message
+      //   return message
+      // }
+      // // 判断表字段校验时，索引字段是否为空
+      // index = 0
+      // if (
+      //   ['field', 'jointField'].includes(this.inspectMethod) &&
+      //   tasks.some((c, i) => {
+      //     index = i + 1
+      //     return !c.source.sortColumn || !c.target.sortColumn
+      //   })
+      // ) {
+      //   // this.$nextTick(() => {
+      //   //   // document.getElementById('data-verification-form').childNodes[index - 1].querySelector('input').focus()
+      //   //   let item = document.getElementById('item-source-' + (index - 1))
+      //   //   item.querySelector('input').focus()
+      //   // })
+      //   message = this.$t('packages_business_verification_lackIndex', { val: index })
+      //   this.jointErrorMessage = message
+      //   return message
+      // }
+      // // 判断表字段校验时，索引字段是否个数一致
+      // index = 0
+      // if (
+      //   ['field', 'jointField'].includes(this.inspectMethod) &&
+      //   tasks.some((c, i) => {
+      //     index = i + 1
+      //     return c.source.sortColumn.split(',').length !== c.target.sortColumn.split(',').length
+      //   })
+      // ) {
+      //   // this.$nextTick(() => {
+      //   //   let item = document.getElementById('item-source-' + (index - 1))
+      //   //   item.querySelector('input').focus()
+      //   // })
+      //   message = this.$t('packages_business_verification_message_error_joint_table_field_not_match', { val: index })
+      //   this.jointErrorMessage = message
+      //   return message
+      // }
+      // // 判断字段模型是否存在空
+      // index = 0
+      // if (
+      //   ['field', 'jointField'].includes(this.inspectMethod) &&
+      //   tasks.some((c, i) => {
+      //     index = i + 1
+      //     return c.source.columns?.some(t => !t) || c.target.columns?.some(t => !t)
+      //   })
+      // ) {
+      //   // this.$nextTick(() => {
+      //   //   let item = document.getElementById('list-table__content' + (index - 1))
+      //   //   const emptyDom = item.querySelector('.el-select.empty-data')
+      //   //   const offsetTop = emptyDom?.offsetTop || 0
+      //   //   if (offsetTop) {
+      //   //     const height = emptyDom?.offsetHeight || 0
+      //   //     item.scrollTo({
+      //   //       top: offsetTop - height
+      //   //     })
+      //   //   }
+      //   // })
+      //   message = this.$t('packages_business_verification_form_diinde', { val1: index })
+      //   this.jointErrorMessage = message
+      //   return message
+      // }
+      //
+      // // 开启高级校验后，JS校验逻辑不能为空
+      // index = 0
+      // if (
+      //   this.inspectMethod === 'field' &&
+      //   tasks.some((c, i) => {
+      //     index = i + 1
+      //     return c.showAdvancedVerification && !c.webScript
+      //   })
+      // ) {
+      //   // this.$nextTick(() => {
+      //   //   formDom.childNodes[index - 1]?.querySelector('input')?.focus()
+      //   // })
+      //   message = this.$t('packages_business_verification_message_error_script_no_enter')
+      //   this.jointErrorMessage = message
+      //   return message
+      // }
+      // this.jointErrorMessage = ''
+      // return
     },
 
     loadDoc() {
@@ -1224,6 +1357,15 @@ function validate(sourceRow){
             }
           })
         })
+    },
+
+    updateErrorMsg(msg, level = '') {
+      this.$emit('update:jointErrorMessage', msg)
+      this.$emit('update:errorMessageLevel', level)
+    },
+
+    updateAutoAddTableLoading() {
+      this.$emit('update:autoAddTableLoading', this.autoAddTableLoading)
     }
   }
 }

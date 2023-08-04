@@ -21,14 +21,32 @@
           <i class="iconfont icon-daoru back-btn-icon"></i>
           <span> {{ $t('public_button_export') }}</span>
         </ElButton>
+        <!--        <ElButton-->
+        <!--          v-readonlybtn="'datasource_creation'"-->
+        <!--          class="btn btn-create"-->
+        <!--          type="primary"-->
+        <!--          size="mini"-->
+        <!--          @click="$router.push({ name: 'dataVerificationCreate' })"-->
+        <!--        >-->
+        <!--          <span> {{ $t('public_button_create') }}</span>-->
+        <!--        </ElButton>-->
         <ElButton
           v-readonlybtn="'datasource_creation'"
           class="btn btn-create"
           type="primary"
           size="mini"
-          @click="$router.push({ name: 'dataVerificationCreate' })"
+          @click="handleCreate('pipeline')"
         >
-          <span> {{ $t('public_button_create') }}</span>
+          <span>任务一致性校验</span>
+        </ElButton>
+        <ElButton
+          v-readonlybtn="'datasource_creation'"
+          class="btn btn-create"
+          type="primary"
+          size="mini"
+          @click="handleCreate('random')"
+        >
+          <span>任意表数据校验</span>
         </ElButton>
       </div>
       <el-table-column type="selection" width="45"></el-table-column>
@@ -465,6 +483,9 @@ export default {
           this.$message.success(this.$t('public_message_operation_success'))
           this.table.fetch()
         })
+    },
+    handleCreate(type) {
+      this.$router.push({ name: 'dataVerificationCreate', query: { taskMode: type } })
     }
   }
 }

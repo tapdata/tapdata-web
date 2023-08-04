@@ -16,24 +16,16 @@
           :rules="rules"
           :validate-on-rule-change="false"
         >
-          <ElFormItem
-            required
-            class="form-item"
-            prop="name"
-            :label="$t('packages_business_verification_task_name') + ': '"
-          >
-            <ElInput class="form-input" v-model="form.name"></ElInput>
-          </ElFormItem>
-          <ElFormItem
-            required
-            class="form-item"
-            :label="$t('packages_business_verification_form_jiaoyanrenwumo') + ': '"
-          >
-            <ElRadioGroup v-model="form.taskMode" @change="handleChangeTaskMode">
-              <ElRadio label="pipeline">{{ $t('packages_business_verification_form_weitedingdeP') }}</ElRadio>
-              <ElRadio label="random">{{ $t('packages_business_verification_form_zhidingrenyibiao') }}</ElRadio>
-            </ElRadioGroup>
-          </ElFormItem>
+          <!--          <ElFormItem-->
+          <!--            required-->
+          <!--            class="form-item"-->
+          <!--            :label="$t('packages_business_verification_form_jiaoyanrenwumo') + ': '"-->
+          <!--          >-->
+          <!--            <ElRadioGroup v-model="form.taskMode" @change="handleChangeTaskMode">-->
+          <!--              <ElRadio label="pipeline">{{ $t('packages_business_verification_form_weitedingdeP') }}</ElRadio>-->
+          <!--              <ElRadio label="random">{{ $t('packages_business_verification_form_zhidingrenyibiao') }}</ElRadio>-->
+          <!--            </ElRadioGroup>-->
+          <!--          </ElFormItem>-->
           <ElFormItem
             v-if="form.taskMode === 'pipeline'"
             required
@@ -49,43 +41,19 @@
               clearable
               @input="flowChangeHandler"
             >
-              <ElOption v-for="opt in flowOptions" :key="opt.id" :label="opt.name" :value="opt.id"></ElOption>
+              <ElOption v-for="opt in flowOptions" :key="opt.id" :label="opt.name" :value="opt.id"> </ElOption>
             </ElSelect>
           </ElFormItem>
+
           <ElFormItem
             required
             class="form-item"
-            prop="inspectDifferenceMode"
-            :label="$t('packages_business_verification_form_jieguoshuchu') + ': '"
+            prop="name"
+            :label="$t('packages_business_verification_task_name') + ': '"
           >
-            <ElSelect filterable class="form-select" v-model="form.inspectDifferenceMode">
-              <ElOption :label="$t('packages_business_verification_form_shuchusuoyoubu')" value="All"></ElOption>
-              <ElOption
-                :label="$t('packages_business_verification_form_zhishuchulaiyuan')"
-                value="OnSourceExists"
-              ></ElOption>
-            </ElSelect>
+            <ElInput class="form-input" v-model="form.name"></ElInput>
           </ElFormItem>
-          <!--<ElFormItem
-            required
-            class="form-item"
-            :label="$t('packages_business_verification_form_jiaoyangaojing') + ': '"
-          >
-            <div class="flex align-items-center">
-              <span>{{ $t('packages_business_verification_form_jianyanrenwuyun') }}</span>
-              <ElCheckboxGroup v-model="form.errorNotifys" class="inline-block ml-4">
-                <ElCheckbox label="SYSTEM">{{ $t('packages_business_verification_form_xitongtongzhi') }}</ElCheckbox>
-                <ElCheckbox label="EMAIL">{{ $t('packages_business_verification_form_youjiantongzhi') }}</ElCheckbox>
-              </ElCheckboxGroup>
-            </div>
-            <div class="flex align-items-center">
-              <span>{{ $t('packages_business_verification_form_jiaoyanjieguobu') }}</span>
-              <ElCheckboxGroup v-model="form.inconsistentNotifys" class="inline-block ml-4">
-                <ElCheckbox label="SYSTEM">{{ $t('packages_business_verification_form_xitongtongzhi') }}</ElCheckbox>
-                <ElCheckbox label="EMAIL">{{ $t('packages_business_verification_form_youjiantongzhi') }}</ElCheckbox>
-              </ElCheckboxGroup>
-            </div>
-          </ElFormItem>-->
+
           <ElFormItem required class="form-item" :label="$t('packages_business_verification_type') + ': '">
             <ElRadioGroup v-model="form.inspectMethod" @change="handleChangeInspectMethod">
               <ElRadioButton label="row_count">{{ inspectMethodMap['row_count'] }}</ElRadioButton>
@@ -123,202 +91,250 @@
               }}</span>
             </div>
           </ElFormItem>
-          <ElFormItem class="form-item" :label="$t('packages_business_verification_frequency') + ': '">
-            <ElSelect class="form-select" v-model="form.mode" @input="form.enabled = true">
-              <ElOption :label="$t('packages_business_verification_single')" value="manual"></ElOption>
-              <ElOption :label="$t('packages_business_verification_repeating')" value="cron"></ElOption>
-            </ElSelect>
-          </ElFormItem>
-          <ElFormItem
-            v-if="form.mode === 'cron'"
-            class="form-item"
-            :label="$t('packages_business_verification_is_enabled') + ': '"
-          >
-            <ElSwitch v-model="form.enabled"></ElSwitch>
-          </ElFormItem>
-          <template v-if="form.mode === 'cron'">
-            <ElFormItem
-              class="form-item"
-              prop="timing.start"
-              :label="$t('packages_business_verification_startAndStopTime') + ': '"
-            >
-              <ElDatePicker
-                class="form-input"
-                :value="[form.timing.start, form.timing.end]"
-                type="datetimerange"
-                range-separator="-"
-                :start-placeholder="$t('date_picker_start_time')"
-                :end-placeholder="$t('date_picker_end_time')"
-                align="right"
-                :default-time="['00:00:00', '23:59:59']"
-                value-format="timestamp"
-                @input="timingChangeHandler"
-              >
-              </ElDatePicker>
-            </ElFormItem>
-            <ElFormItem
-              class="form-item"
-              prop="timing.intervals"
-              :label="$t('packages_business_verification_verifyInterval') + ': '"
-            >
-              <ElInput
-                class="form-input"
-                v-model="form.timing.intervals"
-                onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
-                onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
-              >
-                <template slot="append">
-                  <ElSelect style="width: 100px" v-model="form.timing.intervalsUnit">
-                    <ElOption v-for="unit in timeUnitOptions" :key="unit" :label="unit" :value="unit"></ElOption>
-                  </ElSelect>
-                </template>
-              </ElInput>
-            </ElFormItem>
-          </template>
 
-          <ElFormItem class="form-item" :label="$t('packages_business_verification_form_task_alarm') + ': '">
-            <div class="inline-block">
-              <div>
-                <ElCheckbox v-model="form.alarmSettings[0].open" @change="handleChangeAlarm(arguments[0], 0)">{{
-                  $t('packages_business_verification_form_task_alarm_when_error')
-                }}</ElCheckbox>
-              </div>
-              <div>
-                <ElCheckbox
-                  v-show="form.inspectMethod === 'row_count'"
-                  v-model="form.alarmSettings[1].open"
-                  @change="handleChangeAlarm(arguments[0], 1)"
-                  >{{ $t('packages_business_verification_form_task_alarm_when_diff_result_over_count1') }}
-                  <ElInputNumber
-                    v-model="form.alarmSettings[1].params.maxDifferentialRows"
-                    controls-position="right"
-                    :min="0"
-                    style="width: 100px"
-                    @click.native.prevent.stop
-                    @blur="
-                      () => {
-                        form.alarmSettings[1].params.maxDifferentialRows =
-                          form.alarmSettings[1].params.maxDifferentialRows || 0
-                      }
-                    "
-                  ></ElInputNumber>
-                  {{ $t('packages_business_verification_form_task_alarm_when_diff_result_over_count2') }}</ElCheckbox
-                >
-                <ElCheckbox
-                  v-show="['field', 'jointField'].includes(form.inspectMethod)"
-                  v-model="form.alarmSettings[2].open"
-                  @change="handleChangeAlarm(arguments[0], 2)"
-                  >{{ $t('packages_business_verification_form_task_alarm_when_result_table_over_count1') }}
-                  <ElInputNumber
-                    v-model="form.alarmSettings[2].params.maxDifferentialValues"
-                    controls-position="right"
-                    :min="0"
-                    style="width: 100px"
-                    @click.native.prevent.stop
-                    @blur="
-                      () => {
-                        form.alarmSettings[2].params.maxDifferentialValues =
-                          form.alarmSettings[2].params.maxDifferentialValues || 0
-                      }
-                    "
-                  ></ElInputNumber>
-                  {{ $t('packages_business_verification_form_task_alarm_when_diff_result_over_count2') }}</ElCheckbox
-                >
-              </div>
-            </div>
-            <div class="inline-block ml-8">
-              <ElCheckboxGroup v-model="form.alarmSettings[0].notify" @change="handleChangeAlarmItem">
-                <ElCheckbox label="SYSTEM">{{ $t('packages_business_verification_form_xitongtongzhi') }}</ElCheckbox>
-                <ElCheckbox label="EMAIL">{{ $t('packages_business_verification_form_youjiantongzhi') }}</ElCheckbox>
-              </ElCheckboxGroup>
-              <ElCheckboxGroup
-                v-show="form.inspectMethod === 'row_count'"
-                v-model="form.alarmSettings[1].notify"
-                @change="handleChangeAlarmItem"
+          <!--     折叠     -->
+          <ElCollapse class="collapse-fill db-list-container" accordion>
+            <ElCollapseItem title="配置" name="1">
+              <ElFormItem
+                required
+                class="form-item"
+                prop="inspectDifferenceMode"
+                :label="$t('packages_business_verification_form_jieguoshuchu') + ': '"
               >
-                <ElCheckbox label="SYSTEM">{{ $t('packages_business_verification_form_xitongtongzhi') }}</ElCheckbox>
-                <ElCheckbox label="EMAIL">{{ $t('packages_business_verification_form_youjiantongzhi') }}</ElCheckbox>
-              </ElCheckboxGroup>
-              <ElCheckboxGroup
-                v-show="['field', 'jointField'].includes(form.inspectMethod)"
-                v-model="form.alarmSettings[2].notify"
-                @change="handleChangeAlarmItem"
-              >
-                <ElCheckbox label="SYSTEM">{{ $t('packages_business_verification_form_xitongtongzhi') }}</ElCheckbox>
-                <ElCheckbox label="EMAIL">{{ $t('packages_business_verification_form_youjiantongzhi') }}</ElCheckbox>
-              </ElCheckboxGroup>
-            </div>
-          </ElFormItem>
+                <ElSelect filterable class="form-select" v-model="form.inspectDifferenceMode">
+                  <ElOption :label="$t('packages_business_verification_form_shuchusuoyoubu')" value="All"></ElOption>
+                  <ElOption
+                    :label="$t('packages_business_verification_form_zhishuchulaiyuan')"
+                    value="OnSourceExists"
+                  ></ElOption>
+                </ElSelect>
+              </ElFormItem>
 
-          <ElFormItem
-            class="form-item"
-            :label="$t('packages_business_verification_form_label_error_save_count') + ': '"
-          >
-            <ElSelect class="form-select" v-model="form.limit.keep">
-              <ElOption :value="100" label="100(rows)"></ElOption>
-              <ElOption :value="1000" label="1000(rows)"></ElOption>
-              <ElOption :value="10000" label="10000(rows)"></ElOption>
-            </ElSelect>
-          </ElFormItem>
-          <template v-if="form.inspectMethod === 'cdcCount'">
-            <ElFormItem class="setting-item">
-              <label class="item-label">{{ $t('packages_business_verification_create_window_duration') }}</label>
-              <ElInput
-                class="item-input"
-                size="mini"
-                v-model="form.cdcDuration"
-                onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
-                onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
+              <ElFormItem class="form-item" :label="$t('packages_business_verification_frequency') + ': '">
+                <ElSelect class="form-select" v-model="form.mode" @input="form.enabled = true">
+                  <ElOption :label="$t('packages_business_verification_single')" value="manual"></ElOption>
+                  <ElOption :label="$t('packages_business_verification_repeating')" value="cron"></ElOption>
+                </ElSelect>
+              </ElFormItem>
+              <ElFormItem
+                v-if="form.mode === 'cron'"
+                class="form-item"
+                :label="$t('packages_business_verification_is_enabled') + ': '"
               >
-                <template slot="append"> {{ $t('public_time_m') }} </template>
-              </ElInput>
-            </ElFormItem>
-            <ElFormItem class="setting-item" prop="cdcBeginDate">
-              <label class="item-label is-required">{{
-                $t('packages_business_verification_form_jiaoyankaishishi')
-              }}</label>
-              <ElDatePicker
-                class="item-select"
-                size="mini"
-                v-model="form.cdcBeginDate"
-                type="datetime"
-                :placeholder="$t('packages_business_verification_form_jiaoyankaishishi')"
-                format="yyyy-MM-dd HH:mm"
-                value-format="yyyy-MM-dd HH:mm"
+                <ElSwitch v-model="form.enabled"></ElSwitch>
+              </ElFormItem>
+              <template v-if="form.mode === 'cron'">
+                <ElFormItem
+                  class="form-item"
+                  prop="timing.start"
+                  :label="$t('packages_business_verification_startAndStopTime') + ': '"
+                >
+                  <ElDatePicker
+                    class="form-input"
+                    :value="[form.timing.start, form.timing.end]"
+                    type="datetimerange"
+                    range-separator="-"
+                    :start-placeholder="$t('date_picker_start_time')"
+                    :end-placeholder="$t('date_picker_end_time')"
+                    align="right"
+                    :default-time="['00:00:00', '23:59:59']"
+                    value-format="timestamp"
+                    @input="timingChangeHandler"
+                  >
+                  </ElDatePicker>
+                </ElFormItem>
+                <ElFormItem
+                  class="form-item"
+                  prop="timing.intervals"
+                  :label="$t('packages_business_verification_verifyInterval') + ': '"
+                >
+                  <ElInput
+                    class="form-input"
+                    v-model="form.timing.intervals"
+                    onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
+                    onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
+                  >
+                    <template slot="append">
+                      <ElSelect style="width: 100px" v-model="form.timing.intervalsUnit">
+                        <ElOption v-for="unit in timeUnitOptions" :key="unit" :label="unit" :value="unit"></ElOption>
+                      </ElSelect>
+                    </template>
+                  </ElInput>
+                </ElFormItem>
+              </template>
+
+              <ElFormItem class="form-item" :label="$t('packages_business_verification_form_task_alarm') + ': '">
+                <div class="inline-block">
+                  <div>
+                    <ElCheckbox v-model="form.alarmSettings[0].open" @change="handleChangeAlarm(arguments[0], 0)">{{
+                      $t('packages_business_verification_form_task_alarm_when_error')
+                    }}</ElCheckbox>
+                  </div>
+                  <div>
+                    <ElCheckbox
+                      v-show="form.inspectMethod === 'row_count'"
+                      v-model="form.alarmSettings[1].open"
+                      @change="handleChangeAlarm(arguments[0], 1)"
+                      >{{ $t('packages_business_verification_form_task_alarm_when_diff_result_over_count1') }}
+                      <ElInputNumber
+                        v-model="form.alarmSettings[1].params.maxDifferentialRows"
+                        controls-position="right"
+                        :min="0"
+                        style="width: 100px"
+                        @click.native.prevent.stop
+                        @blur="
+                          () => {
+                            form.alarmSettings[1].params.maxDifferentialRows =
+                              form.alarmSettings[1].params.maxDifferentialRows || 0
+                          }
+                        "
+                      ></ElInputNumber>
+                      {{
+                        $t('packages_business_verification_form_task_alarm_when_diff_result_over_count2')
+                      }}</ElCheckbox
+                    >
+                    <ElCheckbox
+                      v-show="['field', 'jointField'].includes(form.inspectMethod)"
+                      v-model="form.alarmSettings[2].open"
+                      @change="handleChangeAlarm(arguments[0], 2)"
+                      >{{ $t('packages_business_verification_form_task_alarm_when_result_table_over_count1') }}
+                      <ElInputNumber
+                        v-model="form.alarmSettings[2].params.maxDifferentialValues"
+                        controls-position="right"
+                        :min="0"
+                        style="width: 100px"
+                        @click.native.prevent.stop
+                        @blur="
+                          () => {
+                            form.alarmSettings[2].params.maxDifferentialValues =
+                              form.alarmSettings[2].params.maxDifferentialValues || 0
+                          }
+                        "
+                      ></ElInputNumber>
+                      {{
+                        $t('packages_business_verification_form_task_alarm_when_diff_result_over_count2')
+                      }}</ElCheckbox
+                    >
+                  </div>
+                </div>
+                <div class="inline-block ml-8">
+                  <ElCheckboxGroup v-model="form.alarmSettings[0].notify" @change="handleChangeAlarmItem">
+                    <ElCheckbox label="SYSTEM">{{
+                      $t('packages_business_verification_form_xitongtongzhi')
+                    }}</ElCheckbox>
+                    <ElCheckbox label="EMAIL">{{
+                      $t('packages_business_verification_form_youjiantongzhi')
+                    }}</ElCheckbox>
+                  </ElCheckboxGroup>
+                  <ElCheckboxGroup
+                    v-show="form.inspectMethod === 'row_count'"
+                    v-model="form.alarmSettings[1].notify"
+                    @change="handleChangeAlarmItem"
+                  >
+                    <ElCheckbox label="SYSTEM">{{
+                      $t('packages_business_verification_form_xitongtongzhi')
+                    }}</ElCheckbox>
+                    <ElCheckbox label="EMAIL">{{
+                      $t('packages_business_verification_form_youjiantongzhi')
+                    }}</ElCheckbox>
+                  </ElCheckboxGroup>
+                  <ElCheckboxGroup
+                    v-show="['field', 'jointField'].includes(form.inspectMethod)"
+                    v-model="form.alarmSettings[2].notify"
+                    @change="handleChangeAlarmItem"
+                  >
+                    <ElCheckbox label="SYSTEM">{{
+                      $t('packages_business_verification_form_xitongtongzhi')
+                    }}</ElCheckbox>
+                    <ElCheckbox label="EMAIL">{{
+                      $t('packages_business_verification_form_youjiantongzhi')
+                    }}</ElCheckbox>
+                  </ElCheckboxGroup>
+                </div>
+              </ElFormItem>
+
+              <ElFormItem
+                class="form-item"
+                :label="$t('packages_business_verification_form_label_error_save_count') + ': '"
               >
-              </ElDatePicker>
-            </ElFormItem>
-            <ElFormItem class="setting-item" v-if="form.mode === 'manual'">
-              <label class="item-label">{{ $t('packages_business_verification_form_jiaoyanjieshushi') }}</label>
-              <ElDatePicker
-                class="item-select"
-                size="mini"
-                v-model="form.cdcEndDate"
-                type="datetime"
-                :placeholder="$t('packages_business_verification_form_jiaoyanjieshushi')"
-                format="yyyy-MM-dd HH:mm"
-                value-format="yyyy-MM-dd HH:mm"
-              >
-              </ElDatePicker>
-            </ElFormItem>
-          </template>
+                <ElSelect class="form-select" v-model="form.limit.keep">
+                  <ElOption :value="100" label="100(rows)"></ElOption>
+                  <ElOption :value="1000" label="1000(rows)"></ElOption>
+                  <ElOption :value="10000" label="10000(rows)"></ElOption>
+                </ElSelect>
+              </ElFormItem>
+              <template v-if="form.inspectMethod === 'cdcCount'">
+                <ElFormItem class="setting-item">
+                  <label class="item-label">{{ $t('packages_business_verification_create_window_duration') }}</label>
+                  <ElInput
+                    class="item-input"
+                    size="mini"
+                    v-model="form.cdcDuration"
+                    onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
+                    onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
+                  >
+                    <template slot="append"> {{ $t('public_time_m') }} </template>
+                  </ElInput>
+                </ElFormItem>
+                <ElFormItem class="setting-item" prop="cdcBeginDate">
+                  <label class="item-label is-required">{{
+                    $t('packages_business_verification_form_jiaoyankaishishi')
+                  }}</label>
+                  <ElDatePicker
+                    class="item-select"
+                    size="mini"
+                    v-model="form.cdcBeginDate"
+                    type="datetime"
+                    :placeholder="$t('packages_business_verification_form_jiaoyankaishishi')"
+                    format="yyyy-MM-dd HH:mm"
+                    value-format="yyyy-MM-dd HH:mm"
+                  >
+                  </ElDatePicker>
+                </ElFormItem>
+                <ElFormItem class="setting-item" v-if="form.mode === 'manual'">
+                  <label class="item-label">{{ $t('packages_business_verification_form_jiaoyanjieshushi') }}</label>
+                  <ElDatePicker
+                    class="item-select"
+                    size="mini"
+                    v-model="form.cdcEndDate"
+                    type="datetime"
+                    :placeholder="$t('packages_business_verification_form_jiaoyanjieshushi')"
+                    format="yyyy-MM-dd HH:mm"
+                    value-format="yyyy-MM-dd HH:mm"
+                  >
+                  </ElDatePicker>
+                </ElFormItem>
+              </template>
+
+              <ConditionBox
+                ref="conditionBox"
+                :task-id="form.flowId"
+                :inspectMethod="form.inspectMethod"
+                :data="form.tasks"
+                :edges="edges"
+                :allStages="allStages"
+                :isDB="isDbClone"
+                :jointErrorMessage.sync="jointErrorMessage"
+                :errorMessageLevel.sync="errorMessageLevel"
+                :autoAddTableLoading.sync="autoAddTableLoading"
+              ></ConditionBox>
+            </ElCollapseItem>
+          </ElCollapse>
         </ElForm>
-        <ConditionBox
-          ref="conditionBox"
-          :task-id="form.flowId"
-          :inspectMethod="form.inspectMethod"
-          :data="form.tasks"
-          :edges="edges"
-          :allStages="allStages"
-          :isDB="isDbClone"
-        ></ConditionBox>
       </div>
-      <div class="mt-8">
+      <div v-if="!!errorMessageLevel" class="color-danger mt-2" v-html="jointErrorMessage"></div>
+      <div class="mt-4">
         <ElButton size="mini" @click="goBack()">{{ $t('public_button_back') }}</ElButton>
-        <ElButton type="primary" size="mini" @click="save()">{{
-          $t('public_button_save') + ' & ' + $t('public_button_execute')
-        }}</ElButton>
-        <ElButton type="primary" size="mini" @click="save(true)">{{ $t('public_button_save') }}</ElButton>
+        <!--        <ElButton type="primary" size="mini" @click="save()">{{-->
+        <!--          $t('public_button_save') + ' & ' + $t('public_button_execute')-->
+        <!--        }}</ElButton>-->
+        <ElButton
+          type="primary"
+          size="mini"
+          :disabled="errorMessageLevel === 'error' || autoAddTableLoading"
+          @click="save(true)"
+          >{{ $t('public_button_save') }}</ElButton
+        >
       </div>
     </div>
   </section>
@@ -448,10 +464,20 @@ export default {
         row_count: i18n.t('packages_business_verification_row_verify'),
         field: i18n.t('packages_business_verification_content_verify'),
         jointField: i18n.t('packages_business_verification_joint_verify')
-      }
+      },
+      jointErrorMessage: '',
+      errorMessageLevel: '',
+      autoAddTableLoading: false
     }
   },
   created() {
+    // 设置form.taskMode
+    let taskMode = this.$route.query.taskMode
+    console.log('taskMode', taskMode)
+    if (taskMode) {
+      this.form.taskMode = taskMode
+    }
+
     this.getFlowOptions()
   },
   methods: {
@@ -470,7 +496,8 @@ export default {
             where: where,
             fields: {
               id: true,
-              name: true
+              name: true,
+              status: true
             },
             order: 'createTime DESC',
             limit: 999,
@@ -480,6 +507,7 @@ export default {
         .then(data => {
           let list = data?.items || []
           this.flowOptions = list
+          console.log('list', list)
           let flow = this.flowOptions.find(item => item.id === this.form.flowId) || {}
           this.form.name = this.form.name || flow.name || ''
           this.form['dataFlowName'] = flow.name
@@ -531,11 +559,12 @@ export default {
           this.loading = false
         })
     },
-    getFlowStages() {
+    getFlowStages(cb) {
       this.loading = true
       taskApi
         .getId(this.form.flowId)
         .then(data => {
+          console.log('getFlowStages-data', data)
           this.isDbClone = data.syncType === 'migrate'
           let edges = data.dag?.edges || []
           let nodes = data.dag?.nodes || []
@@ -568,8 +597,11 @@ export default {
               })
             )
           })
+
+          console.log('edges', edges)
           this.edges = edges
           this.allStages = stages
+          setTimeout(cb, 800)
         })
         .finally(() => {
           this.loading = false
@@ -580,7 +612,8 @@ export default {
       this.form.tasks = []
       let flow = this.flowOptions.find(item => item.id === this.form.flowId) || {}
       this.form.name = this.form.name || flow.name || ''
-      this.getFlowStages()
+      console.log('flow', flow)
+      this.getFlowStages(this.$refs.conditionBox.autoAddTable)
     },
     timingChangeHandler(times) {
       this.form.timing.start = times?.[0] || ''
@@ -720,6 +753,7 @@ export default {
       this.handleChangeAlarm(true, 1)
       this.handleChangeAlarm(true, 2)
       this.handleChangeAlarmItem()
+      this.$refs.conditionBox.validate()
     }
   }
 }
