@@ -27,6 +27,10 @@ const store = new Vuex.Store({
       enableLicense: false,
       licenseCodes: []
     },
+    startingGuide: false,
+    driverIndex: 0,
+    addConnectionAction: '',
+    // 新人引导
     guide: {
       activeStep: '',
       userId: '',
@@ -76,6 +80,18 @@ const store = new Vuex.Store({
 
     setAgentCount(state, agentCount) {
       Object.assign(state.agentCount, agentCount)
+    },
+
+    setStartingGuide(state, flag) {
+      state.startingGuide = flag
+    },
+
+    setDriverIndex(state, index) {
+      state.driverIndex = index
+    },
+
+    setAddConnectionAction(state, action) {
+      state.addConnectionAction = action
     }
   }
 })

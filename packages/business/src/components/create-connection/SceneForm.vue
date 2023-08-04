@@ -422,11 +422,14 @@ export default {
         }
       }
 
-      if (enumMap[this.selectorType]) {
-        connectionTypeJson.enum = [enumMap.sourceAndTarget, enumMap[this.selectorType]]
-      }
+      // if (enumMap[this.selectorType]) {
+      //   connectionTypeJson.enum = [enumMap.sourceAndTarget, enumMap[this.selectorType]]
+      // }
 
-      if (this.pdkOptions.connectionType === 'source' || this.pdkOptions.connectionType === 'target') {
+      if (this.selectorType === 'source' || this.selectorType === 'target') {
+        connectionTypeJson['x-hidden'] = true
+        connectionTypeJson.default = this.selectorType
+      } else if (this.pdkOptions.connectionType === 'source' || this.pdkOptions.connectionType === 'target') {
         connectionTypeJson.enum = [enumMap[this.pdkOptions.connectionType]]
       }
 

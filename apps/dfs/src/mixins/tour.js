@@ -1,6 +1,7 @@
-import i18n from '@/i18n'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { driver } from 'driver.js'
 import 'driver.js/dist/driver.css'
+import i18n from '@/i18n'
 import { connectionsApi, taskApi } from '@tap/api'
 import Cookie from '@tap/shared/src/cookie'
 
@@ -12,13 +13,30 @@ export default {
       step: 1,
       agent: {},
       isUnDeploy: false,
-      subscribes: {}
+      subscribes: {},
+      showReplicationTour: true
     }
   },
 
   computed: {
     userId() {
       return this.$store.state.user.id
+    }
+  },
+
+  watch: {
+    $route: {
+      immediate: true,
+      handler(to) {
+        console.log('watch.$route', to) // eslint-disable-line
+        if (to.name === 'migrateList') {
+          this.$nextTick(() => {
+            this.initBoardDriver()
+          })
+        } else {
+          this.destroyDriver()
+        }
+      }
     }
   },
 
@@ -29,23 +47,25 @@ export default {
     this.setBaiduIndex() // 百度推广索引
   },
 
-  beforeRouteUpdate(to, from, next) {
+  /*beforeRouteUpdate(to, from, next) {
     next()
     this.$nextTick(() => {
-      this.beTouring = false
-      const whiteList = ['connectionCreate']
-      if (!whiteList.includes(to.name)) {
-        this.initTour()
+      if (to.name === 'migrateList') {
+        console.log(document.querySelector('#btn-add-source')) // eslint-disable-line
+        this.initBoardDriver()
+        setTimeout(() => {
+          console.log(document.querySelector('#btn-add-source')) // eslint-disable-line
+        }, 1000)
       }
     })
-  },
+  },*/
 
   destroyed() {
-    this.driverObj?.destroy()
-    this.driverObj = null
+    this.destroyDriver()
   },
 
   methods: {
+    ...mapMutations(['setStartingGuide', 'setDriverIndex']),
     // 检查是否有安装过agent
     async checkGuide() {
       this.guideLoading = true
@@ -465,11 +485,11 @@ export default {
       if (this.agentRunningCount) {
         // 有可用的agent
         // await this.initDriver()
-        if (this.hasComplete()) {
-          await this.initAlarmTour()
-        } else {
-          await this.initDriver()
-        }
+        // if (this.hasComplete()) {
+        //   await this.initAlarmTour()
+        // } else {
+        //   await this.initDriver()
+        // }
       } else if (this.showAgentWarning && !this.enterAgentTour) {
         // 存在异常的agent
         await this.initAgentTour()
@@ -525,6 +545,86 @@ export default {
           this.$axios.post('api/tcm/user_guide', params)
         }
       }
+    },
+
+    destroyDriver() {
+      this.setStartingGuide(false)
+      this.driverObj?.destroy()
+      // this.driverObj = null
+    },
+
+    async initBoardDriver() {
+      this.loadingStep = true
+      const steps = [
+        {
+          element: '#btn-add-source',
+          elementClick: (...args) => {
+            this.setDriverIndex(this.driverObj.getActiveIndex())
+            this.driverObj.destroy()
+          },
+          onHighlightStarted: (element, step, options) => {
+            element?.addEventListener('click', step.elementClick)
+          },
+          onDeselected: (element, step, options) => {
+            element?.removeEventListener('click', step.elementClick)
+          },
+          popover: {
+            showButtons: [],
+            description: i18n.t('dfs_mixins_tour_dianjicichuchuang3'),
+            onPopoverRender: (popover, { state }) => {}
+          }
+        },
+        {
+          element: '#btn-add-target',
+          elementClick: (...args) => {
+            this.setDriverIndex(this.driverObj.getActiveIndex())
+            this.driverObj.destroy()
+          },
+          onHighlightStarted: (element, step, options) => {
+            element?.addEventListener('click', step.elementClick)
+          },
+          onDeselected: (element, step, options) => {
+            element?.removeEventListener('click', step.elementClick)
+          },
+          popover: {
+            showButtons: [],
+            description: i18n.t('dfs_mixins_tour_dianjicichuchuang2'),
+            onPopoverRender: (popover, { state }) => {}
+          }
+        },
+        {
+          element: '#replication-board',
+          popover: {
+            side: 'top',
+            showButtons: [],
+            description: '请展开您的源连接，并拖动一个表到目标连接',
+            onPopoverRender: (popover, { state }) => {
+              console.log('popover', popover) // eslint-disable-line
+            }
+          }
+        }
+      ]
+      this.loadingStep = false
+      this.driverObj = driver({
+        // allowClose: false,
+        showProgress: true,
+        steps
+      })
+      // this.driverObj.drive(0)
+      this.setStartingGuide(true)
+
+      const unwatch = this.$watch('$store.state.addConnectionAction', action => {
+        if (!this.$store.state.startingGuide || !this.driverObj) {
+          unwatch()
+          return
+        }
+        this.driverObj.drive(this.$store.state.driverIndex + 1)
+      })
+    },
+
+    handleStarTour() {
+      this.showReplicationTour = false
+      this.driverObj.drive(2)
     }
   }
 }

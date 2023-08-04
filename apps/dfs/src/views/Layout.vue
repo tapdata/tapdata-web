@@ -115,6 +115,7 @@
     <!--    <BindPhone :visible.sync="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>-->
     <!--    <CheckLicense :visible.sync="aliyunMaketVisible" :user="userInfo"></CheckLicense>-->
     <TaskAlarmTour v-model="showAlarmTour"></TaskAlarmTour>
+    <ReplicationTour v-model="showReplicationTour" @start="handleStarTour"></ReplicationTour>
   </ElContainer>
 </template>
 
@@ -130,6 +131,7 @@ import Cookie from '@tap/shared/src/cookie'
 import AgentGuide from '@/components/guide/index'
 import tour from '@/mixins/tour'
 import TaskAlarmTour from '@/components/TaskAlarmTour'
+import ReplicationTour from '@/components/ReplicationTour'
 import Mousetrap from 'mousetrap'
 
 export default {
@@ -141,7 +143,8 @@ export default {
     AgentDownloadModal,
     AgentGuide,
     PageHeader,
-    TaskAlarmTour
+    TaskAlarmTour,
+    ReplicationTour
   },
   mixins: [tour],
   data() {
@@ -552,5 +555,8 @@ export default {
 .siqanim,
 .siqanim * {
   pointer-events: all;
+}
+.driver-popover {
+  max-width: 520px;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="swim-lane flex flex-column h-100">
+  <div id="replication-board" class="swim-lane flex flex-column h-100">
     <div class="list flex flex-fill overflow-hidden bg-white">
       <SourceItem
         ref="source"
@@ -190,11 +190,12 @@ export default {
     },
 
     handleSuccess(connection) {
+      this.$store.commit('setAddConnectionAction', this.selectorType)
       if (connection.connection_type === 'source_and_target') {
         this.$refs.source.addItem(connection)
         this.$refs.target.addItem(connection)
       } else {
-        this.$refs[this.selectorType]?.[0]?.addItem(connection)
+        this.$refs[this.selectorType]?.addItem(connection)
       }
     },
 

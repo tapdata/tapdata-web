@@ -4,6 +4,7 @@
     :append-to-body="true"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
+    :show-close="showClose"
     width="80%"
     top="10vh"
     custom-class="connection-dialog ldp-connection-dialog flex flex-column"
@@ -297,6 +298,10 @@ export default {
     }
   },
   computed: {
+    showClose() {
+      console.log('startingGuide', this.$store.state) // eslint-disable-line
+      return !this.$store.state.startingGuide
+    },
     sceneMap() {
       return this.sceneList.reduce((obj, item) => {
         obj[item.key || item.name] = item.types

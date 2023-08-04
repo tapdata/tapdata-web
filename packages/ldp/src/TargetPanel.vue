@@ -3,7 +3,7 @@
     <div class="list__title list__title__target flex align-center px-4">
       <span class="fs-6">{{ $t('packages_business_data_console_targets') }}</span>
       <div class="flex-grow-1"></div>
-      <IconButton @click="handleAdd">add</IconButton>
+      <IconButton id="btn-add-target" @click="handleAdd">add</IconButton>
       <IconButton :class="{ active: enableSearch }" @click="toggleEnableSearch">search-outline</IconButton>
     </div>
     <div class="flex-fill min-h-0 flex flex-column">
@@ -37,7 +37,7 @@
           @drop.stop="handleDrop($event, item)"
         >
           <template v-if="item.LDP_TYPE === 'app'">
-            <div class="item__header p-3">
+            <div class="item__header px-3 py-2">
               <div class="flex align-center gap-2 overflow-hidden">
                 <VIcon size="20">mini-app</VIcon>
                 <span class="font-color-normal fw-sub fs-6 ellipsis lh-base" :title="item.value">{{ item.value }}</span>
@@ -83,7 +83,7 @@
             </div>
           </template>
           <template v-else>
-            <div class="item__header p-3 clickable" @click="$emit('preview', item)">
+            <div class="item__header px-3 py-2 clickable" @click="$emit('preview', item)">
               <div class="flex align-center overflow-hidden">
                 <DatabaseIcon :item="item" :size="20" class="item__icon flex-shrink-0" />
                 <span
@@ -121,6 +121,9 @@
               ref="taskList"
               :item-id="item.id"
               :list="connectionTaskMap[item.id] || []"
+              :startTask="startTask"
+              :forceStopTask="forceStopTask"
+              :stopTask="stopTask"
               @edit-in-dag="handleClickName"
               @find-parent="handleFindParent"
             ></TaskList>
@@ -166,7 +169,6 @@
                 <span>{{ taskDialogConfig.to.name }}</span>
               </span></span
             >
-            <div>{{ $t('packages_business_target_create_task_dialog_desc_suffix') }}</div>
           </div>
           <ElFormItem prop="taskName" :label="$t('public_task_name')">
             <ElInput size="small" v-model="taskDialogConfig.taskName" maxlength="50" show-word-limit></ElInput>
@@ -232,9 +234,9 @@
 import { debounce, cloneDeep } from 'lodash'
 import { defineComponent, ref } from '@vue/composition-api'
 
-import { apiServerApi, appApi, connectionsApi, modulesApi, proxyApi, taskApi } from '@tap/api'
+import { apiServerApi, appApi, connectionsApi, modulesApi, proxyApi, taskApi, workerApi } from '@tap/api'
 import { uuid, generateId } from '@tap/shared'
-import { VIcon, IconButton } from '@tap/component'
+import { VIcon, IconButton, VEmpty } from '@tap/component'
 import i18n from '@tap/i18n'
 import {
   DatabaseIcon,
@@ -247,31 +249,71 @@ import CreateRestApi from './components/CreateRestApi'
 import commonMix from './mixins/common'
 
 const TaskList = defineComponent({
-  props: ['list'],
+  props: ['list', 'startTask', 'forceStopTask', 'stopTask'],
   setup(props, { emit }) {
-    const limit = 5
+    const limit = 10
     const isLimit = ref(true)
     return () => {
       const list = isLimit.value ? props.list.slice(0, limit) : props.list
+
       return (
-        <div staticClass="item__content position-relative p-2" class={{ 'has-more': props.list.length > limit }}>
+        <div staticClass="item__content position-relative">
           {props.list.length ? (
             <div class="task-list">
               <div class="task-list-content">
                 {list.map((task, i) => (
-                  <div key={i} class="task-list-item flex align-center">
-                    <div class="p-1 ellipsis flex-1 align-center">
+                  <div key={i} class="task-list-item flex align-center p-2 gap-4">
+                    <div class="ellipsis flex-1 align-center">
                       <a
-                        class="el-link el-link--primary w-100 justify-content-start"
+                        class="el-link el-link--primary justify-content-start"
                         title={task.name}
                         onClick={() => emit('edit-in-dag', task)}
                       >
                         <span class="ellipsis">{task.name}</span>
                       </a>
                     </div>
-                    <div class="p-1">
-                      <TaskStatus task={task}></TaskStatus>
+                    <div class="">
+                      <TaskStatus reverse task={task}></TaskStatus>
                     </div>
+
+                    <div>
+                      {task.btnDisabled.stop && task.btnDisabled.forceStop ? (
+                        <ElLink
+                          type="primary"
+                          disabled={task.btnDisabled.start}
+                          onClick={() => props.startTask([task.id])}
+                        >
+                          {i18n.t('public_button_start')}
+                        </ElLink>
+                      ) : task.status === 'stopping' ? (
+                        <ElLink
+                          key="forceStop"
+                          type="primary"
+                          disabled={task.btnDisabled.forceStop}
+                          onClick={() => props.forceStopTask([task.id], task)}
+                        >
+                          {i18n.t('public_button_force_stop')}
+                        </ElLink>
+                      ) : (
+                        <ElLink
+                          key="stop"
+                          type="primary"
+                          disabled={task.btnDisabled.stop}
+                          onClick={() => props.stopTask([task.id], task)}
+                        >
+                          {i18n.t('public_button_stop')}
+                        </ElLink>
+                      )}
+                      <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+                      <ElLink type="primary" onClick={() => emit('edit-in-dag', task)}>
+                        {i18n.t(
+                          ['edit', 'wait_start'].includes(task.status)
+                            ? 'public_button_edit'
+                            : 'packages_business_task_list_button_monitor'
+                        )}
+                      </ElLink>
+                    </div>
+
                     {task.website && (
                       <IconButton
                         onClick={() => {
@@ -294,25 +336,28 @@ const TaskList = defineComponent({
                       </ElTag>*/
                     )}
                   </div>
-                ))}{' '}
+                ))}
               </div>
+              {props.list.length > limit && (
+                <div class="text-center py-2 border-top">
+                  <ElButton
+                    onClick={() => {
+                      isLimit.value = !isLimit.value
+                    }}
+                    size="mini"
+                    round
+                    staticClass="task-list-item-more fs-8"
+                    class={{ 'is-reverse': !isLimit.value }}
+                  >
+                    {i18n.t(isLimit.value ? 'packages_business_view_more' : 'packages_business_view_collapse')}
+                    <VIcon class="ml-1">arrow-down</VIcon>
+                  </ElButton>
+                </div>
+              )}
             </div>
           ) : (
-            <span class="font-color-sslight">{i18n.t('packages_business_data_console_target_no_task')}</span>
+            <VEmpty small description={'将源表拖入此处开始复制'}></VEmpty>
           )}
-
-          <ElButton
-            onClick={() => {
-              isLimit.value = !isLimit.value
-            }}
-            size="mini"
-            round
-            staticClass="task-list-item-more position-absolute fs-8"
-            class={{ 'is-reverse': !isLimit.value }}
-          >
-            {i18n.t(isLimit.value ? 'packages_business_view_more' : 'packages_business_view_collapse')}
-            <VIcon class="ml-1">arrow-down</VIcon>
-          </ElButton>
         </div>
       )
     }
@@ -457,8 +502,7 @@ export default {
       this.list = appList
         .concat(connectionList)
         .sort((obj1, obj2) => new Date(obj2.createTime) - new Date(obj1.createTime))
-      await this.loadTask(connectionList)
-      this.autoLoadTaskById()
+      await this.autoLoadTaskById()
     },
 
     handleAdd() {
@@ -486,26 +530,26 @@ export default {
 
     async loadTask(list) {
       if (!list.length) return
-      const spec = []
-      const ids = list.map(item => {
-        if (item.showTableWebsite) spec.push(item.id)
-        return item.id
-      })
+      // const spec = []
+      // const ids = list.map(item => {
+      //   if (item.showTableWebsite) spec.push(item.id)
+      //   return item.id
+      // })
 
-      await this.loadConnectionTaskMap(ids)
+      await this.loadConnectionTaskMap()
 
-      if (spec.length) {
-        spec.forEach(id => {
-          const taskList = data[id]
-          if (taskList?.length) {
-            const mapTaskList = this.connectionTaskMap[id]
-            taskList.forEach((task, i) => {
-              const table = this.getTableByTask(task)
-              if (table) this.getTableWebsite(id, table, mapTaskList[i])
-            })
-          }
-        })
-      }
+      // if (spec.length) {
+      //   spec.forEach(id => {
+      //     const taskList = data[id]
+      //     if (taskList?.length) {
+      //       const mapTaskList = this.connectionTaskMap[id]
+      //       taskList.forEach((task, i) => {
+      //         const table = this.getTableByTask(task)
+      //         if (table) this.getTableWebsite(id, table, mapTaskList[i])
+      //       })
+      //     }
+      //   })
+      // }
     },
 
     async loadConnectionTaskMap() {
@@ -529,13 +573,14 @@ export default {
       })
     },
 
-    autoLoadTaskById() {
+    async autoLoadTaskById() {
       clearTimeout(this.loadTaskTimer)
 
       if (this.destroyed) return
 
-      this.loadTaskTimer = setTimeout(async () => {
-        await this.loadConnectionTaskMap()
+      await this.loadConnectionTaskMap()
+
+      this.loadTaskTimer = setTimeout(() => {
         this.autoLoadTaskById()
       }, 5000)
     },
@@ -714,6 +759,8 @@ export default {
           this.taskDialogConfig.desc = `Tapdata will create a pipeline task to sync [ ${object.data.name} ] from [ ${object.parent.data.name} ] to [ ${item.name} ],  please click button below to continue. You can also change the pipeline name`
         }
 
+        this.taskDialogConfig.syncType = 'migrate'
+
         this.showDialog()
       }
     },
@@ -866,9 +913,9 @@ export default {
     },
 
     mapTask(task) {
-      makeStatusAndDisabled(task)
-      const { id, name, status, syncType } = task
-      return { id, name, status, syncType }
+      return makeStatusAndDisabled(task)
+      // const { id, name, status, syncType } = task
+      // return { id, name, status, syncType }
     },
 
     mapConnection(item) {
@@ -945,6 +992,84 @@ export default {
 
     searchByKeywordList(val = []) {
       this.searchKeywordList = val
+    },
+
+    startTask(ids) {
+      taskApi.batchStart(ids).then(() => {
+        this.autoLoadTaskById()
+        this.$message.success(this.$t('public_message_operation_success'))
+      })
+    },
+
+    async forceStopTask(ids, item = {}) {
+      let data = await workerApi.taskUsedAgent(ids)
+      let msgObj = this.getConfirmMessage('force_stop', ids.length > 1, item.name)
+      if (data?.status === 'offline' && !this.isDaas) {
+        msgObj = this.getConfirmMessage('agent_force_stop', ids.length > 1, item.name)
+      }
+      this.$confirm(msgObj.msg, '', {
+        type: 'warning',
+        showClose: false,
+        zIndex: 999999
+      }).then(resFlag => {
+        if (!resFlag) {
+          return
+        }
+        taskApi.forceStop(ids).then(data => {
+          this.autoLoadTaskById()
+          this.$message.success(data?.message || this.$t('public_message_operation_success'), false)
+        })
+      })
+    },
+
+    stopTask(ids, item) {
+      let msgObj = this.getConfirmMessage('stop', ids.length > 1, item.name)
+      let message = msgObj.msg
+      this.$confirm(message, '', {
+        type: 'warning',
+        showClose: false,
+        zIndex: 999999
+      }).then(resFlag => {
+        if (!resFlag) {
+          return
+        }
+        taskApi.batchStop(ids).then(data => {
+          this.autoLoadTaskById()
+          this.$message.success(data?.message || this.$t('public_message_operation_success'), false)
+        })
+      })
+    },
+
+    getConfirmMessage(operateStr, isBulk, name) {
+      let title = operateStr + '_confirm_title',
+        message = operateStr + '_confirm_message'
+      if (isBulk) {
+        title = 'bulk_' + title
+        message = 'bulk_' + message
+      }
+      const h = this.$createElement
+      let strArr = this.$t('packages_business_dataFlow_' + message).split('xxx')
+      let msg = h(
+        'p',
+        {
+          style: 'width: calc(100% - 28px);word-break: break-all;'
+        },
+        [
+          strArr[0],
+          h(
+            'span',
+            {
+              class: 'color-primary'
+            },
+            name
+          ),
+          strArr[1]
+        ]
+      )
+      return {
+        msg,
+        title: this.$t('packages_business_dataFlow_' + title)
+      }
     }
   }
 }
@@ -963,12 +1088,12 @@ export default {
   }
 
   ::v-deep {
+    .task-list-content {
+      .task-list-item:not(:last-child) {
+        border-bottom: 1px solid #ececec;
+      }
+    }
     .task-list-item-more {
-      display: none;
-      left: 50%;
-      bottom: 12px;
-      transform: translateX(-50%);
-
       .v-icon {
         vertical-align: -0.125em;
         transition: transform 0.3s;
@@ -977,16 +1102,6 @@ export default {
 
       &.is-reverse .v-icon {
         transform: rotate(180deg);
-      }
-    }
-
-    .has-more {
-      .task-list {
-        padding-bottom: 36px;
-      }
-
-      .task-list-item-more {
-        display: inline-flex;
       }
     }
   }
