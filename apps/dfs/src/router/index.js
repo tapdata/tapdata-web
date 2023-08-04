@@ -376,6 +376,15 @@ const routes = [
             }
           },
           {
+            path: 'renew/pay/:id',
+            name: 'payForRenew',
+            component: () => import(/* webpackChunkName: "instance" */ '../views/order/Pay'),
+            meta: {
+              hideTitle: true,
+              title: i18n.t('dfs_router_index_zhifuqingdan')
+            }
+          },
+          {
             path: '/user/order/changeList',
             name: 'changeList',
             component: () => import(/* webpackChunkName: "instance" */ '../views/order/ChangeList.vue'),

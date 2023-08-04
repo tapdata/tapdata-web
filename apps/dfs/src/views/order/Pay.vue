@@ -222,13 +222,17 @@ export default {
 
   async created() {
     const routeName = this.$route.name
-    if (this.$route.name === 'pay') {
+    const renew = routeName === 'payForRenew'
+
+    if (routeName === 'pay' || renew) {
       this.paymentParams.subscribeId = this.subscribeId = this.$route.params.id
+      this.paymentParams.renew = renew
       await this.loadSubscribe()
     } else if (routeName === 'payForChange') {
       this.paymentParams.subscribeAlterId = this.subscribeAlterId = this.$route.params.id
       await this.loadAlter()
     }
+
     await this.loadBankAccount()
   },
 

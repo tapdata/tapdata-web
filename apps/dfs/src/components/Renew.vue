@@ -19,8 +19,12 @@
       <el-form label-position="top" ref="ruleForm">
         <el-form-item :label="$t('dfs_components_renew_xudingshichang')">
           <el-input-number disabled v-model="quantity" :min="1"></el-input-number>
-          <span class="ml-2">{{ currentRenewRow.periodUnit === 'month' ? $t('public_time_month') : $t('public_time_year') }}</span>
-          <div class="mt-2">{{$t('dfs_components_renew_xudinghoudaoqi')}}<span class="color-warning">{{
+          <span class="ml-2">{{
+            currentRenewRow.periodUnit === 'month' ? $t('public_time_month') : $t('public_time_year')
+          }}</span>
+          <div class="mt-2">
+            {{ $t('dfs_components_renew_xudinghoudaoqi')
+            }}<span class="color-warning">{{
               formatterRenewTime(currentRenewRow.periodUnit, currentRenewRow.endAt)
             }}</span>
           </div>
@@ -29,7 +33,7 @@
     </section>
     <span slot="footer" class="dialog-footer">
       <span class="mr-4"
-        ><span class="fs-6 font-color-dark font-weight-light">{{$t('dfs_components_renew_xudingjine')}}</span
+        ><span class="fs-6 font-color-dark font-weight-light">{{ $t('dfs_components_renew_xudingjine') }}</span
         ><span class="color-primary fs-4">
           {{ formatterPrice(currentRenewRow.currency, currentPrice * quantity) }}</span
         ></span
@@ -40,7 +44,7 @@
         type="primary"
         :loading="loadingRenewSubmit"
         @click="handleRenew"
-        >{{$t('public_button_renew')}}</el-button
+        >{{ $t('public_button_renew') }}</el-button
       >
     </span>
   </ElDialog>
@@ -159,9 +163,16 @@ export default {
           this.loadingRenewSubmit = false
           //刷新页面
           this.$emit('closeVisible')
-          openUrl(data.payUrl)
+          // openUrl(data.payUrl)
           this.buried('renewAgentStripe', '', {
             result: true
+          })
+
+          this.$router.push({
+            name: 'payForRenew',
+            params: {
+              id: data.subscribe
+            }
           })
         })
         .catch(() => {
