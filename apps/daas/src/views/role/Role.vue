@@ -1,31 +1,51 @@
 <template>
   <div class="role" v-loading="loading">
     <div class="section-wrap-box">
-      <head class="head">
-        <i class="iconfont icon-left-circle back-btn-icon link-primary cursor-pointer" @click="back"></i>
-        <h1 class="pl-2">{{ $t('role_settingTitle') }}</h1>
-        <span>{{ $t('role_currentRole') }}: {{ roleName }}</span>
+      <head class="head flex justify-content-between mb-4">
+        <div class="flex">
+          <div class="mr-3 fs-5 fw-sub">{{ $t('role_settingTitle') }}</div>
+          <span>{{ $t('role_currentRole') }}: {{ roleName }}</span>
+        </div>
+        <div>
+          <el-button size="mini" @click="back">{{ $t('public_button_back') }} </el-button>
+          <el-button size="mini" type="primary" :loading="saveloading" @click="save('ruleForm')"
+            >{{ $t('public_button_save') }}
+          </el-button>
+        </div>
       </head>
 
       <div class="role-tableBox">
-        <div class="headTitle">
-          <h4>{{ $t('role_pageVisible') }}</h4>
-          <p>{{ $t('role_pageShowTip') }}</p>
+        <div class="alert-tip flex align-items-center mb-4 bg-warning-light rounded-2 px-4 py-2">
+          <VIcon class="color-warning mr-3" size="20">warning</VIcon>
+          <span
+            >勾选相应模块表示此导航对当前角色下用户可见，开启【查看全部数据】则表示角色可以查看和操作该模块下所有的数据，不勾选则只能查看和操作自己创建和被授权的数据。</span
+          >
         </div>
         <ul class="role-table page-table">
           <li class="role-head">
             <el-row class="e-row">
-              <el-col class="e-col borderRight" :span="21">
-                {{ $t('role_choosePage') }}
+              <el-col class="e-col borderRight" :span="4"> 功能模块 </el-col>
+              <el-col class="e-col borderRight" :span="4"> 页面权限 </el-col>
+              <el-col class="e-col borderRight" :span="14"> 功能权限 </el-col>
+              <el-col class="e-col flex align-items-center" :span="2">
+                <span>查看全部数据</span>
+                <ElTooltip transition="tooltip-fade-in" placement="top" content="查看全部数据">
+                  <VIcon size="16" class="color-info ml-2">info</VIcon>
+                </ElTooltip>
               </el-col>
-              <el-col class="e-col" :span="3">{{ $t('role_bulkOperate') }} </el-col>
             </el-row>
           </li>
           <li v-for="item in dataList" :key="item.id">
-            <el-row class="e-row">
-              <el-col class="ml-4 font-weight-bold">{{ item.description }}</el-col>
-              <el-col class="e-col borderRight" :span="21">
-                <template v-for="second in item.children">
+            <el-row class="e-row flex">
+              <el-col class="e-col flex justify-content-center align-items-center" :span="4">
+                <span>{{ item.description }}</span>
+              </el-col>
+              <el-col class="e-col border-start" :span="4">
+                <div
+                  v-for="(second, secondIndex) in item.children"
+                  :key="secondIndex"
+                  :class="['pl-3', secondIndex !== 0 ? 'border-top' : '']"
+                >
                   <el-checkbox
                     :key="second.name"
                     v-model="second.checkAll"
@@ -37,24 +57,48 @@
                       {{ second.description }}
                     </span>
                   </el-checkbox>
-                </template>
+                </div>
               </el-col>
-              <el-col class="e-col" :span="3">
-                <el-checkbox v-model="item.checked" @change="handleAllCheck($event, item)" v-cloak>
-                  <span>
-                    {{ $t('role_all_check') }}
-                  </span>
-                </el-checkbox>
+              <el-col class="e-col border-start border-end" :span="14">
+                <div
+                  v-for="(second, secondIndex) in item.children"
+                  :key="secondIndex"
+                  :class="['pl-3', secondIndex !== 0 ? 'border-top' : '']"
+                >
+                  <el-checkbox
+                    :key="second.name"
+                    :value="true"
+                    disabled
+                    v-if="!second.functionality || !second.functionality.length"
+                    v-cloak
+                  >
+                    <span> 全部功能 </span>
+                  </el-checkbox>
+                  <el-checkbox
+                    v-else
+                    v-for="(sItem, sIndex) in second.functionality"
+                    :key="sIndex"
+                    v-model="sItem.checked"
+                    @change="handleCheckChange($event, sItem, sItem)"
+                    v-cloak
+                    class="mr-10"
+                  >
+                    <span>{{ sItem.label }} </span>
+                  </el-checkbox>
+                </div>
+              </el-col>
+              <el-col class="e-col" :span="2">
+                <div
+                  v-for="(second, secondIndex) in item.children"
+                  :key="secondIndex"
+                  :class="['pl-3', secondIndex !== 0 ? 'border-top' : '']"
+                >
+                  <el-switch :class="{ invisible: !second.showAllData }"></el-switch>
+                </div>
               </el-col>
             </el-row>
           </li>
         </ul>
-      </div>
-      <div class="btn">
-        <el-button size="mini" @click="back">{{ $t('public_button_back') }} </el-button>
-        <el-button size="mini" type="primary" :loading="saveloading" @click="save('ruleForm')"
-          >{{ $t('public_button_save') }}
-        </el-button>
       </div>
     </div>
   </div>
@@ -64,11 +108,85 @@
 import { roleMappingsApi, permissionsApi, usersApi } from '@tap/api'
 
 let pageSort = [
-  { children: [{ name: 'v2_data-console' }] },
-  { children: [{ name: 'v2_datasource_menu' }] },
+  { name: 'v2_data-console', children: [{ name: 'v2_data-console' }] },
+  {
+    name: 'v2_datasource_menu',
+    children: [
+      {
+        name: 'v2_datasource_menu',
+        showAllData: true,
+        functionality: [
+          {
+            label: '创建连接',
+            name: 'v2_datasource_creation',
+            checked: false
+          },
+          {
+            label: '复制连接',
+            name: 'v2_datasource_copy',
+            checked: false
+          }
+        ]
+      }
+    ]
+  },
   {
     name: 'v2_data_pipeline',
-    children: [{ name: 'v2_data_replication' }, { name: 'v2_data_flow' }, { name: 'v2_data_check' }]
+    children: [
+      {
+        name: 'v2_data_replication',
+        showAllData: true,
+        functionality: [
+          {
+            label: '创建任务',
+            name: 'v2_data_replication_edit',
+            checked: false
+          },
+          {
+            label: '复制任务',
+            name: 'v2_data_replication_copy',
+            checked: false
+          },
+          {
+            label: '导入任务',
+            name: 'v2_data_replication_import',
+            checked: false
+          },
+          {
+            label: '导出任务',
+            name: 'v2_data_replication_export',
+            checked: false
+          }
+        ]
+      },
+      {
+        name: 'v2_data_flow',
+        showAllData: true,
+        functionality: [
+          {
+            label: '创建任务',
+            name: 'v2_data_flow_edit',
+            checked: false
+          },
+          {
+            label: '复制任务',
+            name: 'v2_data_flow_copy',
+            checked: false
+          },
+          {
+            label: '导入任务',
+            name: 'v2_data_flow_import',
+            checked: false
+          },
+          {
+            label: '导出任务',
+            name: 'v2_data_flow_export',
+            checked: true
+          }
+        ]
+      },
+      { name: 'v2_data_check' }
+    ]
   },
   {
     name: 'v2_advanced_features',
@@ -444,6 +562,11 @@ export default {
                 if (menu.children) {
                   menu.children = pageMenu(menu.children)
                 }
+                if (menu.functionality) {
+                  menu.functionality.forEach(el => {
+                    el.checked = pageMap[el.name]?.status === 'enable'
+                  })
+                }
                 return menu
               })
             }
@@ -481,11 +604,6 @@ export default {
       if (typeof item.checkAll === 'undefined') {
         this.$set(item, 'checkAll', false)
       }
-
-      let checkedCount = item.children.filter(el => {
-        return el.checkAll
-      })
-      item.checked = checkedCount.length === item.children.length
       //保留当前操作数据
       this.updateData(data.checkAll, data, item)
     },
@@ -539,12 +657,12 @@ export default {
         if (this.deletes && this.deletes.length > 0) {
           let index = this.deletes.findIndex(del => del.principalId === data.name)
           if (index > -1) {
-            this.deletes.splice(index, -1)
+            this.deletes.splice(index, 1)
           }
 
           let p_index = this.deletes.findIndex(del => del.principalId === parentData.name)
           if (p_index > -1) {
-            this.deletes.splice(p_index, -1)
+            this.deletes.splice(p_index, 1)
           }
         }
       } else {
@@ -572,12 +690,12 @@ export default {
         if (this.adds && this.adds.length > 0) {
           let index = this.adds.findIndex(add => add.principalId === data.name)
           if (index > -1) {
-            this.adds.splice(index, -1)
+            this.adds.splice(index, 1)
           }
 
           let p_index = this.adds.findIndex(add => add.principalId === parentData.name)
           if (p_index > -1) {
-            this.adds.splice(p_index, -1)
+            this.adds.splice(p_index, 1)
           }
         }
       }
@@ -790,8 +908,8 @@ export default {
   height: 100%;
   box-sizing: border-box;
   .head {
-    display: block;
-    border-bottom: 1px solid #dedee4;
+    height: 28px;
+    line-height: 28px;
     i {
       display: inline-block;
       cursor: pointer;
@@ -923,16 +1041,14 @@ export default {
       }
     }
   }
-  .btn {
-    width: 100%;
-    padding-top: 18px;
-    text-align: center;
-    border-top: 1px solid #e7e7e7;
-  }
 }
 
 [v-cloak] {
   display: none;
+}
+
+.alert-tip {
+  border-left: 4px solid #ffcf8b;
 }
 </style>
 <style lang="scss">
@@ -943,8 +1059,6 @@ export default {
         line-height: 20px;
       }
       .el-checkbox {
-        // display: inline;
-        min-width: 170px;
         margin: 0 10px;
         line-height: 20px;
         box-sizing: border-box;
@@ -958,14 +1072,12 @@ export default {
         }
       }
       .checkbox-radio {
-        min-width: 170px;
         .el-checkbox__input {
           padding-top: 3px;
           vertical-align: top;
         }
 
         .e-checkbox {
-          // display: block !important;
           padding: 5px 0;
           margin: 0;
           font-size: 12px;
