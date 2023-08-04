@@ -34,6 +34,7 @@
           <span> {{ $t('public_button_bulk_tag') }}</span>
         </ElButton>
         <ElButton
+          v-if="buttonShowMap.create"
           id="connection-list-create"
           v-readonlybtn="'datasource_creation'"
           class="btn btn-create"
@@ -136,8 +137,9 @@
             @click="edit(scope.row.id, scope.row)"
             >{{ $t('public_button_edit') }}
           </ElButton>
-          <ElDivider direction="vertical" v-readonlybtn="'datasource_edition'"></ElDivider>
+          <ElDivider v-if="buttonShowMap.copy" direction="vertical" v-readonlybtn="'datasource_edition'"></ElDivider>
           <ElButton
+            v-if="buttonShowMap.copy"
             v-readonlybtn="'datasource_creation'"
             type="text"
             :loading="scope.row.copyLoading"
@@ -276,6 +278,13 @@ export default {
   computed: {
     table() {
       return this.$refs.table
+``    },
+    buttonShowMap() {
+      const { isDaas } = this
+      return {
+        create: !isDaas || window.__settings__.some(t => t.name === 'v2_datasource_creation'),
+        copy: !isDaas || window.__settings__.some(t => t.name === 'v2_datasource_copy')
+      }
     }
   },
   watch: {

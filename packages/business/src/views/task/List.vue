@@ -71,6 +71,7 @@
         </el-dropdown>
         <template>
           <el-button
+            v-if="buttonShowMap.export"
             v-show="multipleSelection.length > 0 && isDaas"
             :disabled="$disabledReadonlyUserBtn()"
             v-readonlybtn="'SYNC_job_export'"
@@ -82,7 +83,7 @@
             <span> {{ $t('public_button_export') }}</span>
           </el-button>
           <el-button
-            v-if="isDaas"
+            v-if="isDaas && buttonShowMap.import"
             v-readonlybtn="'SYNC_job_import'"
             size="mini"
             class="btn"
@@ -94,6 +95,7 @@
           </el-button>
         </template>
         <el-button
+          v-if="buttonShowMap.create"
           v-readonlybtn="'SYNC_job_creation'"
           class="btn btn-create"
           type="primary"
@@ -213,8 +215,9 @@
             >
               {{ $t('public_button_reset') }}
             </ElLink>
-            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+            <ElDivider v-if="buttonShowMap.copy" v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
             <ElLink
+              v-if="buttonShowMap.copy"
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
               :disabled="$disabledReadonlyUserBtn()"
@@ -406,6 +409,25 @@ export default {
             status: 110,
             operation: 280
           }
+    },
+
+    buttonShowMap() {
+      const { isDaas } = this
+      if (this.$route.name === 'dataflowList') {
+        return {
+          create: !isDaas || window.__settings__.some(t => t.name === 'v2_data_flow_edit'),
+          copy: !isDaas || window.__settings__.some(t => t.name === 'v2_data_flow_copy'),
+          import: !isDaas || window.__settings__.some(t => t.name === 'v2_data_flow_import'),
+          export: !isDaas || window.__settings__.some(t => t.name === 'v2_data_flow_export')
+        }
+      }
+
+      return {
+        create: !isDaas || window.__settings__.some(t => t.name === 'v2_data_replication_edit'),
+        copy: !isDaas || window.__settings__.some(t => t.name === 'v2_data_replication_copy'),
+        import: !isDaas || window.__settings__.some(t => t.name === 'v2_data_replication_import'),
+        export: !isDaas || window.__settings__.some(t => t.name === 'v2_data_replication_export')
+      }
     }
   },
 
