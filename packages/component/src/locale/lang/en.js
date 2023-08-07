@@ -52,7 +52,7 @@ export default {
   packages_component_src_upgradefee_zhuanyeban: 'Professional Plan',
   packages_component_src_upgradefee_dangqianbanben: 'Current Plan',
   packages_component_src_upgradefee_biaozhunshouhouzhi: 'Technical Support: Standard',
-  packages_component_src_upgradefee_ge: '3',
+  packages_component_src_upgradefee_ge: '2',
   packages_component_src_upgradefee_zuidarenwushu: 'Max Concurrently Tasks: ',
   packages_component_src_basic_component: 'Basic Data Replica and Development Features',
   packages_component_src_upgradefee_mianfei: 'Free',
