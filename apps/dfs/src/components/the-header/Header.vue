@@ -260,7 +260,7 @@ export default {
     },
     goSlack() {
       window.open(
-        'https://join.slack.com/share/enQtNTY4ODM3MzkwNjE2NS1iOGFjYzhjY2NmNDFkMDZlMjM0OTk0ZTExMDIxNTExY2Y2ZDE1MmVjMjM1ZGVlMDcxZThmNzAwOTUxNWMzNmZl',
+        'https://join.slack.com/share/enQtNTY5NjA0NjI3Njg1My1iZTlmNDE0Y2VmYWEwNWQwZTc1MDAyMzFiMjdhOGE2M2IyODk3ZjZkYzk0YWYzNDZiYTdiMjE2NDBlODcxODc2',
         '_blank'
       )
     }
