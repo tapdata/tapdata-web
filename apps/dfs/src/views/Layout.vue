@@ -115,7 +115,12 @@
     <!--    <BindPhone :visible.sync="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>-->
     <!--    <CheckLicense :visible.sync="aliyunMaketVisible" :user="userInfo"></CheckLicense>-->
     <TaskAlarmTour v-model="showAlarmTour"></TaskAlarmTour>
-    <ReplicationTour v-model="showReplicationTour" @start="handleStarTour"></ReplicationTour>
+    <ReplicationTour
+      v-model="showReplicationTour"
+      :finish="replicationTourFinish"
+      @start="handleStarTour"
+      @finish="handleFinishTour"
+    ></ReplicationTour>
   </ElContainer>
 </template>
 

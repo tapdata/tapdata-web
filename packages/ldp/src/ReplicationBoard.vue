@@ -1,5 +1,5 @@
 <template>
-  <div id="replication-board" class="swim-lane flex flex-column h-100">
+  <div id="replication-board" class="swim-lane flex flex-column h-100 position-relative">
     <div class="list flex flex-fill overflow-hidden bg-white">
       <SourceItem
         ref="source"
@@ -190,7 +190,7 @@ export default {
     },
 
     handleSuccess(connection) {
-      this.$store.commit('setAddConnectionAction', this.selectorType)
+      this.$store.commit('setDriverBehavior', 'add-' + this.selectorType)
       if (connection.connection_type === 'source_and_target') {
         this.$refs.source.addItem(connection)
         this.$refs.target.addItem(connection)
@@ -297,6 +297,9 @@ export default {
     },
 
     handlePreview(data, connection, callback) {
+      // 引导过程，不给查看详情
+      if (this.$store.state.startingGuide) return
+
       switch (data.LDP_TYPE) {
         case 'table':
           this.$refs.tablePreview.open(data, connection, callback)

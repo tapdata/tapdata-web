@@ -3,8 +3,10 @@
     <div class="list__title list__title__target flex align-center px-4">
       <span class="fs-6">{{ $t('packages_business_data_console_targets') }}</span>
       <div class="flex-grow-1"></div>
-      <IconButton id="btn-add-target" @click="handleAdd">add</IconButton>
-      <IconButton :class="{ active: enableSearch }" @click="toggleEnableSearch">search-outline</IconButton>
+      <IconButton :disabled="highlightBoard" id="btn-add-target" @click="handleAdd">add</IconButton>
+      <IconButton :disabled="highlightBoard" :class="{ active: enableSearch }" @click="toggleEnableSearch"
+        >search-outline</IconButton
+      >
     </div>
     <div class="flex-fill min-h-0 flex flex-column">
       <div v-if="enableSearch" class="px-2 pt-2">
@@ -210,7 +212,7 @@
         </ElForm>
         <span slot="footer" class="dialog-footer">
           <ElButton size="mini" @click="hideDialog">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton :loading="creating" size="mini" @click="dialogSubmit(false)">{{
+          <ElButton :disabled="highlightBoard" :loading="creating" size="mini" @click="dialogSubmit(false)">{{
             $t('packages_business_save_only')
           }}</ElButton>
           <ElButton :loading="creating" size="mini" type="primary" @click="dialogSubmit(true)">
@@ -769,13 +771,9 @@ export default {
       this.apiDialog.visible = true
     },
 
-    makeMigrateTask(from, to) {
-      let source = this.getDatabaseNode(from)
+    makeMigrateTask(from, tableName, to) {
+      let source = this.getSourceNode(from, tableName)
       let target = this.getDatabaseNode(to)
-      Object.assign(source, {
-        migrateTableSelectType: 'expression',
-        tableExpression: '.*'
-      })
 
       return {
         ...TASK_SETTINGS,
@@ -804,6 +802,25 @@ export default {
           capabilities: db.capabilities || []
         }
       }
+    },
+
+    getSourceNode(from, tableName) {
+      let source = this.getDatabaseNode(from)
+
+      Object.assign(
+        source,
+        tableName
+          ? {
+              migrateTableSelectType: 'custom',
+              tableNames: [tableName]
+            }
+          : {
+              migrateTableSelectType: 'expression',
+              tableExpression: '.*'
+            }
+      )
+
+      return source
     },
 
     getTableNode(db, tableName) {
@@ -845,6 +862,7 @@ export default {
       this.$refs.form?.resetFields()
       this.taskDialogConfig.task.crontabExpressionFlag = false
       this.taskDialogConfig.task.crontabExpression = ''
+      this.taskDialogConfig.task.type = this.highlightBoard ? 'initial_sync' : 'initial_sync+cdc'
     },
 
     hideDialog() {
@@ -861,11 +879,22 @@ export default {
           if (syncType === 'sync') {
             task = this.makeSyncTask(from, tableName, to)
           } else if (syncType === 'migrate') {
-            task = this.makeMigrateTask(from, to)
+            task = this.makeMigrateTask(from, tableName, to)
           }
 
           Object.assign(task, settings)
-          let taskInfo = await taskApi[ifStart ? 'saveAndStart' : 'post'](task)
+          let taskInfo = await taskApi.save(task)
+
+          if (ifStart) {
+            // 保存并运行
+            // taskInfo = await taskApi.save(task)
+            taskInfo = await taskApi.saveAndStart(taskInfo, {
+              params: {
+                confirm: true
+              }
+            })
+          }
+
           const table = this.getTableByTask(taskInfo)
           const mapTask = this.mapTask(taskInfo)
 
@@ -895,6 +924,8 @@ export default {
               this.$t('packages_business_task_created_success')
             )
           })
+
+          this.$store.commit('setDriverBehavior', 'add-task')
         }
       })
     },

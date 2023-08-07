@@ -1,24 +1,38 @@
 <template>
   <ElDialog :visible.sync="visible" width="480px" :show-close="false" :close-on-click-modal="false">
-    <div class="text-center title-cover" slot="title">👋</div>
+    <template v-if="!finish">
+      <div class="text-center title-cover" slot="title">👋</div>
 
-    <div class="lh-base font-color-dark text-center mt-n4">
-      <h1 class="fs-5 fw-sub font-color-dark mb-2">Welcome to Tapdata Cloud.</h1>
-      <p class="lh-base">在开始数据复制任务之前，您需要创建源数据库和目标数据库连接。</p>
-      <p>我们将引导您完成：</p>
-      <ul class="flex align-center justify-center fw-sub my-2">
-        <li>创建源数据库连接</li>
-        <ElDivider direction="vertical"></ElDivider>
-        <li>创建目标数据库连接</li>
-        <ElDivider direction="vertical"></ElDivider>
-        <li>配置数据复制任务</li>
-      </ul>
-      <p>现在让我们开始创建您的连接并设置数据复制任务。</p>
-    </div>
+      <div class="lh-base font-color-dark text-center mt-n4">
+        <h1 class="fs-5 fw-sub font-color-dark mb-2">Welcome to Tapdata Cloud.</h1>
+        <p class="lh-base">在开始数据复制任务之前，您需要创建源数据库和目标数据库连接。</p>
+        <p>我们将引导您完成：</p>
+        <ul class="flex align-center justify-center fw-sub my-2">
+          <li>创建源数据库连接</li>
+          <ElDivider direction="vertical"></ElDivider>
+          <li>创建目标数据库连接</li>
+          <ElDivider direction="vertical"></ElDivider>
+          <li>配置数据复制任务</li>
+        </ul>
+        <p>现在让我们开始创建您的连接并设置数据复制任务。</p>
+      </div>
 
-    <div slot="footer" class="text-center">
-      <el-button @click="$emit('start')" type="primary">Start</el-button>
-    </div>
+      <div slot="footer" class="text-center">
+        <el-button @click="$emit('start')" type="primary">Start</el-button>
+      </div>
+    </template>
+
+    <template v-else>
+      <div class="text-center title-cover" slot="title">🎉</div>
+
+      <div class="lh-base font-color-dark text-center mt-n4">
+        <h1 class="fs-5 fw-sub font-color-dark mb-2">恭喜您已经完成复制任务的引导</h1>
+      </div>
+
+      <div slot="footer" class="text-center">
+        <el-button @click="$emit('finish')" type="primary">完成</el-button>
+      </div>
+    </template>
   </ElDialog>
 </template>
 
@@ -30,7 +44,8 @@ import { driver } from 'driver.js'
 export default {
   name: 'ReplicationTour',
   props: {
-    value: Boolean
+    value: Boolean,
+    finish: Boolean
   },
 
   data() {
@@ -45,6 +60,9 @@ export default {
     },
     noEmail() {
       return !this.$store.state.user.email
+    },
+    startingGuide() {
+      return this.$store.state.startingGuide
     }
   },
 

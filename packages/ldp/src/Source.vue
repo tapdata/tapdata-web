@@ -3,8 +3,10 @@
     <div class="list__title list__title__source flex align-center px-4">
       <span class="fs-6">{{ $t('packages_business_data_console_sources') }}</span>
       <div class="flex-grow-1"></div>
-      <IconButton id="btn-add-source" @click="handleAdd">add</IconButton>
-      <IconButton :class="{ active: enableSearch }" @click="toggleEnableSearch">search-outline</IconButton>
+      <IconButton :disabled="highlightBoard" id="btn-add-source" @click="handleAdd">add</IconButton>
+      <IconButton :disabled="highlightBoard" :class="{ active: enableSearch }" @click="toggleEnableSearch"
+        >search-outline</IconButton
+      >
       <!--<IconButton>more</IconButton>-->
     </div>
     <div class="flex-1 min-h-0 flex flex-column">

@@ -34,15 +34,19 @@
           </div>
         </div>
         <footer slot="footer" class="footer">
-          <div class="footer-btn text-start py-4">
-            <!--            <el-button @click="goBack()">{{ $t('public_button_back') }}</el-button>-->
-            <el-button class="test" @click="startTest()">{{ $t('public_connection_button_test') }}</el-button>
-            <el-button type="primary" :loading="submitBtnLoading" @click="submit()">
-              {{ $t('public_button_save') }}
-            </el-button>
-            <el-button type="primary" :loading="saveAndMoreLoading" @click="saveAndMore">{{
+          <div class="footer-btn text-center p-4">
+            <el-button class="test mr-4" @click="startTest()">{{ $t('public_connection_button_test') }}</el-button>
+            <ElTooltip :disabled="!disableSave" :content="saveBtnTip">
+              <div class="inline-block">
+                <el-button :disabled="disableSave" type="primary" :loading="submitBtnLoading" @click="submit()">
+                  {{ $t('public_button_save') }}
+                </el-button>
+              </div>
+            </ElTooltip>
+
+            <!--            <el-button type="primary" :loading="saveAndMoreLoading" @click="saveAndMore">{{
               $t('packages_business_save_and_more')
-            }}</el-button>
+            }}</el-button>-->
           </div>
         </footer>
       </main>
@@ -162,8 +166,18 @@ export default {
     }
   },
   computed: {
+    startingGuide() {
+      return this.$store.state.startingGuide
+    },
     schemaFormInstance() {
       return this.$refs.schemaToForm.getForm?.()
+    },
+    disableSave() {
+      return this.$store.state.startingGuide && this.status !== 'ready'
+    },
+    saveBtnTip() {
+      if (!this.status) return '请先进行连接测试'
+      if (this.status === 'invalid') return '连接测试无效，请检查您的连接配置'
     }
   },
 
@@ -218,6 +232,14 @@ export default {
       this.pdkFormModel = this.$refs.schemaToForm?.getForm?.()
       this.schemaFormInstance?.validate().then(() => {
         if (!addNext) this.submitBtnLoading = true
+
+        // 正在引导
+        /*if (this.startingGuide) {
+          if (!this.status) {
+            this.startTest()
+          }
+        }*/
+
         // 保存数据源
         let id = this.params?.id
         let { pdkOptions } = this

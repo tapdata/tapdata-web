@@ -299,7 +299,6 @@ export default {
   },
   computed: {
     showClose() {
-      console.log('startingGuide', this.$store.state) // eslint-disable-line
       return !this.$store.state.startingGuide
     },
     sceneMap() {

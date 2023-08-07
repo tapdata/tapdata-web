@@ -14,7 +14,8 @@ export default {
       agent: {},
       isUnDeploy: false,
       subscribes: {},
-      showReplicationTour: true
+      showReplicationTour: true,
+      replicationTourFinish: false
     }
   },
 
@@ -65,7 +66,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations(['setStartingGuide', 'setDriverIndex']),
+    ...mapMutations(['setStartingGuide', 'setDriverIndex', 'setHighlightBoard']),
     // 检查是否有安装过agent
     async checkGuide() {
       this.guideLoading = true
@@ -559,10 +560,10 @@ export default {
         {
           element: '#btn-add-source',
           elementClick: (...args) => {
-            this.setDriverIndex(this.driverObj.getActiveIndex())
             this.driverObj.destroy()
           },
-          onHighlightStarted: (element, step, options) => {
+          onHighlightStarted: (element, step, { state }) => {
+            this.setDriverIndex(state.activeIndex)
             element?.addEventListener('click', step.elementClick)
           },
           onDeselected: (element, step, options) => {
@@ -577,10 +578,10 @@ export default {
         {
           element: '#btn-add-target',
           elementClick: (...args) => {
-            this.setDriverIndex(this.driverObj.getActiveIndex())
             this.driverObj.destroy()
           },
-          onHighlightStarted: (element, step, options) => {
+          onHighlightStarted: (element, step, { state }) => {
+            this.setDriverIndex(state.activeIndex)
             element?.addEventListener('click', step.elementClick)
           },
           onDeselected: (element, step, options) => {
@@ -594,6 +595,14 @@ export default {
         },
         {
           element: '#replication-board',
+          onHighlightStarted: (element, step, { state }) => {
+            this.setDriverIndex(state.activeIndex)
+            this.setHighlightBoard(true)
+          },
+          onDeselected: (element, step, options) => {
+            console.log('onDeselected-#replication-board') // eslint-disable-line
+            this.setHighlightBoard(false)
+          },
           popover: {
             side: 'top',
             showButtons: [],
@@ -608,23 +617,39 @@ export default {
       this.driverObj = driver({
         // allowClose: false,
         showProgress: true,
-        steps
+        steps,
+        onHighlightStarted: (element, step, { state }) => {
+          console.log('设置Index', state.activeIndex) // eslint-disable-line
+          this.setDriverIndex(state.activeIndex)
+        }
       })
       // this.driverObj.drive(0)
-      this.setStartingGuide(true)
+      // this.setStartingGuide(true)
 
-      const unwatch = this.$watch('$store.state.addConnectionAction', action => {
+      const unwatch = this.$watch('$store.state.driverBehavior', behavior => {
         if (!this.$store.state.startingGuide || !this.driverObj) {
           unwatch()
           return
         }
+
         this.driverObj.drive(this.$store.state.driverIndex + 1)
+
+        if (behavior === 'add-task') {
+          this.showReplicationTour = true
+          this.replicationTourFinish = true
+        }
       })
     },
 
     handleStarTour() {
       this.showReplicationTour = false
+      this.setStartingGuide(true)
       this.driverObj.drive(2)
+    },
+
+    handleFinishTour() {
+      this.showReplicationTour = false
+      this.destroyDriver()
     }
   }
 }

@@ -28,8 +28,10 @@ const store = new Vuex.Store({
       licenseCodes: []
     },
     startingGuide: false,
+    highlightBoard: false,
     driverIndex: 0,
     addConnectionAction: '',
+    driverBehavior: '', // add-source, add-target, add-task
     // 新人引导
     guide: {
       activeStep: '',
@@ -90,8 +92,12 @@ const store = new Vuex.Store({
       state.driverIndex = index
     },
 
-    setAddConnectionAction(state, action) {
-      state.addConnectionAction = action
+    setDriverBehavior(state, behavior) {
+      state.driverBehavior = behavior
+    },
+
+    setHighlightBoard(state, flag) {
+      state.highlightBoard = flag
     }
   }
 })

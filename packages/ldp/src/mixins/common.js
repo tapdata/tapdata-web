@@ -78,6 +78,13 @@ export default {
       }
     }
   },
+
+  computed: {
+    highlightBoard() {
+      return this.$store.state.highlightBoard
+    }
+  },
+
   unmounted() {
     this.debouncedSearch?.cancel()
     this.cancelSource?.cancel()
