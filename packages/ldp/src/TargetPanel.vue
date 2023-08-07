@@ -856,13 +856,13 @@ export default {
       }
     },
 
-    showDialog() {
+    async showDialog() {
       this.taskDialogConfig.visible = true
-      this.taskDialogConfig.taskName = i18n.t('packages_dag_mixins_editor_xinrenwu') + new Date().toLocaleTimeString()
       this.$refs.form?.resetFields()
       this.taskDialogConfig.task.crontabExpressionFlag = false
       this.taskDialogConfig.task.crontabExpression = ''
       this.taskDialogConfig.task.type = this.highlightBoard ? 'initial_sync' : 'initial_sync+cdc'
+      this.taskDialogConfig.taskName = await this.makeTaskName(`${i18n.t('public_task')} `)
     },
 
     hideDialog() {

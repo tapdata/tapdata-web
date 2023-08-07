@@ -215,6 +215,7 @@ export default {
   public_connection_form_time_zone_of_time_type: '時間類型的時區',
   public_connection_form_link_plugin_source: '鏈接插件來源',
   // 任務
+  public_task: '任務',
   public_task_name: '任務名稱',
   public_task_type: '任務類型',
   public_task_sync_type: '同步類型',
