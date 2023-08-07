@@ -322,11 +322,9 @@ export default {
     list: {
       deep: true,
       handler() {
-        console.log('watch-list')
-        // debounce(this.validate, 200)
         this.debounceValidate()
       }
-    },
+    }
   },
 
   created() {
@@ -610,6 +608,7 @@ export default {
 
     clearList() {
       this.list = []
+      this.validate()
     },
 
     getItemOptions() {
@@ -1025,13 +1024,18 @@ export default {
       item.target.columns = data.map(t => t.target)
     },
 
-    debounceValidate: debounce(function() {
+    debounceValidate: debounce(function () {
       this.validate()
     }, 200),
 
     validate() {
-      console.log('validate')
       let tasks = this.getList()
+
+      if (!tasks.length) {
+        this.updateErrorMsg('')
+        return
+      }
+
       let index = 0
       let message = ''
       // const formDom = document.getElementById('data-verification-form')
@@ -1041,7 +1045,7 @@ export default {
       const noTableArr = tasks.filter(c => !c.source.table || !c.target.table)
 
       if (!haveTableArr.length) {
-        message = `源表和目标表不能为空，请打开配置，并手动选择`
+        message = `源表和目标表不能为空，请修改校验表配置`
         // this.jointErrorMessage = message
         this.updateErrorMsg(message, 'error')
         return message
@@ -1062,7 +1066,7 @@ export default {
         const noIndexFieldArr = tasks.filter(c => !c.source.sortColumn || !c.target.sortColumn)
 
         if (!haveIndexFieldArr.length) {
-          message = `关联校验条件不能为空，请打开配置，并手动选择`
+          message = `关联校验条件不能为空，请修改校验表配置`
           // this.jointErrorMessage = message
           this.updateErrorMsg(message, 'error')
           return message
@@ -1080,7 +1084,7 @@ export default {
             message += `...${noIndexFieldArr.length - SHOW_COUNT}`
           }
           // this.jointErrorMessage = message
-          this.updateErrorMsg(message, warn)
+          this.updateErrorMsg(message, 'warn')
           return
         }
 

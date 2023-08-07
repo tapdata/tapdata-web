@@ -307,6 +307,7 @@
               </template>
 
               <ConditionBox
+                v-if="form.taskMode === 'pipeline'"
                 ref="conditionBox"
                 :task-id="form.flowId"
                 :inspectMethod="form.inspectMethod"
@@ -320,6 +321,20 @@
               ></ConditionBox>
             </ElCollapseItem>
           </ElCollapse>
+          <ConditionBox
+            v-if="form.taskMode !== 'pipeline'"
+            ref="conditionBox"
+            :task-id="form.flowId"
+            :inspectMethod="form.inspectMethod"
+            :data="form.tasks"
+            :edges="edges"
+            :allStages="allStages"
+            :isDB="isDbClone"
+            :jointErrorMessage.sync="jointErrorMessage"
+            :errorMessageLevel.sync="errorMessageLevel"
+            :autoAddTableLoading.sync="autoAddTableLoading"
+            class="mt-6"
+          ></ConditionBox>
         </ElForm>
       </div>
       <div v-if="!!errorMessageLevel" class="color-danger mt-2" v-html="jointErrorMessage"></div>
