@@ -1762,7 +1762,6 @@ export default {
   daas_setting_settingcenter_gaojingshezhi: 'Alert settings',
   packages_nodeDesign_custom_node_name_required: 'Please enter the node name',
   packages_nodeDesign_message_save_ok: 'Save Successfully',
-  dialog_tip_copied: 'Copyed',
   share_detail_title: 'Mining table details',
   shared_cache_messge_no_table: 'The selected table model is not found',
   shared_cache_placeholder_max_memory: 'Please enter the maximum cache memory',

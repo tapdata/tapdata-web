@@ -192,7 +192,7 @@
         <el-tooltip
           placement="top"
           manual
-          :content="$t('dialog_tip_copied')"
+          :content="$t('public_message_copied')"
           popper-class="copy-tooltip"
           :value="showTooltip"
           v-if="createForm.accesscode"
