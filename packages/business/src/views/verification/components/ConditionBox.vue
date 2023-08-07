@@ -1190,12 +1190,14 @@ export default {
       item.capabilities = await this.getConnectionCapabilities(opt.attrs?.connectionId)
       if (!this.taskId) {
         item.connectionName = opt.attrs?.connectionName
+        item.currentLabel = item.connectionName
         return
       }
       const { nodeId, nodeName, connectionName } = opt.attrs || {}
       item.nodeId = nodeId
       item.nodeName = nodeName
       item.connectionName = connectionName
+      item.currentLabel = `${nodeName} / ${connectionName}`
     },
 
     handleSetSelectedConnection(item, val) {
@@ -1433,7 +1435,16 @@ export default {
       }
 
       if (noTableArr.length) {
-        message = `有${noTableArr.length}个校验条件，缺少来源表或目标表，保存时将忽略`
+        message = `因为找不到源表或目标表，以下来源连接将会自动跳过校验` // ，有${noTableArr.length}个校验条件，缺少来源表或目标表，保存时将忽略
+        noTableArr.forEach((el, elIndex) => {
+          if (elIndex <= SHOW_COUNT) {
+            message += (elIndex > 0 ? ', ' : '') + `${el.source.connectionName}`
+            message += (elIndex > 0 ? ', ' : '') + `${el.target.connectionName}`
+          }
+        })
+        if (noTableArr.length > SHOW_COUNT) {
+          message += ` ...`
+        }
         this.updateErrorMsg(message, 'warn')
         return
       }
