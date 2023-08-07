@@ -139,6 +139,7 @@
                   :class="{ 'empty-data': !item.source.sortColumn }"
                   :options="item.source.fields"
                   :id="'item-source-' + index"
+                  :key="`item-source-sortColumn` + item.id"
                   @focus="handleFocus(item.source)"
                 ></MultiSelection>
                 <span class="item-icon"></span>
@@ -147,6 +148,7 @@
                   class="item-select"
                   :class="{ 'empty-data': !item.target.sortColumn }"
                   :options="item.target.fields"
+                  :key="`item-target-sortColumn` + item.id"
                   @focus="handleFocus(item.target)"
                 ></MultiSelection>
               </div>
@@ -946,10 +948,12 @@ export default {
         let updateConditionFieldMap = {}
         let tableNames = []
         let tableNameRelation = {}
+        let objectNames = []
         if (targetNode.type === 'database') {
           tableNames = el.tableNames
           updateConditionFieldMap = targetNode.updateConditionFieldMap || {}
           tableNameRelation = targetNode.syncObjects?.[0]?.tableNameRelation || []
+          objectNames = targetNode.syncObjects?.[0]?.objectNames || []
         } else if (targetNode.type === 'table') {
           tableNames = [targetNode.tableName]
           updateConditionFieldMap[targetNode.tableName] = targetNode.updateConditionFields || []
@@ -969,6 +973,7 @@ export default {
           targetDatabaseType: targetNode.databaseType,
           updateConditionFieldMap,
           tableNames,
+          objectNames,
           tableName: targetNode.tableName,
           tableNameRelation
         }
@@ -1040,6 +1045,7 @@ export default {
         connectionIds.push(m.sourceConnectionId)
         connectionIds.push(m.targetConnectionId)
         tableNames.push(...m.tableNames)
+        tableNames.push(...m.objectNames)
       })
       // 加载数据源的Capabilities
       const capabilitiesMap = await this.getCapabilities(connectionIds)
@@ -1285,6 +1291,7 @@ export default {
       item.target.nodeName = targetName
       item.target.connectionId = targetConnectionId
       item.target.connectionName = targetConnectionName
+      item.target.currentLabel = `${targetName} / ${targetConnectionName}`
       item.target.table = tableName ? tableName : tableNameRelation[val]
 
       // 加载目标的字段
@@ -1421,14 +1428,12 @@ export default {
 
       if (!haveTableArr.length) {
         message = `源表和目标表不能为空，请修改校验表配置`
-        // this.jointErrorMessage = message
         this.updateErrorMsg(message, 'error')
         return message
       }
 
       if (noTableArr.length) {
         message = `有${noTableArr.length}个校验条件，缺少来源表或目标表，保存时将忽略`
-        // this.jointErrorMessage = message
         this.updateErrorMsg(message, 'warn')
         return
       }
@@ -1442,23 +1447,21 @@ export default {
 
         if (!haveIndexFieldArr.length) {
           message = `关联校验条件不能为空，请修改校验表配置`
-          // this.jointErrorMessage = message
           this.updateErrorMsg(message, 'error')
           return message
         }
 
         if (noIndexFieldArr.length) {
-          message = `以下表找不到索引字段，保存校验时将自动跳过：\n`
+          message = `因为找不到索引字段，以下来源表将会自动跳过校验：\n`
           noIndexFieldArr.forEach((el, elIndex) => {
             if (elIndex <= SHOW_COUNT) {
-              message += `${el.source.table} `
-              message += `${el.target.table} `
+              message += (elIndex > 0 ? ', ' : '') + `${el.source.table}`
+              // message += `${el.target.table} `
             }
           })
           if (noIndexFieldArr.length > SHOW_COUNT) {
-            message += `...${noIndexFieldArr.length - SHOW_COUNT}`
+            message += ` ...` // (${noIndexFieldArr.length - SHOW_COUNT})
           }
-          // this.jointErrorMessage = message
           this.updateErrorMsg(message, 'warn')
           return
         }
@@ -1473,7 +1476,7 @@ export default {
           //   let item = document.getElementById('item-source-' + (index - 1))
           //   item.querySelector('input').focus()
           // })
-          message = `以下源表与目标表的索引字段个数不相等，保存校验时将自动跳过：\n`
+          message = `因为源表与目标表的索引字段个数不相等，以下来源表将会自动跳过校验：\n`
           countNotArr.forEach((el, elIndex) => {
             if (elIndex <= SHOW_COUNT) {
               message += `${el.source.table} `
@@ -1497,9 +1500,12 @@ export default {
           })
         }
         if (schemaToFormFlag) {
-          message = this.$t('packages_business_verification_message_error_joint_table_target_or_source_filter_not_set', {
-            val: index
-          })
+          message = this.$t(
+            'packages_business_verification_message_error_joint_table_target_or_source_filter_not_set',
+            {
+              val: index
+            }
+          )
           this.updateErrorMsg(message, 'error')
           return message
         }
@@ -1513,7 +1519,6 @@ export default {
           })
         ) {
           message = this.$t('packages_business_verification_message_error_script_no_enter')
-          // this.jointErrorMessage = message
           this.updateErrorMsg(message, 'error')
           return message
         }

@@ -94,9 +94,8 @@
 
           <!--     折叠     -->
           <ElCollapse class="collapse-fill db-list-container" accordion>
-            <ElCollapseItem title="配置" name="1">
+            <ElCollapseItem title="高级配置" name="1">
               <ElFormItem
-                required
                 class="form-item"
                 prop="inspectDifferenceMode"
                 :label="$t('packages_business_verification_form_jieguoshuchu') + ': '"
@@ -343,13 +342,9 @@
         <!--        <ElButton type="primary" size="mini" @click="save()">{{-->
         <!--          $t('public_button_save') + ' & ' + $t('public_button_execute')-->
         <!--        }}</ElButton>-->
-        <ElButton
-          type="primary"
-          size="mini"
-          :disabled="errorMessageLevel === 'error' || autoAddTableLoading"
-          @click="save(true)"
-          >{{ $t('public_button_save') }}</ElButton
-        >
+        <ElButton type="primary" size="mini" :disabled="saveDisabled" @click="save(true)">{{
+          $t('public_button_save')
+        }}</ElButton>
       </div>
     </div>
   </section>
@@ -483,6 +478,11 @@ export default {
       jointErrorMessage: '',
       errorMessageLevel: '',
       autoAddTableLoading: false
+    }
+  },
+  computed: {
+    saveDisabled() {
+      return this.errorMessageLevel === 'error' || this.autoAddTableLoading
     }
   },
   created() {
@@ -637,9 +637,7 @@ export default {
     //dataflow改变时
     flowChangeHandler() {
       this.form.tasks = []
-      let flow = this.flowOptions.find(item => item.id === this.form.flowId) || {}
-      this.form.name = this.form.name || flow.name || ''
-      console.log('flow', flow)
+      this.setVerifyName()
       this.getFlowStages(this.$refs.conditionBox.autoAddTable)
     },
     timingChangeHandler(times) {
@@ -664,6 +662,17 @@ export default {
       this.$refs.baseForm.validate(async valid => {
         if (valid) {
           let tasks = this.$refs.conditionBox.getList()
+          // 自动过滤出完整数据，以及索引字段数量不相等的情况
+          tasks = tasks.filter(t => {
+            if (this.form.inspectMethod === 'count') {
+              return t.source.table && t.target.table
+            }
+            return (
+              t.source.sortColumn && t.source.sortColumn.split(',').length === t.target.sortColumn.split(',').length
+            )
+          })
+
+          console.log('tasks', tasks.length, tasks)
           // 检查校验类型是否支持
           const notSupportList = this.notSupport[this.form.inspectMethod]
           let notSupportStr = ''
@@ -776,11 +785,16 @@ export default {
     },
 
     handleChangeInspectMethod() {
+      this.setVerifyName()
       this.handleChangeAlarm(true, 0)
       this.handleChangeAlarm(true, 1)
       this.handleChangeAlarm(true, 2)
       this.handleChangeAlarmItem()
       this.$refs.conditionBox.validate()
+    },
+    setVerifyName() {
+      let flow = this.flowOptions.find(item => item.id === this.form.flowId) || {}
+      this.form.name = (flow.name || '') + ' - ' + this.inspectMethodMap[this.form.inspectMethod]
     }
   }
 }
