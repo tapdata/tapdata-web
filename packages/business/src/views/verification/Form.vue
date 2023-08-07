@@ -94,7 +94,7 @@
 
           <!--     折叠     -->
           <ElCollapse class="collapse-fill db-list-container" accordion>
-            <ElCollapseItem title="高级配置" name="1">
+            <ElCollapseItem :title="$t('packages_business_verification_form_gaojipeizhi')" name="1">
               <ElFormItem
                 class="form-item"
                 prop="inspectDifferenceMode"

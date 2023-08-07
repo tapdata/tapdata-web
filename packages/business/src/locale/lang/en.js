@@ -1141,5 +1141,18 @@ export default {
   packages_business_verification_list_biaobufenziduan: 'Verification of some fields in the table',
   packages_business_components_conditionbox_laiyuanbiaoshuju: 'Source Filter',
   packages_business_components_conditionbox_mubiaobiaoshuju: 'Target Filter',
-  packages_business_data_server_list_apIwendang: 'API Document Export'
+  packages_business_data_server_list_apIwendang: 'API Document Export',
+  packages_business_verification_form_gaojipeizhi: 'Advanced Configuration',
+  packages_business_verification_form_validate_table_is_empty:
+    'The source table and target table cannot be empty, please modify the verification table configuration',
+  packages_business_verification_form_validate_table_is_empty1:
+    'Because the source or target table could not be found, the following source connections will automatically skip validation:',
+  packages_business_verification_form_condition_is_empty:
+    'The associated verification condition cannot be empty, please modify the verification table configuration',
+  packages_business_verification_form_index_field_is_empty:
+    'Because the index field cannot be found, the following source tables will automatically skip verification:',
+  packages_business_verification_form_index_field_count_is_not_equal:
+    'Because the number of index fields in the source table and the target table is not equal, the following source tables will automatically skip validation:',
+  packages_business_verification_list_renyibiaoshuju: 'Any table data verification',
+  packages_business_verification_list_renwuyizhixing: 'Task Consistency Verification'
 }

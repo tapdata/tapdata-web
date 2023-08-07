@@ -1093,5 +1093,15 @@ export default {
   packages_business_verification_list_biaobufenziduan: '表部分字段校验',
   packages_business_components_conditionbox_laiyuanbiaoshuju: '来源表数据过滤',
   packages_business_components_conditionbox_mubiaobiaoshuju: '目标表数据过滤',
-  packages_business_data_server_list_apIwendang: 'API文档导出'
+  packages_business_data_server_list_apIwendang: 'API文档导出',
+  packages_business_verification_form_gaojipeizhi: '高级配置',
+  packages_business_verification_form_validate_table_is_empty: '源表和目标表不能为空，请修改校验表配置',
+  packages_business_verification_form_validate_table_is_empty1:
+    '因为找不到源表或目标表，以下来源连接将会自动跳过校验：',
+  packages_business_verification_form_condition_is_empty: '关联校验条件不能为空，请修改校验表配置',
+  packages_business_verification_form_index_field_is_empty: '因为找不到索引字段，以下来源表将会自动跳过校验：',
+  packages_business_verification_form_index_field_count_is_not_equal:
+    '因为源表与目标表的索引字段个数不相等，以下来源表将会自动跳过校验：',
+  packages_business_verification_list_renyibiaoshuju: '任意表数据校验',
+  packages_business_verification_list_renwuyizhixing: '任务一致性校验'
 }

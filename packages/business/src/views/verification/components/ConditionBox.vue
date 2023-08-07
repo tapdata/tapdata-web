@@ -63,7 +63,6 @@
                   filterable
                   class="item-select"
                   :key="'sourceConnectionId' + item.id"
-                  :onSetSelected="useHandle(handleSetSelectedConnection, item.source)"
                   @change="handleChangeConnection(arguments[0], item.source, arguments[1])"
                 >
                 </AsyncSelect>
@@ -79,7 +78,6 @@
                   filterable
                   class="item-select"
                   :key="'targetConnectionId' + item.id"
-                  :onSetSelected="useHandle(handleSetSelectedConnection, item.target)"
                   @change="handleChangeConnection(arguments[0], item.target, arguments[1])"
                 >
                 </AsyncSelect>
@@ -1200,14 +1198,6 @@ export default {
       item.currentLabel = `${nodeName} / ${connectionName}`
     },
 
-    handleSetSelectedConnection(item, val) {
-      // item.connectionName = val?.currentLabel || val?.name
-      // if (this.taskId) {
-      //   item.nodeName = item.connectionName?.split(' / ')?.[0]
-      // }
-      // item.databaseType = val?.databaseType
-    },
-
     getReverseNodeInfo(data = {}) {
       const {
         source,
@@ -1429,13 +1419,13 @@ export default {
       const noTableArr = tasks.filter(c => !c.source.table || !c.target.table)
 
       if (!haveTableArr.length) {
-        message = `源表和目标表不能为空，请修改校验表配置`
+        message = this.$t('packages_business_verification_form_validate_table_is_empty')
         this.updateErrorMsg(message, 'error')
         return message
       }
 
       if (noTableArr.length) {
-        message = `因为找不到源表或目标表，以下来源连接将会自动跳过校验` // ，有${noTableArr.length}个校验条件，缺少来源表或目标表，保存时将忽略
+        message = this.$t('packages_business_verification_form_validate_table_is_empty1')
         noTableArr.forEach((el, elIndex) => {
           if (elIndex <= SHOW_COUNT) {
             message += (elIndex > 0 ? ', ' : '') + `${el.source.connectionName}`
@@ -1457,13 +1447,13 @@ export default {
         const noIndexFieldArr = tasks.filter(c => !c.source.sortColumn || !c.target.sortColumn)
 
         if (!haveIndexFieldArr.length) {
-          message = `关联校验条件不能为空，请修改校验表配置`
+          message = this.$t('packages_business_verification_form_condition_is_empty')
           this.updateErrorMsg(message, 'error')
           return message
         }
 
         if (noIndexFieldArr.length) {
-          message = `因为找不到索引字段，以下来源表将会自动跳过校验：\n`
+          message = this.$t('packages_business_verification_form_index_field_is_empty')
           noIndexFieldArr.forEach((el, elIndex) => {
             if (elIndex <= SHOW_COUNT) {
               message += (elIndex > 0 ? ', ' : '') + `${el.source.table}`
@@ -1487,7 +1477,7 @@ export default {
           //   let item = document.getElementById('item-source-' + (index - 1))
           //   item.querySelector('input').focus()
           // })
-          message = `因为源表与目标表的索引字段个数不相等，以下来源表将会自动跳过校验：\n`
+          message = this.$t('packages_business_verification_form_index_field_count_is_not_equal')
           countNotArr.forEach((el, elIndex) => {
             if (elIndex <= SHOW_COUNT) {
               message += `${el.source.table} `

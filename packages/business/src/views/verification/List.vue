@@ -37,7 +37,7 @@
           size="mini"
           @click="handleCreate('pipeline')"
         >
-          <span>任务一致性校验</span>
+          <span>{{ $t('packages_business_verification_list_renwuyizhixing') }}</span>
         </ElButton>
         <ElButton
           v-readonlybtn="'datasource_creation'"
@@ -46,7 +46,7 @@
           size="mini"
           @click="handleCreate('random')"
         >
-          <span>任意表数据校验</span>
+          <span>{{ $t('packages_business_verification_list_renyibiaoshuju') }}</span>
         </ElButton>
       </div>
       <el-table-column type="selection" width="45"></el-table-column>
