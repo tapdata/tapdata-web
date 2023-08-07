@@ -234,6 +234,10 @@ export default {
           type: 'js_processor',
           beta: true
         },
+        // {
+        //   name: 'Python',
+        //   type: 'python_processor'
+        // },
         {
           name: 'Row Filter',
           type: 'row_filter_processor'
@@ -263,7 +267,7 @@ export default {
           type: 'date_processor'
         },
         {
-          name: '类型过滤',
+          name: i18n.t('packages_dag_src_editor_leixingguolu'),
           type: 'field_mod_type_filter_processor'
         }
       ]
@@ -469,36 +473,6 @@ export default {
       hasMove && this.command.exec(new MoveNodeCommand(oldProperties, newProperties))
       this.$refs.paperScroller.autoResizePaper()
       this.$refs.paperScroller.centerContent()
-    },
-
-    /**
-     * 通过拖拽添加节点
-     * 🎉 支持拖到连线上快速添加
-     * @param item
-     * @param position
-     * @param rect
-     */
-    handleAddNodeByDrag(item, position, rect) {
-      const paper = this.$refs.paperScroller
-      // const newPosition = paper.getDropPositionWithinPaper(position, rect)
-      const point = paper.getMouseToPage(rect)
-      const newPosition = [point.x, point.y]
-      const $elemBelow = document.elementFromPoint(...position)
-
-      // 节点拖放在连线上
-      if ($elemBelow.nodeName === 'path' && $elemBelow.parentElement._jsPlumb) {
-        const connection = $elemBelow.parentElement._jsPlumb
-        const source = this.getRealId(connection.sourceId)
-        const target = this.getRealId(connection.targetId)
-        this.addNodeOnConn(item, newPosition, source, target)
-        this.jsPlumbIns.select().removeClass('connection-highlight')
-      } else {
-        this.handleAddNodeToPos(newPosition, item)
-      }
-
-      paper.autoResizePaper()
-      // 重置导航线
-      this.navLines = []
     },
 
     handleAddTableAsNode(item) {

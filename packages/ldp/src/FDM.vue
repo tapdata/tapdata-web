@@ -156,6 +156,38 @@
             </template>
           </ElInput>
         </ElFormItem>
+
+        <ElFormItem :label="$t('packages_dag_task_setting_sync_type')" prop="task.type">
+          <ElRadioGroup v-model="taskDialogConfig.task.type">
+            <ElTooltip :disabled="!taskDialogConfig.notSupportedCDC" content="当前源数据不支持增量">
+              <ElRadio label="initial_sync+cdc" :disabled="taskDialogConfig.notSupportedCDC">
+                {{ $t('packages_dag_task_setting_initial_sync_cdc') }}
+              </ElRadio>
+            </ElTooltip>
+
+            <ElRadio label="initial_sync">
+              {{ $t('public_task_type_initial_sync') }}
+            </ElRadio>
+          </ElRadioGroup>
+        </ElFormItem>
+        <div class="flex align-center gap-3" v-if="taskDialogConfig.task.type === 'initial_sync'">
+          <ElFormItem :label="$t('packages_dag_task_setting_crontabExpressionFlag')" prop="task.crontabExpressionType">
+            <ElSelect
+              v-model="taskDialogConfig.task.crontabExpressionType"
+              @change="handleChangeCronType"
+              class="flex-1"
+            >
+              <ElOption v-for="(opt, i) in cronOptions" :key="i" v-bind="opt"></ElOption>
+            </ElSelect>
+          </ElFormItem>
+          <ElFormItem
+            v-if="taskDialogConfig.task.crontabExpressionType === 'custom'"
+            prop="task.crontabExpression"
+            label-width="0"
+          >
+            <ElInput v-model="taskDialogConfig.task.crontabExpression"></ElInput>
+          </ElFormItem>
+        </div>
       </ElForm>
       <span slot="footer" class="dialog-footer">
         <ElButton size="mini" @click="taskDialogConfig.visible = false">{{ $t('public_button_cancel') }}</ElButton>
@@ -224,6 +256,7 @@ import { merge, debounce, cloneDeep } from 'lodash'
 import { connectionsApi, ldpApi, metadataDefinitionsApi } from '@tap/api'
 import { VirtualTree, IconButton, VExpandXTransition } from '@tap/component'
 import { uuid, generateId } from '@tap/shared'
+import { validateCron } from '@tap/form'
 import { makeDragNodeImage, TASK_SETTINGS, DatabaseIcon, makeStatusAndDisabled } from '@tap/business'
 import commonMix from './mixins/common'
 
@@ -246,34 +279,28 @@ export default {
   mixins: [commonMix],
 
   data() {
-    const validatePrefix = (rule, value, callback) => {
-      value = value.trim()
-      if (!value) {
-        callback(new Error(this.$t('public_form_not_empty')))
-      } else if (!/\w+/.test(value)) {
-        callback(new Error(this.$t('packages_business_data_server_drawer_geshicuowu')))
-      } else {
-        callback()
-      }
-    }
-
     return {
       fixedPrefix: 'FDM_',
       maxPrefixLength: 10,
       keyword: '',
+      taskType: '',
       taskDialogConfig: {
         from: null,
         to: null,
         visible: false,
         prefix: '',
         tableName: null,
-        canStart: false
+        canStart: false,
+        notSupportedCDC: false,
+        task: {
+          type: 'initial_sync+cdc',
+          crontabExpressionFlag: false,
+          crontabExpression: '',
+          crontabExpressionType: 'once'
+        }
       },
       creating: false,
       expandedKeys: [],
-      formRules: {
-        prefix: [{ validator: validatePrefix, trigger: 'blur' }]
-      },
       searchIng: false,
       search: '',
       enableSearch: false,
@@ -342,7 +369,7 @@ export default {
   methods: {
     autoUpdateObjects() {
       this.autoUpdateObjectsTimer = setInterval(() => {
-        console.log('autoUpdateObjects', this.expandedKeys) // eslint-disable-line
+        if (this.showSearch) return
         this.expandedKeys.forEach(id => {
           this.updateObject(id)
         })
@@ -536,7 +563,29 @@ export default {
     showTaskDialog() {
       this.taskDialogConfig.prefix = this.getSmartPrefix(this.taskDialogConfig.from.name)
       this.taskDialogConfig.visible = true
-      this.$refs.form?.clearValidate()
+      this.$refs.form?.resetFields()
+      this.taskDialogConfig.task.crontabExpressionFlag = false
+      this.taskDialogConfig.task.crontabExpression = ''
+
+      const capbilitiesMap = this.taskDialogConfig.from.capabilities.reduce((map, item) => {
+        map[item.id] = true
+        return map
+      }, {})
+
+      if (
+        !(
+          capbilitiesMap['stream_read_function'] ||
+          capbilitiesMap['raw_data_callback_filter_function'] ||
+          capbilitiesMap['raw_data_callback_filter_function_v2'] ||
+          (capbilitiesMap['query_by_advance_filter_function'] && capbilitiesMap['batch_read_function'])
+        )
+      ) {
+        this.taskDialogConfig.notSupportedCDC = true
+        this.taskDialogConfig.task.type = 'initial_sync'
+      } else {
+        this.taskDialogConfig.notSupportedCDC = false
+      }
+      // this.$refs.form?.clearValidate()
 
       this.checkCanStart()
     },
@@ -547,6 +596,10 @@ export default {
       const tag = this.treeData.find(item => item.linkId === this.taskDialogConfig.from.id)
 
       if (tag) {
+        const task = this.tag2Task[tag.id]
+        this.taskDialogConfig.task.type = task.type
+        this.taskDialogConfig.task.crontabExpressionFlag = task.crontabExpressionFlag
+        this.taskDialogConfig.task.crontabExpression = task.crontabExpression
         this.taskDialogConfig.canStart = await ldpApi.checkCanStartByTag(tag.id)
         // TODO: 这里不能点击保存，可以加个消息提示，或者常驻的 alert， 解释下原因
       } else {
@@ -560,8 +613,8 @@ export default {
       this.$refs.form.validate(async valid => {
         if (!valid) return
 
-        const { tableName, from } = this.taskDialogConfig
-        let task = this.makeMigrateTask(from, tableName)
+        const { tableName, from, task: settings } = this.taskDialogConfig
+        let task = Object.assign(this.makeMigrateTask(from, tableName), settings)
 
         this.creating = true
         try {
@@ -954,10 +1007,17 @@ export default {
       const map = await ldpApi.getTaskByTag(this.treeData.map(item => item.id).join(','))
       const newMap = {}
       for (let tagId in map) {
-        let [task] = map[tagId].filter(task => !['deleting', 'delete_failed'].includes(task.status) && !task.is_deleted)
+        let task = map[tagId].find(
+          task => !['deleting', 'delete_failed'].includes(task.status) && !task.is_deleted && task.fdmMain
+        )
         if (task) {
           task = makeStatusAndDisabled(task)
           newMap[tagId] = {
+            id: task.id,
+            name: task.name,
+            type: task.type,
+            crontabExpressionFlag: task.crontabExpressionFlag,
+            crontabExpression: task.crontabExpression,
             status: task.status,
             disabledData: task.disabledData
           }
@@ -1020,12 +1080,26 @@ export default {
         }
       })
       this.searchExpandedKeys = searchExpandedKeys
+    },
+
+    handleChangeCronType(val) {
+      if (val === 'once') {
+        this.taskDialogConfig.task.crontabExpressionFlag = false
+      } else {
+        this.taskDialogConfig.task.crontabExpressionFlag = true
+        if (val !== 'custom') {
+          this.taskDialogConfig.task.crontabExpression = val
+        }
+      }
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.form-item-inner {
+  height: 32px;
+}
 .pipeline-desc {
   background-color: #f8f8fa;
   border-left: 4px solid map-get($color, primary);

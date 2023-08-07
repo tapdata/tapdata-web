@@ -488,6 +488,8 @@ export default {
   packages_dag_js_declare_index_xianshishengminglai: '顯式聲明來定義和修改模型',
   packages_dag_js_declare_index_zengjiayigezi:
     "// 增加一個字段，如果字段已存在則不操作\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n// 移除一個已存在字段\nTapModelDeclare.removeField({val2}, 'fieldName')\n// 更新一個已存在的字段\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n// 更新字段，如果不存在則新增\nTapModelDeclare.upsertField({val4}, 'fieldName', 'TapString')\n// 設置字段為主鍵\nTapModelDeclare.setPk({val5}, 'fieldName')\n// 取消主鍵\nTapModelDeclare.unSetPk({val6}, 'fieldName')\n// 增加索引\nTapModelDeclare.addIndex({val7}, 'indexName', [{'fieldName':'fieldName1', 'order': 'asc'}])\n// 移除索引\nTapModelDeclare.removeIndex({val8}, 'indexName')\n",
+  packages_dag_python_declare_index_zengjiayigezi:
+    "# 增加一個字段，如果字段已存在則不操作\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n# 移除一個已存在字段\nTapModelDeclare.removeField({val2}, 'fieldName')\n# 更新一個已存在的字段\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n# 更新字段，如果不存在則新增\nTapModelDeclare.upsertField({val4}, 'fieldName', 'TapString')\n# 設置字段為主鍵\nTapModelDeclare.setPk({val5}, 'fieldName')\n# 取消主鍵\nTapModelDeclare.unSetPk({val6}, 'fieldName')\n# 增加索引\nTapModelDeclare.addIndex({val7}, 'indexName', [{'fieldName':'fieldName1', 'order': 'asc'}])\n# 移除索引\nTapModelDeclare.removeIndex({val8}, 'indexName')\n",
   packages_dag_js_processor_index_duibi: '對比',
   packages_dag_js_processor_index_yongfa: '用法：',
   packages_dag_js_processor_index_zuoyong: '作用：',
@@ -608,5 +610,17 @@ export default {
   packages_dag_nodes_database_jinwuzhujianbiao: '僅無主鍵表',
   packages_dag_nodes_database_jinyouzhujianbiao: '僅有主鍵表',
   packages_dag_nodes_database_biaoxianshi: '可選擇的表範圍',
-  packages_dag_nodes_database_xuanzeyaoguolvdiaode: '選擇要過濾掉的字段類型'
+  packages_dag_nodes_database_xuanzeyaoguolvdiaode: '選擇要過濾掉的字段類型',
+  packages_dag_field_add_del_index_zhidi: '置底',
+  packages_dag_field_add_del_index_xiayi: '下移',
+  packages_dag_field_add_del_index_shangyi: '上移',
+  packages_dag_field_add_del_index_zhiding: '置頂',
+  packages_dag_src_editor_leixingguolu: '類型過濾',
+  packages_dag_src_editor_date_processor_field_list: '受運算影響的字段',
+  packages_dag_dynamicAdjustMemoryUsage_title: '動態調整記憶體使用',
+  packages_dag_dynamicAdjustMemoryUsage_tip:
+    '全量同步階段，當識別到同步的數據佔用記憶體較大時，自動按照比例降低記憶體佇列的使用，以防止出現記憶體溢出的錯誤，但次操作會導致同步速度的下降。當確認機器資源较小時，建議啟用，可以有效的保障同步任務的穩定運行。當機器資源充足時，建議關閉。',
+  packages_dag_mergeMode: '合併模式',
+  packages_dag_main_table_first: '全量主表優先',
+  packages_dag_sub_table_first: '全量子表優先'
 }

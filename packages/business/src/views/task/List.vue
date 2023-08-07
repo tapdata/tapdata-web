@@ -344,7 +344,7 @@ export default {
       taskType: {
         initial_sync: this.$t('public_task_type_initial_sync'),
         cdc: this.$t('public_task_type_cdc'),
-        'initial_sync+cdc': this.$t('public_task_type_initial_sync') + '+' + this.$t('public_task_type_cdc')
+        'initial_sync+cdc': this.$t('public_task_type_initial_sync_and_cdc')
       },
       typeOptions: [
         { label: this.$t('public_select_option_all'), value: '' },
@@ -357,7 +357,7 @@ export default {
           value: 'cdc'
         },
         {
-          label: this.$t('public_task_type_initial_sync') + this.$t('public_task_type_cdc'),
+          label: this.$t('public_task_type_initial_sync_and_cdc'),
           value: 'initial_sync+cdc'
         }
       ],
@@ -459,7 +459,9 @@ export default {
         crontabScheduleMsg: true,
         lastStartDate: true,
         functionRetryStatus: true,
-        taskRetryStatus: true
+        taskRetryStatus: true,
+        shareCdcStop: true,
+        shareCdcStopMessage: true
       }
       let where = {
         syncType
@@ -599,7 +601,15 @@ export default {
 
     openRoute(route, newTab = true) {
       if (newTab) {
-        window.open(this.$router.resolve(route).href)
+        // 这里预期是任务已经打开了，不要重复开新标签页
+        // 并且已开的页面要reload，因为hash路由#号的原因，没办法自动reload，所以记录个字段判断
+        let win = window.open(this.$router.resolve(route).href, route.params.id)
+
+        if (win?.openTime) {
+          win.location.reload()
+        }
+
+        win.openTime = Date.now()
       } else {
         this.$router.push(route)
       }

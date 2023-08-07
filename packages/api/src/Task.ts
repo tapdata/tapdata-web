@@ -136,6 +136,11 @@ export default class Task extends Http {
     return this.axios.get('/api/task/migrate-js/get-result', { params })
   }
 
+  // Python rpc试运行
+  testRunPythonRpc(params) {
+    return this.axios.post('/api/task/migrate-python/test-run-rpc', params)
+  }
+
   records(id, params) {
     return this.axios.get(this.url + `/records/${id}`, { params })
   }

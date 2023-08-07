@@ -281,11 +281,14 @@ export default {
         }
       })
 
-      return {
+      let opt = {
         x: time,
         name: [i18n.t('public_time_input'), i18n.t('public_time_output')],
-        value: [qps || inputQps, qps || outputQps],
-        markLine: [
+        value: [qps || inputQps, qps || outputQps]
+      }
+
+      if (this.dataflow.type === 'initial_sync+cdc') {
+        opt.markLine = [
           {
             data: [
               {
@@ -301,6 +304,8 @@ export default {
           }
         ]
       }
+
+      return opt
     },
 
     delayLineTitle() {
@@ -407,13 +412,19 @@ export default {
 
     initialData() {
       const data = this.quota.samples?.totalData?.[0] || {}
-      const { snapshotRowTotal = 0, snapshotInsertRowTotal = 0, snapshotDoneAt, snapshotStartAt, replicateLag } = data
-      const usedTime = Time.now() - snapshotStartAt
+      const {
+        snapshotRowTotal = 0,
+        snapshotInsertRowTotal = 0,
+        snapshotDoneAt,
+        snapshotStartAt,
+        replicateLag,
+        lastFiveMinutesQps
+      } = data
       let time
-      if (!snapshotInsertRowTotal || !snapshotRowTotal || !snapshotStartAt) {
+      if (!snapshotInsertRowTotal || !snapshotRowTotal || !lastFiveMinutesQps) {
         time = 0
       } else {
-        time = snapshotRowTotal / (snapshotInsertRowTotal / usedTime) - usedTime
+        time = ((snapshotRowTotal - snapshotInsertRowTotal) / lastFiveMinutesQps) * 1000
       }
       return {
         snapshotDoneAt: snapshotDoneAt ? dayjs(snapshotDoneAt).format('YYYY-MM-DD HH:mm:ss.SSS') : '',

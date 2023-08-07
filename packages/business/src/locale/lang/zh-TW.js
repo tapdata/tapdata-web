@@ -415,6 +415,8 @@ export default {
   packages_business_verification_message_error_joint_table_not_set: '請添加校驗條件',
   packages_business_verification_message_error_joint_table_target_or_source_not_set:
     '校驗條件{val}中源表或目標表未選擇',
+  packages_business_verification_message_error_joint_table_target_or_source_filter_not_set:
+    '校驗條件{val}中源表或目標表数据过滤未選擇',
   packages_business_verification_message_error_joint_table_field_not_match:
     '校驗條件{val}中源表與目標表的索引欄位個數不相等',
   packages_business_verification_message_error_script_no_enter: '開啟高級校驗後，JS校驗邏輯不能為空',
@@ -1080,5 +1082,8 @@ export default {
   packages_business_components_conditionbox_chakanzidingyi: '查看自定義字段',
   packages_business_components_fielddialog_ziduanbuyunxu: '字段不允許為空',
   packages_business_components_fielddialog_zidingyiziduan: '自定義字段',
-  packages_business_verification_list_biaobufenziduan: '表部分字段校驗'
+  packages_business_verification_list_biaobufenziduan: '表部分字段校驗',
+  packages_business_components_conditionbox_laiyuanbiaoshuju: '來源表數據過濾',
+  packages_business_components_conditionbox_mubiaobiaoshuju: '目標表數據過濾',
+  packages_business_data_server_list_apIwendang: 'API文檔導出'
 }

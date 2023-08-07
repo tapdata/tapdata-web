@@ -650,6 +650,8 @@ export default {
       this.$set(this.dataflow, 'startTime', data.startTime)
       this.$set(this.dataflow, 'lastStartDate', data.lastStartDate)
       this.$set(this.dataflow, 'pingTime', data.pingTime)
+      // this.$set(this.dataflow, 'shareCdcStop', data.shareCdcStop)
+      // this.$set(this.dataflow, 'shareCdcStopMessage', data.shareCdcStopMessage)
       // 前端不关心的属性
       this.dataflow.attrs = data.attrs
 
@@ -709,7 +711,7 @@ export default {
         return Promise.resolve()
       }
 
-      this.dataflow.id = id
+      // this.dataflow.id = id
 
       if (!first) {
         this.resetWorkspace()
@@ -751,7 +753,10 @@ export default {
         !this.stateIsReadonly && this.copyNodes()
       })
       Mousetrap.bind('mod+v', () => {
-        !this.stateIsReadonly && this.pasteNodes(this.command)
+        if (!this.stateIsReadonly) {
+          this.pasteNodes(this.command)
+          this.handleCenterContent()
+        }
       })
       Mousetrap.bind('mod+z', e => {
         e.preventDefault()
@@ -1625,6 +1630,7 @@ export default {
         const source = this.getRealId(connection.sourceId)
         const target = this.getRealId(connection.targetId)
         this.addNodeOnConn(item, newPosition, source, target)
+        this.jsPlumbIns.select().removeClass('connection-highlight')
       } else {
         this.handleAddNodeToPos(newPosition, item)
       }
@@ -1712,6 +1718,8 @@ export default {
       const b = this.createNode(position, nodeType)
       const c = this.nodeById(target)
 
+      // 表和数据库节点不允许即使源又是目标的情况
+      if ('table' === nodeType.type || 'database' === nodeType.type) return
       if (!this.checkAsTarget(b, true)) return
       if (!this.checkAsSource(b, true)) return
       if (!this.checkTargetMaxInputs(b, true)) return
@@ -2026,6 +2034,8 @@ export default {
           this.dataflow.lastStartDate = data.lastStartDate
           this.dataflow.startTime = data.startTime
           this.dataflow.pingTime = data.pingTime
+          this.dataflow.shareCdcStop = data.shareCdcStop
+          this.dataflow.shareCdcStopMessage = data.shareCdcStopMessage
           if (data.status === 'edit') data.btnDisabled.start = false // 任务编辑中，在编辑页面可以启动
           Object.assign(this.dataflow.disabledData, data.btnDisabled)
 

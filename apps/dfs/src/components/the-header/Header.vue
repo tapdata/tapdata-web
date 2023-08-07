@@ -10,6 +10,15 @@
         <div class="vip-btn mr-4 cursor-pointer" @click="openUpgrade">
           <VIcon size="17">icon-vip</VIcon>&nbsp;{{ $t('packages_component_src_upgradefee_dingyuezhuanyeban') }}
         </div>
+        <!--加入slack-->
+        <div
+          v-if="!isDomesticStation"
+          class="command-item mr-6 position-relative inline-flex align-items-center"
+          @click="goSlack"
+        >
+          <ElImage class="slack-logo" :src="require('@/assets/image/slack.svg')" />
+          <span class="cursor-pointer ml-1">{{ $t('dfs_the_header_header_jiaruSla') }}</span>
+        </div>
         <!--有奖问卷-->
         <div v-if="showQuestionnaire" class="command-item mr-6 position-relative" @click="goQuestionnaire">
           <span class="cursor-pointer"> {{ $t('dfs_the_header_header_prize_questionnaire') }} </span>
@@ -95,7 +104,10 @@ export default {
   inject: ['buried'],
   components: { VIcon, NotificationPopover, UpgradeFee },
   data() {
+    const isDomesticStation = window.__config__?.station === 'domestic'
+
     return {
+      isDomesticStation,
       user: window.__USER_INFO__ || {},
       USER_CENTER: window.__config__.USER_CENTER,
       topBarLinks: window.__config__?.topBarLinks,
@@ -146,10 +158,9 @@ export default {
     //获取用户注册时间
     if (this.user?.id) {
       this.registrationTime = extractTimeFromObjectId(this.user?.id)
-      //注册时间7天大于的用户
-      this.showQuestionnaire = daysdifference(this.registrationTime) > 7
+      // 国内站 && 注册时间7天大于的用户
+      this.showQuestionnaire = this.isDomesticStation && daysdifference(this.registrationTime) > 7
     }
-    this.setBaiduIndex() // 百度推广索引
   },
   methods: {
     command(command) {
@@ -247,52 +258,11 @@ export default {
     goQuestionnaire() {
       window.open('https://tapdata.feishu.cn/share/base/form/shrcnImdl8BDtEOxki50Up9OJTg', '_blank')
     },
-    setBaiduIndex() {
-      // 上报百度索引
-      const logidUrlCloud = Cookie.get('logidUrlCloud')
-      if (logidUrlCloud) {
-        const bd_vid = logidUrlCloud
-          .split(/[?&]/)
-          .find(t => t.match(/^bd_vid=/))
-          ?.replace(/^bd_vid=/, '')
-
-        const tp_vid = logidUrlCloud
-          .split(/[?&]/)
-          .find(t => t.match(/^tp_vid=/))
-          ?.replace(/^tp_vid=/, '')
-
-        // tp_vid存到user信息中
-        if (tp_vid && !this.user.tpVid) {
-          this.$axios.patch('api/tcm/user', {
-            tpVid: tp_vid
-          })
-        }
-
-        // bd_vid存到user信息中
-        if (bd_vid && !this.user.bdVid) {
-          this.$axios.patch('api/tcm/user', {
-            bdVid: bd_vid
-          })
-
-          const conversionTypes = [
-            {
-              logidUrl: logidUrlCloud,
-              newType: 25
-            }
-          ]
-          this.$axios
-            .post('api/tcm/track/send_convert_data', conversionTypes)
-            .then(data => {
-              if (data) {
-                this.buried('registerSuccess')
-                Cookie.remove('logidUrlCloud')
-              }
-            })
-            .catch(e => {
-              console.log('ocpc.baidu.com', e)
-            })
-        }
-      }
+    goSlack() {
+      window.open(
+        'https://join.slack.com/share/enQtNTYxNjI0NDQ5ODM4Ni1kMWQ0ZTMzYzYxZDg3YTk4NTQ0MmViZWRiNDhmODQwYTBjOTZiMDc4ZjgxMDM5YzBjNDZiYjIwZjJlOWQzNzBl',
+        '_blank'
+      )
     }
   }
 }
@@ -495,6 +465,9 @@ export default {
   padding: 4px 8px;
   background: linear-gradient(93.39deg, #2c65ff 10.45%, #702cff 98.21%);
   border-radius: 4px;
+}
+.slack-logo {
+  height: 14px;
 }
 
 @keyframes move {

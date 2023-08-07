@@ -191,7 +191,7 @@ export default {
       optionCode: isMacOs ? 'Option' : 'Alt',
       name: '',
       syncMap: {
-        'initial_sync+cdc': this.$t('public_task_type_initial_sync') + '+' + this.$t('public_task_type_cdc'),
+        'initial_sync+cdc': this.$t('public_task_type_initial_sync_and_cdc'),
         initial_sync: this.$t('public_task_type_initial_sync'),
         cdc: this.$t('public_task_type_cdc')
       },
@@ -245,8 +245,8 @@ export default {
     },
 
     hideSetting() {
-      // 挖掘、心跳任务、共享缓存，不显示设置
-      return ['logCollector', 'connHeartbeat', 'shareCache'].includes(this.dataflow.syncType)
+      // 心跳任务、共享缓存，不显示设置
+      return ['connHeartbeat', 'shareCache'].includes(this.dataflow.syncType)
     },
 
     hideEdit() {

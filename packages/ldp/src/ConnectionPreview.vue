@@ -162,7 +162,7 @@ export default {
       taskType: {
         initial_sync: this.$t('public_task_type_initial_sync'),
         cdc: this.$t('public_task_type_cdc'),
-        'initial_sync+cdc': this.$t('public_task_type_initial_sync') + '+' + this.$t('public_task_type_cdc')
+        'initial_sync+cdc': this.$t('public_task_type_initial_sync_and_cdc')
       },
       asTaskType: 'all'
     }

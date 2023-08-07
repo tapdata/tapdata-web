@@ -57,14 +57,14 @@
                 <AsyncSelect
                   v-model="item.source.connectionId"
                   :method="getConnectionsListMethod"
-                  :currentLabel="item.source.connectionName"
+                  :currentLabel="item.source.currentLabel"
                   itemQuery="name"
                   lazy
                   filterable
                   class="item-select"
                   :key="'sourceConnectionId' + item.id"
                   :onSetSelected="useHandle(handleSetSelectedConnection, item.source)"
-                  @change="handleChangeConnection(arguments[0], item.source)"
+                  @change="handleChangeConnection(arguments[0], item.source, arguments[1])"
                 >
                 </AsyncSelect>
                 <span class="item-icon fs-6">
@@ -73,14 +73,14 @@
                 <AsyncSelect
                   v-model="item.target.connectionId"
                   :method="getConnectionsListMethod"
-                  :currentLabel="item.target.connectionName"
+                  :currentLabel="item.target.currentLabel"
                   itemQuery="name"
                   lazy
                   filterable
                   class="item-select"
                   :key="'targetConnectionId' + item.id"
                   :onSetSelected="useHandle(handleSetSelectedConnection, item.target)"
-                  @change="handleChangeConnection(arguments[0], item.target)"
+                  @change="handleChangeConnection(arguments[0], item.target, arguments[1])"
                 >
                 </AsyncSelect>
               </div>
@@ -119,6 +119,17 @@
                   @change="handleChangeTable(arguments[0], item, index, 'target')"
                 >
                 </AsyncSelect>
+              </div>
+              <div class="setting-item mt-4" :key="'SchemaToForm' + item.id">
+                <SchemaToForm
+                  :ref="`schemaToForm_${item.id}`"
+                  :value.sync="item"
+                  :schema="formSchema"
+                  :scope="schemaScope"
+                  :colon="true"
+                  class="w-100"
+                  label-width="120"
+                />
               </div>
               <div v-if="inspectMethod !== 'row_count'" class="setting-item mt-4">
                 <label class="item-label">{{ $t('packages_business_verification_indexField') }}: </label>
@@ -234,10 +245,11 @@
 
 <script>
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
-import { merge, cloneDeep, uniqBy, debounce } from 'lodash'
+import { merge, cloneDeep, uniqBy, isEmpty, debounce } from 'lodash'
+import { action } from '@formily/reactive'
 
 import i18n from '@tap/i18n'
-import { AsyncSelect } from '@tap/form'
+import { AsyncSelect, SchemaToForm } from '@tap/form'
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
 import { uuid } from '@tap/shared'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
@@ -262,7 +274,8 @@ export default {
     VCodeEditor,
     GitBook,
     MultiSelection,
-    FieldDialog
+    FieldDialog,
+    SchemaToForm
   },
 
   props: {
@@ -288,13 +301,383 @@ export default {
       list: [],
       jointErrorMessage: '',
       fieldsMap: {},
+      capabilitiesMap: {},
       autoAddTableLoading: false,
       dynamicSchemaMap: {},
       dialogAddScriptVisible: false,
       formIndex: '',
       webScript: '',
       jsEngineName: 'graal.js',
-      doc: ''
+      doc: '',
+      schemaData: null,
+      schemaScope: {
+        $supportFilterFunction:
+          this.inspectMethod === 'row_count'
+            ? 'count_by_partition_filter_function'
+            : 'query_by_advance_filter_function',
+        useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
+          return field => {
+            field.loading = true
+            service({ field }, ...serviceParams).then(
+              action.bound(data => {
+                if (fieldName === 'value') {
+                  field.setValue(data)
+                } else field[fieldName] = data
+                field.loading = false
+              })
+            )
+          }
+        },
+        async loadTableFieldList(obj, item) {
+          try {
+            if (!item.connectionId || !item.table) return []
+            let fields = item.fields
+            if (!fields?.length) {
+              const params = {
+                where: {
+                  meta_type: 'table',
+                  sourceType: 'SOURCE',
+                  original_name: item.table,
+                  'source._id': item.connectionId
+                },
+                limit: 1
+              }
+              const data = await metadataInstancesApi.tapTables({
+                filter: JSON.stringify(params)
+              })
+              fields = Object.values(data.items[0]?.nameFieldMap || {})
+            }
+            const result = fields.map(t => {
+              return {
+                id: t.id,
+                label: t.fieldName,
+                value: t.fieldName || t.field_name,
+                field_name: t.fieldName || t.field_name,
+                primary_key_position: t.primaryKey,
+                data_type: t.dataType || t.data_type,
+                primaryKey: t.primaryKey,
+                unique: t.unique
+              }
+            })
+            if (result.length) {
+              item.fields = result
+            }
+            return result
+          } catch (e) {
+            return []
+          }
+        }
+      },
+      formSchema: {
+        type: 'object',
+        properties: {
+          nameWrap: {
+            type: 'void',
+            'x-component': 'FormGrid',
+            'x-component-props': {
+              minColumns: 2,
+              maxColumns: 2,
+              columnGap: 16
+            },
+            properties: {
+              source: {
+                type: 'object',
+                'x-component': 'FormGrid.GridColumn',
+                properties: {
+                  nodeSchema: {
+                    type: 'array',
+                    'x-display': 'hidden',
+                    'x-reactions': [
+                      `{{useAsyncDataSource(loadTableFieldList, 'value', $values.source)}}`,
+                      {
+                        target: 'source.conditions.*.key',
+                        fulfill: {
+                          state: {
+                            loading: '{{$self.loading}}',
+                            dataSource: '{{$self.value}}'
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  isFilter: {
+                    type: 'boolean',
+                    title: i18n.t('packages_business_components_conditionbox_laiyuanbiaoshuju'),
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Switch',
+                    default: false,
+                    'x-reactions': [
+                      {
+                        fulfill: {
+                          state: {
+                            visible: `{{$values.source.capabilities && $values.source.capabilities.some(item => item.id === $supportFilterFunction)}}`
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  conditions: {
+                    type: 'array',
+                    title: ' ',
+                    default: [{ key: '', value: '', operator: 5 }],
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      colon: false
+                    },
+                    'x-component': 'ArrayItems',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        space: {
+                          type: 'void',
+                          'x-component': 'Space',
+                          properties: {
+                            key: {
+                              type: 'string',
+                              required: 'true',
+                              'x-decorator': 'FormItem',
+                              'x-component': 'Select',
+                              'x-component-props': {
+                                filterable: true
+                              },
+                              enum: []
+                            },
+                            operator: {
+                              type: 'number',
+                              required: 'true',
+                              enum: [
+                                {
+                                  label: '>',
+                                  value: 1
+                                },
+                                {
+                                  label: '>=',
+                                  value: 2
+                                },
+                                {
+                                  label: '<',
+                                  value: 3
+                                },
+                                {
+                                  label: '<=',
+                                  value: 4
+                                },
+                                {
+                                  label: '=',
+                                  value: 5
+                                }
+                              ],
+                              'x-decorator': 'FormItem',
+                              'x-decorator-props': {
+                                wrapperWidth: 100
+                              },
+                              'x-component': 'Select'
+                            },
+                            value: {
+                              type: 'string',
+                              required: 'true',
+                              'x-decorator': 'FormItem',
+                              'x-component': 'Input',
+                              'x-component-props': {
+                                type: 'datetime',
+                                align: 'right',
+                                format: 'yyyy-MM-dd HH:mm:ss'
+                              },
+                              'x-reactions': {
+                                dependencies: ['.key', '.key#dataSource'],
+                                fulfill: {
+                                  schema: {
+                                    'x-component': `{{field=$deps[1] && $deps[1].find(item=>item.value===$deps[0]),field&&/timestamp|date|DATE_TIME|datetime/i.test(field.data_type)?"DatePicker":"Input"}}`
+                                  }
+                                }
+                              }
+                            },
+                            remove: {
+                              type: 'void',
+                              'x-decorator': 'FormItem',
+                              'x-component': 'ArrayItems.Remove',
+                              'x-component-props': {
+                                disabled: '{{$values.source.conditions.length<2}}'
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    properties: {
+                      add: {
+                        type: 'void',
+                        title: i18n.t('packages_dag_nodes_table_tianjia'),
+                        'x-component': 'ArrayItems.Addition',
+                        'x-component-props': {
+                          defaultValue: { key: '', value: '', operator: 5 }
+                        }
+                      }
+                    },
+                    'x-reactions': [
+                      {
+                        dependencies: ['.isFilter'],
+                        fulfill: {
+                          state: {
+                            visible: '{{!!$deps[0]}}'
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              target: {
+                type: 'object',
+                'x-component': 'FormGrid.GridColumn',
+                properties: {
+                  nodeSchema: {
+                    type: 'array',
+                    'x-display': 'hidden',
+                    'x-reactions': [
+                      `{{useAsyncDataSource(loadTableFieldList, 'value', $values.target)}}`,
+                      {
+                        target: 'target.conditions.*.key',
+                        fulfill: {
+                          state: {
+                            loading: '{{$self.loading}}',
+                            dataSource: '{{$self.value}}'
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  isFilter: {
+                    type: 'boolean',
+                    title: i18n.t('packages_business_components_conditionbox_mubiaobiaoshuju'),
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Switch',
+                    default: false,
+                    'x-reactions': [
+                      {
+                        fulfill: {
+                          state: {
+                            visible: `{{$values.target.capabilities && $values.target.capabilities.some(item => item.id === $supportFilterFunction)}}`
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  conditions: {
+                    type: 'array',
+                    title: ' ',
+                    default: [{ key: '', value: '', operator: 5 }],
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      colon: false
+                    },
+                    'x-component': 'ArrayItems',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        space: {
+                          type: 'void',
+                          'x-component': 'Space',
+                          properties: {
+                            key: {
+                              type: 'string',
+                              required: 'true',
+                              'x-decorator': 'FormItem',
+                              'x-component': 'Select',
+                              'x-component-props': {
+                                filterable: true
+                              },
+                              enum: []
+                            },
+                            operator: {
+                              type: 'number',
+                              required: 'true',
+                              enum: [
+                                {
+                                  label: '>',
+                                  value: 1
+                                },
+                                {
+                                  label: '>=',
+                                  value: 2
+                                },
+                                {
+                                  label: '<',
+                                  value: 3
+                                },
+                                {
+                                  label: '<=',
+                                  value: 4
+                                },
+                                {
+                                  label: '=',
+                                  value: 5
+                                }
+                              ],
+                              'x-decorator': 'FormItem',
+                              'x-decorator-props': {
+                                wrapperWidth: 100
+                              },
+                              'x-component': 'Select'
+                            },
+                            value: {
+                              type: 'string',
+                              required: 'true',
+                              'x-decorator': 'FormItem',
+                              'x-component': 'Input',
+                              'x-component-props': {
+                                type: 'datetime',
+                                align: 'right',
+                                format: 'yyyy-MM-dd HH:mm:ss'
+                              },
+                              'x-reactions': {
+                                dependencies: ['.key', '.key#dataSource'],
+                                fulfill: {
+                                  schema: {
+                                    'x-component': `{{field=$deps[1] && $deps[1].find(item=>item.value===$deps[0]),field&&/timestamp|date|DATE_TIME|datetime/i.test(field.data_type)?"DatePicker":"Input"}}`
+                                  }
+                                }
+                              }
+                            },
+                            remove: {
+                              type: 'void',
+                              'x-decorator': 'FormItem',
+                              'x-component': 'ArrayItems.Remove',
+                              'x-component-props': {
+                                disabled: '{{$values.target.conditions.length<2}}'
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    properties: {
+                      add: {
+                        type: 'void',
+                        title: i18n.t('packages_dag_nodes_table_tianjia'),
+                        'x-component': 'ArrayItems.Addition',
+                        'x-component-props': {
+                          defaultValue: { key: '', value: '', operator: 5 }
+                        }
+                      }
+                    },
+                    'x-reactions': [
+                      {
+                        dependencies: ['.isFilter'],
+                        fulfill: {
+                          state: {
+                            visible: '{{!!$deps[0]}}'
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
 
@@ -367,12 +750,18 @@ export default {
           if (findDynamicSchema) {
             this.dynamicSchemaMap[item.id] = true
           }
+          const connectionId = item.id
+          const connectionName = item.name
+          const databaseType = item.database_type
           return {
-            id: item.id,
-            name: item.name,
-            label: `${item.name} ${item.status ? `(${CONNECTION_STATUS_MAP[item.status]?.text || item.status})` : ''}`,
-            value: item.id,
-            databaseType: item.database_type
+            id: connectionId,
+            name: connectionName,
+            label: `${connectionName} ${
+              item.status ? `(${CONNECTION_STATUS_MAP[item.status]?.text || item.status})` : ''
+            }`,
+            value: connectionId,
+            databaseType: databaseType,
+            attrs: { connectionId, connectionName, databaseType }
           }
         })
 
@@ -419,8 +808,16 @@ export default {
           this.setFieldsByItem(
             [nodeId, connectionId, el.name],
             Object.values(el.nameFieldMap || {}).map(t => {
-              const { id, fieldName, primaryKeyPosition } = t
-              return { id, field_name: fieldName, primary_key_position: primaryKeyPosition }
+              const { id, fieldName, primaryKeyPosition, fieldType, data_type, primaryKey, unique } = t
+              return {
+                id,
+                field_name: fieldName,
+                primary_key_position: primaryKeyPosition,
+                fieldType,
+                data_type,
+                primaryKey,
+                unique
+              }
             })
           )
         })
@@ -444,15 +841,17 @@ export default {
           const nodeName = t.name
           const connectionId = t.connectionId
           const connectionName = t.attrs?.connectionName
+          const databaseType = t.databaseType
           const findDynamicSchema = t.attrs?.capabilities.find(t => t.id === 'dynamic_schema')
           if (findDynamicSchema) {
             this.dynamicSchemaMap[t.connectionId] = true
           }
           return {
-            attrs: { nodeId, nodeName, connectionId, connectionName },
+            attrs: { nodeId, nodeName, connectionId, connectionName, databaseType },
             name: `${nodeName} / ${connectionName}`,
-            value: `${nodeId}/${connectionId}`,
-            label: `${nodeName} / ${connectionName}`
+            value: connectionId,
+            label: `${nodeName} / ${connectionName}`,
+            databaseType: databaseType
           }
         }),
         'value'
@@ -491,8 +890,8 @@ export default {
         this.setFieldsByItem(
           [nodeId, connectionId, el.name],
           el.fields.map(t => {
-            const { id, field_name, primary_key_position } = t
-            return { id, field_name, primary_key_position }
+            const { id, field_name, primary_key_position, data_type, primaryKey, unique } = t
+            return { id, field_name, primary_key_position, data_type, primaryKey, unique }
           })
         )
       })
@@ -642,6 +1041,8 @@ export default {
         connectionIds.push(m.targetConnectionId)
         tableNames.push(...m.tableNames)
       })
+      // 加载数据源的Capabilities
+      const capabilitiesMap = await this.getCapabilities(connectionIds)
       if (!matchNodeList.length) {
         if (this.allStages.length > this.flowStages.length)
           return this.$message.error(i18n.t('packages_business_components_conditionbox_cunzaichulijiedian_wufazidong'))
@@ -690,25 +1091,26 @@ export default {
               item.source.nodeId = source
               item.source.nodeName = sourceName
               item.source.databaseType = sourceDatabaseType
-              item.source.connectionId = `${source}/${sourceConnectionId}`
-              item.source.connectionName = `${sourceName} / ${sourceConnectionName}`
+              item.source.connectionId = sourceConnectionId
+              item.source.connectionName = sourceConnectionName
+              item.source.currentLabel = `${sourceName} / ${sourceConnectionName}`
               item.source.table = ge // findTable.original_name
+              item.source.capabilities = capabilitiesMap[sourceConnectionId]
               // 填充target
               item.target.nodeId = target
               item.target.nodeName = targetName
               item.target.databaseType = targetDatabaseType
-              item.target.connectionId = `${target}/${targetConnectionId}`
-              item.target.connectionName = `${targetName} / ${targetConnectionName}`
+              item.target.connectionId = targetConnectionId
+              item.target.connectionName = targetConnectionName
+              item.target.currentLabel = `${targetName} / ${targetConnectionName}`
               item.target.table = tableNameRelation[ge] // findTargetTable.original_name
+              item.target.capabilities = capabilitiesMap[targetConnectionId]
 
               const updateList = cloneDeep(updateConditionFieldMap[tableNameRelation[ge]] || [])
               let findTable = data.find(t => t.source.id === sourceConnectionId && t.original_name === ge)
               let findTargetTable = data.find(
                 t => t.source.id === targetConnectionId && t.original_name === tableNameRelation[ge]
               )
-
-              console.log('findTable', findTable)
-              console.log('findTargetTable', findTargetTable)
 
               if (findTable) {
                 let sourceSortColumn = updateList.length
@@ -732,31 +1134,12 @@ export default {
                 item.target.sortColumn = targetSortColumn
               }
 
-              // 补全sortColumn
-              if (!item.source.sortColumn) {
-                item.source.sortColumn = item.target.sortColumn
-              }
-
-              if (!item.target.sortColumn) {
-                item.target.sortColumn = item.source.sortColumn
-              }
-
               list.push(item)
             })
           })
-          console.log('list', list)
-          // 字段没有填充的
-          // const hasFieldList = list.filter(t => t.source.sortColumn && t.target.sortColumn)
-          // console.log('hasFieldList', hasFieldList)
-
           if (!list.length) {
             return this.$message.error(i18n.t('packages_business_components_conditionbox_suoxuanrenwuque'))
           }
-
-          // if (this.inspectMethod !== 'row_count') {
-          //   list = list.filter(t => t.source.sortColumn && t.target.sortColumn)
-          // }
-
           this.list = list
 
           // 显示提示
@@ -776,12 +1159,6 @@ export default {
       let data = cloneDeep(this.data)
       data.forEach(el => {
         el.modeType = el.source.columns ? 'custom' : 'all'
-        if (this.taskId) {
-          el.source.connectionId = `${el.source.nodeId}/${el.source.connectionId}`
-          el.source.connectionName = `${el.source.nodeName} / ${el.source.connectionName}`
-          el.target.connectionId = `${el.target.nodeId}/${el.target.connectionId}`
-          el.target.connectionName = `${el.target.nodeName} / ${el.target.connectionName}`
-        }
       })
       this.list = data
     },
@@ -794,35 +1171,33 @@ export default {
             el.source.columns = null
             el.target.columns = null
           }
-          el.source.connectionId = el.source.connectionId?.split('/')?.[1]
-          el.source.connectionName = el.source.connectionName?.split(' / ')?.[1]
-          el.target.connectionId = el.target.connectionId?.split('/')?.[1]
-          el.target.connectionName = el.target.connectionName?.split(' / ')?.[1]
         })
       }
       return list
     },
 
-    handleChangeConnection(val, item) {
+    async handleChangeConnection(val, item, opt = {}) {
+      item.currentLabel = ''
       item.table = '' // 重选连接，清空表
       item.sortColumn = '' // 重选连接，清空表
+      item.databaseType = opt.databaseType
+      item.capabilities = await this.getConnectionCapabilities(opt.attrs?.connectionId)
       if (!this.taskId) {
+        item.connectionName = opt.attrs?.connectionName
         return
       }
-      const result = val.split('/')
-      if (result.length === 1) {
-        return
-      }
-      const findNodeId = result[0]
-      item.nodeId = findNodeId
+      const { nodeId, nodeName, connectionName } = opt.attrs || {}
+      item.nodeId = nodeId
+      item.nodeName = nodeName
+      item.connectionName = connectionName
     },
 
     handleSetSelectedConnection(item, val) {
-      item.connectionName = val?.currentLabel || val?.name
-      if (this.taskId) {
-        item.nodeName = item.connectionName?.split(' / ')?.[0]
-      }
-      item.databaseType = val?.databaseType
+      // item.connectionName = val?.currentLabel || val?.name
+      // if (this.taskId) {
+      //   item.nodeName = item.connectionName?.split(' / ')?.[0]
+      // }
+      // item.databaseType = val?.databaseType
     },
 
     getReverseNodeInfo(data = {}) {
@@ -892,7 +1267,7 @@ export default {
         targetDatabaseType,
         updateConditionFieldMap,
         tableName,
-        tableNameRelation
+        tableNameRelation = {}
       } = matchNode
 
       // 自动填充索引字段
@@ -908,8 +1283,8 @@ export default {
 
       item.target.nodeId = target
       item.target.nodeName = targetName
-      item.target.connectionId = `${target}/${targetConnectionId}`
-      item.target.connectionName = `${targetName} / ${targetConnectionName}`
+      item.target.connectionId = targetConnectionId
+      item.target.connectionName = targetConnectionName
       item.target.table = tableName ? tableName : tableNameRelation[val]
 
       // 加载目标的字段
@@ -1028,7 +1403,7 @@ export default {
       this.validate()
     }, 200),
 
-    validate() {
+    async validate() {
       let tasks = this.getList()
 
       if (!tasks.length) {
@@ -1113,6 +1488,22 @@ export default {
           return
         }
 
+        // 判断过滤设置是否填写完整
+        let schemaToFormFlag = false
+        for (let i = 0; i < tasks.length; i++) {
+          await this.$refs[`schemaToForm_${tasks[i].id}`].validate().catch(() => {
+            index = i + 1
+            schemaToFormFlag = true
+          })
+        }
+        if (schemaToFormFlag) {
+          message = this.$t('packages_business_verification_message_error_joint_table_target_or_source_filter_not_set', {
+            val: index
+          })
+          this.updateErrorMsg(message, 'error')
+          return message
+        }
+
         // 开启高级校验后，JS校验逻辑不能为空
         if (
           this.inspectMethod === 'field' &&
@@ -1130,101 +1521,6 @@ export default {
 
       this.updateErrorMsg('')
       return
-
-      // 判断表名称是否为空
-      // if (
-      //   tasks.some((c, i) => {
-      //     index = i + 1
-      //     return !c.source.table || !c.target.table
-      //   })
-      // ) {
-      //   // this.$nextTick(() => {
-      //   //   formDom.childNodes[index - 1]?.querySelector('input')?.focus()
-      //   // })
-      //   message = this.$t('packages_business_verification_message_error_joint_table_target_or_source_not_set', {
-      //     val: index
-      //   })
-      //   this.jointErrorMessage = message
-      //   return message
-      // }
-      // // 判断表字段校验时，索引字段是否为空
-      // index = 0
-      // if (
-      //   ['field', 'jointField'].includes(this.inspectMethod) &&
-      //   tasks.some((c, i) => {
-      //     index = i + 1
-      //     return !c.source.sortColumn || !c.target.sortColumn
-      //   })
-      // ) {
-      //   // this.$nextTick(() => {
-      //   //   // document.getElementById('data-verification-form').childNodes[index - 1].querySelector('input').focus()
-      //   //   let item = document.getElementById('item-source-' + (index - 1))
-      //   //   item.querySelector('input').focus()
-      //   // })
-      //   message = this.$t('packages_business_verification_lackIndex', { val: index })
-      //   this.jointErrorMessage = message
-      //   return message
-      // }
-      // // 判断表字段校验时，索引字段是否个数一致
-      // index = 0
-      // if (
-      //   ['field', 'jointField'].includes(this.inspectMethod) &&
-      //   tasks.some((c, i) => {
-      //     index = i + 1
-      //     return c.source.sortColumn.split(',').length !== c.target.sortColumn.split(',').length
-      //   })
-      // ) {
-      //   // this.$nextTick(() => {
-      //   //   let item = document.getElementById('item-source-' + (index - 1))
-      //   //   item.querySelector('input').focus()
-      //   // })
-      //   message = this.$t('packages_business_verification_message_error_joint_table_field_not_match', { val: index })
-      //   this.jointErrorMessage = message
-      //   return message
-      // }
-      // // 判断字段模型是否存在空
-      // index = 0
-      // if (
-      //   ['field', 'jointField'].includes(this.inspectMethod) &&
-      //   tasks.some((c, i) => {
-      //     index = i + 1
-      //     return c.source.columns?.some(t => !t) || c.target.columns?.some(t => !t)
-      //   })
-      // ) {
-      //   // this.$nextTick(() => {
-      //   //   let item = document.getElementById('list-table__content' + (index - 1))
-      //   //   const emptyDom = item.querySelector('.el-select.empty-data')
-      //   //   const offsetTop = emptyDom?.offsetTop || 0
-      //   //   if (offsetTop) {
-      //   //     const height = emptyDom?.offsetHeight || 0
-      //   //     item.scrollTo({
-      //   //       top: offsetTop - height
-      //   //     })
-      //   //   }
-      //   // })
-      //   message = this.$t('packages_business_verification_form_diinde', { val1: index })
-      //   this.jointErrorMessage = message
-      //   return message
-      // }
-      //
-      // // 开启高级校验后，JS校验逻辑不能为空
-      // index = 0
-      // if (
-      //   this.inspectMethod === 'field' &&
-      //   tasks.some((c, i) => {
-      //     index = i + 1
-      //     return c.showAdvancedVerification && !c.webScript
-      //   })
-      // ) {
-      //   // this.$nextTick(() => {
-      //   //   formDom.childNodes[index - 1]?.querySelector('input')?.focus()
-      //   // })
-      //   message = this.$t('packages_business_verification_message_error_script_no_enter')
-      //   this.jointErrorMessage = message
-      //   return message
-      // }
-      // this.jointErrorMessage = ''
-      // return
     },
 
     loadDoc() {
@@ -1336,7 +1632,7 @@ function validate(sourceRow){
       if (opt.fields?.length) {
         return
       }
-      const connectionId = opt.connectionId?.split('/')?.[1]
+      const connectionId = opt.connectionId
       const params = {
         where: {
           meta_type: 'table',
@@ -1351,16 +1647,44 @@ function validate(sourceRow){
           filter: JSON.stringify(params)
         })
         .then((data = {}) => {
+          if (isEmpty(data.items[0]?.nameFieldMap)) {
+            return
+          }
           opt.fields = Object.values(data.items[0]?.nameFieldMap || {}).map(t => {
             return {
               id: t.id,
               label: t.fieldName,
               value: t.fieldName,
               field_name: t.fieldName,
-              primary_key_position: t.primaryKey
+              primary_key_position: t.primaryKey,
+              data_type: t.dataType,
+              primaryKey: t.primaryKey,
+              unique: t.unique
             }
           })
         })
+    },
+
+    async getCapabilities(connectionIds = []) {
+      if (!connectionIds.length) return
+      const data = await Promise.all(
+        connectionIds.map(async id => {
+          return {
+            id,
+            capabilities: await this.getConnectionCapabilities(id)
+          }
+        })
+      )
+
+      return data.reduce((cur, pre) => {
+        cur[pre.id] = pre.capabilities
+        return cur
+      }, {})
+    },
+
+    async getConnectionCapabilities(id) {
+      const data = await connectionsApi.get(id)
+      return data?.capabilities || []
     },
 
     updateErrorMsg(msg, level = '') {
@@ -1415,14 +1739,14 @@ function validate(sourceRow){
       line-height: 1;
     }
     .item-label {
-      width: 80px;
+      width: 120px;
       line-height: 32px;
       text-align: left;
       color: map-get($fontColor, light);
     }
     .item-icon {
       margin: 0 10px;
-      width: 80px;
+      width: 120px;
       line-height: 32px;
       color: map-get($fontColor, light);
       text-align: center;
@@ -1487,6 +1811,15 @@ function validate(sourceRow){
       .el-input__inner {
         border-color: #d44d4d;
       }
+    }
+  }
+}
+
+.scheme-to-form {
+  ::v-deep {
+    .formily-element-form-item-layout-horizontal .formily-element-form-item-control-content-component > .el-switch {
+      height: 32px;
+      line-height: 32px;
     }
   }
 }

@@ -171,3 +171,44 @@ body.hide-chart > [data-id='zsalesiq'] {
   display: none !important;
   visibility: hidden !important;
 }
+
+$primary: map-get($color, primary);
+$dotSize: 16px;
+$dotSpace: $dotSize + 8px;
+$dotLeft: 9999px;
+$x1: $dotLeft - $dotSpace;
+$x2: $dotLeft;
+$x3: $dotLeft + $dotSpace;
+.dot-pulse {
+  position: relative;
+  left: $dotLeft * -1;
+  width: $dotSize;
+  height: $dotSize;
+  border-radius: $dotSize * 0.5;
+  background-color: $primary;
+  color: $primary;
+  box-shadow: $x1 0 0 0 $primary, $x2 0 0 0 $primary, $x3 0 0 0 $primary;
+  animation: dotPulse 1.5s infinite linear;
+}
+
+@keyframes dotPulse {
+  0% {
+    box-shadow: $x1 0 0 -5px $primary, $x2 0 0 0 $primary, $x3 0 0 2px $primary;
+  }
+
+  25% {
+    box-shadow: $x1 0 0 0 $primary, $x2 0 0 2px $primary, $x3 0 0 0 $primary;
+  }
+
+  50% {
+    box-shadow: $x1 0 0 2px $primary, $x2 0 0 0 $primary, $x3 0 0 -5px $primary;
+  }
+
+  75% {
+    box-shadow: $x1 0 0 0 $primary, $x2 0 0 -5px $primary, $x3 0 0 0 $primary;
+  }
+
+  100% {
+    box-shadow: $x1 0 0 -5px $primary, $x2 0 0 0 $primary, $x3 0 0 2px $primary;
+  }
+}

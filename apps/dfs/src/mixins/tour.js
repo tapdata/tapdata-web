@@ -2,11 +2,17 @@ import i18n from '@/i18n'
 import { driver } from 'driver.js'
 import 'driver.js/dist/driver.css'
 import { connectionsApi, taskApi } from '@tap/api'
+import Cookie from '@tap/shared/src/cookie'
 
 export default {
   data() {
     return {
-      showAlarmTour: false
+      showAlarmTour: false,
+      //新人引导
+      step: 1,
+      agent: {},
+      isUnDeploy: false,
+      subscribes: {}
     }
   },
 
@@ -16,8 +22,11 @@ export default {
     }
   },
 
-  created() {
+  async created() {
+    await this.loadGuide()
+    await this.checkGuide()
     this.loopLoadAgentCount()
+    this.setBaiduIndex() // 百度推广索引
   },
 
   beforeRouteUpdate(to, from, next) {
@@ -37,6 +46,77 @@ export default {
   },
 
   methods: {
+    // 检查是否有安装过agent
+    async checkGuide() {
+      this.guideLoading = true
+      let subscribe = await this.$axios.get(`api/tcm/subscribe`)
+      this.$axios
+        .get('api/tcm/agent')
+        .then(data => {
+          const { guide } = this.$store.state
+          const { subscribeId, agentId } = guide
+          const haveGuide = guide.steps?.length // 进入过引导
+          let items = data?.items || []
+          let subItems = subscribe?.items || []
+
+          items = items.filter(({ id }) => !['64a785ada8321f670d2338d1', '64a01d43a1dd0e614a1b7d86'].includes(id))
+
+          //是否有未支付的订阅
+          if (!items.length && !subItems.length) {
+            this.subscriptionModelVisible = true
+            return
+          }
+
+          //是否有运行中的实例
+          let isRunning = items.find(i => i.status === 'Running')
+          if (isRunning) {
+            return
+          }
+
+          //是否有支付成功的订阅
+          // if (subItems.find(i => i.status === 'active' && i.totalAmount !== 0)) return
+
+          //订阅0 Agent 0  完全新人引导
+          //订阅不为0 查找是否有待部署状态
+          //Agent不为0 查找是否有待部署状态
+          //优先未支付判定
+          //未支付
+
+          if (subscribeId) {
+            let isUnPay = subItems.find(i => i.status === 'incomplete' && guide.subscribeId === i.id)
+
+            if (isUnPay) {
+              this.subscribes = isUnPay
+              this.subscriptionModelVisible = true
+              //是否有未支付的订阅
+              return
+            }
+          }
+
+          if (agentId) {
+            //检查是否有待部署状态
+            let isUnDeploy = items.find(i => i.status === 'Creating' && i.agentType === 'Local' && i.id === agentId)
+            //未部署
+            if (isUnDeploy) {
+              this.agent = {
+                id: isUnDeploy.id
+              }
+              this.isUnDeploy = true
+              this.subscriptionModelVisible = true
+              return
+            }
+          }
+        })
+        .finally(() => {
+          this.guideLoading = false
+        })
+    },
+
+    async loadGuide() {
+      const guide = await this.$axios.get('api/tcm/user_guide')
+      this.$store.commit('setGuide', guide)
+    },
+
     loopLoadAgentCount() {
       return this.$axios
         .get('api/tcm/agent/agentCount')
@@ -44,7 +124,7 @@ export default {
           this.showAgentWarning = data.agentTotalCount && !data.agentRunningCount
           this.agentRunningCount = data.agentRunningCount
           window.__agentCount__ = data
-
+          this.$store.commit('setAgentCount', data)
           this.initTour()
         })
         .finally(() => {
@@ -147,9 +227,6 @@ export default {
         },
         onHighlightStarted: (element, step, options) => {
           element?.addEventListener('click', step.elementClick)
-          if (!element) {
-            step.elementClick()
-          }
         },
         onDeselected: (element, step, options) => {
           element?.removeEventListener('click', step.elementClick)
@@ -316,8 +393,14 @@ export default {
 
       const element = `#agent-${agent.id} [name="${agent.agentType === 'Cloud' ? 'restart' : 'start'}"]`
       let unwatch = this.$watch('$store.state.instanceLoading', loading => {
-        if (!loading && this.$route.name === 'Instance' && this.driverObj?.getActiveIndex() < 1) {
-          this.driverObj.moveNext()
+        if (
+          !loading &&
+          this.$route.name === 'Instance' &&
+          this.driverObj &&
+          !this.driverObj.getActiveIndex() &&
+          document.querySelector(element)
+        ) {
+          this.driverObj.drive(1)
         }
 
         if (!loading && !document.querySelector(element)) {
@@ -352,13 +435,24 @@ export default {
           this.enterAgentTour = true
         }
       })
-      this.driverObj.drive(steps[0].type === 'menu' && this.$route.name === steps[0].route ? 1 : 0)
+
+      let stepIndex = 0
+
+      if (steps[0].type === 'menu' && this.$route.name === steps[0].route) {
+        stepIndex = 1
+        if (!document.querySelector(element)) {
+          return
+        }
+      }
+
+      this.driverObj.drive(stepIndex)
     },
 
     async initTour() {
       const whiteList = ['connectionCreate']
 
       if (
+        this.guideLoading ||
         this.subscriptionModelVisible ||
         whiteList.includes(this.$route.name) ||
         this.driverObj ||
@@ -379,6 +473,57 @@ export default {
       } else if (this.showAgentWarning && !this.enterAgentTour) {
         // 存在异常的agent
         await this.initAgentTour()
+      }
+    },
+
+    changeIsUnDeploy(val) {
+      this.isUnDeploy = val
+    },
+
+    setBaiduIndex() {
+      // 上报百度索引
+      const logidUrlCloud = Cookie.get('logidUrlCloud')
+      const { guide } = this.$store.state
+      if (logidUrlCloud) {
+        const bd_vid = logidUrlCloud
+          .split(/[?&]/)
+          .find(t => t.match(/^bd_vid=/))
+          ?.replace(/^bd_vid=/, '')
+
+        const tp_vid = logidUrlCloud
+          .split(/[?&]/)
+          .find(t => t.match(/^tp_vid=/))
+          ?.replace(/^tp_vid=/, '')
+        let params = {}
+
+        if (tp_vid && !guide.tpVid) {
+          guide.tpVid = params.tpVid = tp_vid
+        }
+
+        if (bd_vid && !guide.bdVid) {
+          guide.bdVid = params.bdVid = bd_vid
+          const conversionTypes = [
+            {
+              logidUrl: logidUrlCloud,
+              newType: 25
+            }
+          ]
+          this.$axios
+            .post('api/tcm/track/send_convert_data', conversionTypes)
+            .then(data => {
+              if (data) {
+                this.buried('registerSuccess')
+                Cookie.remove('logidUrlCloud')
+              }
+            })
+            .catch(e => {
+              console.log('ocpc.baidu.com', e)
+            })
+        }
+
+        if (Object.keys(params).length) {
+          this.$axios.post('api/tcm/user_guide', params)
+        }
       }
     }
   }

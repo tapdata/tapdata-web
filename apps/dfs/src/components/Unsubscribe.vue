@@ -5,17 +5,19 @@
     :title="$t('dfs_instance_instance_tuidingshili')"
     width="60%"
   >
-    <section>
-      <ul class="subscription-ul">
-        <li class="mt-2">
-          {{ $t('dfs_instance_instance_tuidingjineji') }}
-          <el-link style="vertical-align: top" :href="unsubscribeHelpDocumentation" type="primary" target="_blank">{{
-            $t('dfs_instance_instance_tuifeiguize')
-          }}</el-link>
-        </li>
-        <li class="mt-2">{{ $t('dfs_instance_instance_tuidingzhituihuan') }}</li>
-        <li class="mt-2">{{ $t('dfs_instance_instance_qingzixihedui') }}</li>
-      </ul>
+    <section class="mt-n4">
+      <el-alert
+        class="alert-primary mb-4 text-primary"
+        type="info"
+        :title="$t('dfs_change_instance_tip')"
+        show-icon
+        :closable="false"
+      >
+        <div slot="title">
+          <div>{{ $t('dfs_instance_instance_tuidingzhituihuan') }}</div>
+          <div class="mt-2">{{ $t('dfs_instance_instance_qingzixihedui') }}</div>
+        </div>
+      </el-alert>
       <div class="mt-4 fs-6 font-color-dark">{{ $t('dfs_instance_instance_tuidingshili') }}</div>
       <div v-if="agentList.length > 0">
         <VTable
@@ -315,4 +317,8 @@ export default {
 }
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.alert-primary {
+  background: #e8f3ff;
+}
+</style>

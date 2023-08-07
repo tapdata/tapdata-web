@@ -1,9 +1,11 @@
 import hljs from 'highlight.js/lib/core'
 import javascript from 'highlight.js/lib/languages/javascript'
 import json from 'highlight.js/lib/languages/json'
+import python from 'highlight.js/lib/languages/python'
 import { escape } from 'lodash'
 hljs.registerLanguage('javascript', javascript)
 hljs.registerLanguage('json', json)
+hljs.registerLanguage('python', python)
 
 function hasValueOrEmptyAttribute(value) {
   return Boolean(value || value === '')

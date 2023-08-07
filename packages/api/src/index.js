@@ -33,6 +33,9 @@ const dataFlowsApi = new DataFlows()
 import JavascriptFunctions from './JavascriptFunctions'
 const javascriptFunctionsApi = new JavascriptFunctions()
 
+import PythonFunctions from './PythonFunctions'
+const pythonFunctionsApi = new PythonFunctions()
+
 import MetadataInstances from './MetadataInstances'
 const metadataInstancesApi = new MetadataInstances()
 
@@ -184,6 +187,7 @@ export {
   dataFlowInsightsApi,
   dataFlowsApi,
   javascriptFunctionsApi,
+  pythonFunctionsApi,
   fileApi,
   metadataInstancesApi,
   metadataDefinitionsApi,

@@ -477,29 +477,50 @@ export const FieldRenameProcessor = observer(
         return config.checkedFields.some(field => !!field.isShow)
       })
 
-      const batchRemove = () => {
-        console.log('config.checkedFields', config.checkedFields) // eslint-disable-line
+      const updateFieldsShow = isShow => {
+        let qualifiedName = config.selectTableRow?.sourceQualifiedName
+        let table = fieldsMapping.find(map => map.qualifiedName === qualifiedName)
+        let originTableName = config.selectTableRow?.sourceObjectName
+        let previousTableName = config.selectTableRow?.sinkObjectName
+
+        if (!table) {
+          table = {
+            qualifiedName,
+            previousTableName,
+            originTableName,
+            operation: {
+              prefix: '',
+              suffix: '',
+              capitalized: ''
+            },
+            fields: []
+          }
+          fieldsMapping.push(table)
+        }
+
+        let fieldMap = mappingField(table.fields) || {}
         config.checkedFields.forEach(field => {
-          field.isShow = false
-          doUpdateField(field, 'del', false)
+          field.isShow = isShow
+          fieldMap[field.sourceFieldName] = {
+            sourceFieldName: field.sourceFieldName,
+            targetFieldName: field.targetFieldName,
+            isShow,
+            migrateType: 'custom'
+          }
         })
+
+        table.fields = toList(fieldMap)
+        form.fieldsMapping = fieldsMapping
+        emit('change', fieldsMapping)
         updateDeletedNum(config.selectTableRow)
-        // refs.table?.clearSelection()
+      }
+
+      const batchRemove = () => {
+        updateFieldsShow(false)
       }
 
       const batchShow = () => {
-        console.log('config.checkedFields', config.checkedFields) // eslint-disable-line
-        config.checkedFields.forEach(field => {
-          field.isShow = true
-          doUpdateField(field, 'del', true)
-        })
-        updateDeletedNum(config.selectTableRow)
-        // refs.table?.clearSelection()
-      }
-
-      const doModify = () => {
-        // fieldsOperation = cloneDeep(config.operation)
-        // form.values.fieldsOperation = fieldsOperation
+        updateFieldsShow(true)
       }
 
       watch(

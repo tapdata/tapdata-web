@@ -8,7 +8,7 @@
 <script>
 import i18n from '@tap/i18n'
 
-import { debounce } from 'lodash'
+import { debounce, isNumber } from 'lodash'
 import dayjs from 'dayjs'
 import { Chart } from '@tap/component'
 import { calcUnit, calcTimeUnit } from '@tap/shared'
@@ -93,7 +93,7 @@ export default {
   computed: {
     canScale() {
       const { max, minNotZero } = this
-      return Math.ceil(max / minNotZero / 100) > 1
+      return this.autoScale && Math.ceil(max / minNotZero / 100) > 1
     }
   },
 
@@ -116,7 +116,7 @@ export default {
       this.min = 0
       this.minNotZero = 0
 
-      const { x, value, name, markLine } = this.data
+      const { x, value, name, markLine, yAxisMax } = this.data
       const { limit } = this
       let series = []
 
@@ -131,8 +131,10 @@ export default {
       options.series = series
       const seriesNoData = series.every(t => !t.data.filter(d => !!d).length)
       if (seriesNoData) {
-        options.yAxis.max = 1
+        options.yAxis.max = isNumber(yAxisMax) ? yAxisMax : 1
         options.yAxis.min = 0
+      } else {
+        options.yAxis.max = isNumber(yAxisMax) ? yAxisMax : null
       }
 
       if (x.length) {

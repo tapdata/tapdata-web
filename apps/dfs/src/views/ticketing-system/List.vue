@@ -51,7 +51,8 @@
         <el-form label-position="top" :model="createForm" :rules="rules" ref="createForm">
           <el-form-item :label="$t('dfs_ticketing_system_list_zhuti')" prop="subject">
             <el-input
-              v-model.trim="createForm.subject"
+              v-model="createForm.subject"
+              @change="createForm.subject = createForm.subject.trim()"
               :placeholder="$t('dfs_ticketing_system_list_qingshuruzhuti')"
               required
             ></el-input>
@@ -84,7 +85,8 @@
           </el-form-item>
           <el-form-item :label="$t('dfs_ticketing_system_list_wenti')" prop="description">
             <el-input
-              v-model.trim="createForm.description"
+              v-model="createForm.description"
+              @change="createForm.description = createForm.description.trim()"
               type="textarea"
               :placeholder="$t('dfs_ticketing_system_list_qingmiaoshuninde')"
               required

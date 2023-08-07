@@ -8,6 +8,7 @@ import { taskApi } from '@tap/api'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
 import List from './List.vue'
 import './style.scss'
+import { debounce } from 'lodash'
 
 // 源节点改变，表编辑按照批量配置重新应用，重新应用的场景如下：
 // 1. 记录源节点id，表编辑节点渲染时进行判断，如果源节点和上次记录的不同，重新应用批量规则
@@ -132,6 +133,7 @@ export const TableRename = observer(
       })
 
       const doModify = () => {
+        console.log('doModify') // eslint-disable-line
         const target = tableDataRef.value
         let flag
         // let skipTableName = []
@@ -158,6 +160,8 @@ export const TableRename = observer(
 
         flag && emitChange()
       }
+
+      const lazyModify = debounce(doModify, 1000)
 
       const doReset = () => {
         Object.assign(config, {
@@ -223,6 +227,7 @@ export const TableRename = observer(
         updateName,
         resetNames,
         doModify,
+        lazyModify,
         doReset,
         emitChange,
         nameMap,
@@ -246,7 +251,7 @@ export const TableRename = observer(
         </div>
       )
       return (
-        <div class="table-rename" v-loading={this.$store.state.dataflow.transformLoading || this.loading}>
+        <div class="table-rename">
           <FormItem.BaseItem label={label}>
             <div class="border border-form px-4 pb-2 rounded-4">
               <FormItem.BaseItem label={i18n.t('packages_form_table_rename_index_tihuan')}>
@@ -255,7 +260,7 @@ export const TableRename = observer(
                     v-model={this.config.replaceBefore}
                     disabled={this.disabled}
                     clearable
-                    onInput={this.doModify}
+                    onInput={this.lazyModify}
                   />
                   <div class="px-4 text-nowrap font-color-light">
                     {i18n.t('packages_form_table_rename_index_gaiwei')}
@@ -264,7 +269,7 @@ export const TableRename = observer(
                     v-model={this.config.replaceAfter}
                     disabled={this.disabled}
                     clearable
-                    onInput={this.doModify}
+                    onInput={this.lazyModify}
                   />
                 </div>
               </FormItem.BaseItem>
@@ -282,10 +287,10 @@ export const TableRename = observer(
                   </ElSelect>
                 </FormItem.BaseItem>
                 <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_qianzhui')}>
-                  <ElInput v-model={this.config.prefix} disabled={this.disabled} clearable onInput={this.doModify} />
+                  <ElInput v-model={this.config.prefix} disabled={this.disabled} clearable onInput={this.lazyModify} />
                 </FormItem.BaseItem>
                 <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_houzhui')}>
-                  <ElInput v-model={this.config.suffix} disabled={this.disabled} clearable onInput={this.doModify} />
+                  <ElInput v-model={this.config.suffix} disabled={this.disabled} clearable onInput={this.lazyModify} />
                 </FormItem.BaseItem>
               </div>
             </div>
@@ -302,7 +307,8 @@ export const TableRename = observer(
           </div>
 
           <div
-            class="name-list flex flex-column border border-form rounded-2 overflow-hidden mt-4"
+            v-loading={this.$store.state.dataflow.transformLoading || this.loading}
+            class="name-list flex flex-column border border-form rounded-4 overflow-hidden mt-4"
             style={this.listStyle}
           >
             <div class="name-list-header flex flex-shrink-0">

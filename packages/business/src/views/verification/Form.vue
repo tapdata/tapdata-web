@@ -544,14 +544,26 @@ export default {
             }
           })
         })
-        .then((data = {}) => {
+        .then(async (data = {}) => {
           if (data) {
+            // 加载数据源的Capabilities
+            const capabilitiesMap = await this.$refs.conditionBox.getCapabilities([
+              ...data.tasks.map(t => t.source.connectionId),
+              ...data.tasks.map(t => t.target.connectionId)
+            ])
             data.tasks = data.tasks.map(t => {
               t.source = Object.assign({}, TABLE_PARAMS, t.source)
               t.target = Object.assign({}, TABLE_PARAMS, t.target)
+              t.source.capabilities = capabilitiesMap[t.source.connectionId]
+              t.target.capabilities = capabilitiesMap[t.target.connectionId]
+              if (t.source.nodeId) {
+                t.source.currentLabel = `${t.source.nodeName} / ${t.source.connectionName}`
+                t.target.currentLabel = `${t.target.nodeName} / ${t.target.connectionName}`
+              }
               t.id = t.taskId
               return t
             })
+
             if (!data.timing) {
               data.timing = this.form.timing
             }
@@ -649,7 +661,7 @@ export default {
       })
     },
     save(saveOnly = false) {
-      this.$refs.baseForm.validate(valid => {
+      this.$refs.baseForm.validate(async valid => {
         if (valid) {
           let tasks = this.$refs.conditionBox.getList()
           // 检查校验类型是否支持
@@ -675,7 +687,7 @@ export default {
           if (!tasks.length) {
             return this.$message.error(this.$t('packages_business_verification_tasksVerifyCondition'))
           }
-          const validateMsg = this.$refs.conditionBox.validate()
+          const validateMsg = await this.$refs.conditionBox.validate()
           if (validateMsg) {
             return this.$message.error(validateMsg)
           }

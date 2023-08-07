@@ -515,21 +515,25 @@ export default {
       //保留当前操作数据
       const roleId = this.$route.query.id
       if (checked) {
-        let childrenItem = this.checkPrincipalId(this.adds, data.name)
-        if (childrenItem?.length === 0) {
-          this.adds.push({
-            principalType: 'PERMISSION',
-            principalId: data.name,
-            roleId: roleId
-          })
-        }
-        let parentItem = this.checkPrincipalId(this.adds, parentData.name)
-        if (parentItem?.length === 0) {
-          this.adds.push({
-            principalType: 'PERMISSION',
-            principalId: parentData.name, //父级
-            roleId: roleId
-          })
+        // 子元素
+        if (data.parentId) {
+          let childrenItem = this.checkPrincipalId(this.adds, data.name)
+          if (childrenItem?.length === 0) {
+            this.adds.push({
+              principalType: 'PERMISSION',
+              principalId: data.name,
+              roleId: roleId
+            })
+          }
+        } else {
+          let parentItem = this.checkPrincipalId(this.adds, parentData.name)
+          if (parentItem?.length === 0) {
+            this.adds.push({
+              principalType: 'PERMISSION',
+              principalId: parentData.name, //父级
+              roleId: roleId
+            })
+          }
         }
         //同时清掉 deletes
         if (this.deletes && this.deletes.length > 0) {
@@ -544,21 +548,25 @@ export default {
           }
         }
       } else {
-        let childrenItem = this.checkPrincipalId(this.deletes, data.name)
-        if (childrenItem?.length === 0) {
-          this.deletes.push({
-            principalType: 'PERMISSION',
-            principalId: data.name,
-            roleId: roleId
-          })
-        }
-        let parentItem = this.checkPrincipalId(this.deletes, parentData.name)
-        if (parentItem?.length === 0) {
-          this.deletes.push({
-            principalType: 'PERMISSION',
-            principalId: parentData.name, //父级
-            roleId: roleId
-          })
+        // 子元素
+        if (data.parentId) {
+          let childrenItem = this.checkPrincipalId(this.deletes, data.name)
+          if (childrenItem?.length === 0) {
+            this.deletes.push({
+              principalType: 'PERMISSION',
+              principalId: data.name,
+              roleId: roleId
+            })
+          }
+        } else {
+          let parentItem = this.checkPrincipalId(this.deletes, parentData.name)
+          if (parentItem?.length === 0) {
+            this.deletes.push({
+              principalType: 'PERMISSION',
+              principalId: parentData.name, //父级
+              roleId: roleId
+            })
+          }
         }
         //同时清掉 adds
         if (this.adds && this.adds.length > 0) {
@@ -752,6 +760,8 @@ export default {
         adds: this.adds,
         deletes: this.deletes
       }
+      console.log('data', data)
+      // return
       usersApi
         .updatePermissionRoleMapping(roleId, data)
         .then(() => {

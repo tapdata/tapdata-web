@@ -67,13 +67,12 @@ export default defineComponent({
   setup(props, { attrs, listeners, emit, refs }) {
     const completeTime = computed(() => {
       const totalData = props.quota.samples?.totalData?.[0] || {}
-      const { snapshotInsertRowTotal, snapshotRowTotal, snapshotStartAt } = props.sample
-      let startAt = snapshotStartAt || totalData.snapshotStartAt
-      if (!snapshotInsertRowTotal || !snapshotRowTotal || !startAt) {
+      const { snapshotInsertRowTotal, snapshotRowTotal } = props.sample
+      const { lastFiveMinutesQps } = totalData
+      if (!snapshotInsertRowTotal || !snapshotRowTotal || !lastFiveMinutesQps) {
         return null
       }
-      const usedTime = Time.now() - snapshotStartAt
-      const time = snapshotRowTotal / (snapshotInsertRowTotal / usedTime) - usedTime
+      const time = ((snapshotRowTotal - snapshotInsertRowTotal) / lastFiveMinutesQps) * 1000
       return calcTimeUnit(Math.ceil(Math.abs(time)))
     })
 
