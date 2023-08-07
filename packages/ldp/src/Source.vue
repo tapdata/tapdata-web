@@ -59,16 +59,18 @@
           node-key="id"
           :props="props"
           draggable
-          lazy
           height="100%"
           wrapper-class-name="p-2"
-          :load="loadNode"
           :default-expanded-keys="expandedKeys"
+          :data="treeData"
+          :render-content="renderDefaultContent"
           :filter-node-method="filterNode"
           :render-after-expand="false"
           :expand-on-click-node="false"
           :allow-drag="node => node.data.isObject"
           :allow-drop="() => false"
+          @node-expand="handleNodeExpand"
+          @node-collapse="handeNodeCollapse"
           @node-drag-start="handleDragStart"
           @node-drag-end="handleDragEnd"
           @handle-scroll="handleScroll"
@@ -234,9 +236,12 @@ export default {
       this.filterTreeData = connectionList
       this.searchExpandedKeys = firstExpand ? [firstExpand] : []
     }, 300)
+
+    this.initTree()
   },
 
   beforeDestroyed() {
+    clearTimeout(this.treeTimer)
     this.unwatchFdmAndMdm?.()
   },
 
@@ -295,13 +300,75 @@ export default {
       )
     },
 
+    renderDefaultContent(h, { node, data }) {
+      const schemaLoading = data.loadFieldsStatus === 'loading'
+      // 引导时特殊处理，添加的连接等加载完schema后方可展开
+      node.isLeaf = data.LDP_TYPE !== 'connection' || (this.startingGuide && schemaLoading && !data.children?.length)
+
+      return (
+        <div
+          staticClass="custom-tree-node flex align-items-center position-relative"
+          class={{ grabbable: data.isObject, 'opacity-50': data.disabled }}
+          onClick={() => {
+            this.$emit('preview', data, node.parent.data)
+          }}
+        >
+          {schemaLoading && (
+            <VIcon class="v-icon animation-rotate" size="14" color="rgb(61, 156, 64)">
+              loading-circle
+            </VIcon>
+          )}
+          {!data.isObject && !data.isEmpty ? (
+            <NodeIcon node={node.data} size={18} class="tree-item-icon mr-2" />
+          ) : data.isEmpty ? (
+            <div class="flex align-items-center">
+              <span class="mr-1">{this.$t('public_data_no_data')}</span>
+              <StageButton connection-id={this.getConnectionId(node)}> </StageButton>
+            </div>
+          ) : (
+            <VIcon class="tree-item-icon mr-2" size="18">
+              table
+            </VIcon>
+          )}
+
+          <span class="table-label" title={data.name}>
+            {data.name}
+            {data.comment && <span class="font-color-sslight">{`(${data.comment})`}</span>}
+            {data.disabled && (
+              <ElTag type="info" size="mini">
+                {this.$t('public_status_invalid')}
+              </ElTag>
+            )}
+          </span>
+        </div>
+      )
+    },
+
     handleAdd() {
       this.$emit('create-connection', 'source')
+    },
+
+    async initTree() {
+      clearTimeout(this.treeTimer)
+      this.treeData = await this.getConnectionList()
+
+      if (this.startingGuide && this.newConnectionId) {
+        const connection = this.connectionMap[this.newConnectionId]
+        if (connection && connection.loadFieldsStatus !== 'loading' && !connection.children.length) {
+          const node = this.$refs.tree.getNode(this.newConnectionId)
+          this.handleNodeExpand(connection, node)
+        }
+      }
+
+      this.treeTimer = setTimeout(() => {
+        this.initTree()
+      }, 5000)
     },
 
     async getConnectionList() {
       let filter = {
         limit: 999,
+        order: 'createTime DESC',
         where: {
           connection_type: {
             in: ['source_and_target', 'source']
@@ -314,8 +381,10 @@ export default {
       const res = await connectionsApi.get({
         filter: JSON.stringify(filter)
       })
-      this.connectionMap = {}
+      // this.connectionMap = {}
       const items = []
+      const map = {}
+      const _map = this.connectionMap || {}
 
       this.watchFdmAndMdm()
       res.items.forEach(t => {
@@ -324,10 +393,13 @@ export default {
         const { status, loadCount = 0, tableCount = 0 } = t
         const disabled = status !== 'ready'
         const connection = this.mapConnection(t)
-        this.connectionMap[t.id] = connection
+        map[t.id] = connection
+
+        if (_map[t.id]) connection.children = [..._map[t.id].children]
+
         items.push(connection)
       })
-
+      this.connectionMap = map
       return items
     },
 
@@ -420,7 +492,9 @@ export default {
     },
 
     addItem(data) {
+      data.loadFieldsStatus = 'loading' // 显示加载schema的状态
       const connection = this.mapConnection(data)
+      this.newConnectionId = data.id
       this.connectionMap[data.id] = connection
       const { root = {} } = this.$refs.tree
       const firstChildKey = root.childNodes[0]?.key
@@ -435,11 +509,14 @@ export default {
     },
 
     async handleNodeExpand(data, node) {
-      if (data.children.length) return
+      this.setExpand(data.id, true)
+
+      if (data.children.some(child => !child.isEmpty)) return
 
       node.loadTime = Date.now()
       node.loading = true
-      data.children = await this.getTableList(data.id)
+      const tableList = await this.getTableList(data.id)
+      this.$refs.tree.updateKeyChildren(data.id, tableList)
       node.loading = false
     },
 

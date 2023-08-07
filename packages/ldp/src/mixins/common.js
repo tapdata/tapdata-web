@@ -82,6 +82,9 @@ export default {
   computed: {
     highlightBoard() {
       return this.$store.state.highlightBoard
+    },
+    startingGuide() {
+      return this.$store.state.startingGuide
     }
   },
 
@@ -219,6 +222,19 @@ export default {
           this.taskDialogConfig.task.crontabExpression = val
         }
       }
+    },
+
+    setExpand(id, isExpand) {
+      const i = this.expandedKeys.indexOf(id)
+      if (!isExpand) {
+        if (~i) this.expandedKeys.splice(i, 1)
+      } else {
+        if (!~i) this.expandedKeys.push(id)
+      }
+    },
+
+    handeNodeCollapse(data) {
+      this.setExpand(data.id, false)
     }
   }
 }

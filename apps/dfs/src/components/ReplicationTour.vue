@@ -1,7 +1,15 @@
 <template>
-  <ElDialog :visible.sync="visible" width="480px" :show-close="false" :close-on-click-modal="false">
+  <ElDialog
+    :visible.sync="visible"
+    width="812px"
+    :show-close="false"
+    :close-on-click-modal="false"
+    custom-class="tour-dialog"
+  >
     <template v-if="!finish">
-      <div class="text-center title-cover" slot="title">👋</div>
+      <div class="text-center title-cover" slot="title">
+        <ElImage :src="require('@/assets/image/tour-cover.png')"></ElImage>
+      </div>
 
       <div class="lh-base font-color-dark text-center mt-n4">
         <h1 class="fs-5 fw-sub font-color-dark mb-2">Welcome to Tapdata Cloud.</h1>
@@ -127,5 +135,14 @@ export default {
 <style scoped lang="scss">
 .title-cover {
   font-size: 104px;
+}
+</style>
+
+<style lang="scss">
+.tour-dialog {
+  overflow: hidden;
+  .el-dialog__header {
+    padding: 0;
+  }
 }
 </style>

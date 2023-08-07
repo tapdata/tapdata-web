@@ -644,7 +644,7 @@ export default {
     handleStarTour() {
       this.showReplicationTour = false
       this.setStartingGuide(true)
-      this.driverObj.drive(2)
+      this.driverObj.drive(0)
     },
 
     handleFinishTour() {
