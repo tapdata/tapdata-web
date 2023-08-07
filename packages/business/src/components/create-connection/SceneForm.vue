@@ -11,7 +11,7 @@
               :colon="true"
               label-width="160"
             ></SchemaToForm>
-            <span class="status">
+            <!--            <span class="status">
               <span class="error" v-if="['invalid'].includes(status)">
                 <VIcon>error</VIcon>
                 <span>
@@ -30,7 +30,7 @@
                   {{ $t('public_status_testing') }}
                 </span>
               </span>
-            </span>
+            </span>-->
           </div>
         </div>
         <footer slot="footer" class="footer">
