@@ -327,6 +327,7 @@ export default {
   packages_dag_nodes_database_bucunzaishidiu: 'Discard if not exists',
   packages_dag_nodes_database_shanchushijian: 'Delete Event',
   packages_dag_nodes_database_bucunzaishicha: 'Insert if not exists',
+  packages_dag_nodes_database_bucunzaishidayinrizhi: 'Print log if not exists',
   packages_dag_nodes_database_gengxinshijian: 'Update Event',
   packages_dag_nodes_database_mubiaocunzaishi: 'Update when target exists',
   packages_dag_nodes_database_charushijian: 'Insert Event',

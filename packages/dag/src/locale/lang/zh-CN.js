@@ -314,6 +314,7 @@ export default {
   packages_dag_nodes_database_bucunzaishidiu: '不存在时丢弃',
   packages_dag_nodes_database_shanchushijian: '删除事件',
   packages_dag_nodes_database_bucunzaishicha: '不存在时插入',
+  packages_dag_nodes_database_bucunzaishidayinrizhi: '不存在时打印日志',
   packages_dag_nodes_database_gengxinshijian: '更新事件',
   packages_dag_nodes_database_mubiaocunzaishi: '目标存在时丢弃',
   packages_dag_nodes_database_charushijian: '插入事件',
