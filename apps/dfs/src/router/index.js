@@ -104,14 +104,24 @@ const routes = [
         meta: {
           title: 'tap_home'
         },
-        redirect: { name: 'dataConsole' },
+        redirect: { name: 'Dashboard' },
         hidden: true
       },
       {
         path: '/workbench',
         name: 'Workbench',
-        redirect: { name: 'dataConsole' },
+        redirect: { name: 'dashboard' },
         hidden: true
+      },
+      {
+        path: '/dashboard',
+        name: 'Dashboard',
+        component: () => import('../views/workbench/Workbench.vue'),
+        meta: {
+          title: 'tap_workbench',
+          icon: 'workbench',
+          hideTitle: true
+        }
       },
       {
         path: '/systemNotice',

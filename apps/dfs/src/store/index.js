@@ -14,6 +14,7 @@ const store = new Vuex.Store({
   },
 
   state: {
+    upgradeFeeVisible: false,
     migrateTaskRunningCount: 0,
     instanceLoading: false,
     user: {
@@ -115,6 +116,10 @@ const store = new Vuex.Store({
 
     completeTour(state) {
       state.replicationTour.status = 'completed'
+    },
+
+    setUpgradeFeeVisible(state, flag) {
+      state.upgradeFeeVisible = flag
     }
   }
 })

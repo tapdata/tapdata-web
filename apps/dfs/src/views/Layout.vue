@@ -121,12 +121,15 @@
       @start="handleStartTour"
       @finish="handleFinishTour"
     ></ReplicationTour>
+    <!--付费-->
+    <UpgradeFee :visible="upgradeFeeVisible" @update:visible="setUpgradeFeeVisible"></UpgradeFee>
   </ElContainer>
 </template>
 
 <script>
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import TheHeader from '@/components/the-header'
-import { VIcon } from '@tap/component'
+import { UpgradeFee, VIcon } from '@tap/component'
 import { PageHeader, SceneDialog as ConnectionTypeDialog } from '@tap/business'
 
 import AgentDownloadModal from '@/views/agent-download/AgentDownloadModal'
@@ -142,6 +145,7 @@ import Mousetrap from 'mousetrap'
 export default {
   inject: ['checkAgent', 'buried'],
   components: {
+    UpgradeFee,
     TheHeader,
     VIcon,
     ConnectionTypeDialog,
@@ -159,15 +163,15 @@ export default {
       menus: [],
       sortMenus: [
         {
+          name: 'Dashboard',
+          title: 'Dashboard',
+          icon: 'workbench'
+        },
+        {
           name: 'dataConsole',
           title: this.$t('page_title_data_console'),
           icon: 'process-platform'
         },
-        // {
-        //   name: 'Workbench',
-        //   title: $t('workbench_manage'),
-        //   icon: 'workbench'
-        // },
         {
           name: 'connections',
           title: $t('connection_manage'),
@@ -212,6 +216,11 @@ export default {
       isDomesticStation: true
     }
   },
+
+  computed: {
+    ...mapState(['upgradeFeeVisible'])
+  },
+
   created() {
     if (!window.__config__?.disabledOnlineChat) {
       this.loadChat()
@@ -302,6 +311,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['setUpgradeFeeVisible']),
     //监听agent引导页面
     openAgentDownload() {
       this.agentGuideDialog = false

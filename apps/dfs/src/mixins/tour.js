@@ -14,7 +14,7 @@ export default {
       agent: {},
       isUnDeploy: false,
       subscribes: {},
-      showReplicationTour: true,
+      showReplicationTour: false,
       replicationTourFinish: false
     }
   },
