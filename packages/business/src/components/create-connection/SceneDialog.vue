@@ -4,7 +4,7 @@
     :append-to-body="true"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
-    :show-close="showClose"
+    :show-close="!startingTour"
     width="80%"
     top="10vh"
     custom-class="connection-dialog ldp-connection-dialog flex flex-column"
@@ -129,6 +129,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import i18n from '@tap/i18n'
 
 import ConnectionForm from './SceneForm'
@@ -298,9 +299,7 @@ export default {
     }
   },
   computed: {
-    showClose() {
-      return !this.$store.state.startingGuide
-    },
+    ...mapGetters(['startingTour']),
     sceneMap() {
       return this.sceneList.reduce((obj, item) => {
         obj[item.key || item.name] = item.types

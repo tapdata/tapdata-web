@@ -20,6 +20,8 @@ export default {
   },
 
   computed: {
+    ...mapState(['replicationTour']),
+    ...mapGetters(['startingTour']),
     userId() {
       return this.$store.state.user.id
     }
@@ -48,25 +50,12 @@ export default {
     this.setBaiduIndex() // 百度推广索引
   },
 
-  /*beforeRouteUpdate(to, from, next) {
-    next()
-    this.$nextTick(() => {
-      if (to.name === 'migrateList') {
-        console.log(document.querySelector('#btn-add-source')) // eslint-disable-line
-        this.initBoardDriver()
-        setTimeout(() => {
-          console.log(document.querySelector('#btn-add-source')) // eslint-disable-line
-        }, 1000)
-      }
-    })
-  },*/
-
   destroyed() {
     this.destroyDriver()
   },
 
   methods: {
-    ...mapMutations(['setStartingGuide', 'setDriverIndex', 'setHighlightBoard']),
+    ...mapMutations(['startTour', 'setTourIndex', 'setHighlightBoard', 'finishTour', 'pauseTour']),
     // 检查是否有安装过agent
     async checkGuide() {
       this.guideLoading = true
@@ -549,7 +538,7 @@ export default {
     },
 
     destroyDriver() {
-      this.setStartingGuide(false)
+      if (this.startingTour) this.pauseTour()
       this.driverObj?.destroy()
       // this.driverObj = null
     },
@@ -559,11 +548,11 @@ export default {
       const steps = [
         {
           element: '#btn-add-source',
-          elementClick: (...args) => {
+          elementClick: () => {
             this.driverObj.destroy()
           },
           onHighlightStarted: (element, step, { state }) => {
-            this.setDriverIndex(state.activeIndex)
+            this.setTourIndex(state.activeIndex)
             element?.addEventListener('click', step.elementClick)
           },
           onDeselected: (element, step, options) => {
@@ -571,36 +560,33 @@ export default {
           },
           popover: {
             showButtons: [],
-            description: i18n.t('dfs_mixins_tour_dianjicichuchuang3'),
-            onPopoverRender: (popover, { state }) => {}
+            description: i18n.t('dfs_mixins_tour_dianjicichuchuang3')
           }
         },
         {
           element: '#btn-add-target',
-          elementClick: (...args) => {
+          elementClick: () => {
             this.driverObj.destroy()
           },
           onHighlightStarted: (element, step, { state }) => {
-            this.setDriverIndex(state.activeIndex)
+            this.setTourIndex(state.activeIndex)
             element?.addEventListener('click', step.elementClick)
           },
-          onDeselected: (element, step, options) => {
+          onDeselected: (element, step) => {
             element?.removeEventListener('click', step.elementClick)
           },
           popover: {
             showButtons: [],
-            description: i18n.t('dfs_mixins_tour_dianjicichuchuang2'),
-            onPopoverRender: (popover, { state }) => {}
+            description: i18n.t('dfs_mixins_tour_dianjicichuchuang2')
           }
         },
         {
           element: '#replication-board',
           onHighlightStarted: (element, step, { state }) => {
-            this.setDriverIndex(state.activeIndex)
+            this.setTourIndex(state.activeIndex)
             this.setHighlightBoard(true)
           },
-          onDeselected: (element, step, options) => {
-            console.log('onDeselected-#replication-board') // eslint-disable-line
+          onDeselected: () => {
             this.setHighlightBoard(false)
           },
           popover: {
@@ -615,24 +601,23 @@ export default {
       ]
       this.loadingStep = false
       this.driverObj = driver({
-        // allowClose: false,
+        allowClose: false,
         showProgress: true,
         steps,
         onHighlightStarted: (element, step, { state }) => {
           console.log('设置Index', state.activeIndex) // eslint-disable-line
-          this.setDriverIndex(state.activeIndex)
+          this.setTourIndex(state.activeIndex)
         }
       })
       // this.driverObj.drive(0)
-      // this.setStartingGuide(true)
 
-      const unwatch = this.$watch('$store.state.driverBehavior', behavior => {
-        if (!this.$store.state.startingGuide || !this.driverObj) {
+      const unwatch = this.$watch('$store.state.replicationTour.behavior', behavior => {
+        if (!this.startingTour || !this.driverObj) {
           unwatch()
           return
         }
 
-        this.driverObj.drive(this.$store.state.driverIndex + 1)
+        this.driverObj.drive(this.replicationTour.activeIndex + 1)
 
         if (behavior === 'add-task') {
           this.showReplicationTour = true
@@ -641,9 +626,10 @@ export default {
       })
     },
 
-    handleStarTour() {
+    async handleStarTour() {
       this.showReplicationTour = false
-      this.setStartingGuide(true)
+      await this.$router.push({ name: 'migrateList' })
+      this.startTour()
       this.driverObj.drive(0)
     },
 

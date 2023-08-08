@@ -925,7 +925,7 @@ export default {
             )
           })
 
-          this.$store.commit('setDriverBehavior', 'add-task')
+          this.$store.commit('setTourBehavior', 'add-task')
         }
       })
     },

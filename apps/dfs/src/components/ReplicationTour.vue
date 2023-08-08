@@ -68,9 +68,6 @@ export default {
     },
     noEmail() {
       return !this.$store.state.user.email
-    },
-    startingGuide() {
-      return this.$store.state.startingGuide
     }
   },
 

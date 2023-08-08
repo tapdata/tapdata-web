@@ -35,20 +35,14 @@
 </template>
 
 <script>
-import { IconButton } from '@tap/component'
 import { SceneDialog, EventEmitter } from '@tap/business'
 import { connectionsApi, lineageApi, metadataDefinitionsApi, ldpApi } from '@tap/api'
 import { mapMutations, mapState, mapGetters } from 'vuex'
 
 import SourceItem from './Source'
 import TargetItem from './TargetPanel'
-import FDMItem from './FDM'
-import MDMItem from './MDM'
-import Settings from './Settings'
 import TablePreview from './TablePreview'
 import ConnectionPreview from './ConnectionPreview'
-import Catalogue from './components/Catalogue'
-import OverView from './components/OverView'
 
 import { jsPlumb } from '@tap/dag'
 
@@ -62,15 +56,9 @@ export default {
   components: {
     SourceItem,
     TargetItem,
-    FDMItem,
-    MDMItem,
-    Settings,
     TablePreview,
     ConnectionPreview,
-    IconButton,
-    Catalogue,
-    SceneDialog,
-    OverView
+    SceneDialog
   },
 
   data() {
@@ -112,6 +100,7 @@ export default {
   computed: {
     ...mapState('overView', ['panelFlag', 'userId']),
     ...mapGetters('overView', ['stateFlag', 'stateUserId']),
+    ...mapGetters(['startingTour']),
     laneOptions() {
       const result = [
         {
@@ -190,7 +179,8 @@ export default {
     },
 
     handleSuccess(connection) {
-      this.$store.commit('setDriverBehavior', 'add-' + this.selectorType)
+      this.$store.commit('setTourBehavior', 'add-' + this.selectorType)
+
       if (connection.connection_type === 'source_and_target') {
         this.$refs.source.addItem(connection)
         this.$refs.target.addItem(connection)
@@ -298,7 +288,7 @@ export default {
 
     handlePreview(data, connection, callback) {
       // 引导过程，不给查看详情
-      if (this.$store.state.startingGuide) return
+      if (this.startingTour) return
 
       switch (data.LDP_TYPE) {
         case 'table':

@@ -1,3 +1,4 @@
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { CancelToken, discoveryApi, taskApi } from '@tap/api'
 import { validateCron } from '@tap/form'
 
@@ -80,12 +81,8 @@ export default {
   },
 
   computed: {
-    highlightBoard() {
-      return this.$store.state.highlightBoard
-    },
-    startingGuide() {
-      return this.$store.state.startingGuide
-    }
+    ...mapGetters(['startingTour']),
+    ...mapState(['highlightBoard'])
   },
 
   unmounted() {

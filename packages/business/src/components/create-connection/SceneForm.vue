@@ -84,6 +84,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { action } from '@formily/reactive'
 
 import i18n from '@tap/i18n'
@@ -166,18 +167,17 @@ export default {
     }
   },
   computed: {
-    startingGuide() {
-      return this.$store.state.startingGuide
-    },
+    ...mapGetters(['startingTour']),
     schemaFormInstance() {
       return this.$refs.schemaToForm.getForm?.()
     },
     disableSave() {
-      return this.$store.state.startingGuide && this.status !== 'ready'
+      return this.startingTour && this.status !== 'ready'
     },
     saveBtnTip() {
       if (!this.status) return '请先进行连接测试'
       if (this.status === 'invalid') return '连接测试无效，请检查您的连接配置'
+      return ''
     }
   },
 
@@ -234,7 +234,7 @@ export default {
         if (!addNext) this.submitBtnLoading = true
 
         // 正在引导
-        /*if (this.startingGuide) {
+        /*if (this.startingTour) {
           if (!this.status) {
             this.startTest()
           }

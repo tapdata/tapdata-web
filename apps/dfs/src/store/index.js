@@ -27,11 +27,14 @@ const store = new Vuex.Store({
       enableLicense: false,
       licenseCodes: []
     },
-    startingGuide: false,
     highlightBoard: false,
     driverIndex: 0,
-    addConnectionAction: '',
     driverBehavior: '', // add-source, add-target, add-task
+    replicationTour: {
+      activeIndex: null,
+      behavior: '', // add-source, add-target, add-task
+      status: '' // starting, completed, pause
+    },
     // 新人引导
     guide: {
       activeStep: '',
@@ -61,6 +64,10 @@ const store = new Vuex.Store({
     }
   },
 
+  getters: {
+    startingTour: state => state.replicationTour.status === 'starting'
+  },
+
   mutations: {
     setInstanceLoading(state, loading) {
       state.instanceLoading = loading
@@ -84,20 +91,28 @@ const store = new Vuex.Store({
       Object.assign(state.agentCount, agentCount)
     },
 
-    setStartingGuide(state, flag) {
-      state.startingGuide = flag
+    setTourIndex(state, index) {
+      state.replicationTour.index = index
     },
 
-    setDriverIndex(state, index) {
-      state.driverIndex = index
-    },
-
-    setDriverBehavior(state, behavior) {
-      state.driverBehavior = behavior
+    setTourBehavior(state, behavior) {
+      state.replicationTour.behavior = behavior
     },
 
     setHighlightBoard(state, flag) {
       state.highlightBoard = flag
+    },
+
+    startTour(state) {
+      state.replicationTour.status = 'starting'
+    },
+
+    pauseTour(state) {
+      state.replicationTour.status = 'pause'
+    },
+
+    finishTour(state) {
+      state.replicationTour.status = 'completed'
     }
   }
 })

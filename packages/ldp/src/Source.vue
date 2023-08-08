@@ -303,7 +303,7 @@ export default {
     renderDefaultContent(h, { node, data }) {
       const schemaLoading = data.loadFieldsStatus === 'loading'
       // 引导时特殊处理，添加的连接等加载完schema后方可展开
-      node.isLeaf = data.LDP_TYPE !== 'connection' || (this.startingGuide && schemaLoading && !data.children?.length)
+      node.isLeaf = data.LDP_TYPE !== 'connection' || (this.startingTour && schemaLoading && !data.children?.length)
 
       return (
         <div
@@ -352,7 +352,7 @@ export default {
       clearTimeout(this.treeTimer)
       this.treeData = await this.getConnectionList()
 
-      if (this.startingGuide && this.newConnectionId) {
+      if (this.startingTour && this.newConnectionId) {
         const connection = this.connectionMap[this.newConnectionId]
         if (connection && connection.loadFieldsStatus !== 'loading' && !connection.children.length) {
           const node = this.$refs.tree.getNode(this.newConnectionId)

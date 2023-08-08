@@ -354,6 +354,7 @@ importers:
       qs: ^6.11.0
       vue-virtual-scroller: ^1.1.2
       vuedraggable: ^2.24.3
+      vuex: ^3.4.0
     dependencies:
       '@tap/api': link:../api
       '@tap/assets': link:../assets
@@ -366,6 +367,7 @@ importers:
       qs: 6.11.2
       vue-virtual-scroller: 1.1.2
       vuedraggable: 2.24.3
+      vuex: 3.6.2
 
   packages/component:
     specifiers:
@@ -2863,7 +2865,7 @@ packages:
     dependencies:
       '@babel/core': 7.22.1
       '@vue/babel-preset-app': 4.5.19_core-js@3.30.2+vue@2.6.14
-      '@vue/cli-service': 4.5.19_sbs6or2oam5i4s4vmfp4rzwdnq
+      '@vue/cli-service': 4.5.19_uksaqpj2nsdk26ix3umetljna4
       '@vue/cli-shared-utils': 4.5.19
       babel-loader: 8.3.0_qc4fs4menflmwnb5qs25dohbpi
       cache-loader: 4.1.0_webpack@4.46.0
@@ -2941,7 +2943,7 @@ packages:
     peerDependencies:
       '@vue/cli-service': ^3.0.0 || ^4.0.0-0
     dependencies:
-      '@vue/cli-service': 4.5.19_sbs6or2oam5i4s4vmfp4rzwdnq
+      '@vue/cli-service': 4.5.19_uksaqpj2nsdk26ix3umetljna4
       '@vue/cli-shared-utils': 4.5.19
     dev: true
 
@@ -2950,7 +2952,7 @@ packages:
     peerDependencies:
       '@vue/cli-service': ^3.0.0 || ^4.0.0-0
     dependencies:
-      '@vue/cli-service': 4.5.19_kgyjn4tstgpo3cxl4ealtf4uya
+      '@vue/cli-service': 4.5.19_uksaqpj2nsdk26ix3umetljna4
     dev: true
 
   /@vue/cli-service/4.5.19_kgyjn4tstgpo3cxl4ealtf4uya:
