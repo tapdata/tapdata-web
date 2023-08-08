@@ -104,6 +104,7 @@ import { VIcon } from '@tap/component'
 import dayjs from 'dayjs'
 import { inspectResultsApi } from '@tap/api'
 
+let timeout = null
 export default {
   components: { VIcon },
   data() {
@@ -136,6 +137,12 @@ export default {
   },
   created() {
     this.search(1)
+    timeout = setInterval(() => {
+      this.search(this.page.current, true)
+    }, 8000)
+  },
+  destroyed() {
+    clearInterval(timeout)
   },
   methods: {
     formatTime(time) {
@@ -159,8 +166,10 @@ export default {
           return [{ count: data.total }, data.items]
         })
     },
-    search(pageNum) {
-      this.loading = true
+    search(pageNum, hideLoading = false) {
+      if (!hideLoading) {
+        this.loading = true
+      }
       let { current, size } = this.page
       let currentPage = pageNum || current + 1
       let id = this.$route.params.id
