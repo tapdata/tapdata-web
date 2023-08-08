@@ -65,7 +65,9 @@ const store = new Vuex.Store({
   },
 
   getters: {
-    startingTour: state => state.replicationTour.status === 'starting'
+    startingTour: state => state.replicationTour.status === 'starting',
+
+    completedTour: state => state.replicationTour.status === 'completed'
   },
 
   mutations: {
@@ -111,7 +113,7 @@ const store = new Vuex.Store({
       state.replicationTour.status = 'pause'
     },
 
-    finishTour(state) {
+    completeTour(state) {
       state.replicationTour.status = 'completed'
     }
   }

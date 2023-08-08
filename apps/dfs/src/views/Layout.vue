@@ -118,7 +118,7 @@
     <ReplicationTour
       v-model="showReplicationTour"
       :finish="replicationTourFinish"
-      @start="handleStarTour"
+      @start="handleStartTour"
       @finish="handleFinishTour"
     ></ReplicationTour>
   </ElContainer>

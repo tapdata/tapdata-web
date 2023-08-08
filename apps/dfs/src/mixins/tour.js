@@ -55,7 +55,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations(['startTour', 'setTourIndex', 'setHighlightBoard', 'finishTour', 'pauseTour']),
+    ...mapMutations(['startTour', 'setTourIndex', 'setHighlightBoard', 'completeTour', 'pauseTour']),
     // 检查是否有安装过agent
     async checkGuide() {
       this.guideLoading = true
@@ -601,7 +601,7 @@ export default {
       ]
       this.loadingStep = false
       this.driverObj = driver({
-        allowClose: false,
+        allowClose: process.env.NODE_ENV === 'development',
         showProgress: true,
         steps,
         onHighlightStarted: (element, step, { state }) => {
@@ -620,13 +620,19 @@ export default {
         this.driverObj.drive(this.replicationTour.activeIndex + 1)
 
         if (behavior === 'add-task') {
-          this.showReplicationTour = true
-          this.replicationTourFinish = true
+          this.setCompleted()
         }
       })
     },
 
-    async handleStarTour() {
+    setCompleted() {
+      this.showReplicationTour = true
+      this.replicationTourFinish = true
+      this.completeTour()
+      this.destroyDriver()
+    },
+
+    async handleStartTour() {
       this.showReplicationTour = false
       await this.$router.push({ name: 'migrateList' })
       this.startTour()
@@ -635,7 +641,6 @@ export default {
 
     handleFinishTour() {
       this.showReplicationTour = false
-      this.destroyDriver()
     }
   }
 }
