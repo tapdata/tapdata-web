@@ -410,7 +410,7 @@ export default {
       this.timer = null
       clearTimeout(this.timer)
       this.$axios.get('api/tcm/agent/' + this.$route.query?.id).then(data => {
-        if (data?.status !== 'Creating') {
+        if (['Running', 'Deleting', 'Deleted'].includes(data?.status)) {
           this.timer = null
           clearTimeout(this.timer)
           this.open(data?.status)
