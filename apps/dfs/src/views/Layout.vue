@@ -170,7 +170,7 @@ export default {
         {
           name: 'dataConsole',
           title: this.$t('page_title_data_console'),
-          icon: 'process-platform'
+          icon: 'datastore'
         },
         {
           name: 'connections',

@@ -46,11 +46,6 @@ const VerifyDetails = async () => {
   return VerifyDetails
 }
 
-const DataConsoleDashboard = async () => {
-  const { Dashboard } = await import('@tap/ldp')
-  return Dashboard
-}
-
 const NoticeList = async () => {
   const { NoticeList } = await import('@tap/business')
   return NoticeList
@@ -403,9 +398,9 @@ const routes = [
         }
       },
       {
-        path: '/data-console',
+        path: '/data-hub',
         name: 'dataConsole',
-        component: DataConsoleDashboard,
+        component: () => import(/* webpackChunkName: "data-hub" */ '../views/data-hub'),
         meta: {
           title: 'page_title_data_console',
           hideTitle: true,

@@ -490,6 +490,7 @@ importers:
   packages/ldp:
     specifiers:
       '@tap/api': workspace:^1.0.0
+      '@tap/assets': workspace:^1.0.0
       '@tap/business': workspace:^1.0.0
       '@tap/component': workspace:^1.0.0
       '@tap/dag': workspace:^1.0.0
@@ -500,6 +501,7 @@ importers:
       vuex: ^3.6.2
     dependencies:
       '@tap/api': link:../api
+      '@tap/assets': link:../assets
       '@tap/business': link:../business
       '@tap/component': link:../component
       '@tap/dag': link:../dag
@@ -2722,7 +2724,6 @@ packages:
   /@vue/babel-preset-app/4.5.19_vue@2.6.14:
     resolution: {integrity: sha512-VCNRiAt2P/bLo09rYt3DLe6xXUMlhJwrvU18Ddd/lYJgC7s8+wvhgYs+MTx4OiAXdu58drGwSBO9SPx7C6J82Q==}
     peerDependencies:
-      core-js: ^3
       vue: ^2 || ^3.0.0-0
     peerDependenciesMeta:
       core-js:
@@ -2851,7 +2852,6 @@ packages:
       thread-loader: 2.1.3_webpack@4.46.0
       webpack: 4.46.0
     transitivePeerDependencies:
-      - core-js
       - supports-color
       - vue
       - webpack-cli
@@ -2943,7 +2943,7 @@ packages:
     peerDependencies:
       '@vue/cli-service': ^3.0.0 || ^4.0.0-0
     dependencies:
-      '@vue/cli-service': 4.5.19_uksaqpj2nsdk26ix3umetljna4
+      '@vue/cli-service': 4.5.19_kgyjn4tstgpo3cxl4ealtf4uya
       '@vue/cli-shared-utils': 4.5.19
     dev: true
 
@@ -2952,7 +2952,7 @@ packages:
     peerDependencies:
       '@vue/cli-service': ^3.0.0 || ^4.0.0-0
     dependencies:
-      '@vue/cli-service': 4.5.19_uksaqpj2nsdk26ix3umetljna4
+      '@vue/cli-service': 4.5.19_kgyjn4tstgpo3cxl4ealtf4uya
     dev: true
 
   /@vue/cli-service/4.5.19_kgyjn4tstgpo3cxl4ealtf4uya:
