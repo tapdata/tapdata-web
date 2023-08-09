@@ -1,10 +1,13 @@
 <template>
   <div class="flex flex-column h-100 overflow-hidden">
-    <div class="bg-white rounded-lg mb-2 flex align-center">
-      <span class="page-header-title font-color-dark">{{ $t($route.meta.title) }}</span>
-      <span class="fs-7 font-color-light">{{ $t($route.meta.desc) }}</span>
+    <div class="bg-white rounded-lg mb-4 flex align-center px-4">
+      <span class="fs-5 py-4 font-color-dark">{{ $t($route.meta.title) }}</span>
+      <template v-if="$route.meta.desc">
+        <ElDivider v-if="$route.meta.desc" class="mx-4" direction="vertical"></ElDivider>
+        <span class="fs-7 font-color-sslight">{{ $t($route.meta.desc) }}</span>
+      </template>
       <div class="flex-grow-1"></div>
-      <el-radio-group v-model="viewType" class="mr-4 view-radio-group">
+      <el-radio-group v-model="viewType" class="view-radio-group">
         <el-radio-button label="board">
           <VIcon class="align-top">swimlane</VIcon>
           Board

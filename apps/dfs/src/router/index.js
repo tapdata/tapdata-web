@@ -141,7 +141,8 @@ const routes = [
             name: 'createAgent',
             component: () => import(/* webpackChunkName: "instance-details" */ '../views/instance/CreateAgent'),
             meta: {
-              title: i18n.t('dfs_agent_download_subscriptionmodeldialog_peizhishishishu')
+              title: i18n.t('dfs_agent_download_subscriptionmodeldialog_peizhishishishu'),
+              hideTitle: true
             }
           },
           {
@@ -438,7 +439,7 @@ const routes = [
         name: 'dataConsole',
         component: () => import(/* webpackChunkName: "data-hub" */ '../views/data-hub'),
         meta: {
-          title: 'page_title_data_console',
+          title: 'page_title_data_hub',
           hideTitle: true,
           icon: 'data-server'
         }
@@ -448,9 +449,10 @@ const routes = [
         name: 'CreateStorage',
         component: () => import(/* webpackChunkName: "data-hub" */ '../views/instance/CreateStorage'),
         meta: {
-          title: 'page_title_data_console',
+          title: 'page_title_subscribe_storage',
           hideTitle: true,
-          icon: 'data-server'
+          icon: 'data-server',
+          activeMenu: '/data-hub'
         }
       },
       {

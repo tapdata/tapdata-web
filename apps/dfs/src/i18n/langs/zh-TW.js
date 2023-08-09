@@ -950,6 +950,8 @@ export default {
   page_title_run_monitor: '運行監控',
   page_title_data_verify: '數據校驗',
   page_title_data_difference_details: '差異詳情',
+  page_title_data_hub: '實時數據中心',
+  page_title_subscribe_storage: '訂閱數據存儲',
   notify_abnormally_stopped: '意外停止',
   header_upgrade: '訪問舊版本',
   dfs_src_init_huoquyonghuxin: '獲取用戶信息失敗, 停止重試，跳轉到500',

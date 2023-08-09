@@ -169,7 +169,7 @@ export default {
         },
         {
           name: 'dataConsole',
-          title: this.$t('page_title_data_console'),
+          title: this.$t('page_title_data_hub'),
           icon: 'datastore'
         },
         {
@@ -459,8 +459,7 @@ export default {
     },
 
     setActiveMenu() {
-      let activeRoute = this.$route.matched.find(item => !!item.path)
-      this.activeMenu = activeRoute.path
+      this.activeMenu = this.$route.meta.activeMenu || this.$route.matched.find(item => !!item.path).path
     }
   }
 }

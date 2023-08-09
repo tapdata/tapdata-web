@@ -3,7 +3,7 @@
     <div class="bg-white rounded-lg p-4">
       <div class="flex align-center">
         <IconButton @click="$router.back()">left</IconButton>
-        <span class="fs-5 ml-2">{{ $t('packages_ldp_data_hub_subscribe') }}</span>
+        <span class="fs-5 ml-2">{{ $t('page_title_subscribe_storage') }}</span>
       </div>
     </div>
 
@@ -115,7 +115,7 @@
           </ElRadioGroup>
         </ElFormItem>
         <!--订阅方式-->
-        <ElFormItem>
+        <ElFormItem v-show="mdbPrices > 0">
           <div slot="label" class="font-color-dark fw-sub">
             {{ $t('dfs_instance_instance_dingyuefangshi') }}
           </div>
@@ -129,12 +129,6 @@
             >
               <span class="inline-flex align-center">
                 {{ item.label }}
-                <template v-if="item.type === 'recurring' || item.periodUnit === 'year'">
-                  <ElTag class="discount-tag fw-sub rounded-4 border-0 ml-2">{{
-                    $t('dfs_agent_subscription_discount', { val: getDiscount(item) })
-                  }}</ElTag>
-                  <VIcon class="position-absolute discount-hot-icon">hot-o</VIcon>
-                </template>
               </span>
             </ElRadio>
           </ElRadioGroup>
@@ -148,16 +142,16 @@
       }}</ElButton>
       <div class="flex align-items-end lh-1">
         <span>{{ $t('public_total') }}:</span>
-        <span class="color-primary fs-5 ml-1">{{ formatPrice(currency) }}</span>
+        <span class="color-primary fs-5 ml-1">{{ mongodbSpecPrice }}</span>
         <span class="font-color-dark mx-2" v-if="selected">
           {{ selected.label }}
         </span>
-        <div v-if="getDiscount(selected)">
+        <!--<div v-if="getDiscount(selected)">
           <span class="price-detail-label text-end inline-block mr-2"
             >{{ $t('dfs_agent_subscription_discount', { val: getDiscount(selected) }) }}:
           </span>
-          <span class="color-warning fw-sub">-{{ formatPriceOff(currency) }}</span>
-        </div>
+          <span class="color-warning fw-sub">-{{ mongodbSpecPrice }}</span>
+        </div>-->
       </div>
     </div>
   </section>
@@ -957,7 +951,7 @@ export default {
         subscribeType: type, // 订阅类型：one_time-一次订阅，recurring-连续订阅
         platform: this.platform,
         quantity: '',
-        paymentMethod: this.agentDeploy === 'aliyun' ? 'AliyunMarketCode' : 'Stripe',
+        // paymentMethod: this.agentDeploy === 'aliyun' ? 'AliyunMarketCode' : 'Stripe',
         successUrl:
           location.origin +
           location.pathname +

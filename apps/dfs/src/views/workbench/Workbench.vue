@@ -53,7 +53,7 @@
       </ElCol>
       <ElCol :span="6">
         <div class="bg-white rounded-xl p-4 shadow-sm mb-6">
-          <div class="main-title mb-4">Welcome to Tapdata!</div>
+          <div class="main-title mb-4">Welcome to Tapdata</div>
           <div class="clickable" @click="setUpgradeFeeVisible(true)">
             <ElImage :src="require('@/assets/image/plan_banner.png')"></ElImage>
           </div>

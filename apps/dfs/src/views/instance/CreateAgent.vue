@@ -1,5 +1,12 @@
 <template>
   <section class="flex flex-column flex-1 overflow-hidden create-agent-container gap-4">
+    <div class="bg-white rounded-lg p-4">
+      <div class="flex align-center">
+        <IconButton @click="$router.back()">left</IconButton>
+        <span class="fs-5 ml-2">{{ $t('public_agent_button_create') }}</span>
+      </div>
+    </div>
+
     <div class="flex flex-column bg-white rounded-lg overflow-hidden px-6">
       <div class="py-4 fs-6 fw-sub lh-base">
         <div class="create-agent-title position-relative pl-3">{{ $t('dfs_agent_information') }}</div>
@@ -90,9 +97,9 @@
                 class="position-relative px-4 py-2 cursor-pointer active-group rounded-lg overflow-hidden border"
                 :class="{
                   active: specification === item.value,
-                  disabled: freeAgentCount > 0 && item.chargeProvider === 'FreeTier'
+                  disabled: hasFreeAgent && item.chargeProvider === 'FreeTier'
                 }"
-                @click="changeSpec(item.value, freeAgentCount > 0 && item.chargeProvider === 'FreeTier')"
+                @click="changeSpec(item.value, hasFreeAgent && item.chargeProvider === 'FreeTier')"
               >
                 <div class="is-active position-absolute top-0 end-0">
                   <div class="is-active-triangle"></div>
@@ -178,7 +185,7 @@
 import { uniqBy } from 'lodash'
 
 import i18n from '@tap/i18n'
-import { VTable } from '@tap/component'
+import { IconButton, VTable } from '@tap/component'
 import { isObj } from '@tap/shared'
 import { CURRENCY_SYMBOL_MAP, TIME_MAP, CURRENCY_MAP } from '@tap/business'
 
@@ -186,6 +193,7 @@ import { getPaymentMethod, getSpec, AGENT_TYPE_MAP } from '../instance/utils'
 
 export default {
   name: 'CreateAgent',
+  components: { IconButton },
 
   inject: ['buried'],
 
@@ -214,7 +222,8 @@ export default {
       currentPackage: '',
       packageItems: [],
       currency: '',
-      selected: {}
+      selected: {},
+      hasFreeAgent: false
     }
   },
 
@@ -227,13 +236,14 @@ export default {
     },
     singleYearAmount() {
       return this.singleMonthAmount ? this.singleMonthAmount * 12 : this.singleMonthAmount
-    },
-    freeAgentCount() {
-      return this.$store.state.agentCount.freeTierAgentCount
     }
+    // freeAgentCount() {
+    //   return this.$store.state.agentCount.freeTierAgentCount
+    // }
   },
 
-  created() {
+  async created() {
+    await this.loadAgentCount()
     this.getPrice()
     this.getCloudProvider()
     const currencyType = window.__config__?.currencyType
@@ -245,6 +255,13 @@ export default {
   },
 
   methods: {
+    loadAgentCount() {
+      return this.$axios.get('api/tcm/agent/agentCount').then(data => {
+        this.hasFreeAgent = data.freeTierAgentCount > 0
+        this.$store.commit('setAgentCount', data)
+      })
+    },
+
     //查询规格价格
     getPrice() {
       const params = {
@@ -276,7 +293,7 @@ export default {
         ).sort((a, b) => {
           return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
         })
-        if (this.freeAgentCount > 0) {
+        if (this.hasFreeAgent) {
           this.specificationItems = this.specificationItems.filter(it => it.chargeProvider !== 'FreeTier')
         }
 
@@ -539,12 +556,32 @@ export default {
             result: true
           })
 
-          this.$router.push({
-            name: 'pay',
-            params: {
-              id: data.subscribe
-            }
-          })
+          if (data.status === 'active') {
+            // 免费实例不需要跳转到支付
+            const agentId = data.subscribeItems[0].resourceId
+            this.$router.push(
+              data.platform === 'fullManagement'
+                ? {
+                    name: 'Instance',
+                    query: {
+                      id: agentId
+                    }
+                  }
+                : {
+                    name: 'installAgent',
+                    params: {
+                      id: agentId
+                    }
+                  }
+            )
+          } else {
+            this.$router.push({
+              name: 'pay',
+              params: {
+                id: data.subscribe
+              }
+            })
+          }
         })
         .catch(() => {
           this.buried('newAgentStripe', '', {

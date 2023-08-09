@@ -32,6 +32,7 @@ const store = new Vuex.Store({
     driverIndex: 0,
     driverBehavior: '', // add-source, add-target, add-task
     replicationTour: {
+      enable: false,
       activeIndex: null,
       behavior: '', // add-source, add-target, add-task
       status: '' // starting, completed, pause
