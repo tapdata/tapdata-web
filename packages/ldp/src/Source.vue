@@ -335,7 +335,7 @@ export default {
             {data.name}
             {data.comment && <span class="font-color-sslight">{`(${data.comment})`}</span>}
             {data.disabled && (
-              <ElTag type="info" size="mini">
+              <ElTag type="info" size="mini" class="ml-2">
                 {this.$t('public_status_invalid')}
               </ElTag>
             )}
