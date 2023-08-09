@@ -60,13 +60,13 @@ export default {
         {
           label: i18n.t('packages_dag_components_record_yunxingkaishishi'),
           prop: 'startDate',
-          width: 160,
+          width: 170,
           dataType: 'time'
         },
         {
           label: i18n.t('packages_dag_components_record_yunxingjieshushi'),
           prop: 'endDate',
-          width: 160,
+          width: 170,
           dataType: 'time'
         },
         {

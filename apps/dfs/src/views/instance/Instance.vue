@@ -1234,8 +1234,7 @@ export default {
       this.$router.push({
         name,
         query: {
-          agentId: id,
-          status: 'running'
+          agentId: id
         }
       })
     },
