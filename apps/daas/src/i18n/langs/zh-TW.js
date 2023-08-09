@@ -1702,7 +1702,6 @@ export default {
   daas_setting_settingcenter_gaojingshezhi: '告警設置',
   packages_nodeDesign_custom_node_name_required: '請輸入節點名稱',
   packages_nodeDesign_message_save_ok: '保存成功',
-  dialog_tip_copied: '已復制',
   share_detail_title: '挖掘表詳情',
   shared_cache_messge_no_table: '找不對所選表模型',
   shared_cache_placeholder_max_memory: '請輸入緩存最大內存',

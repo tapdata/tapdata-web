@@ -63,7 +63,6 @@
                   filterable
                   class="item-select"
                   :key="'sourceConnectionId' + item.id"
-                  :onSetSelected="useHandle(handleSetSelectedConnection, item.source)"
                   @change="handleChangeConnection(arguments[0], item.source, arguments[1])"
                 >
                 </AsyncSelect>
@@ -79,7 +78,6 @@
                   filterable
                   class="item-select"
                   :key="'targetConnectionId' + item.id"
-                  :onSetSelected="useHandle(handleSetSelectedConnection, item.target)"
                   @change="handleChangeConnection(arguments[0], item.target, arguments[1])"
                 >
                 </AsyncSelect>
@@ -139,6 +137,7 @@
                   :class="{ 'empty-data': !item.source.sortColumn }"
                   :options="item.source.fields"
                   :id="'item-source-' + index"
+                  :key="`item-source-sortColumn` + item.id"
                   @focus="handleFocus(item.source)"
                 ></MultiSelection>
                 <span class="item-icon"></span>
@@ -147,6 +146,7 @@
                   class="item-select"
                   :class="{ 'empty-data': !item.target.sortColumn }"
                   :options="item.target.fields"
+                  :key="`item-target-sortColumn` + item.id"
                   @focus="handleFocus(item.target)"
                 ></MultiSelection>
               </div>
@@ -245,7 +245,7 @@
 
 <script>
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
-import { merge, cloneDeep, uniqBy, isEmpty } from 'lodash'
+import { merge, cloneDeep, uniqBy, isEmpty, debounce } from 'lodash'
 import { action } from '@formily/reactive'
 
 import i18n from '@tap/i18n'
@@ -700,6 +700,13 @@ export default {
       handler() {
         this.loadList()
       }
+    },
+
+    list: {
+      deep: true,
+      handler() {
+        this.debounceValidate()
+      }
     }
   },
 
@@ -939,10 +946,12 @@ export default {
         let updateConditionFieldMap = {}
         let tableNames = []
         let tableNameRelation = {}
+        let objectNames = []
         if (targetNode.type === 'database') {
           tableNames = el.tableNames
           updateConditionFieldMap = targetNode.updateConditionFieldMap || {}
           tableNameRelation = targetNode.syncObjects?.[0]?.tableNameRelation || []
+          objectNames = targetNode.syncObjects?.[0]?.objectNames || []
         } else if (targetNode.type === 'table') {
           tableNames = [targetNode.tableName]
           updateConditionFieldMap[targetNode.tableName] = targetNode.updateConditionFields || []
@@ -962,6 +971,7 @@ export default {
           targetDatabaseType: targetNode.databaseType,
           updateConditionFieldMap,
           tableNames,
+          objectNames,
           tableName: targetNode.tableName,
           tableNameRelation
         }
@@ -1000,6 +1010,7 @@ export default {
 
     clearList() {
       this.list = []
+      this.validate()
     },
 
     getItemOptions() {
@@ -1015,11 +1026,11 @@ export default {
       }
     },
 
-    async addItem() {
-      const validateMsg = await this.validate()
-      if (validateMsg) {
-        return this.$message.error(validateMsg)
-      }
+    addItem() {
+      // const validateMsg = this.validate()
+      // if (validateMsg) {
+      //   return this.$message.error(validateMsg)
+      // }
       this.list.push(this.getItemOptions())
     },
 
@@ -1032,6 +1043,7 @@ export default {
         connectionIds.push(m.sourceConnectionId)
         connectionIds.push(m.targetConnectionId)
         tableNames.push(...m.tableNames)
+        tableNames.push(...m.objectNames)
       })
       // 加载数据源的Capabilities
       const capabilitiesMap = await this.getCapabilities(connectionIds)
@@ -1052,6 +1064,7 @@ export default {
         }
       }
       this.autoAddTableLoading = true
+      this.updateAutoAddTableLoading()
       metadataInstancesApi
         .findInspect({
           where,
@@ -1132,9 +1145,13 @@ export default {
             return this.$message.error(i18n.t('packages_business_components_conditionbox_suoxuanrenwuque'))
           }
           this.list = list
+
+          // 显示提示
+          this.validate()
         })
         .finally(() => {
           this.autoAddTableLoading = false
+          this.updateAutoAddTableLoading()
         })
     },
 
@@ -1171,20 +1188,14 @@ export default {
       item.capabilities = await this.getConnectionCapabilities(opt.attrs?.connectionId)
       if (!this.taskId) {
         item.connectionName = opt.attrs?.connectionName
+        item.currentLabel = item.connectionName
         return
       }
       const { nodeId, nodeName, connectionName } = opt.attrs || {}
       item.nodeId = nodeId
       item.nodeName = nodeName
       item.connectionName = connectionName
-    },
-
-    handleSetSelectedConnection(item, val) {
-      // item.connectionName = val?.currentLabel || val?.name
-      // if (this.taskId) {
-      //   item.nodeName = item.connectionName?.split(' / ')?.[0]
-      // }
-      // item.databaseType = val?.databaseType
+      item.currentLabel = `${nodeName} / ${connectionName}`
     },
 
     getReverseNodeInfo(data = {}) {
@@ -1272,6 +1283,7 @@ export default {
       item.target.nodeName = targetName
       item.target.connectionId = targetConnectionId
       item.target.connectionName = targetConnectionName
+      item.target.currentLabel = `${targetName} / ${targetConnectionName}`
       item.target.table = tableName ? tableName : tableNameRelation[val]
 
       // 加载目标的字段
@@ -1386,120 +1398,134 @@ export default {
       item.target.columns = data.map(t => t.target)
     },
 
+    debounceValidate: debounce(function () {
+      this.validate()
+    }, 200),
+
     async validate() {
       let tasks = this.getList()
+
+      if (!tasks.length) {
+        this.updateErrorMsg('')
+        return
+      }
+
       let index = 0
       let message = ''
-      const formDom = document.getElementById('data-verification-form')
-      // 判断过滤设置是否填写完整
-      let schemaToFormFlag = false
-      for (let i = 0; i < tasks.length; i++) {
-        await this.$refs[`schemaToForm_${tasks[i].id}`].validate().catch(() => {
-          index = i + 1
-          schemaToFormFlag = true
-        })
-      }
-      if (schemaToFormFlag) {
-        message = this.$t('packages_business_verification_message_error_joint_table_target_or_source_filter_not_set', {
-          val: index
-        })
-        this.jointErrorMessage = message
+      // const formDom = document.getElementById('data-verification-form')
+
+      // 检查是否选择表
+      const haveTableArr = tasks.filter(c => c.source.table && c.target.table)
+      const noTableArr = tasks.filter(c => !c.source.table || !c.target.table)
+
+      if (!haveTableArr.length) {
+        message = this.$t('packages_business_verification_form_validate_table_is_empty')
+        this.updateErrorMsg(message, 'error')
         return message
       }
 
-      // 判断表名称是否为空
-      if (
-        tasks.some((c, i) => {
-          index = i + 1
-          return !c.source.table || !c.target.table
-        })
-      ) {
-        this.$nextTick(() => {
-          formDom.childNodes[index - 1]?.querySelector?.('input')?.focus()
-        })
-        message = this.$t('packages_business_verification_message_error_joint_table_target_or_source_not_set', {
-          val: index
-        })
-        this.jointErrorMessage = message
-        return message
-      }
-      // 判断表字段校验时，索引字段是否为空
-      index = 0
-      if (
-        ['field', 'jointField'].includes(this.inspectMethod) &&
-        tasks.some((c, i) => {
-          index = i + 1
-          return !c.source.sortColumn || !c.target.sortColumn
-        })
-      ) {
-        this.$nextTick(() => {
-          // document.getElementById('data-verification-form').childNodes[index - 1].querySelector('input').focus()
-          let item = document.getElementById('item-source-' + (index - 1))
-          item.querySelector('input').focus()
-        })
-        message = this.$t('packages_business_verification_lackIndex', { val: index })
-        this.jointErrorMessage = message
-        return message
-      }
-      // 判断表字段校验时，索引字段是否个数一致
-      index = 0
-      if (
-        ['field', 'jointField'].includes(this.inspectMethod) &&
-        tasks.some((c, i) => {
-          index = i + 1
-          return c.source.sortColumn.split(',').length !== c.target.sortColumn.split(',').length
-        })
-      ) {
-        this.$nextTick(() => {
-          let item = document.getElementById('item-source-' + (index - 1))
-          item.querySelector('input').focus()
-        })
-        message = this.$t('packages_business_verification_message_error_joint_table_field_not_match', { val: index })
-        this.jointErrorMessage = message
-        return message
-      }
-      // 判断字段模型是否存在空
-      index = 0
-      if (
-        ['field', 'jointField'].includes(this.inspectMethod) &&
-        tasks.some((c, i) => {
-          index = i + 1
-          return c.source.columns?.some(t => !t) || c.target.columns?.some(t => !t)
-        })
-      ) {
-        this.$nextTick(() => {
-          let item = document.getElementById('list-table__content' + (index - 1))
-          const emptyDom = item.querySelector('.el-select.empty-data')
-          const offsetTop = emptyDom?.offsetTop || 0
-          if (offsetTop) {
-            const height = emptyDom?.offsetHeight || 0
-            item.scrollTo({
-              top: offsetTop - height
-            })
+      if (noTableArr.length) {
+        message = this.$t('packages_business_verification_form_validate_table_is_empty1')
+        noTableArr.forEach((el, elIndex) => {
+          if (elIndex <= SHOW_COUNT) {
+            message += (elIndex > 0 ? ', ' : '') + `${el.source.connectionName}`
+            message += (elIndex > 0 ? ', ' : '') + `${el.target.connectionName}`
           }
         })
-        message = this.$t('packages_business_verification_form_diinde', { val1: index })
-        this.jointErrorMessage = message
-        return message
+        if (noTableArr.length > SHOW_COUNT) {
+          message += ` ...`
+        }
+        this.updateErrorMsg(message, 'warn')
+        return
       }
 
-      // 开启高级校验后，JS校验逻辑不能为空
-      index = 0
-      if (
-        this.inspectMethod === 'field' &&
-        tasks.some((c, i) => {
-          index = i + 1
-          return c.showAdvancedVerification && !c.webScript
-        })
-      ) {
-        this.$nextTick(() => {
-          formDom.childNodes[index - 1]?.querySelector?.('input')?.focus()
-        })
-        message = this.$t('packages_business_verification_message_error_script_no_enter')
-        this.jointErrorMessage = message
-        return message
+      // 检查
+      const SHOW_COUNT = 20
+      if (['field', 'jointField'].includes(this.inspectMethod)) {
+        // 索引字段为空
+        const haveIndexFieldArr = tasks.filter(c => c.source.sortColumn && c.target.sortColumn)
+        const noIndexFieldArr = tasks.filter(c => !c.source.sortColumn || !c.target.sortColumn)
+
+        if (!haveIndexFieldArr.length) {
+          message = this.$t('packages_business_verification_form_condition_is_empty')
+          this.updateErrorMsg(message, 'error')
+          return message
+        }
+
+        if (noIndexFieldArr.length) {
+          message = this.$t('packages_business_verification_form_index_field_is_empty')
+          noIndexFieldArr.forEach((el, elIndex) => {
+            if (elIndex <= SHOW_COUNT) {
+              message += (elIndex > 0 ? ', ' : '') + `${el.source.table}`
+              // message += `${el.target.table} `
+            }
+          })
+          if (noIndexFieldArr.length > SHOW_COUNT) {
+            message += ` ...` // (${noIndexFieldArr.length - SHOW_COUNT})
+          }
+          this.updateErrorMsg(message, 'warn')
+          return
+        }
+
+        // 判断表字段校验时，索引字段是否个数一致
+        const countNotArr = tasks.filter(
+          c => c.source.sortColumn.split(',').length !== c.target.sortColumn.split(',').length
+        )
+        if (countNotArr.length) {
+          //校验条件{val}中源表与目标表的索引字段个数不相等
+          // this.$nextTick(() => {
+          //   let item = document.getElementById('item-source-' + (index - 1))
+          //   item.querySelector('input').focus()
+          // })
+          message = this.$t('packages_business_verification_form_index_field_count_is_not_equal')
+          countNotArr.forEach((el, elIndex) => {
+            if (elIndex <= SHOW_COUNT) {
+              message += `${el.source.table} `
+              message += `${el.target.table} `
+            }
+          })
+          if (countNotArr.length > SHOW_COUNT) {
+            message += `...${countNotArr.length - SHOW_COUNT}`
+          }
+          // this.jointErrorMessage = message
+          this.updateErrorMsg(message, 'warn')
+          return
+        }
+
+        // 判断过滤设置是否填写完整
+        let schemaToFormFlag = false
+        for (let i = 0; i < tasks.length; i++) {
+          await this.$refs[`schemaToForm_${tasks[i].id}`].validate().catch(() => {
+            index = i + 1
+            schemaToFormFlag = true
+          })
+        }
+        if (schemaToFormFlag) {
+          message = this.$t(
+            'packages_business_verification_message_error_joint_table_target_or_source_filter_not_set',
+            {
+              val: index
+            }
+          )
+          this.updateErrorMsg(message, 'error')
+          return message
+        }
+
+        // 开启高级校验后，JS校验逻辑不能为空
+        if (
+          this.inspectMethod === 'field' &&
+          tasks.some((c, i) => {
+            index = i + 1
+            return c.showAdvancedVerification && !c.webScript
+          })
+        ) {
+          message = this.$t('packages_business_verification_message_error_script_no_enter')
+          this.updateErrorMsg(message, 'error')
+          return message
+        }
       }
-      this.jointErrorMessage = ''
+
+      this.updateErrorMsg('')
       return
     },
 
@@ -1665,6 +1691,15 @@ function validate(sourceRow){
     async getConnectionCapabilities(id) {
       const data = await connectionsApi.get(id)
       return data?.capabilities || []
+    },
+
+    updateErrorMsg(msg, level = '') {
+      this.$emit('update:jointErrorMessage', msg)
+      this.$emit('update:errorMessageLevel', level)
+    },
+
+    updateAutoAddTableLoading() {
+      this.$emit('update:autoAddTableLoading', this.autoAddTableLoading)
     }
   }
 }

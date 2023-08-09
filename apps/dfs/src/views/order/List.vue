@@ -12,7 +12,7 @@
             </div>
           </div>
           <ul class="mt-4 overflow-auto flex-1">
-            <li class="sub-li mb-4" v-for="item in subscribeList" :key="item.id">
+            <li class="sub-li mb-4 rounded-lg overflow-hidden" v-for="item in subscribeList" :key="item.id">
               <div class="sub-li-header flex justify-content-between">
                 <div>
                   <span class="font-color-dark fw-sub mr-2"
@@ -26,7 +26,8 @@
                   <el-divider direction="vertical"></el-divider>
                   <span class="font-color-light fw-sub mr-2"
                     ><span>{{ $t('dfs_instance_selectlist_dingyuezhouqi') }}: </span>
-                    {{ formatterTime(item.startAt) }} ~ {{ formatterTime(item.endAt) }}</span
+                    {{ formatterTime(item.startAt, 'YYYY-MM-DD') }} ~
+                    {{ formatterTime(item.endAt, 'YYYY-MM-DD') }}</span
                   >
                   <el-divider direction="vertical"></el-divider>
                   <span class="font-color-dark fw-sub mr-2">
@@ -455,8 +456,8 @@ export default {
         })
       })
     },
-    formatterTime(time) {
-      return time ? dayjs(time).format('YYYY-MM-DD') : '-'
+    formatterTime(time, template = 'YYYY-MM-DD') {
+      return time ? dayjs(time).format(template) : '-'
     },
     formatterPrice(currency, price) {
       if (price === 0) {
@@ -520,7 +521,13 @@ export default {
     //支付
     handlePay(row = {}) {
       this.buried('payAgentStripe')
-      if (row.paymentType === 'offline') {
+      this.$router.push({
+        name: 'pay',
+        params: {
+          id: row.id
+        }
+      })
+      /*if (row.paymentType === 'offline') {
         this.showTransferDialogVisible = true
         this.pricePay = row.formatPrice
       } else {
@@ -535,7 +542,7 @@ export default {
         ).then(() => {
           this.$refs.table?.fetch()
         })
-      }
+      }*/
     },
     handleCreateAgent() {
       this.$router.push({

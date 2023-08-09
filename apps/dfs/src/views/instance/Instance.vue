@@ -1097,14 +1097,12 @@ export default {
         return
       }
       this.buried('agentDeploy')
-      let downloadUrl = window.App.$router.resolve({
-        name: 'FastDownload',
-        query: {
+      this.$router.push({
+        name: 'installAgent',
+        params: {
           id: row?.id
         }
       })
-
-      window.open(downloadUrl.href, '_blank')
     },
     // 停止
     handleStop(row, from) {

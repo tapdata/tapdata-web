@@ -74,8 +74,8 @@ export default {
 
     openPay(row) {
       this.$router.push({
-        name: 'pay',
-        query: {
+        name: 'payForChange',
+        params: {
           id: row.id
         }
       })

@@ -1301,6 +1301,10 @@ export class Table extends NodeType {
                               {
                                 label: i18n.t('packages_dag_nodes_database_bucunzaishicha'),
                                 value: 'insert_on_nonexists'
+                              },
+                              {
+                                label: i18n.t('packages_dag_nodes_database_bucunzaishidayinrizhi'),
+                                value: 'log_on_nonexists'
                               }
                             ]
                           },

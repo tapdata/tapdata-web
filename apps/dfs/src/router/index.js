@@ -154,6 +154,15 @@ const routes = [
             meta: {
               title: 'tap_instance_details'
             }
+          },
+          {
+            path: 'install/:id',
+            name: 'installAgent',
+            component: () => import(/* webpackChunkName: "instance-details" */ '../views/instance/Install'),
+            meta: {
+              title: '部署计算引擎',
+              hideTitle: true
+            }
           }
         ]
       },
@@ -355,6 +364,33 @@ const routes = [
         },
         children: [
           {
+            path: 'pay/:id',
+            name: 'pay',
+            component: () => import(/* webpackChunkName: "instance" */ '../views/order/Pay'),
+            meta: {
+              hideTitle: true,
+              title: i18n.t('dfs_router_index_zhifuqingdan')
+            }
+          },
+          {
+            path: 'change/pay/:id',
+            name: 'payForChange',
+            component: () => import(/* webpackChunkName: "instance" */ '../views/order/Pay'),
+            meta: {
+              hideTitle: true,
+              title: i18n.t('dfs_router_index_zhifuqingdan')
+            }
+          },
+          {
+            path: 'renew/pay/:id',
+            name: 'payForRenew',
+            component: () => import(/* webpackChunkName: "instance" */ '../views/order/Pay'),
+            meta: {
+              hideTitle: true,
+              title: i18n.t('dfs_router_index_zhifuqingdan')
+            }
+          },
+          {
             path: '/user/order/changeList',
             name: 'changeList',
             component: () => import(/* webpackChunkName: "instance" */ '../views/order/ChangeList.vue'),
@@ -486,14 +522,14 @@ const routes = [
       title: 'tap_agent_download_now'
     }
   },
-  {
-    path: '/pay',
-    name: 'pay',
-    component: () => import(/* webpackChunkName: "instance" */ '../views/order/pay.vue'),
-    meta: {
-      title: i18n.t('dfs_router_index_zhifuqingdan')
-    }
-  },
+  // {
+  //   path: '/pay',
+  //   name: 'pay',
+  //   component: () => import(/* webpackChunkName: "instance" */ '../views/order/Pay'),
+  //   meta: {
+  //     title: i18n.t('dfs_router_index_zhifuqingdan')
+  //   }
+  // },
   {
     path: '/upgradeVersion',
     name: 'UpgradeVersion',

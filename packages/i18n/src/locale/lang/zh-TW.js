@@ -182,7 +182,7 @@ export default {
   // agent
   public_agent: 'Agent',
   public_agent_name: 'Agent名稱',
-  public_agent_button_create: '創建Agent',
+  public_agent_button_create: '創建計算引擎',
   public_agent_button_deploy: '部署',
   public_agent_button_deploy_now: '立即部署',
   public_agent_button_deploy_later: '稍後部署',

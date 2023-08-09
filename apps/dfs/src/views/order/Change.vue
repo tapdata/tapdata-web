@@ -427,8 +427,8 @@ export default {
           this.loadingCancelSubmit = false
           this.$emit('closeVisible')
           this.$router.push({
-            name: 'pay',
-            query: {
+            name: 'payForChange',
+            params: {
               id: data?.id
             }
           })
