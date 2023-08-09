@@ -350,7 +350,7 @@ export default {
             const result = fields.map(t => {
               return {
                 id: t.id,
-                label: t.fieldName,
+                label: t.fieldName || t.field_name,
                 value: t.fieldName || t.field_name,
                 field_name: t.fieldName || t.field_name,
                 primary_key_position: t.primaryKey,
@@ -1128,6 +1128,8 @@ export default {
                 }
                 item.source.fields = findTable.fields
                 item.source.sortColumn = sourceSortColumn
+                const key = [source || '', sourceConnectionId, item.source.table].join()
+                this.fieldsMap[key] = item.source.fields
               }
 
               if (findTargetTable) {
@@ -1136,6 +1138,8 @@ export default {
                   : this.getPrimaryKeyFieldStr(findTargetTable.fields)
                 item.target.fields = findTargetTable.fields
                 item.target.sortColumn = targetSortColumn
+                const key = [target || '', targetConnectionId, item.target.table].join()
+                this.fieldsMap[key] = item.target.fields
               }
 
               list.push(item)
@@ -1286,6 +1290,16 @@ export default {
       item.target.currentLabel = `${targetName} / ${targetConnectionName}`
       item.target.table = tableName ? tableName : tableNameRelation[val]
 
+      const key = [target || '', targetConnectionId, item.target.table].join()
+      if (this.fieldsMap[key]) {
+        item.target.fields = this.fieldsMap[key]
+        // 设置主键
+        item.target.sortColumn = updateList.length
+          ? updateList.join(',')
+          : this.getPrimaryKeyFieldStr(item.target.fields)
+        return
+      }
+
       // 加载目标的字段
       const params = {
         nodeId: target,
@@ -1296,15 +1310,14 @@ export default {
       metadataInstancesApi.nodeSchemaPage(params).then(data => {
         item.target.fields =
           data.items?.[0]?.fields.map(t => {
-            const { id, field_name, primary_key_position } = t
-            return { id, field_name, primary_key_position }
+            const { id, field_name, primary_key_position, primaryKey, unique } = t
+            return { id, field_name, primary_key_position, primaryKey, unique }
           }) || []
         // 设置主键
         item.target.sortColumn = updateList.length
           ? updateList.join(',')
           : this.getPrimaryKeyFieldStr(item.target.fields)
 
-        const key = [target || '', targetConnectionId, item.target.table].join()
         this.fieldsMap[key] = item.target.fields
       })
     },
