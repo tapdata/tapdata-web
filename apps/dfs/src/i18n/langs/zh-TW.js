@@ -1565,5 +1565,8 @@ export default {
   dfs_change_instance_object: '變更對象',
   dfs_change_instance_price: '訂閱價格',
   dfs_change_instance_submit: '提交變更',
-  dfs_select_server_type: '請選擇您的伺服器類型'
+  dfs_select_server_type: '請選擇您的伺服器類型',
+  dfs_subscribe_storage_tip_title: 'Tapdata數據存儲在哪裡？',
+  dfs_subscribe_storage_tip_content:
+    'Tapdata使用MongoDB Atlas作為集中式存儲的托管雲數據庫。MongoDB Atlas支持AWS、Azure和GCP的大多數地區。Tapdata將逐步添加對所有Atlas地區的支持。您可以選擇最接近您的數據源和目標應用程序的區域和可用區。Tapdata為每個客戶創建一個專用集群，以確保數據安全。'
 }

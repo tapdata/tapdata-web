@@ -1719,5 +1719,8 @@ export default {
   dfs_change_instance_object: 'Instance Object',
   dfs_change_instance_price: 'Price',
   dfs_change_instance_submit: 'Submit',
-  dfs_select_server_type: 'Please select your server type'
+  dfs_select_server_type: 'Please select your server type',
+  dfs_subscribe_storage_tip_title: 'Where does Tapdata store data?',
+  dfs_subscribe_storage_tip_content:
+    'Tapdata provides 10GB storage space in a shared MongoDB Cluster for Free Trial users. You may use this free storage during the 15 day trial period. Only your account can access your data.<br/>Note for Free Trial users a shared cluster is used instead of MongoDB Atlas.'
 }

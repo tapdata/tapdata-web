@@ -408,6 +408,16 @@ const routes = [
         }
       },
       {
+        path: '/crate-storage',
+        name: 'CreateStorage',
+        component: () => import(/* webpackChunkName: "data-hub" */ '../views/instance/CreateStorage'),
+        meta: {
+          title: 'page_title_data_console',
+          hideTitle: true,
+          icon: 'data-server'
+        }
+      },
+      {
         path: '/notice',
         name: 'noticeList',
         component: NoticeList,

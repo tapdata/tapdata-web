@@ -80,7 +80,9 @@
       </div>
 
       <div class="text-center">
-        <ElButton type="primary" size="large">{{ $t('packages_ldp_data_hub_subscribe') }}</ElButton>
+        <ElButton @click="$router.push({ name: 'CreateStorage' })" type="primary" size="large">{{
+          $t('packages_ldp_data_hub_subscribe')
+        }}</ElButton>
       </div>
     </div>
   </div>
