@@ -1508,7 +1508,7 @@ export default {
         // 判断过滤设置是否填写完整
         let schemaToFormFlag = false
         for (let i = 0; i < tasks.length; i++) {
-          await this.$refs[`schemaToForm_${tasks[i].id}`].validate().catch(() => {
+          await this.$refs[`schemaToForm_${tasks[i].id}`]?.validate().catch(() => {
             index = i + 1
             schemaToFormFlag = true
           })
@@ -1643,8 +1643,11 @@ function validate(sourceRow){
     },
 
     handleChangeFields(data = [], index) {
-      this.list[index].source.columns = data.map(t => t.source)
-      this.list[index].target.columns = data.map(t => t.target)
+      let item = this.list[index]
+      item.source.columns = data.map(t => t.source)
+      item.target.columns = data.map(t => t.target)
+      // 设置modeType
+      this.$refs[`schemaToForm_${item.id}`].form.setValuesIn('modeType', 'custom')
     },
 
     handleFocus(opt = {}) {
