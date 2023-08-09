@@ -826,15 +826,21 @@ export default {
         method: 'getErrorCode',
         args: [item.errorCode, i18n.locale === 'en' ? 'en' : 'cn']
       }
-      proxyApi.call(params).then(data => {
-        this.codeDialog.data.errorStack = item.errorStack
-        this.codeDialog.data.errorCode = item.errorCode
-        this.codeDialog.data.fullErrorCode = item.fullErrorCode
-        this.codeDialog.data.describe = data.describe
-        this.codeDialog.data.hasDescribe = data.hasDescribe
-        this.codeDialog.data.seeAlso = data.seeAlso || []
-        this.codeDialog.visible = true
-      })
+
+      this.codeDialog.data.errorStack = item.errorStack
+      this.codeDialog.data.errorCode = item.errorCode
+      this.codeDialog.data.fullErrorCode = item.fullErrorCode
+      proxyApi
+        .call(params)
+        .then(data => {
+          this.codeDialog.data.describe = data.describe
+          this.codeDialog.data.hasDescribe = data.hasDescribe
+          this.codeDialog.data.seeAlso = data.seeAlso || []
+          this.codeDialog.visible = true
+        })
+        .catch(() => {
+          this.codeDialog.visible = true
+        })
     },
 
     handleLink(val) {
