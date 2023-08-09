@@ -30,6 +30,7 @@ import UpgradeFee from './UpgradeFee'
 import Chart from './chart'
 import MqTransfer from './mq-transfer'
 import JsEditor from './JsEditor.vue'
+import PythonEditor from './PythonEditor'
 import OverflowTooltip from './overflow-tooltip'
 export {
   langs,
@@ -50,6 +51,7 @@ export {
   MqTransfer,
   VCodeEditor,
   JsEditor,
+  PythonEditor,
   Classification,
   FilterBar,
   DatetimeRange,

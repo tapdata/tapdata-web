@@ -97,188 +97,183 @@ export const FieldAddDel = connect(
         this.deleteAllFieldsData = formValues?.deleteAllFields || false
         return (
           <div class="field-processors-tree-warp bg-body pt-2" v-loading={this.loading}>
-            <div class={['mb-2', 'flex']}>
-              <ElInput
-                placeholder={i18n.t('packages_form_field_mapping_list_qingshuruziduan')}
-                v-model={this.searchFiledName}
-                suffix-icon="el-icon-search"
-              ></ElInput>
-              <ElButton
-                class={['ml-2']}
-                type={'default'}
-                onClick={() => this.handleInput('')}
-                icon="el-icon-refresh"
-              ></ElButton>
-            </div>
-            <div class="field-processor-operation flex">
-              {/*<ElCheckbox class="check-all" v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />*/}
-              <span class="flex-1 text inline-block ml-6">
-                {i18n.t('packages_form_field_add_del_index_ziduanmingcheng')}
-              </span>
-              <span class="field-ops inline-block ml-10">
-                <VIcon
-                  class={[
-                    this.deleteAllFieldsData ? 'active__delete' : '',
-                    this.disabled ? 'disable__btn' : 'clickable',
-                    'ml-5'
-                  ]}
-                  size="12"
-                  disabled={this.disabled}
-                  onClick={() => this.handleAllDelete()}
-                >
-                  delete
-                </VIcon>
-                <VIcon
-                  class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-5']}
-                  size="12"
-                  disabled={fields.length === 0 || this.disabled}
-                  onClick={() => this.handleCreate()}
-                >
-                  add
-                </VIcon>
-                <VIcon
-                  class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-5']}
-                  size="12"
-                  disabled={this.disabled}
-                  onClick={() => this.handleAllReset()}
-                >
-                  revoke
-                </VIcon>
-              </span>
-            </div>
-            <div class="field-processors-tree-warp">
-              <VirtualTree
-                ref="tree"
-                height="calc(100vh - 240px)"
-                data={fields}
-                node-key="id"
-                draggable
-                allow-drag={this.checkAllowDrag}
-                allow-drop={this.checkAllowDrop}
-                vOn:node-drop={this.handleSaveDrop}
-                default-expand-all={true}
-                expand-on-click-node={false}
-                class="field-processor-tree"
-                scopedSlots={{
-                  default: ({ node, data }) => (
-                    <span
-                      class={[
-                        'tree-node',
-                        'flex flex-1',
-                        'justify-content-center',
-                        'align-items',
-                        'flex-row',
-                        'overflow-hidden'
-                      ]}
-                      slot-scope="{ node, data }"
-                    >
-                      {node.level === 1 && (
-                        <el-dropdown
-                          placement="top-start"
-                          on={{
-                            command: val => this.handleCommand(val, node)
-                          }}
-                        >
-                          <span class="el-dropdown-link">
-                            <VIcon class="color-primary mt-n1 mr-2">drag</VIcon>
-                          </span>
-                          <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item command="top">
-                              {i18n.t('packages_dag_field_add_del_index_zhiding')}
-                            </el-dropdown-item>
-                            <el-dropdown-item command="prev">
-                              {i18n.t('packages_dag_field_add_del_index_shangyi')}
-                            </el-dropdown-item>
-                            <el-dropdown-item command="next">
-                              {i18n.t('packages_dag_field_add_del_index_xiayi')}
-                            </el-dropdown-item>
-                            <el-dropdown-item command="bottom">
-                              {i18n.t('packages_dag_field_add_del_index_zhidi')}
-                            </el-dropdown-item>
-                          </el-dropdown-menu>
-                        </el-dropdown>
-                      )}
-
-                      <span class={['inline-block', 'flex-1', 'text-truncate']}>
-                        {this.isCreate(data.field) ? (
-                          <span
-                            class={[
-                              (data.is_deleted || this.isRemove(data.previousFieldName)) &&
-                              !this.isRest(data.previousFieldName)
-                                ? 'active__delete'
-                                : ''
-                            ]}
+            <ElInput
+              class="my-2"
+              placeholder={i18n.t('packages_form_field_mapping_list_qingshuruziduan')}
+              v-model={this.searchFiledName}
+              clearable
+              prefix-icon="el-icon-search"
+            />
+            <div class="border rounded-4 overflow-hidden">
+              <div class="field-processor-operation flex">
+                <span class="flex-1 text inline-block ml-6">
+                  {i18n.t('packages_form_field_add_del_index_ziduanmingcheng')}
+                </span>
+                <span class="field-ops inline-block ml-10">
+                  <VIcon
+                    class={[
+                      this.deleteAllFieldsData ? 'active__delete' : '',
+                      this.disabled ? 'disable__btn' : 'clickable',
+                      'ml-5'
+                    ]}
+                    size="12"
+                    disabled={this.disabled}
+                    onClick={() => this.handleAllDelete()}
+                  >
+                    delete
+                  </VIcon>
+                  <VIcon
+                    class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-5']}
+                    size="12"
+                    disabled={fields.length === 0 || this.disabled}
+                    onClick={() => this.handleCreate()}
+                  >
+                    add
+                  </VIcon>
+                  <VIcon
+                    class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-5']}
+                    size="12"
+                    disabled={this.disabled}
+                    onClick={() => this.handleAllReset()}
+                  >
+                    revoke
+                  </VIcon>
+                </span>
+              </div>
+              <div class="field-processors-tree-warp">
+                <VirtualTree
+                  ref="tree"
+                  height="calc(100vh - 240px)"
+                  data={fields}
+                  node-key="id"
+                  draggable
+                  allow-drag={this.checkAllowDrag}
+                  allow-drop={this.checkAllowDrop}
+                  vOn:node-drop={this.handleSaveDrop}
+                  default-expand-all={true}
+                  expand-on-click-node={false}
+                  class="field-processor-tree"
+                  scopedSlots={{
+                    default: ({ node, data }) => (
+                      <span
+                        class={[
+                          'tree-node',
+                          'flex flex-1',
+                          'justify-content-center',
+                          'align-items',
+                          'flex-row',
+                          'overflow-hidden'
+                        ]}
+                        slot-scope="{ node, data }"
+                      >
+                        {node.level === 1 && (
+                          <el-dropdown
+                            placement="top-start"
+                            on={{
+                              command: val => this.handleCommand(val, node)
+                            }}
                           >
-                            {data.level === 1 ? (
-                              <ElInput
-                                id="renameInput"
-                                class={[
-                                  'tree-field-input',
-                                  'text__inner',
-                                  {
-                                    'tree-field-input-primary': this.isCreate(data.previousFieldName)
-                                  }
-                                ]}
-                                v-model={data.field_name}
-                                onChange={val => this.handleRename(node, data)}
-                                onBlur={() => this.closeInput(node.data)}
-                                onKeydown={() => this.handleKeyDown()}
-                              />
-                            ) : (
-                              <span class="text__inner">{data.previousFieldName}</span>
-                            )}
-                          </span>
-                        ) : (
-                          //不是新建字段
-                          <span
-                            class={[
-                              (data.is_deleted || this.isRemove(data.previousFieldName)) &&
-                              !this.isRest(data.previousFieldName)
-                                ? 'active__delete'
-                                : ''
-                            ]}
-                          >
-                            {data.previousFieldName}
-                            {data.primary_key_position > 0 ? (
-                              <VIcon size="12" class="text-warning ml-1">
-                                key
-                              </VIcon>
-                            ) : (
-                              ''
-                            )}
-                          </span>
+                            <span class="el-dropdown-link">
+                              <VIcon class="color-primary mt-n1 mr-2">drag</VIcon>
+                            </span>
+                            <el-dropdown-menu slot="dropdown">
+                              <el-dropdown-item command="top">
+                                {i18n.t('packages_dag_field_add_del_index_zhiding')}
+                              </el-dropdown-item>
+                              <el-dropdown-item command="prev">
+                                {i18n.t('packages_dag_field_add_del_index_shangyi')}
+                              </el-dropdown-item>
+                              <el-dropdown-item command="next">
+                                {i18n.t('packages_dag_field_add_del_index_xiayi')}
+                              </el-dropdown-item>
+                              <el-dropdown-item command="bottom">
+                                {i18n.t('packages_dag_field_add_del_index_zhidi')}
+                              </el-dropdown-item>
+                            </el-dropdown-menu>
+                          </el-dropdown>
                         )}
+
+                        <span class={['inline-block', 'flex-1', 'text-truncate']}>
+                          {this.isCreate(data.field) ? (
+                            <span
+                              class={[
+                                (data.is_deleted || this.isRemove(data.previousFieldName)) &&
+                                !this.isRest(data.previousFieldName)
+                                  ? 'active__delete'
+                                  : ''
+                              ]}
+                            >
+                              {data.level === 1 ? (
+                                <ElInput
+                                  id="renameInput"
+                                  class={[
+                                    'tree-field-input',
+                                    'text__inner',
+                                    {
+                                      'tree-field-input-primary': this.isCreate(data.previousFieldName)
+                                    }
+                                  ]}
+                                  v-model={data.field_name}
+                                  onChange={val => this.handleRename(node, data)}
+                                  onBlur={() => this.closeInput(node.data)}
+                                  onKeydown={() => this.handleKeyDown()}
+                                />
+                              ) : (
+                                <span class="text__inner">{data.previousFieldName}</span>
+                              )}
+                            </span>
+                          ) : (
+                            //不是新建字段
+                            <span
+                              class={[
+                                (data.is_deleted || this.isRemove(data.previousFieldName)) &&
+                                !this.isRest(data.previousFieldName)
+                                  ? 'active__delete'
+                                  : ''
+                              ]}
+                            >
+                              {data.previousFieldName}
+                              {data.primary_key_position > 0 ? (
+                                <VIcon size="12" class="text-warning ml-1">
+                                  key
+                                </VIcon>
+                              ) : (
+                                ''
+                              )}
+                            </span>
+                          )}
+                        </span>
+                        <span class="e-ops">
+                          <ElButton
+                            type="text"
+                            class="ml-5"
+                            disabled={
+                              ((this.isRemove(data.previousFieldName) || data.is_deleted) &&
+                                !this.isRest(data.previousFieldName)) ||
+                              this.disabled
+                            }
+                            onClick={() => this.handleDelete(node, data)}
+                          >
+                            <VIcon> delete</VIcon>
+                          </ElButton>
+                          <ElButton
+                            type="text"
+                            class="ml-5"
+                            disabled={
+                              (!this.isRemove(data.previousFieldName) && !data.is_deleted) ||
+                              this.isRest(data.previousFieldName) ||
+                              this.disabled
+                            }
+                            onClick={() => this.handleReset(node, data)}
+                          >
+                            <VIcon size="12">revoke</VIcon>
+                          </ElButton>
+                        </span>
                       </span>
-                      <span class="e-ops">
-                        <ElButton
-                          type="text"
-                          class="ml-5"
-                          disabled={
-                            ((this.isRemove(data.previousFieldName) || data.is_deleted) &&
-                              !this.isRest(data.previousFieldName)) ||
-                            this.disabled
-                          }
-                          onClick={() => this.handleDelete(node, data)}
-                        >
-                          <VIcon> delete</VIcon>
-                        </ElButton>
-                        <ElButton
-                          type="text"
-                          class="ml-5"
-                          disabled={
-                            (!this.isRemove(data.previousFieldName) && !data.is_deleted) ||
-                            this.isRest(data.previousFieldName) ||
-                            this.disabled
-                          }
-                          onClick={() => this.handleReset(node, data)}
-                        >
-                          <VIcon size="12">revoke</VIcon>
-                        </ElButton>
-                      </span>
-                    </span>
-                  )
-                }}
-              />
+                    )
+                  }}
+                />
+              </div>
             </div>
           </div>
         )

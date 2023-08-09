@@ -412,8 +412,8 @@ export default {
         }
       }
       const { time = [] } = this.quota
-      let inputQps = data.inputQps?.map(t => Math.abs(t || 0.1))
-      const outputQps = data.outputQps?.map(t => Math.abs(t || 100))
+      let inputQps = data.inputQps?.map(t => Math.abs(t))
+      const outputQps = data.outputQps?.map(t => Math.abs(t))
       // 计算距离增量时间点，最近的时间点
       const milestone = this.dataflow.attrs?.milestone || {}
       const snapshotDoneAt = milestone.SNAPSHOT?.end
@@ -478,22 +478,33 @@ export default {
           value: []
         }
       }
+
+      const open = this.dataflow.alarmSettings.find(t => t.key === 'TASK_INCREMENT_DELAY')?.open
+      const delay = open ? this.dataflow.alarmRules.find(t => t.key === 'TASK_INCREMENT_DELAY')?.ms || 0 : 60 * 1000
+      const max = Math.max(...data.replicateLag)
       return {
         x: time,
-        value: data.replicateLag
+        value: data.replicateLag,
+        yAxisMax: Math.max(delay, max)
       }
     },
 
     // 全量信息
     initialData() {
       const data = this.quota.samples?.totalData?.[0] || {}
-      const { snapshotRowTotal = 0, snapshotInsertRowTotal = 0, snapshotDoneAt, snapshotStartAt, replicateLag } = data
-      const usedTime = Time.now() - snapshotStartAt
+      const {
+        snapshotRowTotal = 0,
+        snapshotInsertRowTotal = 0,
+        snapshotDoneAt,
+        snapshotStartAt,
+        replicateLag,
+        lastFiveMinutesQps
+      } = data
       let time
-      if (!snapshotInsertRowTotal || !snapshotRowTotal || !snapshotStartAt) {
+      if (!snapshotInsertRowTotal || !snapshotRowTotal || !lastFiveMinutesQps) {
         time = 0
       } else {
-        time = snapshotRowTotal / (snapshotInsertRowTotal / usedTime) - usedTime
+        time = ((snapshotRowTotal - snapshotInsertRowTotal) / lastFiveMinutesQps) * 1000
       }
       return {
         snapshotDoneAt: snapshotDoneAt ? dayjs(snapshotDoneAt).format('YYYY-MM-DD HH:mm:ss.SSS') : '',

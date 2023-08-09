@@ -423,6 +423,8 @@ export default {
   packages_business_verification_message_error_joint_table_not_set: 'Please add validation conditions',
   packages_business_verification_message_error_joint_table_target_or_source_not_set:
     'The source table or the target table is not selected in the validation condition {val}',
+  packages_business_verification_message_error_joint_table_target_or_source_filter_not_set:
+    'The source table or target table data filter is not selected in the verification condition {val}',
   packages_business_verification_message_error_joint_table_field_not_match:
     'The number of index fields in the source table and the target table for validation condition {val} is not equal.',
   packages_business_verification_message_error_script_no_enter:
@@ -1109,7 +1111,7 @@ export default {
   packages_business_shared_mining_table_yihebingdelian: 'Merged Connections',
   packages_business_shared_mining_table_shengyuyigelian:
     'In the mining task, at least one table must be mining, and all tables cannot be stopped.',
-  packages_business_logs_nodelog_yijianfuzhi: 'One key copy',
+  packages_business_logs_nodelog_yijianfuzhi: 'Copy',
   packages_business_connections_jsdebug_shiyongHtt: 'Use the latest data received by HttpReceiver for debugging',
   packages_business_connections_jsdebug_huoqutiaoshishu: 'Get debug data',
   packages_business_shared_mining_list_shanchurenwus:
@@ -1136,5 +1138,21 @@ export default {
   packages_business_components_conditionbox_chakanzidingyi: 'View custom fields',
   packages_business_components_fielddialog_ziduanbuyunxu: 'The field is not allowed to be empty',
   packages_business_components_fielddialog_zidingyiziduan: 'Custom Field',
-  packages_business_verification_list_biaobufenziduan: 'Verification of some fields in the table'
+  packages_business_verification_list_biaobufenziduan: 'Verification of some fields in the table',
+  packages_business_components_conditionbox_laiyuanbiaoshuju: 'Source Filter',
+  packages_business_components_conditionbox_mubiaobiaoshuju: 'Target Filter',
+  packages_business_data_server_list_apIwendang: 'API Document Export',
+  packages_business_verification_form_gaojipeizhi: 'Advanced Configuration',
+  packages_business_verification_form_validate_table_is_empty:
+    'The source table and target table cannot be empty, please modify the verification table configuration',
+  packages_business_verification_form_validate_table_is_empty1:
+    'Because the source or target table could not be found, the following source connections will automatically skip validation:',
+  packages_business_verification_form_condition_is_empty:
+    'The associated verification condition cannot be empty, please modify the verification table configuration',
+  packages_business_verification_form_index_field_is_empty:
+    'Because the index field cannot be found, the following source tables will automatically skip verification:',
+  packages_business_verification_form_index_field_count_is_not_equal:
+    'Because the number of index fields in the source table and the target table is not equal, the following source tables will automatically skip validation:',
+  packages_business_verification_list_renyibiaoshuju: 'Any table data verification',
+  packages_business_verification_list_renwuyizhixing: 'Task Consistency Verification'
 }

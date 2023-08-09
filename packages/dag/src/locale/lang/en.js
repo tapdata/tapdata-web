@@ -327,6 +327,7 @@ export default {
   packages_dag_nodes_database_bucunzaishidiu: 'Discard if not exists',
   packages_dag_nodes_database_shanchushijian: 'Delete Event',
   packages_dag_nodes_database_bucunzaishicha: 'Insert if not exists',
+  packages_dag_nodes_database_bucunzaishidayinrizhi: 'Print log if not exists',
   packages_dag_nodes_database_gengxinshijian: 'Update Event',
   packages_dag_nodes_database_mubiaocunzaishi: 'Update when target exists',
   packages_dag_nodes_database_charushijian: 'Insert Event',
@@ -668,7 +669,12 @@ export default {
   packages_dag_field_add_del_index_xiayi: 'Move down',
   packages_dag_field_add_del_index_shangyi: 'Move Up',
   packages_dag_field_add_del_index_zhiding: 'To Top',
+  packages_dag_src_editor_leixingguolu: 'Type Filter',
+  packages_dag_src_editor_date_processor_field_list: 'Fields affected by operations',
   packages_dag_dynamicAdjustMemoryUsage_title: 'Dynamic Adjustment Memory Usage',
   packages_dag_dynamicAdjustMemoryUsage_tip:
-    'In the full synchronization phase, when the synchronized data occupies a large amount of memory, the system automatically reduces the memory queue usage to prevent memory overflow. However, this operation will slow down the synchronization speed. You are advised to enable this function when the machine resources are low to ensure the stable running of synchronization tasks. When the machine resources are sufficient, it is recommended to shut down.'
+    'In the full synchronization phase, when the synchronized data occupies a large amount of memory, the system automatically reduces the memory queue usage to prevent memory overflow. However, this operation will slow down the synchronization speed. You are advised to enable this function when the machine resources are low to ensure the stable running of synchronization tasks. When the machine resources are sufficient, it is recommended to shut down.',
+  packages_dag_mergeMode: 'Merge Mode',
+  packages_dag_main_table_first: 'Snapshot read primary table priority',
+  packages_dag_sub_table_first: 'Snaphost read child table priority'
 }

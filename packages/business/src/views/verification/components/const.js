@@ -6,7 +6,10 @@ export const TABLE_PARAMS = {
   databaseType: '',
   sortColumn: '',
   fields: [],
-  columns: null
+  columns: null,
+  isFilter: false,
+  conditions: [],
+  capabilities: []
 }
 
 export const META_INSTANCE_FIELDS = {

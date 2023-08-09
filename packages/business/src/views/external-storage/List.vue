@@ -20,15 +20,15 @@
         :label="$t('public_external_memory_type')"
         prop="typeFmt"
       ></ElTableColumn>
-      <!--      <ElTableColumn show-overflow-tooltip min-width="150" :label="$t('public_status')" prop="typeFmt">-->
-      <!--        <template #default="{ row }">-->
-      <!--          <div>-->
-      <!--            <span :class="['status-connection-' + row.status, 'status-block']">-->
-      <!--              {{ getStatus(row.status) }}-->
-      <!--            </span>-->
-      <!--          </div>-->
-      <!--        </template>-->
-      <!--      </ElTableColumn>-->
+      <ElTableColumn show-overflow-tooltip min-width="150" :label="$t('public_status')" prop="typeFmt">
+        <template #default="{ row }">
+          <div>
+            <span :class="['status-connection-' + row.status, 'status-block']">
+              {{ getStatus(row.status) }}
+            </span>
+          </div>
+        </template>
+      </ElTableColumn>
       <ElTableColumn
         show-overflow-tooltip
         min-width="300"
@@ -191,9 +191,11 @@ import { openUrl } from '@tap/shared'
 import { SchemaToForm } from '@tap/form'
 import Test from '@tap/business/src/views/connections/Test'
 
+let timeout = null
+
 export default {
   components: { TablePage, FilterBar, Drawer, SchemaToForm, Test },
-  inject: ['checkAgent'],
+  inject: ['checkAgent', 'buried'],
   data() {
     return {
       loading: false,
@@ -319,6 +321,14 @@ export default {
         }
       }
     }
+
+    //定时轮询
+    timeout = setInterval(() => {
+      this.table.fetch(null, 0, true)
+    }, 10000)
+  },
+  destroyed() {
+    clearInterval(timeout)
   },
   methods: {
     getFilterItems() {
@@ -368,7 +378,7 @@ export default {
           let list = (data?.items || []).map(item => {
             item.typeFmt = EXTERNAL_STORAGE_TYPE_MAP[item.type] || '-'
             item.createTimeFmt = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') || '-'
-            // item.status = item.status || 'ready'
+            item.status = item.status || 'ready'
             return item
           })
           return {
@@ -556,14 +566,26 @@ export default {
         this.dialogTestVisible = true
         this.$refs.test.start(false)
       }).catch(() => {
-        this.buried('connectionTestAgentFail')
+        this.buried('externalStorage_connectionTestAgentFail')
       })
     },
 
-    returnTestData(data) {},
+    returnTestData(data) {
+      if (!data.status || data.status === null) return
+      let status = data.status
+      if (status === 'ready') {
+        this.$message.success(this.$t('public_connection_button_test') + this.$t('public_status_ready'), false)
+      } else {
+        this.$message.error(this.$t('public_connection_button_test') + this.$t('public_status_invalid'), false)
+      }
+      this.buried('externalStorage_connectionTest', '', {
+        result: status === 'ready'
+      })
+      this.table.fetch()
+    },
 
     getStatus(status) {
-      return CONNECTION_STATUS_MAP[status || 'ready']?.text || ''
+      return CONNECTION_STATUS_MAP[status]?.text || ''
     }
   }
 }

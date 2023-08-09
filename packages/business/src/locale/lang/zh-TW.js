@@ -415,6 +415,8 @@ export default {
   packages_business_verification_message_error_joint_table_not_set: '請添加校驗條件',
   packages_business_verification_message_error_joint_table_target_or_source_not_set:
     '校驗條件{val}中源表或目標表未選擇',
+  packages_business_verification_message_error_joint_table_target_or_source_filter_not_set:
+    '校驗條件{val}中源表或目標表数据过滤未選擇',
   packages_business_verification_message_error_joint_table_field_not_match:
     '校驗條件{val}中源表與目標表的索引欄位個數不相等',
   packages_business_verification_message_error_script_no_enter: '開啟高級校驗後，JS校驗邏輯不能為空',
@@ -1080,5 +1082,18 @@ export default {
   packages_business_components_conditionbox_chakanzidingyi: '查看自定義字段',
   packages_business_components_fielddialog_ziduanbuyunxu: '字段不允許為空',
   packages_business_components_fielddialog_zidingyiziduan: '自定義字段',
-  packages_business_verification_list_biaobufenziduan: '表部分字段校驗'
+  packages_business_verification_list_biaobufenziduan: '表部分字段校驗',
+  packages_business_components_conditionbox_laiyuanbiaoshuju: '來源表數據過濾',
+  packages_business_components_conditionbox_mubiaobiaoshuju: '目標表數據過濾',
+  packages_business_data_server_list_apIwendang: 'API文檔導出',
+  packages_business_verification_form_gaojipeizhi: '高級配置',
+  packages_business_verification_form_validate_table_is_empty: '源表和目標表不能為空，請修改校驗表配置',
+  packages_business_verification_form_validate_table_is_empty1:
+    '因為找不到源表或目標表，以下來源連接將會自動跳過校驗：',
+  packages_business_verification_form_condition_is_empty: '關聯校驗條件不能為空，請修改校驗表配置',
+  packages_business_verification_form_index_field_is_empty: '因為找不到索引字段，以下來源表將會自動跳過校驗：',
+  packages_business_verification_form_index_field_count_is_not_equal:
+    '因為源表與目標表的索引字段個數不相等，以下來源表將會自動跳過校驗：',
+  packages_business_verification_list_renyibiaoshuju: '任意表數據校驗',
+  packages_business_verification_list_renwuyizhixing: '任務一致性校驗'
 }

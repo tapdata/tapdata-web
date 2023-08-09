@@ -1,0 +1,96 @@
+.form-js-editor-wrap {
+  position: relative;
+
+  &[theme='one_dark'] {
+    .code-before,
+    .code-after {
+      .hljs {
+        color: #abb2bf;
+        background: rgb(40, 44, 52);
+        .hljs-keyword {
+          color: #c678dd;
+        }
+        .hljs-params {
+          color: #d19a66;
+        }
+      }
+      .hljs-title {
+        color: rgb(97, 175, 239);
+      }
+    }
+  }
+  .code-before,
+  .code-after {
+    .hljs {
+      padding: 0 8px;
+      background: #ebebeb;
+      line-height: 24px;
+      font-size: 12px;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+    }
+  }
+
+  .code-before {
+    .hljs {
+      border-radius: 4px 4px 0 0;
+    }
+  }
+
+  .code-after {
+    .hljs {
+      border-radius: 0 0 4px 4px;
+    }
+  }
+
+  .form-js-editor-wrap {
+    background: #fff;
+  }
+
+  .js-editor-toolbar {
+    background: #fff;
+    font-size: 14px;
+    &-title {
+      display: none;
+    }
+
+    .js-editor-fullscreen {
+      position: absolute;
+      top: 0;
+      right: 0;
+      transform: translateY(-100%);
+      line-height: 40px;
+      .el-link--inner {
+        line-height: inherit;
+      }
+    }
+  }
+
+  &.full-mode {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh !important;
+    z-index: 10;
+
+    .js-editor-toolbar {
+      height: 40px;
+      .js-editor-toolbar-title {
+        display: block;
+      }
+
+      .js-editor-fullscreen {
+        position: static;
+        transform: unset;
+      }
+    }
+  }
+}
+
+.form-python-editor-wrap {
+  .code-before {
+    .hljs {
+      line-height: 18px;
+    }
+  }
+}
