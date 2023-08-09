@@ -154,7 +154,9 @@
     </div>
 
     <div class="bg-white rounded-lg px-6 py-4 flex align-center gap-4">
-      <ElButton type="primary" :loading="submitLoading" @click="submit">订阅</ElButton>
+      <ElButton type="primary" :loading="submitLoading" @click="submit">{{
+        $t('public_button_subscription')
+      }}</ElButton>
       <div class="flex align-items-end lh-1">
         <span>{{ $t('public_total') }}:</span>
         <span class="color-primary fs-5 ml-1">{{ formatPrice(currency) }}</span>

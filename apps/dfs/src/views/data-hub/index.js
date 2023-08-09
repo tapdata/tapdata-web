@@ -1,3 +1,3 @@
-import Intro from './Intro.vue'
+import Index from './Index.vue'
 
-export default Intro
+export default Index

@@ -113,7 +113,6 @@ export default {
 
   data() {
     return {
-      bannerImg,
       keyword: '',
       visible: false,
       overViewVisible: true,
