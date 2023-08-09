@@ -298,7 +298,7 @@ export default {
         it.agentTypeLabel = this.agentTypeMap[it.agentType]
 
         if (it.productType === 'MongoDB') {
-          it.specLabel = `MongoDB ${it.spec.cpu}C${it.spec.memory}G`
+          it.specLabel = `MongoDB ${it.spec.cpu}C ${it.spec.memory}G`
           it.storageSizeLabel = `${it.spec.storageSize}GB`
         } else {
           it.specLabel = getSpec(it.spec) || '-'

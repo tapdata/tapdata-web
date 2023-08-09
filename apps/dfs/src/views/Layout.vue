@@ -168,11 +168,6 @@ export default {
           icon: 'workbench'
         },
         {
-          name: 'dataConsole',
-          title: this.$t('page_title_data_hub'),
-          icon: 'datastore'
-        },
-        {
           name: 'connections',
           title: $t('connection_manage'),
           icon: 'connection'
@@ -191,6 +186,11 @@ export default {
           name: 'dataVerification',
           title: $t('page_title_data_verify'),
           icon: 'data-validation'
+        },
+        {
+          name: 'dataConsole',
+          title: this.$t('page_title_data_hub'),
+          icon: 'datastore'
         }
         // {
         //   name: 'customNodeList',
