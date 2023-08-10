@@ -48,9 +48,9 @@
                 >
                   <el-checkbox
                     :key="second.name"
-                    v-model="second.checkAll"
+                    v-model="second.checked"
                     v-if="second.id"
-                    @change="handleCheckChange($event, item, second)"
+                    @change="handleCheckChange(second, item, 'page')"
                     v-cloak
                   >
                     <span>
@@ -69,17 +69,17 @@
                     :key="second.name"
                     :value="true"
                     disabled
-                    v-if="!second.functionality || !second.functionality.length"
+                    v-if="!second.buttons || !second.buttons.length"
                     v-cloak
                   >
                     <span> 全部功能 </span>
                   </el-checkbox>
                   <el-checkbox
                     v-else
-                    v-for="(sItem, sIndex) in second.functionality"
+                    v-for="(sItem, sIndex) in second.buttons"
                     :key="sIndex"
                     v-model="sItem.checked"
-                    @change="handleCheckChange($event, sItem, sItem)"
+                    @change="handleCheckChange(sItem, second, 'button')"
                     v-cloak
                     class="mr-10"
                   >
@@ -91,9 +91,16 @@
                 <div
                   v-for="(second, secondIndex) in item.children"
                   :key="secondIndex"
-                  :class="['pl-3', secondIndex !== 0 ? 'border-top' : '']"
+                  :class="['pl-3', secondIndex !== 0 && second.filterData ? 'border-top border-bottom' : '']"
                 >
-                  <el-switch :class="{ invisible: !second.showAllData }"></el-switch>
+                  <span v-if="!second.filterData" class="invisible">-</span>
+                  <el-switch
+                    v-else
+                    v-for="(sItem, sIndex) in second.filterData"
+                    v-model="sItem.checked"
+                    :key="sIndex"
+                    @change="handleCheckChange(sItem, second, 'data')"
+                  ></el-switch>
                 </div>
               </el-col>
             </el-row>
@@ -114,17 +121,19 @@ let pageSort = [
     children: [
       {
         name: 'v2_datasource_menu',
-        showAllData: true,
-        functionality: [
+        buttons: [
           {
             label: '创建连接',
-            name: 'v2_datasource_creation',
-            checked: false
+            name: 'v2_datasource_creation'
           },
           {
             label: '复制连接',
-            name: 'v2_datasource_copy',
-            checked: false
+            name: 'v2_datasource_copy'
+          }
+        ],
+        filterData: [
+          {
+            name: 'v2_datasource_all_data'
           }
         ]
       }
@@ -135,8 +144,7 @@ let pageSort = [
     children: [
       {
         name: 'v2_data_replication',
-        showAllData: true,
-        functionality: [
+        buttons: [
           {
             label: '创建任务',
             name: 'v2_data_replication_edit',
@@ -157,12 +165,16 @@ let pageSort = [
             name: 'v2_data_replication_export',
             checked: false
           }
+        ],
+        filterData: [
+          {
+            name: 'v2_data_replication_all_data'
+          }
         ]
       },
       {
         name: 'v2_data_flow',
-        showAllData: true,
-        functionality: [
+        buttons: [
           {
             label: '创建任务',
             name: 'v2_data_flow_edit',
@@ -181,7 +193,12 @@ let pageSort = [
           {
             label: '导出任务',
             name: 'v2_data_flow_export',
-            checked: true
+            checked: false
+          }
+        ],
+        filterData: [
+          {
+            name: 'v2_data_flow_all_data'
           }
         ]
       },
@@ -223,177 +240,6 @@ let pageSort = [
   }
 ]
 
-let moduleMapping = [
-  // { name: 'Dashboard', functional: [{ name: 'Dashboard' }] },
-  {
-    name: 'datasource',
-    children: [
-      { name: 'datasource', allName: 'datasource_all_data' },
-      { name: 'datasource_creation' },
-      { name: 'datasource_edition', allName: 'datasource_edition_all_data' },
-      { name: 'datasource_delete', allName: 'datasource_delete_all_data' }
-    ],
-    classification: [{ name: 'datasource_category_management' }, { name: 'datasource_category_application' }]
-  },
-  {
-    name: 'Data_SYNC',
-    children: [
-      { name: 'Data_SYNC', allName: 'Data_SYNC_all_data' },
-      { name: 'SYNC_job_creation' },
-      { name: 'SYNC_job_edition', allName: 'SYNC_job_edition_all_data' },
-      { name: 'SYNC_job_delete', allName: 'SYNC_job_delete_all_data' },
-      { name: 'SYNC_job_operation', allName: 'SYNC_job_operation_all_data' }
-    ],
-    classification: [{ name: 'SYNC_category_management' }, { name: 'SYNC_category_application' }],
-    functional: [{ name: 'SYNC_job_import' }, { name: 'SYNC_job_export' }]
-  },
-
-  {
-    name: 'Data_verify',
-    children: [
-      { name: 'Data_verify', allName: 'Data_verify_all_data' },
-      { name: 'verify_job_creation' },
-      { name: 'verify_job_edition', allName: 'verify_job_edition_all_data' },
-      { name: 'verify_job_delete', allName: 'verify_job_delete_all_data' }
-      // { name: 'verify_job_execution', allName: 'verify_job_execution_all_data' }
-    ]
-  },
-  {
-    name: 'SYNC_Function_management',
-    functional: [{ name: 'SYNC_Function_management' }]
-  },
-  {
-    name: 'log_collector',
-    functional: [{ name: 'log_collector' }]
-  },
-  {
-    name: 'custom_node',
-    functional: [{ name: 'custom_node' }]
-  },
-  {
-    name: 'shared_cache',
-    functional: [{ name: 'shared_cache' }]
-  },
-  {
-    name: 'data_government',
-    classification: [{ name: 'data_catalog_category_application' }, { name: 'data_catalog_category_management' }]
-  },
-  {
-    name: 'data_catalog',
-    children: [
-      { name: 'data_catalog', allName: 'data_catalog_all_data' },
-      { name: 'new_model_creation' },
-      {
-        name: 'data_catalog_edition',
-        allName: 'data_catalog_edition_all_data'
-      },
-      { name: 'meta_data_deleting', allName: 'meta_data_deleting_all_data' }
-    ]
-  },
-  // {
-  //   name: 'data_quality',
-  //   children: [
-  //     { name: 'data_quality', allName: 'data_quality_all_data' },
-  //     { name: 'data_quality_edition', allName: 'data_quality_edition_all_data' }
-  //   ]
-  // },
-  // {
-  //   name: 'dictionary',
-  //   children: [{ name: 'dictionary', allName: 'dictionary_all_data' }]
-  // },
-  // {
-  //   name: 'data_rules',
-  //   children: [
-  //     { name: 'data_rules', allName: 'data_rules_all_data' },
-  //     { name: 'data_rule_management', allName: 'data_rule_management_all_data' }
-  //   ]
-  // },
-  // {
-  //   name: 'time_to_live',
-  //   children: [
-  //     { name: 'time_to_live', allName: 'time_to_live_all_data' },
-  //     {
-  //       name: 'time_to_live_management',
-  //       allName: 'time_to_live_management_all_data'
-  //     }
-  //   ]
-  // },
-  // {
-  //   name: 'data_lineage',
-  //   functional: [{ name: 'data_lineage' }]
-  // },
-
-  {
-    name: 'API_management',
-    children: [
-      { name: 'API_management', allName: 'API_management_all_data' },
-      { name: 'API_creation' },
-      { name: 'API_edition', allName: 'API_edition_all_data' },
-      { name: 'API_delete', allName: 'API_delete_all_data' },
-      { name: 'API_publish', allName: 'API_publish_all_data' }
-    ],
-    classification: [{ name: 'API_category_application' }, { name: 'API_category_management' }],
-    functional: [{ name: 'API_import' }, { name: 'API_export' }]
-  },
-  {
-    name: 'API_data_explorer',
-    functional: [
-      { name: 'API_data_explorer' },
-      { name: 'API_data_creation' },
-      { name: 'API_data_explorer_deleting' },
-      { name: 'API_data_explorer_export' },
-      { name: 'API_data_download' }
-    ],
-    classification: [{ name: 'API_data_explorer_tagging' }, { name: 'API_data_time_zone_editing' }]
-  },
-  {
-    name: 'API_doc_test',
-    functional: [{ name: 'API_doc_test' }]
-  },
-  {
-    name: 'API_stats',
-    functional: [{ name: 'API_stats' }]
-  },
-  {
-    name: 'API_clients',
-    functional: [{ name: 'API_clients' }, { name: 'API_clients_amangement' }]
-  },
-  {
-    name: 'API_server',
-    functional: [{ name: 'API_server' }, { name: 'API_server_management' }]
-  },
-  {
-    name: 'Cluster_management',
-    children: [
-      { name: 'Cluster_management', allName: 'Cluster_management_all_data' },
-      { name: 'Cluster_operation' },
-      { name: 'status_log' }
-    ]
-  },
-  {
-    name: 'user_management',
-    children: [
-      { name: 'user_management', allName: 'user_management_all_data' },
-      { name: 'user_creation' },
-      { name: 'user_edition', allName: 'user_edition_all_data' },
-      { name: 'user_delete', allName: 'user_delete_all_data' }
-    ],
-    classification: [{ name: 'user_category_management' }, { name: 'user_category_application' }]
-  },
-  {
-    name: 'role_management',
-    children: [
-      { name: 'role_management', allName: 'role_management_all_data' },
-      { name: 'role_creation' },
-      { name: 'role_edition', allName: 'role_edition_all_data' },
-      { name: 'role_delete', allName: 'role_delete_all_data' }
-    ]
-  },
-  {
-    name: 'system_settings',
-    functional: [{ name: 'system_settings' }, { name: 'system_settings_modification' }, { name: 'notice_settings' }]
-  }
-]
 export default {
   data() {
     return {
@@ -425,7 +271,7 @@ export default {
 
   methods: {
     // 获取用户权限数据
-    getMappingData(mappingData, pageData) {
+    getMappingData(pageData) {
       this.loading = true
       let filter = {
         where: {
@@ -451,83 +297,26 @@ export default {
               }
             })
             this.rolemappings = data?.items
-            if (pageData.length) {
-              pageData.forEach(item => {
-                if (this.selectRole && this.selectRole.length) {
-                  if (item.children && item.children.length) {
-                    let checkedCount = [],
-                      pageLength = []
-                    item.children.filter(childItem => {
-                      this.$set(childItem, 'checkAll', this.selectRole.includes(childItem.name))
-                      if (childItem.checkAll) {
-                        checkedCount.push(childItem)
-                      }
-                      if (childItem.id) {
-                        pageLength.push(childItem)
-                      }
-                    })
-                    this.$set(item, 'checked', checkedCount.length === pageLength.length)
-                  }
-                }
-              })
-            }
-            if (mappingData.length) {
-              mappingData.filter(item => {
-                if (this.selectRole && this.selectRole.length) {
-                  if (item.children && item.children.length) {
-                    let checkedCount = [],
-                      allCheckedCount = []
-                    item.children.filter(childItem => {
-                      this.$set(childItem, 'checkAllData', this.selectRole.includes(childItem.allName))
 
-                      this.$set(childItem, 'checked', this.selectRole.includes(childItem.name))
-                      if (childItem.checked) {
-                        checkedCount.push(childItem)
-                      }
-                      if (childItem.checkAllData) {
-                        allCheckedCount.push(childItem)
-                      }
-                    })
-                    let allData = item.children.filter(el => {
-                      return el.allName
-                    })
+            pageData?.forEach(item => {
+              // 页面权限
+              item.children?.forEach(childItem => {
+                this.$set(childItem, 'checked', this.selectRole.includes(childItem.name))
+                this.$set(childItem, 'checkOrigin', this.selectRole.includes(childItem.name))
 
-                    this.$set(item, 'checkAll', checkedCount.length === item.children.length)
-                    this.$set(item, 'checkedAllData', allCheckedCount.length === allData.length)
-                  }
-                  if (item.classification && item.classification.length) {
-                    let checkedCount = []
-                    item.classification.filter(classify => {
-                      this.$set(classify, 'checked', this.selectRole.includes(classify.name))
-                      if (classify.checked) {
-                        checkedCount.push(classify)
-                      }
-                    })
-                    this.$set(item, 'classifiyCheckAll', checkedCount.length === item.classification.length)
-                  }
-                  if (item.functional && item.functional.length) {
-                    let checkedCount = []
-                    item.functional.filter(fun => {
-                      this.$set(fun, 'checked', this.selectRole.includes(fun.name))
-                      if (fun.checked) {
-                        checkedCount.push(fun)
-                      }
-                    })
-                    this.$set(item, 'functionCheckAll', checkedCount.length === item.functional.length)
-                  }
-                }
+                // 按钮权限
+                childItem.buttons?.forEach(el => {
+                  this.$set(el, 'checked', this.selectRole.includes(el.name))
+                  this.$set(el, 'checkOrigin', this.selectRole.includes(el.name))
+                })
+
+                // 显示数据
+                childItem.filterData?.forEach(el => {
+                  this.$set(el, 'checked', this.selectRole.includes(el.name))
+                  this.$set(el, 'checkOrigin', this.selectRole.includes(el.name))
+                })
               })
-            }
-          }
-          if (data?.length === 0) {
-            if (mappingData.length)
-              mappingData.filter(item => {
-                if (item.children && item.children.length) {
-                  item.children.filter(childItem => {
-                    this.$set(childItem, 'checked', childItem.type === 'read')
-                  })
-                }
-              })
+            })
           }
         })
         .finally(() => {
@@ -562,36 +351,13 @@ export default {
                 if (menu.children) {
                   menu.children = pageMenu(menu.children)
                 }
-                if (menu.functionality) {
-                  menu.functionality.forEach(el => {
-                    el.checked = pageMap[el.name]?.status === 'enable'
-                  })
-                }
-                return menu
-              })
-            }
-
-            let moduleFun = items => {
-              return items.map(item => {
-                let page = pageMap[item.name]
-                let menu = Object.assign({}, item, page)
-                if (menu.children) {
-                  menu.children = moduleFun(menu.children)
-                }
-                if (menu.classification) {
-                  menu.classification = moduleFun(menu.classification)
-                }
-                if (menu.functional) {
-                  menu.functional = moduleFun(menu.functional)
-                }
                 return menu
               })
             }
 
             this.dataList = pageMenu(pageSort)
-            this.moduleList = moduleFun(moduleMapping)
             // 页面排序  ---- 结束
-            this.getMappingData(this.moduleList, this.dataList)
+            this.getMappingData(this.dataList)
           }
         })
         .finally(() => {
@@ -600,274 +366,77 @@ export default {
     },
 
     // 页面单选
-    handleCheckChange(event, item, data) {
-      if (typeof item.checkAll === 'undefined') {
-        this.$set(item, 'checkAll', false)
-      }
+    handleCheckChange(data, parentData, type = 'page') {
       //保留当前操作数据
-      this.updateData(data.checkAll, data, item)
+      this.updateData(data.checked, data)
+
+      // 页面权限关闭
+      if (type === 'page' && !data.checked) {
+        // 如果父元素的页面权限全部不勾选，则父元素也隐藏
+        if (
+          !!parentData.children?.every(t => !t.checked) &&
+          !this.checkPrincipalId(this.deletes, parentData.name)?.length
+        ) {
+          parentData.checked = false
+          this.updateData(false, parentData)
+        }
+
+        // 按钮权限全部关闭
+        data.buttons?.forEach(el => {
+          el.checked = false
+          this.updateData(el.checked, el)
+        })
+      }
+
+      // 按钮权限勾选
+      if (type === 'button' && data.checked) {
+        // 页面权限勾选上
+        parentData.checked = true
+        this.updateData(parentData.checked, parentData)
+      }
     },
 
-    // 页面全选
-    handleAllCheck(event, item) {
-      if (typeof item.checked === 'undefined') {
-        this.$set(item, 'checked', false)
-      } else {
-        item.checkAll = event
-      }
-      if (typeof item.checkAll === 'undefined') {
-        this.$set(item, 'checkAll', true)
-      }
-      if (item.children && item.children.length) {
-        for (let i = 0; i < item.children.length; i++) {
-          if (item.checked) {
-            this.$set(item.children[i], 'checkAll', true)
-          } else {
-            this.$set(item.children[i], 'checkAll', false)
-          }
-          this.updateData(item.checkAll, item.children[i], item)
-        }
-      }
-    },
-    updateData(checked, data, parentData) {
+    updateData(checked, data) {
       //保留当前操作数据
       const roleId = this.$route.query.id
       if (checked) {
-        // 子元素
-        if (data.parentId) {
-          let childrenItem = this.checkPrincipalId(this.adds, data.name)
-          if (childrenItem?.length === 0) {
+        // 和初始值不一样，则进行记录
+        if (checked !== data.checkOrigin) {
+          if (this.checkPrincipalId(this.adds, data.name)?.length === 0) {
             this.adds.push({
               principalType: 'PERMISSION',
               principalId: data.name,
-              roleId: roleId
-            })
-          }
-        } else {
-          let parentItem = this.checkPrincipalId(this.adds, parentData.name)
-          if (parentItem?.length === 0) {
-            this.adds.push({
-              principalType: 'PERMISSION',
-              principalId: parentData.name, //父级
               roleId: roleId
             })
           }
         }
         //同时清掉 deletes
-        if (this.deletes && this.deletes.length > 0) {
-          let index = this.deletes.findIndex(del => del.principalId === data.name)
-          if (index > -1) {
-            this.deletes.splice(index, 1)
-          }
-
-          let p_index = this.deletes.findIndex(del => del.principalId === parentData.name)
-          if (p_index > -1) {
-            this.deletes.splice(p_index, 1)
-          }
+        let index = this.deletes?.findIndex(del => del.principalId === data.name)
+        if (index > -1) {
+          this.deletes.splice(index, 1)
         }
       } else {
-        // 子元素
-        if (data.parentId) {
-          let childrenItem = this.checkPrincipalId(this.deletes, data.name)
-          if (childrenItem?.length === 0) {
+        // 和初始值不一样，则进行记录
+        if (checked !== data.checkOrigin) {
+          if (this.checkPrincipalId(this.deletes, data.name)) {
             this.deletes.push({
               principalType: 'PERMISSION',
               principalId: data.name,
               roleId: roleId
             })
           }
-        } else {
-          let parentItem = this.checkPrincipalId(this.deletes, parentData.name)
-          if (parentItem?.length === 0) {
-            this.deletes.push({
-              principalType: 'PERMISSION',
-              principalId: parentData.name, //父级
-              roleId: roleId
-            })
-          }
         }
-        //同时清掉 adds
-        if (this.adds && this.adds.length > 0) {
-          let index = this.adds.findIndex(add => add.principalId === data.name)
-          if (index > -1) {
-            this.adds.splice(index, 1)
-          }
 
-          let p_index = this.adds.findIndex(add => add.principalId === parentData.name)
-          if (p_index > -1) {
-            this.adds.splice(p_index, 1)
-          }
+        //同时清掉 adds
+        let index = this.adds?.findIndex(add => add.principalId === data.name)
+        if (index > -1) {
+          this.adds.splice(index, 1)
         }
       }
     },
     //查找是否存在某个字段
     checkPrincipalId(data, principalId) {
       return data.filter(item => item.principalId === principalId) || []
-    },
-
-    // 权限单个选择
-    handleOneCheckAll(event, item, children, second, type) {
-      if (typeof item.checked === 'undefined') {
-        this.$set(item, 'checked', true)
-      }
-
-      // if (!event) {
-      // 	second.checkAllData = false;
-      // 	item.checkedAllData = false;
-      // }
-
-      let checkedCount = children.filter(el => {
-        return el.checked
-      })
-
-      switch (type) {
-        case 'children':
-          item.checkAll = checkedCount.length === children.length
-          break
-        case 'classify':
-          item.classifiyCheckAll = checkedCount.length === children.length
-          break
-        default:
-          item.functionCheckAll = checkedCount.length === children.length
-          break
-      }
-    },
-    // 权限全选
-    handleAuthoritySelectAll(event, item, children) {
-      if (typeof item.checkAll === 'undefined') {
-        this.$set(item, 'checkAll', false)
-      } else {
-        item.checked = event
-      }
-      if (typeof item.checked === 'undefined') {
-        this.$set(item, 'checked', true)
-      }
-      if (children && children.length) {
-        for (let i = 0; i < children.length; i++) {
-          if (event) {
-            this.$set(children[i], 'checked', true)
-          } else {
-            if (children[i].type !== 'read') {
-              this.$set(children[i], 'checked', false)
-            }
-
-            // this.$set(children[i], 'checkAllData', false);
-            // this.$set(item, 'checkedAllData', false);
-          }
-        }
-      }
-    },
-
-    // 权限全部数据单选
-    handleOneAllData(event, item, children, second) {
-      if (typeof second.checkAllData === 'undefined') {
-        this.$set(second, 'checkAllData', true)
-      }
-      if (typeof item.checkAll === 'undefined') {
-        this.$set(item, 'checkAll', false)
-      } else {
-        item.checked = event
-      }
-      let checkedCount = children.filter(el => {
-        if (el.allName) {
-          return el.checkAllData
-        }
-      })
-      let allDataCount = children.filter(el => {
-        return el.allName
-      })
-      item.checkedAllData = checkedCount.length === allDataCount.length ? true : false
-    },
-
-    // 权限全部数据全选
-    handleCheckedAllData(event, item, children) {
-      if (typeof item.checkedAllData === 'undefined') {
-        this.$set(item, 'checkedAllData', false)
-      } else {
-        item.checkAllData = event
-      }
-      if (children && children.length) {
-        for (let i = 0; i < children.length; i++) {
-          if (event && children[i].checked) {
-            this.$set(children[i], 'checkAllData', true)
-          } else {
-            if (children[i].allName !== 'data_catalog_all_data') {
-              this.$set(children[i], 'checkAllData', false)
-            }
-          }
-        }
-      }
-    },
-
-    // 保存
-    saveSubmit() {
-      let self = this
-      self.saveloading = true
-      const roleId = this.$route.query.id
-
-      // 获取选中数据
-      let pageArr = [],
-        pageMenuArr = [],
-        childreArr = [],
-        childreArrAll = [],
-        classifyArr = [],
-        functionalArr = []
-      this.dataList.forEach(item => {
-        item.children.forEach(child => {
-          if (child.checkAll) {
-            pageArr.push(child.name)
-            pageMenuArr.push(item.name)
-          }
-        })
-      })
-      this.moduleList.forEach(item => {
-        if (item.children && item.children.length)
-          item.children.forEach(child => {
-            if (child.checkAllData) {
-              childreArrAll.push(child.allName)
-            }
-            if (child.checked) {
-              childreArr.push(child.name)
-            }
-          })
-        if (item.classification && item.classification.length)
-          item.classification.forEach(classify => {
-            if (classify.checked) {
-              classifyArr.push(classify.name)
-            }
-          })
-        if (item.functional && item.functional.length)
-          item.functional.forEach(fun => {
-            if (fun.checked) {
-              functionalArr.push(fun.name)
-            }
-          })
-      })
-
-      let saveRoleArr = [...pageMenuArr, ...pageArr, ...childreArr, ...childreArrAll, ...classifyArr, ...functionalArr]
-
-      let newRoleMappings = []
-
-      saveRoleArr.forEach(selectPermission => {
-        if (selectPermission)
-          newRoleMappings.push({
-            principalType: 'PERMISSION',
-            principalId: selectPermission,
-            roleId: roleId
-          })
-      })
-
-      usersApi
-        .deletePermissionRoleMapping(roleId, {
-          data: { data: newRoleMappings }
-        })
-        .then(() => {
-          this.$emit('saveBack')
-          this.$message.success(this.$t('public_message_save_ok'))
-        })
-        .finally(() => {
-          self.saveloading = false
-        })
     },
     //新的保存方法
     save() {
@@ -878,8 +447,6 @@ export default {
         adds: this.adds,
         deletes: this.deletes
       }
-      console.log('data', data)
-      // return
       usersApi
         .updatePermissionRoleMapping(roleId, data)
         .then(() => {
@@ -897,7 +464,18 @@ export default {
     },
     // 返回
     back() {
-      this.$router.push({ name: 'roles' })
+      // 检查是否有改动
+      if (!this.adds.length && !this.deletes.length) {
+        this.$router.push({ name: 'roles' })
+        return
+      }
+
+      this.$confirm('您还未保存设置的权限，是否要保存权限设置？', this.$t('public_message_title_prompt'), {
+        type: 'warning',
+        closeOnClickModal: false
+      }).then(flag => {
+        flag && this.save()
+      })
     }
   }
 }
@@ -1033,6 +611,40 @@ export default {
         border-bottom: 0;
         // border-right: 1px solid #e7e7e7;
       }
+
+      ::v-deep {
+        .e-row {
+          .allSelectBox {
+            line-height: 20px;
+          }
+          .el-checkbox {
+            margin: 0 10px;
+            line-height: 20px;
+            box-sizing: border-box;
+          }
+          .checkbox-position {
+            line-height: 1px;
+            vertical-align: top;
+            .el-checkbox__input {
+              padding-top: 0;
+              vertical-align: top;
+            }
+          }
+          .checkbox-radio {
+            .el-checkbox__input {
+              padding-top: 3px;
+              vertical-align: top;
+            }
+
+            .e-checkbox {
+              padding: 5px 0;
+              margin: 0;
+              font-size: 12px;
+              color: map-get($fontColor, light);
+            }
+          }
+        }
+      }
     }
 
     .page-table {
@@ -1049,42 +661,5 @@ export default {
 
 .alert-tip {
   border-left: 4px solid #ffcf8b;
-}
-</style>
-<style lang="scss">
-.role {
-  .role-table {
-    .e-row {
-      .allSelectBox {
-        line-height: 20px;
-      }
-      .el-checkbox {
-        margin: 0 10px;
-        line-height: 20px;
-        box-sizing: border-box;
-      }
-      .checkbox-position {
-        line-height: 1px;
-        vertical-align: top;
-        .el-checkbox__input {
-          padding-top: 0;
-          vertical-align: top;
-        }
-      }
-      .checkbox-radio {
-        .el-checkbox__input {
-          padding-top: 3px;
-          vertical-align: top;
-        }
-
-        .e-checkbox {
-          padding: 5px 0;
-          margin: 0;
-          font-size: 12px;
-          color: map-get($fontColor, light);
-        }
-      }
-    }
-  }
 }
 </style>
