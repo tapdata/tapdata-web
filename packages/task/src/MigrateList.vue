@@ -41,7 +41,7 @@ export default {
 
   data() {
     return {
-      viewType: 'board',
+      // viewType: 'board',
       syncType: 'migrate',
       taskBuried: {
         new: 'migrationCreate',
@@ -52,6 +52,17 @@ export default {
         new: 'MigrateCreate',
         editor: 'MigrateEditor',
         monitor: 'MigrationMonitor'
+      }
+    }
+  },
+
+  computed: {
+    viewType: {
+      get() {
+        return this.$store.state.replicationTour.view
+      },
+      set(value) {
+        this.$store.commit('setReplicationView', value)
       }
     }
   }

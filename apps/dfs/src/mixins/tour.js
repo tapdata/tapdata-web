@@ -21,25 +21,15 @@ export default {
 
   computed: {
     ...mapState(['replicationTour']),
-    ...mapGetters(['startingTour']),
+    ...mapGetters(['startingTour', 'completedTour', 'pausedTour']),
     userId() {
       return this.$store.state.user.id
     }
   },
 
   watch: {
-    $route: {
-      immediate: true,
-      handler(to) {
-        console.log('watch.$route', to) // eslint-disable-line
-        if (to.name === 'migrateList') {
-          this.$nextTick(() => {
-            this.initBoardDriver()
-          })
-        } else {
-          this.destroyDriver()
-        }
-      }
+    $route(to, from) {
+      console.log('$route', to) // eslint-disable-line
     }
   },
 
@@ -48,9 +38,20 @@ export default {
     await this.checkGuide()
     this.loopLoadAgentCount()
     this.setBaiduIndex() // 百度推广索引
+
+    if (this.subscriptionModelVisible) {
+      const unwatch = this.$watch('subscriptionModelVisible', val => {
+        if (!val) {
+          unwatch()
+          this.checkReplicationTour()
+        }
+      })
+    } else this.checkReplicationTour()
   },
 
   destroyed() {
+    this.unwatchTourRoute?.()
+    this.unwatchTour?.()
     this.destroyDriver()
   },
 
@@ -125,6 +126,7 @@ export default {
     async loadGuide() {
       const guide = await this.$axios.get('api/tcm/user_guide')
       this.$store.commit('setGuide', guide)
+      this.$store.commit('setReplicationTour', guide.tour)
     },
 
     loopLoadAgentCount() {
@@ -437,7 +439,9 @@ export default {
         })
       ]
 
+      this.driverObj?.destroy()
       this.driverObj = driver({
+        showButtons: ['close'],
         steps,
         onDestroyed: () => {
           unwatch()
@@ -480,7 +484,7 @@ export default {
         // } else {
         //   await this.initDriver()
         // }
-      } else if (this.showAgentWarning && !this.enterAgentTour) {
+      } else if (this.showAgentWarning && !this.enterAgentTour && !this.startingTour) {
         // 存在异常的agent
         await this.initAgentTour()
       }
@@ -539,17 +543,28 @@ export default {
 
     destroyDriver() {
       if (this.startingTour) this.pauseTour()
-      this.driverObj?.destroy()
+      this.replicationDriverObj?.destroy()
       // this.driverObj = null
     },
 
-    async initBoardDriver() {
-      this.loadingStep = true
+    checkReplicationTour() {
+      const tour = this.replicationTour
+      if (tour.enable && !this.completedTour) {
+        this.initReplicationTour()
+
+        if (!tour.status) {
+          // 没有进入过
+          this.showReplicationTour = true
+        } else this.$router.push({ name: 'migrateList' }) // 没有完成引导，继续进入数据复制
+      }
+    },
+
+    initReplicationTour() {
       const steps = [
         {
           element: '#btn-add-source',
           elementClick: () => {
-            this.driverObj.destroy()
+            this.replicationDriverObj.destroy()
           },
           onHighlightStarted: (element, step, { state }) => {
             this.setTourIndex(state.activeIndex)
@@ -566,7 +581,7 @@ export default {
         {
           element: '#btn-add-target',
           elementClick: () => {
-            this.driverObj.destroy()
+            this.replicationDriverObj.destroy()
           },
           onHighlightStarted: (element, step, { state }) => {
             this.setTourIndex(state.activeIndex)
@@ -599,8 +614,7 @@ export default {
           }
         }
       ]
-      this.loadingStep = false
-      this.driverObj = driver({
+      this.replicationDriverObj = driver({
         allowClose: process.env.NODE_ENV === 'development',
         showProgress: true,
         steps,
@@ -609,20 +623,51 @@ export default {
           this.setTourIndex(state.activeIndex)
         }
       })
-      // this.driverObj.drive(0)
 
-      const unwatch = this.$watch('$store.state.replicationTour.behavior', behavior => {
-        if (!this.startingTour || !this.driverObj) {
+      const unwatch = this.$watch('replicationTour.behavior', behavior => {
+        if (!this.startingTour || !this.replicationDriverObj) {
           unwatch()
           return
         }
 
-        this.driverObj.drive(this.replicationTour.activeIndex + 1)
+        this.replicationDriverObj.drive(this.replicationTour.activeIndex + 1)
 
         if (behavior === 'add-task') {
           this.setCompleted()
         }
       })
+
+      this.unwatchTourRoute = this.$watch(
+        '$route',
+        to => {
+          if ((to.name === 'migrateList' && this.pausedTour) || this.startingTour) {
+            this.$nextTick(() => {
+              this.startTour()
+              this.replicationDriverObj.drive(this.replicationTour.activeIndex || 0)
+            })
+          } else {
+            this.destroyDriver()
+          }
+
+          if (this.completedTour) this.unwatchTourRoute?.()
+        },
+        {
+          immediate: true
+        }
+      )
+
+      this.unwatchTour = this.$watch(
+        'replicationTour',
+        tour => {
+          this.$axios.post('api/tcm/user_guide', {
+            tour
+          })
+          if (this.completedTour) this.unwatchTour?.()
+        },
+        {
+          deep: true
+        }
+      )
     },
 
     setCompleted() {
@@ -636,7 +681,7 @@ export default {
       this.showReplicationTour = false
       await this.$router.push({ name: 'migrateList' })
       this.startTour()
-      this.driverObj.drive(0)
+      this.replicationDriverObj.drive(0)
     },
 
     handleFinishTour() {

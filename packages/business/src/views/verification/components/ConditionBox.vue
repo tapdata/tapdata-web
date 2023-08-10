@@ -155,6 +155,7 @@
                 <ElRadioGroup
                   v-model="item.modeType"
                   :disabled="getModeTypeDisabled(item)"
+                  @input="handleInputModeType"
                   @change="handleChangeModeType(arguments[0], item, index)"
                 >
                   <ElRadio label="all">{{ $t('packages_business_components_fieldbox_quanziduan') }}</ElRadio>
@@ -707,6 +708,10 @@ export default {
       handler() {
         this.debounceValidate()
       }
+    },
+
+    'list.0.modeType'(val) {
+      console.log('list.0.modeType', val) // eslint-disable-line
     }
   },
 
@@ -1640,6 +1645,10 @@ function validate(sourceRow){
         return
       }
       this.handleCustomFields(item, index)
+    },
+
+    handleInputModeType(val) {
+      console.trace('handleInputModeType', val) // eslint-disable-line
     },
 
     handleChangeFields(data = [], index) {

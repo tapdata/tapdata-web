@@ -980,77 +980,32 @@ export default {
         ]
       }
 
-      this.buried('newAgentStripe', '', {
+      this.buried('newStorageStripe', '', {
         type
       })
       this.$axios
         .post('api/tcm/orders/subscribeV2', params)
         .then(data => {
-          this.buried('newAgentStripe', '', {
+          this.buried('newStorageStripe', '', {
             type,
             result: true
           })
 
-          this.$router.push({
-            name: 'pay',
-            params: {
-              id: data.subscribe
-            }
-          })
-
-          /*if (data.status === 'incomplete') {
-            //订单需要付款
-            if (paymentType === 'online') {
-              //在线支付 打开付款页面
-              this.finish()
-              window.open(data?.payUrl, '_self')
-            } else {
-              //转账支付 打开支付详情弹窗
-              if (this.type === 'newDialog') {
-                this.$emit('closeVisible', false)
-              }
-              this.$router.push({
-                name: 'Instance',
-                params: {
-                  showTransferDialogVisible: true,
-                  price: this.formatPrice(this.currency)
+          this.$router.push(
+            data.status === 'active'
+              ? {
+                  name: 'dataConsole'
                 }
-              })
-            }
-          } else {
-            //订单不需要付款，只需对应跳转不同页面
-            if (params.onlyMdb) {
-              //单独存储
-              this.finish()
-              this.$router.push({
-                name: 'Instance',
-                query: {
-                  active: 'storage'
+              : {
+                  name: 'pay',
+                  params: {
+                    id: data.subscribe
+                  }
                 }
-              })
-            } else if (this.agentDeploy === 'Aliyun' && row.agentType === 'Local') {
-              //半托管-授权码-部署页面
-              this.finish()
-              let downloadUrl = window.App.$router.resolve({
-                name: 'FastDownload',
-                query: {
-                  id: data?.agentId
-                }
-              })
-              window.open(downloadUrl.href, '_self')
-            } else {
-              this.finish()
-              if (this.type === 'newDialog') {
-                this.$emit('closeVisible', false)
-              }
-              this.$router.push({
-                name: 'Instance'
-              })
-            }
-          }*/
+          )
         })
         .catch(() => {
-          this.buried('newAgentStripe', '', {
+          this.buried('newStorageStripe', '', {
             type,
             result: false
           })

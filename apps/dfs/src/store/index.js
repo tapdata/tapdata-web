@@ -35,7 +35,8 @@ const store = new Vuex.Store({
       enable: false,
       activeIndex: null,
       behavior: '', // add-source, add-target, add-task
-      status: '' // starting, completed, pause
+      status: '', // starting, completed, paused
+      view: 'list' // board, list
     },
     // 新人引导
     guide: {
@@ -68,7 +69,7 @@ const store = new Vuex.Store({
 
   getters: {
     startingTour: state => state.replicationTour.status === 'starting',
-
+    pausedTour: state => state.replicationTour.status === 'paused',
     completedTour: state => state.replicationTour.status === 'completed'
   },
 
@@ -95,8 +96,12 @@ const store = new Vuex.Store({
       Object.assign(state.agentCount, agentCount)
     },
 
+    setReplicationTour(state, tour) {
+      Object.assign(state.replicationTour, tour)
+    },
+
     setTourIndex(state, index) {
-      state.replicationTour.index = index
+      state.replicationTour.activeIndex = index
     },
 
     setTourBehavior(state, behavior) {
@@ -112,7 +117,7 @@ const store = new Vuex.Store({
     },
 
     pauseTour(state) {
-      state.replicationTour.status = 'pause'
+      state.replicationTour.status = 'paused'
     },
 
     completeTour(state) {
@@ -121,6 +126,10 @@ const store = new Vuex.Store({
 
     setUpgradeFeeVisible(state, flag) {
       state.upgradeFeeVisible = flag
+    },
+
+    setReplicationView(state, view) {
+      state.replicationTour.view = view
     }
   }
 })
