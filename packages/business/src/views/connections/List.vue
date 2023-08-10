@@ -278,12 +278,11 @@ export default {
   computed: {
     table() {
       return this.$refs.table
-``    },
+    },
     buttonShowMap() {
-      const { isDaas } = this
       return {
-        create: !isDaas || window.__settings__.some(t => t.name === 'v2_datasource_creation'),
-        copy: !isDaas || window.__settings__.some(t => t.name === 'v2_datasource_copy')
+        create: this.$has('v2_datasource_creation'),
+        copy: this.$has('v2_datasource_copy')
       }
     }
   },

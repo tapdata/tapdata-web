@@ -412,21 +412,20 @@ export default {
     },
 
     buttonShowMap() {
-      const { isDaas } = this
       if (this.$route.name === 'dataflowList') {
         return {
-          create: !isDaas || window.__settings__.some(t => t.name === 'v2_data_flow_edit'),
-          copy: !isDaas || window.__settings__.some(t => t.name === 'v2_data_flow_copy'),
-          import: !isDaas || window.__settings__.some(t => t.name === 'v2_data_flow_import'),
-          export: !isDaas || window.__settings__.some(t => t.name === 'v2_data_flow_export')
+          create: this.$has('v2_data_flow_edit'),
+          copy: this.$has('v2_data_flow_copy'),
+          import: this.$has('v2_data_flow_import'),
+          export: this.$has('v2_data_flow_export')
         }
       }
 
       return {
-        create: !isDaas || window.__settings__.some(t => t.name === 'v2_data_replication_edit'),
-        copy: !isDaas || window.__settings__.some(t => t.name === 'v2_data_replication_copy'),
-        import: !isDaas || window.__settings__.some(t => t.name === 'v2_data_replication_import'),
-        export: !isDaas || window.__settings__.some(t => t.name === 'v2_data_replication_export')
+        create: this.$has('v2_data_replication_edit'),
+        copy: this.$has('v2_data_replication_copy'),
+        import: this.$has('v2_data_replication_import'),
+        export: this.$has('v2_data_replication_export')
       }
     }
   },
