@@ -1,59 +1,27 @@
 <template>
-  <div class="swim-lane flex flex-column h-100">
-    <div class="page-header-title bg-white box-card flex align-center position-relative">
-      <span>{{ $t('page_title_data_hub') }}</span>
-      <ElTooltip
-        placement="top"
-        v-if="currentView === 'swimlane'"
-        :content="$t('packages_business_switch_directory_view')"
-        key="swimlane"
-      >
-        <IconButton class="ml-3" @click="toggleView('catalog')" md>list-view</IconButton>
-      </ElTooltip>
-      <ElTooltip placement="top" v-else :content="$t('packages_business_switch_data_console_view')" key="console">
-        <IconButton class="ml-3" @click="toggleView('swimlane')" md>swimlane</IconButton>
-      </ElTooltip>
-      <span
-        v-if="showParentLineage"
-        class="parent-lineage-quit color-linfo cursor-pointer rounded-2 px-4 py-2 position-absolute top-50 start-50 translate-middle"
-        @click="handleQuit"
-        >{{ $t('packages_ldp_src_dashboard_anEsctui') }}</span
-      >
-      <IconButton v-if="isDaas" class="ml-auto" @click="handleSettings" lg>cog-o</IconButton>
-      <!--升级存储-->
-      <!--<ElButton v-else type="primary" plain class="ml-auto">{{ $t('packages_ldp_upgrade_storage') }}</ElButton>-->
-    </div>
+  <div id="replication-board" class="swim-lane flex flex-column h-100 position-relative">
     <div class="list flex flex-fill overflow-hidden bg-white">
-      <div v-if="currentView === 'catalog'" class="px-5 pb-5 w-100 border-top">
-        <Catalogue @create-single-task="hanldeCreateSingleTask"></Catalogue>
-      </div>
-      <template v-else>
-        <component
-          v-for="item in laneOptions"
-          :key="item.type"
-          :is="item.component"
-          :ref="item.type"
-          :dragState="dragState"
-          :settings="settings"
-          :directory="directoryMap[item.type]"
-          :fdmConnection="fdmConnection"
-          :fdmNotExist="fdmNotExist"
-          :mdmNotExist="mdmNotExist"
-          :mdmConnection="mdmConnection"
-          :event-driver="eventDriver"
-          :loadingDirectory="loadingDirectory"
-          :fdmAndMdmId="fdmAndMdmId"
-          :mapCatalog="mapCatalog"
-          :showParentLineage="showParentLineage"
-          @create-connection="handleAdd"
-          @node-drag-end="handleDragEnd"
-          @show-settings="handleSettings"
-          @load-directory="loadDirectory"
-          @preview="handlePreview"
-          @find-parent="handleFindParent"
-          @handle-connection="handleConnection"
-        ></component>
-      </template>
+      <SourceItem
+        ref="source"
+        class="board-source"
+        :fdmAndMdmId="fdmAndMdmId"
+        :dragState="dragState"
+        :event-driver="eventDriver"
+        @create-connection="handleAdd"
+        @node-drag-end="handleDragEnd"
+        @preview="handlePreview"
+        @handle-connection="handleConnection"
+      ></SourceItem>
+      <TargetItem
+        ref="target"
+        :fdmAndMdmId="fdmAndMdmId"
+        :dragState="dragState"
+        :event-driver="eventDriver"
+        @create-connection="handleAdd"
+        @node-drag-end="handleDragEnd"
+        @preview="handlePreview"
+        @handle-connection="handleConnection"
+      ></TargetItem>
     </div>
     <SceneDialog
       :visible.sync="showSceneDialog"
@@ -61,33 +29,20 @@
       @success="handleSuccess"
       @saveAndMore="handleSuccess"
     ></SceneDialog>
-    <Settings
-      :mode.sync="mode"
-      :visible.sync="settingsVisible"
-      :fdmConnection="fdmConnection"
-      @success="handleSettingsSuccess"
-      @init="handleSettingsInit"
-    ></Settings>
     <TablePreview ref="tablePreview" @create-single-task="hanldeCreateSingleTask" />
     <ConnectionPreview ref="connectionView" />
   </div>
 </template>
 
 <script>
-import { mapMutations, mapState, mapGetters } from 'vuex'
-import { IconButton } from '@tap/component'
 import { SceneDialog, EventEmitter } from '@tap/business'
 import { connectionsApi, lineageApi, metadataDefinitionsApi, ldpApi } from '@tap/api'
+import { mapMutations, mapState, mapGetters } from 'vuex'
 
 import SourceItem from './Source'
-import TargetItem from './Target'
-import FDMItem from './FDM'
-import MDMItem from './MDM'
-import Settings from './Settings'
+import TargetItem from './TargetPanel'
 import TablePreview from './TablePreview'
 import ConnectionPreview from './ConnectionPreview'
-import Catalogue from './components/Catalogue'
-import OverView from './components/OverView'
 
 import { jsPlumb } from '@tap/dag'
 
@@ -96,20 +51,14 @@ const TYPE2NAME = {
 }
 
 export default {
-  name: 'Dashboard',
+  name: 'ReplicationBoard',
 
   components: {
     SourceItem,
     TargetItem,
-    FDMItem,
-    MDMItem,
-    Settings,
     TablePreview,
     ConnectionPreview,
-    IconButton,
-    Catalogue,
-    SceneDialog,
-    OverView
+    SceneDialog
   },
 
   data() {
@@ -151,6 +100,7 @@ export default {
   computed: {
     ...mapState('overView', ['panelFlag', 'userId']),
     ...mapGetters('overView', ['stateFlag', 'stateUserId']),
+    ...mapGetters(['startingTour']),
     laneOptions() {
       const result = [
         {
@@ -158,14 +108,6 @@ export default {
           add: true,
           component: 'SourceItem',
           level: 'base'
-        },
-        {
-          component: 'FDMItem',
-          type: 'fdm'
-        },
-        {
-          component: 'MDMItem',
-          type: 'mdm'
         },
         {
           type: 'target',
@@ -209,21 +151,7 @@ export default {
     }
   },
 
-  mounted() {
-    this.$nextTick(() => {
-      this.jsPlumbIns.connect({
-        source: this.$refs.source[0].$el,
-        target: this.$refs.source[0].$el,
-        endpoint: 'Dot',
-        connector: ['Bezier'],
-        anchor: ['Left', 'Right'],
-        endpointStyle: { fill: 'white', radius: 0 }
-      })
-      this.jsPlumbIns.reset()
-
-      window.addEventListener('keydown', this.handleListenerEsc)
-    })
-  },
+  mounted() {},
 
   beforeDestroy() {
     window.removeEventListener('keyword', this.handleListenerEsc)
@@ -251,11 +179,13 @@ export default {
     },
 
     handleSuccess(connection) {
+      this.$store.commit('setTourBehavior', 'add-' + this.selectorType)
+
       if (connection.connection_type === 'source_and_target') {
-        this.$refs.source[0].addItem(connection)
-        this.$refs.target[0].addItem(connection)
+        this.$refs.source.addItem(connection)
+        this.$refs.target.addItem(connection)
       } else {
-        this.$refs[this.selectorType]?.[0]?.addItem(connection)
+        this.$refs[this.selectorType]?.addItem(connection)
       }
     },
 
@@ -357,6 +287,9 @@ export default {
     },
 
     handlePreview(data, connection, callback) {
+      // 引导过程，不给查看详情
+      if (this.startingTour) return
+
       switch (data.LDP_TYPE) {
         case 'table':
           this.$refs.tablePreview.open(data, connection, callback)
@@ -451,8 +384,8 @@ export default {
 
       // 获取dom的方法
       const map = {
-        source: this.$refs.source[0].handleFindTreeDom,
-        target: this.$refs.target[0].handleFindTaskDom,
+        source: this.$refs.source.handleFindTreeDom,
+        target: this.$refs.target.handleFindTaskDom,
         mdm: function () {},
         fdm: this.$refs.fdm[0].handleFindTreeDom
       }
@@ -496,8 +429,8 @@ export default {
 
       // 过滤source列表
       if (keywordOptions) {
-        this.$refs.source[0].searchByKeywordList(keywordOptions.source)
-        this.$refs.target[0].searchByKeywordList(keywordOptions.target)
+        this.$refs.source.searchByKeywordList(keywordOptions.source)
+        this.$refs.target.searchByKeywordList(keywordOptions.target)
         this.$refs.fdm[0].searchByKeywordList(keywordOptions.fdm)
       }
 
@@ -551,6 +484,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.board-source {
+  flex-grow: 0 !important;
+  width: 33.33% !important;
+  flex-basis: 33.33% !important;
+}
 .box-card {
   border-top-right-radius: 8px;
   border-top-left-radius: 8px;
@@ -558,8 +496,8 @@ export default {
 .list {
   ::v-deep {
     .list__title {
-      height: 48px;
-      min-height: 48px;
+      height: 40px;
+      min-height: 40px;
       background: #f3f7fa;
     }
     .list__title__source {

@@ -9,6 +9,7 @@ import ConnectionTypeSelector from './ConnectionTypeSelector'
 import TaskStatus from './TaskStatus'
 import PageHeader from './PageHeader'
 import DiscoveryClassification from './DiscoveryClassification'
+import StageButton from './StageButton'
 
 export {
   StatusItem,
@@ -21,7 +22,8 @@ export {
   ConnectionTypeSelector,
   TaskStatus,
   PageHeader,
-  DiscoveryClassification
+  DiscoveryClassification,
+  StageButton
 }
 
 export * from './DatabaseIcon'

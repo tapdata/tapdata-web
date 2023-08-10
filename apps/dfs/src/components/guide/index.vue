@@ -207,7 +207,14 @@ export default {
         subscribeId: this.subscribeId,
         spec: JSON.stringify(this.orderInfo),
         behavior: JSON.stringify(this.behavior),
-        behaviorAt: this.behaviorAt
+        behaviorAt: this.behaviorAt,
+        tour: {
+          enable: true,
+          activeIndex: null,
+          behavior: '', // add-source, add-target, add-task
+          status: '', // starting, completed, pause
+          replicationView: 'board'
+        }
       }
       this.$axios.post('api/tcm/user_guide', params)
     },

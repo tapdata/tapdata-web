@@ -1083,9 +1083,27 @@ export default {
   packages_business_create_connection_scenedialog_redis:
     'Redis is a high-performance memory database that supports multiple data structures and persistence methods. It is scalable and reliable, and is suitable for application scenarios such as caching, session management, leaderboards, and message queues. ',
   packages_business_create_connection_scenedialog_mongo:
-    'MongoDB is a non-relational database with flexibility, high performance, ease of use and scalability, suitable for application scenarios that need to process large amounts of unstructured data and require fast query and scalability. ',
+    'MongoDB is a flexible and high-performance non-relational database, ideal for processing large amounts of unstructured data with fast querying and scalability in application scenarios.',
   packages_business_create_connection_scenedialog_bigQu:
-    'BigQuery is a managed data warehouse provided by Google Cloud. It is famous for its high speed, scalability and security. It can process PB-level data, integrate with multiple tools, and is suitable for various data analysis and mining scenarios. ',
+    'BigQuery is a Google Cloud-managed data warehouse known for its speed, scalability, and security. It handles PB-scale data, integrates with multiple tools, and suits various data analysis and mining needs.',
+  packages_business_create_connection_mysql_desc:
+    'MySQL is a lightweight database management system used for small and medium-sized websites and applications. It supports data storage, querying, and simple analysis, making it popular for web development and light workloads.',
+  packages_business_create_connection_oracle_desc:
+    'Oracle is a powerful enterprise-level database solution known for its support of large-scale data processing, high-performance transactions, and complex queries. It is widely used in core business systems and data management in enterprises.',
+  packages_business_create_connection_sqlserver_desc:
+    'SQL Server is primarily used for managing and processing large databases. It is suitable for enterprise-level applications and websites, offering features for data storage, querying, analysis, and reporting.',
+  packages_business_create_connection_postgresql_desc:
+    'PostgreSQL is a highly stable database system suitable for complex data storage and queries. It is widely employed in web applications, geographic information systems, data analysis, and enterprise-level applications.',
+  packages_business_create_connection_clickhouse_desc:
+    'ClickHouse is designed for fast querying and analysis of large-scale data. It excels in real-time and log analysis, data warehousing, and handling time-series data.',
+  packages_business_create_connection_elasticsearch_desc:
+    'Elasticsearch is used for full-text search, log analysis, real-time data analysis, and large-scale data indexing. It finds significant applications in search engines, monitoring, and enterprise-level systems.',
+  packages_business_create_connection_dummy_desc:
+    'Dummy is commonly used to represent virtual or placeholder entities with no actual data. In software development and testing, Dummy objects serve to fill gaps or simulate placeholder behavior.',
+  packages_business_create_connection_kafka_desc:
+    'Kafka is ideal for high-throughput real-time data streaming, handling log collection, data transmission, message publishing/subscribing, and stream processing, particularly for large-scale data streams.',
+  packages_business_create_connection_doris_desc:
+    'Doris is well-suited for real-time data analysis and reporting, with support for high-concurrency queries and complex analysis. It is widely used in data warehouses, BI reports, and data visualization.',
   packages_business_swimlane_tablepreview_chuangjianrenwu: 'Create Task',
   packages_business_as_source: 'As Source',
   packages_business_as_target: 'As Target',

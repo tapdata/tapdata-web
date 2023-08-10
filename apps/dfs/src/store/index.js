@@ -14,6 +14,7 @@ const store = new Vuex.Store({
   },
 
   state: {
+    upgradeFeeVisible: false,
     migrateTaskRunningCount: 0,
     instanceLoading: false,
     user: {
@@ -27,6 +28,17 @@ const store = new Vuex.Store({
       enableLicense: false,
       licenseCodes: []
     },
+    highlightBoard: false,
+    driverIndex: 0,
+    driverBehavior: '', // add-source, add-target, add-task
+    replicationTour: {
+      enable: false,
+      activeIndex: null,
+      behavior: '', // add-source, add-target, add-task
+      status: '', // starting, completed, paused
+      view: 'list' // board, list
+    },
+    // 新人引导
     guide: {
       activeStep: '',
       userId: '',
@@ -55,6 +67,12 @@ const store = new Vuex.Store({
     }
   },
 
+  getters: {
+    startingTour: state => state.replicationTour.status === 'starting',
+    pausedTour: state => state.replicationTour.status === 'paused',
+    completedTour: state => state.replicationTour.status === 'completed'
+  },
+
   mutations: {
     setInstanceLoading(state, loading) {
       state.instanceLoading = loading
@@ -76,6 +94,42 @@ const store = new Vuex.Store({
 
     setAgentCount(state, agentCount) {
       Object.assign(state.agentCount, agentCount)
+    },
+
+    setReplicationTour(state, tour) {
+      Object.assign(state.replicationTour, tour)
+    },
+
+    setTourIndex(state, index) {
+      state.replicationTour.activeIndex = index
+    },
+
+    setTourBehavior(state, behavior) {
+      state.replicationTour.behavior = behavior
+    },
+
+    setHighlightBoard(state, flag) {
+      state.highlightBoard = flag
+    },
+
+    startTour(state) {
+      state.replicationTour.status = 'starting'
+    },
+
+    pauseTour(state) {
+      state.replicationTour.status = 'paused'
+    },
+
+    completeTour(state) {
+      state.replicationTour.status = 'completed'
+    },
+
+    setUpgradeFeeVisible(state, flag) {
+      state.upgradeFeeVisible = flag
+    },
+
+    setReplicationView(state, view) {
+      state.replicationTour.view = view
     }
   }
 })

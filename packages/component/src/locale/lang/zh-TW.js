@@ -48,7 +48,7 @@ export default {
   packages_component_src_upgradefee_zhuanyeban: '專業版 ',
   packages_component_src_upgradefee_dangqianbanben: '當前版本',
   packages_component_src_upgradefee_biaozhunshouhouzhi: '標準售後支持',
-  packages_component_src_upgradefee_ge: '3個',
+  packages_component_src_upgradefee_ge: '2個',
   packages_component_src_basic_component: '支援基本的資料複製與開發特性',
   packages_component_src_upgradefee_zuidarenwushu: ' 最大並發任務數: ',
   packages_component_src_upgradefee_mianfei: '免費',

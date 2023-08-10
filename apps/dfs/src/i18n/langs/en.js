@@ -1041,6 +1041,8 @@ export default {
   page_title_run_monitor: 'Run Monitoring',
   page_title_data_verify: 'Validations',
   page_title_data_difference_details: 'Difference Details',
+  page_title_data_hub: 'Real Time Data Hub',
+  page_title_subscribe_storage: 'Subscription Data Storage',
   notify_abnormally_stopped: 'Stopped Unexpectedly',
   header_upgrade: 'Access old version',
   dfs_src_init_huoquyonghuxin: 'Failed to obtain user information, stop retrying and jump to 500',
@@ -1721,5 +1723,8 @@ export default {
   dfs_change_instance_object: 'Instance Object',
   dfs_change_instance_price: 'Price',
   dfs_change_instance_submit: 'Submit',
-  dfs_select_server_type: 'Please select your server type'
+  dfs_select_server_type: 'Please select your server type',
+  dfs_subscribe_storage_tip_title: 'Where does Tapdata store data?',
+  dfs_subscribe_storage_tip_content:
+    'Tapdata provides 10GB storage space in a shared MongoDB Cluster for Free Trial users. You may use this free storage during the 15 day trial period. Only your account can access your data.<br/>Note for Free Trial users a shared cluster is used instead of MongoDB Atlas.'
 }

@@ -1,6 +1,7 @@
-import i18n from '@/i18n'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { driver } from 'driver.js'
 import 'driver.js/dist/driver.css'
+import i18n from '@/i18n'
 import { connectionsApi, taskApi } from '@tap/api'
 import Cookie from '@tap/shared/src/cookie'
 
@@ -12,13 +13,23 @@ export default {
       step: 1,
       agent: {},
       isUnDeploy: false,
-      subscribes: {}
+      subscribes: {},
+      showReplicationTour: false,
+      replicationTourFinish: false
     }
   },
 
   computed: {
+    ...mapState(['replicationTour']),
+    ...mapGetters(['startingTour', 'completedTour', 'pausedTour']),
     userId() {
       return this.$store.state.user.id
+    }
+  },
+
+  watch: {
+    $route(to, from) {
+      console.log('$route', to) // eslint-disable-line
     }
   },
 
@@ -27,25 +38,25 @@ export default {
     await this.checkGuide()
     this.loopLoadAgentCount()
     this.setBaiduIndex() // 百度推广索引
-  },
 
-  beforeRouteUpdate(to, from, next) {
-    next()
-    this.$nextTick(() => {
-      this.beTouring = false
-      const whiteList = ['connectionCreate']
-      if (!whiteList.includes(to.name)) {
-        this.initTour()
-      }
-    })
+    if (this.subscriptionModelVisible) {
+      const unwatch = this.$watch('subscriptionModelVisible', val => {
+        if (!val) {
+          unwatch()
+          this.checkReplicationTour()
+        }
+      })
+    } else this.checkReplicationTour()
   },
 
   destroyed() {
-    this.driverObj?.destroy()
-    this.driverObj = null
+    this.unwatchTourRoute?.()
+    this.unwatchTour?.()
+    this.destroyDriver()
   },
 
   methods: {
+    ...mapMutations(['startTour', 'setTourIndex', 'setHighlightBoard', 'completeTour', 'pauseTour']),
     // 检查是否有安装过agent
     async checkGuide() {
       this.guideLoading = true
@@ -115,6 +126,7 @@ export default {
     async loadGuide() {
       const guide = await this.$axios.get('api/tcm/user_guide')
       this.$store.commit('setGuide', guide)
+      this.$store.commit('setReplicationTour', guide.tour)
     },
 
     loopLoadAgentCount() {
@@ -427,7 +439,9 @@ export default {
         })
       ]
 
+      this.driverObj?.destroy()
       this.driverObj = driver({
+        showButtons: ['close'],
         steps,
         onDestroyed: () => {
           unwatch()
@@ -465,12 +479,12 @@ export default {
       if (this.agentRunningCount) {
         // 有可用的agent
         // await this.initDriver()
-        if (this.hasComplete()) {
-          await this.initAlarmTour()
-        } else {
-          await this.initDriver()
-        }
-      } else if (this.showAgentWarning && !this.enterAgentTour) {
+        // if (this.hasComplete()) {
+        //   await this.initAlarmTour()
+        // } else {
+        //   await this.initDriver()
+        // }
+      } else if (this.showAgentWarning && !this.enterAgentTour && !this.startingTour) {
         // 存在异常的agent
         await this.initAgentTour()
       }
@@ -525,6 +539,153 @@ export default {
           this.$axios.post('api/tcm/user_guide', params)
         }
       }
+    },
+
+    destroyDriver() {
+      if (this.startingTour) this.pauseTour()
+      this.replicationDriverObj?.destroy()
+      // this.driverObj = null
+    },
+
+    checkReplicationTour() {
+      const tour = this.replicationTour
+      if (tour.enable && !this.completedTour) {
+        this.initReplicationTour()
+
+        if (!tour.status) {
+          // 没有进入过
+          this.showReplicationTour = true
+        } else this.$router.push({ name: 'migrateList' }) // 没有完成引导，继续进入数据复制
+      }
+    },
+
+    initReplicationTour() {
+      const steps = [
+        {
+          element: '#btn-add-source',
+          elementClick: () => {
+            this.replicationDriverObj.destroy()
+          },
+          onHighlightStarted: (element, step, { state }) => {
+            this.setTourIndex(state.activeIndex)
+            element?.addEventListener('click', step.elementClick)
+          },
+          onDeselected: (element, step, options) => {
+            element?.removeEventListener('click', step.elementClick)
+          },
+          popover: {
+            showButtons: [],
+            description: i18n.t('dfs_mixins_tour_dianjicichuchuang3')
+          }
+        },
+        {
+          element: '#btn-add-target',
+          elementClick: () => {
+            this.replicationDriverObj.destroy()
+          },
+          onHighlightStarted: (element, step, { state }) => {
+            this.setTourIndex(state.activeIndex)
+            element?.addEventListener('click', step.elementClick)
+          },
+          onDeselected: (element, step) => {
+            element?.removeEventListener('click', step.elementClick)
+          },
+          popover: {
+            showButtons: [],
+            description: i18n.t('dfs_mixins_tour_dianjicichuchuang2')
+          }
+        },
+        {
+          element: '#replication-board',
+          onHighlightStarted: (element, step, { state }) => {
+            this.setTourIndex(state.activeIndex)
+            this.setHighlightBoard(true)
+          },
+          onDeselected: () => {
+            this.setHighlightBoard(false)
+          },
+          popover: {
+            side: 'top',
+            showButtons: [],
+            description: '请展开您的源连接，并拖动一个表到目标连接',
+            onPopoverRender: (popover, { state }) => {
+              console.log('popover', popover) // eslint-disable-line
+            }
+          }
+        }
+      ]
+      this.replicationDriverObj = driver({
+        allowClose: process.env.NODE_ENV === 'development',
+        showProgress: true,
+        steps,
+        onHighlightStarted: (element, step, { state }) => {
+          console.log('设置Index', state.activeIndex) // eslint-disable-line
+          this.setTourIndex(state.activeIndex)
+        }
+      })
+
+      const unwatch = this.$watch('replicationTour.behavior', behavior => {
+        if (!this.startingTour || !this.replicationDriverObj) {
+          unwatch()
+          return
+        }
+
+        this.replicationDriverObj.drive(this.replicationTour.activeIndex + 1)
+
+        if (behavior === 'add-task') {
+          this.setCompleted()
+        }
+      })
+
+      this.unwatchTourRoute = this.$watch(
+        '$route',
+        to => {
+          if ((to.name === 'migrateList' && this.pausedTour) || this.startingTour) {
+            this.$nextTick(() => {
+              this.startTour()
+              this.replicationDriverObj.drive(this.replicationTour.activeIndex || 0)
+            })
+          } else {
+            this.destroyDriver()
+          }
+
+          if (this.completedTour) this.unwatchTourRoute?.()
+        },
+        {
+          immediate: true
+        }
+      )
+
+      this.unwatchTour = this.$watch(
+        'replicationTour',
+        tour => {
+          this.$axios.post('api/tcm/user_guide', {
+            tour
+          })
+          if (this.completedTour) this.unwatchTour?.()
+        },
+        {
+          deep: true
+        }
+      )
+    },
+
+    setCompleted() {
+      this.showReplicationTour = true
+      this.replicationTourFinish = true
+      this.completeTour()
+      this.destroyDriver()
+    },
+
+    async handleStartTour() {
+      this.showReplicationTour = false
+      await this.$router.push({ name: 'migrateList' })
+      this.startTour()
+      this.replicationDriverObj.drive(0)
+    },
+
+    handleFinishTour() {
+      this.showReplicationTour = false
     }
   }
 }

@@ -7,7 +7,7 @@
       </ElLink>
       <div class="dfs-header__button button-bar pr-4 fs-7">
         <!--付费专业版-->
-        <div class="vip-btn mr-4 cursor-pointer" @click="openUpgrade">
+        <div class="vip-btn mr-4 cursor-pointer" @click="setUpgradeFeeVisible(true)">
           <VIcon size="17">icon-vip</VIcon>&nbsp;{{ $t('packages_component_src_upgradefee_dingyuezhuanyeban') }}
         </div>
         <!--加入slack-->
@@ -87,13 +87,12 @@
           </ElDropdownMenu>
         </ElDropdown>
       </div>
-      <!--付费-->
-      <UpgradeFee :visible.sync="openUpgradeFee"></UpgradeFee>
     </div>
   </ElHeader>
 </template>
 <script>
-import { VIcon, UpgradeFee } from '@tap/component'
+import { mapMutations } from 'vuex'
+import { VIcon } from '@tap/component'
 import { langMenu, getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
 import { daysdifference, extractTimeFromObjectId } from '../../util'
 
@@ -102,7 +101,7 @@ import Cookie from '@tap/shared/src/cookie'
 
 export default {
   inject: ['buried'],
-  components: { VIcon, NotificationPopover, UpgradeFee },
+  components: { VIcon, NotificationPopover },
   data() {
     const isDomesticStation = window.__config__?.station === 'domestic'
 
@@ -163,6 +162,8 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['setUpgradeFeeVisible']),
+
     command(command) {
       // let downloadUrl = '';
       switch (command) {

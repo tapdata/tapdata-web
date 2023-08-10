@@ -24,6 +24,7 @@ export default {
   public_schema: '模型',
   public_basic_settings: '基础设置',
   public_advanced_settings: '高级设置',
+  public_recommend: '推荐',
 
   // 状态
   public_status_ready: '有效',
@@ -216,6 +217,7 @@ export default {
   public_connection_form_time_zone_of_time_type: '时间类型的时区',
   public_connection_form_link_plugin_source: '链接插件来源',
   // 任务
+  public_task: '任务',
   public_task_name: '任务名称',
   public_task_type: '任务类型',
   public_task_sync_type: '同步类型',
