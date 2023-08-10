@@ -57,12 +57,25 @@ export default {
   },
 
   computed: {
+    startingTour() {
+      return this.$store.getters.startingTour
+    },
     viewType: {
       get() {
         return this.$store.state.replicationTour.view
       },
       set(value) {
         this.$store.commit('setReplicationView', value)
+      }
+    }
+  },
+
+  watch: {
+    viewType() {
+      if (!this.startingTour) {
+        this.$axios.post('api/tcm/user_guide', {
+          tour: this.$store.state.replicationTour
+        })
       }
     }
   }

@@ -126,7 +126,7 @@ export default {
     async loadGuide() {
       const guide = await this.$axios.get('api/tcm/user_guide')
       this.$store.commit('setGuide', guide)
-      this.$store.commit('setReplicationTour', guide.tour)
+      this.$store.commit('setReplicationTour', guide?.tour)
     },
 
     loopLoadAgentCount() {
@@ -607,7 +607,7 @@ export default {
           popover: {
             side: 'top',
             showButtons: [],
-            description: '请展开您的源连接，并拖动一个表到目标连接',
+            description: '请拖动源连接的一个表到目标连接，开始创建复制任务',
             onPopoverRender: (popover, { state }) => {
               console.log('popover', popover) // eslint-disable-line
             }
