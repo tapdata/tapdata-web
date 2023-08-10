@@ -143,25 +143,8 @@ export default {
       isDomesticStation = window.__config__?.station === 'domestic' //默认是国内站 国际站是 international
     }
 
-    const payMethods = [
-      {
-        icon: 'pay-stripe',
-        label: '在线支付',
-        value: 'Stripe'
-      }
-    ]
-
-    if (isDomesticStation) {
-      payMethods.push({
-        icon: 'pay-cmbc',
-        label: '对公汇款',
-        value: 'Balance'
-      })
-    }
-
     return {
       isDomesticStation,
-      payMethods,
       subscribeId: '',
       subscribeAlterId: '',
       isCard: true,
@@ -196,11 +179,34 @@ export default {
         successUrl: '',
         cancelUrl: ''
       },
-      paymentParams: {}
+      paymentParams: {},
+
+      // 连续订阅
+      isRecurring: true
     }
   },
 
   computed: {
+    payMethods() {
+      const payMethods = [
+        {
+          icon: 'pay-stripe',
+          label: '在线支付',
+          value: 'Stripe'
+        }
+      ]
+
+      if (this.isDomesticStation && !this.isRecurring) {
+        payMethods.push({
+          icon: 'pay-cmbc',
+          label: '对公汇款',
+          value: 'Balance'
+        })
+      }
+
+      return payMethods
+    },
+
     columns() {
       const productType = this.subscribeItems[0]?.productType
       return productType === 'MongoDB'
@@ -291,6 +297,7 @@ export default {
       this.price = this.formatterPrice(currency, subscribe.totalAmount)
       this.subscriptionMethodLabel =
         getPaymentMethod({ periodUnit: subscribe.periodUnit, type: subscribe.subscribeType }) || '-'
+      this.isRecurring = subscribe.subscribeType === 'recurring'
 
       let subscribeItems = subscribe.subscribeItems || []
       this.subscribeItems = subscribeItems.map(it => {
@@ -345,6 +352,7 @@ export default {
       this.price = this.formatterPrice(currency, alter.subscribeItems[0].amount)
       this.subscriptionMethodLabel =
         getPaymentMethod({ periodUnit: subscribe.periodUnit, type: subscribe.subscribeType }) || '-'
+      this.isRecurring = subscribe.subscribeType === 'recurring'
       this.subscribeItems = alter.subscribeItems.map(it => {
         it.price = this.price
         it.agentTypeLabel = this.agentTypeMap[it.agentType]
