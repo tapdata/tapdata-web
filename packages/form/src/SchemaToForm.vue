@@ -99,10 +99,7 @@ export default {
     },
     useEffects() {
       onFormValuesChange(form => {
-        console.log('onFormValuesChange', form) // eslint-disable-line
-        const values = JSON.parse(JSON.stringify(form.values))
-        Object.assign(this.value.source, values.source)
-        Object.assign(this.value.target, values.target)
+        Object.assign(this.value, form.values)
       })
     }
   }
