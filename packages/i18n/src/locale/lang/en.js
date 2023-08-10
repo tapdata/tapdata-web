@@ -24,6 +24,7 @@ export default {
   public_schema: 'Schema',
   public_basic_settings: 'Basic Settings',
   public_advanced_settings: 'Advanced Settings',
+  public_recommend: 'Recommend',
   // state
   public_status_ready: 'Valid',
   public_status_invalid: 'Invalid',
@@ -215,6 +216,7 @@ export default {
   public_connection_form_time_zone_of_time_type: 'Time zone of time type',
   public_connection_form_link_plugin_source: 'Link Plugin Source',
   // Task
+  public_task: 'Task',
   public_task_name: 'Task Name',
   public_task_type: 'Task Type',
   public_task_sync_type: 'Sync Type',

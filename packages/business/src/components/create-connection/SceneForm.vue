@@ -11,7 +11,7 @@
               :colon="true"
               label-width="160"
             ></SchemaToForm>
-            <span class="status">
+            <!--            <span class="status">
               <span class="error" v-if="['invalid'].includes(status)">
                 <VIcon>error</VIcon>
                 <span>
@@ -30,19 +30,23 @@
                   {{ $t('public_status_testing') }}
                 </span>
               </span>
-            </span>
+            </span>-->
           </div>
         </div>
         <footer slot="footer" class="footer">
-          <div class="footer-btn text-start py-4">
-            <!--            <el-button @click="goBack()">{{ $t('public_button_back') }}</el-button>-->
-            <el-button class="test" @click="startTest()">{{ $t('public_connection_button_test') }}</el-button>
-            <el-button type="primary" :loading="submitBtnLoading" @click="submit()">
-              {{ $t('public_button_save') }}
-            </el-button>
-            <el-button type="primary" :loading="saveAndMoreLoading" @click="saveAndMore">{{
+          <div class="footer-btn text-center p-4">
+            <el-button class="test mr-4" @click="startTest()">{{ $t('public_connection_button_test') }}</el-button>
+            <ElTooltip :disabled="!disableSave" :content="saveBtnTip">
+              <div class="inline-block">
+                <el-button :disabled="disableSave" type="primary" :loading="submitBtnLoading" @click="submit()">
+                  {{ $t('public_button_save') }}
+                </el-button>
+              </div>
+            </ElTooltip>
+
+            <!--            <el-button type="primary" :loading="saveAndMoreLoading" @click="saveAndMore">{{
               $t('packages_business_save_and_more')
-            }}</el-button>
+            }}</el-button>-->
           </div>
         </footer>
       </main>
@@ -80,6 +84,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { action } from '@formily/reactive'
 
 import i18n from '@tap/i18n'
@@ -162,8 +167,17 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['startingTour']),
     schemaFormInstance() {
       return this.$refs.schemaToForm.getForm?.()
+    },
+    disableSave() {
+      return this.startingTour && this.status !== 'ready'
+    },
+    saveBtnTip() {
+      if (!this.status) return '请先进行连接测试'
+      if (this.status === 'invalid') return '连接测试无效，请检查您的连接配置'
+      return ''
     }
   },
 
@@ -218,6 +232,14 @@ export default {
       this.pdkFormModel = this.$refs.schemaToForm?.getForm?.()
       this.schemaFormInstance?.validate().then(() => {
         if (!addNext) this.submitBtnLoading = true
+
+        // 正在引导
+        /*if (this.startingTour) {
+          if (!this.status) {
+            this.startTest()
+          }
+        }*/
+
         // 保存数据源
         let id = this.params?.id
         let { pdkOptions } = this
@@ -422,11 +444,14 @@ export default {
         }
       }
 
-      if (enumMap[this.selectorType]) {
-        connectionTypeJson.enum = [enumMap.sourceAndTarget, enumMap[this.selectorType]]
-      }
+      // if (enumMap[this.selectorType]) {
+      //   connectionTypeJson.enum = [enumMap.sourceAndTarget, enumMap[this.selectorType]]
+      // }
 
-      if (this.pdkOptions.connectionType === 'source' || this.pdkOptions.connectionType === 'target') {
+      if (this.selectorType === 'source' || this.selectorType === 'target') {
+        connectionTypeJson['x-hidden'] = true
+        connectionTypeJson.default = this.selectorType
+      } else if (this.pdkOptions.connectionType === 'source' || this.pdkOptions.connectionType === 'target') {
         connectionTypeJson.enum = [enumMap[this.pdkOptions.connectionType]]
       }
 

@@ -1,111 +1,66 @@
 <template>
-  <div v-if="$route.name === 'Workbench'" class="workbench-container">
-    <!--	快速开始	-->
-    <div class="workbench-start workbench-section">
-      <ul class="flex pt-6">
-        <!--        <li>-->
-        <!--          <div class="create-list__item quick-start-video flex justify-content-center align-items-center">-->
-        <!--            <VIcon size="50" class="mr-4">quick-start-read</VIcon>-->
-        <!--            <div class="flex flex-column">-->
-        <!--              <div class="color-white mb-2">新人教程视频</div>-->
-        <!--              <el-button size="mini" class="quick-start-button">点击查看</el-button>-->
-        <!--            </div>-->
-        <!--          </div>-->
-        <!--        </li>-->
-        <li v-for="(item, index) in createList" :key="index">
-          <div class="create-list__item flex justify-content-center align-items-center p-2">
-            <el-link class="create-list__main ml-4" :disabled="$disabledReadonlyUserBtn()" @click="item.action">
-              <VIcon class="ml-2 mr-2" size="20">{{ item.icon }}</VIcon>
-              <span> {{ index + 1 }}. {{ item.name }} </span>
-              <VIcon class="ml-8" size="14">add</VIcon>
-            </el-link>
-          </div>
-        </li>
-      </ul>
-    </div>
-    <!--	{{$t('_workbench_workbench_tansuoshili')}}	-->
-    <div v-show="$i18n.locale !== 'en'" class="workbench-overview workbench-section">
-      <!-- <ElRow :gutter="40" class="section-header py-6">-->
-      <!--  <ElCol :span="18" class="main-title">{{ $t('_workbench_workbench_tansuoshili') }}</ElCol>-->
-      <!--  </ElRow>-->
-      <!--      <el-tabs class="explore-examples" active-name="first">-->
-      <!--        <el-tab-pane label="全部" name="first">-->
-      <!--          <ul class="flex flex-row">-->
-      <!--            <li-->
-      <!--              class="cursor-pointer mr-6"-->
-      <!--              v-for="(item, index) in examplesList"-->
-      <!--              :key="index"-->
-      <!--              @click="goScenes(item.url)"-->
-      <!--            >-->
-      <!--              <div class="position-relative">-->
-      <!--                <img :src="getImg(item.img)" />-->
-      <!--                <div v-if="item.title" class="position-absolute position-text">{{ item.title }}</div>-->
-      <!--                <div v-if="item.subTitle" class="position-absolute position-sub-text">{{ item.subTitle }}</div>-->
-      <!--              </div>-->
-      <!--              <div class="text-center">{{ item.title }}{{ item.subTitle }}</div>-->
-      <!--            </li>-->
-      <!--          </ul>-->
-      <!--        </el-tab-pane>-->
-      <!--      </el-tabs>-->
-      <!--暂时不分类-->
-      <div class="explore-examples explore-examples-wrap">
-        <div class="main-title mb-2">{{ $t('_workbench_workbench_tansuoshili') }}</div>
-        <ul class="flex flex-row overflow-x-auto">
-          <li
-            class="cursor-pointer mr-6"
-            v-for="(item, index) in examplesList"
-            :key="index"
-            @click="goScenes(item.url)"
-          >
-            <div class="position-relative">
-              <img :src="getImg(item.img)" />
-              <div class="position-absolute position-text flex justify-content-center align-items-center flex-column">
-                <div v-if="item.title" class="text-center explore-examples-ellipsis pl-1 pr-1">{{ item.title }}</div>
-                <div v-if="item.subTitle" class="text-center explore-examples-ellipsis">{{ item.subTitle }}</div>
-              </div>
-            </div>
-          </li>
-        </ul>
-      </div>
-    </div>
-    <!--	概览	-->
-    <div class="workbench-overview workbench-section">
-      <ElRow :gutter="24" class="section-header py-4">
-        <ElCol :span="18" class="main-title">{{ $t('workbench_overview') }}</ElCol>
-        <ElCol v-if="$i18n.locale !== 'en'" :span="6" class="aside-title">{{ $t('workbench_notice') }}</ElCol>
-      </ElRow>
-      <ElRow :gutter="24" class="section-body">
-        <ElCol :span="$i18n.locale !== 'en' ? 18 : 24">
-          <ul class="agent-list__list flex">
-            <li v-for="(item, index) in agentList" :key="index" class="agent-list__item" :ref="item.key">
-              <div class="agent-list__name flex align-items-center mx-auto mb-3">
-                <VIcon size="14" class="icon">{{ item.icon }}</VIcon>
-                <span class="ml-1 fs-7">{{ item.name }}</span>
-              </div>
-              <div class="fs-1">
-                {{ item.value }}
-              </div>
-              <div
-                class="flex justify-content-between align-items-center mt-3 px-1"
-                style="height: 80px"
-                v-if="item.list.length > 0"
-              >
-                <div>
-                  <div class="mb-2" v-for="(detail, dIndex) in item.list" :key="dIndex">
-                    <span>{{ detail.label }}</span>
-                    <span>:</span>
-                    <span :class="['ml-1']">{{ detail.value }}</span>
-                  </div>
-                </div>
-                <div style="height: 80px; width: 80px; margin-bottom: 16px">
-                  <Chart ref="lineChart" type="pie" :extend="getPieOption(index)"></Chart>
+  <div class="workbench-container overflow-hidden">
+    <ElRow type="flex" :gutter="24">
+      <ElCol :span="18">
+        <!--探索示例-->
+        <div class="workbench-overview workbench-section bg-white rounded-xl p-4 shadow-sm mb-6">
+          <div class="main-title mb-4">{{ $t('_workbench_workbench_tansuoshili') }}</div>
+          <ul class="flex flex-row overflow-x-auto gap-4">
+            <li class="cursor-pointer" v-for="(item, index) in examplesList" :key="index" @click="goScenes(item.url)">
+              <div class="position-relative">
+                <img :src="getImg(item.img)" />
+                <div class="position-absolute position-text flex justify-content-center align-items-center flex-column">
+                  <div v-if="item.title" class="text-center explore-examples-ellipsis pl-1 pr-1">{{ item.title }}</div>
+                  <div v-if="item.subTitle" class="text-center explore-examples-ellipsis">{{ item.subTitle }}</div>
                 </div>
               </div>
             </li>
           </ul>
-        </ElCol>
-        <ElCol v-if="$i18n.locale !== 'en'" :span="6">
-          <div class="aside-main notice-list flex-grow-1 p-4">
+        </div>
+        <!--概览	-->
+        <div class="bg-white rounded-xl p-4 shadow-sm">
+          <div class="main-title mb-4">{{ $t('workbench_overview') }}</div>
+          <div class="section-body">
+            <ul class="agent-list__list flex">
+              <li v-for="(item, index) in agentList" :key="index" class="agent-list__item" :ref="item.key">
+                <div class="agent-list__name flex align-items-center mx-auto mb-3">
+                  <VIcon size="16" class="icon">{{ item.icon }}</VIcon>
+                  <span class="ml-1 fs-6">{{ item.name }}</span>
+                </div>
+                <div class="fs-1">
+                  {{ item.value }}
+                </div>
+                <div
+                  class="flex justify-content-between align-items-center mt-3 px-1"
+                  style="height: 80px"
+                  v-if="item.list.length > 0"
+                >
+                  <div>
+                    <div class="mb-2" v-for="(detail, dIndex) in item.list" :key="dIndex">
+                      <span>{{ detail.label }}</span>
+                      <span>:</span>
+                      <span :class="['ml-1']">{{ detail.value }}</span>
+                    </div>
+                  </div>
+                  <div style="height: 80px; width: 80px; margin-bottom: 16px">
+                    <Chart ref="lineChart" type="pie" :extend="getPieOption(index)"></Chart>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </ElCol>
+      <ElCol :span="6">
+        <div class="bg-white rounded-xl p-4 shadow-sm mb-6">
+          <div class="main-title mb-4">Welcome to Tapdata</div>
+          <div class="clickable" @click="setUpgradeFeeVisible(true)">
+            <ElImage :src="require('@/assets/image/plan_banner.png')"></ElImage>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl p-4 shadow-sm">
+          <div class="aside-title mb-4">{{ $t('workbench_notice') }}</div>
+          <div class="aside-main notice-list flex-grow-1">
             <ul class="notice-list__list h-100 overflow-y-auto">
               <li
                 v-for="(item, index) in notices.slice(0, 5)"
@@ -124,23 +79,10 @@
               </li>
             </ul>
           </div>
-        </ElCol>
-      </ElRow>
-    </div>
-    <!--  任务数据量统计  -->
-    <div class="workbench-overview workbench-section">
-      <div class="main-title py-6">{{ $t('workbench_statistics_title') }}</div>
-      <div class="p-6 common-card">
-        <div class="fs-7" style="color: #000">
-          <span class="mr-4">{{ $t('workbench_statistics__sub_title') }}</span>
-          <span class="mr-1">{{ $t('workbench_statistics__sub_title_label') }}</span>
-          <span class="color-primary" style="font-family: DIN">{{ taskInputNumber }}</span>
         </div>
-        <div class="pr-4" style="height: 200px">
-          <Chart type="pie" :extend="getLineOption()"></Chart>
-        </div>
-      </div>
-    </div>
+      </ElCol>
+    </ElRow>
+
     <!-- 版本升级弹窗-->
     <el-dialog
       class="dialog-upgrade"
@@ -188,7 +130,6 @@
     </el-dialog>
     <CheckLicense :visible.sync="aliyunMaketVisible" :user="userInfo"></CheckLicense>
   </div>
-  <RouterView v-else></RouterView>
 </template>
 
 <script>
@@ -198,6 +139,7 @@ import { connectionsApi, taskApi } from '@tap/api'
 import { VIcon, Chart } from '@tap/component'
 import timeFunction from '@/mixins/timeFunction'
 import CheckLicense from '@/views/aliyun-market/CheckLicnese'
+import { mapMutations } from 'vuex'
 
 export default {
   name: 'Workbench',
@@ -355,6 +297,7 @@ export default {
     this.init()
   },
   methods: {
+    ...mapMutations(['setUpgradeFeeVisible']),
     init() {
       this.loadAgent() // agent
       this.getConnectionStats() // 任务
@@ -712,10 +655,8 @@ export default {
 <style lang="scss" scoped>
 .workbench-container {
   height: 100%;
-  min-height: 610px;
   min-width: 1100px;
   box-sizing: border-box;
-  padding: 0 24px 24px 24px;
   .pointer {
     cursor: pointer;
   }
@@ -764,10 +705,10 @@ export default {
 .agent-list__item {
   width: 33%;
   height: 190px;
-  border: 1px solid #e1e3e9;
   border-radius: 8px;
-  margin-right: 24px;
+  margin-right: 16px;
   padding: 16px;
+  background-color: #f5f7fa;
   color: map-get($fontColor, dark);
 }
 .agent-list__item:last-child {
@@ -826,7 +767,6 @@ export default {
 }
 .notice-list {
   height: 190px;
-  border: 1px solid #e1e3e9;
   border-radius: 8px;
 }
 .common-card {

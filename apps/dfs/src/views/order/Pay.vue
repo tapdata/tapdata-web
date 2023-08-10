@@ -169,26 +169,6 @@ export default {
       price: 0,
       priceOff: 0,
       subscriptionMethodLabel: '',
-      columns: [
-        {
-          label: i18n.t('dfs_order_list_dingyueleixing'),
-          prop: 'productType'
-        },
-        {
-          label: i18n.t('dfs_instance_instance_guige'),
-          prop: 'specLabel',
-          width: 180
-        },
-        {
-          label: i18n.t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi'),
-          prop: 'agentTypeLabel',
-          width: 180
-        },
-        {
-          label: i18n.t('dfs_user_center_jine'),
-          prop: 'price'
-        }
-      ],
       subscribeItems: [],
       orderInfo: {},
       emailRules: [
@@ -217,6 +197,63 @@ export default {
         cancelUrl: ''
       },
       paymentParams: {}
+    }
+  },
+
+  computed: {
+    columns() {
+      const productType = this.subscribeItems[0]?.productType
+      return productType === 'MongoDB'
+        ? [
+            // {
+            //   label: i18n.t('dfs_order_list_dingyueleixing'),
+            //   prop: 'productType'
+            // },
+            {
+              label: i18n.t('dfs_instance_instance_guige'),
+              prop: 'specLabel',
+              width: 180
+            },
+            {
+              label: '存储空间',
+              prop: 'storageSizeLabel',
+              width: 180
+            },
+            {
+              label: '云服务商',
+              prop: 'provider',
+              width: 180
+            },
+            {
+              label: '地区',
+              prop: 'region',
+              width: 180
+            },
+            {
+              label: i18n.t('dfs_user_center_jine'),
+              prop: 'price'
+            }
+          ]
+        : [
+            {
+              label: i18n.t('dfs_order_list_dingyueleixing'),
+              prop: 'productType'
+            },
+            {
+              label: i18n.t('dfs_instance_instance_guige'),
+              prop: 'specLabel',
+              width: 180
+            },
+            {
+              label: i18n.t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi'),
+              prop: 'agentTypeLabel',
+              width: 180
+            },
+            {
+              label: i18n.t('dfs_user_center_jine'),
+              prop: 'price'
+            }
+          ]
     }
   },
 
@@ -259,7 +296,14 @@ export default {
       this.subscribeItems = subscribeItems.map(it => {
         it.price = this.formatterPrice(currency, it.amount)
         it.agentTypeLabel = this.agentTypeMap[it.agentType]
-        it.specLabel = getSpec(it.spec) || '-'
+
+        if (it.productType === 'MongoDB') {
+          it.specLabel = `MongoDB ${it.spec.cpu}C ${it.spec.memory}G`
+          it.storageSizeLabel = `${it.spec.storageSize}GB`
+        } else {
+          it.specLabel = getSpec(it.spec) || '-'
+        }
+
         return it
       })
 

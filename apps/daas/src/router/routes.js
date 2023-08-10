@@ -986,7 +986,7 @@ export default [
         name: 'dataConsole',
         component: DataConsoleDashboard,
         meta: {
-          title: 'page_title_data_console',
+          title: 'page_title_data_hub',
           hideTitle: true,
           icon: 'data-server',
           code: 'v2_data-console'

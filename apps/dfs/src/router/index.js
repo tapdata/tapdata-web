@@ -28,7 +28,7 @@ const TaskList = async () => {
 }
 
 const MigrateList = async () => {
-  const { MigrateList } = await import('@tap/business')
+  const { MigrateList } = await import('@tap/task')
   return MigrateList
 }
 
@@ -44,11 +44,6 @@ const MigrationMonitorViewer = async () => {
 const VerifyDetails = async () => {
   const { VerifyDetails } = await import('@tap/business')
   return VerifyDetails
-}
-
-const DataConsoleDashboard = async () => {
-  const { Dashboard } = await import('@tap/ldp')
-  return Dashboard
 }
 
 const NoticeList = async () => {
@@ -104,14 +99,24 @@ const routes = [
         meta: {
           title: 'tap_home'
         },
-        redirect: { name: 'dataConsole' },
+        redirect: { name: 'Dashboard' },
         hidden: true
       },
       {
         path: '/workbench',
         name: 'Workbench',
-        redirect: { name: 'dataConsole' },
+        redirect: { name: 'dashboard' },
         hidden: true
+      },
+      {
+        path: '/dashboard',
+        name: 'Dashboard',
+        component: () => import('../views/workbench/Workbench.vue'),
+        meta: {
+          title: 'tap_workbench',
+          icon: 'workbench',
+          hideTitle: true
+        }
       },
       {
         path: '/systemNotice',
@@ -136,7 +141,8 @@ const routes = [
             name: 'createAgent',
             component: () => import(/* webpackChunkName: "instance-details" */ '../views/instance/CreateAgent'),
             meta: {
-              title: i18n.t('dfs_agent_download_subscriptionmodeldialog_peizhishishishu')
+              title: i18n.t('dfs_agent_download_subscriptionmodeldialog_peizhishishishu'),
+              hideTitle: true
             }
           },
           {
@@ -209,7 +215,8 @@ const routes = [
             meta: {
               title: 'task_manage_migrate',
               desc: 'task_manage_migrate_desc',
-              code: 'v2_data_replication'
+              code: 'v2_data_replication',
+              hideTitle: true
             }
           }
         ]
@@ -428,13 +435,24 @@ const routes = [
         }
       },
       {
-        path: '/data-console',
+        path: '/data-hub',
         name: 'dataConsole',
-        component: DataConsoleDashboard,
+        component: () => import(/* webpackChunkName: "data-hub" */ '../views/data-hub'),
         meta: {
-          title: 'page_title_data_console',
+          title: 'page_title_data_hub',
           hideTitle: true,
           icon: 'data-server'
+        }
+      },
+      {
+        path: '/crate-storage',
+        name: 'CreateStorage',
+        component: () => import(/* webpackChunkName: "data-hub" */ '../views/instance/CreateStorage'),
+        meta: {
+          title: 'page_title_subscribe_storage',
+          hideTitle: true,
+          icon: 'data-server',
+          activeMenu: '/data-hub'
         }
       },
       {

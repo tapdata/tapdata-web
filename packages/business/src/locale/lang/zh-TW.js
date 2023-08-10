@@ -1035,6 +1035,24 @@ export default {
     'MongoDB是一種非關係型數據庫，具有靈活性、高性能、易用性和可擴展性，適用於需要處理大量非結構化數據和需要快速查詢和可擴展性的應用場景。 ',
   packages_business_create_connection_scenedialog_bigQu:
     'BigQuery是Google Cloud提供的託管式數據倉庫，以高速、可擴展和安全著稱，可以處理PB級數據，與多個工具集成，適用於各種數據分析和挖掘場景。 ',
+  packages_business_create_connection_mysql_desc:
+    'MySQL 適用於中小規模網站和應用程式，輕量級資料庫管理系統，支援資料儲存、查詢和簡單分析，廣泛用於 Web 開發和輕負載應用。',
+  packages_business_create_connection_oracle_desc:
+    'Oracle 適用於企業級資料庫解決方案，支援大規模資料處理、高效能交易處理和複雜查詢，在企業的核心業務系統和資料管理上廣泛應用。',
+  packages_business_create_connection_sqlserver_desc:
+    'SQL Server 主要用於管理和處理大規模資料庫，適用於企業級應用程式和網站，支援資料儲存、查詢、分析和報告等功能。',
+  packages_business_create_connection_postgresql_desc:
+    'PostgreSQL 適用於高度穩定的資料儲存和複雜查詢，廣泛應用於 Web 應用程式、地理資訊系統、資料分析和企業級應用。',
+  packages_business_create_connection_clickhouse_desc:
+    'ClickHouse 適用於快速查詢和分析大規模資料，特別擅長處理實時分析、日誌分析、資料倉儲和時間序列資料。',
+  packages_business_create_connection_elasticsearch_desc:
+    'Elasticsearch 適用於全文搜尋、日誌分析、實時資料分析和大規模資料索引，廣泛應用於搜尋引擎、監控和企業級應用。',
+  packages_business_create_connection_dummy_desc:
+    'Dummy 通常用於表示虛擬或佔位符實體，無實際資料。在軟體開發和測試中，Dummy 物件用於填充空缺或模擬佔位行為。',
+  packages_business_create_connection_kafka_desc:
+    'Kafka 適用於高吞吐量的實時資料流處理，用於日誌收集、資料傳輸、消息發布/訂閱和流式處理應用，特別擅長大規模資料流處理。',
+  packages_business_create_connection_doris_desc:
+    'Doris 適用於實時資料分析和報表，支援高並發查詢和複雜分析，廣泛應用於資料倉儲、BI 報表和資料視覺化。',
   packages_business_swimlane_tablepreview_chuangjianrenwu: '創建任務',
   packages_business_as_source: '作為源頭',
   packages_business_as_target: '作為目標',
