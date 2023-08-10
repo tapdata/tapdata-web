@@ -128,7 +128,7 @@
         <el-button type="primary" @click="showUpgrade = false">{{ $t('public_button_cancel') }}</el-button>
       </span>
     </el-dialog>
-    <CheckLicense :visible.sync="aliyunMaketVisible" :user="userInfo"></CheckLicense>
+    <!--<CheckLicense :visible.sync="aliyunMaketVisible" :user="userInfo"></CheckLicense>-->
   </div>
 </template>
 
@@ -308,9 +308,9 @@ export default {
       let user = window.__USER_INFO__
       this.userInfo = user
       //检查是云市场用户授权码有效期
-      if (user?.enableLicense) {
-        this.checkLicense(user)
-      }
+      // if (user?.enableLicense) {
+      //   this.checkLicense(user)
+      // }
     },
     loadAgent() {
       let agentList = this.agentList
