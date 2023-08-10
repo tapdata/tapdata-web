@@ -41,7 +41,7 @@
           ></ElDatePicker>
         </div>
       </ElFormItem>
-      <ElFormItem size="mini" :label="$t('packages_dag_nodes_database_quanliangduoxiancheng')">
+      <ElFormItem size="mini" :label="$t('packages_dag_nodes_database_zengliangduoxiancheng')">
         <ElSwitch v-model="dagForm.cdcConcurrent"></ElSwitch>
         <ElInputNumber
           v-if="dagForm.cdcConcurrent"
