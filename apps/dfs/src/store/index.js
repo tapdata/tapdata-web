@@ -113,6 +113,7 @@ const store = new Vuex.Store({
     },
 
     startTour(state) {
+      state.replicationTour.view = 'board'
       state.replicationTour.status = 'starting'
     },
 
