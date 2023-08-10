@@ -25,13 +25,13 @@
         </ElInput>
       </div>
 
-      <div class="flex-fill min-h-0 overflow-auto p-2 position-relative" @scroll="handleScroll">
+      <div class="flex-fill min-h-0 overflow-auto p-4 position-relative" @scroll="handleScroll">
         <!--<draggable v-model="filterList" @start="dragging = true" @end="dragging = false">-->
         <div
           v-for="item in filterList"
           :ref="`wrap__item${item.id}`"
           :key="item.id"
-          class="wrap__item rounded-lg mb-3 position-relative overflow-hidden"
+          class="wrap__item rounded-lg mb-4 position-relative overflow-hidden"
           :class="{ 'opacity-50': item.disabled }"
           @dragover="handleDragOver"
           @dragenter.stop="handleDragEnter($event, item)"

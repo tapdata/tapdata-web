@@ -1,9 +1,9 @@
 <template>
   <div class="workbench-container overflow-hidden">
-    <ElRow type="flex" :gutter="24">
+    <ElRow type="flex" :gutter="16" class="align-items-stretch mb-4">
       <ElCol :span="18">
         <!--探索示例-->
-        <div class="workbench-overview workbench-section bg-white rounded-xl p-4 shadow-sm mb-6">
+        <div class="workbench-overview workbench-section bg-white rounded-xl p-4 shadow-sm h-100">
           <div class="main-title mb-4">{{ $t('_workbench_workbench_tansuoshili') }}</div>
           <ul class="flex flex-row overflow-x-auto gap-4">
             <li class="cursor-pointer" v-for="(item, index) in examplesList" :key="index" @click="goScenes(item.url)">
@@ -17,12 +17,25 @@
             </li>
           </ul>
         </div>
+      </ElCol>
+      <ElCol :span="6">
+        <div class="bg-white rounded-xl p-4 shadow-sm h-100">
+          <div class="main-title mb-4">Welcome to Tapdata</div>
+          <div class="clickable" @click="setUpgradeFeeVisible(true)">
+            <ElImage :src="require('@/assets/image/plan_banner.png')"></ElImage>
+          </div>
+        </div>
+      </ElCol>
+    </ElRow>
+
+    <ElRow type="flex" :gutter="16">
+      <ElCol :span="18">
         <!--概览	-->
         <div class="bg-white rounded-xl p-4 shadow-sm">
           <div class="main-title mb-4">{{ $t('workbench_overview') }}</div>
           <div class="section-body">
             <ul class="agent-list__list flex">
-              <li v-for="(item, index) in agentList" :key="index" class="agent-list__item" :ref="item.key">
+              <li v-for="(item, index) in agentList" :key="index" class="agent-list__item px-4 py-6" :ref="item.key">
                 <div class="agent-list__name flex align-items-center mx-auto mb-3">
                   <VIcon size="16" class="icon">{{ item.icon }}</VIcon>
                   <span class="ml-1 fs-6">{{ item.name }}</span>
@@ -30,19 +43,15 @@
                 <div class="fs-1">
                   {{ item.value }}
                 </div>
-                <div
-                  class="flex justify-content-between align-items-center mt-3 px-1"
-                  style="height: 80px"
-                  v-if="item.list.length > 0"
-                >
-                  <div>
-                    <div class="mb-2" v-for="(detail, dIndex) in item.list" :key="dIndex">
+                <div class="flex justify-content-between align-items-center mt-3 px-1" v-if="item.list.length > 0">
+                  <div class="flex flex-column gap-2">
+                    <div v-for="(detail, dIndex) in item.list" :key="dIndex">
                       <span>{{ detail.label }}</span>
                       <span>:</span>
                       <span :class="['ml-1']">{{ detail.value }}</span>
                     </div>
                   </div>
-                  <div style="height: 80px; width: 80px; margin-bottom: 16px">
+                  <div style="height: 80px; width: 80px">
                     <Chart ref="lineChart" type="pie" :extend="getPieOption(index)"></Chart>
                   </div>
                 </div>
@@ -52,12 +61,6 @@
         </div>
       </ElCol>
       <ElCol :span="6">
-        <div class="bg-white rounded-xl p-4 shadow-sm mb-6">
-          <div class="main-title mb-4">Welcome to Tapdata</div>
-          <div class="clickable" @click="setUpgradeFeeVisible(true)">
-            <ElImage :src="require('@/assets/image/plan_banner.png')"></ElImage>
-          </div>
-        </div>
         <div class="bg-white rounded-xl p-4 shadow-sm">
           <div class="aside-title mb-4">{{ $t('workbench_notice') }}</div>
           <div class="aside-main notice-list flex-grow-1">
@@ -143,7 +146,7 @@ import { mapMutations } from 'vuex'
 
 export default {
   name: 'Workbench',
-  components: { VIcon, Chart, CheckLicense },
+  components: { VIcon, Chart },
   inject: ['checkAgent'],
   mixins: [timeFunction],
   data() {
@@ -177,24 +180,6 @@ export default {
       ], // 创建列表
       agentList: [
         {
-          name: 'Agent',
-          key: 'agent',
-          icon: 'agent',
-          value: 0,
-          list: [
-            {
-              label: $t('public_status_running'),
-              value: 0,
-              class: 'success'
-            },
-            {
-              label: $t('public_agent_status_offline'),
-              value: 0,
-              class: 'error'
-            }
-          ]
-        },
-        {
           name: $t('workbench_overview_connection'),
           key: 'connection',
           icon: 'connection',
@@ -227,6 +212,24 @@ export default {
             {
               label: $t('public_task_type_initial_sync_and_cdc'),
               value: 0
+            }
+          ]
+        },
+        {
+          name: 'Agent',
+          key: 'agent',
+          icon: 'agent',
+          value: 0,
+          list: [
+            {
+              label: $t('public_status_running'),
+              value: 0,
+              class: 'success'
+            },
+            {
+              label: $t('public_agent_status_offline'),
+              value: 0,
+              class: 'error'
             }
           ]
         }
@@ -509,29 +512,31 @@ export default {
     },
     //图表数据组装
     getPieOption(index) {
+      const item = this.agentList[index]
       let data = [
         {
           itemStyle: {
-            color: '#00b42a'
+            color: '#2C65FF'
           },
-          value: this.agentList[index].list[0].value,
-          name: this.agentList[index].list[0].label
+          value: item.list[0].value,
+          name: item.list[0].label
         },
         {
           itemStyle: {
-            color: '#ff7d00'
+            color: '#F3961A'
           },
-          value: this.agentList[index].list[1].value,
-          name: this.agentList[index].list[1].label
+          value: item.list[1].value,
+          name: item.list[1].label
         }
       ]
-      if (index === 2) {
+
+      if (item.key === 'task') {
         let node = {
           itemStyle: {
-            color: '#2C65FF'
+            color: '#0FC6C2'
           },
-          value: this.agentList[index].list[2].value,
-          name: this.agentList[index].list[2].label
+          value: item.list[2].value,
+          name: item.list[2].label
         }
         data.push(node)
       }
@@ -704,7 +709,6 @@ export default {
 }
 .agent-list__item {
   width: 33%;
-  height: 190px;
   border-radius: 8px;
   margin-right: 16px;
   padding: 16px;
