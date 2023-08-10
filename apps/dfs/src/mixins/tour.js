@@ -61,66 +61,60 @@ export default {
     async checkGuide() {
       this.guideLoading = true
       let subscribe = await this.$axios.get(`api/tcm/subscribe`)
-      this.$axios
-        .get('api/tcm/agent')
-        .then(data => {
-          const { guide } = this.$store.state
-          const { subscribeId, agentId } = guide
-          const haveGuide = guide.steps?.length // 进入过引导
-          let items = data?.items || []
-          let subItems = subscribe?.items || []
+      const data = await this.$axios.get('api/tcm/agent')
+      this.guideLoading = false
+      const { guide } = this.$store.state
+      const { subscribeId, agentId } = guide
+      let items = data?.items || []
+      let subItems = subscribe?.items || []
 
-          items = items.filter(({ id }) => !['64a785ada8321f670d2338d1', '64a01d43a1dd0e614a1b7d86'].includes(id))
+      items = items.filter(({ id }) => !['64a785ada8321f670d2338d1', '64a01d43a1dd0e614a1b7d86'].includes(id))
 
+      //是否有未支付的订阅
+      if (!items.length && !subItems.length) {
+        this.subscriptionModelVisible = true
+        return
+      }
+
+      //是否有运行中的实例
+      let isRunning = items.find(i => i.status === 'Running')
+      if (isRunning) {
+        return
+      }
+
+      //是否有支付成功的订阅
+      // if (subItems.find(i => i.status === 'active' && i.totalAmount !== 0)) return
+
+      //订阅0 Agent 0  完全新人引导
+      //订阅不为0 查找是否有待部署状态
+      //Agent不为0 查找是否有待部署状态
+      //优先未支付判定
+      //未支付
+
+      if (subscribeId) {
+        let isUnPay = subItems.find(i => i.status === 'incomplete' && guide.subscribeId === i.id)
+
+        if (isUnPay) {
+          this.subscribes = isUnPay
+          this.subscriptionModelVisible = true
           //是否有未支付的订阅
-          if (!items.length && !subItems.length) {
-            this.subscriptionModelVisible = true
-            return
+          return
+        }
+      }
+
+      if (agentId) {
+        //检查是否有待部署状态
+        let isUnDeploy = items.find(i => i.status === 'Creating' && i.agentType === 'Local' && i.id === agentId)
+        //未部署
+        if (isUnDeploy) {
+          this.agent = {
+            id: isUnDeploy.id
           }
-
-          //是否有运行中的实例
-          let isRunning = items.find(i => i.status === 'Running')
-          if (isRunning) {
-            return
-          }
-
-          //是否有支付成功的订阅
-          // if (subItems.find(i => i.status === 'active' && i.totalAmount !== 0)) return
-
-          //订阅0 Agent 0  完全新人引导
-          //订阅不为0 查找是否有待部署状态
-          //Agent不为0 查找是否有待部署状态
-          //优先未支付判定
-          //未支付
-
-          if (subscribeId) {
-            let isUnPay = subItems.find(i => i.status === 'incomplete' && guide.subscribeId === i.id)
-
-            if (isUnPay) {
-              this.subscribes = isUnPay
-              this.subscriptionModelVisible = true
-              //是否有未支付的订阅
-              return
-            }
-          }
-
-          if (agentId) {
-            //检查是否有待部署状态
-            let isUnDeploy = items.find(i => i.status === 'Creating' && i.agentType === 'Local' && i.id === agentId)
-            //未部署
-            if (isUnDeploy) {
-              this.agent = {
-                id: isUnDeploy.id
-              }
-              this.isUnDeploy = true
-              this.subscriptionModelVisible = true
-              return
-            }
-          }
-        })
-        .finally(() => {
-          this.guideLoading = false
-        })
+          this.isUnDeploy = true
+          this.subscriptionModelVisible = true
+          return
+        }
+      }
     },
 
     async loadGuide() {
