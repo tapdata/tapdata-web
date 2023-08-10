@@ -640,7 +640,7 @@ export default {
       this.unwatchTourRoute = this.$watch(
         '$route',
         to => {
-          if ((to.name === 'migrateList' && this.pausedTour) || this.startingTour) {
+          if (to.name === 'migrateList' && (this.pausedTour || this.startingTour)) {
             this.$nextTick(() => {
               this.startTour()
               this.replicationDriverObj.drive(this.replicationTour.activeIndex || 0)
