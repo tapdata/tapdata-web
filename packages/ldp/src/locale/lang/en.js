@@ -35,5 +35,6 @@ export default {
   packages_ldp_data_hub_intro_how_do_step3: 'Publish API or Send to Dashboards',
   packages_ldp_data_hub_intro_how_do_step3_sub:
     'from data hub, or connect to the Bl product of your choice You may then publish API.',
-  packages_ldp_data_hub_subscribe: 'Subscription Storage'
+  packages_ldp_data_hub_subscribe: 'Subscription Storage',
+  page_title_data_hub: 'Real Time Data Hub'
 }

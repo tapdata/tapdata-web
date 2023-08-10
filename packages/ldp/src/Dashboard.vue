@@ -1,7 +1,7 @@
 <template>
   <div class="swim-lane flex flex-column h-100">
     <div class="page-header-title bg-white box-card flex align-center position-relative">
-      <span>{{ $t('page_title_data_console') }}</span>
+      <span>{{ $t('page_title_data_hub') }}</span>
       <ElTooltip
         placement="top"
         v-if="currentView === 'swimlane'"
@@ -20,7 +20,8 @@
         >{{ $t('packages_ldp_src_dashboard_anEsctui') }}</span
       >
       <IconButton v-if="isDaas" class="ml-auto" @click="handleSettings" lg>cog-o</IconButton>
-      <ElButton v-else type="primary" plain class="ml-auto">{{ $t('packages_ldp_upgrade_storage') }}</ElButton>
+      <!--升级存储-->
+      <!--<ElButton v-else type="primary" plain class="ml-auto">{{ $t('packages_ldp_upgrade_storage') }}</ElButton>-->
     </div>
     <div class="list flex flex-fill overflow-hidden bg-white">
       <div v-if="currentView === 'catalog'" class="px-5 pb-5 w-100 border-top">

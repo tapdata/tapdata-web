@@ -30,5 +30,6 @@ export default {
   packages_ldp_data_hub_intro_how_do_step2_sub: '使用 Tapdata 的複製和轉換功能，將數據從您的數據源同步到數據中心。',
   packages_ldp_data_hub_intro_how_do_step3: '發布API或發送到儀表板',
   packages_ldp_data_hub_intro_how_do_step3_sub: '發布API或發送到儀表板',
-  packages_ldp_data_hub_subscribe: '訂閱存儲'
+  packages_ldp_data_hub_subscribe: '訂閱存儲',
+  page_title_data_hub: '實時數據中心'
 }

@@ -31,7 +31,7 @@
     </template>
 
     <template v-else>
-      <div class="text-center title-cover" slot="title">🎉</div>
+      <div class="text-center title-cover pt-4" slot="title">🎉</div>
 
       <div class="lh-base font-color-dark text-center mt-n4">
         <h1 class="fs-5 fw-sub font-color-dark mb-2">恭喜您已经完成复制任务的引导</h1>
