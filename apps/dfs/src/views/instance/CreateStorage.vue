@@ -520,11 +520,11 @@ export default {
       this.region = this.cloudDetail?.[0]?.region
       this.changeRegion()
       //数据初始化
-      this.mdbPriceId = 'FreeTier'
-      this.mongodbSpecPrice = ''
-      this.mdbPrices = 0
-      this.mongodbSpec = '0-0'
-      this.memorySpace = 5
+      // this.mdbPriceId = 'FreeTier'
+      // this.mongodbSpecPrice = ''
+      // this.mdbPrices = 0
+      // this.mongodbSpec = '0-0'
+      // this.memorySpace = 5
     },
     changeRegion() {
       let region = this.cloudDetail.filter(it => it.region === this.region) || []
@@ -807,9 +807,12 @@ export default {
           ).sort((a, b) => {
             return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
           })
-          // 已体验过免费
-          if (this.mdbFreeCount > 0) {
-            items = items.filter(it => it.chargeProvider !== 'FreeTier')
+
+          let filterFree = items.filter(it => it.chargeProvider !== 'FreeTier')
+
+          // 已体验过免费 or 没有免费的
+          if (this.mdbFreeCount > 0 || filterFree.length === items.length) {
+            items = filterFree
             //默认值取第一个
             this.mongodbSpec = items[0]?.value
             this.memorySpace = 100

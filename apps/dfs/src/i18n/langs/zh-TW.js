@@ -1575,5 +1575,6 @@ export default {
     '免費試用的 MongoDB 服務為 Tapdata 管理的托管雲數據庫，他為您提供了 10GB 的存儲空間供您在 15 天的時間內進行測試與使用，您的數據只有您的帳號有權限訪問。<br/>免費用戶將使用共享集群進行儲存，而非MongoDB Atlas。',
   dfs_subscribe_storage_tip_content:
     'Tapdata使用MongoDB Atlas作為集中式存儲的托管雲數據庫。MongoDB Atlas支持AWS、Azure和GCP的大多數地區。Tapdata將逐步添加對所有Atlas地區的支持。您可以選擇最接近您的數據源和目標應用程序的區域和可用區。<br/>Tapdata為每個客戶創建一個專用集群，以確保數據安全。',
-  dfs_offline_deployment: '線下部署'
+  dfs_offline_deployment: '線下部署',
+  dfs_wait_storage_init: '订阅成功。您訂閱的儲存正在初始化，這可能需要1到20分鐘。請耐心等待。'
 }

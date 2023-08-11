@@ -246,7 +246,7 @@ export default {
     this.initTree()
   },
 
-  beforeDestroyed() {
+  beforeDestroy() {
     clearTimeout(this.treeTimer)
     this.unwatchFdmAndMdm?.()
   },

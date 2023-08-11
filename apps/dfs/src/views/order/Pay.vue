@@ -207,9 +207,12 @@ export default {
       return payMethods
     },
 
+    isStorage() {
+      return this.subscribeItems[0]?.productType === 'MongoDB'
+    },
+
     columns() {
-      const productType = this.subscribeItems[0]?.productType
-      return productType === 'MongoDB'
+      return this.isStorage
         ? [
             // {
             //   label: i18n.t('dfs_order_list_dingyueleixing'),
@@ -330,17 +333,22 @@ export default {
         }
       })
 
-      this.payForm.successUrl =
-        subscribe.platform === 'fullManagement'
-          ? location.origin + location.pathname + agentUrl.href
-          : location.origin +
-            location.pathname +
-            this.$router.resolve({
-              name: 'installAgent',
-              params: {
-                id: subscribeItems[0].resourceId
-              }
-            }).href
+      this.payForm.successUrl = this.isStorage
+        ? location.origin +
+          location.pathname +
+          this.$router.resolve({
+            name: 'dataConsole'
+          }).href
+        : subscribe.platform === 'fullManagement'
+        ? location.origin + location.pathname + agentUrl.href
+        : location.origin +
+          location.pathname +
+          this.$router.resolve({
+            name: 'installAgent',
+            params: {
+              id: subscribeItems[0].resourceId
+            }
+          }).href
       this.payForm.cancelUrl = location.href
     },
 

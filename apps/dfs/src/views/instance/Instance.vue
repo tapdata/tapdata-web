@@ -476,7 +476,6 @@
               <div class="w-25 flex justify-content-end align-items-start mt-2 py-4 px-4">
                 <ElButton
                   v-if="item.scope === 'Private' && item.deploymentType !== 'Local'"
-                  size="mini"
                   type="text"
                   @click="handleCreateIps(item)"
                   >{{ $t('dfs_instance_instance_tianjiabaimingdan') }}</ElButton

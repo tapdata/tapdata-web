@@ -96,15 +96,13 @@
 </template>
 
 <script>
-import { Dashboard } from '@tap/ldp'
-
 export default {
   name: 'Intro',
   data() {
     const isDomesticStation = window.__config__?.station === 'domestic' //默认是国内站 国际站是 international
 
     return {
-      isDomesticStation
+      isDomesticStation: false
     }
   },
 
