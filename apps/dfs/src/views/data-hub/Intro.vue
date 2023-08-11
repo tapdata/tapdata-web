@@ -80,8 +80,15 @@
       </div>
 
       <div class="text-center">
-        <ElButton @click="$router.push({ name: 'CreateStorage' })" type="primary" size="large">{{
-          $t('packages_ldp_data_hub_subscribe')
+        <ElButton
+          v-if="!isDomesticStation"
+          @click="$router.push({ name: 'CreateStorage' })"
+          type="primary"
+          size="large"
+          >{{ $t('packages_ldp_data_hub_subscribe') }}</ElButton
+        >
+        <ElButton v-else @click="openOfflineDeployment" type="primary" size="large">{{
+          $t('dfs_offline_deployment')
         }}</ElButton>
       </div>
     </div>
@@ -92,7 +99,20 @@
 import { Dashboard } from '@tap/ldp'
 
 export default {
-  name: 'Intro'
+  name: 'Intro',
+  data() {
+    const isDomesticStation = window.__config__?.station === 'domestic' //默认是国内站 国际站是 international
+
+    return {
+      isDomesticStation
+    }
+  },
+
+  methods: {
+    openOfflineDeployment() {
+      window.open('https://tapdata.net/tapdata-on-prem/demo.html')
+    }
+  }
 }
 </script>
 

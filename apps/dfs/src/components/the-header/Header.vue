@@ -5,32 +5,40 @@
       <ElLink class="logo" @click="command('workbench')">
         <img src="../../assets/image/logo.svg" alt="" />
       </ElLink>
-      <div class="dfs-header__button button-bar pr-4 fs-7">
+      <div class="dfs-header__button button-bar pr-4 fs-7 flex gap-4 align-center">
         <!--付费专业版-->
-        <div class="vip-btn mr-4 cursor-pointer" @click="setUpgradeFeeVisible(true)">
-          <VIcon size="17">icon-vip</VIcon>&nbsp;{{ $t('packages_component_src_upgradefee_dingyuezhuanyeban') }}
+        <div class="vip-btn rounded-4 cursor-pointer flex align-center gap-1" @click="setUpgradeFeeVisible(true)">
+          <VIcon size="18">icon-vip</VIcon>&nbsp;{{ $t('packages_component_src_upgradefee_dingyuezhuanyeban') }}
         </div>
         <!--加入slack-->
         <div
           v-if="!isDomesticStation"
-          class="command-item mr-6 position-relative inline-flex align-items-center"
+          class="command-item position-relative inline-flex align-items-center rounded-4"
           @click="goSlack"
         >
           <ElImage class="slack-logo" :src="require('@/assets/image/slack.svg')" />
           <span class="cursor-pointer ml-1">{{ $t('dfs_the_header_header_jiaruSla') }}</span>
         </div>
         <!--有奖问卷-->
-        <div v-if="showQuestionnaire" class="command-item mr-6 position-relative" @click="goQuestionnaire">
+        <div v-if="showQuestionnaire" class="command-item position-relative rounded-4" @click="goQuestionnaire">
           <span class="cursor-pointer"> {{ $t('dfs_the_header_header_prize_questionnaire') }} </span>
           <VIcon class="position-absolute discount-hot-icon">hot-o</VIcon>
         </div>
+        <!--线下部署-->
+        <div class="command-item cursor-pointer flex align-center gap-1 rounded-4" @click="goOfflineDeploy">
+          <VIcon size="16">deploy</VIcon>
+          <span> {{ $t('dfs_offline_deployment') }} </span>
+        </div>
         <!--我的工单-->
-        <div class="command-item mr-6" @click="goTicketSystem">
-          <VIcon size="17">workorder</VIcon>
+        <div class="command-item flex align-center gap-1 rounded-4" @click="goTicketSystem">
+          <VIcon size="16">workorder</VIcon>
           <span class="cursor-pointer"> {{ $t('dfs_the_header_header_wodegongdan') }}</span>
         </div>
         <!---demo环境-->
-        <div v-if="domain === 'demo.cloud.tapdata.net' && lang !== 'en'" class="marquee-container cursor-pointer">
+        <div
+          v-if="domain === 'demo.cloud.tapdata.net' && lang !== 'en'"
+          class="marquee-container cursor-pointer rounded-4"
+        >
           <div class="marquee-box">
             <span>{{ $t('dfs_data_dashboard_Marquee') }}</span>
           </div>
@@ -39,20 +47,19 @@
           <p class="words">{{ $t('dfs_data_dashboard_Marquee') }}</p>
         </div>
 
-        <div class="command-item mr-6" v-for="item in topBarLinks" @click="handleGo(item)">
-          <VIcon v-if="item.icon" class="mr-2" size="17">{{ item.icon }}</VIcon>
+        <div
+          class="command-item flex align-center gap-2 rounded-4"
+          v-for="(item, i) in topBarLinks"
+          :key="i"
+          @click="handleGo(item)"
+        >
+          <VIcon v-if="item.icon" size="16">{{ item.icon }}</VIcon>
           <span class="cursor-pointer">{{ $t(item.text) }}</span>
         </div>
 
-        <NotificationPopover class="command-item mr-2 flex align-items-center"></NotificationPopover>
-        <ElDropdown
-          class="mr-2"
-          placement="bottom"
-          :show-timeout="0"
-          @command="changeLanguage"
-          v-if="!onlyEnglishLanguage"
-        >
-          <span class="cursor-pointer command-item icon-btn">
+        <NotificationPopover class="command-item flex align-items-center rounded-4"></NotificationPopover>
+        <ElDropdown placement="bottom" :show-timeout="0" @command="changeLanguage" v-if="!onlyEnglishLanguage">
+          <span class="cursor-pointer command-item rounded-4 icon-btn">
             <VIcon size="20">{{ 'language-' + lang }}</VIcon>
           </span>
           <ElDropdownMenu slot="dropdown" class="no-triangle">
@@ -61,7 +68,7 @@
             </ElDropdownItem>
           </ElDropdownMenu>
         </ElDropdown>
-        <ElDropdown class="command-item menu-user" placement="bottom" :show-timeout="0" @command="command">
+        <ElDropdown class="command-item menu-user rounded-4" placement="bottom" :show-timeout="0" @command="command">
           <div class="username flex align-items-center">
             <img
               v-if="user.avatar"
@@ -264,6 +271,9 @@ export default {
         'https://join.slack.com/share/enQtNTYxNjI0NDQ5ODM4Ni1kMWQ0ZTMzYzYxZDg3YTk4NTQ0MmViZWRiNDhmODQwYTBjOTZiMDc4ZjgxMDM5YzBjNDZiYjIwZjJlOWQzNzBl',
         '_blank'
       )
+    },
+    goOfflineDeploy() {
+      window.open('https://tapdata.net/tapdata-on-prem/demo.html')
     }
   }
 }
@@ -462,10 +472,10 @@ export default {
   content: attr(text);
 }
 .vip-btn {
-  color: map-get($color, white);
+  position: relative;
+  color: #fff;
   padding: 4px 8px;
   background: linear-gradient(93.39deg, #2c65ff 10.45%, #702cff 98.21%);
-  border-radius: 4px;
 }
 .slack-logo {
   height: 14px;

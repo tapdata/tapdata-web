@@ -1,8 +1,8 @@
 <template>
   <ElPopover placement="bottom" popper-class="notive-popove" trigger="hover" @show="activeTab = 'system'">
     <div class="btn" slot="reference" @click="toCenter()">
-      <ElBadge class="item-badge" :value="unRead" :max="99" :hidden="!unRead">
-        <VIcon class="mr-2" size="17">lingdang</VIcon>
+      <ElBadge class="item-badge flex align-center gap-1 rounded-4" :value="unRead" :max="99" :hidden="!unRead">
+        <VIcon size="16">lingdang</VIcon>
         <span>{{ $t('header_notify') }}</span>
       </ElBadge>
     </div>
