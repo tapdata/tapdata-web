@@ -8,8 +8,10 @@
           <ul class="flex flex-row overflow-x-auto gap-4">
             <li class="cursor-pointer" v-for="(item, index) in examplesList" :key="index" @click="goScenes(item.url)">
               <div class="position-relative">
-                <img :src="getImg(item.img)" />
-                <div class="position-absolute position-text flex justify-content-center align-items-center flex-column">
+                <ElImage class="scene-img" :src="item.img" />
+                <div
+                  class="position-absolute position-text flex justify-content-center align-items-center flex-column fs-8 py-2"
+                >
                   <div v-if="item.title" class="text-center explore-examples-ellipsis pl-1 pr-1">{{ item.title }}</div>
                   <div v-if="item.subTitle" class="text-center explore-examples-ellipsis">{{ item.subTitle }}</div>
                 </div>
@@ -262,35 +264,35 @@ export default {
           type: 'all',
           title: i18n.t('_workbench_workbench_jiangshujudaoru'),
           subTitle: i18n.t('_workbench_workbench_jiangshujudaorusub'),
-          img: 'table-store',
+          img: require('@/assets/image/dashboard/scene1.png'),
           url: 'https://tapdata.net/how-to-import-data-into-tablestore-alibaba-cloud.html?fromColId=104'
         },
         {
           type: 'all',
           title: i18n.t('_workbench_workbench_shujuruhucang'),
           subTitle: 'MySQL → Doris',
-          img: 'mysql-doris',
+          img: require('@/assets/image/dashboard/scene2.png'),
           url: 'https://tapdata.net/real-time-data-entry-into-the-lake-and-warehouse.html?fromColId=104'
         },
         {
           type: 'all',
           title: i18n.t('_workbench_workbench_yigoushishitong'),
           subTitle: 'Oracle → MySQL ',
-          img: 'oracle-mysql',
+          img: require('@/assets/image/dashboard/scene3.png'),
           url: 'https://tapdata.net/real-time-sync-of-hdb-from-oracle-to-mysql.html?fromColId=104'
         },
         {
           type: 'all',
           title: i18n.t('_workbench_workbench_shujurucang'),
           subTitle: 'SQL Server → BigQuery ',
-          img: 'bigQuery',
+          img: require('@/assets/image/dashboard/scene4.png'),
           url: 'https://tapdata.net/tapdata-connector-sqlserver-bigquery.html'
         },
         {
           type: 'all',
           title: i18n.t('_workbench_workbench_shujurucang'),
           subTitle: 'MySQL → ClickHouse',
-          img: 'clickHouse',
+          img: require('@/assets/image/dashboard/scene5.png'),
           url: 'https://tapdata.net/tapdata-connector-mysql-clickhouse.html?fromColId=104'
         }
       ]
@@ -799,11 +801,10 @@ export default {
   left: 0;
   color: map-get($color, white);
   width: 100%;
-  height: 60px;
+  line-height: 14px;
 }
 .explore-examples-ellipsis {
   /* white-space: nowrap; */
-  width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -815,5 +816,9 @@ export default {
 .quick-start-button {
   padding: 4px 15px;
   border-radius: 5px;
+}
+.scene-img {
+  width: 161px;
+  height: 92px;
 }
 </style>
