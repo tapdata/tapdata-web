@@ -1602,6 +1602,8 @@ export default {
   dfs_change_instance_submit: '提交变更',
   dfs_select_server_type: '请选择您的服务器类型',
   dfs_subscribe_storage_tip_title: 'Tapdata数据存储在哪里？',
+  dfs_subscribe_free_storage_tip_content:
+    '免费试用的 MongoDB 服务为 Tapdata 管理的托管云数据库，他为您提供了 10GB 的存储空间供您在 15 天的时间内进行测试与使用，您的数据只有您的账号有权限访问。<br/>免费用户将使用共享集群进行储存，而非MongoDB Atlas。',
   dfs_subscribe_storage_tip_content:
     'Tapdata使用MongoDB Atlas作为集中式存储的托管云数据库。MongoDB Atlas支持AWS、Azure和GCP的大多数地区。Tapdata将逐步添加对所有Atlas地区的支持。您可以选择最接近您的数据源和目标应用程序的区域和可用区。<br/>Tapdata为每个客户创建一个专用集群，以确保数据安全。',
   dfs_create_computed_agent: '创建计算引擎'

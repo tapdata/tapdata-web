@@ -316,16 +316,16 @@ export default {
       // }
     },
     loadAgent() {
-      let agentList = this.agentList
+      let agent = this.agentList.find(({ key }) => key === 'agent')
       const loading = this.$loading({
         target: this.$refs.agent?.[0]
       })
       this.$axios
         .get('api/tcm/agent/agentCount')
         .then(data => {
-          agentList[0].value = data.agentTotalCount || 0
-          agentList[0].list[0].value = data.agentRunningCount || 0
-          agentList[0].list[1].value = agentList[0].value - agentList[0].list[0].value
+          agent.value = data.agentTotalCount || 0
+          agent.list[0].value = data.agentRunningCount || 0
+          agent.list[1].value = agent.value - agent.list[0].value
         })
         .finally(() => {
           loading.close()
@@ -339,12 +339,12 @@ export default {
       const data = await connectionsApi.getStats().finally(() => {
         connectionLoading.close()
       })
-      let agentList = this.agentList
+      const connection = this.agentList.find(({ key }) => key === 'connection')
       const stats = data || {}
       if (stats) {
-        agentList[1].value = stats.total
-        agentList[1].list[0].value = stats.ready || 0
-        agentList[1].list[1].value = stats.invalid || 0
+        connection.value = stats.total
+        connection.list[0].value = stats.ready || 0
+        connection.list[1].value = stats.invalid || 0
       }
     },
     // 获取任务数据
@@ -355,13 +355,13 @@ export default {
       const data = await taskApi.getStats().finally(() => {
         taskLoading.close()
       })
-      let agentList = this.agentList
+      const task = this.agentList.find(({ key }) => key === 'task')
       const stats = data.taskTypeStats
       if (stats) {
-        agentList[2].value = stats.total
-        agentList[2].list[0].value = stats.initial_sync || 0
-        agentList[2].list[1].value = stats.cdc || 0
-        agentList[2].list[2].value = stats['initial_sync+cdc'] || 0
+        task.value = stats.total
+        task.list[0].value = stats.initial_sync || 0
+        task.list[1].value = stats.cdc || 0
+        task.list[2].value = stats['initial_sync+cdc'] || 0
       }
     },
     loadNotices() {

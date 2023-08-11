@@ -13,7 +13,10 @@
           <VIcon class="text-primary mr-2" size="18">info</VIcon>
           <div class="font-color-dark fs-6 fw-sub">{{ $t('dfs_subscribe_storage_tip_title') }}</div>
         </div>
-        <div class="lh-lg" v-html="$t('dfs_subscribe_storage_tip_content')"></div>
+        <div
+          class="lh-lg"
+          v-html="$t(mdbPrices > 0 ? 'dfs_subscribe_storage_tip_content' : 'dfs_subscribe_free_storage_tip_content')"
+        ></div>
       </div>
       <ElForm label-position="top" class="flex-1 overflow-x-hidden overflow-y-auto">
         <!--存储地区-->
@@ -379,8 +382,9 @@ export default {
     this.orderStorage = true
     this.platform = 'realTime'
     this.agentDeploy = 'fullManagement'
-    await this.checkAgentCount()
-    await this.getCloudMdbSource()
+    await this.getCloudProvider()
+    // 查询阿里云的可用地区
+    // await this.getCloudMdbSource()
     this.getMongoCluster()
 
     //获取是否有存储实例
@@ -659,7 +663,8 @@ export default {
           let original = data?.items || []
           original.forEach(it => {
             if (it.cloudDetail?.length > 0) {
-              it.cloudDetail = it.cloudDetail.filter(item => item.productList.includes('mongodb')) || []
+              it.cloudDetail =
+                it.cloudDetail.filter(item => item.productList.includes('mongodb') && it.cloudProvider === 'GCP') || []
             }
           })
           this.cloudProviderList = original.filter(it => it.cloudDetail.length > 0)

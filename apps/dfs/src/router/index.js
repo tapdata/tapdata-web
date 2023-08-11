@@ -445,7 +445,7 @@ const routes = [
         }
       },
       {
-        path: '/crate-storage',
+        path: '/create-storage',
         name: 'CreateStorage',
         component: () => import(/* webpackChunkName: "data-hub" */ '../views/instance/CreateStorage'),
         meta: {
