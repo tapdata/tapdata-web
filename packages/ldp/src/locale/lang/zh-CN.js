@@ -31,5 +31,7 @@ export default {
   packages_ldp_data_hub_intro_how_do_step3: '发布API或发送到仪表板',
   packages_ldp_data_hub_intro_how_do_step3_sub: '发布API或发送到仪表板',
   packages_ldp_data_hub_subscribe: '订阅存储',
-  page_title_data_hub: '实时数据中心'
+  page_title_data_hub: '实时数据中心',
+  packages_ldp_source_empty_text: '1. 创建源数据库',
+  packages_ldp_target_empty_text: '2. 创建目标数据库'
 }

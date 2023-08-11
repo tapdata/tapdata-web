@@ -36,5 +36,7 @@ export default {
   packages_ldp_data_hub_intro_how_do_step3_sub:
     'from data hub, or connect to the Bl product of your choice You may then publish API.',
   packages_ldp_data_hub_subscribe: 'Subscription Storage',
-  page_title_data_hub: 'Real Time Data Hub'
+  page_title_data_hub: 'Real Time Data Hub',
+  packages_ldp_source_empty_text: '1. Create your own data source first',
+  packages_ldp_target_empty_text: '2. Next, create your target database.'
 }

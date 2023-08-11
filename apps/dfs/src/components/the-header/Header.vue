@@ -25,7 +25,11 @@
           <VIcon class="position-absolute discount-hot-icon">hot-o</VIcon>
         </div>
         <!--线下部署-->
-        <div class="command-item cursor-pointer flex align-center gap-1 rounded-4" @click="goOfflineDeploy">
+        <div
+          v-if="isDomesticStation"
+          class="command-item cursor-pointer flex align-center gap-1 rounded-4"
+          @click="goOfflineDeploy"
+        >
           <VIcon size="16">deploy</VIcon>
           <span> {{ $t('dfs_offline_deployment') }} </span>
         </div>

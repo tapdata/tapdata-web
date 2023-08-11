@@ -131,8 +131,8 @@
             ></TaskList>
           </template>
         </div>
-        <div v-if="!filterList.length" class="el-tree__empty-block">
-          <span class="el-tree__empty-text">{{ $t('public_data_no_data') }}</span>
+        <div v-if="!filterList.length" class="h-100 flex align-center justify-center">
+          <VEmpty :description="$t('packages_ldp_target_empty_text')"></VEmpty>
         </div>
         <!--</draggable>-->
       </div>
@@ -375,7 +375,7 @@ export default {
     showParentLineage: Boolean
   },
 
-  components: { ApiPreview, CreateRestApi, DatabaseIcon, TaskList, IconButton, VIcon },
+  components: { ApiPreview, CreateRestApi, DatabaseIcon, TaskList, IconButton, VIcon, VEmpty },
 
   mixins: [commonMix],
 
