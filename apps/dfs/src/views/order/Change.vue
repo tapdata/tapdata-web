@@ -426,12 +426,17 @@ export default {
           this.visible = false
           this.loadingCancelSubmit = false
           this.$emit('closeVisible')
-          this.$router.push({
-            name: 'payForChange',
-            params: {
-              id: data?.id
-            }
-          })
+
+          // 连续订阅变更不需要付款
+          if (subscribeType !== 'recurring' || this.isFree) {
+            this.$router.push({
+              name: 'payForChange',
+              params: {
+                id: data?.id
+              }
+            })
+          }
+
           //刷新页面
           this.$emit('closeVisible')
         })
