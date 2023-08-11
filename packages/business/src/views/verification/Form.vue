@@ -488,7 +488,6 @@ export default {
   created() {
     // 设置form.taskMode
     let taskMode = this.$route.query.taskMode
-    console.log('taskMode', taskMode)
     if (taskMode) {
       this.form.taskMode = taskMode
     }
@@ -522,7 +521,6 @@ export default {
         .then(data => {
           let list = data?.items || []
           this.flowOptions = list
-          console.log('list', list)
           let flow = this.flowOptions.find(item => item.id === this.form.flowId) || {}
           this.form.name = this.form.name || flow.name || ''
           this.form['dataFlowName'] = flow.name
@@ -591,7 +589,6 @@ export default {
       taskApi
         .getId(this.form.flowId)
         .then(data => {
-          console.log('getFlowStages-data', data)
           this.isDbClone = data.syncType === 'migrate'
           let edges = data.dag?.edges || []
           let nodes = data.dag?.nodes || []
@@ -625,7 +622,6 @@ export default {
             )
           })
 
-          console.log('edges', edges)
           this.edges = edges
           this.allStages = stages
           setTimeout(cb, 800)
@@ -792,8 +788,11 @@ export default {
       this.$refs.conditionBox.validate()
     },
     setVerifyName() {
-      let flow = this.flowOptions.find(item => item.id === this.form.flowId) || {}
-      this.form.name = (flow.name || '') + ' - ' + this.inspectMethodMap[this.form.inspectMethod]
+      // 任务模式
+      if (this.form.taskMode === 'pipeline') {
+        let flow = this.flowOptions.find(item => item.id === this.form.flowId) || {}
+        this.form.name = (flow.name || '') + ' - ' + this.inspectMethodMap[this.form.inspectMethod]
+      }
     }
   }
 }
