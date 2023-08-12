@@ -949,7 +949,7 @@ export default {
               item.subscriptionMethodLabel = i18n.t('dfs_instance_instance_mianfei')
             } else if (item.publicAgent) {
               item.subscriptionMethodLabel = i18n.t('dfs_instance_instance_gongyongshili')
-            } else if (chargeProvider === 'Stripe') {
+            } else if (['Stripe', 'Balance'].includes(chargeProvider)) {
               item.subscriptionMethodLabel =
                 getPaymentMethod(
                   { periodUnit: periodUnit, type: subscribeType },
