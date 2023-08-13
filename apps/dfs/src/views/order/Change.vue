@@ -417,7 +417,7 @@ export default {
       this.loadingCancelSubmit = true
       this.$axios
         .post('api/tcm/subscribe/change', param)
-        .then(data => {
+        .then(async data => {
           this.buried('unsubscribeAgentStripe', '', {
             result: true,
             type: ''
@@ -434,6 +434,14 @@ export default {
               params: {
                 id: data?.id
               }
+            })
+          } else {
+            await this.$axios.post('api/tcm/subscribe/payment', {
+              email: this.$store.state.user.email,
+              paymentMethod: 'Stripe',
+              successUrl: '',
+              cancelUrl: '',
+              subscribeAlterId: data.id
             })
           }
 
