@@ -365,7 +365,11 @@ export default {
     },
 
     async newDataflow(name) {
-      this.dataflow.name = name || i18n.t('packages_dag_mixins_editor_xinrenwu') + new Date().toLocaleTimeString()
+      if (!name) {
+        name = await this.makeTaskName(`${i18n.t('public_task')} `)
+      }
+
+      this.dataflow.name = name
       await this.saveAsNewDataflow()
       this.titleSet()
     },
@@ -374,21 +378,41 @@ export default {
       const taskNames = await taskApi.get({
         filter: JSON.stringify({
           fields: { name: 1 },
-          where: { name: { like: `^${source} +` } }
+          where: { name: { like: `^${source}\\d+$` } }
         })
       })
       let def = 1
       if (taskNames?.items.length) {
         let arr = [0]
         taskNames.items.forEach(item => {
-          const res = item.name.match(/\+(\d+)$/)
+          const res = item.name.match(new RegExp(`^${source}(\\d+)$`))
           if (res && res[1]) arr.push(+res[1])
         })
         arr.sort()
         def = arr.pop() + 1
       }
-      return `${source} +${def}`
+      return `${source}${def}`
     },
+
+    // async makeTaskName(source) {
+    //   const taskNames = await taskApi.get({
+    //     filter: JSON.stringify({
+    //       fields: { name: 1 },
+    //       where: { name: { like: `^${source} +` } }
+    //     })
+    //   })
+    //   let def = 1
+    //   if (taskNames?.items.length) {
+    //     let arr = [0]
+    //     taskNames.items.forEach(item => {
+    //       const res = item.name.match(/\+(\d+)$/)
+    //       if (res && res[1]) arr.push(+res[1])
+    //     })
+    //     arr.sort()
+    //     def = arr.pop() + 1
+    //   }
+    //   return `${source} +${def}`
+    // },
 
     onNodeDragStart() {
       if (this.ifNodeDragStart) {
