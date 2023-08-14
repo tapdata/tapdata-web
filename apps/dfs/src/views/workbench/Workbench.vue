@@ -11,7 +11,7 @@
                 <ElImage class="scene-img" :src="item.img" />
                 <div
                   class="position-absolute position-text flex justify-content-center align-items-center flex-column fs-8 py-2"
-                  style="min-height: 40px;"
+                  style="min-height: 40px"
                 >
                   <div v-if="item.title" class="text-center explore-examples-ellipsis pl-1 pr-1">{{ item.title }}</div>
                   <div v-if="item.subTitle" class="text-center explore-examples-ellipsis">{{ item.subTitle }}</div>
@@ -160,7 +160,8 @@ export default {
       isDomesticStation = window.__config__?.station === 'domestic' //默认是国内站 国际站是 international
     }
 
-    let examplesList = isDomesticStation ? [
+    let examplesList = isDomesticStation
+      ? [
           {
             type: 'all',
             title: i18n.t('_workbench_workbench_jiangshujudaoru'),
@@ -196,36 +197,37 @@ export default {
             img: require('@/assets/image/dashboard/scene5.png'),
             url: 'https://tapdata.net/tapdata-connector-mysql-clickhouse.html?fromColId=104'
           }
-        ] : [
-      {
-        type: 'all',
-        title: 'Tapdata',
-        subTitle: 'Cloud Version Intro',
-        img: require('@/assets/image/dashboard/io_scene1.png'),
-        url: 'https://youtu.be/WpV5mAOPNL0?t=280'
-      },
-      {
-        type: 'all',
-        title: 'Data Replication Feature',
-        subTitle: '',
-        img: require('@/assets/image/dashboard/io_scene2.png'),
-        url: 'https://youtu.be/jHbDRDYp7Bs?t=6'
-      },
-      {
-        type: 'all',
-        title: 'Data development',
-        subTitle: '',
-        img: require('@/assets/image/dashboard/io_scene3.png'),
-        url: 'https://youtu.be/xQsaEaPxaXo?t=4'
-      },
-      {
-        type: 'all',
-        title: 'Agent Local Installation',
-        subTitle: '',
-        img: require('@/assets/image/dashboard/io_scene4.png'),
-        url: 'https://youtu.be/e-HTtN7JKJU'
-      }
-    ]
+        ]
+      : [
+          {
+            type: 'all',
+            title: 'Tapdata',
+            subTitle: 'Cloud Version Intro',
+            img: require('@/assets/image/dashboard/io_scene1.png'),
+            url: 'https://youtu.be/WpV5mAOPNL0?t=280'
+          },
+          {
+            type: 'all',
+            title: 'Data Replication Feature',
+            subTitle: '',
+            img: require('@/assets/image/dashboard/io_scene2.png'),
+            url: 'https://youtu.be/jHbDRDYp7Bs?t=6'
+          },
+          {
+            type: 'all',
+            title: 'Data development',
+            subTitle: '',
+            img: require('@/assets/image/dashboard/io_scene3.png'),
+            url: 'https://youtu.be/xQsaEaPxaXo?t=4'
+          },
+          {
+            type: 'all',
+            title: 'Agent Local Installation',
+            subTitle: '',
+            img: require('@/assets/image/dashboard/io_scene4.png'),
+            url: 'https://youtu.be/e-HTtN7JKJU'
+          }
+        ]
 
     return {
       isDomesticStation,
