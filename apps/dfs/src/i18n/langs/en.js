@@ -1668,6 +1668,12 @@ export default {
   dfs_guide_scenes_shujurucangjia: 'Database replication between Oracle, MySQL and many other databases',
   dfs_guide_scenes_kuayunshujushi: 'Moving data into or out of MongoDB or MongoDB Atlas',
   dfs_guide_spec_ninxuyaozixing: 'Please select the instance size and subscription period',
+  dfs_guide_spec_offline_deployment_tip: `If your network completely blocks external internet access, you can <a
+        class="text-primary"
+        href="https://tapdata.net/tapdata-on-prem/demo.html"
+        target="_blank"
+        >click to apply</a
+      > for offline deployment of the full Tapdata service.`,
   dfs_components_taskalarmtour_dianjicichushe: 'Click here to set task alert',
   dfs_components_taskalarmtour_qushezhi: 'Settings',
   dfs_components_taskalarmtour_jiancedaoninwei:

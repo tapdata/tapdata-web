@@ -1550,6 +1550,12 @@ export default {
   dfs_guide_scenes_shujurucangjia: '数据入仓，加速查询',
   dfs_guide_scenes_kuayunshujushi: '跨云数据实时同步',
   dfs_guide_spec_ninxuyaozixing: '您需要自行安装一个计算引擎到您的网络环境中, 选择一种合适的方式吧。',
+  dfs_guide_spec_offline_deployment_tip: `如果您的网络环境完全无法访问外网，你可以点击<a
+        class="text-primary"
+        href="https://tapdata.net/tapdata-on-prem/demo.html"
+        target="_blank"
+        >申请</a
+      >离线部署完整的Tapdata服务`,
   dfs_components_taskalarmtour_dianjicichushe: '点击此处设置任务告警',
   dfs_components_taskalarmtour_qushezhi: '去设置',
   dfs_components_taskalarmtour_jiancedaoninwei: '检测到您未绑定邮箱，请先绑定邮箱用于接收任务告警通知',
