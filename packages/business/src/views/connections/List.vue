@@ -22,6 +22,7 @@
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </template>
       <div slot="operation">
+        <ElButton v-if="isDaas && multipleSelection.length" @click="handlePermissionsSettings">权限设置</ElButton>
         <ElButton
           v-if="isDaas"
           v-show="multipleSelection.length > 0"
@@ -132,7 +133,8 @@
             :disabled="
               $disabledByPermission('datasource_edition_all_data', scope.row.user_id) ||
               $disabledReadonlyUserBtn() ||
-              scope.row.agentType === 'Cloud'
+              scope.row.agentType === 'Cloud' ||
+              getDisabled(scope.row.permissionActions, 'Edit')
             "
             @click="edit(scope.row.id, scope.row)"
             >{{ $t('public_button_edit') }}
@@ -154,7 +156,8 @@
             :disabled="
               $disabledByPermission('datasource_delete_all_data', scope.row.user_id) ||
               $disabledReadonlyUserBtn() ||
-              scope.row.agentType === 'Cloud'
+              scope.row.agentType === 'Cloud' ||
+              getDisabled(scope.row.permissionActions, 'Delete')
             "
             @click="remove(scope.row)"
             >{{ $t('public_button_delete') }}
@@ -175,6 +178,7 @@
     ></SceneDialog>
     <Test ref="test" :visible.sync="dialogTestVisible" :formData="testData" @returnTestData="returnTestData"></Test>
     <UsedTaskDialog v-model="connectionTaskDialog" :data="connectionTaskData"></UsedTaskDialog>
+    <PermissionseSettingsCreate ref="permissionseSettingsCreate"></PermissionseSettingsCreate>
   </section>
 </template>
 <script>
@@ -185,6 +189,7 @@ import dayjs from 'dayjs'
 import { connectionsApi, databaseTypesApi } from '@tap/api'
 import { VIcon, FilterBar } from '@tap/component'
 import Cookie from '@tap/shared/src/cookie'
+import PermissionseSettingsCreate from '@tap/business/src/components/permissionse-settings/Create'
 
 import { TablePage, SchemaProgress } from '../../components'
 import Preview from './Preview'
@@ -205,7 +210,8 @@ export default {
     VIcon,
     SchemaProgress,
     FilterBar,
-    UsedTaskDialog
+    UsedTaskDialog,
+    PermissionseSettingsCreate
   },
   inject: ['checkAgent', 'buried'],
   data() {
@@ -774,6 +780,13 @@ export default {
     },
     getType(type) {
       return CONNECTION_TYPE_MAP[type]?.text || '-'
+    },
+    getDisabled(data = [], type = '') {
+      return !data.includes(type)
+    },
+    // 显示权限设置
+    handlePermissionsSettings() {
+      this.$refs.permissionseSettingsCreate.open(this.multipleSelection)
     }
   }
 }
