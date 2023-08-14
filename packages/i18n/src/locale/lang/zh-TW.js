@@ -25,6 +25,8 @@ export default {
   public_basic_settings: '基礎設置',
   public_advanced_settings: '高級設置',
   public_recommend: '推薦',
+  public_board_view: '面板',
+  public_list_view: '列表',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '無效',

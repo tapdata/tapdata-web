@@ -10,11 +10,11 @@
       <el-radio-group v-model="viewType" class="view-radio-group">
         <el-radio-button label="board">
           <VIcon class="align-top">swimlane</VIcon>
-          Board
+          {{ $t('public_board_view') }}
         </el-radio-button>
         <el-radio-button label="list">
           <VIcon class="align-top">list-view</VIcon>
-          List
+          {{ $t('public_list_view') }}
         </el-radio-button>
       </el-radio-group>
     </div>
