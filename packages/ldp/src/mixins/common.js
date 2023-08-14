@@ -248,7 +248,7 @@ export default {
           const res = item.name.match(new RegExp(`^${source}(\\d+)$`))
           if (res && res[1]) arr.push(+res[1])
         })
-        arr.sort()
+        arr.sort((a, b) => a - b)
         def = arr.pop() + 1
       }
       return `${source}${def}`

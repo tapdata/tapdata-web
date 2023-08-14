@@ -635,8 +635,8 @@ export default {
         '$route',
         to => {
           if (to.name === 'migrateList' && (this.pausedTour || this.startingTour)) {
+            this.startTour()
             this.$nextTick(() => {
-              this.startTour()
               this.replicationDriverObj.drive(this.replicationTour.activeIndex || 0)
             })
           } else {

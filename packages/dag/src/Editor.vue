@@ -405,7 +405,7 @@ export default {
         this.buried('taskSubmit', { result: true })
         if (e?.data?.code === 'Task.RepeatName') {
           const newName = await this.makeTaskName(data.name)
-          this.newDataflow(newName)
+          await this.newDataflow(newName)
         } else if (e?.data?.code === 'InvalidPaidPlan') {
           this.$router.push({
             name: 'dataflowList'
