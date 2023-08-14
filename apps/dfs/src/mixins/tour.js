@@ -601,7 +601,7 @@ export default {
           popover: {
             side: 'top',
             showButtons: [],
-            description: '请拖动源连接的一个表到目标连接，开始创建复制任务',
+            description: i18n.t('dfs_mixins_tour_drag_source_table'),
             onPopoverRender: (popover, { state }) => {
               console.log('popover', popover) // eslint-disable-line
             }
