@@ -1536,6 +1536,7 @@ export default {
   dfs_mixins_tour_qingchuangjianninde2: '請創建您的目標數據庫',
   dfs_mixins_tour_dianjicichuchuang3: '點擊此處創建您的源數據庫',
   dfs_mixins_tour_qingchuangjianninde3: '請創建您的源數據庫',
+  dfs_mixins_tour_drag_source_table: '請將源連接的一個表拖動到目標連接，開始創建複製任務。',
   dfs_router_index_zhifuqingdan: '支付清單',
   dfs_instance_instance_perce: '{val1} 秒前',
   dfs_instance_instance_perce_minute: '{val1} 分鐘前',

@@ -1566,6 +1566,7 @@ export default {
   dfs_mixins_tour_qingchuangjianninde2: '请创建您的目标数据库',
   dfs_mixins_tour_dianjicichuchuang3: '点击此处创建您的源数据库',
   dfs_mixins_tour_qingchuangjianninde3: '请创建您的源数据库',
+  dfs_mixins_tour_drag_source_table: '请拖动源连接的一个表到目标连接，开始创建复制任务',
   dfs_router_index_zhifuqingdan: '支付清单',
   dfs_instance_instance_perce: '{val1} 秒前',
   dfs_instance_instance_perce_minute: '{val1} 分钟前',

@@ -11,6 +11,7 @@
                 <ElImage class="scene-img" :src="item.img" />
                 <div
                   class="position-absolute position-text flex justify-content-center align-items-center flex-column fs-8 py-2"
+                  style="min-height: 40px;"
                 >
                   <div v-if="item.title" class="text-center explore-examples-ellipsis pl-1 pr-1">{{ item.title }}</div>
                   <div v-if="item.subTitle" class="text-center explore-examples-ellipsis">{{ item.subTitle }}</div>
@@ -153,7 +154,81 @@ export default {
   mixins: [timeFunction],
   data() {
     const $t = this.$t.bind(this)
+    let isDomesticStation = true
+
+    if (window.__config__?.station) {
+      isDomesticStation = window.__config__?.station === 'domestic' //默认是国内站 国际站是 international
+    }
+
+    let examplesList = isDomesticStation ? [
+          {
+            type: 'all',
+            title: i18n.t('_workbench_workbench_jiangshujudaoru'),
+            subTitle: i18n.t('_workbench_workbench_jiangshujudaorusub'),
+            img: require('@/assets/image/dashboard/scene1.png'),
+            url: 'https://tapdata.net/how-to-import-data-into-tablestore-alibaba-cloud.html?fromColId=104'
+          },
+          {
+            type: 'all',
+            title: i18n.t('_workbench_workbench_shujuruhucang'),
+            subTitle: 'MySQL → Doris',
+            img: require('@/assets/image/dashboard/scene2.png'),
+            url: 'https://tapdata.net/real-time-data-entry-into-the-lake-and-warehouse.html?fromColId=104'
+          },
+          {
+            type: 'all',
+            title: i18n.t('_workbench_workbench_yigoushishitong'),
+            subTitle: 'Oracle → MySQL ',
+            img: require('@/assets/image/dashboard/scene3.png'),
+            url: 'https://tapdata.net/real-time-sync-of-hdb-from-oracle-to-mysql.html?fromColId=104'
+          },
+          {
+            type: 'all',
+            title: i18n.t('_workbench_workbench_shujurucang'),
+            subTitle: 'SQL Server → BigQuery ',
+            img: require('@/assets/image/dashboard/scene4.png'),
+            url: 'https://tapdata.net/tapdata-connector-sqlserver-bigquery.html'
+          },
+          {
+            type: 'all',
+            title: i18n.t('_workbench_workbench_shujurucang'),
+            subTitle: 'MySQL → ClickHouse',
+            img: require('@/assets/image/dashboard/scene5.png'),
+            url: 'https://tapdata.net/tapdata-connector-mysql-clickhouse.html?fromColId=104'
+          }
+        ] : [
+      {
+        type: 'all',
+        title: 'Tapdata',
+        subTitle: 'Cloud Version Intro',
+        img: require('@/assets/image/dashboard/io_scene1.png'),
+        url: 'https://youtu.be/WpV5mAOPNL0?t=280'
+      },
+      {
+        type: 'all',
+        title: 'Data Replication Feature',
+        subTitle: '',
+        img: require('@/assets/image/dashboard/io_scene2.png'),
+        url: 'https://youtu.be/jHbDRDYp7Bs?t=6'
+      },
+      {
+        type: 'all',
+        title: 'Data development',
+        subTitle: '',
+        img: require('@/assets/image/dashboard/io_scene3.png'),
+        url: 'https://youtu.be/xQsaEaPxaXo?t=4'
+      },
+      {
+        type: 'all',
+        title: 'Agent Local Installation',
+        subTitle: '',
+        img: require('@/assets/image/dashboard/io_scene4.png'),
+        url: 'https://youtu.be/e-HTtN7JKJU'
+      }
+    ]
+
     return {
+      isDomesticStation,
       userInfo: '',
       //云市场
       aliyunMaketVisible: false,
@@ -259,43 +334,7 @@ export default {
       colorList: ['rgba(44, 101, 255, 0.85)', 'rgba(44, 101, 255, 0.5)'],
       showUpgrade: false, //版本升级弹窗
       //探索实例
-      examplesList: [
-        {
-          type: 'all',
-          title: i18n.t('_workbench_workbench_jiangshujudaoru'),
-          subTitle: i18n.t('_workbench_workbench_jiangshujudaorusub'),
-          img: require('@/assets/image/dashboard/scene1.png'),
-          url: 'https://tapdata.net/how-to-import-data-into-tablestore-alibaba-cloud.html?fromColId=104'
-        },
-        {
-          type: 'all',
-          title: i18n.t('_workbench_workbench_shujuruhucang'),
-          subTitle: 'MySQL → Doris',
-          img: require('@/assets/image/dashboard/scene2.png'),
-          url: 'https://tapdata.net/real-time-data-entry-into-the-lake-and-warehouse.html?fromColId=104'
-        },
-        {
-          type: 'all',
-          title: i18n.t('_workbench_workbench_yigoushishitong'),
-          subTitle: 'Oracle → MySQL ',
-          img: require('@/assets/image/dashboard/scene3.png'),
-          url: 'https://tapdata.net/real-time-sync-of-hdb-from-oracle-to-mysql.html?fromColId=104'
-        },
-        {
-          type: 'all',
-          title: i18n.t('_workbench_workbench_shujurucang'),
-          subTitle: 'SQL Server → BigQuery ',
-          img: require('@/assets/image/dashboard/scene4.png'),
-          url: 'https://tapdata.net/tapdata-connector-sqlserver-bigquery.html'
-        },
-        {
-          type: 'all',
-          title: i18n.t('_workbench_workbench_shujurucang'),
-          subTitle: 'MySQL → ClickHouse',
-          img: require('@/assets/image/dashboard/scene5.png'),
-          url: 'https://tapdata.net/tapdata-connector-mysql-clickhouse.html?fromColId=104'
-        }
-      ]
+      examplesList
     }
   },
   mounted() {
