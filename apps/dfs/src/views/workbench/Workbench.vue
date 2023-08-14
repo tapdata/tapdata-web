@@ -25,7 +25,7 @@
         <div class="bg-white rounded-xl p-4 shadow-sm h-100">
           <div class="main-title mb-4">Welcome to Tapdata</div>
           <div class="clickable" @click="setUpgradeFeeVisible(true)">
-            <ElImage :src="require('@/assets/image/plan_banner.png')"></ElImage>
+            <ElImage :src="bannerImg"></ElImage>
           </div>
         </div>
       </ElCol>
@@ -231,6 +231,10 @@ export default {
 
     return {
       isDomesticStation,
+      bannerImg:
+        this.$i18n.locale === 'en'
+          ? require('@/assets/image/plan_banner.png')
+          : require('@/assets/image/plan_banner_cn.png'),
       userInfo: '',
       //云市场
       aliyunMaketVisible: false,
@@ -861,5 +865,18 @@ export default {
 .scene-img {
   width: 161px;
   height: 92px;
+}
+.welcome-banner {
+  height: 76px;
+  background: linear-gradient(
+    90deg,
+    rgba(22, 73, 255, 0.8) 0%,
+    rgba(50, 102, 244, 0.8) 39.58%,
+    rgba(79, 50, 255, 0.8) 100%
+  );
+
+  .el-image {
+    height: 50px;
+  }
 }
 </style>
