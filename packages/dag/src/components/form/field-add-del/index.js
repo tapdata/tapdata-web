@@ -365,6 +365,7 @@ export const FieldAddDel = connect(
 
           if (existsName) {
             data.field_name = data.previousFieldName
+            this.updateFieldsAfter()
             return
           }
 
@@ -374,6 +375,7 @@ export const FieldAddDel = connect(
             let op = createOps[0]
             op.field = data.field_name
             data.previousFieldName = data.field_name
+            this.updateFieldsAfter()
           }
           this.$emit('change', this.operations)
         },
@@ -548,13 +550,7 @@ export const FieldAddDel = connect(
             el.columnPosition = i + 1
           })
 
-          const fieldsAfter = cloneDeep(this.fields).map((t, i) => {
-            return {
-              columnPosition: t.columnPosition,
-              field_name: t.field_name
-            }
-          })
-          this.form.setValuesIn('fieldsAfter', fieldsAfter)
+          this.updateFieldsAfter()
         },
         handleCommand(val, node) {
           const index = this.fields.findIndex(t => t.field_name === node.data.field_name)
@@ -574,6 +570,15 @@ export const FieldAddDel = connect(
           }
 
           this.handleSaveDrop()
+        },
+        updateFieldsAfter() {
+          const fieldsAfter = cloneDeep(this.fields).map((t, i) => {
+            return {
+              columnPosition: t.columnPosition,
+              field_name: t.field_name
+            }
+          })
+          this.form.setValuesIn('fieldsAfter', fieldsAfter)
         }
         // handleCheckAllChange() {
         //   if (this.checkAll) {
