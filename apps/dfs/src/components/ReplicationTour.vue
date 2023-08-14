@@ -13,20 +13,14 @@
 
       <div class="lh-base font-color-dark text-center mt-n4">
         <h1 class="fs-5 fw-sub font-color-dark mb-2">Welcome to Tapdata Cloud.</h1>
-        <p class="lh-base">在开始数据复制任务之前，您需要创建源数据库和目标数据库连接。</p>
-        <p>我们将引导您完成：</p>
-        <ul class="flex align-center justify-center fw-sub my-2">
-          <li>创建源数据库连接</li>
-          <ElDivider direction="vertical"></ElDivider>
-          <li>创建目标数据库连接</li>
-          <ElDivider direction="vertical"></ElDivider>
-          <li>配置数据复制任务</li>
-        </ul>
-        <p>现在让我们开始创建您的连接并设置数据复制任务。</p>
+        <p class="lh-base">{{ $t('dfs_replication_tour_dialog_desc') }}</p>
+
+        <p class="text-primary fw-sub my-2">{{ $t('dfs_replication_tour_dialog_steps') }}</p>
+        <p>{{ $t('dfs_replication_tour_dialog_lets_go') }}</p>
       </div>
 
       <div slot="footer" class="text-center">
-        <el-button @click="$emit('start')" type="primary">Start</el-button>
+        <el-button @click="$emit('start')" type="primary">{{ $t('dfs_replication_tour_dialog_start') }}</el-button>
       </div>
     </template>
 
@@ -34,11 +28,11 @@
       <div class="text-center title-cover pt-4" slot="title">🎉</div>
 
       <div class="lh-base font-color-dark text-center mt-n4">
-        <h1 class="fs-5 fw-sub font-color-dark mb-2">恭喜您已经完成复制任务的引导</h1>
+        <h1 class="fs-5 fw-sub font-color-dark mb-2">{{ $t('dfs_replication_tour_dialog_success_title') }}</h1>
       </div>
 
       <div slot="footer" class="text-center">
-        <el-button @click="$emit('finish')" type="primary">完成</el-button>
+        <el-button @click="$emit('finish')" type="primary">{{ $t('dfs_replication_tour_dialog_finish') }}</el-button>
       </div>
     </template>
   </ElDialog>

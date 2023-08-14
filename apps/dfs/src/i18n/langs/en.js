@@ -1738,5 +1738,11 @@ export default {
     'Tapdata provides 10GB storage space in a shared MongoDB Cluster for Free Trial users. You may use this free storage during the 15 day trial period. Only your account can access your data.<br/>Note for Free Trial users a shared cluster is used instead of MongoDB Atlas.',
   dfs_offline_deployment: 'Offline Deployment',
   dfs_wait_storage_init:
-    'The storage you subscribed to is being initialized, which may take 1 to 20 minutes. Please be patient and wait.'
+    'The storage you subscribed to is being initialized, which may take 1 to 20 minutes. Please be patient and wait.',
+  dfs_replication_tour_dialog_desc: 'Before starting the data replication task, you need to create the source and target database connections. We will guide you through the process:',
+  dfs_replication_tour_dialog_steps: '1.Create source database  ｜  2.Create target database｜  3.Configure a data replication task',
+  dfs_replication_tour_dialog_lets_go: 'Now let\'s get started !',
+  dfs_replication_tour_dialog_start: 'Start',
+  dfs_replication_tour_dialog_success_title: 'Congratulations! You have successfully completed the guided tour for the replication task.',
+  dfs_replication_tour_dialog_finish: 'Finish'
 }
