@@ -292,18 +292,7 @@ export default {
       row.sourceFrom = this.getSourceFrom(row)
       row.loadSchemaTime = row.loadSchemaTime ? dayjs(row.loadSchemaTime).format('YYYY-MM-DD HH:mm:ss') : '-'
       if (row.config.uri && row.config.isUri !== false) {
-        const regResult =
-          /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
-            row.config.uri
-          )
-        if (regResult && regResult.groups) {
-          const hostArr = regResult.groups.host.split(':')
-          row.database_host = hostArr[0]
-          row.database_port = hostArr[1]
-          row.database_name = regResult.groups.database
-          row.database_username = regResult.groups.username
-          row.addtionalString = regResult.groups.query
-        }
+        row.uri = row.config.uri
       }
       row.heartbeatTable = this.connection.heartbeatTable
 
@@ -437,44 +426,100 @@ export default {
     async loadList(row = {}) {
       const heartbeatTable = await this.loadHeartbeatTable(row)
       this.connection.heartbeatTable = heartbeatTable?.[0]
-      this.list = [
-        ...this.configModel['default'],
-        ...(this.isDaas
-          ? []
-          : [
-              {
+
+      // 有uri
+      if (row.uri) {
+        this.list = [
+          this.configModel['default']?.[0],
+          ...(this.isDaas
+            ? []
+            : [
+                {
+                  icon: 'link',
+                  items: [
+                    {
+                      label: i18n.t('public_connection_form_link_plugin_source'),
+                      key: 'sourceFrom'
+                    }
+                  ]
+                }
+              ]),
+          this.connection.heartbeatTable
+            ? {
                 icon: 'link',
                 items: [
                   {
-                    label: i18n.t('public_connection_form_link_plugin_source'),
-                    key: 'sourceFrom'
+                    label: i18n.t('packages_business_connections_databaseform_kaiqixintiaobiao'),
+                    key: 'heartbeatTable',
+                    value: i18n.t('packages_business_connections_databaseform_chakanxintiaoren'),
+                    class: 'cursor-pointer color-primary text-decoration-underline',
+                    action: () => {
+                      const routeUrl = this.$router.resolve({
+                        name: 'HeartbeatMonitor',
+                        params: {
+                          id: this.connection.heartbeatTable
+                        }
+                      })
+                      openUrl(routeUrl.href)
+                    }
                   }
                 ]
               }
-            ]),
-        this.connection.heartbeatTable
-          ? {
-              icon: 'link',
-              items: [
-                {
-                  label: i18n.t('packages_business_connections_databaseform_kaiqixintiaobiao'),
-                  key: 'heartbeatTable',
-                  value: i18n.t('packages_business_connections_databaseform_chakanxintiaoren'),
-                  class: 'cursor-pointer color-primary text-decoration-underline',
-                  action: () => {
-                    const routeUrl = this.$router.resolve({
-                      name: 'HeartbeatMonitor',
-                      params: {
-                        id: this.connection.heartbeatTable
-                      }
-                    })
-                    openUrl(routeUrl.href)
+            : {},
+          row.uri
+            ? {
+                icon: 'link',
+                items: [
+                  {
+                    label: 'URI',
+                    key: 'uri',
+                    value: row.uri,
+                    class: 'text-break text-wrap'
                   }
+                ]
+              }
+            : {}
+        ]
+      } else {
+        this.list = [
+          ...this.configModel['default'],
+          ...(this.isDaas
+            ? []
+            : [
+                {
+                  icon: 'link',
+                  items: [
+                    {
+                      label: i18n.t('public_connection_form_link_plugin_source'),
+                      key: 'sourceFrom'
+                    }
+                  ]
                 }
-              ]
-            }
-          : {}
-      ]
+              ]),
+          this.connection.heartbeatTable
+            ? {
+                icon: 'link',
+                items: [
+                  {
+                    label: i18n.t('packages_business_connections_databaseform_kaiqixintiaobiao'),
+                    key: 'heartbeatTable',
+                    value: i18n.t('packages_business_connections_databaseform_chakanxintiaoren'),
+                    class: 'cursor-pointer color-primary text-decoration-underline',
+                    action: () => {
+                      const routeUrl = this.$router.resolve({
+                        name: 'HeartbeatMonitor',
+                        params: {
+                          id: this.connection.heartbeatTable
+                        }
+                      })
+                      openUrl(routeUrl.href)
+                    }
+                  }
+                ]
+              }
+            : {}
+        ]
+      }
     },
     getConnectionIcon() {
       const { connection } = this
@@ -547,7 +592,7 @@ export default {
   color: map-get($fontColor, light);
 }
 .box-line__value {
-  max-width: 200px;
+  max-width: 280px;
   margin-top: 8px;
   color: map-get($fontColor, dark);
 }
