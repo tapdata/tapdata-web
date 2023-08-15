@@ -129,22 +129,22 @@
                     >
                   </span>
                   <!--到期时间-->
-                  <span v-else-if="col.value === 'expiredTimeLabel'" class="font-color-dark">
-                    <ElTooltip
-                      :disabled="!getExpiredTimeLevel(item)"
-                      placement="top"
-                      :visible-arrow="false"
-                      effect="light"
-                    >
-                      <div>
+                  <span v-else-if="col.value === 'expiredTimeLabel'" class="font-color-dark flex align-center">
+                    <ElTooltip :disabled="!getExpiredTimeLevel(item)" placement="top" :visible-arrow="false">
+                      <div class="flex align-center">
                         <span>{{ item.expiredTimeLabel.split(' ')[0] }}</span>
-                        <VIcon v-if="getExpiredTimeLevel(item) === 'expired'" class="ml-2 color-info">error</VIcon>
-                        <VIcon v-else-if="getExpiredTimeLevel(item) === 'expiringSoon'" class="ml-2 color-warning"
+                        <VIcon v-if="getExpiredTimeLevel(item) === 'expired'" size="16" class="ml-1 color-danger"
                           >warning</VIcon
+                        >
+                        <VIcon
+                          v-else-if="getExpiredTimeLevel(item) === 'expiringSoon'"
+                          size="16"
+                          class="ml-1 color-warning"
+                          >warning-circle</VIcon
                         >
                       </div>
                       <template #content>
-                        <div v-if="getExpiredTimeLevel(item) === 'expired'" class="font-color-dark">
+                        <div v-if="getExpiredTimeLevel(item) === 'expired'">
                           <p>{{ $t('dfs_instance_expired_time_tip1') }}</p>
                           <div v-if="item.agentType === 'Cloud'">
                             <p>{{ $t('dfs_instance_expired_time_full_tip2') }}</p>
