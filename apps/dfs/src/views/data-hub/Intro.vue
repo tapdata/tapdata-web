@@ -102,7 +102,7 @@ export default {
     const isDomesticStation = window.__config__?.station === 'domestic' //默认是国内站 国际站是 international
 
     return {
-      isDomesticStation: false
+      isDomesticStation
     }
   },
 
