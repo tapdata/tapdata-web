@@ -63,7 +63,34 @@ export default {
 
   computed: {
     items() {
-      const MAP = {}
+      const MAP = {
+        Task: [
+          {
+            label: '查看',
+            value: 'View'
+          },
+          {
+            label: '编辑',
+            value: 'Edit'
+          },
+          {
+            label: '删除',
+            value: 'Delete'
+          },
+          {
+            label: '重置',
+            value: 'Reset'
+          },
+          {
+            label: '启动',
+            value: 'Start'
+          },
+          {
+            label: '停止',
+            value: 'Stop'
+          }
+        ]
+      }
 
       return (
         MAP[this.type] || [
