@@ -126,6 +126,7 @@
               :startTask="startTask"
               :forceStopTask="forceStopTask"
               :stopTask="stopTask"
+              :getReplicateLag="getReplicateLag"
               @edit-in-dag="handleClickName"
               @find-parent="handleFindParent"
             ></TaskList>
@@ -236,8 +237,17 @@
 import { debounce, cloneDeep } from 'lodash'
 import { defineComponent, ref } from '@vue/composition-api'
 
-import { apiServerApi, appApi, connectionsApi, modulesApi, proxyApi, taskApi, workerApi } from '@tap/api'
-import { uuid, generateId } from '@tap/shared'
+import {
+  apiServerApi,
+  appApi,
+  connectionsApi,
+  measurementApi,
+  modulesApi,
+  proxyApi,
+  taskApi,
+  workerApi
+} from '@tap/api'
+import { uuid, generateId, Time, calcTimeUnit } from '@tap/shared'
 import { VIcon, IconButton, VEmpty } from '@tap/component'
 import i18n from '@tap/i18n'
 import {
@@ -251,7 +261,7 @@ import CreateRestApi from './components/CreateRestApi'
 import commonMix from './mixins/common'
 
 const TaskList = defineComponent({
-  props: ['list', 'startTask', 'forceStopTask', 'stopTask'],
+  props: ['list', 'startTask', 'forceStopTask', 'stopTask', 'getReplicateLag'],
   setup(props, { emit }) {
     const limit = 10
     const isLimit = ref(true)
@@ -265,7 +275,7 @@ const TaskList = defineComponent({
               <div class="task-list-content">
                 {list.map((task, i) => (
                   <div key={i} class="task-list-item flex align-center p-2 gap-4">
-                    <div class="ellipsis flex-1 align-center">
+                    <div class="ellipsis flex-1 align-center flex gap-4">
                       <a
                         class="el-link el-link--primary justify-content-start"
                         title={task.name}
@@ -273,6 +283,14 @@ const TaskList = defineComponent({
                       >
                         <span class="ellipsis">{task.name}</span>
                       </a>
+                      {task.status === 'running' && props.getReplicateLag(task.id) && (
+                        <ElTooltip content={i18n.t('public_event_incremental_delay')} placement="top">
+                          <span class="font-color-sslight flex align-center gap-1">
+                            <VIcon>time</VIcon>
+                            <span>{props.getReplicateLag(task.id)}</span>
+                          </span>
+                        </ElTooltip>
+                      )}
                     </div>
                     <div class="">
                       <TaskStatus reverse task={task}></TaskStatus>
@@ -560,19 +578,56 @@ export default {
         position: 'target'
       })
 
+      const taskMap = {}
+
       Object.keys(data).forEach(key => {
         this.$set(
           this.connectionTaskMap,
           key,
           data[key]
-            .filter(
-              task =>
+            .filter(task => {
+              if (task.status === 'running') {
+                taskMap[task.id] = {
+                  uri: '/api/measurement/query/v2',
+                  param: {
+                    startAt: new Date(task.startTime).getTime(),
+                    endAt: Time.now(),
+                    samples: {
+                      data: {
+                        tags: {
+                          type: 'task',
+                          taskId: task.id,
+                          taskRecordId: task.taskRecordId
+                        },
+                        endAt: Time.now(),
+                        fields: ['replicateLag'],
+                        type: 'instant'
+                      }
+                    }
+                  }
+                }
+              }
+              return (
                 !['deleting', 'delete_failed'].includes(task.status) && !task.is_deleted && task.syncType === 'migrate'
-            )
+              )
+            })
             .reverse()
             .map(this.mapTask)
         )
       })
+
+      const taskDataMap = await measurementApi.batch(taskMap)
+      const map = {}
+      for (let id in taskDataMap) {
+        let current = taskDataMap[id].data?.samples?.data?.[0]
+
+        if (current) {
+          // current.replicateLag = Math.round(Math.random() * 1000) // demo
+          map[id] = current
+        }
+      }
+
+      this.taskMeasurementMap = map
     },
 
     async autoLoadTaskById() {
@@ -1100,6 +1155,16 @@ export default {
       return {
         msg,
         title: this.$t('packages_business_dataFlow_' + title)
+      }
+    },
+
+    getReplicateLag(taskId) {
+      const replicateLag = this.taskMeasurementMap?.[taskId]?.replicateLag
+
+      if (replicateLag != undefined) {
+        return calcTimeUnit(replicateLag, 2, {
+          autoHideMs: true
+        })
       }
     }
   }
