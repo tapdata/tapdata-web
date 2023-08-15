@@ -199,7 +199,7 @@
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
-              :disabled="row.btnDisabled.monitor && !row.startTime"
+              :disabled="row.btnDisabled.monitor && !row.lastStartDate"
               @click="toDetail(row)"
             >
               {{ $t('packages_business_task_list_button_monitor') }}
