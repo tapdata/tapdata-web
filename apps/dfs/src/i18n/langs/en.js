@@ -1685,7 +1685,8 @@ export default {
   dfs_mixins_tour_qingchuangjianninde2: 'Please create your target database',
   dfs_mixins_tour_dianjicichuchuang3: 'Click here to create your source database',
   dfs_mixins_tour_qingchuangjianninde3: 'Please create your source database',
-  dfs_mixins_tour_drag_source_table: 'Please drag a table from the source connection to the target connection to start creating a replication task.',
+  dfs_mixins_tour_drag_source_table:
+    'Please drag a table from the source connection to the target connection to start creating a replication task.',
   dfs_router_index_zhifuqingdan: 'Payment list',
   dfs_instance_instance_perce: '{val1} Second Ago',
   dfs_instance_instance_perce_minute: '{val1} Minute Ago',
@@ -1739,10 +1740,14 @@ export default {
   dfs_offline_deployment: 'Offline Deployment',
   dfs_wait_storage_init:
     'The storage you subscribed to is being initialized, which may take 1 to 20 minutes. Please be patient and wait.',
-  dfs_replication_tour_dialog_desc: 'Before starting the data replication task, you need to create the source and target database connections. We will guide you through the process:',
-  dfs_replication_tour_dialog_steps: '1.Create source database  ｜  2.Create target database｜  3.Configure a data replication task',
-  dfs_replication_tour_dialog_lets_go: 'Now let\'s get started !',
+  dfs_replication_tour_dialog_desc:
+    'Before starting the data replication task, you need to create the source and target database connections. We will guide you through the process:',
+  dfs_replication_tour_dialog_steps:
+    '1.Create source database  ｜  2.Create target database｜  3.Configure a data replication task',
+  dfs_replication_tour_dialog_lets_go: "Now let's get started !",
   dfs_replication_tour_dialog_start: 'Start',
-  dfs_replication_tour_dialog_success_title: 'Congratulations! You have successfully completed the guided tour for the replication task.',
-  dfs_replication_tour_dialog_finish: 'Finish'
+  dfs_replication_tour_dialog_success_title:
+    'Congratulations! You have successfully completed the guided tour for the replication task.',
+  dfs_replication_tour_dialog_finish: 'Finish',
+  dfs_subscribe_to_professional_plan: 'Subscribe to Professional Plan'
 }

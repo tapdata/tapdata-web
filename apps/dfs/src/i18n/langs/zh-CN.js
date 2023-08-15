@@ -1620,5 +1620,6 @@ export default {
   dfs_replication_tour_dialog_lets_go: '现在让我们开始吧！',
   dfs_replication_tour_dialog_start: '开始',
   dfs_replication_tour_dialog_success_title: '恭喜您已经完成复制任务的引导',
-  dfs_replication_tour_dialog_finish: '完成'
+  dfs_replication_tour_dialog_finish: '完成',
+  dfs_subscribe_to_professional_plan: '订阅专业版'
 }

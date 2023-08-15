@@ -1589,5 +1589,6 @@ export default {
   dfs_replication_tour_dialog_lets_go: '現在讓我們開始吧！',
   dfs_replication_tour_dialog_start: '開始',
   dfs_replication_tour_dialog_success_title: '恭喜您已經完成複製任務的引導',
-  dfs_replication_tour_dialog_finish: '完成'
+  dfs_replication_tour_dialog_finish: '完成',
+  dfs_subscribe_to_professional_plan: '訂閱專業版'
 }
