@@ -10,5 +10,11 @@ export default class DataPermission extends Http {
   dataAuth(params: unknown) {
     return this.axios.post(`${this.url}/data-auth`, params)
   }
+  permissions(params: unknown) {
+    return this.axios.get(`${this.url}/permissions`, { params })
+  }
+  postPermissions(params: unknown) {
+    return this.axios.post(`${this.url}/permissions`, params)
+  }
 }
 export { DataPermission }

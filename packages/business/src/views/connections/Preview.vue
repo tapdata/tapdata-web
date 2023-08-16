@@ -56,9 +56,20 @@
         </div>
         <div class="flex-fill ml-4">
           <div v-for="(temp, k) in item.items" :key="index + '' + k" class="box-line">
-            <div class="box-line__label">{{ temp.label }}:</div>
+            <div class="box-line__label flex justify-content-between">
+              <span>{{ temp.label }}:</span>
+              <ElLink v-if="temp.labelAction" type="primary" @click="temp.labelAction">{{
+                temp.labelActionTitle
+              }}</ElLink>
+            </div>
+            <div v-if="['permissions'].includes(temp.key)" class="pt-2">
+              <ElTag v-for="per in permissions" :key="per.roleId" type="info" class="mr-2 mb-1">{{
+                per.roleName
+              }}</ElTag>
+              <span v-if="!permissions.length">-</span>
+            </div>
             <el-tooltip
-              v-if="
+              v-else-if="
                 connection[temp.key] &&
                 !['mqType', 'mqQueueSet', 'mqTopicSet', 'shareCdcEnable', 'redoLogParserEnable'].includes(temp.key) &&
                 connection[temp.key].toString()
@@ -97,6 +108,8 @@
       </div>
     </div>
     <Test ref="test" :formData="formData" @receive="receiveTestData"></Test>
+    <!--  权限管理  -->
+    <PermissionsDialog ref="permissionsDialog" />
   </Drawer>
 </template>
 
@@ -105,18 +118,19 @@ import i18n from '@tap/i18n'
 
 import dayjs from 'dayjs'
 import { cloneDeep } from 'lodash'
-import { connectionsApi } from '@tap/api'
+import { connectionsApi, dataPermissionApi, usersApi } from '@tap/api'
 import { VIcon, Drawer } from '@tap/component'
 import { getIcon } from '@tap/assets/icons'
 
 import { StatusTag } from '../../components'
 import Test from '../connections/Test.vue'
+import PermissionsDialog from './PermissionsDialog'
 import { getConnectionIcon } from './util'
 import { openUrl } from '@tap/shared'
 
 export default {
   name: 'DetailsDrawer',
-  components: { VIcon, Drawer, StatusTag, Test },
+  components: { VIcon, Drawer, StatusTag, Test, PermissionsDialog },
   inject: ['checkAgent'],
   props: {
     hideOperation: {
@@ -247,7 +261,8 @@ export default {
           // }
         ]
       },
-      formData: {}
+      formData: {},
+      permissions: []
     }
   },
   beforeDestroy() {
@@ -317,6 +332,7 @@ export default {
       //组装数据
       this.connection['last_updated'] = dayjs(row.last_updated).format('YYYY-MM-DD HH:mm:ss')
       this.loadList(row)
+      this.isDaas && this.loadPermissions(row.id)
     },
     edit() {
       const { connection = {} } = this
@@ -436,6 +452,7 @@ export default {
     },
     async loadList(row = {}) {
       const heartbeatTable = await this.loadHeartbeatTable(row)
+
       this.connection.heartbeatTable = heartbeatTable?.[0]
       this.list = [
         ...this.configModel['default'],
@@ -475,6 +492,22 @@ export default {
             }
           : {}
       ]
+
+      // 权限管理
+      this.isDaas &&
+        this.list.unshift({
+          icon: 'link',
+          items: [
+            {
+              label: '数据连接权限',
+              key: 'permissions',
+              labelActionTitle: '权限管理',
+              labelAction: () => {
+                this.$refs.permissionsDialog.open(this.connection)
+              }
+            }
+          ]
+        })
     },
     getConnectionIcon() {
       const { connection } = this
@@ -518,6 +551,32 @@ export default {
 
     handleClick(temp = {}) {
       temp.action?.()
+    },
+
+    loadPermissions(id) {
+      const filter = {
+        dataType: 'Connections',
+        dataId: id
+      }
+      dataPermissionApi.permissions(filter).then((data = []) => {
+        usersApi
+          .role({
+            filter: JSON.stringify({
+              limit: 1000
+            })
+          })
+          .then((roleList = []) => {
+            this.permissions = data.map(t => {
+              const role = roleList.items?.find(r => r.id === t.typeId) || {}
+              return {
+                checked: t.actions,
+                roleId: t.typeId,
+                roleName: role.name
+              }
+            })
+            console.log('this.permissions ', this.permissions)
+          })
+      })
     }
   }
 }

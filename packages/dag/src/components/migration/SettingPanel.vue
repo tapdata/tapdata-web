@@ -11,7 +11,7 @@ import { createForm, onFieldValueChange, onFormInputChange, onFormValuesChange }
 import { observer } from '@formily/reactive-vue'
 import FormRender from '../FormRender'
 import { debounce } from 'lodash'
-import { alarmApi, taskApi } from '@tap/api'
+import { alarmApi, taskApi, usersApi, dataPermissionApi } from '@tap/api'
 import { getPickerOptionsBeforeTime } from '@tap/business/src/shared/util'
 import { FormTab } from '../../../../form'
 import { action } from '@formily/reactive'
@@ -62,6 +62,20 @@ export default observer({
           }
         },
 
+        useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
+          return field => {
+            field.loading = true
+            service({ field }, ...serviceParams).then(
+              action.bound(data => {
+                if (fieldName === 'value') {
+                  field.setValue(data)
+                } else field[fieldName] = data
+                field.loading = false
+              })
+            )
+          }
+        },
+
         async loadAlarmChannels() {
           const channels = await alarmApi.channels()
           const MAP = {
@@ -90,6 +104,33 @@ export default observer({
           }
 
           return options
+        },
+
+        async loadRoleList(field, val) {
+          try {
+            let filter = {
+              limit: 1000
+            }
+
+            const usedId = val?.map(t => t.roleId) || []
+
+            const { items = [] } = await usersApi.role({
+              filter: JSON.stringify(filter)
+            })
+            return items.map(item => {
+              return {
+                label: item.name,
+                value: item.id,
+                disabled: usedId.includes(item.id)
+              }
+            })
+          } catch (e) {
+            return []
+          }
+        },
+
+        handleRemovePermissionsItem: () => {
+          this.savePermissionsConfig()
         }
       },
 
@@ -906,6 +947,122 @@ export default observer({
                     }
                   }
                 }
+              },
+              tab4: {
+                type: 'void',
+                'x-component': 'FormTab.TabPane',
+                'x-component-props': {
+                  label: '权限设置'
+                },
+                properties: {
+                  permissions: {
+                    type: 'array',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'ArrayTable',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        c1: {
+                          type: 'void',
+                          'x-component': 'ArrayTable.Column',
+                          'x-component-props': {
+                            title: '授权角色',
+                            align: 'center',
+                            asterisk: false,
+                            width: 200
+                          },
+                          properties: {
+                            roleId: {
+                              type: 'string',
+                              loading: true,
+                              'x-decorator': 'FormItem',
+                              'x-component': 'Select',
+                              'x-component-props': {
+                                filterable: true
+                              },
+                              'x-reactions': [`{{useAsyncDataSource(loadRoleList, 'dataSource', $values.permissions)}}`]
+                            }
+                          }
+                        },
+                        c2: {
+                          type: 'void',
+                          'x-component': 'ArrayTable.Column',
+                          'x-component-props': {
+                            title: '功能权限',
+                            align: 'center',
+                            asterisk: false
+                          },
+                          properties: {
+                            checked: {
+                              type: 'array',
+                              'x-editable': true,
+                              'x-decorator': 'FormItem',
+                              'x-component': 'Checkbox.Group',
+                              'x-component-props': {
+                                class: 'inline-flex flex-wrap',
+                                onChange: `{{ () => !!$self.value.length && !$self.value.includes('View') && $self.value.unshift('View') }}`
+                              },
+                              enum: [
+                                {
+                                  label: i18n.t('public_button_check'),
+                                  value: 'View',
+                                  disabled: `{{ $self.value.length > 1 }}`
+                                },
+                                {
+                                  label: i18n.t('public_button_edit'),
+                                  value: 'Edit'
+                                },
+                                {
+                                  label: i18n.t('public_button_delete'),
+                                  value: 'Delete'
+                                },
+                                {
+                                  label: i18n.t('public_button_reset'),
+                                  value: 'Reset'
+                                },
+                                {
+                                  label: i18n.t('public_button_start'),
+                                  value: 'Start'
+                                },
+                                {
+                                  label: i18n.t('public_button_stop'),
+                                  value: 'Stop'
+                                }
+                              ]
+                              // default: ['SYSTEM', 'EMAIL'],
+                              // 'x-reactions': ['{{useAsyncOptions(loadAlarmChannels)}}']
+                            }
+                          }
+                        },
+                        c3: {
+                          type: 'void',
+                          'x-component': 'ArrayTable.Column',
+                          'x-component-props': {
+                            width: 80,
+                            title: '操作',
+                            align: 'center'
+                          },
+                          properties: {
+                            remove: {
+                              type: 'void',
+                              'x-component': 'ArrayTable.Remove',
+                              'x-component-props': {
+                                onClick: `{{handleRemovePermissionsItem}}`
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    properties: {
+                      addition: {
+                        type: 'void',
+                        title: '添加授权',
+                        'x-component': 'ArrayTable.Addition'
+                      }
+                    }
+                  }
+                }
               }
             }
           }
@@ -939,6 +1096,9 @@ export default observer({
   created() {
     this.form.setState({ disabled: this.stateIsReadonly })
     this.lazySaveAlarmConfig = debounce(this.saveAlarmConfig, 100)
+    this.lazySavePermissionsConfig = debounce(this.savePermissionsConfig, 300)
+
+    this.getRolePermissions()
   },
 
   methods: {
@@ -946,6 +1106,10 @@ export default observer({
     useEffects() {
       onFieldValueChange('*(alarmSettings.*.*,alarmRules.*.*)', (field, form) => {
         if (this.stateIsReadonly) this.lazySaveAlarmConfig()
+      })
+      // 权限设置修改了
+      onFieldValueChange('*(permissions.*)', (field, form) => {
+        this.lazySavePermissionsConfig()
       })
     },
 
@@ -956,6 +1120,40 @@ export default observer({
       taskApi.patch({
         id: this.form.values.id,
         ...JSON.parse(JSON.stringify(this.form.values))
+      })
+    },
+
+    savePermissionsConfig() {
+      if (!this.form.values?.id) {
+        return
+      }
+      const filter = {
+        dataId: this.form.values?.id,
+        dataType: 'Task',
+        actions:
+          this.form.values.permissions?.map(t => {
+            return {
+              type: 'Role',
+              typeId: t.roleId,
+              actions: t.checked || []
+            }
+          }) || []
+      }
+      dataPermissionApi.postPermissions(filter)
+    },
+
+    getRolePermissions() {
+      const filter = {
+        dataType: 'Task',
+        dataId: this.form.values.id
+      }
+      dataPermissionApi.permissions(filter).then(data => {
+        this.settings.permissions = data.map(t => {
+          return {
+            checked: t.actions,
+            roleId: t.typeId
+          }
+        })
       })
     }
   }

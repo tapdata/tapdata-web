@@ -128,7 +128,6 @@ export default {
         dataIds: this.dataList.map(t => t.id).join()
       }
       dataPermissionApi.roleActions(params).then(data => {
-        console.log('getData', data)
         this.form.checked = data
       })
     },
@@ -143,7 +142,6 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(data => {
-          console.log('getRoleList-data', data)
           this.roleList =
             data.items?.map(t => {
               return {
@@ -185,9 +183,9 @@ export default {
       this.saveLoading = true
       dataPermissionApi
         .dataAuth(params)
-        .then(data => {
-          console.log('dataAuth', data)
+        .then(() => {
           this.$message.success(this.$t('public_message_save_ok'))
+          this.close()
         })
         .finally(() => {
           this.saveLoading = false
