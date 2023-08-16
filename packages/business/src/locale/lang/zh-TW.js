@@ -1085,5 +1085,15 @@ export default {
   packages_business_verification_list_biaobufenziduan: '表部分字段校驗',
   packages_business_components_conditionbox_laiyuanbiaoshuju: '來源表數據過濾',
   packages_business_components_conditionbox_mubiaobiaoshuju: '目標表數據過濾',
-  packages_business_data_server_list_apIwendang: 'API文檔導出'
+  packages_business_data_server_list_apIwendang: 'API文檔導出',
+  packages_business_permissionse_settings_create_quanxianshezhi: '權限設置',
+  packages_business_permissionse_settings_create_shezhiquanxian: '設置權限',
+  packages_business_permissionse_settings_create_xuanzeshouquanjiao: '選擇授權角色',
+  packages_business_connections_permissionsdialog_tianjiashouquan: '添加授權',
+  packages_business_connections_permissionsdialog_gongnengquanxian: '功能權限',
+  packages_business_connections_permissionsdialog_shouquanjuese: '授權角色',
+  packages_business_connections_permissionsdialog_lianjiequanxianshe: '連接權限設置',
+  packages_business_connections_preview_quanxianguanli: '權限管理',
+  packages_business_connections_preview_shujulianjiequan: '數據連接權限',
+  packages_business_notice_list_gonggaobiaoti: '公告標題'
 }

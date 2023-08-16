@@ -24,7 +24,9 @@
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)" />
       </template>
       <div class="buttons" slot="operation">
-        <ElButton v-if="isDaas && multipleSelection.length" @click="handlePermissionsSettings">权限设置</ElButton>
+        <ElButton v-if="isDaas && multipleSelection.length" @click="handlePermissionsSettings">{{
+          $t('packages_business_permissionse_settings_create_quanxianshezhi')
+        }}</ElButton>
         <el-button
           v-readonlybtn="'SYNC_category_application'"
           :disabled="$disabledReadonlyUserBtn()"
@@ -300,7 +302,6 @@
         <el-button type="primary" @click="dialogDelMsgVisible = false">{{ $t('public_button_close') }}</el-button>
       </span>
     </el-dialog>
-    <!--  权限设置弹窗  -->
     <PermissionseSettingsCreate ref="permissionseSettingsCreate"></PermissionseSettingsCreate>
   </section>
 </template>

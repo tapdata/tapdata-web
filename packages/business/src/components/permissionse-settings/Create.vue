@@ -10,12 +10,20 @@
     @close="handleClose"
   >
     <ElForm ref="form" label-position="left" label-width="150px" :model="form" class="my-n6">
-      <ElFormItem size="mini" label="选择授权角色" prop="roleId">
+      <ElFormItem
+        size="mini"
+        :label="$t('packages_business_permissionse_settings_create_xuanzeshouquanjiao')"
+        prop="roleId"
+      >
         <ElSelect v-model="form.roleId" size="mini" @change="getData">
           <ElOption v-for="item in roleList" :label="item.label" :value="item.value" :key="item.value"></ElOption>
         </ElSelect>
       </ElFormItem>
-      <ElFormItem size="mini" label="设置权限" prop="checked">
+      <ElFormItem
+        size="mini"
+        :label="$t('packages_business_permissionse_settings_create_shezhiquanxian')"
+        prop="checked"
+      >
         <ElCheckboxGroup v-model="form.checked" size="mini" class="inline-flex ml-4">
           <ElCheckbox v-for="item in items" :label="item.value" :key="item.value">{{ item.label }}</ElCheckbox>
         </ElCheckboxGroup>
@@ -42,7 +50,7 @@ export default {
     title: {
       type: String,
       default: () => {
-        return '权限设置'
+        return i18n.t('packages_business_permissionse_settings_create_quanxianshezhi')
       }
     }
   },
@@ -66,27 +74,27 @@ export default {
       const MAP = {
         Task: [
           {
-            label: '查看',
+            label: i18n.t('public_button_check'),
             value: 'View'
           },
           {
-            label: '编辑',
+            label: i18n.t('public_button_edit'),
             value: 'Edit'
           },
           {
-            label: '删除',
+            label: i18n.t('public_button_delete'),
             value: 'Delete'
           },
           {
-            label: '重置',
+            label: i18n.t('public_button_reset'),
             value: 'Reset'
           },
           {
-            label: '启动',
+            label: i18n.t('public_button_start'),
             value: 'Start'
           },
           {
-            label: '停止',
+            label: i18n.t('public_button_stop'),
             value: 'Stop'
           }
         ]
@@ -95,15 +103,15 @@ export default {
       return (
         MAP[this.type] || [
           {
-            label: '查看',
+            label: i18n.t('public_button_check'),
             value: 'View'
           },
           {
-            label: '编辑',
+            label: i18n.t('public_button_edit'),
             value: 'Edit'
           },
           {
-            label: '删除',
+            label: i18n.t('public_button_delete'),
             value: 'Delete'
           }
         ]

@@ -22,7 +22,9 @@
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </template>
       <div slot="operation">
-        <ElButton v-if="isDaas && multipleSelection.length" @click="handlePermissionsSettings">权限设置</ElButton>
+        <ElButton v-if="isDaas && multipleSelection.length" @click="handlePermissionsSettings">{{
+          $t('packages_business_permissionse_settings_create_quanxianshezhi')
+        }}</ElButton>
         <ElButton
           v-if="isDaas"
           v-show="multipleSelection.length > 0"

@@ -499,9 +499,9 @@ export default {
           icon: 'link',
           items: [
             {
-              label: '数据连接权限',
+              label: i18n.t('packages_business_connections_preview_shujulianjiequan'),
               key: 'permissions',
-              labelActionTitle: '权限管理',
+              labelActionTitle: i18n.t('packages_business_connections_preview_quanxianguanli'),
               labelAction: () => {
                 this.$refs.permissionsDialog.open(this.connection)
               }
