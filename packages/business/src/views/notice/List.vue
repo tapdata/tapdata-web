@@ -102,12 +102,12 @@ export default {
       ], // 展示的数据
       columns: [
         {
-          label: '公告标题',
+          label: i18n.t('packages_business_notice_list_gonggaobiaoti'),
           prop: 'name',
           slotName: 'noticeName'
         },
         {
-          label: '时间',
+          label: i18n.t('packages_business_task_monitor_time'),
           prop: 'time',
           dataType: 'time',
           with: '100px'

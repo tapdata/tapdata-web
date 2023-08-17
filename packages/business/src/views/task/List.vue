@@ -24,6 +24,9 @@
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)" />
       </template>
       <div class="buttons" slot="operation">
+        <ElButton v-if="isDaas && multipleSelection.length" @click="handlePermissionsSettings">{{
+          $t('packages_business_permissionse_settings_create_quanxianshezhi')
+        }}</ElButton>
         <el-button
           v-readonlybtn="'SYNC_category_application'"
           :disabled="$disabledReadonlyUserBtn()"
@@ -71,6 +74,7 @@
         </el-dropdown>
         <template>
           <el-button
+            v-if="buttonShowMap.export"
             v-show="multipleSelection.length > 0 && isDaas"
             :disabled="$disabledReadonlyUserBtn()"
             v-readonlybtn="'SYNC_job_export'"
@@ -82,7 +86,7 @@
             <span> {{ $t('public_button_export') }}</span>
           </el-button>
           <el-button
-            v-if="isDaas"
+            v-if="isDaas && buttonShowMap.import"
             v-readonlybtn="'SYNC_job_import'"
             size="mini"
             class="btn"
@@ -94,6 +98,7 @@
           </el-button>
         </template>
         <el-button
+          v-if="buttonShowMap.create"
           v-readonlybtn="'SYNC_job_creation'"
           class="btn btn-create"
           type="primary"
@@ -213,8 +218,9 @@
             >
               {{ $t('public_button_reset') }}
             </ElLink>
-            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+            <ElDivider v-if="buttonShowMap.copy" v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
             <ElLink
+              v-if="buttonShowMap.copy"
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
               :disabled="$disabledReadonlyUserBtn()"
@@ -296,6 +302,7 @@
         <el-button type="primary" @click="dialogDelMsgVisible = false">{{ $t('public_button_close') }}</el-button>
       </span>
     </el-dialog>
+    <PermissionseSettingsCreate ref="permissionseSettingsCreate"></PermissionseSettingsCreate>
   </section>
 </template>
 
@@ -305,6 +312,8 @@ import dayjs from 'dayjs'
 import i18n from '@tap/i18n'
 import { taskApi, workerApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
+import PermissionseSettingsCreate from '@tap/business/src/components/permissionse-settings/Create'
+
 import { TablePage, TaskStatus } from '../../components'
 import SkipError from './SkipError'
 import Upload from '../../components/UploadDialog'
@@ -322,7 +331,7 @@ export default {
 
   inject: ['checkAgent', 'buried'],
 
-  components: { FilterBar, TablePage, SkipError, Upload, TaskStatus },
+  components: { FilterBar, TablePage, SkipError, Upload, TaskStatus, PermissionseSettingsCreate },
 
   mixins: [syncTaskAgent],
 
@@ -406,6 +415,24 @@ export default {
             status: 110,
             operation: 280
           }
+    },
+
+    buttonShowMap() {
+      if (this.$route.name === 'dataflowList') {
+        return {
+          create: this.$has('v2_data_flow_edit'),
+          copy: this.$has('v2_data_flow_copy'),
+          import: this.$has('v2_data_flow_import'),
+          export: this.$has('v2_data_flow_export')
+        }
+      }
+
+      return {
+        create: this.$has('v2_data_replication_edit'),
+        copy: this.$has('v2_data_replication_copy'),
+        import: this.$has('v2_data_replication_import'),
+        export: this.$has('v2_data_replication_export')
+      }
     }
   },
 
@@ -962,6 +989,10 @@ export default {
         cause !==
           '\u6ca1\u6709\u53d1\u73b0\u60a8\u6700\u8fd1\u6709\u4efb\u52a1\u62a5\u9519, \u5982\u679c\u6709\u5176\u4ed6\u95ee\u9898, \u6b22\u8fce\u54a8\u8be2\u6211\u4eec\u7684\u4eba\u5de5\u5ba2\u670d' &&
         this.$set(this.taskErrorCause, task_id, cause.replace(/\\n/g, '\n').replace(/(\n)+$/g, ''))
+    },
+    // 显示权限设置
+    handlePermissionsSettings() {
+      this.$refs.permissionseSettingsCreate.open(this.multipleSelection, 'Task')
     }
   }
 }

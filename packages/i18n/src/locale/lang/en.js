@@ -205,6 +205,7 @@ export default {
   public_connection_schema_status_tip: 'The connection can only be created normally once the Schema has been loaded.',
   public_connection_table_structure_update_time: 'Schema Load Time',
   public_connection_button_create: 'Create Connection',
+  public_connection_button_copy: 'Copy Connection',
   public_connection_button_test: 'Test',
   public_connection_button_load_schema: 'Load Schema',
   public_connection_form_database_name: 'Database Name',
@@ -240,6 +241,10 @@ export default {
   public_task_mission_error: 'Task Error',
   public_task_reasons_for_error: 'Reasons for error',
   public_task_log: 'Task Log',
+  public_task_create: 'Create Task',
+  public_task_copy: 'Copy Task',
+  public_task_import: 'Import Task',
+  public_task_export: 'Export Task',
   // node
   public_node_name: 'Node Name',
   public_node_type: 'Node Type',

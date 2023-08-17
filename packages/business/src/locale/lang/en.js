@@ -1172,5 +1172,18 @@ export default {
   packages_business_verification_form_index_field_count_is_not_equal:
     'Because the number of index fields in the source table and the target table is not equal, the following source tables will automatically skip validation:',
   packages_business_verification_list_renyibiaoshuju: 'Any table data verification',
-  packages_business_verification_list_renwuyizhixing: 'Task Consistency Verification'
+  packages_business_verification_list_renwuyizhixing: 'Task Consistency Verification',
+  packages_business_connections_preview_quanxianguanli: 'Permission Management',
+  packages_business_permissionse_settings_create_quanxianshezhi: 'Permission Settings',
+  packages_business_permissionse_settings_create_shezhiquanxian: 'Set Permissions',
+  packages_business_permissionse_settings_create_xuanzeshouquanjiao: 'Select authorization role',
+  packages_business_permissionse_settings_create_wufaduiyixiashujujinxingshouquan:
+    'Unable to authorize the following data, saving will be skipped',
+  packages_business_connections_permissionsdialog_tianjiashouquan: 'Add Permissions',
+  packages_business_connections_permissionsdialog_gongnengquanxian: 'Function Permissions',
+  packages_business_connections_permissionsdialog_shouquanjuese: 'Authorization Role',
+  packages_business_connections_permissionsdialog_lianjiequanxianshe: 'Connection permission settings',
+  packages_business_connections_preview_quanxiangguanli: 'Privilege Management',
+  packages_business_connections_preview_shujulianjiequan: 'Data connection permissions',
+  packages_business_notice_list_gonggaobiaoti: 'Notice Title'
 }

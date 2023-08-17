@@ -217,7 +217,8 @@ $headerHeight: 40px;
   will-change: width;
 
   &.show-settings {
-    width: 440px;
+    //width: 440px;
+    width: 640px;
   }
 
   &-close {

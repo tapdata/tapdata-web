@@ -204,6 +204,7 @@ export default {
   public_connection_schema_status_tip: 'Schema加載完成的連接才可以正常創建任務',
   public_connection_table_structure_update_time: '表結構更新時間',
   public_connection_button_create: '創建連接',
+  public_connection_button_copy: '複製連接',
   public_connection_button_test: '連接測試',
   public_connection_button_load_schema: '加載Schema',
   public_connection_form_database_name: '數據庫名稱',
@@ -239,6 +240,10 @@ export default {
   public_task_mission_error: '任務出錯',
   public_task_reasons_for_error: '錯誤原因',
   public_task_log: '任務日誌',
+  public_task_create: '創建任務',
+  public_task_copy: '複製任務',
+  public_task_import: '導入任務',
+  public_task_export: '導出任務',
   // 任節點
   public_node_name: '節點名稱',
   public_node_type: '節點類型',
