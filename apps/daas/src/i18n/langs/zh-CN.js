@@ -5,7 +5,6 @@ export default {
   // 通用消息
   message_loading: '正在加载',
   message_network_connected: '网络已恢复',
-  dialog_tip_copied: '已复制',
   //页面标题
   page_title_overview: '概览',
   page_title_dashboard: '工作台',

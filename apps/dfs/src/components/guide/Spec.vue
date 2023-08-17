@@ -1,6 +1,7 @@
 <template>
   <section class="flex flex-column h-100">
-    <div class="fs-6 font-color-dark fw-sub mb-4 mt-4">{{ $t('dfs_guide_spec_ninxuyaozixing') }}</div>
+    <div class="fs-6 font-color-dark fw-sub mb-2 mt-4">{{ $t('dfs_guide_spec_ninxuyaozixing') }}</div>
+    <div class="fs-7 font-color-sslight mb-2" v-html="$t('dfs_guide_spec_offline_deployment_tip')"></div>
     <el-form class="flex flex-column flex-1 overflow-hidden" label-position="top" ref="ruleForm">
       <!--订阅方式-->
       <ElFormItem :label="$t('dfs_instance_instance_dingyuefangshi')">

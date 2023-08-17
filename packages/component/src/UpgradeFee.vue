@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="$t('packages_component_src_upgradefee_dingyueshengji')"
+    :title="$t('dfs_subscribe_to_professional_plan')"
     :visible.sync="visible"
     :append-to-body="true"
     width="880px"
@@ -307,8 +307,8 @@ export default {
   padding: 1.5px;
   z-index: 2;
   border-radius: 8px;
-  background: -webkit-linear-gradient(135deg, #A3E4D7, #a77bf3);
-  background: linear-gradient(135deg, #A3E4D7, #a77bf3);
+  background: -webkit-linear-gradient(135deg, #a3e4d7, #a77bf3);
+  background: linear-gradient(135deg, #a3e4d7, #a77bf3);
 }
 ::v-deep {
   .el-dialog__body {

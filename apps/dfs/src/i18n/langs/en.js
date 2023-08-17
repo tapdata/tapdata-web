@@ -1041,6 +1041,8 @@ export default {
   page_title_run_monitor: 'Run Monitoring',
   page_title_data_verify: 'Validations',
   page_title_data_difference_details: 'Difference Details',
+  page_title_data_hub: 'Real Time Data Hub',
+  page_title_subscribe_storage: 'Subscription Data Storage',
   notify_abnormally_stopped: 'Stopped Unexpectedly',
   header_upgrade: 'Access old version',
   dfs_src_init_huoquyonghuxin: 'Failed to obtain user information, stop retrying and jump to 500',
@@ -1430,9 +1432,9 @@ export default {
   dfs_agent_download_fastdownload_he: 'and',
   dfs_agent_download_fastdownload_shiyongpeizhiwen: 'Method One: Use configuration file deployment to start Agent',
   dfs_agent_download_subscriptionmodeldialog_yongjiu: 'Permanent',
-  dfs_agent_download_subscriptionmodeldialog_mianfeishilizui: 'Free instance, Maximum of 3 tasks',
+  dfs_agent_download_subscriptionmodeldialog_mianfeishilizui: 'Maximum of 3 tasks',
   dfs_agent_download_subscriptionmodeldialog_ge: '',
-  dfs_agent_download_subscriptionmodeldialog_renwushujianyi: 'Maximum of {val} tasks',
+  dfs_agent_download_subscriptionmodeldialog_renwushujianyi: 'Maximum of {val} tasks running',
   dfs_agent_download_subscriptionmodeldialog_extra: 'EXTRA SMALL: 1C 2G - FREE (only one can be created)',
   dfs_agent_download_subscriptionmodeldialog_dingyuefangshi: 'Subscription Period:',
   dfs_agent_download_subscriptionmodeldialog_jisuanziyuan: 'Computing resources:',
@@ -1666,6 +1668,12 @@ export default {
   dfs_guide_scenes_shujurucangjia: 'Database replication between Oracle, MySQL and many other databases',
   dfs_guide_scenes_kuayunshujushi: 'Moving data into or out of MongoDB or MongoDB Atlas',
   dfs_guide_spec_ninxuyaozixing: 'Please select the instance size and subscription period',
+  dfs_guide_spec_offline_deployment_tip: `If your network completely blocks external internet access, you can <a
+        class="text-primary"
+        href="https://tapdata.net/tapdata-on-prem/demo.html"
+        target="_blank"
+        >click to apply</a
+      > for offline deployment of the full Tapdata service.`,
   dfs_components_taskalarmtour_dianjicichushe: 'Click here to set task alert',
   dfs_components_taskalarmtour_qushezhi: 'Settings',
   dfs_components_taskalarmtour_jiancedaoninwei:
@@ -1677,6 +1685,8 @@ export default {
   dfs_mixins_tour_qingchuangjianninde2: 'Please create your target database',
   dfs_mixins_tour_dianjicichuchuang3: 'Click here to create your source database',
   dfs_mixins_tour_qingchuangjianninde3: 'Please create your source database',
+  dfs_mixins_tour_drag_source_table:
+    'Please drag a table from the source connection to the target connection to start creating a replication task.',
   dfs_router_index_zhifuqingdan: 'Payment list',
   dfs_instance_instance_perce: '{val1} Second Ago',
   dfs_instance_instance_perce_minute: '{val1} Minute Ago',
@@ -1713,11 +1723,31 @@ export default {
   dfs_instance_pay_wait_submit: 'Submit Payment',
   dfs_instance_pay_wait: 'Payment Pending',
   dfs_the_header_header_jiaruSla: 'Join Slack',
+  dfs_agent_information: 'Agent Information',
+  dfs_agent_download_type: 'Please select your server type',
   dfs_change_instance_title: 'Change Instance Size',
   dfs_change_instance_tip:
     'Spec changes support only upgrading from smaller to larger specifications. To downgrade from a larger spec to a smaller one, please unsubscribe and re-subscribe.',
   dfs_change_instance_object: 'Instance Object',
   dfs_change_instance_price: 'Price',
   dfs_change_instance_submit: 'Submit',
-  dfs_select_server_type: 'Please select your server type'
+  dfs_select_server_type: 'Please select your server type',
+  dfs_subscribe_storage_tip_title: 'Where does Tapdata store data?',
+  dfs_subscribe_free_storage_tip_content:
+    'Tapdata provides 10GB storage space in a shared MongoDB Cluster for Free Trial users. You may use this free storage during the 15 day trial period. Only your account can access your data.<br/>Note for Free Trial users a shared cluster is used instead of MongoDB Atlas',
+  dfs_subscribe_storage_tip_content:
+    'Tapdata provides 10GB storage space in a shared MongoDB Cluster for Free Trial users. You may use this free storage during the 15 day trial period. Only your account can access your data.<br/>Note for Free Trial users a shared cluster is used instead of MongoDB Atlas.',
+  dfs_offline_deployment: 'Offline Deployment',
+  dfs_wait_storage_init:
+    'The storage you subscribed to is being initialized, which may take 1 to 20 minutes. Please be patient and wait.',
+  dfs_replication_tour_dialog_desc:
+    'Before starting the data replication task, you need to create the source and target database connections. We will guide you through the process:',
+  dfs_replication_tour_dialog_steps:
+    '1.Create source database  ｜  2.Create target database｜  3.Configure a data replication task',
+  dfs_replication_tour_dialog_lets_go: "Now let's get started !",
+  dfs_replication_tour_dialog_start: 'Start',
+  dfs_replication_tour_dialog_success_title:
+    'Congratulations! You have successfully completed the guided tour for the replication task.',
+  dfs_replication_tour_dialog_finish: 'Finish',
+  dfs_subscribe_to_professional_plan: 'Subscribe to Professional Plan'
 }

@@ -1078,7 +1078,45 @@ export default observer({
   },
 
   computed: {
-    ...mapGetters('dataflow', ['stateIsReadonly', 'allNodes'])
+    ...mapGetters('dataflow', ['stateIsReadonly', 'allNodes']),
+
+    accessNodeProcessIdArr() {
+      const set = this.allNodes
+        .filter(item => item.type === 'database' || item.type === 'table')
+        .reduce((set, item) => {
+          item.attrs.accessNodeProcessId && set.add(item.attrs.accessNodeProcessId)
+          return set
+        }, new Set())
+      return [...set]
+    },
+
+    accessNodeProcessList() {
+      if (!this.accessNodeProcessIdArr.length) return this.scope.$agents
+      return this.scope.$agents.filter(item => this.accessNodeProcessIdArr.includes(item.value))
+    },
+
+    sourceNodes() {
+      return this.allNodes
+        .filter(node => node.$outputs.length && !node.$inputs.length)
+        .map(node => ({
+          nodeId: node.id,
+          nodeName: node.name,
+          hiddenPointType: node?.cdcMode === 'polling', //源节点开启了日志轮询则禁用增量采集时刻配置
+          connectionId: node.connectionId,
+          connectionName: node.attrs.connectionName
+        }))
+    },
+
+    systemTimeZone() {
+      let timeZone = new Date().getTimezoneOffset() / 60
+      let systemTimeZone = ''
+      if (timeZone > 0) {
+        systemTimeZone = 0 - timeZone
+      } else {
+        systemTimeZone = '+' + -timeZone
+      }
+      return systemTimeZone
+    }
   },
 
   watch: {
@@ -1090,6 +1128,60 @@ export default observer({
           disabled: true
         })
       }
+    },
+
+    accessNodeProcessIdArr: {
+      handler(arr) {
+        const size = arr.length
+        if (size >= 1) {
+          const currentId = this.settings.accessNodeProcessId
+          this.settings.accessNodeType = 'MANUALLY_SPECIFIED_BY_THE_USER'
+          this.settings.accessNodeProcessId = currentId && arr.includes(currentId) ? currentId : arr[0]
+        }
+        if (!this.stateIsReadonly) {
+          // 只在编辑模式下禁用或启用
+          this.form.setFieldState('*(accessNodeType,accessNodeProcessId)', {
+            disabled: size === 1
+          })
+        }
+      },
+      immediate: true
+    },
+    accessNodeProcessList: {
+      handler(dataSource = []) {
+        this.form.setFieldState('accessNodeProcessId', {
+          dataSource
+        })
+      },
+      immediate: true
+    },
+
+    sourceNodes(v) {
+      const timeZone = this.systemTimeZone
+      const oldPoints = this.settings.syncPoints
+      const oldPointsMap = oldPoints?.length
+        ? oldPoints.reduce((map, point) => {
+            if (point.nodeId) map[point.nodeId] = point
+            return map
+          }, {})
+        : {}
+      const syncPoints = this.sourceNodes.map(item => {
+        const old = oldPointsMap[item.nodeId]
+        const point = {
+          ...item,
+          timeZone,
+          pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
+          dateTime: ''
+        }
+        if (old && !item.hiddenPointType) {
+          Object.assign(point, {
+            pointType: old.pointType,
+            dateTime: old.dateTime
+          })
+        }
+        return point
+      })
+      this.settings.syncPoints = syncPoints
     }
   },
 

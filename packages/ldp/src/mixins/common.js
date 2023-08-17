@@ -1,3 +1,4 @@
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { CancelToken, discoveryApi, taskApi } from '@tap/api'
 import { validateCron } from '@tap/form'
 
@@ -78,6 +79,12 @@ export default {
       }
     }
   },
+
+  computed: {
+    ...mapGetters(['startingTour']),
+    ...mapState(['highlightBoard'])
+  },
+
   unmounted() {
     this.debouncedSearch?.cancel()
     this.cancelSource?.cancel()
@@ -212,6 +219,39 @@ export default {
           this.taskDialogConfig.task.crontabExpression = val
         }
       }
+    },
+
+    setExpand(id, isExpand) {
+      const i = this.expandedKeys.indexOf(id)
+      if (!isExpand) {
+        if (~i) this.expandedKeys.splice(i, 1)
+      } else {
+        if (!~i) this.expandedKeys.push(id)
+      }
+    },
+
+    handeNodeCollapse(data) {
+      this.setExpand(data.id, false)
+    },
+
+    async makeTaskName(source) {
+      const taskNames = await taskApi.get({
+        filter: JSON.stringify({
+          fields: { name: 1 },
+          where: { name: { like: `^${source}\\d+$` } }
+        })
+      })
+      let def = 1
+      if (taskNames?.items.length) {
+        let arr = [0]
+        taskNames.items.forEach(item => {
+          const res = item.name.match(new RegExp(`^${source}(\\d+)$`))
+          if (res && res[1]) arr.push(+res[1])
+        })
+        arr.sort((a, b) => a - b)
+        def = arr.pop() + 1
+      }
+      return `${source}${def}`
     }
   }
 }

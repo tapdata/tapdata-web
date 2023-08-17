@@ -28,7 +28,7 @@ const TaskList = async () => {
 }
 
 const MigrateList = async () => {
-  const { MigrateList } = await import('@tap/business')
+  const { MigrateList } = await import('@tap/task')
   return MigrateList
 }
 
@@ -44,11 +44,6 @@ const MigrationMonitorViewer = async () => {
 const VerifyDetails = async () => {
   const { VerifyDetails } = await import('@tap/business')
   return VerifyDetails
-}
-
-const DataConsoleDashboard = async () => {
-  const { Dashboard } = await import('@tap/ldp')
-  return Dashboard
 }
 
 const NoticeList = async () => {
@@ -104,14 +99,24 @@ const routes = [
         meta: {
           title: 'tap_home'
         },
-        redirect: { name: 'dataConsole' },
+        redirect: { name: 'Dashboard' },
         hidden: true
       },
       {
         path: '/workbench',
         name: 'Workbench',
-        redirect: { name: 'dataConsole' },
+        redirect: { name: 'dashboard' },
         hidden: true
+      },
+      {
+        path: '/dashboard',
+        name: 'Dashboard',
+        component: () => import('../views/workbench/Workbench.vue'),
+        meta: {
+          title: 'tap_workbench',
+          icon: 'workbench',
+          hideTitle: true
+        }
       },
       {
         path: '/systemNotice',
@@ -136,7 +141,8 @@ const routes = [
             name: 'createAgent',
             component: () => import(/* webpackChunkName: "instance-details" */ '../views/instance/CreateAgent'),
             meta: {
-              title: i18n.t('dfs_agent_download_subscriptionmodeldialog_peizhishishishu')
+              title: i18n.t('dfs_agent_download_subscriptionmodeldialog_peizhishishishu'),
+              hideTitle: true
             }
           },
           {
@@ -148,6 +154,15 @@ const routes = [
             component: () => import(/* webpackChunkName: "instance-details" */ '../views/instance/Details.vue'),
             meta: {
               title: 'tap_instance_details'
+            }
+          },
+          {
+            path: 'install/:id',
+            name: 'installAgent',
+            component: () => import(/* webpackChunkName: "instance-details" */ '../views/instance/Install'),
+            meta: {
+              title: '部署计算引擎',
+              hideTitle: true
             }
           }
         ]
@@ -200,7 +215,8 @@ const routes = [
             meta: {
               title: 'task_manage_migrate',
               desc: 'task_manage_migrate_desc',
-              code: 'v2_data_replication'
+              code: 'v2_data_replication',
+              hideTitle: true
             }
           }
         ]
@@ -349,6 +365,33 @@ const routes = [
         },
         children: [
           {
+            path: 'pay/:id',
+            name: 'pay',
+            component: () => import(/* webpackChunkName: "instance" */ '../views/order/Pay'),
+            meta: {
+              hideTitle: true,
+              title: i18n.t('dfs_router_index_zhifuqingdan')
+            }
+          },
+          {
+            path: 'change/pay/:id',
+            name: 'payForChange',
+            component: () => import(/* webpackChunkName: "instance" */ '../views/order/Pay'),
+            meta: {
+              hideTitle: true,
+              title: i18n.t('dfs_router_index_zhifuqingdan')
+            }
+          },
+          {
+            path: 'renew/pay/:id',
+            name: 'payForRenew',
+            component: () => import(/* webpackChunkName: "instance" */ '../views/order/Pay'),
+            meta: {
+              hideTitle: true,
+              title: i18n.t('dfs_router_index_zhifuqingdan')
+            }
+          },
+          {
             path: '/user/order/changeList',
             name: 'changeList',
             component: () => import(/* webpackChunkName: "instance" */ '../views/order/ChangeList.vue'),
@@ -392,13 +435,24 @@ const routes = [
         }
       },
       {
-        path: '/data-console',
+        path: '/data-hub',
         name: 'dataConsole',
-        component: DataConsoleDashboard,
+        component: () => import(/* webpackChunkName: "data-hub" */ '../views/data-hub'),
         meta: {
-          title: 'page_title_data_console',
+          title: 'page_title_data_hub',
           hideTitle: true,
           icon: 'data-server'
+        }
+      },
+      {
+        path: '/create-storage',
+        name: 'CreateStorage',
+        component: () => import(/* webpackChunkName: "data-hub" */ '../views/instance/CreateStorage'),
+        meta: {
+          title: 'page_title_subscribe_storage',
+          hideTitle: true,
+          icon: 'data-server',
+          activeMenu: '/data-hub'
         }
       },
       {
@@ -470,14 +524,14 @@ const routes = [
       title: 'tap_agent_download_now'
     }
   },
-  {
-    path: '/pay',
-    name: 'pay',
-    component: () => import(/* webpackChunkName: "instance" */ '../views/order/pay.vue'),
-    meta: {
-      title: i18n.t('dfs_router_index_zhifuqingdan')
-    }
-  },
+  // {
+  //   path: '/pay',
+  //   name: 'pay',
+  //   component: () => import(/* webpackChunkName: "instance" */ '../views/order/Pay'),
+  //   meta: {
+  //     title: i18n.t('dfs_router_index_zhifuqingdan')
+  //   }
+  // },
   {
     path: '/upgradeVersion',
     name: 'UpgradeVersion',

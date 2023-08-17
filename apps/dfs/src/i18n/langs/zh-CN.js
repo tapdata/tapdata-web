@@ -233,7 +233,7 @@ export default {
   agent_deploy_start_install: '开始安装',
   agent_deploy_start_install_button_copy: '复制',
   agent_deploy_start_install_button_copied: '已复制',
-  agent_deploy_start_install_windows_first: '1.点击',
+  agent_deploy_start_install_windows_first: '1. 点击',
   agent_deploy_start_install_windows_first_download: '下载Tapdata Agent',
   agent_deploy_start_install_windows_second: '2.将tapdata.exe放入您要安装的目录，安装路径不能有中文和特殊字符。',
   agent_deploy_start_install_windows_third: '3.双击执行tapdata.exe开始安装。',
@@ -981,6 +981,8 @@ export default {
   page_title_run_monitor: '运行监控',
   page_title_data_verify: '数据校验',
   page_title_data_difference_details: '差异详情',
+  page_title_data_hub: '实时数据中心',
+  page_title_subscribe_storage: '订阅数据存储',
   // 自定义节点
   notify_abnormally_stopped: '意外停止',
   header_upgrade: '访问旧版本',
@@ -1325,9 +1327,9 @@ export default {
   dfs_agent_download_fastdownload_he: '和',
   dfs_agent_download_fastdownload_shiyongpeizhiwen: '方法一: 使用配置文件部署启动Agent',
   dfs_agent_download_subscriptionmodeldialog_yongjiu: '永久',
-  dfs_agent_download_subscriptionmodeldialog_mianfeishilizui: '免费实例: 任务数建议最多 2',
+  dfs_agent_download_subscriptionmodeldialog_mianfeishilizui: '任务数建议最多 2',
   dfs_agent_download_subscriptionmodeldialog_ge: ' 个',
-  dfs_agent_download_subscriptionmodeldialog_renwushujianyi: '任务数最多 {val} 个',
+  dfs_agent_download_subscriptionmodeldialog_renwushujianyi: '任务运行数最多 {val} 个',
   dfs_agent_download_subscriptionmodeldialog_extra: 'EXTRA SMALL: 1C 2G - FREE(只能创建一个)',
   dfs_agent_download_subscriptionmodeldialog_dingyuefangshi: '订阅方式:',
   dfs_agent_download_subscriptionmodeldialog_jisuanziyuan: '实例规格:',
@@ -1396,14 +1398,14 @@ export default {
   dfs_agent_download_transferdialog_zaiwanchengzhuanzhang:
     '在完成转账后一天内, 我们将会为您开通服务, 您也可以通过下方客服联系我们马上开通服务',
   dfs_agent_download_transferdialog_reopen_tips:
-    '如您关闭此页面, 可通过右上角, 用户名 -> 用户中心, 在下方 服务订阅信息 处重新进行支付, 如有任何问题, 欢迎通过邮件 team@tapdata.io 与我们联系',
+    '如您关闭此页面, 可通过左侧菜单栏 > 订阅中心, 在【订阅中心】处继续进行支付, 如有任何问题, 欢迎通过在线客服与我们联系',
   dfs_agent_download_transferdialog_caozuoshuoming: '操作说明',
-  dfs_agent_download_transferdialog_huikuanzhanghao: '汇款账号：',
+  dfs_agent_download_transferdialog_huikuanzhanghao: '专属汇款账号：',
   dfs_agent_download_transferdialog_zhongguominshengyin: '中国民生银行深圳蛇口支行',
   dfs_agent_download_transferdialog_kaihuyinhang: '开户银行：',
   dfs_agent_download_transferdialog_shenzhentaiboshu: '深圳钛铂数据有限公司 ',
   dfs_agent_download_transferdialog_kaihumingcheng: '开户名称：',
-  dfs_agent_download_transferdialog_zhuanzhangxinxi: '公司账户信息',
+  dfs_agent_download_transferdialog_zhuanzhangxinxi: '汇款账号信息',
   dfs_agent_download_subscriptionmodeldialog_xuanzechanpinmo: '选择产品模式',
   dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi: '托管方式',
   dfs_agent_download_subscriptionmodeldialog_kafka: 'Kafka供数',
@@ -1548,6 +1550,12 @@ export default {
   dfs_guide_scenes_shujurucangjia: '数据入仓，加速查询',
   dfs_guide_scenes_kuayunshujushi: '跨云数据实时同步',
   dfs_guide_spec_ninxuyaozixing: '您需要自行安装一个计算引擎到您的网络环境中, 选择一种合适的方式吧。',
+  dfs_guide_spec_offline_deployment_tip: `如果您的网络环境完全无法访问外网，你可以点击<a
+        class="text-primary"
+        href="https://tapdata.net/tapdata-on-prem/demo.html"
+        target="_blank"
+        >申请</a
+      >离线部署完整的Tapdata服务`,
   dfs_components_taskalarmtour_dianjicichushe: '点击此处设置任务告警',
   dfs_components_taskalarmtour_qushezhi: '去设置',
   dfs_components_taskalarmtour_jiancedaoninwei: '检测到您未绑定邮箱，请先绑定邮箱用于接收任务告警通知',
@@ -1558,6 +1566,7 @@ export default {
   dfs_mixins_tour_qingchuangjianninde2: '请创建您的目标数据库',
   dfs_mixins_tour_dianjicichuchuang3: '点击此处创建您的源数据库',
   dfs_mixins_tour_qingchuangjianninde3: '请创建您的源数据库',
+  dfs_mixins_tour_drag_source_table: '请拖动源连接的一个表到目标连接，开始创建复制任务',
   dfs_router_index_zhifuqingdan: '支付清单',
   dfs_instance_instance_perce: '{val1} 秒前',
   dfs_instance_instance_perce_minute: '{val1} 分钟前',
@@ -1589,10 +1598,28 @@ export default {
   dfs_instance_pay_wait_submit: '提交支付',
   dfs_instance_pay_wait: '等待支付',
   dfs_the_header_header_jiaruSla: '加入Slack',
+  dfs_agent_information: '引擎信息',
+  dfs_agent_download_type: '请选择您的服务器类型',
+  dfs_agent_deploy_success: '部署完成',
+  dfs_agent_deploy_success_subtitle: '引擎部署完成，5秒后自动返回资源管理页面',
   dfs_change_instance_title: '变更实例规格',
   dfs_change_instance_tip: '规格变更仅支持由小规格向大规格变更，如需将大规格变更为小规格，请先退订后再重新订购。',
   dfs_change_instance_object: '变更对象',
   dfs_change_instance_price: '订阅价格',
   dfs_change_instance_submit: '提交变更',
-  dfs_select_server_type: '请选择您的服务器类型'
+  dfs_select_server_type: '请选择您的服务器类型',
+  dfs_subscribe_storage_tip_title: 'Tapdata数据存储在哪里？',
+  dfs_subscribe_free_storage_tip_content:
+    '免费试用的 MongoDB 服务为 Tapdata 管理的托管云数据库，他为您提供了 10GB 的存储空间供您在 15 天的时间内进行测试与使用，您的数据只有您的账号有权限访问。<br/>免费用户将使用共享集群进行储存，而非MongoDB Atlas。',
+  dfs_subscribe_storage_tip_content:
+    'Tapdata使用MongoDB Atlas作为集中式存储的托管云数据库。MongoDB Atlas支持AWS、Azure和GCP的大多数地区。Tapdata将逐步添加对所有Atlas地区的支持。您可以选择最接近您的数据源和目标应用程序的区域和可用区。<br/>Tapdata为每个客户创建一个专用集群，以确保数据安全。',
+  dfs_offline_deployment: '线下部署',
+  dfs_wait_storage_init: '订阅成功。您订阅的存储正在初始化，这可能需要1到20分钟。请耐心等待。',
+  dfs_replication_tour_dialog_desc: '在开始数据复制任务之前，您需要创建源数据库和目标数据库连接，我们将引导您完成：',
+  dfs_replication_tour_dialog_steps: '1.创建源数据库连接  ｜  2.创建目标数据库连接  ｜  3.配置数据复制任务',
+  dfs_replication_tour_dialog_lets_go: '现在让我们开始吧！',
+  dfs_replication_tour_dialog_start: '开始',
+  dfs_replication_tour_dialog_success_title: '恭喜您已经完成复制任务的引导',
+  dfs_replication_tour_dialog_finish: '完成',
+  dfs_subscribe_to_professional_plan: '订阅专业版'
 }

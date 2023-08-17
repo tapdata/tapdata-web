@@ -1,10 +1,10 @@
 <template>
-  <div class="inline-flex align-center">
+  <div class="inline-flex align-center gap-2" :class="{ 'flex-row-reverse': reverse }">
     <span v-if="show" class="task-status-block" :class="['task-status-' + task.status]">
       {{ $t(STATUS_MAP[task.status].i18n) }}
     </span>
     <ElTooltip v-if="showCronTip" placement="top">
-      <VIcon size="16" class="ml-2" :color="task.crontabScheduleMsg ? '#F3961A' : '#008b58'">task-process</VIcon>
+      <VIcon size="16" :color="task.crontabScheduleMsg ? '#F3961A' : '#008b58'">task-process</VIcon>
       <template #content>
         {{ task.crontabScheduleMsg || getNextStartTime() }}
       </template>
@@ -18,7 +18,7 @@
         :visible-arrow="false"
         effect="light"
       >
-        <VIcon size="16" class="ml-2 color-warning">warning</VIcon>
+        <VIcon size="16" class="color-warning">warning</VIcon>
         <template #content>
           <div class="flex flex-wrap align-center font-color-dark">
             <VIcon size="16" class="mr-2 color-warning"> warning </VIcon>
@@ -36,7 +36,7 @@
     </template>
     <template v-if="task.shareCdcStop">
       <ElTooltip placement="top" popper-class="agent-tooltip__popper" :visible-arrow="false" effect="light">
-        <VIcon size="16" class="ml-2 color-warning">warning</VIcon>
+        <VIcon size="16" class="color-warning">warning</VIcon>
         <template #content>
           <div class="font-color-dark">{{ task.shareCdcStopMessage }}</div>
         </template>
@@ -44,7 +44,7 @@
     </template>
     <!--错误解读-->
     <template v-if="errorCause && task.status === 'error'">
-      <VIcon @click="showErrorCause = true" size="16" class="ml-2 color-danger">question-circle</VIcon>
+      <VIcon @click="showErrorCause = true" size="16" class="color-danger">question-circle</VIcon>
       <ElDialog append-to-body :title="$t('public_task_reasons_for_error')" :visible.sync="showErrorCause">
         <div class="p-4 rounded-4 bg-subtle mt-n4 text-preline font-color-dark">
           {{ errorCause }}
@@ -60,7 +60,7 @@
         :visible-arrow="false"
         effect="light"
       >
-        <VIcon size="16" class="ml-2 color-warning">warning</VIcon>
+        <VIcon size="16" class="color-warning">warning</VIcon>
         <template #content>
           <div class="flex flex-wrap align-center font-color-dark">
             <VIcon size="16" class="mr-2 color-warning"> warning </VIcon>
@@ -83,7 +83,8 @@ export default {
   props: {
     task: Object,
     agentMap: Object,
-    errorCause: String
+    errorCause: String,
+    reverse: Boolean
   },
   data() {
     return {
@@ -174,13 +175,13 @@ export default {
 <style lang="scss">
 .task-status-block {
   display: inline-block;
-  min-width: 60px;
-  padding: 3px 10px;
+  min-width: 72px;
+  padding: 2px 8px;
   text-align: center;
-  font-weight: 500;
-  border-radius: 4px;
+  border-radius: 6px;
   box-sizing: border-box;
   word-break: keep-all;
+  line-height: 22px;
 }
 .task-status-running {
   color: #178061;

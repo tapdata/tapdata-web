@@ -17,6 +17,7 @@
     "dayjs": "^1.11.2",
     "qs": "^6.11.0",
     "vue-virtual-scroller": "^1.1.2",
-    "vuedraggable": "^2.24.3"
+    "vuedraggable": "^2.24.3",
+    "vuex": "^3.4.0"
   }
 }

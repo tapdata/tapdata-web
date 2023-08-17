@@ -205,6 +205,7 @@ importers:
       '@tap/ldp': workspace:^1.0.0
       '@tap/node-design': workspace:^1.0.0
       '@tap/shared': workspace:^1.0.0
+      '@tap/task': workspace:^1.0.0
       '@vue/cli-plugin-babel': ~4.5.0
       '@vue/cli-plugin-eslint': ~4.5.0
       '@vue/cli-plugin-router': ~4.5.0
@@ -273,6 +274,7 @@ importers:
       '@tap/ldp': link:../../packages/ldp
       '@tap/node-design': link:../../packages/node-design
       '@tap/shared': link:../../packages/shared
+      '@tap/task': link:../../packages/task
       '@vue/composition-api': 1.7.1_vue@2.6.14
       ali-oss: 6.17.1
       axios: 0.21.4
@@ -352,6 +354,7 @@ importers:
       qs: ^6.11.0
       vue-virtual-scroller: ^1.1.2
       vuedraggable: ^2.24.3
+      vuex: ^3.4.0
     dependencies:
       '@tap/api': link:../api
       '@tap/assets': link:../assets
@@ -364,6 +367,7 @@ importers:
       qs: 6.11.2
       vue-virtual-scroller: 1.1.2
       vuedraggable: 2.24.3
+      vuex: 3.6.2
 
   packages/component:
     specifiers:
@@ -486,6 +490,7 @@ importers:
   packages/ldp:
     specifiers:
       '@tap/api': workspace:^1.0.0
+      '@tap/assets': workspace:^1.0.0
       '@tap/business': workspace:^1.0.0
       '@tap/component': workspace:^1.0.0
       '@tap/dag': workspace:^1.0.0
@@ -496,6 +501,7 @@ importers:
       vuex: ^3.6.2
     dependencies:
       '@tap/api': link:../api
+      '@tap/assets': link:../assets
       '@tap/business': link:../business
       '@tap/component': link:../component
       '@tap/dag': link:../dag
@@ -542,6 +548,14 @@ importers:
     dependencies:
       requestidlecallback: 0.3.0
       vue-demi: 0.12.5
+
+  packages/task:
+    specifiers:
+      '@tap/business': workspace:^1.0.0
+      '@tap/ldp': workspace:^1.0.0
+    dependencies:
+      '@tap/business': link:../business
+      '@tap/ldp': link:../ldp
 
 packages:
 

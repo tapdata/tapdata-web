@@ -950,6 +950,8 @@ export default {
   page_title_run_monitor: '運行監控',
   page_title_data_verify: '數據校驗',
   page_title_data_difference_details: '差異詳情',
+  page_title_data_hub: '實時數據中心',
+  page_title_subscribe_storage: '訂閱數據存儲',
   notify_abnormally_stopped: '意外停止',
   header_upgrade: '訪問舊版本',
   dfs_src_init_huoquyonghuxin: '獲取用戶信息失敗, 停止重試，跳轉到500',
@@ -1296,9 +1298,9 @@ export default {
   dfs_agent_download_fastdownload_he: '和',
   dfs_agent_download_fastdownload_shiyongpeizhiwen: '方法一: 使用配置文件部署啟動Agent',
   dfs_agent_download_subscriptionmodeldialog_yongjiu: '永久',
-  dfs_agent_download_subscriptionmodeldialog_mianfeishilizui: '免費實例, 最多允許創建 3 個任務',
+  dfs_agent_download_subscriptionmodeldialog_mianfeishilizui: '最多允許創建 3 個任務',
   dfs_agent_download_subscriptionmodeldialog_ge: ' 個',
-  dfs_agent_download_subscriptionmodeldialog_renwushujianyi: '任務數小於 {val} 個',
+  dfs_agent_download_subscriptionmodeldialog_renwushujianyi: '任務運行數最多 {val} 個',
   dfs_agent_download_subscriptionmodeldialog_extra: 'EXTRA SMALL: 1C 2G - FREE(只能創建一個)',
   dfs_agent_download_subscriptionmodeldialog_dingyuefangshi: '訂閱方式：',
   dfs_agent_download_subscriptionmodeldialog_jisuanziyuan: '計算資源：',
@@ -1518,6 +1520,12 @@ export default {
   dfs_guide_scenes_shujurucangjia: '數據入倉，加速查詢',
   dfs_guide_scenes_kuayunshujushi: '跨雲數據實時同步',
   dfs_guide_spec_ninxuyaozixing: '您需要自行安裝一個計算引擎到您的網絡環境中, 選擇一種合適的方式吧。 ',
+  dfs_guide_spec_offline_deployment_tip: `如果您的網絡環境完全無法訪問外網，你可以點擊<a
+        class="text-primary"
+        href="https://tapdata.net/tapdata-on-prem/demo.html"
+        target="_blank"
+        >申請</a
+      >離線部署完整的Tapdata服務`,
   dfs_components_taskalarmtour_dianjicichushe: '點擊此處設置任務告警',
   dfs_components_taskalarmtour_qushezhi: '去設置',
   dfs_components_taskalarmtour_jiancedaoninwei: '檢測到您未綁定郵箱，請先綁定郵箱用於接收任務告警通知',
@@ -1528,6 +1536,7 @@ export default {
   dfs_mixins_tour_qingchuangjianninde2: '請創建您的目標數據庫',
   dfs_mixins_tour_dianjicichuchuang3: '點擊此處創建您的源數據庫',
   dfs_mixins_tour_qingchuangjianninde3: '請創建您的源數據庫',
+  dfs_mixins_tour_drag_source_table: '請將源連接的一個表拖動到目標連接，開始創建複製任務。',
   dfs_router_index_zhifuqingdan: '支付清單',
   dfs_instance_instance_perce: '{val1} 秒前',
   dfs_instance_instance_perce_minute: '{val1} 分鐘前',
@@ -1560,10 +1569,26 @@ export default {
   dfs_instance_pay_wait_submit: '提交支付',
   dfs_instance_pay_wait: '等待支付',
   dfs_the_header_header_jiaruSla: '加入Slack',
+  dfs_agent_information: '引擎信息',
+  dfs_agent_download_type: '請選擇您的伺服器類型',
   dfs_change_instance_title: '變更實例規格',
   dfs_change_instance_tip: '規格變更僅支持由小規格向大規格變更，如需將大規格變更為小規格，請先退訂後再重新訂購。',
   dfs_change_instance_object: '變更對象',
   dfs_change_instance_price: '訂閱價格',
   dfs_change_instance_submit: '提交變更',
-  dfs_select_server_type: '請選擇您的伺服器類型'
+  dfs_select_server_type: '請選擇您的伺服器類型',
+  dfs_subscribe_storage_tip_title: 'Tapdata數據存儲在哪裡？',
+  dfs_subscribe_free_storage_tip_content:
+    '免費試用的 MongoDB 服務為 Tapdata 管理的托管雲數據庫，他為您提供了 10GB 的存儲空間供您在 15 天的時間內進行測試與使用，您的數據只有您的帳號有權限訪問。<br/>免費用戶將使用共享集群進行儲存，而非MongoDB Atlas。',
+  dfs_subscribe_storage_tip_content:
+    'Tapdata使用MongoDB Atlas作為集中式存儲的托管雲數據庫。MongoDB Atlas支持AWS、Azure和GCP的大多數地區。Tapdata將逐步添加對所有Atlas地區的支持。您可以選擇最接近您的數據源和目標應用程序的區域和可用區。<br/>Tapdata為每個客戶創建一個專用集群，以確保數據安全。',
+  dfs_offline_deployment: '線下部署',
+  dfs_wait_storage_init: '订阅成功。您訂閱的儲存正在初始化，這可能需要1到20分鐘。請耐心等待。',
+  dfs_replication_tour_dialog_desc: '在開始資料複製任務之前，您需要創建源資料庫和目標資料庫連接，我們將引導您完成：',
+  dfs_replication_tour_dialog_steps: '1.創建源資料庫連接  ｜  2.創建目標資料庫連接  ｜  3.配置資料複製任務',
+  dfs_replication_tour_dialog_lets_go: '現在讓我們開始吧！',
+  dfs_replication_tour_dialog_start: '開始',
+  dfs_replication_tour_dialog_success_title: '恭喜您已經完成複製任務的引導',
+  dfs_replication_tour_dialog_finish: '完成',
+  dfs_subscribe_to_professional_plan: '訂閱專業版'
 }

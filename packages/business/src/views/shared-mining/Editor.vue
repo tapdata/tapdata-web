@@ -41,6 +41,15 @@
           ></ElDatePicker>
         </div>
       </ElFormItem>
+      <ElFormItem size="mini" :label="$t('packages_dag_nodes_database_zengliangduoxiancheng')">
+        <ElSwitch v-model="dagForm.cdcConcurrent"></ElSwitch>
+        <ElInputNumber
+          v-if="dagForm.cdcConcurrent"
+          v-model="dagForm.cdcConcurrentWriteNum"
+          class="ml-4"
+          :min="0"
+        ></ElInputNumber>
+      </ElFormItem>
     </ElForm>
     <span class="dialog-footer" slot="footer">
       <ElButton @click="handleClose" size="mini">{{ $t('public_button_cancel') }}</ElButton>
@@ -51,7 +60,7 @@
 
 <script>
 import dayjs from 'dayjs'
-import { logcollectorApi } from '@tap/api'
+import { logcollectorApi, taskApi } from '@tap/api'
 
 export default {
   name: 'Editor',
@@ -79,7 +88,12 @@ export default {
           label: this.$t('public_time_current'),
           value: 'current'
         }
-      ]
+      ],
+      dag: null,
+      dagForm: {
+        cdcConcurrent: false,
+        cdcConcurrentWriteNum: 4
+      }
     }
   },
 
@@ -91,6 +105,8 @@ export default {
         storageTime: 3,
         syncPoints: []
       }
+
+      this.loadDag()
       this.loadData()
     },
 
@@ -132,6 +148,20 @@ export default {
         })
     },
 
+    // 获取任务的dag
+    loadDag() {
+      taskApi.get(this.taskId).then(data => {
+        this.dag = data.dag
+
+        this.dag.nodes.forEach(el => {
+          if (el.type === 'hazelcastIMDG') {
+            this.dagForm.cdcConcurrent = el.cdcConcurrent || false
+            this.dagForm.cdcConcurrentWriteNum = el.cdcConcurrentWriteNum || 4
+          }
+        })
+      })
+    },
+
     open(id) {
       this.taskId = id
       this.init()
@@ -151,6 +181,9 @@ export default {
             this.init()
             this.handleClose()
           })
+
+          // 保存到目标节点
+          this.saveTaskDag()
         }
       })
     },
@@ -186,6 +219,23 @@ export default {
         op.selectableRange = `${formatMap.startTime} - ${formatMap.endTime}`
       }
       return op
+    },
+
+    saveTaskDag() {
+      let { dag } = this
+      const { cdcConcurrent, cdcConcurrentWriteNum } = this.dagForm
+      dag.nodes.forEach(el => {
+        if (el.type === 'hazelcastIMDG') {
+          Object.assign(el, {
+            cdcConcurrent,
+            cdcConcurrentWriteNum
+          })
+        }
+      })
+      taskApi.patch({
+        id: this.taskId,
+        dag
+      })
     }
   }
 }

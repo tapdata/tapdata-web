@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@tap/api": "workspace:^1.0.0",
+    "@tap/assets": "workspace:^1.0.0",
     "@tap/business": "workspace:^1.0.0",
     "@tap/component": "workspace:^1.0.0",
     "@tap/dag": "workspace:^1.0.0",

@@ -24,6 +24,9 @@ export default {
   public_schema: '模型',
   public_basic_settings: '基礎設置',
   public_advanced_settings: '高級設置',
+  public_recommend: '推薦',
+  public_board_view: '面板',
+  public_list_view: '列表',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '無效',
@@ -181,7 +184,7 @@ export default {
   // agent
   public_agent: 'Agent',
   public_agent_name: 'Agent名稱',
-  public_agent_button_create: '創建Agent',
+  public_agent_button_create: '創建計算引擎',
   public_agent_button_deploy: '部署',
   public_agent_button_deploy_now: '立即部署',
   public_agent_button_deploy_later: '稍後部署',
@@ -214,6 +217,7 @@ export default {
   public_connection_form_time_zone_of_time_type: '時間類型的時區',
   public_connection_form_link_plugin_source: '鏈接插件來源',
   // 任務
+  public_task: '任務',
   public_task_name: '任務名稱',
   public_task_type: '任務類型',
   public_task_sync_type: '同步類型',

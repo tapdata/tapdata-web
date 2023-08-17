@@ -207,7 +207,8 @@ export default {
         subscribeId: this.subscribeId,
         spec: JSON.stringify(this.orderInfo),
         behavior: JSON.stringify(this.behavior),
-        behaviorAt: this.behaviorAt
+        behaviorAt: this.behaviorAt,
+        tour: this.$store.state.replicationTour
       }
       this.$axios.post('api/tcm/user_guide', params)
     },
@@ -380,6 +381,13 @@ export default {
     },
     //获取存储部署
     initGuide() {
+      this.$store.commit('setReplicationTour', {
+        enable: true,
+        activeIndex: null,
+        behavior: '',
+        status: '',
+        view: 'board'
+      })
       const { guide } = this.$store.state
       // this.getSteps()
       if (guide.steps?.length) {

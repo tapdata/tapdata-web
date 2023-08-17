@@ -417,7 +417,7 @@ export default {
       this.loadingCancelSubmit = true
       this.$axios
         .post('api/tcm/subscribe/change', param)
-        .then(data => {
+        .then(async data => {
           this.buried('unsubscribeAgentStripe', '', {
             result: true,
             type: ''
@@ -426,12 +426,25 @@ export default {
           this.visible = false
           this.loadingCancelSubmit = false
           this.$emit('closeVisible')
-          this.$router.push({
-            name: 'pay',
-            query: {
-              id: data?.id
-            }
-          })
+
+          // 连续订阅变更不需要付款
+          if (subscribeType !== 'recurring' || this.isFree) {
+            this.$router.push({
+              name: 'payForChange',
+              params: {
+                id: data?.id
+              }
+            })
+          } else {
+            await this.$axios.post('api/tcm/subscribe/payment', {
+              email: this.$store.state.user.email,
+              paymentMethod: 'Stripe',
+              successUrl: '',
+              cancelUrl: '',
+              subscribeAlterId: data.id
+            })
+          }
+
           //刷新页面
           this.$emit('closeVisible')
         })
