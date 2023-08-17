@@ -222,6 +222,10 @@ export default {
     async initNodeType() {
       let nodes = [
         {
+          name: i18n.t('packages_dag_src_editor_zhuconghebing'),
+          type: 'merge_table_processor'
+        },
+        {
           name: i18n.t('packages_dag_src_editor_zhuijiahebing'),
           type: 'union_processor'
         },
@@ -277,10 +281,6 @@ export default {
           {
             name: i18n.t('packages_dag_src_editor_join'),
             type: 'join_processor' //join 节点
-          },
-          {
-            name: i18n.t('packages_dag_src_editor_zhuconghebing'),
-            type: 'merge_table_processor'
           }
         ]
         nodes = [...isDaasNode, ...nodes]
