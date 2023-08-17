@@ -1172,7 +1172,7 @@ export default {
   packages_business_verification_form_index_field_count_is_not_equal:
     'Because the number of index fields in the source table and the target table is not equal, the following source tables will automatically skip validation:',
   packages_business_verification_list_renyibiaoshuju: 'Any table data verification',
-  packages_business_verification_list_renwuyizhixing: 'Task Consistency Verification'
+  packages_business_verification_list_renwuyizhixing: 'Task Consistency Verification',
   packages_business_permissionse_settings_create_quanxianshezhi: '权限设置',
   packages_business_permissionse_settings_create_shezhiquanxian: '设置权限',
   packages_business_permissionse_settings_create_xuanzeshouquanjiao: '选择授权角色',
