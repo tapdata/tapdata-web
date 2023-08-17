@@ -914,7 +914,7 @@ export default observer({
 
       form: createForm({
         disabled: this.stateIsReadonly,
-        effects: this.useEffects,
+        // effects: this.useEffects,
         values
       })
     }
@@ -1031,6 +1031,12 @@ export default observer({
   created() {
     this.form.setState({ disabled: this.stateIsReadonly })
     this.lazySaveAlarmConfig = debounce(this.saveAlarmConfig, 100)
+  },
+
+  mounted() {
+    this.$nextTick(() => {
+      this.form.setEffects(this.useEffects)
+    })
   },
 
   methods: {
