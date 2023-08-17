@@ -182,19 +182,24 @@ export default {
   },
 
   methods: {
-    loadData() {
+    async loadData() {
+      const roleList = (await this.formScope.loadRoleList()) || []
       const filter = {
         dataType: 'Connections',
         dataId: this.row.id
       }
       dataPermissionApi.permissions(filter).then((data = []) => {
-        this.$refs.schemaToForm.getForm()?.setValues({
-          permissions: data.map(t => {
+        const permissions = data
+          .map(t => {
             return {
               checked: t.actions,
               roleId: t.typeId
             }
           })
+          .filter(t => roleList.some(role => role.value === t.roleId))
+
+        this.$refs.schemaToForm.getForm()?.setValues({
+          permissions
         })
       })
     },

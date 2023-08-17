@@ -1173,14 +1173,17 @@ export default {
     'Because the number of index fields in the source table and the target table is not equal, the following source tables will automatically skip validation:',
   packages_business_verification_list_renyibiaoshuju: 'Any table data verification',
   packages_business_verification_list_renwuyizhixing: 'Task Consistency Verification',
-  packages_business_permissionse_settings_create_quanxianshezhi: '权限设置',
-  packages_business_permissionse_settings_create_shezhiquanxian: '设置权限',
-  packages_business_permissionse_settings_create_xuanzeshouquanjiao: '选择授权角色',
-  packages_business_connections_permissionsdialog_tianjiashouquan: '添加授权',
-  packages_business_connections_permissionsdialog_gongnengquanxian: '功能权限',
-  packages_business_connections_permissionsdialog_shouquanjuese: '授权角色',
-  packages_business_connections_permissionsdialog_lianjiequanxianshe: '连接权限设置',
-  packages_business_connections_preview_quanxianguanli: '权限管理',
-  packages_business_connections_preview_shujulianjiequan: '数据连接权限',
-  packages_business_notice_list_gonggaobiaoti: '公告标题'
+  packages_business_connections_preview_quanxianguanli: 'Permission Management',
+  packages_business_permissionse_settings_create_quanxianshezhi: 'Permission Settings',
+  packages_business_permissionse_settings_create_shezhiquanxian: 'Set Permissions',
+  packages_business_permissionse_settings_create_xuanzeshouquanjiao: 'Select authorization role',
+  packages_business_permissionse_settings_create_wufaduiyixiashujujinxingshouquan:
+    'Unable to authorize the following data, saving will be skipped',
+  packages_business_connections_permissionsdialog_tianjiashouquan: 'Add Permissions',
+  packages_business_connections_permissionsdialog_gongnengquanxian: 'Function Permissions',
+  packages_business_connections_permissionsdialog_shouquanjuese: 'Authorization Role',
+  packages_business_connections_permissionsdialog_lianjiequanxianshe: 'Connection permission settings',
+  packages_business_connections_preview_quanxiangguanli: 'Privilege Management',
+  packages_business_connections_preview_shujulianjiequan: 'Data connection permissions',
+  packages_business_notice_list_gonggaobiaoti: 'Notice Title'
 }

@@ -540,19 +540,19 @@ export default {
 
       // 权限管理
       this.isDaas &&
-      this.list.unshift({
-        icon: 'link',
-        items: [
-          {
-            label: i18n.t('packages_business_connections_preview_shujulianjiequan'),
-            key: 'permissions',
-            labelActionTitle: i18n.t('packages_business_connections_preview_quanxianguanli'),
-            labelAction: () => {
-              this.$refs.permissionsDialog.open(this.connection)
+        this.list.unshift({
+          icon: 'link',
+          items: [
+            {
+              label: i18n.t('packages_business_connections_preview_shujulianjiequan'),
+              key: 'permissions',
+              labelActionTitle: i18n.t('packages_business_connections_preview_quanxianguanli'),
+              labelAction: () => {
+                this.$refs.permissionsDialog.open(this.connection)
+              }
             }
-          }
-        ]
-      })
+          ]
+        })
     },
     getConnectionIcon() {
       const { connection } = this
@@ -611,14 +611,16 @@ export default {
             })
           })
           .then((roleList = []) => {
-            this.permissions = data.map(t => {
-              const role = roleList.items?.find(r => r.id === t.typeId) || {}
-              return {
-                checked: t.actions,
-                roleId: t.typeId,
-                roleName: role.name
-              }
-            })
+            this.permissions = data
+              .map(t => {
+                const role = roleList.items?.find(r => r.id === t.typeId) || {}
+                return {
+                  checked: t.actions,
+                  roleId: t.typeId,
+                  roleName: role.name
+                }
+              })
+              .filter(t => !!t.roleName)
           })
       })
     }

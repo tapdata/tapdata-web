@@ -1117,6 +1117,7 @@ export default {
   packages_business_permissionse_settings_create_quanxianshezhi: '權限設置',
   packages_business_permissionse_settings_create_shezhiquanxian: '設置權限',
   packages_business_permissionse_settings_create_xuanzeshouquanjiao: '選擇授權角色',
+  packages_business_permissionse_settings_create_wufaduiyixiashujujinxingshouquan: '無法對以下數據進行授權，將跳過保存',
   packages_business_connections_permissionsdialog_tianjiashouquan: '添加授權',
   packages_business_connections_permissionsdialog_gongnengquanxian: '功能權限',
   packages_business_connections_permissionsdialog_shouquanjuese: '授權角色',

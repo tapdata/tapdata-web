@@ -100,22 +100,24 @@ export default {
         ]
       }
 
-      return (
-        MAP[this.type] || [
-          {
-            label: i18n.t('public_button_check'),
-            value: 'View'
-          },
-          {
-            label: i18n.t('public_button_edit'),
-            value: 'Edit'
-          },
-          {
-            label: i18n.t('public_button_delete'),
-            value: 'Delete'
-          }
-        ]
-      )
+      let result = MAP[this.type] || [
+        {
+          label: i18n.t('public_button_check'),
+          value: 'View'
+        },
+        {
+          label: i18n.t('public_button_edit'),
+          value: 'Edit'
+        },
+        {
+          label: i18n.t('public_button_delete'),
+          value: 'Delete'
+        }
+      ]
+
+      result[0].disabled = this.form.checked.length > 1
+
+      return result
     }
   },
 
@@ -191,8 +193,19 @@ export default {
       this.saveLoading = true
       dataPermissionApi
         .dataAuth(params)
-        .then(() => {
-          this.$message.success(this.$t('public_message_save_ok'))
+        .then((data = []) => {
+          if (!data?.length) {
+            this.$message.success(this.$t('public_message_save_ok'))
+          } else {
+            this.$message.warning({
+              dangerouslyUseHTMLString: true,
+              message:
+                i18n.t('packages_business_permissionse_settings_create_wufaduiyixiashujujinxingshouquan') +
+                ':<br/>' +
+                this.dataList.map(t => t.name).join('<br/>')
+            })
+            // this.$message.warning('以下数据无权限修改，将跳过保存:' + ' ' + this.dataList.map(t => t.name).join(',\n<br/>'))
+          }
           this.close()
         })
         .finally(() => {
